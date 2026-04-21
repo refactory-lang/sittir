@@ -32,12 +32,37 @@ describe('parsePath()', () => {
         ])
     })
 
-    it('parses wildcards', () => {
-        expect(parsePath('*')).toEqual([{ kind: 'wildcard' }])
-        expect(parsePath('0/*/1')).toEqual([
+    it('parses wildcard _ segments', () => {
+        expect(parsePath('_')).toEqual([{ kind: 'wildcard' }])
+        expect(parsePath('0/_/1')).toEqual([
             { kind: 'index', value: 0 },
             { kind: 'wildcard' },
             { kind: 'index', value: 1 },
+        ])
+    })
+
+    it('parses kind-match segments (name in parentheses)', () => {
+        expect(parsePath('(foo)')).toEqual([{ kind: 'kind-match', name: 'foo' }])
+        expect(parsePath('0/(_expression)/1')).toEqual([
+            { kind: 'index', value: 0 },
+            { kind: 'kind-match', name: '_expression' },
+            { kind: 'index', value: 1 },
+        ])
+    })
+
+    it('parses field-traversal segments (name with colon suffix)', () => {
+        expect(parsePath('foo:')).toEqual([{ kind: 'fieldName', name: 'foo' }])
+        expect(parsePath('0/elements:/1')).toEqual([
+            { kind: 'index', value: 0 },
+            { kind: 'fieldName', name: 'elements' },
+            { kind: 'index', value: 1 },
+        ])
+    })
+
+    it('parses negative-index segments', () => {
+        expect(parsePath('0/-1')).toEqual([
+            { kind: 'index', value: 0 },
+            { kind: 'index', value: -1 },
         ])
     })
 
@@ -53,21 +78,17 @@ describe('parsePath()', () => {
         expect(() => parsePath('0/')).toThrow(/leading\/trailing slash/)
     })
 
-    it('accepts kind-name + negative-index segments (added post-T028)', () => {
-        // `foo` is a kind-match (recursively matches every $.foo occurrence).
-        // `-1` is a reverse index (last member).
-        expect(parsePath('0/foo/1')).toEqual([
-            { kind: 'index', value: 0 },
-            { kind: 'kind-match', name: 'foo' },
-            { kind: 'index', value: 1 },
-        ])
-        expect(parsePath('0/-1')).toEqual([
-            { kind: 'index', value: 0 },
-            { kind: 'index', value: -1 },
-        ])
+    it('rejects * with migration error — use _ instead', () => {
+        expect(() => parsePath('*')).toThrow(/path segment '\*' is no longer valid — use '_' for wildcard; see ADR-0010/)
+        expect(() => parsePath('0/*/1')).toThrow(/path segment '\*' is no longer valid/)
     })
 
-    it('rejects segments that match neither index/wildcard/kind-name', () => {
+    it('rejects bare kind name with migration error — use (name) instead', () => {
+        expect(() => parsePath('foo')).toThrow(/bare kind name 'foo' is no longer valid as a path segment — use '\(foo\)' instead; see ADR-0010/)
+        expect(() => parsePath('0/_expression/1')).toThrow(/bare kind name '_expression' is no longer valid/)
+    })
+
+    it('rejects segments that match neither index/wildcard/kind-name/field-name', () => {
         expect(() => parsePath('0/1a/1')).toThrow(/invalid segment '1a'/)
     })
 })
@@ -117,7 +138,7 @@ describe('applyPath()', () => {
             .toThrow(/index 1 out of bounds.*optional.*single content/)
     })
 
-    describe('wildcards', () => {
+    describe('wildcards (_)', () => {
         it('applies to every member of a choice', () => {
             const rule = choice(seq(sym('a'), sym('b')), seq(sym('c'), sym('d')))
             const result = applyPath(
@@ -144,14 +165,49 @@ describe('applyPath()', () => {
             )).toThrow(/wildcard matched zero/)
         })
     })
+
+    describe('field traversal (fieldName segment)', () => {
+        it('descends through a field wrapper when name matches', () => {
+            const rule = seq(
+                fld('name', sym('identifier')),
+                fld('body', sym('block')),
+            )
+            const result = applyPath(
+                rule,
+                [{ kind: 'index', value: 1 }, { kind: 'fieldName', name: 'body' }],
+                sym('new_block'),
+            )
+            const bodyField = (result as any).members[1]
+            expect(bodyField).toMatchObject({ type: 'field', name: 'body' })
+            expect(bodyField.content).toMatchObject({ type: 'symbol', name: 'new_block' })
+        })
+
+        it('throws when the rule at that position is not a field wrapper', () => {
+            const rule = seq(sym('identifier'), sym('body'))
+            expect(() => applyPath(
+                rule,
+                [{ kind: 'index', value: 1 }, { kind: 'fieldName', name: 'body' }],
+                sym('new_body'),
+            )).toThrow(/path segment 'body:' at this level expects a field\('body', \.\.\.\) wrapper; got type 'symbol'/)
+        })
+
+        it('throws when the field name at that position does not match', () => {
+            const rule = fld('name', sym('identifier'))
+            expect(() => applyPath(
+                rule,
+                [{ kind: 'fieldName', name: 'body' }],
+                sym('new_identifier'),
+            )).toThrow(/path segment 'body:' doesn't match field name 'name' at this position/)
+        })
+    })
 })
 
 describe('transform() — object form with path keys', () => {
-    it('applies a single path-addressed patch (single-segment)', () => {
+    it('applies a single path-addressed patch using _ wildcard', () => {
         const rule = seq(sym('a'), sym('b'))
-        // The path key '*' marks this as path mode (not flat positional).
+        // The path key '_' marks this as path mode (not flat positional).
         // Use the wildcard to apply to all members for the smoke test.
-        const flat = transform(rule, { '*': fld('any', sym('a')) } as Record<string, Rule>)
+        const flat = transform(rule, { '_': fld('any', sym('a')) } as Record<string, Rule>)
         const r = flat as any
         expect(r.members[0]).toMatchObject({ type: 'field', name: 'any', source: 'override' })
         expect(r.members[1]).toMatchObject({ type: 'field', name: 'any', source: 'override' })
@@ -214,7 +270,7 @@ describe('transform() — object form (flat positional, backward-compat)', () =>
 })
 
 describe('applyPath() — kind-match + negative index', () => {
-    it('kind-match wraps every occurrence recursively', async () => {
+    it('kind-match wraps every occurrence recursively (new (name) syntax)', async () => {
         const { field: oneArgField } = await import('../primitives/field.ts')
         // seq(expr, ',', seq(expr, ',', expr)) — three _expression refs.
         const rule = seq(
@@ -222,7 +278,7 @@ describe('applyPath() — kind-match + negative index', () => {
             str(','),
             seq(sym('_expression'), str(','), sym('_expression')),
         )
-        const result = transform(rule, { '_expression': oneArgField('elements') as Rule })
+        const result = transform(rule, { '(_expression)': oneArgField('elements') as Rule })
         const r = result as any
         expect(r.members[0]).toMatchObject({ type: 'field', name: 'elements' })
         expect(r.members[2].members[0]).toMatchObject({ type: 'field', name: 'elements' })
@@ -231,7 +287,7 @@ describe('applyPath() — kind-match + negative index', () => {
         expect(r.members[1]).toMatchObject({ type: 'string', value: ',' })
     })
 
-    it('kind-match skips occurrences already inside a named field', async () => {
+    it('kind-match skips occurrences already inside a named field (new (name) syntax)', async () => {
         const { field: oneArgField } = await import('../primitives/field.ts')
         // rust's array_expression `[x; N]` shape: first _expression is
         // bare, second is inside `field('length', _expression)`. A
@@ -242,7 +298,9 @@ describe('applyPath() — kind-match + negative index', () => {
             str(';'),
             { type: 'field', name: 'length', content: sym('_expression') } as Rule,
         )
-        const result = transform(rule, { '_expression': oneArgField('elements') as Rule })
+        // Kind-match from root: `(_expression)` finds all bare occurrences,
+        // skips any already inside a named field wrapper.
+        const result = transform(rule, { '(_expression)': oneArgField('elements') as Rule })
         const r = result as any
         expect(r.members[0]).toMatchObject({ type: 'field', name: 'elements' })
         // The pre-fielded `length` slot survives unchanged.

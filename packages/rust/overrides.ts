@@ -44,7 +44,7 @@ export default grammar(enrich(base), wire({
         // flow declaratively instead of inline in rules:.
         array_expression: [
             { 1: field('attributes') },
-            { '2/_expression': field('elements') },
+            { '2/(_expression)': field('elements') },
         ],
 
         // async_block: position 2 is the `block` symbol (position 1 is
@@ -391,7 +391,7 @@ export default grammar(enrich(base), wire({
         // capturing the `,` separators (same pattern as array_expression).
         tuple_expression: {
             1: field('attributes'),
-            '_expression': field('elements'),
+            '(_expression)': field('elements'),
         },
 
         // type_item: 3 field(s)

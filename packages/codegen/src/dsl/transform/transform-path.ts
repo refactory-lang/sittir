@@ -1,18 +1,31 @@
 /**
  * dsl/transform-path.ts — path addressing for transform() patches.
  *
- * Path strings use forward-slash delimiters with numeric segments and
- * `*` wildcards:
+ * Path strings use forward-slash delimiters. Segment forms:
  *
- *   '0'        → first position of the top-level seq
- *   '0/0'      → first position of the nested structure at position 0
- *   '0/*\/1'   → position 1 of every branch at level 1 under position 0
- *   '*'        → every top-level position
+ *   'N'         → positional index (0-based)
+ *   '-N'        → reverse index from the end (-1 = last member)
+ *   '_'         → wildcard — matches every sibling at this level
+ *   '(name)'    → kind-match — finds every occurrence of symbol `name`
+ *                 in the current subtree, skipping pre-fielded ones
+ *   'name:'     → field traversal — descends through a field('name', ...)
+ *                 wrapper at the current position (hard-errors on mismatch)
+ *
+ * Examples:
+ *   '0'              → first position of the top-level seq
+ *   '0/1/2'          → nested descent by positional indices
+ *   '0/_/1'          → position 1 of every branch at level 1 under pos 0
+ *   '(_expression)'  → every `_expression` symbol in the subtree
+ *   '2/elements:'    → descend into field('elements', ...) at position 2
+ *
+ * Migration notes (ADR-0010):
+ *   '*' → '_'         (wildcard)
+ *   'name' → '(name)' (kind-match)
  *
  * Rules:
  * - No leading slash (`/0` is invalid).
  * - No trailing slash.
- * - `*` matches a single level only — not recursive.
+ * - `_` wildcard matches a single level only — not recursive.
  * - Out-of-bounds paths and zero-match wildcards are hard errors at
  *   apply time (with the path + actual rule shape in the message).
  */
@@ -63,8 +76,21 @@ export type PathSegment =
          * a named `field()` (reusing a target kind is almost always
          * unintended — the semi form's `field('length', _expression)`
          * must survive when the list form's `_expression` is patched).
+         *
+         * Syntax: `(name)` — parentheses are required (ADR-0010).
          */
         kind: 'kind-match'
+        name: string
+    }
+    | {
+        /**
+         * Field traversal: descend through a field('name', ...) wrapper
+         * at the current rule position. Hard-errors if the current rule
+         * is not a field wrapper or if the field name doesn't match.
+         *
+         * Syntax: `name:` — colon suffix (ADR-0010).
+         */
+        kind: 'fieldName'
         name: string
     }
 
@@ -89,11 +115,16 @@ export class ApplyPathSkip extends Error {
  * Segment forms:
  *   - `N`       — positional index (0-based)
  *   - `-N`      — reverse index from the end (`-1` = last member)
- *   - `*`       — wildcard, matches every sibling at this level
- *   - `<kind>`  — kind-based match: finds every occurrence of the
- *                 symbol named `<kind>` in the current subtree,
- *                 skipping occurrences already inside a named field.
- *                 Must start with a letter or underscore.
+ *   - `_`       — wildcard: matches every sibling at this level
+ *   - `(name)`  — kind-match: finds every occurrence of symbol `name`
+ *                 in the current subtree, skipping pre-fielded ones.
+ *                 Parentheses are required (ADR-0010).
+ *   - `name:`   — field traversal: descend through field('name', ...)
+ *                 at the current position. Hard-errors on mismatch.
+ *
+ * Migration errors (ADR-0010):
+ *   - `*`       — use `_` instead
+ *   - bare kind name — use `(name)` instead
  */
 export function parsePath(pathStr: string): PathSegment[] {
     if (typeof pathStr !== 'string' || pathStr.length === 0) {
@@ -105,14 +136,23 @@ export function parsePath(pathStr: string): PathSegment[] {
     const parts = pathStr.split('/')
     const segments: PathSegment[] = []
     for (const part of parts) {
-        if (part === '*') {
+        if (part === '_') {
+            // New wildcard syntax (ADR-0010).
             segments.push({ kind: 'wildcard' })
         } else if (/^-?\d+$/.test(part)) {
             segments.push({ kind: 'index', value: Number(part) })
-        } else if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(part)) {
-            segments.push({ kind: 'kind-match', name: part })
+        } else if (/^\([A-Za-z_][A-Za-z0-9_]*\)$/.test(part)) {
+            // New kind-match syntax: (name) — ADR-0010.
+            segments.push({ kind: 'kind-match', name: part.slice(1, -1) })
+        } else if (/^[A-Za-z_][A-Za-z0-9_]*:$/.test(part)) {
+            // New field-traversal syntax: name: — ADR-0010.
+            segments.push({ kind: 'fieldName', name: part.slice(0, -1) })
+        } else if (part === '*') {
+            throw new Error(`parsePath: path segment '*' is no longer valid — use '_' for wildcard; see ADR-0010`)
+        } else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) {
+            throw new Error(`parsePath: bare kind name '${part}' is no longer valid as a path segment — use '(${part})' instead; see ADR-0010`)
         } else {
-            throw new Error(`parsePath: invalid segment '${part}' in path '${pathStr}' — must be a numeric index, '*', or a kind name ([a-zA-Z_][a-zA-Z0-9_]*)`)
+            throw new Error(`parsePath: invalid segment '${part}' in path '${pathStr}' — must be a numeric index, '_' (wildcard), '(name)' (kind-match), or 'name:' (field traversal)`)
         }
     }
     return segments
@@ -154,20 +194,32 @@ export function applyPath(
     const [head, ...rest] = segments
     const t = rule.type
 
-    if (head!.kind === 'kind-match') {
-        return dispatchKindMatch(rule, head!.name, rest, patch, precStack)
-    }
+    switch (head!.kind) {
+        case 'kind-match':
+            return dispatchKindMatch(rule, head!.name, rest, patch, precStack)
 
-    // Containers we can descend into — predicates in runtime-shapes.ts
-    // accept both sittir lowercase and tree-sitter uppercase naming.
-    if (isContainerType(t)) {
-        return applyToMembers(rule, head!, rest, patch, precStack)
-    }
-    if (isWrapperType(t)) {
-        return descendThroughSingleWrapper(rule, head!, rest, patch, precStack)
-    }
+        case 'fieldName':
+            return descendThroughNamedField(rule, head!.name, rest, patch, precStack)
 
-    throw new ApplyPathSkip(`applyPath: cannot descend into '${rule.type}' rule (path has ${segments.length} segments left)`)
+        case 'index':
+        case 'wildcard': {
+            // Containers we can descend into — predicates in runtime-shapes.ts
+            // accept both sittir lowercase and tree-sitter uppercase naming.
+            if (isContainerType(t)) {
+                return applyToMembers(rule, head!, rest, patch, precStack)
+            }
+            if (isWrapperType(t)) {
+                return descendThroughSingleWrapper(rule, head!, rest, patch, precStack)
+            }
+            throw new ApplyPathSkip(`applyPath: cannot descend into '${rule.type}' rule (path has ${segments.length} segments left)`)
+        }
+
+        default: {
+            // Exhaustiveness guard — TypeScript narrows `head` to `never` here.
+            const _exhaustive: never = head
+            throw new Error(`applyPath: unknown segment kind '${(_exhaustive as PathSegment).kind}'`)
+        }
+    }
 }
 
 /**
@@ -220,15 +272,69 @@ function descendThroughSingleWrapper(
     patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
     precStack: readonly RuntimeRule[] | undefined,
 ): RuntimeRule {
-    const wrapperHit = head.kind === 'wildcard'
-        || (head.kind === 'index' && (head.value === 0 || head.value === -1))
-    if (wrapperHit) {
-        const newContent = applyPath(contentOf(rule), rest, patch, precStack)
-        return reconstructWrapper(rule, newContent)
+    switch (head.kind) {
+        case 'wildcard': {
+            const newContent = applyPath(contentOf(rule), rest, patch, precStack)
+            return reconstructWrapper(rule, newContent)
+        }
+        case 'index': {
+            if (head.value === 0 || head.value === -1) {
+                const newContent = applyPath(contentOf(rule), rest, patch, precStack)
+                return reconstructWrapper(rule, newContent)
+            }
+            throw new ApplyPathSkip(
+                `applyPath: index ${head.value} out of bounds — '${rule.type}' wraps a single content rule (only index 0 / -1 is valid)`,
+            )
+        }
+        case 'kind-match':
+        case 'fieldName':
+        default: {
+            // 'kind-match' and 'fieldName' are dispatched before reaching
+            // descendThroughSingleWrapper — they should never arrive here.
+            const _exhaustive: never = head
+            throw new Error(`descendThroughSingleWrapper: unexpected segment kind '${(_exhaustive as PathSegment).kind}' — this is a bug in applyPath dispatch`)
+        }
     }
-    throw new ApplyPathSkip(
-        `applyPath: index ${head.kind === 'index' ? head.value : '*'} out of bounds — '${rule.type}' wraps a single content rule (only index 0 / -1 is valid)`,
-    )
+}
+
+/**
+ * Descend through a named field wrapper, verifying that the current rule is a
+ * field wrapper with the expected name. Hard-errors on mismatch.
+ *
+ * @remarks
+ * Field traversal is strict by design — silently skipping a mismatched field
+ * name would be a footgun (e.g. `body:` silently passing through `name:`
+ * because both are field wrappers at that position). Hard-errors surface
+ * typos immediately.
+ *
+ * @param rule - The rule at the current path position.
+ * @param fieldName - The expected field name.
+ * @param rest - Remaining path segments after this descent.
+ * @param patch - Patch value or function to apply at the addressed position.
+ * @param precStack - Accumulated prec wrappers for the patch callback.
+ * @returns Reconstructed field wrapper with the patched inner content.
+ * @throws {Error} If the rule is not a field wrapper, or if the field name doesn't match.
+ */
+function descendThroughNamedField(
+    rule: RuntimeRule,
+    fieldName: string,
+    rest: readonly PathSegment[],
+    patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
+    precStack: readonly RuntimeRule[] | undefined,
+): RuntimeRule {
+    if (!isFieldType(rule.type)) {
+        throw new Error(
+            `applyPath: path segment '${fieldName}:' at this level expects a field('${fieldName}', ...) wrapper; got type '${rule.type}'`,
+        )
+    }
+    const actualName = (rule as unknown as { name: string }).name
+    if (actualName !== fieldName) {
+        throw new Error(
+            `applyPath: path segment '${fieldName}:' doesn't match field name '${actualName}' at this position`,
+        )
+    }
+    const newContent = applyPath(contentOf(rule), rest, patch, precStack)
+    return reconstructWrapper(rule, newContent)
 }
 
 /**
@@ -524,11 +630,23 @@ function applyToMembers(
 ): RuntimeRule {
     const members = [...membersOf(rule)]
 
-    if (head.kind === 'index') {
-        return applyToIndexedMember(rule, members, head.value, rest, patch, precStack)
-    }
+    switch (head.kind) {
+        case 'index':
+            return applyToIndexedMember(rule, members, head.value, rest, patch, precStack)
 
-    return applyWildcardToMembers(rule, members, rest, patch, precStack)
+        case 'wildcard':
+            return applyWildcardToMembers(rule, members, rest, patch, precStack)
+
+        case 'kind-match':
+        case 'fieldName':
+        default: {
+            // 'kind-match' and 'fieldName' are dispatched before reaching
+            // applyToMembers — they should never arrive here. Other unknown
+            // segment kinds are a bug. Both cases are hard errors.
+            const _exhaustive: never = head
+            throw new Error(`applyToMembers: unexpected segment kind '${(_exhaustive as PathSegment).kind}' — this is a bug in applyPath dispatch`)
+        }
+    }
 }
 
 /**
