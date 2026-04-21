@@ -6,7 +6,7 @@
 import type { NodeMap } from '../compiler/types.ts'
 import type { AssembledField, AssembledChild, NodeOrTerminal } from '../compiler/node-map.ts'
 import {
-    AssembledKeyword,
+    AssembledKeyword, AssembledToken,
     isNodeRef, isTerminalValue, isUnresolvedRef,
     isRequired, isMultiple, isNonEmpty,
 } from '../compiler/node-map.ts'
@@ -155,6 +155,12 @@ export function resolveHiddenKeywordLiteral(
     if (!kindName.startsWith('_')) return undefined
     const node = nodeMap.nodes.get(kindName)
     if (node instanceof AssembledKeyword) return node.text
+    // Tokens with StringRule bodies are anonymous-string literals that
+    // the classifier routed through `token()` / `prec()` wrappers (the
+    // evaluator strips prec but token shape survives). They're
+    // functionally identical to keywords for inlining purposes — a
+    // single literal text the field accepts.
+    if (node instanceof AssembledToken) return node.text
     return undefined
 }
 

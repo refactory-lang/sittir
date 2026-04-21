@@ -3422,8 +3422,8 @@ export function lineComment(config?: T.LineComment.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    outer(value?: T.OuterLineDocCommentMarker | undefined) { return _fs(config, lineComment, 'outer', value, fields.outer); },
-    inner(value?: T.InnerLineDocCommentMarker | undefined) { return _fs(config, lineComment, 'inner', value, fields.inner); },
+    outer(value?: "/" | undefined) { return _fs(config, lineComment, 'outer', value, fields.outer); },
+    inner(value?: "!" | undefined) { return _fs(config, lineComment, 'inner', value, fields.inner); },
     doc(value?: T.LineDocContent | undefined) { return _fs(config, lineComment, 'doc', value, fields.doc); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -3820,7 +3820,7 @@ export function rangeExpressionPostfix(config: T.RangeExpressionPostfix.Config) 
     $named: true as const,
     $fields: fields,
     start(value?: T.Expression) { return _fs(config, rangeExpressionPostfix, 'start', value, fields.start); },
-    operator(value?: T.KwOperator) { return _fs(config, rangeExpressionPostfix, 'operator', value, fields.operator); },
+    operator(value?: "..") { return _fs(config, rangeExpressionPostfix, 'operator', value, fields.operator); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3840,7 +3840,7 @@ export function rangeExpressionPrefix(config: T.RangeExpressionPrefix.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    operator(value?: T.KwOperator) { return _fs(config, rangeExpressionPrefix, 'operator', value, fields.operator); },
+    operator(value?: "..") { return _fs(config, rangeExpressionPrefix, 'operator', value, fields.operator); },
     end(value?: T.Expression) { return _fs(config, rangeExpressionPrefix, 'end', value, fields.end); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -3860,7 +3860,7 @@ export function rangeExpressionBare(config: T.RangeExpressionBare.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    operator(value?: T.KwOperator) { return _fs(config, rangeExpressionBare, 'operator', value, fields.operator); },
+    operator(value?: "..") { return _fs(config, rangeExpressionBare, 'operator', value, fields.operator); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

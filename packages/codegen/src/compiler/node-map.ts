@@ -1316,6 +1316,18 @@ export class AssembledToken extends AssembledNodeBase<StringRule | TokenRule> {
         super(kind, rule, { hidden: true })
     }
     // No emitFactory — tokens are always hidden, no factoryName.
+
+    /**
+     * The literal text this token produces when its rule body is a
+     * single string (post-optimize inline of `token(string)` or
+     * `prec(n, string)` wrappers around a bare literal). Returns
+     * `undefined` when the body is a `TokenRule` wrapping pattern-based
+     * content — those don't have a single user-visible string.
+     */
+    get text(): string | undefined {
+        if (this.rule.type === 'string') return this.rule.value
+        return undefined
+    }
 }
 
 export class AssembledEnum extends AssembledNodeBase<EnumRule> {

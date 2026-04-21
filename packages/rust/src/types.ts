@@ -1888,8 +1888,8 @@ export interface Comment {
 export interface LineComment {
   readonly $type: 'line_comment';
   readonly $fields: {
-    readonly outer?: OuterLineDocCommentMarker;
-    readonly inner?: InnerLineDocCommentMarker;
+    readonly outer?: "/";
+    readonly inner?: "!";
     readonly doc?: LineDocContent;
   };
 }
@@ -2013,7 +2013,7 @@ export interface _RangeExpressionPrefix {
 export interface _RangeExpressionBare {
   readonly $type: '_range_expression_bare';
   readonly $fields: {
-    readonly operator: KwOperator;
+    readonly operator: "..";
   };
 }
 
@@ -2105,14 +2105,14 @@ export interface RangeExpressionPostfix {
   readonly $type: 'range_expression_postfix';
   readonly $fields: {
     readonly start: Expression;
-    readonly operator: KwOperator;
+    readonly operator: "..";
   };
 }
 
 export interface RangeExpressionPrefix {
   readonly $type: 'range_expression_prefix';
   readonly $fields: {
-    readonly operator: KwOperator;
+    readonly operator: "..";
     readonly end: Expression;
   };
 }
@@ -2120,7 +2120,7 @@ export interface RangeExpressionPrefix {
 export interface RangeExpressionBare {
   readonly $type: 'range_expression_bare';
   readonly $fields: {
-    readonly operator: KwOperator;
+    readonly operator: "..";
   };
 }
 
