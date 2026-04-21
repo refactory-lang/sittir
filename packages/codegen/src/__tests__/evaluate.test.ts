@@ -87,7 +87,11 @@ describe('Evaluate — DSL functions', () => {
             const rule = choice('pub', 'crate', 'super')
             expect(rule).toEqual({
                 type: 'enum',
-                values: ['pub', 'crate', 'super'],
+                members: [
+                    { type: 'string', value: 'pub' },
+                    { type: 'string', value: 'crate' },
+                    { type: 'string', value: 'super' },
+                ],
                 source: 'grammar',
             })
         })
@@ -478,7 +482,12 @@ describe('Evaluate — evaluate()', () => {
         )
         expect(operatorField.content).toEqual({
             type: 'enum',
-            values: ['+', '-', '*', '/'],
+            members: [
+                { type: 'string', value: '+' },
+                { type: 'string', value: '-' },
+                { type: 'string', value: '*' },
+                { type: 'string', value: '/' },
+            ],
             source: 'grammar',
         })
     })

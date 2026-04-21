@@ -640,7 +640,7 @@ function deriveValuesForRule(
             return [{ kind: 'terminal', value: rule.value, multiplicity }]
         case 'enum':
             // Enum: each enum member is a TerminalValue
-            return rule.values.map(v => ({ kind: 'terminal' as const, value: v, multiplicity }))
+            return rule.members.map(m => ({ kind: 'terminal' as const, value: m.value, multiplicity }))
         case 'choice':
             // Each arm is independent — union all entries. Arms may differ in
             // their own multiplicity if they wrap repeat/optional differently.
@@ -1344,7 +1344,7 @@ export class AssembledEnum extends AssembledNodeBase<EnumRule> {
     }
 
     /** The enum member strings (e.g. `['u8', 'u16', 'usize']`). */
-    get values(): string[] { return this.rule.values }
+    get values(): string[] { return this.rule.members.map(m => m.value) }
 }
 
 export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | ChoiceRule> {

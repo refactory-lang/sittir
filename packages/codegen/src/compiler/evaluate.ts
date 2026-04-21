@@ -201,8 +201,11 @@ function rulesEqual(a: Rule, b: Rule): boolean {
             return a.value === (b as PatternRule).value
         case 'symbol':
             return a.name === (b as SymbolRule).name
-        case 'enum':
-            return JSON.stringify(a.values) === JSON.stringify((b as EnumRule).values)
+        case 'enum': {
+            const bm = (b as EnumRule).members
+            return a.members.length === bm.length
+                && a.members.every((m, i) => m.value === bm[i]!.value)
+        }
         case 'seq':
             return a.members.length === (b as SeqRule).members.length
                 && a.members.every((m, i) => rulesEqual(m, (b as SeqRule).members[i]!))
@@ -262,7 +265,7 @@ export function choice(...members: Input[]): Rule {
     if (normalized.length > 0 && normalized.every(m => m.type === 'string')) {
         return {
             type: 'enum',
-            values: normalized.map(m => (m as StringRule).value),
+            members: normalized as StringRule[],
             source: 'grammar',
         }
     }

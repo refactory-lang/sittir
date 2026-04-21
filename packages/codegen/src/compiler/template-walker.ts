@@ -722,7 +722,7 @@ function walkRuleForTemplate(
         }
 
         case 'enum':
-            return rule.values.length > 0 ? [rule.values[0]!] : []
+            return rule.members.length > 0 ? [rule.members[0]!.value] : []
 
         case 'variant':
             return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)

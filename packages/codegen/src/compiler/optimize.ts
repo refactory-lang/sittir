@@ -628,8 +628,11 @@ export function rulesEqual(a: Rule, b: Rule): boolean {
         case 'variant':
             return a.name === (b as typeof a).name &&
                 rulesEqual(a.content, (b as typeof a).content)
-        case 'enum':
-            return JSON.stringify(a.values) === JSON.stringify((b as typeof a).values)
+        case 'enum': {
+            const bm = (b as typeof a).members
+            return a.members.length === bm.length &&
+                a.members.every((m, i) => m.value === bm[i]!.value)
+        }
         case 'supertype':
             return a.name === (b as typeof a).name
         case 'indent':

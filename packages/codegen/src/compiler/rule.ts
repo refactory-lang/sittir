@@ -144,9 +144,17 @@ export interface ClauseRule {
  */
 export type RuleSource = 'grammar' | 'promoted' | 'override'
 
+/**
+ * EnumRule — a normalized choice-of-strings.
+ *
+ * Shape-compatible with `ChoiceRule` (both expose `members`) but narrower:
+ * every member is a `StringRule`. Downstream code that walks `.members`
+ * uniformly across choice/enum works for free; code that wants the raw
+ * string list reads `.members.map(m => m.value)`.
+ */
 export interface EnumRule {
     readonly type: 'enum'
-    readonly values: string[]
+    readonly members: readonly StringRule[]
     readonly source?: RuleSource
 }
 

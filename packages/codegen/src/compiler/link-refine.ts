@@ -35,8 +35,10 @@ export interface RefinePathResolution {
      *  case, but we keep this optional so future non-field refinement
      *  sites don't need a schema change). */
     readonly fieldName: string | undefined
-    /** The resolved choice rule. */
-    readonly choice: ChoiceRule
+    /** The resolved choice rule — either a `ChoiceRule` or an `EnumRule`
+     *  (the normalized choice-of-strings). Both expose `members`, so
+     *  consumers that walk them uniformly work without adapting. */
+    readonly choice: ChoiceRule | EnumRule
 }
 
 /**
@@ -161,35 +163,26 @@ function stepPath(
 
 /**
  * Unwrap common single-content wrappers (optional, repeat, repeat1) to
- * reach an inner `choice` — or an `enum` (normalized choice-of-strings)
- * which is promoted to a synthetic ChoiceRule for uniform downstream
- * handling. Returns `undefined` if the eventual node is neither a choice
- * nor an enum. Wrappers between the start and the terminal choice are
+ * reach an inner `choice` — or an `enum` (normalized choice-of-strings).
+ * Returns `undefined` if the eventual node is neither a choice nor an
+ * enum. Wrappers between the start and the terminal choice are
  * structurally transparent for selection purposes.
+ *
+ * `EnumRule` is shape-compatible with `ChoiceRule` (both expose
+ * `members`) — callers that walk members uniformly can accept the union
+ * without further adaptation. The discriminant is still useful
+ * information downstream so we surface it here instead of collapsing.
  */
-function unwrapToChoice(rule: Rule): ChoiceRule | undefined {
+function unwrapToChoice(rule: Rule): ChoiceRule | EnumRule | undefined {
     let cur = rule
     for (;;) {
         if (isChoice(cur)) return cur
-        if (isEnum(cur)) return enumToChoice(cur)
+        if (isEnum(cur)) return cur
         if (isOptional(cur) || isRepeat(cur) || isRepeat1(cur)) {
             cur = cur.content
             continue
         }
         return undefined
-    }
-}
-
-/**
- * Promote an `enum` (normalized choice-of-strings) to a synthetic
- * `ChoiceRule` whose members are `StringRule`s. Refine's selection
- * semantics are identical over both — "pick one branch" — so
- * downstream validation and per-form narrowing treat them uniformly.
- */
-function enumToChoice(rule: EnumRule): ChoiceRule {
-    return {
-        type: 'choice',
-        members: rule.values.map(v => ({ type: 'string' as const, value: v })),
     }
 }
 
@@ -228,10 +221,10 @@ function validateSelection(
     kind: string,
     formName: string,
     pathStr: string,
-    choice: ChoiceRule,
+    choice: ChoiceRule | EnumRule,
     selection: number | string,
 ): void {
-    const arms = choice.members
+    const arms: readonly Rule[] = choice.members
     if (typeof selection === 'number') {
         if (selection < 0 || selection >= arms.length) {
             throw new Error(
@@ -306,7 +299,7 @@ export function narrowedFieldLiteralsForForm(
  * non-string branch.
  */
 export function resolveSelectionLiteral(
-    choice: ChoiceRule,
+    choice: ChoiceRule | EnumRule,
     selection: number | string,
 ): string | undefined {
     if (typeof selection === 'string') return selection

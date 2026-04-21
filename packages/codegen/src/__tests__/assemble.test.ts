@@ -122,7 +122,13 @@ describe('Assemble — classifyNode', () => {
     })
 
     it('classifies enum as enum', () => {
-        const rule: Rule = { type: 'enum', values: ['pub', 'crate'] }
+        const rule: Rule = {
+            type: 'enum',
+            members: [
+                { type: 'string', value: 'pub' },
+                { type: 'string', value: 'crate' },
+            ],
+        }
         expect(classifyNode('visibility', rule)).toBe('enum')
     })
 

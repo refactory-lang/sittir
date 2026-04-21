@@ -1486,7 +1486,7 @@ function classifyHiddenChoiceRule(
     if (rule.members.every((m): m is StringRule => m.type === 'string')) {
         return {
             type: 'enum',
-            values: rule.members.map(m => m.value),
+            members: rule.members,
             source: 'promoted',
         } satisfies EnumRule
     }
