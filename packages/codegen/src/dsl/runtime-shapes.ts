@@ -1,8 +1,8 @@
 /**
  * dsl/runtime-shapes.ts — cross-runtime rule shape utilities.
  *
- * The sittir DSL layer operates on rule trees produced by two
- * different runtimes:
+ * **Scope: DSL layer only.** The predicates here are dual-case aware
+ * because DSL code runs under two different runtimes:
  *
  *   1. **Sittir runtime** — `evaluate.ts` injects `grammarFn` as the
  *      global `grammar()`. Rules use lowercase type discriminators
@@ -18,6 +18,13 @@
  * `role`) run in both runtimes, so they must accept both shapes.
  * Rather than scatter `t === 'seq' || t === 'SEQ'` ladders through
  * every file, consolidate the predicates + type guards here.
+ *
+ * **Do NOT import from here in `compiler/` or `validate/`.** Code
+ * past the evaluate.ts boundary operates on the sittir-internal
+ * `Rule` union — single-case by construction. Use the `isSeq` /
+ * `isChoice` / etc. guards in `compiler/rule.ts` instead. Mixing
+ * the two sets is a cross-pipeline-leak signal (see MEMORY.md
+ * `feedback_rule_case_as_origin_signal`).
  */
 
 /**

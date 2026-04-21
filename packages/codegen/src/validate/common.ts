@@ -17,7 +17,6 @@ import { readFileSync, readdirSync, existsSync, type Mode } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { readNode as readNodeFn } from '@sittir/core'
-import { isChoiceType, isSeqType, isOptionalType, isStringType, isBlankType, isPlainRepeatType, type RuntimeRule } from '../dsl/runtime-shapes.ts'
 import type * as TS from 'web-tree-sitter';
 import type { SgNode, Pos, Range } from '@ast-grep/wasm'
 
