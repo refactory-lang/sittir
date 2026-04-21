@@ -889,22 +889,22 @@ describe('scoped_type_identifier', () => {
 
 describe('range_expression', () => {
   it('binary form produces correct type', () => {
-    const node = ir.range.binary({});
+    const node = ir.range.binary({ start: { $type: '_expression', $text: 'test' } as any, operator: 'test' as any, end: { $type: '_expression', $text: 'test' } as any });
     expect(node.$type).toBe('range_expression');
     expect(node.$source).toBe('factory');
   });
   it('postfix form produces correct type', () => {
-    const node = ir.range.postfix({});
+    const node = ir.range.postfix({ start: { $type: '_expression', $text: 'test' } as any, operator: { $type: '_kw_operator', $text: 'test' } as any });
     expect(node.$type).toBe('range_expression');
     expect(node.$source).toBe('factory');
   });
   it('prefix form produces correct type', () => {
-    const node = ir.range.prefix({});
+    const node = ir.range.prefix({ operator: { $type: '_kw_operator', $text: 'test' } as any, end: { $type: '_expression', $text: 'test' } as any });
     expect(node.$type).toBe('range_expression');
     expect(node.$source).toBe('factory');
   });
   it('bare form produces correct type', () => {
-    const node = ir.range.bare({});
+    const node = ir.range.bare({ operator: { $type: '_kw_operator', $text: 'test' } as any });
     expect(node.$type).toBe('range_expression');
     expect(node.$source).toBe('factory');
   });
@@ -1032,12 +1032,12 @@ describe('arguments', () => {
 
 describe('array_expression', () => {
   it('semi form produces correct type', () => {
-    const node = ir.array.semi({});
+    const node = ir.array.semi({ attributes: [{ $type: 'attribute_item', $text: 'test' } as any], elements: { $type: '_expression', $text: 'test' } as any, length: { $type: '_expression', $text: 'test' } as any });
     expect(node.$type).toBe('array_expression');
     expect(node.$source).toBe('factory');
   });
   it('list form produces correct type', () => {
-    const node = ir.array.list({});
+    const node = ir.array.list({ attributes: [{ $type: 'attribute_item', $text: 'test' } as any], elements: [{ $type: '_expression', $text: 'test' } as any] });
     expect(node.$type).toBe('array_expression');
     expect(node.$source).toBe('factory');
   });
@@ -1488,12 +1488,12 @@ describe('mut_pattern', () => {
 
 describe('range_pattern', () => {
   it('left form produces correct type', () => {
-    const node = ir.rangePattern.left({});
+    const node = ir.rangePattern.left({ left: { $type: '_literal_pattern', $text: 'test' } as any });
     expect(node.$type).toBe('range_pattern');
     expect(node.$source).toBe('factory');
   });
   it('prefix form produces correct type', () => {
-    const node = ir.rangePattern.prefix({});
+    const node = ir.rangePattern.prefix({ right: { $type: '_literal_pattern', $text: 'test' } as any });
     expect(node.$type).toBe('range_pattern');
     expect(node.$source).toBe('factory');
   });
@@ -1533,12 +1533,12 @@ describe('reference_pattern', () => {
 
 describe('or_pattern', () => {
   it('binary form produces correct type', () => {
-    const node = ir.orPattern.binary({});
+    const node = ir.orPattern.binary({ left: { $type: '_pattern', $text: 'test' } as any, right: { $type: '_pattern', $text: 'test' } as any });
     expect(node.$type).toBe('or_pattern');
     expect(node.$source).toBe('factory');
   });
   it('prefix form produces correct type', () => {
-    const node = ir.orPattern.prefix({});
+    const node = ir.orPattern.prefix({ right: { $type: '_pattern', $text: 'test' } as any });
     expect(node.$type).toBe('or_pattern');
     expect(node.$source).toBe('factory');
   });

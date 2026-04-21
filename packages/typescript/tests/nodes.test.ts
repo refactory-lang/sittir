@@ -143,12 +143,12 @@ describe('named_imports', () => {
 
 describe('import_specifier', () => {
   it('name form produces correct type', () => {
-    const node = ir.importSpecifier.name({});
+    const node = ir.importSpecifier.name({ name: { $type: '_import_identifier', $text: 'test' } as any });
     expect(node.$type).toBe('import_specifier');
     expect(node.$source).toBe('factory');
   });
   it('as form produces correct type', () => {
-    const node = ir.importSpecifier.as({});
+    const node = ir.importSpecifier.as({ name: { $type: '_module_export_name', $text: 'test' } as any, alias: { $type: '_import_identifier', $text: 'test' } as any });
     expect(node.$type).toBe('import_specifier');
     expect(node.$source).toBe('factory');
   });
