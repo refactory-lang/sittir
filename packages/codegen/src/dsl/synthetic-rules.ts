@@ -43,37 +43,11 @@ export function getCurrentRuleKind(): string | null {
 }
 
 export function registerSyntheticRule(name: string, content: RuntimeRule): void {
-    // Route to the active wire context when one exists — its closure
-    // absorbs deposits. We still run the legacy blank-placeholder
-    // injection below (when `currentOptsRules` is set by
-    // installGrammarWrapper pass 2) so tree-sitter's ruleMap snapshot
-    // picks up the synthetic name even when wire isn't declaring the
-    // polymorph explicitly yet. Once every grammar uses wire() with
-    // declarative polymorphs, the legacy injection path becomes dead
-    // code and is removed with installGrammarWrapper.
-    wireRegisterSyntheticRule(name, content)
-
-    // Dual-write into the legacy accumulator too. This is what
-    // installGrammarWrapper's pass-1 dry-run harvests into
-    // `discoveredNames` so blank placeholders get injected into
-    // opts.rules BEFORE tree-sitter's native grammar() snapshots
-    // ruleMap. When wire is active the placeholders are redundant
-    // (wire's deposited content resolves via its own deferred fns)
-    // but harmless. After every grammar migrates to declarative
-    // polymorphs, this dual-write disappears with
-    // installGrammarWrapper.
-    if (!currentSyntheticRules) {
-        currentSyntheticRules = new Map()
-    }
-    currentSyntheticRules.set(name, content)
-    // When the grammar wrapper is active (pass 2 of tree-sitter CLI
-    // evaluation), also add a blank placeholder directly to opts.rules
-    // so tree-sitter's `$` proxy resolves the new name when subsequent
-    // options like `conflicts:` reference it. drainSyntheticRules swaps
-    // the blank for the real body after nativeGrammar returns.
-    if (currentOptsRules && !(name in currentOptsRules)) {
-        const blank = currentBlankFn
-        currentOptsRules[name] = () => blank ? blank() : ({ type: 'BLANK' })
+    if (!wireRegisterSyntheticRule(name, content)) {
+        throw new Error(
+            `registerSyntheticRule('${name}'): called outside a wire() context. ` +
+            `Wrap your grammar() opts in wire({...}) so synthetic rules route through it.`,
+        )
     }
 }
 
@@ -119,24 +93,12 @@ export function maybeKeywordSymbol(
 }
 
 export function registerPolymorphVariant(parentKind: string, childSuffix: string): void {
-    // Route to the active wire context when present — wire owns its
-    // own polymorph-variant list (idempotent on duplicates so benign
-    // re-entry from legacy wrapper pass-1 + pass-2 is absorbed).
-    wireRegisterPolymorphVariant(parentKind, childSuffix)
-    // Legacy accumulator — used by sittir's evaluate() drain path.
-    // Keeps the hard duplicate throw: T029a catches two `variant('x')`
-    // calls within the same transform() patch (authoring error), and
-    // the wrapper's pass-1/pass-2 flow resets this accumulator via
-    // drainPolymorphVariants() between passes so the second pass
-    // starts fresh.
-    const dup = currentPolymorphVariants.find(v => v.parent === parentKind && v.child === childSuffix)
-    if (dup) {
+    if (!wireRegisterPolymorphVariant(parentKind, childSuffix)) {
         throw new Error(
-            `variant('${childSuffix}'): duplicate variant name on rule '${parentKind}'. ` +
-            `Each variant() within a rule must have a unique name — change one or merge the patches.`,
+            `registerPolymorphVariant('${parentKind}'/'${childSuffix}'): called outside a wire() context. ` +
+            `variant()/alias() must be resolved inside a rule callback that runs under wire().`,
         )
     }
-    currentPolymorphVariants.push({ parent: parentKind, child: childSuffix })
 }
 
 export function drainPolymorphVariants(): PolymorphVariant[] {
@@ -176,14 +138,10 @@ let currentConflicts: string[][] = []
  */
 export function registerConflict(names: readonly string[]): void {
     if (names.length === 0) return
-    // Dual-write: wire absorbs (idempotent) + legacy accumulator for
-    // installGrammarWrapper's post-grammar append path and any other
-    // non-wire consumers of drainConflicts().
-    wireRegisterConflict(names)
-    const key = names.join('\u0000')
-    const exists = currentConflicts.some(g => g.join('\u0000') === key)
-    if (!exists) {
-        currentConflicts.push([...names])
+    if (!wireRegisterConflict(names)) {
+        throw new Error(
+            `registerConflict(${JSON.stringify(names)}): called outside a wire() context.`,
+        )
     }
 }
 
