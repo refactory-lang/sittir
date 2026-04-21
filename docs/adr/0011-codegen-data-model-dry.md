@@ -1,6 +1,6 @@
 # ADR 0011 — Codegen data-model refactor: DRY enforcement, class-hierarchy encapsulation, per-value multiplicity
 
-**Status**: In Progress (draft)
+**Status**: Accepted (2026-04-21)
 **Date**: 2026-04-21
 **Related**: ADR-0010 (auto-stamp + refine) — motivator; this ADR captures the data-model work that ADR-0010's implementation surfaced as necessary.
 
@@ -334,9 +334,23 @@ string.
   narrowing-exploit getters (`6c32d3d`)
 - ✅ Task 1b-follow — `protected rule` + `renderParts` + `isTextTemplate`
   encapsulation (`f0e2ced`, `2b73fc9`)
-- ⏳ Task 1.6 — `NodeOrTerminal` + per-value multiplicity + kill
-  `deriveContentTypes` / `deriveFieldsRaw` (in progress)
+- ✅ Task 1.6 — `NodeOrTerminal` + per-value multiplicity + kill
+  `deriveContentTypes` / `deriveLiteralValues` (`57f6d7b`)
 - ✅ DRY principle → CLAUDE.md (`85559e7`)
 
-Status flips to Accepted when Task 1.6 lands and the verification checklist
-passes.
+**Note on `deriveFieldsRaw`:** retained as an internal helper for
+`deriveFields`. Initially flagged as a candidate for elimination, but
+re-examination shows it serves a distinct role — the recursive walker
+that produces per-path fields, whose output is then dedup-merged by
+`deriveFields`. The dedupe combines same-named fields appearing in
+different seq/choice branches with branch-specific multiplicity
+downgrading (not-in-all-branches → optional). This is not a DRY
+violation: one walker produces one canonical output; the post-pass
+dedupe is semantic (branch-presence analysis), not a redundant
+re-derivation. Kept as-is.
+
+**Outstanding DRY-enforcement item:** `deriveFieldsRaw`'s `default:
+return []` branch swallows unhandled Rule variants silently. Should
+be `assertNever(rule)` per the principle. Follow-up commit to tighten
+this + any similar silent defaults elsewhere in node-map.ts and
+sibling walkers.
