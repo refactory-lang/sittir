@@ -8,6 +8,11 @@
             "type": "command",
             "command": ".claude/hooks/adr-detector.sh",
             "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": ".claude/hooks/quality-gate.sh",
+            "timeout": 30
           }
         ]
       }

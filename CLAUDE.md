@@ -149,6 +149,66 @@ difference is a cross-pipeline-leak signal — don't normalize it away.
 Specs, plans, tasks under `specs/NNN-feature-name/`. Branch convention: `NNN-short-name`.
 
 <!-- MANUAL ADDITIONS START -->
+
+## Work conventions
+
+These three rules are auto-checked by `.claude/hooks/quality-gate.sh`
+(Stop hook). Follow them during normal work, not just when the hook
+fires.
+
+### Fix the generator, not the generated output
+
+Sittir generates a lot of TypeScript + YAML per grammar package. Never
+hand-edit generated output to work around a problem:
+
+- `packages/{rust,python,typescript}/src/*` — factories, types,
+  node-model, etc.
+- `packages/{rust,python,typescript}/templates.yaml` — render templates.
+- `packages/{rust,python,typescript}/.sittir/grammar.js` — transpiled
+  overrides bridge.
+- `packages/{rust,python,typescript}/factory-map.json5` +
+  `overrides.suggested.ts` — codegen outputs.
+
+If one of these files is wrong, the fix lives in `packages/codegen/src/`
+(walker, emitter, link, assemble, evaluate — per the pipeline above) or
+in the relevant `packages/<lang>/overrides.ts`. Regenerate via the
+commands in "Commands" above. MEMORY.md's `feedback_no_hand_edit_yaml`
+captures the long-form rationale.
+
+### No type-escape hatches as workarounds
+
+Do NOT silence type errors with `as any`, `as unknown`, `@ts-ignore`,
+`@ts-nocheck`, or `eslint-disable` to make a diff compile. If the types
+disagree with your code, the fix is either:
+
+1. Widen/narrow the types honestly (add a discriminated variant, thread
+   a generic, tighten a guard).
+2. Change the code to match the existing type.
+3. Identify the real shape mismatch and fix it at the boundary that
+   introduced it.
+
+Allowed exceptions:
+- `as const` — legitimate narrowing, not a cast.
+- `@ts-nocheck` on `overrides.ts` files — the tree-sitter grammar.js
+  shape is untyped by design; we bypass intentionally there.
+- `as unknown as Foo` inside `dsl/` cross-runtime shape bridging where
+  `runtime-shapes.ts` guards narrow dual-case shapes. Annotate why in a
+  one-line comment above.
+
+### Wave-style decomposition before commits
+
+When you've modified a TypeScript file and a function body contains a
+3+ line inline comment block explaining "what the next chunk does",
+promote that chunk to a named private helper with a JSDoc docstring
+using the standard tags (`@param`, `@returns`, `@throws`, `@remarks`,
+`@see`). Goal: linear, scannable function bodies — explanations live
+next to the code they describe, not above it.
+
+Reference commits: `60a0f77 codegen: wave 2 comment/decomposition
+cleanup`, `f72f540 codegen: wave 3 comment/decomposition cleanup`, and
+the wave 4 ADR-0009 follow-up. Match that style. Don't merge helpers
+that the directive would split — granularity per comment block.
+
 <!-- MANUAL ADDITIONS END -->
 
 ## Active Technologies
