@@ -231,7 +231,8 @@
     "raw": "text",
     "yield": "text",
     "try": "text",
-    "ref": "text"
+    "ref": "text",
+    "move": "text"
   },
   "fieldAliasMap": {
     "attribute.arguments": {

@@ -1793,7 +1793,7 @@ export function pointerType(config: T.PointerType.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    mutableSpecifier(value?: T.MutableSpecifier | "const") { return _fs(config, pointerType, 'mutableSpecifier', value, fields.mutable_specifier); },
+    mutableSpecifier(value?: "const" | T.MutableSpecifier) { return _fs(config, pointerType, 'mutableSpecifier', value, fields.mutable_specifier); },
     typeField(value?: T._Type) { return _fs(config, pointerType, 'type', value, fields.type); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -1814,7 +1814,7 @@ export function abstractType(config: T.AbstractType.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    typeParameters(value?: T.TypeParameters | "for" | undefined) { return _fs(config, abstractType, 'typeParameters', value, fields.type_parameters); },
+    typeParameters(value?: "for" | T.TypeParameters | undefined) { return _fs(config, abstractType, 'typeParameters', value, fields.type_parameters); },
     trait(value?: T._TypeIdentifier | T.ScopedTypeIdentifier | T.RemovedTraitBound | T.GenericType | T.FunctionType | T.TupleType | T.BoundedType) { return _fs(config, abstractType, 'trait', value, fields.trait); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2133,7 +2133,7 @@ export function referenceExpression(config: T.ReferenceExpression.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    mutableSpecifier(value?: T.MutableSpecifier | "raw" | "const" | undefined) { return _fs(config, referenceExpression, 'mutableSpecifier', value, fields.mutable_specifier); },
+    mutableSpecifier(value?: "raw" | "const" | T.MutableSpecifier | undefined) { return _fs(config, referenceExpression, 'mutableSpecifier', value, fields.mutable_specifier); },
     value(value?: T.Expression) { return _fs(config, referenceExpression, 'value', value, fields.value); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {

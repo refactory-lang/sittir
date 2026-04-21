@@ -832,7 +832,7 @@ export function execStatement(config: T.ExecStatement.Config) {
     $named: true as const,
     $fields: fields,
     code(value?: T.String | T.Identifier) { return _fs(config, execStatement, 'code', value, fields.code); },
-    inClause(...values: NonEmptyArray<T.Expression | "in">) { return _fsm(config, execStatement, 'inClause', values, fields.in_clause); },
+    inClause(...values: NonEmptyArray<"in" | T.Expression>) { return _fsm(config, execStatement, 'inClause', values, fields.in_clause); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1411,7 +1411,7 @@ export function comparisonOperator(config: T.ComparisonOperator.Config) {
     $named: true as const,
     $fields: fields,
     left(value?: T.PrimaryExpression) { return _fs(config, comparisonOperator, 'left', value, fields.left); },
-    operators(...values: NonEmptyArray<T.NotIn | T.IsNot | "<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "is">) { return _fsm(config, comparisonOperator, 'operators', values, fields.operators); },
+    operators(...values: NonEmptyArray<"<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | T.NotIn | "is" | T.IsNot>) { return _fsm(config, comparisonOperator, 'operators', values, fields.operators); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1744,7 +1744,7 @@ export function splatType(config: T.SplatType.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    identifier(value?: T.Identifier | "*" | "**") { return _fs(config, splatType, 'identifier', value, fields.identifier); },
+    identifier(value?: "*" | "**" | T.Identifier) { return _fs(config, splatType, 'identifier', value, fields.identifier); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

@@ -19,7 +19,7 @@ import {
 import {
     resolveEffectiveLiteral, isAutoStampSlot, stampExpressionFor,
     isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues,
-    resolveHiddenKeywordLiteral, resolveHoistedForm, type HoistedForm,
+    resolveHoistedForm, type HoistedForm, fieldTypeComponents, isValidIdent,
 } from './shared.ts'
 
 export interface EmitFactoriesConfig {
@@ -527,7 +527,15 @@ function autoStampExpression(f: AssembledField, nodeMap: NodeMap): string | unde
     return stampExpressionFor(f, nodeMap)
 }
 
-/** Resolve an AssembledField's element type to a concrete TS type expression. */
+/**
+ * Resolve an AssembledField's element type to a concrete TS type expression
+ * for the factory surface — each resolved node kind is prefixed with `T.` so
+ * the reference resolves against the `import * as T from './types.js'` import.
+ *
+ * Delegates to the shared {@link fieldTypeComponents} walker so the node-ref
+ * / literal / alias-source / hidden-keyword / missing-kind logic stays in one
+ * place (types.ts::fieldTypeExpr is the same walk with no prefix).
+ */
 function fieldElementType(f: AssembledField, nodeMap: NodeMap): string {
     const literals = slotLiteralValues(f)
     const kindNames = slotKindNames(f)
@@ -537,33 +545,22 @@ function fieldElementType(f: AssembledField, nodeMap: NodeMap): string {
     }
     if (kindNames.length === 0 && literals.length === 0) return 'string'
 
-    // Alias-source projection (ADR-0006 extended to the factory surface):
-    // when a content type is the TARGET of `alias($.source, $.target)`, the
-    // body follows `source`'s shape. Factory config accepts the source type
-    // so callers construct nodes with the real structure.
-    const resolveAliased = (t: string): string => {
-        const source = f.aliasSources?.[t]
-        if (!source) return t
-        return nodeMap.nodes.get(source) ? source : t
-    }
-    const nodeParts = kindNames.map(resolveAliased).map(t => {
-        // Hidden `_kw_*` keywords inline as their literal string so the
-        // fluent setter parameter type matches the raw token the user
-        // sees (e.g. `async(...values: "async"[])`) instead of requiring
-        // a `T.KwAsync` wrapper. Mirrors the surface in types.ts's
-        // `fieldTypeExpr`.
-        const lit = resolveHiddenKeywordLiteral(t, nodeMap)
-        if (lit !== undefined) return JSON.stringify(lit)
-        const node = nodeMap.nodes.get(t)
-        if (!node) {
-            const fallback = t.replace(/(?:^|_)([a-z])/g, (_: string, c: string) => c.toUpperCase())
-            return `T.${fallback}`
+    const components = fieldTypeComponents(f, nodeMap)
+    const parts: string[] = []
+    for (const comp of components) {
+        if (comp.kind === 'literal') {
+            parts.push(JSON.stringify(comp.value))
+        } else if (comp.kind === 'nodeKind') {
+            parts.push(isValidIdent(comp.value) ? `T.${comp.value}` : JSON.stringify(comp.rawKind))
+        } else {
+            // Missing kind — factories can't register for stub emission
+            // (types.ts owns that side). Fall back to the `T.` prefix so
+            // the reference at least links against whatever stub types.ts
+            // emits for its own missing kind.
+            parts.push(`T.${comp.value}`)
         }
-        const name = node.typeName
-        return /^[A-Za-z_$][\w$]*$/.test(name) ? `T.${name}` : JSON.stringify(t)
-    })
-    const litParts = literals.map(v => JSON.stringify(v))
-    return [...new Set([...nodeParts, ...litParts])].join(' | ')
+    }
+    return [...new Set(parts)].join(' | ')
 }
 
 function emitFieldCarryingFactory(

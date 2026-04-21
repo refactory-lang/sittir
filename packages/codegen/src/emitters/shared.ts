@@ -323,6 +323,97 @@ export function stampExpressionFor(slot: AssembledChild, nodeMap: NodeMap): stri
 }
 
 // ---------------------------------------------------------------------------
+// Field / child type-expression projection (shared by types.ts + factories.ts)
+// ---------------------------------------------------------------------------
+
+/**
+ * One component of a field or child type expression. Callers assemble a
+ * final TS type expression by formatting these (adding / omitting a `T.`
+ * prefix, wrapping literals in `JSON.stringify`, routing `missing` to a
+ * fallback stub, etc.).
+ *
+ * Three shapes:
+ *
+ * - **`nodeKind`** — a resolved node kind in the NodeMap. `value` is the
+ *   kind's computed `typeName` (already PascalCase, always a valid TS
+ *   identifier when emitted unquoted; callers that need a quoted form
+ *   when `typeName` is not ident-shaped should branch on
+ *   {@link isValidIdent}). `rawKind` is the original kind string — used
+ *   as the indexed-access key when falling back to `"kind-string"` under
+ *   unquoted-alias conditions.
+ * - **`literal`** — an inline string literal from a terminal value.
+ *   `value` is the raw string; callers typically `JSON.stringify` it.
+ * - **`missing`** — a kind referenced in the slot's values that isn't in
+ *   the NodeMap. `value` is a PascalCase fallback identifier; `rawKind`
+ *   is the raw kind. types.ts registers this for stub emission;
+ *   factories.ts prefixes with `T.`.
+ *
+ * `fieldTypeComponents` pre-inlines hidden single-literal keywords (the
+ * `_kw_*` pattern) as `literal` components so consumer emitters don't
+ * surface helper wrapper types. The alias-source projection
+ * (ADR-0006) is also applied here once — callers don't rebuild the
+ * resolver twice.
+ */
+export type TypeComponent =
+    | { kind: 'nodeKind'; value: string; rawKind: string }
+    | { kind: 'literal'; value: string }
+    | { kind: 'missing'; value: string; rawKind: string }
+
+/**
+ * Compute the shared {@link TypeComponent} list for a field slot.
+ *
+ * Pure derivation over the slot's `values` + `aliasSources`. Applies:
+ *   1. Alias-source rewrite (ADR-0006): if a content kind is the TARGET
+ *      of `alias($.source, $.target)`, rewrite to `source` when `source`
+ *      exists in the NodeMap.
+ *   2. Hidden-keyword inlining: `_kw_async` → literal `"async"`.
+ *   3. NodeMap lookup: resolved kind → `nodeKind`; missing → `missing`
+ *      (with a PascalCase fallback name for consumers that need one).
+ *
+ * Used by `types.ts::fieldTypeExpr` and `factories.ts::fieldElementType`
+ * — previously two parallel walkers with near-identical logic, differing
+ * only in prefix choice and missing-kind handling.
+ *
+ * @param field - The field whose slot values drive the projection.
+ * @param nodeMap - The assembled node map for kind resolution.
+ * @returns Ordered components (in the order the kinds / literals appear
+ *   in `field.values`). Callers deduplicate at emission time.
+ */
+export function fieldTypeComponents(
+    field: AssembledField,
+    nodeMap: NodeMap,
+): TypeComponent[] {
+    const out: TypeComponent[] = []
+    const resolveAliased = (t: string): string => {
+        const source = field.aliasSources?.[t]
+        if (!source) return t
+        return nodeMap.nodes.get(source) ? source : t
+    }
+    for (const v of field.values) {
+        if (isTerminalValue(v)) {
+            out.push({ kind: 'literal', value: v.value })
+            continue
+        }
+        if (!isNodeRef(v)) continue
+        const rawName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind
+        const t = resolveAliased(rawName)
+        const lit = resolveHiddenKeywordLiteral(t, nodeMap)
+        if (lit !== undefined) {
+            out.push({ kind: 'literal', value: lit })
+            continue
+        }
+        const node = nodeMap.nodes.get(t)
+        if (!node) {
+            const fallback = t.replace(/(?:^|_)([a-z])/g, (_, c: string) => c.toUpperCase())
+            out.push({ kind: 'missing', value: fallback, rawKind: t })
+            continue
+        }
+        out.push({ kind: 'nodeKind', value: node.typeName, rawKind: t })
+    }
+    return out
+}
+
+// ---------------------------------------------------------------------------
 // Polymorph UForm Config hoisting
 // ---------------------------------------------------------------------------
 

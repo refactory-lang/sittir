@@ -1347,7 +1347,7 @@ export interface ReferenceType {
 export interface PointerType {
   readonly $type: 'pointer_type';
   readonly $fields: {
-    readonly mutable_specifier: MutableSpecifier | "const";
+    readonly mutable_specifier: "const" | MutableSpecifier;
     readonly type: _Type;
   };
 }
@@ -1355,7 +1355,7 @@ export interface PointerType {
 export interface AbstractType {
   readonly $type: 'abstract_type';
   readonly $fields: {
-    readonly type_parameters?: TypeParameters | "for";
+    readonly type_parameters?: "for" | TypeParameters;
     readonly trait: _TypeIdentifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
   };
 }
@@ -1447,7 +1447,7 @@ export interface TryExpression {
 export interface ReferenceExpression {
   readonly $type: 'reference_expression';
   readonly $fields: {
-    readonly mutable_specifier?: MutableSpecifier | "raw" | "const";
+    readonly mutable_specifier?: "raw" | "const" | MutableSpecifier;
     readonly value: Expression;
   };
 }

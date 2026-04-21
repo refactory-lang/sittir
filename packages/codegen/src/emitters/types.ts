@@ -22,7 +22,7 @@ import {
     AssembledSupertype,
 } from '../compiler/node-map.ts'
 import { loadRawEntries } from '../validate/node-types-loader.ts'
-import { isAutoStampField, isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues, resolveHiddenKeywordLiteral, resolveHoistedForm, isAutoStampSlot, referencedKinds } from './shared.ts'
+import { isAutoStampField, isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues, resolveHiddenKeywordLiteral, resolveHoistedForm, isAutoStampSlot, referencedKinds, fieldTypeComponents, isValidIdent } from './shared.ts'
 
 type StructuralNode = AssembledBranch | AssembledContainer | AssembledPolymorph
 
@@ -1057,82 +1057,48 @@ function emitFormChildrenSlot(
     }
 }
 
+/**
+ * Format a field's type expression for the types.ts surface — bare
+ * identifiers (no `T.` prefix) and missing kinds registered via
+ * {@link missingKindTypes} for stub emission.
+ *
+ * Delegates to the shared {@link fieldTypeComponents} walker so the node-ref /
+ * literal / alias-source / hidden-keyword logic lives in one place
+ * (factories.ts::fieldElementType is the same walk with a `T.` prefix).
+ */
 function fieldTypeExpr(
     field: AssembledField,
     nodeMap?: NodeMap,
     lookupUnion?: LookupUnion,
 ): string {
-    const fieldKinds = slotKindNames(field)
     const litVals = slotLiteralValues(field)
-    const litParts = litVals.map(v => JSON.stringify(v))
+    const kinds = slotKindNames(field)
 
     // Pure-literal slot (no node refs) — emit as a string-literal union.
-    if (fieldKinds.length === 0 && litParts.length > 0) {
-        return [...new Set(litParts)].join(' | ')
+    if (kinds.length === 0 && litVals.length > 0) {
+        return [...new Set(litVals.map(v => JSON.stringify(v)))].join(' | ')
     }
-    if (fieldKinds.length === 0) return 'string'
+    if (kinds.length === 0) return 'string'
+    if (!nodeMap) return 'string' // defensive; current callers always pass nodeMap
 
-    const resolveAliased = buildAliasSourceResolver(field, nodeMap)
-    const nodeParts = fieldKinds.map(resolveAliased).map(t => {
-        // Hidden `_kw_*` keywords inline as their literal string so the
-        // field surface reads as the raw token (e.g. `"async"`) instead
-        // of exposing the helper rule's wrapper type.
-        if (nodeMap) {
-            const lit = resolveHiddenKeywordLiteral(t, nodeMap)
-            if (lit !== undefined) return JSON.stringify(lit)
+    const components = fieldTypeComponents(field, nodeMap)
+    const parts: string[] = []
+    for (const comp of components) {
+        if (comp.kind === 'literal') {
+            parts.push(JSON.stringify(comp.value))
+        } else if (comp.kind === 'nodeKind') {
+            parts.push(isValidIdent(comp.value) ? comp.value : JSON.stringify(comp.rawKind))
+        } else {
+            // missing kind — register for stub emission and use the
+            // PascalCase fallback name (bare, no prefix).
+            missingKindTypes.set(comp.rawKind, comp.value)
+            parts.push(comp.value)
         }
-        const node = nodeMap?.nodes.get(t)
-        if (!node) {
-            const name = t.replace(/(?:^|_)([a-z])/g, (_, c: string) => c.toUpperCase())
-            missingKindTypes.set(t, name)
-            return name
-        }
-        const name = node.typeName
-        if (/^[A-Za-z_$][\w$]*$/.test(name)) return name
-        return JSON.stringify(t)
-    })
-    // Mixed node-ref + terminal slot — merge both (e.g. rust's
-    // `closure_expression_expr.body = choice($._expression, '_')` yields
-    // `_Expression | "_"`). Without this merge the terminal arm was
-    // dropped when kinds were present and vice versa.
-    const parts = [...new Set([...nodeParts, ...litParts])]
-    // Dedup repeated multi-type unions via the lookup (T042k).
-    const alias = lookupUnion?.(parts)
+    }
+    const deduped = [...new Set(parts)]
+    const alias = lookupUnion?.(deduped)
     if (alias) return alias
-    return parts.join(' | ')
-}
-
-// ---------------------------------------------------------------------------
-// fieldTypeExpr helpers
-// ---------------------------------------------------------------------------
-
-/**
- * Build a resolver function that maps each content-type kind to its
- * alias-source kind where applicable.
- *
- * @remarks
- * Alias-source projection (ADR-0006 extended to the type surface): when a
- * content type is the TARGET of a grammar-level `alias($.source, $.target)`,
- * the parsed node's body follows `source`'s shape. This surfaces the source
- * interface as the field type so the factory/config API reflects reality
- * rather than the alias label. `field.aliasSources` maps target → source.
- *
- * @param field - The assembled field whose `aliasSources` map to consult.
- * @param nodeMap - The assembled node map, used to verify the source kind exists.
- * @returns A function `(t: string) => string` that either returns the mapped
- *   source kind (if present in the NodeMap) or falls back to the original `t`.
- */
-function buildAliasSourceResolver(
-    field: AssembledField,
-    nodeMap?: NodeMap,
-): (t: string) => string {
-    return (t: string): string => {
-        const source = field.aliasSources?.[t]
-        if (!source) return t
-        // Fall back to the original name if the source isn't in the NodeMap
-        // (shouldn't happen for declared grammar rules, but be defensive).
-        return nodeMap?.nodes.get(source) ? source : t
-    }
+    return deduped.join(' | ')
 }
 
 function toPascal(kind: string): string {
