@@ -4,8 +4,16 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts'
-import type { AssembledNode, AssembledField } from '../compiler/node-map.ts'
+import type { AssembledNode, AssembledField, SlotValue } from '../compiler/node-map.ts'
+import { isRef, isSlotLiteral } from '../compiler/node-map.ts'
 import { isValidIdent, isAutoStampField, isAutoStampSlot } from './shared.ts'
+
+/** Extract the kind name from a non-literal SlotValue. */
+function slotKindName(v: SlotValue): string | undefined {
+    if (isSlotLiteral(v)) return undefined
+    if (isRef(v)) return v.name
+    return v.kind
+}
 
 export interface EmitTestsConfig {
     grammar: string
@@ -87,7 +95,8 @@ function emitBranchTest(lines: string[], node: AssembledNode, kind: string, key:
             c => c.required && !isAutoStampSlot(c, nodeMap),
         )
         if (hasNonAutoStampRequired) {
-            const firstKind = node.children[0]?.contentTypes[0]
+            const firstValue = node.children[0]?.values.find(v => !isSlotLiteral(v))
+            const firstKind = firstValue && slotKindName(firstValue)
             const dummy = firstKind
                 ? `{ $type: '${firstKind}', $text: 'test' } as any`
                 : `'test' as any`
@@ -96,7 +105,8 @@ function emitBranchTest(lines: string[], node: AssembledNode, kind: string, key:
     }
     const renderConfigParts = [...typeConfigParts]
     if (node.children && node.children.length > 0 && !renderConfigParts.some(p => p.startsWith('children'))) {
-        const firstKind = node.children[0]?.contentTypes[0]
+        const firstValue = node.children[0]?.values.find(v => !isSlotLiteral(v))
+        const firstKind = firstValue && slotKindName(firstValue)
         const dummy = firstKind
             ? `{ $type: '${firstKind}', $text: 'test' } as any`
             : `'test' as any`
@@ -133,8 +143,10 @@ function emitContainerTest(lines: string[], node: AssembledNode, kind: string, k
     const first = node.children[0]
     const requiredSingular = first && !first.multiple && first.required
     const anyNonEmpty = node.children.some(c => c.nonEmpty)
-    const placeholder = (requiredSingular || anyNonEmpty) && first?.contentTypes[0]
-        ? `{ type: ${JSON.stringify(first.contentTypes[0])} } as never`
+    const firstRefValue = first?.values.find(v => !isSlotLiteral(v))
+    const firstKindName = firstRefValue && slotKindName(firstRefValue)
+    const placeholder = (requiredSingular || anyNonEmpty) && firstKindName
+        ? `{ type: ${JSON.stringify(firstKindName)} } as never`
         : ''
 
     lines.push(`describe('${kind}', () => {`)
@@ -251,15 +263,17 @@ function dummyValue(field: AssembledField): string {
     // `$FIELD`/`joinBy` produce non-empty output; otherwise the generated
     // `render produces non-empty string` test fails for kinds where
     // every required field is multiple.
+    const firstRefValue = field.values.find(v => !isSlotLiteral(v))
+    const firstKind = firstRefValue && slotKindName(firstRefValue)
     if (field.multiple) {
-        if (field.contentTypes.length > 0) {
-            return `[{ $type: '${field.contentTypes[0]}', $text: 'test' } as any]`
+        if (firstKind) {
+            return `[{ $type: '${firstKind}', $text: 'test' } as any]`
         }
         return `['test' as any]`
     }
-    if (field.contentTypes.length > 0) {
+    if (firstKind) {
         // Use first content type to generate a dummy
-        return `{ $type: '${field.contentTypes[0]}', $text: 'test' } as any`
+        return `{ $type: '${firstKind}', $text: 'test' } as any`
     }
     return "'test' as any"
 }

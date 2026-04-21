@@ -1,7 +1,7 @@
 /**
  * compiler/assemble.ts — Phase 4: Assemble
  *
- * First time nodes appear. All metadata (required, multiple, contentTypes,
+ * First time nodes appear. All metadata (required, multiple, values,
  * detectToken, modelType) derived from the rule tree — not carried on Rule nodes.
  */
 
@@ -14,14 +14,14 @@ import type {
 } from './types.ts'
 import { computePolymorphFormKinds } from './types.ts'
 import type {
-    AssembledNode, AssembledField, AssembledChild,
+    AssembledNode, AssembledField, AssembledChild, SlotValue,
 } from './node-map.ts'
 import {
     AssembledBranch, AssembledContainer, AssembledPolymorph,
     AssembledLeaf, AssembledKeyword, AssembledToken, AssembledEnum,
     AssembledSupertype, AssembledGroup, AssembledMulti,
     hasAnyField, hasAnyChild,
-    nameNode,
+    nameNode, isRef,
 } from './node-map.ts'
 import { simplifyRule } from './simplify.ts'
 import { compileWordMatcher } from './common.ts'
@@ -136,6 +136,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
     resolveCollidingNames(nodes)
     resolveIrKeys(nodes)
     markParameterlessKinds(nodes)
+    resolveSlotRefs(nodes)
 
     return {
         name: optimized.name,
@@ -350,8 +351,8 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
  * - It is optional (`required: false`) — user can omit it; we treat it as a
  *   non-blocking empty slot.
  * - It is required, non-repeated, and its value is fixed:
- *   (a) inline literal (`literalValues.length === 1`, from AssembledField)
- *   (b) single content-type that is itself parameterless (already marked)
+ *   (a) inline literal (single string entry in `values`)
+ *   (b) single Ref that resolves to a parameterless kind (already marked)
  *
  * Required repeated slots (`multiple: true`) are NOT eligible — they
  * represent a 0..N or 1..N collection whose cardinality is user-determined.
@@ -360,17 +361,18 @@ function isAutoStampSlot(slot: AssembledChild, nodes: Map<string, AssembledNode>
     if (!slot.required) return true  // optional slots never block parameterless
     if (slot.multiple) return false  // required repeated slot needs user input
 
-    // Source A: inline literal on an AssembledField
-    const asField = slot as AssembledField
-    if (asField.literalValues?.length === 1) return true
-
-    // Source B/C: single content-type that is itself parameterless
-    if (slot.contentTypes.length === 1) {
-        const ref = nodes.get(slot.contentTypes[0]!)
-        if (ref?.isParameterless) return true
+    if (slot.values.length !== 1) return false
+    const v = slot.values[0]!
+    // Source A: inline literal
+    if (typeof v === 'string') return true
+    // Unresolved Ref — look up in the nodes map (resolveSlotRefs hasn't run yet)
+    if (isRef(v)) {
+        const ref = nodes.get(v.name)
+        return ref?.isParameterless === true
     }
-
-    return false
+    // Already-resolved AssembledNode (shouldn't happen during markParameterlessKinds
+    // since resolveSlotRefs runs after, but handle defensively)
+    return v.isParameterless === true
 }
 
 /**
@@ -403,18 +405,18 @@ function getSlotsForParameterless(node: AssembledNode): { fields: readonly Assem
 function stampExpressionForSlot(slot: AssembledChild, nodes: Map<string, AssembledNode>): string | undefined {
     if (!slot.required) return undefined  // optional — no stamp needed
 
+    if (slot.values.length !== 1) return undefined
+    const v = slot.values[0]!
+
     // Source A: inline literal
-    const asField = slot as AssembledField
-    if (asField.literalValues?.length === 1) {
-        return JSON.stringify(asField.literalValues[0])
+    if (typeof v === 'string') {
+        return JSON.stringify(v)
     }
 
-    // Source B/C: single referenced parameterless kind
-    if (slot.contentTypes.length === 1) {
-        const ref = nodes.get(slot.contentTypes[0]!)
-        if (ref?.isParameterless && ref.stampExpression !== undefined) {
-            return ref.stampExpression
-        }
+    // Resolve Ref to get the referenced node
+    const ref = isRef(v) ? nodes.get(v.name) : v
+    if (ref?.isParameterless && ref.stampExpression !== undefined) {
+        return ref.stampExpression
     }
 
     return undefined
@@ -490,6 +492,48 @@ function markParameterlessKinds(nodes: Map<string, AssembledNode>): void {
             changed = true
             void kind  // suppress unused warning
         }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// resolveSlotRefs — post-assemble ref resolution pass
+// ---------------------------------------------------------------------------
+
+/**
+ * Post-assemble resolution pass.
+ *
+ * Walk every slot's `values[]`, swapping each `Ref` whose `.name` matches
+ * a kind in the node map with the actual `AssembledNode`. Unresolvable Refs
+ * stay as Refs (expected for dead kinds like `doc_comment` that tree-sitter
+ * aliases away). Runs after `markParameterlessKinds` so resolved
+ * AssembledNodes already carry `isParameterless`.
+ *
+ * Produces new slot objects (immutable — does not mutate existing arrays).
+ */
+function resolveSlotRefs(nodes: Map<string, AssembledNode>): void {
+    const unresolvedNames = new Set<string>()
+
+    const resolveValues = (values: readonly SlotValue[]): readonly SlotValue[] => {
+        let changed = false
+        const next = values.map(v => {
+            if (!isRef(v)) return v
+            const resolved = nodes.get(v.name)
+            if (resolved !== undefined) { changed = true; return resolved }
+            unresolvedNames.add(v.name)
+            return v
+        })
+        return changed ? next : values
+    }
+
+    for (const [, node] of nodes) {
+        node.resolveSlotValues(resolveValues)
+    }
+
+    if (unresolvedNames.size > 0) {
+        console.warn(
+            `[resolveSlotRefs] ${unresolvedNames.size} kind name(s) remained unresolved after resolution pass. ` +
+            `Unresolved kind names: ${[...unresolvedNames].sort().join(', ')}`,
+        )
     }
 }
 

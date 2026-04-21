@@ -1628,12 +1628,12 @@ describe('asserts', () => {
 
 describe('asserts_annotation', () => {
   it('factory produces correct type', () => {
-    const node = ir.assertsAnnotation({});
+    const node = ir.assertsAnnotation({ asserts: { $type: 'asserts', $text: 'test' } as any });
     expect(node.$type).toBe('asserts_annotation');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.assertsAnnotation({});
+    const node = ir.assertsAnnotation({ asserts: { $type: 'asserts', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1764,12 +1764,12 @@ describe('type_predicate', () => {
 
 describe('type_predicate_annotation', () => {
   it('factory produces correct type', () => {
-    const node = ir.typePredicateAnnotation({});
+    const node = ir.typePredicateAnnotation({ typePredicate: { $type: 'type_predicate', $text: 'test' } as any });
     expect(node.$type).toBe('type_predicate_annotation');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.typePredicateAnnotation({});
+    const node = ir.typePredicateAnnotation({ typePredicate: { $type: 'type_predicate', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

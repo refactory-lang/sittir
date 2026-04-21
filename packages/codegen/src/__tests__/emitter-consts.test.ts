@@ -55,8 +55,8 @@ describe('emitConsts', () => {
                 kind: 'function_item', typeName: 'FunctionItem', factoryName: 'functionItem',
                 modelType: 'branch',
                 fields: [
-                    { name: 'name', propertyName: 'name', paramName: 'name', required: true, multiple: false, contentTypes: ['identifier'], source: 'grammar', projection: { typeName: '', kinds: [] } },
-                    { name: 'body', propertyName: 'body', paramName: 'body', required: true, multiple: false, contentTypes: ['block'], source: 'grammar', projection: { typeName: '', kinds: [] } },
+                    { name: 'name', propertyName: 'name', paramName: 'name', required: true, multiple: false, values: [{ kind: 'ref', name: 'identifier' }], source: 'grammar', projection: { typeName: '', kinds: [] } },
+                    { name: 'body', propertyName: 'body', paramName: 'body', required: true, multiple: false, values: [{ kind: 'ref', name: 'block' }], source: 'grammar', projection: { typeName: '', kinds: [] } },
                 ],
             } as unknown as AssembledBranch],
         ])

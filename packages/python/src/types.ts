@@ -728,7 +728,7 @@ export interface ExecStatement {
   readonly $type: 'exec_statement';
   readonly $fields: {
     readonly code: String | Identifier;
-    readonly in_clause?: string;
+    readonly in_clause?: "in";
   };
 }
 
@@ -962,7 +962,7 @@ export interface ComparisonOperator {
   readonly $type: 'comparison_operator';
   readonly $fields: {
     readonly left: PrimaryExpression;
-    readonly operators: NonEmptyArray<NotIn | IsNot>;
+    readonly operators: NonEmptyArray<"<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | NotIn | "is" | IsNot>;
   };
 }
 
@@ -1078,7 +1078,7 @@ export interface Type {
 export interface SplatType {
   readonly $type: 'splat_type';
   readonly $fields: {
-    readonly identifier: "*" | "**";
+    readonly identifier: "*" | "**" | Identifier;
   };
 }
 

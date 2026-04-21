@@ -9,8 +9,16 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts'
-import { AssembledGroup } from '../compiler/node-map.ts'
+import type { SlotValue } from '../compiler/node-map.ts'
+import { AssembledGroup, isRef, isSlotLiteral } from '../compiler/node-map.ts'
 import { compileWordMatcher } from '../compiler/common.ts'
+
+/** Extract the kind name from a non-literal SlotValue. */
+function slotKindName(v: SlotValue): string | undefined {
+    if (isSlotLiteral(v)) return undefined
+    if (isRef(v)) return v.name
+    return v.kind
+}
 
 export interface EmitTemplatesConfig {
     grammar: string
@@ -116,15 +124,21 @@ export function emitTemplates(config: EmitTemplatesConfig): string {
             terminatingKinds.add(kind)
         }
     }
-    const fieldIsBlockTerminating = (fieldName: string, parentNode: { modelType?: string; fields?: readonly { name: string; contentTypes: readonly string[] }[] }): boolean => {
+    const fieldIsBlockTerminating = (fieldName: string, parentNode: { modelType?: string; fields?: readonly import('../compiler/node-map.ts').AssembledField[] }): boolean => {
         const field = parentNode.fields?.find(f => f.name === fieldName)
-        if (!field || field.contentTypes.length === 0) return false
-        return field.contentTypes.every(t => terminatingKinds.has(t))
+        if (!field || field.values.length === 0) return false
+        return field.values.every(v => {
+            const kindName = slotKindName(v)
+            if (kindName === undefined) return false
+            return terminatingKinds.has(kindName)
+        })
     }
-    const childIsBlockTerminating = (parentNode: { children?: readonly { contentTypes: readonly string[] }[] }): boolean => {
-        const all = parentNode.children?.flatMap(c => c.contentTypes) ?? []
-        if (all.length === 0) return false
-        return all.every(t => terminatingKinds.has(t))
+    const childIsBlockTerminating = (parentNode: { children?: readonly import('../compiler/node-map.ts').AssembledChild[] }): boolean => {
+        const kindNames = (parentNode.children ?? []).flatMap(c =>
+            c.values.flatMap(v => { const k = slotKindName(v); return k ? [k] : [] }),
+        )
+        if (kindNames.length === 0) return false
+        return kindNames.every(t => terminatingKinds.has(t))
     }
     for (const [kind, node] of nodeMap.nodes) {
         const raw = rules[kind]
@@ -134,7 +148,7 @@ export function emitTemplates(config: EmitTemplatesConfig): string {
         // we can attach joinBy. We swap `rules[kind]` below only if we
         // actually add metadata.
         const e: Record<string, unknown> = typeof raw === 'string' ? { template: raw } : raw as Record<string, unknown>
-        const n = node as unknown as { modelType?: string; fields?: readonly { name: string; contentTypes: readonly string[] }[]; children?: readonly { contentTypes: readonly string[] }[] }
+        const n = node as unknown as { modelType?: string; fields?: readonly import('../compiler/node-map.ts').AssembledField[]; children?: readonly import('../compiler/node-map.ts').AssembledChild[] }
         let mutated = false
         if (typeof e.template === 'string') {
             // Rule-level: `$$$CHILDREN` without joinBy, and all child

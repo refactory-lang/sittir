@@ -67,8 +67,8 @@ export function traceAssembleNodes(
         // Lazy-access the derivation getters if present. AssembledBranch's
         // `fields` / `children` are computed on access.
         const fields = (node as unknown as { fields?: Array<{ name: string }> }).fields
-        const children = (node as unknown as { children?: Array<{ name: string; contentTypes: string[] }> }).children
+        const children = (node as unknown as { children?: Array<{ name: string; values: unknown[] }> }).children
         if (fields) console.error(`  fields=${JSON.stringify(fields.map(f => f.name))}`)
-        if (children) console.error(`  children=${JSON.stringify(children.map(c => ({ name: c.name, types: c.contentTypes })))}`)
+        if (children) console.error(`  children=${JSON.stringify(children.map(c => ({ name: c.name, valueCount: c.values.length })))}`)
     }
 }
