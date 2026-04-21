@@ -17,9 +17,10 @@
  * - **Derivation helpers:** {@link deriveFields}, {@link deriveChildren},
  *   {@link hasAnyField}, {@link hasAnyChild} — walk a Rule tree to
  *   produce the field / child metadata the emitters consume.
- * - **Structural predicates:** {@link isSyntheticFieldWrapper},
- *   {@link isVerbatimTokenStream}, {@link hasHiddenExternalRef} —
- *   classification hints used by classes' renderTemplate().
+ * - **Structural predicates:** {@link isSyntheticFieldWrapper} —
+ *   classification hint used by template-walker.ts. `isVerbatimTokenStream`
+ *   and `hasHiddenExternalRef` are file-private helpers used only by
+ *   `AssembledNodeBase.isTextTemplate()` and the renderTemplate() methods.
  *
  * Backward compatibility: `rule.ts` re-exports everything from this
  * file. New code should import from `./node-map.ts` directly.
@@ -1065,7 +1066,7 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
  * markers from tagVariants). Every member has exactly three elements:
  * string-literal, repeat/repeat1 of a hidden symbol, string-literal.
  */
-export function isVerbatimTokenStream(rule: Rule): boolean {
+function isVerbatimTokenStream(rule: Rule): boolean {
     if (rule.type !== 'choice') return false
     if (rule.members.length === 0) return false
     return rule.members.every(m => {
@@ -1080,7 +1081,7 @@ export function isVerbatimTokenStream(rule: Rule): boolean {
     })
 }
 
-export function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boolean {
+function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boolean {
     // Unwrap transparent wrappers to find the structural core.
     let core = rule
     while (
@@ -1236,6 +1237,18 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 
     /** A polymorph's forms are hidden groups synthesized from the choice branches. */
     get forms(): AssembledGroup[] { return this.#forms }
+
+    /**
+     * Flattened field list across all forms — the union of every form's
+     * `fields` array. Used by emitters that need "all fields this polymorph
+     * may carry" without caring which form owns each one.
+     *
+     * Single derivation point for the `forms.flatMap(f => f.fields)` pattern
+     * that multiple emitters previously duplicated.
+     */
+    get allFormFields(): AssembledField[] {
+        return this.#forms.flatMap(f => f.fields)
+    }
 
     renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp): Record<string, unknown> {
         if (this.#forms.length === 0) {

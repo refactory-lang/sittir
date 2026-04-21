@@ -13,7 +13,7 @@ import {
     type AssembledPolymorph,
 } from '../compiler/node-map.ts'
 import {
-    hasHiddenExternalRef, isVerbatimTokenStream, AssembledKeyword,
+    AssembledKeyword,
     isNodeRef, isTerminalValue, isUnresolvedRef,
 } from '../compiler/node-map.ts'
 import {
@@ -96,9 +96,8 @@ export function emitFactories(config: EmitFactoriesConfig): string {
  */
 function collectUsesNonEmptyArray(nodeMap: NodeMap): boolean {
     return [...nodeMap.nodes.values()].some(n => {
-        const fs = n.modelType === 'branch' || n.modelType === 'polymorph'
-            ? (n.modelType === 'polymorph' ? n.forms.flatMap(f => f.fields) : n.fields)
-            : []
+        const fs = n.modelType === 'polymorph' ? n.allFormFields
+            : (n.modelType === 'branch' ? n.fields : [])
         return fs.some(f => isNonEmpty(f))
     })
 }
@@ -239,7 +238,7 @@ function buildLeafReConsts(nodeMap: NodeMap, lines: string[]): Map<string, strin
 function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
     const aliasSourceKinds = new Set<string>()
     for (const [, n] of nodeMap.nodes) {
-        const fs = n.modelType === 'polymorph' ? n.forms.flatMap(f => f.fields)
+        const fs = n.modelType === 'polymorph' ? n.allFormFields
             : (n.modelType === 'branch' || n.modelType === 'group') ? n.fields : []
         for (const f of fs) {
             if (!f.aliasSources) continue
@@ -303,15 +302,7 @@ function buildFactoryMapEntries(
             node.modelType === 'container' ||
             node.modelType === 'polymorph'
         let shape: 'config' | 'children' | 'text'
-        const externals = nodeMap.externals
-        const nodeRule = (node as { rule?: import('../compiler/rule.ts').Rule }).rule
-        const isTextTemplate = nodeRule
-            && (node.modelType === 'branch' || node.modelType === 'container')
-            && (
-                (externals && externals.size > 0 && hasHiddenExternalRef(nodeRule, externals))
-                || isVerbatimTokenStream(nodeRule)
-            )
-        if (isTextTemplate) shape = 'text'
+        if (node.isTextTemplate(nodeMap.externals)) shape = 'text'
         else if (node.modelType === 'container') shape = 'children'
         else if (
             node.modelType === 'leaf'
@@ -417,7 +408,7 @@ function renderFactoryForNode(
  * Determine whether a node should be emitted as a text-accepting factory.
  *
  * @param node - The assembled node to test.
- * @param nodeMap - The assembled node map (provides externals and rule access).
+ * @param nodeMap - The assembled node map (provides externals).
  * @returns `true` when the node is a `$TEXT`-templated kind.
  * @remarks
  *   `$TEXT`-templated kinds (external-scanner delimiters like rust's
@@ -425,16 +416,12 @@ function renderFactoryForNode(
  *   appear as named children. A field-carrying factory would expose phantom slots
  *   that nothing ever populates. These nodes get a text-accepting factory so callers
  *   supply the full source text.
+ *
+ *   Delegates to `node.isTextTemplate(externals)` — the class method owns the
+ *   detection logic, keeping rule access encapsulated.
  */
 function detectTextTemplateNode(node: AssembledNode, nodeMap: NodeMap): boolean {
-    const externals = nodeMap.externals
-    const nodeRule = (node as { rule?: import('../compiler/rule.ts').Rule }).rule
-    return !!(nodeRule
-        && (node.modelType === 'branch' || node.modelType === 'container')
-        && (
-            (externals && externals.size > 0 && hasHiddenExternalRef(nodeRule, externals))
-            || isVerbatimTokenStream(nodeRule)
-        ))
+    return node.isTextTemplate(nodeMap.externals)
 }
 
 /**

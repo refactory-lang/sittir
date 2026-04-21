@@ -50,7 +50,7 @@ export function isValidIdent(s: string): boolean {
  * JSON-quoted form — suitable for emission inside union / indexed-access
  * type positions where a non-identifier key would otherwise be a syntax
  * error. */
-export function identOrQuoted(name: string): string {
+function identOrQuoted(name: string): string {
     return IDENT_RE.test(name) ? name : JSON.stringify(name)
 }
 

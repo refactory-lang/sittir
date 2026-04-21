@@ -44,7 +44,7 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
     for (const [kind, node] of nodeMap.nodes) {
         if (node.modelType !== 'branch' && node.modelType !== 'polymorph' && node.modelType !== 'group') continue
         const fields = node.modelType === 'polymorph'
-            ? node.forms.flatMap((f: AssembledGroup) => f.fields)
+            ? node.allFormFields
             : node.fields
         for (const f of fields) {
             if (!f.aliasSources) continue
@@ -62,7 +62,7 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
             if (node.children && node.children.length > 0) continue
             factoryFields[kind] = node.fields.map(f => f.name)
         } else if (node.modelType === 'polymorph') {
-            const unique = [...new Set(node.forms.flatMap((f: AssembledGroup) => f.fields).map(f => f.name))]
+            const unique = [...new Set(node.allFormFields.map(f => f.name))]
             if (unique.length === 0) continue
             const hasChildrenInAnyForm = node.forms.some((f: AssembledGroup) => f.children && f.children.length > 0)
             if (hasChildrenInAnyForm) continue
@@ -106,7 +106,7 @@ function shapeOf(node: AssembledNode, nodeMap: NodeMap): 'config' | 'children' |
 function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
     const out = new Set<string>()
     for (const [, n] of nodeMap.nodes) {
-        const fs = n.modelType === 'polymorph' ? n.forms.flatMap((f: AssembledGroup) => f.fields)
+        const fs = n.modelType === 'polymorph' ? n.allFormFields
             : (n.modelType === 'branch' || n.modelType === 'group') ? n.fields : []
         for (const f of fs) {
             if (!f.aliasSources) continue
