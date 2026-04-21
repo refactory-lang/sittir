@@ -558,13 +558,13 @@ describe('parameters', () => {
 
 describe('self_parameter', () => {
   it('factory produces correct type', () => {
-    const node = ir.selfParameter({});
+    const node = ir.selfParameter({ self: { $type: 'self', $text: 'test' } as any });
     expect(node.$type).toBe('self_parameter');
     expect(node.$source).toBe('factory');
   });
-  it('render does not throw on minimal config', () => {
-    const node = ir.selfParameter({});
-    expect(() => node.render()).not.toThrow();
+  it('render produces non-empty string', () => {
+    const node = ir.selfParameter({ self: { $type: 'self', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -1688,30 +1688,6 @@ describe('metavariable', () => {
   });
 });
 
-describe('array_expression_semi', () => {
-  it('factory produces correct type', () => {
-    const node = ir.arrayExpressionSemi({ attributes: [{ $type: 'attribute_item', $text: 'test' } as any], elements: { $type: '_expression', $text: 'test' } as any, length: { $type: '_expression', $text: 'test' } as any });
-    expect(node.$type).toBe('array_expression_semi');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.arrayExpressionSemi({ attributes: [{ $type: 'attribute_item', $text: 'test' } as any], elements: { $type: '_expression', $text: 'test' } as any, length: { $type: '_expression', $text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('array_expression_list', () => {
-  it('factory produces correct type', () => {
-    const node = ir.arrayExpressionList({ attributes: [{ $type: 'attribute_item', $text: 'test' } as any], elements: [{ $type: '_expression', $text: 'test' } as any], children: [{ $type: 'attribute_item', $text: 'test' } as any] as any });
-    expect(node.$type).toBe('array_expression_list');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.arrayExpressionList({ attributes: [{ $type: 'attribute_item', $text: 'test' } as any], elements: [{ $type: '_expression', $text: 'test' } as any], children: [{ $type: 'attribute_item', $text: 'test' } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
 describe('string_content', () => {
   it('factory produces correct type', () => {
     const node = ir.stringContent("test");
@@ -1883,6 +1859,30 @@ describe('range_expression_bare', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.rangeExpressionBare({ operator: { $type: '_kw_operator', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('array_expression_semi', () => {
+  it('factory produces correct type', () => {
+    const node = ir.arrayExpressionSemi({ attributes: [{ $type: 'attribute_item', $text: 'test' } as any], elements: { $type: '_expression', $text: 'test' } as any, length: { $type: '_expression', $text: 'test' } as any });
+    expect(node.$type).toBe('array_expression_semi');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.arrayExpressionSemi({ attributes: [{ $type: 'attribute_item', $text: 'test' } as any], elements: { $type: '_expression', $text: 'test' } as any, length: { $type: '_expression', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('array_expression_list', () => {
+  it('factory produces correct type', () => {
+    const node = ir.arrayExpressionList({ attributes: [{ $type: 'attribute_item', $text: 'test' } as any], elements: [{ $type: '_expression', $text: 'test' } as any], children: [{ $type: 'attribute_item', $text: 'test' } as any] as any });
+    expect(node.$type).toBe('array_expression_list');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.arrayExpressionList({ attributes: [{ $type: 'attribute_item', $text: 'test' } as any], elements: [{ $type: '_expression', $text: 'test' } as any], children: [{ $type: 'attribute_item', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

@@ -124,7 +124,7 @@ rules:
     template: ($$$CHILDREN)
     joinBy: ","
     joinByTrailing: true
-  self_parameter: $LIFETIME $MUTABLE_SPECIFIER $$$SELF
+  self_parameter: $LIFETIME $LIFETIME_NAME $MUTABLE_SPECIFIER $SELF
   variadic_parameter:
     template: $MUTABLE_SPECIFIER $PATTERN_CLAUSE...
     pattern_clause: "$PATTERN:"
@@ -306,16 +306,6 @@ rules:
   block_comment:
     template: /*$OUTER$INNER $DOC_CLAUSE*/
     doc_clause: $DOC
-  array_expression_semi:
-    template: "[$$$ATTRIBUTES $ELEMENTS;$LENGTH]"
-    joinByField:
-      attributes: "\n"
-  array_expression_list:
-    template: "[$$$ATTRIBUTES $$$CHILDREN $$$ELEMENTS]"
-    joinBy: ","
-    joinByTrailing: true
-    joinByField:
-      attributes: "\n"
   macro_definition_paren:
     template: ($$$CHILDREN);
     joinBy: ";"
@@ -338,6 +328,16 @@ rules:
   range_expression_postfix: $START $OPERATOR
   range_expression_prefix: $OPERATOR $END
   range_expression_bare: $OPERATOR
+  array_expression_semi:
+    template: "[$$$ATTRIBUTES $ELEMENTS;$LENGTH]"
+    joinByField:
+      attributes: "\n"
+  array_expression_list:
+    template: "[$$$ATTRIBUTES $$$CHILDREN $$$ELEMENTS]"
+    joinBy: ","
+    joinByTrailing: true
+    joinByField:
+      attributes: "\n"
   let_chain:
     template: $$$CHILDREN&&
     joinByField:

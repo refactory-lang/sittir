@@ -1310,17 +1310,19 @@ export function parameters(...children: (T.AttributeItem | T.Parameter | T.SelfP
 export function selfParameter(config?: T.SelfParameter.Config) {
   const fields = {
     lifetime: config?.lifetime,
+    lifetime_name: config?.lifetimeName,
     mutable_specifier: config?.mutableSpecifier,
-    self: config?.self,
+    self: { $type: "self" as const, $text: "self" as const, $source: 'factory' as const, $named: true as const },
   };
   return {
     $type: 'self_parameter' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    lifetime(value?: string | undefined) { return _fs(config, selfParameter, 'lifetime', value, fields.lifetime); },
-    mutableSpecifier(value?: T.Lifetime | undefined) { return _fs(config, selfParameter, 'mutableSpecifier', value, fields.mutable_specifier); },
-    self(value?: T.MutableSpecifier | T.Self | undefined) { return _fs(config, selfParameter, 'self', value, fields.self); },
+    lifetime(value?: "&" | undefined) { return _fs(config, selfParameter, 'lifetime', value, fields.lifetime); },
+    lifetimeName(value?: T.Lifetime | undefined) { return _fs(config, selfParameter, 'lifetimeName', value, fields.lifetime_name); },
+    mutableSpecifier(value?: T.MutableSpecifier | undefined) { return _fs(config, selfParameter, 'mutableSpecifier', value, fields.mutable_specifier); },
+    get self() { return fields.self; },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3530,54 +3532,6 @@ export function metavariable(text: string) {
   };
 }
 
-export function arrayExpressionSemi(config: T.ArrayExpressionSemi.Config) {
-  const fields = {
-    attributes: config.attributes,
-    elements: config.elements,
-    length: config.length,
-  };
-  return {
-    $type: 'array_expression_semi' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    attributes(...values: T.AttributeItem[]) { return _fsm(config, arrayExpressionSemi, 'attributes', values, fields.attributes); },
-    elements(value?: T.Expression) { return _fs(config, arrayExpressionSemi, 'elements', value, fields.elements); },
-    length(value?: T.Expression) { return _fs(config, arrayExpressionSemi, 'length', value, fields.length); },
-    render() { return render(this); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(target: T.ArrayExpressionSemiTree) { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function arrayExpressionList(config: T.ArrayExpressionList.Config) {
-  const fields = {
-    attributes: config.attributes,
-    elements: config.elements,
-  };
-  const children = config.children ?? [];
-  return {
-    $type: 'array_expression_list' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    $children: children,
-    attributes(...values: T.AttributeItem[]) { return _fsm(config, arrayExpressionList, 'attributes', values, fields.attributes); },
-    elements(...values: T.Expression[]) { return _fsm(config, arrayExpressionList, 'elements', values, fields.elements); },
-    getChildren() { return children; },
-    setChildren(...items: T.AttributeItem[]) { return arrayExpressionList({ ...config, children: items }); },
-    render() { return render(this); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(target: T.ArrayExpressionListTree) { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
 export function stringContent(text: string) {
   if (text.length === 0) throw new Error(`string_content: text must be non-empty`);
   return {
@@ -3913,6 +3867,54 @@ export function rangeExpressionBare(config: T.RangeExpressionBare.Config) {
       return toEdit(this, startOrRange);
     },
     replace(target: T.RangeExpressionBareTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function arrayExpressionSemi(config: T.ArrayExpressionSemi.Config) {
+  const fields = {
+    attributes: config.attributes,
+    elements: config.elements,
+    length: config.length,
+  };
+  return {
+    $type: 'array_expression_semi' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    attributes(...values: T.AttributeItem[]) { return _fsm(config, arrayExpressionSemi, 'attributes', values, fields.attributes); },
+    elements(value?: T.Expression) { return _fs(config, arrayExpressionSemi, 'elements', value, fields.elements); },
+    length(value?: T.Expression) { return _fs(config, arrayExpressionSemi, 'length', value, fields.length); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ArrayExpressionSemiTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function arrayExpressionList(config: T.ArrayExpressionList.Config) {
+  const fields = {
+    attributes: config.attributes,
+    elements: config.elements,
+  };
+  const children = config.children ?? [];
+  return {
+    $type: 'array_expression_list' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
+    attributes(...values: T.AttributeItem[]) { return _fsm(config, arrayExpressionList, 'attributes', values, fields.attributes); },
+    elements(...values: T.Expression[]) { return _fsm(config, arrayExpressionList, 'elements', values, fields.elements); },
+    getChildren() { return children; },
+    setChildren(...items: T.AttributeItem[]) { return arrayExpressionList({ ...config, children: items }); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ArrayExpressionListTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4324,8 +4326,6 @@ export type FluentKindMap = {
   "super": T.Super;
   "crate": T.Crate;
   "metavariable": T.Metavariable;
-  "array_expression_semi": FluentNode<"array_expression_semi", T.ArrayExpressionSemi.Config>;
-  "array_expression_list": FluentNode<"array_expression_list", T.ArrayExpressionList.Config>;
   "string_content": T.StringContent;
   "raw_string_literal_content": T.RawStringLiteralContent;
   "float_literal": T.FloatLiteral;
@@ -4346,6 +4346,8 @@ export type FluentKindMap = {
   "range_expression_postfix": FluentNode<"range_expression_postfix", T.RangeExpressionPostfix.Config>;
   "range_expression_prefix": FluentNode<"range_expression_prefix", T.RangeExpressionPrefix.Config>;
   "range_expression_bare": FluentNode<"range_expression_bare", T.RangeExpressionBare.Config>;
+  "array_expression_semi": FluentNode<"array_expression_semi", T.ArrayExpressionSemi.Config>;
+  "array_expression_list": FluentNode<"array_expression_list", T.ArrayExpressionList.Config>;
   "let_chain": FluentNode<"let_chain", T.LetChain.Config>;
   "closure_expression_block": FluentNode<"closure_expression_block", T.ClosureExpressionBlock.Config>;
   "closure_expression_expr": FluentNode<"closure_expression_expr", T.ClosureExpressionExpr.Config>;
@@ -4518,8 +4520,6 @@ export const _factoryMap = {
   "super": super_,
   "crate": crate,
   "metavariable": metavariable,
-  "array_expression_semi": arrayExpressionSemi,
-  "array_expression_list": arrayExpressionList,
   "string_content": stringContent,
   "raw_string_literal_content": rawStringLiteralContent,
   "float_literal": floatLiteral,
@@ -4540,6 +4540,8 @@ export const _factoryMap = {
   "range_expression_postfix": rangeExpressionPostfix,
   "range_expression_prefix": rangeExpressionPrefix,
   "range_expression_bare": rangeExpressionBare,
+  "array_expression_semi": arrayExpressionSemi,
+  "array_expression_list": arrayExpressionList,
   "let_chain": letChain,
   "closure_expression_block": closureExpressionBlock,
   "closure_expression_expr": closureExpressionExpr,

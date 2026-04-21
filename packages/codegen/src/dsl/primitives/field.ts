@@ -115,10 +115,10 @@ function synthesizeKwSymbol(
     const isUpperCase = c.type === 'STRING'
     const hiddenName = `_kw_${fieldName}`
     const nativePrec = (globalThis as {
-        prec?: { left?: (v: number, c: unknown) => unknown }
+        prec?: ((v: number, c: unknown) => unknown) & { left?: (v: number, c: unknown) => unknown }
     }).prec
-    let precBody: RuntimeRule = (typeof nativePrec?.left === 'function'
-        ? nativePrec.left(1, content)
+    let precBody: RuntimeRule = (typeof nativePrec === 'function'
+        ? nativePrec(-1, content)
         : content) as RuntimeRule
     if (wrapSyntheticBody) precBody = wrapSyntheticBody(precBody)
     if (!wireRegisterSyntheticRule(hiddenName, precBody)) {

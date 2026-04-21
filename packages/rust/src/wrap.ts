@@ -694,6 +694,7 @@ export function wrapSelfParameter(data: _NodeData, tree: TreeHandle): WrappedNod
   return {
     ...data,
     get lifetime() { return drillIn(data.$fields?.['lifetime'], tree); },
+    get lifetimeName() { return drillIn(data.$fields?.['lifetime_name'], tree); },
     get mutableSpecifier() { return drillIn(data.$fields?.['mutable_specifier'], tree); },
     get self() { return drillIn(data.$fields?.['self'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
@@ -1565,25 +1566,6 @@ export function wrap_RangeExpressionBare(data: _NodeData, tree: TreeHandle): Wra
   } as unknown as WrappedNode<_RangeExpressionBare>;
 }
 
-export function wrapArrayExpressionSemi(data: _NodeData, tree: TreeHandle): WrappedNode<ArrayExpressionSemi> {
-  return {
-    ...data,
-    get attributes() { return drillInAll(data.$fields?.['attributes'], tree); },
-    get elements() { return drillIn(data.$fields?.['elements'], tree); },
-    get length() { return drillIn(data.$fields?.['length'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<ArrayExpressionSemi>;
-}
-
-export function wrapArrayExpressionList(data: _NodeData, tree: TreeHandle): WrappedNode<ArrayExpressionList> {
-  return {
-    ...data,
-    get attributes() { return drillInAll(data.$fields?.['attributes'], tree); },
-    get elements() { return drillInAll(data.$fields?.['elements'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<ArrayExpressionList>;
-}
-
 export function wrapMacroDefinitionParen(data: _NodeData, tree: TreeHandle): WrappedNode<MacroDefinitionParen> {
   return {
     ...data,
@@ -1686,6 +1668,25 @@ export function wrapRangeExpressionBare(data: _NodeData, tree: TreeHandle): Wrap
     get operator() { return drillIn(data.$fields?.['operator'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<RangeExpressionBare>;
+}
+
+export function wrapArrayExpressionSemi(data: _NodeData, tree: TreeHandle): WrappedNode<ArrayExpressionSemi> {
+  return {
+    ...data,
+    get attributes() { return drillInAll(data.$fields?.['attributes'], tree); },
+    get elements() { return drillIn(data.$fields?.['elements'], tree); },
+    get length() { return drillIn(data.$fields?.['length'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ArrayExpressionSemi>;
+}
+
+export function wrapArrayExpressionList(data: _NodeData, tree: TreeHandle): WrappedNode<ArrayExpressionList> {
+  return {
+    ...data,
+    get attributes() { return drillInAll(data.$fields?.['attributes'], tree); },
+    get elements() { return drillInAll(data.$fields?.['elements'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ArrayExpressionList>;
 }
 
 export function wrapLetChain(data: _NodeData, tree: TreeHandle): WrappedNode<LetChain> {
@@ -1931,8 +1932,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_kw_default': (d) => d,
   '_kw_const': (d) => d,
   '_wildcard_pattern': (d) => d,
-  '_array_expression_semi': (d) => d,
-  '_array_expression_list': (d) => d,
   '_closure_expression_expr': (d, t) => wrap_ClosureExpressionExpr(d, t),
   '_field_pattern_shorthand': (d, t) => wrap_FieldPatternShorthand(d, t),
   '_function_type_trait_form': (d, t) => wrap_FunctionTypeTraitForm(d, t),
@@ -1971,14 +1970,12 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_kw_raw_string_literal_end': (d) => d,
   '_kw_start': (d) => d,
   '_kw_end': (d) => d,
-  '_kw_self': (d) => d,
+  '_kw_lifetime_name': (d) => d,
   '_kw_shebang': (d) => d,
   '_kw_statements': (d) => d,
   '_kw_trailing_where_clause': (d) => d,
   '_kw_operand': (d) => d,
   '_kw_path': (d) => d,
-  'array_expression_semi': (d, t) => wrapArrayExpressionSemi(d, t),
-  'array_expression_list': (d, t) => wrapArrayExpressionList(d, t),
   'string_content': (d) => d,
   'raw_string_literal_content': (d) => d,
   'float_literal': (d) => d,
@@ -2000,6 +1997,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'range_expression_postfix': (d, t) => wrapRangeExpressionPostfix(d, t),
   'range_expression_prefix': (d, t) => wrapRangeExpressionPrefix(d, t),
   'range_expression_bare': (d, t) => wrapRangeExpressionBare(d, t),
+  'array_expression_semi': (d, t) => wrapArrayExpressionSemi(d, t),
+  'array_expression_list': (d, t) => wrapArrayExpressionList(d, t),
   'let_chain': (d, t) => wrapLetChain(d, t),
   'closure_expression_block': (d, t) => wrapClosureExpressionBlock(d, t),
   'closure_expression_expr': (d, t) => wrapClosureExpressionExpr(d, t),

@@ -332,11 +332,15 @@ export default grammar(enrich(base), wire({
             2: field('mutable_specifier'), // mutable_specifier [struct=1]
         },
 
-        // self_parameter: 3 field(s)
+        // self_parameter: canonical tree-sitter-rust has no fields here;
+        // labels below are ours. `&` is the lifetime marker (pos 0,
+        // routed through _kw_lifetime so FIELD survives). `$.lifetime`
+        // at pos 1 is the explicit lifetime name ('a etc.) — distinct
+        // name to avoid colliding with pos 0's label.
         self_parameter: {
-            0: field('lifetime'), // lifetime [struct=0]
-            1: field('mutable_specifier'), // mutable_specifier [struct=1]
-            2: field('self'), // self [struct=2]
+            0: field('lifetime'),          // optional('&')
+            1: field('lifetime_name'),     // optional($.lifetime)
+            2: field('mutable_specifier'), // optional($.mutable_specifier)
         },
 
         // shorthand_field_initializer: 2 field(s)
@@ -461,12 +465,12 @@ export default grammar(enrich(base), wire({
         // keywords through SYMBOLs so FIELD wrappers survive. These
         // could also live in a shared module if more grammars start
         // needing the same keyword set; for now, rust is the only one.
-        _kw_async:   $ => 'async',
-        _kw_default: $ => 'default',
-        _kw_const:   $ => 'const',
-        _kw_unsafe:  $ => 'unsafe',
-        _kw_pub:     $ => 'pub',
-        _kw_in:      $ => 'in',
+        _kw_async:   $ => prec(-1, 'async'),
+        _kw_default: $ => prec(-1, 'default'),
+        _kw_const:   $ => prec(-1, 'const'),
+        _kw_unsafe:  $ => prec(-1, 'unsafe'),
+        _kw_pub:     $ => prec(-1, 'pub'),
+        _kw_in:      $ => prec(-1, 'in'),
 
         // _pattern — the wildcard `_` is a bare literal alternative
         // (position 20) of the _pattern supertype choice. At multi-valued

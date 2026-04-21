@@ -186,8 +186,6 @@ export const NODE_KINDS = [
 /** All leaf/terminal node kind strings. */
 export const LEAF_KINDS = [
   '_',
-  '_array_expression_list',
-  '_array_expression_semi',
   '_error_sentinel',
   '_inner_block_doc_comment_marker',
   '_kw_async',
@@ -207,6 +205,7 @@ export const LEAF_KINDS = [
   '_kw_index',
   '_kw_label',
   '_kw_left',
+  '_kw_lifetime_name',
   '_kw_move',
   '_kw_mutable_specifier',
   '_kw_object',
@@ -217,7 +216,6 @@ export const LEAF_KINDS = [
   '_kw_raw_string_literal_start',
   '_kw_ref',
   '_kw_right',
-  '_kw_self',
   '_kw_shebang',
   '_kw_start',
   '_kw_statements',
@@ -905,8 +903,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'self_parameter': [
     { name: 'lifetime', required: false, multiple: false },
+    { name: 'lifetimeName', required: false, multiple: false },
     { name: 'mutableSpecifier', required: false, multiple: false },
-    { name: 'self', required: false, multiple: false },
+    { name: 'self', required: true, multiple: false },
   ],
   'shorthand_field_initializer': [
     { name: 'attributes', required: true, multiple: true },
@@ -1063,16 +1062,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
 };
 
-/** Valid values for `_array_expression_list` nodes. */
-export const _ARRAY_EXPRESSION_LISTS = [
-] as const;
-export type ArrayExpressionListValue = (typeof _ARRAY_EXPRESSION_LISTS)[number];
-
-/** Valid values for `_array_expression_semi` nodes. */
-export const _ARRAY_EXPRESSION_SEMIS = [
-] as const;
-export type ArrayExpressionSemiValue = (typeof _ARRAY_EXPRESSION_SEMIS)[number];
-
 /** Valid values for `_kw_attribute` nodes. */
 export const _KW_ATTRIBUTES = [
 ] as const;
@@ -1143,6 +1132,11 @@ export const _KW_LEFTS = [
 ] as const;
 export type KwLeftValue = (typeof _KW_LEFTS)[number];
 
+/** Valid values for `_kw_lifetime_name` nodes. */
+export const _KW_LIFETIME_NAMES = [
+] as const;
+export type KwLifetimeNameValue = (typeof _KW_LIFETIME_NAMES)[number];
+
 /** Valid values for `_kw_move` nodes. */
 export const _KW_MOVES = [
 ] as const;
@@ -1187,11 +1181,6 @@ export type KwRawStringLiteralStartValue = (typeof _KW_RAW_STRING_LITERAL_STARTS
 export const _KW_RIGHTS = [
 ] as const;
 export type KwRightValue = (typeof _KW_RIGHTS)[number];
-
-/** Valid values for `_kw_self` nodes. */
-export const _KW_SELFS = [
-] as const;
-export type KwSelfValue = (typeof _KW_SELFS)[number];
 
 /** Valid values for `_kw_shebang` nodes. */
 export const _KW_SHEBANGS = [

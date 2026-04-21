@@ -39,7 +39,7 @@ function isKeywordShape(value: string, wordMatcher: RegExp | undefined): boolean
     return /^\w+$/.test(value)
 }
 
-export function simplifyRule(rule: Rule, wordMatcher?: RegExp): Rule {
+export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean = false): Rule {
     switch (rule.type) {
         case 'seq': {
             // Remove string nodes that don't lex as words under the
@@ -51,7 +51,7 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp): Rule {
             // strings like 'pub' / 'return' stay — they carry identity
             // that downstream paths key on.
             const members = rule.members
-                .map(m => simplifyRule(m, wordMatcher))
+                .map(m => simplifyRule(m, wordMatcher, inField))
                 .filter(m => {
                     if (m.type === 'string' && !isKeywordShape(m.value, wordMatcher)) return false
                     if (m.type === 'seq' && m.members.length === 0) return false
@@ -63,13 +63,13 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp): Rule {
         }
         case 'choice': {
             const members = rule.members.map(m =>
-                m.type === 'variant' ? simplifyRule(m.content, wordMatcher) : simplifyRule(m, wordMatcher)
+                m.type === 'variant' ? simplifyRule(m.content, wordMatcher, inField) : simplifyRule(m, wordMatcher, inField)
             )
             if (members.length === 1) return members[0]!
             return { type: 'choice', members }
         }
         case 'optional': {
-            const inner = simplifyRule(rule.content, wordMatcher)
+            const inner = simplifyRule(rule.content, wordMatcher, inField)
             // If the body vanished after simplification — either an
             // empty seq sentinel OR a bare non-word-shaped string
             // literal left behind (`optional(',')` for trailing-separator
@@ -77,10 +77,16 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp): Rule {
             // whole optional contributes nothing derivation cares
             // about. Fold to the empty-seq sentinel so enclosing seqs
             // filter it out.
+            //
+            // Exception: inside a FIELD, a bare anonymous string is
+            // structural content the field explicitly labels (e.g.
+            // `field('lifetime', optional('&'))` in rust's
+            // self_parameter). Preserve the optional(string) so the
+            // field slot sees the `&` terminal in its values.
             if (inner.type === 'seq' && inner.members.length === 0) {
                 return { type: 'seq', members: [] }
             }
-            if (inner.type === 'string' && !isKeywordShape(inner.value, wordMatcher)) {
+            if (!inField && inner.type === 'string' && !isKeywordShape(inner.value, wordMatcher)) {
                 return { type: 'seq', members: [] }
             }
             // Preserve the optional wrapper — `deriveFieldsRaw` /
@@ -92,22 +98,24 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp): Rule {
             // Preserve the repeat wrapper AND its metadata
             // (separator / trailing / leading) — derivation reads them
             // to stamp `multiple: true` and attach joinBy hints.
-            return { ...rule, content: simplifyRule(rule.content, wordMatcher) }
+            return { ...rule, content: simplifyRule(rule.content, wordMatcher, inField) }
         case 'repeat1':
-            return { ...rule, content: simplifyRule(rule.content, wordMatcher) }
+            return { ...rule, content: simplifyRule(rule.content, wordMatcher, inField) }
         case 'field':
             // Recurse into the field's content so inner anonymous
             // delimiters get stripped. The field wrapper itself stays
-            // intact — its `name` is the derivation anchor.
-            return { ...rule, content: simplifyRule(rule.content, wordMatcher) }
+            // intact — its `name` is the derivation anchor. Thread
+            // `inField=true` so `optional(anonymous-string)` inside
+            // the field survives (it's labelled content, not a hint).
+            return { ...rule, content: simplifyRule(rule.content, wordMatcher, true) }
         case 'group':
-            return { ...rule, content: simplifyRule(rule.content, wordMatcher) }
+            return { ...rule, content: simplifyRule(rule.content, wordMatcher, inField) }
         case 'variant':
             // Variants carry a name that polymorph promotion reads.
             // Preserve the wrapper around the simplified content.
-            return { ...rule, content: simplifyRule(rule.content, wordMatcher) }
+            return { ...rule, content: simplifyRule(rule.content, wordMatcher, inField) }
         case 'clause':
-            return { ...rule, content: simplifyRule(rule.content, wordMatcher) }
+            return { ...rule, content: simplifyRule(rule.content, wordMatcher, inField) }
         default:
             // string / pattern / enum / symbol / supertype / token /
             // terminal / polymorph / indent / dedent / newline all

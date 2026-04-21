@@ -158,8 +158,6 @@
     "super": "text",
     "crate": "text",
     "metavariable": "text",
-    "array_expression_semi": "config",
-    "array_expression_list": "config",
     "string_content": "text",
     "raw_string_literal_content": "text",
     "float_literal": "text",
@@ -180,6 +178,8 @@
     "range_expression_postfix": "config",
     "range_expression_prefix": "config",
     "range_expression_bare": "config",
+    "array_expression_semi": "config",
+    "array_expression_list": "config",
     "let_chain": "children",
     "closure_expression_block": "config",
     "closure_expression_expr": "config",
@@ -432,6 +432,7 @@
     ],
     "self_parameter": [
       "lifetime",
+      "lifetime_name",
       "mutable_specifier",
       "self"
     ],
@@ -650,11 +651,6 @@
       "inner",
       "doc"
     ],
-    "array_expression_semi": [
-      "attributes",
-      "elements",
-      "length"
-    ],
     "mod_item_inline": [
       "body"
     ],
@@ -679,6 +675,11 @@
     ],
     "range_expression_bare": [
       "operator"
+    ],
+    "array_expression_semi": [
+      "attributes",
+      "elements",
+      "length"
     ],
     "closure_expression_block": [
       "return_type",

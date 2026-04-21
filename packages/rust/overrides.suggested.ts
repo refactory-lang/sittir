@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  7  (0 applied, 7 held)
-// Rule promotions:   108  (95 applied, 13 held)
+// Rule promotions:   106  (93 applied, 13 held)
 // Repeated shapes:   5  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -25,7 +25,7 @@
 // ---------------------------------------------------------------
 export const suggestedRules = {
   // _non_special_token: 1 inferred field(s)
-  // [held] _non_special_token field 'mutable_specifier' on $.mutable_specifier — 91% agreement, 11 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+  // [held] _non_special_token field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 11 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
   // _struct_item_brace: 1 inferred field(s)
   // [held] _struct_item_brace field 'where_clause' on $.where_clause — 89% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
@@ -35,7 +35,7 @@ export const suggestedRules = {
 
   // static_item: 1 inferred field(s)
   static_item: ($, original) => transform(original, {
-    // [held] 91% agreement, 11 parents
+    // [held] 100% agreement, 11 parents
     3: field("mutable_specifier"),  // $.mutable_specifier
   }),
 
@@ -250,8 +250,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_tokens", classification: "supertype", applied: true },
   { kind: "_type", classification: "supertype", applied: true },
   { kind: "_use_clause", classification: "supertype", applied: true },
-  { kind: "_array_expression_list", classification: "enum", applied: true },
-  { kind: "_array_expression_semi", classification: "enum", applied: true },
   { kind: "_kw_attribute", classification: "enum", applied: true },
   { kind: "_kw_attributes", classification: "enum", applied: true },
   { kind: "_kw_block", classification: "enum", applied: true },
@@ -266,6 +264,7 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_kw_index", classification: "enum", applied: true },
   { kind: "_kw_label", classification: "enum", applied: true },
   { kind: "_kw_left", classification: "enum", applied: true },
+  { kind: "_kw_lifetime_name", classification: "enum", applied: true },
   { kind: "_kw_move", classification: "enum", applied: true },
   { kind: "_kw_mutable_specifier", classification: "enum", applied: true },
   { kind: "_kw_object", classification: "enum", applied: true },
@@ -275,7 +274,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_kw_raw_string_literal_end", classification: "enum", applied: true },
   { kind: "_kw_raw_string_literal_start", classification: "enum", applied: true },
   { kind: "_kw_right", classification: "enum", applied: true },
-  { kind: "_kw_self", classification: "enum", applied: true },
   { kind: "_kw_shebang", classification: "enum", applied: true },
   { kind: "_kw_start", classification: "enum", applied: true },
   { kind: "_kw_statements", classification: "enum", applied: true },
@@ -354,8 +352,8 @@ export interface InferredField {
   readonly applied: boolean;
 }
 export const inferredFields: readonly InferredField[] = [
-  { kind: "_non_special_token", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "medium", agreement: 0.909, sampleSize: 11, applied: false },
-  { kind: "static_item", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "medium", agreement: 0.909, sampleSize: 11, applied: false },
+  { kind: "_non_special_token", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 11, applied: false },
+  { kind: "static_item", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 11, applied: false },
   { kind: "_struct_item_brace", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.889, sampleSize: 9, applied: false },
   { kind: "_struct_item_tuple", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.889, sampleSize: 9, applied: false },
   { kind: "struct_item_brace", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.889, sampleSize: 9, applied: false },

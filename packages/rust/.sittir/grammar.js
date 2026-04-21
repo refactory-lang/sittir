@@ -276,14 +276,14 @@ var PREC_VARIANT_MAP = {
 function reconstructPrec(rule, newContent) {
   const t = rule.type.toLowerCase();
   const value = rule.value ?? 0;
-  const prec = nativeRequired("prec");
+  const prec2 = nativeRequired("prec");
   const variant2 = PREC_VARIANT_MAP[t];
   if (variant2) {
-    const fn = prec[variant2];
+    const fn = prec2[variant2];
     if (typeof fn !== "function") throw new Error(`transform: native prec.${variant2} not available`);
     return fn(value, newContent);
   }
-  return prec(value, newContent);
+  return prec2(value, newContent);
 }
 function wrapInPrecStack(content, precStack, reconstructPrec2) {
   if (!precStack?.length) return content;
@@ -553,7 +553,7 @@ function synthesizeKwSymbol(fieldName, content, wrapSyntheticBody) {
   const isUpperCase = c.type === "STRING";
   const hiddenName = `_kw_${fieldName}`;
   const nativePrec = globalThis.prec;
-  let precBody = typeof nativePrec?.left === "function" ? nativePrec.left(1, content) : content;
+  let precBody = typeof nativePrec === "function" ? nativePrec(-1, content) : content;
   if (wrapSyntheticBody) precBody = wrapSyntheticBody(precBody);
   if (!wireRegisterSyntheticRule(hiddenName, precBody)) {
     throw new Error(`field('${fieldName}', <STRING>): no active wire() context \u2014 call must occur inside a rule callback wrapped by wire()`);
@@ -719,18 +719,21 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     const hoistedSeq = reconstructContainer(core, hoistedMembers);
     const hoistedBody = wrapVariantBodyInParentPrec(hoistedSeq, precStack);
     const visibleName = `${parentKind}_${p.v.name}`;
+    const hiddenName = `_${visibleName}`;
     if (!wireRegisterPolymorphVariant(parentKind, p.v.name)) {
       throw new Error(`variant('${p.v.name}'): no active wire() context \u2014 variant() must run inside a rule callback under wire()`);
     }
-    if (!wireRegisterSyntheticRule(visibleName, hoistedBody)) {
-      throw new Error(`registerSyntheticRule('${visibleName}'): no active wire() context`);
+    if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {
+      throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
     }
     refs.push({
-      type: isUpperCase ? "SYMBOL" : "symbol",
-      name: visibleName
+      type: isUpperCase ? "ALIAS" : "alias",
+      content: { type: isUpperCase ? "SYMBOL" : "symbol", name: hiddenName },
+      named: true,
+      value: visibleName
     });
   }
-  registerHoistedVariantConflicts(parsed.map((p) => `${parentKind}_${p.v.name}`));
+  registerHoistedVariantConflicts(parsed.map((p) => `_${parentKind}_${p.v.name}`));
   const newChoice = reconstructContainer(choice2, refs);
   return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
@@ -1450,14 +1453,18 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
       2: field("mutable_specifier")
       // mutable_specifier [struct=1]
     },
-    // self_parameter: 3 field(s)
+    // self_parameter: canonical tree-sitter-rust has no fields here;
+    // labels below are ours. `&` is the lifetime marker (pos 0,
+    // routed through _kw_lifetime so FIELD survives). `$.lifetime`
+    // at pos 1 is the explicit lifetime name ('a etc.) — distinct
+    // name to avoid colliding with pos 0's label.
     self_parameter: {
       0: field("lifetime"),
-      // lifetime [struct=0]
-      1: field("mutable_specifier"),
-      // mutable_specifier [struct=1]
-      2: field("self")
-      // self [struct=2]
+      // optional('&')
+      1: field("lifetime_name"),
+      // optional($.lifetime)
+      2: field("mutable_specifier")
+      // optional($.mutable_specifier)
     },
     // shorthand_field_initializer: 2 field(s)
     shorthand_field_initializer: {
@@ -1587,12 +1594,12 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     // keywords through SYMBOLs so FIELD wrappers survive. These
     // could also live in a shared module if more grammars start
     // needing the same keyword set; for now, rust is the only one.
-    _kw_async: ($) => "async",
-    _kw_default: ($) => "default",
-    _kw_const: ($) => "const",
-    _kw_unsafe: ($) => "unsafe",
-    _kw_pub: ($) => "pub",
-    _kw_in: ($) => "in",
+    _kw_async: ($) => prec(-1, "async"),
+    _kw_default: ($) => prec(-1, "default"),
+    _kw_const: ($) => prec(-1, "const"),
+    _kw_unsafe: ($) => prec(-1, "unsafe"),
+    _kw_pub: ($) => prec(-1, "pub"),
+    _kw_in: ($) => prec(-1, "in"),
     // _pattern — the wildcard `_` is a bare literal alternative
     // (position 20) of the _pattern supertype choice. At multi-valued
     // list positions (rust `sepBy(',', $._pattern)` used by

@@ -180,8 +180,6 @@ export interface IsGuards {
     MacroDefinitionBrace<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_macro_definition_brace' };
     ModItemInline<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_mod_item_inline' };
     RangeExpressionBare<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_range_expression_bare' };
-    arrayExpressionSemi<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'array_expression_semi' };
-    arrayExpressionList<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'array_expression_list' };
     macroDefinitionParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_definition_paren' };
     macroDefinitionBracket<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_definition_bracket' };
     macroDefinitionBrace<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_definition_brace' };
@@ -195,6 +193,8 @@ export interface IsGuards {
     rangeExpressionPostfix<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'range_expression_postfix' };
     rangeExpressionPrefix<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'range_expression_prefix' };
     rangeExpressionBare<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'range_expression_bare' };
+    arrayExpressionSemi<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'array_expression_semi' };
+    arrayExpressionList<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'array_expression_list' };
     letChain<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'let_chain' };
     closureExpressionBlock<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'closure_expression_block' };
     closureExpressionExpr<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'closure_expression_expr' };
@@ -380,8 +380,6 @@ export interface AssertGuards {
     MacroDefinitionBrace(v: { readonly $type: string }): asserts v is { readonly $type: '_macro_definition_brace' };
     ModItemInline(v: { readonly $type: string }): asserts v is { readonly $type: '_mod_item_inline' };
     RangeExpressionBare(v: { readonly $type: string }): asserts v is { readonly $type: '_range_expression_bare' };
-    arrayExpressionSemi(v: { readonly $type: string }): asserts v is { readonly $type: 'array_expression_semi' };
-    arrayExpressionList(v: { readonly $type: string }): asserts v is { readonly $type: 'array_expression_list' };
     macroDefinitionParen(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_definition_paren' };
     macroDefinitionBracket(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_definition_bracket' };
     macroDefinitionBrace(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_definition_brace' };
@@ -395,6 +393,8 @@ export interface AssertGuards {
     rangeExpressionPostfix(v: { readonly $type: string }): asserts v is { readonly $type: 'range_expression_postfix' };
     rangeExpressionPrefix(v: { readonly $type: string }): asserts v is { readonly $type: 'range_expression_prefix' };
     rangeExpressionBare(v: { readonly $type: string }): asserts v is { readonly $type: 'range_expression_bare' };
+    arrayExpressionSemi(v: { readonly $type: string }): asserts v is { readonly $type: 'array_expression_semi' };
+    arrayExpressionList(v: { readonly $type: string }): asserts v is { readonly $type: 'array_expression_list' };
     letChain(v: { readonly $type: string }): asserts v is { readonly $type: 'let_chain' };
     closureExpressionBlock(v: { readonly $type: string }): asserts v is { readonly $type: 'closure_expression_block' };
     closureExpressionExpr(v: { readonly $type: string }): asserts v is { readonly $type: 'closure_expression_expr' };
@@ -605,8 +605,6 @@ export const is = {
     MacroDefinitionBrace: _g("_macro_definition_brace"),
     ModItemInline: _g("_mod_item_inline"),
     RangeExpressionBare: _g("_range_expression_bare"),
-    arrayExpressionSemi: _g("array_expression_semi"),
-    arrayExpressionList: _g("array_expression_list"),
     macroDefinitionParen: _g("macro_definition_paren"),
     macroDefinitionBracket: _g("macro_definition_bracket"),
     macroDefinitionBrace: _g("macro_definition_brace"),
@@ -620,6 +618,8 @@ export const is = {
     rangeExpressionPostfix: _g("range_expression_postfix"),
     rangeExpressionPrefix: _g("range_expression_prefix"),
     rangeExpressionBare: _g("range_expression_bare"),
+    arrayExpressionSemi: _g("array_expression_semi"),
+    arrayExpressionList: _g("array_expression_list"),
     letChain: _g("let_chain"),
     closureExpressionBlock: _g("closure_expression_block"),
     closureExpressionExpr: _g("closure_expression_expr"),
@@ -826,8 +826,6 @@ export const assert = {
     MacroDefinitionBrace: _makeAssert('MacroDefinitionBrace', is.MacroDefinitionBrace as _AnyGuard),
     ModItemInline: _makeAssert('ModItemInline', is.ModItemInline as _AnyGuard),
     RangeExpressionBare: _makeAssert('RangeExpressionBare', is.RangeExpressionBare as _AnyGuard),
-    arrayExpressionSemi: _makeAssert('arrayExpressionSemi', is.arrayExpressionSemi as _AnyGuard),
-    arrayExpressionList: _makeAssert('arrayExpressionList', is.arrayExpressionList as _AnyGuard),
     macroDefinitionParen: _makeAssert('macroDefinitionParen', is.macroDefinitionParen as _AnyGuard),
     macroDefinitionBracket: _makeAssert('macroDefinitionBracket', is.macroDefinitionBracket as _AnyGuard),
     macroDefinitionBrace: _makeAssert('macroDefinitionBrace', is.macroDefinitionBrace as _AnyGuard),
@@ -841,6 +839,8 @@ export const assert = {
     rangeExpressionPostfix: _makeAssert('rangeExpressionPostfix', is.rangeExpressionPostfix as _AnyGuard),
     rangeExpressionPrefix: _makeAssert('rangeExpressionPrefix', is.rangeExpressionPrefix as _AnyGuard),
     rangeExpressionBare: _makeAssert('rangeExpressionBare', is.rangeExpressionBare as _AnyGuard),
+    arrayExpressionSemi: _makeAssert('arrayExpressionSemi', is.arrayExpressionSemi as _AnyGuard),
+    arrayExpressionList: _makeAssert('arrayExpressionList', is.arrayExpressionList as _AnyGuard),
     letChain: _makeAssert('letChain', is.letChain as _AnyGuard),
     closureExpressionBlock: _makeAssert('closureExpressionBlock', is.closureExpressionBlock as _AnyGuard),
     closureExpressionExpr: _makeAssert('closureExpressionExpr', is.closureExpressionExpr as _AnyGuard),

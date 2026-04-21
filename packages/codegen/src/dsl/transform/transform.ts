@@ -334,19 +334,36 @@ function buildHoistedVariants(
         const hoistedMembers = seqMembers.map((m, i) => i === resolvedPos ? altContent : m)
         const hoistedSeq = reconstructContainer(core, hoistedMembers)
         const hoistedBody = wrapVariantBodyInParentPrec(hoistedSeq, precStack)
+        // Hidden rule name (underscore-prefixed) — MUST match wire's
+        // `injectHiddenRulePlaceholders` naming (`_<parent>_<suffix>`)
+        // so the deferred-content fn can read this deposit. Previously
+        // this code deposited under the VISIBLE name (`parent_suffix`)
+        // which wire's placeholder never looked up, leaving the hidden
+        // rule BLANK → tree-sitter "Undefined symbol" on compile.
         const visibleName = `${parentKind}_${p.v.name}`
+        const hiddenName = `_${visibleName}`
         if (!wireRegisterPolymorphVariant(parentKind, p.v.name)) {
             throw new Error(`variant('${p.v.name}'): no active wire() context — variant() must run inside a rule callback under wire()`)
         }
-        if (!wireRegisterSyntheticRule(visibleName, hoistedBody)) {
-            throw new Error(`registerSyntheticRule('${visibleName}'): no active wire() context`)
+        if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {
+            throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`)
         }
+        // Emit `alias($._hidden, $.visible)` so tree-sitter matches the
+        // hidden rule but surfaces the visible kind name in parse trees.
+        // Mirrors `registerAliasedVariant`'s output shape used by the
+        // non-hoisted variant placeholder path.
         refs.push({
-            type: isUpperCase ? 'SYMBOL' : 'symbol',
-            name: visibleName,
+            type: isUpperCase ? 'ALIAS' : 'alias',
+            content: { type: isUpperCase ? 'SYMBOL' : 'symbol', name: hiddenName },
+            named: true,
+            value: visibleName,
         } as unknown as RuntimeRule)
     }
-    registerHoistedVariantConflicts(parsed.map(p => `${parentKind}_${p.v.name}`))
+    // Conflicts MUST reference declared rules (tree-sitter rejects
+    // symbol references to alias targets in the conflicts array with
+    // "Undefined symbol"). Use the hidden rule names — those ARE
+    // declared via wire's placeholder injection.
+    registerHoistedVariantConflicts(parsed.map(p => `_${parentKind}_${p.v.name}`))
     const newChoice = reconstructContainer(choice, refs)
     return { rule: newChoice, consumed: new Set(parsed.map(p => p.key)) }
 }
