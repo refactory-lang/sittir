@@ -18,6 +18,51 @@ import {
 export { isRequired, isMultiple, isNonEmpty }
 
 /**
+ * Compute the set of kind names referenced by any structural node in the
+ * NodeMap — walked once, consumed by multiple emitters.
+ *
+ * A kind is "referenced" when it appears in:
+ *   - A structural node's `fields[*].values` (node-ref kind names).
+ *   - A structural node's `children[*].values` (node-ref kind names).
+ *   - A polymorph form's fields / children (same, per form).
+ *   - A supertype's `subtypes` list.
+ *
+ * Emitters that decide which terminal aliases / Tree interfaces to emit
+ * use this to skip unreferenced terminals whose only consumer is a missing
+ * factory binding. Previously duplicated in `types.ts::computeReferencedKinds`,
+ * `type-test.ts` (inline walker), and `types.ts::collectAndEmitTokenTypeAliases`
+ * (inline walker) — one walk, three derivations that had to stay in sync.
+ *
+ * @param nodeMap - The assembled node map to walk.
+ * @returns The set of referenced kind strings.
+ */
+export function referencedKinds(nodeMap: NodeMap): Set<string> {
+    const referenced = new Set<string>()
+    for (const [, node] of nodeMap.nodes) {
+        switch (node.modelType) {
+            case 'branch':
+            case 'group':
+                for (const f of node.fields) for (const t of slotKindNames(f)) referenced.add(t)
+                for (const c of (node.children ?? [])) for (const t of slotKindNames(c)) referenced.add(t)
+                break
+            case 'container':
+                for (const c of node.children) for (const t of slotKindNames(c)) referenced.add(t)
+                break
+            case 'polymorph':
+                for (const form of node.forms) {
+                    for (const f of form.fields) for (const t of slotKindNames(f)) referenced.add(t)
+                    for (const c of form.children) for (const t of slotKindNames(c)) referenced.add(t)
+                }
+                break
+            case 'supertype':
+                for (const t of node.subtypes) referenced.add(t)
+                break
+        }
+    }
+    return referenced
+}
+
+/**
  * Extract the node kind names from a slot's `values` array.
  * Returns the name string for each NodeRef entry (resolved or unresolved).
  * Terminal values are excluded — they're not kinds.

@@ -4,7 +4,7 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts'
-import { slotKindNames } from './shared.ts'
+import { referencedKinds } from './shared.ts'
 
 export interface EmitTypeTestsConfig {
     nodeMap: NodeMap
@@ -16,26 +16,11 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
     const structuralKinds: { kind: string; typeName: string; hasVariants: boolean }[] = []
     const leafKinds: { kind: string; typeName: string }[] = []
 
-    // Mirror the T073 liveness check from types: a terminal is
-    // only emitted when it has a factory OR is referenced by another
-    // structural node. Anything type-test would reference but
-    // types skipped becomes a dangling import, so filter here too.
-    const referenced = new Set<string>()
-    for (const [, n] of nodeMap.nodes) {
-        if (n.modelType === 'branch' || n.modelType === 'group') {
-            for (const f of n.fields) for (const t of slotKindNames(f)) referenced.add(t)
-            for (const c of (n.children ?? [])) for (const t of slotKindNames(c)) referenced.add(t)
-        } else if (n.modelType === 'container') {
-            for (const c of n.children) for (const t of slotKindNames(c)) referenced.add(t)
-        } else if (n.modelType === 'polymorph') {
-            for (const form of n.forms) {
-                for (const f of form.fields) for (const t of slotKindNames(f)) referenced.add(t)
-                for (const c of form.children) for (const t of slotKindNames(c)) referenced.add(t)
-            }
-        } else if (n.modelType === 'supertype') {
-            for (const t of n.subtypes) referenced.add(t)
-        }
-    }
+    // Mirror the T073 liveness check from types: a terminal is only emitted
+    // when it has a factory OR is referenced by another structural node.
+    // Shared derivation — `shared.ts::referencedKinds` — so types.ts and
+    // type-test.ts stay in lockstep.
+    const referenced = referencedKinds(nodeMap)
 
     for (const [kind, node] of nodeMap.nodes) {
         switch (node.modelType) {

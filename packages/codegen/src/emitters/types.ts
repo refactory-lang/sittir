@@ -22,7 +22,7 @@ import {
     AssembledSupertype,
 } from '../compiler/node-map.ts'
 import { loadRawEntries } from '../validate/node-types-loader.ts'
-import { isAutoStampField, isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues, resolveHiddenKeywordLiteral, resolveHoistedForm, isAutoStampSlot } from './shared.ts'
+import { isAutoStampField, isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues, resolveHiddenKeywordLiteral, resolveHoistedForm, isAutoStampSlot, referencedKinds } from './shared.ts'
 
 type StructuralNode = AssembledBranch | AssembledContainer | AssembledPolymorph
 
@@ -462,13 +462,13 @@ function emitLeafTerminalAliases(
     nodeMap: NodeMap,
     generatedTypes: Set<string>,
 ): void {
-    const referencedKinds = computeReferencedKinds(nodeMap)
+    const referenced = referencedKinds(nodeMap)
     lines.push('// Leaf node types')
     for (const kind of leafKinds) {
         const node = nodeMap.nodes.get(kind)!
         if (generatedTypes.has(node.typeName)) continue
         // Drop truly-unreferenced terminal aliases.
-        if (!node.rawFactoryName && !referencedKinds.has(kind)) continue
+        if (!node.rawFactoryName && !referenced.has(kind)) continue
         generatedTypes.add(node.typeName)
 
         let textType: string
@@ -742,28 +742,14 @@ function collectAndEmitTokenTypeAliases(
     generatedTypes: Set<string>,
     treeEmitted: Set<string>,
 ): void {
+    // Reuse the shared referenced-kind walk, then filter to tokens. Previously
+    // this emitter had its own inline walker doing the same traversal as
+    // `referencedKinds` — one walk, one set, then the token-specific filter.
+    const referenced = referencedKinds(nodeMap)
     const referencedTokenTypeNames = new Set<string>()
-    for (const [, n] of nodeMap.nodes) {
-        const checkKind = (t: string): void => {
-            const ref = nodeMap.nodes.get(t)
-            if (ref?.modelType === 'token') referencedTokenTypeNames.add(ref.typeName)
-        }
-        if (n instanceof AssembledBranch || n instanceof AssembledGroup) {
-            for (const f of n.fields) slotKindNames(f).forEach(checkKind)
-            for (const c of n.children ?? []) slotKindNames(c).forEach(checkKind)
-        } else if (n instanceof AssembledContainer) {
-            for (const c of n.children) slotKindNames(c).forEach(checkKind)
-        } else if (n instanceof AssembledPolymorph) {
-            for (const form of n.forms) {
-                for (const f of form.fields) slotKindNames(f).forEach(checkKind)
-                for (const c of form.children) slotKindNames(c).forEach(checkKind)
-            }
-        } else if (n instanceof AssembledSupertype) {
-            // Supertypes emit Tree union types referencing each subtype's
-            // Tree interface (e.g. `NeverTypeTree` in `_TypeTree`).
-            // Token-node subtypes need their Tree interface emitted too.
-            n.subtypes.forEach(checkKind)
-        }
+    for (const t of referenced) {
+        const ref = nodeMap.nodes.get(t)
+        if (ref?.modelType === 'token') referencedTokenTypeNames.add(ref.typeName)
     }
 
     lines.push('// Token type aliases (only tokens referenced in field/child unions)')
@@ -966,36 +952,6 @@ function fieldTypeParts(field: AssembledField, nodeMap?: NodeMap): string[] {
         const name = node.typeName
         return /^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t)
     })
-}
-
-/**
- * T073 helper — collect every kind that's referenced by another
- * node's field / child content type or by a supertype's subtype
- * list. Used to decide which terminal aliases can be safely skipped
- * from emission (unreferenced leaves with no factory binding are
- * dead weight).
- */
-function computeReferencedKinds(nodeMap: NodeMap): Set<string> {
-    const referenced = new Set<string>()
-    for (const [, node] of nodeMap.nodes) {
-        if (node instanceof AssembledBranch) {
-            for (const f of node.fields) for (const t of slotKindNames(f)) referenced.add(t)
-            for (const c of (node.children ?? [])) for (const t of slotKindNames(c)) referenced.add(t)
-        } else if (node instanceof AssembledContainer) {
-            for (const c of node.children) for (const t of slotKindNames(c)) referenced.add(t)
-        } else if (node instanceof AssembledPolymorph) {
-            for (const form of node.forms) {
-                for (const f of form.fields) for (const t of slotKindNames(f)) referenced.add(t)
-                for (const c of form.children) for (const t of slotKindNames(c)) referenced.add(t)
-            }
-        } else if (node instanceof AssembledGroup) {
-            for (const f of node.fields) for (const t of slotKindNames(f)) referenced.add(t)
-            for (const c of node.children) for (const t of slotKindNames(c)) referenced.add(t)
-        } else if (node.modelType === 'supertype') {
-            for (const t of node.subtypes) referenced.add(t)
-        }
-    }
-    return referenced
 }
 
 function childContentParts(child: AssembledChild, nodeMap: NodeMap): string[] {
