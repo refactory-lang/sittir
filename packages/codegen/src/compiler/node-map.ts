@@ -549,7 +549,7 @@ const JS_RESERVED_FACTORY_NAMES = new Set([
     'while', 'with', 'yield', 'async', 'await', 'arguments',
 ])
 
-export abstract class AssembledNodeBase {
+export abstract class AssembledNodeBase<R extends Rule = Rule> {
     readonly kind: string
     // typeName / factoryName are writable so assemble()'s post-pass
     // (resolveCollidingNames) can rename hidden kinds that clashed with
@@ -577,6 +577,18 @@ export abstract class AssembledNodeBase {
      */
     readonly source?: RuleSource
     abstract readonly modelType: string
+    /**
+     * The grammar rule that produced this assembled node. Set by concrete
+     * subclasses that carry rule-level structure (branch, container, group,
+     * multi). Absent / undefined on terminal subclasses (leaf, keyword,
+     * token, enum, supertype, polymorph) that don't need rule access.
+     *
+     * The generic parameter `R` narrows this to the exact Rule subset each
+     * subclass accepts — currently all rule-bearing subclasses use the
+     * wide `Rule` union (default), leaving room for future narrowing
+     * without changing callers.
+     */
+    declare readonly rule: R
 
     constructor(init: { kind: string; typeName: string; factoryName?: string; irKey?: string; source?: RuleSource }) {
         this.kind = init.kind
@@ -638,22 +650,24 @@ export abstract class AssembledNodeBase {
     }
 }
 
-export interface AssembledField {
+export interface AssembledChild {
     readonly name: string
     readonly propertyName: string
-    readonly paramName: string
     readonly required: boolean
     readonly multiple: boolean
     /**
-     * True when the field originates from `repeat1(...)` — a list
-     * with a grammar-enforced `length >= 1` guarantee. Emitters use
-     * this to render the field type as a non-empty tuple
-     * `readonly [T, ...(readonly T[])]` in interfaces/config, and
-     * `T | [T, ...T[]]` in from-input (single-value sugar). Only
-     * meaningful when `multiple` is true.
+     * True when the slot originates from `repeat1(...)` — a list with a
+     * grammar-enforced `length >= 1` guarantee. Emitters render the field
+     * type as a non-empty tuple `readonly [T, ...(readonly T[])]` in
+     * interfaces/config, and `T | [T, ...T[]]` in from-input (single-value
+     * sugar). Only meaningful when `multiple` is true.
      */
     readonly nonEmpty?: boolean
     readonly contentTypes: string[]
+}
+
+export interface AssembledField extends AssembledChild {
+    readonly paramName: string
     /**
      * Alias provenance per content type. When a content element was
      * declared at the call site via `alias($.source, $.target)` —
@@ -682,16 +696,6 @@ export interface AssembledField {
     readonly projection: KindProjection
 }
 
-export interface AssembledChild {
-    readonly name: string
-    readonly propertyName: string
-    readonly required: boolean
-    readonly multiple: boolean
-    /** See `AssembledField.nonEmpty`. */
-    readonly nonEmpty?: boolean
-    readonly contentTypes: string[]
-}
-
 /**
  * @deprecated AssembledForm is replaced by AssembledGroup.
  * A polymorph's forms are now hidden groups synthesized from the choice branches.
@@ -703,7 +707,7 @@ export type AssembledForm = AssembledGroup
 
 export class AssembledBranch extends AssembledNodeBase {
     readonly modelType = 'branch' as const
-    readonly rule: Rule
+    // rule: Rule — inherited from AssembledNodeBase<Rule>
     /**
      * Rule with anonymous tokens / structural wrappers stripped.
      * Computed once by assemble() via `simplifyRule(init.rule)` and
@@ -894,7 +898,7 @@ export function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>)
 
 export class AssembledContainer extends AssembledNodeBase {
     readonly modelType = 'container' as const
-    readonly rule: Rule
+    // rule: Rule — inherited from AssembledNodeBase<Rule>
     /** See `AssembledBranch.simplifiedRule`. */
     readonly simplifiedRule: Rule
 
@@ -1114,7 +1118,7 @@ export class AssembledSupertype extends AssembledNodeBase {
  */
 export class AssembledMulti extends AssembledNodeBase {
     readonly modelType = 'multi' as const
-    readonly rule: Rule
+    // rule: Rule — inherited from AssembledNodeBase<Rule>
     /** The repeat's inner content type — raw Rule, for downstream
      * consumers that need the element union (types emitter maps this
      * to a union of TypeNames, inlineGroupRefs hands the whole repeat
@@ -1140,7 +1144,7 @@ export class AssembledMulti extends AssembledNodeBase {
 
 export class AssembledGroup extends AssembledNodeBase {
     readonly modelType = 'group' as const
-    readonly rule: Rule
+    // rule: Rule — inherited from AssembledNodeBase<Rule>
     /** See `AssembledBranch.simplifiedRule`. */
     readonly simplifiedRule: Rule
     readonly detectToken?: string
