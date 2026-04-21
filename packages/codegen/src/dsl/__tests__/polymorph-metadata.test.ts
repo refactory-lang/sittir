@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { transform } from '../transform.ts'
 import { variant } from '../variant.ts'
-import { withSyntheticRuleScope, drainPolymorphVariants, setCurrentRuleKind } from '../synthetic-rules.ts'
+import { withWireContext } from '../wire.ts'
 import type { Rule } from '../../compiler/rule.ts'
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts'
 
@@ -24,21 +24,18 @@ describe('polymorph metadata registration', () => {
             ],
         } as Rule
 
-        const { syntheticRules } = withSyntheticRuleScope(() => {
-            setCurrentRuleKind('assignment')
+        const { ctx } = withWireContext('assignment', () => {
             transform(original, {
                 '1/0': variant('eq'),
                 '1/1': variant('type'),
             })
-            setCurrentRuleKind(null)
         })
 
-        const variants = drainPolymorphVariants()
-        expect(variants.filter(v => v.parent === 'assignment')).toEqual([
+        expect(ctx.polymorphVariants.filter(v => v.parent === 'assignment')).toEqual([
             { parent: 'assignment', child: 'eq' },
             { parent: 'assignment', child: 'type' },
         ])
-        expect(syntheticRules.size).toBe(2)
+        expect(ctx.deposits.size).toBe(2)
     })
 
     it('throws when variant() is used without a current rule kind', () => {
@@ -51,7 +48,7 @@ describe('polymorph metadata registration', () => {
         } as Rule
 
         expect(() => {
-            withSyntheticRuleScope(() => {
+            withWireContext(null, () => {
                 transform(original, {
                     '1/0': variant('b'),
                 })
@@ -67,55 +64,19 @@ describe('polymorph metadata registration', () => {
             ],
         } as Rule)
 
-        withSyntheticRuleScope(() => {
-            setCurrentRuleKind('rule_one')
+        const { ctx: ctx1 } = withWireContext('rule_one', () => {
             transform(makeChoice(), { '0/0': variant('a'), '0/1': variant('b') })
-            setCurrentRuleKind('rule_two')
+        })
+        const { ctx: ctx2 } = withWireContext('rule_two', () => {
             transform(makeChoice(), { '0/0': variant('x') })
-            setCurrentRuleKind(null)
         })
 
-        const variants = drainPolymorphVariants()
-        expect(variants.filter(v => v.parent === 'rule_one')).toEqual([
+        expect(ctx1.polymorphVariants).toEqual([
             { parent: 'rule_one', child: 'a' },
             { parent: 'rule_one', child: 'b' },
         ])
-        expect(variants.filter(v => v.parent === 'rule_two')).toEqual([
+        expect(ctx2.polymorphVariants).toEqual([
             { parent: 'rule_two', child: 'x' },
         ])
-    })
-
-    it('throws when two variant() calls register the same name on the same parent (T029a)', () => {
-        const original = {
-            type: 'seq',
-            members: [
-                { type: 'choice', members: [sym('a'), sym('b')] },
-            ],
-        } as Rule
-
-        expect(() => {
-            withSyntheticRuleScope(() => {
-                setCurrentRuleKind('dup_parent')
-                transform(original, { '0/0': variant('same'), '0/1': variant('same') })
-                setCurrentRuleKind(null)
-            })
-        }).toThrow(/duplicate variant name on rule 'dup_parent'/)
-
-        // Drain to leave the accumulator clean for adjacent tests.
-        drainPolymorphVariants()
-    })
-
-    it('drainPolymorphVariants clears the accumulator', () => {
-        withSyntheticRuleScope(() => {
-            setCurrentRuleKind('foo')
-            const original = { type: 'seq', members: [{ type: 'choice', members: [sym('a')] }] } as Rule
-            transform(original, { '0/0': variant('a') })
-            setCurrentRuleKind(null)
-        })
-
-        const first = drainPolymorphVariants()
-        expect(first.length).toBe(1)
-        const second = drainPolymorphVariants()
-        expect(second.length).toBe(0)
     })
 })

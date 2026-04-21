@@ -6,40 +6,21 @@
  *   2. Registers a hidden rule `_variant_name` with that content here
  *   3. Returns `alias($._variant_name, $.variant_name)` as the replacement
  *
- * The accumulated rules are injected into the grammar after all rule
- * callbacks have run. Same scoping pattern as `role()` in role.ts.
+ * All registration now routes through the wire context. No module-level
+ * accumulator state remains — functions that previously used module state
+ * have been deleted (ADR-0009 phase 3).
  */
 
 import { isChoiceType, isSeqType, isOptionalType, isStringType, isBlankType, isPlainRepeatType, type RuntimeRule } from './runtime-shapes.ts'
-import type { PolymorphVariant } from '../compiler/types.ts'
 import {
-    getCurrentWireContext,
     wireRegisterSyntheticRule,
     wireRegisterPolymorphVariant,
     wireRegisterConflict,
     wireGetCurrentRuleKind,
 } from './wire.ts'
 
-let currentSyntheticRules: Map<string, RuntimeRule> | null = null
-let currentRuleKind: string | null = null
-let currentOptsRules: Record<string, unknown> | null = null
-let currentBlankFn: (() => unknown) | null = null
-
-let currentPolymorphVariants: PolymorphVariant[] = []
-
-export function setCurrentRuleKind(kind: string | null): void {
-    // When a wire context is active, the rule-fn wrapper owns
-    // currentRuleKind — don't mutate module state. Legacy callers
-    // (installGrammarWrapper pass 2) still write to module state when
-    // wire is inactive.
-    if (getCurrentWireContext()) return
-    currentRuleKind = kind
-}
-
 export function getCurrentRuleKind(): string | null {
-    const fromWire = wireGetCurrentRuleKind()
-    if (fromWire !== null) return fromWire
-    return currentRuleKind
+    return wireGetCurrentRuleKind()
 }
 
 export function registerSyntheticRule(name: string, content: RuntimeRule): void {
@@ -101,33 +82,6 @@ export function registerPolymorphVariant(parentKind: string, childSuffix: string
     }
 }
 
-export function drainPolymorphVariants(): PolymorphVariant[] {
-    const variants = currentPolymorphVariants
-    currentPolymorphVariants = []
-    return variants
-}
-
-/**
- * Remove every entry in the legacy polymorph-variant accumulator whose
- * `parent` matches `ruleKind`. Called by wire's rule-fn wrapper before
- * invoking the user's rule body so that re-entry (legacy wrapper pass-1
- * plus pass-2, repeated unit-test invocations, nested grammar extension
- * evaluation) doesn't trip the hard duplicate-throw above. Wire's own
- * accumulator stays intact — this only touches the legacy list that
- * sittir's evaluate() drains.
- */
-export function forgetPolymorphVariantsFor(ruleKind: string): void {
-    currentPolymorphVariants = currentPolymorphVariants.filter(v => v.parent !== ruleKind)
-}
-
-export function drainSyntheticRules(): Map<string, RuntimeRule> {
-    const rules = currentSyntheticRules ?? new Map()
-    currentSyntheticRules = null
-    return rules
-}
-
-let currentConflicts: string[][] = []
-
 /**
  * Register a tree-sitter conflict group. Each call adds one entry to
  * the grammar's `conflicts: [[...]]` list. Used by auto-hoist to tell
@@ -143,12 +97,6 @@ export function registerConflict(names: readonly string[]): void {
             `registerConflict(${JSON.stringify(names)}): called outside a wire() context.`,
         )
     }
-}
-
-export function drainConflicts(): string[][] {
-    const conflicts = currentConflicts
-    currentConflicts = []
-    return conflicts
 }
 
 // ---------------------------------------------------------------------------
@@ -316,14 +264,3 @@ export function matchesEmpty(rule: RuntimeRule): boolean {
     return false
 }
 
-export function withSyntheticRuleScope<T>(fn: () => T): { result: T; syntheticRules: Map<string, RuntimeRule> } {
-    const prev = currentSyntheticRules
-    currentSyntheticRules = new Map()
-    try {
-        const result = fn()
-        const syntheticRules = currentSyntheticRules
-        return { result, syntheticRules }
-    } finally {
-        currentSyntheticRules = prev
-    }
-}

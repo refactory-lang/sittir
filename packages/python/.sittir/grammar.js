@@ -339,7 +339,6 @@ function wire(config) {
   const polymorphs = config.polymorphs ?? {};
   const transforms = config.transforms ?? {};
   const outRules = { ...config.rules };
-  absorbModuleLoadSyntheticRules(outRules);
   composeOrSynthesizePolymorphParents(outRules, polymorphs);
   composeOrSynthesizeTransformParents(outRules, transforms);
   injectHiddenRulePlaceholders(outRules, polymorphs, context);
@@ -380,13 +379,6 @@ function injectHiddenRulePlaceholders(rules, polymorphs, context) {
       const hiddenName = `_${parent}_${suffix}`;
       rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
     }
-  }
-}
-function absorbModuleLoadSyntheticRules(rules) {
-  const drained = drainSyntheticRules();
-  for (const [name, body] of drained) {
-    if (name in rules) continue;
-    rules[name] = () => body;
   }
 }
 function composeOrSynthesizeTransformParents(rules, transforms) {
@@ -448,7 +440,6 @@ function wrapOneRuleFn(name, fn, context) {
     const prevKind = context.currentRuleKind;
     currentContext = context;
     context.currentRuleKind = name;
-    forgetPolymorphVariantsFor(name);
     try {
       return fn.call(this, $, previous);
     } finally {
@@ -472,25 +463,14 @@ function symbolizeRef(_$, name) {
 }
 
 // packages/codegen/src/dsl/synthetic-rules.ts
-var currentSyntheticRules = null;
-var currentRuleKind = null;
-var currentOptsRules = null;
-var currentBlankFn = null;
-var currentPolymorphVariants = [];
 function getCurrentRuleKind() {
-  const fromWire = wireGetCurrentRuleKind();
-  if (fromWire !== null) return fromWire;
-  return currentRuleKind;
+  return wireGetCurrentRuleKind();
 }
 function registerSyntheticRule(name, content) {
-  wireRegisterSyntheticRule(name, content);
-  if (!currentSyntheticRules) {
-    currentSyntheticRules = /* @__PURE__ */ new Map();
-  }
-  currentSyntheticRules.set(name, content);
-  if (currentOptsRules && !(name in currentOptsRules)) {
-    const blank = currentBlankFn;
-    currentOptsRules[name] = () => blank ? blank() : { type: "BLANK" };
+  if (!wireRegisterSyntheticRule(name, content)) {
+    throw new Error(
+      `registerSyntheticRule('${name}'): called outside a wire() context. Wrap your grammar() opts in wire({...}) so synthetic rules route through it.`
+    );
   }
 }
 function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
@@ -509,31 +489,18 @@ function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
   };
 }
 function registerPolymorphVariant(parentKind, childSuffix) {
-  wireRegisterPolymorphVariant(parentKind, childSuffix);
-  const dup = currentPolymorphVariants.find((v) => v.parent === parentKind && v.child === childSuffix);
-  if (dup) {
+  if (!wireRegisterPolymorphVariant(parentKind, childSuffix)) {
     throw new Error(
-      `variant('${childSuffix}'): duplicate variant name on rule '${parentKind}'. Each variant() within a rule must have a unique name \u2014 change one or merge the patches.`
+      `registerPolymorphVariant('${parentKind}'/'${childSuffix}'): called outside a wire() context. variant()/alias() must be resolved inside a rule callback that runs under wire().`
     );
   }
-  currentPolymorphVariants.push({ parent: parentKind, child: childSuffix });
 }
-function forgetPolymorphVariantsFor(ruleKind) {
-  currentPolymorphVariants = currentPolymorphVariants.filter((v) => v.parent !== ruleKind);
-}
-function drainSyntheticRules() {
-  const rules = currentSyntheticRules ?? /* @__PURE__ */ new Map();
-  currentSyntheticRules = null;
-  return rules;
-}
-var currentConflicts = [];
 function registerConflict(names) {
   if (names.length === 0) return;
-  wireRegisterConflict(names);
-  const key = names.join("\0");
-  const exists = currentConflicts.some((g) => g.join("\0") === key);
-  if (!exists) {
-    currentConflicts.push([...names]);
+  if (!wireRegisterConflict(names)) {
+    throw new Error(
+      `registerConflict(${JSON.stringify(names)}): called outside a wire() context.`
+    );
   }
 }
 function wrapInPrecStack(content, precStack, reconstructPrec2) {

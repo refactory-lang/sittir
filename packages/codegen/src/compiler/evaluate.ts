@@ -13,8 +13,8 @@ import type {
 } from './rule.ts'
 import type { RawGrammar } from './types.ts'
 import { withRoleScope } from '../dsl/role.ts'
-import { withSyntheticRuleScope, setCurrentRuleKind, drainPolymorphVariants } from '../dsl/synthetic-rules.ts'
 import type { WireContext } from '../dsl/wire.ts'
+import type { PolymorphVariant } from './types.ts'
 
 // ---------------------------------------------------------------------------
 // Input type — anything the DSL functions accept
@@ -777,18 +777,13 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
     let word: string | null = null
 
     const { roles: collectedRoles } = withRoleScope(() => {
-        // `withSyntheticRuleScope` captures synthetic hidden rules
-        // (variant/alias placeholders) that the DSL registers during
-        // rule-fn evaluation. wire() also pre-registers polymorph
-        // hidden-rule entries in `opts.rules`, so rules pick up
-        // polymorph bodies during iteration too; the scope here
-        // captures the rest (non-polymorph alias placeholders like
-        // rust's `_wildcard_pattern`) that wire doesn't know about.
-        const { syntheticRules } = withSyntheticRuleScope(() => {
-            evaluateRuleFunctions(opts, baseRules, refs, rules)
-        })
-
-        injectSyntheticRules(syntheticRules, rules)
+        // wire() populates its per-invocation context with the
+        // synthetic-rule bodies registered during rule-fn evaluation
+        // (variant/alias placeholder resolution). Pull them out once
+        // evaluation is done and merge into the rules map.
+        evaluateRuleFunctions(opts, baseRules, refs, rules)
+        const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__
+        if (wireCtx) injectSyntheticRules(wireCtx.deposits, rules)
 
         // The rest of the callbacks (extras, externals, supertypes,
         // inline, conflicts, word) stay inside this same role scope so
@@ -831,20 +826,12 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
  *   property whose `polymorphVariants` list is the canonical source.
  * @returns Flat `PolymorphVariant[]` for `RawGrammar.polymorphVariants`.
  * @remarks
- * When wire is in play, its context holds the authoritative list
- * (accumulated across rule-fn invocations, deduplicated). When wire
- * isn't active — legacy path only — we fall back to the module-level
- * `drainPolymorphVariants()` accumulator that `registerPolymorphVariant`
- * dual-writes to. Once every grammar uses wire + installGrammarWrapper
- * is deleted, the legacy branch disappears with it.
+ * All grammars now use wire() — the authoritative list is always the
+ * wire context's `polymorphVariants` array.
  */
-function drainPolymorphMetadata(opts: GrammarOptions): ReturnType<typeof drainPolymorphVariants> {
+function drainPolymorphMetadata(opts: GrammarOptions): PolymorphVariant[] {
     const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__
-    // Always drain the legacy accumulator so it starts empty for the
-    // next grammar invocation, regardless of which path wins.
-    const legacy = drainPolymorphVariants()
-    if (wireCtx) return [...wireCtx.polymorphVariants]
-    return legacy
+    return wireCtx ? [...wireCtx.polymorphVariants] : []
 }
 
 /**
@@ -913,9 +900,8 @@ function seedRefsFromBaseGrammar(baseGrammar: any): SymbolRef[] {
  * @remarks
  * Each rule callback receives a fresh `$` proxy and, as its second
  * argument, the base grammar's version of that rule (if any).
- * `setCurrentRuleKind` / `setCurrentRuleKind(null)` bracket each call
- * so that polymorph-metadata registration is always scoped to the correct
- * rule, even when a callback throws.
+ * wire()'s wrapped rule fns own their own context management
+ * (currentRuleKind) per invocation — no try/finally needed here.
  */
 function evaluateRuleFunctions(
     opts: GrammarOptions,
@@ -926,17 +912,8 @@ function evaluateRuleFunctions(
     for (const [name, ruleFn] of Object.entries(opts.rules)) {
         const $ = createProxy(name, refs)
         const baseRule = baseRules[name]
-        setCurrentRuleKind(name)
-        try {
-            const result = ruleFn.call($, $, baseRule)
-            rules[name] = normalize(result)
-        } finally {
-            // Clear the global current-rule context even if ruleFn throws.
-            // A throw would otherwise leak the current-rule name into
-            // subsequent rule evaluations or error-handling paths and
-            // corrupt polymorph-metadata registration.
-            setCurrentRuleKind(null)
-        }
+        const result = ruleFn.call($, $, baseRule)
+        rules[name] = normalize(result)
     }
 }
 
@@ -945,7 +922,7 @@ function evaluateRuleFunctions(
  * into the shared rules map.
  *
  * @param syntheticRules - Map of synthetic rule name → rule content produced
- *   by `withSyntheticRuleScope`.
+ *   by wire()'s rule-fn wrapper.
  * @param rules - Mutable output map to receive the synthetic rules.
  * @remarks
  * Synthetic rules are hidden variant rules for nested-alias polymorphs,

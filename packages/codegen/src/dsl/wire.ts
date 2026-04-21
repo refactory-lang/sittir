@@ -40,7 +40,6 @@ import { transform as transformFn } from './transform.ts'
 import { isFieldPlaceholder } from './field.ts'
 import { isAliasPlaceholder } from './alias.ts'
 import { isVariantPlaceholder } from './variant.ts'
-import { forgetPolymorphVariantsFor, drainSyntheticRules } from './synthetic-rules.ts'
 
 // ---------------------------------------------------------------------------
 // WireContext + module-level current pointer
@@ -130,6 +129,36 @@ export function wireRegisterConflict(names: readonly string[]): boolean {
 /** Current rule kind on the active wire context, or null when inactive. */
 export function wireGetCurrentRuleKind(): string | null {
     return currentContext?.currentRuleKind ?? null
+}
+
+/**
+ * Install a fresh `WireContext` for the duration of `fn` and return
+ * both the callback result and the context so tests can assert on
+ * deposits / polymorphVariants / conflictGroups that were registered
+ * during the call.
+ *
+ * Intended for unit tests of DSL helpers (variant/alias/transform/
+ * hoist) that need a wire context without going through full wire()
+ * composition. Production callers should use `wire()`.
+ */
+export function withWireContext<T>(
+    ruleKind: string | null,
+    fn: (ctx: WireContext) => T,
+): { result: T; ctx: WireContext } {
+    const ctx: WireContext = {
+        deposits: new Map(),
+        polymorphVariants: [],
+        conflictGroups: [],
+        currentRuleKind: ruleKind,
+    }
+    const prev = currentContext
+    currentContext = ctx
+    try {
+        const result = fn(ctx)
+        return { result, ctx }
+    } finally {
+        currentContext = prev
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -241,14 +270,6 @@ export function wire(config: WireConfig): WiredOpts {
     const transforms = config.transforms ?? {}
     const outRules: Record<string, RuleFn> = { ...config.rules }
 
-    // Drain the module-load-time synthetic rule accumulator first.
-    // Two-arg `field(name, 'literal')` calls inside the config object
-    // literal fire `maybeKeywordSymbol` → `registerSyntheticRule`
-    // during construction — before `wire()` even gets called. Their
-    // content is fully known (no runtime capture needed), so inject
-    // as static rule fns.
-    absorbModuleLoadSyntheticRules(outRules)
-
     composeOrSynthesizePolymorphParents(outRules, polymorphs)
     composeOrSynthesizeTransformParents(outRules, transforms)
     injectHiddenRulePlaceholders(outRules, polymorphs, context)
@@ -327,29 +348,6 @@ function injectHiddenRulePlaceholders(
 }
 
 /**
- * Drain every rule the DSL's `registerSyntheticRule` accumulated during
- * construction of the `wire()` config object literal — two-arg
- * `field(name, 'literal')` calls fire at module-load time via
- * `maybeKeywordSymbol` and register `_kw_<name>` into the synthetic-
- * rules module accumulator.
- *
- * Inject each accumulated entry as a static rule fn in `opts.rules`.
- * Content is fully known (no runtime capture needed), so no deferred-
- * content machinery is required for these. Tree-sitter's `ruleMap`
- * snapshot sees every `_kw_*` name from this path at `grammar()` entry.
- *
- * If a name already exists in `opts.rules` (e.g. the author hand-
- * declared `_kw_foo: $ => 'foo'`), the author's entry wins.
- */
-function absorbModuleLoadSyntheticRules(rules: Record<string, RuleFn>): void {
-    const drained = drainSyntheticRules()
-    for (const [name, body] of drained) {
-        if (name in rules) continue
-        rules[name] = () => body
-    }
-}
-
-/**
  * For each transforms entry, wrap (or synthesize) its rule fn to apply
  * the declared patch-maps via `transform(original, ...patchSets)`. If
  * the author already has a `rules:` entry for the same kind, compose:
@@ -397,8 +395,8 @@ function buildTransformParentFn(
  *
  * Two-arg `field(name, content)` calls are already resolved to native
  * rules at module-load time (by `field.ts::field`) and their
- * `_kw_<name>` registrations are drained by
- * `absorbModuleLoadSyntheticRules`. This function only needs to handle
+ * `_kw_<name>` registrations route through the wire context directly
+ * when a context is active. This function only needs to handle
  * placeholder objects that remain unresolved until `transform()` fires.
  */
 function injectTransformHiddenRulePlaceholders(
@@ -486,13 +484,6 @@ function wrapOneRuleFn(name: string, fn: RuleFn, context: WireContext): RuleFn {
         const prevKind = context.currentRuleKind
         currentContext = context
         context.currentRuleKind = name
-        // Clear the legacy accumulator's entries for this rule so that
-        // re-entry (wrapper pass-1 + pass-2, repeated test invocations,
-        // nested grammar extension evaluation) doesn't trip the hard
-        // duplicate-throw in `registerPolymorphVariant`. Wire's own
-        // polymorph list is idempotent and keeps accumulating across
-        // invocations for this wire context.
-        forgetPolymorphVariantsFor(name)
         try {
             return fn.call(this, $, previous)
         } finally {
