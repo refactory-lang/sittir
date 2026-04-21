@@ -981,6 +981,11 @@ function emitFormInterface(
 ): void {
     lines.push(`export interface ${typeName} {`)
     lines.push(`  readonly $type: '${node.kind}';`)
+    // `$variant` literal discriminant — matches what the form factory stamps
+    // on its output (`$variant: '<form.name>' as const`). Makes the parent
+    // polymorph union a discriminated union so consumers can narrow via
+    // `if (expr.$variant === 'binary') { … }` without structural probing.
+    lines.push(`  readonly $variant: '${form.name}';`)
 
     if (form.fields.length > 0) {
         lines.push('  readonly $fields: {')

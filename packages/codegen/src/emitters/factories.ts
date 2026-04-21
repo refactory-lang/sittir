@@ -711,20 +711,24 @@ function resolveConfigType(node: FieldCarryingNode, isPolymorphForm: boolean): s
 /**
  * Resolve the `$variant` tag name for a polymorph form factory.
  *
- * @param node - The node descriptor (provides `kind` and `parentKind`).
- * @returns The variant name suffix (e.g. `'body'` from `'struct_item_body'`), or
+ * @param node - The node descriptor (provides `name` and `parentKind`).
+ * @returns The form's short name (e.g. `'body'`, `'binary'`, `'form0'`), or
  *   `undefined` when the node is not a polymorph form.
  * @remarks
- *   Polymorph form factories tag their output with `variant: '<name>'` so the
+ *   Polymorph form factories tag their output with `$variant: '<name>'` so the
  *   renderer's variant dispatch (path 1) can discriminate forms whose templates
  *   differ only by literal tokens (e.g. rust `struct_item` body vs semi — same
- *   `$VARS`, differ by trailing `;`). The variant name is the form-kind suffix
- *   after the parent kind.
+ *   `$VARS`, differ by trailing `;`).
+ *
+ *   Single source of truth (DRY): the variant name is `form.name`, assigned at
+ *   assembly time in {@link buildAssembledFormGroups}. Reconstructing it from
+ *   the kind suffix is fragile — `source='override'` polymorphs use
+ *   `${parent}__form_${name}` and slicing by `${parent}_` yields `_form_<name>`
+ *   (leading underscore garbage). Use `form.name` directly and let assemble
+ *   own the naming decision.
  */
 function resolvePolymorphFormVariantName(node: AssembledGroup): string | undefined {
-    return node.parentKind && node.kind.startsWith(node.parentKind + '_')
-        ? node.kind.slice(node.parentKind.length + 1)
-        : undefined
+    return node.parentKind ? node.name : undefined
 }
 
 /**
@@ -879,23 +883,59 @@ function emitPolymorphFactory(node: PolymorphNode, nodeMap: NodeMap): string {
         return `export function ${fn}(_config?: unknown) { return { $type: '${node.kind}' as const, $source: 'factory' as const, $named: true as const, render() { return render(this); }, toEdit(s: number | ByteRange, e?: number) { return typeof s === 'number' ? toEdit(this, s, e!) : toEdit(this, s); }, replace(t: T.${node.treeTypeName}) { const r = t.range(); return toEdit(this, r); } }; }`
     }
 
-    const lines: string[] = []
-    const configUnion = buildPolymorphConfigUnion(forms)
-    const polyOpt = resolvePolymorphConfigOptional(forms)
-    lines.push(`export function ${fn}(config${polyOpt}: ${configUnion}) {`)
-
-    lines.push(...emitPolymorphDispatch(node, forms))
-    lines.push('}')
+    const parts: string[] = []
+    parts.push(emitPolymorphDispatcher(node, forms))
 
     // Emit each form factory inline after the dispatcher.
     // `isPolymorphForm=true` routes the form factory's config parameter
     // through the legacy flat alias instead of namespace sugar — synthetic
     // UForm kinds aren't in `NamespaceMap`.
-    const parts = [lines.join('\n')]
     for (const form of forms) {
         parts.push(emitFieldCarryingFactory(form, form.fields, form.children, nodeMap, true))
     }
     return parts.join('\n')
+}
+
+/**
+ * Emit the polymorph dispatcher function: overloaded signatures (one per
+ * variant, return type narrowed via `ReturnType<typeof formFactory>`) followed
+ * by an implementation signature accepting the discriminated union.
+ *
+ * The body switches on `config.$variant` when present and falls back to
+ * source-specific discrimination (variant-child kind probing for `'override'`
+ * polymorphs, field-presence for `'promoted'` polymorphs) when it is absent —
+ * preserving backward compatibility with pre-`$variant` consumers.
+ */
+function emitPolymorphDispatcher(node: PolymorphNode, forms: AssembledGroup[]): string {
+    const fn = node.rawFactoryName!
+    const lines: string[] = []
+
+    if (forms.length > 1) {
+        // One overload per variant so call-site `config.$variant === 'binary'`
+        // narrows the return type to the binary form factory's output.
+        for (const form of forms) {
+            const formConfig = `T.${form.typeName}Config`
+            lines.push(
+                `export function ${fn}(config: { readonly $variant: '${form.name}' } & ${formConfig}): ReturnType<typeof ${form.rawFactoryName!}>;`,
+            )
+        }
+        // Back-compat overload: accept the legacy config-union (no `$variant`)
+        // so pre-variant callers and internal `from.ts` dispatchers still
+        // type-check. Return type is the union of all per-form return types.
+        const polyOpt = resolvePolymorphConfigOptional(forms)
+        const configUnion = buildPolymorphConfigUnion(forms)
+        const returnUnion = forms.map(f => `ReturnType<typeof ${f.rawFactoryName!}>`).join(' | ')
+        lines.push(`export function ${fn}(config${polyOpt}: ${configUnion}): ${returnUnion};`)
+    }
+
+    const polyOpt = resolvePolymorphConfigOptional(forms)
+    const configUnion = buildPolymorphConfigUnion(forms)
+    // Implementation signature — the untyped union accepted at the dispatch
+    // boundary. The overloads above govern what callers see.
+    lines.push(`export function ${fn}(config${polyOpt}: ${configUnion}) {`)
+    lines.push(...emitPolymorphDispatch(node, forms))
+    lines.push('}')
+    return lines.join('\n')
 }
 
 /**
@@ -931,57 +971,80 @@ function resolvePolymorphConfigOptional(forms: AssembledGroup[]): string {
  *
  * @param node - The polymorph node descriptor.
  * @param forms - The polymorph form descriptors.
- * @param fn - The factory function name.
  * @returns Array of source lines for the dispatch body (without the surrounding `{ }`).
  * @remarks
- *   Two dispatch strategies:
- *   - `source='override'`: forms share parent fields, so field-presence doesn't
- *     discriminate. Use the variant child's type from `config.children[0].type`,
- *     OR an explicit `config.variant` discriminator (T032).
- *   - `source='promoted'`: forms have heterogeneous field sets. Discriminate by
- *     field-presence, most-specific first.
+ *   Dispatch priority:
+ *   1. `config.$variant` discriminator — single source of truth. Emitted as a
+ *      `switch` on `config.$variant` (exhaustive over the form names).
+ *   2. Fallback — only runs when `$variant` is absent:
+ *      - `source='override'`: probe `config.children[0].type` (parse-tree truth).
+ *      - `source='promoted'`: discriminate by field-presence, most-specific first.
+ *      - Otherwise: first form.
+ *
+ *   Single-form polymorphs (`forms.length === 1`) skip the switch entirely.
  */
 function emitPolymorphDispatch(
     node: PolymorphNode,
     forms: AssembledGroup[],
 ): string[] {
     const lines: string[] = []
-    if (forms.length > 1) {
-        const isOverride = node.source === 'override'
-        if (isOverride) {
-            // Variant child kind discrimination first (most reliable —
-            // the kind on the variant child is the parse-tree truth).
-            for (const form of forms) {
-                const childKind = `${node.kind}_${form.name}`
-                lines.push(`  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === '${childKind}') return ${form.rawFactoryName!}(config as T.${form.typeName}Config);`)
-            }
-            // Then explicit `variant` discriminator on config.
-            for (const form of forms) {
-                lines.push(`  if (config && (config as any).variant === '${form.name}') return ${form.rawFactoryName!}(config as T.${form.typeName}Config);`)
-            }
-            // Fallback to first form when nothing discriminates.
-            const fallback = forms[0]!
-            lines.push(`  return ${fallback.rawFactoryName!}(config as T.${fallback.typeName}Config);`)
-        } else {
-            const sorted = [...forms].sort((a, b) => b.fields.length - a.fields.length)
-            const fallback = sorted[sorted.length - 1]!
-            const seenFieldSets = new Set<string>()
-            for (const form of sorted) {
-                if (form === fallback) continue
-                if (form.fields.length === 0) continue
-                const key = [...form.fields.map(f => f.propertyName)].sort().join(',')
-                if (seenFieldSets.has(key)) continue
-                seenFieldSets.add(key)
-                const checks = form.fields
-                    .map(f => `'${f.propertyName}' in config`)
-                    .join(' && ')
-                lines.push(`  if (config && ${checks}) return ${form.rawFactoryName!}(config as T.${form.typeName}Config);`)
-            }
-            lines.push(`  return ${fallback.rawFactoryName!}(config as T.${fallback.typeName}Config);`)
-        }
-    } else {
+    if (forms.length === 1) {
         lines.push(`  return ${forms[0]!.rawFactoryName!}(config);`)
+        return lines
     }
+
+    // Path 1: explicit `$variant` discriminator — covers the declared overloads.
+    lines.push(`  switch ((config as { $variant?: string }).$variant) {`)
+    for (const form of forms) {
+        lines.push(`    case '${form.name}': return ${form.rawFactoryName!}(config as T.${form.typeName}Config);`)
+    }
+    lines.push(`  }`)
+
+    // Path 2: back-compat fallback for callers that omit `$variant` (e.g.,
+    // legacy code, `.from()` re-entry, readNode → factory recursion).
+    lines.push(...emitPolymorphFallbackDispatch(node, forms))
+    return lines
+}
+
+/**
+ * Emit the pre-`$variant` back-compat dispatch lines (child-kind probing /
+ * field-presence) that fire only when `config.$variant` is absent.
+ */
+function emitPolymorphFallbackDispatch(
+    node: PolymorphNode,
+    forms: AssembledGroup[],
+): string[] {
+    const lines: string[] = []
+    const isOverride = node.source === 'override'
+    if (isOverride) {
+        // Variant child kind discrimination — the kind on the variant child is
+        // the parse-tree truth.
+        for (const form of forms) {
+            const childKind = `${node.kind}_${form.name}`
+            lines.push(`  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === '${childKind}') return ${form.rawFactoryName!}(config as T.${form.typeName}Config);`)
+        }
+        const fallback = forms[0]!
+        lines.push(`  return ${fallback.rawFactoryName!}(config as T.${fallback.typeName}Config);`)
+        return lines
+    }
+
+    // `source='promoted'`: heterogeneous field sets. Discriminate by
+    // field-presence, most-specific first.
+    const sorted = [...forms].sort((a, b) => b.fields.length - a.fields.length)
+    const fallback = sorted[sorted.length - 1]!
+    const seenFieldSets = new Set<string>()
+    for (const form of sorted) {
+        if (form === fallback) continue
+        if (form.fields.length === 0) continue
+        const key = [...form.fields.map(f => f.propertyName)].sort().join(',')
+        if (seenFieldSets.has(key)) continue
+        seenFieldSets.add(key)
+        const checks = form.fields
+            .map(f => `'${f.propertyName}' in config`)
+            .join(' && ')
+        lines.push(`  if (config && ${checks}) return ${form.rawFactoryName!}(config as T.${form.typeName}Config);`)
+    }
+    lines.push(`  return ${fallback.rawFactoryName!}(config as T.${fallback.typeName}Config);`)
     return lines
 }
 
