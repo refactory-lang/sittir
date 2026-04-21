@@ -467,6 +467,8 @@ function resolvePatch(
         return resolveFieldPlaceholder(patch, originalMember, precStack)
     }
     // Two-arg field passed through directly — accept either case.
+    // Tag `source: 'override'` so derive-overrides-json and template
+    // walker recognize it as user-authored.
     if (isFieldLike(patch)) {
         return { ...patch, source: 'override' as const } as unknown as RuntimeRule
     }
@@ -540,10 +542,8 @@ function resolveFieldPlaceholder(
     if (typeof native !== 'function') {
         throw new Error('transform: no global field() found — patches that use the one-arg field() form require a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)')
     }
-    // Mark as override so derive-overrides-json sees it. Spread to
-    // preserve whatever shape (lowercase/uppercase) the native produced.
-    const reconstructed = native(patch.name, content) as object
-    return { ...reconstructed, source: 'override' as const } as unknown as RuntimeRule
+    const result = native(patch.name, content) as object
+    return { ...result, source: 'override' as const } as unknown as RuntimeRule
 }
 
 /**

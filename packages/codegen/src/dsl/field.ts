@@ -67,7 +67,7 @@ export function field(name: string, content?: Input): FieldPlaceholder | FieldLi
     // arrives in (plain JS strings become STRING rules, etc.). If the
     // normalized inner content is a bare STRING, swap for a SYMBOL
     // reference to a synthesized hidden rule so tree-sitter preserves
-    // the FIELD wrapper. Always tag `source: 'override'` — user-authored
+    // the FIELD wrapper. Tag `source: 'override'` — user-authored
     // field() calls are by definition override-sourced, and the tag
     // lets derive-overrides-json skip them from the runtime routing map.
     const initial = native(name, content) as FieldLike & { content?: unknown }

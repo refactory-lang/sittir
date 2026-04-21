@@ -1500,23 +1500,12 @@ export function wrap_FieldIdentifier(data: _NodeData, tree: TreeHandle): Wrapped
   } as unknown as WrappedNode<_FieldIdentifier>;
 }
 
-export function wrapArrayExpressionSemi(data: _NodeData, tree: TreeHandle): WrappedNode<ArrayExpressionSemi> {
+export function wrap_ClosureExpressionExpr(data: _NodeData, tree: TreeHandle): WrappedNode<_ClosureExpressionExpr> {
   return {
     ...data,
-    get attributes() { return drillInAll(data.$fields?.['attributes'], tree); },
-    get elements() { return drillIn(data.$fields?.['elements'], tree); },
-    get length() { return drillIn(data.$fields?.['length'], tree); },
+    get body() { return drillIn(data.$fields?.['body'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<ArrayExpressionSemi>;
-}
-
-export function wrapArrayExpressionList(data: _NodeData, tree: TreeHandle): WrappedNode<ArrayExpressionList> {
-  return {
-    ...data,
-    get attributes() { return drillInAll(data.$fields?.['attributes'], tree); },
-    get elements() { return drillInAll(data.$fields?.['elements'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<ArrayExpressionList>;
+  } as unknown as WrappedNode<_ClosureExpressionExpr>;
 }
 
 export function wrap_FieldPatternShorthand(data: _NodeData, tree: TreeHandle): WrappedNode<_FieldPatternShorthand> {
@@ -1579,20 +1568,31 @@ export function wrap_ModItemInline(data: _NodeData, tree: TreeHandle): WrappedNo
   } as unknown as WrappedNode<_ModItemInline>;
 }
 
-export function wrap_ClosureExpressionExpr(data: _NodeData, tree: TreeHandle): WrappedNode<_ClosureExpressionExpr> {
-  return {
-    ...data,
-    get body() { return drillIn(data.$fields?.['body'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<_ClosureExpressionExpr>;
-}
-
 export function wrap_RangeExpressionBare(data: _NodeData, tree: TreeHandle): WrappedNode<_RangeExpressionBare> {
   return {
     ...data,
     get operator() { return drillIn(data.$fields?.['operator'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<_RangeExpressionBare>;
+}
+
+export function wrapArrayExpressionSemi(data: _NodeData, tree: TreeHandle): WrappedNode<ArrayExpressionSemi> {
+  return {
+    ...data,
+    get attributes() { return drillInAll(data.$fields?.['attributes'], tree); },
+    get elements() { return drillIn(data.$fields?.['elements'], tree); },
+    get length() { return drillIn(data.$fields?.['length'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ArrayExpressionSemi>;
+}
+
+export function wrapArrayExpressionList(data: _NodeData, tree: TreeHandle): WrappedNode<ArrayExpressionList> {
+  return {
+    ...data,
+    get attributes() { return drillInAll(data.$fields?.['attributes'], tree); },
+    get elements() { return drillInAll(data.$fields?.['elements'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ArrayExpressionList>;
 }
 
 export function wrapMacroDefinitionParen(data: _NodeData, tree: TreeHandle): WrappedNode<MacroDefinitionParen> {
@@ -1938,9 +1938,10 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_kw_default': (d) => d,
   '_kw_const': (d) => d,
   '_kw_unsafe': (d) => d,
-  'array_expression_semi': (d, t) => wrapArrayExpressionSemi(d, t),
-  'array_expression_list': (d, t) => wrapArrayExpressionList(d, t),
-  '_kw_move': (d) => d,
+  '_wildcard_pattern': (d) => d,
+  '_array_expression_semi': (d) => d,
+  '_array_expression_list': (d) => d,
+  '_closure_expression_expr': (d, t) => wrap_ClosureExpressionExpr(d, t),
   '_field_pattern_shorthand': (d, t) => wrap_FieldPatternShorthand(d, t),
   '_function_type_trait_form': (d, t) => wrap_FunctionTypeTraitForm(d, t),
   '_function_type_fn_form': (d, t) => wrap_FunctionTypeFnForm(d, t),
@@ -1949,9 +1950,44 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_macro_definition_bracket': (d, t) => wrap_MacroDefinitionBracket(d, t),
   '_macro_definition_brace': (d, t) => wrap_MacroDefinitionBrace(d, t),
   '_mod_item_inline': (d, t) => wrap_ModItemInline(d, t),
-  '_closure_expression_expr': (d, t) => wrap_ClosureExpressionExpr(d, t),
-  '_wildcard_pattern': (d) => d,
   '_range_expression_bare': (d, t) => wrap_RangeExpressionBare(d, t),
+  '_kw_type_parameters': (d) => d,
+  '_kw_where_clause': (d) => d,
+  '_kw_block': (d) => d,
+  '_kw_move': (d) => d,
+  '_kw_attribute': (d) => d,
+  '_kw_label': (d) => d,
+  '_kw_left': (d) => d,
+  '_kw_right': (d) => d,
+  '_kw_expression': (d) => d,
+  '_kw_identifier': (d) => d,
+  '_kw_pattern': (d) => d,
+  '_kw_static': (d) => d,
+  '_kw_visibility_modifier': (d) => d,
+  '_kw_crate': (d) => d,
+  '_kw_string_literal': (d) => d,
+  '_kw_mutable_specifier': (d) => d,
+  '_kw_extern_modifier': (d) => d,
+  '_kw_function_modifiers': (d) => d,
+  '_kw_for_lifetimes': (d) => d,
+  '_kw_object': (d) => d,
+  '_kw_index': (d) => d,
+  '_kw_token_tree': (d) => d,
+  '_kw_value': (d) => d,
+  '_kw_attributes': (d) => d,
+  '_kw_raw_string_literal_start': (d) => d,
+  '_kw_string_content': (d) => d,
+  '_kw_raw_string_literal_end': (d) => d,
+  '_kw_lifetime': (d) => d,
+  '_kw_self': (d) => d,
+  '_kw_shebang': (d) => d,
+  '_kw_statements': (d) => d,
+  '_kw_elements': (d) => d,
+  '_kw_trailing_where_clause': (d) => d,
+  '_kw_operand': (d) => d,
+  '_kw_path': (d) => d,
+  'array_expression_semi': (d, t) => wrapArrayExpressionSemi(d, t),
+  'array_expression_list': (d, t) => wrapArrayExpressionList(d, t),
   '_kw_for': (d) => d,
   'string_content': (d) => d,
   'raw_string_literal_content': (d) => d,

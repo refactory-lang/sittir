@@ -296,6 +296,11 @@ function variant(name) {
   return { __sittirPlaceholder: "variant", name };
 }
 
+// packages/codegen/src/dsl/alias.ts
+function isAliasPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
+}
+
 // packages/codegen/src/dsl/wire.ts
 var currentContext = null;
 function wireRegisterSyntheticRule(name, content) {
@@ -332,9 +337,13 @@ function wire(config) {
     currentRuleKind: null
   };
   const polymorphs = config.polymorphs ?? {};
+  const transforms = config.transforms ?? {};
   const outRules = { ...config.rules };
+  absorbModuleLoadSyntheticRules(outRules);
   composeOrSynthesizePolymorphParents(outRules, polymorphs);
+  composeOrSynthesizeTransformParents(outRules, transforms);
   injectHiddenRulePlaceholders(outRules, polymorphs, context);
+  injectTransformHiddenRulePlaceholders(outRules, transforms, context);
   wrapAllRuleFns(outRules, context);
   const conflicts = wrapConflictsCallback(config.conflicts, context);
   const wired = {
@@ -371,6 +380,53 @@ function injectHiddenRulePlaceholders(rules, polymorphs, context) {
       const hiddenName = `_${parent}_${suffix}`;
       rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
     }
+  }
+}
+function absorbModuleLoadSyntheticRules(rules) {
+  const drained = drainSyntheticRules();
+  for (const [name, body] of drained) {
+    if (name in rules) continue;
+    rules[name] = () => body;
+  }
+}
+function composeOrSynthesizeTransformParents(rules, transforms) {
+  for (const [kind, entry] of Object.entries(transforms)) {
+    const patchSets = Array.isArray(entry) ? entry : [entry];
+    const userFn = rules[kind];
+    rules[kind] = buildTransformParentFn(patchSets, userFn);
+  }
+}
+function buildTransformParentFn(patchSets, userFn) {
+  return function wiredTransformParent($, original) {
+    const base2 = userFn ? userFn.call(this, $, original) : original;
+    return transform(base2, ...patchSets);
+  };
+}
+function injectTransformHiddenRulePlaceholders(rules, transforms, context) {
+  for (const [kind, entry] of Object.entries(transforms)) {
+    const patchSets = Array.isArray(entry) ? entry : [entry];
+    for (const patchMap of patchSets) {
+      for (const value of Object.values(patchMap)) {
+        registerHiddenRuleForPlaceholder(value, kind, rules, context);
+      }
+    }
+  }
+}
+function registerHiddenRuleForPlaceholder(value, parentKind, rules, context) {
+  if (isFieldPlaceholder(value)) {
+    const hiddenName = `_kw_${value.name}`;
+    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+    return;
+  }
+  if (isVariantPlaceholder(value)) {
+    const hiddenName = `_${parentKind}_${value.name}`;
+    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+    return;
+  }
+  if (isAliasPlaceholder(value)) {
+    const hiddenName = `_${value.name}`;
+    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+    return;
   }
 }
 function makeDeferredContentFn(context, hiddenName) {
@@ -715,11 +771,6 @@ function field(name, content) {
   return { ...initial, source: "override" };
 }
 
-// packages/codegen/src/dsl/alias.ts
-function isAliasPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
-}
-
 // packages/codegen/src/dsl/transform.ts
 function transform(original, ...patchSets) {
   let rule = original;
@@ -926,8 +977,8 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
   if (typeof native !== "function") {
     throw new Error("transform: no global field() found \u2014 patches that use the one-arg field() form require a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)");
   }
-  const reconstructed = native(patch.name, content);
-  return { ...reconstructed, source: "override" };
+  const result = native(patch.name, content);
+  return { ...result, source: "override" };
 }
 function resolveAliasPlaceholder(patch, originalMember, precStack) {
   const hiddenName = "_" + patch.name;
@@ -955,40 +1006,55 @@ function role(symbol, roleName) {
 }
 
 // packages/codegen/src/dsl/enrich.ts
-function buildEnrichOverrides(base2) {
-  const rulesBag = ("grammar" in base2 ? base2.grammar?.rules : base2.rules) ?? {};
-  const enrichOverrides = {};
-  for (const name of Object.keys(rulesBag)) {
-    enrichOverrides[name] = function(_$, original) {
-      return applyEnrichPasses(name, original);
-    };
-  }
-  return enrichOverrides;
-}
 function enrich(base2) {
   if (!base2 || typeof base2 !== "object") {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
   }
-  const enrichOverrides = buildEnrichOverrides(base2);
-  Object.defineProperty(base2, "__enrichOverrides__", {
-    value: enrichOverrides,
-    enumerable: false,
-    configurable: true,
-    writable: false
-  });
-  return base2;
+  const hasWrapper = "grammar" in base2;
+  const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
+  if (!rulesBag) return base2;
+  const kwRules = {};
+  const enrichedRules = {};
+  for (const name of Object.keys(rulesBag)) {
+    const rule = rulesBag[name];
+    enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules) : rule;
+  }
+  const mergedRules = { ...enrichedRules, ...kwRules };
+  if (hasWrapper) {
+    return { ...base2, grammar: { ...base2.grammar, rules: mergedRules } };
+  }
+  return { ...base2, rules: mergedRules };
 }
-function applyKeywordPasses(ruleName, rule) {
+function applyEnrichPasses(ruleName, rule, kwRules) {
   let r = rule;
-  r = applyBareKeywordViaTransform(ruleName, r);
-  r = applyOptionalKeywordViaTransform(ruleName, r);
+  r = applyKindToName(ruleName, r);
+  r = applyOptionalKeyword(ruleName, r, kwRules);
   return r;
 }
-function applyEnrichPasses(ruleName, rule) {
-  let r = rule;
-  r = applyKindToNameViaTransform(ruleName, r);
-  r = applyKeywordPasses(ruleName, r);
-  return r;
+function detectCase(referenceRule) {
+  const t = referenceRule?.type ?? "";
+  return t.length > 0 && t === t.toUpperCase() ? "upper" : "lower";
+}
+function makeField(referenceRule, name, content) {
+  return {
+    type: detectCase(referenceRule) === "upper" ? "FIELD" : "field",
+    name,
+    content,
+    source: "inferred"
+  };
+}
+function makeSymbol(referenceRule, name) {
+  return {
+    type: detectCase(referenceRule) === "upper" ? "SYMBOL" : "symbol",
+    name
+  };
+}
+function registerKwRule(hostRule, stringLiteral, keyword, kwRules) {
+  const hiddenName = `_kw_${keyword}`;
+  if (!(hiddenName in kwRules)) {
+    kwRules[hiddenName] = stringLiteral;
+  }
+  return makeSymbol(hostRule, hiddenName);
 }
 function normalizeMember(m) {
   if (typeof m === "string") return { type: "STRING", value: m };
@@ -1015,44 +1081,6 @@ function collectFieldNamesRuntime(rule) {
   }
   return names;
 }
-function applyKindToNameViaTransform(ruleName, rule) {
-  if (!isSeqType(rule.type)) return rule;
-  const raw = rule.members;
-  const members = raw.map(normalizeMember);
-  const kindCounts = /* @__PURE__ */ new Map();
-  for (const m of members) {
-    if (isSymbolType(m.type) && typeof m.name === "string") {
-      kindCounts.set(m.name, (kindCounts.get(m.name) ?? 0) + 1);
-    }
-  }
-  const existing = collectFieldNamesRuntime(rule);
-  const patches = {};
-  for (let i = 0; i < members.length; i++) {
-    const m = members[i];
-    if (!isSymbolType(m.type) || typeof m.name !== "string") continue;
-    const k = m.name;
-    if (k.startsWith("_")) continue;
-    if ((kindCounts.get(k) ?? 0) > 1) continue;
-    if (existing.has(k)) {
-      reportSkip("kind-to-name", ruleName, `field '${k}' already exists`);
-      continue;
-    }
-    existing.add(k);
-    patches[String(i)] = field(k);
-  }
-  if (Object.keys(patches).length === 0) return rule;
-  return transform(rule, patches);
-}
-function collectOptionalKeywordPatchesFromRule(ruleName, rule) {
-  const patches = {};
-  collectOptionalKeywordPatches(ruleName, rule, "", patches);
-  return patches;
-}
-function applyOptionalKeywordViaTransform(ruleName, rule) {
-  const patches = collectOptionalKeywordPatchesFromRule(ruleName, rule);
-  if (Object.keys(patches).length === 0) return rule;
-  return transform(rule, patches);
-}
 function peelOptional(rule) {
   if (isOptionalType(rule.type)) {
     return { inner: rule.content, isOptional: true };
@@ -1069,80 +1097,6 @@ function peelOptional(rule) {
   }
   return { inner: rule, isOptional: false };
 }
-function resolveInnerPathForOptionalMember(m) {
-  if (isOptionalType(m.type)) {
-    return "0";
-  }
-  const cm = m.members;
-  const strIdx = cm.findIndex((x) => {
-    const n = normalizeMember(x);
-    return n.type !== "BLANK" && n.type !== "blank";
-  });
-  return String(strIdx);
-}
-function collectOptionalKeywordPatches(ruleName, rule, prefix, patches) {
-  if (isSeqType(rule.type)) {
-    const raw = rule.members;
-    const claimed = collectFieldNamesRuntime(rule);
-    for (let i = 0; i < raw.length; i++) {
-      const m = normalizeMember(raw[i]);
-      const peeled = peelOptional(m);
-      if (peeled.isOptional) {
-        const innerN = normalizeMember(peeled.inner);
-        if (isStringType(innerN.type)) {
-          const kw = innerN.value;
-          if (typeof kw === "string" && isIdentifierShaped(kw)) {
-            if (claimed.has(kw)) {
-              reportSkip("optional-keyword-prefix", ruleName, `field '${kw}' already exists`);
-              continue;
-            }
-            claimed.add(kw);
-            const innerPath = resolveInnerPathForOptionalMember(m);
-            const fullPath = prefix ? `${prefix}/${i}/${innerPath}` : `${i}/${innerPath}`;
-            patches[fullPath] = field(kw);
-            continue;
-          }
-        }
-      }
-      const childPrefix = prefix ? `${prefix}/${i}` : `${i}`;
-      collectOptionalKeywordPatches(ruleName, m, childPrefix, patches);
-    }
-    return;
-  }
-  if (isChoiceType(rule.type)) {
-    const raw = rule.members;
-    for (let i = 0; i < raw.length; i++) {
-      const childPrefix = prefix ? `${prefix}/${i}` : `${i}`;
-      const m = normalizeMember(raw[i]);
-      collectOptionalKeywordPatches(ruleName, m, childPrefix, patches);
-    }
-    return;
-  }
-  if (isOptionalType(rule.type) || isRepeatType(rule.type) || isFieldType(rule.type)) {
-    const inner = normalizeMember(rule.content);
-    const childPrefix = prefix ? `${prefix}/0` : `0`;
-    collectOptionalKeywordPatches(ruleName, inner, childPrefix, patches);
-  }
-}
-function applyBareKeywordViaTransform(ruleName, rule) {
-  if (!isSeqType(rule.type)) return rule;
-  const raw = rule.members;
-  const first = raw[0];
-  if (first === void 0) return rule;
-  const normFirst = normalizeMember(first);
-  if (!isStringType(normFirst.type)) return rule;
-  const kw = normFirst.value;
-  if (typeof kw !== "string" || !isIdentifierShaped(kw)) return rule;
-  const existing = collectFieldNamesRuntime(rule);
-  if (existing.has(kw)) {
-    reportSkip("bare-keyword-prefix", ruleName, `field '${kw}' already exists`);
-    return rule;
-  }
-  return transform(
-    rule,
-    { 0: field(kw) }
-  );
-}
 function isIdentifierShaped(value) {
   return /^[A-Za-z_][A-Za-z0-9_]*$/.test(value);
 }
@@ -1150,6 +1104,104 @@ function reportSkip(pass, ruleName, reason) {
   if (process.env.SITTIR_QUIET) return;
   process.stderr.write(`enrich: skipped ${pass} on ${ruleName} (${reason})
 `);
+}
+function applyKindToName(ruleName, rule) {
+  if (!isSeqType(rule.type)) return rule;
+  const members = rule.members;
+  const kindCounts = /* @__PURE__ */ new Map();
+  for (const m of members) {
+    if (isSymbolType(m.type) && typeof m.name === "string") {
+      const n = m.name;
+      kindCounts.set(n, (kindCounts.get(n) ?? 0) + 1);
+    }
+  }
+  const existing = collectFieldNamesRuntime(rule);
+  let changed = false;
+  const newMembers = members.map((m) => {
+    if (!isSymbolType(m.type) || typeof m.name !== "string") return m;
+    const k = m.name;
+    if (k.startsWith("_")) return m;
+    if ((kindCounts.get(k) ?? 0) > 1) return m;
+    if (existing.has(k)) {
+      reportSkip("kind-to-name", ruleName, `field '${k}' already exists`);
+      return m;
+    }
+    existing.add(k);
+    changed = true;
+    return makeField(rule, k, m);
+  });
+  if (!changed) return rule;
+  return { ...rule, members: newMembers };
+}
+function applyOptionalKeyword(ruleName, rule, kwRules) {
+  const claimed = isSeqType(rule.type) ? collectFieldNamesRuntime(rule) : /* @__PURE__ */ new Set();
+  return walkOptionalKeyword(ruleName, rule, claimed, kwRules) ?? rule;
+}
+function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules) {
+  if (isSeqType(rule.type)) {
+    const members = rule.members;
+    let changed = false;
+    const newMembers = members.map((m) => {
+      const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules);
+      if (out === null) return m;
+      changed = true;
+      return out;
+    });
+    return changed ? { ...rule, members: newMembers } : null;
+  }
+  if (isChoiceType(rule.type)) {
+    const members = rule.members;
+    let changed = false;
+    const newMembers = members.map((m) => {
+      const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules);
+      if (out === null) return m;
+      changed = true;
+      return out;
+    });
+    return changed ? { ...rule, members: newMembers } : null;
+  }
+  const peeled = peelOptional(rule);
+  if (peeled.isOptional) {
+    const replacement = tryPromoteInnerKeyword(ruleName, rule, peeled.inner, claimedAtSeqLevel, kwRules);
+    if (replacement !== null) return replacement;
+    const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules);
+    if (innerRewritten !== null) {
+      return rebuildOptional(rule, innerRewritten);
+    }
+    return null;
+  }
+  if (isRepeatType(rule.type) || isFieldType(rule.type)) {
+    const content = rule.content;
+    const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules);
+    if (out === null) return null;
+    return { ...rule, content: out };
+  }
+  return null;
+}
+function tryPromoteInnerKeyword(ruleName, optionalRule, inner, claimed, kwRules) {
+  const innerNorm = normalizeMember(inner);
+  if (!isStringType(innerNorm.type)) return null;
+  const kw = innerNorm.value;
+  if (typeof kw !== "string" || !isIdentifierShaped(kw)) return null;
+  if (claimed.has(kw)) {
+    reportSkip("optional-keyword-prefix", ruleName, `field '${kw}' already exists`);
+    return null;
+  }
+  claimed.add(kw);
+  const symbolRef = registerKwRule(optionalRule, inner, kw, kwRules);
+  const fieldNode = makeField(optionalRule, kw, symbolRef);
+  return rebuildOptional(optionalRule, fieldNode);
+}
+function rebuildOptional(optionalRule, newInner) {
+  if (isOptionalType(optionalRule.type)) {
+    return { ...optionalRule, content: newInner };
+  }
+  const members = optionalRule.members;
+  const newMembers = members.map((m) => {
+    const t = m.type;
+    return t === "BLANK" || t === "blank" ? m : newInner;
+  });
+  return { ...optionalRule, members: newMembers };
 }
 
 // packages/codegen/src/dsl/index.ts
@@ -1169,179 +1221,175 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     role($._newline, "newline");
     return prev;
   },
-  rules: {
-    // assignment: nested-alias polymorph.
-    // alias('name') captures the choice branch content into a
-    // hidden rule _name and replaces with alias($._name, $.name).
-    assignment: ($, original) => transform(original, {
-      "1/0": variant("eq"),
-      "1/1": variant("type"),
-      "1/2": variant("typed")
-    }),
+  polymorphs: {
+    assignment: { "1/0": "eq", "1/1": "type", "1/2": "typed" }
+  },
+  transforms: {
     // as_pattern: 1 field(s)
-    as_pattern: ($, original) => transform(original, {
+    as_pattern: {
       0: field("expression")
       // expression | case_pattern | identifier [struct=0]
-    }),
+    },
     // await: 1 field(s)
-    await: ($, original) => transform(original, {
+    await: {
       1: field("primary_expression")
       // primary_expression [struct=0]
-    }),
+    },
     // chevron: 1 field(s)
-    chevron: ($, original) => transform(original, {
+    chevron: {
       1: field("expression")
       // expression [struct=0]
-    }),
+    },
     // class_pattern: 2 field(s)
-    class_pattern: ($, original) => transform(original, {
+    class_pattern: {
       0: field("dotted_name"),
       // dotted_name [struct=0]
       2: field("arguments")
       // case_pattern [struct=1]
-    }),
+    },
     // comparison_operator: 2 field(s)
-    comparison_operator: ($, original) => transform(original, {
+    comparison_operator: {
       0: field("left"),
       // primary_expression [struct=0]
       1: field("comparators")
       // primary_expression [struct=1]
-    }),
+    },
     // complex_pattern: 2 field(s)
-    complex_pattern: ($, original) => transform(original, {
+    complex_pattern: {
       0: field("real"),
       // integer | float [struct=0]
       1: field("imaginary")
       // integer | float [struct=1]
-    }),
+    },
     // conditional_expression: 3 field(s)
-    conditional_expression: ($, original) => transform(original, {
+    conditional_expression: {
       0: field("body"),
       // expression [struct=0]
       2: field("condition"),
       // expression [struct=1]
       4: field("alternative")
       // expression [struct=2]
-    }),
+    },
     // constrained_type: 2 field(s)
-    constrained_type: ($, original) => transform(original, {
+    constrained_type: {
       0: field("base_type"),
       // type [struct=0]
       2: field("constraint")
       // type [struct=1]
-    }),
+    },
     // decorator: 2 field(s)
-    decorator: ($, original) => transform(original, {
+    decorator: {
       1: field("expression"),
       // expression [struct=0]
       2: field("newline")
       //  [struct=1]
-    }),
+    },
     // dictionary_splat: 1 field(s)
-    dictionary_splat: ($, original) => transform(original, {
+    dictionary_splat: {
       1: field("expression")
       // expression [struct=0]
-    }),
-    // finally_clause: 1 field(s)
-    finally_clause: ($, original) => transform(original, {
-      2: field("block")
-      // block [struct=0]
-    }),
-    // generic_type: 2 field(s)
-    generic_type: ($, original) => transform(original, {
-      0: field("identifier"),
-      // identifier [struct=0]
-      1: field("type_parameter")
-      // type_parameter [struct=1]
-    }),
-    // if_clause: 1 field(s)
-    if_clause: ($, original) => transform(original, {
-      1: field("expression")
-      // expression [struct=0]
-    }),
+    },
     // exec_statement: grammar is seq('exec', code, optional(seq('in', exprs)))
     // Template walker emits the `in` keyword as a literal at top level,
     // which surfaces in rendering even when the optional(seq(...))
     // didn't match. Wrap the optional as field('in_clause') so the
     // whole clause (`in` + exprs) renders only when present.
-    exec_statement: ($, original) => transform(original, {
+    exec_statement: {
       2: field("in_clause")
-    }),
+    },
+    // finally_clause: 1 field(s)
+    finally_clause: {
+      2: field("block")
+      // block [struct=0]
+    },
+    // generic_type: 2 field(s)
+    generic_type: {
+      0: field("identifier"),
+      // identifier [struct=0]
+      1: field("type_parameter")
+      // type_parameter [struct=1]
+    },
+    // if_clause: 1 field(s)
+    if_clause: {
+      1: field("expression")
+      // expression [struct=0]
+    },
     // import_from_statement: 1 field(s)
-    import_from_statement: ($, original) => transform(original, {
+    import_from_statement: {
       3: field("wildcard_import")
       // wildcard_import [struct=0]
-    }),
+    },
     // keyword_pattern: 2 field(s)
-    keyword_pattern: ($, original) => transform(original, {
+    keyword_pattern: {
       0: field("identifier"),
       // identifier | class_pattern | complex_pattern | concatenated_string | dict_pattern | dotted_name | false | float | integer | list_pattern | none | splat_pattern | string | true | tuple_pattern | union_pattern [struct=0]
       2: field("simple_pattern")
       // _simple_pattern | class_pattern | complex_pattern | concatenated_string | dict_pattern | dotted_name | false | float | integer | list_pattern | none | splat_pattern | string | true | tuple_pattern | union_pattern [struct=1]
-    }),
+    },
     // list_splat: 1 field(s)
-    list_splat: ($, original) => transform(original, {
+    list_splat: {
       1: field("expression")
       // expression | attribute | identifier | subscript [struct=0]
-    }),
+    },
     // member_type: 2 field(s)
-    member_type: ($, original) => transform(original, {
+    member_type: {
       0: field("base_type"),
       // type [struct=0]
       2: field("identifier")
       // identifier [struct=1]
-    }),
+    },
     // relative_import: 2 field(s)
-    relative_import: ($, original) => transform(original, {
+    relative_import: {
       0: field("import_prefix"),
       // import_prefix [struct=0]
       1: field("dotted_name")
       // dotted_name [struct=1]
-    }),
+    },
     // slice: 3 field(s)
-    slice: ($, original) => transform(original, {
+    slice: {
       0: field("start"),
       // expression [struct=0]
       2: field("stop"),
       // expression [struct=1]
       3: field("step")
       // expression [struct=2]
-    }),
+    },
     // splat_pattern: 1 field(s)
-    splat_pattern: ($, original) => transform(original, {
+    splat_pattern: {
       0: field("identifier")
       // identifier [struct=0]
-    }),
+    },
     // splat_type: 1 field(s)
-    splat_type: ($, original) => transform(original, {
+    splat_type: {
       0: field("identifier")
       // identifier [struct=0]
-    }),
+    },
     // string: 3 field(s)
-    string: ($, original) => transform(original, {
+    string: {
       0: field("string_start"),
       // string_start [struct=0]
       1: field("content"),
       // interpolation | string_content [struct=1]
       2: field("string_end")
       // string_end [struct=2]
-    }),
+    },
     // try_statement: 3 field(s)
-    try_statement: ($, original) => transform(original, {
+    try_statement: {
       3: field("except_clauses"),
       // except_clause [struct=0]
       4: field("else_clause"),
       // else_clause [struct=1]
       5: field("finally_clause")
       // finally_clause [struct=2]
-    }),
+    },
     // union_type: 2 field(s)
-    union_type: ($, original) => transform(original, {
+    union_type: {
       0: field("left"),
       // type [struct=0]
       2: field("right")
       // type [struct=1]
-    })
-  }
+    }
+  },
+  rules: {}
 }));
 if (module.exports && module.exports.default) module.exports = module.exports.default;

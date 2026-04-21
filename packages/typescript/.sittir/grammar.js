@@ -280,6 +280,11 @@ function variant(name) {
   return { __sittirPlaceholder: "variant", name };
 }
 
+// packages/codegen/src/dsl/alias.ts
+function isAliasPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
+}
+
 // packages/codegen/src/dsl/wire.ts
 var currentContext = null;
 function wireRegisterSyntheticRule(name, content) {
@@ -316,9 +321,13 @@ function wire(config) {
     currentRuleKind: null
   };
   const polymorphs = config.polymorphs ?? {};
+  const transforms = config.transforms ?? {};
   const outRules = { ...config.rules };
+  absorbModuleLoadSyntheticRules(outRules);
   composeOrSynthesizePolymorphParents(outRules, polymorphs);
+  composeOrSynthesizeTransformParents(outRules, transforms);
   injectHiddenRulePlaceholders(outRules, polymorphs, context);
+  injectTransformHiddenRulePlaceholders(outRules, transforms, context);
   wrapAllRuleFns(outRules, context);
   const conflicts = wrapConflictsCallback(config.conflicts, context);
   const wired = {
@@ -355,6 +364,53 @@ function injectHiddenRulePlaceholders(rules, polymorphs, context) {
       const hiddenName = `_${parent}_${suffix}`;
       rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
     }
+  }
+}
+function absorbModuleLoadSyntheticRules(rules) {
+  const drained = drainSyntheticRules();
+  for (const [name, body] of drained) {
+    if (name in rules) continue;
+    rules[name] = () => body;
+  }
+}
+function composeOrSynthesizeTransformParents(rules, transforms) {
+  for (const [kind, entry] of Object.entries(transforms)) {
+    const patchSets = Array.isArray(entry) ? entry : [entry];
+    const userFn = rules[kind];
+    rules[kind] = buildTransformParentFn(patchSets, userFn);
+  }
+}
+function buildTransformParentFn(patchSets, userFn) {
+  return function wiredTransformParent($, original) {
+    const base2 = userFn ? userFn.call(this, $, original) : original;
+    return transform(base2, ...patchSets);
+  };
+}
+function injectTransformHiddenRulePlaceholders(rules, transforms, context) {
+  for (const [kind, entry] of Object.entries(transforms)) {
+    const patchSets = Array.isArray(entry) ? entry : [entry];
+    for (const patchMap of patchSets) {
+      for (const value of Object.values(patchMap)) {
+        registerHiddenRuleForPlaceholder(value, kind, rules, context);
+      }
+    }
+  }
+}
+function registerHiddenRuleForPlaceholder(value, parentKind, rules, context) {
+  if (isFieldPlaceholder(value)) {
+    const hiddenName = `_kw_${value.name}`;
+    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+    return;
+  }
+  if (isVariantPlaceholder(value)) {
+    const hiddenName = `_${parentKind}_${value.name}`;
+    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+    return;
+  }
+  if (isAliasPlaceholder(value)) {
+    const hiddenName = `_${value.name}`;
+    if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+    return;
   }
 }
 function makeDeferredContentFn(context, hiddenName) {
@@ -699,11 +755,6 @@ function field(name, content) {
   return { ...initial, source: "override" };
 }
 
-// packages/codegen/src/dsl/alias.ts
-function isAliasPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
-}
-
 // packages/codegen/src/dsl/transform.ts
 function transform(original, ...patchSets) {
   let rule = original;
@@ -910,8 +961,8 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
   if (typeof native !== "function") {
     throw new Error("transform: no global field() found \u2014 patches that use the one-arg field() form require a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)");
   }
-  const reconstructed = native(patch.name, content);
-  return { ...reconstructed, source: "override" };
+  const result = native(patch.name, content);
+  return { ...result, source: "override" };
 }
 function resolveAliasPlaceholder(patch, originalMember, precStack) {
   const hiddenName = "_" + patch.name;
@@ -919,40 +970,55 @@ function resolveAliasPlaceholder(patch, originalMember, precStack) {
 }
 
 // packages/codegen/src/dsl/enrich.ts
-function buildEnrichOverrides(base2) {
-  const rulesBag = ("grammar" in base2 ? base2.grammar?.rules : base2.rules) ?? {};
-  const enrichOverrides = {};
-  for (const name of Object.keys(rulesBag)) {
-    enrichOverrides[name] = function(_$, original) {
-      return applyEnrichPasses(name, original);
-    };
-  }
-  return enrichOverrides;
-}
 function enrich(base2) {
   if (!base2 || typeof base2 !== "object") {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
   }
-  const enrichOverrides = buildEnrichOverrides(base2);
-  Object.defineProperty(base2, "__enrichOverrides__", {
-    value: enrichOverrides,
-    enumerable: false,
-    configurable: true,
-    writable: false
-  });
-  return base2;
+  const hasWrapper = "grammar" in base2;
+  const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
+  if (!rulesBag) return base2;
+  const kwRules = {};
+  const enrichedRules = {};
+  for (const name of Object.keys(rulesBag)) {
+    const rule = rulesBag[name];
+    enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules) : rule;
+  }
+  const mergedRules = { ...enrichedRules, ...kwRules };
+  if (hasWrapper) {
+    return { ...base2, grammar: { ...base2.grammar, rules: mergedRules } };
+  }
+  return { ...base2, rules: mergedRules };
 }
-function applyKeywordPasses(ruleName, rule) {
+function applyEnrichPasses(ruleName, rule, kwRules) {
   let r = rule;
-  r = applyBareKeywordViaTransform(ruleName, r);
-  r = applyOptionalKeywordViaTransform(ruleName, r);
+  r = applyKindToName(ruleName, r);
+  r = applyOptionalKeyword(ruleName, r, kwRules);
   return r;
 }
-function applyEnrichPasses(ruleName, rule) {
-  let r = rule;
-  r = applyKindToNameViaTransform(ruleName, r);
-  r = applyKeywordPasses(ruleName, r);
-  return r;
+function detectCase(referenceRule) {
+  const t = referenceRule?.type ?? "";
+  return t.length > 0 && t === t.toUpperCase() ? "upper" : "lower";
+}
+function makeField(referenceRule, name, content) {
+  return {
+    type: detectCase(referenceRule) === "upper" ? "FIELD" : "field",
+    name,
+    content,
+    source: "inferred"
+  };
+}
+function makeSymbol(referenceRule, name) {
+  return {
+    type: detectCase(referenceRule) === "upper" ? "SYMBOL" : "symbol",
+    name
+  };
+}
+function registerKwRule(hostRule, stringLiteral, keyword, kwRules) {
+  const hiddenName = `_kw_${keyword}`;
+  if (!(hiddenName in kwRules)) {
+    kwRules[hiddenName] = stringLiteral;
+  }
+  return makeSymbol(hostRule, hiddenName);
 }
 function normalizeMember(m) {
   if (typeof m === "string") return { type: "STRING", value: m };
@@ -979,44 +1045,6 @@ function collectFieldNamesRuntime(rule) {
   }
   return names;
 }
-function applyKindToNameViaTransform(ruleName, rule) {
-  if (!isSeqType(rule.type)) return rule;
-  const raw = rule.members;
-  const members = raw.map(normalizeMember);
-  const kindCounts = /* @__PURE__ */ new Map();
-  for (const m of members) {
-    if (isSymbolType(m.type) && typeof m.name === "string") {
-      kindCounts.set(m.name, (kindCounts.get(m.name) ?? 0) + 1);
-    }
-  }
-  const existing = collectFieldNamesRuntime(rule);
-  const patches = {};
-  for (let i = 0; i < members.length; i++) {
-    const m = members[i];
-    if (!isSymbolType(m.type) || typeof m.name !== "string") continue;
-    const k = m.name;
-    if (k.startsWith("_")) continue;
-    if ((kindCounts.get(k) ?? 0) > 1) continue;
-    if (existing.has(k)) {
-      reportSkip("kind-to-name", ruleName, `field '${k}' already exists`);
-      continue;
-    }
-    existing.add(k);
-    patches[String(i)] = field(k);
-  }
-  if (Object.keys(patches).length === 0) return rule;
-  return transform(rule, patches);
-}
-function collectOptionalKeywordPatchesFromRule(ruleName, rule) {
-  const patches = {};
-  collectOptionalKeywordPatches(ruleName, rule, "", patches);
-  return patches;
-}
-function applyOptionalKeywordViaTransform(ruleName, rule) {
-  const patches = collectOptionalKeywordPatchesFromRule(ruleName, rule);
-  if (Object.keys(patches).length === 0) return rule;
-  return transform(rule, patches);
-}
 function peelOptional(rule) {
   if (isOptionalType(rule.type)) {
     return { inner: rule.content, isOptional: true };
@@ -1033,80 +1061,6 @@ function peelOptional(rule) {
   }
   return { inner: rule, isOptional: false };
 }
-function resolveInnerPathForOptionalMember(m) {
-  if (isOptionalType(m.type)) {
-    return "0";
-  }
-  const cm = m.members;
-  const strIdx = cm.findIndex((x) => {
-    const n = normalizeMember(x);
-    return n.type !== "BLANK" && n.type !== "blank";
-  });
-  return String(strIdx);
-}
-function collectOptionalKeywordPatches(ruleName, rule, prefix, patches) {
-  if (isSeqType(rule.type)) {
-    const raw = rule.members;
-    const claimed = collectFieldNamesRuntime(rule);
-    for (let i = 0; i < raw.length; i++) {
-      const m = normalizeMember(raw[i]);
-      const peeled = peelOptional(m);
-      if (peeled.isOptional) {
-        const innerN = normalizeMember(peeled.inner);
-        if (isStringType(innerN.type)) {
-          const kw = innerN.value;
-          if (typeof kw === "string" && isIdentifierShaped(kw)) {
-            if (claimed.has(kw)) {
-              reportSkip("optional-keyword-prefix", ruleName, `field '${kw}' already exists`);
-              continue;
-            }
-            claimed.add(kw);
-            const innerPath = resolveInnerPathForOptionalMember(m);
-            const fullPath = prefix ? `${prefix}/${i}/${innerPath}` : `${i}/${innerPath}`;
-            patches[fullPath] = field(kw);
-            continue;
-          }
-        }
-      }
-      const childPrefix = prefix ? `${prefix}/${i}` : `${i}`;
-      collectOptionalKeywordPatches(ruleName, m, childPrefix, patches);
-    }
-    return;
-  }
-  if (isChoiceType(rule.type)) {
-    const raw = rule.members;
-    for (let i = 0; i < raw.length; i++) {
-      const childPrefix = prefix ? `${prefix}/${i}` : `${i}`;
-      const m = normalizeMember(raw[i]);
-      collectOptionalKeywordPatches(ruleName, m, childPrefix, patches);
-    }
-    return;
-  }
-  if (isOptionalType(rule.type) || isRepeatType(rule.type) || isFieldType(rule.type)) {
-    const inner = normalizeMember(rule.content);
-    const childPrefix = prefix ? `${prefix}/0` : `0`;
-    collectOptionalKeywordPatches(ruleName, inner, childPrefix, patches);
-  }
-}
-function applyBareKeywordViaTransform(ruleName, rule) {
-  if (!isSeqType(rule.type)) return rule;
-  const raw = rule.members;
-  const first = raw[0];
-  if (first === void 0) return rule;
-  const normFirst = normalizeMember(first);
-  if (!isStringType(normFirst.type)) return rule;
-  const kw = normFirst.value;
-  if (typeof kw !== "string" || !isIdentifierShaped(kw)) return rule;
-  const existing = collectFieldNamesRuntime(rule);
-  if (existing.has(kw)) {
-    reportSkip("bare-keyword-prefix", ruleName, `field '${kw}' already exists`);
-    return rule;
-  }
-  return transform(
-    rule,
-    { 0: field(kw) }
-  );
-}
 function isIdentifierShaped(value) {
   return /^[A-Za-z_][A-Za-z0-9_]*$/.test(value);
 }
@@ -1115,6 +1069,104 @@ function reportSkip(pass, ruleName, reason) {
   process.stderr.write(`enrich: skipped ${pass} on ${ruleName} (${reason})
 `);
 }
+function applyKindToName(ruleName, rule) {
+  if (!isSeqType(rule.type)) return rule;
+  const members = rule.members;
+  const kindCounts = /* @__PURE__ */ new Map();
+  for (const m of members) {
+    if (isSymbolType(m.type) && typeof m.name === "string") {
+      const n = m.name;
+      kindCounts.set(n, (kindCounts.get(n) ?? 0) + 1);
+    }
+  }
+  const existing = collectFieldNamesRuntime(rule);
+  let changed = false;
+  const newMembers = members.map((m) => {
+    if (!isSymbolType(m.type) || typeof m.name !== "string") return m;
+    const k = m.name;
+    if (k.startsWith("_")) return m;
+    if ((kindCounts.get(k) ?? 0) > 1) return m;
+    if (existing.has(k)) {
+      reportSkip("kind-to-name", ruleName, `field '${k}' already exists`);
+      return m;
+    }
+    existing.add(k);
+    changed = true;
+    return makeField(rule, k, m);
+  });
+  if (!changed) return rule;
+  return { ...rule, members: newMembers };
+}
+function applyOptionalKeyword(ruleName, rule, kwRules) {
+  const claimed = isSeqType(rule.type) ? collectFieldNamesRuntime(rule) : /* @__PURE__ */ new Set();
+  return walkOptionalKeyword(ruleName, rule, claimed, kwRules) ?? rule;
+}
+function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules) {
+  if (isSeqType(rule.type)) {
+    const members = rule.members;
+    let changed = false;
+    const newMembers = members.map((m) => {
+      const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules);
+      if (out === null) return m;
+      changed = true;
+      return out;
+    });
+    return changed ? { ...rule, members: newMembers } : null;
+  }
+  if (isChoiceType(rule.type)) {
+    const members = rule.members;
+    let changed = false;
+    const newMembers = members.map((m) => {
+      const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules);
+      if (out === null) return m;
+      changed = true;
+      return out;
+    });
+    return changed ? { ...rule, members: newMembers } : null;
+  }
+  const peeled = peelOptional(rule);
+  if (peeled.isOptional) {
+    const replacement = tryPromoteInnerKeyword(ruleName, rule, peeled.inner, claimedAtSeqLevel, kwRules);
+    if (replacement !== null) return replacement;
+    const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules);
+    if (innerRewritten !== null) {
+      return rebuildOptional(rule, innerRewritten);
+    }
+    return null;
+  }
+  if (isRepeatType(rule.type) || isFieldType(rule.type)) {
+    const content = rule.content;
+    const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules);
+    if (out === null) return null;
+    return { ...rule, content: out };
+  }
+  return null;
+}
+function tryPromoteInnerKeyword(ruleName, optionalRule, inner, claimed, kwRules) {
+  const innerNorm = normalizeMember(inner);
+  if (!isStringType(innerNorm.type)) return null;
+  const kw = innerNorm.value;
+  if (typeof kw !== "string" || !isIdentifierShaped(kw)) return null;
+  if (claimed.has(kw)) {
+    reportSkip("optional-keyword-prefix", ruleName, `field '${kw}' already exists`);
+    return null;
+  }
+  claimed.add(kw);
+  const symbolRef = registerKwRule(optionalRule, inner, kw, kwRules);
+  const fieldNode = makeField(optionalRule, kw, symbolRef);
+  return rebuildOptional(optionalRule, fieldNode);
+}
+function rebuildOptional(optionalRule, newInner) {
+  if (isOptionalType(optionalRule.type)) {
+    return { ...optionalRule, content: newInner };
+  }
+  const members = optionalRule.members;
+  const newMembers = members.map((m) => {
+    const t = m.type;
+    return t === "BLANK" || t === "blank" ? m : newInner;
+  });
+  return { ...optionalRule, members: newMembers };
+}
 
 // packages/codegen/src/dsl/index.ts
 installGrammarWrapper();
@@ -1122,112 +1174,106 @@ installGrammarWrapper();
 // packages/typescript/overrides.ts
 var overrides_default = grammar(enrich(import_grammar.default), wire({
   name: "typescript",
-  rules: {
+  polymorphs: {
+    arrow_function: { "1/0": "parameter", "1/1": "_call_signature" },
+    class_heritage: { "0": "extends_clause", "1": "implements_clause" },
+    import_clause: { "0": "namespace_import", "1": "named_imports", "2": "default_import" },
+    import_specifier: { "1/0": "name", "1/1": "as" },
+    index_signature: { "2/0": "colon", "2/1": "mapped_type_clause" }
+  },
+  transforms: {
     // abstract_class_declaration: wrap pos 5 (class_heritage choice).
     // pos 0 is REPEAT(field('decorator')) — don't touch it, it's a real
     // base-grammar field and the original override clobbered it.
-    abstract_class_declaration: ($, original) => transform(original, {
+    abstract_class_declaration: {
       5: field("class_heritage")
-    }),
+    },
     // abstract_method_signature: 2 field(s)
-    abstract_method_signature: ($, original) => transform(original, {
+    abstract_method_signature: {
       0: field("accessibility_modifier"),
       // accessibility_modifier [struct=0]
       2: field("override_modifier")
       // override_modifier [struct=1]
-    }),
+    },
     // ambient_declaration: 3 field(s)
-    ambient_declaration: ($, original) => transform(original, {
+    ambient_declaration: {
       1: field("declaration")
       // declaration | statement_block | property_identifier [struct=0]
-    }),
+    },
     // array_type: 1 field(s)
-    array_type: ($, original) => transform(original, {
+    array_type: {
       0: field("primary_type")
       // primary_type [struct=0]
-    }),
+    },
     // as_expression: 2 field(s)
-    as_expression: ($, original) => transform(original, {
+    as_expression: {
       0: field("expression"),
       // expression [struct=0]
       2: field("type_annotation")
       // type [struct=1]
-    }),
+    },
     // asserts_annotation: 1 field(s)
-    asserts_annotation: ($, original) => transform(original, {
+    asserts_annotation: {
       0: field("asserts")
       // asserts [struct=0]
-    }),
+    },
     // await_expression: 1 field(s)
-    await_expression: ($, original) => transform(original, {
+    await_expression: {
       1: field("expression")
       // expression [struct=0]
-    }),
+    },
     // class: wrap pos 4 (class_heritage choice). pos 0 is decorator repeat.
-    class: ($, original) => transform(original, {
+    class: {
       4: field("class_heritage")
-    }),
+    },
     // class_declaration: wrap pos 4 (class_heritage choice) and pos 6
     // (automatic_semicolon choice). pos 0 is decorator repeat — leave it
     // alone so the base 'decorator' field survives.
-    class_declaration: ($, original) => transform(original, {
+    class_declaration: {
       4: field("class_heritage"),
       6: field("automatic_semicolon")
-    }),
-    // class_heritage (T028a): polymorph split — copy-pasted from
-    // overrides.suggested.ts. Each choice alternative becomes its
-    // own named rule via variant().
-    class_heritage: ($, original) => transform(original, {
-      "0": variant("extends_clause"),
-      "1": variant("implements_clause")
-    }),
+    },
     // computed_property_name: 1 field(s)
-    computed_property_name: ($, original) => transform(original, {
+    computed_property_name: {
       1: field("expression")
       // expression [struct=0]
-    }),
+    },
     // else_clause: 1 field(s)
-    else_clause: ($, original) => transform(original, {
+    else_clause: {
       1: field("statement")
       // statement [struct=0]
-    }),
+    },
     // enum_body: 2 field(s)
-    enum_body: ($, original) => transform(original, {
+    enum_body: {
       1: field("opening")
       // enum_assignment [struct=0]
-    }),
+    },
     // flow_maybe_type: 1 field(s)
-    flow_maybe_type: ($, original) => transform(original, {
+    flow_maybe_type: {
       1: field("primary_type")
       // primary_type [struct=0]
-    }),
+    },
     // import_alias: 3 field(s)
-    import_alias: ($, original) => transform(original, {
+    import_alias: {
       1: field("name"),
       // identifier [struct=0]
       3: field("value"),
       // identifier | nested_identifier [struct=1]
       4: field("semicolon")
       //  [struct=2]
-    }),
+    },
     // import_attribute: 1 field(s)
-    import_attribute: ($, original) => transform(original, {
+    import_attribute: {
       0: field("object")
       // object [struct=0]
-    }),
-    // import_clause (T028a): polymorph split from suggested.ts.
-    import_clause: ($, original) => transform(original, {
-      "0": variant("namespace_import"),
-      "1": variant("named_imports"),
-      "2": variant("default_import")
-    }),
+    },
     // import_require_clause: 1 field(s)
-    import_require_clause: ($, original) => transform(original, {
+    import_require_clause: {
       0: field("identifier")
       // identifier [struct=0]
-    }),
+    },
     // import_statement: 4 field(s)
-    import_statement: ($, original) => transform(original, {
+    import_statement: {
       1: field("import_clause"),
       // import_clause | import_require_clause [struct=0]
       2: field("from_clause"),
@@ -1236,17 +1282,149 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
       // import_attribute [struct=2]
       4: field("semicolon")
       //  [struct=3]
-    }),
-    // index_signature (T028a): polymorph split from suggested.ts.
-    index_signature: ($, original) => transform(original, {
-      "2/0": variant("colon"),
-      "2/1": variant("mapped_type_clause")
-    }),
-    // import_specifier (T028a): polymorph split from suggested.ts.
-    import_specifier: ($, original) => transform(original, {
-      "1/0": variant("name"),
-      "1/1": variant("as")
-    }),
+    },
+    // index_type_query: 1 field(s)
+    index_type_query: {
+      1: field("primary_type")
+      // primary_type [struct=0]
+    },
+    // infer_type: 2 field(s)
+    infer_type: {
+      1: field("type_identifier"),
+      // _type_identifier | type_identifier [struct=0]
+      2: field("constraint")
+      // type | type_identifier [struct=1]
+    },
+    // instantiation_expression: 1 field(s)
+    instantiation_expression: {
+      0: field("expression")
+      // expression [struct=0]
+    },
+    // interface_declaration: 1 field(s)
+    interface_declaration: {
+      3: field("extends_type_clause")
+      // extends_type_clause [struct=0]
+    },
+    // intersection_type: 2 field(s)
+    intersection_type: {
+      0: field("left"),
+      // type [struct=0]
+      2: field("right")
+      // type [struct=1]
+    },
+    // lexical_declaration: 2 field(s)
+    lexical_declaration: {
+      1: field("declarators"),
+      // variable_declarator [struct=0]
+      2: field("semicolon")
+      //  [struct=1]
+    },
+    // lookup_type: 2 field(s)
+    lookup_type: {
+      0: field("primary_type"),
+      // primary_type [struct=0]
+      2: field("index_type")
+      // type [struct=1]
+    },
+    // method_definition: 2 field(s)
+    method_definition: {
+      0: field("accessibility_modifier"),
+      // accessibility_modifier [struct=0]
+      1: field("override_modifier")
+      // override_modifier [struct=1]
+    },
+    // method_signature: 2 field(s)
+    method_signature: {
+      0: field("accessibility_modifier"),
+      // accessibility_modifier [struct=0]
+      1: field("override_modifier")
+      // override_modifier [struct=1]
+    },
+    // namespace_import: 1 field(s)
+    namespace_import: {
+      2: field("identifier")
+      // identifier [struct=0]
+    },
+    // non_null_expression: 1 field(s)
+    non_null_expression: {
+      0: field("expression")
+      // expression [struct=0]
+    },
+    // object_type: 3 field(s)
+    object_type: {
+      0: field("opening"),
+      // export_statement | property_signature | call_signature | construct_signature | index_signature | method_signature [struct=0]
+      1: field("members"),
+      // export_statement | property_signature | call_signature | construct_signature | index_signature | method_signature [struct=1]
+      2: field("closing")
+      //  [struct=2]
+    },
+    // program: 2 field(s)
+    program: {
+      0: field("hash_bang_line"),
+      // hash_bang_line [struct=0]
+      1: field("statements")
+      // statement [struct=1]
+    },
+    // property_signature: 2 field(s)
+    property_signature: {
+      0: field("accessibility_modifier"),
+      // accessibility_modifier [struct=0]
+      1: field("override_modifier")
+      // override_modifier [struct=1]
+    },
+    // satisfies_expression: 2 field(s)
+    satisfies_expression: {
+      0: field("expression"),
+      // expression [struct=0]
+      2: field("type_annotation")
+      // type [struct=1]
+    },
+    // spread_element: 1 field(s)
+    spread_element: {
+      1: field("expression")
+      // expression [struct=0]
+    },
+    // statement_block: 2 field(s)
+    statement_block: {
+      1: field("statements"),
+      // statement [struct=0]
+      3: field("automatic_semicolon")
+      //  [struct=1]
+    },
+    // type_assertion: 2 field(s)
+    type_assertion: {
+      0: field("type_arguments"),
+      // type_arguments [struct=0]
+      1: field("expression")
+      // expression [struct=1]
+    },
+    // type_predicate_annotation: 1 field(s)
+    type_predicate_annotation: {
+      0: field("type_predicate")
+      // type_predicate [struct=0]
+    },
+    // union_type: 2 field(s)
+    union_type: {
+      0: field("left"),
+      // type [struct=0]
+      2: field("right")
+      // type [struct=1]
+    },
+    // variable_declaration: 2 field(s)
+    variable_declaration: {
+      1: field("declarators"),
+      // variable_declarator [struct=0]
+      2: field("semicolon")
+      //  [struct=1]
+    },
+    // yield_expression: 1 field(s)
+    yield_expression: {
+      1: field("expression")
+      // expression [struct=0]
+    }
+  },
+  rules: {
     // parenthesized_expression: held. Base is plain `seq('(',
     // _expressions, ')')` with no outer prec — my hoist's prec
     // preservation captures OUTER wrappers, not per-alt prec. The
@@ -1270,87 +1448,6 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     // rule resolves via LR state the base intentionally left
     // ambiguous. Fix would need explicit conflicts entries with
     // external rules — out of scope for variant() adoption.
-    // arrow_function (T028b): polymorph split from suggested.ts.
-    arrow_function: ($, original) => transform(original, {
-      "1/0": variant("parameter"),
-      "1/1": variant("_call_signature")
-    }),
-    // index_type_query: 1 field(s)
-    index_type_query: ($, original) => transform(original, {
-      1: field("primary_type")
-      // primary_type [struct=0]
-    }),
-    // infer_type: 2 field(s)
-    infer_type: ($, original) => transform(original, {
-      1: field("type_identifier"),
-      // _type_identifier | type_identifier [struct=0]
-      2: field("constraint")
-      // type | type_identifier [struct=1]
-    }),
-    // instantiation_expression: 1 field(s)
-    instantiation_expression: ($, original) => transform(original, {
-      0: field("expression")
-      // expression [struct=0]
-    }),
-    // interface_declaration: 1 field(s)
-    interface_declaration: ($, original) => transform(original, {
-      3: field("extends_type_clause")
-      // extends_type_clause [struct=0]
-    }),
-    // intersection_type: 2 field(s)
-    intersection_type: ($, original) => transform(original, {
-      0: field("left"),
-      // type [struct=0]
-      2: field("right")
-      // type [struct=1]
-    }),
-    // lexical_declaration: 2 field(s)
-    lexical_declaration: ($, original) => transform(original, {
-      1: field("declarators"),
-      // variable_declarator [struct=0]
-      2: field("semicolon")
-      //  [struct=1]
-    }),
-    // lookup_type: 2 field(s)
-    lookup_type: ($, original) => transform(original, {
-      0: field("primary_type"),
-      // primary_type [struct=0]
-      2: field("index_type")
-      // type [struct=1]
-    }),
-    // method_definition: 2 field(s)
-    method_definition: ($, original) => transform(original, {
-      0: field("accessibility_modifier"),
-      // accessibility_modifier [struct=0]
-      1: field("override_modifier")
-      // override_modifier [struct=1]
-    }),
-    // method_signature: 2 field(s)
-    method_signature: ($, original) => transform(original, {
-      0: field("accessibility_modifier"),
-      // accessibility_modifier [struct=0]
-      1: field("override_modifier")
-      // override_modifier [struct=1]
-    }),
-    // namespace_import: 1 field(s)
-    namespace_import: ($, original) => transform(original, {
-      2: field("identifier")
-      // identifier [struct=0]
-    }),
-    // non_null_expression: 1 field(s)
-    non_null_expression: ($, original) => transform(original, {
-      0: field("expression")
-      // expression [struct=0]
-    }),
-    // object_type: 3 field(s)
-    object_type: ($, original) => transform(original, {
-      0: field("opening"),
-      // export_statement | property_signature | call_signature | construct_signature | index_signature | method_signature [struct=0]
-      1: field("members"),
-      // export_statement | property_signature | call_signature | construct_signature | index_signature | method_signature [struct=1]
-      2: field("closing")
-      //  [struct=2]
-    }),
     // optional_parameter: position 0 is the hidden `_parameter_name`
     // helper which tree-sitter inlines — its `decorator`, `pattern`, and
     // `name` fields promote onto the parent at parse time. The former
@@ -1359,20 +1456,6 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     // Positions 1/2/3 (the `?`, the type field, and the initializer)
     // are already correctly structured in the base rule.
     optional_parameter: ($, original) => original,
-    // program: 2 field(s)
-    program: ($, original) => transform(original, {
-      0: field("hash_bang_line"),
-      // hash_bang_line [struct=0]
-      1: field("statements")
-      // statement [struct=1]
-    }),
-    // property_signature: 2 field(s)
-    property_signature: ($, original) => transform(original, {
-      0: field("accessibility_modifier"),
-      // accessibility_modifier [struct=0]
-      1: field("override_modifier")
-      // override_modifier [struct=1]
-    }),
     // public_field_definition: pos 0 is decorator repeat (real base
     // field). The original override labeled pos 0 as
     // accessibility_modifier, clobbering decorator. Dropped entirely —
@@ -1382,57 +1465,7 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     // required_parameter: same shape as optional_parameter modulo the
     // `?` — drop the synthetic `parameter_name` wrapper override and
     // let the walker inline the `_parameter_name` helper's fields.
-    required_parameter: ($, original) => original,
-    // satisfies_expression: 2 field(s)
-    satisfies_expression: ($, original) => transform(original, {
-      0: field("expression"),
-      // expression [struct=0]
-      2: field("type_annotation")
-      // type [struct=1]
-    }),
-    // spread_element: 1 field(s)
-    spread_element: ($, original) => transform(original, {
-      1: field("expression")
-      // expression [struct=0]
-    }),
-    // statement_block: 2 field(s)
-    statement_block: ($, original) => transform(original, {
-      1: field("statements"),
-      // statement [struct=0]
-      3: field("automatic_semicolon")
-      //  [struct=1]
-    }),
-    // type_assertion: 2 field(s)
-    type_assertion: ($, original) => transform(original, {
-      0: field("type_arguments"),
-      // type_arguments [struct=0]
-      1: field("expression")
-      // expression [struct=1]
-    }),
-    // type_predicate_annotation: 1 field(s)
-    type_predicate_annotation: ($, original) => transform(original, {
-      0: field("type_predicate")
-      // type_predicate [struct=0]
-    }),
-    // union_type: 2 field(s)
-    union_type: ($, original) => transform(original, {
-      0: field("left"),
-      // type [struct=0]
-      2: field("right")
-      // type [struct=1]
-    }),
-    // variable_declaration: 2 field(s)
-    variable_declaration: ($, original) => transform(original, {
-      1: field("declarators"),
-      // variable_declarator [struct=0]
-      2: field("semicolon")
-      //  [struct=1]
-    }),
-    // yield_expression: 1 field(s)
-    yield_expression: ($, original) => transform(original, {
-      1: field("expression")
-      // expression [struct=0]
-    })
+    required_parameter: ($, original) => original
   }
 }));
 if (module.exports && module.exports.default) module.exports = module.exports.default;

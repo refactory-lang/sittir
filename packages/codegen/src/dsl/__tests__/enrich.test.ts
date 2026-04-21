@@ -9,21 +9,11 @@ function mkGrammar(rules: Record<string, Rule>) {
     return { grammar: { name: 'test', rules } }
 }
 
-// enrich() now emits an `__enrichOverrides__` side-channel (callbacks
-// that grammar() invokes at rule evaluation time). For unit tests we
-// drive each override with the original base rule to get the enriched
-// output, mirroring what grammar() does under both runtimes.
+// enrich() returns a new grammar with enriched rules in place.
 function runEnrich(input: ReturnType<typeof mkGrammar>) {
-    const out = enrich(input) as unknown as {
+    return enrich(input) as unknown as {
         grammar: { name: string, rules: Record<string, Rule> }
-        __enrichOverrides__?: Record<string, (_$: unknown, original: Rule) => Rule>
     }
-    const overrides = out.__enrichOverrides__ ?? {}
-    const result: Record<string, Rule> = {}
-    for (const [name, rule] of Object.entries(input.grammar.rules)) {
-        result[name] = overrides[name]?.({}, rule) ?? rule
-    }
-    return { ...out, grammar: { ...out.grammar, rules: result } }
 }
 
 describe('enrich()', () => {
@@ -88,13 +78,13 @@ describe('enrich()', () => {
                 type: 'field',
                 name: 'function',
                 content: { type: 'symbol', name: 'function' },
-                source: 'override',
+                source: 'inferred',
             })
             expect(rule.members[2]).toMatchObject({
                 type: 'field',
                 name: 'arguments',
                 content: { type: 'symbol', name: 'arguments' },
-                source: 'override',
+                source: 'inferred',
             })
             // String delimiters untouched
             expect(rule.members[1]).toMatchObject({ type: 'string', value: '(' })
@@ -181,7 +171,7 @@ describe('enrich()', () => {
             expect(rule.members[2]).toMatchObject({
                 type: 'field',
                 name: 'rhs',
-                source: 'override',
+                source: 'inferred',
             })
         })
     })
@@ -210,7 +200,7 @@ describe('enrich()', () => {
                     type: 'field',
                     name: 'async',
                     content: { type: 'symbol', name: '_kw_async' },
-                    source: 'override',
+                    source: 'inferred',
                 },
             })
             // 'def' is NOT promoted — bare leading literal, only the

@@ -170,8 +170,7 @@ export interface IsGuards {
     ReservedIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_reserved_identifier' };
     TypeIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_type_identifier' };
     FieldIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_field_identifier' };
-    arrayExpressionSemi<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'array_expression_semi' };
-    arrayExpressionList<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'array_expression_list' };
+    ClosureExpressionExpr<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_closure_expression_expr' };
     FieldPatternShorthand<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_field_pattern_shorthand' };
     FunctionTypeTraitForm<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_function_type_trait_form' };
     FunctionTypeFnForm<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_function_type_fn_form' };
@@ -180,8 +179,9 @@ export interface IsGuards {
     MacroDefinitionBracket<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_macro_definition_bracket' };
     MacroDefinitionBrace<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_macro_definition_brace' };
     ModItemInline<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_mod_item_inline' };
-    ClosureExpressionExpr<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_closure_expression_expr' };
     RangeExpressionBare<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_range_expression_bare' };
+    arrayExpressionSemi<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'array_expression_semi' };
+    arrayExpressionList<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'array_expression_list' };
     macroDefinitionParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_definition_paren' };
     macroDefinitionBracket<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_definition_bracket' };
     macroDefinitionBrace<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_definition_brace' };
@@ -370,8 +370,7 @@ export interface AssertGuards {
     ReservedIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: '_reserved_identifier' };
     TypeIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: '_type_identifier' };
     FieldIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: '_field_identifier' };
-    arrayExpressionSemi(v: { readonly $type: string }): asserts v is { readonly $type: 'array_expression_semi' };
-    arrayExpressionList(v: { readonly $type: string }): asserts v is { readonly $type: 'array_expression_list' };
+    ClosureExpressionExpr(v: { readonly $type: string }): asserts v is { readonly $type: '_closure_expression_expr' };
     FieldPatternShorthand(v: { readonly $type: string }): asserts v is { readonly $type: '_field_pattern_shorthand' };
     FunctionTypeTraitForm(v: { readonly $type: string }): asserts v is { readonly $type: '_function_type_trait_form' };
     FunctionTypeFnForm(v: { readonly $type: string }): asserts v is { readonly $type: '_function_type_fn_form' };
@@ -380,8 +379,9 @@ export interface AssertGuards {
     MacroDefinitionBracket(v: { readonly $type: string }): asserts v is { readonly $type: '_macro_definition_bracket' };
     MacroDefinitionBrace(v: { readonly $type: string }): asserts v is { readonly $type: '_macro_definition_brace' };
     ModItemInline(v: { readonly $type: string }): asserts v is { readonly $type: '_mod_item_inline' };
-    ClosureExpressionExpr(v: { readonly $type: string }): asserts v is { readonly $type: '_closure_expression_expr' };
     RangeExpressionBare(v: { readonly $type: string }): asserts v is { readonly $type: '_range_expression_bare' };
+    arrayExpressionSemi(v: { readonly $type: string }): asserts v is { readonly $type: 'array_expression_semi' };
+    arrayExpressionList(v: { readonly $type: string }): asserts v is { readonly $type: 'array_expression_list' };
     macroDefinitionParen(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_definition_paren' };
     macroDefinitionBracket(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_definition_bracket' };
     macroDefinitionBrace(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_definition_brace' };
@@ -595,8 +595,7 @@ export const is = {
     ReservedIdentifier: _g("_reserved_identifier"),
     TypeIdentifier: _g("_type_identifier"),
     FieldIdentifier: _g("_field_identifier"),
-    arrayExpressionSemi: _g("array_expression_semi"),
-    arrayExpressionList: _g("array_expression_list"),
+    ClosureExpressionExpr: _g("_closure_expression_expr"),
     FieldPatternShorthand: _g("_field_pattern_shorthand"),
     FunctionTypeTraitForm: _g("_function_type_trait_form"),
     FunctionTypeFnForm: _g("_function_type_fn_form"),
@@ -605,8 +604,9 @@ export const is = {
     MacroDefinitionBracket: _g("_macro_definition_bracket"),
     MacroDefinitionBrace: _g("_macro_definition_brace"),
     ModItemInline: _g("_mod_item_inline"),
-    ClosureExpressionExpr: _g("_closure_expression_expr"),
     RangeExpressionBare: _g("_range_expression_bare"),
+    arrayExpressionSemi: _g("array_expression_semi"),
+    arrayExpressionList: _g("array_expression_list"),
     macroDefinitionParen: _g("macro_definition_paren"),
     macroDefinitionBracket: _g("macro_definition_bracket"),
     macroDefinitionBrace: _g("macro_definition_brace"),
@@ -816,8 +816,7 @@ export const assert = {
     ReservedIdentifier: _makeAssert('ReservedIdentifier', is.ReservedIdentifier as _AnyGuard),
     TypeIdentifier: _makeAssert('TypeIdentifier', is.TypeIdentifier as _AnyGuard),
     FieldIdentifier: _makeAssert('FieldIdentifier', is.FieldIdentifier as _AnyGuard),
-    arrayExpressionSemi: _makeAssert('arrayExpressionSemi', is.arrayExpressionSemi as _AnyGuard),
-    arrayExpressionList: _makeAssert('arrayExpressionList', is.arrayExpressionList as _AnyGuard),
+    ClosureExpressionExpr: _makeAssert('ClosureExpressionExpr', is.ClosureExpressionExpr as _AnyGuard),
     FieldPatternShorthand: _makeAssert('FieldPatternShorthand', is.FieldPatternShorthand as _AnyGuard),
     FunctionTypeTraitForm: _makeAssert('FunctionTypeTraitForm', is.FunctionTypeTraitForm as _AnyGuard),
     FunctionTypeFnForm: _makeAssert('FunctionTypeFnForm', is.FunctionTypeFnForm as _AnyGuard),
@@ -826,8 +825,9 @@ export const assert = {
     MacroDefinitionBracket: _makeAssert('MacroDefinitionBracket', is.MacroDefinitionBracket as _AnyGuard),
     MacroDefinitionBrace: _makeAssert('MacroDefinitionBrace', is.MacroDefinitionBrace as _AnyGuard),
     ModItemInline: _makeAssert('ModItemInline', is.ModItemInline as _AnyGuard),
-    ClosureExpressionExpr: _makeAssert('ClosureExpressionExpr', is.ClosureExpressionExpr as _AnyGuard),
     RangeExpressionBare: _makeAssert('RangeExpressionBare', is.RangeExpressionBare as _AnyGuard),
+    arrayExpressionSemi: _makeAssert('arrayExpressionSemi', is.arrayExpressionSemi as _AnyGuard),
+    arrayExpressionList: _makeAssert('arrayExpressionList', is.arrayExpressionList as _AnyGuard),
     macroDefinitionParen: _makeAssert('macroDefinitionParen', is.macroDefinitionParen as _AnyGuard),
     macroDefinitionBracket: _makeAssert('macroDefinitionBracket', is.macroDefinitionBracket as _AnyGuard),
     macroDefinitionBrace: _makeAssert('macroDefinitionBrace', is.macroDefinitionBrace as _AnyGuard),

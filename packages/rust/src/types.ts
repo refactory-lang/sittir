@@ -10,6 +10,42 @@ export type NodeConfig<K extends NodeKind<RustGrammar>> = BaseNodeConfig<RustGra
 export type TreeNode<K extends NodeKind<RustGrammar>> = BaseTreeNode<RustGrammar, K>;
 
 export type LeafScalarMap = {
+  _array_expression_semi: number;
+  _array_expression_list: number;
+  _kw_type_parameters: number;
+  _kw_where_clause: number;
+  _kw_block: number;
+  _kw_attribute: number;
+  _kw_label: number;
+  _kw_left: number;
+  _kw_right: number;
+  _kw_expression: number;
+  _kw_identifier: number;
+  _kw_pattern: number;
+  _kw_static: number;
+  _kw_visibility_modifier: number;
+  _kw_crate: number;
+  _kw_string_literal: number;
+  _kw_mutable_specifier: number;
+  _kw_extern_modifier: number;
+  _kw_function_modifiers: number;
+  _kw_for_lifetimes: number;
+  _kw_object: number;
+  _kw_index: number;
+  _kw_token_tree: number;
+  _kw_value: number;
+  _kw_attributes: number;
+  _kw_raw_string_literal_start: number;
+  _kw_string_content: number;
+  _kw_raw_string_literal_end: number;
+  _kw_lifetime: number;
+  _kw_self: number;
+  _kw_shebang: number;
+  _kw_statements: number;
+  _kw_elements: number;
+  _kw_trailing_where_clause: number;
+  _kw_operand: number;
+  _kw_path: number;
 };
 
 export type LeafStringMap = {
@@ -23,8 +59,8 @@ export type LeafStringMap = {
   _kw_default: "default";
   _kw_const: "const";
   _kw_unsafe: "unsafe";
-  _kw_move: "move";
   _wildcard_pattern: "_";
+  _kw_move: "move";
   _kw_for: "for";
   primitive_type: "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char";
   wildcard_pattern: "_";
@@ -215,8 +251,8 @@ export const enum SyntaxKind {
   ReservedIdentifier = '_reserved_identifier',
   _TypeIdentifier = '_type_identifier',
   _FieldIdentifier = '_field_identifier',
-  ArrayExpressionSemi = 'array_expression_semi',
-  ArrayExpressionList = 'array_expression_list',
+  _ClosureExpressionBlock = '_closure_expression_block',
+  _ClosureExpressionExpr = '_closure_expression_expr',
   _FieldPatternShorthand = '_field_pattern_shorthand',
   _FieldPatternNamed = '_field_pattern_named',
   _FunctionTypeTraitForm = '_function_type_trait_form',
@@ -226,10 +262,6 @@ export const enum SyntaxKind {
   _MacroDefinitionBracket = '_macro_definition_bracket',
   _MacroDefinitionBrace = '_macro_definition_brace',
   _ModItemInline = '_mod_item_inline',
-  _StructItemBrace = '_struct_item_brace',
-  _StructItemTuple = '_struct_item_tuple',
-  _ClosureExpressionBlock = '_closure_expression_block',
-  _ClosureExpressionExpr = '_closure_expression_expr',
   _OrPatternBinary = '_or_pattern_binary',
   _OrPatternPrefix = '_or_pattern_prefix',
   _RangeExpressionBinary = '_range_expression_binary',
@@ -238,6 +270,10 @@ export const enum SyntaxKind {
   _RangeExpressionBare = '_range_expression_bare',
   _RangePatternLeft = '_range_pattern_left',
   _RangePatternPrefix = '_range_pattern_prefix',
+  _StructItemBrace = '_struct_item_brace',
+  _StructItemTuple = '_struct_item_tuple',
+  ArrayExpressionSemi = 'array_expression_semi',
+  ArrayExpressionList = 'array_expression_list',
   MacroDefinitionParen = 'macro_definition_paren',
   MacroDefinitionBracket = 'macro_definition_bracket',
   MacroDefinitionBrace = 'macro_definition_brace',
@@ -278,8 +314,44 @@ export const enum SyntaxKind {
   KwDefault = '_kw_default',
   KwConst = '_kw_const',
   KwUnsafe = '_kw_unsafe',
-  KwMove = '_kw_move',
   _WildcardPattern = '_wildcard_pattern',
+  _ArrayExpressionSemi = '_array_expression_semi',
+  _ArrayExpressionList = '_array_expression_list',
+  KwTypeParameters = '_kw_type_parameters',
+  KwWhereClause = '_kw_where_clause',
+  KwBlock = '_kw_block',
+  KwMove = '_kw_move',
+  KwAttribute = '_kw_attribute',
+  KwLabel = '_kw_label',
+  KwLeft = '_kw_left',
+  KwRight = '_kw_right',
+  KwExpression = '_kw_expression',
+  KwIdentifier = '_kw_identifier',
+  KwPattern = '_kw_pattern',
+  KwStatic = '_kw_static',
+  KwVisibilityModifier = '_kw_visibility_modifier',
+  KwCrate = '_kw_crate',
+  KwStringLiteral = '_kw_string_literal',
+  KwMutableSpecifier = '_kw_mutable_specifier',
+  KwExternModifier = '_kw_extern_modifier',
+  KwFunctionModifiers = '_kw_function_modifiers',
+  KwForLifetimes = '_kw_for_lifetimes',
+  KwObject = '_kw_object',
+  KwIndex = '_kw_index',
+  KwTokenTree = '_kw_token_tree',
+  KwValue = '_kw_value',
+  KwAttributes = '_kw_attributes',
+  KwRawStringLiteralStart = '_kw_raw_string_literal_start',
+  KwStringContent = '_kw_string_content',
+  KwRawStringLiteralEnd = '_kw_raw_string_literal_end',
+  KwLifetime = '_kw_lifetime',
+  KwSelf = '_kw_self',
+  KwShebang = '_kw_shebang',
+  KwStatements = '_kw_statements',
+  KwElements = '_kw_elements',
+  KwTrailingWhereClause = '_kw_trailing_where_clause',
+  KwOperand = '_kw_operand',
+  KwPath = '_kw_path',
   KwFor = '_kw_for',
   StringContent = 'string_content',
   RawStringLiteralContent = 'raw_string_literal_content',
@@ -1940,22 +2012,15 @@ export interface _FieldIdentifier {
   readonly $children: readonly [FieldIdentifier];
 }
 
-export interface ArrayExpressionSemi {
-  readonly $type: 'array_expression_semi';
-  readonly $fields: {
-    readonly attributes: readonly (AttributeItem)[];
-    readonly elements: Expression;
-    readonly length: Expression;
-  };
+export interface _ClosureExpressionBlock {
+  readonly $type: '_closure_expression_block';
 }
 
-export interface ArrayExpressionList {
-  readonly $type: 'array_expression_list';
+export interface _ClosureExpressionExpr {
+  readonly $type: '_closure_expression_expr';
   readonly $fields: {
-    readonly attributes: readonly (AttributeItem)[];
-    readonly elements: readonly (Expression)[];
+    readonly body: Expression;
   };
-  readonly $children: readonly (AttributeItem)[];
 }
 
 export interface _FieldPatternShorthand {
@@ -2010,27 +2075,6 @@ export interface _ModItemInline {
   };
 }
 
-export interface _StructItemBrace {
-  readonly $type: '_struct_item_brace';
-  readonly $children: readonly [WhereClause];
-}
-
-export interface _StructItemTuple {
-  readonly $type: '_struct_item_tuple';
-  readonly $children: readonly [WhereClause];
-}
-
-export interface _ClosureExpressionBlock {
-  readonly $type: '_closure_expression_block';
-}
-
-export interface _ClosureExpressionExpr {
-  readonly $type: '_closure_expression_expr';
-  readonly $fields: {
-    readonly body: Expression;
-  };
-}
-
 export interface _OrPatternBinary {
   readonly $type: '_or_pattern_binary';
 }
@@ -2064,6 +2108,34 @@ export interface _RangePatternLeft {
 
 export interface _RangePatternPrefix {
   readonly $type: '_range_pattern_prefix';
+}
+
+export interface _StructItemBrace {
+  readonly $type: '_struct_item_brace';
+  readonly $children: readonly [WhereClause];
+}
+
+export interface _StructItemTuple {
+  readonly $type: '_struct_item_tuple';
+  readonly $children: readonly [WhereClause];
+}
+
+export interface ArrayExpressionSemi {
+  readonly $type: 'array_expression_semi';
+  readonly $fields: {
+    readonly attributes: readonly (AttributeItem)[];
+    readonly elements: Expression;
+    readonly length: Expression;
+  };
+}
+
+export interface ArrayExpressionList {
+  readonly $type: 'array_expression_list';
+  readonly $fields: {
+    readonly attributes: readonly (AttributeItem)[];
+    readonly elements: readonly (Expression)[];
+  };
+  readonly $children: readonly (AttributeItem)[];
 }
 
 export interface MacroDefinitionParen {
@@ -2240,8 +2312,44 @@ export type KwAsync = Terminal<"_kw_async", "async">;
 export type KwDefault = Terminal<"_kw_default", "default">;
 export type KwConst = Terminal<"_kw_const", "const">;
 export type KwUnsafe = Terminal<"_kw_unsafe", "unsafe">;
-export type KwMove = Terminal<"_kw_move", "move">;
 export type _WildcardPattern = Terminal<"_wildcard_pattern", "_">;
+export type _ArrayExpressionSemi = Terminal<"_array_expression_semi", >;
+export type _ArrayExpressionList = Terminal<"_array_expression_list", >;
+export type KwTypeParameters = Terminal<"_kw_type_parameters", >;
+export type KwWhereClause = Terminal<"_kw_where_clause", >;
+export type KwBlock = Terminal<"_kw_block", >;
+export type KwMove = Terminal<"_kw_move", "move">;
+export type KwAttribute = Terminal<"_kw_attribute", >;
+export type KwLabel = Terminal<"_kw_label", >;
+export type KwLeft = Terminal<"_kw_left", >;
+export type KwRight = Terminal<"_kw_right", >;
+export type KwExpression = Terminal<"_kw_expression", >;
+export type KwIdentifier = Terminal<"_kw_identifier", >;
+export type KwPattern = Terminal<"_kw_pattern", >;
+export type KwStatic = Terminal<"_kw_static", >;
+export type KwVisibilityModifier = Terminal<"_kw_visibility_modifier", >;
+export type KwCrate = Terminal<"_kw_crate", >;
+export type KwStringLiteral = Terminal<"_kw_string_literal", >;
+export type KwMutableSpecifier = Terminal<"_kw_mutable_specifier", >;
+export type KwExternModifier = Terminal<"_kw_extern_modifier", >;
+export type KwFunctionModifiers = Terminal<"_kw_function_modifiers", >;
+export type KwForLifetimes = Terminal<"_kw_for_lifetimes", >;
+export type KwObject = Terminal<"_kw_object", >;
+export type KwIndex = Terminal<"_kw_index", >;
+export type KwTokenTree = Terminal<"_kw_token_tree", >;
+export type KwValue = Terminal<"_kw_value", >;
+export type KwAttributes = Terminal<"_kw_attributes", >;
+export type KwRawStringLiteralStart = Terminal<"_kw_raw_string_literal_start", >;
+export type KwStringContent = Terminal<"_kw_string_content", >;
+export type KwRawStringLiteralEnd = Terminal<"_kw_raw_string_literal_end", >;
+export type KwLifetime = Terminal<"_kw_lifetime", >;
+export type KwSelf = Terminal<"_kw_self", >;
+export type KwShebang = Terminal<"_kw_shebang", >;
+export type KwStatements = Terminal<"_kw_statements", >;
+export type KwElements = Terminal<"_kw_elements", >;
+export type KwTrailingWhereClause = Terminal<"_kw_trailing_where_clause", >;
+export type KwOperand = Terminal<"_kw_operand", >;
+export type KwPath = Terminal<"_kw_path", >;
 export type KwFor = Terminal<"_kw_for", "for">;
 export type StringContent = Terminal<"string_content", string>;
 export type RawStringLiteralContent = Terminal<"raw_string_literal_content", string>;
@@ -2460,8 +2568,8 @@ export interface BlockCommentTree extends TreeNode<'block_comment'> {}
 export interface ReservedIdentifierTree extends AnyTreeNode { readonly type: "_reserved_identifier"; }
 export interface _TypeIdentifierTree extends AnyTreeNode { readonly type: "_type_identifier"; }
 export interface _FieldIdentifierTree extends AnyTreeNode { readonly type: "_field_identifier"; }
-export interface ArrayExpressionSemiTree extends TreeNode<'array_expression_semi'> {}
-export interface ArrayExpressionListTree extends TreeNode<'array_expression_list'> {}
+export interface _ClosureExpressionBlockTree extends AnyTreeNode { readonly type: "_closure_expression_block"; }
+export interface _ClosureExpressionExprTree extends AnyTreeNode { readonly type: "_closure_expression_expr"; }
 export interface _FieldPatternShorthandTree extends AnyTreeNode { readonly type: "_field_pattern_shorthand"; }
 export interface _FieldPatternNamedTree extends AnyTreeNode { readonly type: "_field_pattern_named"; }
 export interface _FunctionTypeTraitFormTree extends AnyTreeNode { readonly type: "_function_type_trait_form"; }
@@ -2471,10 +2579,6 @@ export interface _MacroDefinitionParenTree extends AnyTreeNode { readonly type: 
 export interface _MacroDefinitionBracketTree extends AnyTreeNode { readonly type: "_macro_definition_bracket"; }
 export interface _MacroDefinitionBraceTree extends AnyTreeNode { readonly type: "_macro_definition_brace"; }
 export interface _ModItemInlineTree extends AnyTreeNode { readonly type: "_mod_item_inline"; }
-export interface _StructItemBraceTree extends AnyTreeNode { readonly type: "_struct_item_brace"; }
-export interface _StructItemTupleTree extends AnyTreeNode { readonly type: "_struct_item_tuple"; }
-export interface _ClosureExpressionBlockTree extends AnyTreeNode { readonly type: "_closure_expression_block"; }
-export interface _ClosureExpressionExprTree extends AnyTreeNode { readonly type: "_closure_expression_expr"; }
 export interface _OrPatternBinaryTree extends AnyTreeNode { readonly type: "_or_pattern_binary"; }
 export interface _OrPatternPrefixTree extends AnyTreeNode { readonly type: "_or_pattern_prefix"; }
 export interface _RangeExpressionBinaryTree extends AnyTreeNode { readonly type: "_range_expression_binary"; }
@@ -2483,6 +2587,10 @@ export interface _RangeExpressionPrefixTree extends AnyTreeNode { readonly type:
 export interface _RangeExpressionBareTree extends AnyTreeNode { readonly type: "_range_expression_bare"; }
 export interface _RangePatternLeftTree extends AnyTreeNode { readonly type: "_range_pattern_left"; }
 export interface _RangePatternPrefixTree extends AnyTreeNode { readonly type: "_range_pattern_prefix"; }
+export interface _StructItemBraceTree extends AnyTreeNode { readonly type: "_struct_item_brace"; }
+export interface _StructItemTupleTree extends AnyTreeNode { readonly type: "_struct_item_tuple"; }
+export interface ArrayExpressionSemiTree extends TreeNode<'array_expression_semi'> {}
+export interface ArrayExpressionListTree extends TreeNode<'array_expression_list'> {}
 export interface MacroDefinitionParenTree extends TreeNode<'macro_definition_paren'> {}
 export interface MacroDefinitionBracketTree extends TreeNode<'macro_definition_bracket'> {}
 export interface MacroDefinitionBraceTree extends TreeNode<'macro_definition_brace'> {}
@@ -2523,8 +2631,44 @@ export interface KwAsyncTree extends AnyTreeNode { readonly type: "_kw_async"; }
 export interface KwDefaultTree extends AnyTreeNode { readonly type: "_kw_default"; }
 export interface KwConstTree extends AnyTreeNode { readonly type: "_kw_const"; }
 export interface KwUnsafeTree extends AnyTreeNode { readonly type: "_kw_unsafe"; }
-export interface KwMoveTree extends AnyTreeNode { readonly type: "_kw_move"; }
 export interface _WildcardPatternTree extends AnyTreeNode { readonly type: "_wildcard_pattern"; }
+export interface _ArrayExpressionSemiTree extends AnyTreeNode { readonly type: "_array_expression_semi"; }
+export interface _ArrayExpressionListTree extends AnyTreeNode { readonly type: "_array_expression_list"; }
+export interface KwTypeParametersTree extends AnyTreeNode { readonly type: "_kw_type_parameters"; }
+export interface KwWhereClauseTree extends AnyTreeNode { readonly type: "_kw_where_clause"; }
+export interface KwBlockTree extends AnyTreeNode { readonly type: "_kw_block"; }
+export interface KwMoveTree extends AnyTreeNode { readonly type: "_kw_move"; }
+export interface KwAttributeTree extends AnyTreeNode { readonly type: "_kw_attribute"; }
+export interface KwLabelTree extends AnyTreeNode { readonly type: "_kw_label"; }
+export interface KwLeftTree extends AnyTreeNode { readonly type: "_kw_left"; }
+export interface KwRightTree extends AnyTreeNode { readonly type: "_kw_right"; }
+export interface KwExpressionTree extends AnyTreeNode { readonly type: "_kw_expression"; }
+export interface KwIdentifierTree extends AnyTreeNode { readonly type: "_kw_identifier"; }
+export interface KwPatternTree extends AnyTreeNode { readonly type: "_kw_pattern"; }
+export interface KwStaticTree extends AnyTreeNode { readonly type: "_kw_static"; }
+export interface KwVisibilityModifierTree extends AnyTreeNode { readonly type: "_kw_visibility_modifier"; }
+export interface KwCrateTree extends AnyTreeNode { readonly type: "_kw_crate"; }
+export interface KwStringLiteralTree extends AnyTreeNode { readonly type: "_kw_string_literal"; }
+export interface KwMutableSpecifierTree extends AnyTreeNode { readonly type: "_kw_mutable_specifier"; }
+export interface KwExternModifierTree extends AnyTreeNode { readonly type: "_kw_extern_modifier"; }
+export interface KwFunctionModifiersTree extends AnyTreeNode { readonly type: "_kw_function_modifiers"; }
+export interface KwForLifetimesTree extends AnyTreeNode { readonly type: "_kw_for_lifetimes"; }
+export interface KwObjectTree extends AnyTreeNode { readonly type: "_kw_object"; }
+export interface KwIndexTree extends AnyTreeNode { readonly type: "_kw_index"; }
+export interface KwTokenTreeTree extends AnyTreeNode { readonly type: "_kw_token_tree"; }
+export interface KwValueTree extends AnyTreeNode { readonly type: "_kw_value"; }
+export interface KwAttributesTree extends AnyTreeNode { readonly type: "_kw_attributes"; }
+export interface KwRawStringLiteralStartTree extends AnyTreeNode { readonly type: "_kw_raw_string_literal_start"; }
+export interface KwStringContentTree extends AnyTreeNode { readonly type: "_kw_string_content"; }
+export interface KwRawStringLiteralEndTree extends AnyTreeNode { readonly type: "_kw_raw_string_literal_end"; }
+export interface KwLifetimeTree extends AnyTreeNode { readonly type: "_kw_lifetime"; }
+export interface KwSelfTree extends AnyTreeNode { readonly type: "_kw_self"; }
+export interface KwShebangTree extends AnyTreeNode { readonly type: "_kw_shebang"; }
+export interface KwStatementsTree extends AnyTreeNode { readonly type: "_kw_statements"; }
+export interface KwElementsTree extends AnyTreeNode { readonly type: "_kw_elements"; }
+export interface KwTrailingWhereClauseTree extends AnyTreeNode { readonly type: "_kw_trailing_where_clause"; }
+export interface KwOperandTree extends AnyTreeNode { readonly type: "_kw_operand"; }
+export interface KwPathTree extends AnyTreeNode { readonly type: "_kw_path"; }
 export interface KwForTree extends AnyTreeNode { readonly type: "_kw_for"; }
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface RawStringLiteralContentTree extends AnyTreeNode { readonly type: "raw_string_literal_content"; }
@@ -3135,8 +3279,8 @@ export type RustNode =
   | ReservedIdentifier
   | _TypeIdentifier
   | _FieldIdentifier
-  | ArrayExpressionSemi
-  | ArrayExpressionList
+  | _ClosureExpressionBlock
+  | _ClosureExpressionExpr
   | _FieldPatternShorthand
   | _FieldPatternNamed
   | _FunctionTypeTraitForm
@@ -3146,10 +3290,6 @@ export type RustNode =
   | _MacroDefinitionBracket
   | _MacroDefinitionBrace
   | _ModItemInline
-  | _StructItemBrace
-  | _StructItemTuple
-  | _ClosureExpressionBlock
-  | _ClosureExpressionExpr
   | _OrPatternBinary
   | _OrPatternPrefix
   | _RangeExpressionBinary
@@ -3158,6 +3298,10 @@ export type RustNode =
   | _RangeExpressionBare
   | _RangePatternLeft
   | _RangePatternPrefix
+  | _StructItemBrace
+  | _StructItemTuple
+  | ArrayExpressionSemi
+  | ArrayExpressionList
   | MacroDefinitionParen
   | MacroDefinitionBracket
   | MacroDefinitionBrace
@@ -3328,8 +3472,8 @@ export interface KindMap {
   '_reserved_identifier': ReservedIdentifier;
   '_type_identifier': _TypeIdentifier;
   '_field_identifier': _FieldIdentifier;
-  'array_expression_semi': ArrayExpressionSemi;
-  'array_expression_list': ArrayExpressionList;
+  '_closure_expression_block': _ClosureExpressionBlock;
+  '_closure_expression_expr': _ClosureExpressionExpr;
   '_field_pattern_shorthand': _FieldPatternShorthand;
   '_field_pattern_named': _FieldPatternNamed;
   '_function_type_trait_form': _FunctionTypeTraitForm;
@@ -3339,10 +3483,6 @@ export interface KindMap {
   '_macro_definition_bracket': _MacroDefinitionBracket;
   '_macro_definition_brace': _MacroDefinitionBrace;
   '_mod_item_inline': _ModItemInline;
-  '_struct_item_brace': _StructItemBrace;
-  '_struct_item_tuple': _StructItemTuple;
-  '_closure_expression_block': _ClosureExpressionBlock;
-  '_closure_expression_expr': _ClosureExpressionExpr;
   '_or_pattern_binary': _OrPatternBinary;
   '_or_pattern_prefix': _OrPatternPrefix;
   '_range_expression_binary': _RangeExpressionBinary;
@@ -3351,6 +3491,10 @@ export interface KindMap {
   '_range_expression_bare': _RangeExpressionBare;
   '_range_pattern_left': _RangePatternLeft;
   '_range_pattern_prefix': _RangePatternPrefix;
+  '_struct_item_brace': _StructItemBrace;
+  '_struct_item_tuple': _StructItemTuple;
+  'array_expression_semi': ArrayExpressionSemi;
+  'array_expression_list': ArrayExpressionList;
   'macro_definition_paren': MacroDefinitionParen;
   'macro_definition_bracket': MacroDefinitionBracket;
   'macro_definition_brace': MacroDefinitionBrace;
@@ -3391,8 +3535,44 @@ export interface KindMap {
   '_kw_default': KwDefault;
   '_kw_const': KwConst;
   '_kw_unsafe': KwUnsafe;
-  '_kw_move': KwMove;
   '_wildcard_pattern': _WildcardPattern;
+  '_array_expression_semi': _ArrayExpressionSemi;
+  '_array_expression_list': _ArrayExpressionList;
+  '_kw_type_parameters': KwTypeParameters;
+  '_kw_where_clause': KwWhereClause;
+  '_kw_block': KwBlock;
+  '_kw_move': KwMove;
+  '_kw_attribute': KwAttribute;
+  '_kw_label': KwLabel;
+  '_kw_left': KwLeft;
+  '_kw_right': KwRight;
+  '_kw_expression': KwExpression;
+  '_kw_identifier': KwIdentifier;
+  '_kw_pattern': KwPattern;
+  '_kw_static': KwStatic;
+  '_kw_visibility_modifier': KwVisibilityModifier;
+  '_kw_crate': KwCrate;
+  '_kw_string_literal': KwStringLiteral;
+  '_kw_mutable_specifier': KwMutableSpecifier;
+  '_kw_extern_modifier': KwExternModifier;
+  '_kw_function_modifiers': KwFunctionModifiers;
+  '_kw_for_lifetimes': KwForLifetimes;
+  '_kw_object': KwObject;
+  '_kw_index': KwIndex;
+  '_kw_token_tree': KwTokenTree;
+  '_kw_value': KwValue;
+  '_kw_attributes': KwAttributes;
+  '_kw_raw_string_literal_start': KwRawStringLiteralStart;
+  '_kw_string_content': KwStringContent;
+  '_kw_raw_string_literal_end': KwRawStringLiteralEnd;
+  '_kw_lifetime': KwLifetime;
+  '_kw_self': KwSelf;
+  '_kw_shebang': KwShebang;
+  '_kw_statements': KwStatements;
+  '_kw_elements': KwElements;
+  '_kw_trailing_where_clause': KwTrailingWhereClause;
+  '_kw_operand': KwOperand;
+  '_kw_path': KwPath;
   '_kw_for': KwFor;
   'string_content': StringContent;
   'raw_string_literal_content': RawStringLiteralContent;
@@ -3570,8 +3750,8 @@ export interface BlockCommentNs extends NodeNs<BlockComment, LeafScalarMap, Leaf
 export interface ReservedIdentifierNs extends NodeNs<ReservedIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _TypeIdentifierNs extends NodeNs<_TypeIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _FieldIdentifierNs extends NodeNs<_FieldIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ArrayExpressionSemiNs extends NodeNs<ArrayExpressionSemi, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ArrayExpressionListNs extends NodeNs<ArrayExpressionList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _ClosureExpressionBlockNs extends NodeNs<_ClosureExpressionBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _ClosureExpressionExprNs extends NodeNs<_ClosureExpressionExpr, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _FieldPatternShorthandNs extends NodeNs<_FieldPatternShorthand, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _FieldPatternNamedNs extends NodeNs<_FieldPatternNamed, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _FunctionTypeTraitFormNs extends NodeNs<_FunctionTypeTraitForm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3581,10 +3761,6 @@ export interface _MacroDefinitionParenNs extends NodeNs<_MacroDefinitionParen, L
 export interface _MacroDefinitionBracketNs extends NodeNs<_MacroDefinitionBracket, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _MacroDefinitionBraceNs extends NodeNs<_MacroDefinitionBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _ModItemInlineNs extends NodeNs<_ModItemInline, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _StructItemBraceNs extends NodeNs<_StructItemBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _StructItemTupleNs extends NodeNs<_StructItemTuple, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _ClosureExpressionBlockNs extends NodeNs<_ClosureExpressionBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _ClosureExpressionExprNs extends NodeNs<_ClosureExpressionExpr, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _OrPatternBinaryNs extends NodeNs<_OrPatternBinary, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _OrPatternPrefixNs extends NodeNs<_OrPatternPrefix, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _RangeExpressionBinaryNs extends NodeNs<_RangeExpressionBinary, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3593,6 +3769,10 @@ export interface _RangeExpressionPrefixNs extends NodeNs<_RangeExpressionPrefix,
 export interface _RangeExpressionBareNs extends NodeNs<_RangeExpressionBare, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _RangePatternLeftNs extends NodeNs<_RangePatternLeft, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _RangePatternPrefixNs extends NodeNs<_RangePatternPrefix, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _StructItemBraceNs extends NodeNs<_StructItemBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _StructItemTupleNs extends NodeNs<_StructItemTuple, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ArrayExpressionSemiNs extends NodeNs<ArrayExpressionSemi, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ArrayExpressionListNs extends NodeNs<ArrayExpressionList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MacroDefinitionParenNs extends NodeNs<MacroDefinitionParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MacroDefinitionBracketNs extends NodeNs<MacroDefinitionBracket, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MacroDefinitionBraceNs extends NodeNs<MacroDefinitionBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3762,8 +3942,8 @@ export interface NamespaceMap {
   '_reserved_identifier': ReservedIdentifierNs;
   '_type_identifier': _TypeIdentifierNs;
   '_field_identifier': _FieldIdentifierNs;
-  'array_expression_semi': ArrayExpressionSemiNs;
-  'array_expression_list': ArrayExpressionListNs;
+  '_closure_expression_block': _ClosureExpressionBlockNs;
+  '_closure_expression_expr': _ClosureExpressionExprNs;
   '_field_pattern_shorthand': _FieldPatternShorthandNs;
   '_field_pattern_named': _FieldPatternNamedNs;
   '_function_type_trait_form': _FunctionTypeTraitFormNs;
@@ -3773,10 +3953,6 @@ export interface NamespaceMap {
   '_macro_definition_bracket': _MacroDefinitionBracketNs;
   '_macro_definition_brace': _MacroDefinitionBraceNs;
   '_mod_item_inline': _ModItemInlineNs;
-  '_struct_item_brace': _StructItemBraceNs;
-  '_struct_item_tuple': _StructItemTupleNs;
-  '_closure_expression_block': _ClosureExpressionBlockNs;
-  '_closure_expression_expr': _ClosureExpressionExprNs;
   '_or_pattern_binary': _OrPatternBinaryNs;
   '_or_pattern_prefix': _OrPatternPrefixNs;
   '_range_expression_binary': _RangeExpressionBinaryNs;
@@ -3785,6 +3961,10 @@ export interface NamespaceMap {
   '_range_expression_bare': _RangeExpressionBareNs;
   '_range_pattern_left': _RangePatternLeftNs;
   '_range_pattern_prefix': _RangePatternPrefixNs;
+  '_struct_item_brace': _StructItemBraceNs;
+  '_struct_item_tuple': _StructItemTupleNs;
+  'array_expression_semi': ArrayExpressionSemiNs;
+  'array_expression_list': ArrayExpressionListNs;
   'macro_definition_paren': MacroDefinitionParenNs;
   'macro_definition_bracket': MacroDefinitionBracketNs;
   'macro_definition_brace': MacroDefinitionBraceNs;
@@ -4831,19 +5011,19 @@ export namespace _FieldIdentifier {
   export type Tree = TreeFor<'_field_identifier'>;
   export type Kind = '_field_identifier';
 }
-export namespace ArrayExpressionSemi {
-  export type Config = ConfigFor<'array_expression_semi'>;
-  export type Fluent = FluentFor<'array_expression_semi'>;
-  export type Loose = LooseFor<'array_expression_semi'>;
-  export type Tree = TreeFor<'array_expression_semi'>;
-  export type Kind = 'array_expression_semi';
+export namespace _ClosureExpressionBlock {
+  export type Config = ConfigFor<'_closure_expression_block'>;
+  export type Fluent = FluentFor<'_closure_expression_block'>;
+  export type Loose = LooseFor<'_closure_expression_block'>;
+  export type Tree = TreeFor<'_closure_expression_block'>;
+  export type Kind = '_closure_expression_block';
 }
-export namespace ArrayExpressionList {
-  export type Config = ConfigFor<'array_expression_list'>;
-  export type Fluent = FluentFor<'array_expression_list'>;
-  export type Loose = LooseFor<'array_expression_list'>;
-  export type Tree = TreeFor<'array_expression_list'>;
-  export type Kind = 'array_expression_list';
+export namespace _ClosureExpressionExpr {
+  export type Config = ConfigFor<'_closure_expression_expr'>;
+  export type Fluent = FluentFor<'_closure_expression_expr'>;
+  export type Loose = LooseFor<'_closure_expression_expr'>;
+  export type Tree = TreeFor<'_closure_expression_expr'>;
+  export type Kind = '_closure_expression_expr';
 }
 export namespace _FieldPatternShorthand {
   export type Config = ConfigFor<'_field_pattern_shorthand'>;
@@ -4908,34 +5088,6 @@ export namespace _ModItemInline {
   export type Tree = TreeFor<'_mod_item_inline'>;
   export type Kind = '_mod_item_inline';
 }
-export namespace _StructItemBrace {
-  export type Config = ConfigFor<'_struct_item_brace'>;
-  export type Fluent = FluentFor<'_struct_item_brace'>;
-  export type Loose = LooseFor<'_struct_item_brace'>;
-  export type Tree = TreeFor<'_struct_item_brace'>;
-  export type Kind = '_struct_item_brace';
-}
-export namespace _StructItemTuple {
-  export type Config = ConfigFor<'_struct_item_tuple'>;
-  export type Fluent = FluentFor<'_struct_item_tuple'>;
-  export type Loose = LooseFor<'_struct_item_tuple'>;
-  export type Tree = TreeFor<'_struct_item_tuple'>;
-  export type Kind = '_struct_item_tuple';
-}
-export namespace _ClosureExpressionBlock {
-  export type Config = ConfigFor<'_closure_expression_block'>;
-  export type Fluent = FluentFor<'_closure_expression_block'>;
-  export type Loose = LooseFor<'_closure_expression_block'>;
-  export type Tree = TreeFor<'_closure_expression_block'>;
-  export type Kind = '_closure_expression_block';
-}
-export namespace _ClosureExpressionExpr {
-  export type Config = ConfigFor<'_closure_expression_expr'>;
-  export type Fluent = FluentFor<'_closure_expression_expr'>;
-  export type Loose = LooseFor<'_closure_expression_expr'>;
-  export type Tree = TreeFor<'_closure_expression_expr'>;
-  export type Kind = '_closure_expression_expr';
-}
 export namespace _OrPatternBinary {
   export type Config = ConfigFor<'_or_pattern_binary'>;
   export type Fluent = FluentFor<'_or_pattern_binary'>;
@@ -4991,6 +5143,34 @@ export namespace _RangePatternPrefix {
   export type Loose = LooseFor<'_range_pattern_prefix'>;
   export type Tree = TreeFor<'_range_pattern_prefix'>;
   export type Kind = '_range_pattern_prefix';
+}
+export namespace _StructItemBrace {
+  export type Config = ConfigFor<'_struct_item_brace'>;
+  export type Fluent = FluentFor<'_struct_item_brace'>;
+  export type Loose = LooseFor<'_struct_item_brace'>;
+  export type Tree = TreeFor<'_struct_item_brace'>;
+  export type Kind = '_struct_item_brace';
+}
+export namespace _StructItemTuple {
+  export type Config = ConfigFor<'_struct_item_tuple'>;
+  export type Fluent = FluentFor<'_struct_item_tuple'>;
+  export type Loose = LooseFor<'_struct_item_tuple'>;
+  export type Tree = TreeFor<'_struct_item_tuple'>;
+  export type Kind = '_struct_item_tuple';
+}
+export namespace ArrayExpressionSemi {
+  export type Config = ConfigFor<'array_expression_semi'>;
+  export type Fluent = FluentFor<'array_expression_semi'>;
+  export type Loose = LooseFor<'array_expression_semi'>;
+  export type Tree = TreeFor<'array_expression_semi'>;
+  export type Kind = 'array_expression_semi';
+}
+export namespace ArrayExpressionList {
+  export type Config = ConfigFor<'array_expression_list'>;
+  export type Fluent = FluentFor<'array_expression_list'>;
+  export type Loose = LooseFor<'array_expression_list'>;
+  export type Tree = TreeFor<'array_expression_list'>;
+  export type Kind = 'array_expression_list';
 }
 export namespace MacroDefinitionParen {
   export type Config = ConfigFor<'macro_definition_paren'>;
