@@ -948,7 +948,7 @@ export interface StaticItem {
   readonly $type: 'static_item';
   readonly $fields: {
     readonly visibility_modifier?: VisibilityModifier;
-    readonly mutable_specifier?: KwRef;
+    readonly mutable_specifier?: "ref";
     readonly name: Identifier;
     readonly type: _Type;
     readonly value?: Expression;
@@ -998,10 +998,10 @@ export interface FunctionSignatureItem {
 export interface FunctionModifiers {
   readonly $type: 'function_modifiers';
   readonly $fields: {
-    readonly async: readonly (KwAsync)[];
-    readonly default: readonly (KwDefault)[];
-    readonly const: readonly (KwConst)[];
-    readonly unsafe: readonly (KwUnsafe)[];
+    readonly async: readonly ("async")[];
+    readonly default: readonly ("default")[];
+    readonly const: readonly ("const")[];
+    readonly unsafe: readonly ("unsafe")[];
   };
   readonly $children: readonly (ExternModifier)[];
 }
@@ -1022,7 +1022,7 @@ export interface WherePredicate {
 export interface ImplItemUFormBody {
   readonly $type: 'impl_item';
   readonly $fields: {
-    readonly unsafe?: KwUnsafe;
+    readonly unsafe?: "unsafe";
     readonly type_parameters?: TypeParameters;
     readonly trait?: _TypeIdentifier | ScopedTypeIdentifier | GenericType;
     readonly type: _Type;
@@ -1034,7 +1034,7 @@ export interface ImplItemUFormBody {
 export interface ImplItemUFormSemi {
   readonly $type: 'impl_item';
   readonly $fields: {
-    readonly unsafe?: KwUnsafe;
+    readonly unsafe?: "unsafe";
     readonly type_parameters?: TypeParameters;
     readonly trait?: _TypeIdentifier | ScopedTypeIdentifier | GenericType;
     readonly type: _Type;
@@ -1048,7 +1048,7 @@ export interface TraitItem {
   readonly $type: 'trait_item';
   readonly $fields: {
     readonly visibility_modifier?: VisibilityModifier;
-    readonly unsafe?: KwUnsafe;
+    readonly unsafe?: "unsafe";
     readonly name: _TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly bounds?: TraitBounds;
@@ -1650,7 +1650,7 @@ export interface ClosureExpressionUFormBlock {
   readonly $type: 'closure_expression';
   readonly $fields: {
     readonly static?: KwStatic;
-    readonly async?: KwAsync;
+    readonly async?: "async";
     readonly move?: KwMove;
     readonly parameters: ClosureParameters;
   };
@@ -1661,7 +1661,7 @@ export interface ClosureExpressionUFormExpr {
   readonly $type: 'closure_expression';
   readonly $fields: {
     readonly static?: KwStatic;
-    readonly async?: KwAsync;
+    readonly async?: "async";
     readonly move?: KwMove;
     readonly parameters: ClosureParameters;
   };
@@ -1792,7 +1792,7 @@ export interface StructPattern {
 export interface FieldPatternUFormShorthand {
   readonly $type: 'field_pattern';
   readonly $fields: {
-    readonly ref?: KwRef;
+    readonly ref?: "ref";
     readonly mutable_specifier?: MutableSpecifier;
   };
   readonly $children: readonly [FieldPatternShorthand];
@@ -1801,7 +1801,7 @@ export interface FieldPatternUFormShorthand {
 export interface FieldPatternUFormNamed {
   readonly $type: 'field_pattern';
   readonly $fields: {
-    readonly ref?: KwRef;
+    readonly ref?: "ref";
     readonly mutable_specifier?: MutableSpecifier;
   };
   readonly $children: readonly [FieldPatternNamed];

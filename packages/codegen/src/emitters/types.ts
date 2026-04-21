@@ -22,7 +22,7 @@ import {
     AssembledSupertype,
 } from '../compiler/node-map.ts'
 import { loadRawEntries } from '../validate/node-types-loader.ts'
-import { isAutoStampField, isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues } from './shared.ts'
+import { isAutoStampField, isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues, resolveHiddenKeywordLiteral } from './shared.ts'
 
 type StructuralNode = AssembledBranch | AssembledContainer | AssembledPolymorph
 
@@ -1060,6 +1060,13 @@ function fieldTypeExpr(
     if (fieldKinds.length === 0) return 'string'
     const resolveAliased = buildAliasSourceResolver(field, nodeMap)
     const parts = fieldKinds.map(resolveAliased).map(t => {
+        // Hidden `_kw_*` keywords inline as their literal string so the
+        // field surface reads as the raw token (e.g. `"async"`) instead
+        // of exposing the helper rule's wrapper type.
+        if (nodeMap) {
+            const lit = resolveHiddenKeywordLiteral(t, nodeMap)
+            if (lit !== undefined) return JSON.stringify(lit)
+        }
         const node = nodeMap?.nodes.get(t)
         if (!node) {
             const name = t.replace(/(?:^|_)([a-z])/g, (_, c: string) => c.toUpperCase())

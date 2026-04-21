@@ -552,7 +552,7 @@ export interface CaseClause {
 export interface ForStatement {
   readonly $type: 'for_statement';
   readonly $fields: {
-    readonly async?: KwAsync;
+    readonly async?: "async";
     readonly left: LeftHandSide;
     readonly right: Expressions;
     readonly body: Suite;
@@ -598,7 +598,7 @@ export interface FinallyClause {
 export interface WithStatement {
   readonly $type: 'with_statement';
   readonly $fields: {
-    readonly async?: KwAsync;
+    readonly async?: "async";
     readonly with_clause: WithClause;
     readonly body: Suite;
   };
@@ -619,7 +619,7 @@ export interface WithItem {
 export interface FunctionDefinition {
   readonly $type: 'function_definition';
   readonly $fields: {
-    readonly async?: KwAsync;
+    readonly async?: "async";
     readonly name: Identifier;
     readonly type_parameters?: TypeParameter;
     readonly parameters: Parameters;
@@ -1137,7 +1137,7 @@ export interface ParenthesizedExpression {
 export interface ForInClause {
   readonly $type: 'for_in_clause';
   readonly $fields: {
-    readonly async?: KwAsync;
+    readonly async?: "async";
     readonly left: LeftHandSide;
     readonly right: NonEmptyArray<ExpressionWithinForInClause>;
   };

@@ -19,6 +19,7 @@ import {
 import {
     resolveEffectiveLiteral, isAutoStampSlot, stampExpressionFor,
     isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues,
+    resolveHiddenKeywordLiteral,
 } from './shared.ts'
 
 export interface EmitFactoriesConfig {
@@ -546,6 +547,13 @@ function fieldElementType(f: AssembledField, nodeMap: NodeMap): string {
         return nodeMap.nodes.get(source) ? source : t
     }
     const nodeParts = kindNames.map(resolveAliased).map(t => {
+        // Hidden `_kw_*` keywords inline as their literal string so the
+        // fluent setter parameter type matches the raw token the user
+        // sees (e.g. `async(...values: "async"[])`) instead of requiring
+        // a `T.KwAsync` wrapper. Mirrors the surface in types.ts's
+        // `fieldTypeExpr`.
+        const lit = resolveHiddenKeywordLiteral(t, nodeMap)
+        if (lit !== undefined) return JSON.stringify(lit)
         const node = nodeMap.nodes.get(t)
         if (!node) {
             const fallback = t.replace(/(?:^|_)([a-z])/g, (_: string, c: string) => c.toUpperCase())

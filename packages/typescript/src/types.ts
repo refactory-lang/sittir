@@ -994,7 +994,7 @@ export type ClassHeritage = ClassHeritageUFormExtendsClause | ClassHeritageUForm
 export interface FunctionExpression {
   readonly $type: 'function_expression';
   readonly $fields: {
-    readonly async?: KwAsync;
+    readonly async?: "async";
     readonly name?: Identifier;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
@@ -1006,7 +1006,7 @@ export interface FunctionExpression {
 export interface FunctionDeclaration {
   readonly $type: 'function_declaration';
   readonly $fields: {
-    readonly async?: KwAsync;
+    readonly async?: "async";
     readonly name: Identifier;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
@@ -1019,7 +1019,7 @@ export interface FunctionDeclaration {
 export interface GeneratorFunction {
   readonly $type: 'generator_function';
   readonly $fields: {
-    readonly async?: KwAsync;
+    readonly async?: "async";
     readonly name?: Identifier;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
@@ -1031,7 +1031,7 @@ export interface GeneratorFunction {
 export interface GeneratorFunctionDeclaration {
   readonly $type: 'generator_function_declaration';
   readonly $fields: {
-    readonly async?: KwAsync;
+    readonly async?: "async";
     readonly name: Identifier;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
@@ -1044,7 +1044,7 @@ export interface GeneratorFunctionDeclaration {
 export interface ArrowFunctionUFormParameter {
   readonly $type: 'arrow_function';
   readonly $fields: {
-    readonly async?: KwAsync;
+    readonly async?: "async";
     readonly body: Expression | StatementBlock;
   };
   readonly $children: readonly [ArrowFunctionParameter];
@@ -1053,7 +1053,7 @@ export interface ArrowFunctionUFormParameter {
 export interface ArrowFunctionUFormUCallSignature {
   readonly $type: 'arrow_function';
   readonly $fields: {
-    readonly async?: KwAsync;
+    readonly async?: "async";
     readonly body: Expression | StatementBlock;
   };
   readonly $children: readonly [ArrowFunctionUCallSignature];
@@ -1260,7 +1260,7 @@ export interface FieldDefinition {
   readonly $type: 'field_definition';
   readonly $fields: {
     readonly decorator: readonly (Decorator)[];
-    readonly static?: KwStatic;
+    readonly static?: "static";
     readonly property: PropertyName;
     readonly value?: Expression;
   };
@@ -1293,9 +1293,9 @@ export interface MethodDefinition {
   readonly $type: 'method_definition';
   readonly $fields: {
     readonly accessibility_modifier?: AccessibilityModifier;
-    readonly override_modifier?: KwStatic;
-    readonly readonly?: KwReadonly;
-    readonly async?: KwAsync;
+    readonly override_modifier?: "static";
+    readonly readonly?: "readonly";
+    readonly async?: "async";
     readonly name: PropertyName;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
@@ -1333,9 +1333,9 @@ export interface PublicFieldDefinition {
   readonly $fields: {
     readonly decorator: readonly (Decorator)[];
     readonly declare?: "declare";
-    readonly static?: KwStatic;
-    readonly readonly?: KwReadonly;
-    readonly abstract?: KwAbstract;
+    readonly static?: "static";
+    readonly readonly?: "readonly";
+    readonly abstract?: "abstract";
     readonly accessor?: "accessor";
     readonly name: PropertyName;
     readonly type?: TypeAnnotation;
@@ -1359,9 +1359,9 @@ export interface MethodSignature {
   readonly $type: 'method_signature';
   readonly $fields: {
     readonly accessibility_modifier?: AccessibilityModifier;
-    readonly override_modifier?: KwStatic;
-    readonly readonly?: KwReadonly;
-    readonly async?: KwAsync;
+    readonly override_modifier?: "static";
+    readonly readonly?: "readonly";
+    readonly async?: "async";
     readonly name: PropertyName;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
@@ -1385,7 +1385,7 @@ export interface AbstractMethodSignature {
 export interface FunctionSignature {
   readonly $type: 'function_signature';
   readonly $fields: {
-    readonly async?: KwAsync;
+    readonly async?: "async";
     readonly name: Identifier;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
@@ -1531,7 +1531,7 @@ export interface ExtendsTypeClause {
 export interface EnumDeclaration {
   readonly $type: 'enum_declaration';
   readonly $fields: {
-    readonly const?: KwConst;
+    readonly const?: "const";
     readonly name: Identifier;
     readonly body: EnumBody;
   };
@@ -1566,7 +1566,7 @@ export interface RequiredParameter {
   readonly $type: 'required_parameter';
   readonly $fields: {
     readonly decorator: readonly (Decorator)[];
-    readonly readonly?: KwReadonly;
+    readonly readonly?: "readonly";
     readonly pattern: Pattern | This;
     readonly type?: TypeAnnotation;
     readonly value?: Expression;
@@ -1578,7 +1578,7 @@ export interface OptionalParameter {
   readonly $type: 'optional_parameter';
   readonly $fields: {
     readonly decorator: readonly (Decorator)[];
-    readonly readonly?: KwReadonly;
+    readonly readonly?: "readonly";
     readonly pattern: Pattern | This;
     readonly type?: TypeAnnotation;
     readonly value?: Expression;
@@ -1672,7 +1672,7 @@ export interface RestType {
 export interface ConstructorType {
   readonly $type: 'constructor_type';
   readonly $fields: {
-    readonly abstract?: KwAbstract;
+    readonly abstract?: "abstract";
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
     readonly type: Type;
@@ -1825,8 +1825,8 @@ export interface PropertySignature {
   readonly $type: 'property_signature';
   readonly $fields: {
     readonly accessibility_modifier?: AccessibilityModifier;
-    readonly override_modifier?: KwStatic;
-    readonly readonly?: KwReadonly;
+    readonly override_modifier?: "static";
+    readonly readonly?: "readonly";
     readonly name: PropertyName;
     readonly type?: TypeAnnotation;
   };
@@ -1841,7 +1841,7 @@ export interface TypeParameters {
 export interface TypeParameter {
   readonly $type: 'type_parameter';
   readonly $fields: {
-    readonly const?: KwConst;
+    readonly const?: "const";
     readonly name: _TypeIdentifier;
     readonly constraint?: Constraint;
     readonly value?: DefaultType;
@@ -1865,7 +1865,7 @@ export interface Constraint {
 export interface ConstructSignature {
   readonly $type: 'construct_signature';
   readonly $fields: {
-    readonly abstract?: KwAbstract;
+    readonly abstract?: "abstract";
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
     readonly type?: TypeAnnotation;

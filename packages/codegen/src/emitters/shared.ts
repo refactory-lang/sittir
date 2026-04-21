@@ -123,6 +123,41 @@ export function isAutoStampField(field: AssembledField, nodeMap: NodeMap): boole
     return resolveEffectiveLiteral(field, nodeMap) !== undefined
 }
 
+/**
+ * Return the literal string that a hidden single-literal keyword kind
+ * produces, or `undefined` if the kind is not a hidden single-literal
+ * keyword.
+ *
+ * @remarks
+ * Hidden `_kw_<name>` rules are an implementation detail for preserving
+ * FIELD wrappers around bare string tokens (tree-sitter strips FIELD
+ * around anonymous STRING; routing through a SYMBOL preserves it).
+ * Consumers don't care that a hidden helper rule exists — the surface
+ * type should be the literal string the keyword produces. This helper
+ * lets type / factory emitters inline `"&"` / `"async"` / etc. in
+ * field type expressions and fluent setter signatures instead of
+ * surfacing a `KwLifetime` / `KwAsync` wrapper type.
+ *
+ * A kind qualifies when:
+ *   - The kind name starts with `_` (hidden-rule marker).
+ *   - The resolved node is an {@link AssembledKeyword} — its rule body
+ *     is a single `StringRule`.
+ *
+ * @param kindName - The kind to probe.
+ * @param nodeMap - Assembled node map (needed to resolve `kindName`
+ *   to its `AssembledNode` and check for a keyword shape).
+ * @returns The keyword's literal text, or `undefined`.
+ */
+export function resolveHiddenKeywordLiteral(
+    kindName: string,
+    nodeMap: NodeMap,
+): string | undefined {
+    if (!kindName.startsWith('_')) return undefined
+    const node = nodeMap.nodes.get(kindName)
+    if (node instanceof AssembledKeyword) return node.text
+    return undefined
+}
+
 // ---------------------------------------------------------------------------
 // Generic slot helpers — work on AssembledChild (the base shared by both
 // AssembledField and the plain child slot descriptors).
