@@ -45,8 +45,8 @@ const _leafRe_shorthandFieldIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Cont
 
 export function sourceFile(config: T.SourceFile.Config) {
   const fields = {
-    shebang: config?.shebang,
-    statements: config?.statements,
+    shebang: config.shebang,
+    statements: config.statements,
   };
   return {
     $type: 'source_file' as const,
@@ -91,9 +91,9 @@ export function macroDefinition(config: T.MacroDefinitionUFormParenConfig | T.Ma
 }
 export function macroDefinitionUFormParen(config: T.MacroDefinitionUFormParenConfig) {
   const fields = {
-    name: config?.name,
+    name: config.name,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'macro_definition' as const,
     $source: 'factory' as const,
@@ -114,9 +114,9 @@ export function macroDefinitionUFormParen(config: T.MacroDefinitionUFormParenCon
 }
 export function macroDefinitionUFormBracket(config: T.MacroDefinitionUFormBracketConfig) {
   const fields = {
-    name: config?.name,
+    name: config.name,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'macro_definition' as const,
     $source: 'factory' as const,
@@ -137,9 +137,9 @@ export function macroDefinitionUFormBracket(config: T.MacroDefinitionUFormBracke
 }
 export function macroDefinitionUFormBrace(config: T.MacroDefinitionUFormBraceConfig) {
   const fields = {
-    name: config?.name,
+    name: config.name,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'macro_definition' as const,
     $source: 'factory' as const,
@@ -161,8 +161,8 @@ export function macroDefinitionUFormBrace(config: T.MacroDefinitionUFormBraceCon
 
 export function macroRule(config: T.MacroRule.Config) {
   const fields = {
-    left: config?.left,
-    right: config?.right,
+    left: config.left,
+    right: config.right,
   };
   return {
     $type: 'macro_rule' as const,
@@ -194,8 +194,8 @@ export function tokenTreePattern(text: string) {
 
 export function tokenBindingPattern(config: T.TokenBindingPattern.Config) {
   const fields = {
-    name: config?.name,
-    type: config?.type,
+    name: config.name,
+    type: config.type,
   };
   return {
     $type: 'token_binding_pattern' as const,
@@ -269,7 +269,7 @@ export function tokenRepetition(...children: T.Tokens[]) {
 
 export function attributeItem(config: T.AttributeItem.Config) {
   const fields = {
-    attribute: config?.attribute,
+    attribute: config.attribute,
   };
   return {
     $type: 'attribute_item' as const,
@@ -288,7 +288,7 @@ export function attributeItem(config: T.AttributeItem.Config) {
 
 export function innerAttributeItem(config: T.InnerAttributeItem.Config) {
   const fields = {
-    attribute: config?.attribute,
+    attribute: config.attribute,
   };
   return {
     $type: 'inner_attribute_item' as const,
@@ -307,10 +307,10 @@ export function innerAttributeItem(config: T.InnerAttributeItem.Config) {
 
 export function attribute(config: T.Attribute.Config) {
   const fields = {
-    value: config?.value,
-    arguments: config?.arguments,
+    value: config.value,
+    arguments: config.arguments,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'attribute' as const,
     $source: 'factory' as const,
@@ -339,10 +339,10 @@ export function modItem(config: T.ModItemUFormExternalConfig | T.ModItemUFormInl
 }
 export function modItemUFormExternal(config: T.ModItemUFormExternalConfig) {
   const fields = {
-    visibility_modifier: config?.visibilityModifier,
-    name: config?.name,
+    visibility_modifier: config.visibilityModifier,
+    name: config.name,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'mod_item' as const,
     $source: 'factory' as const,
@@ -364,10 +364,10 @@ export function modItemUFormExternal(config: T.ModItemUFormExternalConfig) {
 }
 export function modItemUFormInline(config: T.ModItemUFormInlineConfig) {
   const fields = {
-    visibility_modifier: config?.visibilityModifier,
-    name: config?.name,
+    visibility_modifier: config.visibilityModifier,
+    name: config.name,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'mod_item' as const,
     $source: 'factory' as const,
@@ -390,9 +390,9 @@ export function modItemUFormInline(config: T.ModItemUFormInlineConfig) {
 
 export function foreignModItem(config: T.ForeignModItem.Config) {
   const fields = {
-    visibility_modifier: config?.visibilityModifier,
-    extern_modifier: config?.externModifier,
-    body: config?.body,
+    visibility_modifier: config.visibilityModifier,
+    extern_modifier: config.externModifier,
+    body: config.body,
   };
   return {
     $type: 'foreign_mod_item' as const,
@@ -437,11 +437,11 @@ export function structItem(config: T.StructItemUFormBraceConfig | T.StructItemUF
 }
 export function structItemUFormBrace(config: T.StructItemUFormBraceConfig) {
   const fields = {
-    visibility_modifier: config?.visibilityModifier,
-    name: config?.name,
-    type_parameters: config?.typeParameters,
+    visibility_modifier: config.visibilityModifier,
+    name: config.name,
+    type_parameters: config.typeParameters,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'struct_item' as const,
     $source: 'factory' as const,
@@ -464,11 +464,11 @@ export function structItemUFormBrace(config: T.StructItemUFormBraceConfig) {
 }
 export function structItemUFormTuple(config: T.StructItemUFormTupleConfig) {
   const fields = {
-    visibility_modifier: config?.visibilityModifier,
-    name: config?.name,
-    type_parameters: config?.typeParameters,
+    visibility_modifier: config.visibilityModifier,
+    name: config.name,
+    type_parameters: config.typeParameters,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'struct_item' as const,
     $source: 'factory' as const,
@@ -491,11 +491,11 @@ export function structItemUFormTuple(config: T.StructItemUFormTupleConfig) {
 }
 export function structItemUFormUnit(config: T.StructItemUFormUnitConfig) {
   const fields = {
-    visibility_modifier: config?.visibilityModifier,
-    name: config?.name,
-    type_parameters: config?.typeParameters,
+    visibility_modifier: config.visibilityModifier,
+    name: config.name,
+    type_parameters: config.typeParameters,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'struct_item' as const,
     $source: 'factory' as const,
@@ -519,11 +519,11 @@ export function structItemUFormUnit(config: T.StructItemUFormUnitConfig) {
 
 export function unionItem(config: T.UnionItem.Config) {
   const fields = {
-    visibility_modifier: config?.visibilityModifier,
-    name: config?.name,
-    type_parameters: config?.typeParameters,
-    where_clause: config?.whereClause,
-    body: config?.body,
+    visibility_modifier: config.visibilityModifier,
+    name: config.name,
+    type_parameters: config.typeParameters,
+    where_clause: config.whereClause,
+    body: config.body,
   };
   return {
     $type: 'union_item' as const,
@@ -546,11 +546,11 @@ export function unionItem(config: T.UnionItem.Config) {
 
 export function enumItem(config: T.EnumItem.Config) {
   const fields = {
-    visibility_modifier: config?.visibilityModifier,
-    name: config?.name,
-    type_parameters: config?.typeParameters,
-    where_clause: config?.whereClause,
-    body: config?.body,
+    visibility_modifier: config.visibilityModifier,
+    name: config.name,
+    type_parameters: config.typeParameters,
+    where_clause: config.whereClause,
+    body: config.body,
   };
   return {
     $type: 'enum_item' as const,
@@ -588,10 +588,10 @@ export function enumVariantList(...children: (T.AttributeItem | T.EnumVariant)[]
 
 export function enumVariant(config: T.EnumVariant.Config) {
   const fields = {
-    visibility_modifier: config?.visibilityModifier,
-    name: config?.name,
-    body: config?.body,
-    value: config?.value,
+    visibility_modifier: config.visibilityModifier,
+    name: config.name,
+    body: config.body,
+    value: config.value,
   };
   return {
     $type: 'enum_variant' as const,
@@ -628,9 +628,9 @@ export function fieldDeclarationList(...children: (T.AttributeItem | T.FieldDecl
 
 export function fieldDeclaration(config: T.FieldDeclaration.Config) {
   const fields = {
-    visibility_modifier: config?.visibilityModifier,
-    name: config?.name,
-    type: config?.type,
+    visibility_modifier: config.visibilityModifier,
+    name: config.name,
+    type: config.type,
   };
   return {
     $type: 'field_declaration' as const,
@@ -651,7 +651,7 @@ export function fieldDeclaration(config: T.FieldDeclaration.Config) {
 
 export function orderedFieldDeclarationList(config: T.OrderedFieldDeclarationList.Config) {
   const fields = {
-    type: config?.type,
+    type: config.type,
   };
   return {
     $type: 'ordered_field_declaration_list' as const,
@@ -670,10 +670,10 @@ export function orderedFieldDeclarationList(config: T.OrderedFieldDeclarationLis
 
 export function externCrateDeclaration(config: T.ExternCrateDeclaration.Config) {
   const fields = {
-    visibility_modifier: config?.visibilityModifier,
-    crate: config?.crate,
-    name: config?.name,
-    alias: config?.alias,
+    visibility_modifier: config.visibilityModifier,
+    crate: config.crate,
+    name: config.name,
+    alias: config.alias,
   };
   return {
     $type: 'extern_crate_declaration' as const,
@@ -695,10 +695,10 @@ export function externCrateDeclaration(config: T.ExternCrateDeclaration.Config) 
 
 export function constItem(config: T.ConstItem.Config) {
   const fields = {
-    visibility_modifier: config?.visibilityModifier,
-    name: config?.name,
-    type: config?.type,
-    value: config?.value,
+    visibility_modifier: config.visibilityModifier,
+    name: config.name,
+    type: config.type,
+    value: config.value,
   };
   return {
     $type: 'const_item' as const,
@@ -720,13 +720,13 @@ export function constItem(config: T.ConstItem.Config) {
 
 export function staticItem(config: T.StaticItem.Config) {
   const fields = {
-    visibility_modifier: config?.visibilityModifier,
-    mutable_specifier: config?.mutableSpecifier,
-    name: config?.name,
-    type: config?.type,
-    value: config?.value,
+    visibility_modifier: config.visibilityModifier,
+    mutable_specifier: config.mutableSpecifier,
+    name: config.name,
+    type: config.type,
+    value: config.value,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'static_item' as const,
     $source: 'factory' as const,
@@ -751,12 +751,12 @@ export function staticItem(config: T.StaticItem.Config) {
 
 export function typeItem(config: T.TypeItem.Config) {
   const fields = {
-    visibility_modifier: config?.visibilityModifier,
-    name: config?.name,
-    type_parameters: config?.typeParameters,
-    where_clause: config?.whereClause,
-    type: config?.type,
-    trailing_where_clause: config?.trailingWhereClause,
+    visibility_modifier: config.visibilityModifier,
+    name: config.name,
+    type_parameters: config.typeParameters,
+    where_clause: config.whereClause,
+    type: config.type,
+    trailing_where_clause: config.trailingWhereClause,
   };
   return {
     $type: 'type_item' as const,
@@ -780,14 +780,14 @@ export function typeItem(config: T.TypeItem.Config) {
 
 export function functionItem(config: T.FunctionItem.Config) {
   const fields = {
-    visibility_modifier: config?.visibilityModifier,
-    function_modifiers: config?.functionModifiers,
-    name: config?.name,
-    type_parameters: config?.typeParameters,
-    parameters: config?.parameters,
-    return_type: config?.returnType,
-    where_clause: config?.whereClause,
-    body: config?.body,
+    visibility_modifier: config.visibilityModifier,
+    function_modifiers: config.functionModifiers,
+    name: config.name,
+    type_parameters: config.typeParameters,
+    parameters: config.parameters,
+    return_type: config.returnType,
+    where_clause: config.whereClause,
+    body: config.body,
   };
   return {
     $type: 'function_item' as const,
@@ -813,13 +813,13 @@ export function functionItem(config: T.FunctionItem.Config) {
 
 export function functionSignatureItem(config: T.FunctionSignatureItem.Config) {
   const fields = {
-    visibility_modifier: config?.visibilityModifier,
-    function_modifiers: config?.functionModifiers,
-    name: config?.name,
-    type_parameters: config?.typeParameters,
-    parameters: config?.parameters,
-    return_type: config?.returnType,
-    where_clause: config?.whereClause,
+    visibility_modifier: config.visibilityModifier,
+    function_modifiers: config.functionModifiers,
+    name: config.name,
+    type_parameters: config.typeParameters,
+    parameters: config.parameters,
+    return_type: config.returnType,
+    where_clause: config.whereClause,
   };
   return {
     $type: 'function_signature_item' as const,
@@ -888,8 +888,8 @@ export function whereClause(...children: T.WherePredicate[]) {
 
 export function wherePredicate(config: T.WherePredicate.Config) {
   const fields = {
-    left: config?.left,
-    bounds: config?.bounds,
+    left: config.left,
+    bounds: config.bounds,
   };
   return {
     $type: 'where_predicate' as const,
@@ -916,13 +916,13 @@ export function implItem(config: T.ImplItemUFormBodyConfig | T.ImplItemUFormSemi
 }
 export function implItemUFormBody(config: T.ImplItemUFormBodyConfig) {
   const fields = {
-    unsafe: config?.unsafe,
-    type_parameters: config?.typeParameters,
-    trait: config?.trait,
-    type: config?.type,
-    where_clause: config?.whereClause,
+    unsafe: config.unsafe,
+    type_parameters: config.typeParameters,
+    trait: config.trait,
+    type: config.type,
+    where_clause: config.whereClause,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'impl_item' as const,
     $source: 'factory' as const,
@@ -947,13 +947,13 @@ export function implItemUFormBody(config: T.ImplItemUFormBodyConfig) {
 }
 export function implItemUFormSemi(config: T.ImplItemUFormSemiConfig) {
   const fields = {
-    unsafe: config?.unsafe,
-    type_parameters: config?.typeParameters,
-    trait: config?.trait,
-    type: config?.type,
-    where_clause: config?.whereClause,
+    unsafe: config.unsafe,
+    type_parameters: config.typeParameters,
+    trait: config.trait,
+    type: config.type,
+    where_clause: config.whereClause,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'impl_item' as const,
     $source: 'factory' as const,
@@ -979,13 +979,13 @@ export function implItemUFormSemi(config: T.ImplItemUFormSemiConfig) {
 
 export function traitItem(config: T.TraitItem.Config) {
   const fields = {
-    visibility_modifier: config?.visibilityModifier,
-    unsafe: config?.unsafe,
-    name: config?.name,
-    type_parameters: config?.typeParameters,
-    bounds: config?.bounds,
-    where_clause: config?.whereClause,
-    body: config?.body,
+    visibility_modifier: config.visibilityModifier,
+    unsafe: config.unsafe,
+    name: config.name,
+    type_parameters: config.typeParameters,
+    bounds: config.bounds,
+    where_clause: config.whereClause,
+    body: config.body,
   };
   return {
     $type: 'trait_item' as const,
@@ -1010,10 +1010,10 @@ export function traitItem(config: T.TraitItem.Config) {
 
 export function associatedType(config: T.AssociatedType.Config) {
   const fields = {
-    name: config?.name,
-    type_parameters: config?.typeParameters,
-    bounds: config?.bounds,
-    where_clause: config?.whereClause,
+    name: config.name,
+    type_parameters: config.typeParameters,
+    bounds: config.bounds,
+    where_clause: config.whereClause,
   };
   return {
     $type: 'associated_type' as const,
@@ -1050,8 +1050,8 @@ export function traitBounds(...children: (T._Type | T.Lifetime | T.HigherRankedT
 
 export function higherRankedTraitBound(config: T.HigherRankedTraitBound.Config) {
   const fields = {
-    type_parameters: config?.typeParameters,
-    type: config?.type,
+    type_parameters: config.typeParameters,
+    type: config.type,
   };
   return {
     $type: 'higher_ranked_trait_bound' as const,
@@ -1102,9 +1102,9 @@ export function typeParameters(...children: (T.AttributeItem | T.Metavariable | 
 
 export function constParameter(config: T.ConstParameter.Config) {
   const fields = {
-    name: config?.name,
-    type: config?.type,
-    value: config?.value,
+    name: config.name,
+    type: config.type,
+    value: config.value,
   };
   return {
     $type: 'const_parameter' as const,
@@ -1125,9 +1125,9 @@ export function constParameter(config: T.ConstParameter.Config) {
 
 export function typeParameter(config: T.TypeParameter.Config) {
   const fields = {
-    name: config?.name,
-    bounds: config?.bounds,
-    default_type: config?.defaultType,
+    name: config.name,
+    bounds: config.bounds,
+    default_type: config.defaultType,
   };
   return {
     $type: 'type_parameter' as const,
@@ -1148,8 +1148,8 @@ export function typeParameter(config: T.TypeParameter.Config) {
 
 export function lifetimeParameter(config: T.LifetimeParameter.Config) {
   const fields = {
-    name: config?.name,
-    bounds: config?.bounds,
+    name: config.name,
+    bounds: config.bounds,
   };
   return {
     $type: 'lifetime_parameter' as const,
@@ -1169,11 +1169,11 @@ export function lifetimeParameter(config: T.LifetimeParameter.Config) {
 
 export function letDeclaration(config: T.LetDeclaration.Config) {
   const fields = {
-    mutable_specifier: config?.mutableSpecifier,
-    pattern: config?.pattern,
-    type: config?.type,
-    value: config?.value,
-    alternative: config?.alternative,
+    mutable_specifier: config.mutableSpecifier,
+    pattern: config.pattern,
+    type: config.type,
+    value: config.value,
+    alternative: config.alternative,
   };
   return {
     $type: 'let_declaration' as const,
@@ -1196,8 +1196,8 @@ export function letDeclaration(config: T.LetDeclaration.Config) {
 
 export function useDeclaration(config: T.UseDeclaration.Config) {
   const fields = {
-    visibility_modifier: config?.visibilityModifier,
-    argument: config?.argument,
+    visibility_modifier: config.visibilityModifier,
+    argument: config.argument,
   };
   return {
     $type: 'use_declaration' as const,
@@ -1217,8 +1217,8 @@ export function useDeclaration(config: T.UseDeclaration.Config) {
 
 export function scopedUseList(config: T.ScopedUseList.Config) {
   const fields = {
-    path: config?.path,
-    list: config?.list,
+    path: config.path,
+    list: config.list,
   };
   return {
     $type: 'scoped_use_list' as const,
@@ -1253,8 +1253,8 @@ export function useList(...children: T.UseClause[]) {
 
 export function useAsClause(config: T.UseAsClause.Config) {
   const fields = {
-    path: config?.path,
-    alias: config?.alias,
+    path: config.path,
+    alias: config.alias,
   };
   return {
     $type: 'use_as_clause' as const,
@@ -1308,9 +1308,9 @@ export function parameters(...children: (T.AttributeItem | T.Parameter | T.SelfP
 
 export function selfParameter(config: T.SelfParameter.Config) {
   const fields = {
-    lifetime: config?.lifetime,
-    mutable_specifier: config?.mutableSpecifier,
-    self: config?.self,
+    lifetime: config.lifetime,
+    mutable_specifier: config.mutableSpecifier,
+    self: config.self,
   };
   return {
     $type: 'self_parameter' as const,
@@ -1352,9 +1352,9 @@ export function variadicParameter(config?: T.VariadicParameter.Config) {
 
 export function parameter(config: T.Parameter.Config) {
   const fields = {
-    mutable_specifier: config?.mutableSpecifier,
-    pattern: config?.pattern,
-    type: config?.type,
+    mutable_specifier: config.mutableSpecifier,
+    pattern: config.pattern,
+    type: config.type,
   };
   return {
     $type: 'parameter' as const,
@@ -1458,8 +1458,8 @@ export function bracketedType(child?: (T._Type | T.QualifiedType)) {
 
 export function qualifiedType(config: T.QualifiedType.Config) {
   const fields = {
-    type: config?.type,
-    alias: config?.alias,
+    type: config.type,
+    alias: config.alias,
   };
   return {
     $type: 'qualified_type' as const,
@@ -1479,7 +1479,7 @@ export function qualifiedType(config: T.QualifiedType.Config) {
 
 export function lifetime(config: T.Lifetime.Config) {
   const fields = {
-    identifier: config?.identifier,
+    identifier: config.identifier,
   };
   return {
     $type: 'lifetime' as const,
@@ -1498,8 +1498,8 @@ export function lifetime(config: T.Lifetime.Config) {
 
 export function arrayType(config: T.ArrayType.Config) {
   const fields = {
-    element: config?.element,
-    length: config?.length,
+    element: config.element,
+    length: config.length,
   };
   return {
     $type: 'array_type' as const,
@@ -1535,11 +1535,11 @@ export function forLifetimes(...children: T.Lifetime[]) {
 
 export function functionType(config: T.FunctionType.Config) {
   const fields = {
-    for_lifetimes: config?.forLifetimes,
-    parameters: config?.parameters,
-    return_type: config?.returnType,
+    for_lifetimes: config.forLifetimes,
+    parameters: config.parameters,
+    return_type: config.returnType,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'function_type' as const,
     $source: 'factory' as const,
@@ -1591,8 +1591,8 @@ export function unitType(text: string) {
 
 export function genericFunction(config: T.GenericFunction.Config) {
   const fields = {
-    function: config?.function,
-    type_arguments: config?.typeArguments,
+    function: config.function,
+    type_arguments: config.typeArguments,
   };
   return {
     $type: 'generic_function' as const,
@@ -1612,8 +1612,8 @@ export function genericFunction(config: T.GenericFunction.Config) {
 
 export function genericType(config: T.GenericType.Config) {
   const fields = {
-    type: config?.type,
-    type_arguments: config?.typeArguments,
+    type: config.type,
+    type_arguments: config.typeArguments,
   };
   return {
     $type: 'generic_type' as const,
@@ -1633,9 +1633,9 @@ export function genericType(config: T.GenericType.Config) {
 
 export function genericTypeWithTurbofish(config: T.GenericTypeWithTurbofish.Config) {
   const fields = {
-    type: config?.type,
+    type: config.type,
     turbofish: "::" as const,
-    type_arguments: config?.typeArguments,
+    type_arguments: config.typeArguments,
   };
   return {
     $type: 'generic_type_with_turbofish' as const,
@@ -1656,8 +1656,8 @@ export function genericTypeWithTurbofish(config: T.GenericTypeWithTurbofish.Conf
 
 export function boundedType(config: T.BoundedType.Config) {
   const fields = {
-    left: config?.left,
-    right: config?.right,
+    left: config.left,
+    right: config.right,
   };
   return {
     $type: 'bounded_type' as const,
@@ -1707,9 +1707,9 @@ export function typeArguments(...children: (T._Type | T.TypeBinding | T.Lifetime
 
 export function typeBinding(config: T.TypeBinding.Config) {
   const fields = {
-    name: config?.name,
-    type_arguments: config?.typeArguments,
-    type: config?.type,
+    name: config.name,
+    type_arguments: config.typeArguments,
+    type: config.type,
   };
   return {
     $type: 'type_binding' as const,
@@ -1730,9 +1730,9 @@ export function typeBinding(config: T.TypeBinding.Config) {
 
 export function referenceType(config: T.ReferenceType.Config) {
   const fields = {
-    lifetime: config?.lifetime,
-    mutable_specifier: config?.mutableSpecifier,
-    type: config?.type,
+    lifetime: config.lifetime,
+    mutable_specifier: config.mutableSpecifier,
+    type: config.type,
   };
   return {
     $type: 'reference_type' as const,
@@ -1753,8 +1753,8 @@ export function referenceType(config: T.ReferenceType.Config) {
 
 export function pointerType(config: T.PointerType.Config) {
   const fields = {
-    mutable_specifier: config?.mutableSpecifier,
-    type: config?.type,
+    mutable_specifier: config.mutableSpecifier,
+    type: config.type,
   };
   return {
     $type: 'pointer_type' as const,
@@ -1774,8 +1774,8 @@ export function pointerType(config: T.PointerType.Config) {
 
 export function abstractType(config: T.AbstractType.Config) {
   const fields = {
-    type_parameters: config?.typeParameters,
-    trait: config?.trait,
+    type_parameters: config.typeParameters,
+    trait: config.trait,
   };
   return {
     $type: 'abstract_type' as const,
@@ -1795,7 +1795,7 @@ export function abstractType(config: T.AbstractType.Config) {
 
 export function dynamicType(config: T.DynamicType.Config) {
   const fields = {
-    trait: config?.trait,
+    trait: config.trait,
   };
   return {
     $type: 'dynamic_type' as const,
@@ -1826,8 +1826,8 @@ export function mutableSpecifier() {
 
 export function macroInvocation(config: T.MacroInvocation.Config) {
   const fields = {
-    macro: config?.macro,
-    token_tree: config?.tokenTree,
+    macro: config.macro,
+    token_tree: config.tokenTree,
   };
   return {
     $type: 'macro_invocation' as const,
@@ -1859,8 +1859,8 @@ export function delimTokenTree(text: string) {
 
 export function scopedIdentifier(config: T.ScopedIdentifier.Config) {
   const fields = {
-    path: config?.path,
-    name: config?.name,
+    path: config.path,
+    name: config.name,
   };
   return {
     $type: 'scoped_identifier' as const,
@@ -1880,8 +1880,8 @@ export function scopedIdentifier(config: T.ScopedIdentifier.Config) {
 
 export function scopedTypeIdentifierInExpressionPosition(config: T.ScopedTypeIdentifierInExpressionPosition.Config) {
   const fields = {
-    path: config?.path,
-    name: config?.name,
+    path: config.path,
+    name: config.name,
   };
   return {
     $type: 'scoped_type_identifier_in_expression_position' as const,
@@ -1901,8 +1901,8 @@ export function scopedTypeIdentifierInExpressionPosition(config: T.ScopedTypeIde
 
 export function scopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config) {
   const fields = {
-    path: config?.path,
-    name: config?.name,
+    path: config.path,
+    name: config.name,
   };
   return {
     $type: 'scoped_type_identifier' as const,
@@ -1932,7 +1932,7 @@ export function rangeExpression(config: T.RangeExpressionUFormBinaryConfig | T.R
   return rangeExpressionUFormBinary(config as T.RangeExpressionUFormBinaryConfig);
 }
 export function rangeExpressionUFormBinary(config: T.RangeExpressionUFormBinaryConfig) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'range_expression' as const,
     $source: 'factory' as const,
@@ -1950,7 +1950,7 @@ export function rangeExpressionUFormBinary(config: T.RangeExpressionUFormBinaryC
   };
 }
 export function rangeExpressionUFormPostfix(config: T.RangeExpressionUFormPostfixConfig) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'range_expression' as const,
     $source: 'factory' as const,
@@ -1968,7 +1968,7 @@ export function rangeExpressionUFormPostfix(config: T.RangeExpressionUFormPostfi
   };
 }
 export function rangeExpressionUFormPrefix(config: T.RangeExpressionUFormPrefixConfig) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'range_expression' as const,
     $source: 'factory' as const,
@@ -1986,7 +1986,7 @@ export function rangeExpressionUFormPrefix(config: T.RangeExpressionUFormPrefixC
   };
 }
 export function rangeExpressionUFormBare(config: T.RangeExpressionUFormBareConfig) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'range_expression' as const,
     $source: 'factory' as const,
@@ -2006,8 +2006,8 @@ export function rangeExpressionUFormBare(config: T.RangeExpressionUFormBareConfi
 
 export function unaryExpression(config: T.UnaryExpression.Config) {
   const fields = {
-    operator: config?.operator,
-    operand: config?.operand,
+    operator: config.operator,
+    operand: config.operand,
   };
   return {
     $type: 'unary_expression' as const,
@@ -2027,7 +2027,7 @@ export function unaryExpression(config: T.UnaryExpression.Config) {
 
 export function tryExpression(config: T.TryExpression.Config) {
   const fields = {
-    value: config?.value,
+    value: config.value,
   };
   return {
     $type: 'try_expression' as const,
@@ -2046,8 +2046,8 @@ export function tryExpression(config: T.TryExpression.Config) {
 
 export function referenceExpression(config: T.ReferenceExpression.Config) {
   const fields = {
-    mutable_specifier: config?.mutableSpecifier,
-    value: config?.value,
+    mutable_specifier: config.mutableSpecifier,
+    value: config.value,
   };
   return {
     $type: 'reference_expression' as const,
@@ -2067,9 +2067,9 @@ export function referenceExpression(config: T.ReferenceExpression.Config) {
 
 export function binaryExpression(config: T.BinaryExpression.Config) {
   const fields = {
-    left: config?.left,
+    left: config.left,
     operator: "&&" as const,
-    right: config?.right,
+    right: config.right,
   };
   return {
     $type: 'binary_expression' as const,
@@ -2090,8 +2090,8 @@ export function binaryExpression(config: T.BinaryExpression.Config) {
 
 export function assignmentExpression(config: T.AssignmentExpression.Config) {
   const fields = {
-    left: config?.left,
-    right: config?.right,
+    left: config.left,
+    right: config.right,
   };
   return {
     $type: 'assignment_expression' as const,
@@ -2111,9 +2111,9 @@ export function assignmentExpression(config: T.AssignmentExpression.Config) {
 
 export function compoundAssignmentExpr(config: T.CompoundAssignmentExpr.Config) {
   const fields = {
-    left: config?.left,
-    operator: config?.operator,
-    right: config?.right,
+    left: config.left,
+    operator: config.operator,
+    right: config.right,
   };
   return {
     $type: 'compound_assignment_expr' as const,
@@ -2134,8 +2134,8 @@ export function compoundAssignmentExpr(config: T.CompoundAssignmentExpr.Config) 
 
 export function typeCastExpression(config: T.TypeCastExpression.Config) {
   const fields = {
-    value: config?.value,
-    type: config?.type,
+    value: config.value,
+    type: config.type,
   };
   return {
     $type: 'type_cast_expression' as const,
@@ -2187,8 +2187,8 @@ export function yieldExpression(child?: T.Expression) {
 
 export function callExpression(config: T.CallExpression.Config) {
   const fields = {
-    function: config?.function,
-    arguments: config?.arguments,
+    function: config.function,
+    arguments: config.arguments,
   };
   return {
     $type: 'call_expression' as const,
@@ -2229,7 +2229,7 @@ export function arrayExpression(config: T.ArrayExpressionUFormSemiConfig | T.Arr
   return arrayExpressionUFormSemi(config as T.ArrayExpressionUFormSemiConfig);
 }
 export function arrayExpressionUFormSemi(config: T.ArrayExpressionUFormSemiConfig) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'array_expression' as const,
     $source: 'factory' as const,
@@ -2247,7 +2247,7 @@ export function arrayExpressionUFormSemi(config: T.ArrayExpressionUFormSemiConfi
   };
 }
 export function arrayExpressionUFormList(config: T.ArrayExpressionUFormListConfig) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'array_expression' as const,
     $source: 'factory' as const,
@@ -2283,8 +2283,8 @@ export function parenthesizedExpression(child: T.Expression) {
 
 export function tupleExpression(config: T.TupleExpression.Config) {
   const fields = {
-    attributes: config?.attributes,
-    elements: config?.elements,
+    attributes: config.attributes,
+    elements: config.elements,
   };
   return {
     $type: 'tuple_expression' as const,
@@ -2317,8 +2317,8 @@ export function unitExpression(text: string) {
 
 export function structExpression(config: T.StructExpression.Config) {
   const fields = {
-    name: config?.name,
-    body: config?.body,
+    name: config.name,
+    body: config.body,
   };
   return {
     $type: 'struct_expression' as const,
@@ -2353,8 +2353,8 @@ export function fieldInitializerList(...children: (T.ShorthandFieldInitializer |
 
 export function shorthandFieldInitializer(config: T.ShorthandFieldInitializer.Config) {
   const fields = {
-    attributes: config?.attributes,
-    identifier: config?.identifier,
+    attributes: config.attributes,
+    identifier: config.identifier,
   };
   return {
     $type: 'shorthand_field_initializer' as const,
@@ -2374,10 +2374,10 @@ export function shorthandFieldInitializer(config: T.ShorthandFieldInitializer.Co
 
 export function fieldInitializer(config: T.FieldInitializer.Config) {
   const fields = {
-    field: config?.field,
-    value: config?.value,
+    field: config.field,
+    value: config.value,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'field_initializer' as const,
     $source: 'factory' as const,
@@ -2415,9 +2415,9 @@ export function baseFieldInitializer(child: T.Expression) {
 
 export function ifExpression(config: T.IfExpression.Config) {
   const fields = {
-    condition: config?.condition,
-    consequence: config?.consequence,
-    alternative: config?.alternative,
+    condition: config.condition,
+    consequence: config.consequence,
+    alternative: config.alternative,
   };
   return {
     $type: 'if_expression' as const,
@@ -2438,8 +2438,8 @@ export function ifExpression(config: T.IfExpression.Config) {
 
 export function letCondition(config: T.LetCondition.Config) {
   const fields = {
-    pattern: config?.pattern,
-    value: config?.value,
+    pattern: config.pattern,
+    value: config.value,
   };
   return {
     $type: 'let_condition' as const,
@@ -2475,8 +2475,8 @@ export function elseClause(child?: (T.Block | T.IfExpression)) {
 
 export function matchExpression(config: T.MatchExpression.Config) {
   const fields = {
-    value: config?.value,
-    body: config?.body,
+    value: config.value,
+    body: config.body,
   };
   return {
     $type: 'match_expression' as const,
@@ -2511,10 +2511,10 @@ export function matchBlock(...children: T.MatchArm[]) {
 
 export function matchArm(config: T.MatchArm.Config) {
   const fields = {
-    pattern: config?.pattern,
-    value: config?.value,
+    pattern: config.pattern,
+    value: config.value,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'match_arm' as const,
     $source: 'factory' as const,
@@ -2536,10 +2536,10 @@ export function matchArm(config: T.MatchArm.Config) {
 
 export function lastMatchArm(config: T.LastMatchArm.Config) {
   const fields = {
-    pattern: config?.pattern,
-    value: config?.value,
+    pattern: config.pattern,
+    value: config.value,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'last_match_arm' as const,
     $source: 'factory' as const,
@@ -2561,9 +2561,9 @@ export function lastMatchArm(config: T.LastMatchArm.Config) {
 
 export function matchPattern(config: T.MatchPattern.Config) {
   const fields = {
-    condition: config?.condition,
+    condition: config.condition,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'match_pattern' as const,
     $source: 'factory' as const,
@@ -2584,9 +2584,9 @@ export function matchPattern(config: T.MatchPattern.Config) {
 
 export function whileExpression(config: T.WhileExpression.Config) {
   const fields = {
-    label: config?.label,
-    condition: config?.condition,
-    body: config?.body,
+    label: config.label,
+    condition: config.condition,
+    body: config.body,
   };
   return {
     $type: 'while_expression' as const,
@@ -2607,8 +2607,8 @@ export function whileExpression(config: T.WhileExpression.Config) {
 
 export function loopExpression(config: T.LoopExpression.Config) {
   const fields = {
-    label: config?.label,
-    body: config?.body,
+    label: config.label,
+    body: config.body,
   };
   return {
     $type: 'loop_expression' as const,
@@ -2628,10 +2628,10 @@ export function loopExpression(config: T.LoopExpression.Config) {
 
 export function forExpression(config: T.ForExpression.Config) {
   const fields = {
-    label: config?.label,
-    pattern: config?.pattern,
-    value: config?.value,
-    body: config?.body,
+    label: config.label,
+    pattern: config.pattern,
+    value: config.value,
+    body: config.body,
   };
   return {
     $type: 'for_expression' as const,
@@ -2653,7 +2653,7 @@ export function forExpression(config: T.ForExpression.Config) {
 
 export function constBlock(config: T.ConstBlock.Config) {
   const fields = {
-    body: config?.body,
+    body: config.body,
   };
   return {
     $type: 'const_block' as const,
@@ -2679,12 +2679,12 @@ export function closureExpression(config: T.ClosureExpressionUFormBlockConfig | 
 }
 export function closureExpressionUFormBlock(config: T.ClosureExpressionUFormBlockConfig) {
   const fields = {
-    static: config?.static,
-    async: config?.async,
-    move: config?.move,
-    parameters: config?.parameters,
+    static: config.static,
+    async: config.async,
+    move: config.move,
+    parameters: config.parameters,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'closure_expression' as const,
     $source: 'factory' as const,
@@ -2708,12 +2708,12 @@ export function closureExpressionUFormBlock(config: T.ClosureExpressionUFormBloc
 }
 export function closureExpressionUFormExpr(config: T.ClosureExpressionUFormExprConfig) {
   const fields = {
-    static: config?.static,
-    async: config?.async,
-    move: config?.move,
-    parameters: config?.parameters,
+    static: config.static,
+    async: config.async,
+    move: config.move,
+    parameters: config.parameters,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'closure_expression' as const,
     $source: 'factory' as const,
@@ -2753,7 +2753,7 @@ export function closureParameters(...children: (T.Pattern | T.Parameter)[]) {
 
 export function label(config: T.Label.Config) {
   const fields = {
-    identifier: config?.identifier,
+    identifier: config.identifier,
   };
   return {
     $type: 'label' as const,
@@ -2812,8 +2812,8 @@ export function continueExpression(config?: T.ContinueExpression.Config) {
 
 export function indexExpression(config: T.IndexExpression.Config) {
   const fields = {
-    object: config?.object,
-    index: config?.index,
+    object: config.object,
+    index: config.index,
   };
   return {
     $type: 'index_expression' as const,
@@ -2849,8 +2849,8 @@ export function awaitExpression(child: T.Expression) {
 
 export function fieldExpression(config: T.FieldExpression.Config) {
   const fields = {
-    value: config?.value,
-    field: config?.field,
+    value: config.value,
+    field: config.field,
   };
   return {
     $type: 'field_expression' as const,
@@ -2870,7 +2870,7 @@ export function fieldExpression(config: T.FieldExpression.Config) {
 
 export function unsafeBlock(config: T.UnsafeBlock.Config) {
   const fields = {
-    block: config?.block,
+    block: config.block,
   };
   return {
     $type: 'unsafe_block' as const,
@@ -2889,8 +2889,8 @@ export function unsafeBlock(config: T.UnsafeBlock.Config) {
 
 export function asyncBlock(config: T.AsyncBlock.Config) {
   const fields = {
-    move: config?.move,
-    block: config?.block,
+    move: config.move,
+    block: config.block,
   };
   return {
     $type: 'async_block' as const,
@@ -2910,8 +2910,8 @@ export function asyncBlock(config: T.AsyncBlock.Config) {
 
 export function genBlock(config: T.GenBlock.Config) {
   const fields = {
-    move: config?.move,
-    block: config?.block,
+    move: config.move,
+    block: config.block,
   };
   return {
     $type: 'gen_block' as const,
@@ -2931,7 +2931,7 @@ export function genBlock(config: T.GenBlock.Config) {
 
 export function tryBlock(config: T.TryBlock.Config) {
   const fields = {
-    block: config?.block,
+    block: config.block,
   };
   return {
     $type: 'try_block' as const,
@@ -2950,9 +2950,9 @@ export function tryBlock(config: T.TryBlock.Config) {
 
 export function block(config: T.Block.Config) {
   const fields = {
-    label: config?.label,
+    label: config.label,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'block' as const,
     $source: 'factory' as const,
@@ -2973,9 +2973,9 @@ export function block(config: T.Block.Config) {
 
 export function genericPattern(config: T.GenericPattern.Config) {
   const fields = {
-    type_arguments: config?.typeArguments,
+    type_arguments: config.typeArguments,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'generic_pattern' as const,
     $source: 'factory' as const,
@@ -3026,9 +3026,9 @@ export function slicePattern(...children: T.Pattern[]) {
 
 export function tupleStructPattern(config: T.TupleStructPattern.Config) {
   const fields = {
-    type: config?.type,
+    type: config.type,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'tuple_struct_pattern' as const,
     $source: 'factory' as const,
@@ -3049,9 +3049,9 @@ export function tupleStructPattern(config: T.TupleStructPattern.Config) {
 
 export function structPattern(config: T.StructPattern.Config) {
   const fields = {
-    type: config?.type,
+    type: config.type,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'struct_pattern' as const,
     $source: 'factory' as const,
@@ -3079,10 +3079,10 @@ export function fieldPattern(config: T.FieldPatternUFormShorthandConfig | T.Fiel
 }
 export function fieldPatternUFormShorthand(config: T.FieldPatternUFormShorthandConfig) {
   const fields = {
-    ref: config?.ref,
-    mutable_specifier: config?.mutableSpecifier,
+    ref: config.ref,
+    mutable_specifier: config.mutableSpecifier,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'field_pattern' as const,
     $source: 'factory' as const,
@@ -3104,10 +3104,10 @@ export function fieldPatternUFormShorthand(config: T.FieldPatternUFormShorthandC
 }
 export function fieldPatternUFormNamed(config: T.FieldPatternUFormNamedConfig) {
   const fields = {
-    ref: config?.ref,
-    mutable_specifier: config?.mutableSpecifier,
+    ref: config.ref,
+    mutable_specifier: config.mutableSpecifier,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'field_pattern' as const,
     $source: 'factory' as const,
@@ -3130,8 +3130,8 @@ export function fieldPatternUFormNamed(config: T.FieldPatternUFormNamedConfig) {
 
 export function mutPattern(config: T.MutPattern.Config) {
   const fields = {
-    mutable_specifier: config?.mutableSpecifier,
-    pattern: config?.pattern,
+    mutable_specifier: config.mutableSpecifier,
+    pattern: config.pattern,
   };
   return {
     $type: 'mut_pattern' as const,
@@ -3157,7 +3157,7 @@ export function rangePattern(config: T.RangePatternUFormLeftConfig | T.RangePatt
   return rangePatternUFormLeft(config as T.RangePatternUFormLeftConfig);
 }
 export function rangePatternUFormLeft(config: T.RangePatternUFormLeftConfig) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'range_pattern' as const,
     $source: 'factory' as const,
@@ -3175,7 +3175,7 @@ export function rangePatternUFormLeft(config: T.RangePatternUFormLeftConfig) {
   };
 }
 export function rangePatternUFormPrefix(config: T.RangePatternUFormPrefixConfig) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'range_pattern' as const,
     $source: 'factory' as const,
@@ -3211,8 +3211,8 @@ export function refPattern(child: T.Pattern) {
 
 export function capturedPattern(config: T.CapturedPattern.Config) {
   const fields = {
-    identifier: config?.identifier,
-    pattern: config?.pattern,
+    identifier: config.identifier,
+    pattern: config.pattern,
   };
   return {
     $type: 'captured_pattern' as const,
@@ -3232,8 +3232,8 @@ export function capturedPattern(config: T.CapturedPattern.Config) {
 
 export function referencePattern(config: T.ReferencePattern.Config) {
   const fields = {
-    mutable_specifier: config?.mutableSpecifier,
-    pattern: config?.pattern,
+    mutable_specifier: config.mutableSpecifier,
+    pattern: config.pattern,
   };
   return {
     $type: 'reference_pattern' as const,
@@ -3259,7 +3259,7 @@ export function orPattern(config: T.OrPatternUFormBinaryConfig | T.OrPatternUFor
   return orPatternUFormBinary(config as T.OrPatternUFormBinaryConfig);
 }
 export function orPatternUFormBinary(config: T.OrPatternUFormBinaryConfig) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'or_pattern' as const,
     $source: 'factory' as const,
@@ -3277,7 +3277,7 @@ export function orPatternUFormBinary(config: T.OrPatternUFormBinaryConfig) {
   };
 }
 export function orPatternUFormPrefix(config: T.OrPatternUFormPrefixConfig) {
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'or_pattern' as const,
     $source: 'factory' as const,
@@ -3297,7 +3297,7 @@ export function orPatternUFormPrefix(config: T.OrPatternUFormPrefixConfig) {
 
 export function negativeLiteral(config: T.NegativeLiteral.Config) {
   const fields = {
-    value: config?.value,
+    value: config.value,
   };
   return {
     $type: 'negative_literal' as const,
@@ -3531,9 +3531,9 @@ export function metavariable(text: string) {
 
 export function arrayExpressionSemi(config: T.ArrayExpressionSemi.Config) {
   const fields = {
-    attributes: config?.attributes,
-    elements: config?.elements,
-    length: config?.length,
+    attributes: config.attributes,
+    elements: config.elements,
+    length: config.length,
   };
   return {
     $type: 'array_expression_semi' as const,
@@ -3554,10 +3554,10 @@ export function arrayExpressionSemi(config: T.ArrayExpressionSemi.Config) {
 
 export function arrayExpressionList(config: T.ArrayExpressionList.Config) {
   const fields = {
-    attributes: config?.attributes,
-    elements: config?.elements,
+    attributes: config.attributes,
+    elements: config.elements,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'array_expression_list' as const,
     $source: 'factory' as const,
@@ -3714,7 +3714,7 @@ export function primitiveType(text: 'u8' | 'i8' | 'u16' | 'i16' | 'u32' | 'i32' 
 
 export function modItemInline(config: T.ModItemInline.Config) {
   const fields = {
-    body: config?.body,
+    body: config.body,
   };
   return {
     $type: 'mod_item_inline' as const,
@@ -3733,9 +3733,9 @@ export function modItemInline(config: T.ModItemInline.Config) {
 
 export function structItemBrace(config: T.StructItemBrace.Config) {
   const fields = {
-    body: config?.body,
+    body: config.body,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'struct_item_brace' as const,
     $source: 'factory' as const,
@@ -3756,9 +3756,9 @@ export function structItemBrace(config: T.StructItemBrace.Config) {
 
 export function structItemTuple(config: T.StructItemTuple.Config) {
   const fields = {
-    body: config?.body,
+    body: config.body,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'struct_item_tuple' as const,
     $source: 'factory' as const,
@@ -3779,7 +3779,7 @@ export function structItemTuple(config: T.StructItemTuple.Config) {
 
 export function implItemBody(config: T.ImplItemBody.Config) {
   const fields = {
-    body: config?.body,
+    body: config.body,
   };
   return {
     $type: 'impl_item_body' as const,
@@ -3798,7 +3798,7 @@ export function implItemBody(config: T.ImplItemBody.Config) {
 
 export function functionTypeTraitForm(config: T.FunctionTypeTraitForm.Config) {
   const fields = {
-    trait: config?.trait,
+    trait: config.trait,
   };
   return {
     $type: 'function_type_trait_form' as const,
@@ -3833,9 +3833,9 @@ export function functionTypeFnForm(child?: T.FunctionModifiers) {
 
 export function rangeExpressionBinary(config: T.RangeExpressionBinary.Config) {
   const fields = {
-    start: config?.start,
-    operator: config?.operator,
-    end: config?.end,
+    start: config.start,
+    operator: config.operator,
+    end: config.end,
   };
   return {
     $type: 'range_expression_binary' as const,
@@ -3856,8 +3856,8 @@ export function rangeExpressionBinary(config: T.RangeExpressionBinary.Config) {
 
 export function rangeExpressionPostfix(config: T.RangeExpressionPostfix.Config) {
   const fields = {
-    start: config?.start,
-    operator: config?.operator,
+    start: config.start,
+    operator: config.operator,
   };
   return {
     $type: 'range_expression_postfix' as const,
@@ -3877,8 +3877,8 @@ export function rangeExpressionPostfix(config: T.RangeExpressionPostfix.Config) 
 
 export function rangeExpressionPrefix(config: T.RangeExpressionPrefix.Config) {
   const fields = {
-    operator: config?.operator,
-    end: config?.end,
+    operator: config.operator,
+    end: config.end,
   };
   return {
     $type: 'range_expression_prefix' as const,
@@ -3898,7 +3898,7 @@ export function rangeExpressionPrefix(config: T.RangeExpressionPrefix.Config) {
 
 export function rangeExpressionBare(config: T.RangeExpressionBare.Config) {
   const fields = {
-    operator: config?.operator,
+    operator: config.operator,
   };
   return {
     $type: 'range_expression_bare' as const,
@@ -3933,8 +3933,8 @@ export function letChain(child?: (T._LetChain | T.LetCondition | T.Expression)) 
 
 export function closureExpressionBlock(config: T.ClosureExpressionBlock.Config) {
   const fields = {
-    return_type: config?.returnType,
-    body: config?.body,
+    return_type: config.returnType,
+    body: config.body,
   };
   return {
     $type: 'closure_expression_block' as const,
@@ -3954,7 +3954,7 @@ export function closureExpressionBlock(config: T.ClosureExpressionBlock.Config) 
 
 export function closureExpressionExpr(config: T.ClosureExpressionExpr.Config) {
   const fields = {
-    body: config?.body,
+    body: config.body,
   };
   return {
     $type: 'closure_expression_expr' as const,
@@ -3985,7 +3985,7 @@ export function wildcardPattern() {
 
 export function fieldPatternShorthand(config: T.FieldPatternShorthand.Config) {
   const fields = {
-    name: config?.name,
+    name: config.name,
   };
   return {
     $type: 'field_pattern_shorthand' as const,
@@ -4004,8 +4004,8 @@ export function fieldPatternShorthand(config: T.FieldPatternShorthand.Config) {
 
 export function fieldPatternNamed(config: T.FieldPatternNamed.Config) {
   const fields = {
-    name: config?.name,
-    pattern: config?.pattern,
+    name: config.name,
+    pattern: config.pattern,
   };
   return {
     $type: 'field_pattern_named' as const,
@@ -4025,8 +4025,8 @@ export function fieldPatternNamed(config: T.FieldPatternNamed.Config) {
 
 export function rangePatternLeft(config: T.RangePatternLeft.Config) {
   const fields = {
-    left: config?.left,
-    right: config?.right,
+    left: config.left,
+    right: config.right,
   };
   return {
     $type: 'range_pattern_left' as const,
@@ -4046,7 +4046,7 @@ export function rangePatternLeft(config: T.RangePatternLeft.Config) {
 
 export function rangePatternPrefix(config: T.RangePatternPrefix.Config) {
   const fields = {
-    right: config?.right,
+    right: config.right,
   };
   return {
     $type: 'range_pattern_prefix' as const,
@@ -4065,8 +4065,8 @@ export function rangePatternPrefix(config: T.RangePatternPrefix.Config) {
 
 export function orPatternBinary(config: T.OrPatternBinary.Config) {
   const fields = {
-    left: config?.left,
-    right: config?.right,
+    left: config.left,
+    right: config.right,
   };
   return {
     $type: 'or_pattern_binary' as const,
@@ -4086,7 +4086,7 @@ export function orPatternBinary(config: T.OrPatternBinary.Config) {
 
 export function orPatternPrefix(config: T.OrPatternPrefix.Config) {
   const fields = {
-    right: config?.right,
+    right: config.right,
   };
   return {
     $type: 'or_pattern_prefix' as const,

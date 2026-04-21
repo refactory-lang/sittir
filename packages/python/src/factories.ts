@@ -56,7 +56,7 @@ export function module(...children: T.Statement[]) {
 
 export function importStatement(config: T.ImportStatement.Config) {
   const fields = {
-    name: config?.name,
+    name: config.name,
   };
   return {
     $type: 'import_statement' as const,
@@ -88,8 +88,8 @@ export function importPrefix(text: string) {
 
 export function relativeImport(config: T.RelativeImport.Config) {
   const fields = {
-    import_prefix: config?.importPrefix,
-    dotted_name: config?.dottedName,
+    import_prefix: config.importPrefix,
+    dotted_name: config.dottedName,
   };
   return {
     $type: 'relative_import' as const,
@@ -109,7 +109,7 @@ export function relativeImport(config: T.RelativeImport.Config) {
 
 export function futureImportStatement(config: T.FutureImportStatement.Config) {
   const fields = {
-    name: config?.name,
+    name: config.name,
   };
   return {
     $type: 'future_import_statement' as const,
@@ -128,9 +128,9 @@ export function futureImportStatement(config: T.FutureImportStatement.Config) {
 
 export function importFromStatement(config: T.ImportFromStatement.Config) {
   const fields = {
-    module_name: config?.moduleName,
-    wildcard_import: config?.wildcardImport,
-    name: config?.name,
+    module_name: config.moduleName,
+    wildcard_import: config.wildcardImport,
+    name: config.name,
   };
   return {
     $type: 'import_from_statement' as const,
@@ -151,8 +151,8 @@ export function importFromStatement(config: T.ImportFromStatement.Config) {
 
 export function aliasedImport(config: T.AliasedImport.Config) {
   const fields = {
-    name: config?.name,
-    alias: config?.alias,
+    name: config.name,
+    alias: config.alias,
   };
   return {
     $type: 'aliased_import' as const,
@@ -172,9 +172,9 @@ export function aliasedImport(config: T.AliasedImport.Config) {
 
 export function printStatement(config: T.PrintStatement.Config) {
   const fields = {
-    argument: config?.argument,
+    argument: config.argument,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'print_statement' as const,
     $source: 'factory' as const,
@@ -195,7 +195,7 @@ export function printStatement(config: T.PrintStatement.Config) {
 
 export function chevron(config: T.Chevron.Config) {
   const fields = {
-    expression: config?.expression,
+    expression: config.expression,
   };
   return {
     $type: 'chevron' as const,
@@ -246,8 +246,8 @@ export function expressionStatement(child?: (T.Expression | T.Assignment | T.Aug
 
 export function namedExpression(config: T.NamedExpression.Config) {
   const fields = {
-    name: config?.name,
-    value: config?.value,
+    name: config.name,
+    value: config.value,
   };
   return {
     $type: 'named_expression' as const,
@@ -358,9 +358,9 @@ export function continueStatement() {
 
 export function ifStatement(config: T.IfStatement.Config) {
   const fields = {
-    condition: config?.condition,
-    consequence: config?.consequence,
-    alternative: config?.alternative,
+    condition: config.condition,
+    consequence: config.consequence,
+    alternative: config.alternative,
   };
   return {
     $type: 'if_statement' as const,
@@ -381,8 +381,8 @@ export function ifStatement(config: T.IfStatement.Config) {
 
 export function elifClause(config: T.ElifClause.Config) {
   const fields = {
-    condition: config?.condition,
-    consequence: config?.consequence,
+    condition: config.condition,
+    consequence: config.consequence,
   };
   return {
     $type: 'elif_clause' as const,
@@ -402,7 +402,7 @@ export function elifClause(config: T.ElifClause.Config) {
 
 export function elseClause(config: T.ElseClause.Config) {
   const fields = {
-    body: config?.body,
+    body: config.body,
   };
   return {
     $type: 'else_clause' as const,
@@ -421,8 +421,8 @@ export function elseClause(config: T.ElseClause.Config) {
 
 export function matchStatement(config: T.MatchStatement.Config) {
   const fields = {
-    subject: config?.subject,
-    body: config?.body,
+    subject: config.subject,
+    body: config.body,
   };
   return {
     $type: 'match_statement' as const,
@@ -446,7 +446,7 @@ export function matchBlock(config: T.MatchBlockForm0Config | T.MatchBlockForm1Co
 }
 export function matchBlockForm0(config: T.MatchBlockForm0Config) {
   const fields = {
-    alternative: config?.alternative,
+    alternative: config.alternative,
   };
   return {
     $type: '_match_block' as const,
@@ -480,10 +480,10 @@ export function matchBlockForm1(config?: T.MatchBlockForm1Config) {
 
 export function caseClause(config: T.CaseClause.Config) {
   const fields = {
-    guard: config?.guard,
-    consequence: config?.consequence,
+    guard: config.guard,
+    consequence: config.consequence,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'case_clause' as const,
     $source: 'factory' as const,
@@ -508,11 +508,11 @@ export function caseClause(config: T.CaseClause.Config) {
 
 export function forStatement(config: T.ForStatement.Config) {
   const fields = {
-    async: config?.async,
-    left: config?.left,
-    right: config?.right,
-    body: config?.body,
-    alternative: config?.alternative,
+    async: config.async,
+    left: config.left,
+    right: config.right,
+    body: config.body,
+    alternative: config.alternative,
   };
   return {
     $type: 'for_statement' as const,
@@ -535,9 +535,9 @@ export function forStatement(config: T.ForStatement.Config) {
 
 export function whileStatement(config: T.WhileStatement.Config) {
   const fields = {
-    condition: config?.condition,
-    body: config?.body,
-    alternative: config?.alternative,
+    condition: config.condition,
+    body: config.body,
+    alternative: config.alternative,
   };
   return {
     $type: 'while_statement' as const,
@@ -558,10 +558,10 @@ export function whileStatement(config: T.WhileStatement.Config) {
 
 export function tryStatement(config: T.TryStatement.Config) {
   const fields = {
-    body: config?.body,
-    except_clauses: config?.exceptClauses,
-    else_clause: config?.elseClause,
-    finally_clause: config?.finallyClause,
+    body: config.body,
+    except_clauses: config.exceptClauses,
+    else_clause: config.elseClause,
+    finally_clause: config.finallyClause,
   };
   return {
     $type: 'try_statement' as const,
@@ -583,10 +583,10 @@ export function tryStatement(config: T.TryStatement.Config) {
 
 export function exceptClause(config: T.ExceptClause.Config) {
   const fields = {
-    value: config?.value,
-    alias: config?.alias,
+    value: config.value,
+    alias: config.alias,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'except_clause' as const,
     $source: 'factory' as const,
@@ -608,7 +608,7 @@ export function exceptClause(config: T.ExceptClause.Config) {
 
 export function finallyClause(config: T.FinallyClause.Config) {
   const fields = {
-    block: config?.block,
+    block: config.block,
   };
   return {
     $type: 'finally_clause' as const,
@@ -627,9 +627,9 @@ export function finallyClause(config: T.FinallyClause.Config) {
 
 export function withStatement(config: T.WithStatement.Config) {
   const fields = {
-    async: config?.async,
-    with_clause: config?.withClause,
-    body: config?.body,
+    async: config.async,
+    with_clause: config.withClause,
+    body: config.body,
   };
   return {
     $type: 'with_statement' as const,
@@ -666,7 +666,7 @@ export function withClause(...children: T.WithItem[]) {
 
 export function withItem(config: T.WithItem.Config) {
   const fields = {
-    value: config?.value,
+    value: config.value,
   };
   return {
     $type: 'with_item' as const,
@@ -685,12 +685,12 @@ export function withItem(config: T.WithItem.Config) {
 
 export function functionDefinition(config: T.FunctionDefinition.Config) {
   const fields = {
-    async: config?.async,
-    name: config?.name,
-    type_parameters: config?.typeParameters,
-    parameters: config?.parameters,
-    return_type: config?.returnType,
-    body: config?.body,
+    async: config.async,
+    name: config.name,
+    type_parameters: config.typeParameters,
+    parameters: config.parameters,
+    return_type: config.returnType,
+    body: config.body,
   };
   return {
     $type: 'function_definition' as const,
@@ -745,7 +745,7 @@ export function lambdaParameters(...children: T.Parameter[]) {
 
 export function listSplat(config: T.ListSplat.Config) {
   const fields = {
-    expression: config?.expression,
+    expression: config.expression,
   };
   return {
     $type: 'list_splat' as const,
@@ -764,7 +764,7 @@ export function listSplat(config: T.ListSplat.Config) {
 
 export function dictionarySplat(config: T.DictionarySplat.Config) {
   const fields = {
-    expression: config?.expression,
+    expression: config.expression,
   };
   return {
     $type: 'dictionary_splat' as const,
@@ -815,8 +815,8 @@ export function nonlocalStatement(...children: T.Identifier[]) {
 
 export function execStatement(config: T.ExecStatement.Config) {
   const fields = {
-    code: config?.code,
-    in_clause: config?.inClause,
+    code: config.code,
+    in_clause: config.inClause,
   };
   return {
     $type: 'exec_statement' as const,
@@ -837,8 +837,8 @@ export function execStatement(config: T.ExecStatement.Config) {
 export function typeAliasStatement(config: T.TypeAliasStatement.Config) {
   const fields = {
     type: "type" as const,
-    left: config?.left,
-    right: config?.right,
+    left: config.left,
+    right: config.right,
   };
   return {
     $type: 'type_alias_statement' as const,
@@ -859,10 +859,10 @@ export function typeAliasStatement(config: T.TypeAliasStatement.Config) {
 
 export function classDefinition(config: T.ClassDefinition.Config) {
   const fields = {
-    name: config?.name,
-    type_parameters: config?.typeParameters,
-    superclasses: config?.superclasses,
-    body: config?.body,
+    name: config.name,
+    type_parameters: config.typeParameters,
+    superclasses: config.superclasses,
+    body: config.body,
   };
   return {
     $type: 'class_definition' as const,
@@ -931,9 +931,9 @@ export function argumentList(...children: (T.Expression | T.ListSplat | T.Dictio
 
 export function decoratedDefinition(config: T.DecoratedDefinition.Config) {
   const fields = {
-    definition: config?.definition,
+    definition: config.definition,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'decorated_definition' as const,
     $source: 'factory' as const,
@@ -957,8 +957,8 @@ export function decoratedDefinition(config: T.DecoratedDefinition.Config) {
 
 export function decorator(config: T.Decorator.Config) {
   const fields = {
-    expression: config?.expression,
-    newline: config?.newline,
+    expression: config.expression,
+    newline: config.newline,
   };
   return {
     $type: 'decorator' as const,
@@ -993,9 +993,9 @@ export function block(...children: T.Statement[]) {
 
 export function expressionList(config: T.ExpressionList.Config) {
   const fields = {
-    expression: config?.expression,
+    expression: config.expression,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'expression_list' as const,
     $source: 'factory' as const,
@@ -1088,8 +1088,8 @@ export function dictPattern(config?: T.DictPattern.Config) {
 
 export function keywordPattern(config: T.KeywordPattern.Config) {
   const fields = {
-    identifier: config?.identifier,
-    simple_pattern: config?.simplePattern,
+    identifier: config.identifier,
+    simple_pattern: config.simplePattern,
   };
   return {
     $type: 'keyword_pattern' as const,
@@ -1109,9 +1109,9 @@ export function keywordPattern(config: T.KeywordPattern.Config) {
 
 export function splatPattern(config: T.SplatPattern.Config) {
   const fields = {
-    identifier: config?.identifier,
+    identifier: config.identifier,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'splat_pattern' as const,
     $source: 'factory' as const,
@@ -1132,8 +1132,8 @@ export function splatPattern(config: T.SplatPattern.Config) {
 
 export function classPattern(config: T.ClassPattern.Config) {
   const fields = {
-    dotted_name: config?.dottedName,
-    arguments: config?.arguments,
+    dotted_name: config.dottedName,
+    arguments: config.arguments,
   };
   return {
     $type: 'class_pattern' as const,
@@ -1153,10 +1153,10 @@ export function classPattern(config: T.ClassPattern.Config) {
 
 export function complexPattern(config: T.ComplexPattern.Config) {
   const fields = {
-    real: config?.real,
-    imaginary: config?.imaginary,
+    real: config.real,
+    imaginary: config.imaginary,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'complex_pattern' as const,
     $source: 'factory' as const,
@@ -1208,8 +1208,8 @@ export function listPattern(...children: T.Pattern[]) {
 
 export function defaultParameter(config: T.DefaultParameter.Config) {
   const fields = {
-    name: config?.name,
-    value: config?.value,
+    name: config.name,
+    value: config.value,
   };
   return {
     $type: 'default_parameter' as const,
@@ -1229,9 +1229,9 @@ export function defaultParameter(config: T.DefaultParameter.Config) {
 
 export function typedDefaultParameter(config: T.TypedDefaultParameter.Config) {
   const fields = {
-    name: config?.name,
-    type: config?.type,
-    value: config?.value,
+    name: config.name,
+    type: config.type,
+    value: config.value,
   };
   return {
     $type: 'typed_default_parameter' as const,
@@ -1284,8 +1284,8 @@ export function dictionarySplatPattern(child?: (T.Identifier | T.KeywordIdentifi
 
 export function asPattern(config: T.AsPattern.Config) {
   const fields = {
-    expression: config?.expression,
-    alias: config?.alias,
+    expression: config.expression,
+    alias: config.alias,
   };
   return {
     $type: 'as_pattern' as const,
@@ -1305,7 +1305,7 @@ export function asPattern(config: T.AsPattern.Config) {
 
 export function notOperator(config: T.NotOperator.Config) {
   const fields = {
-    argument: config?.argument,
+    argument: config.argument,
   };
   return {
     $type: 'not_operator' as const,
@@ -1324,9 +1324,9 @@ export function notOperator(config: T.NotOperator.Config) {
 
 export function booleanOperator(config: T.BooleanOperator.Config) {
   const fields = {
-    left: config?.left,
+    left: config.left,
     operator: "and" as const,
-    right: config?.right,
+    right: config.right,
   };
   return {
     $type: 'boolean_operator' as const,
@@ -1347,9 +1347,9 @@ export function booleanOperator(config: T.BooleanOperator.Config) {
 
 export function binaryOperator(config: T.BinaryOperator.Config) {
   const fields = {
-    left: config?.left,
+    left: config.left,
     operator: "+" as const,
-    right: config?.right,
+    right: config.right,
   };
   return {
     $type: 'binary_operator' as const,
@@ -1370,8 +1370,8 @@ export function binaryOperator(config: T.BinaryOperator.Config) {
 
 export function unaryOperator(config: T.UnaryOperator.Config) {
   const fields = {
-    operator: config?.operator,
-    argument: config?.argument,
+    operator: config.operator,
+    argument: config.argument,
   };
   return {
     $type: 'unary_operator' as const,
@@ -1391,8 +1391,8 @@ export function unaryOperator(config: T.UnaryOperator.Config) {
 
 export function comparisonOperator(config: T.ComparisonOperator.Config) {
   const fields = {
-    left: config?.left,
-    operators: config?.operators,
+    left: config.left,
+    operators: config.operators,
   };
   return {
     $type: 'comparison_operator' as const,
@@ -1412,8 +1412,8 @@ export function comparisonOperator(config: T.ComparisonOperator.Config) {
 
 export function lambda(config: T.Lambda.Config) {
   const fields = {
-    parameters: config?.parameters,
-    body: config?.body,
+    parameters: config.parameters,
+    body: config.body,
   };
   return {
     $type: 'lambda' as const,
@@ -1433,8 +1433,8 @@ export function lambda(config: T.Lambda.Config) {
 
 export function lambdaWithinForInClause(config: T.LambdaWithinForInClause.Config) {
   const fields = {
-    parameters: config?.parameters,
-    body: config?.body,
+    parameters: config.parameters,
+    body: config.body,
   };
   return {
     $type: 'lambda_within_for_in_clause' as const,
@@ -1463,9 +1463,9 @@ export function assignment(config: T.AssignmentUFormEqConfig | T.AssignmentUForm
 }
 export function assignmentUFormEq(config: T.AssignmentUFormEqConfig) {
   const fields = {
-    left: config?.left,
+    left: config.left,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'assignment' as const,
     $source: 'factory' as const,
@@ -1486,9 +1486,9 @@ export function assignmentUFormEq(config: T.AssignmentUFormEqConfig) {
 }
 export function assignmentUFormType(config: T.AssignmentUFormTypeConfig) {
   const fields = {
-    left: config?.left,
+    left: config.left,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'assignment' as const,
     $source: 'factory' as const,
@@ -1509,9 +1509,9 @@ export function assignmentUFormType(config: T.AssignmentUFormTypeConfig) {
 }
 export function assignmentUFormTyped(config: T.AssignmentUFormTypedConfig) {
   const fields = {
-    left: config?.left,
+    left: config.left,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'assignment' as const,
     $source: 'factory' as const,
@@ -1533,9 +1533,9 @@ export function assignmentUFormTyped(config: T.AssignmentUFormTypedConfig) {
 
 export function augmentedAssignment(config: T.AugmentedAssignment.Config) {
   const fields = {
-    left: config?.left,
-    operator: config?.operator,
-    right: config?.right,
+    left: config.left,
+    operator: config.operator,
+    right: config.right,
   };
   return {
     $type: 'augmented_assignment' as const,
@@ -1556,9 +1556,9 @@ export function augmentedAssignment(config: T.AugmentedAssignment.Config) {
 
 export function patternList(config: T.PatternList.Config) {
   const fields = {
-    pattern: config?.pattern,
+    pattern: config.pattern,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'pattern_list' as const,
     $source: 'factory' as const,
@@ -1595,8 +1595,8 @@ export function yield_(child?: (T.Expression | T.Expressions)) {
 
 export function attribute(config: T.Attribute.Config) {
   const fields = {
-    object: config?.object,
-    attribute: config?.attribute,
+    object: config.object,
+    attribute: config.attribute,
   };
   return {
     $type: 'attribute' as const,
@@ -1616,8 +1616,8 @@ export function attribute(config: T.Attribute.Config) {
 
 export function subscript(config: T.Subscript.Config) {
   const fields = {
-    value: config?.value,
-    subscript: config?.subscript,
+    value: config.value,
+    subscript: config.subscript,
   };
   return {
     $type: 'subscript' as const,
@@ -1660,8 +1660,8 @@ export function slice(config?: T.Slice.Config) {
 
 export function call(config: T.Call.Config) {
   const fields = {
-    function: config?.function,
-    arguments: config?.arguments,
+    function: config.function,
+    arguments: config.arguments,
   };
   return {
     $type: 'call' as const,
@@ -1681,9 +1681,9 @@ export function call(config: T.Call.Config) {
 
 export function typedParameter(config: T.TypedParameter.Config) {
   const fields = {
-    type: config?.type,
+    type: config.type,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'typed_parameter' as const,
     $source: 'factory' as const,
@@ -1720,7 +1720,7 @@ export function type(child?: (T.Expression | T.SplatType | T.GenericType | T.Uni
 
 export function splatType(config: T.SplatType.Config) {
   const fields = {
-    identifier: config?.identifier,
+    identifier: config.identifier,
   };
   return {
     $type: 'splat_type' as const,
@@ -1739,8 +1739,8 @@ export function splatType(config: T.SplatType.Config) {
 
 export function genericType(config: T.GenericType.Config) {
   const fields = {
-    identifier: config?.identifier,
-    type_parameter: config?.typeParameter,
+    identifier: config.identifier,
+    type_parameter: config.typeParameter,
   };
   return {
     $type: 'generic_type' as const,
@@ -1760,8 +1760,8 @@ export function genericType(config: T.GenericType.Config) {
 
 export function unionType(config: T.UnionType.Config) {
   const fields = {
-    left: config?.left,
-    right: config?.right,
+    left: config.left,
+    right: config.right,
   };
   return {
     $type: 'union_type' as const,
@@ -1781,8 +1781,8 @@ export function unionType(config: T.UnionType.Config) {
 
 export function constrainedType(config: T.ConstrainedType.Config) {
   const fields = {
-    base_type: config?.baseType,
-    constraint: config?.constraint,
+    base_type: config.baseType,
+    constraint: config.constraint,
   };
   return {
     $type: 'constrained_type' as const,
@@ -1802,8 +1802,8 @@ export function constrainedType(config: T.ConstrainedType.Config) {
 
 export function memberType(config: T.MemberType.Config) {
   const fields = {
-    base_type: config?.baseType,
-    identifier: config?.identifier,
+    base_type: config.baseType,
+    identifier: config.identifier,
   };
   return {
     $type: 'member_type' as const,
@@ -1823,8 +1823,8 @@ export function memberType(config: T.MemberType.Config) {
 
 export function keywordArgument(config: T.KeywordArgument.Config) {
   const fields = {
-    name: config?.name,
-    value: config?.value,
+    name: config.name,
+    value: config.value,
   };
   return {
     $type: 'keyword_argument' as const,
@@ -1904,8 +1904,8 @@ export function dictionary(...children: (T.Pair | T.DictionarySplat)[]) {
 
 export function pair(config: T.Pair.Config) {
   const fields = {
-    key: config?.key,
-    value: config?.value,
+    key: config.key,
+    value: config.value,
   };
   return {
     $type: 'pair' as const,
@@ -1925,10 +1925,10 @@ export function pair(config: T.Pair.Config) {
 
 export function listComprehension(config: T.ListComprehension.Config) {
   const fields = {
-    body: config?.body,
-    for_in_clause: config?.forInClause,
+    body: config.body,
+    for_in_clause: config.forInClause,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'list_comprehension' as const,
     $source: 'factory' as const,
@@ -1950,10 +1950,10 @@ export function listComprehension(config: T.ListComprehension.Config) {
 
 export function dictionaryComprehension(config: T.DictionaryComprehension.Config) {
   const fields = {
-    body: config?.body,
-    for_in_clause: config?.forInClause,
+    body: config.body,
+    for_in_clause: config.forInClause,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'dictionary_comprehension' as const,
     $source: 'factory' as const,
@@ -1975,10 +1975,10 @@ export function dictionaryComprehension(config: T.DictionaryComprehension.Config
 
 export function setComprehension(config: T.SetComprehension.Config) {
   const fields = {
-    body: config?.body,
-    for_in_clause: config?.forInClause,
+    body: config.body,
+    for_in_clause: config.forInClause,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'set_comprehension' as const,
     $source: 'factory' as const,
@@ -2000,10 +2000,10 @@ export function setComprehension(config: T.SetComprehension.Config) {
 
 export function generatorExpression(config: T.GeneratorExpression.Config) {
   const fields = {
-    body: config?.body,
-    for_in_clause: config?.forInClause,
+    body: config.body,
+    for_in_clause: config.forInClause,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'generator_expression' as const,
     $source: 'factory' as const,
@@ -2041,9 +2041,9 @@ export function parenthesizedExpression(child?: (T.Expression | T.Yield)) {
 
 export function forInClause(config: T.ForInClause.Config) {
   const fields = {
-    async: config?.async,
-    left: config?.left,
-    right: config?.right,
+    async: config.async,
+    left: config.left,
+    right: config.right,
   };
   return {
     $type: 'for_in_clause' as const,
@@ -2064,7 +2064,7 @@ export function forInClause(config: T.ForInClause.Config) {
 
 export function ifClause(config: T.IfClause.Config) {
   const fields = {
-    expression: config?.expression,
+    expression: config.expression,
   };
   return {
     $type: 'if_clause' as const,
@@ -2083,9 +2083,9 @@ export function ifClause(config: T.IfClause.Config) {
 
 export function conditionalExpression(config: T.ConditionalExpression.Config) {
   const fields = {
-    body: config?.body,
-    condition: config?.condition,
-    alternative: config?.alternative,
+    body: config.body,
+    condition: config.condition,
+    alternative: config.alternative,
   };
   return {
     $type: 'conditional_expression' as const,
@@ -2106,9 +2106,9 @@ export function conditionalExpression(config: T.ConditionalExpression.Config) {
 
 export function concatenatedString(config: T.ConcatenatedString.Config) {
   const fields = {
-    string: config?.string,
+    string: config.string,
   };
-  const children = config?.children ?? [];
+  const children = config.children ?? [];
   return {
     $type: 'concatenated_string' as const,
     $source: 'factory' as const,
@@ -2132,9 +2132,9 @@ export function concatenatedString(config: T.ConcatenatedString.Config) {
 
 export function string(config: T.String.Config) {
   const fields = {
-    string_start: config?.stringStart,
-    content: config?.content,
-    string_end: config?.stringEnd,
+    string_start: config.stringStart,
+    content: config.content,
+    string_end: config.stringEnd,
   };
   return {
     $type: 'string' as const,
@@ -2170,9 +2170,9 @@ export function stringContent(...children: (T.EscapeInterpolation | T.EscapeSequ
 
 export function interpolation(config: T.Interpolation.Config) {
   const fields = {
-    expression: config?.expression,
-    type_conversion: config?.typeConversion,
-    format_specifier: config?.formatSpecifier,
+    expression: config.expression,
+    type_conversion: config.typeConversion,
+    format_specifier: config.formatSpecifier,
   };
   return {
     $type: 'interpolation' as const,
@@ -2309,7 +2309,7 @@ export function none() {
 
 export function await_(config: T.Await.Config) {
   const fields = {
-    primary_expression: config?.primaryExpression,
+    primary_expression: config.primaryExpression,
   };
   return {
     $type: 'await' as const,
@@ -2461,7 +2461,7 @@ export function asPatternTarget(child?: (T.ComparisonOperator | T.NotOperator | 
 
 export function assignmentEq(config: T.AssignmentEq.Config) {
   const fields = {
-    right: config?.right,
+    right: config.right,
   };
   return {
     $type: 'assignment_eq' as const,
@@ -2480,7 +2480,7 @@ export function assignmentEq(config: T.AssignmentEq.Config) {
 
 export function assignmentType(config: T.AssignmentType.Config) {
   const fields = {
-    type: config?.type,
+    type: config.type,
   };
   return {
     $type: 'assignment_type' as const,
@@ -2499,8 +2499,8 @@ export function assignmentType(config: T.AssignmentType.Config) {
 
 export function assignmentTyped(config: T.AssignmentTyped.Config) {
   const fields = {
-    type: config?.type,
-    right: config?.right,
+    type: config.type,
+    right: config.right,
   };
   return {
     $type: 'assignment_typed' as const,
@@ -2520,9 +2520,9 @@ export function assignmentTyped(config: T.AssignmentTyped.Config) {
 
 export function formatExpression(config: T.FormatExpression.Config) {
   const fields = {
-    expression: config?.expression,
-    type_conversion: config?.typeConversion,
-    format_specifier: config?.formatSpecifier,
+    expression: config.expression,
+    type_conversion: config.typeConversion,
+    format_specifier: config.formatSpecifier,
   };
   return {
     $type: 'format_expression' as const,

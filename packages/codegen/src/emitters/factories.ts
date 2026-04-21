@@ -611,7 +611,7 @@ function emitFieldCarryingFactory(
                 // Config so the caller cannot (and need not) supply it.
                 lines.push(`    ${f.name}: ${stamp},`)
             } else {
-                lines.push(`    ${f.name}: config?.${f.propertyName},`)
+                lines.push(`    ${f.name}: config${opt}.${f.propertyName},`)
             }
         }
         lines.push('  };')
@@ -627,9 +627,9 @@ function emitFieldCarryingFactory(
         if (allRequiredAutoStamp) {
             // Build the pre-stamped children array literal.
             const stampedItems = requiredChildren.map(c => stampExpressionFor(c, nodeMap) ?? 'undefined')
-            lines.push(`  const children = config?.children ?? [${stampedItems.join(', ')}];`)
+            lines.push(`  const children = config${opt}.children ?? [${stampedItems.join(', ')}];`)
         } else {
-            lines.push(`  const children = config?.children ?? [];`)
+            lines.push(`  const children = config${opt}.children ?? [];`)
         }
     }
 

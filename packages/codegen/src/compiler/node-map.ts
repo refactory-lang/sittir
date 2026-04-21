@@ -29,7 +29,7 @@ import type {
     Rule, RuleSource,
     SeqRule, ChoiceRule, RepeatRule, Repeat1Rule,
     StringRule, PatternRule, TokenRule,
-    GroupRule, EnumRule, SupertypeRule, PolymorphRule,
+    GroupRule, EnumRule, SupertypeRule, PolymorphRule, TerminalRule,
 } from './rule.ts'
 import { isSeq, isField } from './rule.ts'
 import type { KindProjection } from './types.ts'
@@ -38,6 +38,7 @@ import {
     findRepeatSeparator,
     findRepeatFlag,
 } from './template-walker.ts'
+import { tokenToName } from './optimize.ts'
 
 // ---------------------------------------------------------------------------
 // Derivation helpers — walk a Rule to produce fields, children, content types
@@ -554,6 +555,47 @@ const JS_RESERVED_FACTORY_NAMES = new Set([
     'while', 'with', 'yield', 'async', 'await', 'arguments',
 ])
 
+// Reserved or restricted identifiers that cannot be top-level function names
+// in strict-mode TypeScript (or would shadow globals in problematic ways).
+const FACTORY_NAME_RESERVED = new Set([
+    'arguments', 'eval', 'yield', 'await', 'async', 'function', 'class',
+    'import', 'export', 'default', 'return', 'throw', 'new', 'delete',
+    'typeof', 'instanceof', 'in', 'of', 'let', 'const', 'var', 'null',
+    'true', 'false', 'undefined', 'NaN', 'Infinity', 'static', 'public',
+    'private', 'protected', 'interface', 'package', 'implements',
+])
+
+/**
+ * Strip the leading underscore (hidden-rule marker) from a normalized kind string
+ * and collapse internal double-underscores into `_U_` so they survive PascalCase
+ * flattening.
+ */
+function prepareKindForPascalCase(normalized: string): string {
+    return normalized.replace(/^_+/, '').replace(/__+/g, '_U_')
+}
+
+/**
+ * Derive `typeName`, `factoryName`, and `irKey` from a raw grammar kind string.
+ *
+ * Moved here from assemble.ts so the `AssembledNodeBase` constructor can call
+ * it directly, eliminating the need for callers to pre-compute and pass these
+ * derived fields.
+ */
+export function nameNode(kind: string): { typeName: string; factoryName: string; irKey: string } {
+    const normalized = /^[\w_]+$/.test(kind) ? kind : tokenToName(kind)
+    const marked = prepareKindForPascalCase(normalized)
+    let typeName = marked
+        .split('_')
+        .filter(Boolean)
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join('') || 'Anonymous'
+    if (/^\d/.test(typeName)) typeName = `Tok_${typeName}`
+    let factoryName = typeName.charAt(0).toLowerCase() + typeName.slice(1)
+    if (FACTORY_NAME_RESERVED.has(factoryName)) factoryName = `${factoryName}_`
+    const irKey = factoryName
+    return { typeName, factoryName, irKey }
+}
+
 export abstract class AssembledNodeBase<R extends Rule = Rule> {
     readonly kind: string
     // typeName / factoryName are writable so assemble()'s post-pass
@@ -619,24 +661,25 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
      */
     stampExpression?: string
     /**
-     * The grammar rule that produced this assembled node. Set by concrete
-     * subclasses that carry rule-level structure (branch, container, group,
-     * multi). Absent / undefined on terminal subclasses (leaf, keyword,
-     * token, enum, supertype, polymorph) that don't need rule access.
-     *
-     * The generic parameter `R` narrows this to the exact Rule subset each
-     * subclass accepts — currently all rule-bearing subclasses use the
-     * wide `Rule` union (default), leaving room for future narrowing
-     * without changing callers.
+     * The grammar rule that produced this assembled node. All 10 concrete
+     * subclasses store their rule here. The generic parameter `R` narrows
+     * this to the exact Rule subset each subclass accepts — the narrowing
+     * is truthful at runtime (not just documentation) because every
+     * subclass constructor stores its rule argument here.
      */
-    declare readonly rule: R
+    readonly rule: R
 
-    constructor(init: { kind: string; typeName: string; factoryName?: string; irKey?: string; source?: RuleSource }) {
-        this.kind = init.kind
-        this.typeName = init.typeName
-        this.factoryName = init.factoryName
-        this.irKey = init.irKey
-        this.source = init.source
+    constructor(kind: string, rule: R, opts?: { factoryName?: string; irKey?: string; source?: RuleSource; hidden?: boolean }) {
+        this.kind = kind
+        this.rule = rule
+        const derived = nameNode(kind)
+        this.typeName = derived.typeName
+        // `hidden: true` suppresses factoryName derivation (node has no factory).
+        // `factoryName: string` overrides the derived name.
+        // Default: use the derived factoryName.
+        this.factoryName = (opts?.hidden === true) ? undefined : (opts?.factoryName ?? derived.factoryName)
+        this.irKey = opts?.irKey ?? derived.irKey
+        this.source = opts?.source
     }
 
     /** A node is hidden when it has no factory (supertype, group, token). */
@@ -766,15 +809,13 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
     #fields?: AssembledField[]
     #children?: AssembledChild[]
 
-    constructor(init: {
-        kind: string; typeName: string; factoryName?: string; irKey?: string
-        rule: Rule
-        simplifiedRule: Rule
-    }) {
-        super(init)
-        this.rule = init.rule
-        this.simplifiedRule = init.simplifiedRule
+    constructor(kind: string, rule: SeqRule | ChoiceRule, simplifiedRule: Rule, opts?: { factoryName?: string; irKey?: string }) {
+        super(kind, rule, opts)
+        this.simplifiedRule = simplifiedRule
     }
+
+    /** Direct access to the rule's ordered members (seq or choice). */
+    get members(): readonly Rule[] { return this.rule.members }
 
     get fields(): AssembledField[] {
         return this.#fields ??= deriveFields(this.simplifiedRule)
@@ -949,14 +990,9 @@ export class AssembledContainer extends AssembledNodeBase<SeqRule | ChoiceRule |
 
     #children?: AssembledChild[]
 
-    constructor(init: {
-        kind: string; typeName: string; factoryName?: string; irKey?: string
-        rule: Rule
-        simplifiedRule: Rule
-    }) {
-        super(init)
-        this.rule = init.rule
-        this.simplifiedRule = init.simplifiedRule
+    constructor(kind: string, rule: SeqRule | ChoiceRule | RepeatRule | Repeat1Rule, simplifiedRule: Rule, opts?: { factoryName?: string; irKey?: string }) {
+        super(kind, rule, opts)
+        this.simplifiedRule = simplifiedRule
     }
 
     get children(): AssembledChild[] {
@@ -1004,6 +1040,8 @@ export class AssembledContainer extends AssembledNodeBase<SeqRule | ChoiceRule |
 
 export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
     readonly modelType = 'polymorph' as const
+    // #forms is stored separately because AssembledGroup instances are
+    // constructed by assemble.ts and passed in — they don't live on the rule.
     readonly #forms: AssembledGroup[]
     readonly source: 'promoted' | 'override'
     /**
@@ -1015,16 +1053,12 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
      */
     readonly variantChildKinds: readonly string[]
 
-    constructor(init: {
-        kind: string; typeName: string; factoryName?: string; irKey?: string
-        forms: AssembledGroup[]
-        source?: 'promoted' | 'override'
-        variantChildKinds?: readonly string[]
-    }) {
-        super(init)
-        this.#forms = init.forms
-        this.source = init.source ?? 'promoted'
-        this.variantChildKinds = init.variantChildKinds ?? []
+    constructor(kind: string, rule: PolymorphRule | ChoiceRule, forms: AssembledGroup[], opts?: { source?: 'promoted' | 'override'; variantChildKinds?: readonly string[]; factoryName?: string; irKey?: string }) {
+        const ruleSource = rule.type === 'polymorph' ? rule.source : undefined
+        super(kind, rule as PolymorphRule, { factoryName: opts?.factoryName, irKey: opts?.irKey, source: ruleSource })
+        this.#forms = forms
+        this.source = opts?.source ?? 'promoted'
+        this.variantChildKinds = opts?.variantChildKinds ?? []
     }
 
     /** A polymorph's forms are hidden groups synthesized from the choice branches. */
@@ -1065,74 +1099,64 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 
 }
 
-export class AssembledLeaf extends AssembledNodeBase<PatternRule> {
+export class AssembledLeaf extends AssembledNodeBase<PatternRule | TerminalRule> {
     readonly modelType = 'leaf' as const
-    readonly #pattern?: string
 
-    constructor(init: {
-        kind: string; typeName: string; factoryName?: string; irKey?: string
-        pattern?: string
-    }) {
-        super(init)
-        this.#pattern = init.pattern
+    constructor(kind: string, rule: PatternRule | TerminalRule, opts?: { factoryName?: string; irKey?: string }) {
+        super(kind, rule, opts)
     }
 
-    get pattern(): string | undefined { return this.#pattern }
+    /** The leaf's regex pattern value when the rule is a PatternRule; undefined for TerminalRule. */
+    get pattern(): string | undefined {
+        return this.rule.type === 'pattern' ? (this.rule.value || undefined) : undefined
+    }
 }
 
 export class AssembledKeyword extends AssembledNodeBase<StringRule> {
     readonly modelType = 'keyword' as const
-    readonly #text: string
 
-    constructor(init: {
-        kind: string; typeName: string; factoryName?: string; irKey?: string
-        text: string
-    }) {
-        super(init)
-        this.#text = init.text
+    constructor(kind: string, rule: StringRule, opts?: { factoryName?: string; irKey?: string; hidden?: boolean }) {
+        super(kind, rule, opts)
     }
 
-    get text(): string { return this.#text }
+    /** The literal text this keyword produces (read from the StringRule). */
+    get text(): string { return this.rule.value }
 }
 
-export class AssembledToken extends AssembledNodeBase<TokenRule> {
+export class AssembledToken extends AssembledNodeBase<StringRule | TokenRule> {
     readonly modelType = 'token' as const
 
-    constructor(init: {
-        kind: string; typeName: string; factoryName?: string; irKey?: string
-    }) {
-        super(init)
+    constructor(kind: string, rule: StringRule | TokenRule) {
+        super(kind, rule, { hidden: true })
     }
-    // No emitFactory — tokens are hidden, no factoryName.
+    // No emitFactory — tokens are always hidden, no factoryName.
 }
 
 export class AssembledEnum extends AssembledNodeBase<EnumRule> {
     readonly modelType = 'enum' as const
-    readonly #values: string[]
 
-    constructor(init: {
-        kind: string; typeName: string; factoryName?: string; irKey?: string
-        values: string[]
-    }) {
-        super(init)
-        this.#values = init.values
+    constructor(kind: string, rule: EnumRule, opts?: { factoryName?: string; irKey?: string }) {
+        super(kind, rule, opts)
     }
 
-    get values(): string[] { return this.#values }
+    /** The enum member strings (e.g. `['u8', 'u16', 'usize']`). */
+    get values(): string[] { return this.rule.values }
 }
 
-export class AssembledSupertype extends AssembledNodeBase<SupertypeRule> {
+export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | ChoiceRule> {
     readonly modelType = 'supertype' as const
+    // #subtypes stores the RESOLVED subtype list (hidden names expanded to
+    // their concrete kinds) — this differs from rule.subtypes which carries
+    // the raw names as declared in the grammar. Do NOT replace with rule.subtypes.
     readonly #subtypes: string[]
 
-    constructor(init: {
-        kind: string; typeName: string; factoryName?: string; irKey?: string
-        subtypes: string[]
-    }) {
-        super(init)
-        this.#subtypes = init.subtypes
+    constructor(kind: string, rule: SupertypeRule | ChoiceRule, subtypes: string[]) {
+        // Supertypes are always hidden — they're dispatch points, not user-constructable nodes.
+        super(kind, rule as SupertypeRule, { hidden: true })
+        this.#subtypes = subtypes
     }
 
+    /** Resolved concrete kind names in this supertype union. */
     get subtypes(): string[] { return this.#subtypes }
 }
 
@@ -1166,35 +1190,39 @@ export class AssembledMulti extends AssembledNodeBase<RepeatRule | Repeat1Rule> 
     // rule narrowed — multis are hidden repeat helpers. Classifier
     // routes repeat / repeat1 shapes here when the hidden rule's
     // top-level content is a repeat.
+
+    constructor(kind: string, rule: RepeatRule | Repeat1Rule, opts?: { irKey?: string }) {
+        // Multi nodes are always hidden (no factoryName)
+        super(kind, rule, { hidden: true, irKey: opts?.irKey })
+    }
+
     /** The repeat's inner content type — raw Rule, for downstream
      * consumers that need the element union (types emitter maps this
      * to a union of TypeNames, inlineGroupRefs hands the whole repeat
      * back to referrers). */
-    readonly elementRule: Rule
+    get elementRule(): Rule { return this.rule.content }
+
     /** `true` when the source rule is `repeat1` (at least one element);
      * `false` for plain `repeat` (zero-or-more). Referrers thread this
      * into AssembledChild.nonEmpty. */
-    readonly nonEmpty: boolean
+    get nonEmpty(): boolean { return this.rule.type === 'repeat1' }
 
-    constructor(init: {
-        kind: string; typeName: string; irKey?: string
-        rule: Rule
-        elementRule: Rule
-        nonEmpty: boolean
-    }) {
-        super(init)
-        this.rule = init.rule
-        this.elementRule = init.elementRule
-        this.nonEmpty = init.nonEmpty
-    }
+    /** Separator string from the repeat rule, if any. */
+    get separator(): string | undefined { return this.rule.separator }
+
+    /** Whether a trailing separator is permitted. */
+    get trailing(): boolean | undefined { return this.rule.trailing }
+
+    /** Whether a leading separator is permitted. */
+    get leading(): boolean | undefined { return this.rule.leading }
 }
 
-export class AssembledGroup extends AssembledNodeBase<GroupRule | SeqRule | ChoiceRule> {
+export class AssembledGroup extends AssembledNodeBase<Rule> {
     readonly modelType = 'group' as const
-    // rule narrowed — groups are hidden helper rules that carry named
-    // sub-structure. Source shapes: GroupRule (pre-unwrap), or a
-    // SeqRule/ChoiceRule after unwrapGroupRuleAndSimplified() extracts
-    // the content.
+    // rule typed as Rule — groups can carry GroupRule (pre-unwrap),
+    // SeqRule/ChoiceRule after unwrapGroupRuleAndSimplified(), or any
+    // Rule when constructed as polymorph forms (form.content can be
+    // any Rule type).
     /** See `AssembledBranch.simplifiedRule`. */
     readonly simplifiedRule: Rule
     readonly detectToken?: string
@@ -1212,20 +1240,14 @@ export class AssembledGroup extends AssembledNodeBase<GroupRule | SeqRule | Choi
     #fields?: AssembledField[]
     #children?: AssembledChild[]
 
-    constructor(init: {
-        kind: string; typeName: string; factoryName?: string; irKey?: string
-        rule: Rule
-        simplifiedRule: Rule
-        detectToken?: string
-        name?: string
-        parentKind?: string
-    }) {
-        super(init)
-        this.rule = init.rule
-        this.simplifiedRule = init.simplifiedRule
-        this.detectToken = init.detectToken
-        this.name = init.name ?? init.kind
-        this.parentKind = init.parentKind
+    constructor(kind: string, rule: Rule, simplifiedRule: Rule, opts?: { factoryName?: string; irKey?: string; detectToken?: string; name?: string; parentKind?: string }) {
+        // Groups are hidden unless factoryName is explicitly provided (polymorph forms pass it).
+        const hidden = !opts?.factoryName
+        super(kind, rule, { hidden, factoryName: opts?.factoryName, irKey: opts?.irKey })
+        this.simplifiedRule = simplifiedRule
+        this.detectToken = opts?.detectToken
+        this.name = opts?.name ?? kind
+        this.parentKind = opts?.parentKind
     }
 
     get fields(): AssembledField[] {

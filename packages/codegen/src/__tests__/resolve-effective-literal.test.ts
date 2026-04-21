@@ -34,11 +34,11 @@ function makeField(overrides: Partial<AssembledField>): AssembledField {
 }
 
 function makeKeyword(kind: string, text: string): AssembledKeyword {
-    return new AssembledKeyword({ kind, typeName: 'Kw', text })
+    return new AssembledKeyword(kind, { type: 'string', value: text })
 }
 
 function makeLeaf(kind: string): AssembledLeaf {
-    return new AssembledLeaf({ kind, typeName: 'Leaf' })
+    return new AssembledLeaf(kind, { type: 'pattern', value: '' })
 }
 
 // ---------------------------------------------------------------------------

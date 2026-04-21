@@ -21,8 +21,8 @@ import {
     AssembledLeaf, AssembledKeyword, AssembledToken, AssembledEnum,
     AssembledSupertype, AssembledGroup, AssembledMulti,
     hasAnyField, hasAnyChild,
+    nameNode,
 } from './node-map.ts'
-import { tokenToName } from './optimize.ts'
 import { simplifyRule } from './simplify.ts'
 import { compileWordMatcher } from './common.ts'
 
@@ -36,23 +36,24 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
     for (const [kind, rule] of Object.entries(optimized.rules)) {
         const inlinedRule = inlineGroupRefs(rule, optimized.rules)
         const modelType = classifyNode(kind, inlinedRule)
-        const { typeName, factoryName, irKey } = nameNode(kind)
         const rawSimplifiedRule = optimized.simplifiedRules[kind]!
         const simplifiedRule = inlineGroupRefs(rawSimplifiedRule, optimized.simplifiedRules)
 
         switch (modelType) {
             case 'branch': {
-                nodes.set(kind, new AssembledBranch({
-                    kind, typeName, factoryName, irKey, rule: inlinedRule,
+                nodes.set(kind, new AssembledBranch(
+                    kind,
+                    inlinedRule as import('./rule.ts').SeqRule | import('./rule.ts').ChoiceRule,
                     simplifiedRule,
-                }))
+                ))
                 break
             }
             case 'container': {
-                nodes.set(kind, new AssembledContainer({
-                    kind, typeName, factoryName, irKey, rule: inlinedRule,
+                nodes.set(kind, new AssembledContainer(
+                    kind,
+                    inlinedRule as import('./rule.ts').SeqRule | import('./rule.ts').ChoiceRule | import('./rule.ts').RepeatRule | import('./rule.ts').Repeat1Rule,
                     simplifiedRule,
-                }))
+                ))
                 break
             }
             case 'polymorph': {
@@ -61,50 +62,59 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                 const forms = buildAssembledFormGroups(kind, polyForms, polySource)
                 for (const form of forms) nodes.set(form.kind, form)
                 const variantChildKinds = collectOverrideVariantChildKinds(polySource, polyForms)
-                nodes.set(kind, new AssembledPolymorph({
-                    kind, typeName, factoryName, irKey, forms,
-                    source: polySource,
-                    variantChildKinds,
-                }))
+                nodes.set(kind, new AssembledPolymorph(
+                    kind,
+                    rule as PolymorphRule | import('./rule.ts').ChoiceRule,
+                    forms,
+                    { source: polySource, variantChildKinds },
+                ))
                 break
             }
             case 'leaf': {
-                nodes.set(kind, new AssembledLeaf({
-                    kind, typeName, factoryName, irKey,
-                    pattern: rule.type === 'pattern' ? rule.value : undefined,
-                }))
+                nodes.set(kind, new AssembledLeaf(
+                    kind,
+                    rule as import('./rule.ts').PatternRule | import('./rule.ts').TerminalRule,
+                ))
                 break
             }
             case 'keyword': {
-                nodes.set(kind, new AssembledKeyword({
-                    kind, typeName, factoryName, irKey,
-                    text: rule.type === 'string' ? rule.value : '',
-                }))
+                nodes.set(kind, new AssembledKeyword(
+                    kind,
+                    rule as import('./rule.ts').StringRule,
+                ))
                 break
             }
             case 'token': {
-                // Hidden — no factoryName
-                nodes.set(kind, new AssembledToken({ kind, typeName }))
+                // Hidden — no factoryName; token kinds have StringRule bodies
+                nodes.set(kind, new AssembledToken(
+                    kind,
+                    rule as import('./rule.ts').StringRule,
+                ))
                 break
             }
             case 'enum': {
-                nodes.set(kind, new AssembledEnum({
-                    kind, typeName, factoryName, irKey,
-                    values: rule.type === 'enum' ? rule.values : [],
-                }))
+                nodes.set(kind, new AssembledEnum(
+                    kind,
+                    rule as import('./rule.ts').EnumRule,
+                ))
                 break
             }
             case 'supertype': {
                 const subtypes = resolveSupertypeSubtypes(rule, optimized)
-                nodes.set(kind, new AssembledSupertype({ kind, typeName, subtypes }))
+                nodes.set(kind, new AssembledSupertype(
+                    kind,
+                    rule as import('./rule.ts').SupertypeRule | import('./rule.ts').ChoiceRule,
+                    subtypes,
+                ))
                 break
             }
             case 'group': {
                 const { groupRule, groupSimplified } = unwrapGroupRuleAndSimplified(rule, simplifiedRule)
-                nodes.set(kind, new AssembledGroup({
-                    kind, typeName, rule: groupRule,
-                    simplifiedRule: groupSimplified,
-                }))
+                nodes.set(kind, new AssembledGroup(
+                    kind,
+                    groupRule,
+                    groupSimplified,
+                ))
                 break
             }
             case 'multi': {
@@ -115,12 +125,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                         `returned null — classifier and extractor must agree on shape.`,
                     )
                 }
-                nodes.set(kind, new AssembledMulti({
-                    kind, typeName, irKey,
-                    rule: inlinedRule,
-                    elementRule: shape.repeat.content,
-                    nonEmpty: shape.nonEmpty,
-                }))
+                nodes.set(kind, new AssembledMulti(kind, shape.repeat))
                 break
             }
         }
@@ -212,16 +217,12 @@ function buildAssembledFormGroups(
             ? `${parentKind}__form_${disambiguated}`
             : `${parentKind}_${disambiguated}`
         const formNames = nameNode(formKind)
-        return new AssembledGroup({
-            kind: formKind,
-            typeName: formNames.typeName,
-            factoryName: formNames.factoryName,
-            irKey: formNames.irKey,
-            rule: form.content,
-            simplifiedRule: simplifyRule(form.content),
-            name: disambiguated,
-            parentKind,
-        })
+        return new AssembledGroup(
+            formKind,
+            form.content,
+            simplifyRule(form.content),
+            { factoryName: formNames.factoryName, irKey: formNames.irKey, name: disambiguated, parentKind },
+        )
     })
 }
 
@@ -864,17 +865,16 @@ function collectAnonymousNodes(
         if (value === '' || /^\s+$/.test(value)) continue // Skip whitespace/empty
 
         const isWordShape = detectKeywordShape(value, wordMatcher)
-        const { typeName } = nameNode(value)
+        // Synthetic StringRule for anonymous tokens — the kind IS the literal value.
+        const syntheticStringRule: import('./rule.ts').StringRule = { type: 'string', value }
 
         if (isWordShape) {
             // Keyword token (e.g., "if", "class", "pub")
-            // Anonymous keywords from grammar — no factory (hidden)
-            nodes.set(value, new AssembledKeyword({
-                kind: value, typeName, text: value,
-            }))
+            // Anonymous keywords from grammar — no factory (hidden: no user construction path)
+            nodes.set(value, new AssembledKeyword(value, syntheticStringRule, { hidden: true }))
         } else {
             // Operator/punctuation token (e.g., "+", "->", "{")
-            nodes.set(value, new AssembledToken({ kind: value, typeName }))
+            nodes.set(value, new AssembledToken(value, syntheticStringRule))
         }
     }
 }
@@ -1228,57 +1228,10 @@ export { simplifyRule }
 // ---------------------------------------------------------------------------
 // Naming
 // ---------------------------------------------------------------------------
-
-// Reserved or restricted identifiers that cannot be top-level function names
-// in strict-mode TypeScript (or would shadow globals in problematic ways).
-const FACTORY_NAME_RESERVED = new Set([
-    'arguments', 'eval', 'yield', 'await', 'async', 'function', 'class',
-    'import', 'export', 'default', 'return', 'throw', 'new', 'delete',
-    'typeof', 'instanceof', 'in', 'of', 'let', 'const', 'var', 'null',
-    'true', 'false', 'undefined', 'NaN', 'Infinity', 'static', 'public',
-    'private', 'protected', 'interface', 'package', 'implements',
-])
-
-export function nameNode(kind: string): { typeName: string; factoryName: string; irKey: string } {
-    // Tokens/keywords can contain non-identifier chars (!=, #, %, ->, ==, etc.).
-    // Route through tokenToName first so typeName is always a valid identifier.
-    const normalized = /^[\w_]+$/.test(kind) ? kind : tokenToName(kind)
-    const marked = prepareKindForPascalCase(normalized)
-    let typeName = marked
-        .split('_')
-        .filter(Boolean)
-        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-        .join('') || 'Anonymous'
-    // TypeScript identifiers cannot start with a digit
-    if (/^\d/.test(typeName)) typeName = `Tok_${typeName}`
-    let factoryName = typeName.charAt(0).toLowerCase() + typeName.slice(1)
-    // Avoid names that are illegal as top-level function declarations
-    // (e.g. `arguments`, `eval`) or that shadow language keywords.
-    if (FACTORY_NAME_RESERVED.has(factoryName)) factoryName = `${factoryName}_`
-    const irKey = factoryName
-    return { typeName, factoryName, irKey }
-}
-
-/**
- * Strip the leading underscore (hidden-rule marker) from a normalized kind string
- * and collapse internal double-underscores into `_U_` so they survive PascalCase
- * flattening.
- *
- * @param normalized - A kind string that has already been through `tokenToName` (so it
- *   contains only word characters and underscores).
- * @returns The prepared string ready to be split on `_` and PascalCase-joined.
- * @example
- *   prepareKindForPascalCase('_type_identifier') // → 'type_identifier'
- *   prepareKindForPascalCase('type_identifier')  // → 'type_identifier'
- *   prepareKindForPascalCase('literal_type__x')  // → 'literal_type_U_x'
- * @remarks
- *   Collisions between hidden/visible kinds that end up with the same result are
- *   resolved post-hoc by `resolveCollidingNames()` — at which point the whole NodeMap
- *   is visible and a disambiguator is applied only where actually needed.
- */
-function prepareKindForPascalCase(normalized: string): string {
-    return normalized.replace(/^_+/, '').replace(/__+/g, '_U_')
-}
+// nameNode has moved to node-map.ts (imported above); re-exported here for
+// backwards compatibility with assemble.test.ts and any other callers that
+// import it from this module.
+export { nameNode } from './node-map.ts'
 
 // Reserved words that cannot be used as parameter/method names in TypeScript.
 const TS_RESERVED_WORDS = new Set([
