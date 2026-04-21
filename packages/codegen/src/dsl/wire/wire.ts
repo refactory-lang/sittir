@@ -513,12 +513,29 @@ function wrapConflictsCallback(
     userConflicts: ConflictsFn | undefined,
     context: WireContext,
 ): ConflictsFn | undefined {
-    if (!userConflicts && context.conflictGroups.length === 0) {
-        // User didn't supply one and nothing could have registered yet
-        // — short-circuit to keep the returned opts minimal. We also
-        // can't know at wire-time whether variants will register later,
-        // so install a drainer below when variants are possible.
-    }
+    return buildWiredConflictsFn(userConflicts, context)
+}
+
+/**
+ * Build the wired conflicts callback that drains accumulated variant
+ * conflict groups into the returned conflict list.
+ *
+ * @remarks
+ * Always returns a drainer, even when the user didn't supply a conflicts
+ * callback and no groups have registered yet. We can't know at wire-time
+ * whether variants will register later (they're registered lazily when
+ * rule fns run), so we install the drainer unconditionally. The drainer
+ * short-circuits at call-time when `conflictGroups` is still empty,
+ * keeping the overhead minimal when no variants are declared.
+ *
+ * @param userConflicts - The author's original conflicts callback, if any.
+ * @param context - The active wire context whose `conflictGroups` are drained.
+ * @returns A wrapped conflicts callback that appends symbolized group entries.
+ */
+function buildWiredConflictsFn(
+    userConflicts: ConflictsFn | undefined,
+    context: WireContext,
+): ConflictsFn {
     return function wiredConflicts(this: unknown, $: unknown, previous?: unknown[][]): unknown[][] {
         const base = userConflicts ? userConflicts.call(this, $, previous) : (previous ?? [])
         if (context.conflictGroups.length === 0) return base as unknown[][]

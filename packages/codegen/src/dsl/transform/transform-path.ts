@@ -154,13 +154,8 @@ export function applyPath(
     const [head, ...rest] = segments
     const t = rule.type
 
-    // Kind-match is scope-agnostic — find every occurrence of the target
-    // kind in the current subtree and apply the patch at each, skipping
-    // occurrences already inside a named field. Runs before
-    // container/wrapper dispatch because kind matching works through
-    // arbitrary composition (seq / choice / wrapper chains).
     if (head!.kind === 'kind-match') {
-        return applyKindMatch(rule, head!.name, rest, patch, precStack, false)
+        return dispatchKindMatch(rule, head!.name, rest, patch, precStack)
     }
 
     // Containers we can descend into — predicates in runtime-shapes.ts
@@ -237,6 +232,35 @@ function descendThroughSingleWrapper(
 }
 
 /**
+ * Dispatch a kind-match path segment, starting the recursive subtree walk
+ * from the root of the current rule.
+ *
+ * @remarks
+ * Kind-match is scope-agnostic — it finds every occurrence of the target
+ * kind anywhere in the current subtree and applies the patch at each site,
+ * skipping occurrences already inside a named field. Dispatched before
+ * container/wrapper handling because kind matching works through arbitrary
+ * composition (seq, choice, wrapper chains) without consuming a positional
+ * slot.
+ *
+ * @param rule - The rule to search for matching symbol occurrences.
+ * @param kindName - The symbol kind name to match against.
+ * @param rest - Remaining path segments after the kind-match step.
+ * @param patch - Patch value or function to apply at each matched symbol.
+ * @param precStack - Accumulated prec wrappers for the patch callback.
+ * @returns The rule with all matching occurrences patched.
+ */
+function dispatchKindMatch(
+    rule: RuntimeRule,
+    kindName: string,
+    rest: readonly PathSegment[],
+    patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
+    precStack: readonly RuntimeRule[] | undefined,
+): RuntimeRule {
+    return applyKindMatch(rule, kindName, rest, patch, precStack, false)
+}
+
+/**
  * Recursively descend into the subtree, applying `patch` to every
  * `symbol` reference whose name matches `targetKind`. Occurrences
  * already inside a named `field(name, ...)` wrapper are skipped —
@@ -263,6 +287,42 @@ function applyKindMatch(
     return result.rule
 }
 
+/**
+ * Apply a kind-match patch to a symbol rule that names the target kind.
+ *
+ * @remarks
+ * This is the terminal case of kind-match descent. The remaining path
+ * segments (if any) are applied to the symbol itself; when `rest` is
+ * empty the patch is applied directly. Occurrences already inside a
+ * named field wrapper are skipped — re-wrapping a pre-fielded symbol is
+ * almost always unintended (e.g. leaving rust's `field('length',
+ * _expression)` alone when the list-form `_expression` is targeted).
+ *
+ * @param rule - The symbol rule to test and potentially patch.
+ * @param targetKind - The kind name that must match `rule.name`.
+ * @param rest - Remaining path segments after the kind-match step.
+ * @param patch - Patch value or function to apply when the name matches.
+ * @param precStack - Accumulated prec wrappers for the patch callback.
+ * @param insideNamedField - Whether this symbol is already inside a named field.
+ * @returns `{ rule, matched }` — `matched` is `false` when name or field guard fails.
+ */
+function applyKindMatchToSymbol(
+    rule: RuntimeRule,
+    targetKind: string,
+    rest: readonly PathSegment[],
+    patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
+    precStack: readonly RuntimeRule[] | undefined,
+    insideNamedField: boolean,
+): { rule: RuntimeRule; matched: boolean } {
+    const name = (rule as unknown as { name: string }).name
+    if (name !== targetKind) return { rule, matched: false }
+    if (insideNamedField) return { rule, matched: false }
+    const patched = rest.length === 0
+        ? (typeof patch === 'function' ? patch(rule, precStack) : patch)
+        : applyPath(rule, rest, patch, precStack)
+    return { rule: patched, matched: true }
+}
+
 function walkKindMatch(
     rule: RuntimeRule,
     targetKind: string,
@@ -283,17 +343,8 @@ function walkKindMatch(
         return { rule: inner.matched ? reconstructPrec(rule, inner.rule) : rule, matched: inner.matched }
     }
 
-    // Symbol match — the terminal case. Apply the remaining path (if any) or
-    // the patch directly. Skip when inside a named field wrapper (except when
-    // the remaining path explicitly asks to descend into a field's content).
     if (t === 'symbol' || t === 'SYMBOL') {
-        const name = (rule as unknown as { name: string }).name
-        if (name !== targetKind) return { rule, matched: false }
-        if (insideNamedField) return { rule, matched: false }
-        const patched = rest.length === 0
-            ? (typeof patch === 'function' ? patch(rule, precStack) : patch)
-            : applyPath(rule, rest, patch, precStack)
-        return { rule: patched, matched: true }
+        return applyKindMatchToSymbol(rule, targetKind, rest, patch, precStack, insideNamedField)
     }
 
     // Field: descend into content but mark insideNamedField=true so nested

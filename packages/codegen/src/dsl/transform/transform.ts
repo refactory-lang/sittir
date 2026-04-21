@@ -333,13 +333,7 @@ function buildHoistedVariants(
         const altContent = choiceMembers[resolvedAlt]!
         const hoistedMembers = seqMembers.map((m, i) => i === resolvedPos ? altContent : m)
         const hoistedSeq = reconstructContainer(core, hoistedMembers)
-        // Wrap each variant's body in the parent's prec context so
-        // tree-sitter's conflict resolver sees the same precedence /
-        // associativity the author declared on the parent rule.
-        // `wrapInPrec` reapplies precStack inner-first so the outer-
-        // most wrapper stays outermost — matches path-descent's
-        // reassembly in applyPath.
-        const hoistedBody = wrapInPrec(hoistedSeq, precStack)
+        const hoistedBody = wrapVariantBodyInParentPrec(hoistedSeq, precStack)
         const visibleName = `${parentKind}_${p.v.name}`
         if (!wireRegisterPolymorphVariant(parentKind, p.v.name)) {
             throw new Error(`variant('${p.v.name}'): no active wire() context — variant() must run inside a rule callback under wire()`)
@@ -406,13 +400,8 @@ function applyFlatPatches(
         return reconstructContainer(original, newMembers)
     }
 
-    // Precedence wrappers — descend into content and reconstruct via
-    // native prec to preserve the precedence value (critical for
-    // tree-sitter's parser-generator to resolve conflicts the same way
-    // as the base grammar).
     if (isPrecWrapper(original)) {
-        const newContent = applyFlatPatches(contentOf(original), patches)
-        return reconstructPrec(original, newContent)
+        return applyFlatPatchesThroughPrec(original, patches)
     }
 
     // Single-content wrappers (optional/repeat/repeat1/field) — descend
@@ -424,6 +413,29 @@ function applyFlatPatches(
 
     // For other types, return as-is (patches don't apply)
     return original
+}
+
+/**
+ * Descend through a precedence wrapper during flat-positional patching,
+ * preserving the precedence value on the way back out.
+ *
+ * @remarks
+ * Reconstructing via native `prec` rather than spreading the original
+ * wrapper is critical: tree-sitter's parser-generator resolves conflicts
+ * using the precedence value that appears in the compiled grammar. If we
+ * dropped or changed that value, the parser would resolve ambiguities
+ * differently from the base grammar author's intent.
+ *
+ * @param original - The prec-wrapped rule to descend into.
+ * @param patches - Flat-positional patches forwarded to the recursive call.
+ * @returns Reconstructed prec wrapper with the inner content patched.
+ */
+function applyFlatPatchesThroughPrec(
+    original: RuntimeRule,
+    patches: Record<number | string, RuntimeRule>,
+): RuntimeRule {
+    const newContent = applyFlatPatches(contentOf(original), patches)
+    return reconstructPrec(original, newContent)
 }
 
 /**
@@ -472,6 +484,30 @@ function applyFlatPatchesToSeq(
 
 const wrapInPrec = (content: RuntimeRule, precStack?: readonly RuntimeRule[]): RuntimeRule =>
     wrapInPrecStack(content, precStack, reconstructPrec)
+
+/**
+ * Wrap a hoisted variant's body in the parent rule's accumulated prec
+ * context, preserving the conflict-resolution intent the grammar author
+ * declared on the parent rule.
+ *
+ * @remarks
+ * `wrapInPrec` reapplies the prec stack inner-first so the outermost
+ * prec wrapper remains outermost in the result — matching path-descent's
+ * reassembly order in `applyPath`. Without this wrapping, tree-sitter's
+ * conflict resolver would see the extracted variant without any precedence
+ * or associativity annotation, and could resolve ambiguities differently
+ * from the base grammar.
+ *
+ * @param hoistedSeq - The reconstructed seq for a single variant arm.
+ * @param precStack - Prec wrappers collected during `peelPrecWrappersFromRule`.
+ * @returns The variant body with the full prec stack reapplied.
+ */
+function wrapVariantBodyInParentPrec(
+    hoistedSeq: RuntimeRule,
+    precStack: ReadonlyArray<RuntimeRule>,
+): RuntimeRule {
+    return wrapInPrec(hoistedSeq, precStack)
+}
 
 function resolvePatch(
     patch: RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder,

@@ -107,13 +107,32 @@ export function field(name: string, content?: Input): FieldPlaceholder | FieldLi
     if (typeof native !== 'function') {
         throw new Error('field(): no global field() found — must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)')
     }
-    // Call native field once to normalize whatever shape `content`
-    // arrives in (plain JS strings become STRING rules, etc.). If the
-    // normalized inner content is a bare STRING, swap for a SYMBOL
-    // reference to a synthesized hidden rule so tree-sitter preserves
-    // the FIELD wrapper. Tag `source: 'override'` — user-authored
-    // field() calls are by definition override-sourced, and the tag
-    // lets derive-overrides-json skip them from the runtime routing map.
+    return buildTwoArgFieldResult(native, name, content)
+}
+
+/**
+ * Invoke the runtime-injected `field()` function, symbolize any bare STRING
+ * content, and tag the result `source: 'override'`.
+ *
+ * @remarks
+ * The native `field()` call normalizes `content` into a rule shape (plain
+ * JS strings become STRING rules). If the normalized inner content is a bare
+ * STRING, we swap it for a SYMBOL reference to a synthesized `_kw_<name>`
+ * hidden rule so tree-sitter's grammar normalizer preserves the FIELD wrapper
+ * around it (the normalizer strips FIELD wrappers around bare STRING nodes).
+ * Tagging `source: 'override'` lets `derive-overrides-json` recognize
+ * user-authored field() calls and skip them from the runtime routing map.
+ *
+ * @param native - The runtime-injected `field(name, content)` function.
+ * @param name - The field name to assign.
+ * @param content - The raw content to place under the field.
+ * @returns A FieldLike with `source: 'override'` stamped on it.
+ */
+function buildTwoArgFieldResult(
+    native: (n: string, c: Input) => unknown,
+    name: string,
+    content: Input,
+): FieldLike {
     const initial = native(name, content) as FieldLike & { content?: unknown }
     const inner = initial.content
     const symbolized = maybeKeywordSymbol(name, inner)

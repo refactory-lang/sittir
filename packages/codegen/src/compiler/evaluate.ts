@@ -777,20 +777,8 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
     let word: string | null = null
 
     const { roles: collectedRoles } = withRoleScope(() => {
-        // wire() populates its per-invocation context with the
-        // synthetic-rule bodies registered during rule-fn evaluation
-        // (variant/alias placeholder resolution). Pull them out once
-        // evaluation is done and merge into the rules map.
-        evaluateRuleFunctions(opts, baseRules, refs, rules)
-        const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__
-        if (wireCtx) injectSyntheticRules(wireCtx.deposits, rules)
-
-        // The rest of the callbacks (extras, externals, supertypes,
-        // inline, conflicts, word) stay inside this same role scope so
-        // any role() calls in them attach to THIS grammar's accumulator.
-        evaluateMetadataCallbacks(opts, baseGrammar, refs, {
-            extras, externals, supertypes, inline, conflicts,
-        }, (w) => { word = w })
+        evaluateRulesAndInjectSynthetics(opts, baseRules, refs, rules)
+        evaluateMetadataCallbacksInScope(opts, baseGrammar, refs, { extras, externals, supertypes, inline, conflicts }, (w) => { word = w })
     })
 
     inheritBaseGrammarMetadata(opts, baseGrammar, { extras, externals, supertypes, inline, conflicts }, (w) => { word = w })
@@ -888,6 +876,66 @@ function seedRefsFromBaseGrammar(baseGrammar: any): SymbolRef[] {
 }
 
 /**
+ * Evaluate all rule functions and inject wire-produced synthetic rules into
+ * the shared rules map in a single step.
+ *
+ * @remarks
+ * `wire()` populates its per-invocation context with synthetic-rule bodies
+ * as each rule fn runs (variant/alias placeholder resolution deposits content
+ * into `wireCtx.deposits`). Injecting immediately after rule evaluation
+ * ensures synthetic rules are present before metadata callbacks run — those
+ * callbacks may reference hidden rules by symbol in conflict or inline lists.
+ *
+ * @param opts - Grammar options containing the rule callbacks and optional
+ *   `__wireContext__` carrying synthetic rule deposits.
+ * @param baseRules - The base grammar's already-evaluated rules, forwarded as
+ *   `previous` to each override callback.
+ * @param refs - Mutable symbol-reference accumulator shared across rule evaluations.
+ * @param rules - Mutable output map where evaluated and synthetic rules are stored.
+ */
+function evaluateRulesAndInjectSynthetics(
+    opts: GrammarOptions,
+    baseRules: Record<string, Rule>,
+    refs: SymbolRef[],
+    rules: Record<string, Rule>,
+): void {
+    evaluateRuleFunctions(opts, baseRules, refs, rules)
+    const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__
+    if (wireCtx) injectSyntheticRules(wireCtx.deposits, rules)
+}
+
+/**
+ * Evaluate all metadata callbacks (extras, externals, supertypes, inline,
+ * conflicts, word) inside the current role scope.
+ *
+ * @remarks
+ * The metadata callbacks must run inside the same `withRoleScope` closure as
+ * the rule functions so any `role()` calls they contain attach to this
+ * grammar's accumulator rather than a parent or sibling scope.
+ *
+ * @param opts - Grammar options containing the metadata callbacks.
+ * @param baseGrammar - The evaluated base grammar object, or `null`.
+ * @param refs - Mutable symbol-reference accumulator.
+ * @param sinks - Mutable accumulators for each metadata list.
+ * @param setWord - Callback to record the `word` rule name.
+ */
+function evaluateMetadataCallbacksInScope(
+    opts: GrammarOptions,
+    baseGrammar: any,
+    refs: SymbolRef[],
+    sinks: {
+        extras: string[]
+        externals: string[]
+        supertypes: string[]
+        inline: string[]
+        conflicts: string[][]
+    },
+    setWord: (w: string) => void,
+): void {
+    evaluateMetadataCallbacks(opts, baseGrammar, refs, sinks, setWord)
+}
+
+/**
  * Evaluate each rule function in `opts.rules` and write the normalised
  * result into the shared `rules` map.
  *
@@ -977,6 +1025,23 @@ function inheritBaseGrammarMetadata(
 }
 
 /**
+ * Append `value` to `sink` only when it is not already present.
+ *
+ * @remarks
+ * Spec FR-019a: when an override callback does `[...prev, $._foo]` and
+ * the base grammar already has `$._foo`, we must collapse to a single
+ * entry. Symbol refs from `$.foo` are fresh objects on every proxy access
+ * (`createProxy` does not cache), so reference equality always fails —
+ * deduplication must compare by string value instead.
+ *
+ * @param sink - The mutable accumulator array to append into.
+ * @param value - The string value to append if not already in `sink`.
+ */
+function appendDedup(sink: string[], value: string): void {
+    if (!sink.includes(value)) sink.push(value)
+}
+
+/**
  * Run all the metadata callbacks (extras, externals, supertypes,
  * inline, conflicts, word) and write their results into the supplied
  * accumulators. Pulled out of grammarFn so the call site can wrap it
@@ -999,15 +1064,6 @@ function evaluateMetadataCallbacks(
     },
     setWord: (w: string) => void,
 ): void {
-    // Helper: append entries to a sink array, deduping by string value.
-    // Spec FR-019a: when an override does `[...prev, $._foo]` and the
-    // base already has `$._foo`, collapse to a single entry. Symbol
-    // refs from `$.foo` are NEW objects on each access (createProxy
-    // doesn't cache), so reference equality fails — dedupe by name.
-    const appendDedup = (sink: string[], value: string): void => {
-        if (!sink.includes(value)) sink.push(value)
-    }
-
     if (opts.extras) {
         const $ = createProxy('_extras_', refs)
         const baseExtras = baseGrammar?.extras ?? []

@@ -80,7 +80,7 @@ var isPlainRepeatType = (t) => typeEq(t, "repeat");
 var isRepeatType = (t) => typeEq(t, "repeat") || typeEq(t, "repeat1");
 var isBlankType = (t) => typeEq(t, "blank");
 
-// packages/codegen/src/dsl/transform-path.ts
+// packages/codegen/src/dsl/transform/transform-path.ts
 function dsl() {
   return globalThis;
 }
@@ -131,7 +131,7 @@ function applyPath(rule, segments, patch, precStack) {
   const [head, ...rest] = segments;
   const t = rule.type;
   if (head.kind === "kind-match") {
-    return applyKindMatch(rule, head.name, rest, patch, precStack, false);
+    return dispatchKindMatch(rule, head.name, rest, patch, precStack);
   }
   if (isContainerType(t)) {
     return applyToMembers(rule, head, rest, patch, precStack);
@@ -156,12 +156,22 @@ function descendThroughSingleWrapper(rule, head, rest, patch, precStack) {
     `applyPath: index ${head.kind === "index" ? head.value : "*"} out of bounds \u2014 '${rule.type}' wraps a single content rule (only index 0 / -1 is valid)`
   );
 }
+function dispatchKindMatch(rule, kindName, rest, patch, precStack) {
+  return applyKindMatch(rule, kindName, rest, patch, precStack, false);
+}
 function applyKindMatch(rule, targetKind, rest, patch, precStack, insideNamedField) {
   const result = walkKindMatch(rule, targetKind, rest, patch, precStack, insideNamedField);
   if (!result.matched) {
     throw new ApplyPathSkip(`applyPath: kind '${targetKind}' matched zero occurrences in this subtree`);
   }
   return result.rule;
+}
+function applyKindMatchToSymbol(rule, targetKind, rest, patch, precStack, insideNamedField) {
+  const name = rule.name;
+  if (name !== targetKind) return { rule, matched: false };
+  if (insideNamedField) return { rule, matched: false };
+  const patched = rest.length === 0 ? typeof patch === "function" ? patch(rule, precStack) : patch : applyPath(rule, rest, patch, precStack);
+  return { rule: patched, matched: true };
 }
 function walkKindMatch(rule, targetKind, rest, patch, precStack, insideNamedField) {
   if (!isWalkableNode(rule)) {
@@ -174,11 +184,7 @@ function walkKindMatch(rule, targetKind, rest, patch, precStack, insideNamedFiel
     return { rule: inner.matched ? reconstructPrec(rule, inner.rule) : rule, matched: inner.matched };
   }
   if (t === "symbol" || t === "SYMBOL") {
-    const name = rule.name;
-    if (name !== targetKind) return { rule, matched: false };
-    if (insideNamedField) return { rule, matched: false };
-    const patched = rest.length === 0 ? typeof patch === "function" ? patch(rule, precStack) : patch : applyPath(rule, rest, patch, precStack);
-    return { rule: patched, matched: true };
+    return applyKindMatchToSymbol(rule, targetKind, rest, patch, precStack, insideNamedField);
   }
   if (t === "field" || t === "FIELD") {
     const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, precStack, true);
@@ -296,7 +302,7 @@ function applyWildcardToMembers(rule, members, rest, patch, precStack) {
   return reconstructContainer(rule, members);
 }
 
-// packages/codegen/src/dsl/variant.ts
+// packages/codegen/src/dsl/primitives/variant.ts
 function isVariantPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
 }
@@ -304,12 +310,12 @@ function variant(name) {
   return { __sittirPlaceholder: "variant", name };
 }
 
-// packages/codegen/src/dsl/alias.ts
+// packages/codegen/src/dsl/primitives/alias.ts
 function isAliasPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
 }
 
-// packages/codegen/src/dsl/wire.ts
+// packages/codegen/src/dsl/wire/wire.ts
 var currentContext = null;
 function wireRegisterSyntheticRule(name, content) {
   if (!currentContext) return false;
@@ -347,8 +353,8 @@ function wire(config) {
   const polymorphs = config.polymorphs ?? {};
   const transforms = config.transforms ?? {};
   const outRules = { ...config.rules };
-  composeOrSynthesizePolymorphParents(outRules, polymorphs);
   composeOrSynthesizeTransformParents(outRules, transforms);
+  composeOrSynthesizePolymorphParents(outRules, polymorphs);
   injectHiddenRulePlaceholders(outRules, polymorphs, context);
   injectTransformHiddenRulePlaceholders(outRules, transforms, context);
   wrapAllRuleFns(outRules, context);
@@ -457,8 +463,9 @@ function wrapOneRuleFn(name, fn, context) {
   };
 }
 function wrapConflictsCallback(userConflicts, context) {
-  if (!userConflicts && context.conflictGroups.length === 0) {
-  }
+  return buildWiredConflictsFn(userConflicts, context);
+}
+function buildWiredConflictsFn(userConflicts, context) {
   return function wiredConflicts($, previous) {
     const base2 = userConflicts ? userConflicts.call(this, $, previous) : previous ?? [];
     if (context.conflictGroups.length === 0) return base2;
@@ -470,7 +477,7 @@ function symbolizeRef(_$, name) {
   return { type: "SYMBOL", name };
 }
 
-// packages/codegen/src/dsl/field.ts
+// packages/codegen/src/dsl/primitives/field.ts
 function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
   const c = content;
   if (!c || typeof c.type !== "string") return content;
@@ -499,6 +506,9 @@ function field(name, content) {
   if (typeof native !== "function") {
     throw new Error("field(): no global field() found \u2014 must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)");
   }
+  return buildTwoArgFieldResult(native, name, content);
+}
+function buildTwoArgFieldResult(native, name, content) {
   const initial = native(name, content);
   const inner = initial.content;
   const symbolized = maybeKeywordSymbol(name, inner);
@@ -509,7 +519,7 @@ function field(name, content) {
   return { ...initial, source: "override" };
 }
 
-// packages/codegen/src/dsl/transform.ts
+// packages/codegen/src/dsl/transform/transform.ts
 function transform(original, ...patchSets) {
   let rule = original;
   for (const patches of patchSets) {
@@ -619,7 +629,7 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     const altContent = choiceMembers[resolvedAlt];
     const hoistedMembers = seqMembers.map((m, i) => i === resolvedPos ? altContent : m);
     const hoistedSeq = reconstructContainer(core, hoistedMembers);
-    const hoistedBody = wrapInPrec(hoistedSeq, precStack);
+    const hoistedBody = wrapVariantBodyInParentPrec(hoistedSeq, precStack);
     const visibleName = `${parentKind}_${p.v.name}`;
     if (!wireRegisterPolymorphVariant(parentKind, p.v.name)) {
       throw new Error(`variant('${p.v.name}'): no active wire() context \u2014 variant() must run inside a rule callback under wire()`);
@@ -658,14 +668,17 @@ function applyFlatPatches(original, patches) {
     return reconstructContainer(original, newMembers);
   }
   if (isPrecWrapper(original)) {
-    const newContent = applyFlatPatches(contentOf2(original), patches);
-    return reconstructPrec(original, newContent);
+    return applyFlatPatchesThroughPrec(original, patches);
   }
   if (isWrapperType(t)) {
     const newContent = applyFlatPatches(contentOf2(original), patches);
     return reconstructWrapper(original, newContent);
   }
   return original;
+}
+function applyFlatPatchesThroughPrec(original, patches) {
+  const newContent = applyFlatPatches(contentOf2(original), patches);
+  return reconstructPrec(original, newContent);
 }
 function applyFlatPatchesToSeq(original, patches) {
   const members = [...membersOf2(original)];
@@ -686,6 +699,9 @@ function applyFlatPatchesToSeq(original, patches) {
   return reconstructContainer(original, members);
 }
 var wrapInPrec = (content, precStack) => wrapInPrecStack(content, precStack, reconstructPrec);
+function wrapVariantBodyInParentPrec(hoistedSeq, precStack) {
+  return wrapInPrec(hoistedSeq, precStack);
+}
 function resolvePatch(patch, originalMember, precStack) {
   if (isFieldPlaceholder(patch)) {
     return resolveFieldPlaceholder(patch, originalMember, precStack);
@@ -813,7 +829,7 @@ function extractNonEmpty(rule) {
   return null;
 }
 
-// packages/codegen/src/dsl/role.ts
+// packages/codegen/src/dsl/primitives/role.ts
 var currentRoles = null;
 var VALID_ROLE_NAMES = /* @__PURE__ */ new Set(["indent", "dedent", "newline"]);
 function role(symbol, roleName) {
