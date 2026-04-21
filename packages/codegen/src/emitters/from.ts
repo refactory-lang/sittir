@@ -861,15 +861,13 @@ function resolveFieldFromTypedInput(
     /**
      * Per spec 008 US3 / FR-023: single-access camelCase read on the bag
      * branch. After the isNodeData identity quick-return at resolver entry,
-     * the resolver body runs only for loose-bag input (camelCase top-level
-     * by construction). One cast per resolver keeps each field access
-     * precise without dual-path noise.
+     * the resolver body runs only for loose-bag input, which carries the
+     * camelCase property directly. No cast — if the typed input union
+     * doesn't expose the camelCase property at this position that is a
+     * real type error, not something to paper over.
      */
-    const loosePath = isPolymorphForm ? `T.${parentTypeName}Config` : `T.${parentTypeName}.Loose`
     const optChain = inputOptional ? '?' : ''
-    const access = isPolymorphForm
-        ? `${sourceVar}${optChain}.${field.propertyName}`
-        : `(${sourceVar} as ${loosePath})${optChain}.${field.propertyName}`
+    const access = `${sourceVar}${optChain}.${field.propertyName}`
     return resolveFieldCall(access, field, isMultiple(field), nodeMap, typeParam, intern)
 }
 
@@ -911,66 +909,9 @@ function resolveChildrenFromTypedInput(
     const pseudo = { values: mergedValues } as { values: readonly NodeOrTerminal[] }
     const slotType = `NonNullable<T.${parentTypeName}.Config['children']>`
     const typeParam = anyMultiple ? `${slotType}[number]` : slotType
-    // Single-cast bag access — same pattern as field reads.
+    // Direct bag access — same pattern as field reads.
     const optChain = inputOptional ? '?' : ''
-    const access = `(${sourceVar} as T.${parentTypeName}.Loose)${optChain}.children`
-    return resolveFieldCall(access, pseudo, anyMultiple, nodeMap, typeParam, intern)
-}
-
-/**
- * NodeData-branch field reader — reads `input.$fields[rawName]` (post-US7
- * metadata rename). Pushes through the same resolver helpers as the bag
- * path; they accept raw NodeData + strings + nested bags uniformly, so
- * the field-level shape mismatch is absorbed there.
- */
-function resolveFieldFromNodeData(
-    field: AssembledField,
-    nodeMap: NodeMap,
-    parentTypeName: string,
-    intern: KindInterner,
-    sourceVar: string,
-    inputOptional: boolean,
-): string {
-    const slotType = `NonNullable<T.${parentTypeName}.Config['${field.propertyName}']>`
-    const typeParam = isMultiple(field) ? `${slotType}[number]` : slotType
-    const optChain = inputOptional ? '?' : ''
-    /**
-     * One cast per resolver to the known parent's data interface. Avoids
-     * the type-level union-narrowing complications. The runtime already
-     * knows it's T.<Parent> via the preceding isNodeData check.
-     */
-    const access = `(${sourceVar} as T.${parentTypeName}).$fields.${field.name}`
-    return resolveFieldCall(access, field, isMultiple(field), nodeMap, typeParam, intern)
-}
-
-function resolveChildrenFromNodeData(
-    childSlots: readonly AssembledChild[],
-    nodeMap: NodeMap,
-    parentTypeName: string,
-    intern: KindInterner,
-    sourceVar: string,
-    inputOptional: boolean,
-): string {
-    const seenTypes = new Set<string>()
-    const mergedValues: NodeOrTerminal[] = []
-    let anyMultiple = false
-    for (const c of childSlots) {
-        if (isMultiple(c)) anyMultiple = true
-        for (const v of c.values) {
-            if (!isNodeRef(v)) continue
-            const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind
-            if (!seenTypes.has(kindName)) {
-                seenTypes.add(kindName)
-                mergedValues.push(v)
-            }
-        }
-    }
-    const pseudo = { values: mergedValues } as { values: readonly NodeOrTerminal[] }
-    const slotType = `NonNullable<T.${parentTypeName}.Config['children']>`
-    const typeParam = anyMultiple ? `${slotType}[number]` : slotType
-    const optChain = inputOptional ? '?' : ''
-    // Same cast pattern as NodeData field reads — one cast per resolver.
-    const access = `(${sourceVar} as T.${parentTypeName})${optChain}.$children`
+    const access = `${sourceVar}${optChain}.children`
     return resolveFieldCall(access, pseudo, anyMultiple, nodeMap, typeParam, intern)
 }
 
