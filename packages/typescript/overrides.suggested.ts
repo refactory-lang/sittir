@@ -19,104 +19,93 @@
 // Repeated shapes:   7  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
-// suggestedRules — drop entries into your overrides.ts rules map.
-// Each key is a rule kind; each value is a transform/choice call
-// that mirrors the shape you'd hand-write yourself.
+// suggestedTransforms — drop entries into your overrides.ts
+// `transforms:` block. Each value is a patch map (or an
+// array of patch maps when both field and polymorph
+// candidates target the same kind).
 // ---------------------------------------------------------------
-export const suggestedRules = {
-  // statement: 1 inferred field(s)
-  // [held] statement field 'body' on $.statement_block — 93% agreement, 14 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
-  // --- Polymorph candidates (wrap each choice arm in variant()) ---
-  // [held] polymorph — no candidates captured at Link time for 'export_statement'
-
+export const suggestedTransforms = {
   // [held] polymorph — 1 choice position(s), 3 arm(s) total
-  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: from_clause
-  import_statement: ($, original) => transform(original,
-    {
-      "2/0": variant("import_clause"),
-      "2/1": variant("import_require_clause"),
-      "2/2": variant("source"),
-    }
-  ),
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: declaration
+  ambient_declaration: {
+      "1/0": variant("declaration"),
+      "1/1": variant("global"),
+      "1/2": variant("module"),
+  },
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: type_annotation
+  as_expression: {
+      "2/0": variant("const"),
+      "2/1": variant("type"),
+  },
+
+
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: condition
-  for_statement: ($, original) => transform(original,
-    {
+  for_statement: {
       "3/0": variant("semi"),
       "3/1": variant("empty_statement"),
-    }
-  ),
+  },
 
-  // [held] polymorph — no candidates captured at Link time for 'parenthesized_expression'
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: expression
-  yield_expression: ($, original) => transform(original,
-    {
-      "1/0": variant("star"),
-      "1/1": variant("form_1"),
-    }
-  ),
-
-  // [held] polymorph — no candidates captured at Link time for 'call_expression'
+  // [held] polymorph — 1 choice position(s), 3 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: from_clause
+  import_statement: {
+      "2/0": variant("import_clause"),
+      "2/1": variant("import_require_clause"),
+      "2/2": variant("source"),
+  },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  member_expression: ($, original) => transform(original,
-    {
+  member_expression: {
       "1/0": variant("dot"),
       "1/1": variant("optional_chain"),
-    }
-  ),
+  },
+
 
   // [held] polymorph — 1 choice position(s), 4 arm(s) total
-  public_field_definition: ($, original) => transform(original,
-    {
+  public_field_definition: {
       "2/0": variant("form_0"),
       "2/1": variant("form_1"),
       "2/2": variant("form_2"),
       "2/3": variant("form_3"),
-    }
-  ),
+  },
+
+  // statement: 1 inferred field(s)
+  // [held] statement field 'body' on $.statement_block — 93% agreement, 14 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: type_annotation
-  as_expression: ($, original) => transform(original,
-    {
-      "2/0": variant("const"),
-      "2/1": variant("type"),
-    }
-  ),
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: expression
+  yield_expression: {
+      "1/0": variant("star"),
+      "1/1": variant("form_1"),
+  },
 
-  // [held] polymorph — 1 choice position(s), 3 arm(s) total
-  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: declaration
-  ambient_declaration: ($, original) => transform(original,
-    {
-      "1/0": variant("declaration"),
-      "1/1": variant("global"),
-      "1/2": variant("module"),
-    }
-  ),
+};
 
+// ---------------------------------------------------------------
+// suggestedRules — drop entries into your overrides.ts
+// `rules:` block. Each value defines a NEW rule (supertype
+// union or repeated-shape group) authored as a `$ => ...`
+// callback.
+// ---------------------------------------------------------------
+export const suggestedRules = {
   // --- Promoted supertypes (add matching names to grammar.supertypes) ---
   // [applied] promoted supertype
-  _module_export_name: $ => choice($.identifier, $.string),
+  _destructuring_pattern: $ => choice($.object_pattern, $.array_pattern),
 
   // [applied] promoted supertype
   _expressions: $ => choice($.expression, $.sequence_expression),
 
   // [applied] promoted supertype
-  _jsx_element: $ => choice($.jsx_element, $.jsx_self_closing_element),
+  _formal_parameter: $ => choice($.required_parameter, $.optional_parameter),
 
   // [applied] promoted supertype
-  _jsx_child: $ => choice($.jsx_text, $.html_character_reference, $.jsx_element, $.jsx_self_closing_element, $.jsx_expression),
+  _identifier: $ => choice($.undefined, $.identifier),
 
   // [applied] promoted supertype
-  _jsx_identifier: $ => choice($.identifier),
-
-  // [applied] promoted supertype
-  _jsx_element_name: $ => choice($.identifier, $.member_expression, $.jsx_namespace_name),
+  _import_identifier: $ => choice($.identifier),
 
   // [applied] promoted supertype
   _jsx_attribute: $ => choice($.jsx_attribute, $.jsx_expression),
@@ -128,13 +117,19 @@ export const suggestedRules = {
   _jsx_attribute_value: $ => choice($.string, $.jsx_expression, $.jsx_element, $.jsx_self_closing_element),
 
   // [applied] promoted supertype
-  _formal_parameter: $ => choice($.required_parameter, $.optional_parameter),
+  _jsx_child: $ => choice($.jsx_text, $.html_character_reference, $.jsx_element, $.jsx_self_closing_element, $.jsx_expression),
 
   // [applied] promoted supertype
-  _destructuring_pattern: $ => choice($.object_pattern, $.array_pattern),
+  _jsx_element: $ => choice($.jsx_element, $.jsx_self_closing_element),
 
   // [applied] promoted supertype
-  _identifier: $ => choice($.undefined, $.identifier),
+  _jsx_element_name: $ => choice($.identifier, $.member_expression, $.jsx_namespace_name),
+
+  // [applied] promoted supertype
+  _jsx_identifier: $ => choice($.identifier),
+
+  // [applied] promoted supertype
+  _module_export_name: $ => choice($.identifier, $.string),
 
   // [applied] promoted supertype
   _property_name: $ => choice($.property_identifier, $.private_property_identifier, $.string, $.number, $.computed_property_name),
@@ -143,16 +138,13 @@ export const suggestedRules = {
   _semicolon: $ => choice($._automatic_semicolon),
 
   // [applied] promoted supertype
-  _import_identifier: $ => choice($.identifier),
-
-  // [applied] promoted supertype
-  type: $ => choice($.primary_type, $.function_type, $.readonly_type, $.constructor_type, $.infer_type, $.member_expression, $.call_expression),
-
-  // [applied] promoted supertype
   _tuple_type_member: $ => choice($.required_parameter, $.optional_parameter, $.optional_type, $.rest_type, $.type),
 
   // [applied] promoted supertype
   primary_type: $ => choice($.parenthesized_type, $.predefined_type, $.type_identifier, $.nested_type_identifier, $.generic_type, $.object_type, $.array_type, $.tuple_type, $.flow_maybe_type, $.type_query, $.index_type_query, $.this_type, $.existential_type, $.literal_type, $.lookup_type, $.conditional_type, $.template_literal_type, $.intersection_type, $.union_type),
+
+  // [applied] promoted supertype
+  type: $ => choice($.primary_type, $.function_type, $.readonly_type, $.constructor_type, $.infer_type, $.member_expression, $.call_expression),
 
   // --- Repeated-shape candidates (reused across ≥2 parents) ---
   // parents: _jsx_start_opening_element, decorator_call_expression, decorator_member_expression, nested_identifier

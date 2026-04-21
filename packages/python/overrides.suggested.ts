@@ -19,69 +19,14 @@
 // Repeated shapes:   0  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
-// suggestedRules — drop entries into your overrides.ts rules map.
-// Each key is a rule kind; each value is a transform/choice call
-// that mirrors the shape you'd hand-write yourself.
+// suggestedTransforms — drop entries into your overrides.ts
+// `transforms:` block. Each value is a patch map (or an
+// array of patch maps when both field and polymorph
+// candidates target the same kind).
 // ---------------------------------------------------------------
-export const suggestedRules = {
-  // --- Polymorph candidates (wrap each choice arm in variant()) ---
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  future_import_statement: ($, original) => transform(original,
-    {
-      "3/0": variant("_import_list"),
-      "3/1": variant("paren"),
-    }
-  ),
-
-  // [held] polymorph — 1 choice position(s), 3 arm(s) total
-  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: wildcard_import
-  import_from_statement: ($, original) => transform(original,
-    {
-      "3/0": variant("wildcard_import"),
-      "3/1": variant("_import_list"),
-      "3/2": variant("paren"),
-    }
-  ),
-
-  // [held] polymorph — 1 choice position(s), 5 arm(s) total
-  expression_statement: ($, original) => transform(original,
-    {
-      "0": variant("expression"),
-      "1": variant("form_1"),
-      "2": variant("assignment"),
-      "3": variant("augmented_assignment"),
-      "4": variant("yield"),
-    }
-  ),
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  with_clause: ($, original) => transform(original,
-    {
-      "0": variant("form_0"),
-      "1": variant("paren"),
-    }
-  ),
-
-  // [held] polymorph — 1 choice position(s), 3 arm(s) total
-  _suite: ($, original) => transform(original,
-    {
-      "0": variant("form0"),
-      "1": variant("form1"),
-      "2": variant("form2"),
-    }
-  ),
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  expression_list: ($, original) => transform(original,
-    {
-      "1/0": variant("comma"),
-      "1/1": variant("form_1"),
-    }
-  ),
-
+export const suggestedTransforms = {
   // [held] polymorph — 1 choice position(s), 15 arm(s) total
-  _simple_pattern: ($, original) => transform(original,
-    {
+  _simple_pattern: {
       "0": variant("form0"),
       "1": variant("form1"),
       "2": variant("form2"),
@@ -97,48 +42,110 @@ export const suggestedRules = {
       "12": variant("form12"),
       "13": variant("form13"),
       "14": variant("form14"),
-    }
-  ),
+  },
+
+  // [held] polymorph — 1 choice position(s), 3 arm(s) total
+  _suite: {
+      "0": variant("form0"),
+      "1": variant("form1"),
+      "2": variant("form2"),
+  },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  splat_pattern: ($, original) => transform(original,
-    {
-      "1/0": variant("identifier"),
-      "1/1": variant("_"),
-    }
-  ),
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  pattern_list: ($, original) => transform(original,
-    {
+  expression_list: {
       "1/0": variant("comma"),
       "1/1": variant("form_1"),
-    }
-  ),
+  },
+
+  // [held] polymorph — 1 choice position(s), 5 arm(s) total
+  expression_statement: {
+      "0": variant("expression"),
+      "1": variant("form_1"),
+      "2": variant("assignment"),
+      "3": variant("augmented_assignment"),
+      "4": variant("yield"),
+  },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  yield: ($, original) => transform(original,
-    {
+  future_import_statement: {
+      "3/0": variant("_import_list"),
+      "3/1": variant("paren"),
+  },
+
+  // [held] polymorph — 1 choice position(s), 3 arm(s) total
+  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: wildcard_import
+  import_from_statement: {
+      "3/0": variant("wildcard_import"),
+      "3/1": variant("_import_list"),
+      "3/2": variant("paren"),
+  },
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  pattern_list: {
+      "1/0": variant("comma"),
+      "1/1": variant("form_1"),
+  },
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  splat_pattern: {
+      "1/0": variant("identifier"),
+      "1/1": variant("_"),
+  },
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  with_clause: {
+      "0": variant("form_0"),
+      "1": variant("paren"),
+  },
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  yield: {
       "1/0": variant("from"),
       "1/1": variant("form_1"),
-    }
-  ),
+  },
 
+};
+
+// ---------------------------------------------------------------
+// suggestedRules — drop entries into your overrides.ts
+// `rules:` block. Each value defines a NEW rule (supertype
+// union or repeated-shape group) authored as a `$ => ...`
+// callback.
+// ---------------------------------------------------------------
+export const suggestedRules = {
   // --- Promoted supertypes (add matching names to grammar.supertypes) ---
   // [applied] promoted supertype
-  _statement: $ => choice($._simple_statements, $.if_statement, $.for_statement, $.while_statement, $.try_statement, $.with_statement, $.function_definition, $.class_definition, $.decorated_definition, $.match_statement),
+  _compound_statement: $ => choice($.if_statement, $.for_statement, $.while_statement, $.try_statement, $.with_statement, $.function_definition, $.class_definition, $.decorated_definition, $.match_statement),
 
   // [applied] promoted supertype
-  _simple_statement: $ => choice($.future_import_statement, $.import_statement, $.import_from_statement, $.print_statement, $.assert_statement, $.expression_statement, $.return_statement, $.delete_statement, $.raise_statement, $.pass_statement, $.break_statement, $.continue_statement, $.global_statement, $.nonlocal_statement, $.exec_statement, $.type_alias_statement),
-
-  // [applied] promoted supertype
-  _named_expression_lhs: $ => choice($.identifier, $.keyword_identifier),
+  _expression_within_for_in_clause: $ => choice($.expression, $.lambda),
 
   // [applied] promoted supertype
   _expressions: $ => choice($.expression, $.expression_list),
 
   // [applied] promoted supertype
-  _compound_statement: $ => choice($.if_statement, $.for_statement, $.while_statement, $.try_statement, $.with_statement, $.function_definition, $.class_definition, $.decorated_definition, $.match_statement),
+  _f_expression: $ => choice($.expression, $.expression_list, $.pattern_list, $.yield),
+
+  // [applied] promoted supertype
+  _left_hand_side: $ => choice($.pattern, $.pattern_list),
+
+  // [applied] promoted supertype
+  _named_expression_lhs: $ => choice($.identifier, $.keyword_identifier),
+
+  // [applied] promoted supertype
+  _right_hand_side: $ => choice($.expression, $.expression_list, $.assignment, $.augmented_assignment, $.pattern_list, $.yield),
+
+  // [applied] promoted supertype
+  _simple_statement: $ => choice($.future_import_statement, $.import_statement, $.import_from_statement, $.print_statement, $.assert_statement, $.expression_statement, $.return_statement, $.delete_statement, $.raise_statement, $.pass_statement, $.break_statement, $.continue_statement, $.global_statement, $.nonlocal_statement, $.exec_statement, $.type_alias_statement),
+
+  // [applied] promoted supertype
+  _statement: $ => choice($._simple_statements, $.if_statement, $.for_statement, $.while_statement, $.try_statement, $.with_statement, $.function_definition, $.class_definition, $.decorated_definition, $.match_statement),
+
+  // [applied] promoted supertype
+  expression: $ => choice($.comparison_operator, $.not_operator, $.boolean_operator, $.lambda, $.primary_expression, $.conditional_expression, $.named_expression, $.as_pattern),
+
+  // [applied] promoted supertype
+  keyword_identifier: $ => choice($.identifier),
 
   // [applied] promoted supertype
   parameter: $ => choice($.identifier, $.typed_parameter, $.default_parameter, $.typed_default_parameter, $.list_splat_pattern, $.tuple_pattern, $.keyword_separator, $.positional_separator, $.dictionary_splat_pattern),
@@ -147,25 +154,7 @@ export const suggestedRules = {
   pattern: $ => choice($.identifier, $.keyword_identifier, $.subscript, $.attribute, $.list_splat_pattern, $.tuple_pattern, $.list_pattern),
 
   // [applied] promoted supertype
-  _expression_within_for_in_clause: $ => choice($.expression, $.lambda),
-
-  // [applied] promoted supertype
-  expression: $ => choice($.comparison_operator, $.not_operator, $.boolean_operator, $.lambda, $.primary_expression, $.conditional_expression, $.named_expression, $.as_pattern),
-
-  // [applied] promoted supertype
   primary_expression: $ => choice($.await, $.binary_operator, $.identifier, $.keyword_identifier, $.string, $.concatenated_string, $.integer, $.float, $.true, $.false, $.none, $.unary_operator, $.attribute, $.subscript, $.call, $.list, $.list_comprehension, $.dictionary, $.dictionary_comprehension, $.set, $.set_comprehension, $.tuple, $.parenthesized_expression, $.generator_expression, $.ellipsis, $.list_splat),
-
-  // [applied] promoted supertype
-  _left_hand_side: $ => choice($.pattern, $.pattern_list),
-
-  // [applied] promoted supertype
-  _right_hand_side: $ => choice($.expression, $.expression_list, $.assignment, $.augmented_assignment, $.pattern_list, $.yield),
-
-  // [applied] promoted supertype
-  _f_expression: $ => choice($.expression, $.expression_list, $.pattern_list, $.yield),
-
-  // [applied] promoted supertype
-  keyword_identifier: $ => choice($.identifier),
 
 };
 

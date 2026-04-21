@@ -327,49 +327,64 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
     }
 
     // ---------------------------------------------------------------
-    // Copy-paste ready rules block
+    // Copy-paste ready transforms block (ADR-0008)
     // ---------------------------------------------------------------
+    // Inferred fields + polymorph candidates produce patch maps that
+    // belong in the `transforms:` block of overrides.ts — each value
+    // is a plain object (or array of objects for multiple patch sets)
+    // that `transform()` unpacks at rule-evaluation time. Keeping them
+    // separate from `suggestedRules` matches the two-block shape the
+    // grammars now author by hand (see rust/overrides.ts for the
+    // template).
     lines.push('// ---------------------------------------------------------------')
-    lines.push('// suggestedRules — drop entries into your overrides.ts rules map.')
-    lines.push('// Each key is a rule kind; each value is a transform/choice call')
-    lines.push('// that mirrors the shape you\'d hand-write yourself.')
+    lines.push('// suggestedTransforms — drop entries into your overrides.ts')
+    lines.push('// `transforms:` block. Each value is a patch map (or an')
+    lines.push('// array of patch maps when both field and polymorph')
+    lines.push('// candidates target the same kind).')
     lines.push('// ---------------------------------------------------------------')
-    lines.push('export const suggestedRules = {')
+    lines.push('export const suggestedTransforms = {')
 
-    const { emittedKinds, emit, quoteKey } = createDeduplicatingEmitter()
+    const { emittedKinds: transformKinds, emit: emitTransform, quoteKey } = createDeduplicatingEmitter()
 
     const inferredByKind = groupInferencesByKind(log.inferredFields)
-    const sortedKinds = [...inferredByKind.keys()].sort()
-    for (const kind of sortedKinds) {
-        const entries = inferredByKind.get(kind)!
-        const parentRule = nodeMap.rules?.[kind]
-        const resolved: Array<{ e: InferredFieldEntry; pos: number | null }> = []
-        for (const e of entries) {
-            const pos = parentRule
-                ? findSymbolPosition(parentRule, e.targetSymbol, e.fieldName)
-                : null
-            resolved.push({ e, pos })
-        }
-        const positional = resolved.filter(r => r.pos !== null)
-        const nonPositional = resolved.filter(r => r.pos === null)
+    const polymorphHolds = log.promotedRules.filter(
+        e => e.classification === 'polymorph' && !e.applied,
+    )
+    const polymorphByKind = new Map(polymorphHolds.map(e => [e.kind, e] as const))
+    const allTransformKinds = [...new Set([...inferredByKind.keys(), ...polymorphByKind.keys()])].sort()
 
-        emit(kind, () => {
-            lines.push(`  // ${kind}: ${entries.length} inferred field(s)`)
-            if (positional.length > 0) {
-                lines.push(`  ${quoteKey(kind)}: ($, original) => transform(original, {`)
-                const seen = new Set<string>()
-                for (const { e, pos } of positional) {
-                    const dkey = `${e.fieldName}::${e.targetSymbol}`
-                    if (seen.has(dkey)) continue
-                    seen.add(dkey)
-                    const tag = e.applied ? 'applied' : 'held'
-                    const pct = (e.agreement * 100).toFixed(0)
-                    lines.push(`    // [${tag}] ${pct}% agreement, ${e.sampleSize} parents`)
-                    lines.push(`    ${pos}: field(${JSON.stringify(e.fieldName)}),  // $.${e.targetSymbol}`)
-                }
-                lines.push('  }),')
+    for (const kind of allTransformKinds) {
+        const inferred = inferredByKind.get(kind)
+        const polymorph = polymorphByKind.get(kind)
+        const parentRule = nodeMap.rules?.[kind]
+
+        const fieldPatches: Array<{ pos: number; fieldName: string; targetSymbol: string; applied: boolean; pct: number; samples: number }> = []
+        const nonPositional: InferredFieldEntry[] = []
+        if (inferred) {
+            const resolved = inferred.map(e => ({
+                e,
+                pos: parentRule ? findSymbolPosition(parentRule, e.targetSymbol, e.fieldName) : null,
+            }))
+            const seen = new Set<string>()
+            for (const { e, pos } of resolved) {
+                if (pos === null) { nonPositional.push(e); continue }
+                const dkey = `${e.fieldName}::${e.targetSymbol}`
+                if (seen.has(dkey)) continue
+                seen.add(dkey)
+                fieldPatches.push({
+                    pos, fieldName: e.fieldName, targetSymbol: e.targetSymbol,
+                    applied: e.applied, pct: e.agreement * 100, samples: e.sampleSize,
+                })
             }
-            for (const { e } of nonPositional) {
+        }
+
+        const polymorphCandidates = polymorph?.polymorphCandidates ?? []
+        const hasVariantPatch = polymorphCandidates.length > 0
+        const hasFieldPatch = fieldPatches.length > 0
+
+        emitTransform(kind, () => {
+            if (inferred) lines.push(`  // ${kind}: ${inferred.length} inferred field(s)`)
+            for (const e of nonPositional) {
                 const tag = e.applied ? 'applied' : 'held'
                 const pct = (e.agreement * 100).toFixed(0)
                 lines.push(
@@ -379,85 +394,97 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
                     ` applyInferredFields pass (tree rewrite) rather than via overrides.ts.`,
                 )
             }
+            if (!hasFieldPatch && !hasVariantPatch) { lines.push(''); return }
+
+            if (polymorph && hasVariantPatch) {
+                const total = polymorphCandidates.reduce((s, c) => s + c.choiceArmCount, 0)
+                lines.push(`  // [held] polymorph — ${polymorphCandidates.length} choice position(s), ${total} arm(s) total`)
+                if (polymorphCandidates.some(c => c.fieldWrapperName)) {
+                    const wrapped = polymorphCandidates.filter(c => c.fieldWrapperName).map(c => c.fieldWrapperName).join(', ')
+                    lines.push(`  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: ${wrapped}`)
+                }
+            }
+
+            // Emit the value — patch map for single patch set, array for multiple.
+            // Polymorph candidates each want their own patch set (tryHoistSiblingVariants
+            // requires all variant patches in one set to target the same choice position).
+            const patchSets: string[][] = []
+            if (hasFieldPatch) {
+                const block = ['{']
+                for (const p of fieldPatches) {
+                    const tag = p.applied ? 'applied' : 'held'
+                    block.push(`  // [${tag}] ${p.pct.toFixed(0)}% agreement, ${p.samples} parents`)
+                    block.push(`  ${p.pos}: field(${JSON.stringify(p.fieldName)}),  // $.${p.targetSymbol}`)
+                }
+                block.push('}')
+                patchSets.push(block)
+            }
+            for (const cand of polymorphCandidates) {
+                const block = ['{']
+                cand.armNames.forEach((armName, i) => {
+                    const key = cand.path === '' ? `${i}` : `${cand.path}/${i}`
+                    block.push(`  ${JSON.stringify(key)}: variant(${JSON.stringify(armName)}),`)
+                })
+                block.push('}')
+                patchSets.push(block)
+            }
+            const useArray = patchSets.length > 1
+            if (!useArray) {
+                const [block] = patchSets
+                if (block) {
+                    lines.push(`  ${quoteKey(kind)}: ${block[0]}`)
+                    for (let i = 1; i < block.length - 1; i++) lines.push(`    ${block[i]}`)
+                    lines.push(`  ${block[block.length - 1]},`)
+                }
+            } else {
+                lines.push(`  ${quoteKey(kind)}: [`)
+                patchSets.forEach((block, si) => {
+                    const isLast = si === patchSets.length - 1
+                    lines.push(`    ${block[0]}`)
+                    for (let i = 1; i < block.length - 1; i++) lines.push(`      ${block[i]}`)
+                    lines.push(`    ${block[block.length - 1]}${isLast ? '' : ','}`)
+                })
+                lines.push('  ],')
+            }
             lines.push('')
         })
     }
-
-    // Polymorph suggestions — Link's `promotePolymorph` flagged these
-    // rules as "could be split into named forms" but left them alone
-    // (applied: false) because splitting only runs when the user writes
-    // `variant()` in their override. Emit a copy-pasteable snippet that
-    // wraps each choice alternative with `variant('<name>')`, so the
-    // author can drop it straight into overrides.ts.
-    const polymorphHolds = log.promotedRules.filter(
-        e => e.classification === 'polymorph' && !e.applied,
-    )
-    if (polymorphHolds.length > 0) {
-        lines.push('  // --- Polymorph candidates (wrap each choice arm in variant()) ---')
-    }
+    // Polymorph holds with no candidates — comment-only entries.
     for (const entry of polymorphHolds) {
-        // Use the pre-Optimize candidates captured at Link time — paths
-        // there match what `transform()`'s applyPath sees at evaluate
-        // time on the base grammar. Computing from post-Optimize rules
-        // (nodeMap.rules) breaks for rules where `fanOutSeqChoices`
-        // flattens a nested `seq(_, seq(choice, _))` into
-        // `seq(_, choice, _)` — the choice shifts up a level.
-        const candidates = entry.polymorphCandidates ?? []
-        if (candidates.length === 0) {
-            emit(entry.kind, () => {
+        if (transformKinds.has(entry.kind)) continue
+        if ((entry.polymorphCandidates ?? []).length === 0) {
+            emitTransform(entry.kind, () => {
                 lines.push(`  // [held] polymorph — no candidates captured at Link time for '${entry.kind}'`)
                 lines.push('')
             })
-            continue
         }
-        // A kind can have BOTH inferred fields and polymorph candidates
-        // (e.g. rust impl_item: inferred field at pos 5 + polymorph at
-        // pos 6). The shared `emit()` dedup would drop the polymorph
-        // entry as a collision. Bypass for this loop — emit a second
-        // block with a merge hint so authors know to combine with the
-        // field block above rather than replace it.
-        const alreadyEmitted = emittedKinds.has(entry.kind)
-        const forceEmit = (body: () => void) => {
-            emittedKinds.add(entry.kind)
-            body()
-        }
-        const emitFn = alreadyEmitted ? forceEmit : emit.bind(null, entry.kind)
-        if (alreadyEmitted) {
-            lines.push(`  // NOTE: \`${entry.kind}\` already has a field-inference block above.`)
-            lines.push(`  // Merge into a single transform() call by passing this patch set`)
-            lines.push(`  // as an additional argument: \`transform(original, {/* fields */}, {/* variants below */})\`.`)
-        }
-        emitFn(() => {
-            const total = candidates.reduce((s, c) => s + c.choiceArmCount, 0)
-            lines.push(`  // [held] polymorph — ${candidates.length} choice position(s), ${total} arm(s) total`)
-            if (candidates.some(c => c.fieldWrapperName)) {
-                const wrapped = candidates.filter(c => c.fieldWrapperName).map(c => c.fieldWrapperName).join(', ')
-                lines.push(`  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: ${wrapped}`)
-            }
-            // Each choice position becomes its own patch set.
-            // `tryHoistSiblingVariants` in transform.ts requires all variant
-            // patches in one set to target the same choice position; mixing
-            // positions causes it to bail and fall through to sequential
-            // application, which breaks because the first patch mutates the
-            // field-wrapped choice shape out from under subsequent patches.
-            lines.push(`  ${quoteKey(entry.kind)}: ($, original) => transform(original,`)
-            candidates.forEach((cand, ci) => {
-                lines.push('    {')
-                cand.armNames.forEach((armName, i) => {
-                    const key = cand.path === '' ? `${i}` : `${cand.path}/${i}`
-                    lines.push(`      ${JSON.stringify(key)}: variant(${JSON.stringify(armName)}),`)
-                })
-                lines.push(`    }${ci === candidates.length - 1 ? '' : ','}`)
-            })
-            lines.push('  ),')
-            lines.push('')
-        })
     }
+
+    lines.push('};')
+    lines.push('')
+
+    // ---------------------------------------------------------------
+    // Copy-paste ready rules block — supertype & repeated-shape definitions
+    // ---------------------------------------------------------------
+    // These are NEW rule definitions (not transforms of existing ones)
+    // so they stay in `suggestedRules` with the `$ => ...` callback
+    // shape used by overrides.ts's `rules:` block.
+    lines.push('// ---------------------------------------------------------------')
+    lines.push('// suggestedRules — drop entries into your overrides.ts')
+    lines.push('// `rules:` block. Each value defines a NEW rule (supertype')
+    lines.push('// union or repeated-shape group) authored as a `$ => ...`')
+    lines.push('// callback.')
+    lines.push('// ---------------------------------------------------------------')
+    lines.push('export const suggestedRules = {')
+
+    const { emit } = createDeduplicatingEmitter()
 
     // Promoted supertypes become `_name: $ => choice($.a, $.b, ...)`
     // rules and get a reminder to list them in the grammar's
     // `supertypes:` array.
-    const promotedSupertypes = log.promotedRules.filter(e => e.classification === 'supertype')
+    const promotedSupertypes = log.promotedRules
+        .filter(e => e.classification === 'supertype')
+        .sort((a, b) => a.kind.localeCompare(b.kind))
     if (promotedSupertypes.length > 0) {
         lines.push('  // --- Promoted supertypes (add matching names to grammar.supertypes) ---')
     }
