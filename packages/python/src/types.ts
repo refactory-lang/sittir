@@ -1273,7 +1273,6 @@ export type False = Terminal<"false", "False">;
 export type None = Terminal<"none", "None">;
 export type Comment = Terminal<"comment", string>;
 export type LineContinuation = Terminal<"line_continuation", string>;
-export type KwAsync = Terminal<"_kw_async", "async">;
 export type Newline = Terminal<"_newline", string>;
 export type Indent = Terminal<"_indent", string>;
 export type Dedent = Terminal<"_dedent", string>;
@@ -1434,7 +1433,6 @@ export interface FalseTree extends AnyTreeNode { readonly type: "false"; }
 export interface NoneTree extends AnyTreeNode { readonly type: "none"; }
 export interface CommentTree extends TreeNode<'comment'> {}
 export interface LineContinuationTree extends TreeNode<'line_continuation'> {}
-export interface KwAsyncTree extends AnyTreeNode { readonly type: "_kw_async"; }
 export interface NewlineTree extends AnyTreeNode { readonly type: "_newline"; }
 export interface IndentTree extends AnyTreeNode { readonly type: "_indent"; }
 export interface DedentTree extends AnyTreeNode { readonly type: "_dedent"; }
@@ -1448,7 +1446,6 @@ export interface CloseBraceTree extends AnyTreeNode { readonly type: "}"; }
 export interface ExceptTree extends AnyTreeNode { readonly type: "except"; }
 export interface ImportTree extends AnyTreeNode { readonly type: "import"; }
 export interface FromTree extends AnyTreeNode { readonly type: "from"; }
-export interface FutureUTree extends AnyTreeNode { readonly type: "__future__"; }
 export interface AsTree extends AnyTreeNode { readonly type: "as"; }
 export interface PrintTree extends AnyTreeNode { readonly type: "print"; }
 export interface AssertTree extends AnyTreeNode { readonly type: "assert"; }
@@ -1474,7 +1471,6 @@ export interface GlobalTree extends AnyTreeNode { readonly type: "global"; }
 export interface NonlocalTree extends AnyTreeNode { readonly type: "nonlocal"; }
 export interface ExecTree extends AnyTreeNode { readonly type: "exec"; }
 export interface ClassTree extends AnyTreeNode { readonly type: "class"; }
-export interface AnonymousTree extends AnyTreeNode { readonly type: "_"; }
 export interface NotTree extends AnyTreeNode { readonly type: "not"; }
 export interface AndTree extends AnyTreeNode { readonly type: "and"; }
 export interface OrTree extends AnyTreeNode { readonly type: "or"; }
@@ -1654,8 +1650,6 @@ export type WildcardImport = Terminal<"wildcard_import">;
 export interface WildcardImportTree extends AnyTreeNode { readonly type: "wildcard_import"; }
 export type Ellipsis2 = Terminal<"ellipsis">;
 export interface Ellipsis2Tree extends AnyTreeNode { readonly type: "ellipsis"; }
-export type NotEscapeSequence = Terminal<"_not_escape_sequence">;
-export interface NotEscapeSequenceTree extends AnyTreeNode { readonly type: "_not_escape_sequence"; }
 export type PositionalSeparator = Terminal<"positional_separator">;
 export interface PositionalSeparatorTree extends AnyTreeNode { readonly type: "positional_separator"; }
 export type KeywordSeparator = Terminal<"keyword_separator">;
@@ -1919,7 +1913,6 @@ export interface KindMap {
   'none': None;
   'comment': Comment;
   'line_continuation': LineContinuation;
-  '_kw_async': KwAsync;
   '_newline': Newline;
   '_indent': Indent;
   '_dedent': Dedent;

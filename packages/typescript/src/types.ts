@@ -2137,11 +2137,6 @@ export type ReservedIdentifier = Terminal<"_reserved_identifier", string>;
 export type AccessibilityModifier = Terminal<"accessibility_modifier", "public" | "private" | "protected">;
 export type OverrideModifier = Terminal<"override_modifier", "override">;
 export type PredefinedType = Terminal<"predefined_type", string>;
-export type KwAsync = Terminal<"_kw_async", "async">;
-export type KwStatic = Terminal<"_kw_static", "static">;
-export type KwReadonly = Terminal<"_kw_readonly", "readonly">;
-export type KwAbstract = Terminal<"_kw_abstract", "abstract">;
-export type KwConst = Terminal<"_kw_const", "const">;
 export type AutomaticSemicolon = Terminal<"_automatic_semicolon", string>;
 export type TemplateChars = Terminal<"_template_chars", string>;
 export type HtmlComment = Terminal<"html_comment", string>;
@@ -2435,11 +2430,6 @@ export interface ReservedIdentifierTree extends AnyTreeNode { readonly type: "_r
 export interface AccessibilityModifierTree extends TreeNode<'accessibility_modifier'> {}
 export interface OverrideModifierTree extends AnyTreeNode { readonly type: "override_modifier"; }
 export interface PredefinedTypeTree extends TreeNode<'predefined_type'> {}
-export interface KwAsyncTree extends AnyTreeNode { readonly type: "_kw_async"; }
-export interface KwStaticTree extends AnyTreeNode { readonly type: "_kw_static"; }
-export interface KwReadonlyTree extends AnyTreeNode { readonly type: "_kw_readonly"; }
-export interface KwAbstractTree extends AnyTreeNode { readonly type: "_kw_abstract"; }
-export interface KwConstTree extends AnyTreeNode { readonly type: "_kw_const"; }
 export interface AutomaticSemicolonTree extends AnyTreeNode { readonly type: "_automatic_semicolon"; }
 export interface TemplateCharsTree extends AnyTreeNode { readonly type: "_template_chars"; }
 export interface HtmlCommentTree extends TreeNode<'html_comment'> {}
@@ -3107,11 +3097,6 @@ export interface KindMap {
   'accessibility_modifier': AccessibilityModifier;
   'override_modifier': OverrideModifier;
   'predefined_type': PredefinedType;
-  '_kw_async': KwAsync;
-  '_kw_static': KwStatic;
-  '_kw_readonly': KwReadonly;
-  '_kw_abstract': KwAbstract;
-  '_kw_const': KwConst;
   '_automatic_semicolon': AutomaticSemicolon;
   '_template_chars': TemplateChars;
   'html_comment': HtmlComment;

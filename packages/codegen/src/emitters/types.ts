@@ -469,6 +469,13 @@ function emitLeafTerminalAliases(
         if (generatedTypes.has(node.typeName)) continue
         // Drop truly-unreferenced terminal aliases.
         if (!node.rawFactoryName && !referenced.has(kind)) continue
+        // Drop hidden single-literal `_kw_*` helper kinds: field types
+        // inline their literal via `resolveHiddenKeywordLiteral`, so no
+        // consumer needs the `KwXxx` / `KwXxxTree` stub any more. Keeping
+        // them would be dead exports — `fieldTypeComponents` resolves the
+        // reference to a literal string at emit time, so no generated
+        // code mentions `KwAsync` / `KwMove` / `KwOperator` anywhere.
+        if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue
         generatedTypes.add(node.typeName)
 
         let textType: string
@@ -609,6 +616,10 @@ function emitTreeInterfaceDeclarations(
     for (const kind of [...nodeKinds, ...leafKinds]) {
         const node = nodeMap.nodes.get(kind)!
         if (treeEmitted.has(node.typeName)) continue
+        // Hidden single-literal `_kw_*` keywords are inlined at every
+        // field reference, so their Tree interfaces are dead exports.
+        // Skip in lockstep with `emitLeafTerminalAliases`.
+        if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue
         treeEmitted.add(node.typeName)
         const isAnon = node.modelType === 'keyword' || node.modelType === 'token'
         const candidate = isAnon ? `_anonymous_${kind}` : kind
@@ -758,6 +769,9 @@ function collectAndEmitTokenTypeAliases(
         if (!referencedTokenTypeNames.has(node.typeName)) continue
         if (!/^[A-Za-z_$][\w$]*$/.test(node.typeName)) continue
         if (generatedTypes.has(node.typeName)) continue
+        // Same hidden-inline skip as emitLeafTerminalAliases — field
+        // references resolve directly to the literal string.
+        if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue
         generatedTypes.add(node.typeName)
         lines.push(`export type ${node.typeName} = Terminal<${JSON.stringify(kind)}>;`)
         if (!treeEmitted.has(node.typeName)) {

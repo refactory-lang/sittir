@@ -2255,14 +2255,6 @@ export type Self = Terminal<"self", "self">;
 export type Super = Terminal<"super", "super">;
 export type Crate = Terminal<"crate", "crate">;
 export type Metavariable = Terminal<"metavariable", string>;
-export type KwRef = Terminal<"_kw_ref", "ref">;
-export type KwUnsafe = Terminal<"_kw_unsafe", "unsafe">;
-export type KwStatic = Terminal<"_kw_static", "static">;
-export type KwAsync = Terminal<"_kw_async", "async">;
-export type KwMove = Terminal<"_kw_move", "move">;
-export type KwDefault = Terminal<"_kw_default", "default">;
-export type KwConst = Terminal<"_kw_const", "const">;
-export type _WildcardPattern = Terminal<"_wildcard_pattern", "_">;
 export type StringContent = Terminal<"string_content", string>;
 export type RawStringLiteralContent = Terminal<"raw_string_literal_content", string>;
 export type FloatLiteral = Terminal<"float_literal", string>;
@@ -2570,14 +2562,6 @@ export interface SelfTree extends AnyTreeNode { readonly type: "self"; }
 export interface SuperTree extends AnyTreeNode { readonly type: "super"; }
 export interface CrateTree extends AnyTreeNode { readonly type: "crate"; }
 export interface MetavariableTree extends TreeNode<'metavariable'> {}
-export interface KwRefTree extends AnyTreeNode { readonly type: "_kw_ref"; }
-export interface KwUnsafeTree extends AnyTreeNode { readonly type: "_kw_unsafe"; }
-export interface KwStaticTree extends AnyTreeNode { readonly type: "_kw_static"; }
-export interface KwAsyncTree extends AnyTreeNode { readonly type: "_kw_async"; }
-export interface KwMoveTree extends AnyTreeNode { readonly type: "_kw_move"; }
-export interface KwDefaultTree extends AnyTreeNode { readonly type: "_kw_default"; }
-export interface KwConstTree extends AnyTreeNode { readonly type: "_kw_const"; }
-export interface _WildcardPatternTree extends AnyTreeNode { readonly type: "_wildcard_pattern"; }
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface RawStringLiteralContentTree extends AnyTreeNode { readonly type: "raw_string_literal_content"; }
 export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
@@ -2622,7 +2606,6 @@ export interface WhereTree extends AnyTreeNode { readonly type: "where"; }
 export interface WhileTree extends AnyTreeNode { readonly type: "while"; }
 export interface ExternTree extends AnyTreeNode { readonly type: "extern"; }
 export interface ElseTree extends AnyTreeNode { readonly type: "else"; }
-export interface AnonymousTree extends AnyTreeNode { readonly type: "_"; }
 export interface InTree extends AnyTreeNode { readonly type: "in"; }
 export interface DynTree extends AnyTreeNode { readonly type: "dyn"; }
 export interface MutTree extends AnyTreeNode { readonly type: "mut"; }
@@ -3032,14 +3015,12 @@ export type NeverType = Terminal<"never_type">;
 export interface NeverTypeTree extends AnyTreeNode { readonly type: "never_type"; }
 export type RemainingFieldPattern = Terminal<"remaining_field_pattern">;
 export interface RemainingFieldPatternTree extends AnyTreeNode { readonly type: "remaining_field_pattern"; }
-export type ImplItemSemi = Terminal<"_impl_item_semi">;
-export interface ImplItemSemiTree extends AnyTreeNode { readonly type: "_impl_item_semi"; }
-export type ModItemExternal = Terminal<"_mod_item_external">;
-export interface ModItemExternalTree extends AnyTreeNode { readonly type: "_mod_item_external"; }
-export type StructItemUnit = Terminal<"_struct_item_unit">;
-export interface StructItemUnitTree extends AnyTreeNode { readonly type: "_struct_item_unit"; }
-export type KwOperator = Terminal<"_kw_operator">;
-export interface KwOperatorTree extends AnyTreeNode { readonly type: "_kw_operator"; }
+export type ModItemExternal = Terminal<"mod_item_external">;
+export interface ModItemExternalTree extends AnyTreeNode { readonly type: "mod_item_external"; }
+export type StructItemUnit = Terminal<"struct_item_unit">;
+export interface StructItemUnitTree extends AnyTreeNode { readonly type: "struct_item_unit"; }
+export type ImplItemSemi = Terminal<"impl_item_semi">;
+export interface ImplItemSemiTree extends AnyTreeNode { readonly type: "impl_item_semi"; }
 
 export type RustNode =
   | SourceFile
@@ -3443,14 +3424,6 @@ export interface KindMap {
   'super': Super;
   'crate': Crate;
   'metavariable': Metavariable;
-  '_kw_ref': KwRef;
-  '_kw_unsafe': KwUnsafe;
-  '_kw_static': KwStatic;
-  '_kw_async': KwAsync;
-  '_kw_move': KwMove;
-  '_kw_default': KwDefault;
-  '_kw_const': KwConst;
-  '_wildcard_pattern': _WildcardPattern;
   'string_content': StringContent;
   'raw_string_literal_content': RawStringLiteralContent;
   'float_literal': FloatLiteral;
