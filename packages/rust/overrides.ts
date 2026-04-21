@@ -27,135 +27,133 @@ export default grammar(enrich(base), wire({
         range_pattern:       { '0': 'left', '1': 'prefix' },
         struct_item:         { '4/0': 'brace', '4/1': 'tuple', '4/2': 'unit' },
     },
-    rules: {
+    transforms: {
         // abstract_type: 1 field(s)
-        abstract_type: ($, original) => transform(original, {
+        abstract_type: {
             1: field('type_parameters'), // type_parameters [struct=0]
-        }),
-
-        // array_expression: polymorph split — auto-hoist includes `[`/`]`
-        // in each alias body and uses INLINE alias (no new named hidden
-        // rule), so tree-sitter's state machine doesn't have to reconcile
-        // a new symbol against its auto-generated _repeat1 helpers.
-        array_expression: ($, original) => transform(original,
-            { 1: field('attributes') },
-            { '2/_expression': field('elements') },
-        ),
+        },
 
         // associated_type: 1 field(s)
-        associated_type: ($, original) => transform(original, {
+        associated_type: {
             4: field('where_clause'), // where_clause [struct=0]
-        }),
+        },
 
         // async_block: position 2 is the `block` symbol (position 1 is
         // the optional `move` choice). Autogen placed the override at
         // position 1, which wrapped the move choice and dropped the
         // block routing entirely.
-        async_block: ($, original) => transform(original, {
+        async_block: {
             '1/0': field('move'),  // optional('move') → surface as field
             2: field('block'),
-        }),
+        },
 
         // attribute_item: 1 field(s)
-        attribute_item: ($, original) => transform(original, {
+        attribute_item: {
             2: field('attribute'), // attribute [struct=0]
-        }),
+        },
 
         // block: 1 field(s)
-        block: ($, original) => transform(original, {
+        block: {
             0: field('label'), // label [struct=0]
-        }),
+        },
 
         // bounded_type: 2 field(s)
-        bounded_type: ($, original) => transform(original, {
+        bounded_type: {
             0: field('left'), // lifetime | _type | use_bounds [struct=0]
             2: field('right'), // lifetime | _type | use_bounds [struct=1]
-        }),
+        },
 
         // break_expression: 2 field(s)
-        break_expression: ($, original) => transform(original, {
+        break_expression: {
             1: field('label'), // label [struct=0]
             2: field('expression'), // _expression [struct=1]
-        }),
+        },
 
         // captured_pattern: 2 field(s)
-        captured_pattern: ($, original) => transform(original, {
+        captured_pattern: {
             0: field('identifier'), // identifier [struct=0]
             2: field('pattern'), // _pattern [struct=1]
-        }),
+        },
+
+        // closure_expression — label the three optional modifiers so readNode
+        // can route `async`, `move`, `static` tokens to named fields instead
+        // of leaving them as anonymous children.
+        closure_expression: [
+            { 0: field('static'), 1: field('async'), 2: field('move') },
+        ],
 
         // const_item: 1 field(s)
-        const_item: ($, original) => transform(original, {
+        const_item: {
             0: field('visibility_modifier'), // visibility_modifier [struct=0]
-        }),
+        },
 
         // continue_expression: 1 field(s)
-        continue_expression: ($, original) => transform(original, {
+        continue_expression: {
             1: field('label'), // label [struct=0]
-        }),
+        },
 
         // enum_item: 2 field(s)
-        enum_item: ($, original) => transform(original, {
+        enum_item: {
             0: field('visibility_modifier'), // visibility_modifier [struct=0]
             4: field('where_clause'), // where_clause [struct=1]
-        }),
+        },
 
         // enum_variant: 1 field(s)
-        enum_variant: ($, original) => transform(original, {
+        enum_variant: {
             0: field('visibility_modifier'), // visibility_modifier [struct=0]
-        }),
+        },
 
         // extern_crate_declaration: 2 field(s)
-        extern_crate_declaration: ($, original) => transform(original, {
+        extern_crate_declaration: {
             0: field('visibility_modifier'), // visibility_modifier [struct=0]
             2: field('crate'), // crate [struct=1]
-        }),
+        },
 
         // extern_modifier: 1 field(s)
-        extern_modifier: ($, original) => transform(original, {
+        extern_modifier: {
             1: field('string_literal'), // string_literal [struct=0]
-        }),
+        },
 
         // field_declaration: 1 field(s)
-        field_declaration: ($, original) => transform(original, {
+        field_declaration: {
             0: field('visibility_modifier'), // visibility_modifier [struct=0]
-        }),
+        },
 
         // field_pattern: 1 field(s)
         // Grammar: seq(optional('ref'), optional(mutable_specifier), choice(...))
         // Position 0 = optional('ref') [anonymous], position 1 = optional(mutable_specifier)
-        field_pattern: ($, original) => transform(original, {
+        field_pattern: {
             1: field('mutable_specifier'), // mutable_specifier [struct=0]
-        }),
+        },
 
         // for_expression: 1 field(s)
-        for_expression: ($, original) => transform(original, {
+        for_expression: {
             0: field('label'), // label [struct=0]
-        }),
+        },
 
         // foreign_mod_item: 2 field(s)
-        foreign_mod_item: ($, original) => transform(original, {
+        foreign_mod_item: {
             0: field('visibility_modifier'), // visibility_modifier [struct=0]
             1: field('extern_modifier'), // extern_modifier [struct=1]
-        }),
+        },
 
         // function_item: pos 6 is optional(seq('->', field('return_type', ..))) —
         // don't touch it, return_type is already a base-grammar field. The
         // where_clause symbol lives at pos 7. Pos 8 is the body block (also
         // already a base field).
-        function_item: ($, original) => transform(original, {
+        function_item: {
             0: field('visibility_modifier'), // visibility_modifier
             1: field('function_modifiers'), // function_modifiers
             7: field('where_clause'), // where_clause
-        }),
+        },
 
         // function_signature_item: same shape as function_item but ends in
         // ';' instead of a body block — pos 7 is where_clause here too.
-        function_signature_item: ($, original) => transform(original, {
+        function_signature_item: {
             0: field('visibility_modifier'), // visibility_modifier
             1: field('function_modifiers'), // function_modifiers
             7: field('where_clause'), // where_clause
-        }),
+        },
 
         // function_type: top-level seq is
         //   [for_lifetimes, prec(call, seq(choice(trait, fn_form), parameters)),
@@ -166,16 +164,16 @@ export default grammar(enrich(base), wire({
         // 'fn' literal because it's only in one arm. Polymorph-split each
         // arm. prec is transparent to path addressing, so path `1/0` is
         // the choice inside.
-        function_type: ($, original) => transform(original,
+        function_type: [
             { 0: field('for_lifetimes') },
-        ),
+        ],
 
         // gen_block: same fix as async_block — the block symbol is
         // at position 2, position 1 is the optional `move` choice.
-        gen_block: ($, original) => transform(original, {
+        gen_block: {
             '1/0': field('move'),  // optional('move') → surface as field
             2: field('block'),
-        }),
+        },
 
         // generic_type_with_turbofish: aliased to `generic_type` at 4 call
         // sites. Wrap `::` at pos 1 as a field('turbofish') so the aliased-
@@ -183,9 +181,9 @@ export default grammar(enrich(base), wire({
         // field=turbofish for `C::<D>`). The generic_type template itself
         // still needs to reference $TURBOFISH — handled via its override
         // below.
-        generic_type_with_turbofish: ($, original) => transform(original, {
+        generic_type_with_turbofish: {
             1: field('turbofish'),
-        }),
+        },
 
         // generic_type: base rule unchanged. ADR-0006 dispatches via
         // drillAs at alias-declared field sites so consumers see source-
@@ -199,66 +197,66 @@ export default grammar(enrich(base), wire({
         // choice(field('body', declaration_list), ';'). The ';' arm is
         // the trait-signature form (no body), which the template walker
         // drops without a polymorph split.
-        impl_item: ($, original) => transform(original,
+        impl_item: [
             {
                 '0/0': field('unsafe'),  // optional('unsafe') → surface as field
                 5: field('where_clause'),
             },
-        ),
+        ],
 
         // index_expression: 2 field(s)
-        index_expression: ($, original) => transform(original, {
+        index_expression: {
             0: field('object'), // _expression [struct=0]
             2: field('index'), // _expression [struct=1]
-        }),
+        },
 
         // inner_attribute_item: 1 field(s)
-        inner_attribute_item: ($, original) => transform(original, {
+        inner_attribute_item: {
             3: field('attribute'), // attribute [struct=0]
-        }),
+        },
 
         // label: 1 field(s)
-        label: ($, original) => transform(original, {
+        label: {
             1: field('identifier'), // identifier [struct=0]
-        }),
+        },
 
         // let_declaration: 1 field(s)
-        let_declaration: ($, original) => transform(original, {
+        let_declaration: {
             1: field('mutable_specifier'), // mutable_specifier [struct=0]
-        }),
+        },
 
         // lifetime: 1 field(s)
-        lifetime: ($, original) => transform(original, {
+        lifetime: {
             1: field('identifier'), // identifier [struct=0]
-        }),
+        },
 
         // loop_expression: 1 field(s)
-        loop_expression: ($, original) => transform(original, {
+        loop_expression: {
             0: field('label'), // label [struct=0]
-        }),
+        },
 
         // macro_invocation: 1 field(s)
-        macro_invocation: ($, original) => transform(original, {
+        macro_invocation: {
             2: field('token_tree'), // token_tree [struct=0]
-        }),
+        },
 
         // mod_item: two forms — `mod name;` (external) vs `mod name { ... }`
         // (inline). Polymorph-split so each form's template emits the
         // right terminator (trailing `;` vs `{...}` body).
-        mod_item: ($, original) => transform(original,
+        mod_item: [
             { 0: field('visibility_modifier') },
-        ),
+        ],
 
         // mut_pattern: 2 field(s)
-        mut_pattern: ($, original) => transform(original, {
+        mut_pattern: {
             0: field('mutable_specifier'), // mutable_specifier [struct=0]
             1: field('pattern'), // _pattern [struct=1]
-        }),
+        },
 
         // negative_literal: 2 field(s)
-        negative_literal: ($, original) => transform(original, {
+        negative_literal: {
             1: field('value'), // integer_literal | float_literal [struct=0]
-        }),
+        },
 
         // ordered_field_declaration_list: 1 field(s)
         // The original override had position 2 for `visibility_modifier`
@@ -268,166 +266,213 @@ export default grammar(enrich(base), wire({
         // Also `visibility_modifier` is inside the per-element seq, not at
         // the outer level, so the position 2 override was structurally
         // incorrect. Only wrapping position 1 (the per-element group).
-        ordered_field_declaration_list: ($, original) => transform(original, {
+        ordered_field_declaration_list: {
             1: field('attributes'), // per-element group [struct=0]
-        }),
+        },
 
         // parameter: 1 field(s)
-        parameter: ($, original) => transform(original, {
+        parameter: {
             0: field('mutable_specifier'), // mutable_specifier [struct=0]
-        }),
+        },
 
         // pointer_type: position 1 is `choice('const', $.mutable_specifier)`.
         // Wrapping the choice as `field('mutable_specifier')` makes BOTH
         // the `const` string and the `mutable_specifier` symbol route to
         // the named slot at readNode time, so the template can emit the
         // actual qualifier text instead of hardcoding "const".
-        pointer_type: ($, original) => transform(original, {
+        pointer_type: {
             1: field('mutable_specifier'),
-        }),
+        },
 
         // raw_string_literal: 3 field(s)
-        raw_string_literal: ($, original) => transform(original, {
+        raw_string_literal: {
             0: field('raw_string_literal_start'), //  [struct=0]
             1: field('string_content'), // string_content [struct=1]
             2: field('raw_string_literal_end'), //  [struct=2]
-        }),
+        },
 
         // reference_expression: 1 field(s)
-        reference_expression: ($, original) => transform(original, {
+        reference_expression: {
             1: field('mutable_specifier'), // mutable_specifier [struct=0]
-        }),
+        },
 
         // reference_pattern: 2 field(s)
-        reference_pattern: ($, original) => transform(original, {
+        reference_pattern: {
             1: field('mutable_specifier'), // mutable_specifier [struct=0]
             2: field('pattern'), // _pattern [struct=1]
-        }),
+        },
 
         // reference_type: 2 field(s)
-        reference_type: ($, original) => transform(original, {
+        reference_type: {
             1: field('lifetime'), // lifetime [struct=0]
             2: field('mutable_specifier'), // mutable_specifier [struct=1]
-        }),
+        },
 
         // self_parameter: 3 field(s)
-        self_parameter: ($, original) => transform(original, {
+        self_parameter: {
             0: field('lifetime'), // lifetime [struct=0]
             1: field('mutable_specifier'), // mutable_specifier [struct=1]
             2: field('self'), // self [struct=2]
-        }),
+        },
 
         // shorthand_field_initializer: 2 field(s)
-        shorthand_field_initializer: ($, original) => transform(original, {
+        shorthand_field_initializer: {
             0: field('attributes'), // attribute_item [struct=0]
             1: field('identifier'), // identifier [struct=1]
-        }),
+        },
 
         // source_file: 2 field(s)
-        source_file: ($, original) => transform(original, {
+        source_file: {
             0: field('shebang'), // shebang [struct=0]
             1: field('statements'), // _statement [struct=1]
-        }),
+        },
 
         // static_item: 2 field(s)
-        static_item: ($, original) => transform(original, {
+        static_item: {
             0: field('visibility_modifier'), // visibility_modifier [struct=0]
             2: field('mutable_specifier'), // mutable_specifier [struct=1]
-        }),
+        },
 
         // struct_item: three body shapes — brace (`{ ... }`), tuple
         // (`(...)` + `;`), unit (`;`). Polymorph-split each into a visible
         // variant so the trailing `;` on tuple/unit forms gets rendered
         // (the flat template dropped it because `;` is an anonymous
         // token not routed to any field).
-        struct_item: ($, original) => transform(original,
+        struct_item: [
             { 0: field('visibility_modifier') },
-        ),
+        ],
 
         // trait_item: position 0 is the same visibility_modifier
         // optional choice as struct_item. The where_clause at
         // position 6 and the body field at position 7 stay as
         // declared in the base grammar.
-        trait_item: ($, original) => transform(original, {
+        trait_item: {
             0: field('visibility_modifier'),
             '1/0': field('unsafe'),   // optional('unsafe')
             6: field('where_clause'), // inferred 88% agreement across 8 parents
-        }),
+        },
 
         // try_block: 1 field(s)
-        try_block: ($, original) => transform(original, {
+        try_block: {
             1: field('block'), // block [struct=0]
-        }),
+        },
 
         // try_expression: 2 field(s)
-        try_expression: ($, original) => transform(original, {
+        try_expression: {
             0: field('value'), // _expression [struct=0]
-        }),
+        },
 
         // tuple_expression: flat list of expressions comma-separated.
         // Kind-match labels every `_expression` as `elements` without
         // capturing the `,` separators (same pattern as array_expression).
-        tuple_expression: ($, original) => transform(original, {
+        tuple_expression: {
             1: field('attributes'),
             '_expression': field('elements'),
-        }),
+        },
 
         // type_item: 3 field(s)
-        type_item: ($, original) => transform(original, {
+        type_item: {
             0: field('visibility_modifier'), // visibility_modifier [struct=0]
             4: field('where_clause'), // where_clause [struct=1]
             7: field('trailing_where_clause'), // where_clause [struct=2]
-        }),
+        },
 
-        // unary_expression: override removed. Autogen wrapped position
-        // 0 (the `choice('-','*','!')` operator) in `field('operand')`
-        // but that position is the OPERATOR, not the operand. Letting
-        // the walker see the raw enum emits `-$$$CHILDREN`. Note:
-        // overrides.json still has `operator`/`operand` fields, so
-        // readNode at runtime produces field data — but the walker
-        // no longer masks the operator as an "operand" slot.
+        // unary_expression — label both the operator token (pos 0) and
+        // the operand expression (pos 1). overrides.json promotes both
+        // to fields at readNode time; the walker needs matching IR
+        // fields so the template emits `$OPERATOR$OPERAND` instead of
+        // `$OPERATOR $$$CHILDREN` (which reads empty after field promotion).
+        unary_expression: {
+            0: field('operator'), // choice('-', '*', '!')
+            1: field('operand'),  // $._expression
+        },
 
         // union_item: 2 field(s)
-        union_item: ($, original) => transform(original, {
+        union_item: {
             0: field('visibility_modifier'), // visibility_modifier [struct=0]
             4: field('where_clause'), // where_clause [struct=1]
-        }),
+        },
 
         // unsafe_block: 1 field(s)
-        unsafe_block: ($, original) => transform(original, {
+        unsafe_block: {
             1: field('block'), // block [struct=0]
-        }),
+        },
 
         // use_declaration: 1 field(s)
-        use_declaration: ($, original) => transform(original, {
+        use_declaration: {
             0: field('visibility_modifier'), // visibility_modifier [struct=0]
-        }),
+        },
 
         // use_wildcard: 1 field(s)
-        use_wildcard: ($, original) => transform(original, {
+        use_wildcard: {
             0: field('path'), // crate | identifier | metavariable | scoped_identifier | self | super [struct=0]
-        }),
+        },
 
         // variadic_parameter: 1 field(s)
-        variadic_parameter: ($, original) => transform(original, {
+        variadic_parameter: {
             0: field('mutable_specifier'), // mutable_specifier [struct=0]
-        }),
+        },
 
         // while_expression: 1 field(s)
-        while_expression: ($, original) => transform(original, {
+        while_expression: {
             0: field('label'), // label [struct=0]
-        }),
+        },
+    },
+    rules: {
+        // ---------------------------------------------------------------------------
+        // Polymorph-interleaved transforms: must run on raw `original` before
+        // polymorphs wrap the choice arms. In wire(), polymorphs run first (they
+        // compose as userFn in buildPolymorphParentFn), then the synthesized
+        // transform fn applies on top. Rules whose transforms navigate INTO the
+        // same paths that polymorphs replace (e.g. '0/2' after '0' → variant)
+        // must stay here so the polymorph wrapper calls them first.
+        // ---------------------------------------------------------------------------
+
+        // array_expression: polymorph split — auto-hoist includes `[`/`]`
+        // in each alias body and uses INLINE alias (no new named hidden
+        // rule), so tree-sitter's state machine doesn't have to reconcile
+        // a new symbol against its auto-generated _repeat1 helpers.
+        // Must stay in rules: — kind-match '2/_expression' fails after
+        // polymorph wraps 2/0 and 2/1 with aliases (kind-match finds no
+        // _expression occurrences in the alias-wrapped choice).
+        array_expression: ($, original) => transform(original,
+            { 1: field('attributes') },
+            { '2/_expression': field('elements') },
+        ),
+
+        // or_pattern — patches the BASE rule's prec.left(-2, ...)
+        // structure to add field labels. Base shape:
+        //   choice(seq(_pattern, '|', _pattern), seq('|', _pattern))
+        // Must stay in rules: — paths '0/0', '0/2', '1/1' navigate into
+        // choice arms that polymorphs replace with aliases at paths '0', '1'.
+        or_pattern: ($, original) => transform(original,
+            { '0/0': field('left'), '0/2': field('right'), '1/1': field('right') },
+        ),
+
+        // range_expression — patches the BASE rule's choice alternatives
+        // by position so the prec.left(1, ...) wrapper survives. The
+        // base shape (after path addressing's prec-transparency) is:
+        //   choice(
+        //     seq(expr, choice('..','...','..='), expr),  // alt 0 — binary
+        //     seq(expr, '..'),                            // alt 1 — postfix
+        //     seq('..', expr),                            // alt 2 — prefix
+        //     '..',                                       // alt 3 — bare
+        //   )
+        // Each {path,value} below labels one position in one alternative.
+        // Must stay in rules: — paths '0/0', '0/2', etc. navigate into
+        // choice arms that polymorphs replace with aliases at paths '0'–'3'.
+        range_expression: ($, original) => transform(original,
+            {
+                '0/0': field('start'), '0/1': field('operator'), '0/2': field('end'),
+                '1/0': field('start'), '1/1': field('operator'),
+                '2/0': field('operator'), '2/1': field('end'),
+                '3': field('operator'),
+            },
+        ),
 
         // ---------------------------------------------------------------------------
         // New overrides — expressing field routing previously only in overrides.json
         // ---------------------------------------------------------------------------
-
-        // closure_expression — label the three optional modifiers so readNode
-        // can route `async`, `move`, `static` tokens to named fields instead
-        // of leaving them as anonymous children.
-        closure_expression: ($, original) => transform(original,
-            { 0: field('static'), 1: field('async'), 2: field('move') },
-        ),
 
         // function_modifiers — full replacement: label each choice alternative
         // so readNode can route `async`, `const`, `default`, `unsafe` tokens.
@@ -438,13 +483,6 @@ export default grammar(enrich(base), wire({
             field('unsafe', 'unsafe'),
             $.extern_modifier,
         )),
-
-        // or_pattern — patches the BASE rule's prec.left(-2, ...)
-        // structure to add field labels. Base shape:
-        //   choice(seq(_pattern, '|', _pattern), seq('|', _pattern))
-        or_pattern: ($, original) => transform(original,
-            { '0/0': field('left'), '0/2': field('right'), '1/1': field('right') },
-        ),
 
         // _pattern — the wildcard `_` is a bare literal alternative
         // (position 20) of the _pattern supertype choice. At multi-valued
@@ -466,35 +504,6 @@ export default grammar(enrich(base), wire({
         // the named alias on `_pattern` above promotes it to a proper
         // `wildcard_pattern` kind at parse time.
         _wildcard_pattern: $ => '_',
-
-        // range_expression — patches the BASE rule's choice alternatives
-        // by position so the prec.left(1, ...) wrapper survives. The
-        // base shape (after path addressing's prec-transparency) is:
-        //   choice(
-        //     seq(expr, choice('..','...','..='), expr),  // alt 0 — binary
-        //     seq(expr, '..'),                            // alt 1 — postfix
-        //     seq('..', expr),                            // alt 2 — prefix
-        //     '..',                                       // alt 3 — bare
-        //   )
-        // Each {path,value} below labels one position in one alternative.
-        range_expression: ($, original) => transform(original,
-            {
-                '0/0': field('start'), '0/1': field('operator'), '0/2': field('end'),
-                '1/0': field('start'), '1/1': field('operator'),
-                '2/0': field('operator'), '2/1': field('end'),
-                '3': field('operator'),
-            },
-        ),
-
-        // unary_expression — label both the operator token (pos 0) and
-        // the operand expression (pos 1). overrides.json promotes both
-        // to fields at readNode time; the walker needs matching IR
-        // fields so the template emits `$OPERATOR$OPERAND` instead of
-        // `$OPERATOR $$$CHILDREN` (which reads empty after field promotion).
-        unary_expression: ($, original) => transform(original, {
-            0: field('operator'), // choice('-', '*', '!')
-            1: field('operand'),  // $._expression
-        }),
 
         // visibility_modifier — label the `pub` keyword and the `in` keyword
         // (inside `pub(in path)`) so readNode can route them to named fields.
