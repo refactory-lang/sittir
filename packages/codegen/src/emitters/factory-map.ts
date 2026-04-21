@@ -17,8 +17,6 @@
 
 import type { NodeMap } from '../compiler/types.ts'
 import type { AssembledNode, AssembledGroup } from '../compiler/node-map.ts'
-import { hasHiddenExternalRef, isVerbatimTokenStream } from '../compiler/node-map.ts'
-import type { Rule } from '../compiler/rule.ts'
 
 export interface EmitFactoryMapConfig {
     grammar: string
@@ -87,26 +85,8 @@ export function emitFactoryMap(config: EmitFactoryMapConfig): string {
     return header + JSON.stringify(data, null, 2) + '\n'
 }
 
-/**
- * Determine whether a node's grammar rule means the factory should accept
- * `text: string` rather than structured fields or children.
- *
- * @param rule    The compiled grammar rule attached to the node.
- * @param nodeMap The full node map, used to access the externals set.
- * @returns `true` when the rule is a verbatim-token-stream or contains a
- *   hidden reference to an external scanner token — both cases mean the
- *   factory cannot enumerate its sub-tokens and must fall back to a raw text
- *   argument.
- */
-function isTextTemplateRule(rule: Rule, nodeMap: NodeMap): boolean {
-    const externals = nodeMap.externals
-    return (externals !== undefined && externals.size > 0 && hasHiddenExternalRef(rule, externals))
-        || isVerbatimTokenStream(rule)
-}
-
 function shapeOf(node: AssembledNode, nodeMap: NodeMap): 'config' | 'children' | 'text' | null {
-    const nodeRule = (node as { rule?: Rule }).rule
-    if (nodeRule && isTextTemplateRule(nodeRule, nodeMap)) return 'text'
+    if (node.isTextTemplate(nodeMap.externals)) return 'text'
     switch (node.modelType) {
         case 'leaf':
         case 'enum':

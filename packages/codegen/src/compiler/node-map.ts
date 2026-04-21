@@ -688,6 +688,24 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
     }
 
     /**
+     * True when this node's rule shape is a text template — a rule whose
+     * parse result is emitted as a single string of text rather than a
+     * structured config/children value. Two sources: verbatim-token-stream
+     * rules (bare-literal sequences with no fields / symbols), and rules
+     * that reach an external hidden token.
+     *
+     * Consumers (emitters) use this instead of reading `node.rule` directly —
+     * per the project convention that only renderTemplate() methods on
+     * AssembledNode subclasses reach into the raw rule.
+     */
+    isTextTemplate(externals: ReadonlySet<string> | undefined): boolean {
+        if (externals !== undefined && externals.size > 0 && hasHiddenExternalRef(this.rule, externals)) {
+            return true
+        }
+        return isVerbatimTokenStream(this.rule)
+    }
+
+    /**
      * Factory function name to emit in factories.ts — factoryName with a
      * trailing `_` when the bare name collides with a JS reserved word.
      * Returns `undefined` for hidden nodes.
