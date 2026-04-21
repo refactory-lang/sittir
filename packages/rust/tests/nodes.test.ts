@@ -558,13 +558,13 @@ describe('parameters', () => {
 
 describe('self_parameter', () => {
   it('factory produces correct type', () => {
-    const node = ir.selfParameter({});
+    const node = ir.selfParameter({ self: { $type: 'self', $text: 'test' } as any });
     expect(node.$type).toBe('self_parameter');
     expect(node.$source).toBe('factory');
   });
-  it('render does not throw on minimal config', () => {
-    const node = ir.selfParameter({});
-    expect(() => node.render()).not.toThrow();
+  it('render produces non-empty string', () => {
+    const node = ir.selfParameter({ self: { $type: 'self', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 

@@ -1247,9 +1247,9 @@ export interface Parameters {
 export interface SelfParameter {
   readonly $type: 'self_parameter';
   readonly $fields: {
-    readonly lifetime?: string;
-    readonly mutable_specifier?: Lifetime;
-    readonly self?: MutableSpecifier | Self;
+    readonly lifetime?: Lifetime;
+    readonly mutable_specifier?: MutableSpecifier;
+    readonly self: Self;
   };
 }
 

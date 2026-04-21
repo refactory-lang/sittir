@@ -907,7 +907,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'self_parameter': [
     { name: 'lifetime', required: false, multiple: false },
     { name: 'mutableSpecifier', required: false, multiple: false },
-    { name: 'self', required: false, multiple: false },
+    { name: 'self', required: true, multiple: false },
   ],
   'shorthand_field_initializer': [
     { name: 'attributes', required: true, multiple: true },

@@ -332,11 +332,19 @@ export default grammar(enrich(base), wire({
             2: field('mutable_specifier'), // mutable_specifier [struct=1]
         },
 
-        // self_parameter: 3 field(s)
+        // self_parameter — grammar is:
+        //   seq(optional('&'), optional($.lifetime), optional($.mutable_specifier), $.self)
+        //       pos 0           pos 1                pos 2                          pos 3
+        // The autogen'd override was numbered 0/1/2 (counting only visible
+        // positions), shifting every field's content type by one. Correct
+        // indexing: field-label the three named positions at 1/2/3 and leave
+        // pos 0's anonymous '&' unlabeled. Enrich's kind-to-name pass already
+        // labels pos 3's bare $.self as field('self'), so position 3 is
+        // redundant here but kept for explicitness.
         self_parameter: {
-            0: field('lifetime'), // lifetime [struct=0]
-            1: field('mutable_specifier'), // mutable_specifier [struct=1]
-            2: field('self'), // self [struct=2]
+            1: field('lifetime'),
+            2: field('mutable_specifier'),
+            3: field('self'),
         },
 
         // shorthand_field_initializer: 2 field(s)

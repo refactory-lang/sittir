@@ -1311,16 +1311,16 @@ export function selfParameter(config?: T.SelfParameter.Config) {
   const fields = {
     lifetime: config?.lifetime,
     mutable_specifier: config?.mutableSpecifier,
-    self: config?.self,
+    self: { $type: "self" as const, $text: "self" as const, $source: 'factory' as const, $named: true as const },
   };
   return {
     $type: 'self_parameter' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    lifetime(value?: string | undefined) { return _fs(config, selfParameter, 'lifetime', value, fields.lifetime); },
-    mutableSpecifier(value?: T.Lifetime | undefined) { return _fs(config, selfParameter, 'mutableSpecifier', value, fields.mutable_specifier); },
-    self(value?: T.MutableSpecifier | T.Self | undefined) { return _fs(config, selfParameter, 'self', value, fields.self); },
+    lifetime(value?: T.Lifetime | undefined) { return _fs(config, selfParameter, 'lifetime', value, fields.lifetime); },
+    mutableSpecifier(value?: T.MutableSpecifier | undefined) { return _fs(config, selfParameter, 'mutableSpecifier', value, fields.mutable_specifier); },
+    get self() { return fields.self; },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
