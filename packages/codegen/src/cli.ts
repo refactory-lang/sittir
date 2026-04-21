@@ -8,6 +8,7 @@
  */
 
 import { mkdirSync, writeFileSync } from 'node:fs';
+import { execSync } from 'node:child_process';
 import { validateRoundTrip, formatRoundTripReport } from './validate/roundtrip.ts';
 import { validateFactoryRoundTrip, formatFactoryRoundTripReport } from './validate/factory-roundtrip.ts';
 import { validateFrom, formatFromReport } from './validate/from.ts';
@@ -34,6 +35,8 @@ interface CliArgs {
 	roundtrip?: boolean;
 	compileParser?: boolean;
 	transpile?: boolean;
+	tsGenerate?: boolean;
+	skipTsChain?: boolean;
 	help?: boolean;
 }
 
@@ -70,6 +73,12 @@ function parseArgs(argv: string[]): CliArgs {
 			case '--transpile':
 				args.transpile = true;
 				break;
+			case '--ts-generate':
+				args.tsGenerate = true;
+				break;
+			case '--skip-ts-chain':
+				args.skipTsChain = true;
+				break;
 			case '--help':
 			case '-h':
 				args.help = true;
@@ -98,7 +107,16 @@ Options:
   --tests-dir      Output directory for test files (default: ../tests)
   --transpile      Transpile overrides.ts to .sittir/grammar.js
   --compile-parser Compile override grammar to .sittir/parser.wasm
+  --ts-generate    Run 'tree-sitter generate' in .sittir/ to produce
+                   grammar.json + node-types.json
+  --skip-ts-chain  Skip the auto transpile + tree-sitter generate chain
+                   that --all normally runs before sittir codegen
   --help, -h       Show this help
+
+With --all (without --skip-ts-chain), the CLI chains:
+  1. Transpile overrides.ts → .sittir/grammar.js
+  2. Run tree-sitter generate → .sittir/src/{grammar,node-types}.json
+  3. Run sittir codegen → packages/<grammar>/src/*
 `);
 	process.exit(0);
 }
@@ -108,13 +126,30 @@ if (!cliArgs.grammar) {
 	process.exit(1);
 }
 
-// Standalone transpile/compile — doesn't require --output
-if (cliArgs.transpile || cliArgs.compileParser) {
+// Run 'tree-sitter generate' in a grammar's .sittir/ directory — produces
+// grammar.json + node-types.json from the transpiled grammar.js. Uses
+// execSync (shell-level) rather than spawnSync; tree-sitter is a native
+// binary so either would launch a separate OS process (no Node module
+// sharing concern) — exec is just simpler for a bare command.
+function runTreeSitterGenerate(grammar: string): void {
+	const sittirDir = resolve('packages', grammar, '.sittir');
+	console.log(`Running 'tree-sitter generate' in ${sittirDir}...`);
+	execSync('npx tree-sitter generate', {
+		cwd: sittirDir,
+		stdio: 'inherit',
+	});
+}
+
+// Standalone transpile/compile/ts-generate — doesn't require --output.
+if (cliArgs.transpile || cliArgs.compileParser || cliArgs.tsGenerate) {
 	const grammarDir = resolve('packages', cliArgs.grammar);
 	if (cliArgs.transpile) {
 		console.log(`Transpiling ${cliArgs.grammar} overrides...`);
 		const tr = await transpileOverrides({ grammar: cliArgs.grammar });
 		console.log(`  → ${tr.outputPath} (${tr.outputBytes} bytes)`);
+	}
+	if (cliArgs.tsGenerate) {
+		runTreeSitterGenerate(cliArgs.grammar);
 	}
 	if (cliArgs.compileParser) {
 		console.log(`Compiling ${cliArgs.grammar} parser to WASM...`);
@@ -132,6 +167,20 @@ if (!cliArgs.outputDir) {
 if (!cliArgs.all && (!cliArgs.nodes || cliArgs.nodes.length === 0)) {
 	console.error('Must provide --nodes or --all. Use --help for usage.');
 	process.exit(1);
+}
+
+// Auto-chain: with --all, by default run transpile + tree-sitter generate
+// BEFORE sittir codegen. This produces fresh .sittir/grammar.js and
+// .sittir/src/{grammar,node-types}.json — sittir codegen then reads those
+// to emit packages/<grammar>/src/*. Opt out with --skip-ts-chain if you
+// only want the sittir codegen phase (e.g., rapid iteration when the
+// upstream grammar hasn't changed).
+if (cliArgs.all && !cliArgs.skipTsChain && !cliArgs.transpile && !cliArgs.tsGenerate) {
+	console.log(`Full regenerate for ${cliArgs.grammar}: transpile + tree-sitter generate + sittir codegen`);
+	console.log(`Transpiling ${cliArgs.grammar} overrides...`);
+	const tr = await transpileOverrides({ grammar: cliArgs.grammar });
+	console.log(`  → ${tr.outputPath} (${tr.outputBytes} bytes)`);
+	runTreeSitterGenerate(cliArgs.grammar);
 }
 
 const config: CodegenConfig = {
