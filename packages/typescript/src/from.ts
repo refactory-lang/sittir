@@ -1762,10 +1762,9 @@ export function assertsFrom(input?: NonNullable<T.Asserts.Config['children']>[nu
   return F.asserts(input as NonNullable<T.Asserts.Config['children']>[number]);
 }
 
-export function assertsAnnotationFrom(input: T.AssertsAnnotation | T.AssertsAnnotation.Loose): ReturnType<typeof F.assertsAnnotation> {
-  if (isNodeData(input)) return input as ReturnType<typeof F.assertsAnnotation>;
+export function assertsAnnotationFrom(input?: T.AssertsAnnotation | T.AssertsAnnotation.Loose): ReturnType<typeof F.assertsAnnotation> {
+  if (input !== undefined && isNodeData(input)) return input as ReturnType<typeof F.assertsAnnotation>;
   return F.assertsAnnotation({
-    asserts: _resolveOneBranch<NonNullable<T.AssertsAnnotation.Config['asserts']>>((input as T.AssertsAnnotation.Loose).asserts, "asserts"),
   });
 }
 
@@ -1860,10 +1859,9 @@ export function typePredicateFrom(input: T.TypePredicate | T.TypePredicate.Loose
   });
 }
 
-export function typePredicateAnnotationFrom(input: T.TypePredicateAnnotation | T.TypePredicateAnnotation.Loose): ReturnType<typeof F.typePredicateAnnotation> {
-  if (isNodeData(input)) return input as ReturnType<typeof F.typePredicateAnnotation>;
+export function typePredicateAnnotationFrom(input?: T.TypePredicateAnnotation | T.TypePredicateAnnotation.Loose): ReturnType<typeof F.typePredicateAnnotation> {
+  if (input !== undefined && isNodeData(input)) return input as ReturnType<typeof F.typePredicateAnnotation>;
   return F.typePredicateAnnotation({
-    typePredicate: _resolveOneBranch<NonNullable<T.TypePredicateAnnotation.Config['typePredicate']>>((input as T.TypePredicateAnnotation.Loose).typePredicate, "type_predicate"),
   });
 }
 

@@ -12,7 +12,7 @@ import {
     type AssembledNode, type AssembledField, type AssembledChild, AssembledGroup,
     type AssembledPolymorph,
 } from '../compiler/node-map.ts'
-import { hasHiddenExternalRef, isVerbatimTokenStream, isRef, isSlotLiteral } from '../compiler/node-map.ts'
+import { hasHiddenExternalRef, isVerbatimTokenStream, AssembledKeyword } from '../compiler/node-map.ts'
 import { resolveEffectiveLiteral, isAutoStampSlot, stampExpressionFor } from './shared.ts'
 
 export interface EmitFactoriesConfig {
@@ -499,13 +499,11 @@ type FieldCarryingNode = Extract<AssembledNode, { modelType: 'branch' | 'group' 
 function childElementType(node: { children: readonly AssembledChild[] }, nodeMap: NodeMap): string {
     const parts = new Set<string>()
     for (const c of node.children) {
-        for (const v of c.values) {
-            if (isSlotLiteral(v)) { parts.add(JSON.stringify(v)); continue }
-            const kindName = isRef(v) ? v.name : v.kind
-            const ref = isRef(v) ? nodeMap.nodes.get(kindName) : v
-            if (!ref) { parts.add(JSON.stringify(kindName)); continue }
+        for (const t of c.contentTypes) {
+            const ref = nodeMap.nodes.get(t)
+            if (!ref) { parts.add(JSON.stringify(t)); continue }
             const name = ref.typeName
-            parts.add(/^[A-Za-z_$][\w$]*$/.test(name) ? `T.${name}` : JSON.stringify(kindName))
+            parts.add(/^[A-Za-z_$][\w$]*$/.test(name) ? `T.${name}` : JSON.stringify(t))
         }
     }
     if (parts.size === 0) return 'never'
@@ -515,53 +513,75 @@ function childElementType(node: { children: readonly AssembledChild[] }, nodeMap
 
 /**
  * Build the TypeScript stamp expression for an auto-stamp-eligible field.
- * Delegates to the shared `stampExpressionFor` helper.
+ *
+ * @remarks
+ * Two cases:
+ *
+ * - **Source A** (`field.literalValues.length === 1`): the field content is an
+ *   inline string literal. Stamp the string directly, e.g. `'pub' as const`.
+ *
+ * - **Source B** (`field.contentTypes.length === 1` and the referenced kind is
+ *   an `AssembledKeyword`): the field content is a hidden-rule terminal with a
+ *   single word-like text value (e.g. `_kw_async`). Stamp a minimal leaf
+ *   NodeData object whose shape matches `Terminal<kind, text>`:
+ *   `{ $type: '_kw_async', $text: 'async', $source: 'factory', $named: true }`.
+ *
+ * Returns `undefined` when the field is NOT auto-stamp-eligible.
  */
 function autoStampExpression(f: AssembledField, nodeMap: NodeMap): string | undefined {
-    return stampExpressionFor(f, nodeMap)
+    // Only required fields: optional single-literal fields control presence/absence
+    // at call sites and must remain user-controllable (e.g. `mut` on let bindings).
+    if (!f.required) return undefined
+    // Repeated fields are never auto-stamped — they represent 0..N occurrences.
+    if (f.multiple) return undefined
+    // Source A: inline literal
+    if (f.literalValues?.length === 1) {
+        return `${JSON.stringify(f.literalValues[0])} as const`
+    }
+    // Source B: field references a single hidden keyword kind (`_kw_*` pattern).
+    // Restricted to hidden kinds (name starts with `_`) to avoid false-positives
+    // from visible keyword nodes that may appear inside mixed-choice overrides.
+    if (f.contentTypes.length === 1) {
+        const kindName = f.contentTypes[0]!
+        if (kindName.startsWith('_')) {
+            const ref = nodeMap.nodes.get(kindName)
+            if (ref instanceof AssembledKeyword) {
+                const kind = JSON.stringify(ref.kind)
+                const text = JSON.stringify(ref.text)
+                return `{ $type: ${kind} as const, $text: ${text} as const, $source: 'factory' as const, $named: true as const }`
+            }
+        }
+    }
+    return undefined
 }
 
 /** Resolve an AssembledField's element type to a concrete TS type expression. */
 function fieldElementType(f: AssembledField, nodeMap: NodeMap): string {
-    const literalEntries = f.values.filter(isSlotLiteral)
-    const refEntries = f.values.filter(v => !isSlotLiteral(v))
-
-    // If the field has ONLY literal values, emit a string-literal union.
-    if (literalEntries.length > 0 && refEntries.length === 0) {
-        return literalEntries.map(v => JSON.stringify(v)).join(' | ')
+    if (f.literalValues && f.literalValues.length > 0) {
+        return f.literalValues.map(v => JSON.stringify(v)).join(' | ')
     }
-
-    if (f.values.length === 0) return 'string'
-
+    if (f.contentTypes.length === 0) return 'string'
     // Alias-source projection (ADR-0006 extended to the factory surface):
     // when a content type is the TARGET of `alias($.source, $.target)`, the
     // body follows `source`'s shape. Factory config accepts the source type
-    // so callers construct nodes with the real structure.
-    const resolveAliased = (kindName: string): string => {
-        const source = f.aliasSources?.[kindName]
-        if (!source) return kindName
-        return nodeMap.nodes.get(source) ? source : kindName
+    // so callers construct nodes with the real structure (e.g. python
+    // `match_statement.body` takes a `MatchBlock` with CaseClause children,
+    // not a plain `Block` with Statement children).
+    const resolveAliased = (t: string): string => {
+        const source = f.aliasSources?.[t]
+        if (!source) return t
+        return nodeMap.nodes.get(source) ? source : t
     }
-
-    const parts: string[] = []
-    for (const v of f.values) {
-        if (isSlotLiteral(v)) {
-            // Mixed literal+ref: include literal as string type
-            parts.push(JSON.stringify(v))
-            continue
-        }
-        const kindName = isRef(v) ? v.name : v.kind
-        const resolved = resolveAliased(kindName)
-        const node = nodeMap.nodes.get(resolved)
+    const parts = f.contentTypes.map(resolveAliased).map(t => {
+        const node = nodeMap.nodes.get(t)
         if (!node) {
-            const fallback = resolved.replace(/(?:^|_)([a-z])/g, (_: string, c: string) => c.toUpperCase())
-            parts.push(`T.${fallback}`)
-            continue
+            const fallback = t.replace(/(?:^|_)([a-z])/g, (_: string, c: string) => c.toUpperCase())
+            return `T.${fallback}`
         }
         const name = node.typeName
-        parts.push(/^[A-Za-z_$][\w$]*$/.test(name) ? `T.${name}` : JSON.stringify(resolved))
-    }
-    return [...new Set(parts)].join(' | ') || 'string'
+        return /^[A-Za-z_$][\w$]*$/.test(name) ? `T.${name}` : JSON.stringify(t)
+    })
+    return [...new Set(parts)].join(' | ')
 }
 
 function emitFieldCarryingFactory(

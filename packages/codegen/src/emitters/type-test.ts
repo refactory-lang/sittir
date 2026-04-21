@@ -4,7 +4,6 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts'
-import { isRef, isSlotLiteral } from '../compiler/node-map.ts'
 
 export interface EmitTypeTestsConfig {
     nodeMap: NodeMap
@@ -21,24 +20,16 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
     // structural node. Anything type-test would reference but
     // types skipped becomes a dangling import, so filter here too.
     const referenced = new Set<string>()
-    const addSlotKinds = (slots: readonly import('../compiler/node-map.ts').AssembledChild[]): void => {
-        for (const slot of slots) {
-            for (const v of slot.values) {
-                if (isSlotLiteral(v)) continue
-                referenced.add(isRef(v) ? v.name : v.kind)
-            }
-        }
-    }
     for (const [, n] of nodeMap.nodes) {
         if (n.modelType === 'branch' || n.modelType === 'group') {
-            addSlotKinds(n.fields)
-            addSlotKinds(n.children ?? [])
+            for (const f of n.fields) for (const t of f.contentTypes) referenced.add(t)
+            for (const c of (n.children ?? [])) for (const t of c.contentTypes) referenced.add(t)
         } else if (n.modelType === 'container') {
-            addSlotKinds(n.children)
+            for (const c of n.children) for (const t of c.contentTypes) referenced.add(t)
         } else if (n.modelType === 'polymorph') {
             for (const form of n.forms) {
-                addSlotKinds(form.fields)
-                addSlotKinds(form.children)
+                for (const f of form.fields) for (const t of f.contentTypes) referenced.add(t)
+                for (const c of form.children) for (const t of c.contentTypes) referenced.add(t)
             }
         } else if (n.modelType === 'supertype') {
             for (const t of n.subtypes) referenced.add(t)

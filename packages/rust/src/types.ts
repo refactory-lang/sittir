@@ -1404,7 +1404,7 @@ export interface ReferenceType {
 export interface PointerType {
   readonly $type: 'pointer_type';
   readonly $fields: {
-    readonly mutable_specifier: "const" | MutableSpecifier;
+    readonly mutable_specifier: MutableSpecifier;
     readonly type: _Type;
   };
 }
@@ -1412,7 +1412,7 @@ export interface PointerType {
 export interface AbstractType {
   readonly $type: 'abstract_type';
   readonly $fields: {
-    readonly type_parameters?: "for" | TypeParameters;
+    readonly type_parameters?: TypeParameters;
     readonly trait: _TypeIdentifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
   };
 }
@@ -1500,7 +1500,7 @@ export interface TryExpression {
 export interface ReferenceExpression {
   readonly $type: 'reference_expression';
   readonly $fields: {
-    readonly mutable_specifier: "raw" | "const" | MutableSpecifier;
+    readonly mutable_specifier: MutableSpecifier;
     readonly value: Expression;
   };
 }
@@ -2000,7 +2000,7 @@ export interface _ClosureExpressionBlock {
 export interface _ClosureExpressionExpr {
   readonly $type: '_closure_expression_expr';
   readonly $fields: {
-    readonly body: Expression | "_";
+    readonly body: Expression;
   };
 }
 
@@ -2224,7 +2224,7 @@ export interface ClosureExpressionBlock {
 export interface ClosureExpressionExpr {
   readonly $type: 'closure_expression_expr';
   readonly $fields: {
-    readonly body: Expression | "_";
+    readonly body: Expression;
   };
 }
 

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { resolveEffectiveLiteral, isAutoStampField } from '../emitters/shared.ts'
 import type { NodeMap } from '../compiler/types.ts'
-import type { AssembledField, SlotValue } from '../compiler/node-map.ts'
+import type { AssembledField } from '../compiler/node-map.ts'
 import { AssembledKeyword, AssembledLeaf } from '../compiler/node-map.ts'
 
 // ---------------------------------------------------------------------------
@@ -19,25 +19,17 @@ function makeNodeMap(nodes: [string, any][]): NodeMap {
     }
 }
 
-function makeField(overrides: Partial<AssembledField> & { literalValues?: string[]; contentTypes?: string[] } = {}): AssembledField {
-    // Translate legacy literalValues/contentTypes to unified values for test compat.
-    const { literalValues, contentTypes, ...rest } = overrides
-    let values: import('../compiler/node-map.ts').SlotValue[] = rest.values as import('../compiler/node-map.ts').SlotValue[] ?? []
-    if (literalValues !== undefined) {
-        values = literalValues.map(v => v)  // strings → literals
-    } else if (contentTypes !== undefined) {
-        values = contentTypes.map(name => ({ kind: 'ref' as const, name }))
-    }
+function makeField(overrides: Partial<AssembledField>): AssembledField {
     return {
         name: 'field',
         propertyName: 'field',
         paramName: 'field',
         required: true,
         multiple: false,
-        values,
+        contentTypes: [],
         source: 'grammar',
         projection: { typeName: '', kinds: [] },
-        ...rest,
+        ...overrides,
     }
 }
 

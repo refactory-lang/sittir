@@ -11,7 +11,6 @@ import type { NodeMap } from '../compiler/types.ts'
 import type {
     AssembledNode, AssembledField, AssembledChild, AssembledGroup,
 } from '../compiler/node-map.ts'
-import { isRef, isSlotLiteral } from '../compiler/node-map.ts'
 import type { PolymorphVariant } from '../compiler/types.ts'
 import { isAutoStampField, isAutoStampSlot } from './shared.ts'
 
@@ -912,15 +911,24 @@ function resolveChildrenFromTypedInput(
     sourceVar: string,
     inputOptional: boolean,
 ): string {
+    const seenTypes = new Set<string>()
+    const contentTypes: string[] = []
     let anyMultiple = false
-    // Collect unique kind names from all children's values (Ref or AssembledNode only).
-    const mergedValues = collectUniqueSlotKinds(childSlots, (c) => { if (c.multiple) anyMultiple = true })
+    for (const c of childSlots) {
+        if (c.multiple) anyMultiple = true
+        for (const t of c.contentTypes) {
+            if (!seenTypes.has(t)) {
+                seenTypes.add(t)
+                contentTypes.push(t)
+            }
+        }
+    }
     /**
-     * `resolveFieldCall` only reads `values` and `multiple` off the
+     * `resolveFieldCall` only reads `contentTypes` and `multiple` off the
      * passed AssembledField — construct a minimal shape that satisfies that
      * contract rather than wiring a parallel children-resolver.
      */
-    const pseudo = { values: mergedValues, multiple: anyMultiple } as unknown as AssembledField
+    const pseudo = { contentTypes, multiple: anyMultiple } as unknown as AssembledField
     const slotType = `NonNullable<T.${parentTypeName}.Config['children']>`
     const typeParam = anyMultiple ? `${slotType}[number]` : slotType
     // Single-cast bag access — same pattern as field reads.
@@ -963,9 +971,19 @@ function resolveChildrenFromNodeData(
     sourceVar: string,
     inputOptional: boolean,
 ): string {
+    const seenTypes = new Set<string>()
+    const contentTypes: string[] = []
     let anyMultiple = false
-    const mergedValues = collectUniqueSlotKinds(childSlots, (c) => { if (c.multiple) anyMultiple = true })
-    const pseudo = { values: mergedValues, multiple: anyMultiple } as unknown as AssembledField
+    for (const c of childSlots) {
+        if (c.multiple) anyMultiple = true
+        for (const t of c.contentTypes) {
+            if (!seenTypes.has(t)) {
+                seenTypes.add(t)
+                contentTypes.push(t)
+            }
+        }
+    }
+    const pseudo = { contentTypes, multiple: anyMultiple } as unknown as AssembledField
     const slotType = `NonNullable<T.${parentTypeName}.Config['children']>`
     const typeParam = anyMultiple ? `${slotType}[number]` : slotType
     const optChain = inputOptional ? '?' : ''
@@ -975,30 +993,7 @@ function resolveChildrenFromNodeData(
 }
 
 /**
- * Collect unique Ref/AssembledNode entries from a list of child slots,
- * returning a merged values array of unique kind references only.
- */
-function collectUniqueSlotKinds(
-    slots: readonly AssembledChild[],
-    perSlot?: (c: AssembledChild) => void,
-): import('../compiler/node-map.ts').SlotValue[] {
-    const seenKeys = new Set<string>()
-    const merged: import('../compiler/node-map.ts').SlotValue[] = []
-    for (const c of slots) {
-        perSlot?.(c)
-        for (const v of c.values) {
-            if (isSlotLiteral(v)) continue  // skip literals for resolver dispatch
-            const key = isRef(v) ? `ref:${v.name}` : `node:${v.kind}`
-            if (seenKeys.has(key)) continue
-            seenKeys.add(key)
-            merged.push(v)
-        }
-    }
-    return merged
-}
-
-/**
- * Expands supertype references in a field's values to their concrete
+ * Expands supertype references in a field's content types to their concrete
  * subtypes, deduplicating the result.
  *
  * @remarks
@@ -1008,23 +1003,21 @@ function collectUniqueSlotKinds(
  * anything. Expansion also lets T042i reach for the named `_super_<name>`
  * dedup entry since the interner keys on the full subtype set.
  *
- * Deduplication is applied after expansion: values may legitimately
+ * Deduplication is applied after expansion: contentTypes may legitimately
  * contain a supertype AND one of its concrete subtypes (e.g. `_expression`
  * and `range_expression` can both appear on the same field), and the
  * expansion would otherwise surface the concrete kind twice.
  *
- * @param values - The slot values from the field.
+ * @param contentTypes - The raw content types from the field.
  * @param nodeMap - The assembled node map (used to look up supertype subtypes).
  * @returns Deduplicated list of concrete kind strings.
  */
-function expandAndDedupeContentTypes(values: readonly import('../compiler/node-map.ts').SlotValue[], nodeMap: NodeMap): string[] {
+function expandAndDedupeContentTypes(contentTypes: readonly string[], nodeMap: NodeMap): string[] {
     const seen = new Set<string>()
     const expanded: string[] = []
-    for (const v of values) {
-        if (isSlotLiteral(v)) continue  // skip literals for resolver dispatch
-        const kindName = isRef(v) ? v.name : v.kind
-        const n = nodeMap.nodes.get(kindName)
-        const items = n?.modelType === 'supertype' ? n.subtypes : [kindName]
+    for (const t of contentTypes) {
+        const n = nodeMap.nodes.get(t)
+        const items = n?.modelType === 'supertype' ? n.subtypes : [t]
         for (const item of items) {
             if (seen.has(item)) continue
             seen.add(item)
@@ -1154,7 +1147,7 @@ function resolveFieldCall(
     typeParam: string | undefined,
     intern: KindInterner,
 ): string {
-    const expanded = expandAndDedupeContentTypes(field.values, nodeMap)
+    const expanded = expandAndDedupeContentTypes(field.contentTypes, nodeMap)
     const { leafKinds, branchKinds } = classifyKindsForResolver(expanded, nodeMap)
 
     const fastPath = buildSingleKindFastPath(prop, leafKinds, branchKinds, field, typeParam)

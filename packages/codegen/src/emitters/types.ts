@@ -19,7 +19,7 @@ import type {
 } from '../compiler/node-map.ts'
 import {
     AssembledBranch, AssembledContainer, AssembledPolymorph, AssembledGroup,
-    AssembledSupertype, isRef, isSlotLiteral,
+    AssembledSupertype,
 } from '../compiler/node-map.ts'
 import { loadRawEntries } from '../validate/node-types-loader.ts'
 import { isAutoStampField } from './shared.ts'
@@ -696,28 +696,20 @@ function collectAndEmitTokenTypeAliases(
     treeEmitted: Set<string>,
 ): void {
     const referencedTokenTypeNames = new Set<string>()
-    const checkKind = (kindName: string): void => {
-        const ref = nodeMap.nodes.get(kindName)
-        if (ref?.modelType === 'token') referencedTokenTypeNames.add(ref.typeName)
-    }
-    const checkSlotKinds = (slots: readonly import('../compiler/node-map.ts').AssembledChild[]): void => {
-        for (const slot of slots) {
-            for (const v of slot.values) {
-                if (isSlotLiteral(v)) continue
-                checkKind(isRef(v) ? v.name : v.kind)
-            }
-        }
-    }
     for (const [, n] of nodeMap.nodes) {
+        const checkKind = (t: string): void => {
+            const ref = nodeMap.nodes.get(t)
+            if (ref?.modelType === 'token') referencedTokenTypeNames.add(ref.typeName)
+        }
         if (n instanceof AssembledBranch || n instanceof AssembledGroup) {
-            checkSlotKinds(n.fields)
-            checkSlotKinds(n.children ?? [])
+            for (const f of n.fields) f.contentTypes.forEach(checkKind)
+            for (const c of n.children ?? []) c.contentTypes.forEach(checkKind)
         } else if (n instanceof AssembledContainer) {
-            checkSlotKinds(n.children)
+            for (const c of n.children) c.contentTypes.forEach(checkKind)
         } else if (n instanceof AssembledPolymorph) {
             for (const form of n.forms) {
-                checkSlotKinds(form.fields)
-                checkSlotKinds(form.children)
+                for (const f of form.fields) f.contentTypes.forEach(checkKind)
+                for (const c of form.children) c.contentTypes.forEach(checkKind)
             }
         } else if (n instanceof AssembledSupertype) {
             // Supertypes emit Tree union types referencing each subtype's
@@ -917,20 +909,14 @@ function emitFieldArrayDeclaration(
  * multi-type union.
  */
 function fieldTypeParts(field: AssembledField, nodeMap?: NodeMap): string[] {
-    // Fields with only literal values produce no aliased type union.
-    if (field.values.length === 0) return []
-    const hasOnlyLiterals = field.values.every(isSlotLiteral)
-    if (hasOnlyLiterals) return []
-    const parts: string[] = []
-    for (const v of field.values) {
-        if (isSlotLiteral(v)) continue  // skip literals for type part extraction
-        const kindName = isRef(v) ? v.name : v.kind
-        const node = nodeMap?.nodes.get(kindName)
-        if (!node) { parts.push(JSON.stringify(kindName)); continue }
+    if (field.literalValues && field.literalValues.length > 0) return []
+    if (field.contentTypes.length === 0) return []
+    return field.contentTypes.map(t => {
+        const node = nodeMap?.nodes.get(t)
+        if (!node) return JSON.stringify(t)
         const name = node.typeName
-        parts.push(/^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(kindName))
-    }
-    return parts
+        return /^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t)
+    })
 }
 
 /**
@@ -942,28 +928,20 @@ function fieldTypeParts(field: AssembledField, nodeMap?: NodeMap): string[] {
  */
 function computeReferencedKinds(nodeMap: NodeMap): Set<string> {
     const referenced = new Set<string>()
-    const addSlotKinds = (slots: readonly import('../compiler/node-map.ts').AssembledChild[]): void => {
-        for (const slot of slots) {
-            for (const v of slot.values) {
-                if (isSlotLiteral(v)) continue
-                referenced.add(isRef(v) ? v.name : v.kind)
-            }
-        }
-    }
     for (const [, node] of nodeMap.nodes) {
         if (node instanceof AssembledBranch) {
-            addSlotKinds(node.fields)
-            addSlotKinds(node.children ?? [])
+            for (const f of node.fields) for (const t of f.contentTypes) referenced.add(t)
+            for (const c of (node.children ?? [])) for (const t of c.contentTypes) referenced.add(t)
         } else if (node instanceof AssembledContainer) {
-            addSlotKinds(node.children)
+            for (const c of node.children) for (const t of c.contentTypes) referenced.add(t)
         } else if (node instanceof AssembledPolymorph) {
             for (const form of node.forms) {
-                addSlotKinds(form.fields)
-                addSlotKinds(form.children)
+                for (const f of form.fields) for (const t of f.contentTypes) referenced.add(t)
+                for (const c of form.children) for (const t of c.contentTypes) referenced.add(t)
             }
         } else if (node instanceof AssembledGroup) {
-            addSlotKinds(node.fields)
-            addSlotKinds(node.children)
+            for (const f of node.fields) for (const t of f.contentTypes) referenced.add(t)
+            for (const c of node.children) for (const t of c.contentTypes) referenced.add(t)
         } else if (node.modelType === 'supertype') {
             for (const t of node.subtypes) referenced.add(t)
         }
@@ -972,20 +950,16 @@ function computeReferencedKinds(nodeMap: NodeMap): Set<string> {
 }
 
 function childContentParts(child: AssembledChild, nodeMap: NodeMap): string[] {
-    const parts: string[] = []
-    for (const v of child.values) {
-        if (isSlotLiteral(v)) { parts.push(JSON.stringify(v)); continue }
-        const kindName = isRef(v) ? v.name : v.kind
-        const n = nodeMap.nodes.get(kindName)
+    return child.contentTypes.map(t => {
+        const n = nodeMap.nodes.get(t)
         if (!n) {
             throw new Error(
-                `types: child references kind '${kindName}' which is not in NodeMap.`,
+                `types: child references kind '${t}' which is not in NodeMap.`,
             )
         }
         const name = n.typeName
-        parts.push(/^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(kindName))
-    }
-    return parts
+        return /^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t)
+    })
 }
 
 function childrenOf(node: AssembledNode): readonly AssembledChild[] {
@@ -1054,13 +1028,11 @@ function emitFormChildrenSlot(
 ): void {
     if (!form.children || form.children.length === 0) return
     const parts = form.children
-        .map(c => c.values.map(v => {
-            if (isSlotLiteral(v)) return JSON.stringify(v)
-            const kindName = isRef(v) ? v.name : v.kind
-            const n = nodeMap.nodes.get(kindName)
-            if (!n) return JSON.stringify(kindName)
+        .map(c => c.contentTypes.map(t => {
+            const n = nodeMap.nodes.get(t)
+            if (!n) return JSON.stringify(t)
             const name = n.typeName
-            return /^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(kindName)
+            return /^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t)
         }))
     const flatParts = parts.flat()
     const aliased = lookupUnion?.(flatParts)
@@ -1082,33 +1054,23 @@ function fieldTypeExpr(
 ): string {
     const inlineEnum = resolveInlineEnumTypeExpr(field)
     if (inlineEnum !== null) return inlineEnum
-    if (field.values.length === 0) return 'string'
+    if (field.contentTypes.length === 0) return 'string'
     const resolveAliased = buildAliasSourceResolver(field, nodeMap)
-    const parts: string[] = []
-    for (const v of field.values) {
-        if (isSlotLiteral(v)) {
-            // Mixed literal+ref field: include literal as string-literal type
-            parts.push(JSON.stringify(v))
-            continue
-        }
-        const kindName = isRef(v) ? v.name : v.kind
-        const resolved = resolveAliased(kindName)
-        const node = nodeMap?.nodes.get(resolved)
+    const parts = field.contentTypes.map(resolveAliased).map(t => {
+        const node = nodeMap?.nodes.get(t)
         if (!node) {
-            const name = resolved.replace(/(?:^|_)([a-z])/g, (_, c: string) => c.toUpperCase())
-            missingKindTypes.set(resolved, name)
-            parts.push(name)
-            continue
+            const name = t.replace(/(?:^|_)([a-z])/g, (_, c: string) => c.toUpperCase())
+            missingKindTypes.set(t, name)
+            return name
         }
         const name = node.typeName
-        if (/^[A-Za-z_$][\w$]*$/.test(name)) { parts.push(name); continue }
-        parts.push(JSON.stringify(resolved))
-    }
+        if (/^[A-Za-z_$][\w$]*$/.test(name)) return name
+        return JSON.stringify(t)
+    })
     // Dedup repeated multi-type unions via the lookup (T042k).
-    const dedupedParts = [...new Set(parts)]
-    const alias = lookupUnion?.(dedupedParts)
+    const alias = lookupUnion?.(parts)
     if (alias) return alias
-    return dedupedParts.join(' | ')
+    return parts.join(' | ')
 }
 
 // ---------------------------------------------------------------------------
@@ -1128,11 +1090,8 @@ function fieldTypeExpr(
  *   not an inline enum.
  */
 function resolveInlineEnumTypeExpr(field: AssembledField): string | null {
-    // A field is an inline enum when ALL values are literals.
-    if (field.values.length === 0) return null
-    const literals = field.values.filter(isSlotLiteral)
-    if (literals.length === field.values.length) {
-        return literals.map(v => JSON.stringify(v)).join(' | ')
+    if (field.literalValues && field.literalValues.length > 0) {
+        return field.literalValues.map(v => JSON.stringify(v)).join(' | ')
     }
     return null
 }

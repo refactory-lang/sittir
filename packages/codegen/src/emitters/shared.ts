@@ -5,7 +5,7 @@
 
 import type { NodeMap } from '../compiler/types.ts'
 import type { AssembledField, AssembledChild } from '../compiler/node-map.ts'
-import { AssembledKeyword, isRef, isSlotLiteral } from '../compiler/node-map.ts'
+import { AssembledKeyword } from '../compiler/node-map.ts'
 
 /** TypeScript identifier pattern — starts with letter/underscore/dollar,
  * continues with word chars or dollar. Used by emitters to decide whether
@@ -37,15 +37,14 @@ export function identOrQuoted(name: string): string {
  *
  * Two sources of "single string literal" are recognised:
  *
- * - **Source A — inline literal**: `values` has exactly one entry that is
- *   a `string`. The field's assembled content is a bare STRING or a
- *   choice-of-one-string.
+ * - **Source A — inline literal**: `field.literalValues.length === 1`.
+ *   The field's assembled content is a bare STRING or a choice-of-one-
+ *   string. The literal value is the single entry in `literalValues`.
  *
- * - **Source B — referenced hidden keyword kind**: `values` has exactly one
- *   entry that is an `AssembledKeyword` (a hidden rule whose body is a single
- *   word-like string, such as `_kw_async: $ => 'async'`). Restricted to
- *   hidden kinds (name starts with `_`) to avoid false-positives from visible
- *   keyword nodes that may appear inside mixed-choice overrides.
+ * - **Source B — referenced keyword kind**: `field.contentTypes.length === 1`
+ *   and the referenced kind is an `AssembledKeyword` (a hidden rule whose
+ *   body is a single word-like string, such as `_kw_async: $ => 'async'`).
+ *   The literal value comes from `AssembledKeyword.text`.
  *
  * Returns `undefined` when the field is optional, is repeated, has
  * multiple possible values, or the referenced kind is not a single-
@@ -68,25 +67,20 @@ export function resolveEffectiveLiteral(
     // Repeated fields are never auto-stamped — they represent 0..N occurrences.
     if (field.multiple) return undefined
 
-    if (field.values.length !== 1) return undefined
-    const v = field.values[0]!
-
     // Source A: inline literal (choice-of-one-string or bare STRING field)
-    if (isSlotLiteral(v)) return v
+    if (field.literalValues?.length === 1) return field.literalValues[0]
 
     // Source B: field references a single hidden keyword kind (`_kw_*` pattern).
     // Restricted to hidden kinds (name starts with `_`) to avoid false-positives
-    // from visible keyword nodes that may appear inside mixed-choice overrides.
-    if (!isRef(v)) {
-        // Resolved AssembledNode — check if it's a hidden keyword
-        if (v.kind.startsWith('_') && v instanceof AssembledKeyword) return v.text
-        return undefined
-    }
-    // Unresolved Ref — fall back to node map lookup (shouldn't happen post-resolution)
-    const kindName = v.name
-    if (kindName.startsWith('_')) {
-        const ref = nodeMap.nodes.get(kindName)
-        if (ref instanceof AssembledKeyword) return ref.text
+    // from visible keyword nodes that may appear inside mixed-choice overrides
+    // (e.g. pointer_type's `choice('const', $.mutable_specifier)` where the
+    // string alternative is silently dropped from contentTypes).
+    if (field.contentTypes.length === 1) {
+        const kindName = field.contentTypes[0]!
+        if (kindName.startsWith('_')) {
+            const ref = nodeMap.nodes.get(kindName)
+            if (ref instanceof AssembledKeyword) return ref.text
+        }
     }
 
     return undefined
@@ -126,24 +120,32 @@ export function isAutoStampField(field: AssembledField, nodeMap: NodeMap): boole
  * applies equally to fields and children. The `isParameterless` property
  * on `AssembledNodeBase` must already be populated before calling this.
  */
-export function isAutoStampSlot(slot: AssembledChild, _nodeMap: NodeMap): boolean {
+export function isAutoStampSlot(slot: AssembledChild, nodeMap: NodeMap): boolean {
     if (!slot.required) return true     // optional → does not block
     if (slot.multiple) return false    // required repeated → user must supply
 
-    if (slot.values.length !== 1) return false
-    const v = slot.values[0]!
+    // Source A: inline literal (AssembledField only, but safe to check on any slot)
+    const asField = slot as AssembledField
+    if (asField.literalValues?.length === 1) return true
 
-    // Source A: inline literal
-    if (isSlotLiteral(v)) return true
-
-    // Unresolved Ref — fall back to node map lookup
-    if (isRef(v)) {
-        const ref = _nodeMap.nodes.get(v.name)
-        return ref?.isParameterless === true
+    // Source B/C: single content-type that is parameterless (set by fixpoint pass)
+    if (slot.contentTypes.length === 1) {
+        const ref = nodeMap.nodes.get(slot.contentTypes[0]!)
+        if (ref?.isParameterless) return true
     }
 
-    // Resolved AssembledNode — check isParameterless (set by fixpoint pass)
-    return v.isParameterless === true
+    // Legacy Source B fallback: hidden keyword kind (preserves pre-fixpoint behaviour
+    // for cases where the fixpoint was not yet run or the slot is a bare field reference
+    // to a hidden `_kw_*` kind that predates `isParameterless`).
+    if (slot.contentTypes.length === 1) {
+        const kindName = slot.contentTypes[0]!
+        if (kindName.startsWith('_')) {
+            const ref = nodeMap.nodes.get(kindName)
+            if (ref instanceof AssembledKeyword) return true
+        }
+    }
+
+    return false
 }
 
 /**
@@ -171,26 +173,42 @@ export function stampExpressionFor(slot: AssembledChild, nodeMap: NodeMap): stri
 
     if (slot.multiple) return undefined   // repeated — no stamp
 
-    if (slot.values.length !== 1) return undefined
-    const v = slot.values[0]!
-
     // Source A: inline literal
-    if (isSlotLiteral(v)) {
-        return `${JSON.stringify(v)} as const`
+    const asField = slot as AssembledField
+    if (asField.literalValues?.length === 1) {
+        return `${JSON.stringify(asField.literalValues[0])} as const`
     }
 
-    // Resolve Ref to get the node (Refs shouldn't appear post-resolution, but handle defensively)
-    const ref = isRef(v) ? nodeMap.nodes.get(v.name) : v
+    // Source B/C: single referenced kind
+    if (slot.contentTypes.length === 1) {
+        const kindName = slot.contentTypes[0]!
+        const ref = nodeMap.nodes.get(kindName)
 
-    if (ref?.isParameterless && ref.stampExpression !== undefined) {
-        if (ref.modelType === 'keyword') {
-            // Keywords: emit NodeData object literal
-            const kind = JSON.stringify(ref.kind)
-            const text = JSON.stringify(ref.text)
-            return `{ $type: ${kind} as const, $text: ${text} as const, $source: 'factory' as const, $named: true as const }`
+        // Source C: parameterless compound — use its stampExpression directly
+        if (ref?.isParameterless && ref.stampExpression !== undefined) {
+            // Compounds stamp as factory call; keywords stamp as NodeData literal
+            if (ref.modelType === 'keyword') {
+                // Keywords: emit NodeData object literal (same as legacy Source B)
+                const kind = JSON.stringify(ref.kind)
+                const text = JSON.stringify(ref.text)
+                return `{ $type: ${kind} as const, $text: ${text} as const, $source: 'factory' as const, $named: true as const }`
+            }
+            // Compound: the stampExpression is `factoryName()` — wrap in a factory import ref
+            // so the emitted code resolves correctly.
+            // We emit the factory call directly; the factory is imported via `import * as F from './factories.js'`
+            // but shared.ts doesn't know whether we're emitting from factories.ts or from.ts.
+            // Return the raw expression and let callers prefix `F.` if needed.
+            return ref.stampExpression
         }
-        // Parameterless compound: the stampExpression is `factoryName()`.
-        return ref.stampExpression
+
+        // Legacy Source B: hidden keyword kind (backwards compat for fields)
+        if (kindName.startsWith('_')) {
+            if (ref instanceof AssembledKeyword) {
+                const kind = JSON.stringify(ref.kind)
+                const text = JSON.stringify(ref.text)
+                return `{ $type: ${kind} as const, $text: ${text} as const, $source: 'factory' as const, $named: true as const }`
+            }
+        }
     }
 
     return undefined

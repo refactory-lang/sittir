@@ -259,7 +259,7 @@ export function importStatement(config: T.ImportStatement.Config) {
     $named: true as const,
     $fields: fields,
     importClause(value?: "type" | "typeof" | undefined) { return _fs(config, importStatement, 'importClause', value, fields.import_clause); },
-    fromClause(value?: T.ImportClause | "from" | T.String | T.ImportRequireClause) { return _fs(config, importStatement, 'fromClause', value, fields.from_clause); },
+    fromClause(value?: T.ImportClause | T.String | T.ImportRequireClause) { return _fs(config, importStatement, 'fromClause', value, fields.from_clause); },
     source(value?: T.String | undefined) { return _fs(config, importStatement, 'source', value, fields.source); },
     importAttribute(value?: T.ImportAttribute | undefined) { return _fs(config, importStatement, 'importAttribute', value, fields.import_attribute); },
     semicolon(value?: T.Semicolon) { return _fs(config, importStatement, 'semicolon', value, fields.semicolon); },
@@ -423,7 +423,7 @@ export function importAttribute(config: T.ImportAttribute.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    object(value?: "with" | "assert" | T.Object) { return _fs(config, importAttribute, 'object', value, fields.object); },
+    object(value?: "with" | "assert") { return _fs(config, importAttribute, 'object', value, fields.object); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2781,7 +2781,7 @@ export function asExpression(config: T.AsExpression.Config) {
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _fs(config, asExpression, 'expression', value, fields.expression); },
-    typeAnnotation(value?: "const" | T.Type) { return _fs(config, asExpression, 'typeAnnotation', value, fields.type_annotation); },
+    typeAnnotation(value?: T.Type) { return _fs(config, asExpression, 'typeAnnotation', value, fields.type_annotation); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2900,7 +2900,7 @@ export function ambientDeclaration(config: T.AmbientDeclaration.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    declaration(value?: T.Declaration | "global" | T.StatementBlock | "module" | T.Identifier | T.Type | T.Semicolon) { return _fs(config, ambientDeclaration, 'declaration', value, fields.declaration); },
+    declaration(value?: T.Declaration | T.StatementBlock | T.Identifier | T.Type | T.Semicolon) { return _fs(config, ambientDeclaration, 'declaration', value, fields.declaration); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3335,16 +3335,16 @@ export function asserts(child?: (T.TypePredicate | T.Identifier | T.This)) {
   };
 }
 
-export function assertsAnnotation(config: T.AssertsAnnotation.Config) {
+export function assertsAnnotation(config?: T.AssertsAnnotation.Config) {
   const fields = {
-    asserts: config.asserts,
+    asserts: ":" as const,
   };
   return {
     $type: 'asserts_annotation' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    asserts(value?: ":" | T.Asserts) { return _fs(config, assertsAnnotation, 'asserts', value, fields.asserts); },
+    get asserts() { return fields.asserts; },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3501,7 +3501,7 @@ export function inferType(config: T.InferType.Config) {
     $named: true as const,
     $fields: fields,
     typeIdentifier(value?: T._TypeIdentifier) { return _fs(config, inferType, 'typeIdentifier', value, fields.type_identifier); },
-    constraint(value?: "extends" | T.Type | undefined) { return _fs(config, inferType, 'constraint', value, fields.constraint); },
+    constraint(value?: T.Type | undefined) { return _fs(config, inferType, 'constraint', value, fields.constraint); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3578,16 +3578,16 @@ export function typePredicate(config: T.TypePredicate.Config) {
   };
 }
 
-export function typePredicateAnnotation(config: T.TypePredicateAnnotation.Config) {
+export function typePredicateAnnotation(config?: T.TypePredicateAnnotation.Config) {
   const fields = {
-    type_predicate: config.typePredicate,
+    type_predicate: ":" as const,
   };
   return {
     $type: 'type_predicate_annotation' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    typePredicate(value?: ":" | T.TypePredicate) { return _fs(config, typePredicateAnnotation, 'typePredicate', value, fields.type_predicate); },
+    get typePredicate() { return fields.type_predicate; },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3771,7 +3771,7 @@ export function objectType(config: T.ObjectType.Config) {
     $named: true as const,
     $fields: fields,
     opening(value?: "{" | "{|") { return _fs(config, objectType, 'opening', value, fields.opening); },
-    members(value?: "," | ";" | T.Semicolon | undefined) { return _fs(config, objectType, 'members', value, fields.members); },
+    members(value?: T.Semicolon | undefined) { return _fs(config, objectType, 'members', value, fields.members); },
     closing(value?: "}" | "|}") { return _fs(config, objectType, 'closing', value, fields.closing); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -4400,7 +4400,7 @@ export function interfaceBody(config: T.InterfaceBody.Config) {
     $named: true as const,
     $fields: fields,
     opening(value?: "{" | "{|") { return _fs(config, interfaceBody, 'opening', value, fields.opening); },
-    members(value?: "," | ";" | T.Semicolon | undefined) { return _fs(config, interfaceBody, 'members', value, fields.members); },
+    members(value?: T.Semicolon | undefined) { return _fs(config, interfaceBody, 'members', value, fields.members); },
     closing(value?: "}" | "|}") { return _fs(config, interfaceBody, 'closing', value, fields.closing); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {

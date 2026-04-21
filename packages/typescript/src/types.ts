@@ -622,7 +622,7 @@ export interface ImportStatement {
   readonly $type: 'import_statement';
   readonly $fields: {
     readonly import_clause?: "type" | "typeof";
-    readonly from_clause: ImportClause | "from" | String | ImportRequireClause;
+    readonly from_clause: ImportClause | String | ImportRequireClause;
     readonly source?: String;
     readonly import_attribute?: ImportAttribute;
     readonly semicolon: Semicolon;
@@ -675,7 +675,7 @@ export type ImportSpecifier = ImportSpecifierUFormName | ImportSpecifierUFormAs;
 export interface ImportAttribute {
   readonly $type: 'import_attribute';
   readonly $fields: {
-    readonly object: "with" | "assert" | Object;
+    readonly object: "with" | "assert";
   };
 }
 
@@ -1471,7 +1471,7 @@ export interface AsExpression {
   readonly $type: 'as_expression';
   readonly $fields: {
     readonly expression: Expression;
-    readonly type_annotation: "const" | Type;
+    readonly type_annotation: Type;
   };
 }
 
@@ -1519,7 +1519,7 @@ export interface ImplementsClause {
 export interface AmbientDeclaration {
   readonly $type: 'ambient_declaration';
   readonly $fields: {
-    readonly declaration: Declaration | "global" | StatementBlock | "module" | Identifier | Type | Semicolon;
+    readonly declaration: Declaration | StatementBlock | Identifier | Type | Semicolon;
   };
 }
 
@@ -1695,7 +1695,7 @@ export interface Asserts {
 export interface AssertsAnnotation {
   readonly $type: 'asserts_annotation';
   readonly $fields: {
-    readonly asserts: ":" | Asserts;
+    readonly asserts: AutoStamp<":">;
   };
 }
 
@@ -1753,7 +1753,7 @@ export interface InferType {
   readonly $type: 'infer_type';
   readonly $fields: {
     readonly type_identifier: _TypeIdentifier;
-    readonly constraint?: "extends" | Type;
+    readonly constraint?: Type;
   };
 }
 
@@ -1786,7 +1786,7 @@ export interface TypePredicate {
 export interface TypePredicateAnnotation {
   readonly $type: 'type_predicate_annotation';
   readonly $fields: {
-    readonly type_predicate: ":" | TypePredicate;
+    readonly type_predicate: AutoStamp<":">;
   };
 }
 
@@ -1867,7 +1867,7 @@ export interface ObjectType {
   readonly $type: 'object_type';
   readonly $fields: {
     readonly opening: "{" | "{|";
-    readonly members?: "," | ";" | Semicolon;
+    readonly members?: Semicolon;
     readonly closing: "}" | "|}";
   };
 }
@@ -2131,7 +2131,7 @@ export interface InterfaceBody {
   readonly $type: 'interface_body';
   readonly $fields: {
     readonly opening: "{" | "{|";
-    readonly members?: "," | ";" | Semicolon;
+    readonly members?: Semicolon;
     readonly closing: "}" | "|}";
   };
 }

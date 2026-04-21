@@ -671,7 +671,7 @@ export function orderedFieldDeclarationList(config: T.OrderedFieldDeclarationLis
 export function externCrateDeclaration(config: T.ExternCrateDeclaration.Config) {
   const fields = {
     visibility_modifier: config.visibilityModifier,
-    crate: { $type: "crate" as const, $text: "crate" as const, $source: 'factory' as const, $named: true as const },
+    crate: config.crate,
     name: config.name,
     alias: config.alias,
   };
@@ -681,7 +681,7 @@ export function externCrateDeclaration(config: T.ExternCrateDeclaration.Config) 
     $named: true as const,
     $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, externCrateDeclaration, 'visibilityModifier', value, fields.visibility_modifier); },
-    get crate() { return fields.crate; },
+    crate(value?: T.Crate) { return _fs(config, externCrateDeclaration, 'crate', value, fields.crate); },
     name(value?: T.Identifier) { return _fs(config, externCrateDeclaration, 'name', value, fields.name); },
     alias(value?: T.Identifier | undefined) { return _fs(config, externCrateDeclaration, 'alias', value, fields.alias); },
     render() { return render(this); },
@@ -1761,7 +1761,7 @@ export function pointerType(config: T.PointerType.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    mutableSpecifier(value?: "const" | T.MutableSpecifier) { return _fs(config, pointerType, 'mutableSpecifier', value, fields.mutable_specifier); },
+    mutableSpecifier(value?: T.MutableSpecifier) { return _fs(config, pointerType, 'mutableSpecifier', value, fields.mutable_specifier); },
     typeField(value?: T._Type) { return _fs(config, pointerType, 'type', value, fields.type); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -1782,7 +1782,7 @@ export function abstractType(config: T.AbstractType.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    typeParameters(value?: "for" | T.TypeParameters | undefined) { return _fs(config, abstractType, 'typeParameters', value, fields.type_parameters); },
+    typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, abstractType, 'typeParameters', value, fields.type_parameters); },
     trait(value?: T._TypeIdentifier | T.ScopedTypeIdentifier | T.RemovedTraitBound | T.GenericType | T.FunctionType | T.TupleType | T.BoundedType) { return _fs(config, abstractType, 'trait', value, fields.trait); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -2054,7 +2054,7 @@ export function referenceExpression(config: T.ReferenceExpression.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    mutableSpecifier(value?: "raw" | "const" | T.MutableSpecifier) { return _fs(config, referenceExpression, 'mutableSpecifier', value, fields.mutable_specifier); },
+    mutableSpecifier(value?: T.MutableSpecifier) { return _fs(config, referenceExpression, 'mutableSpecifier', value, fields.mutable_specifier); },
     value(value?: T.Expression) { return _fs(config, referenceExpression, 'value', value, fields.value); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -3130,7 +3130,7 @@ export function fieldPatternUFormNamed(config: T.FieldPatternUFormNamedConfig) {
 
 export function mutPattern(config: T.MutPattern.Config) {
   const fields = {
-    mutable_specifier: { $type: "mutable_specifier" as const, $text: "mut" as const, $source: 'factory' as const, $named: true as const },
+    mutable_specifier: config.mutableSpecifier,
     pattern: config.pattern,
   };
   return {
@@ -3138,7 +3138,7 @@ export function mutPattern(config: T.MutPattern.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    get mutableSpecifier() { return fields.mutable_specifier; },
+    mutableSpecifier(value?: T.MutableSpecifier) { return _fs(config, mutPattern, 'mutableSpecifier', value, fields.mutable_specifier); },
     pattern(value?: T.Pattern) { return _fs(config, mutPattern, 'pattern', value, fields.pattern); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -3961,7 +3961,7 @@ export function closureExpressionExpr(config: T.ClosureExpressionExpr.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    body(value?: T.Expression | "_") { return _fs(config, closureExpressionExpr, 'body', value, fields.body); },
+    body(value?: T.Expression) { return _fs(config, closureExpressionExpr, 'body', value, fields.body); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

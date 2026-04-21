@@ -41,44 +41,6 @@ import {
 import { tokenToName } from './optimize.ts'
 
 // ---------------------------------------------------------------------------
-// Slot value types — three-way union for field / child slot content
-// ---------------------------------------------------------------------------
-
-/**
- * An unresolved kind-name reference within a slot's `values` list.
- * Appears during assembly and as the on-disk serde form.
- * After `resolveSlotRefs` runs, most Refs are replaced by their
- * corresponding `AssembledNode`. Unresolvable Refs remain as Ref objects.
- */
-export interface Ref {
-    readonly kind: 'ref'
-    readonly name: string
-}
-
-/**
- * The three-way union for a slot's `values` list.
- *   - `AssembledNode` — resolved (post-resolution pass)
- *   - `Ref`           — unresolved kind reference (during assemble or on-disk)
- *   - `string`        — literal value (inline string or enum member)
- */
-export type SlotValue = AssembledNode | Ref | string
-
-/**
- * Type guard: `v` is an unresolved `Ref` placeholder.
- * Safe to call on any SlotValue.
- */
-export function isRef(v: unknown): v is Ref {
-    return typeof v === 'object' && v !== null && (v as { kind?: unknown }).kind === 'ref'
-}
-
-/**
- * Type guard: `v` is a plain string (inline literal).
- */
-export function isSlotLiteral(v: SlotValue): v is string {
-    return typeof v === 'string'
-}
-
-// ---------------------------------------------------------------------------
 // Derivation helpers — walk a Rule to produce fields, children, content types
 // ---------------------------------------------------------------------------
 
@@ -174,8 +136,11 @@ export function deriveFields(rule: Rule, isOptional = false, isRepeated = false)
             // A mixed "once as single, once as repeat1" field drops
             // to plain repeat semantics.
             nonEmpty: Boolean(existing.nonEmpty) && Boolean(f.nonEmpty),
-            values: deduplicateSlotValues([...existing.values, ...f.values]),
+            contentTypes: Array.from(new Set([...existing.contentTypes, ...f.contentTypes])),
             aliasSources: mergedAliasSources,
+            literalValues: (existing.literalValues || f.literalValues)
+                ? Array.from(new Set([...(existing.literalValues ?? []), ...(f.literalValues ?? [])]))
+                : undefined,
             projection: {
                 ...existing.projection,
                 kinds: Array.from(new Set([...existing.projection.kinds, ...f.projection.kinds])),
@@ -210,9 +175,9 @@ function deriveFieldsRaw(
             // target (macro_definition's `rules: $$$MACRO_RULE` repeats
             // macro_rule across 6 variants; supertype expansions can
             // overlap with concrete sibling kinds).
-            const rawValues = deriveSlotValuesForField(rule.content)
-            const values = deduplicateSlotValues(rawValues)
+            const contentTypes = [...new Set(deriveContentTypes(rule.content))]
             const aliasSources = deriveAliasSources(rule.content)
+            const literalValues = deriveLiteralValues(rule.content)
             const propertyName = snakeToCamel(rule.name)
             // A field wrapping a repeat/optional carries that shape on
             // itself — `field('statements', repeat($._statement))` means
@@ -229,10 +194,6 @@ function deriveFieldsRaw(
                 && !isOptional
                 && !innerShape.optional
                 && (isNonEmpty || innerShape.nonEmpty)
-            // Derive kind names for the projection from the Ref entries in values.
-            const projectionKinds = values
-                .filter(v => isRef(v))
-                .map(v => (v as Ref).name)
             const outerField: AssembledField = {
                 name: rule.name,
                 propertyName,
@@ -240,10 +201,11 @@ function deriveFieldsRaw(
                 required: !isOptional && !innerShape.optional,
                 multiple,
                 nonEmpty: nonEmpty || undefined,
-                values,
+                contentTypes,
                 aliasSources: Object.keys(aliasSources).length > 0 ? aliasSources : undefined,
+                literalValues: literalValues.length > 0 ? literalValues : undefined,
                 source: rule.source ?? 'grammar',
-                projection: { typeName: '', kinds: projectionKinds },
+                projection: { typeName: '', kinds: contentTypes },
             }
 
             // Override-wrapper fields wrapping a choice whose branches
@@ -339,7 +301,7 @@ export function deriveChildren(rule: Rule): AssembledChild[] {
             required: existing.required && c.required,
             multiple: existing.multiple || c.multiple,
             nonEmpty: Boolean(existing.nonEmpty) && Boolean(c.nonEmpty),
-            values: deduplicateSlotValues([...existing.values, ...c.values]),
+            contentTypes: Array.from(new Set([...existing.contentTypes, ...c.contentTypes])),
         })
     }
     return Array.from(byName.values())
@@ -368,7 +330,7 @@ function walkForChildren(
                     required: !isOptional,
                     multiple: isRepeated,
                     nonEmpty: (isRepeated && !isOptional && isNonEmpty) || undefined,
-                    values: [{ kind: 'ref' as const, name: rule.name }],
+                    contentTypes: [rule.name],
                 })
             }
             break
@@ -381,7 +343,7 @@ function walkForChildren(
                 required: !isOptional,
                 multiple: isRepeated,
                 nonEmpty: (isRepeated && !isOptional && isNonEmpty) || undefined,
-                values: rule.subtypes.map(name => ({ kind: 'ref' as const, name })),
+                contentTypes: rule.subtypes,
             })
             break
         case 'seq': {
@@ -490,74 +452,26 @@ function deriveAliasSources(rule: Rule): Record<string, string> {
     return out
 }
 
-/**
- * Derive the `values` list (Ref | string) for a field's content rule.
- *
- * Each symbol/supertype reference becomes a `Ref`; each inline string or enum
- * member becomes a bare `string`. After assembly, `resolveSlotRefs` replaces
- * Refs with their corresponding `AssembledNode` instances.
- *
- * Unlike the old `deriveContentTypes`, this preserves string literals from
- * mixed choices such as `choice('const', $.mutable_specifier)` — both
- * `'const'` and `Ref('mutable_specifier')` appear in the result.
- */
-function deriveSlotValuesForField(rule: Rule): (Ref | string)[] {
+function deriveContentTypes(rule: Rule): string[] {
     switch (rule.type) {
-        case 'symbol': return [{ kind: 'ref', name: rule.name }]
-        case 'supertype': return rule.subtypes.map(name => ({ kind: 'ref' as const, name }))
-        // Enum values are text contents — emit as literal strings.
-        case 'enum': return rule.values
-        case 'string': return [rule.value]
-        case 'choice': {
-            // If every member (unwrapping variant wrappers) is a string,
-            // emit all as literal strings. Otherwise recurse for mixed choices.
-            const allStrings = rule.members.every(m => {
-                const inner = m.type === 'variant' ? m.content : m
-                return inner.type === 'string'
-            })
-            if (allStrings) {
-                return rule.members.map(m => {
-                    const inner = m.type === 'variant' ? m.content : m
-                    return (inner as { type: 'string'; value: string }).value
-                })
-            }
-            return rule.members.flatMap(m => deriveSlotValuesForField(m))
-        }
-        case 'field': return deriveSlotValuesForField(rule.content)
-        case 'variant': return deriveSlotValuesForField(rule.content)
-        case 'optional': return deriveSlotValuesForField(rule.content)
-        case 'repeat': return deriveSlotValuesForField(rule.content)
-        case 'seq': return rule.members.flatMap(m => deriveSlotValuesForField(m))
-        case 'clause': return deriveSlotValuesForField(rule.content)
-        case 'group': return deriveSlotValuesForField(rule.content)
+        case 'symbol': return [rule.name]
+        case 'choice': return rule.members.flatMap(m => deriveContentTypes(m))
+        // Enum values are `text` contents, not distinct node kinds. A
+        // field whose content is an inline enum should type as a
+        // string-literal union (see deriveLiteralValues) — the parser
+        // emits a single node whose `text` happens to match one of the
+        // enum values, never a node whose `type` is `"u8"`, `"usize"`.
+        case 'enum': return []
+        case 'supertype': return rule.subtypes
+        case 'field': return deriveContentTypes(rule.content)
+        case 'variant': return deriveContentTypes(rule.content)
+        case 'optional': return deriveContentTypes(rule.content)
+        case 'repeat': return deriveContentTypes(rule.content)
+        case 'seq': return rule.members.flatMap(m => deriveContentTypes(m))
+        case 'clause': return deriveContentTypes(rule.content)
+        case 'group': return deriveContentTypes(rule.content)
         default: return []
     }
-}
-
-/**
- * Deduplicate a SlotValue[] list by key.
- * Refs are keyed by name; strings by value; AssembledNodes by kind.
- */
-function deduplicateSlotValues(values: (Ref | string)[]): (Ref | string)[]
-function deduplicateSlotValues(values: SlotValue[]): SlotValue[]
-function deduplicateSlotValues(values: SlotValue[]): SlotValue[] {
-    const seen = new Set<string>()
-    const out: SlotValue[] = []
-    for (const v of values) {
-        let key: string
-        if (typeof v === 'string') {
-            key = `str:${v}`
-        } else if (isRef(v)) {
-            key = `ref:${v.name}`
-        } else {
-            // AssembledNode (post-resolution)
-            key = `node:${v.kind}`
-        }
-        if (seen.has(key)) continue
-        seen.add(key)
-        out.push(v)
-    }
-    return out
 }
 
 /**
@@ -598,6 +512,26 @@ export function isSyntheticFieldWrapper(content: Rule): boolean {
     }
     if (!isSeq(content)) return false
     return content.members.some(isField)
+}
+
+function deriveLiteralValues(rule: Rule): string[] {
+    switch (rule.type) {
+        case 'enum': return rule.values
+        case 'string': return [rule.value]
+        case 'choice': {
+            const parts: string[] = []
+            for (const m of rule.members) {
+                const inner = m.type === 'variant' ? m.content : m
+                if (inner.type === 'string') parts.push(inner.value)
+                else return []  // not a pure string-choice — bail
+            }
+            return parts
+        }
+        case 'field': return deriveLiteralValues(rule.content)
+        case 'variant': return deriveLiteralValues(rule.content)
+        case 'optional': return deriveLiteralValues(rule.content)
+        default: return []
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -825,21 +759,6 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
     renderTemplate(_rules?: Record<string, Rule>, _wordMatcher?: RegExp): Record<string, unknown> | undefined {
         return undefined
     }
-
-    /**
-     * Post-assemble slot-values resolution pass.
-     *
-     * Called by `resolveSlotRefs` in assemble.ts after all nodes are
-     * constructed and `markParameterlessKinds` has run. The callback
-     * maps each slot's `values` array, replacing `Ref` entries with
-     * their resolved `AssembledNode` instances.
-     *
-     * Base implementation is a no-op — only structural subclasses
-     * (Branch, Container, Group) override to walk their fields/children.
-     */
-    resolveSlotValues(_resolve: (values: readonly SlotValue[]) => readonly SlotValue[]): void {
-        // no-op for non-structural nodes (keywords, leaves, enums, etc.)
-    }
 }
 
 export interface AssembledChild {
@@ -855,17 +774,7 @@ export interface AssembledChild {
      * sugar). Only meaningful when `multiple` is true.
      */
     readonly nonEmpty?: boolean
-    /**
-     * Unified slot content list — three-way union of:
-     *   - `AssembledNode` — resolved kind reference (post-`resolveSlotRefs`)
-     *   - `Ref { kind: 'ref', name }` — unresolved kind reference (during assemble
-     *     or as on-disk serde form)
-     *   - `string` — literal value (inline string or enum member)
-     *
-     * Replaces the old `contentTypes: string[]` + `literalValues?: string[]` pair.
-     * Use `isRef(v)` / `isSlotLiteral(v)` guards to discriminate.
-     */
-    readonly values: readonly SlotValue[]
+    readonly contentTypes: string[]
 }
 
 export interface AssembledField extends AssembledChild {
@@ -887,6 +796,13 @@ export interface AssembledField extends AssembledChild {
      * common case). See ADR-0006.
      */
     readonly aliasSources?: Readonly<Record<string, string>>
+    /**
+     * Literal values when the field's content is an inline enum
+     * (choice-of-strings). Empty for normal fields. When populated,
+     * types emits the field as a string-literal union instead of
+     * a kind-reference union.
+     */
+    readonly literalValues?: readonly string[]
     readonly source: 'grammar' | 'override' | 'inlined' | 'inferred'
     readonly projection: KindProjection
 }
@@ -934,22 +850,6 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
 
     get children(): AssembledChild[] | undefined {
         return this.#children ??= deriveChildren(this.simplifiedRule)
-    }
-
-    override resolveSlotValues(resolve: (values: readonly SlotValue[]) => readonly SlotValue[]): void {
-        // Ensure caches are populated before resolving
-        const fields = this.fields
-        const children = this.children
-        this.#fields = fields.map(f => {
-            const resolved = resolve(f.values)
-            return resolved === f.values ? f : { ...f, values: resolved }
-        })
-        if (children !== undefined) {
-            this.#children = children.map(c => {
-                const resolved = resolve(c.values)
-                return resolved === c.values ? c : { ...c, values: resolved }
-            })
-        }
     }
 
     renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp, externals?: ReadonlySet<string>): Record<string, unknown> {
@@ -1124,14 +1024,6 @@ export class AssembledContainer extends AssembledNodeBase<SeqRule | ChoiceRule |
 
     get children(): AssembledChild[] {
         return this.#children ??= deriveChildren(this.simplifiedRule)
-    }
-
-    override resolveSlotValues(resolve: (values: readonly SlotValue[]) => readonly SlotValue[]): void {
-        const children = this.children
-        this.#children = children.map(c => {
-            const resolved = resolve(c.values)
-            return resolved === c.values ? c : { ...c, values: resolved }
-        })
     }
 
     get separator(): string | undefined {
@@ -1391,19 +1283,6 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 
     get children(): AssembledChild[] {
         return this.#children ??= deriveChildren(this.simplifiedRule)
-    }
-
-    override resolveSlotValues(resolve: (values: readonly SlotValue[]) => readonly SlotValue[]): void {
-        const fields = this.fields
-        const children = this.children
-        this.#fields = fields.map(f => {
-            const resolved = resolve(f.values)
-            return resolved === f.values ? f : { ...f, values: resolved }
-        })
-        this.#children = children.map(c => {
-            const resolved = resolve(c.values)
-            return resolved === c.values ? c : { ...c, values: resolved }
-        })
     }
 
     renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp, externals?: ReadonlySet<string>): Record<string, unknown> {
