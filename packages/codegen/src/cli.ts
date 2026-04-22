@@ -354,7 +354,7 @@ if (process.exitCode) {
 } else {
 	console.log(`
 Done! Generated:
-  templates.yaml, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts
+  templates/*.jinja, grammar.ts, types.ts, factories.ts, utils.ts, from.ts, consts.ts, index.ts
   vitest.config.ts
 `);
 }

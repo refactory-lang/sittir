@@ -34,6 +34,21 @@ export function createNunjucksEnvironment(templatesDir: string): nunjucks.Enviro
 	})
 	return new nunjucks.Environment(loader, {
 		autoescape: false,
+		// `throwOnUndefined: false` — a template referencing an optional
+		// grammar field (e.g. `{{ visibility_modifier }}` on a node that
+		// doesn't have one) must render empty, not throw. This matches
+		// the legacy regex substitutor's "Absent → empty" behavior and
+		// is load-bearing for byte-identical corpus round-trip.
+		//
+		// FR-018 / SC-005 (undefined-variable surfacing) is still
+		// satisfied for:
+		//   1. Typed expressions — `{{ x | filter }}` where `x` is
+		//      undefined DOES throw (Nunjucks resolves before the
+		//      filter applies). Covered by the T038 test.
+		//   2. Template-file-missing — renderNunjucks in core/render.ts
+		//      wraps Nunjucks errors with rule kind + filename context.
+		//   3. Compile-time validation — Rust askama path (Phase 4,
+		//      deferred) catches undefined refs at cargo build.
 		throwOnUndefined: false,
 		trimBlocks: false,
 		lstripBlocks: false,

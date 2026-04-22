@@ -138,35 +138,37 @@ describe('Error wrapping — T028 / FR-018', () => {
 		}
 	});
 
-	it('T038: template referencing an undefined context variable in a typed expression surfaces the filename', () => {
-		// Jinja/Nunjucks's default (`throwOnUndefined: false`) renders
-		// missing vars as empty strings — fine for fields the walker
-		// declares. But referencing an undefined var INSIDE a typed
-		// expression (filter argument, arithmetic, method call) DOES
-		// throw. Assert the wrapper surfaces the filename.
+	it('T038: bare {{ undef }} renders empty (optional-field semantics)', () => {
+		// Missing-field-in-context MUST render empty, not throw — this
+		// is the legacy substitutor's "Absent → empty" contract that
+		// templates like `{{ visibility_modifier }}` rely on. Keep this
+		// test locked so a well-intentioned throwOnUndefined flip gets
+		// caught by CI.
 		const tmp = mkdtempSync(join(tmpdir(), 'sittir-nunjucks-render-'));
 		try {
-			// `undefined_list | join` — typed-expression context forces
-			// a resolution error when `undefined_list` isn't on the ctx.
+			writeFileSync(join(tmp, 'maybe.jinja'), '[{{ maybe_present }}]');
+			const { render } = createRendererFromConfig(emptyConfig, { templatesDir: tmp });
+			const node: AnyNodeData = { $type: 'maybe', $fields: {} };
+			expect(render(node)).toBe('[]');
+		} finally {
+			rmSync(tmp, { recursive: true, force: true });
+		}
+	});
+
+	it('T038: undefined variable inside a typed expression DOES throw with filename context', () => {
+		// Typed-expression context (filter, arithmetic, method call)
+		// forces Nunjucks to resolve the variable before applying the
+		// operator — undefined variables throw even with
+		// throwOnUndefined: false. Our wrapper surfaces the filename.
+		const tmp = mkdtempSync(join(tmpdir(), 'sittir-nunjucks-render-'));
+		try {
 			writeFileSync(
 				join(tmp, 'uses_undef.jinja'),
 				'{{ undefined_list | join(",") }}',
 			);
 			const { render } = createRendererFromConfig(emptyConfig, { templatesDir: tmp });
-			const node: AnyNodeData = {
-				$type: 'uses_undef',
-				$fields: {},
-			};
-			try {
-				const out = render(node);
-				// If Nunjucks was lenient here (rendered empty), the
-				// test degrades to checking the lenient path — still
-				// valuable because it documents current behavior.
-				expect(out).toBe('');
-			} catch (err) {
-				const msg = err instanceof Error ? err.message : String(err);
-				expect(msg).toMatch(/uses_undef\.jinja/);
-			}
+			const node: AnyNodeData = { $type: 'uses_undef', $fields: {} };
+			expect(() => render(node)).toThrow(/uses_undef\.jinja/);
 		} finally {
 			rmSync(tmp, { recursive: true, force: true });
 		}
