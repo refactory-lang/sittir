@@ -1,6 +1,9 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
-import * as fs from 'node:fs';
-import { parse as parseYaml } from 'yaml';
+//
+// Pure render engine — no I/O, no `node:*` imports. Browser-safe.
+// YAML loading and the `createRenderer(yamlPath)` convenience live in
+// `./loader.ts`.
+
 import type { AnyNodeData, Edit, ByteRange, RulesConfig, TemplateRule, TemplateRuleObject } from './types.ts';
 
 export type { RulesConfig };
@@ -658,18 +661,11 @@ function escapeRegex(s: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// YAML loading
+// createRendererFromConfig — close over rules once, return bound helpers
 // ---------------------------------------------------------------------------
-
-/** Load and parse a templates.yaml file into a RulesConfig. */
-export function loadTemplates(yamlPath: string): RulesConfig {
-	const content = fs.readFileSync(yamlPath, 'utf-8');
-	return parseYaml(content) as RulesConfig;
-}
-
-// ---------------------------------------------------------------------------
-// createRenderer — close over rules once, return bound helpers
-// ---------------------------------------------------------------------------
+//
+// File-loading variants (`createRenderer(yamlPath)` + `loadTemplates`)
+// live in `./loader.ts` so `render.ts` has no `node:*` dependencies.
 
 export interface BoundRenderer {
 	render(node: AnyNodeData): string;
@@ -678,16 +674,9 @@ export interface BoundRenderer {
 }
 
 /**
- * Create a renderer bound to a specific YAML templates file.
- * Loads and parses the YAML once — no need to pass config on every render() call.
- */
-export function createRenderer(yamlPath: string): BoundRenderer;
-/**
  * Create a renderer from a pre-parsed RulesConfig.
  */
-export function createRenderer(config: RulesConfig): BoundRenderer;
-export function createRenderer(pathOrConfig: string | RulesConfig): BoundRenderer {
-	const config = typeof pathOrConfig === 'string' ? loadTemplates(pathOrConfig) : pathOrConfig;
+export function createRendererFromConfig(config: RulesConfig): BoundRenderer {
 	const ctx = buildRenderContext(config);
 
 	function boundRender(node: AnyNodeData): string {

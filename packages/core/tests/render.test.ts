@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createRenderer } from '../src/render.ts';
+import { createRenderer } from '../src/loader.ts';
 import type { RulesConfig } from '../src/types.ts';
 import type { AnyNodeData } from '../src/types.ts';
 

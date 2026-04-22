@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { toCst } from '../src/cst.ts';
-import { createRenderer } from '../src/render.ts';
+import { createRenderer } from '../src/loader.ts';
 import type { RulesConfig, AnyNodeData } from '../src/types.ts';
 
 const config: RulesConfig = {
