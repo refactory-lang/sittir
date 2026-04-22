@@ -1011,14 +1011,16 @@ function inlineJinjaClauses(template: string, clauses: Record<string, string>): 
  * Brace-escape pass prevents `{$$$CHILDREN}` becoming `{{{ children }}}`
  * (which Nunjucks misreads as a dict literal).
  */
-interface JinjaTranslateMeta {
+/** @internal — exported for direct unit testing. */
+export interface JinjaTranslateMeta {
     joinBy?: string
     joinByField?: Record<string, string>
     joinByLeading?: boolean
     joinByTrailing?: boolean
 }
 
-function translateToJinja(tmpl: string, meta: JinjaTranslateMeta): string {
+/** @internal — exported for direct unit testing. */
+export function translateToJinja(tmpl: string, meta: JinjaTranslateMeta): string {
     const varPattern = /(\$\$\$|\$\$|\$_|\$)([A-Z][A-Z0-9_]*)/g
     const defaultSep = meta.joinBy ?? ' '
     const translated = tmpl.replace(varPattern, (_full, pfx: string, name: string) => {
@@ -1039,7 +1041,8 @@ function translateToJinja(tmpl: string, meta: JinjaTranslateMeta): string {
 }
 
 /** `$$$CHILDREN` is the only slot that carries flank permission. */
-function filterForFlanks(key: string, meta: JinjaTranslateMeta): string {
+/** @internal — exported for direct unit testing. */
+export function filterForFlanks(key: string, meta: JinjaTranslateMeta): string {
     if (key !== 'children') return 'join'
     if (meta.joinByLeading && meta.joinByTrailing) return 'joinWithFlanks'
     if (meta.joinByTrailing) return 'joinWithTrailing'

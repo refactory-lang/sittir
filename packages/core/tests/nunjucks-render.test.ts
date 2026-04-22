@@ -121,6 +121,81 @@ describe('Token-shaped-kind fallback — T027a / FR-017', () => {
 	});
 });
 
+describe('$TEXT fallback + anon-filter shape — post-011 coverage', () => {
+	it('synthesizes `text` from $fields when a factory-built node hits a {{ text }} template', () => {
+		// Factory-built node: no $text span; template asks for `{{ text }}`.
+		// buildNunjucksTemplateContext concatenates rendered field /
+		// child values so verbatim-pass-through templates still work
+		// after a factory construction.
+		const tmp = mkdtempSync(join(tmpdir(), 'sittir-nunjucks-render-'));
+		try {
+			writeFileSync(join(tmp, 'raw.jinja'), '{{ text }}');
+			writeFileSync(join(tmp, 'id.jinja'), '{{ text }}');
+			const { render } = createRendererFromConfig(emptyConfig, { templatesDir: tmp });
+			const node: AnyNodeData = {
+				$type: 'raw',
+				$fields: {
+					a: { $type: 'id', $text: 'hello' },
+					b: { $type: 'id', $text: 'world' },
+				},
+			};
+			// Factory-synthesized text concatenates rendered field values
+			// in iteration order.
+			expect(render(node)).toBe('helloworld');
+		} finally {
+			rmSync(tmp, { recursive: true, force: true });
+		}
+	});
+
+	it('filters anon children out of multi-valued field slots', () => {
+		// Multi-valued slot with a structural anon separator interleaved:
+		// the anon is a structural comma, it belongs in the joinBy, not
+		// in the rendered values. The context builder drops $named:false
+		// entries from multi-slots.
+		const tmp = mkdtempSync(join(tmpdir(), 'sittir-nunjucks-render-'));
+		try {
+			writeFileSync(join(tmp, 'list.jinja'), '[{{ items | join(",") }}]');
+			writeFileSync(join(tmp, 'id.jinja'), '{{ text }}');
+			const { render } = createRendererFromConfig(emptyConfig, { templatesDir: tmp });
+			const node: AnyNodeData = {
+				$type: 'list',
+				$fields: {
+					items: [
+						{ $type: 'id', $text: 'a', $named: true },
+						{ $type: 'anon', $text: ',', $named: false },
+						{ $type: 'id', $text: 'b', $named: true },
+					],
+				},
+			};
+			expect(render(node)).toBe('[a,b]');
+		} finally {
+			rmSync(tmp, { recursive: true, force: true });
+		}
+	});
+
+	it('keeps anon entries in SINGLE-valued field slots (promoted keyword path)', () => {
+		// Single-valued slot: even when the source is an anon token
+		// (promoted keyword like async / move / unsafe), the context
+		// keeps it — renders straight through. Mirrors the
+		// factory-built path for modifier keywords.
+		const tmp = mkdtempSync(join(tmpdir(), 'sittir-nunjucks-render-'));
+		try {
+			writeFileSync(join(tmp, 'wrap.jinja'), '{{ modifier }} fn');
+			writeFileSync(join(tmp, 'anon.jinja'), '{{ text }}');
+			const { render } = createRendererFromConfig(emptyConfig, { templatesDir: tmp });
+			const node: AnyNodeData = {
+				$type: 'wrap',
+				$fields: {
+					modifier: { $type: 'anon', $text: 'async', $named: false },
+				},
+			};
+			expect(render(node)).toBe('async fn');
+		} finally {
+			rmSync(tmp, { recursive: true, force: true });
+		}
+	});
+});
+
 describe('Error wrapping — T028 / FR-018', () => {
 	it('wraps Nunjucks template errors with rule-kind + filename context', () => {
 		const tmp = mkdtempSync(join(tmpdir(), 'sittir-nunjucks-render-'));
