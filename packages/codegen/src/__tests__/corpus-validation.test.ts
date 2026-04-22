@@ -184,8 +184,7 @@ describe.each(Object.keys(FLOORS) as GrammarName[])(
         }, 60000)
 
         it(`from() correctness passes at least ${floors.fromPass}/${floors.fromTotal}`, async () => {
-            const templatesPath = resolveTemplatesPath(grammar)
-            const result = await validateFrom(grammar, templatesPath)
+            const result = await validateFrom(grammar)
 
             expect(result.total).toBeGreaterThanOrEqual(floors.fromTotal)
             expect(result.pass).toBeGreaterThanOrEqual(floors.fromPass)

@@ -21,33 +21,27 @@
  */
 
 import { loadRawEntries, type RawNodeEntry } from './node-types-loader.ts'
-import { parse as parseYaml } from 'yaml'
-import { readFileSync, readdirSync, statSync } from 'node:fs'
-import type { RulesConfig, TemplateRule } from '@sittir/types'
+import type { TemplateRule } from '@sittir/types'
 import type { NodeMap } from '../compiler/types.ts'
 import { buildRuleLookup } from './rule-lookup.ts'
+import { deriveRuleKinds, loadRulesFromPath } from './templates-path.ts'
 
 /**
- * Derive the set of rule kinds the renderer can handle, from either
- * a legacy YAML file or a directory of per-rule `.jinja` files
- * (feature 011).
+ * Derive the set of rule kinds the renderer can handle. For a directory
+ * of `.jinja` files (feature 011 layout) the set is the filename stems.
+ * For a legacy YAML file we ALSO expand variant subtypes (a variant
+ * template selects by child kind, so each variant's subtype is
+ * renderable through the parent rule). The Jinja layout inlines
+ * variant branching into the template body, so no expansion is
+ * possible or needed.
  */
 function collectRuleKindsFromPath(templatesPath: string): Set<string> {
-    try {
-        const stat = statSync(templatesPath)
-        if (stat.isDirectory()) {
-            return new Set(
-                readdirSync(templatesPath)
-                    .filter((f) => f.endsWith('.jinja'))
-                    .map((f) => f.slice(0, -'.jinja'.length)),
-            )
-        }
-    } catch {
-        // Fall through to YAML parsing.
-    }
-    const content = readFileSync(templatesPath, 'utf-8')
-    const config = parseYaml(content) as RulesConfig
-    return collectRuleKinds(config)
+    const base = deriveRuleKinds(templatesPath)
+    if (!templatesPath.endsWith('.yaml') && !templatesPath.endsWith('.yml')) return base
+    // YAML path — expand variant subtypes recorded in the rule objects.
+    const rules = loadRulesFromPath(templatesPath) as Record<string, TemplateRule>
+    for (const rule of Object.values(rules)) collectVariantKindsFromRule(rule, base)
+    return base
 }
 
 // ---------------------------------------------------------------------------
@@ -209,22 +203,6 @@ function collectVariantKindsFromRule(rule: TemplateRule, kinds: Set<string>): vo
             }
         }
     }
-}
-
-/**
- * Collect every kind addressable via the rules map: both top-level entries
- * and variant subtypes (a variant template selects based on child kind, so
- * the variant-subtype itself is renderable through the parent's rule).
- */
-function collectRuleKinds(config: RulesConfig): Set<string> {
-    const kinds = new Set<string>()
-    const rules = (config as { rules?: Record<string, TemplateRule> }).rules ?? {}
-    for (const [kind, rule] of Object.entries(rules)) {
-        kinds.add(kind)
-
-        collectVariantKindsFromRule(rule, kinds)
-    }
-    return kinds
 }
 
 // ---------------------------------------------------------------------------

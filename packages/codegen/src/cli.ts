@@ -271,7 +271,7 @@ if (cliArgs.roundtrip) {
 	console.log(formatFactoryRoundTripReport(frtResult));
 
 	// from() correctness (structural comparison: from() vs factory())
-	const fromResult = await validateFrom(config.grammar, templatesDir);
+	const fromResult = await validateFrom(config.grammar);
 	console.log(formatFromReport(fromResult));
 
 	// Collect round-trip failures into a structured diagnostic list and

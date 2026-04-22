@@ -143,19 +143,10 @@ export interface FromValidationResult {
 	errors: FromValidationError[];
 }
 
-export async function validateFrom(
-	grammar: string,
-	templatesPath: string,
-): Promise<FromValidationResult> {
+export async function validateFrom(grammar: string): Promise<FromValidationResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
-
-	// Templates path parameter retained for signature parity with the
-	// other validators and for future Nunjucks-powered rendering
-	// needs; `validateFrom` itself doesn't currently render — the
-	// from() surface is the test subject.
-	void templatesPath;
 
 	// Import from() + factory + wrap modules. `.from()` expects a fluent
 	// NodeData (from factory output OR readTreeNode wrap) OR a camelCase

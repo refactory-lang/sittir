@@ -11,33 +11,9 @@
  */
 
 import { createRequire } from 'node:module';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { parse as parseYaml } from 'yaml';
-
-/**
- * Derive the set of rule kinds the renderer knows about from a
- * templates source path (directory of `.jinja` files or a legacy
- * `.yaml` file).
- */
-function deriveRuleKinds(templatesPath: string): Set<string> {
-	try {
-		const stat = statSync(templatesPath);
-		if (stat.isDirectory()) {
-			return new Set(
-				readdirSync(templatesPath)
-					.filter((f) => f.endsWith('.jinja'))
-					.map((f) => f.slice(0, -'.jinja'.length)),
-			);
-		}
-	} catch {
-		// Fall through to YAML parse.
-	}
-	const content = readFileSync(templatesPath, 'utf-8');
-	const config = parseYaml(content) as RulesConfig;
-	return new Set(Object.keys(config.rules));
-}
 import { readNode, createRenderer } from '@sittir/core';
-import type { AnyNodeData, NodeFieldValue, RulesConfig } from '@sittir/types';
+import type { AnyNodeData, NodeFieldValue } from '@sittir/types';
+import { deriveRuleKinds } from './templates-path.ts';
 import { loadRawEntries } from './node-types-loader.ts';
 import {
 	loadCorpusEntries,

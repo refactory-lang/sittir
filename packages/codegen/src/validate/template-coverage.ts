@@ -27,9 +27,7 @@
  */
 
 import { loadRawEntries, type RawNodeEntry, type RawFieldEntry } from './node-types-loader.ts'
-import { parse as parseYaml } from 'yaml'
-import { readFileSync, readdirSync, statSync } from 'node:fs'
-import { join } from 'node:path'
+import { loadRulesFromPath as loadRulesFromTemplatesPath } from './templates-path.ts'
 
 /**
  * Load the rules map from either a legacy YAML file or a directory of
@@ -75,27 +73,9 @@ function jinjaInterpolationsToLegacy(body: string): string {
 }
 
 function loadRulesFromPath(templatesPath: string): Record<string, TemplateRule> {
-    try {
-        const stat = statSync(templatesPath)
-        if (stat.isDirectory()) {
-            const rules: Record<string, TemplateRule> = {}
-            for (const name of readdirSync(templatesPath)) {
-                if (!name.endsWith('.jinja')) continue
-                const kind = name.slice(0, -'.jinja'.length)
-                const body = readFileSync(join(templatesPath, name), 'utf-8')
-                const stripped = body.replace(/^\{#[^#]*#\}\s*/, '')
-                rules[kind] = jinjaBodyToLegacyRule(stripped)
-            }
-            return rules
-        }
-    } catch {
-        // Fall through to YAML parsing.
-    }
-    const content = readFileSync(templatesPath, 'utf-8')
-    const config = parseYaml(content) as RulesConfig
-    return (config as { rules?: Record<string, TemplateRule> }).rules ?? {}
+    return loadRulesFromTemplatesPath(templatesPath, (_kind, body) => jinjaBodyToLegacyRule(body))
 }
-import type { RulesConfig, TemplateRule, TemplateRuleObject } from '@sittir/types'
+import type { TemplateRule, TemplateRuleObject } from '@sittir/types'
 
 // ---------------------------------------------------------------------------
 // Result shape
