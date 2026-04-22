@@ -1,15 +1,48 @@
 #!/usr/bin/env bash
 # Common functions and variables for all scripts
 
-# Get repository root, with fallback for non-git repositories
+# Find repository root by searching upward for .specify directory
+# This is the primary marker for spec-kit projects
+find_specify_root() {
+    local dir="${1:-$(pwd)}"
+    # Normalize to absolute path to prevent infinite loop with relative paths
+    # Use -- to handle paths starting with - (e.g., -P, -L)
+    dir="$(cd -- "$dir" 2>/dev/null && pwd)" || return 1
+    local prev_dir=""
+    while true; do
+        if [ -d "$dir/.specify" ]; then
+            echo "$dir"
+            return 0
+        fi
+        # Stop if we've reached filesystem root or dirname stops changing
+        if [ "$dir" = "/" ] || [ "$dir" = "$prev_dir" ]; then
+            break
+        fi
+        prev_dir="$dir"
+        dir="$(dirname "$dir")"
+    done
+    return 1
+}
+
+# Get repository root, prioritizing .specify directory over git
+# This prevents using a parent git repo when spec-kit is initialized in a subdirectory
 get_repo_root() {
+    # First, look for .specify directory (spec-kit's own marker)
+    local specify_root
+    if specify_root=$(find_specify_root); then
+        echo "$specify_root"
+        return
+    fi
+
+    # Fallback to git if no .specify found
     if git rev-parse --show-toplevel >/dev/null 2>&1; then
         git rev-parse --show-toplevel
-    else
-        # Fall back to script location for non-git repos
-        local script_dir="$(CDPATH="" cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-        (cd "$script_dir/../../.." && pwd)
+        return
     fi
+
+    # Final fallback to script location for non-git repos
+    local script_dir="$(CDPATH="" cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    (cd "$script_dir/../../.." && pwd)
 }
 
 # Get current branch, with fallback for non-git repositories
@@ -20,29 +53,40 @@ get_current_branch() {
         return
     fi
 
-    # Then check git if available
-    if git rev-parse --abbrev-ref HEAD >/dev/null 2>&1; then
-        git rev-parse --abbrev-ref HEAD
+    # Then check git if available at the spec-kit root (not parent)
+    local repo_root=$(get_repo_root)
+    if has_git; then
+        git -C "$repo_root" rev-parse --abbrev-ref HEAD
         return
     fi
 
     # For non-git repos, try to find the latest feature directory
-    local repo_root=$(get_repo_root)
     local specs_dir="$repo_root/specs"
 
     if [[ -d "$specs_dir" ]]; then
         local latest_feature=""
         local highest=0
+        local latest_timestamp=""
 
         for dir in "$specs_dir"/*; do
             if [[ -d "$dir" ]]; then
                 local dirname=$(basename "$dir")
-                if [[ "$dirname" =~ ^([0-9]{3})- ]]; then
+                if [[ "$dirname" =~ ^([0-9]{8}-[0-9]{6})- ]]; then
+                    # Timestamp-based branch: compare lexicographically
+                    local ts="${BASH_REMATCH[1]}"
+                    if [[ "$ts" > "$latest_timestamp" ]]; then
+                        latest_timestamp="$ts"
+                        latest_feature=$dirname
+                    fi
+                elif [[ "$dirname" =~ ^([0-9]{3})- ]]; then
                     local number=${BASH_REMATCH[1]}
                     number=$((10#$number))
                     if [[ "$number" -gt "$highest" ]]; then
                         highest=$number
-                        latest_feature=$dirname
+                        # Only update if no timestamp branch found yet
+                        if [[ -z "$latest_timestamp" ]]; then
+                            latest_feature=$dirname
+                        fi
                     fi
                 fi
             fi
@@ -57,9 +101,17 @@ get_current_branch() {
     echo "main"  # Final fallback
 }
 
-# Check if we have git available
+# Check if we have git available at the spec-kit root level
+# Returns true only if git is installed and the repo root is inside a git work tree
+# Handles both regular repos (.git directory) and worktrees/submodules (.git file)
 has_git() {
-    git rev-parse --show-toplevel >/dev/null 2>&1
+    # First check if git command is available (before calling get_repo_root which may use git)
+    command -v git >/dev/null 2>&1 || return 1
+    local repo_root=$(get_repo_root)
+    # Check if .git exists (directory or file for worktrees/submodules)
+    [ -e "$repo_root/.git" ] || return 1
+    # Verify it's actually a valid git work tree
+    git -C "$repo_root" rev-parse --is-inside-work-tree >/dev/null 2>&1
 }
 
 check_feature_branch_old() {
@@ -72,9 +124,9 @@ check_feature_branch_old() {
         return 0
     fi
 
-    if [[ ! "$branch" =~ ^[0-9]{3}- ]]; then
+    if [[ ! "$branch" =~ ^[0-9]{3}- ]] && [[ ! "$branch" =~ ^[0-9]{8}-[0-9]{6}- ]]; then
         echo "ERROR: Not on a feature branch. Current branch: $branch" >&2
-        echo "Feature branches should be named like: 001-feature-name" >&2
+        echo "Feature branches should be named like: 001-feature-name or 20260319-143022-feature-name" >&2
         return 1
     fi
 
@@ -90,14 +142,17 @@ find_feature_dir_by_prefix() {
     local branch_name="$2"
     local specs_dir="$repo_root/specs"
 
-    # Extract numeric prefix from branch (e.g., "004" from "004-whatever")
-    if [[ ! "$branch_name" =~ ^([0-9]{3})- ]]; then
-        # If branch doesn't have numeric prefix, fall back to exact match
+    # Extract prefix from branch (e.g., "004" from "004-whatever" or "20260319-143022" from timestamp branches)
+    local prefix=""
+    if [[ "$branch_name" =~ ^([0-9]{8}-[0-9]{6})- ]]; then
+        prefix="${BASH_REMATCH[1]}"
+    elif [[ "$branch_name" =~ ^([0-9]{3})- ]]; then
+        prefix="${BASH_REMATCH[1]}"
+    else
+        # If branch doesn't have a recognized prefix, fall back to exact match
         echo "$specs_dir/$branch_name"
         return
     fi
-
-    local prefix="${BASH_REMATCH[1]}"
 
     # Search for directories in specs/ that start with this prefix
     local matches=()
@@ -119,8 +174,8 @@ find_feature_dir_by_prefix() {
     else
         # Multiple matches - this shouldn't happen with proper naming convention
         echo "ERROR: Multiple spec directories found with prefix '$prefix': ${matches[*]}" >&2
-        echo "Please ensure only one spec directory exists per numeric prefix." >&2
-        echo "$specs_dir/$branch_name"  # Return something to avoid breaking the script
+        echo "Please ensure only one spec directory exists per prefix." >&2
+        return 1
     fi
 }
 
@@ -134,21 +189,25 @@ get_feature_paths() {
     fi
 
     # Use prefix-based lookup to support multiple branches per spec
-    local feature_dir=$(find_feature_dir_by_prefix "$repo_root" "$current_branch")
+    local feature_dir
+    if ! feature_dir=$(find_feature_dir_by_prefix "$repo_root" "$current_branch"); then
+        echo "ERROR: Failed to resolve feature directory" >&2
+        return 1
+    fi
 
-    cat <<EOF
-REPO_ROOT='$repo_root'
-CURRENT_BRANCH='$current_branch'
-HAS_GIT='$has_git_repo'
-FEATURE_DIR='$feature_dir'
-FEATURE_SPEC='$feature_dir/spec.md'
-IMPL_PLAN='$feature_dir/plan.md'
-TASKS='$feature_dir/tasks.md'
-RESEARCH='$feature_dir/research.md'
-DATA_MODEL='$feature_dir/data-model.md'
-QUICKSTART='$feature_dir/quickstart.md'
-CONTRACTS_DIR='$feature_dir/contracts'
-EOF
+    # Use printf '%q' to safely quote values, preventing shell injection
+    # via crafted branch names or paths containing special characters
+    printf 'REPO_ROOT=%q\n' "$repo_root"
+    printf 'CURRENT_BRANCH=%q\n' "$current_branch"
+    printf 'HAS_GIT=%q\n' "$has_git_repo"
+    printf 'FEATURE_DIR=%q\n' "$feature_dir"
+    printf 'FEATURE_SPEC=%q\n' "$feature_dir/spec.md"
+    printf 'IMPL_PLAN=%q\n' "$feature_dir/plan.md"
+    printf 'TASKS=%q\n' "$feature_dir/tasks.md"
+    printf 'RESEARCH=%q\n' "$feature_dir/research.md"
+    printf 'DATA_MODEL=%q\n' "$feature_dir/data-model.md"
+    printf 'QUICKSTART=%q\n' "$feature_dir/quickstart.md"
+    printf 'CONTRACTS_DIR=%q\n' "$feature_dir/contracts"
 }
 
 # Check if jq is available for safe JSON construction
@@ -168,6 +227,9 @@ json_escape() {
     s="${s//$'\b'/\\b}"
     s="${s//$'\f'/\\f}"
     # Escape any remaining U+0001-U+001F control characters as \uXXXX.
+    # (U+0000/NUL cannot appear in bash strings and is excluded.)
+    # LC_ALL=C ensures ${#s} counts bytes and ${s:$i:1} yields single bytes,
+    # so multi-byte UTF-8 sequences (first byte >= 0xC0) pass through intact.
     local LC_ALL=C
     local i char code
     for (( i=0; i<${#s}; i++ )); do
@@ -203,6 +265,9 @@ resolve_template() {
     if [ -d "$presets_dir" ]; then
         local registry_file="$presets_dir/.registry"
         if [ -f "$registry_file" ] && command -v python3 >/dev/null 2>&1; then
+            # Read preset IDs sorted by priority (lower number = higher precedence).
+            # The python3 call is wrapped in an if-condition so that set -e does not
+            # abort the function when python3 exits non-zero (e.g. invalid JSON).
             local sorted_presets=""
             if sorted_presets=$(SPECKIT_REGISTRY="$registry_file" python3 -c "
 import json, sys, os
@@ -216,12 +281,15 @@ except Exception:
     sys.exit(1)
 " 2>/dev/null); then
                 if [ -n "$sorted_presets" ]; then
+                    # python3 succeeded and returned preset IDs — search in priority order
                     while IFS= read -r preset_id; do
                         local candidate="$presets_dir/$preset_id/templates/${template_name}.md"
                         [ -f "$candidate" ] && echo "$candidate" && return 0
                     done <<< "$sorted_presets"
                 fi
+                # python3 succeeded but registry has no presets — nothing to search
             else
+                # python3 failed (missing, or registry parse error) — fall back to unordered directory scan
                 for preset in "$presets_dir"/*/; do
                     [ -d "$preset" ] || continue
                     local candidate="$preset/templates/${template_name}.md"
@@ -229,6 +297,7 @@ except Exception:
                 done
             fi
         else
+            # Fallback: alphabetical directory order (no python3 available)
             for preset in "$presets_dir"/*/; do
                 [ -d "$preset" ] || continue
                 local candidate="$preset/templates/${template_name}.md"
@@ -242,6 +311,7 @@ except Exception:
     if [ -d "$ext_dir" ]; then
         for ext in "$ext_dir"/*/; do
             [ -d "$ext" ] || continue
+            # Skip hidden directories (e.g. .backup, .cache)
             case "$(basename "$ext")" in .*) continue;; esac
             local candidate="$ext/templates/${template_name}.md"
             [ -f "$candidate" ] && echo "$candidate" && return 0
@@ -252,7 +322,9 @@ except Exception:
     local core="$base/${template_name}.md"
     [ -f "$core" ] && echo "$core" && return 0
 
-    # Template not found
+    # Template not found in any location.
+    # Return 1 so callers can distinguish "not found" from "found".
+    # Callers running under set -e should use: TEMPLATE=$(resolve_template ...) || true
     return 1
 }
 
@@ -263,24 +335,18 @@ check_feature_branch() {
     local branch="${1:-}"
     local has_git_repo="${2:-}"
 
-    # If branch not provided as parameter, get current branch
-    if [[ -z "$branch" ]]; then
-        if git rev-parse --git-dir > /dev/null 2>&1; then
-            branch=$(git branch --show-current)
-            has_git_repo="true"
-        else
-            return 0
-        fi
+    # If branch not provided as parameter, try to resolve it from Git.
+    if [[ -z "$branch" ]] && git rev-parse --git-dir > /dev/null 2>&1; then
+        branch=$(git branch --show-current)
+        has_git_repo="true"
     fi
 
-    # For non-git repos, skip validation if explicitly specified
-    if [[ "$has_git_repo" != "true" && -n "$has_git_repo" ]]; then
-        echo "[specify] Warning: Git repository not detected; skipped branch validation" >&2
-        return 0
-    fi
+    # If upstream logic is available, preserve it for all standard branches.
+    # This wrapper only short-circuits extra branch patterns introduced by
+    # spec-kit-extensions and delegates everything else back to spec-kit.
 
-    # AI agent branch patterns - allow any branch created by AI agents
-    # These branches bypass validation as agents manage their own branch naming
+    # AI agent branch patterns - allow any branch created by AI agents.
+    # These branches bypass validation as agents manage their own branch naming.
     local agent_prefixes=(
         "claude/"
         "copilot/"
@@ -316,6 +382,27 @@ check_feature_branch() {
             return 0
         fi
     done
+
+    if declare -f check_feature_branch_old > /dev/null 2>&1; then
+        check_feature_branch_old "$branch" "$has_git_repo"
+        return $?
+    fi
+
+    # Fallback behavior if the upstream function cannot be found.
+    if [[ -z "$branch" ]]; then
+        if git rev-parse --git-dir > /dev/null 2>&1; then
+            branch=$(git branch --show-current)
+            has_git_repo="true"
+        else
+            return 0
+        fi
+    fi
+
+    # For non-git repos, skip validation if explicitly specified
+    if [[ "$has_git_repo" != "true" && -n "$has_git_repo" ]]; then
+        echo "[specify] Warning: Git repository not detected; skipped branch validation" >&2
+        return 0
+    fi
 
     # Check standard spec-kit pattern (###-)
     if [[ "$branch" =~ ^[0-9]{3}- ]]; then

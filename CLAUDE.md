@@ -298,3 +298,7 @@ that the directive would split — granularity per comment block.
 
 ## Recent Changes
 - 004-yaml-render-templates: Added TypeScript (ESM, `.ts` extensions in imports), TypeScript 6.0.2 + `@sittir/core`, `@sittir/types`, `@sittir/codegen`; tree-sitter grammars (grammar.json + node-types.json)
+
+<!-- SPECKIT START -->
+Current plan: `specs/011-jinja-template-migration/plan.md`
+<!-- SPECKIT END -->
