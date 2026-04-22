@@ -147,6 +147,36 @@ describe('$TEXT fallback + anon-filter shape — post-011 coverage', () => {
 		}
 	});
 
+	it('uses $text verbatim when present — synthesis does not overwrite a real span', () => {
+		// Parsed-tree path: readNode captured $text from the source.
+		// Synthesis must NOT fire — the real span wins over any
+		// rendered-fields concatenation. Regression guard: earlier
+		// versions of the fallback tested `$text === ''` which
+		// accidentally treats a falsy-but-intentional `''` as absent;
+		// the current gate `$text === ''` is the intent, but this test
+		// pins that a non-empty $text short-circuits regardless of
+		// fields being present.
+		const tmp = mkdtempSync(join(tmpdir(), 'sittir-nunjucks-render-'));
+		try {
+			writeFileSync(join(tmp, 'raw.jinja'), '{{ text }}');
+			writeFileSync(join(tmp, 'id.jinja'), '{{ text }}');
+			const { render } = createRendererFromConfig(emptyConfig, { templatesDir: tmp });
+			const node: AnyNodeData = {
+				$type: 'raw',
+				$text: 'r"actual"',
+				$fields: {
+					a: { $type: 'id', $text: 'hello' },
+					b: { $type: 'id', $text: 'world' },
+				},
+			};
+			// $text wins — synthesis (which would give "helloworld")
+			// doesn't fire because the real span is present.
+			expect(render(node)).toBe('r"actual"');
+		} finally {
+			rmSync(tmp, { recursive: true, force: true });
+		}
+	});
+
 	it('filters anon children out of multi-valued field slots', () => {
 		// Multi-valued slot with a structural anon separator interleaved:
 		// the anon is a structural comma, it belongs in the joinBy, not

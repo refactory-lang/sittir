@@ -163,6 +163,17 @@ export type FlankedChildArray = readonly string[] & {
 };
 
 /**
+ * Mutable counterpart to `FlankedChildArray` — used by the context
+ * builder to accumulate children before handing the readonly view to
+ * the template. Kept in sync with `FlankedChildArray` so the two
+ * shapes can't drift independently.
+ */
+type MutableFlankedChildArray = string[] & {
+	_leading_anon?: string;
+	_trailing_anon?: string;
+};
+
+/**
  * Phase 1 of render: resolve the template, walk the template's `$VAR`
  * placeholders in order, and pre-compute each slot's rendered value
  * (consuming children as needed). Returns a `PreparedRender` bag that
@@ -881,9 +892,11 @@ function tokenShapedFallback(node: AnyNodeData): string {
 }
 
 /**
- * Build a TemplateContext using the recursive Nunjucks renderer for
- * child / field values. Mirrors `buildTemplateContext` (which uses
- * the legacy path) but plumbs Nunjucks all the way down.
+ * Build a TemplateContext for the Nunjucks render path: rendered field
+ * slots (string for single, `string[]` for multi) plus a
+ * `FlankedChildArray` for children carrying the text of any anonymous
+ * separator adjacent to the named-child run. Recursive — child nodes
+ * render via `renderNunjucks` before their strings land in the bag.
  */
 function buildNunjucksTemplateContext(
 	node: AnyNodeData,
@@ -900,12 +913,11 @@ function buildNunjucksTemplateContext(
 	// Children: render every named child. Flank anons (an anonymous
 	// token immediately before / after the named-child run) ride
 	// along as array properties `_leading_anon` / `_trailing_anon` —
-	// sittir's `join` filter compares them to its separator argument
-	// and emits the flank inline when they match. No separate
-	// `| flank(...)` call at the template site.
-	const children: string[] & { _leading_anon?: string; _trailing_anon?: string } = [];
-	// Shape-equivalent to `FlankedChildArray` modulo mutability — the
-	// context emits the readonly view to the template.
+	// the `joinWithTrailing` / `joinWithLeading` / `joinWithFlanks`
+	// filters compare them to their separator argument and emit the
+	// flank inline when they match. Plain `join` ignores the
+	// side-channel.
+	const children: MutableFlankedChildArray = [];
 	if (node.$children) {
 		let firstNamedIdx = -1;
 		let lastNamedIdx = -1;

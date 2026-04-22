@@ -67,10 +67,13 @@ export function emitJinjaTemplates(config: EmitTemplatesConfig): EmittedTemplate
             body = emitBodyForNode(node, nodeMap.rules ?? {}, wordMatcher ?? /\w/)
         } catch (err) {
             // Re-throw with grammar + kind context so the emitter caller
-            // gets an actionable error message.
-            const cause = err instanceof Error ? err.message : String(err)
+            // gets an actionable error message. `{ cause }` preserves
+            // the original stack for Error.cause-aware debuggers (Node
+            // 16.9+), matching the renderNunjucks wrap in core/render.ts.
+            const detail = err instanceof Error ? err.message : String(err)
             throw new Error(
-                `emitJinjaTemplates: failed on ${config.grammar}/${kind}: ${cause}`,
+                `emitJinjaTemplates: failed on ${config.grammar}/${kind}: ${detail}`,
+                { cause: err },
             )
         }
         if (body === null) continue

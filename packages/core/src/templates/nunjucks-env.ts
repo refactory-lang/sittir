@@ -45,9 +45,11 @@ export function createNunjucksEnvironment(templatesDir: string): nunjucks.Enviro
 		//
 		// FR-018 / SC-005 (undefined-variable surfacing) is still
 		// satisfied for:
-		//   1. Typed expressions — `{{ x | filter }}` where `x` is
-		//      undefined DOES throw (Nunjucks resolves before the
-		//      filter applies). Covered by the T038 test.
+		//   1. Unknown / unregistered filter — `{{ x | no_such }}`
+		//      throws with filename context via the renderNunjucks
+		//      wrap. Covered by the T038 test. (Our registered join*
+		//      filters deliberately tolerate undefined to model the
+		//      "optional multi-slot" case; other filters don't.)
 		//   2. Template-file-missing — renderNunjucks in core/render.ts
 		//      wraps Nunjucks errors with rule kind + filename context.
 		//   3. Compile-time validation — Rust askama path (Phase 4,
@@ -91,25 +93,19 @@ export function createNunjucksEnvironment(templatesDir: string): nunjucks.Enviro
  */
 function registerSittirFilters(env: nunjucks.Environment): void {
 	/**
-	 * Normalize the value a `join*` filter receives.
-	 *
-	 * - `undefined` / `null`           — absent optional multi-slot; render `''`.
-	 * - `readonly string[]`            — the happy path; caller joins with sep.
-	 * - `string` / `number` / `boolean` — legacy walker behavior: some rules
-	 *   classify a single-slot container field with `$$$NAME` (emits
-	 *   `| join(sep)`); the factory-produced value is a pre-rendered scalar.
-	 *   Coerce to string and return unwrapped — matches the legacy
-	 *   regex-substitutor's `String(value)` fallback.
-	 * - anything else (object, symbol, NodeData) — throw. A non-coerceable
-	 *   value reaching a `join*` filter is a context-builder bug; silent
-	 *   `"[object Object]"` in the rendered output only surfaces later
-	 *   as a reparse failure.
+	 * Normalize the value a `join*` filter receives. Returns an array
+	 * (happy path; caller joins with its sep) or a string (already-
+	 * rendered scalar — passed through verbatim to cover the walker's
+	 * legacy `$$$NAME` classification of single-slot container fields).
+	 * Nullish becomes `''`. Any other shape (object, symbol, NodeData)
+	 * is a context-builder bug: throw with filter name and value preview
+	 * instead of silently rendering `"[object Object]"`.
 	 */
-	const scalarJoin = (value: unknown, filterName: string): { arr: readonly string[] | null; scalar: string | null } => {
-		if (value === undefined || value === null) return { arr: null, scalar: null }
-		if (Array.isArray(value)) return { arr: value as readonly string[], scalar: null }
-		if (typeof value === 'string') return { arr: null, scalar: value }
-		if (typeof value === 'number' || typeof value === 'boolean') return { arr: null, scalar: String(value) }
+	const normalizeJoinValue = (value: unknown, filterName: string): readonly string[] | string => {
+		if (value === undefined || value === null) return ''
+		if (Array.isArray(value)) return value as readonly string[]
+		if (typeof value === 'string') return value
+		if (typeof value === 'number' || typeof value === 'boolean') return String(value)
 		throw new TypeError(
 			`${filterName}: unsupported value type ${typeof value} ` +
 			`(value = ${JSON.stringify(value)?.slice(0, 120)}). Expected array / string / nullish; ` +
@@ -118,9 +114,8 @@ function registerSittirFilters(env: nunjucks.Environment): void {
 	}
 	const sepOf = (sep: unknown): string => typeof sep === 'string' ? sep : ''
 	env.addFilter('join', (value: unknown, sep: unknown) => {
-		const { arr, scalar } = scalarJoin(value, 'join')
-		if (arr) return arr.join(sepOf(sep))
-		return scalar ?? ''
+		const v = normalizeJoinValue(value, 'join')
+		return Array.isArray(v) ? v.join(sepOf(sep)) : v
 	})
 	const flankJoin = (
 		value: unknown,
@@ -128,15 +123,13 @@ function registerSittirFilters(env: nunjucks.Environment): void {
 		filterName: string,
 		sides: { leading: boolean; trailing: boolean },
 	): string => {
+		const v = normalizeJoinValue(value, filterName)
+		if (!Array.isArray(v)) return v
 		const s = sepOf(sep)
-		const { arr, scalar } = scalarJoin(value, filterName)
-		if (!arr) return scalar ?? ''
-		const flanked = arr as FlankedChildArray
-		const leading = sides.leading ? flanked._leading_anon : undefined
-		const trailing = sides.trailing ? flanked._trailing_anon : undefined
-		const prefix = leading === s ? s : ''
-		const suffix = trailing === s ? s : ''
-		return prefix + arr.join(s) + suffix
+		const flanked = v as FlankedChildArray
+		const prefix = sides.leading && flanked._leading_anon === s ? s : ''
+		const suffix = sides.trailing && flanked._trailing_anon === s ? s : ''
+		return prefix + v.join(s) + suffix
 	}
 	env.addFilter('joinWithTrailing', (value: unknown, sep: unknown) =>
 		flankJoin(value, sep, 'joinWithTrailing', { leading: false, trailing: true }),
