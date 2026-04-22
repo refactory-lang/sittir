@@ -624,7 +624,8 @@ type OptionalNonAutoStampKeys<T> = {
  */
 export type FromInputOf<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMap = {}> = Simplify<
 	Depth['length'] extends MaxDepth ? T
-	: {
+	: (T extends { readonly $type: infer K } ? { readonly $type?: K } : {})
+	& {
 		readonly [K in keyof FieldsOf<T> as K extends RequiredNonAutoStampKeys<FieldsOf<T>> ? CamelCase<K> : never]:
 			WidenSlotValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0], NsMap>;
 	} & {
