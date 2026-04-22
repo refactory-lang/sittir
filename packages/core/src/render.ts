@@ -82,11 +82,53 @@ function resolveTemplate(rule: TemplateRule, node: AnyNodeData, varPattern: RegE
 }
 
 // ---------------------------------------------------------------------------
-// Render engine
+// Render engine — two-stage: prepare() + applyTemplate()
 // ---------------------------------------------------------------------------
+//
+// prepare() walks the node + template once, resolving each `$VAR`
+// placeholder in template order. Consumption tracking (mutable Set of
+// child indices) lives entirely inside prepare() — by the time it
+// returns, every slot value is a finished string and no further
+// reference to $children indices is needed.
+//
+// applyTemplate() does the regex-free substitution: iterate the
+// precomputed substitution list, apply column-aware re-indentation
+// at each site, run the final absent-field space-absorption pass.
+//
+// This shape is the precondition for swapping the hand-rolled
+// substitutor for a declarative template engine (askama / Nunjucks):
+// the declarative engine consumes a finished bag, which is exactly
+// what prepare() produces (modulo key shape — phase 2 of ADR-0013).
+//
+// Per-slot substitution (one entry per `$VAR` occurrence in the
+// template, in match order). `matchIndex` + `matchLength` describe
+// the placeholder's extent in the (trailing-newline-trimmed)
+// template; `value` is the slot's pre-rendered string.
 
-function render(node: AnyNodeData, ctx: InternalRenderContext): string {
-	if (node.$text !== undefined && !node.$fields && !node.$children) return node.$text;
+interface Substitution {
+	readonly matchIndex: number;
+	readonly matchLength: number;
+	readonly value: string;
+}
+
+export interface PreparedRender {
+	/** Rendered-text form when the node bypasses template substitution
+	 *  (leaf text-only node, or token-shaped kind with no rule). */
+	readonly text?: string;
+	/** Template + pre-resolved substitutions. Absent when `text` is set. */
+	readonly template?: string;
+	readonly substitutions?: readonly Substitution[];
+}
+
+/**
+ * Phase 1 of render: resolve the template, walk the template's `$VAR`
+ * placeholders in order, and pre-compute each slot's rendered value
+ * (consuming children as needed). Returns a `PreparedRender` bag that
+ * `applyTemplate()` can substitute against without reaching back into
+ * the node's tree-sitter structure.
+ */
+export function prepare(node: AnyNodeData, ctx: InternalRenderContext): PreparedRender {
+	if (node.$text !== undefined && !node.$fields && !node.$children) return { text: node.$text };
 
 	if (!node.$fields && !node.$children) {
 		throw new Error(`Node '${node.$type}' has no 'fields' or 'children' — did you mean to set 'text' for a leaf node?`);
@@ -117,7 +159,7 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 		);
 		const childrenAllAnon = !node.$children ||
 			(node.$children as readonly AnyNodeData[]).every(c => c.$named === false);
-		if (node.$text !== undefined && fieldsAllAnon && childrenAllAnon) return node.$text;
+		if (node.$text !== undefined && fieldsAllAnon && childrenAllAnon) return { text: node.$text };
 		throw new Error(`No render rule for '${node.$type}'`);
 	}
 
@@ -369,6 +411,33 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 		return '';
 	};
 
+	// Walk the template's `$VAR` placeholders in order, resolving each
+	// slot now. Consumption happens entirely inside this loop; the
+	// returned substitutions carry finished strings. `matchAll` captures
+	// up-front so recursive sub-prepares (which reuse the same
+	// varPattern) cannot interfere with the outer iteration's lastIndex.
+	const substitutions: Substitution[] = [];
+	for (const match of tmpl.matchAll(varPattern)) {
+		substitutions.push({
+			matchIndex: match.index!,
+			matchLength: match[0].length,
+			value: resolveSlot(match[1]!, match[2]!),
+		});
+	}
+	return { template: tmpl, substitutions };
+}
+
+/**
+ * Phase 2 of render: apply precomputed substitutions to the template,
+ * preserving column-aware re-indentation and post-pass absent-field
+ * space absorption. Pure function over the `PreparedRender` bag — no
+ * reach-back into node structure.
+ */
+function applyTemplate(prepared: PreparedRender): string {
+	if (prepared.text !== undefined) return prepared.text;
+	const { template, substitutions } = prepared;
+	if (template === undefined || substitutions === undefined) return '';
+
 	// Substitute with column-aware re-indentation. For each `$VAR` we look
 	// at the characters since the previous newline in `result`; if they
 	// are all spaces (line-leading indentation), we insert that same
@@ -378,22 +447,17 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 	// and each outer substitution re-indents the joined content.
 	let result = '';
 	let lastIdx = 0;
-	// Capture matches up-front: `matchAll` returns an independent iterator,
-	// so recursive sub-renders (which reuse the same varPattern) cannot
-	// interfere with the outer iteration's `lastIndex`.
-	for (const match of tmpl.matchAll(varPattern)) {
-		const idx = match.index!;
-		result += tmpl.slice(lastIdx, idx);
-		const slot = resolveSlot(match[1]!, match[2]!);
+	for (const sub of substitutions) {
+		result += template.slice(lastIdx, sub.matchIndex);
 		const lastNl = result.lastIndexOf('\n');
 		const lineLead = lastNl === -1 ? result : result.slice(lastNl + 1);
 		const indented = lineLead.length > 0 && /^ +$/.test(lineLead)
-			? slot.replace(/\n/g, '\n' + lineLead)
-			: slot;
+			? sub.value.replace(/\n/g, '\n' + lineLead)
+			: sub.value;
 		result += indented;
-		lastIdx = idx + match[0].length;
+		lastIdx = sub.matchIndex + sub.matchLength;
 	}
-	result += tmpl.slice(lastIdx);
+	result += template.slice(lastIdx);
 
 	// FR-017: Absent-field space absorption — collapse runs of 2+ spaces
 	// left by empty variable interpolations. The negative lookbehind skips
@@ -403,6 +467,10 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 	// whitespace (block-bearer fields emit `\n  …\n`). The top-level
 	// `boundRender` wrapper trims once at the end of the render tree.
 	return result.replace(/(?<![\n ]) {2,}/g, ' ');
+}
+
+function render(node: AnyNodeData, ctx: InternalRenderContext): string {
+	return applyTemplate(prepare(node, ctx));
 }
 
 /**
