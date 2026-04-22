@@ -140,19 +140,19 @@ export type PreparedRender =
  * colliding with any reserved name is a translator-time error.
  */
 export interface TemplateContext {
-	readonly [fieldName: string]: string | undefined | readonly string[] | boolean;
-	/** Pre-joined unconsumed named children. */
-	readonly children: string;
-	/** Individual pre-rendered children in source order. */
-	readonly children_list: readonly string[];
+	readonly [fieldName: string]: unknown;
+	/** Pre-rendered named children in source order. Walker emits
+	 *  `{{ children | joinby("<sep>") }}` — the separator lives in the
+	 *  template, not in runtime config. */
+	readonly children: readonly string[];
+	/** Raw $children array — passed to the `has_flank_sep` Jinja global
+	 *  for leading / trailing separator detection. */
+	readonly _children: readonly unknown[];
 	/** Node's $variant, empty string when absent. */
 	readonly variant: string;
-	/** Node's $text, empty string when absent. */
+	/** Node's $text, empty string when absent (factory-built nodes
+	 *  synthesize from rendered fields + children). */
 	readonly text: string;
-	/** flankSep trailing result (ADR-0013 Task 3). */
-	readonly trailing_sep: boolean;
-	/** flankSep leading result (ADR-0013 Task 3). */
-	readonly leading_sep: boolean;
 }
 
 /**
@@ -956,64 +956,54 @@ function buildNunjucksTemplateContext(
 	env: NunjucksEnvLike,
 	templatesDir: string | undefined,
 ): TemplateContext {
-	const rule = ctx.config.rules[node.$type];
-	const ruleObj = typeof rule === 'string' ? undefined : rule as unknown as Record<string, unknown>;
-
 	const renderChild = (value: AnyNodeData | string | number): string => {
 		if (typeof value === 'string') return value;
 		if (typeof value === 'number') return String(value);
 		return renderNunjucks(value, ctx, env, templatesDir);
 	};
 
-	const childrenList: string[] = [];
+	// Children: render every named child, keep the raw array for the
+	// `has_flank_sep` Jinja global's anon-neighbor probes.
+	const children: string[] = [];
 	if (node.$children) {
 		for (const c of node.$children) {
 			const child = c as AnyNodeData;
 			if (child?.$named === false) continue;
-			childrenList.push(renderChild(child));
+			children.push(renderChild(child));
 		}
 	}
 
-	const childrenJoinBy = resolveJoinBy(ruleObj, 'CHILDREN');
-	const childrenJoined = childrenList.join(childrenJoinBy);
-
-	const fields: Record<string, string> = {};
+	// Fields: multi-valued slots (Array.isArray(raw)) surface as
+	// `string[]`; templates apply the separator via
+	// `{{ field | joinby(",") }}`. Single-valued slots surface as
+	// `string` — templates reference them directly `{{ field }}`.
+	// Anonymous tokens in multi slots are structural separators and
+	// belong in the joinBy, not in the value list; single slots keep
+	// them (promoted keywords async / move / unsafe arrive this way).
+	const fields: Record<string, string | string[]> = {};
 	if (node.$fields) {
 		for (const [fieldName, raw] of Object.entries(node.$fields)) {
 			if (raw === undefined || raw === null) continue;
-			// `Array.isArray(raw)` is the multi-valued signal for a slot
-			// (legacy walker wrapped single slots as raw values, multi
-			// slots as arrays; readNode mirrors this). Multi slots: drop
-			// anonymous tokens (promoted separators like comma / semi;
-			// they belong in joinBy, not in the value list). Single
-			// slots: keep everything (promoteAnonymousKeyword routes
-			// keywords async / move / unsafe here and the legacy path
-			// rendered them verbatim).
 			const isMulti = Array.isArray(raw);
-			const items = isMulti ? raw : [raw];
-			const effective = isMulti
-				? items.filter(item => {
+			if (isMulti) {
+				const effective = (raw as unknown[]).filter(item => {
 					if (typeof item !== 'object' || item === null) return true;
 					return (item as AnyNodeData).$named !== false;
-				})
-				: items;
-			if (effective.length === 0) continue;
-			const fieldJoinBy = resolveJoinBy(ruleObj, fieldName.toUpperCase());
-			fields[fieldName] = effective
-				.map(item => renderChild(item as AnyNodeData | string | number))
-				.join(fieldJoinBy);
+				});
+				if (effective.length === 0) continue;
+				fields[fieldName] = effective.map(item =>
+					renderChild(item as AnyNodeData | string | number),
+				);
+			} else {
+				fields[fieldName] = renderChild(raw as AnyNodeData | string | number);
+			}
 		}
 	}
 
 	// `text` fallback for factory-built nodes that reach a `{{ text }}`
-	// template but never saw a source span. Legacy regex path's resolveSlot
-	// synthesizes `$TEXT` by concatenating field + children renders; the
-	// Jinja path needs the same best-effort behavior so kinds like rust
-	// `token_tree` / `delim_token_tree` (whose templates are just
-	// `{{ text }}`) still produce non-empty output when constructed via
-	// factory. Synthesis only fires when `$text` is empty AND there is
-	// structure to concatenate — a genuinely empty node (no text, no
-	// fields, no children) stays empty.
+	// template but never saw a source span. Best-effort concat of
+	// rendered field + children values. Only fires when $text is empty
+	// AND there's structure to synthesize from.
 	let synthesizedText = node.$text ?? '';
 	if (synthesizedText === '' && (node.$fields || node.$children)) {
 		const parts: string[] = [];
@@ -1036,21 +1026,12 @@ function buildNunjucksTemplateContext(
 		synthesizedText = parts.join('');
 	}
 
-	const leadingSep = ruleObj?.['joinByLeading'] === true && node.$children
-		? flankSep(node.$children, 'leading', childrenJoinBy) !== ''
-		: false;
-	const trailingSep = ruleObj?.['joinByTrailing'] === true && node.$children
-		? flankSep(node.$children, 'trailing', childrenJoinBy) !== ''
-		: false;
-
 	return {
 		...fields,
-		children: childrenJoined,
-		children_list: childrenList,
+		children,
+		_children: node.$children ?? [],
 		variant: node.$variant ?? '',
 		text: synthesizedText,
-		trailing_sep: trailingSep,
-		leading_sep: leadingSep,
 	};
 }
 

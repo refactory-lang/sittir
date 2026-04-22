@@ -32,7 +32,7 @@ export function createNunjucksEnvironment(templatesDir: string): nunjucks.Enviro
 		noCache: false,
 		watch: false,
 	})
-	return new nunjucks.Environment(loader, {
+	const env = new nunjucks.Environment(loader, {
 		autoescape: false,
 		// `throwOnUndefined: false` — a template referencing an optional
 		// grammar field (e.g. `{{ visibility_modifier }}` on a node that
@@ -52,5 +52,48 @@ export function createNunjucksEnvironment(templatesDir: string): nunjucks.Enviro
 		throwOnUndefined: false,
 		trimBlocks: false,
 		lstripBlocks: false,
+	})
+	registerSittirFilters(env)
+	return env
+}
+
+/**
+ * `joinby(sep)` — the separator for multi-valued slots. Walker emits
+ * the literal separator inline: `{{ elements | joinby(",") }}`. Keeps
+ * per-rule separator info out of runtime config — the template IS the
+ * source of truth.
+ *
+ * Array input: joined with sep. String input: passed through (idempotent
+ * so a slot that flips multi → single across grammar versions doesn't
+ * need a template re-emission just to keep rendering).
+ *
+ * `has_flank_sep(children, sep, side)` — runtime probe for an anonymous
+ * separator token adjacent to the named-child run. Walker emits
+ * `{% if has_flank_sep(_children, ",", "trailing") %},{% endif %}` when
+ * a rule's repeat carries `trailing: true` / `leading: true`. The
+ * literal separator stays in the template; the function just reports
+ * whether the parsed tree recorded one.
+ */
+function registerSittirFilters(env: nunjucks.Environment): void {
+	env.addFilter('joinby', (value: unknown, sep: unknown) => {
+		const s = typeof sep === 'string' ? sep : ' '
+		if (Array.isArray(value)) return value.join(s)
+		if (value === undefined || value === null) return ''
+		return String(value)
+	})
+	env.addGlobal('has_flank_sep', (children: unknown, sep: unknown, side: unknown) => {
+		if (!Array.isArray(children)) return false
+		if (typeof sep !== 'string' || typeof side !== 'string') return false
+		const isNamed = (c: unknown): boolean =>
+			typeof c === 'object' && c !== null
+			&& (c as { $named?: boolean }).$named !== false
+		const namedIdx = side === 'leading'
+			? children.findIndex(isNamed)
+			: children.findLastIndex(isNamed)
+		if (namedIdx < 0) return false
+		const neighborIdx = side === 'leading' ? namedIdx - 1 : namedIdx + 1
+		if (neighborIdx < 0 || neighborIdx >= children.length) return false
+		const neighbor = children[neighborIdx] as { $named?: boolean; $text?: string } | undefined
+		return !!neighbor && neighbor.$named === false && neighbor.$text === sep
 	})
 }

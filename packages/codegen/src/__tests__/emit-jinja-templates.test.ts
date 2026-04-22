@@ -123,7 +123,7 @@ describe('writeJinjaTemplates — T022 stale-file cleanup', () => {
 			const nested = join(tmp, 'does', 'not', 'exist');
 			const emitted = { bodies: new Map([['r', 'body']]), meta: {} };
 			writeJinjaTemplates(emitted, nested);
-			expect(readdirSync(nested).sort()).toEqual(['_meta.json', 'r.jinja']);
+			expect(readdirSync(nested)).toEqual(['r.jinja']);
 		} finally {
 			rmSync(tmp, { recursive: true, force: true });
 		}

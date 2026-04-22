@@ -22,12 +22,23 @@ describe('translateTemplateString — pure string transform', () => {
 		expect(translateTemplateString('$A $B $C')).toBe('{{ a }} {{ b }} {{ c }}');
 	});
 
-	it('translates $$$CHILDREN to {{ children }}', () => {
-		expect(translateTemplateString('{ $$$CHILDREN }')).toBe('{ {{ children }} }');
+	it('translates $$$CHILDREN to {{ children | joinby(sep) }} — separator inline', () => {
+		expect(translateTemplateString('{ $$$CHILDREN }')).toBe('{ {{ children | joinby(" ") }} }');
 	});
 
-	it('translates $$$NAME (multi-valued field) to {{ name }} (pre-joined by prepare())', () => {
-		expect(translateTemplateString('[$$$ITEMS]')).toBe('[{{ items }}]');
+	it('translates $$$NAME with the rule-level joinBy as the joinby arg', () => {
+		expect(translateTemplateString('[$$$ITEMS]', { joinBy: ',' }))
+			.toBe('[{{ items | joinby(",") }}]');
+	});
+
+	it('translates $$$NAME with joinByField override winning over joinBy', () => {
+		expect(translateTemplateString('[$$$ITEMS]', { joinBy: ',', joinByField: { items: '\n' } }))
+			.toBe('[{{ items | joinby("\\n") }}]');
+	});
+
+	it('emits has_flank_sep guards around $$$CHILDREN when joinByTrailing is set', () => {
+		expect(translateTemplateString('($$$CHILDREN)', { joinBy: ',', joinByTrailing: true }))
+			.toBe('({{ children | joinby(",") }}{% if has_flank_sep(_children, ",", "trailing") %},{% endif %})');
 	});
 
 	it('translates $TEXT to {{ text }}', () => {
@@ -47,7 +58,7 @@ describe('translateTemplateString — pure string transform', () => {
 	});
 
 	it('leaves literal text between placeholders untouched', () => {
-		expect(translateTemplateString('struct $NAME { $$$CHILDREN }')).toBe('struct {{ name }} { {{ children }} }');
+		expect(translateTemplateString('struct $NAME { $$$CHILDREN }')).toBe('struct {{ name }} { {{ children | joinby(" ") }} }');
 	});
 });
 
@@ -93,7 +104,7 @@ describe('YAML block-scalar whitespace fidelity (T020a / spec R41)', () => {
 			}),
 		};
 		const result = translateToJinja(fake as any, emptyRules, wordMatcher);
-		expect(result).toBe('match {{ subject }}:\n{{ children }}');
+		expect(result).toBe('match {{ subject }}:\n{{ children | joinby(" ") }}');
 	});
 
 	it('template with terminal newline preserves it (python indented block convention)', () => {
@@ -267,7 +278,7 @@ describe('Rule 3: polymorph variant branching', () => {
 		} as any;
 		const poly = new AssembledPolymorph('simple_poly', rule, [formA, formB]);
 		const result = translateToJinja(poly, emptyRules, wordMatcher);
-		expect(result).toBe('{{ children }}');
+		expect(result).toBe('{{ children | joinby(" ") }}');
 	});
 
 	it('genuinely branching polymorph: emit {% if variant == "form" %} chain over all forms', () => {
@@ -360,7 +371,7 @@ describe('Rule 1 (container flavor): single-template container', () => {
 		};
 		const node = new AssembledContainer('statement_list', rule, rule);
 		const result = translateToJinja(node, {} as Record<string, Rule>, /\w/);
-		expect(result).toBe('{{ children }}');
+		expect(result).toBe('{{ children | joinby(" ") }}');
 	});
 
 	it('translates a SeqRule container with delimiters and $$$CHILDREN', () => {
@@ -379,6 +390,6 @@ describe('Rule 1 (container flavor): single-template container', () => {
 		const result = translateToJinja(node, {} as Record<string, Rule>, /\w/);
 		// Walker emits spaces around $$$CHILDREN for readability:
 		// source template is `{ $$$CHILDREN }` → Jinja `{ {{ children }} }`.
-		expect(result).toBe('{ {{ children }} }');
+		expect(result).toBe('{ {{ children | joinby(" ") }} }');
 	});
 });

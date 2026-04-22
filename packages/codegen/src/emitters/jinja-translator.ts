@@ -28,7 +28,14 @@ import type { Rule } from '../compiler/rule.ts'
  *
  * Handles:
  * - `$NAME`        → `{{ name }}`
- * - `$$$NAME`      → `{{ name }}` (pre-joined in TemplateContext)
+ * - `$$$NAME`      → `{{ name | joinby("<sep>") }}` — separator literal
+ *                    comes from the rule's joinByField[name] ?? joinBy
+ *                    (default space). Walker-time knowledge, inlined
+ *                    so the render path needs no sidecar config.
+ * - `$$$CHILDREN`  → `{{ children | joinby("<sep>") }}` optionally
+ *                    wrapped in `{% if has_flank_sep(_children,
+ *                    "<sep>", "leading"|"trailing") %}<sep>{% endif %}`
+ *                    when the rule permits leading / trailing markers.
  * - `$TEXT`        → `{{ text }}`
  * - `$NEWLINE`     → literal `\n`
  * - `$INDENT`      → empty string (render-time column tracking handles indent)
@@ -40,19 +47,55 @@ import type { Rule } from '../compiler/rule.ts'
  * template string upstream by `AssembledNode.renderTemplate`; this
  * module no longer handles them.
  */
-export function translateTemplateString(tmpl: string): string {
+export interface TranslateMeta {
+	joinBy?: string
+	joinByField?: Record<string, string>
+	joinByLeading?: boolean
+	joinByTrailing?: boolean
+}
+
+export function translateTemplateString(tmpl: string, meta: TranslateMeta = {}): string {
 	// Matches $$$NAME | $$NAME | $_NAME | $NAME (longest prefix first).
 	// Same shape as core's DEFAULT_VAR_RE.
 	const varPattern = /(\$\$\$|\$\$|\$_|\$)([A-Z][A-Z0-9_]*)/g
-	const translated = tmpl.replace(varPattern, (_full, _pfx: string, name: string) => {
+	const defaultSep = meta.joinBy ?? ' '
+	const translated = tmpl.replace(varPattern, (_full, pfx: string, name: string) => {
 		const key = name.toLowerCase()
 		// Structural placeholders (no Jinja mapping — directly resolved).
 		if (key === 'newline') return '\n'
 		if (key === 'indent') return ''
 		if (key === 'dedent') return ''
+		// Multi-valued ($$$NAME / $$$CHILDREN) — emit the `joinby` filter
+		// with the literal separator. Per-field override wins over the
+		// rule default; `$$$CHILDREN` always uses the rule default.
+		if (pfx === '$$$') {
+			const sep = key === 'children'
+				? defaultSep
+				: meta.joinByField?.[key] ?? defaultSep
+			const sepLit = jsonStringLiteral(sep)
+			const body = `{{ ${key} | joinby(${sepLit}) }}`
+			if (key === 'children' && (meta.joinByLeading || meta.joinByTrailing)) {
+				const leading = meta.joinByLeading
+					? `{% if has_flank_sep(_children, ${sepLit}, "leading") %}${sep}{% endif %}`
+					: ''
+				const trailing = meta.joinByTrailing
+					? `{% if has_flank_sep(_children, ${sepLit}, "trailing") %}${sep}{% endif %}`
+					: ''
+				return `${leading}${body}${trailing}`
+			}
+			return body
+		}
 		return `{{ ${key} }}`
 	})
 	return escapeJinjaBraceCollisions(translated)
+}
+
+/**
+ * JSON-string-encode a separator literal for inline use in a Jinja
+ * filter call — handles `"` / backslash / newline / tab safely.
+ */
+function jsonStringLiteral(s: string): string {
+	return JSON.stringify(s)
 }
 
 /**
@@ -125,5 +168,11 @@ export function translateToJinja(
 			`renderTemplate() returned ${JSON.stringify(entry)}`,
 		)
 	}
-	return translateTemplateString(template)
+	const meta: TranslateMeta = {
+		joinBy: (entry as { joinBy?: string }).joinBy,
+		joinByField: (entry as { joinByField?: Record<string, string> }).joinByField,
+		joinByLeading: (entry as { joinByLeading?: boolean }).joinByLeading,
+		joinByTrailing: (entry as { joinByTrailing?: boolean }).joinByTrailing,
+	}
+	return translateTemplateString(template, meta)
 }

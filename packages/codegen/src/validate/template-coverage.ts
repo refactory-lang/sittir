@@ -48,11 +48,20 @@ import { loadRulesFromPath as loadRulesFromTemplatesPath } from './templates-pat
  */
 function jinjaBodyToLegacyRule(body: string): TemplateRule {
     const clauses: Record<string, string> = {}
+    // `has_flank_sep(_children, "<sep>", "leading"|"trailing")` is a
+    // compile-time-inlined flank marker; it's render-relevant but not
+    // field-relevant for coverage checking. Strip the entire guarded
+    // block (including the literal separator it emits) before the
+    // generic `{% if … %}` clause extractor sees it.
+    const withoutFlanks = body.replace(
+        /\{%-?\s*if\s+has_flank_sep\([^)]*\)\s*%\}[\s\S]*?\{%\s*endif\s*-?%\}/g,
+        '',
+    )
     // Extract `{% if <stem> %}<body>{% endif %}` blocks; capture the
     // body (with `{{ name }}` → `$NAME` applied) as a `<stem>_clause`
     // entry; replace the block with `$<STEM>_CLAUSE` in the main
     // template string.
-    const withClauseRefs = body.replace(
+    const withClauseRefs = withoutFlanks.replace(
         /\{%-?\s*if\s+([a-z_][a-z0-9_]*)\s*%\}([\s\S]*?)\{%\s*endif\s*-?%\}/g,
         (_m, stem: string, clauseBody: string) => {
             clauses[`${stem}_clause`] = jinjaInterpolationsToLegacy(clauseBody)
@@ -65,11 +74,20 @@ function jinjaBodyToLegacyRule(body: string): TemplateRule {
 }
 
 /**
- * Replace Jinja `{{ name }}` interpolations with `$NAME`. No clause
- * handling — call jinjaBodyToLegacyRule for full-rule translation.
+ * Replace Jinja `{{ name }}` and `{{ name | joinby("<sep>") }}`
+ * interpolations with the legacy `$NAME` / `$$$NAME` placeholders the
+ * coverage checker's regex-based field scanner understands. The
+ * `joinby` filter signals a multi-valued slot (maps to `$$$`); the
+ * bare form is single-valued (`$`).
  */
 function jinjaInterpolationsToLegacy(body: string): string {
-    return body.replace(/\{\{\s*([a-z_][a-z0-9_]*)\s*\}\}/g, (_m, name: string) => `$${name.toUpperCase()}`)
+    return body.replace(
+        /\{\{\s*([a-z_][a-z0-9_]*)(\s*\|\s*joinby\([^)]*\))?\s*\}\}/g,
+        (_m, name: string, filter: string | undefined) => {
+            const prefix = filter ? '$$$' : '$'
+            return `${prefix}${name.toUpperCase()}`
+        },
+    )
 }
 
 function loadRulesFromPath(templatesPath: string): Record<string, TemplateRule> {
