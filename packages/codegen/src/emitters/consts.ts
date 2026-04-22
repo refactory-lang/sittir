@@ -5,8 +5,11 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts'
-import type { AssembledNode, AssembledBranch, AssembledContainer } from '../compiler/node-map.ts'
-import { isRequired, isMultiple } from './shared.ts'
+import type { AssembledNode, AssembledBranch, AssembledContainer, AssembledField } from '../compiler/node-map.ts'
+import {
+    isRequired, isMultiple,
+    keywordPresenceKind, keywordPresenceValues, keywordPresenceIsNonEmptyRepeat,
+} from './shared.ts'
 
 export interface EmitConstsConfig {
     grammar: string
@@ -125,6 +128,9 @@ export function emitConsts(config: EmitConstsConfig): string {
     lines.push('};')
     lines.push('')
 
+    // Bitflag const enums — one per bitflag-classified field (ADR-0012).
+    emitBitflagConstEnums(lines, nodeMap)
+
     // Enum values
     for (const ek of enumEntries.sort((a, b) => a.kind.localeCompare(b.kind))) {
         const constName = ek.kind.toUpperCase() + 'S'
@@ -141,6 +147,191 @@ export function emitConsts(config: EmitConstsConfig): string {
     }
 
     return lines.join('\n')
+}
+
+// ---------------------------------------------------------------------------
+// Bitflag const enum emission (ADR-0012)
+// ---------------------------------------------------------------------------
+
+interface BitflagBinding {
+    readonly kind: string
+    readonly field: AssembledField
+    readonly constName: string
+    readonly values: readonly string[]
+    readonly nonEmptyRepeat: boolean
+}
+
+/**
+ * Walk the NodeMap and emit a `const enum` declaration per bitflag-
+ * classified field. Deduplicates by `constName`: when two fields
+ * collapse to the same name and carry the same keyword set, a single
+ * declaration serves both.
+ */
+function emitBitflagConstEnums(lines: string[], nodeMap: NodeMap): void {
+    const bindings = collectBitflagBindings(nodeMap)
+    if (bindings.length === 0) return
+    // Sort alphabetically by constName for deterministic diffs.
+    bindings.sort((a, b) => a.constName.localeCompare(b.constName))
+
+    lines.push('// Bitflag const enums — ordered-unique literal sets per bitflag field (ADR-0012)')
+    const seen = new Set<string>()
+    for (const b of bindings) {
+        if (seen.has(b.constName)) continue
+        seen.add(b.constName)
+        lines.push(`/** Bitflag set for \`${b.kind}.${b.field.name}\`. */`)
+        lines.push(`export const enum ${b.constName} {`)
+        // Zero-flag member only when the repeat allows zero (plain repeat,
+        // not repeat1). For repeat1-backed bitflags, None would be a
+        // type-system lie — at least one flag must be present.
+        if (!b.nonEmptyRepeat) {
+            lines.push('  None = 0,')
+        }
+        b.values.forEach((v, i) => {
+            lines.push(`  ${bitflagMemberName(v)} = 1 << ${i},`)
+        })
+        lines.push('}')
+        lines.push('')
+    }
+}
+
+/**
+ * Walk the NodeMap and collect one BitflagBinding per bitflag-
+ * classified field across all structural and group kinds. Resolves
+ * the const name with collision disambiguation — fields whose name
+ * collapses to the same PascalCase identifier across kinds get a
+ * kind-prefixed name instead of the bare field-name form.
+ */
+function collectBitflagBindings(nodeMap: NodeMap): BitflagBinding[] {
+    const candidates: { kind: string; field: AssembledField; bare: string; prefixed: string; values: readonly string[]; nonEmptyRepeat: boolean }[] = []
+    for (const [kind, node] of nodeMap.nodes) {
+        for (const f of fieldsOfNode(node)) {
+            if (keywordPresenceKind(f, nodeMap) !== 'bitflag') continue
+            const values = keywordPresenceValues(f, nodeMap)
+            if (values.length < 2) continue
+            candidates.push({
+                kind,
+                field: f,
+                bare: bitflagBareConstName(f.propertyName),
+                prefixed: bitflagPrefixedConstName(kind, f.propertyName),
+                values,
+                nonEmptyRepeat: keywordPresenceIsNonEmptyRepeat(f),
+            })
+        }
+    }
+    // Disambiguate collisions: a bare name used by more than one kind
+    // gets the prefixed form for every occurrence.
+    const bareCounts = new Map<string, number>()
+    for (const c of candidates) bareCounts.set(c.bare, (bareCounts.get(c.bare) ?? 0) + 1)
+    return candidates.map(c => ({
+        kind: c.kind,
+        field: c.field,
+        constName: (bareCounts.get(c.bare) ?? 0) > 1 ? c.prefixed : c.bare,
+        values: c.values,
+        nonEmptyRepeat: c.nonEmptyRepeat,
+    }))
+}
+
+/**
+ * Compute the const enum name for a bitflag field from its property
+ * name alone (collision-free form).
+ *
+ * Examples: `modifiers` → `Modifiers`, `functionModifiers` → `FunctionModifiers`.
+ */
+export function bitflagBareConstName(propertyName: string): string {
+    return pascalCaseFromCamel(propertyName)
+}
+
+/**
+ * Compute the disambiguated const enum name by prefixing the parent
+ * kind.
+ *
+ * Example: `class_declaration.modifiers` → `ClassDeclarationModifiers`.
+ */
+export function bitflagPrefixedConstName(kind: string, propertyName: string): string {
+    return pascalCaseFromSnake(kind) + pascalCaseFromCamel(propertyName)
+}
+
+/**
+ * Resolve the bitflag const name for a given kind + field pair.
+ *
+ * This must agree with {@link collectBitflagBindings} — callers in
+ * other emitters (types / factories / from) use this to reference the
+ * emitted name.
+ */
+export function resolveBitflagConstName(
+    kind: string,
+    field: AssembledField,
+    nodeMap: NodeMap,
+): string | undefined {
+    if (keywordPresenceKind(field, nodeMap) !== 'bitflag') return undefined
+    // Recompute the collision map so callers don't have to thread it.
+    const bareCounts = new Map<string, number>()
+    for (const [k, n] of nodeMap.nodes) {
+        for (const f of fieldsOfNode(n)) {
+            if (keywordPresenceKind(f, nodeMap) !== 'bitflag') continue
+            const bare = bitflagBareConstName(f.propertyName)
+            bareCounts.set(bare, (bareCounts.get(bare) ?? 0) + 1)
+            // Ignore k/n unused warning — bareCounts only cares about collisions.
+            void k; void n
+        }
+    }
+    const bare = bitflagBareConstName(field.propertyName)
+    return (bareCounts.get(bare) ?? 0) > 1
+        ? bitflagPrefixedConstName(kind, field.propertyName)
+        : bare
+}
+
+/**
+ * Convert a keyword string to a valid PascalCase const-enum member.
+ * Strips non-word characters and PascalCases each segment.
+ *
+ * Examples: `async` → `Async`, `pub(crate)` → `PubCrate`.
+ */
+function bitflagMemberName(keyword: string): string {
+    const segments = keyword
+        .replace(/[^\w]+/g, '_')
+        .split('_')
+        .filter(Boolean)
+    if (segments.length === 0) return 'Unknown'
+    const name = segments.map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('')
+    // Prefix a leading digit so the name is a valid identifier.
+    return /^\d/.test(name) ? `K${name}` : name
+}
+
+function pascalCaseFromSnake(s: string): string {
+    return s
+        .replace(/^_+/, '')
+        .split('_')
+        .filter(Boolean)
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join('')
+}
+
+function pascalCaseFromCamel(s: string): string {
+    if (s.length === 0) return s
+    return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
+/** Yield the fields of a node — branch, polymorph (via forms), group. */
+function fieldsOfNode(node: AssembledNode): readonly AssembledField[] {
+    switch (node.modelType) {
+        case 'branch': return node.fields
+        case 'group': return node.fields
+        case 'polymorph': {
+            const seen = new Set<string>()
+            const out: AssembledField[] = []
+            for (const form of node.forms) {
+                for (const f of form.fields) {
+                    if (!seen.has(f.name)) {
+                        seen.add(f.name)
+                        out.push(f)
+                    }
+                }
+            }
+            return out
+        }
+        default: return []
+    }
 }
 
 function getFields(node: AssembledNode) {
