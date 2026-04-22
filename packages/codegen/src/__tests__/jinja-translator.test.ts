@@ -36,13 +36,18 @@ describe('translateTemplateString — pure string transform', () => {
 			.toBe('[{{ items | join("\\n") }}]');
 	});
 
-	it('does not emit any extra flank clause — flank handled inside the `join` filter', () => {
-		// joinByTrailing / joinByLeading no longer produce template-side
-		// guards. The context builder attaches `_trailing_anon` /
-		// `_leading_anon` to the children array; sittir's `join`
-		// filter emits the separator inline when they match.
+	it('emits joinWithTrailing for $$$CHILDREN when joinByTrailing is set', () => {
+		// Trailing-flank permission selects the trailing-aware filter
+		// variant; the flank probe happens inside the filter via
+		// `_trailing_anon` on the children array — no extra template
+		// clauses or children references.
 		expect(translateTemplateString('($$$CHILDREN)', { joinBy: ',', joinByTrailing: true }))
-			.toBe('({{ children | join(",") }})');
+			.toBe('({{ children | joinWithTrailing(",") }})');
+	});
+
+	it('emits joinWithLeading for $$$CHILDREN when joinByLeading is set', () => {
+		expect(translateTemplateString('($$$CHILDREN)', { joinBy: '|', joinByLeading: true }))
+			.toBe('({{ children | joinWithLeading("|") }})');
 	});
 
 	it('translates $TEXT to {{ text }}', () => {

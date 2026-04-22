@@ -32,14 +32,17 @@ import type { Rule } from '../compiler/rule.ts'
  *                    comes from the rule's joinByField[name] ?? joinBy
  *                    (default space). Walker-time knowledge, inlined
  *                    so the render path needs no sidecar config.
- * - `$$$CHILDREN`  → `{{ children | join("<sep>") }}`. Leading /
- *                    trailing separator markers handled inside the
- *                    filter — context builder attaches
- *                    `_leading_anon` / `_trailing_anon` properties to
- *                    the children array; sittir's `join` filter emits
- *                    the flank when the anon text matches the sep.
- *                    No separate `| flank(...)` clause at the call
- *                    site.
+ * - `$$$CHILDREN`  → one of four filter forms, selected by the rule's
+ *                    leading / trailing separator permission. Built-in
+ *                    `join` stays pristine (cross-engine parity with
+ *                    Askama); the other three are sittir-registered:
+ *                      neither  → `{{ children | join("<sep>") }}`
+ *                      trailing → `{{ children | joinWithTrailing("<sep>") }}`
+ *                      leading  → `{{ children | joinWithLeading("<sep>") }}`
+ *                      both     → `{{ children | joinWithFlanks("<sep>") }}`
+ *                    Flank probes read `_trailing_anon` /
+ *                    `_leading_anon` properties the core render
+ *                    context attaches to the children array.
  * - `$TEXT`        → `{{ text }}`
  * - `$NEWLINE`     → literal `\n`
  * - `$INDENT`      → empty string (render-time column tracking handles indent)
@@ -69,19 +72,18 @@ export function translateTemplateString(tmpl: string, meta: TranslateMeta = {}):
 		if (key === 'newline') return '\n'
 		if (key === 'indent') return ''
 		if (key === 'dedent') return ''
-		// Multi-valued ($$$NAME / $$$CHILDREN) — emit `| join(sep)`.
-		// Sittir's `join` override tolerates undefined (optional
-		// multi-slots render empty) and emits leading / trailing
-		// anonymous separators inline when the parsed tree recorded
-		// them (context builder exposes `_leading_anon` /
-		// `_trailing_anon` on the children array). Flank info is
-		// fully contained in the filter call — no extra references or
-		// separate `{% if %}` guards in the template.
+		// Multi-valued ($$$NAME / $$$CHILDREN). Built-in `join` for the
+		// simple case; `joinWithTrailing` / `joinWithLeading` / both
+		// when the rule's repeat permitted those separator markers. One
+		// filter per slot — no secondary `{% if %}` clauses or extra
+		// children references. Per-field slots never flank (legacy
+		// behavior), so they always use the built-in `join`.
 		if (pfx === '$$$') {
 			const sep = key === 'children'
 				? defaultSep
 				: meta.joinByField?.[key] ?? defaultSep
-			return `{{ ${key} | join(${jsonStringLiteral(sep)}) }}`
+			const filter = filterForFlanks(key, meta)
+			return `{{ ${key} | ${filter}(${jsonStringLiteral(sep)}) }}`
 		}
 		return `{{ ${key} }}`
 	})
@@ -94,6 +96,20 @@ export function translateTemplateString(tmpl: string, meta: TranslateMeta = {}):
  */
 function jsonStringLiteral(s: string): string {
 	return JSON.stringify(s)
+}
+
+/**
+ * Pick the right join-variant filter for a slot. `$$$CHILDREN` is the
+ * only slot that carries flank permission (legacy per-field flank
+ * behavior was never ported to the Jinja path); everything else uses
+ * the built-in `join`.
+ */
+function filterForFlanks(key: string, meta: TranslateMeta): string {
+	if (key !== 'children') return 'join'
+	if (meta.joinByLeading && meta.joinByTrailing) return 'joinWithFlanks'
+	if (meta.joinByTrailing) return 'joinWithTrailing'
+	if (meta.joinByLeading) return 'joinWithLeading'
+	return 'join'
 }
 
 /**

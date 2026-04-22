@@ -1004,6 +1004,13 @@ function buildNunjucksTemplateContext(
 	const fields: Record<string, string | string[]> = {};
 	if (node.$fields) {
 		for (const [fieldName, raw] of Object.entries(node.$fields)) {
+			// Absent / null value — skip so clause guards like
+			// `{% if return_type %}...{% endif %}` see a falsy value and
+			// omit the body. Defaulting to `[]` makes the guard truthy
+			// (empty arrays coerce to true in JavaScript) and fires
+			// clause bodies spuriously. Sittir's `join` filter override
+			// covers the "template pipes undefined into `| join`" case,
+			// so we don't need to pre-stamp an empty array for safety.
 			if (raw === undefined || raw === null) continue;
 			const isMulti = Array.isArray(raw);
 			if (isMulti) {

@@ -58,31 +58,61 @@ export function createNunjucksEnvironment(templatesDir: string): nunjucks.Enviro
 }
 
 /**
- * Override `join` to:
- *   - tolerate undefined (optional multi-slots render empty),
- *   - auto-apply flank markers baked into the array by the context
- *     builder. Arrays carry `_leading_anon` / `_trailing_anon` string
- *     properties holding the text of any anonymous separator token
- *     adjacent to the named-child run. When that text matches the
- *     filter's separator argument, `join` prepends / appends it —
- *     so templates with optional trailing separators stay simple:
- *       `{{ children | join(",") }}`
- *     The flank is emitted automatically when the parsed tree had
- *     one, and silently skipped when it didn't (or when the grammar
- *     doesn't permit flank, since the tree wouldn't contain such an
- *     anon in the first place). Delimiter anons like `(` / `)` never
- *     match a joinBy literal, so they don't spuriously flank.
+ * Walker picks one of these per multi-valued slot based on the
+ * grammar's separator permission — one filter per call site, distinct
+ * names per scenario so the template reads exactly what it does.
+ *
+ *   - `join` — plain array join. Overridden on the sittir env to
+ *     tolerate undefined / non-array values (walker occasionally
+ *     emits `$$$X` for a slot the factory returns as a single value;
+ *     legacy pre-join swallowed the mismatch, we preserve that). The
+ *     Askama port (Rust, Phase B) has typed `Vec<String>` inputs so
+ *     built-in `join` suffices there without the coercion.
+ *
+ *   - `joinWithTrailing(sep)` — join; append `sep` when the parsed
+ *     tree recorded a trailing anonymous separator matching it.
+ *
+ *   - `joinWithLeading(sep)` — join; prepend `sep` when the parsed
+ *     tree recorded a leading anonymous separator matching it.
+ *
+ *   - `joinWithFlanks(sep)` — both directions. Reserved for rules
+ *     that permit separators on BOTH ends of a repeat (rare — none
+ *     of the three shipped grammars emit this form today). Kept so
+ *     the walker can target it cleanly if a future grammar adopts
+ *     the shape.
+ *
+ * Flank probes read `_leading_anon` / `_trailing_anon` properties the
+ * core render context attaches to the children array. Delimiter anons
+ * like `(` / `)` never match a real joinBy literal so they can't
+ * spuriously flank.
  */
 function registerSittirFilters(env: nunjucks.Environment): void {
+	const coerceJoin = (value: unknown, s: string): { arr: unknown[] | null; str: string } => {
+		if (Array.isArray(value)) return { arr: value, str: value.join(s) }
+		if (value === undefined || value === null) return { arr: null, str: '' }
+		return { arr: null, str: String(value) }
+	}
 	env.addFilter('join', (value: unknown, sep: unknown) => {
 		const s = typeof sep === 'string' ? sep : ''
-		if (value === undefined || value === null) return ''
-		if (!Array.isArray(value)) return String(value)
-		const joined = value.join(s)
-		const leading = (value as { _leading_anon?: unknown })._leading_anon
-		const trailing = (value as { _trailing_anon?: unknown })._trailing_anon
+		return coerceJoin(value, s).str
+	})
+	const flankJoin = (value: unknown, sep: unknown, sides: { leading: boolean; trailing: boolean }): string => {
+		const s = typeof sep === 'string' ? sep : ''
+		const { arr, str } = coerceJoin(value, s)
+		if (!arr) return str
+		const leading = sides.leading ? (arr as { _leading_anon?: unknown })._leading_anon : undefined
+		const trailing = sides.trailing ? (arr as { _trailing_anon?: unknown })._trailing_anon : undefined
 		const prefix = typeof leading === 'string' && leading === s ? s : ''
 		const suffix = typeof trailing === 'string' && trailing === s ? s : ''
-		return prefix + joined + suffix
-	})
+		return prefix + str + suffix
+	}
+	env.addFilter('joinWithTrailing', (value: unknown, sep: unknown) =>
+		flankJoin(value, sep, { leading: false, trailing: true }),
+	)
+	env.addFilter('joinWithLeading', (value: unknown, sep: unknown) =>
+		flankJoin(value, sep, { leading: true, trailing: false }),
+	)
+	env.addFilter('joinWithFlanks', (value: unknown, sep: unknown) =>
+		flankJoin(value, sep, { leading: true, trailing: true }),
+	)
 }
