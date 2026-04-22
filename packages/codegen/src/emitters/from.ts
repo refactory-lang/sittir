@@ -335,7 +335,7 @@ function emitVariantFrom(
     const fn = node.fromFunctionName!
     const factory = `F.${node.rawFactoryName!}`
     const typeName = node.typeName
-    const inputType = `T.${typeName} | T.${typeName}.Loose`
+    const inputType = `T.${typeName}.Loose`
     const returnType = `ReturnType<typeof ${factory}>`
     const lines: string[] = []
     lines.push(`export function ${fn}(input: ${inputType}): ${returnType} {`)
@@ -404,7 +404,7 @@ function buildBranchSignatureParts(
     factory: string,
     opt: string,
 ): { inputType: string; returnType: string; inputOptional: boolean } {
-    const inputType = `T.${node.typeName} | T.${node.typeName}.Loose`
+    const inputType = `T.${node.typeName}.Loose`
     const returnType = `ReturnType<typeof ${factory}>`
     const inputOptional = opt === '?'
     return { inputType, returnType, inputOptional }
@@ -698,7 +698,7 @@ function emitPolymorphDispatcher(
     typeName: string,
     _forms: AssembledGroup[],
 ): string {
-    const inputType = `T.${typeName} | T.${typeName}.Loose`
+    const inputType = `T.${typeName}.Loose`
     const returnType = `ReturnType<typeof ${factory}>`
     return [
         `export function ${fn}(input?: ${inputType}): ${returnType} {`,

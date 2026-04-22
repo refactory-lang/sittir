@@ -832,7 +832,14 @@ export interface NodeNs<T extends { readonly $type: string }, Scalars = {}, Stri
 	// Spec 009 Layer 1: `Loose` threads NsMap so WidenValue can short-circuit
 	// multi-branch recursions to `NsMap[K]['Loose']` instead of re-projecting
 	// `FromInputOf<U>` per arm.
-	readonly Loose: FromInputOf<T, Scalars, Strings, [], NsMap>;
+	//
+	// Unions the `T` NodeData passthrough with the widened `FromInputOf`
+	// bag so callers hand a fully-realised NodeData straight to
+	// `<kind>.from(x)` without re-wrapping. Before this, per-signature
+	// `T.${Kind} | T.${Kind}.Loose` unions added the passthrough
+	// explicitly at every call site; absorbing it into `Loose` lets the
+	// emitter write `T.${Kind}.Loose` once.
+	readonly Loose: T | FromInputOf<T, Scalars, Strings, [], NsMap>;
 	readonly Tree: TreeNodeOf<T>;
 	readonly Kind: KindOf<T>;
 }
