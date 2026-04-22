@@ -710,11 +710,20 @@ type IsHomogeneous<T, NsMap> =
 
 /**
  * TagEachArm<T, ...> — distributive per-arm form for heterogeneous unions.
- * Produces `U | ({kind: K} & FromInputOf<U>)` for each member of T.
+ * Produces `U | ({kind: K} & FromInputOf<U>)` for each member of T (or the
+ * cached NsMap Loose projection when one exists).
+ *
+ * The `{ kind: K } & …` intersection tags the widened shape so callers can
+ * disambiguate without re-probing `$type`. Written via the
+ * `LooseOrFromInput` helper for the same precedence reason documented on
+ * that helper — inline `… extends never ? … : …` collapses under union
+ * distribution.
  */
 type TagEachArm<T, Scalars, Strings, Depth extends number[], NsMap> = T extends infer U
 	? U extends { readonly $type: infer K extends string }
-		? U | ({ kind: K } & LooseProjection<U, NsMap> extends never ? FromInputOf<U, Scalars, Strings, [...Depth, 0], NsMap> : LooseProjection<U, NsMap>)
+		? U | ({ kind: K } & ([LooseProjection<U, NsMap>] extends [never]
+			? FromInputOf<U, Scalars, Strings, [...Depth, 0], NsMap>
+			: LooseProjection<U, NsMap>))
 		: never
 	: never;
 
@@ -734,6 +743,21 @@ type TagEachArm<T, Scalars, Strings, Depth extends number[], NsMap> = T extends 
  */
 
 type LooseProjection<T, NsMap> = T extends { readonly $type: infer K extends keyof NsMap } ? NsMap[K] extends { Loose: infer L } ? L : never : never;
+
+/**
+ * @internal — "if NsMap has a Loose projection for T, use `T | L`; else
+ * use `T | FromInputOf<T>`". Exists because the naive inline form
+ * `T | LooseProjection<T, NsMap> extends never ? FromInputOf<T> : LooseProjection<T>`
+ * parses as `(T | LooseProjection) extends never ? ... : ...` — TS
+ * conditional-types bind `extends` over the whole union on the left. That
+ * distributes per arm and, for any non-never T, collapses to just
+ * `LooseProjection<T>`, silently dropping the `T` passthrough (and thus
+ * the "caller already has a NodeData" escape hatch).
+ */
+type LooseOrFromInput<T, Scalars, Strings, Depth extends number[], NsMap> =
+	[LooseProjection<T, NsMap>] extends [never]
+		? T | FromInputOf<T, Scalars, Strings, [...Depth, 0], NsMap>
+		: T | LooseProjection<T, NsMap>;
 
 type WidenValue<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMap = {}> =
 	Depth['length'] extends MaxDepth ? T
@@ -759,12 +783,12 @@ type WidenValue<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMa
 		// Branch(es) — decide single/homogeneous/heterogeneous ONCE for the
 		// whole union, then emit accordingly.
 		? IsSingleType<T> extends true
-			? T | LooseProjection<T, NsMap> extends never ? FromInputOf<T, Scalars, Strings, [...Depth, 0], NsMap> : LooseProjection<T, NsMap>
+			? LooseOrFromInput<T, Scalars, Strings, Depth, NsMap>
 		: IsHomogeneous<T, NsMap> extends true
 			// Multi-branch, but every arm's Loose projection is identical
 			// (via NsMap lookups). Runtime resolver picks any arm by
 			// field-presence — no `kind` tag needed at the type level.
-			? T | LooseProjection<T, NsMap> extends never ? FromInputOf<T, Scalars, Strings, [...Depth, 0], NsMap> : LooseProjection<T, NsMap>
+			? LooseOrFromInput<T, Scalars, Strings, Depth, NsMap>
 			// Heterogeneous multi-branch → tag each arm for discrimination.
 			: TagEachArm<T, Scalars, Strings, Depth, NsMap>
 	: T;
