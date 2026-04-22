@@ -35,6 +35,16 @@ export function emitTests(config: EmitTestsConfig): string {
         if (!isValidIdent(key)) continue
         if (nodeMap.polymorphFormKinds.has(kind)) continue
 
+        // Text-template branches (e.g. rust `raw_string_literal`) surface
+        // through `factory-map.json5`'s `factoryShapes: "text"` and the
+        // generated factory signature is `fn(text: string)`, not a Config
+        // object. A node-model branch model with an all-external-token
+        // content structure is the trigger — invoke it with a string.
+        if (node.modelType === 'branch' && node.isTextTemplate(nodeMap.externals)) {
+            emitTextTemplateBranchTest(lines, kind, key)
+            continue
+        }
+
         switch (node.modelType) {
             case 'branch':
                 emitBranchTest(lines, node, kind, key, nodeMap)
@@ -191,6 +201,21 @@ function emitPolymorphTest(lines: string[], node: AssembledNode, kind: string, k
     lines.push(`    expect(node.$source).toBe('factory');`)
         lines.push('  });')
     }
+    lines.push('});')
+    lines.push('')
+}
+
+function emitTextTemplateBranchTest(lines: string[], kind: string, key: string): void {
+    lines.push(`describe('${kind}', () => {`)
+    lines.push(`  it('factory produces correct type', () => {`)
+    lines.push(`    const node = ir.${key}('test');`)
+    lines.push(`    expect(node.$type).toBe('${kind}');`)
+    lines.push(`    expect(node.$source).toBe('factory');`)
+    lines.push('  });')
+    lines.push(`  it('render produces non-empty string', () => {`)
+    lines.push(`    const node = ir.${key}('test');`)
+    lines.push(`    expect(node.render().length).toBeGreaterThan(0);`)
+    lines.push('  });')
     lines.push('});')
     lines.push('')
 }

@@ -1575,12 +1575,12 @@ describe('string_literal', () => {
 
 describe('raw_string_literal', () => {
   it('factory produces correct type', () => {
-    const node = ir.rawStringLiteral({ stringContent: { $type: 'string_content', $text: 'test' } as any });
+    const node = ir.rawStringLiteral('test');
     expect(node.$type).toBe('raw_string_literal');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.rawStringLiteral({ stringContent: { $type: 'string_content', $text: 'test' } as any });
+    const node = ir.rawStringLiteral('test');
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
