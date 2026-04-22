@@ -68,6 +68,11 @@ describe('Rule 1: single-template branch', () => {
 	});
 });
 
+// Whitespace-control around clauses is now AssembledNode.renderTemplate's
+// concern (clauses are inlined inside that method) — translator only
+// handles $VAR → {{ var }}. The obsolete whitespace-control tests were
+// deleted in the T1 walker refactor.
+
 describe('YAML block-scalar whitespace fidelity (T020a / spec R41)', () => {
 	// Edge case #1: when the source template was authored as a YAML
 	// `|`-literal with embedded newlines (e.g., python's `_match_block`,
@@ -116,51 +121,11 @@ describe('YAML block-scalar whitespace fidelity (T020a / spec R41)', () => {
 	});
 });
 
-describe('Whitespace control — absent clauses leave no orphan whitespace', () => {
-	const emptyRules = {} as Record<string, Rule>;
-	const wordMatcher = /\w/;
-
-	// We don't run Nunjucks in these tests (Phase A wires it up later);
-	// we just verify the emitted Jinja body has `{%-` and `-%}` markers
-	// around clause wrappers. That's the structural contract T020 is
-	// checking: the translator's output is whitespace-control-aware.
-
-	it('clause wrapper opens with {% if x %} and closes with {% endif %}', () => {
-		// No strip markers: YAML-era renderer preserved surrounding
-		// whitespace when clauses were absent and relied on FR-017
-		// space absorption to collapse. Jinja output mirrors that
-		// behavior so corpus round-trip stays byte-identical.
-		const fake = {
-			modelType: 'branch' as const,
-			kind: 'rule',
-			renderTemplate: () => ({
-				template: 'fn $NAME $BODY_CLAUSE{',
-				body_clause: '{ $BODY }',
-			}),
-		};
-		const result = translateToJinja(fake as any, emptyRules, wordMatcher)!;
-		expect(result).toContain('{% if body ');
-		expect(result).toContain('{% endif %}');
-		// No strip markers on clause boundaries.
-		expect(result).not.toContain('{%- if');
-		expect(result).not.toContain('endif -%}');
-	});
-
-	it('multiple clauses: each gets its own {% if / endif %} wrapper', () => {
-		const fake = {
-			modelType: 'branch' as const,
-			kind: 'rule_two_clauses',
-			renderTemplate: () => ({
-				template: '$PREFIX_CLAUSE $NAME $SUFFIX_CLAUSE',
-				prefix_clause: '[$PREFIX]',
-				suffix_clause: '{$SUFFIX}',
-			}),
-		};
-		const result = translateToJinja(fake as any, emptyRules, wordMatcher)!;
-		expect(result.match(/\{% if /g)?.length).toBe(2);
-		expect(result.match(/\{% endif %\}/g)?.length).toBe(2);
-	});
-});
+// The Whitespace control describe block (T020 artifacts) was deleted
+// in the T1 walker refactor. Clause wrapping is now
+// AssembledNode.renderTemplate's responsibility — the translator just
+// translates `$VAR` → `{{ var }}`. End-to-end whitespace behavior is
+// covered by the corpus-validation and nunjucks-render test suites.
 
 describe('Structural placeholders ($NEWLINE / $INDENT / $DEDENT)', () => {
 	const emptyRules = {} as Record<string, Rule>;
@@ -182,13 +147,14 @@ describe('Structural placeholders ($NEWLINE / $INDENT / $DEDENT)', () => {
 		expect(result).toBe('class {{ name }}:\n{{ body }}');
 	});
 
-	it('$NEWLINE inside a clause body still maps to literal \\n', () => {
+	it('$NEWLINE inside a pre-inlined clause body still maps to literal \\n', () => {
+		// Post T1: clauses are pre-inlined by renderTemplate;
+		// translator only converts $NAME → {{ name }}.
 		const fake = {
 			modelType: 'branch' as const,
 			kind: 'with_block_clause',
 			renderTemplate: () => ({
-				template: '$NAME$BODY_CLAUSE',
-				body_clause: ':$NEWLINE$BODY',
+				template: '$NAME{% if body %}:$NEWLINE$BODY{% endif %}',
 			}),
 		};
 		const result = translateToJinja(fake as any, emptyRules, wordMatcher);
@@ -210,60 +176,48 @@ describe('Loud failure on unsupported constructs', () => {
 			.toThrow(/weird_branch.*branch.*template string/i);
 	});
 
-	it('polymorph with no variants and no template: throws naming kind', () => {
+	it('renderTemplate returning no template string: throws with kind + modelType context', () => {
+		// Post T1: polymorph variant handling is in renderTemplate
+		// itself. If renderTemplate returns an entry without a
+		// template string (truly broken), the translator's wrapper
+		// surfaces the rule kind and modelType.
 		const fake = {
-			modelType: 'polymorph' as const,
-			kind: 'weird_poly',
+			modelType: 'branch' as const,
+			kind: 'weird_branch',
 			renderTemplate: () => ({}),
 		};
 		expect(() => translateToJinja(fake as any, emptyRules, wordMatcher))
-			.toThrow(/weird_poly.*neither template nor variants/i);
-	});
-
-	it('unknown modelType: throws naming modelType + kind', () => {
-		const fake = {
-			modelType: 'nonexistent-type' as const,
-			kind: 'synthetic_unknown',
-			renderTemplate: () => ({ template: '' }),
-		};
-		expect(() => translateToJinja(fake as any, emptyRules, wordMatcher))
-			.toThrow(/not yet implemented.*nonexistent-type.*synthetic_unknown/i);
+			.toThrow(/weird_branch.*branch.*no template string/i);
 	});
 });
 
-describe('Rule 2: clause-bearing template', () => {
+describe('Rule 2: clause-bearing template (post T1 walker refactor)', () => {
+	// Post-T1: clause inlining happens in AssembledNode.renderTemplate,
+	// NOT in the translator. These tests verify the translator's
+	// behavior when it receives an already-inlined Jinja template:
+	// `$VAR` placeholders get converted to `{{ var }}`; clause wrappers
+	// (`{% if x %}...{% endif %}`) pass through unchanged.
 	const emptyRules = {} as Record<string, Rule>;
 	const wordMatcher = /\w/;
 
-	it('inlines a clause body into {% if x %} ... {% endif %} at its $X_CLAUSE reference site', () => {
-		// Fixture: a rule whose renderTemplate() returns
-		// `{ template: "fn $NAME $RETURN_TYPE_CLAUSE", return_type_clause: "-> $RETURN_TYPE" }`.
-		// Expected Jinja body:
-		//   `fn {{ name }} {%- if return_type %} -> {{ return_type }}{% endif -%}`
-		//
-		// Easiest way to assemble this fixture deterministically is to
-		// stub the node with its renderTemplate() return value (mirrors
-		// the T016 approach).
+	it('translates $VAR inside a pre-inlined {% if %} clause', () => {
 		const fake = {
 			modelType: 'branch' as const,
 			kind: 'fn_rule',
 			renderTemplate: () => ({
-				template: 'fn $NAME $RETURN_TYPE_CLAUSE',
-				return_type_clause: '-> $RETURN_TYPE',
+				template: 'fn $NAME {% if return_type %}-> $RETURN_TYPE{% endif %}',
 			}),
 		};
 		const result = translateToJinja(fake as any, emptyRules, wordMatcher);
 		expect(result).toBe('fn {{ name }} {% if return_type %}-> {{ return_type }}{% endif %}');
 	});
 
-	it('handles multiple clauses in a single template', () => {
+	it('translates $VAR inside multiple pre-inlined clauses', () => {
 		const fake = {
 			modelType: 'branch' as const,
 			kind: 'fn_rule_many_clauses',
 			renderTemplate: () => ({
-				template: 'fn $NAME $PARAMS $RETURN_TYPE_CLAUSE$BODY_CLAUSE',
-				return_type_clause: '-> $RETURN_TYPE',
-				body_clause: '{ $BODY }',
+				template: 'fn $NAME $PARAMS {% if return_type %}-> $RETURN_TYPE{% endif %}{% if body %}{ $BODY }{% endif %}',
 			}),
 		};
 		const result = translateToJinja(fake as any, emptyRules, wordMatcher);

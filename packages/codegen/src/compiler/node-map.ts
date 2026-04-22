@@ -969,6 +969,31 @@ export type AssembledForm = AssembledGroup
 
 // --- Concrete classes per model type ---
 
+/**
+ * Inline `$X_CLAUSE` references into the template as Jinja
+ * `{% if x %}<body>{% endif %}` blocks. The body's `$VAR`
+ * placeholders stay in `$`-dialect; the final emitter pass converts
+ * them to `{{ var }}` in one go.
+ *
+ * This is the single chokepoint where the walker-era `clauses` record
+ * collapses into the template string. After this helper runs, the
+ * returned template is Jinja-shaped (save for `$VAR`) — no separate
+ * metadata record needs to travel downstream.
+ */
+function inlineJinjaClauses(template: string, clauses: Record<string, string>): string {
+    if (Object.keys(clauses).length === 0) return template
+    // Match `$VAR_CLAUSE` placeholders (uppercase). The stem is the
+    // full key lowercased with `_clause` still attached — e.g.
+    // `$RETURN_TYPE_CLAUSE` matches key `return_type_clause`.
+    return template.replace(/\$([A-Z][A-Z0-9_]*_CLAUSE)/g, (full, marker: string) => {
+        const key = marker.toLowerCase()
+        const body = clauses[key]
+        if (body === undefined) return full  // not a clause we emitted — leave as-is
+        const stem = key.slice(0, -'_clause'.length)
+        return `{% if ${stem} %}${body}{% endif %}`
+    })
+}
+
 export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
     readonly modelType = 'branch' as const
     // rule narrowed to SeqRule | ChoiceRule — branches classify from
@@ -1037,7 +1062,12 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
                 `Rule has no visible content — should have been classified as leaf/token.`,
             )
         }
-        const entry: Record<string, unknown> = { template, ...clauses }
+        // Inline clauses as `{% if x %}body{% endif %}` directly into
+        // the template. Drops the sibling-key pattern (template + per-
+        // clause keys on the same object) in favor of a single Jinja
+        // template string — eliminates an intermediate translation
+        // layer the Jinja emitter would otherwise have to perform.
+        const entry: Record<string, unknown> = { template: inlineJinjaClauses(template, clauses) }
         // Separator discovery runs on simplifiedRule — the anonymous
         // delimiter layer is gone, so any remaining repeat/repeat1 is
         // reachable without navigating past literals.
@@ -1207,7 +1237,7 @@ export class AssembledContainer extends AssembledNodeBase<SeqRule | ChoiceRule |
                 `Rule has no visible content — should have been classified as leaf/token.`,
             )
         }
-        const entry: Record<string, unknown> = { template, ...clauses }
+        const entry: Record<string, unknown> = { template: inlineJinjaClauses(template, clauses) }
         const sep = this.separator ?? findRepeatSeparator(this.simplifiedRule)
         if (sep) entry.joinBy = sep
         if (findRepeatFlag(this.simplifiedRule, 'trailing')) entry.joinByTrailing = true
@@ -1283,25 +1313,39 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
             Object.assign(mergedClauses, clauses)
             Object.assign(mergedJoinByField, joinByField)
         }
-        // Collapse identical-across-forms `variants:` to a single `template:`
-        // string (ADR-0013 Task 2). When every form renders the same template
-        // text (common: polymorph parent delegates to variant child via
-        // `$$$CHILDREN`, so parent template doesn't branch on form), the
-        // `variants:` block is dead weight — it just bloats the YAML and
-        // hides the fact that only five rules across all grammars actually
-        // branch on variant at the parent level. Drop `detect:` too when
-        // collapsing; with a single template there's nothing to dispatch.
+        // Collapse identical-across-forms variants to a single template
+        // string (ADR-0013 Task 2). Post-collapse the five rules that
+        // genuinely branch on form emit a Jinja `{% if variant == "X" %}`
+        // chain inline (populated from the per-form templates), so the
+        // emitter never sees a `variants:` map — the downstream
+        // translator pass just converts `$VAR` → `{{ var }}` without
+        // knowing about variants at all.
         const formNames = Object.keys(variants)
         const normalizeTrailingNewline = (s: string): string => s.endsWith('\n') ? s.slice(0, -1) : s
         const allEqual = formNames.length > 1
             && formNames.every(n => normalizeTrailingNewline(variants[n]!) === normalizeTrailingNewline(variants[formNames[0]!]!))
+        let templateStr: string
         if (allEqual) {
-            const entry: Record<string, unknown> = { template: variants[formNames[0]!]!, ...mergedClauses }
-            if (Object.keys(mergedJoinByField).length > 0) entry.joinByField = mergedJoinByField
-            return entry
+            templateStr = variants[formNames[0]!]!
+        } else {
+            // Build the `{%- if variant == "a" -%}A:$NAME{%- elif … -%}…{%- endif -%}`
+            // chain. Whitespace-controls suppress the newlines between
+            // the template fragments so the output joins cleanly.
+            const parts: string[] = []
+            for (let i = 0; i < formNames.length; i++) {
+                const formName = formNames[i]!
+                const keyword = i === 0 ? 'if' : 'elif'
+                parts.push(`{%- ${keyword} variant == ${JSON.stringify(formName)} -%}`)
+                parts.push(variants[formName]!)
+            }
+            parts.push('{%- endif -%}')
+            templateStr = parts.join('\n')
         }
-        const entry: Record<string, unknown> = { variants, ...mergedClauses }
-        if (Object.keys(detect).length > 0) entry.detect = detect
+        // Inline the merged per-form clauses as `{% if x %}body{% endif %}`
+        // just like the branch/container renderTemplate methods.
+        const entry: Record<string, unknown> = {
+            template: inlineJinjaClauses(templateStr, mergedClauses),
+        }
         if (Object.keys(mergedJoinByField).length > 0) entry.joinByField = mergedJoinByField
         return entry
     }
@@ -1492,7 +1536,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
                 `Rule has no visible content — should have been classified as leaf/token.`,
             )
         }
-        const entry: Record<string, unknown> = { template, ...clauses }
+        const entry: Record<string, unknown> = { template: inlineJinjaClauses(template, clauses) }
         const sep = findRepeatSeparator(this.simplifiedRule)
         if (sep) entry.joinBy = sep
         if (findRepeatFlag(this.simplifiedRule, 'trailing')) entry.joinByTrailing = true
