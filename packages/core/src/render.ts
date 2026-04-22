@@ -839,6 +839,197 @@ function escapeRegex(s: string): string {
 // File-loading variants (`createRenderer(yamlPath)` + `loadTemplates`)
 // live in `./loader.ts` so `render.ts` has no `node:*` dependencies.
 
+// ---------------------------------------------------------------------------
+// Nunjucks-backed render path (feature 011 / Phase A)
+// ---------------------------------------------------------------------------
+//
+// Structural type for a nunjucks.Environment — keeps the nunjucks
+// import out of render.ts (preserves ADR-0013 Task 1's browser-safe
+// guarantee). `@sittir/core/templates/nunjucks-env.ts` is the opt-in
+// module that constructs one and passes it in via options.
+
+interface NunjucksEnvLike {
+	render(template: string, context: Record<string, unknown>): string;
+	getTemplate?(name: string, eagerCompile?: boolean): unknown;
+}
+
+/**
+ * Lazily constructs a Nunjucks Environment from `templatesDir`.
+ * Separated so this module doesn't import nunjucks until actually
+ * needed (keeps it browser-safe when templatesDir is never set).
+ */
+function lazyNunjucksEnv(templatesDir: string): NunjucksEnvLike {
+	// Dynamic require keeps the import tree clean on the legacy path.
+	// `createNunjucksEnvironment` is the single construction surface;
+	// it encodes the whitespace/autoescape/loader config.
+	// Using `globalThis.require` indirection so bundlers don't pull
+	// nunjucks into browser builds on the legacy path.
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
+	const { createNunjucksEnvironment } = require('./templates/nunjucks-env.ts') as {
+		createNunjucksEnvironment: (dir: string) => NunjucksEnvLike;
+	};
+	return createNunjucksEnvironment(templatesDir);
+}
+
+/**
+ * Check whether a `.jinja` file exists for the given kind under
+ * `templatesDir`. Uses `node:fs` via a dynamic require so the import
+ * tree stays clean on the legacy path.
+ *
+ * Returns `false` when `templatesDir` is undefined — callers that
+ * provide only a pre-built `nunjucksEnv` without a directory path
+ * can't use filesystem detection; they fall back to best-effort
+ * render-and-catch.
+ */
+function templateFileExists(templatesDir: string | undefined, templateName: string): boolean {
+	if (!templatesDir) return false;
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
+	const fs = require('node:fs') as { existsSync: (p: string) => boolean };
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
+	const path = require('node:path') as { join: (a: string, b: string) => string };
+	return fs.existsSync(path.join(templatesDir, templateName));
+}
+
+/**
+ * Render a node via Nunjucks. Recursive — builds the TemplateContext
+ * for a parent by rendering each child / field value through
+ * renderNunjucks first, then feeds the finished bag to
+ * `env.render('<kind>.jinja', ctx)`.
+ *
+ * Fallback (FR-017 / T027a): when no `.jinja` template exists for
+ * `node.$type`, return `node.$text` when all named fields and
+ * children are absent (token-shaped kind). Otherwise throw.
+ *
+ * Error wrapping (FR-018 / T028): Nunjucks template-not-found errors
+ * are caught and re-routed through the fallback. Other render errors
+ * propagate with the template filename in their message.
+ */
+function renderNunjucks(
+	node: AnyNodeData,
+	ctx: InternalRenderContext,
+	providedEnv: NunjucksEnvLike | undefined,
+	templatesDir: string | undefined,
+): string {
+	// Text-only leaves: short-circuit to $text.
+	if (node.$text !== undefined && !node.$fields && !node.$children) {
+		return node.$text;
+	}
+
+	const env = providedEnv ?? (templatesDir ? lazyNunjucksEnv(templatesDir) : undefined);
+	if (!env) {
+		throw new Error('renderNunjucks: neither nunjucksEnv nor templatesDir provided');
+	}
+
+	const templateName = `${node.$type}.jinja`;
+
+	// Check if a template exists for this kind. If not, fall back to
+	// the token-shaped-kind path (FR-017 / T027a). Filesystem check
+	// distinguishes "file absent" (→ fallback) from "file present but
+	// malformed" (→ propagate Nunjucks's compile error).
+	if (!templateFileExists(templatesDir, templateName)) {
+		return tokenShapedFallback(node);
+	}
+
+	// Build TemplateContext by recursively rendering children/fields.
+	const tc = buildNunjucksTemplateContext(node, ctx, env, templatesDir);
+
+	try {
+		return env.render(templateName, tc);
+	} catch (err) {
+		const cause = err instanceof Error ? err.message : String(err);
+		throw new Error(
+			`render: template '${templateName}' (rule '${node.$type}') failed — ${cause}`,
+		);
+	}
+}
+
+/**
+ * Token-shaped-kind fallback (FR-017): a node with $text whose fields
+ * and children are all anonymous renders as its $text. A node with
+ * named structure but no template is an error — the grammar declared
+ * a rule the renderer doesn't know how to render.
+ */
+function tokenShapedFallback(node: AnyNodeData): string {
+	const isAnonEntry = (v: unknown): boolean => {
+		if (v == null || typeof v !== 'object') return false;
+		return (v as AnyNodeData).$named === false;
+	};
+	const fieldsAllAnon = !node.$fields || Object.values(node.$fields).every(v =>
+		Array.isArray(v) ? v.every(isAnonEntry) : isAnonEntry(v),
+	);
+	const childrenAllAnon = !node.$children ||
+		(node.$children as readonly AnyNodeData[]).every(c => c.$named === false);
+	if (node.$text !== undefined && fieldsAllAnon && childrenAllAnon) return node.$text;
+	throw new Error(`No render template for '${node.$type}' (no <kind>.jinja file and node has named fields/children)`);
+}
+
+/**
+ * Build a TemplateContext using the recursive Nunjucks renderer for
+ * child / field values. Mirrors `buildTemplateContext` (which uses
+ * the legacy path) but plumbs Nunjucks all the way down.
+ */
+function buildNunjucksTemplateContext(
+	node: AnyNodeData,
+	ctx: InternalRenderContext,
+	env: NunjucksEnvLike,
+	templatesDir: string | undefined,
+): Record<string, unknown> {
+	const rule = ctx.config.rules[node.$type];
+	const ruleObj = typeof rule === 'string' ? undefined : rule as unknown as Record<string, unknown>;
+
+	const renderChild = (value: AnyNodeData | string | number): string => {
+		if (typeof value === 'string') return value;
+		if (typeof value === 'number') return String(value);
+		return renderNunjucks(value, ctx, env, templatesDir);
+	};
+
+	const childrenList: string[] = [];
+	if (node.$children) {
+		for (const c of node.$children) {
+			const child = c as AnyNodeData;
+			if (child?.$named === false) continue;
+			childrenList.push(renderChild(child));
+		}
+	}
+
+	const childrenJoinBy = resolveJoinBy(ruleObj, 'CHILDREN');
+	const childrenJoined = childrenList.join(childrenJoinBy);
+
+	const fields: Record<string, string> = {};
+	if (node.$fields) {
+		for (const [fieldName, raw] of Object.entries(node.$fields)) {
+			if (raw === undefined || raw === null) continue;
+			const items = Array.isArray(raw) ? raw : [raw];
+			const named = items.filter(item => {
+				if (typeof item !== 'object' || item === null) return true;
+				return (item as AnyNodeData).$named !== false;
+			});
+			if (named.length === 0) continue;
+			const fieldJoinBy = resolveJoinBy(ruleObj, fieldName.toUpperCase());
+			fields[fieldName] = named
+				.map(item => renderChild(item as AnyNodeData | string | number))
+				.join(fieldJoinBy);
+		}
+	}
+
+	const leadingSep = ruleObj?.['joinByLeading'] === true && node.$children
+		? flankSep(node.$children, 'leading', childrenJoinBy) !== ''
+		: false;
+	const trailingSep = ruleObj?.['joinByTrailing'] === true && node.$children
+		? flankSep(node.$children, 'trailing', childrenJoinBy) !== ''
+		: false;
+
+	return {
+		...fields,
+		children: childrenJoined,
+		children_list: childrenList,
+		variant: node.$variant ?? '',
+		text: node.$text ?? '',
+		trailing_sep: trailingSep,
+		leading_sep: leadingSep,
+	};
+}
+
 export interface BoundRenderer {
 	render(node: AnyNodeData): string;
 	toEdit(node: AnyNodeData, start: number, end: number): Edit;
@@ -846,12 +1037,35 @@ export interface BoundRenderer {
 }
 
 /**
- * Create a renderer from a pre-parsed RulesConfig.
+ * Options for `createRendererFromConfig`.
+ *
+ * `templatesDir` — feature 011 / Phase A. When provided, the renderer
+ * dispatches to Nunjucks per-rule `.jinja` templates loaded from that
+ * directory instead of the legacy regex substitutor. Both paths
+ * produce byte-identical output on the corpus; the switch is a
+ * migration lever, not a functional change.
  */
-export function createRendererFromConfig(config: RulesConfig): BoundRenderer {
+export interface RendererOptions {
+	templatesDir?: string;
+	nunjucksEnv?: unknown; // nunjucks.Environment — `unknown` to keep nunjucks import out of render.ts
+}
+
+/**
+ * Create a renderer from a pre-parsed RulesConfig.
+ *
+ * When `options.templatesDir` (or a pre-built `options.nunjucksEnv`) is
+ * provided, the renderer uses Nunjucks-backed per-rule `.jinja` files.
+ * Otherwise, the legacy regex substitutor path runs (default).
+ */
+export function createRendererFromConfig(config: RulesConfig, options?: RendererOptions): BoundRenderer {
 	const ctx = buildRenderContext(config);
+	const nunjucksEnv = options?.nunjucksEnv as NunjucksEnvLike | undefined;
+	const templatesDir = options?.templatesDir;
 
 	function boundRender(node: AnyNodeData): string {
+		if (nunjucksEnv || templatesDir) {
+			return renderNunjucks(node, ctx, nunjucksEnv, templatesDir).trim();
+		}
 		return render(node, ctx).trim();
 	}
 
