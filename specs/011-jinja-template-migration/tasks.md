@@ -68,14 +68,14 @@ description: "Task list for Jinja template migration"
 ### Implementation tasks — translator (TDD order)
 
 - [x] T013 [US1] Implement `translateToJinja` for `modelType === 'branch'` (Rule 1 single-template) in `packages/codegen/src/emitters/jinja-translator.ts`. Replace `it.todo()` with a failing test in `packages/codegen/src/__tests__/jinja-translator.test.ts`, then implement, then pass.
-- [ ] T014 [US1] Implement `translateToJinja` for `modelType === 'container'` (pre-joined `$$$CHILDREN` + joinBy in `prepare()`) in `packages/codegen/src/emitters/jinja-translator.ts`. TDD: failing test → implement → pass.
-- [ ] T015 [US1] Implement clause-body inlining (Rule 2: `$X_CLAUSE` + `x_clause: body`) in `packages/codegen/src/emitters/jinja-translator.ts`. Emit `{%- if x %}<body>{% endif -%}`. TDD.
-- [ ] T016 [US1] Implement variant branching (Rule 3: polymorphs that retain `variants:` — the 5 genuine-branch rules) in `packages/codegen/src/emitters/jinja-translator.ts`. Emit `{%- if variant == "<form>" -%}...{%- elif... -%}...{%- endif -%}`. TDD across all 5 rules.
-- [ ] T017 [P] [US1] Implement "no-file" cases (Rules 4, 5, 6: leaf / keyword / token / supertype / enum / group / multi return `null`, emitter skips file emission) in `packages/codegen/src/emitters/jinja-translator.ts`. TDD.
-- [ ] T018 [US1] Implement loud-failure path: any unrecognized construct throws `Error(`translator: rule '${kind}' uses unsupported construct: ${detail}`)` in `packages/codegen/src/emitters/jinja-translator.ts`. Unit test with a synthetic bad node.
-- [ ] T019 [US1] Implement `$NEWLINE` → literal `\n`; `$INDENT` / `$DEDENT` → empty string. TDD with a python-style block-structured rule fixture.
-- [ ] T020 [US1] Implement whitespace-control insertion logic: place `{%-` / `-%}` around clause and variant constructs so absent clauses don't leave whitespace (matches YAML-era implicit absorption). TDD.
-- [ ] T020a [US1] Add translator fixture tests in `packages/codegen/src/__tests__/jinja-translator.test.ts` covering YAML block-scalar whitespace fidelity (spec R41 / edge case #1): feed the translator an `AssembledNode` whose template was a YAML `|`-literal with embedded newlines (e.g., python's `_match_block`). Assert the emitted `.jinja` preserves byte-exact whitespace including terminal newlines.
+- [x] T014 [US1] Implement `translateToJinja` for `modelType === 'container'` (pre-joined `$$$CHILDREN` + joinBy in `prepare()`) in `packages/codegen/src/emitters/jinja-translator.ts`. TDD: failing test → implement → pass.
+- [x] T015 [US1] Implement clause-body inlining (Rule 2: `$X_CLAUSE` + `x_clause: body`) in `packages/codegen/src/emitters/jinja-translator.ts`. Emit `{%- if x %}<body>{% endif -%}`. TDD.
+- [x] T016 [US1] Implement variant branching (Rule 3: polymorphs that retain `variants:` — the 5 genuine-branch rules) in `packages/codegen/src/emitters/jinja-translator.ts`. Emit `{%- if variant == "<form>" -%}...{%- elif... -%}...{%- endif -%}`. TDD across all 5 rules.
+- [x] T017 [P] [US1] Implement "no-file" cases (Rules 4, 5, 6: leaf / keyword / token / supertype / enum / group / multi return `null`, emitter skips file emission) in `packages/codegen/src/emitters/jinja-translator.ts`. TDD.
+- [x] T018 [US1] Implement loud-failure path: any unrecognized construct throws `Error(`translator: rule '${kind}' uses unsupported construct: ${detail}`)` in `packages/codegen/src/emitters/jinja-translator.ts`. Unit test with a synthetic bad node.
+- [x] T019 [US1] Implement `$NEWLINE` → literal `\n`; `$INDENT` / `$DEDENT` → empty string. TDD with a python-style block-structured rule fixture.
+- [x] T020 [US1] Implement whitespace-control insertion logic: place `{%-` / `-%}` around clause and variant constructs so absent clauses don't leave whitespace (matches YAML-era implicit absorption). TDD.
+- [x] T020a [US1] Add translator fixture tests in `packages/codegen/src/__tests__/jinja-translator.test.ts` covering YAML block-scalar whitespace fidelity (spec R41 / edge case #1): feed the translator an `AssembledNode` whose template was a YAML `|`-literal with embedded newlines (e.g., python's `_match_block`). Assert the emitted `.jinja` preserves byte-exact whitespace including terminal newlines.
 
 ### Emitter rewrite
 
