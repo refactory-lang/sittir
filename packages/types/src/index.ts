@@ -721,9 +721,9 @@ type IsHomogeneous<T, NsMap> =
  */
 type TagEachArm<T, Scalars, Strings, Depth extends number[], NsMap> = T extends infer U
 	? U extends { readonly $type: infer K extends string }
-		? U | ({ kind: K } & ([LooseProjection<U, NsMap>] extends [never]
+		? ({ kind: K } & ([LooseProjection<U, NsMap>] extends [never]
 			? FromInputOf<U, Scalars, Strings, [...Depth, 0], NsMap>
-			: LooseProjection<U, NsMap>))
+			: LooseProjection<U, NsMap>)) | U
 		: never
 	: never;
 
@@ -756,8 +756,8 @@ type LooseProjection<T, NsMap> = T extends { readonly $type: infer K extends key
  */
 type LooseOrFromInput<T, Scalars, Strings, Depth extends number[], NsMap> =
 	[LooseProjection<T, NsMap>] extends [never]
-		? T | FromInputOf<T, Scalars, Strings, [...Depth, 0], NsMap>
-		: T | LooseProjection<T, NsMap>;
+		? FromInputOf<T, Scalars, Strings, [...Depth, 0], NsMap> | T
+		: LooseProjection<T, NsMap> | T;
 
 type WidenValue<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMap = {}> =
 	Depth['length'] extends MaxDepth ? T
@@ -839,7 +839,7 @@ export interface NodeNs<T extends { readonly $type: string }, Scalars = {}, Stri
 	// `T.${Kind} | T.${Kind}.Loose` unions added the passthrough
 	// explicitly at every call site; absorbing it into `Loose` lets the
 	// emitter write `T.${Kind}.Loose` once.
-	readonly Loose: T | FromInputOf<T, Scalars, Strings, [], NsMap>;
+	readonly Loose: FromInputOf<T, Scalars, Strings, [], NsMap> | T;
 	readonly Tree: TreeNodeOf<T>;
 	readonly Kind: KindOf<T>;
 }
