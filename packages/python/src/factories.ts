@@ -35,6 +35,11 @@ function _assertNonEmpty<T>(
     throw new Error(`${label}: requires at least one element`);
   }
 }
+function _bk<T>(v: unknown, kind: string, text: string, named: boolean): T | undefined {
+  if (v === true) return { $type: kind, $text: text, $named: named, $source: 'factory' } as unknown as T;
+  if (v === false || v === undefined || v === null) return undefined;
+  return v as T;
+}
 
 const _leafRe_typeConversion = /^(?:![a-z])/u;
 const _leafRe_identifier = /^(?:[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
@@ -519,7 +524,7 @@ export function caseClause(config: T.CaseClause.Config) {
 
 export function forStatement(config: T.ForStatement.Config) {
   const fields = {
-    async: config.async,
+    async: _bk(config.async, "_kw_async", "async", false),
     left: config.left,
     right: config.right,
     body: config.body,
@@ -640,7 +645,7 @@ export function finallyClause(config: T.FinallyClause.Config) {
 
 export function withStatement(config: T.WithStatement.Config) {
   const fields = {
-    async: config.async,
+    async: _bk(config.async, "_kw_async", "async", false),
     with_clause: config.withClause,
     body: config.body,
   };
@@ -698,7 +703,7 @@ export function withItem(config: T.WithItem.Config) {
 
 export function functionDefinition(config: T.FunctionDefinition.Config) {
   const fields = {
-    async: config.async,
+    async: _bk(config.async, "_kw_async", "async", false),
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -1174,7 +1179,7 @@ export function classPattern(config: T.ClassPattern.Config) {
 
 export function complexPattern(config: T.ComplexPattern.Config) {
   const fields = {
-    real: config.real,
+    real: _bk(config.real, "-", "-", false),
     imaginary: config.imaginary,
   };
   const children = config.children ?? [];
@@ -2090,7 +2095,7 @@ export function parenthesizedExpression(child?: (T.Expression | T.Yield)) {
 
 export function forInClause(config: T.ForInClause.Config) {
   const fields = {
-    async: config.async,
+    async: _bk(config.async, "_kw_async", "async", false),
     left: config.left,
     right: config.right,
   };

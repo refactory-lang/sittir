@@ -35,6 +35,11 @@ function _assertNonEmpty<T>(
     throw new Error(`${label}: requires at least one element`);
   }
 }
+function _bk<T>(v: unknown, kind: string, text: string, named: boolean): T | undefined {
+  if (v === true) return { $type: kind, $text: text, $named: named, $source: 'factory' } as unknown as T;
+  if (v === false || v === undefined || v === null) return undefined;
+  return v as T;
+}
 
 const _leafRe_hashBangLine = /^(?:#!.*)/u;
 const _leafRe_htmlCharacterReference = /^(?:&(#([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});)/u;
@@ -732,9 +737,9 @@ export function forStatement(config: T.ForStatement.Config) {
 
 export function forInStatement(config: T.ForInStatement.Config) {
   const fields = {
-    await: config.await,
+    await: _bk(config.await, "await", "await", false),
     left: config.left,
-    kind: config.kind,
+    kind: _bk(config.kind, "var", "var", false),
     value: config.value,
     operator: config.operator,
     right: config.right,
@@ -1576,7 +1581,7 @@ export function classHeritageUFormImplementsClause(config: T.ClassHeritageUFormI
 
 export function functionExpression(config: T.FunctionExpression.Config) {
   const fields = {
-    async: config.async,
+    async: _bk(config.async, "_kw_async", "async", false),
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -1605,7 +1610,7 @@ export function functionExpression(config: T.FunctionExpression.Config) {
 
 export function functionDeclaration(config: T.FunctionDeclaration.Config) {
   const fields = {
-    async: config.async,
+    async: _bk(config.async, "_kw_async", "async", false),
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -1640,7 +1645,7 @@ export function functionDeclaration(config: T.FunctionDeclaration.Config) {
 
 export function generatorFunction(config: T.GeneratorFunction.Config) {
   const fields = {
-    async: config.async,
+    async: _bk(config.async, "_kw_async", "async", false),
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -1669,7 +1674,7 @@ export function generatorFunction(config: T.GeneratorFunction.Config) {
 
 export function generatorFunctionDeclaration(config: T.GeneratorFunctionDeclaration.Config) {
   const fields = {
-    async: config.async,
+    async: _bk(config.async, "_kw_async", "async", false),
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -1716,7 +1721,7 @@ export function arrowFunction(config: T.ArrowFunctionUFormParameterConfig | T.Ar
 }
 export function arrowFunctionUFormParameter(config: T.ArrowFunctionUFormParameterConfig) {
   const fields = {
-    async: config.async,
+    async: _bk(config.async, "_kw_async", "async", false),
     body: config.body,
   };
   const children = config.children ?? [];
@@ -1743,7 +1748,7 @@ export function arrowFunctionUFormParameter(config: T.ArrowFunctionUFormParamete
 }
 export function arrowFunctionUFormUCallSignature(config: T.ArrowFunctionUFormUCallSignatureConfig) {
   const fields = {
-    async: config.async,
+    async: _bk(config.async, "_kw_async", "async", false),
     body: config.body,
   };
   const children = config.children ?? [];
@@ -1940,7 +1945,7 @@ export function subscriptExpression(config: T.SubscriptExpression.Config) {
 
 export function assignmentExpression(config: T.AssignmentExpression.Config) {
   const fields = {
-    using: config.using,
+    using: _bk(config.using, "using", "using", false),
     left: config.left,
     right: config.right,
   };
@@ -2479,7 +2484,7 @@ export function classBody(config: T.ClassBody.Config) {
 export function fieldDefinition(config: T.FieldDefinition.Config) {
   const fields = {
     decorator: config.decorator,
-    static: config.static,
+    static: _bk(config.static, "_kw_static", "static", false),
     property: config.property,
     value: config.value,
   };
@@ -2577,9 +2582,9 @@ export function restPattern(child: T.LhsExpression) {
 export function methodDefinition(config: T.MethodDefinition.Config) {
   const fields = {
     accessibility_modifier: config.accessibilityModifier,
-    override_modifier: config.overrideModifier,
-    readonly: config.readonly,
-    async: config.async,
+    override_modifier: _bk(config.overrideModifier, "_kw_static", "static", false),
+    readonly: _bk(config.readonly, "_kw_readonly", "readonly", false),
+    async: _bk(config.async, "_kw_async", "async", false),
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -2692,11 +2697,11 @@ export function reservedIdentifier(text: string) {
 export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
   const fields = {
     decorator: config.decorator,
-    declare: config.declare,
-    static: config.static,
-    readonly: config.readonly,
-    abstract: config.abstract,
-    accessor: config.accessor,
+    declare: _bk(config.declare, "declare", "declare", false),
+    static: _bk(config.static, "_kw_static", "static", false),
+    readonly: _bk(config.readonly, "_kw_readonly", "readonly", false),
+    abstract: _bk(config.abstract, "_kw_abstract", "abstract", false),
+    accessor: _bk(config.accessor, "accessor", "accessor", false),
     name: config.name,
     type: config.type,
     value: config.value,
@@ -2752,9 +2757,9 @@ export function nonNullExpression(config: T.NonNullExpression.Config) {
 export function methodSignature(config: T.MethodSignature.Config) {
   const fields = {
     accessibility_modifier: config.accessibilityModifier,
-    override_modifier: config.overrideModifier,
-    readonly: config.readonly,
-    async: config.async,
+    override_modifier: _bk(config.overrideModifier, "_kw_static", "static", false),
+    readonly: _bk(config.readonly, "_kw_readonly", "readonly", false),
+    async: _bk(config.async, "_kw_async", "async", false),
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -2791,7 +2796,7 @@ export function methodSignature(config: T.MethodSignature.Config) {
 export function abstractMethodSignature(config: T.AbstractMethodSignature.Config) {
   const fields = {
     accessibility_modifier: config.accessibilityModifier,
-    override_modifier: config.overrideModifier,
+    override_modifier: _bk(config.overrideModifier, "override_modifier", "override", true),
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -2819,7 +2824,7 @@ export function abstractMethodSignature(config: T.AbstractMethodSignature.Config
 
 export function functionSignature(config: T.FunctionSignature.Config) {
   const fields = {
-    async: config.async,
+    async: _bk(config.async, "_kw_async", "async", false),
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -3186,7 +3191,7 @@ export function extendsTypeClause(config: T.ExtendsTypeClause.Config) {
 
 export function enumDeclaration(config: T.EnumDeclaration.Config) {
   const fields = {
-    const: config.const,
+    const: _bk(config.const, "_kw_const", "const", false),
     name: config.name,
     body: config.body,
   };
@@ -3303,7 +3308,7 @@ export function overrideModifier() {
 export function requiredParameter(config: T.RequiredParameter.Config) {
   const fields = {
     decorator: config.decorator,
-    readonly: config.readonly,
+    readonly: _bk(config.readonly, "_kw_readonly", "readonly", false),
     pattern: config.pattern,
     type: config.type,
     value: config.value,
@@ -3336,7 +3341,7 @@ export function requiredParameter(config: T.RequiredParameter.Config) {
 export function optionalParameter(config: T.OptionalParameter.Config) {
   const fields = {
     decorator: config.decorator,
-    readonly: config.readonly,
+    readonly: _bk(config.readonly, "_kw_readonly", "readonly", false),
     pattern: config.pattern,
     type: config.type,
     value: config.value,
@@ -3559,7 +3564,7 @@ export function restType(config: T.RestType.Config) {
 
 export function constructorType(config: T.ConstructorType.Config) {
   const fields = {
-    abstract: config.abstract,
+    abstract: _bk(config.abstract, "_kw_abstract", "abstract", false),
     type_parameters: config.typeParameters,
     parameters: config.parameters,
     type: config.type,
@@ -3971,8 +3976,8 @@ export function callSignature(config: T.CallSignature.Config) {
 export function propertySignature(config: T.PropertySignature.Config) {
   const fields = {
     accessibility_modifier: config.accessibilityModifier,
-    override_modifier: config.overrideModifier,
-    readonly: config.readonly,
+    override_modifier: _bk(config.overrideModifier, "_kw_static", "static", false),
+    readonly: _bk(config.readonly, "_kw_readonly", "readonly", false),
     name: config.name,
     type: config.type,
   };
@@ -4019,7 +4024,7 @@ export function typeParameters(...children: T.TypeParameter[]) {
 
 export function typeParameter(config: T.TypeParameter.Config) {
   const fields = {
-    const: config.const,
+    const: _bk(config.const, "_kw_const", "const", false),
     name: config.name,
     constraint: config.constraint,
     value: config.value,
@@ -4082,7 +4087,7 @@ export function constraint(config: T.Constraint.Config) {
 
 export function constructSignature(config: T.ConstructSignature.Config) {
   const fields = {
-    abstract: config.abstract,
+    abstract: _bk(config.abstract, "_kw_abstract", "abstract", false),
     type_parameters: config.typeParameters,
     parameters: config.parameters,
     type: config.type,

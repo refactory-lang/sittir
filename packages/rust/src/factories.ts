@@ -35,6 +35,17 @@ function _assertNonEmpty<T>(
     throw new Error(`${label}: requires at least one element`);
   }
 }
+function _bk<T>(v: unknown, kind: string, text: string, named: boolean): T | undefined {
+  if (v === true) return { $type: kind, $text: text, $named: named, $source: 'factory' } as unknown as T;
+  if (v === false || v === undefined || v === null) return undefined;
+  return v as T;
+}
+function _bkArr<T>(v: unknown, kind: string, text: string, named: boolean): readonly T[] | undefined {
+  if (v === true) return [{ $type: kind, $text: text, $named: named, $source: 'factory' } as unknown as T];
+  if (v === false) return [];
+  if (v === undefined || v === null) return undefined;
+  return v as readonly T[];
+}
 
 const _leafRe_identifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 const _leafRe_shebang = /^(?:#![\r\f\t\v ]*([^[\n].*)?\n)/u;
@@ -756,7 +767,7 @@ export function constItem(config: T.ConstItem.Config) {
 export function staticItem(config: T.StaticItem.Config) {
   const fields = {
     visibility_modifier: config.visibilityModifier,
-    mutable_specifier: config.mutableSpecifier,
+    mutable_specifier: _bk(config.mutableSpecifier, "_kw_ref", "ref", false),
     name: config.name,
     type: config.type,
     value: config.value,
@@ -881,10 +892,10 @@ export function functionSignatureItem(config: T.FunctionSignatureItem.Config) {
 
 export function functionModifiers(config: T.FunctionModifiers.Config) {
   const fields = {
-    async: config.async,
-    default: config.default,
-    const: config.const,
-    unsafe: config.unsafe,
+    async: _bkArr(config.async, "_kw_async", "async", false),
+    default: _bkArr(config.default, "_kw_default", "default", false),
+    const: _bkArr(config.const, "_kw_const", "const", false),
+    unsafe: _bkArr(config.unsafe, "_kw_unsafe", "unsafe", false),
   };
   const children = config.children ?? [];
   return {
@@ -961,7 +972,7 @@ export function implItem(config: T.ImplItemUFormBodyConfig | T.ImplItemUFormSemi
 }
 export function implItemUFormBody(config: T.ImplItemUFormBodyConfig) {
   const fields = {
-    unsafe: config.unsafe,
+    unsafe: _bk(config.unsafe, "_kw_unsafe", "unsafe", false),
     type_parameters: config.typeParameters,
     trait: config.trait,
     type: config.type,
@@ -994,7 +1005,7 @@ export function implItemUFormBody(config: T.ImplItemUFormBodyConfig) {
 }
 export function implItemUFormSemi(config: T.ImplItemUFormSemiConfig) {
   const fields = {
-    unsafe: config.unsafe,
+    unsafe: _bk(config.unsafe, "_kw_unsafe", "unsafe", false),
     type_parameters: config.typeParameters,
     trait: config.trait,
     type: config.type,
@@ -1029,7 +1040,7 @@ export function implItemUFormSemi(config: T.ImplItemUFormSemiConfig) {
 export function traitItem(config: T.TraitItem.Config) {
   const fields = {
     visibility_modifier: config.visibilityModifier,
-    unsafe: config.unsafe,
+    unsafe: _bk(config.unsafe, "_kw_unsafe", "unsafe", false),
     name: config.name,
     type_parameters: config.typeParameters,
     bounds: config.bounds,
@@ -1218,7 +1229,7 @@ export function lifetimeParameter(config: T.LifetimeParameter.Config) {
 
 export function letDeclaration(config: T.LetDeclaration.Config) {
   const fields = {
-    mutable_specifier: config.mutableSpecifier,
+    mutable_specifier: _bk(config.mutableSpecifier, "mutable_specifier", "mut", true),
     pattern: config.pattern,
     type: config.type,
     value: config.value,
@@ -1357,9 +1368,9 @@ export function parameters(...children: (T.AttributeItem | T.Parameter | T.SelfP
 
 export function selfParameter(config?: T.SelfParameter.Config) {
   const fields = {
-    lifetime: config?.lifetime,
+    lifetime: _bk(config?.lifetime, "&", "&", false),
     lifetime_name: config?.lifetimeName,
-    mutable_specifier: config?.mutableSpecifier,
+    mutable_specifier: _bk(config?.mutableSpecifier, "mutable_specifier", "mut", true),
     self: { $type: "self" as const, $text: "self" as const, $source: 'factory' as const, $named: true as const },
   };
   return {
@@ -1382,7 +1393,7 @@ export function selfParameter(config?: T.SelfParameter.Config) {
 
 export function variadicParameter(config?: T.VariadicParameter.Config) {
   const fields = {
-    mutable_specifier: config?.mutableSpecifier,
+    mutable_specifier: _bk(config?.mutableSpecifier, "mutable_specifier", "mut", true),
     pattern: config?.pattern,
   };
   return {
@@ -1403,7 +1414,7 @@ export function variadicParameter(config?: T.VariadicParameter.Config) {
 
 export function parameter(config: T.Parameter.Config) {
   const fields = {
-    mutable_specifier: config.mutableSpecifier,
+    mutable_specifier: _bk(config.mutableSpecifier, "mutable_specifier", "mut", true),
     pattern: config.pattern,
     type: config.type,
   };
@@ -1477,7 +1488,7 @@ export function visibilityModifierForm0(config?: T.VisibilityModifierForm0Config
 export function visibilityModifierForm1(config?: T.VisibilityModifierForm1Config) {
   const fields = {
     pub: "pub" as const,
-    in: config?.in,
+    in: _bk(config?.in, "in", "in", false),
   };
   const children = config?.children ?? [];
   return {
@@ -1795,7 +1806,7 @@ export function typeBinding(config: T.TypeBinding.Config) {
 export function referenceType(config: T.ReferenceType.Config) {
   const fields = {
     lifetime: config.lifetime,
-    mutable_specifier: config.mutableSpecifier,
+    mutable_specifier: _bk(config.mutableSpecifier, "mutable_specifier", "mut", true),
     type: config.type,
   };
   return {
@@ -2823,9 +2834,9 @@ export function closureExpression(config: T.ClosureExpressionUFormBlockConfig | 
 }
 export function closureExpressionUFormBlock(config: T.ClosureExpressionUFormBlockConfig) {
   const fields = {
-    static: config.static,
-    async: config.async,
-    move: config.move,
+    static: _bk(config.static, "_kw_static", "static", false),
+    async: _bk(config.async, "_kw_async", "async", false),
+    move: _bk(config.move, "_kw_move", "move", false),
     parameters: config.parameters,
   };
   const children = config.children ?? [];
@@ -2854,9 +2865,9 @@ export function closureExpressionUFormBlock(config: T.ClosureExpressionUFormBloc
 }
 export function closureExpressionUFormExpr(config: T.ClosureExpressionUFormExprConfig) {
   const fields = {
-    static: config.static,
-    async: config.async,
-    move: config.move,
+    static: _bk(config.static, "_kw_static", "static", false),
+    async: _bk(config.async, "_kw_async", "async", false),
+    move: _bk(config.move, "_kw_move", "move", false),
     parameters: config.parameters,
   };
   const children = config.children ?? [];
@@ -3037,7 +3048,7 @@ export function unsafeBlock(config: T.UnsafeBlock.Config) {
 
 export function asyncBlock(config: T.AsyncBlock.Config) {
   const fields = {
-    move: config.move,
+    move: _bk(config.move, "_kw_move", "move", false),
     block: config.block,
   };
   return {
@@ -3058,7 +3069,7 @@ export function asyncBlock(config: T.AsyncBlock.Config) {
 
 export function genBlock(config: T.GenBlock.Config) {
   const fields = {
-    move: config.move,
+    move: _bk(config.move, "_kw_move", "move", false),
     block: config.block,
   };
   return {
@@ -3240,8 +3251,8 @@ export function fieldPattern(config: T.FieldPatternUFormShorthandConfig | T.Fiel
 }
 export function fieldPatternUFormShorthand(config: T.FieldPatternUFormShorthandConfig) {
   const fields = {
-    ref: config.ref,
-    mutable_specifier: config.mutableSpecifier,
+    ref: _bk(config.ref, "_kw_ref", "ref", false),
+    mutable_specifier: _bk(config.mutableSpecifier, "mutable_specifier", "mut", true),
   };
   const children = config.children ?? [];
   return {
@@ -3267,8 +3278,8 @@ export function fieldPatternUFormShorthand(config: T.FieldPatternUFormShorthandC
 }
 export function fieldPatternUFormNamed(config: T.FieldPatternUFormNamedConfig) {
   const fields = {
-    ref: config.ref,
-    mutable_specifier: config.mutableSpecifier,
+    ref: _bk(config.ref, "_kw_ref", "ref", false),
+    mutable_specifier: _bk(config.mutableSpecifier, "mutable_specifier", "mut", true),
   };
   const children = config.children ?? [];
   return {
@@ -3418,7 +3429,7 @@ export function capturedPattern(config: T.CapturedPattern.Config) {
 
 export function referencePattern(config: T.ReferencePattern.Config) {
   const fields = {
-    mutable_specifier: config.mutableSpecifier,
+    mutable_specifier: _bk(config.mutableSpecifier, "mutable_specifier", "mut", true),
     pattern: config.pattern,
   };
   return {

@@ -20,7 +20,10 @@ import {
     resolveEffectiveLiteral, isAutoStampSlot, stampExpressionFor,
     isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues,
     resolveHoistedForm, type HoistedForm, fieldTypeComponents, isValidIdent,
+    keywordPresenceKind, keywordPresenceValue, keywordPresenceValues,
+    resolveHiddenKeywordLiteral,
 } from './shared.ts'
+import { resolveBitflagConstName } from './consts.ts'
 import {
     collectRefineKindInfos, refineFormTypeName, refineFormFactoryName,
     camelCase as refineCamelCase,
@@ -56,6 +59,7 @@ export function emitFactories(config: EmitFactoriesConfig): string {
     lines.push('')
     lines.push(...emitFluentSetterHelpers())
     lines.push(...emitNonEmptyAssertHelper())
+    lines.push(...emitKeywordPresenceHelpers(nodeMap))
     lines.push('')
 
     const leafReConsts = buildLeafReConsts(nodeMap, lines)
@@ -160,6 +164,135 @@ function emitFluentSetterHelpers(): string[] {
  *   AND narrows the static type of the argument so the subsequent assignment /
  *   spread type-checks without a cast.
  */
+/**
+ * Emit the ADR-0012 keyword-presence runtime helpers.
+ *
+ * - `_bk` — scalar boolean-keyword field. Accepts `true` → construct a
+ *   fresh NodeData from the kind / text / named triple, `false` or
+ *   nullish → undefined, anything else → passthrough (covers NodeData
+ *   from readNode, string shorthands via from resolvers, etc.).
+ *
+ * - `_bkArr` — repeat-of-one-literal boolean-keyword field. Same logic
+ *   but the positive branch emits a single-element array.
+ *
+ * - `_bf` — bitflag field. Accepts a number (const-enum OR) and emits
+ *   the underlying NodeData container. (Only emitted when at least one
+ *   bitflag field exists in the grammar.)
+ *
+ * Only emit the helpers that are actually needed — keeps the generated
+ * file lean for grammars with no bitflag fields (all three current
+ * grammars).
+ */
+function emitKeywordPresenceHelpers(nodeMap: NodeMap): string[] {
+    const needs = scanKeywordPresenceNeeds(nodeMap)
+    const lines: string[] = []
+    if (needs.boolean) {
+        lines.push(
+            'function _bk<T>(v: unknown, kind: string, text: string, named: boolean): T | undefined {',
+            "  if (v === true) return { $type: kind, $text: text, $named: named, $source: 'factory' } as unknown as T;",
+            '  if (v === false || v === undefined || v === null) return undefined;',
+            '  return v as T;',
+            '}',
+        )
+    }
+    if (needs.booleanArray) {
+        lines.push(
+            'function _bkArr<T>(v: unknown, kind: string, text: string, named: boolean): readonly T[] | undefined {',
+            "  if (v === true) return [{ $type: kind, $text: text, $named: named, $source: 'factory' } as unknown as T];",
+            '  if (v === false) return [];',
+            '  if (v === undefined || v === null) return undefined;',
+            '  return v as readonly T[];',
+            '}',
+        )
+    }
+    if (needs.bitflag) {
+        lines.push(
+            'function _bf<T>(v: unknown, kinds: readonly string[], texts: readonly string[], named: boolean): readonly T[] | undefined {',
+            '  if (v === undefined || v === null) return undefined;',
+            "  if (typeof v !== 'number') return v as readonly T[];",
+            '  const out: T[] = [];',
+            '  for (let i = 0; i < kinds.length; i++) {',
+            "    if ((v & (1 << i)) !== 0) out.push({ $type: kinds[i]!, $text: texts[i]!, $named: named, $source: 'factory' } as unknown as T);",
+            '  }',
+            '  return out;',
+            '}',
+        )
+    }
+    return lines
+}
+
+/**
+ * Walk the NodeMap and record which keyword-presence helpers the
+ * factory emitter actually needs. Drives conditional helper emission.
+ */
+function scanKeywordPresenceNeeds(nodeMap: NodeMap): { boolean: boolean; booleanArray: boolean; bitflag: boolean } {
+    let boolean = false
+    let booleanArray = false
+    let bitflag = false
+    for (const [, node] of nodeMap.nodes) {
+        const fields = node.modelType === 'polymorph' ? node.allFormFields
+            : (node.modelType === 'branch' || node.modelType === 'group') ? node.fields
+            : []
+        for (const f of fields) {
+            const kw = keywordPresenceKind(f, nodeMap)
+            if (kw === 'boolean') {
+                if (isMultiple(f)) booleanArray = true
+                else boolean = true
+            } else if (kw === 'bitflag') {
+                bitflag = true
+            }
+        }
+    }
+    return { boolean, booleanArray, bitflag }
+}
+
+/**
+ * Compute the `(kind, text, named)` triple for a keyword-presence field.
+ * Used by the factory emitter to construct the stamp arguments passed
+ * to `_bk` / `_bkArr`.
+ *
+ * Resolution order matches `resolveEntryLiteral`:
+ *   - Direct terminal → kind = text = the literal string, named = false.
+ *   - NodeRef to hidden `_kw_*` / hidden single-string token → kind is
+ *     the `_kw_*` kind name, text is the literal, named = false.
+ *   - NodeRef to a visible keyword / single-value enum → kind is the
+ *     visible kind name, text is the literal, named = true.
+ *
+ * Returns `undefined` if no entry resolves (shouldn't happen for a
+ * field that already classified as boolean / bitflag, but returned
+ * defensively).
+ */
+function resolveKeywordPresenceTriple(
+    field: AssembledField,
+    literal: string,
+    nodeMap: NodeMap,
+): { kind: string; text: string; named: boolean } | undefined {
+    for (const v of field.values) {
+        if (isTerminalValue(v) && v.value === literal) {
+            return { kind: literal, text: literal, named: false }
+        }
+        if (isNodeRef(v)) {
+            const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind
+            // Hidden keyword: name matches the literal via _kw_* helper.
+            const hiddenLit = resolveHiddenKeywordLiteral(kindName, nodeMap)
+            if (hiddenLit === literal) {
+                return { kind: kindName, text: literal, named: false }
+            }
+            // Visible keyword / single-enum — named, full kind name.
+            const ref = nodeMap.nodes.get(kindName)
+            if (ref && !kindName.startsWith('_')) {
+                if (ref.modelType === 'keyword' && (ref as { text: string }).text === literal) {
+                    return { kind: kindName, text: literal, named: true }
+                }
+                if (ref.modelType === 'enum' && (ref as { values: string[] }).values.includes(literal) && (ref as { values: string[] }).values.length === 1) {
+                    return { kind: kindName, text: literal, named: true }
+                }
+            }
+        }
+    }
+    return undefined
+}
+
 function emitNonEmptyAssertHelper(): string[] {
     return [
         'function _assertNonEmpty<T>(',
@@ -545,6 +678,47 @@ function autoStampExpression(f: AssembledField, nodeMap: NodeMap): string | unde
 }
 
 /**
+ * Build the RHS expression for a factory field assignment when the
+ * field classifies as keyword-presence (ADR-0012).
+ *
+ * Scalar boolean:   `_bk(config?.propertyName, '<kind>', '<text>', <named>)`
+ * Array  boolean:   `_bkArr(config?.propertyName, '<kind>', '<text>', <named>)`
+ *   (degenerate repeat-of-one-literal)
+ * Bitflag:          `_bf(config?.propertyName, [<kinds>], [<texts>], <named>)`
+ *
+ * Returns `undefined` when the field doesn't classify as keyword-presence.
+ */
+function keywordPresenceAssignmentExpr(
+    f: AssembledField,
+    opt: string,
+    nodeMap: NodeMap,
+): string | undefined {
+    const kw = keywordPresenceKind(f, nodeMap)
+    if (kw === null) return undefined
+    const access = `config${opt}.${f.propertyName}`
+    if (kw === 'boolean') {
+        const lit = keywordPresenceValue(f, nodeMap)
+        if (lit === undefined) return undefined
+        const triple = resolveKeywordPresenceTriple(f, lit, nodeMap)
+        if (!triple) return undefined
+        const helper = isMultiple(f) ? '_bkArr' : '_bk'
+        return `${helper}(${access}, ${JSON.stringify(triple.kind)}, ${JSON.stringify(triple.text)}, ${triple.named})`
+    }
+    // bitflag
+    const lits = keywordPresenceValues(f, nodeMap)
+    if (lits.length === 0) return undefined
+    const triples = lits.map(l => resolveKeywordPresenceTriple(f, l, nodeMap)).filter((t): t is { kind: string; text: string; named: boolean } => t !== undefined)
+    if (triples.length !== lits.length) return undefined
+    const kinds = `[${triples.map(t => JSON.stringify(t.kind)).join(', ')}]`
+    const texts = `[${triples.map(t => JSON.stringify(t.text)).join(', ')}]`
+    // All bitflag entries have the same `named` flag (they're all hidden
+    // `_kw_*` OR all direct-terminal OR all visible-keyword — the
+    // grammar won't mix them). Use the first triple's flag.
+    const named = triples[0]!.named
+    return `_bf(${access}, ${kinds}, ${texts}, ${named})`
+}
+
+/**
  * Resolve an AssembledField's element type to a concrete TS type expression
  * for the factory surface — each resolved node kind is prefixed with `T.` so
  * the reference resolves against the `import * as T from './types.js'` import.
@@ -606,9 +780,14 @@ function emitFieldCarryingFactory(
                 // directly without reading from config. The field is omitted from
                 // Config so the caller cannot (and need not) supply it.
                 lines.push(`    ${f.name}: ${stamp},`)
-            } else {
-                lines.push(`    ${f.name}: config${opt}.${f.propertyName},`)
+                continue
             }
+            const kwExpr = keywordPresenceAssignmentExpr(f, opt, nodeMap)
+            if (kwExpr !== undefined) {
+                lines.push(`    ${f.name}: ${kwExpr},`)
+                continue
+            }
+            lines.push(`    ${f.name}: config${opt}.${f.propertyName},`)
         }
         lines.push('  };')
     }
@@ -722,9 +901,14 @@ function emitRefineFormFactory(
             const stamp = autoStampExpression(f, nodeMap)
             if (stamp !== undefined) {
                 lines.push(`    ${f.name}: ${stamp},`)
-            } else {
-                lines.push(`    ${f.name}: config${opt}.${f.propertyName},`)
+                continue
             }
+            const kwExpr = keywordPresenceAssignmentExpr(f, opt, nodeMap)
+            if (kwExpr !== undefined) {
+                lines.push(`    ${f.name}: ${kwExpr},`)
+                continue
+            }
+            lines.push(`    ${f.name}: config${opt}.${f.propertyName},`)
         }
         lines.push('  };')
     }
