@@ -121,6 +121,110 @@ export interface PreparedRender {
 }
 
 /**
+ * Formal declarative-engine render context (ADR-0013 Task 3 / feature 011).
+ *
+ * The bag passed to a declarative template engine (Nunjucks / askama)
+ * for a single render. Named field slots arrive pre-rendered as strings;
+ * children are pre-joined into `children` with joinBy + flankSep
+ * applied, and also exposed as `children_list` for per-item iteration.
+ *
+ * Identical shape on TS (this interface) and Rust (per-rule askama
+ * struct). Cross-render parity depends on the two producers populating
+ * the same values for the same input node.
+ *
+ * Reserved keys: `children`, `children_list`, `variant`, `text`,
+ * `trailing_sep`, `leading_sep`. A rule whose grammar declares a field
+ * colliding with any reserved name is a translator-time error.
+ */
+export interface TemplateContext {
+	readonly [fieldName: string]: string | undefined | readonly string[] | boolean;
+	/** Pre-joined unconsumed named children. */
+	readonly children: string;
+	/** Individual pre-rendered children in source order. */
+	readonly children_list: readonly string[];
+	/** Node's $variant, empty string when absent. */
+	readonly variant: string;
+	/** Node's $text, empty string when absent. */
+	readonly text: string;
+	/** flankSep trailing result (ADR-0013 Task 3). */
+	readonly trailing_sep: boolean;
+	/** flankSep leading result (ADR-0013 Task 3). */
+	readonly leading_sep: boolean;
+}
+
+/**
+ * Build a declarative-engine TemplateContext (feature 011).
+ *
+ * Mirrors `prepare()`'s slot resolution but produces a flat named-key
+ * bag instead of positional substitutions. Pre-joins named children
+ * into `children`, exposes them individually as `children_list`, and
+ * pre-renders every named field slot to its string form.
+ *
+ * Used by the Nunjucks path in `@sittir/core`. Rust askama structs
+ * populated by codegen emission mirror this shape per-rule.
+ */
+export function buildTemplateContext(node: AnyNodeData, ctx: InternalRenderContext): TemplateContext {
+	const rule = ctx.config.rules[node.$type];
+	const ruleObj = typeof rule === 'string' ? undefined : rule as unknown as Record<string, unknown>;
+
+	// Render named children in source order. Anonymous tokens are
+	// template-structural (joinBy / flankSep material) and never appear
+	// in children_list or children.
+	const childrenList: string[] = [];
+	if (node.$children) {
+		for (const c of node.$children) {
+			const child = c as AnyNodeData;
+			if (child?.$named === false) continue;
+			childrenList.push(renderValue(child as AnyNodeData | string | number, ctx));
+		}
+	}
+
+	const childrenJoinBy = resolveJoinBy(ruleObj, 'CHILDREN');
+	const childrenJoined = childrenList.join(childrenJoinBy);
+
+	// Render named field slots to strings. Multi-valued field slots
+	// pre-join with their configured joinBy; single-valued slots emit
+	// their rendered form. Anonymous-token promotions live alongside
+	// named field slots — filter them out, they're structural.
+	const fields: Record<string, string> = {};
+	if (node.$fields) {
+		for (const [fieldName, raw] of Object.entries(node.$fields)) {
+			if (raw === undefined || raw === null) continue;
+			const items = Array.isArray(raw) ? raw : [raw];
+			const named = items.filter(item => {
+				if (typeof item !== 'object' || item === null) return true;
+				return (item as AnyNodeData).$named !== false;
+			});
+			if (named.length === 0) continue;
+			const fieldJoinBy = resolveJoinBy(ruleObj, fieldName.toUpperCase());
+			fields[fieldName] = named
+				.map(item => renderValue(item as AnyNodeData | string | number, ctx))
+				.join(fieldJoinBy);
+		}
+	}
+
+	// flankSep probes for leading/trailing anonymous separator tokens
+	// adjacent to the named-children run. Only meaningful when the rule
+	// declares joinByLeading / joinByTrailing.
+	const leadingSep = ruleObj?.['joinByLeading'] === true && node.$children
+		? flankSep(node.$children, 'leading', childrenJoinBy) !== ''
+		: false;
+	const trailingSep = ruleObj?.['joinByTrailing'] === true && node.$children
+		? flankSep(node.$children, 'trailing', childrenJoinBy) !== ''
+		: false;
+
+	return {
+		...fields,
+		children: childrenJoined,
+		children_list: childrenList,
+		variant: node.$variant ?? '',
+		text: node.$text ?? '',
+		trailing_sep: trailingSep,
+		leading_sep: leadingSep,
+	};
+}
+
+/**
  * Phase 1 of render: resolve the template, walk the template's `$VAR`
  * placeholders in order, and pre-compute each slot's rendered value
  * (consuming children as needed). Returns a `PreparedRender` bag that

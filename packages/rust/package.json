@@ -26,7 +26,8 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "templates/*.jinja"
   ],
   "scripts": {
     "generate": "rm -f src/factories.ts src/from.ts src/ir.ts src/utils.ts src/types.ts src/consts.ts src/index.ts templates.yaml tests/nodes.test.ts && node --experimental-strip-types ../codegen/src/cli.ts --grammar rust --all --output src/",
