@@ -2,8 +2,15 @@
 
 **Feature Branch**: `011-jinja-template-migration`
 **Created**: 2026-04-21
-**Status**: Draft
+**Status**: US1 (MVP) complete (2026-04-22); US2 (Rust port) deferred
 **Input**: User description: "Askama-Style Template Migration — migrate template format from ast-grep-flavored YAML to Jinja-compatible individual `.jinja` files. Consumed by Nunjucks (TypeScript) and askama (Rust)."
+
+**Scope update (2026-04-22)**: User Story 2 (Rust askama renderer) is
+deferred pending the full `@sittir/core` port to Rust. When that port
+lands, the askama render path is built inside the ported core rather
+than as a standalone crate. The `.jinja` file surface produced by
+Phase 3 is the permanent template format and needs no rework for the
+future port.
 
 ## User Scenarios & Testing *(mandatory)*
 

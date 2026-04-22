@@ -115,6 +115,20 @@ description: "Task list for Jinja template migration"
 
 ## Phase 4: User Story 2 — Rust Port with Askama Compile-Time Validation (Priority: P2)
 
+> **⏸ DEFERRED (2026-04-22)**: Phase 4 waits on the full `@sittir/core`
+> Rust port. The original plan stood up `crates/sittir-render/` as an
+> isolated askama crate consuming the `.jinja` files produced by
+> Phase 3. Re-scoped direction: when `@sittir/core` itself is ported
+> to Rust, the askama render path is built inside that port (not as a
+> separate crate). Phase 3's `.jinja` files remain the authoritative
+> template surface and will drive both the TS Nunjucks renderer (today)
+> and the future Rust askama renderer (post-`@sittir/core` port).
+>
+> Tasks T040–T055 + T046a stay specified here for reference — their
+> technical approach is still correct, just re-homed under the core
+> port spec when it exists. None are blocked or stale; they simply
+> wait.
+
 **Goal**: Stand up `crates/sittir-render/` with per-rule askama structs; `.jinja` files are shared with Phase A's TS renderer. Cross-render parity across the corpus.
 
 **Independent Test**: `cargo test -p sittir-render` passes; each corpus node renders byte-identical between TS (Nunjucks) and Rust (askama).
@@ -184,17 +198,22 @@ description: "Task list for Jinja template migration"
 ## Dependencies
 
 ```text
-Phase 1 (Setup) ──┬─→ Phase 2 (Foundational) ──→ Phase 3 (US1 MVP) ──→ Phase 4 (US2 Rust) ──→ Phase 5 (US3 Ergonomics) ──→ Phase 6 (Polish)
+Phase 1 (Setup) ──┬─→ Phase 2 (Foundational) ──→ Phase 3 (US1 MVP) ──→ Phase 5 (US3 Ergonomics) ──→ Phase 6 (Polish)
                   └─ All Phase 1 tasks parallelizable to each other
                                                └─ Within Phase 3: T013–T020 (translator) → T021–T023 (emitter) → T024–T028 (core bridge) → T029–T034 (per-grammar, serial) → T035–T039 (integration)
-                                                                                         └─ Within Phase 4: T040–T044 (crate scaffolding) → T045–T046 (filters) → T047–T050 (codegen emitter) → T051–T055 (parity)
+
+Phase 4 (US2 Rust) — DEFERRED, waits on full @sittir/core Rust port.
 ```
 
 **Critical path**: T007 → T008 → T009 → T011 → T013 → T014 → T015 → T016 → T021 → T024 → T025 → T029 → T031 → T033 → T034 → T035.
 
-**US2 blocks on US1 landing**: Phase B needs Phase A's `.jinja` files to exist on disk. US2's first `cargo build` depends on US1's T029 (rust) completing.
+**Phase 4 deferred (2026-04-22)**: US2 (the Rust askama renderer)
+waits on the full `@sittir/core` Rust port. When that port lands, the
+askama render path is built inside the ported core rather than as a
+separate `crates/sittir-render/` scaffold. `.jinja` files are
+unchanged; only Phase 4's *delivery vehicle* moves.
 
-**US3 is non-blocking**: Phases 5 tasks are nice-to-have; can land any time after Phase 3 completes.
+**US3 is non-blocking**: Phase 5 tasks are nice-to-have; can land any time after Phase 3 completes.
 
 ---
 
