@@ -631,10 +631,10 @@ export type FromInputOf<T, Scalars = {}, Strings = {}, Depth extends number[] = 
 	} & {
 		readonly [K in keyof FieldsOf<T> as K extends OptionalNonAutoStampKeys<FieldsOf<T>> ? CamelCase<K> : never]?:
 			WidenSlotValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0], NsMap>;
-	} & {
-		readonly [K in keyof ChildSlotsOf<T>]?:
-			WidenChildSlot<ChildSlotsOf<T>[K], Scalars, Strings, [...Depth, 0], NsMap>;
-	}>;
+	} & (T extends { readonly $children: infer C }
+		? { readonly children?: WidenChildSlot<C, Scalars, Strings, [...Depth, 0], NsMap> }
+		: {})
+>;
 
 /** @internal — slot-level widen that projects boolean-keyword / bitflag
  * brands to their Config surface BEFORE delegating to WidenValue for
