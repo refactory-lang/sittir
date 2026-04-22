@@ -252,7 +252,12 @@ export function translateToJinja(
 		return parts.join('\n')
 	}
 
+	// Exhaustive: all AssembledNode subclasses handled above. TS
+	// narrows `node` to `never` here; casting back exposes the
+	// runtime-only case (new modelType added without updating the
+	// translator) as an actionable error.
+	const unreachable = node as AssembledNode
 	throw new Error(
-		`translateToJinja: not yet implemented for node.modelType='${node.modelType}' (kind='${node.kind}')`,
+		`translateToJinja: not yet implemented for node.modelType='${unreachable.modelType}' (kind='${unreachable.kind}')`,
 	)
 }

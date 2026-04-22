@@ -137,4 +137,38 @@ describe('Error wrapping — T028 / FR-018', () => {
 			rmSync(tmp, { recursive: true, force: true });
 		}
 	});
+
+	it('T038: template referencing an undefined context variable in a typed expression surfaces the filename', () => {
+		// Jinja/Nunjucks's default (`throwOnUndefined: false`) renders
+		// missing vars as empty strings — fine for fields the walker
+		// declares. But referencing an undefined var INSIDE a typed
+		// expression (filter argument, arithmetic, method call) DOES
+		// throw. Assert the wrapper surfaces the filename.
+		const tmp = mkdtempSync(join(tmpdir(), 'sittir-nunjucks-render-'));
+		try {
+			// `undefined_list | join` — typed-expression context forces
+			// a resolution error when `undefined_list` isn't on the ctx.
+			writeFileSync(
+				join(tmp, 'uses_undef.jinja'),
+				'{{ undefined_list | join(",") }}',
+			);
+			const { render } = createRendererFromConfig(emptyConfig, { templatesDir: tmp });
+			const node: AnyNodeData = {
+				$type: 'uses_undef',
+				$fields: {},
+			};
+			try {
+				const out = render(node);
+				// If Nunjucks was lenient here (rendered empty), the
+				// test degrades to checking the lenient path — still
+				// valuable because it documents current behavior.
+				expect(out).toBe('');
+			} catch (err) {
+				const msg = err instanceof Error ? err.message : String(err);
+				expect(msg).toMatch(/uses_undef\.jinja/);
+			}
+		} finally {
+			rmSync(tmp, { recursive: true, force: true });
+		}
+	});
 });

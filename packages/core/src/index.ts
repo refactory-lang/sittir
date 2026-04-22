@@ -1,7 +1,7 @@
 // @sittir/core — Grammar-driven render engine (runtime only)
 // All type definitions live in @sittir/types.
 
-export { createRenderer, loadTemplates } from './loader.ts';
+export { createRenderer } from './loader.ts';
 export { createRendererFromConfig } from './render.ts';
 export type { BoundRenderer, RulesConfig } from './render.ts';
 export { validateFull } from './validate.ts';

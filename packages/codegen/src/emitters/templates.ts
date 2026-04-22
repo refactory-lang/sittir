@@ -300,7 +300,7 @@ export function emitJinjaTemplates(config: EmitTemplatesConfig): Map<string, str
         if (node instanceof AssembledGroup && node.parentKind) continue
         let body: string | null
         try {
-            body = translateToJinja(node, nodeMap.rules ?? {}, wordMatcher)
+            body = translateToJinja(node, nodeMap.rules ?? {}, wordMatcher ?? /\w/)
         } catch (err) {
             // Re-throw with grammar + kind context so the emitter caller
             // gets an actionable error message.

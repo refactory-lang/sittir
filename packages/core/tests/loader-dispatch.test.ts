@@ -5,29 +5,13 @@ import { join } from 'node:path';
 import { createRenderer } from '../src/loader.ts';
 import type { AnyNodeData } from '../src/types.ts';
 
-// T026 — createRenderer(path) must detect whether `path` points at a
-// .yaml file (legacy) or a directory (new .jinja per-rule layout) and
-// dispatch accordingly. During the migration both paths must work so
-// callers can cut over grammar-by-grammar.
+// T026 (revised post-T037) — createRenderer(string) treats its string
+// argument as a `.jinja` templates directory. The legacy YAML
+// file-loading branch was retired as part of T037; production
+// renderers always consume per-rule `.jinja` files.
 
-describe('createRenderer dispatch (T026)', () => {
-	it('treats a path ending in .yaml as a legacy YAML templates file', () => {
-		const tmp = mkdtempSync(join(tmpdir(), 'sittir-loader-'));
-		try {
-			const yamlPath = join(tmp, 'templates.yaml');
-			writeFileSync(yamlPath, 'language: test\nextensions: []\nrules:\n  greet: "$NAME!"\n');
-			const { render } = createRenderer(yamlPath);
-			const node: AnyNodeData = {
-				$type: 'greet',
-				$fields: { name: { $type: 'id', $text: 'world' } },
-			};
-			expect(render(node)).toBe('world!');
-		} finally {
-			rmSync(tmp, { recursive: true, force: true });
-		}
-	});
-
-	it('treats a directory path as a .jinja template root', () => {
+describe('createRenderer(templatesDir)', () => {
+	it('treats a string argument as a .jinja template directory', () => {
 		const tmp = mkdtempSync(join(tmpdir(), 'sittir-loader-'));
 		try {
 			writeFileSync(join(tmp, 'greet.jinja'), '{{ name }}!');

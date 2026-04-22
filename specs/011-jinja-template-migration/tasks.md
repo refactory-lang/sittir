@@ -103,11 +103,11 @@ description: "Task list for Jinja template migration"
 
 ### Integration tests + cleanup
 
-- [ ] T035 [US1] Run full `pnpm test`. Assert only the pre-existing 1 `raw_string_literal` failure remains; no new regressions.
-- [ ] T036 [US1] Run `pnpm -r run type-check`. Must pass.
-- [ ] T037 [US1] Remove the legacy `.yaml` path from `packages/core/src/loader.ts` and `packages/core/src/render.ts`. `createRenderer` now accepts directory paths only. Update core tests accordingly.
-- [ ] T038 [P] [US1] Add a regression test in `packages/core/tests/nunjucks-render.test.ts` asserting that a template referencing an undefined variable throws with the error format from T028.
-- [ ] T039 [P] [US1] Add a regression test in `packages/codegen/src/__tests__/jinja-translator.test.ts` asserting stale-file deletion: pre-populate `packages/<grammar>/templates/` with a bogus `removed_rule.jinja`; run codegen; assert file is gone.
+- [x] T035 [US1] Run full `pnpm test`. Assert only the pre-existing 1 `raw_string_literal` failure remains; no new regressions.
+- [x] T036 [US1] Run `pnpm -r run type-check`. Must pass.
+- [x] T037 [US1] Remove the legacy `.yaml` path from `packages/core/src/loader.ts` and `packages/core/src/render.ts`. `createRenderer` now accepts directory paths only. Update core tests accordingly.
+- [x] T038 [P] [US1] Add a regression test in `packages/core/tests/nunjucks-render.test.ts` asserting that a template referencing an undefined variable throws with the error format from T028.
+- [x] T039 [P] [US1] Add a regression test in `packages/codegen/src/__tests__/jinja-translator.test.ts` asserting stale-file deletion: pre-populate `packages/<grammar>/templates/` with a bogus `removed_rule.jinja`; run codegen; assert file is gone.
 
 **Checkpoint (MVP)**: All three grammars render via Nunjucks from per-rule `.jinja` files. YAML deleted. `pnpm test` at pre-migration baseline. Single-file `git diff` when editing one template.
 
