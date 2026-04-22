@@ -22,20 +22,13 @@ rules:
     alias_clause: as $ALIAS
   declaration: $$$CHILDREN
   import_statement: import $IMPORT_CLAUSE $$$CHILDREN$SOURCE$FROM_CLAUSE $IMPORT_ATTRIBUTE $SEMICOLON
-  import_clause:
-    variants:
-      namespace_import: $$$CHILDREN
-      named_imports: $$$CHILDREN
-      default_import: $$$CHILDREN
+  import_clause: $$$CHILDREN
   namespace_import: "*as $IDENTIFIER"
   named_imports:
     template: "{$$$CHILDREN}"
     joinBy: ","
     joinByTrailing: true
-  import_specifier:
-    variants:
-      name: type $$$CHILDREN
-      as: type $$$CHILDREN
+  import_specifier: type $$$CHILDREN
   import_attribute: $$$OBJECT
   statement: $$$CHILDREN
   expression_statement: $$$CHILDREN
@@ -127,10 +120,7 @@ rules:
   jsx_attribute: $$$CHILDREN=
   class: $$$DECORATOR class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY
   class_declaration: $$$DECORATOR class $NAME $TYPE_PARAMETERS $CLASS_HERITAGE $BODY $AUTOMATIC_SEMICOLON
-  class_heritage:
-    variants:
-      extends_clause: $$$CHILDREN
-      implements_clause: $$$CHILDREN
+  class_heritage: $$$CHILDREN
   function_expression:
     template: $ASYNC_CLAUSE function $NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY
     async_clause: $ASYNC
@@ -144,9 +134,7 @@ rules:
     template: $ASYNC_CLAUSE function*$NAME $TYPE_PARAMETERS $PARAMETERS $RETURN_TYPE $BODY $$$CHILDREN
     async_clause: $ASYNC
   arrow_function:
-    variants:
-      parameter: $ASYNC_CLAUSE $$$CHILDREN=>$BODY
-      _call_signature: $ASYNC_CLAUSE $$$CHILDREN=>$BODY
+    template: $ASYNC_CLAUSE $$$CHILDREN=>$BODY
     async_clause: $ASYNC
   call_expression:
     variants:
@@ -324,9 +312,7 @@ rules:
     template: $ABSTRACT_CLAUSE new $TYPE_PARAMETERS $PARAMETERS $TYPE
     abstract_clause: $ABSTRACT
   index_signature:
-    variants:
-      colon: "$SIGN_CLAUSE[$$$CHILDREN]$TYPE"
-      mapped_type_clause: "$SIGN_CLAUSE[$$$CHILDREN]$TYPE"
+    template: "$SIGN_CLAUSE[$$$CHILDREN]$TYPE"
     sign_clause: $SIGN readonly
   array_type: "$PRIMARY_TYPE[]"
   tuple_type:

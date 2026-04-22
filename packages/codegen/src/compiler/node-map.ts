@@ -1283,6 +1283,23 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
             Object.assign(mergedClauses, clauses)
             Object.assign(mergedJoinByField, joinByField)
         }
+        // Collapse identical-across-forms `variants:` to a single `template:`
+        // string (ADR-0013 Task 2). When every form renders the same template
+        // text (common: polymorph parent delegates to variant child via
+        // `$$$CHILDREN`, so parent template doesn't branch on form), the
+        // `variants:` block is dead weight — it just bloats the YAML and
+        // hides the fact that only five rules across all grammars actually
+        // branch on variant at the parent level. Drop `detect:` too when
+        // collapsing; with a single template there's nothing to dispatch.
+        const formNames = Object.keys(variants)
+        const normalizeTrailingNewline = (s: string): string => s.endsWith('\n') ? s.slice(0, -1) : s
+        const allEqual = formNames.length > 1
+            && formNames.every(n => normalizeTrailingNewline(variants[n]!) === normalizeTrailingNewline(variants[formNames[0]!]!))
+        if (allEqual) {
+            const entry: Record<string, unknown> = { template: variants[formNames[0]!]!, ...mergedClauses }
+            if (Object.keys(mergedJoinByField).length > 0) entry.joinByField = mergedJoinByField
+            return entry
+        }
         const entry: Record<string, unknown> = { variants, ...mergedClauses }
         if (Object.keys(detect).length > 0) entry.detect = detect
         if (Object.keys(mergedJoinByField).length > 0) entry.joinByField = mergedJoinByField

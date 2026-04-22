@@ -176,11 +176,7 @@ rules:
   comparison_operator: $LEFT $$$OPERATORS $$$CHILDREN
   lambda: "lambda $PARAMETERS:$BODY"
   lambda_within_for_in_clause: "lambda $PARAMETERS:$BODY"
-  assignment:
-    variants:
-      eq: $LEFT $$$CHILDREN
-      type: $LEFT $$$CHILDREN
-      typed: $LEFT $$$CHILDREN
+  assignment: $LEFT $$$CHILDREN
   augmented_assignment: $LEFT $OPERATOR $RIGHT
   pattern_list:
     template: $PATTERN,$$$CHILDREN

@@ -27,14 +27,18 @@ The five concerns, symptoms first:
    these cases `variants:` is dead weight — the variant child has its own
    kind and template, and `$$$CHILDREN` delegates to it. A `grep`
    inventory (11 variants blocks in rust, 8 in typescript, 2 in python)
-   shows only **three** rules across the three grammars have templates
-   that genuinely differ between forms:
+   shows only **five** rules across the three grammars have templates
+   that genuinely differ between forms (post-regeneration count; the
+   initial pre-cleanup estimate of three undercounted `variable_declarator`
+   and `_match_block`):
 
-   | Rule                          | Why forms differ                                              |
-   |-------------------------------|---------------------------------------------------------------|
-   | `rust/visibility_modifier`    | `pub` (bare) vs `pub(crate)` (with parens + in-clause)        |
-   | `typescript/export_statement` | Star export, type export, export assignment, namespace export |
-   | `typescript/call_expression`  | With/without type_arguments, optional chaining                |
+   | Rule                             | Why forms differ                                              |
+   |----------------------------------|---------------------------------------------------------------|
+   | `rust/visibility_modifier`       | `pub` (bare) vs `pub(crate)` (with parens + in-clause)        |
+   | `typescript/export_statement`    | Star export, type export, export assignment, namespace export |
+   | `typescript/call_expression`     | With/without type_arguments, optional chaining                |
+   | `typescript/variable_declarator` | Forms differ on initializer presence / type annotation        |
+   | `python/_match_block`            | Suite form vs single-statement form                           |
 
    Compounding this: factory output stamps `$variant: '_form_external'`
    (with `_form_` prefix) but template variant keys use `external` (no

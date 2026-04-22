@@ -7,11 +7,7 @@ rules:
     joinByField:
       statements: "\n"
   expression_statement: $$$CHILDREN;
-  macro_definition:
-    variants:
-      paren: macro_rules!$NAME $$$CHILDREN
-      bracket: macro_rules!$NAME $$$CHILDREN
-      brace: macro_rules!$NAME $$$CHILDREN
+  macro_definition: macro_rules!$NAME $$$CHILDREN
   macro_rule: $LEFT=>$RIGHT
   token_tree_pattern: $TEXT
   token_binding_pattern: "$NAME:$TYPE"
@@ -24,17 +20,10 @@ rules:
     template: $$$CHILDREN $VALUE_CLAUSE$ARGUMENTS_CLAUSE
     value_clause: =$VALUE
     arguments_clause: $ARGUMENTS
-  mod_item:
-    variants:
-      external: $VISIBILITY_MODIFIER mod $NAME $$$CHILDREN
-      inline: $VISIBILITY_MODIFIER mod $NAME $$$CHILDREN
+  mod_item: $VISIBILITY_MODIFIER mod $NAME $$$CHILDREN
   foreign_mod_item: $VISIBILITY_MODIFIER $EXTERN_MODIFIER;$BODY
   declaration_list: "{$$$CHILDREN}"
-  struct_item:
-    variants:
-      brace: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $$$CHILDREN
-      tuple: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $$$CHILDREN
-      unit: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $$$CHILDREN
+  struct_item: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $$$CHILDREN
   union_item: $VISIBILITY_MODIFIER union $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
   enum_item: $VISIBILITY_MODIFIER enum $NAME $TYPE_PARAMETERS $WHERE_CLAUSE $BODY
   enum_variant_list:
@@ -76,9 +65,7 @@ rules:
     joinByTrailing: true
   where_predicate: $LEFT $BOUNDS
   impl_item:
-    variants:
-      body: $UNSAFE_CLAUSE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $WHERE_CLAUSE $$$CHILDREN
-      semi: $UNSAFE_CLAUSE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $WHERE_CLAUSE $$$CHILDREN
+    template: $UNSAFE_CLAUSE impl $TYPE_PARAMETERS $TRAIT_CLAUSE $TYPE $WHERE_CLAUSE $$$CHILDREN
     unsafe_clause: $UNSAFE
     bang_clause: "!"
     trait_clause: $BANG_CLAUSE$TRAIT for
@@ -175,12 +162,7 @@ rules:
   scoped_identifier: "$PATH::$NAME"
   scoped_type_identifier_in_expression_position: "$PATH::$NAME"
   scoped_type_identifier: "$PATH::$NAME"
-  range_expression:
-    variants:
-      binary: $$$CHILDREN
-      postfix: $$$CHILDREN
-      prefix: $$$CHILDREN
-      bare: $$$CHILDREN
+  range_expression: $$$CHILDREN
   unary_expression: $OPERATOR $OPERAND
   try_expression: $VALUE?
   reference_expression: "&$$$CHILDREN$MUTABLE_SPECIFIER $VALUE"
@@ -195,10 +177,7 @@ rules:
     template: ($$$CHILDREN)
     joinBy: ","
     joinByTrailing: true
-  array_expression:
-    variants:
-      semi: $$$CHILDREN
-      list: $$$CHILDREN
+  array_expression: $$$CHILDREN
   parenthesized_expression: ($$$CHILDREN)
   tuple_expression:
     template: ($$$ATTRIBUTES $$$ELEMENTS)
@@ -240,10 +219,7 @@ rules:
     template: $LABEL_CLAUSE for $PATTERN in $VALUE $BODY
     label_clause: "$LABEL:"
   const_block: const $BODY
-  closure_expression:
-    variants:
-      block: $STATIC $ASYNC $MOVE $PARAMETERS $$$CHILDREN
-      expr: $STATIC $ASYNC $MOVE $PARAMETERS $$$CHILDREN
+  closure_expression: $STATIC $ASYNC $MOVE $PARAMETERS $$$CHILDREN
   closure_parameters:
     template: "|$$$CHILDREN|"
     joinBy: ","
@@ -282,22 +258,14 @@ rules:
     joinBy: ","
     joinByTrailing: true
   field_pattern:
-    variants:
-      shorthand: $REF_CLAUSE $MUTABLE_SPECIFIER $$$CHILDREN
-      named: $REF_CLAUSE $MUTABLE_SPECIFIER $$$CHILDREN
+    template: $REF_CLAUSE $MUTABLE_SPECIFIER $$$CHILDREN
     ref_clause: $REF
   mut_pattern: $MUTABLE_SPECIFIER $PATTERN
-  range_pattern:
-    variants:
-      left: $$$CHILDREN
-      prefix: $$$CHILDREN
+  range_pattern: $$$CHILDREN
   ref_pattern: ref $$$CHILDREN
   captured_pattern: $IDENTIFIER@$PATTERN
   reference_pattern: "&$MUTABLE_SPECIFIER $PATTERN"
-  or_pattern:
-    variants:
-      binary: $$$CHILDREN
-      prefix: $$$CHILDREN
+  or_pattern: $$$CHILDREN
   negative_literal: "-$$$CHILDREN$VALUE"
   string_literal: "\"$$$CHILDREN\""
   raw_string_literal: $TEXT
