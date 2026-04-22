@@ -75,8 +75,9 @@ export interface MissingKind {
 /**
  * Validate that every named entry in node-types.json is renderable.
  *
- * @param grammar       Grammar name (rust, typescript, python).
- * @param templatesYaml Parsed text of the generated templates.yaml.
+ * @param grammar        Grammar name (rust, typescript, python).
+ * @param templatesPath  Path to either a `.jinja` templates directory
+ *                       (feature 011) or a legacy `templates.yaml` file.
  */
 export function validateRenderable(grammar: string, templatesPath: string): RenderableResult {
     const rawEntries = loadRawEntries(grammar)

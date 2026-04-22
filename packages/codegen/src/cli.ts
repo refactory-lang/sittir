@@ -207,16 +207,12 @@ writeFile(join(outDir, 'consts.ts'), result.consts);
 writeFile(join(outDir, 'is.ts'), result.is);
 writeFile(join(outDir, 'index.ts'), result.index);
 
-// Write YAML templates to package root (one level up from src/) —
-// retained during the transition to per-rule `.jinja` files (feature 011).
-writeFile(join(dirname(outDir), 'templates.yaml'), result.templatesYaml);
-
 // Write per-rule `.jinja` files to packages/<grammar>/templates/
 // (feature 011). writeJinjaTemplates also deletes stale `.jinja` files
 // whose rule kind is no longer in the grammar.
 writeJinjaTemplates(result.jinjaTemplates, join(dirname(outDir), 'templates'));
 
-// Write validator-only factory metadata next to templates.yaml.
+// Write validator-only factory metadata.
 writeFile(join(dirname(outDir), 'factory-map.json5'), result.factoryMap);
 
 // Write node model
@@ -263,15 +259,19 @@ if (cliArgs.roundtrip) {
 	const rnResult = await validateReadNodeRoundTrip(config.grammar);
 	console.log(formatReadNodeRoundTripReport(rnResult));
 
-	const rtResult = await validateRoundTrip(config.grammar, result.templatesYaml);
+	// Validators take the per-rule `.jinja` templates directory
+	// path (feature 011). createRenderer auto-detects directory vs
+	// legacy YAML file.
+	const templatesDir = join(dirname(outDir), 'templates');
+	const rtResult = await validateRoundTrip(config.grammar, templatesDir);
 	console.log(formatRoundTripReport(rtResult));
 
 	// Factory round-trip (corpus → readNode → factory() → render → re-parse)
-	const frtResult = await validateFactoryRoundTrip(config.grammar, result.templatesYaml);
+	const frtResult = await validateFactoryRoundTrip(config.grammar, templatesDir);
 	console.log(formatFactoryRoundTripReport(frtResult));
 
 	// from() correctness (structural comparison: from() vs factory())
-	const fromResult = await validateFrom(config.grammar, result.templatesYaml);
+	const fromResult = await validateFrom(config.grammar, templatesDir);
 	console.log(formatFromReport(fromResult));
 
 	// Collect round-trip failures into a structured diagnostic list and

@@ -55,7 +55,7 @@ for (const grammar of GRAMMARS) {
     });
 
     it('generates without errors', () => {
-      expect(result.templatesYaml).toBeDefined();
+      expect(result.jinjaTemplates.size).toBeGreaterThan(0);
       expect(result.factories).toBeDefined();
       expect(result.types).toBeDefined();
       expect(result.from).toBeDefined();
