@@ -58,42 +58,31 @@ export function createNunjucksEnvironment(templatesDir: string): nunjucks.Enviro
 }
 
 /**
- * `joinby(sep)` — the separator for multi-valued slots. Walker emits
- * the literal separator inline: `{{ elements | joinby(",") }}`. Keeps
- * per-rule separator info out of runtime config — the template IS the
- * source of truth.
- *
- * Array input: joined with sep. String input: passed through (idempotent
- * so a slot that flips multi → single across grammar versions doesn't
- * need a template re-emission just to keep rendering).
- *
- * `has_flank_sep(children, sep, side)` — runtime probe for an anonymous
- * separator token adjacent to the named-child run. Walker emits
- * `{% if has_flank_sep(_children, ",", "trailing") %},{% endif %}` when
- * a rule's repeat carries `trailing: true` / `leading: true`. The
- * literal separator stays in the template; the function just reports
- * whether the parsed tree recorded one.
+ * Override `join` to:
+ *   - tolerate undefined (optional multi-slots render empty),
+ *   - auto-apply flank markers baked into the array by the context
+ *     builder. Arrays carry `_leading_anon` / `_trailing_anon` string
+ *     properties holding the text of any anonymous separator token
+ *     adjacent to the named-child run. When that text matches the
+ *     filter's separator argument, `join` prepends / appends it —
+ *     so templates with optional trailing separators stay simple:
+ *       `{{ children | join(",") }}`
+ *     The flank is emitted automatically when the parsed tree had
+ *     one, and silently skipped when it didn't (or when the grammar
+ *     doesn't permit flank, since the tree wouldn't contain such an
+ *     anon in the first place). Delimiter anons like `(` / `)` never
+ *     match a joinBy literal, so they don't spuriously flank.
  */
 function registerSittirFilters(env: nunjucks.Environment): void {
-	env.addFilter('joinby', (value: unknown, sep: unknown) => {
-		const s = typeof sep === 'string' ? sep : ' '
-		if (Array.isArray(value)) return value.join(s)
+	env.addFilter('join', (value: unknown, sep: unknown) => {
+		const s = typeof sep === 'string' ? sep : ''
 		if (value === undefined || value === null) return ''
-		return String(value)
-	})
-	env.addGlobal('has_flank_sep', (children: unknown, sep: unknown, side: unknown) => {
-		if (!Array.isArray(children)) return false
-		if (typeof sep !== 'string' || typeof side !== 'string') return false
-		const isNamed = (c: unknown): boolean =>
-			typeof c === 'object' && c !== null
-			&& (c as { $named?: boolean }).$named !== false
-		const namedIdx = side === 'leading'
-			? children.findIndex(isNamed)
-			: children.findLastIndex(isNamed)
-		if (namedIdx < 0) return false
-		const neighborIdx = side === 'leading' ? namedIdx - 1 : namedIdx + 1
-		if (neighborIdx < 0 || neighborIdx >= children.length) return false
-		const neighbor = children[neighborIdx] as { $named?: boolean; $text?: string } | undefined
-		return !!neighbor && neighbor.$named === false && neighbor.$text === sep
+		if (!Array.isArray(value)) return String(value)
+		const joined = value.join(s)
+		const leading = (value as { _leading_anon?: unknown })._leading_anon
+		const trailing = (value as { _trailing_anon?: unknown })._trailing_anon
+		const prefix = typeof leading === 'string' && leading === s ? s : ''
+		const suffix = typeof trailing === 'string' && trailing === s ? s : ''
+		return prefix + joined + suffix
 	})
 }

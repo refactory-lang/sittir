@@ -28,14 +28,18 @@ import type { Rule } from '../compiler/rule.ts'
  *
  * Handles:
  * - `$NAME`        → `{{ name }}`
- * - `$$$NAME`      → `{{ name | joinby("<sep>") }}` — separator literal
+ * - `$$$NAME`      → `{{ name | join("<sep>") }}` — separator literal
  *                    comes from the rule's joinByField[name] ?? joinBy
  *                    (default space). Walker-time knowledge, inlined
  *                    so the render path needs no sidecar config.
- * - `$$$CHILDREN`  → `{{ children | joinby("<sep>") }}` optionally
- *                    wrapped in `{% if has_flank_sep(_children,
- *                    "<sep>", "leading"|"trailing") %}<sep>{% endif %}`
- *                    when the rule permits leading / trailing markers.
+ * - `$$$CHILDREN`  → `{{ children | join("<sep>") }}`. Leading /
+ *                    trailing separator markers handled inside the
+ *                    filter — context builder attaches
+ *                    `_leading_anon` / `_trailing_anon` properties to
+ *                    the children array; sittir's `join` filter emits
+ *                    the flank when the anon text matches the sep.
+ *                    No separate `| flank(...)` clause at the call
+ *                    site.
  * - `$TEXT`        → `{{ text }}`
  * - `$NEWLINE`     → literal `\n`
  * - `$INDENT`      → empty string (render-time column tracking handles indent)
@@ -65,25 +69,19 @@ export function translateTemplateString(tmpl: string, meta: TranslateMeta = {}):
 		if (key === 'newline') return '\n'
 		if (key === 'indent') return ''
 		if (key === 'dedent') return ''
-		// Multi-valued ($$$NAME / $$$CHILDREN) — emit the `joinby` filter
-		// with the literal separator. Per-field override wins over the
-		// rule default; `$$$CHILDREN` always uses the rule default.
+		// Multi-valued ($$$NAME / $$$CHILDREN) — emit `| join(sep)`.
+		// Sittir's `join` override tolerates undefined (optional
+		// multi-slots render empty) and emits leading / trailing
+		// anonymous separators inline when the parsed tree recorded
+		// them (context builder exposes `_leading_anon` /
+		// `_trailing_anon` on the children array). Flank info is
+		// fully contained in the filter call — no extra references or
+		// separate `{% if %}` guards in the template.
 		if (pfx === '$$$') {
 			const sep = key === 'children'
 				? defaultSep
 				: meta.joinByField?.[key] ?? defaultSep
-			const sepLit = jsonStringLiteral(sep)
-			const body = `{{ ${key} | joinby(${sepLit}) }}`
-			if (key === 'children' && (meta.joinByLeading || meta.joinByTrailing)) {
-				const leading = meta.joinByLeading
-					? `{% if has_flank_sep(_children, ${sepLit}, "leading") %}${sep}{% endif %}`
-					: ''
-				const trailing = meta.joinByTrailing
-					? `{% if has_flank_sep(_children, ${sepLit}, "trailing") %}${sep}{% endif %}`
-					: ''
-				return `${leading}${body}${trailing}`
-			}
-			return body
+			return `{{ ${key} | join(${jsonStringLiteral(sep)}) }}`
 		}
 		return `{{ ${key} }}`
 	})

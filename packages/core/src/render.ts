@@ -142,12 +142,13 @@ export type PreparedRender =
 export interface TemplateContext {
 	readonly [fieldName: string]: unknown;
 	/** Pre-rendered named children in source order. Walker emits
-	 *  `{{ children | joinby("<sep>") }}` — the separator lives in the
-	 *  template, not in runtime config. */
+	 *  `{{ children | join("<sep>") }}` — separator lives in the
+	 *  template. Leading / trailing anonymous separator tokens (e.g.
+	 *  the optional trailing `,` on `(a, b, c,)`) are attached to the
+	 *  array as non-enumerable `_leading_anon` / `_trailing_anon`
+	 *  properties; sittir's `join` filter reads them and emits the
+	 *  flank inline when the text matches the separator argument. */
 	readonly children: readonly string[];
-	/** Raw $children array — passed to the `has_flank_sep` Jinja global
-	 *  for leading / trailing separator detection. */
-	readonly _children: readonly unknown[];
 	/** Node's $variant, empty string when absent. */
 	readonly variant: string;
 	/** Node's $text, empty string when absent (factory-built nodes
@@ -962,14 +963,34 @@ function buildNunjucksTemplateContext(
 		return renderNunjucks(value, ctx, env, templatesDir);
 	};
 
-	// Children: render every named child, keep the raw array for the
-	// `has_flank_sep` Jinja global's anon-neighbor probes.
-	const children: string[] = [];
+	// Children: render every named child. Flank anons (an anonymous
+	// token immediately before / after the named-child run) ride
+	// along as array properties `_leading_anon` / `_trailing_anon` —
+	// sittir's `join` filter compares them to its separator argument
+	// and emits the flank inline when they match. No separate
+	// `| flank(...)` call at the template site.
+	const children: string[] & { _leading_anon?: string; _trailing_anon?: string } = [];
 	if (node.$children) {
-		for (const c of node.$children) {
-			const child = c as AnyNodeData;
-			if (child?.$named === false) continue;
-			children.push(renderChild(child));
+		let firstNamedIdx = -1;
+		let lastNamedIdx = -1;
+		for (let i = 0; i < node.$children.length; i++) {
+			const c = node.$children[i] as AnyNodeData | undefined;
+			if (!c || c.$named === false) continue;
+			if (firstNamedIdx === -1) firstNamedIdx = i;
+			lastNamedIdx = i;
+			children.push(renderChild(c));
+		}
+		if (firstNamedIdx > 0) {
+			const before = node.$children[firstNamedIdx - 1] as AnyNodeData | undefined;
+			if (before && before.$named === false && typeof before.$text === 'string') {
+				children._leading_anon = before.$text;
+			}
+		}
+		if (lastNamedIdx >= 0 && lastNamedIdx < node.$children.length - 1) {
+			const after = node.$children[lastNamedIdx + 1] as AnyNodeData | undefined;
+			if (after && after.$named === false && typeof after.$text === 'string') {
+				children._trailing_anon = after.$text;
+			}
 		}
 	}
 
@@ -1029,7 +1050,6 @@ function buildNunjucksTemplateContext(
 	return {
 		...fields,
 		children,
-		_children: node.$children ?? [],
 		variant: node.$variant ?? '',
 		text: synthesizedText,
 	};

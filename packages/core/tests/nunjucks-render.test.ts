@@ -155,16 +155,18 @@ describe('Error wrapping — T028 / FR-018', () => {
 		}
 	});
 
-	it('T038: undefined variable inside a typed expression DOES throw with filename context', () => {
-		// Typed-expression context (filter, arithmetic, method call)
-		// forces Nunjucks to resolve the variable before applying the
-		// operator — undefined variables throw even with
-		// throwOnUndefined: false. Our wrapper surfaces the filename.
+	it('T038: render errors surface with the template filename', () => {
+		// FR-018: any render error from Nunjucks — unknown filter,
+		// syntax error, typed-expression resolution failure — must be
+		// rewrapped with the template filename so field diagnostics
+		// can point back to the source. We use an unknown filter as
+		// the trigger because it unconditionally throws regardless of
+		// variable definedness.
 		const tmp = mkdtempSync(join(tmpdir(), 'sittir-nunjucks-render-'));
 		try {
 			writeFileSync(
 				join(tmp, 'uses_undef.jinja'),
-				'{{ undefined_list | join(",") }}',
+				'{{ something | no_such_filter }}',
 			);
 			const { render } = createRendererFromConfig(emptyConfig, { templatesDir: tmp });
 			const node: AnyNodeData = { $type: 'uses_undef', $fields: {} };
