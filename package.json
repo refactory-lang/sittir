@@ -61,6 +61,9 @@
       "esbuild",
       "tree-sitter-cli",
       "tree-sitter-python"
-    ]
+    ],
+    "overrides": {
+      "vite": "^8.0.9"
+    }
   }
 }
