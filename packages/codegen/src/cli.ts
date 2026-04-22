@@ -19,6 +19,7 @@ import { generate } from './compiler/generate.ts';
 import { emitSuggested, type RoundTripDiagnostic } from './emitters/suggested.ts';
 import { compileParser } from './transpile/compile-parser.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
+import { writeJinjaTemplates } from './emitters/templates.ts';
 
 interface CodegenConfig {
 	grammar: string;
@@ -206,8 +207,14 @@ writeFile(join(outDir, 'consts.ts'), result.consts);
 writeFile(join(outDir, 'is.ts'), result.is);
 writeFile(join(outDir, 'index.ts'), result.index);
 
-// Write YAML templates to package root (one level up from src/)
+// Write YAML templates to package root (one level up from src/) —
+// retained during the transition to per-rule `.jinja` files (feature 011).
 writeFile(join(dirname(outDir), 'templates.yaml'), result.templatesYaml);
+
+// Write per-rule `.jinja` files to packages/<grammar>/templates/
+// (feature 011). writeJinjaTemplates also deletes stale `.jinja` files
+// whose rule kind is no longer in the grammar.
+writeJinjaTemplates(result.jinjaTemplates, join(dirname(outDir), 'templates'));
 
 // Write validator-only factory metadata next to templates.yaml.
 writeFile(join(dirname(outDir), 'factory-map.json5'), result.factoryMap);

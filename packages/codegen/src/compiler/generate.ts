@@ -14,7 +14,7 @@ import { tracePhaseRules, traceAssembleNodes } from './trace.ts'
 
 import { emitGrammar } from '../emitters/grammar.ts'
 import { emitTypes } from '../emitters/types.ts'
-import { emitTemplates } from '../emitters/templates.ts'
+import { emitTemplates, emitJinjaTemplates } from '../emitters/templates.ts'
 import { emitFactories } from '../emitters/factories.ts'
 import { emitFactoryMap } from '../emitters/factory-map.ts'
 import { emitWrap } from '../emitters/wrap.ts'
@@ -36,6 +36,11 @@ export interface GeneratedFiles {
     grammar: string
     types: string
     templatesYaml: string
+    /** Per-rule `.jinja` files (feature 011). Map keyed by rule kind;
+     *  values are the full file contents including the `@generated`
+     *  comment header. CLI writes each to
+     *  `packages/<grammar>/templates/<kind>.jinja`. */
+    jinjaTemplates: Map<string, string>
     factories: string
     /** factory-map.json5 — validator-only factory metadata (shapes,
      * alias map, field-only-factory list). See emitters/factory-map.ts. */
@@ -143,6 +148,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
         grammar: emitGrammar({ grammar: cfg.grammar }),
         types: emitTypes({ grammar: cfg.grammar, nodeMap }),
         templatesYaml: emitTemplates({ grammar: cfg.grammar, nodeMap }),
+        jinjaTemplates: emitJinjaTemplates({ grammar: cfg.grammar, nodeMap }),
         factories: emitFactories({ grammar: cfg.grammar, nodeMap, strict: cfg.strict }),
         factoryMap: emitFactoryMap({ grammar: cfg.grammar, nodeMap }),
         wrap: emitWrap({ grammar: cfg.grammar, nodeMap }),

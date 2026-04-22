@@ -79,8 +79,8 @@ description: "Task list for Jinja template migration"
 
 ### Emitter rewrite
 
-- [ ] T021 [US1] Replace the body of `packages/codegen/src/emitters/templates.ts`'s `emitTemplates` function with per-file emission. For each node in `nodeMap.nodes`: call `translateToJinja(node, rules, wordMatcher)`; if non-null, write `packages/<grammar>/templates/<kind>.jinja` with the `@generated` header prepended.
-- [ ] T022 [US1] Add stale-file cleanup to `packages/codegen/src/emitters/templates.ts`: before emission, list current `.jinja` files in `packages/<grammar>/templates/`; after emission, delete any file whose kind is not in the emitted set. Preserve `.gitkeep`.
+- [x] T021 [US1] Replace the body of `packages/codegen/src/emitters/templates.ts`'s `emitTemplates` function with per-file emission. For each node in `nodeMap.nodes`: call `translateToJinja(node, rules, wordMatcher)`; if non-null, write `packages/<grammar>/templates/<kind>.jinja` with the `@generated` header prepended.
+- [x] T022 [US1] Add stale-file cleanup to `packages/codegen/src/emitters/templates.ts`: before emission, list current `.jinja` files in `packages/<grammar>/templates/`; after emission, delete any file whose kind is not in the emitted set. Preserve `.gitkeep`.
 - [ ] T023 [US1] Retire `AssembledPolymorph.renderTemplate()` and related `renderParts()` / `renderTemplate()` class methods in `packages/codegen/src/compiler/node-map.ts`. Delete them. Keep `isTextTemplate` and any metadata helpers the translator needs.
 
 ### Nunjucks bridge in `@sittir/core`
