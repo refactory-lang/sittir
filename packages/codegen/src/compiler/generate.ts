@@ -35,11 +35,13 @@ import type { NodeMap } from './types.ts'
 export interface GeneratedFiles {
     grammar: string
     types: string
-    /** Per-rule `.jinja` files (feature 011). Map keyed by rule kind;
-     *  values are the full file contents including the `@generated`
-     *  comment header. CLI writes each to
+    /** Per-rule `.jinja` files (feature 011) + separator-metadata
+     *  sidecar. `bodies` is keyed by rule kind with the full file
+     *  contents (incl. `@generated` header); `meta` carries joinBy /
+     *  joinByField / joinByLeading / joinByTrailing per kind, written
+     *  as `templates/_meta.json` by the CLI. CLI writes each body to
      *  `packages/<grammar>/templates/<kind>.jinja`. */
-    jinjaTemplates: Map<string, string>
+    jinjaTemplates: import('../emitters/templates.ts').EmittedTemplates
     factories: string
     /** factory-map.json5 — validator-only factory metadata (shapes,
      * alias map, field-only-factory list). See emitters/factory-map.ts. */

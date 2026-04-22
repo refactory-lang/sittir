@@ -99,7 +99,14 @@ export interface TemplateRuleObject {
 	variants?: Record<string, string>;
 	/** Discriminator tokens for detecting variant from anonymous children. */
 	detect?: Record<string, string>;
+	/** Rule-level default separator for multi-valued slots. */
 	joinBy?: string;
+	/** Per-field separator override — wins over `joinBy` for that field. */
+	joinByField?: Record<string, string>;
+	/** Emit leading separator token when the grammar permitted one. */
+	joinByLeading?: boolean;
+	/** Emit trailing separator token when the grammar permitted one. */
+	joinByTrailing?: boolean;
 	[clauseKey: `${string}_clause`]: string;
 }
 

@@ -92,12 +92,18 @@ describe('T060: single-file diff on one-rule metadata change', () => {
 			]);
 			writeJinjaTemplates(emitJinjaTemplates({ grammar: 'synthetic', nodeMap: makeNodeMap(nodes) }), dir);
 			const files = readdirSync(dir);
-			// All emitted files end in .jinja.
-			expect(files.every(f => f.endsWith('.jinja'))).toBe(true);
+			// All bodies are .jinja; a sibling `_meta.json` carries
+			// joinBy metadata (feature 011 follow-up T2.1).
+			const bodyFiles = files.filter(f => f.endsWith('.jinja'));
+			expect(bodyFiles.length).toBeGreaterThan(0);
 			// No templates.yaml produced.
 			expect(files.some(f => f.endsWith('.yaml'))).toBe(false);
+			// `_meta.json` sibling exists even when empty (uniform loader
+			// interface — missing-file and empty-file both mean "no
+			// per-rule separator data").
+			expect(files).toContain('_meta.json');
 			// Each body has the @generated header.
-			for (const f of files) {
+			for (const f of bodyFiles) {
 				expect(readFileSync(join(dir, f), 'utf-8')).toMatch(/^\{#\s*@generated/);
 			}
 		} finally {

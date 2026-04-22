@@ -1,0 +1,106 @@
+{
+  "arguments": {
+    "joinBy": ","
+  },
+  "array": {
+    "joinBy": ","
+  },
+  "array_pattern": {
+    "joinBy": ","
+  },
+  "enum_body": {
+    "joinBy": ",",
+    "joinByField": {
+      "opening": ","
+    },
+    "joinByTrailing": true
+  },
+  "export_clause": {
+    "joinBy": ",",
+    "joinByTrailing": true
+  },
+  "extends_clause": {
+    "joinBy": ","
+  },
+  "extends_type_clause": {
+    "joinBy": ",",
+    "joinByField": {
+      "type": ","
+    }
+  },
+  "formal_parameters": {
+    "joinBy": ",",
+    "joinByTrailing": true
+  },
+  "implements_clause": {
+    "joinBy": ","
+  },
+  "interface_body": {
+    "joinBy": ","
+  },
+  "jsx_namespace_name": {
+    "joinByField": {
+      "children": ":"
+    }
+  },
+  "lexical_declaration": {
+    "joinBy": ",",
+    "joinByField": {
+      "declarators": ","
+    }
+  },
+  "named_imports": {
+    "joinBy": ",",
+    "joinByTrailing": true
+  },
+  "object": {
+    "joinBy": ","
+  },
+  "object_pattern": {
+    "joinBy": ","
+  },
+  "object_type": {
+    "joinBy": ","
+  },
+  "program": {
+    "joinByField": {
+      "statements": "\n"
+    }
+  },
+  "sequence_expression": {
+    "joinBy": ","
+  },
+  "statement_block": {
+    "joinByField": {
+      "statements": "\n"
+    }
+  },
+  "switch_case": {
+    "joinByField": {
+      "body": "\n"
+    }
+  },
+  "switch_default": {
+    "joinByField": {
+      "body": "\n"
+    }
+  },
+  "tuple_type": {
+    "joinBy": ",",
+    "joinByTrailing": true
+  },
+  "type_arguments": {
+    "joinBy": ",",
+    "joinByTrailing": true
+  },
+  "type_parameters": {
+    "joinBy": ",",
+    "joinByTrailing": true
+  },
+  "variable_declaration": {
+    "joinBy": ",",
+    "joinByField": {
+      "declarators": ","
+    }
+  }
+}
