@@ -57,9 +57,10 @@ export function emitJinjaTemplates(config: EmitTemplatesConfig): EmittedTemplate
         // polymorphs — factories stamp the source kind for the
         // drilled target (ADR-0006 drillAs).
         if (kind.startsWith('_') && node.modelType !== 'polymorph') continue
-        // Polymorph-form groups get their own file via the group
-        // branch in the translator; avoid double emission when the
-        // form kind is also registered at the top level.
+        // Polymorph-form groups get their own file via
+        // `AssembledGroup.renderTemplate()`; skip the top-level form
+        // here to avoid double emission when the form kind is also
+        // registered under the parent polymorph.
         if (node instanceof AssembledGroup && node.parentKind) continue
         let body: string | null
         try {

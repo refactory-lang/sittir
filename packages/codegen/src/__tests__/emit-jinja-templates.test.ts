@@ -64,7 +64,6 @@ describe('writeJinjaTemplates — T022 stale-file cleanup', () => {
 					['function_item', '{# @generated #}\n{{ name }}'],
 					['block', '{# @generated #}\n{ {{ children }} }'],
 				]),
-				meta: {},
 			};
 			writeJinjaTemplates(emitted, tmp);
 			const files = readdirSync(tmp).filter(f => f.endsWith('.jinja'));
@@ -84,7 +83,6 @@ describe('writeJinjaTemplates — T022 stale-file cleanup', () => {
 			// Write with only function_item in emission
 			const emitted = {
 				bodies: new Map([['function_item', '{# new #}\n{{ name }}']]),
-				meta: {},
 			};
 			writeJinjaTemplates(emitted, tmp);
 			const files = readdirSync(tmp).filter(f => f.endsWith('.jinja'));
@@ -104,7 +102,6 @@ describe('writeJinjaTemplates — T022 stale-file cleanup', () => {
 			writeFileSync(join(tmp, 'old_rule.jinja'), 'bogus');
 			const emitted = {
 				bodies: new Map([['kept_rule', '{# new #}\nkept']]),
-				meta: {},
 			};
 			writeJinjaTemplates(emitted, tmp);
 			const files = readdirSync(tmp).sort();
@@ -121,7 +118,7 @@ describe('writeJinjaTemplates — T022 stale-file cleanup', () => {
 		const tmp = mkdtempSync(join(tmpdir(), 'sittir-jinja-'));
 		try {
 			const nested = join(tmp, 'does', 'not', 'exist');
-			const emitted = { bodies: new Map([['r', 'body']]), meta: {} };
+			const emitted = { bodies: new Map([['r', 'body']]) };
 			writeJinjaTemplates(emitted, nested);
 			expect(readdirSync(nested)).toEqual(['r.jinja']);
 		} finally {

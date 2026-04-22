@@ -2,9 +2,10 @@
  * Shared helpers for loading rule metadata from a templates path.
  *
  * A templates path is either:
- *  - A directory of per-rule `.jinja` files (feature 011 target layout),
- *    with a sibling `_meta.json` (joinBy / joinByField / joinByLeading /
- *    joinByTrailing per kind).
+ *  - A directory of per-rule `.jinja` files (feature 011 target layout).
+ *    Separator / flank metadata lives INLINE in the body via the
+ *    `| join("<sep>")` / `| joinWithTrailing(...)` filter forms — no
+ *    sidecar.
  *  - A legacy `templates.yaml` file, retained for rollback / test
  *    fixtures.
  *
@@ -61,13 +62,16 @@ export function deriveRuleKinds(templatesPath: string): Set<string> {
 
 /**
  * Load the full rule map from a templates path. The Jinja layout
- * reconstructs each rule by pairing the `.jinja` body (optionally
- * stripped of its `@generated` header) with its sidecar metadata from
- * `_meta.json`. The YAML layout parses the file directly.
+ * returns each kind's `.jinja` body (with its `@generated` header
+ * stripped) as the rule's `template` string — separator and flank
+ * metadata live inline in the body. An optional `bodyReader` runs per-
+ * body (used by template-coverage to reverse-translate Jinja back to
+ * the legacy placeholder shape its field scanner understands).
+ *
+ * The YAML layout parses the file directly and returns its `rules` map.
  *
  * @param templatesPath Directory or legacy YAML file.
- * @param bodyReader Optional per-body transformation (e.g. legacy-shape
- *   reverse adapter used by template-coverage).
+ * @param bodyReader Optional per-body transformation.
  */
 export function loadRulesFromPath(
     templatesPath: string,

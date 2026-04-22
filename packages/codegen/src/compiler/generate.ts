@@ -37,12 +37,12 @@ import type { RoundTripDiagnostic } from '../emitters/suggested.ts'
 export interface GeneratedFiles {
     grammar: string
     types: string
-    /** Per-rule `.jinja` files (feature 011) + separator-metadata
-     *  sidecar. `bodies` is keyed by rule kind with the full file
-     *  contents (incl. `@generated` header); `meta` carries joinBy /
-     *  joinByField / joinByLeading / joinByTrailing per kind, written
-     *  as `templates/_meta.json` by the CLI. CLI writes each body to
-     *  `packages/<grammar>/templates/<kind>.jinja`. */
+    /** Per-rule `.jinja` files (feature 011). `EmittedTemplates.bodies`
+     *  is keyed by rule kind with the full file contents (incl.
+     *  `@generated` header). Separator / flank metadata lives INLINE
+     *  in each body via `| join("<sep>")` and
+     *  `| joinWithTrailing(...)` filters; no sidecar. CLI writes each
+     *  body to `packages/<grammar>/templates/<kind>.jinja`. */
     jinjaTemplates: EmittedTemplates
     factories: string
     /** factory-map.json5 — validator-only factory metadata (shapes,

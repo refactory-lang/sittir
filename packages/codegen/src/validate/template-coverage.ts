@@ -66,15 +66,18 @@ function jinjaBodyToLegacyRule(body: string): TemplateRule {
 }
 
 /**
- * Replace Jinja `{{ name }}` and `{{ name | join("<sep>") }}`
+ * Replace Jinja `{{ name }}` and `{{ name | <join-variant>("<sep>") }}`
  * interpolations with the legacy `$NAME` / `$$$NAME` placeholders the
- * coverage checker's regex-based field scanner understands. The
- * `join` filter signals a multi-valued slot (maps to `$$$`); the
- * bare form is single-valued (`$`).
+ * coverage checker's regex-based field scanner understands. Any of the
+ * sittir-registered join-variant filters (`join`, `joinWithTrailing`,
+ * `joinWithLeading`, `joinWithFlanks`) signals a multi-valued slot
+ * (maps to `$$$`); the bare form is single-valued (`$`). See
+ * `packages/core/src/templates/nunjucks-env.ts:registerSittirFilters`
+ * for the filter inventory the walker picks from.
  */
 function jinjaInterpolationsToLegacy(body: string): string {
     return body.replace(
-        /\{\{\s*([a-z_][a-z0-9_]*)(\s*\|\s*join\([^)]*\))?\s*\}\}/g,
+        /\{\{\s*([a-z_][a-z0-9_]*)(\s*\|\s*(?:join|joinWithTrailing|joinWithLeading|joinWithFlanks)\([^)]*\))?\s*\}\}/g,
         (_m, name: string, filter: string | undefined) => {
             const prefix = filter ? '$$$' : '$'
             return `${prefix}${name.toUpperCase()}`

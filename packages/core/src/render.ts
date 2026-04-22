@@ -124,31 +124,22 @@ export type PreparedRender =
 	| { readonly kind: 'template'; readonly template: string; readonly substitutions: readonly Substitution[] };
 
 /**
- * Formal declarative-engine render context (ADR-0013 Task 3 / feature 011).
+ * Bag passed to Nunjucks for a single render. Named field slots arrive
+ * as strings (single) or `string[]` (multi — the walker's
+ * `{{ x | join(sep) }}` emission calls the built-in). The `children`
+ * slot is a `FlankedChildArray`: a rendered-strings array that carries
+ * the text of any anonymous separator immediately adjacent to the
+ * named-child run, so the flank-aware `joinWith*` filters emit the
+ * trailing / leading separator inline when the parsed tree recorded
+ * one.
  *
- * The bag passed to a declarative template engine (Nunjucks / askama)
- * for a single render. Named field slots arrive pre-rendered as strings;
- * children are pre-joined into `children` with joinBy + flankSep
- * applied, and also exposed as `children_list` for per-item iteration.
- *
- * Identical shape on TS (this interface) and Rust (per-rule askama
- * struct). Cross-render parity depends on the two producers populating
- * the same values for the same input node.
- *
- * Reserved keys: `children`, `children_list`, `variant`, `text`,
- * `trailing_sep`, `leading_sep`. A rule whose grammar declares a field
- * colliding with any reserved name is a translator-time error.
+ * Reserved keys: `children`, `variant`, `text`. A rule whose grammar
+ * declares a field colliding with any reserved name is a walker-emit
+ * time error.
  */
 export interface TemplateContext {
 	readonly [fieldName: string]: unknown;
-	/** Pre-rendered named children in source order. Walker emits
-	 *  `{{ children | join("<sep>") }}` — separator lives in the
-	 *  template. Leading / trailing anonymous separator tokens (e.g.
-	 *  the optional trailing `,` on `(a, b, c,)`) are attached to the
-	 *  array as non-enumerable `_leading_anon` / `_trailing_anon`
-	 *  properties; sittir's `join` filter reads them and emits the
-	 *  flank inline when the text matches the separator argument. */
-	readonly children: readonly string[];
+	readonly children: FlankedChildArray;
 	/** Node's $variant, empty string when absent. */
 	readonly variant: string;
 	/** Node's $text, empty string when absent (factory-built nodes
@@ -157,76 +148,19 @@ export interface TemplateContext {
 }
 
 /**
- * Build a declarative-engine TemplateContext (feature 011).
- *
- * Mirrors `prepare()`'s slot resolution but produces a flat named-key
- * bag instead of positional substitutions. Pre-joins named children
- * into `children`, exposes them individually as `children_list`, and
- * pre-renders every named field slot to its string form.
- *
- * Used by the Nunjucks path in `@sittir/core`. Rust askama structs
- * populated by codegen emission mirror this shape per-rule.
+ * Rendered-children array with optional flank-anon side-channel. The
+ * two properties are the text of the anonymous token immediately
+ * before / after the named-child run (e.g. the trailing `,` in
+ * `(a, b, c,)`); sittir's `joinWithTrailing` / `joinWithLeading` /
+ * `joinWithFlanks` filters compare them to the separator argument and
+ * emit the flank inline when the text matches. A raw `string[]` with
+ * neither property assigned is always accepted (the plain `join`
+ * filter doesn't consult the side-channel at all).
  */
-export function buildTemplateContext(node: AnyNodeData, ctx: InternalRenderContext): TemplateContext {
-	const rule = ctx.config.rules[node.$type];
-	const ruleObj = typeof rule === 'string' ? undefined : rule as unknown as Record<string, unknown>;
-
-	// Render named children in source order. Anonymous tokens are
-	// template-structural (joinBy / flankSep material) and never appear
-	// in children_list or children.
-	const childrenList: string[] = [];
-	if (node.$children) {
-		for (const c of node.$children) {
-			const child = c as AnyNodeData;
-			if (child?.$named === false) continue;
-			childrenList.push(renderValue(child as AnyNodeData | string | number, ctx));
-		}
-	}
-
-	const childrenJoinBy = resolveJoinBy(ruleObj, 'CHILDREN');
-	const childrenJoined = childrenList.join(childrenJoinBy);
-
-	// Render named field slots to strings. Multi-valued field slots
-	// pre-join with their configured joinBy; single-valued slots emit
-	// their rendered form. Anonymous-token promotions live alongside
-	// named field slots — filter them out, they're structural.
-	const fields: Record<string, string> = {};
-	if (node.$fields) {
-		for (const [fieldName, raw] of Object.entries(node.$fields)) {
-			if (raw === undefined || raw === null) continue;
-			const items = Array.isArray(raw) ? raw : [raw];
-			const named = items.filter(item => {
-				if (typeof item !== 'object' || item === null) return true;
-				return (item as AnyNodeData).$named !== false;
-			});
-			if (named.length === 0) continue;
-			const fieldJoinBy = resolveJoinBy(ruleObj, fieldName.toUpperCase());
-			fields[fieldName] = named
-				.map(item => renderValue(item as AnyNodeData | string | number, ctx))
-				.join(fieldJoinBy);
-		}
-	}
-
-	// flankSep probes for leading/trailing anonymous separator tokens
-	// adjacent to the named-children run. Only meaningful when the rule
-	// declares joinByLeading / joinByTrailing.
-	const leadingSep = ruleObj?.['joinByLeading'] === true && node.$children
-		? flankSep(node.$children, 'leading', childrenJoinBy) !== ''
-		: false;
-	const trailingSep = ruleObj?.['joinByTrailing'] === true && node.$children
-		? flankSep(node.$children, 'trailing', childrenJoinBy) !== ''
-		: false;
-
-	return {
-		...fields,
-		children: childrenJoined,
-		children_list: childrenList,
-		variant: node.$variant ?? '',
-		text: node.$text ?? '',
-		trailing_sep: trailingSep,
-		leading_sep: leadingSep,
-	};
-}
+export type FlankedChildArray = readonly string[] & {
+	readonly _leading_anon?: string;
+	readonly _trailing_anon?: string;
+};
 
 /**
  * Phase 1 of render: resolve the template, walk the template's `$VAR`
@@ -970,6 +904,8 @@ function buildNunjucksTemplateContext(
 	// and emits the flank inline when they match. No separate
 	// `| flank(...)` call at the template site.
 	const children: string[] & { _leading_anon?: string; _trailing_anon?: string } = [];
+	// Shape-equivalent to `FlankedChildArray` modulo mutability — the
+	// context emits the readonly view to the template.
 	if (node.$children) {
 		let firstNamedIdx = -1;
 		let lastNamedIdx = -1;

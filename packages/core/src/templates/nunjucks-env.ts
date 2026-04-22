@@ -13,6 +13,7 @@
  */
 
 import nunjucks from 'nunjucks'
+import type { FlankedChildArray } from '../render.ts'
 
 /**
  * Build a Nunjucks `Environment` configured for sittir templates:
@@ -20,12 +21,14 @@ import nunjucks from 'nunjucks'
  * - File-system loader rooted at `templatesDir`.
  * - `trimBlocks: false`, `lstripBlocks: false` — whitespace control is
  *   expressed explicitly via `{%-` / `-%}` in templates (matches the
- *   translator's emission and Jinja2/askama standard semantics).
+ *   walker's emission and Jinja2/askama standard semantics).
  * - `autoescape: false` — the render output is source code, not HTML.
  *   Autoescape would turn `<` into `&lt;` and break everything.
- * - `throwOnUndefined: true` — missing context variables become errors
- *   at render time instead of silently rendering empty strings (matches
- *   FR-018 / SC-005: undefined variable surfaces the problem).
+ * - `throwOnUndefined: false` — a template referencing an optional
+ *   grammar field (e.g. `{{ visibility_modifier }}` on a node that
+ *   doesn't have one) must render empty rather than throw. The inline
+ *   comment at the option itself captures how FR-018 / SC-005 is still
+ *   met for the typed-expression and template-file-missing channels.
  */
 export function createNunjucksEnvironment(templatesDir: string): nunjucks.Environment {
 	const loader = new nunjucks.FileSystemLoader(templatesDir, {
@@ -87,32 +90,61 @@ export function createNunjucksEnvironment(templatesDir: string): nunjucks.Enviro
  * spuriously flank.
  */
 function registerSittirFilters(env: nunjucks.Environment): void {
-	const coerceJoin = (value: unknown, s: string): { arr: unknown[] | null; str: string } => {
-		if (Array.isArray(value)) return { arr: value, str: value.join(s) }
-		if (value === undefined || value === null) return { arr: null, str: '' }
-		return { arr: null, str: String(value) }
+	/**
+	 * Normalize the value a `join*` filter receives.
+	 *
+	 * - `undefined` / `null`           — absent optional multi-slot; render `''`.
+	 * - `readonly string[]`            — the happy path; caller joins with sep.
+	 * - `string` / `number` / `boolean` — legacy walker behavior: some rules
+	 *   classify a single-slot container field with `$$$NAME` (emits
+	 *   `| join(sep)`); the factory-produced value is a pre-rendered scalar.
+	 *   Coerce to string and return unwrapped — matches the legacy
+	 *   regex-substitutor's `String(value)` fallback.
+	 * - anything else (object, symbol, NodeData) — throw. A non-coerceable
+	 *   value reaching a `join*` filter is a context-builder bug; silent
+	 *   `"[object Object]"` in the rendered output only surfaces later
+	 *   as a reparse failure.
+	 */
+	const scalarJoin = (value: unknown, filterName: string): { arr: readonly string[] | null; scalar: string | null } => {
+		if (value === undefined || value === null) return { arr: null, scalar: null }
+		if (Array.isArray(value)) return { arr: value as readonly string[], scalar: null }
+		if (typeof value === 'string') return { arr: null, scalar: value }
+		if (typeof value === 'number' || typeof value === 'boolean') return { arr: null, scalar: String(value) }
+		throw new TypeError(
+			`${filterName}: unsupported value type ${typeof value} ` +
+			`(value = ${JSON.stringify(value)?.slice(0, 120)}). Expected array / string / nullish; ` +
+			`a foreign shape here indicates a context-builder bug.`,
+		)
 	}
+	const sepOf = (sep: unknown): string => typeof sep === 'string' ? sep : ''
 	env.addFilter('join', (value: unknown, sep: unknown) => {
-		const s = typeof sep === 'string' ? sep : ''
-		return coerceJoin(value, s).str
+		const { arr, scalar } = scalarJoin(value, 'join')
+		if (arr) return arr.join(sepOf(sep))
+		return scalar ?? ''
 	})
-	const flankJoin = (value: unknown, sep: unknown, sides: { leading: boolean; trailing: boolean }): string => {
-		const s = typeof sep === 'string' ? sep : ''
-		const { arr, str } = coerceJoin(value, s)
-		if (!arr) return str
-		const leading = sides.leading ? (arr as { _leading_anon?: unknown })._leading_anon : undefined
-		const trailing = sides.trailing ? (arr as { _trailing_anon?: unknown })._trailing_anon : undefined
-		const prefix = typeof leading === 'string' && leading === s ? s : ''
-		const suffix = typeof trailing === 'string' && trailing === s ? s : ''
-		return prefix + str + suffix
+	const flankJoin = (
+		value: unknown,
+		sep: unknown,
+		filterName: string,
+		sides: { leading: boolean; trailing: boolean },
+	): string => {
+		const s = sepOf(sep)
+		const { arr, scalar } = scalarJoin(value, filterName)
+		if (!arr) return scalar ?? ''
+		const flanked = arr as FlankedChildArray
+		const leading = sides.leading ? flanked._leading_anon : undefined
+		const trailing = sides.trailing ? flanked._trailing_anon : undefined
+		const prefix = leading === s ? s : ''
+		const suffix = trailing === s ? s : ''
+		return prefix + arr.join(s) + suffix
 	}
 	env.addFilter('joinWithTrailing', (value: unknown, sep: unknown) =>
-		flankJoin(value, sep, { leading: false, trailing: true }),
+		flankJoin(value, sep, 'joinWithTrailing', { leading: false, trailing: true }),
 	)
 	env.addFilter('joinWithLeading', (value: unknown, sep: unknown) =>
-		flankJoin(value, sep, { leading: true, trailing: false }),
+		flankJoin(value, sep, 'joinWithLeading', { leading: true, trailing: false }),
 	)
 	env.addFilter('joinWithFlanks', (value: unknown, sep: unknown) =>
-		flankJoin(value, sep, { leading: true, trailing: true }),
+		flankJoin(value, sep, 'joinWithFlanks', { leading: true, trailing: true }),
 	)
 }

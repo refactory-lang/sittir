@@ -1371,12 +1371,12 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
             Object.assign(mergedJoinByField, joinByField)
         }
         // Collapse identical-across-forms variants to a single template
-        // string (ADR-0013 Task 2). Post-collapse the five rules that
-        // genuinely branch on form emit a Jinja `{% if variant == "X" %}`
-        // chain inline (populated from the per-form templates), so the
-        // emitter never sees a `variants:` map — the downstream
-        // translator pass just converts `$VAR` → `{{ var }}` without
-        // knowing about variants at all.
+        // string (ADR-0013 Task 2). Post-collapse the handful of rules
+        // that genuinely branch on form emit a Jinja
+        // `{% if variant == "X" %}` chain inline (populated from the
+        // per-form templates), so the emitter never sees a `variants:`
+        // map — `translateToJinja` below just converts `$VAR` →
+        // `{{ var }}` without knowing about variants at all.
         const formNames = Object.keys(variants)
         const normalizeTrailingNewline = (s: string): string => s.endsWith('\n') ? s.slice(0, -1) : s
         const allEqual = formNames.length > 1

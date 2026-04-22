@@ -95,9 +95,13 @@ export type TemplateRule =
 export interface TemplateRuleObject {
 	/** Standard template — mutually exclusive with `variants`. */
 	template?: string;
-	/** Named subtype templates — mutually exclusive with `template`. */
+	/** Named subtype templates — mutually exclusive with `template`.
+	 *  Legacy YAML path only; post-011 walker inlines variant branching
+	 *  directly into `template` via `{% if variant == "X" %}…{% endif %}`
+	 *  and no longer emits this field. */
 	variants?: Record<string, string>;
-	/** Discriminator tokens for detecting variant from anonymous children. */
+	/** Discriminator tokens for detecting variant from anonymous children.
+	 *  Legacy YAML path only; see note on `variants`. */
 	detect?: Record<string, string>;
 	/** Rule-level default separator for multi-valued slots. */
 	joinBy?: string;
@@ -107,7 +111,6 @@ export interface TemplateRuleObject {
 	joinByLeading?: boolean;
 	/** Emit trailing separator token when the grammar permitted one. */
 	joinByTrailing?: boolean;
-	[clauseKey: `${string}_clause`]: string;
 }
 
 /**
