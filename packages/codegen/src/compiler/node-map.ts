@@ -918,7 +918,7 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
      * AssembledContainer, AssembledGroup, AssembledPolymorph) override
      * this to walk their rule tree and produce the right shape.
      */
-    renderTemplate(_rules?: Record<string, Rule>, _wordMatcher?: RegExp): Record<string, unknown> | undefined {
+    renderTemplate(_rules?: Record<string, Rule>, _wordMatcher?: RegExp): { template: string } | undefined {
         return undefined
     }
 }
@@ -994,6 +994,76 @@ function inlineJinjaClauses(template: string, clauses: Record<string, string>): 
     })
 }
 
+/**
+ * Final `$VAR` → `{{ var }}` translation for a template body. Consumes
+ * the rule's separator metadata (`joinBy`, `joinByField`, leading /
+ * trailing flank permissions) directly — output is a Jinja string the
+ * emitter writes verbatim.
+ *
+ *   `$NAME`       → `{{ name }}`
+ *   `$$$NAME`     → `{{ name | join("<sep>") }}` with walker-time sep
+ *   `$$$CHILDREN` → one of `join` / `joinWithTrailing` / `joinWithLeading`
+ *                   / `joinWithFlanks` based on the rule's repeat flags
+ *   `$TEXT`       → `{{ text }}`
+ *   `$NEWLINE`    → `\n`
+ *   `$INDENT`/`$DEDENT` → empty
+ *
+ * Brace-escape pass prevents `{$$$CHILDREN}` becoming `{{{ children }}}`
+ * (which Nunjucks misreads as a dict literal).
+ */
+interface JinjaTranslateMeta {
+    joinBy?: string
+    joinByField?: Record<string, string>
+    joinByLeading?: boolean
+    joinByTrailing?: boolean
+}
+
+function translateToJinja(tmpl: string, meta: JinjaTranslateMeta): string {
+    const varPattern = /(\$\$\$|\$\$|\$_|\$)([A-Z][A-Z0-9_]*)/g
+    const defaultSep = meta.joinBy ?? ' '
+    const translated = tmpl.replace(varPattern, (_full, pfx: string, name: string) => {
+        const key = name.toLowerCase()
+        if (key === 'newline') return '\n'
+        if (key === 'indent') return ''
+        if (key === 'dedent') return ''
+        if (pfx === '$$$') {
+            const sep = key === 'children'
+                ? defaultSep
+                : meta.joinByField?.[key] ?? defaultSep
+            const filter = filterForFlanks(key, meta)
+            return `{{ ${key} | ${filter}(${JSON.stringify(sep)}) }}`
+        }
+        return `{{ ${key} }}`
+    })
+    return escapeJinjaBraceCollisions(translated)
+}
+
+/** `$$$CHILDREN` is the only slot that carries flank permission. */
+function filterForFlanks(key: string, meta: JinjaTranslateMeta): string {
+    if (key !== 'children') return 'join'
+    if (meta.joinByLeading && meta.joinByTrailing) return 'joinWithFlanks'
+    if (meta.joinByTrailing) return 'joinWithTrailing'
+    if (meta.joinByLeading) return 'joinWithLeading'
+    return 'join'
+}
+
+/**
+ * Prevent `{$$$CHILDREN}` → `{{{ children }}}` parse failure by
+ * inserting a space between a literal brace and an adjacent Jinja
+ * interpolation. Iterative to cover stacked cases.
+ */
+function escapeJinjaBraceCollisions(s: string): string {
+    let prev = s
+    for (let i = 0; i < 4; i++) {
+        const next = prev
+            .replace(/\{(\{\{[^}]+\}\})/g, '{ $1')
+            .replace(/(\{\{[^}]+\}\})\}/g, '$1 }')
+        if (next === prev) return next
+        prev = next
+    }
+    return prev
+}
+
 export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
     readonly modelType = 'branch' as const
     // rule narrowed to SeqRule | ChoiceRule — branches classify from
@@ -1030,27 +1100,20 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
         return this.#children ??= deriveChildren(this.simplifiedRule)
     }
 
-    renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp, externals?: ReadonlySet<string>): Record<string, unknown> {
+    renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp, externals?: ReadonlySet<string>): { template: string } {
         // Rules whose structure depends on hidden external-scanner
         // tokens (e.g. rust's raw_string_literal, whose `r#"` and `"#`
         // are produced by `_raw_string_literal_start` and
         // `_raw_string_literal_end`) can't be rendered slot-by-slot
         // because the delimiters never appear as children. Render as
-        // `$TEXT` — emits the node's raw source span verbatim.
+        // `{{ text }}` — emits the node's raw source span verbatim.
         if (externals && hasHiddenExternalRef(this.rule, externals)) {
-            return { template: '$TEXT' }
+            return { template: '{{ text }}' }
         }
-        // Token-stream shape — choice of `seq(delim, repeat(hidden), delim)`
-        // variants. rust's token_tree / delim_token_tree are the canonical
-        // cases: children can be any mix of named symbols and anonymous
-        // punctuation (`=`, `=>`, `,`, etc.), and field-by-field rendering
-        // drops the anonymous ones because readNode's promoteAnonymousKeyword
-        // routes them through $fields keyed by text (not reachable from
-        // `$$$CHILDREN`). The whole content is authored to be verbatim —
-        // macro tokens are supposed to pass through — so emit `$TEXT`
-        // which preserves the source span.
+        // Token-stream shape — same reasoning as above for rust's
+        // token_tree / delim_token_tree (verbatim pass-through).
         if (isVerbatimTokenStream(this.rule)) {
-            return { template: '$TEXT' }
+            return { template: '{{ text }}' }
         }
         // Template walking stays on the RAW rule — templates need the
         // anonymous delimiters ('(', '{', ';', etc.) to surface as
@@ -1062,25 +1125,18 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
                 `Rule has no visible content — should have been classified as leaf/token.`,
             )
         }
-        // Inline clauses as `{% if x %}body{% endif %}` directly into
-        // the template. Drops the sibling-key pattern (template + per-
-        // clause keys on the same object) in favor of a single Jinja
-        // template string — eliminates an intermediate translation
-        // layer the Jinja emitter would otherwise have to perform.
-        const entry: Record<string, unknown> = { template: inlineJinjaClauses(template, clauses) }
-        // Separator discovery runs on simplifiedRule — the anonymous
-        // delimiter layer is gone, so any remaining repeat/repeat1 is
-        // reachable without navigating past literals.
+        // Clauses inline at the reference site; meta drives separator
+        // filter selection; `$VAR` → `{{ var }}` final pass. All
+        // previously-separate translator responsibilities collapse
+        // into this one chokepoint.
+        const withClauses = inlineJinjaClauses(template, clauses)
+        const meta: JinjaTranslateMeta = {}
         const sep = findRepeatSeparator(this.simplifiedRule)
-        if (sep) entry.joinBy = sep
-        // `trailing: true` on the repeat → grammar permits a trailing
-        // separator. Render uses this to know it should look for a
-        // trailing anon-separator token in `$$$CHILDREN` and preserve
-        // it when present.
-        if (findRepeatFlag(this.simplifiedRule, 'trailing')) entry.joinByTrailing = true
-        if (findRepeatFlag(this.simplifiedRule, 'leading')) entry.joinByLeading = true
-        if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
-        return entry
+        if (sep) meta.joinBy = sep
+        if (findRepeatFlag(this.simplifiedRule, 'trailing')) meta.joinByTrailing = true
+        if (findRepeatFlag(this.simplifiedRule, 'leading')) meta.joinByLeading = true
+        if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField
+        return { template: translateToJinja(withClauses, meta) }
     }
 }
 
@@ -1221,12 +1277,12 @@ export class AssembledContainer extends AssembledNodeBase<SeqRule | ChoiceRule |
         return undefined
     }
 
-    renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp, externals?: ReadonlySet<string>): Record<string, unknown> {
+    renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp, externals?: ReadonlySet<string>): { template: string } {
         if (externals && hasHiddenExternalRef(this.rule, externals)) {
-            return { template: '$TEXT' }
+            return { template: '{{ text }}' }
         }
         if (isVerbatimTokenStream(this.rule)) {
-            return { template: '$TEXT' }
+            return { template: '{{ text }}' }
         }
         // Template walking stays on RAW rule (needs literals); derivations
         // and separator discovery use simplifiedRule.
@@ -1237,13 +1293,14 @@ export class AssembledContainer extends AssembledNodeBase<SeqRule | ChoiceRule |
                 `Rule has no visible content — should have been classified as leaf/token.`,
             )
         }
-        const entry: Record<string, unknown> = { template: inlineJinjaClauses(template, clauses) }
+        const withClauses = inlineJinjaClauses(template, clauses)
+        const meta: JinjaTranslateMeta = {}
         const sep = this.separator ?? findRepeatSeparator(this.simplifiedRule)
-        if (sep) entry.joinBy = sep
-        if (findRepeatFlag(this.simplifiedRule, 'trailing')) entry.joinByTrailing = true
-        if (findRepeatFlag(this.simplifiedRule, 'leading')) entry.joinByLeading = true
-        if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
-        return entry
+        if (sep) meta.joinBy = sep
+        if (findRepeatFlag(this.simplifiedRule, 'trailing')) meta.joinByTrailing = true
+        if (findRepeatFlag(this.simplifiedRule, 'leading')) meta.joinByLeading = true
+        if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField
+        return { template: translateToJinja(withClauses, meta) }
     }
 
 }
@@ -1286,7 +1343,7 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
         return this.#forms.flatMap(f => f.fields)
     }
 
-    renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp): Record<string, unknown> {
+    renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp): { template: string } {
         if (this.#forms.length === 0) {
             throw new Error(
                 `AssembledPolymorph.renderTemplate: '${this.kind}' has zero synthesised forms. ` +
@@ -1341,13 +1398,13 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
             parts.push('{%- endif -%}')
             templateStr = parts.join('\n')
         }
-        // Inline the merged per-form clauses as `{% if x %}body{% endif %}`
-        // just like the branch/container renderTemplate methods.
-        const entry: Record<string, unknown> = {
-            template: inlineJinjaClauses(templateStr, mergedClauses),
-        }
-        if (Object.keys(mergedJoinByField).length > 0) entry.joinByField = mergedJoinByField
-        return entry
+        // Inline the merged per-form clauses as `{% if x %}body{% endif %}`,
+        // then apply the final `$VAR` → `{{ var }}` Jinja translation
+        // using the polymorph's aggregated field-separator overrides.
+        const withClauses = inlineJinjaClauses(templateStr, mergedClauses)
+        const meta: JinjaTranslateMeta = {}
+        if (Object.keys(mergedJoinByField).length > 0) meta.joinByField = mergedJoinByField
+        return { template: translateToJinja(withClauses, meta) }
     }
 
 }
@@ -1523,9 +1580,9 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
         return this.#children ??= deriveChildren(this.simplifiedRule)
     }
 
-    renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp, externals?: ReadonlySet<string>): Record<string, unknown> {
+    renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp, externals?: ReadonlySet<string>): { template: string } {
         if (externals && hasHiddenExternalRef(this.rule, externals)) {
-            return { template: '$TEXT' }
+            return { template: '{{ text }}' }
         }
         // Template walking stays on RAW rule (needs literals); derivations
         // and separator discovery use simplifiedRule.
@@ -1536,13 +1593,14 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
                 `Rule has no visible content — should have been classified as leaf/token.`,
             )
         }
-        const entry: Record<string, unknown> = { template: inlineJinjaClauses(template, clauses) }
+        const withClauses = inlineJinjaClauses(template, clauses)
+        const meta: JinjaTranslateMeta = {}
         const sep = findRepeatSeparator(this.simplifiedRule)
-        if (sep) entry.joinBy = sep
-        if (findRepeatFlag(this.simplifiedRule, 'trailing')) entry.joinByTrailing = true
-        if (findRepeatFlag(this.simplifiedRule, 'leading')) entry.joinByLeading = true
-        if (Object.keys(joinByField).length > 0) entry.joinByField = joinByField
-        return entry
+        if (sep) meta.joinBy = sep
+        if (findRepeatFlag(this.simplifiedRule, 'trailing')) meta.joinByTrailing = true
+        if (findRepeatFlag(this.simplifiedRule, 'leading')) meta.joinByLeading = true
+        if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField
+        return { template: translateToJinja(withClauses, meta) }
     }
 
     /**

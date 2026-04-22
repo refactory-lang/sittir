@@ -6,27 +6,24 @@
  * This file owns the two functions that drive that emission:
  *
  *   - `emitJinjaTemplates(config)` — pure function: walks the NodeMap,
- *     delegates to `translateToJinja` for each node, returns a Map
- *     keyed by rule kind (values include the `@generated` header).
+ *     asks each node for its `.renderTemplate()` Jinja body, returns
+ *     a Map keyed by rule kind (values include the `@generated` header).
  *   - `writeJinjaTemplates(emitted, outputDir)` — writes the Map to
  *     disk and removes any stale `.jinja` files whose rule kinds are
  *     no longer present.
  *
- * Translator-level logic (placeholder → `{{ var }}`, clause → `{% if %}`,
- * variant branching → `{% if variant == "..." %}`) lives in
- * `./jinja-translator.ts`. Template-walker logic (how a rule's
- * AssembledNode shape becomes a YAML-era template string in the first
- * place) lives on the `AssembledNode` class hierarchy in
- * `compiler/node-map.ts` — the translator calls `node.renderTemplate()`
- * to get that string, then translates it to Jinja.
+ * All template generation now happens inside the `AssembledNode`
+ * class hierarchy in `compiler/node-map.ts`. Each `renderTemplate()`
+ * method returns Jinja-shaped output directly — clause / variant
+ * inlining, `$VAR` → `{{ var }}` translation, and separator-filter
+ * selection are all collapsed into that one chokepoint.
  */
 
 import * as fs from 'node:fs'
 import { join } from 'node:path'
 import type { NodeMap } from '../compiler/types.ts'
-import { AssembledGroup } from '../compiler/node-map.ts'
+import { AssembledGroup, type AssembledNode } from '../compiler/node-map.ts'
 import { compileWordMatcher } from '../compiler/common.ts'
-import { translateToJinja } from './jinja-translator.ts'
 
 export interface EmitTemplatesConfig {
     grammar: string
@@ -64,7 +61,7 @@ export function emitJinjaTemplates(config: EmitTemplatesConfig): EmittedTemplate
         if (node instanceof AssembledGroup && node.parentKind) continue
         let body: string | null
         try {
-            body = translateToJinja(node, nodeMap.rules ?? {}, wordMatcher ?? /\w/)
+            body = emitBodyForNode(node, nodeMap.rules ?? {}, wordMatcher ?? /\w/)
         } catch (err) {
             // Re-throw with grammar + kind context so the emitter caller
             // gets an actionable error message.
@@ -88,6 +85,45 @@ export function emitJinjaTemplates(config: EmitTemplatesConfig): EmittedTemplate
  *
  * Preserves `.gitkeep` and non-`.jinja` files (README.md, etc.).
  */
+/**
+ * Ask the node for its Jinja body. Returns `null` for node kinds that
+ * don't own a template file (leaves, keywords, tokens, supertypes,
+ * enums, multis, non-polymorph-form groups). The class-hierarchy base
+ * `renderTemplate()` returns `undefined` for those — we translate that
+ * signal to the emitter's `null`.
+ */
+function emitBodyForNode(
+    node: AssembledNode,
+    rules: Record<string, import('../compiler/rule.ts').Rule>,
+    wordMatcher: RegExp,
+): string | null {
+    if (
+        node.modelType === 'leaf'
+        || node.modelType === 'keyword'
+        || node.modelType === 'token'
+        || node.modelType === 'supertype'
+        || node.modelType === 'enum'
+        || node.modelType === 'multi'
+    ) {
+        return null
+    }
+    if (node instanceof AssembledGroup && !node.parentKind) {
+        // Non-polymorph-form groups are hidden helpers inlined at their
+        // referrers; no file emitted.
+        return null
+    }
+    const entry = node.renderTemplate(rules, wordMatcher)
+    if (!entry) return null
+    const template = entry.template
+    if (typeof template !== 'string') {
+        throw new Error(
+            `emitBodyForNode: rule '${node.kind}' (${node.modelType}) produced no template string — ` +
+            `renderTemplate() returned ${JSON.stringify(entry)}`,
+        )
+    }
+    return template
+}
+
 export function writeJinjaTemplates(emitted: EmittedTemplates, outputDir: string): void {
     fs.mkdirSync(outputDir, { recursive: true })
     for (const [kind, body] of emitted.bodies) {
