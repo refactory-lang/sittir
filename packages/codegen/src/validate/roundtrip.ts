@@ -9,6 +9,7 @@
  */
 
 import { createRequire } from 'node:module';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { parse as parseYaml } from 'yaml';
 import { readNode, createRenderer } from '@sittir/core';
 import type { TreeHandle } from '@sittir/core';
@@ -253,20 +254,51 @@ function findReparsedNodeAtOffset(
 }
 
 /**
+ * Derive the set of rule kinds the renderer knows about.
+ *
+ * For a directory path: scans for `.jinja` files. For a YAML file
+ * path: parses the YAML and reads `rules` keys. Both paths produce
+ * the same set of kinds — the templates source is what defines
+ * "renderable".
+ */
+function deriveRuleKinds(templatesPath: string): Set<string> {
+	try {
+		const stat = statSync(templatesPath);
+		if (stat.isDirectory()) {
+			return new Set(
+				readdirSync(templatesPath)
+					.filter((f) => f.endsWith('.jinja'))
+					.map((f) => f.slice(0, -'.jinja'.length)),
+			);
+		}
+	} catch {
+		// Fall through to YAML parse below.
+	}
+	// Legacy YAML file — reachable only if the migration hasn't
+	// swapped this grammar yet (or during rollback).
+	const content = readFileSync(templatesPath, 'utf-8');
+	const config = parseYaml(content) as RulesConfig;
+	return new Set(Object.keys(config.rules));
+}
+
+/**
  * Run round-trip validation for a grammar using corpus fixtures.
  */
 export async function validateRoundTrip(
 	grammar: string,
-	templatesYaml: string,
+	templatesPath: string,
 ): Promise<RoundTripResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
 
-	const config = parseYaml(templatesYaml) as RulesConfig;
 	const rawEntries = loadRawEntries(grammar);
-	const { render } = createRenderer(config);
-	const ruleKinds = new Set(Object.keys(config.rules));
+	const { render } = createRenderer(templatesPath);
+	// `ruleKinds` was historically derived from config.rules (from the
+	// YAML). For the Jinja path (directory of `.jinja` files), derive
+	// the kind set from the on-disk file listing. Works uniformly for
+	// both `.yaml` (use filesystem check) and directories.
+	const ruleKinds = deriveRuleKinds(templatesPath);
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
 	const readTreeNodeFn = await loadReadTreeNode(grammar);

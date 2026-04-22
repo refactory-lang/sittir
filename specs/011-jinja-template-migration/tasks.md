@@ -94,12 +94,12 @@ description: "Task list for Jinja template migration"
 
 ### Per-grammar cutover (bring up one at a time)
 
-- [ ] T029 [US1] Regenerate rust grammar: `npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src`. Inspect `packages/rust/templates/` — should contain ~160 files. Commit the emitted files.
-- [ ] T030 [US1] Update `packages/rust/src/factories.ts`'s `createRenderer` call site to pass the templates directory: `createRenderer(join(__dirname, '..', 'templates'))`.
-- [ ] T031 [US1] Run `pnpm --filter @sittir/rust test`. Iterate on translator bugs until 100% byte-identical to pre-migration baseline. Track fixes in translator unit tests.
-- [ ] T032 [US1] Delete `packages/rust/templates.yaml`.
-- [ ] T033 [US1] Repeat T029–T032 for typescript: regenerate, update `packages/typescript/src/factories.ts`, run `pnpm --filter @sittir/typescript test` until byte-identical, delete `packages/typescript/templates.yaml`.
-- [ ] T034 [US1] Repeat T029–T032 for python: regenerate, update `packages/python/src/factories.ts`, run `pnpm --filter @sittir/python test` until byte-identical, delete `packages/python/templates.yaml`. **Additionally** (spec R47 / edge case #7) verify python's `_match_block` rendered output on a representative corpus node has correct indent/newline/dedent behavior — this is the grammar's canonical whitespace-sensitive case and the highest-risk rule for whitespace-control translation.
+- [x] T029 [US1] Regenerate rust grammar: `npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src`. Inspect `packages/rust/templates/` — should contain ~160 files. Commit the emitted files.
+- [x] T030 [US1] Update `packages/rust/src/factories.ts`'s `createRenderer` call site to pass the templates directory: `createRenderer(join(__dirname, '..', 'templates'))`.
+- [x] T031 [US1] Run `pnpm --filter @sittir/rust test`. Iterate on translator bugs until 100% byte-identical to pre-migration baseline. Track fixes in translator unit tests.
+- [x] T032 [US1] Delete `packages/rust/templates.yaml`.
+- [x] T033 [US1] Repeat T029–T032 for typescript: regenerate, update `packages/typescript/src/factories.ts`, run `pnpm --filter @sittir/typescript test` until byte-identical, delete `packages/typescript/templates.yaml`.
+- [x] T034 [US1] Repeat T029–T032 for python: regenerate, update `packages/python/src/factories.ts`, run `pnpm --filter @sittir/python test` until byte-identical, delete `packages/python/templates.yaml`. **Additionally** (spec R47 / edge case #7) verify python's `_match_block` rendered output on a representative corpus node has correct indent/newline/dedent behavior — this is the grammar's canonical whitespace-sensitive case and the highest-risk rule for whitespace-control translation.
 
 ### Integration tests + cleanup
 

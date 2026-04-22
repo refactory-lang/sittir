@@ -55,7 +55,7 @@ export function emitFactories(config: EmitFactoriesConfig): string {
     lines.push("import { fileURLToPath } from 'node:url';")
     lines.push('')
     lines.push('const __dirname = dirname(fileURLToPath(import.meta.url));')
-    lines.push("const { render, toEdit } = createRenderer(join(__dirname, '..', 'templates.yaml'));")
+    lines.push("const { render, toEdit } = createRenderer(join(__dirname, '..', 'templates'));")
     lines.push('')
     lines.push(...emitFluentSetterHelpers())
     lines.push(...emitNonEmptyAssertHelper())

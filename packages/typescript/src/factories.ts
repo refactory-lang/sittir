@@ -7,7 +7,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const { render, toEdit } = createRenderer(join(__dirname, '..', 'templates.yaml'));
+const { render, toEdit } = createRenderer(join(__dirname, '..', 'templates'));
 
 function _fs<T, R, K extends keyof T>(
   cfg: T | undefined,

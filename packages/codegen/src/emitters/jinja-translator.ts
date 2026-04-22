@@ -49,7 +49,7 @@ export function translateTemplateString(tmpl: string): string {
 	// Matches $$$NAME | $$NAME | $_NAME | $NAME (longest prefix first).
 	// Same shape as core's DEFAULT_VAR_RE.
 	const varPattern = /(\$\$\$|\$\$|\$_|\$)([A-Z][A-Z0-9_]*)/g
-	return tmpl.replace(varPattern, (_full, _pfx: string, name: string) => {
+	const translated = tmpl.replace(varPattern, (_full, _pfx: string, name: string) => {
 		const key = name.toLowerCase()
 		// Structural placeholders (no Jinja mapping — directly resolved).
 		if (key === 'newline') return '\n'
@@ -57,6 +57,24 @@ export function translateTemplateString(tmpl: string): string {
 		if (key === 'dedent') return ''
 		return `{{ ${key} }}`
 	})
+	return escapeJinjaBraceCollisions(translated)
+}
+
+/**
+ * Jinja brace-escape: a literal `{` immediately before `{{` or a
+ * literal `}` immediately after `}}` creates `{{{` / `}}}` which
+ * Jinja parses as `{{ { … }` (dict literal) and fails. Insert a
+ * single space to separate the literal brace from the Jinja
+ * interpolation. Rust's `block` template (`{$$$CHILDREN}` →
+ * `{{{ children }}}`) is the canonical case.
+ *
+ * Exported for reuse by the clause-bearing translator path which
+ * also emits `{{ ... }}` fragments and needs the same safety net.
+ */
+function escapeJinjaBraceCollisions(s: string): string {
+	return s
+		.replace(/\{(\{\{[^}]+\}\})/g, '{ $1')
+		.replace(/(\{\{[^}]+\}\})\}/g, '$1 }')
 }
 
 /**
@@ -106,12 +124,19 @@ function translateBodyWithClauses(template: string, entry: Record<string, unknow
 	// Other placeholders pass through translateTemplateString's
 	// standard mapping.
 	const varPattern = /(\$\$\$|\$\$|\$_|\$)([A-Z][A-Z0-9_]*)/g
-	return template.replace(varPattern, (_full, _pfx: string, name: string) => {
+	const translated = template.replace(varPattern, (_full, _pfx: string, name: string) => {
 		const key = name.toLowerCase()
 		if (key in clauses) {
 			const stem = key.endsWith('_clause') ? key.slice(0, -'_clause'.length) : key
 			const body = translateTemplateString(clauses[key]!)
-			return `{%- if ${stem} %}${body}{% endif -%}`
+			// No whitespace-control strip markers here. The legacy
+			// renderer preserved surrounding spaces when a clause was
+			// absent (then FR-017 collapsed 2+ spaces to 1); using
+			// `{%-` / `-%}` would eat too much. The post-render
+			// space-absorption pass in core/render.ts handles the
+			// "$VIS $CLAUSE trait" → "trait" case (visibility empty,
+			// clause absent) by collapsing the doubled space.
+			return `{% if ${stem} %}${body}{% endif %}`
 		}
 		// Structural placeholders + normal vars handled by the shared
 		// string-transform helper.
@@ -120,6 +145,7 @@ function translateBodyWithClauses(template: string, entry: Record<string, unknow
 		if (key === 'dedent') return ''
 		return `{{ ${key} }}`
 	})
+	return escapeJinjaBraceCollisions(translated)
 }
 
 /**

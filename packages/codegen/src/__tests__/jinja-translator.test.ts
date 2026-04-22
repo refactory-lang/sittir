@@ -125,7 +125,11 @@ describe('Whitespace control — absent clauses leave no orphan whitespace', () 
 	// around clause wrappers. That's the structural contract T020 is
 	// checking: the translator's output is whitespace-control-aware.
 
-	it('clause wrapper opens with {%- and closes with -%}', () => {
+	it('clause wrapper opens with {% if x %} and closes with {% endif %}', () => {
+		// No strip markers: YAML-era renderer preserved surrounding
+		// whitespace when clauses were absent and relied on FR-017
+		// space absorption to collapse. Jinja output mirrors that
+		// behavior so corpus round-trip stays byte-identical.
 		const fake = {
 			modelType: 'branch' as const,
 			kind: 'rule',
@@ -135,11 +139,14 @@ describe('Whitespace control — absent clauses leave no orphan whitespace', () 
 			}),
 		};
 		const result = translateToJinja(fake as any, emptyRules, wordMatcher)!;
-		expect(result).toContain('{%- if body ');
-		expect(result).toContain('{% endif -%}');
+		expect(result).toContain('{% if body ');
+		expect(result).toContain('{% endif %}');
+		// No strip markers on clause boundaries.
+		expect(result).not.toContain('{%- if');
+		expect(result).not.toContain('endif -%}');
 	});
 
-	it('multiple clauses: each gets its own {%- / -%} strip markers', () => {
+	it('multiple clauses: each gets its own {% if / endif %} wrapper', () => {
 		const fake = {
 			modelType: 'branch' as const,
 			kind: 'rule_two_clauses',
@@ -150,9 +157,8 @@ describe('Whitespace control — absent clauses leave no orphan whitespace', () 
 			}),
 		};
 		const result = translateToJinja(fake as any, emptyRules, wordMatcher)!;
-		// Two `{%-` open markers and two `-%}` close markers (one per clause).
-		expect(result.match(/\{%- if /g)?.length).toBe(2);
-		expect(result.match(/\{% endif -%\}/g)?.length).toBe(2);
+		expect(result.match(/\{% if /g)?.length).toBe(2);
+		expect(result.match(/\{% endif %\}/g)?.length).toBe(2);
 	});
 });
 
@@ -186,7 +192,7 @@ describe('Structural placeholders ($NEWLINE / $INDENT / $DEDENT)', () => {
 			}),
 		};
 		const result = translateToJinja(fake as any, emptyRules, wordMatcher);
-		expect(result).toBe('{{ name }}{%- if body %}:\n{{ body }}{% endif -%}');
+		expect(result).toBe('{{ name }}{% if body %}:\n{{ body }}{% endif %}');
 	});
 });
 
@@ -247,7 +253,7 @@ describe('Rule 2: clause-bearing template', () => {
 			}),
 		};
 		const result = translateToJinja(fake as any, emptyRules, wordMatcher);
-		expect(result).toBe('fn {{ name }} {%- if return_type %}-> {{ return_type }}{% endif -%}');
+		expect(result).toBe('fn {{ name }} {% if return_type %}-> {{ return_type }}{% endif %}');
 	});
 
 	it('handles multiple clauses in a single template', () => {
@@ -262,7 +268,7 @@ describe('Rule 2: clause-bearing template', () => {
 		};
 		const result = translateToJinja(fake as any, emptyRules, wordMatcher);
 		expect(result).toBe(
-			'fn {{ name }} {{ params }} {%- if return_type %}-> {{ return_type }}{% endif -%}{%- if body %}{ {{ body }} }{% endif -%}',
+			'fn {{ name }} {{ params }} {% if return_type %}-> {{ return_type }}{% endif %}{% if body %}{ {{ body }} }{% endif %}',
 		);
 	});
 });

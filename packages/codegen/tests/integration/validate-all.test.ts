@@ -1,7 +1,20 @@
 import { describe, it, expect, beforeAll } from 'vitest';
+import { resolve } from 'node:path';
 import { generate } from '../../src/compiler/generate.ts';
 import { validateRoundTrip } from '../../src/validate/roundtrip.ts';
 import { validateFactoryRoundTrip } from '../../src/validate/factory-roundtrip.ts';
+
+/**
+ * Resolve the on-disk `.jinja` templates directory for `grammar`.
+ * The validators (post-feature-011) auto-detect directory vs `.yaml`
+ * and dispatch accordingly.
+ */
+function templatesPath(grammar: string): string {
+  return resolve(
+    new URL('../../../..', import.meta.url).pathname,
+    `packages/${grammar}/templates`,
+  );
+}
 
 const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 
@@ -53,14 +66,14 @@ for (const grammar of GRAMMARS) {
       const ceiling = RT_CEILINGS[grammar]!;
 
       it('parse → readNode → render → reparse preserves structure', async () => {
-        const rt = await validateRoundTrip(grammar, result.templatesYaml);
+        const rt = await validateRoundTrip(grammar, templatesPath(grammar));
         expect(rt.pass).toBeGreaterThan(0);
         // Ceiling: fail count must not regress above known baseline
         expect(rt.fail, `round-trip regressions (ceiling ${ceiling.roundTrip})`).toBeLessThanOrEqual(ceiling.roundTrip);
       }, 30_000);
 
       it('factory round-trip — factory → render → parse matches', async () => {
-        const frt = await validateFactoryRoundTrip(grammar, result.templatesYaml);
+        const frt = await validateFactoryRoundTrip(grammar, templatesPath(grammar));
         expect(frt.pass).toBeGreaterThan(0);
         expect(frt.fail, `factory round-trip regressions (ceiling ${ceiling.factoryRoundTrip})`).toBeLessThanOrEqual(ceiling.factoryRoundTrip);
       }, 30_000);

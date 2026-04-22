@@ -24,7 +24,6 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { generate } from '../compiler/generate.ts'
 import { validateFactoryRoundTrip } from '../validate/factory-roundtrip.ts'
@@ -150,14 +149,13 @@ const LEGACY_BASELINE = {
 
 type GrammarName = keyof typeof FLOORS
 
-async function loadTemplates(grammar: GrammarName): Promise<string> {
-    // Use the checked-in templates.yaml so the validators run against the
-    // same artifact developers/CI see.
-    const path = resolve(
+function resolveTemplatesPath(grammar: GrammarName): string {
+    // Per-rule `.jinja` layout (feature 011). Validators auto-detect
+    // directory vs legacy `.yaml` file via createRenderer dispatch.
+    return resolve(
         new URL('../../../..', import.meta.url).pathname,
-        `packages/${grammar}/templates.yaml`,
+        `packages/${grammar}/templates`,
     )
-    return readFileSync(path, 'utf-8')
 }
 
 describe.each(Object.keys(FLOORS) as GrammarName[])(
@@ -171,31 +169,31 @@ describe.each(Object.keys(FLOORS) as GrammarName[])(
             // dropped anonymous children (e.g. python `async` prefix),
             // missing field surface, children slot not plumbed through
             // the factory signature.
-            const yaml = await loadTemplates(grammar)
-            const result = await validateFactoryRoundTrip(grammar, yaml)
+            const templatesPath = resolveTemplatesPath(grammar)
+            const result = await validateFactoryRoundTrip(grammar, templatesPath)
 
             expect(result.astMatchPass).toBeGreaterThanOrEqual(floors.factoryAstMatchPass)
         }, 60000)
 
         it(`factory round-trip passes at least ${floors.factoryPass}/${floors.factoryTotal}`, async () => {
-            const yaml = await loadTemplates(grammar)
-            const result = await validateFactoryRoundTrip(grammar, yaml)
+            const templatesPath = resolveTemplatesPath(grammar)
+            const result = await validateFactoryRoundTrip(grammar, templatesPath)
 
             expect(result.total).toBeGreaterThanOrEqual(floors.factoryTotal)
             expect(result.pass).toBeGreaterThanOrEqual(floors.factoryPass)
         }, 60000)
 
         it(`from() correctness passes at least ${floors.fromPass}/${floors.fromTotal}`, async () => {
-            const yaml = await loadTemplates(grammar)
-            const result = await validateFrom(grammar, yaml)
+            const templatesPath = resolveTemplatesPath(grammar)
+            const result = await validateFrom(grammar, templatesPath)
 
             expect(result.total).toBeGreaterThanOrEqual(floors.fromTotal)
             expect(result.pass).toBeGreaterThanOrEqual(floors.fromPass)
         }, 60000)
 
         it(`full round-trip (render → reparse) passes at least ${floors.rtPass}/${floors.rtTotal}`, async () => {
-            const yaml = await loadTemplates(grammar)
-            const result = await validateRoundTrip(grammar, yaml)
+            const templatesPath = resolveTemplatesPath(grammar)
+            const result = await validateRoundTrip(grammar, templatesPath)
 
             expect(result.total).toBeGreaterThanOrEqual(floors.rtTotal)
             expect(result.pass).toBeGreaterThanOrEqual(floors.rtPass)
@@ -208,15 +206,15 @@ describe.each(Object.keys(FLOORS) as GrammarName[])(
             // regressions that silently drop content like `;` / `,` /
             // keyword tokens fail CI. The gap between `rtAstMatchPass`
             // and `rtPass` is the outstanding fidelity debt.
-            const yaml = await loadTemplates(grammar)
-            const result = await validateRoundTrip(grammar, yaml)
+            const templatesPath = resolveTemplatesPath(grammar)
+            const result = await validateRoundTrip(grammar, templatesPath)
 
             expect(result.astMatchPass).toBeGreaterThanOrEqual(floors.rtAstMatchPass)
         }, 60000)
 
         it(`template coverage passes at least ${floors.covPass}/${floors.covTotal}`, async () => {
-            const yaml = await loadTemplates(grammar)
-            const result = validateTemplateCoverage(grammar, yaml)
+            const templatesPath = resolveTemplatesPath(grammar)
+            const result = validateTemplateCoverage(grammar, templatesPath)
 
             expect(result.total).toBeGreaterThanOrEqual(floors.covTotal)
             expect(result.pass).toBeGreaterThanOrEqual(floors.covPass)
@@ -313,8 +311,8 @@ describe('renderability — every node-types.json kind must be reachable', () =>
     it.each(Object.keys(FLOORS) as GrammarName[])(
         '%s: 100%% of named kinds are renderable',
         async (grammar) => {
-            const yaml = await loadTemplates(grammar)
-            const result = validateRenderable(grammar, yaml)
+            const templatesPath = resolveTemplatesPath(grammar)
+            const result = validateRenderable(grammar, templatesPath)
             // Filter out alias variant kinds — these are nested-alias
             // targets that appear in node-types.json but aren't standalone
             // renderable nodes. They're rendered as children of their

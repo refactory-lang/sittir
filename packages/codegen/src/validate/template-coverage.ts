@@ -28,6 +28,73 @@
 
 import { loadRawEntries, type RawNodeEntry, type RawFieldEntry } from './node-types-loader.ts'
 import { parse as parseYaml } from 'yaml'
+import { readFileSync, readdirSync, statSync } from 'node:fs'
+import { join } from 'node:path'
+
+/**
+ * Load the rules map from either a legacy YAML file or a directory of
+ * per-rule `.jinja` files (feature 011). For the Jinja layout each
+ * file's body becomes the `template` string; clauses, variants, and
+ * joinBy metadata aren't available at this level (they're baked into
+ * the file body). So the coverage checker's detailed structural
+ * assertions fall back gracefully when the Jinja layout is in use.
+ */
+/**
+ * Convert a Jinja template body back to the legacy rule-object shape
+ * the template-coverage checker expects. Preserves clause bodies as
+ * sibling entries alongside the main `template` string so the
+ * checker's `$FI_CLAUSE` + `fi_clause: body` references resolve.
+ *
+ * This is a read-only adapter — Jinja is authoritative on disk; we
+ * never round-trip through this path for emission.
+ */
+function jinjaBodyToLegacyRule(body: string): TemplateRule {
+    const clauses: Record<string, string> = {}
+    // Extract `{% if <stem> %}<body>{% endif %}` blocks; capture the
+    // body (with `{{ name }}` → `$NAME` applied) as a `<stem>_clause`
+    // entry; replace the block with `$<STEM>_CLAUSE` in the main
+    // template string.
+    const withClauseRefs = body.replace(
+        /\{%-?\s*if\s+([a-z_][a-z0-9_]*)\s*%\}([\s\S]*?)\{%\s*endif\s*-?%\}/g,
+        (_m, stem: string, clauseBody: string) => {
+            clauses[`${stem}_clause`] = jinjaInterpolationsToLegacy(clauseBody)
+            return `$${stem.toUpperCase()}_CLAUSE`
+        },
+    )
+    const template = jinjaInterpolationsToLegacy(withClauseRefs)
+    if (Object.keys(clauses).length === 0) return template
+    return { template, ...clauses } as TemplateRule
+}
+
+/**
+ * Replace Jinja `{{ name }}` interpolations with `$NAME`. No clause
+ * handling — call jinjaBodyToLegacyRule for full-rule translation.
+ */
+function jinjaInterpolationsToLegacy(body: string): string {
+    return body.replace(/\{\{\s*([a-z_][a-z0-9_]*)\s*\}\}/g, (_m, name: string) => `$${name.toUpperCase()}`)
+}
+
+function loadRulesFromPath(templatesPath: string): Record<string, TemplateRule> {
+    try {
+        const stat = statSync(templatesPath)
+        if (stat.isDirectory()) {
+            const rules: Record<string, TemplateRule> = {}
+            for (const name of readdirSync(templatesPath)) {
+                if (!name.endsWith('.jinja')) continue
+                const kind = name.slice(0, -'.jinja'.length)
+                const body = readFileSync(join(templatesPath, name), 'utf-8')
+                const stripped = body.replace(/^\{#[^#]*#\}\s*/, '')
+                rules[kind] = jinjaBodyToLegacyRule(stripped)
+            }
+            return rules
+        }
+    } catch {
+        // Fall through to YAML parsing.
+    }
+    const content = readFileSync(templatesPath, 'utf-8')
+    const config = parseYaml(content) as RulesConfig
+    return (config as { rules?: Record<string, TemplateRule> }).rules ?? {}
+}
 import type { RulesConfig, TemplateRule, TemplateRuleObject } from '@sittir/types'
 
 // ---------------------------------------------------------------------------
@@ -58,11 +125,10 @@ export interface CoverageIssue {
 
 export function validateTemplateCoverage(
     grammar: string,
-    templatesYaml: string,
+    templatesPath: string,
 ): TemplateCoverageResult {
     const entries = loadRawEntries(grammar)
-    const config = parseYaml(templatesYaml) as RulesConfig
-    const rules = (config as { rules?: Record<string, TemplateRule> }).rules ?? {}
+    const rules = loadRulesFromPath(templatesPath)
 
     const issues: CoverageIssue[] = []
     let total = 0

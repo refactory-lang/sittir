@@ -55,7 +55,7 @@ export function createRenderer(pathOrConfig: string | RulesConfig): BoundRendere
 			language: '',
 			extensions: [],
 			expandoChar: null,
-			metadata: {},
+			metadata: { grammarSha: '' },
 			rules: {},
 		};
 		return createRendererFromConfig(emptyConfig, { templatesDir: pathOrConfig });

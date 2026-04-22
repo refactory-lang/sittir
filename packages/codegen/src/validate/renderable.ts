@@ -22,9 +22,33 @@
 
 import { loadRawEntries, type RawNodeEntry } from './node-types-loader.ts'
 import { parse as parseYaml } from 'yaml'
+import { readFileSync, readdirSync, statSync } from 'node:fs'
 import type { RulesConfig, TemplateRule } from '@sittir/types'
 import type { NodeMap } from '../compiler/types.ts'
 import { buildRuleLookup } from './rule-lookup.ts'
+
+/**
+ * Derive the set of rule kinds the renderer can handle, from either
+ * a legacy YAML file or a directory of per-rule `.jinja` files
+ * (feature 011).
+ */
+function collectRuleKindsFromPath(templatesPath: string): Set<string> {
+    try {
+        const stat = statSync(templatesPath)
+        if (stat.isDirectory()) {
+            return new Set(
+                readdirSync(templatesPath)
+                    .filter((f) => f.endsWith('.jinja'))
+                    .map((f) => f.slice(0, -'.jinja'.length)),
+            )
+        }
+    } catch {
+        // Fall through to YAML parsing.
+    }
+    const content = readFileSync(templatesPath, 'utf-8')
+    const config = parseYaml(content) as RulesConfig
+    return collectRuleKinds(config)
+}
 
 // ---------------------------------------------------------------------------
 // Result shape
@@ -54,10 +78,9 @@ export interface MissingKind {
  * @param grammar       Grammar name (rust, typescript, python).
  * @param templatesYaml Parsed text of the generated templates.yaml.
  */
-export function validateRenderable(grammar: string, templatesYaml: string): RenderableResult {
+export function validateRenderable(grammar: string, templatesPath: string): RenderableResult {
     const rawEntries = loadRawEntries(grammar)
-    const rulesConfig = parseYaml(templatesYaml) as RulesConfig
-    const ruleKinds = collectRuleKinds(rulesConfig)
+    const ruleKinds = collectRuleKindsFromPath(templatesPath)
 
     const missing: MissingKind[] = []
     let renderable = 0

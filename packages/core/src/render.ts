@@ -1,10 +1,18 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
 //
-// Pure render engine — no I/O, no `node:*` imports. Browser-safe.
-// YAML loading and the `createRenderer(yamlPath)` convenience live in
-// `./loader.ts`.
+// Render engine. Legacy regex substitutor + Nunjucks-backed per-rule
+// `.jinja` renderer (feature 011). YAML loading lives in `./loader.ts`
+// to keep the import graph tidy; the Nunjucks path depends on
+// `./templates/nunjucks-env.ts`, which requires `node:fs`.
+//
+// Browser-safety, once a concern (ADR-0013 Task 1), is no longer
+// maintained here — the project's browser-facing render path is
+// Rust→WASM (Phase B) post-port; TS is Node-only by design.
 
+import { existsSync } from 'node:fs';
+import { join as pathJoin } from 'node:path';
 import type { AnyNodeData, Edit, ByteRange, RulesConfig, TemplateRule, TemplateRuleObject } from './types.ts';
+import { createNunjucksEnvironment } from './templates/nunjucks-env.ts';
 
 export type { RulesConfig };
 
@@ -854,40 +862,14 @@ interface NunjucksEnvLike {
 }
 
 /**
- * Lazily constructs a Nunjucks Environment from `templatesDir`.
- * Separated so this module doesn't import nunjucks until actually
- * needed (keeps it browser-safe when templatesDir is never set).
- */
-function lazyNunjucksEnv(templatesDir: string): NunjucksEnvLike {
-	// Dynamic require keeps the import tree clean on the legacy path.
-	// `createNunjucksEnvironment` is the single construction surface;
-	// it encodes the whitespace/autoescape/loader config.
-	// Using `globalThis.require` indirection so bundlers don't pull
-	// nunjucks into browser builds on the legacy path.
-	// eslint-disable-next-line @typescript-eslint/no-require-imports
-	const { createNunjucksEnvironment } = require('./templates/nunjucks-env.ts') as {
-		createNunjucksEnvironment: (dir: string) => NunjucksEnvLike;
-	};
-	return createNunjucksEnvironment(templatesDir);
-}
-
-/**
  * Check whether a `.jinja` file exists for the given kind under
- * `templatesDir`. Uses `node:fs` via a dynamic require so the import
- * tree stays clean on the legacy path.
- *
- * Returns `false` when `templatesDir` is undefined — callers that
- * provide only a pre-built `nunjucksEnv` without a directory path
- * can't use filesystem detection; they fall back to best-effort
- * render-and-catch.
+ * `templatesDir`. Used to distinguish "template absent" (fall back
+ * to $text) from "template present but malformed" (propagate the
+ * Nunjucks parse error).
  */
 function templateFileExists(templatesDir: string | undefined, templateName: string): boolean {
 	if (!templatesDir) return false;
-	// eslint-disable-next-line @typescript-eslint/no-require-imports
-	const fs = require('node:fs') as { existsSync: (p: string) => boolean };
-	// eslint-disable-next-line @typescript-eslint/no-require-imports
-	const path = require('node:path') as { join: (a: string, b: string) => string };
-	return fs.existsSync(path.join(templatesDir, templateName));
+	return existsSync(pathJoin(templatesDir, templateName));
 }
 
 /**
@@ -915,7 +897,7 @@ function renderNunjucks(
 		return node.$text;
 	}
 
-	const env = providedEnv ?? (templatesDir ? lazyNunjucksEnv(templatesDir) : undefined);
+	const env = providedEnv ?? (templatesDir ? createNunjucksEnvironment(templatesDir) as unknown as NunjucksEnvLike : undefined);
 	if (!env) {
 		throw new Error('renderNunjucks: neither nunjucksEnv nor templatesDir provided');
 	}
@@ -933,14 +915,19 @@ function renderNunjucks(
 	// Build TemplateContext by recursively rendering children/fields.
 	const tc = buildNunjucksTemplateContext(node, ctx, env, templatesDir);
 
+	let rendered: string;
 	try {
-		return env.render(templateName, tc);
+		rendered = env.render(templateName, tc);
 	} catch (err) {
 		const cause = err instanceof Error ? err.message : String(err);
 		throw new Error(
 			`render: template '${templateName}' (rule '${node.$type}') failed — ${cause}`,
 		);
 	}
+	// FR-017 absent-field space absorption — collapse runs of 2+ spaces
+	// left by empty variable interpolations. Same regex as the legacy
+	// substitutor path so output stays byte-identical across engines.
+	return rendered.replace(/(?<![\n ]) {2,}/g, ' ');
 }
 
 /**
@@ -1000,13 +987,14 @@ function buildNunjucksTemplateContext(
 		for (const [fieldName, raw] of Object.entries(node.$fields)) {
 			if (raw === undefined || raw === null) continue;
 			const items = Array.isArray(raw) ? raw : [raw];
-			const named = items.filter(item => {
-				if (typeof item !== 'object' || item === null) return true;
-				return (item as AnyNodeData).$named !== false;
-			});
-			if (named.length === 0) continue;
+			// Do NOT filter anonymous entries here: promoteAnonymousKeyword
+			// routes structural keywords (async, move, unsafe, etc.) into
+			// $fields keyed by the literal text. The legacy renderer
+			// emitted them verbatim — the Jinja path must too, otherwise
+			// the rendered tree drops the keyword and reparse fails.
+			if (items.length === 0) continue;
 			const fieldJoinBy = resolveJoinBy(ruleObj, fieldName.toUpperCase());
-			fields[fieldName] = named
+			fields[fieldName] = items
 				.map(item => renderChild(item as AnyNodeData | string | number))
 				.join(fieldJoinBy);
 		}

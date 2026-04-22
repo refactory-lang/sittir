@@ -11,7 +11,31 @@
  */
 
 import { createRequire } from 'node:module';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { parse as parseYaml } from 'yaml';
+
+/**
+ * Derive the set of rule kinds the renderer knows about from a
+ * templates source path (directory of `.jinja` files or a legacy
+ * `.yaml` file).
+ */
+function deriveRuleKinds(templatesPath: string): Set<string> {
+	try {
+		const stat = statSync(templatesPath);
+		if (stat.isDirectory()) {
+			return new Set(
+				readdirSync(templatesPath)
+					.filter((f) => f.endsWith('.jinja'))
+					.map((f) => f.slice(0, -'.jinja'.length)),
+			);
+		}
+	} catch {
+		// Fall through to YAML parse.
+	}
+	const content = readFileSync(templatesPath, 'utf-8');
+	const config = parseYaml(content) as RulesConfig;
+	return new Set(Object.keys(config.rules));
+}
 import { readNode, createRenderer } from '@sittir/core';
 import type { AnyNodeData, NodeFieldValue, RulesConfig } from '@sittir/types';
 import { loadRawEntries } from './node-types-loader.ts';
@@ -490,16 +514,15 @@ function recordAstStructuralComparison(
 
 export async function validateFactoryRoundTrip(
 	grammar: string,
-	templatesYaml: string,
+	templatesPath: string,
 ): Promise<FactoryRoundTripResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
 
-	const config = parseYaml(templatesYaml) as RulesConfig;
 	const rawEntries = loadRawEntries(grammar);
-	const ruleKinds = new Set(Object.keys(config.rules));
-	const { render } = createRenderer(config);
+	const ruleKinds = deriveRuleKinds(templatesPath);
+	const { render } = createRenderer(templatesPath);
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
 	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, importFailure } =
