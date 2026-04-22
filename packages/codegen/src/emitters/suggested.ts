@@ -18,7 +18,8 @@
 
 import type { NodeMap, DerivationLog, InferredFieldEntry, PromotedRuleEntry, RepeatedShapeEntry } from '../compiler/types.ts'
 import type { Rule } from '../compiler/rule.ts'
-import { findAllPolymorphCandidates, type PolymorphCandidateLocation } from '../compiler/link.ts'
+import { findAllPolymorphCandidates } from '../compiler/link.ts'
+import type { PolymorphCandidateLocation } from '../compiler/link.ts'
 
 /**
  * Derive a short, readable base label for a single choice arm.

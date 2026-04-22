@@ -26,7 +26,8 @@
  * its source.
  */
 
-import { loadRawEntries, type RawNodeEntry, type RawFieldEntry } from './node-types-loader.ts'
+import { loadRawEntries } from './node-types-loader.ts'
+import type { RawNodeEntry, RawFieldEntry } from './node-types-loader.ts'
 import { loadRulesFromPath as loadRulesFromTemplatesPath } from './templates-path.ts'
 
 /**

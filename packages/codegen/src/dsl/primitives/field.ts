@@ -26,7 +26,8 @@
 import type { Rule } from '../../compiler/rule.ts'
 import type { FieldLike } from '../runtime-shapes.ts'
 import { wireRegisterSyntheticRule } from '../wire/wire.ts'
-import { isStringType, isOptionalType, isChoiceType, type RuntimeRule } from '../runtime-shapes.ts'
+import { isStringType, isOptionalType, isChoiceType } from '../runtime-shapes.ts'
+import type { RuntimeRule } from '../runtime-shapes.ts'
 
 /**
  * Shared `FIELD(name, <shape-containing-STRING>)` →

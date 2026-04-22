@@ -12,7 +12,7 @@
  * re-collapse.
  */
 
-import type { Rule } from './rule.ts'
+import type { Rule, SeqRule, PolymorphRule } from './rule.ts'
 import { isChoice } from './rule.ts'
 import type { LinkedGrammar, OptimizedGrammar } from './types.ts'
 import { simplifyRules } from './simplify.ts'
@@ -211,7 +211,7 @@ function extractFactoredChoiceBody(
     const nonEmpty: Rule[] = []
     for (const m of members) {
         const inner = m.type === 'variant' ? m.content : m
-        const s = (inner as import('./rule.ts').SeqRule).members
+        const s = (inner as SeqRule).members
         const body = s.slice(prefixLen, s.length - suffixLen)
         if (body.length === 0) { hasEmpty = true; continue }
         const bodyRule: Rule = body.length === 1
@@ -240,7 +240,7 @@ export function factorChoiceBranches(rule: Rule): Rule {
             const members = rule.members.map(factorChoiceBranches)
             const unwrapped = members.map(m => m.type === 'variant' ? m.content : m)
             if (!canFactorAllBranchesAsSeqs(unwrapped)) return { ...rule, members }
-            const seqs = unwrapped.map(b => (b as import('./rule.ts').SeqRule).members)
+            const seqs = unwrapped.map(b => (b as SeqRule).members)
             const prefixLen = findCommonPrefix(seqs)
             const suffixLen = findCommonSuffix(seqs, prefixLen)
             if (prefixLen === 0 && suffixLen === 0) return { ...rule, members }
@@ -588,7 +588,7 @@ function outerFromParts(prefix: Rule[], suffix: Rule[]): Rule {
 // Keep in sync when adding new Optimize passes — polymorph forms must
 // receive the same rewrite as top-level rules.
 function mapPolymorphForms(
-    rule: import('./rule.ts').PolymorphRule,
+    rule: PolymorphRule,
     rewrite: (r: Rule) => Rule,
 ): Rule {
     return {

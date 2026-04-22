@@ -30,7 +30,9 @@ import { emitSuggested } from '../emitters/suggested.ts'
 import { emitIs } from '../emitters/is.ts'
 import { emitNodeModel } from '../emitters/node-model.ts'
 
-import type { NodeMap } from './types.ts'
+import type { NodeMap, IncludeFilter } from './types.ts'
+import type { EmittedTemplates } from '../emitters/templates.ts'
+import type { RoundTripDiagnostic } from '../emitters/suggested.ts'
 
 export interface GeneratedFiles {
     grammar: string
@@ -41,7 +43,7 @@ export interface GeneratedFiles {
      *  joinByField / joinByLeading / joinByTrailing per kind, written
      *  as `templates/_meta.json` by the CLI. CLI writes each body to
      *  `packages/<grammar>/templates/<kind>.jinja`. */
-    jinjaTemplates: import('../emitters/templates.ts').EmittedTemplates
+    jinjaTemplates: EmittedTemplates
     factories: string
     /** factory-map.json5 — validator-only factory metadata (shapes,
      * alias map, field-only-factory list). See emitters/factory-map.ts. */
@@ -90,7 +92,7 @@ export interface GenerateConfig {
      * // Default (permissive): everything applied.
      * { include: undefined }
      */
-    include?: import('./types.ts').IncludeFilter
+    include?: IncludeFilter
     /**
      * Emit runtime validation in leaf factories (regex check against
      * the grammar's declared pattern). Default `false` — enum
@@ -107,7 +109,7 @@ export interface GenerateConfig {
      * produces the same output — the emitter only adds the section
      * when at least one diagnostic exists.
      */
-    roundTripFailures?: readonly import('../emitters/suggested.ts').RoundTripDiagnostic[]
+    roundTripFailures?: readonly RoundTripDiagnostic[]
 }
 
 /**

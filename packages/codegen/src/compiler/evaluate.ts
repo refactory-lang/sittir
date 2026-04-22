@@ -13,7 +13,7 @@ import type {
 } from './rule.ts'
 import type { RawGrammar } from './types.ts'
 import { withRoleScope } from '../dsl/primitives/role.ts'
-import type { WireContext } from '../dsl/wire/wire.ts'
+import type { WireContext, RefineForm } from '../dsl/wire/wire.ts'
 import type { PolymorphVariant } from './types.ts'
 
 // ---------------------------------------------------------------------------
@@ -426,7 +426,7 @@ function extractRepeatSeparator(
  */
 function extractFirstStringFromChoice(r: Rule): string | null {
     if (r.type !== 'choice') return null
-    const lit = r.members.find((m): m is import('./rule.ts').StringRule => m.type === 'string')
+    const lit = r.members.find((m): m is StringRule => m.type === 'string')
     return lit ? lit.value : null
 }
 
@@ -833,7 +833,7 @@ function drainPolymorphMetadata(opts: GrammarOptions): PolymorphVariant[] {
  * the `RawGrammar.refineForms` field absent rather than an empty map
  * for downstream consumers that check presence).
  */
-function drainRefineMetadata(opts: GrammarOptions): Map<string, import('../dsl/wire/wire.ts').RefineForm[]> | undefined {
+function drainRefineMetadata(opts: GrammarOptions): Map<string, RefineForm[]> | undefined {
     const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__
     if (!wireCtx || wireCtx.refineForms.size === 0) return undefined
     return new Map(wireCtx.refineForms)

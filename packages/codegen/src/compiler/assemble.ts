@@ -7,6 +7,8 @@
 
 import type {
     Rule, FieldRule, PolymorphRule, SymbolRule,
+    SeqRule, ChoiceRule, RepeatRule, Repeat1Rule,
+    PatternRule, TerminalRule, StringRule, EnumRule, SupertypeRule,
 } from './rule.ts'
 import type {
     OptimizedGrammar, NodeMap,
@@ -44,7 +46,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
             case 'branch': {
                 nodes.set(kind, new AssembledBranch(
                     kind,
-                    inlinedRule as import('./rule.ts').SeqRule | import('./rule.ts').ChoiceRule,
+                    inlinedRule as SeqRule | ChoiceRule,
                     simplifiedRule,
                 ))
                 break
@@ -52,7 +54,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
             case 'container': {
                 nodes.set(kind, new AssembledContainer(
                     kind,
-                    inlinedRule as import('./rule.ts').SeqRule | import('./rule.ts').ChoiceRule | import('./rule.ts').RepeatRule | import('./rule.ts').Repeat1Rule,
+                    inlinedRule as SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
                     simplifiedRule,
                 ))
                 break
@@ -65,7 +67,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                 const variantChildKinds = collectOverrideVariantChildKinds(polySource, polyForms)
                 nodes.set(kind, new AssembledPolymorph(
                     kind,
-                    rule as PolymorphRule | import('./rule.ts').ChoiceRule,
+                    rule as PolymorphRule | ChoiceRule,
                     forms,
                     { source: polySource, variantChildKinds },
                 ))
@@ -74,14 +76,14 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
             case 'leaf': {
                 nodes.set(kind, new AssembledLeaf(
                     kind,
-                    rule as import('./rule.ts').PatternRule | import('./rule.ts').TerminalRule,
+                    rule as PatternRule | TerminalRule,
                 ))
                 break
             }
             case 'keyword': {
                 nodes.set(kind, new AssembledKeyword(
                     kind,
-                    rule as import('./rule.ts').StringRule,
+                    rule as StringRule,
                 ))
                 break
             }
@@ -89,14 +91,14 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                 // Hidden — no factoryName; token kinds have StringRule bodies
                 nodes.set(kind, new AssembledToken(
                     kind,
-                    rule as import('./rule.ts').StringRule,
+                    rule as StringRule,
                 ))
                 break
             }
             case 'enum': {
                 nodes.set(kind, new AssembledEnum(
                     kind,
-                    rule as import('./rule.ts').EnumRule,
+                    rule as EnumRule,
                 ))
                 break
             }
@@ -104,7 +106,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                 const subtypes = resolveSupertypeSubtypes(rule, optimized)
                 nodes.set(kind, new AssembledSupertype(
                     kind,
-                    rule as import('./rule.ts').SupertypeRule | import('./rule.ts').ChoiceRule,
+                    rule as SupertypeRule | ChoiceRule,
                     subtypes,
                 ))
                 break
@@ -874,7 +876,7 @@ function collectAnonymousNodes(
 
         const isWordShape = detectKeywordShape(value, wordMatcher)
         // Synthetic StringRule for anonymous tokens — the kind IS the literal value.
-        const syntheticStringRule: import('./rule.ts').StringRule = { type: 'string', value }
+        const syntheticStringRule: StringRule = { type: 'string', value }
 
         if (isWordShape) {
             // Keyword token (e.g., "if", "class", "pub")
@@ -1269,7 +1271,7 @@ export function nameField(fieldName: string): { propertyName: string; paramName:
 // the different "hidden structural seq" treatment (separate future work).
 // ---------------------------------------------------------------------------
 
-export function extractRepeatShape(rule: Rule): { repeat: import('./rule.ts').RepeatRule | import('./rule.ts').Repeat1Rule; nonEmpty: boolean } | null {
+export function extractRepeatShape(rule: Rule): { repeat: RepeatRule | Repeat1Rule; nonEmpty: boolean } | null {
     switch (rule.type) {
         case 'repeat':
             return { repeat: rule, nonEmpty: false }

@@ -19,7 +19,8 @@
 import type { Rule, ChoiceRule, FieldRule, EnumRule } from './rule.ts'
 import { isChoice, isEnum, isField, isString, isSeq, isOptional, isRepeat, isRepeat1 } from './rule.ts'
 import type { RefineForm } from './types.ts'
-import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts'
+import { parsePath } from '../dsl/transform/transform-path.ts'
+import type { PathSegment } from '../dsl/transform/transform-path.ts'
 
 /**
  * The result of resolving a refine() path against a rule tree. Carries

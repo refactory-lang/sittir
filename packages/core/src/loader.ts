@@ -9,7 +9,8 @@
 // path, retained for in-memory test fixtures).
 
 import type { RulesConfig } from './types.ts';
-import { createRendererFromConfig, type BoundRenderer } from './render.ts';
+import { createRendererFromConfig } from './render.ts';
+import type { BoundRenderer } from './render.ts';
 
 /**
  * Create a renderer bound to a specific templates source.

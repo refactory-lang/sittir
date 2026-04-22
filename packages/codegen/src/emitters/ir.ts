@@ -14,7 +14,8 @@
 import type { NodeMap } from '../compiler/types.ts'
 import type { AssembledNode, AssembledSupertype } from '../compiler/node-map.ts'
 import { isValidIdent } from './shared.ts'
-import { collectRefineKindInfos, refineFormFactoryName, camelCase as refineCamelCase, type RefineKindInfo } from './refine-emit.ts'
+import { collectRefineKindInfos, refineFormFactoryName, camelCase as refineCamelCase } from './refine-emit.ts'
+import type { RefineKindInfo } from './refine-emit.ts'
 
 export interface EmitIrConfig {
     grammar: string

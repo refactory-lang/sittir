@@ -20,7 +20,8 @@
  * want surfaced as a first-class validation error.
  */
 
-import { loadRawEntries, type RawNodeEntry } from './node-types-loader.ts'
+import { loadRawEntries } from './node-types-loader.ts'
+import type { RawNodeEntry } from './node-types-loader.ts'
 import type { TemplateRule } from '@sittir/types'
 import type { NodeMap } from '../compiler/types.ts'
 import { buildRuleLookup } from './rule-lookup.ts'

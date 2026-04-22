@@ -23,8 +23,10 @@ import {
 } from '../compiler/node-map.ts'
 import { loadRawEntries } from '../validate/node-types-loader.ts'
 import { isAutoStampField, isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues, resolveHiddenKeywordLiteral, resolveHoistedForm, isAutoStampSlot, referencedKinds, fieldTypeComponents, isValidIdent, keywordPresenceKind, keywordPresenceValues } from './shared.ts'
+import type { HoistedForm } from './shared.ts'
 import { resolveBitflagConstName } from './consts.ts'
-import { refineFormTypeName, collectRefineKindInfos, type RefineKindInfo } from './refine-emit.ts'
+import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts'
+import type { RefineKindInfo } from './refine-emit.ts'
 
 type StructuralNode = AssembledBranch | AssembledContainer | AssembledPolymorph
 
@@ -564,7 +566,7 @@ function emitPolymorphFormConfigAliases(
 function emitHoistedFormConfigAlias(
     lines: string[],
     ftn: string,
-    hoist: import('./shared.ts').HoistedForm,
+    hoist: HoistedForm,
     nodeMap: NodeMap,
 ): void {
     lines.push(`export type ${ftn}Config = {`)

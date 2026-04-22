@@ -22,16 +22,20 @@
  */
 
 import { parsePath, applyPath, reconstructWrapper, reconstructPrec, reconstructContainer, wrapInPrecStack } from './transform-path.ts'
-import { isFieldPlaceholder, maybeKeywordSymbol, type FieldPlaceholder } from '../primitives/field.ts'
-import { isAliasPlaceholder, type AliasPlaceholder } from '../primitives/alias.ts'
-import { isVariantPlaceholder, type VariantPlaceholder } from '../primitives/variant.ts'
+import { isFieldPlaceholder, maybeKeywordSymbol } from '../primitives/field.ts'
+import type { FieldPlaceholder } from '../primitives/field.ts'
+import { isAliasPlaceholder } from '../primitives/alias.ts'
+import type { AliasPlaceholder } from '../primitives/alias.ts'
+import { isVariantPlaceholder } from '../primitives/variant.ts'
+import type { VariantPlaceholder } from '../primitives/variant.ts'
 import {
     wireRegisterSyntheticRule,
     wireRegisterPolymorphVariant,
     wireRegisterConflict,
     wireGetCurrentRuleKind,
 } from '../wire/wire.ts'
-import { isFieldLike, isPrecWrapper, isWrapperType, isSeqType, isChoiceType, isBlankType, isOptionalType, isPlainRepeatType, type RuntimeRule } from '../runtime-shapes.ts'
+import { isFieldLike, isPrecWrapper, isWrapperType, isSeqType, isChoiceType, isBlankType, isOptionalType, isPlainRepeatType } from '../runtime-shapes.ts'
+import type { RuntimeRule } from '../runtime-shapes.ts'
 
 /**
  * Apply patches to a rule. Patches are an object with path-string keys

@@ -16,7 +16,8 @@ import { validateRenderableFromNodeMap, formatRenderableReport } from './validat
 import { validateReadNodeRoundTrip, formatReadNodeRoundTripReport } from './validate/readnode-roundtrip.ts';
 import { join, dirname, resolve } from 'node:path';
 import { generate } from './compiler/generate.ts';
-import { emitSuggested, type RoundTripDiagnostic } from './emitters/suggested.ts';
+import { emitSuggested } from './emitters/suggested.ts';
+import type { RoundTripDiagnostic } from './emitters/suggested.ts';
 import { compileParser } from './transpile/compile-parser.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { writeJinjaTemplates } from './emitters/templates.ts';

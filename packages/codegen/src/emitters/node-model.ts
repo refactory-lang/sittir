@@ -18,6 +18,7 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts'
+import type { Rule } from '../compiler/rule.ts'
 import type {
     AssembledNode,
     AssembledField,
@@ -359,9 +360,9 @@ function serializeValue(v: NodeOrTerminal): SerializedValue {
  * `elementRule`. Walks choice/symbol/supertype; drops anonymous literals.
  * Used only for diagnostic display in node-model.json5.
  */
-function extractElementKinds(rule: import('../compiler/rule.ts').Rule): string[] {
+function extractElementKinds(rule: Rule): string[] {
     const out = new Set<string>()
-    const walk = (r: import('../compiler/rule.ts').Rule): void => {
+    const walk = (r: Rule): void => {
         switch (r.type) {
             case 'symbol':
                 out.add(r.name); return

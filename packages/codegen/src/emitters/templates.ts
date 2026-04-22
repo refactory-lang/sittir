@@ -22,7 +22,9 @@
 import * as fs from 'node:fs'
 import { join } from 'node:path'
 import type { NodeMap } from '../compiler/types.ts'
-import { AssembledGroup, type AssembledNode } from '../compiler/node-map.ts'
+import { AssembledGroup } from '../compiler/node-map.ts'
+import type { AssembledNode } from '../compiler/node-map.ts'
+import type { Rule } from '../compiler/rule.ts'
 import { compileWordMatcher } from '../compiler/common.ts'
 
 export interface EmitTemplatesConfig {
@@ -94,7 +96,7 @@ export function emitJinjaTemplates(config: EmitTemplatesConfig): EmittedTemplate
  */
 function emitBodyForNode(
     node: AssembledNode,
-    rules: Record<string, import('../compiler/rule.ts').Rule>,
+    rules: Record<string, Rule>,
     wordMatcher: RegExp,
 ): string | null {
     if (

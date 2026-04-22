@@ -112,6 +112,31 @@ if [ -n "$hatch_hits" ]; then
     notes+=("type-escape hatches added — fix the types, don't silence: $hatch_list")
 fi
 
+# 6. Inline `import('...').Type` scan — AI-slop pattern where a type is
+# referenced via an inline dynamic-import expression instead of a hoisted
+# `import type { ... }` declaration. The two forms erase identically but the
+# inline form fragments the import block and obscures type dependencies.
+# Only scan added lines.
+inline_type_hits=$(
+    {
+        git diff HEAD -- $modified 2>/dev/null
+        git diff --cached -- $modified 2>/dev/null
+    } | awk '
+        /^\+\+\+ b\// { file=substr($0, 7); next }
+        /^\+[^+]/ {
+            line=substr($0, 2)
+            # Match inline `import("...").X` or `import(''...'').X` in a type
+            # position. Skip `await import(...)` / `const x = import(...)` —
+            # those are runtime dynamic imports (no trailing `.Identifier`).
+            if (line ~ /import\([^)]*\)\.[A-Z]/) print file
+        }
+    ' | sort -u | head -5
+)
+if [ -n "$inline_type_hits" ]; then
+    inline_list=$(echo "$inline_type_hits" | tr '\n' ' ' | sed 's/ $//')
+    notes+=("inline import().Type — hoist to 'import type { X } from \"…\"': $inline_list")
+fi
+
 [ "${#notes[@]}" -eq 0 ] && emit_silent
 
 # Bullet-format multi-note output so Claude can scan quickly.

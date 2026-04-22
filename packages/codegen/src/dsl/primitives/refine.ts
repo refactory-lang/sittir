@@ -40,7 +40,8 @@
  */
 
 import type { RuntimeRule } from '../runtime-shapes.ts'
-import { wireGetCurrentRuleKind, wireRegisterRefineForms, type RefineForm } from '../wire/wire.ts'
+import { wireGetCurrentRuleKind, wireRegisterRefineForms } from '../wire/wire.ts'
+import type { RefineForm } from '../wire/wire.ts'
 
 /** `{ formName → { path → branchIndex | literal } }`. */
 export type FormMap = Record<string, Record<string, number | string>>

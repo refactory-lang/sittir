@@ -13,7 +13,8 @@
  * own file and imports whatever it needs from here.
  */
 
-import { readFileSync, readdirSync, existsSync, type Mode } from 'node:fs'
+import { readFileSync, readdirSync, existsSync } from 'node:fs'
+import type { Mode } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { readNode as readNodeFn } from '@sittir/core'
