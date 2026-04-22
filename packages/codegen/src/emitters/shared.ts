@@ -8,7 +8,7 @@ import type {
     AssembledField, AssembledChild, NodeOrTerminal, AssembledNode,
 } from '../compiler/node-map.ts'
 import {
-    AssembledKeyword, AssembledToken,
+    AssembledKeyword, AssembledToken, AssembledEnum,
     AssembledBranch, AssembledContainer, AssembledGroup,
     isNodeRef, isTerminalValue, isUnresolvedRef,
     isRequired, isMultiple, isNonEmpty,
@@ -510,4 +510,155 @@ export function resolveHoistedForm(
         innerFactoryName: inner.rawFactoryName,
         innerFields,
     }
+}
+
+// ---------------------------------------------------------------------------
+// Keyword-presence classifier (ADR-0012)
+// ---------------------------------------------------------------------------
+
+/**
+ * Resolve a single NodeOrTerminal entry to a single literal string, or
+ * `undefined` when the entry doesn't point at a single literal.
+ *
+ * Three sources:
+ *   - TerminalValue → its `.value`.
+ *   - NodeRef to a hidden `_kw_*` keyword kind (AssembledKeyword) or
+ *     hidden single-string AssembledToken → the keyword/token text.
+ *   - NodeRef to a single-value AssembledEnum (`members.length === 1`)
+ *     → that member's value.
+ *
+ * Any other shape (non-literal node ref, unresolved ref) returns undefined.
+ */
+function resolveEntryLiteral(
+    entry: NodeOrTerminal,
+    nodeMap: NodeMap,
+): string | undefined {
+    if (isTerminalValue(entry)) return entry.value
+    if (!isNodeRef(entry)) return undefined
+    const kindName = isUnresolvedRef(entry.node) ? entry.node.name : entry.node.kind
+    // Hidden `_kw_*` / hidden single-string token — uses the existing helper.
+    const lit = resolveHiddenKeywordLiteral(kindName, nodeMap)
+    if (lit !== undefined) return lit
+    // Single-value enum — structurally identical to a bare literal.
+    const ref = nodeMap.nodes.get(kindName)
+    if (ref instanceof AssembledEnum) {
+        const values = ref.values
+        if (values.length === 1) return values[0]
+    }
+    // Hidden non-underscore keyword resolution (defensive — keeps the
+    // helper symmetric with resolveHiddenKeywordLiteral, which only
+    // returns for `_`-prefixed kinds).
+    if (!kindName.startsWith('_')) {
+        if (ref instanceof AssembledKeyword) return ref.text
+        if (ref instanceof AssembledToken) return ref.text
+    }
+    return undefined
+}
+
+/**
+ * Classify a field's keyword-presence intent from its slot `values` +
+ * per-value multiplicity. Returns `'boolean'` for `optional(single-literal)`
+ * (or the degenerate `repeat(single-literal)`), `'bitflag'` for
+ * `repeat(choice-of-literals)`, and `null` when the field isn't a
+ * keyword-presence pattern.
+ *
+ * Shape criteria:
+ *
+ * - **`'boolean'`** — EITHER:
+ *   - exactly one `values` entry, resolves to a single literal, multiplicity
+ *     is `'optional'`; OR
+ *   - every entry resolves to a literal AND every entry's multiplicity is
+ *     `'array'` / `'nonEmptyArray'` AND the set of distinct literals has
+ *     size exactly 1 (degenerate repeat-of-one-literal).
+ *
+ * - **`'bitflag'`** — every entry resolves to a literal AND every entry's
+ *   multiplicity is `'array'` / `'nonEmptyArray'` AND the set of distinct
+ *   literal values has size >= 2.
+ *
+ * - **`null`** otherwise — any non-literal NodeRef (a symbol pointing at
+ *   a structural kind) disqualifies, as does mixed or required-single
+ *   multiplicity.
+ *
+ * @see ADR-0012 for the motivation and the three-row taxonomy.
+ */
+export function keywordPresenceKind(
+    field: AssembledChild,
+    nodeMap: NodeMap,
+): 'boolean' | 'bitflag' | null {
+    if (field.values.length === 0) return null
+
+    // Single optional entry → boolean when the entry resolves to a literal.
+    if (field.values.length === 1) {
+        const v = field.values[0]!
+        if (v.multiplicity === 'optional' && resolveEntryLiteral(v, nodeMap) !== undefined) {
+            return 'boolean'
+        }
+    }
+
+    // Every entry must resolve to a literal and be array / nonEmptyArray
+    // for the repeat-of-literals cases.
+    const literals: string[] = []
+    for (const v of field.values) {
+        if (v.multiplicity !== 'array' && v.multiplicity !== 'nonEmptyArray') return null
+        const lit = resolveEntryLiteral(v, nodeMap)
+        if (lit === undefined) return null
+        literals.push(lit)
+    }
+    const distinct = new Set(literals)
+    if (distinct.size === 1) return 'boolean' // degenerate repeat(single-literal)
+    if (distinct.size >= 2) return 'bitflag'
+    return null
+}
+
+/**
+ * The single literal for a boolean-keyword field. Returns `undefined` if
+ * the field is not a boolean-keyword field.
+ */
+export function keywordPresenceValue(
+    field: AssembledChild,
+    nodeMap: NodeMap,
+): string | undefined {
+    if (keywordPresenceKind(field, nodeMap) !== 'boolean') return undefined
+    // For single-entry optional: the entry's literal. For degenerate
+    // repeat(single-literal): the one distinct literal.
+    for (const v of field.values) {
+        const lit = resolveEntryLiteral(v, nodeMap)
+        if (lit !== undefined) return lit
+    }
+    return undefined
+}
+
+/**
+ * The ordered-unique literal set for a bitflag field. Returns an empty
+ * array if the field is not a bitflag field. Order follows the order
+ * the literals appear in the grammar's `values` array — that order is
+ * the canonical render / enum-declaration order.
+ */
+export function keywordPresenceValues(
+    field: AssembledChild,
+    nodeMap: NodeMap,
+): readonly string[] {
+    if (keywordPresenceKind(field, nodeMap) !== 'bitflag') return []
+    const seen = new Set<string>()
+    const out: string[] = []
+    for (const v of field.values) {
+        const lit = resolveEntryLiteral(v, nodeMap)
+        if (lit !== undefined && !seen.has(lit)) {
+            seen.add(lit)
+            out.push(lit)
+        }
+    }
+    return out
+}
+
+/**
+ * Returns `true` when EVERY entry in the slot's `values` has multiplicity
+ * `nonEmptyArray`. Used by the consts emitter to decide whether a bitflag
+ * enum needs a `None = 0` member (repeat allows zero → yes, repeat1 no).
+ */
+export function keywordPresenceIsNonEmptyRepeat(
+    field: AssembledChild,
+): boolean {
+    if (field.values.length === 0) return false
+    return field.values.every(v => v.multiplicity === 'nonEmptyArray')
 }
