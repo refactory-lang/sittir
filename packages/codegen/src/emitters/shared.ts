@@ -454,8 +454,6 @@ export interface HoistedForm {
  *
  * @remarks
  * Qualification criteria:
- * - The form has `fields.length === 0` (otherwise there's nothing to hoist
- *   onto, and mixing form-level + inner fields is ambiguous).
  * - Exactly one child slot.
  * - That slot is required AND not multiple.
  * - That slot's `values` resolve to exactly one kind (no choice / union).
@@ -463,6 +461,12 @@ export interface HoistedForm {
  *   AssembledContainer, or AssembledGroup) whose `fields.length > 0`.
  * - The inner node has a `rawFactoryName` (we need a factory call to
  *   reconstruct the child).
+ * - Form-level and inner-level field names must not collide (same property
+ *   name on both sides would be ambiguous on the hoisted surface).
+ *
+ * Forms with their own fields are allowed — they get the merged surface
+ * where form-level `$fields` are stamped on the parent and inner-level
+ * fields surface via the hoist. Disambiguation is the collision check.
  *
  * Forms that fail any criterion keep the existing `$children`-based Config
  * shape.
@@ -471,10 +475,6 @@ export function resolveHoistedForm(
     form: AssembledGroup,
     nodeMap: NodeMap,
 ): HoistedForm | undefined {
-    // Only forms without their own fields — otherwise the merged surface
-    // is ambiguous and callers can't tell parent fields from inner ones.
-    if (form.fields.length > 0) return undefined
-
     // Exactly one child slot.
     const children = form.children
     if (children.length !== 1) return undefined
@@ -502,6 +502,19 @@ export function resolveHoistedForm(
     if (!innerFields || innerFields.length === 0) return undefined
 
     if (!inner.rawFactoryName) return undefined
+
+    // Collision check: a property name on the form AND the inner child
+    // would produce an ambiguous hoisted Config surface. Bail out —
+    // caller keeps the non-hoisted shape.
+    if (form.fields.length > 0) {
+        const formNames = new Set(form.fields.map(f => f.propertyName))
+        for (const f of innerFields) {
+            if (formNames.has(f.propertyName)) {
+                console.warn(`[resolveHoistedForm] name collision on form '${form.kind}': inner field '${f.propertyName}' shadows form-level field; falling back to non-hoisted Config shape.`)
+                return undefined
+            }
+        }
+    }
 
     return {
         innerKind,

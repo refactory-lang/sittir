@@ -530,22 +530,45 @@ export type ChildOf<T> = T extends { readonly $children: infer C }
 /**
  * ConfigOf<T> — factory input shape. CamelCase keys at top level for ergonomics,
  * field values are the raw interface types (already snake_case internally).
- * Child slots are wrapped in `Partial<>` so the factory can default missing
- * ones to `[]` at runtime — the caller is free to omit `children` on nodes
- * where the underlying grammar rule matches zero occurrences.
+ *
+ * Three shapes it produces:
+ *
+ * 1. **Plain branch / container** — mapped fields ∪ `Partial<{ children }>`.
+ *    Child slots are `Partial<>` so the factory defaults missing ones to `[]`
+ *    at runtime; callers can omit `children` on zero-occurrence rules.
+ *
+ * 2. **Polymorph form variant** — a node with `$variant` and a single-child
+ *    tuple `$children: readonly [C]`. The inner child's Config is hoisted
+ *    into the parent so callers write
+ *    `ir.assignment.eq({ left, right })` instead of
+ *    `ir.assignment.eq({ left, children: [ir.assignmentEq({ right })] })`.
+ *    Parent-level shared fields + inner-level variant fields appear together
+ *    at the top of the Config surface.
  *
  * Fields branded `AutoStamp<T>` are excluded — the factory stamps those
  * automatically and callers should not (and cannot) supply them.
  */
-export type ConfigOf<T> = Simplify<
+export type ConfigOf<T> = T extends unknown ? Simplify<
 	{ [K in keyof FieldsOf<T> as IsAutoStamp<FieldsOf<T>[K]> extends true ? never : CamelCase<K & string>]:
 		IsBooleanKeywordSlot<FieldsOf<T>[K]> extends true
 			? boolean | undefined
 			: IsBitflagSlot<FieldsOf<T>[K]> extends true
 				? BitflagSlotEnum<FieldsOf<T>[K]> | undefined
 				: FieldsOf<T>[K] }
-	& Partial<ChildSlotsOf<T>>
->;
+	// Child surface: polymorph variants with a single-child tuple hoist
+	// the inner child's Config up; everything else exposes a
+	// Partial<{ children }> slot.
+	& (T extends { readonly $variant: string; readonly $children: readonly [infer C] }
+		? ConfigOf<C>
+		: Partial<ChildSlotsOf<T>>)
+	// $variant discriminator: carried verbatim on the Config surface
+	// whenever the interface declares one (independent of whether the
+	// child-hoist fires). Forms without their own $children still need
+	// the tag so the dispatcher's switch narrows correctly.
+	& (T extends { readonly $variant: infer V extends string }
+		? { readonly $variant: V }
+		: {})
+> : never;
 
 /** @internal — detect BooleanKeyword brand at the slot level, including
  * through array wrappers (degenerate `repeat(single-literal)` slots are

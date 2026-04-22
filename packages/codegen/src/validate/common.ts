@@ -24,6 +24,7 @@ import type { SgNode, Pos, Range } from '@ast-grep/wasm'
 
 import type { AnyTreeNode } from '@sittir/types'
 import type { TreeHandle } from '@sittir/core'
+import { assertNever, type PolymorphVariantDescriptor, type PolymorphVariantMap } from '../polymorph-variant.ts'
 
 // ---------------------------------------------------------------------------
 // Corpus parser — tree-sitter test corpus format
@@ -497,6 +498,13 @@ export interface NodeToConfigOpts {
      * expression-statement position is the canonical case), route
      * children into the declared fields by position. */
     readonly factoryFields?: Record<string, readonly string[]>
+    /** Per-polymorph variant descriptor (from `_polymorphVariants`).
+     *  `nodeToConfig` uses this to stamp `$variant` on the returned
+     *  config when the parent kind is a polymorph. The dispatcher's
+     *  `switch (config.$variant)` requires the tag — this is the
+     *  single plumb-in for readNode-derived data that doesn't carry
+     *  it natively. */
+    readonly polymorphVariants?: PolymorphVariantMap
     /** Internal — current parent kind during field recursion. Used with
      * `fieldAliasMap` to form `${parentKind}.${fieldName}` lookups. */
     readonly _parentKind?: string
@@ -739,5 +747,86 @@ export function nodeToConfig(
             assignChildrenToConfig(data.$children, childOpts, out)
         }
     }
+    // Polymorph $variant stamping — the dispatcher's `switch
+    // (config.$variant)` requires the tag. Derive it from either the
+    // first child's kind (source='override') or from the property-
+    // presence on the derived config (source='promoted').
+    if (parentKind && opts.polymorphVariants) {
+        const desc = opts.polymorphVariants[parentKind]
+        if (desc && !('$variant' in out)) {
+            const v = inferPolymorphVariant(desc, data, out, parentKind)
+            if (v !== undefined) out.$variant = v
+        }
+    }
     return out
+}
+
+/**
+ * Infer the `$variant` tag for a polymorph NodeData that doesn't
+ * carry one natively. Mirrors the original dispatcher fallback logic
+ * but lives in `nodeToConfig` so the variant is present BEFORE the
+ * factory is called, not as runtime recovery inside the dispatcher.
+ *
+ * @param desc - Variant descriptor from factory-map.json5.
+ * @param data - Raw read NodeData (used for first-child $type lookup).
+ * @param derivedConfig - Already-built config (used for field-presence).
+ * @param parentKind - Parent polymorph kind, used for warn attribution.
+ * @returns The resolved variant name, or `undefined` if no form matched.
+ */
+function inferPolymorphVariant(
+    desc: PolymorphVariantDescriptor,
+    data: ReadNodeLike,
+    derivedConfig: Record<string, unknown>,
+    parentKind: string,
+): string | undefined {
+    switch (desc.source) {
+        case 'override': return inferFromChildKind(desc.childKind, data, parentKind)
+        case 'promoted': return inferFromFieldPresence(desc.fields, derivedConfig, parentKind)
+        default: return assertNever(desc)
+    }
+}
+
+/**
+ * Resolve a variant tag by looking up the first named child's kind in
+ * the `childKind` map. Used for polymorphs where each form is a
+ * distinct child node kind (source='override').
+ */
+function inferFromChildKind(
+    childKind: Readonly<Record<string, string>>,
+    data: ReadNodeLike,
+    parentKind: string,
+): string | undefined {
+    const firstChild = data.$children?.find(c =>
+        c != null && typeof c === 'object' && (c as { $named?: boolean }).$named !== false,
+    ) as { $type?: string } | undefined
+    const kind = firstChild?.$type
+    if (kind && kind in childKind) return childKind[kind]
+    console.warn(
+        `[nodeToConfig] polymorph '${parentKind}' (source=override): no variant matched first child kind '${kind ?? '<none>'}'. ` +
+        `Known: [${Object.keys(childKind).join(', ')}]`,
+    )
+    return undefined
+}
+
+/**
+ * Resolve a variant tag by testing which form's declared fields are all
+ * present on the derived config. Most-specific (largest field set)
+ * wins; ties broken by declaration order. A zero-field form (if any)
+ * lands last by sort order and matches vacuously as a fallback.
+ */
+function inferFromFieldPresence(
+    fieldsByForm: Readonly<Record<string, readonly string[]>>,
+    derivedConfig: Record<string, unknown>,
+    parentKind: string,
+): string | undefined {
+    const entries = Object.entries(fieldsByForm)
+        .sort(([, a], [, b]) => b.length - a.length)
+    for (const [formName, fields] of entries) {
+        if (fields.every(f => f in derivedConfig)) return formName
+    }
+    console.warn(
+        `[nodeToConfig] polymorph '${parentKind}' (source=promoted): no variant matched derived-config keys [${Object.keys(derivedConfig).join(', ')}]. ` +
+        `Forms: ${entries.map(([n, f]) => `${n}=[${f.join(',')}]`).join('; ')}`,
+    )
+    return undefined
 }

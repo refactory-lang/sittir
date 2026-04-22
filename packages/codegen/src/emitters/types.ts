@@ -22,8 +22,7 @@ import {
     AssembledSupertype, snakeToCamel,
 } from '../compiler/node-map.ts'
 import { loadRawEntries } from '../validate/node-types-loader.ts'
-import { isAutoStampField, isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues, resolveHiddenKeywordLiteral, resolveHoistedForm, isAutoStampSlot, referencedKinds, fieldTypeComponents, isValidIdent, keywordPresenceKind, keywordPresenceValues } from './shared.ts'
-import type { HoistedForm } from './shared.ts'
+import { isAutoStampField, isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues, resolveHiddenKeywordLiteral, isAutoStampSlot, referencedKinds, fieldTypeComponents, isValidIdent, keywordPresenceKind, keywordPresenceValues } from './shared.ts'
 import { resolveBitflagConstName } from './consts.ts'
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts'
 import type { RefineKindInfo } from './refine-emit.ts'
@@ -149,7 +148,10 @@ export function emitTypes(config: EmitTypesConfig): string {
     if (missingKindTypes.size > 0) lines.push('')
 
     // 4. Per-form Config/Tree aliases (polymorph forms only)
-    emitPolymorphFormConfigAliases(lines, nodeKinds, polymorphTypeNames, nodeMap)
+    // Polymorph forms have no flat `${typeName}Config` alias — consumers
+    // (factories + dispatchers) reference `ConfigOf<T.${typeName}>` directly,
+    // which picks up the polymorph-variant hoist via the generic in
+    // @sittir/types. One fewer alias to keep in sync across regenerations.
 
     // Tree interfaces
     const treeEmitted = emitTreeInterfaceDeclarations(lines, nodeKinds, leafKinds, nodeMap, grammarKeys, polymorphTypeNames)
@@ -496,92 +498,6 @@ function emitLeafTerminalAliases(
         lines.push(`export type ${node.typeName} = Terminal<${JSON.stringify(kind)}, ${textType}>;`)
     }
     lines.push('')
-}
-
-// ---------------------------------------------------------------------------
-// Polymorph form Config alias emission
-// ---------------------------------------------------------------------------
-
-/**
- * Emit `export type <FormTypeName>Config = ConfigOf<<FormTypeName>>` aliases
- * for every polymorph form type name.
- *
- * @remarks
- * Spec 008 US7 landing: base-kind `${TypeName}Config` / `${TypeName}Tree` /
- * `Loose${TypeName}` aliases were dropped — consumers use namespace sugar
- * (`X.Config` / `X.Tree` / `X.Loose`) instead. `ConfigMap` / `LooseMap`
- * were also dropped and replaced by `NamespaceMap`.
- *
- * Polymorph FORMS remain as flat aliases because synthetic UForm kinds
- * (e.g. `range_expression_u_form_binary`) are NOT in `NamespaceMap`, so they
- * have no namespace sugar block. `factories.ts` / `from.ts` use
- * `T.${formTypeName}Config` / `.Tree` to reference these.
- *
- * @param lines - Output line buffer to append to.
- * @param nodeKinds - Ordered list of structural kind strings.
- * @param polymorphTypeNames - Map from polymorph kind to its list of form type names.
- */
-function emitPolymorphFormConfigAliases(
-    lines: string[],
-    nodeKinds: string[],
-    polymorphTypeNames: Map<string, string[]>,
-    nodeMap: NodeMap,
-): void {
-    lines.push('// Polymorph form Config/Tree aliases (forms have no namespace sugar)')
-    for (const kind of nodeKinds) {
-        const ptn = polymorphTypeNames.get(kind)
-        if (!ptn) continue
-        const node = nodeMap.nodes.get(kind)
-        if (node?.modelType !== 'polymorph') {
-            // Defensive — emit the default ConfigOf<T> aliases.
-            for (const ftn of ptn) lines.push(`export type ${ftn}Config = ConfigOf<${ftn}>;`)
-            continue
-        }
-        for (const form of node.forms) {
-            const ftn = form.typeName
-            const hoist = resolveHoistedForm(form, nodeMap)
-            if (hoist) {
-                // Hoisted Config — inner child's fields inlined at top level.
-                // The form interface still carries `$children: [Inner]`, but
-                // callers construct with the inner fields directly; the factory
-                // builds the inner child at runtime.
-                emitHoistedFormConfigAlias(lines, ftn, hoist, nodeMap)
-            } else {
-                lines.push(`export type ${ftn}Config = ConfigOf<${ftn}>;`)
-            }
-        }
-    }
-    lines.push('')
-}
-
-/**
- * Emit a bespoke Config type alias for a polymorph form whose inner child
- * has been hoisted up — the fields appear at the top level (camelCase keys),
- * no `children` slot. The inner child's required fields stay required; its
- * optional fields stay optional. Auto-stamp-eligible inner fields are
- * omitted (the factory stamps them just like any other factory).
- *
- * @see {@link resolveHoistedForm}
- */
-function emitHoistedFormConfigAlias(
-    lines: string[],
-    ftn: string,
-    hoist: HoistedForm,
-    nodeMap: NodeMap,
-): void {
-    lines.push(`export type ${ftn}Config = {`)
-    for (const f of hoist.innerFields) {
-        // Auto-stamp fields are never in Config — the factory stamps them.
-        if (isAutoStampField(f, nodeMap)) continue
-        const typeExpr = fieldTypeExpr(f, nodeMap)
-        const opt = isRequired(f) ? '' : '?'
-        if (isMultiple(f)) {
-            lines.push(`  readonly ${f.propertyName}${opt}: readonly (${typeExpr})[];`)
-        } else {
-            lines.push(`  readonly ${f.propertyName}${opt}: ${typeExpr};`)
-        }
-    }
-    lines.push('};')
 }
 
 // ---------------------------------------------------------------------------

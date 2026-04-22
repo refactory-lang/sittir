@@ -2272,63 +2272,6 @@ export type ShorthandFieldIdentifier = Terminal<"shorthand_field_identifier", st
 
 export type DocComment = Terminal<"doc_comment", string>;
 
-// Polymorph form Config/Tree aliases (forms have no namespace sugar)
-export type MacroDefinitionUFormParenConfig = ConfigOf<MacroDefinitionUFormParen>;
-export type MacroDefinitionUFormBracketConfig = ConfigOf<MacroDefinitionUFormBracket>;
-export type MacroDefinitionUFormBraceConfig = ConfigOf<MacroDefinitionUFormBrace>;
-export type ModItemUFormExternalConfig = ConfigOf<ModItemUFormExternal>;
-export type ModItemUFormInlineConfig = ConfigOf<ModItemUFormInline>;
-export type StructItemUFormBraceConfig = ConfigOf<StructItemUFormBrace>;
-export type StructItemUFormTupleConfig = ConfigOf<StructItemUFormTuple>;
-export type StructItemUFormUnitConfig = ConfigOf<StructItemUFormUnit>;
-export type ImplItemUFormBodyConfig = ConfigOf<ImplItemUFormBody>;
-export type ImplItemUFormSemiConfig = ConfigOf<ImplItemUFormSemi>;
-export type VisibilityModifierForm0Config = ConfigOf<VisibilityModifierForm0>;
-export type VisibilityModifierForm1Config = ConfigOf<VisibilityModifierForm1>;
-export type RangeExpressionUFormBinaryConfig = {
-  readonly start: Expression;
-  readonly operator: ".." | "..." | "..=";
-  readonly end: Expression;
-};
-export type RangeExpressionUFormPostfixConfig = {
-  readonly start: Expression;
-  readonly operator: "..";
-};
-export type RangeExpressionUFormPrefixConfig = {
-  readonly operator: "..";
-  readonly end: Expression;
-};
-export type RangeExpressionUFormBareConfig = {
-  readonly operator: "..";
-};
-export type ArrayExpressionUFormSemiConfig = {
-  readonly attributes: readonly (AttributeItem)[];
-  readonly elements: Expression;
-  readonly length: Expression;
-};
-export type ArrayExpressionUFormListConfig = {
-  readonly attributes: readonly (AttributeItem)[];
-  readonly elements: readonly (Expression)[];
-};
-export type ClosureExpressionUFormBlockConfig = ConfigOf<ClosureExpressionUFormBlock>;
-export type ClosureExpressionUFormExprConfig = ConfigOf<ClosureExpressionUFormExpr>;
-export type FieldPatternUFormShorthandConfig = ConfigOf<FieldPatternUFormShorthand>;
-export type FieldPatternUFormNamedConfig = ConfigOf<FieldPatternUFormNamed>;
-export type RangePatternUFormLeftConfig = {
-  readonly left: LiteralPattern | Path;
-  readonly right?: LiteralPattern | Path;
-};
-export type RangePatternUFormPrefixConfig = {
-  readonly right: LiteralPattern | Path;
-};
-export type OrPatternUFormBinaryConfig = {
-  readonly left: Pattern;
-  readonly right: Pattern;
-};
-export type OrPatternUFormPrefixConfig = {
-  readonly right: Pattern;
-};
-
 // Tree types
 export interface SourceFileTree extends TreeNode<'source_file'> {}
 export interface ExpressionStatementTree extends TreeNode<'expression_statement'> {}

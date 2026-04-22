@@ -147,7 +147,7 @@ describe('mod_item', () => {
     expect(node.$source).toBe('factory');
   });
   it('inline form produces correct type', () => {
-    const node = ir.mod.inline({ name: { $type: 'identifier', $text: 'test' } as any });
+    const node = ir.mod.inline({ body: { $type: 'declaration_list', $text: 'test' } as any });
     expect(node.$type).toBe('mod_item');
     expect(node.$source).toBe('factory');
   });
@@ -175,12 +175,12 @@ describe('declaration_list', () => {
 
 describe('struct_item', () => {
   it('brace form produces correct type', () => {
-    const node = ir.struct.brace({ name: { $type: '_type_identifier', $text: 'test' } as any });
+    const node = ir.struct.brace({ body: { $type: 'field_declaration_list', $text: 'test' } as any });
     expect(node.$type).toBe('struct_item');
     expect(node.$source).toBe('factory');
   });
   it('tuple form produces correct type', () => {
-    const node = ir.struct.tuple({ name: { $type: '_type_identifier', $text: 'test' } as any });
+    const node = ir.struct.tuple({ body: { $type: 'ordered_field_declaration_list', $text: 'test' } as any });
     expect(node.$type).toBe('struct_item');
     expect(node.$source).toBe('factory');
   });
@@ -373,7 +373,7 @@ describe('where_predicate', () => {
 
 describe('impl_item', () => {
   it('body form produces correct type', () => {
-    const node = ir.impl.body({ type: { $type: '_type', $text: 'test' } as any });
+    const node = ir.impl.body({ body: { $type: 'declaration_list', $text: 'test' } as any });
     expect(node.$type).toBe('impl_item');
     expect(node.$source).toBe('factory');
   });
@@ -1262,12 +1262,12 @@ describe('const_block', () => {
 
 describe('closure_expression', () => {
   it('block form produces correct type', () => {
-    const node = ir.closure.block({ parameters: { $type: 'closure_parameters', $text: 'test' } as any });
+    const node = ir.closure.block({ body: { $type: 'block', $text: 'test' } as any });
     expect(node.$type).toBe('closure_expression');
     expect(node.$source).toBe('factory');
   });
   it('expr form produces correct type', () => {
-    const node = ir.closure.expr({ parameters: { $type: 'closure_parameters', $text: 'test' } as any });
+    const node = ir.closure.expr({ body: { $type: '_expression', $text: 'test' } as any });
     expect(node.$type).toBe('closure_expression');
     expect(node.$source).toBe('factory');
   });
@@ -1468,7 +1468,7 @@ describe('field_pattern', () => {
     expect(node.$source).toBe('factory');
   });
   it('named form produces correct type', () => {
-    const node = ir.fieldPattern.named({});
+    const node = ir.fieldPattern.named({ name: { $type: '_field_identifier', $text: 'test' } as any, pattern: { $type: '_pattern', $text: 'test' } as any });
     expect(node.$type).toBe('field_pattern');
     expect(node.$source).toBe('factory');
   });

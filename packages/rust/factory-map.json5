@@ -710,5 +710,91 @@
     "or_pattern_prefix": [
       "right"
     ]
+  },
+  "polymorphVariants": {
+    "macro_definition": {
+      "source": "override",
+      "childKind": {
+        "macro_definition_paren": "paren",
+        "macro_definition_bracket": "bracket",
+        "macro_definition_brace": "brace"
+      }
+    },
+    "mod_item": {
+      "source": "override",
+      "childKind": {
+        "mod_item_external": "external",
+        "mod_item_inline": "inline"
+      }
+    },
+    "struct_item": {
+      "source": "override",
+      "childKind": {
+        "struct_item_brace": "brace",
+        "struct_item_tuple": "tuple",
+        "struct_item_unit": "unit"
+      }
+    },
+    "impl_item": {
+      "source": "override",
+      "childKind": {
+        "impl_item_body": "body",
+        "impl_item_semi": "semi"
+      }
+    },
+    "visibility_modifier": {
+      "source": "promoted",
+      "fields": {
+        "form0": [],
+        "form1": [
+          "pub",
+          "in"
+        ]
+      }
+    },
+    "range_expression": {
+      "source": "override",
+      "childKind": {
+        "range_expression_binary": "binary",
+        "range_expression_postfix": "postfix",
+        "range_expression_prefix": "prefix",
+        "range_expression_bare": "bare"
+      }
+    },
+    "array_expression": {
+      "source": "override",
+      "childKind": {
+        "array_expression_semi": "semi",
+        "array_expression_list": "list"
+      }
+    },
+    "closure_expression": {
+      "source": "override",
+      "childKind": {
+        "closure_expression_block": "block",
+        "closure_expression_expr": "expr"
+      }
+    },
+    "field_pattern": {
+      "source": "override",
+      "childKind": {
+        "field_pattern_shorthand": "shorthand",
+        "field_pattern_named": "named"
+      }
+    },
+    "range_pattern": {
+      "source": "override",
+      "childKind": {
+        "range_pattern_left": "left",
+        "range_pattern_prefix": "prefix"
+      }
+    },
+    "or_pattern": {
+      "source": "override",
+      "childKind": {
+        "or_pattern_binary": "binary",
+        "or_pattern_prefix": "prefix"
+      }
+    }
   }
 }

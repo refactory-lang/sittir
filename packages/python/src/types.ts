@@ -1285,13 +1285,6 @@ export type CloseParen = Terminal<")", string>;
 export type CloseBrace = Terminal<"}", string>;
 export type Except = Terminal<"except", string>;
 
-// Polymorph form Config/Tree aliases (forms have no namespace sugar)
-export type MatchBlockForm0Config = ConfigOf<MatchBlockForm0>;
-export type MatchBlockForm1Config = ConfigOf<MatchBlockForm1>;
-export type AssignmentUFormEqConfig = ConfigOf<AssignmentUFormEq>;
-export type AssignmentUFormTypeConfig = ConfigOf<AssignmentUFormType>;
-export type AssignmentUFormTypedConfig = ConfigOf<AssignmentUFormTyped>;
-
 // Tree types
 export interface ModuleTree extends TreeNode<'module'> {}
 export interface SimpleStatementsTree extends AnyTreeNode { readonly type: "_simple_statements"; }

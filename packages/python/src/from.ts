@@ -2,7 +2,7 @@
 
 import * as F from './factories.js';
 import type * as T from './types.js';
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyNodeData, ConfigOf } from '@sittir/types';
 import { isNodeData } from './utils.js';
 
 /** Closed union of every shape a loose-from() field value can hold. */
@@ -929,22 +929,34 @@ export function lambdaWithinForInClauseFrom(input: T.LambdaWithinForInClause.Loo
 
 export function assignmentFrom(input?: T.Assignment.Loose): ReturnType<typeof F.assignment> {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.assignment(input);
+  if (input && typeof input === 'object' && !('$variant' in input)) {
+    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
+    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
+      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
+      const childKind = first?.$type ?? first?.type;
+      switch (childKind) {
+        case 'assignment_eq': _loose.$variant = 'eq'; break;
+        case 'assignment_type': _loose.$variant = 'type'; break;
+        case 'assignment_typed': _loose.$variant = 'typed'; break;
+      }
+    }
+  }
+  return F.assignment(input as Parameters<typeof F.assignment>[0]);
 }
 
-export function assignmentUFormEqFrom(input: T.AssignmentUFormEqConfig) {
+export function assignmentUFormEqFrom(input: ConfigOf<T.AssignmentUFormEq>) {
   return F.assignmentUFormEq({
     left: _resolveOne(input.left, _K0, _super_left_hand_side),
   });
 }
 
-export function assignmentUFormTypeFrom(input: T.AssignmentUFormTypeConfig) {
+export function assignmentUFormTypeFrom(input: ConfigOf<T.AssignmentUFormType>) {
   return F.assignmentUFormType({
     left: _resolveOne(input.left, _K0, _super_left_hand_side),
   });
 }
 
-export function assignmentUFormTypedFrom(input: T.AssignmentUFormTypedConfig) {
+export function assignmentUFormTypedFrom(input: ConfigOf<T.AssignmentUFormTyped>) {
   return F.assignmentUFormTyped({
     left: _resolveOne(input.left, _K0, _super_left_hand_side),
   });

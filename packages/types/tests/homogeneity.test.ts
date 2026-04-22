@@ -7,7 +7,7 @@
  */
 
 import { describe, it } from 'vitest';
-import type { FromInputOf } from '../src/index.ts';
+import type { ConfigOf, FromInputOf } from '../src/index.ts';
 
 type Equals<A, B> =
 	(<T>() => T extends A ? 1 : 2) extends (<T>() => T extends B ? 1 : 2) ? true : false;
@@ -116,6 +116,41 @@ describe('Spec 009 Layer 1 — homogeneity-aware Loose', () => {
 		// assertion is that the homogeneous slot does NOT *require* a
 		// tag — already covered by the first test.
 	});
+});
+
+// ---------------------------------------------------------------------------
+// ConfigOf<T> — $variant is required on the Config projection, even for
+// polymorph forms that don't carry $children. Compile-time invariant
+// introduced alongside the consolidated polymorph dispatcher path.
+// ---------------------------------------------------------------------------
+
+describe('ConfigOf — $variant tag carried on polymorph forms without $children', () => {
+    // Synthetic polymorph form — has $variant but no $children tuple.
+    interface _FormNoChildren {
+        readonly $type: 'foo';
+        readonly $variant: 'bar';
+        readonly $fields: { readonly x: string };
+    }
+    type _Config = ConfigOf<_FormNoChildren>;
+
+    it('requires $variant on Config when the form declares one', () => {
+        // Positive: supplying `$variant` compiles.
+        const _ok: _Config = { x: 'x', $variant: 'bar' };
+        void _ok;
+
+        // Negative: missing `$variant` must fail. @ts-expect-error proves
+        // the type enforcement fires at compile time.
+        // @ts-expect-error — $variant is required on Config for forms that declare it.
+        const _bad: _Config = { x: 'x' };
+        void _bad;
+    });
+
+    it('types $variant as the exact literal the form declares', () => {
+        // Wrong literal must fail.
+        // @ts-expect-error — $variant must be the exact declared literal ('bar').
+        const _wrong: _Config = { x: 'x', $variant: 'other' };
+        void _wrong;
+    });
 });
 
 // Silence unused-import lint for type-only refs.

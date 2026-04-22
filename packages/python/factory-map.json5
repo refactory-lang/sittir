@@ -420,5 +420,24 @@
       "type_conversion",
       "format_specifier"
     ]
+  },
+  "polymorphVariants": {
+    "_match_block": {
+      "source": "promoted",
+      "fields": {
+        "form0": [
+          "alternative"
+        ],
+        "form1": []
+      }
+    },
+    "assignment": {
+      "source": "override",
+      "childKind": {
+        "assignment_eq": "eq",
+        "assignment_type": "type",
+        "assignment_typed": "typed"
+      }
+    }
   }
 }

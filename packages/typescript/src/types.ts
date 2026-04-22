@@ -2150,33 +2150,6 @@ export type StringFragment = Terminal<"string_fragment", string>;
 export type ThisType = Terminal<"this_type", "this">;
 export type TypeIdentifier = Terminal<"type_identifier", string>;
 
-// Polymorph form Config/Tree aliases (forms have no namespace sugar)
-export type ExportStatementForm0Config = ConfigOf<ExportStatementForm0>;
-export type ExportStatementForm1Config = ConfigOf<ExportStatementForm1>;
-export type ExportStatementForm2Config = ConfigOf<ExportStatementForm2>;
-export type ExportStatementForm3Config = ConfigOf<ExportStatementForm3>;
-export type ImportClauseUFormNamespaceImportConfig = ConfigOf<ImportClauseUFormNamespaceImport>;
-export type ImportClauseUFormNamedImportsConfig = ConfigOf<ImportClauseUFormNamedImports>;
-export type ImportClauseUFormDefaultImportConfig = ConfigOf<ImportClauseUFormDefaultImport>;
-export type ImportSpecifierUFormNameConfig = {
-  readonly name: ImportIdentifier;
-};
-export type ImportSpecifierUFormAsConfig = {
-  readonly name: ModuleExportName;
-  readonly alias: ImportIdentifier;
-};
-export type VariableDeclaratorForm0Config = ConfigOf<VariableDeclaratorForm0>;
-export type VariableDeclaratorForm1Config = ConfigOf<VariableDeclaratorForm1>;
-export type ClassHeritageUFormExtendsClauseConfig = ConfigOf<ClassHeritageUFormExtendsClause>;
-export type ClassHeritageUFormImplementsClauseConfig = ConfigOf<ClassHeritageUFormImplementsClause>;
-export type ArrowFunctionUFormParameterConfig = ConfigOf<ArrowFunctionUFormParameter>;
-export type ArrowFunctionUFormUCallSignatureConfig = ConfigOf<ArrowFunctionUFormUCallSignature>;
-export type CallExpressionForm0Config = ConfigOf<CallExpressionForm0>;
-export type CallExpressionForm1Config = ConfigOf<CallExpressionForm1>;
-export type CallExpressionForm2Config = ConfigOf<CallExpressionForm2>;
-export type IndexSignatureUFormColonConfig = ConfigOf<IndexSignatureUFormColon>;
-export type IndexSignatureUFormMappedTypeClauseConfig = ConfigOf<IndexSignatureUFormMappedTypeClause>;
-
 // Tree types
 export interface ProgramTree extends TreeNode<'program'> {}
 export interface ExportStatementTree extends TreeNode<'export_statement'> {}

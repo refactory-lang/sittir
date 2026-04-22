@@ -13,6 +13,7 @@
 import { createRequire } from 'node:module';
 import { readNode, createRenderer } from '@sittir/core';
 import type { AnyNodeData, NodeFieldValue } from '@sittir/types';
+import type { PolymorphVariantMap } from '../polymorph-variant.ts';
 import { deriveRuleKinds } from './templates-path.ts';
 import { loadRawEntries } from './node-types-loader.ts';
 import {
@@ -159,14 +160,21 @@ async function loadFactoryMap(grammar: string): Promise<{
 	factoryShapes: Record<string, 'config' | 'children' | 'text'>;
 	fieldAliasMap: Record<string, Record<string, string>>;
 	factoryFields: Record<string, readonly string[]>;
+	polymorphVariants: PolymorphVariantMap;
 }> {
 	const p = FACTORY_MAP_PATHS[grammar];
-	if (!p) return { factoryShapes: {}, fieldAliasMap: {}, factoryFields: {} };
+	if (!p) return { factoryShapes: {}, fieldAliasMap: {}, factoryFields: {}, polymorphVariants: {} };
 	const { readFileSync } = await import('node:fs');
 	const content = readFileSync(new URL(p, import.meta.url).pathname, 'utf-8');
 	// Strip `// ...` line comments so JSON.parse accepts the body.
 	const jsonOnly = content.replace(/^\s*\/\/.*$/gm, '').trim();
-	return JSON.parse(jsonOnly);
+	const data = JSON.parse(jsonOnly);
+	return {
+		factoryShapes: data.factoryShapes ?? {},
+		fieldAliasMap: data.fieldAliasMap ?? {},
+		factoryFields: data.factoryFields ?? {},
+		polymorphVariants: data.polymorphVariants ?? {},
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -209,6 +217,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	factoryShapes: Record<string, 'config' | 'children' | 'text'>;
 	fieldAliasMap: Record<string, Record<string, string>>;
 	factoryFields: Record<string, readonly string[]>;
+	polymorphVariants: PolymorphVariantMap;
 	importFailure: { message: string } | null;
 }> {
 	const factoryModulePath = FACTORY_MODULE_PATHS[grammar];
@@ -216,8 +225,9 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	let factoryShapes: Record<string, 'config' | 'children' | 'text'> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let factoryFields: Record<string, readonly string[]> = {};
+	let polymorphVariants: PolymorphVariantMap = {};
 	if (!factoryModulePath) {
-		return { factoryMap, factoryShapes, fieldAliasMap, factoryFields, importFailure: null };
+		return { factoryMap, factoryShapes, fieldAliasMap, factoryFields, polymorphVariants, importFailure: null };
 	}
 	try {
 		const factoryModule = await import(new URL(factoryModulePath, import.meta.url).pathname);
@@ -228,11 +238,12 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		factoryShapes = mapData.factoryShapes;
 		fieldAliasMap = mapData.fieldAliasMap;
 		factoryFields = mapData.factoryFields;
-		return { factoryMap, factoryShapes, fieldAliasMap, factoryFields, importFailure: null };
+		polymorphVariants = mapData.polymorphVariants;
+		return { factoryMap, factoryShapes, fieldAliasMap, factoryFields, polymorphVariants, importFailure: null };
 	} catch (e) {
 		const message = `[validate-factory-roundtrip] failed to load ${factoryModulePath}: ${(e as Error)?.message ?? e}`;
 		console.error(message);
-		return { factoryMap, factoryShapes, fieldAliasMap, factoryFields, importFailure: { message } };
+		return { factoryMap, factoryShapes, fieldAliasMap, factoryFields, polymorphVariants, importFailure: { message } };
 	}
 }
 
@@ -352,6 +363,7 @@ function buildFactoryNodeData(
 	factoryShapes: Record<string, 'config' | 'children' | 'text'>,
 	fieldAliasMap: Record<string, Record<string, string>>,
 	factoryFields: Record<string, readonly string[]>,
+	polymorphVariants: PolymorphVariantMap,
 	treeHandle: any,
 	entryName: string,
 	inputSource: string,
@@ -370,8 +382,8 @@ function buildFactoryNodeData(
 		if (shape === 'config') {
 			const recursive = process?.env?.SITTIR_VALIDATE_RECURSIVE === '1';
 			const config = recursive
-				? nodeToConfig(readData, { tree: treeHandle, factoryMap, factoryShapes, fieldAliasMap, factoryFields })
-				: nodeToConfig(readData);
+				? nodeToConfig(readData, { tree: treeHandle, factoryMap, factoryShapes, fieldAliasMap, factoryFields, polymorphVariants })
+				: nodeToConfig(readData, { polymorphVariants });
 			return factory(config) as AnyNodeData;
 		} else if (shape === 'text') {
 			// $TEXT-templated branch/container (e.g. rust
@@ -501,7 +513,7 @@ export async function validateFactoryRoundTrip(
 	const { render } = createRenderer(templatesPath);
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
-	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, importFailure } =
+	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, polymorphVariants, importFailure } =
 		await loadFactoryModuleForGrammar(grammar);
 
 	const readTreeNodeFn = await loadWrapperBasedAliasResolver(grammar);
@@ -516,6 +528,22 @@ export async function validateFactoryRoundTrip(
 	let total = 0;
 
 	recordFactoryModuleLoadFailure(importFailure, errors);
+	// Short-circuit when the factory module failed to load. Otherwise an
+	// empty `factoryMap` silently routes every kind to `stripToFactory`,
+	// producing a misleading "factory round-trip passed" signal that
+	// actually just exercised the strip fallback.
+	if (importFailure) {
+		return {
+			grammar,
+			total: 0,
+			pass: 0,
+			fail: 0,
+			skip: 0,
+			astMatchPass: 0,
+			errors,
+			astMismatches: [],
+		};
+	}
 
 	for (const entry of entries) {
 		const tree1 = parser.parse(entry.source) as TSTree;
@@ -558,6 +586,7 @@ export async function validateFactoryRoundTrip(
 				factoryShapes,
 				fieldAliasMap,
 				factoryFields,
+				polymorphVariants,
 				handle,
 				entry.name,
 				inputSource,

@@ -17,6 +17,7 @@
 
 import type { NodeMap } from '../compiler/types.ts'
 import type { AssembledNode, AssembledGroup } from '../compiler/node-map.ts'
+import type { PolymorphVariantDescriptor, PolymorphVariantMap } from '../polymorph-variant.ts'
 
 export interface EmitFactoryMapConfig {
     grammar: string
@@ -27,6 +28,22 @@ export interface FactoryMapData {
     readonly factoryShapes: Readonly<Record<string, 'config' | 'children' | 'text'>>
     readonly fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>
     readonly factoryFields: Readonly<Record<string, readonly string[]>>
+    /**
+     * Polymorph variant discriminators. For each polymorph parent kind a
+     * descriptor telling `nodeToConfig` how to stamp `$variant` on the
+     * derived config.
+     *
+     *   source='override' — variant inferred from the first named child's
+     *     kind. The `childKind` map is `<parent_childKind>: <variantName>`.
+     *   source='promoted' — variant inferred from field-presence. The
+     *     `fields` map is `<variantName>: [<fieldPropertyName>...]`
+     *     (match if every listed field is present on the config).
+     *
+     * The dispatcher's switch on `config.$variant` expects the tag to be
+     * present; validators and legacy readNode→factory paths use this map
+     * to derive it from the parsed tree.
+     */
+    readonly polymorphVariants: PolymorphVariantMap
 }
 
 export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
@@ -70,7 +87,46 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
         }
     }
 
-    return { factoryShapes, fieldAliasMap, factoryFields }
+    const polymorphVariants: Record<string, PolymorphVariantDescriptor> = {}
+    for (const [kind, node] of nodeMap.nodes) {
+        if (node.modelType !== 'polymorph') continue
+        if (kind.startsWith('_') && !aliasSet.has(kind)) continue
+        if (node.source === 'override') {
+            const childKind: Record<string, string> = {}
+            for (const form of node.forms) {
+                childKind[`${kind}_${form.name}`] = form.name
+            }
+            polymorphVariants[kind] = { source: 'override', childKind }
+        } else {
+            const fields: Record<string, readonly string[]> = {}
+            const seenSignatures = new Map<string, string>()
+            for (const form of node.forms) {
+                const fieldNames = form.fields.map(f => f.propertyName)
+                const signature = [...fieldNames].sort().join(',')
+                const prior = seenSignatures.get(signature)
+                if (prior !== undefined) {
+                    // Two forms with identical field-key sets can't be
+                    // disambiguated by field-presence at runtime. We warn
+                    // (not throw) because the grammar may legitimately
+                    // have shape-identical variants whose semantic
+                    // difference is anonymous-token positions (e.g. TS's
+                    // `export_statement` / `variable_declarator`) and
+                    // `.from()` callers for those go through declaration
+                    // order — first-match-wins, stable-by-spec. Callers
+                    // who need the second form pass `$variant` explicitly.
+                    console.warn(
+                        `[factory-map] polymorph '${kind}': forms '${prior}' and '${form.name}' share field signature [${signature || '(empty)'}]. ` +
+                        `.from() without $variant will dispatch to '${prior}' by declaration order.`,
+                    )
+                }
+                seenSignatures.set(signature, form.name)
+                fields[form.name] = fieldNames
+            }
+            polymorphVariants[kind] = { source: 'promoted', fields }
+        }
+    }
+
+    return { factoryShapes, fieldAliasMap, factoryFields, polymorphVariants }
 }
 
 export function emitFactoryMap(config: EmitFactoryMapConfig): string {

@@ -748,17 +748,17 @@ describe('lambda_within_for_in_clause', () => {
 
 describe('assignment', () => {
   it('eq form produces correct type', () => {
-    const node = ir.assignment.eq({ left: { $type: '_left_hand_side', $text: 'test' } as any });
+    const node = ir.assignment.eq({ right: { $type: '_right_hand_side', $text: 'test' } as any });
     expect(node.$type).toBe('assignment');
     expect(node.$source).toBe('factory');
   });
   it('type form produces correct type', () => {
-    const node = ir.assignment.type({ left: { $type: '_left_hand_side', $text: 'test' } as any });
+    const node = ir.assignment.type({ type: { $type: 'type', $text: 'test' } as any });
     expect(node.$type).toBe('assignment');
     expect(node.$source).toBe('factory');
   });
   it('typed form produces correct type', () => {
-    const node = ir.assignment.typed({ left: { $type: '_left_hand_side', $text: 'test' } as any });
+    const node = ir.assignment.typed({ type: { $type: 'type', $text: 'test' } as any, right: { $type: '_right_hand_side', $text: 'test' } as any });
     expect(node.$type).toBe('assignment');
     expect(node.$source).toBe('factory');
   });

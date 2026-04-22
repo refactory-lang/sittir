@@ -47,7 +47,9 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 
     lines.push(`import type * as T from './types.js';`)
     const usesNonEmptyArray = collectUsesNonEmptyArray(nodeMap)
+    const usesConfigOf = collectUsesHoistedPolymorphForm(nodeMap)
     const utilImports = ['ByteRange', 'FluentNode']
+    if (usesConfigOf) utilImports.push('ConfigOf')
     if (usesNonEmptyArray) utilImports.push('NonEmptyArray')
     lines.push(`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`)
     lines.push("import { createRenderer } from '@sittir/core';")
@@ -110,6 +112,24 @@ function collectUsesNonEmptyArray(nodeMap: NodeMap): boolean {
             : (n.modelType === 'branch' ? n.fields : [])
         return fs.some(f => isNonEmpty(f))
     })
+}
+
+/**
+ * Does any polymorph in this grammar have a form that qualifies for the
+ * hoisted Config shape (inner-child fields surfaced at the parent's
+ * Config)? The unified hoisted factory types its `config` parameter as
+ * `ConfigOf<T.<FormTypeName>>` which pulls the `ConfigOf` generic in
+ * from `@sittir/types`; gate the import on whether any factory actually
+ * uses it.
+ */
+function collectUsesHoistedPolymorphForm(nodeMap: NodeMap): boolean {
+    for (const n of nodeMap.nodes.values()) {
+        if (n.modelType !== 'polymorph') continue
+        for (const form of n.forms) {
+            if (resolveHoistedForm(form, nodeMap)) return true
+        }
+    }
+    return false
 }
 
 /**
@@ -992,15 +1012,17 @@ function resolveConfigOptional(
  *
  * @param node - The node descriptor (provides `typeName` and `parentKind`).
  * @param isPolymorphForm - Whether the factory is emitting a polymorph form (not the dispatcher).
- * @returns A TS source string like `T.FunctionItem.Config` or `T.FunctionItemBodyFormConfig`.
+ * @returns A TS source string like `T.FunctionItem.Config` or `ConfigOf<T.FunctionItemBodyForm>`.
  * @remarks
- *   Polymorph forms keep the flat `${typeName}Config` alias (synthetic UForm kinds have
- *   no namespace sugar). Base kinds use `T.${typeName}.Config` via the declaration-merged
- *   namespace.
+ *   Polymorph forms use `ConfigOf<T.${typeName}>` directly — synthetic UForm
+ *   kinds have no declaration-merged namespace, and the generic projection
+ *   picks up the polymorph-variant hoist automatically. Base kinds use the
+ *   `T.${typeName}.Config` namespace alias, which resolves to the same
+ *   `ConfigOf<T.${typeName}>` shape under the hood.
  */
 function resolveConfigType(node: FieldCarryingNode, isPolymorphForm: boolean): string {
     return isPolymorphForm
-        ? `T.${node.typeName}Config`
+        ? `ConfigOf<T.${node.typeName}>`
         : `T.${node.typeName}.Config`
 }
 
@@ -1199,39 +1221,53 @@ function emitPolymorphFactory(node: PolymorphNode, nodeMap: NodeMap): string {
 
 /**
  * Build the inline rebuild expression used by a hoisted polymorph form's
- * fluent setter. Projects every hoisted inner field from `inner.$fields`
- * (snake_case raw names) back into a camelCase Config literal, then
- * overlays the patched key at the tail (so it takes precedence).
+ * fluent setter. Projects BOTH the form-level fields (from
+ * `config.<propName>`) and the hoisted inner fields (from
+ * `inner.$fields.<name>`) back into a camelCase Config literal, then
+ * overlays the patched key at the tail so it shadows the original value.
  *
  * Replaces the previous runtime `_rebuildHoist` helper — the field set is
  * known at emit time, so the whole projection is a static object literal
  * rather than a generic loop in the generated output. Fewer indirections
- * in the factory, and the inner field inventory is visible in the generated
+ * in the factory, and the field inventory is visible in the generated
  * source (not reconstructed at runtime from `Object.keys`).
  *
- * @param innerFields - Hoisted inner fields the form exposes at the top level.
+ * @param formFields - Form-level fields (surfaced directly on Config).
+ * @param innerFields - Hoisted inner fields (flattened onto Config).
  * @param patchKey - The camelCase property name being overridden by the setter.
  * @param patchVar - The setter parameter expression (e.g. `'value'`, `'values'`).
- * @param configType - The form's `*Config` type name, used for the cast.
+ * @param patchSource - Which group the patched field lives in — `'form'` skips
+ *   the form-level copy of `patchKey`, `'inner'` skips the inner-level copy.
  * @returns A string like
- *   `{ left: (inner as any).$fields.left, right: (inner as any).$fields.right, operator: value } as T.FooConfig`.
+ *   - form-level patch:  `{ left: value, right: inner.$fields.right }`
+ *   - inner-level patch: `{ left: config.left, right: value }`.
  */
 function buildHoistedRebuildExpr(
+    formFields: readonly AssembledField[],
     innerFields: readonly AssembledField[],
     patchKey: string,
     patchVar: string,
-    configType: string,
+    patchSource: 'form' | 'inner',
 ): string {
     const parts: string[] = []
-    for (const f of innerFields) {
-        // Skip the field being patched — avoids a duplicate-key in the emitted
-        // object literal. The patched key is appended below so the setter's
-        // new value is the authoritative one.
-        if (f.propertyName === patchKey) continue
-        parts.push(`${f.propertyName}: (inner as any).$fields.${f.name}`)
+    // Form-level fields come from `config.<propName>` (already camelCase on
+    // the hoisted Config surface). Skip the patched key if this setter is
+    // patching a form-level field.
+    for (const f of formFields) {
+        if (patchSource === 'form' && f.propertyName === patchKey) continue
+        parts.push(`${f.propertyName}: config.${f.propertyName}`)
     }
+    // Inner-level fields come from the materialized inner node's `$fields`
+    // map (snake_case). Skip the patched key if this setter is patching an
+    // inner-level field.
+    for (const f of innerFields) {
+        if (patchSource === 'inner' && f.propertyName === patchKey) continue
+        parts.push(`${f.propertyName}: inner.$fields.${f.name}`)
+    }
+    // Patched key appended last so its value is authoritative in the
+    // emitted object literal (shadows any earlier identical key).
     parts.push(`${patchKey}: ${patchVar}`)
-    return `{ ${parts.join(', ')} } as ${configType}`
+    return `{ ${parts.join(', ')} }`
 }
 
 /**
@@ -1256,72 +1292,71 @@ function emitHoistedPolymorphFormFactory(
     nodeMap: NodeMap,
 ): string {
     const fn = form.rawFactoryName!
-    const configType = `T.${form.typeName}Config`
+    const configType = `ConfigOf<T.${form.typeName}>`
     const variantName = form.name
     const parentKind = form.parentKind ?? form.kind
+    const formFields = form.fields
 
-    // Determine optionality — inner child's required, non-auto-stamp fields
-    // make the config required.
-    const anyRequired = hoist.innerFields.some(f => isRequired(f) && resolveEffectiveLiteral(f, nodeMap) === undefined)
-    const opt = anyRequired ? '' : '?'
+    // Required if ANY form-level OR inner-level required field is present
+    // (modulo auto-stamp / literal-resolved — those don't participate in the
+    // Config surface).
+    const formRequired = formFields.some(f =>
+        isRequired(f) && autoStampExpression(f, nodeMap) === undefined,
+    )
+    const innerRequired = hoist.innerFields.some(f =>
+        isRequired(f) && resolveEffectiveLiteral(f, nodeMap) === undefined,
+    )
+    const opt = (formRequired || innerRequired) ? '' : '?'
 
     const lines: string[] = []
     lines.push(`export function ${fn}(config${opt}: ${configType}) {`)
-    // Accept both the hoisted-fields Config AND the legacy
-    // `{ children: [Inner] }` shape. The legacy shape reaches this factory
-    // when the dispatcher's back-compat branch routes readNode-derived
-    // NodeData (`$children: [Inner]`) in via `nodeToConfig` — that path
-    // produces `{ children: [...] }` not flat fields. When `children` is
-    // present, reuse the first element as the inner child directly; else
-    // construct the inner child from the hoisted fields.
-    lines.push(`  const _cfg: any = config;`)
-    lines.push(`  const inner = _cfg && Array.isArray(_cfg.children) && _cfg.children.length > 0`)
-    lines.push(`    ? _cfg.children[0]`)
-    lines.push(`    : ${hoist.innerFactoryName}(_cfg);`)
+
+    if (formFields.length > 0) {
+        lines.push('  const fields = {')
+        for (const f of formFields) {
+            const stamp = autoStampExpression(f, nodeMap)
+            if (stamp !== undefined) {
+                lines.push(`    ${f.name}: ${stamp},`)
+                continue
+            }
+            lines.push(`    ${f.name}: config.${f.propertyName},`)
+        }
+        lines.push('  };')
+    }
+
+    // Inner factory picks out `config.<its own fields>` and ignores the
+    // form-level keys. Structural subtyping + `resolveHoistedForm`'s name-
+    // collision gate keep this safe.
+    lines.push(`  const inner = ${hoist.innerFactoryName}(config);`)
     lines.push(`  const children = [inner] as const;`)
+
     lines.push('  return {')
     lines.push(`    $type: '${parentKind}' as const,`)
     lines.push(`    $source: 'factory' as const,`)
     lines.push('    $named: true as const,')
     lines.push(`    $variant: '${variantName}' as const,`)
+    if (formFields.length > 0) lines.push('    $fields: fields,')
     lines.push('    $children: children,')
 
-    // Fluent getter/setter surface — reuse the inner child's field methods at
-    // the top level, rebuilt via this factory so the caller stays on the form
-    // factory's result type. Setters project the inner node's current fields
-    // into a fresh hoisted Config (camelCase) with the override applied,
-    // regardless of whether the original config shape was hoisted or legacy
-    // `{ children: [...] }`. That keeps setters stable across both input
-    // shapes.
+    for (const f of formFields) {
+        lines.push(...emitHoistedSetter(f, {
+            fn,
+            formFields,
+            innerFields: hoist.innerFields,
+            nodeMap,
+            getterExpr: `fields.${f.name}`,
+            patchSource: 'form',
+        }))
+    }
     for (const f of hoist.innerFields) {
-        const stamp = autoStampExpression(f, nodeMap)
-        const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
-        if (stamp !== undefined) {
-            // Auto-stamp field — getter-only, reads through the inner node.
-            lines.push(`    get ${method}() { return (inner as any).$fields.${f.name}; },`)
-            continue
-        }
-        const fMultiple = isMultiple(f)
-        const param = fMultiple ? 'values' : 'value'
-        // Inline-rebuild expression: project the inner node's snake_case $fields
-        // back into the hoisted camelCase Config, then overlay the patched
-        // property. `_rebuildHoist` is no longer emitted — the field set is
-        // known at emit time so we build the object literal directly. Overriding
-        // the patched key via `[propertyName]: value` keeps it at the tail.
-        const rebuild = buildHoistedRebuildExpr(hoist.innerFields, f.propertyName, param, configType)
-        if (fMultiple) {
-            const elemType = fieldElementType(f, nodeMap)
-            const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType
-            const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`
-            lines.push(`    ${method}(...${param}: ${restType}) { return ${fn}(${rebuild}); },`)
-        } else {
-            const elemType = fieldElementType(f, nodeMap)
-            const paramType = isRequired(f) ? elemType : `${elemType} | undefined`
-            lines.push(`    ${method}(${param}?: ${paramType}) {`)
-            lines.push(`      if (${param} === undefined) return (inner as any).$fields.${f.name};`)
-            lines.push(`      return ${fn}(${rebuild});`)
-            lines.push(`    },`)
-        }
+        lines.push(...emitHoistedSetter(f, {
+            fn,
+            formFields,
+            innerFields: hoist.innerFields,
+            nodeMap,
+            getterExpr: `inner.$fields.${f.name}`,
+            patchSource: 'inner',
+        }))
     }
 
     lines.push(...factorySuffix(form.treeTypeName))
@@ -1330,15 +1365,62 @@ function emitHoistedPolymorphFormFactory(
     return lines.join('\n')
 }
 
+interface HoistedSetterContext {
+    readonly fn: string
+    readonly formFields: readonly AssembledField[]
+    readonly innerFields: readonly AssembledField[]
+    readonly nodeMap: NodeMap
+    /** Source expression for the getter / auto-stamp read (e.g. `fields.x`). */
+    readonly getterExpr: string
+    /** Which group this field lives in — steers the rebuild-expr skip. */
+    readonly patchSource: 'form' | 'inner'
+}
+
+/**
+ * Emit the fluent get/set lines for a single hoisted-form field.
+ *
+ * @remarks
+ *   Auto-stamp fields emit a read-only getter; everything else emits a
+ *   no-arg-getter / with-arg-setter combo that rebuilds the form via
+ *   {@link buildHoistedRebuildExpr}. Rebuild preserves fields from the OTHER
+ *   group (inner vs form) so the setter round-trips through the same factory.
+ */
+function emitHoistedSetter(
+    f: AssembledField,
+    ctx: HoistedSetterContext,
+): string[] {
+    const { fn, formFields, innerFields, nodeMap, getterExpr, patchSource } = ctx
+    const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
+    const stamp = autoStampExpression(f, nodeMap)
+    if (stamp !== undefined) {
+        return [`    get ${method}() { return ${getterExpr}; },`]
+    }
+    const fMultiple = isMultiple(f)
+    const param = fMultiple ? 'values' : 'value'
+    const rebuild = buildHoistedRebuildExpr(formFields, innerFields, f.propertyName, param, patchSource)
+    const elemType = fieldElementType(f, nodeMap)
+    if (fMultiple) {
+        const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType
+        const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`
+        return [`    ${method}(...${param}: ${restType}) { return ${fn}(${rebuild}); },`]
+    }
+    const paramType = isRequired(f) ? elemType : `${elemType} | undefined`
+    return [
+        `    ${method}(${param}?: ${paramType}) {`,
+        `      if (${param} === undefined) return ${getterExpr};`,
+        `      return ${fn}(${rebuild});`,
+        `    },`,
+    ]
+}
+
 /**
  * Emit the polymorph dispatcher function: overloaded signatures (one per
  * variant, return type narrowed via `ReturnType<typeof formFactory>`) followed
  * by an implementation signature accepting the discriminated union.
  *
- * The body switches on `config.$variant` when present and falls back to
- * source-specific discrimination (variant-child kind probing for `'override'`
- * polymorphs, field-presence for `'promoted'` polymorphs) when it is absent —
- * preserving backward compatibility with pre-`$variant` consumers.
+ * The body is a single `switch (config.$variant)` over the form names,
+ * throwing on unknown. Callers that don't stamp `$variant` route through
+ * `.from()` which normalizes the shape (see `emitters/from.ts`).
  */
 function emitPolymorphDispatcher(node: PolymorphNode, forms: AssembledGroup[]): string {
     const fn = node.rawFactoryName!
@@ -1346,20 +1428,15 @@ function emitPolymorphDispatcher(node: PolymorphNode, forms: AssembledGroup[]): 
 
     if (forms.length > 1) {
         // One overload per variant so call-site `config.$variant === 'binary'`
-        // narrows the return type to the binary form factory's output.
+        // narrows the return type to the binary form factory's output. The
+        // `$variant: '<name>'` literal is already baked into ConfigOf<T> for
+        // polymorph variants (@sittir/types), so each overload's arm
+        // self-discriminates — no extra intersection wrapper needed.
         for (const form of forms) {
-            const formConfig = `T.${form.typeName}Config`
             lines.push(
-                `export function ${fn}(config: { readonly $variant: '${form.name}' } & ${formConfig}): ReturnType<typeof ${form.rawFactoryName!}>;`,
+                `export function ${fn}(config: ConfigOf<T.${form.typeName}>): ReturnType<typeof ${form.rawFactoryName!}>;`,
             )
         }
-        // Back-compat overload: accept the legacy config-union (no `$variant`)
-        // so pre-variant callers and internal `from.ts` dispatchers still
-        // type-check. Return type is the union of all per-form return types.
-        const polyOpt = resolvePolymorphConfigOptional(forms)
-        const configUnion = buildPolymorphConfigUnion(forms)
-        const returnUnion = forms.map(f => `ReturnType<typeof ${f.rawFactoryName!}>`).join(' | ')
-        lines.push(`export function ${fn}(config${polyOpt}: ${configUnion}): ${returnUnion};`)
     }
 
     const polyOpt = resolvePolymorphConfigOptional(forms)
@@ -1376,14 +1453,15 @@ function emitPolymorphDispatcher(node: PolymorphNode, forms: AssembledGroup[]): 
  * Build the config parameter union type string for a polymorph dispatcher.
  *
  * @param forms - The polymorph form descriptors.
- * @returns A TS source string like `T.StructItemBodyFormConfig | T.StructItemSemiFormConfig`.
+ * @returns A TS source string like `ConfigOf<T.StructItemBodyForm> | ConfigOf<T.StructItemSemiForm>`.
  * @remarks
- *   The inline union (rather than `ConfigOf<T>` over a union T) is what lets
- *   TypeScript narrow via `'field' in config` — distributive `ConfigOf` over union
- *   members doesn't narrow the same way.
+ *   `ConfigOf<T>` applied per-form (rather than `ConfigOf<Parent>` over the
+ *   parent-union type) preserves TypeScript's `'field' in config` narrowing
+ *   at the call site — distributive `ConfigOf` over a union doesn't narrow
+ *   the same way.
  */
 function buildPolymorphConfigUnion(forms: AssembledGroup[]): string {
-    return forms.map(f => `T.${f.typeName}Config`).join(' | ')
+    return forms.map(f => `ConfigOf<T.${f.typeName}>`).join(' | ')
 }
 
 /**
@@ -1407,13 +1485,14 @@ function resolvePolymorphConfigOptional(forms: AssembledGroup[]): string {
  * @param forms - The polymorph form descriptors.
  * @returns Array of source lines for the dispatch body (without the surrounding `{ }`).
  * @remarks
- *   Dispatch priority:
- *   1. `config.$variant` discriminator — single source of truth. Emitted as a
- *      `switch` on `config.$variant` (exhaustive over the form names).
- *   2. Fallback — only runs when `$variant` is absent:
- *      - `source='override'`: probe `config.children[0].type` (parse-tree truth).
- *      - `source='promoted'`: discriminate by field-presence, most-specific first.
- *      - Otherwise: first form.
+ *   Shape: non-object guard → `$variant` inference preamble → `switch` → throw.
+ *
+ *   `$variant` is the authoritative discriminator, but Loose input flowing
+ *   through `.from()` wrappers and readNode-derived shapes don't carry it.
+ *   The preamble infers `variant` from parse-tree truth (first child's kind
+ *   for `source='override'`) or field-presence (for `source='promoted'`),
+ *   feeding the same single-dispatch switch. The final `throw` fires only
+ *   when BOTH caller-supplied `$variant` and inference yield nothing.
  *
  *   Single-form polymorphs (`forms.length === 1`) skip the switch entirely.
  */
@@ -1427,58 +1506,18 @@ function emitPolymorphDispatch(
         return lines
     }
 
-    // Path 1: explicit `$variant` discriminator — covers the declared overloads.
-    lines.push(`  switch ((config as { $variant?: string }).$variant) {`)
+    // `$variant` is the authoritative discriminator — `ConfigOf<T>` carries
+    // it in the type for polymorph variants, so the switch narrows the
+    // union arm-by-arm with no casts and no fallback. Callers that don't
+    // stamp `$variant` (Loose input) must route through `.from()` which
+    // normalizes the shape.
+    lines.push(`  switch (config.$variant) {`)
     for (const form of forms) {
-        lines.push(`    case '${form.name}': return ${form.rawFactoryName!}(config as T.${form.typeName}Config);`)
+        lines.push(`    case '${form.name}': return ${form.rawFactoryName!}(config);`)
     }
     lines.push(`  }`)
-
-    // Path 2: back-compat fallback for callers that omit `$variant` (e.g.,
-    // legacy code, `.from()` re-entry, readNode → factory recursion).
-    lines.push(...emitPolymorphFallbackDispatch(node, forms))
-    return lines
-}
-
-/**
- * Emit the pre-`$variant` back-compat dispatch lines (child-kind probing /
- * field-presence) that fire only when `config.$variant` is absent.
- */
-function emitPolymorphFallbackDispatch(
-    node: PolymorphNode,
-    forms: AssembledGroup[],
-): string[] {
-    const lines: string[] = []
-    const isOverride = node.source === 'override'
-    if (isOverride) {
-        // Variant child kind discrimination — the kind on the variant child is
-        // the parse-tree truth.
-        for (const form of forms) {
-            const childKind = `${node.kind}_${form.name}`
-            lines.push(`  if (config && Array.isArray((config as any).children) && (config as any).children[0]?.type === '${childKind}') return ${form.rawFactoryName!}(config as T.${form.typeName}Config);`)
-        }
-        const fallback = forms[0]!
-        lines.push(`  return ${fallback.rawFactoryName!}(config as T.${fallback.typeName}Config);`)
-        return lines
-    }
-
-    // `source='promoted'`: heterogeneous field sets. Discriminate by
-    // field-presence, most-specific first.
-    const sorted = [...forms].sort((a, b) => b.fields.length - a.fields.length)
-    const fallback = sorted[sorted.length - 1]!
-    const seenFieldSets = new Set<string>()
-    for (const form of sorted) {
-        if (form === fallback) continue
-        if (form.fields.length === 0) continue
-        const key = [...form.fields.map(f => f.propertyName)].sort().join(',')
-        if (seenFieldSets.has(key)) continue
-        seenFieldSets.add(key)
-        const checks = form.fields
-            .map(f => `'${f.propertyName}' in config`)
-            .join(' && ')
-        lines.push(`  if (config && ${checks}) return ${form.rawFactoryName!}(config as T.${form.typeName}Config);`)
-    }
-    lines.push(`  return ${fallback.rawFactoryName!}(config as T.${fallback.typeName}Config);`)
+    const formNames = forms.map(f => `'${f.name}'`).join(' | ')
+    lines.push(`  throw new Error(\`${node.rawFactoryName!}: unknown \$variant '\${(config as { $variant?: string }).$variant}' — expected one of ${formNames}.\`);`)
     return lines
 }
 
