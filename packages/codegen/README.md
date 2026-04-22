@@ -190,6 +190,64 @@ at runtime. `tree-sitter generate` against the bundled output
 produces a parser whose parse tree carries every field label sittir's
 transforms add — verifiable by reading the generated `node-types.json`.
 
+## Templates (`.jinja`) — authoring workflow
+
+Each generated grammar package ships per-rule `.jinja` template files
+under `packages/<grammar>/templates/<kind>.jinja` (feature 011). These
+files drive the TS render pipeline via Nunjucks today, and will drive
+the Rust render pipeline via askama once `@sittir/core` is ported.
+
+### Editing a template
+
+**Never hand-edit a `.jinja` file.** The files are generated output —
+hand-edits are overwritten on the next regeneration and produce
+inconsistent state across grammars.
+
+To change how a rule renders:
+
+1. Edit the rule's **overrides** in `packages/<grammar>/overrides.ts`,
+   its grammar shape, or the template-walker logic in
+   `packages/codegen/src/compiler/` (whichever layer owns the
+   behavior you want to change).
+2. Regenerate:
+   ```bash
+   npx tsx packages/codegen/src/cli.ts --grammar <name> --all --output packages/<name>/src
+   ```
+3. Inspect `git diff packages/<name>/templates/` — a well-scoped
+   change should touch only the rules whose rendering you changed.
+4. Run the round-trip corpus:
+   ```bash
+   pnpm --filter @sittir/<name> test
+   pnpm vitest run packages/codegen/src/__tests__/corpus-validation.test.ts
+   ```
+5. Commit `templates/*.jinja` alongside the source change.
+
+### Authoring subset
+
+Only the Nunjucks ∩ askama intersection is allowed:
+
+- Interpolation: `{{ name }}`, `{{ name | filter }}`
+- Conditionals: `{% if %}` / `{% elif %}` / `{% else %}` / `{% endif %}`
+- Loops: `{% for x in xs %}` with `loop.first`, `loop.last`, `loop.index`
+- Whitespace control: `{%-` / `-%}`
+- Comments: `{# ... #}`
+- Filters: `join(sep)`, `length`, `default(v)`, `trim`, `upper`, `lower`
+
+**Forbidden** (breaks askama portability): `{% extends %}`,
+`{% macro %}`, `{% include %}`, `{% match %}`, `{% set %}`, custom
+filters, method calls. The translator fails loudly if a rule's shape
+would require a forbidden construct.
+
+See `specs/011-jinja-template-migration/contracts/jinja-subset.md`
+for the full contract.
+
+### IDE support
+
+`.vscode/extensions.json` at the repo root recommends the
+[wholroyd.jinja](https://marketplace.visualstudio.com/items?itemName=wholroyd.jinja)
+extension for syntax highlighting in `.jinja` files. `.editorconfig`
+sets consistent indent style across editors.
+
 ## License
 
 MIT

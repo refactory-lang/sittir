@@ -172,11 +172,11 @@ description: "Task list for Jinja template migration"
 
 **Independent Test**: Edit one rule's template, regenerate, observe single-file diff. Open `.jinja` file in VSCode (or other IDE) with Jinja extension; verify syntax highlighting and undefined-variable warnings.
 
-- [ ] T056 [US3] Add a `.vscode/extensions.json` entry recommending a Jinja syntax extension (e.g., `samuelcolvin.jinjahtml` or `wholroyd.jinja`) at the repo root. Low-friction discovery for contributors.
-- [ ] T057 [P] [US3] Add a `.editorconfig` rule for `*.jinja` files (indent_style, indent_size matching the emitted files) if not already covered.
-- [ ] T058 [US3] Document the authoring workflow in `packages/codegen/README.md`: how to edit templates (via codegen emitter, never by hand), how to regenerate, how to verify a per-file diff.
-- [ ] T059 [US3] Add a CI lint step that fails when a `.jinja` file is hand-edited without a corresponding codegen emitter change: compute a hash of `translateToJinja`'s output for every node in the graph and compare to the on-disk file hash. Divergence = hand-edit detected. **Additionally** (R21 tightening) scan all `.jinja` files for forbidden constructs (`{% extends %}`, `{% macro %}`, `{% include %}`, `{% match %}`, `{% set %}`) and fail CI if any are found — catches hand-edits that attempt to use authoring-subset violations.
-- [ ] T060 [P] [US3] Add an integration test in `packages/codegen/src/__tests__/single-file-diff.test.ts` that verifies: (a) editing one rule's metadata produces exactly one modified `.jinja` file on regeneration, (b) unrelated rules' files are byte-unchanged.
+- [x] T056 [US3] Add a `.vscode/extensions.json` entry recommending a Jinja syntax extension (e.g., `samuelcolvin.jinjahtml` or `wholroyd.jinja`) at the repo root. Low-friction discovery for contributors.
+- [x] T057 [P] [US3] Add a `.editorconfig` rule for `*.jinja` files (indent_style, indent_size matching the emitted files) if not already covered.
+- [x] T058 [US3] Document the authoring workflow in `packages/codegen/README.md`: how to edit templates (via codegen emitter, never by hand), how to regenerate, how to verify a per-file diff.
+- [x] T059 [US3] Add a CI lint step that fails when a `.jinja` file is hand-edited without a corresponding codegen emitter change: compute a hash of `translateToJinja`'s output for every node in the graph and compare to the on-disk file hash. Divergence = hand-edit detected. **Additionally** (R21 tightening) scan all `.jinja` files for forbidden constructs (`{% extends %}`, `{% macro %}`, `{% include %}`, `{% match %}`, `{% set %}`) and fail CI if any are found — catches hand-edits that attempt to use authoring-subset violations.
+- [x] T060 [P] [US3] Add an integration test in `packages/codegen/src/__tests__/single-file-diff.test.ts` that verifies: (a) editing one rule's metadata produces exactly one modified `.jinja` file on regeneration, (b) unrelated rules' files are byte-unchanged.
 
 **Checkpoint**: Authoring experience matches SC-006.
 
@@ -186,10 +186,10 @@ description: "Task list for Jinja template migration"
 
 **Purpose**: Documentation, performance validation, migration tag.
 
-- [ ] T061 [P] Update `CLAUDE.md` to reference the `.jinja` template surface under the Architecture section; remove references to `templates.yaml`.
-- [ ] T061a Add a new-grammar smoke test in `packages/codegen/src/__tests__/new-grammar.test.ts` (spec R44 / edge case #4): register a synthetic minimal grammar via the codegen pipeline; assert it emits `.jinja` files (never YAML) under `packages/<synthetic>/templates/` and the renderer loads them correctly. Serves as a regression lock against reintroducing YAML paths when new grammars are added post-migration.
-- [ ] T062 [P] Update `docs/adr/` with a new ADR-0014 marking the migration complete, linking ADR-0013 as the enabling prerequisite, and capturing the `@sittir/core` + Nunjucks + askama decision.
-- [ ] T063 [P] Run a performance benchmark: wall-clock `pnpm test` pre- and post-migration; assert no regression > 10% (SC-007).
+- [x] T061 [P] Update `CLAUDE.md` to reference the `.jinja` template surface under the Architecture section; remove references to `templates.yaml`.
+- [x] T061a Add a new-grammar smoke test in `packages/codegen/src/__tests__/new-grammar.test.ts` (spec R44 / edge case #4): register a synthetic minimal grammar via the codegen pipeline; assert it emits `.jinja` files (never YAML) under `packages/<synthetic>/templates/` and the renderer loads them correctly. Serves as a regression lock against reintroducing YAML paths when new grammars are added post-migration.
+- [x] T062 [P] Update `docs/adr/` with a new ADR-0014 marking the migration complete, linking ADR-0013 as the enabling prerequisite, and capturing the `@sittir/core` + Nunjucks + askama decision.
+- [x] T063 [P] Run a performance benchmark: wall-clock `pnpm test` pre- and post-migration; assert no regression > 10% (SC-007).
 - [ ] T064 [P] Run the Phase B perf benchmark: wall-clock per-node render time in Rust vs TS; assert ≥ 2× (SC-008). Document results in `specs/011-jinja-template-migration/benchmarks.md`.
 - [ ] T065 Tag a release milestone `011-jinja-migration-complete` on master after Phases 1–5 merge.
 

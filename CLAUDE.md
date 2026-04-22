@@ -236,7 +236,11 @@ hand-edit generated output to work around a problem:
 
 - `packages/{rust,python,typescript}/src/*` — factories, types,
   node-model, etc.
-- `packages/{rust,python,typescript}/templates.yaml` — render templates.
+- `packages/{rust,python,typescript}/templates/*.jinja` — per-rule
+  render templates (feature 011). One file per rule kind; consumed by
+  Nunjucks at runtime. Generated output — never hand-edit; see
+  `packages/codegen/README.md` "Templates (`.jinja`)" for the
+  authoring workflow.
 - `packages/{rust,python,typescript}/.sittir/grammar.js` — transpiled
   overrides bridge.
 - `packages/{rust,python,typescript}/factory-map.json5` +
@@ -286,7 +290,7 @@ that the directive would split — granularity per comment block.
 
 ## Active Technologies
 - TypeScript (ESM, `.ts` extensions in imports), TypeScript 6.0.2 + `@sittir/core`, `@sittir/types`, `@sittir/codegen`; tree-sitter grammars (grammar.json + node-types.json) (004-yaml-render-templates)
-- File system (YAML templates at `packages/{lang}/templates.yaml`, read at codegen time) (004-yaml-render-templates)
+- File system (per-rule `.jinja` templates at `packages/{lang}/templates/<kind>.jinja`, read at render time by Nunjucks) (011-jinja-template-migration, supersedes 004's YAML templates)
 - TypeScript 6.0.2 (ESM, `.ts` extensions in imports) + None at runtime (zero-dep). Dev: vitest, oxlint, oxfmt, tsgo (005-five-phase-compiler)
 - File system (grammar.js input, overrides.ts, generated .ts/.yaml output) (005-five-phase-compiler)
 - TypeScript (ESM, `.ts` extensions in imports), TypeScript 6.0.2 + `@sittir/core`, `@sittir/types`, `@sittir/codegen`; tree-sitter grammar packages (`tree-sitter-rust`, `tree-sitter-typescript`, `tree-sitter-python`); tree-sitter CLI for CI validation (006-override-dsl-enrich)
