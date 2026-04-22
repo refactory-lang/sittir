@@ -986,18 +986,59 @@ function buildNunjucksTemplateContext(
 	if (node.$fields) {
 		for (const [fieldName, raw] of Object.entries(node.$fields)) {
 			if (raw === undefined || raw === null) continue;
-			const items = Array.isArray(raw) ? raw : [raw];
-			// Do NOT filter anonymous entries here: promoteAnonymousKeyword
-			// routes structural keywords (async, move, unsafe, etc.) into
-			// $fields keyed by the literal text. The legacy renderer
-			// emitted them verbatim — the Jinja path must too, otherwise
-			// the rendered tree drops the keyword and reparse fails.
-			if (items.length === 0) continue;
+			// `Array.isArray(raw)` is the multi-valued signal for a slot
+			// (legacy walker wrapped single slots as raw values, multi
+			// slots as arrays; readNode mirrors this). Multi slots: drop
+			// anonymous tokens (promoted separators like comma / semi;
+			// they belong in joinBy, not in the value list). Single
+			// slots: keep everything (promoteAnonymousKeyword routes
+			// keywords async / move / unsafe here and the legacy path
+			// rendered them verbatim).
+			const isMulti = Array.isArray(raw);
+			const items = isMulti ? raw : [raw];
+			const effective = isMulti
+				? items.filter(item => {
+					if (typeof item !== 'object' || item === null) return true;
+					return (item as AnyNodeData).$named !== false;
+				})
+				: items;
+			if (effective.length === 0) continue;
 			const fieldJoinBy = resolveJoinBy(ruleObj, fieldName.toUpperCase());
-			fields[fieldName] = items
+			fields[fieldName] = effective
 				.map(item => renderChild(item as AnyNodeData | string | number))
 				.join(fieldJoinBy);
 		}
+	}
+
+	// `text` fallback for factory-built nodes that reach a `{{ text }}`
+	// template but never saw a source span. Legacy regex path's resolveSlot
+	// synthesizes `$TEXT` by concatenating field + children renders; the
+	// Jinja path needs the same best-effort behavior so kinds like rust
+	// `token_tree` / `delim_token_tree` (whose templates are just
+	// `{{ text }}`) still produce non-empty output when constructed via
+	// factory. Synthesis only fires when `$text` is empty AND there is
+	// structure to concatenate — a genuinely empty node (no text, no
+	// fields, no children) stays empty.
+	let synthesizedText = node.$text ?? '';
+	if (synthesizedText === '' && (node.$fields || node.$children)) {
+		const parts: string[] = [];
+		if (node.$fields) {
+			for (const v of Object.values(node.$fields)) {
+				if (v === undefined || v === null) continue;
+				const items = Array.isArray(v) ? v : [v];
+				for (const item of items) {
+					if (item === undefined || item === null) continue;
+					parts.push(renderChild(item as AnyNodeData | string | number));
+				}
+			}
+		}
+		if (node.$children) {
+			for (const c of node.$children) {
+				if (c === undefined || c === null) continue;
+				parts.push(renderChild(c as AnyNodeData | string | number));
+			}
+		}
+		synthesizedText = parts.join('');
 	}
 
 	const leadingSep = ruleObj?.['joinByLeading'] === true && node.$children
@@ -1012,7 +1053,7 @@ function buildNunjucksTemplateContext(
 		children: childrenJoined,
 		children_list: childrenList,
 		variant: node.$variant ?? '',
-		text: node.$text ?? '',
+		text: synthesizedText,
 		trailing_sep: trailingSep,
 		leading_sep: leadingSep,
 	};
