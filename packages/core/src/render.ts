@@ -119,14 +119,9 @@ interface Substitution {
 	readonly value: string;
 }
 
-export interface PreparedRender {
-	/** Rendered-text form when the node bypasses template substitution
-	 *  (leaf text-only node, or token-shaped kind with no rule). */
-	readonly text?: string;
-	/** Template + pre-resolved substitutions. Absent when `text` is set. */
-	readonly template?: string;
-	readonly substitutions?: readonly Substitution[];
-}
+export type PreparedRender =
+	| { readonly kind: 'text'; readonly text: string }
+	| { readonly kind: 'template'; readonly template: string; readonly substitutions: readonly Substitution[] };
 
 /**
  * Formal declarative-engine render context (ADR-0013 Task 3 / feature 011).
@@ -240,7 +235,7 @@ export function buildTemplateContext(node: AnyNodeData, ctx: InternalRenderConte
  * the node's tree-sitter structure.
  */
 export function prepare(node: AnyNodeData, ctx: InternalRenderContext): PreparedRender {
-	if (node.$text !== undefined && !node.$fields && !node.$children) return { text: node.$text };
+	if (node.$text !== undefined && !node.$fields && !node.$children) return { kind: 'text', text: node.$text };
 
 	if (!node.$fields && !node.$children) {
 		throw new Error(`Node '${node.$type}' has no 'fields' or 'children' — did you mean to set 'text' for a leaf node?`);
@@ -271,7 +266,7 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 		);
 		const childrenAllAnon = !node.$children ||
 			(node.$children as readonly AnyNodeData[]).every(c => c.$named === false);
-		if (node.$text !== undefined && fieldsAllAnon && childrenAllAnon) return { text: node.$text };
+		if (node.$text !== undefined && fieldsAllAnon && childrenAllAnon) return { kind: 'text', text: node.$text };
 		throw new Error(`No render rule for '${node.$type}'`);
 	}
 
@@ -536,7 +531,7 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 			value: resolveSlot(match[1]!, match[2]!),
 		});
 	}
-	return { template: tmpl, substitutions };
+	return { kind: 'template', template: tmpl, substitutions };
 }
 
 /**
@@ -546,9 +541,8 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
  * reach-back into node structure.
  */
 function applyTemplate(prepared: PreparedRender): string {
-	if (prepared.text !== undefined) return prepared.text;
+	if (prepared.kind === 'text') return prepared.text;
 	const { template, substitutions } = prepared;
-	if (template === undefined || substitutions === undefined) return '';
 
 	// Substitute with column-aware re-indentation. For each `$VAR` we look
 	// at the characters since the previous newline in `result`; if they
@@ -856,7 +850,7 @@ function escapeRegex(s: string): string {
 // guarantee). `@sittir/core/templates/nunjucks-env.ts` is the opt-in
 // module that constructs one and passes it in via options.
 
-interface NunjucksEnvLike {
+export interface NunjucksEnvLike {
 	render(template: string, context: Record<string, unknown>): string;
 	getTemplate?(name: string, eagerCompile?: boolean): unknown;
 }
@@ -922,6 +916,7 @@ function renderNunjucks(
 		const cause = err instanceof Error ? err.message : String(err);
 		throw new Error(
 			`render: template '${templateName}' (rule '${node.$type}') failed — ${cause}`,
+			{ cause: err },
 		);
 	}
 	// FR-017 absent-field space absorption — collapse runs of 2+ spaces
@@ -960,7 +955,7 @@ function buildNunjucksTemplateContext(
 	ctx: InternalRenderContext,
 	env: NunjucksEnvLike,
 	templatesDir: string | undefined,
-): Record<string, unknown> {
+): TemplateContext {
 	const rule = ctx.config.rules[node.$type];
 	const ruleObj = typeof rule === 'string' ? undefined : rule as unknown as Record<string, unknown>;
 
@@ -1076,7 +1071,10 @@ export interface BoundRenderer {
  */
 export interface RendererOptions {
 	templatesDir?: string;
-	nunjucksEnv?: unknown; // nunjucks.Environment — `unknown` to keep nunjucks import out of render.ts
+	/** Pre-built nunjucks.Environment (or compatible shape). Keeps the
+	 *  nunjucks import out of render.ts so the module stays Node-free
+	 *  for consumers that never touch the file-loader. */
+	nunjucksEnv?: NunjucksEnvLike;
 }
 
 /**
@@ -1088,7 +1086,7 @@ export interface RendererOptions {
  */
 export function createRendererFromConfig(config: RulesConfig, options?: RendererOptions): BoundRenderer {
 	const ctx = buildRenderContext(config);
-	const nunjucksEnv = options?.nunjucksEnv as NunjucksEnvLike | undefined;
+	const nunjucksEnv = options?.nunjucksEnv;
 	const templatesDir = options?.templatesDir;
 
 	function boundRender(node: AnyNodeData): string {
