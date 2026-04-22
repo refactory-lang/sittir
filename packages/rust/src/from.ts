@@ -358,6 +358,23 @@ function _resolveManyBranch<T>(v: _FromFieldInput, kind: string): readonly T[] {
   return arr.map(e => _resolveOneBranch<T>(e, kind));
 }
 
+function _resolveBooleanKeyword<T>(v: _FromFieldInput): T {
+  if (v === undefined || v === null) return v;
+  if (v === true || v === false) return v as T;
+  if (isNodeData(v)) return v;
+  if (Array.isArray(v)) return v as unknown as T;
+  return v as T;
+}
+
+function _resolveBitflag<T>(v: _FromFieldInput): T {
+  if (v === undefined || v === null) return v;
+  if (typeof v === "number") return v as unknown as T;
+  if (typeof v === "string") return v as unknown as T;
+  if (Array.isArray(v)) return v as unknown as T;
+  if (isNodeData(v)) return v;
+  return v as T;
+}
+
 function _assertNonEmpty<T>(
   arr: readonly T[],
   label: string,
@@ -682,7 +699,7 @@ export function staticItemFrom(input: T.StaticItem | T.StaticItem.Loose): Return
   if (isNodeData(input)) return input;
   return F.staticItem({
     visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
-    mutableSpecifier: _resolveOneLeaf(input.mutableSpecifier, "_kw_ref"),
+    mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
     name: _resolveOneLeaf(input.name, "identifier"),
     type: _resolveOne(input.type, _K9, _K10),
     value: _resolveOne(input.value, _K4, _K5),
@@ -732,10 +749,10 @@ export function functionSignatureItemFrom(input: T.FunctionSignatureItem | T.Fun
 export function functionModifiersFrom(input: T.FunctionModifiers | T.FunctionModifiers.Loose): ReturnType<typeof F.functionModifiers> {
   if (isNodeData(input)) return input;
   return F.functionModifiers({
-    async: _resolveManyLeaf(input.async, "_kw_async"),
-    default: _resolveManyLeaf(input.default, "_kw_default"),
-    const: _resolveManyLeaf(input.const, "_kw_const"),
-    unsafe: _resolveManyLeaf(input.unsafe, "_kw_unsafe"),
+    async: _resolveBooleanKeyword(input.async),
+    default: _resolveBooleanKeyword(input.default),
+    const: _resolveBooleanKeyword(input.const),
+    unsafe: _resolveBooleanKeyword(input.unsafe),
     children: _resolveManyBranch(input.children, "extern_modifier"),
   });
 }
@@ -763,7 +780,7 @@ export function implItemFrom(input?: T.ImplItem | T.ImplItem.Loose): ReturnType<
 
 export function implItemUFormBodyFrom(input: T.ImplItemUFormBodyConfig) {
   return F.implItemUFormBody({
-    unsafe: _resolveOneLeaf(input.unsafe, "_kw_unsafe"),
+    unsafe: _resolveBooleanKeyword(input.unsafe),
     typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
     trait: _resolveOne(input.trait, _K0, _K14),
     type: _resolveOne(input.type, _K9, _K10),
@@ -773,7 +790,7 @@ export function implItemUFormBodyFrom(input: T.ImplItemUFormBodyConfig) {
 
 export function implItemUFormSemiFrom(input: T.ImplItemUFormSemiConfig) {
   return F.implItemUFormSemi({
-    unsafe: _resolveOneLeaf(input.unsafe, "_kw_unsafe"),
+    unsafe: _resolveBooleanKeyword(input.unsafe),
     typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
     trait: _resolveOne(input.trait, _K0, _K14),
     type: _resolveOne(input.type, _K9, _K10),
@@ -785,7 +802,7 @@ export function traitItemFrom(input: T.TraitItem | T.TraitItem.Loose): ReturnTyp
   if (isNodeData(input)) return input;
   return F.traitItem({
     visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
-    unsafe: _resolveOneLeaf(input.unsafe, "_kw_unsafe"),
+    unsafe: _resolveBooleanKeyword(input.unsafe),
     name: _resolveOneBranch(input.name, "_type_identifier"),
     typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
     bounds: _resolveOneBranch(input.bounds, "trait_bounds"),
@@ -866,7 +883,7 @@ export function lifetimeParameterFrom(input: T.LifetimeParameter | T.LifetimePar
 export function letDeclarationFrom(input: T.LetDeclaration | T.LetDeclaration.Loose): ReturnType<typeof F.letDeclaration> {
   if (isNodeData(input)) return input;
   return F.letDeclaration({
-    mutableSpecifier: _resolveOneLeaf(input.mutableSpecifier, "mutable_specifier"),
+    mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
     pattern: _resolveOne(input.pattern, _K17, _K18),
     type: _resolveOne(input.type, _K9, _K10),
     value: _resolveOne(input.value, _K4, _K5),
@@ -924,9 +941,9 @@ export function parametersFrom(...input: readonly (NonNullable<T.Parameters.Conf
 export function selfParameterFrom(input: T.SelfParameter | T.SelfParameter.Loose): ReturnType<typeof F.selfParameter> {
   if (isNodeData(input)) return input;
   return F.selfParameter({
-    lifetime: _resolveOne(input.lifetime, _K0, _K0),
+    lifetime: _resolveBooleanKeyword(input.lifetime),
     lifetimeName: _resolveOneBranch(input.lifetimeName, "lifetime"),
-    mutableSpecifier: _resolveOneLeaf(input.mutableSpecifier, "mutable_specifier"),
+    mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
     self: _resolveOneLeaf(input.self, "self"),
   });
 }
@@ -934,7 +951,7 @@ export function selfParameterFrom(input: T.SelfParameter | T.SelfParameter.Loose
 export function variadicParameterFrom(input?: T.VariadicParameter | T.VariadicParameter.Loose): ReturnType<typeof F.variadicParameter> {
   if (input !== undefined && isNodeData(input)) return input;
   return F.variadicParameter({
-    mutableSpecifier: _resolveOneLeaf(input?.mutableSpecifier, "mutable_specifier"),
+    mutableSpecifier: _resolveBooleanKeyword(input?.mutableSpecifier),
     pattern: _resolveOne(input?.pattern, _K17, _K18),
   });
 }
@@ -942,7 +959,7 @@ export function variadicParameterFrom(input?: T.VariadicParameter | T.VariadicPa
 export function parameterFrom(input: T.Parameter | T.Parameter.Loose): ReturnType<typeof F.parameter> {
   if (isNodeData(input)) return input;
   return F.parameter({
-    mutableSpecifier: _resolveOneLeaf(input.mutableSpecifier, "mutable_specifier"),
+    mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
     pattern: _resolveOne(input.pattern, _K20, _K18),
     type: _resolveOne(input.type, _K9, _K10),
   });
@@ -966,7 +983,7 @@ export function visibilityModifierForm0From(input?: T.VisibilityModifierForm0Con
 
 export function visibilityModifierForm1From(input?: T.VisibilityModifierForm1Config) {
   return F.visibilityModifierForm1({
-    in: _resolveOne(input?.in, _K0, _K0),
+    in: _resolveBooleanKeyword(input?.in),
   });
 }
 
@@ -1094,7 +1111,7 @@ export function referenceTypeFrom(input: T.ReferenceType | T.ReferenceType.Loose
   if (isNodeData(input)) return input;
   return F.referenceType({
     lifetime: _resolveOneBranch(input.lifetime, "lifetime"),
-    mutableSpecifier: _resolveOneLeaf(input.mutableSpecifier, "mutable_specifier"),
+    mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
     type: _resolveOne(input.type, _K9, _K10),
   });
 }
@@ -1464,18 +1481,18 @@ export function closureExpressionFrom(input?: T.ClosureExpression | T.ClosureExp
 
 export function closureExpressionUFormBlockFrom(input: T.ClosureExpressionUFormBlockConfig) {
   return F.closureExpressionUFormBlock({
-    static: _resolveOneLeaf(input.static, "_kw_static"),
-    async: _resolveOneLeaf(input.async, "_kw_async"),
-    move: _resolveOneLeaf(input.move, "_kw_move"),
+    static: _resolveBooleanKeyword(input.static),
+    async: _resolveBooleanKeyword(input.async),
+    move: _resolveBooleanKeyword(input.move),
     parameters: _resolveOneBranch(input.parameters, "closure_parameters"),
   });
 }
 
 export function closureExpressionUFormExprFrom(input: T.ClosureExpressionUFormExprConfig) {
   return F.closureExpressionUFormExpr({
-    static: _resolveOneLeaf(input.static, "_kw_static"),
-    async: _resolveOneLeaf(input.async, "_kw_async"),
-    move: _resolveOneLeaf(input.move, "_kw_move"),
+    static: _resolveBooleanKeyword(input.static),
+    async: _resolveBooleanKeyword(input.async),
+    move: _resolveBooleanKeyword(input.move),
     parameters: _resolveOneBranch(input.parameters, "closure_parameters"),
   });
 }
@@ -1545,7 +1562,7 @@ export function unsafeBlockFrom(input: T.UnsafeBlock | T.UnsafeBlock.Loose): Ret
 export function asyncBlockFrom(input: T.AsyncBlock | T.AsyncBlock.Loose): ReturnType<typeof F.asyncBlock> {
   if (isNodeData(input)) return input;
   return F.asyncBlock({
-    move: _resolveOneLeaf(input.move, "_kw_move"),
+    move: _resolveBooleanKeyword(input.move),
     block: _resolveOneBranch(input.block, "block"),
   });
 }
@@ -1553,7 +1570,7 @@ export function asyncBlockFrom(input: T.AsyncBlock | T.AsyncBlock.Loose): Return
 export function genBlockFrom(input: T.GenBlock | T.GenBlock.Loose): ReturnType<typeof F.genBlock> {
   if (isNodeData(input)) return input;
   return F.genBlock({
-    move: _resolveOneLeaf(input.move, "_kw_move"),
+    move: _resolveBooleanKeyword(input.move),
     block: _resolveOneBranch(input.block, "block"),
   });
 }
@@ -1620,15 +1637,15 @@ export function fieldPatternFrom(input?: T.FieldPattern | T.FieldPattern.Loose):
 
 export function fieldPatternUFormShorthandFrom(input: T.FieldPatternUFormShorthandConfig) {
   return F.fieldPatternUFormShorthand({
-    ref: _resolveOneLeaf(input.ref, "_kw_ref"),
-    mutableSpecifier: _resolveOneLeaf(input.mutableSpecifier, "mutable_specifier"),
+    ref: _resolveBooleanKeyword(input.ref),
+    mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
   });
 }
 
 export function fieldPatternUFormNamedFrom(input: T.FieldPatternUFormNamedConfig) {
   return F.fieldPatternUFormNamed({
-    ref: _resolveOneLeaf(input.ref, "_kw_ref"),
-    mutableSpecifier: _resolveOneLeaf(input.mutableSpecifier, "mutable_specifier"),
+    ref: _resolveBooleanKeyword(input.ref),
+    mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
   });
 }
 
@@ -1673,7 +1690,7 @@ export function capturedPatternFrom(input: T.CapturedPattern | T.CapturedPattern
 export function referencePatternFrom(input: T.ReferencePattern | T.ReferencePattern.Loose): ReturnType<typeof F.referencePattern> {
   if (isNodeData(input)) return input;
   return F.referencePattern({
-    mutableSpecifier: _resolveOneLeaf(input.mutableSpecifier, "mutable_specifier"),
+    mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
     pattern: _resolveOne(input.pattern, _K17, _K18),
   });
 }

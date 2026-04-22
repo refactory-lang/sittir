@@ -290,6 +290,23 @@ function _resolveManyBranch<T>(v: _FromFieldInput, kind: string): readonly T[] {
   return arr.map(e => _resolveOneBranch<T>(e, kind));
 }
 
+function _resolveBooleanKeyword<T>(v: _FromFieldInput): T {
+  if (v === undefined || v === null) return v;
+  if (v === true || v === false) return v as T;
+  if (isNodeData(v)) return v;
+  if (Array.isArray(v)) return v as unknown as T;
+  return v as T;
+}
+
+function _resolveBitflag<T>(v: _FromFieldInput): T {
+  if (v === undefined || v === null) return v;
+  if (typeof v === "number") return v as unknown as T;
+  if (typeof v === "string") return v as unknown as T;
+  if (Array.isArray(v)) return v as unknown as T;
+  if (isNodeData(v)) return v;
+  return v as T;
+}
+
 function _assertNonEmpty<T>(
   arr: readonly T[],
   label: string,
@@ -513,7 +530,7 @@ export function caseClauseFrom(input: T.CaseClause | T.CaseClause.Loose): Return
 export function forStatementFrom(input: T.ForStatement | T.ForStatement.Loose): ReturnType<typeof F.forStatement> {
   if (isNodeData(input)) return input;
   return F.forStatement({
-    async: _resolveOneLeaf(input.async, "_kw_async"),
+    async: _resolveBooleanKeyword(input.async),
     left: _resolveOne(input.left, _K0, _super_left_hand_side),
     right: _resolveOne(input.right, _K0, _super_expressions),
     body: _resolveOneBranch(input.body, "_suite"),
@@ -559,7 +576,7 @@ export function finallyClauseFrom(input: T.FinallyClause | T.FinallyClause.Loose
 export function withStatementFrom(input: T.WithStatement | T.WithStatement.Loose): ReturnType<typeof F.withStatement> {
   if (isNodeData(input)) return input;
   return F.withStatement({
-    async: _resolveOneLeaf(input.async, "_kw_async"),
+    async: _resolveBooleanKeyword(input.async),
     withClause: _resolveOneBranch(input.withClause, "with_clause"),
     body: _resolveOneBranch(input.body, "_suite"),
   });
@@ -583,7 +600,7 @@ export function withItemFrom(input: T.WithItem | T.WithItem.Loose): ReturnType<t
 export function functionDefinitionFrom(input: T.FunctionDefinition | T.FunctionDefinition.Loose): ReturnType<typeof F.functionDefinition> {
   if (isNodeData(input)) return input;
   return F.functionDefinition({
-    async: _resolveOneLeaf(input.async, "_kw_async"),
+    async: _resolveBooleanKeyword(input.async),
     name: _resolveOneLeaf(input.name, "identifier"),
     typeParameters: _resolveOneBranch(input.typeParameters, "type_parameter"),
     parameters: _resolveOneBranch(input.parameters, "parameters"),
@@ -788,7 +805,7 @@ export function classPatternFrom(input: T.ClassPattern | T.ClassPattern.Loose): 
 export function complexPatternFrom(input: T.ComplexPattern | T.ComplexPattern.Loose): ReturnType<typeof F.complexPattern> {
   if (isNodeData(input)) return input;
   return F.complexPattern({
-    real: _resolveOne(input.real, _K0, _K0),
+    real: _resolveBooleanKeyword(input.real),
     imaginary: _resolveOne(input.imaginary, _K7, _K0),
     children: _resolveOne(input.children, _K7, _K0),
   });
@@ -1148,7 +1165,7 @@ export function forInClauseFrom(input: T.ForInClause | T.ForInClause.Loose): Ret
   const _ne_right = _resolveMany(input.right, _K0, _super_expression_within_for_in_clause);
   _assertNonEmpty(_ne_right, 'for_in_clause.right');
   return F.forInClause({
-    async: _resolveOneLeaf(input.async, "_kw_async"),
+    async: _resolveBooleanKeyword(input.async),
     left: _resolveOne(input.left, _K0, _super_left_hand_side),
     right: _ne_right,
   });

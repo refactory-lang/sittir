@@ -14,6 +14,7 @@ import type {
 import type { PolymorphVariant } from '../compiler/types.ts'
 import {
     isAutoStampField, isAutoStampSlot, isRequired, isMultiple, isNonEmpty, slotKindNames,
+    keywordPresenceKind,
 } from './shared.ts'
 import { isNodeRef, isTerminalValue, isUnresolvedRef } from '../compiler/node-map.ts'
 import type { NodeOrTerminal } from '../compiler/node-map.ts'
@@ -894,7 +895,10 @@ function resolveChildrenFromTypedInput(
     // Direct bag access — same pattern as field reads.
     const optChain = inputOptional ? '?' : ''
     const access = `${sourceVar}${optChain}.children`
-    return resolveFieldCall(access, pseudo, anyMultiple, nodeMap, intern)
+    // ADR-0012: children slots never adopt the boolean-keyword /
+    // bitflag surface — the Config key is `children`, not the keyword
+    // name. Skip the short-circuit here.
+    return resolveFieldCall(access, pseudo, anyMultiple, nodeMap, intern, /* applyKeywordPresence */ false)
 }
 
 /**
@@ -1053,7 +1057,22 @@ function resolveFieldCall(
     fieldMultiple: boolean,
     nodeMap: NodeMap,
     intern: KindInterner,
+    /** When true, ADR-0012 keyword-presence short-circuit applies.
+     * Children slots (the merged-values pseudo shape) skip it because
+     * the Config surface there is `children`, not the keyword name — a
+     * boolean-keyword classifier match on a children slot is coincidental
+     * and should not route through _resolveBooleanKeyword. */
+    applyKeywordPresence = true,
 ): string {
+    // ADR-0012: short-circuit keyword-presence fields through dedicated
+    // resolvers. Boolean / bitflag inputs must NOT get routed through the
+    // leaf-literal registry (a `true` on a boolean-keyword field is a
+    // presence marker, not a boolean_literal node).
+    if (applyKeywordPresence) {
+        const kwCall = keywordPresenceResolverCall(prop, field, nodeMap)
+        if (kwCall !== undefined) return kwCall
+    }
+
     const expanded = expandAndDedupeContentTypes(slotKindNames(field), nodeMap)
     const { leafKinds, branchKinds } = classifyKindsForResolver(expanded, nodeMap)
 
@@ -1061,6 +1080,24 @@ function resolveFieldCall(
     if (fastPath !== undefined) return fastPath
 
     return buildInternedArrayResolverCall(prop, leafKinds, branchKinds, fieldMultiple, intern)
+}
+
+/**
+ * Emit the resolver call string for a keyword-presence field (ADR-0012).
+ *
+ * Returns `undefined` when the field isn't a keyword-presence pattern
+ * (caller falls through to the default resolver).
+ */
+function keywordPresenceResolverCall(
+    prop: string,
+    field: { values: readonly NodeOrTerminal[] },
+    nodeMap: NodeMap,
+): string | undefined {
+    const kw = keywordPresenceKind(field as AssembledField, nodeMap)
+    if (kw === null) return undefined
+    if (kw === 'boolean') return `_resolveBooleanKeyword(${prop})`
+    // bitflag — pass through; the factory handles number expansion via _bf.
+    return `_resolveBitflag(${prop})`
 }
 
 // ---------------------------------------------------------------------------
@@ -1331,6 +1368,29 @@ function emitResolverHelpers(lines: string[], nodeMap: NodeMap): void {
     lines.push('  if (v === undefined || v === null) return [];')
     lines.push('  const arr: readonly _FromFieldInput[] = Array.isArray(v) ? v : [v];')
     lines.push('  return arr.map(e => _resolveOneBranch<T>(e, kind));')
+    lines.push('}')
+    lines.push('')
+
+    // ADR-0012 keyword-presence resolvers — pass-through; the factory's
+    // `_bk` / `_bkArr` / `_bf` runtime helpers perform the actual stamp.
+    // The resolver layer only has to refuse the leaf-registry path so
+    // a `true` input doesn't get misrouted through `_resolveScalar` into
+    // a `boolean_literal` factory call.
+    lines.push('function _resolveBooleanKeyword<T>(v: _FromFieldInput): T {')
+    lines.push('  if (v === undefined || v === null) return v;')
+    lines.push('  if (v === true || v === false) return v as T;')
+    lines.push('  if (isNodeData(v)) return v;')
+    lines.push('  if (Array.isArray(v)) return v as unknown as T;')
+    lines.push('  return v as T;')
+    lines.push('}')
+    lines.push('')
+    lines.push('function _resolveBitflag<T>(v: _FromFieldInput): T {')
+    lines.push('  if (v === undefined || v === null) return v;')
+    lines.push('  if (typeof v === "number") return v as unknown as T;')
+    lines.push('  if (typeof v === "string") return v as unknown as T;')
+    lines.push('  if (Array.isArray(v)) return v as unknown as T;')
+    lines.push('  if (isNodeData(v)) return v;')
+    lines.push('  return v as T;')
     lines.push('}')
     lines.push('')
 

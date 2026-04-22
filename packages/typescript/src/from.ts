@@ -377,6 +377,23 @@ function _resolveManyBranch<T>(v: _FromFieldInput, kind: string): readonly T[] {
   return arr.map(e => _resolveOneBranch<T>(e, kind));
 }
 
+function _resolveBooleanKeyword<T>(v: _FromFieldInput): T {
+  if (v === undefined || v === null) return v;
+  if (v === true || v === false) return v as T;
+  if (isNodeData(v)) return v;
+  if (Array.isArray(v)) return v as unknown as T;
+  return v as T;
+}
+
+function _resolveBitflag<T>(v: _FromFieldInput): T {
+  if (v === undefined || v === null) return v;
+  if (typeof v === "number") return v as unknown as T;
+  if (typeof v === "string") return v as unknown as T;
+  if (Array.isArray(v)) return v as unknown as T;
+  if (isNodeData(v)) return v;
+  return v as T;
+}
+
 function _assertNonEmpty<T>(
   arr: readonly T[],
   label: string,
@@ -679,9 +696,9 @@ export function forStatementFrom(input: T.ForStatement | T.ForStatement.Loose): 
 export function forInStatementFrom(input: T.ForInStatement | T.ForInStatement.Loose): ReturnType<typeof F.forInStatement> {
   if (isNodeData(input)) return input;
   return F.forInStatement({
-    await: _resolveOne(input.await, _K1, _K1),
+    await: _resolveBooleanKeyword(input.await),
     left: _resolveOne(input.left, _K1, _K4),
-    kind: _resolveOne(input.kind, _K1, _K1),
+    kind: _resolveBooleanKeyword(input.kind),
     value: _resolveOneBranch(input.value, "expression"),
     operator: _resolveOne(input.operator, _K1, _K1),
     right: _resolveOne(input.right, _K1, _super_expressions),
@@ -1022,7 +1039,7 @@ export function classHeritageUFormImplementsClauseFrom(input: T.ClassHeritageUFo
 export function functionExpressionFrom(input: T.FunctionExpression | T.FunctionExpression.Loose): ReturnType<typeof F.functionExpression> {
   if (isNodeData(input)) return input;
   return F.functionExpression({
-    async: _resolveOneLeaf(input.async, "_kw_async"),
+    async: _resolveBooleanKeyword(input.async),
     name: _resolveOneLeaf(input.name, "identifier"),
     typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch(input.parameters, "formal_parameters"),
@@ -1034,7 +1051,7 @@ export function functionExpressionFrom(input: T.FunctionExpression | T.FunctionE
 export function functionDeclarationFrom(input: T.FunctionDeclaration | T.FunctionDeclaration.Loose): ReturnType<typeof F.functionDeclaration> {
   if (isNodeData(input)) return input;
   return F.functionDeclaration({
-    async: _resolveOneLeaf(input.async, "_kw_async"),
+    async: _resolveBooleanKeyword(input.async),
     name: _resolveOneLeaf(input.name, "identifier"),
     typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch(input.parameters, "formal_parameters"),
@@ -1047,7 +1064,7 @@ export function functionDeclarationFrom(input: T.FunctionDeclaration | T.Functio
 export function generatorFunctionFrom(input: T.GeneratorFunction | T.GeneratorFunction.Loose): ReturnType<typeof F.generatorFunction> {
   if (isNodeData(input)) return input;
   return F.generatorFunction({
-    async: _resolveOneLeaf(input.async, "_kw_async"),
+    async: _resolveBooleanKeyword(input.async),
     name: _resolveOneLeaf(input.name, "identifier"),
     typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch(input.parameters, "formal_parameters"),
@@ -1059,7 +1076,7 @@ export function generatorFunctionFrom(input: T.GeneratorFunction | T.GeneratorFu
 export function generatorFunctionDeclarationFrom(input: T.GeneratorFunctionDeclaration | T.GeneratorFunctionDeclaration.Loose): ReturnType<typeof F.generatorFunctionDeclaration> {
   if (isNodeData(input)) return input;
   return F.generatorFunctionDeclaration({
-    async: _resolveOneLeaf(input.async, "_kw_async"),
+    async: _resolveBooleanKeyword(input.async),
     name: _resolveOneLeaf(input.name, "identifier"),
     typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch(input.parameters, "formal_parameters"),
@@ -1076,14 +1093,14 @@ export function arrowFunctionFrom(input?: T.ArrowFunction | T.ArrowFunction.Loos
 
 export function arrowFunctionUFormParameterFrom(input: T.ArrowFunctionUFormParameterConfig) {
   return F.arrowFunctionUFormParameter({
-    async: _resolveOneLeaf(input.async, "_kw_async"),
+    async: _resolveBooleanKeyword(input.async),
     body: _resolveOne(input.body, _K1, _K12),
   });
 }
 
 export function arrowFunctionUFormUCallSignatureFrom(input: T.ArrowFunctionUFormUCallSignatureConfig) {
   return F.arrowFunctionUFormUCallSignature({
-    async: _resolveOneLeaf(input.async, "_kw_async"),
+    async: _resolveBooleanKeyword(input.async),
     body: _resolveOne(input.body, _K1, _K12),
   });
 }
@@ -1136,7 +1153,7 @@ export function memberExpressionFrom(input: T.MemberExpression | T.MemberExpress
   if (isNodeData(input)) return input;
   return F.memberExpression({
     object: _resolveOne(input.object, _K13, _K16),
-    optionalChain: _resolveOne(input.optionalChain, _K1, _K1),
+    optionalChain: _resolveBooleanKeyword(input.optionalChain),
     property: _resolveOne(input.property, _K17, _K1),
   });
 }
@@ -1145,7 +1162,7 @@ export function subscriptExpressionFrom(input: T.SubscriptExpression | T.Subscri
   if (isNodeData(input)) return input;
   return F.subscriptExpression({
     object: _resolveOne(input.object, _K1, _K16),
-    optionalChain: _resolveOne(input.optionalChain, _K1, _K1),
+    optionalChain: _resolveBooleanKeyword(input.optionalChain),
     index: _resolveOne(input.index, _K1, _super_expressions),
   });
 }
@@ -1153,7 +1170,7 @@ export function subscriptExpressionFrom(input: T.SubscriptExpression | T.Subscri
 export function assignmentExpressionFrom(input: T.AssignmentExpression | T.AssignmentExpression.Loose): ReturnType<typeof F.assignmentExpression> {
   if (isNodeData(input)) return input;
   return F.assignmentExpression({
-    using: _resolveOne(input.using, _K1, _K1),
+    using: _resolveBooleanKeyword(input.using),
     left: _resolveOne(input.left, _K1, _K18),
     right: _resolveOneBranch(input.right, "expression"),
   });
@@ -1375,7 +1392,7 @@ export function fieldDefinitionFrom(input: T.FieldDefinition | T.FieldDefinition
   if (isNodeData(input)) return input;
   return F.fieldDefinition({
     decorator: _resolveManyBranch(input.decorator, "decorator"),
-    static: _resolveOneLeaf(input.static, "_kw_static"),
+    static: _resolveBooleanKeyword(input.static),
     property: _resolveOne(input.property, _K22, _K23),
     value: _resolveOneBranch(input.value, "expression"),
   });
@@ -1419,9 +1436,9 @@ export function methodDefinitionFrom(input: T.MethodDefinition | T.MethodDefinit
   if (isNodeData(input)) return input;
   return F.methodDefinition({
     accessibilityModifier: _resolveOneLeaf(input.accessibilityModifier, "accessibility_modifier"),
-    overrideModifier: _resolveOneLeaf(input.overrideModifier, "_kw_static"),
-    readonly: _resolveOneLeaf(input.readonly, "_kw_readonly"),
-    async: _resolveOneLeaf(input.async, "_kw_async"),
+    overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
+    readonly: _resolveBooleanKeyword(input.readonly),
+    async: _resolveBooleanKeyword(input.async),
     name: _resolveOne(input.name, _K22, _K23),
     typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch(input.parameters, "formal_parameters"),
@@ -1458,11 +1475,11 @@ export function publicFieldDefinitionFrom(input: T.PublicFieldDefinition | T.Pub
   if (isNodeData(input)) return input;
   return F.publicFieldDefinition({
     decorator: _resolveManyBranch(input.decorator, "decorator"),
-    declare: _resolveOne(input.declare, _K1, _K1),
-    static: _resolveOneLeaf(input.static, "_kw_static"),
-    readonly: _resolveOneLeaf(input.readonly, "_kw_readonly"),
-    abstract: _resolveOneLeaf(input.abstract, "_kw_abstract"),
-    accessor: _resolveOne(input.accessor, _K1, _K1),
+    declare: _resolveBooleanKeyword(input.declare),
+    static: _resolveBooleanKeyword(input.static),
+    readonly: _resolveBooleanKeyword(input.readonly),
+    abstract: _resolveBooleanKeyword(input.abstract),
+    accessor: _resolveBooleanKeyword(input.accessor),
     name: _resolveOne(input.name, _K22, _K23),
     type: _resolveOneBranch(input.type, "type_annotation"),
     value: _resolveOneBranch(input.value, "expression"),
@@ -1481,9 +1498,9 @@ export function methodSignatureFrom(input: T.MethodSignature | T.MethodSignature
   if (isNodeData(input)) return input;
   return F.methodSignature({
     accessibilityModifier: _resolveOneLeaf(input.accessibilityModifier, "accessibility_modifier"),
-    overrideModifier: _resolveOneLeaf(input.overrideModifier, "_kw_static"),
-    readonly: _resolveOneLeaf(input.readonly, "_kw_readonly"),
-    async: _resolveOneLeaf(input.async, "_kw_async"),
+    overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
+    readonly: _resolveBooleanKeyword(input.readonly),
+    async: _resolveBooleanKeyword(input.async),
     name: _resolveOne(input.name, _K22, _K23),
     typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch(input.parameters, "formal_parameters"),
@@ -1496,7 +1513,7 @@ export function abstractMethodSignatureFrom(input: T.AbstractMethodSignature | T
   if (isNodeData(input)) return input;
   return F.abstractMethodSignature({
     accessibilityModifier: _resolveOneLeaf(input.accessibilityModifier, "accessibility_modifier"),
-    overrideModifier: _resolveOneLeaf(input.overrideModifier, "override_modifier"),
+    overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
     name: _resolveOne(input.name, _K22, _K23),
     typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch(input.parameters, "formal_parameters"),
@@ -1507,7 +1524,7 @@ export function abstractMethodSignatureFrom(input: T.AbstractMethodSignature | T
 export function functionSignatureFrom(input: T.FunctionSignature | T.FunctionSignature.Loose): ReturnType<typeof F.functionSignature> {
   if (isNodeData(input)) return input;
   return F.functionSignature({
-    async: _resolveOneLeaf(input.async, "_kw_async"),
+    async: _resolveBooleanKeyword(input.async),
     name: _resolveOneLeaf(input.name, "identifier"),
     typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch(input.parameters, "formal_parameters"),
@@ -1656,7 +1673,7 @@ export function extendsTypeClauseFrom(input: T.ExtendsTypeClause | T.ExtendsType
 export function enumDeclarationFrom(input: T.EnumDeclaration | T.EnumDeclaration.Loose): ReturnType<typeof F.enumDeclaration> {
   if (isNodeData(input)) return input;
   return F.enumDeclaration({
-    const: _resolveOneLeaf(input.const, "_kw_const"),
+    const: _resolveBooleanKeyword(input.const),
     name: _resolveOneLeaf(input.name, "identifier"),
     body: _resolveOneBranch(input.body, "enum_body"),
   });
@@ -1703,7 +1720,7 @@ export function requiredParameterFrom(input: T.RequiredParameter | T.RequiredPar
   if (isNodeData(input)) return input;
   return F.requiredParameter({
     decorator: _resolveManyBranch(input.decorator, "decorator"),
-    readonly: _resolveOneLeaf(input.readonly, "_kw_readonly"),
+    readonly: _resolveBooleanKeyword(input.readonly),
     pattern: _resolveOne(input.pattern, _K32, _K33),
     type: _resolveOneBranch(input.type, "type_annotation"),
     value: _resolveOneBranch(input.value, "expression"),
@@ -1715,7 +1732,7 @@ export function optionalParameterFrom(input: T.OptionalParameter | T.OptionalPar
   if (isNodeData(input)) return input;
   return F.optionalParameter({
     decorator: _resolveManyBranch(input.decorator, "decorator"),
-    readonly: _resolveOneLeaf(input.readonly, "_kw_readonly"),
+    readonly: _resolveBooleanKeyword(input.readonly),
     pattern: _resolveOne(input.pattern, _K32, _K33),
     type: _resolveOneBranch(input.type, "type_annotation"),
     value: _resolveOneBranch(input.value, "expression"),
@@ -1800,7 +1817,7 @@ export function restTypeFrom(input: T.RestType | T.RestType.Loose): ReturnType<t
 export function constructorTypeFrom(input: T.ConstructorType | T.ConstructorType.Loose): ReturnType<typeof F.constructorType> {
   if (isNodeData(input)) return input;
   return F.constructorType({
-    abstract: _resolveOneLeaf(input.abstract, "_kw_abstract"),
+    abstract: _resolveBooleanKeyword(input.abstract),
     typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch(input.parameters, "formal_parameters"),
     type: _resolveOne(input.type, _K1, _super_type),
@@ -1958,8 +1975,8 @@ export function propertySignatureFrom(input: T.PropertySignature | T.PropertySig
   if (isNodeData(input)) return input;
   return F.propertySignature({
     accessibilityModifier: _resolveOneLeaf(input.accessibilityModifier, "accessibility_modifier"),
-    overrideModifier: _resolveOneLeaf(input.overrideModifier, "_kw_static"),
-    readonly: _resolveOneLeaf(input.readonly, "_kw_readonly"),
+    overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
+    readonly: _resolveBooleanKeyword(input.readonly),
     name: _resolveOne(input.name, _K22, _K23),
     type: _resolveOneBranch(input.type, "type_annotation"),
     children: _resolveOneLeaf(input.children, "override_modifier"),
@@ -1977,7 +1994,7 @@ export function typeParametersFrom(...input: readonly (NonNullable<T.TypeParamet
 export function typeParameterFrom(input: T.TypeParameter | T.TypeParameter.Loose): ReturnType<typeof F.typeParameter> {
   if (isNodeData(input)) return input;
   return F.typeParameter({
-    const: _resolveOneLeaf(input.const, "_kw_const"),
+    const: _resolveBooleanKeyword(input.const),
     name: _resolveOneBranch(input.name, "_type_identifier"),
     constraint: _resolveOneBranch(input.constraint, "constraint"),
     value: _resolveOneBranch(input.value, "default_type"),
@@ -2001,7 +2018,7 @@ export function constraintFrom(input: T.Constraint | T.Constraint.Loose): Return
 export function constructSignatureFrom(input: T.ConstructSignature | T.ConstructSignature.Loose): ReturnType<typeof F.constructSignature> {
   if (isNodeData(input)) return input;
   return F.constructSignature({
-    abstract: _resolveOneLeaf(input.abstract, "_kw_abstract"),
+    abstract: _resolveBooleanKeyword(input.abstract),
     typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch(input.parameters, "formal_parameters"),
     type: _resolveOneBranch(input.type, "type_annotation"),
