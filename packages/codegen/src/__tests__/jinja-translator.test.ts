@@ -1,36 +1,64 @@
-import { describe, it } from 'vitest';
+import { describe, it, expect } from 'vitest';
+import { translateToJinja, translateTemplateString } from '../emitters/jinja-translator.ts';
+import { AssembledBranch } from '../compiler/node-map.ts';
+import type { SeqRule, Rule } from '../compiler/rule.ts';
 
-// T012: skeleton. Each `it.todo` maps to one mapping rule from
-// `specs/011-jinja-template-migration/contracts/translator-mapping.md`.
-// Each will be replaced with a concrete failing test + implementation in
-// a dedicated task (T013–T020) following the TDD protocol.
+// T013 harness — covers Rule 1 (single-template branch) from
+// contracts/translator-mapping.md. Subsequent tasks (T014–T020)
+// extend this file with cases for containers, clauses, variants,
+// the no-file paths, and loud failures.
 
-describe('jinja-translator — mapping rules', () => {
-	describe('Rule 1: single-template branch / container', () => {
-		it.todo('translates a branch with $VAR placeholders to {{ var }} interpolations');
+describe('translateTemplateString — pure string transform', () => {
+	it('translates $VAR to {{ var }}', () => {
+		expect(translateTemplateString('fn $NAME()')).toBe('fn {{ name }}()');
 	});
 
-	describe('Rule 2: clause-bearing template', () => {
-		it.todo('translates $NAME_CLAUSE + name_clause body to {% if name %}body{% endif %}');
+	it('translates multiple $VAR placeholders', () => {
+		expect(translateTemplateString('$A $B $C')).toBe('{{ a }} {{ b }} {{ c }}');
 	});
 
-	describe('Rule 3: variant-branching polymorph', () => {
-		it.todo('translates variants to {% if variant == "form" %} chains covering every form');
+	it('translates $$$CHILDREN to {{ children }}', () => {
+		expect(translateTemplateString('{ $$$CHILDREN }')).toBe('{ {{ children }} }');
 	});
 
-	describe('Rule 4: leaf (text-only)', () => {
-		it.todo('emits no file for a leaf rule (returns null)');
+	it('translates $$$NAME (multi-valued field) to {{ name }} (pre-joined by prepare())', () => {
+		expect(translateTemplateString('[$$$ITEMS]')).toBe('[{{ items }}]');
 	});
 
-	describe('Rule 5: keyword / token', () => {
-		it.todo('emits no file for a keyword/token rule (returns null)');
+	it('translates $TEXT to {{ text }}', () => {
+		expect(translateTemplateString('$TEXT')).toBe('{{ text }}');
 	});
 
-	describe('Rule 6: supertype / enum / group / multi', () => {
-		it.todo('emits no file at the supertype level (returns null)');
+	it('lowercases multi-word snake_case field names', () => {
+		expect(translateTemplateString('$RETURN_TYPE_CLAUSE')).toBe('{{ return_type_clause }}');
 	});
 
-	describe('Loud failure', () => {
-		it.todo('throws naming rule kind + unsupported construct when an unsupported shape is encountered');
+	it('translates $NEWLINE to a literal newline', () => {
+		expect(translateTemplateString('class:$NEWLINE')).toBe('class:\n');
+	});
+
+	it('strips $INDENT and $DEDENT (render-time column tracking handles them)', () => {
+		expect(translateTemplateString('$INDENT$BODY$DEDENT')).toBe('{{ body }}');
+	});
+
+	it('leaves literal text between placeholders untouched', () => {
+		expect(translateTemplateString('struct $NAME { $$$CHILDREN }')).toBe('struct {{ name }} { {{ children }} }');
+	});
+});
+
+describe('Rule 1: single-template branch', () => {
+	it('translates a SeqRule branch with a $NAME field to a Jinja body', () => {
+		// Minimal fixture: a seq rule with one field(name, string).
+		// renderTemplate will produce `$NAME` (a bare identifier reference);
+		// the translator wraps it as the Jinja body.
+		const rule: SeqRule = {
+			type: 'seq',
+			members: [
+				{ type: 'field', name: 'name', content: { type: 'symbol', name: '_identifier' } },
+			],
+		};
+		const node = new AssembledBranch('simple_item', rule, rule);
+		const result = translateToJinja(node, {} as Record<string, Rule>, /\w/);
+		expect(result).toBe('{{ name }}');
 	});
 });

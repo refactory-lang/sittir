@@ -67,7 +67,7 @@ description: "Task list for Jinja template migration"
 
 ### Implementation tasks — translator (TDD order)
 
-- [ ] T013 [US1] Implement `translateToJinja` for `modelType === 'branch'` (Rule 1 single-template) in `packages/codegen/src/emitters/jinja-translator.ts`. Replace `it.todo()` with a failing test in `packages/codegen/src/__tests__/jinja-translator.test.ts`, then implement, then pass.
+- [x] T013 [US1] Implement `translateToJinja` for `modelType === 'branch'` (Rule 1 single-template) in `packages/codegen/src/emitters/jinja-translator.ts`. Replace `it.todo()` with a failing test in `packages/codegen/src/__tests__/jinja-translator.test.ts`, then implement, then pass.
 - [ ] T014 [US1] Implement `translateToJinja` for `modelType === 'container'` (pre-joined `$$$CHILDREN` + joinBy in `prepare()`) in `packages/codegen/src/emitters/jinja-translator.ts`. TDD: failing test → implement → pass.
 - [ ] T015 [US1] Implement clause-body inlining (Rule 2: `$X_CLAUSE` + `x_clause: body`) in `packages/codegen/src/emitters/jinja-translator.ts`. Emit `{%- if x %}<body>{% endif -%}`. TDD.
 - [ ] T016 [US1] Implement variant branching (Rule 3: polymorphs that retain `variants:` — the 5 genuine-branch rules) in `packages/codegen/src/emitters/jinja-translator.ts`. Emit `{%- if variant == "<form>" -%}...{%- elif... -%}...{%- endif -%}`. TDD across all 5 rules.
