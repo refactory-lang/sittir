@@ -11,6 +11,15 @@ description = "Render / readNode / splice primitives for sittir — hot-path eng
 serde = { workspace = true }
 serde_json = { workspace = true }
 tree-sitter = { workspace = true }
+# napi + napi-derive: `#[napi(object)]` on boundary types (see
+# data-model.md §3 for `Edit`) expands to references against the napi
+# runtime crate. Both are pure Rust — no Node.js is required at
+# compile time, so FR-004 ("sittir-core builds without Node.js/npm")
+# still holds. The actual .node artifact is linked by the
+# sittir-*-napi binding crates; this dep only buys us the boundary
+# attribute on `Edit`.
+napi = { version = "3", default-features = false, features = ["napi4"] }
+napi-derive = "3"
 # ast-grep-core is named in spec 012 T003 but deferred from Phase 1
 # because every published version >=0.40 pulls tree-sitter ^0.26.3 via
 # its `links = "tree-sitter"` dep, which conflicts with the three
