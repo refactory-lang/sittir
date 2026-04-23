@@ -35,12 +35,23 @@ import { compileWordMatcher } from './common.ts'
 
 export function assemble(optimized: OptimizedGrammar): NodeMap {
     const nodes = new Map<string, AssembledNode>()
+    // Parents that went through Link's variant() push-down keep their
+    // original rule shape but should NOT T065-promote to polymorph —
+    // each variant child renders via its own kind-template.
+    const variantParents = new Set(optimized.polymorphVariants?.map(v => v.parent) ?? [])
+    const variantChildrenByParent = new Map<string, string[]>()
+    for (const v of optimized.polymorphVariants ?? []) {
+        const existing = variantChildrenByParent.get(v.parent) ?? []
+        existing.push(`${v.parent}_${v.child}`)
+        variantChildrenByParent.set(v.parent, existing)
+    }
 
     for (const [kind, rule] of Object.entries(optimized.rules)) {
         const inlinedRule = inlineGroupRefs(rule, optimized.rules)
-        const modelType = classifyNode(kind, inlinedRule)
+        const modelType = classifyNode(kind, inlinedRule, { variantParents })
         const rawSimplifiedRule = optimized.simplifiedRules[kind]!
         const simplifiedRule = inlineGroupRefs(rawSimplifiedRule, optimized.simplifiedRules)
+        const variantChildKinds = variantChildrenByParent.get(kind)
 
         switch (modelType) {
             case 'branch': {
@@ -48,6 +59,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                     kind,
                     inlinedRule as SeqRule | ChoiceRule,
                     simplifiedRule,
+                    variantChildKinds ? { variantChildKinds } : undefined,
                 ))
                 break
             }
@@ -56,6 +68,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
                     kind,
                     inlinedRule as SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
                     simplifiedRule,
+                    variantChildKinds ? { variantChildKinds } : undefined,
                 ))
                 break
             }
@@ -1098,7 +1111,11 @@ function inlineGroupRefs(
  * left is distinguishing branch (has fields) from container (has children
  * only) for ordinary seq rules — that's a one-level check.
  */
-export function classifyNode(kind: string, rule: Rule): ModelType {
+export function classifyNode(
+    kind: string,
+    rule: Rule,
+    opts?: { variantParents?: ReadonlySet<string> },
+): ModelType {
     switch (rule.type) {
         case 'enum':      return 'enum'
         case 'supertype': return 'supertype'
@@ -1109,7 +1126,12 @@ export function classifyNode(kind: string, rule: Rule): ModelType {
         case 'string':    return /^\w+$/.test(rule.value) ? 'keyword' : 'token'
     }
 
-    if (isT065UnpromotedPolymorphChoice(rule)) return 'polymorph'
+    // Kinds that underwent variant() push-down in Link render as
+    // regular branches/containers — the variant distinction is
+    // entirely encoded in child kinds, so the parent has no
+    // per-variant template branches to emit. Suppress T065 for them.
+    const suppressT065 = opts?.variantParents?.has(kind) ?? false
+    if (!suppressT065 && isT065UnpromotedPolymorphChoice(rule)) return 'polymorph'
     if (isHiddenRepeatHelper(kind, rule)) return 'multi'
     const branchOrContainer = classifyBranchOrContainer(rule)
     if (branchOrContainer !== null) return branchOrContainer

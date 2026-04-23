@@ -1082,14 +1082,25 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
      * template text. Stage 1: populated but not yet read.
      */
     readonly simplifiedRule: Rule
+    /**
+     * Visible variant-child kinds registered via `variant()` adoption in
+     * overrides.ts (empty on non-override-polymorph parents). Populated
+     * for parents whose variant children live deep in the rule and were
+     * handled by Link's push-down path — they classify as branches
+     * rather than polymorphs but still need the metadata for `.from()`
+     * dispatch and from.ts generation. Pure metadata; template emission
+     * doesn't consult it.
+     */
+    readonly variantChildKinds: readonly string[]
 
     // Cached derivations — lazy, computed on first access
     #fields?: AssembledField[]
     #children?: AssembledChild[]
 
-    constructor(kind: string, rule: SeqRule | ChoiceRule, simplifiedRule: Rule, opts?: { factoryName?: string; irKey?: string }) {
+    constructor(kind: string, rule: SeqRule | ChoiceRule, simplifiedRule: Rule, opts?: { factoryName?: string; irKey?: string; variantChildKinds?: readonly string[] }) {
         super(kind, rule, opts)
         this.simplifiedRule = simplifiedRule
+        this.variantChildKinds = opts?.variantChildKinds ?? []
     }
 
     /** Direct access to the rule's ordered members (seq or choice). */
@@ -1256,12 +1267,15 @@ export class AssembledContainer extends AssembledNodeBase<SeqRule | ChoiceRule |
     // shapes here when the rule has children but no fields.
     /** See `AssembledBranch.simplifiedRule`. */
     readonly simplifiedRule: Rule
+    /** See `AssembledBranch.variantChildKinds`. */
+    readonly variantChildKinds: readonly string[]
 
     #children?: AssembledChild[]
 
-    constructor(kind: string, rule: SeqRule | ChoiceRule | RepeatRule | Repeat1Rule, simplifiedRule: Rule, opts?: { factoryName?: string; irKey?: string }) {
+    constructor(kind: string, rule: SeqRule | ChoiceRule | RepeatRule | Repeat1Rule, simplifiedRule: Rule, opts?: { factoryName?: string; irKey?: string; variantChildKinds?: readonly string[] }) {
         super(kind, rule, opts)
         this.simplifiedRule = simplifiedRule
+        this.variantChildKinds = opts?.variantChildKinds ?? []
     }
 
     get children(): AssembledChild[] {

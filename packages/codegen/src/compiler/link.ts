@@ -756,7 +756,35 @@ export function applyOverridePolymorphs(
         const found = findVariantChoice(rule)
         if (!found) continue
 
+        // When the registered variant children live in a DEEP choice that
+        // findVariantChoice can't reach (e.g. rust's visibility_modifier
+        // buried under `optional(seq('(', inner_choice, ')'))`), this
+        // `found` will be the outermost tagVariants-wrapped choice whose
+        // members don't reference any of the registered
+        // `${parentKind}_${child}` symbols. Overwriting the rule with a
+        // flat polymorph whose form content is bare `symbol(fullName)`
+        // would discard all ambient tokens (`pub`, `(`, `)`) and destroy
+        // the render template. Instead, leave the parent rule intact but
+        // push the ambient scaffold around the variant choice INTO each
+        // variant child's hidden-rule body — each child then renders its
+        // own structural delimiters, and the parent collapses to a
+        // normal branch/container template (`$PUB$$$CHILDREN`) that
+        // dispatches via child-kind without any `{% if variant %}`
+        // chain. See `pushAmbientScaffoldIntoVariantChildren` for the
+        // rewrite. Variant-child derivations are still emitted so
+        // downstream emitters (from.ts, types.ts) learn about the new
+        // kinds.
         emitVariantChildDerivations(parentKind, children, derivations)
+
+        const variantChildSymbolNames = new Set(children.map(c => `${parentKind}_${c}`))
+        const anyChildMemberInFoundChoice = found.choice.members.some(m => {
+            const inner = m.type === 'variant' ? m.content : m
+            return inner.type === 'symbol' && variantChildSymbolNames.has(inner.name)
+        })
+        if (!anyChildMemberInFoundChoice) {
+            pushAmbientScaffoldIntoVariantChildren(rules, parentKind, children)
+            continue
+        }
 
         const forms = children.map(child => {
             const fullName = `${parentKind}_${child}`
@@ -820,6 +848,174 @@ function emitVariantChildDerivations(
             applied: true,
         })
     }
+}
+
+/**
+ * Push the literals immediately flanking each variant choice INTO each
+ * variant child's hidden-rule body. The parent rule is rewritten to drop
+ * those literals at the corresponding position, so the render template
+ * emitted by the walker collapses from `$PUB($$$CHILDREN)` to
+ * `$PUB$$$CHILDREN` — ambient structure now lives inside each variant
+ * child's own template.
+ *
+ * Canonical case: rust's `visibility_modifier` ends up with variant
+ * aliases buried in `optional(seq('(', choice(a1, a2, a3, a4), ')'))`.
+ * Each `_${parent}_${child}` hidden rule's body is rewritten from
+ * `$.<original>` to `seq('(', $.<original>, ')')` so the variant-child
+ * template emits its own parens. The `seq('(', CHOICE, ')')` in the
+ * parent rule collapses to just `CHOICE` (single-member seq collapses
+ * later by simplifyRule).
+ *
+ * Falls back to a no-op when the rule's variant-choice position is not
+ * wrapped in any literal-flanking seq (e.g. the variant aliases are
+ * direct members of a top-level choice — nothing to push down).
+ *
+ * @param rules - The mutable rule map; modified in place for both the
+ *   parent rule and each `_${parent}_${child}` hidden rule.
+ * @param parentKind - The override-polymorph parent kind name.
+ * @param children - Registered variant-child short names for `parentKind`.
+ */
+function pushAmbientScaffoldIntoVariantChildren(
+    rules: Record<string, Rule>,
+    parentKind: string,
+    children: readonly string[],
+): void {
+    const variantChildVisibleNames = new Set(children.map(c => `${parentKind}_${c}`))
+    const parentRule = rules[parentKind]
+    if (!parentRule) return
+
+    // Rewrite the parent rule: find seq members that contain a choice of
+    // aliases matching the registered variant children, extract the
+    // literal prefix/suffix inside that seq, and strip them. For each
+    // matched alias, rewrite its `_${parent}_${child}` hidden-rule body
+    // to wrap with the same prefix/suffix.
+    const rewritten = rewriteSeqWithVariantAliasChoice(
+        parentRule,
+        rules,
+        variantChildVisibleNames,
+    )
+    if (rewritten !== parentRule) rules[parentKind] = rewritten
+}
+
+/**
+ * Walk a rule tree looking for a seq whose members include a choice
+ * whose every member (unwrapped through variant/alias) is an alias
+ * targeting a registered variant-child visible name. When found,
+ * extract the surrounding literal string members of that seq, push
+ * them into each alias's hidden-rule body, and return the parent seq
+ * with those literals stripped. Non-matching subtrees are returned
+ * unchanged.
+ */
+function rewriteSeqWithVariantAliasChoice(
+    rule: Rule,
+    rules: Record<string, Rule>,
+    variantChildVisibleNames: Set<string>,
+): Rule {
+    switch (rule.type) {
+        case 'seq': {
+            // Does this seq directly contain the alias-choice?
+            const choiceIdx = rule.members.findIndex(m =>
+                isAllAliasChoice(m, variantChildVisibleNames),
+            )
+            if (choiceIdx !== -1) {
+                return applyVariantScaffoldPushDown(rule, choiceIdx, rules)
+            }
+            const members = rule.members.map(m =>
+                rewriteSeqWithVariantAliasChoice(m, rules, variantChildVisibleNames),
+            )
+            return { type: 'seq', members }
+        }
+        case 'choice': {
+            const members = rule.members.map(m =>
+                rewriteSeqWithVariantAliasChoice(m, rules, variantChildVisibleNames),
+            )
+            return { type: 'choice', members }
+        }
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'variant':
+        case 'clause':
+        case 'group':
+        case 'field':
+        case 'token':
+        case 'terminal': {
+            const content = rewriteSeqWithVariantAliasChoice(
+                (rule as { content: Rule }).content,
+                rules,
+                variantChildVisibleNames,
+            )
+            return { ...(rule as object), content } as Rule
+        }
+        default:
+            return rule
+    }
+}
+
+/**
+ * Is `rule` a choice whose every member (after unwrapping variant
+ * wrappers) is a reference to one of the registered variant-child
+ * visible names? Link's `resolveRule` collapses `alias($._hidden,
+ * $.visible)` into `symbol('visible', aliasedFrom: '_hidden')` before
+ * this pass runs — so both raw `alias` rules AND collapsed symbol refs
+ * need to count.
+ */
+function isAllAliasChoice(rule: Rule, variantChildVisibleNames: Set<string>): boolean {
+    if (rule.type !== 'choice' || rule.members.length === 0) return false
+    return rule.members.every(m => {
+        const core = m.type === 'variant' ? m.content : m
+        if (core.type === 'alias') return variantChildVisibleNames.has(core.value)
+        if (core.type === 'symbol') return variantChildVisibleNames.has(core.name)
+        return false
+    })
+}
+
+/**
+ * Given a seq containing the variant-alias choice at `choiceIdx`, extract
+ * the flanking string-literal members of the seq and push them into each
+ * alias's `_${parent}_${child}` hidden-rule body. Return the seq with the
+ * literals removed (single-member seq collapses to its inner content).
+ */
+function applyVariantScaffoldPushDown(
+    seq: SeqRule,
+    choiceIdx: number,
+    rules: Record<string, Rule>,
+): Rule {
+    const prefix = seq.members.slice(0, choiceIdx).filter(m => m.type === 'string') as StringRule[]
+    const suffix = seq.members.slice(choiceIdx + 1).filter(m => m.type === 'string') as StringRule[]
+    if (prefix.length === 0 && suffix.length === 0) return seq // nothing to push
+    const choice = seq.members[choiceIdx] as ChoiceRule
+    for (const member of choice.members) {
+        const core = member.type === 'variant' ? member.content : member
+        let visibleName: string | null = null
+        if (core.type === 'alias') {
+            visibleName = core.value
+        } else if (core.type === 'symbol') {
+            // Link already collapsed the alias wrapper; the symbol's
+            // name IS the visible variant-child kind name.
+            visibleName = core.name
+        }
+        if (!visibleName) continue
+        const hiddenName = `_${visibleName}`
+        // `collectAliasTargets` at Link entry seeds both `rules[hiddenName]`
+        // (the hidden rule) and `rules[visibleName]` (the alias target)
+        // with separate references to the same source content. Wrap once
+        // and assign to both so the visible kind's emitted template —
+        // which is what render consults — picks up the pushed scaffold.
+        const body = rules[hiddenName] ?? rules[visibleName]
+        if (!body) continue
+        const wrapped: Rule = {
+            type: 'seq',
+            members: [...prefix, body, ...suffix],
+        }
+        if (hiddenName in rules) rules[hiddenName] = wrapped
+        if (visibleName in rules) rules[visibleName] = wrapped
+    }
+    // Strip the literals we just pushed down, keep everything else (the
+    // choice itself plus any non-string members).
+    const remaining = seq.members.filter((m, i) => i === choiceIdx || m.type !== 'string')
+    if (remaining.length === 1) return remaining[0]!
+    return { type: 'seq', members: remaining }
 }
 
 export function findVariantChoice(rule: Rule): VariantChoiceLocation | null {

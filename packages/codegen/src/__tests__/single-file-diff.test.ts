@@ -100,7 +100,7 @@ describe('T060: single-file diff on one-rule metadata change', () => {
 			expect(files).not.toContain('_meta.json');
 			// Each body has the @generated header.
 			for (const f of files) {
-				expect(readFileSync(join(dir, f), 'utf-8')).toMatch(/^\{#\s*@generated/);
+				expect(readFileSync(join(dir, f), 'utf-8')).toMatch(/^\{#-?\s*@generated/);
 			}
 		} finally {
 			rmSync(dir, { recursive: true, force: true });

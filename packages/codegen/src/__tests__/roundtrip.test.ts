@@ -58,7 +58,7 @@ describe('round-trip validation', () => {
         expect(result.jinjaTemplates.bodies.size).toBeGreaterThan(20)
         // Every emitted body starts with the @generated header.
         for (const body of result.jinjaTemplates.bodies.values()) {
-            expect(body).toMatch(/^\{#\s*@generated/)
+            expect(body).toMatch(/^\{#-?\s*@generated/)
         }
     }, 30000)
 

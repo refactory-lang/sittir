@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { link, enrichPositions, computeParentSets } from '../compiler/link.ts'
+import { link, enrichPositions, computeParentSets, applyOverridePolymorphs } from '../compiler/link.ts'
+import type { DerivationLog } from '../compiler/types.ts'
 import type { Rule, SymbolRef } from '../compiler/rule.ts'
 import type { RawGrammar, LinkedGrammar } from '../compiler/types.ts'
 
@@ -332,6 +333,109 @@ describe('Link — variant tagging + polymorph promotion', () => {
         expect(linked.derivations.promotedRules.some(
             (p: any) => p.kind === 'assignment' && p.classification === 'polymorph' && !p.applied
         )).toBe(true)
+    })
+
+    it('applyOverridePolymorphs pushes ambient scaffold into variant-child hidden rules when they live deep in the parent rule', () => {
+        // visibility_modifier-shaped case: variant aliases buried in
+        // `optional(seq('(', inner_choice, ')'))`. `findVariantChoice`
+        // only sees the outermost (tagVariants-wrapped) choice whose
+        // members do NOT reference the registered `${parent}_${child}`
+        // symbols → push-down path runs. Each `_${parent}_${child}`
+        // hidden rule gets flanking `(` / `)` wrapped around its body;
+        // the parent rule's enclosing seq drops those literals so the
+        // walker emits `$PUB$$$CHILDREN`. Parent stays as a choice
+        // (assemble suppresses T065 polymorph promotion via
+        // `variantParents`).
+        //
+        // Called directly to isolate the push-down behavior from Link's
+        // other passes (tagVariants, hidden-rule classification) that
+        // would otherwise restructure this fixture.
+        const rules: Record<string, Rule> = {
+            visibility_modifier: {
+                type: 'choice',
+                members: [
+                    { type: 'variant', name: 'crate', content: { type: 'symbol', name: 'crate' } },
+                    { type: 'variant', name: 'form1', content: { type: 'seq', members: [
+                        { type: 'field', name: 'pub', content: { type: 'symbol', name: '_kw_pub' } },
+                        { type: 'optional', content: { type: 'seq', members: [
+                            { type: 'string', value: '(' },
+                            { type: 'choice', members: [
+                                { type: 'alias', named: true, value: 'visibility_modifier_pub_self',
+                                    content: { type: 'symbol', name: '_visibility_modifier_pub_self' } },
+                                { type: 'alias', named: true, value: 'visibility_modifier_pub_super',
+                                    content: { type: 'symbol', name: '_visibility_modifier_pub_super' } },
+                            ] },
+                            { type: 'string', value: ')' },
+                        ] } },
+                    ] } },
+                ],
+            },
+            _visibility_modifier_pub_self: { type: 'symbol', name: 'self' },
+            _visibility_modifier_pub_super: { type: 'symbol', name: 'super' },
+        }
+        const derivations: DerivationLog = { inferredFields: [], promotedRules: [], repeatedShapes: [] }
+        applyOverridePolymorphs(
+            rules,
+            [
+                { parent: 'visibility_modifier', child: 'pub_self' },
+                { parent: 'visibility_modifier', child: 'pub_super' },
+            ],
+            derivations,
+        )
+        // Parent rule stays as a choice (not replaced by flat polymorph).
+        expect(rules['visibility_modifier']!.type).toBe('choice')
+        // Each variant-child hidden rule now has its body wrapped in the
+        // ambient `(` / `)` literals that used to flank the inner choice.
+        const selfBody = rules['_visibility_modifier_pub_self']!
+        expect(selfBody.type).toBe('seq')
+        if (selfBody.type !== 'seq') throw new Error('unreachable')
+        expect(selfBody.members.map(m => m.type === 'string' ? m.value : m.type))
+            .toEqual(['(', 'symbol', ')'])
+        const superBody = rules['_visibility_modifier_pub_super']!
+        expect(superBody.type).toBe('seq')
+        // Variant-child derivations emitted for downstream use.
+        const derivedKinds = derivations.promotedRules
+            .filter(p => p.kind === 'visibility_modifier_pub_self' || p.kind === 'visibility_modifier_pub_super')
+            .map(p => p.kind)
+            .sort()
+        expect(derivedKinds).toEqual(['visibility_modifier_pub_self', 'visibility_modifier_pub_super'])
+    })
+
+    it('applyOverridePolymorphs replaces rule when registered variant children DO match found choice', () => {
+        // Positive case mirroring python's `assignment` shape — the choice
+        // IS at the top level after `tagVariants` strips its variant wraps,
+        // and each member is `symbol(${parent}_${child})`. Expect the rule
+        // to be replaced with a PolymorphRule(source='override').
+        const raw = makeRaw({
+            assignment: {
+                type: 'choice',
+                members: [
+                    { type: 'symbol', name: 'assignment_eq' },
+                    { type: 'symbol', name: 'assignment_type' },
+                ],
+            },
+            assignment_eq: { type: 'seq', members: [
+                { type: 'field', name: 'left', content: { type: 'symbol', name: 'expr' } },
+                { type: 'string', value: '=' },
+                { type: 'field', name: 'right', content: { type: 'symbol', name: 'expr' } },
+            ] },
+            assignment_type: { type: 'seq', members: [
+                { type: 'field', name: 'left', content: { type: 'symbol', name: 'expr' } },
+                { type: 'string', value: ':' },
+                { type: 'field', name: 'typ', content: { type: 'symbol', name: 'expr' } },
+            ] },
+            expr: { type: 'pattern', value: '.*' },
+        }, {
+            polymorphVariants: [
+                { parent: 'assignment', child: 'eq' },
+                { parent: 'assignment', child: 'type' },
+            ],
+        })
+        const linked = link(raw)
+        expect(linked.rules['assignment']!.type).toBe('polymorph')
+        const poly = linked.rules['assignment'] as { type: 'polymorph'; forms: { name: string }[]; source: string }
+        expect(poly.source).toBe('override')
+        expect(poly.forms.map(f => f.name).sort()).toEqual(['eq', 'type'])
     })
 
     it('homogeneous-field choices stay as choice + variants (not polymorph)', () => {

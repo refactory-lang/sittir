@@ -752,6 +752,13 @@
         ]
       }
     },
+    "function_type": {
+      "source": "override",
+      "childKind": {
+        "function_type_trait_form": "trait_form",
+        "function_type_fn_form": "fn_form"
+      }
+    },
     "range_expression": {
       "source": "override",
       "childKind": {

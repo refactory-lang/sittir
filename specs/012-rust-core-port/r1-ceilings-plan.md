@@ -79,16 +79,38 @@ Each cluster below is a root-cause class; fixing one cluster typically closes 5�
 - **The three kinds were explicitly "held"** (see `packages/typescript/overrides.ts:247-271` — prior decision to skip variant() for `call_expression` / `export_statement` / `parenthesized_expression` due to grammar-level conflicts that splitting would expose. "Out of scope for variant() adoption" at the time.).
 - **Re-opening those holds is the spirit of this cluster**: either accept manual `conflicts:` authoring per-kind, or mechanize it.
 
-**Execution sequence (Phase A → D)**:
+**Execution sequence (revised 2026-04-22 post-probe: Phase A/D swap — D is a prerequisite, not a follow-up)**:
 
-- [ ] **CV Phase A — Probe (couple of hours)**. Pick `rust/visibility_modifier` as the cleanest first target (no "held" comment, self-contained, small alternative set: `pub`, `pub(crate)`, `pub(super)`, `pub(in path)`). Apply `variant()` to each alternative in `packages/rust/overrides.ts`. Run `tree-sitter generate` on the rust grammar. **Expected outcome A**: clean compile → readNode emits variant child kinds → rtPass for rust visibility_modifier cases closes. **Expected outcome B**: conflicts error → capture exact rule pairs involved.
-- [ ] **CV Phase B — Handle conflicts (scope depends on A)**. If A compiled: verify end-to-end by checking readNode output includes the new child kinds + measuring rtPass delta. If A errored: inspect the conflicts. Small finite list → prototype auto-wiring (diff `tree-sitter generate` output before/after, extract conflict pattern, emit `conflicts:` array automatically via codegen). Sprawling → commit to manual `conflicts:` authoring per-kind in overrides.ts.
+The original ordering (A → B → C → D) made Phase D a *follow-up* after the variant() grammar changes landed. Phase A, executed 2026-04-22 against `rust/visibility_modifier`, proved Phase D must land **first**: the grammar-level mechanism works end-to-end (tree-sitter generate clean, readNode surfaces variant child kinds, per-variant `.jinja` files emit) but the parent template is produced as `{{ children | join(" ") }}` stripped of its ambient anonymous tokens (`pub`, `(`, `)`), so rendering is lossy (`"pub(crate)" → "crate"`, `"pub" → ""`). rtPass did not move. See **Phase A probe results** below for the raw findings that drove this reordering.
+
+- [ ] **CV Phase D (new first step) — Template-emitter refactor**. Update `AssembledPolymorph.renderTemplate()` at `packages/codegen/src/compiler/node-map.ts:1391-1402` so that when forms are lifted to variant() child kinds, the parent template preserves ambient anonymous tokens around the `{{ children }}` slot (`pub ( {{ children }} )` for visibility_modifier, not the flat `{{ children | join(" ") }}` it emits today) and each variant child gets its own dedicated template. Land **without** grammar adopters: the per-grammar no-variant-adoption codebase should still pass all validators unchanged. Add a unit test that freezes the emitter's expected output for a synthetic "parent-with-structural-delimiters + variant children" shape so future refactors don't regress it.
+- [ ] **CV Phase A (re-run) — Probe now that D has landed**. Re-apply `variant()` adoption on `rust/visibility_modifier` (the same change the 2026-04-22 probe made; see below for exact paths/keys). **Expected outcome**: clean compile AND rtPass for pub(crate)/pub(super)/pub(in path) cases closes. If rtPass still doesn't move despite correct-looking templates, escalate — D missed a case.
+- [ ] **CV Phase B — Handle conflicts (scope depends on A-rerun)**. If A-rerun compiled: verify end-to-end by checking readNode output includes the new child kinds + measuring rtPass delta. If A-rerun errored: inspect the conflicts. Small finite list → prototype auto-wiring (diff `tree-sitter generate` output before/after, extract conflict pattern, emit `conflicts:` array automatically via codegen). Sprawling → commit to manual `conflicts:` authoring per-kind in overrides.ts.
 - [ ] **CV Phase C — Expand to typescript's three holds**. Retry `call_expression`, `export_statement`, `parenthesized_expression` using whatever Phase B learned. Target is the ~30 typescript rtPass failures that the template-fall-through diagnosis attributes to these kinds.
-- [ ] **CV Phase D — Template-emitter change**. Update `AssembledPolymorph.renderTemplate()` at `packages/codegen/src/compiler/node-map.ts:1391-1402`. When forms are lifted to variant() child kinds, the parent's template becomes trivial (`{{ children }}`) and each variant child gets its own dedicated template file. This matches spec 012's FR-011 intent (and v3 input's "parent template renders shared fields + `{{ children }}`; the child's kind→template lookup does the work"). FR-011's "three exception rules" caveat is deleted in the same change — the goal is zero exceptions, not three.
 
-**Risk surface to watch in Phase A**:
-1. **Pipeline correctness** — variant() has unit-test coverage but no end-to-end grammar exercise. Latent bugs may surface only when exercised.
-2. **Template emission** — the current emitter at `node-map.ts:1391-1402` assumes forms come from the pipeline's own split logic. variant() produces aliased child kinds directly; the emitter may need the Phase D refactor BEFORE Phase A even produces passing rtPass entries. Watch for this in Phase A — if a clean-compiling variant() change doesn't move rtPass, Phase D may be a prerequisite rather than a follow-up.
+**Phase A probe results (executed 2026-04-22, reverted)**:
+
+The probe applied `variant('pub_self' | 'pub_super' | 'pub_crate' | 'pub_in_path')` patches to `rust/visibility_modifier` via the **declarative `transforms:` config** (wire-time pre-registration required — `variant()` inside a rule-body `transform()` call does NOT trigger it; the initial in-`rules:` attempt failed with `Undefined symbol _visibility_modifier_pub_self`).
+
+Exact change (for Phase A-rerun):
+```ts
+// packages/rust/overrides.ts
+import { ..., variant, ... } from '../codegen/src/dsl/index.ts'
+// In transforms: (before while_expression)
+visibility_modifier: {
+    '1/1/0/1/0': variant('pub_self'),
+    '1/1/0/1/1': variant('pub_super'),
+    '1/1/0/1/2': variant('pub_crate'),
+    '1/1/0/1/3': variant('pub_in_path'),
+},
+```
+Path `1/1/0/1/N` walks `choice(bareCrate, seq(pub, optional(seq('(', choice[N], ')'))))`. The authored rule body in `rules:` (field-wrapping `pub` / `in` via `_kw_pub` / `_kw_in`) remains unchanged — wire composes them: authored fn runs first, then variant() patches apply.
+
+Probe results: ✅ `tree-sitter generate` clean (no conflicts, only pre-existing warnings) ✅ node-types.json emits 4 variant child kinds with correct field routing ✅ re-compiled parser.wasm surfaces the aliases (`pub(crate)` parses as `visibility_modifier → "pub" "(" visibility_modifier_pub_crate ")"`) ✅ per-variant `.jinja` templates emit ✅ fromPass +4 pass / +4 total (165/176 → 169/180 — new kinds pass-by-construction) ✅ pinning test suite unchanged ❌ rtPass +0: parent template is `{{ children | join(" ") }}` stripped of `pub`/`(`/`)` → `"pub" → ""`, `"pub(crate)" → "crate"` lossy renders.
+
+**Risk surface post-reordering**:
+1. **Phase D scope** — the emitter refactor must cover both "parent-with-delimiters" (visibility_modifier shape) and "parent-with-no-delimiters" (typescript call_expression / export_statement shapes where the variant arms differ at the top-level seq, not inside a sub-grouping). A narrow fix that only handles visibility_modifier's shape won't close the typescript cluster. Validate D's scope against at least one ts kind before declaring D complete.
+2. **Pipeline correctness** — variant() has unit-test coverage but now partial end-to-end coverage (Phase A probe confirmed grammar-level correctness for one kind). Latent bugs for more complex shapes may still surface in Phase C.
 
 **Success definition for CV**: all three FR-011 exception kinds rendered via child-kind dispatch (no `{% if variant == %}` in their .jinja output), and rtPass improves by ~30 across typescript + some rust increment. When CV completes, the remaining R1 debt is the smaller clusters (trailing-semi, quote-style, object_type offset — ~19 failures) which fit the normal per-cluster loop.
 
@@ -156,7 +178,7 @@ Signal: factory construction fails for a kind that appears to exist but isn't in
 
 Re-ordered after the mid-execution discovery that the three FR-011 exception kinds drive ~30 of the 49 typescript rtPass failures via the variant-dispatch gap (templates use `{% if variant == %}` but readNode doesn't populate `$variant`). Adopting `variant()` in overrides.ts is the source-of-truth fix and eliminates the FR-011 exception carve-out entirely.
 
-1. **CV (variant() adoption for the three FR-011 exception kinds)** — NEW TOP PRIORITY. Closes ~30 typescript rtPass failures + several rust `visibility_modifier` cases + removes the three-exception framing from spec 012 FR-011 as a bonus. **Phased execution A→D inside CV (see cluster entry above).** Phase A probe is the first concrete action and will determine whether subsequent phases are feasible.
+1. **CV (variant() adoption for the three FR-011 exception kinds)** — NEW TOP PRIORITY. Closes ~30 typescript rtPass failures + several rust `visibility_modifier` cases + removes the three-exception framing from spec 012 FR-011 as a bonus. **Phased execution D → A → B → C inside CV (see cluster entry above)**; revised 2026-04-22 after the original Phase A probe confirmed that the Phase D template-emitter refactor is a prerequisite, not a follow-up. Phase D is now the first concrete action.
 2. **C1 (polymorph null forms)** — affects rust + typescript rtPass for non-CV polymorphs. CV may close some C1 cases incidentally.
 3. **C4 (choice branches w/ literals)** — `function_type`, `impl_item`, `macro_definition` in rust (3 rtPass failures). Blocked on variant-field-wrapped-choice design limit; may become easier post-CV if the Phase D emitter refactor generalizes.
 4. **C6 (Python comments-as-extras)** — 2–3 python rtPass failures.

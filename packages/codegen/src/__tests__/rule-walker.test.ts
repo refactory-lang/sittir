@@ -33,6 +33,8 @@ const repeat = (content: Rule, separator?: string): Rule =>
     ({ type: 'repeat', content, separator })
 const repeat1 = (content: Rule, separator?: string): Rule =>
     ({ type: 'repeat1', content, separator })
+const aliasRule = (content: Rule, named: boolean, value: string): Rule =>
+    ({ type: 'alias', content, named, value })
 
 // ---------------------------------------------------------------------------
 // Baselines
@@ -172,6 +174,59 @@ describe('renderRuleTemplate — synthetic outer-field wrappers (606b646)', () =
 // Choice branch literal leakage (uncommitted fix)
 // ---------------------------------------------------------------------------
 
+describe('renderRuleTemplate — primary-branch selection in outer choice', () => {
+    it('declaration order wins when the first branch contributes a field', () => {
+        // Unchanged behavior: when the first non-empty branch is already
+        // field-bearing, later branches only add their $-placeholders.
+        const r = choice(
+            seq(str('if'), field('cond', sym('expression'))),
+            seq(str('while'), field('body', sym('block'))),
+        )
+        const { template } = renderRuleTemplate(r)
+        expect(template).toBe('if $COND$BODY')
+    })
+
+    it('bare-only first branch yields to field-bearing later branch', () => {
+        // visibility_modifier-shaped `choice(bare_crate, seq(field('pub',
+        // _kw_pub), optional(variant_choice)))`. First-branch-primary
+        // would emit `$$$CHILDREN$PUB` (child-slot before field — wrong
+        // order for rendering); field-bearing reorder picks the seq
+        // branch as primary so `$PUB` lands first.
+        const r = choice(
+            sym('crate'),
+            seq(
+                field('pub', sym('_kw_pub')),
+                optional(choice(sym('self'), sym('super'))),
+            ),
+        )
+        const { template } = renderRuleTemplate(r)
+        // The walker inserts a needsSpace separator between $PUB's
+        // field slot and the children slot; what matters is the ORDER.
+        expect(template).toBe('$PUB $$$CHILDREN')
+    })
+
+    it('multiple bare-only branches + field-bearing branch', () => {
+        // Three bare branches, one field-bearing — the field-bearing
+        // branch wins, the three bare branches each collapse to the
+        // shared `$$$CHILDREN` slot.
+        const r = choice(
+            sym('x'),
+            sym('y'),
+            sym('z'),
+            seq(str('fn'), field('name', sym('identifier'))),
+        )
+        const { template } = renderRuleTemplate(r)
+        expect(template).toBe('fn $NAME$$$CHILDREN')
+    })
+
+    it('no reorder when no branch has fields', () => {
+        // All branches are bare symbols — declaration order wins
+        // (collapses to single `$$$CHILDREN`).
+        const r = choice(sym('a'), sym('b'), sym('c'))
+        expect(renderRuleTemplate(r).template).toBe('$$$CHILDREN')
+    })
+})
+
 describe('renderRuleTemplate — choice branch literal leakage', () => {
     it('literals from non-primary branches do not leak into the template', () => {
         // Choice of three distinct literal shapes. Only the first branch's
@@ -263,6 +318,47 @@ describe('renderRuleTemplate — hidden helper inlining', () => {
 // ---------------------------------------------------------------------------
 // Repeat semantics
 // ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Alias dispatch — variant()-adopted choice members surface as visible
+// parse-tree kinds; the walker must treat them as named children.
+// ---------------------------------------------------------------------------
+
+describe('renderRuleTemplate — alias rules', () => {
+    it('named alias emits $$$CHILDREN like a visible symbol', () => {
+        // `alias($._hidden, $.visible)` — tree-sitter surfaces a visible
+        // kind at parse time. Walker must render it as a named child slot.
+        const r = aliasRule(sym('_visibility_modifier_pub_crate'), true, 'visibility_modifier_pub_crate')
+        expect(renderRuleTemplate(r).template).toBe('$$$CHILDREN')
+    })
+
+    it('named alias inside a choice contributes to $$$CHILDREN', () => {
+        // visibility_modifier-shaped inner choice after variant() adoption.
+        const r = choice(
+            aliasRule(sym('_vm_pub_self'), true, 'vm_pub_self'),
+            aliasRule(sym('_vm_pub_super'), true, 'vm_pub_super'),
+        )
+        expect(renderRuleTemplate(r).template).toBe('$$$CHILDREN')
+    })
+
+    it('named alias inside seq preserves ambient literals', () => {
+        // `pub(inner_alias)` shape — ambient `(`/`)` must survive so the
+        // parent template doesn't collapse to just `$$$CHILDREN`.
+        const r = seq(
+            str('('),
+            aliasRule(sym('_inner'), true, 'visible_inner'),
+            str(')'),
+        )
+        expect(renderRuleTemplate(r).template).toBe('($$$CHILDREN)')
+    })
+
+    it('unnamed alias walks into its content (relabel only)', () => {
+        // `alias($.x, 'display_name')` with named=false — no new parse-tree
+        // kind is introduced; content dictates the template slot.
+        const r = aliasRule(str('literal'), false, 'display_name')
+        expect(renderRuleTemplate(r).template).toBe('literal')
+    })
+})
 
 describe('renderRuleTemplate — repeats', () => {
     it('string members inside a repeat do not leak into the template', () => {

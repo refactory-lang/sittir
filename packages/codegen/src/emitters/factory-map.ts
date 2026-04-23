@@ -89,6 +89,25 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 
     const polymorphVariants: Record<string, PolymorphVariantDescriptor> = {}
     for (const [kind, node] of nodeMap.nodes) {
+        // Variant-adopted branches / containers — kinds that went
+        // through Link's push-down (see link.ts
+        // `pushAmbientScaffoldIntoVariantChildren`) classify as
+        // branch/container but still carry the variant-child kinds on
+        // `variantChildKinds`. Emit them into polymorphVariants so
+        // `.from()`-dispatch and the validator's deep-read path both
+        // know which kinds participate in variant() adoption.
+        if ((node.modelType === 'branch' || node.modelType === 'container')
+            && node.variantChildKinds.length > 0
+        ) {
+            if (kind.startsWith('_') && !aliasSet.has(kind)) continue
+            const childKind: Record<string, string> = {}
+            for (const visibleName of node.variantChildKinds) {
+                const suffix = visibleName.startsWith(`${kind}_`) ? visibleName.slice(kind.length + 1) : visibleName
+                childKind[visibleName] = suffix
+            }
+            polymorphVariants[kind] = { source: 'override', childKind }
+            continue
+        }
         if (node.modelType !== 'polymorph') continue
         if (kind.startsWith('_') && !aliasSet.has(kind)) continue
         if (node.source === 'override') {
