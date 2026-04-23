@@ -423,7 +423,7 @@ export async function validateRoundTrip(
 					const rendered = render(data);
 
 					// Wrap for reparse using supertype context
-					const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, { adoptedVariantKinds: deepReadKinds });
+					const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, { adoptedVariantKinds: deepReadKinds, targetKind });
 					if (wrapped === null) continue; // no supertype → skip reparse
 
 					// Re-parse

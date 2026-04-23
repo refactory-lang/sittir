@@ -241,6 +241,15 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
         'pattern': r => `let ${r} = null;`,
         'declaration': r => r,
         'statement': r => r,
+        // Alias-target-specific wrappers: tree-sitter aliases are
+        // position-dependent. `interface_body` is `alias($.object_type,
+        // $.interface_body)` inside `interface_declaration.body`.
+        // Reparsing the rendered content inside the generic `type _X
+        // = ${r};` wrapper produces `object_type` (no alias), but the
+        // original was `interface_body`. Wrap in an interface
+        // declaration so the alias re-fires and reparse produces
+        // interface_body for AST-match parity.
+        'interface_body': r => `interface _I ${r}`,
     },
     python: {
         // tree-sitter-python supertypes are also unprefixed.
@@ -351,10 +360,22 @@ export function wrapForReparse(
     kind: string,
     grammar: string,
     kindToSupertypes: Map<string, string[]>,
-    opts?: { adoptedVariantKinds?: ReadonlySet<string> },
+    opts?: { adoptedVariantKinds?: ReadonlySet<string>; targetKind?: string },
 ): WrapForReparseResult | null {
     const wrappers = REPARSE_WRAPPERS[grammar]
     if (!wrappers) return null
+    // Alias-target wrapper preference: when `kind` (renderedKind, the
+    // alias source after drillAs) differs from `targetKind` (the
+    // tree-sitter-emitted alias target), a wrapper keyed on the alias
+    // target — if one exists — reproduces the original parse position
+    // so reparse emits the same aliased kind. That keeps AST-match
+    // parity for kinds whose alias target doesn't survive a generic
+    // supertype wrapper (ts `interface_body` → `object_type` when
+    // reparsed in a `type _X = …;` context).
+    if (opts?.targetKind && opts.targetKind !== kind) {
+        const targetWrapper = wrappers[opts.targetKind]
+        if (targetWrapper) return applyWrapperTemplate(rendered, targetWrapper)
+    }
     // Kind-specific wrapper beats supertype wrapper — some kinds only
     // appear in contexts their supertype's generic wrapper doesn't
     // produce (e.g. rust `mut_pattern` surfaces in match/if-let but
