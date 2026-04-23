@@ -442,7 +442,8 @@ export function wrapDoStatement(data: _NodeData, tree: TreeHandle): WrappedNode<
     ...data,
     get body() { return drillIn(data.$fields?.['body'], tree); },
     get condition() { return drillIn(data.$fields?.['condition'], tree); },
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get semicolon() { return drillIn(data.$fields?.['semicolon'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<DoStatement>;
 }
 
@@ -469,7 +470,8 @@ export function wrapBreakStatement(data: _NodeData, tree: TreeHandle): WrappedNo
   return {
     ...data,
     get label() { return drillAs(data.$fields?.['label'], tree, "statement_identifier", "identifier"); },
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get semicolon() { return drillIn(data.$fields?.['semicolon'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<BreakStatement>;
 }
 
@@ -477,14 +479,16 @@ export function wrapContinueStatement(data: _NodeData, tree: TreeHandle): Wrappe
   return {
     ...data,
     get label() { return drillAs(data.$fields?.['label'], tree, "statement_identifier", "identifier"); },
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get semicolon() { return drillIn(data.$fields?.['semicolon'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ContinueStatement>;
 }
 
 export function wrapDebuggerStatement(data: _NodeData, tree: TreeHandle): WrappedNode<DebuggerStatement> {
   return {
     ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get semicolon() { return drillIn(data.$fields?.['semicolon'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<DebuggerStatement>;
 }
 

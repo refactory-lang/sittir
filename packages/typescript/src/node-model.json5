@@ -5219,12 +5219,11 @@
           "aliasSources": {
             "statement_identifier": "identifier"
           }
-        }
-      ],
-      "children": [
+        },
         {
           "name": "semicolon",
           "propertyName": "semicolon",
+          "paramName": "semicolon",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -5235,9 +5234,17 @@
               "name": "_semicolon",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_semicolon"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "call_expression",
@@ -6661,12 +6668,11 @@
           "aliasSources": {
             "statement_identifier": "identifier"
           }
-        }
-      ],
-      "children": [
+        },
         {
           "name": "semicolon",
           "propertyName": "semicolon",
+          "paramName": "semicolon",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6677,9 +6683,17 @@
               "name": "_semicolon",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_semicolon"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "debugger",
@@ -6693,15 +6707,16 @@
     },
     {
       "kind": "debugger_statement",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "DebuggerStatement",
       "factoryName": "debuggerStatement",
       "irKey": "debuggerStatement",
       "hidden": false,
-      "children": [
+      "fields": [
         {
           "name": "semicolon",
           "propertyName": "semicolon",
+          "paramName": "semicolon",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6712,9 +6727,17 @@
               "name": "_semicolon",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_semicolon"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "declaration",
@@ -7338,12 +7361,11 @@
               "parenthesized_expression"
             ]
           }
-        }
-      ],
-      "children": [
+        },
         {
           "name": "semicolon",
           "propertyName": "semicolon",
+          "paramName": "semicolon",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -7354,9 +7376,17 @@
               "name": "_semicolon",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_semicolon"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "else",

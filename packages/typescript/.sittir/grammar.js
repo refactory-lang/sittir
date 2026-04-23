@@ -1491,6 +1491,25 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     function_signature: {
       4: field("semicolon")
     },
+    // break_statement: seq('break', field('label', optional(...)),
+    // _semicolon). Label the trailing `;` at pos 2.
+    break_statement: {
+      2: field("semicolon")
+    },
+    // continue_statement: seq('continue', field('label', ...), _semicolon).
+    continue_statement: {
+      2: field("semicolon")
+    },
+    // debugger_statement: seq('debugger', _semicolon).
+    debugger_statement: {
+      1: field("semicolon")
+    },
+    // do_statement: seq('do', field('body'), 'while', field('condition'),
+    // optional(_semicolon)). Optional wrapper at pos 4; labeling as
+    // a semicolon field lets the template emit it when present.
+    do_statement: {
+      4: field("semicolon")
+    },
     // parenthesized_expression: variant() adoption. Shape is
     // `seq('(', choice(typed_expr, sequence_expression), ')')`.
     // The inner choice's alternatives become variant-child kinds

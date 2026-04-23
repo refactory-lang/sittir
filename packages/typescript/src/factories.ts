@@ -776,20 +776,16 @@ export function doStatement(config: T.DoStatement.Config) {
   const fields = {
     body: config.body,
     condition: config.condition,
+    semicolon: config.semicolon,
   };
-  const children = config.children ?? [];
   return {
     $type: 'do_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    $children: children,
     body(value?: T.Statement) { return _fs(config, doStatement, 'body', value, fields.body); },
     condition(value?: T.ParenthesizedExpression) { return _fs(config, doStatement, 'condition', value, fields.condition); },
-    child(value?: T.Semicolon) {
-      if (value === undefined) return children[0];
-      return doStatement({ ...config, children: [value] });
-    },
+    semicolon(value?: T.Semicolon | undefined) { return _fs(config, doStatement, 'semicolon', value, fields.semicolon); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -846,19 +842,15 @@ export function withStatement(config: T.WithStatement.Config) {
 export function breakStatement(config: T.BreakStatement.Config) {
   const fields = {
     label: config.label,
+    semicolon: config.semicolon,
   };
-  const children = config.children ?? [];
   return {
     $type: 'break_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    $children: children,
     label(value?: T.Identifier | undefined) { return _fs(config, breakStatement, 'label', value, fields.label); },
-    child(value?: T.Semicolon) {
-      if (value === undefined) return children[0];
-      return breakStatement({ ...config, children: [value] });
-    },
+    semicolon(value?: T.Semicolon) { return _fs(config, breakStatement, 'semicolon', value, fields.semicolon); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -871,19 +863,15 @@ export function breakStatement(config: T.BreakStatement.Config) {
 export function continueStatement(config: T.ContinueStatement.Config) {
   const fields = {
     label: config.label,
+    semicolon: config.semicolon,
   };
-  const children = config.children ?? [];
   return {
     $type: 'continue_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    $children: children,
     label(value?: T.Identifier | undefined) { return _fs(config, continueStatement, 'label', value, fields.label); },
-    child(value?: T.Semicolon) {
-      if (value === undefined) return children[0];
-      return continueStatement({ ...config, children: [value] });
-    },
+    semicolon(value?: T.Semicolon) { return _fs(config, continueStatement, 'semicolon', value, fields.semicolon); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -893,13 +881,16 @@ export function continueStatement(config: T.ContinueStatement.Config) {
   };
 }
 
-export function debuggerStatement(child: T.Semicolon) {
-  const children = [child];
+export function debuggerStatement(config: T.DebuggerStatement.Config) {
+  const fields = {
+    semicolon: config.semicolon,
+  };
   return {
     $type: 'debugger_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $children: children,
+    $fields: fields,
+    semicolon(value?: T.Semicolon) { return _fs(config, debuggerStatement, 'semicolon', value, fields.semicolon); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

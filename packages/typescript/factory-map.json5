@@ -35,7 +35,7 @@
     "with_statement": "config",
     "break_statement": "config",
     "continue_statement": "config",
-    "debugger_statement": "children",
+    "debugger_statement": "config",
     "return_statement": "config",
     "throw_statement": "config",
     "labeled_statement": "config",
@@ -389,6 +389,11 @@
       "condition",
       "body"
     ],
+    "do_statement": [
+      "body",
+      "condition",
+      "semicolon"
+    ],
     "try_statement": [
       "body",
       "handler",
@@ -397,6 +402,17 @@
     "with_statement": [
       "object",
       "body"
+    ],
+    "break_statement": [
+      "label",
+      "semicolon"
+    ],
+    "continue_statement": [
+      "label",
+      "semicolon"
+    ],
+    "debugger_statement": [
+      "semicolon"
     ],
     "labeled_statement": [
       "label",

@@ -314,7 +314,7 @@ describe('do_statement', () => {
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.doStatement({ body: { $type: 'statement', $text: 'test' } as any, condition: { $type: 'parenthesized_expression', $text: 'test' } as any, children: [{ $type: '_semicolon', $text: 'test' } as any] as any });
+    const node = ir.doStatement({ body: { $type: 'statement', $text: 'test' } as any, condition: { $type: 'parenthesized_expression', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -345,33 +345,37 @@ describe('with_statement', () => {
 
 describe('break_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.breakStatement({ children: [{ $type: '_semicolon', $text: 'test' } as any] as any });
+    const node = ir.breakStatement({ semicolon: { $type: '_semicolon', $text: 'test' } as any });
     expect(node.$type).toBe('break_statement');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.breakStatement({ children: [{ $type: '_semicolon', $text: 'test' } as any] as any });
+    const node = ir.breakStatement({ semicolon: { $type: '_semicolon', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('continue_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.continueStatement({ children: [{ $type: '_semicolon', $text: 'test' } as any] as any });
+    const node = ir.continueStatement({ semicolon: { $type: '_semicolon', $text: 'test' } as any });
     expect(node.$type).toBe('continue_statement');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.continueStatement({ children: [{ $type: '_semicolon', $text: 'test' } as any] as any });
+    const node = ir.continueStatement({ semicolon: { $type: '_semicolon', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('debugger_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.debuggerStatement({ type: "_semicolon" } as never);
+    const node = ir.debuggerStatement({ semicolon: { $type: '_semicolon', $text: 'test' } as any });
     expect(node.$type).toBe('debugger_statement');
     expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.debuggerStatement({ semicolon: { $type: '_semicolon', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 

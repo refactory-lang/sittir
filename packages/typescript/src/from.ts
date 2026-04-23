@@ -733,7 +733,7 @@ export function doStatementFrom(input: T.DoStatement.Loose): ReturnType<typeof F
   return F.doStatement({
     body: _resolveOneBranch(input.body, "statement"),
     condition: _resolveOneBranch(input.condition, "parenthesized_expression"),
-    children: _resolveOneLeaf(input.children, "_automatic_semicolon"),
+    semicolon: _resolveOneLeaf(input.semicolon, "_automatic_semicolon"),
   });
 }
 
@@ -758,7 +758,7 @@ export function breakStatementFrom(input: T.BreakStatement.Loose): ReturnType<ty
   if (isNodeData(input)) return input;
   return F.breakStatement({
     label: _resolveOneLeaf(input.label, "identifier"),
-    children: _resolveOneLeaf(input.children, "_automatic_semicolon"),
+    semicolon: _resolveOneLeaf(input.semicolon, "_automatic_semicolon"),
   });
 }
 
@@ -766,17 +766,15 @@ export function continueStatementFrom(input: T.ContinueStatement.Loose): ReturnT
   if (isNodeData(input)) return input;
   return F.continueStatement({
     label: _resolveOneLeaf(input.label, "identifier"),
-    children: _resolveOneLeaf(input.children, "_automatic_semicolon"),
+    semicolon: _resolveOneLeaf(input.semicolon, "_automatic_semicolon"),
   });
 }
 
-export function debuggerStatementFrom(input?: NonNullable<T.DebuggerStatement.Config['children']>[number] | T.DebuggerStatement) {
-  if (isNodeData(input) && input.$type === 'debugger_statement') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.debuggerStatement(child);
-  }
-  return F.debuggerStatement(input);
+export function debuggerStatementFrom(input: T.DebuggerStatement.Loose): ReturnType<typeof F.debuggerStatement> {
+  if (isNodeData(input)) return input;
+  return F.debuggerStatement({
+    semicolon: _resolveOneLeaf(input.semicolon, "_automatic_semicolon"),
+  });
 }
 
 export function returnStatementFrom(input: T.ReturnStatement.Loose): ReturnType<typeof F.returnStatement> {

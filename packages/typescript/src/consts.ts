@@ -525,6 +525,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'break_statement': [
     { name: 'label', required: false, multiple: false },
+    { name: 'semicolon', required: true, multiple: false },
   ],
   'call_expression': [
   ],
@@ -587,8 +588,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'continue_statement': [
     { name: 'label', required: false, multiple: false },
+    { name: 'semicolon', required: true, multiple: false },
   ],
   'debugger_statement': [
+    { name: 'semicolon', required: true, multiple: false },
   ],
   'declaration': [
   ],
@@ -611,6 +614,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'do_statement': [
     { name: 'body', required: true, multiple: false },
     { name: 'condition', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   'else_clause': [
     { name: 'statement', required: true, multiple: false },

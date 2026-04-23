@@ -761,8 +761,8 @@ export interface DoStatement {
   readonly $fields: {
     readonly body: Statement;
     readonly condition: ParenthesizedExpression;
+    readonly semicolon?: Semicolon;
   };
-  readonly $children: readonly [Semicolon];
 }
 
 export interface TryStatement {
@@ -786,21 +786,23 @@ export interface BreakStatement {
   readonly $type: 'break_statement';
   readonly $fields: {
     readonly label?: Identifier;
+    readonly semicolon: Semicolon;
   };
-  readonly $children: readonly [Semicolon];
 }
 
 export interface ContinueStatement {
   readonly $type: 'continue_statement';
   readonly $fields: {
     readonly label?: Identifier;
+    readonly semicolon: Semicolon;
   };
-  readonly $children: readonly [Semicolon];
 }
 
 export interface DebuggerStatement {
   readonly $type: 'debugger_statement';
-  readonly $children: readonly [Semicolon];
+  readonly $fields: {
+    readonly semicolon: Semicolon;
+  };
 }
 
 export interface ReturnStatement {
