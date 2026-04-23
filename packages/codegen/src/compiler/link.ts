@@ -335,7 +335,7 @@ function runFieldNameInferencePass(
  */
 function tagAllRulesVariants(rules: Record<string, Rule>, inline: readonly string[] | undefined): void {
     for (const [name, rule] of Object.entries(rules)) {
-        rules[name] = tagVariants(rule, name, inline)
+        rules[name] = tagVariants(rule, name, rules, inline)
     }
 }
 
@@ -463,10 +463,10 @@ function extractAliasedFromName(content: Rule, supertypes: Set<string>): string 
 // (fan-out, factoring, prefix/suffix extraction).
 // ---------------------------------------------------------------------------
 
-function tagVariants(rule: Rule, name: string, inline?: readonly string[]): Rule {
+function tagVariants(rule: Rule, name: string, rules: Record<string, Rule>, inline?: readonly string[]): Rule {
     switch (rule.type) {
         case 'seq':
-            return { type: 'seq', members: rule.members.map(m => tagVariants(m, name, inline)) }
+            return { type: 'seq', members: rule.members.map(m => tagVariants(m, name, rules, inline)) }
 
         case 'choice': {
             // Wrap visible choice members in variants. Hidden is the
@@ -475,39 +475,36 @@ function tagVariants(rule: Rule, name: string, inline?: readonly string[]): Rule
             if (!isHiddenKind(name, inline)) {
                 // Skip wrapping when the choice is structurally
                 // homogeneous — every branch has the same seq shape with
-                // matching member kinds and field / symbol names at each
-                // position, differing only in LEAF content (literal
-                // values inside a field, for example). Simplify's
-                // `canonicalize` merges these downstream into a flat
-                // seq with per-position unioned contents — which is
-                // the right surface for binary_expression-shaped rules.
+                // matching member kinds at each position, and per-position
+                // content that's either identical or opaque (non-inlined
+                // symbol refs). Simplify's `canonicalize` merges these
+                // downstream into a flat seq with per-position unioned
+                // contents — right for binary_expression-shaped rules.
                 // Wrapping here would create phantom variant identities
                 // that dispatch on nothing render-distinct, and would
-                // also BLOCK canonicalize (which bails on variant-
-                // wrapped choices to preserve intentional polymorph
-                // identity).
-                if (isStructurallyHomogeneousChoice(rule)) {
-                    return { type: 'choice', members: rule.members.map(m => tagVariants(m, name, inline)) }
+                // also block canonicalize.
+                if (isStructurallyHomogeneousChoice(rule, rules)) {
+                    return { type: 'choice', members: rule.members.map(m => tagVariants(m, name, rules, inline)) }
                 }
                 return wrapVariants(rule)
             }
-            return { type: 'choice', members: rule.members.map(m => tagVariants(m, name, inline)) }
+            return { type: 'choice', members: rule.members.map(m => tagVariants(m, name, rules, inline)) }
         }
 
         case 'optional':
-            return { type: 'optional', content: tagVariants(rule.content, name, inline) }
+            return { type: 'optional', content: tagVariants(rule.content, name, rules, inline) }
 
         case 'repeat':
-            return { ...rule, content: tagVariants(rule.content, name, inline) }
+            return { ...rule, content: tagVariants(rule.content, name, rules, inline) }
 
         case 'field':
-            return { ...rule, content: tagVariants(rule.content, name, inline) }
+            return { ...rule, content: tagVariants(rule.content, name, rules, inline) }
 
         case 'clause':
-            return { ...rule, content: tagVariants(rule.content, name, inline) }
+            return { ...rule, content: tagVariants(rule.content, name, rules, inline) }
 
         case 'group':
-            return { ...rule, content: tagVariants(rule.content, name, inline) }
+            return { ...rule, content: tagVariants(rule.content, name, rules, inline) }
 
         default:
             return rule
@@ -516,35 +513,39 @@ function tagVariants(rule: Rule, name: string, inline?: readonly string[]): Rule
 
 /**
  * Is this choice structurally homogeneous — every branch a seq of the
- * same length with matching member KINDS (field / symbol / supertype)
- * and matching discriminator NAMES at each position?
+ * same length with matching member kinds at each position, and
+ * per-position content that's either identical OR opaque (non-inlined
+ * symbol / supertype refs)?
  *
- * When yes, canonicalize (post-simplify) merges these branches into a
- * flat seq with per-position unioned contents. Variant wrapping adds
- * nothing: there's no distinct arm identity to dispatch on render-side,
- * and the wrappers would block canonicalize's merge path.
+ * Key insight: symbol refs are **opaque** at the parent level unless
+ * the symbol would be inlined at assemble time (hidden groups, hidden
+ * multi helpers). Two arms referencing `$.x` vs `$.y` are
+ * structurally the same at the containing position — both are "one
+ * kind reference". The parent rule's shape doesn't change based on
+ * which kind is chosen; only the content at that slot differs (which
+ * becomes a type union post-canonicalize). Supertype refs are
+ * similarly opaque — they dispatch to a subtype at runtime.
  *
- * Mirrors the mergeability criteria in `simplify.ts
- * mergeChoiceBranches` — only `group` wrappers are peeled on the way
- * down to expose the inner seq. Variant / clause wrappers are NOT
- * peeled: if the author wrote them explicitly, they're intentional and
- * we respect that.
+ * When the symbol would be INLINED (hidden group / multi), the inner
+ * fields/children get spliced into the parent at parse time, so the
+ * inlined body's shape is part of the parent's structure — different
+ * names mean different structure. For those positions we require
+ * strict name equality.
  *
- * Leaf content at each position is intentionally NOT compared — the
- * whole point is that literals differ (e.g. binary_expression's
- * `field('operator', '&&' | '||' | ...)`). Canonicalize unions them
- * into a choice at the field's content.
+ * When yes, canonicalize merges these branches into a flat seq with
+ * per-position unioned contents. Variant wrapping would create
+ * phantom arm identities that dispatch on nothing render-distinct.
  *
- * Requires ≥2 branches. Single-branch choices are trivial and get
- * simplified away earlier; a single-branch "homogeneous" choice would
- * wrongly skip variant wrapping for choices that happen to have one
- * arm.
+ * Only `group` wrappers are peeled before checking — variant / clause
+ * wrappers carry author-intended identity.
+ *
+ * Requires ≥2 branches.
  */
-function isStructurallyHomogeneousChoice(choice: ChoiceRule): boolean {
+function isStructurallyHomogeneousChoice(
+    choice: ChoiceRule,
+    rules: Record<string, Rule>,
+): boolean {
     if (choice.members.length < 2) return false
-    // Peel group wrappers only — same rule as simplify.ts
-    // `unwrapForMerge`. Variant wrappers would already indicate
-    // author-intended distinction.
     const unwrapGroup = (r: Rule): Rule => r.type === 'group' ? unwrapGroup(r.content) : r
     const unwrapped = choice.members.map(unwrapGroup)
     if (!unwrapped.every((m): m is SeqRule => m.type === 'seq')) return false
@@ -556,9 +557,22 @@ function isStructurallyHomogeneousChoice(choice: ChoiceRule): boolean {
         if (first.type === 'field') {
             if (!positions.every(p => p.type === 'field' && p.name === first.name)) return false
         } else if (first.type === 'symbol') {
-            if (!positions.every(p => p.type === 'symbol' && p.name === first.name)) return false
+            // All positions must be symbols at this index.
+            if (!positions.every(p => p.type === 'symbol')) return false
+            // Opaque (non-inlined) symbol refs are structurally
+            // homogeneous regardless of name — they're just "a
+            // reference to some kind" from the parent's perspective.
+            // Inlined kinds (hidden groups / multis) do splice body
+            // shape into the parent, so there the name matters.
+            const allOpaque = positions.every(p => !wouldInlineAtAssemble((p as SymbolRule).name, rules))
+            if (allOpaque) continue
+            // At least one position is an inlined kind → require all
+            // positions to name the same kind.
+            if (!positions.every(p => (p as SymbolRule).name === (first as SymbolRule).name)) return false
         } else if (first.type === 'supertype') {
-            if (!positions.every(p => p.type === 'supertype' && p.name === first.name)) return false
+            // Supertypes always dispatch to a subtype at runtime —
+            // opaque from the parent's structural perspective.
+            if (!positions.every(p => p.type === 'supertype')) return false
         } else {
             // Non-discriminator leaves (strings, patterns, etc.) at the
             // same position: require literal equality. If they differ,
@@ -569,6 +583,30 @@ function isStructurallyHomogeneousChoice(choice: ChoiceRule): boolean {
         }
     }
     return true
+}
+
+/**
+ * Would a reference to `kindName` be inlined at assemble time?
+ *
+ * Assemble's `inlineGroupRefs` inlines symbol refs to hidden rules
+ * whose body is a `group` (hidden seq-with-fields helper) or a pure
+ * `repeat` / `repeat1` (multi helper). Those splice into the parent
+ * rule's structure. Everything else — visible kinds, supertypes,
+ * enums, terminals, tokens, hidden branches — stays as a symbol
+ * reference at parse time and is opaque to the parent's structural
+ * shape.
+ */
+function wouldInlineAtAssemble(kindName: string, rules: Record<string, Rule>): boolean {
+    const target = rules[kindName]
+    if (!target) return false
+    if (target.type === 'group') return true
+    // Pure repeat/repeat1 (possibly wrapped in optional/variant) = multi.
+    const unwrap = (r: Rule): Rule =>
+        (r.type === 'optional' || r.type === 'variant')
+            ? unwrap(r.content)
+            : r
+    const bare = unwrap(target)
+    return bare.type === 'repeat' || bare.type === 'repeat1'
 }
 
 // ---------------------------------------------------------------------------

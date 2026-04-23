@@ -71,11 +71,11 @@ export const suggestedTransforms = {
 
   // [held] polymorph — 1 choice position(s), 5 arm(s) total
   let_chain: {
-      "0": variant("andand"),
-      "1": variant("andand"),
-      "2": variant("andand"),
-      "3": variant("andand"),
-      "4": variant("andand"),
+      "0": variant("form0"),
+      "1": variant("form1"),
+      "2": variant("form2"),
+      "3": variant("form3"),
+      "4": variant("form4"),
   },
 
   // pointer_type_mut: 1 inferred field(s)
