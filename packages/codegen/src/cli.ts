@@ -21,6 +21,8 @@ import type { RoundTripDiagnostic } from './emitters/suggested.ts';
 import { compileParser } from './transpile/compile-parser.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { writeJinjaTemplates } from './emitters/templates.ts';
+import { emitHashFiles, type Grammar as RustRenderGrammar } from './emitters/rust-render.ts';
+import type { TemplateFile } from './emitters/template-hash.ts';
 
 interface CodegenConfig {
 	grammar: string;
@@ -39,6 +41,7 @@ interface CliArgs {
 	transpile?: boolean;
 	tsGenerate?: boolean;
 	skipTsChain?: boolean;
+	rustRender?: boolean;
 	help?: boolean;
 }
 
@@ -81,6 +84,9 @@ function parseArgs(argv: string[]): CliArgs {
 			case '--skip-ts-chain':
 				args.skipTsChain = true;
 				break;
+			case '--rust-render':
+				args.rustRender = true;
+				break;
 			case '--help':
 			case '-h':
 				args.help = true;
@@ -113,6 +119,11 @@ Options:
                    grammar.json + node-types.json
   --skip-ts-chain  Skip the auto transpile + tree-sitter generate chain
                    that --all normally runs before sittir codegen
+  --rust-render    Also emit the rust-render crate's codegen artifacts
+                   (spec 012 T016+): packages/<grammar>/rust-render/src/hash.rs
+                   and packages/<grammar>/src/hash.ts. The JS backend shim
+                   uses the TS-side hash to detect drift vs. the native
+                   binary (FR-020).
   --help, -h       Show this help
 
 With --all (without --skip-ts-chain), the CLI chains:
@@ -223,6 +234,32 @@ writeFile(join(outDir, 'index.ts'), result.index);
 // (feature 011). writeJinjaTemplates also deletes stale `.jinja` files
 // whose rule kind is no longer in the grammar.
 writeJinjaTemplates(result.jinjaTemplates, join(dirname(outDir), 'templates'));
+
+// --- rust-render emission (spec 012 T017) ---
+// When `--rust-render` is set, also emit hash.rs / hash.ts so the
+// native backend and the TS backend can detect template-bundle drift
+// at runtime (FR-020). The hash is computed over the same `.jinja`
+// bodies that were just written above — this keeps the TS-side and
+// Rust-side derivations in lockstep.
+if (cliArgs.rustRender) {
+	const grammar = config.grammar;
+	if (grammar !== 'rust' && grammar !== 'typescript' && grammar !== 'python') {
+		console.error(
+			`--rust-render: unsupported grammar '${grammar}'. Supported: rust, typescript, python.`,
+		);
+		process.exit(1);
+	}
+	const templateFiles: TemplateFile[] = [];
+	for (const [kind, body] of result.jinjaTemplates.bodies) {
+		templateFiles.push({ filename: `${kind}.jinja`, content: body });
+	}
+	const emit = emitHashFiles(grammar as RustRenderGrammar, templateFiles);
+	writeFile(emit.hashRs.path, emit.hashRs.contents);
+	writeFile(emit.hashTs.path, emit.hashTs.contents);
+	console.log(`  → rust-render hash files for ${grammar}:`);
+	console.log(`    ${emit.hashRs.path}`);
+	console.log(`    ${emit.hashTs.path}`);
+}
 
 // Write validator-only factory metadata.
 writeFile(join(dirname(outDir), 'factory-map.json5'), result.factoryMap);
