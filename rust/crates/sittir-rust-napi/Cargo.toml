@@ -1,0 +1,21 @@
+[package]
+name = "sittir-rust-napi"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "napi-rs binding for the sittir Rust engine — Rust grammar."
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+sittir-core = { path = "../sittir-core" }
+napi = { version = "3", default-features = false, features = ["napi4"] }
+napi-derive = "3"
+tree-sitter = { workspace = true }
+tree-sitter-rust = "0.24"
+
+[build-dependencies]
+napi-build = "2"
