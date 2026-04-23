@@ -172,17 +172,28 @@ if (!cliArgs.all && (!cliArgs.nodes || cliArgs.nodes.length === 0)) {
 }
 
 // Auto-chain: with --all, by default run transpile + tree-sitter generate
-// BEFORE sittir codegen. This produces fresh .sittir/grammar.js and
-// .sittir/src/{grammar,node-types}.json — sittir codegen then reads those
-// to emit packages/<grammar>/src/*. Opt out with --skip-ts-chain if you
-// only want the sittir codegen phase (e.g., rapid iteration when the
-// upstream grammar hasn't changed).
+// + compile-parser BEFORE sittir codegen. This produces fresh
+// .sittir/grammar.js, .sittir/src/{grammar,node-types}.json, AND a
+// fresh .sittir/parser.wasm — sittir codegen then reads those to emit
+// packages/<grammar>/src/*. Opt out with --skip-ts-chain if you only
+// want the sittir codegen phase (e.g., rapid iteration when the upstream
+// grammar hasn't changed).
+//
+// parser.wasm MUST be rebuilt alongside grammar.js / node-types.json —
+// otherwise validators that consult the override parser (via
+// loadLanguageForGrammar) see a stale parser that doesn't know about
+// recent `field(...)` / `variant(...)` additions, producing silent
+// AST mismatches in round-trip tests.
 if (cliArgs.all && !cliArgs.skipTsChain && !cliArgs.transpile && !cliArgs.tsGenerate) {
-	console.log(`Full regenerate for ${cliArgs.grammar}: transpile + tree-sitter generate + sittir codegen`);
+	console.log(`Full regenerate for ${cliArgs.grammar}: transpile + tree-sitter generate + compile-parser + sittir codegen`);
+	const grammarDir = resolve('packages', cliArgs.grammar);
 	console.log(`Transpiling ${cliArgs.grammar} overrides...`);
 	const tr = await transpileOverrides({ grammar: cliArgs.grammar });
 	console.log(`  → ${tr.outputPath} (${tr.outputBytes} bytes)`);
 	runTreeSitterGenerate(cliArgs.grammar);
+	console.log(`Compiling ${cliArgs.grammar} parser to WASM...`);
+	const wasmPath = await compileParser(grammarDir);
+	console.log(`  → ${wasmPath}`);
 }
 
 const config: CodegenConfig = {
