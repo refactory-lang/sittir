@@ -171,6 +171,7 @@ export interface IsGuards {
     ReservedIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_reserved_identifier' };
     TypeIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_type_identifier' };
     FieldIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_field_identifier' };
+    letChain<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'let_chain' };
     ClosureExpressionExpr<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_closure_expression_expr' };
     FieldPatternShorthand<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_field_pattern_shorthand' };
     FunctionTypeTraitForm<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_function_type_trait_form' };
@@ -207,7 +208,6 @@ export interface IsGuards {
     referenceExpressionRawMut<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'reference_expression_raw_mut' };
     arrayExpressionSemi<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'array_expression_semi' };
     arrayExpressionList<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'array_expression_list' };
-    letChain<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'let_chain' };
     matchArmWithComma<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'match_arm_with_comma' };
     matchArmBlockEnding<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'match_arm_block_ending' };
     closureExpressionBlock<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'closure_expression_block' };
@@ -386,6 +386,7 @@ export interface AssertGuards {
     ReservedIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: '_reserved_identifier' };
     TypeIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: '_type_identifier' };
     FieldIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: '_field_identifier' };
+    letChain(v: { readonly $type: string }): asserts v is { readonly $type: 'let_chain' };
     ClosureExpressionExpr(v: { readonly $type: string }): asserts v is { readonly $type: '_closure_expression_expr' };
     FieldPatternShorthand(v: { readonly $type: string }): asserts v is { readonly $type: '_field_pattern_shorthand' };
     FunctionTypeTraitForm(v: { readonly $type: string }): asserts v is { readonly $type: '_function_type_trait_form' };
@@ -422,7 +423,6 @@ export interface AssertGuards {
     referenceExpressionRawMut(v: { readonly $type: string }): asserts v is { readonly $type: 'reference_expression_raw_mut' };
     arrayExpressionSemi(v: { readonly $type: string }): asserts v is { readonly $type: 'array_expression_semi' };
     arrayExpressionList(v: { readonly $type: string }): asserts v is { readonly $type: 'array_expression_list' };
-    letChain(v: { readonly $type: string }): asserts v is { readonly $type: 'let_chain' };
     matchArmWithComma(v: { readonly $type: string }): asserts v is { readonly $type: 'match_arm_with_comma' };
     matchArmBlockEnding(v: { readonly $type: string }): asserts v is { readonly $type: 'match_arm_block_ending' };
     closureExpressionBlock(v: { readonly $type: string }): asserts v is { readonly $type: 'closure_expression_block' };
@@ -626,6 +626,7 @@ export const is = {
     ReservedIdentifier: _g("_reserved_identifier"),
     TypeIdentifier: _g("_type_identifier"),
     FieldIdentifier: _g("_field_identifier"),
+    letChain: _g("let_chain"),
     ClosureExpressionExpr: _g("_closure_expression_expr"),
     FieldPatternShorthand: _g("_field_pattern_shorthand"),
     FunctionTypeTraitForm: _g("_function_type_trait_form"),
@@ -662,7 +663,6 @@ export const is = {
     referenceExpressionRawMut: _g("reference_expression_raw_mut"),
     arrayExpressionSemi: _g("array_expression_semi"),
     arrayExpressionList: _g("array_expression_list"),
-    letChain: _g("let_chain"),
     matchArmWithComma: _g("match_arm_with_comma"),
     matchArmBlockEnding: _g("match_arm_block_ending"),
     closureExpressionBlock: _g("closure_expression_block"),
@@ -862,6 +862,7 @@ export const assert = {
     ReservedIdentifier: _makeAssert('ReservedIdentifier', is.ReservedIdentifier as _AnyGuard),
     TypeIdentifier: _makeAssert('TypeIdentifier', is.TypeIdentifier as _AnyGuard),
     FieldIdentifier: _makeAssert('FieldIdentifier', is.FieldIdentifier as _AnyGuard),
+    letChain: _makeAssert('letChain', is.letChain as _AnyGuard),
     ClosureExpressionExpr: _makeAssert('ClosureExpressionExpr', is.ClosureExpressionExpr as _AnyGuard),
     FieldPatternShorthand: _makeAssert('FieldPatternShorthand', is.FieldPatternShorthand as _AnyGuard),
     FunctionTypeTraitForm: _makeAssert('FunctionTypeTraitForm', is.FunctionTypeTraitForm as _AnyGuard),
@@ -898,7 +899,6 @@ export const assert = {
     referenceExpressionRawMut: _makeAssert('referenceExpressionRawMut', is.referenceExpressionRawMut as _AnyGuard),
     arrayExpressionSemi: _makeAssert('arrayExpressionSemi', is.arrayExpressionSemi as _AnyGuard),
     arrayExpressionList: _makeAssert('arrayExpressionList', is.arrayExpressionList as _AnyGuard),
-    letChain: _makeAssert('letChain', is.letChain as _AnyGuard),
     matchArmWithComma: _makeAssert('matchArmWithComma', is.matchArmWithComma as _AnyGuard),
     matchArmBlockEnding: _makeAssert('matchArmBlockEnding', is.matchArmBlockEnding as _AnyGuard),
     closureExpressionBlock: _makeAssert('closureExpressionBlock', is.closureExpressionBlock as _AnyGuard),

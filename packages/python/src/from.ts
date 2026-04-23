@@ -132,6 +132,11 @@ export const _fromMap = {
   "await": await_From,
   "comment": commentFrom,
   "line_continuation": lineContinuationFrom,
+  "as_pattern_target": asPatternTargetFrom,
+  "format_expression": formatExpressionFrom,
+  "assignment_eq": assignmentEqFrom,
+  "assignment_type": assignmentTypeFrom,
+  "assignment_typed": assignmentTypedFrom,
   "string_start": stringStartFrom,
   "escape_interpolation": escapeInterpolationFrom,
   "string_end": stringEndFrom,
@@ -139,11 +144,6 @@ export const _fromMap = {
   ")": closeParenFrom,
   "}": closeBraceFrom,
   "except": exceptFrom,
-  "as_pattern_target": asPatternTargetFrom,
-  "assignment_eq": assignmentEqFrom,
-  "assignment_type": assignmentTypeFrom,
-  "assignment_typed": assignmentTypedFrom,
-  "format_expression": formatExpressionFrom,
 } as const;
 export type _FromMap = typeof _fromMap;
 
@@ -1302,6 +1302,46 @@ export function lineContinuationFrom(input: string | T.LineContinuation) {
   return F.lineContinuation(input);
 }
 
+export function asPatternTargetFrom(input?: NonNullable<T.AsPatternTarget.Config['children']>[number] | T.AsPatternTarget) {
+  if (isNodeData(input) && input.$type === 'as_pattern_target') {
+    const data = input;
+    const child = data.$children ? data.$children[0] : undefined;
+    return F.asPatternTarget(child);
+  }
+  return F.asPatternTarget(input);
+}
+
+export function formatExpressionFrom(input: T.FormatExpression.Loose): ReturnType<typeof F.formatExpression> {
+  if (isNodeData(input)) return input;
+  return F.formatExpression({
+    expression: _resolveOne(input.expression, _K0, _super_f_expression),
+    typeConversion: _resolveOneLeaf(input.typeConversion, "type_conversion"),
+    formatSpecifier: _resolveOneBranch(input.formatSpecifier, "format_specifier"),
+  });
+}
+
+export function assignmentEqFrom(input: T.AssignmentEq.Loose): ReturnType<typeof F.assignmentEq> {
+  if (isNodeData(input)) return input;
+  return F.assignmentEq({
+    right: _resolveOne(input.right, _K0, _super_right_hand_side),
+  });
+}
+
+export function assignmentTypeFrom(input: T.AssignmentType.Loose): ReturnType<typeof F.assignmentType> {
+  if (isNodeData(input)) return input;
+  return F.assignmentType({
+    type: _resolveOneBranch(input.type, "type"),
+  });
+}
+
+export function assignmentTypedFrom(input: T.AssignmentTyped.Loose): ReturnType<typeof F.assignmentTyped> {
+  if (isNodeData(input)) return input;
+  return F.assignmentTyped({
+    type: _resolveOneBranch(input.type, "type"),
+    right: _resolveOne(input.right, _K0, _super_right_hand_side),
+  });
+}
+
 export function stringStartFrom(input: string | T.StringStart) {
   if (isNodeData(input)) return input;
   return F.stringStart(input);
@@ -1335,44 +1375,4 @@ export function closeBraceFrom(input: string | T.CloseBrace) {
 export function exceptFrom(input: string | T.Except) {
   if (isNodeData(input)) return input;
   return F.except(input);
-}
-
-export function asPatternTargetFrom(input?: NonNullable<T.AsPatternTarget.Config['children']>[number] | T.AsPatternTarget) {
-  if (isNodeData(input) && input.$type === 'as_pattern_target') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.asPatternTarget(child);
-  }
-  return F.asPatternTarget(input);
-}
-
-export function assignmentEqFrom(input: T.AssignmentEq.Loose): ReturnType<typeof F.assignmentEq> {
-  if (isNodeData(input)) return input;
-  return F.assignmentEq({
-    right: _resolveOne(input.right, _K0, _super_right_hand_side),
-  });
-}
-
-export function assignmentTypeFrom(input: T.AssignmentType.Loose): ReturnType<typeof F.assignmentType> {
-  if (isNodeData(input)) return input;
-  return F.assignmentType({
-    type: _resolveOneBranch(input.type, "type"),
-  });
-}
-
-export function assignmentTypedFrom(input: T.AssignmentTyped.Loose): ReturnType<typeof F.assignmentTyped> {
-  if (isNodeData(input)) return input;
-  return F.assignmentTyped({
-    type: _resolveOneBranch(input.type, "type"),
-    right: _resolveOne(input.right, _K0, _super_right_hand_side),
-  });
-}
-
-export function formatExpressionFrom(input: T.FormatExpression.Loose): ReturnType<typeof F.formatExpression> {
-  if (isNodeData(input)) return input;
-  return F.formatExpression({
-    expression: _resolveOne(input.expression, _K0, _super_f_expression),
-    typeConversion: _resolveOneLeaf(input.typeConversion, "type_conversion"),
-    formatSpecifier: _resolveOneBranch(input.formatSpecifier, "format_specifier"),
-  });
 }

@@ -120,6 +120,11 @@
     "await": "config",
     "comment": "text",
     "line_continuation": "text",
+    "as_pattern_target": "children",
+    "format_expression": "config",
+    "assignment_eq": "config",
+    "assignment_type": "config",
+    "assignment_typed": "config",
     "string_start": "text",
     "escape_interpolation": "text",
     "string_end": "text",
@@ -127,11 +132,6 @@
     ")": "text",
     "}": "text",
     "except": "text",
-    "as_pattern_target": "children",
-    "assignment_eq": "config",
-    "assignment_type": "config",
-    "assignment_typed": "config",
-    "format_expression": "config",
     "import": "text",
     "from": "text",
     "as": "text",
@@ -405,6 +405,11 @@
     "await": [
       "primary_expression"
     ],
+    "format_expression": [
+      "expression",
+      "type_conversion",
+      "format_specifier"
+    ],
     "assignment_eq": [
       "right"
     ],
@@ -414,11 +419,6 @@
     "assignment_typed": [
       "type",
       "right"
-    ],
-    "format_expression": [
-      "expression",
-      "type_conversion",
-      "format_specifier"
     ]
   },
   "polymorphVariants": {

@@ -171,15 +171,16 @@ export const _fromMap = {
   "super": superFrom,
   "crate": crateFrom,
   "metavariable": metavariableFrom,
-  "string_content": stringContentFrom,
-  "raw_string_literal_content": rawStringLiteralContentFrom,
-  "float_literal": floatLiteralFrom,
+  "primitive_type": primitiveTypeFrom,
+  "let_chain": letChainFrom,
+  "shorthand_field_identifier": shorthandFieldIdentifierFrom,
+  "type_identifier": typeIdentifierFrom,
+  "field_identifier": fieldIdentifierFrom,
   "expression_statement_with_semi": expressionStatementWithSemiFrom,
   "expression_statement_block_ending": expressionStatementBlockEndingFrom,
   "macro_definition_paren": macroDefinitionParenFrom,
   "macro_definition_bracket": macroDefinitionBracketFrom,
   "macro_definition_brace": macroDefinitionBraceFrom,
-  "primitive_type": primitiveTypeFrom,
   "mod_item_inline": modItemInlineFrom,
   "foreign_mod_item_body": foreignModItemBodyFrom,
   "struct_item_brace": structItemBraceFrom,
@@ -197,7 +198,6 @@ export const _fromMap = {
   "reference_expression_raw_mut": referenceExpressionRawMutFrom,
   "array_expression_semi": arrayExpressionSemiFrom,
   "array_expression_list": arrayExpressionListFrom,
-  "let_chain": letChainFrom,
   "match_arm_with_comma": matchArmWithCommaFrom,
   "match_arm_block_ending": matchArmBlockEndingFrom,
   "closure_expression_block": closureExpressionBlockFrom,
@@ -212,10 +212,9 @@ export const _fromMap = {
   "line_comment_regular_dslash": lineCommentRegularDslashFrom,
   "line_comment_doc": lineCommentDocFrom,
   "line_comment_content": lineCommentContentFrom,
-  "doc_comment": docCommentFrom,
-  "type_identifier": typeIdentifierFrom,
-  "field_identifier": fieldIdentifierFrom,
-  "shorthand_field_identifier": shorthandFieldIdentifierFrom,
+  "string_content": stringContentFrom,
+  "raw_string_literal_content": rawStringLiteralContentFrom,
+  "float_literal": floatLiteralFrom,
 } as const;
 export type _FromMap = typeof _fromMap;
 
@@ -240,19 +239,18 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
   "super": { values: ["super"], factory: () => F.super_() },
   "crate": { values: ["crate"], factory: () => F.crate() },
   "metavariable": { factory: F.metavariable },
-  "string_content": { factory: F.stringContent },
-  "raw_string_literal_content": { factory: F.rawStringLiteralContent },
-  "float_literal": { factory: F.floatLiteral },
   "primitive_type": { values: ["u8", "i8", "u16", "i16", "u32", "i32", "u64", "i64", "u128", "i128", "isize", "usize", "f32", "f64", "bool", "str", "char"], factory: (text: string) => F.primitiveType(text) },
+  "shorthand_field_identifier": { factory: F.shorthandFieldIdentifier },
+  "type_identifier": { factory: F.typeIdentifier },
+  "field_identifier": { factory: F.fieldIdentifier },
   "pointer_type_const": { values: ["const"], factory: () => F.pointerTypeConst() },
   "reference_expression_raw_const": { factory: F.referenceExpressionRawConst },
   "wildcard_pattern": { values: ["_"], factory: () => F.wildcardPattern() },
   "line_comment_regular_dslash": { factory: F.lineCommentRegularDslash },
   "line_comment_content": { factory: F.lineCommentContent },
-  "doc_comment": { factory: F.docComment },
-  "type_identifier": { factory: F.typeIdentifier },
-  "field_identifier": { factory: F.fieldIdentifier },
-  "shorthand_field_identifier": { factory: F.shorthandFieldIdentifier },
+  "string_content": { factory: F.stringContent },
+  "raw_string_literal_content": { factory: F.rawStringLiteralContent },
+  "float_literal": { factory: F.floatLiteral },
 };
 
 function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | undefined {
@@ -2005,7 +2003,7 @@ export function blockCommentFrom(input?: T.BlockComment.Loose): ReturnType<typeo
   return F.blockComment({
     outer: _resolveBooleanKeyword(input?.outer),
     inner: _resolveBooleanKeyword(input?.inner),
-    doc: _resolveOneLeaf(input?.doc, "doc_comment"),
+    doc: _resolveOneBranch(input?.doc, "doc_comment"),
   });
 }
 
@@ -2039,19 +2037,33 @@ export function metavariableFrom(input: string | T.Metavariable) {
   return F.metavariable(input);
 }
 
-export function stringContentFrom(input: string | T.StringContent) {
+export function primitiveTypeFrom(input: string | T.PrimitiveType) {
   if (isNodeData(input)) return input;
-  return F.stringContent(input);
+  return F.primitiveType(input);
 }
 
-export function rawStringLiteralContentFrom(input: string | T.RawStringLiteralContent) {
-  if (isNodeData(input)) return input;
-  return F.rawStringLiteralContent(input);
+export function letChainFrom(input?: NonNullable<T.LetChain.Config['children']>[number] | T.LetChain) {
+  if (isNodeData(input) && input.$type === 'let_chain') {
+    const data = input;
+    const child = data.$children ? data.$children[0] : undefined;
+    return F.letChain(child);
+  }
+  return F.letChain(input);
 }
 
-export function floatLiteralFrom(input: string | T.FloatLiteral) {
+export function shorthandFieldIdentifierFrom(input: string | T.ShorthandFieldIdentifier) {
   if (isNodeData(input)) return input;
-  return F.floatLiteral(input);
+  return F.shorthandFieldIdentifier(input);
+}
+
+export function typeIdentifierFrom(input: string | T.TypeIdentifier) {
+  if (isNodeData(input)) return input;
+  return F.typeIdentifier(input);
+}
+
+export function fieldIdentifierFrom(input: string | T.FieldIdentifier) {
+  if (isNodeData(input)) return input;
+  return F.fieldIdentifier(input);
 }
 
 export function expressionStatementWithSemiFrom(input?: NonNullable<T.ExpressionStatementWithSemi.Config['children']>[number] | T.ExpressionStatementWithSemi) {
@@ -2094,11 +2106,6 @@ export function macroDefinitionBraceFrom(...input: readonly (NonNullable<T.Macro
     return F.macroDefinitionBrace(...(data.$children ?? []));
   }
   return F.macroDefinitionBrace(...input);
-}
-
-export function primitiveTypeFrom(input: string | T.PrimitiveType) {
-  if (isNodeData(input)) return input;
-  return F.primitiveType(input);
 }
 
 export function modItemInlineFrom(input: T.ModItemInline.Loose): ReturnType<typeof F.modItemInline> {
@@ -2232,15 +2239,6 @@ export function arrayExpressionListFrom(input: T.ArrayExpressionList.Loose): Ret
   });
 }
 
-export function letChainFrom(input?: NonNullable<T.LetChain.Config['children']>[number] | T.LetChain) {
-  if (isNodeData(input) && input.$type === 'let_chain') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.letChain(child);
-  }
-  return F.letChain(input);
-}
-
 export function matchArmWithCommaFrom(input: T.MatchArmWithComma.Loose): ReturnType<typeof F.matchArmWithComma> {
   if (isNodeData(input)) return input;
   return F.matchArmWithComma({
@@ -2328,7 +2326,7 @@ export function lineCommentRegularDslashFrom(input: string | T.LineCommentRegula
 export function lineCommentDocFrom(input: T.LineCommentDoc.Loose): ReturnType<typeof F.lineCommentDoc> {
   if (isNodeData(input)) return input;
   return F.lineCommentDoc({
-    doc: _resolveOneLeaf(input.doc, "doc_comment"),
+    doc: _resolveOneBranch(input.doc, "doc_comment"),
     children: _resolveOneBranch(input.children, "_line_doc_comment_marker"),
   });
 }
@@ -2338,22 +2336,17 @@ export function lineCommentContentFrom(input: string | T.LineCommentContent) {
   return F.lineCommentContent(input);
 }
 
-export function docCommentFrom(input: string | T.DocComment) {
+export function stringContentFrom(input: string | T.StringContent) {
   if (isNodeData(input)) return input;
-  return F.docComment(input);
+  return F.stringContent(input);
 }
 
-export function typeIdentifierFrom(input: string | T.TypeIdentifier) {
+export function rawStringLiteralContentFrom(input: string | T.RawStringLiteralContent) {
   if (isNodeData(input)) return input;
-  return F.typeIdentifier(input);
+  return F.rawStringLiteralContent(input);
 }
 
-export function fieldIdentifierFrom(input: string | T.FieldIdentifier) {
+export function floatLiteralFrom(input: string | T.FloatLiteral) {
   if (isNodeData(input)) return input;
-  return F.fieldIdentifier(input);
-}
-
-export function shorthandFieldIdentifierFrom(input: string | T.ShorthandFieldIdentifier) {
-  if (isNodeData(input)) return input;
-  return F.shorthandFieldIdentifier(input);
+  return F.floatLiteral(input);
 }

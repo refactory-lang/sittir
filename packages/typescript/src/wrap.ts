@@ -1100,6 +1100,20 @@ export function wrapComputedPropertyName(data: _NodeData, tree: TreeHandle): Wra
   } as unknown as WrappedNode<ComputedPropertyName>;
 }
 
+export function wrapShorthandPropertyIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<ShorthandPropertyIdentifier> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<ShorthandPropertyIdentifier>;
+}
+
+export function wrapShorthandPropertyIdentifierPattern(data: _NodeData, tree: TreeHandle): WrappedNode<ShorthandPropertyIdentifierPattern> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<ShorthandPropertyIdentifierPattern>;
+}
+
 export function wrapPublicFieldDefinition(data: _NodeData, tree: TreeHandle): WrappedNode<PublicFieldDefinition> {
   return {
     ...data,
@@ -1731,6 +1745,13 @@ export function wrap_TypeIdentifier(data: _NodeData, tree: TreeHandle): WrappedN
   } as unknown as WrappedNode<_TypeIdentifier>;
 }
 
+export function wrapInterfaceBody(data: _NodeData, tree: TreeHandle): WrappedNode<InterfaceBody> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<InterfaceBody>;
+}
+
 export function wrap_ArrowFunctionParameter(data: _NodeData, tree: TreeHandle): WrappedNode<_ArrowFunctionParameter> {
   return {
     ...data,
@@ -1937,20 +1958,6 @@ export function wrapParenthesizedExpressionSequence(data: _NodeData, tree: TreeH
   } as unknown as WrappedNode<ParenthesizedExpressionSequence>;
 }
 
-export function wrapShorthandPropertyIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<ShorthandPropertyIdentifier> {
-  return {
-    ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<ShorthandPropertyIdentifier>;
-}
-
-export function wrapShorthandPropertyIdentifierPattern(data: _NodeData, tree: TreeHandle): WrappedNode<ShorthandPropertyIdentifierPattern> {
-  return {
-    ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<ShorthandPropertyIdentifierPattern>;
-}
-
 export function wrapClassHeritageExtendsClause(data: _NodeData, tree: TreeHandle): WrappedNode<ClassHeritageExtendsClause> {
   return {
     ...data,
@@ -2024,16 +2031,6 @@ export function wrapStringSingle(data: _NodeData, tree: TreeHandle): WrappedNode
     ...data,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<StringSingle>;
-}
-
-export function wrapInterfaceBody(data: _NodeData, tree: TreeHandle): WrappedNode<InterfaceBody> {
-  return {
-    ...data,
-    get opening() { return drillIn(data.$fields?.['opening'], tree); },
-    get members() { return drillInAll(data.$fields?.['members'], tree); },
-    get closing() { return drillIn(data.$fields?.['closing'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<InterfaceBody>;
 }
 
 export function wrapIndexSignatureColon(data: _NodeData, tree: TreeHandle): WrappedNode<IndexSignatureColon> {
@@ -2173,6 +2170,11 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'pair_pattern': (d, t) => wrapPairPattern(d, t),
   'computed_property_name': (d, t) => wrapComputedPropertyName(d, t),
   '_reserved_identifier': (d) => d,
+  'statement_identifier': (d) => d,
+  'shorthand_property_identifier': (d, t) => wrapShorthandPropertyIdentifier(d, t),
+  'shorthand_property_identifier_pattern': (d, t) => wrapShorthandPropertyIdentifierPattern(d, t),
+  'property_identifier': (d) => d,
+  'string_fragment': (d) => d,
   'public_field_definition': (d, t) => wrapPublicFieldDefinition(d, t),
   'non_null_expression': (d, t) => wrapNonNullExpression(d, t),
   'method_signature': (d, t) => wrapMethodSignature(d, t),
@@ -2245,6 +2247,9 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'intersection_type': (d, t) => wrapIntersectionType(d, t),
   'function_type': (d, t) => wrapFunctionType(d, t),
   '_type_identifier': (d, t) => wrap_TypeIdentifier(d, t),
+  'interface_body': (d, t) => wrapInterfaceBody(d, t),
+  'this_type': (d) => d,
+  'type_identifier': (d) => d,
   '_kw_async': (d) => d,
   '_kw_static': (d) => d,
   '_kw_readonly': (d) => d,
@@ -2266,13 +2271,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_export_statement_namespace_export': (d, t) => wrap_ExportStatementNamespaceExport(d, t),
   '_string_double': (d, t) => wrap_StringDouble(d, t),
   '_string_single': (d, t) => wrap_StringSingle(d, t),
-  '_automatic_semicolon': (d) => d,
-  '_template_chars': (d) => d,
-  'html_comment': (d) => d,
-  '||': (d) => d,
-  'jsx_text': (d) => d,
-  '_function_signature_automatic_semicolon': (d) => d,
-  '__error_recovery': (d) => d,
   'export_statement_default': (d, t) => wrapExportStatementDefault(d, t),
   'export_statement_type_export': (d, t) => wrapExportStatementTypeExport(d, t),
   'export_statement_equals_export': (d, t) => wrapExportStatementEqualsExport(d, t),
@@ -2282,13 +2280,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'import_clause_default_import': (d, t) => wrapImportClauseDefaultImport(d, t),
   'import_specifier_name': (d, t) => wrapImportSpecifierName(d, t),
   'import_specifier_as': (d, t) => wrapImportSpecifierAs(d, t),
-  'statement_identifier': (d) => d,
   'parenthesized_expression_typed': (d, t) => wrapParenthesizedExpressionTyped(d, t),
   'parenthesized_expression_sequence': (d, t) => wrapParenthesizedExpressionSequence(d, t),
-  'shorthand_property_identifier': (d, t) => wrapShorthandPropertyIdentifier(d, t),
-  'shorthand_property_identifier_pattern': (d, t) => wrapShorthandPropertyIdentifierPattern(d, t),
-  'property_identifier': (d) => d,
-  'string_fragment': (d) => d,
   'class_heritage_extends_clause': (d, t) => wrapClassHeritageExtendsClause(d, t),
   'class_heritage_implements_clause': (d, t) => wrapClassHeritageImplementsClause(d, t),
   'arrow_function_parameter': (d, t) => wrapArrowFunctionParameter(d, t),
@@ -2298,11 +2291,15 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'call_expression_member': (d, t) => wrapCallExpressionMember(d, t),
   'string_double': (d, t) => wrapStringDouble(d, t),
   'string_single': (d, t) => wrapStringSingle(d, t),
-  'interface_body': (d, t) => wrapInterfaceBody(d, t),
-  'this_type': (d) => d,
   'index_signature_colon': (d, t) => wrapIndexSignatureColon(d, t),
   'index_signature_mapped_type_clause': (d, t) => wrapIndexSignatureMappedTypeClause(d, t),
-  'type_identifier': (d) => d,
+  '_automatic_semicolon': (d) => d,
+  '_template_chars': (d) => d,
+  'html_comment': (d) => d,
+  '||': (d) => d,
+  'jsx_text': (d) => d,
+  '_function_signature_automatic_semicolon': (d) => d,
+  '__error_recovery': (d) => d,
 };
 
 /** Wrap a NodeData into its lazy read-only view. */

@@ -19,6 +19,7 @@ export type LeafStringMap = {
   self: "self";
   super: "super";
   crate: "crate";
+  primitive_type: "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char";
   _kw_ref: "ref";
   _kw_unsafe: "unsafe";
   _kw_static: "static";
@@ -28,7 +29,6 @@ export type LeafStringMap = {
   _kw_const: "const";
   _wildcard_pattern: "_";
   _pointer_type_const: "const";
-  primitive_type: "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char";
   pointer_type_const: "const";
   wildcard_pattern: "_";
   as: "as";
@@ -219,6 +219,7 @@ export const enum SyntaxKind {
   ReservedIdentifier = '_reserved_identifier',
   _TypeIdentifier = '_type_identifier',
   _FieldIdentifier = '_field_identifier',
+  LetChain = 'let_chain',
   _ArrayExpressionSemi = '_array_expression_semi',
   _ArrayExpressionList = '_array_expression_list',
   _ClosureExpressionBlock = '_closure_expression_block',
@@ -270,7 +271,6 @@ export const enum SyntaxKind {
   ReferenceExpressionRawMut = 'reference_expression_raw_mut',
   ArrayExpressionSemi = 'array_expression_semi',
   ArrayExpressionList = 'array_expression_list',
-  LetChain = 'let_chain',
   MatchArmWithComma = 'match_arm_with_comma',
   MatchArmBlockEnding = 'match_arm_block_ending',
   ClosureExpressionBlock = 'closure_expression_block',
@@ -296,6 +296,10 @@ export const enum SyntaxKind {
   Super = 'super',
   Crate = 'crate',
   Metavariable = 'metavariable',
+  PrimitiveType = 'primitive_type',
+  ShorthandFieldIdentifier = 'shorthand_field_identifier',
+  TypeIdentifier = 'type_identifier',
+  FieldIdentifier = 'field_identifier',
   KwRef = '_kw_ref',
   KwUnsafe = '_kw_unsafe',
   KwStatic = '_kw_static',
@@ -308,6 +312,11 @@ export const enum SyntaxKind {
   _ReferenceExpressionRawConst = '_reference_expression_raw_const',
   _LineCommentRegularDslash = '_line_comment_regular_dslash',
   _LineCommentContent = '_line_comment_content',
+  PointerTypeConst = 'pointer_type_const',
+  ReferenceExpressionRawConst = 'reference_expression_raw_const',
+  WildcardPattern = 'wildcard_pattern',
+  LineCommentRegularDslash = 'line_comment_regular_dslash',
+  LineCommentContent = 'line_comment_content',
   StringContent = 'string_content',
   RawStringLiteralContent = 'raw_string_literal_content',
   FloatLiteral = 'float_literal',
@@ -315,16 +324,6 @@ export const enum SyntaxKind {
   InnerBlockDocCommentMarker = '_inner_block_doc_comment_marker',
   LineDocContent = '_line_doc_content',
   ErrorSentinel = '_error_sentinel',
-  PrimitiveType = 'primitive_type',
-  PointerTypeConst = 'pointer_type_const',
-  ReferenceExpressionRawConst = 'reference_expression_raw_const',
-  WildcardPattern = 'wildcard_pattern',
-  LineCommentRegularDslash = 'line_comment_regular_dslash',
-  LineCommentContent = 'line_comment_content',
-  DocComment = 'doc_comment',
-  TypeIdentifier = 'type_identifier',
-  FieldIdentifier = 'field_identifier',
-  ShorthandFieldIdentifier = 'shorthand_field_identifier',
   As = 'as',
   Async = 'async',
   Await = 'await',
@@ -2042,6 +2041,11 @@ export interface _FieldIdentifier {
   readonly $children: readonly [FieldIdentifier];
 }
 
+export interface LetChain {
+  readonly $type: 'let_chain';
+  readonly $children: readonly [_LetChain | LetCondition | Expression];
+}
+
 export interface _ArrayExpressionSemi {
   readonly $type: '_array_expression_semi';
 }
@@ -2336,11 +2340,6 @@ export interface ArrayExpressionList {
   readonly $children: readonly (AttributeItem)[];
 }
 
-export interface LetChain {
-  readonly $type: 'let_chain';
-  readonly $children: readonly [_LetChain | LetCondition | Expression];
-}
-
 export interface MatchArmWithComma {
   readonly $type: 'match_arm_with_comma';
   readonly $fields: {
@@ -2439,9 +2438,18 @@ export type Self = Terminal<"self", "self">;
 export type Super = Terminal<"super", "super">;
 export type Crate = Terminal<"crate", "crate">;
 export type Metavariable = Terminal<"metavariable", string>;
+export type PrimitiveType = Terminal<"primitive_type", "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char">;
+export type ShorthandFieldIdentifier = Terminal<"shorthand_field_identifier", string>;
+export type TypeIdentifier = Terminal<"type_identifier", string>;
+export type FieldIdentifier = Terminal<"field_identifier", string>;
 export type _ReferenceExpressionRawConst = Terminal<"_reference_expression_raw_const", string>;
 export type _LineCommentRegularDslash = Terminal<"_line_comment_regular_dslash", string>;
 export type _LineCommentContent = Terminal<"_line_comment_content", string>;
+export type PointerTypeConst = Terminal<"pointer_type_const", "const">;
+export type ReferenceExpressionRawConst = Terminal<"reference_expression_raw_const", string>;
+export type WildcardPattern = Terminal<"wildcard_pattern", "_">;
+export type LineCommentRegularDslash = Terminal<"line_comment_regular_dslash", string>;
+export type LineCommentContent = Terminal<"line_comment_content", string>;
 export type StringContent = Terminal<"string_content", string>;
 export type RawStringLiteralContent = Terminal<"raw_string_literal_content", string>;
 export type FloatLiteral = Terminal<"float_literal", string>;
@@ -2449,16 +2457,8 @@ export type OuterBlockDocCommentMarker = Terminal<"_outer_block_doc_comment_mark
 export type InnerBlockDocCommentMarker = Terminal<"_inner_block_doc_comment_marker", string>;
 export type LineDocContent = Terminal<"_line_doc_content", string>;
 export type ErrorSentinel = Terminal<"_error_sentinel", string>;
-export type PrimitiveType = Terminal<"primitive_type", "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char">;
-export type PointerTypeConst = Terminal<"pointer_type_const", "const">;
-export type ReferenceExpressionRawConst = Terminal<"reference_expression_raw_const", string>;
-export type WildcardPattern = Terminal<"wildcard_pattern", "_">;
-export type LineCommentRegularDslash = Terminal<"line_comment_regular_dslash", string>;
-export type LineCommentContent = Terminal<"line_comment_content", string>;
+
 export type DocComment = Terminal<"doc_comment", string>;
-export type TypeIdentifier = Terminal<"type_identifier", string>;
-export type FieldIdentifier = Terminal<"field_identifier", string>;
-export type ShorthandFieldIdentifier = Terminal<"shorthand_field_identifier", string>;
 
 // Tree types
 export interface SourceFileTree extends TreeNode<'source_file'> {}
@@ -2646,6 +2646,7 @@ export interface BlockCommentTree extends TreeNode<'block_comment'> {}
 export interface ReservedIdentifierTree extends AnyTreeNode { readonly type: "_reserved_identifier"; }
 export interface _TypeIdentifierTree extends AnyTreeNode { readonly type: "_type_identifier"; }
 export interface _FieldIdentifierTree extends AnyTreeNode { readonly type: "_field_identifier"; }
+export interface LetChainTree extends TreeNode<'let_chain'> {}
 export interface _ArrayExpressionSemiTree extends AnyTreeNode { readonly type: "_array_expression_semi"; }
 export interface _ArrayExpressionListTree extends AnyTreeNode { readonly type: "_array_expression_list"; }
 export interface _ClosureExpressionBlockTree extends AnyTreeNode { readonly type: "_closure_expression_block"; }
@@ -2697,7 +2698,6 @@ export interface RangeExpressionBareTree extends TreeNode<'range_expression_bare
 export interface ReferenceExpressionRawMutTree extends TreeNode<'reference_expression_raw_mut'> {}
 export interface ArrayExpressionSemiTree extends TreeNode<'array_expression_semi'> {}
 export interface ArrayExpressionListTree extends TreeNode<'array_expression_list'> {}
-export interface LetChainTree extends TreeNode<'let_chain'> {}
 export interface MatchArmWithCommaTree extends TreeNode<'match_arm_with_comma'> {}
 export interface MatchArmBlockEndingTree extends TreeNode<'match_arm_block_ending'> {}
 export interface ClosureExpressionBlockTree extends TreeNode<'closure_expression_block'> {}
@@ -2723,9 +2723,18 @@ export interface SelfTree extends AnyTreeNode { readonly type: "self"; }
 export interface SuperTree extends AnyTreeNode { readonly type: "super"; }
 export interface CrateTree extends AnyTreeNode { readonly type: "crate"; }
 export interface MetavariableTree extends TreeNode<'metavariable'> {}
+export interface PrimitiveTypeTree extends TreeNode<'primitive_type'> {}
+export interface ShorthandFieldIdentifierTree extends TreeNode<'shorthand_field_identifier'> {}
+export interface TypeIdentifierTree extends TreeNode<'type_identifier'> {}
+export interface FieldIdentifierTree extends TreeNode<'field_identifier'> {}
 export interface _ReferenceExpressionRawConstTree extends AnyTreeNode { readonly type: "_reference_expression_raw_const"; }
 export interface _LineCommentRegularDslashTree extends AnyTreeNode { readonly type: "_line_comment_regular_dslash"; }
 export interface _LineCommentContentTree extends AnyTreeNode { readonly type: "_line_comment_content"; }
+export interface PointerTypeConstTree extends AnyTreeNode { readonly type: "pointer_type_const"; }
+export interface ReferenceExpressionRawConstTree extends TreeNode<'reference_expression_raw_const'> {}
+export interface WildcardPatternTree extends AnyTreeNode { readonly type: "wildcard_pattern"; }
+export interface LineCommentRegularDslashTree extends TreeNode<'line_comment_regular_dslash'> {}
+export interface LineCommentContentTree extends TreeNode<'line_comment_content'> {}
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface RawStringLiteralContentTree extends AnyTreeNode { readonly type: "raw_string_literal_content"; }
 export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
@@ -2733,16 +2742,6 @@ export interface OuterBlockDocCommentMarkerTree extends AnyTreeNode { readonly t
 export interface InnerBlockDocCommentMarkerTree extends AnyTreeNode { readonly type: "_inner_block_doc_comment_marker"; }
 export interface LineDocContentTree extends AnyTreeNode { readonly type: "_line_doc_content"; }
 export interface ErrorSentinelTree extends AnyTreeNode { readonly type: "_error_sentinel"; }
-export interface PrimitiveTypeTree extends TreeNode<'primitive_type'> {}
-export interface PointerTypeConstTree extends AnyTreeNode { readonly type: "pointer_type_const"; }
-export interface ReferenceExpressionRawConstTree extends TreeNode<'reference_expression_raw_const'> {}
-export interface WildcardPatternTree extends AnyTreeNode { readonly type: "wildcard_pattern"; }
-export interface LineCommentRegularDslashTree extends TreeNode<'line_comment_regular_dslash'> {}
-export interface LineCommentContentTree extends TreeNode<'line_comment_content'> {}
-export interface DocCommentTree extends TreeNode<'doc_comment'> {}
-export interface TypeIdentifierTree extends TreeNode<'type_identifier'> {}
-export interface FieldIdentifierTree extends TreeNode<'field_identifier'> {}
-export interface ShorthandFieldIdentifierTree extends TreeNode<'shorthand_field_identifier'> {}
 export interface AsTree extends AnyTreeNode { readonly type: "as"; }
 export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
 export interface AwaitTree extends AnyTreeNode { readonly type: "await"; }
@@ -3182,6 +3181,10 @@ export type NeverType = Terminal<"never_type">;
 export interface NeverTypeTree extends AnyTreeNode { readonly type: "never_type"; }
 export type RemainingFieldPattern = Terminal<"remaining_field_pattern">;
 export interface RemainingFieldPatternTree extends AnyTreeNode { readonly type: "remaining_field_pattern"; }
+export type OuterDocCommentMarker = Terminal<"outer_doc_comment_marker">;
+export interface OuterDocCommentMarkerTree extends AnyTreeNode { readonly type: "outer_doc_comment_marker"; }
+export type InnerDocCommentMarker = Terminal<"inner_doc_comment_marker">;
+export interface InnerDocCommentMarkerTree extends AnyTreeNode { readonly type: "inner_doc_comment_marker"; }
 export type ModItemExternal = Terminal<"mod_item_external">;
 export interface ModItemExternalTree extends AnyTreeNode { readonly type: "mod_item_external"; }
 export type ForeignModItemSemi = Terminal<"foreign_mod_item_semi">;
@@ -3190,10 +3193,6 @@ export type StructItemUnit = Terminal<"struct_item_unit">;
 export interface StructItemUnitTree extends AnyTreeNode { readonly type: "struct_item_unit"; }
 export type ImplItemSemi = Terminal<"impl_item_semi">;
 export interface ImplItemSemiTree extends AnyTreeNode { readonly type: "impl_item_semi"; }
-export type OuterDocCommentMarker = Terminal<"outer_doc_comment_marker">;
-export interface OuterDocCommentMarkerTree extends AnyTreeNode { readonly type: "outer_doc_comment_marker"; }
-export type InnerDocCommentMarker = Terminal<"inner_doc_comment_marker">;
-export interface InnerDocCommentMarkerTree extends AnyTreeNode { readonly type: "inner_doc_comment_marker"; }
 
 export type RustNode =
   | SourceFile
@@ -3342,6 +3341,7 @@ export type RustNode =
   | ReservedIdentifier
   | _TypeIdentifier
   | _FieldIdentifier
+  | LetChain
   | _ArrayExpressionSemi
   | _ArrayExpressionList
   | _ClosureExpressionBlock
@@ -3393,7 +3393,6 @@ export type RustNode =
   | ReferenceExpressionRawMut
   | ArrayExpressionSemi
   | ArrayExpressionList
-  | LetChain
   | MatchArmWithComma
   | MatchArmBlockEnding
   | ClosureExpressionBlock
@@ -3554,6 +3553,7 @@ export interface KindMap {
   '_reserved_identifier': ReservedIdentifier;
   '_type_identifier': _TypeIdentifier;
   '_field_identifier': _FieldIdentifier;
+  'let_chain': LetChain;
   '_array_expression_semi': _ArrayExpressionSemi;
   '_array_expression_list': _ArrayExpressionList;
   '_closure_expression_block': _ClosureExpressionBlock;
@@ -3605,7 +3605,6 @@ export interface KindMap {
   'reference_expression_raw_mut': ReferenceExpressionRawMut;
   'array_expression_semi': ArrayExpressionSemi;
   'array_expression_list': ArrayExpressionList;
-  'let_chain': LetChain;
   'match_arm_with_comma': MatchArmWithComma;
   'match_arm_block_ending': MatchArmBlockEnding;
   'closure_expression_block': ClosureExpressionBlock;
@@ -3631,9 +3630,18 @@ export interface KindMap {
   'super': Super;
   'crate': Crate;
   'metavariable': Metavariable;
+  'primitive_type': PrimitiveType;
+  'shorthand_field_identifier': ShorthandFieldIdentifier;
+  'type_identifier': TypeIdentifier;
+  'field_identifier': FieldIdentifier;
   '_reference_expression_raw_const': _ReferenceExpressionRawConst;
   '_line_comment_regular_dslash': _LineCommentRegularDslash;
   '_line_comment_content': _LineCommentContent;
+  'pointer_type_const': PointerTypeConst;
+  'reference_expression_raw_const': ReferenceExpressionRawConst;
+  'wildcard_pattern': WildcardPattern;
+  'line_comment_regular_dslash': LineCommentRegularDslash;
+  'line_comment_content': LineCommentContent;
   'string_content': StringContent;
   'raw_string_literal_content': RawStringLiteralContent;
   'float_literal': FloatLiteral;
@@ -3641,16 +3649,6 @@ export interface KindMap {
   '_inner_block_doc_comment_marker': InnerBlockDocCommentMarker;
   '_line_doc_content': LineDocContent;
   '_error_sentinel': ErrorSentinel;
-  'primitive_type': PrimitiveType;
-  'pointer_type_const': PointerTypeConst;
-  'reference_expression_raw_const': ReferenceExpressionRawConst;
-  'wildcard_pattern': WildcardPattern;
-  'line_comment_regular_dslash': LineCommentRegularDslash;
-  'line_comment_content': LineCommentContent;
-  'doc_comment': DocComment;
-  'type_identifier': TypeIdentifier;
-  'field_identifier': FieldIdentifier;
-  'shorthand_field_identifier': ShorthandFieldIdentifier;
 }
 
 export interface VariantMap {
@@ -3820,6 +3818,7 @@ export interface BlockCommentNs extends NodeNs<BlockComment, LeafScalarMap, Leaf
 export interface ReservedIdentifierNs extends NodeNs<ReservedIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _TypeIdentifierNs extends NodeNs<_TypeIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _FieldIdentifierNs extends NodeNs<_FieldIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface LetChainNs extends NodeNs<LetChain, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _ArrayExpressionSemiNs extends NodeNs<_ArrayExpressionSemi, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _ArrayExpressionListNs extends NodeNs<_ArrayExpressionList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _ClosureExpressionBlockNs extends NodeNs<_ClosureExpressionBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3871,7 +3870,6 @@ export interface RangeExpressionBareNs extends NodeNs<RangeExpressionBare, LeafS
 export interface ReferenceExpressionRawMutNs extends NodeNs<ReferenceExpressionRawMut, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ArrayExpressionSemiNs extends NodeNs<ArrayExpressionSemi, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ArrayExpressionListNs extends NodeNs<ArrayExpressionList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface LetChainNs extends NodeNs<LetChain, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MatchArmWithCommaNs extends NodeNs<MatchArmWithComma, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MatchArmBlockEndingNs extends NodeNs<MatchArmBlockEnding, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ClosureExpressionBlockNs extends NodeNs<ClosureExpressionBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -4031,6 +4029,7 @@ export interface NamespaceMap {
   '_reserved_identifier': ReservedIdentifierNs;
   '_type_identifier': _TypeIdentifierNs;
   '_field_identifier': _FieldIdentifierNs;
+  'let_chain': LetChainNs;
   '_array_expression_semi': _ArrayExpressionSemiNs;
   '_array_expression_list': _ArrayExpressionListNs;
   '_closure_expression_block': _ClosureExpressionBlockNs;
@@ -4082,7 +4081,6 @@ export interface NamespaceMap {
   'reference_expression_raw_mut': ReferenceExpressionRawMutNs;
   'array_expression_semi': ArrayExpressionSemiNs;
   'array_expression_list': ArrayExpressionListNs;
-  'let_chain': LetChainNs;
   'match_arm_with_comma': MatchArmWithCommaNs;
   'match_arm_block_ending': MatchArmBlockEndingNs;
   'closure_expression_block': ClosureExpressionBlockNs;
@@ -5125,6 +5123,13 @@ export namespace _FieldIdentifier {
   export type Tree = TreeFor<'_field_identifier'>;
   export type Kind = '_field_identifier';
 }
+export namespace LetChain {
+  export type Config = ConfigFor<'let_chain'>;
+  export type Fluent = FluentFor<'let_chain'>;
+  export type Loose = LooseFor<'let_chain'>;
+  export type Tree = TreeFor<'let_chain'>;
+  export type Kind = 'let_chain';
+}
 export namespace _ArrayExpressionSemi {
   export type Config = ConfigFor<'_array_expression_semi'>;
   export type Fluent = FluentFor<'_array_expression_semi'>;
@@ -5481,13 +5486,6 @@ export namespace ArrayExpressionList {
   export type Loose = LooseFor<'array_expression_list'>;
   export type Tree = TreeFor<'array_expression_list'>;
   export type Kind = 'array_expression_list';
-}
-export namespace LetChain {
-  export type Config = ConfigFor<'let_chain'>;
-  export type Fluent = FluentFor<'let_chain'>;
-  export type Loose = LooseFor<'let_chain'>;
-  export type Tree = TreeFor<'let_chain'>;
-  export type Kind = 'let_chain';
 }
 export namespace MatchArmWithComma {
   export type Config = ConfigFor<'match_arm_with_comma'>;

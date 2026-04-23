@@ -789,6 +789,20 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
     const polymorphVariants = drainPolymorphMetadata(opts)
     const refineForms = drainRefineMetadata(opts)
 
+    // Synthesize top-level rules for named alias targets before Link.
+    //
+    // Tree-sitter honors `alias($.source, $.target)` natively at parse
+    // time — the target kind shows up in the CST without needing a
+    // rule declaration. Sittir's downstream codegen (types, factories)
+    // DOES need a rule entry for the target kind so it can emit the
+    // kind's shape. We synthesize one here from the source's body.
+    //
+    // Running at end-of-Evaluate (rather than mid-Link) lets the
+    // synthesized rules flow through Link's resolveRule pass uniformly
+    // with author-declared rules — nested aliases inside them get
+    // flattened naturally.
+    synthesizeAliasTargetRules(rules)
+
     return {
         grammar: {
             name: opts.name,
@@ -807,6 +821,62 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
             polymorphVariants: polymorphVariants.length > 0 ? polymorphVariants : undefined,
             refineForms,
         } satisfies RawGrammar,
+    }
+}
+
+/**
+ * Synthesize top-level rule entries for named alias targets.
+ *
+ * Walks every rule looking for `alias($.source, $.target)` nodes
+ * (`{ type: 'alias', named: true, value: target, content: … }`). For
+ * each one where `target` doesn't yet have a rule entry, creates one
+ * using the alias's inner content (dereferenced to the source body
+ * when the content is a bare symbol reference).
+ *
+ * Mutates `rules` in place.
+ *
+ * This was previously `collectAliasTargets` in link.ts, which ran
+ * AFTER link's resolveRule pass had already flattened aliases in
+ * every author-declared rule. The synthesized target rules missed
+ * that pass, so nested aliases inside them survived and were
+ * silently dropped by downstream walkers (typescript
+ * `StringDouble.$children` losing `StringFragment`). Running at
+ * end-of-Evaluate puts synthesized rules through the normal
+ * resolveRule loop uniformly.
+ */
+function synthesizeAliasTargetRules(rules: Record<string, Rule>): void {
+    for (const rule of Object.values(rules)) {
+        walkForAliasTargets(rule, rules)
+    }
+}
+
+function walkForAliasTargets(rule: Rule, rules: Record<string, Rule>): void {
+    switch (rule.type) {
+        case 'alias':
+            if (rule.named && rule.value && !rules[rule.value]) {
+                const sourceRule = rule.content.type === 'symbol'
+                    ? rules[rule.content.name]
+                    : rule.content
+                if (sourceRule) {
+                    rules[rule.value] = sourceRule
+                }
+            }
+            walkForAliasTargets(rule.content, rules)
+            break
+        case 'seq':
+        case 'choice':
+            for (const m of rule.members) walkForAliasTargets(m, rules)
+            break
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'field':
+        case 'token':
+        case 'variant':
+        case 'clause':
+        case 'group':
+            walkForAliasTargets(rule.content, rules)
+            break
     }
 }
 

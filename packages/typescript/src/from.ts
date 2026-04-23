@@ -134,6 +134,11 @@ export const _fromMap = {
   "pair": pairFrom,
   "pair_pattern": pairPatternFrom,
   "computed_property_name": computedPropertyNameFrom,
+  "statement_identifier": statementIdentifierFrom,
+  "shorthand_property_identifier": shorthandPropertyIdentifierFrom,
+  "shorthand_property_identifier_pattern": shorthandPropertyIdentifierPatternFrom,
+  "property_identifier": propertyIdentifierFrom,
+  "string_fragment": stringFragmentFrom,
   "public_field_definition": publicFieldDefinitionFrom,
   "non_null_expression": nonNullExpressionFrom,
   "method_signature": methodSignatureFrom,
@@ -205,9 +210,9 @@ export const _fromMap = {
   "union_type": unionTypeFrom,
   "intersection_type": intersectionTypeFrom,
   "function_type": functionTypeFrom,
-  "html_comment": htmlCommentFrom,
-  "||": ororFrom,
-  "jsx_text": jsxTextFrom,
+  "interface_body": interfaceBodyFrom,
+  "this_type": thisTypeFrom,
+  "type_identifier": typeIdentifierFrom,
   "export_statement_default": exportStatementDefaultFrom,
   "export_statement_type_export": exportStatementTypeExportFrom,
   "export_statement_equals_export": exportStatementEqualsExportFrom,
@@ -217,13 +222,8 @@ export const _fromMap = {
   "import_clause_default_import": importClauseDefaultImportFrom,
   "import_specifier_name": importSpecifierNameFrom,
   "import_specifier_as": importSpecifierAsFrom,
-  "statement_identifier": statementIdentifierFrom,
   "parenthesized_expression_typed": parenthesizedExpressionTypedFrom,
   "parenthesized_expression_sequence": parenthesizedExpressionSequenceFrom,
-  "shorthand_property_identifier": shorthandPropertyIdentifierFrom,
-  "shorthand_property_identifier_pattern": shorthandPropertyIdentifierPatternFrom,
-  "property_identifier": propertyIdentifierFrom,
-  "string_fragment": stringFragmentFrom,
   "class_heritage_extends_clause": classHeritageExtendsClauseFrom,
   "class_heritage_implements_clause": classHeritageImplementsClauseFrom,
   "arrow_function_parameter": arrowFunctionParameterFrom,
@@ -233,11 +233,11 @@ export const _fromMap = {
   "call_expression_member": callExpressionMemberFrom,
   "string_double": stringDoubleFrom,
   "string_single": stringSingleFrom,
-  "interface_body": interfaceBodyFrom,
-  "this_type": thisTypeFrom,
   "index_signature_colon": indexSignatureColonFrom,
   "index_signature_mapped_type_clause": indexSignatureMappedTypeClauseFrom,
-  "type_identifier": typeIdentifierFrom,
+  "html_comment": htmlCommentFrom,
+  "||": ororFrom,
+  "jsx_text": jsxTextFrom,
 } as const;
 export type _FromMap = typeof _fromMap;
 
@@ -270,17 +270,17 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
   "false": { values: ["false"], factory: () => F.false_() },
   "null": { values: ["null"], factory: () => F.null_() },
   "undefined": { values: ["undefined"], factory: () => F.undefined_() },
-  "accessibility_modifier": { values: ["public", "private", "protected"], factory: (text: string) => F.accessibilityModifier(text) },
-  "override_modifier": { values: ["override"], factory: () => F.overrideModifier() },
-  "predefined_type": { factory: F.predefinedType },
-  "html_comment": { factory: F.htmlComment },
-  "||": { factory: F.oror },
-  "jsx_text": { factory: F.jsxText },
   "statement_identifier": { factory: F.statementIdentifier },
   "property_identifier": { factory: F.propertyIdentifier },
   "string_fragment": { factory: F.stringFragment },
+  "accessibility_modifier": { values: ["public", "private", "protected"], factory: (text: string) => F.accessibilityModifier(text) },
+  "override_modifier": { values: ["override"], factory: () => F.overrideModifier() },
+  "predefined_type": { factory: F.predefinedType },
   "this_type": { values: ["this"], factory: () => F.thisType() },
   "type_identifier": { factory: F.typeIdentifier },
+  "html_comment": { factory: F.htmlComment },
+  "||": { factory: F.oror },
+  "jsx_text": { factory: F.jsxText },
 };
 
 function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | undefined {
@@ -1574,6 +1574,39 @@ export function computedPropertyNameFrom(input: T.ComputedPropertyName.Loose): R
   });
 }
 
+export function statementIdentifierFrom(input: string | T.StatementIdentifier) {
+  if (isNodeData(input)) return input;
+  return F.statementIdentifier(input);
+}
+
+export function shorthandPropertyIdentifierFrom(input?: NonNullable<T.ShorthandPropertyIdentifier.Config['children']>[number] | T.ShorthandPropertyIdentifier) {
+  if (isNodeData(input) && input.$type === 'shorthand_property_identifier') {
+    const data = input;
+    const child = data.$children ? data.$children[0] : undefined;
+    return F.shorthandPropertyIdentifier(child);
+  }
+  return F.shorthandPropertyIdentifier(input);
+}
+
+export function shorthandPropertyIdentifierPatternFrom(input?: NonNullable<T.ShorthandPropertyIdentifierPattern.Config['children']>[number] | T.ShorthandPropertyIdentifierPattern) {
+  if (isNodeData(input) && input.$type === 'shorthand_property_identifier_pattern') {
+    const data = input;
+    const child = data.$children ? data.$children[0] : undefined;
+    return F.shorthandPropertyIdentifierPattern(child);
+  }
+  return F.shorthandPropertyIdentifierPattern(input);
+}
+
+export function propertyIdentifierFrom(input: string | T.PropertyIdentifier) {
+  if (isNodeData(input)) return input;
+  return F.propertyIdentifier(input);
+}
+
+export function stringFragmentFrom(input: string | T.StringFragment) {
+  if (isNodeData(input)) return input;
+  return F.stringFragment(input);
+}
+
 export function publicFieldDefinitionFrom(input: T.PublicFieldDefinition.Loose): ReturnType<typeof F.publicFieldDefinition> {
   if (isNodeData(input)) return input;
   return F.publicFieldDefinition({
@@ -2205,19 +2238,22 @@ export function functionTypeFrom(input: T.FunctionType.Loose): ReturnType<typeof
   });
 }
 
-export function htmlCommentFrom(input: string | T.HtmlComment) {
-  if (isNodeData(input)) return input;
-  return F.htmlComment(input);
+export function interfaceBodyFrom(...input: readonly (NonNullable<T.InterfaceBody.Config['children']>[number] | T.InterfaceBody)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'interface_body') {
+    const data = input[0];
+    return F.interfaceBody(...(data.$children ?? []));
+  }
+  return F.interfaceBody(...input);
 }
 
-export function ororFrom(input: string | T.Oror) {
+export function thisTypeFrom(input?: T.ThisType) {
   if (isNodeData(input)) return input;
-  return F.oror(input);
+  return F.thisType();
 }
 
-export function jsxTextFrom(input: string | T.JsxText) {
+export function typeIdentifierFrom(input: string | T.TypeIdentifier) {
   if (isNodeData(input)) return input;
-  return F.jsxText(input);
+  return F.typeIdentifier(input);
 }
 
 export function exportStatementDefaultFrom(input?: T.ExportStatementDefault.Loose): ReturnType<typeof F.exportStatementDefault> {
@@ -2310,11 +2346,6 @@ export function importSpecifierAsFrom(input: T.ImportSpecifierAs.Loose): ReturnT
   });
 }
 
-export function statementIdentifierFrom(input: string | T.StatementIdentifier) {
-  if (isNodeData(input)) return input;
-  return F.statementIdentifier(input);
-}
-
 export function parenthesizedExpressionTypedFrom(input: T.ParenthesizedExpressionTyped.Loose): ReturnType<typeof F.parenthesizedExpressionTyped> {
   if (isNodeData(input)) return input;
   return F.parenthesizedExpressionTyped({
@@ -2330,34 +2361,6 @@ export function parenthesizedExpressionSequenceFrom(input?: NonNullable<T.Parent
     return F.parenthesizedExpressionSequence(child);
   }
   return F.parenthesizedExpressionSequence(input);
-}
-
-export function shorthandPropertyIdentifierFrom(input?: NonNullable<T.ShorthandPropertyIdentifier.Config['children']>[number] | T.ShorthandPropertyIdentifier) {
-  if (isNodeData(input) && input.$type === 'shorthand_property_identifier') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.shorthandPropertyIdentifier(child);
-  }
-  return F.shorthandPropertyIdentifier(input);
-}
-
-export function shorthandPropertyIdentifierPatternFrom(input?: NonNullable<T.ShorthandPropertyIdentifierPattern.Config['children']>[number] | T.ShorthandPropertyIdentifierPattern) {
-  if (isNodeData(input) && input.$type === 'shorthand_property_identifier_pattern') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.shorthandPropertyIdentifierPattern(child);
-  }
-  return F.shorthandPropertyIdentifierPattern(input);
-}
-
-export function propertyIdentifierFrom(input: string | T.PropertyIdentifier) {
-  if (isNodeData(input)) return input;
-  return F.propertyIdentifier(input);
-}
-
-export function stringFragmentFrom(input: string | T.StringFragment) {
-  if (isNodeData(input)) return input;
-  return F.stringFragment(input);
 }
 
 export function classHeritageExtendsClauseFrom(input?: NonNullable<T.ClassHeritageExtendsClause.Config['children']>[number] | T.ClassHeritageExtendsClause) {
@@ -2436,22 +2439,6 @@ export function stringSingleFrom(...input: readonly (NonNullable<T.StringSingle.
   return F.stringSingle(...input);
 }
 
-export function interfaceBodyFrom(input: T.InterfaceBody.Loose): ReturnType<typeof F.interfaceBody> {
-  if (isNodeData(input)) return input;
-  const _ne_members = _resolveMany(input.members, _super_semicolon, _K39);
-  _assertNonEmpty(_ne_members, 'interface_body.members');
-  return F.interfaceBody({
-    opening: _resolveOne(input.opening, _K1, _K1),
-    members: _ne_members,
-    closing: _resolveOne(input.closing, _K1, _K1),
-  });
-}
-
-export function thisTypeFrom(input?: T.ThisType) {
-  if (isNodeData(input)) return input;
-  return F.thisType();
-}
-
 export function indexSignatureColonFrom(input: T.IndexSignatureColon.Loose): ReturnType<typeof F.indexSignatureColon> {
   if (isNodeData(input)) return input;
   return F.indexSignatureColon({
@@ -2469,7 +2456,17 @@ export function indexSignatureMappedTypeClauseFrom(input?: NonNullable<T.IndexSi
   return F.indexSignatureMappedTypeClause(input);
 }
 
-export function typeIdentifierFrom(input: string | T.TypeIdentifier) {
+export function htmlCommentFrom(input: string | T.HtmlComment) {
   if (isNodeData(input)) return input;
-  return F.typeIdentifier(input);
+  return F.htmlComment(input);
+}
+
+export function ororFrom(input: string | T.Oror) {
+  if (isNodeData(input)) return input;
+  return F.oror(input);
+}
+
+export function jsxTextFrom(input: string | T.JsxText) {
+  if (isNodeData(input)) return input;
+  return F.jsxText(input);
 }

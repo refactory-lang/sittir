@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 398,
+  "nodeCount": 397,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -5474,14 +5474,6 @@
           ]
         }
       ]
-    },
-    {
-      "kind": "doc_comment",
-      "modelType": "leaf",
-      "typeName": "DocComment",
-      "factoryName": "docComment",
-      "irKey": "docComment",
-      "hidden": false
     },
     {
       "kind": "dyn",

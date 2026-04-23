@@ -131,10 +131,10 @@ export interface IsGuards {
     formatSpecifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'format_specifier' };
     await<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'await' };
     asPatternTarget<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'as_pattern_target' };
+    formatExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'format_expression' };
     assignmentEq<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'assignment_eq' };
     assignmentType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'assignment_type' };
     assignmentTyped<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'assignment_typed' };
-    formatExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'format_expression' };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): v is { readonly $type: K & string };
     statement(v: { readonly $type: string }): v is Statement;
     simpleStatement(v: { readonly $type: string }): v is SimpleStatement;
@@ -262,10 +262,10 @@ export interface AssertGuards {
     formatSpecifier(v: { readonly $type: string }): asserts v is { readonly $type: 'format_specifier' };
     await(v: { readonly $type: string }): asserts v is { readonly $type: 'await' };
     asPatternTarget(v: { readonly $type: string }): asserts v is { readonly $type: 'as_pattern_target' };
+    formatExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'format_expression' };
     assignmentEq(v: { readonly $type: string }): asserts v is { readonly $type: 'assignment_eq' };
     assignmentType(v: { readonly $type: string }): asserts v is { readonly $type: 'assignment_type' };
     assignmentTyped(v: { readonly $type: string }): asserts v is { readonly $type: 'assignment_typed' };
-    formatExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'format_expression' };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): asserts v is { readonly $type: K & string };
     statement(v: { readonly $type: string }): asserts v is Statement;
     simpleStatement(v: { readonly $type: string }): asserts v is SimpleStatement;
@@ -416,10 +416,10 @@ export const is = {
     formatSpecifier: _g("format_specifier"),
     await: _g("await"),
     asPatternTarget: _g("as_pattern_target"),
+    formatExpression: _g("format_expression"),
     assignmentEq: _g("assignment_eq"),
     assignmentType: _g("assignment_type"),
     assignmentTyped: _g("assignment_typed"),
-    formatExpression: _g("format_expression"),
     kind: (v: { readonly $type: string }, k: string): boolean => v.$type === k,
     statement: _sg(_supertype_statement),
     simpleStatement: _sg(_supertype_simpleStatement),
@@ -568,10 +568,10 @@ export const assert = {
     formatSpecifier: _makeAssert('formatSpecifier', is.formatSpecifier as _AnyGuard),
     await: _makeAssert('await', is.await as _AnyGuard),
     asPatternTarget: _makeAssert('asPatternTarget', is.asPatternTarget as _AnyGuard),
+    formatExpression: _makeAssert('formatExpression', is.formatExpression as _AnyGuard),
     assignmentEq: _makeAssert('assignmentEq', is.assignmentEq as _AnyGuard),
     assignmentType: _makeAssert('assignmentType', is.assignmentType as _AnyGuard),
     assignmentTyped: _makeAssert('assignmentTyped', is.assignmentTyped as _AnyGuard),
-    formatExpression: _makeAssert('formatExpression', is.formatExpression as _AnyGuard),
     kind: _makeAssertKind(is.kind as _AnyGuard),
     statement: _makeAssert('statement', is.statement as _AnyGuard),
     simpleStatement: _makeAssert('simpleStatement', is.simpleStatement as _AnyGuard),

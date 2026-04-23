@@ -14,7 +14,7 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences:  17  (0 applied, 17 held)
+// Field inferences:  18  (0 applied, 18 held)
 // Rule promotions:   70  (61 applied, 9 held)
 // Repeated shapes:   10  (advisory — suggested supertypes/groups)
 
@@ -131,6 +131,9 @@ export const suggestedTransforms = {
       "2/1": variant("import_require_clause"),
       "2/2": variant("source"),
   },
+
+  // interface_body: 1 inferred field(s)
+  // [held] interface_body field 'semicolon' on $._semicolon — 82% agreement, 11 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   member_expression: {
@@ -346,6 +349,7 @@ export const inferredFields: readonly InferredField[] = [
   { kind: "export_statement_equals_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
   { kind: "export_statement_namespace_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
   { kind: "export_statement_type_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
+  { kind: "interface_body", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
 ];
 
 export interface RepeatedShape {

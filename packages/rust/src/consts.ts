@@ -227,7 +227,6 @@ export const LEAF_KINDS = [
   'continue',
   'crate',
   'default',
-  'doc_comment',
   'dyn',
   'else',
   'enum',

@@ -256,10 +256,10 @@ export const ir = {
   formatSpecifier: _attach(F.formatSpecifier, { from: FR.formatSpecifierFrom }),
   await_: _attach(F.await_, { from: FR.await_From }),
   asPatternTarget: _attach(F.asPatternTarget, { from: FR.asPatternTargetFrom }),
+  format: _attach(F.formatExpression, { from: FR.formatExpressionFrom }),
   assignmentEq: _attach(F.assignmentEq, { from: FR.assignmentEqFrom }),
   assignmentType: _attach(F.assignmentType, { from: FR.assignmentTypeFrom }),
   assignmentTyped: _attach(F.assignmentTyped, { from: FR.assignmentTypedFrom }),
-  format: _attach(F.formatExpression, { from: FR.formatExpressionFrom }),
 
   // Keyword factories
   pass: F.passStatement,

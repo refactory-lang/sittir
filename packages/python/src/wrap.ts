@@ -1062,6 +1062,16 @@ export function wrapAsPatternTarget(data: _NodeData, tree: TreeHandle): WrappedN
   } as unknown as WrappedNode<AsPatternTarget>;
 }
 
+export function wrapFormatExpression(data: _NodeData, tree: TreeHandle): WrappedNode<FormatExpression> {
+  return {
+    ...data,
+    get expression() { return drillIn(data.$fields?.['expression'], tree); },
+    get typeConversion() { return drillIn(data.$fields?.['type_conversion'], tree); },
+    get formatSpecifier() { return drillIn(data.$fields?.['format_specifier'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<FormatExpression>;
+}
+
 export function wrapAssignmentEq(data: _NodeData, tree: TreeHandle): WrappedNode<AssignmentEq> {
   return {
     ...data,
@@ -1085,16 +1095,6 @@ export function wrapAssignmentTyped(data: _NodeData, tree: TreeHandle): WrappedN
     get right() { return drillIn(data.$fields?.['right'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<AssignmentTyped>;
-}
-
-export function wrapFormatExpression(data: _NodeData, tree: TreeHandle): WrappedNode<FormatExpression> {
-  return {
-    ...data,
-    get expression() { return drillIn(data.$fields?.['expression'], tree); },
-    get typeConversion() { return drillIn(data.$fields?.['type_conversion'], tree); },
-    get formatSpecifier() { return drillIn(data.$fields?.['format_specifier'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<FormatExpression>;
 }
 
 const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {
@@ -1221,7 +1221,12 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'await': (d, t) => wrapAwait(d, t),
   'comment': (d) => d,
   'line_continuation': (d) => d,
+  'as_pattern_target': (d, t) => wrapAsPatternTarget(d, t),
+  'format_expression': (d, t) => wrapFormatExpression(d, t),
   '_kw_async': (d) => d,
+  'assignment_eq': (d, t) => wrapAssignmentEq(d, t),
+  'assignment_type': (d, t) => wrapAssignmentType(d, t),
+  'assignment_typed': (d, t) => wrapAssignmentTyped(d, t),
   '_newline': (d) => d,
   '_indent': (d) => d,
   '_dedent': (d) => d,
@@ -1233,11 +1238,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   ')': (d) => d,
   '}': (d) => d,
   'except': (d) => d,
-  'as_pattern_target': (d, t) => wrapAsPatternTarget(d, t),
-  'assignment_eq': (d, t) => wrapAssignmentEq(d, t),
-  'assignment_type': (d, t) => wrapAssignmentType(d, t),
-  'assignment_typed': (d, t) => wrapAssignmentTyped(d, t),
-  'format_expression': (d, t) => wrapFormatExpression(d, t),
 };
 
 /** Wrap a NodeData into its lazy read-only view. */

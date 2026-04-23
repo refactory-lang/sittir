@@ -859,9 +859,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typeArguments', required: true, multiple: false },
   ],
   'interface_body': [
-    { name: 'opening', required: true, multiple: false },
-    { name: 'members', required: false, multiple: true },
-    { name: 'closing', required: true, multiple: false },
   ],
   'interface_declaration': [
     { name: 'name', required: true, multiple: false },

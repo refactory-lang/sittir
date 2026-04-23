@@ -1217,47 +1217,23 @@ describe('line_continuation', () => {
   });
 });
 
-describe('string_start', () => {
-  it('factory produces correct type', () => {
-    const node = ir.stringStart("test");
-    expect(node.$type).toBe('string_start');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
-  });
-});
-
-describe('escape_interpolation', () => {
-  it('factory produces correct type', () => {
-    const node = ir.escapeInterpolation("test");
-    expect(node.$type).toBe('escape_interpolation');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
-  });
-});
-
-describe('string_end', () => {
-  it('factory produces correct type', () => {
-    const node = ir.stringEnd("test");
-    expect(node.$type).toBe('string_end');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
-  });
-});
-
-describe('except', () => {
-  it('factory produces correct type', () => {
-    const node = ir.except("test");
-    expect(node.$type).toBe('except');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
-  });
-});
-
 describe('as_pattern_target', () => {
   it('factory produces correct type', () => {
     const node = ir.asPatternTarget();
     expect(node.$type).toBe('as_pattern_target');
     expect(node.$source).toBe('factory');
+  });
+});
+
+describe('format_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.format({ expression: { $type: '_f_expression', $text: 'test' } as any });
+    expect(node.$type).toBe('format_expression');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.format({ expression: { $type: '_f_expression', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -1297,14 +1273,38 @@ describe('assignment_typed', () => {
   });
 });
 
-describe('format_expression', () => {
+describe('string_start', () => {
   it('factory produces correct type', () => {
-    const node = ir.format({ expression: { $type: '_f_expression', $text: 'test' } as any });
-    expect(node.$type).toBe('format_expression');
+    const node = ir.stringStart("test");
+    expect(node.$type).toBe('string_start');
     expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
   });
-  it('render produces non-empty string', () => {
-    const node = ir.format({ expression: { $type: '_f_expression', $text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+});
+
+describe('escape_interpolation', () => {
+  it('factory produces correct type', () => {
+    const node = ir.escapeInterpolation("test");
+    expect(node.$type).toBe('escape_interpolation');
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
+  });
+});
+
+describe('string_end', () => {
+  it('factory produces correct type', () => {
+    const node = ir.stringEnd("test");
+    expect(node.$type).toBe('string_end');
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
+  });
+});
+
+describe('except', () => {
+  it('factory produces correct type', () => {
+    const node = ir.except("test");
+    expect(node.$type).toBe('except');
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
   });
 });

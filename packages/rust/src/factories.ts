@@ -50,10 +50,10 @@ function _bkArr<T>(v: unknown, kind: string, text: string, named: boolean): read
 const _leafRe_identifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 const _leafRe_shebang = /^(?:#![\r\f\t\v ]*([^[\n].*)?\n)/u;
 const _leafRe_metavariable = /^(?:\$[a-zA-Z_]\w*)/u;
-const _leafRe_lineCommentContent = /^(?:.*)/u;
+const _leafRe_shorthandFieldIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 const _leafRe_typeIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 const _leafRe_fieldIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
-const _leafRe_shorthandFieldIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
+const _leafRe_lineCommentContent = /^(?:.*)/u;
 
 export function sourceFile(config: T.SourceFile.Config) {
   const fields = {
@@ -3970,81 +3970,70 @@ export function metavariable(text: string) {
   };
 }
 
-export function stringContent(text: string) {
-  if (text.length === 0) throw new Error(`string_content: text must be non-empty`);
+export function primitiveType(text: 'u8' | 'i8' | 'u16' | 'i16' | 'u32' | 'i32' | 'u64' | 'i64' | 'u128' | 'i128' | 'isize' | 'usize' | 'f32' | 'f64' | 'bool' | 'str' | 'char') {
   return {
-    $type: 'string_content' as const,
+    $type: 'primitive_type' as const,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.StringContentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+    replace: (t: T.PrimitiveTypeTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
-export function rawStringLiteralContent(text: string) {
-  if (text.length === 0) throw new Error(`raw_string_literal_content: text must be non-empty`);
+export function letChain(child?: (T._LetChain | T.LetCondition | T.Expression)) {
+  const children = child != null ? [child] : [];
   return {
-    $type: 'raw_string_literal_content' as const,
+    $type: 'let_chain' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.RawStringLiteralContentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+    $children: children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.LetChainTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function floatLiteral(text: string) {
-  if (text.length === 0) throw new Error(`float_literal: text must be non-empty`);
+export function shorthandFieldIdentifier(text: string) {
+  if (text.length === 0) throw new Error(`shorthand_field_identifier: text must be non-empty`); if (!_leafRe_shorthandFieldIdentifier.test(text)) throw new Error(`shorthand_field_identifier: text does not match pattern: ${text}`);
   return {
-    $type: 'float_literal' as const,
+    $type: 'shorthand_field_identifier' as const,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.FloatLiteralTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+    replace: (t: T.ShorthandFieldIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
-export function outerBlockDocCommentMarker(text: string) {
-  if (text.length === 0) throw new Error(`_outer_block_doc_comment_marker: text must be non-empty`);
+export function typeIdentifier(text: string) {
+  if (text.length === 0) throw new Error(`type_identifier: text must be non-empty`); if (!_leafRe_typeIdentifier.test(text)) throw new Error(`type_identifier: text does not match pattern: ${text}`);
   return {
-    $type: '_outer_block_doc_comment_marker' as const,
+    $type: 'type_identifier' as const,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.OuterBlockDocCommentMarkerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+    replace: (t: T.TypeIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
-export function innerBlockDocCommentMarker(text: string) {
-  if (text.length === 0) throw new Error(`_inner_block_doc_comment_marker: text must be non-empty`);
+export function fieldIdentifier(text: string) {
+  if (text.length === 0) throw new Error(`field_identifier: text must be non-empty`); if (!_leafRe_fieldIdentifier.test(text)) throw new Error(`field_identifier: text does not match pattern: ${text}`);
   return {
-    $type: '_inner_block_doc_comment_marker' as const,
+    $type: 'field_identifier' as const,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.InnerBlockDocCommentMarkerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
-export function lineDocContent(text: string) {
-  if (text.length === 0) throw new Error(`_line_doc_content: text must be non-empty`);
-  return {
-    $type: '_line_doc_content' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.LineDocContentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+    replace: (t: T.FieldIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
@@ -4122,18 +4111,6 @@ export function macroDefinitionBrace(...children: T.MacroRule[]) {
       return toEdit(this, startOrRange);
     },
     replace(target: T.MacroDefinitionBraceTree) { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function primitiveType(text: 'u8' | 'i8' | 'u16' | 'i16' | 'u32' | 'i32' | 'u64' | 'i64' | 'u128' | 'i128' | 'isize' | 'usize' | 'f32' | 'f64' | 'bool' | 'str' | 'char') {
-  return {
-    $type: 'primitive_type' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.PrimitiveTypeTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
@@ -4470,22 +4447,6 @@ export function arrayExpressionList(config: T.ArrayExpressionList.Config) {
   };
 }
 
-export function letChain(child?: (T._LetChain | T.LetCondition | T.Expression)) {
-  const children = child != null ? [child] : [];
-  return {
-    $type: 'let_chain' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render() { return render(this); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(target: T.LetChainTree) { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
 export function matchArmWithComma(config: T.MatchArmWithComma.Config) {
   const fields = {
     value: config.value,
@@ -4747,55 +4708,81 @@ export function lineCommentContent(text: string) {
   };
 }
 
-export function docComment(text: string) {
-  if (text.length === 0) throw new Error(`doc_comment: text must be non-empty`);
+export function stringContent(text: string) {
+  if (text.length === 0) throw new Error(`string_content: text must be non-empty`);
   return {
-    $type: 'doc_comment' as const,
+    $type: 'string_content' as const,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.DocCommentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+    replace: (t: T.StringContentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
-export function typeIdentifier(text: string) {
-  if (text.length === 0) throw new Error(`type_identifier: text must be non-empty`); if (!_leafRe_typeIdentifier.test(text)) throw new Error(`type_identifier: text does not match pattern: ${text}`);
+export function rawStringLiteralContent(text: string) {
+  if (text.length === 0) throw new Error(`raw_string_literal_content: text must be non-empty`);
   return {
-    $type: 'type_identifier' as const,
+    $type: 'raw_string_literal_content' as const,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.TypeIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+    replace: (t: T.RawStringLiteralContentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
-export function fieldIdentifier(text: string) {
-  if (text.length === 0) throw new Error(`field_identifier: text must be non-empty`); if (!_leafRe_fieldIdentifier.test(text)) throw new Error(`field_identifier: text does not match pattern: ${text}`);
+export function floatLiteral(text: string) {
+  if (text.length === 0) throw new Error(`float_literal: text must be non-empty`);
   return {
-    $type: 'field_identifier' as const,
+    $type: 'float_literal' as const,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.FieldIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+    replace: (t: T.FloatLiteralTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
-export function shorthandFieldIdentifier(text: string) {
-  if (text.length === 0) throw new Error(`shorthand_field_identifier: text must be non-empty`); if (!_leafRe_shorthandFieldIdentifier.test(text)) throw new Error(`shorthand_field_identifier: text does not match pattern: ${text}`);
+export function outerBlockDocCommentMarker(text: string) {
+  if (text.length === 0) throw new Error(`_outer_block_doc_comment_marker: text must be non-empty`);
   return {
-    $type: 'shorthand_field_identifier' as const,
+    $type: '_outer_block_doc_comment_marker' as const,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.ShorthandFieldIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+    replace: (t: T.OuterBlockDocCommentMarkerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function innerBlockDocCommentMarker(text: string) {
+  if (text.length === 0) throw new Error(`_inner_block_doc_comment_marker: text must be non-empty`);
+  return {
+    $type: '_inner_block_doc_comment_marker' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.InnerBlockDocCommentMarkerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function lineDocContent(text: string) {
+  if (text.length === 0) throw new Error(`_line_doc_content: text must be non-empty`);
+  return {
+    $type: '_line_doc_content' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.LineDocContentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
@@ -4954,18 +4941,16 @@ export type FluentKindMap = {
   "super": T.Super;
   "crate": T.Crate;
   "metavariable": T.Metavariable;
-  "string_content": T.StringContent;
-  "raw_string_literal_content": T.RawStringLiteralContent;
-  "float_literal": T.FloatLiteral;
-  "_outer_block_doc_comment_marker": T.OuterBlockDocCommentMarker;
-  "_inner_block_doc_comment_marker": T.InnerBlockDocCommentMarker;
-  "_line_doc_content": T.LineDocContent;
+  "primitive_type": T.PrimitiveType;
+  "let_chain": FluentNode<"let_chain", T.LetChain.Config>;
+  "shorthand_field_identifier": T.ShorthandFieldIdentifier;
+  "type_identifier": T.TypeIdentifier;
+  "field_identifier": T.FieldIdentifier;
   "expression_statement_with_semi": FluentNode<"expression_statement_with_semi", T.ExpressionStatementWithSemi.Config>;
   "expression_statement_block_ending": FluentNode<"expression_statement_block_ending", T.ExpressionStatementBlockEnding.Config>;
   "macro_definition_paren": FluentNode<"macro_definition_paren", T.MacroDefinitionParen.Config>;
   "macro_definition_bracket": FluentNode<"macro_definition_bracket", T.MacroDefinitionBracket.Config>;
   "macro_definition_brace": FluentNode<"macro_definition_brace", T.MacroDefinitionBrace.Config>;
-  "primitive_type": T.PrimitiveType;
   "mod_item_inline": FluentNode<"mod_item_inline", T.ModItemInline.Config>;
   "foreign_mod_item_body": FluentNode<"foreign_mod_item_body", T.ForeignModItemBody.Config>;
   "struct_item_brace": FluentNode<"struct_item_brace", T.StructItemBrace.Config>;
@@ -4983,7 +4968,6 @@ export type FluentKindMap = {
   "reference_expression_raw_mut": FluentNode<"reference_expression_raw_mut", T.ReferenceExpressionRawMut.Config>;
   "array_expression_semi": FluentNode<"array_expression_semi", T.ArrayExpressionSemi.Config>;
   "array_expression_list": FluentNode<"array_expression_list", T.ArrayExpressionList.Config>;
-  "let_chain": FluentNode<"let_chain", T.LetChain.Config>;
   "match_arm_with_comma": FluentNode<"match_arm_with_comma", T.MatchArmWithComma.Config>;
   "match_arm_block_ending": FluentNode<"match_arm_block_ending", T.MatchArmBlockEnding.Config>;
   "closure_expression_block": FluentNode<"closure_expression_block", T.ClosureExpressionBlock.Config>;
@@ -4998,10 +4982,12 @@ export type FluentKindMap = {
   "line_comment_regular_dslash": T.LineCommentRegularDslash;
   "line_comment_doc": FluentNode<"line_comment_doc", T.LineCommentDoc.Config>;
   "line_comment_content": T.LineCommentContent;
-  "doc_comment": T.DocComment;
-  "type_identifier": T.TypeIdentifier;
-  "field_identifier": T.FieldIdentifier;
-  "shorthand_field_identifier": T.ShorthandFieldIdentifier;
+  "string_content": T.StringContent;
+  "raw_string_literal_content": T.RawStringLiteralContent;
+  "float_literal": T.FloatLiteral;
+  "_outer_block_doc_comment_marker": T.OuterBlockDocCommentMarker;
+  "_inner_block_doc_comment_marker": T.InnerBlockDocCommentMarker;
+  "_line_doc_content": T.LineDocContent;
 };
 
 export const _factoryMap = {
@@ -5159,18 +5145,16 @@ export const _factoryMap = {
   "super": super_,
   "crate": crate,
   "metavariable": metavariable,
-  "string_content": stringContent,
-  "raw_string_literal_content": rawStringLiteralContent,
-  "float_literal": floatLiteral,
-  "_outer_block_doc_comment_marker": outerBlockDocCommentMarker,
-  "_inner_block_doc_comment_marker": innerBlockDocCommentMarker,
-  "_line_doc_content": lineDocContent,
+  "primitive_type": primitiveType,
+  "let_chain": letChain,
+  "shorthand_field_identifier": shorthandFieldIdentifier,
+  "type_identifier": typeIdentifier,
+  "field_identifier": fieldIdentifier,
   "expression_statement_with_semi": expressionStatementWithSemi,
   "expression_statement_block_ending": expressionStatementBlockEnding,
   "macro_definition_paren": macroDefinitionParen,
   "macro_definition_bracket": macroDefinitionBracket,
   "macro_definition_brace": macroDefinitionBrace,
-  "primitive_type": primitiveType,
   "mod_item_inline": modItemInline,
   "foreign_mod_item_body": foreignModItemBody,
   "struct_item_brace": structItemBrace,
@@ -5188,7 +5172,6 @@ export const _factoryMap = {
   "reference_expression_raw_mut": referenceExpressionRawMut,
   "array_expression_semi": arrayExpressionSemi,
   "array_expression_list": arrayExpressionList,
-  "let_chain": letChain,
   "match_arm_with_comma": matchArmWithComma,
   "match_arm_block_ending": matchArmBlockEnding,
   "closure_expression_block": closureExpressionBlock,
@@ -5203,9 +5186,11 @@ export const _factoryMap = {
   "line_comment_regular_dslash": lineCommentRegularDslash,
   "line_comment_doc": lineCommentDoc,
   "line_comment_content": lineCommentContent,
-  "doc_comment": docComment,
-  "type_identifier": typeIdentifier,
-  "field_identifier": fieldIdentifier,
-  "shorthand_field_identifier": shorthandFieldIdentifier,
+  "string_content": stringContent,
+  "raw_string_literal_content": rawStringLiteralContent,
+  "float_literal": floatLiteral,
+  "_outer_block_doc_comment_marker": outerBlockDocCommentMarker,
+  "_inner_block_doc_comment_marker": innerBlockDocCommentMarker,
+  "_line_doc_content": lineDocContent,
 } as const;
 export type _FactoryMap = typeof _factoryMap;

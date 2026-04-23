@@ -2416,6 +2416,104 @@ export function lineContinuation(text: string) {
   };
 }
 
+export function asPatternTarget(child?: (T.ComparisonOperator | T.NotOperator | T.BooleanOperator | T.Lambda | T.PrimaryExpression | T.ConditionalExpression | T.NamedExpression | T.AsPattern)) {
+  const children = child != null ? [child] : [];
+  return {
+    $type: 'as_pattern_target' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.AsPatternTargetTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function formatExpression(config: T.FormatExpression.Config) {
+  const fields = {
+    expression: config.expression,
+    type_conversion: config.typeConversion,
+    format_specifier: config.formatSpecifier,
+  };
+  return {
+    $type: 'format_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    expression(value?: T.FExpression) { return _fs(config, formatExpression, 'expression', value, fields.expression); },
+    typeConversion(value?: T.TypeConversion | undefined) { return _fs(config, formatExpression, 'typeConversion', value, fields.type_conversion); },
+    formatSpecifier(value?: T.FormatSpecifier | undefined) { return _fs(config, formatExpression, 'formatSpecifier', value, fields.format_specifier); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.FormatExpressionTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function assignmentEq(config: T.AssignmentEq.Config) {
+  const fields = {
+    right: config.right,
+  };
+  return {
+    $type: 'assignment_eq' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    right(value?: T.RightHandSide) { return _fs(config, assignmentEq, 'right', value, fields.right); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.AssignmentEqTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function assignmentType(config: T.AssignmentType.Config) {
+  const fields = {
+    type: config.type,
+  };
+  return {
+    $type: 'assignment_type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    typeField(value?: T.Type) { return _fs(config, assignmentType, 'type', value, fields.type); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.AssignmentTypeTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function assignmentTyped(config: T.AssignmentTyped.Config) {
+  const fields = {
+    type: config.type,
+    right: config.right,
+  };
+  return {
+    $type: 'assignment_typed' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    typeField(value?: T.Type) { return _fs(config, assignmentTyped, 'type', value, fields.type); },
+    right(value?: T.RightHandSide) { return _fs(config, assignmentTyped, 'right', value, fields.right); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.AssignmentTypedTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function stringStart(text: string) {
   if (text.length === 0) throw new Error(`string_start: text must be non-empty`);
   return {
@@ -2504,104 +2602,6 @@ export function except(text: string) {
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.ExceptTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
-export function asPatternTarget(child?: (T.ComparisonOperator | T.NotOperator | T.BooleanOperator | T.Lambda | T.PrimaryExpression | T.ConditionalExpression | T.NamedExpression | T.AsPattern)) {
-  const children = child != null ? [child] : [];
-  return {
-    $type: 'as_pattern_target' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render() { return render(this); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(target: T.AsPatternTargetTree) { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function assignmentEq(config: T.AssignmentEq.Config) {
-  const fields = {
-    right: config.right,
-  };
-  return {
-    $type: 'assignment_eq' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    right(value?: T.RightHandSide) { return _fs(config, assignmentEq, 'right', value, fields.right); },
-    render() { return render(this); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(target: T.AssignmentEqTree) { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function assignmentType(config: T.AssignmentType.Config) {
-  const fields = {
-    type: config.type,
-  };
-  return {
-    $type: 'assignment_type' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    typeField(value?: T.Type) { return _fs(config, assignmentType, 'type', value, fields.type); },
-    render() { return render(this); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(target: T.AssignmentTypeTree) { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function assignmentTyped(config: T.AssignmentTyped.Config) {
-  const fields = {
-    type: config.type,
-    right: config.right,
-  };
-  return {
-    $type: 'assignment_typed' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    typeField(value?: T.Type) { return _fs(config, assignmentTyped, 'type', value, fields.type); },
-    right(value?: T.RightHandSide) { return _fs(config, assignmentTyped, 'right', value, fields.right); },
-    render() { return render(this); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(target: T.AssignmentTypedTree) { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function formatExpression(config: T.FormatExpression.Config) {
-  const fields = {
-    expression: config.expression,
-    type_conversion: config.typeConversion,
-    format_specifier: config.formatSpecifier,
-  };
-  return {
-    $type: 'format_expression' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    expression(value?: T.FExpression) { return _fs(config, formatExpression, 'expression', value, fields.expression); },
-    typeConversion(value?: T.TypeConversion | undefined) { return _fs(config, formatExpression, 'typeConversion', value, fields.type_conversion); },
-    formatSpecifier(value?: T.FormatSpecifier | undefined) { return _fs(config, formatExpression, 'formatSpecifier', value, fields.format_specifier); },
-    render() { return render(this); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(target: T.FormatExpressionTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2722,6 +2722,11 @@ export type FluentKindMap = {
   "await": FluentNode<"await", T.Await.Config>;
   "comment": T.Comment;
   "line_continuation": T.LineContinuation;
+  "as_pattern_target": FluentNode<"as_pattern_target", T.AsPatternTarget.Config>;
+  "format_expression": FluentNode<"format_expression", T.FormatExpression.Config>;
+  "assignment_eq": FluentNode<"assignment_eq", T.AssignmentEq.Config>;
+  "assignment_type": FluentNode<"assignment_type", T.AssignmentType.Config>;
+  "assignment_typed": FluentNode<"assignment_typed", T.AssignmentTyped.Config>;
   "string_start": T.StringStart;
   "escape_interpolation": T.EscapeInterpolation;
   "string_end": T.StringEnd;
@@ -2729,11 +2734,6 @@ export type FluentKindMap = {
   ")": T.CloseParen;
   "}": T.CloseBrace;
   "except": T.Except;
-  "as_pattern_target": FluentNode<"as_pattern_target", T.AsPatternTarget.Config>;
-  "assignment_eq": FluentNode<"assignment_eq", T.AssignmentEq.Config>;
-  "assignment_type": FluentNode<"assignment_type", T.AssignmentType.Config>;
-  "assignment_typed": FluentNode<"assignment_typed", T.AssignmentTyped.Config>;
-  "format_expression": FluentNode<"format_expression", T.FormatExpression.Config>;
 };
 
 export const _factoryMap = {
@@ -2853,6 +2853,11 @@ export const _factoryMap = {
   "await": await_,
   "comment": comment,
   "line_continuation": lineContinuation,
+  "as_pattern_target": asPatternTarget,
+  "format_expression": formatExpression,
+  "assignment_eq": assignmentEq,
+  "assignment_type": assignmentType,
+  "assignment_typed": assignmentTyped,
   "string_start": stringStart,
   "escape_interpolation": escapeInterpolation,
   "string_end": stringEnd,
@@ -2860,10 +2865,5 @@ export const _factoryMap = {
   ")": closeParen,
   "}": closeBrace,
   "except": except,
-  "as_pattern_target": asPatternTarget,
-  "assignment_eq": assignmentEq,
-  "assignment_type": assignmentType,
-  "assignment_typed": assignmentTyped,
-  "format_expression": formatExpression,
 } as const;
 export type _FactoryMap = typeof _factoryMap;

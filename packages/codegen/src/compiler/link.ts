@@ -60,10 +60,11 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
     stripResolvedRoleRules(rules)
     createSyntheticExternalRules(rules, raw.externals)
 
-    // Create synthetic rules for named aliases
-    // alias($.x, $.y) creates a node with kind 'y' that mirrors 'x's structure
-    // Walk all rules to find alias references and create entries for alias targets
-    collectAliasTargets(raw.rules, rules)
+    // Alias-target rule synthesis moved to `evaluate.synthesizeAliasTargetRules`
+    // (commit [TBD]) so the synthesized rules flow through this file's
+    // resolveRule pass uniformly with author-declared rules. Previously ran
+    // here AFTER resolveRule, which left nested aliases inside synthesized
+    // target rules un-flattened.
 
     // Build the hidden-rule → alias-target map BEFORE `resolveRule` has
     // fully collapsed every alias. We walk the raw grammar (pre-link)
@@ -2099,55 +2100,8 @@ function markBlockBearerFields(rule: Rule, bearers: ReadonlySet<string>): void {
 // detectClause — optional(seq(STRING, FIELD, ...)) → clause
 // ---------------------------------------------------------------------------
 
-// ---------------------------------------------------------------------------
-// collectAliasTargets — find named aliases and create rules for their targets
-// ---------------------------------------------------------------------------
-
-function collectAliasTargets(rawRules: Record<string, Rule>, resolvedRules: Record<string, Rule>): void {
-    for (const rule of Object.values(rawRules)) {
-        walkForAliases(rule, rawRules, resolvedRules)
-    }
-}
-
-function walkForAliases(rule: Rule, rawRules: Record<string, Rule>, resolvedRules: Record<string, Rule>): void {
-    switch (rule.type) {
-        case 'alias':
-            if (rule.named && rule.value && !resolvedRules[rule.value]) {
-                // Named alias: alias($.x, $.y) — create a rule for 'y'
-                // based on 'x's content. Prefer the already-resolved
-                // body so nested aliases inside `x` stay flattened
-                // (otherwise the synthesized target kind carries raw
-                // aliases that downstream walkers silently drop —
-                // this was the typescript `StringDouble.$children`
-                // losing `StringFragment` regression).
-                const sourceRule = rule.content.type === 'symbol'
-                    ? (resolvedRules[rule.content.name] ?? rawRules[rule.content.name])
-                    : rule.content
-                if (sourceRule) {
-                    resolvedRules[rule.value] = sourceRule
-                }
-            }
-            break
-        case 'seq':
-            for (const m of rule.members) walkForAliases(m, rawRules, resolvedRules)
-            break
-        case 'choice':
-            for (const m of rule.members) walkForAliases(m, rawRules, resolvedRules)
-            break
-        case 'optional':
-            walkForAliases(rule.content, rawRules, resolvedRules)
-            break
-        case 'repeat':
-            walkForAliases(rule.content, rawRules, resolvedRules)
-            break
-        case 'field':
-            walkForAliases(rule.content, rawRules, resolvedRules)
-            break
-        case 'token':
-            walkForAliases(rule.content, rawRules, resolvedRules)
-            break
-    }
-}
+// Alias-target rule synthesis moved to evaluate.synthesizeAliasTargetRules
+// so synthesized rules flow through resolveRule uniformly.
 
 // ---------------------------------------------------------------------------
 // detectClause — optional(seq(STRING, FIELD, ...)) → clause

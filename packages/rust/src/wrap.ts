@@ -1507,6 +1507,13 @@ export function wrap_FieldIdentifier(data: _NodeData, tree: TreeHandle): Wrapped
   } as unknown as WrappedNode<_FieldIdentifier>;
 }
 
+export function wrapLetChain(data: _NodeData, tree: TreeHandle): WrappedNode<LetChain> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<LetChain>;
+}
+
 export function wrap_ClosureExpressionExpr(data: _NodeData, tree: TreeHandle): WrappedNode<_ClosureExpressionExpr> {
   return {
     ...data,
@@ -1786,13 +1793,6 @@ export function wrapArrayExpressionList(data: _NodeData, tree: TreeHandle): Wrap
   } as unknown as WrappedNode<ArrayExpressionList>;
 }
 
-export function wrapLetChain(data: _NodeData, tree: TreeHandle): WrappedNode<LetChain> {
-  return {
-    ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<LetChain>;
-}
-
 export function wrapMatchArmWithComma(data: _NodeData, tree: TreeHandle): WrappedNode<MatchArmWithComma> {
   return {
     ...data,
@@ -2046,6 +2046,11 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'super': (d) => d,
   'crate': (d) => d,
   'metavariable': (d) => d,
+  'primitive_type': (d) => d,
+  'let_chain': (d, t) => wrapLetChain(d, t),
+  'shorthand_field_identifier': (d) => d,
+  'type_identifier': (d) => d,
+  'field_identifier': (d) => d,
   '_kw_ref': (d) => d,
   '_kw_unsafe': (d) => d,
   '_kw_static': (d) => d,
@@ -2074,19 +2079,11 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_match_arm_block_ending': (d, t) => wrap_MatchArmBlockEnding(d, t),
   '_line_comment_regular_dslash': (d) => d,
   '_line_comment_content': (d) => d,
-  'string_content': (d) => d,
-  'raw_string_literal_content': (d) => d,
-  'float_literal': (d) => d,
-  '_outer_block_doc_comment_marker': (d) => d,
-  '_inner_block_doc_comment_marker': (d) => d,
-  '_line_doc_content': (d) => d,
-  '_error_sentinel': (d) => d,
   'expression_statement_with_semi': (d, t) => wrapExpressionStatementWithSemi(d, t),
   'expression_statement_block_ending': (d, t) => wrapExpressionStatementBlockEnding(d, t),
   'macro_definition_paren': (d, t) => wrapMacroDefinitionParen(d, t),
   'macro_definition_bracket': (d, t) => wrapMacroDefinitionBracket(d, t),
   'macro_definition_brace': (d, t) => wrapMacroDefinitionBrace(d, t),
-  'primitive_type': (d) => d,
   'mod_item_inline': (d, t) => wrapModItemInline(d, t),
   'foreign_mod_item_body': (d, t) => wrapForeignModItemBody(d, t),
   'struct_item_brace': (d, t) => wrapStructItemBrace(d, t),
@@ -2104,7 +2101,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'reference_expression_raw_mut': (d, t) => wrapReferenceExpressionRawMut(d, t),
   'array_expression_semi': (d, t) => wrapArrayExpressionSemi(d, t),
   'array_expression_list': (d, t) => wrapArrayExpressionList(d, t),
-  'let_chain': (d, t) => wrapLetChain(d, t),
   'match_arm_with_comma': (d, t) => wrapMatchArmWithComma(d, t),
   'match_arm_block_ending': (d, t) => wrapMatchArmBlockEnding(d, t),
   'closure_expression_block': (d, t) => wrapClosureExpressionBlock(d, t),
@@ -2119,10 +2115,13 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'line_comment_regular_dslash': (d) => d,
   'line_comment_doc': (d, t) => wrapLineCommentDoc(d, t),
   'line_comment_content': (d) => d,
-  'doc_comment': (d) => d,
-  'type_identifier': (d) => d,
-  'field_identifier': (d) => d,
-  'shorthand_field_identifier': (d) => d,
+  'string_content': (d) => d,
+  'raw_string_literal_content': (d) => d,
+  'float_literal': (d) => d,
+  '_outer_block_doc_comment_marker': (d) => d,
+  '_inner_block_doc_comment_marker': (d) => d,
+  '_line_doc_content': (d) => d,
+  '_error_sentinel': (d) => d,
 };
 
 /** Wrap a NodeData into its lazy read-only view. */

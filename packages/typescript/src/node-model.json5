@@ -12477,139 +12477,118 @@
     },
     {
       "kind": "interface_body",
-      "modelType": "branch",
+      "modelType": "container",
       "typeName": "InterfaceBody",
       "factoryName": "interfaceBody",
       "irKey": "interfaceBody",
       "hidden": false,
-      "fields": [
+      "children": [
         {
-          "name": "opening",
-          "propertyName": "opening",
-          "paramName": "opening",
+          "name": "export_statement",
+          "propertyName": "exportStatement",
           "required": true,
-          "multiple": false,
+          "multiple": true,
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "{"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "{|"
-            }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
-        },
-        {
-          "name": "members",
-          "propertyName": "members",
-          "paramName": "members",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": ","
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": ";"
-            },
-            {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "export_statement",
               "unresolved": true
-            },
+            }
+          ]
+        },
+        {
+          "name": "property_signature",
+          "propertyName": "propertySignature",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "property_signature",
               "unresolved": true
-            },
+            }
+          ]
+        },
+        {
+          "name": "call_signature",
+          "propertyName": "callSignature",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "call_signature",
               "unresolved": true
-            },
+            }
+          ]
+        },
+        {
+          "name": "construct_signature",
+          "propertyName": "constructSignature",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "construct_signature",
               "unresolved": true
-            },
+            }
+          ]
+        },
+        {
+          "name": "index_signature",
+          "propertyName": "indexSignature",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "index_signature",
               "unresolved": true
-            },
+            }
+          ]
+        },
+        {
+          "name": "method_signature",
+          "propertyName": "methodSignature",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "method_signature",
               "unresolved": true
-            },
+            }
+          ]
+        },
+        {
+          "name": "semicolon",
+          "propertyName": "semicolon",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_semicolon",
               "unresolved": true
             }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "export_statement",
-              "property_signature",
-              "call_signature",
-              "construct_signature",
-              "index_signature",
-              "method_signature",
-              "_semicolon"
-            ]
-          }
-        },
-        {
-          "name": "closing",
-          "propertyName": "closing",
-          "paramName": "closing",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "}"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "|}"
-            }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
+          ]
         }
-      ],
-      "children": []
+      ]
     },
     {
       "kind": "interface_declaration",

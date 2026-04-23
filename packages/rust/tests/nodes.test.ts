@@ -1702,28 +1702,44 @@ describe('metavariable', () => {
   });
 });
 
-describe('string_content', () => {
+describe('primitive_type', () => {
+  it('factory accepts valid value', () => {
+    const node = ir.primitiveType('u8');
+    expect(node.$type).toBe('primitive_type');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('let_chain', () => {
   it('factory produces correct type', () => {
-    const node = ir.stringContent("test");
-    expect(node.$type).toBe('string_content');
+    const node = ir.letChain();
+    expect(node.$type).toBe('let_chain');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('shorthand_field_identifier', () => {
+  it('factory produces correct type', () => {
+    const node = ir.shorthandFieldIdentifier("test");
+    expect(node.$type).toBe('shorthand_field_identifier');
     expect(node.$source).toBe('factory');
     expect(node.$text).toBe("test");
   });
 });
 
-describe('raw_string_literal_content', () => {
+describe('type_identifier', () => {
   it('factory produces correct type', () => {
-    const node = ir.rawStringLiteralContent("test");
-    expect(node.$type).toBe('raw_string_literal_content');
+    const node = ir.typeIdentifier("test");
+    expect(node.$type).toBe('type_identifier');
     expect(node.$source).toBe('factory');
     expect(node.$text).toBe("test");
   });
 });
 
-describe('float_literal', () => {
+describe('field_identifier', () => {
   it('factory produces correct type', () => {
-    const node = ir.floatLiteral("test");
-    expect(node.$type).toBe('float_literal');
+    const node = ir.fieldIdentifier("test");
+    expect(node.$type).toBe('field_identifier');
     expect(node.$source).toBe('factory');
     expect(node.$text).toBe("test");
   });
@@ -1765,14 +1781,6 @@ describe('macro_definition_brace', () => {
   it('factory produces correct type', () => {
     const node = ir.macroDefinitionBrace();
     expect(node.$type).toBe('macro_definition_brace');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('primitive_type', () => {
-  it('factory accepts valid value', () => {
-    const node = ir.primitiveType('u8');
-    expect(node.$type).toBe('primitive_type');
     expect(node.$source).toBe('factory');
   });
 });
@@ -1963,14 +1971,6 @@ describe('array_expression_list', () => {
   });
 });
 
-describe('let_chain', () => {
-  it('factory produces correct type', () => {
-    const node = ir.letChain();
-    expect(node.$type).toBe('let_chain');
-    expect(node.$source).toBe('factory');
-  });
-});
-
 describe('match_arm_with_comma', () => {
   it('factory produces correct type', () => {
     const node = ir.matchArmWithComma({ value: { $type: '_expression', $text: 'test' } as any });
@@ -2130,37 +2130,28 @@ describe('line_comment_content', () => {
   });
 });
 
-describe('doc_comment', () => {
+describe('string_content', () => {
   it('factory produces correct type', () => {
-    const node = ir.docComment("test");
-    expect(node.$type).toBe('doc_comment');
+    const node = ir.stringContent("test");
+    expect(node.$type).toBe('string_content');
     expect(node.$source).toBe('factory');
     expect(node.$text).toBe("test");
   });
 });
 
-describe('type_identifier', () => {
+describe('raw_string_literal_content', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeIdentifier("test");
-    expect(node.$type).toBe('type_identifier');
+    const node = ir.rawStringLiteralContent("test");
+    expect(node.$type).toBe('raw_string_literal_content');
     expect(node.$source).toBe('factory');
     expect(node.$text).toBe("test");
   });
 });
 
-describe('field_identifier', () => {
+describe('float_literal', () => {
   it('factory produces correct type', () => {
-    const node = ir.fieldIdentifier("test");
-    expect(node.$type).toBe('field_identifier');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
-  });
-});
-
-describe('shorthand_field_identifier', () => {
-  it('factory produces correct type', () => {
-    const node = ir.shorthandFieldIdentifier("test");
-    expect(node.$type).toBe('shorthand_field_identifier');
+    const node = ir.floatLiteral("test");
+    expect(node.$type).toBe('float_literal');
     expect(node.$source).toBe('factory');
     expect(node.$text).toBe("test");
   });

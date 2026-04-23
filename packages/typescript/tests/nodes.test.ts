@@ -1255,6 +1255,49 @@ describe('computed_property_name', () => {
   });
 });
 
+describe('statement_identifier', () => {
+  it('factory produces correct type', () => {
+    const node = ir.statementIdentifier("test");
+    expect(node.$type).toBe('statement_identifier');
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
+  });
+});
+
+describe('shorthand_property_identifier', () => {
+  it('factory produces correct type', () => {
+    const node = ir.shorthandPropertyIdentifier();
+    expect(node.$type).toBe('shorthand_property_identifier');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('shorthand_property_identifier_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.shorthandPropertyIdentifierPattern();
+    expect(node.$type).toBe('shorthand_property_identifier_pattern');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('property_identifier', () => {
+  it('factory produces correct type', () => {
+    const node = ir.propertyIdentifier("test");
+    expect(node.$type).toBe('property_identifier');
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
+  });
+});
+
+describe('string_fragment', () => {
+  it('factory produces correct type', () => {
+    const node = ir.stringFragment("test");
+    expect(node.$type).toBe('string_fragment');
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
+  });
+});
+
 describe('public_field_definition', () => {
   it('factory produces correct type', () => {
     const node = ir.publicField({ decorator: [{ $type: 'decorator', $text: 'test' } as any], name: { $type: '_property_name', $text: 'test' } as any });
@@ -2058,19 +2101,27 @@ describe('function_type', () => {
   });
 });
 
-describe('html_comment', () => {
+describe('interface_body', () => {
   it('factory produces correct type', () => {
-    const node = ir.htmlComment("test");
-    expect(node.$type).toBe('html_comment');
+    const node = ir.interfaceBody();
+    expect(node.$type).toBe('interface_body');
     expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
   });
 });
 
-describe('jsx_text', () => {
+describe("this_type", () => {
+  it('factory produces keyword', () => {
+    const node = ir.thisType();
+    expect(node.$type).toBe("this_type");
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("this");
+  });
+});
+
+describe('type_identifier', () => {
   it('factory produces correct type', () => {
-    const node = ir.jsxText("test");
-    expect(node.$type).toBe('jsx_text');
+    const node = ir.typeIdentifier("test");
+    expect(node.$type).toBe('type_identifier');
     expect(node.$source).toBe('factory');
     expect(node.$text).toBe("test");
   });
@@ -2165,15 +2216,6 @@ describe('import_specifier_as', () => {
   });
 });
 
-describe('statement_identifier', () => {
-  it('factory produces correct type', () => {
-    const node = ir.statementIdentifier("test");
-    expect(node.$type).toBe('statement_identifier');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
-  });
-});
-
 describe('parenthesized_expression_typed', () => {
   it('factory produces correct type', () => {
     const node = ir.parenthesizedExpressionTyped({ children: [{ $type: 'expression', $text: 'test' } as any] as any });
@@ -2191,40 +2233,6 @@ describe('parenthesized_expression_sequence', () => {
     const node = ir.parenthesizedExpressionSequence({ type: "sequence_expression" } as never);
     expect(node.$type).toBe('parenthesized_expression_sequence');
     expect(node.$source).toBe('factory');
-  });
-});
-
-describe('shorthand_property_identifier', () => {
-  it('factory produces correct type', () => {
-    const node = ir.shorthandPropertyIdentifier();
-    expect(node.$type).toBe('shorthand_property_identifier');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('shorthand_property_identifier_pattern', () => {
-  it('factory produces correct type', () => {
-    const node = ir.shorthandPropertyIdentifierPattern();
-    expect(node.$type).toBe('shorthand_property_identifier_pattern');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('property_identifier', () => {
-  it('factory produces correct type', () => {
-    const node = ir.propertyIdentifier("test");
-    expect(node.$type).toBe('property_identifier');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
-  });
-});
-
-describe('string_fragment', () => {
-  it('factory produces correct type', () => {
-    const node = ir.stringFragment("test");
-    expect(node.$type).toBe('string_fragment');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
   });
 });
 
@@ -2320,27 +2328,6 @@ describe('string_single', () => {
   });
 });
 
-describe('interface_body', () => {
-  it('factory produces correct type', () => {
-    const node = ir.interfaceBody({ opening: 'test' as any, closing: 'test' as any });
-    expect(node.$type).toBe('interface_body');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.interfaceBody({ opening: 'test' as any, closing: 'test' as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe("this_type", () => {
-  it('factory produces keyword', () => {
-    const node = ir.thisType();
-    expect(node.$type).toBe("this_type");
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("this");
-  });
-});
-
 describe('index_signature_colon', () => {
   it('factory produces correct type', () => {
     const node = ir.indexSignatureColon({ name: { $type: 'identifier', $text: 'test' } as any, indexType: { $type: 'type', $text: 'test' } as any });
@@ -2361,10 +2348,19 @@ describe('index_signature_mapped_type_clause', () => {
   });
 });
 
-describe('type_identifier', () => {
+describe('html_comment', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeIdentifier("test");
-    expect(node.$type).toBe('type_identifier');
+    const node = ir.htmlComment("test");
+    expect(node.$type).toBe('html_comment');
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
+  });
+});
+
+describe('jsx_text', () => {
+  it('factory produces correct type', () => {
+    const node = ir.jsxText("test");
+    expect(node.$type).toBe('jsx_text');
     expect(node.$source).toBe('factory');
     expect(node.$text).toBe("test");
   });

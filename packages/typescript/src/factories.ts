@@ -2788,6 +2788,77 @@ export function reservedIdentifier(text: string) {
   };
 }
 
+export function statementIdentifier(text: string) {
+  if (text.length === 0) throw new Error(`statement_identifier: text must be non-empty`);
+  return {
+    $type: 'statement_identifier' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.StatementIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function shorthandPropertyIdentifier(child?: (T.Identifier | T.ReservedIdentifier)) {
+  const children = child != null ? [child] : [];
+  return {
+    $type: 'shorthand_property_identifier' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ShorthandPropertyIdentifierTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function shorthandPropertyIdentifierPattern(child?: (T.Identifier | T.ReservedIdentifier)) {
+  const children = child != null ? [child] : [];
+  return {
+    $type: 'shorthand_property_identifier_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ShorthandPropertyIdentifierPatternTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function propertyIdentifier(text: string) {
+  if (text.length === 0) throw new Error(`property_identifier: text must be non-empty`);
+  return {
+    $type: 'property_identifier' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.PropertyIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function stringFragment(text: string) {
+  if (text.length === 0) throw new Error(`string_fragment: text must be non-empty`); if (!_leafRe_stringFragment.test(text)) throw new Error(`string_fragment: text does not match pattern: ${text}`);
+  return {
+    $type: 'string_fragment' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.StringFragmentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
 export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
   const fields = {
     decorator: config.decorator,
@@ -4389,42 +4460,43 @@ export function functionType(config: T.FunctionType.Config) {
   };
 }
 
-export function htmlComment(text: string) {
-  if (text.length === 0) throw new Error(`html_comment: text must be non-empty`);
+export function interfaceBody(...children: (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon)[]) {
   return {
-    $type: 'html_comment' as const,
+    $type: 'interface_body' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.HtmlCommentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+    $children: children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.InterfaceBodyTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function oror(text: string) {
-  if (text.length === 0) throw new Error(`||: text must be non-empty`);
+export function thisType() {
   return {
-    $type: '||' as const,
+    $type: 'this_type' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.OrorTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+    $text: 'this' as const,
+    render: () => 'this' as const,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'this' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'this' as const },
+    replace: (t: T.ThisTypeTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'this' as const }; },
   };
 }
 
-export function jsxText(text: string) {
-  if (text.length === 0) throw new Error(`jsx_text: text must be non-empty`);
+export function typeIdentifier(text: string) {
+  if (text.length === 0) throw new Error(`type_identifier: text must be non-empty`);
   return {
-    $type: 'jsx_text' as const,
+    $type: 'type_identifier' as const,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.JsxTextTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+    replace: (t: T.TypeIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
@@ -4632,19 +4704,6 @@ export function importSpecifierAs(config: T.ImportSpecifierAs.Config) {
   };
 }
 
-export function statementIdentifier(text: string) {
-  if (text.length === 0) throw new Error(`statement_identifier: text must be non-empty`);
-  return {
-    $type: 'statement_identifier' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.StatementIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
 export function parenthesizedExpressionTyped(config: T.ParenthesizedExpressionTyped.Config) {
   const fields = {
     type: config.type,
@@ -4683,64 +4742,6 @@ export function parenthesizedExpressionSequence(child: T.SequenceExpression) {
       return toEdit(this, startOrRange);
     },
     replace(target: T.ParenthesizedExpressionSequenceTree) { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function shorthandPropertyIdentifier(child?: (T.Identifier | T.ReservedIdentifier)) {
-  const children = child != null ? [child] : [];
-  return {
-    $type: 'shorthand_property_identifier' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render() { return render(this); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(target: T.ShorthandPropertyIdentifierTree) { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function shorthandPropertyIdentifierPattern(child?: (T.Identifier | T.ReservedIdentifier)) {
-  const children = child != null ? [child] : [];
-  return {
-    $type: 'shorthand_property_identifier_pattern' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render() { return render(this); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(target: T.ShorthandPropertyIdentifierPatternTree) { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function propertyIdentifier(text: string) {
-  if (text.length === 0) throw new Error(`property_identifier: text must be non-empty`);
-  return {
-    $type: 'property_identifier' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.PropertyIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
-export function stringFragment(text: string) {
-  if (text.length === 0) throw new Error(`string_fragment: text must be non-empty`); if (!_leafRe_stringFragment.test(text)) throw new Error(`string_fragment: text does not match pattern: ${text}`);
-  return {
-    $type: 'string_fragment' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.StringFragmentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
@@ -4915,41 +4916,6 @@ export function stringSingle(...children: (T.StringFragment | T.EscapeSequence)[
   };
 }
 
-export function interfaceBody(config: T.InterfaceBody.Config) {
-  const fields = {
-    opening: config.opening,
-    members: config.members,
-    closing: config.closing,
-  };
-  return {
-    $type: 'interface_body' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    opening(value?: "{" | "{|") { return _fs(config, interfaceBody, 'opening', value, fields.opening); },
-    members(...values: NonEmptyArray<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>) { return _fsm(config, interfaceBody, 'members', values, fields.members); },
-    closing(value?: "}" | "|}") { return _fs(config, interfaceBody, 'closing', value, fields.closing); },
-    render() { return render(this); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(target: T.InterfaceBodyTree) { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function thisType() {
-  return {
-    $type: 'this_type' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: 'this' as const,
-    render: () => 'this' as const,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'this' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'this' as const },
-    replace: (t: T.ThisTypeTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'this' as const }; },
-  };
-}
-
 export function indexSignatureColon(config: T.IndexSignatureColon.Config) {
   const fields = {
     name: config.name,
@@ -4987,16 +4953,42 @@ export function indexSignatureMappedTypeClause(child: T.MappedTypeClause) {
   };
 }
 
-export function typeIdentifier(text: string) {
-  if (text.length === 0) throw new Error(`type_identifier: text must be non-empty`);
+export function htmlComment(text: string) {
+  if (text.length === 0) throw new Error(`html_comment: text must be non-empty`);
   return {
-    $type: 'type_identifier' as const,
+    $type: 'html_comment' as const,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.TypeIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+    replace: (t: T.HtmlCommentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function oror(text: string) {
+  if (text.length === 0) throw new Error(`||: text must be non-empty`);
+  return {
+    $type: '||' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.OrorTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function jsxText(text: string) {
+  if (text.length === 0) throw new Error(`jsx_text: text must be non-empty`);
+  return {
+    $type: 'jsx_text' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.JsxTextTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
@@ -5119,6 +5111,11 @@ export type FluentKindMap = {
   "pair_pattern": FluentNode<"pair_pattern", T.PairPattern.Config>;
   "computed_property_name": FluentNode<"computed_property_name", T.ComputedPropertyName.Config>;
   "_reserved_identifier": T.ReservedIdentifier;
+  "statement_identifier": T.StatementIdentifier;
+  "shorthand_property_identifier": FluentNode<"shorthand_property_identifier", T.ShorthandPropertyIdentifier.Config>;
+  "shorthand_property_identifier_pattern": FluentNode<"shorthand_property_identifier_pattern", T.ShorthandPropertyIdentifierPattern.Config>;
+  "property_identifier": T.PropertyIdentifier;
+  "string_fragment": T.StringFragment;
   "public_field_definition": FluentNode<"public_field_definition", T.PublicFieldDefinition.Config>;
   "non_null_expression": FluentNode<"non_null_expression", T.NonNullExpression.Config>;
   "method_signature": FluentNode<"method_signature", T.MethodSignature.Config>;
@@ -5190,9 +5187,9 @@ export type FluentKindMap = {
   "union_type": FluentNode<"union_type", T.UnionType.Config>;
   "intersection_type": FluentNode<"intersection_type", T.IntersectionType.Config>;
   "function_type": FluentNode<"function_type", T.FunctionType.Config>;
-  "html_comment": T.HtmlComment;
-  "||": T.Oror;
-  "jsx_text": T.JsxText;
+  "interface_body": FluentNode<"interface_body", T.InterfaceBody.Config>;
+  "this_type": T.ThisType;
+  "type_identifier": T.TypeIdentifier;
   "export_statement_default": FluentNode<"export_statement_default", T.ExportStatementDefault.Config>;
   "export_statement_type_export": FluentNode<"export_statement_type_export", T.ExportStatementTypeExport.Config>;
   "export_statement_equals_export": FluentNode<"export_statement_equals_export", T.ExportStatementEqualsExport.Config>;
@@ -5202,13 +5199,8 @@ export type FluentKindMap = {
   "import_clause_default_import": FluentNode<"import_clause_default_import", T.ImportClauseDefaultImport.Config>;
   "import_specifier_name": FluentNode<"import_specifier_name", T.ImportSpecifierName.Config>;
   "import_specifier_as": FluentNode<"import_specifier_as", T.ImportSpecifierAs.Config>;
-  "statement_identifier": T.StatementIdentifier;
   "parenthesized_expression_typed": FluentNode<"parenthesized_expression_typed", T.ParenthesizedExpressionTyped.Config>;
   "parenthesized_expression_sequence": FluentNode<"parenthesized_expression_sequence", T.ParenthesizedExpressionSequence.Config>;
-  "shorthand_property_identifier": FluentNode<"shorthand_property_identifier", T.ShorthandPropertyIdentifier.Config>;
-  "shorthand_property_identifier_pattern": FluentNode<"shorthand_property_identifier_pattern", T.ShorthandPropertyIdentifierPattern.Config>;
-  "property_identifier": T.PropertyIdentifier;
-  "string_fragment": T.StringFragment;
   "class_heritage_extends_clause": FluentNode<"class_heritage_extends_clause", T.ClassHeritageExtendsClause.Config>;
   "class_heritage_implements_clause": FluentNode<"class_heritage_implements_clause", T.ClassHeritageImplementsClause.Config>;
   "arrow_function_parameter": FluentNode<"arrow_function_parameter", T.ArrowFunctionParameter.Config>;
@@ -5218,11 +5210,11 @@ export type FluentKindMap = {
   "call_expression_member": FluentNode<"call_expression_member", T.CallExpressionMember.Config>;
   "string_double": FluentNode<"string_double", T.StringDouble.Config>;
   "string_single": FluentNode<"string_single", T.StringSingle.Config>;
-  "interface_body": FluentNode<"interface_body", T.InterfaceBody.Config>;
-  "this_type": T.ThisType;
   "index_signature_colon": FluentNode<"index_signature_colon", T.IndexSignatureColon.Config>;
   "index_signature_mapped_type_clause": FluentNode<"index_signature_mapped_type_clause", T.IndexSignatureMappedTypeClause.Config>;
-  "type_identifier": T.TypeIdentifier;
+  "html_comment": T.HtmlComment;
+  "||": T.Oror;
+  "jsx_text": T.JsxText;
 };
 
 export const _factoryMap = {
@@ -5344,6 +5336,11 @@ export const _factoryMap = {
   "pair_pattern": pairPattern,
   "computed_property_name": computedPropertyName,
   "_reserved_identifier": reservedIdentifier,
+  "statement_identifier": statementIdentifier,
+  "shorthand_property_identifier": shorthandPropertyIdentifier,
+  "shorthand_property_identifier_pattern": shorthandPropertyIdentifierPattern,
+  "property_identifier": propertyIdentifier,
+  "string_fragment": stringFragment,
   "public_field_definition": publicFieldDefinition,
   "non_null_expression": nonNullExpression,
   "method_signature": methodSignature,
@@ -5415,9 +5412,9 @@ export const _factoryMap = {
   "union_type": unionType,
   "intersection_type": intersectionType,
   "function_type": functionType,
-  "html_comment": htmlComment,
-  "||": oror,
-  "jsx_text": jsxText,
+  "interface_body": interfaceBody,
+  "this_type": thisType,
+  "type_identifier": typeIdentifier,
   "export_statement_default": exportStatementDefault,
   "export_statement_type_export": exportStatementTypeExport,
   "export_statement_equals_export": exportStatementEqualsExport,
@@ -5427,13 +5424,8 @@ export const _factoryMap = {
   "import_clause_default_import": importClauseDefaultImport,
   "import_specifier_name": importSpecifierName,
   "import_specifier_as": importSpecifierAs,
-  "statement_identifier": statementIdentifier,
   "parenthesized_expression_typed": parenthesizedExpressionTyped,
   "parenthesized_expression_sequence": parenthesizedExpressionSequence,
-  "shorthand_property_identifier": shorthandPropertyIdentifier,
-  "shorthand_property_identifier_pattern": shorthandPropertyIdentifierPattern,
-  "property_identifier": propertyIdentifier,
-  "string_fragment": stringFragment,
   "class_heritage_extends_clause": classHeritageExtendsClause,
   "class_heritage_implements_clause": classHeritageImplementsClause,
   "arrow_function_parameter": arrowFunctionParameter,
@@ -5443,10 +5435,10 @@ export const _factoryMap = {
   "call_expression_member": callExpressionMember,
   "string_double": stringDouble,
   "string_single": stringSingle,
-  "interface_body": interfaceBody,
-  "this_type": thisType,
   "index_signature_colon": indexSignatureColon,
   "index_signature_mapped_type_clause": indexSignatureMappedTypeClause,
-  "type_identifier": typeIdentifier,
+  "html_comment": htmlComment,
+  "||": oror,
+  "jsx_text": jsxText,
 } as const;
 export type _FactoryMap = typeof _factoryMap;

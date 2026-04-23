@@ -170,14 +170,14 @@ export const enum SyntaxKind {
   Interpolation = 'interpolation',
   FormatSpecifier = 'format_specifier',
   Await = 'await',
+  AsPatternTarget = 'as_pattern_target',
+  FormatExpression = 'format_expression',
   _AssignmentEq = '_assignment_eq',
   _AssignmentType = '_assignment_type',
   _AssignmentTyped = '_assignment_typed',
-  AsPatternTarget = 'as_pattern_target',
   AssignmentEq = 'assignment_eq',
   AssignmentType = 'assignment_type',
   AssignmentTyped = 'assignment_typed',
-  FormatExpression = 'format_expression',
   ImportPrefix = 'import_prefix',
   PassStatement = 'pass_statement',
   BreakStatement = 'break_statement',
@@ -1207,6 +1207,20 @@ export interface Await {
   };
 }
 
+export interface AsPatternTarget {
+  readonly $type: 'as_pattern_target';
+  readonly $children: readonly [ComparisonOperator | NotOperator | BooleanOperator | Lambda | PrimaryExpression | ConditionalExpression | NamedExpression | AsPattern];
+}
+
+export interface FormatExpression {
+  readonly $type: 'format_expression';
+  readonly $fields: {
+    readonly expression: FExpression;
+    readonly type_conversion?: TypeConversion;
+    readonly format_specifier?: FormatSpecifier;
+  };
+}
+
 export interface _AssignmentEq {
   readonly $type: '_assignment_eq';
 }
@@ -1217,11 +1231,6 @@ export interface _AssignmentType {
 
 export interface _AssignmentTyped {
   readonly $type: '_assignment_typed';
-}
-
-export interface AsPatternTarget {
-  readonly $type: 'as_pattern_target';
-  readonly $children: readonly [ComparisonOperator | NotOperator | BooleanOperator | Lambda | PrimaryExpression | ConditionalExpression | NamedExpression | AsPattern];
 }
 
 export interface AssignmentEq {
@@ -1243,15 +1252,6 @@ export interface AssignmentTyped {
   readonly $fields: {
     readonly type: Type;
     readonly right: RightHandSide;
-  };
-}
-
-export interface FormatExpression {
-  readonly $type: 'format_expression';
-  readonly $fields: {
-    readonly expression: FExpression;
-    readonly type_conversion?: TypeConversion;
-    readonly format_specifier?: FormatSpecifier;
   };
 }
 
@@ -1402,14 +1402,14 @@ export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface InterpolationTree extends TreeNode<'interpolation'> {}
 export interface FormatSpecifierTree extends TreeNode<'format_specifier'> {}
 export interface AwaitTree extends TreeNode<'await'> {}
+export interface AsPatternTargetTree extends AnyTreeNode { readonly type: "as_pattern_target"; }
+export interface FormatExpressionTree extends TreeNode<'format_expression'> {}
 export interface _AssignmentEqTree extends AnyTreeNode { readonly type: "_assignment_eq"; }
 export interface _AssignmentTypeTree extends AnyTreeNode { readonly type: "_assignment_type"; }
 export interface _AssignmentTypedTree extends AnyTreeNode { readonly type: "_assignment_typed"; }
-export interface AsPatternTargetTree extends AnyTreeNode { readonly type: "as_pattern_target"; }
 export interface AssignmentEqTree extends TreeNode<'assignment_eq'> {}
 export interface AssignmentTypeTree extends TreeNode<'assignment_type'> {}
 export interface AssignmentTypedTree extends TreeNode<'assignment_typed'> {}
-export interface FormatExpressionTree extends TreeNode<'format_expression'> {}
 export interface ImportPrefixTree extends TreeNode<'import_prefix'> {}
 export interface PassStatementTree extends AnyTreeNode { readonly type: "pass_statement"; }
 export interface BreakStatementTree extends AnyTreeNode { readonly type: "break_statement"; }
@@ -1760,14 +1760,14 @@ export type PythonNode =
   | Interpolation
   | FormatSpecifier
   | Await
+  | AsPatternTarget
+  | FormatExpression
   | _AssignmentEq
   | _AssignmentType
   | _AssignmentTyped
-  | AsPatternTarget
   | AssignmentEq
   | AssignmentType
   | AssignmentTyped
-  | FormatExpression
 ;
 
 export interface KindMap {
@@ -1882,14 +1882,14 @@ export interface KindMap {
   'interpolation': Interpolation;
   'format_specifier': FormatSpecifier;
   'await': Await;
+  'as_pattern_target': AsPatternTarget;
+  'format_expression': FormatExpression;
   '_assignment_eq': _AssignmentEq;
   '_assignment_type': _AssignmentType;
   '_assignment_typed': _AssignmentTyped;
-  'as_pattern_target': AsPatternTarget;
   'assignment_eq': AssignmentEq;
   'assignment_type': AssignmentType;
   'assignment_typed': AssignmentTyped;
-  'format_expression': FormatExpression;
   'import_prefix': ImportPrefix;
   'pass_statement': PassStatement;
   'break_statement': BreakStatement;
@@ -2036,14 +2036,14 @@ export interface StringContentNs extends NodeNs<StringContent, LeafScalarMap, Le
 export interface InterpolationNs extends NodeNs<Interpolation, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FormatSpecifierNs extends NodeNs<FormatSpecifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AwaitNs extends NodeNs<Await, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AsPatternTargetNs extends NodeNs<AsPatternTarget, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface FormatExpressionNs extends NodeNs<FormatExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _AssignmentEqNs extends NodeNs<_AssignmentEq, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _AssignmentTypeNs extends NodeNs<_AssignmentType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _AssignmentTypedNs extends NodeNs<_AssignmentTyped, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AsPatternTargetNs extends NodeNs<AsPatternTarget, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentEqNs extends NodeNs<AssignmentEq, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentTypeNs extends NodeNs<AssignmentType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentTypedNs extends NodeNs<AssignmentTyped, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface FormatExpressionNs extends NodeNs<FormatExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 
 export interface NamespaceMap {
   'module': ModuleNs;
@@ -2157,14 +2157,14 @@ export interface NamespaceMap {
   'interpolation': InterpolationNs;
   'format_specifier': FormatSpecifierNs;
   'await': AwaitNs;
+  'as_pattern_target': AsPatternTargetNs;
+  'format_expression': FormatExpressionNs;
   '_assignment_eq': _AssignmentEqNs;
   '_assignment_type': _AssignmentTypeNs;
   '_assignment_typed': _AssignmentTypedNs;
-  'as_pattern_target': AsPatternTargetNs;
   'assignment_eq': AssignmentEqNs;
   'assignment_type': AssignmentTypeNs;
   'assignment_typed': AssignmentTypedNs;
-  'format_expression': FormatExpressionNs;
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -2951,6 +2951,20 @@ export namespace Await {
   export type Tree = TreeFor<'await'>;
   export type Kind = 'await';
 }
+export namespace AsPatternTarget {
+  export type Config = ConfigFor<'as_pattern_target'>;
+  export type Fluent = FluentFor<'as_pattern_target'>;
+  export type Loose = LooseFor<'as_pattern_target'>;
+  export type Tree = TreeFor<'as_pattern_target'>;
+  export type Kind = 'as_pattern_target';
+}
+export namespace FormatExpression {
+  export type Config = ConfigFor<'format_expression'>;
+  export type Fluent = FluentFor<'format_expression'>;
+  export type Loose = LooseFor<'format_expression'>;
+  export type Tree = TreeFor<'format_expression'>;
+  export type Kind = 'format_expression';
+}
 export namespace _AssignmentEq {
   export type Config = ConfigFor<'_assignment_eq'>;
   export type Fluent = FluentFor<'_assignment_eq'>;
@@ -2972,13 +2986,6 @@ export namespace _AssignmentTyped {
   export type Tree = TreeFor<'_assignment_typed'>;
   export type Kind = '_assignment_typed';
 }
-export namespace AsPatternTarget {
-  export type Config = ConfigFor<'as_pattern_target'>;
-  export type Fluent = FluentFor<'as_pattern_target'>;
-  export type Loose = LooseFor<'as_pattern_target'>;
-  export type Tree = TreeFor<'as_pattern_target'>;
-  export type Kind = 'as_pattern_target';
-}
 export namespace AssignmentEq {
   export type Config = ConfigFor<'assignment_eq'>;
   export type Fluent = FluentFor<'assignment_eq'>;
@@ -2999,11 +3006,4 @@ export namespace AssignmentTyped {
   export type Loose = LooseFor<'assignment_typed'>;
   export type Tree = TreeFor<'assignment_typed'>;
   export type Kind = 'assignment_typed';
-}
-export namespace FormatExpression {
-  export type Config = ConfigFor<'format_expression'>;
-  export type Fluent = FluentFor<'format_expression'>;
-  export type Loose = LooseFor<'format_expression'>;
-  export type Tree = TreeFor<'format_expression'>;
-  export type Kind = 'format_expression';
 }
