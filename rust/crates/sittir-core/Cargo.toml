@@ -1,0 +1,16 @@
+[package]
+name = "sittir-core"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Render / readNode / splice primitives for sittir — hot-path engine shared across per-grammar render crates."
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+tree-sitter = { workspace = true }
+ast-grep-core = "0.42"
+sha2 = { workspace = true }
+askama = { workspace = true }
