@@ -6,6 +6,9 @@ export const NODE_KINDS = [
   '_arrow_function_parameter',
   '_class_heritage_extends_clause',
   '_class_heritage_implements_clause',
+  '_export_statement_equals_export',
+  '_export_statement_namespace_export',
+  '_export_statement_type_export',
   '_import_clause_default_import',
   '_import_clause_named_imports',
   '_import_clause_namespace_import',
@@ -13,6 +16,7 @@ export const NODE_KINDS = [
   '_index_signature_mapped_type_clause',
   '_jsx_string',
   '_lhs_expression',
+  '_parenthesized_expression_sequence',
   '_type_identifier',
   'abstract_class_declaration',
   'abstract_method_signature',
@@ -35,6 +39,9 @@ export const NODE_KINDS = [
   'binary_expression',
   'break_statement',
   'call_expression',
+  'call_expression_call',
+  'call_expression_member',
+  'call_expression_template_call',
   'call_signature',
   'catch_clause',
   'class',
@@ -65,6 +72,9 @@ export const NODE_KINDS = [
   'export_clause',
   'export_specifier',
   'export_statement',
+  'export_statement_equals_export',
+  'export_statement_namespace_export',
+  'export_statement_type_export',
   'expression',
   'expression_statement',
   'extends_clause',
@@ -140,6 +150,8 @@ export const NODE_KINDS = [
   'pair',
   'pair_pattern',
   'parenthesized_expression',
+  'parenthesized_expression_sequence',
+  'parenthesized_expression_typed',
   'parenthesized_type',
   'pattern',
   'primary_expression',
@@ -436,6 +448,13 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_class_heritage_implements_clause': [
   ],
+  '_export_statement_equals_export': [
+  ],
+  '_export_statement_namespace_export': [
+  ],
+  '_export_statement_type_export': [
+    { name: 'source', required: false, multiple: false },
+  ],
   '_import_clause_default_import': [
   ],
   '_import_clause_named_imports': [
@@ -450,6 +469,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_jsx_string': [
   ],
   '_lhs_expression': [
+  ],
+  '_parenthesized_expression_sequence': [
   ],
   '_type_identifier': [
   ],
@@ -530,8 +551,19 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'label', required: false, multiple: false },
   ],
   'call_expression': [
+  ],
+  'call_expression_call': [
     { name: 'function', required: true, multiple: false },
     { name: 'typeArguments', required: false, multiple: false },
+    { name: 'arguments', required: true, multiple: false },
+  ],
+  'call_expression_member': [
+    { name: 'function', required: true, multiple: false },
+    { name: 'typeArguments', required: false, multiple: false },
+    { name: 'arguments', required: true, multiple: false },
+  ],
+  'call_expression_template_call': [
+    { name: 'function', required: true, multiple: false },
     { name: 'arguments', required: true, multiple: false },
   ],
   'call_signature': [
@@ -644,9 +676,13 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alias', required: false, multiple: false },
   ],
   'export_statement': [
-    { name: 'decorator', required: true, multiple: true },
-    { name: 'declaration', required: false, multiple: false },
-    { name: 'value', required: false, multiple: false },
+  ],
+  'export_statement_equals_export': [
+  ],
+  'export_statement_namespace_export': [
+  ],
+  'export_statement_type_export': [
+    { name: 'source', required: false, multiple: false },
   ],
   'expression': [
   ],
@@ -957,6 +993,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'parenthesized_expression': [
+  ],
+  'parenthesized_expression_sequence': [
+  ],
+  'parenthesized_expression_typed': [
     { name: 'type', required: false, multiple: false },
   ],
   'parenthesized_type': [

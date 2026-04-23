@@ -84,106 +84,76 @@ export function hashBangLine(text: string) {
   };
 }
 
-export function exportStatement(config: ConfigOf<T.ExportStatementForm0>): ReturnType<typeof exportStatementForm0>;
-export function exportStatement(config: ConfigOf<T.ExportStatementForm1>): ReturnType<typeof exportStatementForm1>;
-export function exportStatement(config: ConfigOf<T.ExportStatementForm2>): ReturnType<typeof exportStatementForm2>;
-export function exportStatement(config: ConfigOf<T.ExportStatementForm3>): ReturnType<typeof exportStatementForm3>;
-export function exportStatement(config: ConfigOf<T.ExportStatementForm0> | ConfigOf<T.ExportStatementForm1> | ConfigOf<T.ExportStatementForm2> | ConfigOf<T.ExportStatementForm3>) {
+export function exportStatement(config: ConfigOf<T.ExportStatementUFormTypeExport>): ReturnType<typeof exportStatementUFormTypeExport>;
+export function exportStatement(config: ConfigOf<T.ExportStatementUFormEqualsExport>): ReturnType<typeof exportStatementUFormEqualsExport>;
+export function exportStatement(config: ConfigOf<T.ExportStatementUFormNamespaceExport>): ReturnType<typeof exportStatementUFormNamespaceExport>;
+export function exportStatement(config: ConfigOf<T.ExportStatementUFormTypeExport> | ConfigOf<T.ExportStatementUFormEqualsExport> | ConfigOf<T.ExportStatementUFormNamespaceExport>) {
   switch (config.$variant) {
-    case 'form0': return exportStatementForm0(config);
-    case 'form1': return exportStatementForm1(config);
-    case 'form2': return exportStatementForm2(config);
-    case 'form3': return exportStatementForm3(config);
+    case 'type_export': return exportStatementUFormTypeExport(config);
+    case 'equals_export': return exportStatementUFormEqualsExport(config);
+    case 'namespace_export': return exportStatementUFormNamespaceExport(config);
   }
-  throw new Error(`exportStatement: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'form0' | 'form1' | 'form2' | 'form3'.`);
+  throw new Error(`exportStatement: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'type_export' | 'equals_export' | 'namespace_export'.`);
 }
-export function exportStatementForm0(config: ConfigOf<T.ExportStatementForm0>) {
-  const fields = {
-    decorator: config.decorator,
-    declaration: config.declaration,
-    value: config.value,
-  };
-  const children = config.children ?? [];
+export function exportStatementUFormTypeExport(config?: ConfigOf<T.ExportStatementUFormTypeExport>) {
+  const inner = exportStatementTypeExport(config);
+  const children = [inner] as const;
   return {
     $type: 'export_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: 'form0' as const,
-    $fields: fields,
+    $variant: 'type_export' as const,
     $children: children,
-    decorator(...values: T.Decorator[]) { return _fsm(config, exportStatementForm0, 'decorator', values, fields.decorator); },
-    declaration(value?: T.Declaration | undefined) { return _fs(config, exportStatementForm0, 'declaration', value, fields.declaration); },
-    value(value?: T.Expression | undefined) { return _fs(config, exportStatementForm0, 'value', value, fields.value); },
-    child(value?: (T.FromClause | T.NamespaceExport | T.ExportClause | T.Semicolon)) {
-      if (value === undefined) return children[0];
-      return exportStatementForm0({ ...config, children: [value] });
+    source(value?: T.String | undefined) {
+      if (value === undefined) return inner.$fields.source;
+      return exportStatementUFormTypeExport({ source: value });
     },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.ExportStatementForm0Tree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.ExportStatementUFormTypeExportTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function exportStatementForm1(config: ConfigOf<T.ExportStatementForm1>) {
+export function exportStatementUFormEqualsExport(config: ConfigOf<T.ExportStatementUFormEqualsExport>) {
   const children = config.children ?? [];
   return {
     $type: 'export_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: 'form1' as const,
+    $variant: 'equals_export' as const,
     $children: children,
-    child(value?: (T.ExportClause | T.FromClause | T.Semicolon)) {
+    child(value?: T.ExportStatementEqualsExport) {
       if (value === undefined) return children[0];
-      return exportStatementForm1({ ...config, children: [value] });
+      return exportStatementUFormEqualsExport({ ...config, children: [value] });
     },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.ExportStatementForm1Tree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.ExportStatementUFormEqualsExportTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function exportStatementForm2(config: ConfigOf<T.ExportStatementForm2>) {
+export function exportStatementUFormNamespaceExport(config: ConfigOf<T.ExportStatementUFormNamespaceExport>) {
   const children = config.children ?? [];
   return {
     $type: 'export_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: 'form2' as const,
+    $variant: 'namespace_export' as const,
     $children: children,
-    child(value?: (T.Expression | T.Semicolon)) {
+    child(value?: T.ExportStatementNamespaceExport) {
       if (value === undefined) return children[0];
-      return exportStatementForm2({ ...config, children: [value] });
+      return exportStatementUFormNamespaceExport({ ...config, children: [value] });
     },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.ExportStatementForm2Tree) { const r = target.range(); return toEdit(this, r); },
-  };
-}
-export function exportStatementForm3(config: ConfigOf<T.ExportStatementForm3>) {
-  const children = config.children ?? [];
-  return {
-    $type: 'export_statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $variant: 'form3' as const,
-    $children: children,
-    child(value?: (T.Identifier | T.Semicolon)) {
-      if (value === undefined) return children[0];
-      return exportStatementForm3({ ...config, children: [value] });
-    },
-    render() { return render(this); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number) {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(target: T.ExportStatementForm3Tree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.ExportStatementUFormNamespaceExportTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1063,28 +1033,54 @@ export function finallyClause(config: T.FinallyClause.Config) {
   };
 }
 
-export function parenthesizedExpression(config?: T.ParenthesizedExpression.Config) {
-  const fields = {
-    type: config?.type,
-  };
-  const children = config?.children ?? [];
+export function parenthesizedExpression(config: ConfigOf<T.ParenthesizedExpressionUFormTyped>): ReturnType<typeof parenthesizedExpressionUFormTyped>;
+export function parenthesizedExpression(config: ConfigOf<T.ParenthesizedExpressionUFormSequence>): ReturnType<typeof parenthesizedExpressionUFormSequence>;
+export function parenthesizedExpression(config: ConfigOf<T.ParenthesizedExpressionUFormTyped> | ConfigOf<T.ParenthesizedExpressionUFormSequence>) {
+  switch (config.$variant) {
+    case 'typed': return parenthesizedExpressionUFormTyped(config);
+    case 'sequence': return parenthesizedExpressionUFormSequence(config);
+  }
+  throw new Error(`parenthesizedExpression: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'typed' | 'sequence'.`);
+}
+export function parenthesizedExpressionUFormTyped(config?: ConfigOf<T.ParenthesizedExpressionUFormTyped>) {
+  const inner = parenthesizedExpressionTyped(config);
+  const children = [inner] as const;
   return {
     $type: 'parenthesized_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
+    $variant: 'typed' as const,
     $children: children,
-    typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, parenthesizedExpression, 'type', value, fields.type); },
-    child(value?: (T.Expression | T.SequenceExpression)) {
-      if (value === undefined) return children[0];
-      return parenthesizedExpression({ ...config, children: [value] });
+    typeField(value?: T.TypeAnnotation | undefined) {
+      if (value === undefined) return inner.$fields.type;
+      return parenthesizedExpressionUFormTyped({ type: value });
     },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.ParenthesizedExpressionTree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.ParenthesizedExpressionUFormTypedTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function parenthesizedExpressionUFormSequence(config: ConfigOf<T.ParenthesizedExpressionUFormSequence>) {
+  const children = config.children ?? [];
+  return {
+    $type: 'parenthesized_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'sequence' as const,
+    $children: children,
+    child(value?: T.ParenthesizedExpressionSequence) {
+      if (value === undefined) return children[0];
+      return parenthesizedExpressionUFormSequence({ ...config, children: [value] });
+    },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ParenthesizedExpressionUFormSequenceTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1773,82 +1769,98 @@ export function arrowFunctionUFormUCallSignature(config: ConfigOf<T.ArrowFunctio
   };
 }
 
-export function callExpression(config: ConfigOf<T.CallExpressionForm0>): ReturnType<typeof callExpressionForm0>;
-export function callExpression(config: ConfigOf<T.CallExpressionForm1>): ReturnType<typeof callExpressionForm1>;
-export function callExpression(config: ConfigOf<T.CallExpressionForm2>): ReturnType<typeof callExpressionForm2>;
-export function callExpression(config: ConfigOf<T.CallExpressionForm0> | ConfigOf<T.CallExpressionForm1> | ConfigOf<T.CallExpressionForm2>) {
+export function callExpression(config: ConfigOf<T.CallExpressionUFormCall>): ReturnType<typeof callExpressionUFormCall>;
+export function callExpression(config: ConfigOf<T.CallExpressionUFormTemplateCall>): ReturnType<typeof callExpressionUFormTemplateCall>;
+export function callExpression(config: ConfigOf<T.CallExpressionUFormMember>): ReturnType<typeof callExpressionUFormMember>;
+export function callExpression(config: ConfigOf<T.CallExpressionUFormCall> | ConfigOf<T.CallExpressionUFormTemplateCall> | ConfigOf<T.CallExpressionUFormMember>) {
   switch (config.$variant) {
-    case 'form0': return callExpressionForm0(config);
-    case 'form1': return callExpressionForm1(config);
-    case 'form2': return callExpressionForm2(config);
+    case 'call': return callExpressionUFormCall(config);
+    case 'template_call': return callExpressionUFormTemplateCall(config);
+    case 'member': return callExpressionUFormMember(config);
   }
-  throw new Error(`callExpression: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'form0' | 'form1' | 'form2'.`);
+  throw new Error(`callExpression: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'call' | 'template_call' | 'member'.`);
 }
-export function callExpressionForm0(config: ConfigOf<T.CallExpressionForm0>) {
-  const fields = {
-    function: config.function,
-    type_arguments: config.typeArguments,
-    arguments: config.arguments,
-  };
+export function callExpressionUFormCall(config: ConfigOf<T.CallExpressionUFormCall>) {
+  const inner = callExpressionCall(config);
+  const children = [inner] as const;
   return {
     $type: 'call_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: 'form0' as const,
-    $fields: fields,
-    function(value?: T.Expression | T.Import) { return _fs(config, callExpressionForm0, 'function', value, fields.function); },
-    typeArguments(value?: T.TypeArguments | undefined) { return _fs(config, callExpressionForm0, 'typeArguments', value, fields.type_arguments); },
-    arguments(value?: T.Arguments) { return _fs(config, callExpressionForm0, 'arguments', value, fields.arguments); },
+    $variant: 'call' as const,
+    $children: children,
+    function(value?: T.Expression | T.Import) {
+      if (value === undefined) return inner.$fields.function;
+      return callExpressionUFormCall({ typeArguments: inner.$fields.type_arguments, arguments: inner.$fields.arguments, function: value });
+    },
+    typeArguments(value?: T.TypeArguments | undefined) {
+      if (value === undefined) return inner.$fields.type_arguments;
+      return callExpressionUFormCall({ function: inner.$fields.function, arguments: inner.$fields.arguments, typeArguments: value });
+    },
+    arguments(value?: T.Arguments) {
+      if (value === undefined) return inner.$fields.arguments;
+      return callExpressionUFormCall({ function: inner.$fields.function, typeArguments: inner.$fields.type_arguments, arguments: value });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.CallExpressionForm0Tree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.CallExpressionUFormCallTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function callExpressionForm1(config: ConfigOf<T.CallExpressionForm1>) {
-  const fields = {
-    function: config.function,
-    arguments: config.arguments,
-  };
+export function callExpressionUFormTemplateCall(config: ConfigOf<T.CallExpressionUFormTemplateCall>) {
+  const inner = callExpressionTemplateCall(config);
+  const children = [inner] as const;
   return {
     $type: 'call_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: 'form1' as const,
-    $fields: fields,
-    function(value?: T.PrimaryExpression | T.NewExpression) { return _fs(config, callExpressionForm1, 'function', value, fields.function); },
-    arguments(value?: T.TemplateString) { return _fs(config, callExpressionForm1, 'arguments', value, fields.arguments); },
+    $variant: 'template_call' as const,
+    $children: children,
+    function(value?: T.PrimaryExpression | T.NewExpression) {
+      if (value === undefined) return inner.$fields.function;
+      return callExpressionUFormTemplateCall({ arguments: inner.$fields.arguments, function: value });
+    },
+    arguments(value?: T.TemplateString) {
+      if (value === undefined) return inner.$fields.arguments;
+      return callExpressionUFormTemplateCall({ function: inner.$fields.function, arguments: value });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.CallExpressionForm1Tree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.CallExpressionUFormTemplateCallTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function callExpressionForm2(config: ConfigOf<T.CallExpressionForm2>) {
-  const fields = {
-    function: config.function,
-    type_arguments: config.typeArguments,
-    arguments: config.arguments,
-  };
+export function callExpressionUFormMember(config: ConfigOf<T.CallExpressionUFormMember>) {
+  const inner = callExpressionMember(config);
+  const children = [inner] as const;
   return {
     $type: 'call_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: 'form2' as const,
-    $fields: fields,
-    function(value?: T.PrimaryExpression) { return _fs(config, callExpressionForm2, 'function', value, fields.function); },
-    typeArguments(value?: T.TypeArguments | undefined) { return _fs(config, callExpressionForm2, 'typeArguments', value, fields.type_arguments); },
-    arguments(value?: T.Arguments) { return _fs(config, callExpressionForm2, 'arguments', value, fields.arguments); },
+    $variant: 'member' as const,
+    $children: children,
+    function(value?: T.PrimaryExpression) {
+      if (value === undefined) return inner.$fields.function;
+      return callExpressionUFormMember({ typeArguments: inner.$fields.type_arguments, arguments: inner.$fields.arguments, function: value });
+    },
+    typeArguments(value?: T.TypeArguments | undefined) {
+      if (value === undefined) return inner.$fields.type_arguments;
+      return callExpressionUFormMember({ function: inner.$fields.function, arguments: inner.$fields.arguments, typeArguments: value });
+    },
+    arguments(value?: T.Arguments) {
+      if (value === undefined) return inner.$fields.arguments;
+      return callExpressionUFormMember({ function: inner.$fields.function, typeArguments: inner.$fields.type_arguments, arguments: value });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.CallExpressionForm2Tree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.CallExpressionUFormMemberTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4339,6 +4351,63 @@ export function jsxText(text: string) {
   };
 }
 
+export function exportStatementTypeExport(config: T.ExportStatementTypeExport.Config) {
+  const fields = {
+    source: config.source,
+  };
+  const children = config.children ?? [];
+  return {
+    $type: 'export_statement_type_export' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
+    source(value?: T.String | undefined) { return _fs(config, exportStatementTypeExport, 'source', value, fields.source); },
+    child(value?: (T.ExportClause | T.Semicolon)) {
+      if (value === undefined) return children[0];
+      return exportStatementTypeExport({ ...config, children: [value] });
+    },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ExportStatementTypeExportTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function exportStatementEqualsExport(child: (T.Expression | T.Semicolon)) {
+  const children = [child];
+  return {
+    $type: 'export_statement_equals_export' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ExportStatementEqualsExportTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function exportStatementNamespaceExport(child: (T.Identifier | T.Semicolon)) {
+  const children = [child];
+  return {
+    $type: 'export_statement_namespace_export' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ExportStatementNamespaceExportTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function importClauseNamespaceImport(child: T.NamespaceImport) {
   const children = [child];
   return {
@@ -4437,6 +4506,47 @@ export function statementIdentifier(text: string) {
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.StatementIdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function parenthesizedExpressionTyped(config: T.ParenthesizedExpressionTyped.Config) {
+  const fields = {
+    type: config.type,
+  };
+  const children = config.children ?? [];
+  return {
+    $type: 'parenthesized_expression_typed' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
+    typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, parenthesizedExpressionTyped, 'type', value, fields.type); },
+    child(value?: T.Expression) {
+      if (value === undefined) return children[0];
+      return parenthesizedExpressionTyped({ ...config, children: [value] });
+    },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ParenthesizedExpressionTypedTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function parenthesizedExpressionSequence(child: T.SequenceExpression) {
+  const children = [child];
+  return {
+    $type: 'parenthesized_expression_sequence' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ParenthesizedExpressionSequenceTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4569,6 +4679,73 @@ export function arrowFunctionUCallSignature(config: T.ArrowFunctionUCallSignatur
       return toEdit(this, startOrRange);
     },
     replace(target: T.ArrowFunctionUCallSignatureTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function callExpressionCall(config: T.CallExpressionCall.Config) {
+  const fields = {
+    function: config.function,
+    type_arguments: config.typeArguments,
+    arguments: config.arguments,
+  };
+  return {
+    $type: 'call_expression_call' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    function(value?: T.Expression | T.Import) { return _fs(config, callExpressionCall, 'function', value, fields.function); },
+    typeArguments(value?: T.TypeArguments | undefined) { return _fs(config, callExpressionCall, 'typeArguments', value, fields.type_arguments); },
+    arguments(value?: T.Arguments) { return _fs(config, callExpressionCall, 'arguments', value, fields.arguments); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.CallExpressionCallTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function callExpressionTemplateCall(config: T.CallExpressionTemplateCall.Config) {
+  const fields = {
+    function: config.function,
+    arguments: config.arguments,
+  };
+  return {
+    $type: 'call_expression_template_call' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    function(value?: T.PrimaryExpression | T.NewExpression) { return _fs(config, callExpressionTemplateCall, 'function', value, fields.function); },
+    arguments(value?: T.TemplateString) { return _fs(config, callExpressionTemplateCall, 'arguments', value, fields.arguments); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.CallExpressionTemplateCallTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function callExpressionMember(config: T.CallExpressionMember.Config) {
+  const fields = {
+    function: config.function,
+    type_arguments: config.typeArguments,
+    arguments: config.arguments,
+  };
+  return {
+    $type: 'call_expression_member' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    function(value?: T.PrimaryExpression) { return _fs(config, callExpressionMember, 'function', value, fields.function); },
+    typeArguments(value?: T.TypeArguments | undefined) { return _fs(config, callExpressionMember, 'typeArguments', value, fields.type_arguments); },
+    arguments(value?: T.Arguments) { return _fs(config, callExpressionMember, 'arguments', value, fields.arguments); },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.CallExpressionMemberTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4850,12 +5027,17 @@ export type FluentKindMap = {
   "html_comment": T.HtmlComment;
   "||": T.Oror;
   "jsx_text": T.JsxText;
+  "export_statement_type_export": FluentNode<"export_statement_type_export", T.ExportStatementTypeExport.Config>;
+  "export_statement_equals_export": FluentNode<"export_statement_equals_export", T.ExportStatementEqualsExport.Config>;
+  "export_statement_namespace_export": FluentNode<"export_statement_namespace_export", T.ExportStatementNamespaceExport.Config>;
   "import_clause_namespace_import": FluentNode<"import_clause_namespace_import", T.ImportClauseNamespaceImport.Config>;
   "import_clause_named_imports": FluentNode<"import_clause_named_imports", T.ImportClauseNamedImports.Config>;
   "import_clause_default_import": FluentNode<"import_clause_default_import", T.ImportClauseDefaultImport.Config>;
   "import_specifier_name": FluentNode<"import_specifier_name", T.ImportSpecifierName.Config>;
   "import_specifier_as": FluentNode<"import_specifier_as", T.ImportSpecifierAs.Config>;
   "statement_identifier": T.StatementIdentifier;
+  "parenthesized_expression_typed": FluentNode<"parenthesized_expression_typed", T.ParenthesizedExpressionTyped.Config>;
+  "parenthesized_expression_sequence": FluentNode<"parenthesized_expression_sequence", T.ParenthesizedExpressionSequence.Config>;
   "shorthand_property_identifier": FluentNode<"shorthand_property_identifier", T.ShorthandPropertyIdentifier.Config>;
   "shorthand_property_identifier_pattern": FluentNode<"shorthand_property_identifier_pattern", T.ShorthandPropertyIdentifierPattern.Config>;
   "property_identifier": T.PropertyIdentifier;
@@ -4864,6 +5046,9 @@ export type FluentKindMap = {
   "class_heritage_implements_clause": FluentNode<"class_heritage_implements_clause", T.ClassHeritageImplementsClause.Config>;
   "arrow_function_parameter": FluentNode<"arrow_function_parameter", T.ArrowFunctionParameter.Config>;
   "arrow_function__call_signature": FluentNode<"arrow_function__call_signature", T.ArrowFunctionUCallSignature.Config>;
+  "call_expression_call": FluentNode<"call_expression_call", T.CallExpressionCall.Config>;
+  "call_expression_template_call": FluentNode<"call_expression_template_call", T.CallExpressionTemplateCall.Config>;
+  "call_expression_member": FluentNode<"call_expression_member", T.CallExpressionMember.Config>;
   "interface_body": FluentNode<"interface_body", T.InterfaceBody.Config>;
   "this_type": T.ThisType;
   "index_signature_colon": FluentNode<"index_signature_colon", T.IndexSignatureColon.Config>;
@@ -5064,12 +5249,17 @@ export const _factoryMap = {
   "html_comment": htmlComment,
   "||": oror,
   "jsx_text": jsxText,
+  "export_statement_type_export": exportStatementTypeExport,
+  "export_statement_equals_export": exportStatementEqualsExport,
+  "export_statement_namespace_export": exportStatementNamespaceExport,
   "import_clause_namespace_import": importClauseNamespaceImport,
   "import_clause_named_imports": importClauseNamedImports,
   "import_clause_default_import": importClauseDefaultImport,
   "import_specifier_name": importSpecifierName,
   "import_specifier_as": importSpecifierAs,
   "statement_identifier": statementIdentifier,
+  "parenthesized_expression_typed": parenthesizedExpressionTyped,
+  "parenthesized_expression_sequence": parenthesizedExpressionSequence,
   "shorthand_property_identifier": shorthandPropertyIdentifier,
   "shorthand_property_identifier_pattern": shorthandPropertyIdentifierPattern,
   "property_identifier": propertyIdentifier,
@@ -5078,6 +5268,9 @@ export const _factoryMap = {
   "class_heritage_implements_clause": classHeritageImplementsClause,
   "arrow_function_parameter": arrowFunctionParameter,
   "arrow_function__call_signature": arrowFunctionUCallSignature,
+  "call_expression_call": callExpressionCall,
+  "call_expression_template_call": callExpressionTemplateCall,
+  "call_expression_member": callExpressionMember,
   "interface_body": interfaceBody,
   "this_type": thisType,
   "index_signature_colon": indexSignatureColon,

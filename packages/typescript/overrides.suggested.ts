@@ -15,8 +15,8 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  1  (0 applied, 1 held)
-// Rule promotions:   57  (47 applied, 10 held)
-// Repeated shapes:   7  (advisory — suggested supertypes/groups)
+// Rule promotions:   66  (58 applied, 8 held)
+// Repeated shapes:   9  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
 // suggestedTransforms — drop entries into your overrides.ts
@@ -41,7 +41,6 @@ export const suggestedTransforms = {
   },
 
 
-
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: condition
   for_statement: {
@@ -62,7 +61,6 @@ export const suggestedTransforms = {
       "1/0": variant("dot"),
       "1/1": variant("optional_chain"),
   },
-
 
   // [held] polymorph — 1 choice position(s), 4 arm(s) total
   public_field_definition: {
@@ -209,11 +207,18 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "arrow_function__call_signature", classification: "polymorph", applied: true },
   { kind: "arrow_function_parameter", classification: "polymorph", applied: true },
   { kind: "as_expression", classification: "polymorph", applied: false },
-  { kind: "call_expression", classification: "polymorph", applied: false },
+  { kind: "call_expression", classification: "polymorph", applied: true },
+  { kind: "call_expression_call", classification: "polymorph", applied: true },
+  { kind: "call_expression_member", classification: "polymorph", applied: true },
+  { kind: "call_expression_template_call", classification: "polymorph", applied: true },
   { kind: "class_heritage", classification: "polymorph", applied: true },
   { kind: "class_heritage_extends_clause", classification: "polymorph", applied: true },
   { kind: "class_heritage_implements_clause", classification: "polymorph", applied: true },
   { kind: "export_statement", classification: "polymorph", applied: false },
+  { kind: "export_statement", classification: "polymorph", applied: true },
+  { kind: "export_statement_equals_export", classification: "polymorph", applied: true },
+  { kind: "export_statement_namespace_export", classification: "polymorph", applied: true },
+  { kind: "export_statement_type_export", classification: "polymorph", applied: true },
   { kind: "for_statement", classification: "polymorph", applied: false },
   { kind: "import_clause", classification: "polymorph", applied: true },
   { kind: "import_clause_default_import", classification: "polymorph", applied: true },
@@ -227,7 +232,9 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "index_signature_colon", classification: "polymorph", applied: true },
   { kind: "index_signature_mapped_type_clause", classification: "polymorph", applied: true },
   { kind: "member_expression", classification: "polymorph", applied: false },
-  { kind: "parenthesized_expression", classification: "polymorph", applied: false },
+  { kind: "parenthesized_expression", classification: "polymorph", applied: true },
+  { kind: "parenthesized_expression_sequence", classification: "polymorph", applied: true },
+  { kind: "parenthesized_expression_typed", classification: "polymorph", applied: true },
   { kind: "public_field_definition", classification: "polymorph", applied: false },
   { kind: "yield_expression", classification: "polymorph", applied: false },
 ];
@@ -257,6 +264,8 @@ export const repeatedShapes: readonly RepeatedShape[] = [
   { suggestedName: "_property_identifier", kinds: ["private_property_identifier","property_identifier"], parents: ["_type_query_member_expression","_type_query_member_expression_in_type_annotation","member_expression"], shape: "supertype" },
   { suggestedName: "_expression", kinds: ["_lhs_expression","parenthesized_expression"], parents: ["_for_header","assignment_expression"], shape: "supertype" },
   { suggestedName: "_identifier", kinds: ["identifier","nested_identifier"], parents: ["import_alias","nested_type_identifier"], shape: "supertype" },
+  { suggestedName: "_shared_2", kinds: ["expression","import"], parents: ["_call_expression_call","call_expression_call"], shape: "supertype" },
+  { suggestedName: "_expression", kinds: ["new_expression","primary_expression"], parents: ["_call_expression_template_call","call_expression_template_call"], shape: "supertype" },
   { suggestedName: "_shared_4", kinds: ["identifier","import","member_expression","subscript_expression"], parents: ["_type_query_call_expression","_type_query_instantiation_expression"], shape: "supertype" },
   { suggestedName: "_shared_5", kinds: ["call_expression","identifier","member_expression","subscript_expression","this"], parents: ["_type_query_member_expression","_type_query_subscript_expression"], shape: "supertype" },
 ];

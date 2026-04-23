@@ -105,16 +105,17 @@ const FLOORS = {
         factoryPass: 121,
         factoryAstMatchPass: 121,
         factoryTotal: 126,
-        fromPass: 132,
-        fromTotal: 143,
-        // rtPass/rtAstMatchPass dropped (65→55, 51→38) after the
-        // transitive supertype walk in wrapForReparse unmasked TS
-        // kinds whose direct supertype (`primary_expression`,
-        // `primary_type`, etc.) isn't in the map but transitively
-        // reaches a mapped ancestor.
-        rtPass: 55,
+        // variant() adoption on call_expression / export_statement /
+        // parenthesized_expression raised the corpus numbers. Each
+        // adopted kind added its variant-child kinds to the from/fact
+        // universes (fromTotal 143 → 157, +14 new visible kinds). The
+        // rt floors jumped because Option 3's push-down + the new
+        // wrappers make those kinds reparse correctly.
+        fromPass: 148,
+        fromTotal: 157,
+        rtPass: 77,
         rtTotal: 112,
-        rtAstMatchPass: 38,
+        rtAstMatchPass: 51,
         covPass: 139,
         covTotal: 145,
     },

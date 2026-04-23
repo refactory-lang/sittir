@@ -14,10 +14,87 @@
 // non-JSX corpus but a latent mismatch: anything JSX-shaped would
 // reparse-fail. Pick one grammar and stick with it end-to-end.
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js'
-import { transform, enrich, field, wire, refine } from '../codegen/src/dsl/index.ts'
+import { transform, enrich, field, wire, refine, variant } from '../codegen/src/dsl/index.ts'
 
 export default grammar(enrich(base), wire({
     name: 'typescript',
+    // Conflict markers for variant() adoption on kinds where splitting
+    // exposes LR(1) ambiguities the unsplit grammar resolved via shared
+    // state. Each entry names two or more rules tree-sitter should
+    // treat as requiring a GLR state so it can defer the decision
+    // until more input disambiguates. Hidden (`_foo`) and visible
+    // (`$.foo`) names are both valid here.
+    conflicts: ($) => [
+        // parenthesized_expression split: `( expression )` vs
+        // `( sequence_expression )` share the expression prefix. The
+        // typed variant's hidden rule (`_parenthesized_expression_typed`)
+        // competes with `sequence_expression` when the parser sees
+        // `( expression •`. GLR resolves based on what follows.
+        [$.sequence_expression, $._parenthesized_expression_typed],
+        // Also exposes a latent `async` ambiguity — before the split,
+        // tree-sitter resolved `async (` via state shared between the
+        // typed parenthesized expression and arrow_function's call
+        // signature. With the typed variant lifted to its own hidden
+        // rule, the parser needs explicit GLR to decide whether `async
+        // (` starts a call (primary_expression) or an arrow function.
+        [$.primary_expression, $.arrow_function],
+        // `export` as `primary_expression` vs as `_property_name`
+        // surfaces once the typed-parenthesized variant brings more
+        // expression contexts into the same state.
+        [$.primary_expression, $._property_name],
+        [$.labeled_statement, $._property_name],
+        [$.object, $.object_pattern],
+        [$.primary_expression, $.method_definition],
+        [$.primary_expression, $.arrow_function, $._property_name],
+        [$.call_expression, $.binary_expression, $.unary_expression, $.instantiation_expression],
+        [$.assignment_expression, $.pattern],
+        [$.primary_expression, $.pattern],
+        [$.primary_expression, $._parameter_name],
+        [$.call_expression, $.await_expression, $.binary_expression, $.instantiation_expression],
+        [$.array, $.array_pattern],
+        [$.primary_type, $.type_parameter],
+        [$.call_expression, $.binary_expression, $.update_expression, $.instantiation_expression],
+        [$.primary_expression, $.rest_pattern],
+        [$._for_header, $.primary_expression],
+        [$.class],
+        [$.class_static_block, $._property_name],
+        [$.primary_expression, $.literal_type],
+        [$.pattern, $.primary_type],
+        [$.primary_expression, $.primary_type],
+        [$.primary_expression, $.nested_identifier, $.nested_type_identifier],
+        [$.primary_expression, $.generic_type],
+        [$._parameter_name, $.primary_type],
+        [$.primary_expression, $.predefined_type],
+        [$._call_signature, $.function_type],
+        [$.optional_tuple_parameter, $.primary_type],
+        [$.call_expression, $.binary_expression, $.instantiation_expression],
+        [$.object_assignment_pattern, $.assignment_expression],
+        [$.array, $.computed_property_name],
+        [$.variable_declarator, $._for_header],
+        [$.object, $.object_pattern, $._property_name],
+        [$.object_pattern, $.object_type],
+        [$.object, $.object_type],
+        [$.primary_expression, $.pattern, $.primary_type],
+        [$.primary_expression, $._parameter_name, $.primary_type],
+        [$.array, $.array_pattern, $.tuple_type],
+        [$.array_pattern, $.tuple_type],
+        [$.array, $.tuple_type],
+        [$._call_signature, $.constructor_type],
+        [$.template_string, $.template_literal_type],
+        [$.object, $.object_pattern, $.object_type],
+        [$.primary_expression, $.rest_pattern, $.primary_type],
+        [$.primary_expression, $.rest_pattern, $.literal_type],
+        [$.primary_expression, $.rest_pattern, $.predefined_type],
+        [$.nested_identifier, $.nested_type_identifier],
+        [$._initializer, $.binary_expression],
+        [$.primary_expression, $._export_statement_namespace_export],
+        [$.binary_expression, $.unary_expression, $.instantiation_expression, $._call_expression_call],
+        [$.await_expression, $.binary_expression, $.instantiation_expression, $._call_expression_call],
+        [$.binary_expression, $.update_expression, $.instantiation_expression, $._call_expression_call],
+        [$.binary_expression, $.instantiation_expression, $._call_expression_call],
+        [$._type_query_call_expression_in_type_annotation, $._call_expression_call],
+        [$._type_query_call_expression, $._call_expression_call],
+    ],
     polymorphs: {
         arrow_function:  { '1/0': 'parameter',        '1/1': '_call_signature' },
         class_heritage:  { '0':   'extends_clause',   '1':   'implements_clause' },
@@ -241,6 +318,39 @@ export default grammar(enrich(base), wire({
         // yield_expression: 1 field(s)
         yield_expression: {
             1: field('expression'), // expression [struct=0]
+        },
+
+        // parenthesized_expression: variant() adoption. Shape is
+        // `seq('(', choice(typed_expr, sequence_expression), ')')`.
+        // The inner choice's alternatives become variant-child kinds
+        // that own the surrounding `(` / `)` scaffold via Link's
+        // push-down; the parent template collapses to $$$CHILDREN.
+        // Path 1/N targets choice alt N inside the seq's member 1.
+        parenthesized_expression: {
+            '1/0': variant('typed'),
+            '1/1': variant('sequence'),
+        },
+
+        // export_statement: variant() adoption on three TypeScript-
+        // specific branches. Path 0 (the JS-inherited `previous`) is
+        // left alone; paths 1/2/3 are `export type`, `export =`, and
+        // `export as namespace` respectively. Each becomes a distinct
+        // variant-child kind with its own template.
+        export_statement: {
+            1: variant('type_export'),
+            2: variant('equals_export'),
+            3: variant('namespace_export'),
+        },
+
+        // call_expression: variant() adoption on three per-prec
+        // branches. Each branch is wrapped in `prec('call' |
+        // 'template_call' | 'member')` and Link's variant hoist
+        // re-wraps each extracted hidden rule in the same prec so the
+        // base grammar's conflict resolution carries through.
+        call_expression: {
+            0: variant('call'),
+            1: variant('template_call'),
+            2: variant('member'),
         },
 
     },

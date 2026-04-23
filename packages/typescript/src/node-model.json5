@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 386,
+  "nodeCount": 403,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -37,15 +37,14 @@
   "polymorphFormKinds": [
     "arrow_function__form__call_signature",
     "arrow_function__form_parameter",
-    "call_expression_form0",
-    "call_expression_form1",
-    "call_expression_form2",
+    "call_expression__form_call",
+    "call_expression__form_member",
+    "call_expression__form_template_call",
     "class_heritage__form_extends_clause",
     "class_heritage__form_implements_clause",
-    "export_statement_form0",
-    "export_statement_form1",
-    "export_statement_form2",
-    "export_statement_form3",
+    "export_statement__form_equals_export",
+    "export_statement__form_namespace_export",
+    "export_statement__form_type_export",
     "import_clause__form_default_import",
     "import_clause__form_named_imports",
     "import_clause__form_namespace_import",
@@ -53,6 +52,8 @@
     "import_specifier__form_name",
     "index_signature__form_colon",
     "index_signature__form_mapped_type_clause",
+    "parenthesized_expression__form_sequence",
+    "parenthesized_expression__form_typed",
     "variable_declarator_form0",
     "variable_declarator_form1"
   ],
@@ -557,6 +558,237 @@
       "hidden": false
     },
     {
+      "kind": "_call_expression_call",
+      "modelType": "group",
+      "typeName": "_CallExpressionCall",
+      "irKey": "callExpressionCall",
+      "hidden": true,
+      "name": "_call_expression_call",
+      "fields": [
+        {
+          "name": "function",
+          "propertyName": "function",
+          "paramName": "function_",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "import",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression",
+              "import"
+            ]
+          }
+        },
+        {
+          "name": "type_arguments",
+          "propertyName": "typeArguments",
+          "paramName": "typeArguments",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "type_arguments",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "type_arguments"
+            ]
+          }
+        },
+        {
+          "name": "arguments",
+          "propertyName": "arguments",
+          "paramName": "arguments_",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "arguments",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "arguments"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "_call_expression_member",
+      "modelType": "group",
+      "typeName": "_CallExpressionMember",
+      "irKey": "callExpressionMember",
+      "hidden": true,
+      "name": "_call_expression_member",
+      "fields": [
+        {
+          "name": "function",
+          "propertyName": "function",
+          "paramName": "function_",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "primary_expression",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "primary_expression"
+            ]
+          }
+        },
+        {
+          "name": "type_arguments",
+          "propertyName": "typeArguments",
+          "paramName": "typeArguments",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "type_arguments",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "type_arguments"
+            ]
+          }
+        },
+        {
+          "name": "arguments",
+          "propertyName": "arguments",
+          "paramName": "arguments_",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "arguments",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "arguments"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "_call_expression_template_call",
+      "modelType": "group",
+      "typeName": "_CallExpressionTemplateCall",
+      "irKey": "callExpressionTemplateCall",
+      "hidden": true,
+      "name": "_call_expression_template_call",
+      "fields": [
+        {
+          "name": "function",
+          "propertyName": "function",
+          "paramName": "function_",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "primary_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "new_expression",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "primary_expression",
+              "new_expression"
+            ]
+          }
+        },
+        {
+          "name": "arguments",
+          "propertyName": "arguments",
+          "paramName": "arguments_",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "template_string",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "template_string"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
       "kind": "_call_signature",
       "modelType": "group",
       "typeName": "_CallSignature",
@@ -724,6 +956,151 @@
       "subtypes": [
         "array_pattern",
         "object_pattern"
+      ]
+    },
+    {
+      "kind": "_export_statement_equals_export",
+      "modelType": "container",
+      "typeName": "_ExportStatementEqualsExport",
+      "factoryName": "_exportStatementEqualsExport",
+      "irKey": "_exportStatementEqualsExport",
+      "hidden": false,
+      "children": [
+        {
+          "name": "expression",
+          "propertyName": "expression",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "expression",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "semicolon",
+          "propertyName": "semicolon",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_semicolon",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_export_statement_namespace_export",
+      "modelType": "container",
+      "typeName": "_ExportStatementNamespaceExport",
+      "factoryName": "_exportStatementNamespaceExport",
+      "irKey": "_exportStatementNamespaceExport",
+      "hidden": false,
+      "children": [
+        {
+          "name": "identifier",
+          "propertyName": "identifier",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "semicolon",
+          "propertyName": "semicolon",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_semicolon",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_export_statement_type_export",
+      "modelType": "branch",
+      "typeName": "_ExportStatementTypeExport",
+      "factoryName": "_exportStatementTypeExport",
+      "irKey": "_exportStatementTypeExport",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "source",
+          "propertyName": "source",
+          "paramName": "source",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "string",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "string"
+            ]
+          }
+        }
+      ],
+      "children": [
+        {
+          "name": "export_clause",
+          "propertyName": "exportClause",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "export_clause",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "semicolon",
+          "propertyName": "semicolon",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_semicolon",
+              "unresolved": true
+            }
+          ]
+        }
       ]
     },
     {
@@ -1932,6 +2309,81 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "override_modifier",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_parenthesized_expression_sequence",
+      "modelType": "container",
+      "typeName": "_ParenthesizedExpressionSequence",
+      "factoryName": "_parenthesizedExpressionSequence",
+      "irKey": "_parenthesizedExpressionSequence",
+      "hidden": false,
+      "children": [
+        {
+          "name": "sequence_expression",
+          "propertyName": "sequenceExpression",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "sequence_expression",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_parenthesized_expression_typed",
+      "modelType": "group",
+      "typeName": "_ParenthesizedExpressionTyped",
+      "irKey": "parenthesizedExpressionTyped",
+      "hidden": true,
+      "name": "_parenthesized_expression_typed",
+      "fields": [
+        {
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "type_annotation",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "type_annotation"
+            ]
+          }
+        }
+      ],
+      "children": [
+        {
+          "name": "expression",
+          "propertyName": "expression",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "expression",
               "unresolved": true
             }
           ]
@@ -4287,22 +4739,26 @@
       "factoryName": "callExpression",
       "irKey": "call",
       "hidden": false,
-      "source": "promoted",
-      "polymorphSource": "promoted",
-      "variantChildKinds": [],
+      "source": "override",
+      "polymorphSource": "override",
+      "variantChildKinds": [
+        "call_expression_call",
+        "call_expression_template_call",
+        "call_expression_member"
+      ],
       "forms": [
         {
-          "kind": "call_expression_form0",
-          "name": "form0",
-          "typeName": "CallExpressionForm0",
-          "factoryName": "callExpressionForm0",
-          "irKey": "callExpressionForm0",
+          "kind": "call_expression__form_call",
+          "name": "call",
+          "typeName": "CallExpressionUFormCall",
+          "factoryName": "callExpressionUFormCall",
+          "irKey": "callExpressionUFormCall",
           "parentKind": "call_expression",
-          "fields": [
+          "fields": [],
+          "children": [
             {
-              "name": "function",
-              "propertyName": "function",
-              "paramName": "function_",
+              "name": "call_expression_call",
+              "propertyName": "callExpressionCall",
               "required": true,
               "multiple": false,
               "nonEmpty": false,
@@ -4310,86 +4766,25 @@
                 {
                   "kind": "node-ref",
                   "multiplicity": "single",
-                  "name": "expression",
-                  "unresolved": true
-                },
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "import",
+                  "name": "call_expression_call",
                   "unresolved": true
                 }
-              ],
-              "source": "grammar",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "expression",
-                  "import"
-                ]
-              }
-            },
-            {
-              "name": "type_arguments",
-              "propertyName": "typeArguments",
-              "paramName": "typeArguments",
-              "required": false,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "optional",
-                  "name": "type_arguments",
-                  "unresolved": true
-                }
-              ],
-              "source": "grammar",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "type_arguments"
-                ]
-              }
-            },
-            {
-              "name": "arguments",
-              "propertyName": "arguments",
-              "paramName": "arguments_",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "arguments",
-                  "unresolved": true
-                }
-              ],
-              "source": "grammar",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "arguments"
-                ]
-              }
+              ]
             }
-          ],
-          "children": []
+          ]
         },
         {
-          "kind": "call_expression_form1",
-          "name": "form1",
-          "typeName": "CallExpressionForm1",
-          "factoryName": "callExpressionForm1",
-          "irKey": "callExpressionForm1",
+          "kind": "call_expression__form_template_call",
+          "name": "template_call",
+          "typeName": "CallExpressionUFormTemplateCall",
+          "factoryName": "callExpressionUFormTemplateCall",
+          "irKey": "callExpressionUFormTemplateCall",
           "parentKind": "call_expression",
-          "fields": [
+          "fields": [],
+          "children": [
             {
-              "name": "function",
-              "propertyName": "function",
-              "paramName": "function_",
+              "name": "call_expression_template_call",
+              "propertyName": "callExpressionTemplateCall",
               "required": true,
               "multiple": false,
               "nonEmpty": false,
@@ -4397,63 +4792,25 @@
                 {
                   "kind": "node-ref",
                   "multiplicity": "single",
-                  "name": "primary_expression",
-                  "unresolved": true
-                },
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "new_expression",
+                  "name": "call_expression_template_call",
                   "unresolved": true
                 }
-              ],
-              "source": "grammar",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "primary_expression",
-                  "new_expression"
-                ]
-              }
-            },
-            {
-              "name": "arguments",
-              "propertyName": "arguments",
-              "paramName": "arguments_",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "template_string",
-                  "unresolved": true
-                }
-              ],
-              "source": "grammar",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "template_string"
-                ]
-              }
+              ]
             }
-          ],
-          "children": []
+          ]
         },
         {
-          "kind": "call_expression_form2",
-          "name": "form2",
-          "typeName": "CallExpressionForm2",
-          "factoryName": "callExpressionForm2",
-          "irKey": "callExpressionForm2",
+          "kind": "call_expression__form_member",
+          "name": "member",
+          "typeName": "CallExpressionUFormMember",
+          "factoryName": "callExpressionUFormMember",
+          "irKey": "callExpressionUFormMember",
           "parentKind": "call_expression",
-          "fields": [
+          "fields": [],
+          "children": [
             {
-              "name": "function",
-              "propertyName": "function",
-              "paramName": "function_",
+              "name": "call_expression_member",
+              "propertyName": "callExpressionMember",
               "required": true,
               "multiple": false,
               "nonEmpty": false,
@@ -4461,78 +4818,106 @@
                 {
                   "kind": "node-ref",
                   "multiplicity": "single",
-                  "name": "primary_expression",
+                  "name": "call_expression_member",
                   "unresolved": true
                 }
-              ],
-              "source": "grammar",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "primary_expression"
-                ]
-              }
-            },
-            {
-              "name": "type_arguments",
-              "propertyName": "typeArguments",
-              "paramName": "typeArguments",
-              "required": false,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "optional",
-                  "name": "type_arguments",
-                  "unresolved": true
-                }
-              ],
-              "source": "grammar",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "type_arguments"
-                ]
-              }
-            },
-            {
-              "name": "arguments",
-              "propertyName": "arguments",
-              "paramName": "arguments_",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "arguments",
-                  "unresolved": true
-                }
-              ],
-              "source": "grammar",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "arguments"
-                ]
-              }
+              ]
             }
-          ],
-          "children": []
+          ]
         }
       ]
     },
     {
-      "kind": "call_expression_form0",
+      "kind": "call_expression__form_call",
       "modelType": "group",
-      "typeName": "CallExpressionForm0",
-      "factoryName": "callExpressionForm0",
-      "irKey": "callExpressionForm0",
+      "typeName": "CallExpressionUFormCall",
+      "factoryName": "callExpressionUFormCall",
+      "irKey": "callExpressionUFormCall",
       "hidden": false,
-      "name": "form0",
+      "name": "call",
       "parentKind": "call_expression",
+      "fields": [],
+      "children": [
+        {
+          "name": "call_expression_call",
+          "propertyName": "callExpressionCall",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "call_expression_call",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "call_expression__form_member",
+      "modelType": "group",
+      "typeName": "CallExpressionUFormMember",
+      "factoryName": "callExpressionUFormMember",
+      "irKey": "callExpressionUFormMember",
+      "hidden": false,
+      "name": "member",
+      "parentKind": "call_expression",
+      "fields": [],
+      "children": [
+        {
+          "name": "call_expression_member",
+          "propertyName": "callExpressionMember",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "call_expression_member",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "call_expression__form_template_call",
+      "modelType": "group",
+      "typeName": "CallExpressionUFormTemplateCall",
+      "factoryName": "callExpressionUFormTemplateCall",
+      "irKey": "callExpressionUFormTemplateCall",
+      "hidden": false,
+      "name": "template_call",
+      "parentKind": "call_expression",
+      "fields": [],
+      "children": [
+        {
+          "name": "call_expression_template_call",
+          "propertyName": "callExpressionTemplateCall",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "call_expression_template_call",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "call_expression_call",
+      "modelType": "branch",
+      "typeName": "CallExpressionCall",
+      "factoryName": "callExpressionCall",
+      "irKey": "callExpressionCall",
+      "hidden": false,
       "fields": [
         {
           "name": "function",
@@ -4614,80 +4999,12 @@
       "children": []
     },
     {
-      "kind": "call_expression_form1",
-      "modelType": "group",
-      "typeName": "CallExpressionForm1",
-      "factoryName": "callExpressionForm1",
-      "irKey": "callExpressionForm1",
+      "kind": "call_expression_member",
+      "modelType": "branch",
+      "typeName": "CallExpressionMember",
+      "factoryName": "callExpressionMember",
+      "irKey": "callExpressionMember",
       "hidden": false,
-      "name": "form1",
-      "parentKind": "call_expression",
-      "fields": [
-        {
-          "name": "function",
-          "propertyName": "function",
-          "paramName": "function_",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "primary_expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "new_expression",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "primary_expression",
-              "new_expression"
-            ]
-          }
-        },
-        {
-          "name": "arguments",
-          "propertyName": "arguments",
-          "paramName": "arguments_",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "template_string",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "template_string"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
-      "kind": "call_expression_form2",
-      "modelType": "group",
-      "typeName": "CallExpressionForm2",
-      "factoryName": "callExpressionForm2",
-      "irKey": "callExpressionForm2",
-      "hidden": false,
-      "name": "form2",
-      "parentKind": "call_expression",
       "fields": [
         {
           "name": "function",
@@ -4755,6 +5072,70 @@
             "typeName": "",
             "kinds": [
               "arguments"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "call_expression_template_call",
+      "modelType": "branch",
+      "typeName": "CallExpressionTemplateCall",
+      "factoryName": "callExpressionTemplateCall",
+      "irKey": "callExpressionTemplateCall",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "function",
+          "propertyName": "function",
+          "paramName": "function_",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "primary_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "new_expression",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "primary_expression",
+              "new_expression"
+            ]
+          }
+        },
+        {
+          "name": "arguments",
+          "propertyName": "arguments",
+          "paramName": "arguments_",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "template_string",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "template_string"
             ]
           }
         }
@@ -7122,163 +7503,26 @@
       "factoryName": "exportStatement",
       "irKey": "exportStatement",
       "hidden": false,
-      "source": "promoted",
-      "polymorphSource": "promoted",
-      "variantChildKinds": [],
+      "source": "override",
+      "polymorphSource": "override",
+      "variantChildKinds": [
+        "export_statement_type_export",
+        "export_statement_equals_export",
+        "export_statement_namespace_export"
+      ],
       "forms": [
         {
-          "kind": "export_statement_form0",
-          "name": "form0",
-          "typeName": "ExportStatementForm0",
-          "factoryName": "exportStatementForm0",
-          "irKey": "exportStatementForm0",
-          "parentKind": "export_statement",
-          "fields": [
-            {
-              "name": "decorator",
-              "propertyName": "decorator",
-              "paramName": "decorator",
-              "required": true,
-              "multiple": true,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "array",
-                  "name": "decorator",
-                  "unresolved": true
-                }
-              ],
-              "source": "grammar",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "decorator"
-                ]
-              }
-            },
-            {
-              "name": "declaration",
-              "propertyName": "declaration",
-              "paramName": "declaration",
-              "required": false,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "optional",
-                  "name": "declaration",
-                  "unresolved": true
-                }
-              ],
-              "source": "grammar",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "declaration"
-                ]
-              }
-            },
-            {
-              "name": "value",
-              "propertyName": "value",
-              "paramName": "value",
-              "required": false,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "optional",
-                  "name": "expression",
-                  "unresolved": true
-                }
-              ],
-              "source": "grammar",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "expression"
-                ]
-              }
-            }
-          ],
-          "children": [
-            {
-              "name": "from_clause",
-              "propertyName": "fromClause",
-              "required": false,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "optional",
-                  "name": "_from_clause",
-                  "unresolved": true
-                }
-              ]
-            },
-            {
-              "name": "namespace_export",
-              "propertyName": "namespaceExport",
-              "required": false,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "optional",
-                  "name": "namespace_export",
-                  "unresolved": true
-                }
-              ]
-            },
-            {
-              "name": "export_clause",
-              "propertyName": "exportClause",
-              "required": false,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "optional",
-                  "name": "export_clause",
-                  "unresolved": true
-                }
-              ]
-            },
-            {
-              "name": "semicolon",
-              "propertyName": "semicolon",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_semicolon",
-                  "unresolved": true
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "kind": "export_statement_form1",
-          "name": "form1",
-          "typeName": "ExportStatementForm1",
-          "factoryName": "exportStatementForm1",
-          "irKey": "exportStatementForm1",
+          "kind": "export_statement__form_type_export",
+          "name": "type_export",
+          "typeName": "ExportStatementUFormTypeExport",
+          "factoryName": "exportStatementUFormTypeExport",
+          "irKey": "exportStatementUFormTypeExport",
           "parentKind": "export_statement",
           "fields": [],
           "children": [
             {
-              "name": "export_clause",
-              "propertyName": "exportClause",
+              "name": "export_statement_type_export",
+              "propertyName": "exportStatementTypeExport",
               "required": true,
               "multiple": false,
               "nonEmpty": false,
@@ -7286,37 +7530,7 @@
                 {
                   "kind": "node-ref",
                   "multiplicity": "single",
-                  "name": "export_clause",
-                  "unresolved": true
-                }
-              ]
-            },
-            {
-              "name": "from_clause",
-              "propertyName": "fromClause",
-              "required": false,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "optional",
-                  "name": "_from_clause",
-                  "unresolved": true
-                }
-              ]
-            },
-            {
-              "name": "semicolon",
-              "propertyName": "semicolon",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_semicolon",
+                  "name": "export_statement_type_export",
                   "unresolved": true
                 }
               ]
@@ -7324,17 +7538,17 @@
           ]
         },
         {
-          "kind": "export_statement_form2",
-          "name": "form2",
-          "typeName": "ExportStatementForm2",
-          "factoryName": "exportStatementForm2",
-          "irKey": "exportStatementForm2",
+          "kind": "export_statement__form_equals_export",
+          "name": "equals_export",
+          "typeName": "ExportStatementUFormEqualsExport",
+          "factoryName": "exportStatementUFormEqualsExport",
+          "irKey": "exportStatementUFormEqualsExport",
           "parentKind": "export_statement",
           "fields": [],
           "children": [
             {
-              "name": "expression",
-              "propertyName": "expression",
+              "name": "export_statement_equals_export",
+              "propertyName": "exportStatementEqualsExport",
               "required": true,
               "multiple": false,
               "nonEmpty": false,
@@ -7342,22 +7556,7 @@
                 {
                   "kind": "node-ref",
                   "multiplicity": "single",
-                  "name": "expression",
-                  "unresolved": true
-                }
-              ]
-            },
-            {
-              "name": "semicolon",
-              "propertyName": "semicolon",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_semicolon",
+                  "name": "export_statement_equals_export",
                   "unresolved": true
                 }
               ]
@@ -7365,205 +7564,47 @@
           ]
         },
         {
-          "kind": "export_statement_form3",
-          "name": "form3",
-          "typeName": "ExportStatementForm3",
-          "factoryName": "exportStatementForm3",
-          "irKey": "exportStatementForm3",
-          "parentKind": "export_statement",
-          "fields": [],
-          "children": [
-            {
-              "name": "identifier",
-              "propertyName": "identifier",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "identifier",
-                  "unresolved": true
-                }
-              ]
-            },
-            {
-              "name": "semicolon",
-              "propertyName": "semicolon",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_semicolon",
-                  "unresolved": true
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "export_statement_form0",
-      "modelType": "group",
-      "typeName": "ExportStatementForm0",
-      "factoryName": "exportStatementForm0",
-      "irKey": "exportStatementForm0",
-      "hidden": false,
-      "name": "form0",
-      "parentKind": "export_statement",
-      "fields": [
-        {
-          "name": "decorator",
-          "propertyName": "decorator",
-          "paramName": "decorator",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "decorator",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "decorator"
-            ]
-          }
-        },
-        {
-          "name": "declaration",
-          "propertyName": "declaration",
-          "paramName": "declaration",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "declaration",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "declaration"
-            ]
-          }
-        },
-        {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "expression",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "expression"
-            ]
-          }
-        }
-      ],
-      "children": [
-        {
-          "name": "from_clause",
-          "propertyName": "fromClause",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_from_clause",
-              "unresolved": true
-            }
-          ]
-        },
-        {
+          "kind": "export_statement__form_namespace_export",
           "name": "namespace_export",
-          "propertyName": "namespaceExport",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+          "typeName": "ExportStatementUFormNamespaceExport",
+          "factoryName": "exportStatementUFormNamespaceExport",
+          "irKey": "exportStatementUFormNamespaceExport",
+          "parentKind": "export_statement",
+          "fields": [],
+          "children": [
             {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "namespace_export",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "export_clause",
-          "propertyName": "exportClause",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "export_clause",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_semicolon",
-              "unresolved": true
+              "name": "export_statement_namespace_export",
+              "propertyName": "exportStatementNamespaceExport",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "export_statement_namespace_export",
+                  "unresolved": true
+                }
+              ]
             }
           ]
         }
       ]
     },
     {
-      "kind": "export_statement_form1",
+      "kind": "export_statement__form_equals_export",
       "modelType": "group",
-      "typeName": "ExportStatementForm1",
-      "factoryName": "exportStatementForm1",
-      "irKey": "exportStatementForm1",
+      "typeName": "ExportStatementUFormEqualsExport",
+      "factoryName": "exportStatementUFormEqualsExport",
+      "irKey": "exportStatementUFormEqualsExport",
       "hidden": false,
-      "name": "form1",
+      "name": "equals_export",
       "parentKind": "export_statement",
       "fields": [],
       "children": [
         {
-          "name": "export_clause",
-          "propertyName": "exportClause",
+          "name": "export_statement_equals_export",
+          "propertyName": "exportStatementEqualsExport",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -7571,37 +7612,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "export_clause",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "from_clause",
-          "propertyName": "fromClause",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_from_clause",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_semicolon",
+              "name": "export_statement_equals_export",
               "unresolved": true
             }
           ]
@@ -7609,15 +7620,68 @@
       ]
     },
     {
-      "kind": "export_statement_form2",
+      "kind": "export_statement__form_namespace_export",
       "modelType": "group",
-      "typeName": "ExportStatementForm2",
-      "factoryName": "exportStatementForm2",
-      "irKey": "exportStatementForm2",
+      "typeName": "ExportStatementUFormNamespaceExport",
+      "factoryName": "exportStatementUFormNamespaceExport",
+      "irKey": "exportStatementUFormNamespaceExport",
       "hidden": false,
-      "name": "form2",
+      "name": "namespace_export",
       "parentKind": "export_statement",
       "fields": [],
+      "children": [
+        {
+          "name": "export_statement_namespace_export",
+          "propertyName": "exportStatementNamespaceExport",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "export_statement_namespace_export",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "export_statement__form_type_export",
+      "modelType": "group",
+      "typeName": "ExportStatementUFormTypeExport",
+      "factoryName": "exportStatementUFormTypeExport",
+      "irKey": "exportStatementUFormTypeExport",
+      "hidden": false,
+      "name": "type_export",
+      "parentKind": "export_statement",
+      "fields": [],
+      "children": [
+        {
+          "name": "export_statement_type_export",
+          "propertyName": "exportStatementTypeExport",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "export_statement_type_export",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "export_statement_equals_export",
+      "modelType": "container",
+      "typeName": "ExportStatementEqualsExport",
+      "factoryName": "exportStatementEqualsExport",
+      "irKey": "exportStatementEqualsExport",
+      "hidden": false,
       "children": [
         {
           "name": "expression",
@@ -7652,15 +7716,12 @@
       ]
     },
     {
-      "kind": "export_statement_form3",
-      "modelType": "group",
-      "typeName": "ExportStatementForm3",
-      "factoryName": "exportStatementForm3",
-      "irKey": "exportStatementForm3",
+      "kind": "export_statement_namespace_export",
+      "modelType": "container",
+      "typeName": "ExportStatementNamespaceExport",
+      "factoryName": "exportStatementNamespaceExport",
+      "irKey": "exportStatementNamespaceExport",
       "hidden": false,
-      "name": "form3",
-      "parentKind": "export_statement",
-      "fields": [],
       "children": [
         {
           "name": "identifier",
@@ -7673,6 +7734,71 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "semicolon",
+          "propertyName": "semicolon",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_semicolon",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "export_statement_type_export",
+      "modelType": "branch",
+      "typeName": "ExportStatementTypeExport",
+      "factoryName": "exportStatementTypeExport",
+      "irKey": "exportStatementTypeExport",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "source",
+          "propertyName": "source",
+          "paramName": "source",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "string",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "string"
+            ]
+          }
+        }
+      ],
+      "children": [
+        {
+          "name": "export_clause",
+          "propertyName": "exportClause",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "export_clause",
               "unresolved": true
             }
           ]
@@ -14435,10 +14561,159 @@
     },
     {
       "kind": "parenthesized_expression",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "ParenthesizedExpression",
       "factoryName": "parenthesizedExpression",
       "irKey": "parenthesized",
+      "hidden": false,
+      "source": "override",
+      "polymorphSource": "override",
+      "variantChildKinds": [
+        "parenthesized_expression_typed",
+        "parenthesized_expression_sequence"
+      ],
+      "forms": [
+        {
+          "kind": "parenthesized_expression__form_typed",
+          "name": "typed",
+          "typeName": "ParenthesizedExpressionUFormTyped",
+          "factoryName": "parenthesizedExpressionUFormTyped",
+          "irKey": "parenthesizedExpressionUFormTyped",
+          "parentKind": "parenthesized_expression",
+          "fields": [],
+          "children": [
+            {
+              "name": "parenthesized_expression_typed",
+              "propertyName": "parenthesizedExpressionTyped",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "parenthesized_expression_typed",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "parenthesized_expression__form_sequence",
+          "name": "sequence",
+          "typeName": "ParenthesizedExpressionUFormSequence",
+          "factoryName": "parenthesizedExpressionUFormSequence",
+          "irKey": "parenthesizedExpressionUFormSequence",
+          "parentKind": "parenthesized_expression",
+          "fields": [],
+          "children": [
+            {
+              "name": "parenthesized_expression_sequence",
+              "propertyName": "parenthesizedExpressionSequence",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "parenthesized_expression_sequence",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "parenthesized_expression__form_sequence",
+      "modelType": "group",
+      "typeName": "ParenthesizedExpressionUFormSequence",
+      "factoryName": "parenthesizedExpressionUFormSequence",
+      "irKey": "parenthesizedExpressionUFormSequence",
+      "hidden": false,
+      "name": "sequence",
+      "parentKind": "parenthesized_expression",
+      "fields": [],
+      "children": [
+        {
+          "name": "parenthesized_expression_sequence",
+          "propertyName": "parenthesizedExpressionSequence",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "parenthesized_expression_sequence",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "parenthesized_expression__form_typed",
+      "modelType": "group",
+      "typeName": "ParenthesizedExpressionUFormTyped",
+      "factoryName": "parenthesizedExpressionUFormTyped",
+      "irKey": "parenthesizedExpressionUFormTyped",
+      "hidden": false,
+      "name": "typed",
+      "parentKind": "parenthesized_expression",
+      "fields": [],
+      "children": [
+        {
+          "name": "parenthesized_expression_typed",
+          "propertyName": "parenthesizedExpressionTyped",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "parenthesized_expression_typed",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "parenthesized_expression_sequence",
+      "modelType": "container",
+      "typeName": "ParenthesizedExpressionSequence",
+      "factoryName": "parenthesizedExpressionSequence",
+      "irKey": "parenthesizedExpressionSequence",
+      "hidden": false,
+      "children": [
+        {
+          "name": "sequence_expression",
+          "propertyName": "sequenceExpression",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "sequence_expression",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "parenthesized_expression_typed",
+      "modelType": "branch",
+      "typeName": "ParenthesizedExpressionTyped",
+      "factoryName": "parenthesizedExpressionTyped",
+      "irKey": "parenthesizedExpressionTyped",
       "hidden": false,
       "fields": [
         {
@@ -14469,29 +14744,14 @@
         {
           "name": "expression",
           "propertyName": "expression",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "sequence_expression",
-          "propertyName": "sequenceExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "sequence_expression",
               "unresolved": true
             }
           ]

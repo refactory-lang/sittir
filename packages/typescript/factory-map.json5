@@ -201,12 +201,17 @@
     "html_comment": "text",
     "||": "text",
     "jsx_text": "text",
+    "export_statement_type_export": "config",
+    "export_statement_equals_export": "children",
+    "export_statement_namespace_export": "children",
     "import_clause_namespace_import": "children",
     "import_clause_named_imports": "children",
     "import_clause_default_import": "children",
     "import_specifier_name": "config",
     "import_specifier_as": "config",
     "statement_identifier": "text",
+    "parenthesized_expression_typed": "config",
+    "parenthesized_expression_sequence": "children",
     "shorthand_property_identifier": "children",
     "shorthand_property_identifier_pattern": "children",
     "property_identifier": "text",
@@ -215,15 +220,15 @@
     "class_heritage_implements_clause": "children",
     "arrow_function_parameter": "config",
     "arrow_function__call_signature": "config",
+    "call_expression_call": "config",
+    "call_expression_template_call": "config",
+    "call_expression_member": "config",
     "interface_body": "config",
     "this_type": "text",
     "index_signature_colon": "config",
     "index_signature_mapped_type_clause": "children",
     "type_identifier": "text",
-    "export": "text",
-    "default": "text",
     "as": "text",
-    "namespace": "text",
     "from": "text",
     "var": "text",
     "else": "text",
@@ -241,6 +246,7 @@
     "return": "text",
     "throw": "text",
     "case": "text",
+    "default": "text",
     "catch": "text",
     "finally": "text",
     "yield": "text",
@@ -260,6 +266,7 @@
     "extends": "text",
     "implements": "text",
     "global": "text",
+    "namespace": "text",
     "interface": "text",
     "enum": "text",
     "override": "text",
@@ -267,7 +274,8 @@
     "is": "text",
     "typeof": "text",
     "keyof": "text",
-    "async": "text"
+    "async": "text",
+    "export": "text"
   },
   "fieldAliasMap": {
     "break_statement.label": {
@@ -488,25 +496,6 @@
       "parameters",
       "return_type",
       "body"
-    ],
-    "call_expression_form0": [
-      "function",
-      "type_arguments",
-      "arguments"
-    ],
-    "call_expression_form1": [
-      "function",
-      "arguments"
-    ],
-    "call_expression_form2": [
-      "function",
-      "type_arguments",
-      "arguments"
-    ],
-    "call_expression": [
-      "function",
-      "type_arguments",
-      "arguments"
     ],
     "new_expression": [
       "constructor",
@@ -826,6 +815,20 @@
       "parameters",
       "return_type"
     ],
+    "call_expression_call": [
+      "function",
+      "type_arguments",
+      "arguments"
+    ],
+    "call_expression_template_call": [
+      "function",
+      "arguments"
+    ],
+    "call_expression_member": [
+      "function",
+      "type_arguments",
+      "arguments"
+    ],
     "interface_body": [
       "opening",
       "members",
@@ -838,16 +841,11 @@
   },
   "polymorphVariants": {
     "export_statement": {
-      "source": "promoted",
-      "fields": {
-        "form0": [
-          "decorator",
-          "declaration",
-          "value"
-        ],
-        "form1": [],
-        "form2": [],
-        "form3": []
+      "source": "override",
+      "childKind": {
+        "export_statement_type_export": "type_export",
+        "export_statement_equals_export": "equals_export",
+        "export_statement_namespace_export": "namespace_export"
       }
     },
     "import_clause": {
@@ -878,6 +876,13 @@
         ]
       }
     },
+    "parenthesized_expression": {
+      "source": "override",
+      "childKind": {
+        "parenthesized_expression_typed": "typed",
+        "parenthesized_expression_sequence": "sequence"
+      }
+    },
     "class_heritage": {
       "source": "override",
       "childKind": {
@@ -893,22 +898,11 @@
       }
     },
     "call_expression": {
-      "source": "promoted",
-      "fields": {
-        "form0": [
-          "function",
-          "typeArguments",
-          "arguments"
-        ],
-        "form1": [
-          "function",
-          "arguments"
-        ],
-        "form2": [
-          "function",
-          "typeArguments",
-          "arguments"
-        ]
+      "source": "override",
+      "childKind": {
+        "call_expression_call": "call",
+        "call_expression_template_call": "template_call",
+        "call_expression_member": "member"
       }
     },
     "index_signature": {

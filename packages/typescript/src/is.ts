@@ -200,17 +200,29 @@ export interface IsGuards {
     ImportClauseDefaultImport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_import_clause_default_import' };
     ImportSpecifierName<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_import_specifier_name' };
     IndexSignatureMappedTypeClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_index_signature_mapped_type_clause' };
+    ParenthesizedExpressionSequence<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_parenthesized_expression_sequence' };
+    ExportStatementTypeExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_type_export' };
+    ExportStatementEqualsExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_equals_export' };
+    ExportStatementNamespaceExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_namespace_export' };
+    exportStatementTypeExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'export_statement_type_export' };
+    exportStatementEqualsExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'export_statement_equals_export' };
+    exportStatementNamespaceExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'export_statement_namespace_export' };
     importClauseNamespaceImport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_clause_namespace_import' };
     importClauseNamedImports<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_clause_named_imports' };
     importClauseDefaultImport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_clause_default_import' };
     importSpecifierName<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_specifier_name' };
     importSpecifierAs<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_specifier_as' };
+    parenthesizedExpressionTyped<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'parenthesized_expression_typed' };
+    parenthesizedExpressionSequence<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'parenthesized_expression_sequence' };
     shorthandPropertyIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'shorthand_property_identifier' };
     shorthandPropertyIdentifierPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'shorthand_property_identifier_pattern' };
     classHeritageExtendsClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'class_heritage_extends_clause' };
     classHeritageImplementsClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'class_heritage_implements_clause' };
     arrowFunctionParameter<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'arrow_function_parameter' };
     arrowFunction_CallSignature<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'arrow_function__call_signature' };
+    callExpressionCall<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'call_expression_call' };
+    callExpressionTemplateCall<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'call_expression_template_call' };
+    callExpressionMember<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'call_expression_member' };
     interfaceBody<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'interface_body' };
     indexSignatureColon<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'index_signature_colon' };
     indexSignatureMappedTypeClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'index_signature_mapped_type_clause' };
@@ -410,17 +422,29 @@ export interface AssertGuards {
     ImportClauseDefaultImport(v: { readonly $type: string }): asserts v is { readonly $type: '_import_clause_default_import' };
     ImportSpecifierName(v: { readonly $type: string }): asserts v is { readonly $type: '_import_specifier_name' };
     IndexSignatureMappedTypeClause(v: { readonly $type: string }): asserts v is { readonly $type: '_index_signature_mapped_type_clause' };
+    ParenthesizedExpressionSequence(v: { readonly $type: string }): asserts v is { readonly $type: '_parenthesized_expression_sequence' };
+    ExportStatementTypeExport(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_type_export' };
+    ExportStatementEqualsExport(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_equals_export' };
+    ExportStatementNamespaceExport(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_namespace_export' };
+    exportStatementTypeExport(v: { readonly $type: string }): asserts v is { readonly $type: 'export_statement_type_export' };
+    exportStatementEqualsExport(v: { readonly $type: string }): asserts v is { readonly $type: 'export_statement_equals_export' };
+    exportStatementNamespaceExport(v: { readonly $type: string }): asserts v is { readonly $type: 'export_statement_namespace_export' };
     importClauseNamespaceImport(v: { readonly $type: string }): asserts v is { readonly $type: 'import_clause_namespace_import' };
     importClauseNamedImports(v: { readonly $type: string }): asserts v is { readonly $type: 'import_clause_named_imports' };
     importClauseDefaultImport(v: { readonly $type: string }): asserts v is { readonly $type: 'import_clause_default_import' };
     importSpecifierName(v: { readonly $type: string }): asserts v is { readonly $type: 'import_specifier_name' };
     importSpecifierAs(v: { readonly $type: string }): asserts v is { readonly $type: 'import_specifier_as' };
+    parenthesizedExpressionTyped(v: { readonly $type: string }): asserts v is { readonly $type: 'parenthesized_expression_typed' };
+    parenthesizedExpressionSequence(v: { readonly $type: string }): asserts v is { readonly $type: 'parenthesized_expression_sequence' };
     shorthandPropertyIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: 'shorthand_property_identifier' };
     shorthandPropertyIdentifierPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'shorthand_property_identifier_pattern' };
     classHeritageExtendsClause(v: { readonly $type: string }): asserts v is { readonly $type: 'class_heritage_extends_clause' };
     classHeritageImplementsClause(v: { readonly $type: string }): asserts v is { readonly $type: 'class_heritage_implements_clause' };
     arrowFunctionParameter(v: { readonly $type: string }): asserts v is { readonly $type: 'arrow_function_parameter' };
     arrowFunction_CallSignature(v: { readonly $type: string }): asserts v is { readonly $type: 'arrow_function__call_signature' };
+    callExpressionCall(v: { readonly $type: string }): asserts v is { readonly $type: 'call_expression_call' };
+    callExpressionTemplateCall(v: { readonly $type: string }): asserts v is { readonly $type: 'call_expression_template_call' };
+    callExpressionMember(v: { readonly $type: string }): asserts v is { readonly $type: 'call_expression_member' };
     interfaceBody(v: { readonly $type: string }): asserts v is { readonly $type: 'interface_body' };
     indexSignatureColon(v: { readonly $type: string }): asserts v is { readonly $type: 'index_signature_colon' };
     indexSignatureMappedTypeClause(v: { readonly $type: string }): asserts v is { readonly $type: 'index_signature_mapped_type_clause' };
@@ -645,17 +669,29 @@ export const is = {
     ImportClauseDefaultImport: _g("_import_clause_default_import"),
     ImportSpecifierName: _g("_import_specifier_name"),
     IndexSignatureMappedTypeClause: _g("_index_signature_mapped_type_clause"),
+    ParenthesizedExpressionSequence: _g("_parenthesized_expression_sequence"),
+    ExportStatementTypeExport: _g("_export_statement_type_export"),
+    ExportStatementEqualsExport: _g("_export_statement_equals_export"),
+    ExportStatementNamespaceExport: _g("_export_statement_namespace_export"),
+    exportStatementTypeExport: _g("export_statement_type_export"),
+    exportStatementEqualsExport: _g("export_statement_equals_export"),
+    exportStatementNamespaceExport: _g("export_statement_namespace_export"),
     importClauseNamespaceImport: _g("import_clause_namespace_import"),
     importClauseNamedImports: _g("import_clause_named_imports"),
     importClauseDefaultImport: _g("import_clause_default_import"),
     importSpecifierName: _g("import_specifier_name"),
     importSpecifierAs: _g("import_specifier_as"),
+    parenthesizedExpressionTyped: _g("parenthesized_expression_typed"),
+    parenthesizedExpressionSequence: _g("parenthesized_expression_sequence"),
     shorthandPropertyIdentifier: _g("shorthand_property_identifier"),
     shorthandPropertyIdentifierPattern: _g("shorthand_property_identifier_pattern"),
     classHeritageExtendsClause: _g("class_heritage_extends_clause"),
     classHeritageImplementsClause: _g("class_heritage_implements_clause"),
     arrowFunctionParameter: _g("arrow_function_parameter"),
     arrowFunction_CallSignature: _g("arrow_function__call_signature"),
+    callExpressionCall: _g("call_expression_call"),
+    callExpressionTemplateCall: _g("call_expression_template_call"),
+    callExpressionMember: _g("call_expression_member"),
     interfaceBody: _g("interface_body"),
     indexSignatureColon: _g("index_signature_colon"),
     indexSignatureMappedTypeClause: _g("index_signature_mapped_type_clause"),
@@ -876,17 +912,29 @@ export const assert = {
     ImportClauseDefaultImport: _makeAssert('ImportClauseDefaultImport', is.ImportClauseDefaultImport as _AnyGuard),
     ImportSpecifierName: _makeAssert('ImportSpecifierName', is.ImportSpecifierName as _AnyGuard),
     IndexSignatureMappedTypeClause: _makeAssert('IndexSignatureMappedTypeClause', is.IndexSignatureMappedTypeClause as _AnyGuard),
+    ParenthesizedExpressionSequence: _makeAssert('ParenthesizedExpressionSequence', is.ParenthesizedExpressionSequence as _AnyGuard),
+    ExportStatementTypeExport: _makeAssert('ExportStatementTypeExport', is.ExportStatementTypeExport as _AnyGuard),
+    ExportStatementEqualsExport: _makeAssert('ExportStatementEqualsExport', is.ExportStatementEqualsExport as _AnyGuard),
+    ExportStatementNamespaceExport: _makeAssert('ExportStatementNamespaceExport', is.ExportStatementNamespaceExport as _AnyGuard),
+    exportStatementTypeExport: _makeAssert('exportStatementTypeExport', is.exportStatementTypeExport as _AnyGuard),
+    exportStatementEqualsExport: _makeAssert('exportStatementEqualsExport', is.exportStatementEqualsExport as _AnyGuard),
+    exportStatementNamespaceExport: _makeAssert('exportStatementNamespaceExport', is.exportStatementNamespaceExport as _AnyGuard),
     importClauseNamespaceImport: _makeAssert('importClauseNamespaceImport', is.importClauseNamespaceImport as _AnyGuard),
     importClauseNamedImports: _makeAssert('importClauseNamedImports', is.importClauseNamedImports as _AnyGuard),
     importClauseDefaultImport: _makeAssert('importClauseDefaultImport', is.importClauseDefaultImport as _AnyGuard),
     importSpecifierName: _makeAssert('importSpecifierName', is.importSpecifierName as _AnyGuard),
     importSpecifierAs: _makeAssert('importSpecifierAs', is.importSpecifierAs as _AnyGuard),
+    parenthesizedExpressionTyped: _makeAssert('parenthesizedExpressionTyped', is.parenthesizedExpressionTyped as _AnyGuard),
+    parenthesizedExpressionSequence: _makeAssert('parenthesizedExpressionSequence', is.parenthesizedExpressionSequence as _AnyGuard),
     shorthandPropertyIdentifier: _makeAssert('shorthandPropertyIdentifier', is.shorthandPropertyIdentifier as _AnyGuard),
     shorthandPropertyIdentifierPattern: _makeAssert('shorthandPropertyIdentifierPattern', is.shorthandPropertyIdentifierPattern as _AnyGuard),
     classHeritageExtendsClause: _makeAssert('classHeritageExtendsClause', is.classHeritageExtendsClause as _AnyGuard),
     classHeritageImplementsClause: _makeAssert('classHeritageImplementsClause', is.classHeritageImplementsClause as _AnyGuard),
     arrowFunctionParameter: _makeAssert('arrowFunctionParameter', is.arrowFunctionParameter as _AnyGuard),
     arrowFunction_CallSignature: _makeAssert('arrowFunction_CallSignature', is.arrowFunction_CallSignature as _AnyGuard),
+    callExpressionCall: _makeAssert('callExpressionCall', is.callExpressionCall as _AnyGuard),
+    callExpressionTemplateCall: _makeAssert('callExpressionTemplateCall', is.callExpressionTemplateCall as _AnyGuard),
+    callExpressionMember: _makeAssert('callExpressionMember', is.callExpressionMember as _AnyGuard),
     interfaceBody: _makeAssert('interfaceBody', is.interfaceBody as _AnyGuard),
     indexSignatureColon: _makeAssert('indexSignatureColon', is.indexSignatureColon as _AnyGuard),
     indexSignatureMappedTypeClause: _makeAssert('indexSignatureMappedTypeClause', is.indexSignatureMappedTypeClause as _AnyGuard),

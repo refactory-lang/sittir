@@ -24,23 +24,18 @@ describe('hash_bang_line', () => {
 });
 
 describe('export_statement', () => {
-  it('form0 form produces correct type', () => {
-    const node = ir.exportStatement.form0({ decorator: [{ $type: 'decorator', $text: 'test' } as any] });
+  it('type_export form produces correct type', () => {
+    const node = ir.exportStatement.type_export({});
     expect(node.$type).toBe('export_statement');
     expect(node.$source).toBe('factory');
   });
-  it('form1 form produces correct type', () => {
-    const node = ir.exportStatement.form1({});
+  it('equals_export form produces correct type', () => {
+    const node = ir.exportStatement.equals_export({});
     expect(node.$type).toBe('export_statement');
     expect(node.$source).toBe('factory');
   });
-  it('form2 form produces correct type', () => {
-    const node = ir.exportStatement.form2({});
-    expect(node.$type).toBe('export_statement');
-    expect(node.$source).toBe('factory');
-  });
-  it('form3 form produces correct type', () => {
-    const node = ir.exportStatement.form3({});
+  it('namespace_export form produces correct type', () => {
+    const node = ir.exportStatement.namespace_export({});
     expect(node.$type).toBe('export_statement');
     expect(node.$source).toBe('factory');
   });
@@ -456,14 +451,15 @@ describe('finally_clause', () => {
 });
 
 describe('parenthesized_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.parenthesized({});
+  it('typed form produces correct type', () => {
+    const node = ir.parenthesized.typed({});
     expect(node.$type).toBe('parenthesized_expression');
     expect(node.$source).toBe('factory');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.parenthesized({ children: [{ $type: 'expression', $text: 'test' } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('sequence form produces correct type', () => {
+    const node = ir.parenthesized.sequence({});
+    expect(node.$type).toBe('parenthesized_expression');
+    expect(node.$source).toBe('factory');
   });
 });
 
@@ -752,18 +748,18 @@ describe('arrow_function', () => {
 });
 
 describe('call_expression', () => {
-  it('form0 form produces correct type', () => {
-    const node = ir.call.form0({ function: { $type: 'expression', $text: 'test' } as any, arguments: { $type: 'arguments', $text: 'test' } as any });
+  it('call form produces correct type', () => {
+    const node = ir.call.call({ function: { $type: 'expression', $text: 'test' } as any, arguments: { $type: 'arguments', $text: 'test' } as any });
     expect(node.$type).toBe('call_expression');
     expect(node.$source).toBe('factory');
   });
-  it('form1 form produces correct type', () => {
-    const node = ir.call.form1({ function: { $type: 'primary_expression', $text: 'test' } as any, arguments: { $type: 'template_string', $text: 'test' } as any });
+  it('template_call form produces correct type', () => {
+    const node = ir.call.template_call({ function: { $type: 'primary_expression', $text: 'test' } as any, arguments: { $type: 'template_string', $text: 'test' } as any });
     expect(node.$type).toBe('call_expression');
     expect(node.$source).toBe('factory');
   });
-  it('form2 form produces correct type', () => {
-    const node = ir.call.form2({ function: { $type: 'primary_expression', $text: 'test' } as any, arguments: { $type: 'arguments', $text: 'test' } as any });
+  it('member form produces correct type', () => {
+    const node = ir.call.member({ function: { $type: 'primary_expression', $text: 'test' } as any, arguments: { $type: 'arguments', $text: 'test' } as any });
     expect(node.$type).toBe('call_expression');
     expect(node.$source).toBe('factory');
   });
@@ -2058,6 +2054,34 @@ describe('jsx_text', () => {
   });
 });
 
+describe('export_statement_type_export', () => {
+  it('factory produces correct type', () => {
+    const node = ir.exportStatementTypeExport({ children: [{ $type: 'export_clause', $text: 'test' } as any] as any });
+    expect(node.$type).toBe('export_statement_type_export');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.exportStatementTypeExport({ children: [{ $type: 'export_clause', $text: 'test' } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('export_statement_equals_export', () => {
+  it('factory produces correct type', () => {
+    const node = ir.exportStatementEqualsExport({ type: "expression" } as never);
+    expect(node.$type).toBe('export_statement_equals_export');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('export_statement_namespace_export', () => {
+  it('factory produces correct type', () => {
+    const node = ir.exportStatementNamespaceExport({ type: "identifier" } as never);
+    expect(node.$type).toBe('export_statement_namespace_export');
+    expect(node.$source).toBe('factory');
+  });
+});
+
 describe('import_clause_namespace_import', () => {
   it('factory produces correct type', () => {
     const node = ir.importClauseNamespaceImport({ type: "namespace_import" } as never);
@@ -2112,6 +2136,26 @@ describe('statement_identifier', () => {
     expect(node.$type).toBe('statement_identifier');
     expect(node.$source).toBe('factory');
     expect(node.$text).toBe("test");
+  });
+});
+
+describe('parenthesized_expression_typed', () => {
+  it('factory produces correct type', () => {
+    const node = ir.parenthesizedExpressionTyped({ children: [{ $type: 'expression', $text: 'test' } as any] as any });
+    expect(node.$type).toBe('parenthesized_expression_typed');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.parenthesizedExpressionTyped({ children: [{ $type: 'expression', $text: 'test' } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('parenthesized_expression_sequence', () => {
+  it('factory produces correct type', () => {
+    const node = ir.parenthesizedExpressionSequence({ type: "sequence_expression" } as never);
+    expect(node.$type).toBe('parenthesized_expression_sequence');
+    expect(node.$source).toBe('factory');
   });
 });
 
@@ -2185,6 +2229,42 @@ describe('arrow_function__call_signature', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.arrowFunctionCallSignature({ parameters: { $type: 'formal_parameters', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('call_expression_call', () => {
+  it('factory produces correct type', () => {
+    const node = ir.callExpressionCall({ function: { $type: 'expression', $text: 'test' } as any, arguments: { $type: 'arguments', $text: 'test' } as any });
+    expect(node.$type).toBe('call_expression_call');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.callExpressionCall({ function: { $type: 'expression', $text: 'test' } as any, arguments: { $type: 'arguments', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('call_expression_template_call', () => {
+  it('factory produces correct type', () => {
+    const node = ir.callExpressionTemplateCall({ function: { $type: 'primary_expression', $text: 'test' } as any, arguments: { $type: 'template_string', $text: 'test' } as any });
+    expect(node.$type).toBe('call_expression_template_call');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.callExpressionTemplateCall({ function: { $type: 'primary_expression', $text: 'test' } as any, arguments: { $type: 'template_string', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('call_expression_member', () => {
+  it('factory produces correct type', () => {
+    const node = ir.callExpressionMember({ function: { $type: 'primary_expression', $text: 'test' } as any, arguments: { $type: 'arguments', $text: 'test' } as any });
+    expect(node.$type).toBe('call_expression_member');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.callExpressionMember({ function: { $type: 'primary_expression', $text: 'test' } as any, arguments: { $type: 'arguments', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
