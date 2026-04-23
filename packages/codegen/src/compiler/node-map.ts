@@ -449,12 +449,19 @@ function walkForChildren(
             // under the parent. The child slot name we emit reflects the
             // symbol we referenced (stripped of any leading underscore so
             // `_expression` → `expression`).
+            //
+            // Ref kind: resolve to the SOURCE kind in the rules map
+            // (`aliasedFrom`, when the symbol came from an alias). Only
+            // source kinds exist in rules post-synthesis-removal; the
+            // visible alias target is identity-only. Downstream lookups
+            // (nodeMap.get) use source kinds.
             {
+                const refName = rule.aliasedFrom ?? rule.name
                 const cleanName = rule.name.replace(/^_+/, '') || rule.name
                 out.push({
                     name: cleanName,
                     propertyName: snakeToCamel(cleanName),
-                    values: [{ kind: 'node-ref', node: { kind: 'unresolved-ref', name: rule.name }, multiplicity }],
+                    values: [{ kind: 'node-ref', node: { kind: 'unresolved-ref', name: refName }, multiplicity }],
                 })
             }
             break
@@ -627,7 +634,10 @@ function deriveValuesForRule(
 ): NodeOrTerminal[] {
     switch (rule.type) {
         case 'symbol':
-            return [{ kind: 'node-ref', node: { kind: 'unresolved-ref', name: rule.name }, multiplicity }]
+            // Ref kind: resolve to SOURCE kind (`aliasedFrom`, when the
+            // symbol came from an alias). Only source kinds exist in
+            // rules post-synthesis-removal.
+            return [{ kind: 'node-ref', node: { kind: 'unresolved-ref', name: rule.aliasedFrom ?? rule.name }, multiplicity }]
         case 'supertype':
             // Supertype refs expand to their subtype list — each subtype is a
             // valid concrete kind the slot can hold.

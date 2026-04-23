@@ -789,19 +789,17 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
     const polymorphVariants = drainPolymorphMetadata(opts)
     const refineForms = drainRefineMetadata(opts)
 
-    // Synthesize top-level rules for named alias targets before Link.
+    // Rules map mirrors tree-sitter's view: no synthesized top-level
+    // entry for alias TARGETS. The source (`_X`) is the canonical
+    // sittir-internal kind; the visible target is identity-only.
     //
-    // Tree-sitter honors `alias($.source, $.target)` natively at parse
-    // time — the target kind shows up in the CST without needing a
-    // rule declaration. Sittir's downstream codegen (types, factories)
-    // DOES need a rule entry for the target kind so it can emit the
-    // kind's shape. We synthesize one here from the source's body.
-    //
-    // Running at end-of-Evaluate (rather than mid-Link) lets the
-    // synthesized rules flow through Link's resolveRule pass uniformly
-    // with author-declared rules — nested aliases inside them get
-    // flattened naturally.
-    synthesizeAliasTargetRules(rules)
+    // One necessary accommodation: when an alias's source is an
+    // INLINE expression (e.g. `alias(choice(...), $.primitive_type)`)
+    // rather than a bare symbol, there's no existing `_X` rule for
+    // downstream to point at. Synthesize `_${target}` with the inline
+    // body so the `_X → X` invariant holds uniformly — every alias
+    // target has a named hidden source in the rules map.
+    synthesizeInlineAliasSources(rules)
 
     return {
         grammar: {
@@ -825,48 +823,67 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 }
 
 /**
- * Synthesize top-level rule entries for named alias targets.
+ * For every `alias(inlineContent, $.target)` whose source isn't a
+ * bare symbol reference to an existing rule, synthesize a hidden
+ * rule `_${target}` carrying the inline content and rewrite the
+ * alias's source to point at it.
  *
- * Walks every rule looking for `alias($.source, $.target)` nodes
- * (`{ type: 'alias', named: true, value: target, content: … }`). For
- * each one where `target` doesn't yet have a rule entry, creates one
- * using the alias's inner content (dereferenced to the source body
- * when the content is a bare symbol reference).
+ * Before:
+ *    alias(choice('u8','u16',...), $.primitive_type)
  *
- * Mutates `rules` in place.
+ * After:
+ *    rules[_primitive_type] = choice('u8','u16',...)
+ *    alias(symbol(_primitive_type), $.primitive_type)
  *
- * This was previously `collectAliasTargets` in link.ts, which ran
- * AFTER link's resolveRule pass had already flattened aliases in
- * every author-declared rule. The synthesized target rules missed
- * that pass, so nested aliases inside them survived and were
- * silently dropped by downstream walkers (typescript
- * `StringDouble.$children` losing `StringFragment`). Running at
- * end-of-Evaluate puts synthesized rules through the normal
- * resolveRule loop uniformly.
+ * Why: downstream (link's `resolveNamedAliasWithProvenance`) produces
+ * `symbol(target, aliasedFrom: source)` ONLY when the alias source is
+ * a bare symbol. For inline content it can't stamp `aliasedFrom` and
+ * drillAs loses the CST-visible target. By making every alias source
+ * a named hidden rule here, we uniformly preserve alias-target
+ * metadata through the pipeline.
+ *
+ * Also: the rules map now has a single named entry per alias target
+ * (the `_${target}` source) without adding entries for visible-only
+ * kinds — matching tree-sitter's declaration view.
  */
-function synthesizeAliasTargetRules(rules: Record<string, Rule>): void {
-    for (const rule of Object.values(rules)) {
-        walkForAliasTargets(rule, rules)
+function synthesizeInlineAliasSources(rules: Record<string, Rule>): void {
+    const ruleEntries = Object.entries(rules)
+    for (const [name, rule] of ruleEntries) {
+        rules[name] = rewriteInlineAliases(rule, rules)
     }
 }
 
-function walkForAliasTargets(rule: Rule, rules: Record<string, Rule>): void {
+function rewriteInlineAliases(rule: Rule, rules: Record<string, Rule>): Rule {
+    const recurse = (r: Rule): Rule => rewriteInlineAliases(r, rules)
     switch (rule.type) {
         case 'alias':
-            if (rule.named && rule.value && !rules[rule.value]) {
-                const sourceRule = rule.content.type === 'symbol'
-                    ? rules[rule.content.name]
-                    : rule.content
-                if (sourceRule) {
-                    rules[rule.value] = sourceRule
+            if (rule.named && rule.value) {
+                const inner = rule.content
+                const isBareSymbolToExistingRule =
+                    inner.type === 'symbol' && rules[inner.name] !== undefined
+                // Also skip when the alias TARGET is already a declared
+                // kind: `alias(inlineBody, $.existingKind)` just relabels
+                // the inline body as that existing kind. Tree-sitter
+                // surfaces instances with `$type: existingKind`, and
+                // downstream uses the existing rule's factory/shape.
+                // Synthesizing `_existingKind` would collide with /
+                // over-ride the existing kind's meaning.
+                const targetAlreadyExists = rules[rule.value] !== undefined
+                if (!isBareSymbolToExistingRule && !targetAlreadyExists) {
+                    const syntheticHiddenName = `_${rule.value}`
+                    if (!rules[syntheticHiddenName]) {
+                        rules[syntheticHiddenName] = recurse(rule.content)
+                    }
+                    return {
+                        ...rule,
+                        content: { type: 'symbol', name: syntheticHiddenName } as SymbolRule,
+                    }
                 }
             }
-            walkForAliasTargets(rule.content, rules)
-            break
+            return { ...rule, content: recurse(rule.content) }
         case 'seq':
         case 'choice':
-            for (const m of rule.members) walkForAliasTargets(m, rules)
-            break
+            return { ...rule, members: rule.members.map(recurse) } as Rule
         case 'optional':
         case 'repeat':
         case 'repeat1':
@@ -875,8 +892,9 @@ function walkForAliasTargets(rule: Rule, rules: Record<string, Rule>): void {
         case 'variant':
         case 'clause':
         case 'group':
-            walkForAliasTargets(rule.content, rules)
-            break
+            return { ...rule, content: recurse((rule as { content: Rule }).content) } as Rule
+        default:
+            return rule
     }
 }
 

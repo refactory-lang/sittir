@@ -541,20 +541,20 @@ function markParameterlessKinds(nodes: Map<string, AssembledNode>): void {
 function resolveHiddenSubtypes(
     names: readonly string[],
     rules: Record<string, Rule>,
-    aliasedHiddenKinds: ReadonlyMap<string, string>,
+    _aliasedHiddenKinds: ReadonlyMap<string, string>,
 ): string[] {
+    // Post-synthesis-removal: the rules map is keyed by SOURCE kinds
+    // only (hidden `_X`). Subtype names surface as source kinds; we
+    // no longer redirect through the aliasedHiddenKinds table (which
+    // pointed at visible alias targets). Hidden kinds that have their
+    // own rule body are resolved via the rules map directly; the
+    // chain terminates at a concrete symbol.
     const out: string[] = []
     const seen = new Set<string>()
     const visit = (name: string): void => {
         if (seen.has(name)) return
         seen.add(name)
         if (!name.startsWith('_')) { out.push(name); return }
-        // Aliased hidden rule: Link records the alias target before collapsing.
-        const aliasTarget = aliasedHiddenKinds.get(name)
-        if (aliasTarget) {
-            if (!seen.has(aliasTarget)) { seen.add(aliasTarget); out.push(aliasTarget) }
-            return
-        }
         const rule = rules[name]
         if (!rule) { out.push(name); return }
         const resolved = resolveHiddenRuleContent(rule, rules, new Set([name]))
@@ -579,13 +579,25 @@ function resolveHiddenRuleContent(
 ): string[] {
     switch (rule.type) {
         case 'alias':
+            // Resolve to the SOURCE kind (what's in the rules map).
+            // Evaluate's `synthesizeInlineAliasSources` pass ensures
+            // every named alias has a bare-symbol source that's a
+            // real rule. Fall back to the value when that invariant
+            // doesn't hold (pre-evaluate / test fixtures).
+            if (rule.named && rule.content.type === 'symbol') {
+                return [rule.content.name]
+            }
             return [rule.value]
         case 'symbol': {
-            if (!rule.name.startsWith('_')) return [rule.name]
-            if (seen.has(rule.name)) return []
-            seen.add(rule.name)
-            const target = rules[rule.name]
-            return target ? resolveHiddenRuleContent(target, rules, seen) : [rule.name]
+            // Post-synthesis-removal: resolve visible-via-alias symbols
+            // (`aliasedFrom` set) to their SOURCE kind name, which is
+            // what's in the rules map and nodeMap.
+            const refName = rule.aliasedFrom ?? rule.name
+            if (!refName.startsWith('_')) return [refName]
+            if (seen.has(refName)) return []
+            seen.add(refName)
+            const target = rules[refName]
+            return target ? resolveHiddenRuleContent(target, rules, seen) : [refName]
         }
         case 'supertype':
             return rule.subtypes.flatMap(s => {

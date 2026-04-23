@@ -1859,16 +1859,26 @@ function classifyHiddenSeqRule(name: string, rule: SeqRule): Rule {
  */
 function collectSubtypeNames(rule: Rule): string[] {
     const names: string[] = []
+    // Subtypes refer to kinds that downstream looks up in the rules
+    // map. Post-synthesis-removal the rules map is keyed by the
+    // SOURCE kind (`_X` for aliased kinds), so we emit source names:
+    // `aliasedFrom ?? name` on resolved symbols, and for raw `alias`
+    // members (not yet processed by resolveRule in some test paths)
+    // emit the source-symbol name from the alias's inner content.
     if (rule.type === 'choice') {
         for (const m of rule.members) {
             if (m.type === 'symbol') {
-                names.push(m.name)
+                names.push(m.aliasedFrom ?? m.name)
             } else if (m.type === 'alias' && m.named) {
-                names.push(m.value)
+                if (m.content.type === 'symbol') {
+                    names.push(m.content.name)
+                } else {
+                    names.push(m.value)
+                }
             } else if (m.type === 'seq') {
                 // Mixed content — extract symbol references
                 for (const s of m.members) {
-                    if (s.type === 'symbol') names.push(s.name)
+                    if (s.type === 'symbol') names.push(s.aliasedFrom ?? s.name)
                 }
             }
         }
