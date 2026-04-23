@@ -140,4 +140,24 @@ function registerSittirFilters(env: nunjucks.Environment): void {
 	env.addFilter('joinWithFlanks', (value: unknown, sep: unknown) =>
 		flankJoin(value, sep, 'joinWithFlanks', { leading: true, trailing: true }),
 	)
+
+	// Presence-check filters — templates use `{% if foo | isBlank %}`
+	// (or the negated `{% if foo | isPresent %}`) for optional-field
+	// rendering. The pair gives cross-renderer-compatible semantics:
+	// nunjucks accepts undefined/null/empty-string/whitespace-only as
+	// "blank"; askama's mirror filter (sittir-core::filters) applies
+	// the same rule to its String-typed context fields.
+	//
+	// Why not `{% if foo %}` + askama's truthy-String check:
+	//   askama requires bool expressions; String isn't bool. A custom
+	//   filter converts the question ("is this present?") into a
+	//   uniform bool regardless of renderer.
+	const isBlank = (value: unknown): boolean => {
+		if (value === undefined || value === null) return true
+		if (typeof value === 'string') return value.trim().length === 0
+		if (Array.isArray(value)) return value.length === 0
+		return false
+	}
+	env.addFilter('isBlank', isBlank)
+	env.addFilter('isPresent', (value: unknown) => !isBlank(value))
 }

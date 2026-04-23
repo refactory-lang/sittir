@@ -1021,7 +1021,13 @@ function inlineJinjaClauses(template: string, clauses: Record<string, string>): 
         const body = clauses[key]
         if (body === undefined) return full  // not a clause we emitted — leave as-is
         const stem = key.slice(0, -'_clause'.length)
-        return `{% if ${stem} %}${body}{% endif %}`
+        // Use the custom `isPresent` filter instead of `{% if stem %}`
+        // for cross-renderer compatibility: nunjucks's truthy-check
+        // `{% if stem %}` is fine, but askama rejects it when the
+        // struct field is a `String`. `{% if stem | isPresent %}`
+        // uses the shared sittir-core filter that returns bool in
+        // both engines regardless of the underlying field type.
+        return `{% if ${stem} | isPresent %}${body}{% endif %}`
     })
 }
 
