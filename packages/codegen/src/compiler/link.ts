@@ -472,6 +472,22 @@ function tagVariants(rule: Rule, name: string, inline?: readonly string[]): Rule
             // authoritative `isHiddenKind` check — convention + the
             // `inline:` list.
             if (!isHiddenKind(name, inline)) {
+                // Skip wrapping when the choice is structurally
+                // homogeneous — every branch has the same seq shape with
+                // matching member kinds and field / symbol names at each
+                // position, differing only in LEAF content (literal
+                // values inside a field, for example). Simplify's
+                // `canonicalize` merges these downstream into a flat
+                // seq with per-position unioned contents — which is
+                // the right surface for binary_expression-shaped rules.
+                // Wrapping here would create phantom variant identities
+                // that dispatch on nothing render-distinct, and would
+                // also BLOCK canonicalize (which bails on variant-
+                // wrapped choices to preserve intentional polymorph
+                // identity).
+                if (isStructurallyHomogeneousChoice(rule)) {
+                    return { type: 'choice', members: rule.members.map(m => tagVariants(m, name, inline)) }
+                }
                 return wrapVariants(rule)
             }
             return { type: 'choice', members: rule.members.map(m => tagVariants(m, name, inline)) }
@@ -495,6 +511,63 @@ function tagVariants(rule: Rule, name: string, inline?: readonly string[]): Rule
         default:
             return rule
     }
+}
+
+/**
+ * Is this choice structurally homogeneous — every branch a seq of the
+ * same length with matching member KINDS (field / symbol / supertype)
+ * and matching discriminator NAMES at each position?
+ *
+ * When yes, canonicalize (post-simplify) merges these branches into a
+ * flat seq with per-position unioned contents. Variant wrapping adds
+ * nothing: there's no distinct arm identity to dispatch on render-side,
+ * and the wrappers would block canonicalize's merge path.
+ *
+ * Mirrors the mergeability criteria in `simplify.ts
+ * mergeChoiceBranches` — only `group` wrappers are peeled on the way
+ * down to expose the inner seq. Variant / clause wrappers are NOT
+ * peeled: if the author wrote them explicitly, they're intentional and
+ * we respect that.
+ *
+ * Leaf content at each position is intentionally NOT compared — the
+ * whole point is that literals differ (e.g. binary_expression's
+ * `field('operator', '&&' | '||' | ...)`). Canonicalize unions them
+ * into a choice at the field's content.
+ *
+ * Requires ≥2 branches. Single-branch choices are trivial and get
+ * simplified away earlier; a single-branch "homogeneous" choice would
+ * wrongly skip variant wrapping for choices that happen to have one
+ * arm.
+ */
+function isStructurallyHomogeneousChoice(choice: ChoiceRule): boolean {
+    if (choice.members.length < 2) return false
+    // Peel group wrappers only — same rule as simplify.ts
+    // `unwrapForMerge`. Variant wrappers would already indicate
+    // author-intended distinction.
+    const unwrapGroup = (r: Rule): Rule => r.type === 'group' ? unwrapGroup(r.content) : r
+    const unwrapped = choice.members.map(unwrapGroup)
+    if (!unwrapped.every((m): m is SeqRule => m.type === 'seq')) return false
+    const len = unwrapped[0]!.members.length
+    if (!unwrapped.every(s => s.members.length === len)) return false
+    for (let i = 0; i < len; i++) {
+        const positions = unwrapped.map(s => s.members[i]!)
+        const first = positions[0]!
+        if (first.type === 'field') {
+            if (!positions.every(p => p.type === 'field' && p.name === first.name)) return false
+        } else if (first.type === 'symbol') {
+            if (!positions.every(p => p.type === 'symbol' && p.name === first.name)) return false
+        } else if (first.type === 'supertype') {
+            if (!positions.every(p => p.type === 'supertype' && p.name === first.name)) return false
+        } else {
+            // Non-discriminator leaves (strings, patterns, etc.) at the
+            // same position: require literal equality. If they differ,
+            // this position IS the discriminator → wrap variants so
+            // render can dispatch.
+            const firstJson = JSON.stringify(first)
+            if (!positions.every(p => JSON.stringify(p) === firstJson)) return false
+        }
+    }
+    return true
 }
 
 // ---------------------------------------------------------------------------

@@ -706,7 +706,7 @@ export function forStatement(config: T.ForStatement.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    initializer(value?: T.LexicalDeclaration | T.VariableDeclaration) { return _fs(config, forStatement, 'initializer', value, fields.initializer); },
+    initializer(value?: T.LexicalDeclaration | T.VariableDeclaration | T.Expressions | T.EmptyStatement) { return _fs(config, forStatement, 'initializer', value, fields.initializer); },
     condition(value?: T.Expressions | T.EmptyStatement) { return _fs(config, forStatement, 'condition', value, fields.condition); },
     increment(value?: T.Expressions | undefined) { return _fs(config, forStatement, 'increment', value, fields.increment); },
     body(value?: T.Statement) { return _fs(config, forStatement, 'body', value, fields.body); },

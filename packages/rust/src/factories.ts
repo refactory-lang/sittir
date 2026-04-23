@@ -2314,7 +2314,7 @@ export function referenceExpression(config: T.ReferenceExpression.Config) {
 export function binaryExpression(config: T.BinaryExpression.Config) {
   const fields = {
     left: config.left,
-    operator: "&&" as const,
+    operator: config.operator,
     right: config.right,
   };
   return {
@@ -2323,7 +2323,7 @@ export function binaryExpression(config: T.BinaryExpression.Config) {
     $named: true as const,
     $fields: fields,
     left(value?: T.Expression) { return _fs(config, binaryExpression, 'left', value, fields.left); },
-    get operator() { return fields.operator; },
+    operator(value?: "&&" | "||" | "&" | "|" | "^" | "==" | "!=" | "<" | "<=" | ">" | ">=" | "<<" | ">>" | "+" | "-" | "*" | "/" | "%") { return _fs(config, binaryExpression, 'operator', value, fields.operator); },
     right(value?: T.Expression) { return _fs(config, binaryExpression, 'right', value, fields.right); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {

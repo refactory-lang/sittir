@@ -9611,6 +9611,18 @@
               "multiplicity": "single",
               "name": "variable_declaration",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_expressions",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "empty_statement",
+              "unresolved": true
             }
           ],
           "source": "grammar",
@@ -9618,7 +9630,9 @@
             "typeName": "",
             "kinds": [
               "lexical_declaration",
-              "variable_declaration"
+              "variable_declaration",
+              "_expressions",
+              "empty_statement"
             ]
           }
         },

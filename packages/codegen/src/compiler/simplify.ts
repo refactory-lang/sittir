@@ -285,6 +285,18 @@ function mergeChoiceBranches(rule: ChoiceRule): Rule {
     if (rule.members.some(m => m.type === 'variant')) return rule
     // Unwrap only group/clause wrappers (purely structural).
     const unwrapped = rule.members.map(unwrapForMerge)
+    // Special case: every branch is a bare `field` of the same name.
+    // Emerges after optimize's factorSeqChoice peels a shared
+    // prefix/suffix off a homogeneous-seq choice, leaving a choice
+    // over just the discriminator field — e.g. rust binary_expression
+    // post-factor: `choice(field('operator', '&&'), field('operator',
+    // '||'), …)`. Merge into a single `field(name, choice(contents))`.
+    if (unwrapped.every((b): b is FieldRule => b.type === 'field')) {
+        const first = unwrapped[0]!
+        if (unwrapped.every(f => f.name === first.name)) {
+            return mergePosition(unwrapped)
+        }
+    }
     // Every branch must be a seq of the same length.
     if (!unwrapped.every((b): b is SeqRule => b.type === 'seq')) return rule
     const len = unwrapped[0]!.members.length
