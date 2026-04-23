@@ -160,4 +160,26 @@ function registerSittirFilters(env: nunjucks.Environment): void {
 	}
 	env.addFilter('isBlank', isBlank)
 	env.addFilter('isPresent', (value: unknown) => !isBlank(value))
+
+	// `value` filter — render an optional field as its inner value
+	// when present, or empty string when absent. Pairs with `isPresent`
+	// so templates can be:
+	//
+	//   {% if foo | isPresent %}{{ foo | value }}{% endif %}
+	//
+	// Cross-renderer semantics:
+	//   - Nunjucks side: `foo` may be undefined/null/NodeData/string.
+	//     Returns `""` for absent; otherwise coerces to string.
+	//   - Askama side: `foo: Option<String>`. The sibling
+	//     `sittir-core::filters::value` returns `""` for None, the
+	//     inner String for Some(_). Optional fields stay typed as
+	//     `Option<String>` so they preserve the absent-vs-present-empty
+	//     distinction at the struct level.
+	env.addFilter('value', (value: unknown): string => {
+		if (value === undefined || value === null) return ''
+		if (typeof value === 'string') return value
+		// NodeData / object — coerce via String() (most templates have
+		// rendered-string children, so this path rarely fires).
+		return String(value)
+	})
 }

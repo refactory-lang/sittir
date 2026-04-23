@@ -53,8 +53,11 @@ function jinjaBodyToLegacyRule(body: string): TemplateRule {
     // body (with `{{ name }}` → `$NAME` applied) as a `<stem>_clause`
     // entry; replace the block with `$<STEM>_CLAUSE` in the main
     // template string.
+    // Accept `{% if stem %}` and the filter-sugared variant
+    // `{% if stem | isPresent %}` (cross-renderer emission, spec 013).
+    // Also tolerate `{%- -%}` whitespace-trim markers on both sides.
     const withClauseRefs = body.replace(
-        /\{%-?\s*if\s+([a-z_][a-z0-9_]*)\s*%\}([\s\S]*?)\{%\s*endif\s*-?%\}/g,
+        /\{%-?\s*if\s+([a-z_][a-z0-9_]*)(?:\s*\|\s*isPresent)?\s*-?%\}([\s\S]*?)\{%-?\s*endif\s*-?%\}/g,
         (_m, stem: string, clauseBody: string) => {
             clauses[`${stem}_clause`] = jinjaInterpolationsToLegacy(clauseBody)
             return `$${stem.toUpperCase()}_CLAUSE`
@@ -77,9 +80,12 @@ function jinjaBodyToLegacyRule(body: string): TemplateRule {
  */
 function jinjaInterpolationsToLegacy(body: string): string {
     return body.replace(
-        /\{\{\s*([a-z_][a-z0-9_]*)(\s*\|\s*(?:join|joinWithTrailing|joinWithLeading|joinWithFlanks)\([^)]*\))?\s*\}\}/g,
-        (_m, name: string, filter: string | undefined) => {
-            const prefix = filter ? '$$$' : '$'
+        /\{\{\s*([a-z_][a-z0-9_]*)(?:\s*\|\s*(join|joinWithTrailing|joinWithLeading|joinWithFlanks)\([^)]*\)|\s*\|\s*value)?\s*\}\}/g,
+        (_m, name: string, joinFilter: string | undefined) => {
+            // Multi-valued slot: one of the join-variant filters ⇒ `$$$`.
+            // Single-valued slot: bare `{{ name }}` OR the `| value`
+            // unwrap (which just coerces Option<String> → String) ⇒ `$`.
+            const prefix = joinFilter ? '$$$' : '$'
             return `${prefix}${name.toUpperCase()}`
         },
     )

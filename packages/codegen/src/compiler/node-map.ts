@@ -1013,22 +1013,79 @@ export type AssembledForm = AssembledGroup
  */
 function inlineJinjaClauses(template: string, clauses: Record<string, string>): string {
     if (Object.keys(clauses).length === 0) return template
-    // Match `$VAR_CLAUSE` placeholders (uppercase). The stem is the
-    // full key lowercased with `_clause` still attached — e.g.
-    // `$RETURN_TYPE_CLAUSE` matches key `return_type_clause`.
-    return template.replace(/\$([A-Z][A-Z0-9_]*_CLAUSE)/g, (full, marker: string) => {
-        const key = marker.toLowerCase()
-        const body = clauses[key]
-        if (body === undefined) return full  // not a clause we emitted — leave as-is
-        const stem = key.slice(0, -'_clause'.length)
-        // Use the custom `isPresent` filter instead of `{% if stem %}`
-        // for cross-renderer compatibility: nunjucks's truthy-check
-        // `{% if stem %}` is fine, but askama rejects it when the
-        // struct field is a `String`. `{% if stem | isPresent %}`
-        // uses the shared sittir-core filter that returns bool in
-        // both engines regardless of the underlying field type.
-        return `{% if ${stem} | isPresent %}${body}{% endif %}`
-    })
+    // Whether a lowercased `$NAME` placeholder refers to a walker-
+    // emitted clause. Membership in the `clauses` dict is the ONLY
+    // correct signal — name-suffix heuristics are wrong because some
+    // grammars have real rule kinds named `for_in_clause` /
+    // `except_clause` / `case_clause` / etc. that would false-
+    // positive a `.endsWith('_clause')` check.
+    const isClauseName = (lowerName: string): boolean => clauses[lowerName] !== undefined
+    // Fixpoint loop so a clause body that itself references another
+    // `$FOO_CLAUSE` resolves after the outer clause it sits inside.
+    // Bounded — N clauses finish in ≤ N passes.
+    let current = template
+    for (let pass = 0; pass < 16; pass++) {
+        // Also consume whitespace adjacent to the placeholder so we
+        // can pull it INTO the body — this makes the ambient spacing
+        // emit only when the clause fires (no trailing-space leak
+        // when the field is absent). Jinja's `{%-` / `-%}` markers
+        // strip that same whitespace from the outer template so the
+        // only place it appears is inside the conditional body.
+        const next = current.replace(/( *)\$([A-Z][A-Z0-9_]*_CLAUSE)( *)/g, (full, leading: string, marker: string, trailing: string) => {
+            const key = marker.toLowerCase()
+            const body = clauses[key]
+            if (body === undefined) return full  // not a clause we emitted — leave as-is
+            const stem = key.slice(0, -'_clause'.length)
+            // A `$NAME` inside the body that is NOT itself a clause
+            // reference names the optional field the clause gates on
+            // (clauses exist precisely because their field is
+            // optional). On the askama side optional fields are typed
+            // `Option<String>` — the `| value` filter unwraps to `""`
+            // when None, inner String when Some. The nunjucks
+            // `value` filter tolerates undefined/null and coerces
+            // NodeData/strings, so emission is cross-renderer
+            // identical.
+            //
+            // Pre-substitute here (rather than in `translateToJinja`)
+            // because translateToJinja doesn't know which
+            // placeholders sit inside a clause body. Multi-valued
+            // `$$$NAME` and specials (`$TEXT`, `$NEWLINE`, `$INDENT`,
+            // `$DEDENT`) stay raw and get handled by the later pass.
+            const convertedBody = body.replace(
+                /(?<!\$)\$([A-Z][A-Z0-9_]*)/g,
+                (m, name: string) => {
+                    const lower = name.toLowerCase()
+                    // Nested clause reference — leave raw, next
+                    // fixpoint pass substitutes it.
+                    if (isClauseName(lower)) return m
+                    // Specials handled by translateToJinja stay raw.
+                    if (lower === 'newline' || lower === 'indent' || lower === 'dedent' || lower === 'text') {
+                        return m
+                    }
+                    return `{{ ${lower} | value }}`
+                },
+            )
+            // `isPresent` instead of `{% if stem %}`: nunjucks's
+            // truthy-check works fine, but askama rejects `{% if x %}`
+            // on `Option<String>`. The sittir-core filter returns
+            // bool in both engines.
+            //
+            // `{%- if ... -%}` / `{%- endif -%}` whitespace markers —
+            // used ONLY when there was ambient whitespace around the
+            // placeholder in the outer template. The `-` markers
+            // strip the adjacent whitespace the regex captured; the
+            // whitespace is re-emitted INSIDE the body so it only
+            // appears when the clause is present. This is the
+            // difference between `(parameter )` (trailing space leak)
+            // and `(parameter)` when an optional type is absent.
+            const leftTrim = leading.length > 0 ? '-' : ''
+            const rightTrim = trailing.length > 0 ? '-' : ''
+            return `{%${leftTrim} if ${stem} | isPresent %}${leading}${convertedBody}${trailing}{% endif ${rightTrim}%}`
+        })
+        if (next === current) return next
+        current = next
+    }
+    return current
 }
 
 /**
