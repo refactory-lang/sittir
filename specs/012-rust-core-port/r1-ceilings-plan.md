@@ -68,6 +68,34 @@ Direct-validator numbers (measured via `npx tsx /tmp/check-actual.mts`; the FLOO
 
 Each cluster below is a root-cause class; fixing one cluster typically closes 5–40 individual failing corpus entries. Ranked by estimated unblock-per-cluster.
 
+### CV — variant() first adoption for the three FR-011 exception kinds (highest-impact; new top priority)
+
+**Discovered 2026-04-22** during R1 execution attempt. Supersedes the earlier framing of C1/C3 (polymorph null forms, TS primary_type nonsense variants) for the three kinds specifically enumerated in spec 012's FR-011: `rust/visibility_modifier`, `typescript/export_statement`, `typescript/call_expression`. Adopting `variant()` in overrides.ts for these kinds (the approach spec 007 landed as DSL infrastructure) closes these failures **and** removes the FR-011 three-exception carve-out entirely — all polymorphs end up rendering via child-kind → own-template dispatch, with no `{% if variant == "..." %}` conditionals anywhere.
+
+**Root cause (what this cluster fixes)**: Templates for the three exception kinds use `{% if variant == "formN" %}` chains. `$variant` is only populated by factory construction, not by `readNode` or `readTreeNode`. Validators use the readNode path, so templates fall through to empty output → re-parse fails. ~30 of 49 typescript rtPass failures originate here (all `call_expression` + `export_statement` cases). Rust `visibility_modifier` contributes fewer rtPass hits but is the cleanest probe target.
+
+**Important state-of-the-world facts**:
+- **`variant()` has zero live grammar adopters today.** DSL-level unit tests exist (`polymorph-metadata.test.ts`, `transform-hoist.test.ts`, `wire.test.ts`), but no `packages/{lang}/overrides.ts` actually calls `variant()`. Spec 007 landed the primitive; grammar adoption was deferred.
+- **The three kinds were explicitly "held"** (see `packages/typescript/overrides.ts:247-271` — prior decision to skip variant() for `call_expression` / `export_statement` / `parenthesized_expression` due to grammar-level conflicts that splitting would expose. "Out of scope for variant() adoption" at the time.).
+- **Re-opening those holds is the spirit of this cluster**: either accept manual `conflicts:` authoring per-kind, or mechanize it.
+
+**Execution sequence (Phase A → D)**:
+
+- [ ] **CV Phase A — Probe (couple of hours)**. Pick `rust/visibility_modifier` as the cleanest first target (no "held" comment, self-contained, small alternative set: `pub`, `pub(crate)`, `pub(super)`, `pub(in path)`). Apply `variant()` to each alternative in `packages/rust/overrides.ts`. Run `tree-sitter generate` on the rust grammar. **Expected outcome A**: clean compile → readNode emits variant child kinds → rtPass for rust visibility_modifier cases closes. **Expected outcome B**: conflicts error → capture exact rule pairs involved.
+- [ ] **CV Phase B — Handle conflicts (scope depends on A)**. If A compiled: verify end-to-end by checking readNode output includes the new child kinds + measuring rtPass delta. If A errored: inspect the conflicts. Small finite list → prototype auto-wiring (diff `tree-sitter generate` output before/after, extract conflict pattern, emit `conflicts:` array automatically via codegen). Sprawling → commit to manual `conflicts:` authoring per-kind in overrides.ts.
+- [ ] **CV Phase C — Expand to typescript's three holds**. Retry `call_expression`, `export_statement`, `parenthesized_expression` using whatever Phase B learned. Target is the ~30 typescript rtPass failures that the template-fall-through diagnosis attributes to these kinds.
+- [ ] **CV Phase D — Template-emitter change**. Update `AssembledPolymorph.renderTemplate()` at `packages/codegen/src/compiler/node-map.ts:1391-1402`. When forms are lifted to variant() child kinds, the parent's template becomes trivial (`{{ children }}`) and each variant child gets its own dedicated template file. This matches spec 012's FR-011 intent (and v3 input's "parent template renders shared fields + `{{ children }}`; the child's kind→template lookup does the work"). FR-011's "three exception rules" caveat is deleted in the same change — the goal is zero exceptions, not three.
+
+**Risk surface to watch in Phase A**:
+1. **Pipeline correctness** — variant() has unit-test coverage but no end-to-end grammar exercise. Latent bugs may surface only when exercised.
+2. **Template emission** — the current emitter at `node-map.ts:1391-1402` assumes forms come from the pipeline's own split logic. variant() produces aliased child kinds directly; the emitter may need the Phase D refactor BEFORE Phase A even produces passing rtPass entries. Watch for this in Phase A — if a clean-compiling variant() change doesn't move rtPass, Phase D may be a prerequisite rather than a follow-up.
+
+**Success definition for CV**: all three FR-011 exception kinds rendered via child-kind dispatch (no `{% if variant == %}` in their .jinja output), and rtPass improves by ~30 across typescript + some rust increment. When CV completes, the remaining R1 debt is the smaller clusters (trailing-semi, quote-style, object_type offset — ~19 failures) which fit the normal per-cluster loop.
+
+---
+
+### Older cluster inventory (pre-CV; retained for reference)
+
 ### C1 — Polymorph "null forms" crashing render (~30 failures)
 Root cause: walker over-expands choice-of-symbol, producing "null" polymorph forms (`mod_item_external` etc.) where `modelType=none` and the render pipeline crashes instead of dispatching.
 Owner files: `packages/codegen/src/polymorph-variant.ts`, `packages/codegen/src/compiler/template-walker.ts`.
@@ -124,16 +152,17 @@ Signal: factory construction fails for a kind that appears to exist but isn't in
 
 ---
 
-## Priority ordering (revised per A′ — rtPass-driven)
+## Priority ordering (revised again — variant()-adoption-first)
 
-Re-ordered by which clusters drop rtPass failures fastest. **TypeScript rtPass is the biggest lever (39 failures to close)**; Python and Rust rtPass are smaller (9 and 8 respectively).
+Re-ordered after the mid-execution discovery that the three FR-011 exception kinds drive ~30 of the 49 typescript rtPass failures via the variant-dispatch gap (templates use `{% if variant == %}` but readNode doesn't populate `$variant`). Adopting `variant()` in overrides.ts is the source-of-truth fix and eliminates the FR-011 exception carve-out entirely.
 
-1. **C3 (TS primary_type nonsense variants)** — likely biggest contributor to the 49 typescript rtPass failures. 18 redundant polymorph forms; single walker fix.
-2. **C1 (polymorph null forms)** — affects rust + typescript rtPass directly. ~30 failures across grammars before this plan's accounting; closes substantial rtPass debt.
-3. **C4 (choice branches w/ literals)** — `function_type`, `impl_item`, `macro_definition` in rust (3 rtPass failures) + any typescript equivalents. Blocked on variant-field-wrapped-choice design limitation; may need workaround (hand-authored overrides) rather than full fix.
+1. **CV (variant() adoption for the three FR-011 exception kinds)** — NEW TOP PRIORITY. Closes ~30 typescript rtPass failures + several rust `visibility_modifier` cases + removes the three-exception framing from spec 012 FR-011 as a bonus. **Phased execution A→D inside CV (see cluster entry above).** Phase A probe is the first concrete action and will determine whether subsequent phases are feasible.
+2. **C1 (polymorph null forms)** — affects rust + typescript rtPass for non-CV polymorphs. CV may close some C1 cases incidentally.
+3. **C4 (choice branches w/ literals)** — `function_type`, `impl_item`, `macro_definition` in rust (3 rtPass failures). Blocked on variant-field-wrapped-choice design limit; may become easier post-CV if the Phase D emitter refactor generalizes.
 4. **C6 (Python comments-as-extras)** — 2–3 python rtPass failures.
 5. **C9 (Rust aliased kinds / alias-collapse)** — handful of rust rtPass failures; targeted overrides.
-6. **Residual long-tail rtPass failures** — whatever doesn't fall into the above clusters after C3+C1 land.
+6. **C3 (TS primary_type nonsense variants)** — deprioritized. If CV Phase D generalizes the variant-adoption pattern, C3 may become obsolete entirely (primary_type's 18 identical forms would collapse under child-kind dispatch).
+7. **Residual long-tail rtPass failures** — whatever remains after CV + C1 land (likely ≤20 across grammars).
 
 **Deferred / out of R1 scope**:
 - **C8 (Python override-parser drift)** — was the original top priority under the stale FLOOR reading (+53 gap on python/factoryPass). Actual python/factoryPass is 197/889 today, well past legacy. Deprioritized. IF spec 007 T023 is still outstanding it's worth finishing, but not gating.
