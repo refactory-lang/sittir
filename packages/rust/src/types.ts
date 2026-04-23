@@ -1512,7 +1512,7 @@ export interface BinaryExpression {
   readonly $type: 'binary_expression';
   readonly $fields: {
     readonly left: Expression;
-    readonly operator: AutoStamp<"&&">;
+    readonly operator: "&&" | "||" | "&" | "|" | "^" | "==" | "!=" | "<" | "<=" | ">" | ">=" | "<<" | ">>" | "+" | "-" | "*" | "/" | "%";
     readonly right: Expression;
   };
 }

@@ -456,7 +456,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_export_statement_default': [
     { name: 'decorator', required: true, multiple: true },
-    { name: 'declaration', required: true, multiple: false },
+    { name: 'declaration', required: false, multiple: false },
     { name: 'value', required: false, multiple: false },
   ],
   '_export_statement_equals_export': [
@@ -694,7 +694,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'export_statement_default': [
     { name: 'decorator', required: true, multiple: true },
-    { name: 'declaration', required: true, multiple: false },
+    { name: 'declaration', required: false, multiple: false },
     { name: 'value', required: false, multiple: false },
   ],
   'export_statement_equals_export': [

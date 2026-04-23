@@ -955,12 +955,12 @@ describe('reference_expression', () => {
 
 describe('binary_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.binary({ left: { $type: '_expression', $text: 'test' } as any, right: { $type: '_expression', $text: 'test' } as any });
+    const node = ir.binary({ left: { $type: '_expression', $text: 'test' } as any, operator: 'test' as any, right: { $type: '_expression', $text: 'test' } as any });
     expect(node.$type).toBe('binary_expression');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.binary({ left: { $type: '_expression', $text: 'test' } as any, right: { $type: '_expression', $text: 'test' } as any });
+    const node = ir.binary({ left: { $type: '_expression', $text: 'test' } as any, operator: 'test' as any, right: { $type: '_expression', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

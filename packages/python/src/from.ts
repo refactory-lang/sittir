@@ -559,8 +559,10 @@ export function tryStatementFrom(input: T.TryStatement.Loose): ReturnType<typeof
 
 export function exceptClauseFrom(input: T.ExceptClause.Loose): ReturnType<typeof F.exceptClause> {
   if (isNodeData(input)) return input;
+  const _ne_value = _resolveMany(input.value, _K0, _super_expression);
+  _assertNonEmpty(_ne_value, 'except_clause.value');
   return F.exceptClause({
-    value: _resolveOne(input.value, _K0, _super_expression),
+    value: _ne_value,
     alias: _resolveOne(input.alias, _K0, _super_expression),
     children: _resolveOneBranch(input.children, "_suite"),
   });
@@ -881,6 +883,7 @@ export function booleanOperatorFrom(input: T.BooleanOperator.Loose): ReturnType<
   if (isNodeData(input)) return input;
   return F.booleanOperator({
     left: _resolveOne(input.left, _K0, _super_expression),
+    operator: _resolveOne(input.operator, _K0, _K0),
     right: _resolveOne(input.right, _K0, _super_expression),
   });
 }
@@ -889,6 +892,7 @@ export function binaryOperatorFrom(input: T.BinaryOperator.Loose): ReturnType<ty
   if (isNodeData(input)) return input;
   return F.binaryOperator({
     left: _resolveOne(input.left, _K9, _K10),
+    operator: _resolveOne(input.operator, _K0, _K0),
     right: _resolveOne(input.right, _K9, _K10),
   });
 }

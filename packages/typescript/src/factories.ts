@@ -706,7 +706,7 @@ export function forStatement(config: T.ForStatement.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    initializer(value?: T.LexicalDeclaration | T.VariableDeclaration) { return _fs(config, forStatement, 'initializer', value, fields.initializer); },
+    initializer(value?: T.LexicalDeclaration | T.VariableDeclaration | T.Expressions | T.EmptyStatement) { return _fs(config, forStatement, 'initializer', value, fields.initializer); },
     condition(value?: T.Expressions | T.EmptyStatement) { return _fs(config, forStatement, 'condition', value, fields.condition); },
     increment(value?: T.Expressions | undefined) { return _fs(config, forStatement, 'increment', value, fields.increment); },
     body(value?: T.Statement) { return _fs(config, forStatement, 'body', value, fields.body); },
@@ -723,7 +723,7 @@ export function forInStatement(config: T.ForInStatement.Config) {
   const fields = {
     await: _bk(config.await, "await", "await", false),
     left: config.left,
-    kind: _bk(config.kind, "var", "var", false),
+    kind: config.kind,
     value: config.value,
     operator: config.operator,
     right: config.right,
@@ -737,8 +737,8 @@ export function forInStatement(config: T.ForInStatement.Config) {
     $fields: fields,
     $children: children,
     await(value?: "await" | undefined) { return _fs(config, forInStatement, 'await', value, fields.await); },
-    left(value?: T.LhsExpression | T.ParenthesizedExpression) { return _fs(config, forInStatement, 'left', value, fields.left); },
-    kind(value?: "var" | undefined) { return _fs(config, forInStatement, 'kind', value, fields.kind); },
+    left(value?: T.LhsExpression | T.ParenthesizedExpression | T.Identifier | T.DestructuringPattern) { return _fs(config, forInStatement, 'left', value, fields.left); },
+    kind(value?: "var" | "let" | "const" | undefined) { return _fs(config, forInStatement, 'kind', value, fields.kind); },
     value(value?: T.Expression | undefined) { return _fs(config, forInStatement, 'value', value, fields.value); },
     operator(value?: "in" | "of") { return _fs(config, forInStatement, 'operator', value, fields.operator); },
     right(value?: T.Expressions) { return _fs(config, forInStatement, 'right', value, fields.right); },
@@ -1353,7 +1353,7 @@ export function jsxOpeningElement(config: T.JsxOpeningElement.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    name(value?: T._JsxIdentifier | T.JsxNamespaceName | undefined) { return _fs(config, jsxOpeningElement, 'name', value, fields.name); },
+    name(value?: T._JsxIdentifier | T.JsxNamespaceName | T.Identifier | T.MemberExpression | undefined) { return _fs(config, jsxOpeningElement, 'name', value, fields.name); },
     typeArguments(value?: T.TypeArguments | undefined) { return _fs(config, jsxOpeningElement, 'typeArguments', value, fields.type_arguments); },
     attribute(...values: T._JsxAttribute[]) { return _fsm(config, jsxOpeningElement, 'attribute', values, fields.attribute); },
     render() { return render(this); },
@@ -1444,7 +1444,7 @@ export function jsxSelfClosingElement(config: T.JsxSelfClosingElement.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    name(value?: T._JsxIdentifier | T.JsxNamespaceName | undefined) { return _fs(config, jsxSelfClosingElement, 'name', value, fields.name); },
+    name(value?: T._JsxIdentifier | T.JsxNamespaceName | T.Identifier | T.MemberExpression | undefined) { return _fs(config, jsxSelfClosingElement, 'name', value, fields.name); },
     typeArguments(value?: T.TypeArguments | undefined) { return _fs(config, jsxSelfClosingElement, 'typeArguments', value, fields.type_arguments); },
     attribute(...values: T._JsxAttribute[]) { return _fsm(config, jsxSelfClosingElement, 'attribute', values, fields.attribute); },
     render() { return render(this); },
@@ -2092,7 +2092,7 @@ export function ternaryExpression(config: T.TernaryExpression.Config) {
 export function binaryExpression(config: T.BinaryExpression.Config) {
   const fields = {
     left: config.left,
-    operator: "&&" as const,
+    operator: config.operator,
     right: config.right,
   };
   return {
@@ -2100,8 +2100,8 @@ export function binaryExpression(config: T.BinaryExpression.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    left(value?: T.Expression) { return _fs(config, binaryExpression, 'left', value, fields.left); },
-    get operator() { return fields.operator; },
+    left(value?: T.Expression | T.PrivatePropertyIdentifier) { return _fs(config, binaryExpression, 'left', value, fields.left); },
+    operator(value?: "&&" | "||" | ">>" | ">>>" | "<<" | "&" | "^" | "|" | "+" | "-" | "*" | "/" | "%" | "**" | "<" | "<=" | "==" | "===" | "!=" | "!==" | ">=" | ">" | "??" | "instanceof" | "in") { return _fs(config, binaryExpression, 'operator', value, fields.operator); },
     right(value?: T.Expression) { return _fs(config, binaryExpression, 'right', value, fields.right); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -4471,7 +4471,7 @@ export function exportStatementDefaultForm1(config: ConfigOf<T.ExportStatementDe
     $fields: fields,
     $children: children,
     decorator(...values: T.Decorator[]) { return _fsm(config, exportStatementDefaultForm1, 'decorator', values, fields.decorator); },
-    declaration(value?: T.Declaration) { return _fs(config, exportStatementDefaultForm1, 'declaration', value, fields.declaration); },
+    declaration(value?: T.Declaration | undefined) { return _fs(config, exportStatementDefaultForm1, 'declaration', value, fields.declaration); },
     value(value?: T.Expression | undefined) { return _fs(config, exportStatementDefaultForm1, 'value', value, fields.value); },
     child(value?: T.Semicolon) {
       if (value === undefined) return children[0];

@@ -2453,6 +2453,66 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "+"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "-"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "*"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "@"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "/"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "%"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "//"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "**"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "|"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "&"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "^"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<<"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">>"
             }
           ],
           "source": "grammar",
@@ -2555,6 +2615,11 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "and"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "or"
             }
           ],
           "source": "grammar",
@@ -4135,12 +4200,18 @@
           "propertyName": "value",
           "paramName": "value",
           "required": false,
-          "multiple": false,
-          "nonEmpty": false,
+          "multiple": true,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
+              "name": "expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
               "name": "expression",
               "unresolved": true
             }
@@ -5408,6 +5479,18 @@
           "multiple": true,
           "nonEmpty": false,
           "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "dotted_name",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "aliased_import",
+              "unresolved": true
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -6802,6 +6885,12 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
+              "name": "expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
               "name": "expression",
               "unresolved": true
             }

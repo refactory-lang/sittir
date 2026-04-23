@@ -3718,6 +3718,91 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "&&"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "||"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "&"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "|"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "^"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "=="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "!="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<<"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">>"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "+"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "-"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "*"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "/"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "%"
             }
           ],
           "source": "grammar",

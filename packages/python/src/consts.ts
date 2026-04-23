@@ -424,7 +424,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'except_clause': [
-    { name: 'value', required: false, multiple: false },
+    { name: 'value', required: false, multiple: true },
     { name: 'alias', required: false, multiple: false },
   ],
   'exec_statement': [

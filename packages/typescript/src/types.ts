@@ -730,7 +730,7 @@ export interface SwitchStatement {
 export interface ForStatement {
   readonly $type: 'for_statement';
   readonly $fields: {
-    readonly initializer: LexicalDeclaration | VariableDeclaration;
+    readonly initializer: LexicalDeclaration | VariableDeclaration | Expressions | EmptyStatement;
     readonly condition: Expressions | EmptyStatement;
     readonly increment?: Expressions;
     readonly body: Statement;
@@ -741,8 +741,8 @@ export interface ForInStatement {
   readonly $type: 'for_in_statement';
   readonly $fields: {
     readonly await?: BooleanKeyword<"await">;
-    readonly left: LhsExpression | ParenthesizedExpression;
-    readonly kind?: BooleanKeyword<"var">;
+    readonly left: LhsExpression | ParenthesizedExpression | Identifier | DestructuringPattern;
+    readonly kind?: "var" | "let" | "const";
     readonly value?: Expression;
     readonly operator: "in" | "of";
     readonly right: Expressions;
@@ -954,7 +954,7 @@ export interface JsxExpression {
 export interface JsxOpeningElement {
   readonly $type: 'jsx_opening_element';
   readonly $fields: {
-    readonly name?: _JsxIdentifier | JsxNamespaceName;
+    readonly name?: _JsxIdentifier | JsxNamespaceName | Identifier | MemberExpression;
     readonly type_arguments?: TypeArguments;
     readonly attribute: readonly (_JsxAttribute)[];
   };
@@ -983,7 +983,7 @@ export interface JsxClosingElement {
 export interface JsxSelfClosingElement {
   readonly $type: 'jsx_self_closing_element';
   readonly $fields: {
-    readonly name?: _JsxIdentifier | JsxNamespaceName;
+    readonly name?: _JsxIdentifier | JsxNamespaceName | Identifier | MemberExpression;
     readonly type_arguments?: TypeArguments;
     readonly attribute: readonly (_JsxAttribute)[];
   };
@@ -1209,8 +1209,8 @@ export interface TernaryExpression {
 export interface BinaryExpression {
   readonly $type: 'binary_expression';
   readonly $fields: {
-    readonly left: Expression;
-    readonly operator: AutoStamp<"&&">;
+    readonly left: Expression | PrivatePropertyIdentifier;
+    readonly operator: "&&" | "||" | ">>" | ">>>" | "<<" | "&" | "^" | "|" | "+" | "-" | "*" | "/" | "%" | "**" | "<" | "<=" | "==" | "===" | "!=" | "!==" | ">=" | ">" | "??" | "instanceof" | "in";
     readonly right: Expression;
   };
 }
@@ -2070,7 +2070,7 @@ export interface _ExportStatementDefaultForm1 {
   readonly $variant: 'form1';
   readonly $fields: {
     readonly decorator: readonly (Decorator)[];
-    readonly declaration: Declaration;
+    readonly declaration?: Declaration;
     readonly value?: Expression;
   };
   readonly $children: readonly [Semicolon];
@@ -2128,7 +2128,7 @@ export interface ExportStatementDefaultForm1 {
   readonly $variant: 'form1';
   readonly $fields: {
     readonly decorator: readonly (Decorator)[];
-    readonly declaration: Declaration;
+    readonly declaration?: Declaration;
     readonly value?: Expression;
   };
   readonly $children: readonly [Semicolon];
