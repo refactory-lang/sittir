@@ -1,332 +1,295 @@
-# 013 — Canonical surface as simplify output
+# 013 — Simplify produces a canonical flat rule
 
-> Status: draft plan (not yet implemented)
+> Status: draft plan
 
 ## Goal
 
-After rule simplification, a rule's `.fields` array IS the fields. Its
-`.children` array IS the children. No downstream traversal, no walker
-extraction, no per-consumer re-derivation. The simplified rule carries
-its canonical semantic surface as direct properties.
+**Simplify normalizes the rule into a canonical flat form.** The Rule
+union stays exactly as it is today — no new variants, no new
+interfaces. But post-simplify, a rule's TOP-LEVEL STRUCTURE directly
+reflects the node's surface:
 
-Eliminates the class of bugs where walker-based derivation made
-assumptions it shouldn't have (e.g. dropping same-named fields across
-choice branches → `BinaryExpression.operator: AutoStamp<"&&">` silently
-collapsing a 25-member enum into a 1-literal constant).
+```
+simplified rule top-level (for a branch):
+    seq([ field('a', contentA), field('b', contentB), symbol('c'), ... ])
+
+Derivation:
+    rule.members.filter(m => m.type === 'field')    // the fields
+    rule.members.filter(m => m.type === 'symbol')   // the children
+```
+
+No recursion. No merging at derivation time. No position-by-position
+heuristics. The simplification pass does all that work once, up front,
+and emits a canonical tree where each semantic field lives at exactly
+one top-level position with all its value branches already unioned
+into its content.
 
 ## Non-goals
 
-- Not changing Rule's raw representation (the pre-simplify tree). The
-  raw rule is still consumed by the template walker because templates
-  need literal delimiters that simplify strips.
-- Not changing the emitter interface — `node.fields`, `node.children`
-  remain the consumer API. Their implementations change to return
-  precomputed surfaces.
-- Not changing corpus validator semantics, FLOORS, or any rtPass /
-  fromPass numbers. The refactor is a pure restructure.
+- Not introducing a new `SimplifiedRule` type. The Rule union stays
+  as-is. Simplified rules are Rules — just in a canonical subset of
+  shapes.
+- Not changing emitters. They continue to read through
+  `node.fields` / `node.children`; those getters now become trivial
+  walkers over the canonical top-level form.
+- Not changing template-walker. It still walks raw rules for
+  delimiters.
+- Not changing corpus FLOORS. Pure restructure.
 
-## Motivating failure cases (from this session)
+## Motivating failure cases
 
-1. **BinaryExpression.operator** typed as `AutoStamp<"&&">` — wrong.
-   Should be literal union of all 25 operators. Caused by
-   `deriveFieldsRaw`'s `case 'choice'` dropping duplicate-named field
-   occurrences across branches after the first.
-2. **ForInStatement.kind** typed as `BooleanKeyword<"var">` — wrong.
-   Should be `"var" | "let" | "const"`. Same class of bug.
-3. **object_type** separator: `choice(',', ';')` inside `sepBy1`
-   renders as hardcoded `,`. Walker picks first literal silently.
-   Same class.
+1. **BinaryExpression.operator** typed as `AutoStamp<"&&">` —
+   should be literal union of 25 operators.
+2. **ForInStatement.kind** typed as `BooleanKeyword<"var">` —
+   should be `"var" | "let" | "const"`.
+3. **object_type** separator rendered as hardcoded `,` regardless of
+   source.
 
-All three share the root cause: derivation walks the rule tree making
-position-by-position decisions that silently pick, drop, or collapse
-when the actual semantics are "union of per-branch possibilities".
+All three share one root cause: derivation walks a non-canonical
+tree making position-by-position decisions that silently drop or
+collapse information. In the new model the canonical tree simply
+doesn't have those ambiguous positions — there's nothing to silently
+collapse.
 
-## Current architecture (what to replace)
+## Canonical form — what simplify produces
+
+For a **branch**-classified rule, post-simplify is:
 
 ```
-simplify(rule) → Rule (same type, delimiters stripped)
-assemble() → AssembledBranch/Container/Group wraps (rule, simplifiedRule)
-AssembledBranch.fields   → lazy getter calling deriveFields(simplifiedRule)
-AssembledBranch.children → lazy getter calling deriveChildren(simplifiedRule)
-
-deriveFields(rule):
-    raw = deriveFieldsRaw(rule, 'single')       // recursive walk
-    merge raw by name → AssembledField[]
-
-deriveFieldsRaw(rule, outerMult):
-    - case 'field'   → build AssembledField from content
-    - case 'seq'     → flatMap(members)
-    - case 'choice'  → perBranch[].merge-by-name with in-all-branches check
-    - case 'optional'/'repeat'/'repeat1' → recurse with adjusted mult
-    - case 'clause'  → recurse with optional mult
-    - case 'variant'/'group' → pass through
-    - default → []
-
-deriveChildren(rule): similar shape via walkForChildren().
+seq([
+    field('a', contentA),          // contentA already unions choice-across-branches
+    field('b', contentB),
+    symbol('c'),                    // unnamed child
+    supertype('d'),                 // unnamed child via supertype
+    ...
+])
 ```
 
-Two walkers (fields + children), each re-walking the same tree, each
-with its own subtle merge logic.
+- Top-level is a `seq` (or a single field/symbol/leaf if there's
+  only one member).
+- Each semantic field is a single `field(name, content)` at the top
+  level. Same-named fields across choice branches are merged; the
+  `content` reflects the union of all per-branch shapes.
+- Each unnamed child reference is a `symbol` or `supertype` at the
+  top level.
+- No `choice` at the top level (choices at a field position are
+  absorbed into the field's content; choices at a non-field structural
+  position are handled by polymorph classification or
+  optional-downgrade).
+- Anonymous delimiters (punctuation, keywords without a field wrap)
+  are absent — already stripped by current simplify.
 
-## Proposed architecture
+For a **container**-classified rule (no fields, only children):
 
-### New type: `AssembledSurface`
+```
+repeat(symbol('x'))    // or repeat1
+// or
+seq([symbol('x'), symbol('y')])
+```
+
+For a **choice**-at-top (polymorph / enum / supertype) — the choice
+remains because it's the rule's actual semantics, not a derivation
+artifact. Classification dispatches:
+
+```
+polymorph:  choice([variant('a', …), variant('b', …)])
+enum:       emitted as EnumRule (already the case today)
+supertype:  emitted as SupertypeRule (already the case today)
+```
+
+## Current state vs target state
+
+### Current (today)
+
+`simplify` strips anon literals, collapses single-member seqs.
+Produces a Rule that may still contain:
+- `choice(seq(field('a',x), …), seq(field('a',y), …))` with
+  same-named fields across branches
+- Nested seqs with fields interleaved with other wrappers
+- Optional/repeat wrappers around fields
+
+Derivation (`deriveFields` / `deriveFieldsRaw`) then walks this
+possibly-ambiguous tree with per-case merge logic, producing
+AssembledField[]. BUG-PRONE because each walker's case-handling
+has to get the merge right, and today the `case 'choice'` drops
+duplicate-named occurrences.
+
+### Target (post-013)
+
+`simplify` does everything above PLUS:
+- If the top-level is a choice whose branches each have the same
+  field shape (same set of field names), union per-branch contents
+  into a flat `seq([field('a', unionedContent), field('b',
+  unionedContent), …])`.
+- If the top-level is a choice whose branches have heterogeneous
+  field sets (pattern A: ε `update_expression`; pattern B:
+  `function_modifiers`), promote to PolymorphRule (already partially
+  done) — forms-after-simplify are themselves canonical.
+- Contents of each `field()` are themselves simplified: choices
+  within the field's content become unions at value-derivation time.
+- Anonymous internal structural wrappers (redundant seqs, variants,
+  groups) are flattened.
+
+Derivation reduces to:
 
 ```ts
-interface AssembledSurface {
-    readonly fields: readonly AssembledField[]
-    readonly children: readonly AssembledChild[]
-    // Separator metadata (today split between joinBy / joinByField /
-    // joinByTrailing on various rule positions) migrates here.
-    readonly separators?: {
-        readonly children?: SeparatorSpec
-        readonly byField?: ReadonlyMap<string, SeparatorSpec>
-    }
-    // Choice-of-literals position metadata — the enum patterns the
-    // walker today silently collapses. Populated for any unlabeled
-    // `choice(lit, lit, ...)` the walker encounters.
-    readonly literalEnums?: ReadonlyMap<string, readonly string[]>  // slot-name → allowed literals
+function deriveFields(rule: Rule): AssembledField[] {
+    const members = rule.type === 'seq' ? rule.members : [rule]
+    return members
+        .filter(isField)
+        .map(f => buildAssembledField(f))
+}
+
+function deriveChildren(rule: Rule): AssembledChild[] {
+    const members = rule.type === 'seq' ? rule.members : [rule]
+    return members
+        .filter(m => m.type === 'symbol' || m.type === 'supertype')
+        .map(m => buildAssembledChild(m))
 }
 ```
 
-One shared struct between fields and children. Computed once by a
-single walker; cached by the assembled node.
-
-### Single walker: `computeSurface(rule: Rule): AssembledSurface`
-
-One pass. Emits occurrences with presence context:
-
-```ts
-interface FieldOccurrence {
-    name: string
-    content: Rule
-    outerMultiplicity: Multiplicity
-    // Branch coordinates from the top of the rule to this occurrence.
-    // Each frame is (choice-id, branch-idx, total-branches).
-    branchPath: readonly ChoiceFrame[]
-    source: RuleSource | undefined
-}
-
-interface ChildOccurrence {
-    targetKindName: string      // or supertype name
-    outerMultiplicity: Multiplicity
-    branchPath: readonly ChoiceFrame[]
-}
-```
-
-Flat occurrence list. Merge pass:
-
-```
-groupByName(occurrences)
-    for each group:
-        union values across occurrences
-        compute "present in every leaf path from root" → required/optional
-        merge projection.kinds, aliasSources
-    emit AssembledField[]
-```
-
-Single source of truth for merging. No per-case logic.
-
-### Surface storage on assembled nodes
-
-```ts
-class AssembledBranch {
-    readonly surface: AssembledSurface        // eager — computed during assemble
-    get fields() { return this.surface.fields }
-    get children() { return this.surface.children }
-    // ...
-}
-```
-
-Computed eagerly during `assemble()`. No lazy getters. Consumers
-(emitters, factory builders, etc.) hit a plain property access.
-
-## What changes
-
-### Deleted
-
-- `deriveFields(rule)` public API (or kept as thin forward to
-  `computeSurface(rule).fields` during a transition).
-- `deriveFieldsRaw(rule, outerMult)` — internal; full delete.
-- `deriveChildren(rule)` — delete or forward.
-- `walkForChildren(rule, out, mult)` — delete.
-- `deriveValuesForRule` — still needed as a helper but folded into
-  the new walker's field-case, cleaner scope.
-
-### Modified
-
-- `compiler/simplify.ts` — unchanged semantically (still strips
-  non-alphanumeric literals, collapses single-member seqs). Keeps
-  current output.
-- `compiler/assemble.ts` — calls `computeSurface(simplifiedRule)` at
-  construction time; passes the surface to AssembledXxx constructors.
-- `compiler/node-map.ts` — AssembledBranch / AssembledContainer /
-  AssembledGroup constructors accept `surface: AssembledSurface`.
-  Getters read from it. The class definitions shrink.
-- `compiler/types.ts` — may need an export for `AssembledSurface`.
-
-### New
-
-- `compiler/surface.ts` — new file. Exports `AssembledSurface` type
-  and `computeSurface(rule)` function. Contains the single walker and
-  merge logic. ~200 LOC.
-
-### Unchanged
-
-- Template walker (`template-walker.ts`). Still consumes raw Rule for
-  delimiter literals. Not part of the refactor.
-- `deriveAliasSources` (used by emitters separately) — keep as-is.
-- Emitters (factories, types, from, node-model, etc.). They consume
-  `node.fields` / `node.children` which still work.
-- Tests. Pure behavior preservation — any test asserting current
-  derived-field shape passes identically because the bug fix is a
-  correctness improvement (more values, not fewer/different).
-
-## Algorithm: `computeSurface`
-
-Single recursive walker. Returns occurrences + tree shape info.
-Then a merge pass folds occurrences into final fields/children.
-
-```
-computeSurface(rule):
-    occurrences = walkOccurrences(rule, {
-        outerMultiplicity: 'single',
-        branchPath: [],
-    })
-    fields = mergeFieldOccurrences(occurrences.fields)
-    children = mergeChildOccurrences(occurrences.children)
-    return { fields, children, separators, literalEnums }
-
-walkOccurrences(rule, ctx):
-    switch rule.type:
-        case 'field':
-            // Don't descend into another field() — fields are opaque slots.
-            // Synthetic wrapper check still applies.
-            if isSyntheticFieldWrapper(rule.content):
-                return walkOccurrences(rule.content, ctx)
-            emit FieldOccurrence(rule.name, rule.content, ctx.mult, ctx.branchPath)
-            return
-
-        case 'seq':
-            for m of rule.members:
-                walkOccurrences(m, ctx)
-
-        case 'choice':
-            for (branch, idx) of rule.members:
-                newCtx = { ...ctx, branchPath: [...ctx.branchPath, { choiceId, idx, total }] }
-                walkOccurrences(branch, newCtx)
-
-        case 'optional': ctx.mult = 'optional', recurse
-        case 'repeat':   ctx.mult = 'array',    recurse
-        case 'repeat1':  ctx.mult = 'nonEmptyArray', recurse
-        case 'clause':   ctx.mult = 'optional',  recurse
-        case 'variant' | 'group': pass through
-
-        case 'symbol' | 'supertype':
-            // Child occurrence (unnamed).
-            emit ChildOccurrence(rule.name, ctx.mult, ctx.branchPath)
-
-        // literal string/pattern/enum etc.: check if unlabeled
-        // choice-of-literals pattern around this position and register
-        // a literal-enum slot.
-```
-
-### Merge pass
-
-```
-mergeFieldOccurrences(occurrences):
-    byName = groupBy(occurrences, o => o.name)
-    for each (name, group):
-        values = dedupeValues(flatMap(group, o => deriveValuesForRule(o.content, o.outerMultiplicity)))
-        // Presence: required iff every leaf-branch-path contains this name.
-        required = coveredByAllLeafPaths(group, occurrences)
-        if !required:
-            values = values.map(v => ({ ...v, multiplicity: toOptional(v.multiplicity) }))
-        emit AssembledField with merged values + projection + aliasSources
-```
-
-`coveredByAllLeafPaths` check replaces the current `inAll()` per-choice
-logic. Computed once over the full occurrence list.
-
-Equivalent to today's behavior for simple cases; correctly handles
-nested choices where the current in-case logic has no information.
+Two short straight-line functions. No recursion, no merging, no
+per-case logic.
 
 ## Migration phases
 
-### Phase 1: Introduce surface (no consumer changes)
+### Phase 1: Canonical form + simplify pipeline additions
 
-- Add `compiler/surface.ts` with `AssembledSurface` + `computeSurface`.
-- No test changes; no downstream changes.
-- Unit tests for `computeSurface` exercising:
-  - simple seq with fields
-  - choice with shared fields (should preserve all branches' values —
-    today's bug)
-  - choice with distinct fields (should optional-downgrade)
-  - nested choice (outer branches each with inner choices)
-  - repeat / optional / clause wrappers
-  - override-wrapper fields (the source === 'override' + choice case)
+- Extend `simplify.ts` with a new normalization pass that runs
+  AFTER the existing strip-and-collapse:
+  - `mergeChoiceBranches`: when a top-level choice has all branches
+    sharing the same field-name set, merge into a flat seq where
+    each field's content is `choice([per-branch-content])` —
+    effectively pushing the ambiguity INTO the field's content.
+  - `flattenStructuralWrappers`: strip redundant nested seqs /
+    variants / groups so the top-level seq's members are
+    syntactically the surface positions.
+  - `absorbChoicesIntoFields`: for `seq(field(a, …), choice(X, Y),
+    field(b, …))` — handle the choice by either polymorph-promoting
+    (distinct field sets) or merging it into adjacent fields'
+    content (shared shape).
 
-### Phase 2: Wire into assemble
+- Add unit tests for each transformation on minimal rule fragments,
+  freezing the canonical output.
 
-- `assemble.ts` calls `computeSurface` at branch/container/group
-  construction time.
-- AssembledBranch / AssembledContainer / AssembledGroup take
-  `surface` in constructor opts.
-- `fields` / `children` getters read from `surface` instead of
-  calling `deriveFields` / `deriveChildren`.
-- Full test suite should pass with identical output except for the
-  bug fixes (auto-stamp regressions, separator pattern fixes).
+- `simplify`'s return type stays `Rule`.
 
-### Phase 3: Delete dead code
+### Phase 2: Rewrite derivation as trivial walk
 
-- Remove `deriveFieldsRaw`, `deriveFields` (or leave as one-line
-  forward for backwards-compat if external tests use them).
-- Remove `walkForChildren`, `deriveChildren` (same).
-- Clean up helper functions that only serve the deleted walkers.
+- `deriveFields(rule)` shrinks to the 4-line form shown above:
+  filter top-level seq members, build AssembledField for each
+  `field()` node.
+- `deriveChildren(rule)` similarly.
+- Delete `deriveFieldsRaw`, `walkForChildren`, helper passes that
+  existed to handle the un-canonical cases.
+- Keep `deriveAliasSources` and `deriveValuesForRule` — those are
+  leaf-level helpers called for building individual field/child
+  entries.
 
-### Phase 4 (optional): Separator and literal-enum unification
+### Phase 3: Consumer verification
 
-- Fold separator-discovery logic (`findRepeatSeparator`,
-  `findRepeatFlag`) into the same walker — emit separators on the
-  surface.
-- Detect and emit `literalEnums` for unlabeled `choice(lit, lit)`
-  positions; emitter uses these to type the slot correctly in
-  factories / Config types.
-- Closes the object_type separator-preservation gap.
+- `AssembledBranch.fields` / `children` getters — unchanged API,
+  now call the 4-line derivation.
+- All emitter tests pass without modification.
+- Corpus FLOORS unchanged or improved (improved on the three
+  motivating bugs).
+
+### AssembledNode = pure projection
+
+Post-013, the AssembledBranch / AssembledContainer / AssembledGroup
+layer becomes a THIN PROJECTION of the canonical simplified rule
+into the shape emitters want to consume. No merge logic, no
+traversal, no per-case decisions — those all happen inside
+`simplify()` before AssembledNode ever sees the rule.
+
+```ts
+class AssembledBranch {
+    readonly simplifiedRule: Rule   // already canonicalized
+    // ... factory naming / irKey / etc.
+
+    get fields(): AssembledField[] {
+        return projectFields(this.simplifiedRule)
+    }
+    get children(): AssembledChild[] {
+        return projectChildren(this.simplifiedRule)
+    }
+}
+
+function projectFields(simplified: Rule): AssembledField[] {
+    const members = simplified.type === 'seq' ? simplified.members : [simplified]
+    return members.filter(isField).map(buildAssembledField)
+}
+```
+
+No private caches (`#fields`). No lazy re-derivation. Semantic
+correctness is guaranteed by simplify's canonicalization, not by
+getter logic. AssembledBranch's whole purpose reduces to "pair the
+canonical rule with the kind-metadata (factoryName, irKey, hidden,
+etc.) that emitters need."
+
+### Phase 4 (optional, follow-up): Separator / literal-enum metadata
+
+- SimplifiedRule branch could carry a `separators` annotation on
+  the seq/repeat structure.
+- Or the canonical form could preserve literal enums at positions
+  that need them (object_type separator case).
+- Independent from Phases 1-3.
 
 ## Risks
 
-1. **Presence computation correctness.** The current `inAll()` logic
-   works case-by-case; a global `coveredByAllLeafPaths` must agree on
-   all existing cases. Mitigate with thorough unit tests from current
-   grammars before/after.
+1. **Completeness of canonicalization.** The three transformations
+   (merge choice branches, flatten wrappers, absorb choices) must
+   handle every grammar shape we've seen. Regressions are caught
+   by: (a) per-grammar regen output diff, (b) corpus FLOORS, (c)
+   505 unit tests.
 
-2. **Child-node ordering.** `deriveChildren` today emits children in
-   source-walk order. The merge pass needs to preserve this to avoid
-   shuffling `$children` slots in emitter output. Use occurrence-emit
-   order as the merge key.
+2. **Choice absorption subtlety.** `choice(seq(a, x), seq(a, y),
+   seq(a, z))` where `a` appears in all branches AND the inner
+   content differs — merges into `seq(a, seq_over_choice_of_x_y_z)`
+   or directly `seq(a, choice(x, y, z))`. Both are equivalent at
+   the value-derivation level. Pick one and document.
 
-3. **Alias / projection merge.** `deriveFields`'s outer merge
-   currently folds `projection.kinds` and `aliasSources`. The new
-   merge must replicate that. Not hard but easy to forget.
+3. **Polymorph interaction.** If a rule is already classified as
+   polymorph pre-013, simplify's new passes shouldn't re-merge its
+   forms. Forms retain their distinct shapes.
 
-4. **Template walker untouched.** Confirm it doesn't call
-   `deriveFields` anywhere (grep says no, but verify).
+4. **Override fields + choice content.** The current
+   `rule.source === 'override' && rule.content.type === 'choice'`
+   special case — when a user's `field('wildcard', choice(inner_a,
+   inner_b, inner_c))` override wraps a choice with inner fields —
+   simplify needs to preserve access to the inner fields (they
+   promote to parent). Must not be lost in canonicalization.
+
+5. **Template walker untouched.** Template walker reads raw rule.
+   Simplified rule is only for derivation. Confirm no cross-coupling
+   emerges.
 
 ## Scope estimate
 
-- Phase 1: ~250 LOC new (surface.ts + tests).
-- Phase 2: ~100 LOC modifications across node-map.ts + assemble.ts.
-- Phase 3: ~-300 LOC net (deleting old code).
-- Phase 4: ~100 LOC if we also do separators + literal enums.
+- Phase 1: ~250 LOC (three new transformations + tests).
+- Phase 2: ~-400 LOC (deleting walker recursion + per-case merges).
+- Phase 3: ~50 LOC (getter simplification + assemble tweaks).
+- Phase 4: ~100 LOC if pursued.
 
-Net: roughly flat LOC with cleaner architecture and bug fixes.
+Net: ~-100 LOC with cleaner architecture and three latent bugs
+fixed.
 
 ## Backout plan
 
-Phase 1 is purely additive. If issues arise, don't wire into assemble
-and the new code is dead until reverted. Phase 2 is the breaking
-point — commit the wiring separately so a revert is clean.
+Phase 1 is additive (new passes, old derivation path still works).
+Phase 2 is the irrevocable point — once old walkers are deleted,
+the new canonical form is load-bearing. Commit each phase
+separately so Phase 2 can be reverted independently.
 
-Phase 3 only lands after Phase 2 is stable, making the deletion
-safe.
+## Open questions
+
+- **Should the first transformation (`mergeChoiceBranches`)
+  recurse into inner seqs that also contain choice?** Yes —
+  canonicalization is recursive. Apply bottom-up.
+- **What if a field's content is itself a canonical-form tree?**
+  That's recursive canonical form; field content gets simplified
+  by the same pipeline.
+- **Separator metadata location?** For Phase 4. Probably a
+  sidecar Map<fieldName, separatorSpec> that the assemble layer
+  attaches to the AssembledBranch — or a rule-level annotation.
+  Decide when we get there.

@@ -31,7 +31,7 @@
  * produces a full `simplifiedRules` map on `OptimizedGrammar`.
  */
 
-import type { Rule } from './rule.ts'
+import type { Rule, ChoiceRule, SeqRule, FieldRule } from './rule.ts'
 
 /** Does this string lex as a "word" under the grammar's `word` rule? */
 function isKeywordShape(value: string, wordMatcher: RegExp | undefined): boolean {
@@ -132,6 +132,236 @@ export function simplifyRules(
     const out: Record<string, Rule> = {}
     for (const [name, rule] of Object.entries(rules)) {
         out[name] = simplifyRule(rule, wordMatcher)
+    }
+    return out
+}
+
+// ---------------------------------------------------------------------------
+// Canonicalization (spec 013)
+// ---------------------------------------------------------------------------
+//
+// After `simplifyRule`'s strip-and-collapse, a rule may still sit in a
+// shape that mixes structural ambiguity into the top-level surface — most
+// notably `choice(seq(field('a', x1), ...), seq(field('a', x2), ...))`
+// where every branch carries the same field names but DIFFERENT contents.
+// Derivation today handles this with per-case merge logic in
+// `deriveFieldsRaw`, and gets it subtly wrong (drops duplicates, misses
+// nested choice coverage, silently auto-stamps constants that should be
+// literal unions).
+//
+// `canonicalize(rule)` — the 013 normalization — transforms the rule into
+// a canonical flat form whose TOP-LEVEL members map 1:1 to the node's
+// surface (fields + unnamed children). Derivation post-canonicalization
+// reduces to a filter-and-project over the top-level seq members.
+//
+// The pipeline is bottom-up: each transformation recurses into
+// content/members first, then applies at the current level. Composition
+// is deterministic; running canonicalize twice is a no-op (idempotent).
+//
+// Additive: Phase 1 lands this function without wiring it into the main
+// simplify pipeline — callers that want the canonical form invoke it
+// explicitly. Phase 2 (separate commit) flips `simplifyRules` to apply
+// canonicalize after simplifyRule, at which point downstream derivation
+// gets the bug fixes automatically.
+//
+// Shape example (after canonicalize, a rule's top-level seq directly
+// reflects its fields + unnamed children; derivation becomes a
+// filter/project over members):
+//
+//   before (post-simplifyRule, still ambiguous):
+//     choice(
+//       seq(field('left', E), field('operator', '&&'), field('right', E)),
+//       seq(field('left', E), field('operator', '||'), field('right', E)),
+//       seq(field('left', E), field('operator', '+'),  field('right', E)),
+//     )
+//
+//   after (canonicalize):
+//     seq(
+//       field('left', E),
+//       field('operator', choice('&&', '||', '+')),
+//       field('right', E),
+//     )
+export function canonicalize(rule: Rule): Rule {
+    // Recurse into content / members FIRST (bottom-up), then apply the
+    // transformations at this level. Each pass expects its input to
+    // already be in canonical form below.
+    const recursed = recurseCanonicalize(rule)
+    if (recursed.type === 'choice') return mergeChoiceBranches(recursed)
+    return recursed
+}
+
+/**
+ * Recurse canonicalize into a rule's content / members. Leaves atomic
+ * rules (strings, patterns, symbols, supertypes, enums, terminals,
+ * indent/dedent/newline) untouched.
+ */
+function recurseCanonicalize(rule: Rule): Rule {
+    switch (rule.type) {
+        case 'seq':
+        case 'choice':
+            return { ...rule, members: rule.members.map(canonicalize) } as Rule
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'field':
+        case 'group':
+        case 'variant':
+        case 'clause':
+        case 'token':
+        case 'terminal':
+        case 'alias':
+            return { ...rule, content: canonicalize((rule as { content: Rule }).content) } as Rule
+        case 'polymorph':
+            return {
+                ...rule,
+                forms: rule.forms.map(f => ({ ...f, content: canonicalize(f.content) })),
+            }
+        default:
+            return rule
+    }
+}
+
+/**
+ * Merge a choice-of-structurally-equivalent-branches into a flat seq
+ * with per-position unioned contents.
+ *
+ * Shape example:
+ *
+ *   before:
+ *     choice(
+ *       seq(field('op', '&&'), …),
+ *       seq(field('op', '||'), …),
+ *       seq(field('op', '+'),  …),
+ *     )
+ *
+ *   after:
+ *     seq(field('op', choice('&&', '||', '+')), …)
+ *
+ * Fires when every branch:
+ *   - Is a seq (or is a variant/group-wrapped seq, which
+ *     `recurseCanonicalize` has left visible).
+ *   - Has the same LENGTH as every other branch.
+ *   - At each position: same member kind (field / symbol / supertype /
+ *     etc.), and same field name (for fields) / same symbol name
+ *     (for symbols).
+ *
+ * For field positions the merged content is `choice(branch0_content,
+ * branch1_content, …)` — the union of per-branch contents. Derivation
+ * post-merge sees ONE `field('op', choice(...))` instead of N
+ * `field('op', …)` occurrences across branches, and
+ * `deriveValuesForRule` on the choice emits all literal / symbol
+ * values cleanly.
+ *
+ * For non-field positions (symbol, supertype, bare string) the content
+ * is already identical across branches (shape equivalence check), so
+ * we pick the first branch's occurrence as canonical.
+ *
+ * When the shape-equivalence check fails — branches differ in length,
+ * kind, or field name — returns the input unchanged. Polymorph /
+ * supertype / enum classification handles those cases downstream.
+ *
+ * Called bottom-up: branches passed in have already been
+ * canonicalized, so nested choice-of-equivalent-branches inside a
+ * branch has already been flattened.
+ */
+function mergeChoiceBranches(rule: ChoiceRule): Rule {
+    if (rule.members.length === 0) return rule
+    // Unwrap variant/group wrappers to expose the seq inside.
+    const unwrapped = rule.members.map(unwrapForMerge)
+    // Every branch must be a seq of the same length.
+    if (!unwrapped.every((b): b is SeqRule => b.type === 'seq')) return rule
+    const len = unwrapped[0]!.members.length
+    if (!unwrapped.every(b => b.members.length === len)) return rule
+    // Check position-by-position structural equivalence.
+    for (let i = 0; i < len; i++) {
+        const position = unwrapped.map(b => b.members[i]!)
+        if (!positionsAreMergeable(position)) return rule
+    }
+    // All positions mergeable. Build the merged seq.
+    const mergedMembers: Rule[] = []
+    for (let i = 0; i < len; i++) {
+        const position = unwrapped.map(b => b.members[i]!)
+        mergedMembers.push(mergePosition(position))
+    }
+    if (mergedMembers.length === 0) return { type: 'seq', members: [] }
+    if (mergedMembers.length === 1) return mergedMembers[0]!
+    return { type: 'seq', members: mergedMembers }
+}
+
+/** Peel `variant` / `group` / `clause` wrappers to expose the seq inside. */
+function unwrapForMerge(rule: Rule): Rule {
+    switch (rule.type) {
+        case 'variant':
+        case 'group':
+        case 'clause':
+            return unwrapForMerge(rule.content)
+        default:
+            return rule
+    }
+}
+
+/**
+ * Are these positions (one per branch, all at the same seq index)
+ * structurally equivalent — same kind, same discriminator (field name /
+ * symbol name)? If yes they can be merged by unioning contents. If no,
+ * the enclosing choice is structurally heterogeneous and stays as-is.
+ */
+function positionsAreMergeable(position: readonly Rule[]): boolean {
+    if (position.length === 0) return true
+    const first = position[0]!
+    if (first.type === 'field') {
+        return position.every(p => p.type === 'field' && p.name === first.name)
+    }
+    if (first.type === 'symbol') {
+        return position.every(p => p.type === 'symbol' && p.name === first.name)
+    }
+    if (first.type === 'supertype') {
+        return position.every(p => p.type === 'supertype' && p.name === first.name)
+    }
+    if (first.type === 'string') {
+        // Same literal at same position is fine. Different literals at
+        // same position means the literal itself is the discriminator
+        // — that's the "choice of literals" case (handled by
+        // separator / enum detection; leave for now).
+        return position.every(p => p.type === 'string' && p.value === first.value)
+    }
+    // Other kinds: structurally identical means equal by shape.
+    // Conservative: require literal JSON equality.
+    const firstJson = JSON.stringify(first)
+    return position.every(p => JSON.stringify(p) === firstJson)
+}
+
+/**
+ * Merge N same-position rules (already verified as mergeable) into a
+ * single canonical rule.
+ *
+ * - Fields: same name, possibly different content → `field(name,
+ *   choice(content1, content2, …))`. Deduplicate equal contents.
+ * - Symbols / supertypes / strings: return the first — all are
+ *   identical by the mergeability check.
+ */
+function mergePosition(position: readonly Rule[]): Rule {
+    const first = position[0]!
+    if (first.type === 'field') {
+        const fields = position.filter((p): p is FieldRule => p.type === 'field')
+        const contents = dedupeByJson(fields.map(f => f.content))
+        const mergedContent: Rule = contents.length === 1
+            ? contents[0]!
+            : { type: 'choice', members: contents }
+        return { ...first, content: mergedContent }
+    }
+    return first
+}
+
+/** Deduplicate rules by JSON equality, preserving first-seen order. */
+function dedupeByJson(rules: readonly Rule[]): Rule[] {
+    const seen = new Set<string>()
+    const out: Rule[] = []
+    for (const r of rules) {
+        const key = JSON.stringify(r)
+        if (seen.has(key)) continue
+        seen.add(key)
+        out.push(r)
     }
     return out
 }
