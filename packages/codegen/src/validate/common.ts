@@ -222,6 +222,12 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
         // (macro token content is author-declared-verbatim, mixes named
         // and anon tokens).
         'delim_token_tree': r => `fn _f() { mac! ${r} }`,
+        // visibility_modifier is a declaration-position prefix — has no
+        // supertype it fits under. Only fires when variant() adoption
+        // has been applied (see `wrapForReparse` — wrappers whose kind
+        // isn't in `deepReadKinds` are skipped so the wrapper doesn't
+        // expose the baseline `{% if variant %}` fall-through).
+        'visibility_modifier': r => `${r} fn _f() {}`,
     },
     typescript: {
         // Tree-sitter-typescript exposes supertypes unprefixed (no leading
@@ -329,11 +335,23 @@ function selectAndApplySupertypeWrapper(
     return applyWrapperTemplate(rendered, wrappers[first]!)
 }
 
+/**
+ * Kind names whose direct `REPARSE_WRAPPERS[grammar]` entry should only
+ * fire when variant() adoption is in effect for that kind. Otherwise
+ * the wrapper is skipped so the baseline `{% if variant %}`
+ * fall-through (a parent-template shape that only works under variant()
+ * adoption) doesn't expose the kind to reparse where it'd render empty.
+ */
+export const VARIANT_ADOPTION_GATED_WRAPPERS: Record<string, readonly string[]> = {
+    rust: ['visibility_modifier'],
+}
+
 export function wrapForReparse(
     rendered: string,
     kind: string,
     grammar: string,
     kindToSupertypes: Map<string, string[]>,
+    opts?: { adoptedVariantKinds?: ReadonlySet<string> },
 ): WrapForReparseResult | null {
     const wrappers = REPARSE_WRAPPERS[grammar]
     if (!wrappers) return null
@@ -342,7 +360,14 @@ export function wrapForReparse(
     // produce (e.g. rust `mut_pattern` surfaces in match/if-let but
     // NOT in plain `let` statements, which flatten it away).
     const direct = wrappers[kind]
-    if (direct) return applyWrapperTemplate(rendered, direct)
+    if (direct) {
+        const gated = VARIANT_ADOPTION_GATED_WRAPPERS[grammar]?.includes(kind) ?? false
+        const adopted = opts?.adoptedVariantKinds?.has(kind) ?? false
+        if (gated && !adopted) {
+            return selectAndApplySupertypeWrapper(kind, wrappers, kindToSupertypes, rendered)
+        }
+        return applyWrapperTemplate(rendered, direct)
+    }
     return selectAndApplySupertypeWrapper(kind, wrappers, kindToSupertypes, rendered)
 }
 

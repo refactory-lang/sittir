@@ -29,6 +29,105 @@ import {
 } from './common.ts';
 
 /**
+ * Read a tree node and selectively populate `$children` / `$fields` of
+ * NAMED descendants whose kind appears in `deepReadKinds`. Other named
+ * children stay shallow (the renderer short-circuits their render path
+ * to `$text`, which matches the source verbatim).
+ *
+ * readNode returns one-level-deep data by design. For most kinds that
+ * shallow view works because their render path is trivially the source
+ * span. But kinds produced via variant() adoption render via their own
+ * template that wraps `$$$CHILDREN` in ambient scaffold — those MUST
+ * drill through their structure so the ambient scaffold (pushed down
+ * at link time) actually composes.
+ *
+ * Scope: the caller (validator) passes the set of kinds that underwent
+ * variant() push-down plus their registered variant parents. Deep-read
+ * fires only for those kinds; all other kinds follow the baseline
+ * shallow path so existing rtPass numbers don't shift.
+ *
+ * @param tree - TreeHandle for node lookup.
+ * @param nodeId - If provided, read the node at this id; otherwise read
+ *   the root.
+ * @param deepReadKinds - Set of `$type` values that should be deep-read
+ *   when encountered as named children.
+ */
+function deepReadNode(
+	tree: TreeHandle,
+	nodeId: number | undefined,
+	deepReadKinds: ReadonlySet<string>,
+): ReturnType<typeof readNode> {
+	const data = readNode(tree, nodeId);
+	const shouldDrill = (entry: ReturnType<typeof readNode>): boolean =>
+		entry.$named === true
+		&& typeof entry.$nodeId === 'number'
+		&& deepReadKinds.has(entry.$type);
+	if (data.$children) {
+		data.$children = data.$children.map(c =>
+			shouldDrill(c) ? deepReadNode(tree, c.$nodeId, deepReadKinds) : c,
+		);
+	}
+	if (data.$fields) {
+		const newFields: typeof data.$fields = {};
+		for (const [key, value] of Object.entries(data.$fields)) {
+			if (Array.isArray(value)) {
+				newFields[key] = value.map(entry =>
+					shouldDrill(entry) ? deepReadNode(tree, entry.$nodeId, deepReadKinds) : entry,
+				);
+			} else {
+				newFields[key] = shouldDrill(value)
+					? deepReadNode(tree, value.$nodeId, deepReadKinds)
+					: value;
+			}
+		}
+		data.$fields = newFields;
+	}
+	return data;
+}
+
+/**
+ * Build the set of `$type` values the validator should deep-read,
+ * scoped to kinds that participate in variant() adoption (parents and
+ * their child kinds). Other kinds stay on the shallow `$text`
+ * short-circuit to preserve baseline rtPass numbers.
+ *
+ * Sources the set from the grammar's emitted `factory-map.json5`
+ * polymorphVariants section (the codegen artifact that records which
+ * kinds went through Link's push-down). Returns an empty set when no
+ * variant adoption exists in the grammar.
+ */
+async function loadVariantAdoptedKinds(grammar: string): Promise<ReadonlySet<string>> {
+	// factory-map.json5 lives at packages/<grammar>/factory-map.json5.
+	const factoryMapPath = new URL(`../../../../${grammar}/factory-map.json5`, import.meta.url).pathname;
+	try {
+		const fs = await import('node:fs');
+		const content = fs.readFileSync(factoryMapPath, 'utf-8');
+		const kinds = new Set<string>();
+		// Minimal JSON5-ish scan: find `polymorphVariants: { kindA: { source: 'override', childKind: { 'kindA_x': ... } } }`.
+		// We only need to harvest kind names — full JSON5 parse isn't worth
+		// the dependency here.
+		const parentMatch = content.match(/polymorphVariants\s*:\s*\{([\s\S]*?)\}\s*,?\s*(?:\}|$)/);
+		if (!parentMatch) return kinds;
+		const body = parentMatch[1]!;
+		// Each parent entry: `<parent>: { source: 'override', childKind: { '<childKind>': ... }, ... }`.
+		const parentEntryRe = /(\w+):\s*\{[^}]*source:\s*['"]override['"][^}]*childKind:\s*\{([^}]*)\}/g;
+		let m: RegExpExecArray | null;
+		while ((m = parentEntryRe.exec(body)) !== null) {
+			kinds.add(m[1]!);
+			const childMap = m[2]!;
+			const childRe = /['"]([^'"]+)['"]\s*:/g;
+			let cm: RegExpExecArray | null;
+			while ((cm = childRe.exec(childMap)) !== null) {
+				kinds.add(cm[1]!);
+			}
+		}
+		return kinds;
+	} catch {
+		return new Set<string>();
+	}
+}
+
+/**
  * Find the first node of `kind` whose `startIndex` equals `offset`.
  * Used to locate the rendered fragment inside a reparse wrapper —
  * e.g. rust's `fn _f() { let _ = ${r}; }` wraps the rendered block
@@ -272,6 +371,7 @@ export async function validateRoundTrip(
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
 	const readTreeNodeFn = await loadReadTreeNode(grammar);
+	const deepReadKinds = await loadVariantAdoptedKinds(grammar);
 
 	const entries = loadCorpusEntries(grammar);
 	const errors: { name: string; message: string; input?: string; rendered?: string }[] = [];
@@ -308,7 +408,14 @@ export async function validateRoundTrip(
 				if (!node1) continue;
 
 				const handle = treeHandle(tree1);
-				const rawData = readNode(handle, node1.id);
+				// Deep-read only for kinds that underwent variant()
+				// push-down (parents + their variant-child kinds).
+				// Those kinds depend on structural children reaching
+				// their own templates so the pushed-down ambient
+				// scaffold renders. Other kinds stay shallow — their
+				// render path short-circuits to `$text` which matches
+				// the source verbatim.
+				const rawData = deepReadNode(handle, node1.id, deepReadKinds);
 				const { data, renderedKind, targetKind } = applyAliasResolution(rawData, node1.id, nodeIdToEffectiveType);
 
 				try {
@@ -316,7 +423,7 @@ export async function validateRoundTrip(
 					const rendered = render(data);
 
 					// Wrap for reparse using supertype context
-					const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes);
+					const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, { adoptedVariantKinds: deepReadKinds });
 					if (wrapped === null) continue; // no supertype → skip reparse
 
 					// Re-parse
