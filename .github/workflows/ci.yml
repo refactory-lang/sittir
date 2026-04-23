@@ -63,3 +63,19 @@ jobs:
       - name: Security Audit
         run: pnpm audit --audit-level moderate
         continue-on-error: true
+
+  # Rust workspace compile check (spec 012 Phase 1 T007).
+  # A single cargo-check job — parity tests, clippy, platform matrix,
+  # and release artifacts come in Phase 4 (T053-T057, T064).
+  rust:
+    name: cargo check --workspace
+    runs-on: ubuntu-22.04
+    needs: CI
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Rust toolchain (stable)
+        uses: dtolnay/rust-toolchain@stable
+      - name: Cache cargo registry + target
+        uses: Swatinem/rust-cache@v2
+      - name: cargo check --workspace
+        run: cargo check --workspace
