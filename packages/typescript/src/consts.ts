@@ -767,6 +767,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'parameters', required: true, multiple: false },
     { name: 'returnType', required: false, multiple: false },
+    { name: 'semicolon', required: true, multiple: false },
   ],
   'function_type': [
     { name: 'typeParameters', required: false, multiple: false },
@@ -1069,6 +1070,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: true, multiple: false },
   ],
   'return_statement': [
+    { name: 'semicolon', required: true, multiple: false },
   ],
   'satisfies_expression': [
     { name: 'expression', required: true, multiple: false },
@@ -1127,6 +1129,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alternative', required: true, multiple: false },
   ],
   'throw_statement': [
+    { name: 'semicolon', required: true, multiple: false },
   ],
   'try_statement': [
     { name: 'body', required: true, multiple: false },

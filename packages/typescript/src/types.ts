@@ -813,12 +813,18 @@ export interface DebuggerStatement {
 
 export interface ReturnStatement {
   readonly $type: 'return_statement';
-  readonly $children: readonly [Expressions | Semicolon];
+  readonly $fields: {
+    readonly semicolon: Semicolon;
+  };
+  readonly $children: readonly [Expressions];
 }
 
 export interface ThrowStatement {
   readonly $type: 'throw_statement';
-  readonly $children: readonly [Expressions | Semicolon];
+  readonly $fields: {
+    readonly semicolon: Semicolon;
+  };
+  readonly $children: readonly [Expressions];
 }
 
 export interface LabeledStatement {
@@ -1430,8 +1436,8 @@ export interface FunctionSignature {
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
     readonly return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
+    readonly semicolon: Semicolon | FunctionSignatureAutomaticSemicolon;
   };
-  readonly $children: readonly [Semicolon | FunctionSignatureAutomaticSemicolon];
 }
 
 export interface DecoratorParenthesizedExpression {

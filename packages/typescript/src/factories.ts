@@ -914,13 +914,22 @@ export function debuggerStatement(child: T.Semicolon) {
   };
 }
 
-export function returnStatement(child?: (T.Expressions | T.Semicolon)) {
-  const children = child != null ? [child] : [];
+export function returnStatement(config: T.ReturnStatement.Config) {
+  const fields = {
+    semicolon: config.semicolon,
+  };
+  const children = config.children ?? [];
   return {
     $type: 'return_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
+    $fields: fields,
     $children: children,
+    semicolon(value?: T.Semicolon) { return _fs(config, returnStatement, 'semicolon', value, fields.semicolon); },
+    child(value?: T.Expressions) {
+      if (value === undefined) return children[0];
+      return returnStatement({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -930,13 +939,22 @@ export function returnStatement(child?: (T.Expressions | T.Semicolon)) {
   };
 }
 
-export function throwStatement(child: (T.Expressions | T.Semicolon)) {
-  const children = [child];
+export function throwStatement(config: T.ThrowStatement.Config) {
+  const fields = {
+    semicolon: config.semicolon,
+  };
+  const children = config.children ?? [];
   return {
     $type: 'throw_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
+    $fields: fields,
     $children: children,
+    semicolon(value?: T.Semicolon) { return _fs(config, throwStatement, 'semicolon', value, fields.semicolon); },
+    child(value?: T.Expressions) {
+      if (value === undefined) return children[0];
+      return throwStatement({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2904,23 +2922,19 @@ export function functionSignature(config: T.FunctionSignature.Config) {
     type_parameters: config.typeParameters,
     parameters: config.parameters,
     return_type: config.returnType,
+    semicolon: config.semicolon,
   };
-  const children = config.children ?? [];
   return {
     $type: 'function_signature' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    $children: children,
     async(value?: "async" | undefined) { return _fs(config, functionSignature, 'async', value, fields.async); },
     name(value?: T.Identifier) { return _fs(config, functionSignature, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, functionSignature, 'typeParameters', value, fields.type_parameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, functionSignature, 'parameters', value, fields.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _fs(config, functionSignature, 'returnType', value, fields.return_type); },
-    child(value?: (T.Semicolon | T.FunctionSignatureAutomaticSemicolon)) {
-      if (value === undefined) return children[0];
-      return functionSignature({ ...config, children: [value] });
-    },
+    semicolon(value?: T.Semicolon | T.FunctionSignatureAutomaticSemicolon) { return _fs(config, functionSignature, 'semicolon', value, fields.semicolon); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

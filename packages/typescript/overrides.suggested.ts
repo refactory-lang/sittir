@@ -14,7 +14,7 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences:  1  (0 applied, 1 held)
+// Field inferences:  17  (0 applied, 17 held)
 // Rule promotions:   71  (62 applied, 9 held)
 // Repeated shapes:   9  (advisory — suggested supertypes/groups)
 
@@ -25,10 +25,31 @@
 // candidates target the same kind).
 // ---------------------------------------------------------------
 export const suggestedTransforms = {
+  // _export_statement_default: 2 inferred field(s)
+  // [held] _export_statement_default field 'semicolon' on $._semicolon — 82% agreement, 11 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+  // [held] _export_statement_default field 'semicolon' on $._semicolon — 82% agreement, 11 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   _export_statement_default: {
       "0": variant("form0"),
       "1": variant("form1"),
+  },
+
+  // _export_statement_equals_export: 1 inferred field(s)
+  _export_statement_equals_export: {
+      // [held] 82% agreement, 11 parents
+      3: field("semicolon"),  // $._semicolon
+  },
+
+  // _export_statement_namespace_export: 1 inferred field(s)
+  _export_statement_namespace_export: {
+      // [held] 82% agreement, 11 parents
+      4: field("semicolon"),  // $._semicolon
+  },
+
+  // _export_statement_type_export: 1 inferred field(s)
+  _export_statement_type_export: {
+      // [held] 82% agreement, 11 parents
+      4: field("semicolon"),  // $._semicolon
   },
 
   // [held] polymorph — 1 choice position(s), 3 arm(s) total
@@ -46,6 +67,55 @@ export const suggestedTransforms = {
       "2/1": variant("type"),
   },
 
+  // break_statement: 1 inferred field(s)
+  break_statement: {
+      // [held] 82% agreement, 11 parents
+      2: field("semicolon"),  // $._semicolon
+  },
+
+  // class_body: 2 inferred field(s)
+  // [held] class_body field 'semicolon' on $._semicolon — 82% agreement, 11 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+  // [held] class_body field 'semicolon' on $._semicolon — 82% agreement, 11 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+
+  // continue_statement: 1 inferred field(s)
+  continue_statement: {
+      // [held] 82% agreement, 11 parents
+      2: field("semicolon"),  // $._semicolon
+  },
+
+  // debugger_statement: 1 inferred field(s)
+  debugger_statement: {
+      // [held] 82% agreement, 11 parents
+      1: field("semicolon"),  // $._semicolon
+  },
+
+  // do_statement: 1 inferred field(s)
+  do_statement: {
+      // [held] 82% agreement, 11 parents
+      4: field("semicolon"),  // $._semicolon
+  },
+
+  // export_statement_default: 2 inferred field(s)
+  // [held] export_statement_default field 'semicolon' on $._semicolon — 82% agreement, 11 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+  // [held] export_statement_default field 'semicolon' on $._semicolon — 82% agreement, 11 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+
+  // export_statement_equals_export: 1 inferred field(s)
+  export_statement_equals_export: {
+      // [held] 82% agreement, 11 parents
+      3: field("semicolon"),  // $._semicolon
+  },
+
+  // export_statement_namespace_export: 1 inferred field(s)
+  export_statement_namespace_export: {
+      // [held] 82% agreement, 11 parents
+      4: field("semicolon"),  // $._semicolon
+  },
+
+  // export_statement_type_export: 1 inferred field(s)
+  export_statement_type_export: {
+      // [held] 82% agreement, 11 parents
+      4: field("semicolon"),  // $._semicolon
+  },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: condition
@@ -261,6 +331,22 @@ export interface InferredField {
 }
 export const inferredFields: readonly InferredField[] = [
   { kind: "statement", fieldName: "body", targetSymbol: "statement_block", confidence: "medium", agreement: 0.929, sampleSize: 14, applied: false },
+  { kind: "_export_statement_default", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
+  { kind: "_export_statement_default", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
+  { kind: "_export_statement_equals_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
+  { kind: "_export_statement_namespace_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
+  { kind: "_export_statement_type_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
+  { kind: "break_statement", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
+  { kind: "class_body", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
+  { kind: "class_body", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
+  { kind: "continue_statement", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
+  { kind: "debugger_statement", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
+  { kind: "do_statement", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
+  { kind: "export_statement_default", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
+  { kind: "export_statement_default", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
+  { kind: "export_statement_equals_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
+  { kind: "export_statement_namespace_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
+  { kind: "export_statement_type_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
 ];
 
 export interface RepeatedShape {

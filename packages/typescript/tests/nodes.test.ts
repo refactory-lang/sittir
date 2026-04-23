@@ -377,17 +377,25 @@ describe('debugger_statement', () => {
 
 describe('return_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.returnStatement();
+    const node = ir.returnStatement({ semicolon: { $type: '_semicolon', $text: 'test' } as any });
     expect(node.$type).toBe('return_statement');
     expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.returnStatement({ semicolon: { $type: '_semicolon', $text: 'test' } as any, children: [{ $type: '_expressions', $text: 'test' } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('throw_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.throwStatement({ type: "_expressions" } as never);
+    const node = ir.throwStatement({ semicolon: { $type: '_semicolon', $text: 'test' } as any, children: [{ $type: '_expressions', $text: 'test' } as any] as any });
     expect(node.$type).toBe('throw_statement');
     expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.throwStatement({ semicolon: { $type: '_semicolon', $text: 'test' } as any, children: [{ $type: '_expressions', $text: 'test' } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -1297,12 +1305,12 @@ describe('abstract_method_signature', () => {
 
 describe('function_signature', () => {
   it('factory produces correct type', () => {
-    const node = ir.functionSignature({ name: { $type: 'identifier', $text: 'test' } as any, parameters: { $type: 'formal_parameters', $text: 'test' } as any });
+    const node = ir.functionSignature({ name: { $type: 'identifier', $text: 'test' } as any, parameters: { $type: 'formal_parameters', $text: 'test' } as any, semicolon: { $type: '_semicolon', $text: 'test' } as any });
     expect(node.$type).toBe('function_signature');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.functionSignature({ name: { $type: 'identifier', $text: 'test' } as any, parameters: { $type: 'formal_parameters', $text: 'test' } as any, children: [{ $type: '_semicolon', $text: 'test' } as any] as any });
+    const node = ir.functionSignature({ name: { $type: 'identifier', $text: 'test' } as any, parameters: { $type: 'formal_parameters', $text: 'test' } as any, semicolon: { $type: '_semicolon', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

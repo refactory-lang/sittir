@@ -341,6 +341,26 @@ export default grammar(enrich(base), wire({
             5: field('semicolon'),
         },
 
+        // return_statement: seq('return', optional(_expressions),
+        // _semicolon). Label pos 2.
+        return_statement: {
+            2: field('semicolon'),
+        },
+
+        // throw_statement: seq('throw', _expressions, _semicolon).
+        throw_statement: {
+            2: field('semicolon'),
+        },
+
+        // function_signature: seq(optional('async'), 'function',
+        // field('name'), _call_signature, choice(_semicolon,
+        // _function_signature_automatic_semicolon)). The trailing
+        // choice carries the semi (either explicit or auto); labeling
+        // pos 4 as a semicolon field lets it render.
+        function_signature: {
+            4: field('semicolon'),
+        },
+
         // parenthesized_expression: variant() adoption. Shape is
         // `seq('(', choice(typed_expr, sequence_expression), ')')`.
         // The inner choice's alternatives become variant-child kinds

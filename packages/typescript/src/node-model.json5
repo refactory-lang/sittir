@@ -10097,40 +10097,39 @@
               "type_predicate_annotation"
             ]
           }
-        }
-      ],
-      "children": [
+        },
         {
           "name": "semicolon",
           "propertyName": "semicolon",
-          "required": false,
+          "paramName": "semicolon",
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_semicolon",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "function_signature_automatic_semicolon",
-          "propertyName": "functionSignatureAutomaticSemicolon",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_function_signature_automatic_semicolon",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_semicolon",
+              "_function_signature_automatic_semicolon"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "function_type",
@@ -16883,11 +16882,36 @@
     },
     {
       "kind": "return_statement",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ReturnStatement",
       "factoryName": "returnStatement",
       "irKey": "returnStatement",
       "hidden": false,
+      "fields": [
+        {
+          "name": "semicolon",
+          "propertyName": "semicolon",
+          "paramName": "semicolon",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_semicolon",
+              "unresolved": true
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_semicolon"
+            ]
+          }
+        }
+      ],
       "children": [
         {
           "name": "expressions",
@@ -16900,21 +16924,6 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_expressions",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_semicolon",
               "unresolved": true
             }
           ]
@@ -18265,11 +18274,36 @@
     },
     {
       "kind": "throw_statement",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ThrowStatement",
       "factoryName": "throwStatement",
       "irKey": "throwStatement",
       "hidden": false,
+      "fields": [
+        {
+          "name": "semicolon",
+          "propertyName": "semicolon",
+          "paramName": "semicolon",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_semicolon",
+              "unresolved": true
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_semicolon"
+            ]
+          }
+        }
+      ],
       "children": [
         {
           "name": "expressions",
@@ -18282,21 +18316,6 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expressions",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_semicolon",
               "unresolved": true
             }
           ]

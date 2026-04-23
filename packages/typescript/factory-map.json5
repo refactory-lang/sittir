@@ -36,8 +36,8 @@
     "break_statement": "config",
     "continue_statement": "config",
     "debugger_statement": "children",
-    "return_statement": "children",
-    "throw_statement": "children",
+    "return_statement": "config",
+    "throw_statement": "config",
     "labeled_statement": "config",
     "switch_body": "children",
     "switch_case": "config",
@@ -589,6 +589,14 @@
       "type_parameters",
       "parameters",
       "return_type"
+    ],
+    "function_signature": [
+      "async",
+      "name",
+      "type_parameters",
+      "parameters",
+      "return_type",
+      "semicolon"
     ],
     "type_assertion": [
       "type_arguments",

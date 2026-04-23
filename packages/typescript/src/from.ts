@@ -814,22 +814,20 @@ export function debuggerStatementFrom(input?: NonNullable<T.DebuggerStatement.Co
   return F.debuggerStatement(input);
 }
 
-export function returnStatementFrom(input?: NonNullable<T.ReturnStatement.Config['children']>[number] | T.ReturnStatement) {
-  if (isNodeData(input) && input.$type === 'return_statement') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.returnStatement(child);
-  }
-  return F.returnStatement(input);
+export function returnStatementFrom(input: T.ReturnStatement.Loose): ReturnType<typeof F.returnStatement> {
+  if (isNodeData(input)) return input;
+  return F.returnStatement({
+    semicolon: _resolveOneLeaf(input.semicolon, "_automatic_semicolon"),
+    children: _resolveOne(input.children, _K1, _super_expressions),
+  });
 }
 
-export function throwStatementFrom(input?: NonNullable<T.ThrowStatement.Config['children']>[number] | T.ThrowStatement) {
-  if (isNodeData(input) && input.$type === 'throw_statement') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.throwStatement(child);
-  }
-  return F.throwStatement(input);
+export function throwStatementFrom(input: T.ThrowStatement.Loose): ReturnType<typeof F.throwStatement> {
+  if (isNodeData(input)) return input;
+  return F.throwStatement({
+    semicolon: _resolveOneLeaf(input.semicolon, "_automatic_semicolon"),
+    children: _resolveOne(input.children, _K1, _super_expressions),
+  });
 }
 
 export function labeledStatementFrom(input: T.LabeledStatement.Loose): ReturnType<typeof F.labeledStatement> {
@@ -1632,7 +1630,7 @@ export function functionSignatureFrom(input: T.FunctionSignature.Loose): ReturnT
     typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch(input.parameters, "formal_parameters"),
     returnType: _resolveOne(input.returnType, _K1, _K11),
-    children: _resolveOne(input.children, _K18, _K1),
+    semicolon: _resolveOne(input.semicolon, _K18, _K1),
   });
 }
 

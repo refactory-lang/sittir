@@ -516,6 +516,7 @@ export function wrapDebuggerStatement(data: _NodeData, tree: TreeHandle): Wrappe
 export function wrapReturnStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ReturnStatement> {
   return {
     ...data,
+    get semicolon() { return drillIn(data.$fields?.['semicolon'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ReturnStatement>;
 }
@@ -523,6 +524,7 @@ export function wrapReturnStatement(data: _NodeData, tree: TreeHandle): WrappedN
 export function wrapThrowStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ThrowStatement> {
   return {
     ...data,
+    get semicolon() { return drillIn(data.$fields?.['semicolon'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ThrowStatement>;
 }
@@ -1158,7 +1160,8 @@ export function wrapFunctionSignature(data: _NodeData, tree: TreeHandle): Wrappe
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
     get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
     get returnType() { return drillIn(data.$fields?.['return_type'], tree); },
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get semicolon() { return drillIn(data.$fields?.['semicolon'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<FunctionSignature>;
 }
 

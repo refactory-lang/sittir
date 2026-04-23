@@ -113,9 +113,9 @@ const FLOORS = {
         // wrappers make those kinds reparse correctly.
         fromPass: 149,
         fromTotal: 160,
-        rtPass: 85,
+        rtPass: 94,
         rtTotal: 112,
-        rtAstMatchPass: 74,
+        rtAstMatchPass: 79,
         covPass: 139,
         covTotal: 145,
     },

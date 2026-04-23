@@ -440,7 +440,14 @@ export async function validateRoundTrip(
 						break;
 					}
 
-					const node2 = findReparsedNodeAtOffset(tree2, targetKind, wrapped);
+					// Reparse produces either the alias target (wrapper
+					// context re-triggers the alias) OR the alias source
+					// (wrapper is a generic supertype context that
+					// doesn't re-alias — ts's interface_body rendered as
+					// object_type inside `type _X = …;`). Accept either
+					// at the rendered offset.
+					const node2 = findReparsedNodeAtOffset(tree2, targetKind, wrapped)
+						?? (renderedKind !== targetKind ? findReparsedNodeAtOffset(tree2, renderedKind, wrapped) : null);
 					if (!node2) {
 						errors.push({
 							name: `${entry.name} [${renderedKind}]`,
