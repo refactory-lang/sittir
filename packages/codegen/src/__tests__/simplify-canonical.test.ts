@@ -94,15 +94,20 @@ describe('canonicalize — mergeChoiceBranches', () => {
         expect(result.type).toBe('choice')
     })
 
-    it('unwraps variant wrappers before checking mergeability', () => {
-        // tagVariants wraps choice members in variant(). Merge should
-        // still fire if the underlying seqs are equivalent.
+    it('does NOT merge variant-wrapped branches — variants preserve identity', () => {
+        // tagVariants wraps choice members in variant() to mark them as
+        // polymorph-distinct. Canonicalize must NEVER collapse those —
+        // doing so drops the variant names and turns a polymorph into
+        // a bare seq.
         const input = choice(
             variant('a', seq(field('op', str('+')), field('r', sym('expr')))),
             variant('b', seq(field('op', str('-')), field('r', sym('expr')))),
         )
-        const expected = seq(field('op', choice(str('+'), str('-'))), field('r', sym('expr')))
-        expect(canonicalize(input)).toEqual(expected)
+        const result = canonicalize(input) as { type: 'choice'; members: Rule[] }
+        expect(result.type).toBe('choice')
+        expect(result.members).toHaveLength(2)
+        expect(result.members[0]!.type).toBe('variant')
+        expect(result.members[1]!.type).toBe('variant')
     })
 
     it('dedupes identical contents across branches', () => {

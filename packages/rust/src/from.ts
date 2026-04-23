@@ -1369,7 +1369,6 @@ export function binaryExpressionFrom(input: T.BinaryExpression.Loose): ReturnTyp
   if (isNodeData(input)) return input;
   return F.binaryExpression({
     left: _resolveOne(input.left, _K4, _K5),
-    operator: _resolveOne(input.operator, _K0, _K0),
     right: _resolveOne(input.right, _K4, _K5),
   });
 }

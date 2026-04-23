@@ -367,7 +367,7 @@ export function wrapTryStatement(data: _NodeData, tree: TreeHandle): WrappedNode
 export function wrapExceptClause(data: _NodeData, tree: TreeHandle): WrappedNode<ExceptClause> {
   return {
     ...data,
-    get value() { return drillInAll(data.$fields?.['value'], tree); },
+    get value() { return drillIn(data.$fields?.['value'], tree); },
     get alias() { return drillIn(data.$fields?.['alias'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ExceptClause>;

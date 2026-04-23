@@ -424,12 +424,12 @@ const _super_semicolon: readonly string[] = ["_automatic_semicolon"];
 const _K0: readonly string[] = ["string"];
 const _K1: readonly string[] = [];
 const _K2: readonly string[] = ["import_clause","string","import_require_clause"];
-const _K3: readonly string[] = ["lexical_declaration","variable_declaration","expression","sequence_expression"];
-const _K4: readonly string[] = ["_lhs_expression","parenthesized_expression","object_pattern","array_pattern"];
+const _K3: readonly string[] = ["lexical_declaration","variable_declaration"];
+const _K4: readonly string[] = ["_lhs_expression","parenthesized_expression"];
 const _K5: readonly string[] = ["shorthand_property_identifier_pattern","object_pattern","array_pattern"];
 const _K6: readonly string[] = ["jsx_text","html_character_reference"];
 const _K7: readonly string[] = ["jsx_element","jsx_self_closing_element","jsx_expression"];
-const _K8: readonly string[] = ["jsx_namespace_name","member_expression"];
+const _K8: readonly string[] = ["jsx_namespace_name"];
 const _K9: readonly string[] = ["member_expression"];
 const _K10: readonly string[] = ["member_expression","jsx_namespace_name"];
 const _K11: readonly string[] = ["type_annotation","asserts_annotation","type_predicate_annotation"];
@@ -746,8 +746,8 @@ export function forInStatementFrom(input: T.ForInStatement.Loose): ReturnType<ty
   if (isNodeData(input)) return input;
   return F.forInStatement({
     await: _resolveBooleanKeyword(input.await),
-    left: _resolveOne(input.left, _super_jsx_identifier, _K4),
-    kind: _resolveOne(input.kind, _K1, _K1),
+    left: _resolveOne(input.left, _K1, _K4),
+    kind: _resolveBooleanKeyword(input.kind),
     value: _resolveOneBranch(input.value, "expression"),
     operator: _resolveOne(input.operator, _K1, _K1),
     right: _resolveOne(input.right, _K1, _super_expressions),

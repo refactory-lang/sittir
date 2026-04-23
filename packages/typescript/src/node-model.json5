@@ -1082,19 +1082,13 @@
               "name": "declaration",
               "propertyName": "declaration",
               "paramName": "declaration",
-              "required": false,
+              "required": true,
               "multiple": false,
               "nonEmpty": false,
               "values": [
                 {
                   "kind": "node-ref",
                   "multiplicity": "single",
-                  "name": "declaration",
-                  "unresolved": true
-                },
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "optional",
                   "name": "declaration",
                   "unresolved": true
                 }
@@ -1261,19 +1255,13 @@
           "name": "declaration",
           "propertyName": "declaration",
           "paramName": "declaration",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "declaration",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
               "name": "declaration",
               "unresolved": true
             }
@@ -1568,18 +1556,6 @@
               "multiplicity": "single",
               "name": "parenthesized_expression",
               "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_destructuring_pattern",
-              "unresolved": true
             }
           ],
           "source": "grammar",
@@ -1587,9 +1563,7 @@
             "typeName": "",
             "kinds": [
               "_lhs_expression",
-              "parenthesized_expression",
-              "identifier",
-              "_destructuring_pattern"
+              "parenthesized_expression"
             ]
           }
         },
@@ -1605,16 +1579,6 @@
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "var"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "let"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "const"
             }
           ],
           "source": "grammar",
@@ -2210,18 +2174,6 @@
               "multiplicity": "optional",
               "name": "jsx_namespace_name",
               "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "member_expression",
-              "unresolved": true
             }
           ],
           "source": "grammar",
@@ -2229,9 +2181,7 @@
             "typeName": "",
             "kinds": [
               "_jsx_identifier",
-              "jsx_namespace_name",
-              "identifier",
-              "member_expression"
+              "jsx_namespace_name"
             ]
           }
         },
@@ -8462,19 +8412,13 @@
               "name": "declaration",
               "propertyName": "declaration",
               "paramName": "declaration",
-              "required": false,
+              "required": true,
               "multiple": false,
               "nonEmpty": false,
               "values": [
                 {
                   "kind": "node-ref",
                   "multiplicity": "single",
-                  "name": "declaration",
-                  "unresolved": true
-                },
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "optional",
                   "name": "declaration",
                   "unresolved": true
                 }
@@ -8641,19 +8585,13 @@
           "name": "declaration",
           "propertyName": "declaration",
           "paramName": "declaration",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "declaration",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
               "name": "declaration",
               "unresolved": true
             }
@@ -9502,18 +9440,6 @@
               "multiplicity": "single",
               "name": "parenthesized_expression",
               "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_destructuring_pattern",
-              "unresolved": true
             }
           ],
           "source": "grammar",
@@ -9521,9 +9447,7 @@
             "typeName": "",
             "kinds": [
               "_lhs_expression",
-              "parenthesized_expression",
-              "identifier",
-              "_destructuring_pattern"
+              "parenthesized_expression"
             ]
           }
         },
@@ -9539,16 +9463,6 @@
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "var"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "let"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "const"
             }
           ],
           "source": "grammar",
@@ -9697,18 +9611,6 @@
               "multiplicity": "single",
               "name": "variable_declaration",
               "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_expressions",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "empty_statement",
-              "unresolved": true
             }
           ],
           "source": "grammar",
@@ -9716,9 +9618,7 @@
             "typeName": "",
             "kinds": [
               "lexical_declaration",
-              "variable_declaration",
-              "_expressions",
-              "empty_statement"
+              "variable_declaration"
             ]
           }
         },
@@ -13194,18 +13094,6 @@
               "multiplicity": "optional",
               "name": "jsx_namespace_name",
               "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "member_expression",
-              "unresolved": true
             }
           ],
           "source": "grammar",
@@ -13213,9 +13101,7 @@
             "typeName": "",
             "kinds": [
               "_jsx_identifier",
-              "jsx_namespace_name",
-              "identifier",
-              "member_expression"
+              "jsx_namespace_name"
             ]
           }
         },
@@ -13295,18 +13181,6 @@
               "multiplicity": "optional",
               "name": "jsx_namespace_name",
               "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "member_expression",
-              "unresolved": true
             }
           ],
           "source": "grammar",
@@ -13314,9 +13188,7 @@
             "typeName": "",
             "kinds": [
               "_jsx_identifier",
-              "jsx_namespace_name",
-              "identifier",
-              "member_expression"
+              "jsx_namespace_name"
             ]
           }
         },

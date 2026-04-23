@@ -2083,7 +2083,7 @@ describe('export_statement_default', () => {
     expect(node.$source).toBe('factory');
   });
   it('form1 form produces correct type', () => {
-    const node = ir.exportStatementDefault.form1({ decorator: [{ $type: 'decorator', $text: 'test' } as any] });
+    const node = ir.exportStatementDefault.form1({ decorator: [{ $type: 'decorator', $text: 'test' } as any], declaration: { $type: 'declaration', $text: 'test' } as any });
     expect(node.$type).toBe('export_statement_default');
     expect(node.$source).toBe('factory');
   });

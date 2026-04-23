@@ -607,7 +607,7 @@ export function exceptClause(config: T.ExceptClause.Config) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    value(...values: NonEmptyArray<T.Expression>) { return _fsm(config, exceptClause, 'value', values, fields.value); },
+    value(value?: T.Expression | undefined) { return _fs(config, exceptClause, 'value', value, fields.value); },
     alias(value?: T.Expression | undefined) { return _fs(config, exceptClause, 'alias', value, fields.alias); },
     child(value?: T.Suite) {
       if (value === undefined) return children[0];
@@ -1353,7 +1353,7 @@ export function notOperator(config: T.NotOperator.Config) {
 export function booleanOperator(config: T.BooleanOperator.Config) {
   const fields = {
     left: config.left,
-    operator: config.operator,
+    operator: "and" as const,
     right: config.right,
   };
   return {
@@ -1362,7 +1362,7 @@ export function booleanOperator(config: T.BooleanOperator.Config) {
     $named: true as const,
     $fields: fields,
     left(value?: T.Expression) { return _fs(config, booleanOperator, 'left', value, fields.left); },
-    operator(value?: "and" | "or") { return _fs(config, booleanOperator, 'operator', value, fields.operator); },
+    get operator() { return fields.operator; },
     right(value?: T.Expression) { return _fs(config, booleanOperator, 'right', value, fields.right); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -1376,7 +1376,7 @@ export function booleanOperator(config: T.BooleanOperator.Config) {
 export function binaryOperator(config: T.BinaryOperator.Config) {
   const fields = {
     left: config.left,
-    operator: config.operator,
+    operator: "+" as const,
     right: config.right,
   };
   return {
@@ -1385,7 +1385,7 @@ export function binaryOperator(config: T.BinaryOperator.Config) {
     $named: true as const,
     $fields: fields,
     left(value?: T.PrimaryExpression) { return _fs(config, binaryOperator, 'left', value, fields.left); },
-    operator(value?: "+" | "-" | "*" | "@" | "/" | "%" | "//" | "**" | "|" | "&" | "^" | "<<" | ">>") { return _fs(config, binaryOperator, 'operator', value, fields.operator); },
+    get operator() { return fields.operator; },
     right(value?: T.PrimaryExpression) { return _fs(config, binaryOperator, 'right', value, fields.right); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {

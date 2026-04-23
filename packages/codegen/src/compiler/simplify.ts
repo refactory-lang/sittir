@@ -124,14 +124,26 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
     }
 }
 
-/** Simplify every rule in an OptimizedGrammar's rules map. */
+/**
+ * Simplify every rule in an OptimizedGrammar's rules map.
+ *
+ * Pipeline per rule (spec 013):
+ *   1. `simplifyRule` — strip anon delimiters, collapse single-member
+ *      wrappers (legacy behavior).
+ *   2. `canonicalize` — merge structurally-equivalent choice branches
+ *      so same-named fields across branches fuse into a single
+ *      `field(name, choice(v1, v2, …))`. Closes the root cause of
+ *      `BinaryExpression.operator: AutoStamp<"&&">`-style bugs where
+ *      derivation walked an uncanonical tree and silently dropped
+ *      duplicate-named field occurrences across choice branches.
+ */
 export function simplifyRules(
     rules: Record<string, Rule>,
     wordMatcher?: RegExp,
 ): Record<string, Rule> {
     const out: Record<string, Rule> = {}
     for (const [name, rule] of Object.entries(rules)) {
-        out[name] = simplifyRule(rule, wordMatcher)
+        out[name] = canonicalize(simplifyRule(rule, wordMatcher))
     }
     return out
 }
@@ -266,7 +278,12 @@ function recurseCanonicalize(rule: Rule): Rule {
  */
 function mergeChoiceBranches(rule: ChoiceRule): Rule {
     if (rule.members.length === 0) return rule
-    // Unwrap variant/group wrappers to expose the seq inside.
+    // NEVER unwrap variant() — variants mark intentional polymorph-
+    // distinct branches that must retain their identity. If ANY
+    // member is variant-wrapped, bail: this choice is a polymorph
+    // surface, not a mergeable same-shape choice.
+    if (rule.members.some(m => m.type === 'variant')) return rule
+    // Unwrap only group/clause wrappers (purely structural).
     const unwrapped = rule.members.map(unwrapForMerge)
     // Every branch must be a seq of the same length.
     if (!unwrapped.every((b): b is SeqRule => b.type === 'seq')) return rule
@@ -288,16 +305,17 @@ function mergeChoiceBranches(rule: ChoiceRule): Rule {
     return { type: 'seq', members: mergedMembers }
 }
 
-/** Peel `variant` / `group` / `clause` wrappers to expose the seq inside. */
+/**
+ * Peel `group` wrappers to expose the seq inside.
+ *
+ * **Only sequences and groups are mergeable.** `variant` wrappers mark
+ * intentional polymorph-distinct branches and must never be unwrapped
+ * here (the caller bails before reaching us if any member is variant).
+ * `clause` carries semantic identity too — leave as-is.
+ */
 function unwrapForMerge(rule: Rule): Rule {
-    switch (rule.type) {
-        case 'variant':
-        case 'group':
-        case 'clause':
-            return unwrapForMerge(rule.content)
-        default:
-            return rule
-    }
+    if (rule.type === 'group') return unwrapForMerge(rule.content)
+    return rule
 }
 
 /**

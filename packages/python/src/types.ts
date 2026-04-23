@@ -584,7 +584,7 @@ export interface TryStatement {
 export interface ExceptClause {
   readonly $type: 'except_clause';
   readonly $fields: {
-    readonly value?: NonEmptyArray<Expression>;
+    readonly value?: Expression;
     readonly alias?: Expression;
   };
   readonly $children: readonly [Suite];
@@ -876,7 +876,7 @@ export interface BooleanOperator {
   readonly $type: 'boolean_operator';
   readonly $fields: {
     readonly left: Expression;
-    readonly operator: "and" | "or";
+    readonly operator: AutoStamp<"and">;
     readonly right: Expression;
   };
 }
@@ -885,7 +885,7 @@ export interface BinaryOperator {
   readonly $type: 'binary_operator';
   readonly $fields: {
     readonly left: PrimaryExpression;
-    readonly operator: "+" | "-" | "*" | "@" | "/" | "%" | "//" | "**" | "|" | "&" | "^" | "<<" | ">>";
+    readonly operator: AutoStamp<"+">;
     readonly right: PrimaryExpression;
   };
 }
