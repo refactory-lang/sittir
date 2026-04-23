@@ -21,7 +21,8 @@ import type { RoundTripDiagnostic } from './emitters/suggested.ts';
 import { compileParser } from './transpile/compile-parser.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { writeJinjaTemplates } from './emitters/templates.ts';
-import { emitHashFiles, type Grammar as RustRenderGrammar } from './emitters/rust-render.ts';
+import { emitRenderCrate, type Grammar as RustRenderGrammar } from './emitters/rust-render.ts';
+import { readdirSync, readFileSync, copyFileSync, existsSync, rmSync } from 'node:fs';
 import type { TemplateFile } from './emitters/template-hash.ts';
 
 interface CodegenConfig {
@@ -253,12 +254,36 @@ if (cliArgs.rustRender) {
 	for (const [kind, body] of result.jinjaTemplates.bodies) {
 		templateFiles.push({ filename: `${kind}.jinja`, content: body });
 	}
-	const emit = emitHashFiles(grammar as RustRenderGrammar, templateFiles);
+	const emit = emitRenderCrate(grammar as RustRenderGrammar, templateFiles, result.nodeMap);
 	writeFile(emit.hashRs.path, emit.hashRs.contents);
 	writeFile(emit.hashTs.path, emit.hashTs.contents);
-	console.log(`  → rust-render hash files for ${grammar}:`);
+	writeFile(emit.templatesRs.path, emit.templatesRs.contents);
+	writeFile(emit.libRs.path, emit.libRs.contents);
+	writeFile(emit.cargoToml.path, emit.cargoToml.contents);
+	// Copy the per-kind `.jinja` files into the render-crate's templates/
+	// directory so askama's build-time `#[template(path = ...)]` can
+	// resolve them (T030). Stale files (no longer in jinjaTemplates) are
+	// removed so regenerations don't accumulate dead templates.
+	const srcTemplatesDir = join(dirname(outDir), 'templates');
+	const dstTemplatesDir = `packages/${grammar}/rust-render/templates`;
+	mkdirSync(dstTemplatesDir, { recursive: true });
+	const emittedNames = new Set<string>();
+	for (const [kind] of result.jinjaTemplates.bodies) {
+		const fname = `${kind}.jinja`;
+		copyFileSync(join(srcTemplatesDir, fname), join(dstTemplatesDir, fname));
+		emittedNames.add(fname);
+	}
+	for (const existing of readdirSync(dstTemplatesDir)) {
+		if (!existing.endsWith('.jinja')) continue;
+		if (!emittedNames.has(existing)) rmSync(join(dstTemplatesDir, existing), { force: true });
+	}
+	console.log(`  → rust-render crate regenerated for ${grammar}:`);
 	console.log(`    ${emit.hashRs.path}`);
 	console.log(`    ${emit.hashTs.path}`);
+	console.log(`    ${emit.templatesRs.path}`);
+	console.log(`    ${emit.libRs.path}`);
+	console.log(`    ${emit.cargoToml.path}`);
+	console.log(`    ${dstTemplatesDir}/ (${emittedNames.size} .jinja files)`);
 }
 
 // Write validator-only factory metadata.
