@@ -152,6 +152,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
     resolveCollidingNames(nodes)
     resolveIrKeys(nodes)
     markParameterlessKinds(nodes)
+    markUserFacing(nodes)
 
     return {
         name: optimized.name,
@@ -635,6 +636,56 @@ function resolveHiddenRuleContent(
  *   - `visible ≥ 2` → rename lower-priority visible(s) via {@link renameCollidingVisibleKinds}
  *   - `hidden ≥ 2` → rename lower-priority hidden(s) via {@link renameCollidingHiddenOnlyKinds}
  */
+/**
+ * Populate each node's `userFacing` flag — the single source of truth
+ * for whether emitters (templates, factories, types, IR) should
+ * produce output for the kind.
+ *
+ * - `token` / `multi` modelTypes: never user-facing (structural helpers).
+ * - Visible kinds (not `_`-prefixed): user-facing.
+ * - Hidden kinds: user-facing only when they're alias sources
+ *   (referenced elsewhere via `aliasedFrom`, meaning factories
+ *   stamp this kind as `$type`).
+ *
+ * Alias-source detection: walk every node's field / child value
+ * slots and collect unresolved-ref names starting with `_`. Those
+ * references only exist in the emitted NodeMap when
+ * `walkForChildren` / `deriveValuesForRule` stamped the source
+ * (`aliasedFrom`) rather than the visible target.
+ */
+function markUserFacing(nodes: Map<string, AssembledNode>): void {
+    const aliasSourceKinds = new Set<string>()
+    for (const [, n] of nodes) {
+        const fieldSlots =
+            n.modelType === 'polymorph' ? n.allFormFields
+            : (n.modelType === 'branch' || n.modelType === 'group') ? n.fields
+            : []
+        const childSlots =
+            (n.modelType === 'branch' || n.modelType === 'container' || n.modelType === 'group')
+                ? (n.children ?? []) : []
+        for (const slot of [...fieldSlots, ...childSlots]) {
+            for (const v of slot.values) {
+                if (!isNodeRef(v)) continue
+                const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind
+                if (name.startsWith('_')) aliasSourceKinds.add(name)
+            }
+        }
+    }
+    for (const [kind, n] of nodes) {
+        if (n.modelType === 'token' || n.modelType === 'multi') {
+            n.userFacing = false
+            continue
+        }
+        if (!kind.startsWith('_')) {
+            n.userFacing = true
+            continue
+        }
+        // Hidden — user-facing only when referenced as alias source,
+        // or when it's a polymorph (dispatched into via $variant).
+        n.userFacing = aliasSourceKinds.has(kind) || n.modelType === 'polymorph'
+    }
+}
+
 function resolveCollidingNames(nodes: Map<string, AssembledNode>): void {
     // Group nodes by typeName. Preferred winner: the non-hidden kind.
     const byType = new Map<string, AssembledNode[]>()

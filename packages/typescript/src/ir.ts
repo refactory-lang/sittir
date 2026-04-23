@@ -45,12 +45,14 @@ export const jsxChild = {
 } as const;
 
 export const jsxIdentifier = {
+  jsx: F.jsxIdentifier,
   identifier: F.identifier,
 } as const;
 
 export const jsxElementName = {
+  jsx: F.jsxIdentifier,
   identifier: F.identifier,
-  member: _attach(F.memberExpression, { from: FR.memberExpressionFrom }),
+  nested: _attach(F.nestedIdentifier, { from: FR.nestedIdentifierFrom }),
   jsxNamespace: _attach(F.jsxNamespaceName, { from: FR.jsxNamespaceNameFrom }),
 } as const;
 
@@ -59,12 +61,12 @@ export const jsxAttribute = {
 } as const;
 
 export const jsxAttributeName = {
-  property: F.propertyIdentifier,
+  jsx: F.jsxIdentifier,
+  identifier: F.identifier,
   jsxNamespace: _attach(F.jsxNamespaceName, { from: FR.jsxNamespaceNameFrom }),
 } as const;
 
 export const jsxAttributeValue = {
-  string: _attach(F.string, { from: FR.stringFrom, "double": _attach(F.stringUFormDouble, { from: FR.stringUFormDoubleFrom }), "single": _attach(F.stringUFormSingle, { from: FR.stringUFormSingleFrom }) }),
   jsx: _attach(F.jsxExpression, { from: FR.jsxExpressionFrom }),
   jsxSelfClosing: _attach(F.jsxSelfClosingElement, { from: FR.jsxSelfClosingElementFrom }),
 } as const;
@@ -85,11 +87,27 @@ export const identifier = {
 } as const;
 
 export const propertyName = {
-  property: F.propertyIdentifier,
+  identifier: F.identifier,
   privateProperty: F.privatePropertyIdentifier,
   string: _attach(F.string, { from: FR.stringFrom, "double": _attach(F.stringUFormDouble, { from: FR.stringUFormDoubleFrom }), "single": _attach(F.stringUFormSingle, { from: FR.stringUFormSingleFrom }) }),
   number: F.number,
   computedProperty: _attach(F.computedPropertyName, { from: FR.computedPropertyNameFrom }),
+} as const;
+
+export const statementIdentifier = {
+  identifier: F.identifier,
+} as const;
+
+export const shorthandPropertyIdentifier = {
+  identifier: F.identifier,
+} as const;
+
+export const shorthandPropertyIdentifierPattern = {
+  identifier: F.identifier,
+} as const;
+
+export const propertyIdentifier = {
+  identifier: F.identifier,
 } as const;
 
 export const importIdentifier = {
@@ -101,28 +119,28 @@ export const type = {
   readonly: _attach(F.readonlyType, { from: FR.readonlyTypeFrom }),
   constructor: _attach(F.constructorType, { from: FR.constructorTypeFrom }),
   infer: _attach(F.inferType, { from: FR.inferTypeFrom }),
-  member: _attach(F.memberExpression, { from: FR.memberExpressionFrom }),
-  call: _attach(F.callExpression, { from: FR.callExpressionFrom, "call": _attach(F.callExpressionUFormCall, { from: FR.callExpressionUFormCallFrom }), "template_call": _attach(F.callExpressionUFormTemplateCall, { from: FR.callExpressionUFormTemplateCallFrom }), "member": _attach(F.callExpressionUFormMember, { from: FR.callExpressionUFormMemberFrom }) }),
 } as const;
 
 export const tupleTypeMember = {
-  required: _attach(F.requiredParameter, { from: FR.requiredParameterFrom }),
-  optional: _attach(F.optionalParameter, { from: FR.optionalParameterFrom }),
+  tuple: _attach(F.tupleParameter, { from: FR.tupleParameterFrom }),
+  optionalTuple: _attach(F.optionalTupleParameter, { from: FR.optionalTupleParameterFrom }),
+  optional: _attach(F.optionalType, { from: FR.optionalTypeFrom }),
   rest: _attach(F.restType, { from: FR.restTypeFrom }),
 } as const;
 
 export const primaryType = {
   parenthesized: _attach(F.parenthesizedType, { from: FR.parenthesizedTypeFrom }),
   predefined: F.predefinedType,
-  type: F.typeIdentifier,
+  identifier: F.identifier,
   nestedType: _attach(F.nestedTypeIdentifier, { from: FR.nestedTypeIdentifierFrom }),
   generic: _attach(F.genericType, { from: FR.genericTypeFrom }),
   object: _attach(F.objectType, { from: FR.objectTypeFrom }),
   array: _attach(F.arrayType, { from: FR.arrayTypeFrom }),
   tuple: _attach(F.tupleType, { from: FR.tupleTypeFrom }),
   flowMaybe: _attach(F.flowMaybeType, { from: FR.flowMaybeTypeFrom }),
+  type: _attach(F.typeQuery, { from: FR.typeQueryFrom }),
   indexType: _attach(F.indexTypeQuery, { from: FR.indexTypeQueryFrom }),
-  this_: F.thisType,
+  this_: F.this_,
   literal: _attach(F.literalType, { from: FR.literalTypeFrom }),
   lookup: _attach(F.lookupType, { from: FR.lookupTypeFrom }),
   conditional: _attach(F.conditionalType, { from: FR.conditionalTypeFrom }),
@@ -228,8 +246,6 @@ export const ir = {
   pair: _attach(F.pair, { from: FR.pairFrom }),
   pairPattern: _attach(F.pairPattern, { from: FR.pairPatternFrom }),
   computedPropertyName: _attach(F.computedPropertyName, { from: FR.computedPropertyNameFrom }),
-  shorthandPropertyIdentifier: _attach(F.shorthandPropertyIdentifier, { from: FR.shorthandPropertyIdentifierFrom }),
-  shorthandPropertyIdentifierPattern: _attach(F.shorthandPropertyIdentifierPattern, { from: FR.shorthandPropertyIdentifierPatternFrom }),
   publicField: _attach(F.publicFieldDefinition, { from: FR.publicFieldDefinitionFrom }),
   nonNull: _attach(F.nonNullExpression, { from: FR.nonNullExpressionFrom }),
   methodSignature: _attach(F.methodSignature, { from: FR.methodSignatureFrom }),
@@ -298,29 +314,6 @@ export const ir = {
   unionType: _attach(F.unionType, { from: FR.unionTypeFrom }),
   intersectionType: _attach(F.intersectionType, { from: FR.intersectionTypeFrom }),
   functionType: _attach(F.functionType, { from: FR.functionTypeFrom }),
-  interfaceBody: _attach(F.interfaceBody, { from: FR.interfaceBodyFrom }),
-  exportStatementDefault: _attach(F.exportStatementDefault, { from: FR.exportStatementDefaultFrom, "form0": _attach(F.exportStatementDefaultForm0, { from: FR.exportStatementDefaultForm0From }), "form1": _attach(F.exportStatementDefaultForm1, { from: FR.exportStatementDefaultForm1From }) }),
-  exportStatementTypeExport: _attach(F.exportStatementTypeExport, { from: FR.exportStatementTypeExportFrom }),
-  exportStatementEqualsExport: _attach(F.exportStatementEqualsExport, { from: FR.exportStatementEqualsExportFrom }),
-  exportStatementNamespaceExport: _attach(F.exportStatementNamespaceExport, { from: FR.exportStatementNamespaceExportFrom }),
-  importClauseNamespaceImport: _attach(F.importClauseNamespaceImport, { from: FR.importClauseNamespaceImportFrom }),
-  importClauseNamedImports: _attach(F.importClauseNamedImports, { from: FR.importClauseNamedImportsFrom }),
-  importClauseDefaultImport: _attach(F.importClauseDefaultImport, { from: FR.importClauseDefaultImportFrom }),
-  importSpecifierName: _attach(F.importSpecifierName, { from: FR.importSpecifierNameFrom }),
-  importSpecifierAs: _attach(F.importSpecifierAs, { from: FR.importSpecifierAsFrom }),
-  parenthesizedExpressionTyped: _attach(F.parenthesizedExpressionTyped, { from: FR.parenthesizedExpressionTypedFrom }),
-  parenthesizedExpressionSequence: _attach(F.parenthesizedExpressionSequence, { from: FR.parenthesizedExpressionSequenceFrom }),
-  classHeritageExtendsClause: _attach(F.classHeritageExtendsClause, { from: FR.classHeritageExtendsClauseFrom }),
-  classHeritageImplementsClause: _attach(F.classHeritageImplementsClause, { from: FR.classHeritageImplementsClauseFrom }),
-  arrowFunctionParameter: _attach(F.arrowFunctionParameter, { from: FR.arrowFunctionParameterFrom }),
-  arrowFunctionCallSignature: _attach(F.arrowFunctionUCallSignature, { from: FR.arrowFunctionUCallSignatureFrom }),
-  callExpressionCall: _attach(F.callExpressionCall, { from: FR.callExpressionCallFrom }),
-  callExpressionTemplateCall: _attach(F.callExpressionTemplateCall, { from: FR.callExpressionTemplateCallFrom }),
-  callExpressionMember: _attach(F.callExpressionMember, { from: FR.callExpressionMemberFrom }),
-  stringDouble: _attach(F.stringDouble, { from: FR.stringDoubleFrom }),
-  stringSingle: _attach(F.stringSingle, { from: FR.stringSingleFrom }),
-  indexSignatureColon: _attach(F.indexSignatureColon, { from: FR.indexSignatureColonFrom }),
-  indexSignatureMappedTypeClause: _attach(F.indexSignatureMappedTypeClause, { from: FR.indexSignatureMappedTypeClauseFrom }),
 
   // Keyword factories
   import_: F.import_,
@@ -331,7 +324,6 @@ export const ir = {
   null_: F.null_,
   undefined: F.undefined_,
   overrideModifier: F.overrideModifier,
-  thisType: F.thisType,
 
   // Leaf node factories
   hashBangLine: F.hashBangLine,
@@ -349,12 +341,8 @@ export const ir = {
   identifier2: F.identifier,
   privatePropertyIdentifier: F.privatePropertyIdentifier,
   metaProperty: F.metaProperty,
-  statementIdentifier: F.statementIdentifier,
-  propertyIdentifier: F.propertyIdentifier,
-  stringFragment: F.stringFragment,
   accessibilityModifier: F.accessibilityModifier,
   predefinedType: F.predefinedType,
-  typeIdentifier: F.typeIdentifier,
   htmlComment: F.htmlComment,
   jsxText: F.jsxText,
 
@@ -372,6 +360,10 @@ export const ir = {
   destructuringPattern,
   identifier,
   propertyName,
+  statementIdentifier,
+  shorthandPropertyIdentifier,
+  shorthandPropertyIdentifierPattern,
+  propertyIdentifier,
   importIdentifier,
   type,
   tupleTypeMember,

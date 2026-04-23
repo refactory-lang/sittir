@@ -122,11 +122,6 @@
     "pair_pattern": "config",
     "computed_property_name": "config",
     "_reserved_identifier": "text",
-    "statement_identifier": "text",
-    "shorthand_property_identifier": "children",
-    "shorthand_property_identifier_pattern": "children",
-    "property_identifier": "text",
-    "string_fragment": "text",
     "public_field_definition": "config",
     "non_null_expression": "config",
     "method_signature": "config",
@@ -203,31 +198,6 @@
     "union_type": "config",
     "intersection_type": "config",
     "function_type": "config",
-    "interface_body": "children",
-    "this_type": "text",
-    "type_identifier": "text",
-    "export_statement_default": "config",
-    "export_statement_type_export": "config",
-    "export_statement_equals_export": "children",
-    "export_statement_namespace_export": "children",
-    "import_clause_namespace_import": "children",
-    "import_clause_named_imports": "children",
-    "import_clause_default_import": "children",
-    "import_specifier_name": "config",
-    "import_specifier_as": "config",
-    "parenthesized_expression_typed": "config",
-    "parenthesized_expression_sequence": "children",
-    "class_heritage_extends_clause": "children",
-    "class_heritage_implements_clause": "children",
-    "arrow_function_parameter": "config",
-    "arrow_function__call_signature": "config",
-    "call_expression_call": "config",
-    "call_expression_template_call": "config",
-    "call_expression_member": "config",
-    "string_double": "children",
-    "string_single": "children",
-    "index_signature_colon": "config",
-    "index_signature_mapped_type_clause": "children",
     "html_comment": "text",
     "||": "text",
     "jsx_text": "text",
@@ -286,6 +256,12 @@
     },
     "continue_statement.label": {
       "statement_identifier": "identifier"
+    },
+    "labeled_statement.label": {
+      "statement_identifier": "_statement_identifier"
+    },
+    "object_assignment_pattern.left": {
+      "shorthand_property_identifier_pattern": "_shorthand_property_identifier_pattern"
     },
     "nested_identifier.object": {
       "member_expression": "nested_identifier"
@@ -349,9 +325,6 @@
       "identifier": "_reserved_identifier"
     },
     "_index_signature_colon.name": {
-      "identifier": "_reserved_identifier"
-    },
-    "arrow_function_parameter.parameter": {
       "identifier": "_reserved_identifier"
     }
   },
@@ -819,39 +792,6 @@
       "type_parameters",
       "parameters",
       "return_type"
-    ],
-    "import_specifier_name": [
-      "name"
-    ],
-    "import_specifier_as": [
-      "name",
-      "alias"
-    ],
-    "arrow_function_parameter": [
-      "parameter"
-    ],
-    "arrow_function__call_signature": [
-      "type_parameters",
-      "parameters",
-      "return_type"
-    ],
-    "call_expression_call": [
-      "function",
-      "type_arguments",
-      "arguments"
-    ],
-    "call_expression_template_call": [
-      "function",
-      "arguments"
-    ],
-    "call_expression_member": [
-      "function",
-      "type_arguments",
-      "arguments"
-    ],
-    "index_signature_colon": [
-      "name",
-      "index_type"
     ]
   },
   "polymorphVariants": {
@@ -933,17 +873,6 @@
       "childKind": {
         "index_signature_colon": "colon",
         "index_signature_mapped_type_clause": "mapped_type_clause"
-      }
-    },
-    "export_statement_default": {
-      "source": "promoted",
-      "fields": {
-        "form0": [],
-        "form1": [
-          "decorator",
-          "declaration",
-          "value"
-        ]
       }
     }
   }

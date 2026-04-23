@@ -132,11 +132,6 @@ export const _fromMap = {
   "await": await_From,
   "comment": commentFrom,
   "line_continuation": lineContinuationFrom,
-  "as_pattern_target": asPatternTargetFrom,
-  "format_expression": formatExpressionFrom,
-  "assignment_eq": assignmentEqFrom,
-  "assignment_type": assignmentTypeFrom,
-  "assignment_typed": assignmentTypedFrom,
   "string_start": stringStartFrom,
   "escape_interpolation": escapeInterpolationFrom,
   "string_end": stringEndFrom,
@@ -321,7 +316,7 @@ const _super_expression: readonly string[] = ["comparison_operator","not_operato
 const _super_keyword_identifier: readonly string[] = ["identifier"];
 const _super_expressions: readonly string[] = ["expression","expression_list"];
 const _super_left_hand_side: readonly string[] = ["pattern","pattern_list"];
-const _super_expression_within_for_in_clause: readonly string[] = ["expression","lambda"];
+const _super_expression_within_for_in_clause: readonly string[] = ["expression","lambda_within_for_in_clause"];
 const _super_right_hand_side: readonly string[] = ["expression","expression_list","assignment","augmented_assignment","pattern_list","yield"];
 const _super_f_expression: readonly string[] = ["expression","expression_list","pattern_list","yield"];
 const _K0: readonly string[] = [];
@@ -334,7 +329,7 @@ const _K6: readonly string[] = ["class_definition","function_definition"];
 const _K7: readonly string[] = ["integer","float"];
 const _K8: readonly string[] = ["tuple_pattern"];
 const _K9: readonly string[] = ["identifier","integer","float","true","false","none"];
-const _K10: readonly string[] = ["await","binary_operator","keyword_identifier","string","concatenated_string","unary_operator","attribute","subscript","call","list","list_comprehension","dictionary","dictionary_comprehension","set","set_comprehension","tuple","parenthesized_expression","generator_expression","list_splat"];
+const _K10: readonly string[] = ["await","binary_operator","keyword_identifier","string","concatenated_string","unary_operator","attribute","subscript","call","list","list_comprehension","dictionary","dictionary_comprehension","set","set_comprehension","tuple","parenthesized_expression","generator_expression","list_splat_pattern"];
 const _K11: readonly string[] = ["_not_in","_is_not"];
 const _K12: readonly string[] = ["keyword_identifier","subscript","attribute","list_splat_pattern","tuple_pattern","list_pattern"];
 const _K13: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","primary_expression","conditional_expression","named_expression","as_pattern","slice"];
@@ -512,7 +507,7 @@ export function matchStatementFrom(input: T.MatchStatement.Loose): ReturnType<ty
   _assertNonEmpty(_ne_subject, 'match_statement.subject');
   return F.matchStatement({
     subject: _ne_subject,
-    body: _resolveOneBranch(input.body, "block"),
+    body: _resolveOneBranch(input.body, "_match_block"),
   });
 }
 
@@ -1300,46 +1295,6 @@ export function commentFrom(input: string | T.Comment) {
 export function lineContinuationFrom(input: string | T.LineContinuation) {
   if (isNodeData(input)) return input;
   return F.lineContinuation(input);
-}
-
-export function asPatternTargetFrom(input?: NonNullable<T.AsPatternTarget.Config['children']>[number] | T.AsPatternTarget) {
-  if (isNodeData(input) && input.$type === 'as_pattern_target') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.asPatternTarget(child);
-  }
-  return F.asPatternTarget(input);
-}
-
-export function formatExpressionFrom(input: T.FormatExpression.Loose): ReturnType<typeof F.formatExpression> {
-  if (isNodeData(input)) return input;
-  return F.formatExpression({
-    expression: _resolveOne(input.expression, _K0, _super_f_expression),
-    typeConversion: _resolveOneLeaf(input.typeConversion, "type_conversion"),
-    formatSpecifier: _resolveOneBranch(input.formatSpecifier, "format_specifier"),
-  });
-}
-
-export function assignmentEqFrom(input: T.AssignmentEq.Loose): ReturnType<typeof F.assignmentEq> {
-  if (isNodeData(input)) return input;
-  return F.assignmentEq({
-    right: _resolveOne(input.right, _K0, _super_right_hand_side),
-  });
-}
-
-export function assignmentTypeFrom(input: T.AssignmentType.Loose): ReturnType<typeof F.assignmentType> {
-  if (isNodeData(input)) return input;
-  return F.assignmentType({
-    type: _resolveOneBranch(input.type, "type"),
-  });
-}
-
-export function assignmentTypedFrom(input: T.AssignmentTyped.Loose): ReturnType<typeof F.assignmentTyped> {
-  if (isNodeData(input)) return input;
-  return F.assignmentTyped({
-    type: _resolveOneBranch(input.type, "type"),
-    right: _resolveOne(input.right, _K0, _super_right_hand_side),
-  });
 }
 
 export function stringStartFrom(input: string | T.StringStart) {

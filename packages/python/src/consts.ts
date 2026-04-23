@@ -11,12 +11,8 @@ export const NODE_KINDS = [
   'aliased_import',
   'argument_list',
   'as_pattern',
-  'as_pattern_target',
   'assert_statement',
   'assignment',
-  'assignment_eq',
-  'assignment_type',
-  'assignment_typed',
   'attribute',
   'augmented_assignment',
   'await',
@@ -53,7 +49,6 @@ export const NODE_KINDS = [
   'finally_clause',
   'for_in_clause',
   'for_statement',
-  'format_expression',
   'format_specifier',
   'function_definition',
   'future_import_statement',
@@ -302,22 +297,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'expression', required: true, multiple: false },
     { name: 'alias', required: true, multiple: false },
   ],
-  'as_pattern_target': [
-  ],
   'assert_statement': [
   ],
   'assignment': [
     { name: 'left', required: true, multiple: false },
-  ],
-  'assignment_eq': [
-    { name: 'right', required: true, multiple: false },
-  ],
-  'assignment_type': [
-    { name: 'type', required: true, multiple: false },
-  ],
-  'assignment_typed': [
-    { name: 'type', required: true, multiple: false },
-    { name: 'right', required: true, multiple: false },
   ],
   'attribute': [
     { name: 'object', required: true, multiple: false },
@@ -450,11 +433,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'right', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
     { name: 'alternative', required: false, multiple: false },
-  ],
-  'format_expression': [
-    { name: 'expression', required: true, multiple: false },
-    { name: 'typeConversion', required: false, multiple: false },
-    { name: 'formatSpecifier', required: false, multiple: false },
   ],
   'format_specifier': [
   ],

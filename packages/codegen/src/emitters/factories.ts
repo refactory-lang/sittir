@@ -394,42 +394,23 @@ function buildLeafReConsts(nodeMap: NodeMap, lines: string[]): Map<string, strin
  *   accepts the source kind so ADR-0006-symmetric dispatch works through the
  *   `_fieldAliasMap`.
  */
+// Re-export the shared helper under the existing name used throughout
+// this module — collectAliasSourceKinds lives in ./shared.ts so the
+// template emitter can use the same rule.
+import { collectAliasSourceKinds as collectAliasSourceKindsShared } from './shared.ts'
 function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
-    const aliasSourceKinds = new Set<string>()
-    // Field-level alias sources (for factory-side drillAs dispatch).
+    const out = collectAliasSourceKindsShared(nodeMap)
+    // Also include field-level aliasSources (the legacy channel —
+    // some paths populate this without a hidden-ref value slot).
     for (const [, n] of nodeMap.nodes) {
         const fs = n.modelType === 'polymorph' ? n.allFormFields
             : (n.modelType === 'branch' || n.modelType === 'group') ? n.fields : []
         for (const f of fs) {
             if (!f.aliasSources) continue
-            for (const source of Object.values(f.aliasSources)) aliasSourceKinds.add(source as string)
+            for (const source of Object.values(f.aliasSources)) out.add(source as string)
         }
     }
-    // Rule-level alias sources: every hidden kind that's pointed at
-    // by any symbol's `aliasedFrom` anywhere in any node's field or
-    // child values. Post-synthesis-removal, these hidden kinds carry
-    // the user-facing factory / interface (their visible alias target
-    // is identity-only, not a rule). Without this, `_mod_item_inline`-
-    // style hidden sources whose target is only referenced via
-    // polymorph forms / children (not via a field's aliasSources)
-    // would be filtered out of factory emission, leaving dangling
-    // references from the polymorph dispatcher.
-    //
-    // Every unresolved-ref name that starts with `_` is a reference to
-    // a hidden source kind — include those too.
-    for (const [, n] of nodeMap.nodes) {
-        const fs = n.modelType === 'polymorph' ? n.allFormFields
-            : (n.modelType === 'branch' || n.modelType === 'group') ? n.fields : []
-        const cs = (n.modelType === 'branch' || n.modelType === 'container' || n.modelType === 'group') ? (n.children ?? []) : []
-        for (const slot of [...fs, ...cs]) {
-            for (const v of slot.values) {
-                if (!isNodeRef(v)) continue
-                const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind
-                if (name.startsWith('_')) aliasSourceKinds.add(name)
-            }
-        }
-    }
-    return aliasSourceKinds
+    return out
 }
 
 /**
@@ -455,7 +436,7 @@ function emitPerNodeFactories(
     const refineByKind = new Map<string, RefineKindInfo>()
     for (const info of refineInfos ?? []) refineByKind.set(info.kind, info)
     for (const [kind, node] of nodeMap.nodes) {
-        if (kind.startsWith('_') && !aliasSourceKinds.has(kind)) continue
+        if (!node.userFacing) continue
         if (nodeMap.polymorphFormKinds.has(kind)) continue
         const source = renderFactoryForNode(node, strict, nodeMap, leafReConsts)
         if (source === undefined) continue
@@ -491,7 +472,7 @@ function buildFactoryMapEntries(
 ): MapEntry[] {
     const mapEntries: MapEntry[] = []
     for (const [kind, node] of nodeMap.nodes) {
-        if (kind.startsWith('_') && !aliasSourceKinds.has(kind)) continue
+        if (!node.userFacing) continue
         if (!node.rawFactoryName) continue
         if (nodeMap.polymorphFormKinds.has(kind)) continue
         const fluent = node.modelType === 'branch' ||

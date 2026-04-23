@@ -59,10 +59,11 @@ export function emitJinjaTemplates(config: EmitTemplatesConfig): EmittedTemplate
     const wordMatcher = compileWordMatcher(nodeMap.word, nodeMap.rules ?? {})
     const bodies = new Map<string, string>()
     for (const [kind, node] of nodeMap.nodes) {
-        // Hidden kinds (`_`-prefixed) are skipped unless they're
-        // polymorphs — factories stamp the source kind for the
-        // drilled target (ADR-0006 drillAs).
-        if (kind.startsWith('_') && node.modelType !== 'polymorph') continue
+        // Single source of truth: `node.userFacing` is set at assemble
+        // time per the shouldEmit rules (visible kind / polymorph /
+        // alias source). Skips tokens, multis, and non-alias-source
+        // hidden helpers.
+        if (!node.userFacing) continue
         // Polymorph-form groups get their own file via
         // `AssembledGroup.renderTemplate()`; skip the top-level form
         // here to avoid double emission when the form kind is also

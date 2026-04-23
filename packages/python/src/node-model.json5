@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 234,
+  "nodeCount": 229,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -342,7 +342,7 @@
     {
       "kind": "_assignment_eq",
       "modelType": "group",
-      "typeName": "_AssignmentEq",
+      "typeName": "AssignmentEq",
       "irKey": "assignmentEq",
       "hidden": true,
       "name": "_assignment_eq",
@@ -376,7 +376,7 @@
     {
       "kind": "_assignment_type",
       "modelType": "group",
-      "typeName": "_AssignmentType",
+      "typeName": "AssignmentType",
       "irKey": "assignmentType",
       "hidden": true,
       "name": "_assignment_type",
@@ -410,7 +410,7 @@
     {
       "kind": "_assignment_typed",
       "modelType": "group",
-      "typeName": "_AssignmentTyped",
+      "typeName": "AssignmentTyped",
       "irKey": "assignmentTyped",
       "hidden": true,
       "name": "_assignment_typed",
@@ -579,7 +579,7 @@
       "hidden": true,
       "subtypes": [
         "expression",
-        "lambda"
+        "lambda_within_for_in_clause"
       ]
     },
     {
@@ -1011,7 +1011,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "list_pattern",
+              "name": "_list_pattern",
               "unresolved": true
             }
           ]
@@ -1026,7 +1026,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "tuple_pattern",
+              "name": "_tuple_pattern",
               "unresolved": true
             }
           ]
@@ -1278,7 +1278,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
+              "name": "_simple_statements",
               "unresolved": true
             }
           ]
@@ -1458,13 +1458,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "parenthesized_expression",
+              "name": "parenthesized_list_splat",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "parenthesized_expression",
+              "name": "parenthesized_list_splat",
               "unresolved": true
             }
           ]
@@ -1560,136 +1560,6 @@
       "children": []
     },
     {
-      "kind": "as_pattern_target",
-      "modelType": "container",
-      "typeName": "AsPatternTarget",
-      "factoryName": "asPatternTarget",
-      "irKey": "asPatternTarget",
-      "hidden": false,
-      "children": [
-        {
-          "name": "comparison_operator",
-          "propertyName": "comparisonOperator",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "comparison_operator",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "not_operator",
-          "propertyName": "notOperator",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "not_operator",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "boolean_operator",
-          "propertyName": "booleanOperator",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "boolean_operator",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "lambda",
-          "propertyName": "lambda",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "lambda",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "primary_expression",
-          "propertyName": "primaryExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "primary_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "conditional_expression",
-          "propertyName": "conditionalExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "conditional_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "named_expression",
-          "propertyName": "namedExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "named_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "as_pattern",
-          "propertyName": "asPattern",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "as_pattern",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
-    },
-    {
       "kind": "assert",
       "modelType": "keyword",
       "typeName": "Assert",
@@ -1782,7 +1652,7 @@
                 {
                   "kind": "node-ref",
                   "multiplicity": "single",
-                  "name": "assignment_eq",
+                  "name": "_assignment_eq",
                   "unresolved": true
                 }
               ]
@@ -1832,7 +1702,7 @@
                 {
                   "kind": "node-ref",
                   "multiplicity": "single",
-                  "name": "assignment_type",
+                  "name": "_assignment_type",
                   "unresolved": true
                 }
               ]
@@ -1882,7 +1752,7 @@
                 {
                   "kind": "node-ref",
                   "multiplicity": "single",
-                  "name": "assignment_typed",
+                  "name": "_assignment_typed",
                   "unresolved": true
                 }
               ]
@@ -1936,7 +1806,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "assignment_eq",
+              "name": "_assignment_eq",
               "unresolved": true
             }
           ]
@@ -1988,7 +1858,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "assignment_type",
+              "name": "_assignment_type",
               "unresolved": true
             }
           ]
@@ -2040,137 +1910,12 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "assignment_typed",
+              "name": "_assignment_typed",
               "unresolved": true
             }
           ]
         }
       ]
-    },
-    {
-      "kind": "assignment_eq",
-      "modelType": "branch",
-      "typeName": "AssignmentEq",
-      "factoryName": "assignmentEq",
-      "irKey": "assignmentEq",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "right",
-          "propertyName": "right",
-          "paramName": "right",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_right_hand_side",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_right_hand_side"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
-      "kind": "assignment_type",
-      "modelType": "branch",
-      "typeName": "AssignmentType",
-      "factoryName": "assignmentType",
-      "irKey": "assignmentType",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "type",
-          "propertyName": "type",
-          "paramName": "type",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "type",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "type"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
-      "kind": "assignment_typed",
-      "modelType": "branch",
-      "typeName": "AssignmentTyped",
-      "factoryName": "assignmentTyped",
-      "irKey": "assignmentTyped",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "type",
-          "propertyName": "type",
-          "paramName": "type",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "type",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "type"
-            ]
-          }
-        },
-        {
-          "name": "right",
-          "propertyName": "right",
-          "paramName": "right",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_right_hand_side",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_right_hand_side"
-            ]
-          }
-        }
-      ],
-      "children": []
     },
     {
       "kind": "async",
@@ -2840,7 +2585,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "as_pattern",
+              "name": "_as_pattern",
               "unresolved": true
             }
           ]
@@ -4756,86 +4501,6 @@
       "children": []
     },
     {
-      "kind": "format_expression",
-      "modelType": "branch",
-      "typeName": "FormatExpression",
-      "factoryName": "formatExpression",
-      "irKey": "format",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "expression",
-          "propertyName": "expression",
-          "paramName": "expression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_f_expression",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_f_expression"
-            ]
-          }
-        },
-        {
-          "name": "type_conversion",
-          "propertyName": "typeConversion",
-          "paramName": "typeConversion",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "type_conversion",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "type_conversion"
-            ]
-          }
-        },
-        {
-          "name": "format_specifier",
-          "propertyName": "formatSpecifier",
-          "paramName": "formatSpecifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "format_specifier",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "format_specifier"
-            ]
-          }
-        }
-      ],
-      "children": []
-    },
-    {
       "kind": "format_specifier",
       "modelType": "container",
       "typeName": "FormatSpecifier",
@@ -4853,7 +4518,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "format_expression",
+              "name": "interpolation",
               "unresolved": true
             }
           ]
@@ -6271,7 +5936,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
+              "name": "_match_block",
               "unresolved": true
             }
           ],
@@ -6279,7 +5944,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "block"
+              "_match_block"
             ]
           },
           "aliasSources": {
@@ -6686,7 +6351,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "parenthesized_expression",
+              "name": "parenthesized_list_splat",
               "unresolved": true
             }
           ]
@@ -6826,7 +6491,7 @@
         "keyword_identifier",
         "list",
         "list_comprehension",
-        "list_splat",
+        "list_splat_pattern",
         "none",
         "parenthesized_expression",
         "set",

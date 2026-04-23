@@ -78,6 +78,18 @@ export function validateRenderable(grammar: string, templatesPath: string): Rend
     const rawEntries = loadRawEntries(grammar)
     const ruleKinds = collectRuleKindsFromPath(templatesPath)
 
+    // Post-synthesis-removal: every CST-visible kind `X` produced via
+    // `alias($._X, $.X)` has its template emitted under the SOURCE
+    // name `_X.jinja`. At runtime the renderer only sees source-kind
+    // `$type` values (drillAs remaps CST's `X` to sittir's `_X` at
+    // read time). Validation is at the top level — node-types.json
+    // lists visible `X` — so we treat `X` as renderable when `_X` is
+    // a known rule.
+    const expandedRuleKinds = new Set<string>(ruleKinds)
+    for (const kind of ruleKinds) {
+        if (kind.startsWith('_')) expandedRuleKinds.add(kind.slice(1))
+    }
+
     const missing: MissingKind[] = []
     let renderable = 0
     let total = 0
@@ -86,11 +98,11 @@ export function validateRenderable(grammar: string, templatesPath: string): Rend
         if (!isNamedEntry(entry)) continue
         total++
 
-        const path = classifyRenderability(entry, ruleKinds)
+        const path = classifyRenderability(entry, expandedRuleKinds)
         if (path === null) {
             missing.push({
                 kind: entry.type,
-                reason: reasonFor(entry, ruleKinds),
+                reason: reasonFor(entry, expandedRuleKinds),
             })
         } else {
             renderable++

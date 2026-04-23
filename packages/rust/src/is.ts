@@ -166,12 +166,11 @@ export interface IsGuards {
     rawStringLiteral<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'raw_string_literal' };
     comment<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'comment' };
     lineComment<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'line_comment' };
-    LineDocCommentMarker<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_line_doc_comment_marker' };
     blockComment<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'block_comment' };
     ReservedIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_reserved_identifier' };
     TypeIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_type_identifier' };
     FieldIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_field_identifier' };
-    letChain<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'let_chain' };
+    StringContent<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_string_content' };
     ClosureExpressionExpr<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_closure_expression_expr' };
     FieldPatternShorthand<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_field_pattern_shorthand' };
     FunctionTypeTraitForm<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_function_type_trait_form' };
@@ -188,37 +187,6 @@ export interface IsGuards {
     ExpressionStatementWithSemi<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_expression_statement_with_semi' };
     ExpressionStatementBlockEnding<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_expression_statement_block_ending' };
     MatchArmBlockEnding<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_match_arm_block_ending' };
-    expressionStatementWithSemi<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'expression_statement_with_semi' };
-    expressionStatementBlockEnding<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'expression_statement_block_ending' };
-    macroDefinitionParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_definition_paren' };
-    macroDefinitionBracket<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_definition_bracket' };
-    macroDefinitionBrace<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_definition_brace' };
-    modItemInline<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'mod_item_inline' };
-    foreignModItemBody<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'foreign_mod_item_body' };
-    structItemBrace<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'struct_item_brace' };
-    structItemTuple<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'struct_item_tuple' };
-    implItemBody<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'impl_item_body' };
-    functionTypeTraitForm<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'function_type_trait_form' };
-    functionTypeFnForm<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'function_type_fn_form' };
-    pointerTypeMut<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'pointer_type_mut' };
-    rangeExpressionBinary<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'range_expression_binary' };
-    rangeExpressionPostfix<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'range_expression_postfix' };
-    rangeExpressionPrefix<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'range_expression_prefix' };
-    rangeExpressionBare<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'range_expression_bare' };
-    referenceExpressionRawMut<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'reference_expression_raw_mut' };
-    arrayExpressionSemi<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'array_expression_semi' };
-    arrayExpressionList<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'array_expression_list' };
-    matchArmWithComma<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'match_arm_with_comma' };
-    matchArmBlockEnding<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'match_arm_block_ending' };
-    closureExpressionBlock<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'closure_expression_block' };
-    closureExpressionExpr<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'closure_expression_expr' };
-    fieldPatternShorthand<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'field_pattern_shorthand' };
-    fieldPatternNamed<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'field_pattern_named' };
-    rangePatternLeft<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'range_pattern_left' };
-    rangePatternPrefix<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'range_pattern_prefix' };
-    orPatternBinary<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'or_pattern_binary' };
-    orPatternPrefix<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'or_pattern_prefix' };
-    lineCommentDoc<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'line_comment_doc' };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): v is { readonly $type: K & string };
     statement(v: { readonly $type: string }): v is Statement;
     declarationStatement(v: { readonly $type: string }): v is DeclarationStatement;
@@ -381,12 +349,11 @@ export interface AssertGuards {
     rawStringLiteral(v: { readonly $type: string }): asserts v is { readonly $type: 'raw_string_literal' };
     comment(v: { readonly $type: string }): asserts v is { readonly $type: 'comment' };
     lineComment(v: { readonly $type: string }): asserts v is { readonly $type: 'line_comment' };
-    LineDocCommentMarker(v: { readonly $type: string }): asserts v is { readonly $type: '_line_doc_comment_marker' };
     blockComment(v: { readonly $type: string }): asserts v is { readonly $type: 'block_comment' };
     ReservedIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: '_reserved_identifier' };
     TypeIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: '_type_identifier' };
     FieldIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: '_field_identifier' };
-    letChain(v: { readonly $type: string }): asserts v is { readonly $type: 'let_chain' };
+    StringContent(v: { readonly $type: string }): asserts v is { readonly $type: '_string_content' };
     ClosureExpressionExpr(v: { readonly $type: string }): asserts v is { readonly $type: '_closure_expression_expr' };
     FieldPatternShorthand(v: { readonly $type: string }): asserts v is { readonly $type: '_field_pattern_shorthand' };
     FunctionTypeTraitForm(v: { readonly $type: string }): asserts v is { readonly $type: '_function_type_trait_form' };
@@ -403,37 +370,6 @@ export interface AssertGuards {
     ExpressionStatementWithSemi(v: { readonly $type: string }): asserts v is { readonly $type: '_expression_statement_with_semi' };
     ExpressionStatementBlockEnding(v: { readonly $type: string }): asserts v is { readonly $type: '_expression_statement_block_ending' };
     MatchArmBlockEnding(v: { readonly $type: string }): asserts v is { readonly $type: '_match_arm_block_ending' };
-    expressionStatementWithSemi(v: { readonly $type: string }): asserts v is { readonly $type: 'expression_statement_with_semi' };
-    expressionStatementBlockEnding(v: { readonly $type: string }): asserts v is { readonly $type: 'expression_statement_block_ending' };
-    macroDefinitionParen(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_definition_paren' };
-    macroDefinitionBracket(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_definition_bracket' };
-    macroDefinitionBrace(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_definition_brace' };
-    modItemInline(v: { readonly $type: string }): asserts v is { readonly $type: 'mod_item_inline' };
-    foreignModItemBody(v: { readonly $type: string }): asserts v is { readonly $type: 'foreign_mod_item_body' };
-    structItemBrace(v: { readonly $type: string }): asserts v is { readonly $type: 'struct_item_brace' };
-    structItemTuple(v: { readonly $type: string }): asserts v is { readonly $type: 'struct_item_tuple' };
-    implItemBody(v: { readonly $type: string }): asserts v is { readonly $type: 'impl_item_body' };
-    functionTypeTraitForm(v: { readonly $type: string }): asserts v is { readonly $type: 'function_type_trait_form' };
-    functionTypeFnForm(v: { readonly $type: string }): asserts v is { readonly $type: 'function_type_fn_form' };
-    pointerTypeMut(v: { readonly $type: string }): asserts v is { readonly $type: 'pointer_type_mut' };
-    rangeExpressionBinary(v: { readonly $type: string }): asserts v is { readonly $type: 'range_expression_binary' };
-    rangeExpressionPostfix(v: { readonly $type: string }): asserts v is { readonly $type: 'range_expression_postfix' };
-    rangeExpressionPrefix(v: { readonly $type: string }): asserts v is { readonly $type: 'range_expression_prefix' };
-    rangeExpressionBare(v: { readonly $type: string }): asserts v is { readonly $type: 'range_expression_bare' };
-    referenceExpressionRawMut(v: { readonly $type: string }): asserts v is { readonly $type: 'reference_expression_raw_mut' };
-    arrayExpressionSemi(v: { readonly $type: string }): asserts v is { readonly $type: 'array_expression_semi' };
-    arrayExpressionList(v: { readonly $type: string }): asserts v is { readonly $type: 'array_expression_list' };
-    matchArmWithComma(v: { readonly $type: string }): asserts v is { readonly $type: 'match_arm_with_comma' };
-    matchArmBlockEnding(v: { readonly $type: string }): asserts v is { readonly $type: 'match_arm_block_ending' };
-    closureExpressionBlock(v: { readonly $type: string }): asserts v is { readonly $type: 'closure_expression_block' };
-    closureExpressionExpr(v: { readonly $type: string }): asserts v is { readonly $type: 'closure_expression_expr' };
-    fieldPatternShorthand(v: { readonly $type: string }): asserts v is { readonly $type: 'field_pattern_shorthand' };
-    fieldPatternNamed(v: { readonly $type: string }): asserts v is { readonly $type: 'field_pattern_named' };
-    rangePatternLeft(v: { readonly $type: string }): asserts v is { readonly $type: 'range_pattern_left' };
-    rangePatternPrefix(v: { readonly $type: string }): asserts v is { readonly $type: 'range_pattern_prefix' };
-    orPatternBinary(v: { readonly $type: string }): asserts v is { readonly $type: 'or_pattern_binary' };
-    orPatternPrefix(v: { readonly $type: string }): asserts v is { readonly $type: 'or_pattern_prefix' };
-    lineCommentDoc(v: { readonly $type: string }): asserts v is { readonly $type: 'line_comment_doc' };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): asserts v is { readonly $type: K & string };
     statement(v: { readonly $type: string }): asserts v is Statement;
     declarationStatement(v: { readonly $type: string }): asserts v is DeclarationStatement;
@@ -464,17 +400,17 @@ function _sg(ks: ReadonlySet<string>): (v: { readonly $type: string }) => boolea
 
 const _supertype_statement = new Set<string>(["expression_statement", "const_item", "macro_invocation", "macro_definition", "empty_statement", "attribute_item", "inner_attribute_item", "mod_item", "foreign_mod_item", "struct_item", "union_item", "enum_item", "type_item", "function_item", "function_signature_item", "impl_item", "trait_item", "associated_type", "let_declaration", "use_declaration", "extern_crate_declaration", "static_item"]);
 const _supertype_declarationStatement = new Set<string>(["const_item", "macro_invocation", "macro_definition", "empty_statement", "attribute_item", "inner_attribute_item", "mod_item", "foreign_mod_item", "struct_item", "union_item", "enum_item", "type_item", "function_item", "function_signature_item", "impl_item", "trait_item", "associated_type", "let_declaration", "use_declaration", "extern_crate_declaration", "static_item"]);
-const _supertype_tokenPattern = new Set<string>(["token_tree_pattern", "token_repetition_pattern", "token_binding_pattern", "metavariable", "string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "mutable_specifier", "self", "super", "crate", "primitive_type"]);
-const _supertype_tokens = new Set<string>(["token_tree", "token_repetition", "metavariable", "string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "mutable_specifier", "self", "super", "crate", "primitive_type"]);
+const _supertype_tokenPattern = new Set<string>(["token_tree_pattern", "token_repetition_pattern", "token_binding_pattern", "metavariable", "string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "mutable_specifier", "self", "super", "crate"]);
+const _supertype_tokens = new Set<string>(["token_tree", "token_repetition", "metavariable", "string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "mutable_specifier", "self", "super", "crate"]);
 const _supertype_useClause = new Set<string>(["self", "identifier", "metavariable", "super", "crate", "scoped_identifier", "use_as_clause", "use_list", "scoped_use_list", "use_wildcard"]);
-const _supertype_type = new Set<string>(["abstract_type", "reference_type", "metavariable", "pointer_type", "generic_type", "scoped_type_identifier", "tuple_type", "unit_type", "array_type", "function_type", "type_identifier", "macro_invocation", "never_type", "dynamic_type", "bounded_type", "removed_trait_bound", "primitive_type"]);
+const _supertype_type = new Set<string>(["abstract_type", "reference_type", "metavariable", "pointer_type", "generic_type", "scoped_type_identifier", "tuple_type", "unit_type", "array_type", "function_type", "identifier", "macro_invocation", "never_type", "dynamic_type", "bounded_type", "removed_trait_bound", "_primitive_type"]);
 const _supertype_expressionExceptRange = new Set<string>(["unary_expression", "reference_expression", "try_expression", "binary_expression", "assignment_expression", "compound_assignment_expr", "type_cast_expression", "call_expression", "return_expression", "yield_expression", "string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "self", "scoped_identifier", "generic_function", "await_expression", "field_expression", "array_expression", "tuple_expression", "macro_invocation", "unit_expression", "break_expression", "continue_expression", "index_expression", "metavariable", "closure_expression", "parenthesized_expression", "struct_expression", "unsafe_block", "async_block", "gen_block", "try_block", "block", "if_expression", "match_expression", "while_expression", "loop_expression", "for_expression", "const_block"]);
 const _supertype_expression = new Set<string>(["unary_expression", "reference_expression", "try_expression", "binary_expression", "assignment_expression", "compound_assignment_expr", "type_cast_expression", "call_expression", "return_expression", "yield_expression", "string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "self", "scoped_identifier", "generic_function", "await_expression", "field_expression", "array_expression", "tuple_expression", "macro_invocation", "unit_expression", "break_expression", "continue_expression", "index_expression", "metavariable", "closure_expression", "parenthesized_expression", "struct_expression", "unsafe_block", "async_block", "gen_block", "try_block", "block", "if_expression", "match_expression", "while_expression", "loop_expression", "for_expression", "const_block", "range_expression"]);
 const _supertype_expressionEndingWithBlock = new Set<string>(["unsafe_block", "async_block", "gen_block", "try_block", "block", "if_expression", "match_expression", "while_expression", "loop_expression", "for_expression", "const_block"]);
-const _supertype_delimTokens = new Set<string>(["string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "mutable_specifier", "self", "super", "crate", "primitive_type", "token_tree"]);
-const _supertype_nonDelimToken = new Set<string>(["string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "mutable_specifier", "self", "super", "crate", "primitive_type"]);
-const _supertype_condition = new Set<string>(["unary_expression", "reference_expression", "try_expression", "binary_expression", "assignment_expression", "compound_assignment_expr", "type_cast_expression", "call_expression", "return_expression", "yield_expression", "string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "self", "scoped_identifier", "generic_function", "await_expression", "field_expression", "array_expression", "tuple_expression", "macro_invocation", "unit_expression", "break_expression", "continue_expression", "index_expression", "metavariable", "closure_expression", "parenthesized_expression", "struct_expression", "unsafe_block", "async_block", "gen_block", "try_block", "block", "if_expression", "match_expression", "while_expression", "loop_expression", "for_expression", "const_block", "range_expression", "let_condition", "let_chain"]);
-const _supertype_pattern = new Set<string>(["string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "negative_literal", "identifier", "scoped_identifier", "generic_pattern", "tuple_pattern", "tuple_struct_pattern", "struct_pattern", "ref_pattern", "slice_pattern", "captured_pattern", "reference_pattern", "remaining_field_pattern", "mut_pattern", "range_pattern", "or_pattern", "const_block", "macro_invocation", "wildcard_pattern"]);
+const _supertype_delimTokens = new Set<string>(["string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "mutable_specifier", "self", "super", "crate", "delim_token_tree"]);
+const _supertype_nonDelimToken = new Set<string>(["string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "mutable_specifier", "self", "super", "crate"]);
+const _supertype_condition = new Set<string>(["unary_expression", "reference_expression", "try_expression", "binary_expression", "assignment_expression", "compound_assignment_expr", "type_cast_expression", "call_expression", "return_expression", "yield_expression", "string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "self", "scoped_identifier", "generic_function", "await_expression", "field_expression", "array_expression", "tuple_expression", "macro_invocation", "unit_expression", "break_expression", "continue_expression", "index_expression", "metavariable", "closure_expression", "parenthesized_expression", "struct_expression", "unsafe_block", "async_block", "gen_block", "try_block", "block", "if_expression", "match_expression", "while_expression", "loop_expression", "for_expression", "const_block", "range_expression", "let_condition", "_let_chain"]);
+const _supertype_pattern = new Set<string>(["string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "negative_literal", "identifier", "scoped_identifier", "generic_pattern", "tuple_pattern", "tuple_struct_pattern", "struct_pattern", "ref_pattern", "slice_pattern", "captured_pattern", "reference_pattern", "remaining_field_pattern", "mut_pattern", "range_pattern", "or_pattern", "const_block", "macro_invocation", "_wildcard_pattern"]);
 const _supertype_literal = new Set<string>(["string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal"]);
 const _supertype_literalPattern = new Set<string>(["string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "negative_literal"]);
 const _supertype_path = new Set<string>(["self", "identifier", "metavariable", "super", "crate", "scoped_identifier"]);
@@ -621,12 +557,11 @@ export const is = {
     rawStringLiteral: _g("raw_string_literal"),
     comment: _g("comment"),
     lineComment: _g("line_comment"),
-    LineDocCommentMarker: _g("_line_doc_comment_marker"),
     blockComment: _g("block_comment"),
     ReservedIdentifier: _g("_reserved_identifier"),
     TypeIdentifier: _g("_type_identifier"),
     FieldIdentifier: _g("_field_identifier"),
-    letChain: _g("let_chain"),
+    StringContent: _g("_string_content"),
     ClosureExpressionExpr: _g("_closure_expression_expr"),
     FieldPatternShorthand: _g("_field_pattern_shorthand"),
     FunctionTypeTraitForm: _g("_function_type_trait_form"),
@@ -643,37 +578,6 @@ export const is = {
     ExpressionStatementWithSemi: _g("_expression_statement_with_semi"),
     ExpressionStatementBlockEnding: _g("_expression_statement_block_ending"),
     MatchArmBlockEnding: _g("_match_arm_block_ending"),
-    expressionStatementWithSemi: _g("expression_statement_with_semi"),
-    expressionStatementBlockEnding: _g("expression_statement_block_ending"),
-    macroDefinitionParen: _g("macro_definition_paren"),
-    macroDefinitionBracket: _g("macro_definition_bracket"),
-    macroDefinitionBrace: _g("macro_definition_brace"),
-    modItemInline: _g("mod_item_inline"),
-    foreignModItemBody: _g("foreign_mod_item_body"),
-    structItemBrace: _g("struct_item_brace"),
-    structItemTuple: _g("struct_item_tuple"),
-    implItemBody: _g("impl_item_body"),
-    functionTypeTraitForm: _g("function_type_trait_form"),
-    functionTypeFnForm: _g("function_type_fn_form"),
-    pointerTypeMut: _g("pointer_type_mut"),
-    rangeExpressionBinary: _g("range_expression_binary"),
-    rangeExpressionPostfix: _g("range_expression_postfix"),
-    rangeExpressionPrefix: _g("range_expression_prefix"),
-    rangeExpressionBare: _g("range_expression_bare"),
-    referenceExpressionRawMut: _g("reference_expression_raw_mut"),
-    arrayExpressionSemi: _g("array_expression_semi"),
-    arrayExpressionList: _g("array_expression_list"),
-    matchArmWithComma: _g("match_arm_with_comma"),
-    matchArmBlockEnding: _g("match_arm_block_ending"),
-    closureExpressionBlock: _g("closure_expression_block"),
-    closureExpressionExpr: _g("closure_expression_expr"),
-    fieldPatternShorthand: _g("field_pattern_shorthand"),
-    fieldPatternNamed: _g("field_pattern_named"),
-    rangePatternLeft: _g("range_pattern_left"),
-    rangePatternPrefix: _g("range_pattern_prefix"),
-    orPatternBinary: _g("or_pattern_binary"),
-    orPatternPrefix: _g("or_pattern_prefix"),
-    lineCommentDoc: _g("line_comment_doc"),
     kind: (v: { readonly $type: string }, k: string): boolean => v.$type === k,
     statement: _sg(_supertype_statement),
     declarationStatement: _sg(_supertype_declarationStatement),
@@ -857,12 +761,11 @@ export const assert = {
     rawStringLiteral: _makeAssert('rawStringLiteral', is.rawStringLiteral as _AnyGuard),
     comment: _makeAssert('comment', is.comment as _AnyGuard),
     lineComment: _makeAssert('lineComment', is.lineComment as _AnyGuard),
-    LineDocCommentMarker: _makeAssert('LineDocCommentMarker', is.LineDocCommentMarker as _AnyGuard),
     blockComment: _makeAssert('blockComment', is.blockComment as _AnyGuard),
     ReservedIdentifier: _makeAssert('ReservedIdentifier', is.ReservedIdentifier as _AnyGuard),
     TypeIdentifier: _makeAssert('TypeIdentifier', is.TypeIdentifier as _AnyGuard),
     FieldIdentifier: _makeAssert('FieldIdentifier', is.FieldIdentifier as _AnyGuard),
-    letChain: _makeAssert('letChain', is.letChain as _AnyGuard),
+    StringContent: _makeAssert('StringContent', is.StringContent as _AnyGuard),
     ClosureExpressionExpr: _makeAssert('ClosureExpressionExpr', is.ClosureExpressionExpr as _AnyGuard),
     FieldPatternShorthand: _makeAssert('FieldPatternShorthand', is.FieldPatternShorthand as _AnyGuard),
     FunctionTypeTraitForm: _makeAssert('FunctionTypeTraitForm', is.FunctionTypeTraitForm as _AnyGuard),
@@ -879,37 +782,6 @@ export const assert = {
     ExpressionStatementWithSemi: _makeAssert('ExpressionStatementWithSemi', is.ExpressionStatementWithSemi as _AnyGuard),
     ExpressionStatementBlockEnding: _makeAssert('ExpressionStatementBlockEnding', is.ExpressionStatementBlockEnding as _AnyGuard),
     MatchArmBlockEnding: _makeAssert('MatchArmBlockEnding', is.MatchArmBlockEnding as _AnyGuard),
-    expressionStatementWithSemi: _makeAssert('expressionStatementWithSemi', is.expressionStatementWithSemi as _AnyGuard),
-    expressionStatementBlockEnding: _makeAssert('expressionStatementBlockEnding', is.expressionStatementBlockEnding as _AnyGuard),
-    macroDefinitionParen: _makeAssert('macroDefinitionParen', is.macroDefinitionParen as _AnyGuard),
-    macroDefinitionBracket: _makeAssert('macroDefinitionBracket', is.macroDefinitionBracket as _AnyGuard),
-    macroDefinitionBrace: _makeAssert('macroDefinitionBrace', is.macroDefinitionBrace as _AnyGuard),
-    modItemInline: _makeAssert('modItemInline', is.modItemInline as _AnyGuard),
-    foreignModItemBody: _makeAssert('foreignModItemBody', is.foreignModItemBody as _AnyGuard),
-    structItemBrace: _makeAssert('structItemBrace', is.structItemBrace as _AnyGuard),
-    structItemTuple: _makeAssert('structItemTuple', is.structItemTuple as _AnyGuard),
-    implItemBody: _makeAssert('implItemBody', is.implItemBody as _AnyGuard),
-    functionTypeTraitForm: _makeAssert('functionTypeTraitForm', is.functionTypeTraitForm as _AnyGuard),
-    functionTypeFnForm: _makeAssert('functionTypeFnForm', is.functionTypeFnForm as _AnyGuard),
-    pointerTypeMut: _makeAssert('pointerTypeMut', is.pointerTypeMut as _AnyGuard),
-    rangeExpressionBinary: _makeAssert('rangeExpressionBinary', is.rangeExpressionBinary as _AnyGuard),
-    rangeExpressionPostfix: _makeAssert('rangeExpressionPostfix', is.rangeExpressionPostfix as _AnyGuard),
-    rangeExpressionPrefix: _makeAssert('rangeExpressionPrefix', is.rangeExpressionPrefix as _AnyGuard),
-    rangeExpressionBare: _makeAssert('rangeExpressionBare', is.rangeExpressionBare as _AnyGuard),
-    referenceExpressionRawMut: _makeAssert('referenceExpressionRawMut', is.referenceExpressionRawMut as _AnyGuard),
-    arrayExpressionSemi: _makeAssert('arrayExpressionSemi', is.arrayExpressionSemi as _AnyGuard),
-    arrayExpressionList: _makeAssert('arrayExpressionList', is.arrayExpressionList as _AnyGuard),
-    matchArmWithComma: _makeAssert('matchArmWithComma', is.matchArmWithComma as _AnyGuard),
-    matchArmBlockEnding: _makeAssert('matchArmBlockEnding', is.matchArmBlockEnding as _AnyGuard),
-    closureExpressionBlock: _makeAssert('closureExpressionBlock', is.closureExpressionBlock as _AnyGuard),
-    closureExpressionExpr: _makeAssert('closureExpressionExpr', is.closureExpressionExpr as _AnyGuard),
-    fieldPatternShorthand: _makeAssert('fieldPatternShorthand', is.fieldPatternShorthand as _AnyGuard),
-    fieldPatternNamed: _makeAssert('fieldPatternNamed', is.fieldPatternNamed as _AnyGuard),
-    rangePatternLeft: _makeAssert('rangePatternLeft', is.rangePatternLeft as _AnyGuard),
-    rangePatternPrefix: _makeAssert('rangePatternPrefix', is.rangePatternPrefix as _AnyGuard),
-    orPatternBinary: _makeAssert('orPatternBinary', is.orPatternBinary as _AnyGuard),
-    orPatternPrefix: _makeAssert('orPatternPrefix', is.orPatternPrefix as _AnyGuard),
-    lineCommentDoc: _makeAssert('lineCommentDoc', is.lineCommentDoc as _AnyGuard),
     kind: _makeAssertKind(is.kind as _AnyGuard),
     statement: _makeAssert('statement', is.statement as _AnyGuard),
     declarationStatement: _makeAssert('declarationStatement', is.declarationStatement as _AnyGuard),

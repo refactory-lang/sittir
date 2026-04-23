@@ -55,6 +55,17 @@ export function buildRuleLookup(nodeMap: NodeMap): RuleLookup {
         path.set(kind, p)
         if (p !== 'none') renderable.add(kind)
         if (p === 'template') templated.add(kind)
+        // Post-synthesis-removal: hidden `_X` kinds whose `userFacing`
+        // flag is set are the sittir-internal identity for CST kind
+        // `X` (via alias). node-types.json lists `X`; the renderable
+        // / templated sets must include it so validation passes.
+        if (node.userFacing && kind.startsWith('_')) {
+            const visible = kind.slice(1)
+            kinds.add(visible)
+            if (p !== 'none') renderable.add(visible)
+            if (p === 'template') templated.add(visible)
+            path.set(visible, p)
+        }
     }
 
     return { kinds, renderable, templated, path }

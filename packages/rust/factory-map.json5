@@ -158,53 +158,14 @@
     "super": "text",
     "crate": "text",
     "metavariable": "text",
-    "primitive_type": "text",
-    "let_chain": "children",
-    "shorthand_field_identifier": "text",
-    "type_identifier": "text",
-    "field_identifier": "text",
-    "expression_statement_with_semi": "children",
-    "expression_statement_block_ending": "children",
-    "macro_definition_paren": "children",
-    "macro_definition_bracket": "children",
-    "macro_definition_brace": "children",
-    "mod_item_inline": "config",
-    "foreign_mod_item_body": "config",
-    "struct_item_brace": "config",
-    "struct_item_tuple": "config",
-    "impl_item_body": "config",
-    "function_type_trait_form": "config",
-    "function_type_fn_form": "children",
-    "pointer_type_const": "text",
-    "pointer_type_mut": "children",
-    "range_expression_binary": "config",
-    "range_expression_postfix": "config",
-    "range_expression_prefix": "config",
-    "range_expression_bare": "config",
-    "reference_expression_raw_const": "text",
-    "reference_expression_raw_mut": "children",
-    "array_expression_semi": "config",
-    "array_expression_list": "config",
-    "match_arm_with_comma": "config",
-    "match_arm_block_ending": "config",
-    "closure_expression_block": "config",
-    "closure_expression_expr": "config",
-    "wildcard_pattern": "text",
-    "field_pattern_shorthand": "config",
-    "field_pattern_named": "config",
-    "range_pattern_left": "config",
-    "range_pattern_prefix": "config",
-    "or_pattern_binary": "config",
-    "or_pattern_prefix": "config",
-    "line_comment_regular_dslash": "text",
-    "line_comment_doc": "config",
-    "line_comment_content": "text",
+    "_primitive_type": "text",
+    "_string_content": "children",
+    "_doc_comment": "text",
+    "_outer_doc_comment_marker": "text",
+    "_inner_doc_comment_marker": "text",
     "string_content": "text",
     "raw_string_literal_content": "text",
     "float_literal": "text",
-    "_outer_block_doc_comment_marker": "text",
-    "_inner_block_doc_comment_marker": "text",
-    "_line_doc_content": "text",
     "as": "text",
     "async": "text",
     "await": "text",
@@ -248,6 +209,9 @@
     "attribute.arguments": {
       "token_tree": "delim_token_tree"
     },
+    "where_predicate.left": {
+      "primitive_type": "_primitive_type"
+    },
     "macro_invocation.token_tree": {
       "token_tree": "delim_token_tree"
     },
@@ -267,40 +231,28 @@
       "generic_type": "generic_type_with_turbofish"
     },
     "raw_string_literal.string_content": {
-      "string_content": "raw_string_literal_content"
-    },
-    "_line_doc_comment_marker_form0.outer": {
-      "outer_doc_comment_marker": "_outer_line_doc_comment_marker"
-    },
-    "_line_doc_comment_marker_form1.inner": {
-      "inner_doc_comment_marker": "_inner_line_doc_comment_marker"
-    },
-    "_line_doc_comment_marker.outer": {
-      "outer_doc_comment_marker": "_outer_line_doc_comment_marker"
-    },
-    "_line_doc_comment_marker.inner": {
-      "inner_doc_comment_marker": "_inner_line_doc_comment_marker"
+      "string_content": "_string_content"
     },
     "block_comment.outer": {
-      "outer_doc_comment_marker": "_outer_block_doc_comment_marker"
+      "outer_doc_comment_marker": "_outer_doc_comment_marker"
     },
     "block_comment.inner": {
-      "inner_doc_comment_marker": "_inner_block_doc_comment_marker"
+      "inner_doc_comment_marker": "_inner_doc_comment_marker"
     },
     "block_comment.doc": {
-      "doc_comment": "_block_comment_content"
+      "doc_comment": "_doc_comment"
     },
     "_field_pattern_shorthand.name": {
       "shorthand_field_identifier": "identifier"
     },
+    "_line_comment_doc.outer": {
+      "outer_doc_comment_marker": "_outer_line_doc_comment_marker"
+    },
+    "_line_comment_doc.inner": {
+      "inner_doc_comment_marker": "_inner_line_doc_comment_marker"
+    },
     "_line_comment_doc.doc": {
-      "doc_comment": "_line_doc_content"
-    },
-    "field_pattern_shorthand.name": {
-      "shorthand_field_identifier": "identifier"
-    },
-    "line_comment_doc.doc": {
-      "doc_comment": "_line_doc_content"
+      "doc_comment": "_doc_comment"
     }
   },
   "factoryFields": {
@@ -655,73 +607,6 @@
       "outer",
       "inner",
       "doc"
-    ],
-    "mod_item_inline": [
-      "body"
-    ],
-    "foreign_mod_item_body": [
-      "body"
-    ],
-    "impl_item_body": [
-      "body"
-    ],
-    "function_type_trait_form": [
-      "trait"
-    ],
-    "range_expression_binary": [
-      "start",
-      "operator",
-      "end"
-    ],
-    "range_expression_postfix": [
-      "start",
-      "operator"
-    ],
-    "range_expression_prefix": [
-      "operator",
-      "end"
-    ],
-    "range_expression_bare": [
-      "operator"
-    ],
-    "array_expression_semi": [
-      "attributes",
-      "elements",
-      "length"
-    ],
-    "match_arm_with_comma": [
-      "value"
-    ],
-    "match_arm_block_ending": [
-      "value"
-    ],
-    "closure_expression_block": [
-      "return_type",
-      "body"
-    ],
-    "closure_expression_expr": [
-      "body"
-    ],
-    "field_pattern_shorthand": [
-      "name"
-    ],
-    "field_pattern_named": [
-      "name",
-      "pattern"
-    ],
-    "range_pattern_left": [
-      "left",
-      "right"
-    ],
-    "range_pattern_prefix": [
-      "right"
-    ],
-    "or_pattern_binary": [
-      "left",
-      "right"
-    ],
-    "or_pattern_prefix": [
-      "right"
     ]
   },
   "polymorphVariants": {

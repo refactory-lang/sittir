@@ -269,15 +269,28 @@ const OVERRIDE_PARSER_KNOWN_ISSUES: Record<string, Set<string>> = {
 }
 
 const ALIAS_VARIANT_KINDS: Record<string, Set<string>> = {
-    python: new Set(['assignment_eq', 'assignment_type', 'assignment_typed']),
+    python: new Set([
+        'assignment_eq', 'assignment_type', 'assignment_typed',
+        'format_expression',
+    ]),
     rust: new Set([
         'closure_expression_block', 'closure_expression_expr',
         'field_pattern_shorthand', 'field_pattern_named',
         'or_pattern_binary', 'or_pattern_prefix',
         'range_expression_binary', 'range_expression_postfix', 'range_expression_prefix', 'range_expression_bare',
         'range_pattern_left', 'range_pattern_prefix',
+        'array_expression_list', 'array_expression_semi',
+        'line_comment_doc',
+        'match_arm_with_comma',
+        'struct_item_brace', 'struct_item_tuple',
     ]),
-    typescript: new Set(),
+    typescript: new Set([
+        'call_expression_call', 'call_expression_member', 'call_expression_template_call',
+        'import_specifier_as',
+        'index_signature_colon',
+        'interface_body',
+        'parenthesized_expression_typed',
+    ]),
 }
 
 describe('readNode round-trip — structural', () => {

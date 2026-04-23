@@ -84,7 +84,6 @@ export const tokenPattern = {
   self: F.self,
   super_: F.super_,
   crate: F.crate,
-  primitive: F.primitiveType,
 } as const;
 
 export const tokens = {
@@ -101,7 +100,6 @@ export const tokens = {
   self: F.self,
   super_: F.super_,
   crate: F.crate,
-  primitive: F.primitiveType,
 } as const;
 
 export const useClause = {
@@ -127,12 +125,11 @@ export const type = {
   unit: F.unitType,
   array: _attach(F.arrayType, { from: FR.arrayTypeFrom }),
   function_: _attach(F.functionType, { from: FR.functionTypeFrom }),
-  typeIdentifier: F.typeIdentifier,
+  identifier: F.identifier,
   macro: _attach(F.macroInvocation, { from: FR.macroInvocationFrom }),
   dynamic: _attach(F.dynamicType, { from: FR.dynamicTypeFrom }),
   bounded: _attach(F.boundedType, { from: FR.boundedTypeFrom }),
   removedTrait: _attach(F.removedTraitBound, { from: FR.removedTraitBoundFrom }),
-  primitive: F.primitiveType,
 } as const;
 
 export const expressionExceptRange = {
@@ -254,8 +251,7 @@ export const delimTokens = {
   self: F.self,
   super_: F.super_,
   crate: F.crate,
-  primitive: F.primitiveType,
-  token: _attach(F.tokenTree, { from: FR.tokenTreeFrom }),
+  delimToken: _attach(F.delimTokenTree, { from: FR.delimTokenTreeFrom }),
 } as const;
 
 export const nonDelimToken = {
@@ -270,7 +266,6 @@ export const nonDelimToken = {
   self: F.self,
   super_: F.super_,
   crate: F.crate,
-  primitive: F.primitiveType,
 } as const;
 
 export const condition = {
@@ -344,7 +339,6 @@ export const pattern = {
   or: _attach(F.orPattern, { from: FR.orPatternFrom, "binary": _attach(F.orPatternUFormBinary, { from: FR.orPatternUFormBinaryFrom }), "prefix": _attach(F.orPatternUFormPrefix, { from: FR.orPatternUFormPrefixFrom }) }),
   const_: _attach(F.constBlock, { from: FR.constBlockFrom }),
   macro: _attach(F.macroInvocation, { from: FR.macroInvocationFrom }),
-  wildcard: F.wildcardPattern,
 } as const;
 
 export const literal = {
@@ -517,46 +511,12 @@ export const ir = {
   comment: _attach(F.comment, { from: FR.commentFrom }),
   lineComment: _attach(F.lineComment, { from: FR.lineCommentFrom, "regular_dslash": _attach(F.lineCommentUFormRegularDslash, { from: FR.lineCommentUFormRegularDslashFrom }), "doc": _attach(F.lineCommentUFormDoc, { from: FR.lineCommentUFormDocFrom }), "content": _attach(F.lineCommentUFormContent, { from: FR.lineCommentUFormContentFrom }) }),
   blockComment: _attach(F.blockComment, { from: FR.blockCommentFrom }),
-  letChain: _attach(F.letChain, { from: FR.letChainFrom }),
-  expressionStatementWithSemi: _attach(F.expressionStatementWithSemi, { from: FR.expressionStatementWithSemiFrom }),
-  expressionStatementBlockEnding: _attach(F.expressionStatementBlockEnding, { from: FR.expressionStatementBlockEndingFrom }),
-  macroDefinitionParen: _attach(F.macroDefinitionParen, { from: FR.macroDefinitionParenFrom }),
-  macroDefinitionBracket: _attach(F.macroDefinitionBracket, { from: FR.macroDefinitionBracketFrom }),
-  macroDefinitionBrace: _attach(F.macroDefinitionBrace, { from: FR.macroDefinitionBraceFrom }),
-  modItemInline: _attach(F.modItemInline, { from: FR.modItemInlineFrom }),
-  foreignModItemBody: _attach(F.foreignModItemBody, { from: FR.foreignModItemBodyFrom }),
-  structItemBrace: _attach(F.structItemBrace, { from: FR.structItemBraceFrom }),
-  structItemTuple: _attach(F.structItemTuple, { from: FR.structItemTupleFrom }),
-  implItemBody: _attach(F.implItemBody, { from: FR.implItemBodyFrom }),
-  functionTypeTraitForm: _attach(F.functionTypeTraitForm, { from: FR.functionTypeTraitFormFrom }),
-  functionTypeFnForm: _attach(F.functionTypeFnForm, { from: FR.functionTypeFnFormFrom }),
-  pointerTypeMut: _attach(F.pointerTypeMut, { from: FR.pointerTypeMutFrom }),
-  rangeExpressionBinary: _attach(F.rangeExpressionBinary, { from: FR.rangeExpressionBinaryFrom }),
-  rangeExpressionPostfix: _attach(F.rangeExpressionPostfix, { from: FR.rangeExpressionPostfixFrom }),
-  rangeExpressionPrefix: _attach(F.rangeExpressionPrefix, { from: FR.rangeExpressionPrefixFrom }),
-  rangeExpressionBare: _attach(F.rangeExpressionBare, { from: FR.rangeExpressionBareFrom }),
-  referenceExpressionRawMut: _attach(F.referenceExpressionRawMut, { from: FR.referenceExpressionRawMutFrom }),
-  arrayExpressionSemi: _attach(F.arrayExpressionSemi, { from: FR.arrayExpressionSemiFrom }),
-  arrayExpressionList: _attach(F.arrayExpressionList, { from: FR.arrayExpressionListFrom }),
-  matchArmWithComma: _attach(F.matchArmWithComma, { from: FR.matchArmWithCommaFrom }),
-  matchArmBlockEnding: _attach(F.matchArmBlockEnding, { from: FR.matchArmBlockEndingFrom }),
-  closureExpressionBlock: _attach(F.closureExpressionBlock, { from: FR.closureExpressionBlockFrom }),
-  closureExpressionExpr: _attach(F.closureExpressionExpr, { from: FR.closureExpressionExprFrom }),
-  fieldPatternShorthand: _attach(F.fieldPatternShorthand, { from: FR.fieldPatternShorthandFrom }),
-  fieldPatternNamed: _attach(F.fieldPatternNamed, { from: FR.fieldPatternNamedFrom }),
-  rangePatternLeft: _attach(F.rangePatternLeft, { from: FR.rangePatternLeftFrom }),
-  rangePatternPrefix: _attach(F.rangePatternPrefix, { from: FR.rangePatternPrefixFrom }),
-  orPatternBinary: _attach(F.orPatternBinary, { from: FR.orPatternBinaryFrom }),
-  orPatternPrefix: _attach(F.orPatternPrefix, { from: FR.orPatternPrefixFrom }),
-  lineCommentDoc: _attach(F.lineCommentDoc, { from: FR.lineCommentDocFrom }),
 
   // Keyword factories
   mutableSpecifier: F.mutableSpecifier,
   self: F.self,
   super: F.super_,
   crate: F.crate,
-  pointerTypeConst: F.pointerTypeConst,
-  wildcardPattern: F.wildcardPattern,
 
   // Leaf node factories
   fragmentSpecifier: F.fragmentSpecifier,
@@ -569,13 +529,6 @@ export const ir = {
   identifier: F.identifier,
   shebang: F.shebang,
   metavariable: F.metavariable,
-  primitiveType: F.primitiveType,
-  shorthandFieldIdentifier: F.shorthandFieldIdentifier,
-  typeIdentifier: F.typeIdentifier,
-  fieldIdentifier: F.fieldIdentifier,
-  referenceExpressionRawConst: F.referenceExpressionRawConst,
-  lineCommentRegularDslash: F.lineCommentRegularDslash,
-  lineCommentContent: F.lineCommentContent,
   stringContent: F.stringContent,
   rawStringLiteralContent: F.rawStringLiteralContent,
   floatLiteral: F.floatLiteral,

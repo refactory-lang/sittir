@@ -170,14 +170,9 @@ export const enum SyntaxKind {
   Interpolation = 'interpolation',
   FormatSpecifier = 'format_specifier',
   Await = 'await',
-  AsPatternTarget = 'as_pattern_target',
-  FormatExpression = 'format_expression',
-  _AssignmentEq = '_assignment_eq',
-  _AssignmentType = '_assignment_type',
-  _AssignmentTyped = '_assignment_typed',
-  AssignmentEq = 'assignment_eq',
-  AssignmentType = 'assignment_type',
-  AssignmentTyped = 'assignment_typed',
+  AssignmentEq = '_assignment_eq',
+  AssignmentType = '_assignment_type',
+  AssignmentTyped = '_assignment_typed',
   ImportPrefix = 'import_prefix',
   PassStatement = 'pass_statement',
   BreakStatement = 'break_statement',
@@ -323,7 +318,7 @@ export const enum PatternKind {
 
 export const enum ExpressionWithinForInClauseKind {
   Expression = 'expression',
-  Lambda = 'lambda',
+  LambdaWithinForInClause = 'lambda_within_for_in_clause',
 }
 
 export const enum ExpressionKind {
@@ -363,7 +358,7 @@ export const enum PrimaryExpressionKind {
   ParenthesizedExpression = 'parenthesized_expression',
   GeneratorExpression = 'generator_expression',
   Ellipsis2 = 'ellipsis',
-  ListSplat = 'list_splat',
+  ListSplatPattern = 'list_splat_pattern',
 }
 
 export const enum LeftHandSideKind {
@@ -698,12 +693,12 @@ export interface TypeParameter {
 
 export interface ParenthesizedListSplat {
   readonly $type: 'parenthesized_list_splat';
-  readonly $children: readonly [ParenthesizedExpression | ListSplat];
+  readonly $children: readonly [ParenthesizedListSplat | ListSplat];
 }
 
 export interface ArgumentList {
   readonly $type: 'argument_list';
-  readonly $children: readonly (Expression | Expression | ListSplat | ListSplat | DictionarySplat | DictionarySplat | ParenthesizedExpression | ParenthesizedExpression | KeywordArgument | KeywordArgument)[];
+  readonly $children: readonly (Expression | Expression | ListSplat | ListSplat | DictionarySplat | DictionarySplat | ParenthesizedListSplat | ParenthesizedListSplat | KeywordArgument | KeywordArgument)[];
 }
 
 export interface DecoratedDefinition {
@@ -724,7 +719,7 @@ export interface Decorator {
 
 export interface Suite {
   readonly $type: '_suite';
-  readonly $children: readonly [Block];
+  readonly $children: readonly [SimpleStatements];
 }
 
 export interface Block {
@@ -747,12 +742,12 @@ export interface DottedName {
 
 export interface CasePattern {
   readonly $type: 'case_pattern';
-  readonly $children: readonly [AsPattern | KeywordPattern | SimplePattern];
+  readonly $children: readonly [_AsPattern | KeywordPattern | SimplePattern];
 }
 
 export interface SimplePattern {
   readonly $type: '_simple_pattern';
-  readonly $children: readonly [ClassPattern | SplatPattern | UnionPattern | ListPattern | TuplePattern | DictPattern | String | ConcatenatedString | True | False | None | Integer | Float | ComplexPattern | DottedName];
+  readonly $children: readonly [ClassPattern | SplatPattern | UnionPattern | _ListPattern | _TuplePattern | DictPattern | String | ConcatenatedString | True | False | None | Integer | Float | ComplexPattern | DottedName];
 }
 
 export interface _AsPattern {
@@ -1197,7 +1192,7 @@ export interface Interpolation {
 
 export interface FormatSpecifier {
   readonly $type: 'format_specifier';
-  readonly $children: readonly (FormatExpression)[];
+  readonly $children: readonly (Interpolation)[];
 }
 
 export interface Await {
@@ -1207,52 +1202,16 @@ export interface Await {
   };
 }
 
-export interface AsPatternTarget {
-  readonly $type: 'as_pattern_target';
-  readonly $children: readonly [ComparisonOperator | NotOperator | BooleanOperator | Lambda | PrimaryExpression | ConditionalExpression | NamedExpression | AsPattern];
-}
-
-export interface FormatExpression {
-  readonly $type: 'format_expression';
-  readonly $fields: {
-    readonly expression: FExpression;
-    readonly type_conversion?: TypeConversion;
-    readonly format_specifier?: FormatSpecifier;
-  };
-}
-
-export interface _AssignmentEq {
+export interface AssignmentEq {
   readonly $type: '_assignment_eq';
 }
 
-export interface _AssignmentType {
+export interface AssignmentType {
   readonly $type: '_assignment_type';
 }
 
-export interface _AssignmentTyped {
-  readonly $type: '_assignment_typed';
-}
-
-export interface AssignmentEq {
-  readonly $type: 'assignment_eq';
-  readonly $fields: {
-    readonly right: RightHandSide;
-  };
-}
-
-export interface AssignmentType {
-  readonly $type: 'assignment_type';
-  readonly $fields: {
-    readonly type: Type;
-  };
-}
-
 export interface AssignmentTyped {
-  readonly $type: 'assignment_typed';
-  readonly $fields: {
-    readonly type: Type;
-    readonly right: RightHandSide;
-  };
+  readonly $type: '_assignment_typed';
 }
 
 
@@ -1284,6 +1243,8 @@ export type CloseBracket = Terminal<"]", string>;
 export type CloseParen = Terminal<")", string>;
 export type CloseBrace = Terminal<"}", string>;
 export type Except = Terminal<"except", string>;
+
+export type AsPatternTarget = Terminal<"as_pattern_target", string>;
 
 // Tree types
 export interface ModuleTree extends TreeNode<'module'> {}
@@ -1402,14 +1363,9 @@ export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface InterpolationTree extends TreeNode<'interpolation'> {}
 export interface FormatSpecifierTree extends TreeNode<'format_specifier'> {}
 export interface AwaitTree extends TreeNode<'await'> {}
-export interface AsPatternTargetTree extends AnyTreeNode { readonly type: "as_pattern_target"; }
-export interface FormatExpressionTree extends TreeNode<'format_expression'> {}
-export interface _AssignmentEqTree extends AnyTreeNode { readonly type: "_assignment_eq"; }
-export interface _AssignmentTypeTree extends AnyTreeNode { readonly type: "_assignment_type"; }
-export interface _AssignmentTypedTree extends AnyTreeNode { readonly type: "_assignment_typed"; }
-export interface AssignmentEqTree extends TreeNode<'assignment_eq'> {}
-export interface AssignmentTypeTree extends TreeNode<'assignment_type'> {}
-export interface AssignmentTypedTree extends TreeNode<'assignment_typed'> {}
+export interface AssignmentEqTree extends AnyTreeNode { readonly type: "_assignment_eq"; }
+export interface AssignmentTypeTree extends AnyTreeNode { readonly type: "_assignment_type"; }
+export interface AssignmentTypedTree extends AnyTreeNode { readonly type: "_assignment_typed"; }
 export interface ImportPrefixTree extends TreeNode<'import_prefix'> {}
 export interface PassStatementTree extends AnyTreeNode { readonly type: "pass_statement"; }
 export interface BreakStatementTree extends AnyTreeNode { readonly type: "break_statement"; }
@@ -1559,10 +1515,10 @@ export type Pattern =
 export type PatternTree = IdentifierTree | KeywordIdentifierTree | SubscriptTree | AttributeTree | ListSplatPatternTree | TuplePatternTree | ListPatternTree;
 
 export type ExpressionWithinForInClause =
-  | Lambda
+  | LambdaWithinForInClause
 ;
 
-export type ExpressionWithinForInClauseTree = ExpressionTree | LambdaTree;
+export type ExpressionWithinForInClauseTree = ExpressionTree | LambdaWithinForInClauseTree;
 
 export type Expression =
   | ComparisonOperator
@@ -1600,10 +1556,10 @@ export type PrimaryExpression =
   | Tuple
   | ParenthesizedExpression
   | GeneratorExpression
-  | ListSplat
+  | ListSplatPattern
 ;
 
-export type PrimaryExpressionTree = AwaitTree | BinaryOperatorTree | IdentifierTree | KeywordIdentifierTree | StringTree | ConcatenatedStringTree | IntegerTree | FloatTree | TrueTree | FalseTree | NoneTree | UnaryOperatorTree | AttributeTree | SubscriptTree | CallTree | ListTree | ListComprehensionTree | DictionaryTree | DictionaryComprehensionTree | SetTree | SetComprehensionTree | TupleTree | ParenthesizedExpressionTree | GeneratorExpressionTree | Ellipsis2Tree | ListSplatTree;
+export type PrimaryExpressionTree = AwaitTree | BinaryOperatorTree | IdentifierTree | KeywordIdentifierTree | StringTree | ConcatenatedStringTree | IntegerTree | FloatTree | TrueTree | FalseTree | NoneTree | UnaryOperatorTree | AttributeTree | SubscriptTree | CallTree | ListTree | ListComprehensionTree | DictionaryTree | DictionaryComprehensionTree | SetTree | SetComprehensionTree | TupleTree | ParenthesizedExpressionTree | GeneratorExpressionTree | Ellipsis2Tree | ListSplatPatternTree;
 
 export type LeftHandSide =
   | Pattern
@@ -1760,11 +1716,6 @@ export type PythonNode =
   | Interpolation
   | FormatSpecifier
   | Await
-  | AsPatternTarget
-  | FormatExpression
-  | _AssignmentEq
-  | _AssignmentType
-  | _AssignmentTyped
   | AssignmentEq
   | AssignmentType
   | AssignmentTyped
@@ -1882,14 +1833,9 @@ export interface KindMap {
   'interpolation': Interpolation;
   'format_specifier': FormatSpecifier;
   'await': Await;
-  'as_pattern_target': AsPatternTarget;
-  'format_expression': FormatExpression;
-  '_assignment_eq': _AssignmentEq;
-  '_assignment_type': _AssignmentType;
-  '_assignment_typed': _AssignmentTyped;
-  'assignment_eq': AssignmentEq;
-  'assignment_type': AssignmentType;
-  'assignment_typed': AssignmentTyped;
+  '_assignment_eq': AssignmentEq;
+  '_assignment_type': AssignmentType;
+  '_assignment_typed': AssignmentTyped;
   'import_prefix': ImportPrefix;
   'pass_statement': PassStatement;
   'break_statement': BreakStatement;
@@ -2036,11 +1982,6 @@ export interface StringContentNs extends NodeNs<StringContent, LeafScalarMap, Le
 export interface InterpolationNs extends NodeNs<Interpolation, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FormatSpecifierNs extends NodeNs<FormatSpecifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AwaitNs extends NodeNs<Await, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AsPatternTargetNs extends NodeNs<AsPatternTarget, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface FormatExpressionNs extends NodeNs<FormatExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _AssignmentEqNs extends NodeNs<_AssignmentEq, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _AssignmentTypeNs extends NodeNs<_AssignmentType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _AssignmentTypedNs extends NodeNs<_AssignmentTyped, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentEqNs extends NodeNs<AssignmentEq, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentTypeNs extends NodeNs<AssignmentType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentTypedNs extends NodeNs<AssignmentTyped, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -2157,14 +2098,9 @@ export interface NamespaceMap {
   'interpolation': InterpolationNs;
   'format_specifier': FormatSpecifierNs;
   'await': AwaitNs;
-  'as_pattern_target': AsPatternTargetNs;
-  'format_expression': FormatExpressionNs;
-  '_assignment_eq': _AssignmentEqNs;
-  '_assignment_type': _AssignmentTypeNs;
-  '_assignment_typed': _AssignmentTypedNs;
-  'assignment_eq': AssignmentEqNs;
-  'assignment_type': AssignmentTypeNs;
-  'assignment_typed': AssignmentTypedNs;
+  '_assignment_eq': AssignmentEqNs;
+  '_assignment_type': AssignmentTypeNs;
+  '_assignment_typed': AssignmentTypedNs;
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -2951,59 +2887,24 @@ export namespace Await {
   export type Tree = TreeFor<'await'>;
   export type Kind = 'await';
 }
-export namespace AsPatternTarget {
-  export type Config = ConfigFor<'as_pattern_target'>;
-  export type Fluent = FluentFor<'as_pattern_target'>;
-  export type Loose = LooseFor<'as_pattern_target'>;
-  export type Tree = TreeFor<'as_pattern_target'>;
-  export type Kind = 'as_pattern_target';
-}
-export namespace FormatExpression {
-  export type Config = ConfigFor<'format_expression'>;
-  export type Fluent = FluentFor<'format_expression'>;
-  export type Loose = LooseFor<'format_expression'>;
-  export type Tree = TreeFor<'format_expression'>;
-  export type Kind = 'format_expression';
-}
-export namespace _AssignmentEq {
+export namespace AssignmentEq {
   export type Config = ConfigFor<'_assignment_eq'>;
   export type Fluent = FluentFor<'_assignment_eq'>;
   export type Loose = LooseFor<'_assignment_eq'>;
   export type Tree = TreeFor<'_assignment_eq'>;
   export type Kind = '_assignment_eq';
 }
-export namespace _AssignmentType {
+export namespace AssignmentType {
   export type Config = ConfigFor<'_assignment_type'>;
   export type Fluent = FluentFor<'_assignment_type'>;
   export type Loose = LooseFor<'_assignment_type'>;
   export type Tree = TreeFor<'_assignment_type'>;
   export type Kind = '_assignment_type';
 }
-export namespace _AssignmentTyped {
+export namespace AssignmentTyped {
   export type Config = ConfigFor<'_assignment_typed'>;
   export type Fluent = FluentFor<'_assignment_typed'>;
   export type Loose = LooseFor<'_assignment_typed'>;
   export type Tree = TreeFor<'_assignment_typed'>;
   export type Kind = '_assignment_typed';
-}
-export namespace AssignmentEq {
-  export type Config = ConfigFor<'assignment_eq'>;
-  export type Fluent = FluentFor<'assignment_eq'>;
-  export type Loose = LooseFor<'assignment_eq'>;
-  export type Tree = TreeFor<'assignment_eq'>;
-  export type Kind = 'assignment_eq';
-}
-export namespace AssignmentType {
-  export type Config = ConfigFor<'assignment_type'>;
-  export type Fluent = FluentFor<'assignment_type'>;
-  export type Loose = LooseFor<'assignment_type'>;
-  export type Tree = TreeFor<'assignment_type'>;
-  export type Kind = 'assignment_type';
-}
-export namespace AssignmentTyped {
-  export type Config = ConfigFor<'assignment_typed'>;
-  export type Fluent = FluentFor<'assignment_typed'>;
-  export type Loose = LooseFor<'assignment_typed'>;
-  export type Tree = TreeFor<'assignment_typed'>;
-  export type Kind = 'assignment_typed';
 }

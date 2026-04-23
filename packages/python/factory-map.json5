@@ -120,11 +120,6 @@
     "await": "config",
     "comment": "text",
     "line_continuation": "text",
-    "as_pattern_target": "children",
-    "format_expression": "config",
-    "assignment_eq": "config",
-    "assignment_type": "config",
-    "assignment_typed": "config",
     "string_start": "text",
     "escape_interpolation": "text",
     "string_end": "text",
@@ -404,21 +399,6 @@
     ],
     "await": [
       "primary_expression"
-    ],
-    "format_expression": [
-      "expression",
-      "type_conversion",
-      "format_specifier"
-    ],
-    "assignment_eq": [
-      "right"
-    ],
-    "assignment_type": [
-      "type"
-    ],
-    "assignment_typed": [
-      "type",
-      "right"
     ]
   },
   "polymorphVariants": {

@@ -10,12 +10,8 @@ import type {
   AliasedImport,
   ArgumentList,
   AsPattern,
-  AsPatternTarget,
   AssertStatement,
   Assignment,
-  AssignmentEq,
-  AssignmentType,
-  AssignmentTyped,
   Attribute,
   AugmentedAssignment,
   Await,
@@ -52,7 +48,6 @@ import type {
   FinallyClause,
   ForInClause,
   ForStatement,
-  FormatExpression,
   FormatSpecifier,
   FunctionDefinition,
   FutureImportStatement,
@@ -1055,48 +1050,6 @@ export function wrapAwait(data: _NodeData, tree: TreeHandle): WrappedNode<Await>
   } as unknown as WrappedNode<Await>;
 }
 
-export function wrapAsPatternTarget(data: _NodeData, tree: TreeHandle): WrappedNode<AsPatternTarget> {
-  return {
-    ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<AsPatternTarget>;
-}
-
-export function wrapFormatExpression(data: _NodeData, tree: TreeHandle): WrappedNode<FormatExpression> {
-  return {
-    ...data,
-    get expression() { return drillIn(data.$fields?.['expression'], tree); },
-    get typeConversion() { return drillIn(data.$fields?.['type_conversion'], tree); },
-    get formatSpecifier() { return drillIn(data.$fields?.['format_specifier'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<FormatExpression>;
-}
-
-export function wrapAssignmentEq(data: _NodeData, tree: TreeHandle): WrappedNode<AssignmentEq> {
-  return {
-    ...data,
-    get right() { return drillIn(data.$fields?.['right'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<AssignmentEq>;
-}
-
-export function wrapAssignmentType(data: _NodeData, tree: TreeHandle): WrappedNode<AssignmentType> {
-  return {
-    ...data,
-    get typeField() { return drillIn(data.$fields?.['type'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<AssignmentType>;
-}
-
-export function wrapAssignmentTyped(data: _NodeData, tree: TreeHandle): WrappedNode<AssignmentTyped> {
-  return {
-    ...data,
-    get typeField() { return drillIn(data.$fields?.['type'], tree); },
-    get right() { return drillIn(data.$fields?.['right'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<AssignmentTyped>;
-}
-
 const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {
   'module': (d, t) => wrapModule(d, t),
   '_simple_statements': (d, t) => wrapSimpleStatements(d, t),
@@ -1221,12 +1174,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'await': (d, t) => wrapAwait(d, t),
   'comment': (d) => d,
   'line_continuation': (d) => d,
-  'as_pattern_target': (d, t) => wrapAsPatternTarget(d, t),
-  'format_expression': (d, t) => wrapFormatExpression(d, t),
   '_kw_async': (d) => d,
-  'assignment_eq': (d, t) => wrapAssignmentEq(d, t),
-  'assignment_type': (d, t) => wrapAssignmentType(d, t),
-  'assignment_typed': (d, t) => wrapAssignmentTyped(d, t),
   '_newline': (d) => d,
   '_indent': (d) => d,
   '_dedent': (d) => d,

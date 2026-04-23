@@ -14,9 +14,9 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences:  18  (0 applied, 18 held)
-// Rule promotions:   70  (61 applied, 9 held)
-// Repeated shapes:   10  (advisory — suggested supertypes/groups)
+// Field inferences:  12  (0 applied, 12 held)
+// Rule promotions:   70  (62 applied, 8 held)
+// Repeated shapes:   7  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
 // suggestedTransforms — drop entries into your overrides.ts
@@ -95,28 +95,6 @@ export const suggestedTransforms = {
       4: field("semicolon"),  // $._semicolon
   },
 
-  // export_statement_default: 2 inferred field(s)
-  // [held] export_statement_default field 'semicolon' on $._semicolon — 82% agreement, 11 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-  // [held] export_statement_default field 'semicolon' on $._semicolon — 82% agreement, 11 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
-  // export_statement_equals_export: 1 inferred field(s)
-  export_statement_equals_export: {
-      // [held] 82% agreement, 11 parents
-      3: field("semicolon"),  // $._semicolon
-  },
-
-  // export_statement_namespace_export: 1 inferred field(s)
-  export_statement_namespace_export: {
-      // [held] 82% agreement, 11 parents
-      4: field("semicolon"),  // $._semicolon
-  },
-
-  // export_statement_type_export: 1 inferred field(s)
-  export_statement_type_export: {
-      // [held] 82% agreement, 11 parents
-      4: field("semicolon"),  // $._semicolon
-  },
-
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: condition
   for_statement: {
@@ -131,9 +109,6 @@ export const suggestedTransforms = {
       "2/1": variant("import_require_clause"),
       "2/2": variant("source"),
   },
-
-  // interface_body: 1 inferred field(s)
-  // [held] interface_body field 'semicolon' on $._semicolon — 82% agreement, 11 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   member_expression: {
@@ -188,10 +163,10 @@ export const suggestedRules = {
   _jsx_attribute: $ => choice($.jsx_attribute, $.jsx_expression),
 
   // [applied] promoted supertype
-  _jsx_attribute_name: $ => choice($.property_identifier, $.jsx_namespace_name),
+  _jsx_attribute_name: $ => choice($.jsx_identifier, $.identifier, $.jsx_namespace_name),
 
   // [applied] promoted supertype
-  _jsx_attribute_value: $ => choice($.string, $.jsx_expression, $.jsx_element, $.jsx_self_closing_element),
+  _jsx_attribute_value: $ => choice($._jsx_string, $.jsx_expression, $.jsx_element, $.jsx_self_closing_element),
 
   // [applied] promoted supertype
   _jsx_child: $ => choice($.jsx_text, $.html_character_reference, $.jsx_element, $.jsx_self_closing_element, $.jsx_expression),
@@ -200,35 +175,44 @@ export const suggestedRules = {
   _jsx_element: $ => choice($.jsx_element, $.jsx_self_closing_element),
 
   // [applied] promoted supertype
-  _jsx_element_name: $ => choice($.identifier, $.member_expression, $.jsx_namespace_name),
+  _jsx_element_name: $ => choice($.jsx_identifier, $.identifier, $.nested_identifier, $.jsx_namespace_name),
 
   // [applied] promoted supertype
-  _jsx_identifier: $ => choice($.identifier),
+  _jsx_identifier: $ => choice($.jsx_identifier, $.identifier),
 
   // [applied] promoted supertype
   _module_export_name: $ => choice($.identifier, $.string),
 
   // [applied] promoted supertype
-  _property_name: $ => choice($.property_identifier, $.private_property_identifier, $.string, $.number, $.computed_property_name),
+  _property_identifier: $ => choice($.identifier, $._reserved_identifier),
+
+  // [applied] promoted supertype
+  _property_name: $ => choice($.identifier, $.private_property_identifier, $.string, $.number, $.computed_property_name),
 
   // [applied] promoted supertype
   _semicolon: $ => choice($._automatic_semicolon),
 
   // [applied] promoted supertype
-  _tuple_type_member: $ => choice($.required_parameter, $.optional_parameter, $.optional_type, $.rest_type, $.type),
+  _shorthand_property_identifier: $ => choice($.identifier, $._reserved_identifier),
 
   // [applied] promoted supertype
-  primary_type: $ => choice($.parenthesized_type, $.predefined_type, $.type_identifier, $.nested_type_identifier, $.generic_type, $.object_type, $.array_type, $.tuple_type, $.flow_maybe_type, $.type_query, $.index_type_query, $.this_type, $.existential_type, $.literal_type, $.lookup_type, $.conditional_type, $.template_literal_type, $.intersection_type, $.union_type),
+  _shorthand_property_identifier_pattern: $ => choice($.identifier, $._reserved_identifier),
 
   // [applied] promoted supertype
-  type: $ => choice($.primary_type, $.function_type, $.readonly_type, $.constructor_type, $.infer_type, $.member_expression, $.call_expression),
+  _statement_identifier: $ => choice($.identifier, $._reserved_identifier),
+
+  // [applied] promoted supertype
+  _tuple_type_member: $ => choice($.tuple_parameter, $.optional_tuple_parameter, $.optional_type, $.rest_type, $.type),
+
+  // [applied] promoted supertype
+  primary_type: $ => choice($.parenthesized_type, $.predefined_type, $.identifier, $.nested_type_identifier, $.generic_type, $.object_type, $.array_type, $.tuple_type, $.flow_maybe_type, $.type_query, $.index_type_query, $.this, $.existential_type, $.literal_type, $.lookup_type, $.conditional_type, $.template_literal_type, $.intersection_type, $.union_type),
+
+  // [applied] promoted supertype
+  type: $ => choice($.primary_type, $.function_type, $.readonly_type, $.constructor_type, $.infer_type, $._type_query_member_expression_in_type_annotation, $._type_query_call_expression_in_type_annotation),
 
   // --- Repeated-shape candidates (reused across ≥2 parents) ---
   // parents: _jsx_start_opening_element, decorator_call_expression, decorator_member_expression, nested_identifier
   _shared_2: $ => choice($.identifier, $.member_expression),
-
-  // parents: _type_query_member_expression, _type_query_member_expression_in_type_annotation, member_expression
-  _property_identifier: $ => choice($.private_property_identifier, $.property_identifier),
 
   // parents: _for_header, assignment_expression
   _expression: $ => choice($._lhs_expression, $.parenthesized_expression),
@@ -263,8 +247,12 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_jsx_element_name", classification: "supertype", applied: true },
   { kind: "_jsx_identifier", classification: "supertype", applied: true },
   { kind: "_module_export_name", classification: "supertype", applied: true },
+  { kind: "_property_identifier", classification: "supertype", applied: true },
   { kind: "_property_name", classification: "supertype", applied: true },
   { kind: "_semicolon", classification: "supertype", applied: true },
+  { kind: "_shorthand_property_identifier", classification: "supertype", applied: true },
+  { kind: "_shorthand_property_identifier_pattern", classification: "supertype", applied: true },
+  { kind: "_statement_identifier", classification: "supertype", applied: true },
   { kind: "_tuple_type_member", classification: "supertype", applied: true },
   { kind: "primary_type", classification: "supertype", applied: true },
   { kind: "type", classification: "supertype", applied: true },
@@ -276,10 +264,7 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "number", classification: "terminal", applied: true },
   { kind: "predefined_type", classification: "terminal", applied: true },
   { kind: "private_property_identifier", classification: "terminal", applied: true },
-  { kind: "property_identifier", classification: "terminal", applied: true },
   { kind: "regex_pattern", classification: "terminal", applied: true },
-  { kind: "statement_identifier", classification: "terminal", applied: true },
-  { kind: "type_identifier", classification: "terminal", applied: true },
   { kind: "_export_statement_default", classification: "polymorph", applied: false },
   { kind: "ambient_declaration", classification: "polymorph", applied: false },
   { kind: "arrow_function", classification: "polymorph", applied: true },
@@ -294,7 +279,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "class_heritage_extends_clause", classification: "polymorph", applied: true },
   { kind: "class_heritage_implements_clause", classification: "polymorph", applied: true },
   { kind: "export_statement", classification: "polymorph", applied: true },
-  { kind: "export_statement_default", classification: "polymorph", applied: false },
   { kind: "export_statement_default", classification: "polymorph", applied: true },
   { kind: "export_statement_equals_export", classification: "polymorph", applied: true },
   { kind: "export_statement_namespace_export", classification: "polymorph", applied: true },
@@ -344,12 +328,6 @@ export const inferredFields: readonly InferredField[] = [
   { kind: "continue_statement", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
   { kind: "debugger_statement", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
   { kind: "do_statement", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
-  { kind: "export_statement_default", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
-  { kind: "export_statement_default", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
-  { kind: "export_statement_equals_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
-  { kind: "export_statement_namespace_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
-  { kind: "export_statement_type_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
-  { kind: "interface_body", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "low", agreement: 0.818, sampleSize: 11, applied: false },
 ];
 
 export interface RepeatedShape {
@@ -364,9 +342,6 @@ export const repeatedShapes: readonly RepeatedShape[] = [
   { suggestedName: "_property_identifier", kinds: ["private_property_identifier","property_identifier"], parents: ["_type_query_member_expression","_type_query_member_expression_in_type_annotation","member_expression"], shape: "supertype" },
   { suggestedName: "_expression", kinds: ["_lhs_expression","parenthesized_expression"], parents: ["_for_header","assignment_expression"], shape: "supertype" },
   { suggestedName: "_identifier", kinds: ["identifier","nested_identifier"], parents: ["import_alias","nested_type_identifier"], shape: "supertype" },
-  { suggestedName: "_shared_2", kinds: ["_module_export_name","identifier"], parents: ["_import_specifier_as","import_specifier_as"], shape: "supertype" },
-  { suggestedName: "_shared_2", kinds: ["expression","import"], parents: ["_call_expression_call","call_expression_call"], shape: "supertype" },
-  { suggestedName: "_expression", kinds: ["new_expression","primary_expression"], parents: ["_call_expression_template_call","call_expression_template_call"], shape: "supertype" },
   { suggestedName: "_shared_4", kinds: ["identifier","import","member_expression","subscript_expression"], parents: ["_type_query_call_expression","_type_query_instantiation_expression"], shape: "supertype" },
   { suggestedName: "_shared_5", kinds: ["call_expression","identifier","member_expression","subscript_expression","this"], parents: ["_type_query_member_expression","_type_query_subscript_expression"], shape: "supertype" },
 ];

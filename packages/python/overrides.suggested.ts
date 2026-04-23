@@ -118,7 +118,7 @@ export const suggestedRules = {
   _compound_statement: $ => choice($.if_statement, $.for_statement, $.while_statement, $.try_statement, $.with_statement, $.function_definition, $.class_definition, $.decorated_definition, $.match_statement),
 
   // [applied] promoted supertype
-  _expression_within_for_in_clause: $ => choice($.expression, $.lambda),
+  _expression_within_for_in_clause: $ => choice($.expression, $.lambda_within_for_in_clause),
 
   // [applied] promoted supertype
   _expressions: $ => choice($.expression, $.expression_list),
@@ -154,7 +154,7 @@ export const suggestedRules = {
   pattern: $ => choice($.identifier, $.keyword_identifier, $.subscript, $.attribute, $.list_splat_pattern, $.tuple_pattern, $.list_pattern),
 
   // [applied] promoted supertype
-  primary_expression: $ => choice($.await, $.binary_operator, $.identifier, $.keyword_identifier, $.string, $.concatenated_string, $.integer, $.float, $.true, $.false, $.none, $.unary_operator, $.attribute, $.subscript, $.call, $.list, $.list_comprehension, $.dictionary, $.dictionary_comprehension, $.set, $.set_comprehension, $.tuple, $.parenthesized_expression, $.generator_expression, $.ellipsis, $.list_splat),
+  primary_expression: $ => choice($.await, $.binary_operator, $.identifier, $.keyword_identifier, $.string, $.concatenated_string, $.integer, $.float, $.true, $.false, $.none, $.unary_operator, $.attribute, $.subscript, $.call, $.list, $.list_comprehension, $.dictionary, $.dictionary_comprehension, $.set, $.set_comprehension, $.tuple, $.parenthesized_expression, $.generator_expression, $.ellipsis, $.list_splat_pattern),
 
 };
 

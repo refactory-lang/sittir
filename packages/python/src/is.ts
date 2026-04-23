@@ -130,11 +130,6 @@ export interface IsGuards {
     interpolation<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'interpolation' };
     formatSpecifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'format_specifier' };
     await<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'await' };
-    asPatternTarget<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'as_pattern_target' };
-    formatExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'format_expression' };
-    assignmentEq<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'assignment_eq' };
-    assignmentType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'assignment_type' };
-    assignmentTyped<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'assignment_typed' };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): v is { readonly $type: K & string };
     statement(v: { readonly $type: string }): v is Statement;
     simpleStatement(v: { readonly $type: string }): v is SimpleStatement;
@@ -261,11 +256,6 @@ export interface AssertGuards {
     interpolation(v: { readonly $type: string }): asserts v is { readonly $type: 'interpolation' };
     formatSpecifier(v: { readonly $type: string }): asserts v is { readonly $type: 'format_specifier' };
     await(v: { readonly $type: string }): asserts v is { readonly $type: 'await' };
-    asPatternTarget(v: { readonly $type: string }): asserts v is { readonly $type: 'as_pattern_target' };
-    formatExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'format_expression' };
-    assignmentEq(v: { readonly $type: string }): asserts v is { readonly $type: 'assignment_eq' };
-    assignmentType(v: { readonly $type: string }): asserts v is { readonly $type: 'assignment_type' };
-    assignmentTyped(v: { readonly $type: string }): asserts v is { readonly $type: 'assignment_typed' };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): asserts v is { readonly $type: K & string };
     statement(v: { readonly $type: string }): asserts v is Statement;
     simpleStatement(v: { readonly $type: string }): asserts v is SimpleStatement;
@@ -299,9 +289,9 @@ const _supertype_expressions = new Set<string>(["expression", "expression_list"]
 const _supertype_compoundStatement = new Set<string>(["if_statement", "for_statement", "while_statement", "try_statement", "with_statement", "function_definition", "class_definition", "decorated_definition", "match_statement"]);
 const _supertype_parameter = new Set<string>(["identifier", "typed_parameter", "default_parameter", "typed_default_parameter", "list_splat_pattern", "tuple_pattern", "keyword_separator", "positional_separator", "dictionary_splat_pattern"]);
 const _supertype_pattern = new Set<string>(["identifier", "keyword_identifier", "subscript", "attribute", "list_splat_pattern", "tuple_pattern", "list_pattern"]);
-const _supertype_expressionWithinForInClause = new Set<string>(["expression", "lambda"]);
+const _supertype_expressionWithinForInClause = new Set<string>(["expression", "lambda_within_for_in_clause"]);
 const _supertype_expression = new Set<string>(["comparison_operator", "not_operator", "boolean_operator", "lambda", "primary_expression", "conditional_expression", "named_expression", "as_pattern"]);
-const _supertype_primaryExpression = new Set<string>(["await", "binary_operator", "identifier", "keyword_identifier", "string", "concatenated_string", "integer", "float", "true", "false", "none", "unary_operator", "attribute", "subscript", "call", "list", "list_comprehension", "dictionary", "dictionary_comprehension", "set", "set_comprehension", "tuple", "parenthesized_expression", "generator_expression", "ellipsis", "list_splat"]);
+const _supertype_primaryExpression = new Set<string>(["await", "binary_operator", "identifier", "keyword_identifier", "string", "concatenated_string", "integer", "float", "true", "false", "none", "unary_operator", "attribute", "subscript", "call", "list", "list_comprehension", "dictionary", "dictionary_comprehension", "set", "set_comprehension", "tuple", "parenthesized_expression", "generator_expression", "ellipsis", "list_splat_pattern"]);
 const _supertype_leftHandSide = new Set<string>(["pattern", "pattern_list"]);
 const _supertype_rightHandSide = new Set<string>(["expression", "expression_list", "assignment", "augmented_assignment", "pattern_list", "yield"]);
 const _supertype_fExpression = new Set<string>(["expression", "expression_list", "pattern_list", "yield"]);
@@ -415,11 +405,6 @@ export const is = {
     interpolation: _g("interpolation"),
     formatSpecifier: _g("format_specifier"),
     await: _g("await"),
-    asPatternTarget: _g("as_pattern_target"),
-    formatExpression: _g("format_expression"),
-    assignmentEq: _g("assignment_eq"),
-    assignmentType: _g("assignment_type"),
-    assignmentTyped: _g("assignment_typed"),
     kind: (v: { readonly $type: string }, k: string): boolean => v.$type === k,
     statement: _sg(_supertype_statement),
     simpleStatement: _sg(_supertype_simpleStatement),
@@ -567,11 +552,6 @@ export const assert = {
     interpolation: _makeAssert('interpolation', is.interpolation as _AnyGuard),
     formatSpecifier: _makeAssert('formatSpecifier', is.formatSpecifier as _AnyGuard),
     await: _makeAssert('await', is.await as _AnyGuard),
-    asPatternTarget: _makeAssert('asPatternTarget', is.asPatternTarget as _AnyGuard),
-    formatExpression: _makeAssert('formatExpression', is.formatExpression as _AnyGuard),
-    assignmentEq: _makeAssert('assignmentEq', is.assignmentEq as _AnyGuard),
-    assignmentType: _makeAssert('assignmentType', is.assignmentType as _AnyGuard),
-    assignmentTyped: _makeAssert('assignmentTyped', is.assignmentTyped as _AnyGuard),
     kind: _makeAssertKind(is.kind as _AnyGuard),
     statement: _makeAssert('statement', is.statement as _AnyGuard),
     simpleStatement: _makeAssert('simpleStatement', is.simpleStatement as _AnyGuard),

@@ -224,12 +224,12 @@ describe('else_clause', () => {
 
 describe('match_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.match({ subject: [{ $type: 'expression', $text: 'test' } as any], body: { $type: 'block', $text: 'test' } as any });
+    const node = ir.match({ subject: [{ $type: 'expression', $text: 'test' } as any], body: { $type: '_match_block', $text: 'test' } as any });
     expect(node.$type).toBe('match_statement');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.match({ subject: [{ $type: 'expression', $text: 'test' } as any], body: { $type: 'block', $text: 'test' } as any });
+    const node = ir.match({ subject: [{ $type: 'expression', $text: 'test' } as any], body: { $type: '_match_block', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -748,17 +748,17 @@ describe('lambda_within_for_in_clause', () => {
 
 describe('assignment', () => {
   it('eq form produces correct type', () => {
-    const node = ir.assignment.eq({ right: { $type: '_right_hand_side', $text: 'test' } as any });
+    const node = ir.assignment.eq({ left: { $type: '_left_hand_side', $text: 'test' } as any });
     expect(node.$type).toBe('assignment');
     expect(node.$source).toBe('factory');
   });
   it('type form produces correct type', () => {
-    const node = ir.assignment.type({ type: { $type: 'type', $text: 'test' } as any });
+    const node = ir.assignment.type({ left: { $type: '_left_hand_side', $text: 'test' } as any });
     expect(node.$type).toBe('assignment');
     expect(node.$source).toBe('factory');
   });
   it('typed form produces correct type', () => {
-    const node = ir.assignment.typed({ type: { $type: 'type', $text: 'test' } as any, right: { $type: '_right_hand_side', $text: 'test' } as any });
+    const node = ir.assignment.typed({ left: { $type: '_left_hand_side', $text: 'test' } as any });
     expect(node.$type).toBe('assignment');
     expect(node.$source).toBe('factory');
   });
@@ -1214,62 +1214,6 @@ describe('line_continuation', () => {
     expect(node.$type).toBe('line_continuation');
     expect(node.$source).toBe('factory');
     expect(node.$text).toBe("test");
-  });
-});
-
-describe('as_pattern_target', () => {
-  it('factory produces correct type', () => {
-    const node = ir.asPatternTarget();
-    expect(node.$type).toBe('as_pattern_target');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('format_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.format({ expression: { $type: '_f_expression', $text: 'test' } as any });
-    expect(node.$type).toBe('format_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.format({ expression: { $type: '_f_expression', $text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('assignment_eq', () => {
-  it('factory produces correct type', () => {
-    const node = ir.assignmentEq({ right: { $type: '_right_hand_side', $text: 'test' } as any });
-    expect(node.$type).toBe('assignment_eq');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.assignmentEq({ right: { $type: '_right_hand_side', $text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('assignment_type', () => {
-  it('factory produces correct type', () => {
-    const node = ir.assignmentType({ type: { $type: 'type', $text: 'test' } as any });
-    expect(node.$type).toBe('assignment_type');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.assignmentType({ type: { $type: 'type', $text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('assignment_typed', () => {
-  it('factory produces correct type', () => {
-    const node = ir.assignmentTyped({ type: { $type: 'type', $text: 'test' } as any, right: { $type: '_right_hand_side', $text: 'test' } as any });
-    expect(node.$type).toBe('assignment_typed');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.assignmentTyped({ type: { $type: 'type', $text: 'test' } as any, right: { $type: '_right_hand_side', $text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 

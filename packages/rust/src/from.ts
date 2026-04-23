@@ -171,47 +171,6 @@ export const _fromMap = {
   "super": superFrom,
   "crate": crateFrom,
   "metavariable": metavariableFrom,
-  "primitive_type": primitiveTypeFrom,
-  "let_chain": letChainFrom,
-  "shorthand_field_identifier": shorthandFieldIdentifierFrom,
-  "type_identifier": typeIdentifierFrom,
-  "field_identifier": fieldIdentifierFrom,
-  "expression_statement_with_semi": expressionStatementWithSemiFrom,
-  "expression_statement_block_ending": expressionStatementBlockEndingFrom,
-  "macro_definition_paren": macroDefinitionParenFrom,
-  "macro_definition_bracket": macroDefinitionBracketFrom,
-  "macro_definition_brace": macroDefinitionBraceFrom,
-  "mod_item_inline": modItemInlineFrom,
-  "foreign_mod_item_body": foreignModItemBodyFrom,
-  "struct_item_brace": structItemBraceFrom,
-  "struct_item_tuple": structItemTupleFrom,
-  "impl_item_body": implItemBodyFrom,
-  "function_type_trait_form": functionTypeTraitFormFrom,
-  "function_type_fn_form": functionTypeFnFormFrom,
-  "pointer_type_const": pointerTypeConstFrom,
-  "pointer_type_mut": pointerTypeMutFrom,
-  "range_expression_binary": rangeExpressionBinaryFrom,
-  "range_expression_postfix": rangeExpressionPostfixFrom,
-  "range_expression_prefix": rangeExpressionPrefixFrom,
-  "range_expression_bare": rangeExpressionBareFrom,
-  "reference_expression_raw_const": referenceExpressionRawConstFrom,
-  "reference_expression_raw_mut": referenceExpressionRawMutFrom,
-  "array_expression_semi": arrayExpressionSemiFrom,
-  "array_expression_list": arrayExpressionListFrom,
-  "match_arm_with_comma": matchArmWithCommaFrom,
-  "match_arm_block_ending": matchArmBlockEndingFrom,
-  "closure_expression_block": closureExpressionBlockFrom,
-  "closure_expression_expr": closureExpressionExprFrom,
-  "wildcard_pattern": wildcardPatternFrom,
-  "field_pattern_shorthand": fieldPatternShorthandFrom,
-  "field_pattern_named": fieldPatternNamedFrom,
-  "range_pattern_left": rangePatternLeftFrom,
-  "range_pattern_prefix": rangePatternPrefixFrom,
-  "or_pattern_binary": orPatternBinaryFrom,
-  "or_pattern_prefix": orPatternPrefixFrom,
-  "line_comment_regular_dslash": lineCommentRegularDslashFrom,
-  "line_comment_doc": lineCommentDocFrom,
-  "line_comment_content": lineCommentContentFrom,
   "string_content": stringContentFrom,
   "raw_string_literal_content": rawStringLiteralContentFrom,
   "float_literal": floatLiteralFrom,
@@ -239,15 +198,6 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
   "super": { values: ["super"], factory: () => F.super_() },
   "crate": { values: ["crate"], factory: () => F.crate() },
   "metavariable": { factory: F.metavariable },
-  "primitive_type": { values: ["u8", "i8", "u16", "i16", "u32", "i32", "u64", "i64", "u128", "i128", "isize", "usize", "f32", "f64", "bool", "str", "char"], factory: (text: string) => F.primitiveType(text) },
-  "shorthand_field_identifier": { factory: F.shorthandFieldIdentifier },
-  "type_identifier": { factory: F.typeIdentifier },
-  "field_identifier": { factory: F.fieldIdentifier },
-  "pointer_type_const": { values: ["const"], factory: () => F.pointerTypeConst() },
-  "reference_expression_raw_const": { factory: F.referenceExpressionRawConst },
-  "wildcard_pattern": { values: ["_"], factory: () => F.wildcardPattern() },
-  "line_comment_regular_dslash": { factory: F.lineCommentRegularDslash },
-  "line_comment_content": { factory: F.lineCommentContent },
   "string_content": { factory: F.stringContent },
   "raw_string_literal_content": { factory: F.rawStringLiteralContent },
   "float_literal": { factory: F.floatLiteral },
@@ -397,7 +347,6 @@ function _assertNonEmpty<T>(
 }
 
 // Interned resolver kind lists (T042i dedup)
-const _super_expression_ending_with_block: readonly string[] = ["unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block"];
 const _K0: readonly string[] = [];
 const _K1: readonly string[] = ["expression_statement","const_item","macro_invocation","macro_definition","attribute_item","inner_attribute_item","mod_item","foreign_mod_item","struct_item","union_item","enum_item","type_item","function_item","function_signature_item","impl_item","trait_item","associated_type","let_declaration","use_declaration","extern_crate_declaration","static_item"];
 const _K2: readonly string[] = ["identifier"];
@@ -407,19 +356,19 @@ const _K5: readonly string[] = ["unary_expression","reference_expression","try_e
 const _K6: readonly string[] = ["self","identifier","metavariable","super","crate"];
 const _K7: readonly string[] = ["scoped_identifier"];
 const _K8: readonly string[] = ["field_declaration_list","ordered_field_declaration_list"];
-const _K9: readonly string[] = ["metavariable","unit_type","type_identifier","primitive_type"];
+const _K9: readonly string[] = ["metavariable","unit_type","identifier","_primitive_type"];
 const _K10: readonly string[] = ["abstract_type","reference_type","pointer_type","generic_type","scoped_type_identifier","tuple_type","array_type","function_type","macro_invocation","dynamic_type","bounded_type","removed_trait_bound"];
 const _K11: readonly string[] = ["identifier","metavariable"];
-const _K12: readonly string[] = ["primitive_type"];
+const _K12: readonly string[] = ["_primitive_type"];
 const _K13: readonly string[] = ["lifetime","_type_identifier","scoped_type_identifier","generic_type","reference_type","pointer_type","tuple_type","array_type","higher_ranked_trait_bound"];
 const _K14: readonly string[] = ["_type_identifier","scoped_type_identifier","generic_type"];
 const _K15: readonly string[] = ["identifier","char_literal","boolean_literal","integer_literal","float_literal"];
 const _K16: readonly string[] = ["block","string_literal","raw_string_literal","negative_literal"];
-const _K17: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","identifier","wildcard_pattern"];
+const _K17: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","identifier","_wildcard_pattern"];
 const _K18: readonly string[] = ["string_literal","raw_string_literal","negative_literal","scoped_identifier","generic_pattern","tuple_pattern","tuple_struct_pattern","struct_pattern","ref_pattern","slice_pattern","captured_pattern","reference_pattern","mut_pattern","range_pattern","or_pattern","const_block","macro_invocation"];
 const _K19: readonly string[] = ["scoped_identifier","use_as_clause","use_list","scoped_use_list","use_wildcard"];
-const _K20: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","identifier","wildcard_pattern","self"];
-const _K21: readonly string[] = ["function_type_trait_form","function_type_fn_form"];
+const _K20: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","identifier","_wildcard_pattern","self"];
+const _K21: readonly string[] = ["_function_type_trait_form","_function_type_fn_form"];
 const _K22: readonly string[] = ["scoped_identifier","field_expression"];
 const _K23: readonly string[] = ["_type_identifier","_reserved_identifier","scoped_type_identifier"];
 const _K24: readonly string[] = ["_type_identifier","scoped_identifier"];
@@ -427,23 +376,21 @@ const _K25: readonly string[] = ["lifetime","abstract_type","reference_type","po
 const _K26: readonly string[] = ["_type_identifier","scoped_type_identifier","removed_trait_bound","generic_type","function_type","tuple_type","bounded_type"];
 const _K27: readonly string[] = ["higher_ranked_trait_bound","_type_identifier","scoped_type_identifier","generic_type","function_type","tuple_type"];
 const _K28: readonly string[] = ["scoped_identifier","_reserved_identifier"];
-const _K29: readonly string[] = ["scoped_identifier","bracketed_type","generic_type"];
+const _K29: readonly string[] = ["scoped_identifier","bracketed_type","generic_type_with_turbofish"];
 const _K30: readonly string[] = ["identifier","super"];
-const _K31: readonly string[] = ["scoped_identifier","generic_type"];
-const _K32: readonly string[] = ["scoped_identifier","generic_type","bracketed_type"];
-const _K33: readonly string[] = ["reference_expression_raw_const","mutable_specifier"];
-const _K34: readonly string[] = ["reference_expression_raw_mut"];
+const _K31: readonly string[] = ["scoped_identifier","generic_type_with_turbofish"];
+const _K32: readonly string[] = ["scoped_identifier","generic_type_with_turbofish","bracketed_type"];
+const _K33: readonly string[] = ["_reference_expression_raw_const","mutable_specifier"];
+const _K34: readonly string[] = ["_reference_expression_raw_mut"];
 const _K35: readonly string[] = ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block"];
-const _K36: readonly string[] = ["_type_identifier","scoped_type_identifier","generic_type_with_turbofish"];
+const _K36: readonly string[] = ["_type_identifier","scoped_type_identifier_in_expression_position","generic_type_with_turbofish"];
 const _K37: readonly string[] = ["integer_literal"];
 const _K38: readonly string[] = ["_field_identifier"];
-const _K39: readonly string[] = ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression","let_condition","let_chain"];
+const _K39: readonly string[] = ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression","let_condition","_let_chain"];
 const _K40: readonly string[] = ["attribute_item","inner_attribute_item"];
 const _K41: readonly string[] = ["expression_statement","const_item","macro_invocation","macro_definition","attribute_item","inner_attribute_item","mod_item","foreign_mod_item","struct_item","union_item","enum_item","type_item","function_item","function_signature_item","impl_item","trait_item","associated_type","let_declaration","use_declaration","extern_crate_declaration","static_item","unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"];
 const _K42: readonly string[] = ["_type_identifier","scoped_type_identifier"];
 const _K43: readonly string[] = ["integer_literal","float_literal"];
-const _K44: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","self","identifier","metavariable","super","crate"];
-const _K45: readonly string[] = ["string_literal","raw_string_literal","negative_literal","scoped_identifier"];
 
 export function sourceFileFrom(input: T.SourceFile.Loose): ReturnType<typeof F.sourceFile> {
   if (isNodeData(input)) return input;
@@ -583,7 +530,7 @@ export function attributeFrom(input: T.Attribute.Loose): ReturnType<typeof F.att
   if (isNodeData(input)) return input;
   return F.attribute({
     value: _resolveOne(input.value, _K4, _K5),
-    arguments: _resolveOneBranch(input.arguments, "token_tree"),
+    arguments: _resolveOneBranch(input.arguments, "delim_token_tree"),
     children: _resolveOne(input.children, _K6, _K7),
   });
 }
@@ -1268,7 +1215,7 @@ export function macroInvocationFrom(input: T.MacroInvocation.Loose): ReturnType<
   if (isNodeData(input)) return input;
   return F.macroInvocation({
     macro: _resolveOne(input.macro, _K2, _K28),
-    tokenTree: _resolveOneBranch(input.tokenTree, "token_tree"),
+    tokenTree: _resolveOneBranch(input.tokenTree, "delim_token_tree"),
   });
 }
 
@@ -1940,7 +1887,7 @@ export function rawStringLiteralFrom(input: T.RawStringLiteral.Loose): ReturnTyp
   if (isNodeData(input)) return input;
   return F.rawStringLiteral({
     rawStringLiteralStart: _resolveOne(input.rawStringLiteralStart, _K0, _K0),
-    stringContent: _resolveOneLeaf(input.stringContent, "string_content"),
+    stringContent: _resolveOneBranch(input.stringContent, "_string_content"),
     rawStringLiteralEnd: _resolveOne(input.rawStringLiteralEnd, _K0, _K0),
   });
 }
@@ -2001,9 +1948,9 @@ export function lineCommentUFormContentFrom(input: ConfigOf<T.LineCommentUFormCo
 export function blockCommentFrom(input?: T.BlockComment.Loose): ReturnType<typeof F.blockComment> {
   if (input !== undefined && isNodeData(input)) return input;
   return F.blockComment({
-    outer: _resolveBooleanKeyword(input?.outer),
-    inner: _resolveBooleanKeyword(input?.inner),
-    doc: _resolveOneBranch(input?.doc, "doc_comment"),
+    outer: _resolveOneLeaf(input?.outer, "_outer_doc_comment_marker"),
+    inner: _resolveOneLeaf(input?.inner, "_inner_doc_comment_marker"),
+    doc: _resolveOneLeaf(input?.doc, "_doc_comment"),
   });
 }
 
@@ -2035,305 +1982,6 @@ export function crateFrom(input?: T.Crate) {
 export function metavariableFrom(input: string | T.Metavariable) {
   if (isNodeData(input)) return input;
   return F.metavariable(input);
-}
-
-export function primitiveTypeFrom(input: string | T.PrimitiveType) {
-  if (isNodeData(input)) return input;
-  return F.primitiveType(input);
-}
-
-export function letChainFrom(input?: NonNullable<T.LetChain.Config['children']>[number] | T.LetChain) {
-  if (isNodeData(input) && input.$type === 'let_chain') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.letChain(child);
-  }
-  return F.letChain(input);
-}
-
-export function shorthandFieldIdentifierFrom(input: string | T.ShorthandFieldIdentifier) {
-  if (isNodeData(input)) return input;
-  return F.shorthandFieldIdentifier(input);
-}
-
-export function typeIdentifierFrom(input: string | T.TypeIdentifier) {
-  if (isNodeData(input)) return input;
-  return F.typeIdentifier(input);
-}
-
-export function fieldIdentifierFrom(input: string | T.FieldIdentifier) {
-  if (isNodeData(input)) return input;
-  return F.fieldIdentifier(input);
-}
-
-export function expressionStatementWithSemiFrom(input?: NonNullable<T.ExpressionStatementWithSemi.Config['children']>[number] | T.ExpressionStatementWithSemi) {
-  if (isNodeData(input) && input.$type === 'expression_statement_with_semi') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.expressionStatementWithSemi(child);
-  }
-  return F.expressionStatementWithSemi(input);
-}
-
-export function expressionStatementBlockEndingFrom(input?: NonNullable<T.ExpressionStatementBlockEnding.Config['children']>[number] | T.ExpressionStatementBlockEnding) {
-  if (isNodeData(input) && input.$type === 'expression_statement_block_ending') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.expressionStatementBlockEnding(child);
-  }
-  return F.expressionStatementBlockEnding(input);
-}
-
-export function macroDefinitionParenFrom(...input: readonly (NonNullable<T.MacroDefinitionParen.Config['children']>[number] | T.MacroDefinitionParen)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'macro_definition_paren') {
-    const data = input[0];
-    return F.macroDefinitionParen(...(data.$children ?? []));
-  }
-  return F.macroDefinitionParen(...input);
-}
-
-export function macroDefinitionBracketFrom(...input: readonly (NonNullable<T.MacroDefinitionBracket.Config['children']>[number] | T.MacroDefinitionBracket)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'macro_definition_bracket') {
-    const data = input[0];
-    return F.macroDefinitionBracket(...(data.$children ?? []));
-  }
-  return F.macroDefinitionBracket(...input);
-}
-
-export function macroDefinitionBraceFrom(...input: readonly (NonNullable<T.MacroDefinitionBrace.Config['children']>[number] | T.MacroDefinitionBrace)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'macro_definition_brace') {
-    const data = input[0];
-    return F.macroDefinitionBrace(...(data.$children ?? []));
-  }
-  return F.macroDefinitionBrace(...input);
-}
-
-export function modItemInlineFrom(input: T.ModItemInline.Loose): ReturnType<typeof F.modItemInline> {
-  if (isNodeData(input)) return input;
-  return F.modItemInline({
-    body: _resolveOneBranch(input.body, "declaration_list"),
-  });
-}
-
-export function foreignModItemBodyFrom(input: T.ForeignModItemBody.Loose): ReturnType<typeof F.foreignModItemBody> {
-  if (isNodeData(input)) return input;
-  return F.foreignModItemBody({
-    body: _resolveOneBranch(input.body, "declaration_list"),
-  });
-}
-
-export function structItemBraceFrom(input: T.StructItemBrace.Loose): ReturnType<typeof F.structItemBrace> {
-  if (isNodeData(input)) return input;
-  return F.structItemBrace({
-    body: _resolveOneBranch(input.body, "field_declaration_list"),
-    children: _resolveOneBranch(input.children, "where_clause"),
-  });
-}
-
-export function structItemTupleFrom(input: T.StructItemTuple.Loose): ReturnType<typeof F.structItemTuple> {
-  if (isNodeData(input)) return input;
-  return F.structItemTuple({
-    body: _resolveOneBranch(input.body, "ordered_field_declaration_list"),
-    children: _resolveOneBranch(input.children, "where_clause"),
-  });
-}
-
-export function implItemBodyFrom(input: T.ImplItemBody.Loose): ReturnType<typeof F.implItemBody> {
-  if (isNodeData(input)) return input;
-  return F.implItemBody({
-    body: _resolveOneBranch(input.body, "declaration_list"),
-  });
-}
-
-export function functionTypeTraitFormFrom(input: T.FunctionTypeTraitForm.Loose): ReturnType<typeof F.functionTypeTraitForm> {
-  if (isNodeData(input)) return input;
-  return F.functionTypeTraitForm({
-    trait: _resolveOne(input.trait, _K0, _K42),
-  });
-}
-
-export function functionTypeFnFormFrom(input?: NonNullable<T.FunctionTypeFnForm.Config['children']>[number] | T.FunctionTypeFnForm) {
-  if (isNodeData(input) && input.$type === 'function_type_fn_form') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.functionTypeFnForm(child);
-  }
-  return F.functionTypeFnForm(input);
-}
-
-export function pointerTypeConstFrom(input?: T.PointerTypeConst) {
-  if (isNodeData(input)) return input;
-  return F.pointerTypeConst();
-}
-
-export function pointerTypeMutFrom(input?: NonNullable<T.PointerTypeMut.Config['children']>[number] | T.PointerTypeMut) {
-  if (isNodeData(input) && input.$type === 'pointer_type_mut') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.pointerTypeMut(child);
-  }
-  return F.pointerTypeMut(input);
-}
-
-export function rangeExpressionBinaryFrom(input: T.RangeExpressionBinary.Loose): ReturnType<typeof F.rangeExpressionBinary> {
-  if (isNodeData(input)) return input;
-  return F.rangeExpressionBinary({
-    start: _resolveOne(input.start, _K4, _K5),
-    operator: _resolveOne(input.operator, _K0, _K0),
-    end: _resolveOne(input.end, _K4, _K5),
-  });
-}
-
-export function rangeExpressionPostfixFrom(input: T.RangeExpressionPostfix.Loose): ReturnType<typeof F.rangeExpressionPostfix> {
-  if (isNodeData(input)) return input;
-  return F.rangeExpressionPostfix({
-    start: _resolveOne(input.start, _K4, _K5),
-    operator: _resolveOne(input.operator, _K0, _K0),
-  });
-}
-
-export function rangeExpressionPrefixFrom(input: T.RangeExpressionPrefix.Loose): ReturnType<typeof F.rangeExpressionPrefix> {
-  if (isNodeData(input)) return input;
-  return F.rangeExpressionPrefix({
-    operator: _resolveOne(input.operator, _K0, _K0),
-    end: _resolveOne(input.end, _K4, _K5),
-  });
-}
-
-export function rangeExpressionBareFrom(input: T.RangeExpressionBare.Loose): ReturnType<typeof F.rangeExpressionBare> {
-  if (isNodeData(input)) return input;
-  return F.rangeExpressionBare({
-    operator: _resolveOne(input.operator, _K0, _K0),
-  });
-}
-
-export function referenceExpressionRawConstFrom(input: string | T.ReferenceExpressionRawConst) {
-  if (isNodeData(input)) return input;
-  return F.referenceExpressionRawConst(input);
-}
-
-export function referenceExpressionRawMutFrom(input?: NonNullable<T.ReferenceExpressionRawMut.Config['children']>[number] | T.ReferenceExpressionRawMut) {
-  if (isNodeData(input) && input.$type === 'reference_expression_raw_mut') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.referenceExpressionRawMut(child);
-  }
-  return F.referenceExpressionRawMut(input);
-}
-
-export function arrayExpressionSemiFrom(input: T.ArrayExpressionSemi.Loose): ReturnType<typeof F.arrayExpressionSemi> {
-  if (isNodeData(input)) return input;
-  return F.arrayExpressionSemi({
-    attributes: _resolveManyBranch(input.attributes, "attribute_item"),
-    elements: _resolveOne(input.elements, _K4, _K5),
-    length: _resolveOne(input.length, _K4, _K5),
-  });
-}
-
-export function arrayExpressionListFrom(input: T.ArrayExpressionList.Loose): ReturnType<typeof F.arrayExpressionList> {
-  if (isNodeData(input)) return input;
-  return F.arrayExpressionList({
-    attributes: _resolveManyBranch(input.attributes, "attribute_item"),
-    elements: _resolveMany(input.elements, _K4, _K5),
-    children: _resolveManyBranch(input.children, "attribute_item"),
-  });
-}
-
-export function matchArmWithCommaFrom(input: T.MatchArmWithComma.Loose): ReturnType<typeof F.matchArmWithComma> {
-  if (isNodeData(input)) return input;
-  return F.matchArmWithComma({
-    value: _resolveOne(input.value, _K4, _K5),
-  });
-}
-
-export function matchArmBlockEndingFrom(input: T.MatchArmBlockEnding.Loose): ReturnType<typeof F.matchArmBlockEnding> {
-  if (isNodeData(input)) return input;
-  return F.matchArmBlockEnding({
-    value: _resolveOne(input.value, _K0, _super_expression_ending_with_block),
-  });
-}
-
-export function closureExpressionBlockFrom(input: T.ClosureExpressionBlock.Loose): ReturnType<typeof F.closureExpressionBlock> {
-  if (isNodeData(input)) return input;
-  return F.closureExpressionBlock({
-    returnType: _resolveOne(input.returnType, _K9, _K10),
-    body: _resolveOneBranch(input.body, "block"),
-  });
-}
-
-export function closureExpressionExprFrom(input: T.ClosureExpressionExpr.Loose): ReturnType<typeof F.closureExpressionExpr> {
-  if (isNodeData(input)) return input;
-  return F.closureExpressionExpr({
-    body: _resolveOne(input.body, _K4, _K5),
-  });
-}
-
-export function wildcardPatternFrom(input?: T.WildcardPattern) {
-  if (isNodeData(input)) return input;
-  return F.wildcardPattern();
-}
-
-export function fieldPatternShorthandFrom(input: T.FieldPatternShorthand.Loose): ReturnType<typeof F.fieldPatternShorthand> {
-  if (isNodeData(input)) return input;
-  return F.fieldPatternShorthand({
-    name: _resolveOneLeaf(input.name, "shorthand_field_identifier"),
-  });
-}
-
-export function fieldPatternNamedFrom(input: T.FieldPatternNamed.Loose): ReturnType<typeof F.fieldPatternNamed> {
-  if (isNodeData(input)) return input;
-  return F.fieldPatternNamed({
-    name: _resolveOneBranch(input.name, "_field_identifier"),
-    pattern: _resolveOne(input.pattern, _K17, _K18),
-  });
-}
-
-export function rangePatternLeftFrom(input: T.RangePatternLeft.Loose): ReturnType<typeof F.rangePatternLeft> {
-  if (isNodeData(input)) return input;
-  return F.rangePatternLeft({
-    left: _resolveOne(input.left, _K44, _K45),
-    right: _resolveOne(input.right, _K44, _K45),
-  });
-}
-
-export function rangePatternPrefixFrom(input: T.RangePatternPrefix.Loose): ReturnType<typeof F.rangePatternPrefix> {
-  if (isNodeData(input)) return input;
-  return F.rangePatternPrefix({
-    right: _resolveOne(input.right, _K44, _K45),
-  });
-}
-
-export function orPatternBinaryFrom(input: T.OrPatternBinary.Loose): ReturnType<typeof F.orPatternBinary> {
-  if (isNodeData(input)) return input;
-  return F.orPatternBinary({
-    left: _resolveOne(input.left, _K17, _K18),
-    right: _resolveOne(input.right, _K17, _K18),
-  });
-}
-
-export function orPatternPrefixFrom(input: T.OrPatternPrefix.Loose): ReturnType<typeof F.orPatternPrefix> {
-  if (isNodeData(input)) return input;
-  return F.orPatternPrefix({
-    right: _resolveOne(input.right, _K17, _K18),
-  });
-}
-
-export function lineCommentRegularDslashFrom(input: string | T.LineCommentRegularDslash) {
-  if (isNodeData(input)) return input;
-  return F.lineCommentRegularDslash(input);
-}
-
-export function lineCommentDocFrom(input: T.LineCommentDoc.Loose): ReturnType<typeof F.lineCommentDoc> {
-  if (isNodeData(input)) return input;
-  return F.lineCommentDoc({
-    doc: _resolveOneBranch(input.doc, "doc_comment"),
-    children: _resolveOneBranch(input.children, "_line_doc_comment_marker"),
-  });
-}
-
-export function lineCommentContentFrom(input: string | T.LineCommentContent) {
-  if (isNodeData(input)) return input;
-  return F.lineCommentContent(input);
 }
 
 export function stringContentFrom(input: string | T.StringContent) {

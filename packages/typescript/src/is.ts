@@ -15,8 +15,12 @@ import type {
     JsxElementName,
     ModuleExportName,
     PrimaryType,
+    PropertyIdentifier,
     PropertyName,
     Semicolon,
+    ShorthandPropertyIdentifier,
+    ShorthandPropertyIdentifierPattern,
+    StatementIdentifier,
     TupleTypeMember,
     Type,
     _Identifier,
@@ -122,8 +126,6 @@ export interface IsGuards {
     pair<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'pair' };
     pairPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'pair_pattern' };
     computedPropertyName<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'computed_property_name' };
-    shorthandPropertyIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'shorthand_property_identifier' };
-    shorthandPropertyIdentifierPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'shorthand_property_identifier_pattern' };
     publicFieldDefinition<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'public_field_definition' };
     nonNullExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'non_null_expression' };
     methodSignature<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'method_signature' };
@@ -193,7 +195,6 @@ export interface IsGuards {
     intersectionType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'intersection_type' };
     functionType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'function_type' };
     TypeIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_type_identifier' };
-    interfaceBody<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'interface_body' };
     ArrowFunctionParameter<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_arrow_function_parameter' };
     ArrowFunction_CallSignature<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_arrow_function__call_signature' };
     ClassHeritageExtendsClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_class_heritage_extends_clause' };
@@ -210,28 +211,6 @@ export interface IsGuards {
     ExportStatementNamespaceExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_namespace_export' };
     StringDouble<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_string_double' };
     StringSingle<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_string_single' };
-    exportStatementDefault<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'export_statement_default' };
-    exportStatementTypeExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'export_statement_type_export' };
-    exportStatementEqualsExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'export_statement_equals_export' };
-    exportStatementNamespaceExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'export_statement_namespace_export' };
-    importClauseNamespaceImport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_clause_namespace_import' };
-    importClauseNamedImports<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_clause_named_imports' };
-    importClauseDefaultImport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_clause_default_import' };
-    importSpecifierName<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_specifier_name' };
-    importSpecifierAs<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_specifier_as' };
-    parenthesizedExpressionTyped<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'parenthesized_expression_typed' };
-    parenthesizedExpressionSequence<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'parenthesized_expression_sequence' };
-    classHeritageExtendsClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'class_heritage_extends_clause' };
-    classHeritageImplementsClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'class_heritage_implements_clause' };
-    arrowFunctionParameter<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'arrow_function_parameter' };
-    arrowFunction_CallSignature<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'arrow_function__call_signature' };
-    callExpressionCall<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'call_expression_call' };
-    callExpressionTemplateCall<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'call_expression_template_call' };
-    callExpressionMember<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'call_expression_member' };
-    stringDouble<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'string_double' };
-    stringSingle<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'string_single' };
-    indexSignatureColon<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'index_signature_colon' };
-    indexSignatureMappedTypeClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'index_signature_mapped_type_clause' };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): v is { readonly $type: K & string };
     moduleExportName(v: { readonly $type: string }): v is ModuleExportName;
     expressions(v: { readonly $type: string }): v is Expressions;
@@ -245,6 +224,10 @@ export interface IsGuards {
     identifier(v: { readonly $type: string }): v is _Identifier;
     propertyName(v: { readonly $type: string }): v is PropertyName;
     semicolon(v: { readonly $type: string }): v is Semicolon;
+    statementIdentifier(v: { readonly $type: string }): v is StatementIdentifier;
+    shorthandPropertyIdentifier(v: { readonly $type: string }): v is ShorthandPropertyIdentifier;
+    shorthandPropertyIdentifierPattern(v: { readonly $type: string }): v is ShorthandPropertyIdentifierPattern;
+    propertyIdentifier(v: { readonly $type: string }): v is PropertyIdentifier;
     importIdentifier(v: { readonly $type: string }): v is ImportIdentifier;
     type(v: { readonly $type: string }): v is Type;
     tupleTypeMember(v: { readonly $type: string }): v is TupleTypeMember;
@@ -350,8 +333,6 @@ export interface AssertGuards {
     pair(v: { readonly $type: string }): asserts v is { readonly $type: 'pair' };
     pairPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'pair_pattern' };
     computedPropertyName(v: { readonly $type: string }): asserts v is { readonly $type: 'computed_property_name' };
-    shorthandPropertyIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: 'shorthand_property_identifier' };
-    shorthandPropertyIdentifierPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'shorthand_property_identifier_pattern' };
     publicFieldDefinition(v: { readonly $type: string }): asserts v is { readonly $type: 'public_field_definition' };
     nonNullExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'non_null_expression' };
     methodSignature(v: { readonly $type: string }): asserts v is { readonly $type: 'method_signature' };
@@ -421,7 +402,6 @@ export interface AssertGuards {
     intersectionType(v: { readonly $type: string }): asserts v is { readonly $type: 'intersection_type' };
     functionType(v: { readonly $type: string }): asserts v is { readonly $type: 'function_type' };
     TypeIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: '_type_identifier' };
-    interfaceBody(v: { readonly $type: string }): asserts v is { readonly $type: 'interface_body' };
     ArrowFunctionParameter(v: { readonly $type: string }): asserts v is { readonly $type: '_arrow_function_parameter' };
     ArrowFunction_CallSignature(v: { readonly $type: string }): asserts v is { readonly $type: '_arrow_function__call_signature' };
     ClassHeritageExtendsClause(v: { readonly $type: string }): asserts v is { readonly $type: '_class_heritage_extends_clause' };
@@ -438,28 +418,6 @@ export interface AssertGuards {
     ExportStatementNamespaceExport(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_namespace_export' };
     StringDouble(v: { readonly $type: string }): asserts v is { readonly $type: '_string_double' };
     StringSingle(v: { readonly $type: string }): asserts v is { readonly $type: '_string_single' };
-    exportStatementDefault(v: { readonly $type: string }): asserts v is { readonly $type: 'export_statement_default' };
-    exportStatementTypeExport(v: { readonly $type: string }): asserts v is { readonly $type: 'export_statement_type_export' };
-    exportStatementEqualsExport(v: { readonly $type: string }): asserts v is { readonly $type: 'export_statement_equals_export' };
-    exportStatementNamespaceExport(v: { readonly $type: string }): asserts v is { readonly $type: 'export_statement_namespace_export' };
-    importClauseNamespaceImport(v: { readonly $type: string }): asserts v is { readonly $type: 'import_clause_namespace_import' };
-    importClauseNamedImports(v: { readonly $type: string }): asserts v is { readonly $type: 'import_clause_named_imports' };
-    importClauseDefaultImport(v: { readonly $type: string }): asserts v is { readonly $type: 'import_clause_default_import' };
-    importSpecifierName(v: { readonly $type: string }): asserts v is { readonly $type: 'import_specifier_name' };
-    importSpecifierAs(v: { readonly $type: string }): asserts v is { readonly $type: 'import_specifier_as' };
-    parenthesizedExpressionTyped(v: { readonly $type: string }): asserts v is { readonly $type: 'parenthesized_expression_typed' };
-    parenthesizedExpressionSequence(v: { readonly $type: string }): asserts v is { readonly $type: 'parenthesized_expression_sequence' };
-    classHeritageExtendsClause(v: { readonly $type: string }): asserts v is { readonly $type: 'class_heritage_extends_clause' };
-    classHeritageImplementsClause(v: { readonly $type: string }): asserts v is { readonly $type: 'class_heritage_implements_clause' };
-    arrowFunctionParameter(v: { readonly $type: string }): asserts v is { readonly $type: 'arrow_function_parameter' };
-    arrowFunction_CallSignature(v: { readonly $type: string }): asserts v is { readonly $type: 'arrow_function__call_signature' };
-    callExpressionCall(v: { readonly $type: string }): asserts v is { readonly $type: 'call_expression_call' };
-    callExpressionTemplateCall(v: { readonly $type: string }): asserts v is { readonly $type: 'call_expression_template_call' };
-    callExpressionMember(v: { readonly $type: string }): asserts v is { readonly $type: 'call_expression_member' };
-    stringDouble(v: { readonly $type: string }): asserts v is { readonly $type: 'string_double' };
-    stringSingle(v: { readonly $type: string }): asserts v is { readonly $type: 'string_single' };
-    indexSignatureColon(v: { readonly $type: string }): asserts v is { readonly $type: 'index_signature_colon' };
-    indexSignatureMappedTypeClause(v: { readonly $type: string }): asserts v is { readonly $type: 'index_signature_mapped_type_clause' };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): asserts v is { readonly $type: K & string };
     moduleExportName(v: { readonly $type: string }): asserts v is ModuleExportName;
     expressions(v: { readonly $type: string }): asserts v is Expressions;
@@ -473,6 +431,10 @@ export interface AssertGuards {
     identifier(v: { readonly $type: string }): asserts v is _Identifier;
     propertyName(v: { readonly $type: string }): asserts v is PropertyName;
     semicolon(v: { readonly $type: string }): asserts v is Semicolon;
+    statementIdentifier(v: { readonly $type: string }): asserts v is StatementIdentifier;
+    shorthandPropertyIdentifier(v: { readonly $type: string }): asserts v is ShorthandPropertyIdentifier;
+    shorthandPropertyIdentifierPattern(v: { readonly $type: string }): asserts v is ShorthandPropertyIdentifierPattern;
+    propertyIdentifier(v: { readonly $type: string }): asserts v is PropertyIdentifier;
     importIdentifier(v: { readonly $type: string }): asserts v is ImportIdentifier;
     type(v: { readonly $type: string }): asserts v is Type;
     tupleTypeMember(v: { readonly $type: string }): asserts v is TupleTypeMember;
@@ -491,19 +453,23 @@ function _sg(ks: ReadonlySet<string>): (v: { readonly $type: string }) => boolea
 const _supertype_moduleExportName = new Set<string>(["identifier", "string"]);
 const _supertype_expressions = new Set<string>(["expression", "sequence_expression"]);
 const _supertype_jsxChild = new Set<string>(["jsx_text", "html_character_reference", "jsx_element", "jsx_self_closing_element", "jsx_expression"]);
-const _supertype_jsxIdentifier = new Set<string>(["identifier"]);
-const _supertype_jsxElementName = new Set<string>(["identifier", "member_expression", "jsx_namespace_name"]);
-const _supertype_jsxAttributeName = new Set<string>(["property_identifier", "jsx_namespace_name"]);
-const _supertype_jsxAttributeValue = new Set<string>(["string", "jsx_expression", "jsx_element", "jsx_self_closing_element"]);
+const _supertype_jsxIdentifier = new Set<string>(["jsx_identifier", "identifier"]);
+const _supertype_jsxElementName = new Set<string>(["jsx_identifier", "identifier", "nested_identifier", "jsx_namespace_name"]);
+const _supertype_jsxAttributeName = new Set<string>(["jsx_identifier", "identifier", "jsx_namespace_name"]);
+const _supertype_jsxAttributeValue = new Set<string>(["_jsx_string", "jsx_expression", "jsx_element", "jsx_self_closing_element"]);
 const _supertype_formalParameter = new Set<string>(["required_parameter", "optional_parameter"]);
 const _supertype_destructuringPattern = new Set<string>(["object_pattern", "array_pattern"]);
 const _supertype_identifier = new Set<string>(["undefined", "identifier"]);
-const _supertype_propertyName = new Set<string>(["property_identifier", "private_property_identifier", "string", "number", "computed_property_name"]);
+const _supertype_propertyName = new Set<string>(["identifier", "private_property_identifier", "string", "number", "computed_property_name"]);
 const _supertype_semicolon = new Set<string>(["_automatic_semicolon"]);
+const _supertype_statementIdentifier = new Set<string>(["identifier", "_reserved_identifier"]);
+const _supertype_shorthandPropertyIdentifier = new Set<string>(["identifier", "_reserved_identifier"]);
+const _supertype_shorthandPropertyIdentifierPattern = new Set<string>(["identifier", "_reserved_identifier"]);
+const _supertype_propertyIdentifier = new Set<string>(["identifier", "_reserved_identifier"]);
 const _supertype_importIdentifier = new Set<string>(["identifier"]);
-const _supertype_type = new Set<string>(["primary_type", "function_type", "readonly_type", "constructor_type", "infer_type", "member_expression", "call_expression"]);
-const _supertype_tupleTypeMember = new Set<string>(["required_parameter", "optional_parameter", "optional_type", "rest_type", "type"]);
-const _supertype_primaryType = new Set<string>(["parenthesized_type", "predefined_type", "type_identifier", "nested_type_identifier", "generic_type", "object_type", "array_type", "tuple_type", "flow_maybe_type", "type_query", "index_type_query", "this_type", "existential_type", "literal_type", "lookup_type", "conditional_type", "template_literal_type", "intersection_type", "union_type"]);
+const _supertype_type = new Set<string>(["primary_type", "function_type", "readonly_type", "constructor_type", "infer_type", "_type_query_member_expression_in_type_annotation", "_type_query_call_expression_in_type_annotation"]);
+const _supertype_tupleTypeMember = new Set<string>(["tuple_parameter", "optional_tuple_parameter", "optional_type", "rest_type", "type"]);
+const _supertype_primaryType = new Set<string>(["parenthesized_type", "predefined_type", "identifier", "nested_type_identifier", "generic_type", "object_type", "array_type", "tuple_type", "flow_maybe_type", "type_query", "index_type_query", "this", "existential_type", "literal_type", "lookup_type", "conditional_type", "template_literal_type", "intersection_type", "union_type"]);
 
 export const is = {
     program: _g("program"),
@@ -603,8 +569,6 @@ export const is = {
     pair: _g("pair"),
     pairPattern: _g("pair_pattern"),
     computedPropertyName: _g("computed_property_name"),
-    shorthandPropertyIdentifier: _g("shorthand_property_identifier"),
-    shorthandPropertyIdentifierPattern: _g("shorthand_property_identifier_pattern"),
     publicFieldDefinition: _g("public_field_definition"),
     nonNullExpression: _g("non_null_expression"),
     methodSignature: _g("method_signature"),
@@ -674,7 +638,6 @@ export const is = {
     intersectionType: _g("intersection_type"),
     functionType: _g("function_type"),
     TypeIdentifier: _g("_type_identifier"),
-    interfaceBody: _g("interface_body"),
     ArrowFunctionParameter: _g("_arrow_function_parameter"),
     ArrowFunction_CallSignature: _g("_arrow_function__call_signature"),
     ClassHeritageExtendsClause: _g("_class_heritage_extends_clause"),
@@ -691,28 +654,6 @@ export const is = {
     ExportStatementNamespaceExport: _g("_export_statement_namespace_export"),
     StringDouble: _g("_string_double"),
     StringSingle: _g("_string_single"),
-    exportStatementDefault: _g("export_statement_default"),
-    exportStatementTypeExport: _g("export_statement_type_export"),
-    exportStatementEqualsExport: _g("export_statement_equals_export"),
-    exportStatementNamespaceExport: _g("export_statement_namespace_export"),
-    importClauseNamespaceImport: _g("import_clause_namespace_import"),
-    importClauseNamedImports: _g("import_clause_named_imports"),
-    importClauseDefaultImport: _g("import_clause_default_import"),
-    importSpecifierName: _g("import_specifier_name"),
-    importSpecifierAs: _g("import_specifier_as"),
-    parenthesizedExpressionTyped: _g("parenthesized_expression_typed"),
-    parenthesizedExpressionSequence: _g("parenthesized_expression_sequence"),
-    classHeritageExtendsClause: _g("class_heritage_extends_clause"),
-    classHeritageImplementsClause: _g("class_heritage_implements_clause"),
-    arrowFunctionParameter: _g("arrow_function_parameter"),
-    arrowFunction_CallSignature: _g("arrow_function__call_signature"),
-    callExpressionCall: _g("call_expression_call"),
-    callExpressionTemplateCall: _g("call_expression_template_call"),
-    callExpressionMember: _g("call_expression_member"),
-    stringDouble: _g("string_double"),
-    stringSingle: _g("string_single"),
-    indexSignatureColon: _g("index_signature_colon"),
-    indexSignatureMappedTypeClause: _g("index_signature_mapped_type_clause"),
     kind: (v: { readonly $type: string }, k: string): boolean => v.$type === k,
     moduleExportName: _sg(_supertype_moduleExportName),
     expressions: _sg(_supertype_expressions),
@@ -726,6 +667,10 @@ export const is = {
     identifier: _sg(_supertype_identifier),
     propertyName: _sg(_supertype_propertyName),
     semicolon: _sg(_supertype_semicolon),
+    statementIdentifier: _sg(_supertype_statementIdentifier),
+    shorthandPropertyIdentifier: _sg(_supertype_shorthandPropertyIdentifier),
+    shorthandPropertyIdentifierPattern: _sg(_supertype_shorthandPropertyIdentifierPattern),
+    propertyIdentifier: _sg(_supertype_propertyIdentifier),
     importIdentifier: _sg(_supertype_importIdentifier),
     type: _sg(_supertype_type),
     tupleTypeMember: _sg(_supertype_tupleTypeMember),
@@ -852,8 +797,6 @@ export const assert = {
     pair: _makeAssert('pair', is.pair as _AnyGuard),
     pairPattern: _makeAssert('pairPattern', is.pairPattern as _AnyGuard),
     computedPropertyName: _makeAssert('computedPropertyName', is.computedPropertyName as _AnyGuard),
-    shorthandPropertyIdentifier: _makeAssert('shorthandPropertyIdentifier', is.shorthandPropertyIdentifier as _AnyGuard),
-    shorthandPropertyIdentifierPattern: _makeAssert('shorthandPropertyIdentifierPattern', is.shorthandPropertyIdentifierPattern as _AnyGuard),
     publicFieldDefinition: _makeAssert('publicFieldDefinition', is.publicFieldDefinition as _AnyGuard),
     nonNullExpression: _makeAssert('nonNullExpression', is.nonNullExpression as _AnyGuard),
     methodSignature: _makeAssert('methodSignature', is.methodSignature as _AnyGuard),
@@ -923,7 +866,6 @@ export const assert = {
     intersectionType: _makeAssert('intersectionType', is.intersectionType as _AnyGuard),
     functionType: _makeAssert('functionType', is.functionType as _AnyGuard),
     TypeIdentifier: _makeAssert('TypeIdentifier', is.TypeIdentifier as _AnyGuard),
-    interfaceBody: _makeAssert('interfaceBody', is.interfaceBody as _AnyGuard),
     ArrowFunctionParameter: _makeAssert('ArrowFunctionParameter', is.ArrowFunctionParameter as _AnyGuard),
     ArrowFunction_CallSignature: _makeAssert('ArrowFunction_CallSignature', is.ArrowFunction_CallSignature as _AnyGuard),
     ClassHeritageExtendsClause: _makeAssert('ClassHeritageExtendsClause', is.ClassHeritageExtendsClause as _AnyGuard),
@@ -940,28 +882,6 @@ export const assert = {
     ExportStatementNamespaceExport: _makeAssert('ExportStatementNamespaceExport', is.ExportStatementNamespaceExport as _AnyGuard),
     StringDouble: _makeAssert('StringDouble', is.StringDouble as _AnyGuard),
     StringSingle: _makeAssert('StringSingle', is.StringSingle as _AnyGuard),
-    exportStatementDefault: _makeAssert('exportStatementDefault', is.exportStatementDefault as _AnyGuard),
-    exportStatementTypeExport: _makeAssert('exportStatementTypeExport', is.exportStatementTypeExport as _AnyGuard),
-    exportStatementEqualsExport: _makeAssert('exportStatementEqualsExport', is.exportStatementEqualsExport as _AnyGuard),
-    exportStatementNamespaceExport: _makeAssert('exportStatementNamespaceExport', is.exportStatementNamespaceExport as _AnyGuard),
-    importClauseNamespaceImport: _makeAssert('importClauseNamespaceImport', is.importClauseNamespaceImport as _AnyGuard),
-    importClauseNamedImports: _makeAssert('importClauseNamedImports', is.importClauseNamedImports as _AnyGuard),
-    importClauseDefaultImport: _makeAssert('importClauseDefaultImport', is.importClauseDefaultImport as _AnyGuard),
-    importSpecifierName: _makeAssert('importSpecifierName', is.importSpecifierName as _AnyGuard),
-    importSpecifierAs: _makeAssert('importSpecifierAs', is.importSpecifierAs as _AnyGuard),
-    parenthesizedExpressionTyped: _makeAssert('parenthesizedExpressionTyped', is.parenthesizedExpressionTyped as _AnyGuard),
-    parenthesizedExpressionSequence: _makeAssert('parenthesizedExpressionSequence', is.parenthesizedExpressionSequence as _AnyGuard),
-    classHeritageExtendsClause: _makeAssert('classHeritageExtendsClause', is.classHeritageExtendsClause as _AnyGuard),
-    classHeritageImplementsClause: _makeAssert('classHeritageImplementsClause', is.classHeritageImplementsClause as _AnyGuard),
-    arrowFunctionParameter: _makeAssert('arrowFunctionParameter', is.arrowFunctionParameter as _AnyGuard),
-    arrowFunction_CallSignature: _makeAssert('arrowFunction_CallSignature', is.arrowFunction_CallSignature as _AnyGuard),
-    callExpressionCall: _makeAssert('callExpressionCall', is.callExpressionCall as _AnyGuard),
-    callExpressionTemplateCall: _makeAssert('callExpressionTemplateCall', is.callExpressionTemplateCall as _AnyGuard),
-    callExpressionMember: _makeAssert('callExpressionMember', is.callExpressionMember as _AnyGuard),
-    stringDouble: _makeAssert('stringDouble', is.stringDouble as _AnyGuard),
-    stringSingle: _makeAssert('stringSingle', is.stringSingle as _AnyGuard),
-    indexSignatureColon: _makeAssert('indexSignatureColon', is.indexSignatureColon as _AnyGuard),
-    indexSignatureMappedTypeClause: _makeAssert('indexSignatureMappedTypeClause', is.indexSignatureMappedTypeClause as _AnyGuard),
     kind: _makeAssertKind(is.kind as _AnyGuard),
     moduleExportName: _makeAssert('moduleExportName', is.moduleExportName as _AnyGuard),
     expressions: _makeAssert('expressions', is.expressions as _AnyGuard),
@@ -975,6 +895,10 @@ export const assert = {
     identifier: _makeAssert('identifier', is.identifier as _AnyGuard),
     propertyName: _makeAssert('propertyName', is.propertyName as _AnyGuard),
     semicolon: _makeAssert('semicolon', is.semicolon as _AnyGuard),
+    statementIdentifier: _makeAssert('statementIdentifier', is.statementIdentifier as _AnyGuard),
+    shorthandPropertyIdentifier: _makeAssert('shorthandPropertyIdentifier', is.shorthandPropertyIdentifier as _AnyGuard),
+    shorthandPropertyIdentifierPattern: _makeAssert('shorthandPropertyIdentifierPattern', is.shorthandPropertyIdentifierPattern as _AnyGuard),
+    propertyIdentifier: _makeAssert('propertyIdentifier', is.propertyIdentifier as _AnyGuard),
     importIdentifier: _makeAssert('importIdentifier', is.importIdentifier as _AnyGuard),
     type: _makeAssert('type', is.type as _AnyGuard),
     tupleTypeMember: _makeAssert('tupleTypeMember', is.tupleTypeMember as _AnyGuard),

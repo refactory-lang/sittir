@@ -850,6 +850,27 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
      */
     protected readonly rule: R
 
+    /**
+     * User-facing eligibility: set at assemble time after alias-source
+     * analysis completes. Determines whether template, factory, type,
+     * and IR emitters should produce output for this node.
+     *
+     * Rules:
+     * - Visible kinds (not `_`-prefixed) — always user-facing UNLESS
+     *   modelType is `token` or `multi` (structural helpers with no
+     *   API surface).
+     * - Hidden kinds (`_`-prefixed) — user-facing ONLY when the kind
+     *   is an alias source (some symbol ref elsewhere points at it
+     *   via `aliasedFrom`, meaning factories stamp this kind as
+     *   `$type` per the source-kind identity model). Otherwise hidden
+     *   kinds are inlined / never surface at runtime.
+     *
+     * Populated by `assemble()`'s `markUserFacing` pass. Defaults to
+     * `true` so hand-constructed test fixtures that bypass assemble
+     * still have their nodes appear in emitter output.
+     */
+    userFacing: boolean = true
+
     constructor(kind: string, rule: R, opts?: { factoryName?: string; irKey?: string; source?: RuleSource; hidden?: boolean }) {
         this.kind = kind
         this.rule = rule

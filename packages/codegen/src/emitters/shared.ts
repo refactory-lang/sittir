@@ -36,6 +36,31 @@ export { isRequired, isMultiple, isNonEmpty }
  * @param nodeMap - The assembled node map to walk.
  * @returns The set of referenced kind strings.
  */
+/**
+ * Collect hidden source kinds (leading `_`) referenced via any field
+ * / child value slot across the node map. These are the kinds whose
+ * factory stamps `$type: '_X'` at construction — emission paths
+ * (factories, templates, types) must include them even though they're
+ * hidden.
+ */
+export function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
+    const out = new Set<string>()
+    for (const [, n] of nodeMap.nodes) {
+        const fieldSlots = n.modelType === 'polymorph' ? n.allFormFields
+            : (n.modelType === 'branch' || n.modelType === 'group') ? n.fields : []
+        const childSlots = (n.modelType === 'branch' || n.modelType === 'container' || n.modelType === 'group')
+            ? (n.children ?? []) : []
+        for (const slot of [...fieldSlots, ...childSlots]) {
+            for (const v of slot.values) {
+                if (!isNodeRef(v)) continue
+                const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind
+                if (name.startsWith('_')) out.add(name)
+            }
+        }
+    }
+    return out
+}
+
 export function referencedKinds(nodeMap: NodeMap): Set<string> {
     const referenced = new Set<string>()
     for (const [, node] of nodeMap.nodes) {
