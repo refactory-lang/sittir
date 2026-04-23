@@ -78,3 +78,25 @@ pub fn joinby<S: AsRef<str>>(
         .join(sep);
     Ok(format!("{prefix}{joined}{suffix}"))
 }
+
+/// Presence test — true when a field is absent / empty / whitespace-only.
+///
+/// Mirrors the TS `isBlank` nunjucks filter registered in
+/// `packages/core/src/templates/nunjucks-env.ts`. Templates use
+/// `{% if foo | isBlank %}` (or the negated `{% if foo | isPresent %}`)
+/// to conditionally emit optional-field content with uniform semantics
+/// across both render engines.
+///
+/// The TS engine accepts undefined/null/""/whitespace as blank. Askama
+/// template context fields are `String`-typed (absent fields are
+/// empty strings), so the test reduces to `trim().is_empty()`.
+pub fn isBlank(s: &str) -> Result<bool, askama::Error> {
+    Ok(s.trim().is_empty())
+}
+
+/// Inverse of `isBlank` — true when a field has non-whitespace content.
+/// Sugar for `{% if not (foo | isBlank) %}`; used as
+/// `{% if foo | isPresent %}`.
+pub fn isPresent(s: &str) -> Result<bool, askama::Error> {
+    Ok(!s.trim().is_empty())
+}
