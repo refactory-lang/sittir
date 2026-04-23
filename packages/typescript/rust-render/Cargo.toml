@@ -1,6 +1,5 @@
-# @generated scaffold — spec 012 T005 placeholder. T027/T028/T031 will
-# overwrite `src/` with codegen output. This Cargo.toml is hand-written
-# until T031 emits the real manifest.
+# @generated from packages/typescript/node-model.json5 — do not hand-edit.
+# Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar typescript --all --rust-render
 [package]
 name = "sittir-typescript-render"
 version = "0.0.0"
@@ -8,7 +7,7 @@ edition = "2021"
 rust-version = "1.82"
 license = "MIT"
 repository = "https://github.com/refactory-lang/sittir"
-description = "Generated render dispatch for the TypeScript grammar — codegen output from packages/typescript/node-model.json5 and packages/typescript/templates/*.jinja."
+description = "Generated render dispatch for the typescript grammar — codegen output from packages/typescript/node-model.json5 and packages/typescript/templates/*.jinja."
 
 [dependencies]
 sittir-core = { path = "../../../rust/crates/sittir-core" }

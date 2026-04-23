@@ -182,10 +182,23 @@ const RUST_KEYWORDS = new Set([
 	'try', 'union',
 ])
 
+/** Keywords that CANNOT be raw identifiers in Rust — they must be
+ *  renamed. Used to emit `${kw}_` as a disambiguated field name; the
+ *  `render_dispatch` arm still populates from `ctx.fields[kw]` so the
+ *  template's `{{ kw }}` reference resolves. Askama's variable→field
+ *  mapping doesn't handle the rename, though, so templates that
+ *  reference these names will fail compilation — they require a
+ *  template-author-side fix (rename the grammar field or a codegen
+ *  pre-pass that renames at emit time). */
+const RUST_NON_RAWABLE_KEYWORDS = new Set(['crate', 'self', 'super', 'Self'])
+
 /** Rust keyword → raw-identifier form. Askama lets us declare the
  *  struct field under `r#kw` and still use `{{ kw }}` in the template
- *  because askama resolves template variables by the field's raw name. */
+ *  because askama resolves template variables by the field's raw name.
+ *  A small set (`crate` / `self` / `super` / `Self`) can't be raw-
+ *  identifier'd — those get a `_`-suffix rename. */
 function rustFieldIdent(id: string): string {
+	if (RUST_NON_RAWABLE_KEYWORDS.has(id)) return `${id}_`
 	if (RUST_KEYWORDS.has(id)) return `r#${id}`
 	return id
 }
@@ -478,6 +491,36 @@ export function emitRenderCrate(
 		templatesRsHeader(lang),
 		'',
 		'#![allow(dead_code, unused_imports)]',
+		'',
+		// Askama resolves custom filters by looking for a sibling
+		// `filters` module at the derive-macro's call site. Re-export the
+		// shared `sittir_core::filters::*` here and declare aliases for
+		// the Jinja-dialect names the TS emitter currently produces
+		// (`joinWithTrailing`/`joinWithLeading`/`joinWithFlanks`). The
+		// sittir-core filter implementations are source of truth; these
+		// are one-line forwarders.
+		'pub mod filters {',
+		'    //! Askama resolves custom-filter names by searching for a',
+		'    //! sibling `filters` module at the derive-macro site. This',
+		'    //! module re-exports `sittir_core::filters::{upper, lower,',
+		'    //! joinby}` + the TS-dialect aliases (`joinWithTrailing`,',
+		'    //! `joinWithLeading`, `joinWithFlanks`) that the current',
+		'    //! jinja emitter references. Aliases are thin wrappers over',
+		'    //! `joinby` with preset flank flags.',
+		'    pub use ::sittir_core::filters::{upper, lower, joinby};',
+		'',
+		'    pub fn joinWithTrailing<S: AsRef<str>>(xs: &[S], _values: &dyn ::askama::Values, sep: &str) -> Result<String, ::askama::Error> {',
+		'        ::sittir_core::filters::joinby(xs, sep, false, true)',
+		'    }',
+		'',
+		'    pub fn joinWithLeading<S: AsRef<str>>(xs: &[S], _values: &dyn ::askama::Values, sep: &str) -> Result<String, ::askama::Error> {',
+		'        ::sittir_core::filters::joinby(xs, sep, true, false)',
+		'    }',
+		'',
+		'    pub fn joinWithFlanks<S: AsRef<str>>(xs: &[S], _values: &dyn ::askama::Values, sep: &str) -> Result<String, ::askama::Error> {',
+		'        ::sittir_core::filters::joinby(xs, sep, true, true)',
+		'    }',
+		'}',
 		'',
 		renderStructDefs(structs),
 		renderDispatchFn(structs),
