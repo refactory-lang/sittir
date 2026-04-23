@@ -202,8 +202,7 @@
     "line_comment_regular_dslash": "text",
     "line_comment_doc": "config",
     "line_comment_content": "text",
-    "outer_doc_comment_marker": "text",
-    "inner_doc_comment_marker": "text",
+    "doc_comment": "text",
     "type_identifier": "text",
     "field_identifier": "text",
     "shorthand_field_identifier": "text",
@@ -296,6 +295,12 @@
       "shorthand_field_identifier": "identifier"
     },
     "_line_comment_doc.doc": {
+      "doc_comment": "_line_doc_content"
+    },
+    "field_pattern_shorthand.name": {
+      "shorthand_field_identifier": "identifier"
+    },
+    "line_comment_doc.doc": {
       "doc_comment": "_line_doc_content"
     }
   },

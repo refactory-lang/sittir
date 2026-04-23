@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 397,
+  "nodeCount": 398,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -5476,6 +5476,14 @@
       ]
     },
     {
+      "kind": "doc_comment",
+      "modelType": "leaf",
+      "typeName": "DocComment",
+      "factoryName": "docComment",
+      "irKey": "docComment",
+      "hidden": false
+    },
+    {
       "kind": "dyn",
       "modelType": "keyword",
       "typeName": "Dyn",
@@ -6939,14 +6947,26 @@
           "name": "name",
           "propertyName": "name",
           "paramName": "name",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "values": [],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "shorthand_field_identifier",
+              "unresolved": true
+            }
+          ],
           "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "shorthand_field_identifier"
+            ]
+          },
+          "aliasSources": {
+            "shorthand_field_identifier": "identifier"
           }
         }
       ],
@@ -9445,11 +9465,11 @@
     },
     {
       "kind": "inner_doc_comment_marker",
-      "modelType": "leaf",
+      "modelType": "token",
       "typeName": "InnerDocCommentMarker",
-      "factoryName": "innerDocCommentMarker",
       "irKey": "innerDocCommentMarker",
-      "hidden": false
+      "hidden": true,
+      "text": "!"
     },
     {
       "kind": "integer_literal",
@@ -10105,7 +10125,8 @@
       "typeName": "LineCommentContent",
       "factoryName": "lineCommentContent",
       "irKey": "lineCommentContent",
-      "hidden": false
+      "hidden": false,
+      "pattern": ".*"
     },
     {
       "kind": "line_comment_doc",
@@ -10119,14 +10140,26 @@
           "name": "doc",
           "propertyName": "doc",
           "paramName": "doc",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "values": [],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "doc_comment",
+              "unresolved": true
+            }
+          ],
           "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "doc_comment"
+            ]
+          },
+          "aliasSources": {
+            "doc_comment": "_line_doc_content"
           }
         }
       ],
@@ -12129,11 +12162,11 @@
     },
     {
       "kind": "outer_doc_comment_marker",
-      "modelType": "leaf",
+      "modelType": "token",
       "typeName": "OuterDocCommentMarker",
-      "factoryName": "outerDocCommentMarker",
       "irKey": "outerDocCommentMarker",
-      "hidden": false
+      "hidden": true,
+      "text": "/"
     },
     {
       "kind": "parameter",

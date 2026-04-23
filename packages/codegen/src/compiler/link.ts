@@ -2113,8 +2113,16 @@ function walkForAliases(rule: Rule, rawRules: Record<string, Rule>, resolvedRule
     switch (rule.type) {
         case 'alias':
             if (rule.named && rule.value && !resolvedRules[rule.value]) {
-                // Named alias: alias($.x, $.y) — create a rule for 'y' based on 'x's content
-                const sourceRule = rule.content.type === 'symbol' ? rawRules[rule.content.name] : rule.content
+                // Named alias: alias($.x, $.y) — create a rule for 'y'
+                // based on 'x's content. Prefer the already-resolved
+                // body so nested aliases inside `x` stay flattened
+                // (otherwise the synthesized target kind carries raw
+                // aliases that downstream walkers silently drop —
+                // this was the typescript `StringDouble.$children`
+                // losing `StringFragment` regression).
+                const sourceRule = rule.content.type === 'symbol'
+                    ? (resolvedRules[rule.content.name] ?? rawRules[rule.content.name])
+                    : rule.content
                 if (sourceRule) {
                     resolvedRules[rule.value] = sourceRule
                 }

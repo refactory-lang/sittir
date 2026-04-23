@@ -50,6 +50,7 @@ function _bkArr<T>(v: unknown, kind: string, text: string, named: boolean): read
 const _leafRe_identifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 const _leafRe_shebang = /^(?:#![\r\f\t\v ]*([^[\n].*)?\n)/u;
 const _leafRe_metavariable = /^(?:\$[a-zA-Z_]\w*)/u;
+const _leafRe_lineCommentContent = /^(?:.*)/u;
 const _leafRe_typeIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 const _leafRe_fieldIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 const _leafRe_shorthandFieldIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
@@ -3421,7 +3422,7 @@ export function fieldPattern(config: ConfigOf<T.FieldPatternUFormShorthand> | Co
   }
   throw new Error(`fieldPattern: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'shorthand' | 'named'.`);
 }
-export function fieldPatternUFormShorthand(config?: ConfigOf<T.FieldPatternUFormShorthand>) {
+export function fieldPatternUFormShorthand(config: ConfigOf<T.FieldPatternUFormShorthand>) {
   const fields = {
     ref: config.ref,
     mutable_specifier: config.mutableSpecifier,
@@ -3443,7 +3444,7 @@ export function fieldPatternUFormShorthand(config?: ConfigOf<T.FieldPatternUForm
       if (value === undefined) return fields.mutable_specifier;
       return fieldPatternUFormShorthand({ ref: config.ref, name: inner.$fields.name, mutableSpecifier: value });
     },
-    name(value?: string | undefined) {
+    name(value?: T.Identifier) {
       if (value === undefined) return inner.$fields.name;
       return fieldPatternUFormShorthand({ ref: config.ref, mutableSpecifier: config.mutableSpecifier, name: value });
     },
@@ -3829,7 +3830,7 @@ export function lineCommentUFormRegularDslash(config: ConfigOf<T.LineCommentUFor
     replace(target: T.LineCommentUFormRegularDslashTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function lineCommentUFormDoc(config?: ConfigOf<T.LineCommentUFormDoc>) {
+export function lineCommentUFormDoc(config: ConfigOf<T.LineCommentUFormDoc>) {
   const inner = lineCommentDoc(config);
   const children = [inner] as const;
   return {
@@ -3838,7 +3839,7 @@ export function lineCommentUFormDoc(config?: ConfigOf<T.LineCommentUFormDoc>) {
     $named: true as const,
     $variant: 'doc' as const,
     $children: children,
-    doc(value?: string | undefined) {
+    doc(value?: T.LineDocContent) {
       if (value === undefined) return inner.$fields.doc;
       return lineCommentUFormDoc({ doc: value });
     },
@@ -4575,16 +4576,16 @@ export function wildcardPattern() {
   };
 }
 
-export function fieldPatternShorthand(config?: T.FieldPatternShorthand.Config) {
+export function fieldPatternShorthand(config: T.FieldPatternShorthand.Config) {
   const fields = {
-    name: config?.name,
+    name: config.name,
   };
   return {
     $type: 'field_pattern_shorthand' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    name(value?: string | undefined) { return _fs(config, fieldPatternShorthand, 'name', value, fields.name); },
+    name(value?: T.Identifier) { return _fs(config, fieldPatternShorthand, 'name', value, fields.name); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -4719,7 +4720,7 @@ export function lineCommentDoc(config: T.LineCommentDoc.Config) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    doc(value?: string | undefined) { return _fs(config, lineCommentDoc, 'doc', value, fields.doc); },
+    doc(value?: T.LineDocContent) { return _fs(config, lineCommentDoc, 'doc', value, fields.doc); },
     child(value?: T.LineDocCommentMarker) {
       if (value === undefined) return children[0];
       return lineCommentDoc({ ...config, children: [value] });
@@ -4734,7 +4735,7 @@ export function lineCommentDoc(config: T.LineCommentDoc.Config) {
 }
 
 export function lineCommentContent(text: string) {
-  if (text.length === 0) throw new Error(`line_comment_content: text must be non-empty`);
+  if (text.length === 0) throw new Error(`line_comment_content: text must be non-empty`); if (!_leafRe_lineCommentContent.test(text)) throw new Error(`line_comment_content: text does not match pattern: ${text}`);
   return {
     $type: 'line_comment_content' as const,
     $source: 'factory' as const,
@@ -4746,29 +4747,16 @@ export function lineCommentContent(text: string) {
   };
 }
 
-export function outerDocCommentMarker(text: string) {
-  if (text.length === 0) throw new Error(`outer_doc_comment_marker: text must be non-empty`);
+export function docComment(text: string) {
+  if (text.length === 0) throw new Error(`doc_comment: text must be non-empty`);
   return {
-    $type: 'outer_doc_comment_marker' as const,
+    $type: 'doc_comment' as const,
     $source: 'factory' as const,
     $named: true as const,
     $text: text,
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.OuterDocCommentMarkerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
-export function innerDocCommentMarker(text: string) {
-  if (text.length === 0) throw new Error(`inner_doc_comment_marker: text must be non-empty`);
-  return {
-    $type: 'inner_doc_comment_marker' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.InnerDocCommentMarkerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+    replace: (t: T.DocCommentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
@@ -5010,8 +4998,7 @@ export type FluentKindMap = {
   "line_comment_regular_dslash": T.LineCommentRegularDslash;
   "line_comment_doc": FluentNode<"line_comment_doc", T.LineCommentDoc.Config>;
   "line_comment_content": T.LineCommentContent;
-  "outer_doc_comment_marker": T.OuterDocCommentMarker;
-  "inner_doc_comment_marker": T.InnerDocCommentMarker;
+  "doc_comment": T.DocComment;
   "type_identifier": T.TypeIdentifier;
   "field_identifier": T.FieldIdentifier;
   "shorthand_field_identifier": T.ShorthandFieldIdentifier;
@@ -5216,8 +5203,7 @@ export const _factoryMap = {
   "line_comment_regular_dslash": lineCommentRegularDslash,
   "line_comment_doc": lineCommentDoc,
   "line_comment_content": lineCommentContent,
-  "outer_doc_comment_marker": outerDocCommentMarker,
-  "inner_doc_comment_marker": innerDocCommentMarker,
+  "doc_comment": docComment,
   "type_identifier": typeIdentifier,
   "field_identifier": fieldIdentifier,
   "shorthand_field_identifier": shorthandFieldIdentifier,

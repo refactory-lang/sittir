@@ -1968,7 +1968,7 @@ export function wrapClassHeritageImplementsClause(data: _NodeData, tree: TreeHan
 export function wrapArrowFunctionParameter(data: _NodeData, tree: TreeHandle): WrappedNode<ArrowFunctionParameter> {
   return {
     ...data,
-    get parameter() { return drillIn(data.$fields?.['parameter'], tree); },
+    get parameter() { return drillAs(data.$fields?.['parameter'], tree, "identifier", "_reserved_identifier"); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ArrowFunctionParameter>;
 }

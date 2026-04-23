@@ -2178,7 +2178,7 @@ export interface ImportSpecifierName {
 export interface ImportSpecifierAs {
   readonly $type: 'import_specifier_as';
   readonly $fields: {
-    readonly name: ModuleExportName;
+    readonly name: ModuleExportName | Identifier;
     readonly alias: ImportIdentifier;
   };
 }
@@ -2219,7 +2219,7 @@ export interface ClassHeritageImplementsClause {
 export interface ArrowFunctionParameter {
   readonly $type: 'arrow_function_parameter';
   readonly $fields: {
-    readonly parameter: Identifier;
+    readonly parameter: ReservedIdentifier;
   };
 }
 
@@ -2260,12 +2260,12 @@ export interface CallExpressionMember {
 
 export interface StringDouble {
   readonly $type: 'string_double';
-  readonly $children: readonly (EscapeSequence)[];
+  readonly $children: readonly (StringFragment | EscapeSequence)[];
 }
 
 export interface StringSingle {
   readonly $type: 'string_single';
-  readonly $children: readonly (EscapeSequence)[];
+  readonly $children: readonly (StringFragment | EscapeSequence)[];
 }
 
 export interface InterfaceBody {

@@ -321,8 +321,7 @@ export const enum SyntaxKind {
   WildcardPattern = 'wildcard_pattern',
   LineCommentRegularDslash = 'line_comment_regular_dslash',
   LineCommentContent = 'line_comment_content',
-  OuterDocCommentMarker = 'outer_doc_comment_marker',
-  InnerDocCommentMarker = 'inner_doc_comment_marker',
+  DocComment = 'doc_comment',
   TypeIdentifier = 'type_identifier',
   FieldIdentifier = 'field_identifier',
   ShorthandFieldIdentifier = 'shorthand_field_identifier',
@@ -2022,8 +2021,8 @@ export type LineDocCommentMarker = LineDocCommentMarkerForm0 | LineDocCommentMar
 export interface BlockComment {
   readonly $type: 'block_comment';
   readonly $fields: {
-    readonly outer?: OuterBlockDocCommentMarker;
-    readonly inner?: InnerBlockDocCommentMarker;
+    readonly outer?: BooleanKeyword<OuterBlockDocCommentMarker>;
+    readonly inner?: BooleanKeyword<InnerBlockDocCommentMarker>;
     readonly doc?: DocComment;
   };
 }
@@ -2374,7 +2373,7 @@ export interface ClosureExpressionExpr {
 export interface FieldPatternShorthand {
   readonly $type: 'field_pattern_shorthand';
   readonly $fields: {
-    readonly name?: string;
+    readonly name: Identifier;
   };
 }
 
@@ -2419,7 +2418,7 @@ export interface OrPatternPrefix {
 export interface LineCommentDoc {
   readonly $type: 'line_comment_doc';
   readonly $fields: {
-    readonly doc?: string;
+    readonly doc: LineDocContent;
   };
   readonly $children: readonly [LineDocCommentMarker];
 }
@@ -2456,13 +2455,10 @@ export type ReferenceExpressionRawConst = Terminal<"reference_expression_raw_con
 export type WildcardPattern = Terminal<"wildcard_pattern", "_">;
 export type LineCommentRegularDslash = Terminal<"line_comment_regular_dslash", string>;
 export type LineCommentContent = Terminal<"line_comment_content", string>;
-export type OuterDocCommentMarker = Terminal<"outer_doc_comment_marker", string>;
-export type InnerDocCommentMarker = Terminal<"inner_doc_comment_marker", string>;
+export type DocComment = Terminal<"doc_comment", string>;
 export type TypeIdentifier = Terminal<"type_identifier", string>;
 export type FieldIdentifier = Terminal<"field_identifier", string>;
 export type ShorthandFieldIdentifier = Terminal<"shorthand_field_identifier", string>;
-
-export type DocComment = Terminal<"doc_comment", string>;
 
 // Tree types
 export interface SourceFileTree extends TreeNode<'source_file'> {}
@@ -2743,8 +2739,7 @@ export interface ReferenceExpressionRawConstTree extends TreeNode<'reference_exp
 export interface WildcardPatternTree extends AnyTreeNode { readonly type: "wildcard_pattern"; }
 export interface LineCommentRegularDslashTree extends TreeNode<'line_comment_regular_dslash'> {}
 export interface LineCommentContentTree extends TreeNode<'line_comment_content'> {}
-export interface OuterDocCommentMarkerTree extends TreeNode<'outer_doc_comment_marker'> {}
-export interface InnerDocCommentMarkerTree extends TreeNode<'inner_doc_comment_marker'> {}
+export interface DocCommentTree extends TreeNode<'doc_comment'> {}
 export interface TypeIdentifierTree extends TreeNode<'type_identifier'> {}
 export interface FieldIdentifierTree extends TreeNode<'field_identifier'> {}
 export interface ShorthandFieldIdentifierTree extends TreeNode<'shorthand_field_identifier'> {}
@@ -3195,6 +3190,10 @@ export type StructItemUnit = Terminal<"struct_item_unit">;
 export interface StructItemUnitTree extends AnyTreeNode { readonly type: "struct_item_unit"; }
 export type ImplItemSemi = Terminal<"impl_item_semi">;
 export interface ImplItemSemiTree extends AnyTreeNode { readonly type: "impl_item_semi"; }
+export type OuterDocCommentMarker = Terminal<"outer_doc_comment_marker">;
+export interface OuterDocCommentMarkerTree extends AnyTreeNode { readonly type: "outer_doc_comment_marker"; }
+export type InnerDocCommentMarker = Terminal<"inner_doc_comment_marker">;
+export interface InnerDocCommentMarkerTree extends AnyTreeNode { readonly type: "inner_doc_comment_marker"; }
 
 export type RustNode =
   | SourceFile
@@ -3648,8 +3647,7 @@ export interface KindMap {
   'wildcard_pattern': WildcardPattern;
   'line_comment_regular_dslash': LineCommentRegularDslash;
   'line_comment_content': LineCommentContent;
-  'outer_doc_comment_marker': OuterDocCommentMarker;
-  'inner_doc_comment_marker': InnerDocCommentMarker;
+  'doc_comment': DocComment;
   'type_identifier': TypeIdentifier;
   'field_identifier': FieldIdentifier;
   'shorthand_field_identifier': ShorthandFieldIdentifier;

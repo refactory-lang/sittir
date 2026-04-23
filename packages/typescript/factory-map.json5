@@ -350,6 +350,9 @@
     },
     "_index_signature_colon.name": {
       "identifier": "_reserved_identifier"
+    },
+    "arrow_function_parameter.parameter": {
+      "identifier": "_reserved_identifier"
     }
   },
   "factoryFields": {

@@ -1471,7 +1471,7 @@ describe('struct_pattern', () => {
 
 describe('field_pattern', () => {
   it('shorthand form produces correct type', () => {
-    const node = ir.fieldPattern.shorthand({});
+    const node = ir.fieldPattern.shorthand({ name: { $type: 'shorthand_field_identifier', $text: 'test' } as any });
     expect(node.$type).toBe('field_pattern');
     expect(node.$source).toBe('factory');
   });
@@ -1634,7 +1634,7 @@ describe('line_comment', () => {
     expect(node.$source).toBe('factory');
   });
   it('doc form produces correct type', () => {
-    const node = ir.lineComment.doc({});
+    const node = ir.lineComment.doc({ doc: { $type: 'doc_comment', $text: 'test' } as any });
     expect(node.$type).toBe('line_comment');
     expect(node.$source).toBe('factory');
   });
@@ -2030,13 +2030,13 @@ describe("wildcard_pattern", () => {
 
 describe('field_pattern_shorthand', () => {
   it('factory produces correct type', () => {
-    const node = ir.fieldPatternShorthand({});
+    const node = ir.fieldPatternShorthand({ name: { $type: 'shorthand_field_identifier', $text: 'test' } as any });
     expect(node.$type).toBe('field_pattern_shorthand');
     expect(node.$source).toBe('factory');
   });
-  it('render does not throw on minimal config', () => {
-    const node = ir.fieldPatternShorthand({});
-    expect(() => node.render()).not.toThrow();
+  it('render produces non-empty string', () => {
+    const node = ir.fieldPatternShorthand({ name: { $type: 'shorthand_field_identifier', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -2111,12 +2111,12 @@ describe('line_comment_regular_dslash', () => {
 
 describe('line_comment_doc', () => {
   it('factory produces correct type', () => {
-    const node = ir.lineCommentDoc({ children: [{ $type: '_line_doc_comment_marker', $text: 'test' } as any] as any });
+    const node = ir.lineCommentDoc({ doc: { $type: 'doc_comment', $text: 'test' } as any, children: [{ $type: '_line_doc_comment_marker', $text: 'test' } as any] as any });
     expect(node.$type).toBe('line_comment_doc');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.lineCommentDoc({ children: [{ $type: '_line_doc_comment_marker', $text: 'test' } as any] as any });
+    const node = ir.lineCommentDoc({ doc: { $type: 'doc_comment', $text: 'test' } as any, children: [{ $type: '_line_doc_comment_marker', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -2130,19 +2130,10 @@ describe('line_comment_content', () => {
   });
 });
 
-describe('outer_doc_comment_marker', () => {
+describe('doc_comment', () => {
   it('factory produces correct type', () => {
-    const node = ir.outerDocCommentMarker("test");
-    expect(node.$type).toBe('outer_doc_comment_marker');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
-  });
-});
-
-describe('inner_doc_comment_marker', () => {
-  it('factory produces correct type', () => {
-    const node = ir.innerDocCommentMarker("test");
-    expect(node.$type).toBe('inner_doc_comment_marker');
+    const node = ir.docComment("test");
+    expect(node.$type).toBe('doc_comment');
     expect(node.$source).toBe('factory');
     expect(node.$text).toBe("test");
   });

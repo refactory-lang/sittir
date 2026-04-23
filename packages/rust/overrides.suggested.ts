@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  13  (0 applied, 13 held)
-// Rule promotions:   87  (78 applied, 9 held)
+// Rule promotions:   84  (75 applied, 9 held)
 // Repeated shapes:   5  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -233,11 +233,8 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_line_comment_regular_dslash", classification: "terminal", applied: true },
   { kind: "char_literal", classification: "terminal", applied: true },
   { kind: "escape_sequence", classification: "terminal", applied: true },
-  { kind: "inner_doc_comment_marker", classification: "terminal", applied: true },
   { kind: "integer_literal", classification: "terminal", applied: true },
-  { kind: "line_comment_content", classification: "terminal", applied: true },
   { kind: "line_comment_regular_dslash", classification: "terminal", applied: true },
-  { kind: "outer_doc_comment_marker", classification: "terminal", applied: true },
   { kind: "unit_expression", classification: "terminal", applied: true },
   { kind: "unit_type", classification: "terminal", applied: true },
   { kind: "_closure_expression_expr", classification: "polymorph", applied: false },

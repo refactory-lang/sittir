@@ -4486,6 +4486,9 @@
             "kinds": [
               "identifier"
             ]
+          },
+          "aliasSources": {
+            "identifier": "_reserved_identifier"
           }
         }
       ],
@@ -11569,13 +11572,20 @@
               "multiplicity": "single",
               "name": "_module_export_name",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "unresolved": true
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_module_export_name"
+              "_module_export_name",
+              "identifier"
             ]
           }
         },
@@ -17796,6 +17806,21 @@
       "hidden": false,
       "children": [
         {
+          "name": "string_fragment",
+          "propertyName": "stringFragment",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "string_fragment",
+              "unresolved": true
+            }
+          ]
+        },
+        {
           "name": "escape_sequence",
           "propertyName": "escapeSequence",
           "required": true,
@@ -17818,7 +17843,8 @@
       "typeName": "StringFragment",
       "factoryName": "stringFragment",
       "irKey": "stringFragment",
-      "hidden": false
+      "hidden": false,
+      "pattern": "([^\"&]|&[^#A-Za-z])+"
     },
     {
       "kind": "string_single",
@@ -17828,6 +17854,21 @@
       "irKey": "stringSingle",
       "hidden": false,
       "children": [
+        {
+          "name": "string_fragment",
+          "propertyName": "stringFragment",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "string_fragment",
+              "unresolved": true
+            }
+          ]
+        },
         {
           "name": "escape_sequence",
           "propertyName": "escapeSequence",

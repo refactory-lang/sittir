@@ -227,6 +227,7 @@ export const LEAF_KINDS = [
   'continue',
   'crate',
   'default',
+  'doc_comment',
   'dyn',
   'else',
   'enum',
@@ -242,7 +243,6 @@ export const LEAF_KINDS = [
   'if',
   'impl',
   'in',
-  'inner_doc_comment_marker',
   'integer_literal',
   'let',
   'line_comment_content',
@@ -254,7 +254,6 @@ export const LEAF_KINDS = [
   'move',
   'mut',
   'mutable_specifier',
-  'outer_doc_comment_marker',
   'pointer_type_const',
   'primitive_type',
   'pub',
@@ -328,6 +327,7 @@ export const KEYWORDS = [
   'impl',
   'impl_item_semi',
   'in',
+  'inner_doc_comment_marker',
   'let',
   'loop',
   'match',
@@ -337,6 +337,7 @@ export const KEYWORDS = [
   'mut',
   'mutable_specifier',
   'never_type',
+  'outer_doc_comment_marker',
   'pointer_type_const',
   'pub',
   'raw',
@@ -647,7 +648,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'pattern', required: true, multiple: false },
   ],
   'field_pattern_shorthand': [
-    { name: 'name', required: false, multiple: false },
+    { name: 'name', required: true, multiple: false },
   ],
   'for_expression': [
     { name: 'label', required: false, multiple: false },
@@ -774,7 +775,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'line_comment': [
   ],
   'line_comment_doc': [
-    { name: 'doc', required: false, multiple: false },
+    { name: 'doc', required: true, multiple: false },
   ],
   'loop_expression': [
     { name: 'label', required: false, multiple: false },

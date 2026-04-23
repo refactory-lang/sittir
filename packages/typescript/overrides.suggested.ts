@@ -15,8 +15,8 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  17  (0 applied, 17 held)
-// Rule promotions:   71  (62 applied, 9 held)
-// Repeated shapes:   9  (advisory — suggested supertypes/groups)
+// Rule promotions:   70  (61 applied, 9 held)
+// Repeated shapes:   10  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
 // suggestedTransforms — drop entries into your overrides.ts
@@ -276,7 +276,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "property_identifier", classification: "terminal", applied: true },
   { kind: "regex_pattern", classification: "terminal", applied: true },
   { kind: "statement_identifier", classification: "terminal", applied: true },
-  { kind: "string_fragment", classification: "terminal", applied: true },
   { kind: "type_identifier", classification: "terminal", applied: true },
   { kind: "_export_statement_default", classification: "polymorph", applied: false },
   { kind: "ambient_declaration", classification: "polymorph", applied: false },
@@ -361,6 +360,7 @@ export const repeatedShapes: readonly RepeatedShape[] = [
   { suggestedName: "_property_identifier", kinds: ["private_property_identifier","property_identifier"], parents: ["_type_query_member_expression","_type_query_member_expression_in_type_annotation","member_expression"], shape: "supertype" },
   { suggestedName: "_expression", kinds: ["_lhs_expression","parenthesized_expression"], parents: ["_for_header","assignment_expression"], shape: "supertype" },
   { suggestedName: "_identifier", kinds: ["identifier","nested_identifier"], parents: ["import_alias","nested_type_identifier"], shape: "supertype" },
+  { suggestedName: "_shared_2", kinds: ["_module_export_name","identifier"], parents: ["_import_specifier_as","import_specifier_as"], shape: "supertype" },
   { suggestedName: "_shared_2", kinds: ["expression","import"], parents: ["_call_expression_call","call_expression_call"], shape: "supertype" },
   { suggestedName: "_expression", kinds: ["new_expression","primary_expression"], parents: ["_call_expression_template_call","call_expression_template_call"], shape: "supertype" },
   { suggestedName: "_shared_4", kinds: ["identifier","import","member_expression","subscript_expression"], parents: ["_type_query_call_expression","_type_query_instantiation_expression"], shape: "supertype" },

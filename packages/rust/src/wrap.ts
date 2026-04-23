@@ -1829,7 +1829,7 @@ export function wrapClosureExpressionExpr(data: _NodeData, tree: TreeHandle): Wr
 export function wrapFieldPatternShorthand(data: _NodeData, tree: TreeHandle): WrappedNode<FieldPatternShorthand> {
   return {
     ...data,
-    get name() { return drillIn(data.$fields?.['name'], tree); },
+    get name() { return drillAs(data.$fields?.['name'], tree, "shorthand_field_identifier", "identifier"); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<FieldPatternShorthand>;
 }
@@ -1880,7 +1880,7 @@ export function wrapOrPatternPrefix(data: _NodeData, tree: TreeHandle): WrappedN
 export function wrapLineCommentDoc(data: _NodeData, tree: TreeHandle): WrappedNode<LineCommentDoc> {
   return {
     ...data,
-    get doc() { return drillIn(data.$fields?.['doc'], tree); },
+    get doc() { return drillAs(data.$fields?.['doc'], tree, "doc_comment", "_line_doc_content"); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<LineCommentDoc>;
 }
@@ -2119,8 +2119,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'line_comment_regular_dslash': (d) => d,
   'line_comment_doc': (d, t) => wrapLineCommentDoc(d, t),
   'line_comment_content': (d) => d,
-  'outer_doc_comment_marker': (d) => d,
-  'inner_doc_comment_marker': (d) => d,
+  'doc_comment': (d) => d,
   'type_identifier': (d) => d,
   'field_identifier': (d) => d,
   'shorthand_field_identifier': (d) => d,

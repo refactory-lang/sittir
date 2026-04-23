@@ -49,6 +49,7 @@ const _leafRe_unescapedSingleJsxStringFragment = /^(?:([^'&]|&[^#A-Za-z])+)/u;
 const _leafRe_unescapedDoubleStringFragment = /^(?:[^"\\\r\n]+)/u;
 const _leafRe_unescapedSingleStringFragment = /^(?:[^'\\\r\n]+)/u;
 const _leafRe_regexFlags = /^(?:[a-z]+)/u;
+const _leafRe_stringFragment = /^(?:([^"&]|&[^#A-Za-z])+)/u;
 
 export function program(config: T.Program.Config) {
   const fields = {
@@ -431,7 +432,7 @@ export function importSpecifierUFormAs(config: ConfigOf<T.ImportSpecifierUFormAs
     $named: true as const,
     $variant: 'as' as const,
     $children: children,
-    name(value?: T.ModuleExportName) {
+    name(value?: T.ModuleExportName | T.Identifier) {
       if (value === undefined) return inner.$fields.name;
       return importSpecifierUFormAs({ alias: inner.$fields.alias, name: value });
     },
@@ -1763,7 +1764,7 @@ export function arrowFunctionUFormParameter(config: ConfigOf<T.ArrowFunctionUFor
       if (value === undefined) return fields.body;
       return arrowFunctionUFormParameter({ async: config.async, parameter: inner.$fields.parameter, body: value });
     },
-    parameter(value?: T.Identifier) {
+    parameter(value?: T.ReservedIdentifier) {
       if (value === undefined) return inner.$fields.parameter;
       return arrowFunctionUFormParameter({ async: config.async, body: config.body, parameter: value });
     },
@@ -4620,7 +4621,7 @@ export function importSpecifierAs(config: T.ImportSpecifierAs.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    name(value?: T.ModuleExportName) { return _fs(config, importSpecifierAs, 'name', value, fields.name); },
+    name(value?: T.ModuleExportName | T.Identifier) { return _fs(config, importSpecifierAs, 'name', value, fields.name); },
     alias(value?: T.ImportIdentifier) { return _fs(config, importSpecifierAs, 'alias', value, fields.alias); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
@@ -4731,7 +4732,7 @@ export function propertyIdentifier(text: string) {
 }
 
 export function stringFragment(text: string) {
-  if (text.length === 0) throw new Error(`string_fragment: text must be non-empty`);
+  if (text.length === 0) throw new Error(`string_fragment: text must be non-empty`); if (!_leafRe_stringFragment.test(text)) throw new Error(`string_fragment: text does not match pattern: ${text}`);
   return {
     $type: 'string_fragment' as const,
     $source: 'factory' as const,
@@ -4784,7 +4785,7 @@ export function arrowFunctionParameter(config: T.ArrowFunctionParameter.Config) 
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    parameter(value?: T.Identifier) { return _fs(config, arrowFunctionParameter, 'parameter', value, fields.parameter); },
+    parameter(value?: T.ReservedIdentifier) { return _fs(config, arrowFunctionParameter, 'parameter', value, fields.parameter); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -4884,7 +4885,7 @@ export function callExpressionMember(config: T.CallExpressionMember.Config) {
   };
 }
 
-export function stringDouble(...children: T.EscapeSequence[]) {
+export function stringDouble(...children: (T.StringFragment | T.EscapeSequence)[]) {
   return {
     $type: 'string_double' as const,
     $source: 'factory' as const,
@@ -4899,7 +4900,7 @@ export function stringDouble(...children: T.EscapeSequence[]) {
   };
 }
 
-export function stringSingle(...children: T.EscapeSequence[]) {
+export function stringSingle(...children: (T.StringFragment | T.EscapeSequence)[]) {
   return {
     $type: 'string_single' as const,
     $source: 'factory' as const,

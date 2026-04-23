@@ -212,8 +212,7 @@ export const _fromMap = {
   "line_comment_regular_dslash": lineCommentRegularDslashFrom,
   "line_comment_doc": lineCommentDocFrom,
   "line_comment_content": lineCommentContentFrom,
-  "outer_doc_comment_marker": outerDocCommentMarkerFrom,
-  "inner_doc_comment_marker": innerDocCommentMarkerFrom,
+  "doc_comment": docCommentFrom,
   "type_identifier": typeIdentifierFrom,
   "field_identifier": fieldIdentifierFrom,
   "shorthand_field_identifier": shorthandFieldIdentifierFrom,
@@ -250,8 +249,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
   "wildcard_pattern": { values: ["_"], factory: () => F.wildcardPattern() },
   "line_comment_regular_dslash": { factory: F.lineCommentRegularDslash },
   "line_comment_content": { factory: F.lineCommentContent },
-  "outer_doc_comment_marker": { factory: F.outerDocCommentMarker },
-  "inner_doc_comment_marker": { factory: F.innerDocCommentMarker },
+  "doc_comment": { factory: F.docComment },
   "type_identifier": { factory: F.typeIdentifier },
   "field_identifier": { factory: F.fieldIdentifier },
   "shorthand_field_identifier": { factory: F.shorthandFieldIdentifier },
@@ -2005,9 +2003,9 @@ export function lineCommentUFormContentFrom(input: ConfigOf<T.LineCommentUFormCo
 export function blockCommentFrom(input?: T.BlockComment.Loose): ReturnType<typeof F.blockComment> {
   if (input !== undefined && isNodeData(input)) return input;
   return F.blockComment({
-    outer: _resolveOneLeaf(input?.outer, "outer_doc_comment_marker"),
-    inner: _resolveOneLeaf(input?.inner, "inner_doc_comment_marker"),
-    doc: _resolveOneBranch(input?.doc, "doc_comment"),
+    outer: _resolveBooleanKeyword(input?.outer),
+    inner: _resolveBooleanKeyword(input?.inner),
+    doc: _resolveOneLeaf(input?.doc, "doc_comment"),
   });
 }
 
@@ -2277,10 +2275,10 @@ export function wildcardPatternFrom(input?: T.WildcardPattern) {
   return F.wildcardPattern();
 }
 
-export function fieldPatternShorthandFrom(input?: T.FieldPatternShorthand.Loose): ReturnType<typeof F.fieldPatternShorthand> {
-  if (input !== undefined && isNodeData(input)) return input;
+export function fieldPatternShorthandFrom(input: T.FieldPatternShorthand.Loose): ReturnType<typeof F.fieldPatternShorthand> {
+  if (isNodeData(input)) return input;
   return F.fieldPatternShorthand({
-    name: _resolveOne(input?.name, _K0, _K0),
+    name: _resolveOneLeaf(input.name, "shorthand_field_identifier"),
   });
 }
 
@@ -2330,7 +2328,7 @@ export function lineCommentRegularDslashFrom(input: string | T.LineCommentRegula
 export function lineCommentDocFrom(input: T.LineCommentDoc.Loose): ReturnType<typeof F.lineCommentDoc> {
   if (isNodeData(input)) return input;
   return F.lineCommentDoc({
-    doc: _resolveOne(input.doc, _K0, _K0),
+    doc: _resolveOneLeaf(input.doc, "doc_comment"),
     children: _resolveOneBranch(input.children, "_line_doc_comment_marker"),
   });
 }
@@ -2340,14 +2338,9 @@ export function lineCommentContentFrom(input: string | T.LineCommentContent) {
   return F.lineCommentContent(input);
 }
 
-export function outerDocCommentMarkerFrom(input: string | T.OuterDocCommentMarker) {
+export function docCommentFrom(input: string | T.DocComment) {
   if (isNodeData(input)) return input;
-  return F.outerDocCommentMarker(input);
-}
-
-export function innerDocCommentMarkerFrom(input: string | T.InnerDocCommentMarker) {
-  if (isNodeData(input)) return input;
-  return F.innerDocCommentMarker(input);
+  return F.docComment(input);
 }
 
 export function typeIdentifierFrom(input: string | T.TypeIdentifier) {
