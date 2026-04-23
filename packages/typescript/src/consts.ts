@@ -6,6 +6,7 @@ export const NODE_KINDS = [
   '_arrow_function_parameter',
   '_class_heritage_extends_clause',
   '_class_heritage_implements_clause',
+  '_export_statement_default',
   '_export_statement_equals_export',
   '_export_statement_namespace_export',
   '_export_statement_type_export',
@@ -17,6 +18,8 @@ export const NODE_KINDS = [
   '_jsx_string',
   '_lhs_expression',
   '_parenthesized_expression_sequence',
+  '_string_double',
+  '_string_single',
   '_type_identifier',
   'abstract_class_declaration',
   'abstract_method_signature',
@@ -72,6 +75,7 @@ export const NODE_KINDS = [
   'export_clause',
   'export_specifier',
   'export_statement',
+  'export_statement_default',
   'export_statement_equals_export',
   'export_statement_namespace_export',
   'export_statement_type_export',
@@ -172,6 +176,8 @@ export const NODE_KINDS = [
   'statement',
   'statement_block',
   'string',
+  'string_double',
+  'string_single',
   'subscript_expression',
   'switch_body',
   'switch_case',
@@ -448,6 +454,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_class_heritage_implements_clause': [
   ],
+  '_export_statement_default': [
+    { name: 'decorator', required: true, multiple: true },
+    { name: 'declaration', required: true, multiple: false },
+    { name: 'value', required: false, multiple: false },
+  ],
   '_export_statement_equals_export': [
   ],
   '_export_statement_namespace_export': [
@@ -471,6 +482,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_lhs_expression': [
   ],
   '_parenthesized_expression_sequence': [
+  ],
+  '_string_double': [
+  ],
+  '_string_single': [
   ],
   '_type_identifier': [
   ],
@@ -677,6 +692,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'export_statement': [
   ],
+  'export_statement_default': [
+    { name: 'decorator', required: true, multiple: true },
+    { name: 'declaration', required: true, multiple: false },
+    { name: 'value', required: false, multiple: false },
+  ],
   'export_statement_equals_export': [
   ],
   'export_statement_namespace_export': [
@@ -687,6 +707,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'expression': [
   ],
   'expression_statement': [
+    { name: 'semicolon', required: true, multiple: false },
   ],
   'extends_clause': [
     { name: 'value', required: true, multiple: true },
@@ -1070,6 +1091,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'string': [
   ],
+  'string_double': [
+  ],
+  'string_single': [
+  ],
   'subscript_expression': [
     { name: 'object', required: true, multiple: false },
     { name: 'optionalChain', required: false, multiple: false },
@@ -1118,6 +1143,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'value', required: true, multiple: false },
+    { name: 'semicolon', required: true, multiple: false },
   ],
   'type_annotation': [
     { name: 'type', required: true, multiple: false },

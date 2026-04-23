@@ -25,7 +25,7 @@ function _attach<T extends (...args: never[]) => unknown, P extends Record<strin
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
 export const moduleExportName = {
   identifier: F.identifier,
-  string: _attach(F.string, { from: FR.stringFrom }),
+  string: _attach(F.string, { from: FR.stringFrom, "double": _attach(F.stringUFormDouble, { from: FR.stringUFormDoubleFrom }), "single": _attach(F.stringUFormSingle, { from: FR.stringUFormSingleFrom }) }),
 } as const;
 
 export const expressions = {
@@ -64,7 +64,7 @@ export const jsxAttributeName = {
 } as const;
 
 export const jsxAttributeValue = {
-  string: _attach(F.string, { from: FR.stringFrom }),
+  string: _attach(F.string, { from: FR.stringFrom, "double": _attach(F.stringUFormDouble, { from: FR.stringUFormDoubleFrom }), "single": _attach(F.stringUFormSingle, { from: FR.stringUFormSingleFrom }) }),
   jsx: _attach(F.jsxExpression, { from: FR.jsxExpressionFrom }),
   jsxSelfClosing: _attach(F.jsxSelfClosingElement, { from: FR.jsxSelfClosingElementFrom }),
 } as const;
@@ -87,7 +87,7 @@ export const identifier = {
 export const propertyName = {
   property: F.propertyIdentifier,
   privateProperty: F.privatePropertyIdentifier,
-  string: _attach(F.string, { from: FR.stringFrom }),
+  string: _attach(F.string, { from: FR.stringFrom, "double": _attach(F.stringUFormDouble, { from: FR.stringUFormDoubleFrom }), "single": _attach(F.stringUFormSingle, { from: FR.stringUFormSingleFrom }) }),
   number: F.number,
   computedProperty: _attach(F.computedPropertyName, { from: FR.computedPropertyNameFrom }),
 } as const;
@@ -134,7 +134,7 @@ export const primaryType = {
 export const ir = {
   // Node factories
   program: _attach(F.program, { from: FR.programFrom }),
-  exportStatement: _attach(F.exportStatement, { from: FR.exportStatementFrom, "type_export": _attach(F.exportStatementUFormTypeExport, { from: FR.exportStatementUFormTypeExportFrom }), "equals_export": _attach(F.exportStatementUFormEqualsExport, { from: FR.exportStatementUFormEqualsExportFrom }), "namespace_export": _attach(F.exportStatementUFormNamespaceExport, { from: FR.exportStatementUFormNamespaceExportFrom }) }),
+  exportStatement: _attach(F.exportStatement, { from: FR.exportStatementFrom, "default": _attach(F.exportStatementUFormDefault, { from: FR.exportStatementUFormDefaultFrom }), "type_export": _attach(F.exportStatementUFormTypeExport, { from: FR.exportStatementUFormTypeExportFrom }), "equals_export": _attach(F.exportStatementUFormEqualsExport, { from: FR.exportStatementUFormEqualsExportFrom }), "namespace_export": _attach(F.exportStatementUFormNamespaceExport, { from: FR.exportStatementUFormNamespaceExportFrom }) }),
   namespaceExport: _attach(F.namespaceExport, { from: FR.namespaceExportFrom }),
   exportClause: _attach(F.exportClause, { from: FR.exportClauseFrom }),
   exportSpecifier: _attach(F.exportSpecifier, { from: FR.exportSpecifierFrom }),
@@ -210,7 +210,7 @@ export const ir = {
   unary: _attach(F.unaryExpression, { from: FR.unaryExpressionFrom }),
   update: _attach(F.updateExpression, { from: FR.updateExpressionFrom }),
   sequence: _attach(F.sequenceExpression, { from: FR.sequenceExpressionFrom }),
-  string: _attach(F.string, { from: FR.stringFrom }),
+  string: _attach(F.string, { from: FR.stringFrom, "double": _attach(F.stringUFormDouble, { from: FR.stringUFormDoubleFrom }), "single": _attach(F.stringUFormSingle, { from: FR.stringUFormSingleFrom }) }),
   templateString: _attach(F.templateString, { from: FR.templateStringFrom }),
   templateSubstitution: _attach(F.templateSubstitution, { from: FR.templateSubstitutionFrom }),
   regex: _attach(F.regex, { from: FR.regexFrom }),
@@ -296,6 +296,7 @@ export const ir = {
   unionType: _attach(F.unionType, { from: FR.unionTypeFrom }),
   intersectionType: _attach(F.intersectionType, { from: FR.intersectionTypeFrom }),
   functionType: _attach(F.functionType, { from: FR.functionTypeFrom }),
+  exportStatementDefault: _attach(F.exportStatementDefault, { from: FR.exportStatementDefaultFrom, "form0": _attach(F.exportStatementDefaultForm0, { from: FR.exportStatementDefaultForm0From }), "form1": _attach(F.exportStatementDefaultForm1, { from: FR.exportStatementDefaultForm1From }) }),
   exportStatementTypeExport: _attach(F.exportStatementTypeExport, { from: FR.exportStatementTypeExportFrom }),
   exportStatementEqualsExport: _attach(F.exportStatementEqualsExport, { from: FR.exportStatementEqualsExportFrom }),
   exportStatementNamespaceExport: _attach(F.exportStatementNamespaceExport, { from: FR.exportStatementNamespaceExportFrom }),
@@ -315,6 +316,8 @@ export const ir = {
   callExpressionCall: _attach(F.callExpressionCall, { from: FR.callExpressionCallFrom }),
   callExpressionTemplateCall: _attach(F.callExpressionTemplateCall, { from: FR.callExpressionTemplateCallFrom }),
   callExpressionMember: _attach(F.callExpressionMember, { from: FR.callExpressionMemberFrom }),
+  stringDouble: _attach(F.stringDouble, { from: FR.stringDoubleFrom }),
+  stringSingle: _attach(F.stringSingle, { from: FR.stringSingleFrom }),
   interfaceBody: _attach(F.interfaceBody, { from: FR.interfaceBodyFrom }),
   indexSignatureColon: _attach(F.indexSignatureColon, { from: FR.indexSignatureColonFrom }),
   indexSignatureMappedTypeClause: _attach(F.indexSignatureMappedTypeClause, { from: FR.indexSignatureMappedTypeClauseFrom }),

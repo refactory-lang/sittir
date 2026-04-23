@@ -201,9 +201,13 @@ export interface IsGuards {
     ImportSpecifierName<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_import_specifier_name' };
     IndexSignatureMappedTypeClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_index_signature_mapped_type_clause' };
     ParenthesizedExpressionSequence<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_parenthesized_expression_sequence' };
+    ExportStatementDefault<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_default' };
     ExportStatementTypeExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_type_export' };
     ExportStatementEqualsExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_equals_export' };
     ExportStatementNamespaceExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_namespace_export' };
+    StringDouble<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_string_double' };
+    StringSingle<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_string_single' };
+    exportStatementDefault<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'export_statement_default' };
     exportStatementTypeExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'export_statement_type_export' };
     exportStatementEqualsExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'export_statement_equals_export' };
     exportStatementNamespaceExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'export_statement_namespace_export' };
@@ -223,6 +227,8 @@ export interface IsGuards {
     callExpressionCall<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'call_expression_call' };
     callExpressionTemplateCall<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'call_expression_template_call' };
     callExpressionMember<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'call_expression_member' };
+    stringDouble<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'string_double' };
+    stringSingle<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'string_single' };
     interfaceBody<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'interface_body' };
     indexSignatureColon<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'index_signature_colon' };
     indexSignatureMappedTypeClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'index_signature_mapped_type_clause' };
@@ -423,9 +429,13 @@ export interface AssertGuards {
     ImportSpecifierName(v: { readonly $type: string }): asserts v is { readonly $type: '_import_specifier_name' };
     IndexSignatureMappedTypeClause(v: { readonly $type: string }): asserts v is { readonly $type: '_index_signature_mapped_type_clause' };
     ParenthesizedExpressionSequence(v: { readonly $type: string }): asserts v is { readonly $type: '_parenthesized_expression_sequence' };
+    ExportStatementDefault(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_default' };
     ExportStatementTypeExport(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_type_export' };
     ExportStatementEqualsExport(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_equals_export' };
     ExportStatementNamespaceExport(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_namespace_export' };
+    StringDouble(v: { readonly $type: string }): asserts v is { readonly $type: '_string_double' };
+    StringSingle(v: { readonly $type: string }): asserts v is { readonly $type: '_string_single' };
+    exportStatementDefault(v: { readonly $type: string }): asserts v is { readonly $type: 'export_statement_default' };
     exportStatementTypeExport(v: { readonly $type: string }): asserts v is { readonly $type: 'export_statement_type_export' };
     exportStatementEqualsExport(v: { readonly $type: string }): asserts v is { readonly $type: 'export_statement_equals_export' };
     exportStatementNamespaceExport(v: { readonly $type: string }): asserts v is { readonly $type: 'export_statement_namespace_export' };
@@ -445,6 +455,8 @@ export interface AssertGuards {
     callExpressionCall(v: { readonly $type: string }): asserts v is { readonly $type: 'call_expression_call' };
     callExpressionTemplateCall(v: { readonly $type: string }): asserts v is { readonly $type: 'call_expression_template_call' };
     callExpressionMember(v: { readonly $type: string }): asserts v is { readonly $type: 'call_expression_member' };
+    stringDouble(v: { readonly $type: string }): asserts v is { readonly $type: 'string_double' };
+    stringSingle(v: { readonly $type: string }): asserts v is { readonly $type: 'string_single' };
     interfaceBody(v: { readonly $type: string }): asserts v is { readonly $type: 'interface_body' };
     indexSignatureColon(v: { readonly $type: string }): asserts v is { readonly $type: 'index_signature_colon' };
     indexSignatureMappedTypeClause(v: { readonly $type: string }): asserts v is { readonly $type: 'index_signature_mapped_type_clause' };
@@ -670,9 +682,13 @@ export const is = {
     ImportSpecifierName: _g("_import_specifier_name"),
     IndexSignatureMappedTypeClause: _g("_index_signature_mapped_type_clause"),
     ParenthesizedExpressionSequence: _g("_parenthesized_expression_sequence"),
+    ExportStatementDefault: _g("_export_statement_default"),
     ExportStatementTypeExport: _g("_export_statement_type_export"),
     ExportStatementEqualsExport: _g("_export_statement_equals_export"),
     ExportStatementNamespaceExport: _g("_export_statement_namespace_export"),
+    StringDouble: _g("_string_double"),
+    StringSingle: _g("_string_single"),
+    exportStatementDefault: _g("export_statement_default"),
     exportStatementTypeExport: _g("export_statement_type_export"),
     exportStatementEqualsExport: _g("export_statement_equals_export"),
     exportStatementNamespaceExport: _g("export_statement_namespace_export"),
@@ -692,6 +708,8 @@ export const is = {
     callExpressionCall: _g("call_expression_call"),
     callExpressionTemplateCall: _g("call_expression_template_call"),
     callExpressionMember: _g("call_expression_member"),
+    stringDouble: _g("string_double"),
+    stringSingle: _g("string_single"),
     interfaceBody: _g("interface_body"),
     indexSignatureColon: _g("index_signature_colon"),
     indexSignatureMappedTypeClause: _g("index_signature_mapped_type_clause"),
@@ -913,9 +931,13 @@ export const assert = {
     ImportSpecifierName: _makeAssert('ImportSpecifierName', is.ImportSpecifierName as _AnyGuard),
     IndexSignatureMappedTypeClause: _makeAssert('IndexSignatureMappedTypeClause', is.IndexSignatureMappedTypeClause as _AnyGuard),
     ParenthesizedExpressionSequence: _makeAssert('ParenthesizedExpressionSequence', is.ParenthesizedExpressionSequence as _AnyGuard),
+    ExportStatementDefault: _makeAssert('ExportStatementDefault', is.ExportStatementDefault as _AnyGuard),
     ExportStatementTypeExport: _makeAssert('ExportStatementTypeExport', is.ExportStatementTypeExport as _AnyGuard),
     ExportStatementEqualsExport: _makeAssert('ExportStatementEqualsExport', is.ExportStatementEqualsExport as _AnyGuard),
     ExportStatementNamespaceExport: _makeAssert('ExportStatementNamespaceExport', is.ExportStatementNamespaceExport as _AnyGuard),
+    StringDouble: _makeAssert('StringDouble', is.StringDouble as _AnyGuard),
+    StringSingle: _makeAssert('StringSingle', is.StringSingle as _AnyGuard),
+    exportStatementDefault: _makeAssert('exportStatementDefault', is.exportStatementDefault as _AnyGuard),
     exportStatementTypeExport: _makeAssert('exportStatementTypeExport', is.exportStatementTypeExport as _AnyGuard),
     exportStatementEqualsExport: _makeAssert('exportStatementEqualsExport', is.exportStatementEqualsExport as _AnyGuard),
     exportStatementNamespaceExport: _makeAssert('exportStatementNamespaceExport', is.exportStatementNamespaceExport as _AnyGuard),
@@ -935,6 +957,8 @@ export const assert = {
     callExpressionCall: _makeAssert('callExpressionCall', is.callExpressionCall as _AnyGuard),
     callExpressionTemplateCall: _makeAssert('callExpressionTemplateCall', is.callExpressionTemplateCall as _AnyGuard),
     callExpressionMember: _makeAssert('callExpressionMember', is.callExpressionMember as _AnyGuard),
+    stringDouble: _makeAssert('stringDouble', is.stringDouble as _AnyGuard),
+    stringSingle: _makeAssert('stringSingle', is.stringSingle as _AnyGuard),
     interfaceBody: _makeAssert('interfaceBody', is.interfaceBody as _AnyGuard),
     indexSignatureColon: _makeAssert('indexSignatureColon', is.indexSignatureColon as _AnyGuard),
     indexSignatureMappedTypeClause: _makeAssert('indexSignatureMappedTypeClause', is.indexSignatureMappedTypeClause as _AnyGuard),

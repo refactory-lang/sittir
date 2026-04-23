@@ -27,7 +27,9 @@ export type LeafStringMap = {
   _kw_default: "default";
   _kw_const: "const";
   _wildcard_pattern: "_";
+  _pointer_type_const: "const";
   primitive_type: "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char";
+  pointer_type_const: "const";
   wildcard_pattern: "_";
   as: "as";
   async: "async";
@@ -63,11 +65,11 @@ export type LeafStringMap = {
   in: "in";
   dyn: "dyn";
   mut: "mut";
-  raw: "raw";
   yield: "yield";
   try: "try";
   ref: "ref";
   move: "move";
+  raw: "raw";
 };
 
 export const enum SyntaxKind {
@@ -212,6 +214,7 @@ export const enum SyntaxKind {
   RawStringLiteral = 'raw_string_literal',
   Comment = 'comment',
   LineComment = 'line_comment',
+  LineDocCommentMarker = '_line_doc_comment_marker',
   BlockComment = 'block_comment',
   ReservedIdentifier = '_reserved_identifier',
   _TypeIdentifier = '_type_identifier',
@@ -239,22 +242,37 @@ export const enum SyntaxKind {
   _RangePatternPrefix = '_range_pattern_prefix',
   _StructItemBrace = '_struct_item_brace',
   _StructItemTuple = '_struct_item_tuple',
+  _ForeignModItemBody = '_foreign_mod_item_body',
+  _PointerTypeMut = '_pointer_type_mut',
+  _ReferenceExpressionRawMut = '_reference_expression_raw_mut',
+  _ExpressionStatementWithSemi = '_expression_statement_with_semi',
+  _ExpressionStatementBlockEnding = '_expression_statement_block_ending',
+  _MatchArmWithComma = '_match_arm_with_comma',
+  _MatchArmBlockEnding = '_match_arm_block_ending',
+  _LineCommentDoc = '_line_comment_doc',
+  ExpressionStatementWithSemi = 'expression_statement_with_semi',
+  ExpressionStatementBlockEnding = 'expression_statement_block_ending',
   MacroDefinitionParen = 'macro_definition_paren',
   MacroDefinitionBracket = 'macro_definition_bracket',
   MacroDefinitionBrace = 'macro_definition_brace',
   ModItemInline = 'mod_item_inline',
+  ForeignModItemBody = 'foreign_mod_item_body',
   StructItemBrace = 'struct_item_brace',
   StructItemTuple = 'struct_item_tuple',
   ImplItemBody = 'impl_item_body',
   FunctionTypeTraitForm = 'function_type_trait_form',
   FunctionTypeFnForm = 'function_type_fn_form',
+  PointerTypeMut = 'pointer_type_mut',
   RangeExpressionBinary = 'range_expression_binary',
   RangeExpressionPostfix = 'range_expression_postfix',
   RangeExpressionPrefix = 'range_expression_prefix',
   RangeExpressionBare = 'range_expression_bare',
+  ReferenceExpressionRawMut = 'reference_expression_raw_mut',
   ArrayExpressionSemi = 'array_expression_semi',
   ArrayExpressionList = 'array_expression_list',
   LetChain = 'let_chain',
+  MatchArmWithComma = 'match_arm_with_comma',
+  MatchArmBlockEnding = 'match_arm_block_ending',
   ClosureExpressionBlock = 'closure_expression_block',
   ClosureExpressionExpr = 'closure_expression_expr',
   FieldPatternShorthand = 'field_pattern_shorthand',
@@ -263,6 +281,7 @@ export const enum SyntaxKind {
   RangePatternPrefix = 'range_pattern_prefix',
   OrPatternBinary = 'or_pattern_binary',
   OrPatternPrefix = 'or_pattern_prefix',
+  LineCommentDoc = 'line_comment_doc',
   FragmentSpecifier = 'fragment_specifier',
   UnitType = 'unit_type',
   MutableSpecifier = 'mutable_specifier',
@@ -285,6 +304,10 @@ export const enum SyntaxKind {
   KwDefault = '_kw_default',
   KwConst = '_kw_const',
   _WildcardPattern = '_wildcard_pattern',
+  _PointerTypeConst = '_pointer_type_const',
+  _ReferenceExpressionRawConst = '_reference_expression_raw_const',
+  _LineCommentRegularDslash = '_line_comment_regular_dslash',
+  _LineCommentContent = '_line_comment_content',
   StringContent = 'string_content',
   RawStringLiteralContent = 'raw_string_literal_content',
   FloatLiteral = 'float_literal',
@@ -293,7 +316,11 @@ export const enum SyntaxKind {
   LineDocContent = '_line_doc_content',
   ErrorSentinel = '_error_sentinel',
   PrimitiveType = 'primitive_type',
+  PointerTypeConst = 'pointer_type_const',
+  ReferenceExpressionRawConst = 'reference_expression_raw_const',
   WildcardPattern = 'wildcard_pattern',
+  LineCommentRegularDslash = 'line_comment_regular_dslash',
+  LineCommentContent = 'line_comment_content',
   OuterDocCommentMarker = 'outer_doc_comment_marker',
   InnerDocCommentMarker = 'inner_doc_comment_marker',
   TypeIdentifier = 'type_identifier',
@@ -333,11 +360,11 @@ export const enum SyntaxKind {
   In = 'in',
   Dyn = 'dyn',
   Mut = 'mut',
-  Raw = 'raw',
   Yield = 'yield',
   Try = 'try',
   Ref = 'ref',
   Move = 'move',
+  Raw = 'raw',
 }
 
 // Scoped enums per supertype
@@ -714,11 +741,19 @@ export interface SourceFile {
   };
 }
 
-export interface ExpressionStatement {
+export interface ExpressionStatementUFormWithSemi {
   readonly $type: 'expression_statement';
-  readonly $children: readonly [Expression | ExpressionEndingWithBlock];
+  readonly $variant: 'with_semi';
+  readonly $children: readonly [ExpressionStatementWithSemi];
 }
 
+export interface ExpressionStatementUFormBlockEnding {
+  readonly $type: 'expression_statement';
+  readonly $variant: 'block_ending';
+  readonly $children: readonly [ExpressionStatementBlockEnding];
+}
+
+export type ExpressionStatement = ExpressionStatementUFormWithSemi | ExpressionStatementUFormBlockEnding;
 export interface MacroDefinitionUFormParen {
   readonly $type: 'macro_definition';
   readonly $variant: 'paren';
@@ -832,15 +867,25 @@ export interface ModItemUFormInline {
 }
 
 export type ModItem = ModItemUFormExternal | ModItemUFormInline;
-export interface ForeignModItem {
+export interface ForeignModItemUFormSemi {
   readonly $type: 'foreign_mod_item';
+  readonly $variant: 'semi';
   readonly $fields: {
-    readonly visibility_modifier?: VisibilityModifier;
     readonly extern_modifier: ExternModifier;
-    readonly body?: DeclarationList;
   };
+  readonly $children: readonly [VisibilityModifier | ForeignModItemSemi];
 }
 
+export interface ForeignModItemUFormBody {
+  readonly $type: 'foreign_mod_item';
+  readonly $variant: 'body';
+  readonly $fields: {
+    readonly extern_modifier: ExternModifier;
+  };
+  readonly $children: readonly [VisibilityModifier | ForeignModItemBody];
+}
+
+export type ForeignModItem = ForeignModItemUFormSemi | ForeignModItemUFormBody;
 export interface DeclarationList {
   readonly $type: 'declaration_list';
   readonly $children: readonly (DeclarationStatement)[];
@@ -1344,14 +1389,25 @@ export interface ReferenceType {
   };
 }
 
-export interface PointerType {
+export interface PointerTypeUFormConst {
   readonly $type: 'pointer_type';
+  readonly $variant: 'const';
   readonly $fields: {
-    readonly mutable_specifier: "const" | MutableSpecifier;
     readonly type: _Type;
   };
+  readonly $children: readonly [PointerTypeConst];
 }
 
+export interface PointerTypeUFormMut {
+  readonly $type: 'pointer_type';
+  readonly $variant: 'mut';
+  readonly $fields: {
+    readonly type: _Type;
+  };
+  readonly $children: readonly [PointerTypeMut];
+}
+
+export type PointerType = PointerTypeUFormConst | PointerTypeUFormMut;
 export interface AbstractType {
   readonly $type: 'abstract_type';
   readonly $fields: {
@@ -1447,9 +1503,9 @@ export interface TryExpression {
 export interface ReferenceExpression {
   readonly $type: 'reference_expression';
   readonly $fields: {
-    readonly mutable_specifier?: "raw" | "const" | MutableSpecifier;
     readonly value: Expression;
   };
+  readonly $children: readonly [ReferenceExpressionRawConst | ReferenceExpressionRawMut | MutableSpecifier];
 }
 
 export interface BinaryExpression {
@@ -1610,15 +1666,25 @@ export interface MatchBlock {
   readonly $children: readonly (MatchArm | MatchArm)[];
 }
 
-export interface MatchArm {
+export interface MatchArmUFormWithComma {
   readonly $type: 'match_arm';
+  readonly $variant: 'with_comma';
   readonly $fields: {
     readonly pattern: MatchPattern;
-    readonly value: Expression;
   };
-  readonly $children: readonly (AttributeItem | InnerAttributeItem)[];
+  readonly $children: readonly (AttributeItem | InnerAttributeItem | MatchArmWithComma)[];
 }
 
+export interface MatchArmUFormBlockEnding {
+  readonly $type: 'match_arm';
+  readonly $variant: 'block_ending';
+  readonly $fields: {
+    readonly pattern: MatchPattern;
+  };
+  readonly $children: readonly (AttributeItem | InnerAttributeItem | MatchArmBlockEnding)[];
+}
+
+export type MatchArm = MatchArmUFormWithComma | MatchArmUFormBlockEnding;
 export interface LastMatchArm {
   readonly $type: 'last_match_arm';
   readonly $fields: {
@@ -1917,15 +1983,42 @@ export interface Comment {
   readonly $children: readonly [LineComment | BlockComment];
 }
 
-export interface LineComment {
+export interface LineCommentUFormRegularDslash {
   readonly $type: 'line_comment';
+  readonly $variant: 'regular_dslash';
+  readonly $children: readonly [LineCommentRegularDslash];
+}
+
+export interface LineCommentUFormDoc {
+  readonly $type: 'line_comment';
+  readonly $variant: 'doc';
+  readonly $children: readonly [LineCommentDoc];
+}
+
+export interface LineCommentUFormContent {
+  readonly $type: 'line_comment';
+  readonly $variant: 'content';
+  readonly $children: readonly [LineCommentContent];
+}
+
+export type LineComment = LineCommentUFormRegularDslash | LineCommentUFormDoc | LineCommentUFormContent;
+export interface LineDocCommentMarkerForm0 {
+  readonly $type: '_line_doc_comment_marker';
+  readonly $variant: 'form0';
   readonly $fields: {
-    readonly outer?: "/";
-    readonly inner?: "!";
-    readonly doc?: LineDocContent;
+    readonly outer: "/";
   };
 }
 
+export interface LineDocCommentMarkerForm1 {
+  readonly $type: '_line_doc_comment_marker';
+  readonly $variant: 'form1';
+  readonly $fields: {
+    readonly inner: "!";
+  };
+}
+
+export type LineDocCommentMarker = LineDocCommentMarkerForm0 | LineDocCommentMarkerForm1;
 export interface BlockComment {
   readonly $type: 'block_comment';
   readonly $fields: {
@@ -2067,6 +2160,59 @@ export interface _StructItemTuple {
   readonly $children: readonly [WhereClause];
 }
 
+export interface _ForeignModItemBody {
+  readonly $type: '_foreign_mod_item_body';
+  readonly $fields: {
+    readonly body: DeclarationList;
+  };
+}
+
+export interface _PointerTypeMut {
+  readonly $type: '_pointer_type_mut';
+  readonly $children: readonly [MutableSpecifier];
+}
+
+export interface _ReferenceExpressionRawMut {
+  readonly $type: '_reference_expression_raw_mut';
+  readonly $children: readonly [MutableSpecifier];
+}
+
+export interface _ExpressionStatementWithSemi {
+  readonly $type: '_expression_statement_with_semi';
+  readonly $children: readonly [Expression];
+}
+
+export interface _ExpressionStatementBlockEnding {
+  readonly $type: '_expression_statement_block_ending';
+  readonly $children: readonly [ExpressionEndingWithBlock];
+}
+
+export interface _MatchArmWithComma {
+  readonly $type: '_match_arm_with_comma';
+}
+
+export interface _MatchArmBlockEnding {
+  readonly $type: '_match_arm_block_ending';
+  readonly $fields: {
+    readonly value: ExpressionEndingWithBlock;
+  };
+}
+
+export interface _LineCommentDoc {
+  readonly $type: '_line_comment_doc';
+  readonly $children: readonly [LineDocCommentMarker];
+}
+
+export interface ExpressionStatementWithSemi {
+  readonly $type: 'expression_statement_with_semi';
+  readonly $children: readonly [Expression];
+}
+
+export interface ExpressionStatementBlockEnding {
+  readonly $type: 'expression_statement_block_ending';
+  readonly $children: readonly [ExpressionEndingWithBlock];
+}
+
 export interface MacroDefinitionParen {
   readonly $type: 'macro_definition_paren';
   readonly $children: readonly (MacroRule | MacroRule)[];
@@ -2084,6 +2230,13 @@ export interface MacroDefinitionBrace {
 
 export interface ModItemInline {
   readonly $type: 'mod_item_inline';
+  readonly $fields: {
+    readonly body: DeclarationList;
+  };
+}
+
+export interface ForeignModItemBody {
+  readonly $type: 'foreign_mod_item_body';
   readonly $fields: {
     readonly body: DeclarationList;
   };
@@ -2124,6 +2277,11 @@ export interface FunctionTypeFnForm {
   readonly $children: readonly [FunctionModifiers];
 }
 
+export interface PointerTypeMut {
+  readonly $type: 'pointer_type_mut';
+  readonly $children: readonly [MutableSpecifier];
+}
+
 export interface RangeExpressionBinary {
   readonly $type: 'range_expression_binary';
   readonly $fields: {
@@ -2156,6 +2314,11 @@ export interface RangeExpressionBare {
   };
 }
 
+export interface ReferenceExpressionRawMut {
+  readonly $type: 'reference_expression_raw_mut';
+  readonly $children: readonly [MutableSpecifier];
+}
+
 export interface ArrayExpressionSemi {
   readonly $type: 'array_expression_semi';
   readonly $fields: {
@@ -2177,6 +2340,20 @@ export interface ArrayExpressionList {
 export interface LetChain {
   readonly $type: 'let_chain';
   readonly $children: readonly [_LetChain | LetCondition | Expression];
+}
+
+export interface MatchArmWithComma {
+  readonly $type: 'match_arm_with_comma';
+  readonly $fields: {
+    readonly value: Expression;
+  };
+}
+
+export interface MatchArmBlockEnding {
+  readonly $type: 'match_arm_block_ending';
+  readonly $fields: {
+    readonly value: ExpressionEndingWithBlock;
+  };
 }
 
 export interface ClosureExpressionBlock {
@@ -2239,6 +2416,14 @@ export interface OrPatternPrefix {
   };
 }
 
+export interface LineCommentDoc {
+  readonly $type: 'line_comment_doc';
+  readonly $fields: {
+    readonly doc?: string;
+  };
+  readonly $children: readonly [LineDocCommentMarker];
+}
+
 
 // Leaf node types
 export type FragmentSpecifier = Terminal<"fragment_specifier", "block" | "expr" | "expr_2021" | "ident" | "item" | "lifetime" | "literal" | "meta" | "pat" | "pat_param" | "path" | "stmt" | "tt" | "ty" | "vis">;
@@ -2255,6 +2440,9 @@ export type Self = Terminal<"self", "self">;
 export type Super = Terminal<"super", "super">;
 export type Crate = Terminal<"crate", "crate">;
 export type Metavariable = Terminal<"metavariable", string>;
+export type _ReferenceExpressionRawConst = Terminal<"_reference_expression_raw_const", string>;
+export type _LineCommentRegularDslash = Terminal<"_line_comment_regular_dslash", string>;
+export type _LineCommentContent = Terminal<"_line_comment_content", string>;
 export type StringContent = Terminal<"string_content", string>;
 export type RawStringLiteralContent = Terminal<"raw_string_literal_content", string>;
 export type FloatLiteral = Terminal<"float_literal", string>;
@@ -2263,7 +2451,11 @@ export type InnerBlockDocCommentMarker = Terminal<"_inner_block_doc_comment_mark
 export type LineDocContent = Terminal<"_line_doc_content", string>;
 export type ErrorSentinel = Terminal<"_error_sentinel", string>;
 export type PrimitiveType = Terminal<"primitive_type", "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char">;
+export type PointerTypeConst = Terminal<"pointer_type_const", "const">;
+export type ReferenceExpressionRawConst = Terminal<"reference_expression_raw_const", string>;
 export type WildcardPattern = Terminal<"wildcard_pattern", "_">;
+export type LineCommentRegularDslash = Terminal<"line_comment_regular_dslash", string>;
+export type LineCommentContent = Terminal<"line_comment_content", string>;
 export type OuterDocCommentMarker = Terminal<"outer_doc_comment_marker", string>;
 export type InnerDocCommentMarker = Terminal<"inner_doc_comment_marker", string>;
 export type TypeIdentifier = Terminal<"type_identifier", string>;
@@ -2275,6 +2467,8 @@ export type DocComment = Terminal<"doc_comment", string>;
 // Tree types
 export interface SourceFileTree extends TreeNode<'source_file'> {}
 export interface ExpressionStatementTree extends TreeNode<'expression_statement'> {}
+export interface ExpressionStatementUFormWithSemiTree extends TreeNode<'expression_statement'> {}
+export interface ExpressionStatementUFormBlockEndingTree extends TreeNode<'expression_statement'> {}
 export interface MacroDefinitionTree extends TreeNode<'macro_definition'> {}
 export interface MacroDefinitionUFormParenTree extends TreeNode<'macro_definition'> {}
 export interface MacroDefinitionUFormBracketTree extends TreeNode<'macro_definition'> {}
@@ -2293,6 +2487,8 @@ export interface ModItemTree extends TreeNode<'mod_item'> {}
 export interface ModItemUFormExternalTree extends TreeNode<'mod_item'> {}
 export interface ModItemUFormInlineTree extends TreeNode<'mod_item'> {}
 export interface ForeignModItemTree extends TreeNode<'foreign_mod_item'> {}
+export interface ForeignModItemUFormSemiTree extends TreeNode<'foreign_mod_item'> {}
+export interface ForeignModItemUFormBodyTree extends TreeNode<'foreign_mod_item'> {}
 export interface DeclarationListTree extends TreeNode<'declaration_list'> {}
 export interface StructItemTree extends TreeNode<'struct_item'> {}
 export interface StructItemUFormBraceTree extends TreeNode<'struct_item'> {}
@@ -2356,6 +2552,8 @@ export interface TypeArgumentsTree extends TreeNode<'type_arguments'> {}
 export interface TypeBindingTree extends TreeNode<'type_binding'> {}
 export interface ReferenceTypeTree extends TreeNode<'reference_type'> {}
 export interface PointerTypeTree extends TreeNode<'pointer_type'> {}
+export interface PointerTypeUFormConstTree extends TreeNode<'pointer_type'> {}
+export interface PointerTypeUFormMutTree extends TreeNode<'pointer_type'> {}
 export interface AbstractTypeTree extends TreeNode<'abstract_type'> {}
 export interface DynamicTypeTree extends TreeNode<'dynamic_type'> {}
 export interface MacroInvocationTree extends TreeNode<'macro_invocation'> {}
@@ -2396,6 +2594,8 @@ export interface ElseClauseTree extends TreeNode<'else_clause'> {}
 export interface MatchExpressionTree extends TreeNode<'match_expression'> {}
 export interface MatchBlockTree extends TreeNode<'match_block'> {}
 export interface MatchArmTree extends TreeNode<'match_arm'> {}
+export interface MatchArmUFormWithCommaTree extends TreeNode<'match_arm'> {}
+export interface MatchArmUFormBlockEndingTree extends TreeNode<'match_arm'> {}
 export interface LastMatchArmTree extends AnyTreeNode { readonly type: "last_match_arm"; }
 export interface MatchPatternTree extends TreeNode<'match_pattern'> {}
 export interface WhileExpressionTree extends TreeNode<'while_expression'> {}
@@ -2440,6 +2640,12 @@ export interface StringLiteralTree extends TreeNode<'string_literal'> {}
 export interface RawStringLiteralTree extends TreeNode<'raw_string_literal'> {}
 export interface CommentTree extends AnyTreeNode { readonly type: "comment"; }
 export interface LineCommentTree extends TreeNode<'line_comment'> {}
+export interface LineCommentUFormRegularDslashTree extends TreeNode<'line_comment'> {}
+export interface LineCommentUFormDocTree extends TreeNode<'line_comment'> {}
+export interface LineCommentUFormContentTree extends TreeNode<'line_comment'> {}
+export interface LineDocCommentMarkerTree extends AnyTreeNode { readonly type: "_line_doc_comment_marker"; }
+export interface LineDocCommentMarkerForm0Tree extends AnyTreeNode {}
+export interface LineDocCommentMarkerForm1Tree extends AnyTreeNode {}
 export interface BlockCommentTree extends TreeNode<'block_comment'> {}
 export interface ReservedIdentifierTree extends AnyTreeNode { readonly type: "_reserved_identifier"; }
 export interface _TypeIdentifierTree extends AnyTreeNode { readonly type: "_type_identifier"; }
@@ -2467,22 +2673,37 @@ export interface _RangePatternLeftTree extends AnyTreeNode { readonly type: "_ra
 export interface _RangePatternPrefixTree extends AnyTreeNode { readonly type: "_range_pattern_prefix"; }
 export interface _StructItemBraceTree extends AnyTreeNode { readonly type: "_struct_item_brace"; }
 export interface _StructItemTupleTree extends AnyTreeNode { readonly type: "_struct_item_tuple"; }
+export interface _ForeignModItemBodyTree extends AnyTreeNode { readonly type: "_foreign_mod_item_body"; }
+export interface _PointerTypeMutTree extends AnyTreeNode { readonly type: "_pointer_type_mut"; }
+export interface _ReferenceExpressionRawMutTree extends AnyTreeNode { readonly type: "_reference_expression_raw_mut"; }
+export interface _ExpressionStatementWithSemiTree extends AnyTreeNode { readonly type: "_expression_statement_with_semi"; }
+export interface _ExpressionStatementBlockEndingTree extends AnyTreeNode { readonly type: "_expression_statement_block_ending"; }
+export interface _MatchArmWithCommaTree extends AnyTreeNode { readonly type: "_match_arm_with_comma"; }
+export interface _MatchArmBlockEndingTree extends AnyTreeNode { readonly type: "_match_arm_block_ending"; }
+export interface _LineCommentDocTree extends AnyTreeNode { readonly type: "_line_comment_doc"; }
+export interface ExpressionStatementWithSemiTree extends TreeNode<'expression_statement_with_semi'> {}
+export interface ExpressionStatementBlockEndingTree extends TreeNode<'expression_statement_block_ending'> {}
 export interface MacroDefinitionParenTree extends TreeNode<'macro_definition_paren'> {}
 export interface MacroDefinitionBracketTree extends TreeNode<'macro_definition_bracket'> {}
 export interface MacroDefinitionBraceTree extends TreeNode<'macro_definition_brace'> {}
 export interface ModItemInlineTree extends TreeNode<'mod_item_inline'> {}
+export interface ForeignModItemBodyTree extends TreeNode<'foreign_mod_item_body'> {}
 export interface StructItemBraceTree extends TreeNode<'struct_item_brace'> {}
 export interface StructItemTupleTree extends TreeNode<'struct_item_tuple'> {}
 export interface ImplItemBodyTree extends TreeNode<'impl_item_body'> {}
 export interface FunctionTypeTraitFormTree extends TreeNode<'function_type_trait_form'> {}
 export interface FunctionTypeFnFormTree extends TreeNode<'function_type_fn_form'> {}
+export interface PointerTypeMutTree extends TreeNode<'pointer_type_mut'> {}
 export interface RangeExpressionBinaryTree extends TreeNode<'range_expression_binary'> {}
 export interface RangeExpressionPostfixTree extends TreeNode<'range_expression_postfix'> {}
 export interface RangeExpressionPrefixTree extends TreeNode<'range_expression_prefix'> {}
 export interface RangeExpressionBareTree extends TreeNode<'range_expression_bare'> {}
+export interface ReferenceExpressionRawMutTree extends TreeNode<'reference_expression_raw_mut'> {}
 export interface ArrayExpressionSemiTree extends TreeNode<'array_expression_semi'> {}
 export interface ArrayExpressionListTree extends TreeNode<'array_expression_list'> {}
 export interface LetChainTree extends TreeNode<'let_chain'> {}
+export interface MatchArmWithCommaTree extends TreeNode<'match_arm_with_comma'> {}
+export interface MatchArmBlockEndingTree extends TreeNode<'match_arm_block_ending'> {}
 export interface ClosureExpressionBlockTree extends TreeNode<'closure_expression_block'> {}
 export interface ClosureExpressionExprTree extends TreeNode<'closure_expression_expr'> {}
 export interface FieldPatternShorthandTree extends TreeNode<'field_pattern_shorthand'> {}
@@ -2491,6 +2712,7 @@ export interface RangePatternLeftTree extends TreeNode<'range_pattern_left'> {}
 export interface RangePatternPrefixTree extends TreeNode<'range_pattern_prefix'> {}
 export interface OrPatternBinaryTree extends TreeNode<'or_pattern_binary'> {}
 export interface OrPatternPrefixTree extends TreeNode<'or_pattern_prefix'> {}
+export interface LineCommentDocTree extends TreeNode<'line_comment_doc'> {}
 export interface FragmentSpecifierTree extends TreeNode<'fragment_specifier'> {}
 export interface UnitTypeTree extends TreeNode<'unit_type'> {}
 export interface MutableSpecifierTree extends AnyTreeNode { readonly type: "mutable_specifier"; }
@@ -2505,6 +2727,9 @@ export interface SelfTree extends AnyTreeNode { readonly type: "self"; }
 export interface SuperTree extends AnyTreeNode { readonly type: "super"; }
 export interface CrateTree extends AnyTreeNode { readonly type: "crate"; }
 export interface MetavariableTree extends TreeNode<'metavariable'> {}
+export interface _ReferenceExpressionRawConstTree extends AnyTreeNode { readonly type: "_reference_expression_raw_const"; }
+export interface _LineCommentRegularDslashTree extends AnyTreeNode { readonly type: "_line_comment_regular_dslash"; }
+export interface _LineCommentContentTree extends AnyTreeNode { readonly type: "_line_comment_content"; }
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface RawStringLiteralContentTree extends AnyTreeNode { readonly type: "raw_string_literal_content"; }
 export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
@@ -2513,7 +2738,11 @@ export interface InnerBlockDocCommentMarkerTree extends AnyTreeNode { readonly t
 export interface LineDocContentTree extends AnyTreeNode { readonly type: "_line_doc_content"; }
 export interface ErrorSentinelTree extends AnyTreeNode { readonly type: "_error_sentinel"; }
 export interface PrimitiveTypeTree extends TreeNode<'primitive_type'> {}
+export interface PointerTypeConstTree extends AnyTreeNode { readonly type: "pointer_type_const"; }
+export interface ReferenceExpressionRawConstTree extends TreeNode<'reference_expression_raw_const'> {}
 export interface WildcardPatternTree extends AnyTreeNode { readonly type: "wildcard_pattern"; }
+export interface LineCommentRegularDslashTree extends TreeNode<'line_comment_regular_dslash'> {}
+export interface LineCommentContentTree extends TreeNode<'line_comment_content'> {}
 export interface OuterDocCommentMarkerTree extends TreeNode<'outer_doc_comment_marker'> {}
 export interface InnerDocCommentMarkerTree extends TreeNode<'inner_doc_comment_marker'> {}
 export interface TypeIdentifierTree extends TreeNode<'type_identifier'> {}
@@ -2552,11 +2781,11 @@ export interface ElseTree extends AnyTreeNode { readonly type: "else"; }
 export interface InTree extends AnyTreeNode { readonly type: "in"; }
 export interface DynTree extends AnyTreeNode { readonly type: "dyn"; }
 export interface MutTree extends AnyTreeNode { readonly type: "mut"; }
-export interface RawTree extends AnyTreeNode { readonly type: "raw"; }
 export interface YieldTree extends AnyTreeNode { readonly type: "yield"; }
 export interface TryTree extends AnyTreeNode { readonly type: "try"; }
 export interface RefTree extends AnyTreeNode { readonly type: "ref"; }
 export interface MoveTree extends AnyTreeNode { readonly type: "move"; }
+export interface RawTree extends AnyTreeNode { readonly type: "raw"; }
 
 // Supertype unions
 export type Statement =
@@ -2960,6 +3189,8 @@ export type RemainingFieldPattern = Terminal<"remaining_field_pattern">;
 export interface RemainingFieldPatternTree extends AnyTreeNode { readonly type: "remaining_field_pattern"; }
 export type ModItemExternal = Terminal<"mod_item_external">;
 export interface ModItemExternalTree extends AnyTreeNode { readonly type: "mod_item_external"; }
+export type ForeignModItemSemi = Terminal<"foreign_mod_item_semi">;
+export interface ForeignModItemSemiTree extends AnyTreeNode { readonly type: "foreign_mod_item_semi"; }
 export type StructItemUnit = Terminal<"struct_item_unit">;
 export interface StructItemUnitTree extends AnyTreeNode { readonly type: "struct_item_unit"; }
 export type ImplItemSemi = Terminal<"impl_item_semi">;
@@ -3107,6 +3338,7 @@ export type RustNode =
   | RawStringLiteral
   | Comment
   | LineComment
+  | LineDocCommentMarker
   | BlockComment
   | ReservedIdentifier
   | _TypeIdentifier
@@ -3134,22 +3366,37 @@ export type RustNode =
   | _RangePatternPrefix
   | _StructItemBrace
   | _StructItemTuple
+  | _ForeignModItemBody
+  | _PointerTypeMut
+  | _ReferenceExpressionRawMut
+  | _ExpressionStatementWithSemi
+  | _ExpressionStatementBlockEnding
+  | _MatchArmWithComma
+  | _MatchArmBlockEnding
+  | _LineCommentDoc
+  | ExpressionStatementWithSemi
+  | ExpressionStatementBlockEnding
   | MacroDefinitionParen
   | MacroDefinitionBracket
   | MacroDefinitionBrace
   | ModItemInline
+  | ForeignModItemBody
   | StructItemBrace
   | StructItemTuple
   | ImplItemBody
   | FunctionTypeTraitForm
   | FunctionTypeFnForm
+  | PointerTypeMut
   | RangeExpressionBinary
   | RangeExpressionPostfix
   | RangeExpressionPrefix
   | RangeExpressionBare
+  | ReferenceExpressionRawMut
   | ArrayExpressionSemi
   | ArrayExpressionList
   | LetChain
+  | MatchArmWithComma
+  | MatchArmBlockEnding
   | ClosureExpressionBlock
   | ClosureExpressionExpr
   | FieldPatternShorthand
@@ -3158,6 +3405,7 @@ export type RustNode =
   | RangePatternPrefix
   | OrPatternBinary
   | OrPatternPrefix
+  | LineCommentDoc
 ;
 
 export interface KindMap {
@@ -3302,6 +3550,7 @@ export interface KindMap {
   'raw_string_literal': RawStringLiteral;
   'comment': Comment;
   'line_comment': LineComment;
+  '_line_doc_comment_marker': LineDocCommentMarker;
   'block_comment': BlockComment;
   '_reserved_identifier': ReservedIdentifier;
   '_type_identifier': _TypeIdentifier;
@@ -3329,22 +3578,37 @@ export interface KindMap {
   '_range_pattern_prefix': _RangePatternPrefix;
   '_struct_item_brace': _StructItemBrace;
   '_struct_item_tuple': _StructItemTuple;
+  '_foreign_mod_item_body': _ForeignModItemBody;
+  '_pointer_type_mut': _PointerTypeMut;
+  '_reference_expression_raw_mut': _ReferenceExpressionRawMut;
+  '_expression_statement_with_semi': _ExpressionStatementWithSemi;
+  '_expression_statement_block_ending': _ExpressionStatementBlockEnding;
+  '_match_arm_with_comma': _MatchArmWithComma;
+  '_match_arm_block_ending': _MatchArmBlockEnding;
+  '_line_comment_doc': _LineCommentDoc;
+  'expression_statement_with_semi': ExpressionStatementWithSemi;
+  'expression_statement_block_ending': ExpressionStatementBlockEnding;
   'macro_definition_paren': MacroDefinitionParen;
   'macro_definition_bracket': MacroDefinitionBracket;
   'macro_definition_brace': MacroDefinitionBrace;
   'mod_item_inline': ModItemInline;
+  'foreign_mod_item_body': ForeignModItemBody;
   'struct_item_brace': StructItemBrace;
   'struct_item_tuple': StructItemTuple;
   'impl_item_body': ImplItemBody;
   'function_type_trait_form': FunctionTypeTraitForm;
   'function_type_fn_form': FunctionTypeFnForm;
+  'pointer_type_mut': PointerTypeMut;
   'range_expression_binary': RangeExpressionBinary;
   'range_expression_postfix': RangeExpressionPostfix;
   'range_expression_prefix': RangeExpressionPrefix;
   'range_expression_bare': RangeExpressionBare;
+  'reference_expression_raw_mut': ReferenceExpressionRawMut;
   'array_expression_semi': ArrayExpressionSemi;
   'array_expression_list': ArrayExpressionList;
   'let_chain': LetChain;
+  'match_arm_with_comma': MatchArmWithComma;
+  'match_arm_block_ending': MatchArmBlockEnding;
   'closure_expression_block': ClosureExpressionBlock;
   'closure_expression_expr': ClosureExpressionExpr;
   'field_pattern_shorthand': FieldPatternShorthand;
@@ -3353,6 +3617,7 @@ export interface KindMap {
   'range_pattern_prefix': RangePatternPrefix;
   'or_pattern_binary': OrPatternBinary;
   'or_pattern_prefix': OrPatternPrefix;
+  'line_comment_doc': LineCommentDoc;
   'fragment_specifier': FragmentSpecifier;
   'unit_type': UnitType;
   'mutable_specifier': MutableSpecifier;
@@ -3367,6 +3632,9 @@ export interface KindMap {
   'super': Super;
   'crate': Crate;
   'metavariable': Metavariable;
+  '_reference_expression_raw_const': _ReferenceExpressionRawConst;
+  '_line_comment_regular_dslash': _LineCommentRegularDslash;
+  '_line_comment_content': _LineCommentContent;
   'string_content': StringContent;
   'raw_string_literal_content': RawStringLiteralContent;
   'float_literal': FloatLiteral;
@@ -3375,7 +3643,11 @@ export interface KindMap {
   '_line_doc_content': LineDocContent;
   '_error_sentinel': ErrorSentinel;
   'primitive_type': PrimitiveType;
+  'pointer_type_const': PointerTypeConst;
+  'reference_expression_raw_const': ReferenceExpressionRawConst;
   'wildcard_pattern': WildcardPattern;
+  'line_comment_regular_dslash': LineCommentRegularDslash;
+  'line_comment_content': LineCommentContent;
   'outer_doc_comment_marker': OuterDocCommentMarker;
   'inner_doc_comment_marker': InnerDocCommentMarker;
   'type_identifier': TypeIdentifier;
@@ -3384,17 +3656,23 @@ export interface KindMap {
 }
 
 export interface VariantMap {
+  'expression_statement': { with_semi: ExpressionStatementUFormWithSemi; block_ending: ExpressionStatementUFormBlockEnding };
   'macro_definition': { paren: MacroDefinitionUFormParen; bracket: MacroDefinitionUFormBracket; brace: MacroDefinitionUFormBrace };
   'mod_item': { external: ModItemUFormExternal; inline: ModItemUFormInline };
+  'foreign_mod_item': { semi: ForeignModItemUFormSemi; body: ForeignModItemUFormBody };
   'struct_item': { brace: StructItemUFormBrace; tuple: StructItemUFormTuple; unit: StructItemUFormUnit };
   'impl_item': { body: ImplItemUFormBody; semi: ImplItemUFormSemi };
   'visibility_modifier': { form0: VisibilityModifierForm0; form1: VisibilityModifierForm1 };
+  'pointer_type': { const: PointerTypeUFormConst; mut: PointerTypeUFormMut };
   'range_expression': { binary: RangeExpressionUFormBinary; postfix: RangeExpressionUFormPostfix; prefix: RangeExpressionUFormPrefix; bare: RangeExpressionUFormBare };
   'array_expression': { semi: ArrayExpressionUFormSemi; list: ArrayExpressionUFormList };
+  'match_arm': { with_comma: MatchArmUFormWithComma; block_ending: MatchArmUFormBlockEnding };
   'closure_expression': { block: ClosureExpressionUFormBlock; expr: ClosureExpressionUFormExpr };
   'field_pattern': { shorthand: FieldPatternUFormShorthand; named: FieldPatternUFormNamed };
   'range_pattern': { left: RangePatternUFormLeft; prefix: RangePatternUFormPrefix };
   'or_pattern': { binary: OrPatternUFormBinary; prefix: OrPatternUFormPrefix };
+  'line_comment': { regular_dslash: LineCommentUFormRegularDslash; doc: LineCommentUFormDoc; content: LineCommentUFormContent };
+  '_line_doc_comment_marker': { form0: LineDocCommentMarkerForm0; form1: LineDocCommentMarkerForm1 };
 }
 
 // Per-kind namespace interfaces — one computed base per kind (spec 008 US1)
@@ -3539,6 +3817,7 @@ export interface StringLiteralNs extends NodeNs<StringLiteral, LeafScalarMap, Le
 export interface RawStringLiteralNs extends NodeNs<RawStringLiteral, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface CommentNs extends NodeNs<Comment, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface LineCommentNs extends NodeNs<LineComment, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface LineDocCommentMarkerNs extends NodeNs<LineDocCommentMarker, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface BlockCommentNs extends NodeNs<BlockComment, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ReservedIdentifierNs extends NodeNs<ReservedIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _TypeIdentifierNs extends NodeNs<_TypeIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3566,22 +3845,37 @@ export interface _RangePatternLeftNs extends NodeNs<_RangePatternLeft, LeafScala
 export interface _RangePatternPrefixNs extends NodeNs<_RangePatternPrefix, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _StructItemBraceNs extends NodeNs<_StructItemBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _StructItemTupleNs extends NodeNs<_StructItemTuple, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _ForeignModItemBodyNs extends NodeNs<_ForeignModItemBody, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _PointerTypeMutNs extends NodeNs<_PointerTypeMut, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _ReferenceExpressionRawMutNs extends NodeNs<_ReferenceExpressionRawMut, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _ExpressionStatementWithSemiNs extends NodeNs<_ExpressionStatementWithSemi, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _ExpressionStatementBlockEndingNs extends NodeNs<_ExpressionStatementBlockEnding, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _MatchArmWithCommaNs extends NodeNs<_MatchArmWithComma, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _MatchArmBlockEndingNs extends NodeNs<_MatchArmBlockEnding, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _LineCommentDocNs extends NodeNs<_LineCommentDoc, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExpressionStatementWithSemiNs extends NodeNs<ExpressionStatementWithSemi, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExpressionStatementBlockEndingNs extends NodeNs<ExpressionStatementBlockEnding, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MacroDefinitionParenNs extends NodeNs<MacroDefinitionParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MacroDefinitionBracketNs extends NodeNs<MacroDefinitionBracket, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MacroDefinitionBraceNs extends NodeNs<MacroDefinitionBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ModItemInlineNs extends NodeNs<ModItemInline, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ForeignModItemBodyNs extends NodeNs<ForeignModItemBody, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface StructItemBraceNs extends NodeNs<StructItemBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface StructItemTupleNs extends NodeNs<StructItemTuple, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ImplItemBodyNs extends NodeNs<ImplItemBody, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FunctionTypeTraitFormNs extends NodeNs<FunctionTypeTraitForm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FunctionTypeFnFormNs extends NodeNs<FunctionTypeFnForm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface PointerTypeMutNs extends NodeNs<PointerTypeMut, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface RangeExpressionBinaryNs extends NodeNs<RangeExpressionBinary, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface RangeExpressionPostfixNs extends NodeNs<RangeExpressionPostfix, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface RangeExpressionPrefixNs extends NodeNs<RangeExpressionPrefix, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface RangeExpressionBareNs extends NodeNs<RangeExpressionBare, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ReferenceExpressionRawMutNs extends NodeNs<ReferenceExpressionRawMut, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ArrayExpressionSemiNs extends NodeNs<ArrayExpressionSemi, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ArrayExpressionListNs extends NodeNs<ArrayExpressionList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface LetChainNs extends NodeNs<LetChain, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface MatchArmWithCommaNs extends NodeNs<MatchArmWithComma, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface MatchArmBlockEndingNs extends NodeNs<MatchArmBlockEnding, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ClosureExpressionBlockNs extends NodeNs<ClosureExpressionBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ClosureExpressionExprNs extends NodeNs<ClosureExpressionExpr, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FieldPatternShorthandNs extends NodeNs<FieldPatternShorthand, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3590,6 +3884,7 @@ export interface RangePatternLeftNs extends NodeNs<RangePatternLeft, LeafScalarM
 export interface RangePatternPrefixNs extends NodeNs<RangePatternPrefix, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface OrPatternBinaryNs extends NodeNs<OrPatternBinary, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface OrPatternPrefixNs extends NodeNs<OrPatternPrefix, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface LineCommentDocNs extends NodeNs<LineCommentDoc, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 
 export interface NamespaceMap {
   'source_file': SourceFileNs;
@@ -3733,6 +4028,7 @@ export interface NamespaceMap {
   'raw_string_literal': RawStringLiteralNs;
   'comment': CommentNs;
   'line_comment': LineCommentNs;
+  '_line_doc_comment_marker': LineDocCommentMarkerNs;
   'block_comment': BlockCommentNs;
   '_reserved_identifier': ReservedIdentifierNs;
   '_type_identifier': _TypeIdentifierNs;
@@ -3760,22 +4056,37 @@ export interface NamespaceMap {
   '_range_pattern_prefix': _RangePatternPrefixNs;
   '_struct_item_brace': _StructItemBraceNs;
   '_struct_item_tuple': _StructItemTupleNs;
+  '_foreign_mod_item_body': _ForeignModItemBodyNs;
+  '_pointer_type_mut': _PointerTypeMutNs;
+  '_reference_expression_raw_mut': _ReferenceExpressionRawMutNs;
+  '_expression_statement_with_semi': _ExpressionStatementWithSemiNs;
+  '_expression_statement_block_ending': _ExpressionStatementBlockEndingNs;
+  '_match_arm_with_comma': _MatchArmWithCommaNs;
+  '_match_arm_block_ending': _MatchArmBlockEndingNs;
+  '_line_comment_doc': _LineCommentDocNs;
+  'expression_statement_with_semi': ExpressionStatementWithSemiNs;
+  'expression_statement_block_ending': ExpressionStatementBlockEndingNs;
   'macro_definition_paren': MacroDefinitionParenNs;
   'macro_definition_bracket': MacroDefinitionBracketNs;
   'macro_definition_brace': MacroDefinitionBraceNs;
   'mod_item_inline': ModItemInlineNs;
+  'foreign_mod_item_body': ForeignModItemBodyNs;
   'struct_item_brace': StructItemBraceNs;
   'struct_item_tuple': StructItemTupleNs;
   'impl_item_body': ImplItemBodyNs;
   'function_type_trait_form': FunctionTypeTraitFormNs;
   'function_type_fn_form': FunctionTypeFnFormNs;
+  'pointer_type_mut': PointerTypeMutNs;
   'range_expression_binary': RangeExpressionBinaryNs;
   'range_expression_postfix': RangeExpressionPostfixNs;
   'range_expression_prefix': RangeExpressionPrefixNs;
   'range_expression_bare': RangeExpressionBareNs;
+  'reference_expression_raw_mut': ReferenceExpressionRawMutNs;
   'array_expression_semi': ArrayExpressionSemiNs;
   'array_expression_list': ArrayExpressionListNs;
   'let_chain': LetChainNs;
+  'match_arm_with_comma': MatchArmWithCommaNs;
+  'match_arm_block_ending': MatchArmBlockEndingNs;
   'closure_expression_block': ClosureExpressionBlockNs;
   'closure_expression_expr': ClosureExpressionExprNs;
   'field_pattern_shorthand': FieldPatternShorthandNs;
@@ -3784,6 +4095,7 @@ export interface NamespaceMap {
   'range_pattern_prefix': RangePatternPrefixNs;
   'or_pattern_binary': OrPatternBinaryNs;
   'or_pattern_prefix': OrPatternPrefixNs;
+  'line_comment_doc': LineCommentDocNs;
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -4780,6 +5092,13 @@ export namespace LineComment {
   export type Tree = TreeFor<'line_comment'>;
   export type Kind = 'line_comment';
 }
+export namespace LineDocCommentMarker {
+  export type Config = ConfigFor<'_line_doc_comment_marker'>;
+  export type Fluent = FluentFor<'_line_doc_comment_marker'>;
+  export type Loose = LooseFor<'_line_doc_comment_marker'>;
+  export type Tree = TreeFor<'_line_doc_comment_marker'>;
+  export type Kind = '_line_doc_comment_marker';
+}
 export namespace BlockComment {
   export type Config = ConfigFor<'block_comment'>;
   export type Fluent = FluentFor<'block_comment'>;
@@ -4969,6 +5288,76 @@ export namespace _StructItemTuple {
   export type Tree = TreeFor<'_struct_item_tuple'>;
   export type Kind = '_struct_item_tuple';
 }
+export namespace _ForeignModItemBody {
+  export type Config = ConfigFor<'_foreign_mod_item_body'>;
+  export type Fluent = FluentFor<'_foreign_mod_item_body'>;
+  export type Loose = LooseFor<'_foreign_mod_item_body'>;
+  export type Tree = TreeFor<'_foreign_mod_item_body'>;
+  export type Kind = '_foreign_mod_item_body';
+}
+export namespace _PointerTypeMut {
+  export type Config = ConfigFor<'_pointer_type_mut'>;
+  export type Fluent = FluentFor<'_pointer_type_mut'>;
+  export type Loose = LooseFor<'_pointer_type_mut'>;
+  export type Tree = TreeFor<'_pointer_type_mut'>;
+  export type Kind = '_pointer_type_mut';
+}
+export namespace _ReferenceExpressionRawMut {
+  export type Config = ConfigFor<'_reference_expression_raw_mut'>;
+  export type Fluent = FluentFor<'_reference_expression_raw_mut'>;
+  export type Loose = LooseFor<'_reference_expression_raw_mut'>;
+  export type Tree = TreeFor<'_reference_expression_raw_mut'>;
+  export type Kind = '_reference_expression_raw_mut';
+}
+export namespace _ExpressionStatementWithSemi {
+  export type Config = ConfigFor<'_expression_statement_with_semi'>;
+  export type Fluent = FluentFor<'_expression_statement_with_semi'>;
+  export type Loose = LooseFor<'_expression_statement_with_semi'>;
+  export type Tree = TreeFor<'_expression_statement_with_semi'>;
+  export type Kind = '_expression_statement_with_semi';
+}
+export namespace _ExpressionStatementBlockEnding {
+  export type Config = ConfigFor<'_expression_statement_block_ending'>;
+  export type Fluent = FluentFor<'_expression_statement_block_ending'>;
+  export type Loose = LooseFor<'_expression_statement_block_ending'>;
+  export type Tree = TreeFor<'_expression_statement_block_ending'>;
+  export type Kind = '_expression_statement_block_ending';
+}
+export namespace _MatchArmWithComma {
+  export type Config = ConfigFor<'_match_arm_with_comma'>;
+  export type Fluent = FluentFor<'_match_arm_with_comma'>;
+  export type Loose = LooseFor<'_match_arm_with_comma'>;
+  export type Tree = TreeFor<'_match_arm_with_comma'>;
+  export type Kind = '_match_arm_with_comma';
+}
+export namespace _MatchArmBlockEnding {
+  export type Config = ConfigFor<'_match_arm_block_ending'>;
+  export type Fluent = FluentFor<'_match_arm_block_ending'>;
+  export type Loose = LooseFor<'_match_arm_block_ending'>;
+  export type Tree = TreeFor<'_match_arm_block_ending'>;
+  export type Kind = '_match_arm_block_ending';
+}
+export namespace _LineCommentDoc {
+  export type Config = ConfigFor<'_line_comment_doc'>;
+  export type Fluent = FluentFor<'_line_comment_doc'>;
+  export type Loose = LooseFor<'_line_comment_doc'>;
+  export type Tree = TreeFor<'_line_comment_doc'>;
+  export type Kind = '_line_comment_doc';
+}
+export namespace ExpressionStatementWithSemi {
+  export type Config = ConfigFor<'expression_statement_with_semi'>;
+  export type Fluent = FluentFor<'expression_statement_with_semi'>;
+  export type Loose = LooseFor<'expression_statement_with_semi'>;
+  export type Tree = TreeFor<'expression_statement_with_semi'>;
+  export type Kind = 'expression_statement_with_semi';
+}
+export namespace ExpressionStatementBlockEnding {
+  export type Config = ConfigFor<'expression_statement_block_ending'>;
+  export type Fluent = FluentFor<'expression_statement_block_ending'>;
+  export type Loose = LooseFor<'expression_statement_block_ending'>;
+  export type Tree = TreeFor<'expression_statement_block_ending'>;
+  export type Kind = 'expression_statement_block_ending';
+}
 export namespace MacroDefinitionParen {
   export type Config = ConfigFor<'macro_definition_paren'>;
   export type Fluent = FluentFor<'macro_definition_paren'>;
@@ -4996,6 +5385,13 @@ export namespace ModItemInline {
   export type Loose = LooseFor<'mod_item_inline'>;
   export type Tree = TreeFor<'mod_item_inline'>;
   export type Kind = 'mod_item_inline';
+}
+export namespace ForeignModItemBody {
+  export type Config = ConfigFor<'foreign_mod_item_body'>;
+  export type Fluent = FluentFor<'foreign_mod_item_body'>;
+  export type Loose = LooseFor<'foreign_mod_item_body'>;
+  export type Tree = TreeFor<'foreign_mod_item_body'>;
+  export type Kind = 'foreign_mod_item_body';
 }
 export namespace StructItemBrace {
   export type Config = ConfigFor<'struct_item_brace'>;
@@ -5032,6 +5428,13 @@ export namespace FunctionTypeFnForm {
   export type Tree = TreeFor<'function_type_fn_form'>;
   export type Kind = 'function_type_fn_form';
 }
+export namespace PointerTypeMut {
+  export type Config = ConfigFor<'pointer_type_mut'>;
+  export type Fluent = FluentFor<'pointer_type_mut'>;
+  export type Loose = LooseFor<'pointer_type_mut'>;
+  export type Tree = TreeFor<'pointer_type_mut'>;
+  export type Kind = 'pointer_type_mut';
+}
 export namespace RangeExpressionBinary {
   export type Config = ConfigFor<'range_expression_binary'>;
   export type Fluent = FluentFor<'range_expression_binary'>;
@@ -5060,6 +5463,13 @@ export namespace RangeExpressionBare {
   export type Tree = TreeFor<'range_expression_bare'>;
   export type Kind = 'range_expression_bare';
 }
+export namespace ReferenceExpressionRawMut {
+  export type Config = ConfigFor<'reference_expression_raw_mut'>;
+  export type Fluent = FluentFor<'reference_expression_raw_mut'>;
+  export type Loose = LooseFor<'reference_expression_raw_mut'>;
+  export type Tree = TreeFor<'reference_expression_raw_mut'>;
+  export type Kind = 'reference_expression_raw_mut';
+}
 export namespace ArrayExpressionSemi {
   export type Config = ConfigFor<'array_expression_semi'>;
   export type Fluent = FluentFor<'array_expression_semi'>;
@@ -5080,6 +5490,20 @@ export namespace LetChain {
   export type Loose = LooseFor<'let_chain'>;
   export type Tree = TreeFor<'let_chain'>;
   export type Kind = 'let_chain';
+}
+export namespace MatchArmWithComma {
+  export type Config = ConfigFor<'match_arm_with_comma'>;
+  export type Fluent = FluentFor<'match_arm_with_comma'>;
+  export type Loose = LooseFor<'match_arm_with_comma'>;
+  export type Tree = TreeFor<'match_arm_with_comma'>;
+  export type Kind = 'match_arm_with_comma';
+}
+export namespace MatchArmBlockEnding {
+  export type Config = ConfigFor<'match_arm_block_ending'>;
+  export type Fluent = FluentFor<'match_arm_block_ending'>;
+  export type Loose = LooseFor<'match_arm_block_ending'>;
+  export type Tree = TreeFor<'match_arm_block_ending'>;
+  export type Kind = 'match_arm_block_ending';
 }
 export namespace ClosureExpressionBlock {
   export type Config = ConfigFor<'closure_expression_block'>;
@@ -5136,4 +5560,11 @@ export namespace OrPatternPrefix {
   export type Loose = LooseFor<'or_pattern_prefix'>;
   export type Tree = TreeFor<'or_pattern_prefix'>;
   export type Kind = 'or_pattern_prefix';
+}
+export namespace LineCommentDoc {
+  export type Config = ConfigFor<'line_comment_doc'>;
+  export type Fluent = FluentFor<'line_comment_doc'>;
+  export type Loose = LooseFor<'line_comment_doc'>;
+  export type Tree = TreeFor<'line_comment_doc'>;
+  export type Kind = 'line_comment_doc';
 }

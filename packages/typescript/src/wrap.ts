@@ -61,6 +61,7 @@ import type {
   ExportClause,
   ExportSpecifier,
   ExportStatement,
+  ExportStatementDefault,
   ExportStatementEqualsExport,
   ExportStatementNamespaceExport,
   ExportStatementTypeExport,
@@ -163,6 +164,8 @@ import type {
   Statement,
   StatementBlock,
   String,
+  StringDouble,
+  StringSingle,
   SubscriptExpression,
   SwitchBody,
   SwitchCase,
@@ -198,6 +201,7 @@ import type {
   _ArrowFunctionUCallSignature,
   _ClassHeritageExtendsClause,
   _ClassHeritageImplementsClause,
+  _ExportStatementDefault,
   _ExportStatementEqualsExport,
   _ExportStatementNamespaceExport,
   _ExportStatementTypeExport,
@@ -207,6 +211,8 @@ import type {
   _ImportSpecifierName,
   _IndexSignatureMappedTypeClause,
   _ParenthesizedExpressionSequence,
+  _StringDouble,
+  _StringSingle,
   _TypeIdentifier,
 } from './types.js';
 
@@ -353,6 +359,7 @@ export function wrapStatement(data: _NodeData, tree: TreeHandle): WrappedNode<St
 export function wrapExpressionStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ExpressionStatement> {
   return {
     ...data,
+    get semicolon() { return drillIn(data.$fields?.['semicolon'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ExpressionStatement>;
 }
@@ -941,7 +948,7 @@ export function wrapSequenceExpression(data: _NodeData, tree: TreeHandle): Wrapp
 export function wrapString(data: _NodeData, tree: TreeHandle): WrappedNode<String> {
   return {
     ...data,
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<String>;
 }
 
@@ -1332,7 +1339,8 @@ export function wrapTypeAliasDeclaration(data: _NodeData, tree: TreeHandle): Wra
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
     get value() { return drillIn(data.$fields?.['value'], tree); },
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get semicolon() { return drillIn(data.$fields?.['semicolon'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<TypeAliasDeclaration>;
 }
 
@@ -1795,6 +1803,16 @@ export function wrap_ParenthesizedExpressionSequence(data: _NodeData, tree: Tree
   } as unknown as WrappedNode<_ParenthesizedExpressionSequence>;
 }
 
+export function wrap_ExportStatementDefault(data: _NodeData, tree: TreeHandle): WrappedNode<_ExportStatementDefault> {
+  return {
+    ...data,
+    get decorator() { return drillInAll(data.$fields?.['decorator'], tree); },
+    get declaration() { return drillIn(data.$fields?.['declaration'], tree); },
+    get value() { return drillIn(data.$fields?.['value'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<_ExportStatementDefault>;
+}
+
 export function wrap_ExportStatementTypeExport(data: _NodeData, tree: TreeHandle): WrappedNode<_ExportStatementTypeExport> {
   return {
     ...data,
@@ -1815,6 +1833,30 @@ export function wrap_ExportStatementNamespaceExport(data: _NodeData, tree: TreeH
     ...data,
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<_ExportStatementNamespaceExport>;
+}
+
+export function wrap_StringDouble(data: _NodeData, tree: TreeHandle): WrappedNode<_StringDouble> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<_StringDouble>;
+}
+
+export function wrap_StringSingle(data: _NodeData, tree: TreeHandle): WrappedNode<_StringSingle> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<_StringSingle>;
+}
+
+export function wrapExportStatementDefault(data: _NodeData, tree: TreeHandle): WrappedNode<ExportStatementDefault> {
+  return {
+    ...data,
+    get decorator() { return drillInAll(data.$fields?.['decorator'], tree); },
+    get declaration() { return drillIn(data.$fields?.['declaration'], tree); },
+    get value() { return drillIn(data.$fields?.['value'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<ExportStatementDefault>;
 }
 
 export function wrapExportStatementTypeExport(data: _NodeData, tree: TreeHandle): WrappedNode<ExportStatementTypeExport> {
@@ -1965,6 +2007,20 @@ export function wrapCallExpressionMember(data: _NodeData, tree: TreeHandle): Wra
     get arguments() { return drillIn(data.$fields?.['arguments'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<CallExpressionMember>;
+}
+
+export function wrapStringDouble(data: _NodeData, tree: TreeHandle): WrappedNode<StringDouble> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<StringDouble>;
+}
+
+export function wrapStringSingle(data: _NodeData, tree: TreeHandle): WrappedNode<StringSingle> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<StringSingle>;
 }
 
 export function wrapInterfaceBody(data: _NodeData, tree: TreeHandle): WrappedNode<InterfaceBody> {
@@ -2201,9 +2257,12 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_import_specifier_name': (d, t) => wrap_ImportSpecifierName(d, t),
   '_index_signature_mapped_type_clause': (d, t) => wrap_IndexSignatureMappedTypeClause(d, t),
   '_parenthesized_expression_sequence': (d, t) => wrap_ParenthesizedExpressionSequence(d, t),
+  '_export_statement_default': (d, t) => wrap_ExportStatementDefault(d, t),
   '_export_statement_type_export': (d, t) => wrap_ExportStatementTypeExport(d, t),
   '_export_statement_equals_export': (d, t) => wrap_ExportStatementEqualsExport(d, t),
   '_export_statement_namespace_export': (d, t) => wrap_ExportStatementNamespaceExport(d, t),
+  '_string_double': (d, t) => wrap_StringDouble(d, t),
+  '_string_single': (d, t) => wrap_StringSingle(d, t),
   '_automatic_semicolon': (d) => d,
   '_template_chars': (d) => d,
   'html_comment': (d) => d,
@@ -2211,6 +2270,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'jsx_text': (d) => d,
   '_function_signature_automatic_semicolon': (d) => d,
   '__error_recovery': (d) => d,
+  'export_statement_default': (d, t) => wrapExportStatementDefault(d, t),
   'export_statement_type_export': (d, t) => wrapExportStatementTypeExport(d, t),
   'export_statement_equals_export': (d, t) => wrapExportStatementEqualsExport(d, t),
   'export_statement_namespace_export': (d, t) => wrapExportStatementNamespaceExport(d, t),
@@ -2233,6 +2293,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'call_expression_call': (d, t) => wrapCallExpressionCall(d, t),
   'call_expression_template_call': (d, t) => wrapCallExpressionTemplateCall(d, t),
   'call_expression_member': (d, t) => wrapCallExpressionMember(d, t),
+  'string_double': (d, t) => wrapStringDouble(d, t),
+  'string_single': (d, t) => wrapStringSingle(d, t),
   'interface_body': (d, t) => wrapInterfaceBody(d, t),
   'this_type': (d) => d,
   'index_signature_colon': (d, t) => wrapIndexSignatureColon(d, t),

@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  1  (0 applied, 1 held)
-// Rule promotions:   66  (58 applied, 8 held)
+// Rule promotions:   71  (62 applied, 9 held)
 // Repeated shapes:   9  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -25,6 +25,12 @@
 // candidates target the same kind).
 // ---------------------------------------------------------------
 export const suggestedTransforms = {
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  _export_statement_default: {
+      "0": variant("form0"),
+      "1": variant("form1"),
+  },
+
   // [held] polymorph — 1 choice position(s), 3 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: declaration
   ambient_declaration: {
@@ -202,6 +208,7 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "statement_identifier", classification: "terminal", applied: true },
   { kind: "string_fragment", classification: "terminal", applied: true },
   { kind: "type_identifier", classification: "terminal", applied: true },
+  { kind: "_export_statement_default", classification: "polymorph", applied: false },
   { kind: "ambient_declaration", classification: "polymorph", applied: false },
   { kind: "arrow_function", classification: "polymorph", applied: true },
   { kind: "arrow_function__call_signature", classification: "polymorph", applied: true },
@@ -214,8 +221,9 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "class_heritage", classification: "polymorph", applied: true },
   { kind: "class_heritage_extends_clause", classification: "polymorph", applied: true },
   { kind: "class_heritage_implements_clause", classification: "polymorph", applied: true },
-  { kind: "export_statement", classification: "polymorph", applied: false },
   { kind: "export_statement", classification: "polymorph", applied: true },
+  { kind: "export_statement_default", classification: "polymorph", applied: false },
+  { kind: "export_statement_default", classification: "polymorph", applied: true },
   { kind: "export_statement_equals_export", classification: "polymorph", applied: true },
   { kind: "export_statement_namespace_export", classification: "polymorph", applied: true },
   { kind: "export_statement_type_export", classification: "polymorph", applied: true },
@@ -236,6 +244,9 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "parenthesized_expression_sequence", classification: "polymorph", applied: true },
   { kind: "parenthesized_expression_typed", classification: "polymorph", applied: true },
   { kind: "public_field_definition", classification: "polymorph", applied: false },
+  { kind: "string", classification: "polymorph", applied: true },
+  { kind: "string_double", classification: "polymorph", applied: true },
+  { kind: "string_single", classification: "polymorph", applied: true },
   { kind: "yield_expression", classification: "polymorph", applied: false },
 ];
 

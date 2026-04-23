@@ -166,6 +166,7 @@ export interface IsGuards {
     rawStringLiteral<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'raw_string_literal' };
     comment<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'comment' };
     lineComment<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'line_comment' };
+    LineDocCommentMarker<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_line_doc_comment_marker' };
     blockComment<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'block_comment' };
     ReservedIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_reserved_identifier' };
     TypeIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_type_identifier' };
@@ -180,22 +181,35 @@ export interface IsGuards {
     MacroDefinitionBrace<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_macro_definition_brace' };
     ModItemInline<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_mod_item_inline' };
     RangeExpressionBare<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_range_expression_bare' };
+    ForeignModItemBody<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_foreign_mod_item_body' };
+    PointerTypeMut<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_pointer_type_mut' };
+    ReferenceExpressionRawMut<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_reference_expression_raw_mut' };
+    ExpressionStatementWithSemi<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_expression_statement_with_semi' };
+    ExpressionStatementBlockEnding<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_expression_statement_block_ending' };
+    MatchArmBlockEnding<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_match_arm_block_ending' };
+    expressionStatementWithSemi<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'expression_statement_with_semi' };
+    expressionStatementBlockEnding<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'expression_statement_block_ending' };
     macroDefinitionParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_definition_paren' };
     macroDefinitionBracket<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_definition_bracket' };
     macroDefinitionBrace<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_definition_brace' };
     modItemInline<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'mod_item_inline' };
+    foreignModItemBody<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'foreign_mod_item_body' };
     structItemBrace<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'struct_item_brace' };
     structItemTuple<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'struct_item_tuple' };
     implItemBody<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'impl_item_body' };
     functionTypeTraitForm<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'function_type_trait_form' };
     functionTypeFnForm<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'function_type_fn_form' };
+    pointerTypeMut<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'pointer_type_mut' };
     rangeExpressionBinary<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'range_expression_binary' };
     rangeExpressionPostfix<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'range_expression_postfix' };
     rangeExpressionPrefix<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'range_expression_prefix' };
     rangeExpressionBare<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'range_expression_bare' };
+    referenceExpressionRawMut<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'reference_expression_raw_mut' };
     arrayExpressionSemi<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'array_expression_semi' };
     arrayExpressionList<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'array_expression_list' };
     letChain<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'let_chain' };
+    matchArmWithComma<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'match_arm_with_comma' };
+    matchArmBlockEnding<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'match_arm_block_ending' };
     closureExpressionBlock<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'closure_expression_block' };
     closureExpressionExpr<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'closure_expression_expr' };
     fieldPatternShorthand<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'field_pattern_shorthand' };
@@ -204,6 +218,7 @@ export interface IsGuards {
     rangePatternPrefix<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'range_pattern_prefix' };
     orPatternBinary<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'or_pattern_binary' };
     orPatternPrefix<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'or_pattern_prefix' };
+    lineCommentDoc<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'line_comment_doc' };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): v is { readonly $type: K & string };
     statement(v: { readonly $type: string }): v is Statement;
     declarationStatement(v: { readonly $type: string }): v is DeclarationStatement;
@@ -366,6 +381,7 @@ export interface AssertGuards {
     rawStringLiteral(v: { readonly $type: string }): asserts v is { readonly $type: 'raw_string_literal' };
     comment(v: { readonly $type: string }): asserts v is { readonly $type: 'comment' };
     lineComment(v: { readonly $type: string }): asserts v is { readonly $type: 'line_comment' };
+    LineDocCommentMarker(v: { readonly $type: string }): asserts v is { readonly $type: '_line_doc_comment_marker' };
     blockComment(v: { readonly $type: string }): asserts v is { readonly $type: 'block_comment' };
     ReservedIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: '_reserved_identifier' };
     TypeIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: '_type_identifier' };
@@ -380,22 +396,35 @@ export interface AssertGuards {
     MacroDefinitionBrace(v: { readonly $type: string }): asserts v is { readonly $type: '_macro_definition_brace' };
     ModItemInline(v: { readonly $type: string }): asserts v is { readonly $type: '_mod_item_inline' };
     RangeExpressionBare(v: { readonly $type: string }): asserts v is { readonly $type: '_range_expression_bare' };
+    ForeignModItemBody(v: { readonly $type: string }): asserts v is { readonly $type: '_foreign_mod_item_body' };
+    PointerTypeMut(v: { readonly $type: string }): asserts v is { readonly $type: '_pointer_type_mut' };
+    ReferenceExpressionRawMut(v: { readonly $type: string }): asserts v is { readonly $type: '_reference_expression_raw_mut' };
+    ExpressionStatementWithSemi(v: { readonly $type: string }): asserts v is { readonly $type: '_expression_statement_with_semi' };
+    ExpressionStatementBlockEnding(v: { readonly $type: string }): asserts v is { readonly $type: '_expression_statement_block_ending' };
+    MatchArmBlockEnding(v: { readonly $type: string }): asserts v is { readonly $type: '_match_arm_block_ending' };
+    expressionStatementWithSemi(v: { readonly $type: string }): asserts v is { readonly $type: 'expression_statement_with_semi' };
+    expressionStatementBlockEnding(v: { readonly $type: string }): asserts v is { readonly $type: 'expression_statement_block_ending' };
     macroDefinitionParen(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_definition_paren' };
     macroDefinitionBracket(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_definition_bracket' };
     macroDefinitionBrace(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_definition_brace' };
     modItemInline(v: { readonly $type: string }): asserts v is { readonly $type: 'mod_item_inline' };
+    foreignModItemBody(v: { readonly $type: string }): asserts v is { readonly $type: 'foreign_mod_item_body' };
     structItemBrace(v: { readonly $type: string }): asserts v is { readonly $type: 'struct_item_brace' };
     structItemTuple(v: { readonly $type: string }): asserts v is { readonly $type: 'struct_item_tuple' };
     implItemBody(v: { readonly $type: string }): asserts v is { readonly $type: 'impl_item_body' };
     functionTypeTraitForm(v: { readonly $type: string }): asserts v is { readonly $type: 'function_type_trait_form' };
     functionTypeFnForm(v: { readonly $type: string }): asserts v is { readonly $type: 'function_type_fn_form' };
+    pointerTypeMut(v: { readonly $type: string }): asserts v is { readonly $type: 'pointer_type_mut' };
     rangeExpressionBinary(v: { readonly $type: string }): asserts v is { readonly $type: 'range_expression_binary' };
     rangeExpressionPostfix(v: { readonly $type: string }): asserts v is { readonly $type: 'range_expression_postfix' };
     rangeExpressionPrefix(v: { readonly $type: string }): asserts v is { readonly $type: 'range_expression_prefix' };
     rangeExpressionBare(v: { readonly $type: string }): asserts v is { readonly $type: 'range_expression_bare' };
+    referenceExpressionRawMut(v: { readonly $type: string }): asserts v is { readonly $type: 'reference_expression_raw_mut' };
     arrayExpressionSemi(v: { readonly $type: string }): asserts v is { readonly $type: 'array_expression_semi' };
     arrayExpressionList(v: { readonly $type: string }): asserts v is { readonly $type: 'array_expression_list' };
     letChain(v: { readonly $type: string }): asserts v is { readonly $type: 'let_chain' };
+    matchArmWithComma(v: { readonly $type: string }): asserts v is { readonly $type: 'match_arm_with_comma' };
+    matchArmBlockEnding(v: { readonly $type: string }): asserts v is { readonly $type: 'match_arm_block_ending' };
     closureExpressionBlock(v: { readonly $type: string }): asserts v is { readonly $type: 'closure_expression_block' };
     closureExpressionExpr(v: { readonly $type: string }): asserts v is { readonly $type: 'closure_expression_expr' };
     fieldPatternShorthand(v: { readonly $type: string }): asserts v is { readonly $type: 'field_pattern_shorthand' };
@@ -404,6 +433,7 @@ export interface AssertGuards {
     rangePatternPrefix(v: { readonly $type: string }): asserts v is { readonly $type: 'range_pattern_prefix' };
     orPatternBinary(v: { readonly $type: string }): asserts v is { readonly $type: 'or_pattern_binary' };
     orPatternPrefix(v: { readonly $type: string }): asserts v is { readonly $type: 'or_pattern_prefix' };
+    lineCommentDoc(v: { readonly $type: string }): asserts v is { readonly $type: 'line_comment_doc' };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): asserts v is { readonly $type: K & string };
     statement(v: { readonly $type: string }): asserts v is Statement;
     declarationStatement(v: { readonly $type: string }): asserts v is DeclarationStatement;
@@ -591,6 +621,7 @@ export const is = {
     rawStringLiteral: _g("raw_string_literal"),
     comment: _g("comment"),
     lineComment: _g("line_comment"),
+    LineDocCommentMarker: _g("_line_doc_comment_marker"),
     blockComment: _g("block_comment"),
     ReservedIdentifier: _g("_reserved_identifier"),
     TypeIdentifier: _g("_type_identifier"),
@@ -605,22 +636,35 @@ export const is = {
     MacroDefinitionBrace: _g("_macro_definition_brace"),
     ModItemInline: _g("_mod_item_inline"),
     RangeExpressionBare: _g("_range_expression_bare"),
+    ForeignModItemBody: _g("_foreign_mod_item_body"),
+    PointerTypeMut: _g("_pointer_type_mut"),
+    ReferenceExpressionRawMut: _g("_reference_expression_raw_mut"),
+    ExpressionStatementWithSemi: _g("_expression_statement_with_semi"),
+    ExpressionStatementBlockEnding: _g("_expression_statement_block_ending"),
+    MatchArmBlockEnding: _g("_match_arm_block_ending"),
+    expressionStatementWithSemi: _g("expression_statement_with_semi"),
+    expressionStatementBlockEnding: _g("expression_statement_block_ending"),
     macroDefinitionParen: _g("macro_definition_paren"),
     macroDefinitionBracket: _g("macro_definition_bracket"),
     macroDefinitionBrace: _g("macro_definition_brace"),
     modItemInline: _g("mod_item_inline"),
+    foreignModItemBody: _g("foreign_mod_item_body"),
     structItemBrace: _g("struct_item_brace"),
     structItemTuple: _g("struct_item_tuple"),
     implItemBody: _g("impl_item_body"),
     functionTypeTraitForm: _g("function_type_trait_form"),
     functionTypeFnForm: _g("function_type_fn_form"),
+    pointerTypeMut: _g("pointer_type_mut"),
     rangeExpressionBinary: _g("range_expression_binary"),
     rangeExpressionPostfix: _g("range_expression_postfix"),
     rangeExpressionPrefix: _g("range_expression_prefix"),
     rangeExpressionBare: _g("range_expression_bare"),
+    referenceExpressionRawMut: _g("reference_expression_raw_mut"),
     arrayExpressionSemi: _g("array_expression_semi"),
     arrayExpressionList: _g("array_expression_list"),
     letChain: _g("let_chain"),
+    matchArmWithComma: _g("match_arm_with_comma"),
+    matchArmBlockEnding: _g("match_arm_block_ending"),
     closureExpressionBlock: _g("closure_expression_block"),
     closureExpressionExpr: _g("closure_expression_expr"),
     fieldPatternShorthand: _g("field_pattern_shorthand"),
@@ -629,6 +673,7 @@ export const is = {
     rangePatternPrefix: _g("range_pattern_prefix"),
     orPatternBinary: _g("or_pattern_binary"),
     orPatternPrefix: _g("or_pattern_prefix"),
+    lineCommentDoc: _g("line_comment_doc"),
     kind: (v: { readonly $type: string }, k: string): boolean => v.$type === k,
     statement: _sg(_supertype_statement),
     declarationStatement: _sg(_supertype_declarationStatement),
@@ -812,6 +857,7 @@ export const assert = {
     rawStringLiteral: _makeAssert('rawStringLiteral', is.rawStringLiteral as _AnyGuard),
     comment: _makeAssert('comment', is.comment as _AnyGuard),
     lineComment: _makeAssert('lineComment', is.lineComment as _AnyGuard),
+    LineDocCommentMarker: _makeAssert('LineDocCommentMarker', is.LineDocCommentMarker as _AnyGuard),
     blockComment: _makeAssert('blockComment', is.blockComment as _AnyGuard),
     ReservedIdentifier: _makeAssert('ReservedIdentifier', is.ReservedIdentifier as _AnyGuard),
     TypeIdentifier: _makeAssert('TypeIdentifier', is.TypeIdentifier as _AnyGuard),
@@ -826,22 +872,35 @@ export const assert = {
     MacroDefinitionBrace: _makeAssert('MacroDefinitionBrace', is.MacroDefinitionBrace as _AnyGuard),
     ModItemInline: _makeAssert('ModItemInline', is.ModItemInline as _AnyGuard),
     RangeExpressionBare: _makeAssert('RangeExpressionBare', is.RangeExpressionBare as _AnyGuard),
+    ForeignModItemBody: _makeAssert('ForeignModItemBody', is.ForeignModItemBody as _AnyGuard),
+    PointerTypeMut: _makeAssert('PointerTypeMut', is.PointerTypeMut as _AnyGuard),
+    ReferenceExpressionRawMut: _makeAssert('ReferenceExpressionRawMut', is.ReferenceExpressionRawMut as _AnyGuard),
+    ExpressionStatementWithSemi: _makeAssert('ExpressionStatementWithSemi', is.ExpressionStatementWithSemi as _AnyGuard),
+    ExpressionStatementBlockEnding: _makeAssert('ExpressionStatementBlockEnding', is.ExpressionStatementBlockEnding as _AnyGuard),
+    MatchArmBlockEnding: _makeAssert('MatchArmBlockEnding', is.MatchArmBlockEnding as _AnyGuard),
+    expressionStatementWithSemi: _makeAssert('expressionStatementWithSemi', is.expressionStatementWithSemi as _AnyGuard),
+    expressionStatementBlockEnding: _makeAssert('expressionStatementBlockEnding', is.expressionStatementBlockEnding as _AnyGuard),
     macroDefinitionParen: _makeAssert('macroDefinitionParen', is.macroDefinitionParen as _AnyGuard),
     macroDefinitionBracket: _makeAssert('macroDefinitionBracket', is.macroDefinitionBracket as _AnyGuard),
     macroDefinitionBrace: _makeAssert('macroDefinitionBrace', is.macroDefinitionBrace as _AnyGuard),
     modItemInline: _makeAssert('modItemInline', is.modItemInline as _AnyGuard),
+    foreignModItemBody: _makeAssert('foreignModItemBody', is.foreignModItemBody as _AnyGuard),
     structItemBrace: _makeAssert('structItemBrace', is.structItemBrace as _AnyGuard),
     structItemTuple: _makeAssert('structItemTuple', is.structItemTuple as _AnyGuard),
     implItemBody: _makeAssert('implItemBody', is.implItemBody as _AnyGuard),
     functionTypeTraitForm: _makeAssert('functionTypeTraitForm', is.functionTypeTraitForm as _AnyGuard),
     functionTypeFnForm: _makeAssert('functionTypeFnForm', is.functionTypeFnForm as _AnyGuard),
+    pointerTypeMut: _makeAssert('pointerTypeMut', is.pointerTypeMut as _AnyGuard),
     rangeExpressionBinary: _makeAssert('rangeExpressionBinary', is.rangeExpressionBinary as _AnyGuard),
     rangeExpressionPostfix: _makeAssert('rangeExpressionPostfix', is.rangeExpressionPostfix as _AnyGuard),
     rangeExpressionPrefix: _makeAssert('rangeExpressionPrefix', is.rangeExpressionPrefix as _AnyGuard),
     rangeExpressionBare: _makeAssert('rangeExpressionBare', is.rangeExpressionBare as _AnyGuard),
+    referenceExpressionRawMut: _makeAssert('referenceExpressionRawMut', is.referenceExpressionRawMut as _AnyGuard),
     arrayExpressionSemi: _makeAssert('arrayExpressionSemi', is.arrayExpressionSemi as _AnyGuard),
     arrayExpressionList: _makeAssert('arrayExpressionList', is.arrayExpressionList as _AnyGuard),
     letChain: _makeAssert('letChain', is.letChain as _AnyGuard),
+    matchArmWithComma: _makeAssert('matchArmWithComma', is.matchArmWithComma as _AnyGuard),
+    matchArmBlockEnding: _makeAssert('matchArmBlockEnding', is.matchArmBlockEnding as _AnyGuard),
     closureExpressionBlock: _makeAssert('closureExpressionBlock', is.closureExpressionBlock as _AnyGuard),
     closureExpressionExpr: _makeAssert('closureExpressionExpr', is.closureExpressionExpr as _AnyGuard),
     fieldPatternShorthand: _makeAssert('fieldPatternShorthand', is.fieldPatternShorthand as _AnyGuard),
@@ -850,6 +909,7 @@ export const assert = {
     rangePatternPrefix: _makeAssert('rangePatternPrefix', is.rangePatternPrefix as _AnyGuard),
     orPatternBinary: _makeAssert('orPatternBinary', is.orPatternBinary as _AnyGuard),
     orPatternPrefix: _makeAssert('orPatternPrefix', is.orPatternPrefix as _AnyGuard),
+    lineCommentDoc: _makeAssert('lineCommentDoc', is.lineCommentDoc as _AnyGuard),
     kind: _makeAssertKind(is.kind as _AnyGuard),
     statement: _makeAssert('statement', is.statement as _AnyGuard),
     declarationStatement: _makeAssert('declarationStatement', is.declarationStatement as _AnyGuard),

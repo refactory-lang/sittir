@@ -111,11 +111,11 @@ const FLOORS = {
         // universes (fromTotal 143 → 157, +14 new visible kinds). The
         // rt floors jumped because Option 3's push-down + the new
         // wrappers make those kinds reparse correctly.
-        fromPass: 148,
-        fromTotal: 157,
-        rtPass: 77,
+        fromPass: 149,
+        fromTotal: 160,
+        rtPass: 85,
         rtTotal: 112,
-        rtAstMatchPass: 51,
+        rtAstMatchPass: 74,
         covPass: 139,
         covTotal: 145,
     },

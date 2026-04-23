@@ -24,7 +24,11 @@ export default grammar(enrich(base), wire({
     // treat as requiring a GLR state so it can defer the decision
     // until more input disambiguates. Hidden (`_foo`) and visible
     // (`$.foo`) names are both valid here.
-    conflicts: ($) => [
+    // `previous` is the TS grammar's own conflicts list (which
+    // itself concats the JS base's conflicts). Concat so we don't
+    // drop the base entries — we only ADD the new ones required by
+    // variant() adoption.
+    conflicts: ($, previous) => (previous ?? []).concat([
         // parenthesized_expression split: `( expression )` vs
         // `( sequence_expression )` share the expression prefix. The
         // typed variant's hidden rule (`_parenthesized_expression_typed`)
@@ -94,7 +98,8 @@ export default grammar(enrich(base), wire({
         [$.binary_expression, $.instantiation_expression, $._call_expression_call],
         [$._type_query_call_expression_in_type_annotation, $._call_expression_call],
         [$._type_query_call_expression, $._call_expression_call],
-    ],
+        [$.primary_expression, $._export_statement_default],
+    ]),
     polymorphs: {
         arrow_function:  { '1/0': 'parameter',        '1/1': '_call_signature' },
         class_heritage:  { '0':   'extends_clause',   '1':   'implements_clause' },
@@ -320,6 +325,22 @@ export default grammar(enrich(base), wire({
             1: field('expression'), // expression [struct=0]
         },
 
+        // expression_statement: label the trailing `_semicolon` so the
+        // template emits `{{ semicolon }}`. Without the label, readNode
+        // captures the anon `;` child but the parent template's
+        // `{{ children | join(" ") }}` filters to NAMED-only children
+        // and the `;` drops. Grammar: `seq(_expressions, _semicolon)`.
+        expression_statement: {
+            1: field('semicolon'),
+        },
+
+        // type_alias_declaration: same semicolon-drop pattern. Grammar:
+        // `seq('type', field('name'), optional(type_parameters), '=',
+        // field('value'), _semicolon)` — label pos 5.
+        type_alias_declaration: {
+            5: field('semicolon'),
+        },
+
         // parenthesized_expression: variant() adoption. Shape is
         // `seq('(', choice(typed_expr, sequence_expression), ')')`.
         // The inner choice's alternatives become variant-child kinds
@@ -331,12 +352,16 @@ export default grammar(enrich(base), wire({
             '1/1': variant('sequence'),
         },
 
-        // export_statement: variant() adoption on three TypeScript-
-        // specific branches. Path 0 (the JS-inherited `previous`) is
-        // left alone; paths 1/2/3 are `export type`, `export =`, and
-        // `export as namespace` respectively. Each becomes a distinct
-        // variant-child kind with its own template.
+        // export_statement: variant() adoption on all four branches.
+        // Path 0 is the JS-inherited `previous` (export default,
+        // export function, export from, …); paths 1/2/3 are
+        // `export type`, `export =`, `export as namespace`. Without
+        // labeling path 0, its base-JS branches render without the
+        // `export` prefix (parent template is just `$$$CHILDREN`,
+        // which filters to named children) — the wrapper becomes
+        // invisible at render time.
         export_statement: {
+            0: variant('default'),
             1: variant('type_export'),
             2: variant('equals_export'),
             3: variant('namespace_export'),
@@ -351,6 +376,18 @@ export default grammar(enrich(base), wire({
             0: variant('call'),
             1: variant('template_call'),
             2: variant('member'),
+        },
+
+        // string: variant() adoption on the quote-style choice. Base
+        // grammar: `choice(seq('"', …, '"'), seq("'", …, "'"))`. The
+        // walker's primary-branch-wins would always pick the first
+        // (double-quoted) branch as the template, so `'x'` source
+        // round-trips as `"x"` — AST mismatch. Splitting into variant
+        // children (`string_double` / `string_single`) gives each its
+        // own template that preserves the quote style.
+        string: {
+            0: variant('double'),
+            1: variant('single'),
         },
 
     },

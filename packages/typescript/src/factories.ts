@@ -84,16 +84,38 @@ export function hashBangLine(text: string) {
   };
 }
 
+export function exportStatement(config: ConfigOf<T.ExportStatementUFormDefault>): ReturnType<typeof exportStatementUFormDefault>;
 export function exportStatement(config: ConfigOf<T.ExportStatementUFormTypeExport>): ReturnType<typeof exportStatementUFormTypeExport>;
 export function exportStatement(config: ConfigOf<T.ExportStatementUFormEqualsExport>): ReturnType<typeof exportStatementUFormEqualsExport>;
 export function exportStatement(config: ConfigOf<T.ExportStatementUFormNamespaceExport>): ReturnType<typeof exportStatementUFormNamespaceExport>;
-export function exportStatement(config: ConfigOf<T.ExportStatementUFormTypeExport> | ConfigOf<T.ExportStatementUFormEqualsExport> | ConfigOf<T.ExportStatementUFormNamespaceExport>) {
+export function exportStatement(config: ConfigOf<T.ExportStatementUFormDefault> | ConfigOf<T.ExportStatementUFormTypeExport> | ConfigOf<T.ExportStatementUFormEqualsExport> | ConfigOf<T.ExportStatementUFormNamespaceExport>) {
   switch (config.$variant) {
+    case 'default': return exportStatementUFormDefault(config);
     case 'type_export': return exportStatementUFormTypeExport(config);
     case 'equals_export': return exportStatementUFormEqualsExport(config);
     case 'namespace_export': return exportStatementUFormNamespaceExport(config);
   }
-  throw new Error(`exportStatement: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'type_export' | 'equals_export' | 'namespace_export'.`);
+  throw new Error(`exportStatement: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'default' | 'type_export' | 'equals_export' | 'namespace_export'.`);
+}
+export function exportStatementUFormDefault(config: ConfigOf<T.ExportStatementUFormDefault>) {
+  const children = config.children ?? [];
+  return {
+    $type: 'export_statement' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'default' as const,
+    $children: children,
+    child(value?: T.ExportStatementDefault) {
+      if (value === undefined) return children[0];
+      return exportStatementUFormDefault({ ...config, children: [value] });
+    },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ExportStatementUFormDefaultTree) { const r = target.range(); return toEdit(this, r); },
+  };
 }
 export function exportStatementUFormTypeExport(config?: ConfigOf<T.ExportStatementUFormTypeExport>) {
   const inner = exportStatementTypeExport(config);
@@ -461,13 +483,22 @@ export function statement(child?: (T.ExportStatement | T.ImportStatement | T.Deb
   };
 }
 
-export function expressionStatement(child: (T.Expressions | T.Semicolon)) {
-  const children = [child];
+export function expressionStatement(config: T.ExpressionStatement.Config) {
+  const fields = {
+    semicolon: config.semicolon,
+  };
+  const children = config.children ?? [];
   return {
     $type: 'expression_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
+    $fields: fields,
     $children: children,
+    semicolon(value?: T.Semicolon) { return _fs(config, expressionStatement, 'semicolon', value, fields.semicolon); },
+    child(value?: T.Expressions) {
+      if (value === undefined) return children[0];
+      return expressionStatement({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2121,18 +2152,53 @@ export function sequenceExpression(...children: T.Expression[]) {
   };
 }
 
-export function string(...children: (T.StringFragment | T.EscapeSequence)[]) {
+export function string(config: ConfigOf<T.StringUFormDouble>): ReturnType<typeof stringUFormDouble>;
+export function string(config: ConfigOf<T.StringUFormSingle>): ReturnType<typeof stringUFormSingle>;
+export function string(config: ConfigOf<T.StringUFormDouble> | ConfigOf<T.StringUFormSingle>) {
+  switch (config.$variant) {
+    case 'double': return stringUFormDouble(config);
+    case 'single': return stringUFormSingle(config);
+  }
+  throw new Error(`string: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'double' | 'single'.`);
+}
+export function stringUFormDouble(config: ConfigOf<T.StringUFormDouble>) {
+  const children = config.children ?? [];
   return {
     $type: 'string' as const,
     $source: 'factory' as const,
     $named: true as const,
+    $variant: 'double' as const,
     $children: children,
+    child(value?: T.StringDouble) {
+      if (value === undefined) return children[0];
+      return stringUFormDouble({ ...config, children: [value] });
+    },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(target: T.StringTree) { const r = target.range(); return toEdit(this, r); },
+    replace(target: T.StringUFormDoubleTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function stringUFormSingle(config: ConfigOf<T.StringUFormSingle>) {
+  const children = config.children ?? [];
+  return {
+    $type: 'string' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'single' as const,
+    $children: children,
+    child(value?: T.StringSingle) {
+      if (value === undefined) return children[0];
+      return stringUFormSingle({ ...config, children: [value] });
+    },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.StringUFormSingleTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3266,21 +3332,17 @@ export function typeAliasDeclaration(config: T.TypeAliasDeclaration.Config) {
     name: config.name,
     type_parameters: config.typeParameters,
     value: config.value,
+    semicolon: config.semicolon,
   };
-  const children = config.children ?? [];
   return {
     $type: 'type_alias_declaration' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    $children: children,
     name(value?: T._TypeIdentifier) { return _fs(config, typeAliasDeclaration, 'name', value, fields.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, typeAliasDeclaration, 'typeParameters', value, fields.type_parameters); },
     value(value?: T.Type) { return _fs(config, typeAliasDeclaration, 'value', value, fields.value); },
-    child(value?: T.Semicolon) {
-      if (value === undefined) return children[0];
-      return typeAliasDeclaration({ ...config, children: [value] });
-    },
+    semicolon(value?: T.Semicolon) { return _fs(config, typeAliasDeclaration, 'semicolon', value, fields.semicolon); },
     render() { return render(this); },
     toEdit(startOrRange: number | ByteRange, endPos?: number) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -4351,6 +4413,65 @@ export function jsxText(text: string) {
   };
 }
 
+export function exportStatementDefault(config: ConfigOf<T.ExportStatementDefaultForm0>): ReturnType<typeof exportStatementDefaultForm0>;
+export function exportStatementDefault(config: ConfigOf<T.ExportStatementDefaultForm1>): ReturnType<typeof exportStatementDefaultForm1>;
+export function exportStatementDefault(config: ConfigOf<T.ExportStatementDefaultForm0> | ConfigOf<T.ExportStatementDefaultForm1>) {
+  switch (config.$variant) {
+    case 'form0': return exportStatementDefaultForm0(config);
+    case 'form1': return exportStatementDefaultForm1(config);
+  }
+  throw new Error(`exportStatementDefault: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'form0' | 'form1'.`);
+}
+export function exportStatementDefaultForm0(config: ConfigOf<T.ExportStatementDefaultForm0>) {
+  const children = config.children ?? [];
+  return {
+    $type: 'export_statement_default' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'form0' as const,
+    $children: children,
+    child(value?: (T.FromClause | T.NamespaceExport | T.ExportClause | T.Semicolon)) {
+      if (value === undefined) return children[0];
+      return exportStatementDefaultForm0({ ...config, children: [value] });
+    },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ExportStatementDefaultForm0Tree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function exportStatementDefaultForm1(config: ConfigOf<T.ExportStatementDefaultForm1>) {
+  const fields = {
+    decorator: config.decorator,
+    declaration: config.declaration,
+    value: config.value,
+  };
+  const children = config.children ?? [];
+  return {
+    $type: 'export_statement_default' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'form1' as const,
+    $fields: fields,
+    $children: children,
+    decorator(...values: T.Decorator[]) { return _fsm(config, exportStatementDefaultForm1, 'decorator', values, fields.decorator); },
+    declaration(value?: T.Declaration) { return _fs(config, exportStatementDefaultForm1, 'declaration', value, fields.declaration); },
+    value(value?: T.Expression | undefined) { return _fs(config, exportStatementDefaultForm1, 'value', value, fields.value); },
+    child(value?: T.Semicolon) {
+      if (value === undefined) return children[0];
+      return exportStatementDefaultForm1({ ...config, children: [value] });
+    },
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.ExportStatementDefaultForm1Tree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function exportStatementTypeExport(config: T.ExportStatementTypeExport.Config) {
   const fields = {
     source: config.source,
@@ -4749,6 +4870,36 @@ export function callExpressionMember(config: T.CallExpressionMember.Config) {
   };
 }
 
+export function stringDouble(...children: T.EscapeSequence[]) {
+  return {
+    $type: 'string_double' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.StringDoubleTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function stringSingle(...children: T.EscapeSequence[]) {
+  return {
+    $type: 'string_single' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render() { return render(this); },
+    toEdit(startOrRange: number | ByteRange, endPos?: number) {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(target: T.StringSingleTree) { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function interfaceBody(config: T.InterfaceBody.Config) {
   const fields = {
     opening: config.opening,
@@ -5027,6 +5178,7 @@ export type FluentKindMap = {
   "html_comment": T.HtmlComment;
   "||": T.Oror;
   "jsx_text": T.JsxText;
+  "export_statement_default": FluentNode<"export_statement_default", T.ExportStatementDefault.Config>;
   "export_statement_type_export": FluentNode<"export_statement_type_export", T.ExportStatementTypeExport.Config>;
   "export_statement_equals_export": FluentNode<"export_statement_equals_export", T.ExportStatementEqualsExport.Config>;
   "export_statement_namespace_export": FluentNode<"export_statement_namespace_export", T.ExportStatementNamespaceExport.Config>;
@@ -5049,6 +5201,8 @@ export type FluentKindMap = {
   "call_expression_call": FluentNode<"call_expression_call", T.CallExpressionCall.Config>;
   "call_expression_template_call": FluentNode<"call_expression_template_call", T.CallExpressionTemplateCall.Config>;
   "call_expression_member": FluentNode<"call_expression_member", T.CallExpressionMember.Config>;
+  "string_double": FluentNode<"string_double", T.StringDouble.Config>;
+  "string_single": FluentNode<"string_single", T.StringSingle.Config>;
   "interface_body": FluentNode<"interface_body", T.InterfaceBody.Config>;
   "this_type": T.ThisType;
   "index_signature_colon": FluentNode<"index_signature_colon", T.IndexSignatureColon.Config>;
@@ -5249,6 +5403,7 @@ export const _factoryMap = {
   "html_comment": htmlComment,
   "||": oror,
   "jsx_text": jsxText,
+  "export_statement_default": exportStatementDefault,
   "export_statement_type_export": exportStatementTypeExport,
   "export_statement_equals_export": exportStatementEqualsExport,
   "export_statement_namespace_export": exportStatementNamespaceExport,
@@ -5271,6 +5426,8 @@ export const _factoryMap = {
   "call_expression_call": callExpressionCall,
   "call_expression_template_call": callExpressionTemplateCall,
   "call_expression_member": callExpressionMember,
+  "string_double": stringDouble,
+  "string_single": stringSingle,
   "interface_body": interfaceBody,
   "this_type": thisType,
   "index_signature_colon": indexSignatureColon,

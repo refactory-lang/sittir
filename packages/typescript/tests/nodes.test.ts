@@ -24,6 +24,11 @@ describe('hash_bang_line', () => {
 });
 
 describe('export_statement', () => {
+  it('default form produces correct type', () => {
+    const node = ir.exportStatement.default({});
+    expect(node.$type).toBe('export_statement');
+    expect(node.$source).toBe('factory');
+  });
   it('type_export form produces correct type', () => {
     const node = ir.exportStatement.type_export({});
     expect(node.$type).toBe('export_statement');
@@ -171,9 +176,13 @@ describe('statement', () => {
 
 describe('expression_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.expressionStatement({ type: "_expressions" } as never);
+    const node = ir.expressionStatement({ semicolon: { $type: '_semicolon', $text: 'test' } as any, children: [{ $type: '_expressions', $text: 'test' } as any] as any });
     expect(node.$type).toBe('expression_statement');
     expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.expressionStatement({ semicolon: { $type: '_semicolon', $text: 'test' } as any, children: [{ $type: '_expressions', $text: 'test' } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -906,8 +915,13 @@ describe('sequence_expression', () => {
 });
 
 describe('string', () => {
-  it('factory produces correct type', () => {
-    const node = ir.string();
+  it('double form produces correct type', () => {
+    const node = ir.string.double({});
+    expect(node.$type).toBe('string');
+    expect(node.$source).toBe('factory');
+  });
+  it('single form produces correct type', () => {
+    const node = ir.string.single({});
     expect(node.$type).toBe('string');
     expect(node.$source).toBe('factory');
   });
@@ -1515,12 +1529,12 @@ describe('enum_assignment', () => {
 
 describe('type_alias_declaration', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeAlias({ name: { $type: '_type_identifier', $text: 'test' } as any, value: { $type: 'type', $text: 'test' } as any, children: [{ $type: '_semicolon', $text: 'test' } as any] as any });
+    const node = ir.typeAlias({ name: { $type: '_type_identifier', $text: 'test' } as any, value: { $type: 'type', $text: 'test' } as any, semicolon: { $type: '_semicolon', $text: 'test' } as any });
     expect(node.$type).toBe('type_alias_declaration');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.typeAlias({ name: { $type: '_type_identifier', $text: 'test' } as any, value: { $type: 'type', $text: 'test' } as any, children: [{ $type: '_semicolon', $text: 'test' } as any] as any });
+    const node = ir.typeAlias({ name: { $type: '_type_identifier', $text: 'test' } as any, value: { $type: 'type', $text: 'test' } as any, semicolon: { $type: '_semicolon', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -2054,6 +2068,19 @@ describe('jsx_text', () => {
   });
 });
 
+describe('export_statement_default', () => {
+  it('form0 form produces correct type', () => {
+    const node = ir.exportStatementDefault.form0({});
+    expect(node.$type).toBe('export_statement_default');
+    expect(node.$source).toBe('factory');
+  });
+  it('form1 form produces correct type', () => {
+    const node = ir.exportStatementDefault.form1({ decorator: [{ $type: 'decorator', $text: 'test' } as any], declaration: { $type: 'declaration', $text: 'test' } as any });
+    expect(node.$type).toBe('export_statement_default');
+    expect(node.$source).toBe('factory');
+  });
+});
+
 describe('export_statement_type_export', () => {
   it('factory produces correct type', () => {
     const node = ir.exportStatementTypeExport({ children: [{ $type: 'export_clause', $text: 'test' } as any] as any });
@@ -2266,6 +2293,22 @@ describe('call_expression_member', () => {
   it('render produces non-empty string', () => {
     const node = ir.callExpressionMember({ function: { $type: 'primary_expression', $text: 'test' } as any, arguments: { $type: 'arguments', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('string_double', () => {
+  it('factory produces correct type', () => {
+    const node = ir.stringDouble();
+    expect(node.$type).toBe('string_double');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('string_single', () => {
+  it('factory produces correct type', () => {
+    const node = ir.stringSingle();
+    expect(node.$type).toBe('string_single');
+    expect(node.$source).toBe('factory');
   });
 });
 

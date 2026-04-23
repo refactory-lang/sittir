@@ -3,18 +3,25 @@
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
   '_closure_expression_expr',
+  '_expression_statement_block_ending',
+  '_expression_statement_with_semi',
   '_field_identifier',
   '_field_pattern_shorthand',
+  '_foreign_mod_item_body',
   '_function_type_fn_form',
   '_function_type_trait_form',
   '_impl_item_body',
   '_let_chain',
+  '_line_doc_comment_marker',
   '_macro_definition_brace',
   '_macro_definition_bracket',
   '_macro_definition_paren',
+  '_match_arm_block_ending',
   '_mod_item_inline',
   '_non_special_token',
+  '_pointer_type_mut',
   '_range_expression_bare',
+  '_reference_expression_raw_mut',
   '_reserved_identifier',
   '_type_identifier',
   'abstract_type',
@@ -56,6 +63,8 @@ export const NODE_KINDS = [
   'enum_variant',
   'enum_variant_list',
   'expression_statement',
+  'expression_statement_block_ending',
+  'expression_statement_with_semi',
   'extern_crate_declaration',
   'extern_modifier',
   'field_declaration',
@@ -69,6 +78,7 @@ export const NODE_KINDS = [
   'for_expression',
   'for_lifetimes',
   'foreign_mod_item',
+  'foreign_mod_item_body',
   'function_item',
   'function_modifiers',
   'function_signature_item',
@@ -94,6 +104,7 @@ export const NODE_KINDS = [
   'lifetime',
   'lifetime_parameter',
   'line_comment',
+  'line_comment_doc',
   'loop_expression',
   'macro_definition',
   'macro_definition_brace',
@@ -102,6 +113,8 @@ export const NODE_KINDS = [
   'macro_invocation',
   'macro_rule',
   'match_arm',
+  'match_arm_block_ending',
+  'match_arm_with_comma',
   'match_block',
   'match_expression',
   'match_pattern',
@@ -117,6 +130,7 @@ export const NODE_KINDS = [
   'parameters',
   'parenthesized_expression',
   'pointer_type',
+  'pointer_type_mut',
   'qualified_type',
   'range_expression',
   'range_expression_bare',
@@ -129,6 +143,7 @@ export const NODE_KINDS = [
   'raw_string_literal',
   'ref_pattern',
   'reference_expression',
+  'reference_expression_raw_mut',
   'reference_pattern',
   'reference_type',
   'removed_trait_bound',
@@ -195,8 +210,12 @@ export const LEAF_KINDS = [
   '_kw_ref',
   '_kw_static',
   '_kw_unsafe',
+  '_line_comment_content',
+  '_line_comment_regular_dslash',
   '_line_doc_content',
   '_outer_block_doc_comment_marker',
+  '_pointer_type_const',
+  '_reference_expression_raw_const',
   '_wildcard_pattern',
   'as',
   'async',
@@ -226,6 +245,8 @@ export const LEAF_KINDS = [
   'inner_doc_comment_marker',
   'integer_literal',
   'let',
+  'line_comment_content',
+  'line_comment_regular_dslash',
   'loop',
   'match',
   'metavariable',
@@ -234,11 +255,13 @@ export const LEAF_KINDS = [
   'mut',
   'mutable_specifier',
   'outer_doc_comment_marker',
+  'pointer_type_const',
   'primitive_type',
   'pub',
   'raw',
   'raw_string_literal_content',
   'ref',
+  'reference_expression_raw_const',
   'return',
   'self',
   'shebang',
@@ -268,6 +291,7 @@ export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 /** Language keywords (alphabetic anonymous tokens). */
 export const KEYWORDS = [
   '_',
+  '_foreign_mod_item_semi',
   '_impl_item_semi',
   '_inner_line_doc_comment_marker',
   '_kw_async',
@@ -280,6 +304,7 @@ export const KEYWORDS = [
   '_kw_unsafe',
   '_mod_item_external',
   '_outer_line_doc_comment_marker',
+  '_pointer_type_const',
   '_struct_item_unit',
   '_wildcard_pattern',
   'as',
@@ -297,6 +322,7 @@ export const KEYWORDS = [
   'extern',
   'fn',
   'for',
+  'foreign_mod_item_semi',
   'gen',
   'if',
   'impl',
@@ -311,6 +337,7 @@ export const KEYWORDS = [
   'mut',
   'mutable_specifier',
   'never_type',
+  'pointer_type_const',
   'pub',
   'raw',
   'ref',
@@ -355,7 +382,6 @@ export const OPERATORS = [
   "...",
   "/",
   "/*",
-  "//",
   ":",
   "::",
   ";",
@@ -389,10 +415,17 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_closure_expression_expr': [
     { name: 'body', required: true, multiple: false },
   ],
+  '_expression_statement_block_ending': [
+  ],
+  '_expression_statement_with_semi': [
+  ],
   '_field_identifier': [
   ],
   '_field_pattern_shorthand': [
     { name: 'name', required: true, multiple: false },
+  ],
+  '_foreign_mod_item_body': [
+    { name: 'body', required: true, multiple: false },
   ],
   '_function_type_fn_form': [
   ],
@@ -404,19 +437,30 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_let_chain': [
   ],
+  '_line_doc_comment_marker': [
+    { name: 'outer', required: true, multiple: false },
+    { name: 'inner', required: true, multiple: false },
+  ],
   '_macro_definition_brace': [
   ],
   '_macro_definition_bracket': [
   ],
   '_macro_definition_paren': [
   ],
+  '_match_arm_block_ending': [
+    { name: 'value', required: true, multiple: false },
+  ],
   '_mod_item_inline': [
     { name: 'body', required: true, multiple: false },
   ],
   '_non_special_token': [
   ],
+  '_pointer_type_mut': [
+  ],
   '_range_expression_bare': [
     { name: 'operator', required: true, multiple: false },
+  ],
+  '_reference_expression_raw_mut': [
   ],
   '_reserved_identifier': [
   ],
@@ -564,6 +608,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'expression_statement': [
   ],
+  'expression_statement_block_ending': [
+  ],
+  'expression_statement_with_semi': [
+  ],
   'extern_crate_declaration': [
     { name: 'visibilityModifier', required: false, multiple: false },
     { name: 'crate', required: true, multiple: false },
@@ -610,9 +658,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'for_lifetimes': [
   ],
   'foreign_mod_item': [
-    { name: 'visibilityModifier', required: false, multiple: false },
     { name: 'externModifier', required: true, multiple: false },
-    { name: 'body', required: false, multiple: false },
+  ],
+  'foreign_mod_item_body': [
+    { name: 'body', required: true, multiple: false },
   ],
   'function_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
@@ -723,8 +772,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'bounds', required: false, multiple: false },
   ],
   'line_comment': [
-    { name: 'outer', required: false, multiple: false },
-    { name: 'inner', required: false, multiple: false },
+  ],
+  'line_comment_doc': [
     { name: 'doc', required: false, multiple: false },
   ],
   'loop_expression': [
@@ -750,6 +799,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'match_arm': [
     { name: 'pattern', required: true, multiple: false },
+  ],
+  'match_arm_block_ending': [
+    { name: 'value', required: true, multiple: false },
+  ],
+  'match_arm_with_comma': [
     { name: 'value', required: true, multiple: false },
   ],
   'match_block': [
@@ -797,8 +851,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'parenthesized_expression': [
   ],
   'pointer_type': [
-    { name: 'mutableSpecifier', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
+  ],
+  'pointer_type_mut': [
   ],
   'qualified_type': [
     { name: 'type', required: true, multiple: false },
@@ -839,8 +894,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'ref_pattern': [
   ],
   'reference_expression': [
-    { name: 'mutableSpecifier', required: false, multiple: false },
     { name: 'value', required: true, multiple: false },
+  ],
+  'reference_expression_raw_mut': [
   ],
   'reference_pattern': [
     { name: 'mutableSpecifier', required: false, multiple: false },

@@ -236,45 +236,6 @@ function collectRepeatedFields(
     }
 }
 
-/**
- * Identify a primary-branch candidate for the walker's choice case when
- * declaration order would pick a bare-only branch over a field-bearing
- * sibling. Returns the index of a field-bearing branch iff the first
- * non-empty branch is bare-only (contributes only `$$$CHILDREN`) AND
- * some later branch contributes a field placeholder. Otherwise returns
- * -1 to signal "no reorder needed — use declaration order".
- *
- * Scoring runs against a FRESH seen-set per branch so no consumption
- * bookkeeping leaks into the caller's shared state.
- */
-function findPrimaryCandidateWithField(
-    members: readonly Rule[],
-    outerSeen: Set<string>,
-    inRepeat: boolean,
-    rules: Record<string, Rule> | undefined,
-    repeatedFields: ReadonlySet<string> | undefined,
-    wordMatcher: RegExp | undefined,
-): number {
-    let firstNonEmpty = -1
-    let firstNonEmptyIsBareOnly = false
-    for (let i = 0; i < members.length; i++) {
-        const scoreSeen = new Set(outerSeen)
-        const parts = walkRuleForTemplate(members[i]!, scoreSeen, inRepeat, {}, rules, repeatedFields, {}, wordMatcher)
-        if (parts.length === 0) continue
-        const bareOnly = parts.every(p => p === '$$$CHILDREN')
-        if (firstNonEmpty === -1) {
-            firstNonEmpty = i
-            firstNonEmptyIsBareOnly = bareOnly
-            if (!firstNonEmptyIsBareOnly) return -1 // first non-empty is already field-bearing
-            continue
-        }
-        if (firstNonEmptyIsBareOnly && parts.some(p => p.startsWith('$') && p !== '$$$CHILDREN')) {
-            return i
-        }
-    }
-    return -1
-}
-
 function walkRuleForTemplate(
     rule: Rule,
     seen: Set<string>,
@@ -467,46 +428,81 @@ function walkRuleForTemplate(
         }
 
         case 'choice': {
-            // For choice in a template, start with the first non-empty
-            // member's parts. Then walk remaining members with the SHARED
-            // `seen` set to surface any NEW field/symbol placeholders that
-            // only appear in other branches (e.g. function_item's
-            // return_type, attribute's arguments variant). Only placeholder
-            // tokens (`$...`) from subsequent branches are appended —
-            // literals from alternative branches would otherwise leak into
-            // the template unconditionally (`////`, `=value` etc.).
+            // Walk every non-empty branch with a FRESH seen so each
+            // branch's parts are independent of declaration order.
             //
-            // Narrow exception: when the first non-empty branch is a
-            // bare symbol/alias/supertype contributing ONLY `$$$CHILDREN`
-            // and a later branch contributes at least one field slot
-            // (`$NAME`), the bare-only branch is skipped for primary
-            // selection. This preserves structural order for shapes
-            // like visibility_modifier's `choice(bare_crate_symbol,
-            // seq(field('pub', _kw_pub), optional(variant_choice)))`
-            // where first-branch-primary would emit `$$$CHILDREN$PUB`
-            // (rendering `(crate)pub`). The exception does NOT fire when
-            // the first branch contributes any field — declaration order
-            // wins for field-bearing branches, so existing templates
-            // keep their current output.
-            const out: string[] = []
-            let primaryTaken = false
-            const primaryDeprioritizedIdx = findPrimaryCandidateWithField(rule.members, seen, inRepeat, rules, repeatedFields, wordMatcher)
-            const iterationOrder = primaryDeprioritizedIdx >= 0
-                ? [
-                    rule.members[primaryDeprioritizedIdx]!,
-                    ...rule.members.filter((_, i) => i !== primaryDeprioritizedIdx),
-                ]
-                : rule.members
-            for (const m of iterationOrder) {
-                const parts = walkRuleForTemplate(m, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
+            // Homogeneity rule: branches may differ in their
+            // $-placeholders (those are just "slot that may or may
+            // not be populated by this arm") but must agree on their
+            // LITERALS — any non-placeholder text. When literals
+            // diverge, the walker can't compose a single template:
+            // which arm's literals are authoritative? Authors must
+            // declare intent via `variant()` adoption so each arm
+            // becomes its own kind with its own template.
+            //
+            // Homogeneous examples (merge all $-placeholders into
+            // primary):
+            //   - choice(sym1, sym2, sym3) → each branch emits
+            //     $$$CHILDREN; single template.
+            //   - choice(field('async', …), field('const', …)) →
+            //     both emit field placeholders only; combine into
+            //     `$ASYNC$CONST` so either arm renders correctly
+            //     (absent field → empty string).
+            //
+            // Heterogeneous examples (throw — author must variant()):
+            //   - choice(seq(expr, ';'), expr) → branch 0 has
+            //     literal ';', branch 1 doesn't. Single template
+            //     can't both include and exclude ';'.
+            //   - choice(seq('"', …, '"'), seq("'", …, "'")) →
+            //     different delimiters.
+            //   - choice(seq('if', cond), seq('while', body)) →
+            //     different keywords AND different fields.
+            const branchResults: { parts: string[]; index: number }[] = []
+            for (let i = 0; i < rule.members.length; i++) {
+                const branchSeen = new Set(seen)
+                const parts = walkRuleForTemplate(rule.members[i]!, branchSeen, inRepeat, {}, rules, repeatedFields, {}, wordMatcher)
                 if (parts.length === 0) continue
-                if (!primaryTaken) {
-                    out.push(...parts)
-                    primaryTaken = true
-                    continue
+                branchResults.push({ parts, index: i })
+            }
+            if (branchResults.length === 0) return []
+            // Compute each branch's "literal signature" — parts with
+            // $-placeholders removed, concatenated and whitespace-
+            // normalised. Branches with identical signatures can be
+            // merged (different $ coverage is fine).
+            const literalSig = (parts: string[]): string =>
+                parts.filter(p => !p.startsWith('$')).join('').replace(/\s+/g, ' ').trim()
+            const firstSig = literalSig(branchResults[0]!.parts)
+            const allSameLiterals = branchResults.every(b => literalSig(b.parts) === firstSig)
+            if (!allSameLiterals) {
+                // Heterogeneous literals: walker can't produce a single
+                // lossless template. Ideal fix is `variant('name')`
+                // adoption on each arm in overrides.ts (each becomes
+                // its own kind with its own template). Until then,
+                // fall back to the old first-non-empty-branch heuristic
+                // and surface a diagnostic via SITTIR_DEBUG so authors
+                // can see which kinds need adoption.
+                if (process.env.SITTIR_DEBUG === '1') {
+                    const branchSummaries = branchResults.map(b =>
+                        `  [${b.index}] ${JSON.stringify(b.parts.join(''))}`,
+                    ).join('\n')
+                    console.error(
+                        `[sittir] walker: heterogeneous choice branches — picking first, ` +
+                        `dropping literals from others. Consider \`variant('name')\` ` +
+                        `adoption per arm. Branches:\n${branchSummaries}`,
+                    )
                 }
+                // Fall through to the primary-branch pick below.
+            }
+            // Homogeneous literals. Replay the first non-empty branch
+            // against the OUTER seen (consumption / clauses / joinByField
+            // reach the caller). Append $-placeholders from other
+            // branches that the primary didn't already produce.
+            const primaryIdx = branchResults[0]!.index
+            const out = [...walkRuleForTemplate(rule.members[primaryIdx]!, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)]
+            for (let k = 1; k < branchResults.length; k++) {
+                const parts = walkRuleForTemplate(rule.members[branchResults[k]!.index]!, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
                 for (const p of parts) {
-                    if (p.startsWith('$')) out.push(p)
+                    if (p.startsWith('$') && !out.includes(p)) out.push(p)
                 }
             }
             return out

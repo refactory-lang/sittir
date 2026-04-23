@@ -15,8 +15,13 @@ describe('source_file', () => {
 });
 
 describe('expression_statement', () => {
-  it('factory produces correct type', () => {
-    const node = ir.expressionStatement();
+  it('with_semi form produces correct type', () => {
+    const node = ir.expressionStatement.with_semi({});
+    expect(node.$type).toBe('expression_statement');
+    expect(node.$source).toBe('factory');
+  });
+  it('block_ending form produces correct type', () => {
+    const node = ir.expressionStatement.block_ending({});
     expect(node.$type).toBe('expression_statement');
     expect(node.$source).toBe('factory');
   });
@@ -154,14 +159,15 @@ describe('mod_item', () => {
 });
 
 describe('foreign_mod_item', () => {
-  it('factory produces correct type', () => {
-    const node = ir.foreignMod({ externModifier: { $type: 'extern_modifier', $text: 'test' } as any });
+  it('semi form produces correct type', () => {
+    const node = ir.foreignMod.semi({ externModifier: { $type: 'extern_modifier', $text: 'test' } as any });
     expect(node.$type).toBe('foreign_mod_item');
     expect(node.$source).toBe('factory');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.foreignMod({ externModifier: { $type: 'extern_modifier', $text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('body form produces correct type', () => {
+    const node = ir.foreignMod.body({ externModifier: { $type: 'extern_modifier', $text: 'test' } as any });
+    expect(node.$type).toBe('foreign_mod_item');
+    expect(node.$source).toBe('factory');
   });
 });
 
@@ -787,14 +793,15 @@ describe('reference_type', () => {
 });
 
 describe('pointer_type', () => {
-  it('factory produces correct type', () => {
-    const node = ir.pointerType({ mutableSpecifier: { $type: 'mutable_specifier', $text: 'test' } as any, type: { $type: '_type', $text: 'test' } as any });
+  it('const form produces correct type', () => {
+    const node = ir.pointerType.const({ type: { $type: '_type', $text: 'test' } as any });
     expect(node.$type).toBe('pointer_type');
     expect(node.$source).toBe('factory');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.pointerType({ mutableSpecifier: { $type: 'mutable_specifier', $text: 'test' } as any, type: { $type: '_type', $text: 'test' } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('mut form produces correct type', () => {
+    const node = ir.pointerType.mut({ type: { $type: '_type', $text: 'test' } as any });
+    expect(node.$type).toBe('pointer_type');
+    expect(node.$source).toBe('factory');
   });
 });
 
@@ -941,7 +948,7 @@ describe('reference_expression', () => {
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.reference({ value: { $type: '_expression', $text: 'test' } as any });
+    const node = ir.reference({ value: { $type: '_expression', $text: 'test' } as any, children: [{ $type: 'reference_expression_raw_const', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1177,14 +1184,15 @@ describe('match_block', () => {
 });
 
 describe('match_arm', () => {
-  it('factory produces correct type', () => {
-    const node = ir.matchArm({ pattern: { $type: 'match_pattern', $text: 'test' } as any, value: { $type: '_expression', $text: 'test' } as any, children: [{ $type: 'attribute_item', $text: 'test' } as any] as any });
+  it('with_comma form produces correct type', () => {
+    const node = ir.matchArm.with_comma({ pattern: { $type: 'match_pattern', $text: 'test' } as any });
     expect(node.$type).toBe('match_arm');
     expect(node.$source).toBe('factory');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.matchArm({ pattern: { $type: 'match_pattern', $text: 'test' } as any, value: { $type: '_expression', $text: 'test' } as any, children: [{ $type: 'attribute_item', $text: 'test' } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('block_ending form produces correct type', () => {
+    const node = ir.matchArm.block_ending({ pattern: { $type: 'match_pattern', $text: 'test' } as any });
+    expect(node.$type).toBe('match_arm');
+    expect(node.$source).toBe('factory');
   });
 });
 
@@ -1620,14 +1628,20 @@ describe('comment', () => {
 });
 
 describe('line_comment', () => {
-  it('factory produces correct type', () => {
-    const node = ir.lineComment({});
+  it('regular_dslash form produces correct type', () => {
+    const node = ir.lineComment.regular_dslash({});
     expect(node.$type).toBe('line_comment');
     expect(node.$source).toBe('factory');
   });
-  it('render does not throw on minimal config', () => {
-    const node = ir.lineComment({});
-    expect(() => node.render()).not.toThrow();
+  it('doc form produces correct type', () => {
+    const node = ir.lineComment.doc({});
+    expect(node.$type).toBe('line_comment');
+    expect(node.$source).toBe('factory');
+  });
+  it('content form produces correct type', () => {
+    const node = ir.lineComment.content({});
+    expect(node.$type).toBe('line_comment');
+    expect(node.$source).toBe('factory');
   });
 });
 
@@ -1715,6 +1729,22 @@ describe('float_literal', () => {
   });
 });
 
+describe('expression_statement_with_semi', () => {
+  it('factory produces correct type', () => {
+    const node = ir.expressionStatementWithSemi({ type: "_expression" } as never);
+    expect(node.$type).toBe('expression_statement_with_semi');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('expression_statement_block_ending', () => {
+  it('factory produces correct type', () => {
+    const node = ir.expressionStatementBlockEnding({ type: "_expression_ending_with_block" } as never);
+    expect(node.$type).toBe('expression_statement_block_ending');
+    expect(node.$source).toBe('factory');
+  });
+});
+
 describe('macro_definition_paren', () => {
   it('factory produces correct type', () => {
     const node = ir.macroDefinitionParen();
@@ -1755,6 +1785,18 @@ describe('mod_item_inline', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.modItemInline({ body: { $type: 'declaration_list', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('foreign_mod_item_body', () => {
+  it('factory produces correct type', () => {
+    const node = ir.foreignModItemBody({ body: { $type: 'declaration_list', $text: 'test' } as any });
+    expect(node.$type).toBe('foreign_mod_item_body');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.foreignModItemBody({ body: { $type: 'declaration_list', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1815,6 +1857,23 @@ describe('function_type_fn_form', () => {
   });
 });
 
+describe("pointer_type_const", () => {
+  it('factory produces keyword', () => {
+    const node = ir.pointerTypeConst();
+    expect(node.$type).toBe("pointer_type_const");
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("const");
+  });
+});
+
+describe('pointer_type_mut', () => {
+  it('factory produces correct type', () => {
+    const node = ir.pointerTypeMut({ type: "mutable_specifier" } as never);
+    expect(node.$type).toBe('pointer_type_mut');
+    expect(node.$source).toBe('factory');
+  });
+});
+
 describe('range_expression_binary', () => {
   it('factory produces correct type', () => {
     const node = ir.rangeExpressionBinary({ start: { $type: '_expression', $text: 'test' } as any, operator: 'test' as any, end: { $type: '_expression', $text: 'test' } as any });
@@ -1863,6 +1922,23 @@ describe('range_expression_bare', () => {
   });
 });
 
+describe('reference_expression_raw_const', () => {
+  it('factory produces correct type', () => {
+    const node = ir.referenceExpressionRawConst("test");
+    expect(node.$type).toBe('reference_expression_raw_const');
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
+  });
+});
+
+describe('reference_expression_raw_mut', () => {
+  it('factory produces correct type', () => {
+    const node = ir.referenceExpressionRawMut({ type: "mutable_specifier" } as never);
+    expect(node.$type).toBe('reference_expression_raw_mut');
+    expect(node.$source).toBe('factory');
+  });
+});
+
 describe('array_expression_semi', () => {
   it('factory produces correct type', () => {
     const node = ir.arrayExpressionSemi({ attributes: [{ $type: 'attribute_item', $text: 'test' } as any], elements: { $type: '_expression', $text: 'test' } as any, length: { $type: '_expression', $text: 'test' } as any });
@@ -1892,6 +1968,30 @@ describe('let_chain', () => {
     const node = ir.letChain();
     expect(node.$type).toBe('let_chain');
     expect(node.$source).toBe('factory');
+  });
+});
+
+describe('match_arm_with_comma', () => {
+  it('factory produces correct type', () => {
+    const node = ir.matchArmWithComma({ value: { $type: '_expression', $text: 'test' } as any });
+    expect(node.$type).toBe('match_arm_with_comma');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.matchArmWithComma({ value: { $type: '_expression', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('match_arm_block_ending', () => {
+  it('factory produces correct type', () => {
+    const node = ir.matchArmBlockEnding({ value: { $type: '_expression_ending_with_block', $text: 'test' } as any });
+    expect(node.$type).toBe('match_arm_block_ending');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.matchArmBlockEnding({ value: { $type: '_expression_ending_with_block', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -1997,6 +2097,36 @@ describe('or_pattern_prefix', () => {
   it('render produces non-empty string', () => {
     const node = ir.orPatternPrefix({ right: { $type: '_pattern', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('line_comment_regular_dslash', () => {
+  it('factory produces correct type', () => {
+    const node = ir.lineCommentRegularDslash("test");
+    expect(node.$type).toBe('line_comment_regular_dslash');
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
+  });
+});
+
+describe('line_comment_doc', () => {
+  it('factory produces correct type', () => {
+    const node = ir.lineCommentDoc({ children: [{ $type: '_line_doc_comment_marker', $text: 'test' } as any] as any });
+    expect(node.$type).toBe('line_comment_doc');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.lineCommentDoc({ children: [{ $type: '_line_doc_comment_marker', $text: 'test' } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('line_comment_content', () => {
+  it('factory produces correct type', () => {
+    const node = ir.lineCommentContent("test");
+    expect(node.$type).toBe('line_comment_content');
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
   });
 });
 

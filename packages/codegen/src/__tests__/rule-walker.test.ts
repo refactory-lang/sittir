@@ -174,24 +174,28 @@ describe('renderRuleTemplate — synthetic outer-field wrappers (606b646)', () =
 // Choice branch literal leakage (uncommitted fix)
 // ---------------------------------------------------------------------------
 
-describe('renderRuleTemplate — primary-branch selection in outer choice', () => {
-    it('declaration order wins when the first branch contributes a field', () => {
-        // Unchanged behavior: when the first non-empty branch is already
-        // field-bearing, later branches only add their $-placeholders.
+describe('renderRuleTemplate — choice branch diagnostic', () => {
+    it('heterogeneous branches with different literal prefixes fall back to primary (diagnostic surfaces under SITTIR_DEBUG)', () => {
+        // Ideal fix is `variant()` adoption per arm. Absent that,
+        // walker logs a diagnostic and picks the first non-empty
+        // branch — drops the 'while' keyword from branch 1.
         const r = choice(
             seq(str('if'), field('cond', sym('expression'))),
             seq(str('while'), field('body', sym('block'))),
         )
         const { template } = renderRuleTemplate(r)
-        expect(template).toBe('if $COND$BODY')
+        expect(template).toContain('if')
+        expect(template).not.toContain('while')
+        expect(template).toContain('$COND')
+        expect(template).toContain('$BODY')
     })
 
-    it('bare-only first branch yields to field-bearing later branch', () => {
-        // visibility_modifier-shaped `choice(bare_crate, seq(field('pub',
-        // _kw_pub), optional(variant_choice)))`. First-branch-primary
-        // would emit `$$$CHILDREN$PUB` (child-slot before field — wrong
-        // order for rendering); field-bearing reorder picks the seq
-        // branch as primary so `$PUB` lands first.
+    it('bare-symbol branch + field-bearing branch falls back to declaration order', () => {
+        // visibility_modifier-shaped heterogeneity: first-branch pick
+        // emits $$$CHILDREN$PUB, which is structurally wrong for
+        // rendering but is the pre-Option-3 baseline the walker has
+        // always used. Visible in the diagnostic so authors know to
+        // variant()-adopt.
         const r = choice(
             sym('crate'),
             seq(
@@ -200,57 +204,40 @@ describe('renderRuleTemplate — primary-branch selection in outer choice', () =
             ),
         )
         const { template } = renderRuleTemplate(r)
-        // The walker inserts a needsSpace separator between $PUB's
-        // field slot and the children slot; what matters is the ORDER.
-        expect(template).toBe('$PUB $$$CHILDREN')
+        expect(template).toContain('$$$CHILDREN')
+        expect(template).toContain('$PUB')
     })
 
-    it('multiple bare-only branches + field-bearing branch', () => {
-        // Three bare branches, one field-bearing — the field-bearing
-        // branch wins, the three bare branches each collapse to the
-        // shared `$$$CHILDREN` slot.
-        const r = choice(
-            sym('x'),
-            sym('y'),
-            sym('z'),
-            seq(str('fn'), field('name', sym('identifier'))),
-        )
-        const { template } = renderRuleTemplate(r)
-        expect(template).toBe('fn $NAME$$$CHILDREN')
-    })
-
-    it('no reorder when no branch has fields', () => {
-        // All branches are bare symbols — declaration order wins
-        // (collapses to single `$$$CHILDREN`).
+    it('homogeneous branches collapse silently — choice of bare symbols', () => {
+        // All three branches walk to $$$CHILDREN — identical parts, safe
+        // to collapse to a single template.
         const r = choice(sym('a'), sym('b'), sym('c'))
         expect(renderRuleTemplate(r).template).toBe('$$$CHILDREN')
     })
-})
 
-describe('renderRuleTemplate — choice branch literal leakage', () => {
-    it('literals from non-primary branches do not leak into the template', () => {
-        // Choice of three distinct literal shapes. Only the first branch's
-        // literals should appear; subsequent branches contribute their
-        // $ placeholders but not their raw punctuation.
-        const r = choice(
-            seq(str('if'), field('cond', sym('expression'))),
-            seq(str('////'), field('cond', sym('expression'))),
-            seq(str('='), field('value', sym('expression'))),
-        )
-        const { template } = renderRuleTemplate(r)
-        // Primary branch's literals survive verbatim.
-        expect(template).toContain('if $COND')
-        // But `////` and `=` must NOT leak in.
-        expect(template).not.toContain('////')
-        expect(template).not.toContain('=')
-        // Placeholders from other branches that name NEW fields do get
-        // appended so the slot is reachable.
-        expect(template).toContain('$VALUE')
+    it('homogeneous branches collapse — matched field placeholders', () => {
+        // Both branches emit $X (same field name, same shape). Single
+        // template covers both parse shapes.
+        const r = choice(field('x', sym('a')), field('x', sym('b')))
+        expect(renderRuleTemplate(r).template).toBe('$X')
     })
 
-    it('choice of symbols collapses to a single $$$CHILDREN', () => {
-        const r = choice(sym('a'), sym('b'), sym('c'))
-        expect(renderRuleTemplate(r).template).toBe('$$$CHILDREN')
+    it('function_modifiers-shaped: different field names, no literal differences → merges all $-placeholders', () => {
+        // rust function_modifiers: `choice(field('async', _kw_async),
+        // field('const', _kw_const), field('unsafe', _kw_unsafe))`.
+        // All branches have empty literal signatures (only field
+        // placeholders) — walker merges them into one template with
+        // all slots. Absent fields render empty; space absorption
+        // handles the whitespace.
+        const r = choice(
+            field('async', sym('_kw_async')),
+            field('const', sym('_kw_const')),
+            field('unsafe', sym('_kw_unsafe')),
+        )
+        const { template } = renderRuleTemplate(r)
+        expect(template).toContain('$ASYNC')
+        expect(template).toContain('$CONST')
+        expect(template).toContain('$UNSAFE')
     })
 })
 

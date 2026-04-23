@@ -5,7 +5,7 @@
 {
   "factoryShapes": {
     "source_file": "config",
-    "expression_statement": "children",
+    "expression_statement": "config",
     "macro_definition": "config",
     "macro_rule": "config",
     "token_tree_pattern": "text",
@@ -164,23 +164,32 @@
     "_outer_block_doc_comment_marker": "text",
     "_inner_block_doc_comment_marker": "text",
     "_line_doc_content": "text",
+    "expression_statement_with_semi": "children",
+    "expression_statement_block_ending": "children",
     "macro_definition_paren": "children",
     "macro_definition_bracket": "children",
     "macro_definition_brace": "children",
     "primitive_type": "text",
     "mod_item_inline": "config",
+    "foreign_mod_item_body": "config",
     "struct_item_brace": "config",
     "struct_item_tuple": "config",
     "impl_item_body": "config",
     "function_type_trait_form": "config",
     "function_type_fn_form": "children",
+    "pointer_type_const": "text",
+    "pointer_type_mut": "children",
     "range_expression_binary": "config",
     "range_expression_postfix": "config",
     "range_expression_prefix": "config",
     "range_expression_bare": "config",
+    "reference_expression_raw_const": "text",
+    "reference_expression_raw_mut": "children",
     "array_expression_semi": "config",
     "array_expression_list": "config",
     "let_chain": "children",
+    "match_arm_with_comma": "config",
+    "match_arm_block_ending": "config",
     "closure_expression_block": "config",
     "closure_expression_expr": "config",
     "wildcard_pattern": "text",
@@ -190,6 +199,9 @@
     "range_pattern_prefix": "config",
     "or_pattern_binary": "config",
     "or_pattern_prefix": "config",
+    "line_comment_regular_dslash": "text",
+    "line_comment_doc": "config",
+    "line_comment_content": "text",
     "outer_doc_comment_marker": "text",
     "inner_doc_comment_marker": "text",
     "type_identifier": "text",
@@ -228,11 +240,11 @@
     "in": "text",
     "dyn": "text",
     "mut": "text",
-    "raw": "text",
     "yield": "text",
     "try": "text",
     "ref": "text",
-    "move": "text"
+    "move": "text",
+    "raw": "text"
   },
   "fieldAliasMap": {
     "attribute.arguments": {
@@ -259,14 +271,17 @@
     "raw_string_literal.string_content": {
       "string_content": "raw_string_literal_content"
     },
-    "line_comment.outer": {
+    "_line_doc_comment_marker_form0.outer": {
       "outer_doc_comment_marker": "_outer_line_doc_comment_marker"
     },
-    "line_comment.inner": {
+    "_line_doc_comment_marker_form1.inner": {
       "inner_doc_comment_marker": "_inner_line_doc_comment_marker"
     },
-    "line_comment.doc": {
-      "doc_comment": "_line_doc_content"
+    "_line_doc_comment_marker.outer": {
+      "outer_doc_comment_marker": "_outer_line_doc_comment_marker"
+    },
+    "_line_doc_comment_marker.inner": {
+      "inner_doc_comment_marker": "_inner_line_doc_comment_marker"
     },
     "block_comment.outer": {
       "outer_doc_comment_marker": "_outer_block_doc_comment_marker"
@@ -279,6 +294,9 @@
     },
     "_field_pattern_shorthand.name": {
       "shorthand_field_identifier": "identifier"
+    },
+    "_line_comment_doc.doc": {
+      "doc_comment": "_line_doc_content"
     }
   },
   "factoryFields": {
@@ -299,11 +317,6 @@
     ],
     "inner_attribute_item": [
       "attribute"
-    ],
-    "foreign_mod_item": [
-      "visibility_modifier",
-      "extern_modifier",
-      "body"
     ],
     "union_item": [
       "visibility_modifier",
@@ -487,10 +500,6 @@
       "mutable_specifier",
       "type"
     ],
-    "pointer_type": [
-      "mutable_specifier",
-      "type"
-    ],
     "abstract_type": [
       "type_parameters",
       "trait"
@@ -519,10 +528,6 @@
       "operand"
     ],
     "try_expression": [
-      "value"
-    ],
-    "reference_expression": [
-      "mutable_specifier",
       "value"
     ],
     "binary_expression": [
@@ -642,17 +647,15 @@
       "string_content",
       "raw_string_literal_end"
     ],
-    "line_comment": [
-      "outer",
-      "inner",
-      "doc"
-    ],
     "block_comment": [
       "outer",
       "inner",
       "doc"
     ],
     "mod_item_inline": [
+      "body"
+    ],
+    "foreign_mod_item_body": [
       "body"
     ],
     "impl_item_body": [
@@ -681,6 +684,12 @@
       "attributes",
       "elements",
       "length"
+    ],
+    "match_arm_with_comma": [
+      "value"
+    ],
+    "match_arm_block_ending": [
+      "value"
     ],
     "closure_expression_block": [
       "return_type",
@@ -712,6 +721,13 @@
     ]
   },
   "polymorphVariants": {
+    "expression_statement": {
+      "source": "override",
+      "childKind": {
+        "expression_statement_with_semi": "with_semi",
+        "expression_statement_block_ending": "block_ending"
+      }
+    },
     "macro_definition": {
       "source": "override",
       "childKind": {
@@ -725,6 +741,13 @@
       "childKind": {
         "mod_item_external": "external",
         "mod_item_inline": "inline"
+      }
+    },
+    "foreign_mod_item": {
+      "source": "override",
+      "childKind": {
+        "foreign_mod_item_semi": "semi",
+        "foreign_mod_item_body": "body"
       }
     },
     "struct_item": {
@@ -759,6 +782,13 @@
         "function_type_fn_form": "fn_form"
       }
     },
+    "pointer_type": {
+      "source": "override",
+      "childKind": {
+        "pointer_type_const": "const",
+        "pointer_type_mut": "mut"
+      }
+    },
     "range_expression": {
       "source": "override",
       "childKind": {
@@ -768,11 +798,25 @@
         "range_expression_bare": "bare"
       }
     },
+    "reference_expression": {
+      "source": "override",
+      "childKind": {
+        "reference_expression_raw_const": "raw_const",
+        "reference_expression_raw_mut": "raw_mut"
+      }
+    },
     "array_expression": {
       "source": "override",
       "childKind": {
         "array_expression_semi": "semi",
         "array_expression_list": "list"
+      }
+    },
+    "match_arm": {
+      "source": "override",
+      "childKind": {
+        "match_arm_with_comma": "with_comma",
+        "match_arm_block_ending": "block_ending"
       }
     },
     "closure_expression": {
@@ -801,6 +845,14 @@
       "childKind": {
         "or_pattern_binary": "binary",
         "or_pattern_prefix": "prefix"
+      }
+    },
+    "line_comment": {
+      "source": "override",
+      "childKind": {
+        "line_comment_regular_dslash": "regular_dslash",
+        "line_comment_doc": "doc",
+        "line_comment_content": "content"
       }
     }
   }

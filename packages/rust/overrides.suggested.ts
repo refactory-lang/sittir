@@ -14,8 +14,8 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences:  7  (0 applied, 7 held)
-// Rule promotions:   70  (57 applied, 13 held)
+// Field inferences:  13  (0 applied, 13 held)
+// Rule promotions:   87  (78 applied, 9 held)
 // Repeated shapes:   5  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -42,7 +42,16 @@ export const suggestedTransforms = {
   },
 
   // _non_special_token: 1 inferred field(s)
-  // [held] _non_special_token field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 11 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+  // [held] _non_special_token field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 8 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+
+  // _pointer_type_mut: 1 inferred field(s)
+  // [held] _pointer_type_mut field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 8 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+
+  // _reference_expression_raw_mut: 1 inferred field(s)
+  _reference_expression_raw_mut: {
+      // [held] 100% agreement, 8 parents
+      1: field("mutable_specifier"),  // $.mutable_specifier
+  },
 
   // _struct_item_brace: 1 inferred field(s)
   // [held] _struct_item_brace field 'where_clause' on $.where_clause — 89% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
@@ -57,17 +66,8 @@ export const suggestedTransforms = {
       "1": variant("_"),
   },
 
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  expression_statement: {
-      "0": variant("semi"),
-      "1": variant("_expression_ending_with_block"),
-  },
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  foreign_mod_item: {
-      "2/0": variant("semi"),
-      "2/1": variant("body"),
-  },
+  // foreign_mod_item: 1 inferred field(s)
+  // [held] foreign_mod_item field 'visibility_modifier' on $.visibility_modifier — 93% agreement, 15 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
   // [held] polymorph — 1 choice position(s), 5 arm(s) total
   let_chain: {
@@ -78,19 +78,8 @@ export const suggestedTransforms = {
       "4": variant("andand"),
   },
 
-  // [held] polymorph — 1 choice position(s), 3 arm(s) total
-  line_comment: {
-      "1/0": variant("form_0"),
-      "1/1": variant("_line_doc_comment_marker"),
-      "1/2": variant("form_2"),
-  },
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: mutable_specifier
-  pointer_type: {
-      "1/0": variant("const"),
-      "1/1": variant("mutable_specifier"),
-  },
+  // pointer_type_mut: 1 inferred field(s)
+  // [held] pointer_type_mut field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 8 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   range_pattern_left: {
@@ -98,11 +87,18 @@ export const suggestedTransforms = {
       "1/1": variant("dotdot"),
   },
 
+  // reference_expression: 1 inferred field(s)
+  // [held] reference_expression field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 8 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: mutable_specifier
   reference_expression: {
       "1/0": variant("raw"),
       "1/1": variant("form_1"),
+  },
+
+  // reference_expression_raw_mut: 1 inferred field(s)
+  reference_expression_raw_mut: {
+      // [held] 100% agreement, 8 parents
+      1: field("mutable_specifier"),  // $.mutable_specifier
   },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
@@ -113,7 +109,7 @@ export const suggestedTransforms = {
 
   // static_item: 1 inferred field(s)
   static_item: {
-      // [held] 100% agreement, 11 parents
+      // [held] 100% agreement, 8 parents
       3: field("mutable_specifier"),  // $.mutable_specifier
   },
 
@@ -234,10 +230,13 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_tokens", classification: "supertype", applied: true },
   { kind: "_type", classification: "supertype", applied: true },
   { kind: "_use_clause", classification: "supertype", applied: true },
+  { kind: "_line_comment_regular_dslash", classification: "terminal", applied: true },
   { kind: "char_literal", classification: "terminal", applied: true },
   { kind: "escape_sequence", classification: "terminal", applied: true },
   { kind: "inner_doc_comment_marker", classification: "terminal", applied: true },
   { kind: "integer_literal", classification: "terminal", applied: true },
+  { kind: "line_comment_content", classification: "terminal", applied: true },
+  { kind: "line_comment_regular_dslash", classification: "terminal", applied: true },
   { kind: "outer_doc_comment_marker", classification: "terminal", applied: true },
   { kind: "unit_expression", classification: "terminal", applied: true },
   { kind: "unit_type", classification: "terminal", applied: true },
@@ -250,27 +249,39 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "closure_expression_block", classification: "polymorph", applied: true },
   { kind: "closure_expression_expr", classification: "polymorph", applied: false },
   { kind: "closure_expression_expr", classification: "polymorph", applied: true },
-  { kind: "expression_statement", classification: "polymorph", applied: false },
+  { kind: "expression_statement", classification: "polymorph", applied: true },
+  { kind: "expression_statement_block_ending", classification: "polymorph", applied: true },
+  { kind: "expression_statement_with_semi", classification: "polymorph", applied: true },
   { kind: "field_pattern", classification: "polymorph", applied: true },
   { kind: "field_pattern_named", classification: "polymorph", applied: true },
   { kind: "field_pattern_shorthand", classification: "polymorph", applied: true },
-  { kind: "foreign_mod_item", classification: "polymorph", applied: false },
+  { kind: "foreign_mod_item", classification: "polymorph", applied: true },
+  { kind: "foreign_mod_item_body", classification: "polymorph", applied: true },
+  { kind: "foreign_mod_item_semi", classification: "polymorph", applied: true },
   { kind: "impl_item", classification: "polymorph", applied: true },
   { kind: "impl_item_body", classification: "polymorph", applied: true },
   { kind: "impl_item_semi", classification: "polymorph", applied: true },
   { kind: "let_chain", classification: "polymorph", applied: false },
-  { kind: "line_comment", classification: "polymorph", applied: false },
+  { kind: "line_comment", classification: "polymorph", applied: true },
+  { kind: "line_comment_content", classification: "polymorph", applied: true },
+  { kind: "line_comment_doc", classification: "polymorph", applied: true },
+  { kind: "line_comment_regular_dslash", classification: "polymorph", applied: true },
   { kind: "macro_definition", classification: "polymorph", applied: true },
   { kind: "macro_definition_brace", classification: "polymorph", applied: true },
   { kind: "macro_definition_bracket", classification: "polymorph", applied: true },
   { kind: "macro_definition_paren", classification: "polymorph", applied: true },
+  { kind: "match_arm", classification: "polymorph", applied: true },
+  { kind: "match_arm_block_ending", classification: "polymorph", applied: true },
+  { kind: "match_arm_with_comma", classification: "polymorph", applied: true },
   { kind: "mod_item", classification: "polymorph", applied: true },
   { kind: "mod_item_external", classification: "polymorph", applied: true },
   { kind: "mod_item_inline", classification: "polymorph", applied: true },
   { kind: "or_pattern", classification: "polymorph", applied: true },
   { kind: "or_pattern_binary", classification: "polymorph", applied: true },
   { kind: "or_pattern_prefix", classification: "polymorph", applied: true },
-  { kind: "pointer_type", classification: "polymorph", applied: false },
+  { kind: "pointer_type", classification: "polymorph", applied: true },
+  { kind: "pointer_type_const", classification: "polymorph", applied: true },
+  { kind: "pointer_type_mut", classification: "polymorph", applied: true },
   { kind: "range_expression", classification: "polymorph", applied: true },
   { kind: "range_expression_bare", classification: "polymorph", applied: true },
   { kind: "range_expression_binary", classification: "polymorph", applied: true },
@@ -281,6 +292,8 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "range_pattern_left", classification: "polymorph", applied: true },
   { kind: "range_pattern_prefix", classification: "polymorph", applied: true },
   { kind: "reference_expression", classification: "polymorph", applied: false },
+  { kind: "reference_expression_raw_const", classification: "polymorph", applied: true },
+  { kind: "reference_expression_raw_mut", classification: "polymorph", applied: true },
   { kind: "return_expression", classification: "polymorph", applied: false },
   { kind: "struct_item", classification: "polymorph", applied: true },
   { kind: "struct_item_brace", classification: "polymorph", applied: true },
@@ -300,10 +313,16 @@ export interface InferredField {
   readonly applied: boolean;
 }
 export const inferredFields: readonly InferredField[] = [
-  { kind: "_non_special_token", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 11, applied: false },
-  { kind: "static_item", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 11, applied: false },
+  { kind: "foreign_mod_item", fieldName: "visibility_modifier", targetSymbol: "visibility_modifier", confidence: "medium", agreement: 0.933, sampleSize: 15, applied: false },
+  { kind: "_non_special_token", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 8, applied: false },
+  { kind: "_pointer_type_mut", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 8, applied: false },
+  { kind: "_reference_expression_raw_mut", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 8, applied: false },
   { kind: "_struct_item_brace", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.889, sampleSize: 9, applied: false },
   { kind: "_struct_item_tuple", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.889, sampleSize: 9, applied: false },
+  { kind: "pointer_type_mut", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 8, applied: false },
+  { kind: "reference_expression", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 8, applied: false },
+  { kind: "reference_expression_raw_mut", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 8, applied: false },
+  { kind: "static_item", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 8, applied: false },
   { kind: "struct_item_brace", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.889, sampleSize: 9, applied: false },
   { kind: "struct_item_tuple", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.889, sampleSize: 9, applied: false },
   { kind: "type_arguments", fieldName: "bounds", targetSymbol: "trait_bounds", confidence: "high", agreement: 1.000, sampleSize: 5, applied: false },

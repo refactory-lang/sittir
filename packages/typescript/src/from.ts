@@ -208,6 +208,7 @@ export const _fromMap = {
   "html_comment": htmlCommentFrom,
   "||": ororFrom,
   "jsx_text": jsxTextFrom,
+  "export_statement_default": exportStatementDefaultFrom,
   "export_statement_type_export": exportStatementTypeExportFrom,
   "export_statement_equals_export": exportStatementEqualsExportFrom,
   "export_statement_namespace_export": exportStatementNamespaceExportFrom,
@@ -230,6 +231,8 @@ export const _fromMap = {
   "call_expression_call": callExpressionCallFrom,
   "call_expression_template_call": callExpressionTemplateCallFrom,
   "call_expression_member": callExpressionMemberFrom,
+  "string_double": stringDoubleFrom,
+  "string_single": stringSingleFrom,
   "interface_body": interfaceBodyFrom,
   "this_type": thisTypeFrom,
   "index_signature_colon": indexSignatureColonFrom,
@@ -413,8 +416,8 @@ function _assertNonEmpty<T>(
 
 // Interned resolver kind lists (T042i dedup)
 const _super_jsx_identifier: readonly string[] = ["identifier"];
-const _super_destructuring_pattern: readonly string[] = ["object_pattern","array_pattern"];
 const _super_expressions: readonly string[] = ["expression","sequence_expression"];
+const _super_destructuring_pattern: readonly string[] = ["object_pattern","array_pattern"];
 const _super_jsx_attribute: readonly string[] = ["jsx_attribute","jsx_expression"];
 const _super_type: readonly string[] = ["primary_type","function_type","readonly_type","constructor_type","infer_type","member_expression","call_expression"];
 const _super_semicolon: readonly string[] = ["_automatic_semicolon"];
@@ -483,6 +486,7 @@ export function exportStatementFrom(input?: T.ExportStatement.Loose): ReturnType
       const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
       const childKind = first?.$type ?? first?.type;
       switch (childKind) {
+        case 'export_statement_default': _loose.$variant = 'default'; break;
         case 'export_statement_type_export': _loose.$variant = 'type_export'; break;
         case 'export_statement_equals_export': _loose.$variant = 'equals_export'; break;
         case 'export_statement_namespace_export': _loose.$variant = 'namespace_export'; break;
@@ -490,6 +494,10 @@ export function exportStatementFrom(input?: T.ExportStatement.Loose): ReturnType
     }
   }
   return F.exportStatement(input as Parameters<typeof F.exportStatement>[0]);
+}
+
+export function exportStatementUFormDefaultFrom(input: ConfigOf<T.ExportStatementUFormDefault>) {
+  return F.exportStatementUFormDefault(input);
 }
 
 export function exportStatementUFormTypeExportFrom(input: ConfigOf<T.ExportStatementUFormTypeExport>) {
@@ -638,13 +646,12 @@ export function statementFrom(input?: NonNullable<T.Statement.Config['children']
   return F.statement(input);
 }
 
-export function expressionStatementFrom(input?: NonNullable<T.ExpressionStatement.Config['children']>[number] | T.ExpressionStatement) {
-  if (isNodeData(input) && input.$type === 'expression_statement') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.expressionStatement(child);
-  }
-  return F.expressionStatement(input);
+export function expressionStatementFrom(input: T.ExpressionStatement.Loose): ReturnType<typeof F.expressionStatement> {
+  if (isNodeData(input)) return input;
+  return F.expressionStatement({
+    semicolon: _resolveOneLeaf(input.semicolon, "_automatic_semicolon"),
+    children: _resolveOne(input.children, _K1, _super_expressions),
+  });
 }
 
 export function variableDeclarationFrom(input: T.VariableDeclaration.Loose): ReturnType<typeof F.variableDeclaration> {
@@ -1313,12 +1320,28 @@ export function sequenceExpressionFrom(...input: readonly (NonNullable<T.Sequenc
   return F.sequenceExpression(...input);
 }
 
-export function stringFrom(...input: readonly (NonNullable<T.String.Config['children']>[number] | T.String)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'string') {
-    const data = input[0];
-    return F.string(...(data.$children ?? []));
+export function stringFrom(input?: T.String.Loose): ReturnType<typeof F.string> {
+  if (input !== undefined && isNodeData(input)) return input;
+  if (input && typeof input === 'object' && !('$variant' in input)) {
+    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
+    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
+      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
+      const childKind = first?.$type ?? first?.type;
+      switch (childKind) {
+        case 'string_double': _loose.$variant = 'double'; break;
+        case 'string_single': _loose.$variant = 'single'; break;
+      }
+    }
   }
-  return F.string(...input);
+  return F.string(input as Parameters<typeof F.string>[0]);
+}
+
+export function stringUFormDoubleFrom(input: ConfigOf<T.StringUFormDouble>) {
+  return F.stringUFormDouble(input);
+}
+
+export function stringUFormSingleFrom(input: ConfigOf<T.StringUFormSingle>) {
+  return F.stringUFormSingle(input);
 }
 
 export function unescapedDoubleStringFragmentFrom(input: string | T.UnescapedDoubleStringFragment) {
@@ -1782,7 +1805,7 @@ export function typeAliasDeclarationFrom(input: T.TypeAliasDeclaration.Loose): R
     name: _resolveOneBranch(input.name, "_type_identifier"),
     typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
     value: _resolveOne(input.value, _K1, _super_type),
-    children: _resolveOneLeaf(input.children, "_automatic_semicolon"),
+    semicolon: _resolveOneLeaf(input.semicolon, "_automatic_semicolon"),
   });
 }
 
@@ -2197,6 +2220,28 @@ export function jsxTextFrom(input: string | T.JsxText) {
   return F.jsxText(input);
 }
 
+export function exportStatementDefaultFrom(input?: T.ExportStatementDefault.Loose): ReturnType<typeof F.exportStatementDefault> {
+  if (input !== undefined && isNodeData(input)) return input;
+  if (input && typeof input === 'object' && !('$variant' in input)) {
+    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
+    if ('decorator' in _loose && 'declaration' in _loose && 'value' in _loose) _loose.$variant = 'form1';
+    else _loose.$variant = 'form0';
+  }
+  return F.exportStatementDefault(input as Parameters<typeof F.exportStatementDefault>[0]);
+}
+
+export function exportStatementDefaultForm0From(input: ConfigOf<T.ExportStatementDefaultForm0>) {
+  return F.exportStatementDefaultForm0(input);
+}
+
+export function exportStatementDefaultForm1From(input: ConfigOf<T.ExportStatementDefaultForm1>) {
+  return F.exportStatementDefaultForm1({
+    decorator: _resolveManyBranch(input.decorator, "decorator"),
+    declaration: _resolveOneBranch(input.declaration, "declaration"),
+    value: _resolveOneBranch(input.value, "expression"),
+  });
+}
+
 export function exportStatementTypeExportFrom(input: T.ExportStatementTypeExport.Loose): ReturnType<typeof F.exportStatementTypeExport> {
   if (isNodeData(input)) return input;
   return F.exportStatementTypeExport({
@@ -2373,6 +2418,22 @@ export function callExpressionMemberFrom(input: T.CallExpressionMember.Loose): R
     typeArguments: _resolveOneBranch(input.typeArguments, "type_arguments"),
     arguments: _resolveOneBranch(input.arguments, "arguments"),
   });
+}
+
+export function stringDoubleFrom(...input: readonly (NonNullable<T.StringDouble.Config['children']>[number] | T.StringDouble)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'string_double') {
+    const data = input[0];
+    return F.stringDouble(...(data.$children ?? []));
+  }
+  return F.stringDouble(...input);
+}
+
+export function stringSingleFrom(...input: readonly (NonNullable<T.StringSingle.Config['children']>[number] | T.StringSingle)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'string_single') {
+    const data = input[0];
+    return F.stringSingle(...(data.$children ?? []));
+  }
+  return F.stringSingle(...input);
 }
 
 export function interfaceBodyFrom(input: T.InterfaceBody.Loose): ReturnType<typeof F.interfaceBody> {

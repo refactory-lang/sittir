@@ -19,7 +19,7 @@
     "import_specifier": "config",
     "import_attribute": "config",
     "statement": "children",
-    "expression_statement": "children",
+    "expression_statement": "config",
     "variable_declaration": "config",
     "lexical_declaration": "config",
     "variable_declarator": "config",
@@ -87,7 +87,7 @@
     "unary_expression": "config",
     "update_expression": "config",
     "sequence_expression": "children",
-    "string": "children",
+    "string": "config",
     "unescaped_double_string_fragment": "text",
     "unescaped_single_string_fragment": "text",
     "escape_sequence": "text",
@@ -201,6 +201,7 @@
     "html_comment": "text",
     "||": "text",
     "jsx_text": "text",
+    "export_statement_default": "config",
     "export_statement_type_export": "config",
     "export_statement_equals_export": "children",
     "export_statement_namespace_export": "children",
@@ -223,6 +224,8 @@
     "call_expression_call": "config",
     "call_expression_template_call": "config",
     "call_expression_member": "config",
+    "string_double": "children",
+    "string_single": "children",
     "interface_body": "config",
     "this_type": "text",
     "index_signature_colon": "config",
@@ -659,6 +662,12 @@
       "name",
       "value"
     ],
+    "type_alias_declaration": [
+      "name",
+      "type_parameters",
+      "value",
+      "semicolon"
+    ],
     "omitting_type_annotation": [
       "type"
     ],
@@ -843,6 +852,7 @@
     "export_statement": {
       "source": "override",
       "childKind": {
+        "export_statement_default": "default",
         "export_statement_type_export": "type_export",
         "export_statement_equals_export": "equals_export",
         "export_statement_namespace_export": "namespace_export"
@@ -905,11 +915,29 @@
         "call_expression_member": "member"
       }
     },
+    "string": {
+      "source": "override",
+      "childKind": {
+        "string_double": "double",
+        "string_single": "single"
+      }
+    },
     "index_signature": {
       "source": "override",
       "childKind": {
         "index_signature_colon": "colon",
         "index_signature_mapped_type_clause": "mapped_type_clause"
+      }
+    },
+    "export_statement_default": {
+      "source": "promoted",
+      "fields": {
+        "form0": [],
+        "form1": [
+          "decorator",
+          "declaration",
+          "value"
+        ]
       }
     }
   }

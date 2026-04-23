@@ -9,11 +9,19 @@
 
 // @ts-nocheck — grammar.js is untyped; overrides use sittir DSL
 import base from '../../node_modules/.pnpm/tree-sitter-rust@0.24.0/node_modules/tree-sitter-rust/grammar.js'
-import { transform, enrich, field, alias, wire } from '../codegen/src/dsl/index.ts'
+import { transform, enrich, field, alias, variant, wire } from '../codegen/src/dsl/index.ts'
 
 
 export default grammar(enrich(base), wire({
     name: 'rust',
+    // `previous` is the base grammar's conflicts list — concat so we
+    // don't drop the base entries (`$._type`, `$._pattern`, etc.).
+    conflicts: ($, previous) => (previous ?? []).concat([
+        // match_arm split: the `seq(expr, ',')` vs block-ending variants
+        // expose a shared-prefix conflict with other expression
+        // contexts when the parser sees `… => if_expr (`.
+        [$._expression_except_range, $._match_arm_block_ending],
+    ]),
     polymorphs: {
         array_expression:    { '2/0': 'semi', '2/1': 'list' },
         closure_expression:  { '4/0': 'block', '4/1': 'expr' },
@@ -445,6 +453,58 @@ export default grammar(enrich(base), wire({
         while_expression: {
             0: field('label'), // label [struct=0]
         },
+
+        // expression_statement: choice(seq(_expression, ';'),
+        //                              prec(1, _expression_ending_with_block)).
+        // Heterogeneous — the ';'-terminated form and the block-ending
+        // form have structurally distinct templates. Each becomes its
+        // own variant child kind.
+        expression_statement: {
+            0: variant('with_semi'),
+            1: variant('block_ending'),
+        },
+
+        // foreign_mod_item: choice at pos 2 between ';' (bare extern
+        // decl) and field('body', declaration_list) (block extern).
+        // Variant-adopt so each arm owns its own template.
+        foreign_mod_item: {
+            '2/0': variant('semi'),
+            '2/1': variant('body'),
+        },
+
+        // pointer_type: choice('const', mutable_specifier) at pos 1.
+        // Literal 'const' vs symbol → split arms.
+        pointer_type: {
+            '1/0': variant('const'),
+            '1/1': variant('mut'),
+        },
+
+        // reference_expression: inner choice at path 1/0/1 selects
+        // `const` vs `mutable_specifier` inside the `&raw (…) …`
+        // form. Same const-vs-mut shape as pointer_type.
+        reference_expression: {
+            '1/0/1/0': variant('raw_const'),
+            '1/0/1/1': variant('raw_mut'),
+        },
+
+        // match_arm: choice(seq(field('value',expr), ','),
+        //                   field('value', prec(1, _expr_ending_with_block)))
+        // The ','-terminated form vs block-ending form have distinct
+        // literals. Split arms.
+        match_arm: {
+            '3/0': variant('with_comma'),
+            '3/1': variant('block_ending'),
+        },
+
+        // line_comment: choice at pos 1 between regular double-slash,
+        // doc-comment, and regular content. Each arm has its own
+        // distinct literal prefix.
+        line_comment: {
+            '1/0': variant('regular_dslash'),
+            '1/1': variant('doc'),
+            '1/2': variant('content'),
+        },
+
     },
     rules: {
         // function_modifiers — full replacement: label each choice alternative
