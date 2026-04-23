@@ -37,6 +37,7 @@
     "@changesets/changelog-github": "^0.6.0",
     "@changesets/cli": "^2.30.0",
     "@types/node": "^25.6.0",
+    "@napi-rs/cli": "^3.0.0",
     "@typescript/native-preview": "7.0.0-dev.20260417.1",
     "@vitest/coverage-v8": "^4.1.4",
     "oxfmt": "^0.45.0",

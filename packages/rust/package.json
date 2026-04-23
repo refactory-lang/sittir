@@ -43,6 +43,7 @@
     "@sittir/core": "workspace:*",
     "@sittir/types": "workspace:*"
   },
+  "//peer": "Optional peer @sittir/rust-native is added by spec 012 T036 once the native package is published. Listing it here pre-publish causes pnpm install to 404 even with peerDependenciesMeta.optional=true because pnpm still probes the registry.",
   "devDependencies": {
     "@types/node": "^25.6.0",
     "tree-sitter-rust": "^0.24.0",
