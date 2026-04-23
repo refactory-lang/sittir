@@ -11,6 +11,15 @@ description = "Render / readNode / splice primitives for sittir — hot-path eng
 serde = { workspace = true }
 serde_json = { workspace = true }
 tree-sitter = { workspace = true }
-ast-grep-core = "0.42"
+# ast-grep-core is named in spec 012 T003 but deferred from Phase 1
+# because every published version >=0.40 pulls tree-sitter ^0.26.3 via
+# its `links = "tree-sitter"` dep, which conflicts with the three
+# grammar crates named in T004 (tree-sitter-rust 0.24 -> tree-sitter
+# ^0.25; tree-sitter-typescript 0.23 -> tree-sitter ^0.24;
+# tree-sitter-python 0.25 -> tree-sitter ^0.25.8). ast-grep-core is
+# only exercised by Phase 3 T022+ (pattern search via
+# `find_and_read`); the dep + version-alignment decision belongs in
+# that task, not here. Phase 1 scaffold stays clean without it.
+# ast-grep-core = "0.42"
 sha2 = { workspace = true }
 askama = { workspace = true }

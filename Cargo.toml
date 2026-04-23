@@ -1,0 +1,47 @@
+[workspace]
+resolver = "2"
+members = [
+    "rust/crates/sittir-core",
+    "rust/crates/sittir-rust-napi",
+    "rust/crates/sittir-typescript-napi",
+    "rust/crates/sittir-python-napi",
+    "packages/rust/rust-render",
+    "packages/typescript/rust-render",
+    "packages/python/rust-render",
+]
+
+# NOTE on workspace-root location (deviation from spec 012 task T002):
+# T002 asked for `/rust/Cargo.toml` as the workspace root with members
+# resolved via `..` paths. cargo 1.83+ enforces that every workspace
+# member live hierarchically below the workspace root (rejected with
+# "workspace member is not hierarchically below the workspace root"),
+# which invalidates the spec's layout because render crates must live
+# under `packages/{lang}/rust-render/` (Principle III — generated
+# alongside their template source). Minimal fix: promote the workspace
+# manifest one level to the repo root. All spec-driven file locations
+# for individual crates remain unchanged.
+
+[workspace.package]
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.82"
+license = "MIT"
+repository = "https://github.com/refactory-lang/sittir"
+
+# Centralise common dependency versions so core + render + napi stay
+# aligned. Per-crate `Cargo.toml` files pull these via
+# `{ workspace = true }` or override when pinning is required.
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# tree-sitter pinned to 0.25 to accommodate tree-sitter-rust 0.24.2
+# (`tree-sitter = ^0.25`) and tree-sitter-python 0.25.0
+# (`tree-sitter = ^0.25.8`). tree-sitter-typescript 0.23.2 declares
+# `tree-sitter = ^0.24` — its grammar code talks to the tree-sitter
+# runtime via tree-sitter-language 0.1 (semver-stable ABI bridge), so
+# at runtime the 0.25 runtime links the 0.23 grammar crate correctly.
+# Spec 012 T003 said 0.24; bumped here because 0.24 cannot satisfy the
+# newer grammar crates.
+tree-sitter = "0.25"
+sha2 = "0.10"
+askama = "0.14"
