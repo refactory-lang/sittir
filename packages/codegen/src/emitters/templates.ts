@@ -71,7 +71,7 @@ export function emitJinjaTemplates(config: EmitTemplatesConfig): EmittedTemplate
         if (node instanceof AssembledGroup && node.parentKind) continue
         let body: string | null
         try {
-            body = emitBodyForNode(node, nodeMap.rules ?? {}, wordMatcher ?? /\w/)
+            body = emitBodyForNode(node, nodeMap.rules ?? {}, wordMatcher ?? /\w/, nodeMap.externals)
         } catch (err) {
             // Re-throw with grammar + kind context so the emitter caller
             // gets an actionable error message. `{ cause }` preserves
@@ -109,6 +109,7 @@ function emitBodyForNode(
     node: AssembledNode,
     rules: Record<string, Rule>,
     wordMatcher: RegExp,
+    externals: ReadonlySet<string> | undefined,
 ): string | null {
     if (
         node.modelType === 'leaf'
@@ -136,7 +137,7 @@ function emitBodyForNode(
         // the shape but the inlining assumption doesn't.
         return null
     }
-    const entry = node.renderTemplate(rules, wordMatcher)
+    const entry = node.renderTemplate(rules, wordMatcher, externals)
     if (!entry) return null
     const template = entry.template
     if (typeof template !== 'string') {
