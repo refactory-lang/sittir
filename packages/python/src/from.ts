@@ -323,20 +323,19 @@ const _K0: readonly string[] = [];
 const _K1: readonly string[] = ["dotted_name","aliased_import"];
 const _K2: readonly string[] = ["relative_import","dotted_name"];
 const _K3: readonly string[] = ["keyword_identifier"];
-const _K4: readonly string[] = ["elif_clause","else_clause"];
-const _K5: readonly string[] = ["string"];
-const _K6: readonly string[] = ["class_definition","function_definition"];
-const _K7: readonly string[] = ["integer","float"];
-const _K8: readonly string[] = ["tuple_pattern"];
-const _K9: readonly string[] = ["identifier","integer","float","true","false","none"];
-const _K10: readonly string[] = ["await","binary_operator","keyword_identifier","string","concatenated_string","unary_operator","attribute","subscript","call","list","list_comprehension","dictionary","dictionary_comprehension","set","set_comprehension","tuple","parenthesized_expression","generator_expression","list_splat_pattern"];
-const _K11: readonly string[] = ["_not_in","_is_not"];
-const _K12: readonly string[] = ["keyword_identifier","subscript","attribute","list_splat_pattern","tuple_pattern","list_pattern"];
-const _K13: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","primary_expression","conditional_expression","named_expression","as_pattern","slice"];
-const _K14: readonly string[] = ["generator_expression","argument_list"];
-const _K15: readonly string[] = ["list_splat_pattern","dictionary_splat_pattern"];
-const _K16: readonly string[] = ["for_in_clause","if_clause"];
-const _K17: readonly string[] = ["interpolation","string_content"];
+const _K4: readonly string[] = ["string"];
+const _K5: readonly string[] = ["class_definition","function_definition"];
+const _K6: readonly string[] = ["integer","float"];
+const _K7: readonly string[] = ["tuple_pattern"];
+const _K8: readonly string[] = ["identifier","integer","float","true","false","none"];
+const _K9: readonly string[] = ["await","binary_operator","keyword_identifier","string","concatenated_string","unary_operator","attribute","subscript","call","list","list_comprehension","dictionary","dictionary_comprehension","set","set_comprehension","tuple","parenthesized_expression","generator_expression","list_splat_pattern"];
+const _K10: readonly string[] = ["_not_in","_is_not"];
+const _K11: readonly string[] = ["keyword_identifier","subscript","attribute","list_splat_pattern","tuple_pattern","list_pattern"];
+const _K12: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","primary_expression","conditional_expression","named_expression","as_pattern","slice"];
+const _K13: readonly string[] = ["generator_expression","argument_list"];
+const _K14: readonly string[] = ["list_splat_pattern","dictionary_splat_pattern"];
+const _K15: readonly string[] = ["for_in_clause","if_clause"];
+const _K16: readonly string[] = ["interpolation","string_content"];
 
 export function moduleFrom(...input: readonly (NonNullable<T.Module.Config['children']>[number] | T.Module)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'module') {
@@ -384,7 +383,6 @@ export function importFromStatementFrom(input: T.ImportFromStatement.Loose): Ret
   return F.importFromStatement({
     moduleName: _resolveOne(input.moduleName, _K0, _K2),
     wildcardImport: _ne_wildcardImport,
-    name: _resolveMany(input.name, _K0, _K1),
   });
 }
 
@@ -482,7 +480,8 @@ export function ifStatementFrom(input: T.IfStatement.Loose): ReturnType<typeof F
   return F.ifStatement({
     condition: _resolveOne(input.condition, _K0, _super_expression),
     consequence: _resolveOneBranch(input.consequence, "_suite"),
-    alternative: _resolveMany(input.alternative, _K0, _K4),
+    alternative: _resolveManyBranch(input.alternative, "elif_clause"),
+    alternative: _resolveOneBranch(input.alternative, "else_clause"),
   });
 }
 
@@ -662,7 +661,7 @@ export function execStatementFrom(input: T.ExecStatement.Loose): ReturnType<type
   const _ne_inClause = _resolveMany(input.inClause, _K0, _super_expression);
   _assertNonEmpty(_ne_inClause, 'exec_statement.inClause');
   return F.execStatement({
-    code: _resolveOne(input.code, _super_keyword_identifier, _K5),
+    code: _resolveOne(input.code, _super_keyword_identifier, _K4),
     inClause: _ne_inClause,
   });
 }
@@ -715,7 +714,7 @@ export function decoratedDefinitionFrom(input: T.DecoratedDefinition.Loose): Ret
   const _ne_children = _resolveManyBranch(input.children, "decorator");
   _assertNonEmpty(_ne_children, 'decorated_definition.children');
   return F.decoratedDefinition({
-    definition: _resolveOne(input.definition, _K0, _K6),
+    definition: _resolveOne(input.definition, _K0, _K5),
     children: _ne_children,
   });
 }
@@ -738,9 +737,11 @@ export function blockFrom(...input: readonly (NonNullable<T.Block.Config['childr
 
 export function expressionListFrom(input: T.ExpressionList.Loose): ReturnType<typeof F.expressionList> {
   if (isNodeData(input)) return input;
+  const _ne_children = _resolveMany(input.children, _K0, _super_expression);
+  _assertNonEmpty(_ne_children, 'expression_list.children');
   return F.expressionList({
     expression: _resolveOne(input.expression, _K0, _super_expression),
-    children: _resolveMany(input.children, _K0, _super_expression),
+    children: _ne_children,
   });
 }
 
@@ -807,8 +808,8 @@ export function complexPatternFrom(input: T.ComplexPattern.Loose): ReturnType<ty
   if (isNodeData(input)) return input;
   return F.complexPattern({
     real: _resolveBooleanKeyword(input.real),
-    imaginary: _resolveOne(input.imaginary, _K7, _K0),
-    children: _resolveOne(input.children, _K7, _K0),
+    imaginary: _resolveOne(input.imaginary, _K6, _K0),
+    children: _resolveOne(input.children, _K6, _K0),
   });
 }
 
@@ -831,7 +832,7 @@ export function listPatternFrom(...input: readonly (NonNullable<T.ListPattern.Co
 export function defaultParameterFrom(input: T.DefaultParameter.Loose): ReturnType<typeof F.defaultParameter> {
   if (isNodeData(input)) return input;
   return F.defaultParameter({
-    name: _resolveOne(input.name, _super_keyword_identifier, _K8),
+    name: _resolveOne(input.name, _super_keyword_identifier, _K7),
     value: _resolveOne(input.value, _K0, _super_expression),
   });
 }
@@ -890,9 +891,9 @@ export function booleanOperatorFrom(input: T.BooleanOperator.Loose): ReturnType<
 export function binaryOperatorFrom(input: T.BinaryOperator.Loose): ReturnType<typeof F.binaryOperator> {
   if (isNodeData(input)) return input;
   return F.binaryOperator({
-    left: _resolveOne(input.left, _K9, _K10),
+    left: _resolveOne(input.left, _K8, _K9),
     operator: _resolveOne(input.operator, _K0, _K0),
-    right: _resolveOne(input.right, _K9, _K10),
+    right: _resolveOne(input.right, _K8, _K9),
   });
 }
 
@@ -900,16 +901,16 @@ export function unaryOperatorFrom(input: T.UnaryOperator.Loose): ReturnType<type
   if (isNodeData(input)) return input;
   return F.unaryOperator({
     operator: _resolveOne(input.operator, _K0, _K0),
-    argument: _resolveOne(input.argument, _K9, _K10),
+    argument: _resolveOne(input.argument, _K8, _K9),
   });
 }
 
 export function comparisonOperatorFrom(input: T.ComparisonOperator.Loose): ReturnType<typeof F.comparisonOperator> {
   if (isNodeData(input)) return input;
-  const _ne_operators = _resolveMany(input.operators, _K11, _K0);
+  const _ne_operators = _resolveMany(input.operators, _K10, _K0);
   _assertNonEmpty(_ne_operators, 'comparison_operator.operators');
   return F.comparisonOperator({
-    left: _resolveOne(input.left, _K9, _K10),
+    left: _resolveOne(input.left, _K8, _K9),
     operators: _ne_operators,
   });
 }
@@ -964,9 +965,11 @@ export function augmentedAssignmentFrom(input: T.AugmentedAssignment.Loose): Ret
 
 export function patternListFrom(input: T.PatternList.Loose): ReturnType<typeof F.patternList> {
   if (isNodeData(input)) return input;
+  const _ne_children = _resolveMany(input.children, _super_keyword_identifier, _K11);
+  _assertNonEmpty(_ne_children, 'pattern_list.children');
   return F.patternList({
-    pattern: _resolveOne(input.pattern, _super_keyword_identifier, _K12),
-    children: _resolveMany(input.children, _super_keyword_identifier, _K12),
+    pattern: _resolveOne(input.pattern, _super_keyword_identifier, _K11),
+    children: _ne_children,
   });
 }
 
@@ -982,17 +985,17 @@ export function yield_From(input?: NonNullable<T.Yield.Config['children']>[numbe
 export function attributeFrom(input: T.Attribute.Loose): ReturnType<typeof F.attribute> {
   if (isNodeData(input)) return input;
   return F.attribute({
-    object: _resolveOne(input.object, _K9, _K10),
+    object: _resolveOne(input.object, _K8, _K9),
     attribute: _resolveOneLeaf(input.attribute, "identifier"),
   });
 }
 
 export function subscriptFrom(input: T.Subscript.Loose): ReturnType<typeof F.subscript> {
   if (isNodeData(input)) return input;
-  const _ne_subscript = _resolveMany(input.subscript, _K0, _K13);
+  const _ne_subscript = _resolveMany(input.subscript, _K0, _K12);
   _assertNonEmpty(_ne_subscript, 'subscript.subscript');
   return F.subscript({
-    value: _resolveOne(input.value, _K9, _K10),
+    value: _resolveOne(input.value, _K8, _K9),
     subscript: _ne_subscript,
   });
 }
@@ -1009,8 +1012,8 @@ export function sliceFrom(input?: T.Slice.Loose): ReturnType<typeof F.slice> {
 export function callFrom(input: T.Call.Loose): ReturnType<typeof F.call> {
   if (isNodeData(input)) return input;
   return F.call({
-    function: _resolveOne(input.function, _K9, _K10),
-    arguments: _resolveOne(input.arguments, _K0, _K14),
+    function: _resolveOne(input.function, _K8, _K9),
+    arguments: _resolveOne(input.arguments, _K0, _K13),
   });
 }
 
@@ -1018,7 +1021,7 @@ export function typedParameterFrom(input: T.TypedParameter.Loose): ReturnType<ty
   if (isNodeData(input)) return input;
   return F.typedParameter({
     type: _resolveOneBranch(input.type, "type"),
-    children: _resolveOne(input.children, _super_keyword_identifier, _K15),
+    children: _resolveOne(input.children, _super_keyword_identifier, _K14),
   });
 }
 
@@ -1034,6 +1037,7 @@ export function typeFrom(input?: NonNullable<T.Type.Config['children']>[number] 
 export function splatTypeFrom(input: T.SplatType.Loose): ReturnType<typeof F.splatType> {
   if (isNodeData(input)) return input;
   return F.splatType({
+    identifier: _resolveOne(input.identifier, _K0, _K0),
     identifier: _resolveOneLeaf(input.identifier, "identifier"),
   });
 }
@@ -1123,7 +1127,7 @@ export function listComprehensionFrom(input: T.ListComprehension.Loose): ReturnT
   return F.listComprehension({
     body: _resolveOne(input.body, _K0, _super_expression),
     forInClause: _resolveOneBranch(input.forInClause, "for_in_clause"),
-    children: _resolveMany(input.children, _K0, _K16),
+    children: _resolveMany(input.children, _K0, _K15),
   });
 }
 
@@ -1132,7 +1136,7 @@ export function dictionaryComprehensionFrom(input: T.DictionaryComprehension.Loo
   return F.dictionaryComprehension({
     body: _resolveOneBranch(input.body, "pair"),
     forInClause: _resolveOneBranch(input.forInClause, "for_in_clause"),
-    children: _resolveMany(input.children, _K0, _K16),
+    children: _resolveMany(input.children, _K0, _K15),
   });
 }
 
@@ -1141,7 +1145,7 @@ export function setComprehensionFrom(input: T.SetComprehension.Loose): ReturnTyp
   return F.setComprehension({
     body: _resolveOne(input.body, _K0, _super_expression),
     forInClause: _resolveOneBranch(input.forInClause, "for_in_clause"),
-    children: _resolveMany(input.children, _K0, _K16),
+    children: _resolveMany(input.children, _K0, _K15),
   });
 }
 
@@ -1150,7 +1154,7 @@ export function generatorExpressionFrom(input: T.GeneratorExpression.Loose): Ret
   return F.generatorExpression({
     body: _resolveOne(input.body, _K0, _super_expression),
     forInClause: _resolveOneBranch(input.forInClause, "for_in_clause"),
-    children: _resolveMany(input.children, _K0, _K16),
+    children: _resolveMany(input.children, _K0, _K15),
   });
 }
 
@@ -1204,7 +1208,7 @@ export function stringFrom(input: T.String.Loose): ReturnType<typeof F.string> {
   if (isNodeData(input)) return input;
   return F.string({
     stringStart: _resolveOneLeaf(input.stringStart, "string_start"),
-    content: _resolveMany(input.content, _K0, _K17),
+    content: _resolveMany(input.content, _K0, _K16),
     stringEnd: _resolveOneLeaf(input.stringEnd, "string_end"),
   });
 }
@@ -1277,7 +1281,7 @@ export function noneFrom(input?: T.None) {
 export function await_From(input: T.Await.Loose): ReturnType<typeof F.await_> {
   if (isNodeData(input)) return input;
   return F.await_({
-    primaryExpression: _resolveOne(input.primaryExpression, _K9, _K10),
+    primaryExpression: _resolveOne(input.primaryExpression, _K8, _K9),
   });
 }
 

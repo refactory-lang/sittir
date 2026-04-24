@@ -441,19 +441,12 @@ export function innerAttributeItem(config: T.InnerAttributeItem.Config) {
 }
 
 export function attribute(config: T.Attribute.Config) {
-  const fields = {
-    value: config.value,
-    arguments: config.arguments,
-  };
   const children = config.children ?? [];
   return {
     $type: 'attribute' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
     $children: children,
-    value(value?: T.Expression | undefined) { return _fs(config, attribute, 'value', value, config?.value); },
-    arguments(value?: T.DelimTokenTree | undefined) { return _fs(config, attribute, 'arguments', value, config?.arguments); },
     child(value?: T.Path) {
       if (value === undefined) return children[0];
       return attribute({ ...config, children: [value] });
@@ -1062,25 +1055,15 @@ export function functionSignatureItem(config: T.FunctionSignatureItem.Config) {
 }
 
 export function functionModifiers(config: T.FunctionModifiers.Config) {
-  const fields = {
-    async: config.async ? ["async" as const] : undefined,
-    default: config.default ? ["default" as const] : undefined,
-    const: config.const ? ["const" as const] : undefined,
-    unsafe: config.unsafe ? ["unsafe" as const] : undefined,
-  };
   const children = config.children ?? [];
   return {
     $type: 'function_modifiers' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
     $children: children,
-    async(...values: "async"[]) { return _fsm(config, functionModifiers, 'async', values, config?.async); },
-    default(...values: "default"[]) { return _fsm(config, functionModifiers, 'default', values, config?.default); },
-    const(...values: "const"[]) { return _fsm(config, functionModifiers, 'const', values, config?.const); },
-    unsafe(...values: "unsafe"[]) { return _fsm(config, functionModifiers, 'unsafe', values, config?.unsafe); },
     children(...items: T.ExternModifier[]) {
       if (items.length === 0) return children;
+      _assertNonEmpty(items, 'function_modifiers.children');
       return functionModifiers({ ...config, children: items });
     },
     render(this: AnyNodeData): string { return render(this); },
@@ -1272,6 +1255,7 @@ export function associatedType(config: T.AssociatedType.Config) {
 }
 
 export function traitBounds(...children: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]) {
+  _assertNonEmpty(children, 'trait_bounds.children');
   return {
     $type: 'trait_bounds' as const,
     $source: 'factory' as const,
@@ -1324,6 +1308,7 @@ export function removedTraitBound(child: T._Type) {
 }
 
 export function typeParameters(...children: (T.AttributeItem | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter)[]) {
+  _assertNonEmpty(children, 'type_parameters.children');
   return {
     $type: 'type_parameters' as const,
     $source: 'factory' as const,
@@ -1684,8 +1669,8 @@ export function visibilityModifierUFormPub(config?: Omit<ConfigOf<T.VisibilityMo
   };
 }
 
-export function bracketedType(child?: (T._Type | T.QualifiedType)) {
-  const children = child != null ? [child] : [];
+export function bracketedType(child: (T._Type | T.QualifiedType)) {
+  const children = [child];
   return {
     $type: 'bracketed_type' as const,
     $source: 'factory' as const,
@@ -1937,6 +1922,7 @@ export function useBounds(...children: (T.Lifetime | T.TypeIdentifier)[]) {
 }
 
 export function typeArguments(...children: (T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TraitBounds)[]) {
+  _assertNonEmpty(children, 'type_arguments.children');
   return {
     $type: 'type_arguments' as const,
     $source: 'factory' as const,
@@ -2693,6 +2679,8 @@ export function tupleExpression(config: T.TupleExpression.Config) {
   const fields = {
     attributes: config.attributes,
     elements: config.elements,
+    elements: config.elements,
+    elements: config.elements,
   };
   return {
     $type: 'tuple_expression' as const,
@@ -2700,7 +2688,9 @@ export function tupleExpression(config: T.TupleExpression.Config) {
     $named: true as const,
     $fields: fields,
     attributes(...values: T.AttributeItem[]) { return _fsm(config, tupleExpression, 'attributes', values, config?.attributes); },
+    elements(value?: T.Expression) { return _fs(config, tupleExpression, 'elements', value, config?.elements); },
     elements(...values: T.Expression[]) { return _fsm(config, tupleExpression, 'elements', values, config?.elements); },
+    elements(value?: T.Expression | undefined) { return _fs(config, tupleExpression, 'elements', value, config?.elements); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2867,8 +2857,8 @@ export function letCondition(config: T.LetCondition.Config) {
   };
 }
 
-export function letChain(child?: (T.LetChain | T.LetCondition | T.Expression)) {
-  const children = child != null ? [child] : [];
+export function letChain(child: (T.LetChain | T.LetCondition | T.Expression)) {
+  const children = [child];
   return {
     $type: '_let_chain' as const,
     $source: 'factory' as const,
@@ -2883,8 +2873,8 @@ export function letChain(child?: (T.LetChain | T.LetCondition | T.Expression)) {
   };
 }
 
-export function elseClause(child?: (T.Block | T.IfExpression)) {
-  const children = child != null ? [child] : [];
+export function elseClause(child: (T.Block | T.IfExpression)) {
+  const children = [child];
   return {
     $type: 'else_clause' as const,
     $source: 'factory' as const,
@@ -3992,8 +3982,8 @@ export function booleanLiteral(text: 'true' | 'false') {
   };
 }
 
-export function comment(child?: (T.LineComment | T.BlockComment)) {
-  const children = child != null ? [child] : [];
+export function comment(child: (T.LineComment | T.BlockComment)) {
+  const children = [child];
   return {
     $type: 'comment' as const,
     $source: 'factory' as const,
@@ -4045,8 +4035,6 @@ export function lineCommentUFormDoc(config: Omit<ConfigOf<T.LineCommentUFormDoc>
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
-      outer: config.outer ? "/" as const : undefined,
-      inner: config.inner ? "!" as const : undefined,
       doc: config.doc,
     },
   };
@@ -4057,17 +4045,9 @@ export function lineCommentUFormDoc(config: Omit<ConfigOf<T.LineCommentUFormDoc>
     $named: true as const,
     $variant: 'doc' as const,
     $children: children,
-    outer(value?: "/" | undefined) {
-      if (value === undefined) return inner.$fields.outer;
-      return lineCommentUFormDoc({ inner: inner.$fields.inner, doc: inner.$fields.doc, outer: value });
-    },
-    inner(value?: "!" | undefined) {
-      if (value === undefined) return inner.$fields.inner;
-      return lineCommentUFormDoc({ outer: inner.$fields.outer, doc: inner.$fields.doc, inner: value });
-    },
     doc(value?: T.DocComment) {
       if (value === undefined) return inner.$fields.doc;
-      return lineCommentUFormDoc({ outer: inner.$fields.outer, inner: inner.$fields.inner, doc: value });
+      return lineCommentUFormDoc({ doc: value });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -4100,8 +4080,6 @@ export function lineCommentUFormContent(config: Omit<ConfigOf<T.LineCommentUForm
 
 export function blockComment(config?: T.BlockComment.Config) {
   const fields = {
-    outer: config?.outer,
-    inner: config?.inner,
     doc: config?.doc,
   };
   return {
@@ -4109,8 +4087,6 @@ export function blockComment(config?: T.BlockComment.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    outer(value?: T.OuterDocCommentMarker | undefined) { return _fs(config, blockComment, 'outer', value, config?.outer); },
-    inner(value?: T.InnerDocCommentMarker | undefined) { return _fs(config, blockComment, 'inner', value, config?.inner); },
     doc(value?: T.DocComment | undefined) { return _fs(config, blockComment, 'doc', value, config?.doc); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -4282,32 +4258,6 @@ export function docComment(text: string) {
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.DocCommentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
-export function outerDocCommentMarker(text: string) {
-  if (text.length === 0) throw new Error(`_outer_doc_comment_marker: text must be non-empty`);
-  return {
-    $type: '_outer_doc_comment_marker' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.OuterDocCommentMarkerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
-export function innerDocCommentMarker(text: string) {
-  if (text.length === 0) throw new Error(`_inner_doc_comment_marker: text must be non-empty`);
-  return {
-    $type: '_inner_doc_comment_marker' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.InnerDocCommentMarkerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
@@ -4979,8 +4929,6 @@ export type FluentKindMap = {
   "_primitive_type": T.PrimitiveType;
   "_string_content": FluentNode<"_string_content", T._StringContent.Config>;
   "_doc_comment": T.DocComment;
-  "_outer_doc_comment_marker": T.OuterDocCommentMarker;
-  "_inner_doc_comment_marker": T.InnerDocCommentMarker;
   "_closure_expression_expr": FluentNode<"_closure_expression_expr", T.ClosureExpressionExpr.Config>;
   "_field_pattern_shorthand": FluentNode<"_field_pattern_shorthand", T.FieldPatternShorthand.Config>;
   "_function_type_trait_form": FluentNode<"_function_type_trait_form", T.FunctionTypeTraitForm.Config>;
@@ -5177,8 +5125,6 @@ export const _factoryMap = {
   "_primitive_type": primitiveType,
   "_string_content": _stringContent,
   "_doc_comment": docComment,
-  "_outer_doc_comment_marker": outerDocCommentMarker,
-  "_inner_doc_comment_marker": innerDocCommentMarker,
   "_closure_expression_expr": closureExpressionExpr,
   "_field_pattern_shorthand": fieldPatternShorthand,
   "_function_type_trait_form": functionTypeTraitForm,

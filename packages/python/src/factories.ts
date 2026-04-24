@@ -146,7 +146,6 @@ export function importFromStatement(config: T.ImportFromStatement.Config) {
   const fields = {
     module_name: config.moduleName,
     wildcard_import: config.wildcardImport,
-    name: config.name,
   };
   return {
     $type: 'import_from_statement' as const,
@@ -155,7 +154,6 @@ export function importFromStatement(config: T.ImportFromStatement.Config) {
     $fields: fields,
     moduleName(value?: T.RelativeImport | T.DottedName) { return _fs(config, importFromStatement, 'moduleName', value, config?.moduleName); },
     wildcardImport(...values: NonEmptyArray<T.WildcardImport | T.DottedName | T.AliasedImport>) { return _fsm(config, importFromStatement, 'wildcardImport', values, config?.wildcardImport); },
-    name(...values: (T.DottedName | T.AliasedImport)[]) { return _fsm(config, importFromStatement, 'name', values, config?.name); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -383,6 +381,7 @@ export function ifStatement(config: T.IfStatement.Config) {
     condition: config.condition,
     consequence: config.consequence,
     alternative: config.alternative,
+    alternative: config.alternative,
   };
   return {
     $type: 'if_statement' as const,
@@ -391,7 +390,8 @@ export function ifStatement(config: T.IfStatement.Config) {
     $fields: fields,
     condition(value?: T.Expression) { return _fs(config, ifStatement, 'condition', value, config?.condition); },
     consequence(value?: T.Suite) { return _fs(config, ifStatement, 'consequence', value, config?.consequence); },
-    alternative(...values: (T.ElifClause | T.ElseClause)[]) { return _fsm(config, ifStatement, 'alternative', values, config?.alternative); },
+    alternative(...values: T.ElifClause[]) { return _fsm(config, ifStatement, 'alternative', values, config?.alternative); },
+    alternative(value?: T.ElseClause | undefined) { return _fs(config, ifStatement, 'alternative', value, config?.alternative); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -462,8 +462,8 @@ export function matchStatement(config: T.MatchStatement.Config) {
   };
 }
 
-export function matchBlock(child?: T.MatchBlockBlock) {
-  const children = child != null ? [child] : [];
+export function matchBlock(child: T.MatchBlockBlock) {
+  const children = [child];
   return {
     $type: '_match_block' as const,
     $source: 'factory' as const,
@@ -926,8 +926,8 @@ export function typeParameter(...children: T.Type[]) {
   };
 }
 
-export function parenthesizedListSplat(child?: (T.ParenthesizedListSplat | T.ListSplat)) {
-  const children = child != null ? [child] : [];
+export function parenthesizedListSplat(child: (T.ParenthesizedListSplat | T.ListSplat)) {
+  const children = [child];
   return {
     $type: 'parenthesized_list_splat' as const,
     $source: 'factory' as const,
@@ -1004,7 +1004,7 @@ export function decorator(config: T.Decorator.Config) {
   };
 }
 
-export function suite(child: T.SimpleStatements) {
+export function suite(child: (T.SimpleStatements | T.Block | T.Newline)) {
   const children = [child];
   return {
     $type: '_suite' as const,
@@ -1049,6 +1049,7 @@ export function expressionList(config: T.ExpressionList.Config) {
     expression(value?: T.Expression) { return _fs(config, expressionList, 'expression', value, config?.expression); },
     children(...items: T.Expression[]) {
       if (items.length === 0) return children;
+      _assertNonEmpty(items, 'expression_list.children');
       return expressionList({ ...config, children: items });
     },
     render(this: AnyNodeData): string { return render(this); },
@@ -1076,8 +1077,8 @@ export function dottedName(...children: T.Identifier[]) {
   };
 }
 
-export function casePattern(child?: (T._AsPattern | T.KeywordPattern | T.SimplePattern)) {
-  const children = child != null ? [child] : [];
+export function casePattern(child: (T._AsPattern | T.KeywordPattern | T.SimplePattern)) {
+  const children = [child];
   return {
     $type: 'case_pattern' as const,
     $source: 'factory' as const,
@@ -1092,8 +1093,8 @@ export function casePattern(child?: (T._AsPattern | T.KeywordPattern | T.SimpleP
   };
 }
 
-export function simplePattern(child?: (T.ClassPattern | T.SplatPattern | T.UnionPattern | T._ListPattern | T._TuplePattern | T.DictPattern | T.String | T.ConcatenatedString | T.True | T.False | T.None | T.Integer | T.Float | T.ComplexPattern | T.DottedName)) {
-  const children = child != null ? [child] : [];
+export function simplePattern(child: (T.ClassPattern | T.SplatPattern | T.UnionPattern | T._ListPattern | T._TuplePattern | T.DictPattern | T.String | T.ConcatenatedString | T.True | T.False | T.None | T.Integer | T.Float | T.ComplexPattern | T.DottedName)) {
+  const children = [child];
   return {
     $type: '_simple_pattern' as const,
     $source: 'factory' as const,
@@ -1341,8 +1342,8 @@ export function typedDefaultParameter(config: T.TypedDefaultParameter.Config) {
   };
 }
 
-export function listSplatPattern(child?: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute)) {
-  const children = child != null ? [child] : [];
+export function listSplatPattern(child: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute)) {
+  const children = [child];
   return {
     $type: 'list_splat_pattern' as const,
     $source: 'factory' as const,
@@ -1357,8 +1358,8 @@ export function listSplatPattern(child?: (T.Identifier | T.KeywordIdentifier | T
   };
 }
 
-export function dictionarySplatPattern(child?: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute)) {
-  const children = child != null ? [child] : [];
+export function dictionarySplatPattern(child: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute)) {
+  const children = [child];
   return {
     $type: 'dictionary_splat_pattern' as const,
     $source: 'factory' as const,
@@ -1731,6 +1732,7 @@ export function patternList(config: T.PatternList.Config) {
     pattern(value?: T.Pattern) { return _fs(config, patternList, 'pattern', value, config?.pattern); },
     children(...items: T.Pattern[]) {
       if (items.length === 0) return children;
+      _assertNonEmpty(items, 'pattern_list.children');
       return patternList({ ...config, children: items });
     },
     render(this: AnyNodeData): string { return render(this); },
@@ -1742,8 +1744,8 @@ export function patternList(config: T.PatternList.Config) {
   };
 }
 
-export function yield_(child?: (T.Expression | T.Expressions)) {
-  const children = child != null ? [child] : [];
+export function yield_(child: (T.Expression | T.Expressions)) {
+  const children = [child];
   return {
     $type: 'yield' as const,
     $source: 'factory' as const,
@@ -1869,8 +1871,8 @@ export function typedParameter(config: T.TypedParameter.Config) {
   };
 }
 
-export function type(child?: (T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType)) {
-  const children = child != null ? [child] : [];
+export function type(child: (T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType)) {
+  const children = [child];
   return {
     $type: 'type' as const,
     $source: 'factory' as const,
@@ -1888,13 +1890,15 @@ export function type(child?: (T.Expression | T.SplatType | T.GenericType | T.Uni
 export function splatType(config: T.SplatType.Config) {
   const fields = {
     identifier: config.identifier,
+    identifier: config.identifier,
   };
   return {
     $type: 'splat_type' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    identifier(value?: "*" | "**" | T.Identifier) { return _fs(config, splatType, 'identifier', value, config?.identifier); },
+    identifier(value?: "*" | "**") { return _fs(config, splatType, 'identifier', value, config?.identifier); },
+    identifier(value?: T.Identifier) { return _fs(config, splatType, 'identifier', value, config?.identifier); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2010,6 +2014,7 @@ export function keywordArgument(config: T.KeywordArgument.Config) {
 }
 
 export function list(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
+  _assertNonEmpty(children, 'list.children');
   return {
     $type: 'list' as const,
     $source: 'factory' as const,
@@ -2025,6 +2030,7 @@ export function list(...children: (T.Expression | T.Yield | T.ListSplat | T.Pare
 }
 
 export function set(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
+  _assertNonEmpty(children, 'set.children');
   return {
     $type: 'set' as const,
     $source: 'factory' as const,
@@ -2040,6 +2046,7 @@ export function set(...children: (T.Expression | T.Yield | T.ListSplat | T.Paren
 }
 
 export function tuple(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
+  _assertNonEmpty(children, 'tuple.children');
   return {
     $type: 'tuple' as const,
     $source: 'factory' as const,
@@ -2198,8 +2205,8 @@ export function generatorExpression(config: T.GeneratorExpression.Config) {
   };
 }
 
-export function parenthesizedExpression(child?: (T.Expression | T.Yield)) {
-  const children = child != null ? [child] : [];
+export function parenthesizedExpression(child: (T.Expression | T.Yield)) {
+  const children = [child];
   return {
     $type: 'parenthesized_expression' as const,
     $source: 'factory' as const,
@@ -2329,6 +2336,7 @@ export function string(config: T.String.Config) {
 }
 
 export function stringContent(...children: (T.EscapeInterpolation | T.EscapeSequence | T.NotEscapeSequence | T._StringContent)[]) {
+  _assertNonEmpty(children, 'string_content.children');
   return {
     $type: 'string_content' as const,
     $source: 'factory' as const,
@@ -2540,6 +2548,19 @@ export function withClauseParen(...children: T.WithItem[]) {
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T.WithClauseParenTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function newline(text: string) {
+  if (text.length === 0) throw new Error(`_newline: text must be non-empty`);
+  return {
+    $type: '_newline' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.NewlineTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
@@ -2772,6 +2793,7 @@ export type FluentKindMap = {
   "comment": T.Comment;
   "line_continuation": T.LineContinuation;
   "_with_clause_paren": FluentNode<"_with_clause_paren", T.WithClauseParen.Config>;
+  "_newline": T.Newline;
   "string_start": T.StringStart;
   "_string_content": T._StringContent;
   "escape_interpolation": T.EscapeInterpolation;
@@ -2907,6 +2929,7 @@ export const _factoryMap = {
   "comment": comment,
   "line_continuation": lineContinuation,
   "_with_clause_paren": withClauseParen,
+  "_newline": newline,
   "string_start": stringStart,
   "_string_content": _stringContent,
   "escape_interpolation": escapeInterpolation,

@@ -161,8 +161,6 @@
     "_primitive_type": "text",
     "_string_content": "children",
     "_doc_comment": "text",
-    "_outer_doc_comment_marker": "text",
-    "_inner_doc_comment_marker": "text",
     "string_content": "text",
     "raw_string_literal_content": "text",
     "float_literal": "text",
@@ -206,9 +204,6 @@
     "raw": "text"
   },
   "fieldAliasMap": {
-    "attribute.arguments": {
-      "token_tree": "delim_token_tree"
-    },
     "where_predicate.left": {
       "primitive_type": "_primitive_type"
     },
@@ -233,23 +228,11 @@
     "raw_string_literal.string_content": {
       "string_content": "_string_content"
     },
-    "block_comment.outer": {
-      "outer_doc_comment_marker": "_outer_doc_comment_marker"
-    },
-    "block_comment.inner": {
-      "inner_doc_comment_marker": "_inner_doc_comment_marker"
-    },
     "block_comment.doc": {
       "doc_comment": "_doc_comment"
     },
     "_field_pattern_shorthand.name": {
       "shorthand_field_identifier": "identifier"
-    },
-    "_line_comment_doc.outer": {
-      "outer_doc_comment_marker": "_outer_line_doc_comment_marker"
-    },
-    "_line_comment_doc.inner": {
-      "inner_doc_comment_marker": "_inner_line_doc_comment_marker"
     },
     "_line_comment_doc.doc": {
       "doc_comment": "_doc_comment"
@@ -510,6 +493,8 @@
     ],
     "tuple_expression": [
       "attributes",
+      "elements",
+      "elements",
       "elements"
     ],
     "struct_expression": [
@@ -604,8 +589,6 @@
       "raw_string_literal_end"
     ],
     "block_comment": [
-      "outer",
-      "inner",
       "doc"
     ]
   },

@@ -1425,13 +1425,13 @@
         {
           "name": "let_chain",
           "propertyName": "letChain",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_let_chain",
               "unresolved": true
             }
@@ -1440,13 +1440,13 @@
         {
           "name": "let_condition",
           "propertyName": "letCondition",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "let_condition",
               "unresolved": true
             }
@@ -1455,13 +1455,13 @@
         {
           "name": "expression",
           "propertyName": "expression",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_expression",
               "unresolved": true
             }
@@ -1486,58 +1486,6 @@
       "hidden": true,
       "name": "_line_comment_doc",
       "fields": [
-        {
-          "name": "outer",
-          "propertyName": "outer",
-          "paramName": "outer",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_outer_line_doc_comment_marker",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_outer_line_doc_comment_marker"
-            ]
-          },
-          "aliasSources": {
-            "outer_doc_comment_marker": "_outer_line_doc_comment_marker"
-          }
-        },
-        {
-          "name": "inner",
-          "propertyName": "inner",
-          "paramName": "inner",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_inner_line_doc_comment_marker",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_inner_line_doc_comment_marker"
-            ]
-          },
-          "aliasSources": {
-            "inner_doc_comment_marker": "_inner_line_doc_comment_marker"
-          }
-        },
         {
           "name": "doc",
           "propertyName": "doc",
@@ -1842,13 +1790,13 @@
         {
           "name": "literal",
           "propertyName": "literal",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_literal",
               "unresolved": true
             }
@@ -1857,13 +1805,13 @@
         {
           "name": "identifier",
           "propertyName": "identifier",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
             }
@@ -1872,13 +1820,13 @@
         {
           "name": "mutable_specifier",
           "propertyName": "mutableSpecifier",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "mutable_specifier",
               "unresolved": true
             }
@@ -1887,13 +1835,13 @@
         {
           "name": "self",
           "propertyName": "self",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "self",
               "unresolved": true
             }
@@ -1902,13 +1850,13 @@
         {
           "name": "super",
           "propertyName": "super",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "super",
               "unresolved": true
             }
@@ -1917,13 +1865,13 @@
         {
           "name": "crate",
           "propertyName": "crate",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "crate",
               "unresolved": true
             }
@@ -1932,13 +1880,13 @@
         {
           "name": "primitive_type",
           "propertyName": "primitiveType",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_primitive_type",
               "unresolved": true
             }
@@ -3737,57 +3685,7 @@
       "factoryName": "attribute",
       "irKey": "attribute",
       "hidden": false,
-      "fields": [
-        {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_expression",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_expression"
-            ]
-          }
-        },
-        {
-          "name": "arguments",
-          "propertyName": "arguments",
-          "paramName": "arguments_",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "delim_token_tree",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "delim_token_tree"
-            ]
-          },
-          "aliasSources": {
-            "token_tree": "delim_token_tree"
-          }
-        }
-      ],
+      "fields": [],
       "children": [
         {
           "name": "path",
@@ -4136,58 +4034,6 @@
       "hidden": false,
       "fields": [
         {
-          "name": "outer",
-          "propertyName": "outer",
-          "paramName": "outer",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_outer_doc_comment_marker",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_outer_doc_comment_marker"
-            ]
-          },
-          "aliasSources": {
-            "outer_doc_comment_marker": "_outer_doc_comment_marker"
-          }
-        },
-        {
-          "name": "inner",
-          "propertyName": "inner",
-          "paramName": "inner",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_inner_doc_comment_marker",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_inner_doc_comment_marker"
-            ]
-          },
-          "aliasSources": {
-            "inner_doc_comment_marker": "_inner_doc_comment_marker"
-          }
-        },
-        {
           "name": "doc",
           "propertyName": "doc",
           "paramName": "doc",
@@ -4324,13 +4170,13 @@
         {
           "name": "type",
           "propertyName": "type",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_type",
               "unresolved": true
             }
@@ -4339,13 +4185,13 @@
         {
           "name": "qualified_type",
           "propertyName": "qualifiedType",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "qualified_type",
               "unresolved": true
             }
@@ -5090,13 +4936,13 @@
         {
           "name": "line_comment",
           "propertyName": "lineComment",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "line_comment",
               "unresolved": true
             }
@@ -5105,13 +4951,13 @@
         {
           "name": "block_comment",
           "propertyName": "blockComment",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "block_comment",
               "unresolved": true
             }
@@ -5858,13 +5704,13 @@
         {
           "name": "block",
           "propertyName": "block",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "block",
               "unresolved": true
             }
@@ -5873,13 +5719,13 @@
         {
           "name": "if_expression",
           "propertyName": "ifExpression",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "if_expression",
               "unresolved": true
             }
@@ -7766,111 +7612,18 @@
       "factoryName": "functionModifiers",
       "irKey": "functionModifiers",
       "hidden": false,
-      "fields": [
-        {
-          "name": "async",
-          "propertyName": "async",
-          "paramName": "async",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_kw_async",
-              "unresolved": true
-            }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_kw_async"
-            ]
-          }
-        },
-        {
-          "name": "default",
-          "propertyName": "default",
-          "paramName": "default_",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_kw_default",
-              "unresolved": true
-            }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_kw_default"
-            ]
-          }
-        },
-        {
-          "name": "const",
-          "propertyName": "const",
-          "paramName": "const_",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_kw_const",
-              "unresolved": true
-            }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_kw_const"
-            ]
-          }
-        },
-        {
-          "name": "unsafe",
-          "propertyName": "unsafe",
-          "paramName": "unsafe",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_kw_unsafe",
-              "unresolved": true
-            }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_kw_unsafe"
-            ]
-          }
-        }
-      ],
+      "fields": [],
       "children": [
         {
           "name": "extern_modifier",
           "propertyName": "externModifier",
           "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "extern_modifier",
               "unresolved": true
             }
@@ -8139,13 +7892,13 @@
         {
           "name": "function_type_trait_form",
           "propertyName": "functionTypeTraitForm",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_function_type_trait_form",
               "unresolved": true
             }
@@ -8154,13 +7907,13 @@
         {
           "name": "function_type_fn_form",
           "propertyName": "functionTypeFnForm",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_function_type_fn_form",
               "unresolved": true
             }
@@ -8342,13 +8095,13 @@
         {
           "name": "identifier",
           "propertyName": "identifier",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
             }
@@ -8357,13 +8110,13 @@
         {
           "name": "scoped_identifier",
           "propertyName": "scopedIdentifier",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "scoped_identifier",
               "unresolved": true
             }
@@ -12763,13 +12516,13 @@
         {
           "name": "reference_expression_raw_const",
           "propertyName": "referenceExpressionRawConst",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_reference_expression_raw_const",
               "unresolved": true
             }
@@ -12778,13 +12531,13 @@
         {
           "name": "reference_expression_raw_mut",
           "propertyName": "referenceExpressionRawMut",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_reference_expression_raw_mut",
               "unresolved": true
             }
@@ -15016,11 +14769,11 @@
           "propertyName": "type",
           "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "_type",
               "unresolved": true
             }
@@ -15031,11 +14784,11 @@
           "propertyName": "lifetime",
           "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "lifetime",
               "unresolved": true
             }
@@ -15046,11 +14799,11 @@
           "propertyName": "higherRankedTraitBound",
           "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "higher_ranked_trait_bound",
               "unresolved": true
             }
@@ -15344,8 +15097,8 @@
           "name": "elements",
           "propertyName": "elements",
           "paramName": "elements",
-          "required": false,
-          "multiple": true,
+          "required": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
@@ -15353,13 +15106,47 @@
               "multiplicity": "single",
               "name": "_expression",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_expression"
+            ]
+          }
+        },
+        {
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_expression",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_expression"
+            ]
+          }
+        },
+        {
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -15535,11 +15322,11 @@
           "propertyName": "type",
           "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "_type",
               "unresolved": true
             }
@@ -15550,11 +15337,11 @@
           "propertyName": "typeBinding",
           "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "type_binding",
               "unresolved": true
             }
@@ -15565,11 +15352,11 @@
           "propertyName": "lifetime",
           "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "lifetime",
               "unresolved": true
             }
@@ -15580,11 +15367,11 @@
           "propertyName": "literal",
           "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "_literal",
               "unresolved": true
             }
@@ -15595,11 +15382,11 @@
           "propertyName": "block",
           "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "block",
               "unresolved": true
             }
@@ -16017,11 +15804,11 @@
           "propertyName": "metavariable",
           "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "metavariable",
               "unresolved": true
             }
@@ -16032,11 +15819,11 @@
           "propertyName": "typeParameter",
           "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "type_parameter",
               "unresolved": true
             }
@@ -16047,11 +15834,11 @@
           "propertyName": "lifetimeParameter",
           "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "lifetime_parameter",
               "unresolved": true
             }
@@ -16062,11 +15849,11 @@
           "propertyName": "constParameter",
           "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "const_parameter",
               "unresolved": true
             }

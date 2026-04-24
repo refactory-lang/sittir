@@ -659,7 +659,6 @@ export interface ImportStatement {
   readonly $fields: {
     readonly import_clause?: "type" | "typeof";
     readonly from_clause: ImportClause | "from" | String | ImportRequireClause;
-    readonly source?: String;
     readonly import_attribute?: ImportAttribute;
     readonly semicolon: Semicolon;
   };
@@ -719,7 +718,8 @@ export type ImportSpecifier = ImportSpecifierUFormName | ImportSpecifierUFormAs;
 export interface ImportAttribute {
   readonly $type: 'import_attribute';
   readonly $fields: {
-    readonly object: "with" | "assert" | Object;
+    readonly object: "with" | "assert";
+    readonly object: Object;
   };
 }
 
@@ -1051,7 +1051,7 @@ export interface JsxAttribute {
 
 export interface JsxString {
   readonly $type: 'jsx_string';
-  readonly $children: readonly (UnescapedDoubleJsxStringFragment | HtmlCharacterReference)[];
+  readonly $children: readonly (UnescapedDoubleJsxStringFragment | UnescapedSingleJsxStringFragment | HtmlCharacterReference)[];
 }
 
 export interface Class {
@@ -1209,7 +1209,6 @@ export interface MemberExpression {
   readonly $type: 'member_expression';
   readonly $fields: {
     readonly object: Expression | PrimaryExpression | Import;
-    readonly optional_chain?: BooleanKeyword<OptionalChain>;
     readonly property: PrivatePropertyIdentifier | Identifier;
   };
 }
@@ -1225,7 +1224,7 @@ export interface SubscriptExpression {
 
 export interface LhsExpression {
   readonly $type: 'lhs_expression';
-  readonly $children: readonly [MemberExpression | SubscriptExpression | _Identifier | DestructuringPattern | NonNullExpression];
+  readonly $children: readonly [MemberExpression | SubscriptExpression | _Identifier | ReservedIdentifier | DestructuringPattern | NonNullExpression];
 }
 
 export interface AssignmentExpression {
@@ -1762,7 +1761,8 @@ export interface Asserts {
 export interface AssertsAnnotation {
   readonly $type: 'asserts_annotation';
   readonly $fields: {
-    readonly asserts: ":" | Asserts;
+    readonly asserts: AutoStamp<":">;
+    readonly asserts: Asserts;
   };
 }
 
@@ -1853,7 +1853,8 @@ export interface TypePredicate {
 export interface TypePredicateAnnotation {
   readonly $type: 'type_predicate_annotation';
   readonly $fields: {
-    readonly type_predicate: ":" | TypePredicate;
+    readonly type_predicate: AutoStamp<":">;
+    readonly type_predicate: TypePredicate;
   };
 }
 
@@ -2098,16 +2099,12 @@ export interface ExportStatementDefaultDeclArm {
   readonly $type: 'export_statement_default_decl_arm';
   readonly $fields: {
     readonly decorator: readonly (Decorator)[];
-    readonly declaration?: Declaration;
   };
   readonly $children: readonly [ExportStatementDefaultDeclArmDefaultKw];
 }
 
 export interface ExportStatementDefaultDeclArmDefaultKw {
   readonly $type: 'export_statement_default_decl_arm_default_kw';
-  readonly $fields: {
-    readonly declaration?: Declaration;
-  };
   readonly $children: readonly [ExportStatementDefaultDeclArmDefaultKwValue];
 }
 

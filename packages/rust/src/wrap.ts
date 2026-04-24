@@ -315,8 +315,6 @@ export function wrapInnerAttributeItem(data: _NodeData, tree: TreeHandle): Wrapp
 export function wrapAttribute(data: _NodeData, tree: TreeHandle): WrappedNode<Attribute> {
   return {
     ...data,
-    get value() { return drillIn(data.$fields?.['value'], tree); },
-    get arguments() { return drillAs(data.$fields?.['arguments'], tree, "token_tree", "delim_token_tree"); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<Attribute>;
 }
@@ -501,10 +499,6 @@ export function wrapFunctionSignatureItem(data: _NodeData, tree: TreeHandle): Wr
 export function wrapFunctionModifiers(data: _NodeData, tree: TreeHandle): WrappedNode<FunctionModifiers> {
   return {
     ...data,
-    get async() { return drillInAll(data.$fields?.['async'], tree); },
-    get default() { return drillInAll(data.$fields?.['default'], tree); },
-    get const() { return drillInAll(data.$fields?.['const'], tree); },
-    get unsafe() { return drillInAll(data.$fields?.['unsafe'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<FunctionModifiers>;
 }
@@ -1041,7 +1035,9 @@ export function wrapTupleExpression(data: _NodeData, tree: TreeHandle): WrappedN
   return {
     ...data,
     get attributes() { return drillInAll(data.$fields?.['attributes'], tree); },
+    get elements() { return drillIn(data.$fields?.['elements'], tree); },
     get elements() { return drillInAll(data.$fields?.['elements'], tree); },
+    get elements() { return drillIn(data.$fields?.['elements'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<TupleExpression>;
 }
@@ -1446,8 +1442,6 @@ export function wrapLineComment(data: _NodeData, tree: TreeHandle): WrappedNode<
 export function wrapBlockComment(data: _NodeData, tree: TreeHandle): WrappedNode<BlockComment> {
   return {
     ...data,
-    get outer() { return drillAs(data.$fields?.['outer'], tree, "outer_doc_comment_marker", "_outer_doc_comment_marker"); },
-    get inner() { return drillAs(data.$fields?.['inner'], tree, "inner_doc_comment_marker", "_inner_doc_comment_marker"); },
     get doc() { return drillAs(data.$fields?.['doc'], tree, "doc_comment", "_doc_comment"); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<BlockComment>;

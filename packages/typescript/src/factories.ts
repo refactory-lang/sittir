@@ -236,7 +236,6 @@ export function importStatement(config: T.ImportStatement.Config) {
   const fields = {
     import_clause: config.importClause,
     from_clause: config.fromClause,
-    source: config.source,
     import_attribute: config.importAttribute,
     semicolon: config.semicolon,
   };
@@ -247,7 +246,6 @@ export function importStatement(config: T.ImportStatement.Config) {
     $fields: fields,
     importClause(value?: "type" | "typeof" | undefined) { return _fs(config, importStatement, 'importClause', value, config?.importClause); },
     fromClause(value?: T.ImportClause | "from" | T.String | T.ImportRequireClause) { return _fs(config, importStatement, 'fromClause', value, config?.fromClause); },
-    source(value?: T.String | undefined) { return _fs(config, importStatement, 'source', value, config?.source); },
     importAttribute(value?: T.ImportAttribute | undefined) { return _fs(config, importStatement, 'importAttribute', value, config?.importAttribute); },
     semicolon(value?: T.Semicolon) { return _fs(config, importStatement, 'semicolon', value, config?.semicolon); },
     render(this: AnyNodeData): string { return render(this); },
@@ -423,13 +421,15 @@ export function importSpecifierUFormAs(config: Omit<ConfigOf<T.ImportSpecifierUF
 export function importAttribute(config: T.ImportAttribute.Config) {
   const fields = {
     object: config.object,
+    object: config.object,
   };
   return {
     $type: 'import_attribute' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    object(value?: "with" | "assert" | T.Object) { return _fs(config, importAttribute, 'object', value, config?.object); },
+    object(value?: "with" | "assert") { return _fs(config, importAttribute, 'object', value, config?.object); },
+    object(value?: T.Object) { return _fs(config, importAttribute, 'object', value, config?.object); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1856,7 +1856,6 @@ export function awaitExpression(config: T.AwaitExpression.Config) {
 export function memberExpression(config: T.MemberExpression.Config) {
   const fields = {
     object: config.object,
-    optional_chain: config.optionalChain ? "?." as const : undefined,
     property: config.property,
   };
   return {
@@ -1865,7 +1864,6 @@ export function memberExpression(config: T.MemberExpression.Config) {
     $named: true as const,
     $fields: fields,
     object(value?: T.Expression | T.PrimaryExpression | T.Import) { return _fs(config, memberExpression, 'object', value, config?.object); },
-    optionalChain(value?: T.OptionalChain | undefined) { return _fs(config, memberExpression, 'optionalChain', value, config?.optionalChain); },
     property(value?: T.PrivatePropertyIdentifier | T.Identifier) { return _fs(config, memberExpression, 'property', value, config?.property); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -1899,8 +1897,8 @@ export function subscriptExpression(config: T.SubscriptExpression.Config) {
   };
 }
 
-export function lhsExpression(child?: (T.MemberExpression | T.SubscriptExpression | T._Identifier | T.DestructuringPattern | T.NonNullExpression)) {
-  const children = child != null ? [child] : [];
+export function lhsExpression(child: (T.MemberExpression | T.SubscriptExpression | T._Identifier | T.ReservedIdentifier | T.DestructuringPattern | T.NonNullExpression)) {
+  const children = [child];
   return {
     $type: '_lhs_expression' as const,
     $source: 'factory' as const,
@@ -2452,8 +2450,8 @@ export function arguments_(...children: (T.Expression | T.SpreadElement)[]) {
   };
 }
 
-export function decorator(child?: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression)) {
-  const children = child != null ? [child] : [];
+export function decorator(child: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression)) {
+  const children = [child];
   return {
     $type: 'decorator' as const,
     $source: 'factory' as const,
@@ -2884,8 +2882,8 @@ export function functionSignature(config: T.FunctionSignature.Config) {
   };
 }
 
-export function decoratorParenthesizedExpression(child?: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) {
-  const children = child != null ? [child] : [];
+export function decoratorParenthesizedExpression(child: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) {
+  const children = [child];
   return {
     $type: 'decorator_parenthesized_expression' as const,
     $source: 'factory' as const,
@@ -3472,8 +3470,8 @@ export function typeAnnotation(config: T.TypeAnnotation.Config) {
   };
 }
 
-export function asserts(child?: (T.TypePredicate | T.Identifier | T.This)) {
-  const children = child != null ? [child] : [];
+export function asserts(child: (T.TypePredicate | T.Identifier | T.This)) {
+  const children = [child];
   return {
     $type: 'asserts' as const,
     $source: 'factory' as const,
@@ -3490,6 +3488,7 @@ export function asserts(child?: (T.TypePredicate | T.Identifier | T.This)) {
 
 export function assertsAnnotation(config: T.AssertsAnnotation.Config) {
   const fields = {
+    asserts: ":" as const,
     asserts: config.asserts,
   };
   return {
@@ -3497,7 +3496,8 @@ export function assertsAnnotation(config: T.AssertsAnnotation.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    asserts(value?: ":" | T.Asserts) { return _fs(config, assertsAnnotation, 'asserts', value, config?.asserts); },
+    get asserts() { return fields.asserts; },
+    asserts(value?: T.Asserts) { return _fs(config, assertsAnnotation, 'asserts', value, config?.asserts); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3612,8 +3612,8 @@ export function constructorType(config: T.ConstructorType.Config) {
   };
 }
 
-export function templateType(child?: (T.PrimaryType | T.InferType)) {
-  const children = child != null ? [child] : [];
+export function templateType(child: (T.PrimaryType | T.InferType)) {
+  const children = [child];
   return {
     $type: 'template_type' as const,
     $source: 'factory' as const,
@@ -3733,6 +3733,7 @@ export function typePredicate(config: T.TypePredicate.Config) {
 
 export function typePredicateAnnotation(config: T.TypePredicateAnnotation.Config) {
   const fields = {
+    type_predicate: ":" as const,
     type_predicate: config.typePredicate,
   };
   return {
@@ -3740,7 +3741,8 @@ export function typePredicateAnnotation(config: T.TypePredicateAnnotation.Config
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    typePredicate(value?: ":" | T.TypePredicate) { return _fs(config, typePredicateAnnotation, 'typePredicate', value, config?.typePredicate); },
+    get typePredicate() { return fields.type_predicate; },
+    typePredicate(value?: T.TypePredicate) { return _fs(config, typePredicateAnnotation, 'typePredicate', value, config?.typePredicate); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3750,8 +3752,8 @@ export function typePredicateAnnotation(config: T.TypePredicateAnnotation.Config
   };
 }
 
-export function typeQuery(child?: (T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression | T.TypeQueryInstantiationExpression | T.Identifier | T.This)) {
-  const children = child != null ? [child] : [];
+export function typeQuery(child: (T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression | T.TypeQueryInstantiationExpression | T.Identifier | T.This)) {
+  const children = [child];
   return {
     $type: 'type_query' as const,
     $source: 'factory' as const,
@@ -3829,8 +3831,8 @@ export function mappedTypeClause(config: T.MappedTypeClause.Config) {
   };
 }
 
-export function literalType(child?: (T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined)) {
-  const children = child != null ? [child] : [];
+export function literalType(child: (T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined)) {
+  const children = [child];
   return {
     $type: 'literal_type' as const,
     $source: 'factory' as const,
@@ -4597,8 +4599,8 @@ export function classBodyMethodSig(child: (T.MethodSignature | T.FunctionSignatu
   };
 }
 
-export function classBodyMember(child?: (T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition | T.Semicolon)) {
-  const children = child != null ? [child] : [];
+export function classBodyMember(child: (T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition | T.Semicolon)) {
+  const children = [child];
   return {
     $type: '_class_body_member' as const,
     $source: 'factory' as const,

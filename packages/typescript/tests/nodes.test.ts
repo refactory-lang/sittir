@@ -148,12 +148,12 @@ describe('import_specifier', () => {
 
 describe('import_attribute', () => {
   it('factory produces correct type', () => {
-    const node = ir.importAttribute({ object: { $type: 'object', $text: 'test' } as any });
+    const node = ir.importAttribute({ object: 'test' as any, object: { $type: 'object', $text: 'test' } as any });
     expect(node.$type).toBe('import_attribute');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.importAttribute({ object: { $type: 'object', $text: 'test' } as any });
+    const node = ir.importAttribute({ object: 'test' as any, object: { $type: 'object', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -268,7 +268,7 @@ describe('for_statement', () => {
 
 describe('for_in_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.forIn({ operator: 'test' as any, right: { $type: '_expressions', $text: 'test' } as any, body: { $type: 'statement', $text: 'test' } as any });
+    const node = ir.forIn({ operator: 'test' as any, right: { $type: '_expressions', $text: 'test' } as any, body: { $type: 'statement', $text: 'test' } as any, children: [{ $type: '_for_header_lhs', $text: 'test' } as any] as any });
     expect(node.$type).toBe('for_in_statement');
     expect(node.$source).toBe('factory');
   });
@@ -1089,7 +1089,7 @@ describe('arguments', () => {
 
 describe('decorator', () => {
   it('factory produces correct type', () => {
-    const node = ir.decorator();
+    const node = ir.decorator({ type: "identifier" } as never);
     expect(node.$type).toBe('decorator');
     expect(node.$source).toBe('factory');
   });
@@ -1277,7 +1277,7 @@ describe('function_signature', () => {
 
 describe('decorator_parenthesized_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.decoratorParenthesized();
+    const node = ir.decoratorParenthesized({ type: "identifier" } as never);
     expect(node.$type).toBe('decorator_parenthesized_expression');
     expect(node.$source).toBe('factory');
   });
@@ -1598,7 +1598,7 @@ describe('type_annotation', () => {
 
 describe('asserts', () => {
   it('factory produces correct type', () => {
-    const node = ir.asserts();
+    const node = ir.asserts({ type: "type_predicate" } as never);
     expect(node.$type).toBe('asserts');
     expect(node.$source).toBe('factory');
   });
@@ -1678,7 +1678,7 @@ describe('constructor_type', () => {
 
 describe('template_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.templateType();
+    const node = ir.templateType({ type: "primary_type" } as never);
     expect(node.$type).toBe('template_type');
     expect(node.$source).toBe('factory');
   });
@@ -1754,7 +1754,7 @@ describe('type_predicate_annotation', () => {
 
 describe('type_query', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeQuery();
+    const node = ir.typeQuery({ type: "_type_query_subscript_expression" } as never);
     expect(node.$type).toBe('type_query');
     expect(node.$source).toBe('factory');
   });
@@ -1798,7 +1798,7 @@ describe('mapped_type_clause', () => {
 
 describe('literal_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.literalType();
+    const node = ir.literalType({ type: "_number" } as never);
     expect(node.$type).toBe('literal_type');
     expect(node.$source).toBe('factory');
   });

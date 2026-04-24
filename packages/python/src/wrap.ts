@@ -199,7 +199,6 @@ export function wrapImportFromStatement(data: _NodeData, tree: TreeHandle): Wrap
     ...data,
     get moduleName() { return drillIn(data.$fields?.['module_name'], tree); },
     get wildcardImport() { return drillInAll(data.$fields?.['wildcard_import'], tree); },
-    get name() { return drillInAll(data.$fields?.['name'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ImportFromStatement>;
 }
@@ -280,6 +279,7 @@ export function wrapIfStatement(data: _NodeData, tree: TreeHandle): WrappedNode<
     get condition() { return drillIn(data.$fields?.['condition'], tree); },
     get consequence() { return drillIn(data.$fields?.['consequence'], tree); },
     get alternative() { return drillInAll(data.$fields?.['alternative'], tree); },
+    get alternative() { return drillIn(data.$fields?.['alternative'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<IfStatement>;
 }
@@ -840,6 +840,7 @@ export function wrapType(data: _NodeData, tree: TreeHandle): WrappedNode<Type> {
 export function wrapSplatType(data: _NodeData, tree: TreeHandle): WrappedNode<SplatType> {
   return {
     ...data,
+    get identifier() { return drillIn(data.$fields?.['identifier'], tree); },
     get identifier() { return drillIn(data.$fields?.['identifier'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<SplatType>;

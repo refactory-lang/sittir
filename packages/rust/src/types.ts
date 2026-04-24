@@ -831,10 +831,6 @@ export interface InnerAttributeItem {
 
 export interface Attribute {
   readonly $type: 'attribute';
-  readonly $fields: {
-    readonly value?: Expression;
-    readonly arguments?: DelimTokenTree;
-  };
   readonly $children: readonly [Path];
 }
 
@@ -1046,13 +1042,7 @@ export interface FunctionSignatureItem {
 
 export interface FunctionModifiers {
   readonly $type: 'function_modifiers';
-  readonly $fields: {
-    readonly async: readonly (BooleanKeyword<"async">)[];
-    readonly default: readonly (BooleanKeyword<"default">)[];
-    readonly const: readonly (BooleanKeyword<"const">)[];
-    readonly unsafe: readonly (BooleanKeyword<"unsafe">)[];
-  };
-  readonly $children: readonly (ExternModifier)[];
+  readonly $children: NonEmptyArray<ExternModifier>;
 }
 
 export interface WhereClause {
@@ -1119,7 +1109,7 @@ export interface AssociatedType {
 
 export interface TraitBounds {
   readonly $type: 'trait_bounds';
-  readonly $children: readonly (_Type | Lifetime | HigherRankedTraitBound)[];
+  readonly $children: NonEmptyArray<_Type | Lifetime | HigherRankedTraitBound>;
 }
 
 export interface HigherRankedTraitBound {
@@ -1137,7 +1127,7 @@ export interface RemovedTraitBound {
 
 export interface TypeParameters {
   readonly $type: 'type_parameters';
-  readonly $children: readonly (AttributeItem | Metavariable | TypeParameter | LifetimeParameter | ConstParameter)[];
+  readonly $children: NonEmptyArray<AttributeItem | Metavariable | TypeParameter | LifetimeParameter | ConstParameter>;
 }
 
 export interface ConstParameter {
@@ -1353,7 +1343,7 @@ export interface UseBounds {
 
 export interface TypeArguments {
   readonly $type: 'type_arguments';
-  readonly $children: readonly (_Type | TypeBinding | Lifetime | Literal | Block | TraitBounds)[];
+  readonly $children: NonEmptyArray<_Type | TypeBinding | Lifetime | Literal | Block | TraitBounds>;
 }
 
 export interface TypeBinding {
@@ -1585,7 +1575,9 @@ export interface TupleExpression {
   readonly $type: 'tuple_expression';
   readonly $fields: {
     readonly attributes: readonly (AttributeItem)[];
-    readonly elements?: readonly (Expression)[];
+    readonly elements: Expression;
+    readonly elements: readonly (Expression)[];
+    readonly elements?: Expression;
   };
 }
 
@@ -2007,8 +1999,6 @@ export type LineComment = LineCommentUFormRegularDslash | LineCommentUFormDoc | 
 export interface BlockComment {
   readonly $type: 'block_comment';
   readonly $fields: {
-    readonly outer?: OuterDocCommentMarker;
-    readonly inner?: InnerDocCommentMarker;
     readonly doc?: DocComment;
   };
 }
@@ -2264,8 +2254,6 @@ export interface MatchArmBlockEnding {
 export interface LineCommentDoc {
   readonly $type: 'line_comment_doc';
   readonly $fields: {
-    readonly outer?: BooleanKeyword<"/">;
-    readonly inner?: BooleanKeyword<"!">;
     readonly doc: DocComment;
   };
 }

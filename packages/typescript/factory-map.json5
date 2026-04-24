@@ -347,7 +347,6 @@
     "import_statement": [
       "import_clause",
       "from_clause",
-      "source",
       "import_attribute",
       "semicolon"
     ],
@@ -355,6 +354,7 @@
       "identifier"
     ],
     "import_attribute": [
+      "object",
       "object"
     ],
     "variable_declaration": [
@@ -510,7 +510,6 @@
     ],
     "member_expression": [
       "object",
-      "optional_chain",
       "property"
     ],
     "subscript_expression": [
@@ -693,6 +692,7 @@
       "arguments"
     ],
     "asserts_annotation": [
+      "asserts",
       "asserts"
     ],
     "tuple_parameter": [
@@ -734,6 +734,7 @@
       "type"
     ],
     "type_predicate_annotation": [
+      "type_predicate",
       "type_predicate"
     ],
     "_type_query_member_expression": [

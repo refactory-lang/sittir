@@ -497,7 +497,6 @@ export function importStatementFrom(input: T.ImportStatement.Loose): ReturnType<
   return F.importStatement({
     importClause: _resolveOne(input.importClause, _K0, _K0),
     fromClause: _resolveOne(input.fromClause, _K0, _K3),
-    source: _resolveOneBranch(input.source, "string"),
     importAttribute: _resolveOneBranch(input.importAttribute, "import_attribute"),
     semicolon: _resolveOneLeaf(input.semicolon, "_automatic_semicolon"),
   });
@@ -551,6 +550,7 @@ export function importSpecifierUFormAsFrom(input: Omit<ConfigOf<T.ImportSpecifie
 export function importAttributeFrom(input: T.ImportAttribute.Loose): ReturnType<typeof F.importAttribute> {
   if (isNodeData(input)) return input;
   return F.importAttribute({
+    object: _resolveOne(input.object, _K0, _K0),
     object: _resolveOneBranch(input.object, "object"),
   });
 }
@@ -1064,7 +1064,6 @@ export function memberExpressionFrom(input: T.MemberExpression.Loose): ReturnTyp
   if (isNodeData(input)) return input;
   return F.memberExpression({
     object: _resolveOne(input.object, _K14, _K15),
-    optionalChain: _resolveBooleanKeyword(input.optionalChain),
     property: _resolveOne(input.property, _K16, _K0),
   });
 }

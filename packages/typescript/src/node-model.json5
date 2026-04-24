@@ -1001,13 +1001,13 @@
         {
           "name": "abstract_method_signature",
           "propertyName": "abstractMethodSignature",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "abstract_method_signature",
               "unresolved": true
             }
@@ -1016,13 +1016,13 @@
         {
           "name": "index_signature",
           "propertyName": "indexSignature",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "index_signature",
               "unresolved": true
             }
@@ -1031,13 +1031,13 @@
         {
           "name": "method_signature",
           "propertyName": "methodSignature",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "method_signature",
               "unresolved": true
             }
@@ -1046,13 +1046,13 @@
         {
           "name": "public_field_definition",
           "propertyName": "publicFieldDefinition",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "public_field_definition",
               "unresolved": true
             }
@@ -1061,13 +1061,13 @@
         {
           "name": "semicolon",
           "propertyName": "semicolon",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_semicolon",
               "unresolved": true
             }
@@ -1166,13 +1166,13 @@
         {
           "name": "function_signature_automatic_semicolon",
           "propertyName": "functionSignatureAutomaticSemicolon",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_function_signature_automatic_semicolon",
               "unresolved": true
             }
@@ -1297,42 +1297,19 @@
               "decorator"
             ]
           }
-        },
-        {
-          "name": "declaration",
-          "propertyName": "declaration",
-          "paramName": "declaration",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "declaration",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "declaration"
-            ]
-          }
         }
       ],
       "children": [
         {
           "name": "export_statement_default_decl_arm_default_kw",
           "propertyName": "exportStatementDefaultDeclArmDefaultKw",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_export_statement_default_decl_arm_default_kw",
               "unresolved": true
             }
@@ -1347,42 +1324,18 @@
       "irKey": "exportStatementDefaultDeclArmDefaultKw",
       "hidden": true,
       "name": "_export_statement_default_decl_arm_default_kw",
-      "fields": [
-        {
-          "name": "declaration",
-          "propertyName": "declaration",
-          "paramName": "declaration",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "declaration",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "declaration"
-            ]
-          }
-        }
-      ],
+      "fields": [],
       "children": [
         {
           "name": "export_statement_default_decl_arm_default_kw_value",
           "propertyName": "exportStatementDefaultDeclArmDefaultKwValue",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_export_statement_default_decl_arm_default_kw_value",
               "unresolved": true
             }
@@ -1451,13 +1404,13 @@
         {
           "name": "export_statement_default_from_arm_star_from",
           "propertyName": "exportStatementDefaultFromArmStarFrom",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_export_statement_default_from_arm_star_from",
               "unresolved": true
             }
@@ -1466,13 +1419,13 @@
         {
           "name": "export_statement_default_from_arm_ns_from",
           "propertyName": "exportStatementDefaultFromArmNsFrom",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_export_statement_default_from_arm_ns_from",
               "unresolved": true
             }
@@ -1481,13 +1434,13 @@
         {
           "name": "export_statement_default_from_arm_clause_from",
           "propertyName": "exportStatementDefaultFromArmClauseFrom",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_export_statement_default_from_arm_clause_from",
               "unresolved": true
             }
@@ -1496,13 +1449,13 @@
         {
           "name": "export_clause",
           "propertyName": "exportClause",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "export_clause",
               "unresolved": true
             }
@@ -1933,13 +1886,13 @@
         {
           "name": "for_header_lhs",
           "propertyName": "forHeaderLhs",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_for_header_lhs",
               "unresolved": true
             }
@@ -1948,13 +1901,13 @@
         {
           "name": "for_header_var_kind",
           "propertyName": "forHeaderVarKind",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_for_header_var_kind",
               "unresolved": true
             }
@@ -1963,13 +1916,13 @@
         {
           "name": "for_header_let_const_kind",
           "propertyName": "forHeaderLetConstKind",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_for_header_let_const_kind",
               "unresolved": true
             }
@@ -2789,6 +2742,12 @@
               "multiplicity": "array",
               "name": "unescaped_double_jsx_string_fragment",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "unescaped_single_jsx_string_fragment",
+              "unresolved": true
             }
           ]
         },
@@ -2875,13 +2834,13 @@
         {
           "name": "member_expression",
           "propertyName": "memberExpression",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "member_expression",
               "unresolved": true
             }
@@ -2890,13 +2849,13 @@
         {
           "name": "subscript_expression",
           "propertyName": "subscriptExpression",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "subscript_expression",
               "unresolved": true
             }
@@ -2905,14 +2864,20 @@
         {
           "name": "identifier",
           "propertyName": "identifier",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_reserved_identifier",
               "unresolved": true
             }
           ]
@@ -2920,13 +2885,13 @@
         {
           "name": "destructuring_pattern",
           "propertyName": "destructuringPattern",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_destructuring_pattern",
               "unresolved": true
             }
@@ -2935,13 +2900,13 @@
         {
           "name": "non_null_expression",
           "propertyName": "nonNullExpression",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "non_null_expression",
               "unresolved": true
             }
@@ -5365,13 +5330,13 @@
         {
           "name": "type_predicate",
           "propertyName": "typePredicate",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "type_predicate",
               "unresolved": true
             }
@@ -5380,13 +5345,13 @@
         {
           "name": "identifier",
           "propertyName": "identifier",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
             }
@@ -5395,13 +5360,13 @@
         {
           "name": "this",
           "propertyName": "this",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "this",
               "unresolved": true
             }
@@ -5429,7 +5394,22 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": ":"
-            },
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
+          "name": "asserts",
+          "propertyName": "asserts",
+          "paramName": "asserts",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -5437,7 +5417,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7549,13 +7529,13 @@
         {
           "name": "identifier",
           "propertyName": "identifier",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
             }
@@ -7564,13 +7544,13 @@
         {
           "name": "member_expression",
           "propertyName": "memberExpression",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "decorator_member_expression",
               "unresolved": true
             }
@@ -7579,13 +7559,13 @@
         {
           "name": "call_expression",
           "propertyName": "callExpression",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "decorator_call_expression",
               "unresolved": true
             }
@@ -7594,13 +7574,13 @@
         {
           "name": "parenthesized_expression",
           "propertyName": "parenthesizedExpression",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "decorator_parenthesized_expression",
               "unresolved": true
             }
@@ -7779,13 +7759,13 @@
         {
           "name": "identifier",
           "propertyName": "identifier",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
             }
@@ -7794,13 +7774,13 @@
         {
           "name": "member_expression",
           "propertyName": "memberExpression",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "decorator_member_expression",
               "unresolved": true
             }
@@ -7809,13 +7789,13 @@
         {
           "name": "call_expression",
           "propertyName": "callExpression",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "decorator_call_expression",
               "unresolved": true
             }
@@ -9039,13 +9019,13 @@
         {
           "name": "for_header_lhs",
           "propertyName": "forHeaderLhs",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_for_header_lhs",
               "unresolved": true
             }
@@ -9054,13 +9034,13 @@
         {
           "name": "for_header_var_kind",
           "propertyName": "forHeaderVarKind",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_for_header_var_kind",
               "unresolved": true
             }
@@ -9069,13 +9049,13 @@
         {
           "name": "for_header_let_const_kind",
           "propertyName": "forHeaderLetConstKind",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_for_header_let_const_kind",
               "unresolved": true
             }
@@ -10563,7 +10543,22 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "assert"
-            },
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
+          "name": "object",
+          "propertyName": "object",
+          "paramName": "object",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -10571,7 +10566,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11014,29 +11009,6 @@
               "import_clause",
               "string",
               "import_require_clause"
-            ]
-          }
-        },
-        {
-          "name": "source",
-          "propertyName": "source",
-          "paramName": "source",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "string",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "string"
             ]
           }
         },
@@ -12545,13 +12517,13 @@
         {
           "name": "unary_expression",
           "propertyName": "unaryExpression",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_number",
               "unresolved": true
             }
@@ -12560,13 +12532,13 @@
         {
           "name": "number",
           "propertyName": "number",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "number",
               "unresolved": true
             }
@@ -12575,13 +12547,13 @@
         {
           "name": "string",
           "propertyName": "string",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "string",
               "unresolved": true
             }
@@ -12590,13 +12562,13 @@
         {
           "name": "true",
           "propertyName": "true",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "true",
               "unresolved": true
             }
@@ -12605,13 +12577,13 @@
         {
           "name": "false",
           "propertyName": "false",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "false",
               "unresolved": true
             }
@@ -12620,13 +12592,13 @@
         {
           "name": "null",
           "propertyName": "null",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "null",
               "unresolved": true
             }
@@ -12635,13 +12607,13 @@
         {
           "name": "undefined",
           "propertyName": "undefined",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "undefined",
               "unresolved": true
             }
@@ -12828,29 +12800,6 @@
               "expression",
               "primary_expression",
               "import"
-            ]
-          }
-        },
-        {
-          "name": "optional_chain",
-          "propertyName": "optionalChain",
-          "paramName": "optionalChain",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "optional_chain",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "optional_chain"
             ]
           }
         },
@@ -16487,13 +16436,13 @@
         {
           "name": "primary_type",
           "propertyName": "primaryType",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "primary_type",
               "unresolved": true
             }
@@ -16502,13 +16451,13 @@
         {
           "name": "infer_type",
           "propertyName": "inferType",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "infer_type",
               "unresolved": true
             }
@@ -17317,7 +17266,22 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": ":"
-            },
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
+          "name": "type_predicate",
+          "propertyName": "typePredicate",
+          "paramName": "typePredicate",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -17325,7 +17289,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17347,13 +17311,13 @@
         {
           "name": "subscript_expression",
           "propertyName": "subscriptExpression",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_type_query_subscript_expression",
               "unresolved": true
             }
@@ -17362,13 +17326,13 @@
         {
           "name": "member_expression",
           "propertyName": "memberExpression",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_type_query_member_expression",
               "unresolved": true
             }
@@ -17377,13 +17341,13 @@
         {
           "name": "call_expression",
           "propertyName": "callExpression",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_type_query_call_expression",
               "unresolved": true
             }
@@ -17392,13 +17356,13 @@
         {
           "name": "instantiation_expression",
           "propertyName": "instantiationExpression",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_type_query_instantiation_expression",
               "unresolved": true
             }
@@ -17407,13 +17371,13 @@
         {
           "name": "identifier",
           "propertyName": "identifier",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
             }
@@ -17422,13 +17386,13 @@
         {
           "name": "this",
           "propertyName": "this",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "this",
               "unresolved": true
             }

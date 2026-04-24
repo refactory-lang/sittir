@@ -474,8 +474,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'block', required: true, multiple: false },
   ],
   'attribute': [
-    { name: 'value', required: false, multiple: false },
-    { name: 'arguments', required: false, multiple: false },
   ],
   'attribute_item': [
     { name: 'attribute', required: true, multiple: false },
@@ -493,8 +491,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'label', required: false, multiple: false },
   ],
   'block_comment': [
-    { name: 'outer', required: false, multiple: false },
-    { name: 'inner', required: false, multiple: false },
     { name: 'doc', required: false, multiple: false },
   ],
   'bounded_type': [
@@ -625,10 +621,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'function_modifiers': [
-    { name: 'async', required: true, multiple: true },
-    { name: 'default', required: true, multiple: true },
-    { name: 'const', required: true, multiple: true },
-    { name: 'unsafe', required: true, multiple: true },
   ],
   'function_signature_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
@@ -884,7 +876,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'tuple_expression': [
     { name: 'attributes', required: true, multiple: true },
-    { name: 'elements', required: false, multiple: true },
+    { name: 'elements', required: true, multiple: false },
+    { name: 'elements', required: true, multiple: true },
+    { name: 'elements', required: false, multiple: false },
   ],
   'tuple_pattern': [
   ],

@@ -276,7 +276,6 @@ export function wrapImportStatement(data: _NodeData, tree: TreeHandle): WrappedN
     ...data,
     get importClause() { return drillIn(data.$fields?.['import_clause'], tree); },
     get fromClause() { return drillIn(data.$fields?.['from_clause'], tree); },
-    get source() { return drillIn(data.$fields?.['source'], tree); },
     get importAttribute() { return drillIn(data.$fields?.['import_attribute'], tree); },
     get semicolon() { return drillIn(data.$fields?.['semicolon'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
@@ -315,6 +314,7 @@ export function wrapImportSpecifier(data: _NodeData, tree: TreeHandle): WrappedN
 export function wrapImportAttribute(data: _NodeData, tree: TreeHandle): WrappedNode<ImportAttribute> {
   return {
     ...data,
+    get object() { return drillIn(data.$fields?.['object'], tree); },
     get object() { return drillIn(data.$fields?.['object'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ImportAttribute>;
@@ -803,7 +803,6 @@ export function wrapMemberExpression(data: _NodeData, tree: TreeHandle): Wrapped
   return {
     ...data,
     get object() { return drillIn(data.$fields?.['object'], tree); },
-    get optionalChain() { return drillIn(data.$fields?.['optional_chain'], tree); },
     get property() { return drillAs(data.$fields?.['property'], tree, "property_identifier", "identifier"); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<MemberExpression>;
@@ -1351,6 +1350,7 @@ export function wrapAssertsAnnotation(data: _NodeData, tree: TreeHandle): Wrappe
   return {
     ...data,
     get asserts() { return drillIn(data.$fields?.['asserts'], tree); },
+    get asserts() { return drillIn(data.$fields?.['asserts'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<AssertsAnnotation>;
 }
@@ -1455,6 +1455,7 @@ export function wrapTypePredicate(data: _NodeData, tree: TreeHandle): WrappedNod
 export function wrapTypePredicateAnnotation(data: _NodeData, tree: TreeHandle): WrappedNode<TypePredicateAnnotation> {
   return {
     ...data,
+    get typePredicate() { return drillIn(data.$fields?.['type_predicate'], tree); },
     get typePredicate() { return drillIn(data.$fields?.['type_predicate'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<TypePredicateAnnotation>;

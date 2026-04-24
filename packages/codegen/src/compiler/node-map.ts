@@ -632,18 +632,74 @@ function fieldContentMultiplicity(content: Rule, outerMultiplicity: Multiplicity
     }
 }
 
+/**
+ * Derive child slots from a canonical rule tree.
+ *
+ * Two axes of "canonical" apply to deriveChildren:
+ *
+ * 1. **Branch kinds** — top-level `seq` of field/symbol/wrapper members.
+ *    Children are the non-field members (symbol refs, optional /
+ *    repeat / repeat1 around refs, choice of refs).
+ *
+ * 2. **Container kinds** — top-level is a `repeat` / `repeat1` whose
+ *    content may be a `seq` of refs (tree-sitter flattens the seq's
+ *    elements into sibling children at parse time). `enum_variant_list`
+ *    has shape `repeat(seq(repeat(attribute_item), enum_variant),
+ *    separator=',', trailing=true)` — the inner seq is load-bearing
+ *    template structure AND yields two array children (attribute_item,
+ *    enum_variant) flattened together.
+ *
+ * The walker handles both by treating top-level `seq` members as the
+ * canonical unit and recursing through wrappers/choices/nested-seqs
+ * when the structure demands it. What it rejects:
+ *
+ *   - `alias` / `group` / `polymorph` — simplify strips the first two,
+ *     assemble classifies the third into its own AssembledPolymorph.
+ *     Reaching them here is a real canonicalization gap.
+ *
+ *   - `variant` / `clause` — post-variant-adoption these should be
+ *     either resolved to aliased symbols or promoted to polymorph
+ *     forms. Retained as canonicalization-gap signals.
+ */
 export function deriveChildren(rule: Rule): AssembledChild[] {
     auditDerivationShape(rule, 'children')
+    const members: readonly Rule[] = rule.type === 'seq' ? rule.members : [rule]
+
+    // Sibling-duplicate symbol/supertype refs with the same target
+    // (rust or_pattern: `seq(_pattern, _pattern)`) represent the
+    // multi-children shape; force 'array' multiplicity on those
+    // positions so downstream merge keeps the array semantics.
+    const targetCounts = new Map<string, number>()
+    for (const m of members) {
+        const t = memberTarget(m)
+        if (t !== null) targetCounts.set(t, (targetCounts.get(t) ?? 0) + 1)
+    }
+
     const raw: AssembledChild[] = []
-    walkForChildren(rule, raw, 'single')
-    // Deduplicate by child name — merge values arrays.
+    for (const m of members) {
+        const t = memberTarget(m)
+        const mult: Multiplicity = (t !== null && (targetCounts.get(t) ?? 0) > 1)
+            ? 'array'
+            : 'single'
+        collectChildFromMember(m, raw, mult)
+    }
+
+    // Deduplicate by child name. Sources of duplicates:
+    //   - Choice arms referencing the same symbol kind (rare but
+    //     legal — e.g. an override-wrapped supertype whose resolution
+    //     includes the same concrete name twice).
+    //   - Top-level duplicated targets picked up by the array-
+    //     multiplicity detection above — each position emits its own
+    //     child entry; merging folds them into one multi-valued slot.
+    //   - Container kinds: a nested `repeat(seq(a, b))` shape emits
+    //     per-member entries which then merge by name into array-
+    //     multiplicity slots.
+    // Single-source fast path avoids the map allocation.
+    if (raw.length <= 1) return raw
     const byName = new Map<string, AssembledChild>()
     for (const c of raw) {
         const existing = byName.get(c.name)
-        if (!existing) {
-            byName.set(c.name, { ...c })
-            continue
-        }
+        if (!existing) { byName.set(c.name, c); continue }
         byName.set(c.name, {
             ...existing,
             values: dedupeValues([...existing.values, ...c.values]),
@@ -652,25 +708,34 @@ export function deriveChildren(rule: Rule): AssembledChild[] {
     return Array.from(byName.values())
 }
 
-function walkForChildren(
-    rule: Rule,
-    out: AssembledChild[],
-    multiplicity: Multiplicity,
-): void {
+/**
+ * Extract the child-target kind name from a top-level seq member, peeling
+ * through structural wrappers that don't themselves reference a kind.
+ * Returns null when the member is a literal, field, or non-reference
+ * structure (choice — which can contain multiple targets and is
+ * disambiguated by the caller).
+ */
+function memberTarget(rule: Rule): string | null {
+    switch (rule.type) {
+        case 'symbol': case 'supertype': return rule.name
+        case 'optional': case 'variant': case 'clause': case 'group':
+            return memberTarget(rule.content)
+        default: return null
+    }
+}
+
+/**
+ * Walk one rule position and append AssembledChild entries for every
+ * child reference it contributes at `multiplicity`. Called both for
+ * top-level seq members and recursively for structural wrappers.
+ */
+function collectChildFromMember(rule: Rule, out: AssembledChild[], multiplicity: Multiplicity): void {
     switch (rule.type) {
         case 'symbol':
-            // Both visible and hidden symbols contribute to the runtime child
-            // set: hidden symbols (supertypes) dispatch to their concrete
-            // subtypes at parse time, so tree-sitter surfaces those children
-            // under the parent. The child slot name we emit reflects the
-            // symbol we referenced (stripped of any leading underscore so
-            // `_expression` → `expression`).
-            //
-            // Ref kind: resolve to the SOURCE kind in the rules map
-            // (`aliasedFrom`, when the symbol came from an alias). Only
-            // source kinds exist in rules post-synthesis-removal; the
-            // visible alias target is identity-only. Downstream lookups
-            // (nodeMap.get) use source kinds.
+            // Child-slot name drops the hidden-rule leading underscore
+            // (`_expression` → `expression`); the ref target resolves
+            // through `aliasedFrom` when the symbol came from an alias
+            // (only source kinds exist in rules post-synthesis-removal).
             {
                 const refName = rule.aliasedFrom ?? rule.name
                 const cleanName = rule.name.replace(/^_+/, '') || rule.name
@@ -682,8 +747,6 @@ function walkForChildren(
             }
             break
         case 'supertype':
-            // Resolved supertype reference — dispatches to any subtype at
-            // runtime. Emit one slot with the supertype's name.
             {
                 const cleanName = rule.name.replace(/^_+/, '') || rule.name
                 out.push({
@@ -697,56 +760,41 @@ function walkForChildren(
                 })
             }
             break
-        case 'seq': {
-            // Sibling-duplicate symbol/supertype refs with the same
-            // target (rust or_pattern: two `_pattern` refs) represent
-            // the multi-children shape. Mark those occurrences as
-            // multi so downstream merge keeps multiplicity `array`.
-            const targetCounts = new Map<string, number>()
-            const childTarget = (r: Rule): string | null => {
-                if (r.type === 'symbol') return r.name
-                if (r.type === 'supertype') return r.name
-                if (r.type === 'optional' || r.type === 'variant' || r.type === 'clause' || r.type === 'group') return childTarget(r.content)
-                return null
-            }
-            for (const m of rule.members) {
-                const t = childTarget(m)
-                if (t) targetCounts.set(t, (targetCounts.get(t) ?? 0) + 1)
-            }
-            for (const m of rule.members) {
-                const t = childTarget(m)
-                const dup = t !== null && (targetCounts.get(t) ?? 0) > 1
-                // If this target is duplicated, force 'array' multiplicity.
-                const childMult: Multiplicity = dup ? 'array' : multiplicity
-                walkForChildren(m, out, childMult)
-            }
-            break
-        }
         case 'optional':
-            walkForChildren(rule.content, out, 'optional')
+            collectChildFromMember(rule.content, out, 'optional')
             break
         case 'repeat':
-            walkForChildren(rule.content, out, 'array')
+            collectChildFromMember(rule.content, out, 'array')
             break
         case 'repeat1':
-            walkForChildren(rule.content, out, 'nonEmptyArray')
+            collectChildFromMember(rule.content, out, 'nonEmptyArray')
             break
         case 'choice':
-            // Canonical choice: union of symbol-like arms — each arm
-            // contributes ONE child value at the same multiplicity.
-            // Walk arms directly; per-branch merge + downgrade is no
-            // longer needed now that heterogeneous-field choices are
-            // all resolved via variant() adoption upstream.
-            for (const m of rule.members) walkForChildren(m, out, multiplicity)
+            // Canonical choice: union of symbol-like arms. Each arm
+            // contributes one child value at the enclosing multiplicity.
+            for (const m of rule.members) collectChildFromMember(m, out, multiplicity)
+            break
+        case 'seq':
+            // Nested seqs reach here from three patterns that the
+            // current canonical form permits:
+            //   - `clause(seq(string, field))` — optional punctuation-
+            //     prefixed field groupings (rust extern_crate_declaration's
+            //     `as alias_name` clause, python `except ... as ...`).
+            //   - `repeat(seq(...))` — container kinds whose elements
+            //     are multi-kind (rust enum_variant_list's
+            //     attribute_item+enum_variant pairs).
+            //   - `optional(seq(...))` — analogous to clause.
+            // A STRICTER canonical form would lift the inner seq into
+            // its own hidden rule so the outer position sees a single
+            // symbol ref — eliminating positional ambiguity at the
+            // container/wrapper level. Until simplify is extended to
+            // hoist these, walk each member at the enclosing
+            // multiplicity so every reference still surfaces as a
+            // child.
+            for (const m of rule.members) collectChildFromMember(m, out, multiplicity)
             break
         case 'field':
-            // Fields are handled by deriveFields, not children
-            break
-        case 'variant':
-            walkForChildren(rule.content, out, multiplicity)
-            break
-        case 'clause':
-            walkForChildren(rule.content, out, 'optional')
+            // Fields are handled by deriveFields, not children.
             break
         case 'string':
         case 'pattern':
@@ -756,19 +804,32 @@ function walkForChildren(
         case 'indent':
         case 'dedent':
         case 'newline':
-            // Terminal / token-literal rules — they render as text but
-            // contribute no addressable children. Explicit cases keep
-            // the switch exhaustive so adding a new Rule type surfaces
-            // here as a compile error.
+            // Terminal / token-literal rules — render as text, contribute
+            // no addressable children.
+            break
+        case 'variant':
+            // Variant wrappers survive in a handful of rust polymorph
+            // arms that weren't adopted via variant(). Unwrap-and-
+            // recurse preserves the child references they contain.
+            collectChildFromMember(rule.content, out, multiplicity)
+            break
+        case 'clause':
+            // `clause` wraps an optional anon-token / punctuation
+            // position (e.g. `?` / `!` on rust `impl_item` / `match_arm`).
+            // Its content is structurally optional, so descend with
+            // 'optional' multiplicity.
+            collectChildFromMember(rule.content, out, 'optional')
             break
         case 'alias':
         case 'group':
         case 'polymorph':
-            // Same reasoning as `deriveFieldsRaw` above: these shapes
-            // should have been stripped / classified before derivation.
-            // Reaching them here is a canonicalization gap.
+            // Canonicalization-gap signals. `alias` should resolve to a
+            // `symbol` with `aliasedFrom`; `group` gets stripped by
+            // simplify; `polymorph` classifies into its own assembled
+            // node type via assemble's dispatch. Reaching any of them
+            // here means an upstream pass missed the shape.
             throw new Error(
-                `walkForChildren: unexpected '${rule.type}' in canonical input — ` +
+                `deriveChildren: unexpected '${rule.type}' in canonical input — ` +
                 `simplify should have stripped / classified it before derivation. ` +
                 `currentAuditKind=${currentAuditKind ?? '(none)'}`,
             )

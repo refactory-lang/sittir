@@ -431,7 +431,6 @@ export interface ImportFromStatement {
   readonly $fields: {
     readonly module_name: RelativeImport | DottedName;
     readonly wildcard_import: NonEmptyArray<WildcardImport | DottedName | AliasedImport>;
-    readonly name: readonly (DottedName | AliasedImport)[];
   };
 }
 
@@ -505,7 +504,8 @@ export interface IfStatement {
   readonly $fields: {
     readonly condition: Expression;
     readonly consequence: Suite;
-    readonly alternative?: readonly (ElifClause | ElseClause)[];
+    readonly alternative: readonly (ElifClause)[];
+    readonly alternative?: ElseClause;
   };
 }
 
@@ -726,7 +726,7 @@ export interface Decorator {
 
 export interface Suite {
   readonly $type: 'suite';
-  readonly $children: readonly [SimpleStatements];
+  readonly $children: readonly [SimpleStatements | Block | Newline];
 }
 
 export interface Block {
@@ -739,7 +739,7 @@ export interface ExpressionList {
   readonly $fields: {
     readonly expression: Expression;
   };
-  readonly $children: readonly (Expression)[];
+  readonly $children: NonEmptyArray<Expression>;
 }
 
 export interface DottedName {
@@ -970,7 +970,7 @@ export interface PatternList {
   readonly $fields: {
     readonly pattern: Pattern;
   };
-  readonly $children: readonly (Pattern)[];
+  readonly $children: NonEmptyArray<Pattern>;
 }
 
 export interface Yield {
@@ -1027,7 +1027,8 @@ export interface Type {
 export interface SplatType {
   readonly $type: 'splat_type';
   readonly $fields: {
-    readonly identifier: "*" | "**" | Identifier;
+    readonly identifier: "*" | "**";
+    readonly identifier: Identifier;
   };
 }
 
@@ -1073,17 +1074,17 @@ export interface KeywordArgument {
 
 export interface List {
   readonly $type: 'list';
-  readonly $children: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+  readonly $children: NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat>;
 }
 
 export interface Set {
   readonly $type: 'set';
-  readonly $children: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+  readonly $children: NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat>;
 }
 
 export interface Tuple {
   readonly $type: 'tuple';
-  readonly $children: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+  readonly $children: NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat>;
 }
 
 export interface Dictionary {
@@ -1192,7 +1193,7 @@ export interface String {
 
 export interface StringContent {
   readonly $type: 'string_content';
-  readonly $children: readonly (EscapeInterpolation | EscapeSequence | NotEscapeSequence | _StringContent)[];
+  readonly $children: NonEmptyArray<EscapeInterpolation | EscapeSequence | NotEscapeSequence | _StringContent>;
 }
 
 export interface Interpolation {

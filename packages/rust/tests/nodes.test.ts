@@ -367,12 +367,12 @@ describe('function_signature_item', () => {
 
 describe('function_modifiers', () => {
   it('factory produces correct type', () => {
-    const node = ir.functionModifiers({ async: [{ $type: '_kw_async', $text: 'test' } as any], default: [{ $type: '_kw_default', $text: 'test' } as any], const: [{ $type: '_kw_const', $text: 'test' } as any], unsafe: [{ $type: '_kw_unsafe', $text: 'test' } as any], children: [{ $type: 'extern_modifier', $text: 'test' } as any] as any });
+    const node = ir.functionModifiers({ children: [{ $type: 'extern_modifier', $text: 'test' } as any] as any });
     expect(node.$type).toBe('function_modifiers');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.functionModifiers({ async: [{ $type: '_kw_async', $text: 'test' } as any], default: [{ $type: '_kw_default', $text: 'test' } as any], const: [{ $type: '_kw_const', $text: 'test' } as any], unsafe: [{ $type: '_kw_unsafe', $text: 'test' } as any], children: [{ $type: 'extern_modifier', $text: 'test' } as any] as any });
+    const node = ir.functionModifiers({ children: [{ $type: 'extern_modifier', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -436,7 +436,7 @@ describe('associated_type', () => {
 
 describe('trait_bounds', () => {
   it('factory produces correct type', () => {
-    const node = ir.traitBounds();
+    const node = ir.traitBounds({ type: "_type" } as never);
     expect(node.$type).toBe('trait_bounds');
     expect(node.$source).toBe('factory');
   });
@@ -464,7 +464,7 @@ describe('removed_trait_bound', () => {
 
 describe('type_parameters', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeParameters();
+    const node = ir.typeParameters({ type: "attribute_item" } as never);
     expect(node.$type).toBe('type_parameters');
     expect(node.$source).toBe('factory');
   });
@@ -645,7 +645,7 @@ describe('visibility_modifier', () => {
 
 describe('bracketed_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.bracketedType();
+    const node = ir.bracketedType({ type: "_type" } as never);
     expect(node.$type).toBe('bracketed_type');
     expect(node.$source).toBe('factory');
   });
@@ -697,7 +697,7 @@ describe('for_lifetimes', () => {
 
 describe('function_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.functionType({ parameters: { $type: 'parameters', $text: 'test' } as any });
+    const node = ir.functionType({ parameters: { $type: 'parameters', $text: 'test' } as any, children: [{ $type: '_function_type_trait_form', $text: 'test' } as any] as any });
     expect(node.$type).toBe('function_type');
     expect(node.$source).toBe('factory');
   });
@@ -782,7 +782,7 @@ describe('use_bounds', () => {
 
 describe('type_arguments', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeArguments();
+    const node = ir.typeArguments({ type: "_type" } as never);
     expect(node.$type).toBe('type_arguments');
     expect(node.$source).toBe('factory');
   });
@@ -973,7 +973,7 @@ describe('try_expression', () => {
 
 describe('reference_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.reference({ value: { $type: '_expression', $text: 'test' } as any });
+    const node = ir.reference({ value: { $type: '_expression', $text: 'test' } as any, children: [{ $type: '_reference_expression_raw_const', $text: 'test' } as any] as any });
     expect(node.$type).toBe('reference_expression');
     expect(node.$source).toBe('factory');
   });
@@ -1090,12 +1090,12 @@ describe('parenthesized_expression', () => {
 
 describe('tuple_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.tuple({ attributes: [{ $type: 'attribute_item', $text: 'test' } as any] });
+    const node = ir.tuple({ attributes: [{ $type: 'attribute_item', $text: 'test' } as any], elements: { $type: '_expression', $text: 'test' } as any, elements: [{ $type: '_expression', $text: 'test' } as any] });
     expect(node.$type).toBe('tuple_expression');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.tuple({ attributes: [{ $type: 'attribute_item', $text: 'test' } as any] });
+    const node = ir.tuple({ attributes: [{ $type: 'attribute_item', $text: 'test' } as any], elements: { $type: '_expression', $text: 'test' } as any, elements: [{ $type: '_expression', $text: 'test' } as any] });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1187,7 +1187,7 @@ describe('let_condition', () => {
 
 describe('else_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.elseClause();
+    const node = ir.elseClause({ type: "block" } as never);
     expect(node.$type).toBe('else_clause');
     expect(node.$source).toBe('factory');
   });
@@ -1449,7 +1449,7 @@ describe('block', () => {
 
 describe('generic_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.genericPattern({ typeArguments: { $type: 'type_arguments', $text: 'test' } as any });
+    const node = ir.genericPattern({ typeArguments: { $type: 'type_arguments', $text: 'test' } as any, children: [{ $type: 'identifier', $text: 'test' } as any] as any });
     expect(node.$type).toBe('generic_pattern');
     expect(node.$source).toBe('factory');
   });
@@ -1656,7 +1656,7 @@ describe('boolean_literal', () => {
 
 describe('comment', () => {
   it('factory produces correct type', () => {
-    const node = ir.comment();
+    const node = ir.comment({ type: "line_comment" } as never);
     expect(node.$type).toBe('comment');
     expect(node.$source).toBe('factory');
   });

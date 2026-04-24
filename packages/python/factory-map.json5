@@ -180,8 +180,7 @@
     ],
     "import_from_statement": [
       "module_name",
-      "wildcard_import",
-      "name"
+      "wildcard_import"
     ],
     "aliased_import": [
       "name",
@@ -197,6 +196,7 @@
     "if_statement": [
       "condition",
       "consequence",
+      "alternative",
       "alternative"
     ],
     "elif_clause": [
@@ -345,6 +345,7 @@
       "arguments"
     ],
     "splat_type": [
+      "identifier",
       "identifier"
     ],
     "generic_type": [

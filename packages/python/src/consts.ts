@@ -463,12 +463,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'if_statement': [
     { name: 'condition', required: true, multiple: false },
     { name: 'consequence', required: true, multiple: false },
-    { name: 'alternative', required: false, multiple: true },
+    { name: 'alternative', required: true, multiple: true },
+    { name: 'alternative', required: false, multiple: false },
   ],
   'import_from_statement': [
     { name: 'moduleName', required: true, multiple: false },
     { name: 'wildcardImport', required: true, multiple: true },
-    { name: 'name', required: true, multiple: true },
   ],
   'import_statement': [
     { name: 'name', required: true, multiple: true },
@@ -568,6 +568,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'identifier', required: true, multiple: false },
   ],
   'splat_type': [
+    { name: 'identifier', required: true, multiple: false },
     { name: 'identifier', required: true, multiple: false },
   ],
   'string': [
