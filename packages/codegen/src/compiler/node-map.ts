@@ -271,97 +271,101 @@ function auditDerivationShape(rule: Rule, context: 'fields' | 'children'): void 
     }
 }
 function classifyTopLevelShape(rule: Rule): string {
-    // Canonical for the Phase 2 trivial walk: shapes the walk can
-    // handle via a small recursion (descend through structural
-    // wrappers, iterate seq / choice members, read single atomics).
+    // Canonical for the Phase 2 trivial walk: the tree rooted at `rule`
+    // — traversed through the structural wrappers the walker descends
+    // (seq, optional, repeat, repeat1, choice, clause, variant) — must
+    // satisfy:
     //
-    //  - `seq` with non-seq members (no nested seq, but nested choice
-    //     is fine — each branch is just another case for the walk)
-    //  - single atomic: `field`, `repeat`, `repeat1`, `symbol`,
-    //     `string`, `pattern`, `terminal`
-    //  - structural wrappers at the top: `optional(...)`, `choice(...)`
-    //     — walk descends into them before filtering for fields /
-    //     children
+    //  - Every choice encountered during the traversal is "union-shaped"
+    //    (token-like or flat-symbol-seq). No choice anywhere in the
+    //    field/child-finding path has heterogeneous structural branches.
+    //    A heterogeneous choice is a polymorph by any other name; the
+    //    walker would have to case-analyze it, so flag it for variant()
+    //    adoption (or hoisting into a proper polymorph parent).
+    //  - Field contents are opaque to this classifier — `deriveValuesForRule`
+    //    owns that subtree and its own simplification.
     //
-    // Non-canonical — shapes that indicate simplify didn't finish
-    // normalizing:
+    // Non-canonical shapes:
     //
-    //  - `seq-with-nested-seq`: flattening gap (my recent fixpoint +
-    //     flatten should eliminate these)
-    //  - `group` / `variant` / `clause` / `alias` / `token` wrappers
-    //     at the top level: should have been peeled by simplifyRule's
-    //     single-member collapse
-    //  - `polymorph` at top: should have been classified into its own
-    //     polymorph modelType, not reached derivation
-    //  - `optional` wrapping a seq-with-nested-seq: the inner seq
-    //     still has flattening gaps
+    //  - `seq-with-nested-seq`: flattening gap (should be caught by the
+    //     simplify fixpoint + flatten).
+    //  - `*-with-heterogeneous-choice`: an inner choice with field-bearing
+    //     branches. Needs variant() adoption at the parent kind or the
+    //     branches hoisted / merged.
+    //  - `group` / `alias` / `token` wrappers mid-tree: simplify should
+    //     peel them.
+    //  - `polymorph` anywhere: polymorphs have their own assemble path
+    //     (AssembledPolymorph). Reaching derivation means classification
+    //     missed it.
     switch (rule.type) {
         case 'seq': {
-            // Nested seq is the only intra-seq shape we flag — nested
-            // choice / optional / repeat inside a seq are all walkable
-            // cases the trivial recursion handles.
             if (rule.members.some(m => m.type === 'seq')) return 'seq-with-nested-seq'
+            for (const m of rule.members) {
+                const inner = classifyTopLevelShape(m)
+                if (inner !== 'canonical') return `seq-member-${inner}`
+            }
             return 'canonical'
         }
         case 'field':
-        case 'repeat':
-        case 'repeat1':
         case 'symbol':
         case 'string':
         case 'pattern':
         case 'terminal':
+        case 'enum':
+        case 'supertype':
         case 'indent':
         case 'dedent':
         case 'newline':
             return 'canonical'
+        case 'clause': {
+            // A `clause` wrapper is sittir's "this seq position owns
+            // a structural token" marker (e.g. field-semicolon, body-
+            // brace). The walker descends through it the same as any
+            // other single-content wrapper; treat its content the
+            // same way the top-level classifier does.
+            const inner = classifyTopLevelShape(rule.content)
+            return inner === 'canonical' ? 'canonical' : `clause-wrapping-${inner}`
+        }
+        case 'variant': {
+            // `variant` wrappers below the top level — usually a
+            // polymorph discriminator that simplify couldn't hoist
+            // (e.g. buried under an optional). The walker unwraps
+            // them without structural consequence; treat inner as
+            // the canonicality check.
+            const inner = classifyTopLevelShape(rule.content)
+            return inner === 'canonical' ? 'canonical' : `variant-wrapping-${inner}`
+        }
+        case 'token': {
+            const inner = classifyTopLevelShape(rule.content)
+            return inner === 'canonical' ? 'canonical' : `token-wrapping-${inner}`
+        }
+        case 'repeat':
+        case 'repeat1': {
+            const inner = classifyTopLevelShape(rule.content)
+            return inner === 'canonical' ? 'canonical' : `${rule.type}-wrapping-${inner}`
+        }
         case 'choice': {
-            // Top-level choice can be canonical in three shapes:
-            //
-            //   - **All-symbol choice** — `choice($.a, $.b, $.c)` where
-            //     every branch is a bare symbol ref (or wrapped in a
-            //     transparent prec / alias). At parse time the node
-            //     has one named child that's one of the referenced
-            //     kinds — a container. The trivial walk handles this
-            //     by treating the choice members as the child slot's
-            //     value union.
-            //   - **Token-like choice** — same union shape, but the
-            //     members can include bare string/pattern tokens and
-            //     `repeat1(enum)` runs. No structural branching, just
-            //     alternative terminals.
-            //   - **Left-recursive operator chain** — `choice(seq($.self,
-            //     '&&', …), …)` where every seq branch is a flat list
-            //     of symbol references (no fields, no inner structure).
-            //     Common for operator chains (e.g. `_let_chain`). The
-            //     trivial walk enumerates each branch's symbols as
-            //     alternative child unions.
-            //
-            // Heterogeneous shapes — seq-with-fields, mixed field
-            // names, quote-variant strings — are non-canonical and
-            // need either `variant()` adoption (grammar override) or
-            // `mergeChoiceBranches` to fire. Flag them for triage.
+            // Every choice in the traversal must be a simple union — no
+            // structural branches with fields. Flag heterogeneous
+            // choices here instead of leaving the walker to merge them:
+            // they are polymorphs in all but declaration.
             const allTokenLike = rule.members.every(isTokenLikeChoiceMember)
             if (allTokenLike) return 'canonical'
             const allFlatSymbolSeq = rule.members.every(isFlatSymbolSeqOrTokenLike)
             if (allFlatSymbolSeq) return 'canonical'
-            return 'top-level-choice-needs-variant-or-merge'
+            return 'choice-needs-variant-or-merge'
         }
         case 'optional': {
-            // Optional wrapping any canonical shape is itself canonical
-            // — the walk descends through optional and keeps going.
-            // Flag only optionals wrapping a pre-canonical shape.
             const innerShape = classifyTopLevelShape(rule.content)
             return innerShape === 'canonical' ? 'canonical' : `optional-wrapping-${innerShape}`
         }
         case 'group':
-        case 'variant':
-        case 'clause':
         case 'alias':
-        case 'token':
             return `wrapper-${rule.type}`
         case 'polymorph':
             return 'top-level-polymorph'
         default:
-            return `other-${rule.type}`
+            return `other-${(rule as Rule).type}`
     }
 }
 /**
