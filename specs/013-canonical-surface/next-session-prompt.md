@@ -1,61 +1,120 @@
 # 013 — Next Session Prompt
 
-**Goal:** complete Phase 2 walker shrink. Audit is now fully clean across all three grammars; the walker can safely assume canonical input.
+**Goal:** extend enrich's kind-to-name pass to recurse into nested seqs, fix the downstream bugs it surfaces iteratively. This is the optimization that drives category (2) and part of (3) without per-kind override bloat.
 
 ## Context
 
-Spec 013 Phase 1 done + Phase 2 pipeline + cascaded variant adoption + inline fix for `public_field_definition` all landed this session. Audit fully drained (7 → 0 flags). Corpus floors: 6 failures (1 less than baseline — ts factory round-trip test now passes).
+Spec 013 Phase 1 + Phase 2 (walker shrink + strict audit default) are landed. Audit clean across all 3 grammars. Corpus floors: 6 pre-existing failures. `deriveChildren` restructured into top-level + per-member (commit `826bbd02`).
 
-## Session Log
+Categories of nested seqs still reaching `deriveChildren` (from the probe):
+1. **`clause(seq(...))` — 12 kinds — FINE**, clause is our "named optional group" mechanism.
+2. **`repeat(seq(...))` / `repeat1(seq(...))` — 11 kinds — positional ambiguity**, need field names on inner seq members.
+3. **`optional(seq(...))` — 10 kinds — should be clause**, user agreed these are miscategorized clauses.
+4. **`choice(seq(...))` — 3 kinds** — `_let_chain` (real), `_suite` / `yield` (benign).
 
-**Landed this session**:
-- Infra (A) — compose polymorphs onto hidden-rule parents (commit `be602c05`).
-- Infra (B) — `applyPath` descends through `alias` (commit `c5d121c2`).
-- `_export_statement_default` multi-level cascade (commit `23ce9640`).
-- `class_body` + `_for_header` multi-level cascade (commit `3d2ba8aa`).
-- `public_field_definition` resolved via `inline:` (commit `df8a8fa3`).
-- Spread-syntax cleanup in all three grammars' `conflicts:` callbacks (commit `3840e9f1`).
+## Approach: extend `applyKindToName` to recurse
 
-**Key discovery**: tree-sitter's `inline:` is the right tool when a variant's body reduces to "just a shared prefix" and conflicts unrecoverably with sibling rules that share that prefix. Inlining folds the body back into the parent's LR state machine (pre-split states restored), while the alias wrapper survives so the parse tree still emits the named variant kind. `public_field_definition`'s `access_first` arm was the test case — tree-sitter's suggested per-rule-precedence fix would have bled into unrelated rules.
+Enrich's `applyKindToName` currently only runs on TOP-LEVEL seqs (`packages/codegen/src/dsl/enrich.ts:220`). Extend it to walk through `repeat`/`repeat1`/`optional`/`clause` wrappers and apply the same bare-symbol → `field(kind, symbol)` transform to every seq it reaches. This auto-covers categories (2) and part of (3) without touching per-kind overrides.
 
-**Experiments NOT adopted** (kept the "tried and reverted" info for future reference):
-- Auto-inlining every polymorph-synthesized variant wire-side — some transform-based variants wrap token rules that tree-sitter refuses to inline (rust's `line_comment` variants).
-- Moving ALL typescript variant conflicts (`_for_header_*`, `_export_statement_default_*`, `_class_body_*`) from `conflicts:` to `inline:` — tree-sitter accepts the build but 1 corpus round-trip drops and the typescript factory round-trip starts failing. The cascaded variants have tree-output sensitivity to alias-boundary handling that inline subtly changes. Only `public_field_definition` adopted inline.
+Blueprint (tried in session, reverted on regressions — iterate from here):
 
-## Remaining Work — Phase 2 Walker Shrink
+```ts
+function applyKindToName(ruleName: string, rule: Rule): Rule {
+    // Collect ALL existing field names in the rule's subtree — names
+    // claimed anywhere (ancestor, sibling, cousin) can't be reused.
+    const claimed = new Set<string>()
+    walkCollectFieldNames(rule, claimed)
+    return walkKindToName(ruleName, rule, claimed) ?? rule
+}
 
-Audit is clean. Phase 2 is ready to land:
+function walkKindToName(ruleName: string, rule: Rule, claimed: Set<string>): Rule | null {
+    if (isSeqType(rule.type)) return applyKindToNameAtSeq(ruleName, rule, claimed)
+    if (isRepeatType(rule.type) || isOptionalType(rule.type) || rule.type === 'clause') {
+        const content = (rule as unknown as { content: Rule }).content
+        const recursed = walkKindToName(ruleName, content, claimed)
+        return recursed ? ({ ...rule, content: recursed } as Rule) : null
+    }
+    return null
+}
 
-1. **Flip `DERIVE_AUDIT_MODE` default to `strict`** in `packages/codegen/src/compiler/node-map.ts:230`. This changes the `"off"` default to `"strict"` — any non-canonical shape reaching the walker will throw at codegen time (currently only logs in `"report"` mode).
+function applyKindToNameAtSeq(ruleName: string, rule: Rule, claimed: Set<string>): Rule | null {
+    // Same as the existing top-level impl but uses `claimed` (tree-wide)
+    // instead of a per-seq `existing` set. Recurse into nested wrappers
+    // before the bare-symbol check — deeper changes propagate.
+    // ... (see commit history for full implementation)
+}
+```
 
-2. **Shrink `deriveFields` / `deriveChildren`** to the 4-line target from `plan.md` lines 135-149. Specifically:
-   - Delete `deriveFieldsRaw`'s `case 'choice'` per-branch+downgrade logic.
-   - Delete `walkForChildren`'s same.
-   - Delete `toOptionalMultiplicity`.
-   - Delete `deriveFields`'s merge loop.
-   - Verify python `commaSep` still works (the lift path produces a repeat1 that should pass canonical classification).
+**Collision safety**: collision detection must span the ENTIRE rule subtree, not just the current seq level. Tree-sitter folds same-named fields at different depths together, silently merging distinct positional meanings. The pre-walk `walkCollectFieldNames` seeds the `claimed` set with every existing `field('name', ...)` anywhere in the rule.
 
-3. **Add a `## Delivered` section to `plan.md`** summarizing the work.
+## Known issues to iterate through
 
-## Starting Command
+### (A) Autogen'd overrides label wrong positions
+
+Some per-kind overrides wrap the wrong seq position as a field. Example: `packages/typescript/overrides.ts` has
+
+```ts
+import_attribute: {
+    0: field('object'),  // WRONG — position 0 is 'with' literal
+},
+```
+
+Base grammar is `seq('with', $.object)` — position 0 is the `'with'` keyword, position 1 is the `$.object` symbol. The autogen walker counted "struct=0" (first named child) = `object` but misidentified position.
+
+When enrich's nested-seq pass runs, the symbol `$.object` at position 1 gets wrapped as `field('object', symbol)` — colliding with the autogen's mislabeled `field('object', 'with')`. Two fields named 'object' at different positions in the same seq; downstream factories emit duplicated property names.
+
+Fix per-kind: audit each override, either correct the position or change the field name. Memory note `project_overrides_generator_positional_bug.md` has the full inventory.
+
+### (B) repeat(separator)-metadata interaction
+
+Some container kinds like `variable_declaration = seq('var', field('declarators', repeat1(variable_declarator, sep=',')))` — enrich's recursion descends through the field wrapper into the repeat1. The repeat1's content (a bare `variable_declarator` symbol) gets wrapped as `field('variable_declarator', symbol)`. This CHANGES the repeat1's inner shape from symbol to field(symbol).
+
+Downstream render walkers may treat `repeat1(field(name, sym))` differently than `repeat1(sym)` — e.g. the separator-trailing metadata or the walker's template emission shifts. In testing, `variable_declaration` rendered as `var ;` losing all declarators.
+
+Fix options: (i) skip recursion through field wrappers (the pass already does this), (ii) add per-kind overrides that explicitly retain the bare-symbol form, (iii) teach the template walker to handle field-wrapped repeat content identically.
+
+### (C) Test floor adjustments
+
+After the nested-seq enrichment lands, expect TS round-trip floors to shift.
+
+**Critical — user guidance**: the aggregate "how many tests are failing overall" number is NOT the signal to track. What matters is the **TOTALS** (`rtTotal` / `fromTotal` / `covTotal`) — a shift downward means kinds disappeared from the universe, which is a real regression. The pass-count floors (`rtPass` etc.) are expected to move around as adoption shifts what's canonical; the totals should only grow or stay flat. If total drops, investigate WHICH kinds fell out of the universe.
+
+## Starting command
 
 ```bash
 cd /Users/pmouli/GitHub.nosync/refactory-lang/sittir
-git log --oneline -20 | grep "013:"
-SITTIR_AUDIT_DERIVE=1 npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src 2>&1 | tail -3
-SITTIR_AUDIT_DERIVE=1 npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src 2>&1 | tail -3
-SITTIR_AUDIT_DERIVE=1 npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src 2>&1 | tail -3
-# All three should show no `non-canonical shapes reaching derivation` output.
+git log --oneline -10 | grep "013:"
+npx vitest run 2>&1 | grep -E "Test Files|Tests " | tail -3
+# Should show 6 failed, 1402 passed — pre-existing floor.
 ```
 
-## Probe Tool
+## Investigation order
 
-If needed — trivial to recreate, don't commit:
+1. Re-apply the enrich recursion extension (snippet above).
+2. Regen all three grammars; check audit stays clean.
+3. Run the full test suite; collect the regressions.
+4. For each regression, probe the kind and either:
+   - Fix the autogen'd override position (category A).
+   - Adjust the enrich recursion to skip that shape (category B).
+   - Accept the change and adjust the floor (category C).
+5. Iterate until tests are back to 6-failure baseline (or better).
+6. Commit. Phase 3 projection (drop `#fields`/`#children` caches) is the next stretch goal — defer unless there's time.
+
+## Probe tool
+
+Trivial; don't commit:
 
 ```ts
 // packages/codegen/src/scripts/probe-rule.ts
 import { evaluate } from '../compiler/evaluate.ts'
+import { link } from '../compiler/link.ts'
+import { optimize } from '../compiler/optimize.ts'
+import { simplifyRule } from '../compiler/simplify.ts'
 import { resolveOverridesPath } from '../compiler/resolve-grammar.ts'
 const raw = await evaluate(resolveOverridesPath(process.argv[2]))
-console.log(JSON.stringify(raw.rules[process.argv[3]], (k, v) => k === '_ref' ? undefined : v, 2))
+const linked = link(raw)
+const optimized = optimize(linked)
+const r = optimized.rules[process.argv[3]]
+const s = r ? simplifyRule(r) : null
+console.log(JSON.stringify(s, (k, v) => k === '_ref' ? undefined : v, 2))
 ```
