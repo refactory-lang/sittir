@@ -50,6 +50,14 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
             // empty seq after the string is stripped). Word-shaped
             // strings like 'pub' / 'return' stay — they carry identity
             // that downstream paths key on.
+            //
+            // Flatten nested-seq members (`seq(a, seq(b, c), d)` →
+            // `seq(a, b, c, d)`). Grammar authors occasionally wrap
+            // a sub-sequence inline — canonical form has a flat
+            // top-level seq so derivation can filter-and-project
+            // without descending. Canonical example from rust:
+            // `_array_expression_semi` wraps `seq(elements, ';',
+            // length)` inside the outer bracketed-seq.
             const members = rule.members
                 .map(m => simplifyRule(m, wordMatcher, inField))
                 .filter(m => {
@@ -57,6 +65,7 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
                     if (m.type === 'seq' && m.members.length === 0) return false
                     return true
                 })
+                .flatMap(m => m.type === 'seq' ? m.members : [m])
             if (members.length === 0) return { type: 'seq', members: [] }
             if (members.length === 1) return members[0]!
             return { type: 'seq', members }
