@@ -1,16 +1,19 @@
 /**
- * Backend-selection shim — spec 012 T019 (stub; T039 fills the real
- * selection algorithm). Picks between the native backend
+ * Backend-selection shim — spec 012 T040 (real selection algorithm;
+ * overwrites the T019 stub). Picks between the native backend
  * (`@sittir/python-native`) and the TypeScript fallback. See
  * specs/012-rust-core-port/contracts/backend-selection.md for the
  * runtime-selection contract.
  *
- * This stub always reports the TS fallback. It is intentionally tiny
- * so consumers can depend on `getActiveBackend()` and the
- * `BackendName` / `BackendStatus` types today; the implementation
- * flips to real native-load behaviour in T039 without changing the
- * public surface.
+ * The selection runs once per module load, is cached as a module-local
+ * singleton, never retries, and is reference-stable across the process
+ * lifetime. A failure to load native falls back silently to the TS
+ * engine; consumers see the decision via `getActiveBackend()` and
+ * optionally via the `SITTIR_BACKEND_DEBUG` stderr nudge.
  */
+
+import { createRequire } from 'node:module';
+import { TEMPLATE_BUNDLE_HASH } from './hash.js';
 
 /** Which backend is currently serving render/read/splice. */
 export type BackendName = 'native' | 'typescript';
@@ -22,9 +25,35 @@ export interface BackendStatus {
 	reason?: string;
 	/**
 	 * Hash-comparison outcome when native was considered. Absent when
-	 * native didn't load at all (stub always returns absent).
+	 * native didn't load at all (fallback without a load attempt).
 	 */
 	hashMatch?: boolean;
+	/**
+	 * Handle to the loaded native engine module. Only present when
+	 * `name === 'native'`; consumers should reach the engine via the
+	 * routing in index.ts rather than touching this directly, but it
+	 * is exposed here so boundary shims in this package can use it
+	 * without re-running `require`.
+	 */
+	native?: NativeModule;
+}
+
+/**
+ * Structural shape of `@sittir/{lang}-native`. Matches
+ * contracts/napi-api.md — we only require `SittirEngine` with the
+ * documented surface. Declared locally (not imported) so the package
+ * type-checks even when the native package is not installed.
+ */
+export interface NativeEngine {
+	readonly templateBundleHash: string;
+	findAndRead(source: string, pattern: string): string;
+	readNode(nodeId: number): string;
+	render(nodeJson: string): string;
+	applyEdits(source: string, edits: { startPos: number; endPos: number; insertedText: string }[]): string;
+}
+
+export interface NativeModule {
+	SittirEngine: new () => NativeEngine;
 }
 
 /**
@@ -34,33 +63,102 @@ export interface BackendStatus {
  */
 let cached: BackendStatus | null = null;
 
+/** Fires only once across the process lifetime — see emitDebug. */
+let debugEmitted = false;
+
 /** Package identifier baked into the `SITTIR_BACKEND_DEBUG` log line. */
 const PACKAGE_ID = 'sittir/python';
+
+/** npm package id of the paired native binary. */
+const NATIVE_PACKAGE = '@sittir/python-native';
+
+/**
+ * Emit the `SITTIR_BACKEND_DEBUG` stderr line exactly once per process
+ * lifetime. Guarded by both the env var and the module-scoped flag so
+ * repeat `getActiveBackend()` calls after the singleton is cached do
+ * not re-emit.
+ */
+function emitDebug(status: BackendStatus): void {
+	if (debugEmitted) return;
+	if (!process.env.SITTIR_BACKEND_DEBUG) return;
+	debugEmitted = true;
+	const suffix = status.reason ? `, reason = ${status.reason}` : '';
+	try {
+		process.stderr.write(`${PACKAGE_ID}: backend = ${status.name}${suffix}\n`);
+	} catch {
+		// Never throw on stderr write failure — contract invariant.
+	}
+}
+
+/**
+ * Attempt to `require` the paired native package. Uses
+ * `createRequire(import.meta.url)` so ESM consumers can still resolve
+ * CJS native addons. Returns either the loaded module or a status
+ * object carrying the fallback reason.
+ */
+function tryLoadNative(): NativeModule | { reason: string } {
+	try {
+		const req = createRequire(import.meta.url);
+		const mod = req(NATIVE_PACKAGE) as NativeModule;
+		return mod;
+	} catch (err) {
+		const message = err instanceof Error ? err.message : String(err);
+		// Cannot-find-module surfaces as the common "platform not supported"
+		// case; other errors get the generic native-load-failed phrasing.
+		if (/Cannot find module/i.test(message) || /MODULE_NOT_FOUND/.test(message)) {
+			return { reason: 'native binary not available for this platform' };
+		}
+		return { reason: `native load failed: ${message}` };
+	}
+}
+
+/**
+ * Run the native load + hash-compare algorithm from
+ * contracts/backend-selection.md. Silently falls back to the TS engine
+ * on any failure; the reason field carries enough context for the
+ * `SITTIR_BACKEND_DEBUG` nudge and programmatic inspection via
+ * `getActiveBackend()`.
+ */
+function computeBackend(): BackendStatus {
+	const loaded = tryLoadNative();
+	if ('reason' in loaded) {
+		return Object.freeze({ name: 'typescript', reason: loaded.reason });
+	}
+
+	let hashMatch: boolean;
+	let nativeHash: string;
+	try {
+		const engine = new loaded.SittirEngine();
+		nativeHash = engine.templateBundleHash;
+		hashMatch = nativeHash.toLowerCase() === TEMPLATE_BUNDLE_HASH.toLowerCase();
+	} catch (err) {
+		const message = err instanceof Error ? err.message : String(err);
+		return Object.freeze({
+			name: 'typescript',
+			reason: `native-engine error at init: ${message}`,
+		});
+	}
+
+	if (!hashMatch) {
+		return Object.freeze({
+			name: 'typescript',
+			reason: 'template-bundle hash mismatch',
+			hashMatch: false,
+		});
+	}
+
+	return Object.freeze({ name: 'native', hashMatch: true, native: loaded });
+}
 
 /**
  * Return the active backend for this package. Safe to call from any
  * consumer code path — never throws, never writes to stdout, writes
  * at most one line to stderr across the process lifetime (gated on
  * `SITTIR_BACKEND_DEBUG`).
- *
- * The stub always selects the TypeScript fallback. T039 replaces
- * this body with the real try-native-then-hash-compare algorithm.
  */
 export function getActiveBackend(): BackendStatus {
 	if (cached !== null) return cached;
-	const status: BackendStatus = Object.freeze({
-		name: 'typescript' as const,
-		reason: 'not yet implemented',
-	});
-	if (process.env.SITTIR_BACKEND_DEBUG) {
-		try {
-			process.stderr.write(
-				`${PACKAGE_ID}: backend = ${status.name}, reason = ${status.reason}\n`,
-			);
-		} catch {
-			// Never throw on stderr write failure — contract invariant.
-		}
-	}
-	cached = status;
-	return status;
+	cached = computeBackend();
+	emitDebug(cached);
+	return cached;
 }
