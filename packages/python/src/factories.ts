@@ -1156,24 +1156,12 @@ export function _tuplePattern(...children: T.CasePattern[]) {
   };
 }
 
-export function dictPattern(config: T.DictPattern.Config) {
-  const fields = {
-    key: config.key,
-    value: config.value,
-  };
-  const children = config.children ?? [];
+export function dictPattern(...children: T.DictPatternKv[]) {
   return {
     $type: 'dict_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
     $children: children,
-    key(...values: T.SimplePattern[]) { return _fsm(config, dictPattern, 'key', values, config?.key); },
-    value(...values: T.CasePattern[]) { return _fsm(config, dictPattern, 'value', values, config?.value); },
-    children(...items: T.SplatPattern[]) {
-      if (items.length === 0) return children;
-      return dictPattern({ ...config, children: items });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

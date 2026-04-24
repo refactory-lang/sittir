@@ -769,13 +769,12 @@ export function unionPatternFrom(...input: readonly (NonNullable<T.UnionPattern.
   return F.unionPattern(...input);
 }
 
-export function dictPatternFrom(input: T.DictPattern.Loose): ReturnType<typeof F.dictPattern> {
-  if (isNodeData(input)) return input;
-  return F.dictPattern({
-    key: _resolveManyBranch(input.key, "_simple_pattern"),
-    value: _resolveManyBranch(input.value, "case_pattern"),
-    children: _resolveManyBranch(input.children, "splat_pattern"),
-  });
+export function dictPatternFrom(...input: readonly (NonNullable<T.DictPattern.Config['children']>[number] | T.DictPattern)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'dict_pattern') {
+    const data = input[0];
+    return F.dictPattern(...(data.$children ?? []));
+  }
+  return F.dictPattern(...input);
 }
 
 export function keywordPatternFrom(input: T.KeywordPattern.Loose): ReturnType<typeof F.keywordPattern> {

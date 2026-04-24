@@ -388,6 +388,11 @@ export const enum KeywordIdentifierKind {
   Identifier = 'identifier',
 }
 
+export const enum DictPatternKvKind {
+  KeyValuePattern = '_key_value_pattern',
+  SplatPattern = 'splat_pattern',
+}
+
 // Node types — concrete interfaces
 export interface Module {
   readonly $type: 'module';
@@ -777,11 +782,7 @@ export interface _TuplePattern {
 
 export interface DictPattern {
   readonly $type: 'dict_pattern';
-  readonly $fields: {
-    readonly key: readonly (SimplePattern)[];
-    readonly value: readonly (CasePattern)[];
-  };
-  readonly $children: readonly (SplatPattern)[];
+  readonly $children: readonly (DictPatternKv)[];
 }
 
 export interface KeyValuePattern {
@@ -1630,6 +1631,13 @@ export type KeywordIdentifier =
 ;
 
 export type KeywordIdentifierTree = IdentifierTree;
+
+export type DictPatternKv =
+  | KeyValuePattern
+  | SplatPattern
+;
+
+export type DictPatternKvTree = KeyValuePatternTree | SplatPatternTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
 export type WildcardImport = Terminal<"wildcard_import">;

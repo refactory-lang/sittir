@@ -6,6 +6,7 @@ import type { AnyNodeData, AnyTreeNodeOf as AnyTreeNode } from '@sittir/types';
 import type {
     NamespaceMap,
     CompoundStatement,
+    DictPatternKv,
     Expression,
     ExpressionWithinForInClause,
     Expressions,
@@ -146,6 +147,7 @@ export interface IsGuards {
     rightHandSide(v: { readonly $type: string }): v is RightHandSide;
     fExpression(v: { readonly $type: string }): v is FExpression;
     keywordIdentifier(v: { readonly $type: string }): v is KeywordIdentifier;
+    dictPatternKv(v: { readonly $type: string }): v is DictPatternKv;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
@@ -273,6 +275,7 @@ export interface AssertGuards {
     rightHandSide(v: { readonly $type: string }): asserts v is RightHandSide;
     fExpression(v: { readonly $type: string }): asserts v is FExpression;
     keywordIdentifier(v: { readonly $type: string }): asserts v is KeywordIdentifier;
+    dictPatternKv(v: { readonly $type: string }): asserts v is DictPatternKv;
 }
 
 // Runtime: kind guards = string equality; supertype guards = Set.has.
@@ -298,6 +301,7 @@ const _supertype_leftHandSide = new Set<string>(["pattern", "pattern_list"]);
 const _supertype_rightHandSide = new Set<string>(["expression", "expression_list", "assignment", "augmented_assignment", "pattern_list", "yield"]);
 const _supertype_fExpression = new Set<string>(["expression", "expression_list", "pattern_list", "yield"]);
 const _supertype_keywordIdentifier = new Set<string>(["identifier"]);
+const _supertype_dictPatternKv = new Set<string>(["_key_value_pattern", "splat_pattern"]);
 
 export const is = {
     module: _g("module"),
@@ -423,6 +427,7 @@ export const is = {
     rightHandSide: _sg(_supertype_rightHandSide),
     fExpression: _sg(_supertype_fExpression),
     keywordIdentifier: _sg(_supertype_keywordIdentifier),
+    dictPatternKv: _sg(_supertype_dictPatternKv),
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -571,6 +576,7 @@ export const assert = {
     rightHandSide: _makeAssert('rightHandSide', is.rightHandSide as _AnyGuard),
     fExpression: _makeAssert('fExpression', is.fExpression as _AnyGuard),
     keywordIdentifier: _makeAssert('keywordIdentifier', is.keywordIdentifier as _AnyGuard),
+    dictPatternKv: _makeAssert('dictPatternKv', is.dictPatternKv as _AnyGuard),
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.

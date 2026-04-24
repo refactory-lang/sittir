@@ -153,6 +153,10 @@ export const keywordIdentifier = {
   identifier: F.identifier,
 } as const;
 
+export const dictPatternKv = {
+  splat: _attach(F.splatPattern, { from: FR.splatPatternFrom }),
+} as const;
+
 export const ir = {
   // Node factories
   module: _attach(F.module, { from: FR.moduleFrom }),
@@ -294,4 +298,5 @@ export const ir = {
   rightHandSide,
   fExpression,
   keywordIdentifier,
+  dictPatternKv,
 } as const;

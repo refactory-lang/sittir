@@ -385,8 +385,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'delete_statement': [
   ],
   'dict_pattern': [
-    { name: 'key', required: true, multiple: true },
-    { name: 'value', required: true, multiple: true },
   ],
   'dictionary': [
   ],

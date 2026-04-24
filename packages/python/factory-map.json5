@@ -56,7 +56,7 @@
     "dotted_name": "children",
     "case_pattern": "children",
     "union_pattern": "children",
-    "dict_pattern": "config",
+    "dict_pattern": "children",
     "keyword_pattern": "config",
     "splat_pattern": "config",
     "class_pattern": "config",
@@ -416,6 +416,12 @@
       "childKind": {
         "with_clause_bare": "bare",
         "with_clause_paren": "paren"
+      }
+    },
+    "dict_pattern": {
+      "source": "override",
+      "childKind": {
+        "dict_pattern_kv": "kv"
       }
     },
     "assignment": {

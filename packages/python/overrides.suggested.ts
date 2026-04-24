@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   40  (32 applied, 8 held)
+// Rule promotions:   41  (33 applied, 8 held)
 // Repeated shapes:   0  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -103,6 +103,9 @@ export const suggestedRules = {
   _compound_statement: $ => choice($.if_statement, $.for_statement, $.while_statement, $.try_statement, $.with_statement, $.function_definition, $.class_definition, $.decorated_definition, $.match_statement),
 
   // [applied] promoted supertype
+  _dict_pattern_kv: $ => choice($._key_value_pattern, $.splat_pattern),
+
+  // [applied] promoted supertype
   _expression_within_for_in_clause: $ => choice($.expression, $.lambda_within_for_in_clause),
 
   // [applied] promoted supertype
@@ -153,6 +156,7 @@ export interface PromotedRule {
 }
 export const promotedRules: readonly PromotedRule[] = [
   { kind: "_compound_statement", classification: "supertype", applied: true },
+  { kind: "_dict_pattern_kv", classification: "supertype", applied: true },
   { kind: "_expression_within_for_in_clause", classification: "supertype", applied: true },
   { kind: "_expressions", classification: "supertype", applied: true },
   { kind: "_f_expression", classification: "supertype", applied: true },

@@ -77,6 +77,21 @@ export default grammar(enrich(base), wire({
         // into `_match_block_block` leaves the remaining choice as all
         // symbol-like (alias + symbol) — canonical.
         _match_block: { 0: 'block' },
+
+        // dict_pattern: base rule is
+        //   seq('{', optional(seq(
+        //     commaSep1(choice($._key_value_pattern, $.splat_pattern)),
+        //     optional(','),
+        //   )), '}')
+        // liftCommaSep converts the commaSep1 into a repeat1 with
+        // separator, so after simplify the path to the heterogeneous
+        // choice is 1/0/0 (optional → seq → repeat1 → choice). One arm is
+        // the inlined `_key_value_pattern` seq (tree-sitter wraps the
+        // hidden rule in an alias); the other is `splat_pattern`.
+        // Splitting the key-value arm into `dict_pattern_kv` leaves the
+        // remaining choice all symbol-like. Requires infra (B)'s alias
+        // descent in applyPath.
+        dict_pattern: { '1/0/0/0': 'kv' },
     },
     transforms: {
         // as_pattern: 1 field(s)

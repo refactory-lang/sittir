@@ -593,8 +593,6 @@ export function wrap_TuplePattern(data: _NodeData, tree: TreeHandle): WrappedNod
 export function wrapDictPattern(data: _NodeData, tree: TreeHandle): WrappedNode<DictPattern> {
   return {
     ...data,
-    get key() { return drillInAll(data.$fields?.['key'], tree); },
-    get value() { return drillInAll(data.$fields?.['value'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<DictPattern>;
 }

@@ -1,9 +1,10 @@
 {
   "name": "python",
-  "nodeCount": 234,
+  "nodeCount": 235,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
+    "_dict_pattern_kv",
     "_expression_within_for_in_clause",
     "_expressions",
     "_f_expression",
@@ -615,6 +616,17 @@
       "factoryName": "dedent",
       "irKey": "dedent",
       "hidden": false
+    },
+    {
+      "kind": "_dict_pattern_kv",
+      "modelType": "supertype",
+      "typeName": "DictPatternKv",
+      "irKey": "dictPatternKv",
+      "hidden": true,
+      "subtypes": [
+        "_key_value_pattern",
+        "splat_pattern"
+      ]
     },
     {
       "kind": "_expression_statement_tuple",
@@ -3512,63 +3524,15 @@
     },
     {
       "kind": "dict_pattern",
-      "modelType": "branch",
+      "modelType": "container",
       "typeName": "DictPattern",
       "factoryName": "dictPattern",
       "irKey": "dictPattern",
       "hidden": false,
-      "fields": [
-        {
-          "name": "key",
-          "propertyName": "key",
-          "paramName": "key",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_simple_pattern",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_simple_pattern"
-            ]
-          }
-        },
-        {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "case_pattern",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "case_pattern"
-            ]
-          }
-        }
-      ],
       "children": [
         {
-          "name": "splat_pattern",
-          "propertyName": "splatPattern",
+          "name": "dict_pattern_kv",
+          "propertyName": "dictPatternKv",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -3576,12 +3540,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "splat_pattern",
+              "name": "_dict_pattern_kv",
               "unresolved": true
             }
           ]
         }
-      ]
+      ],
+      "separator": ","
     },
     {
       "kind": "dictionary",

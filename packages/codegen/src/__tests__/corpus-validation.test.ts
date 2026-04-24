@@ -281,6 +281,13 @@ const ALIAS_VARIANT_KINDS: Record<string, Set<string>> = {
         // a multi-shape (`expression, expression, ...`), same situation
         // as with_clause_bare.
         'expression_statement_tuple',
+        // dict_pattern variant adoption: the `kv` arm's body is the
+        // inlined `_key_value_pattern` shape (`seq(field('key', ...), ':',
+        // field('value', ...))`). The assembler classifies the synthesized
+        // parent as a pass-through alias rather than an independent
+        // template owner — rendering routes through the alias to the
+        // underlying _key_value_pattern body.
+        'dict_pattern_kv',
     ]),
     rust: new Set([
         'closure_expression_block', 'closure_expression_expr',

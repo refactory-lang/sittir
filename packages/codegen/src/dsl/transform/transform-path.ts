@@ -212,6 +212,9 @@ export function applyPath(
             if (isWrapperType(t)) {
                 return descendThroughSingleWrapper(rule, head!, rest, patch, precStack)
             }
+            if (t === 'alias' || t === 'ALIAS') {
+                return descendThroughAlias(rule, head!, rest, patch, precStack)
+            }
             throw new ApplyPathSkip(`applyPath: cannot descend into '${rule.type}' rule (path has ${segments.length} segments left)`)
         }
 
@@ -296,6 +299,62 @@ function descendThroughSingleWrapper(
             throw new Error(`descendThroughSingleWrapper: unexpected segment kind '${(_exhaustive as PathSegment).kind}' — this is a bug in applyPath dispatch`)
         }
     }
+}
+
+/**
+ * Descend through an `alias(content, name)` wrapper, treating position 0
+ * (or -1) as the aliased content. Symmetric to descendThroughSingleWrapper
+ * — the alias is just a single-slot rule wrapper that re-labels its
+ * content. On return the alias is rebuilt around the patched content with
+ * its `named`/`value` metadata preserved.
+ *
+ * Unblocks path-addressed transforms on rules where the patch target sits
+ * inside an alias wrapper — e.g. python's `dict_pattern`, where the
+ * `_key_value_pattern` choice arm is wrapped in an alias after tree-sitter
+ * inlines the hidden rule, and the inner heterogeneous choice can't be
+ * reached without descending through it.
+ */
+function descendThroughAlias(
+    rule: RuntimeRule,
+    head: PathSegment,
+    rest: readonly PathSegment[],
+    patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
+    precStack: readonly RuntimeRule[] | undefined,
+): RuntimeRule {
+    switch (head.kind) {
+        case 'wildcard': {
+            const newContent = applyPath(contentOf(rule), rest, patch, precStack)
+            return reconstructAlias(rule, newContent)
+        }
+        case 'index': {
+            if (head.value === 0 || head.value === -1) {
+                const newContent = applyPath(contentOf(rule), rest, patch, precStack)
+                return reconstructAlias(rule, newContent)
+            }
+            throw new ApplyPathSkip(
+                `applyPath: index ${head.value} out of bounds — '${rule.type}' wraps a single content rule (only index 0 / -1 is valid)`,
+            )
+        }
+        case 'kind-match':
+        case 'fieldName':
+        default: {
+            const _exhaustive: never = head
+            throw new Error(`descendThroughAlias: unexpected segment kind '${(_exhaustive as PathSegment).kind}' — this is a bug in applyPath dispatch`)
+        }
+    }
+}
+
+/**
+ * Rebuild an `alias(content, name)` rule around patched content while
+ * preserving the alias's `named` / `value` metadata. Uses direct object
+ * construction rather than a native-dsl call because tree-sitter's
+ * `alias()` primitive takes `(content, target)` where `target` can be
+ * either a string (named alias) or a rule reference (symbol), and
+ * round-tripping through it would require reconstructing the original
+ * target shape. Direct spread preserves exactly what we received.
+ */
+function reconstructAlias(rule: RuntimeRule, newContent: RuntimeRule): RuntimeRule {
+    return { ...(rule as object), content: newContent } as RuntimeRule
 }
 
 /**
