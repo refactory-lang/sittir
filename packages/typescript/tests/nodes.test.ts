@@ -74,14 +74,6 @@ describe('export_specifier', () => {
   });
 });
 
-describe('declaration', () => {
-  it('factory produces correct type', () => {
-    const node = ir.declaration();
-    expect(node.$type).toBe('declaration');
-    expect(node.$source).toBe('factory');
-  });
-});
-
 describe("import", () => {
   it('factory produces keyword', () => {
     const node = ir.import_();
@@ -163,14 +155,6 @@ describe('import_attribute', () => {
   it('render produces non-empty string', () => {
     const node = ir.importAttribute({ object: { $type: 'object', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('statement', () => {
-  it('factory produces correct type', () => {
-    const node = ir.statement();
-    expect(node.$type).toBe('statement');
-    expect(node.$source).toBe('factory');
   });
 });
 
@@ -480,22 +464,6 @@ describe('parenthesized_expression', () => {
   it('sequence form produces correct type', () => {
     const node = ir.parenthesized.sequence({});
     expect(node.$type).toBe('parenthesized_expression');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.expression();
-    expect(node.$type).toBe('expression');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('primary_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.primary();
-    expect(node.$type).toBe('primary_expression');
     expect(node.$source).toBe('factory');
   });
 });
@@ -1192,14 +1160,6 @@ describe('class_static_block', () => {
   it('render produces non-empty string', () => {
     const node = ir.classStaticBlock({ body: { $type: 'statement_block', $text: 'test' } as any, children: [{ $type: '_automatic_semicolon', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('pattern', () => {
-  it('factory produces correct type', () => {
-    const node = ir.pattern();
-    expect(node.$type).toBe('pattern');
-    expect(node.$source).toBe('factory');
   });
 });
 

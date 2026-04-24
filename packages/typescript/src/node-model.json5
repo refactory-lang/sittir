@@ -23,7 +23,12 @@
     "_shorthand_property_identifier_pattern",
     "_statement_identifier",
     "_tuple_type_member",
+    "declaration",
+    "expression",
+    "pattern",
+    "primary_expression",
     "primary_type",
+    "statement",
     "type"
   ],
   "externals": [
@@ -6831,222 +6836,20 @@
     },
     {
       "kind": "declaration",
-      "modelType": "container",
+      "modelType": "supertype",
       "typeName": "Declaration",
-      "factoryName": "declaration",
       "irKey": "declaration",
-      "hidden": false,
-      "children": [
-        {
-          "name": "function_declaration",
-          "propertyName": "functionDeclaration",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "function_declaration",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "generator_function_declaration",
-          "propertyName": "generatorFunctionDeclaration",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "generator_function_declaration",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "class_declaration",
-          "propertyName": "classDeclaration",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "class_declaration",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "lexical_declaration",
-          "propertyName": "lexicalDeclaration",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "lexical_declaration",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "variable_declaration",
-          "propertyName": "variableDeclaration",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "variable_declaration",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "function_signature",
-          "propertyName": "functionSignature",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "function_signature",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "abstract_class_declaration",
-          "propertyName": "abstractClassDeclaration",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "abstract_class_declaration",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "module",
-          "propertyName": "module",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "module",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "internal_module",
-          "propertyName": "internalModule",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "internal_module",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "type_alias_declaration",
-          "propertyName": "typeAliasDeclaration",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "type_alias_declaration",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "enum_declaration",
-          "propertyName": "enumDeclaration",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "enum_declaration",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "interface_declaration",
-          "propertyName": "interfaceDeclaration",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "interface_declaration",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "import_alias",
-          "propertyName": "importAlias",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "import_alias",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "ambient_declaration",
-          "propertyName": "ambientDeclaration",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "ambient_declaration",
-              "unresolved": true
-            }
-          ]
-        }
+      "hidden": true,
+      "subtypes": [
+        "abstract_class_declaration",
+        "ambient_declaration",
+        "enum_declaration",
+        "function_signature",
+        "import_alias",
+        "interface_declaration",
+        "internal_module",
+        "module",
+        "type_alias_declaration"
       ]
     },
     {
@@ -8067,237 +7870,26 @@
     },
     {
       "kind": "expression",
-      "modelType": "container",
+      "modelType": "supertype",
       "typeName": "Expression",
-      "factoryName": "expression",
       "irKey": "expression",
-      "hidden": false,
-      "children": [
-        {
-          "name": "as_expression",
-          "propertyName": "asExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "as_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "satisfies_expression",
-          "propertyName": "satisfiesExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "satisfies_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "instantiation_expression",
-          "propertyName": "instantiationExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "instantiation_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "internal_module",
-          "propertyName": "internalModule",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "internal_module",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "type_assertion",
-          "propertyName": "typeAssertion",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "type_assertion",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "primary_expression",
-          "propertyName": "primaryExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "primary_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "assignment_expression",
-          "propertyName": "assignmentExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "assignment_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "augmented_assignment_expression",
-          "propertyName": "augmentedAssignmentExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "augmented_assignment_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "await_expression",
-          "propertyName": "awaitExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "await_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "unary_expression",
-          "propertyName": "unaryExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "unary_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "binary_expression",
-          "propertyName": "binaryExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "binary_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "ternary_expression",
-          "propertyName": "ternaryExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "ternary_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "update_expression",
-          "propertyName": "updateExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "update_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "new_expression",
-          "propertyName": "newExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "new_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "yield_expression",
-          "propertyName": "yieldExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "yield_expression",
-              "unresolved": true
-            }
-          ]
-        }
+      "hidden": true,
+      "subtypes": [
+        "as_expression",
+        "assignment_expression",
+        "augmented_assignment_expression",
+        "await_expression",
+        "binary_expression",
+        "instantiation_expression",
+        "internal_module",
+        "new_expression",
+        "primary_expression",
+        "satisfies_expression",
+        "ternary_expression",
+        "type_assertion",
+        "unary_expression",
+        "update_expression",
+        "yield_expression"
       ]
     },
     {
@@ -14581,42 +14173,19 @@
     },
     {
       "kind": "pattern",
-      "modelType": "container",
+      "modelType": "supertype",
       "typeName": "Pattern",
-      "factoryName": "pattern",
       "irKey": "pattern",
-      "hidden": false,
-      "children": [
-        {
-          "name": "lhs_expression",
-          "propertyName": "lhsExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_lhs_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "rest_pattern",
-          "propertyName": "restPattern",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "rest_pattern",
-              "unresolved": true
-            }
-          ]
-        }
+      "hidden": true,
+      "subtypes": [
+        "array_pattern",
+        "identifier",
+        "member_expression",
+        "non_null_expression",
+        "object_pattern",
+        "rest_pattern",
+        "subscript_expression",
+        "undefined"
       ]
     },
     {
@@ -14629,342 +14198,12 @@
     },
     {
       "kind": "primary_expression",
-      "modelType": "container",
+      "modelType": "supertype",
       "typeName": "PrimaryExpression",
-      "factoryName": "primaryExpression",
-      "irKey": "primary",
-      "hidden": false,
-      "children": [
-        {
-          "name": "subscript_expression",
-          "propertyName": "subscriptExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "subscript_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "member_expression",
-          "propertyName": "memberExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "member_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "parenthesized_expression",
-          "propertyName": "parenthesizedExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "parenthesized_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_identifier",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "this",
-          "propertyName": "this",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "this",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "super",
-          "propertyName": "super",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "super",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "number",
-          "propertyName": "number",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "number",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "string",
-          "propertyName": "string",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "string",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "template_string",
-          "propertyName": "templateString",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "template_string",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "regex",
-          "propertyName": "regex",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "regex",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "true",
-          "propertyName": "true",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "true",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "false",
-          "propertyName": "false",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "false",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "null",
-          "propertyName": "null",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "null",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "object",
-          "propertyName": "object",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "object",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "array",
-          "propertyName": "array",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "array",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "function_expression",
-          "propertyName": "functionExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "function_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "arrow_function",
-          "propertyName": "arrowFunction",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "arrow_function",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "generator_function",
-          "propertyName": "generatorFunction",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "generator_function",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "class",
-          "propertyName": "class",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "class",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "meta_property",
-          "propertyName": "metaProperty",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "meta_property",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "call_expression",
-          "propertyName": "callExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "call_expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "non_null_expression",
-          "propertyName": "nonNullExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "non_null_expression",
-              "unresolved": true
-            }
-          ]
-        }
+      "irKey": "primaryExpression",
+      "hidden": true,
+      "subtypes": [
+        "non_null_expression"
       ]
     },
     {
@@ -15985,312 +15224,31 @@
     },
     {
       "kind": "statement",
-      "modelType": "container",
+      "modelType": "supertype",
       "typeName": "Statement",
-      "factoryName": "statement",
       "irKey": "statement",
-      "hidden": false,
-      "children": [
-        {
-          "name": "export_statement",
-          "propertyName": "exportStatement",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "export_statement",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "import_statement",
-          "propertyName": "importStatement",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "import_statement",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "debugger_statement",
-          "propertyName": "debuggerStatement",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "debugger_statement",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "expression_statement",
-          "propertyName": "expressionStatement",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "expression_statement",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "declaration",
-          "propertyName": "declaration",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "declaration",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "statement_block",
-          "propertyName": "statementBlock",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "statement_block",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "if_statement",
-          "propertyName": "ifStatement",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "if_statement",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "switch_statement",
-          "propertyName": "switchStatement",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "switch_statement",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "for_statement",
-          "propertyName": "forStatement",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "for_statement",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "for_in_statement",
-          "propertyName": "forInStatement",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "for_in_statement",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "while_statement",
-          "propertyName": "whileStatement",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "while_statement",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "do_statement",
-          "propertyName": "doStatement",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "do_statement",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "try_statement",
-          "propertyName": "tryStatement",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "try_statement",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "with_statement",
-          "propertyName": "withStatement",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "with_statement",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "break_statement",
-          "propertyName": "breakStatement",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "break_statement",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "continue_statement",
-          "propertyName": "continueStatement",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "continue_statement",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "return_statement",
-          "propertyName": "returnStatement",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "return_statement",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "throw_statement",
-          "propertyName": "throwStatement",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "throw_statement",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "empty_statement",
-          "propertyName": "emptyStatement",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "empty_statement",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "labeled_statement",
-          "propertyName": "labeledStatement",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "labeled_statement",
-              "unresolved": true
-            }
-          ]
-        }
+      "hidden": true,
+      "subtypes": [
+        "break_statement",
+        "continue_statement",
+        "debugger_statement",
+        "declaration",
+        "do_statement",
+        "empty_statement",
+        "export_statement",
+        "expression_statement",
+        "for_in_statement",
+        "for_statement",
+        "if_statement",
+        "import_statement",
+        "labeled_statement",
+        "return_statement",
+        "statement_block",
+        "switch_statement",
+        "throw_statement",
+        "try_statement",
+        "while_statement",
+        "with_statement"
       ]
     },
     {

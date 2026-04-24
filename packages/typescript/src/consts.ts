@@ -54,7 +54,6 @@ export const NODE_KINDS = [
   'constructor_type',
   'continue_statement',
   'debugger_statement',
-  'declaration',
   'decorator',
   'decorator_call_expression',
   'decorator_member_expression',
@@ -68,7 +67,6 @@ export const NODE_KINDS = [
   'export_clause',
   'export_specifier',
   'export_statement',
-  'expression',
   'expression_statement',
   'extends_clause',
   'extends_type_clause',
@@ -136,8 +134,6 @@ export const NODE_KINDS = [
   'pair_pattern',
   'parenthesized_expression',
   'parenthesized_type',
-  'pattern',
-  'primary_expression',
   'program',
   'property_signature',
   'public_field_definition',
@@ -150,7 +146,6 @@ export const NODE_KINDS = [
   'satisfies_expression',
   'sequence_expression',
   'spread_element',
-  'statement',
   'statement_block',
   'string',
   'subscript_expression',
@@ -593,8 +588,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'debugger_statement': [
     { name: 'semicolon', required: true, multiple: false },
   ],
-  'declaration': [
-  ],
   'decorator': [
   ],
   'decorator_call_expression': [
@@ -638,8 +631,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alias', required: false, multiple: false },
   ],
   'export_statement': [
-  ],
-  'expression': [
   ],
   'expression_statement': [
     { name: 'semicolon', required: true, multiple: false },
@@ -930,10 +921,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'parenthesized_type': [
     { name: 'type', required: true, multiple: false },
   ],
-  'pattern': [
-  ],
-  'primary_expression': [
-  ],
   'program': [
     { name: 'hashBangLine', required: false, multiple: false },
     { name: 'statements', required: true, multiple: true },
@@ -986,8 +973,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'spread_element': [
     { name: 'expression', required: true, multiple: false },
-  ],
-  'statement': [
   ],
   'statement_block': [
     { name: 'statements', required: true, multiple: true },

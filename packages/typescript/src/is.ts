@@ -5,7 +5,9 @@
 import type { AnyNodeData, AnyTreeNodeOf as AnyTreeNode } from '@sittir/types';
 import type {
     NamespaceMap,
+    Declaration,
     DestructuringPattern,
+    Expression,
     Expressions,
     FormalParameter,
     ImportIdentifier,
@@ -14,12 +16,15 @@ import type {
     JsxChild,
     JsxElementName,
     ModuleExportName,
+    Pattern,
+    PrimaryExpression,
     PrimaryType,
     PropertyIdentifier,
     PropertyName,
     Semicolon,
     ShorthandPropertyIdentifier,
     ShorthandPropertyIdentifierPattern,
+    Statement,
     StatementIdentifier,
     TupleTypeMember,
     Type,
@@ -34,14 +39,12 @@ export interface IsGuards {
     namespaceExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'namespace_export' };
     exportClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'export_clause' };
     exportSpecifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'export_specifier' };
-    declaration<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'declaration' };
     importStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_statement' };
     importClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_clause' };
     namespaceImport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'namespace_import' };
     namedImports<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'named_imports' };
     importSpecifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_specifier' };
     importAttribute<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_attribute' };
-    statement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'statement' };
     expressionStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'expression_statement' };
     variableDeclaration<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'variable_declaration' };
     lexicalDeclaration<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'lexical_declaration' };
@@ -68,8 +71,6 @@ export interface IsGuards {
     catchClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'catch_clause' };
     finallyClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'finally_clause' };
     parenthesizedExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'parenthesized_expression' };
-    expression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'expression' };
-    primaryExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'primary_expression' };
     yieldExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'yield_expression' };
     object<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'object' };
     objectPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'object_pattern' };
@@ -120,7 +121,6 @@ export interface IsGuards {
     fieldDefinition<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'field_definition' };
     formalParameters<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'formal_parameters' };
     classStaticBlock<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'class_static_block' };
-    pattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'pattern' };
     restPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'rest_pattern' };
     methodDefinition<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'method_definition' };
     pair<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'pair' };
@@ -213,7 +213,11 @@ export interface IsGuards {
     StringSingle<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_string_single' };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): v is { readonly $type: K & string };
     moduleExportName(v: { readonly $type: string }): v is ModuleExportName;
+    declaration(v: { readonly $type: string }): v is Declaration;
+    statement(v: { readonly $type: string }): v is Statement;
     expressions(v: { readonly $type: string }): v is Expressions;
+    expression(v: { readonly $type: string }): v is Expression;
+    primaryExpression(v: { readonly $type: string }): v is PrimaryExpression;
     jsxChild(v: { readonly $type: string }): v is JsxChild;
     jsxIdentifier(v: { readonly $type: string }): v is _JsxIdentifier;
     jsxElementName(v: { readonly $type: string }): v is JsxElementName;
@@ -222,6 +226,7 @@ export interface IsGuards {
     formalParameter(v: { readonly $type: string }): v is FormalParameter;
     destructuringPattern(v: { readonly $type: string }): v is DestructuringPattern;
     identifier(v: { readonly $type: string }): v is _Identifier;
+    pattern(v: { readonly $type: string }): v is Pattern;
     propertyName(v: { readonly $type: string }): v is PropertyName;
     semicolon(v: { readonly $type: string }): v is Semicolon;
     statementIdentifier(v: { readonly $type: string }): v is StatementIdentifier;
@@ -241,14 +246,12 @@ export interface AssertGuards {
     namespaceExport(v: { readonly $type: string }): asserts v is { readonly $type: 'namespace_export' };
     exportClause(v: { readonly $type: string }): asserts v is { readonly $type: 'export_clause' };
     exportSpecifier(v: { readonly $type: string }): asserts v is { readonly $type: 'export_specifier' };
-    declaration(v: { readonly $type: string }): asserts v is { readonly $type: 'declaration' };
     importStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'import_statement' };
     importClause(v: { readonly $type: string }): asserts v is { readonly $type: 'import_clause' };
     namespaceImport(v: { readonly $type: string }): asserts v is { readonly $type: 'namespace_import' };
     namedImports(v: { readonly $type: string }): asserts v is { readonly $type: 'named_imports' };
     importSpecifier(v: { readonly $type: string }): asserts v is { readonly $type: 'import_specifier' };
     importAttribute(v: { readonly $type: string }): asserts v is { readonly $type: 'import_attribute' };
-    statement(v: { readonly $type: string }): asserts v is { readonly $type: 'statement' };
     expressionStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'expression_statement' };
     variableDeclaration(v: { readonly $type: string }): asserts v is { readonly $type: 'variable_declaration' };
     lexicalDeclaration(v: { readonly $type: string }): asserts v is { readonly $type: 'lexical_declaration' };
@@ -275,8 +278,6 @@ export interface AssertGuards {
     catchClause(v: { readonly $type: string }): asserts v is { readonly $type: 'catch_clause' };
     finallyClause(v: { readonly $type: string }): asserts v is { readonly $type: 'finally_clause' };
     parenthesizedExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'parenthesized_expression' };
-    expression(v: { readonly $type: string }): asserts v is { readonly $type: 'expression' };
-    primaryExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'primary_expression' };
     yieldExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'yield_expression' };
     object(v: { readonly $type: string }): asserts v is { readonly $type: 'object' };
     objectPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'object_pattern' };
@@ -327,7 +328,6 @@ export interface AssertGuards {
     fieldDefinition(v: { readonly $type: string }): asserts v is { readonly $type: 'field_definition' };
     formalParameters(v: { readonly $type: string }): asserts v is { readonly $type: 'formal_parameters' };
     classStaticBlock(v: { readonly $type: string }): asserts v is { readonly $type: 'class_static_block' };
-    pattern(v: { readonly $type: string }): asserts v is { readonly $type: 'pattern' };
     restPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'rest_pattern' };
     methodDefinition(v: { readonly $type: string }): asserts v is { readonly $type: 'method_definition' };
     pair(v: { readonly $type: string }): asserts v is { readonly $type: 'pair' };
@@ -420,7 +420,11 @@ export interface AssertGuards {
     StringSingle(v: { readonly $type: string }): asserts v is { readonly $type: '_string_single' };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): asserts v is { readonly $type: K & string };
     moduleExportName(v: { readonly $type: string }): asserts v is ModuleExportName;
+    declaration(v: { readonly $type: string }): asserts v is Declaration;
+    statement(v: { readonly $type: string }): asserts v is Statement;
     expressions(v: { readonly $type: string }): asserts v is Expressions;
+    expression(v: { readonly $type: string }): asserts v is Expression;
+    primaryExpression(v: { readonly $type: string }): asserts v is PrimaryExpression;
     jsxChild(v: { readonly $type: string }): asserts v is JsxChild;
     jsxIdentifier(v: { readonly $type: string }): asserts v is _JsxIdentifier;
     jsxElementName(v: { readonly $type: string }): asserts v is JsxElementName;
@@ -429,6 +433,7 @@ export interface AssertGuards {
     formalParameter(v: { readonly $type: string }): asserts v is FormalParameter;
     destructuringPattern(v: { readonly $type: string }): asserts v is DestructuringPattern;
     identifier(v: { readonly $type: string }): asserts v is _Identifier;
+    pattern(v: { readonly $type: string }): asserts v is Pattern;
     propertyName(v: { readonly $type: string }): asserts v is PropertyName;
     semicolon(v: { readonly $type: string }): asserts v is Semicolon;
     statementIdentifier(v: { readonly $type: string }): asserts v is StatementIdentifier;
@@ -451,7 +456,11 @@ function _sg(ks: ReadonlySet<string>): (v: { readonly $type: string }) => boolea
 }
 
 const _supertype_moduleExportName = new Set<string>(["identifier", "string"]);
+const _supertype_declaration = new Set<string>(["function_signature", "abstract_class_declaration", "module", "internal_module", "type_alias_declaration", "enum_declaration", "interface_declaration", "import_alias", "ambient_declaration"]);
+const _supertype_statement = new Set<string>(["export_statement", "import_statement", "debugger_statement", "expression_statement", "declaration", "statement_block", "if_statement", "switch_statement", "for_statement", "for_in_statement", "while_statement", "do_statement", "try_statement", "with_statement", "break_statement", "continue_statement", "return_statement", "throw_statement", "empty_statement", "labeled_statement"]);
 const _supertype_expressions = new Set<string>(["expression", "sequence_expression"]);
+const _supertype_expression = new Set<string>(["as_expression", "satisfies_expression", "instantiation_expression", "internal_module", "type_assertion", "primary_expression", "assignment_expression", "augmented_assignment_expression", "await_expression", "unary_expression", "binary_expression", "ternary_expression", "update_expression", "new_expression", "yield_expression"]);
+const _supertype_primaryExpression = new Set<string>(["non_null_expression"]);
 const _supertype_jsxChild = new Set<string>(["jsx_text", "html_character_reference", "jsx_element", "jsx_self_closing_element", "jsx_expression"]);
 const _supertype_jsxIdentifier = new Set<string>(["jsx_identifier", "identifier"]);
 const _supertype_jsxElementName = new Set<string>(["jsx_identifier", "identifier", "nested_identifier", "jsx_namespace_name"]);
@@ -460,6 +469,7 @@ const _supertype_jsxAttributeValue = new Set<string>(["_jsx_string", "jsx_expres
 const _supertype_formalParameter = new Set<string>(["required_parameter", "optional_parameter"]);
 const _supertype_destructuringPattern = new Set<string>(["object_pattern", "array_pattern"]);
 const _supertype_identifier = new Set<string>(["undefined", "identifier"]);
+const _supertype_pattern = new Set<string>(["member_expression", "subscript_expression", "undefined", "identifier", "object_pattern", "array_pattern", "non_null_expression", "rest_pattern"]);
 const _supertype_propertyName = new Set<string>(["identifier", "private_property_identifier", "string", "number", "computed_property_name"]);
 const _supertype_semicolon = new Set<string>(["_automatic_semicolon"]);
 const _supertype_statementIdentifier = new Set<string>(["identifier", "_reserved_identifier"]);
@@ -477,14 +487,12 @@ export const is = {
     namespaceExport: _g("namespace_export"),
     exportClause: _g("export_clause"),
     exportSpecifier: _g("export_specifier"),
-    declaration: _g("declaration"),
     importStatement: _g("import_statement"),
     importClause: _g("import_clause"),
     namespaceImport: _g("namespace_import"),
     namedImports: _g("named_imports"),
     importSpecifier: _g("import_specifier"),
     importAttribute: _g("import_attribute"),
-    statement: _g("statement"),
     expressionStatement: _g("expression_statement"),
     variableDeclaration: _g("variable_declaration"),
     lexicalDeclaration: _g("lexical_declaration"),
@@ -511,8 +519,6 @@ export const is = {
     catchClause: _g("catch_clause"),
     finallyClause: _g("finally_clause"),
     parenthesizedExpression: _g("parenthesized_expression"),
-    expression: _g("expression"),
-    primaryExpression: _g("primary_expression"),
     yieldExpression: _g("yield_expression"),
     object: _g("object"),
     objectPattern: _g("object_pattern"),
@@ -563,7 +569,6 @@ export const is = {
     fieldDefinition: _g("field_definition"),
     formalParameters: _g("formal_parameters"),
     classStaticBlock: _g("class_static_block"),
-    pattern: _g("pattern"),
     restPattern: _g("rest_pattern"),
     methodDefinition: _g("method_definition"),
     pair: _g("pair"),
@@ -656,7 +661,11 @@ export const is = {
     StringSingle: _g("_string_single"),
     kind: (v: { readonly $type: string }, k: string): boolean => v.$type === k,
     moduleExportName: _sg(_supertype_moduleExportName),
+    declaration: _sg(_supertype_declaration),
+    statement: _sg(_supertype_statement),
     expressions: _sg(_supertype_expressions),
+    expression: _sg(_supertype_expression),
+    primaryExpression: _sg(_supertype_primaryExpression),
     jsxChild: _sg(_supertype_jsxChild),
     jsxIdentifier: _sg(_supertype_jsxIdentifier),
     jsxElementName: _sg(_supertype_jsxElementName),
@@ -665,6 +674,7 @@ export const is = {
     formalParameter: _sg(_supertype_formalParameter),
     destructuringPattern: _sg(_supertype_destructuringPattern),
     identifier: _sg(_supertype_identifier),
+    pattern: _sg(_supertype_pattern),
     propertyName: _sg(_supertype_propertyName),
     semicolon: _sg(_supertype_semicolon),
     statementIdentifier: _sg(_supertype_statementIdentifier),
@@ -705,14 +715,12 @@ export const assert = {
     namespaceExport: _makeAssert('namespaceExport', is.namespaceExport as _AnyGuard),
     exportClause: _makeAssert('exportClause', is.exportClause as _AnyGuard),
     exportSpecifier: _makeAssert('exportSpecifier', is.exportSpecifier as _AnyGuard),
-    declaration: _makeAssert('declaration', is.declaration as _AnyGuard),
     importStatement: _makeAssert('importStatement', is.importStatement as _AnyGuard),
     importClause: _makeAssert('importClause', is.importClause as _AnyGuard),
     namespaceImport: _makeAssert('namespaceImport', is.namespaceImport as _AnyGuard),
     namedImports: _makeAssert('namedImports', is.namedImports as _AnyGuard),
     importSpecifier: _makeAssert('importSpecifier', is.importSpecifier as _AnyGuard),
     importAttribute: _makeAssert('importAttribute', is.importAttribute as _AnyGuard),
-    statement: _makeAssert('statement', is.statement as _AnyGuard),
     expressionStatement: _makeAssert('expressionStatement', is.expressionStatement as _AnyGuard),
     variableDeclaration: _makeAssert('variableDeclaration', is.variableDeclaration as _AnyGuard),
     lexicalDeclaration: _makeAssert('lexicalDeclaration', is.lexicalDeclaration as _AnyGuard),
@@ -739,8 +747,6 @@ export const assert = {
     catchClause: _makeAssert('catchClause', is.catchClause as _AnyGuard),
     finallyClause: _makeAssert('finallyClause', is.finallyClause as _AnyGuard),
     parenthesizedExpression: _makeAssert('parenthesizedExpression', is.parenthesizedExpression as _AnyGuard),
-    expression: _makeAssert('expression', is.expression as _AnyGuard),
-    primaryExpression: _makeAssert('primaryExpression', is.primaryExpression as _AnyGuard),
     yieldExpression: _makeAssert('yieldExpression', is.yieldExpression as _AnyGuard),
     object: _makeAssert('object', is.object as _AnyGuard),
     objectPattern: _makeAssert('objectPattern', is.objectPattern as _AnyGuard),
@@ -791,7 +797,6 @@ export const assert = {
     fieldDefinition: _makeAssert('fieldDefinition', is.fieldDefinition as _AnyGuard),
     formalParameters: _makeAssert('formalParameters', is.formalParameters as _AnyGuard),
     classStaticBlock: _makeAssert('classStaticBlock', is.classStaticBlock as _AnyGuard),
-    pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
     restPattern: _makeAssert('restPattern', is.restPattern as _AnyGuard),
     methodDefinition: _makeAssert('methodDefinition', is.methodDefinition as _AnyGuard),
     pair: _makeAssert('pair', is.pair as _AnyGuard),
@@ -884,7 +889,11 @@ export const assert = {
     StringSingle: _makeAssert('StringSingle', is.StringSingle as _AnyGuard),
     kind: _makeAssertKind(is.kind as _AnyGuard),
     moduleExportName: _makeAssert('moduleExportName', is.moduleExportName as _AnyGuard),
+    declaration: _makeAssert('declaration', is.declaration as _AnyGuard),
+    statement: _makeAssert('statement', is.statement as _AnyGuard),
     expressions: _makeAssert('expressions', is.expressions as _AnyGuard),
+    expression: _makeAssert('expression', is.expression as _AnyGuard),
+    primaryExpression: _makeAssert('primaryExpression', is.primaryExpression as _AnyGuard),
     jsxChild: _makeAssert('jsxChild', is.jsxChild as _AnyGuard),
     jsxIdentifier: _makeAssert('jsxIdentifier', is.jsxIdentifier as _AnyGuard),
     jsxElementName: _makeAssert('jsxElementName', is.jsxElementName as _AnyGuard),
@@ -893,6 +902,7 @@ export const assert = {
     formalParameter: _makeAssert('formalParameter', is.formalParameter as _AnyGuard),
     destructuringPattern: _makeAssert('destructuringPattern', is.destructuringPattern as _AnyGuard),
     identifier: _makeAssert('identifier', is.identifier as _AnyGuard),
+    pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
     propertyName: _makeAssert('propertyName', is.propertyName as _AnyGuard),
     semicolon: _makeAssert('semicolon', is.semicolon as _AnyGuard),
     statementIdentifier: _makeAssert('statementIdentifier', is.statementIdentifier as _AnyGuard),

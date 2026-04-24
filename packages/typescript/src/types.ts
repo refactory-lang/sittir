@@ -83,7 +83,6 @@ export const enum SyntaxKind {
   NamespaceExport = 'namespace_export',
   ExportClause = 'export_clause',
   ExportSpecifier = 'export_specifier',
-  Declaration = 'declaration',
   ImportStatement = 'import_statement',
   ImportClause = 'import_clause',
   FromClause = '_from_clause',
@@ -91,7 +90,6 @@ export const enum SyntaxKind {
   NamedImports = 'named_imports',
   ImportSpecifier = 'import_specifier',
   ImportAttribute = 'import_attribute',
-  Statement = 'statement',
   ExpressionStatement = 'expression_statement',
   VariableDeclaration = 'variable_declaration',
   LexicalDeclaration = 'lexical_declaration',
@@ -119,8 +117,6 @@ export const enum SyntaxKind {
   CatchClause = 'catch_clause',
   FinallyClause = 'finally_clause',
   ParenthesizedExpression = 'parenthesized_expression',
-  Expression = 'expression',
-  PrimaryExpression = 'primary_expression',
   YieldExpression = 'yield_expression',
   Object = 'object',
   ObjectPattern = 'object_pattern',
@@ -173,7 +169,6 @@ export const enum SyntaxKind {
   FieldDefinition = 'field_definition',
   FormalParameters = 'formal_parameters',
   ClassStaticBlock = 'class_static_block',
-  Pattern = 'pattern',
   RestPattern = 'rest_pattern',
   MethodDefinition = 'method_definition',
   Pair = 'pair',
@@ -375,9 +370,66 @@ export const enum ModuleExportNameKind {
   String = 'string',
 }
 
+export const enum DeclarationKind {
+  FunctionSignature = 'function_signature',
+  AbstractClassDeclaration = 'abstract_class_declaration',
+  Module = 'module',
+  InternalModule = 'internal_module',
+  TypeAliasDeclaration = 'type_alias_declaration',
+  EnumDeclaration = 'enum_declaration',
+  InterfaceDeclaration = 'interface_declaration',
+  ImportAlias = 'import_alias',
+  AmbientDeclaration = 'ambient_declaration',
+}
+
+export const enum StatementKind {
+  ExportStatement = 'export_statement',
+  ImportStatement = 'import_statement',
+  DebuggerStatement = 'debugger_statement',
+  ExpressionStatement = 'expression_statement',
+  Declaration = 'declaration',
+  StatementBlock = 'statement_block',
+  IfStatement = 'if_statement',
+  SwitchStatement = 'switch_statement',
+  ForStatement = 'for_statement',
+  ForInStatement = 'for_in_statement',
+  WhileStatement = 'while_statement',
+  DoStatement = 'do_statement',
+  TryStatement = 'try_statement',
+  WithStatement = 'with_statement',
+  BreakStatement = 'break_statement',
+  ContinueStatement = 'continue_statement',
+  ReturnStatement = 'return_statement',
+  ThrowStatement = 'throw_statement',
+  EmptyStatement = 'empty_statement',
+  LabeledStatement = 'labeled_statement',
+}
+
 export const enum ExpressionsKind {
   Expression = 'expression',
   SequenceExpression = 'sequence_expression',
+}
+
+export const enum ExpressionKind {
+  AsExpression = 'as_expression',
+  SatisfiesExpression = 'satisfies_expression',
+  InstantiationExpression = 'instantiation_expression',
+  InternalModule = 'internal_module',
+  TypeAssertion = 'type_assertion',
+  PrimaryExpression = 'primary_expression',
+  AssignmentExpression = 'assignment_expression',
+  AugmentedAssignmentExpression = 'augmented_assignment_expression',
+  AwaitExpression = 'await_expression',
+  UnaryExpression = 'unary_expression',
+  BinaryExpression = 'binary_expression',
+  TernaryExpression = 'ternary_expression',
+  UpdateExpression = 'update_expression',
+  NewExpression = 'new_expression',
+  YieldExpression = 'yield_expression',
+}
+
+export const enum PrimaryExpressionKind {
+  NonNullExpression = 'non_null_expression',
 }
 
 export const enum JsxElementKind {
@@ -436,6 +488,17 @@ export const enum DestructuringPatternKind {
 export const enum IdentifierKind {
   Undefined = 'undefined',
   Identifier = 'identifier',
+}
+
+export const enum PatternKind {
+  MemberExpression = 'member_expression',
+  SubscriptExpression = 'subscript_expression',
+  Undefined = 'undefined',
+  Identifier = 'identifier',
+  ObjectPattern = 'object_pattern',
+  ArrayPattern = 'array_pattern',
+  NonNullExpression = 'non_null_expression',
+  RestPattern = 'rest_pattern',
 }
 
 export const enum PropertyNameKind {
@@ -566,11 +629,6 @@ export interface ExportSpecifier {
   };
 }
 
-export interface Declaration {
-  readonly $type: 'declaration';
-  readonly $children: readonly [FunctionDeclaration | GeneratorFunctionDeclaration | ClassDeclaration | LexicalDeclaration | VariableDeclaration | FunctionSignature | AbstractClassDeclaration | Module | InternalModule | TypeAliasDeclaration | EnumDeclaration | InterfaceDeclaration | ImportAlias | AmbientDeclaration];
-}
-
 export interface ImportStatement {
   readonly $type: 'import_statement';
   readonly $fields: {
@@ -638,11 +696,6 @@ export interface ImportAttribute {
   readonly $fields: {
     readonly object: "with" | "assert" | Object;
   };
-}
-
-export interface Statement {
-  readonly $type: 'statement';
-  readonly $children: readonly [ExportStatement | ImportStatement | DebuggerStatement | ExpressionStatement | Declaration | StatementBlock | IfStatement | SwitchStatement | ForStatement | ForInStatement | WhileStatement | DoStatement | TryStatement | WithStatement | BreakStatement | ContinueStatement | ReturnStatement | ThrowStatement | EmptyStatement | LabeledStatement];
 }
 
 export interface ExpressionStatement {
@@ -887,16 +940,6 @@ export interface ParenthesizedExpressionUFormSequence {
 }
 
 export type ParenthesizedExpression = ParenthesizedExpressionUFormTyped | ParenthesizedExpressionUFormSequence;
-export interface Expression {
-  readonly $type: 'expression';
-  readonly $children: readonly [AsExpression | SatisfiesExpression | InstantiationExpression | InternalModule | TypeAssertion | PrimaryExpression | AssignmentExpression | AugmentedAssignmentExpression | AwaitExpression | UnaryExpression | BinaryExpression | TernaryExpression | UpdateExpression | NewExpression | YieldExpression];
-}
-
-export interface PrimaryExpression {
-  readonly $type: 'primary_expression';
-  readonly $children: readonly [SubscriptExpression | MemberExpression | ParenthesizedExpression | _Identifier | This | Super | Number | String | TemplateString | Regex | True | False | Null | Object | Array | FunctionExpression | ArrowFunction | GeneratorFunction | Class | MetaProperty | CallExpression | NonNullExpression];
-}
-
 export interface YieldExpression {
   readonly $type: 'yield_expression';
   readonly $fields: {
@@ -1334,11 +1377,6 @@ export interface ClassStaticBlock {
     readonly body: StatementBlock;
   };
   readonly $children: readonly [AutomaticSemicolon];
-}
-
-export interface Pattern {
-  readonly $type: 'pattern';
-  readonly $children: readonly [LhsExpression | RestPattern];
 }
 
 export interface RestPattern {
@@ -2245,7 +2283,6 @@ export interface ExportStatementUFormNamespaceExportTree extends TreeNode<'expor
 export interface NamespaceExportTree extends TreeNode<'namespace_export'> {}
 export interface ExportClauseTree extends TreeNode<'export_clause'> {}
 export interface ExportSpecifierTree extends TreeNode<'export_specifier'> {}
-export interface DeclarationTree extends TreeNode<'declaration'> {}
 export interface ImportStatementTree extends TreeNode<'import_statement'> {}
 export interface ImportClauseTree extends TreeNode<'import_clause'> {}
 export interface ImportClauseUFormNamespaceImportTree extends TreeNode<'import_clause'> {}
@@ -2258,7 +2295,6 @@ export interface ImportSpecifierTree extends TreeNode<'import_specifier'> {}
 export interface ImportSpecifierUFormNameTree extends TreeNode<'import_specifier'> {}
 export interface ImportSpecifierUFormAsTree extends TreeNode<'import_specifier'> {}
 export interface ImportAttributeTree extends TreeNode<'import_attribute'> {}
-export interface StatementTree extends TreeNode<'statement'> {}
 export interface ExpressionStatementTree extends TreeNode<'expression_statement'> {}
 export interface VariableDeclarationTree extends TreeNode<'variable_declaration'> {}
 export interface LexicalDeclarationTree extends TreeNode<'lexical_declaration'> {}
@@ -2290,8 +2326,6 @@ export interface FinallyClauseTree extends TreeNode<'finally_clause'> {}
 export interface ParenthesizedExpressionTree extends TreeNode<'parenthesized_expression'> {}
 export interface ParenthesizedExpressionUFormTypedTree extends TreeNode<'parenthesized_expression'> {}
 export interface ParenthesizedExpressionUFormSequenceTree extends TreeNode<'parenthesized_expression'> {}
-export interface ExpressionTree extends TreeNode<'expression'> {}
-export interface PrimaryExpressionTree extends TreeNode<'primary_expression'> {}
 export interface YieldExpressionTree extends TreeNode<'yield_expression'> {}
 export interface ObjectTree extends TreeNode<'object'> {}
 export interface ObjectPatternTree extends TreeNode<'object_pattern'> {}
@@ -2353,7 +2387,6 @@ export interface ClassBodyTree extends TreeNode<'class_body'> {}
 export interface FieldDefinitionTree extends AnyTreeNode { readonly type: "field_definition"; }
 export interface FormalParametersTree extends TreeNode<'formal_parameters'> {}
 export interface ClassStaticBlockTree extends TreeNode<'class_static_block'> {}
-export interface PatternTree extends TreeNode<'pattern'> {}
 export interface RestPatternTree extends TreeNode<'rest_pattern'> {}
 export interface MethodDefinitionTree extends TreeNode<'method_definition'> {}
 export interface PairTree extends TreeNode<'pair'> {}
@@ -2559,12 +2592,74 @@ export type ModuleExportName =
 
 export type ModuleExportNameTree = IdentifierTree | StringTree;
 
+export type Declaration =
+  | FunctionSignature
+  | AbstractClassDeclaration
+  | Module
+  | InternalModule
+  | TypeAliasDeclaration
+  | EnumDeclaration
+  | InterfaceDeclaration
+  | ImportAlias
+  | AmbientDeclaration
+;
+
+export type DeclarationTree = FunctionSignatureTree | AbstractClassDeclarationTree | ModuleTree | InternalModuleTree | TypeAliasDeclarationTree | EnumDeclarationTree | InterfaceDeclarationTree | ImportAliasTree | AmbientDeclarationTree;
+
+export type Statement =
+  | ExportStatement
+  | ImportStatement
+  | DebuggerStatement
+  | ExpressionStatement
+  | Declaration
+  | StatementBlock
+  | IfStatement
+  | SwitchStatement
+  | ForStatement
+  | ForInStatement
+  | WhileStatement
+  | DoStatement
+  | TryStatement
+  | WithStatement
+  | BreakStatement
+  | ContinueStatement
+  | ReturnStatement
+  | ThrowStatement
+  | LabeledStatement
+;
+
+export type StatementTree = ExportStatementTree | ImportStatementTree | DebuggerStatementTree | ExpressionStatementTree | DeclarationTree | StatementBlockTree | IfStatementTree | SwitchStatementTree | ForStatementTree | ForInStatementTree | WhileStatementTree | DoStatementTree | TryStatementTree | WithStatementTree | BreakStatementTree | ContinueStatementTree | ReturnStatementTree | ThrowStatementTree | EmptyStatementTree | LabeledStatementTree;
+
 export type Expressions =
-  | Expression
   | SequenceExpression
 ;
 
 export type ExpressionsTree = ExpressionTree | SequenceExpressionTree;
+
+export type Expression =
+  | AsExpression
+  | SatisfiesExpression
+  | InstantiationExpression
+  | InternalModule
+  | TypeAssertion
+  | AssignmentExpression
+  | AugmentedAssignmentExpression
+  | AwaitExpression
+  | UnaryExpression
+  | BinaryExpression
+  | TernaryExpression
+  | UpdateExpression
+  | NewExpression
+  | YieldExpression
+;
+
+export type ExpressionTree = AsExpressionTree | SatisfiesExpressionTree | InstantiationExpressionTree | InternalModuleTree | TypeAssertionTree | PrimaryExpressionTree | AssignmentExpressionTree | AugmentedAssignmentExpressionTree | AwaitExpressionTree | UnaryExpressionTree | BinaryExpressionTree | TernaryExpressionTree | UpdateExpressionTree | NewExpressionTree | YieldExpressionTree;
+
+export type PrimaryExpression =
+  | NonNullExpression
+;
+
+export type PrimaryExpressionTree = NonNullExpressionTree;
 
 export type _JsxElement =
   | JsxElement
@@ -2643,6 +2738,19 @@ export type _Identifier =
 ;
 
 export type _IdentifierTree = UndefinedTree | IdentifierTree;
+
+export type Pattern =
+  | MemberExpression
+  | SubscriptExpression
+  | Undefined
+  | Identifier
+  | ObjectPattern
+  | ArrayPattern
+  | NonNullExpression
+  | RestPattern
+;
+
+export type PatternTree = MemberExpressionTree | SubscriptExpressionTree | UndefinedTree | IdentifierTree | ObjectPatternTree | ArrayPatternTree | NonNullExpressionTree | RestPatternTree;
 
 export type PropertyName =
   | Identifier
@@ -2752,7 +2860,6 @@ export type TypescriptNode =
   | NamespaceExport
   | ExportClause
   | ExportSpecifier
-  | Declaration
   | ImportStatement
   | ImportClause
   | FromClause
@@ -2760,7 +2867,6 @@ export type TypescriptNode =
   | NamedImports
   | ImportSpecifier
   | ImportAttribute
-  | Statement
   | ExpressionStatement
   | VariableDeclaration
   | LexicalDeclaration
@@ -2788,8 +2894,6 @@ export type TypescriptNode =
   | CatchClause
   | FinallyClause
   | ParenthesizedExpression
-  | Expression
-  | PrimaryExpression
   | YieldExpression
   | Object
   | ObjectPattern
@@ -2842,7 +2946,6 @@ export type TypescriptNode =
   | FieldDefinition
   | FormalParameters
   | ClassStaticBlock
-  | Pattern
   | RestPattern
   | MethodDefinition
   | Pair
@@ -2958,7 +3061,6 @@ export interface KindMap {
   'namespace_export': NamespaceExport;
   'export_clause': ExportClause;
   'export_specifier': ExportSpecifier;
-  'declaration': Declaration;
   'import_statement': ImportStatement;
   'import_clause': ImportClause;
   '_from_clause': FromClause;
@@ -2966,7 +3068,6 @@ export interface KindMap {
   'named_imports': NamedImports;
   'import_specifier': ImportSpecifier;
   'import_attribute': ImportAttribute;
-  'statement': Statement;
   'expression_statement': ExpressionStatement;
   'variable_declaration': VariableDeclaration;
   'lexical_declaration': LexicalDeclaration;
@@ -2994,8 +3095,6 @@ export interface KindMap {
   'catch_clause': CatchClause;
   'finally_clause': FinallyClause;
   'parenthesized_expression': ParenthesizedExpression;
-  'expression': Expression;
-  'primary_expression': PrimaryExpression;
   'yield_expression': YieldExpression;
   'object': Object;
   'object_pattern': ObjectPattern;
@@ -3048,7 +3147,6 @@ export interface KindMap {
   'field_definition': FieldDefinition;
   'formal_parameters': FormalParameters;
   'class_static_block': ClassStaticBlock;
-  'pattern': Pattern;
   'rest_pattern': RestPattern;
   'method_definition': MethodDefinition;
   'pair': Pair;
@@ -3211,7 +3309,6 @@ export interface ExportStatementNs extends NodeNs<ExportStatement, LeafScalarMap
 export interface NamespaceExportNs extends NodeNs<NamespaceExport, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExportClauseNs extends NodeNs<ExportClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExportSpecifierNs extends NodeNs<ExportSpecifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface DeclarationNs extends NodeNs<Declaration, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ImportStatementNs extends NodeNs<ImportStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ImportClauseNs extends NodeNs<ImportClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FromClauseNs extends NodeNs<FromClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3219,7 +3316,6 @@ export interface NamespaceImportNs extends NodeNs<NamespaceImport, LeafScalarMap
 export interface NamedImportsNs extends NodeNs<NamedImports, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ImportSpecifierNs extends NodeNs<ImportSpecifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ImportAttributeNs extends NodeNs<ImportAttribute, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface StatementNs extends NodeNs<Statement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExpressionStatementNs extends NodeNs<ExpressionStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface VariableDeclarationNs extends NodeNs<VariableDeclaration, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface LexicalDeclarationNs extends NodeNs<LexicalDeclaration, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3247,8 +3343,6 @@ export interface SwitchDefaultNs extends NodeNs<SwitchDefault, LeafScalarMap, Le
 export interface CatchClauseNs extends NodeNs<CatchClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FinallyClauseNs extends NodeNs<FinallyClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ParenthesizedExpressionNs extends NodeNs<ParenthesizedExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ExpressionNs extends NodeNs<Expression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface PrimaryExpressionNs extends NodeNs<PrimaryExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface YieldExpressionNs extends NodeNs<YieldExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ObjectNs extends NodeNs<Object, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ObjectPatternNs extends NodeNs<ObjectPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3301,7 +3395,6 @@ export interface ClassBodyNs extends NodeNs<ClassBody, LeafScalarMap, LeafString
 export interface FieldDefinitionNs extends NodeNs<FieldDefinition, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FormalParametersNs extends NodeNs<FormalParameters, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ClassStaticBlockNs extends NodeNs<ClassStaticBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface PatternNs extends NodeNs<Pattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface RestPatternNs extends NodeNs<RestPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MethodDefinitionNs extends NodeNs<MethodDefinition, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface PairNs extends NodeNs<Pair, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3416,7 +3509,6 @@ export interface NamespaceMap {
   'namespace_export': NamespaceExportNs;
   'export_clause': ExportClauseNs;
   'export_specifier': ExportSpecifierNs;
-  'declaration': DeclarationNs;
   'import_statement': ImportStatementNs;
   'import_clause': ImportClauseNs;
   '_from_clause': FromClauseNs;
@@ -3424,7 +3516,6 @@ export interface NamespaceMap {
   'named_imports': NamedImportsNs;
   'import_specifier': ImportSpecifierNs;
   'import_attribute': ImportAttributeNs;
-  'statement': StatementNs;
   'expression_statement': ExpressionStatementNs;
   'variable_declaration': VariableDeclarationNs;
   'lexical_declaration': LexicalDeclarationNs;
@@ -3452,8 +3543,6 @@ export interface NamespaceMap {
   'catch_clause': CatchClauseNs;
   'finally_clause': FinallyClauseNs;
   'parenthesized_expression': ParenthesizedExpressionNs;
-  'expression': ExpressionNs;
-  'primary_expression': PrimaryExpressionNs;
   'yield_expression': YieldExpressionNs;
   'object': ObjectNs;
   'object_pattern': ObjectPatternNs;
@@ -3506,7 +3595,6 @@ export interface NamespaceMap {
   'field_definition': FieldDefinitionNs;
   'formal_parameters': FormalParametersNs;
   'class_static_block': ClassStaticBlockNs;
-  'pattern': PatternNs;
   'rest_pattern': RestPatternNs;
   'method_definition': MethodDefinitionNs;
   'pair': PairNs;
@@ -3658,13 +3746,6 @@ export namespace ExportSpecifier {
   export type Tree = TreeFor<'export_specifier'>;
   export type Kind = 'export_specifier';
 }
-export namespace Declaration {
-  export type Config = ConfigFor<'declaration'>;
-  export type Fluent = FluentFor<'declaration'>;
-  export type Loose = LooseFor<'declaration'>;
-  export type Tree = TreeFor<'declaration'>;
-  export type Kind = 'declaration';
-}
 export namespace ImportStatement {
   export type Config = ConfigFor<'import_statement'>;
   export type Fluent = FluentFor<'import_statement'>;
@@ -3713,13 +3794,6 @@ export namespace ImportAttribute {
   export type Loose = LooseFor<'import_attribute'>;
   export type Tree = TreeFor<'import_attribute'>;
   export type Kind = 'import_attribute';
-}
-export namespace Statement {
-  export type Config = ConfigFor<'statement'>;
-  export type Fluent = FluentFor<'statement'>;
-  export type Loose = LooseFor<'statement'>;
-  export type Tree = TreeFor<'statement'>;
-  export type Kind = 'statement';
 }
 export namespace ExpressionStatement {
   export type Config = ConfigFor<'expression_statement'>;
@@ -3909,20 +3983,6 @@ export namespace ParenthesizedExpression {
   export type Loose = LooseFor<'parenthesized_expression'>;
   export type Tree = TreeFor<'parenthesized_expression'>;
   export type Kind = 'parenthesized_expression';
-}
-export namespace Expression {
-  export type Config = ConfigFor<'expression'>;
-  export type Fluent = FluentFor<'expression'>;
-  export type Loose = LooseFor<'expression'>;
-  export type Tree = TreeFor<'expression'>;
-  export type Kind = 'expression';
-}
-export namespace PrimaryExpression {
-  export type Config = ConfigFor<'primary_expression'>;
-  export type Fluent = FluentFor<'primary_expression'>;
-  export type Loose = LooseFor<'primary_expression'>;
-  export type Tree = TreeFor<'primary_expression'>;
-  export type Kind = 'primary_expression';
 }
 export namespace YieldExpression {
   export type Config = ConfigFor<'yield_expression'>;
@@ -4287,13 +4347,6 @@ export namespace ClassStaticBlock {
   export type Loose = LooseFor<'class_static_block'>;
   export type Tree = TreeFor<'class_static_block'>;
   export type Kind = 'class_static_block';
-}
-export namespace Pattern {
-  export type Config = ConfigFor<'pattern'>;
-  export type Fluent = FluentFor<'pattern'>;
-  export type Loose = LooseFor<'pattern'>;
-  export type Tree = TreeFor<'pattern'>;
-  export type Kind = 'pattern';
 }
 export namespace RestPattern {
   export type Config = ConfigFor<'rest_pattern'>;

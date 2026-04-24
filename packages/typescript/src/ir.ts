@@ -28,9 +28,62 @@ export const moduleExportName = {
   string: _attach(F.string, { from: FR.stringFrom, "double": _attach(F.stringUFormDouble, { from: FR.stringUFormDoubleFrom }), "single": _attach(F.stringUFormSingle, { from: FR.stringUFormSingleFrom }) }),
 } as const;
 
+export const declaration = {
+  function_: _attach(F.functionSignature, { from: FR.functionSignatureFrom }),
+  abstractClass: _attach(F.abstractClassDeclaration, { from: FR.abstractClassDeclarationFrom }),
+  module: _attach(F.module, { from: FR.moduleFrom }),
+  internal: _attach(F.internalModule, { from: FR.internalModuleFrom }),
+  typeAlias: _attach(F.typeAliasDeclaration, { from: FR.typeAliasDeclarationFrom }),
+  enum_: _attach(F.enumDeclaration, { from: FR.enumDeclarationFrom }),
+  interface_: _attach(F.interfaceDeclaration, { from: FR.interfaceDeclarationFrom }),
+  import_: _attach(F.importAlias, { from: FR.importAliasFrom }),
+  ambient: _attach(F.ambientDeclaration, { from: FR.ambientDeclarationFrom }),
+} as const;
+
+export const statement = {
+  export_: _attach(F.exportStatement, { from: FR.exportStatementFrom, "default": _attach(F.exportStatementUFormDefault, { from: FR.exportStatementUFormDefaultFrom }), "type_export": _attach(F.exportStatementUFormTypeExport, { from: FR.exportStatementUFormTypeExportFrom }), "equals_export": _attach(F.exportStatementUFormEqualsExport, { from: FR.exportStatementUFormEqualsExportFrom }), "namespace_export": _attach(F.exportStatementUFormNamespaceExport, { from: FR.exportStatementUFormNamespaceExportFrom }) }),
+  import_: _attach(F.importStatement, { from: FR.importStatementFrom }),
+  debugger_: _attach(F.debuggerStatement, { from: FR.debuggerStatementFrom }),
+  expression: _attach(F.expressionStatement, { from: FR.expressionStatementFrom }),
+  statementBlock: _attach(F.statementBlock, { from: FR.statementBlockFrom }),
+  if_: _attach(F.ifStatement, { from: FR.ifStatementFrom }),
+  switch_: _attach(F.switchStatement, { from: FR.switchStatementFrom }),
+  for_: _attach(F.forStatement, { from: FR.forStatementFrom }),
+  forIn: _attach(F.forInStatement, { from: FR.forInStatementFrom }),
+  while_: _attach(F.whileStatement, { from: FR.whileStatementFrom }),
+  do_: _attach(F.doStatement, { from: FR.doStatementFrom }),
+  try_: _attach(F.tryStatement, { from: FR.tryStatementFrom }),
+  with_: _attach(F.withStatement, { from: FR.withStatementFrom }),
+  break_: _attach(F.breakStatement, { from: FR.breakStatementFrom }),
+  continue_: _attach(F.continueStatement, { from: FR.continueStatementFrom }),
+  return_: _attach(F.returnStatement, { from: FR.returnStatementFrom }),
+  throw_: _attach(F.throwStatement, { from: FR.throwStatementFrom }),
+  labeled: _attach(F.labeledStatement, { from: FR.labeledStatementFrom }),
+} as const;
+
 export const expressions = {
-  expression: _attach(F.expression, { from: FR.expressionFrom }),
   sequence: _attach(F.sequenceExpression, { from: FR.sequenceExpressionFrom }),
+} as const;
+
+export const expression = {
+  as: _attach(F.asExpression, { from: FR.asExpressionFrom }),
+  satisfies: _attach(F.satisfiesExpression, { from: FR.satisfiesExpressionFrom }),
+  instantiation: _attach(F.instantiationExpression, { from: FR.instantiationExpressionFrom }),
+  internal: _attach(F.internalModule, { from: FR.internalModuleFrom }),
+  type: _attach(F.typeAssertion, { from: FR.typeAssertionFrom }),
+  assignment: _attach(F.assignmentExpression, { from: FR.assignmentExpressionFrom }),
+  augmentedAssignment: _attach(F.augmentedAssignmentExpression, { from: FR.augmentedAssignmentExpressionFrom }),
+  await: _attach(F.awaitExpression, { from: FR.awaitExpressionFrom }),
+  unary: _attach(F.unaryExpression, { from: FR.unaryExpressionFrom }),
+  binary: _attach(F.binaryExpression, { from: FR.binaryExpressionFrom }),
+  ternary: _attach(F.ternaryExpression, { from: FR.ternaryExpressionFrom }),
+  update: _attach(F.updateExpression, { from: FR.updateExpressionFrom }),
+  new_: _attach(F.newExpression, { from: FR.newExpressionFrom }),
+  yield_: _attach(F.yieldExpression, { from: FR.yieldExpressionFrom }),
+} as const;
+
+export const primaryExpression = {
+  nonNull: _attach(F.nonNullExpression, { from: FR.nonNullExpressionFrom }),
 } as const;
 
 export const jsxElement = {
@@ -84,6 +137,17 @@ export const destructuringPattern = {
 export const identifier = {
   undefined: F.undefined_,
   identifier: F.identifier,
+} as const;
+
+export const pattern = {
+  member: _attach(F.memberExpression, { from: FR.memberExpressionFrom }),
+  subscript: _attach(F.subscriptExpression, { from: FR.subscriptExpressionFrom }),
+  undefined: F.undefined_,
+  identifier: F.identifier,
+  object: _attach(F.objectPattern, { from: FR.objectPatternFrom }),
+  array: _attach(F.arrayPattern, { from: FR.arrayPatternFrom }),
+  nonNull: _attach(F.nonNullExpression, { from: FR.nonNullExpressionFrom }),
+  rest: _attach(F.restPattern, { from: FR.restPatternFrom }),
 } as const;
 
 export const propertyName = {
@@ -156,14 +220,12 @@ export const ir = {
   namespaceExport: _attach(F.namespaceExport, { from: FR.namespaceExportFrom }),
   exportClause: _attach(F.exportClause, { from: FR.exportClauseFrom }),
   exportSpecifier: _attach(F.exportSpecifier, { from: FR.exportSpecifierFrom }),
-  declaration: _attach(F.declaration, { from: FR.declarationFrom }),
   importStatement: _attach(F.importStatement, { from: FR.importStatementFrom }),
   importClause: _attach(F.importClause, { from: FR.importClauseFrom, "namespace_import": _attach(F.importClauseUFormNamespaceImport, { from: FR.importClauseUFormNamespaceImportFrom }), "named_imports": _attach(F.importClauseUFormNamedImports, { from: FR.importClauseUFormNamedImportsFrom }), "default_import": _attach(F.importClauseUFormDefaultImport, { from: FR.importClauseUFormDefaultImportFrom }) }),
   namespaceImport: _attach(F.namespaceImport, { from: FR.namespaceImportFrom }),
   namedImports: _attach(F.namedImports, { from: FR.namedImportsFrom }),
   importSpecifier: _attach(F.importSpecifier, { from: FR.importSpecifierFrom, "name": _attach(F.importSpecifierUFormName, { from: FR.importSpecifierUFormNameFrom }), "as": _attach(F.importSpecifierUFormAs, { from: FR.importSpecifierUFormAsFrom }) }),
   importAttribute: _attach(F.importAttribute, { from: FR.importAttributeFrom }),
-  statement: _attach(F.statement, { from: FR.statementFrom }),
   expressionStatement: _attach(F.expressionStatement, { from: FR.expressionStatementFrom }),
   variable: _attach(F.variableDeclaration, { from: FR.variableDeclarationFrom }),
   lexical: _attach(F.lexicalDeclaration, { from: FR.lexicalDeclarationFrom }),
@@ -190,8 +252,6 @@ export const ir = {
   catchClause: _attach(F.catchClause, { from: FR.catchClauseFrom }),
   finallyClause: _attach(F.finallyClause, { from: FR.finallyClauseFrom }),
   parenthesized: _attach(F.parenthesizedExpression, { from: FR.parenthesizedExpressionFrom, "typed": _attach(F.parenthesizedExpressionUFormTyped, { from: FR.parenthesizedExpressionUFormTypedFrom }), "sequence": _attach(F.parenthesizedExpressionUFormSequence, { from: FR.parenthesizedExpressionUFormSequenceFrom }) }),
-  expression: _attach(F.expression, { from: FR.expressionFrom }),
-  primary: _attach(F.primaryExpression, { from: FR.primaryExpressionFrom }),
   yieldExpression: _attach(F.yieldExpression, { from: FR.yieldExpressionFrom }),
   object: _attach(F.object, { from: FR.objectFrom }),
   objectPattern: _attach(F.objectPattern, { from: FR.objectPatternFrom }),
@@ -240,7 +300,6 @@ export const ir = {
   field: _attach(F.fieldDefinition, { from: FR.fieldDefinitionFrom }),
   formalParameters: _attach(F.formalParameters, { from: FR.formalParametersFrom }),
   classStaticBlock: _attach(F.classStaticBlock, { from: FR.classStaticBlockFrom }),
-  pattern: _attach(F.pattern, { from: FR.patternFrom }),
   restPattern: _attach(F.restPattern, { from: FR.restPatternFrom }),
   method: _attach(F.methodDefinition, { from: FR.methodDefinitionFrom }),
   pair: _attach(F.pair, { from: FR.pairFrom }),
@@ -348,7 +407,11 @@ export const ir = {
 
   // Supertype-grouped sub-namespaces (also exported standalone above)
   moduleExportName,
+  declaration,
+  statement,
   expressions,
+  expression,
+  primaryExpression,
   jsxElement,
   jsxChild,
   jsxIdentifier,
@@ -359,6 +422,7 @@ export const ir = {
   formalParameter,
   destructuringPattern,
   identifier,
+  pattern,
   propertyName,
   statementIdentifier,
   shorthandPropertyIdentifier,

@@ -220,22 +220,6 @@ export function exportSpecifier(config: T.ExportSpecifier.Config) {
   };
 }
 
-export function declaration(child?: (T.FunctionDeclaration | T.GeneratorFunctionDeclaration | T.ClassDeclaration | T.LexicalDeclaration | T.VariableDeclaration | T.FunctionSignature | T.AbstractClassDeclaration | T.Module | T.InternalModule | T.TypeAliasDeclaration | T.EnumDeclaration | T.InterfaceDeclaration | T.ImportAlias | T.AmbientDeclaration)) {
-  const children = child != null ? [child] : [];
-  return {
-    $type: 'declaration' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.DeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
 export function import_() {
   return {
     $type: 'import' as const,
@@ -452,22 +436,6 @@ export function importAttribute(config: T.ImportAttribute.Config) {
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T.ImportAttributeTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function statement(child?: (T.ExportStatement | T.ImportStatement | T.DebuggerStatement | T.ExpressionStatement | T.Declaration | T.StatementBlock | T.IfStatement | T.SwitchStatement | T.ForStatement | T.ForInStatement | T.WhileStatement | T.DoStatement | T.TryStatement | T.WithStatement | T.BreakStatement | T.ContinueStatement | T.ReturnStatement | T.ThrowStatement | T.EmptyStatement | T.LabeledStatement)) {
-  const children = child != null ? [child] : [];
-  return {
-    $type: 'statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.StatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1113,38 +1081,6 @@ export function parenthesizedExpressionUFormSequence(config?: Omit<ConfigOf<T.Pa
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T.ParenthesizedExpressionUFormSequenceTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function expression(child?: (T.AsExpression | T.SatisfiesExpression | T.InstantiationExpression | T.InternalModule | T.TypeAssertion | T.PrimaryExpression | T.AssignmentExpression | T.AugmentedAssignmentExpression | T.AwaitExpression | T.UnaryExpression | T.BinaryExpression | T.TernaryExpression | T.UpdateExpression | T.NewExpression | T.YieldExpression)) {
-  const children = child != null ? [child] : [];
-  return {
-    $type: 'expression' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function primaryExpression(child?: (T.SubscriptExpression | T.MemberExpression | T.ParenthesizedExpression | T._Identifier | T.This | T.Super | T.Number | T.String | T.TemplateString | T.Regex | T.True | T.False | T.Null | T.Object | T.Array | T.FunctionExpression | T.ArrowFunction | T.GeneratorFunction | T.Class | T.MetaProperty | T.CallExpression | T.NonNullExpression)) {
-  const children = child != null ? [child] : [];
-  return {
-    $type: 'primary_expression' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.PrimaryExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2650,22 +2586,6 @@ export function classStaticBlock(config: T.ClassStaticBlock.Config) {
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T.ClassStaticBlockTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function pattern(child?: (T.LhsExpression | T.RestPattern)) {
-  const children = child != null ? [child] : [];
-  return {
-    $type: 'pattern' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.PatternTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4832,7 +4752,6 @@ export type FluentKindMap = {
   "namespace_export": FluentNode<"namespace_export", T.NamespaceExport.Config>;
   "export_clause": FluentNode<"export_clause", T.ExportClause.Config>;
   "export_specifier": FluentNode<"export_specifier", T.ExportSpecifier.Config>;
-  "declaration": FluentNode<"declaration", T.Declaration.Config>;
   "import": T.Import;
   "import_statement": FluentNode<"import_statement", T.ImportStatement.Config>;
   "import_clause": FluentNode<"import_clause", T.ImportClause.Config>;
@@ -4840,7 +4759,6 @@ export type FluentKindMap = {
   "named_imports": FluentNode<"named_imports", T.NamedImports.Config>;
   "import_specifier": FluentNode<"import_specifier", T.ImportSpecifier.Config>;
   "import_attribute": FluentNode<"import_attribute", T.ImportAttribute.Config>;
-  "statement": FluentNode<"statement", T.Statement.Config>;
   "expression_statement": FluentNode<"expression_statement", T.ExpressionStatement.Config>;
   "variable_declaration": FluentNode<"variable_declaration", T.VariableDeclaration.Config>;
   "lexical_declaration": FluentNode<"lexical_declaration", T.LexicalDeclaration.Config>;
@@ -4867,8 +4785,6 @@ export type FluentKindMap = {
   "catch_clause": FluentNode<"catch_clause", T.CatchClause.Config>;
   "finally_clause": FluentNode<"finally_clause", T.FinallyClause.Config>;
   "parenthesized_expression": FluentNode<"parenthesized_expression", T.ParenthesizedExpression.Config>;
-  "expression": FluentNode<"expression", T.Expression.Config>;
-  "primary_expression": FluentNode<"primary_expression", T.PrimaryExpression.Config>;
   "yield_expression": FluentNode<"yield_expression", T.YieldExpression.Config>;
   "object": FluentNode<"object", T.Object.Config>;
   "object_pattern": FluentNode<"object_pattern", T.ObjectPattern.Config>;
@@ -4938,7 +4854,6 @@ export type FluentKindMap = {
   "field_definition": FluentNode<"field_definition", T.FieldDefinition.Config>;
   "formal_parameters": FluentNode<"formal_parameters", T.FormalParameters.Config>;
   "class_static_block": FluentNode<"class_static_block", T.ClassStaticBlock.Config>;
-  "pattern": FluentNode<"pattern", T.Pattern.Config>;
   "rest_pattern": FluentNode<"rest_pattern", T.RestPattern.Config>;
   "method_definition": FluentNode<"method_definition", T.MethodDefinition.Config>;
   "pair": FluentNode<"pair", T.Pair.Config>;
@@ -5048,7 +4963,6 @@ export const _factoryMap = {
   "namespace_export": namespaceExport,
   "export_clause": exportClause,
   "export_specifier": exportSpecifier,
-  "declaration": declaration,
   "import": import_,
   "import_statement": importStatement,
   "import_clause": importClause,
@@ -5056,7 +4970,6 @@ export const _factoryMap = {
   "named_imports": namedImports,
   "import_specifier": importSpecifier,
   "import_attribute": importAttribute,
-  "statement": statement,
   "expression_statement": expressionStatement,
   "variable_declaration": variableDeclaration,
   "lexical_declaration": lexicalDeclaration,
@@ -5083,8 +4996,6 @@ export const _factoryMap = {
   "catch_clause": catchClause,
   "finally_clause": finallyClause,
   "parenthesized_expression": parenthesizedExpression,
-  "expression": expression,
-  "primary_expression": primaryExpression,
   "yield_expression": yieldExpression,
   "object": object,
   "object_pattern": objectPattern,
@@ -5154,7 +5065,6 @@ export const _factoryMap = {
   "field_definition": fieldDefinition,
   "formal_parameters": formalParameters,
   "class_static_block": classStaticBlock,
-  "pattern": pattern,
   "rest_pattern": restPattern,
   "method_definition": methodDefinition,
   "pair": pair,

@@ -44,7 +44,6 @@ import type {
   ConstructorType,
   ContinueStatement,
   DebuggerStatement,
-  Declaration,
   Decorator,
   DecoratorCallExpression,
   DecoratorMemberExpression,
@@ -62,7 +61,6 @@ import type {
   ExportStatementEqualsExport,
   ExportStatementNamespaceExport,
   ExportStatementTypeExport,
-  Expression,
   ExpressionStatement,
   ExtendsClause,
   ExtendsTypeClause,
@@ -138,8 +136,6 @@ import type {
   ParenthesizedExpression,
   ParenthesizedExpressionSequence,
   ParenthesizedType,
-  Pattern,
-  PrimaryExpression,
   Program,
   PropertySignature,
   PublicFieldDefinition,
@@ -152,7 +148,6 @@ import type {
   SatisfiesExpression,
   SequenceExpression,
   SpreadElement,
-  Statement,
   StatementBlock,
   String,
   StringDouble,
@@ -268,13 +263,6 @@ export function wrapExportSpecifier(data: _NodeData, tree: TreeHandle): WrappedN
   } as unknown as WrappedNode<ExportSpecifier>;
 }
 
-export function wrapDeclaration(data: _NodeData, tree: TreeHandle): WrappedNode<Declaration> {
-  return {
-    ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<Declaration>;
-}
-
 export function wrapImportStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ImportStatement> {
   return {
     ...data,
@@ -322,13 +310,6 @@ export function wrapImportAttribute(data: _NodeData, tree: TreeHandle): WrappedN
     get object() { return drillIn(data.$fields?.['object'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ImportAttribute>;
-}
-
-export function wrapStatement(data: _NodeData, tree: TreeHandle): WrappedNode<Statement> {
-  return {
-    ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<Statement>;
 }
 
 export function wrapExpressionStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ExpressionStatement> {
@@ -564,20 +545,6 @@ export function wrapParenthesizedExpression(data: _NodeData, tree: TreeHandle): 
     ...data,
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ParenthesizedExpression>;
-}
-
-export function wrapExpression(data: _NodeData, tree: TreeHandle): WrappedNode<Expression> {
-  return {
-    ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<Expression>;
-}
-
-export function wrapPrimaryExpression(data: _NodeData, tree: TreeHandle): WrappedNode<PrimaryExpression> {
-  return {
-    ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<PrimaryExpression>;
 }
 
 export function wrapYieldExpression(data: _NodeData, tree: TreeHandle): WrappedNode<YieldExpression> {
@@ -1021,13 +988,6 @@ export function wrapClassStaticBlock(data: _NodeData, tree: TreeHandle): Wrapped
     get body() { return drillIn(data.$fields?.['body'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ClassStaticBlock>;
-}
-
-export function wrapPattern(data: _NodeData, tree: TreeHandle): WrappedNode<Pattern> {
-  return {
-    ...data,
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<Pattern>;
 }
 
 export function wrapRestPattern(data: _NodeData, tree: TreeHandle): WrappedNode<RestPattern> {
@@ -1838,7 +1798,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'namespace_export': (d, t) => wrapNamespaceExport(d, t),
   'export_clause': (d, t) => wrapExportClause(d, t),
   'export_specifier': (d, t) => wrapExportSpecifier(d, t),
-  'declaration': (d, t) => wrapDeclaration(d, t),
   'import': (d) => d,
   'import_statement': (d, t) => wrapImportStatement(d, t),
   'import_clause': (d, t) => wrapImportClause(d, t),
@@ -1846,7 +1805,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'named_imports': (d, t) => wrapNamedImports(d, t),
   'import_specifier': (d, t) => wrapImportSpecifier(d, t),
   'import_attribute': (d, t) => wrapImportAttribute(d, t),
-  'statement': (d, t) => wrapStatement(d, t),
   'expression_statement': (d, t) => wrapExpressionStatement(d, t),
   'variable_declaration': (d, t) => wrapVariableDeclaration(d, t),
   'lexical_declaration': (d, t) => wrapLexicalDeclaration(d, t),
@@ -1873,8 +1831,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'catch_clause': (d, t) => wrapCatchClause(d, t),
   'finally_clause': (d, t) => wrapFinallyClause(d, t),
   'parenthesized_expression': (d, t) => wrapParenthesizedExpression(d, t),
-  'expression': (d, t) => wrapExpression(d, t),
-  'primary_expression': (d, t) => wrapPrimaryExpression(d, t),
   'yield_expression': (d, t) => wrapYieldExpression(d, t),
   'object': (d, t) => wrapObject(d, t),
   'object_pattern': (d, t) => wrapObjectPattern(d, t),
@@ -1945,7 +1901,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'field_definition': (d, t) => wrapFieldDefinition(d, t),
   'formal_parameters': (d, t) => wrapFormalParameters(d, t),
   'class_static_block': (d, t) => wrapClassStaticBlock(d, t),
-  'pattern': (d, t) => wrapPattern(d, t),
   'rest_pattern': (d, t) => wrapRestPattern(d, t),
   'method_definition': (d, t) => wrapMethodDefinition(d, t),
   'pair': (d, t) => wrapPair(d, t),

@@ -1250,6 +1250,17 @@ function evaluateMetadataCallbacks(
         const result = opts.supertypes.call($, $, baseSupertypes)
         if (Array.isArray(result)) {
             for (const s of result) {
+                // Accept BOTH shapes — the callback's `previous` param
+                // carries already-normalized string names from the base
+                // grammar, while `$.foo` references added in the override
+                // normalize to `{ type: 'symbol', name: 'foo' }`. An
+                // override body like `previous.concat([$.foo])` produces
+                // a mixed array; without the string branch the base-
+                // inherited supertypes silently drop.
+                if (typeof s === 'string') {
+                    appendDedup(sinks.supertypes, s)
+                    continue
+                }
                 const n = normalize(s)
                 if (n.type === 'symbol') appendDedup(sinks.supertypes, n.name)
             }

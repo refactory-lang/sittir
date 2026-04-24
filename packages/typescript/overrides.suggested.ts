@@ -14,8 +14,8 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences:  8  (0 applied, 8 held)
-// Rule promotions:   70  (62 applied, 8 held)
+// Field inferences:  7  (0 applied, 7 held)
+// Rule promotions:   75  (67 applied, 8 held)
 // Repeated shapes:   7  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -100,9 +100,6 @@ export const suggestedTransforms = {
       "2/3": variant("form_3"),
   },
 
-  // statement: 1 inferred field(s)
-  // [held] statement field 'body' on $.statement_block — 93% agreement, 14 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: expression
   yield_expression: {
@@ -181,7 +178,22 @@ export const suggestedRules = {
   _tuple_type_member: $ => choice($.tuple_parameter, $.optional_tuple_parameter, $.optional_type, $.rest_type, $.type),
 
   // [applied] promoted supertype
+  declaration: $ => choice($.function_signature, $.abstract_class_declaration, $.module, $.internal_module, $.type_alias_declaration, $.enum_declaration, $.interface_declaration, $.import_alias, $.ambient_declaration),
+
+  // [applied] promoted supertype
+  expression: $ => choice($.as_expression, $.satisfies_expression, $.instantiation_expression, $.internal_module, $.type_assertion, $.primary_expression, $.assignment_expression, $.augmented_assignment_expression, $.await_expression, $.unary_expression, $.binary_expression, $.ternary_expression, $.update_expression, $.new_expression, $.yield_expression),
+
+  // [applied] promoted supertype
+  pattern: $ => choice($.member_expression, $.subscript_expression, $.undefined, $.identifier, $.object_pattern, $.array_pattern, $.non_null_expression, $.rest_pattern),
+
+  // [applied] promoted supertype
+  primary_expression: $ => choice($.non_null_expression),
+
+  // [applied] promoted supertype
   primary_type: $ => choice($.parenthesized_type, $.predefined_type, $.identifier, $.nested_type_identifier, $.generic_type, $.object_type, $.array_type, $.tuple_type, $.flow_maybe_type, $.type_query, $.index_type_query, $.this, $.existential_type, $.literal_type, $.lookup_type, $.conditional_type, $.template_literal_type, $.intersection_type, $.union_type),
+
+  // [applied] promoted supertype
+  statement: $ => choice($.export_statement, $.import_statement, $.debugger_statement, $.expression_statement, $.declaration, $.statement_block, $.if_statement, $.switch_statement, $.for_statement, $.for_in_statement, $.while_statement, $.do_statement, $.try_statement, $.with_statement, $.break_statement, $.continue_statement, $.return_statement, $.throw_statement, $.empty_statement, $.labeled_statement),
 
   // [applied] promoted supertype
   type: $ => choice($.primary_type, $.function_type, $.readonly_type, $.constructor_type, $.infer_type, $._type_query_member_expression_in_type_annotation, $._type_query_call_expression_in_type_annotation),
@@ -230,7 +242,12 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_shorthand_property_identifier_pattern", classification: "supertype", applied: true },
   { kind: "_statement_identifier", classification: "supertype", applied: true },
   { kind: "_tuple_type_member", classification: "supertype", applied: true },
+  { kind: "declaration", classification: "supertype", applied: true },
+  { kind: "expression", classification: "supertype", applied: true },
+  { kind: "pattern", classification: "supertype", applied: true },
+  { kind: "primary_expression", classification: "supertype", applied: true },
   { kind: "primary_type", classification: "supertype", applied: true },
+  { kind: "statement", classification: "supertype", applied: true },
   { kind: "type", classification: "supertype", applied: true },
   { kind: "_reserved_identifier", classification: "terminal", applied: true },
   { kind: "comment", classification: "terminal", applied: true },
@@ -299,7 +316,6 @@ export const inferredFields: readonly InferredField[] = [
   { kind: "_export_statement_type_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
   { kind: "class_body", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
   { kind: "class_body", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
-  { kind: "statement", fieldName: "body", targetSymbol: "statement_block", confidence: "medium", agreement: 0.929, sampleSize: 14, applied: false },
 ];
 
 export interface RepeatedShape {
