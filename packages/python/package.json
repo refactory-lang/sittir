@@ -43,7 +43,10 @@
     "@sittir/core": "workspace:*",
     "@sittir/types": "workspace:*"
   },
-  "//peer": "Optional peer @sittir/python-native is added by spec 012 T038 once the native package is published. Listing it here pre-publish causes pnpm install to 404 even with peerDependenciesMeta.optional=true because pnpm still probes the registry.",
+  "optionalDependencies": {
+    "@sittir/python-native": "workspace:*"
+  },
+  "//peer": "spec 012 T038: @sittir/python-native is a workspace optionalDependency.",
   "devDependencies": {
     "@types/node": "^25.6.0",
     "tree-sitter-python": "^0.25.0",

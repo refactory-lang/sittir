@@ -48,7 +48,10 @@
     "@sittir/core": "workspace:*",
     "@sittir/types": "workspace:*"
   },
-  "//peer": "Optional peer @sittir/typescript-native is added by spec 012 T037 once the native package is published. Listing it here pre-publish causes pnpm install to 404 even with peerDependenciesMeta.optional=true because pnpm still probes the registry.",
+  "optionalDependencies": {
+    "@sittir/typescript-native": "workspace:*"
+  },
+  "//peer": "spec 012 T037: @sittir/typescript-native is a workspace optionalDependency.",
   "devDependencies": {
     "@types/node": "^25.6.0",
     "tree-sitter-typescript": "^0.23.2",
