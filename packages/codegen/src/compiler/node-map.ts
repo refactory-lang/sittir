@@ -353,13 +353,27 @@ function classifyTopLevelShape(rule: Rule): string {
             if (allTokenLike) return 'canonical'
             const allFlatSymbolSeq = rule.members.every(isFlatSymbolSeqOrTokenLike)
             if (allFlatSymbolSeq) return 'canonical'
+            // Distinct-named-fields choice: every branch is either a
+            // `field(A, ...)` with its own name or a token-like atom.
+            // Rust's `function_modifiers` (`choice(field('async', …),
+            // field('const', …), field('unsafe', …), extern_modifier)`)
+            // is the canonical example — the branches contribute
+            // different fields to the enclosing kind rather than
+            // different kinds themselves, so this is a legitimate
+            // "one-of-these-fields" shape, NOT a polymorph. The walker's
+            // choice case enumerates each branch and downgrades every
+            // field to `optional` multiplicity; that's correct behavior.
+            const allFieldOrToken = rule.members.every(m =>
+                m.type === 'field' || isTokenLikeChoiceMember(m),
+            )
+            if (allFieldOrToken) return 'canonical'
             // Polymorph surface: every branch wraps its content in a
-            // `variant()` tag (from override-declared variant() adoption
-            // or tagVariants auto-promotion). Variant-wrapped branches
-            // are never merged or hoisted — they preserve polymorph
-            // identity — so the walker descends into each independently
-            // and dispatches via `$variant`. That's canonical even when
-            // the inner content is a structural seq with fields.
+            // `variant()` tag (from override-declared variant() adoption).
+            // Variant-wrapped branches are never merged or hoisted —
+            // they preserve polymorph identity — so the walker descends
+            // into each independently and dispatches via `$variant`.
+            // Canonical even when the inner content is a structural seq
+            // with fields.
             if (rule.members.every(m => m.type === 'variant')) return 'canonical'
             return 'choice-needs-variant-or-merge'
         }
