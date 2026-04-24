@@ -98,24 +98,30 @@ function deepReadNode(
  */
 async function loadVariantAdoptedKinds(grammar: string): Promise<ReadonlySet<string>> {
 	// factory-map.json5 lives at packages/<grammar>/factory-map.json5.
-	const factoryMapPath = new URL(`../../../../${grammar}/factory-map.json5`, import.meta.url).pathname;
+	// 3x `..` resolves from .../packages/codegen/src/validate/roundtrip.ts
+	// up to `packages/` (validate → src → codegen → packages). A
+	// previous `../../../../` overshoot landed at the repo root; with
+	// the 012-merge introducing a top-level `rust/` directory, that
+	// mis-path silently hit `rust/factory-map.json5` (non-existent) and
+	// the catch{} swallowed the ENOENT.
+	const factoryMapPath = new URL(`../../../${grammar}/factory-map.json5`, import.meta.url).pathname;
 	try {
 		const fs = await import('node:fs');
 		const content = fs.readFileSync(factoryMapPath, 'utf-8');
 		const kinds = new Set<string>();
-		// Minimal JSON5-ish scan: find `polymorphVariants: { kindA: { source: 'override', childKind: { 'kindA_x': ... } } }`.
-		// We only need to harvest kind names — full JSON5 parse isn't worth
-		// the dependency here.
-		const parentMatch = content.match(/polymorphVariants\s*:\s*\{([\s\S]*?)\}\s*,?\s*(?:\}|$)/);
-		if (!parentMatch) return kinds;
-		const body = parentMatch[1]!;
-		// Each parent entry: `<parent>: { source: 'override', childKind: { '<childKind>': ... }, ... }`.
-		const parentEntryRe = /(\w+):\s*\{[^}]*source:\s*['"]override['"][^}]*childKind:\s*\{([^}]*)\}/g;
+		// Scan the WHOLE file for parent entries — the shape
+		// `"<name>": { "source": "override", "childKind": { ... } }`
+		// is distinctive enough to appear only inside polymorphVariants
+		// (no other factory-map section nests `source` + `childKind`),
+		// so we don't need to isolate the surrounding block (nested
+		// brace matching in regex is brittle and the outer non-greedy
+		// scan stops at the first `}` inside the inner object).
+		const parentEntryRe = /["'](\w+)["']\s*:\s*\{[^}]*["']source["']\s*:\s*["']override["'][^{]*["']childKind["']\s*:\s*\{([^}]*)\}/g;
 		let m: RegExpExecArray | null;
-		while ((m = parentEntryRe.exec(body)) !== null) {
+		while ((m = parentEntryRe.exec(content)) !== null) {
 			kinds.add(m[1]!);
 			const childMap = m[2]!;
-			const childRe = /['"]([^'"]+)['"]\s*:/g;
+			const childRe = /["']([^"']+)["']\s*:/g;
 			let cm: RegExpExecArray | null;
 			while ((cm = childRe.exec(childMap)) !== null) {
 				kinds.add(cm[1]!);
@@ -353,9 +359,63 @@ function findReparsedNodeAtOffset(
 /**
  * Run round-trip validation for a grammar using corpus fixtures.
  */
+/**
+ * Parity-fixture capture — a single render + round-trip pair as seen
+ * by the validator. Shape matches spec 012 T045 / data-model.md §6.
+ *
+ * Populated only when the caller supplies `onFixture` in the options
+ * bag. Each successful kind probe (render OK, re-parse OK, AST match
+ * OK) emits one `RenderFixture` + one `RoundTripFixture` — the
+ * former for byte-identical render parity (SC-001a), the latter for
+ * end-to-end semantic parity (SC-001b).
+ */
+export interface RenderFixture {
+	kind: 'render'
+	grammar: string
+	/** NodeData input — the deep-read result from readTreeNode, ready
+	 *  for the Rust engine's `render_dispatch` or the TS engine's
+	 *  `render()`. Serialized to JSON verbatim. */
+	input: unknown
+	/** The string the TS engine produced for `input`. Parity gate
+	 *  asserts the Rust engine produces the same bytes. */
+	expectedOutput: string
+}
+
+export interface RoundTripFixture {
+	kind: 'roundtrip'
+	grammar: string
+	/** Original source text for the probed node. */
+	sourceIn: string
+	/** The kind name — functions as the ast-grep-style pattern
+	 *  ("match anything of this kind"). No actual edits are applied
+	 *  at MVP; the fixture exists to anchor full-pipeline parity. */
+	pattern: string
+	/** Edit spec list — empty at MVP (render-only round-trip). Kept
+	 *  in the schema so future fixtures can exercise applyEdits. */
+	edits: readonly unknown[]
+	/** Expected source after render (equals `sourceIn` for render-only
+	 *  round-trips that match byte-for-byte; may differ when render
+	 *  normalizes whitespace). */
+	expectedSourceOut: string
+	/** S-expression serialization of the re-parsed tree's root node
+	 *  (`Tree.rootNode.toString()` on the web-tree-sitter side). */
+	expectedReparseTree: string
+}
+
+export type ParityFixture = RenderFixture | RoundTripFixture
+
+export interface ValidateRoundTripOptions {
+	/** Called once per successfully round-tripped kind — emits a
+	 *  `RenderFixture` then a `RoundTripFixture`. When omitted,
+	 *  validator runs its normal pass/fail accounting without
+	 *  fixture capture (zero added cost). */
+	onFixture?: (fx: ParityFixture) => void
+}
+
 export async function validateRoundTrip(
 	grammar: string,
 	templatesPath: string,
+	options: ValidateRoundTripOptions = {},
 ): Promise<RoundTripResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
@@ -408,14 +468,19 @@ export async function validateRoundTrip(
 				if (!node1) continue;
 
 				const handle = treeHandle(tree1);
-				// Deep-read only for kinds that underwent variant()
-				// push-down (parents + their variant-child kinds).
-				// Those kinds depend on structural children reaching
-				// their own templates so the pushed-down ambient
-				// scaffold renders. Other kinds stay shallow — their
-				// render path short-circuits to `$text` which matches
-				// the source verbatim.
-				const rawData = deepReadNode(handle, node1.id, deepReadKinds);
+				// Shallow read — RT validator relies on the $text
+				// short-circuit: readNode returns a NodeData with
+				// $text=source-span, render() falls through to emit
+				// that $text verbatim, compare succeeds trivially.
+				// This applies uniformly; variant-adopted kinds do
+				// NOT require pre-enriched NodeData here — the ambient
+				// scaffold in their template would re-produce the same
+				// spans on reparse. Deep reads (with recursion into
+				// children/fields) live in the FACTORY round-trip
+				// validator (factory-roundtrip.ts), which needs the
+				// structural data to call factory functions and
+				// reconstruct the tree from scratch.
+				const rawData = readNode(handle, node1.id);
 				const { data, renderedKind, targetKind } = applyAliasResolution(rawData, node1.id, nodeIdToEffectiveType);
 
 				try {
@@ -469,6 +534,27 @@ export async function validateRoundTrip(
 							rendered,
 						});
 						entryAstMatch = false;
+					} else if (options.onFixture) {
+						// Success path (both re-parse OK + AST match OK) —
+						// emit a render fixture (NodeData → rendered) and a
+						// round-trip fixture (source → reparse s-exp). The
+						// data we have matches both shapes; only the shape
+						// type tag differs.
+						options.onFixture({
+							kind: 'render',
+							grammar,
+							input: data,
+							expectedOutput: rendered,
+						});
+						options.onFixture({
+							kind: 'roundtrip',
+							grammar,
+							sourceIn: inputSource,
+							pattern: renderedKind,
+							edits: [],
+							expectedSourceOut: rendered,
+							expectedReparseTree: node2.toString(),
+						});
 					}
 				} catch (e) {
 					errors.push({ name: `${entry.name} [${renderedKind}]`, message: `render: ${(e as Error).message.slice(0, 100)}` });

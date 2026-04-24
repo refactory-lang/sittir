@@ -22,6 +22,11 @@ import { compileParser } from './transpile/compile-parser.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { writeJinjaTemplates } from './emitters/templates.ts';
 import { emitRenderCrate, type Grammar as RustRenderGrammar } from './emitters/rust-render.ts';
+import {
+	extractParityFixtures,
+	serializeFixtures,
+	fixturesOutputPath,
+} from './emitters/parity-fixtures.ts';
 import { readdirSync, readFileSync, existsSync, rmSync } from 'node:fs';
 import type { TemplateFile } from './emitters/template-hash.ts';
 
@@ -335,6 +340,25 @@ if (cliArgs.rustRender) {
 	console.log(`    ${emit.libRs.path}`);
 	console.log(`    ${emit.cargoToml.path}`);
 	console.log(`    ${dstTemplatesDir}/ (${emittedNames.size} .jinja files)`);
+
+	// --- parity-fixture extraction (spec 012 T045 / T046) ---
+	// Run the round-trip validator in fixture-capture mode. Every
+	// successfully round-tripped kind emits a paired (render,
+	// roundtrip) fixture; the result is written to
+	// packages/{grammar}/rust-render/test-fixtures.json where the
+	// Rust parity harness (T047) reads it via serde_json.
+	//
+	// FR-011 required-kinds gate lives in `extractParityFixtures` —
+	// throws when the corpus doesn't cover the exception kinds for
+	// this grammar. Regen fails loudly rather than emitting an
+	// insufficient fixture set.
+	const templatesPath = join(dirname(outDir), 'templates');
+	const extracted = await extractParityFixtures(grammar, templatesPath);
+	const fxPath = fixturesOutputPath(grammar);
+	writeFile(fxPath, serializeFixtures(extracted.fixtures));
+	console.log(
+		`    ${fxPath} (${extracted.renderCount} render + ${extracted.roundTripCount} roundtrip, ${extracted.coveredKinds.size} kinds)`,
+	);
 }
 
 // Write validator-only factory metadata.
