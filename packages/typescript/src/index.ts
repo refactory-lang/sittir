@@ -26,3 +26,13 @@ export type { IsGuards, AssertGuards } from './is.js';
 export { createRenderer } from '@sittir/core';
 export type { NodeData, TreeNode } from './types.js';
 export type { Edit, CSTNode, RenderContext } from '@sittir/types';
+
+// Backend selection (spec 012) — native vs. typescript fallback shim.
+export { getActiveBackend } from './backend.js';
+export type { BackendName, BackendStatus } from './backend.js';
+
+// Backend-dispatched hot-path primitives (spec 012 T042). Each one
+// checks `getActiveBackend().name` on first use and routes to the
+// native engine or the existing TS engine. Signatures are unchanged
+// from the pre-012 TS-only surface (FR-006).
+export { render, readNode, applyEdits, findMatches } from './boundary.js';

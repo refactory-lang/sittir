@@ -21,6 +21,9 @@ import type { RoundTripDiagnostic } from './emitters/suggested.ts';
 import { compileParser } from './transpile/compile-parser.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { writeJinjaTemplates } from './emitters/templates.ts';
+import { emitRenderCrate, type Grammar as RustRenderGrammar } from './emitters/rust-render.ts';
+import { readdirSync, readFileSync, copyFileSync, existsSync, rmSync } from 'node:fs';
+import type { TemplateFile } from './emitters/template-hash.ts';
 
 interface CodegenConfig {
 	grammar: string;
@@ -39,6 +42,7 @@ interface CliArgs {
 	transpile?: boolean;
 	tsGenerate?: boolean;
 	skipTsChain?: boolean;
+	rustRender?: boolean;
 	help?: boolean;
 }
 
@@ -81,6 +85,9 @@ function parseArgs(argv: string[]): CliArgs {
 			case '--skip-ts-chain':
 				args.skipTsChain = true;
 				break;
+			case '--rust-render':
+				args.rustRender = true;
+				break;
 			case '--help':
 			case '-h':
 				args.help = true;
@@ -113,6 +120,11 @@ Options:
                    grammar.json + node-types.json
   --skip-ts-chain  Skip the auto transpile + tree-sitter generate chain
                    that --all normally runs before sittir codegen
+  --rust-render    Also emit the rust-render crate's codegen artifacts
+                   (spec 012 T016+): packages/<grammar>/rust-render/src/hash.rs
+                   and packages/<grammar>/src/hash.ts. The JS backend shim
+                   uses the TS-side hash to detect drift vs. the native
+                   binary (FR-020).
   --help, -h       Show this help
 
 With --all (without --skip-ts-chain), the CLI chains:
@@ -223,6 +235,56 @@ writeFile(join(outDir, 'index.ts'), result.index);
 // (feature 011). writeJinjaTemplates also deletes stale `.jinja` files
 // whose rule kind is no longer in the grammar.
 writeJinjaTemplates(result.jinjaTemplates, join(dirname(outDir), 'templates'));
+
+// --- rust-render emission (spec 012 T017) ---
+// When `--rust-render` is set, also emit hash.rs / hash.ts so the
+// native backend and the TS backend can detect template-bundle drift
+// at runtime (FR-020). The hash is computed over the same `.jinja`
+// bodies that were just written above — this keeps the TS-side and
+// Rust-side derivations in lockstep.
+if (cliArgs.rustRender) {
+	const grammar = config.grammar;
+	if (grammar !== 'rust' && grammar !== 'typescript' && grammar !== 'python') {
+		console.error(
+			`--rust-render: unsupported grammar '${grammar}'. Supported: rust, typescript, python.`,
+		);
+		process.exit(1);
+	}
+	const templateFiles: TemplateFile[] = [];
+	for (const [kind, body] of result.jinjaTemplates.bodies) {
+		templateFiles.push({ filename: `${kind}.jinja`, content: body });
+	}
+	const emit = emitRenderCrate(grammar as RustRenderGrammar, templateFiles, result.nodeMap);
+	writeFile(emit.hashRs.path, emit.hashRs.contents);
+	writeFile(emit.hashTs.path, emit.hashTs.contents);
+	writeFile(emit.templatesRs.path, emit.templatesRs.contents);
+	writeFile(emit.libRs.path, emit.libRs.contents);
+	writeFile(emit.cargoToml.path, emit.cargoToml.contents);
+	// Copy the per-kind `.jinja` files into the render-crate's templates/
+	// directory so askama's build-time `#[template(path = ...)]` can
+	// resolve them (T030). Stale files (no longer in jinjaTemplates) are
+	// removed so regenerations don't accumulate dead templates.
+	const srcTemplatesDir = join(dirname(outDir), 'templates');
+	const dstTemplatesDir = `packages/${grammar}/rust-render/templates`;
+	mkdirSync(dstTemplatesDir, { recursive: true });
+	const emittedNames = new Set<string>();
+	for (const [kind] of result.jinjaTemplates.bodies) {
+		const fname = `${kind}.jinja`;
+		copyFileSync(join(srcTemplatesDir, fname), join(dstTemplatesDir, fname));
+		emittedNames.add(fname);
+	}
+	for (const existing of readdirSync(dstTemplatesDir)) {
+		if (!existing.endsWith('.jinja')) continue;
+		if (!emittedNames.has(existing)) rmSync(join(dstTemplatesDir, existing), { force: true });
+	}
+	console.log(`  → rust-render crate regenerated for ${grammar}:`);
+	console.log(`    ${emit.hashRs.path}`);
+	console.log(`    ${emit.hashTs.path}`);
+	console.log(`    ${emit.templatesRs.path}`);
+	console.log(`    ${emit.libRs.path}`);
+	console.log(`    ${emit.cargoToml.path}`);
+	console.log(`    ${dstTemplatesDir}/ (${emittedNames.size} .jinja files)`);
+}
 
 // Write validator-only factory metadata.
 writeFile(join(dirname(outDir), 'factory-map.json5'), result.factoryMap);

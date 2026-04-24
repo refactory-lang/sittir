@@ -41,5 +41,9 @@ export function emitIndex(_config: EmitIndexConfig): string {
         "export type { NodeData, TreeNode } from './types.js';",
         "export type { Edit, CSTNode, RenderContext } from '@sittir/types';",
         '',
+        '// Backend selection (spec 012) — native vs. typescript fallback shim.',
+        "export { getActiveBackend } from './backend.js';",
+        "export type { BackendName, BackendStatus } from './backend.js';",
+        '',
     ].join('\n')
 }
