@@ -94,10 +94,29 @@ pub struct TemplateContext {
     pub variant: String,
     /// Leaf text — `""` for branch nodes.
     pub text: String,
-    /// Trailing separator flag (spec-011).
+    /// Trailing separator flag (spec-011). Legacy positional held over
+    /// from the early MVP — modern flank detection lives in
+    /// `trailing_anon` (per-call text-vs-sep comparison via askama
+    /// `Values`). This bool stays in the struct because every emitted
+    /// per-kind template carries it as a positional field; cleaning up
+    /// the codegen + struct shape is a follow-up to T047.
     pub trailing_sep: bool,
-    /// Leading separator flag (spec-011).
+    /// Leading separator flag (spec-011). See `trailing_sep`.
     pub leading_sep: bool,
+    /// Text of the anonymous token immediately AFTER the last named
+    /// child in `node.children`. `None` when the children list has no
+    /// trailing anon (the common case — anon tokens typically land in
+    /// `$fields` via TS-side `promoteAnonymousKeyword`, not in
+    /// `$children`). Consulted by `joinWithTrailing` / `joinWithFlanks`
+    /// custom filters: when `Some(text)` and `text == sep` arg, the
+    /// filter emits a trailing separator. Mirrors the TS engine's
+    /// `_trailing_anon` side-channel on the children array (see
+    /// `packages/core/src/render.ts:937-942`).
+    pub trailing_anon: Option<String>,
+    /// Text of the anonymous token immediately BEFORE the first named
+    /// child in `node.children`. See `trailing_anon` — symmetric for
+    /// leading separators.
+    pub leading_anon: Option<String>,
 }
 
 impl TemplateContext {
@@ -106,6 +125,40 @@ impl TemplateContext {
     /// against `""` rather than handle null/missing.
     pub fn empty() -> Self {
         Self::default()
+    }
+
+    /// Borrow the flank metadata (`leading_anon`, `trailing_anon`) as an
+    /// askama [`Values`] bag for `render_with_values()`. Codegen-emitted
+    /// `render_dispatch` calls this and threads the result into every
+    /// per-kind template render so the `joinWith*` filter family can
+    /// inspect the captured anon-text per call site.
+    ///
+    /// Implementation: a thin newtype wrapping `&TemplateContext`. The
+    /// `Values::get_value` impl recognises the two flank keys
+    /// (`"trailing_anon"` / `"leading_anon"`) and returns a `&dyn Any`
+    /// over the corresponding `Option<String>` field — the filter
+    /// downcasts and compares.
+    pub fn as_values(&self) -> FlankValues<'_> {
+        FlankValues { ctx: self }
+    }
+}
+
+/// Bridge between [`TemplateContext`] and askama's runtime [`Values`]
+/// store — exposes the flank-anon text fields by key so the per-filter
+/// wrappers in `sittir_core::filters` can read them via
+/// `values.get_value("trailing_anon")` etc. See [`TemplateContext::as_values`]
+/// for the construction site.
+pub struct FlankValues<'a> {
+    ctx: &'a TemplateContext,
+}
+
+impl<'a> askama::Values for FlankValues<'a> {
+    fn get_value<'b>(&'b self, key: &str) -> Option<&'b dyn std::any::Any> {
+        match key {
+            "trailing_anon" => Some(&self.ctx.trailing_anon),
+            "leading_anon" => Some(&self.ctx.leading_anon),
+            _ => None,
+        }
     }
 }
 
@@ -168,19 +221,52 @@ pub fn build_template_context<M: GrammarMeta>(
     // Only NAMED children enter `children_list` — anonymous token
     // children (tree-sitter's `"` pair around string_literal, `,`
     // separators inside a list, etc.) are structural. Their text
-    // gets re-inserted by the parent template's literal bytes or
-    // joinby-separator (flank metadata, TS renders them via
-    // `_leading_anon` / `_trailing_anon` — not yet plumbed through
-    // here; see `packages/core/src/render.ts:918-942`). Including
-    // them here would double-up the punctuation: e.g. rust
-    // `string_literal`'s template `"{{ children | join(" ") }}"`
-    // would render `"Got: {} ""` instead of `"Got: {}"`.
+    // is reintroduced two ways:
+    //   1. Parent template's literal bytes (`(...)`, `[...]`, etc.).
+    //   2. Flank-aware filters (`joinWithTrailing` / `joinWithLeading`
+    //      / `joinWithFlanks`) compare their `sep` arg against the
+    //      `trailing_anon` / `leading_anon` text captured below and
+    //      emit the flank when it matches. Mirrors the TS engine's
+    //      `_trailing_anon` / `_leading_anon` side-channel on the
+    //      children array (`packages/core/src/render.ts:918-942`).
     if let Some(children) = &node.children {
-        for child in children {
-            if !child.named {
-                continue;
+        // Find first / last named child indices in source order so we
+        // can probe the immediately-adjacent unnamed entry on each
+        // side. Mirrors the TS scan in
+        // `buildNunjucksTemplateContext` — only the anon DIRECTLY
+        // flanking the named-child run is a flank candidate;
+        // intervening anons are inter-element separators and surface
+        // through the join-filter's sep arg, not the flank channel.
+        let mut first_named_idx: Option<usize> = None;
+        let mut last_named_idx: Option<usize> = None;
+        for (i, child) in children.iter().enumerate() {
+            if child.named {
+                if first_named_idx.is_none() {
+                    first_named_idx = Some(i);
+                }
+                last_named_idx = Some(i);
+                ctx.children_list.push(render_any(child, meta, render_dispatch)?);
             }
-            ctx.children_list.push(render_any(child, meta, render_dispatch)?);
+        }
+        if let Some(first) = first_named_idx {
+            if first > 0 {
+                let before = &children[first - 1];
+                if !before.named {
+                    if let Some(t) = &before.text {
+                        ctx.leading_anon = Some(t.clone());
+                    }
+                }
+            }
+        }
+        if let Some(last) = last_named_idx {
+            if last + 1 < children.len() {
+                let after = &children[last + 1];
+                if !after.named {
+                    if let Some(t) = &after.text {
+                        ctx.trailing_anon = Some(t.clone());
+                    }
+                }
+            }
         }
         let sep = meta.separator_for(parent_kind).unwrap_or("");
         ctx.children = ctx.children_list.join(sep);

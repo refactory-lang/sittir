@@ -90,6 +90,7 @@ pub fn joinby<S: AsRef<str>>(
 /// The TS engine accepts undefined/null/""/whitespace as blank. Askama
 /// template context fields are `String`-typed (absent fields are
 /// empty strings), so the test reduces to `trim().is_empty()`.
+#[allow(non_snake_case)]
 pub fn isBlank(s: &str, _values: &dyn askama::Values) -> Result<bool, askama::Error> {
     Ok(s.trim().is_empty())
 }
@@ -106,6 +107,86 @@ pub fn isBlank(s: &str, _values: &dyn askama::Values) -> Result<bool, askama::Er
 /// reads as "not present" (matches the TS engine's semantics where a
 /// never-populated field and an empty-array field both render as
 /// blank).
+#[allow(non_snake_case)]
 pub fn isPresent(s: &str, _values: &dyn askama::Values) -> Result<bool, askama::Error> {
     Ok(!s.trim().is_empty())
+}
+
+/// Probe `values` for a flank-anon text registered under `key`. Returns
+/// the captured text iff it matches `sep` (the join filter's separator
+/// argument), so the filter can emit `sep` at the flank position.
+///
+/// Mirrors the TS Nunjucks `flankJoin` semantics: the filter only emits
+/// a flank when the parser observed an anonymous token there AND that
+/// token's text equals the separator the template asked for. A `,`-anon
+/// flanking a `;`-joined list contributes nothing — the separator
+/// argument is the source of truth for what to emit.
+///
+/// `key` is `"trailing_anon"` or `"leading_anon"`. Codegen passes the
+/// `Option<String>` from `TemplateContext` into `render_with_values`
+/// under those keys; this helper does the downcast + match in one
+/// place so the per-filter wrappers stay one-liners.
+fn flank_match(values: &dyn askama::Values, key: &str, sep: &str) -> bool {
+    match values.get_value(key) {
+        Some(any) => {
+            if let Some(opt) = any.downcast_ref::<Option<String>>() {
+                return opt.as_deref() == Some(sep);
+            }
+            if let Some(s) = any.downcast_ref::<String>() {
+                return s.as_str() == sep;
+            }
+            if let Some(s) = any.downcast_ref::<&str>() {
+                return *s == sep;
+            }
+            false
+        }
+        None => false,
+    }
+}
+
+/// Askama filter — `{{ children | joinWithTrailing(",") }}`. Emits a
+/// trailing `sep` iff the children list captured a trailing anonymous
+/// token whose text matches `sep`. Source: `TemplateContext.trailing_anon`,
+/// passed through `render_with_values` under key `"trailing_anon"` by
+/// the generated `render_dispatch`.
+///
+/// On a context with no flank metadata (`render()` instead of
+/// `render_with_values()`, or values bag missing the key) the filter
+/// degrades to plain `join` — matches TS engine behavior when the
+/// children array has no `_trailing_anon` property.
+#[allow(non_snake_case)]
+pub fn joinWithTrailing<S: AsRef<str>>(
+    xs: &[S],
+    values: &dyn askama::Values,
+    sep: &str,
+) -> Result<String, askama::Error> {
+    let trailing = flank_match(values, "trailing_anon", sep);
+    joinby(xs, sep, false, trailing)
+}
+
+/// Askama filter — `{{ children | joinWithLeading(",") }}`. Symmetric to
+/// `joinWithTrailing`: emits a leading `sep` iff the children list
+/// captured a leading anonymous token whose text matches `sep`.
+#[allow(non_snake_case)]
+pub fn joinWithLeading<S: AsRef<str>>(
+    xs: &[S],
+    values: &dyn askama::Values,
+    sep: &str,
+) -> Result<String, askama::Error> {
+    let leading = flank_match(values, "leading_anon", sep);
+    joinby(xs, sep, leading, false)
+}
+
+/// Askama filter — `{{ children | joinWithFlanks(",") }}`. Both
+/// directions; emits each flank independently iff its captured anon
+/// text matches `sep`.
+#[allow(non_snake_case)]
+pub fn joinWithFlanks<S: AsRef<str>>(
+    xs: &[S],
+    values: &dyn askama::Values,
+    sep: &str,
+) -> Result<String, askama::Error> {
+    let leading = flank_match(values, "leading_anon", sep);
+    let trailing = flank_match(values, "trailing_anon", sep);
+    joinby(xs, sep, leading, trailing)
 }

@@ -129,3 +129,77 @@ fn joinby_preserves_empty_string_elements() {
     let xs = ["", "", "a"];
     assert_eq!(joinby(&xs, ",", false, false).unwrap(), ",,a");
 }
+
+// -------------------------------------------------------------------
+// Flank-aware filter wrappers — TS parity for joinWith{Trailing,Leading,Flanks}
+// -------------------------------------------------------------------
+//
+// The TS Nunjucks env carries flank metadata as side-channel
+// properties on the children array (`_leading_anon` /
+// `_trailing_anon`). The filter compares against its `sep` arg and
+// emits the flank only on a text match. The Rust filters mirror this
+// via askama `Values` — `joinWithTrailing` reads `trailing_anon` from
+// the per-render value bag, downcasts the `Option<String>` and
+// compares with `sep`.
+
+use sittir_core::filters::{joinWithFlanks, joinWithLeading, joinWithTrailing};
+use sittir_core::prepare::TemplateContext;
+
+#[test]
+fn join_with_trailing_emits_flank_when_anon_text_matches_sep() {
+    let mut ctx = TemplateContext::empty();
+    ctx.trailing_anon = Some(",".into());
+    let values = ctx.as_values();
+    let xs = ["a", "b"];
+    assert_eq!(joinWithTrailing(&xs, &values, ",").unwrap(), "a,b,");
+}
+
+#[test]
+fn join_with_trailing_skips_flank_when_anon_text_differs() {
+    // `;`-anon flanking a `,`-joined list contributes nothing — the
+    // separator argument is the source of truth for what to emit.
+    let mut ctx = TemplateContext::empty();
+    ctx.trailing_anon = Some(";".into());
+    let values = ctx.as_values();
+    let xs = ["a", "b"];
+    assert_eq!(joinWithTrailing(&xs, &values, ",").unwrap(), "a,b");
+}
+
+#[test]
+fn join_with_trailing_skips_flank_when_anon_absent() {
+    // Default ctx has trailing_anon: None — degrades to plain join.
+    let ctx = TemplateContext::empty();
+    let values = ctx.as_values();
+    let xs = ["a", "b"];
+    assert_eq!(joinWithTrailing(&xs, &values, ",").unwrap(), "a,b");
+}
+
+#[test]
+fn join_with_leading_mirrors_trailing_semantics() {
+    let mut ctx = TemplateContext::empty();
+    ctx.leading_anon = Some(",".into());
+    let values = ctx.as_values();
+    let xs = ["a", "b"];
+    assert_eq!(joinWithLeading(&xs, &values, ",").unwrap(), ",a,b");
+}
+
+#[test]
+fn join_with_flanks_independent_per_side() {
+    // Only one flank set — only that side emits.
+    let mut ctx = TemplateContext::empty();
+    ctx.trailing_anon = Some(",".into());
+    ctx.leading_anon = None;
+    let values = ctx.as_values();
+    let xs = ["a"];
+    assert_eq!(joinWithFlanks(&xs, &values, ",").unwrap(), "a,");
+}
+
+#[test]
+fn join_with_flanks_both_sides_match() {
+    let mut ctx = TemplateContext::empty();
+    ctx.trailing_anon = Some(",".into());
+    ctx.leading_anon = Some(",".into());
+    let values = ctx.as_values();
+    let xs = ["a", "b"];
+    assert_eq!(joinWithFlanks(&xs, &values, ",").unwrap(), ",a,b,");
+}

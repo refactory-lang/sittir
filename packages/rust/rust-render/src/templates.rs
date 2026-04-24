@@ -15,29 +15,18 @@
 // fields is caught at compile time (FR-008). If you see a build error
 // here, the codegen is out of sync: regenerate via the command above.
 
-#![allow(dead_code, unused_imports)]
+#![allow(dead_code, unused_imports, non_snake_case)]
 
 pub mod filters {
     //! Askama resolves custom-filter names by searching for a
     //! sibling `filters` module at the derive-macro site. This
-    //! module re-exports `sittir_core::filters::{upper, lower,
-    //! joinby}` + the TS-dialect aliases (`joinWithTrailing`,
-    //! `joinWithLeading`, `joinWithFlanks`) that the current
-    //! jinja emitter references. Aliases are thin wrappers over
-    //! `joinby` with preset flank flags.
-    pub use ::sittir_core::filters::{upper, lower, joinby, isBlank, isPresent};
-
-    pub fn joinWithTrailing<S: AsRef<str>>(xs: &[S], _values: &dyn ::askama::Values, sep: &str) -> Result<String, ::askama::Error> {
-        ::sittir_core::filters::joinby(xs, sep, false, true)
-    }
-
-    pub fn joinWithLeading<S: AsRef<str>>(xs: &[S], _values: &dyn ::askama::Values, sep: &str) -> Result<String, ::askama::Error> {
-        ::sittir_core::filters::joinby(xs, sep, true, false)
-    }
-
-    pub fn joinWithFlanks<S: AsRef<str>>(xs: &[S], _values: &dyn ::askama::Values, sep: &str) -> Result<String, ::askama::Error> {
-        ::sittir_core::filters::joinby(xs, sep, true, true)
-    }
+    //! module just re-exports the canonical implementations
+    //! from `sittir_core::filters`.
+    pub use ::sittir_core::filters::{
+        upper, lower, joinby,
+        isBlank, isPresent,
+        joinWithTrailing, joinWithLeading, joinWithFlanks,
+    };
 }
 
 #[derive(::askama::Template)]
@@ -2650,10 +2639,17 @@ use ::askama::Template as _AskamaTemplate;
 /// Render the given NodeData kind using its generated askama template struct.
 /// Matches on the source kind name (`_X` for hidden user-facing aliases,
 /// `X` for visible) — mirrors what NodeData.$type carries at runtime.
+///
+/// The render uses `render_with_values(ctx.as_values())` so the
+/// flank-aware filters (`joinWithTrailing` / `joinWithLeading` /
+/// `joinWithFlanks`) can read `trailing_anon` / `leading_anon` from
+/// the context — matching the TS engine's `_trailing_anon` /
+/// `_leading_anon` side-channel on the children array.
 pub fn render_dispatch(
     kind: &str,
     ctx: &::sittir_core::prepare::TemplateContext,
 ) -> Result<String, ::askama::Error> {
+    let _values = ctx.as_values();
     match kind {
         "_array_expression_list" => {
             let t = ArrayExpressionListTemplate {
@@ -2668,7 +2664,7 @@ pub fn render_dispatch(
                 elements: ctx.fields.get("elements").cloned().unwrap_or_default(),
                 elements_list: ctx.fields_list.get("elements").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_array_expression_semi" => {
             let t = ArrayExpressionSemiTemplate {
@@ -2685,7 +2681,7 @@ pub fn render_dispatch(
                 length: ctx.fields.get("length").cloned().unwrap_or_default(),
                 length_list: ctx.fields_list.get("length").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_closure_expression_block" => {
             let t = ClosureExpressionBlockTemplate {
@@ -2700,7 +2696,7 @@ pub fn render_dispatch(
                 return_type: ctx.fields.get("return_type").cloned().unwrap_or_default(),
                 return_type_list: ctx.fields_list.get("return_type").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_closure_expression_expr" => {
             let t = ClosureExpressionExprTemplate {
@@ -2713,7 +2709,7 @@ pub fn render_dispatch(
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
                 body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_delim_token_tree_brace" => {
             let t = DelimTokenTreeBraceTemplate {
@@ -2724,7 +2720,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_delim_token_tree_bracket" => {
             let t = DelimTokenTreeBracketTemplate {
@@ -2735,7 +2731,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_delim_token_tree_paren" => {
             let t = DelimTokenTreeParenTemplate {
@@ -2746,7 +2742,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_expression_statement_block_ending" => {
             let t = ExpressionStatementBlockEndingTemplate {
@@ -2757,7 +2753,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_expression_statement_with_semi" => {
             let t = ExpressionStatementWithSemiTemplate {
@@ -2768,7 +2764,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_field_identifier" => {
             let t = FieldIdentifierTemplate {
@@ -2779,7 +2775,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_field_pattern_named" => {
             let t = FieldPatternNamedTemplate {
@@ -2794,7 +2790,7 @@ pub fn render_dispatch(
                 pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
                 pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_field_pattern_shorthand" => {
             let t = FieldPatternShorthandTemplate {
@@ -2807,7 +2803,7 @@ pub fn render_dispatch(
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
                 name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_foreign_mod_item_body" => {
             let t = ForeignModItemBodyTemplate {
@@ -2820,7 +2816,7 @@ pub fn render_dispatch(
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
                 body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_function_type_fn_form" => {
             let t = FunctionTypeFnFormTemplate {
@@ -2831,7 +2827,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_function_type_trait_form" => {
             let t = FunctionTypeTraitFormTemplate {
@@ -2844,7 +2840,7 @@ pub fn render_dispatch(
                 r#trait: ctx.fields.get("trait").cloned().unwrap_or_default(),
                 r#trait_list: ctx.fields_list.get("trait").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_impl_item_body" => {
             let t = ImplItemBodyTemplate {
@@ -2857,7 +2853,7 @@ pub fn render_dispatch(
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
                 body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_let_chain" => {
             let t = LetChainTemplate {
@@ -2868,7 +2864,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_line_comment_doc" => {
             let t = LineCommentDocTemplate {
@@ -2885,7 +2881,7 @@ pub fn render_dispatch(
                 outer: ctx.fields.get("outer").cloned().unwrap_or_default(),
                 outer_list: ctx.fields_list.get("outer").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_macro_definition_brace" => {
             let t = MacroDefinitionBraceTemplate {
@@ -2896,7 +2892,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_macro_definition_bracket" => {
             let t = MacroDefinitionBracketTemplate {
@@ -2907,7 +2903,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_macro_definition_paren" => {
             let t = MacroDefinitionParenTemplate {
@@ -2918,7 +2914,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_match_arm_block_ending" => {
             let t = MatchArmBlockEndingTemplate {
@@ -2931,7 +2927,7 @@ pub fn render_dispatch(
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
                 value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_match_arm_with_comma" => {
             let t = MatchArmWithCommaTemplate {
@@ -2944,7 +2940,7 @@ pub fn render_dispatch(
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
                 value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_mod_item_inline" => {
             let t = ModItemInlineTemplate {
@@ -2957,7 +2953,7 @@ pub fn render_dispatch(
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
                 body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_or_pattern_binary" => {
             let t = OrPatternBinaryTemplate {
@@ -2972,7 +2968,7 @@ pub fn render_dispatch(
                 right: ctx.fields.get("right").cloned().unwrap_or_default(),
                 right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_or_pattern_prefix" => {
             let t = OrPatternPrefixTemplate {
@@ -2985,7 +2981,7 @@ pub fn render_dispatch(
                 right: ctx.fields.get("right").cloned().unwrap_or_default(),
                 right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_pointer_type_mut" => {
             let t = PointerTypeMutTemplate {
@@ -2996,7 +2992,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_range_expression_bare" => {
             let t = RangeExpressionBareTemplate {
@@ -3009,7 +3005,7 @@ pub fn render_dispatch(
                 operator: ctx.fields.get("operator").cloned().unwrap_or_default(),
                 operator_list: ctx.fields_list.get("operator").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_range_expression_binary" => {
             let t = RangeExpressionBinaryTemplate {
@@ -3026,7 +3022,7 @@ pub fn render_dispatch(
                 start: ctx.fields.get("start").cloned().unwrap_or_default(),
                 start_list: ctx.fields_list.get("start").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_range_expression_postfix" => {
             let t = RangeExpressionPostfixTemplate {
@@ -3041,7 +3037,7 @@ pub fn render_dispatch(
                 start: ctx.fields.get("start").cloned().unwrap_or_default(),
                 start_list: ctx.fields_list.get("start").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_range_expression_prefix" => {
             let t = RangeExpressionPrefixTemplate {
@@ -3056,7 +3052,7 @@ pub fn render_dispatch(
                 operator: ctx.fields.get("operator").cloned().unwrap_or_default(),
                 operator_list: ctx.fields_list.get("operator").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_range_pattern_prefix" => {
             let t = RangePatternPrefixTemplate {
@@ -3069,7 +3065,7 @@ pub fn render_dispatch(
                 right: ctx.fields.get("right").cloned().unwrap_or_default(),
                 right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_reference_expression_raw_mut" => {
             let t = ReferenceExpressionRawMutTemplate {
@@ -3080,7 +3076,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_reserved_identifier" => {
             let t = ReservedIdentifierTemplate {
@@ -3091,7 +3087,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_string_content" => {
             let t = _StringContentTemplate {
@@ -3102,7 +3098,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_struct_item_brace" => {
             let t = StructItemBraceTemplate {
@@ -3115,7 +3111,7 @@ pub fn render_dispatch(
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
                 body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_struct_item_tuple" => {
             let t = StructItemTupleTemplate {
@@ -3128,7 +3124,7 @@ pub fn render_dispatch(
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
                 body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_token_tree_brace" => {
             let t = TokenTreeBraceTemplate {
@@ -3139,7 +3135,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_token_tree_bracket" => {
             let t = TokenTreeBracketTemplate {
@@ -3150,7 +3146,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_token_tree_paren" => {
             let t = TokenTreeParenTemplate {
@@ -3161,7 +3157,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_token_tree_pattern_brace" => {
             let t = TokenTreePatternBraceTemplate {
@@ -3172,7 +3168,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_token_tree_pattern_bracket" => {
             let t = TokenTreePatternBracketTemplate {
@@ -3183,7 +3179,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_token_tree_pattern_paren" => {
             let t = TokenTreePatternParenTemplate {
@@ -3194,7 +3190,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_type_identifier" => {
             let t = TypeIdentifierTemplate {
@@ -3205,7 +3201,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_visibility_modifier_crate" => {
             let t = VisibilityModifierCrateTemplate {
@@ -3216,7 +3212,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_visibility_modifier_pub_in_path" => {
             let t = VisibilityModifierPubInPathTemplate {
@@ -3229,7 +3225,7 @@ pub fn render_dispatch(
                 r#in: ctx.fields.get("in").cloned().unwrap_or_default(),
                 r#in_list: ctx.fields_list.get("in").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "_visibility_modifier_pub" => {
             let t = VisibilityModifierPubTemplate {
@@ -3242,7 +3238,7 @@ pub fn render_dispatch(
                 r#pub: ctx.fields.get("pub").cloned().unwrap_or_default(),
                 r#pub_list: ctx.fields_list.get("pub").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "abstract_type" => {
             let t = AbstractTypeTemplate {
@@ -3257,7 +3253,7 @@ pub fn render_dispatch(
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
                 type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "arguments" => {
             let t = ArgumentsTemplate {
@@ -3268,7 +3264,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "array_expression" => {
             let t = ArrayExpressionTemplate {
@@ -3279,7 +3275,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "array_type" => {
             let t = ArrayTypeTemplate {
@@ -3294,7 +3290,7 @@ pub fn render_dispatch(
                 length: ctx.fields.get("length").cloned().unwrap_or_default(),
                 length_list: ctx.fields_list.get("length").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "assignment_expression" => {
             let t = AssignmentExpressionTemplate {
@@ -3309,7 +3305,7 @@ pub fn render_dispatch(
                 right: ctx.fields.get("right").cloned().unwrap_or_default(),
                 right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "associated_type" => {
             let t = AssociatedTypeTemplate {
@@ -3328,7 +3324,7 @@ pub fn render_dispatch(
                 where_clause: ctx.fields.get("where_clause").cloned().unwrap_or_default(),
                 where_clause_list: ctx.fields_list.get("where_clause").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "async_block" => {
             let t = AsyncBlockTemplate {
@@ -3343,7 +3339,7 @@ pub fn render_dispatch(
                 r#move: ctx.fields.get("move").cloned().unwrap_or_default(),
                 r#move_list: ctx.fields_list.get("move").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "attribute_item" => {
             let t = AttributeItemTemplate {
@@ -3356,7 +3352,7 @@ pub fn render_dispatch(
                 attribute: ctx.fields.get("attribute").cloned().unwrap_or_default(),
                 attribute_list: ctx.fields_list.get("attribute").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "attribute" => {
             let t = AttributeTemplate {
@@ -3371,7 +3367,7 @@ pub fn render_dispatch(
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
                 value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "await_expression" => {
             let t = AwaitExpressionTemplate {
@@ -3382,7 +3378,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "base_field_initializer" => {
             let t = BaseFieldInitializerTemplate {
@@ -3393,7 +3389,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "binary_expression" => {
             let t = BinaryExpressionTemplate {
@@ -3410,7 +3406,7 @@ pub fn render_dispatch(
                 right: ctx.fields.get("right").cloned().unwrap_or_default(),
                 right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "block_comment" => {
             let t = BlockCommentTemplate {
@@ -3427,7 +3423,7 @@ pub fn render_dispatch(
                 outer: ctx.fields.get("outer").cloned().unwrap_or_default(),
                 outer_list: ctx.fields_list.get("outer").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "block" => {
             let t = BlockTemplate {
@@ -3440,7 +3436,7 @@ pub fn render_dispatch(
                 label: ctx.fields.get("label").cloned().unwrap_or_default(),
                 label_list: ctx.fields_list.get("label").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "bounded_type" => {
             let t = BoundedTypeTemplate {
@@ -3455,7 +3451,7 @@ pub fn render_dispatch(
                 right: ctx.fields.get("right").cloned().unwrap_or_default(),
                 right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "bracketed_type" => {
             let t = BracketedTypeTemplate {
@@ -3466,7 +3462,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "break_expression" => {
             let t = BreakExpressionTemplate {
@@ -3481,7 +3477,7 @@ pub fn render_dispatch(
                 label: ctx.fields.get("label").cloned().unwrap_or_default(),
                 label_list: ctx.fields_list.get("label").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "call_expression" => {
             let t = CallExpressionTemplate {
@@ -3496,7 +3492,7 @@ pub fn render_dispatch(
                 function: ctx.fields.get("function").cloned().unwrap_or_default(),
                 function_list: ctx.fields_list.get("function").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "captured_pattern" => {
             let t = CapturedPatternTemplate {
@@ -3511,7 +3507,7 @@ pub fn render_dispatch(
                 pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
                 pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "closure_expression" => {
             let t = ClosureExpressionTemplate {
@@ -3530,7 +3526,7 @@ pub fn render_dispatch(
                 r#static: ctx.fields.get("static").cloned().unwrap_or_default(),
                 r#static_list: ctx.fields_list.get("static").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "closure_parameters" => {
             let t = ClosureParametersTemplate {
@@ -3541,7 +3537,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "comment" => {
             let t = CommentTemplate {
@@ -3552,7 +3548,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "compound_assignment_expr" => {
             let t = CompoundAssignmentExprTemplate {
@@ -3569,7 +3565,7 @@ pub fn render_dispatch(
                 right: ctx.fields.get("right").cloned().unwrap_or_default(),
                 right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "const_block" => {
             let t = ConstBlockTemplate {
@@ -3582,7 +3578,7 @@ pub fn render_dispatch(
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
                 body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "const_item" => {
             let t = ConstItemTemplate {
@@ -3601,7 +3597,7 @@ pub fn render_dispatch(
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
                 visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "const_parameter" => {
             let t = ConstParameterTemplate {
@@ -3618,7 +3614,7 @@ pub fn render_dispatch(
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
                 value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "continue_expression" => {
             let t = ContinueExpressionTemplate {
@@ -3631,7 +3627,7 @@ pub fn render_dispatch(
                 label: ctx.fields.get("label").cloned().unwrap_or_default(),
                 label_list: ctx.fields_list.get("label").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "declaration_list" => {
             let t = DeclarationListTemplate {
@@ -3642,7 +3638,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "delim_token_tree" => {
             let t = DelimTokenTreeTemplate {
@@ -3653,7 +3649,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "dynamic_type" => {
             let t = DynamicTypeTemplate {
@@ -3666,7 +3662,7 @@ pub fn render_dispatch(
                 r#trait: ctx.fields.get("trait").cloned().unwrap_or_default(),
                 r#trait_list: ctx.fields_list.get("trait").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "else_clause" => {
             let t = ElseClauseTemplate {
@@ -3677,7 +3673,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "enum_item" => {
             let t = EnumItemTemplate {
@@ -3698,7 +3694,7 @@ pub fn render_dispatch(
                 where_clause: ctx.fields.get("where_clause").cloned().unwrap_or_default(),
                 where_clause_list: ctx.fields_list.get("where_clause").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "enum_variant_list" => {
             let t = EnumVariantListTemplate {
@@ -3709,7 +3705,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "enum_variant" => {
             let t = EnumVariantTemplate {
@@ -3728,7 +3724,7 @@ pub fn render_dispatch(
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
                 visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "expression_statement" => {
             let t = ExpressionStatementTemplate {
@@ -3739,7 +3735,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "extern_crate_declaration" => {
             let t = ExternCrateDeclarationTemplate {
@@ -3758,7 +3754,7 @@ pub fn render_dispatch(
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
                 visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "extern_modifier" => {
             let t = ExternModifierTemplate {
@@ -3771,7 +3767,7 @@ pub fn render_dispatch(
                 string_literal: ctx.fields.get("string_literal").cloned().unwrap_or_default(),
                 string_literal_list: ctx.fields_list.get("string_literal").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "field_declaration_list" => {
             let t = FieldDeclarationListTemplate {
@@ -3782,7 +3778,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "field_declaration" => {
             let t = FieldDeclarationTemplate {
@@ -3799,7 +3795,7 @@ pub fn render_dispatch(
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
                 visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "field_expression" => {
             let t = FieldExpressionTemplate {
@@ -3814,7 +3810,7 @@ pub fn render_dispatch(
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
                 value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "field_initializer_list" => {
             let t = FieldInitializerListTemplate {
@@ -3825,7 +3821,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "field_initializer" => {
             let t = FieldInitializerTemplate {
@@ -3840,7 +3836,7 @@ pub fn render_dispatch(
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
                 value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "field_pattern" => {
             let t = FieldPatternTemplate {
@@ -3855,7 +3851,7 @@ pub fn render_dispatch(
                 r#ref: ctx.fields.get("ref").cloned().unwrap_or_default(),
                 r#ref_list: ctx.fields_list.get("ref").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "for_expression" => {
             let t = ForExpressionTemplate {
@@ -3874,7 +3870,7 @@ pub fn render_dispatch(
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
                 value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "for_lifetimes" => {
             let t = ForLifetimesTemplate {
@@ -3885,7 +3881,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "foreign_mod_item" => {
             let t = ForeignModItemTemplate {
@@ -3898,7 +3894,7 @@ pub fn render_dispatch(
                 extern_modifier: ctx.fields.get("extern_modifier").cloned().unwrap_or_default(),
                 extern_modifier_list: ctx.fields_list.get("extern_modifier").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "function_item" => {
             let t = FunctionItemTemplate {
@@ -3925,7 +3921,7 @@ pub fn render_dispatch(
                 where_clause: ctx.fields.get("where_clause").cloned().unwrap_or_default(),
                 where_clause_list: ctx.fields_list.get("where_clause").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "function_modifiers" => {
             let t = FunctionModifiersTemplate {
@@ -3944,7 +3940,7 @@ pub fn render_dispatch(
                 r#unsafe: ctx.fields.get("unsafe").cloned().unwrap_or_default(),
                 r#unsafe_list: ctx.fields_list.get("unsafe").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "function_signature_item" => {
             let t = FunctionSignatureItemTemplate {
@@ -3969,7 +3965,7 @@ pub fn render_dispatch(
                 where_clause: ctx.fields.get("where_clause").cloned().unwrap_or_default(),
                 where_clause_list: ctx.fields_list.get("where_clause").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "function_type" => {
             let t = FunctionTypeTemplate {
@@ -3986,7 +3982,7 @@ pub fn render_dispatch(
                 return_type: ctx.fields.get("return_type").cloned().unwrap_or_default(),
                 return_type_list: ctx.fields_list.get("return_type").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "gen_block" => {
             let t = GenBlockTemplate {
@@ -4001,7 +3997,7 @@ pub fn render_dispatch(
                 r#move: ctx.fields.get("move").cloned().unwrap_or_default(),
                 r#move_list: ctx.fields_list.get("move").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "generic_function" => {
             let t = GenericFunctionTemplate {
@@ -4016,7 +4012,7 @@ pub fn render_dispatch(
                 type_arguments: ctx.fields.get("type_arguments").cloned().unwrap_or_default(),
                 type_arguments_list: ctx.fields_list.get("type_arguments").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "generic_pattern" => {
             let t = GenericPatternTemplate {
@@ -4029,7 +4025,7 @@ pub fn render_dispatch(
                 type_arguments: ctx.fields.get("type_arguments").cloned().unwrap_or_default(),
                 type_arguments_list: ctx.fields_list.get("type_arguments").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "generic_type_with_turbofish" => {
             let t = GenericTypeWithTurbofishTemplate {
@@ -4046,7 +4042,7 @@ pub fn render_dispatch(
                 type_arguments: ctx.fields.get("type_arguments").cloned().unwrap_or_default(),
                 type_arguments_list: ctx.fields_list.get("type_arguments").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "generic_type" => {
             let t = GenericTypeTemplate {
@@ -4061,7 +4057,7 @@ pub fn render_dispatch(
                 type_arguments: ctx.fields.get("type_arguments").cloned().unwrap_or_default(),
                 type_arguments_list: ctx.fields_list.get("type_arguments").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "higher_ranked_trait_bound" => {
             let t = HigherRankedTraitBoundTemplate {
@@ -4076,7 +4072,7 @@ pub fn render_dispatch(
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
                 type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "if_expression" => {
             let t = IfExpressionTemplate {
@@ -4093,7 +4089,7 @@ pub fn render_dispatch(
                 consequence: ctx.fields.get("consequence").cloned().unwrap_or_default(),
                 consequence_list: ctx.fields_list.get("consequence").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "impl_item" => {
             let t = ImplItemTemplate {
@@ -4116,7 +4112,7 @@ pub fn render_dispatch(
                 where_clause: ctx.fields.get("where_clause").cloned().unwrap_or_default(),
                 where_clause_list: ctx.fields_list.get("where_clause").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "index_expression" => {
             let t = IndexExpressionTemplate {
@@ -4131,7 +4127,7 @@ pub fn render_dispatch(
                 object: ctx.fields.get("object").cloned().unwrap_or_default(),
                 object_list: ctx.fields_list.get("object").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "inner_attribute_item" => {
             let t = InnerAttributeItemTemplate {
@@ -4144,7 +4140,7 @@ pub fn render_dispatch(
                 attribute: ctx.fields.get("attribute").cloned().unwrap_or_default(),
                 attribute_list: ctx.fields_list.get("attribute").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "label" => {
             let t = LabelTemplate {
@@ -4157,7 +4153,7 @@ pub fn render_dispatch(
                 identifier: ctx.fields.get("identifier").cloned().unwrap_or_default(),
                 identifier_list: ctx.fields_list.get("identifier").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "last_match_arm" => {
             let t = LastMatchArmTemplate {
@@ -4172,7 +4168,7 @@ pub fn render_dispatch(
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
                 value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "let_condition" => {
             let t = LetConditionTemplate {
@@ -4187,7 +4183,7 @@ pub fn render_dispatch(
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
                 value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "let_declaration" => {
             let t = LetDeclarationTemplate {
@@ -4208,7 +4204,7 @@ pub fn render_dispatch(
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
                 value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "lifetime_parameter" => {
             let t = LifetimeParameterTemplate {
@@ -4223,7 +4219,7 @@ pub fn render_dispatch(
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
                 name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "lifetime" => {
             let t = LifetimeTemplate {
@@ -4236,7 +4232,7 @@ pub fn render_dispatch(
                 identifier: ctx.fields.get("identifier").cloned().unwrap_or_default(),
                 identifier_list: ctx.fields_list.get("identifier").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "line_comment" => {
             let t = LineCommentTemplate {
@@ -4247,7 +4243,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "loop_expression" => {
             let t = LoopExpressionTemplate {
@@ -4262,7 +4258,7 @@ pub fn render_dispatch(
                 label: ctx.fields.get("label").cloned().unwrap_or_default(),
                 label_list: ctx.fields_list.get("label").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "macro_definition" => {
             let t = MacroDefinitionTemplate {
@@ -4275,7 +4271,7 @@ pub fn render_dispatch(
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
                 name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "macro_invocation" => {
             let t = MacroInvocationTemplate {
@@ -4290,7 +4286,7 @@ pub fn render_dispatch(
                 token_tree: ctx.fields.get("token_tree").cloned().unwrap_or_default(),
                 token_tree_list: ctx.fields_list.get("token_tree").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "macro_rule" => {
             let t = MacroRuleTemplate {
@@ -4305,7 +4301,7 @@ pub fn render_dispatch(
                 right: ctx.fields.get("right").cloned().unwrap_or_default(),
                 right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "match_arm" => {
             let t = MatchArmTemplate {
@@ -4318,7 +4314,7 @@ pub fn render_dispatch(
                 pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
                 pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "match_block" => {
             let t = MatchBlockTemplate {
@@ -4329,7 +4325,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "match_expression" => {
             let t = MatchExpressionTemplate {
@@ -4344,7 +4340,7 @@ pub fn render_dispatch(
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
                 value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "match_pattern" => {
             let t = MatchPatternTemplate {
@@ -4357,7 +4353,7 @@ pub fn render_dispatch(
                 condition: ctx.fields.get("condition").cloned().unwrap_or_default(),
                 condition_list: ctx.fields_list.get("condition").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "mod_item" => {
             let t = ModItemTemplate {
@@ -4372,7 +4368,7 @@ pub fn render_dispatch(
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
                 visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "mut_pattern" => {
             let t = MutPatternTemplate {
@@ -4387,7 +4383,7 @@ pub fn render_dispatch(
                 pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
                 pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "negative_literal" => {
             let t = NegativeLiteralTemplate {
@@ -4400,7 +4396,7 @@ pub fn render_dispatch(
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
                 value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "or_pattern" => {
             let t = OrPatternTemplate {
@@ -4411,7 +4407,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "ordered_field_declaration_list" => {
             let t = OrderedFieldDeclarationListTemplate {
@@ -4424,7 +4420,7 @@ pub fn render_dispatch(
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "parameter" => {
             let t = ParameterTemplate {
@@ -4441,7 +4437,7 @@ pub fn render_dispatch(
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "parameters" => {
             let t = ParametersTemplate {
@@ -4452,7 +4448,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "parenthesized_expression" => {
             let t = ParenthesizedExpressionTemplate {
@@ -4463,7 +4459,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "pointer_type" => {
             let t = PointerTypeTemplate {
@@ -4476,7 +4472,7 @@ pub fn render_dispatch(
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "qualified_type" => {
             let t = QualifiedTypeTemplate {
@@ -4491,7 +4487,7 @@ pub fn render_dispatch(
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "range_expression" => {
             let t = RangeExpressionTemplate {
@@ -4502,7 +4498,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "range_pattern" => {
             let t = RangePatternTemplate {
@@ -4513,7 +4509,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "raw_string_literal" => {
             let t = RawStringLiteralTemplate {
@@ -4524,7 +4520,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "ref_pattern" => {
             let t = RefPatternTemplate {
@@ -4535,7 +4531,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "reference_expression" => {
             let t = ReferenceExpressionTemplate {
@@ -4548,7 +4544,7 @@ pub fn render_dispatch(
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
                 value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "reference_pattern" => {
             let t = ReferencePatternTemplate {
@@ -4563,7 +4559,7 @@ pub fn render_dispatch(
                 pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
                 pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "reference_type" => {
             let t = ReferenceTypeTemplate {
@@ -4580,7 +4576,7 @@ pub fn render_dispatch(
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "removed_trait_bound" => {
             let t = RemovedTraitBoundTemplate {
@@ -4591,7 +4587,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "return_expression" => {
             let t = ReturnExpressionTemplate {
@@ -4602,7 +4598,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "scoped_identifier" => {
             let t = ScopedIdentifierTemplate {
@@ -4617,7 +4613,7 @@ pub fn render_dispatch(
                 path: ctx.fields.get("path").cloned().unwrap_or_default(),
                 path_list: ctx.fields_list.get("path").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "scoped_type_identifier_in_expression_position" => {
             let t = ScopedTypeIdentifierInExpressionPositionTemplate {
@@ -4632,7 +4628,7 @@ pub fn render_dispatch(
                 path: ctx.fields.get("path").cloned().unwrap_or_default(),
                 path_list: ctx.fields_list.get("path").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "scoped_type_identifier" => {
             let t = ScopedTypeIdentifierTemplate {
@@ -4647,7 +4643,7 @@ pub fn render_dispatch(
                 path: ctx.fields.get("path").cloned().unwrap_or_default(),
                 path_list: ctx.fields_list.get("path").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "scoped_use_list" => {
             let t = ScopedUseListTemplate {
@@ -4662,7 +4658,7 @@ pub fn render_dispatch(
                 path: ctx.fields.get("path").cloned().unwrap_or_default(),
                 path_list: ctx.fields_list.get("path").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "self_parameter" => {
             let t = SelfParameterTemplate {
@@ -4681,7 +4677,7 @@ pub fn render_dispatch(
                 self_: ctx.fields.get("self").cloned().unwrap_or_default(),
                 self__list: ctx.fields_list.get("self").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "shorthand_field_initializer" => {
             let t = ShorthandFieldInitializerTemplate {
@@ -4696,7 +4692,7 @@ pub fn render_dispatch(
                 identifier: ctx.fields.get("identifier").cloned().unwrap_or_default(),
                 identifier_list: ctx.fields_list.get("identifier").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "slice_pattern" => {
             let t = SlicePatternTemplate {
@@ -4707,7 +4703,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "source_file" => {
             let t = SourceFileTemplate {
@@ -4722,7 +4718,7 @@ pub fn render_dispatch(
                 statements: ctx.fields.get("statements").cloned().unwrap_or_default(),
                 statements_list: ctx.fields_list.get("statements").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "static_item" => {
             let t = StaticItemTemplate {
@@ -4743,7 +4739,7 @@ pub fn render_dispatch(
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
                 visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "string_literal" => {
             let t = StringLiteralTemplate {
@@ -4754,7 +4750,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "struct_expression" => {
             let t = StructExpressionTemplate {
@@ -4769,7 +4765,7 @@ pub fn render_dispatch(
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
                 name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "struct_item" => {
             let t = StructItemTemplate {
@@ -4786,7 +4782,7 @@ pub fn render_dispatch(
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
                 visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "struct_pattern" => {
             let t = StructPatternTemplate {
@@ -4799,7 +4795,7 @@ pub fn render_dispatch(
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "token_binding_pattern" => {
             let t = TokenBindingPatternTemplate {
@@ -4814,7 +4810,7 @@ pub fn render_dispatch(
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "token_repetition_pattern" => {
             let t = TokenRepetitionPatternTemplate {
@@ -4825,7 +4821,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "token_repetition" => {
             let t = TokenRepetitionTemplate {
@@ -4836,7 +4832,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "token_tree_pattern" => {
             let t = TokenTreePatternTemplate {
@@ -4847,7 +4843,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "token_tree" => {
             let t = TokenTreeTemplate {
@@ -4858,7 +4854,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "trait_bounds" => {
             let t = TraitBoundsTemplate {
@@ -4869,7 +4865,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "trait_item" => {
             let t = TraitItemTemplate {
@@ -4894,7 +4890,7 @@ pub fn render_dispatch(
                 where_clause: ctx.fields.get("where_clause").cloned().unwrap_or_default(),
                 where_clause_list: ctx.fields_list.get("where_clause").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "try_block" => {
             let t = TryBlockTemplate {
@@ -4907,7 +4903,7 @@ pub fn render_dispatch(
                 block: ctx.fields.get("block").cloned().unwrap_or_default(),
                 block_list: ctx.fields_list.get("block").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "try_expression" => {
             let t = TryExpressionTemplate {
@@ -4920,7 +4916,7 @@ pub fn render_dispatch(
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
                 value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "tuple_expression" => {
             let t = TupleExpressionTemplate {
@@ -4935,7 +4931,7 @@ pub fn render_dispatch(
                 elements: ctx.fields.get("elements").cloned().unwrap_or_default(),
                 elements_list: ctx.fields_list.get("elements").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "tuple_pattern" => {
             let t = TuplePatternTemplate {
@@ -4946,7 +4942,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "tuple_struct_pattern" => {
             let t = TupleStructPatternTemplate {
@@ -4959,7 +4955,7 @@ pub fn render_dispatch(
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "tuple_type" => {
             let t = TupleTypeTemplate {
@@ -4970,7 +4966,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "type_arguments" => {
             let t = TypeArgumentsTemplate {
@@ -4981,7 +4977,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "type_binding" => {
             let t = TypeBindingTemplate {
@@ -4998,7 +4994,7 @@ pub fn render_dispatch(
                 type_arguments: ctx.fields.get("type_arguments").cloned().unwrap_or_default(),
                 type_arguments_list: ctx.fields_list.get("type_arguments").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "type_cast_expression" => {
             let t = TypeCastExpressionTemplate {
@@ -5013,7 +5009,7 @@ pub fn render_dispatch(
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
                 value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "type_item" => {
             let t = TypeItemTemplate {
@@ -5036,7 +5032,7 @@ pub fn render_dispatch(
                 where_clause: ctx.fields.get("where_clause").cloned().unwrap_or_default(),
                 where_clause_list: ctx.fields_list.get("where_clause").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "type_parameter" => {
             let t = TypeParameterTemplate {
@@ -5053,7 +5049,7 @@ pub fn render_dispatch(
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
                 name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "type_parameters" => {
             let t = TypeParametersTemplate {
@@ -5064,7 +5060,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "unary_expression" => {
             let t = UnaryExpressionTemplate {
@@ -5079,7 +5075,7 @@ pub fn render_dispatch(
                 operator: ctx.fields.get("operator").cloned().unwrap_or_default(),
                 operator_list: ctx.fields_list.get("operator").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "union_item" => {
             let t = UnionItemTemplate {
@@ -5100,7 +5096,7 @@ pub fn render_dispatch(
                 where_clause: ctx.fields.get("where_clause").cloned().unwrap_or_default(),
                 where_clause_list: ctx.fields_list.get("where_clause").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "unsafe_block" => {
             let t = UnsafeBlockTemplate {
@@ -5113,7 +5109,7 @@ pub fn render_dispatch(
                 block: ctx.fields.get("block").cloned().unwrap_or_default(),
                 block_list: ctx.fields_list.get("block").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "use_as_clause" => {
             let t = UseAsClauseTemplate {
@@ -5128,7 +5124,7 @@ pub fn render_dispatch(
                 path: ctx.fields.get("path").cloned().unwrap_or_default(),
                 path_list: ctx.fields_list.get("path").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "use_bounds" => {
             let t = UseBoundsTemplate {
@@ -5139,7 +5135,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "use_declaration" => {
             let t = UseDeclarationTemplate {
@@ -5154,7 +5150,7 @@ pub fn render_dispatch(
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
                 visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "use_list" => {
             let t = UseListTemplate {
@@ -5165,7 +5161,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "use_wildcard" => {
             let t = UseWildcardTemplate {
@@ -5178,7 +5174,7 @@ pub fn render_dispatch(
                 path: ctx.fields.get("path").cloned().unwrap_or_default(),
                 path_list: ctx.fields_list.get("path").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "variadic_parameter" => {
             let t = VariadicParameterTemplate {
@@ -5193,7 +5189,7 @@ pub fn render_dispatch(
                 pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
                 pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "visibility_modifier" => {
             let t = VisibilityModifierTemplate {
@@ -5204,7 +5200,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "where_clause" => {
             let t = WhereClauseTemplate {
@@ -5215,7 +5211,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "where_predicate" => {
             let t = WherePredicateTemplate {
@@ -5230,7 +5226,7 @@ pub fn render_dispatch(
                 left: ctx.fields.get("left").cloned().unwrap_or_default(),
                 left_list: ctx.fields_list.get("left").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "while_expression" => {
             let t = WhileExpressionTemplate {
@@ -5247,7 +5243,7 @@ pub fn render_dispatch(
                 label: ctx.fields.get("label").cloned().unwrap_or_default(),
                 label_list: ctx.fields_list.get("label").cloned().unwrap_or_default(),
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         "yield_expression" => {
             let t = YieldExpressionTemplate {
@@ -5258,7 +5254,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
             };
-            t.render()
+            t.render_with_values(&_values)
         }
         other => Err(::askama::Error::Custom(
             format!("render_dispatch: no template for kind '{}'", other).into(),

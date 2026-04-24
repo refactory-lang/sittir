@@ -342,10 +342,17 @@ function renderDispatchFn(structs: EmittedStruct[]): string {
 	lines.push(`/// Render the given NodeData kind using its generated askama template struct.`)
 	lines.push(`/// Matches on the source kind name (\`_X\` for hidden user-facing aliases,`)
 	lines.push(`/// \`X\` for visible) — mirrors what NodeData.\$type carries at runtime.`)
+	lines.push(`///`)
+	lines.push(`/// The render uses \`render_with_values(ctx.as_values())\` so the`)
+	lines.push(`/// flank-aware filters (\`joinWithTrailing\` / \`joinWithLeading\` /`)
+	lines.push(`/// \`joinWithFlanks\`) can read \`trailing_anon\` / \`leading_anon\` from`)
+	lines.push(`/// the context — matching the TS engine's \`_trailing_anon\` /`)
+	lines.push(`/// \`_leading_anon\` side-channel on the children array.`)
 	lines.push(`pub fn render_dispatch(`)
 	lines.push(`    kind: &str,`)
 	lines.push(`    ctx: &::sittir_core::prepare::TemplateContext,`)
 	lines.push(`) -> Result<String, ::askama::Error> {`)
+	lines.push(`    let _values = ctx.as_values();`)
 	lines.push(`    match kind {`)
 	for (const s of structs) {
 		lines.push(`        ${JSON.stringify(s.kind)} => {`)
@@ -364,7 +371,7 @@ function renderDispatchFn(structs: EmittedStruct[]): string {
 			lines.push(`                ${rustFieldIdent(f.name)}_list: ctx.fields_list.get(${JSON.stringify(f.name)}).cloned().unwrap_or_default(),`)
 		}
 		lines.push(`            };`)
-		lines.push(`            t.render()`)
+		lines.push(`            t.render_with_values(&_values)`)
 		lines.push(`        }`)
 	}
 	lines.push(`        other => Err(::askama::Error::Custom(`)
@@ -558,36 +565,25 @@ export function emitRenderCrate(
 	const templatesRs = [
 		templatesRsHeader(lang),
 		'',
-		'#![allow(dead_code, unused_imports)]',
+		'#![allow(dead_code, unused_imports, non_snake_case)]',
 		'',
 		// Askama resolves custom filters by looking for a sibling
 		// `filters` module at the derive-macro's call site. Re-export the
-		// shared `sittir_core::filters::*` here and declare aliases for
-		// the Jinja-dialect names the TS emitter currently produces
-		// (`joinWithTrailing`/`joinWithLeading`/`joinWithFlanks`). The
-		// sittir-core filter implementations are source of truth; these
-		// are one-line forwarders.
+		// canonical `sittir_core::filters::*` here — `joinWithTrailing`,
+		// `joinWithLeading`, `joinWithFlanks` consult flank-anon text
+		// from per-call askama `Values` (see `TemplateContext::as_values`).
+		// `render_dispatch` below threads the values through every
+		// template render via `render_with_values`.
 		'pub mod filters {',
 		'    //! Askama resolves custom-filter names by searching for a',
 		'    //! sibling `filters` module at the derive-macro site. This',
-		'    //! module re-exports `sittir_core::filters::{upper, lower,',
-		'    //! joinby}` + the TS-dialect aliases (`joinWithTrailing`,',
-		'    //! `joinWithLeading`, `joinWithFlanks`) that the current',
-		'    //! jinja emitter references. Aliases are thin wrappers over',
-		'    //! `joinby` with preset flank flags.',
-		'    pub use ::sittir_core::filters::{upper, lower, joinby, isBlank, isPresent};',
-		'',
-		'    pub fn joinWithTrailing<S: AsRef<str>>(xs: &[S], _values: &dyn ::askama::Values, sep: &str) -> Result<String, ::askama::Error> {',
-		'        ::sittir_core::filters::joinby(xs, sep, false, true)',
-		'    }',
-		'',
-		'    pub fn joinWithLeading<S: AsRef<str>>(xs: &[S], _values: &dyn ::askama::Values, sep: &str) -> Result<String, ::askama::Error> {',
-		'        ::sittir_core::filters::joinby(xs, sep, true, false)',
-		'    }',
-		'',
-		'    pub fn joinWithFlanks<S: AsRef<str>>(xs: &[S], _values: &dyn ::askama::Values, sep: &str) -> Result<String, ::askama::Error> {',
-		'        ::sittir_core::filters::joinby(xs, sep, true, true)',
-		'    }',
+		'    //! module just re-exports the canonical implementations',
+		'    //! from `sittir_core::filters`.',
+		'    pub use ::sittir_core::filters::{',
+		'        upper, lower, joinby,',
+		'        isBlank, isPresent,',
+		'        joinWithTrailing, joinWithLeading, joinWithFlanks,',
+		'    };',
 		'}',
 		'',
 		renderStructDefs(structs),
