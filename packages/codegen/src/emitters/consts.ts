@@ -286,13 +286,58 @@ export function resolveBitflagConstName(
  * Strips non-word characters and PascalCases each segment.
  *
  * Examples: `async` → `Async`, `pub(crate)` → `PubCrate`.
+ *
+ * Pure-punctuation literals (e.g. python comparison operators `<`,
+ * `>=`, `!=`) all have zero word segments after the non-word strip;
+ * routing them all through the `Unknown` fallback produced duplicate
+ * enum members that `tsgo` / TS-native rejects with `Identifier X has
+ * already been declared`. Map the most common operator punctuation
+ * to mnemonic names so each literal produces a distinct identifier.
+ * The table intentionally covers comparison + bitwise + logical +
+ * assignment forms shared across rust / ts / python grammars; any
+ * literal not in the table still falls through to the
+ * char-code-based fallback below, which generates a unique name per
+ * literal (prefixed `Op_<codepoints>`) so duplicates never collide.
  */
+const PUNCT_MNEMONIC: Record<string, string> = {
+    '<': 'Lt', '>': 'Gt', '<=': 'Le', '>=': 'Ge',
+    '==': 'Eq', '!=': 'Ne', '<>': 'NeAlt',
+    '===': 'EqStrict', '!==': 'NeStrict',
+    '+': 'Plus', '-': 'Minus', '*': 'Star', '/': 'Slash',
+    '%': 'Percent', '**': 'StarStar', '//': 'SlashSlash',
+    '&': 'Amp', '|': 'Pipe', '^': 'Caret', '~': 'Tilde',
+    '&&': 'AmpAmp', '||': 'PipePipe', '??': 'Nullish',
+    '<<': 'Shl', '>>': 'Shr', '>>>': 'Ushr',
+    '=': 'Assign', '+=': 'PlusAssign', '-=': 'MinusAssign',
+    '*=': 'StarAssign', '/=': 'SlashAssign', '%=': 'PercentAssign',
+    '**=': 'StarStarAssign', '//=': 'SlashSlashAssign',
+    '&=': 'AmpAssign', '|=': 'PipeAssign', '^=': 'CaretAssign',
+    '<<=': 'ShlAssign', '>>=': 'ShrAssign', '>>>=': 'UshrAssign',
+    '!': 'Bang', '?': 'Question',
+    '@': 'At', '#': 'Hash', '$': 'Dollar',
+    '.': 'Dot', ',': 'Comma', ':': 'Colon', ';': 'Semi',
+    '(': 'LParen', ')': 'RParen', '[': 'LBracket', ']': 'RBracket',
+    '{': 'LBrace', '}': 'RBrace',
+    '=>': 'FatArrow', '->': 'ThinArrow', '::': 'DoubleColon',
+}
+
 function bitflagMemberName(keyword: string): string {
+    // Pure-punctuation mnemonic fast path — produces distinct names
+    // for common operators without depending on word segmentation.
+    const punctName = PUNCT_MNEMONIC[keyword]
+    if (punctName) return punctName
+
     const segments = keyword
         .replace(/[^\w]+/g, '_')
         .split('_')
         .filter(Boolean)
-    if (segments.length === 0) return 'Unknown'
+    if (segments.length === 0) {
+        // Unknown punctuation — hash the literal's char codes into a
+        // stable suffix so repeated fallbacks don't collide. Prefixed
+        // `Op_` to make it readable + obviously-a-fallback at a glance.
+        const codepoints = Array.from(keyword).map(c => c.codePointAt(0)!.toString(16)).join('')
+        return `Op_${codepoints || 'empty'}`
+    }
     const name = segments.map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('')
     // Prefix a leading digit so the name is a valid identifier.
     return /^\d/.test(name) ? `K${name}` : name

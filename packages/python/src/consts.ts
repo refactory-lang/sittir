@@ -641,13 +641,13 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
 // Bitflag const enums — ordered-unique literal sets per bitflag field (ADR-0012)
 /** Bitflag set for `comparison_operator.operators`. */
 export const enum Operators {
-  Unknown = 1 << 0,
-  Unknown = 1 << 1,
-  Unknown = 1 << 2,
-  Unknown = 1 << 3,
-  Unknown = 1 << 4,
-  Unknown = 1 << 5,
-  Unknown = 1 << 6,
+  Lt = 1 << 0,
+  Le = 1 << 1,
+  Eq = 1 << 2,
+  Ne = 1 << 3,
+  Ge = 1 << 4,
+  Gt = 1 << 5,
+  NeAlt = 1 << 6,
   In = 1 << 7,
   NotIn = 1 << 8,
   Is = 1 << 9,
