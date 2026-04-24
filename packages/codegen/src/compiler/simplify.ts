@@ -385,6 +385,15 @@ function hoistFieldOutOfSingleContentWrapper(rule: Rule): Rule {
  */
 function hoistSharedFieldAcrossChoiceBranches(rule: ChoiceRule): Rule {
     if (rule.members.length < 2) return rule
+    // Bail on variant-wrapped branches — those are polymorph surfaces
+    // and must preserve their identity for the walker's `$variant`
+    // dispatch. Caveat: `tagVariants` auto-wraps many un-promoted
+    // choices (`_for_header`, `_export_statement_default_form1`, …)
+    // with heuristic `variant(form_N)` tags. Those tags block this
+    // hoist from running even though no downstream polymorph
+    // classification consumes them — leaving the choice non-canonical
+    // at derivation. A follow-up (spec 013, unfinished) should strip
+    // auto-tagged variants that didn't survive polymorph promotion.
     if (rule.members.some(m => m.type === 'variant')) return rule
     const perBranch = rule.members.map(normalizeBranchToMembers)
     const fieldNameCounts = perBranch.map(countFieldNames)
