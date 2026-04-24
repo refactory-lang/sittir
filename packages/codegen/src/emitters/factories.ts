@@ -792,6 +792,23 @@ function emitFieldCarryingFactory(
 ): string {
     const fn = node.rawFactoryName!
     const hasFields = fields.length > 0
+    // Filter child slots whose refs all resolve to non-emittable kinds —
+    // tokens, non-userFacing hidden helpers, and hidden single-literal
+    // keywords (their interface is inlined at every reference, the
+    // `T.KwXxx` stub was dropped in the _bk removal landing). Keeps the
+    // factory body symmetric with the UForm interface — types.ts's
+    // `emitFormChildrenSlot` applies the same filter.
+    //
+    // Canonical cases: `impl_item__form_semi` child references the
+    // hidden `_impl_item_semi` token marker, `pointer_type__form_const`
+    // child references the hidden `_pointer_type_const` keyword. Both
+    // have no content a caller can construct.
+    children = children.filter(c => slotKindNames(c).some(t => {
+        const n = nodeMap.nodes.get(t)
+        if (!n || !n.userFacing) return false
+        if (resolveHiddenKeywordLiteral(t, nodeMap) !== undefined) return false
+        return true
+    }))
     const hasChildren = children.length > 0
     const childrenMultiple = resolveChildrenMultiple(children)
     const opt = resolveConfigOptional(fields, children, nodeMap)

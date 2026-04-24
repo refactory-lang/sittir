@@ -983,10 +983,25 @@ function emitFormChildrenSlot(
     lookupUnion?: LookupUnion,
 ): void {
     if (!form.children || form.children.length === 0) return
-    const parts = form.children
-        .map(c => slotKindNames(c).map(t => {
-            const n = nodeMap.nodes.get(t)
-            if (!n) return JSON.stringify(t)
+    // Filter slots whose refs ALL resolve to non-emittable kinds —
+    // tokens, non-userFacing hidden helpers, AND hidden single-literal
+    // keywords whose interface is inlined at every reference (the
+    // `resolveHiddenKeywordLiteral` skip in `emitLeafTerminalAliases`).
+    // Without this filter the UForm interface emits dangling references
+    // like `$children: [ImplItemSemi]` (token) or `$children:
+    // [PointerTypeConst]` (hidden keyword). `impl_item__form_semi` and
+    // `pointer_type__form_const` both hit this pattern.
+    const isEmittableRef = (t: string): boolean => {
+        const n = nodeMap.nodes.get(t)
+        if (!n || !n.userFacing) return false
+        if (resolveHiddenKeywordLiteral(t, nodeMap) !== undefined) return false
+        return true
+    }
+    const emittableChildren = form.children.filter(c => slotKindNames(c).some(isEmittableRef))
+    if (emittableChildren.length === 0) return
+    const parts = emittableChildren
+        .map(c => slotKindNames(c).filter(isEmittableRef).map(t => {
+            const n = nodeMap.nodes.get(t)!
             const name = n.typeName
             return /^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t)
         }))
@@ -994,7 +1009,7 @@ function emitFormChildrenSlot(
     const aliased = lookupUnion?.(flatParts)
     const union = aliased ?? parts.map(p => p.join(' | ')).filter(Boolean).join(' | ')
     if (union) {
-        const anyMultiple = form.children.some(c => isMultiple(c))
+        const anyMultiple = emittableChildren.some(c => isMultiple(c))
         if (anyMultiple) {
             lines.push(`  readonly $children: readonly (${union})[];`)
         } else {
