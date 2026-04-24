@@ -29,17 +29,17 @@ describe('expression_statement', () => {
 
 describe('macro_definition', () => {
   it('paren form produces correct type', () => {
-    const node = ir.macro.paren({ name: { $type: 'identifier', $text: 'test' } as any });
+    const node = ir.macro.paren({});
     expect(node.$type).toBe('macro_definition');
     expect(node.$source).toBe('factory');
   });
   it('bracket form produces correct type', () => {
-    const node = ir.macro.bracket({ name: { $type: 'identifier', $text: 'test' } as any });
+    const node = ir.macro.bracket({});
     expect(node.$type).toBe('macro_definition');
     expect(node.$source).toBe('factory');
   });
   it('brace form produces correct type', () => {
-    const node = ir.macro.brace({ name: { $type: 'identifier', $text: 'test' } as any });
+    const node = ir.macro.brace({});
     expect(node.$type).toBe('macro_definition');
     expect(node.$source).toBe('factory');
   });
@@ -799,7 +799,7 @@ describe('pointer_type', () => {
     expect(node.$source).toBe('factory');
   });
   it('mut form produces correct type', () => {
-    const node = ir.pointerType.mut({ type: { $type: '_type', $text: 'test' } as any });
+    const node = ir.pointerType.mut({});
     expect(node.$type).toBe('pointer_type');
     expect(node.$source).toBe('factory');
   });

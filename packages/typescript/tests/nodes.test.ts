@@ -1988,7 +1988,7 @@ describe('index_signature', () => {
     expect(node.$source).toBe('factory');
   });
   it('mapped_type_clause form produces correct type', () => {
-    const node = ir.indexSignature.mapped_type_clause({ type: { $type: 'type_annotation', $text: 'test' } as any });
+    const node = ir.indexSignature.mapped_type_clause({});
     expect(node.$type).toBe('index_signature');
     expect(node.$source).toBe('factory');
   });

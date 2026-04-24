@@ -1390,24 +1390,42 @@ function emitHoistedPolymorphFormFactory(
         lines.push('  };')
     }
 
-    // Inner child construction. Two paths:
+    // Inner child construction. Three paths:
     //
-    //   - **Factory available** (common case): the inner kind has a
-    //     `rawFactoryName`, so delegate. The inner factory picks out
+    //   - **Field-carrier + factory available** (branches/groups with
+    //     fields that also have a factory): delegate to
+    //     `innerFactory(config)`. The inner factory picks out
     //     `config.<its own fields>` and ignores the form-level keys.
     //     Structural subtyping + `resolveHoistedForm`'s name-collision
     //     gate keep this safe.
     //
-    //   - **No factory** (hidden group referenced by a polymorph form):
-    //     inline the NodeData construction using the hoisted fields
-    //     directly. Matches the shape a sibling factory would produce
-    //     — `{ $type, $source, $named, $fields }` with `$fields` built
-    //     from `config.<propertyName>` for each inner field. This
-    //     unblocks polymorph forms whose inner kind is a hidden group
-    //     (python's `assignment__form_eq` → `_assignment_eq`; many
-    //     python variants share the shape) without having to retrofit
-    //     factory emission onto every hidden group.
-    if (hoist.innerFactoryName !== undefined) {
+    //   - **Container inner** (modelType='container', has children
+    //     but no fields): the inner factory takes positional children
+    //     (`containerFactory(child)` for single-child, `(...children)`
+    //     for multi). ConfigOf hoists the container's `Partial<{
+    //     children }>` up, so the form's Config has `config.children`
+    //     typed as the inner's children slot. Extract from config
+    //     and pass positionally. Example:
+    //     `expression_statement__form_with_semi` → inner container
+    //     `_expression_statement_with_semi`.
+    //
+    //   - **No factory** (hidden group with fields): inline the
+    //     NodeData construction — unblocks polymorph forms whose
+    //     inner kind is a hidden field-carrying group without
+    //     retrofitting factory emission onto every hidden group.
+    //     Example: python's `_assignment_eq`.
+    const innerIsContainer = hoist.innerNode.modelType === 'container'
+        && hoist.innerFields.length === 0
+    if (innerIsContainer && hoist.innerFactoryName !== undefined) {
+        const container = hoist.innerNode as unknown as { children: readonly AssembledChild[] }
+        const innerChildren = container.children
+        const anyMultiple = innerChildren.some(c => isMultiple(c))
+        if (anyMultiple) {
+            lines.push(`  const inner = ${hoist.innerFactoryName}(...(config?.children ?? []));`)
+        } else {
+            lines.push(`  const inner = ${hoist.innerFactoryName}(config?.children?.[0]!);`)
+        }
+    } else if (hoist.innerFactoryName !== undefined) {
         lines.push(`  const inner = ${hoist.innerFactoryName}(config);`)
     } else {
         const innerKind = hoist.innerKind

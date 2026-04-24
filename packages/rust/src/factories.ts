@@ -70,18 +70,15 @@ export function expressionStatement(config: ConfigOf<T.ExpressionStatementUFormW
   }
   throw new Error(`expressionStatement: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'with_semi' | 'block_ending'.`);
 }
-export function expressionStatementUFormWithSemi(config: Omit<ConfigOf<T.ExpressionStatementUFormWithSemi>, '$variant'>) {
-  const children = config.children ?? [];
+export function expressionStatementUFormWithSemi(config?: Omit<ConfigOf<T.ExpressionStatementUFormWithSemi>, '$variant'>) {
+  const inner = expressionStatementWithSemi(config?.children?.[0]!);
+  const children = [inner] as const;
   return {
     $type: 'expression_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'with_semi' as const,
     $children: children,
-    child(value?: T.ExpressionStatementWithSemi) {
-      if (value === undefined) return children[0];
-      return expressionStatementUFormWithSemi({ ...config, children: [value] });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -90,18 +87,15 @@ export function expressionStatementUFormWithSemi(config: Omit<ConfigOf<T.Express
     replace(this: AnyNodeData, target: T.ExpressionStatementUFormWithSemiTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function expressionStatementUFormBlockEnding(config: Omit<ConfigOf<T.ExpressionStatementUFormBlockEnding>, '$variant'>) {
-  const children = config.children ?? [];
+export function expressionStatementUFormBlockEnding(config?: Omit<ConfigOf<T.ExpressionStatementUFormBlockEnding>, '$variant'>) {
+  const inner = expressionStatementBlockEnding(config?.children?.[0]!);
+  const children = [inner] as const;
   return {
     $type: 'expression_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'block_ending' as const,
     $children: children,
-    child(value?: T.ExpressionStatementBlockEnding) {
-      if (value === undefined) return children[0];
-      return expressionStatementUFormBlockEnding({ ...config, children: [value] });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -126,7 +120,8 @@ export function macroDefinitionUFormParen(config: Omit<ConfigOf<T.MacroDefinitio
   const fields = {
     name: config.name,
   };
-  const children = config.children ?? [];
+  const inner = macroDefinitionParen(...(config?.children ?? []));
+  const children = [inner] as const;
   return {
     $type: 'macro_definition' as const,
     $source: 'factory' as const,
@@ -134,10 +129,9 @@ export function macroDefinitionUFormParen(config: Omit<ConfigOf<T.MacroDefinitio
     $variant: 'paren' as const,
     $fields: fields,
     $children: children,
-    name(value?: T.Identifier | T.ReservedIdentifier) { return _fs(config, macroDefinitionUFormParen, 'name', value, config?.name); },
-    child(value?: T.MacroDefinitionParen) {
-      if (value === undefined) return children[0];
-      return macroDefinitionUFormParen({ ...config, children: [value] });
+    name(value?: T.Identifier | T.ReservedIdentifier) {
+      if (value === undefined) return fields.name;
+      return macroDefinitionUFormParen({ name: value });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -151,7 +145,8 @@ export function macroDefinitionUFormBracket(config: Omit<ConfigOf<T.MacroDefinit
   const fields = {
     name: config.name,
   };
-  const children = config.children ?? [];
+  const inner = macroDefinitionBracket(...(config?.children ?? []));
+  const children = [inner] as const;
   return {
     $type: 'macro_definition' as const,
     $source: 'factory' as const,
@@ -159,10 +154,9 @@ export function macroDefinitionUFormBracket(config: Omit<ConfigOf<T.MacroDefinit
     $variant: 'bracket' as const,
     $fields: fields,
     $children: children,
-    name(value?: T.Identifier | T.ReservedIdentifier) { return _fs(config, macroDefinitionUFormBracket, 'name', value, config?.name); },
-    child(value?: T.MacroDefinitionBracket) {
-      if (value === undefined) return children[0];
-      return macroDefinitionUFormBracket({ ...config, children: [value] });
+    name(value?: T.Identifier | T.ReservedIdentifier) {
+      if (value === undefined) return fields.name;
+      return macroDefinitionUFormBracket({ name: value });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -176,7 +170,8 @@ export function macroDefinitionUFormBrace(config: Omit<ConfigOf<T.MacroDefinitio
   const fields = {
     name: config.name,
   };
-  const children = config.children ?? [];
+  const inner = macroDefinitionBrace(...(config?.children ?? []));
+  const children = [inner] as const;
   return {
     $type: 'macro_definition' as const,
     $source: 'factory' as const,
@@ -184,10 +179,9 @@ export function macroDefinitionUFormBrace(config: Omit<ConfigOf<T.MacroDefinitio
     $variant: 'brace' as const,
     $fields: fields,
     $children: children,
-    name(value?: T.Identifier | T.ReservedIdentifier) { return _fs(config, macroDefinitionUFormBrace, 'name', value, config?.name); },
-    child(value?: T.MacroDefinitionBrace) {
-      if (value === undefined) return children[0];
-      return macroDefinitionUFormBrace({ ...config, children: [value] });
+    name(value?: T.Identifier | T.ReservedIdentifier) {
+      if (value === undefined) return fields.name;
+      return macroDefinitionUFormBrace({ name: value });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -1934,7 +1928,8 @@ export function pointerTypeUFormMut(config: Omit<ConfigOf<T.PointerTypeUFormMut>
   const fields = {
     type: config.type,
   };
-  const children = [pointerTypeMut()] as const;
+  const inner = pointerTypeMut(config?.children?.[0]!);
+  const children = [inner] as const;
   return {
     $type: 'pointer_type' as const,
     $source: 'factory' as const,
@@ -1942,7 +1937,10 @@ export function pointerTypeUFormMut(config: Omit<ConfigOf<T.PointerTypeUFormMut>
     $variant: 'mut' as const,
     $fields: fields,
     $children: children,
-    typeField(value?: T._Type) { return _fs(config, pointerTypeUFormMut, 'type', value, config?.type); },
+    typeField(value?: T._Type) {
+      if (value === undefined) return fields.type;
+      return pointerTypeUFormMut({ type: value });
+    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

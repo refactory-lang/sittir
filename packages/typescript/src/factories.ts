@@ -133,18 +133,15 @@ export function exportStatementUFormTypeExport(config?: Omit<ConfigOf<T.ExportSt
     replace(this: AnyNodeData, target: T.ExportStatementUFormTypeExportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function exportStatementUFormEqualsExport(config: Omit<ConfigOf<T.ExportStatementUFormEqualsExport>, '$variant'>) {
-  const children = config.children ?? [];
+export function exportStatementUFormEqualsExport(config?: Omit<ConfigOf<T.ExportStatementUFormEqualsExport>, '$variant'>) {
+  const inner = exportStatementEqualsExport(config?.children?.[0]!);
+  const children = [inner] as const;
   return {
     $type: 'export_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'equals_export' as const,
     $children: children,
-    child(value?: T.ExportStatementEqualsExport) {
-      if (value === undefined) return children[0];
-      return exportStatementUFormEqualsExport({ ...config, children: [value] });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -153,18 +150,15 @@ export function exportStatementUFormEqualsExport(config: Omit<ConfigOf<T.ExportS
     replace(this: AnyNodeData, target: T.ExportStatementUFormEqualsExportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function exportStatementUFormNamespaceExport(config: Omit<ConfigOf<T.ExportStatementUFormNamespaceExport>, '$variant'>) {
-  const children = config.children ?? [];
+export function exportStatementUFormNamespaceExport(config?: Omit<ConfigOf<T.ExportStatementUFormNamespaceExport>, '$variant'>) {
+  const inner = exportStatementNamespaceExport(config?.children?.[0]!);
+  const children = [inner] as const;
   return {
     $type: 'export_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'namespace_export' as const,
     $children: children,
-    child(value?: T.ExportStatementNamespaceExport) {
-      if (value === undefined) return children[0];
-      return exportStatementUFormNamespaceExport({ ...config, children: [value] });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -292,18 +286,15 @@ export function importClause(config: ConfigOf<T.ImportClauseUFormNamespaceImport
   }
   throw new Error(`importClause: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'namespace_import' | 'named_imports' | 'default_import'.`);
 }
-export function importClauseUFormNamespaceImport(config: Omit<ConfigOf<T.ImportClauseUFormNamespaceImport>, '$variant'>) {
-  const children = config.children ?? [];
+export function importClauseUFormNamespaceImport(config?: Omit<ConfigOf<T.ImportClauseUFormNamespaceImport>, '$variant'>) {
+  const inner = importClauseNamespaceImport(config?.children?.[0]!);
+  const children = [inner] as const;
   return {
     $type: 'import_clause' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'namespace_import' as const,
     $children: children,
-    child(value?: T.ImportClauseNamespaceImport) {
-      if (value === undefined) return children[0];
-      return importClauseUFormNamespaceImport({ ...config, children: [value] });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -312,18 +303,15 @@ export function importClauseUFormNamespaceImport(config: Omit<ConfigOf<T.ImportC
     replace(this: AnyNodeData, target: T.ImportClauseUFormNamespaceImportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function importClauseUFormNamedImports(config: Omit<ConfigOf<T.ImportClauseUFormNamedImports>, '$variant'>) {
-  const children = config.children ?? [];
+export function importClauseUFormNamedImports(config?: Omit<ConfigOf<T.ImportClauseUFormNamedImports>, '$variant'>) {
+  const inner = importClauseNamedImports(config?.children?.[0]!);
+  const children = [inner] as const;
   return {
     $type: 'import_clause' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'named_imports' as const,
     $children: children,
-    child(value?: T.ImportClauseNamedImports) {
-      if (value === undefined) return children[0];
-      return importClauseUFormNamedImports({ ...config, children: [value] });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -332,18 +320,15 @@ export function importClauseUFormNamedImports(config: Omit<ConfigOf<T.ImportClau
     replace(this: AnyNodeData, target: T.ImportClauseUFormNamedImportsTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function importClauseUFormDefaultImport(config: Omit<ConfigOf<T.ImportClauseUFormDefaultImport>, '$variant'>) {
-  const children = config.children ?? [];
+export function importClauseUFormDefaultImport(config?: Omit<ConfigOf<T.ImportClauseUFormDefaultImport>, '$variant'>) {
+  const inner = importClauseDefaultImport(config?.children?.[0]!);
+  const children = [inner] as const;
   return {
     $type: 'import_clause' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'default_import' as const,
     $children: children,
-    child(value?: T.ImportClauseDefaultImport) {
-      if (value === undefined) return children[0];
-      return importClauseUFormDefaultImport({ ...config, children: [value] });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1113,18 +1098,15 @@ export function parenthesizedExpressionUFormTyped(config?: Omit<ConfigOf<T.Paren
     replace(this: AnyNodeData, target: T.ParenthesizedExpressionUFormTypedTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function parenthesizedExpressionUFormSequence(config: Omit<ConfigOf<T.ParenthesizedExpressionUFormSequence>, '$variant'>) {
-  const children = config.children ?? [];
+export function parenthesizedExpressionUFormSequence(config?: Omit<ConfigOf<T.ParenthesizedExpressionUFormSequence>, '$variant'>) {
+  const inner = parenthesizedExpressionSequence(config?.children?.[0]!);
+  const children = [inner] as const;
   return {
     $type: 'parenthesized_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'sequence' as const,
     $children: children,
-    child(value?: T.ParenthesizedExpressionSequence) {
-      if (value === undefined) return children[0];
-      return parenthesizedExpressionUFormSequence({ ...config, children: [value] });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1564,18 +1546,15 @@ export function classHeritage(config: ConfigOf<T.ClassHeritageUFormExtendsClause
   }
   throw new Error(`classHeritage: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'extends_clause' | 'implements_clause'.`);
 }
-export function classHeritageUFormExtendsClause(config: Omit<ConfigOf<T.ClassHeritageUFormExtendsClause>, '$variant'>) {
-  const children = config.children ?? [];
+export function classHeritageUFormExtendsClause(config?: Omit<ConfigOf<T.ClassHeritageUFormExtendsClause>, '$variant'>) {
+  const inner = classHeritageExtendsClause(config?.children?.[0]!);
+  const children = [inner] as const;
   return {
     $type: 'class_heritage' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'extends_clause' as const,
     $children: children,
-    child(value?: T.ClassHeritageExtendsClause) {
-      if (value === undefined) return children[0];
-      return classHeritageUFormExtendsClause({ ...config, children: [value] });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1584,18 +1563,15 @@ export function classHeritageUFormExtendsClause(config: Omit<ConfigOf<T.ClassHer
     replace(this: AnyNodeData, target: T.ClassHeritageUFormExtendsClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function classHeritageUFormImplementsClause(config: Omit<ConfigOf<T.ClassHeritageUFormImplementsClause>, '$variant'>) {
-  const children = config.children ?? [];
+export function classHeritageUFormImplementsClause(config?: Omit<ConfigOf<T.ClassHeritageUFormImplementsClause>, '$variant'>) {
+  const inner = classHeritageImplementsClause(config?.children?.[0]!);
+  const children = [inner] as const;
   return {
     $type: 'class_heritage' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'implements_clause' as const,
     $children: children,
-    child(value?: T.ClassHeritageImplementsClause) {
-      if (value === undefined) return children[0];
-      return classHeritageUFormImplementsClause({ ...config, children: [value] });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2222,18 +2198,15 @@ export function string(config: ConfigOf<T.StringUFormDouble> | ConfigOf<T.String
   }
   throw new Error(`string: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'double' | 'single'.`);
 }
-export function stringUFormDouble(config: Omit<ConfigOf<T.StringUFormDouble>, '$variant'>) {
-  const children = config.children ?? [];
+export function stringUFormDouble(config?: Omit<ConfigOf<T.StringUFormDouble>, '$variant'>) {
+  const inner = stringDouble(...(config?.children ?? []));
+  const children = [inner] as const;
   return {
     $type: 'string' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'double' as const,
     $children: children,
-    child(value?: T.StringDouble) {
-      if (value === undefined) return children[0];
-      return stringUFormDouble({ ...config, children: [value] });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2242,18 +2215,15 @@ export function stringUFormDouble(config: Omit<ConfigOf<T.StringUFormDouble>, '$
     replace(this: AnyNodeData, target: T.StringUFormDoubleTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function stringUFormSingle(config: Omit<ConfigOf<T.StringUFormSingle>, '$variant'>) {
-  const children = config.children ?? [];
+export function stringUFormSingle(config?: Omit<ConfigOf<T.StringUFormSingle>, '$variant'>) {
+  const inner = stringSingle(...(config?.children ?? []));
+  const children = [inner] as const;
   return {
     $type: 'string' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'single' as const,
     $children: children,
-    child(value?: T.StringSingle) {
-      if (value === undefined) return children[0];
-      return stringUFormSingle({ ...config, children: [value] });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -4311,7 +4281,8 @@ export function indexSignatureUFormMappedTypeClause(config: Omit<ConfigOf<T.Inde
     sign: config.sign,
     type: config.type,
   };
-  const children = config.children ?? [];
+  const inner = indexSignatureMappedTypeClause(config?.children?.[0]!);
+  const children = [inner] as const;
   return {
     $type: 'index_signature' as const,
     $source: 'factory' as const,
@@ -4319,11 +4290,13 @@ export function indexSignatureUFormMappedTypeClause(config: Omit<ConfigOf<T.Inde
     $variant: 'mapped_type_clause' as const,
     $fields: fields,
     $children: children,
-    sign(value?: "-" | "+" | undefined) { return _fs(config, indexSignatureUFormMappedTypeClause, 'sign', value, config?.sign); },
-    typeField(value?: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation) { return _fs(config, indexSignatureUFormMappedTypeClause, 'type', value, config?.type); },
-    child(value?: T.IndexSignatureMappedTypeClause) {
-      if (value === undefined) return children[0];
-      return indexSignatureUFormMappedTypeClause({ ...config, children: [value] });
+    sign(value?: "-" | "+" | undefined) {
+      if (value === undefined) return fields.sign;
+      return indexSignatureUFormMappedTypeClause({ type: config.type, sign: value });
+    },
+    typeField(value?: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation) {
+      if (value === undefined) return fields.type;
+      return indexSignatureUFormMappedTypeClause({ sign: config.sign, type: value });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {

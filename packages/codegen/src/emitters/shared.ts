@@ -540,8 +540,15 @@ export function resolveHoistedForm(
         || inner instanceof AssembledGroup
     if (!isFieldCarrier) return undefined
 
-    const innerFields = (inner as AssembledBranch).fields ?? []
-    if (!innerFields || innerFields.length === 0) return undefined
+    // Inner fields (Branch / Group with fields). Containers have no
+    // fields — their Config surface is `{ children?: [...] }` which
+    // is picked up via ChildSlotsOf hoisting. `innerFields` is empty
+    // in that case; the hoisted-path emitter detects it and emits a
+    // `config.children`-based inner construction call instead of a
+    // Config-forwarding one.
+    const innerFields = (inner instanceof AssembledBranch || inner instanceof AssembledGroup)
+        ? inner.fields ?? []
+        : []
 
     // Collision check: a property name on the form AND the inner child
     // would produce an ambiguous hoisted Config surface. Bail out —
