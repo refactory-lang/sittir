@@ -250,6 +250,12 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
         // declaration so the alias re-fires and reparse produces
         // interface_body for AST-match parity.
         'interface_body': r => `interface _I ${r}`,
+        // Kind-specific: `rest_pattern` (`...x`) appears in array
+        // destructuring, tuple types (TS), and parameter lists. The
+        // generic `pattern` wrapper `let ${r} = null;` produces a
+        // parse error — `let ...x = null` is invalid. Wrap in an
+        // array destructuring target so the rest-pattern surfaces.
+        'rest_pattern': r => `let [${r}] = [];`,
     },
     python: {
         // tree-sitter-python supertypes are also unprefixed.

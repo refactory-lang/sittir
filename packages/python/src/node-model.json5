@@ -2991,10 +2991,9 @@
               "value": "in"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "nonEmptyArray",
-              "name": "_not_in",
-              "unresolved": true
+              "value": "not in"
             },
             {
               "kind": "terminal",
@@ -3002,19 +3001,15 @@
               "value": "is"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "nonEmptyArray",
-              "name": "_is_not",
-              "unresolved": true
+              "value": "is not"
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_not_in",
-              "_is_not"
-            ]
+            "kinds": []
           }
         }
       ],

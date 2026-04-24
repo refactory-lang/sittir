@@ -713,12 +713,12 @@ describe('unary_operator', () => {
 
 describe('comparison_operator', () => {
   it('factory produces correct type', () => {
-    const node = ir.comparisonOperator({ left: { $type: 'primary_expression', $text: 'test' } as any, operators: [{ $type: '_not_in', $text: 'test' } as any] });
+    const node = ir.comparisonOperator({ left: { $type: 'primary_expression', $text: 'test' } as any, operators: ['test' as any] });
     expect(node.$type).toBe('comparison_operator');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.comparisonOperator({ left: { $type: 'primary_expression', $text: 'test' } as any, operators: [{ $type: '_not_in', $text: 'test' } as any] });
+    const node = ir.comparisonOperator({ left: { $type: 'primary_expression', $text: 'test' } as any, operators: ['test' as any] });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

@@ -329,6 +329,7 @@ export const enum SyntaxKind {
   KwConst = '_kw_const',
   PublicFieldDefinitionReadonlyFirst = '_public_field_definition_readonly_first',
   AutomaticSemicolon = '_automatic_semicolon',
+  TernaryQmark = '_ternary_qmark',
   HtmlComment = 'html_comment',
   Oror = '||',
   JsxText = 'jsx_text',
@@ -2401,6 +2402,7 @@ export type OverrideModifier = Terminal<"override_modifier", "override">;
 export type PredefinedType = Terminal<"predefined_type", string>;
 export type PublicFieldDefinitionReadonlyFirst = Terminal<"_public_field_definition_readonly_first", string>;
 export type AutomaticSemicolon = Terminal<"_automatic_semicolon", string>;
+export type TernaryQmark = Terminal<"_ternary_qmark", string>;
 export type HtmlComment = Terminal<"html_comment", string>;
 export type Oror = Terminal<"||", string>;
 export type JsxText = Terminal<"jsx_text", string>;
@@ -2678,6 +2680,7 @@ export interface OverrideModifierTree extends AnyTreeNode { readonly type: "over
 export interface PredefinedTypeTree extends TreeNode<'predefined_type'> {}
 export interface PublicFieldDefinitionReadonlyFirstTree extends AnyTreeNode { readonly type: "_public_field_definition_readonly_first"; }
 export interface AutomaticSemicolonTree extends AnyTreeNode { readonly type: "_automatic_semicolon"; }
+export interface TernaryQmarkTree extends AnyTreeNode { readonly type: "_ternary_qmark"; }
 export interface HtmlCommentTree extends TreeNode<'html_comment'> {}
 export interface OrorTree extends AnyTreeNode { readonly type: "||"; }
 export interface JsxTextTree extends AnyTreeNode { readonly type: "jsx_text"; }
@@ -3480,6 +3483,7 @@ export interface KindMap {
   'predefined_type': PredefinedType;
   '_public_field_definition_readonly_first': PublicFieldDefinitionReadonlyFirst;
   '_automatic_semicolon': AutomaticSemicolon;
+  '_ternary_qmark': TernaryQmark;
   'html_comment': HtmlComment;
   '||': Oror;
   'jsx_text': JsxText;

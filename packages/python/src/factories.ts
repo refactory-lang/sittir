@@ -35,6 +35,15 @@ function _assertNonEmpty<T>(
     throw new Error(`${label}: requires at least one element`);
   }
 }
+function _bf<T>(v: unknown, kinds: readonly string[], texts: readonly string[], named: boolean): readonly T[] | undefined {
+  if (v === undefined || v === null) return undefined;
+  if (typeof v !== 'number') return v as readonly T[];
+  const out: T[] = [];
+  for (let i = 0; i < kinds.length; i++) {
+    if ((v & (1 << i)) !== 0) out.push({ $type: kinds[i]!, $text: texts[i]!, $named: named, $source: 'factory' } as unknown as T);
+  }
+  return out;
+}
 
 const _leafRe_typeConversion = /^(?:![a-z])/u;
 const _leafRe_identifier = /^(?:[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
@@ -1481,36 +1490,10 @@ export function unaryOperator(config: T.UnaryOperator.Config) {
   };
 }
 
-export function notIn(text: string) {
-  if (text.length === 0) throw new Error(`_not_in: text must be non-empty`);
-  return {
-    $type: '_not_in' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.NotInTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
-export function isNot(text: string) {
-  if (text.length === 0) throw new Error(`_is_not: text must be non-empty`);
-  return {
-    $type: '_is_not' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.IsNotTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
 export function comparisonOperator(config: T.ComparisonOperator.Config) {
   const fields = {
     left: config.left,
-    operators: config.operators,
+    operators: _bf(config.operators, ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"], ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"], false),
   };
   return {
     $type: 'comparison_operator' as const,
@@ -1518,7 +1501,7 @@ export function comparisonOperator(config: T.ComparisonOperator.Config) {
     $named: true as const,
     $fields: fields,
     left(value?: T.PrimaryExpression) { return _fs(config, comparisonOperator, 'left', value, config?.left); },
-    operators(...values: NonEmptyArray<"<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | T.NotIn | "is" | T.IsNot>) { return _fsm(config, comparisonOperator, 'operators', values, config?.operators); },
+    operators(...values: NonEmptyArray<"<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not">) { return _fsm(config, comparisonOperator, 'operators', values, config?.operators); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2742,8 +2725,6 @@ export type FluentKindMap = {
   "boolean_operator": FluentNode<"boolean_operator", T.BooleanOperator.Config>;
   "binary_operator": FluentNode<"binary_operator", T.BinaryOperator.Config>;
   "unary_operator": FluentNode<"unary_operator", T.UnaryOperator.Config>;
-  "_not_in": T.NotIn;
-  "_is_not": T.IsNot;
   "comparison_operator": FluentNode<"comparison_operator", T.ComparisonOperator.Config>;
   "lambda": FluentNode<"lambda", T.Lambda.Config>;
   "lambda_within_for_in_clause": FluentNode<"lambda_within_for_in_clause", T.LambdaWithinForInClause.Config>;
@@ -2878,8 +2859,6 @@ export const _factoryMap = {
   "boolean_operator": booleanOperator,
   "binary_operator": binaryOperator,
   "unary_operator": unaryOperator,
-  "_not_in": notIn,
-  "_is_not": isNot,
   "comparison_operator": comparisonOperator,
   "lambda": lambda,
   "lambda_within_for_in_clause": lambdaWithinForInClause,

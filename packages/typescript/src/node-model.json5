@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 407,
+  "nodeCount": 408,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -3631,6 +3631,14 @@
           ]
         }
       ]
+    },
+    {
+      "kind": "_ternary_qmark",
+      "modelType": "leaf",
+      "typeName": "TernaryQmark",
+      "factoryName": "ternaryQmark",
+      "irKey": "ternaryQmark",
+      "hidden": false
     },
     {
       "kind": "_tuple_type_member",
