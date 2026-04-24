@@ -532,10 +532,6 @@
       "operator",
       "argument"
     ],
-    "update_expression": [
-      "argument",
-      "operator"
-    ],
     "regex": [
       "pattern",
       "flags"
@@ -870,6 +866,13 @@
         "call_expression_call": "call",
         "call_expression_template_call": "template_call",
         "call_expression_member": "member"
+      }
+    },
+    "update_expression": {
+      "source": "override",
+      "childKind": {
+        "update_expression_postfix": "postfix",
+        "update_expression_prefix": "prefix"
       }
     },
     "string": {

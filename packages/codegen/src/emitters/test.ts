@@ -195,6 +195,13 @@ function emitPolymorphTest(lines: string[], node: AssembledNode, kind: string, k
         const configParts = fieldsSource
             .filter(f => isRequired(f) && !isAutoStampField(f, nodeMap))
             .map(f => `${f.propertyName}: ${dummyValue(f)}`)
+        // Container-shaped hoist targets: inner factory accepts `...children`
+        // via the form's `children` surface. The inner container may assert
+        // non-empty so supply a single dummy child of the slot's first kind.
+        if (hoist && hoist.innerFields.length === 0) {
+            const innerChildNonEmpty = resolveInnerContainerNonEmptyChild(hoist.innerNode)
+            if (innerChildNonEmpty) configParts.push(`children: [${innerChildNonEmpty}]`)
+        }
         const configArg = configParts.length > 0 ? `{ ${configParts.join(', ')} }` : '{}'
         lines.push(`    const node = ir.${key}.${form.name}(${configArg});`)
         lines.push(`    expect(node.$type).toBe('${kind}');`)
@@ -298,6 +305,35 @@ function emitEnumTest(lines: string[], node: AssembledNode, kind: string, key: s
     lines.push('  });')
     lines.push('});')
     lines.push('')
+}
+
+/**
+ * Synthesize a dummy-child expression for a container-shaped hoisted
+ * polymorph-form inner node whose first child slot is required and
+ * non-empty, so the auto-generated polymorph form test doesn't fail
+ * the inner factory's `_assertNonEmpty` check.
+ *
+ * @remarks
+ * Containers have no fields so `innerFields` in the hoist target is
+ * empty — the test emitter would otherwise pass `{}` to the form
+ * factory, spread zero children into the inner factory, and trip the
+ * assertion. Returns `null` when the container has no required
+ * non-empty child slot (one dummy isn't needed) or when no content
+ * kind is available.
+ */
+function resolveInnerContainerNonEmptyChild(innerNode: AssembledNode): string | null {
+    // Only container-shaped inners go through this path — others surface
+    // their data via fields.
+    if (innerNode.modelType !== 'container') return null
+    const childSlots = innerNode.children
+    if (!childSlots || childSlots.length === 0) return null
+    const firstRequired = childSlots.find(
+        c => isRequired(c) && isNonEmpty(c)
+    )
+    if (!firstRequired) return null
+    const kinds = slotKindNames(firstRequired)
+    if (kinds.length === 0) return null
+    return `{ $type: '${kinds[0]}', $text: 'test' } as any`
 }
 
 function dummyValue(field: AssembledField): string {

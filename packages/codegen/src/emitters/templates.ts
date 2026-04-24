@@ -120,9 +120,20 @@ function emitBodyForNode(
     ) {
         return null
     }
-    if (node instanceof AssembledGroup && !node.parentKind) {
-        // Non-polymorph-form groups are hidden helpers inlined at their
-        // referrers; no file emitted.
+    if (node instanceof AssembledGroup && !node.parentKind && !node.userFacing) {
+        // Non-polymorph-form groups without an alias-source reference
+        // are hidden helpers inlined at their referrers; no file emitted.
+        //
+        // Groups that ARE userFacing (populated by `markUserFacing` when
+        // the hidden kind shows up as an alias source in some other
+        // rule's child/field slots) get their own template — tree-sitter
+        // emits them via `alias($._kind, $.visible)` and the render
+        // pipeline dispatches to the hidden rule's body. Covers
+        // variant() adoption on rules with field-bearing branches
+        // (`_update_expression_postfix` etc.), where the hoisted hidden
+        // rule gets wrapped as a GroupRule by classifyHiddenSeqRule even
+        // though it's an alias source — the group classification fits
+        // the shape but the inlining assumption doesn't.
         return null
     }
     const entry = node.renderTemplate(rules, wordMatcher)

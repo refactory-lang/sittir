@@ -1066,8 +1066,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'right', required: true, multiple: false },
   ],
   'update_expression': [
-    { name: 'argument', required: true, multiple: false },
-    { name: 'operator', required: true, multiple: false },
   ],
   'variable_declaration': [
     { name: 'declarators', required: true, multiple: true },

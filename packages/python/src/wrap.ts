@@ -109,6 +109,7 @@ import type {
   UnionType,
   WhileStatement,
   WithClause,
+  WithClauseParen,
   WithItem,
   WithStatement,
   Yield,
@@ -389,7 +390,7 @@ export function wrapWithStatement(data: _NodeData, tree: TreeHandle): WrappedNod
 export function wrapWithClause(data: _NodeData, tree: TreeHandle): WrappedNode<WithClause> {
   return {
     ...data,
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<WithClause>;
 }
 
@@ -1050,6 +1051,13 @@ export function wrapAwait(data: _NodeData, tree: TreeHandle): WrappedNode<Await>
   } as unknown as WrappedNode<Await>;
 }
 
+export function wrapWithClauseParen(data: _NodeData, tree: TreeHandle): WrappedNode<WithClauseParen> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<WithClauseParen>;
+}
+
 const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {
   'module': (d, t) => wrapModule(d, t),
   '_simple_statements': (d, t) => wrapSimpleStatements(d, t),
@@ -1175,6 +1183,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'comment': (d) => d,
   'line_continuation': (d) => d,
   '_kw_async': (d) => d,
+  '_with_clause_paren': (d, t) => wrapWithClauseParen(d, t),
   '_newline': (d) => d,
   '_indent': (d) => d,
   '_dedent': (d) => d,

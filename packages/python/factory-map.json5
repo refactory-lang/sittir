@@ -34,7 +34,7 @@
     "except_clause": "config",
     "finally_clause": "config",
     "with_statement": "config",
-    "with_clause": "children",
+    "with_clause": "config",
     "with_item": "config",
     "function_definition": "config",
     "parameters": "children",
@@ -409,6 +409,13 @@
           "alternative"
         ],
         "form1": []
+      }
+    },
+    "with_clause": {
+      "source": "override",
+      "childKind": {
+        "with_clause_bare": "bare",
+        "with_clause_paren": "paren"
       }
     },
     "assignment": {

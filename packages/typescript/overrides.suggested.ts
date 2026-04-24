@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  7  (0 applied, 7 held)
-// Rule promotions:   75  (67 applied, 8 held)
+// Rule promotions:   78  (70 applied, 8 held)
 // Repeated shapes:   7  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -296,6 +296,9 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "string", classification: "polymorph", applied: true },
   { kind: "string_double", classification: "polymorph", applied: true },
   { kind: "string_single", classification: "polymorph", applied: true },
+  { kind: "update_expression", classification: "polymorph", applied: true },
+  { kind: "update_expression_postfix", classification: "polymorph", applied: true },
+  { kind: "update_expression_prefix", classification: "polymorph", applied: true },
   { kind: "yield_expression", classification: "polymorph", applied: false },
 ];
 

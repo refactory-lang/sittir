@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 229,
+  "nodeCount": 233,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -37,7 +37,9 @@
     "_match_block_form1",
     "assignment__form_eq",
     "assignment__form_type",
-    "assignment__form_typed"
+    "assignment__form_typed",
+    "with_clause__form_bare",
+    "with_clause__form_paren"
   ],
   "nodes": [
     {
@@ -1355,6 +1357,45 @@
           ]
         }
       ]
+    },
+    {
+      "kind": "_with_clause_bare",
+      "modelType": "multi",
+      "typeName": "WithClauseBare",
+      "irKey": "withClauseBare",
+      "hidden": true,
+      "nonEmpty": true,
+      "separator": ",",
+      "trailing": true,
+      "elementKinds": [
+        "with_item"
+      ]
+    },
+    {
+      "kind": "_with_clause_paren",
+      "modelType": "container",
+      "typeName": "WithClauseParen",
+      "factoryName": "withClauseParen",
+      "irKey": "withClauseParen",
+      "hidden": false,
+      "children": [
+        {
+          "name": "with_item",
+          "propertyName": "withItem",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "with_item",
+              "unresolved": true
+            }
+          ]
+        }
+      ],
+      "separator": ","
     },
     {
       "kind": "aliased_import",
@@ -8194,23 +8235,122 @@
     },
     {
       "kind": "with_clause",
-      "modelType": "container",
+      "modelType": "polymorph",
       "typeName": "WithClause",
       "factoryName": "withClause",
       "irKey": "withClause",
       "hidden": false,
+      "source": "override",
+      "polymorphSource": "override",
+      "variantChildKinds": [
+        "with_clause_bare",
+        "with_clause_paren"
+      ],
+      "forms": [
+        {
+          "kind": "with_clause__form_bare",
+          "name": "bare",
+          "typeName": "WithClauseUFormBare",
+          "factoryName": "withClauseUFormBare",
+          "irKey": "withClauseUFormBare",
+          "parentKind": "with_clause",
+          "fields": [],
+          "children": [
+            {
+              "name": "with_clause_bare",
+              "propertyName": "withClauseBare",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_with_clause_bare",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "with_clause__form_paren",
+          "name": "paren",
+          "typeName": "WithClauseUFormParen",
+          "factoryName": "withClauseUFormParen",
+          "irKey": "withClauseUFormParen",
+          "parentKind": "with_clause",
+          "fields": [],
+          "children": [
+            {
+              "name": "with_clause_paren",
+              "propertyName": "withClauseParen",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_with_clause_paren",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "with_clause__form_bare",
+      "modelType": "group",
+      "typeName": "WithClauseUFormBare",
+      "factoryName": "withClauseUFormBare",
+      "irKey": "withClauseUFormBare",
+      "hidden": false,
+      "name": "bare",
+      "parentKind": "with_clause",
+      "fields": [],
       "children": [
         {
-          "name": "with_item",
-          "propertyName": "withItem",
+          "name": "with_clause_bare",
+          "propertyName": "withClauseBare",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "with_item",
+              "multiplicity": "single",
+              "name": "_with_clause_bare",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "with_clause__form_paren",
+      "modelType": "group",
+      "typeName": "WithClauseUFormParen",
+      "factoryName": "withClauseUFormParen",
+      "irKey": "withClauseUFormParen",
+      "hidden": false,
+      "name": "paren",
+      "parentKind": "with_clause",
+      "fields": [],
+      "children": [
+        {
+          "name": "with_clause_paren",
+          "propertyName": "withClauseParen",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_with_clause_paren",
               "unresolved": true
             }
           ]

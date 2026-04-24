@@ -577,12 +577,17 @@ export function withStatementFrom(input: T.WithStatement.Loose): ReturnType<type
   });
 }
 
-export function withClauseFrom(...input: readonly (NonNullable<T.WithClause.Config['children']>[number] | T.WithClause)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'with_clause') {
-    const data = input[0];
-    return F.withClause(...(data.$children ?? []));
-  }
-  return F.withClause(...input);
+export function withClauseFrom(input?: T.WithClause.Loose): ReturnType<typeof F.withClause> {
+  if (input !== undefined && isNodeData(input)) return input;
+  return F.withClause(input as Parameters<typeof F.withClause>[0]);
+}
+
+export function withClauseUFormBareFrom(input: Omit<ConfigOf<T.WithClauseUFormBare>, '$variant'>) {
+  return F.withClauseUFormBare(input);
+}
+
+export function withClauseUFormParenFrom(input: Omit<ConfigOf<T.WithClauseUFormParen>, '$variant'>) {
+  return F.withClauseUFormParen(input);
 }
 
 export function withItemFrom(input: T.WithItem.Loose): ReturnType<typeof F.withItem> {

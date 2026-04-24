@@ -130,6 +130,7 @@ export interface IsGuards {
     interpolation<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'interpolation' };
     formatSpecifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'format_specifier' };
     await<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'await' };
+    WithClauseParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_with_clause_paren' };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): v is { readonly $type: K & string };
     statement(v: { readonly $type: string }): v is Statement;
     simpleStatement(v: { readonly $type: string }): v is SimpleStatement;
@@ -256,6 +257,7 @@ export interface AssertGuards {
     interpolation(v: { readonly $type: string }): asserts v is { readonly $type: 'interpolation' };
     formatSpecifier(v: { readonly $type: string }): asserts v is { readonly $type: 'format_specifier' };
     await(v: { readonly $type: string }): asserts v is { readonly $type: 'await' };
+    WithClauseParen(v: { readonly $type: string }): asserts v is { readonly $type: '_with_clause_paren' };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): asserts v is { readonly $type: K & string };
     statement(v: { readonly $type: string }): asserts v is Statement;
     simpleStatement(v: { readonly $type: string }): asserts v is SimpleStatement;
@@ -405,6 +407,7 @@ export const is = {
     interpolation: _g("interpolation"),
     formatSpecifier: _g("format_specifier"),
     await: _g("await"),
+    WithClauseParen: _g("_with_clause_paren"),
     kind: (v: { readonly $type: string }, k: string): boolean => v.$type === k,
     statement: _sg(_supertype_statement),
     simpleStatement: _sg(_supertype_simpleStatement),
@@ -552,6 +555,7 @@ export const assert = {
     interpolation: _makeAssert('interpolation', is.interpolation as _AnyGuard),
     formatSpecifier: _makeAssert('formatSpecifier', is.formatSpecifier as _AnyGuard),
     await: _makeAssert('await', is.await as _AnyGuard),
+    WithClauseParen: _makeAssert('WithClauseParen', is.WithClauseParen as _AnyGuard),
     kind: _makeAssertKind(is.kind as _AnyGuard),
     statement: _makeAssert('statement', is.statement as _AnyGuard),
     simpleStatement: _makeAssert('simpleStatement', is.simpleStatement as _AnyGuard),

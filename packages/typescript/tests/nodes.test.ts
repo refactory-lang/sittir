@@ -875,14 +875,15 @@ describe('unary_expression', () => {
 });
 
 describe('update_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.update({ argument: { $type: 'expression', $text: 'test' } as any, operator: 'test' as any });
+  it('postfix form produces correct type', () => {
+    const node = ir.update.postfix({ argument: { $type: 'expression', $text: 'test' } as any, operator: 'test' as any });
     expect(node.$type).toBe('update_expression');
     expect(node.$source).toBe('factory');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.update({ argument: { $type: 'expression', $text: 'test' } as any, operator: 'test' as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('prefix form produces correct type', () => {
+    const node = ir.update.prefix({ operator: 'test' as any, argument: { $type: 'expression', $text: 'test' } as any });
+    expect(node.$type).toBe('update_expression');
+    expect(node.$source).toBe('factory');
   });
 });
 

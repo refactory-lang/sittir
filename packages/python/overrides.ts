@@ -44,14 +44,12 @@ export default grammar(enrich(base), wire({
         // it trips the derive audit.
 
         // with_clause: bare (`a, b, c`) vs parenthesized (`(a, b, c)`).
-        // Deferred — adoption produces `_with_clause_bare` variant but
-        // template emission folds it into the parent `with_clause.jinja`
-        // (no `_with_clause_bare.jinja` written) while the
-        // renderability check still expects a dedicated template.
-        // Additionally the auto-generated test file passes `{}` to the
-        // paren factory which asserts non-empty children. Fix needs
-        // either template-emission awareness of merged-variant forms or
-        // a renderability-check exemption for the parent-template case.
+        // Same with_item content on both arms; paren form wraps with
+        // '(' ... ')'. Split per variant so each owns its template.
+        with_clause: {
+            0: 'bare',
+            1: 'paren',
+        },
     },
     transforms: {
         // as_pattern: 1 field(s)

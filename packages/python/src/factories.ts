@@ -675,19 +675,44 @@ export function withStatement(config: T.WithStatement.Config) {
   };
 }
 
-export function withClause(...children: T.WithItem[]) {
-  _assertNonEmpty(children, 'with_clause.children');
+export function withClause(config: ConfigOf<T.WithClauseUFormBare>): ReturnType<typeof withClauseUFormBare>;
+export function withClause(config: ConfigOf<T.WithClauseUFormParen>): ReturnType<typeof withClauseUFormParen>;
+export function withClause(config: ConfigOf<T.WithClauseUFormBare> | ConfigOf<T.WithClauseUFormParen>) {
+  switch (config.$variant) {
+    case 'bare': return withClauseUFormBare(config as Parameters<typeof withClauseUFormBare>[0]);
+    case 'paren': return withClauseUFormParen(config as Parameters<typeof withClauseUFormParen>[0]);
+  }
+  throw new Error(`withClause: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'bare' | 'paren'.`);
+}
+export function withClauseUFormBare(config?: Omit<ConfigOf<T.WithClauseUFormBare>, '$variant'>) {
   return {
     $type: 'with_clause' as const,
     $source: 'factory' as const,
     $named: true as const,
+    $variant: 'bare' as const,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.WithClauseUFormBareTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function withClauseUFormParen(config?: Omit<ConfigOf<T.WithClauseUFormParen>, '$variant'>) {
+  const inner = withClauseParen(...(config?.children ?? []));
+  const children = [inner] as const;
+  return {
+    $type: 'with_clause' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'paren' as const,
     $children: children,
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.WithClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.WithClauseUFormParenTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2539,6 +2564,22 @@ export function lineContinuation(text: string) {
   };
 }
 
+export function withClauseParen(...children: T.WithItem[]) {
+  _assertNonEmpty(children, '_with_clause_paren.children');
+  return {
+    $type: '_with_clause_paren' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.WithClauseParenTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function stringStart(text: string) {
   if (text.length === 0) throw new Error(`string_start: text must be non-empty`);
   return {
@@ -2767,6 +2808,7 @@ export type FluentKindMap = {
   "await": FluentNode<"await", T.Await.Config>;
   "comment": T.Comment;
   "line_continuation": T.LineContinuation;
+  "_with_clause_paren": FluentNode<"_with_clause_paren", T.WithClauseParen.Config>;
   "string_start": T.StringStart;
   "_string_content": T._StringContent;
   "escape_interpolation": T.EscapeInterpolation;
@@ -2901,6 +2943,7 @@ export const _factoryMap = {
   "await": await_,
   "comment": comment,
   "line_continuation": lineContinuation,
+  "_with_clause_paren": withClauseParen,
   "string_start": stringStart,
   "_string_content": _stringContent,
   "escape_interpolation": escapeInterpolation,

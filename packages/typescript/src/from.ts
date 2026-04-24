@@ -1141,12 +1141,17 @@ export function unaryExpressionFrom(input: T.UnaryExpression.Loose): ReturnType<
   });
 }
 
-export function updateExpressionFrom(input: T.UpdateExpression.Loose): ReturnType<typeof F.updateExpression> {
-  if (isNodeData(input)) return input;
-  return F.updateExpression({
-    argument: _resolveOne(input.argument, _K0, _super_expression),
-    operator: _resolveOne(input.operator, _K0, _K0),
-  });
+export function updateExpressionFrom(input?: T.UpdateExpression.Loose): ReturnType<typeof F.updateExpression> {
+  if (input !== undefined && isNodeData(input)) return input;
+  return F.updateExpression(input as Parameters<typeof F.updateExpression>[0]);
+}
+
+export function updateExpressionUFormPostfixFrom(input: Omit<ConfigOf<T.UpdateExpressionUFormPostfix>, '$variant'>) {
+  return F.updateExpressionUFormPostfix(input);
+}
+
+export function updateExpressionUFormPrefixFrom(input: Omit<ConfigOf<T.UpdateExpressionUFormPrefix>, '$variant'>) {
+  return F.updateExpressionUFormPrefix(input);
 }
 
 export function sequenceExpressionFrom(...input: readonly (NonNullable<T.SequenceExpression.Config['children']>[number] | T.SequenceExpression)[]) {

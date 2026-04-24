@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   36  (26 applied, 10 held)
+// Rule promotions:   38  (29 applied, 9 held)
 // Repeated shapes:   0  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -90,12 +90,6 @@ export const suggestedTransforms = {
   splat_pattern: {
       "1/0": variant("identifier"),
       "1/1": variant("_"),
-  },
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  with_clause: {
-      "0": variant("form_0"),
-      "1": variant("paren"),
   },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
@@ -201,7 +195,9 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "import_from_statement", classification: "polymorph", applied: false },
   { kind: "pattern_list", classification: "polymorph", applied: false },
   { kind: "splat_pattern", classification: "polymorph", applied: false },
-  { kind: "with_clause", classification: "polymorph", applied: false },
+  { kind: "with_clause", classification: "polymorph", applied: true },
+  { kind: "with_clause_bare", classification: "polymorph", applied: true },
+  { kind: "with_clause_paren", classification: "polymorph", applied: true },
   { kind: "yield", classification: "polymorph", applied: false },
 ];
 

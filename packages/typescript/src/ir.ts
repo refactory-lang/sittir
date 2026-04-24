@@ -77,7 +77,7 @@ export const expression = {
   unary: _attach(F.unaryExpression, { from: FR.unaryExpressionFrom }),
   binary: _attach(F.binaryExpression, { from: FR.binaryExpressionFrom }),
   ternary: _attach(F.ternaryExpression, { from: FR.ternaryExpressionFrom }),
-  update: _attach(F.updateExpression, { from: FR.updateExpressionFrom }),
+  update: _attach(F.updateExpression, { from: FR.updateExpressionFrom, "postfix": _attach(F.updateExpressionUFormPostfix, { from: FR.updateExpressionUFormPostfixFrom }), "prefix": _attach(F.updateExpressionUFormPrefix, { from: FR.updateExpressionUFormPrefixFrom }) }),
   new_: _attach(F.newExpression, { from: FR.newExpressionFrom }),
   yield_: _attach(F.yieldExpression, { from: FR.yieldExpressionFrom }),
 } as const;
@@ -286,7 +286,7 @@ export const ir = {
   ternary: _attach(F.ternaryExpression, { from: FR.ternaryExpressionFrom }),
   binary: _attach(F.binaryExpression, { from: FR.binaryExpressionFrom }),
   unary: _attach(F.unaryExpression, { from: FR.unaryExpressionFrom }),
-  update: _attach(F.updateExpression, { from: FR.updateExpressionFrom }),
+  update: _attach(F.updateExpression, { from: FR.updateExpressionFrom, "postfix": _attach(F.updateExpressionUFormPostfix, { from: FR.updateExpressionUFormPostfixFrom }), "prefix": _attach(F.updateExpressionUFormPrefix, { from: FR.updateExpressionUFormPrefixFrom }) }),
   sequence: _attach(F.sequenceExpression, { from: FR.sequenceExpressionFrom }),
   string: _attach(F.string, { from: FR.stringFrom, "double": _attach(F.stringUFormDouble, { from: FR.stringUFormDoubleFrom }), "single": _attach(F.stringUFormSingle, { from: FR.stringUFormSingleFrom }) }),
   templateString: _attach(F.templateString, { from: FR.templateStringFrom }),

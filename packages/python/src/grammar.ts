@@ -117,7 +117,9 @@ export type PythonGrammar = {
   readonly "union_type": {"type":"union_type","named":true,"fields":{"left":{"multiple":false,"required":true,"types":[{"type":"type","named":true}]},"right":{"multiple":false,"required":true,"types":[{"type":"type","named":true}]}}};
   readonly "while_statement": {"type":"while_statement","named":true,"fields":{"alternative":{"multiple":false,"required":false,"types":[{"type":"else_clause","named":true}]},"body":{"multiple":false,"required":true,"types":[{"type":"block","named":true}]},"condition":{"multiple":false,"required":true,"types":[{"type":"expression","named":true}]}}};
   readonly "wildcard_import": {"type":"wildcard_import","named":true,"fields":{}};
-  readonly "with_clause": {"type":"with_clause","named":true,"fields":{},"children":{"multiple":true,"required":true,"types":[{"type":"with_item","named":true}]}};
+  readonly "with_clause": {"type":"with_clause","named":true,"fields":{},"children":{"multiple":false,"required":true,"types":[{"type":"with_clause_bare","named":true},{"type":"with_clause_paren","named":true}]}};
+  readonly "with_clause_bare": {"type":"with_clause_bare","named":true,"fields":{},"children":{"multiple":true,"required":true,"types":[{"type":"with_item","named":true}]}};
+  readonly "with_clause_paren": {"type":"with_clause_paren","named":true,"fields":{},"children":{"multiple":true,"required":true,"types":[{"type":"with_item","named":true}]}};
   readonly "with_item": {"type":"with_item","named":true,"fields":{"value":{"multiple":false,"required":true,"types":[{"type":"expression","named":true}]}}};
   readonly "with_statement": {"type":"with_statement","named":true,"fields":{"body":{"multiple":false,"required":true,"types":[{"type":"block","named":true}]},"with_clause":{"multiple":false,"required":true,"types":[{"type":"with_clause","named":true}]}}};
   readonly "yield": {"type":"yield","named":true,"fields":{},"children":{"multiple":false,"required":false,"types":[{"type":"expression","named":true},{"type":"expression_list","named":true}]}};

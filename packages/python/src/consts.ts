@@ -8,6 +8,7 @@ export const NODE_KINDS = [
   '_simple_statements',
   '_suite',
   '_tuple_pattern',
+  '_with_clause_paren',
   'aliased_import',
   'argument_list',
   'as_pattern',
@@ -286,6 +287,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_suite': [
   ],
   '_tuple_pattern': [
+  ],
+  '_with_clause_paren': [
   ],
   'aliased_import': [
     { name: 'name', required: true, multiple: false },

@@ -276,6 +276,8 @@ export const enum SyntaxKind {
   CallExpressionMember = '_call_expression_member',
   StringDouble = '_string_double',
   StringSingle = '_string_single',
+  UpdateExpressionPostfix = '_update_expression_postfix',
+  UpdateExpressionPrefix = '_update_expression_prefix',
   HashBangLine = 'hash_bang_line',
   Import = 'import',
   HtmlCharacterReference = 'html_character_reference',
@@ -1277,14 +1279,19 @@ export interface UnaryExpression {
   };
 }
 
-export interface UpdateExpression {
+export interface UpdateExpressionUFormPostfix {
   readonly $type: 'update_expression';
-  readonly $fields: {
-    readonly argument: Expression;
-    readonly operator: "++" | "--";
-  };
+  readonly $variant: 'postfix';
+  readonly $children: readonly [UpdateExpressionPostfix];
 }
 
+export interface UpdateExpressionUFormPrefix {
+  readonly $type: 'update_expression';
+  readonly $variant: 'prefix';
+  readonly $children: readonly [UpdateExpressionPrefix];
+}
+
+export type UpdateExpression = UpdateExpressionUFormPostfix | UpdateExpressionUFormPrefix;
 export interface SequenceExpression {
   readonly $type: 'sequence_expression';
   readonly $children: NonEmptyArray<Expression>;
@@ -2237,6 +2244,22 @@ export interface StringSingle {
   readonly $children: readonly (UnescapedSingleStringFragment | EscapeSequence)[];
 }
 
+export interface UpdateExpressionPostfix {
+  readonly $type: 'update_expression_postfix';
+  readonly $fields: {
+    readonly argument: Expression;
+    readonly operator: "++" | "--";
+  };
+}
+
+export interface UpdateExpressionPrefix {
+  readonly $type: 'update_expression_prefix';
+  readonly $fields: {
+    readonly operator: "++" | "--";
+    readonly argument: Expression;
+  };
+}
+
 
 // Leaf node types
 export type HashBangLine = Terminal<"hash_bang_line", string>;
@@ -2372,6 +2395,8 @@ export interface TernaryExpressionTree extends TreeNode<'ternary_expression'> {}
 export interface BinaryExpressionTree extends TreeNode<'binary_expression'> {}
 export interface UnaryExpressionTree extends TreeNode<'unary_expression'> {}
 export interface UpdateExpressionTree extends TreeNode<'update_expression'> {}
+export interface UpdateExpressionUFormPostfixTree extends TreeNode<'update_expression'> {}
+export interface UpdateExpressionUFormPrefixTree extends TreeNode<'update_expression'> {}
 export interface SequenceExpressionTree extends TreeNode<'sequence_expression'> {}
 export interface StringTree extends TreeNode<'string'> {}
 export interface StringUFormDoubleTree extends TreeNode<'string'> {}
@@ -2498,6 +2523,8 @@ export interface CallExpressionTemplateCallTree extends AnyTreeNode { readonly t
 export interface CallExpressionMemberTree extends AnyTreeNode { readonly type: "_call_expression_member"; }
 export interface StringDoubleTree extends AnyTreeNode { readonly type: "_string_double"; }
 export interface StringSingleTree extends AnyTreeNode { readonly type: "_string_single"; }
+export interface UpdateExpressionPostfixTree extends AnyTreeNode { readonly type: "_update_expression_postfix"; }
+export interface UpdateExpressionPrefixTree extends AnyTreeNode { readonly type: "_update_expression_prefix"; }
 export interface HashBangLineTree extends TreeNode<'hash_bang_line'> {}
 export interface ImportTree extends AnyTreeNode { readonly type: "import"; }
 export interface HtmlCharacterReferenceTree extends AnyTreeNode { readonly type: "html_character_reference"; }
@@ -3053,6 +3080,8 @@ export type TypescriptNode =
   | CallExpressionMember
   | StringDouble
   | StringSingle
+  | UpdateExpressionPostfix
+  | UpdateExpressionPrefix
 ;
 
 export interface KindMap {
@@ -3254,6 +3283,8 @@ export interface KindMap {
   '_call_expression_member': CallExpressionMember;
   '_string_double': StringDouble;
   '_string_single': StringSingle;
+  '_update_expression_postfix': UpdateExpressionPostfix;
+  '_update_expression_prefix': UpdateExpressionPrefix;
   'hash_bang_line': HashBangLine;
   'import': Import;
   'html_character_reference': HtmlCharacterReference;
@@ -3298,6 +3329,7 @@ export interface VariantMap {
   'class_heritage': { extends_clause: ClassHeritageUFormExtendsClause; implements_clause: ClassHeritageUFormImplementsClause };
   'arrow_function': { parameter: ArrowFunctionUFormParameter; _call_signature: ArrowFunctionUFormUCallSignature };
   'call_expression': { call: CallExpressionUFormCall; template_call: CallExpressionUFormTemplateCall; member: CallExpressionUFormMember };
+  'update_expression': { postfix: UpdateExpressionUFormPostfix; prefix: UpdateExpressionUFormPrefix };
   'string': { double: StringUFormDouble; single: StringUFormSingle };
   'index_signature': { colon: IndexSignatureUFormColon; mapped_type_clause: IndexSignatureUFormMappedTypeClause };
   '_export_statement_default': { form0: ExportStatementDefaultForm0; form1: ExportStatementDefaultForm1 };
@@ -3502,6 +3534,8 @@ export interface CallExpressionTemplateCallNs extends NodeNs<CallExpressionTempl
 export interface CallExpressionMemberNs extends NodeNs<CallExpressionMember, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface StringDoubleNs extends NodeNs<StringDouble, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface StringSingleNs extends NodeNs<StringSingle, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface UpdateExpressionPostfixNs extends NodeNs<UpdateExpressionPostfix, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface UpdateExpressionPrefixNs extends NodeNs<UpdateExpressionPrefix, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 
 export interface NamespaceMap {
   'program': ProgramNs;
@@ -3702,6 +3736,8 @@ export interface NamespaceMap {
   '_call_expression_member': CallExpressionMemberNs;
   '_string_double': StringDoubleNs;
   '_string_single': StringSingleNs;
+  '_update_expression_postfix': UpdateExpressionPostfixNs;
+  '_update_expression_prefix': UpdateExpressionPrefixNs;
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -5105,4 +5141,18 @@ export namespace StringSingle {
   export type Loose = LooseFor<'_string_single'>;
   export type Tree = TreeFor<'_string_single'>;
   export type Kind = '_string_single';
+}
+export namespace UpdateExpressionPostfix {
+  export type Config = ConfigFor<'_update_expression_postfix'>;
+  export type Fluent = FluentFor<'_update_expression_postfix'>;
+  export type Loose = LooseFor<'_update_expression_postfix'>;
+  export type Tree = TreeFor<'_update_expression_postfix'>;
+  export type Kind = '_update_expression_postfix';
+}
+export namespace UpdateExpressionPrefix {
+  export type Config = ConfigFor<'_update_expression_prefix'>;
+  export type Fluent = FluentFor<'_update_expression_prefix'>;
+  export type Loose = LooseFor<'_update_expression_prefix'>;
+  export type Tree = TreeFor<'_update_expression_prefix'>;
+  export type Kind = '_update_expression_prefix';
 }

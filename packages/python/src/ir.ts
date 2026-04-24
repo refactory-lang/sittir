@@ -180,7 +180,7 @@ export const ir = {
   exceptClause: _attach(F.exceptClause, { from: FR.exceptClauseFrom }),
   finallyClause: _attach(F.finallyClause, { from: FR.finallyClauseFrom }),
   withStatement: _attach(F.withStatement, { from: FR.withStatementFrom }),
-  withClause: _attach(F.withClause, { from: FR.withClauseFrom }),
+  withClause: _attach(F.withClause, { from: FR.withClauseFrom, "bare": _attach(F.withClauseUFormBare, { from: FR.withClauseUFormBareFrom }), "paren": _attach(F.withClauseUFormParen, { from: FR.withClauseUFormParenFrom }) }),
   withItem: _attach(F.withItem, { from: FR.withItemFrom }),
   functionDefinition: _attach(F.functionDefinition, { from: FR.functionDefinitionFrom }),
   parameters: _attach(F.parameters, { from: FR.parametersFrom }),

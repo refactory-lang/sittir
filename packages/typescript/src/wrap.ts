@@ -880,9 +880,7 @@ export function wrapUnaryExpression(data: _NodeData, tree: TreeHandle): WrappedN
 export function wrapUpdateExpression(data: _NodeData, tree: TreeHandle): WrappedNode<UpdateExpression> {
   return {
     ...data,
-    get argument() { return drillIn(data.$fields?.['argument'], tree); },
-    get operator() { return drillIn(data.$fields?.['operator'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<UpdateExpression>;
 }
 

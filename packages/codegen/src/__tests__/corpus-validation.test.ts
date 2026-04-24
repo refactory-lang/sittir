@@ -272,6 +272,11 @@ const ALIAS_VARIANT_KINDS: Record<string, Set<string>> = {
     python: new Set([
         'assignment_eq', 'assignment_type', 'assignment_typed',
         'format_expression',
+        // with_clause variant adoption: the `bare` form is `seq(with_item,
+        // repeat(','+with_item), optional(','))` — classifyHiddenSeqRule
+        // folds this into modelType=multi (repeat helper), which renders
+        // inline at the referrer rather than owning its own template.
+        'with_clause_bare',
     ]),
     rust: new Set([
         'closure_expression_block', 'closure_expression_expr',

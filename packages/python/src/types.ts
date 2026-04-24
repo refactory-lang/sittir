@@ -173,6 +173,7 @@ export const enum SyntaxKind {
   AssignmentEq = '_assignment_eq',
   AssignmentType = '_assignment_type',
   AssignmentTyped = '_assignment_typed',
+  WithClauseParen = '_with_clause_paren',
   ImportPrefix = 'import_prefix',
   PassStatement = 'pass_statement',
   BreakStatement = 'break_statement',
@@ -604,11 +605,18 @@ export interface WithStatement {
   };
 }
 
-export interface WithClause {
+export interface WithClauseUFormBare {
   readonly $type: 'with_clause';
-  readonly $children: NonEmptyArray<WithItem>;
+  readonly $variant: 'bare';
 }
 
+export interface WithClauseUFormParen {
+  readonly $type: 'with_clause';
+  readonly $variant: 'paren';
+  readonly $children: readonly [WithClauseParen];
+}
+
+export type WithClause = WithClauseUFormBare | WithClauseUFormParen;
 export interface WithItem {
   readonly $type: 'with_item';
   readonly $fields: {
@@ -1238,6 +1246,11 @@ export interface AssignmentTyped {
   };
 }
 
+export interface WithClauseParen {
+  readonly $type: 'with_clause_paren';
+  readonly $children: NonEmptyArray<WithItem>;
+}
+
 
 // Leaf node types
 export type ImportPrefix = Terminal<"import_prefix", string>;
@@ -1302,6 +1315,8 @@ export interface ExceptClauseTree extends TreeNode<'except_clause'> {}
 export interface FinallyClauseTree extends TreeNode<'finally_clause'> {}
 export interface WithStatementTree extends TreeNode<'with_statement'> {}
 export interface WithClauseTree extends TreeNode<'with_clause'> {}
+export interface WithClauseUFormBareTree extends TreeNode<'with_clause'> {}
+export interface WithClauseUFormParenTree extends TreeNode<'with_clause'> {}
 export interface WithItemTree extends TreeNode<'with_item'> {}
 export interface FunctionDefinitionTree extends TreeNode<'function_definition'> {}
 export interface ParametersTree extends TreeNode<'parameters'> {}
@@ -1390,6 +1405,7 @@ export interface AwaitTree extends TreeNode<'await'> {}
 export interface AssignmentEqTree extends AnyTreeNode { readonly type: "_assignment_eq"; }
 export interface AssignmentTypeTree extends AnyTreeNode { readonly type: "_assignment_type"; }
 export interface AssignmentTypedTree extends AnyTreeNode { readonly type: "_assignment_typed"; }
+export interface WithClauseParenTree extends AnyTreeNode { readonly type: "_with_clause_paren"; }
 export interface ImportPrefixTree extends TreeNode<'import_prefix'> {}
 export interface PassStatementTree extends AnyTreeNode { readonly type: "pass_statement"; }
 export interface BreakStatementTree extends AnyTreeNode { readonly type: "break_statement"; }
@@ -1743,6 +1759,7 @@ export type PythonNode =
   | AssignmentEq
   | AssignmentType
   | AssignmentTyped
+  | WithClauseParen
 ;
 
 export interface KindMap {
@@ -1860,6 +1877,7 @@ export interface KindMap {
   '_assignment_eq': AssignmentEq;
   '_assignment_type': AssignmentType;
   '_assignment_typed': AssignmentTyped;
+  '_with_clause_paren': WithClauseParen;
   'import_prefix': ImportPrefix;
   'pass_statement': PassStatement;
   'break_statement': BreakStatement;
@@ -1891,6 +1909,7 @@ export interface KindMap {
 
 export interface VariantMap {
   '_match_block': { form0: MatchBlockForm0; form1: MatchBlockForm1 };
+  'with_clause': { bare: WithClauseUFormBare; paren: WithClauseUFormParen };
   'assignment': { eq: AssignmentUFormEq; type: AssignmentUFormType; typed: AssignmentUFormTyped };
 }
 
@@ -2009,6 +2028,7 @@ export interface AwaitNs extends NodeNs<Await, LeafScalarMap, LeafStringMap, Nam
 export interface AssignmentEqNs extends NodeNs<AssignmentEq, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentTypeNs extends NodeNs<AssignmentType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentTypedNs extends NodeNs<AssignmentTyped, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface WithClauseParenNs extends NodeNs<WithClauseParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 
 export interface NamespaceMap {
   'module': ModuleNs;
@@ -2125,6 +2145,7 @@ export interface NamespaceMap {
   '_assignment_eq': AssignmentEqNs;
   '_assignment_type': AssignmentTypeNs;
   '_assignment_typed': AssignmentTypedNs;
+  '_with_clause_paren': WithClauseParenNs;
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -2931,4 +2952,11 @@ export namespace AssignmentTyped {
   export type Loose = LooseFor<'_assignment_typed'>;
   export type Tree = TreeFor<'_assignment_typed'>;
   export type Kind = '_assignment_typed';
+}
+export namespace WithClauseParen {
+  export type Config = ConfigFor<'_with_clause_paren'>;
+  export type Fluent = FluentFor<'_with_clause_paren'>;
+  export type Loose = LooseFor<'_with_clause_paren'>;
+  export type Tree = TreeFor<'_with_clause_paren'>;
+  export type Kind = '_with_clause_paren';
 }

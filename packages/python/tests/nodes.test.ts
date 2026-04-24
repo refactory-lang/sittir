@@ -319,8 +319,13 @@ describe('with_statement', () => {
 });
 
 describe('with_clause', () => {
-  it('factory produces correct type', () => {
-    const node = ir.withClause({ type: "with_item" } as never);
+  it('bare form produces correct type', () => {
+    const node = ir.withClause.bare({});
+    expect(node.$type).toBe('with_clause');
+    expect(node.$source).toBe('factory');
+  });
+  it('paren form produces correct type', () => {
+    const node = ir.withClause.paren({ children: [{ $type: 'with_item', $text: 'test' } as any] });
     expect(node.$type).toBe('with_clause');
     expect(node.$source).toBe('factory');
   });

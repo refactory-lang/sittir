@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 388,
+  "nodeCount": 392,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -68,6 +68,8 @@
     "parenthesized_expression__form_typed",
     "string__form_double",
     "string__form_single",
+    "update_expression__form_postfix",
+    "update_expression__form_prefix",
     "variable_declarator_form0",
     "variable_declarator_form1"
   ],
@@ -3577,6 +3579,124 @@
               "predefined_type",
               "string",
               "number"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "_update_expression_postfix",
+      "modelType": "group",
+      "typeName": "UpdateExpressionPostfix",
+      "irKey": "updateExpressionPostfix",
+      "hidden": true,
+      "name": "_update_expression_postfix",
+      "fields": [
+        {
+          "name": "argument",
+          "propertyName": "argument",
+          "paramName": "argument",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "expression",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression"
+            ]
+          }
+        },
+        {
+          "name": "operator",
+          "propertyName": "operator",
+          "paramName": "operator",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "++"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "--"
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "_update_expression_prefix",
+      "modelType": "group",
+      "typeName": "UpdateExpressionPrefix",
+      "irKey": "updateExpressionPrefix",
+      "hidden": true,
+      "name": "_update_expression_prefix",
+      "fields": [
+        {
+          "name": "operator",
+          "propertyName": "operator",
+          "paramName": "operator",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "++"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "--"
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
+          "name": "argument",
+          "propertyName": "argument",
+          "paramName": "argument",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "expression",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression"
             ]
           }
         }
@@ -17008,16 +17128,86 @@
     },
     {
       "kind": "update_expression",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "UpdateExpression",
       "factoryName": "updateExpression",
       "irKey": "update",
       "hidden": false,
-      "fields": [
+      "source": "override",
+      "polymorphSource": "override",
+      "variantChildKinds": [
+        "update_expression_postfix",
+        "update_expression_prefix"
+      ],
+      "forms": [
         {
-          "name": "argument",
-          "propertyName": "argument",
-          "paramName": "argument",
+          "kind": "update_expression__form_postfix",
+          "name": "postfix",
+          "typeName": "UpdateExpressionUFormPostfix",
+          "factoryName": "updateExpressionUFormPostfix",
+          "irKey": "updateExpressionUFormPostfix",
+          "parentKind": "update_expression",
+          "fields": [],
+          "children": [
+            {
+              "name": "update_expression_postfix",
+              "propertyName": "updateExpressionPostfix",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_update_expression_postfix",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "update_expression__form_prefix",
+          "name": "prefix",
+          "typeName": "UpdateExpressionUFormPrefix",
+          "factoryName": "updateExpressionUFormPrefix",
+          "irKey": "updateExpressionUFormPrefix",
+          "parentKind": "update_expression",
+          "fields": [],
+          "children": [
+            {
+              "name": "update_expression_prefix",
+              "propertyName": "updateExpressionPrefix",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_update_expression_prefix",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "update_expression__form_postfix",
+      "modelType": "group",
+      "typeName": "UpdateExpressionUFormPostfix",
+      "factoryName": "updateExpressionUFormPostfix",
+      "irKey": "updateExpressionUFormPostfix",
+      "hidden": false,
+      "name": "postfix",
+      "parentKind": "update_expression",
+      "fields": [],
+      "children": [
+        {
+          "name": "update_expression_postfix",
+          "propertyName": "updateExpressionPostfix",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -17025,45 +17215,40 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "expression",
+              "name": "_update_expression_postfix",
               "unresolved": true
             }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "expression"
-            ]
-          }
-        },
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "update_expression__form_prefix",
+      "modelType": "group",
+      "typeName": "UpdateExpressionUFormPrefix",
+      "factoryName": "updateExpressionUFormPrefix",
+      "irKey": "updateExpressionUFormPrefix",
+      "hidden": false,
+      "name": "prefix",
+      "parentKind": "update_expression",
+      "fields": [],
+      "children": [
         {
-          "name": "operator",
-          "propertyName": "operator",
-          "paramName": "operator",
+          "name": "update_expression_prefix",
+          "propertyName": "updateExpressionPrefix",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "++"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "--"
+              "name": "_update_expression_prefix",
+              "unresolved": true
             }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
+          ]
         }
-      ],
-      "children": []
+      ]
     },
     {
       "kind": "using",

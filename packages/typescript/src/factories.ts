@@ -2088,24 +2088,79 @@ export function unaryExpression(config: T.UnaryExpression.Config) {
   };
 }
 
-export function updateExpression(config: T.UpdateExpression.Config) {
-  const fields = {
-    argument: config.argument,
-    operator: config.operator,
+export function updateExpression(config: ConfigOf<T.UpdateExpressionUFormPostfix>): ReturnType<typeof updateExpressionUFormPostfix>;
+export function updateExpression(config: ConfigOf<T.UpdateExpressionUFormPrefix>): ReturnType<typeof updateExpressionUFormPrefix>;
+export function updateExpression(config: ConfigOf<T.UpdateExpressionUFormPostfix> | ConfigOf<T.UpdateExpressionUFormPrefix>) {
+  switch (config.$variant) {
+    case 'postfix': return updateExpressionUFormPostfix(config as Parameters<typeof updateExpressionUFormPostfix>[0]);
+    case 'prefix': return updateExpressionUFormPrefix(config as Parameters<typeof updateExpressionUFormPrefix>[0]);
+  }
+  throw new Error(`updateExpression: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'postfix' | 'prefix'.`);
+}
+export function updateExpressionUFormPostfix(config: Omit<ConfigOf<T.UpdateExpressionUFormPostfix>, '$variant'>) {
+  const inner = {
+    $type: 'update_expression_postfix' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: {
+      argument: config.argument,
+      operator: config.operator,
+    },
   };
+  const children = [inner] as const;
   return {
     $type: 'update_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
-    argument(value?: T.Expression) { return _fs(config, updateExpression, 'argument', value, config?.argument); },
-    operator(value?: "++" | "--") { return _fs(config, updateExpression, 'operator', value, config?.operator); },
+    $variant: 'postfix' as const,
+    $children: children,
+    argument(value?: T.Expression) {
+      if (value === undefined) return inner.$fields.argument;
+      return updateExpressionUFormPostfix({ operator: inner.$fields.operator, argument: value });
+    },
+    operator(value?: "++" | "--") {
+      if (value === undefined) return inner.$fields.operator;
+      return updateExpressionUFormPostfix({ argument: inner.$fields.argument, operator: value });
+    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.UpdateExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.UpdateExpressionUFormPostfixTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function updateExpressionUFormPrefix(config: Omit<ConfigOf<T.UpdateExpressionUFormPrefix>, '$variant'>) {
+  const inner = {
+    $type: 'update_expression_prefix' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: {
+      operator: config.operator,
+      argument: config.argument,
+    },
+  };
+  const children = [inner] as const;
+  return {
+    $type: 'update_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'prefix' as const,
+    $children: children,
+    operator(value?: "++" | "--") {
+      if (value === undefined) return inner.$fields.operator;
+      return updateExpressionUFormPrefix({ argument: inner.$fields.argument, operator: value });
+    },
+    argument(value?: T.Expression) {
+      if (value === undefined) return inner.$fields.argument;
+      return updateExpressionUFormPrefix({ operator: inner.$fields.operator, argument: value });
+    },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.UpdateExpressionUFormPrefixTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
