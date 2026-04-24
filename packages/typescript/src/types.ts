@@ -780,7 +780,7 @@ export interface SwitchStatement {
 export interface ForStatement {
   readonly $type: 'for_statement';
   readonly $fields: {
-    readonly initializer: LexicalDeclaration | VariableDeclaration | Expressions | EmptyStatement;
+    readonly initializer: LexicalDeclaration | VariableDeclaration;
     readonly condition: Expressions | EmptyStatement;
     readonly increment?: Expressions;
     readonly body: Statement;

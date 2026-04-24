@@ -389,6 +389,7 @@ function isTokenLikeChoiceMember(m: Rule): boolean {
     const peel = (r: Rule): Rule =>
         r.type === 'alias' ? peel(r.content)
         : r.type === 'token' ? peel(r.content)
+        : r.type === 'variant' ? peel(r.content)
         : r
     const core = peel(m)
     if (core.type === 'symbol' || core.type === 'supertype' || core.type === 'enum') return true
@@ -403,6 +404,12 @@ function isTokenLikeChoiceMember(m: Rule): boolean {
     // branching to a choice arm.
     if (core.type === 'indent' || core.type === 'dedent' || core.type === 'newline') return true
     if (core.type === 'terminal') return true
+    // `optional(token-like)` preserves the union shape — the branch
+    // contributes either the wrapped token or nothing. Rust's
+    // `reference_expression` has `choice(choice-of-syms, optional(sym))`
+    // for the raw-pointer-modifier spot; both arms are union-safe even
+    // though one is an optional. Recurse to classify the inner.
+    if (core.type === 'optional') return isTokenLikeChoiceMember(core.content)
     // Nested choice of token-like members — simplify should have
     // flattened this, but when flattening is blocked (e.g. by a
     // variant wrapper on the inner choice), the nested shape is still

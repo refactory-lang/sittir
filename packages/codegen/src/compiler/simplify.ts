@@ -91,9 +91,14 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
             return { type: 'seq', members }
         }
         case 'choice': {
-            const members = rule.members.map(m =>
-                m.type === 'variant' ? simplifyRule(m.content, wordMatcher, inField) : simplifyRule(m, wordMatcher, inField)
-            )
+            // Preserve variant wrappers — `mergeChoiceBranches` relies
+            // on them to detect polymorph surfaces (if any branch is
+            // variant-wrapped, the choice is intentionally
+            // heterogeneous and must NOT be merged into a flat seq).
+            // The `variant` case below recurses into variant content
+            // normally, so wrappers survive without blocking inner
+            // simplification.
+            const members = rule.members.map(m => simplifyRule(m, wordMatcher, inField))
             // Fold empty-matching members out of the choice and wrap the
             // remainder in `optional`. Tree-sitter's external-token
             // placeholder surfaces as `pattern("")`, which matches the
@@ -107,10 +112,16 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
                 const inner: Rule = nonEmpty.length === 1
                     ? nonEmpty[0]!
                     : { type: 'choice', members: nonEmpty }
-                return { type: 'optional', content: inner }
+                return simplifyRule({ type: 'optional', content: inner }, wordMatcher, inField)
             }
             if (members.length === 1) return members[0]!
-            return { type: 'choice', members }
+            // Merge structurally-equivalent choice branches so same-
+            // named fields across branches fuse into a single field
+            // with union content (spec 013). Closes `BinaryExpression.
+            // operator: AutoStamp<"&&">`-style bugs where derivation
+            // walked an uncanonical tree and silently dropped
+            // duplicate-named field occurrences across choice branches.
+            return mergeChoiceBranches({ type: 'choice', members })
         }
         case 'optional': {
             const inner = simplifyRule(rule.content, wordMatcher, inField)
@@ -133,18 +144,23 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
             if (!inField && inner.type === 'string' && !isKeywordShape(inner.value, wordMatcher)) {
                 return { type: 'seq', members: [] }
             }
-            // Preserve the optional wrapper — `deriveFieldsRaw` /
-            // `walkForChildren` thread an `isOptional` flag from this
-            // node to mark the downstream slot as non-required.
-            return { type: 'optional', content: inner }
+            // Hoist a nested field out — `optional(field(n, X))` is
+            // equivalent to `field(n, optional(X))` for derivation, and
+            // fields belong at the top so the walker's trivial form
+            // applies. See `hoistFieldOutOfSingleContentWrapper`.
+            return hoistFieldOutOfSingleContentWrapper({ type: 'optional', content: inner })
         }
-        case 'repeat':
+        case 'repeat': {
             // Preserve the repeat wrapper AND its metadata
             // (separator / trailing / leading) — derivation reads them
             // to stamp `multiple: true` and attach joinBy hints.
-            return { ...rule, content: simplifyRule(rule.content, wordMatcher, inField) }
-        case 'repeat1':
-            return { ...rule, content: simplifyRule(rule.content, wordMatcher, inField) }
+            const next = { ...rule, content: simplifyRule(rule.content, wordMatcher, inField) }
+            return hoistFieldOutOfSingleContentWrapper(next)
+        }
+        case 'repeat1': {
+            const next = { ...rule, content: simplifyRule(rule.content, wordMatcher, inField) }
+            return hoistFieldOutOfSingleContentWrapper(next)
+        }
         case 'field':
             // Recurse into the field's content so inner anonymous
             // delimiters get stripped. The field wrapper itself stays
@@ -219,7 +235,7 @@ function normalizeToFixpoint(rule: Rule, wordMatcher: RegExp | undefined, rules:
     const MAX_ITERS = 16
     let current = rule
     for (let i = 0; i < MAX_ITERS; i++) {
-        const next = canonicalize(simplifyRule(inlineGroupRefs(current, rules), wordMatcher))
+        const next = simplifyRule(inlineGroupRefs(current, rules), wordMatcher)
         if (rulesStructurallyEqual(current, next)) return next
         current = next
     }
@@ -286,44 +302,37 @@ function rulesStructurallyEqual(a: Rule, b: Rule): boolean {
 //       field('operator', choice('&&', '||', '+')),
 //       field('right', E),
 //     )
-export function canonicalize(rule: Rule): Rule {
-    // Recurse into content / members FIRST (bottom-up), then apply the
-    // transformations at this level. Each pass expects its input to
-    // already be in canonical form below.
-    const recursed = recurseCanonicalize(rule)
-    if (recursed.type === 'choice') return mergeChoiceBranches(recursed)
-    return recursed
-}
-
 /**
- * Recurse canonicalize into a rule's content / members. Leaves atomic
- * rules (strings, patterns, symbols, supertypes, enums, terminals,
- * indent/dedent/newline) untouched.
+ * Pull a `field()` wrapper OUT of a single-content structural wrapper
+ * (`repeat` / `repeat1` / `optional`), so the field's name ends up at
+ * the outer structural level:
+ *
+ *   repeat(field('name', X))   → field('name', repeat(X))
+ *   repeat1(field('name', X))  → field('name', repeat1(X))
+ *   optional(field('name', X)) → field('name', optional(X))
+ *
+ * Rationale: the derive walker's trivial form wants fields directly
+ * under a seq (or as the top-level rule). Keeping fields buried under
+ * structural wrappers forces the walker to thread multiplicity down
+ * through each wrapper and unwrap on the way back up. Tree-sitter's
+ * field semantics are insensitive to this rewrite — a field can match
+ * zero, one, or many children either way — so it's a non-lossy
+ * canonicalization.
+ *
+ * Interplay: after this fires, adjacent fields with the same name are
+ * still distinct entries; `mergeChoiceBranches` + the fixpoint loop
+ * further collapse `choice(field('n', X), field('n', Y))` into
+ * `field('n', choice(X, Y))`, and eventually into unified top-level
+ * field seqs. Preserves the repeat's `separator` / `trailing` /
+ * `leading` metadata — the walker reads those when stamping joinBy
+ * hints.
  */
-function recurseCanonicalize(rule: Rule): Rule {
-    switch (rule.type) {
-        case 'seq':
-        case 'choice':
-            return { ...rule, members: rule.members.map(canonicalize) } as Rule
-        case 'optional':
-        case 'repeat':
-        case 'repeat1':
-        case 'field':
-        case 'group':
-        case 'variant':
-        case 'clause':
-        case 'token':
-        case 'terminal':
-        case 'alias':
-            return { ...rule, content: canonicalize((rule as { content: Rule }).content) } as Rule
-        case 'polymorph':
-            return {
-                ...rule,
-                forms: rule.forms.map(f => ({ ...f, content: canonicalize(f.content) })),
-            }
-        default:
-            return rule
-    }
+function hoistFieldOutOfSingleContentWrapper(rule: Rule): Rule {
+    if (rule.type !== 'optional' && rule.type !== 'repeat' && rule.type !== 'repeat1') return rule
+    const inner = rule.content
+    if (inner.type !== 'field') return rule
+    const wrapper: Rule = { ...rule, content: inner.content }
+    return { ...inner, content: wrapper }
 }
 
 /**

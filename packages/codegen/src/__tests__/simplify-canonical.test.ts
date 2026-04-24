@@ -1,8 +1,8 @@
 /**
- * Tests for the spec-013 `canonicalize` transformation pipeline.
+ * Tests for the spec-013 `simplifyRule` transformation pipeline.
  *
  * Each test freezes the canonical shape produced for a minimal input
- * fragment. The canonicalize function is idempotent — running it
+ * fragment. The simplifyRule function is idempotent — running it
  * twice produces the same output — and shape-preserving for rules
  * that are already canonical or don't match the merge-compatible
  * pattern.
@@ -10,7 +10,7 @@
 
 import { describe, it, expect } from 'vitest'
 import type { Rule } from '../compiler/rule.ts'
-import { canonicalize } from '../compiler/simplify.ts'
+import { simplifyRule } from '../compiler/simplify.ts'
 
 const str = (value: string): Rule => ({ type: 'string', value })
 const sym = (name: string): Rule => ({ type: 'symbol', name })
@@ -20,7 +20,7 @@ const seq = (...members: Rule[]): Rule => ({ type: 'seq', members })
 const choice = (...members: Rule[]): Rule => ({ type: 'choice', members })
 const variant = (name: string, content: Rule): Rule => ({ type: 'variant', name, content })
 
-describe('canonicalize — mergeChoiceBranches', () => {
+describe('simplifyRule — mergeChoiceBranches', () => {
     it('merges same-shape branches that differ only in one field\'s literal', () => {
         // Pattern: binary_expression. Each arm same seq shape with
         // different literal for operator.
@@ -34,7 +34,7 @@ describe('canonicalize — mergeChoiceBranches', () => {
             field('op', choice(str('&&'), str('||'), str('+'))),
             field('right', sym('expr')),
         )
-        expect(canonicalize(input)).toEqual(expected)
+        expect(simplifyRule(input)).toEqual(expected)
     })
 
     it('merges two-branch choice with identical shape + differing field content', () => {
@@ -45,7 +45,7 @@ describe('canonicalize — mergeChoiceBranches', () => {
         )
         const expected = field('kind', choice(str('var'), str('let'), str('const')))
         // seq of one member collapses to the member.
-        expect(canonicalize(input)).toEqual(expected)
+        expect(simplifyRule(input)).toEqual(expected)
     })
 
     it('preserves non-field positions as-is when identical across branches', () => {
@@ -54,7 +54,7 @@ describe('canonicalize — mergeChoiceBranches', () => {
             seq(sym('expr'), field('op', str('-')), sym('expr')),
         )
         const expected = seq(sym('expr'), field('op', choice(str('+'), str('-'))), sym('expr'))
-        expect(canonicalize(input)).toEqual(expected)
+        expect(simplifyRule(input)).toEqual(expected)
     })
 
     it('does NOT merge when branches differ in LENGTH', () => {
@@ -65,8 +65,8 @@ describe('canonicalize — mergeChoiceBranches', () => {
         // Structurally heterogeneous (different lengths) — polymorph /
         // enum classification downstream handles this. Canonicalize
         // returns the shape unchanged (its members have themselves been
-        // bottom-up canonicalized, but the outer choice stays).
-        const result = canonicalize(input) as { type: 'choice'; members: Rule[] }
+        // bottom-up simplifyRuled, but the outer choice stays).
+        const result = simplifyRule(input) as { type: 'choice'; members: Rule[] }
         expect(result.type).toBe('choice')
         expect(result.members.length).toBe(2)
     })
@@ -79,7 +79,7 @@ describe('canonicalize — mergeChoiceBranches', () => {
             field('const', sym('_kw_const')),
             field('unsafe', sym('_kw_unsafe')),
         )
-        const result = canonicalize(input) as { type: 'choice'; members: Rule[] }
+        const result = simplifyRule(input) as { type: 'choice'; members: Rule[] }
         expect(result.type).toBe('choice')
         expect(result.members.length).toBe(3)
     })
@@ -90,7 +90,7 @@ describe('canonicalize — mergeChoiceBranches', () => {
             seq(field('op', str('='))),
             seq(sym('assignment_expression')),
         )
-        const result = canonicalize(input) as { type: 'choice'; members: Rule[] }
+        const result = simplifyRule(input) as { type: 'choice'; members: Rule[] }
         expect(result.type).toBe('choice')
     })
 
@@ -103,7 +103,7 @@ describe('canonicalize — mergeChoiceBranches', () => {
             variant('a', seq(field('op', str('+')), field('r', sym('expr')))),
             variant('b', seq(field('op', str('-')), field('r', sym('expr')))),
         )
-        const result = canonicalize(input) as { type: 'choice'; members: Rule[] }
+        const result = simplifyRule(input) as { type: 'choice'; members: Rule[] }
         expect(result.type).toBe('choice')
         expect(result.members).toHaveLength(2)
         expect(result.members[0]!.type).toBe('variant')
@@ -122,16 +122,16 @@ describe('canonicalize — mergeChoiceBranches', () => {
             field('op', choice(str('+'), str('-'))),
             field('r', sym('expr')),
         )
-        expect(canonicalize(input)).toEqual(expected)
+        expect(simplifyRule(input)).toEqual(expected)
     })
 
-    it('is idempotent — running canonicalize twice is a no-op', () => {
+    it('is idempotent — running simplifyRule twice is a no-op', () => {
         const input = choice(
             seq(field('op', str('+')), field('r', sym('expr'))),
             seq(field('op', str('-')), field('r', sym('expr'))),
         )
-        const once = canonicalize(input)
-        const twice = canonicalize(once)
+        const once = simplifyRule(input)
+        const twice = simplifyRule(once)
         expect(twice).toEqual(once)
     })
 
@@ -139,13 +139,16 @@ describe('canonicalize — mergeChoiceBranches', () => {
         const input = choice(sym('a'), sym('b'), sym('c'))
         // No seq structure to merge — stays as a choice. Supertype /
         // enum classification handles this kind downstream.
-        const result = canonicalize(input) as { type: 'choice'; members: Rule[] }
+        const result = simplifyRule(input) as { type: 'choice'; members: Rule[] }
         expect(result.type).toBe('choice')
         expect(result.members).toHaveLength(3)
     })
 
     it('recurses bottom-up: nested mergeable choice inside a seq gets merged', () => {
-        // Outer seq with a nested choice that's itself mergeable.
+        // Outer seq with a nested choice that's itself mergeable. After
+        // merge the inner choice becomes a seq; simplifyRule's seq case
+        // then flattens that into the outer seq, yielding a single flat
+        // top-level seq with all fields as direct members.
         const input = seq(
             field('outer', sym('x')),
             choice(
@@ -155,12 +158,10 @@ describe('canonicalize — mergeChoiceBranches', () => {
         )
         const expected = seq(
             field('outer', sym('x')),
-            seq(
-                field('op', choice(str('+'), str('-'))),
-                field('r', sym('y')),
-            ),
+            field('op', choice(str('+'), str('-'))),
+            field('r', sym('y')),
         )
-        expect(canonicalize(input)).toEqual(expected)
+        expect(simplifyRule(input)).toEqual(expected)
     })
 
     it('recurses into a field\'s content — inner choice gets merged', () => {
@@ -169,6 +170,6 @@ describe('canonicalize — mergeChoiceBranches', () => {
             seq(sym('a'), field('y', str('w'))),
         ))
         const expected = field('x', seq(sym('a'), field('y', choice(str('v'), str('w')))))
-        expect(canonicalize(input)).toEqual(expected)
+        expect(simplifyRule(input)).toEqual(expected)
     })
 })
