@@ -138,7 +138,7 @@ description: "Task list for feature 012 — Rust Port of @sittir/core"
 - [X] T054 [P] Add Linux x64 glibc + Linux x64 musl jobs (musl uses `napi-rs/setup-node-and-napi@v3` with `target: x86_64-unknown-linux-musl`).
 - [X] T055 [P] Add Linux arm64 glibc + Linux arm64 musl jobs via cross-compilation (`aarch64-unknown-linux-gnu` / `aarch64-unknown-linux-musl`).
 - [X] T056 [P] Add Windows x64 job on `windows-2022`.
-- [ ] T057 Wire release automation in `.github/workflows/release.yml` to run `@napi-rs/cli artifacts` + publish platform subpackages (`@sittir/rust-native-darwin-arm64`, etc.) per research R8.
+- [X] T057 Wire release automation in `.github/workflows/release.yml` to run `@napi-rs/cli artifacts` + publish platform subpackages (`@sittir/rust-native-darwin-arm64`, etc.) per research R8.
 
 ### Benchmarks (per SC-003 + research R9)
 

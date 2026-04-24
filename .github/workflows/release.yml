@@ -95,3 +95,131 @@ jobs:
               }
             `, { id: pr.node_id });
             console.log(`Auto-merge enabled on PR #${pr.number}`);
+
+  # Spec 012 T057 — platform-subpackage publication for the napi
+  # `.node` artifacts produced by the `napi-build` matrix in `ci.yml`.
+  # Triggered on git tags matching `v*` (separately from the
+  # changesets-driven npm release above; the changesets path publishes
+  # the JS-side `@sittir/{rust,typescript,python}` packages, this path
+  # publishes the platform-suffixed `*-native-<target>` siblings).
+  #
+  # Flow per napi-rs's reference release.yml:
+  # 1. Build the napi `.node` artifacts on each matrix host.
+  # 2. Download all artifacts to a single host.
+  # 3. `napi artifacts` repacks them into per-target subpackages
+  #    (`@sittir/rust-native-darwin-arm64`, etc.).
+  # 4. `npm publish` each subpackage with provenance.
+  napi-publish:
+    name: napi publish (${{ matrix.target }})
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ${{ matrix.host }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: aarch64-apple-darwin
+            host: macos-14
+            cross: false
+          - target: x86_64-apple-darwin
+            host: macos-13
+            cross: false
+          - target: x86_64-unknown-linux-gnu
+            host: ubuntu-22.04
+            cross: false
+          - target: x86_64-unknown-linux-musl
+            host: ubuntu-22.04
+            cross: true
+          - target: aarch64-unknown-linux-gnu
+            host: ubuntu-22.04
+            cross: true
+          - target: aarch64-unknown-linux-musl
+            host: ubuntu-22.04
+            cross: true
+          - target: x86_64-pc-windows-msvc
+            host: windows-2022
+            cross: false
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: pnpm
+          registry-url: 'https://registry.npmjs.org'
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install Rust toolchain (stable, ${{ matrix.target }})
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - name: Setup cross-compile (musl / arm64)
+        if: matrix.cross == true
+        uses: napi-rs/setup-node-and-napi@v3
+        with:
+          target: ${{ matrix.target }}
+      - name: Cache cargo registry + target
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: release-${{ matrix.target }}
+      - name: napi build (release) — @sittir/rust-native
+        run: pnpm exec napi build --platform --release --target ${{ matrix.target }}
+        working-directory: rust/crates/sittir-rust-napi
+      - name: napi build (release) — @sittir/typescript-native
+        run: pnpm exec napi build --platform --release --target ${{ matrix.target }}
+        working-directory: rust/crates/sittir-typescript-napi
+      - name: napi build (release) — @sittir/python-native
+        run: pnpm exec napi build --platform --release --target ${{ matrix.target }}
+        working-directory: rust/crates/sittir-python-napi
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bindings-${{ matrix.target }}
+          path: |
+            rust/crates/sittir-rust-napi/*.node
+            rust/crates/sittir-typescript-napi/*.node
+            rust/crates/sittir-python-napi/*.node
+          if-no-files-found: error
+
+  napi-artifacts-publish:
+    name: aggregate + publish platform subpackages
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: napi-publish
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: pnpm
+          registry-url: 'https://registry.npmjs.org'
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Download all bindings artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: bindings-*
+          merge-multiple: false
+      - name: napi artifacts — repack into platform subpackages
+        run: |
+          for crate in sittir-rust-napi sittir-typescript-napi sittir-python-napi; do
+            (cd "rust/crates/${crate}" && pnpm exec napi artifacts --dir ../../../artifacts)
+          done
+      - name: Publish platform subpackages to npm
+        run: |
+          for crate in sittir-rust-napi sittir-typescript-napi sittir-python-napi; do
+            (cd "rust/crates/${crate}" && pnpm exec napi prepublish --tag latest --skip-gh-release)
+          done
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
