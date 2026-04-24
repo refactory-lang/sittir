@@ -1222,7 +1222,7 @@ describe('public_field_definition', () => {
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.publicField({ decorator: [{ $type: 'decorator', $text: 'test' } as any], name: { $type: '_property_name', $text: 'test' } as any, children: [{ $type: 'accessibility_modifier', $text: 'test' } as any] as any });
+    const node = ir.publicField({ decorator: [{ $type: 'decorator', $text: 'test' } as any], name: { $type: '_property_name', $text: 'test' } as any, children: [{ $type: '_public_field_definition_declare_first', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

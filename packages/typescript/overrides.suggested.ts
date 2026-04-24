@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  7  (0 applied, 7 held)
-// Rule promotions:   83  (74 applied, 9 held)
+// Rule promotions:   89  (81 applied, 8 held)
 // Repeated shapes:   7  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -103,14 +103,6 @@ export const suggestedTransforms = {
   member_expression: {
       "1/0": variant("form0"),
       "1/1": variant("form1"),
-  },
-
-  // [held] polymorph — 1 choice position(s), 4 arm(s) total
-  public_field_definition: {
-      "2/0": variant("form0"),
-      "2/1": variant("form1"),
-      "2/2": variant("form2"),
-      "2/3": variant("form3"),
   },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
@@ -266,6 +258,7 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "primary_type", classification: "supertype", applied: true },
   { kind: "statement", classification: "supertype", applied: true },
   { kind: "type", classification: "supertype", applied: true },
+  { kind: "_public_field_definition_readonly_first", classification: "terminal", applied: true },
   { kind: "_reserved_identifier", classification: "terminal", applied: true },
   { kind: "comment", classification: "terminal", applied: true },
   { kind: "escape_sequence", classification: "terminal", applied: true },
@@ -313,7 +306,12 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "parenthesized_expression", classification: "polymorph", applied: true },
   { kind: "parenthesized_expression_sequence", classification: "polymorph", applied: true },
   { kind: "parenthesized_expression_typed", classification: "polymorph", applied: true },
-  { kind: "public_field_definition", classification: "polymorph", applied: false },
+  { kind: "public_field_definition_abstract_first", classification: "polymorph", applied: true },
+  { kind: "public_field_definition_access_first", classification: "polymorph", applied: true },
+  { kind: "public_field_definition_accessor_opt", classification: "polymorph", applied: true },
+  { kind: "public_field_definition_declare_first", classification: "polymorph", applied: true },
+  { kind: "public_field_definition_readonly_first", classification: "polymorph", applied: true },
+  { kind: "public_field_definition_static_mods", classification: "polymorph", applied: true },
   { kind: "string", classification: "polymorph", applied: true },
   { kind: "string_double", classification: "polymorph", applied: true },
   { kind: "string_single", classification: "polymorph", applied: true },

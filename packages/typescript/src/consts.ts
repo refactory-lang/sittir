@@ -24,6 +24,8 @@ export const NODE_KINDS = [
   '_jsx_string',
   '_lhs_expression',
   '_parenthesized_expression_sequence',
+  '_public_field_definition_accessor_opt',
+  '_public_field_definition_declare_first',
   '_string_double',
   '_string_single',
   '_type_identifier',
@@ -197,6 +199,7 @@ export const LEAF_KINDS = [
   '_kw_const',
   '_kw_readonly',
   '_kw_static',
+  '_public_field_definition_readonly_first',
   '_reserved_identifier',
   '_string_fragment',
   'abstract',
@@ -465,6 +468,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_lhs_expression': [
   ],
   '_parenthesized_expression_sequence': [
+  ],
+  '_public_field_definition_accessor_opt': [
+    { name: 'accessor', required: true, multiple: false },
+  ],
+  '_public_field_definition_declare_first': [
   ],
   '_string_double': [
   ],
@@ -949,11 +957,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'public_field_definition': [
     { name: 'decorator', required: true, multiple: true },
-    { name: 'declare', required: false, multiple: false },
-    { name: 'static', required: false, multiple: false },
-    { name: 'readonly', required: false, multiple: false },
-    { name: 'abstract', required: false, multiple: false },
-    { name: 'accessor', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
     { name: 'value', required: false, multiple: false },

@@ -224,15 +224,13 @@
     "instanceof": "text",
     "in": "text",
     "static": "text",
-    "declare": "text",
-    "readonly": "text",
     "abstract": "text",
-    "accessor": "text",
     "const": "text",
     "satisfies": "text",
     "require": "text",
     "extends": "text",
     "implements": "text",
+    "declare": "text",
     "global": "text",
     "namespace": "text",
     "interface": "text",
@@ -242,8 +240,10 @@
     "is": "text",
     "typeof": "text",
     "keyof": "text",
+    "readonly": "text",
     "async": "text",
-    "export": "text"
+    "export": "text",
+    "accessor": "text"
   },
   "fieldAliasMap": {
     "break_statement.label": {
@@ -888,6 +888,17 @@
         "class_body_method": "method",
         "class_body_method_sig": "method_sig",
         "class_body_member": "member"
+      }
+    },
+    "public_field_definition": {
+      "source": "override",
+      "childKind": {
+        "public_field_definition_declare_first": "declare_first",
+        "public_field_definition_access_first": "access_first",
+        "public_field_definition_static_mods": "static_mods",
+        "public_field_definition_abstract_first": "abstract_first",
+        "public_field_definition_readonly_first": "readonly_first",
+        "public_field_definition_accessor_opt": "accessor_opt"
       }
     },
     "index_signature": {

@@ -145,6 +145,8 @@ import type {
   Program,
   PropertySignature,
   PublicFieldDefinition,
+  PublicFieldDefinitionAccessorOpt,
+  PublicFieldDefinitionDeclareFirst,
   ReadonlyType,
   Regex,
   RequiredParameter,
@@ -1044,11 +1046,6 @@ export function wrapPublicFieldDefinition(data: _NodeData, tree: TreeHandle): Wr
   return {
     ...data,
     get decorator() { return drillInAll(data.$fields?.['decorator'], tree); },
-    get declare() { return drillIn(data.$fields?.['declare'], tree); },
-    get static() { return drillIn(data.$fields?.['static'], tree); },
-    get readonly() { return drillIn(data.$fields?.['readonly'], tree); },
-    get abstract() { return drillIn(data.$fields?.['abstract'], tree); },
-    get accessor() { return drillIn(data.$fields?.['accessor'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get typeField() { return drillIn(data.$fields?.['type'], tree); },
     get value() { return drillIn(data.$fields?.['value'], tree); },
@@ -1792,6 +1789,21 @@ export function wrapForHeaderLhs(data: _NodeData, tree: TreeHandle): WrappedNode
   } as unknown as WrappedNode<ForHeaderLhs>;
 }
 
+export function wrapPublicFieldDefinitionDeclareFirst(data: _NodeData, tree: TreeHandle): WrappedNode<PublicFieldDefinitionDeclareFirst> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<PublicFieldDefinitionDeclareFirst>;
+}
+
+export function wrapPublicFieldDefinitionAccessorOpt(data: _NodeData, tree: TreeHandle): WrappedNode<PublicFieldDefinitionAccessorOpt> {
+  return {
+    ...data,
+    get accessor() { return drillIn(data.$fields?.['accessor'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<PublicFieldDefinitionAccessorOpt>;
+}
+
 export function wrapParenthesizedExpressionSequence(data: _NodeData, tree: TreeHandle): WrappedNode<ParenthesizedExpressionSequence> {
   return {
     ...data,
@@ -2045,6 +2057,9 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_class_body_method_sig': (d, t) => wrapClassBodyMethodSig(d, t),
   '_class_body_member': (d, t) => wrapClassBodyMember(d, t),
   '_for_header_lhs': (d, t) => wrapForHeaderLhs(d, t),
+  '_public_field_definition_declare_first': (d, t) => wrapPublicFieldDefinitionDeclareFirst(d, t),
+  '_public_field_definition_readonly_first': (d) => d,
+  '_public_field_definition_accessor_opt': (d, t) => wrapPublicFieldDefinitionAccessorOpt(d, t),
   '_parenthesized_expression_sequence': (d, t) => wrapParenthesizedExpressionSequence(d, t),
   '_export_statement_type_export': (d, t) => wrapExportStatementTypeExport(d, t),
   '_export_statement_equals_export': (d, t) => wrapExportStatementEqualsExport(d, t),

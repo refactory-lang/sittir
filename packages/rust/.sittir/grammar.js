@@ -133,6 +133,9 @@ function applyPath(rule, segments, patch, precStack) {
       if (isWrapperType(t)) {
         return descendThroughSingleWrapper(rule, head, rest, patch, precStack);
       }
+      if (t === "alias" || t === "ALIAS") {
+        return descendThroughAlias(rule, head, rest, patch, precStack);
+      }
       throw new ApplyPathSkip(`applyPath: cannot descend into '${rule.type}' rule (path has ${segments.length} segments left)`);
     }
     default: {
@@ -168,6 +171,32 @@ function descendThroughSingleWrapper(rule, head, rest, patch, precStack) {
       throw new Error(`descendThroughSingleWrapper: unexpected segment kind '${_exhaustive.kind}' \u2014 this is a bug in applyPath dispatch`);
     }
   }
+}
+function descendThroughAlias(rule, head, rest, patch, precStack) {
+  switch (head.kind) {
+    case "wildcard": {
+      const newContent = applyPath(contentOf(rule), rest, patch, precStack);
+      return reconstructAlias(rule, newContent);
+    }
+    case "index": {
+      if (head.value === 0 || head.value === -1) {
+        const newContent = applyPath(contentOf(rule), rest, patch, precStack);
+        return reconstructAlias(rule, newContent);
+      }
+      throw new ApplyPathSkip(
+        `applyPath: index ${head.value} out of bounds \u2014 '${rule.type}' wraps a single content rule (only index 0 / -1 is valid)`
+      );
+    }
+    case "kind-match":
+    case "fieldName":
+    default: {
+      const _exhaustive = head;
+      throw new Error(`descendThroughAlias: unexpected segment kind '${_exhaustive.kind}' \u2014 this is a bug in applyPath dispatch`);
+    }
+  }
+}
+function reconstructAlias(rule, newContent) {
+  return { ...rule, content: newContent };
 }
 function descendThroughNamedField(rule, fieldName, rest, patch, precStack) {
   if (!isFieldType(rule.type)) {

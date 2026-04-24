@@ -55,15 +55,13 @@ export type LeafStringMap = {
   instanceof: "instanceof";
   in: "in";
   static: "static";
-  declare: "declare";
-  readonly: "readonly";
   abstract: "abstract";
-  accessor: "accessor";
   const: "const";
   satisfies: "satisfies";
   require: "require";
   extends: "extends";
   implements: "implements";
+  declare: "declare";
   global: "global";
   namespace: "namespace";
   interface: "interface";
@@ -73,8 +71,10 @@ export type LeafStringMap = {
   is: "is";
   typeof: "typeof";
   keyof: "keyof";
+  readonly: "readonly";
   async: "async";
   export: "export";
+  accessor: "accessor";
 };
 
 export const enum SyntaxKind {
@@ -278,6 +278,11 @@ export const enum SyntaxKind {
   ForHeaderLhs = '_for_header_lhs',
   ForHeaderVarKind = '_for_header_var_kind',
   ForHeaderLetConstKind = '_for_header_let_const_kind',
+  PublicFieldDefinitionDeclareFirst = '_public_field_definition_declare_first',
+  PublicFieldDefinitionAccessFirst = '_public_field_definition_access_first',
+  PublicFieldDefinitionStaticMods = '_public_field_definition_static_mods',
+  PublicFieldDefinitionAbstractFirst = '_public_field_definition_abstract_first',
+  PublicFieldDefinitionAccessorOpt = '_public_field_definition_accessor_opt',
   ParenthesizedExpressionTyped = '_parenthesized_expression_typed',
   ParenthesizedExpressionSequence = '_parenthesized_expression_sequence',
   ExportStatementTypeExport = '_export_statement_type_export',
@@ -322,6 +327,7 @@ export const enum SyntaxKind {
   KwReadonly = '_kw_readonly',
   KwAbstract = '_kw_abstract',
   KwConst = '_kw_const',
+  PublicFieldDefinitionReadonlyFirst = '_public_field_definition_readonly_first',
   AutomaticSemicolon = '_automatic_semicolon',
   HtmlComment = 'html_comment',
   Oror = '||',
@@ -356,15 +362,13 @@ export const enum SyntaxKind {
   Instanceof = 'instanceof',
   In = 'in',
   Static = 'static',
-  Declare = 'declare',
-  Readonly = 'readonly',
   Abstract = 'abstract',
-  Accessor = 'accessor',
   Const = 'const',
   Satisfies = 'satisfies',
   Require = 'require',
   Extends = 'extends',
   Implements = 'implements',
+  Declare = 'declare',
   Global = 'global',
   Namespace = 'namespace',
   Interface = 'interface',
@@ -374,8 +378,10 @@ export const enum SyntaxKind {
   Is = 'is',
   Typeof = 'typeof',
   Keyof = 'keyof',
+  Readonly = 'readonly',
   Async = 'async',
   Export = 'export',
+  Accessor = 'accessor',
 }
 
 // Scoped enums per supertype
@@ -1432,16 +1438,11 @@ export interface PublicFieldDefinition {
   readonly $type: 'public_field_definition';
   readonly $fields: {
     readonly decorator: readonly (Decorator)[];
-    readonly declare?: BooleanKeyword<"declare">;
-    readonly static?: BooleanKeyword<"static">;
-    readonly readonly?: BooleanKeyword<"readonly">;
-    readonly abstract?: BooleanKeyword<"abstract">;
-    readonly accessor?: BooleanKeyword<"accessor">;
     readonly name: PropertyName;
     readonly type?: TypeAnnotation;
     readonly value?: Expression;
   };
-  readonly $children: readonly [AccessibilityModifier | OverrideModifier];
+  readonly $children: readonly [PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst | PublicFieldDefinitionStaticMods | PublicFieldDefinitionAbstractFirst | PublicFieldDefinitionReadonlyFirst | PublicFieldDefinitionAccessorOpt];
 }
 
 export interface JsxStartOpeningElement {
@@ -2253,6 +2254,42 @@ export interface ForHeaderLetConstKind {
   readonly $children: readonly [AutomaticSemicolon];
 }
 
+export interface PublicFieldDefinitionDeclareFirst {
+  readonly $type: 'public_field_definition_declare_first';
+  readonly $children: readonly [AccessibilityModifier];
+}
+
+export interface PublicFieldDefinitionAccessFirst {
+  readonly $type: 'public_field_definition_access_first';
+  readonly $fields: {
+    readonly declare?: BooleanKeyword<"declare">;
+  };
+  readonly $children: readonly [AccessibilityModifier];
+}
+
+export interface PublicFieldDefinitionStaticMods {
+  readonly $type: 'public_field_definition_static_mods';
+  readonly $fields: {
+    readonly static: AutoStamp<"static">;
+    readonly readonly?: BooleanKeyword<"readonly">;
+  };
+  readonly $children: readonly [OverrideModifier];
+}
+
+export interface PublicFieldDefinitionAbstractFirst {
+  readonly $type: 'public_field_definition_abstract_first';
+  readonly $fields: {
+    readonly abstract: AutoStamp<"abstract">;
+  };
+}
+
+export interface PublicFieldDefinitionAccessorOpt {
+  readonly $type: 'public_field_definition_accessor_opt';
+  readonly $fields: {
+    readonly accessor: AutoStamp<"accessor">;
+  };
+}
+
 export interface ParenthesizedExpressionTyped {
   readonly $type: 'parenthesized_expression_typed';
   readonly $fields: {
@@ -2365,6 +2402,7 @@ export type StringFragment = Terminal<"_string_fragment", string>;
 export type AccessibilityModifier = Terminal<"accessibility_modifier", "public" | "private" | "protected">;
 export type OverrideModifier = Terminal<"override_modifier", "override">;
 export type PredefinedType = Terminal<"predefined_type", string>;
+export type PublicFieldDefinitionReadonlyFirst = Terminal<"_public_field_definition_readonly_first", string>;
 export type AutomaticSemicolon = Terminal<"_automatic_semicolon", string>;
 export type HtmlComment = Terminal<"html_comment", string>;
 export type Oror = Terminal<"||", string>;
@@ -2597,6 +2635,11 @@ export interface ClassBodyMemberTree extends AnyTreeNode { readonly type: "_clas
 export interface ForHeaderLhsTree extends AnyTreeNode { readonly type: "_for_header_lhs"; }
 export interface ForHeaderVarKindTree extends AnyTreeNode { readonly type: "_for_header_var_kind"; }
 export interface ForHeaderLetConstKindTree extends AnyTreeNode { readonly type: "_for_header_let_const_kind"; }
+export interface PublicFieldDefinitionDeclareFirstTree extends AnyTreeNode { readonly type: "_public_field_definition_declare_first"; }
+export interface PublicFieldDefinitionAccessFirstTree extends AnyTreeNode { readonly type: "_public_field_definition_access_first"; }
+export interface PublicFieldDefinitionStaticModsTree extends AnyTreeNode { readonly type: "_public_field_definition_static_mods"; }
+export interface PublicFieldDefinitionAbstractFirstTree extends AnyTreeNode { readonly type: "_public_field_definition_abstract_first"; }
+export interface PublicFieldDefinitionAccessorOptTree extends AnyTreeNode { readonly type: "_public_field_definition_accessor_opt"; }
 export interface ParenthesizedExpressionTypedTree extends AnyTreeNode { readonly type: "_parenthesized_expression_typed"; }
 export interface ParenthesizedExpressionSequenceTree extends AnyTreeNode { readonly type: "_parenthesized_expression_sequence"; }
 export interface ExportStatementTypeExportTree extends AnyTreeNode { readonly type: "_export_statement_type_export"; }
@@ -2636,6 +2679,7 @@ export interface StringFragmentTree extends AnyTreeNode { readonly type: "_strin
 export interface AccessibilityModifierTree extends TreeNode<'accessibility_modifier'> {}
 export interface OverrideModifierTree extends AnyTreeNode { readonly type: "override_modifier"; }
 export interface PredefinedTypeTree extends TreeNode<'predefined_type'> {}
+export interface PublicFieldDefinitionReadonlyFirstTree extends AnyTreeNode { readonly type: "_public_field_definition_readonly_first"; }
 export interface AutomaticSemicolonTree extends AnyTreeNode { readonly type: "_automatic_semicolon"; }
 export interface HtmlCommentTree extends TreeNode<'html_comment'> {}
 export interface OrorTree extends AnyTreeNode { readonly type: "||"; }
@@ -2670,15 +2714,13 @@ export interface UsingTree extends AnyTreeNode { readonly type: "using"; }
 export interface InstanceofTree extends AnyTreeNode { readonly type: "instanceof"; }
 export interface InTree extends AnyTreeNode { readonly type: "in"; }
 export interface StaticTree extends AnyTreeNode { readonly type: "static"; }
-export interface DeclareTree extends AnyTreeNode { readonly type: "declare"; }
-export interface ReadonlyTree extends AnyTreeNode { readonly type: "readonly"; }
 export interface AbstractTree extends AnyTreeNode { readonly type: "abstract"; }
-export interface AccessorTree extends AnyTreeNode { readonly type: "accessor"; }
 export interface ConstTree extends AnyTreeNode { readonly type: "const"; }
 export interface SatisfiesTree extends AnyTreeNode { readonly type: "satisfies"; }
 export interface RequireTree extends AnyTreeNode { readonly type: "require"; }
 export interface ExtendsTree extends AnyTreeNode { readonly type: "extends"; }
 export interface ImplementsTree extends AnyTreeNode { readonly type: "implements"; }
+export interface DeclareTree extends AnyTreeNode { readonly type: "declare"; }
 export interface GlobalTree extends AnyTreeNode { readonly type: "global"; }
 export interface NamespaceTree extends AnyTreeNode { readonly type: "namespace"; }
 export interface InterfaceTree extends AnyTreeNode { readonly type: "interface"; }
@@ -2688,8 +2730,10 @@ export interface InferTree extends AnyTreeNode { readonly type: "infer"; }
 export interface IsTree extends AnyTreeNode { readonly type: "is"; }
 export interface TypeofTree extends AnyTreeNode { readonly type: "typeof"; }
 export interface KeyofTree extends AnyTreeNode { readonly type: "keyof"; }
+export interface ReadonlyTree extends AnyTreeNode { readonly type: "readonly"; }
 export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
 export interface ExportTree extends AnyTreeNode { readonly type: "export"; }
+export interface AccessorTree extends AnyTreeNode { readonly type: "accessor"; }
 
 // refine() per-form Tree aliases — same shape as the base kind Tree.
 export type ObjectTypeCurlyTree = ObjectTypeTree;
@@ -3173,6 +3217,11 @@ export type TypescriptNode =
   | ForHeaderLhs
   | ForHeaderVarKind
   | ForHeaderLetConstKind
+  | PublicFieldDefinitionDeclareFirst
+  | PublicFieldDefinitionAccessFirst
+  | PublicFieldDefinitionStaticMods
+  | PublicFieldDefinitionAbstractFirst
+  | PublicFieldDefinitionAccessorOpt
   | ParenthesizedExpressionTyped
   | ParenthesizedExpressionSequence
   | ExportStatementTypeExport
@@ -3388,6 +3437,11 @@ export interface KindMap {
   '_for_header_lhs': ForHeaderLhs;
   '_for_header_var_kind': ForHeaderVarKind;
   '_for_header_let_const_kind': ForHeaderLetConstKind;
+  '_public_field_definition_declare_first': PublicFieldDefinitionDeclareFirst;
+  '_public_field_definition_access_first': PublicFieldDefinitionAccessFirst;
+  '_public_field_definition_static_mods': PublicFieldDefinitionStaticMods;
+  '_public_field_definition_abstract_first': PublicFieldDefinitionAbstractFirst;
+  '_public_field_definition_accessor_opt': PublicFieldDefinitionAccessorOpt;
   '_parenthesized_expression_typed': ParenthesizedExpressionTyped;
   '_parenthesized_expression_sequence': ParenthesizedExpressionSequence;
   '_export_statement_type_export': ExportStatementTypeExport;
@@ -3427,6 +3481,7 @@ export interface KindMap {
   'accessibility_modifier': AccessibilityModifier;
   'override_modifier': OverrideModifier;
   'predefined_type': PredefinedType;
+  '_public_field_definition_readonly_first': PublicFieldDefinitionReadonlyFirst;
   '_automatic_semicolon': AutomaticSemicolon;
   'html_comment': HtmlComment;
   '||': Oror;
@@ -3649,6 +3704,11 @@ export interface ClassBodyMemberNs extends NodeNs<ClassBodyMember, LeafScalarMap
 export interface ForHeaderLhsNs extends NodeNs<ForHeaderLhs, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ForHeaderVarKindNs extends NodeNs<ForHeaderVarKind, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ForHeaderLetConstKindNs extends NodeNs<ForHeaderLetConstKind, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface PublicFieldDefinitionDeclareFirstNs extends NodeNs<PublicFieldDefinitionDeclareFirst, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface PublicFieldDefinitionAccessFirstNs extends NodeNs<PublicFieldDefinitionAccessFirst, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface PublicFieldDefinitionStaticModsNs extends NodeNs<PublicFieldDefinitionStaticMods, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface PublicFieldDefinitionAbstractFirstNs extends NodeNs<PublicFieldDefinitionAbstractFirst, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface PublicFieldDefinitionAccessorOptNs extends NodeNs<PublicFieldDefinitionAccessorOpt, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ParenthesizedExpressionTypedNs extends NodeNs<ParenthesizedExpressionTyped, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ParenthesizedExpressionSequenceNs extends NodeNs<ParenthesizedExpressionSequence, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExportStatementTypeExportNs extends NodeNs<ExportStatementTypeExport, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3863,6 +3923,11 @@ export interface NamespaceMap {
   '_for_header_lhs': ForHeaderLhsNs;
   '_for_header_var_kind': ForHeaderVarKindNs;
   '_for_header_let_const_kind': ForHeaderLetConstKindNs;
+  '_public_field_definition_declare_first': PublicFieldDefinitionDeclareFirstNs;
+  '_public_field_definition_access_first': PublicFieldDefinitionAccessFirstNs;
+  '_public_field_definition_static_mods': PublicFieldDefinitionStaticModsNs;
+  '_public_field_definition_abstract_first': PublicFieldDefinitionAbstractFirstNs;
+  '_public_field_definition_accessor_opt': PublicFieldDefinitionAccessorOptNs;
   '_parenthesized_expression_typed': ParenthesizedExpressionTypedNs;
   '_parenthesized_expression_sequence': ParenthesizedExpressionSequenceNs;
   '_export_statement_type_export': ExportStatementTypeExportNs;
@@ -5292,6 +5357,41 @@ export namespace ForHeaderLetConstKind {
   export type Loose = LooseFor<'_for_header_let_const_kind'>;
   export type Tree = TreeFor<'_for_header_let_const_kind'>;
   export type Kind = '_for_header_let_const_kind';
+}
+export namespace PublicFieldDefinitionDeclareFirst {
+  export type Config = ConfigFor<'_public_field_definition_declare_first'>;
+  export type Fluent = FluentFor<'_public_field_definition_declare_first'>;
+  export type Loose = LooseFor<'_public_field_definition_declare_first'>;
+  export type Tree = TreeFor<'_public_field_definition_declare_first'>;
+  export type Kind = '_public_field_definition_declare_first';
+}
+export namespace PublicFieldDefinitionAccessFirst {
+  export type Config = ConfigFor<'_public_field_definition_access_first'>;
+  export type Fluent = FluentFor<'_public_field_definition_access_first'>;
+  export type Loose = LooseFor<'_public_field_definition_access_first'>;
+  export type Tree = TreeFor<'_public_field_definition_access_first'>;
+  export type Kind = '_public_field_definition_access_first';
+}
+export namespace PublicFieldDefinitionStaticMods {
+  export type Config = ConfigFor<'_public_field_definition_static_mods'>;
+  export type Fluent = FluentFor<'_public_field_definition_static_mods'>;
+  export type Loose = LooseFor<'_public_field_definition_static_mods'>;
+  export type Tree = TreeFor<'_public_field_definition_static_mods'>;
+  export type Kind = '_public_field_definition_static_mods';
+}
+export namespace PublicFieldDefinitionAbstractFirst {
+  export type Config = ConfigFor<'_public_field_definition_abstract_first'>;
+  export type Fluent = FluentFor<'_public_field_definition_abstract_first'>;
+  export type Loose = LooseFor<'_public_field_definition_abstract_first'>;
+  export type Tree = TreeFor<'_public_field_definition_abstract_first'>;
+  export type Kind = '_public_field_definition_abstract_first';
+}
+export namespace PublicFieldDefinitionAccessorOpt {
+  export type Config = ConfigFor<'_public_field_definition_accessor_opt'>;
+  export type Fluent = FluentFor<'_public_field_definition_accessor_opt'>;
+  export type Loose = LooseFor<'_public_field_definition_accessor_opt'>;
+  export type Tree = TreeFor<'_public_field_definition_accessor_opt'>;
+  export type Kind = '_public_field_definition_accessor_opt';
 }
 export namespace ParenthesizedExpressionTyped {
   export type Config = ConfigFor<'_parenthesized_expression_typed'>;

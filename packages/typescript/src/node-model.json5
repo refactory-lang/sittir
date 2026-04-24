@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 401,
+  "nodeCount": 407,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -3306,6 +3306,226 @@
         "number",
         "private_property_identifier",
         "string"
+      ]
+    },
+    {
+      "kind": "_public_field_definition_abstract_first",
+      "modelType": "group",
+      "typeName": "PublicFieldDefinitionAbstractFirst",
+      "irKey": "publicFieldDefinitionAbstractFirst",
+      "hidden": true,
+      "name": "_public_field_definition_abstract_first",
+      "fields": [
+        {
+          "name": "abstract",
+          "propertyName": "abstract",
+          "paramName": "abstract",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_kw_abstract",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_kw_abstract"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "_public_field_definition_access_first",
+      "modelType": "group",
+      "typeName": "PublicFieldDefinitionAccessFirst",
+      "irKey": "publicFieldDefinitionAccessFirst",
+      "hidden": true,
+      "name": "_public_field_definition_access_first",
+      "fields": [
+        {
+          "name": "declare",
+          "propertyName": "declare",
+          "paramName": "declare",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "declare"
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        }
+      ],
+      "children": [
+        {
+          "name": "accessibility_modifier",
+          "propertyName": "accessibilityModifier",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "accessibility_modifier",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_public_field_definition_accessor_opt",
+      "modelType": "branch",
+      "typeName": "PublicFieldDefinitionAccessorOpt",
+      "factoryName": "publicFieldDefinitionAccessorOpt",
+      "irKey": "publicFieldDefinitionAccessorOpt",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "publicFieldDefinitionAccessorOpt()",
+      "fields": [
+        {
+          "name": "accessor",
+          "propertyName": "accessor",
+          "paramName": "accessor",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "accessor"
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "_public_field_definition_declare_first",
+      "modelType": "container",
+      "typeName": "PublicFieldDefinitionDeclareFirst",
+      "factoryName": "publicFieldDefinitionDeclareFirst",
+      "irKey": "publicFieldDefinitionDeclareFirst",
+      "hidden": false,
+      "children": [
+        {
+          "name": "accessibility_modifier",
+          "propertyName": "accessibilityModifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "accessibility_modifier",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_public_field_definition_readonly_first",
+      "modelType": "leaf",
+      "typeName": "PublicFieldDefinitionReadonlyFirst",
+      "factoryName": "publicFieldDefinitionReadonlyFirst",
+      "irKey": "publicFieldDefinitionReadonlyFirst",
+      "hidden": false
+    },
+    {
+      "kind": "_public_field_definition_static_mods",
+      "modelType": "group",
+      "typeName": "PublicFieldDefinitionStaticMods",
+      "irKey": "publicFieldDefinitionStaticMods",
+      "hidden": true,
+      "name": "_public_field_definition_static_mods",
+      "fields": [
+        {
+          "name": "static",
+          "propertyName": "static",
+          "paramName": "static_",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_kw_static",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_kw_static"
+            ]
+          }
+        },
+        {
+          "name": "readonly",
+          "propertyName": "readonly",
+          "paramName": "readonly",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_kw_readonly",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_kw_readonly"
+            ]
+          }
+        }
+      ],
+      "children": [
+        {
+          "name": "override_modifier",
+          "propertyName": "overrideModifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "override_modifier",
+              "unresolved": true
+            }
+          ]
+        }
       ]
     },
     {
@@ -14920,115 +15140,6 @@
           }
         },
         {
-          "name": "declare",
-          "propertyName": "declare",
-          "paramName": "declare",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "declare"
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
-        },
-        {
-          "name": "static",
-          "propertyName": "static",
-          "paramName": "static_",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_kw_static",
-              "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_kw_static"
-            ]
-          }
-        },
-        {
-          "name": "readonly",
-          "propertyName": "readonly",
-          "paramName": "readonly",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_kw_readonly",
-              "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_kw_readonly"
-            ]
-          }
-        },
-        {
-          "name": "abstract",
-          "propertyName": "abstract",
-          "paramName": "abstract",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_kw_abstract",
-              "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_kw_abstract"
-            ]
-          }
-        },
-        {
-          "name": "accessor",
-          "propertyName": "accessor",
-          "paramName": "accessor",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "accessor"
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
-        },
-        {
           "name": "name",
           "propertyName": "name",
           "paramName": "name",
@@ -15100,8 +15211,8 @@
       ],
       "children": [
         {
-          "name": "accessibility_modifier",
-          "propertyName": "accessibilityModifier",
+          "name": "public_field_definition_declare_first",
+          "propertyName": "publicFieldDefinitionDeclareFirst",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -15109,14 +15220,14 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "accessibility_modifier",
+              "name": "_public_field_definition_declare_first",
               "unresolved": true
             }
           ]
         },
         {
-          "name": "override_modifier",
-          "propertyName": "overrideModifier",
+          "name": "public_field_definition_access_first",
+          "propertyName": "publicFieldDefinitionAccessFirst",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -15124,7 +15235,67 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "override_modifier",
+              "name": "_public_field_definition_access_first",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "public_field_definition_static_mods",
+          "propertyName": "publicFieldDefinitionStaticMods",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_public_field_definition_static_mods",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "public_field_definition_abstract_first",
+          "propertyName": "publicFieldDefinitionAbstractFirst",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_public_field_definition_abstract_first",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "public_field_definition_readonly_first",
+          "propertyName": "publicFieldDefinitionReadonlyFirst",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_public_field_definition_readonly_first",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "public_field_definition_accessor_opt",
+          "propertyName": "publicFieldDefinitionAccessorOpt",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_public_field_definition_accessor_opt",
               "unresolved": true
             }
           ]

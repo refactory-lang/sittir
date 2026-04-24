@@ -212,6 +212,8 @@ export interface IsGuards {
     ClassBodyMethodSig<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_class_body_method_sig' };
     ClassBodyMember<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_class_body_member' };
     ForHeaderLhs<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_for_header_lhs' };
+    PublicFieldDefinitionDeclareFirst<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_public_field_definition_declare_first' };
+    PublicFieldDefinitionAccessorOpt<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_public_field_definition_accessor_opt' };
     ParenthesizedExpressionSequence<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_parenthesized_expression_sequence' };
     ExportStatementTypeExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_type_export' };
     ExportStatementEqualsExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_equals_export' };
@@ -426,6 +428,8 @@ export interface AssertGuards {
     ClassBodyMethodSig(v: { readonly $type: string }): asserts v is { readonly $type: '_class_body_method_sig' };
     ClassBodyMember(v: { readonly $type: string }): asserts v is { readonly $type: '_class_body_member' };
     ForHeaderLhs(v: { readonly $type: string }): asserts v is { readonly $type: '_for_header_lhs' };
+    PublicFieldDefinitionDeclareFirst(v: { readonly $type: string }): asserts v is { readonly $type: '_public_field_definition_declare_first' };
+    PublicFieldDefinitionAccessorOpt(v: { readonly $type: string }): asserts v is { readonly $type: '_public_field_definition_accessor_opt' };
     ParenthesizedExpressionSequence(v: { readonly $type: string }): asserts v is { readonly $type: '_parenthesized_expression_sequence' };
     ExportStatementTypeExport(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_type_export' };
     ExportStatementEqualsExport(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_equals_export' };
@@ -675,6 +679,8 @@ export const is = {
     ClassBodyMethodSig: _g("_class_body_method_sig"),
     ClassBodyMember: _g("_class_body_member"),
     ForHeaderLhs: _g("_for_header_lhs"),
+    PublicFieldDefinitionDeclareFirst: _g("_public_field_definition_declare_first"),
+    PublicFieldDefinitionAccessorOpt: _g("_public_field_definition_accessor_opt"),
     ParenthesizedExpressionSequence: _g("_parenthesized_expression_sequence"),
     ExportStatementTypeExport: _g("_export_statement_type_export"),
     ExportStatementEqualsExport: _g("_export_statement_equals_export"),
@@ -910,6 +916,8 @@ export const assert = {
     ClassBodyMethodSig: _makeAssert('ClassBodyMethodSig', is.ClassBodyMethodSig as _AnyGuard),
     ClassBodyMember: _makeAssert('ClassBodyMember', is.ClassBodyMember as _AnyGuard),
     ForHeaderLhs: _makeAssert('ForHeaderLhs', is.ForHeaderLhs as _AnyGuard),
+    PublicFieldDefinitionDeclareFirst: _makeAssert('PublicFieldDefinitionDeclareFirst', is.PublicFieldDefinitionDeclareFirst as _AnyGuard),
+    PublicFieldDefinitionAccessorOpt: _makeAssert('PublicFieldDefinitionAccessorOpt', is.PublicFieldDefinitionAccessorOpt as _AnyGuard),
     ParenthesizedExpressionSequence: _makeAssert('ParenthesizedExpressionSequence', is.ParenthesizedExpressionSequence as _AnyGuard),
     ExportStatementTypeExport: _makeAssert('ExportStatementTypeExport', is.ExportStatementTypeExport as _AnyGuard),
     ExportStatementEqualsExport: _makeAssert('ExportStatementEqualsExport', is.ExportStatementEqualsExport as _AnyGuard),

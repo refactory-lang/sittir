@@ -1301,6 +1301,21 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     [$.variable_declarator, $._for_header_var_kind],
     [$.variable_declarator, $._for_header_let_const_kind]
   ]),
+  // Inline the `public_field_definition` variants so the LR table
+  // retains the pre-split state — each variant body is folded back
+  // into `public_field_definition` at the alias site. Inlining keeps
+  // the alias so sittir's post-polymorph canonical shape is
+  // preserved AND the parse tree still surfaces the named variant
+  // kind, while tree-sitter's state machine sees the unrolled shape
+  // and avoids LR conflicts that the split would otherwise create.
+  inline: ($, previous) => (previous ?? []).concat([
+    $._public_field_definition_declare_first,
+    $._public_field_definition_access_first,
+    $._public_field_definition_static_mods,
+    $._public_field_definition_abstract_first,
+    $._public_field_definition_readonly_first,
+    $._public_field_definition_accessor_opt
+  ]),
   polymorphs: {
     arrow_function: { "1/0": "parameter", "1/1": "_call_signature" },
     class_heritage: { "0": "extends_clause", "1": "implements_clause" },
@@ -1370,19 +1385,35 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
       "1/0": "lhs",
       "1/1": "var_kind",
       "1/2": "let_const_kind"
+    },
+    // public_field_definition body position 1:
+    //   optional(choice(
+    //     seq('declare', optional(accessibility_modifier)),
+    //     seq(accessibility_modifier, optional(field('declare', _kw_declare))),
+    //   ))
+    // Split both arms and INLINE the synthesized hidden rules (see
+    // `inline:` below). Inlining is critical here: the `access_first`
+    // arm reduces to "just accessibility_modifier" which conflicts
+    // with every class-member rule sharing that prefix
+    // (`method_definition`, `method_signature`,
+    // `abstract_method_signature`). Keeping them as standalone
+    // hidden rules produces an unresolvable LR state that
+    // tree-sitter can't disambiguate via conflict groups alone.
+    // Inlining folds each arm's body back into `public_field_definition`'s
+    // state machine — the LR table looks exactly like the pre-split
+    // grammar at the conflict site, while sittir's derive-audit
+    // still sees the post-polymorph shape (all-alias choice) as
+    // canonical. Variant adoption stays a pure sittir-side concern;
+    // tree-sitter parses the same tree as before.
+    public_field_definition: {
+      "1/0/0": "declare_first",
+      "1/0/1": "access_first",
+      // Position 2: a four-arm modifier choice (heterogeneous).
+      "2/0": "static_mods",
+      "2/1": "abstract_first",
+      "2/2": "readonly_first",
+      "2/3": "accessor_opt"
     }
-    // public_field_definition: DEFERRED. The heterogeneous choice at
-    // path 1/0 splits cleanly into `declare_first` / `access_first`,
-    // but `access_first` (`seq(accessibility_modifier,
-    // optional(field('declare', _kw_declare)))`) overlaps with
-    // every class-member rule that also starts with
-    // `accessibility_modifier` — method_definition, method_signature,
-    // abstract_method_signature. Declaring the full conflict group
-    // still leaves an unresolvable LR state because access_first's
-    // body reduces to "just accessibility_modifier" while the other
-    // rules shift more. Tree-sitter's suggested fix (precedence
-    // relative to the others) has wide grammar implications and is
-    // out of scope for 013 — leaving the audit flag in place.
   },
   transforms: {
     // abstract_class_declaration: wrap pos 5 (class_heritage choice).

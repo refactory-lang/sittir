@@ -2740,11 +2740,6 @@ export function stringFragment(text: string) {
 export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
   const fields = {
     decorator: config.decorator,
-    declare: config.declare ? "declare" as const : undefined,
-    static: config.static ? "static" as const : undefined,
-    readonly: config.readonly ? "readonly" as const : undefined,
-    abstract: config.abstract ? "abstract" as const : undefined,
-    accessor: config.accessor ? "accessor" as const : undefined,
     name: config.name,
     type: config.type,
     value: config.value,
@@ -2757,15 +2752,10 @@ export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
     $fields: fields,
     $children: children,
     decorator(...values: T.Decorator[]) { return _fsm(config, publicFieldDefinition, 'decorator', values, config?.decorator); },
-    declare(value?: "declare" | undefined) { return _fs(config, publicFieldDefinition, 'declare', value, config?.declare); },
-    static(value?: "static" | undefined) { return _fs(config, publicFieldDefinition, 'static', value, config?.static); },
-    readonly(value?: "readonly" | undefined) { return _fs(config, publicFieldDefinition, 'readonly', value, config?.readonly); },
-    abstract(value?: "abstract" | undefined) { return _fs(config, publicFieldDefinition, 'abstract', value, config?.abstract); },
-    accessor(value?: "accessor" | undefined) { return _fs(config, publicFieldDefinition, 'accessor', value, config?.accessor); },
     name(value?: T.PropertyName) { return _fs(config, publicFieldDefinition, 'name', value, config?.name); },
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, publicFieldDefinition, 'type', value, config?.type); },
     value(value?: T.Expression | undefined) { return _fs(config, publicFieldDefinition, 'value', value, config?.value); },
-    child(value?: (T.AccessibilityModifier | T.OverrideModifier)) {
+    child(value?: (T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst | T.PublicFieldDefinitionStaticMods | T.PublicFieldDefinitionAbstractFirst | T.PublicFieldDefinitionReadonlyFirst | T.PublicFieldDefinitionAccessorOpt)) {
       if (value === undefined) return children[0];
       return publicFieldDefinition({ ...config, children: [value] });
     },
@@ -4642,6 +4632,54 @@ export function forHeaderLhs(config: T.ForHeaderLhs.Config) {
   };
 }
 
+export function publicFieldDefinitionDeclareFirst(child?: T.AccessibilityModifier) {
+  const children = child != null ? [child] : [];
+  return {
+    $type: '_public_field_definition_declare_first' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.PublicFieldDefinitionDeclareFirstTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function publicFieldDefinitionReadonlyFirst(text: string) {
+  if (text.length === 0) throw new Error(`_public_field_definition_readonly_first: text must be non-empty`);
+  return {
+    $type: '_public_field_definition_readonly_first' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.PublicFieldDefinitionReadonlyFirstTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function publicFieldDefinitionAccessorOpt(config?: T.PublicFieldDefinitionAccessorOpt.Config) {
+  const fields = {
+    accessor: "accessor" as const,
+  };
+  return {
+    $type: '_public_field_definition_accessor_opt' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    get accessor() { return fields.accessor; },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.PublicFieldDefinitionAccessorOptTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function parenthesizedExpressionSequence(child: T.SequenceExpression) {
   const children = [child];
   return {
@@ -5013,6 +5051,9 @@ export type FluentKindMap = {
   "_class_body_method_sig": FluentNode<"_class_body_method_sig", T.ClassBodyMethodSig.Config>;
   "_class_body_member": FluentNode<"_class_body_member", T.ClassBodyMember.Config>;
   "_for_header_lhs": FluentNode<"_for_header_lhs", T.ForHeaderLhs.Config>;
+  "_public_field_definition_declare_first": FluentNode<"_public_field_definition_declare_first", T.PublicFieldDefinitionDeclareFirst.Config>;
+  "_public_field_definition_readonly_first": T.PublicFieldDefinitionReadonlyFirst;
+  "_public_field_definition_accessor_opt": FluentNode<"_public_field_definition_accessor_opt", T.PublicFieldDefinitionAccessorOpt.Config>;
   "_parenthesized_expression_sequence": FluentNode<"_parenthesized_expression_sequence", T.ParenthesizedExpressionSequence.Config>;
   "_export_statement_type_export": FluentNode<"_export_statement_type_export", T.ExportStatementTypeExport.Config>;
   "_export_statement_equals_export": FluentNode<"_export_statement_equals_export", T.ExportStatementEqualsExport.Config>;
@@ -5229,6 +5270,9 @@ export const _factoryMap = {
   "_class_body_method_sig": classBodyMethodSig,
   "_class_body_member": classBodyMember,
   "_for_header_lhs": forHeaderLhs,
+  "_public_field_definition_declare_first": publicFieldDefinitionDeclareFirst,
+  "_public_field_definition_readonly_first": publicFieldDefinitionReadonlyFirst,
+  "_public_field_definition_accessor_opt": publicFieldDefinitionAccessorOpt,
   "_parenthesized_expression_sequence": parenthesizedExpressionSequence,
   "_export_statement_type_export": exportStatementTypeExport,
   "_export_statement_equals_export": exportStatementEqualsExport,
