@@ -57,7 +57,9 @@
     "pattern": "binary_operator",
     "edits": [],
     "expectedSourceOut": "β_γ + Ψ_5",
-    "expectedReparseTree": "(binary_operator left: (identifier) right: (identifier))"
+    "expectedReparseTree": "(binary_operator left: (identifier) right: (identifier))",
+    "wrappedText": "_ = β_γ + Ψ_5",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -128,7 +130,9 @@
     "pattern": "subscript",
     "edits": [],
     "expectedSourceOut": "a[1]",
-    "expectedReparseTree": "(subscript value: (identifier) subscript: (integer))"
+    "expectedReparseTree": "(subscript value: (identifier) subscript: (integer))",
+    "wrappedText": "_ = a[1]",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -199,7 +203,9 @@
     "pattern": "subscript",
     "edits": [],
     "expectedSourceOut": "a[:]",
-    "expectedReparseTree": "(subscript value: (identifier) subscript: (slice))"
+    "expectedReparseTree": "(subscript value: (identifier) subscript: (slice))",
+    "wrappedText": "_ = a[:]",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -259,7 +265,9 @@
     "pattern": "attribute",
     "edits": [],
     "expectedSourceOut": "a.b.c",
-    "expectedReparseTree": "(attribute object: (attribute object: (identifier) attribute: (identifier)) attribute: (identifier))"
+    "expectedReparseTree": "(attribute object: (attribute object: (identifier) attribute: (identifier)) attribute: (identifier))",
+    "wrappedText": "_ = a.b.c",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -308,7 +316,9 @@
     "pattern": "await",
     "edits": [],
     "expectedSourceOut": "await i(j, 5)",
-    "expectedReparseTree": "(await primary_expression: (call function: (identifier) arguments: (argument_list (identifier) (integer))))"
+    "expectedReparseTree": "(await primary_expression: (call function: (identifier) arguments: (argument_list (identifier) (integer))))",
+    "wrappedText": "_ = await i(j, 5)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -357,7 +367,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "i (j, 5)",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (identifier) (integer)))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (identifier) (integer)))",
+    "wrappedText": "_ = i (j, 5)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -395,7 +407,9 @@
     "pattern": "type",
     "edits": [],
     "expectedSourceOut": "str",
-    "expectedReparseTree": "(type (identifier))"
+    "expectedReparseTree": "(type (identifier))",
+    "wrappedText": "_: str = None",
+    "wrappedOffset": 3
   },
   {
     "kind": "render",
@@ -444,7 +458,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "__a__ ()",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))",
+    "wrappedText": "_ = __a__ ()",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -493,7 +509,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "print ()",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))",
+    "wrappedText": "_ = print ()",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -542,7 +560,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "exec (\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\" : None}, safe_dict)",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence)) string_end: (string_end)) (dictionary (pair key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (none))) (identifier)))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence)) string_end: (string_end)) (dictionary (pair key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (none))) (identifier)))",
+    "wrappedText": "_ = exec (\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\" : None}, safe_dict)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -602,7 +622,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "\" print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function())) \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence)) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence)) string_end: (string_end))",
+    "wrappedText": "_ = \" print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function())) \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -664,7 +686,9 @@
     "pattern": "dictionary",
     "edits": [],
     "expectedSourceOut": "{ \"__builtins__\" : None }",
-    "expectedReparseTree": "(dictionary (pair key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (none)))"
+    "expectedReparseTree": "(dictionary (pair key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (none)))",
+    "wrappedText": "_ = { \"__builtins__\" : None }",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -713,7 +737,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "a (*())",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (list_splat expression: (tuple))))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (list_splat expression: (tuple))))",
+    "wrappedText": "_ = a (*())",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -773,7 +799,9 @@
     "pattern": "binary_operator",
     "edits": [],
     "expectedSourceOut": "a + b * c ** d - e / 5",
-    "expectedReparseTree": "(binary_operator left: (binary_operator left: (identifier) right: (binary_operator left: (identifier) right: (binary_operator left: (identifier) right: (identifier)))) right: (binary_operator left: (identifier) right: (integer)))"
+    "expectedReparseTree": "(binary_operator left: (binary_operator left: (identifier) right: (binary_operator left: (identifier) right: (binary_operator left: (identifier) right: (identifier)))) right: (binary_operator left: (identifier) right: (integer)))",
+    "wrappedText": "_ = a + b * c ** d - e / 5",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -822,7 +850,9 @@
     "pattern": "unary_operator",
     "edits": [],
     "expectedSourceOut": "- 5",
-    "expectedReparseTree": "(unary_operator argument: (integer))"
+    "expectedReparseTree": "(unary_operator argument: (integer))",
+    "wrappedText": "_ = - 5",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -882,7 +912,9 @@
     "pattern": "binary_operator",
     "edits": [],
     "expectedSourceOut": ".1 - .0",
-    "expectedReparseTree": "(binary_operator left: (float) right: (float))"
+    "expectedReparseTree": "(binary_operator left: (float) right: (float))",
+    "wrappedText": "_ = .1 - .0",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -942,7 +974,9 @@
     "pattern": "binary_operator",
     "edits": [],
     "expectedSourceOut": "2 ** 2**3",
-    "expectedReparseTree": "(binary_operator left: (integer) right: (binary_operator left: (integer) right: (integer)))"
+    "expectedReparseTree": "(binary_operator left: (integer) right: (binary_operator left: (integer) right: (integer)))",
+    "wrappedText": "_ = 2 ** 2**3",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -991,7 +1025,9 @@
     "pattern": "unary_operator",
     "edits": [],
     "expectedSourceOut": "- 2**2",
-    "expectedReparseTree": "(unary_operator argument: (binary_operator left: (integer) right: (integer)))"
+    "expectedReparseTree": "(unary_operator argument: (binary_operator left: (integer) right: (integer)))",
+    "wrappedText": "_ = - 2**2",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -1051,7 +1087,9 @@
     "pattern": "binary_operator",
     "edits": [],
     "expectedSourceOut": "a() + b[c] * c.d.e",
-    "expectedReparseTree": "(binary_operator left: (call function: (identifier) arguments: (argument_list)) right: (binary_operator left: (subscript value: (identifier) subscript: (identifier)) right: (attribute object: (attribute object: (identifier) attribute: (identifier)) attribute: (identifier))))"
+    "expectedReparseTree": "(binary_operator left: (call function: (identifier) arguments: (argument_list)) right: (binary_operator left: (subscript value: (identifier) subscript: (identifier)) right: (attribute object: (attribute object: (identifier) attribute: (identifier)) attribute: (identifier))))",
+    "wrappedText": "_ = a() + b[c] * c.d.e",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -1100,7 +1138,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "a ()",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))",
+    "wrappedText": "_ = a ()",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -1171,7 +1211,9 @@
     "pattern": "subscript",
     "edits": [],
     "expectedSourceOut": "b[c]",
-    "expectedReparseTree": "(subscript value: (identifier) subscript: (identifier))"
+    "expectedReparseTree": "(subscript value: (identifier) subscript: (identifier))",
+    "wrappedText": "_ = b[c]",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -1231,7 +1273,9 @@
     "pattern": "attribute",
     "edits": [],
     "expectedSourceOut": "c.d.e",
-    "expectedReparseTree": "(attribute object: (attribute object: (identifier) attribute: (identifier)) attribute: (identifier))"
+    "expectedReparseTree": "(attribute object: (attribute object: (identifier) attribute: (identifier)) attribute: (identifier))",
+    "wrappedText": "_ = c.d.e",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -1291,7 +1335,9 @@
     "pattern": "binary_operator",
     "edits": [],
     "expectedSourceOut": "a << b | c >> d & e ^ f",
-    "expectedReparseTree": "(binary_operator left: (binary_operator left: (identifier) right: (identifier)) right: (binary_operator left: (binary_operator left: (identifier) right: (identifier)) right: (binary_operator left: (identifier) right: (identifier))))"
+    "expectedReparseTree": "(binary_operator left: (binary_operator left: (identifier) right: (identifier)) right: (binary_operator left: (binary_operator left: (identifier) right: (identifier)) right: (binary_operator left: (identifier) right: (identifier))))",
+    "wrappedText": "_ = a << b | c >> d & e ^ f",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -1351,7 +1397,9 @@
     "pattern": "boolean_operator",
     "edits": [],
     "expectedSourceOut": "a or b and c",
-    "expectedReparseTree": "(boolean_operator left: (identifier) right: (boolean_operator left: (identifier) right: (identifier)))"
+    "expectedReparseTree": "(boolean_operator left: (identifier) right: (boolean_operator left: (identifier) right: (identifier)))",
+    "wrappedText": "_ = a or b and c",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -1400,7 +1448,9 @@
     "pattern": "not_operator",
     "edits": [],
     "expectedSourceOut": "not d",
-    "expectedReparseTree": "(not_operator argument: (identifier))"
+    "expectedReparseTree": "(not_operator argument: (identifier))",
+    "wrappedText": "_ = not d",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -1438,7 +1488,9 @@
     "pattern": "type",
     "edits": [],
     "expectedSourceOut": "List[Leaf]",
-    "expectedReparseTree": "(type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)))))"
+    "expectedReparseTree": "(type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)))))",
+    "wrappedText": "_: List[Leaf] = None",
+    "wrappedOffset": 3
   },
   {
     "kind": "render",
@@ -1487,7 +1539,9 @@
     "pattern": "list",
     "edits": [],
     "expectedSourceOut": "[]",
-    "expectedReparseTree": "(list)"
+    "expectedReparseTree": "(list)",
+    "wrappedText": "_ = []",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -1547,7 +1601,9 @@
     "pattern": "named_expression",
     "edits": [],
     "expectedSourceOut": "a:=x",
-    "expectedReparseTree": "(named_expression name: (identifier) value: (identifier))"
+    "expectedReparseTree": "(named_expression name: (identifier) value: (identifier))",
+    "wrappedText": "_ = a:=x",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -1609,7 +1665,9 @@
     "pattern": "parenthesized_expression",
     "edits": [],
     "expectedSourceOut": "(y := f(x))",
-    "expectedReparseTree": "(parenthesized_expression (named_expression name: (identifier) value: (call function: (identifier) arguments: (argument_list (identifier)))))"
+    "expectedReparseTree": "(parenthesized_expression (named_expression name: (identifier) value: (call function: (identifier) arguments: (argument_list (identifier)))))",
+    "wrappedText": "_ = (y := f(x))",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -1658,7 +1716,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "f (x)",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (identifier)))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (identifier)))",
+    "wrappedText": "_ = f (x)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -1696,7 +1756,9 @@
     "pattern": "type",
     "edits": [],
     "expectedSourceOut": "(p := 42)",
-    "expectedReparseTree": "(type (parenthesized_expression (named_expression name: (identifier) value: (integer))))"
+    "expectedReparseTree": "(type (parenthesized_expression (named_expression name: (identifier) value: (integer))))",
+    "wrappedText": "_: (p := 42) = None",
+    "wrappedOffset": 3
   },
   {
     "kind": "render",
@@ -1756,7 +1818,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "' vector '",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = ' vector '",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -1818,7 +1882,9 @@
     "pattern": "parenthesized_expression",
     "edits": [],
     "expectedSourceOut": "(yield from (x for x in range(1, 10)))",
-    "expectedReparseTree": "(parenthesized_expression (yield (generator_expression body: (identifier) for_in_clause: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list (integer) (integer)))))))"
+    "expectedReparseTree": "(parenthesized_expression (yield (generator_expression body: (identifier) for_in_clause: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list (integer) (integer)))))))",
+    "wrappedText": "_ = (yield from (x for x in range(1, 10)))",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -1889,7 +1955,9 @@
     "pattern": "generator_expression",
     "edits": [],
     "expectedSourceOut": "(x for x in range(1, 10) )",
-    "expectedReparseTree": "(generator_expression body: (identifier) for_in_clause: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list (integer) (integer)))))"
+    "expectedReparseTree": "(generator_expression body: (identifier) for_in_clause: (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list (integer) (integer)))))",
+    "wrappedText": "_ = (x for x in range(1, 10) )",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -1938,7 +2006,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "range (1, 10)",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (integer) (integer)))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (integer) (integer)))",
+    "wrappedText": "_ = range (1, 10)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -2009,7 +2079,9 @@
     "pattern": "lambda",
     "edits": [],
     "expectedSourceOut": "lambda b, c:d(\"e\" % f)",
-    "expectedReparseTree": "(lambda parameters: (lambda_parameters (identifier) (identifier)) body: (call function: (identifier) arguments: (argument_list (binary_operator left: (string string_start: (string_start) content: (string_content) string_end: (string_end)) right: (identifier)))))"
+    "expectedReparseTree": "(lambda parameters: (lambda_parameters (identifier) (identifier)) body: (call function: (identifier) arguments: (argument_list (binary_operator left: (string string_start: (string_start) content: (string_content) string_end: (string_end)) right: (identifier)))))",
+    "wrappedText": "_ = lambda b, c:d(\"e\" % f)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -2058,7 +2130,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "d (\"e\" % f)",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (binary_operator left: (string string_start: (string_start) content: (string_content) string_end: (string_end)) right: (identifier))))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (binary_operator left: (string string_start: (string_start) content: (string_content) string_end: (string_end)) right: (identifier))))",
+    "wrappedText": "_ = d (\"e\" % f)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -2118,7 +2192,9 @@
     "pattern": "binary_operator",
     "edits": [],
     "expectedSourceOut": "\"e\" % f",
-    "expectedReparseTree": "(binary_operator left: (string string_start: (string_start) content: (string_content) string_end: (string_end)) right: (identifier))"
+    "expectedReparseTree": "(binary_operator left: (string string_start: (string_start) content: (string_content) string_end: (string_end)) right: (identifier))",
+    "wrappedText": "_ = \"e\" % f",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -2178,7 +2254,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "\" e \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \" e \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -2284,7 +2362,9 @@
     "pattern": "tuple",
     "edits": [],
     "expectedSourceOut": "(foo,*bar,*baz)",
-    "expectedReparseTree": "(tuple (identifier) (list_splat expression: (identifier)) (list_splat expression: (identifier)))"
+    "expectedReparseTree": "(tuple (identifier) (list_splat expression: (identifier)) (list_splat expression: (identifier)))",
+    "wrappedText": "_ = (foo,*bar,*baz)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -2333,7 +2413,9 @@
     "pattern": "list_splat",
     "edits": [],
     "expectedSourceOut": "*bar",
-    "expectedReparseTree": "(list_splat (identifier))"
+    "expectedReparseTree": "(list_splat (identifier))",
+    "wrappedText": "_ = *bar",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -2417,7 +2499,9 @@
     "pattern": "tuple",
     "edits": [],
     "expectedSourceOut": "(a,yield a, b, c)",
-    "expectedReparseTree": "(tuple (identifier) (yield (expression_list (identifier) (identifier) (identifier))))"
+    "expectedReparseTree": "(tuple (identifier) (yield (expression_list (identifier) (identifier) (identifier))))",
+    "wrappedText": "_ = (a,yield a, b, c)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -2501,7 +2585,9 @@
     "pattern": "tuple",
     "edits": [],
     "expectedSourceOut": "(3,4)",
-    "expectedReparseTree": "(tuple (integer) (integer))"
+    "expectedReparseTree": "(tuple (integer) (integer))",
+    "wrappedText": "_ = (3,4)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -2583,7 +2669,9 @@
     "pattern": "conditional_expression",
     "edits": [],
     "expectedSourceOut": "something() if a else d",
-    "expectedReparseTree": "(conditional_expression body: (call function: (identifier) arguments: (argument_list)) condition: (identifier) alternative: (identifier))"
+    "expectedReparseTree": "(conditional_expression body: (call function: (identifier) arguments: (argument_list)) condition: (identifier) alternative: (identifier))",
+    "wrappedText": "_ = something() if a else d",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -2632,7 +2720,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "something ()",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))",
+    "wrappedText": "_ = something ()",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -2692,7 +2782,9 @@
     "pattern": "as_pattern",
     "edits": [],
     "expectedSourceOut": "a as b",
-    "expectedReparseTree": "(as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))"
+    "expectedReparseTree": "(as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))",
+    "wrappedText": "_ = a as b",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -2763,7 +2855,9 @@
     "pattern": "list_comprehension",
     "edits": [],
     "expectedSourceOut": "[e async for f in g ]",
-    "expectedReparseTree": "(list_comprehension body: (identifier) for_in_clause: (for_in_clause left: (identifier) right: (identifier)))"
+    "expectedReparseTree": "(list_comprehension body: (identifier) for_in_clause: (for_in_clause left: (identifier) right: (identifier)))",
+    "wrappedText": "_ = [e async for f in g ]",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -2812,7 +2906,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "b (\n1,\n2\n    )",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (integer) (integer)))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (integer) (integer)))",
+    "wrappedText": "_ = b (\n1,\n2\n    )",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -2874,7 +2970,9 @@
     "pattern": "list",
     "edits": [],
     "expectedSourceOut": "[3]",
-    "expectedReparseTree": "(list (integer))"
+    "expectedReparseTree": "(list (integer))",
+    "wrappedText": "_ = [3]",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -2958,7 +3056,9 @@
     "pattern": "list",
     "edits": [],
     "expectedSourceOut": "[1,2]",
-    "expectedReparseTree": "(list (integer) (integer))"
+    "expectedReparseTree": "(list (integer) (integer))",
+    "wrappedText": "_ = [1,2]",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -3007,7 +3107,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "match (r1, r2, r3)",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (identifier) (identifier) (identifier)))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (identifier) (identifier) (identifier)))",
+    "wrappedText": "_ = match (r1, r2, r3)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -3045,7 +3147,9 @@
     "pattern": "type",
     "edits": [],
     "expectedSourceOut": "A[T] | B",
-    "expectedReparseTree": "(type (union_type left: (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier))))) right: (type (identifier))))"
+    "expectedReparseTree": "(type (union_type left: (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier))))) right: (type (identifier))))",
+    "wrappedText": "_: A[T] | B = None",
+    "wrappedOffset": 3
   },
   {
     "kind": "render",
@@ -3094,7 +3198,9 @@
     "pattern": "unary_operator",
     "edits": [],
     "expectedSourceOut": "- 1",
-    "expectedReparseTree": "(unary_operator argument: (integer))"
+    "expectedReparseTree": "(unary_operator argument: (integer))",
+    "wrappedText": "_ = - 1",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -3143,7 +3249,9 @@
     "pattern": "unary_operator",
     "edits": [],
     "expectedSourceOut": "- .6_6",
-    "expectedReparseTree": "(unary_operator argument: (float))"
+    "expectedReparseTree": "(unary_operator argument: (float))",
+    "wrappedText": "_ = - .6_6",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -3192,7 +3300,9 @@
     "pattern": "unary_operator",
     "edits": [],
     "expectedSourceOut": "- 1e10",
-    "expectedReparseTree": "(unary_operator argument: (float))"
+    "expectedReparseTree": "(unary_operator argument: (float))",
+    "wrappedText": "_ = - 1e10",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -3252,7 +3362,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "\" I'm ok \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \" I'm ok \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -3312,7 +3424,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "' ab\\x00cd '",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_sequence)) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_sequence)) string_end: (string_end))",
+    "wrappedText": "_ = ' ab\\x00cd '",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -3361,7 +3475,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "re.compile (r\"(\\n|\\A)#include\\s*['\\\"]\"\n           r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\")",
-    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (concatenated_string string: (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))))"
+    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (concatenated_string string: (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))))",
+    "wrappedText": "_ = re.compile (r\"(\\n|\\A)#include\\s*['\\\"]\"\n           r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\")",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -3421,7 +3537,9 @@
     "pattern": "attribute",
     "edits": [],
     "expectedSourceOut": "re.compile",
-    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))"
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "_ = re.compile",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -3472,7 +3590,9 @@
     "pattern": "concatenated_string",
     "edits": [],
     "expectedSourceOut": "r\"(\\n|\\A)#include\\s*['\\\"]\" r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\"",
-    "expectedReparseTree": "(concatenated_string string: (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))"
+    "expectedReparseTree": "(concatenated_string string: (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))",
+    "wrappedText": "_ = r\"(\\n|\\A)#include\\s*['\\\"]\" r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -3532,7 +3652,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "r\" (\\n|\\A)#include\\s*['\\\"] \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = r\" (\\n|\\A)#include\\s*['\\\"] \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -3592,7 +3714,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "\" \\x12 \\123 \\u1234 \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence) (escape_sequence)) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence) (escape_sequence)) string_end: (string_end))",
+    "wrappedText": "_ = \" \\x12 \\123 \\u1234 \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -3654,7 +3778,9 @@
     "pattern": "concatenated_string",
     "edits": [],
     "expectedSourceOut": "\"one\" \"two\" \"three\"",
-    "expectedReparseTree": "(concatenated_string string: (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))"
+    "expectedReparseTree": "(concatenated_string string: (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))",
+    "wrappedText": "_ = \"one\" \"two\" \"three\"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -3714,7 +3840,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "\" one \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \" one \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -3774,7 +3902,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "\"\"\" \nA double quote hello,\nwithout double or single quotes.\n \"\"\"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \"\"\" \nA double quote hello,\nwithout double or single quotes.\n \"\"\"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -3880,7 +4010,9 @@
     "pattern": "list",
     "edits": [],
     "expectedSourceOut": "[a,b,[c, d]]",
-    "expectedReparseTree": "(list (identifier) (identifier) (list (identifier) (identifier)))"
+    "expectedReparseTree": "(list (identifier) (identifier) (list (identifier) (identifier)))",
+    "wrappedText": "_ = [a,b,[c, d]]",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -3951,7 +4083,9 @@
     "pattern": "list_comprehension",
     "edits": [],
     "expectedSourceOut": "[a + b for (a, b) in items ]",
-    "expectedReparseTree": "(list_comprehension body: (binary_operator left: (identifier) right: (identifier)) for_in_clause: (for_in_clause left: (tuple_pattern (identifier) (identifier)) right: (identifier)))"
+    "expectedReparseTree": "(list_comprehension body: (binary_operator left: (identifier) right: (identifier)) for_in_clause: (for_in_clause left: (tuple_pattern (identifier) (identifier)) right: (identifier)))",
+    "wrappedText": "_ = [a + b for (a, b) in items ]",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -4011,7 +4145,9 @@
     "pattern": "binary_operator",
     "edits": [],
     "expectedSourceOut": "a + b",
-    "expectedReparseTree": "(binary_operator left: (identifier) right: (identifier))"
+    "expectedReparseTree": "(binary_operator left: (identifier) right: (identifier))",
+    "wrappedText": "_ = a + b",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -4095,7 +4231,9 @@
     "pattern": "tuple",
     "edits": [],
     "expectedSourceOut": "(x,y)",
-    "expectedReparseTree": "(tuple (identifier) (identifier))"
+    "expectedReparseTree": "(tuple (identifier) (identifier))",
+    "wrappedText": "_ = (x,y)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -4201,7 +4339,9 @@
     "pattern": "list",
     "edits": [],
     "expectedSourceOut": "[1,2,3]",
-    "expectedReparseTree": "(list (integer) (integer) (integer))"
+    "expectedReparseTree": "(list (integer) (integer) (integer))",
+    "wrappedText": "_ = [1,2,3]",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -4261,7 +4401,9 @@
     "pattern": "lambda",
     "edits": [],
     "expectedSourceOut": "lambda :True",
-    "expectedReparseTree": "(lambda body: (true))"
+    "expectedReparseTree": "(lambda body: (true))",
+    "wrappedText": "_ = lambda :True",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -4310,7 +4452,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "a ()",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))",
+    "wrappedText": "_ = a ()",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -4394,7 +4538,9 @@
     "pattern": "dictionary",
     "edits": [],
     "expectedSourceOut": "{ a: 1,b: 2 }",
-    "expectedReparseTree": "(dictionary (pair key: (identifier) value: (integer)) (pair key: (identifier) value: (integer)))"
+    "expectedReparseTree": "(dictionary (pair key: (identifier) value: (integer)) (pair key: (identifier) value: (integer)))",
+    "wrappedText": "_ = { a: 1,b: 2 }",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -4454,7 +4600,9 @@
     "pattern": "attribute",
     "edits": [],
     "expectedSourceOut": "a.b",
-    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))"
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "_ = a.b",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -4525,7 +4673,9 @@
     "pattern": "subscript",
     "edits": [],
     "expectedSourceOut": "a[b]",
-    "expectedReparseTree": "(subscript value: (identifier) subscript: (identifier))"
+    "expectedReparseTree": "(subscript value: (identifier) subscript: (identifier))",
+    "wrappedText": "_ = a[b]",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -4574,7 +4724,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "a ()",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))",
+    "wrappedText": "_ = a ()",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -4645,7 +4797,9 @@
     "pattern": "dictionary_comprehension",
     "edits": [],
     "expectedSourceOut": "{ a: b for a, b in items }",
-    "expectedReparseTree": "(dictionary_comprehension body: (pair key: (identifier) value: (identifier)) for_in_clause: (for_in_clause left: (pattern_list pattern: (identifier) (identifier)) right: (identifier)))"
+    "expectedReparseTree": "(dictionary_comprehension body: (pair key: (identifier) value: (identifier)) for_in_clause: (for_in_clause left: (pattern_list pattern: (identifier) (identifier)) right: (identifier)))",
+    "wrappedText": "_ = { a: b for a, b in items }",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -4762,7 +4916,9 @@
     "pattern": "set",
     "edits": [],
     "expectedSourceOut": "{ a,b,c, }",
-    "expectedReparseTree": "(set (identifier) (identifier) (identifier))"
+    "expectedReparseTree": "(set (identifier) (identifier) (identifier))",
+    "wrappedText": "_ = { a,b,c, }",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -4833,7 +4989,9 @@
     "pattern": "set_comprehension",
     "edits": [],
     "expectedSourceOut": "{ a[b][c] for a, b, c in items }",
-    "expectedReparseTree": "(set_comprehension body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) for_in_clause: (for_in_clause left: (pattern_list pattern: (identifier) (identifier) (identifier)) right: (identifier)))"
+    "expectedReparseTree": "(set_comprehension body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) for_in_clause: (for_in_clause left: (pattern_list pattern: (identifier) (identifier) (identifier)) right: (identifier)))",
+    "wrappedText": "_ = { a[b][c] for a, b, c in items }",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -4904,7 +5062,9 @@
     "pattern": "subscript",
     "edits": [],
     "expectedSourceOut": "a[b][c]",
-    "expectedReparseTree": "(subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier))"
+    "expectedReparseTree": "(subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier))",
+    "wrappedText": "_ = a[b][c]",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -4953,7 +5113,9 @@
     "pattern": "tuple",
     "edits": [],
     "expectedSourceOut": "()",
-    "expectedReparseTree": "(tuple)"
+    "expectedReparseTree": "(tuple)",
+    "wrappedText": "_ = ()",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -5024,7 +5186,9 @@
     "pattern": "generator_expression",
     "edits": [],
     "expectedSourceOut": "(a[b][c] for a, b, c in items )",
-    "expectedReparseTree": "(generator_expression body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) for_in_clause: (for_in_clause left: (pattern_list pattern: (identifier) (identifier) (identifier)) right: (identifier)))"
+    "expectedReparseTree": "(generator_expression body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) for_in_clause: (for_in_clause left: (pattern_list pattern: (identifier) (identifier) (identifier)) right: (identifier)))",
+    "wrappedText": "_ = (a[b][c] for a, b, c in items )",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -5095,7 +5259,9 @@
     "pattern": "subscript",
     "edits": [],
     "expectedSourceOut": "a[b][c]",
-    "expectedReparseTree": "(subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier))"
+    "expectedReparseTree": "(subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier))",
+    "wrappedText": "_ = a[b][c]",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -5144,7 +5310,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "dict ((a, b) for a, b in d)",
-    "expectedReparseTree": "(call function: (identifier) arguments: (generator_expression body: (tuple (identifier) (identifier)) for_in_clause: (for_in_clause left: (pattern_list pattern: (identifier) (identifier)) right: (identifier))))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (generator_expression body: (tuple (identifier) (identifier)) for_in_clause: (for_in_clause left: (pattern_list pattern: (identifier) (identifier)) right: (identifier))))",
+    "wrappedText": "_ = dict ((a, b) for a, b in d)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -5228,7 +5396,9 @@
     "pattern": "tuple",
     "edits": [],
     "expectedSourceOut": "(a,b)",
-    "expectedReparseTree": "(tuple (identifier) (identifier))"
+    "expectedReparseTree": "(tuple (identifier) (identifier))",
+    "wrappedText": "_ = (a,b)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -5277,7 +5447,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "command.split ()",
-    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))"
+    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))",
+    "wrappedText": "_ = command.split ()",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -5337,7 +5509,9 @@
     "pattern": "attribute",
     "edits": [],
     "expectedSourceOut": "command.split",
-    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))"
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "_ = command.split",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -5399,7 +5573,9 @@
     "pattern": "list_pattern",
     "edits": [],
     "expectedSourceOut": "[\"quit\"]",
-    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))"
+    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))",
+    "wrappedText": "match _:\n  case [\"quit\"]: pass",
+    "wrappedOffset": 16
   },
   {
     "kind": "render",
@@ -5459,7 +5635,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "\" quit \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \" quit \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -5508,7 +5686,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "command.split ()",
-    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))"
+    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))",
+    "wrappedText": "_ = command.split ()",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -5568,7 +5748,9 @@
     "pattern": "attribute",
     "edits": [],
     "expectedSourceOut": "command.split",
-    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))"
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "_ = command.split",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -5652,7 +5834,9 @@
     "pattern": "list_pattern",
     "edits": [],
     "expectedSourceOut": "[\"drop\",*objects]",
-    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (splat_pattern (identifier))))"
+    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (splat_pattern (identifier))))",
+    "wrappedText": "match _:\n  case [\"drop\",*objects]: pass",
+    "wrappedOffset": 16
   },
   {
     "kind": "render",
@@ -5712,7 +5896,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "\" drop \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \" drop \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -5761,7 +5947,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "command.split ()",
-    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))"
+    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))",
+    "wrappedText": "_ = command.split ()",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -5821,7 +6009,9 @@
     "pattern": "attribute",
     "edits": [],
     "expectedSourceOut": "command.split",
-    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))"
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "_ = command.split",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -5883,7 +6073,9 @@
     "pattern": "list_pattern",
     "edits": [],
     "expectedSourceOut": "[\"quit\"]",
-    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))"
+    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))",
+    "wrappedText": "match _:\n  case [\"quit\"]: pass",
+    "wrappedOffset": 16
   },
   {
     "kind": "render",
@@ -5943,7 +6135,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "\" quit \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \" quit \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -5992,7 +6186,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "command.split ()",
-    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))"
+    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))",
+    "wrappedText": "_ = command.split ()",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -6052,7 +6248,9 @@
     "pattern": "attribute",
     "edits": [],
     "expectedSourceOut": "command.split",
-    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))"
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "_ = command.split",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -6114,7 +6312,9 @@
     "pattern": "list_pattern",
     "edits": [],
     "expectedSourceOut": "[\"north\"]",
-    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))"
+    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))",
+    "wrappedText": "match _:\n  case [\"north\"]: pass",
+    "wrappedOffset": 16
   },
   {
     "kind": "render",
@@ -6174,7 +6374,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "\" north \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \" north \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -6223,7 +6425,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "command.split ()",
-    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))"
+    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))",
+    "wrappedText": "_ = command.split ()",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -6283,7 +6487,9 @@
     "pattern": "attribute",
     "edits": [],
     "expectedSourceOut": "command.split",
-    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))"
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "_ = command.split",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -6367,7 +6573,9 @@
     "pattern": "list_pattern",
     "edits": [],
     "expectedSourceOut": "[\"go\",(\"north\" | \"south\" | \"east\" | \"west\") as direction]",
-    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (as_pattern case_pattern: (case_pattern (tuple_pattern (case_pattern (union_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))))) identifier: (identifier))))"
+    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (as_pattern case_pattern: (case_pattern (tuple_pattern (case_pattern (union_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))))) identifier: (identifier))))",
+    "wrappedText": "match _:\n  case [\"go\",(\"north\" | \"south\" | \"east\" | \"west\") as direction]: pass",
+    "wrappedOffset": 16
   },
   {
     "kind": "render",
@@ -6427,7 +6635,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "\" go \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \" go \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -6465,7 +6675,9 @@
     "pattern": "type",
     "edits": [],
     "expectedSourceOut": "int",
-    "expectedReparseTree": "(type (identifier))"
+    "expectedReparseTree": "(type (identifier))",
+    "wrappedText": "_: int = None",
+    "wrappedOffset": 3
   },
   {
     "kind": "render",
@@ -6525,7 +6737,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "\" hey, what's up? \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \" hey, what's up? \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -6587,7 +6801,9 @@
     "pattern": "list",
     "edits": [],
     "expectedSourceOut": "[match]",
-    "expectedReparseTree": "(list (identifier))"
+    "expectedReparseTree": "(list (identifier))",
+    "wrappedText": "_ = [match]",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -6636,7 +6852,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "call (match=r\".*\\.txt$\")",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (keyword_argument name: (identifier) value: (string string_start: (string_start) content: (string_content) string_end: (string_end)))))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (keyword_argument name: (identifier) value: (string string_start: (string_start) content: (string_content) string_end: (string_end)))))",
+    "wrappedText": "_ = call (match=r\".*\\.txt$\")",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -6696,7 +6914,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "r\" .*\\.txt$ \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = r\" .*\\.txt$ \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -6745,7 +6965,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "match (match=match, match)",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (keyword_argument name: (identifier) value: (identifier)) (identifier)))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (keyword_argument name: (identifier) value: (identifier)) (identifier)))",
+    "wrappedText": "_ = match (match=match, match)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -6807,7 +7029,9 @@
     "pattern": "list",
     "edits": [],
     "expectedSourceOut": "[case]",
-    "expectedReparseTree": "(list (identifier))"
+    "expectedReparseTree": "(list (identifier))",
+    "wrappedText": "_ = [case]",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -6856,7 +7080,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "call_me (case=True)",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (keyword_argument name: (identifier) value: (true))))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (keyword_argument name: (identifier) value: (true))))",
+    "wrappedText": "_ = call_me (case=True)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -6916,7 +7142,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "\" something \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \" something \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -6967,7 +7195,9 @@
     "pattern": "concatenated_string",
     "edits": [],
     "expectedSourceOut": "\"something\" \"else\"",
-    "expectedReparseTree": "(concatenated_string string: (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))"
+    "expectedReparseTree": "(concatenated_string string: (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))",
+    "wrappedText": "_ = \"something\" \"else\"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -7073,7 +7303,9 @@
     "pattern": "tuple",
     "edits": [],
     "expectedSourceOut": "(0,1,2)",
-    "expectedReparseTree": "(tuple (integer) (integer) (integer))"
+    "expectedReparseTree": "(tuple (integer) (integer) (integer))",
+    "wrappedText": "_ = (0,1,2)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -7122,7 +7354,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "locals ()",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))",
+    "wrappedText": "_ = locals ()",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -7182,7 +7416,9 @@
     "pattern": "named_expression",
     "edits": [],
     "expectedSourceOut": "match:=re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)",
-    "expectedReparseTree": "(named_expression name: (identifier) value: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end)) (identifier) (keyword_argument name: (identifier) value: (attribute object: (identifier) attribute: (identifier))))))"
+    "expectedReparseTree": "(named_expression name: (identifier) value: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end)) (identifier) (keyword_argument name: (identifier) value: (attribute object: (identifier) attribute: (identifier))))))",
+    "wrappedText": "_ = match:=re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -7231,7 +7467,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "re.fullmatch (r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)",
-    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end)) (identifier) (keyword_argument name: (identifier) value: (attribute object: (identifier) attribute: (identifier)))))"
+    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end)) (identifier) (keyword_argument name: (identifier) value: (attribute object: (identifier) attribute: (identifier)))))",
+    "wrappedText": "_ = re.fullmatch (r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -7291,7 +7529,9 @@
     "pattern": "attribute",
     "edits": [],
     "expectedSourceOut": "re.fullmatch",
-    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))"
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "_ = re.fullmatch",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -7351,7 +7591,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "r\" (-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)? \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = r\" (-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)? \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -7400,7 +7642,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "event.get ()",
-    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))"
+    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))",
+    "wrappedText": "_ = event.get ()",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -7460,7 +7704,9 @@
     "pattern": "attribute",
     "edits": [],
     "expectedSourceOut": "event.get",
-    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))"
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "_ = event.get",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -7544,7 +7790,9 @@
     "pattern": "tuple_pattern",
     "edits": [],
     "expectedSourceOut": "(x,y)",
-    "expectedReparseTree": "(tuple_pattern (case_pattern (dotted_name (identifier))) (case_pattern (dotted_name (identifier))))"
+    "expectedReparseTree": "(tuple_pattern (case_pattern (dotted_name (identifier))) (case_pattern (dotted_name (identifier))))",
+    "wrappedText": "match _:\n  case (x,y): pass",
+    "wrappedOffset": 16
   },
   {
     "kind": "render",
@@ -7604,7 +7852,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "\" Q \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \" Q \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -7653,7 +7903,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "event.get ()",
-    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))"
+    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))",
+    "wrappedText": "_ = event.get ()",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -7713,7 +7965,9 @@
     "pattern": "attribute",
     "edits": [],
     "expectedSourceOut": "event.get",
-    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))"
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "_ = event.get",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -7797,7 +8051,9 @@
     "pattern": "tuple_pattern",
     "edits": [],
     "expectedSourceOut": "(x,y)",
-    "expectedReparseTree": "(tuple_pattern (case_pattern (dotted_name (identifier))) (case_pattern (dotted_name (identifier))))"
+    "expectedReparseTree": "(tuple_pattern (case_pattern (dotted_name (identifier))) (case_pattern (dotted_name (identifier))))",
+    "wrappedText": "match _:\n  case (x,y): pass",
+    "wrappedOffset": 16
   },
   {
     "kind": "render",
@@ -7846,7 +8102,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "event.get ()",
-    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))"
+    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))",
+    "wrappedText": "_ = event.get ()",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -7906,7 +8164,9 @@
     "pattern": "attribute",
     "edits": [],
     "expectedSourceOut": "event.get",
-    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))"
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "_ = event.get",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -7990,7 +8250,9 @@
     "pattern": "tuple_pattern",
     "edits": [],
     "expectedSourceOut": "(x,y)",
-    "expectedReparseTree": "(tuple_pattern (case_pattern (dotted_name (identifier))) (case_pattern (dotted_name (identifier))))"
+    "expectedReparseTree": "(tuple_pattern (case_pattern (dotted_name (identifier))) (case_pattern (dotted_name (identifier))))",
+    "wrappedText": "match _:\n  case (x,y): pass",
+    "wrappedOffset": 16
   },
   {
     "kind": "render",
@@ -8050,7 +8312,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "\" text \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \" text \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -8099,7 +8363,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "ui.set_text_color (c)",
-    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))"
+    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))",
+    "wrappedText": "_ = ui.set_text_color (c)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -8159,7 +8425,9 @@
     "pattern": "attribute",
     "edits": [],
     "expectedSourceOut": "ui.set_text_color",
-    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))"
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "_ = ui.set_text_color",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -8219,7 +8487,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "\" text \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \" text \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -8268,7 +8538,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "ui.set_text_color (c)",
-    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))"
+    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))",
+    "wrappedText": "_ = ui.set_text_color (c)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -8328,7 +8600,9 @@
     "pattern": "attribute",
     "edits": [],
     "expectedSourceOut": "ui.set_text_color",
-    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))"
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "_ = ui.set_text_color",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -8377,7 +8651,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "foo1 ()",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))",
+    "wrappedText": "_ = foo1 ()",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -8437,7 +8713,9 @@
     "pattern": "boolean_operator",
     "edits": [],
     "expectedSourceOut": "0 or 1",
-    "expectedReparseTree": "(boolean_operator left: (integer) right: (integer))"
+    "expectedReparseTree": "(boolean_operator left: (integer) right: (integer))",
+    "wrappedText": "_ = 0 or 1",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -8486,7 +8764,9 @@
     "pattern": "not_operator",
     "edits": [],
     "expectedSourceOut": "not True",
-    "expectedReparseTree": "(not_operator argument: (true))"
+    "expectedReparseTree": "(not_operator argument: (true))",
+    "wrappedText": "_ = not True",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -8546,7 +8826,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "\" b \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \" b \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -8606,7 +8888,9 @@
     "pattern": "binary_operator",
     "edits": [],
     "expectedSourceOut": "b + c",
-    "expectedReparseTree": "(binary_operator left: (identifier) right: (identifier))"
+    "expectedReparseTree": "(binary_operator left: (identifier) right: (identifier))",
+    "wrappedText": "_ = b + c",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -8677,7 +8961,9 @@
     "pattern": "subscript",
     "edits": [],
     "expectedSourceOut": "a[1]",
-    "expectedReparseTree": "(subscript value: (identifier) subscript: (integer))"
+    "expectedReparseTree": "(subscript value: (identifier) subscript: (integer))",
+    "wrappedText": "_ = a[1]",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -8737,7 +9023,9 @@
     "pattern": "binary_operator",
     "edits": [],
     "expectedSourceOut": "a + b",
-    "expectedReparseTree": "(binary_operator left: (identifier) right: (identifier))"
+    "expectedReparseTree": "(binary_operator left: (identifier) right: (identifier))",
+    "wrappedText": "_ = a + b",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -8786,7 +9074,9 @@
     "pattern": "not_operator",
     "edits": [],
     "expectedSourceOut": "not b",
-    "expectedReparseTree": "(not_operator argument: (identifier))"
+    "expectedReparseTree": "(not_operator argument: (identifier))",
+    "wrappedText": "_ = not b",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -8892,7 +9182,9 @@
     "pattern": "list",
     "edits": [],
     "expectedSourceOut": "[(1,),(2,),(3,)]",
-    "expectedReparseTree": "(list (tuple (integer)) (tuple (integer)) (tuple (integer)))"
+    "expectedReparseTree": "(list (tuple (integer)) (tuple (integer)) (tuple (integer)))",
+    "wrappedText": "_ = [(1,),(2,),(3,)]",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -8952,7 +9244,9 @@
     "pattern": "as_pattern",
     "edits": [],
     "expectedSourceOut": "d as e",
-    "expectedReparseTree": "(as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))"
+    "expectedReparseTree": "(as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))",
+    "wrappedText": "_ = d as e",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -9012,7 +9306,9 @@
     "pattern": "as_pattern",
     "edits": [],
     "expectedSourceOut": "a as b",
-    "expectedReparseTree": "(as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))"
+    "expectedReparseTree": "(as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))",
+    "wrappedText": "_ = a as b",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -9061,7 +9357,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "open ('d')",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end))))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end))))",
+    "wrappedText": "_ = open ('d')",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -9121,7 +9419,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "' d '",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = ' d '",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -9159,7 +9459,9 @@
     "pattern": "type",
     "edits": [],
     "expectedSourceOut": "str",
-    "expectedReparseTree": "(type (identifier))"
+    "expectedReparseTree": "(type (identifier))",
+    "wrappedText": "_: str = None",
+    "wrappedOffset": 3
   },
   {
     "kind": "render",
@@ -9219,7 +9521,9 @@
     "pattern": "attribute",
     "edits": [],
     "expectedSourceOut": "b.c",
-    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))"
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "_ = b.c",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -9303,7 +9607,9 @@
     "pattern": "tuple",
     "edits": [],
     "expectedSourceOut": "(a,b)",
-    "expectedReparseTree": "(tuple (identifier) (identifier))"
+    "expectedReparseTree": "(tuple (identifier) (identifier))",
+    "wrappedText": "_ = (a,b)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -9352,7 +9658,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "f ()",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))",
+    "wrappedText": "_ = f ()",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -9423,7 +9731,9 @@
     "pattern": "subscript",
     "edits": [],
     "expectedSourceOut": "Sequence[T]",
-    "expectedReparseTree": "(subscript value: (identifier) subscript: (identifier))"
+    "expectedReparseTree": "(subscript value: (identifier) subscript: (identifier))",
+    "wrappedText": "_ = Sequence[T]",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -9483,7 +9793,9 @@
     "pattern": "attribute",
     "edits": [],
     "expectedSourceOut": "e[2].f.g",
-    "expectedReparseTree": "(attribute object: (attribute object: (subscript value: (identifier) subscript: (integer)) attribute: (identifier)) attribute: (identifier))"
+    "expectedReparseTree": "(attribute object: (attribute object: (subscript value: (identifier) subscript: (integer)) attribute: (identifier)) attribute: (identifier))",
+    "wrappedText": "_ = e[2].f.g",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -9532,7 +9844,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "d (1)",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (integer)))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (integer)))",
+    "wrappedText": "_ = d (1)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -9603,7 +9917,9 @@
     "pattern": "subscript",
     "edits": [],
     "expectedSourceOut": "e[2]",
-    "expectedReparseTree": "(subscript value: (identifier) subscript: (integer))"
+    "expectedReparseTree": "(subscript value: (identifier) subscript: (integer))",
+    "wrappedText": "_ = e[2]",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -9652,7 +9968,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "RuntimeError ('NO')",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end))))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end))))",
+    "wrappedText": "_ = RuntimeError ('NO')",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -9712,7 +10030,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "' NO '",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = ' NO '",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -9772,7 +10092,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "\" a \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \" a \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -9832,7 +10154,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "' 1+1 '",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = ' 1+1 '",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -9881,7 +10205,9 @@
     "pattern": "dictionary",
     "edits": [],
     "expectedSourceOut": "{ }",
-    "expectedReparseTree": "(dictionary)"
+    "expectedReparseTree": "(dictionary)",
+    "wrappedText": "_ = { }",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -9930,7 +10256,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "b ()",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))",
+    "wrappedText": "_ = b ()",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -9979,7 +10307,9 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "len (\"a\")",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end))))"
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end))))",
+    "wrappedText": "_ = len (\"a\")",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -10039,7 +10369,9 @@
     "pattern": "string",
     "edits": [],
     "expectedSourceOut": "\" a \"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))"
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \" a \"",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -10123,7 +10455,9 @@
     "pattern": "tuple",
     "edits": [],
     "expectedSourceOut": "(int,str)",
-    "expectedReparseTree": "(tuple (identifier) (identifier))"
+    "expectedReparseTree": "(tuple (identifier) (identifier))",
+    "wrappedText": "_ = (int,str)",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -10161,6 +10495,8 @@
     "pattern": "type",
     "edits": [],
     "expectedSourceOut": "T",
-    "expectedReparseTree": "(type (identifier))"
+    "expectedReparseTree": "(type (identifier))",
+    "wrappedText": "_: T = None",
+    "wrappedOffset": 3
   }
 ]

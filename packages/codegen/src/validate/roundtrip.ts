@@ -397,9 +397,21 @@ export interface RoundTripFixture {
 	 *  round-trips that match byte-for-byte; may differ when render
 	 *  normalizes whitespace). */
 	expectedSourceOut: string
-	/** S-expression serialization of the re-parsed tree's root node
-	 *  (`Tree.rootNode.toString()` on the web-tree-sitter side). */
+	/** S-expression serialization of the re-parsed SUBTREE rooted at
+	 *  `pattern` (`node2.toString()` on the web-tree-sitter side). The
+	 *  subtree comes from parsing `wrappedText` and locating the node
+	 *  at `wrappedOffset`. Cross-engine parity harnesses reproduce it
+	 *  by parsing `wrappedText` with their own tree-sitter binding. */
 	expectedReparseTree: string
+	/** The rendered fragment wrapped in a supertype / direct-kind
+	 *  reparse context so tree-sitter can parse it (bare fragments
+	 *  like `"pub"` alone don't parse). Captured by the TS validator's
+	 *  `wrapForReparse` — the SAME text the TS side reparsed. */
+	wrappedText: string
+	/** Byte offset within `wrappedText` where the rendered fragment
+	 *  was spliced in. Parity harnesses use this to locate the
+	 *  subtree to compare against `expectedReparseTree`. */
+	wrappedOffset: number
 }
 
 export type ParityFixture = RenderFixture | RoundTripFixture
@@ -554,6 +566,8 @@ export async function validateRoundTrip(
 							edits: [],
 							expectedSourceOut: rendered,
 							expectedReparseTree: node2.toString(),
+							wrappedText: wrapped.text,
+							wrappedOffset: wrapped.offset,
 						});
 					}
 				} catch (e) {

@@ -36,6 +36,18 @@ pub enum ParityFixture {
         expected_source_out: String,
         #[serde(rename = "expectedReparseTree")]
         expected_reparse_tree: String,
+        /// Rendered fragment wrapped in a supertype/direct-kind reparse
+        /// context so tree-sitter can parse it standalone. Produced by
+        /// the TS validator's `wrapForReparse` at capture time. The
+        /// parity harness parses THIS text, not the bare rendered
+        /// fragment (bare fragments like `"pub"` alone fail parse).
+        #[serde(rename = "wrappedText", default)]
+        wrapped_text: String,
+        /// Byte offset within `wrapped_text` where the rendered
+        /// fragment was spliced. The harness locates the subtree at
+        /// this offset to compare against `expected_reparse_tree`.
+        #[serde(rename = "wrappedOffset", default)]
+        wrapped_offset: u32,
     },
 }
 
