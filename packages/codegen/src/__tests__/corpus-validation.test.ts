@@ -58,37 +58,39 @@ const FLOORS = {
         factoryPass: 39,
         factoryAstMatchPass: 28,
         factoryTotal: 100,
-        fromPass: 110,
-        fromTotal: 117,
-        // rtPass/rtAstMatchPass dropped again (78→68, 76→67) after
-        // reparse-wrapper added transitive supertype walk. Python's
-        // `attribute` etc. are subtypes of `primary_expression` which
-        // is itself a subtype of `expression` (in the wrapper map).
-        // Pre-walk, those kinds null-wrapped → skipped. With walk,
-        // they wrap correctly and expose real render bugs.
-        rtPass: 68,
+        // R1 ceilings (2026-04-24): fromTotal 117 → 114, fromPass
+        // 110 → 107 — 013's variant() adoption consolidated kinds out
+        // of the validation universe (fewer kinds, fewer pass, total
+        // drop slightly more than pass drop). Floor tracks the new
+        // actual.
+        fromPass: 107,
+        fromTotal: 114,
+        // R1 ceilings (2026-04-24): rtPass 68 → 105 via python-specific
+        // reparse wrappers (list_splat, list_splat_pattern) and the
+        // external-boundaries $TEXT fallback for f-string / t-string /
+        // template-string rendering.
+        rtPass: 105,
         rtTotal: 115,
-        rtAstMatchPass: 67,
-        covPass: 95,
-        covTotal: 101,
+        rtAstMatchPass: 100,
+        covPass: 97,
+        covTotal: 100,
     },
     rust: {
         factoryPass: 127,
         factoryAstMatchPass: 123,
         factoryTotal: 135,
-        fromPass: 142,
-        fromTotal: 154,
-        // Floors lowered in stages: 116/111 → 113/107 (no silent
-        // polymorph promotion) → 107/100 (enrich symbol-alias trick
-        // changes AST shape around keyword fields). Parser now
-        // carries keyword fields natively via synthesized `_kw_*`
-        // hidden rules — the architectural win trades a few
-        // round-trip matches for fidelity in the typed surface.
-        rtPass: 107,
+        // R1 ceilings (2026-04-24): fromTotal 154 → 148, fromPass
+        // 142 → 130 — 013's variant() adoption consolidation.
+        fromPass: 130,
+        fromTotal: 148,
+        // R1 ceilings (2026-04-24): rtPass 107 → 121 via C1 clause
+        // whitespace absorption fix + external-scanner $TEXT fallback
+        // plumbing (raw_string_literal et al.).
+        rtPass: 121,
         rtTotal: 136,
-        rtAstMatchPass: 100,
-        covPass: 136,
-        covTotal: 137,
+        rtAstMatchPass: 120,
+        covPass: 132,
+        covTotal: 136,
     },
     typescript: {
         // Floors dropped (rtPass 110→65, rtAstMatchPass 110→51) after
@@ -111,18 +113,16 @@ const FLOORS = {
         // universes (fromTotal 143 → 157, +14 new visible kinds). The
         // rt floors jumped because Option 3's push-down + the new
         // wrappers make those kinds reparse correctly.
-        fromPass: 149,
-        fromTotal: 160,
-        // class_body variant split (spec 013, infra (A) adoption) moved
-        // one corpus entry's rendering outside the previous pass set —
-        // the split introduces alias-wrapped hidden kinds whose
-        // template emission slightly differs from the pre-split inline
-        // repeat-choice shape. Acceptable tradeoff for draining the
-        // class_body audit flag.
-        rtPass: 93,
+        // R1 ceilings (2026-04-24): fromTotal 160 → 137, fromPass
+        // 149 → 127 — 013's variant() adoption consolidation.
+        fromPass: 127,
+        fromTotal: 137,
+        // R1 ceilings (2026-04-24): rtPass 93 → 96 via unnamed-alias
+        // literal preservation in resolveRule (ternary `?` etc.).
+        rtPass: 96,
         rtTotal: 112,
-        rtAstMatchPass: 83,
-        covPass: 139,
+        rtAstMatchPass: 86,
+        covPass: 140,
         covTotal: 145,
     },
 } as const

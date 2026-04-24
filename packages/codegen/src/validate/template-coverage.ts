@@ -231,6 +231,16 @@ function checkRule(entry: RawNodeEntry, rule: TemplateRule): CoverageIssue[] {
     const variants = collectTemplates(rule)
     if (variants.length === 0) return issues // no inspectable template (shouldn't happen)
 
+    // $TEXT fallback kinds (e.g. rust's `raw_string_literal` post
+    // externals-plumbing, python's f-strings via external-boundaries)
+    // render as the node's native source span verbatim — field slots
+    // are by design unused because the template doesn't reference
+    // them. Skip field-coverage enforcement for these.
+    if (variants.length === 1) {
+        const body = variants[0]!.template.trim()
+        if (body === '{{ text }}' || body === '$TEXT') return issues
+    }
+
     const ruleObj = isObjectRule(rule) ? rule : undefined
     const clauseKeys = ruleObj ? collectClauseKeys(ruleObj) : new Set<string>()
     const clauseTemplates = ruleObj ? collectClauseTemplates(ruleObj) : {}
