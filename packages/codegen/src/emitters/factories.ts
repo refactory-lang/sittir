@@ -48,7 +48,10 @@ export function emitFactories(config: EmitFactoriesConfig): string {
     lines.push(`import type * as T from './types.js';`)
     const usesNonEmptyArray = collectUsesNonEmptyArray(nodeMap)
     const usesConfigOf = collectUsesHoistedPolymorphForm(nodeMap)
-    const utilImports = ['ByteRange', 'FluentNode']
+    // `AnyNodeData` and `Edit` are always needed by the common factory
+    // suffix (render / toEdit / replace — see `factorySuffix`).
+    // `ByteRange` + `FluentNode` are the other ubiquitous imports.
+    const utilImports = ['AnyNodeData', 'ByteRange', 'Edit', 'FluentNode']
     if (usesConfigOf) utilImports.push('ConfigOf')
     if (usesNonEmptyArray) utilImports.push('NonEmptyArray')
     lines.push(`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`)
@@ -123,11 +126,16 @@ function collectUsesNonEmptyArray(nodeMap: NodeMap): boolean {
  * uses it.
  */
 function collectUsesHoistedPolymorphForm(nodeMap: NodeMap): boolean {
+    // Any polymorph parent triggers `ConfigOf` usage — both the
+    // dispatcher overloads (`ConfigOf<T.FooUFormX>`) and the per-form
+    // signatures (`Omit<ConfigOf<T.FooUFormX>, '$variant'>`) reference
+    // it regardless of whether `resolveHoistedForm` fires. The earlier
+    // hoisted-only check missed grammars whose polymorph forms are all
+    // non-hoisted (e.g. python, whose polymorph forms have no inner
+    // field-carrying kind with a factory), leaving `ConfigOf`
+    // unimported in the emitted factories.ts.
     for (const n of nodeMap.nodes.values()) {
-        if (n.modelType !== 'polymorph') continue
-        for (const form of n.forms) {
-            if (resolveHoistedForm(form, nodeMap)) return true
-        }
+        if (n.modelType === 'polymorph') return true
     }
     return false
 }
@@ -1118,6 +1126,15 @@ function emitFluentFieldMethods(
         }
         const fMultiple = isMultiple(f)
         const param = fMultiple ? 'values' : 'value'
+        // Pass `config?.<propertyName>` (Config-surface type) as the
+        // "current value" to _fs / _fsm — NOT `fields.<name>` (internal
+        // storage). For boolean-keyword fields the two differ:
+        // Config exposes `boolean`, storage holds the literal string
+        // array ("async"[]). Using the Config form keeps the setter's
+        // T[K] inference consistent across the v + cur args. The
+        // optional-chain covers factories where `config` itself is
+        // optional (`config?: ConfigOf<…>`).
+        const curExpr = `config?.${f.propertyName}`
         if (fMultiple) {
             const elemType = fieldElementType(f, nodeMap)
             // Rest params can't be `readonly T[]` (TS2370) so plain mutable arrays
@@ -1127,11 +1144,11 @@ function emitFluentFieldMethods(
             // `A | B[]` being parsed as `A | (B[])`.
             const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType
             const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`
-            lines.push(`    ${method}(...${param}: ${restType}) { return _fsm(config, ${fn}, '${f.propertyName}', ${param}, fields.${f.name}); },`)
+            lines.push(`    ${method}(...${param}: ${restType}) { return _fsm(config, ${fn}, '${f.propertyName}', ${param}, ${curExpr}); },`)
         } else {
             const elemType = fieldElementType(f, nodeMap)
             const paramType = isRequired(f) ? elemType : `${elemType} | undefined`
-            lines.push(`    ${method}(${param}?: ${paramType}) { return _fs(config, ${fn}, '${f.propertyName}', ${param}, fields.${f.name}); },`)
+            lines.push(`    ${method}(${param}?: ${paramType}) { return _fs(config, ${fn}, '${f.propertyName}', ${param}, ${curExpr}); },`)
         }
     }
     return lines
@@ -1232,7 +1249,7 @@ function emitPolymorphFactory(node: PolymorphNode, nodeMap: NodeMap): string {
 
     if (forms.length === 0) {
         // Defensive stub — shouldn't happen after classifier fix.
-        return `export function ${fn}(_config?: unknown) { return { $type: '${node.kind}' as const, $source: 'factory' as const, $named: true as const, render() { return render(this); }, toEdit(s: number | ByteRange, e?: number) { return typeof s === 'number' ? toEdit(this, s, e!) : toEdit(this, s); }, replace(t: T.${node.treeTypeName}) { const r = t.range(); return toEdit(this, r); } }; }`
+        return `export function ${fn}(_config?: unknown) { return { $type: '${node.kind}' as const, $source: 'factory' as const, $named: true as const, render(): string { return render(this as unknown as AnyNodeData); }, toEdit(s: number | ByteRange, e?: number): Edit { return typeof s === 'number' ? toEdit(this as unknown as AnyNodeData, s, e!) : toEdit(this as unknown as AnyNodeData, s); }, replace(t: T.${node.treeTypeName}): Edit { const r = t.range(); return toEdit(this as unknown as AnyNodeData, r); } }; }`
     }
 
     const parts: string[] = []
@@ -1360,10 +1377,50 @@ function emitHoistedPolymorphFormFactory(
         lines.push('  };')
     }
 
-    // Inner factory picks out `config.<its own fields>` and ignores the
-    // form-level keys. Structural subtyping + `resolveHoistedForm`'s name-
-    // collision gate keep this safe.
-    lines.push(`  const inner = ${hoist.innerFactoryName}(config);`)
+    // Inner child construction. Two paths:
+    //
+    //   - **Factory available** (common case): the inner kind has a
+    //     `rawFactoryName`, so delegate. The inner factory picks out
+    //     `config.<its own fields>` and ignores the form-level keys.
+    //     Structural subtyping + `resolveHoistedForm`'s name-collision
+    //     gate keep this safe.
+    //
+    //   - **No factory** (hidden group referenced by a polymorph form):
+    //     inline the NodeData construction using the hoisted fields
+    //     directly. Matches the shape a sibling factory would produce
+    //     — `{ $type, $source, $named, $fields }` with `$fields` built
+    //     from `config.<propertyName>` for each inner field. This
+    //     unblocks polymorph forms whose inner kind is a hidden group
+    //     (python's `assignment__form_eq` → `_assignment_eq`; many
+    //     python variants share the shape) without having to retrofit
+    //     factory emission onto every hidden group.
+    if (hoist.innerFactoryName !== undefined) {
+        lines.push(`  const inner = ${hoist.innerFactoryName}(config);`)
+    } else {
+        const innerKind = hoist.innerKind
+        lines.push('  const inner = {')
+        lines.push(`    $type: '${innerKind.replace(/^_+/, '')}' as const,`)
+        lines.push(`    $source: 'factory' as const,`)
+        lines.push('    $named: true as const,')
+        if (hoist.innerFields.length > 0) {
+            lines.push('    $fields: {')
+            for (const f of hoist.innerFields) {
+                const stamp = autoStampExpression(f, nodeMap)
+                if (stamp !== undefined) {
+                    lines.push(`      ${f.name}: ${stamp},`)
+                    continue
+                }
+                const kwExpr = keywordPresenceAssignmentExpr(f, '', nodeMap)
+                if (kwExpr !== undefined) {
+                    lines.push(`      ${f.name}: ${kwExpr},`)
+                    continue
+                }
+                lines.push(`      ${f.name}: config.${f.propertyName},`)
+            }
+            lines.push('    },')
+        }
+        lines.push('  };')
+    }
     lines.push(`  const children = [inner] as const;`)
 
     lines.push('  return {')
@@ -1665,13 +1722,20 @@ function stripUselessEscapes(pattern: string): string {
  * toEdit(...), replace(target).
  */
 function factorySuffix(treeTypeName: string): string[] {
+    // Explicit return-type annotations collapse the assignability check
+    // TS performs on `render(this)` / `toEdit(this, …)` — otherwise TS
+    // recursively expands the factory's object-literal shape to verify
+    // `this` satisfies `AnyNodeData`, which explodes on large grammars
+    // into hundreds of "excessive stack depth" / "not assignable to
+    // AnyNodeData" errors. Typed `: string` / `: Edit` short-circuit the
+    // inference.
     return [
-        `    render() { return render(this); },`,
-        `    toEdit(startOrRange: number | ByteRange, endPos?: number) {`,
-        `      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);`,
-        `      return toEdit(this, startOrRange);`,
+        `    render(): string { return render(this as unknown as AnyNodeData); },`,
+        `    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {`,
+        `      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);`,
+        `      return toEdit(this as unknown as AnyNodeData, startOrRange);`,
         `    },`,
-        `    replace(target: T.${treeTypeName}) { const r = target.range(); return toEdit(this, r); },`,
+        `    replace(target: T.${treeTypeName}): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },`,
     ]
 }
 

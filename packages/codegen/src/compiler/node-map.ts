@@ -1594,6 +1594,13 @@ export class AssembledKeyword extends AssembledNodeBase<StringRule> {
 
     constructor(kind: string, rule: StringRule, opts?: { factoryName?: string; irKey?: string; hidden?: boolean }) {
         super(kind, rule, opts)
+        // Keywords are always parameterless — they produce a fixed
+        // single text value. The stamp is the literal (as const) so
+        // parent factories can inline it directly into `$fields`. The
+        // `markParameterlessKinds` fixpoint pass propagates this
+        // status upward to compounds that reference the keyword.
+        this.isParameterless = true
+        this.stampExpression = `${JSON.stringify(this.rule.value)} as const`
     }
 
     /** The literal text this keyword produces (read from the StringRule). */
@@ -1605,6 +1612,17 @@ export class AssembledToken extends AssembledNodeBase<StringRule | TokenRule> {
 
     constructor(kind: string, rule: StringRule | TokenRule) {
         super(kind, rule, { hidden: true })
+        // Single-literal tokens are parameterless — they stamp to the
+        // literal (as const) the same way keywords do. Pattern-based
+        // tokens (TokenRule) carry no single user-visible string and
+        // stay non-parameterless. The classifier splits keyword vs
+        // token on word-shape — non-word single-strings like `..` /
+        // `=>` land here but should still auto-stamp from parent
+        // required-single-literal fields.
+        if (rule.type === 'string') {
+            this.isParameterless = true
+            this.stampExpression = `${JSON.stringify(rule.value)} as const`
+        }
     }
     // No emitFactory — tokens are always hidden, no factoryName.
 

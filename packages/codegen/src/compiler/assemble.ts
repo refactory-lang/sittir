@@ -468,12 +468,10 @@ function markNode(node: AssembledNode, stamp: string): void {
  * a parent factory emits to produce a value for a slot pointing at this kind.
  */
 function markParameterlessKinds(nodes: Map<string, AssembledNode>): void {
-    // Phase 1: keywords — their text is the stamp literal.
-    for (const [, node] of nodes) {
-        if (node.modelType === 'keyword') {
-            markNode(node, JSON.stringify(node.text))
-        }
-    }
+    // Phase 1: single-literal terminals self-initialize `isParameterless`
+    // and `stampExpression` in their constructors — see
+    // `AssembledKeyword` and `AssembledToken` in node-map.ts. No work
+    // needed here.
 
     // Phase 2: fixpoint over compounds.
     const MAX_ITERS = 20

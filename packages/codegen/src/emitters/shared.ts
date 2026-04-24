@@ -281,8 +281,14 @@ export function isAutoStampSlot(slot: AssembledChild, nodeMap: NodeMap): boolean
         // Source C: parameterless compound (set by fixpoint pass)
         if (ref?.isParameterless) return true
 
-        // Legacy Source B fallback: hidden keyword kind
-        if (kindName.startsWith('_') && ref instanceof AssembledKeyword) return true
+        // Legacy Source B fallback: hidden single-literal kind
+        // (keyword OR token — the classifier split doesn't affect
+        // factory stamping; see `stampExpressionFor` for the
+        // corresponding branch).
+        if (
+            kindName.startsWith('_')
+            && (ref instanceof AssembledKeyword || ref instanceof AssembledToken)
+        ) return true
     }
 
     return false
@@ -321,26 +327,29 @@ export function stampExpressionFor(slot: AssembledChild, nodeMap: NodeMap): stri
         return `${JSON.stringify(v.value)} as const`
     }
 
-    // Source B/C: single NodeRef
+    // Source B/C: single NodeRef to a parameterless kind.
+    // `isParameterless` is the sole criterion — NOT the kind-name
+    // convention (`startsWith('_')`). `markParameterlessKinds` in
+    // `assemble.ts` stamps both single-literal terminals (keywords +
+    // tokens) and recursively-parameterless compounds as
+    // parameterless. Anything with `isParameterless` has a fixed
+    // stamp expression the factory can emit directly, with no caller
+    // input needed.
+    //
+    // Single-literal terminals stamp to the literal string itself
+    // (e.g. `"ref" as const`, `".." as const`) — matches the
+    // interface's field type (`readonly operator: ".."`) and the
+    // render pipeline's acceptance of plain strings in `$fields`.
+    // Parameterless compounds stamp to a factory call
+    // (e.g. `"breakExpression()"`).
     if (isNodeRef(v)) {
         const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind
         const ref = nodeMap.nodes.get(kindName)
-
-        // Source C: parameterless compound — use its stampExpression directly
         if (ref?.isParameterless && ref.stampExpression !== undefined) {
-            if (ref.modelType === 'keyword') {
-                const kind = JSON.stringify(ref.kind)
-                const text = JSON.stringify(ref.text)
-                return `{ $type: ${kind} as const, $text: ${text} as const, $source: 'factory' as const, $named: true as const }`
+            if (ref.modelType === 'keyword' || ref.modelType === 'token') {
+                return `${JSON.stringify((ref as { text: string }).text)} as const`
             }
             return ref.stampExpression
-        }
-
-        // Legacy Source B: hidden keyword kind (backwards compat)
-        if (kindName.startsWith('_') && ref instanceof AssembledKeyword) {
-            const kind = JSON.stringify(ref.kind)
-            const text = JSON.stringify(ref.text)
-            return `{ $type: ${kind} as const, $text: ${text} as const, $source: 'factory' as const, $named: true as const }`
         }
     }
 
@@ -463,7 +472,15 @@ export interface HoistedForm {
     readonly innerKind: string
     readonly innerNode: AssembledNode
     readonly innerTypeName: string
-    readonly innerFactoryName: string
+    /**
+     * Factory name for the inner kind when one was emitted. Undefined
+     * for hidden groups that carry fields but didn't get a factory
+     * (hidden=true at construction time). The emitter's hoisted path
+     * handles `undefined` by inlining the NodeData construction from
+     * the form-level `config.<field>` inputs instead of calling a
+     * factory.
+     */
+    readonly innerFactoryName: string | undefined
     readonly innerFields: readonly AssembledField[]
 }
 
@@ -525,8 +542,6 @@ export function resolveHoistedForm(
 
     const innerFields = (inner as AssembledBranch).fields ?? []
     if (!innerFields || innerFields.length === 0) return undefined
-
-    if (!inner.rawFactoryName) return undefined
 
     // Collision check: a property name on the form AND the inner child
     // would produce an ambiguous hoisted Config surface. Bail out —

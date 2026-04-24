@@ -73,6 +73,8 @@
       "typeName": "Bang",
       "irKey": "bang",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"!\" as const",
       "text": "!"
     },
     {
@@ -81,6 +83,8 @@
       "typeName": "Neq",
       "irKey": "neq",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"!=\" as const",
       "text": "!="
     },
     {
@@ -89,6 +93,8 @@
       "typeName": "TokBangEqEq",
       "irKey": "tokBangEqEq",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"!==\" as const",
       "text": "!=="
     },
     {
@@ -97,6 +103,8 @@
       "typeName": "TokDq",
       "irKey": "tokDq",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\\"\" as const",
       "text": "\""
     },
     {
@@ -105,6 +113,8 @@
       "typeName": "TokDollarLbr",
       "irKey": "tokDollarLbr",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"${\" as const",
       "text": "${"
     },
     {
@@ -113,6 +123,8 @@
       "typeName": "Percent",
       "irKey": "percent",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"%\" as const",
       "text": "%"
     },
     {
@@ -121,6 +133,8 @@
       "typeName": "Amp",
       "irKey": "amp",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"&\" as const",
       "text": "&"
     },
     {
@@ -129,6 +143,8 @@
       "typeName": "Andand",
       "irKey": "andand",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"&&\" as const",
       "text": "&&"
     },
     {
@@ -137,6 +153,8 @@
       "typeName": "TokSq",
       "irKey": "tokSq",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"'\" as const",
       "text": "'"
     },
     {
@@ -145,6 +163,8 @@
       "typeName": "Paren",
       "irKey": "paren",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"(\" as const",
       "text": "("
     },
     {
@@ -153,6 +173,8 @@
       "typeName": "CloseParen",
       "irKey": "closeParen",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\")\" as const",
       "text": ")"
     },
     {
@@ -161,6 +183,8 @@
       "typeName": "Star",
       "irKey": "star",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"*\" as const",
       "text": "*"
     },
     {
@@ -169,6 +193,8 @@
       "typeName": "Starstar",
       "irKey": "starstar",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"**\" as const",
       "text": "**"
     },
     {
@@ -177,6 +203,8 @@
       "typeName": "Plus",
       "irKey": "plus",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"+\" as const",
       "text": "+"
     },
     {
@@ -185,6 +213,8 @@
       "typeName": "TokPlusQColon",
       "irKey": "tokPlusQColon",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"+?:\" as const",
       "text": "+?:"
     },
     {
@@ -193,6 +223,8 @@
       "typeName": "Comma",
       "irKey": "comma",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\",\" as const",
       "text": ","
     },
     {
@@ -201,6 +233,8 @@
       "typeName": "Minus",
       "irKey": "minus",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"-\" as const",
       "text": "-"
     },
     {
@@ -209,6 +243,8 @@
       "typeName": "TokMinusQColon",
       "irKey": "tokMinusQColon",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"-?:\" as const",
       "text": "-?:"
     },
     {
@@ -217,6 +253,8 @@
       "typeName": "Dot",
       "irKey": "dot",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\".\" as const",
       "text": "."
     },
     {
@@ -225,6 +263,8 @@
       "typeName": "Ellipsis",
       "irKey": "ellipsis",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"...\" as const",
       "text": "..."
     },
     {
@@ -233,6 +273,8 @@
       "typeName": "Slash",
       "irKey": "slash",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"/\" as const",
       "text": "/"
     },
     {
@@ -241,6 +283,8 @@
       "typeName": "TokSlashGt",
       "irKey": "tokSlashGt",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"/>\" as const",
       "text": "/>"
     },
     {
@@ -249,6 +293,8 @@
       "typeName": "Colon",
       "irKey": "colon",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\":\" as const",
       "text": ":"
     },
     {
@@ -257,6 +303,8 @@
       "typeName": "Semi",
       "irKey": "semi",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\";\" as const",
       "text": ";"
     },
     {
@@ -265,6 +313,8 @@
       "typeName": "Lt",
       "irKey": "lt",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"<\" as const",
       "text": "<"
     },
     {
@@ -273,6 +323,8 @@
       "typeName": "TokLtSlash",
       "irKey": "tokLtSlash",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"</\" as const",
       "text": "</"
     },
     {
@@ -281,6 +333,8 @@
       "typeName": "Shl",
       "irKey": "shl",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"<<\" as const",
       "text": "<<"
     },
     {
@@ -289,6 +343,8 @@
       "typeName": "Le",
       "irKey": "le",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"<=\" as const",
       "text": "<="
     },
     {
@@ -297,6 +353,8 @@
       "typeName": "Eq",
       "irKey": "eq",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"=\" as const",
       "text": "="
     },
     {
@@ -305,6 +363,8 @@
       "typeName": "Eqeq",
       "irKey": "eqeq",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"==\" as const",
       "text": "=="
     },
     {
@@ -313,6 +373,8 @@
       "typeName": "TokEqEqEq",
       "irKey": "tokEqEqEq",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"===\" as const",
       "text": "==="
     },
     {
@@ -321,6 +383,8 @@
       "typeName": "FatArrow",
       "irKey": "fatArrow",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"=>\" as const",
       "text": "=>"
     },
     {
@@ -329,6 +393,8 @@
       "typeName": "Gt",
       "irKey": "gt",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\">\" as const",
       "text": ">"
     },
     {
@@ -337,6 +403,8 @@
       "typeName": "Ge",
       "irKey": "ge",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\">=\" as const",
       "text": ">="
     },
     {
@@ -345,6 +413,8 @@
       "typeName": "Shr",
       "irKey": "shr",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\">>\" as const",
       "text": ">>"
     },
     {
@@ -353,6 +423,8 @@
       "typeName": "TokGtGtGt",
       "irKey": "tokGtGtGt",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\">>>\" as const",
       "text": ">>>"
     },
     {
@@ -361,6 +433,8 @@
       "typeName": "Question",
       "irKey": "question",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"?\" as const",
       "text": "?"
     },
     {
@@ -369,6 +443,8 @@
       "typeName": "TokQDot",
       "irKey": "tokQDot",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"?.\" as const",
       "text": "?."
     },
     {
@@ -377,6 +453,8 @@
       "typeName": "TokQColon",
       "irKey": "tokQColon",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"?:\" as const",
       "text": "?:"
     },
     {
@@ -385,6 +463,8 @@
       "typeName": "TokQQ",
       "irKey": "tokQQ",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"??\" as const",
       "text": "??"
     },
     {
@@ -393,6 +473,8 @@
       "typeName": "At",
       "irKey": "at",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"@\" as const",
       "text": "@"
     },
     {
@@ -401,6 +483,8 @@
       "typeName": "Bracket",
       "irKey": "bracket",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"[\" as const",
       "text": "["
     },
     {
@@ -409,6 +493,8 @@
       "typeName": "CloseBracket",
       "irKey": "closeBracket",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"]\" as const",
       "text": "]"
     },
     {
@@ -417,6 +503,8 @@
       "typeName": "Caret",
       "irKey": "caret",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"^\" as const",
       "text": "^"
     },
     {
@@ -2301,7 +2389,7 @@
       "irKey": "kwAbstract",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "\"abstract\"",
+      "stampExpression": "\"abstract\" as const",
       "text": "abstract"
     },
     {
@@ -2312,7 +2400,7 @@
       "irKey": "kwAsync",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "\"async\"",
+      "stampExpression": "\"async\" as const",
       "text": "async"
     },
     {
@@ -2323,7 +2411,7 @@
       "irKey": "kwConst",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "\"const\"",
+      "stampExpression": "\"const\" as const",
       "text": "const"
     },
     {
@@ -2334,7 +2422,7 @@
       "irKey": "kwReadonly",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "\"readonly\"",
+      "stampExpression": "\"readonly\" as const",
       "text": "readonly"
     },
     {
@@ -2345,7 +2433,7 @@
       "irKey": "kwStatic",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "\"static\"",
+      "stampExpression": "\"static\" as const",
       "text": "static"
     },
     {
@@ -3496,6 +3584,8 @@
       "typeName": "TokBt",
       "irKey": "tokBt",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"`\" as const",
       "text": "`"
     },
     {
@@ -3505,7 +3595,7 @@
       "irKey": "abstract",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"abstract\"",
+      "stampExpression": "\"abstract\" as const",
       "text": "abstract"
     },
     {
@@ -3817,7 +3907,7 @@
       "irKey": "accessor",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"accessor\"",
+      "stampExpression": "\"accessor\" as const",
       "text": "accessor"
     },
     {
@@ -4433,7 +4523,7 @@
       "irKey": "as",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"as\"",
+      "stampExpression": "\"as\" as const",
       "text": "as"
     },
     {
@@ -4740,7 +4830,7 @@
       "irKey": "async_",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"async\"",
+      "stampExpression": "\"async\" as const",
       "text": "async"
     },
     {
@@ -4935,7 +5025,7 @@
       "irKey": "await_",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"await\"",
+      "stampExpression": "\"await\" as const",
       "text": "await"
     },
     {
@@ -5183,7 +5273,7 @@
       "irKey": "break",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"break\"",
+      "stampExpression": "\"break\" as const",
       "text": "break"
     },
     {
@@ -5526,7 +5616,7 @@
       "irKey": "case",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"case\"",
+      "stampExpression": "\"case\" as const",
       "text": "case"
     },
     {
@@ -5536,7 +5626,7 @@
       "irKey": "catch",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"catch\"",
+      "stampExpression": "\"catch\" as const",
       "text": "catch"
     },
     {
@@ -6382,7 +6472,7 @@
       "irKey": "const_",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"const\"",
+      "stampExpression": "\"const\" as const",
       "text": "const"
     },
     {
@@ -6632,7 +6722,7 @@
       "irKey": "continue",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"continue\"",
+      "stampExpression": "\"continue\" as const",
       "text": "continue"
     },
     {
@@ -6702,7 +6792,7 @@
       "irKey": "debugger",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"debugger\"",
+      "stampExpression": "\"debugger\" as const",
       "text": "debugger"
     },
     {
@@ -6966,7 +7056,7 @@
       "irKey": "declare",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"declare\"",
+      "stampExpression": "\"declare\" as const",
       "text": "declare"
     },
     {
@@ -7261,7 +7351,7 @@
       "irKey": "default_",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"default\"",
+      "stampExpression": "\"default\" as const",
       "text": "default"
     },
     {
@@ -7305,7 +7395,7 @@
       "irKey": "do",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"do\"",
+      "stampExpression": "\"do\" as const",
       "text": "do"
     },
     {
@@ -7395,7 +7485,7 @@
       "irKey": "else",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"else\"",
+      "stampExpression": "\"else\" as const",
       "text": "else"
     },
     {
@@ -7438,6 +7528,8 @@
       "typeName": "EmptyStatement",
       "irKey": "emptyStatement",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\";\" as const",
       "text": ";"
     },
     {
@@ -7447,7 +7539,7 @@
       "irKey": "enum",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"enum\"",
+      "stampExpression": "\"enum\" as const",
       "text": "enum"
     },
     {
@@ -7642,6 +7734,8 @@
       "typeName": "ExistentialType",
       "irKey": "existentialType",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"*\" as const",
       "text": "*"
     },
     {
@@ -7651,7 +7745,7 @@
       "irKey": "export_",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"export\"",
+      "stampExpression": "\"export\" as const",
       "text": "export"
     },
     {
@@ -8263,7 +8357,7 @@
       "irKey": "extends",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"extends\"",
+      "stampExpression": "\"extends\" as const",
       "text": "extends"
     },
     {
@@ -8379,7 +8473,7 @@
       "irKey": "false_",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "\"false\"",
+      "stampExpression": "\"false\" as const",
       "text": "false"
     },
     {
@@ -8492,7 +8586,7 @@
       "irKey": "finally",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"finally\"",
+      "stampExpression": "\"finally\" as const",
       "text": "finally"
     },
     {
@@ -8570,7 +8664,7 @@
       "irKey": "for",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"for\"",
+      "stampExpression": "\"for\" as const",
       "text": "for"
     },
     {
@@ -8927,7 +9021,7 @@
       "irKey": "from",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"from\"",
+      "stampExpression": "\"from\" as const",
       "text": "from"
     },
     {
@@ -8937,7 +9031,7 @@
       "irKey": "function_",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"function\"",
+      "stampExpression": "\"function\" as const",
       "text": "function"
     },
     {
@@ -9959,7 +10053,7 @@
       "irKey": "global",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"global\"",
+      "stampExpression": "\"global\" as const",
       "text": "global"
     },
     {
@@ -10003,7 +10097,7 @@
       "irKey": "if",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"if\"",
+      "stampExpression": "\"if\" as const",
       "text": "if"
     },
     {
@@ -10093,7 +10187,7 @@
       "irKey": "implements_",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"implements\"",
+      "stampExpression": "\"implements\" as const",
       "text": "implements"
     },
     {
@@ -10129,7 +10223,7 @@
       "irKey": "import_",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "\"import\"",
+      "stampExpression": "\"import\" as const",
       "text": "import"
     },
     {
@@ -10777,7 +10871,7 @@
       "irKey": "in_",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"in\"",
+      "stampExpression": "\"in\" as const",
       "text": "in"
     },
     {
@@ -11225,7 +11319,7 @@
       "irKey": "infer",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"infer\"",
+      "stampExpression": "\"infer\" as const",
       "text": "infer"
     },
     {
@@ -11297,7 +11391,7 @@
       "irKey": "instanceof_",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"instanceof\"",
+      "stampExpression": "\"instanceof\" as const",
       "text": "instanceof"
     },
     {
@@ -11364,7 +11458,7 @@
       "irKey": "interface_",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"interface\"",
+      "stampExpression": "\"interface\" as const",
       "text": "interface"
     },
     {
@@ -11608,7 +11702,7 @@
       "irKey": "is",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"is\"",
+      "stampExpression": "\"is\" as const",
       "text": "is"
     },
     {
@@ -12036,7 +12130,7 @@
       "irKey": "keyof",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"keyof\"",
+      "stampExpression": "\"keyof\" as const",
       "text": "keyof"
     },
     {
@@ -13122,7 +13216,7 @@
       "irKey": "namespace",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"namespace\"",
+      "stampExpression": "\"namespace\" as const",
       "text": "namespace"
     },
     {
@@ -13325,7 +13419,7 @@
       "irKey": "new_",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"new\"",
+      "stampExpression": "\"new\" as const",
       "text": "new"
     },
     {
@@ -13450,7 +13544,7 @@
       "irKey": "null_",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "\"null\"",
+      "stampExpression": "\"null\" as const",
       "text": "null"
     },
     {
@@ -13926,6 +14020,8 @@
       "typeName": "OptionalChain",
       "irKey": "optionalChain",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"?.\" as const",
       "text": "?."
     },
     {
@@ -14190,7 +14286,7 @@
       "irKey": "override",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"override\"",
+      "stampExpression": "\"override\" as const",
       "text": "override"
     },
     {
@@ -14201,7 +14297,7 @@
       "irKey": "overrideModifier",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "\"override\"",
+      "stampExpression": "\"override\" as const",
       "text": "override"
     },
     {
@@ -15356,7 +15452,7 @@
       "irKey": "readonly",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"readonly\"",
+      "stampExpression": "\"readonly\" as const",
       "text": "readonly"
     },
     {
@@ -15474,7 +15570,7 @@
       "irKey": "require",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"require\"",
+      "stampExpression": "\"require\" as const",
       "text": "require"
     },
     {
@@ -15707,7 +15803,7 @@
       "irKey": "return_",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"return\"",
+      "stampExpression": "\"return\" as const",
       "text": "return"
     },
     {
@@ -15767,7 +15863,7 @@
       "irKey": "satisfies",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"satisfies\"",
+      "stampExpression": "\"satisfies\" as const",
       "text": "satisfies"
     },
     {
@@ -16261,7 +16357,7 @@
       "irKey": "static_",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"static\"",
+      "stampExpression": "\"static\" as const",
       "text": "static"
     },
     {
@@ -16483,7 +16579,7 @@
       "irKey": "super",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "\"super\"",
+      "stampExpression": "\"super\" as const",
       "text": "super"
     },
     {
@@ -16493,7 +16589,7 @@
       "irKey": "switch",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"switch\"",
+      "stampExpression": "\"switch\" as const",
       "text": "switch"
     },
     {
@@ -16932,7 +17028,7 @@
       "irKey": "this",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "\"this\"",
+      "stampExpression": "\"this\" as const",
       "text": "this"
     },
     {
@@ -16942,7 +17038,7 @@
       "irKey": "throw_",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"throw\"",
+      "stampExpression": "\"throw\" as const",
       "text": "throw"
     },
     {
@@ -17003,7 +17099,7 @@
       "irKey": "true_",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "\"true\"",
+      "stampExpression": "\"true\" as const",
       "text": "true"
     },
     {
@@ -17013,7 +17109,7 @@
       "irKey": "try",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"try\"",
+      "stampExpression": "\"try\" as const",
       "text": "try"
     },
     {
@@ -17761,7 +17857,7 @@
       "irKey": "typeof_",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"typeof\"",
+      "stampExpression": "\"typeof\" as const",
       "text": "typeof"
     },
     {
@@ -17856,7 +17952,7 @@
       "irKey": "undefined",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "\"undefined\"",
+      "stampExpression": "\"undefined\" as const",
       "text": "undefined"
     },
     {
@@ -18018,7 +18114,7 @@
       "irKey": "using",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"using\"",
+      "stampExpression": "\"using\" as const",
       "text": "using"
     },
     {
@@ -18028,7 +18124,7 @@
       "irKey": "var_",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"var\"",
+      "stampExpression": "\"var\" as const",
       "text": "var"
     },
     {
@@ -18386,7 +18482,7 @@
       "irKey": "while",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"while\"",
+      "stampExpression": "\"while\" as const",
       "text": "while"
     },
     {
@@ -18453,7 +18549,7 @@
       "irKey": "with",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"with\"",
+      "stampExpression": "\"with\" as const",
       "text": "with"
     },
     {
@@ -18520,7 +18616,7 @@
       "irKey": "yield_",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"yield\"",
+      "stampExpression": "\"yield\" as const",
       "text": "yield"
     },
     {
@@ -18569,6 +18665,8 @@
       "typeName": "Brace",
       "irKey": "brace",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"{\" as const",
       "text": "{"
     },
     {
@@ -18577,6 +18675,8 @@
       "typeName": "Pipe",
       "irKey": "pipe",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"|\" as const",
       "text": "|"
     },
     {
@@ -18593,6 +18693,8 @@
       "typeName": "CloseBrace",
       "irKey": "closeBrace",
       "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"}\" as const",
       "text": "}"
     }
   ]

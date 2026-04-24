@@ -1184,7 +1184,7 @@ export function rangeExpressionUFormPrefixFrom(input: Omit<ConfigOf<T.RangeExpre
   return F.rangeExpressionUFormPrefix(input);
 }
 
-export function rangeExpressionUFormBareFrom(input: Omit<ConfigOf<T.RangeExpressionUFormBare>, '$variant'>) {
+export function rangeExpressionUFormBareFrom(input?: Omit<ConfigOf<T.RangeExpressionUFormBare>, '$variant'>) {
   return F.rangeExpressionUFormBare(input);
 }
 

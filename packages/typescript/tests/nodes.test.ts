@@ -148,7 +148,7 @@ describe('import_specifier', () => {
     expect(node.$source).toBe('factory');
   });
   it('as form produces correct type', () => {
-    const node = ir.importSpecifier.as({});
+    const node = ir.importSpecifier.as({ name: { $type: '_module_export_name', $text: 'test' } as any, alias: { $type: '_import_identifier', $text: 'test' } as any });
     expect(node.$type).toBe('import_specifier');
     expect(node.$source).toBe('factory');
   });
@@ -770,17 +770,17 @@ describe('arrow_function', () => {
 
 describe('call_expression', () => {
   it('call form produces correct type', () => {
-    const node = ir.call.call({});
+    const node = ir.call.call({ function: { $type: 'expression', $text: 'test' } as any, arguments: { $type: 'arguments', $text: 'test' } as any });
     expect(node.$type).toBe('call_expression');
     expect(node.$source).toBe('factory');
   });
   it('template_call form produces correct type', () => {
-    const node = ir.call.template_call({});
+    const node = ir.call.template_call({ function: { $type: 'primary_expression', $text: 'test' } as any, arguments: { $type: 'template_string', $text: 'test' } as any });
     expect(node.$type).toBe('call_expression');
     expect(node.$source).toBe('factory');
   });
   it('member form produces correct type', () => {
-    const node = ir.call.member({});
+    const node = ir.call.member({ function: { $type: 'primary_expression', $text: 'test' } as any, arguments: { $type: 'arguments', $text: 'test' } as any });
     expect(node.$type).toBe('call_expression');
     expect(node.$source).toBe('factory');
   });
@@ -1983,7 +1983,7 @@ describe('construct_signature', () => {
 
 describe('index_signature', () => {
   it('colon form produces correct type', () => {
-    const node = ir.indexSignature.colon({ type: { $type: 'type_annotation', $text: 'test' } as any });
+    const node = ir.indexSignature.colon({ name: { $type: 'identifier', $text: 'test' } as any, indexType: { $type: 'type', $text: 'test' } as any });
     expect(node.$type).toBe('index_signature');
     expect(node.$source).toBe('factory');
   });
