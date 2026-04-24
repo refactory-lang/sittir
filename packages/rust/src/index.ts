@@ -30,3 +30,10 @@ export type { Edit, CSTNode, RenderContext } from '@sittir/types';
 // Backend selection (spec 012) — native vs. typescript fallback shim.
 export { getActiveBackend } from './backend.js';
 export type { BackendName, BackendStatus } from './backend.js';
+
+// Boundary shims — render / readNode / applyEdits routed through the
+// active backend (spec 012 T041). `render` collides with the renderer
+// returned by `createRenderer`; we re-export under explicit names so
+// consumer code that imports `applyEdits` doesn't need to reach into
+// the package's internals.
+export { applyEdits } from './boundary.js';
