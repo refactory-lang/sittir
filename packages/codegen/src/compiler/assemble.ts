@@ -1021,64 +1021,6 @@ function walkForStrings(rule: Rule, out: Set<string>): void {
 
 type ModelType = AssembledNode['modelType']
 
-/**
- * Check if all variant members of a choice have the same field names.
- * If so, it's a branch with operator variation (e.g., binary_operator with prec variants),
- * not a polymorph with structurally distinct forms.
- */
-function allVariantsHaveSameFieldSet(rule: Rule): boolean {
-    if (rule.type !== 'choice') return false
-
-    const fieldSets: Set<string>[] = []
-    for (const member of rule.members) {
-        const content = member.type === 'variant' ? member.content : member
-        const fields = extractFieldNames(content)
-        fieldSets.push(fields)
-    }
-
-    if (fieldSets.length < 2) return false
-
-    const first = fieldSets[0]!
-    // Must have at least one field — empty field sets mean children-based, not field-based
-    if (first.size === 0) return false
-
-    return fieldSets.every(s =>
-        s.size === first.size && [...s].every(f => first.has(f))
-    )
-}
-
-function extractFieldNames(rule: Rule): Set<string> {
-    const names = new Set<string>()
-    walkForFieldNames(rule, names)
-    return names
-}
-
-function walkForFieldNames(rule: Rule, out: Set<string>): void {
-    switch (rule.type) {
-        case 'field':
-            out.add(rule.name)
-            break
-        case 'seq':
-            for (const m of rule.members) walkForFieldNames(m, out)
-            break
-        case 'choice':
-            for (const m of rule.members) walkForFieldNames(m, out)
-            break
-        case 'optional':
-            walkForFieldNames(rule.content, out)
-            break
-        case 'repeat':
-            walkForFieldNames(rule.content, out)
-            break
-        case 'variant':
-            walkForFieldNames(rule.content, out)
-            break
-        case 'clause':
-            walkForFieldNames(rule.content, out)
-            break
-    }
-}
-
 // `inlineGroupRefs` / `resolveGroupOrMultiInlineTarget` moved to
 // `simplify.ts` so the group-inlining happens inside the simplify
 // fixpoint (enables flatten + canonicalize to re-fire on inlined
@@ -1115,45 +1057,18 @@ export function classifyNode(
         case 'string':    return /^\w+$/.test(rule.value) ? 'keyword' : 'token'
     }
 
-    // Kinds that underwent variant() push-down in Link render as
-    // regular branches/containers — the variant distinction is
-    // entirely encoded in child kinds, so the parent has no
-    // per-variant template branches to emit. Suppress T065 for them.
-    // T065 auto-promotion DISABLED (spec 013 cleanup). Was a debug-mode
-    // fallback for kinds whose `choice` with heterogeneous field sets
-    // should have been wrapped as a polymorph by Link's
-    // `promotePolymorph` — but that's now suggestion-only, leaving T065
-    // to silently invent anonymous `form0` / `form1` polymorph names
-    // for any non-canonical choice with fields. That masks real
-    // adoption work: grammar authors should declare `polymorphs: {
-    // parent: { 'path': 'name' } }` in overrides.ts with meaningful
-    // names. Kinds like rust's `visibility_modifier` now classify as
-    // plain branches with optional fields across arms — the walker's
-    // cross-branch merging handles the shape correctly.
-    // const suppressT065 = opts?.variantParents?.has(kind) ?? false
-    // if (!suppressT065 && isT065UnpromotedPolymorphChoice(rule)) return 'polymorph'
+    // T065 auto-polymorph promotion removed (spec 013 cleanup).
+    // Grammar authors declare polymorph shapes explicitly via
+    // `polymorphs: { parent: { 'path': 'name' } }` in overrides.ts.
+    // Kinds without an adoption classify as plain branches /
+    // containers; the derive walker's cross-branch merging handles
+    // heterogeneous-field-per-arm shapes without inventing anonymous
+    // polymorph identities.
+    void opts
     if (isHiddenRepeatHelper(kind, rule)) return 'multi'
     const branchOrContainer = classifyBranchOrContainer(rule)
     if (branchOrContainer !== null) return branchOrContainer
     return classifyT065TerminalFallback(kind, rule)
-}
-
-/**
- * Test whether a raw choice rule should be classified as a polymorph under the T065
- * fallback path.
- *
- * @param rule - The rule to inspect.
- * @returns `true` when the rule is a choice that carries fields and whose variant
- *   members have heterogeneous field sets.
- * @remarks
- *   Fires when `IncludeFilter.rules` held back `promoted`, leaving a raw `choice`
- *   whose variants carry heterogeneous field sets. Link's `promotePolymorph` would
- *   normally wrap this in a `PolymorphRule`; under strict debug mode we detect the
- *   shape here so the node still gets treated as a polymorph instead of collapsing
- *   into a flat branch with union-ed fields.
- */
-function isT065UnpromotedPolymorphChoice(rule: Rule): boolean {
-    return rule.type === 'choice' && hasAnyField(rule) && !allVariantsHaveSameFieldSet(rule)
 }
 
 /**

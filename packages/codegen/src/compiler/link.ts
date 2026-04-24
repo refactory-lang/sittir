@@ -330,24 +330,6 @@ function runFieldNameInferencePass(
 }
 
 /**
- * Wrap visible choice members in `variant` nodes across every rule in the map.
- *
- * @param rules - Mutable resolved rules map; entries are replaced with
- *   variant-tagged equivalents in place.
- * @param inline - Names listed in `grammar.inline`; they are treated as hidden
- *   and their choices are NOT variant-wrapped.
- * @remarks
- *   Hidden choices were already resolved into supertype/enum/inline by
- *   `classifyHiddenRule`. Only visible choices receive variant wrappers that
- *   name every branch and deduplicate structurally identical ones.
- */
-function tagAllRulesVariants(rules: Record<string, Rule>, inline: readonly string[] | undefined): void {
-    for (const [name, rule] of Object.entries(rules)) {
-        rules[name] = tagVariants(rule, name, rules, inline)
-    }
-}
-
-/**
  * Run polymorph detection across all rules and record candidates in the
  * derivation log.
  *
@@ -456,142 +438,11 @@ function extractAliasedFromName(content: Rule, supertypes: Set<string>): string 
     return undefined
 }
 
-// ---------------------------------------------------------------------------
-// tagVariants — wrap visible choice members in `variant` rules
-// ---------------------------------------------------------------------------
-//
-// Walks the rule tree. Visible choices (under a non-hidden parent rule)
-// get their members wrapped in `variant` nodes via `wrapVariants`,
-// which dedupes structurally identical members and assigns each a
-// `nameVariant`-derived name. Hidden choices are recursed-into without
-// wrapping (they were already resolved by classifyHiddenRule).
-//
-// This is a TAGGING pass — it adds wrapper nodes but does not restructure
-// or simplify anything. Optimize is the simplification phase
-// (fan-out, factoring, prefix/suffix extraction).
-// ---------------------------------------------------------------------------
-
-function tagVariants(rule: Rule, name: string, rules: Record<string, Rule>, inline?: readonly string[]): Rule {
-    switch (rule.type) {
-        case 'seq':
-            return { type: 'seq', members: rule.members.map(m => tagVariants(m, name, rules, inline)) }
-
-        case 'choice': {
-            // Wrap visible choice members in variants. Hidden is the
-            // authoritative `isHiddenKind` check — convention + the
-            // `inline:` list.
-            if (!isHiddenKind(name, inline)) {
-                // Skip wrapping when the choice is structurally
-                // homogeneous — every branch has the same seq shape with
-                // matching member kinds at each position, and per-position
-                // content that's either identical or opaque (non-inlined
-                // symbol refs). Simplify's `canonicalize` merges these
-                // downstream into a flat seq with per-position unioned
-                // contents — right for binary_expression-shaped rules.
-                // Wrapping here would create phantom variant identities
-                // that dispatch on nothing render-distinct, and would
-                // also block canonicalize.
-                if (isStructurallyHomogeneousChoice(rule, rules)) {
-                    return { type: 'choice', members: rule.members.map(m => tagVariants(m, name, rules, inline)) }
-                }
-                return wrapVariants(rule)
-            }
-            return { type: 'choice', members: rule.members.map(m => tagVariants(m, name, rules, inline)) }
-        }
-
-        case 'optional':
-            return { type: 'optional', content: tagVariants(rule.content, name, rules, inline) }
-
-        case 'repeat':
-            return { ...rule, content: tagVariants(rule.content, name, rules, inline) }
-
-        case 'field':
-            return { ...rule, content: tagVariants(rule.content, name, rules, inline) }
-
-        case 'clause':
-            return { ...rule, content: tagVariants(rule.content, name, rules, inline) }
-
-        case 'group':
-            return { ...rule, content: tagVariants(rule.content, name, rules, inline) }
-
-        default:
-            return rule
-    }
-}
-
-/**
- * Is this choice structurally homogeneous — every branch a seq of the
- * same length with matching member kinds at each position, and
- * per-position content that's either identical OR opaque (non-inlined
- * symbol / supertype refs)?
- *
- * Key insight: symbol refs are **opaque** at the parent level unless
- * the symbol would be inlined at assemble time (hidden groups, hidden
- * multi helpers). Two arms referencing `$.x` vs `$.y` are
- * structurally the same at the containing position — both are "one
- * kind reference". The parent rule's shape doesn't change based on
- * which kind is chosen; only the content at that slot differs (which
- * becomes a type union post-canonicalize). Supertype refs are
- * similarly opaque — they dispatch to a subtype at runtime.
- *
- * When the symbol would be INLINED (hidden group / multi), the inner
- * fields/children get spliced into the parent at parse time, so the
- * inlined body's shape is part of the parent's structure — different
- * names mean different structure. For those positions we require
- * strict name equality.
- *
- * When yes, canonicalize merges these branches into a flat seq with
- * per-position unioned contents. Variant wrapping would create
- * phantom arm identities that dispatch on nothing render-distinct.
- *
- * Only `group` wrappers are peeled before checking — variant / clause
- * wrappers carry author-intended identity.
- *
- * Requires ≥2 branches.
- */
-function isStructurallyHomogeneousChoice(
-    choice: ChoiceRule,
-    rules: Record<string, Rule>,
-): boolean {
-    if (choice.members.length < 2) return false
-    const unwrapGroup = (r: Rule): Rule => r.type === 'group' ? unwrapGroup(r.content) : r
-    const unwrapped = choice.members.map(unwrapGroup)
-    if (!unwrapped.every((m): m is SeqRule => m.type === 'seq')) return false
-    const len = unwrapped[0]!.members.length
-    if (!unwrapped.every(s => s.members.length === len)) return false
-    for (let i = 0; i < len; i++) {
-        const positions = unwrapped.map(s => s.members[i]!)
-        const first = positions[0]!
-        if (first.type === 'field') {
-            if (!positions.every(p => p.type === 'field' && p.name === first.name)) return false
-        } else if (first.type === 'symbol') {
-            // All positions must be symbols at this index.
-            if (!positions.every(p => p.type === 'symbol')) return false
-            // Opaque (non-inlined) symbol refs are structurally
-            // homogeneous regardless of name — they're just "a
-            // reference to some kind" from the parent's perspective.
-            // Inlined kinds (hidden groups / multis) do splice body
-            // shape into the parent, so there the name matters.
-            const allOpaque = positions.every(p => !wouldInlineAtAssemble((p as SymbolRule).name, rules))
-            if (allOpaque) continue
-            // At least one position is an inlined kind → require all
-            // positions to name the same kind.
-            if (!positions.every(p => (p as SymbolRule).name === (first as SymbolRule).name)) return false
-        } else if (first.type === 'supertype') {
-            // Supertypes always dispatch to a subtype at runtime —
-            // opaque from the parent's structural perspective.
-            if (!positions.every(p => p.type === 'supertype')) return false
-        } else {
-            // Non-discriminator leaves (strings, patterns, etc.) at the
-            // same position: require literal equality. If they differ,
-            // this position IS the discriminator → wrap variants so
-            // render can dispatch.
-            const firstJson = JSON.stringify(first)
-            if (!positions.every(p => JSON.stringify(p) === firstJson)) return false
-        }
-    }
-    return true
-}
+// tagVariants / isStructurallyHomogeneousChoice removed (spec 013).
+// Auto-wrapping heuristics replaced by explicit user-declared
+// `variant()` / `polymorphs:` in overrides.ts. See commit
+// "013: disable tagAllRulesVariants — auto-tagging masked real
+// adoption work" for the rationale.
 
 /**
  * Would a reference to `kindName` be inlined at assemble time?
