@@ -890,6 +890,33 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
     }
 
     /**
+     * Fields visible at the interface / Config surface for this kind.
+     * Default is empty (leaves, keywords, tokens, enums, supertypes,
+     * containers, multis — none of which expose a `$fields` slot).
+     * Subclasses override to surface their own fields:
+     *
+     * - `AssembledBranch` / `AssembledGroup` — their own `.fields`.
+     * - `AssembledPolymorph` — dedup'd union across all forms, keeping
+     *   the first occurrence per name so the emitted shape matches
+     *   the order emitters see inside `forms[]`.
+     *
+     * Emitters (types.ts, factories.ts) read this via the base class
+     * rather than switching on `modelType` — one source, one derivation.
+     */
+    get structuralFields(): readonly AssembledField[] {
+        return []
+    }
+
+    /**
+     * Children visible at the interface surface. Default empty. See
+     * `structuralFields` for rationale. Overridden by Branch, Container,
+     * and Group to return their own child slots.
+     */
+    get structuralChildren(): readonly AssembledChild[] {
+        return []
+    }
+
+    /**
      * True when this node's rule shape is a text template — a rule whose
      * parse result is emitted as a single string of text rather than a
      * structured config/children value. Two sources: verbatim-token-stream
@@ -1204,9 +1231,15 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
         return this.#fields ??= deriveFields(this.simplifiedRule)
     }
 
+    /** Branch interface surface = own fields. */
+    override get structuralFields(): readonly AssembledField[] { return this.fields }
+
     get children(): AssembledChild[] | undefined {
         return this.#children ??= deriveChildren(this.simplifiedRule)
     }
+
+    /** Branch interface surface = own children (or empty when absent). */
+    override get structuralChildren(): readonly AssembledChild[] { return this.children ?? [] }
 
     renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp, externals?: ReadonlySet<string>): { template: string } {
         // Rules whose structure depends on hidden external-scanner
@@ -1376,6 +1409,9 @@ export class AssembledContainer extends AssembledNodeBase<SeqRule | ChoiceRule |
         return this.#children ??= deriveChildren(this.simplifiedRule)
     }
 
+    /** Container interface surface = own children (no fields). */
+    override get structuralChildren(): readonly AssembledChild[] { return this.children }
+
     get separator(): string | undefined {
         // Separator is captured on the repeat / repeat1 rule by Evaluate.
         // Read from the simplified rule — if an anonymous-delimiter seq
@@ -1452,6 +1488,26 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
      */
     get allFormFields(): AssembledField[] {
         return this.#forms.flatMap(f => f.fields)
+    }
+
+    /**
+     * Polymorph interface surface = dedup'd union of form fields.
+     * Keeps the first occurrence per name so the order matches what
+     * emitters see when iterating `this.#forms`. Callers that want
+     * the raw concatenation use `allFormFields`.
+     */
+    override get structuralFields(): readonly AssembledField[] {
+        const seen = new Set<string>()
+        const out: AssembledField[] = []
+        for (const form of this.#forms) {
+            for (const f of form.fields) {
+                if (!seen.has(f.name)) {
+                    seen.add(f.name)
+                    out.push(f)
+                }
+            }
+        }
+        return out
     }
 
     renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp): { template: string } {
@@ -1687,9 +1743,21 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
         return this.#fields ??= deriveFields(this.simplifiedRule)
     }
 
+    /**
+     * Group interface surface = own fields. Standalone (non-polymorph-
+     * form) hidden groups like `_range_expression_postfix` surface
+     * their content through the interface the same way branches do —
+     * the UForm parent references them via `$children`, and callers
+     * need to supply the field values to construct.
+     */
+    override get structuralFields(): readonly AssembledField[] { return this.fields }
+
     get children(): AssembledChild[] {
         return this.#children ??= deriveChildren(this.simplifiedRule)
     }
+
+    /** Group interface surface = own children. */
+    override get structuralChildren(): readonly AssembledChild[] { return this.children }
 
     renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp, externals?: ReadonlySet<string>): { template: string } {
         if (externals && hasHiddenExternalRef(this.rule, externals)) {

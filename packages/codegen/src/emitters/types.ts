@@ -18,7 +18,7 @@ import type {
     AssembledNode, AssembledField, AssembledForm, AssembledChild,
 } from '../compiler/node-map.ts'
 import {
-    AssembledBranch, AssembledContainer, AssembledPolymorph, AssembledGroup,
+    AssembledBranch, AssembledContainer, AssembledPolymorph,
     AssembledSupertype, snakeToCamel,
 } from '../compiler/node-map.ts'
 import { loadRawEntries } from '../validate/node-types-loader.ts'
@@ -761,30 +761,9 @@ function emitNamespaceInterfaceLine(lines: string[], typeName: string): void {
 // Interface emitters
 // ---------------------------------------------------------------------------
 
-function fieldsOf(node: AssembledNode): readonly AssembledField[] {
-    if (node.modelType === 'branch') return node.fields
-    // Hidden groups that land in the structural bucket (e.g.
-    // `_range_expression_postfix` — the inner content of a polymorph
-    // form that didn't hoist) carry fields too. Without this clause
-    // their interface emits as `{ $type: 'x' }` only — callers have
-    // no way to supply the `start` / `operator` content even though
-    // the UForm parent references the kind in its `$children`.
-    // Non-polymorph-form groups are filtered into the structural
-    // category by `collectNodesByCategory`, so this branch only fires
-    // for the relevant subset.
-    if (node.modelType === 'group') return node.fields
-    if (node.modelType === 'polymorph') {
-        const seen = new Set<string>()
-        const fields: AssembledField[] = []
-        for (const form of node.forms) {
-            for (const f of form.fields) {
-                if (!seen.has(f.name)) { seen.add(f.name); fields.push(f) }
-            }
-        }
-        return fields
-    }
-    return []
-}
+// `fieldsOf` → `node.structuralFields` (getter on AssembledNodeBase +
+// subclass overrides). One source: each class owns the semantics for
+// its own interface surface.
 
 type LookupUnion = (parts: readonly string[]) => string | undefined
 
@@ -794,8 +773,8 @@ function emitInterface(
     nodeMap: NodeMap,
     lookupUnion?: LookupUnion,
 ): void {
-    const fields = fieldsOf(node)
-    const children = childrenOf(node)
+    const fields = node.structuralFields
+    const children = node.structuralChildren
     lines.push(`export interface ${node.typeName} {`)
     // Hidden-source kinds (`_foo`) are exposed at parse time via
     // `alias(_foo, 'foo')` — tree-sitter emits `$type: 'foo'`, NEVER
@@ -921,12 +900,8 @@ function childContentParts(child: AssembledChild, nodeMap: NodeMap): string[] {
     })
 }
 
-function childrenOf(node: AssembledNode): readonly AssembledChild[] {
-    if (node instanceof AssembledBranch || node instanceof AssembledContainer || node instanceof AssembledGroup) {
-        return node.children ?? []
-    }
-    return []
-}
+// `childrenOf` → `node.structuralChildren` (getter on AssembledNodeBase +
+// subclass overrides). Each class owns its own children semantics.
 
 function emitFormInterface(
     lines: string[],
