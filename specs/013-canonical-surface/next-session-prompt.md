@@ -73,11 +73,18 @@ Downstream render walkers may treat `repeat1(field(name, sym))` differently than
 
 Fix options: (i) skip recursion through field wrappers (the pass already does this), (ii) add per-kind overrides that explicitly retain the bare-symbol form, (iii) teach the template walker to handle field-wrapped repeat content identically.
 
-### (C) Test floor adjustments
+### (C) Test floor adjustments + signal tracking
 
 After the nested-seq enrichment lands, expect TS round-trip floors to shift.
 
-**Critical — user guidance**: the aggregate "how many tests are failing overall" number is NOT the signal to track. What matters is the **TOTALS** (`rtTotal` / `fromTotal` / `covTotal`) — a shift downward means kinds disappeared from the universe, which is a real regression. The pass-count floors (`rtPass` etc.) are expected to move around as adoption shifts what's canonical; the totals should only grow or stay flat. If total drops, investigate WHICH kinds fell out of the universe.
+**Critical — user guidance on what to track**: don't report the aggregate "6 failed, 1402 passed" number when iterating. Instead, report the **ACTUAL COUNTS** each run:
+- `python: fromPass=X fromTotal=Y  covPass=X covTotal=Y  rtPass=X rtTotal=Y rtAstMatchPass=X`
+- `rust: fromPass=X fromTotal=Y  covPass=X covTotal=Y  rtPass=X rtTotal=Y rtAstMatchPass=X factoryPass=X factoryTotal=Y`
+- `typescript: fromPass=X fromTotal=Y  covPass=X covTotal=Y  rtPass=X rtTotal=Y rtAstMatchPass=X factoryPass=X factoryTotal=Y`
+
+Why: the floors are arbitrary numbers set at a point in time. The raw counts show the real movement. **`*Total` dropping** means kinds fell out of the validation universe (real regression — investigate which kinds). **`*Pass` changing** is expected as adoption shifts what's canonical; rising is good, falling means a shape-change broke renders.
+
+Use `validateFrom`, `validateRoundTrip`, `validateTemplateCoverage`, `validateFactoryRoundTrip` from `packages/codegen/src/validate/*.ts` directly via a small script to print these numbers explicitly rather than reading them out of vitest's "expected X to be >= Y" errors.
 
 ## Starting command
 
