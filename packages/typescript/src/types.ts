@@ -791,8 +791,8 @@ export interface ForInStatement {
   readonly $type: 'for_in_statement';
   readonly $fields: {
     readonly await?: BooleanKeyword<"await">;
-    readonly left: LhsExpression | ParenthesizedExpression;
-    readonly kind?: BooleanKeyword<"var">;
+    readonly left: LhsExpression | ParenthesizedExpression | Identifier | DestructuringPattern;
+    readonly kind?: "var" | "let" | "const";
     readonly value?: Expression;
     readonly operator: "in" | "of";
     readonly right: Expressions;
@@ -804,7 +804,7 @@ export interface ForInStatement {
 export interface ForHeader {
   readonly $type: 'for_header';
   readonly $fields: {
-    readonly left: LhsExpression | ParenthesizedExpression;
+    readonly left: LhsExpression | ParenthesizedExpression | Identifier | DestructuringPattern;
     readonly kind?: BooleanKeyword<"var">;
     readonly operator: "in" | "of";
     readonly right: Expressions;
@@ -1002,7 +1002,7 @@ export interface JsxExpression {
 export interface JsxOpeningElement {
   readonly $type: 'jsx_opening_element';
   readonly $fields: {
-    readonly name?: _JsxIdentifier | JsxNamespaceName;
+    readonly name?: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
     readonly type_arguments?: TypeArguments;
     readonly attribute: readonly (_JsxAttribute)[];
   };
@@ -1031,7 +1031,7 @@ export interface JsxClosingElement {
 export interface JsxSelfClosingElement {
   readonly $type: 'jsx_self_closing_element';
   readonly $fields: {
-    readonly name?: _JsxIdentifier | JsxNamespaceName;
+    readonly name?: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
     readonly type_arguments?: TypeArguments;
     readonly attribute: readonly (_JsxAttribute)[];
   };
@@ -1449,7 +1449,7 @@ export interface PublicFieldDefinition {
 export interface JsxStartOpeningElement {
   readonly $type: 'jsx_start_opening_element';
   readonly $fields: {
-    readonly name?: _JsxIdentifier | JsxNamespaceName;
+    readonly name?: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
     readonly type_arguments?: TypeArguments;
     readonly attribute: readonly (_JsxAttribute)[];
   };

@@ -390,11 +390,11 @@ const _K1: readonly string[] = ["export_statement","import_statement","debugger_
 const _K2: readonly string[] = ["string"];
 const _K3: readonly string[] = ["import_clause","string","import_require_clause"];
 const _K4: readonly string[] = ["lexical_declaration","variable_declaration"];
-const _K5: readonly string[] = ["_lhs_expression","parenthesized_expression"];
+const _K5: readonly string[] = ["_lhs_expression","parenthesized_expression","object_pattern","array_pattern"];
 const _K6: readonly string[] = ["member_expression","subscript_expression","object_pattern","array_pattern","non_null_expression","rest_pattern"];
 const _K7: readonly string[] = ["jsx_text","html_character_reference"];
 const _K8: readonly string[] = ["jsx_element","jsx_self_closing_element","jsx_expression"];
-const _K9: readonly string[] = ["jsx_namespace_name"];
+const _K9: readonly string[] = ["jsx_namespace_name","nested_identifier"];
 const _K10: readonly string[] = ["nested_identifier"];
 const _K11: readonly string[] = ["nested_identifier","jsx_namespace_name"];
 const _K12: readonly string[] = ["type_annotation","asserts_annotation","type_predicate_annotation"];
@@ -648,8 +648,8 @@ export function forInStatementFrom(input: T.ForInStatement.Loose): ReturnType<ty
   if (isNodeData(input)) return input;
   return F.forInStatement({
     await: _resolveBooleanKeyword(input.await),
-    left: _resolveOne(input.left, _K0, _K5),
-    kind: _resolveBooleanKeyword(input.kind),
+    left: _resolveOne(input.left, _super_import_identifier, _K5),
+    kind: _resolveOne(input.kind, _K0, _K0),
     value: _resolveOne(input.value, _K0, _super_expression),
     operator: _resolveOne(input.operator, _K0, _K0),
     right: _resolveOne(input.right, _K0, _super_expressions),

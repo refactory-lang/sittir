@@ -258,11 +258,17 @@
     "object_assignment_pattern.left": {
       "shorthand_property_identifier_pattern": "_shorthand_property_identifier_pattern"
     },
+    "jsx_opening_element.name": {
+      "member_expression": "nested_identifier"
+    },
     "nested_identifier.object": {
       "member_expression": "nested_identifier"
     },
     "nested_identifier.property": {
       "property_identifier": "identifier"
+    },
+    "jsx_self_closing_element.name": {
+      "member_expression": "nested_identifier"
     },
     "member_expression.property": {
       "property_identifier": "identifier"
@@ -278,6 +284,9 @@
     },
     "decorator_call_expression.function": {
       "member_expression": "decorator_member_expression"
+    },
+    "_jsx_start_opening_element.name": {
+      "member_expression": "nested_identifier"
     },
     "ambient_declaration.declaration": {
       "property_identifier": "identifier"

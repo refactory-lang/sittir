@@ -57,18 +57,23 @@ describe('simplifyRule — mergeChoiceBranches', () => {
         expect(simplifyRule(input)).toEqual(expected)
     })
 
-    it('does NOT merge when branches differ in LENGTH', () => {
+    it('hoists a shared field across different-length branches', () => {
+        // `hoistSharedFieldAcrossChoiceBranches` now covers branches
+        // that differ in length when they share a field name. Field
+        // `a` is common to both branches; the second branch's extra
+        // `field('b', ...)` becomes the optional residual.
         const input = choice(
             seq(field('a', sym('x'))),
             seq(field('a', sym('x')), field('b', sym('y'))),
         )
-        // Structurally heterogeneous (different lengths) — polymorph /
-        // enum classification downstream handles this. Canonicalize
-        // returns the shape unchanged (its members have themselves been
-        // bottom-up simplifyRuled, but the outer choice stays).
-        const result = simplifyRule(input) as { type: 'choice'; members: Rule[] }
-        expect(result.type).toBe('choice')
-        expect(result.members.length).toBe(2)
+        const result = simplifyRule(input) as { type: 'seq'; members: Rule[] }
+        expect(result.type).toBe('seq')
+        // Member 0: hoisted field('a', choice(sym('x'), sym('x')))
+        // Member 1: optional(field('b', sym('y')))
+        expect(result.members).toHaveLength(2)
+        expect(result.members[0]!.type).toBe('field')
+        expect((result.members[0] as any).name).toBe('a')
+        expect(result.members[1]!.type).toBe('optional')
     })
 
     it('does NOT merge when branches differ in FIELD NAME at a position', () => {

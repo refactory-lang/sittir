@@ -121,7 +121,17 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
             // operator: AutoStamp<"&&">`-style bugs where derivation
             // walked an uncanonical tree and silently dropped
             // duplicate-named field occurrences across choice branches.
-            return mergeChoiceBranches({ type: 'choice', members })
+            const merged = mergeChoiceBranches({ type: 'choice', members })
+            if (merged.type !== 'choice') return merged
+            // Cross-branch field hoist: if every branch contains exactly
+            // one `field(A, ...)` (directly or nested in a seq), lift A
+            // out to an enclosing seq and union the contents. Handles
+            // shapes where branches differ in length / extra fields
+            // (`choice(field(A, X), seq(field(B, Y), field(A, X)))` →
+            // `seq(optional(field(B, Y)), field(A, choice(X)))`) that
+            // `mergeChoiceBranches` can't touch because it requires
+            // same-length same-kind branches.
+            return hoistSharedFieldAcrossChoiceBranches(merged)
         }
         case 'optional': {
             const inner = simplifyRule(rule.content, wordMatcher, inField)
@@ -333,6 +343,141 @@ function hoistFieldOutOfSingleContentWrapper(rule: Rule): Rule {
     if (inner.type !== 'field') return rule
     const wrapper: Rule = { ...rule, content: inner.content }
     return { ...inner, content: wrapper }
+}
+
+/**
+ * Cross-branch field hoist — lift a field name shared by every choice
+ * branch out to an enclosing seq, unioning the field contents across
+ * branches and keeping branch-specific residuals as a side choice:
+ *
+ *   choice(
+ *     field(A, X1),
+ *     seq(field(B, Y), field(A, X2)),
+ *     seq(field(A, X3), field(C, Z)),
+ *   )
+ *   →
+ *   seq(
+ *     field(A, choice(X1, X2, X3)),
+ *     optional(choice(field(B, Y), field(C, Z))),
+ *   )
+ *
+ * Covers the `for_in_statement` / `jsx_opening_element` /
+ * `except_clause` family of shapes: branches differ in length or
+ * extra fields but share a field name. `mergeChoiceBranches` bails on
+ * these (it requires same-length same-kind seq branches);
+ * `hoistFieldOutOfSingleContentWrapper` doesn't see them (not a single-
+ * content wrapper). This pass closes the gap.
+ *
+ * Position is canonical (hoisted field first in the resulting seq).
+ * Template emission reads the RAW rule, not the simplified rule, so
+ * reordering field positions here doesn't affect rendering — only
+ * downstream derivation, which filter-and-projects over seq members
+ * and doesn't care about member order.
+ *
+ * Safety bails:
+ *   - Bails on any variant-wrapped branch (polymorph identity must
+ *     be preserved).
+ *   - Requires the shared field name to appear EXACTLY ONCE per
+ *     branch (multiple same-named fields in one branch could lose
+ *     sibling-duplicate semantics).
+ *   - One field at a time — the fixpoint loop re-runs simplifyRule
+ *     and picks up additional shared fields on subsequent iterations.
+ */
+function hoistSharedFieldAcrossChoiceBranches(rule: ChoiceRule): Rule {
+    if (rule.members.length < 2) return rule
+    if (rule.members.some(m => m.type === 'variant')) return rule
+    const perBranch = rule.members.map(normalizeBranchToMembers)
+    const fieldNameCounts = perBranch.map(countFieldNames)
+    const candidate = firstFieldNameSharedExactlyOncePerBranch(fieldNameCounts)
+    if (candidate === null) return rule
+    return extractFieldAcrossBranches(perBranch, candidate)
+}
+
+/**
+ * Expand a choice branch into a flat array of its top-level members.
+ * A bare non-seq branch becomes a single-element array; a seq branch
+ * is returned verbatim so subsequent passes can scan for field
+ * occurrences.
+ */
+function normalizeBranchToMembers(branch: Rule): Rule[] {
+    if (branch.type === 'seq') return branch.members
+    return [branch]
+}
+
+/**
+ * Count occurrences of each field name in a branch's top-level
+ * members. Nested fields (inside an inner optional / choice / seq)
+ * aren't counted — they aren't directly hoistable without rewriting
+ * the branch's structural frame.
+ */
+function countFieldNames(members: Rule[]): Map<string, number> {
+    const counts = new Map<string, number>()
+    for (const m of members) {
+        if (m.type === 'field') counts.set(m.name, (counts.get(m.name) ?? 0) + 1)
+    }
+    return counts
+}
+
+/**
+ * Return the first field name that appears EXACTLY ONCE in every
+ * branch's top-level members, or null if no such name exists.
+ * Deterministic tie-break: the field order of the first branch.
+ */
+function firstFieldNameSharedExactlyOncePerBranch(perBranchCounts: Map<string, number>[]): string | null {
+    if (perBranchCounts.length === 0) return null
+    const first = perBranchCounts[0]!
+    outer: for (const [name, count] of first) {
+        if (count !== 1) continue
+        for (let i = 1; i < perBranchCounts.length; i++) {
+            if (perBranchCounts[i]!.get(name) !== 1) continue outer
+        }
+        return name
+    }
+    return null
+}
+
+/**
+ * Extract `field(name, ...)` from each branch, union their contents
+ * into a single hoisted field, and keep branch-specific residuals as
+ * a side choice wrapped in optional when any branch has nothing left.
+ */
+function extractFieldAcrossBranches(perBranch: Rule[][], name: string): Rule {
+    const hoistedContents: Rule[] = []
+    const residuals: Rule[] = []
+    let hoistedFieldTemplate: FieldRule | null = null
+    for (const members of perBranch) {
+        const rest: Rule[] = []
+        let extracted: FieldRule | null = null
+        for (const m of members) {
+            if (m.type === 'field' && m.name === name && extracted === null) {
+                extracted = m
+                continue
+            }
+            rest.push(m)
+        }
+        if (!extracted) return { type: 'choice', members: perBranch.map(b => b.length === 1 ? b[0]! : { type: 'seq', members: b }) }
+        hoistedFieldTemplate = hoistedFieldTemplate ?? extracted
+        hoistedContents.push(extracted.content)
+        residuals.push(
+            rest.length === 0 ? { type: 'seq', members: [] }
+            : rest.length === 1 ? rest[0]!
+            : { type: 'seq', members: rest },
+        )
+    }
+    const unionedContent: Rule = hoistedContents.length === 1
+        ? hoistedContents[0]!
+        : { type: 'choice', members: hoistedContents }
+    const hoistedField: Rule = { ...hoistedFieldTemplate!, content: unionedContent }
+    const hasEmptyResidual = residuals.some(r => r.type === 'seq' && r.members.length === 0)
+    const nonEmptyResiduals = residuals.filter(r => !(r.type === 'seq' && r.members.length === 0))
+    if (nonEmptyResiduals.length === 0) return hoistedField
+    const residualCore: Rule = nonEmptyResiduals.length === 1
+        ? nonEmptyResiduals[0]!
+        : { type: 'choice', members: nonEmptyResiduals }
+    const residualPart: Rule = hasEmptyResidual
+        ? { type: 'optional', content: residualCore }
+        : residualCore
+    return { type: 'seq', members: [hoistedField, residualPart] }
 }
 
 /**

@@ -620,7 +620,7 @@ export function wrapJsxExpression(data: _NodeData, tree: TreeHandle): WrappedNod
 export function wrapJsxOpeningElement(data: _NodeData, tree: TreeHandle): WrappedNode<JsxOpeningElement> {
   return {
     ...data,
-    get name() { return drillIn(data.$fields?.['name'], tree); },
+    get name() { return drillAs(data.$fields?.['name'], tree, "member_expression", "nested_identifier"); },
     get typeArguments() { return drillIn(data.$fields?.['type_arguments'], tree); },
     get attribute() { return drillInAll(data.$fields?.['attribute'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
@@ -654,7 +654,7 @@ export function wrapJsxClosingElement(data: _NodeData, tree: TreeHandle): Wrappe
 export function wrapJsxSelfClosingElement(data: _NodeData, tree: TreeHandle): WrappedNode<JsxSelfClosingElement> {
   return {
     ...data,
-    get name() { return drillIn(data.$fields?.['name'], tree); },
+    get name() { return drillAs(data.$fields?.['name'], tree, "member_expression", "nested_identifier"); },
     get typeArguments() { return drillIn(data.$fields?.['type_arguments'], tree); },
     get attribute() { return drillInAll(data.$fields?.['attribute'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },

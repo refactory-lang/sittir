@@ -353,6 +353,14 @@ function classifyTopLevelShape(rule: Rule): string {
             if (allTokenLike) return 'canonical'
             const allFlatSymbolSeq = rule.members.every(isFlatSymbolSeqOrTokenLike)
             if (allFlatSymbolSeq) return 'canonical'
+            // Polymorph surface: every branch wraps its content in a
+            // `variant()` tag (from override-declared variant() adoption
+            // or tagVariants auto-promotion). Variant-wrapped branches
+            // are never merged or hoisted — they preserve polymorph
+            // identity — so the walker descends into each independently
+            // and dispatches via `$variant`. That's canonical even when
+            // the inner content is a structural seq with fields.
+            if (rule.members.every(m => m.type === 'variant')) return 'canonical'
             return 'choice-needs-variant-or-merge'
         }
         case 'optional': {

@@ -1660,6 +1660,18 @@
               "multiplicity": "single",
               "name": "parenthesized_expression",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_destructuring_pattern",
+              "unresolved": true
             }
           ],
           "source": "grammar",
@@ -1667,7 +1679,9 @@
             "typeName": "",
             "kinds": [
               "_lhs_expression",
-              "parenthesized_expression"
+              "parenthesized_expression",
+              "identifier",
+              "_destructuring_pattern"
             ]
           }
         },
@@ -2288,6 +2302,18 @@
               "multiplicity": "optional",
               "name": "jsx_namespace_name",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "nested_identifier",
+              "unresolved": true
             }
           ],
           "source": "grammar",
@@ -2295,8 +2321,13 @@
             "typeName": "",
             "kinds": [
               "_jsx_identifier",
-              "jsx_namespace_name"
+              "jsx_namespace_name",
+              "identifier",
+              "nested_identifier"
             ]
+          },
+          "aliasSources": {
+            "member_expression": "nested_identifier"
           }
         },
         {
@@ -8426,6 +8457,18 @@
               "multiplicity": "single",
               "name": "parenthesized_expression",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_destructuring_pattern",
+              "unresolved": true
             }
           ],
           "source": "grammar",
@@ -8433,7 +8476,9 @@
             "typeName": "",
             "kinds": [
               "_lhs_expression",
-              "parenthesized_expression"
+              "parenthesized_expression",
+              "identifier",
+              "_destructuring_pattern"
             ]
           }
         },
@@ -8449,6 +8494,16 @@
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "var"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "let"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "const"
             }
           ],
           "source": "grammar",
@@ -11666,6 +11721,18 @@
               "multiplicity": "optional",
               "name": "jsx_namespace_name",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "nested_identifier",
+              "unresolved": true
             }
           ],
           "source": "grammar",
@@ -11673,8 +11740,13 @@
             "typeName": "",
             "kinds": [
               "_jsx_identifier",
-              "jsx_namespace_name"
+              "jsx_namespace_name",
+              "identifier",
+              "nested_identifier"
             ]
+          },
+          "aliasSources": {
+            "member_expression": "nested_identifier"
           }
         },
         {
@@ -11753,6 +11825,18 @@
               "multiplicity": "optional",
               "name": "jsx_namespace_name",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "nested_identifier",
+              "unresolved": true
             }
           ],
           "source": "grammar",
@@ -11760,8 +11844,13 @@
             "typeName": "",
             "kinds": [
               "_jsx_identifier",
-              "jsx_namespace_name"
+              "jsx_namespace_name",
+              "identifier",
+              "nested_identifier"
             ]
+          },
+          "aliasSources": {
+            "member_expression": "nested_identifier"
           }
         },
         {
