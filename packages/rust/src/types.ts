@@ -771,7 +771,7 @@ export interface TokenRepetition {
 }
 
 export interface NonSpecialToken {
-  readonly $type: '_non_special_token';
+  readonly $type: 'non_special_token';
   readonly $children: readonly [Literal | Identifier | MutableSpecifier | Self | Super | Crate | PrimitiveType];
 }
 
@@ -805,7 +805,6 @@ export interface ModItemUFormExternal {
     readonly visibility_modifier?: VisibilityModifier;
     readonly name: Identifier;
   };
-  readonly $children: readonly [ModItemExternal];
 }
 
 export interface ModItemUFormInline {
@@ -825,7 +824,7 @@ export interface ForeignModItemUFormSemi {
   readonly $fields: {
     readonly extern_modifier: ExternModifier;
   };
-  readonly $children: readonly [VisibilityModifier | ForeignModItemSemi];
+  readonly $children: readonly [VisibilityModifier];
 }
 
 export interface ForeignModItemUFormBody {
@@ -873,7 +872,6 @@ export interface StructItemUFormUnit {
     readonly name: TypeIdentifier;
     readonly type_parameters?: TypeParameters;
   };
-  readonly $children: readonly [StructItemUnit];
 }
 
 export type StructItem = StructItemUFormBrace | StructItemUFormTuple | StructItemUFormUnit;
@@ -1053,7 +1051,6 @@ export interface ImplItemUFormSemi {
     readonly type: _Type;
     readonly where_clause?: WhereClause;
   };
-  readonly $children: readonly [ImplItemSemi];
 }
 
 export type ImplItem = ImplItemUFormBody | ImplItemUFormSemi;
@@ -1347,7 +1344,6 @@ export interface PointerTypeUFormConst {
   readonly $fields: {
     readonly type: _Type;
   };
-  readonly $children: readonly [PointerTypeConst];
 }
 
 export interface PointerTypeUFormMut {
@@ -1596,7 +1592,7 @@ export interface LetCondition {
 }
 
 export interface LetChain {
-  readonly $type: '_let_chain';
+  readonly $type: 'let_chain';
   readonly $children: readonly [LetChain | LetCondition | Expression];
 }
 
@@ -1964,182 +1960,182 @@ export interface BlockComment {
 }
 
 export interface ReservedIdentifier {
-  readonly $type: '_reserved_identifier';
+  readonly $type: 'reserved_identifier';
   readonly $children: readonly [Identifier];
 }
 
 export interface TypeIdentifier {
-  readonly $type: '_type_identifier';
+  readonly $type: 'type_identifier';
   readonly $children: readonly [Identifier];
 }
 
 export interface FieldIdentifier {
-  readonly $type: '_field_identifier';
+  readonly $type: 'field_identifier';
   readonly $children: readonly [Identifier];
 }
 
 export interface _StringContent {
-  readonly $type: '_string_content';
+  readonly $type: 'string_content';
   readonly $children: readonly [RawStringLiteralContent];
 }
 
 export interface ArrayExpressionSemi {
-  readonly $type: '_array_expression_semi';
+  readonly $type: 'array_expression_semi';
 }
 
 export interface ArrayExpressionList {
-  readonly $type: '_array_expression_list';
+  readonly $type: 'array_expression_list';
   readonly $children: readonly (AttributeItem)[];
 }
 
 export interface ClosureExpressionBlock {
-  readonly $type: '_closure_expression_block';
+  readonly $type: 'closure_expression_block';
 }
 
 export interface ClosureExpressionExpr {
-  readonly $type: '_closure_expression_expr';
+  readonly $type: 'closure_expression_expr';
   readonly $fields: {
     readonly body: Expression | "_";
   };
 }
 
 export interface FieldPatternShorthand {
-  readonly $type: '_field_pattern_shorthand';
+  readonly $type: 'field_pattern_shorthand';
   readonly $fields: {
     readonly name: Identifier;
   };
 }
 
 export interface FieldPatternNamed {
-  readonly $type: '_field_pattern_named';
+  readonly $type: 'field_pattern_named';
 }
 
 export interface FunctionTypeTraitForm {
-  readonly $type: '_function_type_trait_form';
+  readonly $type: 'function_type_trait_form';
   readonly $fields: {
     readonly trait: TypeIdentifier | ScopedTypeIdentifier;
   };
 }
 
 export interface FunctionTypeFnForm {
-  readonly $type: '_function_type_fn_form';
+  readonly $type: 'function_type_fn_form';
   readonly $children: readonly [FunctionModifiers];
 }
 
 export interface ImplItemBody {
-  readonly $type: '_impl_item_body';
+  readonly $type: 'impl_item_body';
   readonly $fields: {
     readonly body: DeclarationList;
   };
 }
 
 export interface MacroDefinitionParen {
-  readonly $type: '_macro_definition_paren';
+  readonly $type: 'macro_definition_paren';
   readonly $children: readonly (MacroRule | MacroRule)[];
 }
 
 export interface MacroDefinitionBracket {
-  readonly $type: '_macro_definition_bracket';
+  readonly $type: 'macro_definition_bracket';
   readonly $children: readonly (MacroRule | MacroRule)[];
 }
 
 export interface MacroDefinitionBrace {
-  readonly $type: '_macro_definition_brace';
+  readonly $type: 'macro_definition_brace';
   readonly $children: readonly (MacroRule | MacroRule)[];
 }
 
 export interface ModItemInline {
-  readonly $type: '_mod_item_inline';
+  readonly $type: 'mod_item_inline';
   readonly $fields: {
     readonly body: DeclarationList;
   };
 }
 
 export interface OrPatternBinary {
-  readonly $type: '_or_pattern_binary';
+  readonly $type: 'or_pattern_binary';
 }
 
 export interface OrPatternPrefix {
-  readonly $type: '_or_pattern_prefix';
+  readonly $type: 'or_pattern_prefix';
 }
 
 export interface RangeExpressionBinary {
-  readonly $type: '_range_expression_binary';
+  readonly $type: 'range_expression_binary';
 }
 
 export interface RangeExpressionPostfix {
-  readonly $type: '_range_expression_postfix';
+  readonly $type: 'range_expression_postfix';
 }
 
 export interface RangeExpressionPrefix {
-  readonly $type: '_range_expression_prefix';
+  readonly $type: 'range_expression_prefix';
 }
 
 export interface RangeExpressionBare {
-  readonly $type: '_range_expression_bare';
+  readonly $type: 'range_expression_bare';
   readonly $fields: {
     readonly operator: "..";
   };
 }
 
 export interface RangePatternLeft {
-  readonly $type: '_range_pattern_left';
+  readonly $type: 'range_pattern_left';
 }
 
 export interface RangePatternPrefix {
-  readonly $type: '_range_pattern_prefix';
+  readonly $type: 'range_pattern_prefix';
 }
 
 export interface StructItemBrace {
-  readonly $type: '_struct_item_brace';
+  readonly $type: 'struct_item_brace';
   readonly $children: readonly [WhereClause];
 }
 
 export interface StructItemTuple {
-  readonly $type: '_struct_item_tuple';
+  readonly $type: 'struct_item_tuple';
   readonly $children: readonly [WhereClause];
 }
 
 export interface ForeignModItemBody {
-  readonly $type: '_foreign_mod_item_body';
+  readonly $type: 'foreign_mod_item_body';
   readonly $fields: {
     readonly body: DeclarationList;
   };
 }
 
 export interface PointerTypeMut {
-  readonly $type: '_pointer_type_mut';
+  readonly $type: 'pointer_type_mut';
   readonly $children: readonly [MutableSpecifier];
 }
 
 export interface ReferenceExpressionRawMut {
-  readonly $type: '_reference_expression_raw_mut';
+  readonly $type: 'reference_expression_raw_mut';
   readonly $children: readonly [MutableSpecifier];
 }
 
 export interface ExpressionStatementWithSemi {
-  readonly $type: '_expression_statement_with_semi';
+  readonly $type: 'expression_statement_with_semi';
   readonly $children: readonly [Expression];
 }
 
 export interface ExpressionStatementBlockEnding {
-  readonly $type: '_expression_statement_block_ending';
+  readonly $type: 'expression_statement_block_ending';
   readonly $children: readonly [ExpressionEndingWithBlock];
 }
 
 export interface MatchArmWithComma {
-  readonly $type: '_match_arm_with_comma';
+  readonly $type: 'match_arm_with_comma';
 }
 
 export interface MatchArmBlockEnding {
-  readonly $type: '_match_arm_block_ending';
+  readonly $type: 'match_arm_block_ending';
   readonly $fields: {
     readonly value: ExpressionEndingWithBlock;
   };
 }
 
 export interface LineCommentDoc {
-  readonly $type: '_line_comment_doc';
+  readonly $type: 'line_comment_doc';
 }
 
 

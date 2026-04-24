@@ -602,7 +602,7 @@ export interface ImportClauseUFormDefaultImport {
 
 export type ImportClause = ImportClauseUFormNamespaceImport | ImportClauseUFormNamedImports | ImportClauseUFormDefaultImport;
 export interface FromClause {
-  readonly $type: '_from_clause';
+  readonly $type: 'from_clause';
 }
 
 export interface NamespaceImport {
@@ -744,7 +744,7 @@ export interface ForInStatement {
 }
 
 export interface ForHeader {
-  readonly $type: '_for_header';
+  readonly $type: 'for_header';
   readonly $children: readonly [Initializer | AutomaticSemicolon];
 }
 
@@ -989,7 +989,7 @@ export interface JsxAttribute {
 }
 
 export interface JsxString {
-  readonly $type: '_jsx_string';
+  readonly $type: 'jsx_string';
   readonly $children: readonly (UnescapedDoubleJsxStringFragment | HtmlCharacterReference)[];
 }
 
@@ -1101,7 +1101,7 @@ export interface ArrowFunctionUFormUCallSignature {
 
 export type ArrowFunction = ArrowFunctionUFormParameter | ArrowFunctionUFormUCallSignature;
 export interface _CallSignature {
-  readonly $type: '_call_signature';
+  readonly $type: 'call_signature';
 }
 
 export interface CallExpressionUFormCall {
@@ -1158,7 +1158,7 @@ export interface SubscriptExpression {
 }
 
 export interface LhsExpression {
-  readonly $type: '_lhs_expression';
+  readonly $type: 'lhs_expression';
   readonly $children: readonly [MemberExpression | SubscriptExpression | _Identifier | DestructuringPattern | NonNullExpression];
 }
 
@@ -1181,7 +1181,7 @@ export interface AugmentedAssignmentExpression {
 }
 
 export interface Initializer {
-  readonly $type: '_initializer';
+  readonly $type: 'initializer';
 }
 
 export interface SpreadElement {
@@ -1385,7 +1385,7 @@ export interface PublicFieldDefinition {
 }
 
 export interface JsxStartOpeningElement {
-  readonly $type: '_jsx_start_opening_element';
+  readonly $type: 'jsx_start_opening_element';
 }
 
 export interface NonNullExpression {
@@ -1488,7 +1488,7 @@ export interface ExtendsClause {
 }
 
 export interface ExtendsClauseSingle {
-  readonly $type: '_extends_clause_single';
+  readonly $type: 'extends_clause_single';
 }
 
 export interface ImplementsClause {
@@ -1531,7 +1531,7 @@ export interface InternalModule {
 }
 
 export interface _Module {
-  readonly $type: '_module';
+  readonly $type: 'module';
 }
 
 export interface ImportAlias {
@@ -1627,7 +1627,7 @@ export interface OptionalParameter {
 }
 
 export interface ParameterName {
-  readonly $type: '_parameter_name';
+  readonly $type: 'parameter_name';
   readonly $children: readonly [AccessibilityModifier | OverrideModifier];
 }
 
@@ -1660,11 +1660,11 @@ export interface TypeAnnotation {
 }
 
 export interface TypeQueryMemberExpressionInTypeAnnotation {
-  readonly $type: '_type_query_member_expression_in_type_annotation';
+  readonly $type: 'type_query_member_expression_in_type_annotation';
 }
 
 export interface TypeQueryCallExpressionInTypeAnnotation {
-  readonly $type: '_type_query_call_expression_in_type_annotation';
+  readonly $type: 'type_query_call_expression_in_type_annotation';
 }
 
 export interface Asserts {
@@ -1771,19 +1771,19 @@ export interface TypePredicateAnnotation {
 }
 
 export interface TypeQueryMemberExpression {
-  readonly $type: '_type_query_member_expression';
+  readonly $type: 'type_query_member_expression';
 }
 
 export interface TypeQuerySubscriptExpression {
-  readonly $type: '_type_query_subscript_expression';
+  readonly $type: 'type_query_subscript_expression';
 }
 
 export interface TypeQueryCallExpression {
-  readonly $type: '_type_query_call_expression';
+  readonly $type: 'type_query_call_expression';
 }
 
 export interface TypeQueryInstantiationExpression {
-  readonly $type: '_type_query_instantiation_expression';
+  readonly $type: 'type_query_instantiation_expression';
 }
 
 export interface TypeQuery {
@@ -1821,7 +1821,7 @@ export interface LiteralType {
 }
 
 export interface _Number {
-  readonly $type: '_number';
+  readonly $type: 'number';
 }
 
 export interface FlowMaybeType {
@@ -1978,19 +1978,19 @@ export interface FunctionType {
 }
 
 export interface TypeIdentifier {
-  readonly $type: '_type_identifier';
+  readonly $type: 'type_identifier';
   readonly $children: readonly [Identifier];
 }
 
 export interface ArrowFunctionParameter {
-  readonly $type: '_arrow_function_parameter';
+  readonly $type: 'arrow_function_parameter';
   readonly $fields: {
     readonly parameter: ReservedIdentifier;
   };
 }
 
 export interface ArrowFunctionUCallSignature {
-  readonly $type: '_arrow_function__call_signature';
+  readonly $type: 'arrow_function__call_signature';
   readonly $fields: {
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
@@ -1999,68 +1999,68 @@ export interface ArrowFunctionUCallSignature {
 }
 
 export interface ClassHeritageExtendsClause {
-  readonly $type: '_class_heritage_extends_clause';
+  readonly $type: 'class_heritage_extends_clause';
   readonly $children: readonly [ExtendsClause | ImplementsClause];
 }
 
 export interface ClassHeritageImplementsClause {
-  readonly $type: '_class_heritage_implements_clause';
+  readonly $type: 'class_heritage_implements_clause';
   readonly $children: readonly [ImplementsClause];
 }
 
 export interface ImportClauseNamespaceImport {
-  readonly $type: '_import_clause_namespace_import';
+  readonly $type: 'import_clause_namespace_import';
   readonly $children: readonly [NamespaceImport];
 }
 
 export interface ImportClauseNamedImports {
-  readonly $type: '_import_clause_named_imports';
+  readonly $type: 'import_clause_named_imports';
   readonly $children: readonly [NamedImports];
 }
 
 export interface ImportClauseDefaultImport {
-  readonly $type: '_import_clause_default_import';
+  readonly $type: 'import_clause_default_import';
   readonly $children: readonly [ImportIdentifier | NamespaceImport | NamedImports];
 }
 
 export interface ImportSpecifierName {
-  readonly $type: '_import_specifier_name';
+  readonly $type: 'import_specifier_name';
   readonly $fields: {
     readonly name: ImportIdentifier;
   };
 }
 
 export interface ImportSpecifierAs {
-  readonly $type: '_import_specifier_as';
+  readonly $type: 'import_specifier_as';
 }
 
 export interface IndexSignatureColon {
-  readonly $type: '_index_signature_colon';
+  readonly $type: 'index_signature_colon';
 }
 
 export interface IndexSignatureMappedTypeClause {
-  readonly $type: '_index_signature_mapped_type_clause';
+  readonly $type: 'index_signature_mapped_type_clause';
   readonly $children: readonly [MappedTypeClause];
 }
 
 export interface ParenthesizedExpressionTyped {
-  readonly $type: '_parenthesized_expression_typed';
+  readonly $type: 'parenthesized_expression_typed';
   readonly $children: readonly [Expression];
 }
 
 export interface ParenthesizedExpressionSequence {
-  readonly $type: '_parenthesized_expression_sequence';
+  readonly $type: 'parenthesized_expression_sequence';
   readonly $children: readonly [SequenceExpression];
 }
 
 export interface ExportStatementDefaultForm0 {
-  readonly $type: '_export_statement_default';
+  readonly $type: 'export_statement_default';
   readonly $variant: 'form0';
   readonly $children: readonly [FromClause | NamespaceExport | ExportClause | Semicolon];
 }
 
 export interface ExportStatementDefaultForm1 {
-  readonly $type: '_export_statement_default';
+  readonly $type: 'export_statement_default';
   readonly $variant: 'form1';
   readonly $fields: {
     readonly decorator: readonly (Decorator)[];
@@ -2072,7 +2072,7 @@ export interface ExportStatementDefaultForm1 {
 
 export type ExportStatementDefault = ExportStatementDefaultForm0 | ExportStatementDefaultForm1;
 export interface ExportStatementTypeExport {
-  readonly $type: '_export_statement_type_export';
+  readonly $type: 'export_statement_type_export';
   readonly $fields: {
     readonly source?: String;
   };
@@ -2080,34 +2080,34 @@ export interface ExportStatementTypeExport {
 }
 
 export interface ExportStatementEqualsExport {
-  readonly $type: '_export_statement_equals_export';
+  readonly $type: 'export_statement_equals_export';
   readonly $children: readonly [Expression | Semicolon];
 }
 
 export interface ExportStatementNamespaceExport {
-  readonly $type: '_export_statement_namespace_export';
+  readonly $type: 'export_statement_namespace_export';
   readonly $children: readonly [Identifier | Semicolon];
 }
 
 export interface CallExpressionCall {
-  readonly $type: '_call_expression_call';
+  readonly $type: 'call_expression_call';
 }
 
 export interface CallExpressionTemplateCall {
-  readonly $type: '_call_expression_template_call';
+  readonly $type: 'call_expression_template_call';
 }
 
 export interface CallExpressionMember {
-  readonly $type: '_call_expression_member';
+  readonly $type: 'call_expression_member';
 }
 
 export interface StringDouble {
-  readonly $type: '_string_double';
+  readonly $type: 'string_double';
   readonly $children: readonly (UnescapedDoubleStringFragment | EscapeSequence)[];
 }
 
 export interface StringSingle {
-  readonly $type: '_string_single';
+  readonly $type: 'string_single';
   readonly $children: readonly (UnescapedSingleStringFragment | EscapeSequence)[];
 }
 

@@ -35,11 +35,6 @@ function _assertNonEmpty<T>(
     throw new Error(`${label}: requires at least one element`);
   }
 }
-function _bk<T>(v: unknown, kind: string, text: string, named: boolean): T | undefined {
-  if (v === true) return { $type: kind, $text: text, $named: named, $source: 'factory' } as unknown as T;
-  if (v === false || v === undefined || v === null) return undefined;
-  return v as T;
-}
 
 const _leafRe_typeConversion = /^(?:![a-z])/u;
 const _leafRe_identifier = /^(?:[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
@@ -469,12 +464,12 @@ export function matchBlock(config: ConfigOf<T.MatchBlockForm0>): ReturnType<type
 export function matchBlock(config: ConfigOf<T.MatchBlockForm1>): ReturnType<typeof matchBlockForm1>;
 export function matchBlock(config: ConfigOf<T.MatchBlockForm0> | ConfigOf<T.MatchBlockForm1>) {
   switch (config.$variant) {
-    case 'form0': return matchBlockForm0(config);
-    case 'form1': return matchBlockForm1(config);
+    case 'form0': return matchBlockForm0(config as Parameters<typeof matchBlockForm0>[0]);
+    case 'form1': return matchBlockForm1(config as Parameters<typeof matchBlockForm1>[0]);
   }
   throw new Error(`matchBlock: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'form0' | 'form1'.`);
 }
-export function matchBlockForm0(config: ConfigOf<T.MatchBlockForm0>) {
+export function matchBlockForm0(config: Omit<ConfigOf<T.MatchBlockForm0>, '$variant'>) {
   const fields = {
     alternative: config.alternative,
   };
@@ -493,7 +488,7 @@ export function matchBlockForm0(config: ConfigOf<T.MatchBlockForm0>) {
     replace(target: T.MatchBlockForm0Tree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function matchBlockForm1(config?: ConfigOf<T.MatchBlockForm1>) {
+export function matchBlockForm1(config?: Omit<ConfigOf<T.MatchBlockForm1>, '$variant'>) {
   return {
     $type: '_match_block' as const,
     $source: 'factory' as const,
@@ -538,7 +533,7 @@ export function caseClause(config: T.CaseClause.Config) {
 
 export function forStatement(config: T.ForStatement.Config) {
   const fields = {
-    async: _bk(config.async, "_kw_async", "async", false),
+    async: config.async ? "async" as const : undefined,
     left: config.left,
     right: config.right,
     body: config.body,
@@ -659,7 +654,7 @@ export function finallyClause(config: T.FinallyClause.Config) {
 
 export function withStatement(config: T.WithStatement.Config) {
   const fields = {
-    async: _bk(config.async, "_kw_async", "async", false),
+    async: config.async ? "async" as const : undefined,
     with_clause: config.withClause,
     body: config.body,
   };
@@ -717,7 +712,7 @@ export function withItem(config: T.WithItem.Config) {
 
 export function functionDefinition(config: T.FunctionDefinition.Config) {
   const fields = {
-    async: _bk(config.async, "_kw_async", "async", false),
+    async: config.async ? "async" as const : undefined,
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -1257,7 +1252,7 @@ export function classPattern(config: T.ClassPattern.Config) {
 
 export function complexPattern(config: T.ComplexPattern.Config) {
   const fields = {
-    real: _bk(config.real, "-", "-", false),
+    real: config.real ? "-" as const : undefined,
     imaginary: config.imaginary,
   };
   const children = config.children ?? [];
@@ -1591,13 +1586,13 @@ export function assignment(config: ConfigOf<T.AssignmentUFormType>): ReturnType<
 export function assignment(config: ConfigOf<T.AssignmentUFormTyped>): ReturnType<typeof assignmentUFormTyped>;
 export function assignment(config: ConfigOf<T.AssignmentUFormEq> | ConfigOf<T.AssignmentUFormType> | ConfigOf<T.AssignmentUFormTyped>) {
   switch (config.$variant) {
-    case 'eq': return assignmentUFormEq(config);
-    case 'type': return assignmentUFormType(config);
-    case 'typed': return assignmentUFormTyped(config);
+    case 'eq': return assignmentUFormEq(config as Parameters<typeof assignmentUFormEq>[0]);
+    case 'type': return assignmentUFormType(config as Parameters<typeof assignmentUFormType>[0]);
+    case 'typed': return assignmentUFormTyped(config as Parameters<typeof assignmentUFormTyped>[0]);
   }
   throw new Error(`assignment: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'eq' | 'type' | 'typed'.`);
 }
-export function assignmentUFormEq(config: ConfigOf<T.AssignmentUFormEq>) {
+export function assignmentUFormEq(config: Omit<ConfigOf<T.AssignmentUFormEq>, '$variant'>) {
   const fields = {
     left: config.left,
   };
@@ -1622,7 +1617,7 @@ export function assignmentUFormEq(config: ConfigOf<T.AssignmentUFormEq>) {
     replace(target: T.AssignmentUFormEqTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function assignmentUFormType(config: ConfigOf<T.AssignmentUFormType>) {
+export function assignmentUFormType(config: Omit<ConfigOf<T.AssignmentUFormType>, '$variant'>) {
   const fields = {
     left: config.left,
   };
@@ -1647,7 +1642,7 @@ export function assignmentUFormType(config: ConfigOf<T.AssignmentUFormType>) {
     replace(target: T.AssignmentUFormTypeTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function assignmentUFormTyped(config: ConfigOf<T.AssignmentUFormTyped>) {
+export function assignmentUFormTyped(config: Omit<ConfigOf<T.AssignmentUFormTyped>, '$variant'>) {
   const fields = {
     left: config.left,
   };
@@ -2195,7 +2190,7 @@ export function parenthesizedExpression(child?: (T.Expression | T.Yield)) {
 
 export function forInClause(config: T.ForInClause.Config) {
   const fields = {
-    async: _bk(config.async, "_kw_async", "async", false),
+    async: config.async ? "async" as const : undefined,
     left: config.left,
     right: config.right,
   };
@@ -2506,18 +2501,6 @@ export function lineContinuation(text: string) {
   };
 }
 
-export function kwAsync() {
-  return {
-    $type: '_kw_async' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: 'async' as const,
-    render: () => 'async' as const,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'async' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'async' as const },
-    replace: (t: T.KwAsyncTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'async' as const }; },
-  };
-}
-
 export function stringStart(text: string) {
   if (text.length === 0) throw new Error(`string_start: text must be non-empty`);
   return {
@@ -2746,7 +2729,6 @@ export type FluentKindMap = {
   "await": FluentNode<"await", T.Await.Config>;
   "comment": T.Comment;
   "line_continuation": T.LineContinuation;
-  "_kw_async": T.KwAsync;
   "string_start": T.StringStart;
   "_string_content": T._StringContent;
   "escape_interpolation": T.EscapeInterpolation;
@@ -2881,7 +2863,6 @@ export const _factoryMap = {
   "await": await_,
   "comment": comment,
   "line_continuation": lineContinuation,
-  "_kw_async": kwAsync,
   "string_start": stringStart,
   "_string_content": _stringContent,
   "escape_interpolation": escapeInterpolation,

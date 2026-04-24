@@ -402,58 +402,35 @@ export function sourceFileFrom(input: T.SourceFile.Loose): ReturnType<typeof F.s
 
 export function expressionStatementFrom(input?: T.ExpressionStatement.Loose): ReturnType<typeof F.expressionStatement> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'expression_statement_with_semi': _loose.$variant = 'with_semi'; break;
-        case 'expression_statement_block_ending': _loose.$variant = 'block_ending'; break;
-      }
-    }
-  }
   return F.expressionStatement(input as Parameters<typeof F.expressionStatement>[0]);
 }
 
-export function expressionStatementUFormWithSemiFrom(input: ConfigOf<T.ExpressionStatementUFormWithSemi>) {
+export function expressionStatementUFormWithSemiFrom(input: Omit<ConfigOf<T.ExpressionStatementUFormWithSemi>, '$variant'>) {
   return F.expressionStatementUFormWithSemi(input);
 }
 
-export function expressionStatementUFormBlockEndingFrom(input: ConfigOf<T.ExpressionStatementUFormBlockEnding>) {
+export function expressionStatementUFormBlockEndingFrom(input: Omit<ConfigOf<T.ExpressionStatementUFormBlockEnding>, '$variant'>) {
   return F.expressionStatementUFormBlockEnding(input);
 }
 
 export function macroDefinitionFrom(input?: T.MacroDefinition.Loose): ReturnType<typeof F.macroDefinition> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'macro_definition_paren': _loose.$variant = 'paren'; break;
-        case 'macro_definition_bracket': _loose.$variant = 'bracket'; break;
-        case 'macro_definition_brace': _loose.$variant = 'brace'; break;
-      }
-    }
-  }
   return F.macroDefinition(input as Parameters<typeof F.macroDefinition>[0]);
 }
 
-export function macroDefinitionUFormParenFrom(input: ConfigOf<T.MacroDefinitionUFormParen>) {
+export function macroDefinitionUFormParenFrom(input: Omit<ConfigOf<T.MacroDefinitionUFormParen>, '$variant'>) {
   return F.macroDefinitionUFormParen({
     name: _resolveOne(input.name, _K2, _K3),
   });
 }
 
-export function macroDefinitionUFormBracketFrom(input: ConfigOf<T.MacroDefinitionUFormBracket>) {
+export function macroDefinitionUFormBracketFrom(input: Omit<ConfigOf<T.MacroDefinitionUFormBracket>, '$variant'>) {
   return F.macroDefinitionUFormBracket({
     name: _resolveOne(input.name, _K2, _K3),
   });
 }
 
-export function macroDefinitionUFormBraceFrom(input: ConfigOf<T.MacroDefinitionUFormBrace>) {
+export function macroDefinitionUFormBraceFrom(input: Omit<ConfigOf<T.MacroDefinitionUFormBrace>, '$variant'>) {
   return F.macroDefinitionUFormBrace({
     name: _resolveOne(input.name, _K2, _K3),
   });
@@ -537,28 +514,17 @@ export function attributeFrom(input: T.Attribute.Loose): ReturnType<typeof F.att
 
 export function modItemFrom(input?: T.ModItem.Loose): ReturnType<typeof F.modItem> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'mod_item_external': _loose.$variant = 'external'; break;
-        case 'mod_item_inline': _loose.$variant = 'inline'; break;
-      }
-    }
-  }
   return F.modItem(input as Parameters<typeof F.modItem>[0]);
 }
 
-export function modItemUFormExternalFrom(input: ConfigOf<T.ModItemUFormExternal>) {
+export function modItemUFormExternalFrom(input: Omit<ConfigOf<T.ModItemUFormExternal>, '$variant'>) {
   return F.modItemUFormExternal({
     visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
     name: _resolveOneLeaf(input.name, "identifier"),
   });
 }
 
-export function modItemUFormInlineFrom(input: ConfigOf<T.ModItemUFormInline>) {
+export function modItemUFormInlineFrom(input: Omit<ConfigOf<T.ModItemUFormInline>, '$variant'>) {
   return F.modItemUFormInline({
     visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
     name: _resolveOneLeaf(input.name, "identifier"),
@@ -567,27 +533,16 @@ export function modItemUFormInlineFrom(input: ConfigOf<T.ModItemUFormInline>) {
 
 export function foreignModItemFrom(input?: T.ForeignModItem.Loose): ReturnType<typeof F.foreignModItem> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'foreign_mod_item_semi': _loose.$variant = 'semi'; break;
-        case 'foreign_mod_item_body': _loose.$variant = 'body'; break;
-      }
-    }
-  }
   return F.foreignModItem(input as Parameters<typeof F.foreignModItem>[0]);
 }
 
-export function foreignModItemUFormSemiFrom(input: ConfigOf<T.ForeignModItemUFormSemi>) {
+export function foreignModItemUFormSemiFrom(input: Omit<ConfigOf<T.ForeignModItemUFormSemi>, '$variant'>) {
   return F.foreignModItemUFormSemi({
     externModifier: _resolveOneBranch(input.externModifier, "extern_modifier"),
   });
 }
 
-export function foreignModItemUFormBodyFrom(input: ConfigOf<T.ForeignModItemUFormBody>) {
+export function foreignModItemUFormBodyFrom(input: Omit<ConfigOf<T.ForeignModItemUFormBody>, '$variant'>) {
   return F.foreignModItemUFormBody({
     externModifier: _resolveOneBranch(input.externModifier, "extern_modifier"),
   });
@@ -603,22 +558,10 @@ export function declarationListFrom(...input: readonly (NonNullable<T.Declaratio
 
 export function structItemFrom(input?: T.StructItem.Loose): ReturnType<typeof F.structItem> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'struct_item_brace': _loose.$variant = 'brace'; break;
-        case 'struct_item_tuple': _loose.$variant = 'tuple'; break;
-        case 'struct_item_unit': _loose.$variant = 'unit'; break;
-      }
-    }
-  }
   return F.structItem(input as Parameters<typeof F.structItem>[0]);
 }
 
-export function structItemUFormBraceFrom(input: ConfigOf<T.StructItemUFormBrace>) {
+export function structItemUFormBraceFrom(input: Omit<ConfigOf<T.StructItemUFormBrace>, '$variant'>) {
   return F.structItemUFormBrace({
     visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
     name: _resolveOneBranch(input.name, "_type_identifier"),
@@ -626,7 +569,7 @@ export function structItemUFormBraceFrom(input: ConfigOf<T.StructItemUFormBrace>
   });
 }
 
-export function structItemUFormTupleFrom(input: ConfigOf<T.StructItemUFormTuple>) {
+export function structItemUFormTupleFrom(input: Omit<ConfigOf<T.StructItemUFormTuple>, '$variant'>) {
   return F.structItemUFormTuple({
     visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
     name: _resolveOneBranch(input.name, "_type_identifier"),
@@ -634,7 +577,7 @@ export function structItemUFormTupleFrom(input: ConfigOf<T.StructItemUFormTuple>
   });
 }
 
-export function structItemUFormUnitFrom(input: ConfigOf<T.StructItemUFormUnit>) {
+export function structItemUFormUnitFrom(input: Omit<ConfigOf<T.StructItemUFormUnit>, '$variant'>) {
   return F.structItemUFormUnit({
     visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
     name: _resolveOneBranch(input.name, "_type_identifier"),
@@ -806,21 +749,10 @@ export function wherePredicateFrom(input: T.WherePredicate.Loose): ReturnType<ty
 
 export function implItemFrom(input?: T.ImplItem.Loose): ReturnType<typeof F.implItem> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'impl_item_body': _loose.$variant = 'body'; break;
-        case 'impl_item_semi': _loose.$variant = 'semi'; break;
-      }
-    }
-  }
   return F.implItem(input as Parameters<typeof F.implItem>[0]);
 }
 
-export function implItemUFormBodyFrom(input: ConfigOf<T.ImplItemUFormBody>) {
+export function implItemUFormBodyFrom(input: Omit<ConfigOf<T.ImplItemUFormBody>, '$variant'>) {
   return F.implItemUFormBody({
     unsafe: _resolveBooleanKeyword(input.unsafe),
     typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
@@ -830,7 +762,7 @@ export function implItemUFormBodyFrom(input: ConfigOf<T.ImplItemUFormBody>) {
   });
 }
 
-export function implItemUFormSemiFrom(input: ConfigOf<T.ImplItemUFormSemi>) {
+export function implItemUFormSemiFrom(input: Omit<ConfigOf<T.ImplItemUFormSemi>, '$variant'>) {
   return F.implItemUFormSemi({
     unsafe: _resolveBooleanKeyword(input.unsafe),
     typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
@@ -1016,19 +948,14 @@ export function externModifierFrom(input?: T.ExternModifier.Loose): ReturnType<t
 
 export function visibilityModifierFrom(input?: T.VisibilityModifier.Loose): ReturnType<typeof F.visibilityModifier> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if ('pub' in _loose && 'in' in _loose) _loose.$variant = 'form1';
-    else _loose.$variant = 'form0';
-  }
   return F.visibilityModifier(input as Parameters<typeof F.visibilityModifier>[0]);
 }
 
-export function visibilityModifierForm0From(input?: ConfigOf<T.VisibilityModifierForm0>) {
+export function visibilityModifierForm0From(input?: Omit<ConfigOf<T.VisibilityModifierForm0>, '$variant'>) {
   return F.visibilityModifierForm0(input);
 }
 
-export function visibilityModifierForm1From(input?: ConfigOf<T.VisibilityModifierForm1>) {
+export function visibilityModifierForm1From(input?: Omit<ConfigOf<T.VisibilityModifierForm1>, '$variant'>) {
   return F.visibilityModifierForm1({
     in: _resolveBooleanKeyword(input?.in),
   });
@@ -1165,27 +1092,16 @@ export function referenceTypeFrom(input: T.ReferenceType.Loose): ReturnType<type
 
 export function pointerTypeFrom(input?: T.PointerType.Loose): ReturnType<typeof F.pointerType> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'pointer_type_const': _loose.$variant = 'const'; break;
-        case 'pointer_type_mut': _loose.$variant = 'mut'; break;
-      }
-    }
-  }
   return F.pointerType(input as Parameters<typeof F.pointerType>[0]);
 }
 
-export function pointerTypeUFormConstFrom(input: ConfigOf<T.PointerTypeUFormConst>) {
+export function pointerTypeUFormConstFrom(input: Omit<ConfigOf<T.PointerTypeUFormConst>, '$variant'>) {
   return F.pointerTypeUFormConst({
     type: _resolveOne(input.type, _K9, _K10),
   });
 }
 
-export function pointerTypeUFormMutFrom(input: ConfigOf<T.PointerTypeUFormMut>) {
+export function pointerTypeUFormMutFrom(input: Omit<ConfigOf<T.PointerTypeUFormMut>, '$variant'>) {
   return F.pointerTypeUFormMut({
     type: _resolveOne(input.type, _K9, _K10),
   });
@@ -1253,35 +1169,22 @@ export function scopedTypeIdentifierFrom(input: T.ScopedTypeIdentifier.Loose): R
 
 export function rangeExpressionFrom(input?: T.RangeExpression.Loose): ReturnType<typeof F.rangeExpression> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'range_expression_binary': _loose.$variant = 'binary'; break;
-        case 'range_expression_postfix': _loose.$variant = 'postfix'; break;
-        case 'range_expression_prefix': _loose.$variant = 'prefix'; break;
-        case 'range_expression_bare': _loose.$variant = 'bare'; break;
-      }
-    }
-  }
   return F.rangeExpression(input as Parameters<typeof F.rangeExpression>[0]);
 }
 
-export function rangeExpressionUFormBinaryFrom(input: ConfigOf<T.RangeExpressionUFormBinary>) {
+export function rangeExpressionUFormBinaryFrom(input: Omit<ConfigOf<T.RangeExpressionUFormBinary>, '$variant'>) {
   return F.rangeExpressionUFormBinary(input);
 }
 
-export function rangeExpressionUFormPostfixFrom(input: ConfigOf<T.RangeExpressionUFormPostfix>) {
+export function rangeExpressionUFormPostfixFrom(input: Omit<ConfigOf<T.RangeExpressionUFormPostfix>, '$variant'>) {
   return F.rangeExpressionUFormPostfix(input);
 }
 
-export function rangeExpressionUFormPrefixFrom(input: ConfigOf<T.RangeExpressionUFormPrefix>) {
+export function rangeExpressionUFormPrefixFrom(input: Omit<ConfigOf<T.RangeExpressionUFormPrefix>, '$variant'>) {
   return F.rangeExpressionUFormPrefix(input);
 }
 
-export function rangeExpressionUFormBareFrom(input: ConfigOf<T.RangeExpressionUFormBare>) {
+export function rangeExpressionUFormBareFrom(input: Omit<ConfigOf<T.RangeExpressionUFormBare>, '$variant'>) {
   return F.rangeExpressionUFormBare(input);
 }
 
@@ -1378,25 +1281,14 @@ export function arguments_From(...input: readonly (NonNullable<T.Arguments.Confi
 
 export function arrayExpressionFrom(input?: T.ArrayExpression.Loose): ReturnType<typeof F.arrayExpression> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'array_expression_semi': _loose.$variant = 'semi'; break;
-        case 'array_expression_list': _loose.$variant = 'list'; break;
-      }
-    }
-  }
   return F.arrayExpression(input as Parameters<typeof F.arrayExpression>[0]);
 }
 
-export function arrayExpressionUFormSemiFrom(input: ConfigOf<T.ArrayExpressionUFormSemi>) {
+export function arrayExpressionUFormSemiFrom(input: Omit<ConfigOf<T.ArrayExpressionUFormSemi>, '$variant'>) {
   return F.arrayExpressionUFormSemi(input);
 }
 
-export function arrayExpressionUFormListFrom(input: ConfigOf<T.ArrayExpressionUFormList>) {
+export function arrayExpressionUFormListFrom(input: Omit<ConfigOf<T.ArrayExpressionUFormList>, '$variant'>) {
   return F.arrayExpressionUFormList(input);
 }
 
@@ -1508,27 +1400,16 @@ export function matchBlockFrom(...input: readonly (NonNullable<T.MatchBlock.Conf
 
 export function matchArmFrom(input?: T.MatchArm.Loose): ReturnType<typeof F.matchArm> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'match_arm_with_comma': _loose.$variant = 'with_comma'; break;
-        case 'match_arm_block_ending': _loose.$variant = 'block_ending'; break;
-      }
-    }
-  }
   return F.matchArm(input as Parameters<typeof F.matchArm>[0]);
 }
 
-export function matchArmUFormWithCommaFrom(input: ConfigOf<T.MatchArmUFormWithComma>) {
+export function matchArmUFormWithCommaFrom(input: Omit<ConfigOf<T.MatchArmUFormWithComma>, '$variant'>) {
   return F.matchArmUFormWithComma({
     pattern: _resolveOneBranch(input.pattern, "match_pattern"),
   });
 }
 
-export function matchArmUFormBlockEndingFrom(input: ConfigOf<T.MatchArmUFormBlockEnding>) {
+export function matchArmUFormBlockEndingFrom(input: Omit<ConfigOf<T.MatchArmUFormBlockEnding>, '$variant'>) {
   return F.matchArmUFormBlockEnding({
     pattern: _resolveOneBranch(input.pattern, "match_pattern"),
   });
@@ -1587,21 +1468,10 @@ export function constBlockFrom(input: T.ConstBlock.Loose): ReturnType<typeof F.c
 
 export function closureExpressionFrom(input?: T.ClosureExpression.Loose): ReturnType<typeof F.closureExpression> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'closure_expression_block': _loose.$variant = 'block'; break;
-        case 'closure_expression_expr': _loose.$variant = 'expr'; break;
-      }
-    }
-  }
   return F.closureExpression(input as Parameters<typeof F.closureExpression>[0]);
 }
 
-export function closureExpressionUFormBlockFrom(input: ConfigOf<T.ClosureExpressionUFormBlock>) {
+export function closureExpressionUFormBlockFrom(input: Omit<ConfigOf<T.ClosureExpressionUFormBlock>, '$variant'>) {
   return F.closureExpressionUFormBlock({
     static: _resolveBooleanKeyword(input.static),
     async: _resolveBooleanKeyword(input.async),
@@ -1610,7 +1480,7 @@ export function closureExpressionUFormBlockFrom(input: ConfigOf<T.ClosureExpress
   });
 }
 
-export function closureExpressionUFormExprFrom(input: ConfigOf<T.ClosureExpressionUFormExpr>) {
+export function closureExpressionUFormExprFrom(input: Omit<ConfigOf<T.ClosureExpressionUFormExpr>, '$variant'>) {
   return F.closureExpressionUFormExpr({
     static: _resolveBooleanKeyword(input.static),
     async: _resolveBooleanKeyword(input.async),
@@ -1754,28 +1624,17 @@ export function structPatternFrom(input: T.StructPattern.Loose): ReturnType<type
 
 export function fieldPatternFrom(input?: T.FieldPattern.Loose): ReturnType<typeof F.fieldPattern> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'field_pattern_shorthand': _loose.$variant = 'shorthand'; break;
-        case 'field_pattern_named': _loose.$variant = 'named'; break;
-      }
-    }
-  }
   return F.fieldPattern(input as Parameters<typeof F.fieldPattern>[0]);
 }
 
-export function fieldPatternUFormShorthandFrom(input: ConfigOf<T.FieldPatternUFormShorthand>) {
+export function fieldPatternUFormShorthandFrom(input: Omit<ConfigOf<T.FieldPatternUFormShorthand>, '$variant'>) {
   return F.fieldPatternUFormShorthand({
     ref: _resolveBooleanKeyword(input.ref),
     mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
   });
 }
 
-export function fieldPatternUFormNamedFrom(input: ConfigOf<T.FieldPatternUFormNamed>) {
+export function fieldPatternUFormNamedFrom(input: Omit<ConfigOf<T.FieldPatternUFormNamed>, '$variant'>) {
   return F.fieldPatternUFormNamed({
     ref: _resolveBooleanKeyword(input.ref),
     mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
@@ -1792,25 +1651,14 @@ export function mutPatternFrom(input: T.MutPattern.Loose): ReturnType<typeof F.m
 
 export function rangePatternFrom(input?: T.RangePattern.Loose): ReturnType<typeof F.rangePattern> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'range_pattern_left': _loose.$variant = 'left'; break;
-        case 'range_pattern_prefix': _loose.$variant = 'prefix'; break;
-      }
-    }
-  }
   return F.rangePattern(input as Parameters<typeof F.rangePattern>[0]);
 }
 
-export function rangePatternUFormLeftFrom(input: ConfigOf<T.RangePatternUFormLeft>) {
+export function rangePatternUFormLeftFrom(input: Omit<ConfigOf<T.RangePatternUFormLeft>, '$variant'>) {
   return F.rangePatternUFormLeft(input);
 }
 
-export function rangePatternUFormPrefixFrom(input: ConfigOf<T.RangePatternUFormPrefix>) {
+export function rangePatternUFormPrefixFrom(input: Omit<ConfigOf<T.RangePatternUFormPrefix>, '$variant'>) {
   return F.rangePatternUFormPrefix(input);
 }
 
@@ -1841,25 +1689,14 @@ export function referencePatternFrom(input: T.ReferencePattern.Loose): ReturnTyp
 
 export function orPatternFrom(input?: T.OrPattern.Loose): ReturnType<typeof F.orPattern> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'or_pattern_binary': _loose.$variant = 'binary'; break;
-        case 'or_pattern_prefix': _loose.$variant = 'prefix'; break;
-      }
-    }
-  }
   return F.orPattern(input as Parameters<typeof F.orPattern>[0]);
 }
 
-export function orPatternUFormBinaryFrom(input: ConfigOf<T.OrPatternUFormBinary>) {
+export function orPatternUFormBinaryFrom(input: Omit<ConfigOf<T.OrPatternUFormBinary>, '$variant'>) {
   return F.orPatternUFormBinary(input);
 }
 
-export function orPatternUFormPrefixFrom(input: ConfigOf<T.OrPatternUFormPrefix>) {
+export function orPatternUFormPrefixFrom(input: Omit<ConfigOf<T.OrPatternUFormPrefix>, '$variant'>) {
   return F.orPatternUFormPrefix(input);
 }
 
@@ -1918,30 +1755,18 @@ export function commentFrom(input?: NonNullable<T.Comment.Config['children']>[nu
 
 export function lineCommentFrom(input?: T.LineComment.Loose): ReturnType<typeof F.lineComment> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'line_comment_regular_dslash': _loose.$variant = 'regular_dslash'; break;
-        case 'line_comment_doc': _loose.$variant = 'doc'; break;
-        case 'line_comment_content': _loose.$variant = 'content'; break;
-      }
-    }
-  }
   return F.lineComment(input as Parameters<typeof F.lineComment>[0]);
 }
 
-export function lineCommentUFormRegularDslashFrom(input: ConfigOf<T.LineCommentUFormRegularDslash>) {
+export function lineCommentUFormRegularDslashFrom(input: Omit<ConfigOf<T.LineCommentUFormRegularDslash>, '$variant'>) {
   return F.lineCommentUFormRegularDslash(input);
 }
 
-export function lineCommentUFormDocFrom(input: ConfigOf<T.LineCommentUFormDoc>) {
+export function lineCommentUFormDocFrom(input: Omit<ConfigOf<T.LineCommentUFormDoc>, '$variant'>) {
   return F.lineCommentUFormDoc(input);
 }
 
-export function lineCommentUFormContentFrom(input: ConfigOf<T.LineCommentUFormContent>) {
+export function lineCommentUFormContentFrom(input: Omit<ConfigOf<T.LineCommentUFormContent>, '$variant'>) {
   return F.lineCommentUFormContent(input);
 }
 

@@ -926,34 +926,22 @@ export function lambdaWithinForInClauseFrom(input: T.LambdaWithinForInClause.Loo
 
 export function assignmentFrom(input?: T.Assignment.Loose): ReturnType<typeof F.assignment> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'assignment_eq': _loose.$variant = 'eq'; break;
-        case 'assignment_type': _loose.$variant = 'type'; break;
-        case 'assignment_typed': _loose.$variant = 'typed'; break;
-      }
-    }
-  }
   return F.assignment(input as Parameters<typeof F.assignment>[0]);
 }
 
-export function assignmentUFormEqFrom(input: ConfigOf<T.AssignmentUFormEq>) {
+export function assignmentUFormEqFrom(input: Omit<ConfigOf<T.AssignmentUFormEq>, '$variant'>) {
   return F.assignmentUFormEq({
     left: _resolveOne(input.left, _K0, _super_left_hand_side),
   });
 }
 
-export function assignmentUFormTypeFrom(input: ConfigOf<T.AssignmentUFormType>) {
+export function assignmentUFormTypeFrom(input: Omit<ConfigOf<T.AssignmentUFormType>, '$variant'>) {
   return F.assignmentUFormType({
     left: _resolveOne(input.left, _K0, _super_left_hand_side),
   });
 }
 
-export function assignmentUFormTypedFrom(input: ConfigOf<T.AssignmentUFormTyped>) {
+export function assignmentUFormTypedFrom(input: Omit<ConfigOf<T.AssignmentUFormTyped>, '$variant'>) {
   return F.assignmentUFormTyped({
     left: _resolveOne(input.left, _K0, _super_left_hand_side),
   });

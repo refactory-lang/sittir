@@ -35,11 +35,6 @@ function _assertNonEmpty<T>(
     throw new Error(`${label}: requires at least one element`);
   }
 }
-function _bk<T>(v: unknown, kind: string, text: string, named: boolean): T | undefined {
-  if (v === true) return { $type: kind, $text: text, $named: named, $source: 'factory' } as unknown as T;
-  if (v === false || v === undefined || v === null) return undefined;
-  return v as T;
-}
 
 const _leafRe_hashBangLine = /^(?:#!.*)/u;
 const _leafRe_htmlCharacterReference = /^(?:&(#([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});)/u;
@@ -90,14 +85,14 @@ export function exportStatement(config: ConfigOf<T.ExportStatementUFormEqualsExp
 export function exportStatement(config: ConfigOf<T.ExportStatementUFormNamespaceExport>): ReturnType<typeof exportStatementUFormNamespaceExport>;
 export function exportStatement(config: ConfigOf<T.ExportStatementUFormDefault> | ConfigOf<T.ExportStatementUFormTypeExport> | ConfigOf<T.ExportStatementUFormEqualsExport> | ConfigOf<T.ExportStatementUFormNamespaceExport>) {
   switch (config.$variant) {
-    case 'default': return exportStatementUFormDefault(config);
-    case 'type_export': return exportStatementUFormTypeExport(config);
-    case 'equals_export': return exportStatementUFormEqualsExport(config);
-    case 'namespace_export': return exportStatementUFormNamespaceExport(config);
+    case 'default': return exportStatementUFormDefault(config as Parameters<typeof exportStatementUFormDefault>[0]);
+    case 'type_export': return exportStatementUFormTypeExport(config as Parameters<typeof exportStatementUFormTypeExport>[0]);
+    case 'equals_export': return exportStatementUFormEqualsExport(config as Parameters<typeof exportStatementUFormEqualsExport>[0]);
+    case 'namespace_export': return exportStatementUFormNamespaceExport(config as Parameters<typeof exportStatementUFormNamespaceExport>[0]);
   }
   throw new Error(`exportStatement: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'default' | 'type_export' | 'equals_export' | 'namespace_export'.`);
 }
-export function exportStatementUFormDefault(config: ConfigOf<T.ExportStatementUFormDefault>) {
+export function exportStatementUFormDefault(config: Omit<ConfigOf<T.ExportStatementUFormDefault>, '$variant'>) {
   const children = config.children ?? [];
   return {
     $type: 'export_statement' as const,
@@ -117,7 +112,7 @@ export function exportStatementUFormDefault(config: ConfigOf<T.ExportStatementUF
     replace(target: T.ExportStatementUFormDefaultTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function exportStatementUFormTypeExport(config?: ConfigOf<T.ExportStatementUFormTypeExport>) {
+export function exportStatementUFormTypeExport(config?: Omit<ConfigOf<T.ExportStatementUFormTypeExport>, '$variant'>) {
   const inner = exportStatementTypeExport(config);
   const children = [inner] as const;
   return {
@@ -138,7 +133,7 @@ export function exportStatementUFormTypeExport(config?: ConfigOf<T.ExportStateme
     replace(target: T.ExportStatementUFormTypeExportTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function exportStatementUFormEqualsExport(config: ConfigOf<T.ExportStatementUFormEqualsExport>) {
+export function exportStatementUFormEqualsExport(config: Omit<ConfigOf<T.ExportStatementUFormEqualsExport>, '$variant'>) {
   const children = config.children ?? [];
   return {
     $type: 'export_statement' as const,
@@ -158,7 +153,7 @@ export function exportStatementUFormEqualsExport(config: ConfigOf<T.ExportStatem
     replace(target: T.ExportStatementUFormEqualsExportTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function exportStatementUFormNamespaceExport(config: ConfigOf<T.ExportStatementUFormNamespaceExport>) {
+export function exportStatementUFormNamespaceExport(config: Omit<ConfigOf<T.ExportStatementUFormNamespaceExport>, '$variant'>) {
   const children = config.children ?? [];
   return {
     $type: 'export_statement' as const,
@@ -291,13 +286,13 @@ export function importClause(config: ConfigOf<T.ImportClauseUFormNamedImports>):
 export function importClause(config: ConfigOf<T.ImportClauseUFormDefaultImport>): ReturnType<typeof importClauseUFormDefaultImport>;
 export function importClause(config: ConfigOf<T.ImportClauseUFormNamespaceImport> | ConfigOf<T.ImportClauseUFormNamedImports> | ConfigOf<T.ImportClauseUFormDefaultImport>) {
   switch (config.$variant) {
-    case 'namespace_import': return importClauseUFormNamespaceImport(config);
-    case 'named_imports': return importClauseUFormNamedImports(config);
-    case 'default_import': return importClauseUFormDefaultImport(config);
+    case 'namespace_import': return importClauseUFormNamespaceImport(config as Parameters<typeof importClauseUFormNamespaceImport>[0]);
+    case 'named_imports': return importClauseUFormNamedImports(config as Parameters<typeof importClauseUFormNamedImports>[0]);
+    case 'default_import': return importClauseUFormDefaultImport(config as Parameters<typeof importClauseUFormDefaultImport>[0]);
   }
   throw new Error(`importClause: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'namespace_import' | 'named_imports' | 'default_import'.`);
 }
-export function importClauseUFormNamespaceImport(config: ConfigOf<T.ImportClauseUFormNamespaceImport>) {
+export function importClauseUFormNamespaceImport(config: Omit<ConfigOf<T.ImportClauseUFormNamespaceImport>, '$variant'>) {
   const children = config.children ?? [];
   return {
     $type: 'import_clause' as const,
@@ -317,7 +312,7 @@ export function importClauseUFormNamespaceImport(config: ConfigOf<T.ImportClause
     replace(target: T.ImportClauseUFormNamespaceImportTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function importClauseUFormNamedImports(config: ConfigOf<T.ImportClauseUFormNamedImports>) {
+export function importClauseUFormNamedImports(config: Omit<ConfigOf<T.ImportClauseUFormNamedImports>, '$variant'>) {
   const children = config.children ?? [];
   return {
     $type: 'import_clause' as const,
@@ -337,7 +332,7 @@ export function importClauseUFormNamedImports(config: ConfigOf<T.ImportClauseUFo
     replace(target: T.ImportClauseUFormNamedImportsTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function importClauseUFormDefaultImport(config: ConfigOf<T.ImportClauseUFormDefaultImport>) {
+export function importClauseUFormDefaultImport(config: Omit<ConfigOf<T.ImportClauseUFormDefaultImport>, '$variant'>) {
   const children = config.children ?? [];
   return {
     $type: 'import_clause' as const,
@@ -396,12 +391,12 @@ export function importSpecifier(config: ConfigOf<T.ImportSpecifierUFormName>): R
 export function importSpecifier(config: ConfigOf<T.ImportSpecifierUFormAs>): ReturnType<typeof importSpecifierUFormAs>;
 export function importSpecifier(config: ConfigOf<T.ImportSpecifierUFormName> | ConfigOf<T.ImportSpecifierUFormAs>) {
   switch (config.$variant) {
-    case 'name': return importSpecifierUFormName(config);
-    case 'as': return importSpecifierUFormAs(config);
+    case 'name': return importSpecifierUFormName(config as Parameters<typeof importSpecifierUFormName>[0]);
+    case 'as': return importSpecifierUFormAs(config as Parameters<typeof importSpecifierUFormAs>[0]);
   }
   throw new Error(`importSpecifier: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'name' | 'as'.`);
 }
-export function importSpecifierUFormName(config: ConfigOf<T.ImportSpecifierUFormName>) {
+export function importSpecifierUFormName(config: Omit<ConfigOf<T.ImportSpecifierUFormName>, '$variant'>) {
   const inner = importSpecifierName(config);
   const children = [inner] as const;
   return {
@@ -422,7 +417,7 @@ export function importSpecifierUFormName(config: ConfigOf<T.ImportSpecifierUForm
     replace(target: T.ImportSpecifierUFormNameTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function importSpecifierUFormAs(config: ConfigOf<T.ImportSpecifierUFormAs>) {
+export function importSpecifierUFormAs(config: Omit<ConfigOf<T.ImportSpecifierUFormAs>, '$variant'>) {
   const children = config.children ?? [];
   return {
     $type: 'import_specifier' as const,
@@ -551,12 +546,12 @@ export function variableDeclarator(config: ConfigOf<T.VariableDeclaratorForm0>):
 export function variableDeclarator(config: ConfigOf<T.VariableDeclaratorForm1>): ReturnType<typeof variableDeclaratorForm1>;
 export function variableDeclarator(config: ConfigOf<T.VariableDeclaratorForm0> | ConfigOf<T.VariableDeclaratorForm1>) {
   switch (config.$variant) {
-    case 'form0': return variableDeclaratorForm0(config);
-    case 'form1': return variableDeclaratorForm1(config);
+    case 'form0': return variableDeclaratorForm0(config as Parameters<typeof variableDeclaratorForm0>[0]);
+    case 'form1': return variableDeclaratorForm1(config as Parameters<typeof variableDeclaratorForm1>[0]);
   }
   throw new Error(`variableDeclarator: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'form0' | 'form1'.`);
 }
-export function variableDeclaratorForm0(config: ConfigOf<T.VariableDeclaratorForm0>) {
+export function variableDeclaratorForm0(config: Omit<ConfigOf<T.VariableDeclaratorForm0>, '$variant'>) {
   const fields = {
     name: config.name,
     type: config.type,
@@ -583,7 +578,7 @@ export function variableDeclaratorForm0(config: ConfigOf<T.VariableDeclaratorFor
     replace(target: T.VariableDeclaratorForm0Tree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function variableDeclaratorForm1(config: ConfigOf<T.VariableDeclaratorForm1>) {
+export function variableDeclaratorForm1(config: Omit<ConfigOf<T.VariableDeclaratorForm1>, '$variant'>) {
   const fields = {
     name: config.name,
     type: config.type,
@@ -716,9 +711,9 @@ export function forStatement(config: T.ForStatement.Config) {
 
 export function forInStatement(config: T.ForInStatement.Config) {
   const fields = {
-    await: _bk(config.await, "await", "await", false),
+    await: config.await ? "await" as const : undefined,
     left: config.left,
-    kind: _bk(config.kind, "var", "var", false),
+    kind: config.kind ? "var" as const : undefined,
     value: config.value,
     operator: config.operator,
     right: config.right,
@@ -1072,12 +1067,12 @@ export function parenthesizedExpression(config: ConfigOf<T.ParenthesizedExpressi
 export function parenthesizedExpression(config: ConfigOf<T.ParenthesizedExpressionUFormSequence>): ReturnType<typeof parenthesizedExpressionUFormSequence>;
 export function parenthesizedExpression(config: ConfigOf<T.ParenthesizedExpressionUFormTyped> | ConfigOf<T.ParenthesizedExpressionUFormSequence>) {
   switch (config.$variant) {
-    case 'typed': return parenthesizedExpressionUFormTyped(config);
-    case 'sequence': return parenthesizedExpressionUFormSequence(config);
+    case 'typed': return parenthesizedExpressionUFormTyped(config as Parameters<typeof parenthesizedExpressionUFormTyped>[0]);
+    case 'sequence': return parenthesizedExpressionUFormSequence(config as Parameters<typeof parenthesizedExpressionUFormSequence>[0]);
   }
   throw new Error(`parenthesizedExpression: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'typed' | 'sequence'.`);
 }
-export function parenthesizedExpressionUFormTyped(config: ConfigOf<T.ParenthesizedExpressionUFormTyped>) {
+export function parenthesizedExpressionUFormTyped(config: Omit<ConfigOf<T.ParenthesizedExpressionUFormTyped>, '$variant'>) {
   const children = config.children ?? [];
   return {
     $type: 'parenthesized_expression' as const,
@@ -1097,7 +1092,7 @@ export function parenthesizedExpressionUFormTyped(config: ConfigOf<T.Parenthesiz
     replace(target: T.ParenthesizedExpressionUFormTypedTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function parenthesizedExpressionUFormSequence(config: ConfigOf<T.ParenthesizedExpressionUFormSequence>) {
+export function parenthesizedExpressionUFormSequence(config: Omit<ConfigOf<T.ParenthesizedExpressionUFormSequence>, '$variant'>) {
   const children = config.children ?? [];
   return {
     $type: 'parenthesized_expression' as const,
@@ -1543,12 +1538,12 @@ export function classHeritage(config: ConfigOf<T.ClassHeritageUFormExtendsClause
 export function classHeritage(config: ConfigOf<T.ClassHeritageUFormImplementsClause>): ReturnType<typeof classHeritageUFormImplementsClause>;
 export function classHeritage(config: ConfigOf<T.ClassHeritageUFormExtendsClause> | ConfigOf<T.ClassHeritageUFormImplementsClause>) {
   switch (config.$variant) {
-    case 'extends_clause': return classHeritageUFormExtendsClause(config);
-    case 'implements_clause': return classHeritageUFormImplementsClause(config);
+    case 'extends_clause': return classHeritageUFormExtendsClause(config as Parameters<typeof classHeritageUFormExtendsClause>[0]);
+    case 'implements_clause': return classHeritageUFormImplementsClause(config as Parameters<typeof classHeritageUFormImplementsClause>[0]);
   }
   throw new Error(`classHeritage: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'extends_clause' | 'implements_clause'.`);
 }
-export function classHeritageUFormExtendsClause(config: ConfigOf<T.ClassHeritageUFormExtendsClause>) {
+export function classHeritageUFormExtendsClause(config: Omit<ConfigOf<T.ClassHeritageUFormExtendsClause>, '$variant'>) {
   const children = config.children ?? [];
   return {
     $type: 'class_heritage' as const,
@@ -1568,7 +1563,7 @@ export function classHeritageUFormExtendsClause(config: ConfigOf<T.ClassHeritage
     replace(target: T.ClassHeritageUFormExtendsClauseTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function classHeritageUFormImplementsClause(config: ConfigOf<T.ClassHeritageUFormImplementsClause>) {
+export function classHeritageUFormImplementsClause(config: Omit<ConfigOf<T.ClassHeritageUFormImplementsClause>, '$variant'>) {
   const children = config.children ?? [];
   return {
     $type: 'class_heritage' as const,
@@ -1591,7 +1586,7 @@ export function classHeritageUFormImplementsClause(config: ConfigOf<T.ClassHerit
 
 export function functionExpression(config: T.FunctionExpression.Config) {
   const fields = {
-    async: _bk(config.async, "_kw_async", "async", false),
+    async: config.async ? "async" as const : undefined,
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -1620,7 +1615,7 @@ export function functionExpression(config: T.FunctionExpression.Config) {
 
 export function functionDeclaration(config: T.FunctionDeclaration.Config) {
   const fields = {
-    async: _bk(config.async, "_kw_async", "async", false),
+    async: config.async ? "async" as const : undefined,
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -1655,7 +1650,7 @@ export function functionDeclaration(config: T.FunctionDeclaration.Config) {
 
 export function generatorFunction(config: T.GeneratorFunction.Config) {
   const fields = {
-    async: _bk(config.async, "_kw_async", "async", false),
+    async: config.async ? "async" as const : undefined,
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -1684,7 +1679,7 @@ export function generatorFunction(config: T.GeneratorFunction.Config) {
 
 export function generatorFunctionDeclaration(config: T.GeneratorFunctionDeclaration.Config) {
   const fields = {
-    async: _bk(config.async, "_kw_async", "async", false),
+    async: config.async ? "async" as const : undefined,
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -1721,12 +1716,12 @@ export function arrowFunction(config: ConfigOf<T.ArrowFunctionUFormParameter>): 
 export function arrowFunction(config: ConfigOf<T.ArrowFunctionUFormUCallSignature>): ReturnType<typeof arrowFunctionUFormUCallSignature>;
 export function arrowFunction(config: ConfigOf<T.ArrowFunctionUFormParameter> | ConfigOf<T.ArrowFunctionUFormUCallSignature>) {
   switch (config.$variant) {
-    case 'parameter': return arrowFunctionUFormParameter(config);
-    case '_call_signature': return arrowFunctionUFormUCallSignature(config);
+    case 'parameter': return arrowFunctionUFormParameter(config as Parameters<typeof arrowFunctionUFormParameter>[0]);
+    case '_call_signature': return arrowFunctionUFormUCallSignature(config as Parameters<typeof arrowFunctionUFormUCallSignature>[0]);
   }
   throw new Error(`arrowFunction: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'parameter' | '_call_signature'.`);
 }
-export function arrowFunctionUFormParameter(config: ConfigOf<T.ArrowFunctionUFormParameter>) {
+export function arrowFunctionUFormParameter(config: Omit<ConfigOf<T.ArrowFunctionUFormParameter>, '$variant'>) {
   const fields = {
     async: config.async,
     body: config.body,
@@ -1760,7 +1755,7 @@ export function arrowFunctionUFormParameter(config: ConfigOf<T.ArrowFunctionUFor
     replace(target: T.ArrowFunctionUFormParameterTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function arrowFunctionUFormUCallSignature(config: ConfigOf<T.ArrowFunctionUFormUCallSignature>) {
+export function arrowFunctionUFormUCallSignature(config: Omit<ConfigOf<T.ArrowFunctionUFormUCallSignature>, '$variant'>) {
   const fields = {
     async: config.async,
     body: config.body,
@@ -1808,13 +1803,13 @@ export function callExpression(config: ConfigOf<T.CallExpressionUFormTemplateCal
 export function callExpression(config: ConfigOf<T.CallExpressionUFormMember>): ReturnType<typeof callExpressionUFormMember>;
 export function callExpression(config: ConfigOf<T.CallExpressionUFormCall> | ConfigOf<T.CallExpressionUFormTemplateCall> | ConfigOf<T.CallExpressionUFormMember>) {
   switch (config.$variant) {
-    case 'call': return callExpressionUFormCall(config);
-    case 'template_call': return callExpressionUFormTemplateCall(config);
-    case 'member': return callExpressionUFormMember(config);
+    case 'call': return callExpressionUFormCall(config as Parameters<typeof callExpressionUFormCall>[0]);
+    case 'template_call': return callExpressionUFormTemplateCall(config as Parameters<typeof callExpressionUFormTemplateCall>[0]);
+    case 'member': return callExpressionUFormMember(config as Parameters<typeof callExpressionUFormMember>[0]);
   }
   throw new Error(`callExpression: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'call' | 'template_call' | 'member'.`);
 }
-export function callExpressionUFormCall(config: ConfigOf<T.CallExpressionUFormCall>) {
+export function callExpressionUFormCall(config: Omit<ConfigOf<T.CallExpressionUFormCall>, '$variant'>) {
   const children = config.children ?? [];
   return {
     $type: 'call_expression' as const,
@@ -1834,7 +1829,7 @@ export function callExpressionUFormCall(config: ConfigOf<T.CallExpressionUFormCa
     replace(target: T.CallExpressionUFormCallTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function callExpressionUFormTemplateCall(config: ConfigOf<T.CallExpressionUFormTemplateCall>) {
+export function callExpressionUFormTemplateCall(config: Omit<ConfigOf<T.CallExpressionUFormTemplateCall>, '$variant'>) {
   const children = config.children ?? [];
   return {
     $type: 'call_expression' as const,
@@ -1854,7 +1849,7 @@ export function callExpressionUFormTemplateCall(config: ConfigOf<T.CallExpressio
     replace(target: T.CallExpressionUFormTemplateCallTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function callExpressionUFormMember(config: ConfigOf<T.CallExpressionUFormMember>) {
+export function callExpressionUFormMember(config: Omit<ConfigOf<T.CallExpressionUFormMember>, '$variant'>) {
   const children = config.children ?? [];
   return {
     $type: 'call_expression' as const,
@@ -1920,7 +1915,7 @@ export function awaitExpression(config: T.AwaitExpression.Config) {
 export function memberExpression(config: T.MemberExpression.Config) {
   const fields = {
     object: config.object,
-    optional_chain: config.optionalChain,
+    optional_chain: config.optionalChain ? "?." as const : undefined,
     property: config.property,
   };
   return {
@@ -1943,7 +1938,7 @@ export function memberExpression(config: T.MemberExpression.Config) {
 export function subscriptExpression(config: T.SubscriptExpression.Config) {
   const fields = {
     object: config.object,
-    optional_chain: config.optionalChain,
+    optional_chain: config.optionalChain ? "?." as const : undefined,
     index: config.index,
   };
   return {
@@ -1981,7 +1976,7 @@ export function lhsExpression(child?: (T.MemberExpression | T.SubscriptExpressio
 
 export function assignmentExpression(config: T.AssignmentExpression.Config) {
   const fields = {
-    using: _bk(config.using, "using", "using", false),
+    using: config.using ? "using" as const : undefined,
     left: config.left,
     right: config.right,
   };
@@ -2152,12 +2147,12 @@ export function string(config: ConfigOf<T.StringUFormDouble>): ReturnType<typeof
 export function string(config: ConfigOf<T.StringUFormSingle>): ReturnType<typeof stringUFormSingle>;
 export function string(config: ConfigOf<T.StringUFormDouble> | ConfigOf<T.StringUFormSingle>) {
   switch (config.$variant) {
-    case 'double': return stringUFormDouble(config);
-    case 'single': return stringUFormSingle(config);
+    case 'double': return stringUFormDouble(config as Parameters<typeof stringUFormDouble>[0]);
+    case 'single': return stringUFormSingle(config as Parameters<typeof stringUFormSingle>[0]);
   }
   throw new Error(`string: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'double' | 'single'.`);
 }
-export function stringUFormDouble(config: ConfigOf<T.StringUFormDouble>) {
+export function stringUFormDouble(config: Omit<ConfigOf<T.StringUFormDouble>, '$variant'>) {
   const children = config.children ?? [];
   return {
     $type: 'string' as const,
@@ -2177,7 +2172,7 @@ export function stringUFormDouble(config: ConfigOf<T.StringUFormDouble>) {
     replace(target: T.StringUFormDoubleTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function stringUFormSingle(config: ConfigOf<T.StringUFormSingle>) {
+export function stringUFormSingle(config: Omit<ConfigOf<T.StringUFormSingle>, '$variant'>) {
   const children = config.children ?? [];
   return {
     $type: 'string' as const,
@@ -2555,7 +2550,7 @@ export function classBody(config: T.ClassBody.Config) {
 export function fieldDefinition(config: T.FieldDefinition.Config) {
   const fields = {
     decorator: config.decorator,
-    static: _bk(config.static, "_kw_static", "static", false),
+    static: config.static ? "static" as const : undefined,
     property: config.property,
     value: config.value,
   };
@@ -2653,9 +2648,9 @@ export function restPattern(child: T.LhsExpression) {
 export function methodDefinition(config: T.MethodDefinition.Config) {
   const fields = {
     accessibility_modifier: config.accessibilityModifier,
-    override_modifier: _bk(config.overrideModifier, "_kw_static", "static", false),
-    readonly: _bk(config.readonly, "_kw_readonly", "readonly", false),
-    async: _bk(config.async, "_kw_async", "async", false),
+    override_modifier: config.overrideModifier ? "static" as const : undefined,
+    readonly: config.readonly ? "readonly" as const : undefined,
+    async: config.async ? "async" as const : undefined,
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -2781,11 +2776,11 @@ export function stringFragment(text: string) {
 export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
   const fields = {
     decorator: config.decorator,
-    declare: _bk(config.declare, "declare", "declare", false),
-    static: _bk(config.static, "_kw_static", "static", false),
-    readonly: _bk(config.readonly, "_kw_readonly", "readonly", false),
-    abstract: _bk(config.abstract, "_kw_abstract", "abstract", false),
-    accessor: _bk(config.accessor, "accessor", "accessor", false),
+    declare: config.declare ? "declare" as const : undefined,
+    static: config.static ? "static" as const : undefined,
+    readonly: config.readonly ? "readonly" as const : undefined,
+    abstract: config.abstract ? "abstract" as const : undefined,
+    accessor: config.accessor ? "accessor" as const : undefined,
     name: config.name,
     type: config.type,
     value: config.value,
@@ -2841,9 +2836,9 @@ export function nonNullExpression(config: T.NonNullExpression.Config) {
 export function methodSignature(config: T.MethodSignature.Config) {
   const fields = {
     accessibility_modifier: config.accessibilityModifier,
-    override_modifier: _bk(config.overrideModifier, "_kw_static", "static", false),
-    readonly: _bk(config.readonly, "_kw_readonly", "readonly", false),
-    async: _bk(config.async, "_kw_async", "async", false),
+    override_modifier: config.overrideModifier ? "static" as const : undefined,
+    readonly: config.readonly ? "readonly" as const : undefined,
+    async: config.async ? "async" as const : undefined,
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -2880,7 +2875,7 @@ export function methodSignature(config: T.MethodSignature.Config) {
 export function abstractMethodSignature(config: T.AbstractMethodSignature.Config) {
   const fields = {
     accessibility_modifier: config.accessibilityModifier,
-    override_modifier: _bk(config.overrideModifier, "override_modifier", "override", true),
+    override_modifier: config.overrideModifier ? "override" as const : undefined,
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -2908,7 +2903,7 @@ export function abstractMethodSignature(config: T.AbstractMethodSignature.Config
 
 export function functionSignature(config: T.FunctionSignature.Config) {
   const fields = {
-    async: _bk(config.async, "_kw_async", "async", false),
+    async: config.async ? "async" as const : undefined,
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -3271,7 +3266,7 @@ export function extendsTypeClause(config: T.ExtendsTypeClause.Config) {
 
 export function enumDeclaration(config: T.EnumDeclaration.Config) {
   const fields = {
-    const: _bk(config.const, "_kw_const", "const", false),
+    const: config.const ? "const" as const : undefined,
     name: config.name,
     body: config.body,
   };
@@ -3384,7 +3379,7 @@ export function overrideModifier() {
 export function requiredParameter(config: T.RequiredParameter.Config) {
   const fields = {
     decorator: config.decorator,
-    readonly: _bk(config.readonly, "_kw_readonly", "readonly", false),
+    readonly: config.readonly ? "readonly" as const : undefined,
     pattern: config.pattern,
     type: config.type,
     value: config.value,
@@ -3417,7 +3412,7 @@ export function requiredParameter(config: T.RequiredParameter.Config) {
 export function optionalParameter(config: T.OptionalParameter.Config) {
   const fields = {
     decorator: config.decorator,
-    readonly: _bk(config.readonly, "_kw_readonly", "readonly", false),
+    readonly: config.readonly ? "readonly" as const : undefined,
     pattern: config.pattern,
     type: config.type,
     value: config.value,
@@ -3640,7 +3635,7 @@ export function restType(config: T.RestType.Config) {
 
 export function constructorType(config: T.ConstructorType.Config) {
   const fields = {
-    abstract: _bk(config.abstract, "_kw_abstract", "abstract", false),
+    abstract: config.abstract ? "abstract" as const : undefined,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
     type: config.type,
@@ -4052,8 +4047,8 @@ export function callSignature(config: T.CallSignature.Config) {
 export function propertySignature(config: T.PropertySignature.Config) {
   const fields = {
     accessibility_modifier: config.accessibilityModifier,
-    override_modifier: _bk(config.overrideModifier, "_kw_static", "static", false),
-    readonly: _bk(config.readonly, "_kw_readonly", "readonly", false),
+    override_modifier: config.overrideModifier ? "static" as const : undefined,
+    readonly: config.readonly ? "readonly" as const : undefined,
     name: config.name,
     type: config.type,
   };
@@ -4100,7 +4095,7 @@ export function typeParameters(...children: T.TypeParameter[]) {
 
 export function typeParameter(config: T.TypeParameter.Config) {
   const fields = {
-    const: _bk(config.const, "_kw_const", "const", false),
+    const: config.const ? "const" as const : undefined,
     name: config.name,
     constraint: config.constraint,
     value: config.value,
@@ -4163,7 +4158,7 @@ export function constraint(config: T.Constraint.Config) {
 
 export function constructSignature(config: T.ConstructSignature.Config) {
   const fields = {
-    abstract: _bk(config.abstract, "_kw_abstract", "abstract", false),
+    abstract: config.abstract ? "abstract" as const : undefined,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
     type: config.type,
@@ -4190,12 +4185,12 @@ export function indexSignature(config: ConfigOf<T.IndexSignatureUFormColon>): Re
 export function indexSignature(config: ConfigOf<T.IndexSignatureUFormMappedTypeClause>): ReturnType<typeof indexSignatureUFormMappedTypeClause>;
 export function indexSignature(config: ConfigOf<T.IndexSignatureUFormColon> | ConfigOf<T.IndexSignatureUFormMappedTypeClause>) {
   switch (config.$variant) {
-    case 'colon': return indexSignatureUFormColon(config);
-    case 'mapped_type_clause': return indexSignatureUFormMappedTypeClause(config);
+    case 'colon': return indexSignatureUFormColon(config as Parameters<typeof indexSignatureUFormColon>[0]);
+    case 'mapped_type_clause': return indexSignatureUFormMappedTypeClause(config as Parameters<typeof indexSignatureUFormMappedTypeClause>[0]);
   }
   throw new Error(`indexSignature: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'colon' | 'mapped_type_clause'.`);
 }
-export function indexSignatureUFormColon(config: ConfigOf<T.IndexSignatureUFormColon>) {
+export function indexSignatureUFormColon(config: Omit<ConfigOf<T.IndexSignatureUFormColon>, '$variant'>) {
   const fields = {
     sign: config.sign,
     type: config.type,
@@ -4222,7 +4217,7 @@ export function indexSignatureUFormColon(config: ConfigOf<T.IndexSignatureUFormC
     replace(target: T.IndexSignatureUFormColonTree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function indexSignatureUFormMappedTypeClause(config: ConfigOf<T.IndexSignatureUFormMappedTypeClause>) {
+export function indexSignatureUFormMappedTypeClause(config: Omit<ConfigOf<T.IndexSignatureUFormMappedTypeClause>, '$variant'>) {
   const fields = {
     sign: config.sign,
     type: config.type,
@@ -4381,66 +4376,6 @@ export function typeIdentifier(child: T.Identifier) {
       return toEdit(this, startOrRange);
     },
     replace(target: T.TypeIdentifierTree) { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function kwAsync() {
-  return {
-    $type: '_kw_async' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: 'async' as const,
-    render: () => 'async' as const,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'async' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'async' as const },
-    replace: (t: T.KwAsyncTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'async' as const }; },
-  };
-}
-
-export function kwStatic() {
-  return {
-    $type: '_kw_static' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: 'static' as const,
-    render: () => 'static' as const,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'static' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'static' as const },
-    replace: (t: T.KwStaticTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'static' as const }; },
-  };
-}
-
-export function kwReadonly() {
-  return {
-    $type: '_kw_readonly' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: 'readonly' as const,
-    render: () => 'readonly' as const,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'readonly' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'readonly' as const },
-    replace: (t: T.KwReadonlyTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'readonly' as const }; },
-  };
-}
-
-export function kwAbstract() {
-  return {
-    $type: '_kw_abstract' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: 'abstract' as const,
-    render: () => 'abstract' as const,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'abstract' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'abstract' as const },
-    replace: (t: T.KwAbstractTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'abstract' as const }; },
-  };
-}
-
-export function kwConst() {
-  return {
-    $type: '_kw_const' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: 'const' as const,
-    render: () => 'const' as const,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'const' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'const' as const },
-    replace: (t: T.KwConstTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'const' as const }; },
   };
 }
 
@@ -4621,12 +4556,12 @@ export function exportStatementDefault(config: ConfigOf<T.ExportStatementDefault
 export function exportStatementDefault(config: ConfigOf<T.ExportStatementDefaultForm1>): ReturnType<typeof exportStatementDefaultForm1>;
 export function exportStatementDefault(config: ConfigOf<T.ExportStatementDefaultForm0> | ConfigOf<T.ExportStatementDefaultForm1>) {
   switch (config.$variant) {
-    case 'form0': return exportStatementDefaultForm0(config);
-    case 'form1': return exportStatementDefaultForm1(config);
+    case 'form0': return exportStatementDefaultForm0(config as Parameters<typeof exportStatementDefaultForm0>[0]);
+    case 'form1': return exportStatementDefaultForm1(config as Parameters<typeof exportStatementDefaultForm1>[0]);
   }
   throw new Error(`exportStatementDefault: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'form0' | 'form1'.`);
 }
-export function exportStatementDefaultForm0(config: ConfigOf<T.ExportStatementDefaultForm0>) {
+export function exportStatementDefaultForm0(config: Omit<ConfigOf<T.ExportStatementDefaultForm0>, '$variant'>) {
   const children = config.children ?? [];
   return {
     $type: '_export_statement_default' as const,
@@ -4646,7 +4581,7 @@ export function exportStatementDefaultForm0(config: ConfigOf<T.ExportStatementDe
     replace(target: T.ExportStatementDefaultForm0Tree) { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function exportStatementDefaultForm1(config: ConfigOf<T.ExportStatementDefaultForm1>) {
+export function exportStatementDefaultForm1(config: Omit<ConfigOf<T.ExportStatementDefaultForm1>, '$variant'>) {
   const fields = {
     decorator: config.decorator,
     declaration: config.declaration,
@@ -5021,11 +4956,6 @@ export type FluentKindMap = {
   "intersection_type": FluentNode<"intersection_type", T.IntersectionType.Config>;
   "function_type": FluentNode<"function_type", T.FunctionType.Config>;
   "_type_identifier": FluentNode<"_type_identifier", T.TypeIdentifier.Config>;
-  "_kw_async": T.KwAsync;
-  "_kw_static": T.KwStatic;
-  "_kw_readonly": T.KwReadonly;
-  "_kw_abstract": T.KwAbstract;
-  "_kw_const": T.KwConst;
   "_arrow_function_parameter": FluentNode<"_arrow_function_parameter", T.ArrowFunctionParameter.Config>;
   "_arrow_function__call_signature": FluentNode<"_arrow_function__call_signature", T.ArrowFunctionUCallSignature.Config>;
   "_class_heritage_extends_clause": FluentNode<"_class_heritage_extends_clause", T.ClassHeritageExtendsClause.Config>;
@@ -5242,11 +5172,6 @@ export const _factoryMap = {
   "intersection_type": intersectionType,
   "function_type": functionType,
   "_type_identifier": typeIdentifier,
-  "_kw_async": kwAsync,
-  "_kw_static": kwStatic,
-  "_kw_readonly": kwReadonly,
-  "_kw_abstract": kwAbstract,
-  "_kw_const": kwConst,
   "_arrow_function_parameter": arrowFunctionParameter,
   "_arrow_function__call_signature": arrowFunctionUCallSignature,
   "_class_heritage_extends_clause": classHeritageExtendsClause,

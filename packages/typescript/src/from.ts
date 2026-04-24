@@ -445,35 +445,22 @@ export function hashBangLineFrom(input: string | T.HashBangLine) {
 
 export function exportStatementFrom(input?: T.ExportStatement.Loose): ReturnType<typeof F.exportStatement> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'export_statement_default': _loose.$variant = 'default'; break;
-        case 'export_statement_type_export': _loose.$variant = 'type_export'; break;
-        case 'export_statement_equals_export': _loose.$variant = 'equals_export'; break;
-        case 'export_statement_namespace_export': _loose.$variant = 'namespace_export'; break;
-      }
-    }
-  }
   return F.exportStatement(input as Parameters<typeof F.exportStatement>[0]);
 }
 
-export function exportStatementUFormDefaultFrom(input: ConfigOf<T.ExportStatementUFormDefault>) {
+export function exportStatementUFormDefaultFrom(input: Omit<ConfigOf<T.ExportStatementUFormDefault>, '$variant'>) {
   return F.exportStatementUFormDefault(input);
 }
 
-export function exportStatementUFormTypeExportFrom(input: ConfigOf<T.ExportStatementUFormTypeExport>) {
+export function exportStatementUFormTypeExportFrom(input: Omit<ConfigOf<T.ExportStatementUFormTypeExport>, '$variant'>) {
   return F.exportStatementUFormTypeExport(input);
 }
 
-export function exportStatementUFormEqualsExportFrom(input: ConfigOf<T.ExportStatementUFormEqualsExport>) {
+export function exportStatementUFormEqualsExportFrom(input: Omit<ConfigOf<T.ExportStatementUFormEqualsExport>, '$variant'>) {
   return F.exportStatementUFormEqualsExport(input);
 }
 
-export function exportStatementUFormNamespaceExportFrom(input: ConfigOf<T.ExportStatementUFormNamespaceExport>) {
+export function exportStatementUFormNamespaceExportFrom(input: Omit<ConfigOf<T.ExportStatementUFormNamespaceExport>, '$variant'>) {
   return F.exportStatementUFormNamespaceExport(input);
 }
 
@@ -529,30 +516,18 @@ export function importStatementFrom(input: T.ImportStatement.Loose): ReturnType<
 
 export function importClauseFrom(input?: T.ImportClause.Loose): ReturnType<typeof F.importClause> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'import_clause_namespace_import': _loose.$variant = 'namespace_import'; break;
-        case 'import_clause_named_imports': _loose.$variant = 'named_imports'; break;
-        case 'import_clause_default_import': _loose.$variant = 'default_import'; break;
-      }
-    }
-  }
   return F.importClause(input as Parameters<typeof F.importClause>[0]);
 }
 
-export function importClauseUFormNamespaceImportFrom(input: ConfigOf<T.ImportClauseUFormNamespaceImport>) {
+export function importClauseUFormNamespaceImportFrom(input: Omit<ConfigOf<T.ImportClauseUFormNamespaceImport>, '$variant'>) {
   return F.importClauseUFormNamespaceImport(input);
 }
 
-export function importClauseUFormNamedImportsFrom(input: ConfigOf<T.ImportClauseUFormNamedImports>) {
+export function importClauseUFormNamedImportsFrom(input: Omit<ConfigOf<T.ImportClauseUFormNamedImports>, '$variant'>) {
   return F.importClauseUFormNamedImports(input);
 }
 
-export function importClauseUFormDefaultImportFrom(input: ConfigOf<T.ImportClauseUFormDefaultImport>) {
+export function importClauseUFormDefaultImportFrom(input: Omit<ConfigOf<T.ImportClauseUFormDefaultImport>, '$variant'>) {
   return F.importClauseUFormDefaultImport(input);
 }
 
@@ -573,25 +548,14 @@ export function namedImportsFrom(...input: readonly (NonNullable<T.NamedImports.
 
 export function importSpecifierFrom(input?: T.ImportSpecifier.Loose): ReturnType<typeof F.importSpecifier> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'import_specifier_name': _loose.$variant = 'name'; break;
-        case 'import_specifier_as': _loose.$variant = 'as'; break;
-      }
-    }
-  }
   return F.importSpecifier(input as Parameters<typeof F.importSpecifier>[0]);
 }
 
-export function importSpecifierUFormNameFrom(input: ConfigOf<T.ImportSpecifierUFormName>) {
+export function importSpecifierUFormNameFrom(input: Omit<ConfigOf<T.ImportSpecifierUFormName>, '$variant'>) {
   return F.importSpecifierUFormName(input);
 }
 
-export function importSpecifierUFormAsFrom(input: ConfigOf<T.ImportSpecifierUFormAs>) {
+export function importSpecifierUFormAsFrom(input: Omit<ConfigOf<T.ImportSpecifierUFormAs>, '$variant'>) {
   return F.importSpecifierUFormAs(input);
 }
 
@@ -642,22 +606,17 @@ export function lexicalDeclarationFrom(input: T.LexicalDeclaration.Loose): Retur
 
 export function variableDeclaratorFrom(input?: T.VariableDeclarator.Loose): ReturnType<typeof F.variableDeclarator> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if ('name' in _loose && 'type' in _loose) _loose.$variant = 'form0';
-    else if ('name' in _loose && 'type' in _loose) _loose.$variant = 'form1';
-  }
   return F.variableDeclarator(input as Parameters<typeof F.variableDeclarator>[0]);
 }
 
-export function variableDeclaratorForm0From(input: ConfigOf<T.VariableDeclaratorForm0>) {
+export function variableDeclaratorForm0From(input: Omit<ConfigOf<T.VariableDeclaratorForm0>, '$variant'>) {
   return F.variableDeclaratorForm0({
     name: _resolveOne(input.name, _super_import_identifier, _super_destructuring_pattern),
     type: _resolveOneBranch(input.type, "type_annotation"),
   });
 }
 
-export function variableDeclaratorForm1From(input: ConfigOf<T.VariableDeclaratorForm1>) {
+export function variableDeclaratorForm1From(input: Omit<ConfigOf<T.VariableDeclaratorForm1>, '$variant'>) {
   return F.variableDeclaratorForm1({
     name: _resolveOneLeaf(input.name, "identifier"),
     type: _resolveOneBranch(input.type, "type_annotation"),
@@ -842,25 +801,14 @@ export function finallyClauseFrom(input: T.FinallyClause.Loose): ReturnType<type
 
 export function parenthesizedExpressionFrom(input?: T.ParenthesizedExpression.Loose): ReturnType<typeof F.parenthesizedExpression> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'parenthesized_expression_typed': _loose.$variant = 'typed'; break;
-        case 'parenthesized_expression_sequence': _loose.$variant = 'sequence'; break;
-      }
-    }
-  }
   return F.parenthesizedExpression(input as Parameters<typeof F.parenthesizedExpression>[0]);
 }
 
-export function parenthesizedExpressionUFormTypedFrom(input: ConfigOf<T.ParenthesizedExpressionUFormTyped>) {
+export function parenthesizedExpressionUFormTypedFrom(input: Omit<ConfigOf<T.ParenthesizedExpressionUFormTyped>, '$variant'>) {
   return F.parenthesizedExpressionUFormTyped(input);
 }
 
-export function parenthesizedExpressionUFormSequenceFrom(input: ConfigOf<T.ParenthesizedExpressionUFormSequence>) {
+export function parenthesizedExpressionUFormSequenceFrom(input: Omit<ConfigOf<T.ParenthesizedExpressionUFormSequence>, '$variant'>) {
   return F.parenthesizedExpressionUFormSequence(input);
 }
 
@@ -1050,25 +998,14 @@ export function classDeclarationFrom(input: T.ClassDeclaration.Loose): ReturnTyp
 
 export function classHeritageFrom(input?: T.ClassHeritage.Loose): ReturnType<typeof F.classHeritage> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'class_heritage_extends_clause': _loose.$variant = 'extends_clause'; break;
-        case 'class_heritage_implements_clause': _loose.$variant = 'implements_clause'; break;
-      }
-    }
-  }
   return F.classHeritage(input as Parameters<typeof F.classHeritage>[0]);
 }
 
-export function classHeritageUFormExtendsClauseFrom(input: ConfigOf<T.ClassHeritageUFormExtendsClause>) {
+export function classHeritageUFormExtendsClauseFrom(input: Omit<ConfigOf<T.ClassHeritageUFormExtendsClause>, '$variant'>) {
   return F.classHeritageUFormExtendsClause(input);
 }
 
-export function classHeritageUFormImplementsClauseFrom(input: ConfigOf<T.ClassHeritageUFormImplementsClause>) {
+export function classHeritageUFormImplementsClauseFrom(input: Omit<ConfigOf<T.ClassHeritageUFormImplementsClause>, '$variant'>) {
   return F.classHeritageUFormImplementsClause(input);
 }
 
@@ -1124,28 +1061,17 @@ export function generatorFunctionDeclarationFrom(input: T.GeneratorFunctionDecla
 
 export function arrowFunctionFrom(input?: T.ArrowFunction.Loose): ReturnType<typeof F.arrowFunction> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'arrow_function_parameter': _loose.$variant = 'parameter'; break;
-        case 'arrow_function__call_signature': _loose.$variant = '_call_signature'; break;
-      }
-    }
-  }
   return F.arrowFunction(input as Parameters<typeof F.arrowFunction>[0]);
 }
 
-export function arrowFunctionUFormParameterFrom(input: ConfigOf<T.ArrowFunctionUFormParameter>) {
+export function arrowFunctionUFormParameterFrom(input: Omit<ConfigOf<T.ArrowFunctionUFormParameter>, '$variant'>) {
   return F.arrowFunctionUFormParameter({
     async: _resolveBooleanKeyword(input.async),
     body: _resolveOne(input.body, _K1, _K11),
   });
 }
 
-export function arrowFunctionUFormUCallSignatureFrom(input: ConfigOf<T.ArrowFunctionUFormUCallSignature>) {
+export function arrowFunctionUFormUCallSignatureFrom(input: Omit<ConfigOf<T.ArrowFunctionUFormUCallSignature>, '$variant'>) {
   return F.arrowFunctionUFormUCallSignature({
     async: _resolveBooleanKeyword(input.async),
     body: _resolveOne(input.body, _K1, _K11),
@@ -1154,30 +1080,18 @@ export function arrowFunctionUFormUCallSignatureFrom(input: ConfigOf<T.ArrowFunc
 
 export function callExpressionFrom(input?: T.CallExpression.Loose): ReturnType<typeof F.callExpression> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'call_expression_call': _loose.$variant = 'call'; break;
-        case 'call_expression_template_call': _loose.$variant = 'template_call'; break;
-        case 'call_expression_member': _loose.$variant = 'member'; break;
-      }
-    }
-  }
   return F.callExpression(input as Parameters<typeof F.callExpression>[0]);
 }
 
-export function callExpressionUFormCallFrom(input: ConfigOf<T.CallExpressionUFormCall>) {
+export function callExpressionUFormCallFrom(input: Omit<ConfigOf<T.CallExpressionUFormCall>, '$variant'>) {
   return F.callExpressionUFormCall(input);
 }
 
-export function callExpressionUFormTemplateCallFrom(input: ConfigOf<T.CallExpressionUFormTemplateCall>) {
+export function callExpressionUFormTemplateCallFrom(input: Omit<ConfigOf<T.CallExpressionUFormTemplateCall>, '$variant'>) {
   return F.callExpressionUFormTemplateCall(input);
 }
 
-export function callExpressionUFormMemberFrom(input: ConfigOf<T.CallExpressionUFormMember>) {
+export function callExpressionUFormMemberFrom(input: Omit<ConfigOf<T.CallExpressionUFormMember>, '$variant'>) {
   return F.callExpressionUFormMember(input);
 }
 
@@ -1284,25 +1198,14 @@ export function sequenceExpressionFrom(...input: readonly (NonNullable<T.Sequenc
 
 export function stringFrom(input?: T.String.Loose): ReturnType<typeof F.string> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'string_double': _loose.$variant = 'double'; break;
-        case 'string_single': _loose.$variant = 'single'; break;
-      }
-    }
-  }
   return F.string(input as Parameters<typeof F.string>[0]);
 }
 
-export function stringUFormDoubleFrom(input: ConfigOf<T.StringUFormDouble>) {
+export function stringUFormDoubleFrom(input: Omit<ConfigOf<T.StringUFormDouble>, '$variant'>) {
   return F.stringUFormDouble(input);
 }
 
-export function stringUFormSingleFrom(input: ConfigOf<T.StringUFormSingle>) {
+export function stringUFormSingleFrom(input: Omit<ConfigOf<T.StringUFormSingle>, '$variant'>) {
   return F.stringUFormSingle(input);
 }
 
@@ -2092,28 +1995,17 @@ export function constructSignatureFrom(input: T.ConstructSignature.Loose): Retur
 
 export function indexSignatureFrom(input?: T.IndexSignature.Loose): ReturnType<typeof F.indexSignature> {
   if (input !== undefined && isNodeData(input)) return input;
-  if (input && typeof input === 'object' && !('$variant' in input)) {
-    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };
-    if (Array.isArray(_loose.children) && _loose.children.length > 0) {
-      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;
-      const childKind = first?.$type ?? first?.type;
-      switch (childKind) {
-        case 'index_signature_colon': _loose.$variant = 'colon'; break;
-        case 'index_signature_mapped_type_clause': _loose.$variant = 'mapped_type_clause'; break;
-      }
-    }
-  }
   return F.indexSignature(input as Parameters<typeof F.indexSignature>[0]);
 }
 
-export function indexSignatureUFormColonFrom(input: ConfigOf<T.IndexSignatureUFormColon>) {
+export function indexSignatureUFormColonFrom(input: Omit<ConfigOf<T.IndexSignatureUFormColon>, '$variant'>) {
   return F.indexSignatureUFormColon({
     sign: _resolveOne(input.sign, _K1, _K1),
     type: _resolveOne(input.type, _K1, _K39),
   });
 }
 
-export function indexSignatureUFormMappedTypeClauseFrom(input: ConfigOf<T.IndexSignatureUFormMappedTypeClause>) {
+export function indexSignatureUFormMappedTypeClauseFrom(input: Omit<ConfigOf<T.IndexSignatureUFormMappedTypeClause>, '$variant'>) {
   return F.indexSignatureUFormMappedTypeClause({
     sign: _resolveOne(input.sign, _K1, _K1),
     type: _resolveOne(input.type, _K1, _K39),
