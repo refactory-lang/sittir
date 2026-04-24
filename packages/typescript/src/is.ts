@@ -7,6 +7,7 @@ import type {
     NamespaceMap,
     Declaration,
     DestructuringPattern,
+    ExportStatementDefault,
     Expression,
     Expressions,
     FormalParameter,
@@ -195,6 +196,7 @@ export interface IsGuards {
     intersectionType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'intersection_type' };
     functionType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'function_type' };
     TypeIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_type_identifier' };
+    ExportStatementDefaultFromArm<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_default_from_arm' };
     ArrowFunctionParameter<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_arrow_function_parameter' };
     ArrowFunction_CallSignature<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_arrow_function__call_signature' };
     ClassHeritageExtendsClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_class_heritage_extends_clause' };
@@ -204,8 +206,10 @@ export interface IsGuards {
     ImportClauseDefaultImport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_import_clause_default_import' };
     ImportSpecifierName<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_import_specifier_name' };
     IndexSignatureMappedTypeClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_index_signature_mapped_type_clause' };
+    ExportStatementDefaultFromArmStarFrom<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_default_from_arm_star_from' };
+    ExportStatementDefaultFromArmNsFrom<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_default_from_arm_ns_from' };
+    ExportStatementDefaultFromArmClauseFrom<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_default_from_arm_clause_from' };
     ParenthesizedExpressionSequence<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_parenthesized_expression_sequence' };
-    ExportStatementDefault<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_default' };
     ExportStatementTypeExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_type_export' };
     ExportStatementEqualsExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_equals_export' };
     ExportStatementNamespaceExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_namespace_export' };
@@ -237,6 +241,7 @@ export interface IsGuards {
     type(v: { readonly $type: string }): v is Type;
     tupleTypeMember(v: { readonly $type: string }): v is TupleTypeMember;
     primaryType(v: { readonly $type: string }): v is PrimaryType;
+    exportStatementDefault(v: { readonly $type: string }): v is ExportStatementDefault;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
@@ -402,6 +407,7 @@ export interface AssertGuards {
     intersectionType(v: { readonly $type: string }): asserts v is { readonly $type: 'intersection_type' };
     functionType(v: { readonly $type: string }): asserts v is { readonly $type: 'function_type' };
     TypeIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: '_type_identifier' };
+    ExportStatementDefaultFromArm(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_default_from_arm' };
     ArrowFunctionParameter(v: { readonly $type: string }): asserts v is { readonly $type: '_arrow_function_parameter' };
     ArrowFunction_CallSignature(v: { readonly $type: string }): asserts v is { readonly $type: '_arrow_function__call_signature' };
     ClassHeritageExtendsClause(v: { readonly $type: string }): asserts v is { readonly $type: '_class_heritage_extends_clause' };
@@ -411,8 +417,10 @@ export interface AssertGuards {
     ImportClauseDefaultImport(v: { readonly $type: string }): asserts v is { readonly $type: '_import_clause_default_import' };
     ImportSpecifierName(v: { readonly $type: string }): asserts v is { readonly $type: '_import_specifier_name' };
     IndexSignatureMappedTypeClause(v: { readonly $type: string }): asserts v is { readonly $type: '_index_signature_mapped_type_clause' };
+    ExportStatementDefaultFromArmStarFrom(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_default_from_arm_star_from' };
+    ExportStatementDefaultFromArmNsFrom(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_default_from_arm_ns_from' };
+    ExportStatementDefaultFromArmClauseFrom(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_default_from_arm_clause_from' };
     ParenthesizedExpressionSequence(v: { readonly $type: string }): asserts v is { readonly $type: '_parenthesized_expression_sequence' };
-    ExportStatementDefault(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_default' };
     ExportStatementTypeExport(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_type_export' };
     ExportStatementEqualsExport(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_equals_export' };
     ExportStatementNamespaceExport(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_namespace_export' };
@@ -444,6 +452,7 @@ export interface AssertGuards {
     type(v: { readonly $type: string }): asserts v is Type;
     tupleTypeMember(v: { readonly $type: string }): asserts v is TupleTypeMember;
     primaryType(v: { readonly $type: string }): asserts v is PrimaryType;
+    exportStatementDefault(v: { readonly $type: string }): asserts v is ExportStatementDefault;
 }
 
 // Runtime: kind guards = string equality; supertype guards = Set.has.
@@ -480,6 +489,7 @@ const _supertype_importIdentifier = new Set<string>(["identifier"]);
 const _supertype_type = new Set<string>(["primary_type", "function_type", "readonly_type", "constructor_type", "infer_type", "_type_query_member_expression_in_type_annotation", "_type_query_call_expression_in_type_annotation"]);
 const _supertype_tupleTypeMember = new Set<string>(["tuple_parameter", "optional_tuple_parameter", "optional_type", "rest_type", "type"]);
 const _supertype_primaryType = new Set<string>(["parenthesized_type", "predefined_type", "identifier", "nested_type_identifier", "generic_type", "object_type", "array_type", "tuple_type", "flow_maybe_type", "type_query", "index_type_query", "this", "existential_type", "literal_type", "lookup_type", "conditional_type", "template_literal_type", "intersection_type", "union_type"]);
+const _supertype_exportStatementDefault = new Set<string>(["_export_statement_default_from_arm", "_export_statement_default_decl_arm"]);
 
 export const is = {
     program: _g("program"),
@@ -643,6 +653,7 @@ export const is = {
     intersectionType: _g("intersection_type"),
     functionType: _g("function_type"),
     TypeIdentifier: _g("_type_identifier"),
+    ExportStatementDefaultFromArm: _g("_export_statement_default_from_arm"),
     ArrowFunctionParameter: _g("_arrow_function_parameter"),
     ArrowFunction_CallSignature: _g("_arrow_function__call_signature"),
     ClassHeritageExtendsClause: _g("_class_heritage_extends_clause"),
@@ -652,8 +663,10 @@ export const is = {
     ImportClauseDefaultImport: _g("_import_clause_default_import"),
     ImportSpecifierName: _g("_import_specifier_name"),
     IndexSignatureMappedTypeClause: _g("_index_signature_mapped_type_clause"),
+    ExportStatementDefaultFromArmStarFrom: _g("_export_statement_default_from_arm_star_from"),
+    ExportStatementDefaultFromArmNsFrom: _g("_export_statement_default_from_arm_ns_from"),
+    ExportStatementDefaultFromArmClauseFrom: _g("_export_statement_default_from_arm_clause_from"),
     ParenthesizedExpressionSequence: _g("_parenthesized_expression_sequence"),
-    ExportStatementDefault: _g("_export_statement_default"),
     ExportStatementTypeExport: _g("_export_statement_type_export"),
     ExportStatementEqualsExport: _g("_export_statement_equals_export"),
     ExportStatementNamespaceExport: _g("_export_statement_namespace_export"),
@@ -685,6 +698,7 @@ export const is = {
     type: _sg(_supertype_type),
     tupleTypeMember: _sg(_supertype_tupleTypeMember),
     primaryType: _sg(_supertype_primaryType),
+    exportStatementDefault: _sg(_supertype_exportStatementDefault),
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -871,6 +885,7 @@ export const assert = {
     intersectionType: _makeAssert('intersectionType', is.intersectionType as _AnyGuard),
     functionType: _makeAssert('functionType', is.functionType as _AnyGuard),
     TypeIdentifier: _makeAssert('TypeIdentifier', is.TypeIdentifier as _AnyGuard),
+    ExportStatementDefaultFromArm: _makeAssert('ExportStatementDefaultFromArm', is.ExportStatementDefaultFromArm as _AnyGuard),
     ArrowFunctionParameter: _makeAssert('ArrowFunctionParameter', is.ArrowFunctionParameter as _AnyGuard),
     ArrowFunction_CallSignature: _makeAssert('ArrowFunction_CallSignature', is.ArrowFunction_CallSignature as _AnyGuard),
     ClassHeritageExtendsClause: _makeAssert('ClassHeritageExtendsClause', is.ClassHeritageExtendsClause as _AnyGuard),
@@ -880,8 +895,10 @@ export const assert = {
     ImportClauseDefaultImport: _makeAssert('ImportClauseDefaultImport', is.ImportClauseDefaultImport as _AnyGuard),
     ImportSpecifierName: _makeAssert('ImportSpecifierName', is.ImportSpecifierName as _AnyGuard),
     IndexSignatureMappedTypeClause: _makeAssert('IndexSignatureMappedTypeClause', is.IndexSignatureMappedTypeClause as _AnyGuard),
+    ExportStatementDefaultFromArmStarFrom: _makeAssert('ExportStatementDefaultFromArmStarFrom', is.ExportStatementDefaultFromArmStarFrom as _AnyGuard),
+    ExportStatementDefaultFromArmNsFrom: _makeAssert('ExportStatementDefaultFromArmNsFrom', is.ExportStatementDefaultFromArmNsFrom as _AnyGuard),
+    ExportStatementDefaultFromArmClauseFrom: _makeAssert('ExportStatementDefaultFromArmClauseFrom', is.ExportStatementDefaultFromArmClauseFrom as _AnyGuard),
     ParenthesizedExpressionSequence: _makeAssert('ParenthesizedExpressionSequence', is.ParenthesizedExpressionSequence as _AnyGuard),
-    ExportStatementDefault: _makeAssert('ExportStatementDefault', is.ExportStatementDefault as _AnyGuard),
     ExportStatementTypeExport: _makeAssert('ExportStatementTypeExport', is.ExportStatementTypeExport as _AnyGuard),
     ExportStatementEqualsExport: _makeAssert('ExportStatementEqualsExport', is.ExportStatementEqualsExport as _AnyGuard),
     ExportStatementNamespaceExport: _makeAssert('ExportStatementNamespaceExport', is.ExportStatementNamespaceExport as _AnyGuard),
@@ -913,6 +930,7 @@ export const assert = {
     type: _makeAssert('type', is.type as _AnyGuard),
     tupleTypeMember: _makeAssert('tupleTypeMember', is.tupleTypeMember as _AnyGuard),
     primaryType: _makeAssert('primaryType', is.primaryType as _AnyGuard),
+    exportStatementDefault: _makeAssert('exportStatementDefault', is.exportStatementDefault as _AnyGuard),
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.

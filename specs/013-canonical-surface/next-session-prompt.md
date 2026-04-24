@@ -1,65 +1,79 @@
 # 013 — Next Session Prompt
 
-**Goal:** finish spec 013. All remaining audit hits need PIPELINE infrastructure work, not just grammar-author overrides.
+**Goal:** finish spec 013. Remaining 4 typescript audit flags need iterative grammar-author work (split heterogeneous choice → add GLR conflict → re-split inner → repeat). Pipeline infra is now in place.
 
 ## Context
 
-Spec 013 Phase 1 is done + Phase 2 starter landed (commit `ef3ce731`, branch `012-rust-core-port`). Simplify + canonicalize merged, cross-branch field hoist, single-wrapper field hoist, auto-tagging (`tagAllRulesVariants`) and T065 auto-polymorph promotion both disabled and dead code deleted. Corpus floors at 7 pre-existing failures.
+Spec 013 Phase 1 is done + Phase 2 pipeline work landed this session:
+- Infra (A) — compose polymorphs onto hidden-rule parents (commit `be602c05`).
+- Infra (B) — `applyPath` descends through `alias` (commit `c5d121c2`).
+
+Corpus floors at 7 pre-existing failures. Audit went from 7 → 4 flags this session:
+- rust clean (`_visibility_modifier_pub` resolved via nested split)
+- python clean (`_match_block` and `dict_pattern` both resolved)
+- typescript unchanged at 4 flags
 
 ## Session Log
 
-**Landed this session** (kind adoptions):
-- `visibility_modifier` (rust top-level, commit `982d9cff` by subagent)
-- `range_pattern_left` nested split to `left_with_right` / `left_bare` / `prefix` (commit `a6c0422e`)
+**Landed this session** (infra + kind adoptions):
+- Infra (A): `buildPolymorphParentFn` reads `context.deposits` fallback for hidden-name parents; `injectHiddenRulePlaceholders` skips keys compose already filled; `injectSyntheticRules` (evaluate.ts) skips keys rule-fn already wrote. `polymorphVisibleName`/`polymorphHiddenName` helpers strip leading `_` from hidden parent kinds.
+- Infra (B): `descendThroughAlias` + `reconstructAlias` in transform-path.ts; applyPath dispatches `alias` for index/wildcard descents.
+- Rust: `_visibility_modifier_pub: { '1/0/1/3': 'in_path' }` — nested split of `seq('in', _path)` arm.
+- Python: `_match_block: { 0: 'block' }` — split the block-form arm.
+- Python: `dict_pattern: { '1/0/0/0': 'kv' }` — split inlined `_key_value_pattern` choice arm.
+- Corpus test: added `dict_pattern_kv` to python's ALIAS_VARIANT_KINDS exclusion set.
 
-**Attempted and reverted** (blocked on pipeline infra):
-- `_visibility_modifier_pub` (rust): wire system doesn't compose polymorphs onto deferred-content hidden-rule kinds. `composeOrSynthesizePolymorphParents` runs before `injectHiddenRulePlaceholders`, so `original` is undefined for synthesized hidden kinds.
-- `_export_statement_default` (ts): split to `default_specifier` + `default_declaration` at paths `0/0` / `0/1` just moved the audit flag one level deeper — each sub-arm has inner heterogeneous choices that need THEIR own variants. Adoption on polymorph-synthesized kinds isn't supported end-to-end.
-- `dict_pattern` (python): `applyPath` throws `ApplyPathSkip: cannot descend into 'alias' rule` — the inner paths target a choice wrapped in an alias that applyPath can't traverse.
+**Attempted and reverted** (needs iterative splitting):
+- TS `_for_header: { '1/0': 'lhs', '1/1': 'var_kind', '1/2': 'let_const_kind' }` — exposed multiple GLR conflicts against `primary_expression` / `variable_declarator`. Each added conflict surfaced another. Reverted after 3 rounds; this kind needs ~5+ conflict declarations to settle.
+- TS `_export_statement_default: { 0: 'from_clause', 1: 'declaration' }` — split worked but each sub-kind (`_from_clause`, `_declaration`) has its OWN heterogeneous inner choice, each with its own GLR conflicts. Net flag count went 4 → 5. Reverted.
 
-## Remaining Audit Hits (7)
+## Remaining Audit Hits (4 — all typescript)
 
-- **rust (1)**: `_visibility_modifier_pub`
-- **typescript (4)**: `_for_header`, `public_field_definition`, `class_body`, `_export_statement_default`
-- **python (2)**: `_match_block`, `dict_pattern`
+- `_for_header` — `seq-member-optional-wrapping-choice` (3-arm inner choice, each with fields + optionals)
+- `public_field_definition` — `seq-member-optional-wrapping-choice` (complex optional-choice shapes)
+- `class_body` — `repeat-wrapping-choice` (body repeats a 4-arm heterogeneous choice)
+- `_export_statement_default` — `choice-needs-variant` (top-level 2-arm choice with deeply nested inner heterogeneity)
 
-Every one of these needs a specific pipeline change first:
+Each of these needs:
+1. Split outer choice into variant arms (`polymorphs: { kind: { 'path': 'name' } }`).
+2. Add the required tree-sitter GLR conflicts for each new variant.
+3. Repeat at the next level until the inner choices are all symbol-like / token-like.
 
-## Infrastructure Work Required
+## Strategy for Remaining Work
 
-### (A) Compose polymorphs onto deferred-content hidden rules
-Unblocks: `_visibility_modifier_pub`, likely `_match_block`.
+These are tractable but deep — each kind likely needs 2-4 levels of split + ~5-10 conflict entries per level. Budget ~2-3 hours per kind. Approach:
 
-In `packages/codegen/src/dsl/wire/wire.ts`, `composeOrSynthesizePolymorphParents` currently runs before `injectHiddenRulePlaceholders`. When a polymorphs entry targets a rule like `_visibility_modifier_pub` (synthesized by an outer `visibility_modifier` adoption), the hidden rule's body isn't available yet. Reorder the passes, or extend the polymorph-composer to defer adoption until after hidden-rule placeholders are injected.
+1. Start with one kind, ideally the shallowest (`_export_statement_default` has only 2 outer arms).
+2. Split, regen, watch tree-sitter fail with a conflict, add the conflict.
+3. Repeat until generate succeeds. Check audit: if inner sub-kinds are flagged, split them too.
+4. Add each new `*_variant_name` kind to `ALIAS_VARIANT_KINDS[typescript]` in corpus-validation.test.ts if the renderability test complains about a missing template.
+5. Once that kind is clean, move to the next.
 
-### (B) Teach `applyPath` to descend through `alias`
-Unblocks: `dict_pattern`, likely any grammar using `alias()` wrappers around inner choices.
-
-In `packages/codegen/src/dsl/transform/transform-path.ts`, `descendThroughSingleWrapper` handles `optional` / `repeat` / `field` but not `alias`. Add an `alias` case that recurses into the alias content (the aliased-from body) and reconstructs the alias wrapper on the way back up. Symmetric to how `field` is handled.
-
-### (C) Multi-level polymorph adoption
-Unblocks: `_export_statement_default`, `_for_header`, `public_field_definition`, `class_body`.
-
-The current `polymorphs: { kind: { 'path': 'name' } }` model hits original-rule paths. When an adoption produces a new hidden kind whose body has its own heterogeneous choice, there's no path to reach the inner choice from the original rule's perspective. Two options:
-
-1. **Nested-path syntax**: extend polymorph paths to address positions within synthesized kinds — e.g. `{ '0/0/1/0': 'name' }` drills through arm 0 of arm 0 of the original rule. Some of these already work (see `range_pattern` doing `'0/1/0'` at depth 3); the failures are where depth crosses the boundary into a hidden rule's content.
-2. **Adopt-on-synthesized**: allow `polymorphs: { _synthesized_kind: { 'path': 'name' } }` to work. Wire pipeline currently can't find the rule. This is (A) in different words.
+**Watch out for:**
+- Conflict cascade: each split splits LR states, which can expose conflicts you didn't create. If the same symbol keeps appearing in the conflict message, add a higher-level group conflict (`[$.A, $.B, $.C, $.newVariant]`) rather than many 2-way ones.
+- Corpus test renderability failure: synthesized variants whose body is a pass-through alias don't emit their own templates — add them to `ALIAS_VARIANT_KINDS`.
 
 ## Starting Command
 
 ```bash
 cd /Users/pmouli/GitHub.nosync/refactory-lang/sittir
-git log --oneline -20 | grep "013:"  # review what's landed
-SITTIR_AUDIT_DERIVE=1 npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src 2>&1 | tail -10
+git log --oneline -20 | grep "013:"  # review landed work
 SITTIR_AUDIT_DERIVE=1 npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src 2>&1 | tail -10
-SITTIR_AUDIT_DERIVE=1 npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src 2>&1 | tail -10
 ```
 
-Start with infra (A) — it unblocks 2 kinds directly (`_visibility_modifier_pub`, `_match_block`) and lays groundwork for (C). Then (B) for `dict_pattern`. (C) last; may subsume (A) depending on design.
+Probe tool (recreate if needed — it's trivial and got deleted after each use):
+
+```ts
+// packages/codegen/src/scripts/probe-rule.ts
+import { evaluate } from '../compiler/evaluate.ts'
+import { resolveOverridesPath } from '../compiler/resolve-grammar.ts'
+const raw = await evaluate(resolveOverridesPath(process.argv[2]))
+console.log(JSON.stringify(raw.rules[process.argv[3]], (k, v) => k === '_ref' ? undefined : v, 2))
+```
 
 ## Phase 2 Walker Shrink
 
-Still blocked — the walker can't assume canonical input until all 7 kinds are resolved. Once the audit is clean:
+Still blocked — walker can't assume canonical input until all 4 TS kinds resolve. Once the audit is clean:
 
 1. Flip `DERIVE_AUDIT_MODE` default to `strict` in `packages/codegen/src/compiler/node-map.ts:230`.
 2. Shrink `deriveFields` / `deriveChildren` to the 4-line target from `plan.md` lines 135-149. Delete `deriveFieldsRaw`'s `case 'choice'` per-branch+downgrade logic, `walkForChildren`'s same, `toOptionalMultiplicity`, and `deriveFields`'s merge loop (check python commaSep still works).

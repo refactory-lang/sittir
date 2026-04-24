@@ -313,6 +313,12 @@ const ALIAS_VARIANT_KINDS: Record<string, Set<string>> = {
         'index_signature_colon',
         'interface_body',
         'parenthesized_expression_typed',
+        // export_statement_default multi-level polymorph adoption:
+        // each synthesized kind renders inline through its alias at the
+        // referrer rather than owning its own template.
+        'export_statement_default',
+        'export_statement_default_from_arm',
+        'export_statement_default_decl_arm',
     ]),
 }
 

@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  7  (0 applied, 7 held)
-// Rule promotions:   78  (70 applied, 8 held)
+// Rule promotions:   81  (74 applied, 7 held)
 // Repeated shapes:   7  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -25,9 +25,14 @@
 // candidates target the same kind).
 // ---------------------------------------------------------------
 export const suggestedTransforms = {
-  // _export_statement_default: 2 inferred field(s)
-  // [held] _export_statement_default field 'semicolon' on $._semicolon — 87% agreement, 15 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-  // [held] _export_statement_default field 'semicolon' on $._semicolon — 87% agreement, 15 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+  // _export_statement_default_decl_arm_default_kw_value: 1 inferred field(s)
+  // [held] _export_statement_default_decl_arm_default_kw_value field 'semicolon' on $._semicolon — 87% agreement, 15 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+
+  // _export_statement_default_from_arm: 1 inferred field(s)
+  _export_statement_default_from_arm: {
+      // [held] 87% agreement, 15 parents
+      2: field("semicolon"),  // $._semicolon
+  },
 
   // _export_statement_equals_export: 1 inferred field(s)
   _export_statement_equals_export: {
@@ -114,6 +119,9 @@ export const suggestedRules = {
   // --- Promoted supertypes (add matching names to grammar.supertypes) ---
   // [applied] promoted supertype
   _destructuring_pattern: $ => choice($.object_pattern, $.array_pattern),
+
+  // [applied] promoted supertype
+  _export_statement_default: $ => choice($._export_statement_default_from_arm, $._export_statement_default_decl_arm),
 
   // [applied] promoted supertype
   _expressions: $ => choice($.expression, $.sequence_expression),
@@ -218,6 +226,7 @@ export interface PromotedRule {
 }
 export const promotedRules: readonly PromotedRule[] = [
   { kind: "_destructuring_pattern", classification: "supertype", applied: true },
+  { kind: "_export_statement_default", classification: "supertype", applied: true },
   { kind: "_expressions", classification: "supertype", applied: true },
   { kind: "_formal_parameter", classification: "supertype", applied: true },
   { kind: "_identifier", classification: "supertype", applied: true },
@@ -253,7 +262,9 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "predefined_type", classification: "terminal", applied: true },
   { kind: "private_property_identifier", classification: "terminal", applied: true },
   { kind: "regex_pattern", classification: "terminal", applied: true },
-  { kind: "_export_statement_default", classification: "polymorph", applied: false },
+  { kind: "_export_statement_default_from_arm_clause_from", classification: "polymorph", applied: true },
+  { kind: "_export_statement_default_from_arm_ns_from", classification: "polymorph", applied: true },
+  { kind: "_export_statement_default_from_arm_star_from", classification: "polymorph", applied: true },
   { kind: "ambient_declaration", classification: "polymorph", applied: false },
   { kind: "arrow_function", classification: "polymorph", applied: true },
   { kind: "arrow_function__call_signature", classification: "polymorph", applied: true },
@@ -307,8 +318,8 @@ export interface InferredField {
   readonly applied: boolean;
 }
 export const inferredFields: readonly InferredField[] = [
-  { kind: "_export_statement_default", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
-  { kind: "_export_statement_default", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
+  { kind: "_export_statement_default_decl_arm_default_kw_value", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
+  { kind: "_export_statement_default_from_arm", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
   { kind: "_export_statement_equals_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
   { kind: "_export_statement_namespace_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
   { kind: "_export_statement_type_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },

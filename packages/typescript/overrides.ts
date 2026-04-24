@@ -114,6 +114,11 @@ export default grammar(enrich(base), wire({
         [$.await_expression, $._update_expression_prefix],
         [$.arrow_function, $._update_expression_postfix],
         [$.arrow_function, $._update_expression_prefix],
+        // _export_statement_default outer split inherits the outer
+        // `_export_statement_default` vs primary_expression conflict on
+        // the `export` prefix, propagated to the two outer variants.
+        [$.primary_expression, $._export_statement_default_from_arm],
+        [$.primary_expression, $._export_statement_default_decl_arm],
     ]),
     polymorphs: {
         arrow_function:  { '1/0': 'parameter',        '1/1': '_call_signature' },
@@ -121,6 +126,43 @@ export default grammar(enrich(base), wire({
         import_clause:   { '0':   'namespace_import', '1':   'named_imports',    '2': 'default_import' },
         import_specifier: { '1/0': 'name',             '1/1': 'as' },
         index_signature: { '2/0': 'colon',             '2/1': 'mapped_type_clause' },
+
+        // _export_statement_default — synthesized by
+        // `export_statement: { 0: variant('default') }` transform. Body
+        // is a two-arm heterogeneous choice:
+        //   arm 0: `seq('export', choice(4 from-clause shapes), _semicolon)`
+        //   arm 1: `seq(repeat(field('decorator',…)), 'export',
+        //             choice(field('declaration',…), seq('default', …)))`
+        // Top-level split.
+        _export_statement_default: { 0: 'from_arm', 1: 'decl_arm' },
+
+        // _export_statement_default_from_arm body:
+        //   `seq('export', choice(4 from-clause shapes), _semicolon)`
+        // Inner choice at path 1 has 3 seqs + 1 bare symbol — split the
+        // 3 seqs so the remaining choice is all symbol-like.
+        _export_statement_default_from_arm: {
+            '1/0': 'star_from',       // seq('*', _from_clause)
+            '1/1': 'ns_from',         // seq(namespace_export, _from_clause)
+            '1/2': 'clause_from',     // seq(export_clause, _from_clause)
+        },
+
+        // _export_statement_default_decl_arm body:
+        //   `seq(repeat(field('decorator',…)), 'export', choice(
+        //       field('declaration', declaration),
+        //       seq('default', choice(
+        //           field('declaration', declaration),
+        //           seq(field('value', expression), _semicolon),
+        //       )),
+        //   ))`
+        // Split outer and nested default-arm choices at every unique
+        // heterogeneous path — multi-level adoption hits the leaves
+        // directly rather than cascading through intermediate kinds.
+        _export_statement_default_decl_arm: {
+            '2/1': 'default_kw',     // seq('default', …)
+        },
+        _export_statement_default_decl_arm_default_kw: {
+            '1/1': 'value',           // seq(field('value', expression), _semicolon)
+        },
     },
     transforms: {
         // abstract_class_declaration: wrap pos 5 (class_heritage choice).

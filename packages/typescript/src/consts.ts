@@ -6,7 +6,10 @@ export const NODE_KINDS = [
   '_arrow_function_parameter',
   '_class_heritage_extends_clause',
   '_class_heritage_implements_clause',
-  '_export_statement_default',
+  '_export_statement_default_from_arm',
+  '_export_statement_default_from_arm_clause_from',
+  '_export_statement_default_from_arm_ns_from',
+  '_export_statement_default_from_arm_star_from',
   '_export_statement_equals_export',
   '_export_statement_namespace_export',
   '_export_statement_type_export',
@@ -418,11 +421,16 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_class_heritage_implements_clause': [
   ],
-  '_export_statement_default': [
-    { name: 'source', required: false, multiple: false },
-    { name: 'decorator', required: true, multiple: true },
-    { name: 'declaration', required: false, multiple: false },
-    { name: 'value', required: false, multiple: false },
+  '_export_statement_default_from_arm': [
+  ],
+  '_export_statement_default_from_arm_clause_from': [
+    { name: 'source', required: true, multiple: false },
+  ],
+  '_export_statement_default_from_arm_ns_from': [
+    { name: 'source', required: true, multiple: false },
+  ],
+  '_export_statement_default_from_arm_star_from': [
+    { name: 'source', required: true, multiple: false },
   ],
   '_export_statement_equals_export': [
   ],

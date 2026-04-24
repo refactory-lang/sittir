@@ -93,26 +93,16 @@ export function exportStatement(config: ConfigOf<T.ExportStatementUFormDefault> 
   throw new Error(`exportStatement: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'default' | 'type_export' | 'equals_export' | 'namespace_export'.`);
 }
 export function exportStatementUFormDefault(config: Omit<ConfigOf<T.ExportStatementUFormDefault>, '$variant'>) {
-  const inner = exportStatementDefault(config);
-  const children = [inner] as const;
+  const children = config.children ?? [];
   return {
     $type: 'export_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'default' as const,
     $children: children,
-    source(value?: T.String | undefined) {
-      if (value === undefined) return inner.$fields.source;
-      return exportStatementUFormDefault({ decorator: inner.$fields.decorator, declaration: inner.$fields.declaration, value: inner.$fields.value, source: value });
-    },
-    decorator(...values: T.Decorator[]) { return exportStatementUFormDefault({ source: inner.$fields.source, declaration: inner.$fields.declaration, value: inner.$fields.value, decorator: values }); },
-    declaration(value?: T.Declaration | undefined) {
-      if (value === undefined) return inner.$fields.declaration;
-      return exportStatementUFormDefault({ source: inner.$fields.source, decorator: inner.$fields.decorator, value: inner.$fields.value, declaration: value });
-    },
-    value(value?: T.Expression | undefined) {
-      if (value === undefined) return inner.$fields.value;
-      return exportStatementUFormDefault({ source: inner.$fields.source, decorator: inner.$fields.decorator, declaration: inner.$fields.declaration, value: value });
+    child(value?: T.ExportStatementDefault) {
+      if (value === undefined) return children[0];
+      return exportStatementUFormDefault({ ...config, children: [value] });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -4548,6 +4538,75 @@ export function indexSignatureMappedTypeClause(child: T.MappedTypeClause) {
   };
 }
 
+export function exportStatementDefaultFromArmStarFrom(config: T.ExportStatementDefaultFromArmStarFrom.Config) {
+  const fields = {
+    source: config.source,
+  };
+  return {
+    $type: '_export_statement_default_from_arm_star_from' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    source(value?: T.String) { return _fs(config, exportStatementDefaultFromArmStarFrom, 'source', value, config?.source); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ExportStatementDefaultFromArmStarFromTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function exportStatementDefaultFromArmNsFrom(config: T.ExportStatementDefaultFromArmNsFrom.Config) {
+  const fields = {
+    source: config.source,
+  };
+  const children = config.children ?? [];
+  return {
+    $type: '_export_statement_default_from_arm_ns_from' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
+    source(value?: T.String) { return _fs(config, exportStatementDefaultFromArmNsFrom, 'source', value, config?.source); },
+    child(value?: T.NamespaceExport) {
+      if (value === undefined) return children[0];
+      return exportStatementDefaultFromArmNsFrom({ ...config, children: [value] });
+    },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ExportStatementDefaultFromArmNsFromTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function exportStatementDefaultFromArmClauseFrom(config: T.ExportStatementDefaultFromArmClauseFrom.Config) {
+  const fields = {
+    source: config.source,
+  };
+  const children = config.children ?? [];
+  return {
+    $type: '_export_statement_default_from_arm_clause_from' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
+    source(value?: T.String) { return _fs(config, exportStatementDefaultFromArmClauseFrom, 'source', value, config?.source); },
+    child(value?: T.ExportClause) {
+      if (value === undefined) return children[0];
+      return exportStatementDefaultFromArmClauseFrom({ ...config, children: [value] });
+    },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ExportStatementDefaultFromArmClauseFromTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function parenthesizedExpressionSequence(child: T.SequenceExpression) {
   const children = [child];
   return {
@@ -4561,37 +4620,6 @@ export function parenthesizedExpressionSequence(child: T.SequenceExpression) {
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T.ParenthesizedExpressionSequenceTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function exportStatementDefault(config: T.ExportStatementDefault.Config) {
-  const fields = {
-    source: config.source,
-    decorator: config.decorator,
-    declaration: config.declaration,
-    value: config.value,
-  };
-  const children = config.children ?? [];
-  return {
-    $type: '_export_statement_default' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    $children: children,
-    source(value?: T.String | undefined) { return _fs(config, exportStatementDefault, 'source', value, config?.source); },
-    decorator(...values: T.Decorator[]) { return _fsm(config, exportStatementDefault, 'decorator', values, config?.decorator); },
-    declaration(value?: T.Declaration | undefined) { return _fs(config, exportStatementDefault, 'declaration', value, config?.declaration); },
-    value(value?: T.Expression | undefined) { return _fs(config, exportStatementDefault, 'value', value, config?.value); },
-    child(value?: (T.NamespaceExport | T.ExportClause | T.Semicolon)) {
-      if (value === undefined) return children[0];
-      return exportStatementDefault({ ...config, children: [value] });
-    },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ExportStatementDefaultTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4944,8 +4972,10 @@ export type FluentKindMap = {
   "_import_clause_default_import": FluentNode<"_import_clause_default_import", T.ImportClauseDefaultImport.Config>;
   "_import_specifier_name": FluentNode<"_import_specifier_name", T.ImportSpecifierName.Config>;
   "_index_signature_mapped_type_clause": FluentNode<"_index_signature_mapped_type_clause", T.IndexSignatureMappedTypeClause.Config>;
+  "_export_statement_default_from_arm_star_from": FluentNode<"_export_statement_default_from_arm_star_from", T.ExportStatementDefaultFromArmStarFrom.Config>;
+  "_export_statement_default_from_arm_ns_from": FluentNode<"_export_statement_default_from_arm_ns_from", T.ExportStatementDefaultFromArmNsFrom.Config>;
+  "_export_statement_default_from_arm_clause_from": FluentNode<"_export_statement_default_from_arm_clause_from", T.ExportStatementDefaultFromArmClauseFrom.Config>;
   "_parenthesized_expression_sequence": FluentNode<"_parenthesized_expression_sequence", T.ParenthesizedExpressionSequence.Config>;
-  "_export_statement_default": FluentNode<"_export_statement_default", T.ExportStatementDefault.Config>;
   "_export_statement_type_export": FluentNode<"_export_statement_type_export", T.ExportStatementTypeExport.Config>;
   "_export_statement_equals_export": FluentNode<"_export_statement_equals_export", T.ExportStatementEqualsExport.Config>;
   "_export_statement_namespace_export": FluentNode<"_export_statement_namespace_export", T.ExportStatementNamespaceExport.Config>;
@@ -5155,8 +5185,10 @@ export const _factoryMap = {
   "_import_clause_default_import": importClauseDefaultImport,
   "_import_specifier_name": importSpecifierName,
   "_index_signature_mapped_type_clause": indexSignatureMappedTypeClause,
+  "_export_statement_default_from_arm_star_from": exportStatementDefaultFromArmStarFrom,
+  "_export_statement_default_from_arm_ns_from": exportStatementDefaultFromArmNsFrom,
+  "_export_statement_default_from_arm_clause_from": exportStatementDefaultFromArmClauseFrom,
   "_parenthesized_expression_sequence": parenthesizedExpressionSequence,
-  "_export_statement_default": exportStatementDefault,
   "_export_statement_type_export": exportStatementTypeExport,
   "_export_statement_equals_export": exportStatementEqualsExport,
   "_export_statement_namespace_export": exportStatementNamespaceExport,

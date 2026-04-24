@@ -25,7 +25,7 @@ describe('hash_bang_line', () => {
 
 describe('export_statement', () => {
   it('default form produces correct type', () => {
-    const node = ir.exportStatement.default({ decorator: [{ $type: 'decorator', $text: 'test' } as any] });
+    const node = ir.exportStatement.default({});
     expect(node.$type).toBe('export_statement');
     expect(node.$source).toBe('factory');
   });

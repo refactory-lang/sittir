@@ -57,7 +57,10 @@ import type {
   ExportClause,
   ExportSpecifier,
   ExportStatement,
-  ExportStatementDefault,
+  ExportStatementDefaultFromArm,
+  ExportStatementDefaultFromArmClauseFrom,
+  ExportStatementDefaultFromArmNsFrom,
+  ExportStatementDefaultFromArmStarFrom,
   ExportStatementEqualsExport,
   ExportStatementNamespaceExport,
   ExportStatementTypeExport,
@@ -1669,6 +1672,13 @@ export function wrapTypeIdentifier(data: _NodeData, tree: TreeHandle): WrappedNo
   } as unknown as WrappedNode<TypeIdentifier>;
 }
 
+export function wrapExportStatementDefaultFromArm(data: _NodeData, tree: TreeHandle): WrappedNode<ExportStatementDefaultFromArm> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<ExportStatementDefaultFromArm>;
+}
+
 export function wrapArrowFunctionParameter(data: _NodeData, tree: TreeHandle): WrappedNode<ArrowFunctionParameter> {
   return {
     ...data,
@@ -1737,22 +1747,35 @@ export function wrapIndexSignatureMappedTypeClause(data: _NodeData, tree: TreeHa
   } as unknown as WrappedNode<IndexSignatureMappedTypeClause>;
 }
 
+export function wrapExportStatementDefaultFromArmStarFrom(data: _NodeData, tree: TreeHandle): WrappedNode<ExportStatementDefaultFromArmStarFrom> {
+  return {
+    ...data,
+    get source() { return drillIn(data.$fields?.['source'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ExportStatementDefaultFromArmStarFrom>;
+}
+
+export function wrapExportStatementDefaultFromArmNsFrom(data: _NodeData, tree: TreeHandle): WrappedNode<ExportStatementDefaultFromArmNsFrom> {
+  return {
+    ...data,
+    get source() { return drillIn(data.$fields?.['source'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<ExportStatementDefaultFromArmNsFrom>;
+}
+
+export function wrapExportStatementDefaultFromArmClauseFrom(data: _NodeData, tree: TreeHandle): WrappedNode<ExportStatementDefaultFromArmClauseFrom> {
+  return {
+    ...data,
+    get source() { return drillIn(data.$fields?.['source'], tree); },
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<ExportStatementDefaultFromArmClauseFrom>;
+}
+
 export function wrapParenthesizedExpressionSequence(data: _NodeData, tree: TreeHandle): WrappedNode<ParenthesizedExpressionSequence> {
   return {
     ...data,
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ParenthesizedExpressionSequence>;
-}
-
-export function wrapExportStatementDefault(data: _NodeData, tree: TreeHandle): WrappedNode<ExportStatementDefault> {
-  return {
-    ...data,
-    get source() { return drillIn(data.$fields?.['source'], tree); },
-    get decorator() { return drillInAll(data.$fields?.['decorator'], tree); },
-    get declaration() { return drillIn(data.$fields?.['declaration'], tree); },
-    get value() { return drillIn(data.$fields?.['value'], tree); },
-    get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<ExportStatementDefault>;
 }
 
 export function wrapExportStatementTypeExport(data: _NodeData, tree: TreeHandle): WrappedNode<ExportStatementTypeExport> {
@@ -1985,6 +2008,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_kw_readonly': (d) => d,
   '_kw_abstract': (d) => d,
   '_kw_const': (d) => d,
+  '_export_statement_default_from_arm': (d, t) => wrapExportStatementDefaultFromArm(d, t),
   '_arrow_function_parameter': (d, t) => wrapArrowFunctionParameter(d, t),
   '_arrow_function__call_signature': (d, t) => wrapArrowFunctionUCallSignature(d, t),
   '_class_heritage_extends_clause': (d, t) => wrapClassHeritageExtendsClause(d, t),
@@ -1994,8 +2018,10 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_import_clause_default_import': (d, t) => wrapImportClauseDefaultImport(d, t),
   '_import_specifier_name': (d, t) => wrapImportSpecifierName(d, t),
   '_index_signature_mapped_type_clause': (d, t) => wrapIndexSignatureMappedTypeClause(d, t),
+  '_export_statement_default_from_arm_star_from': (d, t) => wrapExportStatementDefaultFromArmStarFrom(d, t),
+  '_export_statement_default_from_arm_ns_from': (d, t) => wrapExportStatementDefaultFromArmNsFrom(d, t),
+  '_export_statement_default_from_arm_clause_from': (d, t) => wrapExportStatementDefaultFromArmClauseFrom(d, t),
   '_parenthesized_expression_sequence': (d, t) => wrapParenthesizedExpressionSequence(d, t),
-  '_export_statement_default': (d, t) => wrapExportStatementDefault(d, t),
   '_export_statement_type_export': (d, t) => wrapExportStatementTypeExport(d, t),
   '_export_statement_equals_export': (d, t) => wrapExportStatementEqualsExport(d, t),
   '_export_statement_namespace_export': (d, t) => wrapExportStatementNamespaceExport(d, t),

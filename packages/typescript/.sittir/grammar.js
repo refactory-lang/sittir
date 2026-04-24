@@ -133,6 +133,9 @@ function applyPath(rule, segments, patch, precStack) {
       if (isWrapperType(t)) {
         return descendThroughSingleWrapper(rule, head, rest, patch, precStack);
       }
+      if (t === "alias" || t === "ALIAS") {
+        return descendThroughAlias(rule, head, rest, patch, precStack);
+      }
       throw new ApplyPathSkip(`applyPath: cannot descend into '${rule.type}' rule (path has ${segments.length} segments left)`);
     }
     default: {
@@ -168,6 +171,32 @@ function descendThroughSingleWrapper(rule, head, rest, patch, precStack) {
       throw new Error(`descendThroughSingleWrapper: unexpected segment kind '${_exhaustive.kind}' \u2014 this is a bug in applyPath dispatch`);
     }
   }
+}
+function descendThroughAlias(rule, head, rest, patch, precStack) {
+  switch (head.kind) {
+    case "wildcard": {
+      const newContent = applyPath(contentOf(rule), rest, patch, precStack);
+      return reconstructAlias(rule, newContent);
+    }
+    case "index": {
+      if (head.value === 0 || head.value === -1) {
+        const newContent = applyPath(contentOf(rule), rest, patch, precStack);
+        return reconstructAlias(rule, newContent);
+      }
+      throw new ApplyPathSkip(
+        `applyPath: index ${head.value} out of bounds \u2014 '${rule.type}' wraps a single content rule (only index 0 / -1 is valid)`
+      );
+    }
+    case "kind-match":
+    case "fieldName":
+    default: {
+      const _exhaustive = head;
+      throw new Error(`descendThroughAlias: unexpected segment kind '${_exhaustive.kind}' \u2014 this is a bug in applyPath dispatch`);
+    }
+  }
+}
+function reconstructAlias(rule, newContent) {
+  return { ...rule, content: newContent };
 }
 function descendThroughNamedField(rule, fieldName, rest, patch, precStack) {
   if (!isFieldType(rule.type)) {
@@ -1248,14 +1277,58 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     [$.await_expression, $._update_expression_postfix],
     [$.await_expression, $._update_expression_prefix],
     [$.arrow_function, $._update_expression_postfix],
-    [$.arrow_function, $._update_expression_prefix]
+    [$.arrow_function, $._update_expression_prefix],
+    // _export_statement_default outer split inherits the outer
+    // `_export_statement_default` vs primary_expression conflict on
+    // the `export` prefix, propagated to the two outer variants.
+    [$.primary_expression, $._export_statement_default_from_arm],
+    [$.primary_expression, $._export_statement_default_decl_arm]
   ]),
   polymorphs: {
     arrow_function: { "1/0": "parameter", "1/1": "_call_signature" },
     class_heritage: { "0": "extends_clause", "1": "implements_clause" },
     import_clause: { "0": "namespace_import", "1": "named_imports", "2": "default_import" },
     import_specifier: { "1/0": "name", "1/1": "as" },
-    index_signature: { "2/0": "colon", "2/1": "mapped_type_clause" }
+    index_signature: { "2/0": "colon", "2/1": "mapped_type_clause" },
+    // _export_statement_default — synthesized by
+    // `export_statement: { 0: variant('default') }` transform. Body
+    // is a two-arm heterogeneous choice:
+    //   arm 0: `seq('export', choice(4 from-clause shapes), _semicolon)`
+    //   arm 1: `seq(repeat(field('decorator',…)), 'export',
+    //             choice(field('declaration',…), seq('default', …)))`
+    // Top-level split.
+    _export_statement_default: { 0: "from_arm", 1: "decl_arm" },
+    // _export_statement_default_from_arm body:
+    //   `seq('export', choice(4 from-clause shapes), _semicolon)`
+    // Inner choice at path 1 has 3 seqs + 1 bare symbol — split the
+    // 3 seqs so the remaining choice is all symbol-like.
+    _export_statement_default_from_arm: {
+      "1/0": "star_from",
+      // seq('*', _from_clause)
+      "1/1": "ns_from",
+      // seq(namespace_export, _from_clause)
+      "1/2": "clause_from"
+      // seq(export_clause, _from_clause)
+    },
+    // _export_statement_default_decl_arm body:
+    //   `seq(repeat(field('decorator',…)), 'export', choice(
+    //       field('declaration', declaration),
+    //       seq('default', choice(
+    //           field('declaration', declaration),
+    //           seq(field('value', expression), _semicolon),
+    //       )),
+    //   ))`
+    // Split outer and nested default-arm choices at every unique
+    // heterogeneous path — multi-level adoption hits the leaves
+    // directly rather than cascading through intermediate kinds.
+    _export_statement_default_decl_arm: {
+      "2/1": "default_kw"
+      // seq('default', …)
+    },
+    _export_statement_default_decl_arm_default_kw: {
+      "1/1": "value"
+      // seq(field('value', expression), _semicolon)
+    }
   },
   transforms: {
     // abstract_class_declaration: wrap pos 5 (class_heritage choice).
