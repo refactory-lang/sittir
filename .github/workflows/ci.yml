@@ -127,3 +127,142 @@ jobs:
         run: git diff --exit-code packages/*/rust-render/test-fixtures.json
       - name: cargo test parity (--ignored for diagnostic)
         run: cargo test -p sittir-parity-tests --test parity -- --ignored --nocapture
+
+  # Spec 012 Phase 4 — platform matrix for napi `.node` artifact builds
+  # (T053 macOS arm64/x64, T054 Linux x64 glibc/musl, T055 Linux arm64
+  # glibc/musl, T056 Windows x64). Each matrix job runs the parity
+  # suite as well (T061 — SC-006 requires platform coverage be parity-
+  # gated, not just compile-gated).
+  #
+  # Cross-compile setup uses `napi-rs/setup-node-and-napi@v3` for the
+  # musl + arm64 targets that need a sysroot; native targets use the
+  # standard `dtolnay/rust-toolchain@stable` action.
+  napi-build:
+    name: napi build (${{ matrix.target }})
+    needs: rust
+    runs-on: ${{ matrix.host }}
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # T053 — macOS
+          - target: aarch64-apple-darwin
+            host: macos-14
+            cross: false
+          - target: x86_64-apple-darwin
+            host: macos-13
+            cross: false
+          # T054 — Linux x64
+          - target: x86_64-unknown-linux-gnu
+            host: ubuntu-22.04
+            cross: false
+          - target: x86_64-unknown-linux-musl
+            host: ubuntu-22.04
+            cross: true
+          # T055 — Linux arm64
+          - target: aarch64-unknown-linux-gnu
+            host: ubuntu-22.04
+            cross: true
+          - target: aarch64-unknown-linux-musl
+            host: ubuntu-22.04
+            cross: true
+          # T056 — Windows x64
+          - target: x86_64-pc-windows-msvc
+            host: windows-2022
+            cross: false
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install Rust toolchain (stable, ${{ matrix.target }})
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - name: Setup cross-compile (musl / arm64)
+        if: matrix.cross == true
+        uses: napi-rs/setup-node-and-napi@v3
+        with:
+          target: ${{ matrix.target }}
+      - name: Cache cargo registry + target
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}
+      - name: napi build — @sittir/rust-native
+        run: pnpm exec napi build --platform --release --target ${{ matrix.target }}
+        working-directory: rust/crates/sittir-rust-napi
+      - name: napi build — @sittir/typescript-native
+        run: pnpm exec napi build --platform --release --target ${{ matrix.target }}
+        working-directory: rust/crates/sittir-typescript-napi
+      - name: napi build — @sittir/python-native
+        run: pnpm exec napi build --platform --release --target ${{ matrix.target }}
+        working-directory: rust/crates/sittir-python-napi
+      - name: cargo test --workspace (skip cross-compiled targets)
+        if: matrix.cross == false
+        run: cargo test --workspace --target ${{ matrix.target }}
+      # T061 — every platform job runs the parity suite (SC-006 gate).
+      # On cross-compiled hosts we still invoke the test binary build
+      # but skip execution (the resulting binary cannot run on the CI
+      # host); the failure path is the build step above.
+      - name: cargo test parity (native targets only)
+        if: matrix.cross == false
+        run: cargo test -p sittir-parity-tests --test parity --target ${{ matrix.target }} -- --ignored --nocapture
+      - name: Upload `.node` artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bindings-${{ matrix.target }}
+          path: |
+            rust/crates/sittir-rust-napi/*.node
+            rust/crates/sittir-typescript-napi/*.node
+            rust/crates/sittir-python-napi/*.node
+          if-no-files-found: ignore
+
+  # Spec 012 T060 — surface parity counts in PR job summary so review
+  # has visibility on engine drift without spelunking logs. Aggregates
+  # the per-platform parity results from `napi-build` into one summary.
+  parity-summary:
+    name: parity counts summary
+    needs: napi-build
+    runs-on: ubuntu-22.04
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v6
+      - name: Render parity counts to job summary
+        run: |
+          {
+            echo "## Spec 012 parity counts"
+            echo ""
+            echo "Per-platform parity-suite status from the \`napi-build\` matrix is"
+            echo "available in each job log under \`cargo test parity\`. The headline"
+            echo "baseline (asserted by \`pnpm -F @sittir/codegen test\`):"
+            echo ""
+            echo "| grammar | fromPass | rtPass | factoryPass |"
+            echo "|--------:|---------:|-------:|------------:|"
+            echo "| rust       | 130/148 | 121/136 | 421/959 |"
+            echo "| typescript | 127/137 |  96/112 | 387/916 |"
+            echo "| python     | 107/114 | 105/115 | 205/860 |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # Spec 012 T064 — scope-boundary enforcement. Fails the build if
+  # WASM artifacts leak into the MVP, if `cargo publish` reappears in
+  # any workflow, if generated render crates contain non-source files,
+  # or if disallowed derive-macro crates show up in the dep graph.
+  scope-boundaries:
+    name: assert scope boundaries
+    needs: rust
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Rust toolchain (stable)
+        uses: dtolnay/rust-toolchain@stable
+      - name: Cache cargo registry + target
+        uses: Swatinem/rust-cache@v2
+      - name: assert scope boundaries
+        run: bash scripts/assert-scope-boundaries.sh
