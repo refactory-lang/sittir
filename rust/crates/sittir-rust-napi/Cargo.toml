@@ -12,8 +12,11 @@ crate-type = ["cdylib"]
 
 [dependencies]
 sittir-core = { path = "../sittir-core" }
+sittir-rust-render = { path = "../../../packages/rust/rust-render" }
 napi = { version = "3", default-features = false, features = ["napi4"] }
 napi-derive = "3"
+serde = { workspace = true }
+serde_json = { workspace = true }
 tree-sitter = { workspace = true }
 tree-sitter-rust = "0.24"
 

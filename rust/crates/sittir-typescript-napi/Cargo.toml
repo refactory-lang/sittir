@@ -12,15 +12,19 @@ crate-type = ["cdylib"]
 
 [dependencies]
 sittir-core = { path = "../sittir-core" }
+sittir-typescript-render = { path = "../../../packages/typescript/rust-render" }
 napi = { version = "3", default-features = false, features = ["napi4"] }
 napi-derive = "3"
-# tree-sitter-typescript 0.23 requires tree-sitter ^0.24, incompatible
-# with the workspace-pinned tree-sitter 0.25 at the `links` level.
-# Phase 1 skeleton doesn't actually USE the grammar crate (T034 does),
-# so it's listed as an optional dep here — the crate compiles without
-# the grammar, and T034 will revisit version alignment.
+serde = { workspace = true }
+serde_json = { workspace = true }
+# tree-sitter-typescript 0.23 declares `tree-sitter = ^0.24`, which
+# overlaps with the workspace-pinned 0.25. The cross-version bridge
+# goes through tree-sitter-language 0.1 (a semver-stable ABI crate),
+# so the 0.25 runtime can `set_language` on a 0.23-generated grammar
+# at runtime — matches the rationale documented in the workspace
+# root `Cargo.toml` for keeping tree-sitter pinned at 0.25.
 tree-sitter = { workspace = true }
-# tree-sitter-typescript = "0.23"
+tree-sitter-typescript = "0.23"
 
 [build-dependencies]
 napi-build = "2"
