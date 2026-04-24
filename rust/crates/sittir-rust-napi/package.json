@@ -1,0 +1,51 @@
+{
+  "name": "@sittir/rust-native",
+  "version": "0.1.0",
+  "description": "Native (Rust / napi-rs) engine for @sittir/rust — platform-subpackaged .node addon.",
+  "license": "MIT",
+  "author": "Pradeep Mouli",
+  "homepage": "https://github.com/refactory-lang/sittir#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/refactory-lang/sittir.git",
+    "directory": "rust/crates/sittir-rust-napi"
+  },
+  "keywords": [
+    "sittir",
+    "rust",
+    "tree-sitter",
+    "napi",
+    "native",
+    "n-api"
+  ],
+  "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ],
+  "napi": {
+    "binaryName": "sittir-rust",
+    "packageName": "@sittir/rust-native",
+    "targets": [
+      "x86_64-apple-darwin",
+      "aarch64-apple-darwin",
+      "x86_64-unknown-linux-gnu",
+      "aarch64-unknown-linux-gnu",
+      "x86_64-pc-windows-msvc",
+      "aarch64-pc-windows-msvc"
+    ]
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "artifacts": "napi artifacts",
+    "build": "napi build --platform --release",
+    "build:debug": "napi build --platform",
+    "prepublishOnly": "napi prepublish -t npm"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^3.0.0"
+  }
+}
