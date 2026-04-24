@@ -1665,7 +1665,6 @@ export function visibilityModifierUFormPub(config?: Omit<ConfigOf<T.VisibilityMo
     $named: true as const,
     $fields: {
       pub: "pub" as const,
-      in: config.in ? "in" as const : undefined,
     },
   };
   const children = [inner] as const;
@@ -1676,10 +1675,6 @@ export function visibilityModifierUFormPub(config?: Omit<ConfigOf<T.VisibilityMo
     $variant: 'pub' as const,
     $children: children,
     get pub() { return inner.$fields.pub; },
-    in(value?: "in" | undefined) {
-      if (value === undefined) return inner.$fields.in;
-      return visibilityModifierUFormPub({ pub: inner.$fields.pub, in: value });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

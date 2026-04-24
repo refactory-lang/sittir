@@ -26,7 +26,7 @@
     "elif_clause": "config",
     "else_clause": "config",
     "match_statement": "config",
-    "_match_block": "config",
+    "_match_block": "children",
     "case_clause": "config",
     "for_statement": "config",
     "while_statement": "config",
@@ -209,9 +209,6 @@
     "match_statement": [
       "subject",
       "body"
-    ],
-    "_match_block": [
-      "alternative"
     ],
     "for_statement": [
       "async",
@@ -406,6 +403,12 @@
       "source": "override",
       "childKind": {
         "expression_statement_tuple": "tuple"
+      }
+    },
+    "_match_block": {
+      "source": "override",
+      "childKind": {
+        "_match_block_block": "block"
       }
     },
     "with_clause": {

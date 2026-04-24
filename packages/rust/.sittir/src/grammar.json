@@ -9607,6 +9607,67 @@
       "type": "STRING",
       "value": "_"
     },
+    "_visibility_modifier_pub": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "pub",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_kw_pub"
+          },
+          "source": "override"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "("
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "self"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "super"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "crate"
+                    },
+                    {
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_visibility_modifier_pub_in_path"
+                      },
+                      "named": true,
+                      "value": "visibility_modifier_pub_in_path"
+                    }
+                  ]
+                },
+                {
+                  "type": "STRING",
+                  "value": ")"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
     "_array_expression_semi": {
       "type": "SEQ",
       "members": [
@@ -10393,73 +10454,21 @@
       "type": "SYMBOL",
       "name": "crate"
     },
-    "_visibility_modifier_pub": {
+    "_visibility_modifier_pub_in_path": {
       "type": "SEQ",
       "members": [
         {
           "type": "FIELD",
-          "name": "pub",
+          "name": "in",
           "content": {
             "type": "SYMBOL",
-            "name": "_kw_pub"
+            "name": "_kw_in"
           },
           "source": "override"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": "("
-                },
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "SYMBOL",
-                      "name": "self"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "super"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "crate"
-                    },
-                    {
-                      "type": "SEQ",
-                      "members": [
-                        {
-                          "type": "FIELD",
-                          "name": "in",
-                          "content": {
-                            "type": "SYMBOL",
-                            "name": "_kw_in"
-                          },
-                          "source": "override"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "_path"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "STRING",
-                  "value": ")"
-                }
-              ]
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+          "type": "SYMBOL",
+          "name": "_path"
         }
       ]
     },

@@ -316,8 +316,18 @@ export function wire(config: WireConfig): WiredOpts {
     // Reversing this (polymorphs first) made inline transforms that
     // address base-shape paths (e.g. 'N/_expression' kind-match) break
     // because the polymorph already aliased the choice arms.
+    //
+    // Compose runs BEFORE inject so iteration order at runtime puts
+    // polymorph parents ahead of their hidden arms — parents populate
+    // deposits via transformFn; arms read those deposits when their
+    // deferred-content fn later runs. The injection pass is careful not
+    // to clobber a polymorph-parent fn already installed by compose:
+    // when a hidden name is BOTH an arm of one polymorph AND itself a
+    // polymorph parent (e.g. `_visibility_modifier_pub`), compose wins
+    // and the parent fn reads the outer's deposit at run time (see
+    // `buildPolymorphParentFn`).
     composeOrSynthesizeTransformParents(outRules, transforms)
-    composeOrSynthesizePolymorphParents(outRules, polymorphs)
+    composeOrSynthesizePolymorphParents(outRules, polymorphs, context)
     injectHiddenRulePlaceholders(outRules, polymorphs, context)
     injectTransformHiddenRulePlaceholders(outRules, transforms, context)
     wrapAllRuleFns(outRules, context)
@@ -345,32 +355,60 @@ export function wire(config: WireConfig): WiredOpts {
  * For every polymorph parent, either wrap the author's rule fn (compose
  * — user runs first, variant transform on the result) or synthesize a
  * fresh rule fn that applies the variant patches to `original` directly.
+ *
+ * `context` is threaded in so parents whose name is a hidden rule (starts
+ * with `_`) can fall back to reading their own body from
+ * `context.deposits` — this is the case when a parent was synthesized as
+ * an arm of an OUTER polymorph (e.g. `_visibility_modifier_pub` produced
+ * by `visibility_modifier: {1:'pub'}` and then adopted as its own inner
+ * polymorph parent). The outer runs first at iteration time and deposits
+ * its arm body; the inner's parent fn reads that deposit as its base.
  */
 function composeOrSynthesizePolymorphParents(
     rules: Record<string, RuleFn>,
     polymorphs: PolymorphsConfig,
+    context: WireContext,
 ): void {
     for (const [parent, armMap] of Object.entries(polymorphs)) {
         const userFn = rules[parent]
-        rules[parent] = buildPolymorphParentFn(armMap, userFn)
+        rules[parent] = buildPolymorphParentFn(parent, armMap, userFn, context)
     }
 }
 
 /**
- * Build a rule fn for a polymorph parent. If `userFn` is supplied, it
- * runs first (to do author-level field transforms on `original`); the
- * variant transform is then applied to its output.
+ * Build a rule fn for a polymorph parent. Base-body resolution order:
+ *
+ *   1. User-supplied `userFn` (from config.rules) — runs first, so any
+ *      author-level field/keyword transforms see the base-shape rule
+ *      tree and the variant transform applies on that output.
+ *   2. For hidden-name parents (leading `_`) produced by an outer
+ *      polymorph, read the body from `context.deposits` — the outer
+ *      rule fn (which iterates at its base-grammar position, ahead of
+ *      the injected hidden name) populates that deposit when its own
+ *      variant transform resolves.
+ *   3. Otherwise use `original` (the `previous` arg tree-sitter passes —
+ *      the base grammar's body of this rule).
  */
 function buildPolymorphParentFn(
+    parent: string,
     armMap: Record<string, string>,
     userFn: RuleFn | undefined,
+    context: WireContext,
 ): RuleFn {
     const patches: Record<string, unknown> = {}
     for (const [path, suffix] of Object.entries(armMap)) {
         patches[path] = variantPlaceholder(suffix)
     }
+    const isHidden = parent.startsWith('_')
     return function wiredPolymorphParent(this: unknown, $: unknown, original: unknown): unknown {
-        const base = userFn ? userFn.call(this, $, original) : original
+        let base: unknown
+        if (userFn) {
+            base = userFn.call(this, $, original)
+        } else if (isHidden && context.deposits.has(parent)) {
+            base = context.deposits.get(parent)
+        } else {
+            base = original
+        }
         return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, patches)
     }
 }
@@ -379,6 +417,15 @@ function buildPolymorphParentFn(
  * Inject one deferred-content rule fn per declared `_<parent>_<suffix>`
  * hidden rule. The fn reads captured content from `context.deposits` at
  * the moment tree-sitter iterates to it.
+ *
+ * Skips keys already filled by `composeOrSynthesizePolymorphParents` —
+ * that happens when a hidden name is BOTH an arm of one polymorph AND
+ * itself a polymorph parent (e.g. `_visibility_modifier_pub` = the
+ * `pub` arm of `visibility_modifier` AND its own polymorph parent
+ * splitting the inner `choice(self, super, crate, seq('in', _path))`).
+ * Compose installs the parent fn there; its body-resolution logic reads
+ * the outer's deposit directly (see `buildPolymorphParentFn`), so this
+ * overwrite would drop the inner split.
  */
 function injectHiddenRulePlaceholders(
     rules: Record<string, RuleFn>,
@@ -387,10 +434,34 @@ function injectHiddenRulePlaceholders(
 ): void {
     for (const [parent, armMap] of Object.entries(polymorphs)) {
         for (const suffix of Object.values(armMap)) {
-            const hiddenName = `_${parent}_${suffix}`
+            const hiddenName = polymorphHiddenName(parent, suffix)
+            if (hiddenName in rules) continue
             rules[hiddenName] = makeDeferredContentFn(context, hiddenName)
         }
     }
+}
+
+/**
+ * Compute the visible-kind name for a polymorph variant.
+ *
+ * When the parent is itself a hidden rule (name starts with `_`) —
+ * e.g. `_visibility_modifier_pub`, produced as an arm of an outer
+ * polymorph — the leading underscore is stripped so the generated
+ * variant kind (`visibility_modifier_pub_in_path`) is visible in the
+ * parse tree. Without stripping, the visible alias target would also
+ * lead with `_` and tree-sitter would hide it, collapsing the variant.
+ *
+ * Used by wire's injectHiddenRulePlaceholders AND transform.ts's
+ * variant-resolution paths so both agree on the rule name.
+ */
+export function polymorphVisibleName(parentKind: string, suffix: string): string {
+    const visibleParent = parentKind.startsWith('_') ? parentKind.slice(1) : parentKind
+    return `${visibleParent}_${suffix}`
+}
+
+/** Hidden rule name for a polymorph variant — underscore-prefixed visible form. */
+export function polymorphHiddenName(parentKind: string, suffix: string): string {
+    return `_${polymorphVisibleName(parentKind, suffix)}`
 }
 
 /**

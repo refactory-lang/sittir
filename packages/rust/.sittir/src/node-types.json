@@ -6516,16 +6516,6 @@
     "type": "visibility_modifier_pub",
     "named": true,
     "fields": {
-      "in": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "in",
-            "named": false
-          }
-        ]
-      },
       "pub": {
         "multiple": false,
         "required": true,
@@ -6540,6 +6530,44 @@
     "children": {
       "multiple": false,
       "required": false,
+      "types": [
+        {
+          "type": "crate",
+          "named": true
+        },
+        {
+          "type": "self",
+          "named": true
+        },
+        {
+          "type": "super",
+          "named": true
+        },
+        {
+          "type": "visibility_modifier_pub_in_path",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "visibility_modifier_pub_in_path",
+    "named": true,
+    "fields": {
+      "in": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "in",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
       "types": [
         {
           "type": "crate",

@@ -404,7 +404,7 @@ function wire(config) {
   const transforms = config.transforms ?? {};
   const outRules = { ...config.rules };
   composeOrSynthesizeTransformParents(outRules, transforms);
-  composeOrSynthesizePolymorphParents(outRules, polymorphs);
+  composeOrSynthesizePolymorphParents(outRules, polymorphs, context);
   injectHiddenRulePlaceholders(outRules, polymorphs, context);
   injectTransformHiddenRulePlaceholders(outRules, transforms, context);
   wrapAllRuleFns(outRules, context);
@@ -421,29 +421,45 @@ function wire(config) {
   });
   return wired;
 }
-function composeOrSynthesizePolymorphParents(rules, polymorphs) {
+function composeOrSynthesizePolymorphParents(rules, polymorphs, context) {
   for (const [parent, armMap] of Object.entries(polymorphs)) {
     const userFn = rules[parent];
-    rules[parent] = buildPolymorphParentFn(armMap, userFn);
+    rules[parent] = buildPolymorphParentFn(parent, armMap, userFn, context);
   }
 }
-function buildPolymorphParentFn(armMap, userFn) {
+function buildPolymorphParentFn(parent, armMap, userFn, context) {
   const patches = {};
   for (const [path, suffix] of Object.entries(armMap)) {
     patches[path] = variant(suffix);
   }
+  const isHidden = parent.startsWith("_");
   return function wiredPolymorphParent($, original) {
-    const base2 = userFn ? userFn.call(this, $, original) : original;
+    let base2;
+    if (userFn) {
+      base2 = userFn.call(this, $, original);
+    } else if (isHidden && context.deposits.has(parent)) {
+      base2 = context.deposits.get(parent);
+    } else {
+      base2 = original;
+    }
     return transform(base2, patches);
   };
 }
 function injectHiddenRulePlaceholders(rules, polymorphs, context) {
   for (const [parent, armMap] of Object.entries(polymorphs)) {
     for (const suffix of Object.values(armMap)) {
-      const hiddenName = `_${parent}_${suffix}`;
+      const hiddenName = polymorphHiddenName(parent, suffix);
+      if (hiddenName in rules) continue;
       rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
     }
   }
+}
+function polymorphVisibleName(parentKind, suffix) {
+  const visibleParent = parentKind.startsWith("_") ? parentKind.slice(1) : parentKind;
+  return `${visibleParent}_${suffix}`;
+}
+function polymorphHiddenName(parentKind, suffix) {
+  return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
 function composeOrSynthesizeTransformParents(rules, transforms) {
   for (const [kind, entry] of Object.entries(transforms)) {
@@ -720,8 +736,8 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     const hoistedMembers = seqMembers.map((m, i) => i === resolvedPos ? altContent : m);
     const hoistedSeq = reconstructContainer(core, hoistedMembers);
     const hoistedBody = wrapVariantBodyInParentPrec(hoistedSeq, precStack);
-    const visibleName = `${parentKind}_${p.v.name}`;
-    const hiddenName = `_${visibleName}`;
+    const visibleName = polymorphVisibleName(parentKind, p.v.name);
+    const hiddenName = polymorphHiddenName(parentKind, p.v.name);
     if (!wireRegisterPolymorphVariant(parentKind, p.v.name)) {
       throw new Error(`variant('${p.v.name}'): no active wire() context \u2014 variant() must run inside a rule callback under wire()`);
     }
@@ -735,7 +751,7 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
       value: visibleName
     });
   }
-  registerHoistedVariantConflicts(parsed.map((p) => `_${parentKind}_${p.v.name}`));
+  registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, p.v.name)));
   const newChoice = reconstructContainer(choice2, refs);
   return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
@@ -810,9 +826,9 @@ function resolvePatch(patch, originalMember, precStack) {
     if (!wireRegisterPolymorphVariant(parentKind, patch.name)) {
       throw new Error(`variant('${patch.name}'): no active wire() context \u2014 variant() must run inside a rule callback under wire()`);
     }
-    const fullName = `${parentKind}_${patch.name}`;
-    const hiddenName = "_" + fullName;
-    return registerAliasedVariant(hiddenName, fullName, originalMember, (body) => wrapInPrec(body, precStack));
+    const visibleName = polymorphVisibleName(parentKind, patch.name);
+    const hiddenName = polymorphHiddenName(parentKind, patch.name);
+    return registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack));
   }
   if (isAliasPlaceholder(patch)) {
     return resolveAliasPlaceholder(patch, originalMember, precStack);
@@ -1161,7 +1177,14 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     // bare `..` doesn't) means these are genuine structural variants.
     range_pattern: { "0/1/0": "left_with_right", "0/1/1": "left_bare", "1": "prefix" },
     struct_item: { "4/0": "brace", "4/1": "tuple", "4/2": "unit" },
-    visibility_modifier: { "0": "crate", "1": "pub" }
+    visibility_modifier: { "0": "crate", "1": "pub" },
+    // `_visibility_modifier_pub` is the body of `visibility_modifier`'s
+    // `pub` arm — `seq('pub', optional(seq('(', choice(self, super,
+    // crate, seq('in', _path)), ')')))`. The inner choice has three
+    // bare symbols plus one seq (`seq('in', _path)`), which makes it
+    // heterogeneous. Split the seq arm into its own variant so the
+    // inner choice becomes four bare symbols (canonical).
+    _visibility_modifier_pub: { "1/0/1/3": "in_path" }
   },
   transforms: {
     // abstract_type: 1 field(s)

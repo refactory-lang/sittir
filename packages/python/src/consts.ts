@@ -278,7 +278,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_list_pattern': [
   ],
   '_match_block': [
-    { name: 'alternative', required: true, multiple: true },
   ],
   '_simple_pattern': [
   ],

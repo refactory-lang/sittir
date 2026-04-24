@@ -66,6 +66,17 @@ export default grammar(enrich(base), wire({
             0: 'bare',
             1: 'paren',
         },
+
+        // _match_block: base rule is
+        //   choice(
+        //     seq($._indent, repeat(field('alternative', $.case_clause)),
+        //         $._dedent),                         // arm 0 — block form
+        //     $._newline,                             // arm 1 — empty form
+        //   )
+        // Heterogeneous: one seq + one bare symbol. Splitting the seq arm
+        // into `_match_block_block` leaves the remaining choice as all
+        // symbol-like (alias + symbol) — canonical.
+        _match_block: { 0: 'block' },
     },
     transforms: {
         // as_pattern: 1 field(s)

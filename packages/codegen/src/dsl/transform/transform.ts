@@ -33,6 +33,8 @@ import {
     wireRegisterPolymorphVariant,
     wireRegisterConflict,
     wireGetCurrentRuleKind,
+    polymorphVisibleName,
+    polymorphHiddenName,
 } from '../wire/wire.ts'
 import { isFieldLike, isPrecWrapper, isWrapperType, isSeqType, isChoiceType, isBlankType, isOptionalType, isPlainRepeatType } from '../runtime-shapes.ts'
 import type { RuntimeRule } from '../runtime-shapes.ts'
@@ -344,8 +346,15 @@ function buildHoistedVariants(
         // this code deposited under the VISIBLE name (`parent_suffix`)
         // which wire's placeholder never looked up, leaving the hidden
         // rule BLANK → tree-sitter "Undefined symbol" on compile.
-        const visibleName = `${parentKind}_${p.v.name}`
-        const hiddenName = `_${visibleName}`
+        // Nested-variant naming: when `parentKind` is already a hidden
+        // rule (e.g. `_visibility_modifier_pub`, produced as an arm of
+        // an outer polymorph), strip its leading underscore before
+        // building the variant's visible kind name. Without stripping,
+        // the inner visible name inherits the leading `_` and
+        // tree-sitter treats the alias target as hidden, collapsing
+        // the variant's contribution.
+        const visibleName = polymorphVisibleName(parentKind, p.v.name)
+        const hiddenName = polymorphHiddenName(parentKind, p.v.name)
         if (!wireRegisterPolymorphVariant(parentKind, p.v.name)) {
             throw new Error(`variant('${p.v.name}'): no active wire() context — variant() must run inside a rule callback under wire()`)
         }
@@ -367,7 +376,7 @@ function buildHoistedVariants(
     // symbol references to alias targets in the conflicts array with
     // "Undefined symbol"). Use the hidden rule names — those ARE
     // declared via wire's placeholder injection.
-    registerHoistedVariantConflicts(parsed.map(p => `_${parentKind}_${p.v.name}`))
+    registerHoistedVariantConflicts(parsed.map(p => polymorphHiddenName(parentKind, p.v.name)))
     const newChoice = reconstructContainer(choice, refs)
     return { rule: newChoice, consumed: new Set(parsed.map(p => p.key)) }
 }
@@ -554,9 +563,9 @@ function resolvePatch(
         if (!wireRegisterPolymorphVariant(parentKind, patch.name)) {
             throw new Error(`variant('${patch.name}'): no active wire() context — variant() must run inside a rule callback under wire()`)
         }
-        const fullName = `${parentKind}_${patch.name}`
-        const hiddenName = '_' + fullName
-        return registerAliasedVariant(hiddenName, fullName, originalMember, body => wrapInPrec(body, precStack))
+        const visibleName = polymorphVisibleName(parentKind, patch.name)
+        const hiddenName = polymorphHiddenName(parentKind, patch.name)
+        return registerAliasedVariant(hiddenName, visibleName, originalMember, body => wrapInPrec(body, precStack))
     }
     if (isAliasPlaceholder(patch)) {
         return resolveAliasPlaceholder(patch, originalMember, precStack)

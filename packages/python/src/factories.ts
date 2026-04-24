@@ -462,16 +462,13 @@ export function matchStatement(config: T.MatchStatement.Config) {
   };
 }
 
-export function matchBlock(config: T.MatchBlock.Config) {
-  const fields = {
-    alternative: config.alternative,
-  };
+export function matchBlock(child?: T.MatchBlockBlock) {
+  const children = child != null ? [child] : [];
   return {
     $type: '_match_block' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
-    alternative(...values: T.CaseClause[]) { return _fsm(config, matchBlock, 'alternative', values, config?.alternative); },
+    $children: children,
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

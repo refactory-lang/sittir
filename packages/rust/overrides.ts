@@ -52,6 +52,13 @@ export default grammar(enrich(base), wire({
         range_pattern:       { '0/1/0': 'left_with_right', '0/1/1': 'left_bare', '1': 'prefix' },
         struct_item:         { '4/0': 'brace', '4/1': 'tuple', '4/2': 'unit' },
         visibility_modifier: { '0': 'crate', '1': 'pub' },
+        // `_visibility_modifier_pub` is the body of `visibility_modifier`'s
+        // `pub` arm — `seq('pub', optional(seq('(', choice(self, super,
+        // crate, seq('in', _path)), ')')))`. The inner choice has three
+        // bare symbols plus one seq (`seq('in', _path)`), which makes it
+        // heterogeneous. Split the seq arm into its own variant so the
+        // inner choice becomes four bare symbols (canonical).
+        _visibility_modifier_pub: { '1/0/1/3': 'in_path' },
     },
     transforms: {
         // abstract_type: 1 field(s)

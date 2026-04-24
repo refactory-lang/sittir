@@ -1129,12 +1129,22 @@ function evaluateRuleFunctions(
  * @remarks
  * Synthetic rules are hidden variant rules for nested-alias polymorphs,
  * created when transform patches use alias() placeholders.
+ *
+ * Only fills keys not already populated by `evaluateRuleFunctions`. A
+ * deferred-content fn registered by `wire/injectHiddenRulePlaceholders`
+ * already ran and wrote the deposited body to `rules[name]` — re-writing
+ * from `syntheticRules` would be a no-op for that case but a REGRESSION
+ * for a nested-polymorph parent where compose's fn ran at that key and
+ * further transformed the deposited body (e.g. `_visibility_modifier_pub`
+ * — the outer's deposit + an inner variant split). Skipping preserves
+ * the transform; the raw deposit is still correct when no compose ran.
  */
 function injectSyntheticRules(
     syntheticRules: Map<string, unknown>,
     rules: Record<string, Rule>,
 ): void {
     for (const [name, content] of syntheticRules) {
+        if (name in rules) continue
         rules[name] = content as Rule
     }
 }

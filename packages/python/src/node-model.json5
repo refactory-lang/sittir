@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 233,
+  "nodeCount": 234,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -827,11 +827,36 @@
     },
     {
       "kind": "_match_block",
-      "modelType": "branch",
+      "modelType": "container",
       "typeName": "MatchBlock",
       "factoryName": "matchBlock",
       "irKey": "matchBlock",
       "hidden": false,
+      "children": [
+        {
+          "name": "match_block_block",
+          "propertyName": "matchBlockBlock",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_match_block_block",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_match_block_block",
+      "modelType": "group",
+      "typeName": "MatchBlockBlock",
+      "irKey": "matchBlockBlock",
+      "hidden": true,
+      "name": "_match_block_block",
       "fields": [
         {
           "name": "alternative",

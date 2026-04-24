@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 371,
+  "nodeCount": 372,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -3044,26 +3044,6 @@
             "typeName": "",
             "kinds": []
           }
-        },
-        {
-          "name": "in",
-          "propertyName": "in",
-          "paramName": "in_",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "in"
-            }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
         }
       ],
       "children": [
@@ -3113,8 +3093,8 @@
           ]
         },
         {
-          "name": "path",
-          "propertyName": "path",
+          "name": "visibility_modifier_pub_in_path",
+          "propertyName": "visibilityModifierPubInPath",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -3122,6 +3102,53 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
+              "name": "_visibility_modifier_pub_in_path",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_visibility_modifier_pub_in_path",
+      "modelType": "group",
+      "typeName": "VisibilityModifierPubInPath",
+      "irKey": "visibilityModifierPubInPath",
+      "hidden": true,
+      "name": "_visibility_modifier_pub_in_path",
+      "fields": [
+        {
+          "name": "in",
+          "propertyName": "in",
+          "paramName": "in_",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "in"
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        }
+      ],
+      "children": [
+        {
+          "name": "path",
+          "propertyName": "path",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
               "name": "_path",
               "unresolved": true
             }

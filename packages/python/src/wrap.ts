@@ -313,8 +313,7 @@ export function wrapMatchStatement(data: _NodeData, tree: TreeHandle): WrappedNo
 export function wrapMatchBlock(data: _NodeData, tree: TreeHandle): WrappedNode<MatchBlock> {
   return {
     ...data,
-    get alternative() { return drillInAll(data.$fields?.['alternative'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<MatchBlock>;
 }
 

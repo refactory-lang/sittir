@@ -174,6 +174,7 @@ export const enum SyntaxKind {
   AssignmentType = '_assignment_type',
   AssignmentTyped = '_assignment_typed',
   WithClauseParen = '_with_clause_paren',
+  MatchBlockBlock = '_match_block_block',
   ImportPrefix = 'import_prefix',
   PassStatement = 'pass_statement',
   BreakStatement = 'break_statement',
@@ -528,9 +529,7 @@ export interface MatchStatement {
 
 export interface MatchBlock {
   readonly $type: 'match_block';
-  readonly $fields: {
-    readonly alternative: readonly (CaseClause)[];
-  };
+  readonly $children: readonly [MatchBlockBlock];
 }
 
 export interface CaseClause {
@@ -1243,6 +1242,13 @@ export interface WithClauseParen {
   readonly $children: NonEmptyArray<WithItem>;
 }
 
+export interface MatchBlockBlock {
+  readonly $type: 'match_block_block';
+  readonly $fields: {
+    readonly alternative: readonly (CaseClause)[];
+  };
+}
+
 
 // Leaf node types
 export type ImportPrefix = Terminal<"import_prefix", string>;
@@ -1396,6 +1402,7 @@ export interface AssignmentEqTree extends AnyTreeNode { readonly type: "_assignm
 export interface AssignmentTypeTree extends AnyTreeNode { readonly type: "_assignment_type"; }
 export interface AssignmentTypedTree extends AnyTreeNode { readonly type: "_assignment_typed"; }
 export interface WithClauseParenTree extends AnyTreeNode { readonly type: "_with_clause_paren"; }
+export interface MatchBlockBlockTree extends AnyTreeNode { readonly type: "_match_block_block"; }
 export interface ImportPrefixTree extends TreeNode<'import_prefix'> {}
 export interface PassStatementTree extends AnyTreeNode { readonly type: "pass_statement"; }
 export interface BreakStatementTree extends AnyTreeNode { readonly type: "break_statement"; }
@@ -1750,6 +1757,7 @@ export type PythonNode =
   | AssignmentType
   | AssignmentTyped
   | WithClauseParen
+  | MatchBlockBlock
 ;
 
 export interface KindMap {
@@ -1868,6 +1876,7 @@ export interface KindMap {
   '_assignment_type': AssignmentType;
   '_assignment_typed': AssignmentTyped;
   '_with_clause_paren': WithClauseParen;
+  '_match_block_block': MatchBlockBlock;
   'import_prefix': ImportPrefix;
   'pass_statement': PassStatement;
   'break_statement': BreakStatement;
@@ -2018,6 +2027,7 @@ export interface AssignmentEqNs extends NodeNs<AssignmentEq, LeafScalarMap, Leaf
 export interface AssignmentTypeNs extends NodeNs<AssignmentType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentTypedNs extends NodeNs<AssignmentTyped, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface WithClauseParenNs extends NodeNs<WithClauseParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface MatchBlockBlockNs extends NodeNs<MatchBlockBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 
 export interface NamespaceMap {
   'module': ModuleNs;
@@ -2135,6 +2145,7 @@ export interface NamespaceMap {
   '_assignment_type': AssignmentTypeNs;
   '_assignment_typed': AssignmentTypedNs;
   '_with_clause_paren': WithClauseParenNs;
+  '_match_block_block': MatchBlockBlockNs;
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -2948,4 +2959,11 @@ export namespace WithClauseParen {
   export type Loose = LooseFor<'_with_clause_paren'>;
   export type Tree = TreeFor<'_with_clause_paren'>;
   export type Kind = '_with_clause_paren';
+}
+export namespace MatchBlockBlock {
+  export type Config = ConfigFor<'_match_block_block'>;
+  export type Fluent = FluentFor<'_match_block_block'>;
+  export type Loose = LooseFor<'_match_block_block'>;
+  export type Tree = TreeFor<'_match_block_block'>;
+  export type Kind = '_match_block_block';
 }
