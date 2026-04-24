@@ -908,7 +908,7 @@ export interface ComparisonOperator {
   readonly $type: 'comparison_operator';
   readonly $fields: {
     readonly left: PrimaryExpression;
-    readonly operators: NonEmptyArray<"<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | NotIn | "is" | IsNot>;
+    readonly operators: NonEmptyArray<Bitflag<Operators, "<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not">>;
   };
 }
 

@@ -202,6 +202,7 @@ export const LEAF_KINDS = [
   '_public_field_definition_readonly_first',
   '_reserved_identifier',
   '_string_fragment',
+  '_ternary_qmark',
   'abstract',
   'accessibility_modifier',
   'accessor',

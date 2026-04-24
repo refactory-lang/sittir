@@ -1487,6 +1487,19 @@ function resolveRule(
             if (rule.named && rule.value && !rule.value.startsWith('_')) {
                 return resolveNamedAliasWithProvenance(rule.content, rule.value, supertypes)
             }
+            // Unnamed alias with a non-word literal value (e.g. typescript
+            // `alias(_ternary_qmark, '?')` — relabels a hidden external-
+            // scanner symbol as the literal punctuation it represents).
+            // The inner symbol resolves to an empty-pattern stub during
+            // simplify, stranding the walker with nothing to emit. The
+            // alias's `value` IS the rendered text — preserve it as a
+            // string literal so the template walker surfaces `?` / `:` /
+            // whatever the alias relabels to. Only fires for unnamed
+            // aliases (named aliases become their own visible kind).
+            if (!rule.named && typeof rule.value === 'string' && rule.value.length > 0
+                && !rule.value.startsWith('_') && !/^[A-Za-z_]\w*$/.test(rule.value)) {
+                return { type: 'string', value: rule.value }
+            }
             return resolveRule(rule.content, currentName, allRules, supertypes, externalRoles)
 
         case 'symbol':

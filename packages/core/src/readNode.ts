@@ -102,11 +102,15 @@ export function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
 			// the loop — e.g. rust's `type_item` has an anonymous
 			// `type` keyword child AND a named `type` field for the
 			// RHS) aren't multi-value: the real field replaces the
-			// placeholder. Accumulate only between genuine fname writes.
+			// placeholder. Same-field anon-after-anon must still
+			// accumulate — typescript ambient_declaration's
+			// `module.exports:` emits five children sharing
+			// `field=declaration` (module, ., property_identifier,
+			// :, object_type); silent replacement drops module/. .
 			const existing = fields[fname];
 			if (existing === undefined) {
 				fields[fname] = entry;
-			} else if (!Array.isArray(existing) && existing.$named === false) {
+			} else if (!Array.isArray(existing) && existing.$named === false && entry.$named === true) {
 				fields[fname] = entry;
 			} else if (Array.isArray(existing)) {
 				existing.push(entry);

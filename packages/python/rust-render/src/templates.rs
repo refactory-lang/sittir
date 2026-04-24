@@ -1340,12 +1340,6 @@ pub struct StringTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub content: String,
-    pub content_list: Vec<String>,
-    pub string_end: String,
-    pub string_end_list: Vec<String>,
-    pub string_start: String,
-    pub string_start_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2892,12 +2886,6 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                content: ctx.fields.get("content").cloned().unwrap_or_default(),
-                content_list: ctx.fields_list.get("content").cloned().unwrap_or_default(),
-                string_end: ctx.fields.get("string_end").cloned().unwrap_or_default(),
-                string_end_list: ctx.fields_list.get("string_end").cloned().unwrap_or_default(),
-                string_start: ctx.fields.get("string_start").cloned().unwrap_or_default(),
-                string_start_list: ctx.fields_list.get("string_start").cloned().unwrap_or_default(),
             };
             t.render()
         }

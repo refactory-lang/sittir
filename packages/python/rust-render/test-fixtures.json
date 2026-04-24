@@ -517,6 +517,59 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": "list_splat_pattern",
+      "$source": "ts",
+      "$text": "*print",
+      "$fields": {
+        "*": {
+          "$type": "*",
+          "$source": "ts",
+          "$text": "*",
+          "$span": {
+            "start": 50,
+            "end": 51
+          },
+          "$nodeId": 581528,
+          "$named": false
+        }
+      },
+      "$children": [
+        {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "print",
+          "$span": {
+            "start": 51,
+            "end": 56
+          },
+          "$nodeId": 581536,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 50,
+        "end": 56
+      },
+      "$nodeId": 580944,
+      "$named": true
+    },
+    "expectedOutput": "*print"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*print",
+    "pattern": "list_splat_pattern",
+    "edits": [],
+    "expectedSourceOut": "*print",
+    "expectedReparseTree": "(list_splat_pattern (identifier))",
+    "wrappedText": "*print = (1,)",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": "call",
       "$source": "ts",
       "$text": "exec(\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\" : None}, safe_dict)",
@@ -529,7 +582,7 @@
             "start": 0,
             "end": 4
           },
-          "$nodeId": 585640,
+          "$nodeId": 586432,
           "$named": true
         },
         "arguments": {
@@ -540,7 +593,7 @@
             "start": 4,
             "end": 122
           },
-          "$nodeId": 588808,
+          "$nodeId": 589600,
           "$named": true
         }
       },
@@ -548,7 +601,7 @@
         "start": 0,
         "end": 122
       },
-      "$nodeId": 588896,
+      "$nodeId": 589688,
       "$named": true
     },
     "expectedOutput": "exec (\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\" : None}, safe_dict)"
@@ -580,7 +633,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 586696,
+          "$nodeId": 587488,
           "$named": true
         },
         "content": {
@@ -591,7 +644,7 @@
             "start": 6,
             "end": 84
           },
-          "$nodeId": 586704,
+          "$nodeId": 587496,
           "$named": true
         },
         "string_end": {
@@ -602,7 +655,7 @@
             "start": 84,
             "end": 85
           },
-          "$nodeId": 586712,
+          "$nodeId": 587504,
           "$named": true
         }
       },
@@ -610,10 +663,10 @@
         "start": 5,
         "end": 85
       },
-      "$nodeId": 586800,
+      "$nodeId": 587592,
       "$named": true
     },
-    "expectedOutput": "\" print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function())) \""
+    "expectedOutput": "\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\""
   },
   {
     "kind": "roundtrip",
@@ -621,9 +674,9 @@
     "sourceIn": "\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function())) \"",
+    "expectedSourceOut": "\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence)) string_end: (string_end))",
-    "wrappedText": "_ = \" print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function())) \"",
+    "wrappedText": "_ = \"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\"",
     "wrappedOffset": 4
   },
   {
@@ -642,7 +695,7 @@
             "start": 87,
             "end": 88
           },
-          "$nodeId": 587864,
+          "$nodeId": 588656,
           "$named": false
         },
         "}": {
@@ -653,7 +706,7 @@
             "start": 109,
             "end": 110
           },
-          "$nodeId": 587880,
+          "$nodeId": 588672,
           "$named": false
         }
       },
@@ -666,7 +719,7 @@
             "start": 88,
             "end": 109
           },
-          "$nodeId": 587872,
+          "$nodeId": 588664,
           "$named": true
         }
       ],
@@ -674,7 +727,7 @@
         "start": 87,
         "end": 110
       },
-      "$nodeId": 587968,
+      "$nodeId": 588760,
       "$named": true
     },
     "expectedOutput": "{ \"__builtins__\" : None }"
@@ -706,7 +759,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 601528,
+          "$nodeId": 602048,
           "$named": true
         },
         "arguments": {
@@ -717,7 +770,7 @@
             "start": 1,
             "end": 6
           },
-          "$nodeId": 602176,
+          "$nodeId": 602792,
           "$named": true
         }
       },
@@ -725,7 +778,7 @@
         "start": 0,
         "end": 6
       },
-      "$nodeId": 602264,
+      "$nodeId": 602880,
       "$named": true
     },
     "expectedOutput": "a (*())"
@@ -745,6 +798,159 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": "list_splat",
+      "$source": "ts",
+      "$text": "*()",
+      "$fields": {
+        "*": {
+          "$type": "*",
+          "$source": "ts",
+          "$text": "*",
+          "$span": {
+            "start": 2,
+            "end": 3
+          },
+          "$nodeId": 602504,
+          "$named": false
+        },
+        "expression": {
+          "$type": "tuple",
+          "$source": "ts",
+          "$text": "()",
+          "$span": {
+            "start": 3,
+            "end": 5
+          },
+          "$nodeId": 602328,
+          "$named": true
+        }
+      },
+      "$span": {
+        "start": 2,
+        "end": 5
+      },
+      "$nodeId": 602688,
+      "$named": true
+    },
+    "expectedOutput": "*()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*()",
+    "pattern": "list_splat",
+    "edits": [],
+    "expectedSourceOut": "*()",
+    "expectedReparseTree": "(list_splat expression: (tuple))",
+    "wrappedText": "_f(*())",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "tuple",
+      "$source": "ts",
+      "$text": "()",
+      "$fields": {
+        "(": {
+          "$type": "(",
+          "$source": "ts",
+          "$text": "(",
+          "$span": {
+            "start": 3,
+            "end": 4
+          },
+          "$nodeId": 602232,
+          "$named": false
+        },
+        ")": {
+          "$type": ")",
+          "$source": "ts",
+          "$text": ")",
+          "$span": {
+            "start": 4,
+            "end": 5
+          },
+          "$nodeId": 602240,
+          "$named": false
+        }
+      },
+      "$span": {
+        "start": 3,
+        "end": 5
+      },
+      "$nodeId": 602328,
+      "$named": true
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "tuple",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(tuple)",
+    "wrappedText": "_ = ()",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "dictionary",
+      "$source": "ts",
+      "$text": "{}",
+      "$fields": {
+        "{": {
+          "$type": "{",
+          "$source": "ts",
+          "$text": "{",
+          "$span": {
+            "start": 11,
+            "end": 12
+          },
+          "$nodeId": 603408,
+          "$named": false
+        },
+        "}": {
+          "$type": "}",
+          "$source": "ts",
+          "$text": "}",
+          "$span": {
+            "start": 12,
+            "end": 13
+          },
+          "$nodeId": 603416,
+          "$named": false
+        }
+      },
+      "$span": {
+        "start": 11,
+        "end": 13
+      },
+      "$nodeId": 603504,
+      "$named": true
+    },
+    "expectedOutput": "{ }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "{}",
+    "pattern": "dictionary",
+    "edits": [],
+    "expectedSourceOut": "{ }",
+    "expectedReparseTree": "(dictionary)",
+    "wrappedText": "_ = { }",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": "binary_operator",
       "$source": "ts",
       "$text": "a + b * c ** d - e / 5",
@@ -757,7 +963,7 @@
             "start": 0,
             "end": 14
           },
-          "$nodeId": 610112,
+          "$nodeId": 613424,
           "$named": true
         },
         "operator": {
@@ -768,7 +974,7 @@
             "start": 15,
             "end": 16
           },
-          "$nodeId": 610576,
+          "$nodeId": 613968,
           "$named": false
         },
         "right": {
@@ -779,7 +985,7 @@
             "start": 17,
             "end": 22
           },
-          "$nodeId": 610480,
+          "$nodeId": 613872,
           "$named": true
         }
       },
@@ -787,7 +993,7 @@
         "start": 0,
         "end": 22
       },
-      "$nodeId": 610672,
+      "$nodeId": 614064,
       "$named": true
     },
     "expectedOutput": "a + b * c ** d - e / 5"
@@ -819,7 +1025,7 @@
             "start": 30,
             "end": 31
           },
-          "$nodeId": 611856,
+          "$nodeId": 615408,
           "$named": false
         },
         "argument": {
@@ -830,7 +1036,7 @@
             "start": 31,
             "end": 32
           },
-          "$nodeId": 611768,
+          "$nodeId": 615048,
           "$named": true
         }
       },
@@ -838,7 +1044,7 @@
         "start": 30,
         "end": 32
       },
-      "$nodeId": 611952,
+      "$nodeId": 615504,
       "$named": true
     },
     "expectedOutput": "- 5"
@@ -870,7 +1076,7 @@
             "start": 0,
             "end": 2
           },
-          "$nodeId": 617416,
+          "$nodeId": 621064,
           "$named": true
         },
         "operator": {
@@ -881,7 +1087,7 @@
             "start": 2,
             "end": 3
           },
-          "$nodeId": 617776,
+          "$nodeId": 621328,
           "$named": false
         },
         "right": {
@@ -892,7 +1098,7 @@
             "start": 3,
             "end": 5
           },
-          "$nodeId": 617680,
+          "$nodeId": 621232,
           "$named": true
         }
       },
@@ -900,7 +1106,7 @@
         "start": 0,
         "end": 5
       },
-      "$nodeId": 617872,
+      "$nodeId": 621424,
       "$named": true
     },
     "expectedOutput": ".1 - .0"
@@ -932,7 +1138,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 623768,
+          "$nodeId": 627232,
           "$named": true
         },
         "operator": {
@@ -943,7 +1149,7 @@
             "start": 1,
             "end": 3
           },
-          "$nodeId": 624312,
+          "$nodeId": 627776,
           "$named": false
         },
         "right": {
@@ -954,7 +1160,7 @@
             "start": 3,
             "end": 7
           },
-          "$nodeId": 624216,
+          "$nodeId": 627680,
           "$named": true
         }
       },
@@ -962,7 +1168,7 @@
         "start": 0,
         "end": 7
       },
-      "$nodeId": 624408,
+      "$nodeId": 627872,
       "$named": true
     },
     "expectedOutput": "2 ** 2**3"
@@ -994,7 +1200,7 @@
             "start": 8,
             "end": 9
           },
-          "$nodeId": 625216,
+          "$nodeId": 628680,
           "$named": false
         },
         "argument": {
@@ -1005,7 +1211,7 @@
             "start": 9,
             "end": 13
           },
-          "$nodeId": 625128,
+          "$nodeId": 628592,
           "$named": true
         }
       },
@@ -1013,7 +1219,7 @@
         "start": 8,
         "end": 13
       },
-      "$nodeId": 625312,
+      "$nodeId": 628776,
       "$named": true
     },
     "expectedOutput": "- 2**2"
@@ -1045,7 +1251,7 @@
             "start": 0,
             "end": 3
           },
-          "$nodeId": 629152,
+          "$nodeId": 632616,
           "$named": true
         },
         "operator": {
@@ -1056,7 +1262,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 630456,
+          "$nodeId": 633920,
           "$named": false
         },
         "right": {
@@ -1067,7 +1273,7 @@
             "start": 6,
             "end": 18
           },
-          "$nodeId": 630360,
+          "$nodeId": 633824,
           "$named": true
         }
       },
@@ -1075,7 +1281,7 @@
         "start": 0,
         "end": 18
       },
-      "$nodeId": 630552,
+      "$nodeId": 634016,
       "$named": true
     },
     "expectedOutput": "a() + b[c] * c.d.e"
@@ -1107,7 +1313,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 628872,
+          "$nodeId": 632336,
           "$named": true
         },
         "arguments": {
@@ -1118,7 +1324,7 @@
             "start": 1,
             "end": 3
           },
-          "$nodeId": 629064,
+          "$nodeId": 632528,
           "$named": true
         }
       },
@@ -1126,7 +1332,7 @@
         "start": 0,
         "end": 3
       },
-      "$nodeId": 629152,
+      "$nodeId": 632616,
       "$named": true
     },
     "expectedOutput": "a ()"
@@ -1158,7 +1364,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 629240,
+          "$nodeId": 632704,
           "$named": true
         },
         "[": {
@@ -1169,7 +1375,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 629512,
+          "$nodeId": 632976,
           "$named": false
         },
         "subscript": {
@@ -1180,7 +1386,7 @@
             "start": 8,
             "end": 9
           },
-          "$nodeId": 629328,
+          "$nodeId": 632792,
           "$named": true
         },
         "]": {
@@ -1191,7 +1397,7 @@
             "start": 9,
             "end": 10
           },
-          "$nodeId": 629528,
+          "$nodeId": 632992,
           "$named": false
         }
       },
@@ -1199,7 +1405,7 @@
         "start": 6,
         "end": 10
       },
-      "$nodeId": 629616,
+      "$nodeId": 633080,
       "$named": true
     },
     "expectedOutput": "b[c]"
@@ -1231,7 +1437,7 @@
             "start": 13,
             "end": 16
           },
-          "$nodeId": 629896,
+          "$nodeId": 633360,
           "$named": true
         },
         ".": {
@@ -1242,7 +1448,7 @@
             "start": 16,
             "end": 17
           },
-          "$nodeId": 630072,
+          "$nodeId": 633536,
           "$named": false
         },
         "attribute": {
@@ -1253,7 +1459,7 @@
             "start": 17,
             "end": 18
           },
-          "$nodeId": 630080,
+          "$nodeId": 633544,
           "$named": true
         }
       },
@@ -1261,7 +1467,7 @@
         "start": 13,
         "end": 18
       },
-      "$nodeId": 630168,
+      "$nodeId": 633632,
       "$named": true
     },
     "expectedOutput": "c.d.e"
@@ -1293,7 +1499,7 @@
             "start": 0,
             "end": 6
           },
-          "$nodeId": 637808,
+          "$nodeId": 641272,
           "$named": true
         },
         "operator": {
@@ -1304,7 +1510,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 638912,
+          "$nodeId": 642376,
           "$named": false
         },
         "right": {
@@ -1315,7 +1521,7 @@
             "start": 9,
             "end": 23
           },
-          "$nodeId": 638816,
+          "$nodeId": 642280,
           "$named": true
         }
       },
@@ -1323,7 +1529,7 @@
         "start": 0,
         "end": 23
       },
-      "$nodeId": 639008,
+      "$nodeId": 642472,
       "$named": true
     },
     "expectedOutput": "a << b | c >> d & e ^ f"
@@ -1355,7 +1561,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 641760,
+          "$nodeId": 645408,
           "$named": true
         },
         "operator": {
@@ -1366,7 +1572,7 @@
             "start": 2,
             "end": 4
           },
-          "$nodeId": 642664,
+          "$nodeId": 646216,
           "$named": false
         },
         "right": {
@@ -1377,7 +1583,7 @@
             "start": 5,
             "end": 12
           },
-          "$nodeId": 642568,
+          "$nodeId": 646120,
           "$named": true
         }
       },
@@ -1385,7 +1591,7 @@
         "start": 0,
         "end": 12
       },
-      "$nodeId": 642760,
+      "$nodeId": 646312,
       "$named": true
     },
     "expectedOutput": "a or b and c"
@@ -1417,7 +1623,7 @@
             "start": 13,
             "end": 16
           },
-          "$nodeId": 643288,
+          "$nodeId": 646840,
           "$named": false
         },
         "argument": {
@@ -1428,7 +1634,7 @@
             "start": 17,
             "end": 18
           },
-          "$nodeId": 642936,
+          "$nodeId": 646488,
           "$named": true
         }
       },
@@ -1436,7 +1642,7 @@
         "start": 13,
         "end": 18
       },
-      "$nodeId": 643384,
+      "$nodeId": 646936,
       "$named": true
     },
     "expectedOutput": "not d"
@@ -1456,6 +1662,194 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": "list_splat_pattern",
+      "$source": "ts",
+      "$text": "*c",
+      "$fields": {
+        "*": {
+          "$type": "*",
+          "$source": "ts",
+          "$text": "*",
+          "$span": {
+            "start": 21,
+            "end": 22
+          },
+          "$nodeId": 664712,
+          "$named": false
+        }
+      },
+      "$children": [
+        {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "c",
+          "$span": {
+            "start": 22,
+            "end": 23
+          },
+          "$nodeId": 664720,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 21,
+        "end": 23
+      },
+      "$nodeId": 664808,
+      "$named": true
+    },
+    "expectedOutput": "*c"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*c",
+    "pattern": "list_splat_pattern",
+    "edits": [],
+    "expectedSourceOut": "*c",
+    "expectedReparseTree": "(list_splat_pattern (identifier))",
+    "wrappedText": "*c = (1,)",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "subscript",
+      "$source": "ts",
+      "$text": "a[b]",
+      "$fields": {
+        "value": {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "a",
+          "$span": {
+            "start": 44,
+            "end": 45
+          },
+          "$nodeId": 667384,
+          "$named": true
+        },
+        "[": {
+          "$type": "[",
+          "$source": "ts",
+          "$text": "[",
+          "$span": {
+            "start": 45,
+            "end": 46
+          },
+          "$nodeId": 667656,
+          "$named": false
+        },
+        "subscript": {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "b",
+          "$span": {
+            "start": 46,
+            "end": 47
+          },
+          "$nodeId": 667472,
+          "$named": true
+        },
+        "]": {
+          "$type": "]",
+          "$source": "ts",
+          "$text": "]",
+          "$span": {
+            "start": 47,
+            "end": 48
+          },
+          "$nodeId": 667672,
+          "$named": false
+        }
+      },
+      "$span": {
+        "start": 44,
+        "end": 48
+      },
+      "$nodeId": 667760,
+      "$named": true
+    },
+    "expectedOutput": "a[b]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a[b]",
+    "pattern": "subscript",
+    "edits": [],
+    "expectedSourceOut": "a[b]",
+    "expectedReparseTree": "(subscript value: (identifier) subscript: (identifier))",
+    "wrappedText": "_ = a[b]",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "attribute",
+      "$source": "ts",
+      "$text": "b.c",
+      "$fields": {
+        "object": {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "b",
+          "$span": {
+            "start": 61,
+            "end": 62
+          },
+          "$nodeId": 669480,
+          "$named": true
+        },
+        ".": {
+          "$type": ".",
+          "$source": "ts",
+          "$text": ".",
+          "$span": {
+            "start": 62,
+            "end": 63
+          },
+          "$nodeId": 670144,
+          "$named": false
+        },
+        "attribute": {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "c",
+          "$span": {
+            "start": 63,
+            "end": 64
+          },
+          "$nodeId": 670152,
+          "$named": true
+        }
+      },
+      "$span": {
+        "start": 61,
+        "end": 64
+      },
+      "$nodeId": 670352,
+      "$named": true
+    },
+    "expectedOutput": "b.c"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "b.c",
+    "pattern": "attribute",
+    "edits": [],
+    "expectedSourceOut": "b.c",
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "_ = b.c",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": "type",
       "$source": "ts",
       "$text": "List[Leaf]",
@@ -1468,7 +1862,7 @@
             "start": 13,
             "end": 23
           },
-          "$nodeId": 668528,
+          "$nodeId": 675016,
           "$named": true
         }
       ],
@@ -1476,7 +1870,7 @@
         "start": 13,
         "end": 23
       },
-      "$nodeId": 669064,
+      "$nodeId": 675552,
       "$named": true
     },
     "expectedOutput": "List[Leaf]"
@@ -1508,7 +1902,7 @@
             "start": 26,
             "end": 27
           },
-          "$nodeId": 668696,
+          "$nodeId": 675184,
           "$named": false
         },
         "]": {
@@ -1519,7 +1913,7 @@
             "start": 27,
             "end": 28
           },
-          "$nodeId": 668704,
+          "$nodeId": 675192,
           "$named": false
         }
       },
@@ -1527,7 +1921,7 @@
         "start": 26,
         "end": 28
       },
-      "$nodeId": 668792,
+      "$nodeId": 675280,
       "$named": true
     },
     "expectedOutput": "[]"
@@ -1559,7 +1953,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 682888,
+          "$nodeId": 689376,
           "$named": true
         },
         ":=": {
@@ -1570,7 +1964,7 @@
             "start": 2,
             "end": 4
           },
-          "$nodeId": 683240,
+          "$nodeId": 689728,
           "$named": false
         },
         "value": {
@@ -1581,7 +1975,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 683056,
+          "$nodeId": 689544,
           "$named": true
         }
       },
@@ -1589,7 +1983,7 @@
         "start": 0,
         "end": 6
       },
-      "$nodeId": 683336,
+      "$nodeId": 689824,
       "$named": true
     },
     "expectedOutput": "a:=x"
@@ -1621,7 +2015,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 684608,
+          "$nodeId": 691096,
           "$named": false
         },
         ")": {
@@ -1632,7 +2026,7 @@
             "start": 17,
             "end": 18
           },
-          "$nodeId": 684624,
+          "$nodeId": 691112,
           "$named": false
         }
       },
@@ -1645,7 +2039,7 @@
             "start": 8,
             "end": 17
           },
-          "$nodeId": 684520,
+          "$nodeId": 691008,
           "$named": true
         }
       ],
@@ -1653,7 +2047,7 @@
         "start": 7,
         "end": 18
       },
-      "$nodeId": 684712,
+      "$nodeId": 691200,
       "$named": true
     },
     "expectedOutput": "(y := f(x))"
@@ -1685,7 +2079,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 683776,
+          "$nodeId": 690264,
           "$named": true
         },
         "arguments": {
@@ -1696,7 +2090,7 @@
             "start": 14,
             "end": 17
           },
-          "$nodeId": 684152,
+          "$nodeId": 690640,
           "$named": true
         }
       },
@@ -1704,7 +2098,7 @@
         "start": 13,
         "end": 17
       },
-      "$nodeId": 684240,
+      "$nodeId": 690728,
       "$named": true
     },
     "expectedOutput": "f (x)"
@@ -1736,7 +2130,7 @@
             "start": 116,
             "end": 125
           },
-          "$nodeId": 691840,
+          "$nodeId": 698328,
           "$named": true
         }
       ],
@@ -1744,7 +2138,7 @@
         "start": 116,
         "end": 125
       },
-      "$nodeId": 692296,
+      "$nodeId": 698784,
       "$named": true
     },
     "expectedOutput": "(p := 42)"
@@ -1776,7 +2170,7 @@
             "start": 165,
             "end": 166
           },
-          "$nodeId": 694488,
+          "$nodeId": 700976,
           "$named": true
         },
         "content": {
@@ -1787,7 +2181,7 @@
             "start": 166,
             "end": 172
           },
-          "$nodeId": 694496,
+          "$nodeId": 700984,
           "$named": true
         },
         "string_end": {
@@ -1798,7 +2192,7 @@
             "start": 172,
             "end": 173
           },
-          "$nodeId": 694504,
+          "$nodeId": 700992,
           "$named": true
         }
       },
@@ -1806,10 +2200,10 @@
         "start": 165,
         "end": 173
       },
-      "$nodeId": 694592,
+      "$nodeId": 701080,
       "$named": true
     },
-    "expectedOutput": "' vector '"
+    "expectedOutput": "'vector'"
   },
   {
     "kind": "roundtrip",
@@ -1817,9 +2211,9 @@
     "sourceIn": "'vector'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "' vector '",
+    "expectedSourceOut": "'vector'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = ' vector '",
+    "wrappedText": "_ = 'vector'",
     "wrappedOffset": 4
   },
   {
@@ -1838,7 +2232,7 @@
             "start": 75,
             "end": 76
           },
-          "$nodeId": 711264,
+          "$nodeId": 717752,
           "$named": false
         },
         ")": {
@@ -1849,7 +2243,7 @@
             "start": 112,
             "end": 113
           },
-          "$nodeId": 711280,
+          "$nodeId": 717768,
           "$named": false
         }
       },
@@ -1862,7 +2256,7 @@
             "start": 76,
             "end": 112
           },
-          "$nodeId": 711272,
+          "$nodeId": 717760,
           "$named": true
         }
       ],
@@ -1870,7 +2264,7 @@
         "start": 75,
         "end": 113
       },
-      "$nodeId": 711368,
+      "$nodeId": 717856,
       "$named": true
     },
     "expectedOutput": "(yield from (x for x in range(1, 10)))"
@@ -1902,7 +2296,7 @@
             "start": 87,
             "end": 88
           },
-          "$nodeId": 710792,
+          "$nodeId": 717280,
           "$named": false
         },
         "body": {
@@ -1913,7 +2307,7 @@
             "start": 88,
             "end": 89
           },
-          "$nodeId": 708648,
+          "$nodeId": 715136,
           "$named": true
         },
         "for_in_clause": {
@@ -1924,7 +2318,7 @@
             "start": 90,
             "end": 111
           },
-          "$nodeId": 710704,
+          "$nodeId": 717192,
           "$named": true
         },
         ")": {
@@ -1935,7 +2329,7 @@
             "start": 111,
             "end": 112
           },
-          "$nodeId": 710816,
+          "$nodeId": 717304,
           "$named": false
         }
       },
@@ -1943,7 +2337,7 @@
         "start": 87,
         "end": 112
       },
-      "$nodeId": 710904,
+      "$nodeId": 717392,
       "$named": true
     },
     "expectedOutput": "(x for x in range(1, 10) )"
@@ -1975,7 +2369,7 @@
             "start": 99,
             "end": 104
           },
-          "$nodeId": 708912,
+          "$nodeId": 715400,
           "$named": true
         },
         "arguments": {
@@ -1986,7 +2380,7 @@
             "start": 104,
             "end": 111
           },
-          "$nodeId": 710240,
+          "$nodeId": 716728,
           "$named": true
         }
       },
@@ -1994,7 +2388,7 @@
         "start": 99,
         "end": 111
       },
-      "$nodeId": 710328,
+      "$nodeId": 716816,
       "$named": true
     },
     "expectedOutput": "range (1, 10)"
@@ -2026,7 +2420,7 @@
             "start": 0,
             "end": 6
           },
-          "$nodeId": 721488,
+          "$nodeId": 727976,
           "$named": false
         },
         "parameters": {
@@ -2037,7 +2431,7 @@
             "start": 7,
             "end": 11
           },
-          "$nodeId": 721496,
+          "$nodeId": 727984,
           "$named": true
         },
         ":": {
@@ -2048,7 +2442,7 @@
             "start": 11,
             "end": 12
           },
-          "$nodeId": 721504,
+          "$nodeId": 727992,
           "$named": false
         },
         "body": {
@@ -2059,7 +2453,7 @@
             "start": 13,
             "end": 23
           },
-          "$nodeId": 721312,
+          "$nodeId": 727800,
           "$named": true
         }
       },
@@ -2067,7 +2461,7 @@
         "start": 0,
         "end": 23
       },
-      "$nodeId": 721600,
+      "$nodeId": 728088,
       "$named": true
     },
     "expectedOutput": "lambda b, c:d(\"e\" % f)"
@@ -2099,7 +2493,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 720056,
+          "$nodeId": 726544,
           "$named": true
         },
         "arguments": {
@@ -2110,7 +2504,7 @@
             "start": 14,
             "end": 23
           },
-          "$nodeId": 721224,
+          "$nodeId": 727712,
           "$named": true
         }
       },
@@ -2118,7 +2512,7 @@
         "start": 13,
         "end": 23
       },
-      "$nodeId": 721312,
+      "$nodeId": 727800,
       "$named": true
     },
     "expectedOutput": "d (\"e\" % f)"
@@ -2150,7 +2544,7 @@
             "start": 15,
             "end": 18
           },
-          "$nodeId": 720576,
+          "$nodeId": 727064,
           "$named": true
         },
         "operator": {
@@ -2161,7 +2555,7 @@
             "start": 19,
             "end": 20
           },
-          "$nodeId": 720760,
+          "$nodeId": 727248,
           "$named": false
         },
         "right": {
@@ -2172,7 +2566,7 @@
             "start": 21,
             "end": 22
           },
-          "$nodeId": 720664,
+          "$nodeId": 727152,
           "$named": true
         }
       },
@@ -2180,7 +2574,7 @@
         "start": 15,
         "end": 22
       },
-      "$nodeId": 720856,
+      "$nodeId": 727344,
       "$named": true
     },
     "expectedOutput": "\"e\" % f"
@@ -2212,7 +2606,7 @@
             "start": 15,
             "end": 16
           },
-          "$nodeId": 720472,
+          "$nodeId": 726960,
           "$named": true
         },
         "content": {
@@ -2223,7 +2617,7 @@
             "start": 16,
             "end": 17
           },
-          "$nodeId": 720480,
+          "$nodeId": 726968,
           "$named": true
         },
         "string_end": {
@@ -2234,7 +2628,7 @@
             "start": 17,
             "end": 18
           },
-          "$nodeId": 720488,
+          "$nodeId": 726976,
           "$named": true
         }
       },
@@ -2242,10 +2636,10 @@
         "start": 15,
         "end": 18
       },
-      "$nodeId": 720576,
+      "$nodeId": 727064,
       "$named": true
     },
-    "expectedOutput": "\" e \""
+    "expectedOutput": "\"e\""
   },
   {
     "kind": "roundtrip",
@@ -2253,9 +2647,148 @@
     "sourceIn": "\"e\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" e \"",
+    "expectedSourceOut": "\"e\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" e \"",
+    "wrappedText": "_ = \"e\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "list_splat_pattern",
+      "$source": "ts",
+      "$text": "*d",
+      "$fields": {
+        "*": {
+          "$type": "*",
+          "$source": "ts",
+          "$text": "*",
+          "$span": {
+            "start": 54,
+            "end": 55
+          },
+          "$nodeId": 729720,
+          "$named": false
+        }
+      },
+      "$children": [
+        {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "d",
+          "$span": {
+            "start": 55,
+            "end": 56
+          },
+          "$nodeId": 729728,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 54,
+        "end": 56
+      },
+      "$nodeId": 729816,
+      "$named": true
+    },
+    "expectedOutput": "*d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*d",
+    "pattern": "list_splat_pattern",
+    "edits": [],
+    "expectedSourceOut": "*d",
+    "expectedReparseTree": "(list_splat_pattern (identifier))",
+    "wrappedText": "*d = (1,)",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "tuple",
+      "$source": "ts",
+      "$text": "(a, b)",
+      "$fields": {
+        "(": {
+          "$type": "(",
+          "$source": "ts",
+          "$text": "(",
+          "$span": {
+            "start": 80,
+            "end": 81
+          },
+          "$nodeId": 732672,
+          "$named": false
+        },
+        ",": {
+          "$type": ",",
+          "$source": "ts",
+          "$text": ",",
+          "$span": {
+            "start": 82,
+            "end": 83
+          },
+          "$nodeId": 732480,
+          "$named": false
+        },
+        ")": {
+          "$type": ")",
+          "$source": "ts",
+          "$text": ")",
+          "$span": {
+            "start": 85,
+            "end": 86
+          },
+          "$nodeId": 732688,
+          "$named": false
+        }
+      },
+      "$children": [
+        {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "a",
+          "$span": {
+            "start": 81,
+            "end": 82
+          },
+          "$nodeId": 732128,
+          "$named": true
+        },
+        {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "b",
+          "$span": {
+            "start": 84,
+            "end": 85
+          },
+          "$nodeId": 732304,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 80,
+        "end": 86
+      },
+      "$nodeId": 732776,
+      "$named": true
+    },
+    "expectedOutput": "(a,b)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "(a, b)",
+    "pattern": "tuple",
+    "edits": [],
+    "expectedSourceOut": "(a,b)",
+    "expectedReparseTree": "(tuple (identifier) (identifier))",
+    "wrappedText": "_ = (a,b)",
     "wrappedOffset": 4
   },
   {
@@ -2274,7 +2807,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 738016,
+          "$nodeId": 748248,
           "$named": false
         },
         ",": {
@@ -2285,7 +2818,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 737632,
+          "$nodeId": 747864,
           "$named": false
         },
         ")": {
@@ -2296,7 +2829,7 @@
             "start": 16,
             "end": 17
           },
-          "$nodeId": 738032,
+          "$nodeId": 748264,
           "$named": false
         }
       },
@@ -2309,7 +2842,7 @@
             "start": 1,
             "end": 4
           },
-          "$nodeId": 736632,
+          "$nodeId": 747056,
           "$named": true
         },
         {
@@ -2320,7 +2853,7 @@
             "start": 6,
             "end": 10
           },
-          "$nodeId": 737640,
+          "$nodeId": 747872,
           "$named": true
         },
         {
@@ -2331,7 +2864,7 @@
             "start": 10,
             "end": 11
           },
-          "$nodeId": 738472,
+          "$nodeId": 748704,
           "$named": false
         },
         {
@@ -2342,7 +2875,7 @@
             "start": 12,
             "end": 16
           },
-          "$nodeId": 738480,
+          "$nodeId": 748712,
           "$named": true
         }
       ],
@@ -2350,7 +2883,7 @@
         "start": 0,
         "end": 17
       },
-      "$nodeId": 738760,
+      "$nodeId": 748520,
       "$named": true
     },
     "expectedOutput": "(foo,*bar,*baz)"
@@ -2382,7 +2915,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 737536,
+          "$nodeId": 747768,
           "$named": false
         },
         "expression": {
@@ -2393,7 +2926,7 @@
             "start": 7,
             "end": 10
           },
-          "$nodeId": 736808,
+          "$nodeId": 747232,
           "$named": true
         }
       },
@@ -2401,7 +2934,7 @@
         "start": 6,
         "end": 10
       },
-      "$nodeId": 737640,
+      "$nodeId": 747872,
       "$named": true
     },
     "expectedOutput": "*bar"
@@ -2413,9 +2946,9 @@
     "pattern": "list_splat",
     "edits": [],
     "expectedSourceOut": "*bar",
-    "expectedReparseTree": "(list_splat (identifier))",
-    "wrappedText": "_ = *bar",
-    "wrappedOffset": 4
+    "expectedReparseTree": "(list_splat expression: (identifier))",
+    "wrappedText": "_f(*bar)",
+    "wrappedOffset": 3
   },
   {
     "kind": "render",
@@ -2433,7 +2966,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 742984,
+          "$nodeId": 753344,
           "$named": false
         },
         ",": {
@@ -2444,7 +2977,7 @@
             "start": 2,
             "end": 3
           },
-          "$nodeId": 742712,
+          "$nodeId": 753152,
           "$named": false
         },
         ")": {
@@ -2455,7 +2988,7 @@
             "start": 17,
             "end": 18
           },
-          "$nodeId": 743000,
+          "$nodeId": 753360,
           "$named": false
         }
       },
@@ -2468,7 +3001,7 @@
             "start": 1,
             "end": 2
           },
-          "$nodeId": 741616,
+          "$nodeId": 752056,
           "$named": true
         },
         {
@@ -2479,7 +3012,7 @@
             "start": 4,
             "end": 17
           },
-          "$nodeId": 742720,
+          "$nodeId": 753160,
           "$named": true
         }
       ],
@@ -2487,7 +3020,7 @@
         "start": 0,
         "end": 18
       },
-      "$nodeId": 743088,
+      "$nodeId": 753448,
       "$named": true
     },
     "expectedOutput": "(a,yield a, b, c)"
@@ -2519,7 +3052,7 @@
             "start": 21,
             "end": 22
           },
-          "$nodeId": 747120,
+          "$nodeId": 757392,
           "$named": false
         },
         ",": {
@@ -2530,7 +3063,7 @@
             "start": 23,
             "end": 24
           },
-          "$nodeId": 746928,
+          "$nodeId": 757200,
           "$named": false
         },
         ")": {
@@ -2541,7 +3074,7 @@
             "start": 26,
             "end": 27
           },
-          "$nodeId": 747136,
+          "$nodeId": 757408,
           "$named": false
         }
       },
@@ -2554,7 +3087,7 @@
             "start": 22,
             "end": 23
           },
-          "$nodeId": 746576,
+          "$nodeId": 756848,
           "$named": true
         },
         {
@@ -2565,7 +3098,7 @@
             "start": 25,
             "end": 26
           },
-          "$nodeId": 746752,
+          "$nodeId": 757024,
           "$named": true
         }
       ],
@@ -2573,7 +3106,7 @@
         "start": 21,
         "end": 27
       },
-      "$nodeId": 747224,
+      "$nodeId": 757496,
       "$named": true
     },
     "expectedOutput": "(3,4)"
@@ -2605,7 +3138,7 @@
             "start": 18,
             "end": 29
           },
-          "$nodeId": 754480,
+          "$nodeId": 764752,
           "$named": true
         },
         "if": {
@@ -2616,7 +3149,7 @@
             "start": 30,
             "end": 32
           },
-          "$nodeId": 755096,
+          "$nodeId": 765368,
           "$named": false
         },
         "condition": {
@@ -2627,7 +3160,7 @@
             "start": 33,
             "end": 34
           },
-          "$nodeId": 754656,
+          "$nodeId": 764928,
           "$named": true
         },
         "else": {
@@ -2638,7 +3171,7 @@
             "start": 35,
             "end": 39
           },
-          "$nodeId": 755112,
+          "$nodeId": 765384,
           "$named": false
         },
         "alternative": {
@@ -2649,7 +3182,7 @@
             "start": 40,
             "end": 41
           },
-          "$nodeId": 754912,
+          "$nodeId": 765184,
           "$named": true
         }
       },
@@ -2657,7 +3190,7 @@
         "start": 18,
         "end": 41
       },
-      "$nodeId": 755208,
+      "$nodeId": 765480,
       "$named": true
     },
     "expectedOutput": "something() if a else d"
@@ -2689,7 +3222,7 @@
             "start": 18,
             "end": 27
           },
-          "$nodeId": 754200,
+          "$nodeId": 764472,
           "$named": true
         },
         "arguments": {
@@ -2700,7 +3233,7 @@
             "start": 27,
             "end": 29
           },
-          "$nodeId": 754392,
+          "$nodeId": 764664,
           "$named": true
         }
       },
@@ -2708,7 +3241,7 @@
         "start": 18,
         "end": 29
       },
-      "$nodeId": 754480,
+      "$nodeId": 764752,
       "$named": true
     },
     "expectedOutput": "something ()"
@@ -2740,7 +3273,7 @@
             "start": 11,
             "end": 12
           },
-          "$nodeId": 760984,
+          "$nodeId": 771256,
           "$named": true
         },
         "as": {
@@ -2751,7 +3284,7 @@
             "start": 13,
             "end": 15
           },
-          "$nodeId": 761344,
+          "$nodeId": 771616,
           "$named": false
         },
         "alias": {
@@ -2762,7 +3295,7 @@
             "start": 16,
             "end": 17
           },
-          "$nodeId": 761352,
+          "$nodeId": 771624,
           "$named": true
         }
       },
@@ -2770,7 +3303,7 @@
         "start": 11,
         "end": 17
       },
-      "$nodeId": 761440,
+      "$nodeId": 771712,
       "$named": true
     },
     "expectedOutput": "a as b"
@@ -2802,7 +3335,7 @@
             "start": 44,
             "end": 45
           },
-          "$nodeId": 763032,
+          "$nodeId": 773304,
           "$named": false
         },
         "body": {
@@ -2813,7 +3346,7 @@
             "start": 45,
             "end": 46
           },
-          "$nodeId": 762216,
+          "$nodeId": 772488,
           "$named": true
         },
         "for_in_clause": {
@@ -2824,7 +3357,7 @@
             "start": 47,
             "end": 63
           },
-          "$nodeId": 762864,
+          "$nodeId": 773136,
           "$named": true
         },
         "]": {
@@ -2835,7 +3368,7 @@
             "start": 63,
             "end": 64
           },
-          "$nodeId": 763056,
+          "$nodeId": 773328,
           "$named": false
         }
       },
@@ -2843,7 +3376,7 @@
         "start": 44,
         "end": 64
       },
-      "$nodeId": 763144,
+      "$nodeId": 773416,
       "$named": true
     },
     "expectedOutput": "[e async for f in g ]"
@@ -2875,7 +3408,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 767608,
+          "$nodeId": 777880,
           "$named": true
         },
         "arguments": {
@@ -2886,7 +3419,7 @@
             "start": 14,
             "end": 26
           },
-          "$nodeId": 768344,
+          "$nodeId": 778616,
           "$named": true
         }
       },
@@ -2894,7 +3427,7 @@
         "start": 13,
         "end": 26
       },
-      "$nodeId": 768432,
+      "$nodeId": 778704,
       "$named": true
     },
     "expectedOutput": "b (\n1,\n2\n    )"
@@ -2926,7 +3459,7 @@
             "start": 36,
             "end": 37
           },
-          "$nodeId": 769224,
+          "$nodeId": 779496,
           "$named": false
         },
         "]": {
@@ -2937,7 +3470,7 @@
             "start": 44,
             "end": 45
           },
-          "$nodeId": 769240,
+          "$nodeId": 779512,
           "$named": false
         }
       },
@@ -2950,7 +3483,7 @@
             "start": 38,
             "end": 39
           },
-          "$nodeId": 768960,
+          "$nodeId": 779232,
           "$named": true
         }
       ],
@@ -2958,7 +3491,7 @@
         "start": 36,
         "end": 45
       },
-      "$nodeId": 769328,
+      "$nodeId": 779600,
       "$named": true
     },
     "expectedOutput": "[3]"
@@ -2990,7 +3523,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 774472,
+          "$nodeId": 784744,
           "$named": false
         },
         ",": {
@@ -3001,7 +3534,7 @@
             "start": 8,
             "end": 9
           },
-          "$nodeId": 774280,
+          "$nodeId": 784552,
           "$named": false
         },
         "]": {
@@ -3012,7 +3545,7 @@
             "start": 10,
             "end": 11
           },
-          "$nodeId": 774488,
+          "$nodeId": 784760,
           "$named": false
         }
       },
@@ -3025,7 +3558,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 773648,
+          "$nodeId": 783920,
           "$named": true
         },
         {
@@ -3036,7 +3569,7 @@
             "start": 9,
             "end": 10
           },
-          "$nodeId": 773824,
+          "$nodeId": 784096,
           "$named": true
         }
       ],
@@ -3044,7 +3577,7 @@
         "start": 6,
         "end": 11
       },
-      "$nodeId": 774576,
+      "$nodeId": 784848,
       "$named": true
     },
     "expectedOutput": "[1,2]"
@@ -3076,7 +3609,7 @@
             "start": 0,
             "end": 5
           },
-          "$nodeId": 779888,
+          "$nodeId": 791456,
           "$named": true
         },
         "arguments": {
@@ -3087,7 +3620,7 @@
             "start": 5,
             "end": 17
           },
-          "$nodeId": 782384,
+          "$nodeId": 793264,
           "$named": true
         }
       },
@@ -3095,7 +3628,7 @@
         "start": 0,
         "end": 17
       },
-      "$nodeId": 782472,
+      "$nodeId": 793352,
       "$named": true
     },
     "expectedOutput": "match (r1, r2, r3)"
@@ -3127,7 +3660,7 @@
             "start": 3,
             "end": 11
           },
-          "$nodeId": 785152,
+          "$nodeId": 796008,
           "$named": true
         }
       ],
@@ -3135,7 +3668,7 @@
         "start": 3,
         "end": 11
       },
-      "$nodeId": 785248,
+      "$nodeId": 796104,
       "$named": true
     },
     "expectedOutput": "A[T] | B"
@@ -3167,7 +3700,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 789288,
+          "$nodeId": 800224,
           "$named": false
         },
         "argument": {
@@ -3178,7 +3711,7 @@
             "start": 1,
             "end": 2
           },
-          "$nodeId": 789200,
+          "$nodeId": 800136,
           "$named": true
         }
       },
@@ -3186,7 +3719,7 @@
         "start": 0,
         "end": 2
       },
-      "$nodeId": 789384,
+      "$nodeId": 800320,
       "$named": true
     },
     "expectedOutput": "- 1"
@@ -3218,7 +3751,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 797808,
+          "$nodeId": 808744,
           "$named": false
         },
         "argument": {
@@ -3229,7 +3762,7 @@
             "start": 1,
             "end": 5
           },
-          "$nodeId": 797720,
+          "$nodeId": 808656,
           "$named": true
         }
       },
@@ -3237,7 +3770,7 @@
         "start": 0,
         "end": 5
       },
-      "$nodeId": 797904,
+      "$nodeId": 808840,
       "$named": true
     },
     "expectedOutput": "- .6_6"
@@ -3269,7 +3802,7 @@
             "start": 29,
             "end": 30
           },
-          "$nodeId": 806312,
+          "$nodeId": 817248,
           "$named": false
         },
         "argument": {
@@ -3280,7 +3813,7 @@
             "start": 30,
             "end": 34
           },
-          "$nodeId": 805952,
+          "$nodeId": 816888,
           "$named": true
         }
       },
@@ -3288,7 +3821,7 @@
         "start": 29,
         "end": 34
       },
-      "$nodeId": 806408,
+      "$nodeId": 817344,
       "$named": true
     },
     "expectedOutput": "- 1e10"
@@ -3320,7 +3853,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 808544,
+          "$nodeId": 819480,
           "$named": true
         },
         "content": {
@@ -3331,7 +3864,7 @@
             "start": 1,
             "end": 7
           },
-          "$nodeId": 808552,
+          "$nodeId": 819488,
           "$named": true
         },
         "string_end": {
@@ -3342,7 +3875,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 808560,
+          "$nodeId": 819496,
           "$named": true
         }
       },
@@ -3350,10 +3883,10 @@
         "start": 0,
         "end": 8
       },
-      "$nodeId": 808648,
+      "$nodeId": 819584,
       "$named": true
     },
-    "expectedOutput": "\" I'm ok \""
+    "expectedOutput": "\"I'm ok\""
   },
   {
     "kind": "roundtrip",
@@ -3361,9 +3894,9 @@
     "sourceIn": "\"I'm ok\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" I'm ok \"",
+    "expectedSourceOut": "\"I'm ok\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" I'm ok \"",
+    "wrappedText": "_ = \"I'm ok\"",
     "wrappedOffset": 4
   },
   {
@@ -3382,7 +3915,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 826928,
+          "$nodeId": 837864,
           "$named": true
         },
         "content": {
@@ -3393,7 +3926,7 @@
             "start": 1,
             "end": 9
           },
-          "$nodeId": 826936,
+          "$nodeId": 837872,
           "$named": true
         },
         "string_end": {
@@ -3404,7 +3937,7 @@
             "start": 9,
             "end": 10
           },
-          "$nodeId": 826944,
+          "$nodeId": 837880,
           "$named": true
         }
       },
@@ -3412,10 +3945,10 @@
         "start": 0,
         "end": 10
       },
-      "$nodeId": 827032,
+      "$nodeId": 837968,
       "$named": true
     },
-    "expectedOutput": "' ab\\x00cd '"
+    "expectedOutput": "'ab\\x00cd'"
   },
   {
     "kind": "roundtrip",
@@ -3423,9 +3956,9 @@
     "sourceIn": "'ab\\x00cd'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "' ab\\x00cd '",
+    "expectedSourceOut": "'ab\\x00cd'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_sequence)) string_end: (string_end))",
-    "wrappedText": "_ = ' ab\\x00cd '",
+    "wrappedText": "_ = 'ab\\x00cd'",
     "wrappedOffset": 4
   },
   {
@@ -3444,7 +3977,7 @@
             "start": 0,
             "end": 10
           },
-          "$nodeId": 835536,
+          "$nodeId": 846472,
           "$named": true
         },
         "arguments": {
@@ -3455,7 +3988,7 @@
             "start": 10,
             "end": 85
           },
-          "$nodeId": 836952,
+          "$nodeId": 847888,
           "$named": true
         }
       },
@@ -3463,7 +3996,7 @@
         "start": 0,
         "end": 85
       },
-      "$nodeId": 837040,
+      "$nodeId": 847976,
       "$named": true
     },
     "expectedOutput": "re.compile (r\"(\\n|\\A)#include\\s*['\\\"]\"\n           r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\")"
@@ -3495,7 +4028,7 @@
             "start": 0,
             "end": 2
           },
-          "$nodeId": 835344,
+          "$nodeId": 846280,
           "$named": true
         },
         ".": {
@@ -3506,7 +4039,7 @@
             "start": 2,
             "end": 3
           },
-          "$nodeId": 835440,
+          "$nodeId": 846376,
           "$named": false
         },
         "attribute": {
@@ -3517,7 +4050,7 @@
             "start": 3,
             "end": 10
           },
-          "$nodeId": 835448,
+          "$nodeId": 846384,
           "$named": true
         }
       },
@@ -3525,7 +4058,7 @@
         "start": 0,
         "end": 10
       },
-      "$nodeId": 835536,
+      "$nodeId": 846472,
       "$named": true
     },
     "expectedOutput": "re.compile"
@@ -3557,7 +4090,7 @@
             "start": 11,
             "end": 37
           },
-          "$nodeId": 836488,
+          "$nodeId": 847424,
           "$named": true
         }
       },
@@ -3570,7 +4103,7 @@
             "start": 49,
             "end": 84
           },
-          "$nodeId": 836496,
+          "$nodeId": 847432,
           "$named": true
         }
       ],
@@ -3578,7 +4111,7 @@
         "start": 11,
         "end": 84
       },
-      "$nodeId": 836584,
+      "$nodeId": 847520,
       "$named": true
     },
     "expectedOutput": "r\"(\\n|\\A)#include\\s*['\\\"]\" r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\""
@@ -3610,7 +4143,7 @@
             "start": 11,
             "end": 13
           },
-          "$nodeId": 836032,
+          "$nodeId": 846968,
           "$named": true
         },
         "content": {
@@ -3621,7 +4154,7 @@
             "start": 13,
             "end": 36
           },
-          "$nodeId": 836040,
+          "$nodeId": 846976,
           "$named": true
         },
         "string_end": {
@@ -3632,7 +4165,7 @@
             "start": 36,
             "end": 37
           },
-          "$nodeId": 836048,
+          "$nodeId": 846984,
           "$named": true
         }
       },
@@ -3640,10 +4173,10 @@
         "start": 11,
         "end": 37
       },
-      "$nodeId": 836488,
+      "$nodeId": 847424,
       "$named": true
     },
-    "expectedOutput": "r\" (\\n|\\A)#include\\s*['\\\"] \""
+    "expectedOutput": "r\"(\\n|\\A)#include\\s*['\\\"]\""
   },
   {
     "kind": "roundtrip",
@@ -3651,9 +4184,537 @@
     "sourceIn": "r\"(\\n|\\A)#include\\s*['\\\"]\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "r\" (\\n|\\A)#include\\s*['\\\"] \"",
+    "expectedSourceOut": "r\"(\\n|\\A)#include\\s*['\\\"]\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = r\" (\\n|\\A)#include\\s*['\\\"] \"",
+    "wrappedText": "_ = r\"(\\n|\\A)#include\\s*['\\\"]\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "string",
+      "$source": "ts",
+      "$text": "f\"a {b(f'c {e} d')} e\"",
+      "$fields": {
+        "string_start": {
+          "$type": "string_start",
+          "$source": "ts",
+          "$text": "f\"",
+          "$span": {
+            "start": 10,
+            "end": 12
+          },
+          "$nodeId": 858272,
+          "$named": true
+        },
+        "content": [
+          {
+            "$type": "string_content",
+            "$source": "ts",
+            "$text": "a ",
+            "$span": {
+              "start": 12,
+              "end": 14
+            },
+            "$nodeId": 857832,
+            "$named": true
+          },
+          {
+            "$type": "interpolation",
+            "$source": "ts",
+            "$text": "{b(f'c {e} d')}",
+            "$span": {
+              "start": 14,
+              "end": 29
+            },
+            "$nodeId": 857840,
+            "$named": true
+          },
+          {
+            "$type": "string_content",
+            "$source": "ts",
+            "$text": " e",
+            "$span": {
+              "start": 29,
+              "end": 31
+            },
+            "$nodeId": 858104,
+            "$named": true
+          }
+        ],
+        "string_end": {
+          "$type": "string_end",
+          "$source": "ts",
+          "$text": "\"",
+          "$span": {
+            "start": 31,
+            "end": 32
+          },
+          "$nodeId": 858288,
+          "$named": true
+        }
+      },
+      "$span": {
+        "start": 10,
+        "end": 32
+      },
+      "$nodeId": 858376,
+      "$named": true
+    },
+    "expectedOutput": "f\"a {b(f'c {e} d')} e\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"a {b(f'c {e} d')} e\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"a {b(f'c {e} d')} e\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))))) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = f\"a {b(f'c {e} d')} e\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "call",
+      "$source": "ts",
+      "$text": "b(f'c {e} d')",
+      "$fields": {
+        "function": {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "b",
+          "$span": {
+            "start": 15,
+            "end": 16
+          },
+          "$nodeId": 855760,
+          "$named": true
+        },
+        "arguments": {
+          "$type": "argument_list",
+          "$source": "ts",
+          "$text": "(f'c {e} d')",
+          "$span": {
+            "start": 16,
+            "end": 28
+          },
+          "$nodeId": 857296,
+          "$named": true
+        }
+      },
+      "$span": {
+        "start": 15,
+        "end": 28
+      },
+      "$nodeId": 857384,
+      "$named": true
+    },
+    "expectedOutput": "b (f'c {e} d')"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "b(f'c {e} d')",
+    "pattern": "call",
+    "edits": [],
+    "expectedSourceOut": "b (f'c {e} d')",
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))))",
+    "wrappedText": "_ = b (f'c {e} d')",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "string",
+      "$source": "ts",
+      "$text": "f\"a {b:2} {c:34.5}\"",
+      "$fields": {
+        "string_start": {
+          "$type": "string_start",
+          "$source": "ts",
+          "$text": "f\"",
+          "$span": {
+            "start": 0,
+            "end": 2
+          },
+          "$nodeId": 890192,
+          "$named": true
+        },
+        "content": [
+          {
+            "$type": "string_content",
+            "$source": "ts",
+            "$text": "a ",
+            "$span": {
+              "start": 2,
+              "end": 4
+            },
+            "$nodeId": 889344,
+            "$named": true
+          },
+          {
+            "$type": "interpolation",
+            "$source": "ts",
+            "$text": "{b:2}",
+            "$span": {
+              "start": 4,
+              "end": 9
+            },
+            "$nodeId": 889352,
+            "$named": true
+          },
+          {
+            "$type": "string_content",
+            "$source": "ts",
+            "$text": " ",
+            "$span": {
+              "start": 9,
+              "end": 10
+            },
+            "$nodeId": 887512,
+            "$named": true
+          },
+          {
+            "$type": "interpolation",
+            "$source": "ts",
+            "$text": "{c:34.5}",
+            "$span": {
+              "start": 10,
+              "end": 18
+            },
+            "$nodeId": 890024,
+            "$named": true
+          }
+        ],
+        "string_end": {
+          "$type": "string_end",
+          "$source": "ts",
+          "$text": "\"",
+          "$span": {
+            "start": 18,
+            "end": 19
+          },
+          "$nodeId": 890208,
+          "$named": true
+        }
+      },
+      "$span": {
+        "start": 0,
+        "end": 19
+      },
+      "$nodeId": 890296,
+      "$named": true
+    },
+    "expectedOutput": "f\"a {b:2} {c:34.5}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"a {b:2} {c:34.5}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"a {b:2} {c:34.5}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) content: (string_content) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end))",
+    "wrappedText": "_ = f\"a {b:2} {c:34.5}\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "attribute",
+      "$source": "ts",
+      "$text": "c.d",
+      "$fields": {
+        "object": {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "c",
+          "$span": {
+            "start": 26,
+            "end": 27
+          },
+          "$nodeId": 891000,
+          "$named": true
+        },
+        ".": {
+          "$type": ".",
+          "$source": "ts",
+          "$text": ".",
+          "$span": {
+            "start": 27,
+            "end": 28
+          },
+          "$nodeId": 891096,
+          "$named": false
+        },
+        "attribute": {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "d",
+          "$span": {
+            "start": 28,
+            "end": 29
+          },
+          "$nodeId": 891104,
+          "$named": true
+        }
+      },
+      "$span": {
+        "start": 26,
+        "end": 29
+      },
+      "$nodeId": 891192,
+      "$named": true
+    },
+    "expectedOutput": "c.d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "c.d",
+    "pattern": "attribute",
+    "edits": [],
+    "expectedSourceOut": "c.d",
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "_ = c.d",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "binary_operator",
+      "$source": "ts",
+      "$text": "width + padding",
+      "$fields": {
+        "left": {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "width",
+          "$span": {
+            "start": 81,
+            "end": 86
+          },
+          "$nodeId": 897488,
+          "$named": true
+        },
+        "operator": {
+          "$type": "+",
+          "$source": "ts",
+          "$text": "+",
+          "$span": {
+            "start": 87,
+            "end": 88
+          },
+          "$nodeId": 897672,
+          "$named": false
+        },
+        "right": {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "padding",
+          "$span": {
+            "start": 89,
+            "end": 96
+          },
+          "$nodeId": 897576,
+          "$named": true
+        }
+      },
+      "$span": {
+        "start": 81,
+        "end": 96
+      },
+      "$nodeId": 897768,
+      "$named": true
+    },
+    "expectedOutput": "width + padding"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "width + padding",
+    "pattern": "binary_operator",
+    "edits": [],
+    "expectedSourceOut": "width + padding",
+    "expectedReparseTree": "(binary_operator left: (identifier) right: (identifier))",
+    "wrappedText": "_ = width + padding",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "string",
+      "$source": "ts",
+      "$text": "t\"Hello, {first_name} {last_name}!\"",
+      "$fields": {
+        "string_start": {
+          "$type": "string_start",
+          "$source": "ts",
+          "$text": "t\"",
+          "$span": {
+            "start": 0,
+            "end": 2
+          },
+          "$nodeId": 906968,
+          "$named": true
+        },
+        "content": [
+          {
+            "$type": "string_content",
+            "$source": "ts",
+            "$text": "Hello, ",
+            "$span": {
+              "start": 2,
+              "end": 9
+            },
+            "$nodeId": 905800,
+            "$named": true
+          },
+          {
+            "$type": "interpolation",
+            "$source": "ts",
+            "$text": "{first_name}",
+            "$span": {
+              "start": 9,
+              "end": 21
+            },
+            "$nodeId": 905808,
+            "$named": true
+          },
+          {
+            "$type": "string_content",
+            "$source": "ts",
+            "$text": " ",
+            "$span": {
+              "start": 21,
+              "end": 22
+            },
+            "$nodeId": 906528,
+            "$named": true
+          },
+          {
+            "$type": "interpolation",
+            "$source": "ts",
+            "$text": "{last_name}",
+            "$span": {
+              "start": 22,
+              "end": 33
+            },
+            "$nodeId": 906536,
+            "$named": true
+          },
+          {
+            "$type": "string_content",
+            "$source": "ts",
+            "$text": "!",
+            "$span": {
+              "start": 33,
+              "end": 34
+            },
+            "$nodeId": 906800,
+            "$named": true
+          }
+        ],
+        "string_end": {
+          "$type": "string_end",
+          "$source": "ts",
+          "$text": "\"",
+          "$span": {
+            "start": 34,
+            "end": 35
+          },
+          "$nodeId": 906984,
+          "$named": true
+        }
+      },
+      "$span": {
+        "start": 0,
+        "end": 35
+      },
+      "$nodeId": 907072,
+      "$named": true
+    },
+    "expectedOutput": "t\"Hello, {first_name} {last_name}!\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "t\"Hello, {first_name} {last_name}!\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "t\"Hello, {first_name} {last_name}!\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = t\"Hello, {first_name} {last_name}!\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "binary_operator",
+      "$source": "ts",
+      "$text": "a + b",
+      "$fields": {
+        "left": {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "a",
+          "$span": {
+            "start": 159,
+            "end": 160
+          },
+          "$nodeId": 915152,
+          "$named": true
+        },
+        "operator": {
+          "$type": "+",
+          "$source": "ts",
+          "$text": "+",
+          "$span": {
+            "start": 161,
+            "end": 162
+          },
+          "$nodeId": 915336,
+          "$named": false
+        },
+        "right": {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "b",
+          "$span": {
+            "start": 163,
+            "end": 164
+          },
+          "$nodeId": 915240,
+          "$named": true
+        }
+      },
+      "$span": {
+        "start": 159,
+        "end": 164
+      },
+      "$nodeId": 915432,
+      "$named": true
+    },
+    "expectedOutput": "a + b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a + b",
+    "pattern": "binary_operator",
+    "edits": [],
+    "expectedSourceOut": "a + b",
+    "expectedReparseTree": "(binary_operator left: (identifier) right: (identifier))",
+    "wrappedText": "_ = a + b",
     "wrappedOffset": 4
   },
   {
@@ -3672,7 +4733,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 904104,
+          "$nodeId": 921744,
           "$named": true
         },
         "content": {
@@ -3683,7 +4744,7 @@
             "start": 1,
             "end": 17
           },
-          "$nodeId": 904112,
+          "$nodeId": 921752,
           "$named": true
         },
         "string_end": {
@@ -3694,7 +4755,7 @@
             "start": 17,
             "end": 18
           },
-          "$nodeId": 904120,
+          "$nodeId": 921760,
           "$named": true
         }
       },
@@ -3702,10 +4763,10 @@
         "start": 0,
         "end": 18
       },
-      "$nodeId": 904208,
+      "$nodeId": 921848,
       "$named": true
     },
-    "expectedOutput": "\" \\x12 \\123 \\u1234 \""
+    "expectedOutput": "\"\\x12 \\123 \\u1234\""
   },
   {
     "kind": "roundtrip",
@@ -3713,9 +4774,9 @@
     "sourceIn": "\"\\x12 \\123 \\u1234\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" \\x12 \\123 \\u1234 \"",
+    "expectedSourceOut": "\"\\x12 \\123 \\u1234\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence) (escape_sequence)) string_end: (string_end))",
-    "wrappedText": "_ = \" \\x12 \\123 \\u1234 \"",
+    "wrappedText": "_ = \"\\x12 \\123 \\u1234\"",
     "wrappedOffset": 4
   },
   {
@@ -3734,7 +4795,7 @@
             "start": 0,
             "end": 5
           },
-          "$nodeId": 909992,
+          "$nodeId": 927368,
           "$named": true
         }
       },
@@ -3747,7 +4808,7 @@
             "start": 6,
             "end": 11
           },
-          "$nodeId": 909896,
+          "$nodeId": 927272,
           "$named": true
         },
         {
@@ -3758,7 +4819,7 @@
             "start": 12,
             "end": 19
           },
-          "$nodeId": 909904,
+          "$nodeId": 927280,
           "$named": true
         }
       ],
@@ -3766,7 +4827,7 @@
         "start": 0,
         "end": 19
       },
-      "$nodeId": 910088,
+      "$nodeId": 927464,
       "$named": true
     },
     "expectedOutput": "\"one\" \"two\" \"three\""
@@ -3798,7 +4859,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 908928,
+          "$nodeId": 926304,
           "$named": true
         },
         "content": {
@@ -3809,7 +4870,7 @@
             "start": 1,
             "end": 4
           },
-          "$nodeId": 908936,
+          "$nodeId": 926312,
           "$named": true
         },
         "string_end": {
@@ -3820,7 +4881,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 908944,
+          "$nodeId": 926320,
           "$named": true
         }
       },
@@ -3828,10 +4889,10 @@
         "start": 0,
         "end": 5
       },
-      "$nodeId": 909992,
+      "$nodeId": 927368,
       "$named": true
     },
-    "expectedOutput": "\" one \""
+    "expectedOutput": "\"one\""
   },
   {
     "kind": "roundtrip",
@@ -3839,9 +4900,9 @@
     "sourceIn": "\"one\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" one \"",
+    "expectedSourceOut": "\"one\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" one \"",
+    "wrappedText": "_ = \"one\"",
     "wrappedOffset": 4
   },
   {
@@ -3860,7 +4921,7 @@
             "start": 0,
             "end": 3
           },
-          "$nodeId": 914856,
+          "$nodeId": 932240,
           "$named": true
         },
         "content": {
@@ -3871,7 +4932,7 @@
             "start": 3,
             "end": 59
           },
-          "$nodeId": 914864,
+          "$nodeId": 932248,
           "$named": true
         },
         "string_end": {
@@ -3882,7 +4943,7 @@
             "start": 59,
             "end": 62
           },
-          "$nodeId": 914872,
+          "$nodeId": 932256,
           "$named": true
         }
       },
@@ -3890,10 +4951,10 @@
         "start": 0,
         "end": 62
       },
-      "$nodeId": 914960,
+      "$nodeId": 932344,
       "$named": true
     },
-    "expectedOutput": "\"\"\" \nA double quote hello,\nwithout double or single quotes.\n \"\"\""
+    "expectedOutput": "\"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\""
   },
   {
     "kind": "roundtrip",
@@ -3901,9 +4962,9 @@
     "sourceIn": "\"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\"\"\" \nA double quote hello,\nwithout double or single quotes.\n \"\"\"",
+    "expectedSourceOut": "\"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \"\"\" \nA double quote hello,\nwithout double or single quotes.\n \"\"\"",
+    "wrappedText": "_ = \"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\"",
     "wrappedOffset": 4
   },
   {
@@ -3922,7 +4983,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 925552,
+          "$nodeId": 943024,
           "$named": false
         },
         ",": {
@@ -3933,7 +4994,7 @@
             "start": 2,
             "end": 3
           },
-          "$nodeId": 925008,
+          "$nodeId": 942480,
           "$named": false
         },
         "]": {
@@ -3944,7 +5005,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 925568,
+          "$nodeId": 943040,
           "$named": false
         }
       },
@@ -3957,7 +5018,7 @@
             "start": 1,
             "end": 2
           },
-          "$nodeId": 924656,
+          "$nodeId": 942128,
           "$named": true
         },
         {
@@ -3968,7 +5029,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 924832,
+          "$nodeId": 942304,
           "$named": true
         },
         {
@@ -3979,7 +5040,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 926848,
+          "$nodeId": 944320,
           "$named": false
         },
         {
@@ -3990,7 +5051,7 @@
             "start": 7,
             "end": 13
           },
-          "$nodeId": 926672,
+          "$nodeId": 944144,
           "$named": true
         }
       ],
@@ -3998,7 +5059,7 @@
         "start": 0,
         "end": 14
       },
-      "$nodeId": 926192,
+      "$nodeId": 943664,
       "$named": true
     },
     "expectedOutput": "[a,b,[c, d]]"
@@ -4018,6 +5079,108 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": "list_splat",
+      "$source": "ts",
+      "$text": "*()",
+      "$fields": {
+        "*": {
+          "$type": "*",
+          "$source": "ts",
+          "$text": "*",
+          "$span": {
+            "start": 16,
+            "end": 17
+          },
+          "$nodeId": 943856,
+          "$named": false
+        },
+        "expression": {
+          "$type": "tuple",
+          "$source": "ts",
+          "$text": "()",
+          "$span": {
+            "start": 17,
+            "end": 19
+          },
+          "$nodeId": 942672,
+          "$named": true
+        }
+      },
+      "$span": {
+        "start": 16,
+        "end": 19
+      },
+      "$nodeId": 942936,
+      "$named": true
+    },
+    "expectedOutput": "*()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*()",
+    "pattern": "list_splat",
+    "edits": [],
+    "expectedSourceOut": "*()",
+    "expectedReparseTree": "(list_splat expression: (tuple))",
+    "wrappedText": "_f(*())",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "tuple",
+      "$source": "ts",
+      "$text": "()",
+      "$fields": {
+        "(": {
+          "$type": "(",
+          "$source": "ts",
+          "$text": "(",
+          "$span": {
+            "start": 17,
+            "end": 18
+          },
+          "$nodeId": 943760,
+          "$named": false
+        },
+        ")": {
+          "$type": ")",
+          "$source": "ts",
+          "$text": ")",
+          "$span": {
+            "start": 18,
+            "end": 19
+          },
+          "$nodeId": 943768,
+          "$named": false
+        }
+      },
+      "$span": {
+        "start": 17,
+        "end": 19
+      },
+      "$nodeId": 942672,
+      "$named": true
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "tuple",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(tuple)",
+    "wrappedText": "_ = ()",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": "list_comprehension",
       "$source": "ts",
       "$text": "[a + b for (a, b) in items]",
@@ -4030,7 +5193,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 938656,
+          "$nodeId": 957880,
           "$named": false
         },
         "body": {
@@ -4041,7 +5204,7 @@
             "start": 1,
             "end": 6
           },
-          "$nodeId": 937080,
+          "$nodeId": 956928,
           "$named": true
         },
         "for_in_clause": {
@@ -4052,7 +5215,7 @@
             "start": 7,
             "end": 26
           },
-          "$nodeId": 938568,
+          "$nodeId": 957792,
           "$named": true
         },
         "]": {
@@ -4063,7 +5226,7 @@
             "start": 26,
             "end": 27
           },
-          "$nodeId": 938680,
+          "$nodeId": 957904,
           "$named": false
         }
       },
@@ -4071,7 +5234,7 @@
         "start": 0,
         "end": 27
       },
-      "$nodeId": 938768,
+      "$nodeId": 957992,
       "$named": true
     },
     "expectedOutput": "[a + b for (a, b) in items ]"
@@ -4103,7 +5266,7 @@
             "start": 1,
             "end": 2
           },
-          "$nodeId": 936248,
+          "$nodeId": 957104,
           "$named": true
         },
         "operator": {
@@ -4114,7 +5277,7 @@
             "start": 3,
             "end": 4
           },
-          "$nodeId": 936984,
+          "$nodeId": 957320,
           "$named": false
         },
         "right": {
@@ -4125,7 +5288,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 938104,
+          "$nodeId": 956840,
           "$named": true
         }
       },
@@ -4133,7 +5296,7 @@
         "start": 1,
         "end": 6
       },
-      "$nodeId": 937080,
+      "$nodeId": 956928,
       "$named": true
     },
     "expectedOutput": "a + b"
@@ -4165,7 +5328,7 @@
             "start": 55,
             "end": 56
           },
-          "$nodeId": 942528,
+          "$nodeId": 962824,
           "$named": false
         },
         ",": {
@@ -4176,7 +5339,7 @@
             "start": 57,
             "end": 58
           },
-          "$nodeId": 942056,
+          "$nodeId": 962352,
           "$named": false
         },
         ")": {
@@ -4187,7 +5350,7 @@
             "start": 59,
             "end": 60
           },
-          "$nodeId": 942544,
+          "$nodeId": 962840,
           "$named": false
         }
       },
@@ -4200,7 +5363,7 @@
             "start": 56,
             "end": 57
           },
-          "$nodeId": 941704,
+          "$nodeId": 962000,
           "$named": true
         },
         {
@@ -4211,7 +5374,7 @@
             "start": 58,
             "end": 59
           },
-          "$nodeId": 941880,
+          "$nodeId": 962176,
           "$named": true
         }
       ],
@@ -4219,7 +5382,7 @@
         "start": 55,
         "end": 60
       },
-      "$nodeId": 942632,
+      "$nodeId": 962928,
       "$named": true
     },
     "expectedOutput": "(x,y)"
@@ -4251,7 +5414,7 @@
             "start": 70,
             "end": 71
           },
-          "$nodeId": 943456,
+          "$nodeId": 963752,
           "$named": false
         },
         ",": {
@@ -4262,7 +5425,7 @@
             "start": 72,
             "end": 73
           },
-          "$nodeId": 942896,
+          "$nodeId": 963192,
           "$named": false
         },
         "]": {
@@ -4273,7 +5436,7 @@
             "start": 76,
             "end": 77
           },
-          "$nodeId": 943472,
+          "$nodeId": 963768,
           "$named": false
         }
       },
@@ -4286,7 +5449,7 @@
             "start": 71,
             "end": 72
           },
-          "$nodeId": 942248,
+          "$nodeId": 962544,
           "$named": true
         },
         {
@@ -4297,7 +5460,7 @@
             "start": 73,
             "end": 74
           },
-          "$nodeId": 942424,
+          "$nodeId": 962720,
           "$named": true
         },
         {
@@ -4308,7 +5471,7 @@
             "start": 74,
             "end": 75
           },
-          "$nodeId": 943168,
+          "$nodeId": 963464,
           "$named": false
         },
         {
@@ -4319,7 +5482,7 @@
             "start": 75,
             "end": 76
           },
-          "$nodeId": 942992,
+          "$nodeId": 963288,
           "$named": true
         }
       ],
@@ -4327,7 +5490,7 @@
         "start": 70,
         "end": 77
       },
-      "$nodeId": 943560,
+      "$nodeId": 963856,
       "$named": true
     },
     "expectedOutput": "[1,2,3]"
@@ -4359,7 +5522,7 @@
             "start": 116,
             "end": 122
           },
-          "$nodeId": 946976,
+          "$nodeId": 967352,
           "$named": false
         },
         ":": {
@@ -4370,7 +5533,7 @@
             "start": 122,
             "end": 123
           },
-          "$nodeId": 946984,
+          "$nodeId": 967360,
           "$named": false
         },
         "body": {
@@ -4381,7 +5544,7 @@
             "start": 124,
             "end": 128
           },
-          "$nodeId": 946712,
+          "$nodeId": 967088,
           "$named": true
         }
       },
@@ -4389,7 +5552,7 @@
         "start": 116,
         "end": 128
       },
-      "$nodeId": 947568,
+      "$nodeId": 967944,
       "$named": true
     },
     "expectedOutput": "lambda :True"
@@ -4421,7 +5584,7 @@
             "start": 147,
             "end": 148
           },
-          "$nodeId": 947664,
+          "$nodeId": 968040,
           "$named": true
         },
         "arguments": {
@@ -4432,7 +5595,7 @@
             "start": 148,
             "end": 150
           },
-          "$nodeId": 947856,
+          "$nodeId": 968232,
           "$named": true
         }
       },
@@ -4440,7 +5603,7 @@
         "start": 147,
         "end": 150
       },
-      "$nodeId": 947944,
+      "$nodeId": 968320,
       "$named": true
     },
     "expectedOutput": "a ()"
@@ -4472,7 +5635,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 961872,
+          "$nodeId": 982336,
           "$named": false
         },
         ",": {
@@ -4483,7 +5646,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 961696,
+          "$nodeId": 982160,
           "$named": false
         },
         "}": {
@@ -4494,7 +5657,7 @@
             "start": 11,
             "end": 12
           },
-          "$nodeId": 961896,
+          "$nodeId": 982360,
           "$named": false
         }
       },
@@ -4507,7 +5670,7 @@
             "start": 1,
             "end": 5
           },
-          "$nodeId": 961880,
+          "$nodeId": 982344,
           "$named": true
         },
         {
@@ -4518,7 +5681,7 @@
             "start": 7,
             "end": 11
           },
-          "$nodeId": 961704,
+          "$nodeId": 982168,
           "$named": true
         }
       ],
@@ -4526,7 +5689,7 @@
         "start": 0,
         "end": 12
       },
-      "$nodeId": 961984,
+      "$nodeId": 982448,
       "$named": true
     },
     "expectedOutput": "{ a: 1,b: 2 }"
@@ -4558,7 +5721,7 @@
             "start": 32,
             "end": 33
           },
-          "$nodeId": 964704,
+          "$nodeId": 985168,
           "$named": true
         },
         ".": {
@@ -4569,7 +5732,7 @@
             "start": 33,
             "end": 34
           },
-          "$nodeId": 965072,
+          "$nodeId": 985536,
           "$named": false
         },
         "attribute": {
@@ -4580,7 +5743,7 @@
             "start": 34,
             "end": 35
           },
-          "$nodeId": 965080,
+          "$nodeId": 985544,
           "$named": true
         }
       },
@@ -4588,7 +5751,7 @@
         "start": 32,
         "end": 35
       },
-      "$nodeId": 965168,
+      "$nodeId": 985632,
       "$named": true
     },
     "expectedOutput": "a.b"
@@ -4620,7 +5783,7 @@
             "start": 40,
             "end": 41
           },
-          "$nodeId": 965808,
+          "$nodeId": 986272,
           "$named": true
         },
         "[": {
@@ -4631,7 +5794,7 @@
             "start": 41,
             "end": 42
           },
-          "$nodeId": 966352,
+          "$nodeId": 986816,
           "$named": false
         },
         "subscript": {
@@ -4642,7 +5805,7 @@
             "start": 42,
             "end": 43
           },
-          "$nodeId": 966168,
+          "$nodeId": 986632,
           "$named": true
         },
         "]": {
@@ -4653,7 +5816,7 @@
             "start": 43,
             "end": 44
           },
-          "$nodeId": 966368,
+          "$nodeId": 986832,
           "$named": false
         }
       },
@@ -4661,7 +5824,7 @@
         "start": 40,
         "end": 44
       },
-      "$nodeId": 966456,
+      "$nodeId": 986920,
       "$named": true
     },
     "expectedOutput": "a[b]"
@@ -4693,7 +5856,7 @@
             "start": 51,
             "end": 52
           },
-          "$nodeId": 967288,
+          "$nodeId": 987752,
           "$named": true
         },
         "arguments": {
@@ -4704,7 +5867,7 @@
             "start": 52,
             "end": 54
           },
-          "$nodeId": 967752,
+          "$nodeId": 988216,
           "$named": true
         }
       },
@@ -4712,7 +5875,7 @@
         "start": 51,
         "end": 54
       },
-      "$nodeId": 967840,
+      "$nodeId": 988304,
       "$named": true
     },
     "expectedOutput": "a ()"
@@ -4744,7 +5907,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 975984,
+          "$nodeId": 996448,
           "$named": false
         },
         "body": {
@@ -4755,7 +5918,7 @@
             "start": 1,
             "end": 5
           },
-          "$nodeId": 975992,
+          "$nodeId": 996456,
           "$named": true
         },
         "for_in_clause": {
@@ -4766,7 +5929,7 @@
             "start": 6,
             "end": 23
           },
-          "$nodeId": 975816,
+          "$nodeId": 996280,
           "$named": true
         },
         "}": {
@@ -4777,7 +5940,7 @@
             "start": 23,
             "end": 24
           },
-          "$nodeId": 976008,
+          "$nodeId": 996472,
           "$named": false
         }
       },
@@ -4785,7 +5948,7 @@
         "start": 0,
         "end": 24
       },
-      "$nodeId": 976096,
+      "$nodeId": 996560,
       "$named": true
     },
     "expectedOutput": "{ a: b for a, b in items }"
@@ -4817,7 +5980,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 982072,
+          "$nodeId": 1002536,
           "$named": false
         },
         ",": {
@@ -4828,7 +5991,7 @@
             "start": 2,
             "end": 3
           },
-          "$nodeId": 981424,
+          "$nodeId": 1001888,
           "$named": false
         },
         "}": {
@@ -4839,7 +6002,7 @@
             "start": 9,
             "end": 10
           },
-          "$nodeId": 982088,
+          "$nodeId": 1002552,
           "$named": false
         }
       },
@@ -4852,7 +6015,7 @@
             "start": 1,
             "end": 2
           },
-          "$nodeId": 980976,
+          "$nodeId": 1001440,
           "$named": true
         },
         {
@@ -4863,7 +6026,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 981248,
+          "$nodeId": 1001712,
           "$named": true
         },
         {
@@ -4874,7 +6037,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 981696,
+          "$nodeId": 1002160,
           "$named": false
         },
         {
@@ -4885,7 +6048,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 981520,
+          "$nodeId": 1001984,
           "$named": true
         },
         {
@@ -4896,7 +6059,7 @@
             "start": 8,
             "end": 9
           },
-          "$nodeId": 981904,
+          "$nodeId": 1002368,
           "$named": false
         }
       ],
@@ -4904,7 +6067,7 @@
         "start": 0,
         "end": 10
       },
-      "$nodeId": 982176,
+      "$nodeId": 1002640,
       "$named": true
     },
     "expectedOutput": "{ a,b,c, }"
@@ -4924,6 +6087,108 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": "list_splat",
+      "$source": "ts",
+      "$text": "*{}",
+      "$fields": {
+        "*": {
+          "$type": "*",
+          "$source": "ts",
+          "$text": "*",
+          "$span": {
+            "start": 12,
+            "end": 13
+          },
+          "$nodeId": 1003352,
+          "$named": false
+        },
+        "expression": {
+          "$type": "dictionary",
+          "$source": "ts",
+          "$text": "{}",
+          "$span": {
+            "start": 13,
+            "end": 15
+          },
+          "$nodeId": 1002904,
+          "$named": true
+        }
+      },
+      "$span": {
+        "start": 12,
+        "end": 15
+      },
+      "$nodeId": 1003448,
+      "$named": true
+    },
+    "expectedOutput": "*{}"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*{}",
+    "pattern": "list_splat",
+    "edits": [],
+    "expectedSourceOut": "*{}",
+    "expectedReparseTree": "(list_splat expression: (dictionary))",
+    "wrappedText": "_f(*{})",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "dictionary",
+      "$source": "ts",
+      "$text": "{}",
+      "$fields": {
+        "{": {
+          "$type": "{",
+          "$source": "ts",
+          "$text": "{",
+          "$span": {
+            "start": 13,
+            "end": 14
+          },
+          "$nodeId": 1003168,
+          "$named": false
+        },
+        "}": {
+          "$type": "}",
+          "$source": "ts",
+          "$text": "}",
+          "$span": {
+            "start": 14,
+            "end": 15
+          },
+          "$nodeId": 1003176,
+          "$named": false
+        }
+      },
+      "$span": {
+        "start": 13,
+        "end": 15
+      },
+      "$nodeId": 1002904,
+      "$named": true
+    },
+    "expectedOutput": "{ }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "{}",
+    "pattern": "dictionary",
+    "edits": [],
+    "expectedSourceOut": "{ }",
+    "expectedReparseTree": "(dictionary)",
+    "wrappedText": "_ = { }",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": "set_comprehension",
       "$source": "ts",
       "$text": "{a[b][c] for a, b, c in items}",
@@ -4936,7 +6201,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 988632,
+          "$nodeId": 1010696,
           "$named": false
         },
         "body": {
@@ -4947,7 +6212,7 @@
             "start": 1,
             "end": 8
           },
-          "$nodeId": 987344,
+          "$nodeId": 1009328,
           "$named": true
         },
         "for_in_clause": {
@@ -4958,7 +6223,7 @@
             "start": 9,
             "end": 29
           },
-          "$nodeId": 988544,
+          "$nodeId": 1010528,
           "$named": true
         },
         "}": {
@@ -4969,7 +6234,7 @@
             "start": 29,
             "end": 30
           },
-          "$nodeId": 988656,
+          "$nodeId": 1010720,
           "$named": false
         }
       },
@@ -4977,7 +6242,7 @@
         "start": 0,
         "end": 30
       },
-      "$nodeId": 988744,
+      "$nodeId": 1010808,
       "$named": true
     },
     "expectedOutput": "{ a[b][c] for a, b, c in items }"
@@ -5009,7 +6274,7 @@
             "start": 1,
             "end": 5
           },
-          "$nodeId": 986968,
+          "$nodeId": 1008952,
           "$named": true
         },
         "[": {
@@ -5020,7 +6285,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 987240,
+          "$nodeId": 1009224,
           "$named": false
         },
         "subscript": {
@@ -5031,7 +6296,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 987056,
+          "$nodeId": 1009040,
           "$named": true
         },
         "]": {
@@ -5042,7 +6307,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 987256,
+          "$nodeId": 1009240,
           "$named": false
         }
       },
@@ -5050,7 +6315,7 @@
         "start": 1,
         "end": 8
       },
-      "$nodeId": 987344,
+      "$nodeId": 1009328,
       "$named": true
     },
     "expectedOutput": "a[b][c]"
@@ -5082,7 +6347,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 995856,
+          "$nodeId": 1018080,
           "$named": false
         },
         ")": {
@@ -5093,7 +6358,7 @@
             "start": 1,
             "end": 2
           },
-          "$nodeId": 995864,
+          "$nodeId": 1018088,
           "$named": false
         }
       },
@@ -5101,7 +6366,7 @@
         "start": 0,
         "end": 2
       },
-      "$nodeId": 995952,
+      "$nodeId": 1018176,
       "$named": true
     },
     "expectedOutput": "()"
@@ -5133,7 +6398,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 1003568,
+          "$nodeId": 1025792,
           "$named": false
         },
         "body": {
@@ -5144,7 +6409,7 @@
             "start": 1,
             "end": 8
           },
-          "$nodeId": 1002200,
+          "$nodeId": 1024424,
           "$named": true
         },
         "for_in_clause": {
@@ -5155,7 +6420,7 @@
             "start": 9,
             "end": 29
           },
-          "$nodeId": 1003400,
+          "$nodeId": 1025624,
           "$named": true
         },
         ")": {
@@ -5166,7 +6431,7 @@
             "start": 29,
             "end": 30
           },
-          "$nodeId": 1003592,
+          "$nodeId": 1025816,
           "$named": false
         }
       },
@@ -5174,7 +6439,7 @@
         "start": 0,
         "end": 30
       },
-      "$nodeId": 1003680,
+      "$nodeId": 1025904,
       "$named": true
     },
     "expectedOutput": "(a[b][c] for a, b, c in items )"
@@ -5206,7 +6471,7 @@
             "start": 1,
             "end": 5
           },
-          "$nodeId": 1001824,
+          "$nodeId": 1024048,
           "$named": true
         },
         "[": {
@@ -5217,7 +6482,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 1002096,
+          "$nodeId": 1024320,
           "$named": false
         },
         "subscript": {
@@ -5228,7 +6493,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 1001912,
+          "$nodeId": 1024136,
           "$named": true
         },
         "]": {
@@ -5239,7 +6504,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 1002112,
+          "$nodeId": 1024336,
           "$named": false
         }
       },
@@ -5247,7 +6512,7 @@
         "start": 1,
         "end": 8
       },
-      "$nodeId": 1002200,
+      "$nodeId": 1024424,
       "$named": true
     },
     "expectedOutput": "a[b][c]"
@@ -5279,7 +6544,7 @@
             "start": 31,
             "end": 35
           },
-          "$nodeId": 1003944,
+          "$nodeId": 1026168,
           "$named": true
         },
         "arguments": {
@@ -5290,7 +6555,7 @@
             "start": 35,
             "end": 57
           },
-          "$nodeId": 1005984,
+          "$nodeId": 1028208,
           "$named": true
         }
       },
@@ -5298,7 +6563,7 @@
         "start": 31,
         "end": 57
       },
-      "$nodeId": 1006072,
+      "$nodeId": 1028296,
       "$named": true
     },
     "expectedOutput": "dict ((a, b) for a, b in d)"
@@ -5330,7 +6595,7 @@
             "start": 36,
             "end": 37
           },
-          "$nodeId": 1004752,
+          "$nodeId": 1026976,
           "$named": false
         },
         ",": {
@@ -5341,7 +6606,7 @@
             "start": 38,
             "end": 39
           },
-          "$nodeId": 1004560,
+          "$nodeId": 1026784,
           "$named": false
         },
         ")": {
@@ -5352,7 +6617,7 @@
             "start": 41,
             "end": 42
           },
-          "$nodeId": 1004768,
+          "$nodeId": 1026992,
           "$named": false
         }
       },
@@ -5365,7 +6630,7 @@
             "start": 37,
             "end": 38
           },
-          "$nodeId": 1004208,
+          "$nodeId": 1026432,
           "$named": true
         },
         {
@@ -5376,7 +6641,7 @@
             "start": 40,
             "end": 41
           },
-          "$nodeId": 1004384,
+          "$nodeId": 1026608,
           "$named": true
         }
       ],
@@ -5384,7 +6649,7 @@
         "start": 36,
         "end": 42
       },
-      "$nodeId": 1004856,
+      "$nodeId": 1027080,
       "$named": true
     },
     "expectedOutput": "(a,b)"
@@ -5416,7 +6681,7 @@
             "start": 6,
             "end": 19
           },
-          "$nodeId": 1020544,
+          "$nodeId": 1042768,
           "$named": true
         },
         "arguments": {
@@ -5427,7 +6692,7 @@
             "start": 19,
             "end": 21
           },
-          "$nodeId": 1019256,
+          "$nodeId": 1041480,
           "$named": true
         }
       },
@@ -5435,7 +6700,7 @@
         "start": 6,
         "end": 21
       },
-      "$nodeId": 1019344,
+      "$nodeId": 1041568,
       "$named": true
     },
     "expectedOutput": "command.split ()"
@@ -5467,7 +6732,7 @@
             "start": 6,
             "end": 13
           },
-          "$nodeId": 1020256,
+          "$nodeId": 1042480,
           "$named": true
         },
         ".": {
@@ -5478,7 +6743,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 1020448,
+          "$nodeId": 1042672,
           "$named": false
         },
         "attribute": {
@@ -5489,7 +6754,7 @@
             "start": 14,
             "end": 19
           },
-          "$nodeId": 1020456,
+          "$nodeId": 1042680,
           "$named": true
         }
       },
@@ -5497,7 +6762,7 @@
         "start": 6,
         "end": 19
       },
-      "$nodeId": 1020544,
+      "$nodeId": 1042768,
       "$named": true
     },
     "expectedOutput": "command.split"
@@ -5529,7 +6794,7 @@
             "start": 32,
             "end": 33
           },
-          "$nodeId": 1021408,
+          "$nodeId": 1043632,
           "$named": false
         },
         "]": {
@@ -5540,7 +6805,7 @@
             "start": 39,
             "end": 40
           },
-          "$nodeId": 1021424,
+          "$nodeId": 1043648,
           "$named": false
         }
       },
@@ -5553,7 +6818,7 @@
             "start": 33,
             "end": 39
           },
-          "$nodeId": 1021416,
+          "$nodeId": 1043640,
           "$named": true
         }
       ],
@@ -5561,7 +6826,7 @@
         "start": 32,
         "end": 40
       },
-      "$nodeId": 1021512,
+      "$nodeId": 1043736,
       "$named": true
     },
     "expectedOutput": "[\"quit\"]"
@@ -5593,7 +6858,7 @@
             "start": 33,
             "end": 34
           },
-          "$nodeId": 1021128,
+          "$nodeId": 1043352,
           "$named": true
         },
         "content": {
@@ -5604,7 +6869,7 @@
             "start": 34,
             "end": 38
           },
-          "$nodeId": 1021136,
+          "$nodeId": 1043360,
           "$named": true
         },
         "string_end": {
@@ -5615,7 +6880,7 @@
             "start": 38,
             "end": 39
           },
-          "$nodeId": 1021144,
+          "$nodeId": 1043368,
           "$named": true
         }
       },
@@ -5623,10 +6888,10 @@
         "start": 33,
         "end": 39
       },
-      "$nodeId": 1021232,
+      "$nodeId": 1043456,
       "$named": true
     },
-    "expectedOutput": "\" quit \""
+    "expectedOutput": "\"quit\""
   },
   {
     "kind": "roundtrip",
@@ -5634,9 +6899,9 @@
     "sourceIn": "\"quit\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" quit \"",
+    "expectedSourceOut": "\"quit\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" quit \"",
+    "wrappedText": "_ = \"quit\"",
     "wrappedOffset": 4
   },
   {
@@ -5655,7 +6920,7 @@
             "start": 6,
             "end": 19
           },
-          "$nodeId": 1039544,
+          "$nodeId": 1061840,
           "$named": true
         },
         "arguments": {
@@ -5666,7 +6931,7 @@
             "start": 19,
             "end": 21
           },
-          "$nodeId": 1039736,
+          "$nodeId": 1062032,
           "$named": true
         }
       },
@@ -5674,7 +6939,7 @@
         "start": 6,
         "end": 21
       },
-      "$nodeId": 1039824,
+      "$nodeId": 1062120,
       "$named": true
     },
     "expectedOutput": "command.split ()"
@@ -5706,7 +6971,7 @@
             "start": 6,
             "end": 13
           },
-          "$nodeId": 1039352,
+          "$nodeId": 1061648,
           "$named": true
         },
         ".": {
@@ -5717,7 +6982,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 1039448,
+          "$nodeId": 1061744,
           "$named": false
         },
         "attribute": {
@@ -5728,7 +6993,7 @@
             "start": 14,
             "end": 19
           },
-          "$nodeId": 1039456,
+          "$nodeId": 1061752,
           "$named": true
         }
       },
@@ -5736,7 +7001,7 @@
         "start": 6,
         "end": 19
       },
-      "$nodeId": 1039544,
+      "$nodeId": 1061840,
       "$named": true
     },
     "expectedOutput": "command.split"
@@ -5768,7 +7033,7 @@
             "start": 32,
             "end": 33
           },
-          "$nodeId": 1040968,
+          "$nodeId": 1063264,
           "$named": false
         },
         ",": {
@@ -5779,7 +7044,7 @@
             "start": 39,
             "end": 40
           },
-          "$nodeId": 1040872,
+          "$nodeId": 1063168,
           "$named": false
         },
         "]": {
@@ -5790,7 +7055,7 @@
             "start": 49,
             "end": 50
           },
-          "$nodeId": 1040992,
+          "$nodeId": 1063288,
           "$named": false
         }
       },
@@ -5803,7 +7068,7 @@
             "start": 33,
             "end": 39
           },
-          "$nodeId": 1040976,
+          "$nodeId": 1063272,
           "$named": true
         },
         {
@@ -5814,7 +7079,7 @@
             "start": 41,
             "end": 49
           },
-          "$nodeId": 1040880,
+          "$nodeId": 1063176,
           "$named": true
         }
       ],
@@ -5822,7 +7087,7 @@
         "start": 32,
         "end": 50
       },
-      "$nodeId": 1041080,
+      "$nodeId": 1063376,
       "$named": true
     },
     "expectedOutput": "[\"drop\",*objects]"
@@ -5854,7 +7119,7 @@
             "start": 33,
             "end": 34
           },
-          "$nodeId": 1040408,
+          "$nodeId": 1062704,
           "$named": true
         },
         "content": {
@@ -5865,7 +7130,7 @@
             "start": 34,
             "end": 38
           },
-          "$nodeId": 1040416,
+          "$nodeId": 1062712,
           "$named": true
         },
         "string_end": {
@@ -5876,7 +7141,7 @@
             "start": 38,
             "end": 39
           },
-          "$nodeId": 1040424,
+          "$nodeId": 1062720,
           "$named": true
         }
       },
@@ -5884,10 +7149,10 @@
         "start": 33,
         "end": 39
       },
-      "$nodeId": 1040512,
+      "$nodeId": 1062808,
       "$named": true
     },
-    "expectedOutput": "\" drop \""
+    "expectedOutput": "\"drop\""
   },
   {
     "kind": "roundtrip",
@@ -5895,9 +7160,9 @@
     "sourceIn": "\"drop\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" drop \"",
+    "expectedSourceOut": "\"drop\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" drop \"",
+    "wrappedText": "_ = \"drop\"",
     "wrappedOffset": 4
   },
   {
@@ -5916,7 +7181,7 @@
             "start": 6,
             "end": 19
           },
-          "$nodeId": 1050704,
+          "$nodeId": 1073000,
           "$named": true
         },
         "arguments": {
@@ -5927,7 +7192,7 @@
             "start": 19,
             "end": 21
           },
-          "$nodeId": 1050896,
+          "$nodeId": 1073192,
           "$named": true
         }
       },
@@ -5935,7 +7200,7 @@
         "start": 6,
         "end": 21
       },
-      "$nodeId": 1050984,
+      "$nodeId": 1073280,
       "$named": true
     },
     "expectedOutput": "command.split ()"
@@ -5967,7 +7232,7 @@
             "start": 6,
             "end": 13
           },
-          "$nodeId": 1050416,
+          "$nodeId": 1072712,
           "$named": true
         },
         ".": {
@@ -5978,7 +7243,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 1050608,
+          "$nodeId": 1072904,
           "$named": false
         },
         "attribute": {
@@ -5989,7 +7254,7 @@
             "start": 14,
             "end": 19
           },
-          "$nodeId": 1050616,
+          "$nodeId": 1072912,
           "$named": true
         }
       },
@@ -5997,7 +7262,7 @@
         "start": 6,
         "end": 19
       },
-      "$nodeId": 1050704,
+      "$nodeId": 1073000,
       "$named": true
     },
     "expectedOutput": "command.split"
@@ -6029,7 +7294,7 @@
             "start": 48,
             "end": 49
           },
-          "$nodeId": 1051848,
+          "$nodeId": 1074144,
           "$named": false
         },
         "]": {
@@ -6040,7 +7305,7 @@
             "start": 55,
             "end": 56
           },
-          "$nodeId": 1051864,
+          "$nodeId": 1074160,
           "$named": false
         }
       },
@@ -6053,7 +7318,7 @@
             "start": 49,
             "end": 55
           },
-          "$nodeId": 1051856,
+          "$nodeId": 1074152,
           "$named": true
         }
       ],
@@ -6061,7 +7326,7 @@
         "start": 48,
         "end": 56
       },
-      "$nodeId": 1051952,
+      "$nodeId": 1074248,
       "$named": true
     },
     "expectedOutput": "[\"quit\"]"
@@ -6093,7 +7358,7 @@
             "start": 49,
             "end": 50
           },
-          "$nodeId": 1051568,
+          "$nodeId": 1073864,
           "$named": true
         },
         "content": {
@@ -6104,7 +7369,7 @@
             "start": 50,
             "end": 54
           },
-          "$nodeId": 1051576,
+          "$nodeId": 1073872,
           "$named": true
         },
         "string_end": {
@@ -6115,7 +7380,7 @@
             "start": 54,
             "end": 55
           },
-          "$nodeId": 1051584,
+          "$nodeId": 1073880,
           "$named": true
         }
       },
@@ -6123,10 +7388,10 @@
         "start": 49,
         "end": 55
       },
-      "$nodeId": 1051672,
+      "$nodeId": 1073968,
       "$named": true
     },
-    "expectedOutput": "\" quit \""
+    "expectedOutput": "\"quit\""
   },
   {
     "kind": "roundtrip",
@@ -6134,9 +7399,9 @@
     "sourceIn": "\"quit\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" quit \"",
+    "expectedSourceOut": "\"quit\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" quit \"",
+    "wrappedText": "_ = \"quit\"",
     "wrappedOffset": 4
   },
   {
@@ -6155,7 +7420,7 @@
             "start": 6,
             "end": 19
           },
-          "$nodeId": 1065368,
+          "$nodeId": 1087664,
           "$named": true
         },
         "arguments": {
@@ -6166,7 +7431,7 @@
             "start": 19,
             "end": 21
           },
-          "$nodeId": 1065560,
+          "$nodeId": 1087856,
           "$named": true
         }
       },
@@ -6174,7 +7439,7 @@
         "start": 6,
         "end": 21
       },
-      "$nodeId": 1065648,
+      "$nodeId": 1087944,
       "$named": true
     },
     "expectedOutput": "command.split ()"
@@ -6206,7 +7471,7 @@
             "start": 6,
             "end": 13
           },
-          "$nodeId": 1065176,
+          "$nodeId": 1087472,
           "$named": true
         },
         ".": {
@@ -6217,7 +7482,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 1065272,
+          "$nodeId": 1087568,
           "$named": false
         },
         "attribute": {
@@ -6228,7 +7493,7 @@
             "start": 14,
             "end": 19
           },
-          "$nodeId": 1065280,
+          "$nodeId": 1087576,
           "$named": true
         }
       },
@@ -6236,7 +7501,7 @@
         "start": 6,
         "end": 19
       },
-      "$nodeId": 1065368,
+      "$nodeId": 1087664,
       "$named": true
     },
     "expectedOutput": "command.split"
@@ -6268,7 +7533,7 @@
             "start": 32,
             "end": 33
           },
-          "$nodeId": 1066512,
+          "$nodeId": 1088808,
           "$named": false
         },
         "]": {
@@ -6279,7 +7544,7 @@
             "start": 40,
             "end": 41
           },
-          "$nodeId": 1066528,
+          "$nodeId": 1088824,
           "$named": false
         }
       },
@@ -6292,7 +7557,7 @@
             "start": 33,
             "end": 40
           },
-          "$nodeId": 1066520,
+          "$nodeId": 1088816,
           "$named": true
         }
       ],
@@ -6300,7 +7565,7 @@
         "start": 32,
         "end": 41
       },
-      "$nodeId": 1068136,
+      "$nodeId": 1090432,
       "$named": true
     },
     "expectedOutput": "[\"north\"]"
@@ -6332,7 +7597,7 @@
             "start": 33,
             "end": 34
           },
-          "$nodeId": 1066232,
+          "$nodeId": 1088528,
           "$named": true
         },
         "content": {
@@ -6343,7 +7608,7 @@
             "start": 34,
             "end": 39
           },
-          "$nodeId": 1066240,
+          "$nodeId": 1088536,
           "$named": true
         },
         "string_end": {
@@ -6354,7 +7619,7 @@
             "start": 39,
             "end": 40
           },
-          "$nodeId": 1066248,
+          "$nodeId": 1088544,
           "$named": true
         }
       },
@@ -6362,10 +7627,10 @@
         "start": 33,
         "end": 40
       },
-      "$nodeId": 1066336,
+      "$nodeId": 1088632,
       "$named": true
     },
-    "expectedOutput": "\" north \""
+    "expectedOutput": "\"north\""
   },
   {
     "kind": "roundtrip",
@@ -6373,9 +7638,9 @@
     "sourceIn": "\"north\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" north \"",
+    "expectedSourceOut": "\"north\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" north \"",
+    "wrappedText": "_ = \"north\"",
     "wrappedOffset": 4
   },
   {
@@ -6394,7 +7659,7 @@
             "start": 6,
             "end": 19
           },
-          "$nodeId": 1083560,
+          "$nodeId": 1105856,
           "$named": true
         },
         "arguments": {
@@ -6405,7 +7670,7 @@
             "start": 19,
             "end": 21
           },
-          "$nodeId": 1083752,
+          "$nodeId": 1106048,
           "$named": true
         }
       },
@@ -6413,7 +7678,7 @@
         "start": 6,
         "end": 21
       },
-      "$nodeId": 1083840,
+      "$nodeId": 1106136,
       "$named": true
     },
     "expectedOutput": "command.split ()"
@@ -6445,7 +7710,7 @@
             "start": 6,
             "end": 13
           },
-          "$nodeId": 1083272,
+          "$nodeId": 1105568,
           "$named": true
         },
         ".": {
@@ -6456,7 +7721,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 1083464,
+          "$nodeId": 1105760,
           "$named": false
         },
         "attribute": {
@@ -6467,7 +7732,7 @@
             "start": 14,
             "end": 19
           },
-          "$nodeId": 1083472,
+          "$nodeId": 1105768,
           "$named": true
         }
       },
@@ -6475,7 +7740,7 @@
         "start": 6,
         "end": 19
       },
-      "$nodeId": 1083560,
+      "$nodeId": 1105856,
       "$named": true
     },
     "expectedOutput": "command.split"
@@ -6507,7 +7772,7 @@
             "start": 32,
             "end": 33
           },
-          "$nodeId": 1087928,
+          "$nodeId": 1110224,
           "$named": false
         },
         ",": {
@@ -6518,7 +7783,7 @@
             "start": 37,
             "end": 38
           },
-          "$nodeId": 1087832,
+          "$nodeId": 1110128,
           "$named": false
         },
         "]": {
@@ -6529,7 +7794,7 @@
             "start": 89,
             "end": 90
           },
-          "$nodeId": 1087952,
+          "$nodeId": 1110248,
           "$named": false
         }
       },
@@ -6542,7 +7807,7 @@
             "start": 33,
             "end": 37
           },
-          "$nodeId": 1087936,
+          "$nodeId": 1110232,
           "$named": true
         },
         {
@@ -6553,7 +7818,7 @@
             "start": 39,
             "end": 89
           },
-          "$nodeId": 1087840,
+          "$nodeId": 1110136,
           "$named": true
         }
       ],
@@ -6561,7 +7826,7 @@
         "start": 32,
         "end": 90
       },
-      "$nodeId": 1088040,
+      "$nodeId": 1110336,
       "$named": true
     },
     "expectedOutput": "[\"go\",(\"north\" | \"south\" | \"east\" | \"west\") as direction]"
@@ -6593,7 +7858,7 @@
             "start": 33,
             "end": 34
           },
-          "$nodeId": 1084424,
+          "$nodeId": 1106720,
           "$named": true
         },
         "content": {
@@ -6604,7 +7869,7 @@
             "start": 34,
             "end": 36
           },
-          "$nodeId": 1084432,
+          "$nodeId": 1106728,
           "$named": true
         },
         "string_end": {
@@ -6615,7 +7880,7 @@
             "start": 36,
             "end": 37
           },
-          "$nodeId": 1084440,
+          "$nodeId": 1106736,
           "$named": true
         }
       },
@@ -6623,10 +7888,10 @@
         "start": 33,
         "end": 37
       },
-      "$nodeId": 1084528,
+      "$nodeId": 1106824,
       "$named": true
     },
-    "expectedOutput": "\" go \""
+    "expectedOutput": "\"go\""
   },
   {
     "kind": "roundtrip",
@@ -6634,9 +7899,9 @@
     "sourceIn": "\"go\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" go \"",
+    "expectedSourceOut": "\"go\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" go \"",
+    "wrappedText": "_ = \"go\"",
     "wrappedOffset": 4
   },
   {
@@ -6655,7 +7920,7 @@
             "start": 33,
             "end": 36
           },
-          "$nodeId": 1102864,
+          "$nodeId": 1125160,
           "$named": true
         }
       ],
@@ -6663,7 +7928,7 @@
         "start": 33,
         "end": 36
       },
-      "$nodeId": 1103400,
+      "$nodeId": 1125696,
       "$named": true
     },
     "expectedOutput": "int"
@@ -6695,7 +7960,7 @@
             "start": 60,
             "end": 61
           },
-          "$nodeId": 1104768,
+          "$nodeId": 1127064,
           "$named": true
         },
         "content": {
@@ -6706,7 +7971,7 @@
             "start": 61,
             "end": 76
           },
-          "$nodeId": 1104776,
+          "$nodeId": 1127072,
           "$named": true
         },
         "string_end": {
@@ -6717,7 +7982,7 @@
             "start": 76,
             "end": 77
           },
-          "$nodeId": 1104784,
+          "$nodeId": 1127080,
           "$named": true
         }
       },
@@ -6725,10 +7990,10 @@
         "start": 60,
         "end": 77
       },
-      "$nodeId": 1104872,
+      "$nodeId": 1127168,
       "$named": true
     },
-    "expectedOutput": "\" hey, what's up? \""
+    "expectedOutput": "\"hey, what's up?\""
   },
   {
     "kind": "roundtrip",
@@ -6736,9 +8001,170 @@
     "sourceIn": "\"hey, what's up?\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" hey, what's up? \"",
+    "expectedSourceOut": "\"hey, what's up?\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" hey, what's up? \"",
+    "wrappedText": "_ = \"hey, what's up?\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "list_splat_pattern",
+      "$source": "ts",
+      "$text": "*match",
+      "$fields": {
+        "*": {
+          "$type": "*",
+          "$source": "ts",
+          "$text": "*",
+          "$span": {
+            "start": 78,
+            "end": 79
+          },
+          "$nodeId": 1128008,
+          "$named": false
+        }
+      },
+      "$children": [
+        {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "match",
+          "$span": {
+            "start": 79,
+            "end": 84
+          },
+          "$nodeId": 1128016,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 78,
+        "end": 84
+      },
+      "$nodeId": 1128104,
+      "$named": true
+    },
+    "expectedOutput": "*match"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*match",
+    "pattern": "list_splat_pattern",
+    "edits": [],
+    "expectedSourceOut": "*match",
+    "expectedReparseTree": "(list_splat_pattern (identifier))",
+    "wrappedText": "*match = (1,)",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "list",
+      "$source": "ts",
+      "$text": "[1, 2, 3]",
+      "$fields": {
+        "[": {
+          "$type": "[",
+          "$source": "ts",
+          "$text": "[",
+          "$span": {
+            "start": 93,
+            "end": 94
+          },
+          "$nodeId": 1129464,
+          "$named": false
+        },
+        ",": {
+          "$type": ",",
+          "$source": "ts",
+          "$text": ",",
+          "$span": {
+            "start": 95,
+            "end": 96
+          },
+          "$nodeId": 1128824,
+          "$named": false
+        },
+        "]": {
+          "$type": "]",
+          "$source": "ts",
+          "$text": "]",
+          "$span": {
+            "start": 101,
+            "end": 102
+          },
+          "$nodeId": 1129480,
+          "$named": false
+        }
+      },
+      "$children": [
+        {
+          "$type": "integer",
+          "$source": "ts",
+          "$text": "1",
+          "$span": {
+            "start": 94,
+            "end": 95
+          },
+          "$nodeId": 1128192,
+          "$named": true
+        },
+        {
+          "$type": "integer",
+          "$source": "ts",
+          "$text": "2",
+          "$span": {
+            "start": 97,
+            "end": 98
+          },
+          "$nodeId": 1128368,
+          "$named": true
+        },
+        {
+          "$type": ",",
+          "$source": "ts",
+          "$text": ",",
+          "$span": {
+            "start": 98,
+            "end": 99
+          },
+          "$nodeId": 1129096,
+          "$named": false
+        },
+        {
+          "$type": "integer",
+          "$source": "ts",
+          "$text": "3",
+          "$span": {
+            "start": 100,
+            "end": 101
+          },
+          "$nodeId": 1128920,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 93,
+        "end": 102
+      },
+      "$nodeId": 1129568,
+      "$named": true
+    },
+    "expectedOutput": "[1,2,3]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "[1, 2, 3]",
+    "pattern": "list",
+    "edits": [],
+    "expectedSourceOut": "[1,2,3]",
+    "expectedReparseTree": "(list (integer) (integer) (integer))",
+    "wrappedText": "_ = [1,2,3]",
     "wrappedOffset": 4
   },
   {
@@ -6757,7 +8183,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 1113736,
+          "$nodeId": 1137944,
           "$named": false
         },
         "]": {
@@ -6768,7 +8194,7 @@
             "start": 10,
             "end": 11
           },
-          "$nodeId": 1113752,
+          "$nodeId": 1137960,
           "$named": false
         }
       },
@@ -6781,7 +8207,7 @@
             "start": 5,
             "end": 10
           },
-          "$nodeId": 1113304,
+          "$nodeId": 1137512,
           "$named": true
         }
       ],
@@ -6789,7 +8215,7 @@
         "start": 4,
         "end": 11
       },
-      "$nodeId": 1113840,
+      "$nodeId": 1138048,
       "$named": true
     },
     "expectedOutput": "[match]"
@@ -6821,7 +8247,7 @@
             "start": 8,
             "end": 12
           },
-          "$nodeId": 1116112,
+          "$nodeId": 1141328,
           "$named": true
         },
         "arguments": {
@@ -6832,7 +8258,7 @@
             "start": 12,
             "end": 31
           },
-          "$nodeId": 1118144,
+          "$nodeId": 1142440,
           "$named": true
         }
       },
@@ -6840,7 +8266,7 @@
         "start": 8,
         "end": 31
       },
-      "$nodeId": 1118232,
+      "$nodeId": 1142528,
       "$named": true
     },
     "expectedOutput": "call (match=r\".*\\.txt$\")"
@@ -6872,7 +8298,7 @@
             "start": 19,
             "end": 21
           },
-          "$nodeId": 1117568,
+          "$nodeId": 1141864,
           "$named": true
         },
         "content": {
@@ -6883,7 +8309,7 @@
             "start": 21,
             "end": 29
           },
-          "$nodeId": 1117576,
+          "$nodeId": 1141872,
           "$named": true
         },
         "string_end": {
@@ -6894,7 +8320,7 @@
             "start": 29,
             "end": 30
           },
-          "$nodeId": 1117584,
+          "$nodeId": 1141880,
           "$named": true
         }
       },
@@ -6902,10 +8328,10 @@
         "start": 19,
         "end": 30
       },
-      "$nodeId": 1117672,
+      "$nodeId": 1141968,
       "$named": true
     },
-    "expectedOutput": "r\" .*\\.txt$ \""
+    "expectedOutput": "r\".*\\.txt$\""
   },
   {
     "kind": "roundtrip",
@@ -6913,9 +8339,9 @@
     "sourceIn": "r\".*\\.txt$\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "r\" .*\\.txt$ \"",
+    "expectedSourceOut": "r\".*\\.txt$\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = r\" .*\\.txt$ \"",
+    "wrappedText": "_ = r\".*\\.txt$\"",
     "wrappedOffset": 4
   },
   {
@@ -6934,7 +8360,7 @@
             "start": 8,
             "end": 13
           },
-          "$nodeId": 1122472,
+          "$nodeId": 1146680,
           "$named": true
         },
         "arguments": {
@@ -6945,7 +8371,7 @@
             "start": 13,
             "end": 33
           },
-          "$nodeId": 1123312,
+          "$nodeId": 1147520,
           "$named": true
         }
       },
@@ -6953,7 +8379,7 @@
         "start": 8,
         "end": 33
       },
-      "$nodeId": 1123400,
+      "$nodeId": 1147608,
       "$named": true
     },
     "expectedOutput": "match (match=match, match)"
@@ -6985,7 +8411,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 1126584,
+          "$nodeId": 1150880,
           "$named": false
         },
         "]": {
@@ -6996,7 +8422,7 @@
             "start": 9,
             "end": 10
           },
-          "$nodeId": 1126600,
+          "$nodeId": 1150896,
           "$named": false
         }
       },
@@ -7009,7 +8435,7 @@
             "start": 5,
             "end": 9
           },
-          "$nodeId": 1126152,
+          "$nodeId": 1150448,
           "$named": true
         }
       ],
@@ -7017,7 +8443,7 @@
         "start": 4,
         "end": 10
       },
-      "$nodeId": 1126688,
+      "$nodeId": 1150984,
       "$named": true
     },
     "expectedOutput": "[case]"
@@ -7049,7 +8475,7 @@
             "start": 40,
             "end": 47
           },
-          "$nodeId": 1127592,
+          "$nodeId": 1151888,
           "$named": true
         },
         "arguments": {
@@ -7060,7 +8486,7 @@
             "start": 47,
             "end": 58
           },
-          "$nodeId": 1129072,
+          "$nodeId": 1153368,
           "$named": true
         }
       },
@@ -7068,7 +8494,7 @@
         "start": 40,
         "end": 58
       },
-      "$nodeId": 1129160,
+      "$nodeId": 1153456,
       "$named": true
     },
     "expectedOutput": "call_me (case=True)"
@@ -7100,7 +8526,7 @@
             "start": 48,
             "end": 49
           },
-          "$nodeId": 1139056,
+          "$nodeId": 1163272,
           "$named": true
         },
         "content": {
@@ -7111,7 +8537,7 @@
             "start": 49,
             "end": 58
           },
-          "$nodeId": 1139064,
+          "$nodeId": 1163280,
           "$named": true
         },
         "string_end": {
@@ -7122,7 +8548,7 @@
             "start": 58,
             "end": 59
           },
-          "$nodeId": 1139072,
+          "$nodeId": 1163288,
           "$named": true
         }
       },
@@ -7130,10 +8556,10 @@
         "start": 48,
         "end": 59
       },
-      "$nodeId": 1139160,
+      "$nodeId": 1163376,
       "$named": true
     },
-    "expectedOutput": "\" something \""
+    "expectedOutput": "\"something\""
   },
   {
     "kind": "roundtrip",
@@ -7141,9 +8567,9 @@
     "sourceIn": "\"something\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" something \"",
+    "expectedSourceOut": "\"something\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" something \"",
+    "wrappedText": "_ = \"something\"",
     "wrappedOffset": 4
   },
   {
@@ -7162,7 +8588,7 @@
             "start": 81,
             "end": 92
           },
-          "$nodeId": 1141024,
+          "$nodeId": 1165240,
           "$named": true
         }
       },
@@ -7175,7 +8601,7 @@
             "start": 93,
             "end": 99
           },
-          "$nodeId": 1141032,
+          "$nodeId": 1165248,
           "$named": true
         }
       ],
@@ -7183,7 +8609,7 @@
         "start": 81,
         "end": 99
       },
-      "$nodeId": 1141120,
+      "$nodeId": 1165336,
       "$named": true
     },
     "expectedOutput": "\"something\" \"else\""
@@ -7215,7 +8641,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 1151008,
+          "$nodeId": 1175224,
           "$named": false
         },
         ",": {
@@ -7226,7 +8652,7 @@
             "start": 8,
             "end": 9
           },
-          "$nodeId": 1149984,
+          "$nodeId": 1174200,
           "$named": false
         },
         ")": {
@@ -7237,7 +8663,7 @@
             "start": 14,
             "end": 15
           },
-          "$nodeId": 1151024,
+          "$nodeId": 1175240,
           "$named": false
         }
       },
@@ -7250,7 +8676,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 1149280,
+          "$nodeId": 1173496,
           "$named": true
         },
         {
@@ -7261,7 +8687,7 @@
             "start": 10,
             "end": 11
           },
-          "$nodeId": 1149632,
+          "$nodeId": 1173848,
           "$named": true
         },
         {
@@ -7272,7 +8698,7 @@
             "start": 11,
             "end": 12
           },
-          "$nodeId": 1150528,
+          "$nodeId": 1174744,
           "$named": false
         },
         {
@@ -7283,7 +8709,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 1150176,
+          "$nodeId": 1174392,
           "$named": true
         }
       ],
@@ -7291,7 +8717,7 @@
         "start": 6,
         "end": 15
       },
-      "$nodeId": 1151112,
+      "$nodeId": 1175328,
       "$named": true
     },
     "expectedOutput": "(0,1,2)"
@@ -7323,7 +8749,7 @@
             "start": 46,
             "end": 52
           },
-          "$nodeId": 1159992,
+          "$nodeId": 1184296,
           "$named": true
         },
         "arguments": {
@@ -7334,7 +8760,7 @@
             "start": 52,
             "end": 54
           },
-          "$nodeId": 1160264,
+          "$nodeId": 1184568,
           "$named": true
         }
       },
@@ -7342,7 +8768,7 @@
         "start": 46,
         "end": 54
       },
-      "$nodeId": 1160352,
+      "$nodeId": 1184656,
       "$named": true
     },
     "expectedOutput": "locals ()"
@@ -7374,7 +8800,7 @@
             "start": 3,
             "end": 8
           },
-          "$nodeId": 1166320,
+          "$nodeId": 1190720,
           "$named": true
         },
         ":=": {
@@ -7385,7 +8811,7 @@
             "start": 9,
             "end": 11
           },
-          "$nodeId": 1168720,
+          "$nodeId": 1193024,
           "$named": false
         },
         "value": {
@@ -7396,7 +8822,7 @@
             "start": 12,
             "end": 80
           },
-          "$nodeId": 1168536,
+          "$nodeId": 1192840,
           "$named": true
         }
       },
@@ -7404,7 +8830,7 @@
         "start": 3,
         "end": 80
       },
-      "$nodeId": 1168816,
+      "$nodeId": 1193120,
       "$named": true
     },
     "expectedOutput": "match:=re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)"
@@ -7436,7 +8862,7 @@
             "start": 12,
             "end": 24
           },
-          "$nodeId": 1166696,
+          "$nodeId": 1191000,
           "$named": true
         },
         "arguments": {
@@ -7447,7 +8873,7 @@
             "start": 24,
             "end": 80
           },
-          "$nodeId": 1168448,
+          "$nodeId": 1192752,
           "$named": true
         }
       },
@@ -7455,7 +8881,7 @@
         "start": 12,
         "end": 80
       },
-      "$nodeId": 1168536,
+      "$nodeId": 1192840,
       "$named": true
     },
     "expectedOutput": "re.fullmatch (r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)"
@@ -7487,7 +8913,7 @@
             "start": 12,
             "end": 14
           },
-          "$nodeId": 1166504,
+          "$nodeId": 1190808,
           "$named": true
         },
         ".": {
@@ -7498,7 +8924,7 @@
             "start": 14,
             "end": 15
           },
-          "$nodeId": 1166600,
+          "$nodeId": 1190904,
           "$named": false
         },
         "attribute": {
@@ -7509,7 +8935,7 @@
             "start": 15,
             "end": 24
           },
-          "$nodeId": 1166608,
+          "$nodeId": 1190912,
           "$named": true
         }
       },
@@ -7517,7 +8943,7 @@
         "start": 12,
         "end": 24
       },
-      "$nodeId": 1166696,
+      "$nodeId": 1191000,
       "$named": true
     },
     "expectedOutput": "re.fullmatch"
@@ -7549,7 +8975,7 @@
             "start": 25,
             "end": 27
           },
-          "$nodeId": 1167112,
+          "$nodeId": 1191416,
           "$named": true
         },
         "content": {
@@ -7560,7 +8986,7 @@
             "start": 27,
             "end": 56
           },
-          "$nodeId": 1167120,
+          "$nodeId": 1191424,
           "$named": true
         },
         "string_end": {
@@ -7571,7 +8997,7 @@
             "start": 56,
             "end": 57
           },
-          "$nodeId": 1167128,
+          "$nodeId": 1191432,
           "$named": true
         }
       },
@@ -7579,10 +9005,10 @@
         "start": 25,
         "end": 57
       },
-      "$nodeId": 1167216,
+      "$nodeId": 1191520,
       "$named": true
     },
-    "expectedOutput": "r\" (-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)? \""
+    "expectedOutput": "r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\""
   },
   {
     "kind": "roundtrip",
@@ -7590,9 +9016,9 @@
     "sourceIn": "r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "r\" (-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)? \"",
+    "expectedSourceOut": "r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = r\" (-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)? \"",
+    "wrappedText": "_ = r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\"",
     "wrappedOffset": 4
   },
   {
@@ -7611,7 +9037,7 @@
             "start": 6,
             "end": 15
           },
-          "$nodeId": 1178952,
+          "$nodeId": 1203168,
           "$named": true
         },
         "arguments": {
@@ -7622,7 +9048,7 @@
             "start": 15,
             "end": 17
           },
-          "$nodeId": 1179144,
+          "$nodeId": 1203360,
           "$named": true
         }
       },
@@ -7630,7 +9056,7 @@
         "start": 6,
         "end": 17
       },
-      "$nodeId": 1179232,
+      "$nodeId": 1203448,
       "$named": true
     },
     "expectedOutput": "event.get ()"
@@ -7662,7 +9088,7 @@
             "start": 6,
             "end": 11
           },
-          "$nodeId": 1178760,
+          "$nodeId": 1202880,
           "$named": true
         },
         ".": {
@@ -7673,7 +9099,7 @@
             "start": 11,
             "end": 12
           },
-          "$nodeId": 1178856,
+          "$nodeId": 1203072,
           "$named": false
         },
         "attribute": {
@@ -7684,7 +9110,7 @@
             "start": 12,
             "end": 15
           },
-          "$nodeId": 1178864,
+          "$nodeId": 1203080,
           "$named": true
         }
       },
@@ -7692,7 +9118,7 @@
         "start": 6,
         "end": 15
       },
-      "$nodeId": 1178952,
+      "$nodeId": 1203168,
       "$named": true
     },
     "expectedOutput": "event.get"
@@ -7724,7 +9150,7 @@
             "start": 43,
             "end": 44
           },
-          "$nodeId": 1180200,
+          "$nodeId": 1204416,
           "$named": false
         },
         ",": {
@@ -7735,7 +9161,7 @@
             "start": 45,
             "end": 46
           },
-          "$nodeId": 1180104,
+          "$nodeId": 1204320,
           "$named": false
         },
         ")": {
@@ -7746,7 +9172,7 @@
             "start": 48,
             "end": 49
           },
-          "$nodeId": 1180224,
+          "$nodeId": 1204440,
           "$named": false
         }
       },
@@ -7759,7 +9185,7 @@
             "start": 44,
             "end": 45
           },
-          "$nodeId": 1180208,
+          "$nodeId": 1204424,
           "$named": true
         },
         {
@@ -7770,7 +9196,7 @@
             "start": 47,
             "end": 48
           },
-          "$nodeId": 1180112,
+          "$nodeId": 1204328,
           "$named": true
         }
       ],
@@ -7778,7 +9204,7 @@
         "start": 43,
         "end": 49
       },
-      "$nodeId": 1180328,
+      "$nodeId": 1204544,
       "$named": true
     },
     "expectedOutput": "(x,y)"
@@ -7810,7 +9236,7 @@
             "start": 109,
             "end": 110
           },
-          "$nodeId": 1182768,
+          "$nodeId": 1206984,
           "$named": true
         },
         "content": {
@@ -7821,7 +9247,7 @@
             "start": 110,
             "end": 111
           },
-          "$nodeId": 1182776,
+          "$nodeId": 1206992,
           "$named": true
         },
         "string_end": {
@@ -7832,7 +9258,7 @@
             "start": 111,
             "end": 112
           },
-          "$nodeId": 1182784,
+          "$nodeId": 1207000,
           "$named": true
         }
       },
@@ -7840,10 +9266,10 @@
         "start": 109,
         "end": 112
       },
-      "$nodeId": 1182872,
+      "$nodeId": 1207088,
       "$named": true
     },
-    "expectedOutput": "\" Q \""
+    "expectedOutput": "\"Q\""
   },
   {
     "kind": "roundtrip",
@@ -7851,9 +9277,9 @@
     "sourceIn": "\"Q\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" Q \"",
+    "expectedSourceOut": "\"Q\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" Q \"",
+    "wrappedText": "_ = \"Q\"",
     "wrappedOffset": 4
   },
   {
@@ -7872,7 +9298,7 @@
             "start": 6,
             "end": 15
           },
-          "$nodeId": 1198728,
+          "$nodeId": 1223032,
           "$named": true
         },
         "arguments": {
@@ -7883,7 +9309,7 @@
             "start": 15,
             "end": 17
           },
-          "$nodeId": 1198920,
+          "$nodeId": 1223224,
           "$named": true
         }
       },
@@ -7891,7 +9317,7 @@
         "start": 6,
         "end": 17
       },
-      "$nodeId": 1199008,
+      "$nodeId": 1223312,
       "$named": true
     },
     "expectedOutput": "event.get ()"
@@ -7923,7 +9349,7 @@
             "start": 6,
             "end": 11
           },
-          "$nodeId": 1198536,
+          "$nodeId": 1222840,
           "$named": true
         },
         ".": {
@@ -7934,7 +9360,7 @@
             "start": 11,
             "end": 12
           },
-          "$nodeId": 1198632,
+          "$nodeId": 1222936,
           "$named": false
         },
         "attribute": {
@@ -7945,7 +9371,7 @@
             "start": 12,
             "end": 15
           },
-          "$nodeId": 1198640,
+          "$nodeId": 1222944,
           "$named": true
         }
       },
@@ -7953,7 +9379,7 @@
         "start": 6,
         "end": 15
       },
-      "$nodeId": 1198728,
+      "$nodeId": 1223032,
       "$named": true
     },
     "expectedOutput": "event.get"
@@ -7985,7 +9411,7 @@
             "start": 34,
             "end": 35
           },
-          "$nodeId": 1199976,
+          "$nodeId": 1224280,
           "$named": false
         },
         ",": {
@@ -7996,7 +9422,7 @@
             "start": 36,
             "end": 37
           },
-          "$nodeId": 1199880,
+          "$nodeId": 1224184,
           "$named": false
         },
         ")": {
@@ -8007,7 +9433,7 @@
             "start": 39,
             "end": 40
           },
-          "$nodeId": 1200000,
+          "$nodeId": 1224304,
           "$named": false
         }
       },
@@ -8020,7 +9446,7 @@
             "start": 35,
             "end": 36
           },
-          "$nodeId": 1199984,
+          "$nodeId": 1224288,
           "$named": true
         },
         {
@@ -8031,7 +9457,7 @@
             "start": 38,
             "end": 39
           },
-          "$nodeId": 1199888,
+          "$nodeId": 1224192,
           "$named": true
         }
       ],
@@ -8039,7 +9465,7 @@
         "start": 34,
         "end": 40
       },
-      "$nodeId": 1200088,
+      "$nodeId": 1224392,
       "$named": true
     },
     "expectedOutput": "(x,y)"
@@ -8071,7 +9497,7 @@
             "start": 6,
             "end": 15
           },
-          "$nodeId": 1207464,
+          "$nodeId": 1231680,
           "$named": true
         },
         "arguments": {
@@ -8082,7 +9508,7 @@
             "start": 15,
             "end": 17
           },
-          "$nodeId": 1207656,
+          "$nodeId": 1231872,
           "$named": true
         }
       },
@@ -8090,7 +9516,7 @@
         "start": 6,
         "end": 17
       },
-      "$nodeId": 1207744,
+      "$nodeId": 1231960,
       "$named": true
     },
     "expectedOutput": "event.get ()"
@@ -8122,7 +9548,7 @@
             "start": 6,
             "end": 11
           },
-          "$nodeId": 1207272,
+          "$nodeId": 1231392,
           "$named": true
         },
         ".": {
@@ -8133,7 +9559,7 @@
             "start": 11,
             "end": 12
           },
-          "$nodeId": 1207368,
+          "$nodeId": 1231584,
           "$named": false
         },
         "attribute": {
@@ -8144,7 +9570,7 @@
             "start": 12,
             "end": 15
           },
-          "$nodeId": 1207376,
+          "$nodeId": 1231592,
           "$named": true
         }
       },
@@ -8152,7 +9578,7 @@
         "start": 6,
         "end": 15
       },
-      "$nodeId": 1207464,
+      "$nodeId": 1231680,
       "$named": true
     },
     "expectedOutput": "event.get"
@@ -8184,7 +9610,7 @@
             "start": 34,
             "end": 35
           },
-          "$nodeId": 1208712,
+          "$nodeId": 1232928,
           "$named": false
         },
         ",": {
@@ -8195,7 +9621,7 @@
             "start": 36,
             "end": 37
           },
-          "$nodeId": 1208616,
+          "$nodeId": 1232832,
           "$named": false
         },
         ")": {
@@ -8206,7 +9632,7 @@
             "start": 39,
             "end": 40
           },
-          "$nodeId": 1208736,
+          "$nodeId": 1232952,
           "$named": false
         }
       },
@@ -8219,7 +9645,7 @@
             "start": 35,
             "end": 36
           },
-          "$nodeId": 1208720,
+          "$nodeId": 1232936,
           "$named": true
         },
         {
@@ -8230,7 +9656,7 @@
             "start": 38,
             "end": 39
           },
-          "$nodeId": 1208624,
+          "$nodeId": 1232840,
           "$named": true
         }
       ],
@@ -8238,7 +9664,7 @@
         "start": 34,
         "end": 40
       },
-      "$nodeId": 1208824,
+      "$nodeId": 1233040,
       "$named": true
     },
     "expectedOutput": "(x,y)"
@@ -8270,7 +9696,7 @@
             "start": 55,
             "end": 56
           },
-          "$nodeId": 1218536,
+          "$nodeId": 1242840,
           "$named": true
         },
         "content": {
@@ -8281,7 +9707,7 @@
             "start": 56,
             "end": 60
           },
-          "$nodeId": 1218544,
+          "$nodeId": 1242848,
           "$named": true
         },
         "string_end": {
@@ -8292,7 +9718,7 @@
             "start": 60,
             "end": 61
           },
-          "$nodeId": 1218552,
+          "$nodeId": 1242856,
           "$named": true
         }
       },
@@ -8300,10 +9726,10 @@
         "start": 55,
         "end": 61
       },
-      "$nodeId": 1218640,
+      "$nodeId": 1242944,
       "$named": true
     },
-    "expectedOutput": "\" text \""
+    "expectedOutput": "\"text\""
   },
   {
     "kind": "roundtrip",
@@ -8311,9 +9737,9 @@
     "sourceIn": "\"text\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" text \"",
+    "expectedSourceOut": "\"text\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" text \"",
+    "wrappedText": "_ = \"text\"",
     "wrappedOffset": 4
   },
   {
@@ -8332,7 +9758,7 @@
             "start": 97,
             "end": 114
           },
-          "$nodeId": 1220640,
+          "$nodeId": 1244944,
           "$named": true
         },
         "arguments": {
@@ -8343,7 +9769,7 @@
             "start": 114,
             "end": 117
           },
-          "$nodeId": 1221096,
+          "$nodeId": 1245400,
           "$named": true
         }
       },
@@ -8351,7 +9777,7 @@
         "start": 97,
         "end": 117
       },
-      "$nodeId": 1221184,
+      "$nodeId": 1245488,
       "$named": true
     },
     "expectedOutput": "ui.set_text_color (c)"
@@ -8383,7 +9809,7 @@
             "start": 97,
             "end": 99
           },
-          "$nodeId": 1220448,
+          "$nodeId": 1244752,
           "$named": true
         },
         ".": {
@@ -8394,7 +9820,7 @@
             "start": 99,
             "end": 100
           },
-          "$nodeId": 1220544,
+          "$nodeId": 1244848,
           "$named": false
         },
         "attribute": {
@@ -8405,7 +9831,7 @@
             "start": 100,
             "end": 114
           },
-          "$nodeId": 1220552,
+          "$nodeId": 1244856,
           "$named": true
         }
       },
@@ -8413,7 +9839,7 @@
         "start": 97,
         "end": 114
       },
-      "$nodeId": 1220640,
+      "$nodeId": 1244944,
       "$named": true
     },
     "expectedOutput": "ui.set_text_color"
@@ -8445,7 +9871,7 @@
             "start": 55,
             "end": 56
           },
-          "$nodeId": 1242000,
+          "$nodeId": 1266304,
           "$named": true
         },
         "content": {
@@ -8456,7 +9882,7 @@
             "start": 56,
             "end": 60
           },
-          "$nodeId": 1242008,
+          "$nodeId": 1266312,
           "$named": true
         },
         "string_end": {
@@ -8467,7 +9893,7 @@
             "start": 60,
             "end": 61
           },
-          "$nodeId": 1242016,
+          "$nodeId": 1266320,
           "$named": true
         }
       },
@@ -8475,10 +9901,10 @@
         "start": 55,
         "end": 61
       },
-      "$nodeId": 1242104,
+      "$nodeId": 1266408,
       "$named": true
     },
-    "expectedOutput": "\" text \""
+    "expectedOutput": "\"text\""
   },
   {
     "kind": "roundtrip",
@@ -8486,9 +9912,9 @@
     "sourceIn": "\"text\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" text \"",
+    "expectedSourceOut": "\"text\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" text \"",
+    "wrappedText": "_ = \"text\"",
     "wrappedOffset": 4
   },
   {
@@ -8507,7 +9933,7 @@
             "start": 107,
             "end": 124
           },
-          "$nodeId": 1244680,
+          "$nodeId": 1268984,
           "$named": true
         },
         "arguments": {
@@ -8518,7 +9944,7 @@
             "start": 124,
             "end": 127
           },
-          "$nodeId": 1245136,
+          "$nodeId": 1269440,
           "$named": true
         }
       },
@@ -8526,7 +9952,7 @@
         "start": 107,
         "end": 127
       },
-      "$nodeId": 1245224,
+      "$nodeId": 1269528,
       "$named": true
     },
     "expectedOutput": "ui.set_text_color (c)"
@@ -8558,7 +9984,7 @@
             "start": 107,
             "end": 109
           },
-          "$nodeId": 1244488,
+          "$nodeId": 1268792,
           "$named": true
         },
         ".": {
@@ -8569,7 +9995,7 @@
             "start": 109,
             "end": 110
           },
-          "$nodeId": 1244584,
+          "$nodeId": 1268888,
           "$named": false
         },
         "attribute": {
@@ -8580,7 +10006,7 @@
             "start": 110,
             "end": 124
           },
-          "$nodeId": 1244592,
+          "$nodeId": 1268896,
           "$named": true
         }
       },
@@ -8588,7 +10014,7 @@
         "start": 107,
         "end": 124
       },
-      "$nodeId": 1244680,
+      "$nodeId": 1268984,
       "$named": true
     },
     "expectedOutput": "ui.set_text_color"
@@ -8620,7 +10046,7 @@
             "start": 49,
             "end": 53
           },
-          "$nodeId": 1264096,
+          "$nodeId": 1288312,
           "$named": true
         },
         "arguments": {
@@ -8631,7 +10057,7 @@
             "start": 53,
             "end": 55
           },
-          "$nodeId": 1264368,
+          "$nodeId": 1288584,
           "$named": true
         }
       },
@@ -8639,7 +10065,7 @@
         "start": 49,
         "end": 55
       },
-      "$nodeId": 1264456,
+      "$nodeId": 1288672,
       "$named": true
     },
     "expectedOutput": "foo1 ()"
@@ -8671,7 +10097,7 @@
             "start": 25,
             "end": 26
           },
-          "$nodeId": 1308208,
+          "$nodeId": 1332512,
           "$named": true
         },
         "operator": {
@@ -8682,7 +10108,7 @@
             "start": 27,
             "end": 29
           },
-          "$nodeId": 1308568,
+          "$nodeId": 1332872,
           "$named": false
         },
         "right": {
@@ -8693,7 +10119,7 @@
             "start": 30,
             "end": 31
           },
-          "$nodeId": 1308384,
+          "$nodeId": 1332688,
           "$named": true
         }
       },
@@ -8701,7 +10127,7 @@
         "start": 25,
         "end": 31
       },
-      "$nodeId": 1308664,
+      "$nodeId": 1332968,
       "$named": true
     },
     "expectedOutput": "0 or 1"
@@ -8733,7 +10159,7 @@
             "start": 60,
             "end": 63
           },
-          "$nodeId": 1310944,
+          "$nodeId": 1335248,
           "$named": false
         },
         "argument": {
@@ -8744,7 +10170,7 @@
             "start": 64,
             "end": 68
           },
-          "$nodeId": 1310768,
+          "$nodeId": 1335072,
           "$named": true
         }
       },
@@ -8752,7 +10178,7 @@
         "start": 60,
         "end": 68
       },
-      "$nodeId": 1311040,
+      "$nodeId": 1335344,
       "$named": true
     },
     "expectedOutput": "not True"
@@ -8784,7 +10210,7 @@
             "start": 23,
             "end": 24
           },
-          "$nodeId": 1315104,
+          "$nodeId": 1339408,
           "$named": true
         },
         "content": {
@@ -8795,7 +10221,7 @@
             "start": 24,
             "end": 25
           },
-          "$nodeId": 1315112,
+          "$nodeId": 1339416,
           "$named": true
         },
         "string_end": {
@@ -8806,7 +10232,7 @@
             "start": 25,
             "end": 26
           },
-          "$nodeId": 1315120,
+          "$nodeId": 1339424,
           "$named": true
         }
       },
@@ -8814,10 +10240,10 @@
         "start": 23,
         "end": 26
       },
-      "$nodeId": 1315208,
+      "$nodeId": 1339512,
       "$named": true
     },
-    "expectedOutput": "\" b \""
+    "expectedOutput": "\"b\""
   },
   {
     "kind": "roundtrip",
@@ -8825,9 +10251,9 @@
     "sourceIn": "\"b\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" b \"",
+    "expectedSourceOut": "\"b\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" b \"",
+    "wrappedText": "_ = \"b\"",
     "wrappedOffset": 4
   },
   {
@@ -8846,7 +10272,7 @@
             "start": 2,
             "end": 3
           },
-          "$nodeId": 1319984,
+          "$nodeId": 1344280,
           "$named": true
         },
         "operator": {
@@ -8857,7 +10283,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 1320344,
+          "$nodeId": 1344640,
           "$named": false
         },
         "right": {
@@ -8868,7 +10294,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 1320248,
+          "$nodeId": 1344544,
           "$named": true
         }
       },
@@ -8876,7 +10302,7 @@
         "start": 2,
         "end": 7
       },
-      "$nodeId": 1320440,
+      "$nodeId": 1344736,
       "$named": true
     },
     "expectedOutput": "b + c"
@@ -8908,7 +10334,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 1324720,
+          "$nodeId": 1349112,
           "$named": true
         },
         "[": {
@@ -8919,7 +10345,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 1325088,
+          "$nodeId": 1349384,
           "$named": false
         },
         "subscript": {
@@ -8930,7 +10356,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 1324904,
+          "$nodeId": 1349200,
           "$named": true
         },
         "]": {
@@ -8941,7 +10367,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 1325104,
+          "$nodeId": 1349400,
           "$named": false
         }
       },
@@ -8949,7 +10375,7 @@
         "start": 4,
         "end": 8
       },
-      "$nodeId": 1325192,
+      "$nodeId": 1349488,
       "$named": true
     },
     "expectedOutput": "a[1]"
@@ -8981,7 +10407,7 @@
             "start": 14,
             "end": 15
           },
-          "$nodeId": 1329840,
+          "$nodeId": 1354128,
           "$named": true
         },
         "operator": {
@@ -8992,7 +10418,7 @@
             "start": 16,
             "end": 17
           },
-          "$nodeId": 1330024,
+          "$nodeId": 1354312,
           "$named": false
         },
         "right": {
@@ -9003,7 +10429,7 @@
             "start": 18,
             "end": 19
           },
-          "$nodeId": 1329928,
+          "$nodeId": 1354216,
           "$named": true
         }
       },
@@ -9011,7 +10437,7 @@
         "start": 14,
         "end": 19
       },
-      "$nodeId": 1330120,
+      "$nodeId": 1354408,
       "$named": true
     },
     "expectedOutput": "a + b"
@@ -9043,7 +10469,7 @@
             "start": 30,
             "end": 33
           },
-          "$nodeId": 1331288,
+          "$nodeId": 1355576,
           "$named": false
         },
         "argument": {
@@ -9054,7 +10480,7 @@
             "start": 34,
             "end": 35
           },
-          "$nodeId": 1331112,
+          "$nodeId": 1355400,
           "$named": true
         }
       },
@@ -9062,7 +10488,7 @@
         "start": 30,
         "end": 35
       },
-      "$nodeId": 1331384,
+      "$nodeId": 1355672,
       "$named": true
     },
     "expectedOutput": "not b"
@@ -9094,7 +10520,7 @@
             "start": 110,
             "end": 111
           },
-          "$nodeId": 1356120,
+          "$nodeId": 1380408,
           "$named": false
         },
         ",": {
@@ -9105,7 +10531,7 @@
             "start": 115,
             "end": 116
           },
-          "$nodeId": 1355184,
+          "$nodeId": 1379472,
           "$named": false
         },
         "]": {
@@ -9116,7 +10542,7 @@
             "start": 127,
             "end": 128
           },
-          "$nodeId": 1356136,
+          "$nodeId": 1380424,
           "$named": false
         }
       },
@@ -9129,7 +10555,7 @@
             "start": 111,
             "end": 115
           },
-          "$nodeId": 1354456,
+          "$nodeId": 1378744,
           "$named": true
         },
         {
@@ -9140,7 +10566,7 @@
             "start": 117,
             "end": 121
           },
-          "$nodeId": 1355008,
+          "$nodeId": 1379296,
           "$named": true
         },
         {
@@ -9151,7 +10577,7 @@
             "start": 121,
             "end": 122
           },
-          "$nodeId": 1355832,
+          "$nodeId": 1380120,
           "$named": false
         },
         {
@@ -9162,7 +10588,7 @@
             "start": 123,
             "end": 127
           },
-          "$nodeId": 1355656,
+          "$nodeId": 1379944,
           "$named": true
         }
       ],
@@ -9170,7 +10596,7 @@
         "start": 110,
         "end": 128
       },
-      "$nodeId": 1356224,
+      "$nodeId": 1380512,
       "$named": true
     },
     "expectedOutput": "[(1,),(2,),(3,)]"
@@ -9202,7 +10628,7 @@
             "start": 30,
             "end": 31
           },
-          "$nodeId": 1363128,
+          "$nodeId": 1387416,
           "$named": true
         },
         "as": {
@@ -9213,7 +10639,7 @@
             "start": 32,
             "end": 34
           },
-          "$nodeId": 1363880,
+          "$nodeId": 1388168,
           "$named": false
         },
         "alias": {
@@ -9224,7 +10650,7 @@
             "start": 35,
             "end": 36
           },
-          "$nodeId": 1363888,
+          "$nodeId": 1388176,
           "$named": true
         }
       },
@@ -9232,7 +10658,7 @@
         "start": 30,
         "end": 36
       },
-      "$nodeId": 1363976,
+      "$nodeId": 1388264,
       "$named": true
     },
     "expectedOutput": "d as e"
@@ -9264,7 +10690,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 1377864,
+          "$nodeId": 1402248,
           "$named": true
         },
         "as": {
@@ -9275,7 +10701,7 @@
             "start": 7,
             "end": 9
           },
-          "$nodeId": 1378320,
+          "$nodeId": 1402608,
           "$named": false
         },
         "alias": {
@@ -9286,7 +10712,7 @@
             "start": 10,
             "end": 11
           },
-          "$nodeId": 1378328,
+          "$nodeId": 1402616,
           "$named": true
         }
       },
@@ -9294,7 +10720,7 @@
         "start": 5,
         "end": 11
       },
-      "$nodeId": 1378416,
+      "$nodeId": 1402704,
       "$named": true
     },
     "expectedOutput": "a as b"
@@ -9326,7 +10752,7 @@
             "start": 24,
             "end": 28
           },
-          "$nodeId": 1379192,
+          "$nodeId": 1403480,
           "$named": true
         },
         "arguments": {
@@ -9337,7 +10763,7 @@
             "start": 28,
             "end": 33
           },
-          "$nodeId": 1380392,
+          "$nodeId": 1404680,
           "$named": true
         }
       },
@@ -9345,7 +10771,7 @@
         "start": 24,
         "end": 33
       },
-      "$nodeId": 1380480,
+      "$nodeId": 1404768,
       "$named": true
     },
     "expectedOutput": "open ('d')"
@@ -9377,7 +10803,7 @@
             "start": 29,
             "end": 30
           },
-          "$nodeId": 1380000,
+          "$nodeId": 1404288,
           "$named": true
         },
         "content": {
@@ -9388,7 +10814,7 @@
             "start": 30,
             "end": 31
           },
-          "$nodeId": 1380008,
+          "$nodeId": 1404296,
           "$named": true
         },
         "string_end": {
@@ -9399,7 +10825,7 @@
             "start": 31,
             "end": 32
           },
-          "$nodeId": 1380016,
+          "$nodeId": 1404304,
           "$named": true
         }
       },
@@ -9407,10 +10833,10 @@
         "start": 29,
         "end": 32
       },
-      "$nodeId": 1380104,
+      "$nodeId": 1404392,
       "$named": true
     },
-    "expectedOutput": "' d '"
+    "expectedOutput": "'d'"
   },
   {
     "kind": "roundtrip",
@@ -9418,9 +10844,9 @@
     "sourceIn": "'d'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "' d '",
+    "expectedSourceOut": "'d'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = ' d '",
+    "wrappedText": "_ = 'd'",
     "wrappedOffset": 4
   },
   {
@@ -9439,7 +10865,7 @@
             "start": 81,
             "end": 84
           },
-          "$nodeId": 1394168,
+          "$nodeId": 1418456,
           "$named": true
         }
       ],
@@ -9447,7 +10873,7 @@
         "start": 81,
         "end": 84
       },
-      "$nodeId": 1394952,
+      "$nodeId": 1419240,
       "$named": true
     },
     "expectedOutput": "str"
@@ -9479,7 +10905,7 @@
             "start": 107,
             "end": 108
           },
-          "$nodeId": 1395744,
+          "$nodeId": 1420032,
           "$named": true
         },
         ".": {
@@ -9490,7 +10916,7 @@
             "start": 108,
             "end": 109
           },
-          "$nodeId": 1396344,
+          "$nodeId": 1420632,
           "$named": false
         },
         "attribute": {
@@ -9501,7 +10927,7 @@
             "start": 109,
             "end": 110
           },
-          "$nodeId": 1396352,
+          "$nodeId": 1420640,
           "$named": true
         }
       },
@@ -9509,7 +10935,7 @@
         "start": 107,
         "end": 110
       },
-      "$nodeId": 1396440,
+      "$nodeId": 1420728,
       "$named": true
     },
     "expectedOutput": "b.c"
@@ -9529,6 +10955,121 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": "list_splat_pattern",
+      "$source": "ts",
+      "$text": "*c",
+      "$fields": {
+        "*": {
+          "$type": "*",
+          "$source": "ts",
+          "$text": "*",
+          "$span": {
+            "start": 177,
+            "end": 178
+          },
+          "$nodeId": 1425000,
+          "$named": false
+        }
+      },
+      "$children": [
+        {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "c",
+          "$span": {
+            "start": 178,
+            "end": 179
+          },
+          "$nodeId": 1425008,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 177,
+        "end": 179
+      },
+      "$nodeId": 1425096,
+      "$named": true
+    },
+    "expectedOutput": "*c"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*c",
+    "pattern": "list_splat_pattern",
+    "edits": [],
+    "expectedSourceOut": "*c",
+    "expectedReparseTree": "(list_splat_pattern (identifier))",
+    "wrappedText": "*c = (1,)",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "string",
+      "$source": "ts",
+      "$text": "\"default\"",
+      "$fields": {
+        "string_start": {
+          "$type": "string_start",
+          "$source": "ts",
+          "$text": "\"",
+          "$span": {
+            "start": 254,
+            "end": 255
+          },
+          "$nodeId": 1429336,
+          "$named": true
+        },
+        "content": {
+          "$type": "string_content",
+          "$source": "ts",
+          "$text": "default",
+          "$span": {
+            "start": 255,
+            "end": 262
+          },
+          "$nodeId": 1429344,
+          "$named": true
+        },
+        "string_end": {
+          "$type": "string_end",
+          "$source": "ts",
+          "$text": "\"",
+          "$span": {
+            "start": 262,
+            "end": 263
+          },
+          "$nodeId": 1429352,
+          "$named": true
+        }
+      },
+      "$span": {
+        "start": 254,
+        "end": 263
+      },
+      "$nodeId": 1429440,
+      "$named": true
+    },
+    "expectedOutput": "\"default\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "\"default\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "\"default\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \"default\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": "tuple",
       "$source": "ts",
       "$text": "(a,b)",
@@ -9541,7 +11082,7 @@
             "start": 23,
             "end": 24
           },
-          "$nodeId": 1412896,
+          "$nodeId": 1438512,
           "$named": false
         },
         ",": {
@@ -9552,7 +11093,7 @@
             "start": 25,
             "end": 26
           },
-          "$nodeId": 1412624,
+          "$nodeId": 1438240,
           "$named": false
         },
         ")": {
@@ -9563,7 +11104,7 @@
             "start": 27,
             "end": 28
           },
-          "$nodeId": 1412912,
+          "$nodeId": 1438528,
           "$named": false
         }
       },
@@ -9576,7 +11117,7 @@
             "start": 24,
             "end": 25
           },
-          "$nodeId": 1412272,
+          "$nodeId": 1437888,
           "$named": true
         },
         {
@@ -9587,7 +11128,7 @@
             "start": 26,
             "end": 27
           },
-          "$nodeId": 1412448,
+          "$nodeId": 1438064,
           "$named": true
         }
       ],
@@ -9595,7 +11136,7 @@
         "start": 23,
         "end": 28
       },
-      "$nodeId": 1413000,
+      "$nodeId": 1438616,
       "$named": true
     },
     "expectedOutput": "(a,b)"
@@ -9615,6 +11156,150 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": "list_splat_pattern",
+      "$source": "ts",
+      "$text": "*list",
+      "$fields": {
+        "*": {
+          "$type": "*",
+          "$source": "ts",
+          "$text": "*",
+          "$span": {
+            "start": 36,
+            "end": 37
+          },
+          "$nodeId": 1439288,
+          "$named": false
+        }
+      },
+      "$children": [
+        {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "list",
+          "$span": {
+            "start": 37,
+            "end": 41
+          },
+          "$nodeId": 1439296,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 36,
+        "end": 41
+      },
+      "$nodeId": 1439648,
+      "$named": true
+    },
+    "expectedOutput": "*list"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*list",
+    "pattern": "list_splat_pattern",
+    "edits": [],
+    "expectedSourceOut": "*list",
+    "expectedReparseTree": "(list_splat_pattern (identifier))",
+    "wrappedText": "*list = (1,)",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "type",
+      "$source": "ts",
+      "$text": "str",
+      "$children": [
+        {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "str",
+          "$span": {
+            "start": 43,
+            "end": 46
+          },
+          "$nodeId": 1439384,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 43,
+        "end": 46
+      },
+      "$nodeId": 1439664,
+      "$named": true
+    },
+    "expectedOutput": "str"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "str",
+    "pattern": "type",
+    "edits": [],
+    "expectedSourceOut": "str",
+    "expectedReparseTree": "(type (identifier))",
+    "wrappedText": "_: str = None",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "call",
+      "$source": "ts",
+      "$text": "i((*a))",
+      "$fields": {
+        "function": {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "i",
+          "$span": {
+            "start": 183,
+            "end": 184
+          },
+          "$nodeId": 1448392,
+          "$named": true
+        },
+        "arguments": {
+          "$type": "argument_list",
+          "$source": "ts",
+          "$text": "((*a))",
+          "$span": {
+            "start": 184,
+            "end": 190
+          },
+          "$nodeId": 1449600,
+          "$named": true
+        }
+      },
+      "$span": {
+        "start": 183,
+        "end": 190
+      },
+      "$nodeId": 1449688,
+      "$named": true
+    },
+    "expectedOutput": "i ((*a))"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "i((*a))",
+    "pattern": "call",
+    "edits": [],
+    "expectedSourceOut": "i ((*a))",
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (parenthesized_expression (list_splat expression: (identifier)))))",
+    "wrappedText": "_ = i ((*a))",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": "call",
       "$source": "ts",
       "$text": "f()",
@@ -9627,7 +11312,7 @@
             "start": 219,
             "end": 220
           },
-          "$nodeId": 1434104,
+          "$nodeId": 1464000,
           "$named": true
         },
         "arguments": {
@@ -9638,7 +11323,7 @@
             "start": 220,
             "end": 222
           },
-          "$nodeId": 1434296,
+          "$nodeId": 1464192,
           "$named": true
         }
       },
@@ -9646,7 +11331,7 @@
         "start": 219,
         "end": 222
       },
-      "$nodeId": 1434384,
+      "$nodeId": 1464280,
       "$named": true
     },
     "expectedOutput": "f ()"
@@ -9678,7 +11363,7 @@
             "start": 122,
             "end": 130
           },
-          "$nodeId": 1440832,
+          "$nodeId": 1470736,
           "$named": true
         },
         "[": {
@@ -9689,7 +11374,7 @@
             "start": 130,
             "end": 131
           },
-          "$nodeId": 1441104,
+          "$nodeId": 1471008,
           "$named": false
         },
         "subscript": {
@@ -9700,7 +11385,7 @@
             "start": 131,
             "end": 132
           },
-          "$nodeId": 1440920,
+          "$nodeId": 1470824,
           "$named": true
         },
         "]": {
@@ -9711,7 +11396,7 @@
             "start": 132,
             "end": 133
           },
-          "$nodeId": 1441120,
+          "$nodeId": 1471024,
           "$named": false
         }
       },
@@ -9719,7 +11404,7 @@
         "start": 122,
         "end": 133
       },
-      "$nodeId": 1441208,
+      "$nodeId": 1471112,
       "$named": true
     },
     "expectedOutput": "Sequence[T]"
@@ -9751,7 +11436,7 @@
             "start": 25,
             "end": 31
           },
-          "$nodeId": 1449560,
+          "$nodeId": 1479464,
           "$named": true
         },
         ".": {
@@ -9762,7 +11447,7 @@
             "start": 31,
             "end": 32
           },
-          "$nodeId": 1449736,
+          "$nodeId": 1479640,
           "$named": false
         },
         "attribute": {
@@ -9773,7 +11458,7 @@
             "start": 32,
             "end": 33
           },
-          "$nodeId": 1449744,
+          "$nodeId": 1479648,
           "$named": true
         }
       },
@@ -9781,7 +11466,7 @@
         "start": 25,
         "end": 33
       },
-      "$nodeId": 1449832,
+      "$nodeId": 1479736,
       "$named": true
     },
     "expectedOutput": "e[2].f.g"
@@ -9813,7 +11498,7 @@
             "start": 17,
             "end": 18
           },
-          "$nodeId": 1448168,
+          "$nodeId": 1478072,
           "$named": true
         },
         "arguments": {
@@ -9824,7 +11509,7 @@
             "start": 18,
             "end": 21
           },
-          "$nodeId": 1448624,
+          "$nodeId": 1478528,
           "$named": true
         }
       },
@@ -9832,7 +11517,7 @@
         "start": 17,
         "end": 21
       },
-      "$nodeId": 1448712,
+      "$nodeId": 1478616,
       "$named": true
     },
     "expectedOutput": "d (1)"
@@ -9864,7 +11549,7 @@
             "start": 25,
             "end": 26
           },
-          "$nodeId": 1448992,
+          "$nodeId": 1478896,
           "$named": true
         },
         "[": {
@@ -9875,7 +11560,7 @@
             "start": 26,
             "end": 27
           },
-          "$nodeId": 1449264,
+          "$nodeId": 1479168,
           "$named": false
         },
         "subscript": {
@@ -9886,7 +11571,7 @@
             "start": 27,
             "end": 28
           },
-          "$nodeId": 1449080,
+          "$nodeId": 1478984,
           "$named": true
         },
         "]": {
@@ -9897,7 +11582,7 @@
             "start": 28,
             "end": 29
           },
-          "$nodeId": 1449280,
+          "$nodeId": 1479184,
           "$named": false
         }
       },
@@ -9905,7 +11590,7 @@
         "start": 25,
         "end": 29
       },
-      "$nodeId": 1449368,
+      "$nodeId": 1479272,
       "$named": true
     },
     "expectedOutput": "e[2]"
@@ -9937,7 +11622,7 @@
             "start": 12,
             "end": 24
           },
-          "$nodeId": 1460552,
+          "$nodeId": 1490456,
           "$named": true
         },
         "arguments": {
@@ -9948,7 +11633,7 @@
             "start": 24,
             "end": 30
           },
-          "$nodeId": 1461440,
+          "$nodeId": 1491344,
           "$named": true
         }
       },
@@ -9956,7 +11641,7 @@
         "start": 12,
         "end": 30
       },
-      "$nodeId": 1461528,
+      "$nodeId": 1491432,
       "$named": true
     },
     "expectedOutput": "RuntimeError ('NO')"
@@ -9988,7 +11673,7 @@
             "start": 25,
             "end": 26
           },
-          "$nodeId": 1460968,
+          "$nodeId": 1490872,
           "$named": true
         },
         "content": {
@@ -9999,7 +11684,7 @@
             "start": 26,
             "end": 28
           },
-          "$nodeId": 1460976,
+          "$nodeId": 1490880,
           "$named": true
         },
         "string_end": {
@@ -10010,7 +11695,7 @@
             "start": 28,
             "end": 29
           },
-          "$nodeId": 1460984,
+          "$nodeId": 1490888,
           "$named": true
         }
       },
@@ -10018,10 +11703,10 @@
         "start": 25,
         "end": 29
       },
-      "$nodeId": 1461072,
+      "$nodeId": 1490976,
       "$named": true
     },
-    "expectedOutput": "' NO '"
+    "expectedOutput": "'NO'"
   },
   {
     "kind": "roundtrip",
@@ -10029,9 +11714,9 @@
     "sourceIn": "'NO'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "' NO '",
+    "expectedSourceOut": "'NO'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = ' NO '",
+    "wrappedText": "_ = 'NO'",
     "wrappedOffset": 4
   },
   {
@@ -10050,7 +11735,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 1477248,
+          "$nodeId": 1507232,
           "$named": true
         },
         "content": {
@@ -10061,7 +11746,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 1477256,
+          "$nodeId": 1507240,
           "$named": true
         },
         "string_end": {
@@ -10072,7 +11757,7 @@
             "start": 8,
             "end": 9
           },
-          "$nodeId": 1477264,
+          "$nodeId": 1507248,
           "$named": true
         }
       },
@@ -10080,10 +11765,10 @@
         "start": 6,
         "end": 9
       },
-      "$nodeId": 1477352,
+      "$nodeId": 1507336,
       "$named": true
     },
-    "expectedOutput": "\" a \""
+    "expectedOutput": "\"a\""
   },
   {
     "kind": "roundtrip",
@@ -10091,9 +11776,9 @@
     "sourceIn": "\"a\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" a \"",
+    "expectedSourceOut": "\"a\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" a \"",
+    "wrappedText": "_ = \"a\"",
     "wrappedOffset": 4
   },
   {
@@ -10112,7 +11797,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 1480592,
+          "$nodeId": 1510568,
           "$named": true
         },
         "content": {
@@ -10123,7 +11808,7 @@
             "start": 6,
             "end": 9
           },
-          "$nodeId": 1480600,
+          "$nodeId": 1510576,
           "$named": true
         },
         "string_end": {
@@ -10134,7 +11819,7 @@
             "start": 9,
             "end": 10
           },
-          "$nodeId": 1480608,
+          "$nodeId": 1510584,
           "$named": true
         }
       },
@@ -10142,10 +11827,10 @@
         "start": 5,
         "end": 10
       },
-      "$nodeId": 1480704,
+      "$nodeId": 1510680,
       "$named": true
     },
-    "expectedOutput": "' 1+1 '"
+    "expectedOutput": "'1+1'"
   },
   {
     "kind": "roundtrip",
@@ -10153,9 +11838,9 @@
     "sourceIn": "'1+1'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "' 1+1 '",
+    "expectedSourceOut": "'1+1'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = ' 1+1 '",
+    "wrappedText": "_ = '1+1'",
     "wrappedOffset": 4
   },
   {
@@ -10174,7 +11859,7 @@
             "start": 79,
             "end": 80
           },
-          "$nodeId": 1484568,
+          "$nodeId": 1514544,
           "$named": false
         },
         "}": {
@@ -10185,7 +11870,7 @@
             "start": 80,
             "end": 81
           },
-          "$nodeId": 1484576,
+          "$nodeId": 1514552,
           "$named": false
         }
       },
@@ -10193,7 +11878,7 @@
         "start": 79,
         "end": 81
       },
-      "$nodeId": 1484664,
+      "$nodeId": 1514640,
       "$named": true
     },
     "expectedOutput": "{ }"
@@ -10225,7 +11910,7 @@
             "start": 12,
             "end": 13
           },
-          "$nodeId": 1488008,
+          "$nodeId": 1517984,
           "$named": true
         },
         "arguments": {
@@ -10236,7 +11921,7 @@
             "start": 13,
             "end": 15
           },
-          "$nodeId": 1488280,
+          "$nodeId": 1518256,
           "$named": true
         }
       },
@@ -10244,7 +11929,7 @@
         "start": 12,
         "end": 15
       },
-      "$nodeId": 1488368,
+      "$nodeId": 1518344,
       "$named": true
     },
     "expectedOutput": "b ()"
@@ -10276,7 +11961,7 @@
             "start": 0,
             "end": 3
           },
-          "$nodeId": 1493408,
+          "$nodeId": 1523296,
           "$named": true
         },
         "arguments": {
@@ -10287,7 +11972,7 @@
             "start": 3,
             "end": 8
           },
-          "$nodeId": 1494376,
+          "$nodeId": 1524264,
           "$named": true
         }
       },
@@ -10295,7 +11980,7 @@
         "start": 0,
         "end": 8
       },
-      "$nodeId": 1494464,
+      "$nodeId": 1524352,
       "$named": true
     },
     "expectedOutput": "len (\"a\")"
@@ -10327,7 +12012,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 1493824,
+          "$nodeId": 1523712,
           "$named": true
         },
         "content": {
@@ -10338,7 +12023,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 1493832,
+          "$nodeId": 1523720,
           "$named": true
         },
         "string_end": {
@@ -10349,7 +12034,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 1493840,
+          "$nodeId": 1523728,
           "$named": true
         }
       },
@@ -10357,10 +12042,10 @@
         "start": 4,
         "end": 7
       },
-      "$nodeId": 1493928,
+      "$nodeId": 1523816,
       "$named": true
     },
-    "expectedOutput": "\" a \""
+    "expectedOutput": "\"a\""
   },
   {
     "kind": "roundtrip",
@@ -10368,9 +12053,9 @@
     "sourceIn": "\"a\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" a \"",
+    "expectedSourceOut": "\"a\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" a \"",
+    "wrappedText": "_ = \"a\"",
     "wrappedOffset": 4
   },
   {
@@ -10389,7 +12074,7 @@
             "start": 264,
             "end": 265
           },
-          "$nodeId": 1515120,
+          "$nodeId": 1545008,
           "$named": false
         },
         ",": {
@@ -10400,7 +12085,7 @@
             "start": 268,
             "end": 269
           },
-          "$nodeId": 1514928,
+          "$nodeId": 1544816,
           "$named": false
         },
         ")": {
@@ -10411,7 +12096,7 @@
             "start": 273,
             "end": 274
           },
-          "$nodeId": 1515136,
+          "$nodeId": 1545024,
           "$named": false
         }
       },
@@ -10424,7 +12109,7 @@
             "start": 265,
             "end": 268
           },
-          "$nodeId": 1514576,
+          "$nodeId": 1544464,
           "$named": true
         },
         {
@@ -10435,7 +12120,7 @@
             "start": 270,
             "end": 273
           },
-          "$nodeId": 1514752,
+          "$nodeId": 1544640,
           "$named": true
         }
       ],
@@ -10443,7 +12128,7 @@
         "start": 264,
         "end": 274
       },
-      "$nodeId": 1515224,
+      "$nodeId": 1545112,
       "$named": true
     },
     "expectedOutput": "(int,str)"
@@ -10475,7 +12160,7 @@
             "start": 17,
             "end": 18
           },
-          "$nodeId": 1520104,
+          "$nodeId": 1550072,
           "$named": true
         }
       ],
@@ -10483,7 +12168,7 @@
         "start": 17,
         "end": 18
       },
-      "$nodeId": 1520928,
+      "$nodeId": 1550896,
       "$named": true
     },
     "expectedOutput": "T"

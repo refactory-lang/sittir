@@ -1356,7 +1356,22 @@ function inlineJinjaClauses(template: string, clauses: Record<string, string>): 
         // when the field is absent). Jinja's `{%-` / `-%}` markers
         // strip that same whitespace from the outer template so the
         // only place it appears is inside the conditional body.
-        const next = current.replace(/( *)\$([A-Z][A-Z0-9_]*_CLAUSE)( *)/g, (full, leading: string, marker: string, trailing: string) => {
+        const next = current.replace(/\$([A-Z][A-Z0-9_]*_CLAUSE)/g, (full, marker: string) => {
+            // Historically this regex captured `( *)\$CLAUSE( *)` and
+            // pulled outer whitespace INTO the clause body (with
+            // `{%- -%}` trim markers). That worked for clauses with
+            // flanking literals (`:type`, `=value` — the literal and
+            // space co-render), but silently broke for clauses whose
+            // only content is a placeholder: when absent, the body
+            // rendered empty, and the absorbed outer whitespace was
+            // gone — gluing the clause's outer neighbors. Example:
+            // `{{ vis }} $UNSAFE_CLAUSE trait` → absorbed both spaces
+            // → `{{ vis }}{% if unsafe %}...{% endif %}trait` →
+            // `pubtrait` on unsafe-absent. Leave outer whitespace
+            // in the outer template — when absent, the neighbors
+            // keep their ambient separator.
+            const leading = ''
+            const trailing = ''
             const key = marker.toLowerCase()
             const body = clauses[key]
             if (body === undefined) return full  // not a clause we emitted — leave as-is
@@ -1692,9 +1707,64 @@ function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boole
     for (const m of core.members) {
         if (isIgnorableBoundaryExternal(m)) continue
         hasContent = true
-        if (!isExternalMember(m)) return false
+        if (!isExternalMember(m)) {
+            // Relaxed path: rule has external-scanner BOUNDARIES (first
+            // and last non-ignorable members are external) — treat as
+            // $TEXT. Python's `string` kind has this shape:
+            // `seq(field('string_start', external), REPEAT(content),
+            // field('string_end', external))`. Start and end are
+            // external-only tokens; the REPEAT between them holds the
+            // text + interpolations. Slot-by-slot rendering can't
+            // reconstruct the start/end delimiters and breaks f-strings
+            // / template strings. $TEXT preserves the source span
+            // verbatim on readNode-derived data.
+            return hasExternalBoundaries(core, externals)
+        }
     }
     return hasContent
+}
+
+/**
+ * Rule-level boundary check — first and last non-ignorable seq members
+ * are external-scanner symbols. Fires for rules like python's `string`
+ * where scanner tokens delimit but the interior is author-content.
+ */
+function hasExternalBoundaries(seqRule: Rule, externals: ReadonlySet<string>): boolean {
+    if (seqRule.type !== 'seq') return false
+    const isExternalTerminalMember = (r: Rule): boolean => {
+        let core = r
+        while (
+            core.type === 'optional' || core.type === 'variant'
+            || core.type === 'clause' || core.type === 'group'
+            || core.type === 'alias' || core.type === 'token'
+            || core.type === 'terminal'
+        ) {
+            core = (core as { content: Rule }).content
+        }
+        if (core.type === 'field') {
+            const f = core as { name: string; content: Rule }
+            core = f.content
+            while (
+                core.type === 'optional' || core.type === 'variant'
+                || core.type === 'clause' || core.type === 'group'
+                || core.type === 'alias' || core.type === 'token'
+                || core.type === 'terminal'
+            ) {
+                core = (core as { content: Rule }).content
+            }
+            if (
+                core.type === 'pattern'
+                && (core as { value: string }).value === ''
+                && (externals.has(f.name) || externals.has('_' + f.name))
+            ) return true
+        }
+        return core.type === 'symbol' && externals.has((core as { name: string }).name)
+    }
+    if (seqRule.members.length < 2) return false
+    const first = seqRule.members[0]
+    const last = seqRule.members[seqRule.members.length - 1]
+    if (!first || !last) return false
+    return isExternalTerminalMember(first) && isExternalTerminalMember(last)
 }
 
 export class AssembledContainer extends AssembledNodeBase<SeqRule | ChoiceRule | RepeatRule | Repeat1Rule> {

@@ -56,6 +56,115 @@ Direct-validator numbers (measured via `npx tsx /tmp/check-actual.mts`; the FLOO
 | TypeScript | fromPass | 144 / 152 | 118 / 123 | Exceeds legacy | **Yes** — 8 failures |
 | TypeScript | rtPass (full round-trip) | **63 / 112** | — | **39 short of target (102). Biggest lever.** | **Yes** — 49 failures |
 
+## Working session inventory (2026-04-24 — R1 ceilings worktree)
+
+Refreshed after six source-of-truth fixes landed on branch
+`012-r1-ceilings`. Measured via `npx tsx packages/codegen/src/scripts/counts.ts`
++ per-grammar `rt-breakdown.ts` for fail/skip detail.
+
+| Grammar | rtPass | Fail | Skip | Total | Strict gate (≥total−10) | Relaxed gate (fail≤10) |
+|---|---:|---:|---:|---:|:---|:---|
+| rust | **121** | 2 | 13 | 136 | ❌ Unreachable (max=123) | ✅ Pass |
+| python | **105** | 9 | 1 | 115 | ✅ Pass | ✅ Pass |
+| typescript | **96** | 12 | 4 | 112 | ❌ −6 short | ❌ −2 short |
+
+### Delta from 2026-04-24 baseline
+
+| Grammar | Start → End | Δ | Commits |
+|---|:---|---:|---:|
+| rust | 114 → 121 | **+7** | 3 (C1 clause whitespace, externals, readNode helper) |
+| python | 96 → 105 | **+9** | 2 (list_splat/pattern wrappers, external-boundaries $TEXT) |
+| typescript | 93 → 96 | **+3** | 1 (unnamed-alias literal preservation) |
+
+**Total closed: +19 rtPass across three grammars** out of the 30
+failures called out at session start. Rust 5 + python 9 + typescript 3
+= 17 of 30 (plus +2 astMatch improvements not counted as rtPass).
+
+### Why the strict gate is unreachable on rust
+
+Rust has 13 corpus-entry skips out of 136. Skips arise when the corpus
+entry's root parse errors OR contains no testable kinds. They cannot
+become passes without deleting corpus entries — which would be
+cheating. Maximum reachable pass = 123, strict target 126 is 3 above
+ceiling.
+
+The plan's "relax fromPass gate formulation to `fail ≤ 10`" (line 101
+of original doc) should apply to rtPass too. Under that reading:
+
+- **rust: PASS** (fail=2)
+- **python: FAIL** (fail=11, need −1)
+- **typescript: FAIL** (fail=12, need −2)
+
+Total: 3 more real failures to close for cross-grammar gate.
+
+### Commits landed this session
+
+1. `c4a4ab6b 012/R1: C1 clause whitespace absorption — rust rtPass +4`
+   Clause inliner absorbed outer-template spaces into bodies, silently
+   dropping them when clause was absent. Fixed regex to leave outer
+   whitespace alone.
+
+2. `b5df77e8 012/R1: C-externals external-scanner text fallback — rust rtPass +3`
+   `emitJinjaTemplates` didn't thread `nodeMap.externals` to
+   `node.renderTemplate`, so the `hasHiddenExternalRef` guard never
+   fired and raw_string_literal got slot-by-slot rendering.
+
+3. `9b061d21 012/R1: C-wrappers python list_splat/list_splat_pattern — python rtPass +7`
+   Added kind-specific reparse wrappers for python kinds that only
+   appear in syntactic contexts the generic expression wrapper can't
+   reproduce.
+
+4. `081ca494 012/R1: C-alias-literal preserve unnamed-alias value — ts rtPass +3`
+   resolveRule lost the literal `value` of unnamed aliases (e.g.
+   typescript `alias(_ternary_qmark, '?')`). Preserve as string rule
+   when value is punctuation.
+
+5. `16d4ddbc 012/R1: readNode + walker multi-field detection (no count delta)`
+   readNode: same-field anon-after-anon accumulates (prev replaced);
+   walker: `fieldContentIsMultiSibling` helper for seq with 2+ named
+   structural members. Unblocks follow-up work on ambient_declaration
+   rendering; doesn't move counts on its own.
+
+6. `afb18c4e 012/R1: C-external-boundaries $TEXT fallback — python rtPass +2`
+   `hasHiddenExternalRef` required EVERY seq member to be external;
+   added `hasExternalBoundaries` fallback that fires when first and
+   last non-ignorable members are external. Python's `string` kind
+   (f-string, t-string, template-string) has `seq(external_start,
+   REPEAT(content), external_end)` and now takes the $TEXT path
+   instead of breaking slot-by-slot render.
+
+### Deferred — alias-source child-slot drillAs
+
+Several remaining failures across all three grammars share one class:
+when tree-sitter aliases source-kind-A as target-kind-B at a specific
+position (`decorator → call_expression`, `type_query → instantiation_expression`,
+`_as_pattern → as_pattern` inside case), the wrap layer's `drillIn`
+doesn't rewrite `$type` to the source, so rendering dispatches on the
+target kind's template which has different field names.
+
+The fix requires extending `AssembledChild` to track `aliasSources` (as
+`AssembledField` already does) and emitting `drillAs` in the wrap
+emitter's `emitChildrenSlotGetters`. Non-trivial; deferred.
+
+Affects (confirmed): ts `Classes with decorator calls`, ts `Classes
+with decorators`, ts `Type query and index type query types`, ts
+`Typeof instantiation expressions`, ts `Import in type`, python `As
+patterns`.
+
+### Deferred — comparison_operator / list_splat / f-string shapes
+
+Three smaller clusters that each need structural engine work:
+- python `comparison_operator` inherited-field-name walker gap
+  (tree-sitter inherits `comparators` onto bare `primary_expression`
+  children inside the repeat — walker emits `$$$CHILDREN` which can't
+  find them).
+- python `Print used as an identifier [list_splat]: *` — list_splat
+  rendering drops expression field in some contexts.
+- python `f"...{interpolation}..."` — string kind uses external scanner
+  tokens for start/end delimiters but also has real content field;
+  `hasHiddenExternalRef` check doesn't match because content isn't
+  all-external.
+
 ## Refreshed inventory (as of 2026-04-24 — post 013-canonical-surface work)
 
 Measured via `npx tsx packages/codegen/src/scripts/counts.ts` (new in 013). All three grammars regenerated on branch `012-rust-core-port` with 013 enrich + variant() adoption + 012-rust-impl merge applied.

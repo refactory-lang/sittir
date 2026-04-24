@@ -1909,12 +1909,6 @@ pub struct RawStringLiteralTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub raw_string_literal_end: String,
-    pub raw_string_literal_end_list: Vec<String>,
-    pub raw_string_literal_start: String,
-    pub raw_string_literal_start_list: Vec<String>,
-    pub string_content: String,
-    pub string_content_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -4529,12 +4523,6 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                raw_string_literal_end: ctx.fields.get("raw_string_literal_end").cloned().unwrap_or_default(),
-                raw_string_literal_end_list: ctx.fields_list.get("raw_string_literal_end").cloned().unwrap_or_default(),
-                raw_string_literal_start: ctx.fields.get("raw_string_literal_start").cloned().unwrap_or_default(),
-                raw_string_literal_start_list: ctx.fields_list.get("raw_string_literal_start").cloned().unwrap_or_default(),
-                string_content: ctx.fields.get("string_content").cloned().unwrap_or_default(),
-                string_content_list: ctx.fields_list.get("string_content").cloned().unwrap_or_default(),
             };
             t.render()
         }

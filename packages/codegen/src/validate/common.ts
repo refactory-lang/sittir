@@ -250,6 +250,12 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
         // declaration so the alias re-fires and reparse produces
         // interface_body for AST-match parity.
         'interface_body': r => `interface _I ${r}`,
+        // Kind-specific: `rest_pattern` (`...x`) appears in array
+        // destructuring, tuple types (TS), and parameter lists. The
+        // generic `pattern` wrapper `let ${r} = null;` produces a
+        // parse error — `let ...x = null` is invalid. Wrap in an
+        // array destructuring target so the rest-pattern surfaces.
+        'rest_pattern': r => `let [${r}] = [];`,
     },
     python: {
         // tree-sitter-python supertypes are also unprefixed.
@@ -258,6 +264,15 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
         'pattern': r => `match _:\n  case ${r}: pass`,
         'simple_statement': r => r,
         'compound_statement': r => r,
+        // Kind-specific: `list_splat` (`*args`) only appears inside
+        // argument lists, list/tuple/set literals, and expression
+        // lists. Generic expression wrapper `_ = *()` is syntactically
+        // invalid. Argument-list context accepts it.
+        'list_splat': r => `_f(${r})`,
+        // Kind-specific: `list_splat_pattern` (`*rest`) appears inside
+        // assignment patterns (`a, *rest = xs`) and function parameter
+        // lists. Wrap in an assignment-target position.
+        'list_splat_pattern': r => `${r} = (1,)`,
     },
 }
 

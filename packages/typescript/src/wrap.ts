@@ -2068,6 +2068,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_string_double': (d, t) => wrapStringDouble(d, t),
   '_string_single': (d, t) => wrapStringSingle(d, t),
   '_automatic_semicolon': (d) => d,
+  '_ternary_qmark': (d) => d,
   'html_comment': (d) => d,
   '||': (d) => d,
   'jsx_text': (d) => d,
