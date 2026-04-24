@@ -643,9 +643,6 @@ export function forStatement(config: T.ForStatement.Config) {
 export function forInStatement(config: T.ForInStatement.Config) {
   const fields = {
     await: config.await ? "await" as const : undefined,
-    left: config.left,
-    kind: config.kind,
-    value: config.value,
     operator: config.operator,
     right: config.right,
     body: config.body,
@@ -658,13 +655,10 @@ export function forInStatement(config: T.ForInStatement.Config) {
     $fields: fields,
     $children: children,
     await(value?: "await" | undefined) { return _fs(config, forInStatement, 'await', value, config?.await); },
-    left(value?: T.LhsExpression | T.ParenthesizedExpression | T.Identifier | T.DestructuringPattern) { return _fs(config, forInStatement, 'left', value, config?.left); },
-    kind(value?: "var" | "let" | "const" | undefined) { return _fs(config, forInStatement, 'kind', value, config?.kind); },
-    value(value?: T.Expression | undefined) { return _fs(config, forInStatement, 'value', value, config?.value); },
     operator(value?: "in" | "of") { return _fs(config, forInStatement, 'operator', value, config?.operator); },
     right(value?: T.Expressions) { return _fs(config, forInStatement, 'right', value, config?.right); },
     body(value?: T.Statement) { return _fs(config, forInStatement, 'body', value, config?.body); },
-    child(value?: T.AutomaticSemicolon) {
+    child(value?: (T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind)) {
       if (value === undefined) return children[0];
       return forInStatement({ ...config, children: [value] });
     },
@@ -2518,22 +2512,12 @@ export function decoratorCallExpression(config: T.DecoratorCallExpression.Config
   };
 }
 
-export function classBody(config: T.ClassBody.Config) {
-  const fields = {
-    decorator: config.decorator,
-  };
-  const children = config.children ?? [];
+export function classBody(...children: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember)[]) {
   return {
     $type: 'class_body' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
     $children: children,
-    decorator(...values: T.Decorator[]) { return _fsm(config, classBody, 'decorator', values, config?.decorator); },
-    children(...items: (T.MethodDefinition | T.Semicolon | T.MethodSignature | T.FunctionSignatureAutomaticSemicolon | T.ClassStaticBlock | T.AbstractMethodSignature | T.IndexSignature | T.PublicFieldDefinition)[]) {
-      if (items.length === 0) return children;
-      return classBody({ ...config, children: items });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -4607,6 +4591,57 @@ export function exportStatementDefaultFromArmClauseFrom(config: T.ExportStatemen
   };
 }
 
+export function classBodyMethodSig(child: (T.MethodSignature | T.FunctionSignatureAutomaticSemicolon)) {
+  const children = [child];
+  return {
+    $type: '_class_body_method_sig' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ClassBodyMethodSigTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function classBodyMember(child?: (T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition | T.Semicolon)) {
+  const children = child != null ? [child] : [];
+  return {
+    $type: '_class_body_member' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ClassBodyMemberTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function forHeaderLhs(config: T.ForHeaderLhs.Config) {
+  const fields = {
+    left: config.left,
+  };
+  return {
+    $type: '_for_header_lhs' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    left(value?: T.LhsExpression | T.ParenthesizedExpression) { return _fs(config, forHeaderLhs, 'left', value, config?.left); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ForHeaderLhsTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function parenthesizedExpressionSequence(child: T.SequenceExpression) {
   const children = [child];
   return {
@@ -4975,6 +5010,9 @@ export type FluentKindMap = {
   "_export_statement_default_from_arm_star_from": FluentNode<"_export_statement_default_from_arm_star_from", T.ExportStatementDefaultFromArmStarFrom.Config>;
   "_export_statement_default_from_arm_ns_from": FluentNode<"_export_statement_default_from_arm_ns_from", T.ExportStatementDefaultFromArmNsFrom.Config>;
   "_export_statement_default_from_arm_clause_from": FluentNode<"_export_statement_default_from_arm_clause_from", T.ExportStatementDefaultFromArmClauseFrom.Config>;
+  "_class_body_method_sig": FluentNode<"_class_body_method_sig", T.ClassBodyMethodSig.Config>;
+  "_class_body_member": FluentNode<"_class_body_member", T.ClassBodyMember.Config>;
+  "_for_header_lhs": FluentNode<"_for_header_lhs", T.ForHeaderLhs.Config>;
   "_parenthesized_expression_sequence": FluentNode<"_parenthesized_expression_sequence", T.ParenthesizedExpressionSequence.Config>;
   "_export_statement_type_export": FluentNode<"_export_statement_type_export", T.ExportStatementTypeExport.Config>;
   "_export_statement_equals_export": FluentNode<"_export_statement_equals_export", T.ExportStatementEqualsExport.Config>;
@@ -5188,6 +5226,9 @@ export const _factoryMap = {
   "_export_statement_default_from_arm_star_from": exportStatementDefaultFromArmStarFrom,
   "_export_statement_default_from_arm_ns_from": exportStatementDefaultFromArmNsFrom,
   "_export_statement_default_from_arm_clause_from": exportStatementDefaultFromArmClauseFrom,
+  "_class_body_method_sig": classBodyMethodSig,
+  "_class_body_member": classBodyMember,
+  "_for_header_lhs": forHeaderLhs,
   "_parenthesized_expression_sequence": parenthesizedExpressionSequence,
   "_export_statement_type_export": exportStatementTypeExport,
   "_export_statement_equals_export": exportStatementEqualsExport,

@@ -4,6 +4,8 @@
 export const NODE_KINDS = [
   '_arrow_function__call_signature',
   '_arrow_function_parameter',
+  '_class_body_member',
+  '_class_body_method_sig',
   '_class_heritage_extends_clause',
   '_class_heritage_implements_clause',
   '_export_statement_default_from_arm',
@@ -13,6 +15,7 @@ export const NODE_KINDS = [
   '_export_statement_equals_export',
   '_export_statement_namespace_export',
   '_export_statement_type_export',
+  '_for_header_lhs',
   '_import_clause_default_import',
   '_import_clause_named_imports',
   '_import_clause_namespace_import',
@@ -417,6 +420,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_arrow_function_parameter': [
     { name: 'parameter', required: true, multiple: false },
   ],
+  '_class_body_member': [
+  ],
+  '_class_body_method_sig': [
+  ],
   '_class_heritage_extends_clause': [
   ],
   '_class_heritage_implements_clause': [
@@ -438,6 +445,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_export_statement_type_export': [
     { name: 'source', required: false, multiple: false },
+  ],
+  '_for_header_lhs': [
+    { name: 'left', required: true, multiple: false },
   ],
   '_import_clause_default_import': [
   ],
@@ -551,7 +561,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'class_body': [
-    { name: 'decorator', required: true, multiple: true },
   ],
   'class_declaration': [
     { name: 'decorator', required: true, multiple: true },
@@ -665,9 +674,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'for_in_statement': [
     { name: 'await', required: false, multiple: false },
-    { name: 'left', required: true, multiple: false },
-    { name: 'kind', required: false, multiple: false },
-    { name: 'value', required: false, multiple: false },
     { name: 'operator', required: true, multiple: false },
     { name: 'right', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },

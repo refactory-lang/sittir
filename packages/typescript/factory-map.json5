@@ -107,7 +107,7 @@
     "decorator": "children",
     "decorator_member_expression": "config",
     "decorator_call_expression": "config",
-    "class_body": "config",
+    "class_body": "children",
     "field_definition": "config",
     "formal_parameters": "children",
     "class_static_block": "config",
@@ -880,6 +880,14 @@
       "childKind": {
         "string_double": "double",
         "string_single": "single"
+      }
+    },
+    "class_body": {
+      "source": "override",
+      "childKind": {
+        "class_body_method": "method",
+        "class_body_method_sig": "method_sig",
+        "class_body_member": "member"
       }
     },
     "index_signature": {

@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 395,
+  "nodeCount": 401,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -991,6 +991,196 @@
       "children": []
     },
     {
+      "kind": "_class_body_member",
+      "modelType": "container",
+      "typeName": "ClassBodyMember",
+      "factoryName": "classBodyMember",
+      "irKey": "classBodyMember",
+      "hidden": false,
+      "children": [
+        {
+          "name": "abstract_method_signature",
+          "propertyName": "abstractMethodSignature",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "abstract_method_signature",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "index_signature",
+          "propertyName": "indexSignature",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "index_signature",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "method_signature",
+          "propertyName": "methodSignature",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "method_signature",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "public_field_definition",
+          "propertyName": "publicFieldDefinition",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "public_field_definition",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "semicolon",
+          "propertyName": "semicolon",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_semicolon",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_class_body_method",
+      "modelType": "group",
+      "typeName": "ClassBodyMethod",
+      "irKey": "classBodyMethod",
+      "hidden": true,
+      "name": "_class_body_method",
+      "fields": [
+        {
+          "name": "decorator",
+          "propertyName": "decorator",
+          "paramName": "decorator",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "decorator",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "decorator"
+            ]
+          }
+        }
+      ],
+      "children": [
+        {
+          "name": "method_definition",
+          "propertyName": "methodDefinition",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "method_definition",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "semicolon",
+          "propertyName": "semicolon",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_semicolon",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_class_body_method_sig",
+      "modelType": "container",
+      "typeName": "ClassBodyMethodSig",
+      "factoryName": "classBodyMethodSig",
+      "irKey": "classBodyMethodSig",
+      "hidden": false,
+      "children": [
+        {
+          "name": "method_signature",
+          "propertyName": "methodSignature",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "method_signature",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "function_signature_automatic_semicolon",
+          "propertyName": "functionSignatureAutomaticSemicolon",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_function_signature_automatic_semicolon",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
       "kind": "_class_heritage_extends_clause",
       "modelType": "container",
       "typeName": "ClassHeritageExtendsClause",
@@ -1691,70 +1881,6 @@
       "name": "_for_header",
       "fields": [
         {
-          "name": "left",
-          "propertyName": "left",
-          "paramName": "left",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_lhs_expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "parenthesized_expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_destructuring_pattern",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_lhs_expression",
-              "parenthesized_expression",
-              "identifier",
-              "_destructuring_pattern"
-            ]
-          }
-        },
-        {
-          "name": "kind",
-          "propertyName": "kind",
-          "paramName": "kind",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "var"
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
-        },
-        {
           "name": "operator",
           "propertyName": "operator",
           "paramName": "operator",
@@ -1805,8 +1931,8 @@
       ],
       "children": [
         {
-          "name": "initializer",
-          "propertyName": "initializer",
+          "name": "for_header_lhs",
+          "propertyName": "forHeaderLhs",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -1814,11 +1940,108 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_initializer",
+              "name": "_for_header_lhs",
               "unresolved": true
             }
           ]
         },
+        {
+          "name": "for_header_var_kind",
+          "propertyName": "forHeaderVarKind",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_for_header_var_kind",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "for_header_let_const_kind",
+          "propertyName": "forHeaderLetConstKind",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_for_header_let_const_kind",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_for_header_let_const_kind",
+      "modelType": "group",
+      "typeName": "ForHeaderLetConstKind",
+      "irKey": "forHeaderLetConstKind",
+      "hidden": true,
+      "name": "_for_header_let_const_kind",
+      "fields": [
+        {
+          "name": "kind",
+          "propertyName": "kind",
+          "paramName": "kind",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "const"
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
+          "name": "left",
+          "propertyName": "left",
+          "paramName": "left",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_destructuring_pattern",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "identifier",
+              "_destructuring_pattern"
+            ]
+          }
+        }
+      ],
+      "children": [
         {
           "name": "automatic_semicolon",
           "propertyName": "automaticSemicolon",
@@ -1830,6 +2053,124 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_automatic_semicolon",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_for_header_lhs",
+      "modelType": "branch",
+      "typeName": "ForHeaderLhs",
+      "factoryName": "forHeaderLhs",
+      "irKey": "forHeaderLhs",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "left",
+          "propertyName": "left",
+          "paramName": "left",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_lhs_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "parenthesized_expression",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_lhs_expression",
+              "parenthesized_expression"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "_for_header_var_kind",
+      "modelType": "group",
+      "typeName": "ForHeaderVarKind",
+      "irKey": "forHeaderVarKind",
+      "hidden": true,
+      "name": "_for_header_var_kind",
+      "fields": [
+        {
+          "name": "kind",
+          "propertyName": "kind",
+          "paramName": "kind",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "var"
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
+          "name": "left",
+          "propertyName": "left",
+          "paramName": "left",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_destructuring_pattern",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "identifier",
+              "_destructuring_pattern"
+            ]
+          }
+        }
+      ],
+      "children": [
+        {
+          "name": "initializer",
+          "propertyName": "initializer",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_initializer",
               "unresolved": true
             }
           ]
@@ -6049,40 +6390,15 @@
     },
     {
       "kind": "class_body",
-      "modelType": "branch",
+      "modelType": "container",
       "typeName": "ClassBody",
       "factoryName": "classBody",
       "irKey": "classBody",
       "hidden": false,
-      "fields": [
-        {
-          "name": "decorator",
-          "propertyName": "decorator",
-          "paramName": "decorator",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "decorator",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "decorator"
-            ]
-          }
-        }
-      ],
       "children": [
         {
-          "name": "method_definition",
-          "propertyName": "methodDefinition",
+          "name": "class_body_method",
+          "propertyName": "classBodyMethod",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -6090,29 +6406,14 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "method_definition",
+              "name": "_class_body_method",
               "unresolved": true
             }
           ]
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_semicolon",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "method_signature",
-          "propertyName": "methodSignature",
+          "name": "class_body_method_sig",
+          "propertyName": "classBodyMethodSig",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -6120,22 +6421,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "method_signature",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "function_signature_automatic_semicolon",
-          "propertyName": "functionSignatureAutomaticSemicolon",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_function_signature_automatic_semicolon",
+              "name": "_class_body_method_sig",
               "unresolved": true
             }
           ]
@@ -6156,8 +6442,8 @@
           ]
         },
         {
-          "name": "abstract_method_signature",
-          "propertyName": "abstractMethodSignature",
+          "name": "class_body_member",
+          "propertyName": "classBodyMember",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -6165,37 +6451,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "abstract_method_signature",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "index_signature",
-          "propertyName": "indexSignature",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "index_signature",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "public_field_definition",
-          "propertyName": "publicFieldDefinition",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "public_field_definition",
+              "name": "_class_body_member",
               "unresolved": true
             }
           ]
@@ -8488,103 +8744,6 @@
           }
         },
         {
-          "name": "left",
-          "propertyName": "left",
-          "paramName": "left",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_lhs_expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "parenthesized_expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_destructuring_pattern",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_lhs_expression",
-              "parenthesized_expression",
-              "identifier",
-              "_destructuring_pattern"
-            ]
-          }
-        },
-        {
-          "name": "kind",
-          "propertyName": "kind",
-          "paramName": "kind",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "var"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "let"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "const"
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
-        },
-        {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "expression",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "expression"
-            ]
-          }
-        },
-        {
           "name": "operator",
           "propertyName": "operator",
           "paramName": "operator",
@@ -8658,8 +8817,8 @@
       ],
       "children": [
         {
-          "name": "automatic_semicolon",
-          "propertyName": "automaticSemicolon",
+          "name": "for_header_lhs",
+          "propertyName": "forHeaderLhs",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8667,7 +8826,37 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_automatic_semicolon",
+              "name": "_for_header_lhs",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "for_header_var_kind",
+          "propertyName": "forHeaderVarKind",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_for_header_var_kind",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "for_header_let_const_kind",
+          "propertyName": "forHeaderLetConstKind",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_for_header_let_const_kind",
               "unresolved": true
             }
           ]

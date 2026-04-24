@@ -209,6 +209,9 @@ export interface IsGuards {
     ExportStatementDefaultFromArmStarFrom<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_default_from_arm_star_from' };
     ExportStatementDefaultFromArmNsFrom<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_default_from_arm_ns_from' };
     ExportStatementDefaultFromArmClauseFrom<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_default_from_arm_clause_from' };
+    ClassBodyMethodSig<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_class_body_method_sig' };
+    ClassBodyMember<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_class_body_member' };
+    ForHeaderLhs<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_for_header_lhs' };
     ParenthesizedExpressionSequence<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_parenthesized_expression_sequence' };
     ExportStatementTypeExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_type_export' };
     ExportStatementEqualsExport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_export_statement_equals_export' };
@@ -420,6 +423,9 @@ export interface AssertGuards {
     ExportStatementDefaultFromArmStarFrom(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_default_from_arm_star_from' };
     ExportStatementDefaultFromArmNsFrom(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_default_from_arm_ns_from' };
     ExportStatementDefaultFromArmClauseFrom(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_default_from_arm_clause_from' };
+    ClassBodyMethodSig(v: { readonly $type: string }): asserts v is { readonly $type: '_class_body_method_sig' };
+    ClassBodyMember(v: { readonly $type: string }): asserts v is { readonly $type: '_class_body_member' };
+    ForHeaderLhs(v: { readonly $type: string }): asserts v is { readonly $type: '_for_header_lhs' };
     ParenthesizedExpressionSequence(v: { readonly $type: string }): asserts v is { readonly $type: '_parenthesized_expression_sequence' };
     ExportStatementTypeExport(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_type_export' };
     ExportStatementEqualsExport(v: { readonly $type: string }): asserts v is { readonly $type: '_export_statement_equals_export' };
@@ -666,6 +672,9 @@ export const is = {
     ExportStatementDefaultFromArmStarFrom: _g("_export_statement_default_from_arm_star_from"),
     ExportStatementDefaultFromArmNsFrom: _g("_export_statement_default_from_arm_ns_from"),
     ExportStatementDefaultFromArmClauseFrom: _g("_export_statement_default_from_arm_clause_from"),
+    ClassBodyMethodSig: _g("_class_body_method_sig"),
+    ClassBodyMember: _g("_class_body_member"),
+    ForHeaderLhs: _g("_for_header_lhs"),
     ParenthesizedExpressionSequence: _g("_parenthesized_expression_sequence"),
     ExportStatementTypeExport: _g("_export_statement_type_export"),
     ExportStatementEqualsExport: _g("_export_statement_equals_export"),
@@ -898,6 +907,9 @@ export const assert = {
     ExportStatementDefaultFromArmStarFrom: _makeAssert('ExportStatementDefaultFromArmStarFrom', is.ExportStatementDefaultFromArmStarFrom as _AnyGuard),
     ExportStatementDefaultFromArmNsFrom: _makeAssert('ExportStatementDefaultFromArmNsFrom', is.ExportStatementDefaultFromArmNsFrom as _AnyGuard),
     ExportStatementDefaultFromArmClauseFrom: _makeAssert('ExportStatementDefaultFromArmClauseFrom', is.ExportStatementDefaultFromArmClauseFrom as _AnyGuard),
+    ClassBodyMethodSig: _makeAssert('ClassBodyMethodSig', is.ClassBodyMethodSig as _AnyGuard),
+    ClassBodyMember: _makeAssert('ClassBodyMember', is.ClassBodyMember as _AnyGuard),
+    ForHeaderLhs: _makeAssert('ForHeaderLhs', is.ForHeaderLhs as _AnyGuard),
     ParenthesizedExpressionSequence: _makeAssert('ParenthesizedExpressionSequence', is.ParenthesizedExpressionSequence as _AnyGuard),
     ExportStatementTypeExport: _makeAssert('ExportStatementTypeExport', is.ExportStatementTypeExport as _AnyGuard),
     ExportStatementEqualsExport: _makeAssert('ExportStatementEqualsExport', is.ExportStatementEqualsExport as _AnyGuard),

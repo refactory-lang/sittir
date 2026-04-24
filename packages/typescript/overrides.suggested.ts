@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  7  (0 applied, 7 held)
-// Rule promotions:   81  (74 applied, 7 held)
+// Rule promotions:   83  (74 applied, 9 held)
 // Repeated shapes:   7  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -25,6 +25,23 @@
 // candidates target the same kind).
 // ---------------------------------------------------------------
 export const suggestedTransforms = {
+  // _class_body_member: 1 inferred field(s)
+  // [held] _class_body_member field 'semicolon' on $._semicolon — 87% agreement, 15 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  _class_body_member: {
+      "1/0": variant("form0"),
+      "1/1": variant("form1"),
+  },
+
+  // _class_body_method: 1 inferred field(s)
+  // [held] _class_body_method field 'semicolon' on $._semicolon — 87% agreement, 15 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+
+  // [held] polymorph — 1 choice position(s), 2 arm(s) total
+  _class_body_method_sig: {
+      "1/0": variant("form0"),
+      "1/1": variant("form1"),
+  },
+
   // _export_statement_default_decl_arm_default_kw_value: 1 inferred field(s)
   // [held] _export_statement_default_decl_arm_default_kw_value field 'semicolon' on $._semicolon — 87% agreement, 15 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
@@ -66,10 +83,6 @@ export const suggestedTransforms = {
       "2/0": variant("form0"),
       "2/1": variant("form1"),
   },
-
-  // class_body: 2 inferred field(s)
-  // [held] class_body field 'semicolon' on $._semicolon — 87% agreement, 15 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-  // [held] class_body field 'semicolon' on $._semicolon — 87% agreement, 15 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: condition
@@ -202,10 +215,10 @@ export const suggestedRules = {
   type: $ => choice($.primary_type, $.function_type, $.readonly_type, $.constructor_type, $.infer_type, $._type_query_member_expression_in_type_annotation, $._type_query_call_expression_in_type_annotation),
 
   // --- Repeated-shape candidates (reused across ≥2 parents) ---
-  // parents: _jsx_start_opening_element, decorator_call_expression, decorator_member_expression, nested_identifier
-  _shared_2: $ => choice($.identifier, $.member_expression),
+  // parents: _for_header_let_const_kind, _for_header_var_kind, catch_clause, variable_declarator
+  _shared_2: $ => choice($._destructuring_pattern, $.identifier),
 
-  // parents: _for_header, assignment_expression
+  // parents: _for_header_lhs, assignment_expression
   _expression: $ => choice($._lhs_expression, $.parenthesized_expression),
 
   // parents: _type_query_call_expression, _type_query_instantiation_expression
@@ -262,6 +275,8 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "predefined_type", classification: "terminal", applied: true },
   { kind: "private_property_identifier", classification: "terminal", applied: true },
   { kind: "regex_pattern", classification: "terminal", applied: true },
+  { kind: "_class_body_member", classification: "polymorph", applied: false },
+  { kind: "_class_body_method_sig", classification: "polymorph", applied: false },
   { kind: "_export_statement_default_from_arm_clause_from", classification: "polymorph", applied: true },
   { kind: "_export_statement_default_from_arm_ns_from", classification: "polymorph", applied: true },
   { kind: "_export_statement_default_from_arm_star_from", classification: "polymorph", applied: true },
@@ -318,13 +333,13 @@ export interface InferredField {
   readonly applied: boolean;
 }
 export const inferredFields: readonly InferredField[] = [
+  { kind: "_class_body_member", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
+  { kind: "_class_body_method", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
   { kind: "_export_statement_default_decl_arm_default_kw_value", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
   { kind: "_export_statement_default_from_arm", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
   { kind: "_export_statement_equals_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
   { kind: "_export_statement_namespace_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
   { kind: "_export_statement_type_export", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
-  { kind: "class_body", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
-  { kind: "class_body", fieldName: "semicolon", targetSymbol: "_semicolon", confidence: "medium", agreement: 0.867, sampleSize: 15, applied: false },
 ];
 
 export interface RepeatedShape {
@@ -334,10 +349,10 @@ export interface RepeatedShape {
   readonly shape: 'supertype' | 'group';
 }
 export const repeatedShapes: readonly RepeatedShape[] = [
+  { suggestedName: "_shared_2", kinds: ["_destructuring_pattern","identifier"], parents: ["_for_header_let_const_kind","_for_header_var_kind","catch_clause","variable_declarator"], shape: "supertype" },
   { suggestedName: "_shared_2", kinds: ["identifier","member_expression"], parents: ["_jsx_start_opening_element","decorator_call_expression","decorator_member_expression","nested_identifier"], shape: "supertype" },
-  { suggestedName: "_shared_2", kinds: ["_destructuring_pattern","identifier"], parents: ["_for_header","catch_clause","variable_declarator"], shape: "supertype" },
   { suggestedName: "_property_identifier", kinds: ["private_property_identifier","property_identifier"], parents: ["_type_query_member_expression","_type_query_member_expression_in_type_annotation","member_expression"], shape: "supertype" },
-  { suggestedName: "_expression", kinds: ["_lhs_expression","parenthesized_expression"], parents: ["_for_header","assignment_expression"], shape: "supertype" },
+  { suggestedName: "_expression", kinds: ["_lhs_expression","parenthesized_expression"], parents: ["_for_header_lhs","assignment_expression"], shape: "supertype" },
   { suggestedName: "_identifier", kinds: ["identifier","nested_identifier"], parents: ["import_alias","nested_type_identifier"], shape: "supertype" },
   { suggestedName: "_shared_4", kinds: ["identifier","import","member_expression","subscript_expression"], parents: ["_type_query_call_expression","_type_query_instantiation_expression"], shape: "supertype" },
   { suggestedName: "_shared_5", kinds: ["call_expression","identifier","member_expression","subscript_expression","this"], parents: ["_type_query_member_expression","_type_query_subscript_expression"], shape: "supertype" },

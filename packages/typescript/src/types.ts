@@ -272,6 +272,12 @@ export const enum SyntaxKind {
   ExportStatementDefaultFromArmNsFrom = '_export_statement_default_from_arm_ns_from',
   ExportStatementDefaultFromArmClauseFrom = '_export_statement_default_from_arm_clause_from',
   ExportStatementDefaultDeclArmDefaultKwValue = '_export_statement_default_decl_arm_default_kw_value',
+  ClassBodyMethod = '_class_body_method',
+  ClassBodyMethodSig = '_class_body_method_sig',
+  ClassBodyMember = '_class_body_member',
+  ForHeaderLhs = '_for_header_lhs',
+  ForHeaderVarKind = '_for_header_var_kind',
+  ForHeaderLetConstKind = '_for_header_let_const_kind',
   ParenthesizedExpressionTyped = '_parenthesized_expression_typed',
   ParenthesizedExpressionSequence = '_parenthesized_expression_sequence',
   ExportStatementTypeExport = '_export_statement_type_export',
@@ -791,25 +797,20 @@ export interface ForInStatement {
   readonly $type: 'for_in_statement';
   readonly $fields: {
     readonly await?: BooleanKeyword<"await">;
-    readonly left: LhsExpression | ParenthesizedExpression | Identifier | DestructuringPattern;
-    readonly kind?: "var" | "let" | "const";
-    readonly value?: Expression;
     readonly operator: "in" | "of";
     readonly right: Expressions;
     readonly body: Statement;
   };
-  readonly $children: readonly [AutomaticSemicolon];
+  readonly $children: readonly [ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind];
 }
 
 export interface ForHeader {
   readonly $type: 'for_header';
   readonly $fields: {
-    readonly left: LhsExpression | ParenthesizedExpression | Identifier | DestructuringPattern;
-    readonly kind?: BooleanKeyword<"var">;
     readonly operator: "in" | "of";
     readonly right: Expressions;
   };
-  readonly $children: readonly [Initializer | AutomaticSemicolon];
+  readonly $children: readonly [ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind];
 }
 
 export interface WhileStatement {
@@ -1357,10 +1358,7 @@ export interface DecoratorCallExpression {
 
 export interface ClassBody {
   readonly $type: 'class_body';
-  readonly $fields: {
-    readonly decorator: readonly (Decorator)[];
-  };
-  readonly $children: readonly (MethodDefinition | Semicolon | MethodSignature | FunctionSignatureAutomaticSemicolon | ClassStaticBlock | AbstractMethodSignature | IndexSignature | PublicFieldDefinition)[];
+  readonly $children: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember)[];
 }
 
 export interface FieldDefinition {
@@ -2212,6 +2210,49 @@ export interface ExportStatementDefaultDeclArmDefaultKwValue {
   readonly $children: readonly [Semicolon];
 }
 
+export interface ClassBodyMethod {
+  readonly $type: 'class_body_method';
+  readonly $fields: {
+    readonly decorator: readonly (Decorator)[];
+  };
+  readonly $children: readonly [MethodDefinition | Semicolon];
+}
+
+export interface ClassBodyMethodSig {
+  readonly $type: 'class_body_method_sig';
+  readonly $children: readonly [MethodSignature | FunctionSignatureAutomaticSemicolon];
+}
+
+export interface ClassBodyMember {
+  readonly $type: 'class_body_member';
+  readonly $children: readonly [AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition | Semicolon];
+}
+
+export interface ForHeaderLhs {
+  readonly $type: 'for_header_lhs';
+  readonly $fields: {
+    readonly left: LhsExpression | ParenthesizedExpression;
+  };
+}
+
+export interface ForHeaderVarKind {
+  readonly $type: 'for_header_var_kind';
+  readonly $fields: {
+    readonly kind: AutoStamp<"var">;
+    readonly left: Identifier | DestructuringPattern;
+  };
+  readonly $children: readonly [Initializer];
+}
+
+export interface ForHeaderLetConstKind {
+  readonly $type: 'for_header_let_const_kind';
+  readonly $fields: {
+    readonly kind: "let" | "const";
+    readonly left: Identifier | DestructuringPattern;
+  };
+  readonly $children: readonly [AutomaticSemicolon];
+}
+
 export interface ParenthesizedExpressionTyped {
   readonly $type: 'parenthesized_expression_typed';
   readonly $fields: {
@@ -2550,6 +2591,12 @@ export interface ExportStatementDefaultFromArmStarFromTree extends AnyTreeNode {
 export interface ExportStatementDefaultFromArmNsFromTree extends AnyTreeNode { readonly type: "_export_statement_default_from_arm_ns_from"; }
 export interface ExportStatementDefaultFromArmClauseFromTree extends AnyTreeNode { readonly type: "_export_statement_default_from_arm_clause_from"; }
 export interface ExportStatementDefaultDeclArmDefaultKwValueTree extends AnyTreeNode { readonly type: "_export_statement_default_decl_arm_default_kw_value"; }
+export interface ClassBodyMethodTree extends AnyTreeNode { readonly type: "_class_body_method"; }
+export interface ClassBodyMethodSigTree extends AnyTreeNode { readonly type: "_class_body_method_sig"; }
+export interface ClassBodyMemberTree extends AnyTreeNode { readonly type: "_class_body_member"; }
+export interface ForHeaderLhsTree extends AnyTreeNode { readonly type: "_for_header_lhs"; }
+export interface ForHeaderVarKindTree extends AnyTreeNode { readonly type: "_for_header_var_kind"; }
+export interface ForHeaderLetConstKindTree extends AnyTreeNode { readonly type: "_for_header_let_const_kind"; }
 export interface ParenthesizedExpressionTypedTree extends AnyTreeNode { readonly type: "_parenthesized_expression_typed"; }
 export interface ParenthesizedExpressionSequenceTree extends AnyTreeNode { readonly type: "_parenthesized_expression_sequence"; }
 export interface ExportStatementTypeExportTree extends AnyTreeNode { readonly type: "_export_statement_type_export"; }
@@ -3120,6 +3167,12 @@ export type TypescriptNode =
   | ExportStatementDefaultFromArmNsFrom
   | ExportStatementDefaultFromArmClauseFrom
   | ExportStatementDefaultDeclArmDefaultKwValue
+  | ClassBodyMethod
+  | ClassBodyMethodSig
+  | ClassBodyMember
+  | ForHeaderLhs
+  | ForHeaderVarKind
+  | ForHeaderLetConstKind
   | ParenthesizedExpressionTyped
   | ParenthesizedExpressionSequence
   | ExportStatementTypeExport
@@ -3329,6 +3382,12 @@ export interface KindMap {
   '_export_statement_default_from_arm_ns_from': ExportStatementDefaultFromArmNsFrom;
   '_export_statement_default_from_arm_clause_from': ExportStatementDefaultFromArmClauseFrom;
   '_export_statement_default_decl_arm_default_kw_value': ExportStatementDefaultDeclArmDefaultKwValue;
+  '_class_body_method': ClassBodyMethod;
+  '_class_body_method_sig': ClassBodyMethodSig;
+  '_class_body_member': ClassBodyMember;
+  '_for_header_lhs': ForHeaderLhs;
+  '_for_header_var_kind': ForHeaderVarKind;
+  '_for_header_let_const_kind': ForHeaderLetConstKind;
   '_parenthesized_expression_typed': ParenthesizedExpressionTyped;
   '_parenthesized_expression_sequence': ParenthesizedExpressionSequence;
   '_export_statement_type_export': ExportStatementTypeExport;
@@ -3584,6 +3643,12 @@ export interface ExportStatementDefaultFromArmStarFromNs extends NodeNs<ExportSt
 export interface ExportStatementDefaultFromArmNsFromNs extends NodeNs<ExportStatementDefaultFromArmNsFrom, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExportStatementDefaultFromArmClauseFromNs extends NodeNs<ExportStatementDefaultFromArmClauseFrom, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExportStatementDefaultDeclArmDefaultKwValueNs extends NodeNs<ExportStatementDefaultDeclArmDefaultKwValue, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ClassBodyMethodNs extends NodeNs<ClassBodyMethod, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ClassBodyMethodSigNs extends NodeNs<ClassBodyMethodSig, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ClassBodyMemberNs extends NodeNs<ClassBodyMember, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ForHeaderLhsNs extends NodeNs<ForHeaderLhs, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ForHeaderVarKindNs extends NodeNs<ForHeaderVarKind, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ForHeaderLetConstKindNs extends NodeNs<ForHeaderLetConstKind, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ParenthesizedExpressionTypedNs extends NodeNs<ParenthesizedExpressionTyped, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ParenthesizedExpressionSequenceNs extends NodeNs<ParenthesizedExpressionSequence, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExportStatementTypeExportNs extends NodeNs<ExportStatementTypeExport, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3792,6 +3857,12 @@ export interface NamespaceMap {
   '_export_statement_default_from_arm_ns_from': ExportStatementDefaultFromArmNsFromNs;
   '_export_statement_default_from_arm_clause_from': ExportStatementDefaultFromArmClauseFromNs;
   '_export_statement_default_decl_arm_default_kw_value': ExportStatementDefaultDeclArmDefaultKwValueNs;
+  '_class_body_method': ClassBodyMethodNs;
+  '_class_body_method_sig': ClassBodyMethodSigNs;
+  '_class_body_member': ClassBodyMemberNs;
+  '_for_header_lhs': ForHeaderLhsNs;
+  '_for_header_var_kind': ForHeaderVarKindNs;
+  '_for_header_let_const_kind': ForHeaderLetConstKindNs;
   '_parenthesized_expression_typed': ParenthesizedExpressionTypedNs;
   '_parenthesized_expression_sequence': ParenthesizedExpressionSequenceNs;
   '_export_statement_type_export': ExportStatementTypeExportNs;
@@ -5179,6 +5250,48 @@ export namespace ExportStatementDefaultDeclArmDefaultKwValue {
   export type Loose = LooseFor<'_export_statement_default_decl_arm_default_kw_value'>;
   export type Tree = TreeFor<'_export_statement_default_decl_arm_default_kw_value'>;
   export type Kind = '_export_statement_default_decl_arm_default_kw_value';
+}
+export namespace ClassBodyMethod {
+  export type Config = ConfigFor<'_class_body_method'>;
+  export type Fluent = FluentFor<'_class_body_method'>;
+  export type Loose = LooseFor<'_class_body_method'>;
+  export type Tree = TreeFor<'_class_body_method'>;
+  export type Kind = '_class_body_method';
+}
+export namespace ClassBodyMethodSig {
+  export type Config = ConfigFor<'_class_body_method_sig'>;
+  export type Fluent = FluentFor<'_class_body_method_sig'>;
+  export type Loose = LooseFor<'_class_body_method_sig'>;
+  export type Tree = TreeFor<'_class_body_method_sig'>;
+  export type Kind = '_class_body_method_sig';
+}
+export namespace ClassBodyMember {
+  export type Config = ConfigFor<'_class_body_member'>;
+  export type Fluent = FluentFor<'_class_body_member'>;
+  export type Loose = LooseFor<'_class_body_member'>;
+  export type Tree = TreeFor<'_class_body_member'>;
+  export type Kind = '_class_body_member';
+}
+export namespace ForHeaderLhs {
+  export type Config = ConfigFor<'_for_header_lhs'>;
+  export type Fluent = FluentFor<'_for_header_lhs'>;
+  export type Loose = LooseFor<'_for_header_lhs'>;
+  export type Tree = TreeFor<'_for_header_lhs'>;
+  export type Kind = '_for_header_lhs';
+}
+export namespace ForHeaderVarKind {
+  export type Config = ConfigFor<'_for_header_var_kind'>;
+  export type Fluent = FluentFor<'_for_header_var_kind'>;
+  export type Loose = LooseFor<'_for_header_var_kind'>;
+  export type Tree = TreeFor<'_for_header_var_kind'>;
+  export type Kind = '_for_header_var_kind';
+}
+export namespace ForHeaderLetConstKind {
+  export type Config = ConfigFor<'_for_header_let_const_kind'>;
+  export type Fluent = FluentFor<'_for_header_let_const_kind'>;
+  export type Loose = LooseFor<'_for_header_let_const_kind'>;
+  export type Tree = TreeFor<'_for_header_let_const_kind'>;
+  export type Kind = '_for_header_let_const_kind';
 }
 export namespace ParenthesizedExpressionTyped {
   export type Config = ConfigFor<'_parenthesized_expression_typed'>;

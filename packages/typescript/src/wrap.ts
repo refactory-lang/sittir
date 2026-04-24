@@ -32,6 +32,8 @@ import type {
   CatchClause,
   Class,
   ClassBody,
+  ClassBodyMember,
+  ClassBodyMethodSig,
   ClassDeclaration,
   ClassHeritage,
   ClassHeritageExtendsClause,
@@ -70,6 +72,7 @@ import type {
   FieldDefinition,
   FinallyClause,
   FlowMaybeType,
+  ForHeaderLhs,
   ForInStatement,
   ForStatement,
   FormalParameters,
@@ -403,9 +406,6 @@ export function wrapForInStatement(data: _NodeData, tree: TreeHandle): WrappedNo
   return {
     ...data,
     get await() { return drillIn(data.$fields?.['await'], tree); },
-    get left() { return drillIn(data.$fields?.['left'], tree); },
-    get kind() { return drillIn(data.$fields?.['kind'], tree); },
-    get value() { return drillIn(data.$fields?.['value'], tree); },
     get operator() { return drillIn(data.$fields?.['operator'], tree); },
     get right() { return drillIn(data.$fields?.['right'], tree); },
     get body() { return drillIn(data.$fields?.['body'], tree); },
@@ -961,7 +961,6 @@ export function wrapDecoratorCallExpression(data: _NodeData, tree: TreeHandle): 
 export function wrapClassBody(data: _NodeData, tree: TreeHandle): WrappedNode<ClassBody> {
   return {
     ...data,
-    get decorator() { return drillInAll(data.$fields?.['decorator'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ClassBody>;
 }
@@ -1771,6 +1770,28 @@ export function wrapExportStatementDefaultFromArmClauseFrom(data: _NodeData, tre
   } as unknown as WrappedNode<ExportStatementDefaultFromArmClauseFrom>;
 }
 
+export function wrapClassBodyMethodSig(data: _NodeData, tree: TreeHandle): WrappedNode<ClassBodyMethodSig> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<ClassBodyMethodSig>;
+}
+
+export function wrapClassBodyMember(data: _NodeData, tree: TreeHandle): WrappedNode<ClassBodyMember> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<ClassBodyMember>;
+}
+
+export function wrapForHeaderLhs(data: _NodeData, tree: TreeHandle): WrappedNode<ForHeaderLhs> {
+  return {
+    ...data,
+    get left() { return drillIn(data.$fields?.['left'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ForHeaderLhs>;
+}
+
 export function wrapParenthesizedExpressionSequence(data: _NodeData, tree: TreeHandle): WrappedNode<ParenthesizedExpressionSequence> {
   return {
     ...data,
@@ -2021,6 +2042,9 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_export_statement_default_from_arm_star_from': (d, t) => wrapExportStatementDefaultFromArmStarFrom(d, t),
   '_export_statement_default_from_arm_ns_from': (d, t) => wrapExportStatementDefaultFromArmNsFrom(d, t),
   '_export_statement_default_from_arm_clause_from': (d, t) => wrapExportStatementDefaultFromArmClauseFrom(d, t),
+  '_class_body_method_sig': (d, t) => wrapClassBodyMethodSig(d, t),
+  '_class_body_member': (d, t) => wrapClassBodyMember(d, t),
+  '_for_header_lhs': (d, t) => wrapForHeaderLhs(d, t),
   '_parenthesized_expression_sequence': (d, t) => wrapParenthesizedExpressionSequence(d, t),
   '_export_statement_type_export': (d, t) => wrapExportStatementTypeExport(d, t),
   '_export_statement_equals_export': (d, t) => wrapExportStatementEqualsExport(d, t),

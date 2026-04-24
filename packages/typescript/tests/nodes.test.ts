@@ -268,12 +268,12 @@ describe('for_statement', () => {
 
 describe('for_in_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.forIn({ left: { $type: '_lhs_expression', $text: 'test' } as any, operator: 'test' as any, right: { $type: '_expressions', $text: 'test' } as any, body: { $type: 'statement', $text: 'test' } as any });
+    const node = ir.forIn({ operator: 'test' as any, right: { $type: '_expressions', $text: 'test' } as any, body: { $type: 'statement', $text: 'test' } as any });
     expect(node.$type).toBe('for_in_statement');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.forIn({ left: { $type: '_lhs_expression', $text: 'test' } as any, operator: 'test' as any, right: { $type: '_expressions', $text: 'test' } as any, body: { $type: 'statement', $text: 'test' } as any, children: [{ $type: '_automatic_semicolon', $text: 'test' } as any] as any });
+    const node = ir.forIn({ operator: 'test' as any, right: { $type: '_expressions', $text: 'test' } as any, body: { $type: 'statement', $text: 'test' } as any, children: [{ $type: '_for_header_lhs', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1121,13 +1121,9 @@ describe('decorator_call_expression', () => {
 
 describe('class_body', () => {
   it('factory produces correct type', () => {
-    const node = ir.classBody({ decorator: [{ $type: 'decorator', $text: 'test' } as any], children: [{ $type: 'method_definition', $text: 'test' } as any] as any });
+    const node = ir.classBody();
     expect(node.$type).toBe('class_body');
     expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.classBody({ decorator: [{ $type: 'decorator', $text: 'test' } as any], children: [{ $type: 'method_definition', $text: 'test' } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 

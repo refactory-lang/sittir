@@ -1282,7 +1282,24 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     // `_export_statement_default` vs primary_expression conflict on
     // the `export` prefix, propagated to the two outer variants.
     [$.primary_expression, $._export_statement_default_from_arm],
-    [$.primary_expression, $._export_statement_default_decl_arm]
+    [$.primary_expression, $._export_statement_default_decl_arm],
+    // class_body repeat-choice split: the `method` arm ends with
+    // `optional(_semicolon)` — tree-sitter can't decide whether to
+    // consume the `;` as part of `_class_body_method` or as the
+    // next iteration's start. Self-conflict tells it to fork.
+    [$._class_body_method],
+    // class_body repeat-choice: `method_signature` can appear both
+    // in the `method_sig` arm (followed by `_function_signature_…`
+    // or `,`) and in the `member` arm (wrapped in a choice-of-
+    // member-kinds). Shared prefix requires a GLR fork.
+    [$._class_body_method_sig, $._class_body_member],
+    // _for_header variant splits: each sub-variant inherits the
+    // for-header's identifier-prefix ambiguity.
+    [$.primary_expression, $._for_header_lhs],
+    [$.primary_expression, $._for_header_var_kind],
+    [$.primary_expression, $._for_header_let_const_kind],
+    [$.variable_declarator, $._for_header_var_kind],
+    [$.variable_declarator, $._for_header_let_const_kind]
   ]),
   polymorphs: {
     arrow_function: { "1/0": "parameter", "1/1": "_call_signature" },
@@ -1328,7 +1345,44 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     _export_statement_default_decl_arm_default_kw: {
       "1/1": "value"
       // seq(field('value', expression), _semicolon)
+    },
+    // class_body body: `seq('{', repeat(choice(5 arms)), '}')`.
+    // Inner repeat-choice has 3 heterogeneous seqs, 1 bare symbol
+    // (class_static_block), 1 bare literal (';'). Split the 3 seqs
+    // so the choice becomes symbol-like across all arms.
+    class_body: {
+      "1/0/0": "method",
+      // seq(repeat(field(decorator,…)), method_definition, optional(_semicolon))
+      "1/0/1": "method_sig",
+      // seq(method_signature, choice(…))
+      "1/0/3": "member"
+      // seq(choice(4 member kinds), choice(_semicolon, ','))
+    },
+    // _for_header body (base-grammar hidden):
+    //   seq('(', choice(3 arms), field('operator', choice('in','of')),
+    //       field('right', _expressions), ')')
+    //   arm 0: field('left', choice(_lhs_expression, parenthesized_expression))
+    //   arm 1: seq(field('kind','var'), field('left',…), optional(_initializer))
+    //   arm 2: seq(field('kind', choice('let','const')), field('left',…),
+    //              optional(_automatic_semicolon))
+    // Split each arm so the outer choice becomes all symbol-like.
+    _for_header: {
+      "1/0": "lhs",
+      "1/1": "var_kind",
+      "1/2": "let_const_kind"
     }
+    // public_field_definition: DEFERRED. The heterogeneous choice at
+    // path 1/0 splits cleanly into `declare_first` / `access_first`,
+    // but `access_first` (`seq(accessibility_modifier,
+    // optional(field('declare', _kw_declare)))`) overlaps with
+    // every class-member rule that also starts with
+    // `accessibility_modifier` — method_definition, method_signature,
+    // abstract_method_signature. Declaring the full conflict group
+    // still leaves an unresolvable LR state because access_first's
+    // body reduces to "just accessibility_modifier" while the other
+    // rules shift more. Tree-sitter's suggested fix (precedence
+    // relative to the others) has wide grammar implications and is
+    // out of scope for 013 — leaving the audit flag in place.
   },
   transforms: {
     // abstract_class_declaration: wrap pos 5 (class_heritage choice).
