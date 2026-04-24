@@ -229,12 +229,23 @@ export function hasAnyChild(rule: Rule): boolean {
  */
 const DERIVE_AUDIT = process.env.SITTIR_AUDIT_DERIVE === '1'
 const auditCounts = new Map<string, number>()
+const auditKindsByShape = new Map<string, string[]>()
+/** Transient — each AssembledNode's constructor sets this before the lazy
+ * `fields` / `children` getters fire, so the audit can attribute shapes
+ * to their originating kind. */
+let currentAuditKind: string | undefined
+export function setAuditKindContext(kind: string | undefined): void { currentAuditKind = kind }
 function auditDerivationShape(rule: Rule, context: 'fields' | 'children'): void {
     if (!DERIVE_AUDIT) return
     const shape = classifyTopLevelShape(rule)
     if (shape === 'canonical') return
     const key = `${context}:${shape}`
     auditCounts.set(key, (auditCounts.get(key) ?? 0) + 1)
+    if (currentAuditKind !== undefined) {
+        const kinds = auditKindsByShape.get(key) ?? []
+        if (!kinds.includes(currentAuditKind)) kinds.push(currentAuditKind)
+        auditKindsByShape.set(key, kinds)
+    }
 }
 function classifyTopLevelShape(rule: Rule): string {
     // Canonical: a top-level seq, OR a single atomic member (field /
@@ -279,8 +290,13 @@ export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
     if (!DERIVE_AUDIT || auditCounts.size === 0) return
     const sorted = [...auditCounts.entries()].sort((a, b) => b[1] - a[1])
     console.error(`[${label}] non-canonical shapes reaching derivation:`)
-    for (const [key, n] of sorted) console.error(`  ${n.toString().padStart(5)} ${key}`)
+    for (const [key, n] of sorted) {
+        const kinds = auditKindsByShape.get(key) ?? []
+        const sample = kinds.slice(0, 6).join(', ') + (kinds.length > 6 ? `, +${kinds.length - 6}` : '')
+        console.error(`  ${n.toString().padStart(5)} ${key}  [${sample}]`)
+    }
     auditCounts.clear()
+    auditKindsByShape.clear()
 }
 
 export function deriveFields(rule: Rule): AssembledField[] {
@@ -1316,14 +1332,20 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
     get members(): readonly Rule[] { return this.rule.members }
 
     get fields(): AssembledField[] {
-        return this.#fields ??= deriveFields(this.simplifiedRule)
+        if (this.#fields) return this.#fields
+        setAuditKindContext(this.kind)
+        try { return this.#fields = deriveFields(this.simplifiedRule) }
+        finally { setAuditKindContext(undefined) }
     }
 
     /** Branch interface surface = own fields. */
     override get structuralFields(): readonly AssembledField[] { return this.fields }
 
     get children(): AssembledChild[] | undefined {
-        return this.#children ??= deriveChildren(this.simplifiedRule)
+        if (this.#children) return this.#children
+        setAuditKindContext(this.kind)
+        try { return this.#children = deriveChildren(this.simplifiedRule) }
+        finally { setAuditKindContext(undefined) }
     }
 
     /** Branch interface surface = own children (or empty when absent). */
@@ -1494,7 +1516,10 @@ export class AssembledContainer extends AssembledNodeBase<SeqRule | ChoiceRule |
     }
 
     get children(): AssembledChild[] {
-        return this.#children ??= deriveChildren(this.simplifiedRule)
+        if (this.#children) return this.#children
+        setAuditKindContext(this.kind)
+        try { return this.#children = deriveChildren(this.simplifiedRule) }
+        finally { setAuditKindContext(undefined) }
     }
 
     /** Container interface surface = own children (no fields). */
@@ -1878,7 +1903,10 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
     }
 
     get fields(): AssembledField[] {
-        return this.#fields ??= deriveFields(this.simplifiedRule)
+        if (this.#fields) return this.#fields
+        setAuditKindContext(this.kind)
+        try { return this.#fields = deriveFields(this.simplifiedRule) }
+        finally { setAuditKindContext(undefined) }
     }
 
     /**
@@ -1891,7 +1919,10 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
     override get structuralFields(): readonly AssembledField[] { return this.fields }
 
     get children(): AssembledChild[] {
-        return this.#children ??= deriveChildren(this.simplifiedRule)
+        if (this.#children) return this.#children
+        setAuditKindContext(this.kind)
+        try { return this.#children = deriveChildren(this.simplifiedRule) }
+        finally { setAuditKindContext(undefined) }
     }
 
     /** Group interface surface = own children. */
