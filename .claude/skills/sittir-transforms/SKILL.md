@@ -165,3 +165,13 @@ field_pattern: ($, original) => transform(original,
 5. **Synthetic rule names must be unique:** `variant('prefix')` in two different rules produces `rule_a_prefix` and `rule_b_prefix` — no collision. But `alias('my_name')` in two rules would collide on `_my_name`.
 
 6. **Delimiter repeats can't be path-addressed:** `repeat()` with `separator`/`leading`/`trailing` metadata throws on path descent. Use flat mode instead.
+
+7. **Choice arm already an `alias(hidden_rule, value)`:** When a rule is already written as `choice(alias(_foo, 'parent_foo'), alias(_bar, 'parent_bar'), …)` — i.e. the grammar author already wrote out the variant split by hand — applying `variant('foo')` / `variant('bar')` COLLIDES. variant() synthesizes `_parent_foo` from the captured alt content, but that name already exists as a hand-written hidden rule. tree-sitter rejects with "Unresolved conflict for symbol sequence" on the parent.
+
+   Symptom: the variant synthesis writes `_parent_foo = alias(_parent_foo, 'parent_foo')` (self-referential) because the captured alt WAS the outer alias.
+
+   **And even if you wire it around the conflict, rendering breaks anyway** — the form's template collapses to `$$$CHILDREN` because each form's rule is a bare `alias(symbol(_hidden), value)` with no structural content to walk. readNode's field-hoisting also becomes inconsistent (flattens aliased hidden-rule fields onto the parent for some forms but not others), so `$fields` vs `$children` differ between variants.
+
+   **Known case:** typescript `call_expression` in tree-sitter-typescript — the upstream grammar already writes `choice(alias(_call_expression_call, …), alias(_call_expression_template_call, …), alias(_call_expression_member, …))`. The override already has a (disabled-by-symptom) `transforms.call_expression` block with `variant('call')` / etc. that registers polymorph metadata but doesn't produce working templates.
+
+   **Workaround (pending):** needs readNode + AssembledGroup.renderParts changes to either (a) not flatten aliased-hidden-rule fields so the form has real $children to walk, or (b) follow the symbol through the alias at walker time and use the hidden rule's body as the form's template. No clean override-only fix.
