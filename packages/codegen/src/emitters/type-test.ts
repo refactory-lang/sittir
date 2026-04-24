@@ -4,7 +4,7 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts'
-import { referencedKinds } from './shared.ts'
+import { referencedKinds, resolveHiddenKeywordLiteral } from './shared.ts'
 
 export interface EmitTypeTestsConfig {
     nodeMap: NodeMap
@@ -36,6 +36,12 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
             case 'enum':
                 // Only test leaves that actually made it into types.ts.
                 if (!node.rawFactoryName && !referenced.has(kind)) continue
+                // Hidden `_kw_*` keywords are dropped from types.ts (the
+                // factory inlines their literal), so skip them here too —
+                // emitting `_Type_KwAsync` tests an identifier that
+                // types.ts never exports. Lockstep with
+                // `emitLeafTerminalAliases` in types.ts.
+                if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue
                 leafKinds.push({ kind, typeName: node.typeName })
                 break
         }

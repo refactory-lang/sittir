@@ -124,7 +124,12 @@ function registerSittirFilters(env: nunjucks.Environment): void {
 		sides: { leading: boolean; trailing: boolean },
 	): string => {
 		const v = normalizeJoinValue(value, filterName)
-		if (!Array.isArray(v)) return v
+		// `Array.isArray` widens `readonly string[]` to `any[]`, so the
+		// negative branch here leaves `v` typed as `string | readonly
+		// string[]` instead of `string`. An explicit string narrowing
+		// matches the runtime shape — normalizeJoinValue only returns
+		// array-or-string — without a cast.
+		if (typeof v === 'string') return v
 		const s = sepOf(sep)
 		const flanked = v as FlankedChildArray
 		const prefix = sides.leading && flanked._leading_anon === s ? s : ''

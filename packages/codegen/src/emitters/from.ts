@@ -703,81 +703,27 @@ function emitPolymorphDispatcher(
     fn: string,
     factory: string,
     typeName: string,
-    forms: AssembledGroup[],
-    source: 'override' | 'promoted',
-    variantChildKinds: readonly string[] | undefined,
+    _forms: AssembledGroup[],
+    _source: 'override' | 'promoted',
+    _variantChildKinds: readonly string[] | undefined,
 ): string {
     const inputType = `T.${typeName}.Loose`
     const returnType = `ReturnType<typeof ${factory}>`
     const lines: string[] = []
     lines.push(`export function ${fn}(input?: ${inputType}): ${returnType} {`)
     lines.push(`  if (input !== undefined && isNodeData(input)) return input;`)
-    // `$variant` is the authoritative discriminator on the factory side.
-    // Loose input passed through `.from()` may not carry it — normalize
-    // here before handing off. The Loose shape is flexible, so operate on
-    // `input` via a looser view; factory's `ConfigOf<T>` union narrows after.
-    lines.push(`  if (input && typeof input === 'object' && !('$variant' in input)) {`)
-    lines.push(`    const _loose = input as { $variant?: string; children?: readonly unknown[]; [k: string]: unknown };`)
-    lines.push(...emitLooseVariantStamp(forms, source, variantChildKinds))
-    lines.push(`  }`)
+    // `$variant` is the authoritative discriminator. Callers must
+    // supply it (ConfigOf<T.Polymorph> requires it in the type) or
+    // obtain it via `readTreeNode`, which stamps it from parse-tree
+    // truth. This dispatcher does NOT infer — passing Loose input
+    // without `$variant` is a type error; a runtime call that
+    // bypasses types hits the factory's throw.
     lines.push(`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`)
     lines.push('}')
     return lines.join('\n')
 }
 
 /**
- * Emit the `$variant` stamping body for a polymorph `.from()` dispatcher.
- * Runs inside the `if (!('$variant' in input))` branch — only fires for
- * Loose callers that didn't stamp the tag. Mutates `_loose` in place;
- * factory sees the normalized shape afterward.
- *
- * - `source='override'`: the first child's kind IS the variant. Zip
- *   `variantChildKinds[i]` with `forms[i]` (same index by `assemble.ts`).
- * - `source='promoted'`: discriminate by field-presence, most-specific
- *   (largest field set) first. The zero-field form is the fallback.
- */
-function emitLooseVariantStamp(
-    forms: AssembledGroup[],
-    source: 'override' | 'promoted',
-    variantChildKinds: readonly string[] | undefined,
-): string[] {
-    const lines: string[] = []
-    if (source === 'override' && variantChildKinds && variantChildKinds.length === forms.length) {
-        lines.push(`    if (Array.isArray(_loose.children) && _loose.children.length > 0) {`)
-        lines.push(`      const first = _loose.children[0] as { $type?: string; type?: string } | undefined;`)
-        lines.push(`      const childKind = first?.$type ?? first?.type;`)
-        lines.push(`      switch (childKind) {`)
-        for (let i = 0; i < forms.length; i++) {
-            const form = forms[i]!
-            const childKind = variantChildKinds[i]!
-            lines.push(`        case '${childKind}': _loose.$variant = '${form.name}'; break;`)
-        }
-        lines.push(`      }`)
-        lines.push(`    }`)
-        return lines
-    }
-    // source === 'promoted' — field-presence, most-specific first, empty
-    // form as fallback. `buildFactoryMap`'s invariant ensures no two forms
-    // share the same field signature, so this picks deterministically.
-    const sorted = [...forms].sort((a, b) => b.fields.length - a.fields.length)
-    const emptyForm = sorted.find(f => f.fields.length === 0)
-    const matched = sorted.filter(f => f.fields.length > 0)
-    if (matched.length === 0) {
-        if (emptyForm) lines.push(`    _loose.$variant = '${emptyForm.name}';`)
-        return lines
-    }
-    for (let i = 0; i < matched.length; i++) {
-        const form = matched[i]!
-        const checks = form.fields
-            .map(f => `'${f.propertyName}' in _loose`)
-            .join(' && ')
-        const kw = i === 0 ? 'if' : 'else if'
-        lines.push(`    ${kw} (${checks}) _loose.$variant = '${form.name}';`)
-    }
-    if (emptyForm) lines.push(`    else _loose.$variant = '${emptyForm.name}';`)
-    return lines
-}
-
 /**
  * Determines whether a polymorph form's `input` parameter should be optional
  * or required, and emits the per-form from() function.
@@ -812,7 +758,10 @@ function emitPolymorphFormFrom(
         form.children.some(c => isRequired(c) && !isAutoStampSlot(c, nodeMap)) ? '' : '?'
     const fLines: string[] = []
     const formInputOptional = formOpt === '?'
-    fLines.push(`export function ${formFn}(input${formOpt}: ConfigOf<T.${form.typeName}>) {`)
+    // Form `.from()` input omits `$variant` — see resolveConfigType
+    // in emitters/factories.ts for the rationale (forms stamp, they
+    // don't accept).
+    fLines.push(`export function ${formFn}(input${formOpt}: Omit<ConfigOf<T.${form.typeName}>, '$variant'>) {`)
     if (form.fields.length > 0) {
         fLines.push(`  return ${formFactory}({`)
         for (const f of form.fields) {
@@ -1441,10 +1390,12 @@ function emitResolverHelpers(lines: string[], nodeMap: NodeMap): void {
     lines.push('}')
     lines.push('')
 
-    // ADR-0012 keyword-presence resolvers — pass-through; the factory's
-    // `_bk` / `_bkArr` / `_bf` runtime helpers perform the actual stamp.
-    // The resolver layer only has to refuse the leaf-registry path so
-    // a `true` input doesn't get misrouted through `_resolveScalar` into
+    // ADR-0012 keyword-presence resolvers — pass-through. For scalar /
+    // repeat-of-one booleans the factory inlines
+    // `config.x ? '<literal>' : undefined` (no runtime helper); for
+    // bitflags the `_bf` helper stamps the NodeData container. The
+    // resolver layer only has to refuse the leaf-registry path so a
+    // `true` input doesn't get misrouted through `_resolveScalar` into
     // a `boolean_literal` factory call.
     lines.push('function _resolveBooleanKeyword<T>(v: _FromFieldInput): T {')
     lines.push('  if (v === undefined || v === null) return v;')

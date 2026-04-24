@@ -187,44 +187,25 @@ function emitFluentSetterHelpers(): string[] {
 /**
  * Emit the ADR-0012 keyword-presence runtime helpers.
  *
- * - `_bk` — scalar boolean-keyword field. Accepts `true` → construct a
- *   fresh NodeData from the kind / text / named triple, `false` or
- *   nullish → undefined, anything else → passthrough (covers NodeData
- *   from readNode, string shorthands via from resolvers, etc.).
- *
- * - `_bkArr` — repeat-of-one-literal boolean-keyword field. Same logic
- *   but the positive branch emits a single-element array.
- *
  * - `_bf` — bitflag field. Accepts a number (const-enum OR) and emits
  *   the underlying NodeData container. (Only emitted when at least one
  *   bitflag field exists in the grammar.)
  *
- * Only emit the helpers that are actually needed — keeps the generated
- * file lean for grammars with no bitflag fields (all three current
+ * Scalar / repeat-of-one-literal boolean-keyword fields no longer need a
+ * runtime helper: the generated factory emits them inline as
+ * `config.foo ? 'literal' : undefined` (scalar) or
+ * `config.foo ? ['literal'] : undefined` (repeat-of-one). The render
+ * engine accepts string values in `$fields` directly (see
+ * `core/render.ts::buildNunjucksTemplateContext.renderChild`), so the
+ * previous NodeData-wrapping (`$type: '_kw_foo', $text: 'foo', …`) was
+ * redundant ceremony — the literal is the only load-bearing payload.
+ * Only emit the helpers actually needed — keeps the generated file
+ * lean for grammars with no bitflag fields (all three current
  * grammars).
  */
 function emitKeywordPresenceHelpers(nodeMap: NodeMap): string[] {
     const needs = scanKeywordPresenceNeeds(nodeMap)
     const lines: string[] = []
-    if (needs.boolean) {
-        lines.push(
-            'function _bk<T>(v: unknown, kind: string, text: string, named: boolean): T | undefined {',
-            "  if (v === true) return { $type: kind, $text: text, $named: named, $source: 'factory' } as unknown as T;",
-            '  if (v === false || v === undefined || v === null) return undefined;',
-            '  return v as T;',
-            '}',
-        )
-    }
-    if (needs.booleanArray) {
-        lines.push(
-            'function _bkArr<T>(v: unknown, kind: string, text: string, named: boolean): readonly T[] | undefined {',
-            "  if (v === true) return [{ $type: kind, $text: text, $named: named, $source: 'factory' } as unknown as T];",
-            '  if (v === false) return [];',
-            '  if (v === undefined || v === null) return undefined;',
-            '  return v as readonly T[];',
-            '}',
-        )
-    }
     if (needs.bitflag) {
         lines.push(
             'function _bf<T>(v: unknown, kinds: readonly string[], texts: readonly string[], named: boolean): readonly T[] | undefined {',
@@ -245,31 +226,25 @@ function emitKeywordPresenceHelpers(nodeMap: NodeMap): string[] {
  * Walk the NodeMap and record which keyword-presence helpers the
  * factory emitter actually needs. Drives conditional helper emission.
  */
-function scanKeywordPresenceNeeds(nodeMap: NodeMap): { boolean: boolean; booleanArray: boolean; bitflag: boolean } {
-    let boolean = false
-    let booleanArray = false
+function scanKeywordPresenceNeeds(nodeMap: NodeMap): { bitflag: boolean } {
     let bitflag = false
     for (const [, node] of nodeMap.nodes) {
         const fields = node.modelType === 'polymorph' ? node.allFormFields
             : (node.modelType === 'branch' || node.modelType === 'group') ? node.fields
             : []
         for (const f of fields) {
-            const kw = keywordPresenceKind(f, nodeMap)
-            if (kw === 'boolean') {
-                if (isMultiple(f)) booleanArray = true
-                else boolean = true
-            } else if (kw === 'bitflag') {
-                bitflag = true
-            }
+            if (keywordPresenceKind(f, nodeMap) === 'bitflag') bitflag = true
         }
     }
-    return { boolean, booleanArray, bitflag }
+    return { bitflag }
 }
 
 /**
  * Compute the `(kind, text, named)` triple for a keyword-presence field.
- * Used by the factory emitter to construct the stamp arguments passed
- * to `_bk` / `_bkArr`.
+ * Only used by bitflag emission — the `_bf` helper still stamps a
+ * NodeData container per bit so it needs the full triple. Scalar /
+ * array-boolean fields now inline as `config.x ? 'text' : undefined`
+ * and don't consult this function.
  *
  * Resolution order matches `resolveEntryLiteral`:
  *   - Direct terminal → kind = text = the literal string, named = false.
@@ -438,6 +413,12 @@ function emitPerNodeFactories(
     for (const [kind, node] of nodeMap.nodes) {
         if (!node.userFacing) continue
         if (nodeMap.polymorphFormKinds.has(kind)) continue
+        // Hidden `_kw_*` keywords never need a factory — all references
+        // inline the literal string. Skipping here keeps their `T.Kw<
+        // Keyword>Tree` references from being emitted at all (types.ts
+        // also skips emitting those aliases). Lockstep with
+        // `buildFactoryMapEntries` and `emitLeafTerminalAliases`.
+        if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue
         const source = renderFactoryForNode(node, strict, nodeMap, leafReConsts)
         if (source === undefined) continue
         lines.push(source)
@@ -475,6 +456,15 @@ function buildFactoryMapEntries(
         if (!node.userFacing) continue
         if (!node.rawFactoryName) continue
         if (nodeMap.polymorphFormKinds.has(kind)) continue
+        // Hidden single-literal `_kw_*` keywords are inlined at every
+        // reference (factory fields emit the literal string directly,
+        // see `keywordPresenceAssignmentExpr`), so they never need a
+        // factory / `replace()` method / NamespaceMap entry. Dropping
+        // them also removes the dangling `T.Kw<Keyword>` / `T.Kw<
+        // Keyword>Tree` type references that would otherwise survive
+        // after types.ts skipped emitting those aliases. Lockstep with
+        // `emitLeafTerminalAliases` / `emitTreeInterfaceDeclarations`.
+        if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue
         const fluent = node.modelType === 'branch' ||
             node.modelType === 'container' ||
             node.modelType === 'polymorph'
@@ -707,10 +697,19 @@ function autoStampExpression(f: AssembledField, nodeMap: NodeMap): string | unde
  * Build the RHS expression for a factory field assignment when the
  * field classifies as keyword-presence (ADR-0012).
  *
- * Scalar boolean:   `_bk(config?.propertyName, '<kind>', '<text>', <named>)`
- * Array  boolean:   `_bkArr(config?.propertyName, '<kind>', '<text>', <named>)`
+ * Scalar boolean:   `config?.propertyName ? '<text>' : undefined`
+ * Array  boolean:   `config?.propertyName ? ['<text>'] : undefined`
  *   (degenerate repeat-of-one-literal)
  * Bitflag:          `_bf(config?.propertyName, [<kinds>], [<texts>], <named>)`
+ *
+ * The scalar / array-boolean forms used to wrap the literal in a
+ * NodeData via the `_bk` / `_bkArr` helpers. That wrapping was
+ * redundant — the render engine accepts plain string values in
+ * `$fields` (see `core/render.ts::buildNunjucksTemplateContext.renderChild`),
+ * and the kind / named metadata never flowed anywhere load-bearing.
+ * Inlining the ternary here drops the helpers, their imports, and
+ * the `T.Kw<Keyword>` type references that the helpers forced on
+ * the generated factories.
  *
  * Returns `undefined` when the field doesn't classify as keyword-presence.
  */
@@ -725,10 +724,14 @@ function keywordPresenceAssignmentExpr(
     if (kw === 'boolean') {
         const lit = keywordPresenceValue(f, nodeMap)
         if (lit === undefined) return undefined
-        const triple = resolveKeywordPresenceTriple(f, lit, nodeMap)
-        if (!triple) return undefined
-        const helper = isMultiple(f) ? '_bkArr' : '_bk'
-        return `${helper}(${access}, ${JSON.stringify(triple.kind)}, ${JSON.stringify(triple.text)}, ${triple.named})`
+        // `as const` keeps the emitted literal narrow when the expression
+        // flows into an object-literal context — without it, TypeScript
+        // widens `"ref"` to `string` which fails the `$fields` interface
+        // slot's `BooleanKeyword<"ref">` constraint.
+        const textLit = `${JSON.stringify(lit)} as const`
+        return isMultiple(f)
+            ? `${access} ? [${textLit}] : undefined`
+            : `${access} ? ${textLit} : undefined`
     }
     // bitflag
     const lits = keywordPresenceValues(f, nodeMap)
@@ -1027,8 +1030,13 @@ function resolveConfigOptional(
  *   `ConfigOf<T.${typeName}>` shape under the hood.
  */
 function resolveConfigType(node: FieldCarryingNode, isPolymorphForm: boolean): string {
+    // Polymorph FORM factories omit `$variant` from their input Config —
+    // the form itself stamps `$variant` on the output, so accepting it
+    // as input would be redundant. Parent (dispatcher) factories use
+    // `T.${parent}.Config` which resolves to `ConfigOf<union>` and
+    // REQUIRES `$variant` (discriminated-union narrowing).
     return isPolymorphForm
-        ? `ConfigOf<T.${node.typeName}>`
+        ? `Omit<ConfigOf<T.${node.typeName}>, '$variant'>`
         : `T.${node.typeName}.Config`
 }
 
@@ -1298,7 +1306,9 @@ function emitHoistedPolymorphFormFactory(
     nodeMap: NodeMap,
 ): string {
     const fn = form.rawFactoryName!
-    const configType = `ConfigOf<T.${form.typeName}>`
+    // Polymorph form factories OMIT `$variant` from their input Config
+    // — the factory stamps the variant on output. See resolveConfigType.
+    const configType = `Omit<ConfigOf<T.${form.typeName}>, '$variant'>`
     const variantName = form.name
     const parentKind = form.parentKind ?? form.kind
     const formFields = form.fields
@@ -1508,18 +1518,20 @@ function emitPolymorphDispatch(
 ): string[] {
     const lines: string[] = []
     if (forms.length === 1) {
-        lines.push(`  return ${forms[0]!.rawFactoryName!}(config);`)
+        // Single-form polymorph: form factory's input type omits `$variant`.
+        // The parent's Config still carries it (discriminated union arm),
+        // so cast when delegating.
+        lines.push(`  return ${forms[0]!.rawFactoryName!}(config as Parameters<typeof ${forms[0]!.rawFactoryName!}>[0]);`)
         return lines
     }
 
     // `$variant` is the authoritative discriminator — `ConfigOf<T>` carries
     // it in the type for polymorph variants, so the switch narrows the
-    // union arm-by-arm with no casts and no fallback. Callers that don't
-    // stamp `$variant` (Loose input) must route through `.from()` which
-    // normalizes the shape.
+    // union arm-by-arm. Form factories accept `Omit<ConfigOf<T.FormN>, '$variant'>`
+    // (the variant tag is factory-output, not input) — cast when delegating.
     lines.push(`  switch (config.$variant) {`)
     for (const form of forms) {
-        lines.push(`    case '${form.name}': return ${form.rawFactoryName!}(config);`)
+        lines.push(`    case '${form.name}': return ${form.rawFactoryName!}(config as Parameters<typeof ${form.rawFactoryName!}>[0]);`)
     }
     lines.push(`  }`)
     const formNames = forms.map(f => `'${f.name}'`).join(' | ')

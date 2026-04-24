@@ -787,7 +787,15 @@ function emitInterface(
     const fields = fieldsOf(node)
     const children = childrenOf(node)
     lines.push(`export interface ${node.typeName} {`)
-    lines.push(`  readonly $type: '${node.kind}';`)
+    // Hidden-source kinds (`_foo`) are exposed at parse time via
+    // `alias(_foo, 'foo')` — tree-sitter emits `$type: 'foo'`, NEVER
+    // the underscore form. Strip the leading underscore so the
+    // interface's declared `$type` matches what readTreeNode produces
+    // AND what the factory stamps (factories always stamp the
+    // unprefixed kind). Commit 8b5e67d0 punted a follow-up to remap
+    // CST `$type: X` → `$type: _X` at readTreeNode time; stripping
+    // here is the cheaper direction.
+    lines.push(`  readonly $type: '${node.kind.replace(/^_+/, '')}';`)
 
     if (fields.length > 0) {
         lines.push('  readonly $fields: {')
@@ -919,7 +927,9 @@ function emitFormInterface(
     lookupUnion?: LookupUnion,
 ): void {
     lines.push(`export interface ${typeName} {`)
-    lines.push(`  readonly $type: '${node.kind}';`)
+    // Same underscore strip as `emitInterface` — UForm parents alias
+    // through to a visible kind at parse time.
+    lines.push(`  readonly $type: '${node.kind.replace(/^_+/, '')}';`)
     // `$variant` literal discriminant — matches what the form factory stamps
     // on its output (`$variant: '<form.name>' as const`). Makes the parent
     // polymorph union a discriminated union so consumers can narrow via
