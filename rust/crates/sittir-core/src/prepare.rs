@@ -166,9 +166,7 @@ pub fn build_template_context<M: GrammarMeta>(
     // joined string using the parent's separator (or "" if none).
     if let Some(children) = &node.children {
         for child in children {
-            let child_ctx = build_template_context(child, meta, render_dispatch)?;
-            let rendered = render_dispatch(&child.type_, &child_ctx)?;
-            ctx.children_list.push(rendered);
+            ctx.children_list.push(render_any(child, meta, render_dispatch)?);
         }
         let sep = meta.separator_for(parent_kind).unwrap_or("");
         ctx.children = ctx.children_list.join(sep);
@@ -189,6 +187,32 @@ pub fn build_template_context<M: GrammarMeta>(
     Ok(ctx)
 }
 
+/// Render a single NodeData through the Rust engine, with the same
+/// short-circuit the TS engine applies (`packages/core/src/render.ts`
+/// line 836): a text-only leaf (has `$text`, no `$fields`, no
+/// `$children`) renders verbatim as its `$text`. Anonymous token
+/// children (tree-sitter surfaces `fn`, `+`, `declare`, …, etc. as
+/// named children of their parents with `$text` set and no structure
+/// below) land here — without the short-circuit, `render_dispatch`
+/// would panic on them because there's no template for the token
+/// kind itself.
+///
+/// Parent kinds with structure fall through to the full
+/// `build_template_context` + `render_dispatch` path.
+pub fn render_any<M: GrammarMeta>(
+    node: &NodeData,
+    meta: &M,
+    render_dispatch: RenderDispatch,
+) -> Result<String, askama::Error> {
+    if node.fields.is_none() && node.children.is_none() {
+        if let Some(text) = &node.text {
+            return Ok(text.clone());
+        }
+    }
+    let ctx = build_template_context(node, meta, render_dispatch)?;
+    render_dispatch(&node.type_, &ctx)
+}
+
 /// Render a single `FieldValue` into both a joined scalar AND a
 /// per-element list view. The per-kind struct's field type selects
 /// between the two at emit time.
@@ -207,15 +231,13 @@ fn render_field_value<M: GrammarMeta>(
 ) -> Result<(String, Vec<String>), askama::Error> {
     match value {
         FieldValue::Single(node) => {
-            let child_ctx = build_template_context(node, meta, render_dispatch)?;
-            let rendered = render_dispatch(&node.type_, &child_ctx)?;
+            let rendered = render_any(node, meta, render_dispatch)?;
             Ok((rendered.clone(), vec![rendered]))
         }
         FieldValue::Multiple(nodes) => {
             let mut parts: Vec<String> = Vec::with_capacity(nodes.len());
             for n in nodes {
-                let child_ctx = build_template_context(n, meta, render_dispatch)?;
-                parts.push(render_dispatch(&n.type_, &child_ctx)?);
+                parts.push(render_any(n, meta, render_dispatch)?);
             }
             let sep = meta.separator_for(parent_kind).unwrap_or("");
             let joined = parts.join(sep);
