@@ -118,10 +118,32 @@ function tryLoadNative(): NativeModule | { reason: string } {
  * on any failure; the reason field carries enough context for the
  * `SITTIR_BACKEND_DEBUG` nudge and programmatic inspection via
  * `getActiveBackend()`.
+ *
+ * `SITTIR_BACKEND` forced-selection (documented as non-normative in
+ * the contract):
+ *   - `typescript` — skip the native load entirely; status.reason
+ *     records the override.
+ *   - `native` — disable the silent fall-back; any native-load or
+ *     hash-mismatch failure throws loudly so CI parity-diffing
+ *     runs fail visibly instead of silently re-running on TS.
+ *   - unset / any other value — default try-native-else-TS flow.
  */
 function computeBackend(): BackendStatus {
+	const forced = process.env.SITTIR_BACKEND;
+	if (forced === 'typescript') {
+		return Object.freeze({
+			name: 'typescript',
+			reason: 'forced by SITTIR_BACKEND=typescript',
+		});
+	}
+
 	const loaded = tryLoadNative();
 	if ('reason' in loaded) {
+		if (forced === 'native') {
+			throw new Error(
+				`SITTIR_BACKEND=native but native engine unavailable — ${loaded.reason}`,
+			);
+		}
 		return Object.freeze({ name: 'typescript', reason: loaded.reason });
 	}
 
@@ -133,6 +155,9 @@ function computeBackend(): BackendStatus {
 		hashMatch = nativeHash.toLowerCase() === TEMPLATE_BUNDLE_HASH.toLowerCase();
 	} catch (err) {
 		const message = err instanceof Error ? err.message : String(err);
+		if (forced === 'native') {
+			throw new Error(`SITTIR_BACKEND=native but native-engine error at init: ${message}`);
+		}
 		return Object.freeze({
 			name: 'typescript',
 			reason: `native-engine error at init: ${message}`,
@@ -140,6 +165,11 @@ function computeBackend(): BackendStatus {
 	}
 
 	if (!hashMatch) {
+		if (forced === 'native') {
+			throw new Error(
+				`SITTIR_BACKEND=native but template-bundle hash mismatch (native=${nativeHash}, ts=${TEMPLATE_BUNDLE_HASH})`,
+			);
+		}
 		return Object.freeze({
 			name: 'typescript',
 			reason: 'template-bundle hash mismatch',
