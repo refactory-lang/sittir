@@ -1981,15 +1981,28 @@ export interface _StringContent {
 
 export interface ArrayExpressionSemi {
   readonly $type: 'array_expression_semi';
+  readonly $fields: {
+    readonly attributes: readonly (AttributeItem)[];
+    readonly elements: Expression;
+    readonly length: Expression;
+  };
 }
 
 export interface ArrayExpressionList {
   readonly $type: 'array_expression_list';
+  readonly $fields: {
+    readonly attributes: readonly (AttributeItem)[];
+    readonly elements: readonly (Expression)[];
+  };
   readonly $children: readonly (AttributeItem)[];
 }
 
 export interface ClosureExpressionBlock {
   readonly $type: 'closure_expression_block';
+  readonly $fields: {
+    readonly return_type?: _Type;
+    readonly body: Block;
+  };
 }
 
 export interface ClosureExpressionExpr {
@@ -2008,6 +2021,10 @@ export interface FieldPatternShorthand {
 
 export interface FieldPatternNamed {
   readonly $type: 'field_pattern_named';
+  readonly $fields: {
+    readonly name: FieldIdentifier;
+    readonly pattern: Pattern;
+  };
 }
 
 export interface FunctionTypeTraitForm {
@@ -2053,22 +2070,42 @@ export interface ModItemInline {
 
 export interface OrPatternBinary {
   readonly $type: 'or_pattern_binary';
+  readonly $fields: {
+    readonly left: Pattern;
+    readonly right: Pattern;
+  };
 }
 
 export interface OrPatternPrefix {
   readonly $type: 'or_pattern_prefix';
+  readonly $fields: {
+    readonly right: Pattern;
+  };
 }
 
 export interface RangeExpressionBinary {
   readonly $type: 'range_expression_binary';
+  readonly $fields: {
+    readonly start: Expression;
+    readonly operator: ".." | "..." | "..=";
+    readonly end: Expression;
+  };
 }
 
 export interface RangeExpressionPostfix {
   readonly $type: 'range_expression_postfix';
+  readonly $fields: {
+    readonly start: Expression;
+    readonly operator: "..";
+  };
 }
 
 export interface RangeExpressionPrefix {
   readonly $type: 'range_expression_prefix';
+  readonly $fields: {
+    readonly operator: "..";
+    readonly end: Expression;
+  };
 }
 
 export interface RangeExpressionBare {
@@ -2080,19 +2117,32 @@ export interface RangeExpressionBare {
 
 export interface RangePatternLeft {
   readonly $type: 'range_pattern_left';
+  readonly $fields: {
+    readonly left: LiteralPattern | Path;
+    readonly right?: LiteralPattern | Path;
+  };
 }
 
 export interface RangePatternPrefix {
   readonly $type: 'range_pattern_prefix';
+  readonly $fields: {
+    readonly right: LiteralPattern | Path;
+  };
 }
 
 export interface StructItemBrace {
   readonly $type: 'struct_item_brace';
+  readonly $fields: {
+    readonly body: FieldDeclarationList;
+  };
   readonly $children: readonly [WhereClause];
 }
 
 export interface StructItemTuple {
   readonly $type: 'struct_item_tuple';
+  readonly $fields: {
+    readonly body: OrderedFieldDeclarationList;
+  };
   readonly $children: readonly [WhereClause];
 }
 
@@ -2125,6 +2175,9 @@ export interface ExpressionStatementBlockEnding {
 
 export interface MatchArmWithComma {
   readonly $type: 'match_arm_with_comma';
+  readonly $fields: {
+    readonly value: Expression;
+  };
 }
 
 export interface MatchArmBlockEnding {
@@ -2136,6 +2189,11 @@ export interface MatchArmBlockEnding {
 
 export interface LineCommentDoc {
   readonly $type: 'line_comment_doc';
+  readonly $fields: {
+    readonly outer?: BooleanKeyword<"/">;
+    readonly inner?: BooleanKeyword<"!">;
+    readonly doc: DocComment;
+  };
 }
 
 

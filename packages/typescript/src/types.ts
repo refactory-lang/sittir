@@ -603,6 +603,9 @@ export interface ImportClauseUFormDefaultImport {
 export type ImportClause = ImportClauseUFormNamespaceImport | ImportClauseUFormNamedImports | ImportClauseUFormDefaultImport;
 export interface FromClause {
   readonly $type: 'from_clause';
+  readonly $fields: {
+    readonly source: String;
+  };
 }
 
 export interface NamespaceImport {
@@ -745,6 +748,12 @@ export interface ForInStatement {
 
 export interface ForHeader {
   readonly $type: 'for_header';
+  readonly $fields: {
+    readonly left: LhsExpression | ParenthesizedExpression;
+    readonly kind?: BooleanKeyword<"var">;
+    readonly operator: "in" | "of";
+    readonly right: Expressions;
+  };
   readonly $children: readonly [Initializer | AutomaticSemicolon];
 }
 
@@ -1102,6 +1111,11 @@ export interface ArrowFunctionUFormUCallSignature {
 export type ArrowFunction = ArrowFunctionUFormParameter | ArrowFunctionUFormUCallSignature;
 export interface _CallSignature {
   readonly $type: 'call_signature';
+  readonly $fields: {
+    readonly type_parameters?: TypeParameters;
+    readonly parameters: FormalParameters;
+    readonly return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
+  };
 }
 
 export interface CallExpressionUFormCall {
@@ -1182,6 +1196,9 @@ export interface AugmentedAssignmentExpression {
 
 export interface Initializer {
   readonly $type: 'initializer';
+  readonly $fields: {
+    readonly value: Expression;
+  };
 }
 
 export interface SpreadElement {
@@ -1386,6 +1403,11 @@ export interface PublicFieldDefinition {
 
 export interface JsxStartOpeningElement {
   readonly $type: 'jsx_start_opening_element';
+  readonly $fields: {
+    readonly name?: _JsxIdentifier | JsxNamespaceName;
+    readonly type_arguments?: TypeArguments;
+    readonly attribute: readonly (_JsxAttribute)[];
+  };
 }
 
 export interface NonNullExpression {
@@ -1489,6 +1511,10 @@ export interface ExtendsClause {
 
 export interface ExtendsClauseSingle {
   readonly $type: 'extends_clause_single';
+  readonly $fields: {
+    readonly value: Expression;
+    readonly type_arguments?: TypeArguments;
+  };
 }
 
 export interface ImplementsClause {
@@ -1532,6 +1558,10 @@ export interface InternalModule {
 
 export interface _Module {
   readonly $type: 'module';
+  readonly $fields: {
+    readonly name: String | Identifier | NestedIdentifier;
+    readonly body?: StatementBlock;
+  };
 }
 
 export interface ImportAlias {
@@ -1628,6 +1658,11 @@ export interface OptionalParameter {
 
 export interface ParameterName {
   readonly $type: 'parameter_name';
+  readonly $fields: {
+    readonly decorator: readonly (Decorator)[];
+    readonly readonly?: BooleanKeyword<"readonly">;
+    readonly pattern: Pattern | This;
+  };
   readonly $children: readonly [AccessibilityModifier | OverrideModifier];
 }
 
@@ -1661,10 +1696,18 @@ export interface TypeAnnotation {
 
 export interface TypeQueryMemberExpressionInTypeAnnotation {
   readonly $type: 'type_query_member_expression_in_type_annotation';
+  readonly $fields: {
+    readonly object: Import | TypeQueryMemberExpressionInTypeAnnotation | TypeQueryCallExpressionInTypeAnnotation;
+    readonly property: PrivatePropertyIdentifier | Identifier;
+  };
 }
 
 export interface TypeQueryCallExpressionInTypeAnnotation {
   readonly $type: 'type_query_call_expression_in_type_annotation';
+  readonly $fields: {
+    readonly function: Import | TypeQueryMemberExpressionInTypeAnnotation;
+    readonly arguments: Arguments;
+  };
 }
 
 export interface Asserts {
@@ -1772,18 +1815,34 @@ export interface TypePredicateAnnotation {
 
 export interface TypeQueryMemberExpression {
   readonly $type: 'type_query_member_expression';
+  readonly $fields: {
+    readonly object: Identifier | This | TypeQuerySubscriptExpression | TypeQueryMemberExpression | TypeQueryCallExpression;
+    readonly property: PrivatePropertyIdentifier | Identifier;
+  };
 }
 
 export interface TypeQuerySubscriptExpression {
   readonly $type: 'type_query_subscript_expression';
+  readonly $fields: {
+    readonly object: Identifier | This | TypeQuerySubscriptExpression | TypeQueryMemberExpression | TypeQueryCallExpression;
+    readonly index: PredefinedType | String | Number;
+  };
 }
 
 export interface TypeQueryCallExpression {
   readonly $type: 'type_query_call_expression';
+  readonly $fields: {
+    readonly function: Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
+    readonly arguments: Arguments;
+  };
 }
 
 export interface TypeQueryInstantiationExpression {
   readonly $type: 'type_query_instantiation_expression';
+  readonly $fields: {
+    readonly function: Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
+    readonly type_arguments: TypeArguments;
+  };
 }
 
 export interface TypeQuery {
@@ -1822,6 +1881,10 @@ export interface LiteralType {
 
 export interface _Number {
   readonly $type: 'number';
+  readonly $fields: {
+    readonly operator: "-" | "+";
+    readonly argument: Number;
+  };
 }
 
 export interface FlowMaybeType {
@@ -2032,10 +2095,18 @@ export interface ImportSpecifierName {
 
 export interface ImportSpecifierAs {
   readonly $type: 'import_specifier_as';
+  readonly $fields: {
+    readonly name: ModuleExportName | Identifier;
+    readonly alias: ImportIdentifier;
+  };
 }
 
 export interface IndexSignatureColon {
   readonly $type: 'index_signature_colon';
+  readonly $fields: {
+    readonly name: ReservedIdentifier;
+    readonly index_type: Type;
+  };
 }
 
 export interface IndexSignatureMappedTypeClause {
@@ -2045,6 +2116,9 @@ export interface IndexSignatureMappedTypeClause {
 
 export interface ParenthesizedExpressionTyped {
   readonly $type: 'parenthesized_expression_typed';
+  readonly $fields: {
+    readonly type?: TypeAnnotation;
+  };
   readonly $children: readonly [Expression];
 }
 
@@ -2091,14 +2165,28 @@ export interface ExportStatementNamespaceExport {
 
 export interface CallExpressionCall {
   readonly $type: 'call_expression_call';
+  readonly $fields: {
+    readonly function: Expression | Import;
+    readonly type_arguments?: TypeArguments;
+    readonly arguments: Arguments;
+  };
 }
 
 export interface CallExpressionTemplateCall {
   readonly $type: 'call_expression_template_call';
+  readonly $fields: {
+    readonly function: PrimaryExpression | NewExpression;
+    readonly arguments: TemplateString;
+  };
 }
 
 export interface CallExpressionMember {
   readonly $type: 'call_expression_member';
+  readonly $fields: {
+    readonly function: PrimaryExpression;
+    readonly type_arguments?: TypeArguments;
+    readonly arguments: Arguments;
+  };
 }
 
 export interface StringDouble {

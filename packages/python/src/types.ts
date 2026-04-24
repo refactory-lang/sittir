@@ -430,6 +430,9 @@ export interface ImportFromStatement {
 
 export interface ImportList {
   readonly $type: 'import_list';
+  readonly $fields: {
+    readonly name: NonEmptyArray<DottedName | AliasedImport>;
+  };
 }
 
 export interface AliasedImport {
@@ -752,6 +755,10 @@ export interface SimplePattern {
 
 export interface _AsPattern {
   readonly $type: 'as_pattern';
+  readonly $fields: {
+    readonly case_pattern: CasePattern;
+    readonly identifier: Identifier;
+  };
 }
 
 export interface UnionPattern {
@@ -780,6 +787,10 @@ export interface DictPattern {
 
 export interface KeyValuePattern {
   readonly $type: 'key_value_pattern';
+  readonly $fields: {
+    readonly key: SimplePattern;
+    readonly value: CasePattern;
+  };
 }
 
 export interface KeywordPattern {
@@ -1126,6 +1137,9 @@ export interface GeneratorExpression {
 
 export interface ComprehensionClauses {
   readonly $type: 'comprehension_clauses';
+  readonly $fields: {
+    readonly for_in_clause: ForInClause;
+  };
   readonly $children: readonly (ForInClause | IfClause)[];
 }
 
@@ -1204,14 +1218,24 @@ export interface Await {
 
 export interface AssignmentEq {
   readonly $type: 'assignment_eq';
+  readonly $fields: {
+    readonly right: RightHandSide;
+  };
 }
 
 export interface AssignmentType {
   readonly $type: 'assignment_type';
+  readonly $fields: {
+    readonly type: Type;
+  };
 }
 
 export interface AssignmentTyped {
   readonly $type: 'assignment_typed';
+  readonly $fields: {
+    readonly type: Type;
+    readonly right: RightHandSide;
+  };
 }
 
 

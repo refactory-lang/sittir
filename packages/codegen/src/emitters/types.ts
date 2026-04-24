@@ -763,6 +763,16 @@ function emitNamespaceInterfaceLine(lines: string[], typeName: string): void {
 
 function fieldsOf(node: AssembledNode): readonly AssembledField[] {
     if (node.modelType === 'branch') return node.fields
+    // Hidden groups that land in the structural bucket (e.g.
+    // `_range_expression_postfix` — the inner content of a polymorph
+    // form that didn't hoist) carry fields too. Without this clause
+    // their interface emits as `{ $type: 'x' }` only — callers have
+    // no way to supply the `start` / `operator` content even though
+    // the UForm parent references the kind in its `$children`.
+    // Non-polymorph-form groups are filtered into the structural
+    // category by `collectNodesByCategory`, so this branch only fires
+    // for the relevant subset.
+    if (node.modelType === 'group') return node.fields
     if (node.modelType === 'polymorph') {
         const seen = new Set<string>()
         const fields: AssembledField[] = []
@@ -983,18 +993,33 @@ function emitFormChildrenSlot(
     lookupUnion?: LookupUnion,
 ): void {
     if (!form.children || form.children.length === 0) return
-    // Filter slots whose refs ALL resolve to non-emittable kinds —
-    // tokens, non-userFacing hidden helpers, AND hidden single-literal
-    // keywords whose interface is inlined at every reference (the
-    // `resolveHiddenKeywordLiteral` skip in `emitLeafTerminalAliases`).
-    // Without this filter the UForm interface emits dangling references
-    // like `$children: [ImplItemSemi]` (token) or `$children:
-    // [PointerTypeConst]` (hidden keyword). `impl_item__form_semi` and
-    // `pointer_type__form_const` both hit this pattern.
+    // Filter slots whose refs ALL resolve to non-constructible kinds.
+    // A kind is non-constructible when there's nothing for a caller to
+    // supply — the UForm's `$variant` discriminator already captures
+    // the only semantic distinction. Three flavours:
+    //
+    //   1. Tokens / non-userFacing hidden helpers (e.g. `_impl_item_semi`
+    //      — a bare `;` marker; token modelType, userFacing=false).
+    //   2. Hidden single-literal keywords (e.g. `_pointer_type_const` —
+    //      inlined at every reference via `resolveHiddenKeywordLiteral`).
+    //   3. Empty branches / groups — interface exists but has no
+    //      `$fields` and no `$children` (e.g. `_range_expression_postfix`
+    //      — a pure marker for the `postfix` variant).
+    //
+    // Leaving any of these in `$children` emits a dangling reference
+    // (the interface is skipped by `emitLeafTerminalAliases` / still
+    // produced as empty) and forces the factory to accept a caller
+    // value that carries no information beyond its kind.
     const isEmittableRef = (t: string): boolean => {
         const n = nodeMap.nodes.get(t)
         if (!n || !n.userFacing) return false
         if (resolveHiddenKeywordLiteral(t, nodeMap) !== undefined) return false
+        // Empty branch / group — no fields and no children to construct.
+        if (n.modelType === 'branch' || n.modelType === 'group') {
+            const fs = (n as unknown as { fields: readonly unknown[] }).fields
+            const cs = (n as unknown as { children?: readonly unknown[] }).children
+            if ((fs?.length ?? 0) === 0 && (cs?.length ?? 0) === 0) return false
+        }
         return true
     }
     const emittableChildren = form.children.filter(c => slotKindNames(c).some(isEmittableRef))
