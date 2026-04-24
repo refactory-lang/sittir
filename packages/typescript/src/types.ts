@@ -2780,13 +2780,13 @@ export type Statement =
   | LabeledStatement
 ;
 
-export type StatementTree = ExportStatementTree | ImportStatementTree | DebuggerStatementTree | ExpressionStatementTree | DeclarationTree | StatementBlockTree | IfStatementTree | SwitchStatementTree | ForStatementTree | ForInStatementTree | WhileStatementTree | DoStatementTree | TryStatementTree | WithStatementTree | BreakStatementTree | ContinueStatementTree | ReturnStatementTree | ThrowStatementTree | EmptyStatementTree | LabeledStatementTree;
+export type StatementTree = ExportStatementTree | ImportStatementTree | DebuggerStatementTree | ExpressionStatementTree | DeclarationTree | StatementBlockTree | IfStatementTree | SwitchStatementTree | ForStatementTree | ForInStatementTree | WhileStatementTree | DoStatementTree | TryStatementTree | WithStatementTree | BreakStatementTree | ContinueStatementTree | ReturnStatementTree | ThrowStatementTree | LabeledStatementTree;
 
 export type Expressions =
   | SequenceExpression
 ;
 
-export type ExpressionsTree = ExpressionTree | SequenceExpressionTree;
+export type ExpressionsTree = SequenceExpressionTree;
 
 export type Expression =
   | AsExpression
@@ -2805,7 +2805,7 @@ export type Expression =
   | YieldExpression
 ;
 
-export type ExpressionTree = AsExpressionTree | SatisfiesExpressionTree | InstantiationExpressionTree | InternalModuleTree | TypeAssertionTree | PrimaryExpressionTree | AssignmentExpressionTree | AugmentedAssignmentExpressionTree | AwaitExpressionTree | UnaryExpressionTree | BinaryExpressionTree | TernaryExpressionTree | UpdateExpressionTree | NewExpressionTree | YieldExpressionTree;
+export type ExpressionTree = AsExpressionTree | SatisfiesExpressionTree | InstantiationExpressionTree | InternalModuleTree | TypeAssertionTree | AssignmentExpressionTree | AugmentedAssignmentExpressionTree | AwaitExpressionTree | UnaryExpressionTree | BinaryExpressionTree | TernaryExpressionTree | UpdateExpressionTree | NewExpressionTree | YieldExpressionTree;
 
 export type PrimaryExpression =
   | NonNullExpression
@@ -2963,7 +2963,7 @@ export type Type =
   | TypeQueryCallExpressionInTypeAnnotation
 ;
 
-export type TypeTree = PrimaryTypeTree | FunctionTypeTree | ReadonlyTypeTree | ConstructorTypeTree | InferTypeTree | TypeQueryMemberExpressionInTypeAnnotationTree | TypeQueryCallExpressionInTypeAnnotationTree;
+export type TypeTree = FunctionTypeTree | ReadonlyTypeTree | ConstructorTypeTree | InferTypeTree | TypeQueryMemberExpressionInTypeAnnotationTree | TypeQueryCallExpressionInTypeAnnotationTree;
 
 export type TupleTypeMember =
   | TupleParameter
@@ -2996,7 +2996,7 @@ export type PrimaryType =
   | UnionType
 ;
 
-export type PrimaryTypeTree = ParenthesizedTypeTree | PredefinedTypeTree | IdentifierTree | NestedTypeIdentifierTree | GenericTypeTree | ObjectTypeTree | ArrayTypeTree | TupleTypeTree | FlowMaybeTypeTree | TypeQueryTree | IndexTypeQueryTree | ThisTree | ExistentialTypeTree | LiteralTypeTree | LookupTypeTree | ConditionalTypeTree | TemplateLiteralTypeTree | IntersectionTypeTree | UnionTypeTree;
+export type PrimaryTypeTree = ParenthesizedTypeTree | PredefinedTypeTree | IdentifierTree | NestedTypeIdentifierTree | GenericTypeTree | ObjectTypeTree | ArrayTypeTree | TupleTypeTree | FlowMaybeTypeTree | TypeQueryTree | IndexTypeQueryTree | ThisTree | LiteralTypeTree | LookupTypeTree | ConditionalTypeTree | TemplateLiteralTypeTree | IntersectionTypeTree | UnionTypeTree;
 
 export type ExportStatementDefault =
   | ExportStatementDefaultFromArm

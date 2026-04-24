@@ -664,9 +664,20 @@ function emitSupertypeUnionDeclarations(
         lines.push(';')
         lines.push('')
         // Supertype Tree union — factories reference it from
-        // `replace(target: T.SupertypeTree)` signatures.
-        lines.push(`export type ${typeName}Tree = ${resolvedSubs.map(r => `${r.typeName}Tree`).join(' | ')};`)
-        lines.push('')
+        // `replace(target: T.SupertypeTree)` signatures. Filter to
+        // subtypes whose data type was actually emitted (the matching
+        // `Tree` alias only exists when the data type itself does — for
+        // example, hidden single-literal `_kw_*` keywords resolve their
+        // literal inline and emit no Tree alias). Without the filter the
+        // supertype Tree references dangling identifiers like
+        // `WildcardPatternTree` for `_wildcard_pattern`.
+        const treeMembers = resolvedSubs
+            .filter(r => generatedTypes.has(r.typeName))
+            .map(r => `${r.typeName}Tree`)
+        if (treeMembers.length > 0) {
+            lines.push(`export type ${typeName}Tree = ${treeMembers.join(' | ')};`)
+            lines.push('')
+        }
         // Supertype Config/Loose unions dropped (spec 008 US7 landing):
         // consumers reach supertype Config via `T.Supertype` and map it
         // through generic helpers rather than a flat alias.

@@ -1510,13 +1510,13 @@ export type NamedExpressionLhs =
   | Identifier
 ;
 
-export type NamedExpressionLhsTree = IdentifierTree | KeywordIdentifierTree;
+export type NamedExpressionLhsTree = IdentifierTree;
 
 export type Expressions =
   | ExpressionList
 ;
 
-export type ExpressionsTree = ExpressionTree | ExpressionListTree;
+export type ExpressionsTree = ExpressionListTree;
 
 export type CompoundStatement =
   | IfStatement
@@ -1542,7 +1542,7 @@ export type Parameter =
   | DictionarySplatPattern
 ;
 
-export type ParameterTree = IdentifierTree | TypedParameterTree | DefaultParameterTree | TypedDefaultParameterTree | ListSplatPatternTree | TuplePatternTree | KeywordSeparatorTree | PositionalSeparatorTree | DictionarySplatPatternTree;
+export type ParameterTree = IdentifierTree | TypedParameterTree | DefaultParameterTree | TypedDefaultParameterTree | ListSplatPatternTree | TuplePatternTree | DictionarySplatPatternTree;
 
 export type Pattern =
   | Identifier
@@ -1553,13 +1553,13 @@ export type Pattern =
   | ListPattern
 ;
 
-export type PatternTree = IdentifierTree | KeywordIdentifierTree | SubscriptTree | AttributeTree | ListSplatPatternTree | TuplePatternTree | ListPatternTree;
+export type PatternTree = IdentifierTree | SubscriptTree | AttributeTree | ListSplatPatternTree | TuplePatternTree | ListPatternTree;
 
 export type ExpressionWithinForInClause =
   | LambdaWithinForInClause
 ;
 
-export type ExpressionWithinForInClauseTree = ExpressionTree | LambdaWithinForInClauseTree;
+export type ExpressionWithinForInClauseTree = LambdaWithinForInClauseTree;
 
 export type Expression =
   | ComparisonOperator
@@ -1571,7 +1571,7 @@ export type Expression =
   | AsPattern
 ;
 
-export type ExpressionTree = ComparisonOperatorTree | NotOperatorTree | BooleanOperatorTree | LambdaTree | PrimaryExpressionTree | ConditionalExpressionTree | NamedExpressionTree | AsPatternTree;
+export type ExpressionTree = ComparisonOperatorTree | NotOperatorTree | BooleanOperatorTree | LambdaTree | ConditionalExpressionTree | NamedExpressionTree | AsPatternTree;
 
 export type PrimaryExpression =
   | Await
@@ -1600,7 +1600,7 @@ export type PrimaryExpression =
   | ListSplatPattern
 ;
 
-export type PrimaryExpressionTree = AwaitTree | BinaryOperatorTree | IdentifierTree | KeywordIdentifierTree | StringTree | ConcatenatedStringTree | IntegerTree | FloatTree | TrueTree | FalseTree | NoneTree | UnaryOperatorTree | AttributeTree | SubscriptTree | CallTree | ListTree | ListComprehensionTree | DictionaryTree | DictionaryComprehensionTree | SetTree | SetComprehensionTree | TupleTree | ParenthesizedExpressionTree | GeneratorExpressionTree | Ellipsis2Tree | ListSplatPatternTree;
+export type PrimaryExpressionTree = AwaitTree | BinaryOperatorTree | IdentifierTree | StringTree | ConcatenatedStringTree | IntegerTree | FloatTree | TrueTree | FalseTree | NoneTree | UnaryOperatorTree | AttributeTree | SubscriptTree | CallTree | ListTree | ListComprehensionTree | DictionaryTree | DictionaryComprehensionTree | SetTree | SetComprehensionTree | TupleTree | ParenthesizedExpressionTree | GeneratorExpressionTree | ListSplatPatternTree;
 
 export type LeftHandSide =
   | Pattern

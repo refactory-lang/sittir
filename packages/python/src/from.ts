@@ -360,7 +360,7 @@ export function importStatementFrom(input: T.ImportStatement.Loose): ReturnType<
 
 export function importPrefixFrom(input: string | T.ImportPrefix) {
   if (typeof input !== 'string') return input;
-  return F.importPrefix(input);
+  return F.importPrefix(input as Parameters<typeof F.importPrefix>[0]);
 }
 
 export function relativeImportFrom(input: T.RelativeImport.Loose): ReturnType<typeof F.relativeImport> | T.RelativeImport {
@@ -942,18 +942,22 @@ export function assignmentFrom(input?: T.Assignment.Loose): ReturnType<typeof F.
 export function assignmentUFormEqFrom(input: Omit<ConfigOf<T.AssignmentUFormEq>, '$variant'>) {
   return F.assignmentUFormEq({
     left: _resolveOne<T.LeftHandSide>(input.left, _K0, _super_left_hand_side),
+    right: _resolveOne<T.RightHandSide>(input.right, _K0, _super_right_hand_side),
   });
 }
 
 export function assignmentUFormTypeFrom(input: Omit<ConfigOf<T.AssignmentUFormType>, '$variant'>) {
   return F.assignmentUFormType({
     left: _resolveOne<T.LeftHandSide>(input.left, _K0, _super_left_hand_side),
+    type: _resolveOneBranch<T.Type>(input.type, "type"),
   });
 }
 
 export function assignmentUFormTypedFrom(input: Omit<ConfigOf<T.AssignmentUFormTyped>, '$variant'>) {
   return F.assignmentUFormTyped({
     left: _resolveOne<T.LeftHandSide>(input.left, _K0, _super_left_hand_side),
+    type: _resolveOneBranch<T.Type>(input.type, "type"),
+    right: _resolveOne<T.RightHandSide>(input.right, _K0, _super_right_hand_side),
   });
 }
 
@@ -1234,7 +1238,7 @@ export function interpolationFrom(input: T.Interpolation.Loose): ReturnType<type
 
 export function escapeSequenceFrom(input: string | T.EscapeSequence) {
   if (typeof input !== 'string') return input;
-  return F.escapeSequence(input);
+  return F.escapeSequence(input as Parameters<typeof F.escapeSequence>[0]);
 }
 
 export function formatSpecifierFrom(...input: readonly (NonNullable<T.FormatSpecifier.Config['children']>[number] | T.FormatSpecifier)[]) {
@@ -1247,22 +1251,22 @@ export function formatSpecifierFrom(...input: readonly (NonNullable<T.FormatSpec
 
 export function typeConversionFrom(input: string | T.TypeConversion) {
   if (typeof input !== 'string') return input;
-  return F.typeConversion(input);
+  return F.typeConversion(input as Parameters<typeof F.typeConversion>[0]);
 }
 
 export function integerFrom(input: string | T.Integer) {
   if (typeof input !== 'string') return input;
-  return F.integer(input);
+  return F.integer(input as Parameters<typeof F.integer>[0]);
 }
 
 export function floatFrom(input: string | T.Float) {
   if (typeof input !== 'string') return input;
-  return F.float(input);
+  return F.float(input as Parameters<typeof F.float>[0]);
 }
 
 export function identifierFrom(input: string | T.Identifier) {
   if (typeof input !== 'string') return input;
-  return F.identifier(input);
+  return F.identifier(input as Parameters<typeof F.identifier>[0]);
 }
 
 export function true_From(input?: T.True) {
@@ -1289,45 +1293,45 @@ export function await_From(input: T.Await.Loose): ReturnType<typeof F.await_> | 
 
 export function commentFrom(input: string | T.Comment) {
   if (typeof input !== 'string') return input;
-  return F.comment(input);
+  return F.comment(input as Parameters<typeof F.comment>[0]);
 }
 
 export function lineContinuationFrom(input: string | T.LineContinuation) {
   if (typeof input !== 'string') return input;
-  return F.lineContinuation(input);
+  return F.lineContinuation(input as Parameters<typeof F.lineContinuation>[0]);
 }
 
 export function stringStartFrom(input: string | T.StringStart) {
   if (typeof input !== 'string') return input;
-  return F.stringStart(input);
+  return F.stringStart(input as Parameters<typeof F.stringStart>[0]);
 }
 
 export function escapeInterpolationFrom(input: string | T.EscapeInterpolation) {
   if (typeof input !== 'string') return input;
-  return F.escapeInterpolation(input);
+  return F.escapeInterpolation(input as Parameters<typeof F.escapeInterpolation>[0]);
 }
 
 export function stringEndFrom(input: string | T.StringEnd) {
   if (typeof input !== 'string') return input;
-  return F.stringEnd(input);
+  return F.stringEnd(input as Parameters<typeof F.stringEnd>[0]);
 }
 
 export function closeBracketFrom(input: string | T.CloseBracket) {
   if (typeof input !== 'string') return input;
-  return F.closeBracket(input);
+  return F.closeBracket(input as Parameters<typeof F.closeBracket>[0]);
 }
 
 export function closeParenFrom(input: string | T.CloseParen) {
   if (typeof input !== 'string') return input;
-  return F.closeParen(input);
+  return F.closeParen(input as Parameters<typeof F.closeParen>[0]);
 }
 
 export function closeBraceFrom(input: string | T.CloseBrace) {
   if (typeof input !== 'string') return input;
-  return F.closeBrace(input);
+  return F.closeBrace(input as Parameters<typeof F.closeBrace>[0]);
 }
 
 export function exceptFrom(input: string | T.Except) {
   if (typeof input !== 'string') return input;
-  return F.except(input);
+  return F.except(input as Parameters<typeof F.except>[0]);
 }

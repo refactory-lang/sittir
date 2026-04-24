@@ -29,17 +29,17 @@ describe('expression_statement', () => {
 
 describe('macro_definition', () => {
   it('paren form produces correct type', () => {
-    const node = ir.macro.paren({});
+    const node = ir.macro.paren({ name: { $type: 'identifier', $text: 'test' } as any });
     expect(node.$type).toBe('macro_definition');
     expect(node.$source).toBe('factory');
   });
   it('bracket form produces correct type', () => {
-    const node = ir.macro.bracket({});
+    const node = ir.macro.bracket({ name: { $type: 'identifier', $text: 'test' } as any });
     expect(node.$type).toBe('macro_definition');
     expect(node.$source).toBe('factory');
   });
   it('brace form produces correct type', () => {
-    const node = ir.macro.brace({});
+    const node = ir.macro.brace({ name: { $type: 'identifier', $text: 'test' } as any });
     expect(node.$type).toBe('macro_definition');
     expect(node.$source).toBe('factory');
   });
@@ -172,7 +172,7 @@ describe('mod_item', () => {
     expect(node.$source).toBe('factory');
   });
   it('inline form produces correct type', () => {
-    const node = ir.mod.inline({ body: { $type: 'declaration_list', $text: 'test' } as any });
+    const node = ir.mod.inline({ name: { $type: 'identifier', $text: 'test' } as any, body: { $type: 'declaration_list', $text: 'test' } as any });
     expect(node.$type).toBe('mod_item');
     expect(node.$source).toBe('factory');
   });
@@ -201,12 +201,12 @@ describe('declaration_list', () => {
 
 describe('struct_item', () => {
   it('brace form produces correct type', () => {
-    const node = ir.struct.brace({ body: { $type: 'field_declaration_list', $text: 'test' } as any });
+    const node = ir.struct.brace({ name: { $type: '_type_identifier', $text: 'test' } as any, body: { $type: 'field_declaration_list', $text: 'test' } as any });
     expect(node.$type).toBe('struct_item');
     expect(node.$source).toBe('factory');
   });
   it('tuple form produces correct type', () => {
-    const node = ir.struct.tuple({ body: { $type: 'ordered_field_declaration_list', $text: 'test' } as any });
+    const node = ir.struct.tuple({ name: { $type: '_type_identifier', $text: 'test' } as any, body: { $type: 'ordered_field_declaration_list', $text: 'test' } as any });
     expect(node.$type).toBe('struct_item');
     expect(node.$source).toBe('factory');
   });
@@ -399,7 +399,7 @@ describe('where_predicate', () => {
 
 describe('impl_item', () => {
   it('body form produces correct type', () => {
-    const node = ir.impl.body({ body: { $type: 'declaration_list', $text: 'test' } as any });
+    const node = ir.impl.body({ type: { $type: '_type', $text: 'test' } as any, body: { $type: 'declaration_list', $text: 'test' } as any });
     expect(node.$type).toBe('impl_item');
     expect(node.$source).toBe('factory');
   });
@@ -819,7 +819,7 @@ describe('pointer_type', () => {
     expect(node.$source).toBe('factory');
   });
   it('mut form produces correct type', () => {
-    const node = ir.pointerType.mut({});
+    const node = ir.pointerType.mut({ type: { $type: '_type', $text: 'test' } as any });
     expect(node.$type).toBe('pointer_type');
     expect(node.$source).toBe('factory');
   });
@@ -1300,12 +1300,12 @@ describe('const_block', () => {
 
 describe('closure_expression', () => {
   it('block form produces correct type', () => {
-    const node = ir.closure.block({ body: { $type: 'block', $text: 'test' } as any });
+    const node = ir.closure.block({ parameters: { $type: 'closure_parameters', $text: 'test' } as any, body: { $type: 'block', $text: 'test' } as any });
     expect(node.$type).toBe('closure_expression');
     expect(node.$source).toBe('factory');
   });
   it('expr form produces correct type', () => {
-    const node = ir.closure.expr({ body: { $type: '_expression', $text: 'test' } as any });
+    const node = ir.closure.expr({ parameters: { $type: 'closure_parameters', $text: 'test' } as any, body: { $type: '_expression', $text: 'test' } as any });
     expect(node.$type).toBe('closure_expression');
     expect(node.$source).toBe('factory');
   });

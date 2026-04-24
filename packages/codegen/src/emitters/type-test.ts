@@ -69,11 +69,18 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
     const seenTree = new Set<string>()
 
     body.push('// --- Concrete interface `type` literal ---')
+    // Hidden-source structural kinds (`_foo`) surface at parse time via
+    // `alias(_foo, 'foo')`, so types.ts emits `$type: 'foo'` (no leading
+    // underscore) for the structural interface. Leaf terminal aliases keep
+    // their underscore. Strip on the structural-interface side only — using
+    // the raw `s.kind` produced a constant `false` assertion for every
+    // hidden structural kind.
+    const stripHidden = (k: string): string => k.replace(/^_+/, '')
     for (const s of structuralKinds) {
         if (seenType.has(s.typeName)) continue
         seenType.add(s.typeName)
         typeImports.add(s.typeName)
-        body.push(`export type _Type_${s.typeName} = _TypeAssert<_TypeExtends<${s.typeName}['$type'], '${s.kind}'>>;`)
+        body.push(`export type _Type_${s.typeName} = _TypeAssert<_TypeExtends<${s.typeName}['$type'], '${stripHidden(s.kind)}'>>;`)
     }
     for (const l of leafKinds) {
         if (seenType.has(l.typeName)) continue

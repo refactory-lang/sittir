@@ -184,14 +184,14 @@ interface _LeafEntry {
   readonly factory: (text: string) => AnyNodeData;
 }
 const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
-  "fragment_specifier": { values: ["block", "expr", "expr_2021", "ident", "item", "lifetime", "literal", "meta", "pat", "pat_param", "path", "stmt", "tt", "ty", "vis"], factory: (text: string) => F.fragmentSpecifier(text) },
+  "fragment_specifier": { values: ["block", "expr", "expr_2021", "ident", "item", "lifetime", "literal", "meta", "pat", "pat_param", "path", "stmt", "tt", "ty", "vis"], factory: (text: string) => F.fragmentSpecifier(text as Parameters<typeof F.fragmentSpecifier>[0]) },
   "unit_type": { factory: F.unitType },
   "mutable_specifier": { values: ["mut"], factory: () => F.mutableSpecifier() },
   "unit_expression": { factory: F.unitExpression },
   "integer_literal": { factory: F.integerLiteral },
   "char_literal": { factory: F.charLiteral },
   "escape_sequence": { factory: F.escapeSequence },
-  "boolean_literal": { values: ["true", "false"], factory: (text: string) => F.booleanLiteral(text) },
+  "boolean_literal": { values: ["true", "false"], factory: (text: string) => F.booleanLiteral(text as Parameters<typeof F.booleanLiteral>[0]) },
   "identifier": { factory: F.identifier },
   "shebang": { factory: F.shebang },
   "self": { values: ["self"], factory: () => F.self() },
@@ -394,7 +394,9 @@ const _K39: readonly string[] = ["unary_expression","reference_expression","try_
 const _K40: readonly string[] = ["attribute_item","inner_attribute_item"];
 const _K41: readonly string[] = ["expression_statement","const_item","macro_invocation","macro_definition","attribute_item","inner_attribute_item","mod_item","foreign_mod_item","struct_item","union_item","enum_item","type_item","function_item","function_signature_item","impl_item","trait_item","associated_type","let_declaration","use_declaration","extern_crate_declaration","static_item","unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"];
 const _K42: readonly string[] = ["_type_identifier","scoped_type_identifier"];
-const _K43: readonly string[] = ["integer_literal","float_literal"];
+const _K43: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","self","identifier","metavariable","super","crate"];
+const _K44: readonly string[] = ["string_literal","raw_string_literal","negative_literal","scoped_identifier"];
+const _K45: readonly string[] = ["integer_literal","float_literal"];
 
 export function sourceFileFrom(input: T.SourceFile.Loose): ReturnType<typeof F.sourceFile> | T.SourceFile {
   if (isNodeData(input)) return input;
@@ -483,7 +485,7 @@ export function tokenRepetitionPatternFrom(...input: readonly (NonNullable<T.Tok
 
 export function fragmentSpecifierFrom(input: string | T.FragmentSpecifier) {
   if (typeof input !== 'string') return input;
-  return F.fragmentSpecifier(input);
+  return F.fragmentSpecifier(input as Parameters<typeof F.fragmentSpecifier>[0]);
 }
 
 export function tokenTreeFrom(input?: T.TokenTree.Loose): ReturnType<typeof F.tokenTree> | T.TokenTree {
@@ -526,7 +528,7 @@ export function innerAttributeItemFrom(input: T.InnerAttributeItem.Loose): Retur
 }
 
 export function attributeFrom(input: T.Attribute.Loose): ReturnType<typeof F.attribute> | T.Attribute {
-  return F.attribute(input);
+  return F.attribute(input as Parameters<typeof F.attribute>[0]);
 }
 
 export function modItemFrom(input?: T.ModItem.Loose): ReturnType<typeof F.modItem> | T.ModItem {
@@ -545,6 +547,7 @@ export function modItemUFormInlineFrom(input: Omit<ConfigOf<T.ModItemUFormInline
   return F.modItemUFormInline({
     visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
+    body: _resolveOneBranch<T.DeclarationList>(input.body, "declaration_list"),
   });
 }
 
@@ -583,6 +586,7 @@ export function structItemUFormBraceFrom(input: Omit<ConfigOf<T.StructItemUFormB
     visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
     name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
+    body: _resolveOneBranch<T.FieldDeclarationList>(input.body, "field_declaration_list"),
   });
 }
 
@@ -591,6 +595,7 @@ export function structItemUFormTupleFrom(input: Omit<ConfigOf<T.StructItemUFormT
     visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
     name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
+    body: _resolveOneBranch<T.OrderedFieldDeclarationList>(input.body, "ordered_field_declaration_list"),
   });
 }
 
@@ -738,7 +743,7 @@ export function functionSignatureItemFrom(input: T.FunctionSignatureItem.Loose):
 }
 
 export function functionModifiersFrom(input: T.FunctionModifiers.Loose): ReturnType<typeof F.functionModifiers> | T.FunctionModifiers {
-  return F.functionModifiers(input);
+  return F.functionModifiers(input as Parameters<typeof F.functionModifiers>[0]);
 }
 
 export function whereClauseFrom(...input: readonly (NonNullable<T.WhereClause.Config['children']>[number] | T.WhereClause)[]) {
@@ -769,6 +774,7 @@ export function implItemUFormBodyFrom(input: Omit<ConfigOf<T.ImplItemUFormBody>,
     trait: _resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType>(input.trait, _K0, _K12),
     type: _resolveOne<T._Type>(input.type, _K7, _K8),
     whereClause: _resolveOneBranch<T.WhereClause>(input.whereClause, "where_clause"),
+    body: _resolveOneBranch<T.DeclarationList>(input.body, "declaration_list"),
   });
 }
 
@@ -966,7 +972,8 @@ export function visibilityModifierUFormCrateFrom(input?: Omit<ConfigOf<T.Visibil
 }
 
 export function visibilityModifierUFormPubFrom(input: Omit<ConfigOf<T.VisibilityModifierUFormPub>, '$variant'>) {
-  return F.visibilityModifierUFormPub(input);
+  return F.visibilityModifierUFormPub({
+  });
 }
 
 export function bracketedTypeFrom(input?: NonNullable<T.BracketedType.Config['children']>[number] | T.BracketedType) {
@@ -1029,7 +1036,7 @@ export function tupleTypeFrom(...input: readonly (NonNullable<T.TupleType.Config
 
 export function unitTypeFrom(input: string | T.UnitType) {
   if (typeof input !== 'string') return input;
-  return F.unitType(input);
+  return F.unitType(input as Parameters<typeof F.unitType>[0]);
 }
 
 export function genericFunctionFrom(input: T.GenericFunction.Loose): ReturnType<typeof F.genericFunction> | T.GenericFunction {
@@ -1190,19 +1197,31 @@ export function rangeExpressionFrom(input?: T.RangeExpression.Loose): ReturnType
 }
 
 export function rangeExpressionUFormBinaryFrom(input: Omit<ConfigOf<T.RangeExpressionUFormBinary>, '$variant'>) {
-  return F.rangeExpressionUFormBinary(input);
+  return F.rangeExpressionUFormBinary({
+    start: _resolveOne<T.Expression>(input.start, _K5, _K6),
+    operator: _resolveOne<".." | "..." | "..=">(input.operator, _K0, _K0),
+    end: _resolveOne<T.Expression>(input.end, _K5, _K6),
+  });
 }
 
 export function rangeExpressionUFormPostfixFrom(input: Omit<ConfigOf<T.RangeExpressionUFormPostfix>, '$variant'>) {
-  return F.rangeExpressionUFormPostfix(input);
+  return F.rangeExpressionUFormPostfix({
+    start: _resolveOne<T.Expression>(input.start, _K5, _K6),
+    operator: _resolveOne<"..">(input.operator, _K0, _K0),
+  });
 }
 
 export function rangeExpressionUFormPrefixFrom(input: Omit<ConfigOf<T.RangeExpressionUFormPrefix>, '$variant'>) {
-  return F.rangeExpressionUFormPrefix(input);
+  return F.rangeExpressionUFormPrefix({
+    operator: _resolveOne<"..">(input.operator, _K0, _K0),
+    end: _resolveOne<T.Expression>(input.end, _K5, _K6),
+  });
 }
 
-export function rangeExpressionUFormBareFrom(input?: Omit<ConfigOf<T.RangeExpressionUFormBare>, '$variant'>) {
-  return F.rangeExpressionUFormBare(input);
+export function rangeExpressionUFormBareFrom(input: Omit<ConfigOf<T.RangeExpressionUFormBare>, '$variant'>) {
+  return F.rangeExpressionUFormBare({
+    operator: _resolveOne<"..">(input.operator, _K0, _K0),
+  });
 }
 
 export function unaryExpressionFrom(input: T.UnaryExpression.Loose): ReturnType<typeof F.unaryExpression> | T.UnaryExpression {
@@ -1302,11 +1321,18 @@ export function arrayExpressionFrom(input?: T.ArrayExpression.Loose): ReturnType
 }
 
 export function arrayExpressionUFormSemiFrom(input: Omit<ConfigOf<T.ArrayExpressionUFormSemi>, '$variant'>) {
-  return F.arrayExpressionUFormSemi(input);
+  return F.arrayExpressionUFormSemi({
+    attributes: _resolveManyBranch<T.AttributeItem>(input.attributes, "attribute_item"),
+    elements: _resolveOne<T.Expression>(input.elements, _K5, _K6),
+    length: _resolveOne<T.Expression>(input.length, _K5, _K6),
+  });
 }
 
 export function arrayExpressionUFormListFrom(input: Omit<ConfigOf<T.ArrayExpressionUFormList>, '$variant'>) {
-  return F.arrayExpressionUFormList(input);
+  return F.arrayExpressionUFormList({
+    attributes: _resolveManyBranch<T.AttributeItem>(input.attributes, "attribute_item"),
+    elements: _resolveMany<T.Expression>(input.elements, _K5, _K6),
+  });
 }
 
 export function parenthesizedExpressionFrom(input?: NonNullable<T.ParenthesizedExpression.Config['children']>[number] | T.ParenthesizedExpression) {
@@ -1328,7 +1354,7 @@ export function tupleExpressionFrom(input: T.TupleExpression.Loose): ReturnType<
 
 export function unitExpressionFrom(input: string | T.UnitExpression) {
   if (typeof input !== 'string') return input;
-  return F.unitExpression(input);
+  return F.unitExpression(input as Parameters<typeof F.unitExpression>[0]);
 }
 
 export function structExpressionFrom(input: T.StructExpression.Loose): ReturnType<typeof F.structExpression> | T.StructExpression {
@@ -1494,6 +1520,8 @@ export function closureExpressionUFormBlockFrom(input: Omit<ConfigOf<T.ClosureEx
     async: _resolveBooleanKeyword(input.async),
     move: _resolveBooleanKeyword(input.move),
     parameters: _resolveOneBranch<T.ClosureParameters>(input.parameters, "closure_parameters"),
+    returnType: _resolveOne<T._Type>(input.returnType, _K7, _K8),
+    body: _resolveOneBranch<T.Block>(input.body, "block"),
   });
 }
 
@@ -1503,6 +1531,7 @@ export function closureExpressionUFormExprFrom(input: Omit<ConfigOf<T.ClosureExp
     async: _resolveBooleanKeyword(input.async),
     move: _resolveBooleanKeyword(input.move),
     parameters: _resolveOneBranch<T.ClosureParameters>(input.parameters, "closure_parameters"),
+    body: _resolveOne<T.Expression | "_">(input.body, _K5, _K6),
   });
 }
 
@@ -1648,6 +1677,7 @@ export function fieldPatternUFormShorthandFrom(input: Omit<ConfigOf<T.FieldPatte
   return F.fieldPatternUFormShorthand({
     ref: _resolveBooleanKeyword(input.ref),
     mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
+    name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
   });
 }
 
@@ -1655,6 +1685,8 @@ export function fieldPatternUFormNamedFrom(input: Omit<ConfigOf<T.FieldPatternUF
   return F.fieldPatternUFormNamed({
     ref: _resolveBooleanKeyword(input.ref),
     mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
+    name: _resolveOneBranch<T.FieldIdentifier>(input.name, "_field_identifier"),
+    pattern: _resolveOne<T.Pattern>(input.pattern, _K15, _K16),
   });
 }
 
@@ -1672,7 +1704,9 @@ export function rangePatternFrom(input?: T.RangePattern.Loose): ReturnType<typeo
 }
 
 export function rangePatternUFormPrefixFrom(input: Omit<ConfigOf<T.RangePatternUFormPrefix>, '$variant'>) {
-  return F.rangePatternUFormPrefix(input);
+  return F.rangePatternUFormPrefix({
+    right: _resolveOne<T.LiteralPattern | T.Path>(input.right, _K43, _K44),
+  });
 }
 
 export function rangePatternUFormLeftWithRightFrom(input: Omit<ConfigOf<T.RangePatternUFormLeftWithRight>, '$variant'>) {
@@ -1714,23 +1748,28 @@ export function orPatternFrom(input?: T.OrPattern.Loose): ReturnType<typeof F.or
 }
 
 export function orPatternUFormBinaryFrom(input: Omit<ConfigOf<T.OrPatternUFormBinary>, '$variant'>) {
-  return F.orPatternUFormBinary(input);
+  return F.orPatternUFormBinary({
+    left: _resolveOne<T.Pattern>(input.left, _K15, _K16),
+    right: _resolveOne<T.Pattern>(input.right, _K15, _K16),
+  });
 }
 
 export function orPatternUFormPrefixFrom(input: Omit<ConfigOf<T.OrPatternUFormPrefix>, '$variant'>) {
-  return F.orPatternUFormPrefix(input);
+  return F.orPatternUFormPrefix({
+    right: _resolveOne<T.Pattern>(input.right, _K15, _K16),
+  });
 }
 
 export function negativeLiteralFrom(input: T.NegativeLiteral.Loose): ReturnType<typeof F.negativeLiteral> | T.NegativeLiteral {
   if (isNodeData(input)) return input;
   return F.negativeLiteral({
-    value: _resolveOne<T.IntegerLiteral | T.FloatLiteral>(input.value, _K43, _K0),
+    value: _resolveOne<T.IntegerLiteral | T.FloatLiteral>(input.value, _K45, _K0),
   });
 }
 
 export function integerLiteralFrom(input: string | T.IntegerLiteral) {
   if (typeof input !== 'string') return input;
-  return F.integerLiteral(input);
+  return F.integerLiteral(input as Parameters<typeof F.integerLiteral>[0]);
 }
 
 export function stringLiteralFrom(...input: readonly (NonNullable<T.StringLiteral.Config['children']>[number] | T.StringLiteral)[]) {
@@ -1752,17 +1791,17 @@ export function rawStringLiteralFrom(input: T.RawStringLiteral.Loose): ReturnTyp
 
 export function charLiteralFrom(input: string | T.CharLiteral) {
   if (typeof input !== 'string') return input;
-  return F.charLiteral(input);
+  return F.charLiteral(input as Parameters<typeof F.charLiteral>[0]);
 }
 
 export function escapeSequenceFrom(input: string | T.EscapeSequence) {
   if (typeof input !== 'string') return input;
-  return F.escapeSequence(input);
+  return F.escapeSequence(input as Parameters<typeof F.escapeSequence>[0]);
 }
 
 export function booleanLiteralFrom(input: string | T.BooleanLiteral) {
   if (typeof input !== 'string') return input;
-  return F.booleanLiteral(input);
+  return F.booleanLiteral(input as Parameters<typeof F.booleanLiteral>[0]);
 }
 
 export function commentFrom(input?: NonNullable<T.Comment.Config['children']>[number] | T.Comment) {
@@ -1784,7 +1823,9 @@ export function lineCommentUFormRegularDslashFrom(input: Omit<ConfigOf<T.LineCom
 }
 
 export function lineCommentUFormDocFrom(input: Omit<ConfigOf<T.LineCommentUFormDoc>, '$variant'>) {
-  return F.lineCommentUFormDoc(input);
+  return F.lineCommentUFormDoc({
+    doc: _resolveOneLeaf<T.DocComment>(input.doc, "_doc_comment"),
+  });
 }
 
 export function lineCommentUFormContentFrom(input: Omit<ConfigOf<T.LineCommentUFormContent>, '$variant'>) {
@@ -1800,12 +1841,12 @@ export function blockCommentFrom(input?: T.BlockComment.Loose): ReturnType<typeo
 
 export function identifierFrom(input: string | T.Identifier) {
   if (typeof input !== 'string') return input;
-  return F.identifier(input);
+  return F.identifier(input as Parameters<typeof F.identifier>[0]);
 }
 
 export function shebangFrom(input: string | T.Shebang) {
   if (typeof input !== 'string') return input;
-  return F.shebang(input);
+  return F.shebang(input as Parameters<typeof F.shebang>[0]);
 }
 
 export function selfFrom(input?: T.Self) {
@@ -1825,20 +1866,20 @@ export function crateFrom(input?: T.Crate) {
 
 export function metavariableFrom(input: string | T.Metavariable) {
   if (typeof input !== 'string') return input;
-  return F.metavariable(input);
+  return F.metavariable(input as Parameters<typeof F.metavariable>[0]);
 }
 
 export function stringContentFrom(input: string | T.StringContent) {
   if (typeof input !== 'string') return input;
-  return F.stringContent(input);
+  return F.stringContent(input as Parameters<typeof F.stringContent>[0]);
 }
 
 export function rawStringLiteralContentFrom(input: string | T.RawStringLiteralContent) {
   if (typeof input !== 'string') return input;
-  return F.rawStringLiteralContent(input);
+  return F.rawStringLiteralContent(input as Parameters<typeof F.rawStringLiteralContent>[0]);
 }
 
 export function floatLiteralFrom(input: string | T.FloatLiteral) {
   if (typeof input !== 'string') return input;
-  return F.floatLiteral(input);
+  return F.floatLiteral(input as Parameters<typeof F.floatLiteral>[0]);
 }

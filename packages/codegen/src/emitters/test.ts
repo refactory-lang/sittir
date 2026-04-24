@@ -192,13 +192,16 @@ function emitPolymorphTest(lines: string[], node: AssembledNode, kind: string, k
         const itLabel = useDirectCall ? 'factory produces correct type' : `${form.name} form produces correct type`
         lines.push(`  it('${itLabel}', () => {`)
         // Hoisted forms surface the inner child's fields at the top level
-        // — use those when building the dummy config; otherwise fall back
-        // to the form's own fields (which for polymorphs forms is
-        // typically empty when hoisting applies, but non-empty for
-        // 'promoted'-source polymorphs).
+        // — combine those with the form's own fields. A form can have BOTH
+        // direct fields (e.g. `name` on `MacroDefinitionUFormParen`) AND
+        // hoisted inner fields (e.g. `body` from the inner container). The
+        // earlier "either-or" branch dropped form-level fields whenever
+        // hoisting fired and produced `ir.macro.paren({})` even though the
+        // factory required `name`.
         const hoist = resolveHoistedForm(form, nodeMap)
-        const fieldsSource = hoist ? hoist.innerFields : form.fields
-        const configParts = fieldsSource
+        const allFields: AssembledField[] = [...form.fields]
+        if (hoist) allFields.push(...hoist.innerFields)
+        const configParts = allFields
             .filter(f => isRequired(f) && !isAutoStampField(f, nodeMap))
             .map(f => `${f.propertyName}: ${dummyValue(f)}`)
         // Container-shaped hoist targets: inner factory accepts `...children`

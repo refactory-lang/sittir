@@ -15,7 +15,7 @@ import type { PolymorphVariant } from '../compiler/types.ts'
 import {
     isAutoStampField, isAutoStampSlot, isRequired, isMultiple, isNonEmpty, slotKindNames,
     slotLiteralValues, fieldTypeComponents, isValidIdent,
-    keywordPresenceKind,
+    keywordPresenceKind, resolveHoistedForm,
 } from './shared.ts'
 import { isNodeRef, isTerminalValue, isUnresolvedRef } from '../compiler/node-map.ts'
 import type { NodeOrTerminal } from '../compiler/node-map.ts'
@@ -547,7 +547,10 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
         }
         lines.push('  });')
     } else {
-        lines.push(`  return ${factory}(input);`)
+        // No fields: pass-through to the factory with a boundary cast — the
+        // Loose input shape is wider than the factory's strict Config, but the
+        // structural overlap (children + leaf shape) is enough at runtime.
+        lines.push(`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`)
     }
     lines.push('}')
     return lines.join('\n')
@@ -780,8 +783,13 @@ function emitPolymorphFormFrom(
     // Auto-stamp fields are always `required` but have no Config slot — exclude them.
     // Auto-stamp-eligible children also excluded: factory stamps them directly.
     const formNonStampFields = form.fields.filter(fd => !isAutoStampField(fd, nodeMap))
+    const hoist = resolveHoistedForm(form, nodeMap)
+    const hoistedNonStampFields = hoist
+        ? hoist.innerFields.filter(fd => !isAutoStampField(fd, nodeMap))
+        : []
     const formOpt =
         formNonStampFields.some(fd => isRequired(fd)) ||
+        hoistedNonStampFields.some(fd => isRequired(fd)) ||
         form.children.some(c => isRequired(c) && !isAutoStampSlot(c, nodeMap)) ? '' : '?'
     const fLines: string[] = []
     const formInputOptional = formOpt === '?'
@@ -789,11 +797,23 @@ function emitPolymorphFormFrom(
     // in emitters/factories.ts for the rationale (forms stamp, they
     // don't accept).
     fLines.push(`export function ${formFn}(input${formOpt}: Omit<ConfigOf<T.${form.typeName}>, '$variant'>) {`)
-    if (form.fields.length > 0) {
+    const hasFormFields = form.fields.length > 0
+    const hasHoistedFields = hoist && hoist.innerFields.length > 0
+    if (hasFormFields || hasHoistedFields) {
         fLines.push(`  return ${formFactory}({`)
+        // Form-level fields (always Config keys at the form's surface).
         for (const f of form.fields) {
-            if (isAutoStampField(f, nodeMap)) continue  // factory stamps these; no Config slot
+            if (isAutoStampField(f, nodeMap)) continue
             fLines.push(`    ${f.propertyName}: ${resolveFieldFromTypedInput(f, nodeMap, form.typeName, intern, 'input', formInputOptional, /* isPolymorphForm */ true)},`)
+        }
+        // Hoisted inner-child fields surface flat on the form's Config —
+        // mirror what factories.ts does. Resolution uses the inner field's
+        // shape so node-ref / leaf / many semantics still apply.
+        if (hoist) {
+            for (const f of hoist.innerFields) {
+                if (isAutoStampField(f, nodeMap)) continue
+                fLines.push(`    ${f.propertyName}: ${resolveFieldFromTypedInput(f, nodeMap, hoist.innerTypeName, intern, 'input', formInputOptional, /* isPolymorphForm */ true)},`)
+            }
         }
         fLines.push('  });')
     } else {
@@ -836,7 +856,11 @@ function emitStringLikeFrom(node: LeafFromNode): string {
         // `typeof === 'string'` test is what funnels the post-guard branch
         // to the factory's `string` parameter.
         `  if (typeof input !== 'string') return input;`,
-        `  return ${factory}(input);`,
+        // Enum-leaf factories declare a narrow string-literal union for
+        // their text parameter; the from() entry point accepts arbitrary
+        // strings and the factory's runtime guard catches invalid values.
+        // Cast at the boundary funnels the `string` to the narrow shape.
+        `  return ${factory}(input as Parameters<typeof ${factory}>[0]);`,
         '}',
     ].join('\n')
 }
@@ -1230,7 +1254,11 @@ function buildLeafRegistryEntries(nodeMap: NodeMap): string[] {
         const factory = `F.${node.rawFactoryName}`
         if (node.modelType === 'enum') {
             const values = node.values.map(v => JSON.stringify(v)).join(', ')
-            registryEntries.push(`  ${JSON.stringify(kind)}: { values: [${values}], factory: (text: string) => ${factory}(text) },`)
+            // Enum factories declare a narrow string-literal union for `text`,
+            // but the registry slot is `(text: string)` (the runtime guard
+            // catches invalid input). Cast at the boundary so the wrapper
+            // signature stays uniform.
+            registryEntries.push(`  ${JSON.stringify(kind)}: { values: [${values}], factory: (text: string) => ${factory}(text as Parameters<typeof ${factory}>[0]) },`)
         } else if (node.modelType === 'keyword') {
             registryEntries.push(`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(node.text)}], factory: () => ${factory}() },`)
         } else if (node.modelType === 'leaf') {

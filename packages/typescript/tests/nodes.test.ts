@@ -724,12 +724,12 @@ describe('generator_function_declaration', () => {
 
 describe('arrow_function', () => {
   it('parameter form produces correct type', () => {
-    const node = ir.arrowFunction.parameter({ parameter: { $type: '_reserved_identifier', $text: 'test' } as any });
+    const node = ir.arrowFunction.parameter({ body: { $type: 'expression', $text: 'test' } as any, parameter: { $type: '_reserved_identifier', $text: 'test' } as any });
     expect(node.$type).toBe('arrow_function');
     expect(node.$source).toBe('factory');
   });
   it('_call_signature form produces correct type', () => {
-    const node = ir.arrowFunction._call_signature({ parameters: { $type: 'formal_parameters', $text: 'test' } as any });
+    const node = ir.arrowFunction._call_signature({ body: { $type: 'expression', $text: 'test' } as any, parameters: { $type: 'formal_parameters', $text: 'test' } as any });
     expect(node.$type).toBe('arrow_function');
     expect(node.$source).toBe('factory');
   });
@@ -1939,12 +1939,12 @@ describe('construct_signature', () => {
 
 describe('index_signature', () => {
   it('colon form produces correct type', () => {
-    const node = ir.indexSignature.colon({ name: { $type: 'identifier', $text: 'test' } as any, indexType: { $type: 'type', $text: 'test' } as any });
+    const node = ir.indexSignature.colon({ type: { $type: 'type_annotation', $text: 'test' } as any, name: { $type: 'identifier', $text: 'test' } as any, indexType: { $type: 'type', $text: 'test' } as any });
     expect(node.$type).toBe('index_signature');
     expect(node.$source).toBe('factory');
   });
   it('mapped_type_clause form produces correct type', () => {
-    const node = ir.indexSignature.mapped_type_clause({});
+    const node = ir.indexSignature.mapped_type_clause({ type: { $type: 'type_annotation', $text: 'test' } as any });
     expect(node.$type).toBe('index_signature');
     expect(node.$source).toBe('factory');
   });
