@@ -65,8 +65,9 @@ jobs:
         continue-on-error: true
 
   # Rust workspace compile check (spec 012 Phase 1 T007).
-  # A single cargo-check job — parity tests, clippy, platform matrix,
-  # and release artifacts come in Phase 4 (T053-T057, T064).
+  # A single cargo-check job — clippy, platform matrix, and release
+  # artifacts come in Phase 4 (T053-T057, T064). The parity harness
+  # is gated in its own `rust-parity` job below (T049).
   rust:
     name: cargo check --workspace
     runs-on: ubuntu-22.04
@@ -79,3 +80,50 @@ jobs:
         uses: Swatinem/rust-cache@v2
       - name: cargo check --workspace
         run: cargo check --workspace
+
+  # Cross-engine parity harness (spec 012 T049 / FR-012 / SC-001a +
+  # SC-001b). Runs the integration-test crate that loads each
+  # grammar's `test-fixtures.json` and asserts the Rust engine
+  # reproduces the TS engine's captured render + roundtrip outputs.
+  #
+  # At MVP the three per-grammar test cases are `#[ignore]` until the
+  # flank-metadata plumbing lands (see
+  # `rust/crates/sittir-parity-tests/tests/parity.rs`). The job still
+  # runs `--ignored` so the harness compiles, fixtures load, and
+  # diagnostic output surfaces in CI logs for regression detection;
+  # `continue-on-error: true` keeps the overall pipeline green while
+  # the gap closes. Flip to required-gate when all three tests pass
+  # un-ignored.
+  rust-parity:
+    name: cargo test parity (advisory)
+    runs-on: ubuntu-22.04
+    needs: rust
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Install Node (for codegen + fixture regen)
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22.x
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install Rust toolchain (stable)
+        uses: dtolnay/rust-toolchain@stable
+      - name: Cache cargo registry + target
+        uses: Swatinem/rust-cache@v2
+      - name: Regenerate fixtures
+        # The test-fixtures.json files are checked in, but regenerating
+        # here catches drift between committed fixtures and current
+        # render behavior — the pipeline should fail LOUDLY if a codegen
+        # change silently shifts the capture without a matching commit.
+        run: |
+          npx tsx packages/codegen/src/cli.ts --grammar rust --all --rust-render --output packages/rust/src
+          npx tsx packages/codegen/src/cli.ts --grammar typescript --all --rust-render --output packages/typescript/src
+          npx tsx packages/codegen/src/cli.ts --grammar python --all --rust-render --output packages/python/src
+      - name: Fixture check — no drift from committed
+        run: git diff --exit-code packages/*/rust-render/test-fixtures.json
+      - name: cargo test parity (--ignored for diagnostic)
+        run: cargo test -p sittir-parity-tests --test parity -- --ignored --nocapture
