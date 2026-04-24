@@ -105,7 +105,7 @@
     "if_clause": "config",
     "conditional_expression": "config",
     "concatenated_string": "config",
-    "string": "config",
+    "string": "text",
     "string_content": "children",
     "interpolation": "config",
     "escape_sequence": "text",

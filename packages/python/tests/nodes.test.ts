@@ -1087,12 +1087,12 @@ describe('concatenated_string', () => {
 
 describe('string', () => {
   it('factory produces correct type', () => {
-    const node = ir.string({ stringStart: { $type: 'string_start', $text: 'test' } as any, content: [{ $type: 'interpolation', $text: 'test' } as any], stringEnd: { $type: 'string_end', $text: 'test' } as any });
+    const node = ir.string('test');
     expect(node.$type).toBe('string');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.string({ stringStart: { $type: 'string_start', $text: 'test' } as any, content: [{ $type: 'interpolation', $text: 'test' } as any], stringEnd: { $type: 'string_end', $text: 'test' } as any });
+    const node = ir.string('test');
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

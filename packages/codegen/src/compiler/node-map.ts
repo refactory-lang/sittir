@@ -1701,9 +1701,64 @@ function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boole
     for (const m of core.members) {
         if (isIgnorableBoundaryExternal(m)) continue
         hasContent = true
-        if (!isExternalMember(m)) return false
+        if (!isExternalMember(m)) {
+            // Relaxed path: rule has external-scanner BOUNDARIES (first
+            // and last non-ignorable members are external) — treat as
+            // $TEXT. Python's `string` kind has this shape:
+            // `seq(field('string_start', external), REPEAT(content),
+            // field('string_end', external))`. Start and end are
+            // external-only tokens; the REPEAT between them holds the
+            // text + interpolations. Slot-by-slot rendering can't
+            // reconstruct the start/end delimiters and breaks f-strings
+            // / template strings. $TEXT preserves the source span
+            // verbatim on readNode-derived data.
+            return hasExternalBoundaries(core, externals)
+        }
     }
     return hasContent
+}
+
+/**
+ * Rule-level boundary check — first and last non-ignorable seq members
+ * are external-scanner symbols. Fires for rules like python's `string`
+ * where scanner tokens delimit but the interior is author-content.
+ */
+function hasExternalBoundaries(seqRule: Rule, externals: ReadonlySet<string>): boolean {
+    if (seqRule.type !== 'seq') return false
+    const isExternalTerminalMember = (r: Rule): boolean => {
+        let core = r
+        while (
+            core.type === 'optional' || core.type === 'variant'
+            || core.type === 'clause' || core.type === 'group'
+            || core.type === 'alias' || core.type === 'token'
+            || core.type === 'terminal'
+        ) {
+            core = (core as { content: Rule }).content
+        }
+        if (core.type === 'field') {
+            const f = core as { name: string; content: Rule }
+            core = f.content
+            while (
+                core.type === 'optional' || core.type === 'variant'
+                || core.type === 'clause' || core.type === 'group'
+                || core.type === 'alias' || core.type === 'token'
+                || core.type === 'terminal'
+            ) {
+                core = (core as { content: Rule }).content
+            }
+            if (
+                core.type === 'pattern'
+                && (core as { value: string }).value === ''
+                && (externals.has(f.name) || externals.has('_' + f.name))
+            ) return true
+        }
+        return core.type === 'symbol' && externals.has((core as { name: string }).name)
+    }
+    if (seqRule.members.length < 2) return false
+    const first = seqRule.members[0]
+    const last = seqRule.members[seqRule.members.length - 1]
+    if (!first || !last) return false
+    return isExternalTerminalMember(first) && isExternalTerminalMember(last)
 }
 
 export class AssembledContainer extends AssembledNodeBase<SeqRule | ChoiceRule | RepeatRule | Repeat1Rule> {

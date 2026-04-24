@@ -2295,26 +2295,15 @@ export function concatenatedString(config: T.ConcatenatedString.Config) {
   };
 }
 
-export function string(config: T.String.Config) {
-  const fields = {
-    string_start: config.stringStart,
-    content: config.content,
-    string_end: config.stringEnd,
-  };
+export function string(text: string) {
   return {
     $type: 'string' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
-    stringStart(value?: T.StringStart) { return _fs(config, string, 'stringStart', value, config?.stringStart); },
-    content(...values: (T.Interpolation | T.StringContent)[]) { return _fsm(config, string, 'content', values, config?.content); },
-    stringEnd(value?: T.StringEnd) { return _fs(config, string, 'stringEnd', value, config?.stringEnd); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.StringTree): Edit { const r = target.range(); return toEdit(this, r); },
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.StringTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
