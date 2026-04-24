@@ -293,17 +293,36 @@ function classifyTopLevelShape(rule: Rule): string {
         case 'pattern':
         case 'terminal':
             return 'canonical'
-        case 'choice':
-            // Top-level choice should have been either (a) merged by
-            // mergeChoiceBranches into a flat seq (structurally
-            // equivalent branches — typical for binary_expression-style
-            // polymorph-collapse candidates), or (b) marked with
-            // `variant()` in the grammar override (heterogeneous
-            // branches — polymorph semantics). A bare top-level choice
-            // reaching derivation means neither happened — the kind
-            // needs variant() adoption in overrides, or a simplify
-            // pass to flatten if branches agree.
+        case 'choice': {
+            // Top-level choice can be canonical in two shapes:
+            //
+            //   - **All-symbol choice** — `choice($.a, $.b, $.c)` where
+            //     every branch is a bare symbol ref (or wrapped in a
+            //     transparent prec / alias). At parse time the node
+            //     has one named child that's one of the referenced
+            //     kinds — a container. The trivial walk handles this
+            //     by treating the choice members as the child slot's
+            //     value union.
+            //   - **Left-recursive self-ref** — `choice(seq($.self,
+            //     '&&', …), …)` where at least one branch references
+            //     the rule's own name. Common for operator chains
+            //     (e.g. `_let_chain`). Treated as canonical; the
+            //     trivial walk processes each branch independently.
+            //
+            // Heterogeneous shapes — seq-with-fields, mixed field
+            // names, quote-variant strings — are non-canonical and
+            // need either `variant()` adoption (grammar override) or
+            // `mergeChoiceBranches` to fire. Flag them for triage.
+            const peelPrec = (m: Rule): Rule => m.type === 'alias'
+                ? peelPrec(m.content)
+                : m
+            const allSymbols = rule.members.every(m => {
+                const core = peelPrec(m)
+                return core.type === 'symbol' || core.type === 'supertype' || core.type === 'enum'
+            })
+            if (allSymbols) return 'canonical'
             return 'top-level-choice-needs-variant-or-merge'
+        }
         case 'optional': {
             // Optional wrapping any canonical shape is itself canonical
             // — the walk descends through optional and keeps going.
@@ -330,8 +349,7 @@ export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
     console.error(`[${label}] non-canonical shapes reaching derivation:`)
     for (const [key, n] of sorted) {
         const kinds = auditKindsByShape.get(key) ?? []
-        const sample = kinds.slice(0, 6).join(', ') + (kinds.length > 6 ? `, +${kinds.length - 6}` : '')
-        console.error(`  ${n.toString().padStart(5)} ${key}  [${sample}]`)
+        console.error(`  ${n.toString().padStart(5)} ${key}  [${kinds.join(', ')}]`)
     }
     auditCounts.clear()
     auditKindsByShape.clear()
