@@ -214,7 +214,77 @@ export function hasAnyChild(rule: Rule): boolean {
     }
 }
 
+/**
+ * Dev audit — log shapes that reach derivation in a non-canonical form.
+ * Spec 013 Phase 2 prereq: simplify's canonicalization should produce a
+ * top-level `seq` (or a single atomic member) with members that are
+ * fields / literals / repeats / symbols. Anything else means simplify
+ * didn't finish normalizing, and the trivialized `projectFields` /
+ * `projectChildren` walks won't see the content.
+ *
+ * Opt in via `SITTIR_AUDIT_DERIVE=1`; otherwise silent (zero overhead in
+ * normal codegen runs). Captures per-kind shape signatures so we can
+ * count distinct non-canonical patterns across the corpus and decide
+ * which simplify passes still need work.
+ */
+const DERIVE_AUDIT = process.env.SITTIR_AUDIT_DERIVE === '1'
+const auditCounts = new Map<string, number>()
+function auditDerivationShape(rule: Rule, context: 'fields' | 'children'): void {
+    if (!DERIVE_AUDIT) return
+    const shape = classifyTopLevelShape(rule)
+    if (shape === 'canonical') return
+    const key = `${context}:${shape}`
+    auditCounts.set(key, (auditCounts.get(key) ?? 0) + 1)
+}
+function classifyTopLevelShape(rule: Rule): string {
+    // Canonical: a top-level seq, OR a single atomic member (field /
+    // repeat / symbol / string etc.). Everything else — nested choice,
+    // optional-wrapping a seq, group/variant/clause wrappers, polymorph
+    // at top — is pre-canonical.
+    switch (rule.type) {
+        case 'seq': {
+            // Inspect members — nested seq or nested choice with
+            // heterogeneous field sets is pre-canonical.
+            const innerShapes = rule.members.map(m => m.type)
+            if (innerShapes.some(t => t === 'seq')) return 'seq-with-nested-seq'
+            if (innerShapes.some(t => t === 'choice')) return 'seq-with-nested-choice'
+            return 'canonical'
+        }
+        case 'field':
+        case 'repeat':
+        case 'repeat1':
+        case 'symbol':
+        case 'string':
+        case 'pattern':
+        case 'terminal':
+            return 'canonical'
+        case 'choice':
+            return 'top-level-choice'
+        case 'optional':
+            return `optional-wrapping-${rule.content.type}`
+        case 'group':
+        case 'variant':
+        case 'clause':
+        case 'alias':
+        case 'token':
+            return `wrapper-${rule.type}`
+        case 'polymorph':
+            return 'top-level-polymorph'
+        default:
+            return `other-${rule.type}`
+    }
+}
+/** Log accumulated audit counts. Called by codegen entry points. */
+export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
+    if (!DERIVE_AUDIT || auditCounts.size === 0) return
+    const sorted = [...auditCounts.entries()].sort((a, b) => b[1] - a[1])
+    console.error(`[${label}] non-canonical shapes reaching derivation:`)
+    for (const [key, n] of sorted) console.error(`  ${n.toString().padStart(5)} ${key}`)
+    auditCounts.clear()
+}
+
 export function deriveFields(rule: Rule): AssembledField[] {
+    auditDerivationShape(rule, 'fields')
     const raw = deriveFieldsRaw(rule, 'single')
     // Deduplicate by field name. If the same name appears multiple times
     // (e.g. once as single, once as repeat, across choice arms), merge
@@ -418,6 +488,7 @@ function fieldContentMultiplicity(content: Rule, outerMultiplicity: Multiplicity
 }
 
 export function deriveChildren(rule: Rule): AssembledChild[] {
+    auditDerivationShape(rule, 'children')
     const raw: AssembledChild[] = []
     walkForChildren(rule, raw, 'single')
     // Deduplicate by child name — merge values arrays.
