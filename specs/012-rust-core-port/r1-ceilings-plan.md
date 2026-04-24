@@ -58,31 +58,27 @@ Direct-validator numbers (measured via `npx tsx /tmp/check-actual.mts`; the FLOO
 
 ## Working session inventory (2026-04-24 — R1 ceilings worktree)
 
-Refreshed after five source-of-truth fixes landed on branch
+Refreshed after six source-of-truth fixes landed on branch
 `012-r1-ceilings`. Measured via `npx tsx packages/codegen/src/scripts/counts.ts`
 + per-grammar `rt-breakdown.ts` for fail/skip detail.
 
 | Grammar | rtPass | Fail | Skip | Total | Strict gate (≥total−10) | Relaxed gate (fail≤10) |
 |---|---:|---:|---:|---:|:---|:---|
 | rust | **121** | 2 | 13 | 136 | ❌ Unreachable (max=123) | ✅ Pass |
-| python | **104** | 11 | 1 | 115 | ❌ −1 short | ❌ −1 short |
+| python | **105** | 9 | 1 | 115 | ✅ Pass | ✅ Pass |
 | typescript | **96** | 12 | 4 | 112 | ❌ −6 short | ❌ −2 short |
-
-(python count varies 103/104 across iterations depending on template
-regen timing; core count unchanged, but ambient_declaration template
-still dropping one case in this probe.)
 
 ### Delta from 2026-04-24 baseline
 
 | Grammar | Start → End | Δ | Commits |
 |---|:---|---:|---:|
-| rust | 114 → 121 | **+7** | 3 (C1 clause, externals, ts rtPass-neutral readNode fix) |
-| python | 96 → 103/104 | **+7/+8** | 1 (list_splat/pattern wrappers) |
+| rust | 114 → 121 | **+7** | 3 (C1 clause whitespace, externals, readNode helper) |
+| python | 96 → 105 | **+9** | 2 (list_splat/pattern wrappers, external-boundaries $TEXT) |
 | typescript | 93 → 96 | **+3** | 1 (unnamed-alias literal preservation) |
 
-**Total closed: +17 rtPass across three grammars** out of the 30
-failures called out at session start. Rust 5 + python 7-8 + typescript 3
-= 15-16 of 30.
+**Total closed: +19 rtPass across three grammars** out of the 30
+failures called out at session start. Rust 5 + python 9 + typescript 3
+= 17 of 30 (plus +2 astMatch improvements not counted as rtPass).
 
 ### Why the strict gate is unreachable on rust
 
@@ -128,6 +124,14 @@ Total: 3 more real failures to close for cross-grammar gate.
    walker: `fieldContentIsMultiSibling` helper for seq with 2+ named
    structural members. Unblocks follow-up work on ambient_declaration
    rendering; doesn't move counts on its own.
+
+6. `afb18c4e 012/R1: C-external-boundaries $TEXT fallback — python rtPass +2`
+   `hasHiddenExternalRef` required EVERY seq member to be external;
+   added `hasExternalBoundaries` fallback that fires when first and
+   last non-ignorable members are external. Python's `string` kind
+   (f-string, t-string, template-string) has `seq(external_start,
+   REPEAT(content), external_end)` and now takes the $TEXT path
+   instead of breaking slot-by-slot render.
 
 ### Deferred — alias-source child-slot drillAs
 
