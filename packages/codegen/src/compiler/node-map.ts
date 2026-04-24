@@ -1356,7 +1356,22 @@ function inlineJinjaClauses(template: string, clauses: Record<string, string>): 
         // when the field is absent). Jinja's `{%-` / `-%}` markers
         // strip that same whitespace from the outer template so the
         // only place it appears is inside the conditional body.
-        const next = current.replace(/( *)\$([A-Z][A-Z0-9_]*_CLAUSE)( *)/g, (full, leading: string, marker: string, trailing: string) => {
+        const next = current.replace(/\$([A-Z][A-Z0-9_]*_CLAUSE)/g, (full, marker: string) => {
+            // Historically this regex captured `( *)\$CLAUSE( *)` and
+            // pulled outer whitespace INTO the clause body (with
+            // `{%- -%}` trim markers). That worked for clauses with
+            // flanking literals (`:type`, `=value` — the literal and
+            // space co-render), but silently broke for clauses whose
+            // only content is a placeholder: when absent, the body
+            // rendered empty, and the absorbed outer whitespace was
+            // gone — gluing the clause's outer neighbors. Example:
+            // `{{ vis }} $UNSAFE_CLAUSE trait` → absorbed both spaces
+            // → `{{ vis }}{% if unsafe %}...{% endif %}trait` →
+            // `pubtrait` on unsafe-absent. Leave outer whitespace
+            // in the outer template — when absent, the neighbors
+            // keep their ambient separator.
+            const leading = ''
+            const trailing = ''
             const key = marker.toLowerCase()
             const body = clauses[key]
             if (body === undefined) return full  // not a clause we emitted — leave as-is
