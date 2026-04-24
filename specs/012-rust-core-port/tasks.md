@@ -161,7 +161,7 @@ description: "Task list for feature 012 — Rust Port of @sittir/core"
 
 ### Deferred-scope handover
 
-- [ ] T068 Create stub spec files for the two deferred user stories at `specs/NNN-rust-crate-publish/spec.md` (US2) and `specs/NNN-rust-wasm-backend/spec.md` (US3), each a one-paragraph summary pointing back to this feature's "Deferred / Future Work" section. Do NOT implement; just establish the speckit directories for the future features so the task tracker understands they're scheduled but not-yet-work.
+- [X] T068 Create stub spec files for the two deferred user stories at `specs/014-rust-crate-publish/spec.md` (US2) and `specs/015-rust-wasm-backend/spec.md` (US3), each a one-paragraph summary pointing back to this feature's "Deferred / Future Work" section. Do NOT implement; just establish the speckit directories for the future features so the task tracker understands they're scheduled but not-yet-work.
 
 ---
 
