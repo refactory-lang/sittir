@@ -169,18 +169,36 @@ export function fanOutSeqChoices(rule: Rule): Rule {
 // ---------------------------------------------------------------------------
 
 /**
- * Check whether every unwrapped choice branch is a `seq`, a requirement for
- * common prefix/suffix factoring to be applicable.
+ * Identify rules that can be normalized as single-member seqs for
+ * prefix/suffix factoring purposes.
  *
- * @param unwrapped - Choice branch rules with variant wrappers already removed.
- * @returns `true` when there are at least two branches and every branch is a seq.
+ * @param rule - A choice branch (already variant-unwrapped).
+ * @returns `true` when the rule is a leaf / simple wrapper that `findCommonPrefix` can reliably compare against a seq member.
  * @remarks
- * A single non-seq branch means no common prefix/suffix is extractable.
- * Factoring over fewer than two branches is a no-op.
+ * Symbol / string / pattern are grammar leaves — exact structural equality
+ * via `rulesEqual` behaves predictably. `field` and `token` carry
+ * structural identity but are single-slot wrappers; treating them as
+ * single-member seqs lets `choice(seq(A, B), A)` factor to `seq(A,
+ * optional(B))` even when one branch is the bare atom rather than a
+ * `seq([atom])`.
+ *
+ * Excluded: `optional`, `repeat`, `choice`, `variant`, `clause`, `group`,
+ * `polymorph`, `supertype`, `enum`, `terminal`, `indent`, `dedent`,
+ * `newline`. Those either carry composite structure that the factor
+ * extractor would mis-align, or already represent the "zero-or-more"
+ * semantics that factoring produces.
  */
-function canFactorAllBranchesAsSeqs(unwrapped: Rule[]): boolean {
-    if (unwrapped.length < 2) return false
-    return unwrapped.every(b => b.type === 'seq')
+function isAtomForFactoring(rule: Rule): boolean {
+    switch (rule.type) {
+        case 'symbol':
+        case 'string':
+        case 'pattern':
+        case 'field':
+        case 'token':
+            return true
+        default:
+            return false
+    }
 }
 
 /**
@@ -209,9 +227,9 @@ function extractFactoredChoiceBody(
         : []
     let hasEmpty = false
     const nonEmpty: Rule[] = []
-    for (const m of members) {
-        const inner = m.type === 'variant' ? m.content : m
-        const s = (inner as SeqRule).members
+    for (let i = 0; i < members.length; i++) {
+        const m = members[i]!
+        const s = seqs[i]!
         const body = s.slice(prefixLen, s.length - suffixLen)
         if (body.length === 0) { hasEmpty = true; continue }
         const bodyRule: Rule = body.length === 1
@@ -239,8 +257,27 @@ export function factorChoiceBranches(rule: Rule): Rule {
         case 'choice': {
             const members = rule.members.map(factorChoiceBranches)
             const unwrapped = members.map(m => m.type === 'variant' ? m.content : m)
-            if (!canFactorAllBranchesAsSeqs(unwrapped)) return { ...rule, members }
-            const seqs = unwrapped.map(b => (b as SeqRule).members)
+            // Normalize bare atoms (symbols, strings, fields, etc.) as
+            // single-member seqs so the factoring logic can treat them
+            // uniformly. Canonical target case:
+            //
+            //   choice(seq('return', expr), 'return')
+            //      → factor 'return' prefix (common to seq and the
+            //        normalized seq('return')) → seq('return',
+            //        optional(expr))
+            //
+            // Grammar authors occasionally write
+            // `choice(prec.left(seq(KW, content)), prec(-1, KW))`
+            // instead of `seq(KW, optional(content))` for precedence
+            // control. After prec-stripping, the shape is exactly the
+            // asymmetric-length choice this pass can now factor.
+            const canFactor = unwrapped.length >= 2 && unwrapped.every(
+                b => b.type === 'seq' || isAtomForFactoring(b),
+            )
+            if (!canFactor) return { ...rule, members }
+            const seqs = unwrapped.map(b =>
+                b.type === 'seq' ? (b as SeqRule).members : [b],
+            )
             const prefixLen = findCommonPrefix(seqs)
             const suffixLen = findCommonSuffix(seqs, prefixLen)
             if (prefixLen === 0 && suffixLen === 0) return { ...rule, members }
@@ -610,7 +647,14 @@ export function rulesEqual(a: Rule, b: Rule): boolean {
         case 'pattern':
             return a.value === (b as typeof a).value
         case 'symbol':
-            return a.name === (b as typeof a).name
+            // Include aliasedFrom: two symbols with the same `.name` but
+            // different alias provenance point at the same kind but carry
+            // different drillAs metadata. Treating them as equal lets
+            // factoring collapse to one branch and silently drop the
+            // aliasSources entry from the other (see
+            // node-model.json5 diff for `_index_signature_colon.name`).
+            return a.name === (b as typeof a).name &&
+                a.aliasedFrom === (b as typeof a).aliasedFrom
         case 'seq':
             return a.members.length === (b as typeof a).members.length &&
                 a.members.every((m, i) => rulesEqual(m, (b as typeof a).members[i]!))

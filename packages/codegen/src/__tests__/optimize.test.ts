@@ -250,12 +250,35 @@ describe('Optimize — factorChoiceBranches (T061)', () => {
         expect(out.members[1]).toEqual({ type: 'string', value: ';' })
     })
 
-    it('leaves non-seq branches alone', () => {
+    it('factors bare atom against seq(atom, tail) into seq(atom, optional(tail))', () => {
+        // choice('a', seq('a', 'b')) — shared 'a' prefix, one branch has a
+        // trailing 'b', the other is bare. Canonical form: seq('a', optional('b')).
+        // Matches the grammar pattern `choice(seq(KW, body), KW)` used to
+        // express "KW and optional body" with explicit precedence control.
         const rule: Rule = {
             type: 'choice',
             members: [
                 { type: 'string', value: 'a' },
                 { type: 'seq', members: [{ type: 'string', value: 'a' }, { type: 'string', value: 'b' }] },
+            ],
+        }
+        const out = factorChoiceBranches(rule) as any
+        expect(out.type).toBe('seq')
+        expect(out.members).toHaveLength(2)
+        expect(out.members[0]).toEqual({ type: 'string', value: 'a' })
+        expect(out.members[1].type).toBe('optional')
+        expect(out.members[1].content).toEqual({ type: 'string', value: 'b' })
+    })
+
+    it('leaves choice-of-unrelated-atoms alone', () => {
+        // No common prefix/suffix → choice is preserved. Covers the
+        // common grammar pattern `choice(identifier, _reserved_identifier)`
+        // where the branches are alternative references, not prefixable seqs.
+        const rule: Rule = {
+            type: 'choice',
+            members: [
+                { type: 'symbol', name: 'identifier' },
+                { type: 'symbol', name: '_reserved_identifier' },
             ],
         }
         const out = factorChoiceBranches(rule)
