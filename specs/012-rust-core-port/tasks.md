@@ -155,9 +155,9 @@ description: "Task list for feature 012 — Rust Port of @sittir/core"
 
 ### Documentation
 
-- [ ] T065 [P] Update `CLAUDE.md` Active Technologies section with the Rust port entries (Rust 1.82+, `sittir-core`, `askama`, `napi-rs`, per-grammar render crate location). Additive only.
-- [ ] T066 [P] Add a "Native backend" section to the root `README.md` explaining the runtime-selection model and the `SITTIR_BACKEND` / `SITTIR_BACKEND_DEBUG` env vars.
-- [ ] T067 [P] Link `specs/012-rust-core-port/quickstart.md` from `CLAUDE.md § Commands` as the onboarding doc for new Rust contributors.
+- [X] T065 [P] Update `CLAUDE.md` Active Technologies section with the Rust port entries (Rust 1.82+, `sittir-core`, `askama`, `napi-rs`, per-grammar render crate location). Additive only.
+- [X] T066 [P] Add a "Native backend" section to the root `README.md` explaining the runtime-selection model and the `SITTIR_BACKEND` / `SITTIR_BACKEND_DEBUG` env vars.
+- [X] T067 [P] Link `specs/012-rust-core-port/quickstart.md` from `CLAUDE.md § Commands` as the onboarding doc for new Rust contributors.
 
 ### Deferred-scope handover
 

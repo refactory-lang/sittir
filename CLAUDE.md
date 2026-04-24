@@ -102,6 +102,9 @@ pnpm -r run type-check       # type-check all packages
 npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src
 npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
 npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
+
+# Native (Rust) backend — onboarding for new Rust contributors:
+# specs/012-rust-core-port/quickstart.md (T067)
 ```
 
 ## Code Style
@@ -300,6 +303,7 @@ that the directive would split — granularity per comment block.
 - TypeScript 6.0.2 (ESM, `.ts` extensions in imports) + `@sittir/core`, `@sittir/types`, `@sittir/codegen` (workspace packages — no new deps) (008-factory-ergonomic-cleanup)
 - File system — per-grammar generated output under `packages/{rust,typescript,python}/src/` (008-factory-ergonomic-cleanup)
 - N/A — the engine is a pure transformation over in-memory strings and parse trees. No persistence layer. (012-rust-core-port)
+- Rust 1.82+, sittir-core, askama 0.14, napi-rs 3, per-grammar render crates at `packages/{lang}/rust-render/` (012-rust-core-port)
 
 ## Recent Changes
 - 004-yaml-render-templates: Added TypeScript (ESM, `.ts` extensions in imports), TypeScript 6.0.2 + `@sittir/core`, `@sittir/types`, `@sittir/codegen`; tree-sitter grammars (grammar.json + node-types.json)

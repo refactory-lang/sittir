@@ -185,6 +185,56 @@ npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/pyt
 npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
 ```
 
+## Native backend
+
+The `@sittir/{rust,typescript,python}` packages ship with a native
+Rust render engine (spec 012). When the platform-specific
+`@sittir/<grammar>-native` package is installed and its template
+bundle hash matches the JS-side bundle, the public APIs (`render`,
+`readNode`, `applyEdits`) transparently delegate to the Rust engine.
+Otherwise they fall back silently to the TypeScript engine — every
+public API works on every platform regardless of native availability.
+
+### Selecting a backend at runtime
+
+`getActiveBackend(): { name, reason, hashMatch }` reports which
+engine the package resolved on first import. The result is cached
+per process — call it any time after the first `import` of the
+package.
+
+```ts
+import { getActiveBackend } from '@sittir/rust'
+
+console.log(getActiveBackend())
+// { name: 'native', reason: 'loaded', hashMatch: true }
+// or
+// { name: 'typescript', reason: 'native package not installed', hashMatch: false }
+```
+
+### Environment variables
+
+| Variable | Effect |
+|---|---|
+| `SITTIR_BACKEND=native` | Force the native backend; throw if it can't load. Useful for CI parity diffing. |
+| `SITTIR_BACKEND=typescript` | Skip the native load entirely; always use the TS engine. Useful for capturing reference output. |
+| `SITTIR_BACKEND_DEBUG=1` | Emit a single `stderr` line per package indicating which backend resolved and why. |
+
+### Silent-fallback semantics
+
+The TS layer never throws when the native backend is unavailable —
+it only logs (when `SITTIR_BACKEND_DEBUG=1`) and falls through to
+the TS engine. The fallback fires on:
+
+- the platform-specific `@sittir/<grammar>-native` package not being
+  installed,
+- the bundled native binary failing to load (linking error,
+  unsupported architecture),
+- the native engine's baked template-bundle hash not matching the
+  JS-side `TEMPLATE_BUNDLE_HASH` (codegen drift).
+
+For the contracts and code paths see
+[`specs/012-rust-core-port/quickstart.md`](specs/012-rust-core-port/quickstart.md).
+
 ## Planned Work
 
 - **Override-compiled parser** (spec 007) — compile override grammars to WASM parsers so parse trees carry all field labels natively, eliminating runtime field-promotion heuristics
