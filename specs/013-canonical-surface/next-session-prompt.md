@@ -113,7 +113,7 @@ npx tsx packages/codegen/src/scripts/counts.ts
 
 ## Probe tools
 
-Three scripts available under `packages/codegen/src/scripts/`:
+Four scripts available under `packages/codegen/src/scripts/`:
 
 - `counts.ts` — per-grammar raw counts across all validators.
 - `diff-failures.ts <grammar> [from|rt|cov|factory|all]` — list failing kinds + error messages.

@@ -11,7 +11,8 @@ import { validateRoundTrip } from '../validate/roundtrip.ts'
 import { validateTemplateCoverage } from '../validate/template-coverage.ts'
 
 const [grammar, which = 'all'] = process.argv.slice(2)
-if (!grammar) {
+const VALID_WHICH = ['all', 'from', 'rt', 'cov', 'factory'] as const
+if (!grammar || !VALID_WHICH.includes(which as typeof VALID_WHICH[number])) {
     console.error('Usage: diff-failures.ts <grammar> [from|rt|cov|factory|all]')
     process.exit(1)
 }
