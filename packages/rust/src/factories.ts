@@ -1632,30 +1632,60 @@ export function externModifier(config?: T.ExternModifier.Config) {
   };
 }
 
-export function visibilityModifier(config?: T.VisibilityModifier.Config) {
-  const fields = {
-    pub: config?.pub ? "pub" as const : undefined,
-    in: config?.in ? "in" as const : undefined,
-  };
-  const children = config?.children ?? [{ $type: "crate" as const, $text: "crate" as const, $source: 'factory' as const, $named: true as const }];
+export function visibilityModifier(config: ConfigOf<T.VisibilityModifierUFormCrate>): ReturnType<typeof visibilityModifierUFormCrate>;
+export function visibilityModifier(config: ConfigOf<T.VisibilityModifierUFormPub>): ReturnType<typeof visibilityModifierUFormPub>;
+export function visibilityModifier(config: ConfigOf<T.VisibilityModifierUFormCrate> | ConfigOf<T.VisibilityModifierUFormPub>) {
+  switch (config.$variant) {
+    case 'crate': return visibilityModifierUFormCrate(config as Parameters<typeof visibilityModifierUFormCrate>[0]);
+    case 'pub': return visibilityModifierUFormPub(config as Parameters<typeof visibilityModifierUFormPub>[0]);
+  }
+  throw new Error(`visibilityModifier: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'crate' | 'pub'.`);
+}
+export function visibilityModifierUFormCrate(config?: Omit<ConfigOf<T.VisibilityModifierUFormCrate>, '$variant'>) {
+  const inner = visibilityModifierCrate(config?.children?.[0]!);
+  const children = [inner] as const;
   return {
     $type: 'visibility_modifier' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
+    $variant: 'crate' as const,
     $children: children,
-    pub(value?: "pub" | undefined) { return _fs(config, visibilityModifier, 'pub', value, config?.pub); },
-    in(value?: "in" | undefined) { return _fs(config, visibilityModifier, 'in', value, config?.in); },
-    child(value?: (T.Crate | T.Self | T.Super | T.Path)) {
-      if (value === undefined) return children[0];
-      return visibilityModifier({ ...config, children: [value] });
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.VisibilityModifierUFormCrateTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function visibilityModifierUFormPub(config?: Omit<ConfigOf<T.VisibilityModifierUFormPub>, '$variant'>) {
+  const inner = {
+    $type: 'visibility_modifier_pub' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: {
+      pub: "pub" as const,
+      in: config.in ? "in" as const : undefined,
+    },
+  };
+  const children = [inner] as const;
+  return {
+    $type: 'visibility_modifier' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'pub' as const,
+    $children: children,
+    get pub() { return inner.$fields.pub; },
+    in(value?: "in" | undefined) {
+      if (value === undefined) return inner.$fields.in;
+      return visibilityModifierUFormPub({ pub: inner.$fields.pub, in: value });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.VisibilityModifierTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.VisibilityModifierUFormPubTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4464,6 +4494,22 @@ export function rangeExpressionBare(config?: T.RangeExpressionBare.Config) {
   };
 }
 
+export function visibilityModifierCrate(child: T.Crate) {
+  const children = [child];
+  return {
+    $type: '_visibility_modifier_crate' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.VisibilityModifierCrateTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function foreignModItemBody(config: T.ForeignModItemBody.Config) {
   const fields = {
     body: config.body,
@@ -4953,6 +4999,7 @@ export type FluentKindMap = {
   "_macro_definition_brace": FluentNode<"_macro_definition_brace", T.MacroDefinitionBrace.Config>;
   "_mod_item_inline": FluentNode<"_mod_item_inline", T.ModItemInline.Config>;
   "_range_expression_bare": FluentNode<"_range_expression_bare", T.RangeExpressionBare.Config>;
+  "_visibility_modifier_crate": FluentNode<"_visibility_modifier_crate", T.VisibilityModifierCrate.Config>;
   "_foreign_mod_item_body": FluentNode<"_foreign_mod_item_body", T.ForeignModItemBody.Config>;
   "_pointer_type_mut": FluentNode<"_pointer_type_mut", T.PointerTypeMut.Config>;
   "_reference_expression_raw_const": T.ReferenceExpressionRawConst;
@@ -5150,6 +5197,7 @@ export const _factoryMap = {
   "_macro_definition_brace": macroDefinitionBrace,
   "_mod_item_inline": modItemInline,
   "_range_expression_bare": rangeExpressionBare,
+  "_visibility_modifier_crate": visibilityModifierCrate,
   "_foreign_mod_item_body": foreignModItemBody,
   "_pointer_type_mut": pointerTypeMut,
   "_reference_expression_raw_const": referenceExpressionRawConst,

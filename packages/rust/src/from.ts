@@ -368,30 +368,29 @@ const _K17: readonly string[] = ["char_literal","boolean_literal","integer_liter
 const _K18: readonly string[] = ["string_literal","raw_string_literal","negative_literal","scoped_identifier","generic_pattern","tuple_pattern","tuple_struct_pattern","struct_pattern","ref_pattern","slice_pattern","captured_pattern","reference_pattern","mut_pattern","range_pattern","or_pattern","const_block","macro_invocation"];
 const _K19: readonly string[] = ["scoped_identifier","use_as_clause","use_list","scoped_use_list","use_wildcard"];
 const _K20: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","identifier","_wildcard_pattern","self"];
-const _K21: readonly string[] = ["crate","self","super","identifier","metavariable"];
-const _K22: readonly string[] = ["_function_type_trait_form","_function_type_fn_form"];
-const _K23: readonly string[] = ["scoped_identifier","field_expression"];
-const _K24: readonly string[] = ["_type_identifier","_reserved_identifier","scoped_type_identifier"];
-const _K25: readonly string[] = ["_type_identifier","scoped_identifier"];
-const _K26: readonly string[] = ["lifetime","abstract_type","reference_type","pointer_type","generic_type","scoped_type_identifier","tuple_type","array_type","function_type","macro_invocation","dynamic_type","bounded_type","removed_trait_bound","use_bounds"];
-const _K27: readonly string[] = ["_type_identifier","scoped_type_identifier","removed_trait_bound","generic_type","function_type","tuple_type","bounded_type"];
-const _K28: readonly string[] = ["higher_ranked_trait_bound","_type_identifier","scoped_type_identifier","generic_type","function_type","tuple_type"];
-const _K29: readonly string[] = ["scoped_identifier","_reserved_identifier"];
-const _K30: readonly string[] = ["scoped_identifier","bracketed_type","generic_type_with_turbofish"];
-const _K31: readonly string[] = ["identifier","super"];
-const _K32: readonly string[] = ["scoped_identifier","generic_type_with_turbofish"];
-const _K33: readonly string[] = ["scoped_identifier","generic_type_with_turbofish","bracketed_type","generic_type"];
-const _K34: readonly string[] = ["_reference_expression_raw_const","mutable_specifier"];
-const _K35: readonly string[] = ["_reference_expression_raw_mut"];
-const _K36: readonly string[] = ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block"];
-const _K37: readonly string[] = ["_type_identifier","scoped_type_identifier_in_expression_position","generic_type_with_turbofish"];
-const _K38: readonly string[] = ["integer_literal"];
-const _K39: readonly string[] = ["_field_identifier"];
-const _K40: readonly string[] = ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression","let_condition","_let_chain"];
-const _K41: readonly string[] = ["attribute_item","inner_attribute_item"];
-const _K42: readonly string[] = ["expression_statement","const_item","macro_invocation","macro_definition","attribute_item","inner_attribute_item","mod_item","foreign_mod_item","struct_item","union_item","enum_item","type_item","function_item","function_signature_item","impl_item","trait_item","associated_type","let_declaration","use_declaration","extern_crate_declaration","static_item","unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"];
-const _K43: readonly string[] = ["_type_identifier","scoped_type_identifier"];
-const _K44: readonly string[] = ["integer_literal","float_literal"];
+const _K21: readonly string[] = ["_function_type_trait_form","_function_type_fn_form"];
+const _K22: readonly string[] = ["scoped_identifier","field_expression"];
+const _K23: readonly string[] = ["_type_identifier","_reserved_identifier","scoped_type_identifier"];
+const _K24: readonly string[] = ["_type_identifier","scoped_identifier"];
+const _K25: readonly string[] = ["lifetime","abstract_type","reference_type","pointer_type","generic_type","scoped_type_identifier","tuple_type","array_type","function_type","macro_invocation","dynamic_type","bounded_type","removed_trait_bound","use_bounds"];
+const _K26: readonly string[] = ["_type_identifier","scoped_type_identifier","removed_trait_bound","generic_type","function_type","tuple_type","bounded_type"];
+const _K27: readonly string[] = ["higher_ranked_trait_bound","_type_identifier","scoped_type_identifier","generic_type","function_type","tuple_type"];
+const _K28: readonly string[] = ["scoped_identifier","_reserved_identifier"];
+const _K29: readonly string[] = ["scoped_identifier","bracketed_type","generic_type_with_turbofish"];
+const _K30: readonly string[] = ["identifier","super"];
+const _K31: readonly string[] = ["scoped_identifier","generic_type_with_turbofish"];
+const _K32: readonly string[] = ["scoped_identifier","generic_type_with_turbofish","bracketed_type","generic_type"];
+const _K33: readonly string[] = ["_reference_expression_raw_const","mutable_specifier"];
+const _K34: readonly string[] = ["_reference_expression_raw_mut"];
+const _K35: readonly string[] = ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block"];
+const _K36: readonly string[] = ["_type_identifier","scoped_type_identifier_in_expression_position","generic_type_with_turbofish"];
+const _K37: readonly string[] = ["integer_literal"];
+const _K38: readonly string[] = ["_field_identifier"];
+const _K39: readonly string[] = ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression","let_condition","_let_chain"];
+const _K40: readonly string[] = ["attribute_item","inner_attribute_item"];
+const _K41: readonly string[] = ["expression_statement","const_item","macro_invocation","macro_definition","attribute_item","inner_attribute_item","mod_item","foreign_mod_item","struct_item","union_item","enum_item","type_item","function_item","function_signature_item","impl_item","trait_item","associated_type","let_declaration","use_declaration","extern_crate_declaration","static_item","unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"];
+const _K42: readonly string[] = ["_type_identifier","scoped_type_identifier"];
+const _K43: readonly string[] = ["integer_literal","float_literal"];
 
 export function sourceFileFrom(input: T.SourceFile.Loose): ReturnType<typeof F.sourceFile> {
   if (isNodeData(input)) return input;
@@ -967,11 +966,15 @@ export function externModifierFrom(input?: T.ExternModifier.Loose): ReturnType<t
 
 export function visibilityModifierFrom(input?: T.VisibilityModifier.Loose): ReturnType<typeof F.visibilityModifier> {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.visibilityModifier({
-    pub: _resolveBooleanKeyword(input?.pub),
-    in: _resolveBooleanKeyword(input?.in),
-    children: _resolveOne(input?.children, _K21, _K7),
-  });
+  return F.visibilityModifier(input as Parameters<typeof F.visibilityModifier>[0]);
+}
+
+export function visibilityModifierUFormCrateFrom(input?: Omit<ConfigOf<T.VisibilityModifierUFormCrate>, '$variant'>) {
+  return F.visibilityModifierUFormCrate(input);
+}
+
+export function visibilityModifierUFormPubFrom(input: Omit<ConfigOf<T.VisibilityModifierUFormPub>, '$variant'>) {
+  return F.visibilityModifierUFormPub(input);
 }
 
 export function bracketedTypeFrom(input?: NonNullable<T.BracketedType.Config['children']>[number] | T.BracketedType) {
@@ -1020,7 +1023,7 @@ export function functionTypeFrom(input: T.FunctionType.Loose): ReturnType<typeof
     forLifetimes: _resolveOneBranch(input.forLifetimes, "for_lifetimes"),
     parameters: _resolveOneBranch(input.parameters, "parameters"),
     returnType: _resolveOne(input.returnType, _K9, _K10),
-    children: _resolveOne(input.children, _K0, _K22),
+    children: _resolveOne(input.children, _K0, _K21),
   });
 }
 
@@ -1040,7 +1043,7 @@ export function unitTypeFrom(input: string | T.UnitType) {
 export function genericFunctionFrom(input: T.GenericFunction.Loose): ReturnType<typeof F.genericFunction> {
   if (isNodeData(input)) return input;
   return F.genericFunction({
-    function: _resolveOne(input.function, _K2, _K23),
+    function: _resolveOne(input.function, _K2, _K22),
     typeArguments: _resolveOneBranch(input.typeArguments, "type_arguments"),
   });
 }
@@ -1048,7 +1051,7 @@ export function genericFunctionFrom(input: T.GenericFunction.Loose): ReturnType<
 export function genericTypeFrom(input: T.GenericType.Loose): ReturnType<typeof F.genericType> {
   if (isNodeData(input)) return input;
   return F.genericType({
-    type: _resolveOne(input.type, _K0, _K24),
+    type: _resolveOne(input.type, _K0, _K23),
     typeArguments: _resolveOneBranch(input.typeArguments, "type_arguments"),
   });
 }
@@ -1056,7 +1059,7 @@ export function genericTypeFrom(input: T.GenericType.Loose): ReturnType<typeof F
 export function genericTypeWithTurbofishFrom(input: T.GenericTypeWithTurbofish.Loose): ReturnType<typeof F.genericTypeWithTurbofish> {
   if (isNodeData(input)) return input;
   return F.genericTypeWithTurbofish({
-    type: _resolveOne(input.type, _K0, _K25),
+    type: _resolveOne(input.type, _K0, _K24),
     typeArguments: _resolveOneBranch(input.typeArguments, "type_arguments"),
   });
 }
@@ -1064,8 +1067,8 @@ export function genericTypeWithTurbofishFrom(input: T.GenericTypeWithTurbofish.L
 export function boundedTypeFrom(input: T.BoundedType.Loose): ReturnType<typeof F.boundedType> {
   if (isNodeData(input)) return input;
   return F.boundedType({
-    left: _resolveOne(input.left, _K9, _K26),
-    right: _resolveOne(input.right, _K9, _K26),
+    left: _resolveOne(input.left, _K9, _K25),
+    right: _resolveOne(input.right, _K9, _K25),
   });
 }
 
@@ -1124,14 +1127,14 @@ export function abstractTypeFrom(input: T.AbstractType.Loose): ReturnType<typeof
   if (isNodeData(input)) return input;
   return F.abstractType({
     typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
-    trait: _resolveOne(input.trait, _K0, _K27),
+    trait: _resolveOne(input.trait, _K0, _K26),
   });
 }
 
 export function dynamicTypeFrom(input: T.DynamicType.Loose): ReturnType<typeof F.dynamicType> {
   if (isNodeData(input)) return input;
   return F.dynamicType({
-    trait: _resolveOne(input.trait, _K0, _K28),
+    trait: _resolveOne(input.trait, _K0, _K27),
   });
 }
 
@@ -1143,7 +1146,7 @@ export function mutableSpecifierFrom(input?: T.MutableSpecifier) {
 export function macroInvocationFrom(input: T.MacroInvocation.Loose): ReturnType<typeof F.macroInvocation> {
   if (isNodeData(input)) return input;
   return F.macroInvocation({
-    macro: _resolveOne(input.macro, _K2, _K29),
+    macro: _resolveOne(input.macro, _K2, _K28),
     tokenTree: _resolveOneBranch(input.tokenTree, "delim_token_tree"),
   });
 }
@@ -1168,15 +1171,15 @@ export function delimTokenTreeUFormBraceFrom(input: Omit<ConfigOf<T.DelimTokenTr
 export function scopedIdentifierFrom(input: T.ScopedIdentifier.Loose): ReturnType<typeof F.scopedIdentifier> {
   if (isNodeData(input)) return input;
   return F.scopedIdentifier({
-    path: _resolveOne(input.path, _K6, _K30),
-    name: _resolveOne(input.name, _K31, _K0),
+    path: _resolveOne(input.path, _K6, _K29),
+    name: _resolveOne(input.name, _K30, _K0),
   });
 }
 
 export function scopedTypeIdentifierInExpressionPositionFrom(input: T.ScopedTypeIdentifierInExpressionPosition.Loose): ReturnType<typeof F.scopedTypeIdentifierInExpressionPosition> {
   if (isNodeData(input)) return input;
   return F.scopedTypeIdentifierInExpressionPosition({
-    path: _resolveOne(input.path, _K6, _K32),
+    path: _resolveOne(input.path, _K6, _K31),
     name: _resolveOneBranch(input.name, "_type_identifier"),
   });
 }
@@ -1184,7 +1187,7 @@ export function scopedTypeIdentifierInExpressionPositionFrom(input: T.ScopedType
 export function scopedTypeIdentifierFrom(input: T.ScopedTypeIdentifier.Loose): ReturnType<typeof F.scopedTypeIdentifier> {
   if (isNodeData(input)) return input;
   return F.scopedTypeIdentifier({
-    path: _resolveOne(input.path, _K6, _K33),
+    path: _resolveOne(input.path, _K6, _K32),
     name: _resolveOneBranch(input.name, "_type_identifier"),
   });
 }
@@ -1229,7 +1232,7 @@ export function referenceExpressionFrom(input: T.ReferenceExpression.Loose): Ret
   if (isNodeData(input)) return input;
   return F.referenceExpression({
     value: _resolveOne(input.value, _K4, _K5),
-    children: _resolveOne(input.children, _K34, _K35),
+    children: _resolveOne(input.children, _K33, _K34),
   });
 }
 
@@ -1288,7 +1291,7 @@ export function yieldExpressionFrom(input?: NonNullable<T.YieldExpression.Config
 export function callExpressionFrom(input: T.CallExpression.Loose): ReturnType<typeof F.callExpression> {
   if (isNodeData(input)) return input;
   return F.callExpression({
-    function: _resolveOne(input.function, _K4, _K36),
+    function: _resolveOne(input.function, _K4, _K35),
     arguments: _resolveOneBranch(input.arguments, "arguments"),
   });
 }
@@ -1339,7 +1342,7 @@ export function unitExpressionFrom(input: string | T.UnitExpression) {
 export function structExpressionFrom(input: T.StructExpression.Loose): ReturnType<typeof F.structExpression> {
   if (isNodeData(input)) return input;
   return F.structExpression({
-    name: _resolveOne(input.name, _K0, _K37),
+    name: _resolveOne(input.name, _K0, _K36),
     body: _resolveOneBranch(input.body, "field_initializer_list"),
   });
 }
@@ -1363,7 +1366,7 @@ export function shorthandFieldInitializerFrom(input: T.ShorthandFieldInitializer
 export function fieldInitializerFrom(input: T.FieldInitializer.Loose): ReturnType<typeof F.fieldInitializer> {
   if (isNodeData(input)) return input;
   return F.fieldInitializer({
-    field: _resolveOne(input.field, _K38, _K39),
+    field: _resolveOne(input.field, _K37, _K38),
     value: _resolveOne(input.value, _K4, _K5),
     children: _resolveManyBranch(input.children, "attribute_item"),
   });
@@ -1381,7 +1384,7 @@ export function baseFieldInitializerFrom(input?: NonNullable<T.BaseFieldInitiali
 export function ifExpressionFrom(input: T.IfExpression.Loose): ReturnType<typeof F.ifExpression> {
   if (isNodeData(input)) return input;
   return F.ifExpression({
-    condition: _resolveOne(input.condition, _K4, _K40),
+    condition: _resolveOne(input.condition, _K4, _K39),
     consequence: _resolveOneBranch(input.consequence, "block"),
     alternative: _resolveOneBranch(input.alternative, "else_clause"),
   });
@@ -1442,14 +1445,14 @@ export function lastMatchArmFrom(input: T.LastMatchArm.Loose): ReturnType<typeof
   return F.lastMatchArm({
     pattern: _resolveOneBranch(input.pattern, "match_pattern"),
     value: _resolveOne(input.value, _K4, _K5),
-    children: _resolveMany(input.children, _K0, _K41),
+    children: _resolveMany(input.children, _K0, _K40),
   });
 }
 
 export function matchPatternFrom(input: T.MatchPattern.Loose): ReturnType<typeof F.matchPattern> {
   if (isNodeData(input)) return input;
   return F.matchPattern({
-    condition: _resolveOne(input.condition, _K4, _K40),
+    condition: _resolveOne(input.condition, _K4, _K39),
     children: _resolveOne(input.children, _K17, _K18),
   });
 }
@@ -1458,7 +1461,7 @@ export function whileExpressionFrom(input: T.WhileExpression.Loose): ReturnType<
   if (isNodeData(input)) return input;
   return F.whileExpression({
     label: _resolveOneBranch(input.label, "label"),
-    condition: _resolveOne(input.condition, _K4, _K40),
+    condition: _resolveOne(input.condition, _K4, _K39),
     body: _resolveOneBranch(input.body, "block"),
   });
 }
@@ -1562,7 +1565,7 @@ export function fieldExpressionFrom(input: T.FieldExpression.Loose): ReturnType<
   if (isNodeData(input)) return input;
   return F.fieldExpression({
     value: _resolveOne(input.value, _K4, _K5),
-    field: _resolveOne(input.field, _K38, _K39),
+    field: _resolveOne(input.field, _K37, _K38),
   });
 }
 
@@ -1600,7 +1603,7 @@ export function blockFrom(input: T.Block.Loose): ReturnType<typeof F.block> {
   if (isNodeData(input)) return input;
   return F.block({
     label: _resolveOneBranch(input.label, "label"),
-    children: _resolveMany(input.children, _K4, _K42),
+    children: _resolveMany(input.children, _K4, _K41),
   });
 }
 
@@ -1631,7 +1634,7 @@ export function slicePatternFrom(...input: readonly (NonNullable<T.SlicePattern.
 export function tupleStructPatternFrom(input: T.TupleStructPattern.Loose): ReturnType<typeof F.tupleStructPattern> {
   if (isNodeData(input)) return input;
   return F.tupleStructPattern({
-    type: _resolveOne(input.type, _K2, _K32),
+    type: _resolveOne(input.type, _K2, _K31),
     children: _resolveMany(input.children, _K17, _K18),
   });
 }
@@ -1639,7 +1642,7 @@ export function tupleStructPatternFrom(input: T.TupleStructPattern.Loose): Retur
 export function structPatternFrom(input: T.StructPattern.Loose): ReturnType<typeof F.structPattern> {
   if (isNodeData(input)) return input;
   return F.structPattern({
-    type: _resolveOne(input.type, _K0, _K43),
+    type: _resolveOne(input.type, _K0, _K42),
     children: _resolveManyBranch(input.children, "field_pattern"),
   });
 }
@@ -1725,7 +1728,7 @@ export function orPatternUFormPrefixFrom(input: Omit<ConfigOf<T.OrPatternUFormPr
 export function negativeLiteralFrom(input: T.NegativeLiteral.Loose): ReturnType<typeof F.negativeLiteral> {
   if (isNodeData(input)) return input;
   return F.negativeLiteral({
-    value: _resolveOne(input.value, _K44, _K0),
+    value: _resolveOne(input.value, _K43, _K0),
   });
 }
 

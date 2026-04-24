@@ -196,10 +196,10 @@
     "while": "text",
     "extern": "text",
     "else": "text",
-    "in": "text",
     "dyn": "text",
     "mut": "text",
     "yield": "text",
+    "in": "text",
     "try": "text",
     "ref": "text",
     "move": "text",
@@ -668,6 +668,13 @@
       "childKind": {
         "impl_item_body": "body",
         "impl_item_semi": "semi"
+      }
+    },
+    "visibility_modifier": {
+      "source": "override",
+      "childKind": {
+        "visibility_modifier_crate": "crate",
+        "visibility_modifier_pub": "pub"
       }
     },
     "function_type": {

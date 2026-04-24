@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 365,
+  "nodeCount": 369,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -76,7 +76,9 @@
     "token_tree__form_paren",
     "token_tree_pattern__form_brace",
     "token_tree_pattern__form_bracket",
-    "token_tree_pattern__form_paren"
+    "token_tree_pattern__form_paren",
+    "visibility_modifier__form_crate",
+    "visibility_modifier__form_pub"
   ],
   "nodes": [
     {
@@ -3005,6 +3007,145 @@
         "use_as_clause",
         "use_list",
         "use_wildcard"
+      ]
+    },
+    {
+      "kind": "_visibility_modifier_crate",
+      "modelType": "container",
+      "typeName": "VisibilityModifierCrate",
+      "factoryName": "visibilityModifierCrate",
+      "irKey": "visibilityModifierCrate",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "visibilityModifierCrate()",
+      "children": [
+        {
+          "name": "crate",
+          "propertyName": "crate",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "crate",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_visibility_modifier_pub",
+      "modelType": "group",
+      "typeName": "VisibilityModifierPub",
+      "irKey": "visibilityModifierPub",
+      "hidden": true,
+      "name": "_visibility_modifier_pub",
+      "fields": [
+        {
+          "name": "pub",
+          "propertyName": "pub",
+          "paramName": "pub",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "pub"
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
+          "name": "in",
+          "propertyName": "in",
+          "paramName": "in_",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "in"
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        }
+      ],
+      "children": [
+        {
+          "name": "self",
+          "propertyName": "self",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "self",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "super",
+          "propertyName": "super",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "super",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "crate",
+          "propertyName": "crate",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "crate",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "path",
+          "propertyName": "path",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_path",
+              "unresolved": true
+            }
+          ]
+        }
       ]
     },
     {
@@ -16414,59 +16555,88 @@
     },
     {
       "kind": "visibility_modifier",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "VisibilityModifier",
       "factoryName": "visibilityModifier",
       "irKey": "visibilityModifier",
       "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "visibilityModifier()",
-      "fields": [
+      "source": "override",
+      "polymorphSource": "override",
+      "variantChildKinds": [
+        "visibility_modifier_crate",
+        "visibility_modifier_pub"
+      ],
+      "forms": [
         {
-          "name": "pub",
-          "propertyName": "pub",
-          "paramName": "pub",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+          "kind": "visibility_modifier__form_crate",
+          "name": "crate",
+          "typeName": "VisibilityModifierUFormCrate",
+          "factoryName": "visibilityModifierUFormCrate",
+          "irKey": "visibilityModifierUFormCrate",
+          "parentKind": "visibility_modifier",
+          "fields": [],
+          "children": [
             {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "pub"
+              "name": "visibility_modifier_crate",
+              "propertyName": "visibilityModifierCrate",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_visibility_modifier_crate",
+                  "unresolved": true
+                }
+              ]
             }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
+          ]
         },
         {
-          "name": "in",
-          "propertyName": "in",
-          "paramName": "in_",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+          "kind": "visibility_modifier__form_pub",
+          "name": "pub",
+          "typeName": "VisibilityModifierUFormPub",
+          "factoryName": "visibilityModifierUFormPub",
+          "irKey": "visibilityModifierUFormPub",
+          "parentKind": "visibility_modifier",
+          "fields": [],
+          "children": [
             {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "in"
+              "name": "visibility_modifier_pub",
+              "propertyName": "visibilityModifierPub",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_visibility_modifier_pub",
+                  "unresolved": true
+                }
+              ]
             }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
+          ]
         }
-      ],
+      ]
+    },
+    {
+      "kind": "visibility_modifier__form_crate",
+      "modelType": "group",
+      "typeName": "VisibilityModifierUFormCrate",
+      "factoryName": "visibilityModifierUFormCrate",
+      "irKey": "visibilityModifierUFormCrate",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "visibilityModifierUFormCrate()",
+      "name": "crate",
+      "parentKind": "visibility_modifier",
+      "fields": [],
       "children": [
         {
-          "name": "crate",
-          "propertyName": "crate",
+          "name": "visibility_modifier_crate",
+          "propertyName": "visibilityModifierCrate",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -16474,52 +16644,35 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "crate",
+              "name": "_visibility_modifier_crate",
               "unresolved": true
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "kind": "visibility_modifier__form_pub",
+      "modelType": "group",
+      "typeName": "VisibilityModifierUFormPub",
+      "factoryName": "visibilityModifierUFormPub",
+      "irKey": "visibilityModifierUFormPub",
+      "hidden": false,
+      "name": "pub",
+      "parentKind": "visibility_modifier",
+      "fields": [],
+      "children": [
         {
-          "name": "self",
-          "propertyName": "self",
-          "required": false,
+          "name": "visibility_modifier_pub",
+          "propertyName": "visibilityModifierPub",
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "self",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "super",
-          "propertyName": "super",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "super",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "path",
-          "propertyName": "path",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_path",
+              "multiplicity": "single",
+              "name": "_visibility_modifier_pub",
               "unresolved": true
             }
           ]

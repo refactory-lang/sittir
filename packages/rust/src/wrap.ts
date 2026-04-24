@@ -173,6 +173,7 @@ import type {
   UseWildcard,
   VariadicParameter,
   VisibilityModifier,
+  VisibilityModifierCrate,
   WhereClause,
   WherePredicate,
   WhileExpression,
@@ -722,8 +723,6 @@ export function wrapExternModifier(data: _NodeData, tree: TreeHandle): WrappedNo
 export function wrapVisibilityModifier(data: _NodeData, tree: TreeHandle): WrappedNode<VisibilityModifier> {
   return {
     ...data,
-    get pub() { return drillIn(data.$fields?.['pub'], tree); },
-    get in() { return drillIn(data.$fields?.['in'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<VisibilityModifier>;
 }
@@ -1558,6 +1557,13 @@ export function wrapRangeExpressionBare(data: _NodeData, tree: TreeHandle): Wrap
   } as unknown as WrappedNode<RangeExpressionBare>;
 }
 
+export function wrapVisibilityModifierCrate(data: _NodeData, tree: TreeHandle): WrappedNode<VisibilityModifierCrate> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<VisibilityModifierCrate>;
+}
+
 export function wrapForeignModItemBody(data: _NodeData, tree: TreeHandle): WrappedNode<ForeignModItemBody> {
   return {
     ...data,
@@ -1848,6 +1854,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_macro_definition_brace': (d, t) => wrapMacroDefinitionBrace(d, t),
   '_mod_item_inline': (d, t) => wrapModItemInline(d, t),
   '_range_expression_bare': (d, t) => wrapRangeExpressionBare(d, t),
+  '_visibility_modifier_crate': (d, t) => wrapVisibilityModifierCrate(d, t),
   '_foreign_mod_item_body': (d, t) => wrapForeignModItemBody(d, t),
   '_pointer_type_const': (d) => d,
   '_pointer_type_mut': (d, t) => wrapPointerTypeMut(d, t),

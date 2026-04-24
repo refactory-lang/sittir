@@ -33,6 +33,7 @@ export const NODE_KINDS = [
   '_token_tree_pattern_bracket',
   '_token_tree_pattern_paren',
   '_type_identifier',
+  '_visibility_modifier_crate',
   'abstract_type',
   'arguments',
   'array_expression',
@@ -442,6 +443,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_token_tree_pattern_paren': [
   ],
   '_type_identifier': [
+  ],
+  '_visibility_modifier_crate': [
   ],
   'abstract_type': [
     { name: 'typeParameters', required: false, multiple: false },
@@ -949,8 +952,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'pattern', required: false, multiple: false },
   ],
   'visibility_modifier': [
-    { name: 'pub', required: false, multiple: false },
-    { name: 'in', required: false, multiple: false },
   ],
   'where_clause': [
   ],

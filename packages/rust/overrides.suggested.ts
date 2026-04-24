@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  9  (0 applied, 9 held)
-// Rule promotions:   94  (86 applied, 8 held)
+// Rule promotions:   96  (89 applied, 7 held)
 // Repeated shapes:   4  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -86,7 +86,6 @@ export const suggestedTransforms = {
 
   // type_arguments: 1 inferred field(s)
   // [held] type_arguments field 'bounds' on $.trait_bounds — 100% agreement, 5 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   yield_expression: {
@@ -262,7 +261,9 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "token_tree_pattern_brace", classification: "polymorph", applied: true },
   { kind: "token_tree_pattern_bracket", classification: "polymorph", applied: true },
   { kind: "token_tree_pattern_paren", classification: "polymorph", applied: true },
-  { kind: "visibility_modifier", classification: "polymorph", applied: false },
+  { kind: "visibility_modifier", classification: "polymorph", applied: true },
+  { kind: "visibility_modifier_crate", classification: "polymorph", applied: true },
+  { kind: "visibility_modifier_pub", classification: "polymorph", applied: true },
   { kind: "yield_expression", classification: "polymorph", applied: false },
 ];
 

@@ -631,14 +631,15 @@ describe('extern_modifier', () => {
 });
 
 describe('visibility_modifier', () => {
-  it('factory produces correct type', () => {
-    const node = ir.visibilityModifier({});
+  it('crate form produces correct type', () => {
+    const node = ir.visibilityModifier.crate({});
     expect(node.$type).toBe('visibility_modifier');
     expect(node.$source).toBe('factory');
   });
-  it('render produces non-empty string', () => {
-    const node = ir.visibilityModifier({ children: [{ $type: 'crate', $text: 'test' } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+  it('pub form produces correct type', () => {
+    const node = ir.visibilityModifier.pub({});
+    expect(node.$type).toBe('visibility_modifier');
+    expect(node.$source).toBe('factory');
   });
 });
 

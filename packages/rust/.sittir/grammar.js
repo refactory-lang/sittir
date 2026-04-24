@@ -1130,7 +1130,13 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     // match_arm split: the `seq(expr, ',')` vs block-ending variants
     // expose a shared-prefix conflict with other expression
     // contexts when the parser sees `… => if_expr (`.
-    [$._expression_except_range, $._match_arm_block_ending]
+    [$._expression_except_range, $._match_arm_block_ending],
+    // visibility_modifier variant extraction: `pub(crate)` vs
+    // `crate::foo` share the `crate` prefix.
+    [$.scoped_identifier, $.scoped_type_identifier, $._visibility_modifier_crate],
+    // visibility_modifier variant extraction: `pub` vs `pub(x)`
+    // share the `pub` prefix; parser needs lookahead.
+    [$._visibility_modifier_pub]
   ]),
   polymorphs: {
     array_expression: { "2/0": "semi", "2/1": "list" },
@@ -1143,7 +1149,8 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     or_pattern: { "0": "binary", "1": "prefix" },
     range_expression: { "0": "binary", "1": "postfix", "2": "prefix", "3": "bare" },
     range_pattern: { "0": "left", "1": "prefix" },
-    struct_item: { "4/0": "brace", "4/1": "tuple", "4/2": "unit" }
+    struct_item: { "4/0": "brace", "4/1": "tuple", "4/2": "unit" },
+    visibility_modifier: { "0": "crate", "1": "pub" }
   },
   transforms: {
     // abstract_type: 1 field(s)
