@@ -1,10 +1,25 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { evaluate } from '../compiler/evaluate.ts'
 import { link } from '../compiler/link.ts'
 import { optimize } from '../compiler/optimize.ts'
 import { assemble } from '../compiler/assemble.ts'
 import { resolveGrammarJsPath } from '../compiler/resolve-grammar.ts'
 import { resolve } from 'node:path'
+
+// Raw base grammars (no override() / variant() applied) still contain
+// non-canonical shapes that would trip the derive-audit default. Switch
+// to report mode for this file; the canonical-surface invariant is
+// tested separately via corpus-validation against the over-ridden
+// grammars.
+let _prevAudit: string | undefined
+beforeAll(() => {
+    _prevAudit = process.env.SITTIR_AUDIT_DERIVE
+    process.env.SITTIR_AUDIT_DERIVE = '1'
+})
+afterAll(() => {
+    if (_prevAudit === undefined) delete process.env.SITTIR_AUDIT_DERIVE
+    else process.env.SITTIR_AUDIT_DERIVE = _prevAudit
+})
 
 const pythonGrammar = resolveGrammarJsPath('python')
 const rustGrammar = resolveGrammarJsPath('rust')

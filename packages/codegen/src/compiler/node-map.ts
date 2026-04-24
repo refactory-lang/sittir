@@ -228,15 +228,24 @@ export function hasAnyChild(rule: Rule): boolean {
  * which simplify passes still need work.
  */
 const DERIVE_AUDIT = process.env.SITTIR_AUDIT_DERIVE === '1'
-// `SITTIR_AUDIT_DERIVE=strict` upgrades audit from accumulator-mode to
-// fail-closed: any non-canonical shape reaching derivation throws with
-// a diagnostic. Use in CI / scripts that regenerate curated grammars to
-// prevent regressions — the default `SITTIR_AUDIT_DERIVE=1` stays in
-// report mode for backwards compat with tests that consume raw base
-// grammars (no override() / variant() applied).
-const DERIVE_AUDIT_MODE: 'strict' | 'report' | 'off' =
-    process.env.SITTIR_AUDIT_DERIVE === 'strict' ? 'strict'
-    : (process.env.SITTIR_AUDIT_DERIVE === '1' ? 'report' : 'off')
+// Audit default is now 'strict' — spec 013 drained every non-canonical
+// shape across the curated grammars via variant adoption + inline
+// (`rust`, `python`, `typescript` all audit clean). Any non-canonical
+// rule reaching derivation throws with a diagnostic so the walker can
+// safely assume canonical input.
+//
+// Opt-outs:
+//   SITTIR_AUDIT_DERIVE=1        → 'report' mode (log + accumulate,
+//                                   don't throw). Used by tests that
+//                                   consume raw base grammars without
+//                                   override() / variant() applied.
+//   SITTIR_AUDIT_DERIVE=off      → 'off' mode (no audit at all).
+function deriveAuditMode(): 'strict' | 'report' | 'off' {
+    const v = process.env.SITTIR_AUDIT_DERIVE
+    if (v === '1') return 'report'
+    if (v === 'off') return 'off'
+    return 'strict'
+}
 const auditCounts = new Map<string, number>()
 const auditKindsByShape = new Map<string, string[]>()
 /** Transient — each AssembledNode's constructor sets this before the lazy
@@ -245,10 +254,11 @@ const auditKindsByShape = new Map<string, string[]>()
 let currentAuditKind: string | undefined
 export function setAuditKindContext(kind: string | undefined): void { currentAuditKind = kind }
 function auditDerivationShape(rule: Rule, context: 'fields' | 'children'): void {
-    if (DERIVE_AUDIT_MODE === 'off') return
+    const mode = deriveAuditMode()
+    if (mode === 'off') return
     const shape = classifyTopLevelShape(rule)
     if (shape === 'canonical') return
-    if (DERIVE_AUDIT_MODE === 'strict') {
+    if (mode === 'strict') {
         const kindLabel = currentAuditKind ?? '(no-kind-context)'
         throw new Error(
             `derive: non-canonical shape '${shape}' reached ${context} derivation for '${kindLabel}'. ` +
