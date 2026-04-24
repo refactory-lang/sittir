@@ -1217,7 +1217,22 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     [$.binary_expression, $.instantiation_expression, $._call_expression_call],
     [$._type_query_call_expression_in_type_annotation, $._call_expression_call],
     [$._type_query_call_expression, $._call_expression_call],
-    [$.primary_expression, $._export_statement_default]
+    [$.primary_expression, $._export_statement_default],
+    // update_expression variant extraction: the hoisted
+    // `_update_expression_postfix` / `_update_expression_prefix`
+    // hidden rules inherit the outer `prec.left(0, ...)`, but after
+    // extraction they compete with `await_expression` (prec
+    // 'unary_void') on the `await expr • '++' …` / `'++' • expr`
+    // sequences. Before the split, one `update_expression` rule
+    // carried the whole choice under one prec declaration;
+    // tree-sitter's LR table handled disambiguation internally.
+    // After splitting, both hidden rules each have `prec 0` and
+    // compete with `await_expression` individually — GLR is the
+    // only resolver. Declare the conflict groups explicitly.
+    [$.await_expression, $._update_expression_postfix],
+    [$.await_expression, $._update_expression_prefix],
+    [$.arrow_function, $._update_expression_postfix],
+    [$.arrow_function, $._update_expression_prefix]
   ]),
   polymorphs: {
     arrow_function: { "1/0": "parameter", "1/1": "_call_signature" },
@@ -1554,18 +1569,12 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     string: {
       0: variant("double"),
       1: variant("single")
-    }
+    },
     // update_expression: postfix vs prefix `++` / `--`.
-    //   PREC_LEFT(0, choice(
-    //     seq(field('argument', expr), field('operator', '++'|'--')),
-    //     seq(field('operator', '++'|'--'), field('argument', expr))))
-    // Deferred: variant() adoption here triggers a parse-generation
-    // conflict with `await_expression` because Link's variant hoist
-    // doesn't propagate the OUTER `PREC_LEFT(0, ...)` into each
-    // extracted hidden rule. call_expression uses per-branch `prec(...)`
-    // wrappers, so the hoist re-wraps them; update_expression's
-    // precedence lives on the whole choice instead. Fix would need
-    // Link to duplicate outer prec onto every extracted branch.
+    update_expression: {
+      0: variant("postfix"),
+      1: variant("prefix")
+    }
   },
   rules: {
     // parenthesized_expression: held. Base is plain `seq('(',
