@@ -147,9 +147,9 @@ description: "Task list for feature 012 — Rust Port of @sittir/core"
 
 ### Spec success-criteria verification gates
 
-- [ ] T060 [P] SC-001a + SC-001b gate: T049 already enforces; add a post-merge status check that surfaces parity counts in PR comments for visibility.
-- [ ] T061 [P] SC-006 gate (platform coverage): ensure every platform job in Phase 4 CI matrix runs the parity suite, not just cargo check. Failure on any platform blocks release.
-- [ ] T062 [P] SC-007 gate (primitive shape): add a test in `rust/crates/sittir-core/tests/wire_shape.rs` that serializes a complex NodeData and asserts the JSON has exactly the 8 allowed top-level `$`-prefixed keys — no `$variant`, no `$raw`, nothing else.
+- [X] T060 [P] SC-001a + SC-001b gate: T049 already enforces; add a post-merge status check that surfaces parity counts in PR comments for visibility.
+- [X] T061 [P] SC-006 gate (platform coverage): ensure every platform job in Phase 4 CI matrix runs the parity suite, not just cargo check. Failure on any platform blocks release.
+- [X] T062 [P] SC-007 gate (primitive shape): add a test in `rust/crates/sittir-core/tests/wire_shape.rs` that serializes a complex NodeData and asserts the JSON has exactly the 8 allowed top-level `$`-prefixed keys — no `$variant`, no `$raw`, nothing else.
 - [ ] T063 [P] SC-008 gate (no breaking API changes): add an API-surface snapshot test at `packages/rust/tests/api-surface.test.ts` (and clones for TS/Python) that exports the list of top-level names + their signatures via a snapshot file; any change requires explicit baseline update.
 - [ ] T064 FR-018 + FR-019 + FR-013 enforcement: add a CI check script at `scripts/assert-scope-boundaries.sh` that fails if any of the following would produce: (a) a WASM artifact in the MVP release (`pnpm publish --dry-run` must not emit `.wasm` files), (b) `sittir-core` published to crates.io (no `cargo publish` in the MVP release workflow — FR-018), (c) any runtime-loaded generated artifact in `packages/{lang}/rust-render/` — the directory MUST contain only `.rs` files and the `templates/` copy (FR-019 enforcement: fail on any `.json`, `.yaml`, `.toml` other than `Cargo.toml`, `.txt`, or similar data file), (d) any derive-macro crate in the Rust workspace dependency graph other than `askama`, `napi-derive`, `serde_derive`, and `tree-sitter`-crate internals (`cargo tree -e normal --depth 2 | grep -E '(derive|proc-macro)'` allow-list — FR-013 enforcement). Run as a CI job before release.
 
