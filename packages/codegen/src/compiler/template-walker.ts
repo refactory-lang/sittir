@@ -32,7 +32,7 @@
 import type {
     Rule, ChoiceRule,
 } from './rule.ts'
-import { isSyntheticFieldWrapper } from './node-map.ts'
+import { isSyntheticFieldWrapper, unwrapStructuralPassthroughs } from './node-map.ts'
 
 /**
  * Extract anonymous-string literals flanking the main content of a field
@@ -116,14 +116,7 @@ function wrappedRepeatSeparator(content: Rule): string | null {
 function fieldContentIsMultiSibling(content: Rule): boolean {
     // Unwrap structural passthroughs that don't themselves contribute
     // sibling positions.
-    let core: Rule = content
-    while (
-        core.type === 'optional' || core.type === 'variant'
-        || core.type === 'clause' || core.type === 'group'
-        || core.type === 'token' || core.type === 'terminal'
-    ) {
-        core = (core as { content: Rule }).content
-    }
+    const core = unwrapStructuralPassthroughs(content)
     if (core.type === 'choice') {
         return core.members.some(m => fieldContentIsMultiSibling(m))
     }

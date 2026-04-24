@@ -40,6 +40,7 @@ import {
     findRepeatFlag,
 } from './template-walker.ts'
 import { tokenToName } from './optimize.ts'
+import { assertNever } from '../polymorph-variant.ts'
 
 // ---------------------------------------------------------------------------
 // NodeOrTerminal — unified slot-content type (ADR-0010 Task 1.6)
@@ -1639,18 +1640,68 @@ function isVerbatimTokenStream(rule: Rule): boolean {
     })
 }
 
+/**
+ * Peel structural passthrough wrappers off a rule until reaching a
+ * non-passthrough core. Single source of truth for the "find the
+ * meaningful inner rule" walk that otherwise gets re-inlined every
+ * time a caller wants to ignore decorative wrappers.
+ *
+ * Passthroughs:
+ * - `optional`, `variant`, `clause`, `group` — pure structural
+ *   markers (presence/absence, polymorph variant, override clause,
+ *   anonymous group). None contribute their own runtime position.
+ * - `alias` — renames the kind without changing the rule's structural
+ *   role.
+ * - `token`, `terminal` — terminalisation wrappers; the inner rule
+ *   carries the actual content shape.
+ *
+ * @remarks Exhaustive `switch` on `Rule.type`; non-passthrough rules
+ * (seq/choice/repeat/repeat1/field/symbol/string/pattern/etc.) are
+ * returned as-is. `assertNever` locks the switch shut so adding a new
+ * Rule variant becomes a compile error here instead of silently
+ * skipping the unwrap step.
+ *
+ * @see hasHiddenExternalRef, hasExternalBoundaries (this file) and
+ *      template-walker.ts `fieldContentIsMultiSibling` — the three
+ *      original call sites this helper consolidates.
+ */
+export function unwrapStructuralPassthroughs(rule: Rule): Rule {
+    let r: Rule = rule
+    for (;;) {
+        switch (r.type) {
+            case 'optional':
+            case 'variant':
+            case 'clause':
+            case 'group':
+            case 'alias':
+            case 'token':
+            case 'terminal':
+                r = r.content
+                continue
+            case 'seq':
+            case 'choice':
+            case 'repeat':
+            case 'repeat1':
+            case 'field':
+            case 'enum':
+            case 'supertype':
+            case 'polymorph':
+            case 'string':
+            case 'pattern':
+            case 'indent':
+            case 'dedent':
+            case 'newline':
+            case 'symbol':
+                return r
+            default:
+                return assertNever(r)
+        }
+    }
+}
+
 function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boolean {
     // Unwrap transparent wrappers to find the structural core.
-    let core = rule
-    while (
-        core.type === 'optional'
-        || core.type === 'variant'
-        || core.type === 'clause'
-        || core.type === 'group'
-        || core.type === 'alias'
-    ) {
-        core = (core as { content: Rule }).content
-    }
+    const core = unwrapStructuralPassthroughs(rule)
     if (core.type !== 'seq') return false
     // A member is "all external" if it's a symbol ref whose target is
     // in the externals list, OR a wrapper (alias/optional/…) whose
@@ -1732,26 +1783,10 @@ function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boole
 function hasExternalBoundaries(seqRule: Rule, externals: ReadonlySet<string>): boolean {
     if (seqRule.type !== 'seq') return false
     const isExternalTerminalMember = (r: Rule): boolean => {
-        let core = r
-        while (
-            core.type === 'optional' || core.type === 'variant'
-            || core.type === 'clause' || core.type === 'group'
-            || core.type === 'alias' || core.type === 'token'
-            || core.type === 'terminal'
-        ) {
-            core = (core as { content: Rule }).content
-        }
+        let core: Rule = unwrapStructuralPassthroughs(r)
         if (core.type === 'field') {
-            const f = core as { name: string; content: Rule }
-            core = f.content
-            while (
-                core.type === 'optional' || core.type === 'variant'
-                || core.type === 'clause' || core.type === 'group'
-                || core.type === 'alias' || core.type === 'token'
-                || core.type === 'terminal'
-            ) {
-                core = (core as { content: Rule }).content
-            }
+            const f = core
+            core = unwrapStructuralPassthroughs(f.content)
             if (
                 core.type === 'pattern'
                 && (core as { value: string }).value === ''
