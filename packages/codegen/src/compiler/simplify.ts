@@ -152,9 +152,49 @@ export function simplifyRules(
 ): Record<string, Rule> {
     const out: Record<string, Rule> = {}
     for (const [name, rule] of Object.entries(rules)) {
-        out[name] = canonicalize(simplifyRule(rule, wordMatcher))
+        out[name] = normalizeToFixpoint(rule, wordMatcher)
     }
     return out
+}
+
+/**
+ * Run `simplifyRule` + `canonicalize` to fixpoint. Each individual
+ * transformation is non-increasing on rule nesting and designed to be
+ * idempotent on its own, but the two passes can enable each other —
+ * e.g. canonicalize may merge a choice into a seq whose inner members
+ * are shapes simplifyRule can further collapse (single-member seqs,
+ * empty-seq sentinels from freshly-stripped literals, etc.). A single
+ * forward pass misses those cascaded simplifications.
+ *
+ * The loop terminates because both transformations are non-increasing
+ * on the rule's structural size (member counts, nesting depth); any
+ * change produces a strictly smaller tree by one of those metrics.
+ * Safety cap at 16 iterations — a real grammar converges in 2-3.
+ */
+function normalizeToFixpoint(rule: Rule, wordMatcher?: RegExp): Rule {
+    const MAX_ITERS = 16
+    let current = rule
+    for (let i = 0; i < MAX_ITERS; i++) {
+        const next = canonicalize(simplifyRule(current, wordMatcher))
+        if (rulesStructurallyEqual(current, next)) return next
+        current = next
+    }
+    console.warn(`[simplify] normalizeToFixpoint: ${MAX_ITERS} iterations reached without convergence — returning last iteration`)
+    return current
+}
+
+/**
+ * Structural Rule equality — compares all discriminant + content fields
+ * recursively. Used by the simplify fixpoint loop to detect
+ * convergence. JSON-stringify is deterministic enough for this: Rule
+ * nodes are plain data (no Maps, Sets, or symbols), order of keys is
+ * stable because we control their construction, and nested arrays /
+ * objects are compared element-wise via stringify. Slightly wasteful
+ * at O(n) per iteration, but n is small (a grammar's rules are in the
+ * hundreds) and the loop runs once per codegen.
+ */
+function rulesStructurallyEqual(a: Rule, b: Rule): boolean {
+    return JSON.stringify(a) === JSON.stringify(b)
 }
 
 // ---------------------------------------------------------------------------
