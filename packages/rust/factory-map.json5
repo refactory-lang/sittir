@@ -746,8 +746,9 @@
     "range_pattern": {
       "source": "override",
       "childKind": {
-        "range_pattern_left": "left",
-        "range_pattern_prefix": "prefix"
+        "range_pattern_prefix": "prefix",
+        "range_pattern_left_with_right": "left_with_right",
+        "range_pattern_left_bare": "left_bare"
       }
     },
     "or_pattern": {

@@ -3703,47 +3703,16 @@ export function mutPattern(config: T.MutPattern.Config) {
   };
 }
 
-export function rangePattern(config: ConfigOf<T.RangePatternUFormLeft>): ReturnType<typeof rangePatternUFormLeft>;
 export function rangePattern(config: ConfigOf<T.RangePatternUFormPrefix>): ReturnType<typeof rangePatternUFormPrefix>;
-export function rangePattern(config: ConfigOf<T.RangePatternUFormLeft> | ConfigOf<T.RangePatternUFormPrefix>) {
+export function rangePattern(config: ConfigOf<T.RangePatternUFormLeftWithRight>): ReturnType<typeof rangePatternUFormLeftWithRight>;
+export function rangePattern(config: ConfigOf<T.RangePatternUFormLeftBare>): ReturnType<typeof rangePatternUFormLeftBare>;
+export function rangePattern(config: ConfigOf<T.RangePatternUFormPrefix> | ConfigOf<T.RangePatternUFormLeftWithRight> | ConfigOf<T.RangePatternUFormLeftBare>) {
   switch (config.$variant) {
-    case 'left': return rangePatternUFormLeft(config as Parameters<typeof rangePatternUFormLeft>[0]);
     case 'prefix': return rangePatternUFormPrefix(config as Parameters<typeof rangePatternUFormPrefix>[0]);
+    case 'left_with_right': return rangePatternUFormLeftWithRight(config as Parameters<typeof rangePatternUFormLeftWithRight>[0]);
+    case 'left_bare': return rangePatternUFormLeftBare(config as Parameters<typeof rangePatternUFormLeftBare>[0]);
   }
-  throw new Error(`rangePattern: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'left' | 'prefix'.`);
-}
-export function rangePatternUFormLeft(config: Omit<ConfigOf<T.RangePatternUFormLeft>, '$variant'>) {
-  const inner = {
-    $type: 'range_pattern_left' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: {
-      left: config.left,
-      right: config.right,
-    },
-  };
-  const children = [inner] as const;
-  return {
-    $type: 'range_pattern' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $variant: 'left' as const,
-    $children: children,
-    left(value?: T.LiteralPattern | T.Path) {
-      if (value === undefined) return inner.$fields.left;
-      return rangePatternUFormLeft({ right: inner.$fields.right, left: value });
-    },
-    right(value?: T.LiteralPattern | T.Path | undefined) {
-      if (value === undefined) return inner.$fields.right;
-      return rangePatternUFormLeft({ left: inner.$fields.left, right: value });
-    },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.RangePatternUFormLeftTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  throw new Error(`rangePattern: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'prefix' | 'left_with_right' | 'left_bare'.`);
 }
 export function rangePatternUFormPrefix(config: Omit<ConfigOf<T.RangePatternUFormPrefix>, '$variant'>) {
   const inner = {
@@ -3771,6 +3740,34 @@ export function rangePatternUFormPrefix(config: Omit<ConfigOf<T.RangePatternUFor
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T.RangePatternUFormPrefixTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function rangePatternUFormLeftWithRight(config?: Omit<ConfigOf<T.RangePatternUFormLeftWithRight>, '$variant'>) {
+  return {
+    $type: 'range_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'left_with_right' as const,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.RangePatternUFormLeftWithRightTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function rangePatternUFormLeftBare(config?: Omit<ConfigOf<T.RangePatternUFormLeftBare>, '$variant'>) {
+  return {
+    $type: 'range_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'left_bare' as const,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.RangePatternUFormLeftBareTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 

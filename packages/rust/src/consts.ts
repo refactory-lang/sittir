@@ -273,6 +273,7 @@ export const KEYWORDS = [
   '_mod_item_external',
   '_outer_line_doc_comment_marker',
   '_pointer_type_const',
+  '_range_pattern_left_bare',
   '_struct_item_unit',
   '_wildcard_pattern',
   'as',

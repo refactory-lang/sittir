@@ -4293,29 +4293,10 @@
   {
     "type": "range_pattern",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "range_pattern_left",
-          "named": true
-        },
-        {
-          "type": "range_pattern_prefix",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "range_pattern_left",
-    "named": true,
     "fields": {
       "left": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "_literal_pattern",
@@ -4346,10 +4327,39 @@
             "named": true
           }
         ]
-      },
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "range_pattern_left_bare",
+          "named": true
+        },
+        {
+          "type": "range_pattern_left_with_right",
+          "named": true
+        },
+        {
+          "type": "range_pattern_prefix",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "range_pattern_left_bare",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "range_pattern_left_with_right",
+    "named": true,
+    "fields": {
       "right": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "_literal_pattern",

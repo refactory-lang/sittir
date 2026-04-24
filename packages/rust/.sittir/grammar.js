@@ -1148,7 +1148,18 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     mod_item: { "3/0": "external", "3/1": "inline" },
     or_pattern: { "0": "binary", "1": "prefix" },
     range_expression: { "0": "binary", "1": "postfix", "2": "prefix", "3": "bare" },
-    range_pattern: { "0": "left", "1": "prefix" },
+    // range_pattern: the base rule is
+    //   choice(
+    //     seq(field('left', X), choice(             ← 0
+    //       seq(enum('...', '..=', '..'), field('right', X)),  ← 0/1/0 "left_with_right"
+    //       '..',                                               ← 0/1/1 "left_bare"
+    //     )),
+    //     seq(enum, field('right', X)),             ← 1 "prefix"
+    //   )
+    // Flatten the adoption so the inner-choice arms get their own
+    // variant names — the asymmetry (`..=`/`...` require a right,
+    // bare `..` doesn't) means these are genuine structural variants.
+    range_pattern: { "0/1/0": "left_with_right", "0/1/1": "left_bare", "1": "prefix" },
     struct_item: { "4/0": "brace", "4/1": "tuple", "4/2": "unit" },
     visibility_modifier: { "0": "crate", "1": "pub" }
   },

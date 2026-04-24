@@ -1679,12 +1679,16 @@ export function rangePatternFrom(input?: T.RangePattern.Loose): ReturnType<typeo
   return F.rangePattern(input as Parameters<typeof F.rangePattern>[0]);
 }
 
-export function rangePatternUFormLeftFrom(input: Omit<ConfigOf<T.RangePatternUFormLeft>, '$variant'>) {
-  return F.rangePatternUFormLeft(input);
-}
-
 export function rangePatternUFormPrefixFrom(input: Omit<ConfigOf<T.RangePatternUFormPrefix>, '$variant'>) {
   return F.rangePatternUFormPrefix(input);
+}
+
+export function rangePatternUFormLeftWithRightFrom(input: Omit<ConfigOf<T.RangePatternUFormLeftWithRight>, '$variant'>) {
+  return F.rangePatternUFormLeftWithRight(input);
+}
+
+export function rangePatternUFormLeftBareFrom(input: Omit<ConfigOf<T.RangePatternUFormLeftBare>, '$variant'>) {
+  return F.rangePatternUFormLeftBare(input);
 }
 
 export function refPatternFrom(input?: NonNullable<T.RefPattern.Config['children']>[number] | T.RefPattern) {

@@ -236,8 +236,8 @@ export const enum SyntaxKind {
   RangeExpressionPostfix = '_range_expression_postfix',
   RangeExpressionPrefix = '_range_expression_prefix',
   RangeExpressionBare = '_range_expression_bare',
-  RangePatternLeft = '_range_pattern_left',
   RangePatternPrefix = '_range_pattern_prefix',
+  RangePatternLeftWithRight = '_range_pattern_left_with_right',
   StructItemBrace = '_struct_item_brace',
   StructItemTuple = '_struct_item_tuple',
   VisibilityModifierCrate = '_visibility_modifier_crate',
@@ -1907,19 +1907,23 @@ export interface MutPattern {
   };
 }
 
-export interface RangePatternUFormLeft {
-  readonly $type: 'range_pattern';
-  readonly $variant: 'left';
-  readonly $children: readonly [RangePatternLeft];
-}
-
 export interface RangePatternUFormPrefix {
   readonly $type: 'range_pattern';
   readonly $variant: 'prefix';
   readonly $children: readonly [RangePatternPrefix];
 }
 
-export type RangePattern = RangePatternUFormLeft | RangePatternUFormPrefix;
+export interface RangePatternUFormLeftWithRight {
+  readonly $type: 'range_pattern';
+  readonly $variant: 'left_with_right';
+}
+
+export interface RangePatternUFormLeftBare {
+  readonly $type: 'range_pattern';
+  readonly $variant: 'left_bare';
+}
+
+export type RangePattern = RangePatternUFormPrefix | RangePatternUFormLeftWithRight | RangePatternUFormLeftBare;
 export interface RefPattern {
   readonly $type: 'ref_pattern';
   readonly $children: readonly [Pattern];
@@ -2164,16 +2168,15 @@ export interface RangeExpressionBare {
   };
 }
 
-export interface RangePatternLeft {
-  readonly $type: 'range_pattern_left';
+export interface RangePatternPrefix {
+  readonly $type: 'range_pattern_prefix';
   readonly $fields: {
-    readonly left: LiteralPattern | Path;
-    readonly right?: LiteralPattern | Path;
+    readonly right: LiteralPattern | Path;
   };
 }
 
-export interface RangePatternPrefix {
-  readonly $type: 'range_pattern_prefix';
+export interface RangePatternLeftWithRight {
+  readonly $type: 'range_pattern_left_with_right';
   readonly $fields: {
     readonly right: LiteralPattern | Path;
   };
@@ -2504,8 +2507,9 @@ export interface FieldPatternUFormShorthandTree extends TreeNode<'field_pattern'
 export interface FieldPatternUFormNamedTree extends TreeNode<'field_pattern'> {}
 export interface MutPatternTree extends TreeNode<'mut_pattern'> {}
 export interface RangePatternTree extends TreeNode<'range_pattern'> {}
-export interface RangePatternUFormLeftTree extends TreeNode<'range_pattern'> {}
 export interface RangePatternUFormPrefixTree extends TreeNode<'range_pattern'> {}
+export interface RangePatternUFormLeftWithRightTree extends TreeNode<'range_pattern'> {}
+export interface RangePatternUFormLeftBareTree extends TreeNode<'range_pattern'> {}
 export interface RefPatternTree extends TreeNode<'ref_pattern'> {}
 export interface CapturedPatternTree extends TreeNode<'captured_pattern'> {}
 export interface ReferencePatternTree extends TreeNode<'reference_pattern'> {}
@@ -2544,8 +2548,8 @@ export interface RangeExpressionBinaryTree extends AnyTreeNode { readonly type: 
 export interface RangeExpressionPostfixTree extends AnyTreeNode { readonly type: "_range_expression_postfix"; }
 export interface RangeExpressionPrefixTree extends AnyTreeNode { readonly type: "_range_expression_prefix"; }
 export interface RangeExpressionBareTree extends AnyTreeNode { readonly type: "_range_expression_bare"; }
-export interface RangePatternLeftTree extends AnyTreeNode { readonly type: "_range_pattern_left"; }
 export interface RangePatternPrefixTree extends AnyTreeNode { readonly type: "_range_pattern_prefix"; }
+export interface RangePatternLeftWithRightTree extends AnyTreeNode { readonly type: "_range_pattern_left_with_right"; }
 export interface StructItemBraceTree extends AnyTreeNode { readonly type: "_struct_item_brace"; }
 export interface StructItemTupleTree extends AnyTreeNode { readonly type: "_struct_item_tuple"; }
 export interface VisibilityModifierCrateTree extends AnyTreeNode { readonly type: "_visibility_modifier_crate"; }
@@ -3193,8 +3197,8 @@ export type RustNode =
   | RangeExpressionPostfix
   | RangeExpressionPrefix
   | RangeExpressionBare
-  | RangePatternLeft
   | RangePatternPrefix
+  | RangePatternLeftWithRight
   | StructItemBrace
   | StructItemTuple
   | VisibilityModifierCrate
@@ -3384,8 +3388,8 @@ export interface KindMap {
   '_range_expression_postfix': RangeExpressionPostfix;
   '_range_expression_prefix': RangeExpressionPrefix;
   '_range_expression_bare': RangeExpressionBare;
-  '_range_pattern_left': RangePatternLeft;
   '_range_pattern_prefix': RangePatternPrefix;
+  '_range_pattern_left_with_right': RangePatternLeftWithRight;
   '_struct_item_brace': StructItemBrace;
   '_struct_item_tuple': StructItemTuple;
   '_visibility_modifier_crate': VisibilityModifierCrate;
@@ -3451,7 +3455,7 @@ export interface VariantMap {
   'match_arm': { with_comma: MatchArmUFormWithComma; block_ending: MatchArmUFormBlockEnding };
   'closure_expression': { block: ClosureExpressionUFormBlock; expr: ClosureExpressionUFormExpr };
   'field_pattern': { shorthand: FieldPatternUFormShorthand; named: FieldPatternUFormNamed };
-  'range_pattern': { left: RangePatternUFormLeft; prefix: RangePatternUFormPrefix };
+  'range_pattern': { prefix: RangePatternUFormPrefix; left_with_right: RangePatternUFormLeftWithRight; left_bare: RangePatternUFormLeftBare };
   'or_pattern': { binary: OrPatternUFormBinary; prefix: OrPatternUFormPrefix };
   'line_comment': { regular_dslash: LineCommentUFormRegularDslash; doc: LineCommentUFormDoc; content: LineCommentUFormContent };
 }
@@ -3622,8 +3626,8 @@ export interface RangeExpressionBinaryNs extends NodeNs<RangeExpressionBinary, L
 export interface RangeExpressionPostfixNs extends NodeNs<RangeExpressionPostfix, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface RangeExpressionPrefixNs extends NodeNs<RangeExpressionPrefix, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface RangeExpressionBareNs extends NodeNs<RangeExpressionBare, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface RangePatternLeftNs extends NodeNs<RangePatternLeft, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface RangePatternPrefixNs extends NodeNs<RangePatternPrefix, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface RangePatternLeftWithRightNs extends NodeNs<RangePatternLeftWithRight, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface StructItemBraceNs extends NodeNs<StructItemBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface StructItemTupleNs extends NodeNs<StructItemTuple, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface VisibilityModifierCrateNs extends NodeNs<VisibilityModifierCrate, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3812,8 +3816,8 @@ export interface NamespaceMap {
   '_range_expression_postfix': RangeExpressionPostfixNs;
   '_range_expression_prefix': RangeExpressionPrefixNs;
   '_range_expression_bare': RangeExpressionBareNs;
-  '_range_pattern_left': RangePatternLeftNs;
   '_range_pattern_prefix': RangePatternPrefixNs;
+  '_range_pattern_left_with_right': RangePatternLeftWithRightNs;
   '_struct_item_brace': StructItemBraceNs;
   '_struct_item_tuple': StructItemTupleNs;
   '_visibility_modifier_crate': VisibilityModifierCrateNs;
@@ -4999,19 +5003,19 @@ export namespace RangeExpressionBare {
   export type Tree = TreeFor<'_range_expression_bare'>;
   export type Kind = '_range_expression_bare';
 }
-export namespace RangePatternLeft {
-  export type Config = ConfigFor<'_range_pattern_left'>;
-  export type Fluent = FluentFor<'_range_pattern_left'>;
-  export type Loose = LooseFor<'_range_pattern_left'>;
-  export type Tree = TreeFor<'_range_pattern_left'>;
-  export type Kind = '_range_pattern_left';
-}
 export namespace RangePatternPrefix {
   export type Config = ConfigFor<'_range_pattern_prefix'>;
   export type Fluent = FluentFor<'_range_pattern_prefix'>;
   export type Loose = LooseFor<'_range_pattern_prefix'>;
   export type Tree = TreeFor<'_range_pattern_prefix'>;
   export type Kind = '_range_pattern_prefix';
+}
+export namespace RangePatternLeftWithRight {
+  export type Config = ConfigFor<'_range_pattern_left_with_right'>;
+  export type Fluent = FluentFor<'_range_pattern_left_with_right'>;
+  export type Loose = LooseFor<'_range_pattern_left_with_right'>;
+  export type Tree = TreeFor<'_range_pattern_left_with_right'>;
+  export type Kind = '_range_pattern_left_with_right';
 }
 export namespace StructItemBrace {
   export type Config = ConfigFor<'_struct_item_brace'>;

@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  9  (0 applied, 9 held)
-// Rule promotions:   96  (89 applied, 7 held)
+// Rule promotions:   98  (90 applied, 8 held)
 // Repeated shapes:   4  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -63,6 +63,7 @@ export const suggestedTransforms = {
 
   // foreign_mod_item: 1 inferred field(s)
   // [held] foreign_mod_item field 'visibility_modifier' on $.visibility_modifier — 93% agreement, 15 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
+
 
   // reference_expression: 1 inferred field(s)
   // [held] reference_expression field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 8 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
@@ -242,8 +243,10 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "range_expression_binary", classification: "polymorph", applied: true },
   { kind: "range_expression_postfix", classification: "polymorph", applied: true },
   { kind: "range_expression_prefix", classification: "polymorph", applied: true },
+  { kind: "range_pattern", classification: "polymorph", applied: false },
   { kind: "range_pattern", classification: "polymorph", applied: true },
-  { kind: "range_pattern_left", classification: "polymorph", applied: true },
+  { kind: "range_pattern_left_bare", classification: "polymorph", applied: true },
+  { kind: "range_pattern_left_with_right", classification: "polymorph", applied: true },
   { kind: "range_pattern_prefix", classification: "polymorph", applied: true },
   { kind: "reference_expression", classification: "polymorph", applied: false },
   { kind: "reference_expression_raw_const", classification: "polymorph", applied: true },
@@ -298,5 +301,5 @@ export const repeatedShapes: readonly RepeatedShape[] = [
   { suggestedName: "_shared_2", kinds: ["identifier","metavariable"], parents: ["function_item","function_signature_item"], shape: "supertype" },
   { suggestedName: "_shared_2", kinds: ["_field_identifier","integer_literal"], parents: ["field_expression","field_initializer"], shape: "supertype" },
   { suggestedName: "_type_identifier", kinds: ["_type_identifier","scoped_type_identifier"], parents: ["_function_type_trait_form","struct_pattern"], shape: "supertype" },
-  { suggestedName: "_shared_2", kinds: ["_literal_pattern","_path"], parents: ["_range_pattern_left","_range_pattern_prefix"], shape: "supertype" },
+  { suggestedName: "_shared_2", kinds: ["_literal_pattern","_path"], parents: ["_range_pattern_left_with_right","_range_pattern_prefix"], shape: "supertype" },
 ];

@@ -287,7 +287,14 @@ const ALIAS_VARIANT_KINDS: Record<string, Set<string>> = {
         'field_pattern_shorthand', 'field_pattern_named',
         'or_pattern_binary', 'or_pattern_prefix',
         'range_expression_binary', 'range_expression_postfix', 'range_expression_prefix', 'range_expression_bare',
-        'range_pattern_left', 'range_pattern_prefix',
+        // `range_pattern_left` removed (nested variant split — now
+        // surfaces as `range_pattern_left_with_right` +
+        // `range_pattern_left_bare`). The `left_with_right` arm
+        // inherits the enclosing alias-variant render path; its own
+        // template isn't separately emitted.
+        'range_pattern_left_with_right',
+        'range_pattern_left_bare',
+        'range_pattern_prefix',
         'array_expression_list', 'array_expression_semi',
         'line_comment_doc',
         'match_arm_with_comma',
