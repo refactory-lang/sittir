@@ -1699,51 +1699,52 @@ export function unwrapStructuralPassthroughs(rule: Rule): Rule {
     }
 }
 
+/**
+ * Shared predicate — does `rule` reduce to an external-scanner terminal?
+ * Single source of truth for the symbol-in-externals + field/pattern('')
+ * stub recognition used by both `hasHiddenExternalRef` (every member
+ * must match for $TEXT promotion) and `hasExternalBoundaries` (only
+ * first and last seq members must match).
+ *
+ * Two acceptance shapes:
+ *
+ * 1. After peeling structural passthroughs, the result is a `symbol`
+ *    whose name is in `externals`.
+ *
+ * 2. After peeling, the result is a `field` whose unwrapped content
+ *    is the link-stub `pattern('')` AND whose name (or `_`-prefixed
+ *    form) is in `externals`. Link inlines external-token rule bodies
+ *    as empty-pattern stubs; enrich then wraps them in
+ *    `field('<stripped_name>', pattern(''))`. Both conditions must
+ *    hold — a non-external rule could coincidentally have an empty-
+ *    pattern child, and a field named after an external might
+ *    legitimately carry real content.
+ *
+ * For non-stub field content, recurses into the content so wrapper-
+ * of-symbol shapes still match (the `hasHiddenExternalRef` use-case).
+ *
+ * Anything else returns false. String literals like `{` / `}` / `;`
+ * make the rule walkable via template text and disqualify the $TEXT
+ * fallback.
+ */
+function isExternalTerminalMember(rule: Rule, externals: ReadonlySet<string>): boolean {
+    const core = unwrapStructuralPassthroughs(rule)
+    if (core.type === 'field') {
+        const inner = unwrapStructuralPassthroughs(core.content)
+        if (
+            inner.type === 'pattern'
+            && inner.value === ''
+            && (externals.has(core.name) || externals.has('_' + core.name))
+        ) return true
+        return isExternalTerminalMember(core.content, externals)
+    }
+    return core.type === 'symbol' && externals.has(core.name)
+}
+
 function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boolean {
     // Unwrap transparent wrappers to find the structural core.
     const core = unwrapStructuralPassthroughs(rule)
     if (core.type !== 'seq') return false
-    // A member is "all external" if it's a symbol ref whose target is
-    // in the externals list, OR a wrapper (alias/optional/…) whose
-    // eventual symbol is external. String literals like `{` / `}` /
-    // `;` make the rule walkable via template text and disqualify the
-    // $TEXT fallback.
-    const isExternalMember = (r: Rule): boolean => {
-        switch (r.type) {
-            case 'symbol':
-                return externals.has((r as { name: string }).name)
-            // Link inlines external-token rule bodies as `pattern('')`
-            // stubs in place of symbol references; enrich then wraps
-            // those in `field('<stripped_name>', pattern(''))`
-            // (leading underscore stripped). A match requires BOTH
-            // conditions: (1) the unique Link stub shape — `content`
-            // is empty-value pattern — AND (2) the field name (or its
-            // `_`-prefixed form) is in the externals list. Either
-            // alone would misfire: a non-external rule could
-            // coincidentally have an empty-pattern child, and a field
-            // named after an external might legitimately carry real
-            // content. Otherwise fall through to walking the content.
-            case 'field': {
-                const f = r as { name: string; content: Rule }
-                if (
-                    f.content.type === 'pattern'
-                    && (f.content as { value: string }).value === ''
-                    && (externals.has(f.name) || externals.has('_' + f.name))
-                ) return true
-                return isExternalMember(f.content)
-            }
-            case 'alias':
-            case 'optional':
-            case 'variant':
-            case 'clause':
-            case 'group':
-            case 'token':
-            case 'terminal':
-                return isExternalMember((r as { content: Rule }).content)
-            default:
-                return false
-        }
-    }
     // Also ignore pure-boundary optionals (e.g. the trailing
     // `optional($._automatic_semicolon)` in javascript's
     // `statement_block`) so they don't disqualify the rule from
@@ -1758,7 +1759,7 @@ function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boole
     for (const m of core.members) {
         if (isIgnorableBoundaryExternal(m)) continue
         hasContent = true
-        if (!isExternalMember(m)) {
+        if (!isExternalTerminalMember(m, externals)) {
             // Relaxed path: rule has external-scanner BOUNDARIES (first
             // and last non-ignorable members are external) — treat as
             // $TEXT. Python's `string` kind has this shape:
@@ -1782,24 +1783,12 @@ function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boole
  */
 function hasExternalBoundaries(seqRule: Rule, externals: ReadonlySet<string>): boolean {
     if (seqRule.type !== 'seq') return false
-    const isExternalTerminalMember = (r: Rule): boolean => {
-        let core: Rule = unwrapStructuralPassthroughs(r)
-        if (core.type === 'field') {
-            const f = core
-            core = unwrapStructuralPassthroughs(f.content)
-            if (
-                core.type === 'pattern'
-                && (core as { value: string }).value === ''
-                && (externals.has(f.name) || externals.has('_' + f.name))
-            ) return true
-        }
-        return core.type === 'symbol' && externals.has((core as { name: string }).name)
-    }
     if (seqRule.members.length < 2) return false
     const first = seqRule.members[0]
     const last = seqRule.members[seqRule.members.length - 1]
     if (!first || !last) return false
-    return isExternalTerminalMember(first) && isExternalTerminalMember(last)
+    return isExternalTerminalMember(first, externals)
+        && isExternalTerminalMember(last, externals)
 }
 
 export class AssembledContainer extends AssembledNodeBase<SeqRule | ChoiceRule | RepeatRule | Repeat1Rule> {
