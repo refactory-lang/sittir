@@ -41,3 +41,13 @@ askama = { workspace = true }
 tree-sitter-rust = "0.24"
 tree-sitter-typescript = "0.23"
 tree-sitter-python = "0.25"
+# T058 — micro-benchmark harness. Criterion is a dev-dep so the
+# production engine artifact stays slim. The bench itself lives at
+# `benches/render.rs` and uses a synthetic NodeData + a stub
+# RenderDispatch (sittir-core can't depend on the per-grammar render
+# crates without inverting the layering).
+criterion = { version = "0.5", default-features = false, features = ["plotters", "cargo_bench_support"] }
+
+[[bench]]
+name = "render"
+harness = false
