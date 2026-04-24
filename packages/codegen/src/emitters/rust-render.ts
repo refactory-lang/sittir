@@ -46,6 +46,11 @@ export interface RustRenderEmit {
 	libRs: { path: string; contents: string }
 	/** `packages/{lang}/rust-render/Cargo.toml` (T031) */
 	cargoToml: { path: string; contents: string }
+	/** Per-kind set of field names emitted as `Vec<String>` (list shape).
+	 *  Used by the cli.ts template-copy step to rewrite scalar-filter
+	 *  calls (e.g. `| isPresent`) into their list-variant counterparts
+	 *  (`| isPresentList`) when the field is list-shaped. */
+	listShapedFieldsByKind: Map<string, Set<string>>
 }
 
 function hashRsHeader(lang: Grammar): string {
@@ -126,9 +131,17 @@ serde = { workspace = true }
 // build. Reserved identifiers (`true`, `false`, loop var names) are
 // filtered out.
 
+// Jinja keywords / built-ins that are NOT template variables. `in` is
+// NOT included — it appears as a Jinja keyword in `{% for x in y %}`
+// (handled by the explicit forRe pattern) but also as a LEGITIMATE
+// VARIABLE in kinds whose grammar surfaces `in` as a literal child
+// (e.g. rust `pub(in path)` — `_visibility_modifier_pub_in_path.jinja`
+// renders `{{ in }} {{ children | join(" ") }}` where `in` is the
+// promoted keyword field). Dropping it here would shadow the field
+// lookup at struct-derive time.
 const RESERVED_IDENTS = new Set([
 	'true', 'false', 'none', 'null', 'empty',
-	'and', 'or', 'not', 'in', 'is',
+	'and', 'or', 'not', 'is',
 	'if', 'elif', 'else', 'endif',
 	'for', 'endfor',
 	'loop',
@@ -139,31 +152,65 @@ const SHARED_POSITIONAL = new Set([
 ])
 
 /**
- * Extract the set of variable identifiers referenced by a Jinja
- * template body. Handles `{{ ... }}`, `{% if ... %}`, `{%- elif ... %}`,
- * `{% for x in y %}` — pulls leading identifiers before any filter
- * pipe or operator, plus the right-hand-side of `for ... in ...`.
+ * Template variable shape — scalar (rendered as a single joined string)
+ * or list (rendered per-element by the template, either via `{% for %}`
+ * or a `join*` filter). The distinction drives the generated struct's
+ * field type: `String` for scalar, `Vec<String>` for list.
  */
-function scanTemplateIdentifiers(body: string): Set<string> {
-	const out = new Set<string>()
+type IdentShape = 'scalar' | 'list'
+
+/**
+ * Extract the set of variable identifiers referenced by a Jinja
+ * template body, classified by shape (scalar vs list). Handles
+ * `{{ ... }}`, `{% if ... %}`, `{%- elif ... %}`, `{% for x in y %}` —
+ * pulls leading identifiers before any filter pipe or operator, plus
+ * the right-hand-side of `for ... in ...`.
+ *
+ * An identifier is classified as 'list' when it appears as:
+ *   - The `y` in `{% for x in y %}` (iterated)
+ *   - The left operand of any `join*` filter (`join` / `joinWith*`) —
+ *     these consume a slice of strings; the filter's signature
+ *     rejects `&String` at askama compile time.
+ * Otherwise 'scalar'.
+ *
+ * When the same identifier appears in BOTH shapes across the template,
+ * 'list' wins (a Vec<String> can be `to_string`'d at a scalar site but
+ * a String can't be iterated).
+ */
+function scanTemplateIdentifiers(body: string): Map<string, IdentShape> {
+	const out = new Map<string, IdentShape>()
+	const record = (id: string, shape: IdentShape): void => {
+		if (RESERVED_IDENTS.has(id)) return
+		const prior = out.get(id)
+		if (prior === 'list' || shape === 'list') out.set(id, 'list')
+		else if (prior === undefined) out.set(id, 'scalar')
+	}
+
 	// {{ expr | filter(...) }} — first identifier is the source.
-	const exprRe = /\{\{-?\s*([a-zA-Z_][a-zA-Z0-9_]*)\b/g
+	// If the very first filter is join / joinWithTrailing / joinWithLeading /
+	// joinWithFlanks the source is list-shaped (the filter iterates).
+	const exprRe = /\{\{-?\s*([a-zA-Z_][a-zA-Z0-9_]*)([^}]*?)-?\}\}/g
 	let m: RegExpExecArray | null
 	while ((m = exprRe.exec(body)) !== null) {
 		const id = m[1]!
-		if (!RESERVED_IDENTS.has(id)) out.add(id)
+		const rest = m[2] ?? ''
+		const firstFilter = /\|\s*([a-zA-Z_][a-zA-Z0-9_]*)/.exec(rest)
+		const filterName = firstFilter?.[1] ?? ''
+		const isJoin = filterName === 'join'
+			|| filterName === 'joinWithTrailing'
+			|| filterName === 'joinWithLeading'
+			|| filterName === 'joinWithFlanks'
+		record(id, isJoin ? 'list' : 'scalar')
 	}
 	// {% if expr %} / {% elif expr %} — first identifier in the condition.
 	const ifRe = /\{%-?\s*(?:if|elif)\s+([a-zA-Z_][a-zA-Z0-9_]*)\b/g
 	while ((m = ifRe.exec(body)) !== null) {
-		const id = m[1]!
-		if (!RESERVED_IDENTS.has(id)) out.add(id)
+		record(m[1]!, 'scalar')
 	}
-	// {% for x in y %} — pull y.
+	// {% for x in y %} — y is the iterable.
 	const forRe = /\{%-?\s*for\s+[a-zA-Z_][a-zA-Z0-9_]*\s+in\s+([a-zA-Z_][a-zA-Z0-9_]*)\b/g
 	while ((m = forRe.exec(body)) !== null) {
-		const id = m[1]!
-		if (!RESERVED_IDENTS.has(id)) out.add(id)
+		record(m[1]!, 'list')
 	}
 	return out
 }
@@ -228,22 +275,31 @@ function pascal(s: string): string {
 // Per-kind struct emission
 // ----------------------------------------------------------------------
 
+interface EmittedField {
+	name: string           // raw grammar field name
+	shape: IdentShape      // scalar → String, list → Vec<String>
+}
+
 interface EmittedStruct {
 	name: string
 	kind: string
-	fieldNames: string[] // non-shared variable names referenced by the template
+	fields: EmittedField[] // non-shared variable names referenced by the template
 }
 
 function emitStruct(kind: string, body: string, node: AssembledNode | undefined): EmittedStruct {
 	const name = structNameFor(kind, node)
 	const idents = scanTemplateIdentifiers(body)
-	const userFields: string[] = []
-	for (const id of idents) {
+	const fields: EmittedField[] = []
+	for (const [id, shape] of idents) {
 		if (SHARED_POSITIONAL.has(id)) continue
-		userFields.push(id)
+		fields.push({ name: id, shape })
 	}
-	userFields.sort()
-	return { name, kind, fieldNames: userFields }
+	fields.sort((a, b) => a.name.localeCompare(b.name))
+	return { name, kind, fields }
+}
+
+function rustFieldType(shape: IdentShape): string {
+	return shape === 'list' ? 'Vec<String>' : 'String'
 }
 
 function renderStructDefs(structs: EmittedStruct[]): string {
@@ -260,8 +316,8 @@ function renderStructDefs(structs: EmittedStruct[]): string {
 		lines.push(`    pub text: String,`)
 		lines.push(`    pub trailing_sep: bool,`)
 		lines.push(`    pub leading_sep: bool,`)
-		for (const f of s.fieldNames) {
-			lines.push(`    pub ${rustFieldIdent(f)}: String,`)
+		for (const f of s.fields) {
+			lines.push(`    pub ${rustFieldIdent(f.name)}: ${rustFieldType(f.shape)},`)
 		}
 		lines.push(`}`)
 		lines.push('')
@@ -290,10 +346,15 @@ function renderDispatchFn(structs: EmittedStruct[]): string {
 		lines.push(`                text: ctx.text.clone(),`)
 		lines.push(`                trailing_sep: ctx.trailing_sep,`)
 		lines.push(`                leading_sep: ctx.leading_sep,`)
-		for (const f of s.fieldNames) {
-			// Pull from ctx.fields; default to empty string so optional
-			// fields (e.g. `{% if foo %}`) don't panic on absence.
-			lines.push(`                ${rustFieldIdent(f)}: ctx.fields.get(${JSON.stringify(f)}).cloned().unwrap_or_default(),`)
+		for (const f of s.fields) {
+			// Scalar → ctx.fields (String). List → ctx.fields_list (Vec<String>).
+			// Both default to empty so optional fields don't panic on absence
+			// (`{% if foo %}` / `{{ foo | join(",") }}` both degrade cleanly).
+			if (f.shape === 'list') {
+				lines.push(`                ${rustFieldIdent(f.name)}: ctx.fields_list.get(${JSON.stringify(f.name)}).cloned().unwrap_or_default(),`)
+			} else {
+				lines.push(`                ${rustFieldIdent(f.name)}: ctx.fields.get(${JSON.stringify(f.name)}).cloned().unwrap_or_default(),`)
+			}
 		}
 		lines.push(`            };`)
 		lines.push(`            t.render()`)
@@ -507,7 +568,7 @@ export function emitRenderCrate(
 		'    //! `joinWithLeading`, `joinWithFlanks`) that the current',
 		'    //! jinja emitter references. Aliases are thin wrappers over',
 		'    //! `joinby` with preset flank flags.',
-		'    pub use ::sittir_core::filters::{upper, lower, joinby};',
+		'    pub use ::sittir_core::filters::{upper, lower, joinby, isBlank, isPresent, isPresentList};',
 		'',
 		'    pub fn joinWithTrailing<S: AsRef<str>>(xs: &[S], _values: &dyn ::askama::Values, sep: &str) -> Result<String, ::askama::Error> {',
 		'        ::sittir_core::filters::joinby(xs, sep, false, true)',
@@ -527,6 +588,12 @@ export function emitRenderCrate(
 		'',
 		renderGrammarMeta(lang, meta),
 	].join('\n')
+	const listShapedFieldsByKind = new Map<string, Set<string>>()
+	for (const s of structs) {
+		const listFields = new Set<string>()
+		for (const f of s.fields) if (f.shape === 'list') listFields.add(f.name)
+		if (listFields.size > 0) listShapedFieldsByKind.set(s.kind, listFields)
+	}
 	return {
 		hashRs,
 		hashTs,
@@ -542,5 +609,6 @@ export function emitRenderCrate(
 			path: `packages/${lang}/rust-render/Cargo.toml`,
 			contents: cargoTomlContents(lang),
 		},
+		listShapedFieldsByKind,
 	}
 }

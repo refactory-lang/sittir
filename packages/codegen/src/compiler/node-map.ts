@@ -1387,7 +1387,13 @@ function inlineJinjaClauses(template: string, clauses: Record<string, string>): 
                     if (lower === 'newline' || lower === 'indent' || lower === 'dedent' || lower === 'text') {
                         return m
                     }
-                    return `{{ ${lower} | value }}`
+                    // `| value` was a cross-engine safety wrapper for
+                    // `Option<String>`-typed fields (askama side) /
+                    // undefined-tolerant nunjucks (TS side). Our struct
+                    // fields are `String` (empty when absent) on both
+                    // engines, so the wrap is a no-op — drop it to
+                    // avoid the askama built-in `value::<T>` collision.
+                    return `{{ ${lower} }}`
                 },
             )
             // `isPresent` instead of `{% if stem %}`: nunjucks's

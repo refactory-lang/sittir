@@ -73,8 +73,19 @@ pub type RenderDispatch = fn(&str, &TemplateContext) -> Result<String, askama::E
 /// struct is the transport between `sittir-core` and the dispatcher.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct TemplateContext {
-    /// Pre-rendered string value for each raw (snake_case) field name.
+    /// Pre-rendered string value for each raw (snake_case) field name
+    /// (scalar surface — `FieldValue::Multiple` already joined with
+    /// the parent's separator).
     pub fields: HashMap<String, String>,
+    /// Per-field raw list view — for templates that iterate a field
+    /// (`{% for x in foo %}`) or pipe it into a `join*` filter. The
+    /// generated per-kind struct selects between this and `fields`
+    /// based on the template's usage of each identifier. For
+    /// `FieldValue::Multiple` entries this is the per-element
+    /// pre-rendered list; for `FieldValue::Single` / `FieldValue::Text`
+    /// it's a single-element vec (so a list-shaped template slot
+    /// degrades to emitting one value).
+    pub fields_list: HashMap<String, Vec<String>>,
     /// Pre-rendered children joined with the per-node separator.
     pub children: String,
     /// Per-child rendered strings, for `{% for c in children_list %}`.
@@ -137,11 +148,17 @@ pub fn build_template_context<M: GrammarMeta>(
     let parent_kind = &node.type_;
     let mut ctx = TemplateContext::empty();
 
-    // Fields — per-name render + join for Multiple.
+    // Fields — per-name render. `fields` receives the pre-joined
+    // scalar view (Multiple values joined with the parent's separator);
+    // `fields_list` receives the per-element list view so templates that
+    // iterate (`{% for x in foo %}`) or pipe through a `join*` filter
+    // can reach every element.
     if let Some(fields) = &node.fields {
         for (name, value) in fields {
-            let rendered = render_field_value(value, meta, render_dispatch, parent_kind)?;
+            let (rendered, list) =
+                render_field_value(value, meta, render_dispatch, parent_kind)?;
             ctx.fields.insert(name.clone(), rendered);
+            ctx.fields_list.insert(name.clone(), list);
         }
     }
 
@@ -172,22 +189,27 @@ pub fn build_template_context<M: GrammarMeta>(
     Ok(ctx)
 }
 
-/// Render a single `FieldValue` into a string.
+/// Render a single `FieldValue` into both a joined scalar AND a
+/// per-element list view. The per-kind struct's field type selects
+/// between the two at emit time.
 ///
-/// - `Single` → recurse + dispatch, single-string.
-/// - `Multiple` → recurse + dispatch for each, join with the parent's
-///   separator (empty if the grammar didn't register one).
-/// - `Text` → verbatim.
+/// - `Single` → render once. Scalar = the rendered string. List = a
+///   single-element vec containing that same string (so a list-shaped
+///   template slot still emits one value).
+/// - `Multiple` → render each. Scalar = joined with the parent's
+///   separator. List = per-element pre-rendered vec.
+/// - `Text` → verbatim scalar + single-element list.
 fn render_field_value<M: GrammarMeta>(
     value: &FieldValue,
     meta: &M,
     render_dispatch: RenderDispatch,
     parent_kind: &str,
-) -> Result<String, askama::Error> {
+) -> Result<(String, Vec<String>), askama::Error> {
     match value {
         FieldValue::Single(node) => {
             let child_ctx = build_template_context(node, meta, render_dispatch)?;
-            render_dispatch(&node.type_, &child_ctx)
+            let rendered = render_dispatch(&node.type_, &child_ctx)?;
+            Ok((rendered.clone(), vec![rendered]))
         }
         FieldValue::Multiple(nodes) => {
             let mut parts: Vec<String> = Vec::with_capacity(nodes.len());
@@ -196,9 +218,10 @@ fn render_field_value<M: GrammarMeta>(
                 parts.push(render_dispatch(&n.type_, &child_ctx)?);
             }
             let sep = meta.separator_for(parent_kind).unwrap_or("");
-            Ok(parts.join(sep))
+            let joined = parts.join(sep);
+            Ok((joined, parts))
         }
-        FieldValue::Text(s) => Ok(s.clone()),
+        FieldValue::Text(s) => Ok((s.clone(), vec![s.clone()])),
     }
 }
 

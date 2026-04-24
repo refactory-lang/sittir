@@ -22,7 +22,7 @@ import { compileParser } from './transpile/compile-parser.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { writeJinjaTemplates } from './emitters/templates.ts';
 import { emitRenderCrate, type Grammar as RustRenderGrammar } from './emitters/rust-render.ts';
-import { readdirSync, readFileSync, copyFileSync, existsSync, rmSync } from 'node:fs';
+import { readdirSync, readFileSync, existsSync, rmSync } from 'node:fs';
 import type { TemplateFile } from './emitters/template-hash.ts';
 
 interface CodegenConfig {
@@ -264,13 +264,51 @@ if (cliArgs.rustRender) {
 	// directory so askama's build-time `#[template(path = ...)]` can
 	// resolve them (T030). Stale files (no longer in jinjaTemplates) are
 	// removed so regenerations don't accumulate dead templates.
+	//
+	// Template-body transform: rust keywords that can't be raw-
+	// identifier'd (`crate`, `self`, `super`, `Self`) have their struct
+	// field names suffixed with `_` at emit time (see
+	// `rust-render.ts:RUST_NON_RAWABLE_KEYWORDS`). Askama resolves
+	// template variables by the field's raw name, so the template
+	// copy must rename `{{ crate }}` → `{{ crate_ }}` to match.
+	// Applies only to the rust-render copy — the source .jinja under
+	// packages/{lang}/templates/ stays unchanged (TS Nunjucks side
+	// doesn't have the keyword collision).
+	const RUST_UNRAWABLE_KW = ['crate', 'self', 'super', 'Self'] as const;
+	const renameForRustRender = (body: string): string => {
+		let out = body;
+		for (const kw of RUST_UNRAWABLE_KW) {
+			// Match `{{ kw }}` / `{{ kw | filter }}` / `{% if kw ... %}` /
+			// `{% for x in kw %}` — identifier position only.
+			const re = new RegExp(`(\\{\\{-?\\s*|\\{%-?\\s*(?:if|elif)\\s+|\\{%-?\\s*for\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s+in\\s+)${kw}\\b`, 'g');
+			out = out.replace(re, `$1${kw}_`);
+		}
+		return out;
+	};
+	// `{{ foo | isPresent %}` where `foo` is typed as `Vec<String>`
+	// (because elsewhere in the same template it appears in a
+	// list-consuming filter like `| join(",")` or `{% for x in foo %}`)
+	// can't call the scalar `isPresent(&str, _)` — the argument types
+	// disagree. Rewrite to `| isPresentList` (filter signature accepts
+	// `&[String]`) per the shape map emitted from rust-render.ts.
+	const rewriteListIsPresent = (body: string, listFields: Set<string>): string => {
+		if (listFields.size === 0) return body;
+		const alt = Array.from(listFields).map(f => f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+		const re = new RegExp(`(\\b(?:${alt}))\\s*\\|\\s*isPresent\\b`, 'g');
+		return body.replace(re, '$1 | isPresentList');
+	};
 	const srcTemplatesDir = join(dirname(outDir), 'templates');
 	const dstTemplatesDir = `packages/${grammar}/rust-render/templates`;
 	mkdirSync(dstTemplatesDir, { recursive: true });
 	const emittedNames = new Set<string>();
 	for (const [kind] of result.jinjaTemplates.bodies) {
 		const fname = `${kind}.jinja`;
-		copyFileSync(join(srcTemplatesDir, fname), join(dstTemplatesDir, fname));
+		const srcPath = join(srcTemplatesDir, fname);
+		const dstPath = join(dstTemplatesDir, fname);
+		const listFields = emit.listShapedFieldsByKind.get(kind) ?? new Set<string>();
+		let transformed = renameForRustRender(readFileSync(srcPath, 'utf8'));
+		transformed = rewriteListIsPresent(transformed, listFields);
+		writeFile(dstPath, transformed);
 		emittedNames.add(fname);
 	}
 	for (const existing of readdirSync(dstTemplatesDir)) {

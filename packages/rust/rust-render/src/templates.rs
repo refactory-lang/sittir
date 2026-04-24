@@ -25,7 +25,7 @@ pub mod filters {
     //! `joinWithLeading`, `joinWithFlanks`) that the current
     //! jinja emitter references. Aliases are thin wrappers over
     //! `joinby` with preset flank flags.
-    pub use ::sittir_core::filters::{upper, lower, joinby};
+    pub use ::sittir_core::filters::{upper, lower, joinby, isBlank, isPresent, isPresentList};
 
     pub fn joinWithTrailing<S: AsRef<str>>(xs: &[S], _values: &dyn ::askama::Values, sep: &str) -> Result<String, ::askama::Error> {
         ::sittir_core::filters::joinby(xs, sep, false, true)
@@ -41,6 +41,46 @@ pub mod filters {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_array_expression_list.jinja", escape = "none")]
+pub struct ArrayExpressionListTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub attributes: Vec<String>,
+    pub elements: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_array_expression_semi.jinja", escape = "none")]
+pub struct ArrayExpressionSemiTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub attributes: Vec<String>,
+    pub elements: String,
+    pub length: String,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_closure_expression_block.jinja", escape = "none")]
+pub struct ClosureExpressionBlockTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub body: String,
+    pub return_type: String,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_closure_expression_expr.jinja", escape = "none")]
 pub struct ClosureExpressionExprTemplate {
     pub children: Vec<String>,
@@ -50,6 +90,39 @@ pub struct ClosureExpressionExprTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub body: String,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_delim_token_tree_brace.jinja", escape = "none")]
+pub struct DelimTokenTreeBraceTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_delim_token_tree_bracket.jinja", escape = "none")]
+pub struct DelimTokenTreeBracketTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_delim_token_tree_paren.jinja", escape = "none")]
+pub struct DelimTokenTreeParenTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
 }
 
 #[derive(::askama::Template)]
@@ -83,6 +156,19 @@ pub struct FieldIdentifierTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_field_pattern_named.jinja", escape = "none")]
+pub struct FieldPatternNamedTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub name: String,
+    pub pattern: String,
 }
 
 #[derive(::askama::Template)]
@@ -156,6 +242,20 @@ pub struct LetChainTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_line_comment_doc.jinja", escape = "none")]
+pub struct LineCommentDocTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub doc: String,
+    pub inner: String,
+    pub outer: String,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_macro_definition_brace.jinja", escape = "none")]
 pub struct MacroDefinitionBraceTemplate {
     pub children: Vec<String>,
@@ -201,6 +301,18 @@ pub struct MatchArmBlockEndingTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_match_arm_with_comma.jinja", escape = "none")]
+pub struct MatchArmWithCommaTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub value: String,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_mod_item_inline.jinja", escape = "none")]
 pub struct ModItemInlineTemplate {
     pub children: Vec<String>,
@@ -210,6 +322,31 @@ pub struct ModItemInlineTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub body: String,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_or_pattern_binary.jinja", escape = "none")]
+pub struct OrPatternBinaryTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub left: String,
+    pub right: String,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_or_pattern_prefix.jinja", escape = "none")]
+pub struct OrPatternPrefixTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub right: String,
 }
 
 #[derive(::askama::Template)]
@@ -233,6 +370,58 @@ pub struct RangeExpressionBareTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub operator: String,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_range_expression_binary.jinja", escape = "none")]
+pub struct RangeExpressionBinaryTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub end: String,
+    pub operator: String,
+    pub start: String,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_range_expression_postfix.jinja", escape = "none")]
+pub struct RangeExpressionPostfixTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub operator: String,
+    pub start: String,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_range_expression_prefix.jinja", escape = "none")]
+pub struct RangeExpressionPrefixTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub end: String,
+    pub operator: String,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_range_pattern_prefix.jinja", escape = "none")]
+pub struct RangePatternPrefixTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub right: String,
 }
 
 #[derive(::askama::Template)]
@@ -269,6 +458,96 @@ pub struct _StringContentTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_struct_item_brace.jinja", escape = "none")]
+pub struct StructItemBraceTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub body: String,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_struct_item_tuple.jinja", escape = "none")]
+pub struct StructItemTupleTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub body: String,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_token_tree_brace.jinja", escape = "none")]
+pub struct TokenTreeBraceTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_token_tree_bracket.jinja", escape = "none")]
+pub struct TokenTreeBracketTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_token_tree_paren.jinja", escape = "none")]
+pub struct TokenTreeParenTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_token_tree_pattern_brace.jinja", escape = "none")]
+pub struct TokenTreePatternBraceTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_token_tree_pattern_bracket.jinja", escape = "none")]
+pub struct TokenTreePatternBracketTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_token_tree_pattern_paren.jinja", escape = "none")]
+pub struct TokenTreePatternParenTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_type_identifier.jinja", escape = "none")]
 pub struct TypeIdentifierTemplate {
     pub children: Vec<String>,
@@ -277,6 +556,41 @@ pub struct TypeIdentifierTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_visibility_modifier_crate.jinja", escape = "none")]
+pub struct VisibilityModifierCrateTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_visibility_modifier_pub_in_path.jinja", escape = "none")]
+pub struct VisibilityModifierPubInPathTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub r#in: String,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_visibility_modifier_pub.jinja", escape = "none")]
+pub struct VisibilityModifierPubTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub r#pub: String,
 }
 
 #[derive(::askama::Template)]
@@ -888,10 +1202,10 @@ pub struct FunctionModifiersTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#async: String,
-    pub r#const: String,
-    pub default: String,
-    pub r#unsafe: String,
+    pub r#async: Vec<String>,
+    pub r#const: Vec<String>,
+    pub default: Vec<String>,
+    pub r#unsafe: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1027,7 +1341,7 @@ pub struct ImplItemTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub bang_clause: String,
+    pub bang: String,
     pub r#trait: String,
     pub r#type: String,
     pub type_parameters: String,
@@ -1307,7 +1621,7 @@ pub struct OrderedFieldDeclarationListTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#type: String,
+    pub r#type: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1555,7 +1869,7 @@ pub struct ShorthandFieldInitializerTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub attributes: String,
+    pub attributes: Vec<String>,
     pub identifier: String,
 }
 
@@ -1580,7 +1894,7 @@ pub struct SourceFileTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub shebang: String,
-    pub statements: String,
+    pub statements: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1768,8 +2082,8 @@ pub struct TupleExpressionTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub attributes: String,
-    pub elements: String,
+    pub attributes: Vec<String>,
+    pub elements: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2009,7 +2323,6 @@ pub struct VisibilityModifierTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#pub: String,
 }
 
 #[derive(::askama::Template)]
@@ -2071,6 +2384,46 @@ pub fn render_dispatch(
     ctx: &::sittir_core::prepare::TemplateContext,
 ) -> Result<String, ::askama::Error> {
     match kind {
+        "_array_expression_list" => {
+            let t = ArrayExpressionListTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                attributes: ctx.fields_list.get("attributes").cloned().unwrap_or_default(),
+                elements: ctx.fields_list.get("elements").cloned().unwrap_or_default(),
+            };
+            t.render()
+        }
+        "_array_expression_semi" => {
+            let t = ArrayExpressionSemiTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                attributes: ctx.fields_list.get("attributes").cloned().unwrap_or_default(),
+                elements: ctx.fields.get("elements").cloned().unwrap_or_default(),
+                length: ctx.fields.get("length").cloned().unwrap_or_default(),
+            };
+            t.render()
+        }
+        "_closure_expression_block" => {
+            let t = ClosureExpressionBlockTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                return_type: ctx.fields.get("return_type").cloned().unwrap_or_default(),
+            };
+            t.render()
+        }
         "_closure_expression_expr" => {
             let t = ClosureExpressionExprTemplate {
                 children: ctx.children_list.clone(),
@@ -2080,6 +2433,39 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
+            };
+            t.render()
+        }
+        "_delim_token_tree_brace" => {
+            let t = DelimTokenTreeBraceTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render()
+        }
+        "_delim_token_tree_bracket" => {
+            let t = DelimTokenTreeBracketTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render()
+        }
+        "_delim_token_tree_paren" => {
+            let t = DelimTokenTreeParenTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
             };
             t.render()
         }
@@ -2113,6 +2499,19 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
+            };
+            t.render()
+        }
+        "_field_pattern_named" => {
+            let t = FieldPatternNamedTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2186,6 +2585,20 @@ pub fn render_dispatch(
             };
             t.render()
         }
+        "_line_comment_doc" => {
+            let t = LineCommentDocTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                doc: ctx.fields.get("doc").cloned().unwrap_or_default(),
+                inner: ctx.fields.get("inner").cloned().unwrap_or_default(),
+                outer: ctx.fields.get("outer").cloned().unwrap_or_default(),
+            };
+            t.render()
+        }
         "_macro_definition_brace" => {
             let t = MacroDefinitionBraceTemplate {
                 children: ctx.children_list.clone(),
@@ -2231,6 +2644,18 @@ pub fn render_dispatch(
             };
             t.render()
         }
+        "_match_arm_with_comma" => {
+            let t = MatchArmWithCommaTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                value: ctx.fields.get("value").cloned().unwrap_or_default(),
+            };
+            t.render()
+        }
         "_mod_item_inline" => {
             let t = ModItemInlineTemplate {
                 children: ctx.children_list.clone(),
@@ -2240,6 +2665,31 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
+            };
+            t.render()
+        }
+        "_or_pattern_binary" => {
+            let t = OrPatternBinaryTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                left: ctx.fields.get("left").cloned().unwrap_or_default(),
+                right: ctx.fields.get("right").cloned().unwrap_or_default(),
+            };
+            t.render()
+        }
+        "_or_pattern_prefix" => {
+            let t = OrPatternPrefixTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                right: ctx.fields.get("right").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2263,6 +2713,58 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 operator: ctx.fields.get("operator").cloned().unwrap_or_default(),
+            };
+            t.render()
+        }
+        "_range_expression_binary" => {
+            let t = RangeExpressionBinaryTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                end: ctx.fields.get("end").cloned().unwrap_or_default(),
+                operator: ctx.fields.get("operator").cloned().unwrap_or_default(),
+                start: ctx.fields.get("start").cloned().unwrap_or_default(),
+            };
+            t.render()
+        }
+        "_range_expression_postfix" => {
+            let t = RangeExpressionPostfixTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                operator: ctx.fields.get("operator").cloned().unwrap_or_default(),
+                start: ctx.fields.get("start").cloned().unwrap_or_default(),
+            };
+            t.render()
+        }
+        "_range_expression_prefix" => {
+            let t = RangeExpressionPrefixTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                end: ctx.fields.get("end").cloned().unwrap_or_default(),
+                operator: ctx.fields.get("operator").cloned().unwrap_or_default(),
+            };
+            t.render()
+        }
+        "_range_pattern_prefix" => {
+            let t = RangePatternPrefixTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                right: ctx.fields.get("right").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2299,6 +2801,96 @@ pub fn render_dispatch(
             };
             t.render()
         }
+        "_struct_item_brace" => {
+            let t = StructItemBraceTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                body: ctx.fields.get("body").cloned().unwrap_or_default(),
+            };
+            t.render()
+        }
+        "_struct_item_tuple" => {
+            let t = StructItemTupleTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                body: ctx.fields.get("body").cloned().unwrap_or_default(),
+            };
+            t.render()
+        }
+        "_token_tree_brace" => {
+            let t = TokenTreeBraceTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render()
+        }
+        "_token_tree_bracket" => {
+            let t = TokenTreeBracketTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render()
+        }
+        "_token_tree_paren" => {
+            let t = TokenTreeParenTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render()
+        }
+        "_token_tree_pattern_brace" => {
+            let t = TokenTreePatternBraceTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render()
+        }
+        "_token_tree_pattern_bracket" => {
+            let t = TokenTreePatternBracketTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render()
+        }
+        "_token_tree_pattern_paren" => {
+            let t = TokenTreePatternParenTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render()
+        }
         "_type_identifier" => {
             let t = TypeIdentifierTemplate {
                 children: ctx.children_list.clone(),
@@ -2307,6 +2899,41 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
+            };
+            t.render()
+        }
+        "_visibility_modifier_crate" => {
+            let t = VisibilityModifierCrateTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render()
+        }
+        "_visibility_modifier_pub_in_path" => {
+            let t = VisibilityModifierPubInPathTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                r#in: ctx.fields.get("in").cloned().unwrap_or_default(),
+            };
+            t.render()
+        }
+        "_visibility_modifier_pub" => {
+            let t = VisibilityModifierPubTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                r#pub: ctx.fields.get("pub").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2918,10 +3545,10 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#async: ctx.fields.get("async").cloned().unwrap_or_default(),
-                r#const: ctx.fields.get("const").cloned().unwrap_or_default(),
-                default: ctx.fields.get("default").cloned().unwrap_or_default(),
-                r#unsafe: ctx.fields.get("unsafe").cloned().unwrap_or_default(),
+                r#async: ctx.fields_list.get("async").cloned().unwrap_or_default(),
+                r#const: ctx.fields_list.get("const").cloned().unwrap_or_default(),
+                default: ctx.fields_list.get("default").cloned().unwrap_or_default(),
+                r#unsafe: ctx.fields_list.get("unsafe").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3057,7 +3684,7 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                bang_clause: ctx.fields.get("bang_clause").cloned().unwrap_or_default(),
+                bang: ctx.fields.get("bang").cloned().unwrap_or_default(),
                 r#trait: ctx.fields.get("trait").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
@@ -3337,7 +3964,7 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type: ctx.fields_list.get("type").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3585,7 +4212,7 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                attributes: ctx.fields.get("attributes").cloned().unwrap_or_default(),
+                attributes: ctx.fields_list.get("attributes").cloned().unwrap_or_default(),
                 identifier: ctx.fields.get("identifier").cloned().unwrap_or_default(),
             };
             t.render()
@@ -3610,7 +4237,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 shebang: ctx.fields.get("shebang").cloned().unwrap_or_default(),
-                statements: ctx.fields.get("statements").cloned().unwrap_or_default(),
+                statements: ctx.fields_list.get("statements").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3798,8 +4425,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                attributes: ctx.fields.get("attributes").cloned().unwrap_or_default(),
-                elements: ctx.fields.get("elements").cloned().unwrap_or_default(),
+                attributes: ctx.fields_list.get("attributes").cloned().unwrap_or_default(),
+                elements: ctx.fields_list.get("elements").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4039,7 +4666,6 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#pub: ctx.fields.get("pub").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4131,6 +4757,12 @@ impl ::sittir_core::prepare::GrammarMeta for RustGrammarMeta {
             ("closure_expression", "closure_expression__form_expr") => Some("expr"),
             ("closure_expression", "closure_expression_block") => Some("block"),
             ("closure_expression", "closure_expression_expr") => Some("block"),
+            ("delim_token_tree", "delim_token_tree__form_brace") => Some("brace"),
+            ("delim_token_tree", "delim_token_tree__form_bracket") => Some("bracket"),
+            ("delim_token_tree", "delim_token_tree__form_paren") => Some("paren"),
+            ("delim_token_tree", "delim_token_tree_brace") => Some("paren"),
+            ("delim_token_tree", "delim_token_tree_bracket") => Some("paren"),
+            ("delim_token_tree", "delim_token_tree_paren") => Some("paren"),
             ("expression_statement", "expression_statement__form_block_ending") => Some("block_ending"),
             ("expression_statement", "expression_statement__form_with_semi") => Some("with_semi"),
             ("expression_statement", "expression_statement_block_ending") => Some("with_semi"),
@@ -4183,24 +4815,40 @@ impl ::sittir_core::prepare::GrammarMeta for RustGrammarMeta {
             ("range_expression", "range_expression_binary") => Some("binary"),
             ("range_expression", "range_expression_postfix") => Some("binary"),
             ("range_expression", "range_expression_prefix") => Some("binary"),
-            ("range_pattern", "range_pattern__form_left") => Some("left"),
+            ("range_pattern", "range_pattern__form_left_bare") => Some("left_bare"),
+            ("range_pattern", "range_pattern__form_left_with_right") => Some("left_with_right"),
             ("range_pattern", "range_pattern__form_prefix") => Some("prefix"),
-            ("range_pattern", "range_pattern_left") => Some("left"),
-            ("range_pattern", "range_pattern_prefix") => Some("left"),
+            ("range_pattern", "range_pattern_left_bare") => Some("prefix"),
+            ("range_pattern", "range_pattern_left_with_right") => Some("prefix"),
+            ("range_pattern", "range_pattern_prefix") => Some("prefix"),
             ("struct_item", "struct_item__form_brace") => Some("brace"),
             ("struct_item", "struct_item__form_tuple") => Some("tuple"),
             ("struct_item", "struct_item__form_unit") => Some("unit"),
             ("struct_item", "struct_item_brace") => Some("brace"),
             ("struct_item", "struct_item_tuple") => Some("brace"),
             ("struct_item", "struct_item_unit") => Some("brace"),
-            ("visibility_modifier", "visibility_modifier_form0") => Some("form0"),
-            ("visibility_modifier", "visibility_modifier_form1") => Some("form1"),
+            ("token_tree", "token_tree__form_brace") => Some("brace"),
+            ("token_tree", "token_tree__form_bracket") => Some("bracket"),
+            ("token_tree", "token_tree__form_paren") => Some("paren"),
+            ("token_tree", "token_tree_brace") => Some("paren"),
+            ("token_tree", "token_tree_bracket") => Some("paren"),
+            ("token_tree", "token_tree_paren") => Some("paren"),
+            ("token_tree_pattern", "token_tree_pattern__form_brace") => Some("brace"),
+            ("token_tree_pattern", "token_tree_pattern__form_bracket") => Some("bracket"),
+            ("token_tree_pattern", "token_tree_pattern__form_paren") => Some("paren"),
+            ("token_tree_pattern", "token_tree_pattern_brace") => Some("paren"),
+            ("token_tree_pattern", "token_tree_pattern_bracket") => Some("paren"),
+            ("token_tree_pattern", "token_tree_pattern_paren") => Some("paren"),
+            ("visibility_modifier", "visibility_modifier__form_crate") => Some("crate"),
+            ("visibility_modifier", "visibility_modifier__form_pub") => Some("pub"),
+            ("visibility_modifier", "visibility_modifier_crate") => Some("crate"),
+            ("visibility_modifier", "visibility_modifier_pub") => Some("crate"),
             _ => None,
         }
     }
     fn is_list_container(&self, kind: &str) -> bool {
         matches!(kind,
-            "_expression_statement_block_ending" | "_expression_statement_with_semi" | "_field_identifier" | "_function_type_fn_form" | "_let_chain" | "_macro_definition_brace" | "_macro_definition_bracket" | "_macro_definition_paren" | "_pointer_type_mut" | "_reference_expression_raw_mut" | "_reserved_identifier" | "_string_content" | "_type_identifier" | "arguments" | "await_expression" | "base_field_initializer" | "bracketed_type" | "closure_parameters" | "comment" | "declaration_list" | "delim_token_tree" | "else_clause" | "enum_variant_list" | "field_declaration_list" | "field_initializer_list" | "for_lifetimes" | "match_block" | "parameters" | "parenthesized_expression" | "ref_pattern" | "removed_trait_bound" | "return_expression" | "slice_pattern" | "string_literal" | "token_repetition" | "token_repetition_pattern" | "token_tree" | "token_tree_pattern" | "trait_bounds" | "tuple_pattern" | "tuple_type" | "type_arguments" | "type_parameters" | "use_bounds" | "use_list" | "where_clause" | "yield_expression"
+            "_delim_token_tree_brace" | "_delim_token_tree_bracket" | "_delim_token_tree_paren" | "_expression_statement_block_ending" | "_expression_statement_with_semi" | "_field_identifier" | "_function_type_fn_form" | "_let_chain" | "_macro_definition_brace" | "_macro_definition_bracket" | "_macro_definition_paren" | "_pointer_type_mut" | "_reference_expression_raw_mut" | "_reserved_identifier" | "_string_content" | "_token_tree_brace" | "_token_tree_bracket" | "_token_tree_paren" | "_token_tree_pattern_brace" | "_token_tree_pattern_bracket" | "_token_tree_pattern_paren" | "_type_identifier" | "_visibility_modifier_crate" | "arguments" | "await_expression" | "base_field_initializer" | "bracketed_type" | "closure_parameters" | "comment" | "declaration_list" | "else_clause" | "enum_variant_list" | "field_declaration_list" | "field_initializer_list" | "for_lifetimes" | "match_block" | "parameters" | "parenthesized_expression" | "ref_pattern" | "removed_trait_bound" | "return_expression" | "slice_pattern" | "string_literal" | "token_repetition" | "token_repetition_pattern" | "trait_bounds" | "tuple_pattern" | "tuple_type" | "type_arguments" | "type_parameters" | "use_bounds" | "use_list" | "where_clause" | "yield_expression"
         )
     }
 }
