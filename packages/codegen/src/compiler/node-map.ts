@@ -1234,6 +1234,28 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
     }
 
     /**
+     * Render-template short-circuit for text-shape kinds. Branch /
+     * Container / Group all start their `renderTemplate()` with the
+     * same two checks — hidden-external-ref and verbatim-token-stream —
+     * and return `{{ text }}` when either fires. That preamble is one
+     * fact (isTextTemplate) materialised three times; consolidate it
+     * here so each subclass's renderTemplate() can short-circuit via
+     * a single call.
+     *
+     * Returns the `{{ text }}` template when the rule is a text
+     * template, otherwise `undefined` so the caller proceeds to its
+     * structured walk.
+     *
+     * @see isTextTemplate — the underlying classification.
+     */
+    protected textTemplate(externals: ReadonlySet<string> | undefined): { template: string } | undefined {
+        if (this.isTextTemplate(externals)) {
+            return { template: '{{ text }}' }
+        }
+        return undefined
+    }
+
+    /**
      * Factory function name to emit in factories.ts — factoryName with a
      * trailing `_` when the bare name collides with a JS reserved word.
      * Returns `undefined` for hidden nodes.
@@ -1572,16 +1594,12 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
         // tokens (e.g. rust's raw_string_literal, whose `r#"` and `"#`
         // are produced by `_raw_string_literal_start` and
         // `_raw_string_literal_end`) can't be rendered slot-by-slot
-        // because the delimiters never appear as children. Render as
-        // `{{ text }}` — emits the node's raw source span verbatim.
-        if (externals && hasHiddenExternalRef(this.rule, externals)) {
-            return { template: '{{ text }}' }
-        }
-        // Token-stream shape — same reasoning as above for rust's
-        // token_tree / delim_token_tree (verbatim pass-through).
-        if (isVerbatimTokenStream(this.rule)) {
-            return { template: '{{ text }}' }
-        }
+        // because the delimiters never appear as children. Same for
+        // verbatim token-stream rules (rust's token_tree /
+        // delim_token_tree). Both render as `{{ text }}` — emits the
+        // node's raw source span verbatim.
+        const textShape = this.textTemplate(externals)
+        if (textShape) return textShape
         // Template walking stays on the RAW rule — templates need the
         // anonymous delimiters ('(', '{', ';', etc.) to surface as
         // template text. Only derivations use simplifiedRule.
@@ -1832,12 +1850,8 @@ export class AssembledContainer extends AssembledNodeBase<SeqRule | ChoiceRule |
     }
 
     renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp, externals?: ReadonlySet<string>): { template: string } {
-        if (externals && hasHiddenExternalRef(this.rule, externals)) {
-            return { template: '{{ text }}' }
-        }
-        if (isVerbatimTokenStream(this.rule)) {
-            return { template: '{{ text }}' }
-        }
+        const textShape = this.textTemplate(externals)
+        if (textShape) return textShape
         // Template walking stays on RAW rule (needs literals); derivations
         // and separator discovery use simplifiedRule.
         const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules, wordMatcher)
@@ -2223,9 +2237,8 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
     override get structuralChildren(): readonly AssembledChild[] { return this.children }
 
     renderTemplate(rules?: Record<string, Rule>, wordMatcher?: RegExp, externals?: ReadonlySet<string>): { template: string } {
-        if (externals && hasHiddenExternalRef(this.rule, externals)) {
-            return { template: '{{ text }}' }
-        }
+        const textShape = this.textTemplate(externals)
+        if (textShape) return textShape
         // Template walking stays on RAW rule (needs literals); derivations
         // and separator discovery use simplifiedRule.
         const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules, wordMatcher)
