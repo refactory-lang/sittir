@@ -14,7 +14,7 @@
     "print_statement": "config",
     "chevron": "config",
     "assert_statement": "children",
-    "expression_statement": "children",
+    "expression_statement": "config",
     "named_expression": "config",
     "return_statement": "children",
     "delete_statement": "children",
@@ -402,6 +402,12 @@
     ]
   },
   "polymorphVariants": {
+    "expression_statement": {
+      "source": "override",
+      "childKind": {
+        "expression_statement_tuple": "tuple"
+      }
+    },
     "_match_block": {
       "source": "promoted",
       "fields": {

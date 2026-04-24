@@ -248,7 +248,7 @@ function auditDerivationShape(rule: Rule, context: 'fields' | 'children'): void 
         // SITTIR_AUDIT_DUMP=<kind> dumps the rule tree for that kind.
         if (process.env.SITTIR_AUDIT_DUMP === currentAuditKind) {
             console.error(`[audit-dump] ${currentAuditKind} (${key}):`)
-            console.error(JSON.stringify(rule, null, 2).slice(0, 3000))
+            console.error(JSON.stringify(rule, null, 2))
         }
     }
 }
@@ -292,9 +292,12 @@ function classifyTopLevelShape(rule: Rule): string {
         case 'string':
         case 'pattern':
         case 'terminal':
+        case 'indent':
+        case 'dedent':
+        case 'newline':
             return 'canonical'
         case 'choice': {
-            // Top-level choice can be canonical in two shapes:
+            // Top-level choice can be canonical in three shapes:
             //
             //   - **All-symbol choice** — `choice($.a, $.b, $.c)` where
             //     every branch is a bare symbol ref (or wrapped in a
@@ -303,24 +306,25 @@ function classifyTopLevelShape(rule: Rule): string {
             //     kinds — a container. The trivial walk handles this
             //     by treating the choice members as the child slot's
             //     value union.
-            //   - **Left-recursive self-ref** — `choice(seq($.self,
-            //     '&&', …), …)` where at least one branch references
-            //     the rule's own name. Common for operator chains
-            //     (e.g. `_let_chain`). Treated as canonical; the
-            //     trivial walk processes each branch independently.
+            //   - **Token-like choice** — same union shape, but the
+            //     members can include bare string/pattern tokens and
+            //     `repeat1(enum)` runs. No structural branching, just
+            //     alternative terminals.
+            //   - **Left-recursive operator chain** — `choice(seq($.self,
+            //     '&&', …), …)` where every seq branch is a flat list
+            //     of symbol references (no fields, no inner structure).
+            //     Common for operator chains (e.g. `_let_chain`). The
+            //     trivial walk enumerates each branch's symbols as
+            //     alternative child unions.
             //
             // Heterogeneous shapes — seq-with-fields, mixed field
             // names, quote-variant strings — are non-canonical and
             // need either `variant()` adoption (grammar override) or
             // `mergeChoiceBranches` to fire. Flag them for triage.
-            const peelPrec = (m: Rule): Rule => m.type === 'alias'
-                ? peelPrec(m.content)
-                : m
-            const allSymbols = rule.members.every(m => {
-                const core = peelPrec(m)
-                return core.type === 'symbol' || core.type === 'supertype' || core.type === 'enum'
-            })
-            if (allSymbols) return 'canonical'
+            const allTokenLike = rule.members.every(isTokenLikeChoiceMember)
+            if (allTokenLike) return 'canonical'
+            const allFlatSymbolSeq = rule.members.every(isFlatSymbolSeqOrTokenLike)
+            if (allFlatSymbolSeq) return 'canonical'
             return 'top-level-choice-needs-variant-or-merge'
         }
         case 'optional': {
@@ -342,6 +346,79 @@ function classifyTopLevelShape(rule: Rule): string {
             return `other-${rule.type}`
     }
 }
+/**
+ * Test a single `choice` member for being structurally "token-like" — a
+ * bare kind reference (symbol / supertype / enum) or a repeat1 of
+ * strings / enums. Both forms surface at parse time as a SINGLE child
+ * with one typed union, not as a heterogeneous structure the trivial
+ * derive walk would need to branch on.
+ *
+ * @remarks
+ * Peels transparent wrappers (`alias`, `token`) before classifying — an
+ * alias's surface kind lives in its target, and a `token` wrapper marks
+ * a lexeme-level production that behaves like a terminal for derivation
+ * purposes. `repeat1(enum(...))` / `repeat1(choice(string, string,
+ * ...))` captures the `_non_special_token` pattern in tree-sitter
+ * grammars — a run of operator punctuation tokens that tree-sitter
+ * lexes as a single token stream; the derive walker treats this as a
+ * single-value child slot just like a symbol member.
+ */
+function isTokenLikeChoiceMember(m: Rule): boolean {
+    const peel = (r: Rule): Rule =>
+        r.type === 'alias' ? peel(r.content)
+        : r.type === 'token' ? peel(r.content)
+        : r
+    const core = peel(m)
+    if (core.type === 'symbol' || core.type === 'supertype' || core.type === 'enum') return true
+    // Bare `string` / `pattern` members — token-literal alternatives.
+    // `_non_special_token` has a choice containing dozens of bare
+    // keyword strings alongside symbol refs; each contributes a
+    // single-token alternative to the union, not a structural branch.
+    if (core.type === 'string' || core.type === 'pattern') return true
+    // Structural-whitespace tokens (python-style indent/dedent/newline).
+    // These behave as anonymous token separators — they don't surface
+    // as addressable children, so they never contribute structural
+    // branching to a choice arm.
+    if (core.type === 'indent' || core.type === 'dedent' || core.type === 'newline') return true
+    if (core.type === 'terminal') return true
+    // Nested choice of token-like members — simplify should have
+    // flattened this, but when flattening is blocked (e.g. by a
+    // variant wrapper on the inner choice), the nested shape is still
+    // structurally a union of tokens. `_lhs_expression` hits this
+    // with a nested `choice(choice(sym, sym, ...), sym, ...)`.
+    if (core.type === 'choice' && core.members.every(isTokenLikeChoiceMember)) return true
+    if (core.type === 'repeat1' || core.type === 'repeat') {
+        const inner = peel(core.content)
+        if (inner.type === 'enum') return true
+        if (inner.type === 'string' || inner.type === 'pattern') return true
+        if (inner.type === 'symbol' || inner.type === 'supertype') return true
+        if (inner.type === 'choice' && inner.members.every(isTokenLikeChoiceMember)) return true
+    }
+    return false
+}
+
+/**
+ * Test a choice member for being a flat seq of token-like atoms — the
+ * canonical shape for left-recursive operator chains and similar
+ * "scalar list" productions.
+ *
+ * @remarks
+ * `_let_chain` expands to `choice(seq(_let_chain, '&&', let_condition),
+ * ...)` — every branch is a fixed-length seq of symbol/literal
+ * references with no fields and no nested structure. Each branch
+ * contributes a flat alternative to the union; the walker enumerates
+ * each alternative's symbols as child values, which is a canonical
+ * shape even though the raw rule.type is `seq`, not `symbol`. Falls
+ * through to `isTokenLikeChoiceMember` for non-seq members so a mixed
+ * choice `(seq(X, '&&', Y), bareY)` still qualifies.
+ */
+function isFlatSymbolSeqOrTokenLike(m: Rule): boolean {
+    if (m.type === 'seq') {
+        return m.members.every(isTokenLikeChoiceMember)
+    }
+    return isTokenLikeChoiceMember(m)
+}
+
 /** Log accumulated audit counts. Called by codegen entry points. */
 export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
     if (!DERIVE_AUDIT || auditCounts.size === 0) return

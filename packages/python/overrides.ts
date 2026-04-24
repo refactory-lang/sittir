@@ -30,18 +30,34 @@ export default grammar(enrich(base), wire({
         role($._newline, 'newline')
         return prev
     },
+    conflicts: ($, previous) => (previous ?? []).concat([
+        // expression_statement tuple-variant extraction: the bare
+        // `expression` arm and the hoisted `_expression_statement_tuple`
+        // both start with `expression • …`. In the base grammar
+        // tree-sitter's LR(1) table merged the common prefix into a
+        // single state; with the tuple form lifted into its own hidden
+        // rule, tree-sitter needs an explicit GLR fork group to decide
+        // between the bare expression and the tuple form on the `,`
+        // suffix that only the tuple accepts.
+        [$.expression_statement, $._expression_statement_tuple],
+    ]),
     polymorphs: {
         assignment: { '1/0': 'eq', '1/1': 'type', '1/2': 'typed' },
 
-        // expression_statement: deferred — variant adopting creates
-        // `_expression_statement_expr` vs `_expression_statement_tuple`
-        // hidden rules that both match `expression • …` and produce
-        // unresolvable LR conflicts. The base grammar relies on
-        // tree-sitter's merged NFA where the `,` that continues the
-        // tuple form lives on the same state. Splitting the state
-        // requires explicit `conflicts` entries or prec adjustments —
-        // not attempted here. Current shape is walk-correct even if
-        // it trips the derive audit.
+        // expression_statement: bare expression / comma-separated tuple
+        // form / assignment / augmented_assignment / yield. Arms 0, 2,
+        // 3, 4 are bare symbol refs to existing visible kinds — the
+        // classifier treats the all-symbol shape as canonical, so they
+        // need no adoption. Arm 1 is the structural seq (tuple form);
+        // adopting it wraps the seq in an alias so the rule becomes an
+        // all-symbol choice from the walker's perspective. The
+        // `conflicts` entry above tells tree-sitter to fork between
+        // `expression` and `_expression_statement_tuple` when the LR
+        // table sees `expression • …` and needs to decide on the `,`
+        // continuation only the tuple form accepts.
+        expression_statement: {
+            1: 'tuple',
+        },
 
         // with_clause: bare (`a, b, c`) vs parenthesized (`(a, b, c)`).
         // Same with_item content on both arms; paren form wraps with

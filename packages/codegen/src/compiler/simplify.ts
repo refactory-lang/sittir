@@ -34,6 +34,26 @@
 import type { Rule, ChoiceRule, SeqRule, FieldRule, RepeatRule, Repeat1Rule } from './rule.ts'
 
 /** Does this string lex as a "word" under the grammar's `word` rule? */
+/**
+ * Test whether a choice member matches the empty string — the canonical
+ * signal for "this branch contributes nothing" so the enclosing choice
+ * can be simplified to `optional(non-empty-branches)`.
+ *
+ * @remarks
+ * Fires on two shapes:
+ *   - `pattern("")` — what evaluate surfaces for tree-sitter external
+ *     tokens that have no syntactic content. Appears in `block_comment`
+ *     as the `_block_comment_content` placeholder arm.
+ *   - Empty seq — `{type: 'seq', members: []}`. simplifyRule produces
+ *     this sentinel when an optional/bare-string collapses out; when it
+ *     ends up as a choice branch, the same semantics apply.
+ */
+function isEmptyMatchMember(rule: Rule): boolean {
+    if (rule.type === 'pattern' && rule.value === '') return true
+    if (rule.type === 'seq' && rule.members.length === 0) return true
+    return false
+}
+
 function isKeywordShape(value: string, wordMatcher: RegExp | undefined): boolean {
     if (wordMatcher) return wordMatcher.test(value)
     return /^\w+$/.test(value)
@@ -74,6 +94,21 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
             const members = rule.members.map(m =>
                 m.type === 'variant' ? simplifyRule(m.content, wordMatcher, inField) : simplifyRule(m, wordMatcher, inField)
             )
+            // Fold empty-matching members out of the choice and wrap the
+            // remainder in `optional`. Tree-sitter's external-token
+            // placeholder surfaces as `pattern("")`, which matches the
+            // empty string — structurally equivalent to BLANK. Leaving
+            // it as a choice branch makes downstream derivation see a
+            // heterogeneous shape; moving it to `optional` matches the
+            // semantics exactly and keeps the rule canonical.
+            const empty = members.findIndex(isEmptyMatchMember)
+            if (empty >= 0 && members.length > 1) {
+                const nonEmpty = members.filter((_, i) => i !== empty)
+                const inner: Rule = nonEmpty.length === 1
+                    ? nonEmpty[0]!
+                    : { type: 'choice', members: nonEmpty }
+                return { type: 'optional', content: inner }
+            }
             if (members.length === 1) return members[0]!
             return { type: 'choice', members }
         }

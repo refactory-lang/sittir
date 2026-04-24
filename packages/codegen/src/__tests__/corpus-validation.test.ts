@@ -277,6 +277,10 @@ const ALIAS_VARIANT_KINDS: Record<string, Set<string>> = {
         // folds this into modelType=multi (repeat helper), which renders
         // inline at the referrer rather than owning its own template.
         'with_clause_bare',
+        // expression_statement variant adoption: the tuple form is also
+        // a multi-shape (`expression, expression, ...`), same situation
+        // as with_clause_bare.
+        'expression_statement_tuple',
     ]),
     rust: new Set([
         'closure_expression_block', 'closure_expression_expr',

@@ -246,19 +246,21 @@ export function assertStatement(...children: T.Expression[]) {
   };
 }
 
-export function expressionStatement(child?: (T.Expression | T.Assignment | T.AugmentedAssignment | T.Yield)) {
-  const children = child != null ? [child] : [];
+export function expressionStatement(config: ConfigOf<T.ExpressionStatementUFormTuple>) {
+  return expressionStatementUFormTuple(config as Parameters<typeof expressionStatementUFormTuple>[0]);
+}
+export function expressionStatementUFormTuple(config?: Omit<ConfigOf<T.ExpressionStatementUFormTuple>, '$variant'>) {
   return {
     $type: 'expression_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $children: children,
+    $variant: 'tuple' as const,
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.ExpressionStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.ExpressionStatementUFormTupleTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 

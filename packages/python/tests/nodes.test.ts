@@ -113,7 +113,7 @@ describe('assert_statement', () => {
 
 describe('expression_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.expressionStatement();
+    const node = ir.expressionStatement({});
     expect(node.$type).toBe('expression_statement');
     expect(node.$source).toBe('factory');
   });

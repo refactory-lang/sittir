@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   38  (29 applied, 9 held)
+// Rule promotions:   39  (31 applied, 8 held)
 // Repeated shapes:   0  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -55,15 +55,6 @@ export const suggestedTransforms = {
   expression_list: {
       "1/0": variant("comma"),
       "1/1": variant("form_1"),
-  },
-
-  // [held] polymorph — 1 choice position(s), 5 arm(s) total
-  expression_statement: {
-      "0": variant("expression"),
-      "1": variant("form_1"),
-      "2": variant("assignment"),
-      "3": variant("augmented_assignment"),
-      "4": variant("yield"),
   },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
@@ -190,7 +181,8 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "assignment_type", classification: "polymorph", applied: true },
   { kind: "assignment_typed", classification: "polymorph", applied: true },
   { kind: "expression_list", classification: "polymorph", applied: false },
-  { kind: "expression_statement", classification: "polymorph", applied: false },
+  { kind: "expression_statement", classification: "polymorph", applied: true },
+  { kind: "expression_statement_tuple", classification: "polymorph", applied: true },
   { kind: "future_import_statement", classification: "polymorph", applied: false },
   { kind: "import_from_statement", classification: "polymorph", applied: false },
   { kind: "pattern_list", classification: "polymorph", applied: false },

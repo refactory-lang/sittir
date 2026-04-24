@@ -182,9 +182,15 @@ function emitContainerTest(lines: string[], node: AssembledNode, kind: string, k
 function emitPolymorphTest(lines: string[], node: AssembledNode, kind: string, key: string, nodeMap: NodeMap): void {
     if (node.modelType !== 'polymorph') return
 
+    // Single-form polymorphs emit ir.<key> as a direct function (no
+    // `.formName` namespace) — the ir bundleExpr only attaches variant
+    // accessors when forms.length > 1. Generate a single direct test
+    // instead of per-form variant tests.
+    const useDirectCall = node.forms.length <= 1
     lines.push(`describe('${kind}', () => {`)
     for (const form of node.forms) {
-        lines.push(`  it('${form.name} form produces correct type', () => {`)
+        const itLabel = useDirectCall ? 'factory produces correct type' : `${form.name} form produces correct type`
+        lines.push(`  it('${itLabel}', () => {`)
         // Hoisted forms surface the inner child's fields at the top level
         // — use those when building the dummy config; otherwise fall back
         // to the form's own fields (which for polymorphs forms is
@@ -203,7 +209,10 @@ function emitPolymorphTest(lines: string[], node: AssembledNode, kind: string, k
             if (innerChildNonEmpty) configParts.push(`children: [${innerChildNonEmpty}]`)
         }
         const configArg = configParts.length > 0 ? `{ ${configParts.join(', ')} }` : '{}'
-        lines.push(`    const node = ir.${key}.${form.name}(${configArg});`)
+        const callExpr = useDirectCall
+            ? `ir.${key}(${configArg})`
+            : `ir.${key}.${form.name}(${configArg})`
+        lines.push(`    const node = ${callExpr};`)
         lines.push(`    expect(node.$type).toBe('${kind}');`)
     lines.push(`    expect(node.$source).toBe('factory');`)
         lines.push('  });')

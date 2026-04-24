@@ -466,7 +466,6 @@ export interface AssertStatement {
 
 export interface ExpressionStatement {
   readonly $type: 'expression_statement';
-  readonly $children: readonly [Expression | Assignment | AugmentedAssignment | Yield];
 }
 
 export interface NamedExpression {

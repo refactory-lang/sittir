@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 233,
+  "nodeCount": 235,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -38,6 +38,7 @@
     "assignment__form_eq",
     "assignment__form_type",
     "assignment__form_typed",
+    "expression_statement__form_tuple",
     "with_clause__form_bare",
     "with_clause__form_paren"
   ],
@@ -616,6 +617,19 @@
       "factoryName": "dedent",
       "irKey": "dedent",
       "hidden": false
+    },
+    {
+      "kind": "_expression_statement_tuple",
+      "modelType": "multi",
+      "typeName": "ExpressionStatementTuple",
+      "irKey": "expressionStatementTuple",
+      "hidden": true,
+      "nonEmpty": true,
+      "separator": ",",
+      "trailing": true,
+      "elementKinds": [
+        "expression"
+      ]
     },
     {
       "kind": "_expression_within_for_in_clause",
@@ -4242,68 +4256,67 @@
     },
     {
       "kind": "expression_statement",
-      "modelType": "container",
+      "modelType": "polymorph",
       "typeName": "ExpressionStatement",
       "factoryName": "expressionStatement",
       "irKey": "expressionStatement",
       "hidden": false,
+      "source": "override",
+      "polymorphSource": "override",
+      "variantChildKinds": [
+        "expression_statement_tuple"
+      ],
+      "forms": [
+        {
+          "kind": "expression_statement__form_tuple",
+          "name": "tuple",
+          "typeName": "ExpressionStatementUFormTuple",
+          "factoryName": "expressionStatementUFormTuple",
+          "irKey": "expressionStatementUFormTuple",
+          "parentKind": "expression_statement",
+          "fields": [],
+          "children": [
+            {
+              "name": "expression_statement_tuple",
+              "propertyName": "expressionStatementTuple",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_expression_statement_tuple",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "expression_statement__form_tuple",
+      "modelType": "group",
+      "typeName": "ExpressionStatementUFormTuple",
+      "factoryName": "expressionStatementUFormTuple",
+      "irKey": "expressionStatementUFormTuple",
+      "hidden": false,
+      "name": "tuple",
+      "parentKind": "expression_statement",
+      "fields": [],
       "children": [
         {
-          "name": "expression",
-          "propertyName": "expression",
-          "required": false,
+          "name": "expression_statement_tuple",
+          "propertyName": "expressionStatementTuple",
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "assignment",
-          "propertyName": "assignment",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "assignment",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "augmented_assignment",
-          "propertyName": "augmentedAssignment",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "augmented_assignment",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "yield",
-          "propertyName": "yield",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "yield",
+              "multiplicity": "single",
+              "name": "_expression_statement_tuple",
               "unresolved": true
             }
           ]

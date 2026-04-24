@@ -419,13 +419,13 @@ export function assertStatementFrom(...input: readonly (NonNullable<T.AssertStat
   return F.assertStatement(...input);
 }
 
-export function expressionStatementFrom(input?: NonNullable<T.ExpressionStatement.Config['children']>[number] | T.ExpressionStatement) {
-  if (isNodeData(input) && input.$type === 'expression_statement') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.expressionStatement(child);
-  }
-  return F.expressionStatement(input);
+export function expressionStatementFrom(input?: T.ExpressionStatement.Loose): ReturnType<typeof F.expressionStatement> {
+  if (input !== undefined && isNodeData(input)) return input;
+  return F.expressionStatement(input as Parameters<typeof F.expressionStatement>[0]);
+}
+
+export function expressionStatementUFormTupleFrom(input: Omit<ConfigOf<T.ExpressionStatementUFormTuple>, '$variant'>) {
+  return F.expressionStatementUFormTuple(input);
 }
 
 export function namedExpressionFrom(input: T.NamedExpression.Loose): ReturnType<typeof F.namedExpression> {
