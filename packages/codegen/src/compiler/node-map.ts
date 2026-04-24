@@ -228,6 +228,15 @@ export function hasAnyChild(rule: Rule): boolean {
  * which simplify passes still need work.
  */
 const DERIVE_AUDIT = process.env.SITTIR_AUDIT_DERIVE === '1'
+// `SITTIR_AUDIT_DERIVE=strict` upgrades audit from accumulator-mode to
+// fail-closed: any non-canonical shape reaching derivation throws with
+// a diagnostic. Use in CI / scripts that regenerate curated grammars to
+// prevent regressions — the default `SITTIR_AUDIT_DERIVE=1` stays in
+// report mode for backwards compat with tests that consume raw base
+// grammars (no override() / variant() applied).
+const DERIVE_AUDIT_MODE: 'strict' | 'report' | 'off' =
+    process.env.SITTIR_AUDIT_DERIVE === 'strict' ? 'strict'
+    : (process.env.SITTIR_AUDIT_DERIVE === '1' ? 'report' : 'off')
 const auditCounts = new Map<string, number>()
 const auditKindsByShape = new Map<string, string[]>()
 /** Transient — each AssembledNode's constructor sets this before the lazy
@@ -236,9 +245,18 @@ const auditKindsByShape = new Map<string, string[]>()
 let currentAuditKind: string | undefined
 export function setAuditKindContext(kind: string | undefined): void { currentAuditKind = kind }
 function auditDerivationShape(rule: Rule, context: 'fields' | 'children'): void {
-    if (!DERIVE_AUDIT) return
+    if (DERIVE_AUDIT_MODE === 'off') return
     const shape = classifyTopLevelShape(rule)
     if (shape === 'canonical') return
+    if (DERIVE_AUDIT_MODE === 'strict') {
+        const kindLabel = currentAuditKind ?? '(no-kind-context)'
+        throw new Error(
+            `derive: non-canonical shape '${shape}' reached ${context} derivation for '${kindLabel}'. ` +
+            `The Phase-2 walker assumes canonical input; fix the shape upstream (simplify pass, ` +
+            `variant() adoption in overrides.ts, or audit classifier) before regenerating. ` +
+            `Set SITTIR_AUDIT_DERIVE=1 to downgrade this to the accumulator/report mode.`,
+        )
+    }
     const key = `${context}:${shape}`
     auditCounts.set(key, (auditCounts.get(key) ?? 0) + 1)
     if (currentAuditKind !== undefined) {
@@ -435,20 +453,29 @@ export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
 export function deriveFields(rule: Rule): AssembledField[] {
     auditDerivationShape(rule, 'fields')
     const raw = deriveFieldsRaw(rule, 'single')
-    // Deduplicate by field name. If the same name appears multiple times
-    // (e.g. once as single, once as repeat, across choice arms), merge
-    // by combining their `values` arrays.
+    // Merge entries with the same field name. Sources of duplicates:
+    //  - Python commaSep patterns: `seq(field('name', x), repeat(seq(',',
+    //    field('name', x))))` surfaces two entries with the same name
+    //    but different outer multiplicities; merging unions their value
+    //    sets and carries forward the stronger multiplicity.
+    //  - Override-source wrapper fields that descend into a choice and
+    //    collect inner fields (see the `rule.source === 'override'`
+    //    branch in `deriveFieldsRaw`); the outer wrapper and some inner
+    //    branches can share a field name.
+    // Single-source fields skip the clone/merge fast path so the
+    // common case allocates zero extra objects.
+    if (raw.length <= 1) return raw
     const byName = new Map<string, AssembledField>()
     for (const f of raw) {
         const existing = byName.get(f.name)
         if (!existing) {
-            byName.set(f.name, { ...f })
+            byName.set(f.name, f)
             continue
         }
         const mergedAliasSources = (existing.aliasSources || f.aliasSources)
             ? { ...(existing.aliasSources ?? {}), ...(f.aliasSources ?? {}) }
             : undefined
-        const merged: AssembledField = {
+        byName.set(f.name, {
             ...existing,
             values: dedupeValues([...existing.values, ...f.values]),
             aliasSources: mergedAliasSources,
@@ -456,8 +483,7 @@ export function deriveFields(rule: Rule): AssembledField[] {
                 ...existing.projection,
                 kinds: Array.from(new Set([...existing.projection.kinds, ...f.projection.kinds])),
             },
-        }
-        byName.set(f.name, merged)
+        })
     }
     return Array.from(byName.values())
 }
@@ -588,10 +614,42 @@ function deriveFieldsRaw(
         case 'clause':
             return deriveFieldsRaw(rule.content, 'optional')
         case 'variant':
-        case 'group':
+            // Rare — post-simplify most variant wrappers are either
+            // promoted to polymorph forms (variant() adoption) or
+            // stripped. A handful survive in rust's nested-variant
+            // choice arms; unwrap and continue so their inner fields
+            // still surface.
             return deriveFieldsRaw(rule.content, outerMultiplicity)
-        default:
+        case 'symbol':
+        case 'string':
+        case 'pattern':
+        case 'terminal':
+        case 'token':
+        case 'enum':
+        case 'supertype':
+        case 'indent':
+        case 'dedent':
+        case 'newline':
+            // Leaves / references — no fields to extract. Explicit
+            // cases keep the switch exhaustive so a new Rule type
+            // added later surfaces here as a compile error instead
+            // of silently returning no fields.
             return []
+        case 'alias':
+        case 'group':
+        case 'polymorph':
+            // `group` / `alias` are simplify-stripped by the time
+            // derivation sees the rule; `polymorph` has its own
+            // assemble path (classifyNode returns 'polymorph' and
+            // routes into AssembledPolymorph instead of Branch/
+            // Container getters). Reaching any of them here means a
+            // canonicalization gap — throw so the next audit-clean
+            // session investigates.
+            throw new Error(
+                `deriveFieldsRaw: unexpected '${rule.type}' in canonical input — ` +
+                `simplify should have stripped / classified it before derivation. ` +
+                `currentAuditKind=${currentAuditKind ?? '(none)'}`,
+            )
     }
 }
 
@@ -772,6 +830,30 @@ function walkForChildren(
         case 'clause':
             walkForChildren(rule.content, out, 'optional')
             break
+        case 'string':
+        case 'pattern':
+        case 'terminal':
+        case 'token':
+        case 'enum':
+        case 'indent':
+        case 'dedent':
+        case 'newline':
+            // Terminal / token-literal rules — they render as text but
+            // contribute no addressable children. Explicit cases keep
+            // the switch exhaustive so adding a new Rule type surfaces
+            // here as a compile error.
+            break
+        case 'alias':
+        case 'group':
+        case 'polymorph':
+            // Same reasoning as `deriveFieldsRaw` above: these shapes
+            // should have been stripped / classified before derivation.
+            // Reaching them here is a canonicalization gap.
+            throw new Error(
+                `walkForChildren: unexpected '${rule.type}' in canonical input — ` +
+                `simplify should have stripped / classified it before derivation. ` +
+                `currentAuditKind=${currentAuditKind ?? '(none)'}`,
+            )
     }
 }
 
