@@ -143,7 +143,7 @@ description: "Task list for feature 012 — Rust Port of @sittir/core"
 ### Benchmarks (per SC-003 + research R9)
 
 - [X] T058 [P] Micro-benchmark at `rust/crates/sittir-core/benches/render.rs` using `criterion` — measures per-kind render time on synthetic NodeData across the largest-surface-area kinds per grammar. Baseline for intra-Rust regression detection.
-- [ ] T059 [P] Macro-benchmark script at `scripts/bench-codemod.sh` that runs a fixed codemod against a fixed corpus twice (once `SITTIR_BACKEND=native`, once `=typescript`) and reports wall-clock delta. Exit 0 only if native is strictly lower (SC-003 automation).
+- [X] T059 [P] Macro-benchmark script at `scripts/bench-codemod.sh` that runs a fixed codemod against a fixed corpus twice (once `SITTIR_BACKEND=native`, once `=typescript`) and reports wall-clock delta. Exit 0 only if native is strictly lower (SC-003 automation).
 
 ### Spec success-criteria verification gates
 
