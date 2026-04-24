@@ -36,6 +36,9 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.6.0",
     "@changesets/cli": "^2.30.0",
+    "@sittir/rust": "workspace:*",
+    "@sittir/typescript": "workspace:*",
+    "@sittir/python": "workspace:*",
     "@types/node": "^25.6.0",
     "@napi-rs/cli": "^3.0.0",
     "@typescript/native-preview": "7.0.0-dev.20260417.1",
