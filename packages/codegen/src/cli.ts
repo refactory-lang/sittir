@@ -285,17 +285,30 @@ if (cliArgs.rustRender) {
 		}
 		return out;
 	};
-	// `{{ foo | isPresent %}` where `foo` is typed as `Vec<String>`
-	// (because elsewhere in the same template it appears in a
-	// list-consuming filter like `| join(",")` or `{% for x in foo %}`)
-	// can't call the scalar `isPresent(&str, _)` — the argument types
-	// disagree. Rewrite to `| isPresentList` (filter signature accepts
-	// `&[String]`) per the shape map emitted from rust-render.ts.
-	const rewriteListIsPresent = (body: string, listFields: Set<string>): string => {
+	// Each user field is emitted as BOTH scalar (`foo: String`, the
+	// pre-joined form) and list (`foo_list: Vec<String>`, per-element).
+	// Rewrite list-consuming references in the rust-render template
+	// copy so they target `foo_list` — list-consumers are:
+	//   - `{{ foo | join(...) }}` / `| joinWithTrailing(...)` / etc.
+	//   - `{% for x in foo %}`
+	// All other references (`{{ foo }}`, `{% if foo | isPresent %}`)
+	// stay on the scalar — empty lists render as empty joined strings
+	// which read as "not present" via `isPresent`, so no separate list
+	// filter is needed.
+	const LIST_FILTERS = ['join', 'joinWithTrailing', 'joinWithLeading', 'joinWithFlanks'];
+	const rewriteListUsage = (body: string, listFields: Set<string>): string => {
 		if (listFields.size === 0) return body;
 		const alt = Array.from(listFields).map(f => f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
-		const re = new RegExp(`(\\b(?:${alt}))\\s*\\|\\s*isPresent\\b`, 'g');
-		return body.replace(re, '$1 | isPresentList');
+		// `{{ foo | join(...) }}` → `{{ foo_list | join(...) }}`
+		const filterRe = new RegExp(`(\\{\\{-?\\s*)(?:${alt})(\\s*\\|\\s*(?:${LIST_FILTERS.join('|')})\\b)`, 'g');
+		let out = body.replace(filterRe, (_m, p1, p2) => {
+			const fname = _m.slice(p1.length).match(new RegExp(`^(${alt})`))![1]!;
+			return `${p1}${fname}_list${p2}`;
+		});
+		// `{% for x in foo %}` → `{% for x in foo_list %}`
+		const forRe = new RegExp(`(\\{%-?\\s*for\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s+in\\s+)(${alt})\\b`, 'g');
+		out = out.replace(forRe, `$1$2_list`);
+		return out;
 	};
 	const srcTemplatesDir = join(dirname(outDir), 'templates');
 	const dstTemplatesDir = `packages/${grammar}/rust-render/templates`;
@@ -307,7 +320,7 @@ if (cliArgs.rustRender) {
 		const dstPath = join(dstTemplatesDir, fname);
 		const listFields = emit.listShapedFieldsByKind.get(kind) ?? new Set<string>();
 		let transformed = renameForRustRender(readFileSync(srcPath, 'utf8'));
-		transformed = rewriteListIsPresent(transformed, listFields);
+		transformed = rewriteListUsage(transformed, listFields);
 		writeFile(dstPath, transformed);
 		emittedNames.add(fname);
 	}

@@ -316,8 +316,18 @@ function renderStructDefs(structs: EmittedStruct[]): string {
 		lines.push(`    pub text: String,`)
 		lines.push(`    pub trailing_sep: bool,`)
 		lines.push(`    pub leading_sep: bool,`)
+		// Each user-declared field always emits BOTH a scalar and a
+		// list view (mirrors the shared `children` + `children_list`
+		// pattern). Templates that interpolate / check presence use
+		// the scalar (pre-joined string); templates that iterate or
+		// pipe through a `join*` filter use the list. The per-field
+		// `_list` reference is synthesized at template-copy time (see
+		// `cli.ts`). Empty lists render as empty scalars and read as
+		// "not present" via `| isPresent`, so no separate filter is
+		// needed — we never permit null arrays, only empty ones.
 		for (const f of s.fields) {
-			lines.push(`    pub ${rustFieldIdent(f.name)}: ${rustFieldType(f.shape)},`)
+			lines.push(`    pub ${rustFieldIdent(f.name)}: String,`)
+			lines.push(`    pub ${rustFieldIdent(f.name)}_list: Vec<String>,`)
 		}
 		lines.push(`}`)
 		lines.push('')
@@ -347,14 +357,11 @@ function renderDispatchFn(structs: EmittedStruct[]): string {
 		lines.push(`                trailing_sep: ctx.trailing_sep,`)
 		lines.push(`                leading_sep: ctx.leading_sep,`)
 		for (const f of s.fields) {
-			// Scalar → ctx.fields (String). List → ctx.fields_list (Vec<String>).
-			// Both default to empty so optional fields don't panic on absence
-			// (`{% if foo %}` / `{{ foo | join(",") }}` both degrade cleanly).
-			if (f.shape === 'list') {
-				lines.push(`                ${rustFieldIdent(f.name)}: ctx.fields_list.get(${JSON.stringify(f.name)}).cloned().unwrap_or_default(),`)
-			} else {
-				lines.push(`                ${rustFieldIdent(f.name)}: ctx.fields.get(${JSON.stringify(f.name)}).cloned().unwrap_or_default(),`)
-			}
+			// Dual-view: populate both scalar (joined) and list (per-
+			// element) forms from TemplateContext. Both default to
+			// empty so optional fields don't panic on absence.
+			lines.push(`                ${rustFieldIdent(f.name)}: ctx.fields.get(${JSON.stringify(f.name)}).cloned().unwrap_or_default(),`)
+			lines.push(`                ${rustFieldIdent(f.name)}_list: ctx.fields_list.get(${JSON.stringify(f.name)}).cloned().unwrap_or_default(),`)
 		}
 		lines.push(`            };`)
 		lines.push(`            t.render()`)
@@ -568,7 +575,7 @@ export function emitRenderCrate(
 		'    //! `joinWithLeading`, `joinWithFlanks`) that the current',
 		'    //! jinja emitter references. Aliases are thin wrappers over',
 		'    //! `joinby` with preset flank flags.',
-		'    pub use ::sittir_core::filters::{upper, lower, joinby, isBlank, isPresent, isPresentList};',
+		'    pub use ::sittir_core::filters::{upper, lower, joinby, isBlank, isPresent};',
 		'',
 		'    pub fn joinWithTrailing<S: AsRef<str>>(xs: &[S], _values: &dyn ::askama::Values, sep: &str) -> Result<String, ::askama::Error> {',
 		'        ::sittir_core::filters::joinby(xs, sep, false, true)',

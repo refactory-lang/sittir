@@ -25,7 +25,7 @@ pub mod filters {
     //! `joinWithLeading`, `joinWithFlanks`) that the current
     //! jinja emitter references. Aliases are thin wrappers over
     //! `joinby` with preset flank flags.
-    pub use ::sittir_core::filters::{upper, lower, joinby, isBlank, isPresent, isPresentList};
+    pub use ::sittir_core::filters::{upper, lower, joinby, isBlank, isPresent};
 
     pub fn joinWithTrailing<S: AsRef<str>>(xs: &[S], _values: &dyn ::askama::Values, sep: &str) -> Result<String, ::askama::Error> {
         ::sittir_core::filters::joinby(xs, sep, false, true)
@@ -49,8 +49,10 @@ pub struct ArrayExpressionListTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub attributes: Vec<String>,
-    pub elements: Vec<String>,
+    pub attributes: String,
+    pub attributes_list: Vec<String>,
+    pub elements: String,
+    pub elements_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -62,9 +64,12 @@ pub struct ArrayExpressionSemiTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub attributes: Vec<String>,
+    pub attributes: String,
+    pub attributes_list: Vec<String>,
     pub elements: String,
+    pub elements_list: Vec<String>,
     pub length: String,
+    pub length_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -77,7 +82,9 @@ pub struct ClosureExpressionBlockTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub body: String,
+    pub body_list: Vec<String>,
     pub return_type: String,
+    pub return_type_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -90,6 +97,7 @@ pub struct ClosureExpressionExprTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub body: String,
+    pub body_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -168,7 +176,9 @@ pub struct FieldPatternNamedTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub name: String,
+    pub name_list: Vec<String>,
     pub pattern: String,
+    pub pattern_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -181,6 +191,7 @@ pub struct FieldPatternShorthandTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub name: String,
+    pub name_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -193,6 +204,7 @@ pub struct ForeignModItemBodyTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub body: String,
+    pub body_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -216,6 +228,7 @@ pub struct FunctionTypeTraitFormTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub r#trait: String,
+    pub r#trait_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -228,6 +241,7 @@ pub struct ImplItemBodyTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub body: String,
+    pub body_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -251,8 +265,11 @@ pub struct LineCommentDocTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub doc: String,
+    pub doc_list: Vec<String>,
     pub inner: String,
+    pub inner_list: Vec<String>,
     pub outer: String,
+    pub outer_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -298,6 +315,7 @@ pub struct MatchArmBlockEndingTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub value: String,
+    pub value_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -310,6 +328,7 @@ pub struct MatchArmWithCommaTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub value: String,
+    pub value_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -322,6 +341,7 @@ pub struct ModItemInlineTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub body: String,
+    pub body_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -334,7 +354,9 @@ pub struct OrPatternBinaryTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub left: String,
+    pub left_list: Vec<String>,
     pub right: String,
+    pub right_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -347,6 +369,7 @@ pub struct OrPatternPrefixTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub right: String,
+    pub right_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -370,6 +393,7 @@ pub struct RangeExpressionBareTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub operator: String,
+    pub operator_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -382,8 +406,11 @@ pub struct RangeExpressionBinaryTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub end: String,
+    pub end_list: Vec<String>,
     pub operator: String,
+    pub operator_list: Vec<String>,
     pub start: String,
+    pub start_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -396,7 +423,9 @@ pub struct RangeExpressionPostfixTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub operator: String,
+    pub operator_list: Vec<String>,
     pub start: String,
+    pub start_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -409,7 +438,9 @@ pub struct RangeExpressionPrefixTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub end: String,
+    pub end_list: Vec<String>,
     pub operator: String,
+    pub operator_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -422,6 +453,7 @@ pub struct RangePatternPrefixTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub right: String,
+    pub right_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -467,6 +499,7 @@ pub struct StructItemBraceTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub body: String,
+    pub body_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -479,6 +512,7 @@ pub struct StructItemTupleTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub body: String,
+    pub body_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -579,6 +613,7 @@ pub struct VisibilityModifierPubInPathTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub r#in: String,
+    pub r#in_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -591,6 +626,7 @@ pub struct VisibilityModifierPubTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub r#pub: String,
+    pub r#pub_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -603,7 +639,9 @@ pub struct AbstractTypeTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub r#trait: String,
+    pub r#trait_list: Vec<String>,
     pub type_parameters: String,
+    pub type_parameters_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -638,7 +676,9 @@ pub struct ArrayTypeTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub element: String,
+    pub element_list: Vec<String>,
     pub length: String,
+    pub length_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -651,7 +691,9 @@ pub struct AssignmentExpressionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub left: String,
+    pub left_list: Vec<String>,
     pub right: String,
+    pub right_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -664,9 +706,13 @@ pub struct AssociatedTypeTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub bounds: String,
+    pub bounds_list: Vec<String>,
     pub name: String,
+    pub name_list: Vec<String>,
     pub type_parameters: String,
+    pub type_parameters_list: Vec<String>,
     pub where_clause: String,
+    pub where_clause_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -679,7 +725,9 @@ pub struct AsyncBlockTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub block: String,
+    pub block_list: Vec<String>,
     pub r#move: String,
+    pub r#move_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -692,6 +740,7 @@ pub struct AttributeItemTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub attribute: String,
+    pub attribute_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -704,7 +753,9 @@ pub struct AttributeTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub arguments: String,
+    pub arguments_list: Vec<String>,
     pub value: String,
+    pub value_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -739,8 +790,11 @@ pub struct BinaryExpressionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub left: String,
+    pub left_list: Vec<String>,
     pub operator: String,
+    pub operator_list: Vec<String>,
     pub right: String,
+    pub right_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -753,8 +807,11 @@ pub struct BlockCommentTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub doc: String,
+    pub doc_list: Vec<String>,
     pub inner: String,
+    pub inner_list: Vec<String>,
     pub outer: String,
+    pub outer_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -767,6 +824,7 @@ pub struct BlockTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub label: String,
+    pub label_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -779,7 +837,9 @@ pub struct BoundedTypeTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub left: String,
+    pub left_list: Vec<String>,
     pub right: String,
+    pub right_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -803,7 +863,9 @@ pub struct BreakExpressionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub expression: String,
+    pub expression_list: Vec<String>,
     pub label: String,
+    pub label_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -816,7 +878,9 @@ pub struct CallExpressionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub arguments: String,
+    pub arguments_list: Vec<String>,
     pub function: String,
+    pub function_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -829,7 +893,9 @@ pub struct CapturedPatternTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub identifier: String,
+    pub identifier_list: Vec<String>,
     pub pattern: String,
+    pub pattern_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -842,9 +908,13 @@ pub struct ClosureExpressionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub r#async: String,
+    pub r#async_list: Vec<String>,
     pub r#move: String,
+    pub r#move_list: Vec<String>,
     pub parameters: String,
+    pub parameters_list: Vec<String>,
     pub r#static: String,
+    pub r#static_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -879,8 +949,11 @@ pub struct CompoundAssignmentExprTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub left: String,
+    pub left_list: Vec<String>,
     pub operator: String,
+    pub operator_list: Vec<String>,
     pub right: String,
+    pub right_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -893,6 +966,7 @@ pub struct ConstBlockTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub body: String,
+    pub body_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -905,9 +979,13 @@ pub struct ConstItemTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub name: String,
+    pub name_list: Vec<String>,
     pub r#type: String,
+    pub r#type_list: Vec<String>,
     pub value: String,
+    pub value_list: Vec<String>,
     pub visibility_modifier: String,
+    pub visibility_modifier_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -920,8 +998,11 @@ pub struct ConstParameterTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub name: String,
+    pub name_list: Vec<String>,
     pub r#type: String,
+    pub r#type_list: Vec<String>,
     pub value: String,
+    pub value_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -934,6 +1015,7 @@ pub struct ContinueExpressionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub label: String,
+    pub label_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -968,6 +1050,7 @@ pub struct DynamicTypeTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub r#trait: String,
+    pub r#trait_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -991,10 +1074,15 @@ pub struct EnumItemTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub body: String,
+    pub body_list: Vec<String>,
     pub name: String,
+    pub name_list: Vec<String>,
     pub type_parameters: String,
+    pub type_parameters_list: Vec<String>,
     pub visibility_modifier: String,
+    pub visibility_modifier_list: Vec<String>,
     pub where_clause: String,
+    pub where_clause_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1018,9 +1106,13 @@ pub struct EnumVariantTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub body: String,
+    pub body_list: Vec<String>,
     pub name: String,
+    pub name_list: Vec<String>,
     pub value: String,
+    pub value_list: Vec<String>,
     pub visibility_modifier: String,
+    pub visibility_modifier_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1044,9 +1136,13 @@ pub struct ExternCrateDeclarationTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub alias: String,
+    pub alias_list: Vec<String>,
     pub crate_: String,
+    pub crate__list: Vec<String>,
     pub name: String,
+    pub name_list: Vec<String>,
     pub visibility_modifier: String,
+    pub visibility_modifier_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1059,6 +1155,7 @@ pub struct ExternModifierTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub string_literal: String,
+    pub string_literal_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1082,8 +1179,11 @@ pub struct FieldDeclarationTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub name: String,
+    pub name_list: Vec<String>,
     pub r#type: String,
+    pub r#type_list: Vec<String>,
     pub visibility_modifier: String,
+    pub visibility_modifier_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1096,7 +1196,9 @@ pub struct FieldExpressionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub field: String,
+    pub field_list: Vec<String>,
     pub value: String,
+    pub value_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1120,7 +1222,9 @@ pub struct FieldInitializerTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub field: String,
+    pub field_list: Vec<String>,
     pub value: String,
+    pub value_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1133,7 +1237,9 @@ pub struct FieldPatternTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub mutable_specifier: String,
+    pub mutable_specifier_list: Vec<String>,
     pub r#ref: String,
+    pub r#ref_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1146,9 +1252,13 @@ pub struct ForExpressionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub body: String,
+    pub body_list: Vec<String>,
     pub label: String,
+    pub label_list: Vec<String>,
     pub pattern: String,
+    pub pattern_list: Vec<String>,
     pub value: String,
+    pub value_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1172,6 +1282,7 @@ pub struct ForeignModItemTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub extern_modifier: String,
+    pub extern_modifier_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1184,13 +1295,21 @@ pub struct FunctionItemTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub body: String,
+    pub body_list: Vec<String>,
     pub function_modifiers: String,
+    pub function_modifiers_list: Vec<String>,
     pub name: String,
+    pub name_list: Vec<String>,
     pub parameters: String,
+    pub parameters_list: Vec<String>,
     pub return_type: String,
+    pub return_type_list: Vec<String>,
     pub type_parameters: String,
+    pub type_parameters_list: Vec<String>,
     pub visibility_modifier: String,
+    pub visibility_modifier_list: Vec<String>,
     pub where_clause: String,
+    pub where_clause_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1202,10 +1321,14 @@ pub struct FunctionModifiersTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#async: Vec<String>,
-    pub r#const: Vec<String>,
-    pub default: Vec<String>,
-    pub r#unsafe: Vec<String>,
+    pub r#async: String,
+    pub r#async_list: Vec<String>,
+    pub r#const: String,
+    pub r#const_list: Vec<String>,
+    pub default: String,
+    pub default_list: Vec<String>,
+    pub r#unsafe: String,
+    pub r#unsafe_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1218,12 +1341,19 @@ pub struct FunctionSignatureItemTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub function_modifiers: String,
+    pub function_modifiers_list: Vec<String>,
     pub name: String,
+    pub name_list: Vec<String>,
     pub parameters: String,
+    pub parameters_list: Vec<String>,
     pub return_type: String,
+    pub return_type_list: Vec<String>,
     pub type_parameters: String,
+    pub type_parameters_list: Vec<String>,
     pub visibility_modifier: String,
+    pub visibility_modifier_list: Vec<String>,
     pub where_clause: String,
+    pub where_clause_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1236,8 +1366,11 @@ pub struct FunctionTypeTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub for_lifetimes: String,
+    pub for_lifetimes_list: Vec<String>,
     pub parameters: String,
+    pub parameters_list: Vec<String>,
     pub return_type: String,
+    pub return_type_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1250,7 +1383,9 @@ pub struct GenBlockTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub block: String,
+    pub block_list: Vec<String>,
     pub r#move: String,
+    pub r#move_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1263,7 +1398,9 @@ pub struct GenericFunctionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub function: String,
+    pub function_list: Vec<String>,
     pub type_arguments: String,
+    pub type_arguments_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1276,6 +1413,7 @@ pub struct GenericPatternTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub type_arguments: String,
+    pub type_arguments_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1288,8 +1426,11 @@ pub struct GenericTypeWithTurbofishTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub turbofish: String,
+    pub turbofish_list: Vec<String>,
     pub r#type: String,
+    pub r#type_list: Vec<String>,
     pub type_arguments: String,
+    pub type_arguments_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1302,7 +1443,9 @@ pub struct GenericTypeTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub r#type: String,
+    pub r#type_list: Vec<String>,
     pub type_arguments: String,
+    pub type_arguments_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1315,7 +1458,9 @@ pub struct HigherRankedTraitBoundTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub r#type: String,
+    pub r#type_list: Vec<String>,
     pub type_parameters: String,
+    pub type_parameters_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1328,8 +1473,11 @@ pub struct IfExpressionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub alternative: String,
+    pub alternative_list: Vec<String>,
     pub condition: String,
+    pub condition_list: Vec<String>,
     pub consequence: String,
+    pub consequence_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1342,11 +1490,17 @@ pub struct ImplItemTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub bang: String,
+    pub bang_list: Vec<String>,
     pub r#trait: String,
+    pub r#trait_list: Vec<String>,
     pub r#type: String,
+    pub r#type_list: Vec<String>,
     pub type_parameters: String,
+    pub type_parameters_list: Vec<String>,
     pub r#unsafe: String,
+    pub r#unsafe_list: Vec<String>,
     pub where_clause: String,
+    pub where_clause_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1359,7 +1513,9 @@ pub struct IndexExpressionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub index: String,
+    pub index_list: Vec<String>,
     pub object: String,
+    pub object_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1372,6 +1528,7 @@ pub struct InnerAttributeItemTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub attribute: String,
+    pub attribute_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1384,6 +1541,7 @@ pub struct LabelTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub identifier: String,
+    pub identifier_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1396,7 +1554,9 @@ pub struct LastMatchArmTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub pattern: String,
+    pub pattern_list: Vec<String>,
     pub value: String,
+    pub value_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1409,7 +1569,9 @@ pub struct LetConditionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub pattern: String,
+    pub pattern_list: Vec<String>,
     pub value: String,
+    pub value_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1422,10 +1584,15 @@ pub struct LetDeclarationTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub alternative: String,
+    pub alternative_list: Vec<String>,
     pub mutable_specifier: String,
+    pub mutable_specifier_list: Vec<String>,
     pub pattern: String,
+    pub pattern_list: Vec<String>,
     pub r#type: String,
+    pub r#type_list: Vec<String>,
     pub value: String,
+    pub value_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1438,7 +1605,9 @@ pub struct LifetimeParameterTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub bounds: String,
+    pub bounds_list: Vec<String>,
     pub name: String,
+    pub name_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1451,6 +1620,7 @@ pub struct LifetimeTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub identifier: String,
+    pub identifier_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1474,7 +1644,9 @@ pub struct LoopExpressionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub body: String,
+    pub body_list: Vec<String>,
     pub label: String,
+    pub label_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1487,6 +1659,7 @@ pub struct MacroDefinitionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub name: String,
+    pub name_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1499,7 +1672,9 @@ pub struct MacroInvocationTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub r#macro: String,
+    pub r#macro_list: Vec<String>,
     pub token_tree: String,
+    pub token_tree_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1512,7 +1687,9 @@ pub struct MacroRuleTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub left: String,
+    pub left_list: Vec<String>,
     pub right: String,
+    pub right_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1525,6 +1702,7 @@ pub struct MatchArmTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub pattern: String,
+    pub pattern_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1548,7 +1726,9 @@ pub struct MatchExpressionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub body: String,
+    pub body_list: Vec<String>,
     pub value: String,
+    pub value_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1561,6 +1741,7 @@ pub struct MatchPatternTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub condition: String,
+    pub condition_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1573,7 +1754,9 @@ pub struct ModItemTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub name: String,
+    pub name_list: Vec<String>,
     pub visibility_modifier: String,
+    pub visibility_modifier_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1586,7 +1769,9 @@ pub struct MutPatternTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub mutable_specifier: String,
+    pub mutable_specifier_list: Vec<String>,
     pub pattern: String,
+    pub pattern_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1599,6 +1784,7 @@ pub struct NegativeLiteralTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub value: String,
+    pub value_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1621,7 +1807,8 @@ pub struct OrderedFieldDeclarationListTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#type: Vec<String>,
+    pub r#type: String,
+    pub r#type_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1634,8 +1821,11 @@ pub struct ParameterTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub mutable_specifier: String,
+    pub mutable_specifier_list: Vec<String>,
     pub pattern: String,
+    pub pattern_list: Vec<String>,
     pub r#type: String,
+    pub r#type_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1670,6 +1860,7 @@ pub struct PointerTypeTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub r#type: String,
+    pub r#type_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1682,7 +1873,9 @@ pub struct QualifiedTypeTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub alias: String,
+    pub alias_list: Vec<String>,
     pub r#type: String,
+    pub r#type_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1717,8 +1910,11 @@ pub struct RawStringLiteralTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub raw_string_literal_end: String,
+    pub raw_string_literal_end_list: Vec<String>,
     pub raw_string_literal_start: String,
+    pub raw_string_literal_start_list: Vec<String>,
     pub string_content: String,
+    pub string_content_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1742,6 +1938,7 @@ pub struct ReferenceExpressionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub value: String,
+    pub value_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1754,7 +1951,9 @@ pub struct ReferencePatternTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub mutable_specifier: String,
+    pub mutable_specifier_list: Vec<String>,
     pub pattern: String,
+    pub pattern_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1767,8 +1966,11 @@ pub struct ReferenceTypeTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub lifetime: String,
+    pub lifetime_list: Vec<String>,
     pub mutable_specifier: String,
+    pub mutable_specifier_list: Vec<String>,
     pub r#type: String,
+    pub r#type_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1803,7 +2005,9 @@ pub struct ScopedIdentifierTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub name: String,
+    pub name_list: Vec<String>,
     pub path: String,
+    pub path_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1816,7 +2020,9 @@ pub struct ScopedTypeIdentifierInExpressionPositionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub name: String,
+    pub name_list: Vec<String>,
     pub path: String,
+    pub path_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1829,7 +2035,9 @@ pub struct ScopedTypeIdentifierTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub name: String,
+    pub name_list: Vec<String>,
     pub path: String,
+    pub path_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1842,7 +2050,9 @@ pub struct ScopedUseListTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub list: String,
+    pub list_list: Vec<String>,
     pub path: String,
+    pub path_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1855,9 +2065,13 @@ pub struct SelfParameterTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub lifetime: String,
+    pub lifetime_list: Vec<String>,
     pub lifetime_name: String,
+    pub lifetime_name_list: Vec<String>,
     pub mutable_specifier: String,
+    pub mutable_specifier_list: Vec<String>,
     pub self_: String,
+    pub self__list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1869,8 +2083,10 @@ pub struct ShorthandFieldInitializerTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub attributes: Vec<String>,
+    pub attributes: String,
+    pub attributes_list: Vec<String>,
     pub identifier: String,
+    pub identifier_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1894,7 +2110,9 @@ pub struct SourceFileTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub shebang: String,
-    pub statements: Vec<String>,
+    pub shebang_list: Vec<String>,
+    pub statements: String,
+    pub statements_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1907,10 +2125,15 @@ pub struct StaticItemTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub mutable_specifier: String,
+    pub mutable_specifier_list: Vec<String>,
     pub name: String,
+    pub name_list: Vec<String>,
     pub r#type: String,
+    pub r#type_list: Vec<String>,
     pub value: String,
+    pub value_list: Vec<String>,
     pub visibility_modifier: String,
+    pub visibility_modifier_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1934,7 +2157,9 @@ pub struct StructExpressionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub body: String,
+    pub body_list: Vec<String>,
     pub name: String,
+    pub name_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1947,8 +2172,11 @@ pub struct StructItemTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub name: String,
+    pub name_list: Vec<String>,
     pub type_parameters: String,
+    pub type_parameters_list: Vec<String>,
     pub visibility_modifier: String,
+    pub visibility_modifier_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1961,6 +2189,7 @@ pub struct StructPatternTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub r#type: String,
+    pub r#type_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1973,7 +2202,9 @@ pub struct TokenBindingPatternTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub name: String,
+    pub name_list: Vec<String>,
     pub r#type: String,
+    pub r#type_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2041,12 +2272,19 @@ pub struct TraitItemTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub body: String,
+    pub body_list: Vec<String>,
     pub bounds: String,
+    pub bounds_list: Vec<String>,
     pub name: String,
+    pub name_list: Vec<String>,
     pub type_parameters: String,
+    pub type_parameters_list: Vec<String>,
     pub r#unsafe: String,
+    pub r#unsafe_list: Vec<String>,
     pub visibility_modifier: String,
+    pub visibility_modifier_list: Vec<String>,
     pub where_clause: String,
+    pub where_clause_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2059,6 +2297,7 @@ pub struct TryBlockTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub block: String,
+    pub block_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2071,6 +2310,7 @@ pub struct TryExpressionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub value: String,
+    pub value_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2082,8 +2322,10 @@ pub struct TupleExpressionTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub attributes: Vec<String>,
-    pub elements: Vec<String>,
+    pub attributes: String,
+    pub attributes_list: Vec<String>,
+    pub elements: String,
+    pub elements_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2107,6 +2349,7 @@ pub struct TupleStructPatternTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub r#type: String,
+    pub r#type_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2141,8 +2384,11 @@ pub struct TypeBindingTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub name: String,
+    pub name_list: Vec<String>,
     pub r#type: String,
+    pub r#type_list: Vec<String>,
     pub type_arguments: String,
+    pub type_arguments_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2155,7 +2401,9 @@ pub struct TypeCastExpressionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub r#type: String,
+    pub r#type_list: Vec<String>,
     pub value: String,
+    pub value_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2168,11 +2416,17 @@ pub struct TypeItemTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub name: String,
+    pub name_list: Vec<String>,
     pub trailing_where_clause: String,
+    pub trailing_where_clause_list: Vec<String>,
     pub r#type: String,
+    pub r#type_list: Vec<String>,
     pub type_parameters: String,
+    pub type_parameters_list: Vec<String>,
     pub visibility_modifier: String,
+    pub visibility_modifier_list: Vec<String>,
     pub where_clause: String,
+    pub where_clause_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2185,8 +2439,11 @@ pub struct TypeParameterTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub bounds: String,
+    pub bounds_list: Vec<String>,
     pub default_type: String,
+    pub default_type_list: Vec<String>,
     pub name: String,
+    pub name_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2210,7 +2467,9 @@ pub struct UnaryExpressionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub operand: String,
+    pub operand_list: Vec<String>,
     pub operator: String,
+    pub operator_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2223,10 +2482,15 @@ pub struct UnionItemTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub body: String,
+    pub body_list: Vec<String>,
     pub name: String,
+    pub name_list: Vec<String>,
     pub type_parameters: String,
+    pub type_parameters_list: Vec<String>,
     pub visibility_modifier: String,
+    pub visibility_modifier_list: Vec<String>,
     pub where_clause: String,
+    pub where_clause_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2239,6 +2503,7 @@ pub struct UnsafeBlockTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub block: String,
+    pub block_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2251,7 +2516,9 @@ pub struct UseAsClauseTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub alias: String,
+    pub alias_list: Vec<String>,
     pub path: String,
+    pub path_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2275,7 +2542,9 @@ pub struct UseDeclarationTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub argument: String,
+    pub argument_list: Vec<String>,
     pub visibility_modifier: String,
+    pub visibility_modifier_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2299,6 +2568,7 @@ pub struct UseWildcardTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub path: String,
+    pub path_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2311,7 +2581,9 @@ pub struct VariadicParameterTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub mutable_specifier: String,
+    pub mutable_specifier_list: Vec<String>,
     pub pattern: String,
+    pub pattern_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2346,7 +2618,9 @@ pub struct WherePredicateTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub bounds: String,
+    pub bounds_list: Vec<String>,
     pub left: String,
+    pub left_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2359,8 +2633,11 @@ pub struct WhileExpressionTemplate {
     pub trailing_sep: bool,
     pub leading_sep: bool,
     pub body: String,
+    pub body_list: Vec<String>,
     pub condition: String,
+    pub condition_list: Vec<String>,
     pub label: String,
+    pub label_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2392,8 +2669,10 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                attributes: ctx.fields_list.get("attributes").cloned().unwrap_or_default(),
-                elements: ctx.fields_list.get("elements").cloned().unwrap_or_default(),
+                attributes: ctx.fields.get("attributes").cloned().unwrap_or_default(),
+                attributes_list: ctx.fields_list.get("attributes").cloned().unwrap_or_default(),
+                elements: ctx.fields.get("elements").cloned().unwrap_or_default(),
+                elements_list: ctx.fields_list.get("elements").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2405,9 +2684,12 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                attributes: ctx.fields_list.get("attributes").cloned().unwrap_or_default(),
+                attributes: ctx.fields.get("attributes").cloned().unwrap_or_default(),
+                attributes_list: ctx.fields_list.get("attributes").cloned().unwrap_or_default(),
                 elements: ctx.fields.get("elements").cloned().unwrap_or_default(),
+                elements_list: ctx.fields_list.get("elements").cloned().unwrap_or_default(),
                 length: ctx.fields.get("length").cloned().unwrap_or_default(),
+                length_list: ctx.fields_list.get("length").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2420,7 +2702,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
                 return_type: ctx.fields.get("return_type").cloned().unwrap_or_default(),
+                return_type_list: ctx.fields_list.get("return_type").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2433,6 +2717,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2511,7 +2796,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
+                pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2524,6 +2811,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2536,6 +2824,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2559,6 +2848,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 r#trait: ctx.fields.get("trait").cloned().unwrap_or_default(),
+                r#trait_list: ctx.fields_list.get("trait").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2571,6 +2861,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2594,8 +2885,11 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 doc: ctx.fields.get("doc").cloned().unwrap_or_default(),
+                doc_list: ctx.fields_list.get("doc").cloned().unwrap_or_default(),
                 inner: ctx.fields.get("inner").cloned().unwrap_or_default(),
+                inner_list: ctx.fields_list.get("inner").cloned().unwrap_or_default(),
                 outer: ctx.fields.get("outer").cloned().unwrap_or_default(),
+                outer_list: ctx.fields_list.get("outer").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2641,6 +2935,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
+                value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2653,6 +2948,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
+                value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2665,6 +2961,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2677,7 +2974,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 left: ctx.fields.get("left").cloned().unwrap_or_default(),
+                left_list: ctx.fields_list.get("left").cloned().unwrap_or_default(),
                 right: ctx.fields.get("right").cloned().unwrap_or_default(),
+                right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2690,6 +2989,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 right: ctx.fields.get("right").cloned().unwrap_or_default(),
+                right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2713,6 +3013,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 operator: ctx.fields.get("operator").cloned().unwrap_or_default(),
+                operator_list: ctx.fields_list.get("operator").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2725,8 +3026,11 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 end: ctx.fields.get("end").cloned().unwrap_or_default(),
+                end_list: ctx.fields_list.get("end").cloned().unwrap_or_default(),
                 operator: ctx.fields.get("operator").cloned().unwrap_or_default(),
+                operator_list: ctx.fields_list.get("operator").cloned().unwrap_or_default(),
                 start: ctx.fields.get("start").cloned().unwrap_or_default(),
+                start_list: ctx.fields_list.get("start").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2739,7 +3043,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 operator: ctx.fields.get("operator").cloned().unwrap_or_default(),
+                operator_list: ctx.fields_list.get("operator").cloned().unwrap_or_default(),
                 start: ctx.fields.get("start").cloned().unwrap_or_default(),
+                start_list: ctx.fields_list.get("start").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2752,7 +3058,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 end: ctx.fields.get("end").cloned().unwrap_or_default(),
+                end_list: ctx.fields_list.get("end").cloned().unwrap_or_default(),
                 operator: ctx.fields.get("operator").cloned().unwrap_or_default(),
+                operator_list: ctx.fields_list.get("operator").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2765,6 +3073,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 right: ctx.fields.get("right").cloned().unwrap_or_default(),
+                right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2810,6 +3119,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2822,6 +3132,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2922,6 +3233,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 r#in: ctx.fields.get("in").cloned().unwrap_or_default(),
+                r#in_list: ctx.fields_list.get("in").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2934,6 +3246,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 r#pub: ctx.fields.get("pub").cloned().unwrap_or_default(),
+                r#pub_list: ctx.fields_list.get("pub").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2946,7 +3259,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 r#trait: ctx.fields.get("trait").cloned().unwrap_or_default(),
+                r#trait_list: ctx.fields_list.get("trait").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
+                type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2981,7 +3296,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 element: ctx.fields.get("element").cloned().unwrap_or_default(),
+                element_list: ctx.fields_list.get("element").cloned().unwrap_or_default(),
                 length: ctx.fields.get("length").cloned().unwrap_or_default(),
+                length_list: ctx.fields_list.get("length").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -2994,7 +3311,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 left: ctx.fields.get("left").cloned().unwrap_or_default(),
+                left_list: ctx.fields_list.get("left").cloned().unwrap_or_default(),
                 right: ctx.fields.get("right").cloned().unwrap_or_default(),
+                right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3007,9 +3326,13 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 bounds: ctx.fields.get("bounds").cloned().unwrap_or_default(),
+                bounds_list: ctx.fields_list.get("bounds").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
+                type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
                 where_clause: ctx.fields.get("where_clause").cloned().unwrap_or_default(),
+                where_clause_list: ctx.fields_list.get("where_clause").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3022,7 +3345,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 block: ctx.fields.get("block").cloned().unwrap_or_default(),
+                block_list: ctx.fields_list.get("block").cloned().unwrap_or_default(),
                 r#move: ctx.fields.get("move").cloned().unwrap_or_default(),
+                r#move_list: ctx.fields_list.get("move").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3035,6 +3360,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 attribute: ctx.fields.get("attribute").cloned().unwrap_or_default(),
+                attribute_list: ctx.fields_list.get("attribute").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3047,7 +3373,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 arguments: ctx.fields.get("arguments").cloned().unwrap_or_default(),
+                arguments_list: ctx.fields_list.get("arguments").cloned().unwrap_or_default(),
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
+                value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3082,8 +3410,11 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 left: ctx.fields.get("left").cloned().unwrap_or_default(),
+                left_list: ctx.fields_list.get("left").cloned().unwrap_or_default(),
                 operator: ctx.fields.get("operator").cloned().unwrap_or_default(),
+                operator_list: ctx.fields_list.get("operator").cloned().unwrap_or_default(),
                 right: ctx.fields.get("right").cloned().unwrap_or_default(),
+                right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3096,8 +3427,11 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 doc: ctx.fields.get("doc").cloned().unwrap_or_default(),
+                doc_list: ctx.fields_list.get("doc").cloned().unwrap_or_default(),
                 inner: ctx.fields.get("inner").cloned().unwrap_or_default(),
+                inner_list: ctx.fields_list.get("inner").cloned().unwrap_or_default(),
                 outer: ctx.fields.get("outer").cloned().unwrap_or_default(),
+                outer_list: ctx.fields_list.get("outer").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3110,6 +3444,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 label: ctx.fields.get("label").cloned().unwrap_or_default(),
+                label_list: ctx.fields_list.get("label").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3122,7 +3457,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 left: ctx.fields.get("left").cloned().unwrap_or_default(),
+                left_list: ctx.fields_list.get("left").cloned().unwrap_or_default(),
                 right: ctx.fields.get("right").cloned().unwrap_or_default(),
+                right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3146,7 +3483,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 expression: ctx.fields.get("expression").cloned().unwrap_or_default(),
+                expression_list: ctx.fields_list.get("expression").cloned().unwrap_or_default(),
                 label: ctx.fields.get("label").cloned().unwrap_or_default(),
+                label_list: ctx.fields_list.get("label").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3159,7 +3498,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 arguments: ctx.fields.get("arguments").cloned().unwrap_or_default(),
+                arguments_list: ctx.fields_list.get("arguments").cloned().unwrap_or_default(),
                 function: ctx.fields.get("function").cloned().unwrap_or_default(),
+                function_list: ctx.fields_list.get("function").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3172,7 +3513,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 identifier: ctx.fields.get("identifier").cloned().unwrap_or_default(),
+                identifier_list: ctx.fields_list.get("identifier").cloned().unwrap_or_default(),
                 pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
+                pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3185,9 +3528,13 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 r#async: ctx.fields.get("async").cloned().unwrap_or_default(),
+                r#async_list: ctx.fields_list.get("async").cloned().unwrap_or_default(),
                 r#move: ctx.fields.get("move").cloned().unwrap_or_default(),
+                r#move_list: ctx.fields_list.get("move").cloned().unwrap_or_default(),
                 parameters: ctx.fields.get("parameters").cloned().unwrap_or_default(),
+                parameters_list: ctx.fields_list.get("parameters").cloned().unwrap_or_default(),
                 r#static: ctx.fields.get("static").cloned().unwrap_or_default(),
+                r#static_list: ctx.fields_list.get("static").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3222,8 +3569,11 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 left: ctx.fields.get("left").cloned().unwrap_or_default(),
+                left_list: ctx.fields_list.get("left").cloned().unwrap_or_default(),
                 operator: ctx.fields.get("operator").cloned().unwrap_or_default(),
+                operator_list: ctx.fields_list.get("operator").cloned().unwrap_or_default(),
                 right: ctx.fields.get("right").cloned().unwrap_or_default(),
+                right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3236,6 +3586,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3248,9 +3599,13 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
+                value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
+                visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3263,8 +3618,11 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
+                value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3277,6 +3635,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 label: ctx.fields.get("label").cloned().unwrap_or_default(),
+                label_list: ctx.fields_list.get("label").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3311,6 +3670,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 r#trait: ctx.fields.get("trait").cloned().unwrap_or_default(),
+                r#trait_list: ctx.fields_list.get("trait").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3334,10 +3694,15 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
+                type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
+                visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
                 where_clause: ctx.fields.get("where_clause").cloned().unwrap_or_default(),
+                where_clause_list: ctx.fields_list.get("where_clause").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3361,9 +3726,13 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
+                value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
+                visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3387,9 +3756,13 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 alias: ctx.fields.get("alias").cloned().unwrap_or_default(),
+                alias_list: ctx.fields_list.get("alias").cloned().unwrap_or_default(),
                 crate_: ctx.fields.get("crate").cloned().unwrap_or_default(),
+                crate__list: ctx.fields_list.get("crate").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
+                visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3402,6 +3775,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 string_literal: ctx.fields.get("string_literal").cloned().unwrap_or_default(),
+                string_literal_list: ctx.fields_list.get("string_literal").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3425,8 +3799,11 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
+                visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3439,7 +3816,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 field: ctx.fields.get("field").cloned().unwrap_or_default(),
+                field_list: ctx.fields_list.get("field").cloned().unwrap_or_default(),
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
+                value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3463,7 +3842,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 field: ctx.fields.get("field").cloned().unwrap_or_default(),
+                field_list: ctx.fields_list.get("field").cloned().unwrap_or_default(),
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
+                value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3476,7 +3857,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 mutable_specifier: ctx.fields.get("mutable_specifier").cloned().unwrap_or_default(),
+                mutable_specifier_list: ctx.fields_list.get("mutable_specifier").cloned().unwrap_or_default(),
                 r#ref: ctx.fields.get("ref").cloned().unwrap_or_default(),
+                r#ref_list: ctx.fields_list.get("ref").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3489,9 +3872,13 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
                 label: ctx.fields.get("label").cloned().unwrap_or_default(),
+                label_list: ctx.fields_list.get("label").cloned().unwrap_or_default(),
                 pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
+                pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
+                value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3515,6 +3902,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 extern_modifier: ctx.fields.get("extern_modifier").cloned().unwrap_or_default(),
+                extern_modifier_list: ctx.fields_list.get("extern_modifier").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3527,13 +3915,21 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
                 function_modifiers: ctx.fields.get("function_modifiers").cloned().unwrap_or_default(),
+                function_modifiers_list: ctx.fields_list.get("function_modifiers").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 parameters: ctx.fields.get("parameters").cloned().unwrap_or_default(),
+                parameters_list: ctx.fields_list.get("parameters").cloned().unwrap_or_default(),
                 return_type: ctx.fields.get("return_type").cloned().unwrap_or_default(),
+                return_type_list: ctx.fields_list.get("return_type").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
+                type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
+                visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
                 where_clause: ctx.fields.get("where_clause").cloned().unwrap_or_default(),
+                where_clause_list: ctx.fields_list.get("where_clause").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3545,10 +3941,14 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#async: ctx.fields_list.get("async").cloned().unwrap_or_default(),
-                r#const: ctx.fields_list.get("const").cloned().unwrap_or_default(),
-                default: ctx.fields_list.get("default").cloned().unwrap_or_default(),
-                r#unsafe: ctx.fields_list.get("unsafe").cloned().unwrap_or_default(),
+                r#async: ctx.fields.get("async").cloned().unwrap_or_default(),
+                r#async_list: ctx.fields_list.get("async").cloned().unwrap_or_default(),
+                r#const: ctx.fields.get("const").cloned().unwrap_or_default(),
+                r#const_list: ctx.fields_list.get("const").cloned().unwrap_or_default(),
+                default: ctx.fields.get("default").cloned().unwrap_or_default(),
+                default_list: ctx.fields_list.get("default").cloned().unwrap_or_default(),
+                r#unsafe: ctx.fields.get("unsafe").cloned().unwrap_or_default(),
+                r#unsafe_list: ctx.fields_list.get("unsafe").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3561,12 +3961,19 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 function_modifiers: ctx.fields.get("function_modifiers").cloned().unwrap_or_default(),
+                function_modifiers_list: ctx.fields_list.get("function_modifiers").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 parameters: ctx.fields.get("parameters").cloned().unwrap_or_default(),
+                parameters_list: ctx.fields_list.get("parameters").cloned().unwrap_or_default(),
                 return_type: ctx.fields.get("return_type").cloned().unwrap_or_default(),
+                return_type_list: ctx.fields_list.get("return_type").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
+                type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
+                visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
                 where_clause: ctx.fields.get("where_clause").cloned().unwrap_or_default(),
+                where_clause_list: ctx.fields_list.get("where_clause").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3579,8 +3986,11 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 for_lifetimes: ctx.fields.get("for_lifetimes").cloned().unwrap_or_default(),
+                for_lifetimes_list: ctx.fields_list.get("for_lifetimes").cloned().unwrap_or_default(),
                 parameters: ctx.fields.get("parameters").cloned().unwrap_or_default(),
+                parameters_list: ctx.fields_list.get("parameters").cloned().unwrap_or_default(),
                 return_type: ctx.fields.get("return_type").cloned().unwrap_or_default(),
+                return_type_list: ctx.fields_list.get("return_type").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3593,7 +4003,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 block: ctx.fields.get("block").cloned().unwrap_or_default(),
+                block_list: ctx.fields_list.get("block").cloned().unwrap_or_default(),
                 r#move: ctx.fields.get("move").cloned().unwrap_or_default(),
+                r#move_list: ctx.fields_list.get("move").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3606,7 +4018,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 function: ctx.fields.get("function").cloned().unwrap_or_default(),
+                function_list: ctx.fields_list.get("function").cloned().unwrap_or_default(),
                 type_arguments: ctx.fields.get("type_arguments").cloned().unwrap_or_default(),
+                type_arguments_list: ctx.fields_list.get("type_arguments").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3619,6 +4033,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 type_arguments: ctx.fields.get("type_arguments").cloned().unwrap_or_default(),
+                type_arguments_list: ctx.fields_list.get("type_arguments").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3631,8 +4046,11 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 turbofish: ctx.fields.get("turbofish").cloned().unwrap_or_default(),
+                turbofish_list: ctx.fields_list.get("turbofish").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 type_arguments: ctx.fields.get("type_arguments").cloned().unwrap_or_default(),
+                type_arguments_list: ctx.fields_list.get("type_arguments").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3645,7 +4063,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 type_arguments: ctx.fields.get("type_arguments").cloned().unwrap_or_default(),
+                type_arguments_list: ctx.fields_list.get("type_arguments").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3658,7 +4078,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
+                type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3671,8 +4093,11 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 alternative: ctx.fields.get("alternative").cloned().unwrap_or_default(),
+                alternative_list: ctx.fields_list.get("alternative").cloned().unwrap_or_default(),
                 condition: ctx.fields.get("condition").cloned().unwrap_or_default(),
+                condition_list: ctx.fields_list.get("condition").cloned().unwrap_or_default(),
                 consequence: ctx.fields.get("consequence").cloned().unwrap_or_default(),
+                consequence_list: ctx.fields_list.get("consequence").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3685,11 +4110,17 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 bang: ctx.fields.get("bang").cloned().unwrap_or_default(),
+                bang_list: ctx.fields_list.get("bang").cloned().unwrap_or_default(),
                 r#trait: ctx.fields.get("trait").cloned().unwrap_or_default(),
+                r#trait_list: ctx.fields_list.get("trait").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
+                type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
                 r#unsafe: ctx.fields.get("unsafe").cloned().unwrap_or_default(),
+                r#unsafe_list: ctx.fields_list.get("unsafe").cloned().unwrap_or_default(),
                 where_clause: ctx.fields.get("where_clause").cloned().unwrap_or_default(),
+                where_clause_list: ctx.fields_list.get("where_clause").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3702,7 +4133,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 index: ctx.fields.get("index").cloned().unwrap_or_default(),
+                index_list: ctx.fields_list.get("index").cloned().unwrap_or_default(),
                 object: ctx.fields.get("object").cloned().unwrap_or_default(),
+                object_list: ctx.fields_list.get("object").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3715,6 +4148,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 attribute: ctx.fields.get("attribute").cloned().unwrap_or_default(),
+                attribute_list: ctx.fields_list.get("attribute").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3727,6 +4161,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 identifier: ctx.fields.get("identifier").cloned().unwrap_or_default(),
+                identifier_list: ctx.fields_list.get("identifier").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3739,7 +4174,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
+                pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
+                value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3752,7 +4189,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
+                pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
+                value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3765,10 +4204,15 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 alternative: ctx.fields.get("alternative").cloned().unwrap_or_default(),
+                alternative_list: ctx.fields_list.get("alternative").cloned().unwrap_or_default(),
                 mutable_specifier: ctx.fields.get("mutable_specifier").cloned().unwrap_or_default(),
+                mutable_specifier_list: ctx.fields_list.get("mutable_specifier").cloned().unwrap_or_default(),
                 pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
+                pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
+                value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3781,7 +4225,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 bounds: ctx.fields.get("bounds").cloned().unwrap_or_default(),
+                bounds_list: ctx.fields_list.get("bounds").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3794,6 +4240,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 identifier: ctx.fields.get("identifier").cloned().unwrap_or_default(),
+                identifier_list: ctx.fields_list.get("identifier").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3817,7 +4264,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
                 label: ctx.fields.get("label").cloned().unwrap_or_default(),
+                label_list: ctx.fields_list.get("label").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3830,6 +4279,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3842,7 +4292,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 r#macro: ctx.fields.get("macro").cloned().unwrap_or_default(),
+                r#macro_list: ctx.fields_list.get("macro").cloned().unwrap_or_default(),
                 token_tree: ctx.fields.get("token_tree").cloned().unwrap_or_default(),
+                token_tree_list: ctx.fields_list.get("token_tree").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3855,7 +4307,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 left: ctx.fields.get("left").cloned().unwrap_or_default(),
+                left_list: ctx.fields_list.get("left").cloned().unwrap_or_default(),
                 right: ctx.fields.get("right").cloned().unwrap_or_default(),
+                right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3868,6 +4322,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
+                pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3891,7 +4346,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
+                value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3904,6 +4361,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 condition: ctx.fields.get("condition").cloned().unwrap_or_default(),
+                condition_list: ctx.fields_list.get("condition").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3916,7 +4374,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
+                visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3929,7 +4389,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 mutable_specifier: ctx.fields.get("mutable_specifier").cloned().unwrap_or_default(),
+                mutable_specifier_list: ctx.fields_list.get("mutable_specifier").cloned().unwrap_or_default(),
                 pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
+                pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3942,6 +4404,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
+                value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3964,7 +4427,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#type: ctx.fields_list.get("type").cloned().unwrap_or_default(),
+                r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -3977,8 +4441,11 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 mutable_specifier: ctx.fields.get("mutable_specifier").cloned().unwrap_or_default(),
+                mutable_specifier_list: ctx.fields_list.get("mutable_specifier").cloned().unwrap_or_default(),
                 pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
+                pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4013,6 +4480,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4025,7 +4493,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 alias: ctx.fields.get("alias").cloned().unwrap_or_default(),
+                alias_list: ctx.fields_list.get("alias").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4060,8 +4530,11 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 raw_string_literal_end: ctx.fields.get("raw_string_literal_end").cloned().unwrap_or_default(),
+                raw_string_literal_end_list: ctx.fields_list.get("raw_string_literal_end").cloned().unwrap_or_default(),
                 raw_string_literal_start: ctx.fields.get("raw_string_literal_start").cloned().unwrap_or_default(),
+                raw_string_literal_start_list: ctx.fields_list.get("raw_string_literal_start").cloned().unwrap_or_default(),
                 string_content: ctx.fields.get("string_content").cloned().unwrap_or_default(),
+                string_content_list: ctx.fields_list.get("string_content").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4085,6 +4558,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
+                value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4097,7 +4571,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 mutable_specifier: ctx.fields.get("mutable_specifier").cloned().unwrap_or_default(),
+                mutable_specifier_list: ctx.fields_list.get("mutable_specifier").cloned().unwrap_or_default(),
                 pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
+                pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4110,8 +4586,11 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 lifetime: ctx.fields.get("lifetime").cloned().unwrap_or_default(),
+                lifetime_list: ctx.fields_list.get("lifetime").cloned().unwrap_or_default(),
                 mutable_specifier: ctx.fields.get("mutable_specifier").cloned().unwrap_or_default(),
+                mutable_specifier_list: ctx.fields_list.get("mutable_specifier").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4146,7 +4625,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 path: ctx.fields.get("path").cloned().unwrap_or_default(),
+                path_list: ctx.fields_list.get("path").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4159,7 +4640,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 path: ctx.fields.get("path").cloned().unwrap_or_default(),
+                path_list: ctx.fields_list.get("path").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4172,7 +4655,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 path: ctx.fields.get("path").cloned().unwrap_or_default(),
+                path_list: ctx.fields_list.get("path").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4185,7 +4670,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 list: ctx.fields.get("list").cloned().unwrap_or_default(),
+                list_list: ctx.fields_list.get("list").cloned().unwrap_or_default(),
                 path: ctx.fields.get("path").cloned().unwrap_or_default(),
+                path_list: ctx.fields_list.get("path").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4198,9 +4685,13 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 lifetime: ctx.fields.get("lifetime").cloned().unwrap_or_default(),
+                lifetime_list: ctx.fields_list.get("lifetime").cloned().unwrap_or_default(),
                 lifetime_name: ctx.fields.get("lifetime_name").cloned().unwrap_or_default(),
+                lifetime_name_list: ctx.fields_list.get("lifetime_name").cloned().unwrap_or_default(),
                 mutable_specifier: ctx.fields.get("mutable_specifier").cloned().unwrap_or_default(),
+                mutable_specifier_list: ctx.fields_list.get("mutable_specifier").cloned().unwrap_or_default(),
                 self_: ctx.fields.get("self").cloned().unwrap_or_default(),
+                self__list: ctx.fields_list.get("self").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4212,8 +4703,10 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                attributes: ctx.fields_list.get("attributes").cloned().unwrap_or_default(),
+                attributes: ctx.fields.get("attributes").cloned().unwrap_or_default(),
+                attributes_list: ctx.fields_list.get("attributes").cloned().unwrap_or_default(),
                 identifier: ctx.fields.get("identifier").cloned().unwrap_or_default(),
+                identifier_list: ctx.fields_list.get("identifier").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4237,7 +4730,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 shebang: ctx.fields.get("shebang").cloned().unwrap_or_default(),
-                statements: ctx.fields_list.get("statements").cloned().unwrap_or_default(),
+                shebang_list: ctx.fields_list.get("shebang").cloned().unwrap_or_default(),
+                statements: ctx.fields.get("statements").cloned().unwrap_or_default(),
+                statements_list: ctx.fields_list.get("statements").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4250,10 +4745,15 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 mutable_specifier: ctx.fields.get("mutable_specifier").cloned().unwrap_or_default(),
+                mutable_specifier_list: ctx.fields_list.get("mutable_specifier").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
+                value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
+                visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4277,7 +4777,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4290,8 +4792,11 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
+                type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
+                visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4304,6 +4809,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4316,7 +4822,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4384,12 +4892,19 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
                 bounds: ctx.fields.get("bounds").cloned().unwrap_or_default(),
+                bounds_list: ctx.fields_list.get("bounds").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
+                type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
                 r#unsafe: ctx.fields.get("unsafe").cloned().unwrap_or_default(),
+                r#unsafe_list: ctx.fields_list.get("unsafe").cloned().unwrap_or_default(),
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
+                visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
                 where_clause: ctx.fields.get("where_clause").cloned().unwrap_or_default(),
+                where_clause_list: ctx.fields_list.get("where_clause").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4402,6 +4917,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 block: ctx.fields.get("block").cloned().unwrap_or_default(),
+                block_list: ctx.fields_list.get("block").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4414,6 +4930,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
+                value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4425,8 +4942,10 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                attributes: ctx.fields_list.get("attributes").cloned().unwrap_or_default(),
-                elements: ctx.fields_list.get("elements").cloned().unwrap_or_default(),
+                attributes: ctx.fields.get("attributes").cloned().unwrap_or_default(),
+                attributes_list: ctx.fields_list.get("attributes").cloned().unwrap_or_default(),
+                elements: ctx.fields.get("elements").cloned().unwrap_or_default(),
+                elements_list: ctx.fields_list.get("elements").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4450,6 +4969,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4484,8 +5004,11 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 type_arguments: ctx.fields.get("type_arguments").cloned().unwrap_or_default(),
+                type_arguments_list: ctx.fields_list.get("type_arguments").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4498,7 +5021,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
+                value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4511,11 +5036,17 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 trailing_where_clause: ctx.fields.get("trailing_where_clause").cloned().unwrap_or_default(),
+                trailing_where_clause_list: ctx.fields_list.get("trailing_where_clause").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
+                type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
+                visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
                 where_clause: ctx.fields.get("where_clause").cloned().unwrap_or_default(),
+                where_clause_list: ctx.fields_list.get("where_clause").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4528,8 +5059,11 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 bounds: ctx.fields.get("bounds").cloned().unwrap_or_default(),
+                bounds_list: ctx.fields_list.get("bounds").cloned().unwrap_or_default(),
                 default_type: ctx.fields.get("default_type").cloned().unwrap_or_default(),
+                default_type_list: ctx.fields_list.get("default_type").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4553,7 +5087,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 operand: ctx.fields.get("operand").cloned().unwrap_or_default(),
+                operand_list: ctx.fields_list.get("operand").cloned().unwrap_or_default(),
                 operator: ctx.fields.get("operator").cloned().unwrap_or_default(),
+                operator_list: ctx.fields_list.get("operator").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4566,10 +5102,15 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
+                type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
+                visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
                 where_clause: ctx.fields.get("where_clause").cloned().unwrap_or_default(),
+                where_clause_list: ctx.fields_list.get("where_clause").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4582,6 +5123,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 block: ctx.fields.get("block").cloned().unwrap_or_default(),
+                block_list: ctx.fields_list.get("block").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4594,7 +5136,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 alias: ctx.fields.get("alias").cloned().unwrap_or_default(),
+                alias_list: ctx.fields_list.get("alias").cloned().unwrap_or_default(),
                 path: ctx.fields.get("path").cloned().unwrap_or_default(),
+                path_list: ctx.fields_list.get("path").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4618,7 +5162,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 argument: ctx.fields.get("argument").cloned().unwrap_or_default(),
+                argument_list: ctx.fields_list.get("argument").cloned().unwrap_or_default(),
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
+                visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4642,6 +5188,7 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 path: ctx.fields.get("path").cloned().unwrap_or_default(),
+                path_list: ctx.fields_list.get("path").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4654,7 +5201,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 mutable_specifier: ctx.fields.get("mutable_specifier").cloned().unwrap_or_default(),
+                mutable_specifier_list: ctx.fields_list.get("mutable_specifier").cloned().unwrap_or_default(),
                 pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
+                pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4689,7 +5238,9 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 bounds: ctx.fields.get("bounds").cloned().unwrap_or_default(),
+                bounds_list: ctx.fields_list.get("bounds").cloned().unwrap_or_default(),
                 left: ctx.fields.get("left").cloned().unwrap_or_default(),
+                left_list: ctx.fields_list.get("left").cloned().unwrap_or_default(),
             };
             t.render()
         }
@@ -4702,8 +5253,11 @@ pub fn render_dispatch(
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
+                body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
                 condition: ctx.fields.get("condition").cloned().unwrap_or_default(),
+                condition_list: ctx.fields_list.get("condition").cloned().unwrap_or_default(),
                 label: ctx.fields.get("label").cloned().unwrap_or_default(),
+                label_list: ctx.fields_list.get("label").cloned().unwrap_or_default(),
             };
             t.render()
         }

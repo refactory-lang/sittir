@@ -97,21 +97,15 @@ pub fn isBlank(s: &str, _values: &dyn askama::Values) -> Result<bool, askama::Er
 /// Inverse of `isBlank` — true when a field has non-whitespace content.
 /// Sugar for `{% if not (foo | isBlank) %}`; used as
 /// `{% if foo | isPresent %}`.
+///
+/// Works on both scalar (`String`) and list fields — by convention the
+/// generated struct emits a field's scalar form (`foo`) alongside its
+/// list form (`foo_list`) for every user-declared field; `isPresent`
+/// always targets the scalar. The scalar for list-shaped fields is the
+/// pre-joined string, so an empty list reduces to empty string which
+/// reads as "not present" (matches the TS engine's semantics where a
+/// never-populated field and an empty-array field both render as
+/// blank).
 pub fn isPresent(s: &str, _values: &dyn askama::Values) -> Result<bool, askama::Error> {
     Ok(!s.trim().is_empty())
-}
-
-/// List variant of `isPresent` — true when a `Vec<String>` list field
-/// has any element whose content is non-blank. Used by the rust-render
-/// emitter when a field is used in BOTH scalar (`| isPresent`) and
-/// list (`| join(",")`) positions within the same template; the field
-/// is typed as `Vec<String>` (list wins), and scalar `| isPresent`
-/// usage rewrites to `| isPresentList` at emit time so the filter's
-/// argument type matches. Matches the scalar semantics: a list of
-/// only-whitespace strings counts as blank.
-pub fn isPresentList(
-    xs: &[String],
-    _values: &dyn askama::Values,
-) -> Result<bool, askama::Error> {
-    Ok(xs.iter().any(|s| !s.trim().is_empty()))
 }
