@@ -137,21 +137,33 @@ export default grammar(enrich(base), wire({
         [$.variable_declarator, $._for_header_var_kind],
         [$.variable_declarator, $._for_header_let_const_kind],
     ]),
-    // Inline the `public_field_definition` variants so the LR table
-    // retains the pre-split state — each variant body is folded back
-    // into `public_field_definition` at the alias site. Inlining keeps
-    // the alias so sittir's post-polymorph canonical shape is
-    // preserved AND the parse tree still surfaces the named variant
-    // kind, while tree-sitter's state machine sees the unrolled shape
-    // and avoids LR conflicts that the split would otherwise create.
-    inline: ($, previous) => (previous ?? []).concat([
+    // Inline `public_field_definition`'s polymorph-synthesized variant
+    // bodies at the alias site. Why inline instead of `conflicts:` —
+    // `access_first` reduces to "just accessibility_modifier" and
+    // conflicts unrecoverably with method_definition / method_signature
+    // / abstract_method_signature that share the prefix. Inlining
+    // folds the body into public_field_definition's LR state machine
+    // so the pre-split parser states are restored; the alias wrapper
+    // survives inlining so the parse tree still surfaces the named
+    // variant kind.
+    //
+    // Experimentally tried moving _for_header and _export_statement_default
+    // variants here too — tree-sitter accepted the build, but 1 corpus
+    // round-trip dropped to 92 and the typescript factory round-trip
+    // started failing. The difference: those variants are referenced
+    // through multi-level paths (cascaded polymorph adoption) where
+    // inlining changes how tree-sitter resolves alias boundaries at
+    // parse time, in ways that slightly alter tree output. Kept as
+    // `conflicts:` entries which preserve the exact pre-inline shape.
+    inline: ($, previous) => [
+        ...(previous ?? []),
         $._public_field_definition_declare_first,
         $._public_field_definition_access_first,
         $._public_field_definition_static_mods,
         $._public_field_definition_abstract_first,
         $._public_field_definition_readonly_first,
         $._public_field_definition_accessor_opt,
-    ]),
+    ],
     polymorphs: {
         arrow_function:  { '1/0': 'parameter',        '1/1': '_call_signature' },
         class_heritage:  { '0':   'extends_clause',   '1':   'implements_clause' },
