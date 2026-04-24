@@ -418,6 +418,20 @@ export default grammar(enrich(base), wire({
         // `export` prefix (parent template is just `$$$CHILDREN`,
         // which filters to named children) — the wrapper becomes
         // invisible at render time.
+        //
+        // `_export_statement_default`'s body is a top-level choice of
+        // TWO structurally distinct shapes:
+        //   arm 0 — `seq('export', choice(4 from-clause forms), _semicolon)`
+        //   arm 1 — `seq(decorator, 'export', choice(declaration | default value))`
+        // Splitting it further (e.g. `0/0` / `0/1` for these sub-arms)
+        // just moves the non-canonical flag one level deeper — each
+        // split arm STILL has inner choice-with-fields shapes
+        // (specifiers, from-clause forms, default value). Adoption on
+        // kinds synthesized by a parent polymorph adoption isn't
+        // supported end-to-end, so deferred for future work. The
+        // walker handles the shape via its per-branch + downgrade
+        // logic correctly; the audit flag surfaces real adoption
+        // opportunity but not a blocking bug.
         export_statement: {
             0: variant('default'),
             1: variant('type_export'),
