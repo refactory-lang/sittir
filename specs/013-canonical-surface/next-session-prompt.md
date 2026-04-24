@@ -12,116 +12,112 @@ Categories of nested seqs still reaching `deriveChildren` (from the probe):
 3. **`optional(seq(...))` — 10 kinds — should be clause**, user agreed these are miscategorized clauses.
 4. **`choice(seq(...))` — 3 kinds** — `_let_chain` (real), `_suite` / `yield` (benign).
 
-## Approach: extend `applyKindToName` to recurse
+## What this session learned (2026-04-24)
 
-Enrich's `applyKindToName` currently only runs on TOP-LEVEL seqs (`packages/codegen/src/dsl/enrich.ts:220`). Extend it to walk through `repeat`/`repeat1`/`optional`/`clause` wrappers and apply the same bare-symbol → `field(kind, symbol)` transform to every seq it reaches. This auto-covers categories (2) and part of (3) without touching per-kind overrides.
+Attempts this session (all reverted at end) surfaced **architectural issues** that need addressing before any enrich extension can land cleanly:
 
-Blueprint (tried in session, reverted on regressions — iterate from here):
+### Issue A — DSL-runtime divergence
 
-```ts
-function applyKindToName(ruleName: string, rule: Rule): Rule {
-    // Collect ALL existing field names in the rule's subtree — names
-    // claimed anywhere (ancestor, sibling, cousin) can't be reused.
-    const claimed = new Set<string>()
-    walkCollectFieldNames(rule, claimed)
-    return walkKindToName(ruleName, rule, claimed) ?? rule
-}
+Enrich runs in BOTH the tree-sitter CLI runtime (transpiled `.sittir/grammar.js`, uppercase tree-sitter-JSON types) AND sittir's evaluate pipeline (direct overrides.ts import, lowercase sittir types). `base.grammar.rules` is evaluated ONCE per runtime — each runtime evaluates it with its own DSL helpers.
 
-function walkKindToName(ruleName: string, rule: Rule, claimed: Set<string>): Rule | null {
-    if (isSeqType(rule.type)) return applyKindToNameAtSeq(ruleName, rule, claimed)
-    if (isRepeatType(rule.type) || isOptionalType(rule.type) || rule.type === 'clause') {
-        const content = (rule as unknown as { content: Rule }).content
-        const recursed = walkKindToName(ruleName, content, claimed)
-        return recursed ? ({ ...rule, content: recursed } as Rule) : null
-    }
-    return null
-}
+Sittir's DSL helpers do structural collapses at evaluation time:
+- `seq(...)` runs `liftCommaSep`: `seq(sym, repeat(seq(sep, sym)))` → `repeat1(sym, sep=X)`
+- `optional(repeat(...))` collapses to `repeat(...)` inside fields
+- `absorbTrailingSeparator`, `collapseOptionalRepeatInField`, `hoistFieldOutOfSingleContentWrapper`
 
-function applyKindToNameAtSeq(ruleName: string, rule: Rule, claimed: Set<string>): Rule | null {
-    // Same as the existing top-level impl but uses `claimed` (tree-wide)
-    // instead of a per-seq `existing` set. Recurse into nested wrappers
-    // before the bare-symbol check — deeper changes propagate.
-    // ... (see commit history for full implementation)
-}
-```
+Tree-sitter's DSL does none of these. So:
+- Tree-sitter path: enrich sees uncollapsed `seq(sym, repeat(seq(sep, sym)))`.
+- Sittir path: enrich sees collapsed `repeat1(sym, sep=',')`.
 
-**Collision safety**: collision detection must span the ENTIRE rule subtree, not just the current seq level. Tree-sitter folds same-named fields at different depths together, silently merging distinct positional meanings. The pre-walk `walkCollectFieldNames` seeds the `claimed` set with every existing `field('name', ...)` anywhere in the rule.
+Any enrich transform that pattern-matches on shape diverges between runtimes. The output grammar.json (tree-sitter CLI) won't match the codegen types / factories / templates (sittir) unless enrich is runtime-agnostic or the two paths are unified.
 
-## Known issues to iterate through
+**Directions considered:**
+1. **Pragmatic** — dual-detection in enrich (match both raw + collapsed shapes). Works per-transform but doesn't scale; every new transform needs dual-case handling.
+2. **Architectural** — move `liftCommaSep`, `absorbTrailingSeparator`, `collapseOptionalRepeatInField`, `hoistFieldOutOfSingleContentWrapper`, etc. OUT of sittir's DSL helpers and into a post-evaluate compiler pass. Then both runtimes see the same pre-collapsed shape at enrich time. Clean long-term fix.
+3. **Normalize in enrich** — wrap the bare symbol directly wherever it appears (approach (2)'s output works because both runtimes still contain the bare symbol, even after collapse).
 
-### (A) Autogen'd overrides label wrong positions
+### Issue B — polymorphic-content repeat regression
 
-Some per-kind overrides wrap the wrong seq position as a field. Example: `packages/typescript/overrides.ts` has
+Python's `_patterns` hidden rule is `repeat1(sym('pattern'), sep=',')`. `pattern` is a SUPERTYPE with subtypes {attribute, identifier, list_pattern, list_splat_pattern, subscript, tuple_pattern}.
 
-```ts
-import_attribute: {
-    0: field('object'),  // WRONG — position 0 is 'with' literal
-},
-```
+`tuple_pattern` inlines `_patterns`. But `tuple_pattern` ALSO appears inside `case_pattern` contexts (python match statements), so tree-sitter's node-types for `tuple_pattern` merges children types from all contexts: `{case_pattern, pattern}`.
 
-Base grammar is `seq('with', $.object)` — position 0 is the `'with'` keyword, position 1 is the `$.object` symbol. The autogen walker counted "struct=0" (first named child) = `object` but misidentified position.
+When enrich wraps the inner `pattern` symbol inside `_patterns` as `field('pattern', sym)`:
+- Tree-sitter's CST for `tuple_pattern`: field `pattern` (multi=true, types={pattern}) + loose children for anything matching `case_pattern` (which isn't a pattern subtype).
+- Source `(a, b)` in match context: `a` and `b` are `case_pattern`-typed → go to loose children.
+- Render template says `({{ pattern | join(",") }})` → only reads the field → empty content.
+- Result: rendered as `()` or `(case_pattern)` — lost the actual pattern content.
 
-When enrich's nested-seq pass runs, the symbol `$.object` at position 1 gets wrapped as `field('object', symbol)` — colliding with the autogen's mislabeled `field('object', 'with')`. Two fields named 'object' at different positions in the same seq; downstream factories emit duplicated property names.
+Python regressed -7 rtAstMatch, -9 factoryAstMatch on this cluster.
 
-Fix per-kind: audit each override, either correct the position or change the field name. Memory note `project_overrides_generator_positional_bug.md` has the full inventory.
+**Resolution paths:**
+1. **Don't hoist when content is polymorphic** — detect if the symbol is a supertype AND the enclosing rule's effective content spans types outside that supertype's subtrees. Skip enrich for those rules.
+2. **Wrap the commaSep1 container instead of the inner symbol** — `field(X, repeat1(sym, sep=',')))`. Tree-sitter still applies field to all occurrences, but the field covers the whole range. Template references the field container. Downside: breaks public_field_definition variant extraction (empty-matching subtree) and _let_chain polymorph classification (non-uniform arms when wrapped inside a choice).
+3. **Teach render template to handle the split** — `$$$CHILDREN` + `$FIELD` combined rendering when fields can have overflow children.
 
-### (B) repeat(separator)-metadata interaction
+### Issue C — choice recursion
 
-Some container kinds like `variable_declaration = seq('var', field('declarators', repeat1(variable_declarator, sep=',')))` — enrich's recursion descends through the field wrapper into the repeat1. The repeat1's content (a bare `variable_declarator` symbol) gets wrapped as `field('variable_declarator', symbol)`. This CHANGES the repeat1's inner shape from symbol to field(symbol).
+`_let_chain` (rust) has 5 choice arms with genuinely different symbol combinations (some `let_condition`, some `_expression`, one arm with two `let_condition`s). Any enrich wrap inside choice arms creates non-uniform shapes → merge / polymorph classifier breaks (audit error: `choice-needs-variant-or-merge reached fields derivation`).
 
-Downstream render walkers may treat `repeat1(field(name, sym))` differently than `repeat1(sym)` — e.g. the separator-trailing metadata or the walker's template emission shifts. In testing, `variable_declaration` rendered as `var ;` losing all declarators.
+**Conclusion**: enrich should NOT recurse into choice arms. Polymorph adoption via `variant()` in overrides.ts is a separate concern.
 
-Fix options: (i) skip recursion through field wrappers (the pass already does this), (ii) add per-kind overrides that explicitly retain the bare-symbol form, (iii) teach the template walker to handle field-wrapped repeat content identically.
+## Paths forward for next session
 
-### (C) Test floor adjustments + signal tracking
+In priority order:
 
-After the nested-seq enrichment lands, expect TS round-trip floors to shift.
+### Path 1 — Move sittir's structural collapses to a post-evaluate pass
 
-**Critical — user guidance on what to track**: don't report the aggregate "6 failed, 1402 passed" number when iterating. Instead, report the **ACTUAL COUNTS** each run:
-- `python: fromPass=X fromTotal=Y  covPass=X covTotal=Y  rtPass=X rtTotal=Y rtAstMatchPass=X`
-- `rust: fromPass=X fromTotal=Y  covPass=X covTotal=Y  rtPass=X rtTotal=Y rtAstMatchPass=X factoryPass=X factoryTotal=Y`
-- `typescript: fromPass=X fromTotal=Y  covPass=X covTotal=Y  rtPass=X rtTotal=Y rtAstMatchPass=X factoryPass=X factoryTotal=Y`
+Biggest architectural win. Unwinds the DSL-runtime divergence (Issue A). Sittir's `seq()` / `optional()` / `field()` become thin wrappers; the collapses move to a dedicated normalize pass after evaluate, runs in sittir's pipeline only. Tree-sitter continues to see raw shapes.
 
-Why: the floors are arbitrary numbers set at a point in time. The raw counts show the real movement. **`*Total` dropping** means kinds fell out of the validation universe (real regression — investigate which kinds). **`*Pass` changing** is expected as adoption shifts what's canonical; rising is good, falling means a shape-change broke renders.
+Files:
+- `packages/codegen/src/compiler/evaluate.ts`: remove `liftCommaSep`, `absorbTrailingSeparator`, `collapseOptionalRepeatInField`, `hoistFieldOutOfSingleContentWrapper` call sites from DSL helpers.
+- Add `packages/codegen/src/compiler/normalize.ts`: dedicated pass that runs on the output of evaluate (before link). Consolidates the collapsed transforms.
+- Test that the existing corpus still passes (should — semantic equivalence).
 
-Use `validateFrom`, `validateRoundTrip`, `validateTemplateCoverage`, `validateFactoryRoundTrip` from `packages/codegen/src/validate/*.ts` directly via a small script to print these numbers explicitly rather than reading them out of vitest's "expected X to be >= Y" errors.
+Once unified, enrich can extend without dual-detection.
+
+### Path 2 — Fix the template walker for field-wrapped-repeat content
+
+Addresses Issue B. Teach `walkRuleForTemplate` that `repeat1(field(X, sym), sep=',')` is equivalent to `repeat1(sym, sep=',')` for template emission purposes. The multi-valued slot's source should be detected regardless of inner field wrap.
+
+Files:
+- `packages/codegen/src/compiler/template-walker.ts`: in the `repeat` / `repeat1` cases, unwrap an inner `field(...)` when computing the element kind / slot reference. The sibling-repeated-field logic already handles `seq(field(X), SEP)` sub-patterns — extend to bare `field` inside repeat.
+
+After this, the inner-symbol enrich hoist can land without the split-first-vs-rest regression.
+
+### Path 3 — Container-level commaSep1 hoist (narrow)
+
+If Paths 1 and 2 are too ambitious, a narrower approach: detect ONLY the commaSep1 shape (`seq(sym, repeat(seq(sep, sym)))` and `repeat1(sym, sep=X)`), hoist the WHOLE container as `field(X, container)`. Don't wrap inside optional/choice. This was the dual-detection approach; it worked for TS/rust at baseline but had some python regressions (small, -1 rtAstMatch, -1 factoryAstMatch).
+
+Much smaller surgery than Paths 1/2 but more fragile — future transform patterns need similar dual detection.
+
+## Tracking signal
+
+Use `npx tsx packages/codegen/src/scripts/counts.ts` (new in this session) to get per-grammar raw counts each iteration. DO NOT rely on aggregate pass/fail. Each line shows `fromPass/fromTotal covPass/covTotal rtPass/rtTotal rtAstMatchPass factoryPass/factoryTotal factoryAstMatchPass` — focus on what's changing kind-by-kind.
+
+**Baseline to match or exceed:**
+- rust: fromPass=130/148  covPass=132/136  rtPass=114/136  rtAstMatchPass=113  factoryPass=417/959  factoryAstMatchPass=413
+- typescript: fromPass=127/137  covPass=140/145  rtPass=93/112  rtAstMatchPass=83  factoryPass=384/915  factoryAstMatchPass=374
+- python: fromPass=107/114  covPass=97/100  rtPass=96/115  rtAstMatchPass=92  factoryPass=193/860  factoryAstMatchPass=184
+
+Totals dropping = real regression (kinds fell out of validation universe). Pass counts changing = shape shifts (good or bad).
 
 ## Starting command
 
 ```bash
 cd /Users/pmouli/GitHub.nosync/refactory-lang/sittir
-git log --oneline -10 | grep "013:"
-npx vitest run 2>&1 | grep -E "Test Files|Tests " | tail -3
-# Should show 6 failed, 1402 passed — pre-existing floor.
+git log --oneline -15 | grep "013:"
+npx tsx packages/codegen/src/scripts/counts.ts
+# Should match baseline numbers above.
 ```
 
-## Investigation order
+## Probe tools
 
-1. Re-apply the enrich recursion extension (snippet above).
-2. Regen all three grammars; check audit stays clean.
-3. Run the full test suite; collect the regressions.
-4. For each regression, probe the kind and either:
-   - Fix the autogen'd override position (category A).
-   - Adjust the enrich recursion to skip that shape (category B).
-   - Accept the change and adjust the floor (category C).
-5. Iterate until tests are back to 6-failure baseline (or better).
-6. Commit. Phase 3 projection (drop `#fields`/`#children` caches) is the next stretch goal — defer unless there's time.
+Three scripts available under `packages/codegen/src/scripts/`:
 
-## Probe tool
+- `counts.ts` — per-grammar raw counts across all validators.
+- `diff-failures.ts <grammar> [from|rt|cov|factory|all]` — list failing kinds + error messages.
+- `probe-rule.ts <grammar> <kind>` — dump a rule through each compiler phase (post-evaluate, post-link, post-optimize, post-simplify).
+- `probe-kind.ts --grammar X --source '...'` — parse + readNode + render one source snippet, dump the full pipeline.
 
-Trivial; don't commit:
-
-```ts
-// packages/codegen/src/scripts/probe-rule.ts
-import { evaluate } from '../compiler/evaluate.ts'
-import { link } from '../compiler/link.ts'
-import { optimize } from '../compiler/optimize.ts'
-import { simplifyRule } from '../compiler/simplify.ts'
-import { resolveOverridesPath } from '../compiler/resolve-grammar.ts'
-const raw = await evaluate(resolveOverridesPath(process.argv[2]))
-const linked = link(raw)
-const optimized = optimize(linked)
-const r = optimized.rules[process.argv[3]]
-const s = r ? simplifyRule(r) : null
-console.log(JSON.stringify(s, (k, v) => k === '_ref' ? undefined : v, 2))
-```
+Use these before writing any one-off `/tmp/probe-*.ts`.

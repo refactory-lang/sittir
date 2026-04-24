@@ -362,3 +362,43 @@ Walker shrink (commit `aba04edf` + follow-up):
 Corpus floors: 6 failures (1 less than pre-session baseline of 7 —
 typescript factory round-trip test now passes). Audit clean across
 rust, python, typescript.
+
+### Status — 013 closed as of 2026-04-24
+
+Phases 1-3 delivered. AssembledBranch / AssembledContainer are
+thin projections over the canonical rule (both-derivation loops
+collapsed to filter-and-project). Audit is strict-default and
+clean across all three grammars.
+
+Enrich's kind-to-name pass still runs on top-level seqs only.
+Extending it to recurse into nested seq positions (to cover
+category 2 — the 11 `repeat(seq(...))` kinds reaching
+derivation) was investigated in a 2026-04-24 session and
+**deferred as follow-up work**. The session surfaced three
+architectural blockers:
+
+1. **DSL-runtime divergence.** Sittir's `seq()` / `optional()` /
+   `field()` helpers do structural collapses (`liftCommaSep`,
+   `absorbTrailingSeparator`, `collapseOptionalRepeatInField`,
+   `hoistFieldOutOfSingleContentWrapper`) at evaluation time.
+   Tree-sitter's DSL does none of these. Enrich runs in BOTH
+   contexts with different input shapes — any pattern-matching
+   enrich transform diverges between runtimes.
+2. **Polymorphic-content repeats.** Tree-sitter merges
+   node-types across all contexts a rule appears in (e.g.
+   python `tuple_pattern`'s content spans both `pattern` and
+   `case_pattern` across match-vs-fndef contexts). Wrapping
+   inside `repeat1(sym(X), sep=',')` creates a field for X-typed
+   entries but leaves other context types in loose children,
+   splitting rendered content.
+3. **Choice-arm polymorphs.** Rules like rust `_let_chain` have
+   structurally different arms per-context; any per-arm enrich
+   wrap breaks the uniform-shape invariant that the merge /
+   polymorph classifier requires.
+
+Paths forward documented in `next-session-prompt.md`. The two
+cleanest options require either a dedicated post-evaluate
+normalize pass (unwinding sittir's DSL-level collapses) or a
+template-walker extension that handles field-wrapped-repeat
+content identically to bare-symbol-repeat content — both
+sizeable refactors beyond 013's scope.
