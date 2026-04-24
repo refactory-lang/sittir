@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  9  (0 applied, 9 held)
-// Rule promotions:   80  (74 applied, 6 held)
+// Rule promotions:   92  (86 applied, 6 held)
 // Repeated shapes:   5  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -201,6 +201,10 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "closure_expression", classification: "polymorph", applied: true },
   { kind: "closure_expression_block", classification: "polymorph", applied: true },
   { kind: "closure_expression_expr", classification: "polymorph", applied: true },
+  { kind: "delim_token_tree", classification: "polymorph", applied: true },
+  { kind: "delim_token_tree_brace", classification: "polymorph", applied: true },
+  { kind: "delim_token_tree_bracket", classification: "polymorph", applied: true },
+  { kind: "delim_token_tree_paren", classification: "polymorph", applied: true },
   { kind: "expression_statement", classification: "polymorph", applied: true },
   { kind: "expression_statement_block_ending", classification: "polymorph", applied: true },
   { kind: "expression_statement_with_semi", classification: "polymorph", applied: true },
@@ -249,6 +253,14 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "struct_item_brace", classification: "polymorph", applied: true },
   { kind: "struct_item_tuple", classification: "polymorph", applied: true },
   { kind: "struct_item_unit", classification: "polymorph", applied: true },
+  { kind: "token_tree", classification: "polymorph", applied: true },
+  { kind: "token_tree_brace", classification: "polymorph", applied: true },
+  { kind: "token_tree_bracket", classification: "polymorph", applied: true },
+  { kind: "token_tree_paren", classification: "polymorph", applied: true },
+  { kind: "token_tree_pattern", classification: "polymorph", applied: true },
+  { kind: "token_tree_pattern_brace", classification: "polymorph", applied: true },
+  { kind: "token_tree_pattern_bracket", classification: "polymorph", applied: true },
+  { kind: "token_tree_pattern_paren", classification: "polymorph", applied: true },
   { kind: "visibility_modifier", classification: "polymorph", applied: false },
   { kind: "yield_expression", classification: "polymorph", applied: false },
 ];

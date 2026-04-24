@@ -433,6 +433,18 @@ export default grammar(enrich(base), wire({
             1: variant('single'),
         },
 
+        // update_expression: postfix vs prefix `++` / `--`.
+        //   PREC_LEFT(0, choice(
+        //     seq(field('argument', expr), field('operator', '++'|'--')),
+        //     seq(field('operator', '++'|'--'), field('argument', expr))))
+        // Deferred: variant() adoption here triggers a parse-generation
+        // conflict with `await_expression` because Link's variant hoist
+        // doesn't propagate the OUTER `PREC_LEFT(0, ...)` into each
+        // extracted hidden rule. call_expression uses per-branch `prec(...)`
+        // wrappers, so the hoist re-wraps them; update_expression's
+        // precedence lives on the whole choice instead. Fix would need
+        // Link to duplicate outer prec onto every extracted branch.
+
     },
     rules: {
         // parenthesized_expression: held. Base is plain `seq('(',

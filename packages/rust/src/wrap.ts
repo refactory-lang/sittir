@@ -37,6 +37,9 @@ import type {
   ContinueExpression,
   DeclarationList,
   DelimTokenTree,
+  DelimTokenTreeBrace,
+  DelimTokenTreeBracket,
+  DelimTokenTreeParen,
   DynamicType,
   ElseClause,
   EnumItem,
@@ -138,7 +141,13 @@ import type {
   TokenRepetition,
   TokenRepetitionPattern,
   TokenTree,
+  TokenTreeBrace,
+  TokenTreeBracket,
+  TokenTreeParen,
   TokenTreePattern,
+  TokenTreePatternBrace,
+  TokenTreePatternBracket,
+  TokenTreePatternParen,
   TraitBounds,
   TraitItem,
   TryBlock,
@@ -245,7 +254,7 @@ export function wrapMacroRule(data: _NodeData, tree: TreeHandle): WrappedNode<Ma
 export function wrapTokenTreePattern(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTreePattern> {
   return {
     ...data,
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<TokenTreePattern>;
 }
 
@@ -268,7 +277,7 @@ export function wrapTokenRepetitionPattern(data: _NodeData, tree: TreeHandle): W
 export function wrapTokenTree(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTree> {
   return {
     ...data,
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<TokenTree>;
 }
 
@@ -884,7 +893,7 @@ export function wrapMacroInvocation(data: _NodeData, tree: TreeHandle): WrappedN
 export function wrapDelimTokenTree(data: _NodeData, tree: TreeHandle): WrappedNode<DelimTokenTree> {
   return {
     ...data,
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<DelimTokenTree>;
 }
 
@@ -1593,6 +1602,69 @@ export function wrapMatchArmBlockEnding(data: _NodeData, tree: TreeHandle): Wrap
   } as unknown as WrappedNode<MatchArmBlockEnding>;
 }
 
+export function wrapTokenTreePatternParen(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTreePatternParen> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<TokenTreePatternParen>;
+}
+
+export function wrapTokenTreePatternBracket(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTreePatternBracket> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<TokenTreePatternBracket>;
+}
+
+export function wrapTokenTreePatternBrace(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTreePatternBrace> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<TokenTreePatternBrace>;
+}
+
+export function wrapTokenTreeParen(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTreeParen> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<TokenTreeParen>;
+}
+
+export function wrapTokenTreeBracket(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTreeBracket> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<TokenTreeBracket>;
+}
+
+export function wrapTokenTreeBrace(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTreeBrace> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<TokenTreeBrace>;
+}
+
+export function wrapDelimTokenTreeParen(data: _NodeData, tree: TreeHandle): WrappedNode<DelimTokenTreeParen> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<DelimTokenTreeParen>;
+}
+
+export function wrapDelimTokenTreeBracket(data: _NodeData, tree: TreeHandle): WrappedNode<DelimTokenTreeBracket> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<DelimTokenTreeBracket>;
+}
+
+export function wrapDelimTokenTreeBrace(data: _NodeData, tree: TreeHandle): WrappedNode<DelimTokenTreeBrace> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<DelimTokenTreeBrace>;
+}
+
 const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {
   'source_file': (d, t) => wrapSourceFile(d, t),
   'expression_statement': (d, t) => wrapExpressionStatement(d, t),
@@ -1786,6 +1858,15 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_match_arm_block_ending': (d, t) => wrapMatchArmBlockEnding(d, t),
   '_line_comment_regular_dslash': (d) => d,
   '_line_comment_content': (d) => d,
+  '_token_tree_pattern_paren': (d, t) => wrapTokenTreePatternParen(d, t),
+  '_token_tree_pattern_bracket': (d, t) => wrapTokenTreePatternBracket(d, t),
+  '_token_tree_pattern_brace': (d, t) => wrapTokenTreePatternBrace(d, t),
+  '_token_tree_paren': (d, t) => wrapTokenTreeParen(d, t),
+  '_token_tree_bracket': (d, t) => wrapTokenTreeBracket(d, t),
+  '_token_tree_brace': (d, t) => wrapTokenTreeBrace(d, t),
+  '_delim_token_tree_paren': (d, t) => wrapDelimTokenTreeParen(d, t),
+  '_delim_token_tree_bracket': (d, t) => wrapDelimTokenTreeBracket(d, t),
+  '_delim_token_tree_brace': (d, t) => wrapDelimTokenTreeBrace(d, t),
   'string_content': (d) => d,
   'raw_string_literal_content': (d) => d,
   'float_literal': (d) => d,

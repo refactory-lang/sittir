@@ -444,12 +444,21 @@ export function macroRuleFrom(input: T.MacroRule.Loose): ReturnType<typeof F.mac
   });
 }
 
-export function tokenTreePatternFrom(...input: readonly (NonNullable<T.TokenTreePattern.Config['children']>[number] | T.TokenTreePattern)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'token_tree_pattern') {
-    const data = input[0];
-    return F.tokenTreePattern(...(data.$children ?? []));
-  }
-  return F.tokenTreePattern(...input);
+export function tokenTreePatternFrom(input?: T.TokenTreePattern.Loose): ReturnType<typeof F.tokenTreePattern> {
+  if (input !== undefined && isNodeData(input)) return input;
+  return F.tokenTreePattern(input as Parameters<typeof F.tokenTreePattern>[0]);
+}
+
+export function tokenTreePatternUFormParenFrom(input: Omit<ConfigOf<T.TokenTreePatternUFormParen>, '$variant'>) {
+  return F.tokenTreePatternUFormParen(input);
+}
+
+export function tokenTreePatternUFormBracketFrom(input: Omit<ConfigOf<T.TokenTreePatternUFormBracket>, '$variant'>) {
+  return F.tokenTreePatternUFormBracket(input);
+}
+
+export function tokenTreePatternUFormBraceFrom(input: Omit<ConfigOf<T.TokenTreePatternUFormBrace>, '$variant'>) {
+  return F.tokenTreePatternUFormBrace(input);
 }
 
 export function tokenBindingPatternFrom(input: T.TokenBindingPattern.Loose): ReturnType<typeof F.tokenBindingPattern> {
@@ -473,12 +482,21 @@ export function fragmentSpecifierFrom(input: string | T.FragmentSpecifier) {
   return F.fragmentSpecifier(input);
 }
 
-export function tokenTreeFrom(...input: readonly (NonNullable<T.TokenTree.Config['children']>[number] | T.TokenTree)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'token_tree') {
-    const data = input[0];
-    return F.tokenTree(...(data.$children ?? []));
-  }
-  return F.tokenTree(...input);
+export function tokenTreeFrom(input?: T.TokenTree.Loose): ReturnType<typeof F.tokenTree> {
+  if (input !== undefined && isNodeData(input)) return input;
+  return F.tokenTree(input as Parameters<typeof F.tokenTree>[0]);
+}
+
+export function tokenTreeUFormParenFrom(input: Omit<ConfigOf<T.TokenTreeUFormParen>, '$variant'>) {
+  return F.tokenTreeUFormParen(input);
+}
+
+export function tokenTreeUFormBracketFrom(input: Omit<ConfigOf<T.TokenTreeUFormBracket>, '$variant'>) {
+  return F.tokenTreeUFormBracket(input);
+}
+
+export function tokenTreeUFormBraceFrom(input: Omit<ConfigOf<T.TokenTreeUFormBrace>, '$variant'>) {
+  return F.tokenTreeUFormBrace(input);
 }
 
 export function tokenRepetitionFrom(...input: readonly (NonNullable<T.TokenRepetition.Config['children']>[number] | T.TokenRepetition)[]) {
@@ -1135,12 +1153,21 @@ export function macroInvocationFrom(input: T.MacroInvocation.Loose): ReturnType<
   });
 }
 
-export function delimTokenTreeFrom(...input: readonly (NonNullable<T.DelimTokenTree.Config['children']>[number] | T.DelimTokenTree)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'delim_token_tree') {
-    const data = input[0];
-    return F.delimTokenTree(...(data.$children ?? []));
-  }
-  return F.delimTokenTree(...input);
+export function delimTokenTreeFrom(input?: T.DelimTokenTree.Loose): ReturnType<typeof F.delimTokenTree> {
+  if (input !== undefined && isNodeData(input)) return input;
+  return F.delimTokenTree(input as Parameters<typeof F.delimTokenTree>[0]);
+}
+
+export function delimTokenTreeUFormParenFrom(input: Omit<ConfigOf<T.DelimTokenTreeUFormParen>, '$variant'>) {
+  return F.delimTokenTreeUFormParen(input);
+}
+
+export function delimTokenTreeUFormBracketFrom(input: Omit<ConfigOf<T.DelimTokenTreeUFormBracket>, '$variant'>) {
+  return F.delimTokenTreeUFormBracket(input);
+}
+
+export function delimTokenTreeUFormBraceFrom(input: Omit<ConfigOf<T.DelimTokenTreeUFormBrace>, '$variant'>) {
+  return F.delimTokenTreeUFormBrace(input);
 }
 
 export function scopedIdentifierFrom(input: T.ScopedIdentifier.Loose): ReturnType<typeof F.scopedIdentifier> {

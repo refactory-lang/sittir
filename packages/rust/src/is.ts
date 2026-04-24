@@ -187,6 +187,15 @@ export interface IsGuards {
     ExpressionStatementWithSemi<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_expression_statement_with_semi' };
     ExpressionStatementBlockEnding<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_expression_statement_block_ending' };
     MatchArmBlockEnding<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_match_arm_block_ending' };
+    TokenTreePatternParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_token_tree_pattern_paren' };
+    TokenTreePatternBracket<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_token_tree_pattern_bracket' };
+    TokenTreePatternBrace<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_token_tree_pattern_brace' };
+    TokenTreeParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_token_tree_paren' };
+    TokenTreeBracket<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_token_tree_bracket' };
+    TokenTreeBrace<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_token_tree_brace' };
+    DelimTokenTreeParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_delim_token_tree_paren' };
+    DelimTokenTreeBracket<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_delim_token_tree_bracket' };
+    DelimTokenTreeBrace<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_delim_token_tree_brace' };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): v is { readonly $type: K & string };
     statement(v: { readonly $type: string }): v is Statement;
     declarationStatement(v: { readonly $type: string }): v is DeclarationStatement;
@@ -370,6 +379,15 @@ export interface AssertGuards {
     ExpressionStatementWithSemi(v: { readonly $type: string }): asserts v is { readonly $type: '_expression_statement_with_semi' };
     ExpressionStatementBlockEnding(v: { readonly $type: string }): asserts v is { readonly $type: '_expression_statement_block_ending' };
     MatchArmBlockEnding(v: { readonly $type: string }): asserts v is { readonly $type: '_match_arm_block_ending' };
+    TokenTreePatternParen(v: { readonly $type: string }): asserts v is { readonly $type: '_token_tree_pattern_paren' };
+    TokenTreePatternBracket(v: { readonly $type: string }): asserts v is { readonly $type: '_token_tree_pattern_bracket' };
+    TokenTreePatternBrace(v: { readonly $type: string }): asserts v is { readonly $type: '_token_tree_pattern_brace' };
+    TokenTreeParen(v: { readonly $type: string }): asserts v is { readonly $type: '_token_tree_paren' };
+    TokenTreeBracket(v: { readonly $type: string }): asserts v is { readonly $type: '_token_tree_bracket' };
+    TokenTreeBrace(v: { readonly $type: string }): asserts v is { readonly $type: '_token_tree_brace' };
+    DelimTokenTreeParen(v: { readonly $type: string }): asserts v is { readonly $type: '_delim_token_tree_paren' };
+    DelimTokenTreeBracket(v: { readonly $type: string }): asserts v is { readonly $type: '_delim_token_tree_bracket' };
+    DelimTokenTreeBrace(v: { readonly $type: string }): asserts v is { readonly $type: '_delim_token_tree_brace' };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): asserts v is { readonly $type: K & string };
     statement(v: { readonly $type: string }): asserts v is Statement;
     declarationStatement(v: { readonly $type: string }): asserts v is DeclarationStatement;
@@ -578,6 +596,15 @@ export const is = {
     ExpressionStatementWithSemi: _g("_expression_statement_with_semi"),
     ExpressionStatementBlockEnding: _g("_expression_statement_block_ending"),
     MatchArmBlockEnding: _g("_match_arm_block_ending"),
+    TokenTreePatternParen: _g("_token_tree_pattern_paren"),
+    TokenTreePatternBracket: _g("_token_tree_pattern_bracket"),
+    TokenTreePatternBrace: _g("_token_tree_pattern_brace"),
+    TokenTreeParen: _g("_token_tree_paren"),
+    TokenTreeBracket: _g("_token_tree_bracket"),
+    TokenTreeBrace: _g("_token_tree_brace"),
+    DelimTokenTreeParen: _g("_delim_token_tree_paren"),
+    DelimTokenTreeBracket: _g("_delim_token_tree_bracket"),
+    DelimTokenTreeBrace: _g("_delim_token_tree_brace"),
     kind: (v: { readonly $type: string }, k: string): boolean => v.$type === k,
     statement: _sg(_supertype_statement),
     declarationStatement: _sg(_supertype_declarationStatement),
@@ -782,6 +809,15 @@ export const assert = {
     ExpressionStatementWithSemi: _makeAssert('ExpressionStatementWithSemi', is.ExpressionStatementWithSemi as _AnyGuard),
     ExpressionStatementBlockEnding: _makeAssert('ExpressionStatementBlockEnding', is.ExpressionStatementBlockEnding as _AnyGuard),
     MatchArmBlockEnding: _makeAssert('MatchArmBlockEnding', is.MatchArmBlockEnding as _AnyGuard),
+    TokenTreePatternParen: _makeAssert('TokenTreePatternParen', is.TokenTreePatternParen as _AnyGuard),
+    TokenTreePatternBracket: _makeAssert('TokenTreePatternBracket', is.TokenTreePatternBracket as _AnyGuard),
+    TokenTreePatternBrace: _makeAssert('TokenTreePatternBrace', is.TokenTreePatternBrace as _AnyGuard),
+    TokenTreeParen: _makeAssert('TokenTreeParen', is.TokenTreeParen as _AnyGuard),
+    TokenTreeBracket: _makeAssert('TokenTreeBracket', is.TokenTreeBracket as _AnyGuard),
+    TokenTreeBrace: _makeAssert('TokenTreeBrace', is.TokenTreeBrace as _AnyGuard),
+    DelimTokenTreeParen: _makeAssert('DelimTokenTreeParen', is.DelimTokenTreeParen as _AnyGuard),
+    DelimTokenTreeBracket: _makeAssert('DelimTokenTreeBracket', is.DelimTokenTreeBracket as _AnyGuard),
+    DelimTokenTreeBrace: _makeAssert('DelimTokenTreeBrace', is.DelimTokenTreeBrace as _AnyGuard),
     kind: _makeAssertKind(is.kind as _AnyGuard),
     statement: _makeAssert('statement', is.statement as _AnyGuard),
     declarationStatement: _makeAssert('declarationStatement', is.declarationStatement as _AnyGuard),

@@ -505,6 +505,44 @@ export default grammar(enrich(base), wire({
             '1/2': variant('content'),
         },
 
+        // token_tree_pattern / token_tree / delim_token_tree: each is
+        // choice(seq('(', repeat(inner), ')'), seq('[', ..., ']'), seq('{', ..., '}')).
+        // Three delimiter-variants — distinct opening/closing literals per
+        // arm, same inner content. Split so each arm owns its template.
+        token_tree_pattern: {
+            0: variant('paren'),
+            1: variant('bracket'),
+            2: variant('brace'),
+        },
+        token_tree: {
+            0: variant('paren'),
+            1: variant('bracket'),
+            2: variant('brace'),
+        },
+        delim_token_tree: {
+            0: variant('paren'),
+            1: variant('bracket'),
+            2: variant('brace'),
+        },
+
+        // _let_chain: left-recursive `_let_chain && let_condition` vs
+        // base `let_condition`. Hidden rule — tree-sitter flattens the
+        // recursion at parse time, so variant() adoption would emit
+        // unreachable `_let_chain_and` / `_let_chain_base` kinds. The
+        // non-canonical audit for this kind reflects the derive walker's
+        // view of an inlined helper; it doesn't surface as a user-facing
+        // shape. Leave as-is.
+
+        // block_comment: deferred. Inner choice at `1/0` branches on
+        // doc-marker form vs bare `_block_comment_content`, but the
+        // latter is an EXTERNAL token (lexer callback). Variant hoist
+        // tries to reference `_block_comment_content` from a generated
+        // hidden rule, and tree-sitter rejects it as "used as both an
+        // external token and a non-terminal rule." Resolving this
+        // needs either conflicts-awareness in the hoist or a
+        // merge-branches path that doesn't extract the external-token
+        // branch.
+
     },
     rules: {
         // function_modifiers — full replacement: label each choice alternative

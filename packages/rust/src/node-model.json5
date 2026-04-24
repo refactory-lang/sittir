@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 349,
+  "nodeCount": 367,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -37,6 +37,9 @@
     "array_expression__form_semi",
     "closure_expression__form_block",
     "closure_expression__form_expr",
+    "delim_token_tree__form_brace",
+    "delim_token_tree__form_bracket",
+    "delim_token_tree__form_paren",
     "expression_statement__form_block_ending",
     "expression_statement__form_with_semi",
     "field_pattern__form_named",
@@ -68,6 +71,12 @@
     "struct_item__form_brace",
     "struct_item__form_tuple",
     "struct_item__form_unit",
+    "token_tree__form_brace",
+    "token_tree__form_bracket",
+    "token_tree__form_paren",
+    "token_tree_pattern__form_brace",
+    "token_tree_pattern__form_bracket",
+    "token_tree_pattern__form_paren",
     "visibility_modifier_form0",
     "visibility_modifier_form1"
   ],
@@ -735,6 +744,81 @@
         "type_item",
         "union_item",
         "use_declaration"
+      ]
+    },
+    {
+      "kind": "_delim_token_tree_brace",
+      "modelType": "container",
+      "typeName": "DelimTokenTreeBrace",
+      "factoryName": "delimTokenTreeBrace",
+      "irKey": "delimTokenTreeBrace",
+      "hidden": false,
+      "children": [
+        {
+          "name": "delim_tokens",
+          "propertyName": "delimTokens",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_delim_tokens",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_delim_token_tree_bracket",
+      "modelType": "container",
+      "typeName": "DelimTokenTreeBracket",
+      "factoryName": "delimTokenTreeBracket",
+      "irKey": "delimTokenTreeBracket",
+      "hidden": false,
+      "children": [
+        {
+          "name": "delim_tokens",
+          "propertyName": "delimTokens",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_delim_tokens",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_delim_token_tree_paren",
+      "modelType": "container",
+      "typeName": "DelimTokenTreeParen",
+      "factoryName": "delimTokenTreeParen",
+      "irKey": "delimTokenTreeParen",
+      "hidden": false,
+      "children": [
+        {
+          "name": "delim_tokens",
+          "propertyName": "delimTokens",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_delim_tokens",
+              "unresolved": true
+            }
+          ]
+        }
       ]
     },
     {
@@ -2680,6 +2764,156 @@
         "token_binding_pattern",
         "token_repetition_pattern",
         "token_tree_pattern"
+      ]
+    },
+    {
+      "kind": "_token_tree_brace",
+      "modelType": "container",
+      "typeName": "TokenTreeBrace",
+      "factoryName": "tokenTreeBrace",
+      "irKey": "tokenTreeBrace",
+      "hidden": false,
+      "children": [
+        {
+          "name": "tokens",
+          "propertyName": "tokens",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_tokens",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_token_tree_bracket",
+      "modelType": "container",
+      "typeName": "TokenTreeBracket",
+      "factoryName": "tokenTreeBracket",
+      "irKey": "tokenTreeBracket",
+      "hidden": false,
+      "children": [
+        {
+          "name": "tokens",
+          "propertyName": "tokens",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_tokens",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_token_tree_paren",
+      "modelType": "container",
+      "typeName": "TokenTreeParen",
+      "factoryName": "tokenTreeParen",
+      "irKey": "tokenTreeParen",
+      "hidden": false,
+      "children": [
+        {
+          "name": "tokens",
+          "propertyName": "tokens",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_tokens",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_token_tree_pattern_brace",
+      "modelType": "container",
+      "typeName": "TokenTreePatternBrace",
+      "factoryName": "tokenTreePatternBrace",
+      "irKey": "tokenTreePatternBrace",
+      "hidden": false,
+      "children": [
+        {
+          "name": "token_pattern",
+          "propertyName": "tokenPattern",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_token_pattern",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_token_tree_pattern_bracket",
+      "modelType": "container",
+      "typeName": "TokenTreePatternBracket",
+      "factoryName": "tokenTreePatternBracket",
+      "irKey": "tokenTreePatternBracket",
+      "hidden": false,
+      "children": [
+        {
+          "name": "token_pattern",
+          "propertyName": "tokenPattern",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_token_pattern",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_token_tree_pattern_paren",
+      "modelType": "container",
+      "typeName": "TokenTreePatternParen",
+      "factoryName": "tokenTreePatternParen",
+      "irKey": "tokenTreePatternParen",
+      "hidden": false,
+      "children": [
+        {
+          "name": "token_pattern",
+          "propertyName": "tokenPattern",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_token_pattern",
+              "unresolved": true
+            }
+          ]
+        }
       ]
     },
     {
@@ -5200,23 +5434,177 @@
     },
     {
       "kind": "delim_token_tree",
-      "modelType": "container",
+      "modelType": "polymorph",
       "typeName": "DelimTokenTree",
       "factoryName": "delimTokenTree",
       "irKey": "delimTokenTree",
       "hidden": false,
+      "source": "override",
+      "polymorphSource": "override",
+      "variantChildKinds": [
+        "delim_token_tree_paren",
+        "delim_token_tree_bracket",
+        "delim_token_tree_brace"
+      ],
+      "forms": [
+        {
+          "kind": "delim_token_tree__form_paren",
+          "name": "paren",
+          "typeName": "DelimTokenTreeUFormParen",
+          "factoryName": "delimTokenTreeUFormParen",
+          "irKey": "delimTokenTreeUFormParen",
+          "parentKind": "delim_token_tree",
+          "fields": [],
+          "children": [
+            {
+              "name": "delim_token_tree_paren",
+              "propertyName": "delimTokenTreeParen",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_delim_token_tree_paren",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "delim_token_tree__form_bracket",
+          "name": "bracket",
+          "typeName": "DelimTokenTreeUFormBracket",
+          "factoryName": "delimTokenTreeUFormBracket",
+          "irKey": "delimTokenTreeUFormBracket",
+          "parentKind": "delim_token_tree",
+          "fields": [],
+          "children": [
+            {
+              "name": "delim_token_tree_bracket",
+              "propertyName": "delimTokenTreeBracket",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_delim_token_tree_bracket",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "delim_token_tree__form_brace",
+          "name": "brace",
+          "typeName": "DelimTokenTreeUFormBrace",
+          "factoryName": "delimTokenTreeUFormBrace",
+          "irKey": "delimTokenTreeUFormBrace",
+          "parentKind": "delim_token_tree",
+          "fields": [],
+          "children": [
+            {
+              "name": "delim_token_tree_brace",
+              "propertyName": "delimTokenTreeBrace",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_delim_token_tree_brace",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "delim_token_tree__form_brace",
+      "modelType": "group",
+      "typeName": "DelimTokenTreeUFormBrace",
+      "factoryName": "delimTokenTreeUFormBrace",
+      "irKey": "delimTokenTreeUFormBrace",
+      "hidden": false,
+      "name": "brace",
+      "parentKind": "delim_token_tree",
+      "fields": [],
       "children": [
         {
-          "name": "delim_tokens",
-          "propertyName": "delimTokens",
+          "name": "delim_token_tree_brace",
+          "propertyName": "delimTokenTreeBrace",
           "required": true,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_delim_tokens",
+              "multiplicity": "single",
+              "name": "_delim_token_tree_brace",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "delim_token_tree__form_bracket",
+      "modelType": "group",
+      "typeName": "DelimTokenTreeUFormBracket",
+      "factoryName": "delimTokenTreeUFormBracket",
+      "irKey": "delimTokenTreeUFormBracket",
+      "hidden": false,
+      "name": "bracket",
+      "parentKind": "delim_token_tree",
+      "fields": [],
+      "children": [
+        {
+          "name": "delim_token_tree_bracket",
+          "propertyName": "delimTokenTreeBracket",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_delim_token_tree_bracket",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "delim_token_tree__form_paren",
+      "modelType": "group",
+      "typeName": "DelimTokenTreeUFormParen",
+      "factoryName": "delimTokenTreeUFormParen",
+      "irKey": "delimTokenTreeUFormParen",
+      "hidden": false,
+      "name": "paren",
+      "parentKind": "delim_token_tree",
+      "fields": [],
+      "children": [
+        {
+          "name": "delim_token_tree_paren",
+          "propertyName": "delimTokenTreeParen",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_delim_token_tree_paren",
               "unresolved": true
             }
           ]
@@ -14040,23 +14428,177 @@
     },
     {
       "kind": "token_tree",
-      "modelType": "container",
+      "modelType": "polymorph",
       "typeName": "TokenTree",
       "factoryName": "tokenTree",
       "irKey": "tokenTree",
       "hidden": false,
+      "source": "override",
+      "polymorphSource": "override",
+      "variantChildKinds": [
+        "token_tree_paren",
+        "token_tree_bracket",
+        "token_tree_brace"
+      ],
+      "forms": [
+        {
+          "kind": "token_tree__form_paren",
+          "name": "paren",
+          "typeName": "TokenTreeUFormParen",
+          "factoryName": "tokenTreeUFormParen",
+          "irKey": "tokenTreeUFormParen",
+          "parentKind": "token_tree",
+          "fields": [],
+          "children": [
+            {
+              "name": "token_tree_paren",
+              "propertyName": "tokenTreeParen",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_token_tree_paren",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "token_tree__form_bracket",
+          "name": "bracket",
+          "typeName": "TokenTreeUFormBracket",
+          "factoryName": "tokenTreeUFormBracket",
+          "irKey": "tokenTreeUFormBracket",
+          "parentKind": "token_tree",
+          "fields": [],
+          "children": [
+            {
+              "name": "token_tree_bracket",
+              "propertyName": "tokenTreeBracket",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_token_tree_bracket",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "token_tree__form_brace",
+          "name": "brace",
+          "typeName": "TokenTreeUFormBrace",
+          "factoryName": "tokenTreeUFormBrace",
+          "irKey": "tokenTreeUFormBrace",
+          "parentKind": "token_tree",
+          "fields": [],
+          "children": [
+            {
+              "name": "token_tree_brace",
+              "propertyName": "tokenTreeBrace",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_token_tree_brace",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "token_tree__form_brace",
+      "modelType": "group",
+      "typeName": "TokenTreeUFormBrace",
+      "factoryName": "tokenTreeUFormBrace",
+      "irKey": "tokenTreeUFormBrace",
+      "hidden": false,
+      "name": "brace",
+      "parentKind": "token_tree",
+      "fields": [],
       "children": [
         {
-          "name": "tokens",
-          "propertyName": "tokens",
+          "name": "token_tree_brace",
+          "propertyName": "tokenTreeBrace",
           "required": true,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_tokens",
+              "multiplicity": "single",
+              "name": "_token_tree_brace",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "token_tree__form_bracket",
+      "modelType": "group",
+      "typeName": "TokenTreeUFormBracket",
+      "factoryName": "tokenTreeUFormBracket",
+      "irKey": "tokenTreeUFormBracket",
+      "hidden": false,
+      "name": "bracket",
+      "parentKind": "token_tree",
+      "fields": [],
+      "children": [
+        {
+          "name": "token_tree_bracket",
+          "propertyName": "tokenTreeBracket",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_token_tree_bracket",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "token_tree__form_paren",
+      "modelType": "group",
+      "typeName": "TokenTreeUFormParen",
+      "factoryName": "tokenTreeUFormParen",
+      "irKey": "tokenTreeUFormParen",
+      "hidden": false,
+      "name": "paren",
+      "parentKind": "token_tree",
+      "fields": [],
+      "children": [
+        {
+          "name": "token_tree_paren",
+          "propertyName": "tokenTreeParen",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_token_tree_paren",
               "unresolved": true
             }
           ]
@@ -14065,23 +14607,177 @@
     },
     {
       "kind": "token_tree_pattern",
-      "modelType": "container",
+      "modelType": "polymorph",
       "typeName": "TokenTreePattern",
       "factoryName": "tokenTreePattern",
       "irKey": "tokenTreePattern",
       "hidden": false,
+      "source": "override",
+      "polymorphSource": "override",
+      "variantChildKinds": [
+        "token_tree_pattern_paren",
+        "token_tree_pattern_bracket",
+        "token_tree_pattern_brace"
+      ],
+      "forms": [
+        {
+          "kind": "token_tree_pattern__form_paren",
+          "name": "paren",
+          "typeName": "TokenTreePatternUFormParen",
+          "factoryName": "tokenTreePatternUFormParen",
+          "irKey": "tokenTreePatternUFormParen",
+          "parentKind": "token_tree_pattern",
+          "fields": [],
+          "children": [
+            {
+              "name": "token_tree_pattern_paren",
+              "propertyName": "tokenTreePatternParen",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_token_tree_pattern_paren",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "token_tree_pattern__form_bracket",
+          "name": "bracket",
+          "typeName": "TokenTreePatternUFormBracket",
+          "factoryName": "tokenTreePatternUFormBracket",
+          "irKey": "tokenTreePatternUFormBracket",
+          "parentKind": "token_tree_pattern",
+          "fields": [],
+          "children": [
+            {
+              "name": "token_tree_pattern_bracket",
+              "propertyName": "tokenTreePatternBracket",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_token_tree_pattern_bracket",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "token_tree_pattern__form_brace",
+          "name": "brace",
+          "typeName": "TokenTreePatternUFormBrace",
+          "factoryName": "tokenTreePatternUFormBrace",
+          "irKey": "tokenTreePatternUFormBrace",
+          "parentKind": "token_tree_pattern",
+          "fields": [],
+          "children": [
+            {
+              "name": "token_tree_pattern_brace",
+              "propertyName": "tokenTreePatternBrace",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_token_tree_pattern_brace",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "token_tree_pattern__form_brace",
+      "modelType": "group",
+      "typeName": "TokenTreePatternUFormBrace",
+      "factoryName": "tokenTreePatternUFormBrace",
+      "irKey": "tokenTreePatternUFormBrace",
+      "hidden": false,
+      "name": "brace",
+      "parentKind": "token_tree_pattern",
+      "fields": [],
       "children": [
         {
-          "name": "token_pattern",
-          "propertyName": "tokenPattern",
+          "name": "token_tree_pattern_brace",
+          "propertyName": "tokenTreePatternBrace",
           "required": true,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_token_pattern",
+              "multiplicity": "single",
+              "name": "_token_tree_pattern_brace",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "token_tree_pattern__form_bracket",
+      "modelType": "group",
+      "typeName": "TokenTreePatternUFormBracket",
+      "factoryName": "tokenTreePatternUFormBracket",
+      "irKey": "tokenTreePatternUFormBracket",
+      "hidden": false,
+      "name": "bracket",
+      "parentKind": "token_tree_pattern",
+      "fields": [],
+      "children": [
+        {
+          "name": "token_tree_pattern_bracket",
+          "propertyName": "tokenTreePatternBracket",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_token_tree_pattern_bracket",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "token_tree_pattern__form_paren",
+      "modelType": "group",
+      "typeName": "TokenTreePatternUFormParen",
+      "factoryName": "tokenTreePatternUFormParen",
+      "irKey": "tokenTreePatternUFormParen",
+      "hidden": false,
+      "name": "paren",
+      "parentKind": "token_tree_pattern",
+      "fields": [],
+      "children": [
+        {
+          "name": "token_tree_pattern_paren",
+          "propertyName": "tokenTreePatternParen",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_token_tree_pattern_paren",
               "unresolved": true
             }
           ]

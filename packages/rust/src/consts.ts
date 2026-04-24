@@ -3,6 +3,9 @@
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
   '_closure_expression_expr',
+  '_delim_token_tree_brace',
+  '_delim_token_tree_bracket',
+  '_delim_token_tree_paren',
   '_expression_statement_block_ending',
   '_expression_statement_with_semi',
   '_field_identifier',
@@ -23,6 +26,12 @@ export const NODE_KINDS = [
   '_reference_expression_raw_mut',
   '_reserved_identifier',
   '_string_content',
+  '_token_tree_brace',
+  '_token_tree_bracket',
+  '_token_tree_paren',
+  '_token_tree_pattern_brace',
+  '_token_tree_pattern_bracket',
+  '_token_tree_pattern_paren',
   '_type_identifier',
   'abstract_type',
   'arguments',
@@ -367,6 +376,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_closure_expression_expr': [
     { name: 'body', required: true, multiple: false },
   ],
+  '_delim_token_tree_brace': [
+  ],
+  '_delim_token_tree_bracket': [
+  ],
+  '_delim_token_tree_paren': [
+  ],
   '_expression_statement_block_ending': [
   ],
   '_expression_statement_with_semi': [
@@ -413,6 +428,18 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_reserved_identifier': [
   ],
   '_string_content': [
+  ],
+  '_token_tree_brace': [
+  ],
+  '_token_tree_bracket': [
+  ],
+  '_token_tree_paren': [
+  ],
+  '_token_tree_pattern_brace': [
+  ],
+  '_token_tree_pattern_bracket': [
+  ],
+  '_token_tree_pattern_paren': [
   ],
   '_type_identifier': [
   ],

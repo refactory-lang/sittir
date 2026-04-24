@@ -248,6 +248,15 @@ export const enum SyntaxKind {
   MatchArmWithComma = '_match_arm_with_comma',
   MatchArmBlockEnding = '_match_arm_block_ending',
   LineCommentDoc = '_line_comment_doc',
+  TokenTreePatternParen = '_token_tree_pattern_paren',
+  TokenTreePatternBracket = '_token_tree_pattern_bracket',
+  TokenTreePatternBrace = '_token_tree_pattern_brace',
+  TokenTreeParen = '_token_tree_paren',
+  TokenTreeBracket = '_token_tree_bracket',
+  TokenTreeBrace = '_token_tree_brace',
+  DelimTokenTreeParen = '_delim_token_tree_paren',
+  DelimTokenTreeBracket = '_delim_token_tree_bracket',
+  DelimTokenTreeBrace = '_delim_token_tree_brace',
   FragmentSpecifier = 'fragment_specifier',
   UnitType = 'unit_type',
   MutableSpecifier = 'mutable_specifier',
@@ -742,11 +751,25 @@ export interface MacroRule {
   };
 }
 
-export interface TokenTreePattern {
+export interface TokenTreePatternUFormParen {
   readonly $type: 'token_tree_pattern';
-  readonly $children: readonly (TokenPattern)[];
+  readonly $variant: 'paren';
+  readonly $children: readonly [TokenTreePatternParen];
 }
 
+export interface TokenTreePatternUFormBracket {
+  readonly $type: 'token_tree_pattern';
+  readonly $variant: 'bracket';
+  readonly $children: readonly [TokenTreePatternBracket];
+}
+
+export interface TokenTreePatternUFormBrace {
+  readonly $type: 'token_tree_pattern';
+  readonly $variant: 'brace';
+  readonly $children: readonly [TokenTreePatternBrace];
+}
+
+export type TokenTreePattern = TokenTreePatternUFormParen | TokenTreePatternUFormBracket | TokenTreePatternUFormBrace;
 export interface TokenBindingPattern {
   readonly $type: 'token_binding_pattern';
   readonly $fields: {
@@ -760,11 +783,25 @@ export interface TokenRepetitionPattern {
   readonly $children: readonly (TokenPattern)[];
 }
 
-export interface TokenTree {
+export interface TokenTreeUFormParen {
   readonly $type: 'token_tree';
-  readonly $children: readonly (Tokens)[];
+  readonly $variant: 'paren';
+  readonly $children: readonly [TokenTreeParen];
 }
 
+export interface TokenTreeUFormBracket {
+  readonly $type: 'token_tree';
+  readonly $variant: 'bracket';
+  readonly $children: readonly [TokenTreeBracket];
+}
+
+export interface TokenTreeUFormBrace {
+  readonly $type: 'token_tree';
+  readonly $variant: 'brace';
+  readonly $children: readonly [TokenTreeBrace];
+}
+
+export type TokenTree = TokenTreeUFormParen | TokenTreeUFormBracket | TokenTreeUFormBrace;
 export interface TokenRepetition {
   readonly $type: 'token_repetition';
   readonly $children: readonly (Tokens)[];
@@ -1379,11 +1416,25 @@ export interface MacroInvocation {
   };
 }
 
-export interface DelimTokenTree {
+export interface DelimTokenTreeUFormParen {
   readonly $type: 'delim_token_tree';
-  readonly $children: readonly (DelimTokens)[];
+  readonly $variant: 'paren';
+  readonly $children: readonly [DelimTokenTreeParen];
 }
 
+export interface DelimTokenTreeUFormBracket {
+  readonly $type: 'delim_token_tree';
+  readonly $variant: 'bracket';
+  readonly $children: readonly [DelimTokenTreeBracket];
+}
+
+export interface DelimTokenTreeUFormBrace {
+  readonly $type: 'delim_token_tree';
+  readonly $variant: 'brace';
+  readonly $children: readonly [DelimTokenTreeBrace];
+}
+
+export type DelimTokenTree = DelimTokenTreeUFormParen | DelimTokenTreeUFormBracket | DelimTokenTreeUFormBrace;
 export interface ScopedIdentifier {
   readonly $type: 'scoped_identifier';
   readonly $fields: {
@@ -2196,6 +2247,51 @@ export interface LineCommentDoc {
   };
 }
 
+export interface TokenTreePatternParen {
+  readonly $type: 'token_tree_pattern_paren';
+  readonly $children: readonly (TokenPattern)[];
+}
+
+export interface TokenTreePatternBracket {
+  readonly $type: 'token_tree_pattern_bracket';
+  readonly $children: readonly (TokenPattern)[];
+}
+
+export interface TokenTreePatternBrace {
+  readonly $type: 'token_tree_pattern_brace';
+  readonly $children: readonly (TokenPattern)[];
+}
+
+export interface TokenTreeParen {
+  readonly $type: 'token_tree_paren';
+  readonly $children: readonly (Tokens)[];
+}
+
+export interface TokenTreeBracket {
+  readonly $type: 'token_tree_bracket';
+  readonly $children: readonly (Tokens)[];
+}
+
+export interface TokenTreeBrace {
+  readonly $type: 'token_tree_brace';
+  readonly $children: readonly (Tokens)[];
+}
+
+export interface DelimTokenTreeParen {
+  readonly $type: 'delim_token_tree_paren';
+  readonly $children: readonly (DelimTokens)[];
+}
+
+export interface DelimTokenTreeBracket {
+  readonly $type: 'delim_token_tree_bracket';
+  readonly $children: readonly (DelimTokens)[];
+}
+
+export interface DelimTokenTreeBrace {
+  readonly $type: 'delim_token_tree_brace';
+  readonly $children: readonly (DelimTokens)[];
+}
+
 
 // Leaf node types
 export type FragmentSpecifier = Terminal<"fragment_specifier", "block" | "expr" | "expr_2021" | "ident" | "item" | "lifetime" | "literal" | "meta" | "pat" | "pat_param" | "path" | "stmt" | "tt" | "ty" | "vis">;
@@ -2235,9 +2331,15 @@ export interface MacroDefinitionUFormBracketTree extends TreeNode<'macro_definit
 export interface MacroDefinitionUFormBraceTree extends TreeNode<'macro_definition'> {}
 export interface MacroRuleTree extends TreeNode<'macro_rule'> {}
 export interface TokenTreePatternTree extends TreeNode<'token_tree_pattern'> {}
+export interface TokenTreePatternUFormParenTree extends TreeNode<'token_tree_pattern'> {}
+export interface TokenTreePatternUFormBracketTree extends TreeNode<'token_tree_pattern'> {}
+export interface TokenTreePatternUFormBraceTree extends TreeNode<'token_tree_pattern'> {}
 export interface TokenBindingPatternTree extends TreeNode<'token_binding_pattern'> {}
 export interface TokenRepetitionPatternTree extends TreeNode<'token_repetition_pattern'> {}
 export interface TokenTreeTree extends TreeNode<'token_tree'> {}
+export interface TokenTreeUFormParenTree extends TreeNode<'token_tree'> {}
+export interface TokenTreeUFormBracketTree extends TreeNode<'token_tree'> {}
+export interface TokenTreeUFormBraceTree extends TreeNode<'token_tree'> {}
 export interface TokenRepetitionTree extends TreeNode<'token_repetition'> {}
 export interface NonSpecialTokenTree extends AnyTreeNode { readonly type: "_non_special_token"; }
 export interface AttributeItemTree extends TreeNode<'attribute_item'> {}
@@ -2318,6 +2420,9 @@ export interface AbstractTypeTree extends TreeNode<'abstract_type'> {}
 export interface DynamicTypeTree extends TreeNode<'dynamic_type'> {}
 export interface MacroInvocationTree extends TreeNode<'macro_invocation'> {}
 export interface DelimTokenTreeTree extends AnyTreeNode { readonly type: "delim_token_tree"; }
+export interface DelimTokenTreeUFormParenTree extends AnyTreeNode {}
+export interface DelimTokenTreeUFormBracketTree extends AnyTreeNode {}
+export interface DelimTokenTreeUFormBraceTree extends AnyTreeNode {}
 export interface ScopedIdentifierTree extends TreeNode<'scoped_identifier'> {}
 export interface ScopedTypeIdentifierInExpressionPositionTree extends AnyTreeNode { readonly type: "scoped_type_identifier_in_expression_position"; }
 export interface ScopedTypeIdentifierTree extends TreeNode<'scoped_type_identifier'> {}
@@ -2439,6 +2544,15 @@ export interface ExpressionStatementBlockEndingTree extends AnyTreeNode { readon
 export interface MatchArmWithCommaTree extends AnyTreeNode { readonly type: "_match_arm_with_comma"; }
 export interface MatchArmBlockEndingTree extends AnyTreeNode { readonly type: "_match_arm_block_ending"; }
 export interface LineCommentDocTree extends AnyTreeNode { readonly type: "_line_comment_doc"; }
+export interface TokenTreePatternParenTree extends AnyTreeNode { readonly type: "_token_tree_pattern_paren"; }
+export interface TokenTreePatternBracketTree extends AnyTreeNode { readonly type: "_token_tree_pattern_bracket"; }
+export interface TokenTreePatternBraceTree extends AnyTreeNode { readonly type: "_token_tree_pattern_brace"; }
+export interface TokenTreeParenTree extends AnyTreeNode { readonly type: "_token_tree_paren"; }
+export interface TokenTreeBracketTree extends AnyTreeNode { readonly type: "_token_tree_bracket"; }
+export interface TokenTreeBraceTree extends AnyTreeNode { readonly type: "_token_tree_brace"; }
+export interface DelimTokenTreeParenTree extends AnyTreeNode { readonly type: "_delim_token_tree_paren"; }
+export interface DelimTokenTreeBracketTree extends AnyTreeNode { readonly type: "_delim_token_tree_bracket"; }
+export interface DelimTokenTreeBraceTree extends AnyTreeNode { readonly type: "_delim_token_tree_brace"; }
 export interface FragmentSpecifierTree extends TreeNode<'fragment_specifier'> {}
 export interface UnitTypeTree extends TreeNode<'unit_type'> {}
 export interface MutableSpecifierTree extends AnyTreeNode { readonly type: "mutable_specifier"; }
@@ -3077,6 +3191,15 @@ export type RustNode =
   | MatchArmWithComma
   | MatchArmBlockEnding
   | LineCommentDoc
+  | TokenTreePatternParen
+  | TokenTreePatternBracket
+  | TokenTreePatternBrace
+  | TokenTreeParen
+  | TokenTreeBracket
+  | TokenTreeBrace
+  | DelimTokenTreeParen
+  | DelimTokenTreeBracket
+  | DelimTokenTreeBrace
 ;
 
 export interface KindMap {
@@ -3257,6 +3380,15 @@ export interface KindMap {
   '_match_arm_with_comma': MatchArmWithComma;
   '_match_arm_block_ending': MatchArmBlockEnding;
   '_line_comment_doc': LineCommentDoc;
+  '_token_tree_pattern_paren': TokenTreePatternParen;
+  '_token_tree_pattern_bracket': TokenTreePatternBracket;
+  '_token_tree_pattern_brace': TokenTreePatternBrace;
+  '_token_tree_paren': TokenTreeParen;
+  '_token_tree_bracket': TokenTreeBracket;
+  '_token_tree_brace': TokenTreeBrace;
+  '_delim_token_tree_paren': DelimTokenTreeParen;
+  '_delim_token_tree_bracket': DelimTokenTreeBracket;
+  '_delim_token_tree_brace': DelimTokenTreeBrace;
   'fragment_specifier': FragmentSpecifier;
   'unit_type': UnitType;
   'mutable_specifier': MutableSpecifier;
@@ -3287,12 +3419,15 @@ export interface KindMap {
 export interface VariantMap {
   'expression_statement': { with_semi: ExpressionStatementUFormWithSemi; block_ending: ExpressionStatementUFormBlockEnding };
   'macro_definition': { paren: MacroDefinitionUFormParen; bracket: MacroDefinitionUFormBracket; brace: MacroDefinitionUFormBrace };
+  'token_tree_pattern': { paren: TokenTreePatternUFormParen; bracket: TokenTreePatternUFormBracket; brace: TokenTreePatternUFormBrace };
+  'token_tree': { paren: TokenTreeUFormParen; bracket: TokenTreeUFormBracket; brace: TokenTreeUFormBrace };
   'mod_item': { external: ModItemUFormExternal; inline: ModItemUFormInline };
   'foreign_mod_item': { semi: ForeignModItemUFormSemi; body: ForeignModItemUFormBody };
   'struct_item': { brace: StructItemUFormBrace; tuple: StructItemUFormTuple; unit: StructItemUFormUnit };
   'impl_item': { body: ImplItemUFormBody; semi: ImplItemUFormSemi };
   'visibility_modifier': { form0: VisibilityModifierForm0; form1: VisibilityModifierForm1 };
   'pointer_type': { const: PointerTypeUFormConst; mut: PointerTypeUFormMut };
+  'delim_token_tree': { paren: DelimTokenTreeUFormParen; bracket: DelimTokenTreeUFormBracket; brace: DelimTokenTreeUFormBrace };
   'range_expression': { binary: RangeExpressionUFormBinary; postfix: RangeExpressionUFormPostfix; prefix: RangeExpressionUFormPrefix; bare: RangeExpressionUFormBare };
   'array_expression': { semi: ArrayExpressionUFormSemi; list: ArrayExpressionUFormList };
   'match_arm': { with_comma: MatchArmUFormWithComma; block_ending: MatchArmUFormBlockEnding };
@@ -3481,6 +3616,15 @@ export interface ExpressionStatementBlockEndingNs extends NodeNs<ExpressionState
 export interface MatchArmWithCommaNs extends NodeNs<MatchArmWithComma, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MatchArmBlockEndingNs extends NodeNs<MatchArmBlockEnding, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface LineCommentDocNs extends NodeNs<LineCommentDoc, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TokenTreePatternParenNs extends NodeNs<TokenTreePatternParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TokenTreePatternBracketNs extends NodeNs<TokenTreePatternBracket, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TokenTreePatternBraceNs extends NodeNs<TokenTreePatternBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TokenTreeParenNs extends NodeNs<TokenTreeParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TokenTreeBracketNs extends NodeNs<TokenTreeBracket, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TokenTreeBraceNs extends NodeNs<TokenTreeBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface DelimTokenTreeParenNs extends NodeNs<DelimTokenTreeParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface DelimTokenTreeBracketNs extends NodeNs<DelimTokenTreeBracket, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface DelimTokenTreeBraceNs extends NodeNs<DelimTokenTreeBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 
 export interface NamespaceMap {
   'source_file': SourceFileNs;
@@ -3660,6 +3804,15 @@ export interface NamespaceMap {
   '_match_arm_with_comma': MatchArmWithCommaNs;
   '_match_arm_block_ending': MatchArmBlockEndingNs;
   '_line_comment_doc': LineCommentDocNs;
+  '_token_tree_pattern_paren': TokenTreePatternParenNs;
+  '_token_tree_pattern_bracket': TokenTreePatternBracketNs;
+  '_token_tree_pattern_brace': TokenTreePatternBraceNs;
+  '_token_tree_paren': TokenTreeParenNs;
+  '_token_tree_bracket': TokenTreeBracketNs;
+  '_token_tree_brace': TokenTreeBraceNs;
+  '_delim_token_tree_paren': DelimTokenTreeParenNs;
+  '_delim_token_tree_bracket': DelimTokenTreeBracketNs;
+  '_delim_token_tree_brace': DelimTokenTreeBraceNs;
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -4907,4 +5060,67 @@ export namespace LineCommentDoc {
   export type Loose = LooseFor<'_line_comment_doc'>;
   export type Tree = TreeFor<'_line_comment_doc'>;
   export type Kind = '_line_comment_doc';
+}
+export namespace TokenTreePatternParen {
+  export type Config = ConfigFor<'_token_tree_pattern_paren'>;
+  export type Fluent = FluentFor<'_token_tree_pattern_paren'>;
+  export type Loose = LooseFor<'_token_tree_pattern_paren'>;
+  export type Tree = TreeFor<'_token_tree_pattern_paren'>;
+  export type Kind = '_token_tree_pattern_paren';
+}
+export namespace TokenTreePatternBracket {
+  export type Config = ConfigFor<'_token_tree_pattern_bracket'>;
+  export type Fluent = FluentFor<'_token_tree_pattern_bracket'>;
+  export type Loose = LooseFor<'_token_tree_pattern_bracket'>;
+  export type Tree = TreeFor<'_token_tree_pattern_bracket'>;
+  export type Kind = '_token_tree_pattern_bracket';
+}
+export namespace TokenTreePatternBrace {
+  export type Config = ConfigFor<'_token_tree_pattern_brace'>;
+  export type Fluent = FluentFor<'_token_tree_pattern_brace'>;
+  export type Loose = LooseFor<'_token_tree_pattern_brace'>;
+  export type Tree = TreeFor<'_token_tree_pattern_brace'>;
+  export type Kind = '_token_tree_pattern_brace';
+}
+export namespace TokenTreeParen {
+  export type Config = ConfigFor<'_token_tree_paren'>;
+  export type Fluent = FluentFor<'_token_tree_paren'>;
+  export type Loose = LooseFor<'_token_tree_paren'>;
+  export type Tree = TreeFor<'_token_tree_paren'>;
+  export type Kind = '_token_tree_paren';
+}
+export namespace TokenTreeBracket {
+  export type Config = ConfigFor<'_token_tree_bracket'>;
+  export type Fluent = FluentFor<'_token_tree_bracket'>;
+  export type Loose = LooseFor<'_token_tree_bracket'>;
+  export type Tree = TreeFor<'_token_tree_bracket'>;
+  export type Kind = '_token_tree_bracket';
+}
+export namespace TokenTreeBrace {
+  export type Config = ConfigFor<'_token_tree_brace'>;
+  export type Fluent = FluentFor<'_token_tree_brace'>;
+  export type Loose = LooseFor<'_token_tree_brace'>;
+  export type Tree = TreeFor<'_token_tree_brace'>;
+  export type Kind = '_token_tree_brace';
+}
+export namespace DelimTokenTreeParen {
+  export type Config = ConfigFor<'_delim_token_tree_paren'>;
+  export type Fluent = FluentFor<'_delim_token_tree_paren'>;
+  export type Loose = LooseFor<'_delim_token_tree_paren'>;
+  export type Tree = TreeFor<'_delim_token_tree_paren'>;
+  export type Kind = '_delim_token_tree_paren';
+}
+export namespace DelimTokenTreeBracket {
+  export type Config = ConfigFor<'_delim_token_tree_bracket'>;
+  export type Fluent = FluentFor<'_delim_token_tree_bracket'>;
+  export type Loose = LooseFor<'_delim_token_tree_bracket'>;
+  export type Tree = TreeFor<'_delim_token_tree_bracket'>;
+  export type Kind = '_delim_token_tree_bracket';
+}
+export namespace DelimTokenTreeBrace {
+  export type Config = ConfigFor<'_delim_token_tree_brace'>;
+  export type Fluent = FluentFor<'_delim_token_tree_brace'>;
+  export type Loose = LooseFor<'_delim_token_tree_brace'>;
+  export type Tree = TreeFor<'_delim_token_tree_brace'>;
+  export type Kind = '_delim_token_tree_brace';
 }

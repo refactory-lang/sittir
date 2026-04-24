@@ -58,8 +58,18 @@ describe('macro_rule', () => {
 });
 
 describe('token_tree_pattern', () => {
-  it('factory produces correct type', () => {
-    const node = ir.tokenTreePattern();
+  it('paren form produces correct type', () => {
+    const node = ir.tokenTreePattern.paren({});
+    expect(node.$type).toBe('token_tree_pattern');
+    expect(node.$source).toBe('factory');
+  });
+  it('bracket form produces correct type', () => {
+    const node = ir.tokenTreePattern.bracket({});
+    expect(node.$type).toBe('token_tree_pattern');
+    expect(node.$source).toBe('factory');
+  });
+  it('brace form produces correct type', () => {
+    const node = ir.tokenTreePattern.brace({});
     expect(node.$type).toBe('token_tree_pattern');
     expect(node.$source).toBe('factory');
   });
@@ -94,8 +104,18 @@ describe('fragment_specifier', () => {
 });
 
 describe('token_tree', () => {
-  it('factory produces correct type', () => {
-    const node = ir.tokenTree();
+  it('paren form produces correct type', () => {
+    const node = ir.tokenTree.paren({});
+    expect(node.$type).toBe('token_tree');
+    expect(node.$source).toBe('factory');
+  });
+  it('bracket form produces correct type', () => {
+    const node = ir.tokenTree.bracket({});
+    expect(node.$type).toBe('token_tree');
+    expect(node.$source).toBe('factory');
+  });
+  it('brace form produces correct type', () => {
+    const node = ir.tokenTree.brace({});
     expect(node.$type).toBe('token_tree');
     expect(node.$source).toBe('factory');
   });
@@ -851,8 +871,18 @@ describe('macro_invocation', () => {
 });
 
 describe('delim_token_tree', () => {
-  it('factory produces correct type', () => {
-    const node = ir.delimTokenTree();
+  it('paren form produces correct type', () => {
+    const node = ir.delimTokenTree.paren({});
+    expect(node.$type).toBe('delim_token_tree');
+    expect(node.$source).toBe('factory');
+  });
+  it('bracket form produces correct type', () => {
+    const node = ir.delimTokenTree.bracket({});
+    expect(node.$type).toBe('delim_token_tree');
+    expect(node.$source).toBe('factory');
+  });
+  it('brace form produces correct type', () => {
+    const node = ir.delimTokenTree.brace({});
     expect(node.$type).toBe('delim_token_tree');
     expect(node.$source).toBe('factory');
   });

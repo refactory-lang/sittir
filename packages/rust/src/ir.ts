@@ -69,7 +69,7 @@ export const declarationStatement = {
 } as const;
 
 export const tokenPattern = {
-  tokenTree: _attach(F.tokenTreePattern, { from: FR.tokenTreePatternFrom }),
+  tokenTree: _attach(F.tokenTreePattern, { from: FR.tokenTreePatternFrom, "paren": _attach(F.tokenTreePatternUFormParen, { from: FR.tokenTreePatternUFormParenFrom }), "bracket": _attach(F.tokenTreePatternUFormBracket, { from: FR.tokenTreePatternUFormBracketFrom }), "brace": _attach(F.tokenTreePatternUFormBrace, { from: FR.tokenTreePatternUFormBraceFrom }) }),
   tokenRepetition: _attach(F.tokenRepetitionPattern, { from: FR.tokenRepetitionPatternFrom }),
   tokenBinding: _attach(F.tokenBindingPattern, { from: FR.tokenBindingPatternFrom }),
   metavariable: F.metavariable,
@@ -87,7 +87,7 @@ export const tokenPattern = {
 } as const;
 
 export const tokens = {
-  token: _attach(F.tokenTree, { from: FR.tokenTreeFrom }),
+  token: _attach(F.tokenTree, { from: FR.tokenTreeFrom, "paren": _attach(F.tokenTreeUFormParen, { from: FR.tokenTreeUFormParenFrom }), "bracket": _attach(F.tokenTreeUFormBracket, { from: FR.tokenTreeUFormBracketFrom }), "brace": _attach(F.tokenTreeUFormBrace, { from: FR.tokenTreeUFormBraceFrom }) }),
   metavariable: F.metavariable,
   string: _attach(F.stringLiteral, { from: FR.stringLiteralFrom }),
   rawString: _attach(F.rawStringLiteral, { from: FR.rawStringLiteralFrom }),
@@ -251,7 +251,7 @@ export const delimTokens = {
   self: F.self,
   super_: F.super_,
   crate: F.crate,
-  delimToken: _attach(F.delimTokenTree, { from: FR.delimTokenTreeFrom }),
+  delimToken: _attach(F.delimTokenTree, { from: FR.delimTokenTreeFrom, "paren": _attach(F.delimTokenTreeUFormParen, { from: FR.delimTokenTreeUFormParenFrom }), "bracket": _attach(F.delimTokenTreeUFormBracket, { from: FR.delimTokenTreeUFormBracketFrom }), "brace": _attach(F.delimTokenTreeUFormBrace, { from: FR.delimTokenTreeUFormBraceFrom }) }),
 } as const;
 
 export const nonDelimToken = {
@@ -375,10 +375,10 @@ export const ir = {
   expressionStatement: _attach(F.expressionStatement, { from: FR.expressionStatementFrom, "with_semi": _attach(F.expressionStatementUFormWithSemi, { from: FR.expressionStatementUFormWithSemiFrom }), "block_ending": _attach(F.expressionStatementUFormBlockEnding, { from: FR.expressionStatementUFormBlockEndingFrom }) }),
   macro: _attach(F.macroDefinition, { from: FR.macroDefinitionFrom, "paren": _attach(F.macroDefinitionUFormParen, { from: FR.macroDefinitionUFormParenFrom }), "bracket": _attach(F.macroDefinitionUFormBracket, { from: FR.macroDefinitionUFormBracketFrom }), "brace": _attach(F.macroDefinitionUFormBrace, { from: FR.macroDefinitionUFormBraceFrom }) }),
   macroRule: _attach(F.macroRule, { from: FR.macroRuleFrom }),
-  tokenTreePattern: _attach(F.tokenTreePattern, { from: FR.tokenTreePatternFrom }),
+  tokenTreePattern: _attach(F.tokenTreePattern, { from: FR.tokenTreePatternFrom, "paren": _attach(F.tokenTreePatternUFormParen, { from: FR.tokenTreePatternUFormParenFrom }), "bracket": _attach(F.tokenTreePatternUFormBracket, { from: FR.tokenTreePatternUFormBracketFrom }), "brace": _attach(F.tokenTreePatternUFormBrace, { from: FR.tokenTreePatternUFormBraceFrom }) }),
   tokenBindingPattern: _attach(F.tokenBindingPattern, { from: FR.tokenBindingPatternFrom }),
   tokenRepetitionPattern: _attach(F.tokenRepetitionPattern, { from: FR.tokenRepetitionPatternFrom }),
-  tokenTree: _attach(F.tokenTree, { from: FR.tokenTreeFrom }),
+  tokenTree: _attach(F.tokenTree, { from: FR.tokenTreeFrom, "paren": _attach(F.tokenTreeUFormParen, { from: FR.tokenTreeUFormParenFrom }), "bracket": _attach(F.tokenTreeUFormBracket, { from: FR.tokenTreeUFormBracketFrom }), "brace": _attach(F.tokenTreeUFormBrace, { from: FR.tokenTreeUFormBraceFrom }) }),
   tokenRepetition: _attach(F.tokenRepetition, { from: FR.tokenRepetitionFrom }),
   attributeItem: _attach(F.attributeItem, { from: FR.attributeItemFrom }),
   innerAttribute: _attach(F.innerAttributeItem, { from: FR.innerAttributeItemFrom }),
@@ -444,7 +444,7 @@ export const ir = {
   abstractType: _attach(F.abstractType, { from: FR.abstractTypeFrom }),
   dynamicType: _attach(F.dynamicType, { from: FR.dynamicTypeFrom }),
   macroInvocation: _attach(F.macroInvocation, { from: FR.macroInvocationFrom }),
-  delimTokenTree: _attach(F.delimTokenTree, { from: FR.delimTokenTreeFrom }),
+  delimTokenTree: _attach(F.delimTokenTree, { from: FR.delimTokenTreeFrom, "paren": _attach(F.delimTokenTreeUFormParen, { from: FR.delimTokenTreeUFormParenFrom }), "bracket": _attach(F.delimTokenTreeUFormBracket, { from: FR.delimTokenTreeUFormBracketFrom }), "brace": _attach(F.delimTokenTreeUFormBrace, { from: FR.delimTokenTreeUFormBraceFrom }) }),
   scopedIdentifier: _attach(F.scopedIdentifier, { from: FR.scopedIdentifierFrom }),
   scopedTypeIdentifierInExpressionPosition: _attach(F.scopedTypeIdentifierInExpressionPosition, { from: FR.scopedTypeIdentifierInExpressionPositionFrom }),
   scopedTypeIdentifier: _attach(F.scopedTypeIdentifier, { from: FR.scopedTypeIdentifierFrom }),

@@ -32,6 +32,26 @@ export default grammar(enrich(base), wire({
     },
     polymorphs: {
         assignment: { '1/0': 'eq', '1/1': 'type', '1/2': 'typed' },
+
+        // expression_statement: deferred — variant adopting creates
+        // `_expression_statement_expr` vs `_expression_statement_tuple`
+        // hidden rules that both match `expression • …` and produce
+        // unresolvable LR conflicts. The base grammar relies on
+        // tree-sitter's merged NFA where the `,` that continues the
+        // tuple form lives on the same state. Splitting the state
+        // requires explicit `conflicts` entries or prec adjustments —
+        // not attempted here. Current shape is walk-correct even if
+        // it trips the derive audit.
+
+        // with_clause: bare (`a, b, c`) vs parenthesized (`(a, b, c)`).
+        // Deferred — adoption produces `_with_clause_bare` variant but
+        // template emission folds it into the parent `with_clause.jinja`
+        // (no `_with_clause_bare.jinja` written) while the
+        // renderability check still expects a dedicated template.
+        // Additionally the auto-generated test file passes `{}` to the
+        // paren factory which asserts non-empty children. Fix needs
+        // either template-emission awareness of merged-variant forms or
+        // a renderability-check exemption for the parent-template case.
     },
     transforms: {
         // as_pattern: 1 field(s)

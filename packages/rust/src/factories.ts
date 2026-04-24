@@ -213,15 +213,66 @@ export function macroRule(config: T.MacroRule.Config) {
   };
 }
 
-export function tokenTreePattern(text: string) {
+export function tokenTreePattern(config: ConfigOf<T.TokenTreePatternUFormParen>): ReturnType<typeof tokenTreePatternUFormParen>;
+export function tokenTreePattern(config: ConfigOf<T.TokenTreePatternUFormBracket>): ReturnType<typeof tokenTreePatternUFormBracket>;
+export function tokenTreePattern(config: ConfigOf<T.TokenTreePatternUFormBrace>): ReturnType<typeof tokenTreePatternUFormBrace>;
+export function tokenTreePattern(config: ConfigOf<T.TokenTreePatternUFormParen> | ConfigOf<T.TokenTreePatternUFormBracket> | ConfigOf<T.TokenTreePatternUFormBrace>) {
+  switch (config.$variant) {
+    case 'paren': return tokenTreePatternUFormParen(config as Parameters<typeof tokenTreePatternUFormParen>[0]);
+    case 'bracket': return tokenTreePatternUFormBracket(config as Parameters<typeof tokenTreePatternUFormBracket>[0]);
+    case 'brace': return tokenTreePatternUFormBrace(config as Parameters<typeof tokenTreePatternUFormBrace>[0]);
+  }
+  throw new Error(`tokenTreePattern: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'paren' | 'bracket' | 'brace'.`);
+}
+export function tokenTreePatternUFormParen(config?: Omit<ConfigOf<T.TokenTreePatternUFormParen>, '$variant'>) {
+  const inner = tokenTreePatternParen(...(config?.children ?? []));
+  const children = [inner] as const;
   return {
     $type: 'token_tree_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.TokenTreePatternTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+    $variant: 'paren' as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TokenTreePatternUFormParenTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function tokenTreePatternUFormBracket(config?: Omit<ConfigOf<T.TokenTreePatternUFormBracket>, '$variant'>) {
+  const inner = tokenTreePatternBracket(...(config?.children ?? []));
+  const children = [inner] as const;
+  return {
+    $type: 'token_tree_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'bracket' as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TokenTreePatternUFormBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function tokenTreePatternUFormBrace(config?: Omit<ConfigOf<T.TokenTreePatternUFormBrace>, '$variant'>) {
+  const inner = tokenTreePatternBrace(...(config?.children ?? []));
+  const children = [inner] as const;
+  return {
+    $type: 'token_tree_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'brace' as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TokenTreePatternUFormBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -273,15 +324,66 @@ export function fragmentSpecifier(text: 'block' | 'expr' | 'expr_2021' | 'ident'
   };
 }
 
-export function tokenTree(text: string) {
+export function tokenTree(config: ConfigOf<T.TokenTreeUFormParen>): ReturnType<typeof tokenTreeUFormParen>;
+export function tokenTree(config: ConfigOf<T.TokenTreeUFormBracket>): ReturnType<typeof tokenTreeUFormBracket>;
+export function tokenTree(config: ConfigOf<T.TokenTreeUFormBrace>): ReturnType<typeof tokenTreeUFormBrace>;
+export function tokenTree(config: ConfigOf<T.TokenTreeUFormParen> | ConfigOf<T.TokenTreeUFormBracket> | ConfigOf<T.TokenTreeUFormBrace>) {
+  switch (config.$variant) {
+    case 'paren': return tokenTreeUFormParen(config as Parameters<typeof tokenTreeUFormParen>[0]);
+    case 'bracket': return tokenTreeUFormBracket(config as Parameters<typeof tokenTreeUFormBracket>[0]);
+    case 'brace': return tokenTreeUFormBrace(config as Parameters<typeof tokenTreeUFormBrace>[0]);
+  }
+  throw new Error(`tokenTree: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'paren' | 'bracket' | 'brace'.`);
+}
+export function tokenTreeUFormParen(config?: Omit<ConfigOf<T.TokenTreeUFormParen>, '$variant'>) {
+  const inner = tokenTreeParen(...(config?.children ?? []));
+  const children = [inner] as const;
   return {
     $type: 'token_tree' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.TokenTreeTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+    $variant: 'paren' as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TokenTreeUFormParenTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function tokenTreeUFormBracket(config?: Omit<ConfigOf<T.TokenTreeUFormBracket>, '$variant'>) {
+  const inner = tokenTreeBracket(...(config?.children ?? []));
+  const children = [inner] as const;
+  return {
+    $type: 'token_tree' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'bracket' as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TokenTreeUFormBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function tokenTreeUFormBrace(config?: Omit<ConfigOf<T.TokenTreeUFormBrace>, '$variant'>) {
+  const inner = tokenTreeBrace(...(config?.children ?? []));
+  const children = [inner] as const;
+  return {
+    $type: 'token_tree' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'brace' as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TokenTreeUFormBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2023,15 +2125,66 @@ export function macroInvocation(config: T.MacroInvocation.Config) {
   };
 }
 
-export function delimTokenTree(text: string) {
+export function delimTokenTree(config: ConfigOf<T.DelimTokenTreeUFormParen>): ReturnType<typeof delimTokenTreeUFormParen>;
+export function delimTokenTree(config: ConfigOf<T.DelimTokenTreeUFormBracket>): ReturnType<typeof delimTokenTreeUFormBracket>;
+export function delimTokenTree(config: ConfigOf<T.DelimTokenTreeUFormBrace>): ReturnType<typeof delimTokenTreeUFormBrace>;
+export function delimTokenTree(config: ConfigOf<T.DelimTokenTreeUFormParen> | ConfigOf<T.DelimTokenTreeUFormBracket> | ConfigOf<T.DelimTokenTreeUFormBrace>) {
+  switch (config.$variant) {
+    case 'paren': return delimTokenTreeUFormParen(config as Parameters<typeof delimTokenTreeUFormParen>[0]);
+    case 'bracket': return delimTokenTreeUFormBracket(config as Parameters<typeof delimTokenTreeUFormBracket>[0]);
+    case 'brace': return delimTokenTreeUFormBrace(config as Parameters<typeof delimTokenTreeUFormBrace>[0]);
+  }
+  throw new Error(`delimTokenTree: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'paren' | 'bracket' | 'brace'.`);
+}
+export function delimTokenTreeUFormParen(config?: Omit<ConfigOf<T.DelimTokenTreeUFormParen>, '$variant'>) {
+  const inner = delimTokenTreeParen(...(config?.children ?? []));
+  const children = [inner] as const;
   return {
     $type: 'delim_token_tree' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.DelimTokenTreeTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+    $variant: 'paren' as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.DelimTokenTreeUFormParenTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function delimTokenTreeUFormBracket(config?: Omit<ConfigOf<T.DelimTokenTreeUFormBracket>, '$variant'>) {
+  const inner = delimTokenTreeBracket(...(config?.children ?? []));
+  const children = [inner] as const;
+  return {
+    $type: 'delim_token_tree' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'bracket' as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.DelimTokenTreeUFormBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function delimTokenTreeUFormBrace(config?: Omit<ConfigOf<T.DelimTokenTreeUFormBrace>, '$variant'>) {
+  const inner = delimTokenTreeBrace(...(config?.children ?? []));
+  const children = [inner] as const;
+  return {
+    $type: 'delim_token_tree' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'brace' as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.DelimTokenTreeUFormBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4478,6 +4631,141 @@ export function lineCommentContent(text: string) {
   };
 }
 
+export function tokenTreePatternParen(...children: T.TokenPattern[]) {
+  return {
+    $type: '_token_tree_pattern_paren' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TokenTreePatternParenTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function tokenTreePatternBracket(...children: T.TokenPattern[]) {
+  return {
+    $type: '_token_tree_pattern_bracket' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TokenTreePatternBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function tokenTreePatternBrace(...children: T.TokenPattern[]) {
+  return {
+    $type: '_token_tree_pattern_brace' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TokenTreePatternBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function tokenTreeParen(...children: T.Tokens[]) {
+  return {
+    $type: '_token_tree_paren' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TokenTreeParenTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function tokenTreeBracket(...children: T.Tokens[]) {
+  return {
+    $type: '_token_tree_bracket' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TokenTreeBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function tokenTreeBrace(...children: T.Tokens[]) {
+  return {
+    $type: '_token_tree_brace' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TokenTreeBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function delimTokenTreeParen(...children: T.DelimTokens[]) {
+  return {
+    $type: '_delim_token_tree_paren' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.DelimTokenTreeParenTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function delimTokenTreeBracket(...children: T.DelimTokens[]) {
+  return {
+    $type: '_delim_token_tree_bracket' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.DelimTokenTreeBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function delimTokenTreeBrace(...children: T.DelimTokens[]) {
+  return {
+    $type: '_delim_token_tree_brace' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.DelimTokenTreeBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function stringContent(text: string) {
   if (text.length === 0) throw new Error(`string_content: text must be non-empty`);
   return {
@@ -4700,6 +4988,15 @@ export type FluentKindMap = {
   "_match_arm_block_ending": FluentNode<"_match_arm_block_ending", T.MatchArmBlockEnding.Config>;
   "_line_comment_regular_dslash": T.LineCommentRegularDslash;
   "_line_comment_content": T.LineCommentContent;
+  "_token_tree_pattern_paren": FluentNode<"_token_tree_pattern_paren", T.TokenTreePatternParen.Config>;
+  "_token_tree_pattern_bracket": FluentNode<"_token_tree_pattern_bracket", T.TokenTreePatternBracket.Config>;
+  "_token_tree_pattern_brace": FluentNode<"_token_tree_pattern_brace", T.TokenTreePatternBrace.Config>;
+  "_token_tree_paren": FluentNode<"_token_tree_paren", T.TokenTreeParen.Config>;
+  "_token_tree_bracket": FluentNode<"_token_tree_bracket", T.TokenTreeBracket.Config>;
+  "_token_tree_brace": FluentNode<"_token_tree_brace", T.TokenTreeBrace.Config>;
+  "_delim_token_tree_paren": FluentNode<"_delim_token_tree_paren", T.DelimTokenTreeParen.Config>;
+  "_delim_token_tree_bracket": FluentNode<"_delim_token_tree_bracket", T.DelimTokenTreeBracket.Config>;
+  "_delim_token_tree_brace": FluentNode<"_delim_token_tree_brace", T.DelimTokenTreeBrace.Config>;
   "string_content": T.StringContent;
   "raw_string_literal_content": T.RawStringLiteralContent;
   "float_literal": T.FloatLiteral;
@@ -4888,6 +5185,15 @@ export const _factoryMap = {
   "_match_arm_block_ending": matchArmBlockEnding,
   "_line_comment_regular_dslash": lineCommentRegularDslash,
   "_line_comment_content": lineCommentContent,
+  "_token_tree_pattern_paren": tokenTreePatternParen,
+  "_token_tree_pattern_bracket": tokenTreePatternBracket,
+  "_token_tree_pattern_brace": tokenTreePatternBrace,
+  "_token_tree_paren": tokenTreeParen,
+  "_token_tree_bracket": tokenTreeBracket,
+  "_token_tree_brace": tokenTreeBrace,
+  "_delim_token_tree_paren": delimTokenTreeParen,
+  "_delim_token_tree_bracket": delimTokenTreeBracket,
+  "_delim_token_tree_brace": delimTokenTreeBrace,
   "string_content": stringContent,
   "raw_string_literal_content": rawStringLiteralContent,
   "float_literal": floatLiteral,

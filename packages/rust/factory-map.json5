@@ -8,11 +8,11 @@
     "expression_statement": "config",
     "macro_definition": "config",
     "macro_rule": "config",
-    "token_tree_pattern": "text",
+    "token_tree_pattern": "config",
     "token_binding_pattern": "config",
     "token_repetition_pattern": "children",
     "fragment_specifier": "text",
-    "token_tree": "text",
+    "token_tree": "config",
     "token_repetition": "children",
     "attribute_item": "config",
     "inner_attribute_item": "config",
@@ -80,7 +80,7 @@
     "dynamic_type": "config",
     "mutable_specifier": "text",
     "macro_invocation": "config",
-    "delim_token_tree": "text",
+    "delim_token_tree": "config",
     "scoped_identifier": "config",
     "scoped_type_identifier_in_expression_position": "config",
     "scoped_type_identifier": "config",
@@ -625,6 +625,22 @@
         "macro_definition_brace": "brace"
       }
     },
+    "token_tree_pattern": {
+      "source": "override",
+      "childKind": {
+        "token_tree_pattern_paren": "paren",
+        "token_tree_pattern_bracket": "bracket",
+        "token_tree_pattern_brace": "brace"
+      }
+    },
+    "token_tree": {
+      "source": "override",
+      "childKind": {
+        "token_tree_paren": "paren",
+        "token_tree_bracket": "bracket",
+        "token_tree_brace": "brace"
+      }
+    },
     "mod_item": {
       "source": "override",
       "childKind": {
@@ -676,6 +692,14 @@
       "childKind": {
         "pointer_type_const": "const",
         "pointer_type_mut": "mut"
+      }
+    },
+    "delim_token_tree": {
+      "source": "override",
+      "childKind": {
+        "delim_token_tree_paren": "paren",
+        "delim_token_tree_bracket": "bracket",
+        "delim_token_tree_brace": "brace"
       }
     },
     "range_expression": {
