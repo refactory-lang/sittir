@@ -670,16 +670,6 @@
         "impl_item_semi": "semi"
       }
     },
-    "visibility_modifier": {
-      "source": "promoted",
-      "fields": {
-        "form0": [],
-        "form1": [
-          "pub",
-          "in"
-        ]
-      }
-    },
     "function_type": {
       "source": "override",
       "childKind": {

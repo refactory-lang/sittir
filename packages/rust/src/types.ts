@@ -1249,23 +1249,15 @@ export interface ExternModifier {
   };
 }
 
-export interface VisibilityModifierForm0 {
+export interface VisibilityModifier {
   readonly $type: 'visibility_modifier';
-  readonly $variant: 'form0';
-  readonly $children: readonly [Crate];
-}
-
-export interface VisibilityModifierForm1 {
-  readonly $type: 'visibility_modifier';
-  readonly $variant: 'form1';
   readonly $fields: {
-    readonly pub: AutoStamp<"pub">;
+    readonly pub?: BooleanKeyword<"pub">;
     readonly in?: BooleanKeyword<"in">;
   };
-  readonly $children: readonly [Self | Super | Crate | Path];
+  readonly $children: readonly [Crate | Self | Super | Path];
 }
 
-export type VisibilityModifier = VisibilityModifierForm0 | VisibilityModifierForm1;
 export interface BracketedType {
   readonly $type: 'bracketed_type';
   readonly $children: readonly [_Type | QualifiedType];
@@ -2396,8 +2388,6 @@ export interface VariadicParameterTree extends TreeNode<'variadic_parameter'> {}
 export interface ParameterTree extends TreeNode<'parameter'> {}
 export interface ExternModifierTree extends TreeNode<'extern_modifier'> {}
 export interface VisibilityModifierTree extends TreeNode<'visibility_modifier'> {}
-export interface VisibilityModifierForm0Tree extends TreeNode<'visibility_modifier'> {}
-export interface VisibilityModifierForm1Tree extends TreeNode<'visibility_modifier'> {}
 export interface BracketedTypeTree extends TreeNode<'bracketed_type'> {}
 export interface QualifiedTypeTree extends TreeNode<'qualified_type'> {}
 export interface LifetimeTree extends TreeNode<'lifetime'> {}
@@ -3425,7 +3415,6 @@ export interface VariantMap {
   'foreign_mod_item': { semi: ForeignModItemUFormSemi; body: ForeignModItemUFormBody };
   'struct_item': { brace: StructItemUFormBrace; tuple: StructItemUFormTuple; unit: StructItemUFormUnit };
   'impl_item': { body: ImplItemUFormBody; semi: ImplItemUFormSemi };
-  'visibility_modifier': { form0: VisibilityModifierForm0; form1: VisibilityModifierForm1 };
   'pointer_type': { const: PointerTypeUFormConst; mut: PointerTypeUFormMut };
   'delim_token_tree': { paren: DelimTokenTreeUFormParen; bracket: DelimTokenTreeUFormBracket; brace: DelimTokenTreeUFormBrace };
   'range_expression': { binary: RangeExpressionUFormBinary; postfix: RangeExpressionUFormPostfix; prefix: RangeExpressionUFormPrefix; bare: RangeExpressionUFormBare };

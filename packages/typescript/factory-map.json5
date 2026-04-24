@@ -366,9 +366,10 @@
       "declarators",
       "semicolon"
     ],
-    "variable_declarator_form1": [
+    "variable_declarator": [
       "name",
-      "type"
+      "type",
+      "value"
     ],
     "statement_block": [
       "statements",
@@ -836,19 +837,6 @@
       "childKind": {
         "import_specifier_name": "name",
         "import_specifier_as": "as"
-      }
-    },
-    "variable_declarator": {
-      "source": "promoted",
-      "fields": {
-        "form0": [
-          "name",
-          "type"
-        ],
-        "form1": [
-          "name",
-          "type"
-        ]
       }
     },
     "parenthesized_expression": {

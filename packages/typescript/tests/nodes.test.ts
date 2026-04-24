@@ -25,7 +25,7 @@ describe('hash_bang_line', () => {
 
 describe('export_statement', () => {
   it('default form produces correct type', () => {
-    const node = ir.exportStatement.default({});
+    const node = ir.exportStatement.default({ decorator: [{ $type: 'decorator', $text: 'test' } as any] });
     expect(node.$type).toBe('export_statement');
     expect(node.$source).toBe('factory');
   });
@@ -195,15 +195,14 @@ describe('lexical_declaration', () => {
 });
 
 describe('variable_declarator', () => {
-  it('form0 form produces correct type', () => {
-    const node = ir.variableDeclarator.form0({ name: { $type: 'identifier', $text: 'test' } as any });
+  it('factory produces correct type', () => {
+    const node = ir.variableDeclarator({ name: { $type: 'identifier', $text: 'test' } as any });
     expect(node.$type).toBe('variable_declarator');
     expect(node.$source).toBe('factory');
   });
-  it('form1 form produces correct type', () => {
-    const node = ir.variableDeclarator.form1({ name: { $type: 'identifier', $text: 'test' } as any, type: { $type: 'type_annotation', $text: 'test' } as any });
-    expect(node.$type).toBe('variable_declarator');
-    expect(node.$source).toBe('factory');
+  it('render produces non-empty string', () => {
+    const node = ir.variableDeclarator({ name: { $type: 'identifier', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 

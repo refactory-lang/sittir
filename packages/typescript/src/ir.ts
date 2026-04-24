@@ -229,7 +229,7 @@ export const ir = {
   expressionStatement: _attach(F.expressionStatement, { from: FR.expressionStatementFrom }),
   variable: _attach(F.variableDeclaration, { from: FR.variableDeclarationFrom }),
   lexical: _attach(F.lexicalDeclaration, { from: FR.lexicalDeclarationFrom }),
-  variableDeclarator: _attach(F.variableDeclarator, { from: FR.variableDeclaratorFrom, "form0": _attach(F.variableDeclaratorForm0, { from: FR.variableDeclaratorForm0From }), "form1": _attach(F.variableDeclaratorForm1, { from: FR.variableDeclaratorForm1From }) }),
+  variableDeclarator: _attach(F.variableDeclarator, { from: FR.variableDeclaratorFrom }),
   statementBlock: _attach(F.statementBlock, { from: FR.statementBlockFrom }),
   elseClause: _attach(F.elseClause, { from: FR.elseClauseFrom }),
   ifStatement: _attach(F.ifStatement, { from: FR.ifStatementFrom }),

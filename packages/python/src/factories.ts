@@ -462,16 +462,7 @@ export function matchStatement(config: T.MatchStatement.Config) {
   };
 }
 
-export function matchBlock(config: ConfigOf<T.MatchBlockForm0>): ReturnType<typeof matchBlockForm0>;
-export function matchBlock(config: ConfigOf<T.MatchBlockForm1>): ReturnType<typeof matchBlockForm1>;
-export function matchBlock(config: ConfigOf<T.MatchBlockForm0> | ConfigOf<T.MatchBlockForm1>) {
-  switch (config.$variant) {
-    case 'form0': return matchBlockForm0(config as Parameters<typeof matchBlockForm0>[0]);
-    case 'form1': return matchBlockForm1(config as Parameters<typeof matchBlockForm1>[0]);
-  }
-  throw new Error(`matchBlock: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'form0' | 'form1'.`);
-}
-export function matchBlockForm0(config: Omit<ConfigOf<T.MatchBlockForm0>, '$variant'>) {
+export function matchBlock(config: T.MatchBlock.Config) {
   const fields = {
     alternative: config.alternative,
   };
@@ -479,29 +470,14 @@ export function matchBlockForm0(config: Omit<ConfigOf<T.MatchBlockForm0>, '$vari
     $type: '_match_block' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: 'form0' as const,
     $fields: fields,
-    alternative(...values: T.CaseClause[]) { return _fsm(config, matchBlockForm0, 'alternative', values, config?.alternative); },
+    alternative(...values: T.CaseClause[]) { return _fsm(config, matchBlock, 'alternative', values, config?.alternative); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.MatchBlockForm0Tree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-export function matchBlockForm1(config?: Omit<ConfigOf<T.MatchBlockForm1>, '$variant'>) {
-  return {
-    $type: '_match_block' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $variant: 'form1' as const,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.MatchBlockForm1Tree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.MatchBlockTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 

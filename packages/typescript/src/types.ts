@@ -725,26 +725,15 @@ export interface LexicalDeclaration {
   };
 }
 
-export interface VariableDeclaratorForm0 {
+export interface VariableDeclarator {
   readonly $type: 'variable_declarator';
-  readonly $variant: 'form0';
   readonly $fields: {
     readonly name: Identifier | DestructuringPattern;
     readonly type?: TypeAnnotation;
-  };
-  readonly $children: readonly [Initializer];
-}
-
-export interface VariableDeclaratorForm1 {
-  readonly $type: 'variable_declarator';
-  readonly $variant: 'form1';
-  readonly $fields: {
-    readonly name: Identifier;
-    readonly type: TypeAnnotation;
+    readonly value?: Expression;
   };
 }
 
-export type VariableDeclarator = VariableDeclaratorForm0 | VariableDeclaratorForm1;
 export interface StatementBlock {
   readonly $type: 'statement_block';
   readonly $fields: {
@@ -2172,24 +2161,17 @@ export interface ParenthesizedExpressionSequence {
   readonly $children: readonly [SequenceExpression];
 }
 
-export interface ExportStatementDefaultForm0 {
+export interface ExportStatementDefault {
   readonly $type: 'export_statement_default';
-  readonly $variant: 'form0';
-  readonly $children: readonly [FromClause | NamespaceExport | ExportClause | Semicolon];
-}
-
-export interface ExportStatementDefaultForm1 {
-  readonly $type: 'export_statement_default';
-  readonly $variant: 'form1';
   readonly $fields: {
+    readonly source?: String;
     readonly decorator: readonly (Decorator)[];
-    readonly declaration: Declaration;
+    readonly declaration?: Declaration;
     readonly value?: Expression;
   };
-  readonly $children: readonly [Semicolon];
+  readonly $children: readonly [NamespaceExport | ExportClause | Semicolon];
 }
 
-export type ExportStatementDefault = ExportStatementDefaultForm0 | ExportStatementDefaultForm1;
 export interface ExportStatementTypeExport {
   readonly $type: 'export_statement_type_export';
   readonly $fields: {
@@ -2322,8 +2304,6 @@ export interface ExpressionStatementTree extends TreeNode<'expression_statement'
 export interface VariableDeclarationTree extends TreeNode<'variable_declaration'> {}
 export interface LexicalDeclarationTree extends TreeNode<'lexical_declaration'> {}
 export interface VariableDeclaratorTree extends TreeNode<'variable_declarator'> {}
-export interface VariableDeclaratorForm0Tree extends TreeNode<'variable_declarator'> {}
-export interface VariableDeclaratorForm1Tree extends TreeNode<'variable_declarator'> {}
 export interface StatementBlockTree extends TreeNode<'statement_block'> {}
 export interface ElseClauseTree extends TreeNode<'else_clause'> {}
 export interface IfStatementTree extends TreeNode<'if_statement'> {}
@@ -2513,8 +2493,6 @@ export interface IndexSignatureMappedTypeClauseTree extends AnyTreeNode { readon
 export interface ParenthesizedExpressionTypedTree extends AnyTreeNode { readonly type: "_parenthesized_expression_typed"; }
 export interface ParenthesizedExpressionSequenceTree extends AnyTreeNode { readonly type: "_parenthesized_expression_sequence"; }
 export interface ExportStatementDefaultTree extends AnyTreeNode { readonly type: "_export_statement_default"; }
-export interface ExportStatementDefaultForm0Tree extends AnyTreeNode {}
-export interface ExportStatementDefaultForm1Tree extends AnyTreeNode {}
 export interface ExportStatementTypeExportTree extends AnyTreeNode { readonly type: "_export_statement_type_export"; }
 export interface ExportStatementEqualsExportTree extends AnyTreeNode { readonly type: "_export_statement_equals_export"; }
 export interface ExportStatementNamespaceExportTree extends AnyTreeNode { readonly type: "_export_statement_namespace_export"; }
@@ -3324,7 +3302,6 @@ export interface VariantMap {
   'export_statement': { default: ExportStatementUFormDefault; type_export: ExportStatementUFormTypeExport; equals_export: ExportStatementUFormEqualsExport; namespace_export: ExportStatementUFormNamespaceExport };
   'import_clause': { namespace_import: ImportClauseUFormNamespaceImport; named_imports: ImportClauseUFormNamedImports; default_import: ImportClauseUFormDefaultImport };
   'import_specifier': { name: ImportSpecifierUFormName; as: ImportSpecifierUFormAs };
-  'variable_declarator': { form0: VariableDeclaratorForm0; form1: VariableDeclaratorForm1 };
   'parenthesized_expression': { typed: ParenthesizedExpressionUFormTyped; sequence: ParenthesizedExpressionUFormSequence };
   'class_heritage': { extends_clause: ClassHeritageUFormExtendsClause; implements_clause: ClassHeritageUFormImplementsClause };
   'arrow_function': { parameter: ArrowFunctionUFormParameter; _call_signature: ArrowFunctionUFormUCallSignature };
@@ -3332,7 +3309,6 @@ export interface VariantMap {
   'update_expression': { postfix: UpdateExpressionUFormPostfix; prefix: UpdateExpressionUFormPrefix };
   'string': { double: StringUFormDouble; single: StringUFormSingle };
   'index_signature': { colon: IndexSignatureUFormColon; mapped_type_clause: IndexSignatureUFormMappedTypeClause };
-  '_export_statement_default': { form0: ExportStatementDefaultForm0; form1: ExportStatementDefaultForm1 };
 }
 
 // Per-kind namespace interfaces — one computed base per kind (spec 008 US1)

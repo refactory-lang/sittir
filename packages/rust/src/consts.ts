@@ -949,7 +949,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'pattern', required: false, multiple: false },
   ],
   'visibility_modifier': [
-    { name: 'pub', required: true, multiple: false },
+    { name: 'pub', required: false, multiple: false },
     { name: 'in', required: false, multiple: false },
   ],
   'where_clause': [

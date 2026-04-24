@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 235,
+  "nodeCount": 233,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -33,8 +33,6 @@
     "}"
   ],
   "polymorphFormKinds": [
-    "_match_block_form0",
-    "_match_block_form1",
     "assignment__form_eq",
     "assignment__form_type",
     "assignment__form_typed",
@@ -829,70 +827,11 @@
     },
     {
       "kind": "_match_block",
-      "modelType": "polymorph",
+      "modelType": "branch",
       "typeName": "MatchBlock",
       "factoryName": "matchBlock",
       "irKey": "matchBlock",
       "hidden": false,
-      "source": "promoted",
-      "polymorphSource": "promoted",
-      "variantChildKinds": [],
-      "forms": [
-        {
-          "kind": "_match_block_form0",
-          "name": "form0",
-          "typeName": "MatchBlockForm0",
-          "factoryName": "matchBlockForm0",
-          "irKey": "matchBlockForm0",
-          "parentKind": "_match_block",
-          "fields": [
-            {
-              "name": "alternative",
-              "propertyName": "alternative",
-              "paramName": "alternative",
-              "required": true,
-              "multiple": true,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "array",
-                  "name": "case_clause",
-                  "unresolved": true
-                }
-              ],
-              "source": "grammar",
-              "projection": {
-                "typeName": "",
-                "kinds": [
-                  "case_clause"
-                ]
-              }
-            }
-          ],
-          "children": []
-        },
-        {
-          "kind": "_match_block_form1",
-          "name": "form1",
-          "typeName": "MatchBlockForm1",
-          "factoryName": "matchBlockForm1",
-          "irKey": "matchBlockForm1",
-          "parentKind": "_match_block",
-          "fields": [],
-          "children": []
-        }
-      ]
-    },
-    {
-      "kind": "_match_block_form0",
-      "modelType": "group",
-      "typeName": "MatchBlockForm0",
-      "factoryName": "matchBlockForm0",
-      "irKey": "matchBlockForm0",
-      "hidden": false,
-      "name": "form0",
-      "parentKind": "_match_block",
       "fields": [
         {
           "name": "alternative",
@@ -918,18 +857,6 @@
           }
         }
       ],
-      "children": []
-    },
-    {
-      "kind": "_match_block_form1",
-      "modelType": "group",
-      "typeName": "MatchBlockForm1",
-      "factoryName": "matchBlockForm1",
-      "irKey": "matchBlockForm1",
-      "hidden": false,
-      "name": "form1",
-      "parentKind": "_match_block",
-      "fields": [],
       "children": []
     },
     {

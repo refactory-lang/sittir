@@ -424,7 +424,7 @@ export const ir = {
   variadicParameter: _attach(F.variadicParameter, { from: FR.variadicParameterFrom }),
   parameter: _attach(F.parameter, { from: FR.parameterFrom }),
   externModifier: _attach(F.externModifier, { from: FR.externModifierFrom }),
-  visibilityModifier: _attach(F.visibilityModifier, { from: FR.visibilityModifierFrom, "form0": _attach(F.visibilityModifierForm0, { from: FR.visibilityModifierForm0From }), "form1": _attach(F.visibilityModifierForm1, { from: FR.visibilityModifierForm1From }) }),
+  visibilityModifier: _attach(F.visibilityModifier, { from: FR.visibilityModifierFrom }),
   bracketedType: _attach(F.bracketedType, { from: FR.bracketedTypeFrom }),
   qualifiedType: _attach(F.qualifiedType, { from: FR.qualifiedTypeFrom }),
   lifetime: _attach(F.lifetime, { from: FR.lifetimeFrom }),

@@ -1119,8 +1119,19 @@ export function classifyNode(
     // regular branches/containers — the variant distinction is
     // entirely encoded in child kinds, so the parent has no
     // per-variant template branches to emit. Suppress T065 for them.
-    const suppressT065 = opts?.variantParents?.has(kind) ?? false
-    if (!suppressT065 && isT065UnpromotedPolymorphChoice(rule)) return 'polymorph'
+    // T065 auto-promotion DISABLED (spec 013 cleanup). Was a debug-mode
+    // fallback for kinds whose `choice` with heterogeneous field sets
+    // should have been wrapped as a polymorph by Link's
+    // `promotePolymorph` — but that's now suggestion-only, leaving T065
+    // to silently invent anonymous `form0` / `form1` polymorph names
+    // for any non-canonical choice with fields. That masks real
+    // adoption work: grammar authors should declare `polymorphs: {
+    // parent: { 'path': 'name' } }` in overrides.ts with meaningful
+    // names. Kinds like rust's `visibility_modifier` now classify as
+    // plain branches with optional fields across arms — the walker's
+    // cross-branch merging handles the shape correctly.
+    // const suppressT065 = opts?.variantParents?.has(kind) ?? false
+    // if (!suppressT065 && isT065UnpromotedPolymorphChoice(rule)) return 'polymorph'
     if (isHiddenRepeatHelper(kind, rule)) return 'multi'
     const branchOrContainer = classifyBranchOrContainer(rule)
     if (branchOrContainer !== null) return branchOrContainer

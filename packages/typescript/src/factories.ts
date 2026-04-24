@@ -93,16 +93,26 @@ export function exportStatement(config: ConfigOf<T.ExportStatementUFormDefault> 
   throw new Error(`exportStatement: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'default' | 'type_export' | 'equals_export' | 'namespace_export'.`);
 }
 export function exportStatementUFormDefault(config: Omit<ConfigOf<T.ExportStatementUFormDefault>, '$variant'>) {
-  const children = config.children ?? [];
+  const inner = exportStatementDefault(config);
+  const children = [inner] as const;
   return {
     $type: 'export_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'default' as const,
     $children: children,
-    child(value?: T.ExportStatementDefault) {
-      if (value === undefined) return children[0];
-      return exportStatementUFormDefault({ ...config, children: [value] });
+    source(value?: T.String | undefined) {
+      if (value === undefined) return inner.$fields.source;
+      return exportStatementUFormDefault({ decorator: inner.$fields.decorator, declaration: inner.$fields.declaration, value: inner.$fields.value, source: value });
+    },
+    decorator(...values: T.Decorator[]) { return exportStatementUFormDefault({ source: inner.$fields.source, declaration: inner.$fields.declaration, value: inner.$fields.value, decorator: values }); },
+    declaration(value?: T.Declaration | undefined) {
+      if (value === undefined) return inner.$fields.declaration;
+      return exportStatementUFormDefault({ source: inner.$fields.source, decorator: inner.$fields.decorator, value: inner.$fields.value, declaration: value });
+    },
+    value(value?: T.Expression | undefined) {
+      if (value === undefined) return inner.$fields.value;
+      return exportStatementUFormDefault({ source: inner.$fields.source, decorator: inner.$fields.decorator, declaration: inner.$fields.declaration, value: value });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -508,61 +518,26 @@ export function lexicalDeclaration(config: T.LexicalDeclaration.Config) {
   };
 }
 
-export function variableDeclarator(config: ConfigOf<T.VariableDeclaratorForm0>): ReturnType<typeof variableDeclaratorForm0>;
-export function variableDeclarator(config: ConfigOf<T.VariableDeclaratorForm1>): ReturnType<typeof variableDeclaratorForm1>;
-export function variableDeclarator(config: ConfigOf<T.VariableDeclaratorForm0> | ConfigOf<T.VariableDeclaratorForm1>) {
-  switch (config.$variant) {
-    case 'form0': return variableDeclaratorForm0(config as Parameters<typeof variableDeclaratorForm0>[0]);
-    case 'form1': return variableDeclaratorForm1(config as Parameters<typeof variableDeclaratorForm1>[0]);
-  }
-  throw new Error(`variableDeclarator: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'form0' | 'form1'.`);
-}
-export function variableDeclaratorForm0(config: Omit<ConfigOf<T.VariableDeclaratorForm0>, '$variant'>) {
+export function variableDeclarator(config: T.VariableDeclarator.Config) {
   const fields = {
     name: config.name,
     type: config.type,
-  };
-  const children = config.children ?? [];
-  return {
-    $type: 'variable_declarator' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $variant: 'form0' as const,
-    $fields: fields,
-    $children: children,
-    name(value?: T.Identifier | T.DestructuringPattern) { return _fs(config, variableDeclaratorForm0, 'name', value, config?.name); },
-    typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, variableDeclaratorForm0, 'type', value, config?.type); },
-    child(value?: T.Initializer) {
-      if (value === undefined) return children[0];
-      return variableDeclaratorForm0({ ...config, children: [value] });
-    },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.VariableDeclaratorForm0Tree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-export function variableDeclaratorForm1(config: Omit<ConfigOf<T.VariableDeclaratorForm1>, '$variant'>) {
-  const fields = {
-    name: config.name,
-    type: config.type,
+    value: config.value,
   };
   return {
     $type: 'variable_declarator' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: 'form1' as const,
     $fields: fields,
-    name(value?: T.Identifier) { return _fs(config, variableDeclaratorForm1, 'name', value, config?.name); },
-    typeField(value?: T.TypeAnnotation) { return _fs(config, variableDeclaratorForm1, 'type', value, config?.type); },
+    name(value?: T.Identifier | T.DestructuringPattern) { return _fs(config, variableDeclarator, 'name', value, config?.name); },
+    typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, variableDeclarator, 'type', value, config?.type); },
+    value(value?: T.Expression | undefined) { return _fs(config, variableDeclarator, 'value', value, config?.value); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.VariableDeclaratorForm1Tree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.VariableDeclaratorTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4589,37 +4564,9 @@ export function parenthesizedExpressionSequence(child: T.SequenceExpression) {
   };
 }
 
-export function exportStatementDefault(config: ConfigOf<T.ExportStatementDefaultForm0>): ReturnType<typeof exportStatementDefaultForm0>;
-export function exportStatementDefault(config: ConfigOf<T.ExportStatementDefaultForm1>): ReturnType<typeof exportStatementDefaultForm1>;
-export function exportStatementDefault(config: ConfigOf<T.ExportStatementDefaultForm0> | ConfigOf<T.ExportStatementDefaultForm1>) {
-  switch (config.$variant) {
-    case 'form0': return exportStatementDefaultForm0(config as Parameters<typeof exportStatementDefaultForm0>[0]);
-    case 'form1': return exportStatementDefaultForm1(config as Parameters<typeof exportStatementDefaultForm1>[0]);
-  }
-  throw new Error(`exportStatementDefault: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'form0' | 'form1'.`);
-}
-export function exportStatementDefaultForm0(config: Omit<ConfigOf<T.ExportStatementDefaultForm0>, '$variant'>) {
-  const children = config.children ?? [];
-  return {
-    $type: '_export_statement_default' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $variant: 'form0' as const,
-    $children: children,
-    child(value?: (T.FromClause | T.NamespaceExport | T.ExportClause | T.Semicolon)) {
-      if (value === undefined) return children[0];
-      return exportStatementDefaultForm0({ ...config, children: [value] });
-    },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ExportStatementDefaultForm0Tree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-export function exportStatementDefaultForm1(config: Omit<ConfigOf<T.ExportStatementDefaultForm1>, '$variant'>) {
+export function exportStatementDefault(config: T.ExportStatementDefault.Config) {
   const fields = {
+    source: config.source,
     decorator: config.decorator,
     declaration: config.declaration,
     value: config.value,
@@ -4629,22 +4576,22 @@ export function exportStatementDefaultForm1(config: Omit<ConfigOf<T.ExportStatem
     $type: '_export_statement_default' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: 'form1' as const,
     $fields: fields,
     $children: children,
-    decorator(...values: T.Decorator[]) { return _fsm(config, exportStatementDefaultForm1, 'decorator', values, config?.decorator); },
-    declaration(value?: T.Declaration) { return _fs(config, exportStatementDefaultForm1, 'declaration', value, config?.declaration); },
-    value(value?: T.Expression | undefined) { return _fs(config, exportStatementDefaultForm1, 'value', value, config?.value); },
-    child(value?: T.Semicolon) {
+    source(value?: T.String | undefined) { return _fs(config, exportStatementDefault, 'source', value, config?.source); },
+    decorator(...values: T.Decorator[]) { return _fsm(config, exportStatementDefault, 'decorator', values, config?.decorator); },
+    declaration(value?: T.Declaration | undefined) { return _fs(config, exportStatementDefault, 'declaration', value, config?.declaration); },
+    value(value?: T.Expression | undefined) { return _fs(config, exportStatementDefault, 'value', value, config?.value); },
+    child(value?: (T.NamespaceExport | T.ExportClause | T.Semicolon)) {
       if (value === undefined) return children[0];
-      return exportStatementDefaultForm1({ ...config, children: [value] });
+      return exportStatementDefault({ ...config, children: [value] });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.ExportStatementDefaultForm1Tree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.ExportStatementDefaultTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 

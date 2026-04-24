@@ -1632,56 +1632,30 @@ export function externModifier(config?: T.ExternModifier.Config) {
   };
 }
 
-export function visibilityModifier(config: ConfigOf<T.VisibilityModifierForm0>): ReturnType<typeof visibilityModifierForm0>;
-export function visibilityModifier(config: ConfigOf<T.VisibilityModifierForm1>): ReturnType<typeof visibilityModifierForm1>;
-export function visibilityModifier(config: ConfigOf<T.VisibilityModifierForm0> | ConfigOf<T.VisibilityModifierForm1>) {
-  switch (config.$variant) {
-    case 'form0': return visibilityModifierForm0(config as Parameters<typeof visibilityModifierForm0>[0]);
-    case 'form1': return visibilityModifierForm1(config as Parameters<typeof visibilityModifierForm1>[0]);
-  }
-  throw new Error(`visibilityModifier: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'form0' | 'form1'.`);
-}
-export function visibilityModifierForm0(config?: Omit<ConfigOf<T.VisibilityModifierForm0>, '$variant'>) {
-  const children = [{ $type: "crate" as const, $text: "crate" as const, $source: 'factory' as const, $named: true as const }] as const;
-  return {
-    $type: 'visibility_modifier' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $variant: 'form0' as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.VisibilityModifierForm0Tree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-export function visibilityModifierForm1(config?: Omit<ConfigOf<T.VisibilityModifierForm1>, '$variant'>) {
+export function visibilityModifier(config?: T.VisibilityModifier.Config) {
   const fields = {
-    pub: "pub" as const,
+    pub: config?.pub ? "pub" as const : undefined,
     in: config?.in ? "in" as const : undefined,
   };
-  const children = config?.children ?? [];
+  const children = config?.children ?? [{ $type: "crate" as const, $text: "crate" as const, $source: 'factory' as const, $named: true as const }];
   return {
     $type: 'visibility_modifier' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $variant: 'form1' as const,
     $fields: fields,
     $children: children,
-    get pub() { return fields.pub; },
-    in(value?: "in" | undefined) { return _fs(config, visibilityModifierForm1, 'in', value, config?.in); },
-    child(value?: (T.Self | T.Super | T.Crate | T.Path)) {
+    pub(value?: "pub" | undefined) { return _fs(config, visibilityModifier, 'pub', value, config?.pub); },
+    in(value?: "in" | undefined) { return _fs(config, visibilityModifier, 'in', value, config?.in); },
+    child(value?: (T.Crate | T.Self | T.Super | T.Path)) {
       if (value === undefined) return children[0];
-      return visibilityModifierForm1({ ...config, children: [value] });
+      return visibilityModifier({ ...config, children: [value] });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.VisibilityModifierForm1Tree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.VisibilityModifierTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 

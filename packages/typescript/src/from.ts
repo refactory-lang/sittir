@@ -583,22 +583,12 @@ export function lexicalDeclarationFrom(input: T.LexicalDeclaration.Loose): Retur
   });
 }
 
-export function variableDeclaratorFrom(input?: T.VariableDeclarator.Loose): ReturnType<typeof F.variableDeclarator> {
-  if (input !== undefined && isNodeData(input)) return input;
-  return F.variableDeclarator(input as Parameters<typeof F.variableDeclarator>[0]);
-}
-
-export function variableDeclaratorForm0From(input: Omit<ConfigOf<T.VariableDeclaratorForm0>, '$variant'>) {
-  return F.variableDeclaratorForm0({
+export function variableDeclaratorFrom(input: T.VariableDeclarator.Loose): ReturnType<typeof F.variableDeclarator> {
+  if (isNodeData(input)) return input;
+  return F.variableDeclarator({
     name: _resolveOne(input.name, _super_import_identifier, _super_destructuring_pattern),
     type: _resolveOneBranch(input.type, "type_annotation"),
-  });
-}
-
-export function variableDeclaratorForm1From(input: Omit<ConfigOf<T.VariableDeclaratorForm1>, '$variant'>) {
-  return F.variableDeclaratorForm1({
-    name: _resolveOneLeaf(input.name, "identifier"),
-    type: _resolveOneBranch(input.type, "type_annotation"),
+    value: _resolveOne(input.value, _K0, _super_expression),
   });
 }
 

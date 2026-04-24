@@ -408,15 +408,6 @@
         "expression_statement_tuple": "tuple"
       }
     },
-    "_match_block": {
-      "source": "promoted",
-      "fields": {
-        "form0": [
-          "alternative"
-        ],
-        "form1": []
-      }
-    },
     "with_clause": {
       "source": "override",
       "childKind": {

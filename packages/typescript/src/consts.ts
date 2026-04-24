@@ -419,8 +419,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_class_heritage_implements_clause': [
   ],
   '_export_statement_default': [
+    { name: 'source', required: false, multiple: false },
     { name: 'decorator', required: true, multiple: true },
-    { name: 'declaration', required: true, multiple: false },
+    { name: 'declaration', required: false, multiple: false },
     { name: 'value', required: false, multiple: false },
   ],
   '_export_statement_equals_export': [
@@ -1074,6 +1075,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'variable_declarator': [
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
+    { name: 'value', required: false, multiple: false },
   ],
   'while_statement': [
     { name: 'condition', required: true, multiple: false },

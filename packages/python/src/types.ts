@@ -526,20 +526,13 @@ export interface MatchStatement {
   };
 }
 
-export interface MatchBlockForm0 {
+export interface MatchBlock {
   readonly $type: 'match_block';
-  readonly $variant: 'form0';
   readonly $fields: {
     readonly alternative: readonly (CaseClause)[];
   };
 }
 
-export interface MatchBlockForm1 {
-  readonly $type: 'match_block';
-  readonly $variant: 'form1';
-}
-
-export type MatchBlock = MatchBlockForm0 | MatchBlockForm1;
 export interface CaseClause {
   readonly $type: 'case_clause';
   readonly $fields: {
@@ -1304,8 +1297,6 @@ export interface ElifClauseTree extends TreeNode<'elif_clause'> {}
 export interface ElseClauseTree extends TreeNode<'else_clause'> {}
 export interface MatchStatementTree extends TreeNode<'match_statement'> {}
 export interface MatchBlockTree extends AnyTreeNode { readonly type: "_match_block"; }
-export interface MatchBlockForm0Tree extends AnyTreeNode {}
-export interface MatchBlockForm1Tree extends AnyTreeNode {}
 export interface CaseClauseTree extends TreeNode<'case_clause'> {}
 export interface ForStatementTree extends TreeNode<'for_statement'> {}
 export interface WhileStatementTree extends TreeNode<'while_statement'> {}
@@ -1907,7 +1898,6 @@ export interface KindMap {
 }
 
 export interface VariantMap {
-  '_match_block': { form0: MatchBlockForm0; form1: MatchBlockForm1 };
   'with_clause': { bare: WithClauseUFormBare; paren: WithClauseUFormParen };
   'assignment': { eq: AssignmentUFormEq; type: AssignmentUFormType; typed: AssignmentUFormTyped };
 }

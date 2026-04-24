@@ -344,7 +344,8 @@ export function wrapVariableDeclarator(data: _NodeData, tree: TreeHandle): Wrapp
     ...data,
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get typeField() { return drillIn(data.$fields?.['type'], tree); },
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get value() { return drillIn(data.$fields?.['value'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<VariableDeclarator>;
 }
 
@@ -1746,6 +1747,7 @@ export function wrapParenthesizedExpressionSequence(data: _NodeData, tree: TreeH
 export function wrapExportStatementDefault(data: _NodeData, tree: TreeHandle): WrappedNode<ExportStatementDefault> {
   return {
     ...data,
+    get source() { return drillIn(data.$fields?.['source'], tree); },
     get decorator() { return drillInAll(data.$fields?.['decorator'], tree); },
     get declaration() { return drillIn(data.$fields?.['declaration'], tree); },
     get value() { return drillIn(data.$fields?.['value'], tree); },
