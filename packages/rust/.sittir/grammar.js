@@ -1171,7 +1171,8 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
   name: "rust",
   // `previous` is the base grammar's conflicts list — concat so we
   // don't drop the base entries (`$._type`, `$._pattern`, etc.).
-  conflicts: ($, previous) => (previous ?? []).concat([
+  conflicts: ($, previous) => [
+    ...previous ?? [],
     // match_arm split: the `seq(expr, ',')` vs block-ending variants
     // expose a shared-prefix conflict with other expression
     // contexts when the parser sees `… => if_expr (`.
@@ -1182,7 +1183,7 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     // visibility_modifier variant extraction: `pub` vs `pub(x)`
     // share the `pub` prefix; parser needs lookahead.
     [$._visibility_modifier_pub]
-  ]),
+  ],
   polymorphs: {
     array_expression: { "2/0": "semi", "2/1": "list" },
     closure_expression: { "4/0": "block", "4/1": "expr" },

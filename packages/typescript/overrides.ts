@@ -28,7 +28,7 @@ export default grammar(enrich(base), wire({
     // itself concats the JS base's conflicts). Concat so we don't
     // drop the base entries — we only ADD the new ones required by
     // variant() adoption.
-    conflicts: ($, previous) => (previous ?? []).concat([
+    conflicts: ($, previous) => [...(previous ?? []),
         // parenthesized_expression split: `( expression )` vs
         // `( sequence_expression )` share the expression prefix. The
         // typed variant's hidden rule (`_parenthesized_expression_typed`)
@@ -136,7 +136,7 @@ export default grammar(enrich(base), wire({
         [$.primary_expression, $._for_header_let_const_kind],
         [$.variable_declarator, $._for_header_var_kind],
         [$.variable_declarator, $._for_header_let_const_kind],
-    ]),
+    ],
     // Inline `public_field_definition`'s polymorph-synthesized variant
     // bodies at the alias site. Why inline instead of `conflicts:` —
     // `access_first` reduces to "just accessibility_modifier" and

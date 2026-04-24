@@ -1203,7 +1203,8 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     role($._newline, "newline");
     return prev;
   },
-  conflicts: ($, previous) => (previous ?? []).concat([
+  conflicts: ($, previous) => [
+    ...previous ?? [],
     // expression_statement tuple-variant extraction: the bare
     // `expression` arm and the hoisted `_expression_statement_tuple`
     // both start with `expression • …`. In the base grammar
@@ -1213,7 +1214,7 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     // between the bare expression and the tuple form on the `,`
     // suffix that only the tuple accepts.
     [$.expression_statement, $._expression_statement_tuple]
-  ]),
+  ],
   polymorphs: {
     assignment: { "1/0": "eq", "1/1": "type", "1/2": "typed" },
     // expression_statement: bare expression / comma-separated tuple
