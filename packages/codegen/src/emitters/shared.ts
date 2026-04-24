@@ -314,7 +314,11 @@ export function isAutoStampSlot(slot: AssembledChild, nodeMap: NodeMap): boolean
  * compat; this helper is the authoritative version for emitters that need to handle
  * children slots too.
  */
-export function stampExpressionFor(slot: AssembledChild, nodeMap: NodeMap): string | undefined {
+export function stampExpressionFor(
+    slot: AssembledChild,
+    nodeMap: NodeMap,
+    context: 'field' | 'child' = 'field',
+): string | undefined {
     if (!isRequired(slot)) return undefined  // optional — no stamp
     if (isMultiple(slot)) return undefined   // repeated — no stamp
 
@@ -322,34 +326,30 @@ export function stampExpressionFor(slot: AssembledChild, nodeMap: NodeMap): stri
     if (slot.values.length !== 1) return undefined
     const v = slot.values[0]!
 
-    // Source A: inline literal
+    // Source A: inline literal TerminalValue. Field context emits the
+    // plain literal; child context wraps in a NodeData literal so the
+    // parent's `$children` matches the UForm interface shape
+    // (`readonly [Terminal<"text">]` = `{ $type, $text, ... }`, not a
+    // bare string).
     if (isTerminalValue(v)) {
+        if (context === 'child') {
+            const text = JSON.stringify(v.value)
+            return `{ $type: ${text} as const, $text: ${text} as const, $source: 'factory' as const, $named: false as const }`
+        }
         return `${JSON.stringify(v.value)} as const`
     }
 
-    // Source B/C: single NodeRef to a parameterless kind.
-    // `isParameterless` is the sole criterion — NOT the kind-name
-    // convention (`startsWith('_')`). `markParameterlessKinds` in
-    // `assemble.ts` stamps both single-literal terminals (keywords +
-    // tokens) and recursively-parameterless compounds as
-    // parameterless. Anything with `isParameterless` has a fixed
-    // stamp expression the factory can emit directly, with no caller
-    // input needed.
-    //
-    // Single-literal terminals stamp to the literal string itself
-    // (e.g. `"ref" as const`, `".." as const`) — matches the
-    // interface's field type (`readonly operator: ".."`) and the
-    // render pipeline's acceptance of plain strings in `$fields`.
-    // Parameterless compounds stamp to a factory call
-    // (e.g. `"breakExpression()"`).
+    // Source B/C: single NodeRef to a parameterless kind. The kind
+    // owns both stamp expressions (`stampExpression` for field
+    // context, `stampChildExpression` for child context) — the
+    // emitter just reads the right one. Compounds have the same
+    // NodeData-returning factory-call expression for both contexts;
+    // only terminals differentiate.
     if (isNodeRef(v)) {
         const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind
         const ref = nodeMap.nodes.get(kindName)
-        if (ref?.isParameterless && ref.stampExpression !== undefined) {
-            if (ref.modelType === 'keyword' || ref.modelType === 'token') {
-                return `${JSON.stringify((ref as { text: string }).text)} as const`
-            }
-            return ref.stampExpression
+        if (ref?.isParameterless) {
+            return context === 'child' ? ref.stampChildExpression : ref.stampExpression
         }
     }
 

@@ -556,10 +556,28 @@ export type ConfigOf<T> = T extends unknown ? Simplify<
 				? BitflagSlotEnum<FieldsOf<T>[K]> | undefined
 				: FieldsOf<T>[K] }
 	// Child surface: polymorph variants with a single-child tuple hoist
-	// the inner child's Config up; everything else exposes a
-	// Partial<{ children }> slot.
+	// the inner child's Config up when the inner has meaningful Config
+	// content (fields or further hoists). Two corner cases:
+	//
+	// - Inner's Config is empty (e.g. `$children: [Crate]` where
+	//   `Crate` is `Terminal<...>`): fall back to exposing
+	//   `children?: readonly [InnerType]` so the caller has a slot to
+	//   supply the content. Otherwise the form is un-constructible
+	//   for any variant whose content isn't pre-stamped.
+	//
+	// - Inner carries its OWN `$variant` (inner is itself a UForm or
+	//   polymorph union): `Omit<ConfigOf<C>, '$variant'>` first —
+	//   the outer form's `$variant` is authoritative, and intersecting
+	//   both collapses to `never` when they don't match. This keeps
+	//   a single discriminator at the outer level while preserving
+	//   the inner's fields / children.
+	//
+	// Everything else (non-polymorph or multi-child) exposes
+	// `Partial<{ children }>` directly.
 	& (T extends { readonly $variant: string; readonly $children: readonly [infer C] }
-		? ConfigOf<C>
+		? (keyof ConfigOf<C> extends never
+			? Partial<ChildSlotsOf<T>>
+			: Omit<ConfigOf<C>, '$variant'>)
 		: Partial<ChildSlotsOf<T>>)
 	// $variant discriminator: carried verbatim on the Config surface
 	// whenever the interface declares one (independent of whether the

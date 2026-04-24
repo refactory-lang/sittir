@@ -57,12 +57,12 @@ export function program(config: T.Program.Config) {
     $fields: fields,
     hashBangLine(value?: T.HashBangLine | undefined) { return _fs(config, program, 'hashBangLine', value, config?.hashBangLine); },
     statements(...values: T.Statement[]) { return _fsm(config, program, 'statements', values, config?.statements); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ProgramTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ProgramTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -104,12 +104,12 @@ export function exportStatementUFormDefault(config: Omit<ConfigOf<T.ExportStatem
       if (value === undefined) return children[0];
       return exportStatementUFormDefault({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ExportStatementUFormDefaultTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ExportStatementUFormDefaultTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 export function exportStatementUFormTypeExport(config?: Omit<ConfigOf<T.ExportStatementUFormTypeExport>, '$variant'>) {
@@ -125,12 +125,12 @@ export function exportStatementUFormTypeExport(config?: Omit<ConfigOf<T.ExportSt
       if (value === undefined) return inner.$fields.source;
       return exportStatementUFormTypeExport({ source: value });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ExportStatementUFormTypeExportTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ExportStatementUFormTypeExportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 export function exportStatementUFormEqualsExport(config: Omit<ConfigOf<T.ExportStatementUFormEqualsExport>, '$variant'>) {
@@ -145,12 +145,12 @@ export function exportStatementUFormEqualsExport(config: Omit<ConfigOf<T.ExportS
       if (value === undefined) return children[0];
       return exportStatementUFormEqualsExport({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ExportStatementUFormEqualsExportTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ExportStatementUFormEqualsExportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 export function exportStatementUFormNamespaceExport(config: Omit<ConfigOf<T.ExportStatementUFormNamespaceExport>, '$variant'>) {
@@ -165,12 +165,12 @@ export function exportStatementUFormNamespaceExport(config: Omit<ConfigOf<T.Expo
       if (value === undefined) return children[0];
       return exportStatementUFormNamespaceExport({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ExportStatementUFormNamespaceExportTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ExportStatementUFormNamespaceExportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -181,12 +181,12 @@ export function namespaceExport(child: T.ModuleExportName) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.NamespaceExportTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.NamespaceExportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -196,12 +196,12 @@ export function exportClause(...children: T.ExportSpecifier[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ExportClauseTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ExportClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -217,12 +217,12 @@ export function exportSpecifier(config: T.ExportSpecifier.Config) {
     $fields: fields,
     name(value?: T.ModuleExportName) { return _fs(config, exportSpecifier, 'name', value, config?.name); },
     alias(value?: T.ModuleExportName | undefined) { return _fs(config, exportSpecifier, 'alias', value, config?.alias); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ExportSpecifierTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ExportSpecifierTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -233,12 +233,12 @@ export function declaration(child?: (T.FunctionDeclaration | T.GeneratorFunction
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.DeclarationTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.DeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -272,12 +272,12 @@ export function importStatement(config: T.ImportStatement.Config) {
     source(value?: T.String | undefined) { return _fs(config, importStatement, 'source', value, config?.source); },
     importAttribute(value?: T.ImportAttribute | undefined) { return _fs(config, importStatement, 'importAttribute', value, config?.importAttribute); },
     semicolon(value?: T.Semicolon) { return _fs(config, importStatement, 'semicolon', value, config?.semicolon); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ImportStatementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ImportStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -304,12 +304,12 @@ export function importClauseUFormNamespaceImport(config: Omit<ConfigOf<T.ImportC
       if (value === undefined) return children[0];
       return importClauseUFormNamespaceImport({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ImportClauseUFormNamespaceImportTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ImportClauseUFormNamespaceImportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 export function importClauseUFormNamedImports(config: Omit<ConfigOf<T.ImportClauseUFormNamedImports>, '$variant'>) {
@@ -324,12 +324,12 @@ export function importClauseUFormNamedImports(config: Omit<ConfigOf<T.ImportClau
       if (value === undefined) return children[0];
       return importClauseUFormNamedImports({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ImportClauseUFormNamedImportsTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ImportClauseUFormNamedImportsTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 export function importClauseUFormDefaultImport(config: Omit<ConfigOf<T.ImportClauseUFormDefaultImport>, '$variant'>) {
@@ -344,12 +344,12 @@ export function importClauseUFormDefaultImport(config: Omit<ConfigOf<T.ImportCla
       if (value === undefined) return children[0];
       return importClauseUFormDefaultImport({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ImportClauseUFormDefaultImportTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ImportClauseUFormDefaultImportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -363,12 +363,12 @@ export function namespaceImport(config: T.NamespaceImport.Config) {
     $named: true as const,
     $fields: fields,
     identifier(value?: T.Identifier) { return _fs(config, namespaceImport, 'identifier', value, config?.identifier); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.NamespaceImportTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.NamespaceImportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -378,12 +378,12 @@ export function namedImports(...children: T.ImportSpecifier[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.NamedImportsTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.NamedImportsTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -409,12 +409,12 @@ export function importSpecifierUFormName(config: Omit<ConfigOf<T.ImportSpecifier
       if (value === undefined) return inner.$fields.name;
       return importSpecifierUFormName({ name: value });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ImportSpecifierUFormNameTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ImportSpecifierUFormNameTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 export function importSpecifierUFormAs(config: Omit<ConfigOf<T.ImportSpecifierUFormAs>, '$variant'>) {
@@ -442,12 +442,12 @@ export function importSpecifierUFormAs(config: Omit<ConfigOf<T.ImportSpecifierUF
       if (value === undefined) return inner.$fields.alias;
       return importSpecifierUFormAs({ name: inner.$fields.name, alias: value });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ImportSpecifierUFormAsTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ImportSpecifierUFormAsTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -461,12 +461,12 @@ export function importAttribute(config: T.ImportAttribute.Config) {
     $named: true as const,
     $fields: fields,
     object(value?: "with" | "assert" | T.Object) { return _fs(config, importAttribute, 'object', value, config?.object); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ImportAttributeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ImportAttributeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -477,12 +477,12 @@ export function statement(child?: (T.ExportStatement | T.ImportStatement | T.Deb
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.StatementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.StatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -502,12 +502,12 @@ export function expressionStatement(config: T.ExpressionStatement.Config) {
       if (value === undefined) return children[0];
       return expressionStatement({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ExpressionStatementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ExpressionStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -523,12 +523,12 @@ export function variableDeclaration(config: T.VariableDeclaration.Config) {
     $fields: fields,
     declarators(...values: NonEmptyArray<T.VariableDeclarator>) { return _fsm(config, variableDeclaration, 'declarators', values, config?.declarators); },
     semicolon(value?: T.Semicolon) { return _fs(config, variableDeclaration, 'semicolon', value, config?.semicolon); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.VariableDeclarationTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.VariableDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -546,12 +546,12 @@ export function lexicalDeclaration(config: T.LexicalDeclaration.Config) {
     kind(value?: "let" | "const") { return _fs(config, lexicalDeclaration, 'kind', value, config?.kind); },
     declarators(...values: NonEmptyArray<T.VariableDeclarator>) { return _fsm(config, lexicalDeclaration, 'declarators', values, config?.declarators); },
     semicolon(value?: T.Semicolon) { return _fs(config, lexicalDeclaration, 'semicolon', value, config?.semicolon); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.LexicalDeclarationTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.LexicalDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -583,12 +583,12 @@ export function variableDeclaratorForm0(config: Omit<ConfigOf<T.VariableDeclarat
       if (value === undefined) return children[0];
       return variableDeclaratorForm0({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.VariableDeclaratorForm0Tree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.VariableDeclaratorForm0Tree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 export function variableDeclaratorForm1(config: Omit<ConfigOf<T.VariableDeclaratorForm1>, '$variant'>) {
@@ -604,12 +604,12 @@ export function variableDeclaratorForm1(config: Omit<ConfigOf<T.VariableDeclarat
     $fields: fields,
     name(value?: T.Identifier) { return _fs(config, variableDeclaratorForm1, 'name', value, config?.name); },
     typeField(value?: T.TypeAnnotation) { return _fs(config, variableDeclaratorForm1, 'type', value, config?.type); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.VariableDeclaratorForm1Tree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.VariableDeclaratorForm1Tree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -625,12 +625,12 @@ export function statementBlock(config: T.StatementBlock.Config) {
     $fields: fields,
     statements(...values: T.Statement[]) { return _fsm(config, statementBlock, 'statements', values, config?.statements); },
     automaticSemicolon(value?: T.AutomaticSemicolon | undefined) { return _fs(config, statementBlock, 'automaticSemicolon', value, config?.automaticSemicolon); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.StatementBlockTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.StatementBlockTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -644,12 +644,12 @@ export function elseClause(config: T.ElseClause.Config) {
     $named: true as const,
     $fields: fields,
     statement(value?: T.Statement) { return _fs(config, elseClause, 'statement', value, config?.statement); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ElseClauseTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ElseClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -667,12 +667,12 @@ export function ifStatement(config: T.IfStatement.Config) {
     condition(value?: T.ParenthesizedExpression) { return _fs(config, ifStatement, 'condition', value, config?.condition); },
     consequence(value?: T.Statement) { return _fs(config, ifStatement, 'consequence', value, config?.consequence); },
     alternative(value?: T.ElseClause | undefined) { return _fs(config, ifStatement, 'alternative', value, config?.alternative); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.IfStatementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.IfStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -688,12 +688,12 @@ export function switchStatement(config: T.SwitchStatement.Config) {
     $fields: fields,
     value(value?: T.ParenthesizedExpression) { return _fs(config, switchStatement, 'value', value, config?.value); },
     body(value?: T.SwitchBody) { return _fs(config, switchStatement, 'body', value, config?.body); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.SwitchStatementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.SwitchStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -713,12 +713,12 @@ export function forStatement(config: T.ForStatement.Config) {
     condition(value?: T.Expressions | T.EmptyStatement) { return _fs(config, forStatement, 'condition', value, config?.condition); },
     increment(value?: T.Expressions | undefined) { return _fs(config, forStatement, 'increment', value, config?.increment); },
     body(value?: T.Statement) { return _fs(config, forStatement, 'body', value, config?.body); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ForStatementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ForStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -750,12 +750,12 @@ export function forInStatement(config: T.ForInStatement.Config) {
       if (value === undefined) return children[0];
       return forInStatement({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ForInStatementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ForInStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -771,12 +771,12 @@ export function whileStatement(config: T.WhileStatement.Config) {
     $fields: fields,
     condition(value?: T.ParenthesizedExpression) { return _fs(config, whileStatement, 'condition', value, config?.condition); },
     body(value?: T.Statement) { return _fs(config, whileStatement, 'body', value, config?.body); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.WhileStatementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.WhileStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -794,12 +794,12 @@ export function doStatement(config: T.DoStatement.Config) {
     body(value?: T.Statement) { return _fs(config, doStatement, 'body', value, config?.body); },
     condition(value?: T.ParenthesizedExpression) { return _fs(config, doStatement, 'condition', value, config?.condition); },
     semicolon(value?: T.Semicolon | undefined) { return _fs(config, doStatement, 'semicolon', value, config?.semicolon); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.DoStatementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.DoStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -817,12 +817,12 @@ export function tryStatement(config: T.TryStatement.Config) {
     body(value?: T.StatementBlock) { return _fs(config, tryStatement, 'body', value, config?.body); },
     handler(value?: T.CatchClause | undefined) { return _fs(config, tryStatement, 'handler', value, config?.handler); },
     finalizer(value?: T.FinallyClause | undefined) { return _fs(config, tryStatement, 'finalizer', value, config?.finalizer); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.TryStatementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.TryStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -838,12 +838,12 @@ export function withStatement(config: T.WithStatement.Config) {
     $fields: fields,
     object(value?: T.ParenthesizedExpression) { return _fs(config, withStatement, 'object', value, config?.object); },
     body(value?: T.Statement) { return _fs(config, withStatement, 'body', value, config?.body); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.WithStatementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.WithStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -859,12 +859,12 @@ export function breakStatement(config: T.BreakStatement.Config) {
     $fields: fields,
     label(value?: T.Identifier | undefined) { return _fs(config, breakStatement, 'label', value, config?.label); },
     semicolon(value?: T.Semicolon) { return _fs(config, breakStatement, 'semicolon', value, config?.semicolon); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.BreakStatementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.BreakStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -880,12 +880,12 @@ export function continueStatement(config: T.ContinueStatement.Config) {
     $fields: fields,
     label(value?: T.Identifier | undefined) { return _fs(config, continueStatement, 'label', value, config?.label); },
     semicolon(value?: T.Semicolon) { return _fs(config, continueStatement, 'semicolon', value, config?.semicolon); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ContinueStatementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ContinueStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -899,12 +899,12 @@ export function debuggerStatement(config: T.DebuggerStatement.Config) {
     $named: true as const,
     $fields: fields,
     semicolon(value?: T.Semicolon) { return _fs(config, debuggerStatement, 'semicolon', value, config?.semicolon); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.DebuggerStatementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.DebuggerStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -924,12 +924,12 @@ export function returnStatement(config: T.ReturnStatement.Config) {
       if (value === undefined) return children[0];
       return returnStatement({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ReturnStatementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ReturnStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -949,12 +949,12 @@ export function throwStatement(config: T.ThrowStatement.Config) {
       if (value === undefined) return children[0];
       return throwStatement({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ThrowStatementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ThrowStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -970,12 +970,12 @@ export function labeledStatement(config: T.LabeledStatement.Config) {
     $fields: fields,
     label(value?: T.StatementIdentifier) { return _fs(config, labeledStatement, 'label', value, config?.label); },
     body(value?: T.Statement) { return _fs(config, labeledStatement, 'body', value, config?.body); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.LabeledStatementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.LabeledStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -985,12 +985,12 @@ export function switchBody(...children: (T.SwitchCase | T.SwitchDefault)[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.SwitchBodyTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.SwitchBodyTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1006,12 +1006,12 @@ export function switchCase(config: T.SwitchCase.Config) {
     $fields: fields,
     value(value?: T.Expressions) { return _fs(config, switchCase, 'value', value, config?.value); },
     body(...values: T.Statement[]) { return _fsm(config, switchCase, 'body', values, config?.body); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.SwitchCaseTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.SwitchCaseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1025,12 +1025,12 @@ export function switchDefault(config: T.SwitchDefault.Config) {
     $named: true as const,
     $fields: fields,
     body(...values: T.Statement[]) { return _fsm(config, switchDefault, 'body', values, config?.body); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.SwitchDefaultTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.SwitchDefaultTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1048,12 +1048,12 @@ export function catchClause(config: T.CatchClause.Config) {
     parameter(value?: T.Identifier | T.DestructuringPattern | undefined) { return _fs(config, catchClause, 'parameter', value, config?.parameter); },
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, catchClause, 'type', value, config?.type); },
     body(value?: T.StatementBlock) { return _fs(config, catchClause, 'body', value, config?.body); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.CatchClauseTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.CatchClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1067,12 +1067,12 @@ export function finallyClause(config: T.FinallyClause.Config) {
     $named: true as const,
     $fields: fields,
     body(value?: T.StatementBlock) { return _fs(config, finallyClause, 'body', value, config?.body); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.FinallyClauseTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.FinallyClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1105,12 +1105,12 @@ export function parenthesizedExpressionUFormTyped(config?: Omit<ConfigOf<T.Paren
       if (value === undefined) return inner.$fields.type;
       return parenthesizedExpressionUFormTyped({ type: value });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ParenthesizedExpressionUFormTypedTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ParenthesizedExpressionUFormTypedTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 export function parenthesizedExpressionUFormSequence(config: Omit<ConfigOf<T.ParenthesizedExpressionUFormSequence>, '$variant'>) {
@@ -1125,12 +1125,12 @@ export function parenthesizedExpressionUFormSequence(config: Omit<ConfigOf<T.Par
       if (value === undefined) return children[0];
       return parenthesizedExpressionUFormSequence({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ParenthesizedExpressionUFormSequenceTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ParenthesizedExpressionUFormSequenceTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1141,12 +1141,12 @@ export function expression(child?: (T.AsExpression | T.SatisfiesExpression | T.I
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1157,12 +1157,12 @@ export function primaryExpression(child?: (T.SubscriptExpression | T.MemberExpre
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.PrimaryExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.PrimaryExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1176,12 +1176,12 @@ export function yieldExpression(config?: T.YieldExpression.Config) {
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression | undefined) { return _fs(config, yieldExpression, 'expression', value, config?.expression); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.YieldExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.YieldExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1191,12 +1191,12 @@ export function object(...children: (T.Pair | T.SpreadElement | T.MethodDefiniti
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ObjectTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ObjectTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1206,12 +1206,12 @@ export function objectPattern(...children: (T.PairPattern | T.RestPattern | T.Ob
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ObjectPatternTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ObjectPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1227,12 +1227,12 @@ export function assignmentPattern(config: T.AssignmentPattern.Config) {
     $fields: fields,
     left(value?: T.Pattern) { return _fs(config, assignmentPattern, 'left', value, config?.left); },
     right(value?: T.Expression) { return _fs(config, assignmentPattern, 'right', value, config?.right); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.AssignmentPatternTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.AssignmentPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1248,12 +1248,12 @@ export function objectAssignmentPattern(config: T.ObjectAssignmentPattern.Config
     $fields: fields,
     left(value?: T.ShorthandPropertyIdentifierPattern | T.DestructuringPattern) { return _fs(config, objectAssignmentPattern, 'left', value, config?.left); },
     right(value?: T.Expression) { return _fs(config, objectAssignmentPattern, 'right', value, config?.right); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ObjectAssignmentPatternTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ObjectAssignmentPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1263,12 +1263,12 @@ export function array(...children: (T.Expression | T.SpreadElement)[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ArrayTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ArrayTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1278,12 +1278,12 @@ export function arrayPattern(...children: (T.Pattern | T.AssignmentPattern)[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ArrayPatternTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ArrayPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1305,12 +1305,12 @@ export function jsxElement(config: T.JsxElement.Config) {
       if (items.length === 0) return children;
       return jsxElement({ ...config, children: items });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.JsxElementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.JsxElementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1334,12 +1334,12 @@ export function jsxExpression(child?: (T.Expression | T.SequenceExpression | T.S
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.JsxExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.JsxExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1357,12 +1357,12 @@ export function jsxOpeningElement(config: T.JsxOpeningElement.Config) {
     name(value?: T._JsxIdentifier | T.JsxNamespaceName | undefined) { return _fs(config, jsxOpeningElement, 'name', value, config?.name); },
     typeArguments(value?: T.TypeArguments | undefined) { return _fs(config, jsxOpeningElement, 'typeArguments', value, config?.typeArguments); },
     attribute(...values: T._JsxAttribute[]) { return _fsm(config, jsxOpeningElement, 'attribute', values, config?.attribute); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.JsxOpeningElementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.JsxOpeningElementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1391,12 +1391,12 @@ export function nestedIdentifier(config: T.NestedIdentifier.Config) {
     $fields: fields,
     object(value?: T.Identifier | T.NestedIdentifier) { return _fs(config, nestedIdentifier, 'object', value, config?.object); },
     property(value?: T.Identifier) { return _fs(config, nestedIdentifier, 'property', value, config?.property); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.NestedIdentifierTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.NestedIdentifierTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1406,12 +1406,12 @@ export function jsxNamespaceName(...children: T._JsxIdentifier[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.JsxNamespaceNameTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.JsxNamespaceNameTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1425,12 +1425,12 @@ export function jsxClosingElement(config?: T.JsxClosingElement.Config) {
     $named: true as const,
     $fields: fields,
     name(value?: T.JsxElementName | undefined) { return _fs(config, jsxClosingElement, 'name', value, config?.name); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.JsxClosingElementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.JsxClosingElementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1448,12 +1448,12 @@ export function jsxSelfClosingElement(config: T.JsxSelfClosingElement.Config) {
     name(value?: T._JsxIdentifier | T.JsxNamespaceName | undefined) { return _fs(config, jsxSelfClosingElement, 'name', value, config?.name); },
     typeArguments(value?: T.TypeArguments | undefined) { return _fs(config, jsxSelfClosingElement, 'typeArguments', value, config?.typeArguments); },
     attribute(...values: T._JsxAttribute[]) { return _fsm(config, jsxSelfClosingElement, 'attribute', values, config?.attribute); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.JsxSelfClosingElementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.JsxSelfClosingElementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1464,12 +1464,12 @@ export function jsxAttribute(child: (T.JsxAttributeName | T.JsxAttributeValue)) 
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.JsxAttributeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.JsxAttributeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1517,12 +1517,12 @@ export function class_(config: T.Class.Config) {
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, class_, 'typeParameters', value, config?.typeParameters); },
     classHeritage(value?: T.ClassHeritage | undefined) { return _fs(config, class_, 'classHeritage', value, config?.classHeritage); },
     body(value?: T.ClassBody) { return _fs(config, class_, 'body', value, config?.body); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ClassTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ClassTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1546,12 +1546,12 @@ export function classDeclaration(config: T.ClassDeclaration.Config) {
     classHeritage(value?: T.ClassHeritage | undefined) { return _fs(config, classDeclaration, 'classHeritage', value, config?.classHeritage); },
     body(value?: T.ClassBody) { return _fs(config, classDeclaration, 'body', value, config?.body); },
     automaticSemicolon(value?: T.AutomaticSemicolon | undefined) { return _fs(config, classDeclaration, 'automaticSemicolon', value, config?.automaticSemicolon); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ClassDeclarationTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ClassDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1576,12 +1576,12 @@ export function classHeritageUFormExtendsClause(config: Omit<ConfigOf<T.ClassHer
       if (value === undefined) return children[0];
       return classHeritageUFormExtendsClause({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ClassHeritageUFormExtendsClauseTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ClassHeritageUFormExtendsClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 export function classHeritageUFormImplementsClause(config: Omit<ConfigOf<T.ClassHeritageUFormImplementsClause>, '$variant'>) {
@@ -1596,12 +1596,12 @@ export function classHeritageUFormImplementsClause(config: Omit<ConfigOf<T.Class
       if (value === undefined) return children[0];
       return classHeritageUFormImplementsClause({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ClassHeritageUFormImplementsClauseTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ClassHeritageUFormImplementsClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1625,12 +1625,12 @@ export function functionExpression(config: T.FunctionExpression.Config) {
     parameters(value?: T.FormalParameters) { return _fs(config, functionExpression, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _fs(config, functionExpression, 'returnType', value, config?.returnType); },
     body(value?: T.StatementBlock) { return _fs(config, functionExpression, 'body', value, config?.body); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.FunctionExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.FunctionExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1660,12 +1660,12 @@ export function functionDeclaration(config: T.FunctionDeclaration.Config) {
       if (value === undefined) return children[0];
       return functionDeclaration({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.FunctionDeclarationTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.FunctionDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1689,12 +1689,12 @@ export function generatorFunction(config: T.GeneratorFunction.Config) {
     parameters(value?: T.FormalParameters) { return _fs(config, generatorFunction, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _fs(config, generatorFunction, 'returnType', value, config?.returnType); },
     body(value?: T.StatementBlock) { return _fs(config, generatorFunction, 'body', value, config?.body); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.GeneratorFunctionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.GeneratorFunctionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1724,12 +1724,12 @@ export function generatorFunctionDeclaration(config: T.GeneratorFunctionDeclarat
       if (value === undefined) return children[0];
       return generatorFunctionDeclaration({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.GeneratorFunctionDeclarationTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.GeneratorFunctionDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1768,12 +1768,12 @@ export function arrowFunctionUFormParameter(config: Omit<ConfigOf<T.ArrowFunctio
       if (value === undefined) return inner.$fields.parameter;
       return arrowFunctionUFormParameter({ async: config.async, body: config.body, parameter: value });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ArrowFunctionUFormParameterTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ArrowFunctionUFormParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 export function arrowFunctionUFormUCallSignature(config: Omit<ConfigOf<T.ArrowFunctionUFormUCallSignature>, '$variant'>) {
@@ -1810,12 +1810,12 @@ export function arrowFunctionUFormUCallSignature(config: Omit<ConfigOf<T.ArrowFu
       if (value === undefined) return inner.$fields.return_type;
       return arrowFunctionUFormUCallSignature({ async: config.async, body: config.body, typeParameters: inner.$fields.type_parameters, parameters: inner.$fields.parameters, returnType: value });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ArrowFunctionUFormUCallSignatureTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ArrowFunctionUFormUCallSignatureTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1860,12 +1860,12 @@ export function callExpressionUFormCall(config: Omit<ConfigOf<T.CallExpressionUF
       if (value === undefined) return inner.$fields.arguments;
       return callExpressionUFormCall({ function: inner.$fields.function, typeArguments: inner.$fields.type_arguments, arguments: value });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.CallExpressionUFormCallTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.CallExpressionUFormCallTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 export function callExpressionUFormTemplateCall(config: Omit<ConfigOf<T.CallExpressionUFormTemplateCall>, '$variant'>) {
@@ -1893,12 +1893,12 @@ export function callExpressionUFormTemplateCall(config: Omit<ConfigOf<T.CallExpr
       if (value === undefined) return inner.$fields.arguments;
       return callExpressionUFormTemplateCall({ function: inner.$fields.function, arguments: value });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.CallExpressionUFormTemplateCallTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.CallExpressionUFormTemplateCallTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 export function callExpressionUFormMember(config: Omit<ConfigOf<T.CallExpressionUFormMember>, '$variant'>) {
@@ -1931,12 +1931,12 @@ export function callExpressionUFormMember(config: Omit<ConfigOf<T.CallExpression
       if (value === undefined) return inner.$fields.arguments;
       return callExpressionUFormMember({ function: inner.$fields.function, typeArguments: inner.$fields.type_arguments, arguments: value });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.CallExpressionUFormMemberTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.CallExpressionUFormMemberTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1954,12 +1954,12 @@ export function newExpression(config: T.NewExpression.Config) {
     constructor(value?: T.PrimaryExpression) { return _fs(config, newExpression, 'constructor', value, config?.constructor); },
     typeArguments(value?: T.TypeArguments | undefined) { return _fs(config, newExpression, 'typeArguments', value, config?.typeArguments); },
     arguments(value?: T.Arguments | undefined) { return _fs(config, newExpression, 'arguments', value, config?.arguments); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.NewExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.NewExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1973,12 +1973,12 @@ export function awaitExpression(config: T.AwaitExpression.Config) {
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _fs(config, awaitExpression, 'expression', value, config?.expression); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.AwaitExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.AwaitExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1996,12 +1996,12 @@ export function memberExpression(config: T.MemberExpression.Config) {
     object(value?: T.Expression | T.PrimaryExpression | T.Import) { return _fs(config, memberExpression, 'object', value, config?.object); },
     optionalChain(value?: T.OptionalChain | undefined) { return _fs(config, memberExpression, 'optionalChain', value, config?.optionalChain); },
     property(value?: T.PrivatePropertyIdentifier | T.Identifier) { return _fs(config, memberExpression, 'property', value, config?.property); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.MemberExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.MemberExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2019,12 +2019,12 @@ export function subscriptExpression(config: T.SubscriptExpression.Config) {
     object(value?: T.Expression | T.PrimaryExpression) { return _fs(config, subscriptExpression, 'object', value, config?.object); },
     optionalChain(value?: T.OptionalChain | undefined) { return _fs(config, subscriptExpression, 'optionalChain', value, config?.optionalChain); },
     index(value?: T.Expressions) { return _fs(config, subscriptExpression, 'index', value, config?.index); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.SubscriptExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.SubscriptExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2035,12 +2035,12 @@ export function lhsExpression(child?: (T.MemberExpression | T.SubscriptExpressio
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.LhsExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.LhsExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2058,12 +2058,12 @@ export function assignmentExpression(config: T.AssignmentExpression.Config) {
     using(value?: "using" | undefined) { return _fs(config, assignmentExpression, 'using', value, config?.using); },
     left(value?: T.ParenthesizedExpression | T.LhsExpression) { return _fs(config, assignmentExpression, 'left', value, config?.left); },
     right(value?: T.Expression) { return _fs(config, assignmentExpression, 'right', value, config?.right); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.AssignmentExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.AssignmentExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2081,12 +2081,12 @@ export function augmentedAssignmentExpression(config: T.AugmentedAssignmentExpre
     left(value?: T.MemberExpression | T.SubscriptExpression | T.ReservedIdentifier | T.ParenthesizedExpression | T.NonNullExpression) { return _fs(config, augmentedAssignmentExpression, 'left', value, config?.left); },
     operator(value?: "+=" | "-=" | "*=" | "/=" | "%=" | "^=" | "&=" | "|=" | ">>=" | ">>>=" | "<<=" | "**=" | "&&=" | "||=" | "??=") { return _fs(config, augmentedAssignmentExpression, 'operator', value, config?.operator); },
     right(value?: T.Expression) { return _fs(config, augmentedAssignmentExpression, 'right', value, config?.right); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.AugmentedAssignmentExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.AugmentedAssignmentExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2100,12 +2100,12 @@ export function spreadElement(config: T.SpreadElement.Config) {
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _fs(config, spreadElement, 'expression', value, config?.expression); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.SpreadElementTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.SpreadElementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2123,12 +2123,12 @@ export function ternaryExpression(config: T.TernaryExpression.Config) {
     condition(value?: T.Expression) { return _fs(config, ternaryExpression, 'condition', value, config?.condition); },
     consequence(value?: T.Expression) { return _fs(config, ternaryExpression, 'consequence', value, config?.consequence); },
     alternative(value?: T.Expression) { return _fs(config, ternaryExpression, 'alternative', value, config?.alternative); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.TernaryExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.TernaryExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2146,12 +2146,12 @@ export function binaryExpression(config: T.BinaryExpression.Config) {
     left(value?: T.Expression | T.PrivatePropertyIdentifier) { return _fs(config, binaryExpression, 'left', value, config?.left); },
     operator(value?: "&&" | "||" | ">>" | ">>>" | "<<" | "&" | "^" | "|" | "+" | "-" | "*" | "/" | "%" | "**" | "<" | "<=" | "==" | "===" | "!=" | "!==" | ">=" | ">" | "??" | "instanceof" | "in") { return _fs(config, binaryExpression, 'operator', value, config?.operator); },
     right(value?: T.Expression) { return _fs(config, binaryExpression, 'right', value, config?.right); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.BinaryExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.BinaryExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2167,12 +2167,12 @@ export function unaryExpression(config: T.UnaryExpression.Config) {
     $fields: fields,
     operator(value?: "!" | "~" | "-" | "+" | "typeof" | "void" | "delete") { return _fs(config, unaryExpression, 'operator', value, config?.operator); },
     argument(value?: T.Expression) { return _fs(config, unaryExpression, 'argument', value, config?.argument); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.UnaryExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.UnaryExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2188,12 +2188,12 @@ export function updateExpression(config: T.UpdateExpression.Config) {
     $fields: fields,
     argument(value?: T.Expression) { return _fs(config, updateExpression, 'argument', value, config?.argument); },
     operator(value?: "++" | "--") { return _fs(config, updateExpression, 'operator', value, config?.operator); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.UpdateExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.UpdateExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2204,12 +2204,12 @@ export function sequenceExpression(...children: T.Expression[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.SequenceExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.SequenceExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2234,12 +2234,12 @@ export function stringUFormDouble(config: Omit<ConfigOf<T.StringUFormDouble>, '$
       if (value === undefined) return children[0];
       return stringUFormDouble({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.StringUFormDoubleTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.StringUFormDoubleTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 export function stringUFormSingle(config: Omit<ConfigOf<T.StringUFormSingle>, '$variant'>) {
@@ -2254,12 +2254,12 @@ export function stringUFormSingle(config: Omit<ConfigOf<T.StringUFormSingle>, '$
       if (value === undefined) return children[0];
       return stringUFormSingle({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.StringUFormSingleTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.StringUFormSingleTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2321,12 +2321,12 @@ export function templateString(...children: (T.StringFragment | T.EscapeSequence
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.TemplateStringTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.TemplateStringTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2337,12 +2337,12 @@ export function templateSubstitution(child: T.Expressions) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.TemplateSubstitutionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.TemplateSubstitutionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2358,12 +2358,12 @@ export function regex(config: T.Regex.Config) {
     $fields: fields,
     pattern(value?: T.RegexPattern) { return _fs(config, regex, 'pattern', value, config?.pattern); },
     flags(value?: T.RegexFlags | undefined) { return _fs(config, regex, 'flags', value, config?.flags); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.RegexTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.RegexTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2523,12 +2523,12 @@ export function arguments_(...children: (T.Expression | T.SpreadElement)[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ArgumentsTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ArgumentsTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2539,12 +2539,12 @@ export function decorator(child?: (T.Identifier | T.DecoratorMemberExpression | 
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.DecoratorTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.DecoratorTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2560,12 +2560,12 @@ export function decoratorMemberExpression(config: T.DecoratorMemberExpression.Co
     $fields: fields,
     object(value?: T.Identifier | T.DecoratorMemberExpression) { return _fs(config, decoratorMemberExpression, 'object', value, config?.object); },
     property(value?: T.Identifier) { return _fs(config, decoratorMemberExpression, 'property', value, config?.property); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.DecoratorMemberExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.DecoratorMemberExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2583,12 +2583,12 @@ export function decoratorCallExpression(config: T.DecoratorCallExpression.Config
     function(value?: T.Identifier | T.DecoratorMemberExpression) { return _fs(config, decoratorCallExpression, 'function', value, config?.function); },
     typeArguments(value?: T.TypeArguments | undefined) { return _fs(config, decoratorCallExpression, 'typeArguments', value, config?.typeArguments); },
     arguments(value?: T.Arguments) { return _fs(config, decoratorCallExpression, 'arguments', value, config?.arguments); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.DecoratorCallExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.DecoratorCallExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2608,12 +2608,12 @@ export function classBody(config: T.ClassBody.Config) {
       if (items.length === 0) return children;
       return classBody({ ...config, children: items });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ClassBodyTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ClassBodyTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2633,12 +2633,12 @@ export function fieldDefinition(config: T.FieldDefinition.Config) {
     static(value?: "static" | undefined) { return _fs(config, fieldDefinition, 'static', value, config?.static); },
     property(value?: T.PropertyName) { return _fs(config, fieldDefinition, 'property', value, config?.property); },
     value(value?: T.Expression | undefined) { return _fs(config, fieldDefinition, 'value', value, config?.value); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.FieldDefinitionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.FieldDefinitionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2649,12 +2649,12 @@ export function formalParameters(...children: T.FormalParameter[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.FormalParametersTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.FormalParametersTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2674,12 +2674,12 @@ export function classStaticBlock(config: T.ClassStaticBlock.Config) {
       if (value === undefined) return children[0];
       return classStaticBlock({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ClassStaticBlockTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ClassStaticBlockTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2690,12 +2690,12 @@ export function pattern(child?: (T.LhsExpression | T.RestPattern)) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.PatternTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.PatternTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2706,12 +2706,12 @@ export function restPattern(child: T.LhsExpression) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.RestPatternTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.RestPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2747,12 +2747,12 @@ export function methodDefinition(config: T.MethodDefinition.Config) {
       if (value === undefined) return children[0];
       return methodDefinition({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.MethodDefinitionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.MethodDefinitionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2768,12 +2768,12 @@ export function pair(config: T.Pair.Config) {
     $fields: fields,
     key(value?: T.PropertyName) { return _fs(config, pair, 'key', value, config?.key); },
     value(value?: T.Expression) { return _fs(config, pair, 'value', value, config?.value); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.PairTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.PairTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2789,12 +2789,12 @@ export function pairPattern(config: T.PairPattern.Config) {
     $fields: fields,
     key(value?: T.PropertyName) { return _fs(config, pairPattern, 'key', value, config?.key); },
     value(value?: T.Pattern | T.AssignmentPattern) { return _fs(config, pairPattern, 'value', value, config?.value); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.PairPatternTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.PairPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2808,12 +2808,12 @@ export function computedPropertyName(config: T.ComputedPropertyName.Config) {
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _fs(config, computedPropertyName, 'expression', value, config?.expression); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ComputedPropertyNameTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ComputedPropertyNameTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2875,12 +2875,12 @@ export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
       if (value === undefined) return children[0];
       return publicFieldDefinition({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.PublicFieldDefinitionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.PublicFieldDefinitionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2894,12 +2894,12 @@ export function nonNullExpression(config: T.NonNullExpression.Config) {
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _fs(config, nonNullExpression, 'expression', value, config?.expression); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.NonNullExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.NonNullExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2933,12 +2933,12 @@ export function methodSignature(config: T.MethodSignature.Config) {
       if (value === undefined) return children[0];
       return methodSignature({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.MethodSignatureTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.MethodSignatureTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2962,12 +2962,12 @@ export function abstractMethodSignature(config: T.AbstractMethodSignature.Config
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, abstractMethodSignature, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, abstractMethodSignature, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _fs(config, abstractMethodSignature, 'returnType', value, config?.returnType); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.AbstractMethodSignatureTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.AbstractMethodSignatureTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2991,12 +2991,12 @@ export function functionSignature(config: T.FunctionSignature.Config) {
     parameters(value?: T.FormalParameters) { return _fs(config, functionSignature, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _fs(config, functionSignature, 'returnType', value, config?.returnType); },
     semicolon(value?: T.Semicolon | T.FunctionSignatureAutomaticSemicolon) { return _fs(config, functionSignature, 'semicolon', value, config?.semicolon); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.FunctionSignatureTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.FunctionSignatureTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3007,12 +3007,12 @@ export function decoratorParenthesizedExpression(child?: (T.Identifier | T.Decor
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.DecoratorParenthesizedExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.DecoratorParenthesizedExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3028,12 +3028,12 @@ export function typeAssertion(config: T.TypeAssertion.Config) {
     $fields: fields,
     typeArguments(value?: T.TypeArguments) { return _fs(config, typeAssertion, 'typeArguments', value, config?.typeArguments); },
     expression(value?: T.Expression) { return _fs(config, typeAssertion, 'expression', value, config?.expression); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.TypeAssertionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.TypeAssertionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3049,12 +3049,12 @@ export function asExpression(config: T.AsExpression.Config) {
     $fields: fields,
     expression(value?: T.Expression) { return _fs(config, asExpression, 'expression', value, config?.expression); },
     typeAnnotation(value?: "const" | T.Type) { return _fs(config, asExpression, 'typeAnnotation', value, config?.typeAnnotation); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.AsExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.AsExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3070,12 +3070,12 @@ export function satisfiesExpression(config: T.SatisfiesExpression.Config) {
     $fields: fields,
     expression(value?: T.Expression) { return _fs(config, satisfiesExpression, 'expression', value, config?.expression); },
     typeAnnotation(value?: T.Type) { return _fs(config, satisfiesExpression, 'typeAnnotation', value, config?.typeAnnotation); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.SatisfiesExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.SatisfiesExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3091,12 +3091,12 @@ export function instantiationExpression(config: T.InstantiationExpression.Config
     $fields: fields,
     expression(value?: T.Expression) { return _fs(config, instantiationExpression, 'expression', value, config?.expression); },
     typeArguments(value?: T.TypeArguments) { return _fs(config, instantiationExpression, 'typeArguments', value, config?.typeArguments); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.InstantiationExpressionTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.InstantiationExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3112,12 +3112,12 @@ export function importRequireClause(config: T.ImportRequireClause.Config) {
     $fields: fields,
     identifier(value?: T.Identifier) { return _fs(config, importRequireClause, 'identifier', value, config?.identifier); },
     source(value?: T.String) { return _fs(config, importRequireClause, 'source', value, config?.source); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ImportRequireClauseTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ImportRequireClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3133,12 +3133,12 @@ export function extendsClause(config: T.ExtendsClause.Config) {
     $fields: fields,
     value(...values: NonEmptyArray<T.Expression>) { return _fsm(config, extendsClause, 'value', values, config?.value); },
     typeArguments(value?: T.TypeArguments | undefined) { return _fs(config, extendsClause, 'typeArguments', value, config?.typeArguments); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ExtendsClauseTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ExtendsClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3149,12 +3149,12 @@ export function implementsClause(...children: T.Type[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ImplementsClauseTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ImplementsClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3168,12 +3168,12 @@ export function ambientDeclaration(config: T.AmbientDeclaration.Config) {
     $named: true as const,
     $fields: fields,
     declaration(value?: T.Declaration | "global" | T.StatementBlock | "module" | T.Identifier | T.Type | T.Semicolon) { return _fs(config, ambientDeclaration, 'declaration', value, config?.declaration); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.AmbientDeclarationTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.AmbientDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3195,12 +3195,12 @@ export function abstractClassDeclaration(config: T.AbstractClassDeclaration.Conf
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, abstractClassDeclaration, 'typeParameters', value, config?.typeParameters); },
     classHeritage(value?: T.ClassHeritage | undefined) { return _fs(config, abstractClassDeclaration, 'classHeritage', value, config?.classHeritage); },
     body(value?: T.ClassBody) { return _fs(config, abstractClassDeclaration, 'body', value, config?.body); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.AbstractClassDeclarationTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.AbstractClassDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3216,12 +3216,12 @@ export function module(config: T.Module.Config) {
     $fields: fields,
     name(value?: T.String | T.Identifier | T.NestedIdentifier) { return _fs(config, module, 'name', value, config?.name); },
     body(value?: T.StatementBlock | undefined) { return _fs(config, module, 'body', value, config?.body); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ModuleTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ModuleTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3237,12 +3237,12 @@ export function internalModule(config: T.InternalModule.Config) {
     $fields: fields,
     name(value?: T.String | T.Identifier | T.NestedIdentifier) { return _fs(config, internalModule, 'name', value, config?.name); },
     body(value?: T.StatementBlock | undefined) { return _fs(config, internalModule, 'body', value, config?.body); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.InternalModuleTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.InternalModuleTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3260,12 +3260,12 @@ export function importAlias(config: T.ImportAlias.Config) {
     name(value?: T.Identifier) { return _fs(config, importAlias, 'name', value, config?.name); },
     value(value?: T.Identifier | T.NestedIdentifier) { return _fs(config, importAlias, 'value', value, config?.value); },
     semicolon(value?: T.Semicolon) { return _fs(config, importAlias, 'semicolon', value, config?.semicolon); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ImportAliasTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ImportAliasTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3281,12 +3281,12 @@ export function nestedTypeIdentifier(config: T.NestedTypeIdentifier.Config) {
     $fields: fields,
     module(value?: T.Identifier | T.NestedIdentifier) { return _fs(config, nestedTypeIdentifier, 'module', value, config?.module); },
     name(value?: T.TypeIdentifier) { return _fs(config, nestedTypeIdentifier, 'name', value, config?.name); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.NestedTypeIdentifierTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.NestedTypeIdentifierTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3306,12 +3306,12 @@ export function interfaceDeclaration(config: T.InterfaceDeclaration.Config) {
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, interfaceDeclaration, 'typeParameters', value, config?.typeParameters); },
     extendsTypeClause(value?: T.ExtendsTypeClause | undefined) { return _fs(config, interfaceDeclaration, 'extendsTypeClause', value, config?.extendsTypeClause); },
     body(value?: T.ObjectType) { return _fs(config, interfaceDeclaration, 'body', value, config?.body); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.InterfaceDeclarationTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.InterfaceDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3325,12 +3325,12 @@ export function extendsTypeClause(config: T.ExtendsTypeClause.Config) {
     $named: true as const,
     $fields: fields,
     typeField(...values: NonEmptyArray<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>) { return _fsm(config, extendsTypeClause, 'type', values, config?.type); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ExtendsTypeClauseTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ExtendsTypeClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3348,12 +3348,12 @@ export function enumDeclaration(config: T.EnumDeclaration.Config) {
     const(value?: "const" | undefined) { return _fs(config, enumDeclaration, 'const', value, config?.const); },
     name(value?: T.Identifier) { return _fs(config, enumDeclaration, 'name', value, config?.name); },
     body(value?: T.EnumBody) { return _fs(config, enumDeclaration, 'body', value, config?.body); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.EnumDeclarationTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.EnumDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3367,12 +3367,12 @@ export function enumBody(config: T.EnumBody.Config) {
     $named: true as const,
     $fields: fields,
     opening(...values: NonEmptyArray<T.PropertyName | T.EnumAssignment>) { return _fsm(config, enumBody, 'opening', values, config?.opening); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.EnumBodyTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.EnumBodyTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3388,12 +3388,12 @@ export function enumAssignment(config: T.EnumAssignment.Config) {
     $fields: fields,
     name(value?: T.PropertyName) { return _fs(config, enumAssignment, 'name', value, config?.name); },
     value(value?: T.Expression) { return _fs(config, enumAssignment, 'value', value, config?.value); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.EnumAssignmentTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.EnumAssignmentTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3413,12 +3413,12 @@ export function typeAliasDeclaration(config: T.TypeAliasDeclaration.Config) {
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, typeAliasDeclaration, 'typeParameters', value, config?.typeParameters); },
     value(value?: T.Type) { return _fs(config, typeAliasDeclaration, 'value', value, config?.value); },
     semicolon(value?: T.Semicolon) { return _fs(config, typeAliasDeclaration, 'semicolon', value, config?.semicolon); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.TypeAliasDeclarationTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.TypeAliasDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3470,12 +3470,12 @@ export function requiredParameter(config: T.RequiredParameter.Config) {
       if (value === undefined) return children[0];
       return requiredParameter({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.RequiredParameterTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.RequiredParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3503,12 +3503,12 @@ export function optionalParameter(config: T.OptionalParameter.Config) {
       if (value === undefined) return children[0];
       return optionalParameter({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.OptionalParameterTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.OptionalParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3522,12 +3522,12 @@ export function omittingTypeAnnotation(config: T.OmittingTypeAnnotation.Config) 
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _fs(config, omittingTypeAnnotation, 'type', value, config?.type); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.OmittingTypeAnnotationTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.OmittingTypeAnnotationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3541,12 +3541,12 @@ export function addingTypeAnnotation(config: T.AddingTypeAnnotation.Config) {
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _fs(config, addingTypeAnnotation, 'type', value, config?.type); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.AddingTypeAnnotationTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.AddingTypeAnnotationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3560,12 +3560,12 @@ export function optingTypeAnnotation(config: T.OptingTypeAnnotation.Config) {
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _fs(config, optingTypeAnnotation, 'type', value, config?.type); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.OptingTypeAnnotationTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.OptingTypeAnnotationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3579,12 +3579,12 @@ export function typeAnnotation(config: T.TypeAnnotation.Config) {
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _fs(config, typeAnnotation, 'type', value, config?.type); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.TypeAnnotationTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.TypeAnnotationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3595,12 +3595,12 @@ export function asserts(child?: (T.TypePredicate | T.Identifier | T.This)) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.AssertsTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.AssertsTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3614,12 +3614,12 @@ export function assertsAnnotation(config: T.AssertsAnnotation.Config) {
     $named: true as const,
     $fields: fields,
     asserts(value?: ":" | T.Asserts) { return _fs(config, assertsAnnotation, 'asserts', value, config?.asserts); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.AssertsAnnotationTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.AssertsAnnotationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3635,12 +3635,12 @@ export function tupleParameter(config: T.TupleParameter.Config) {
     $fields: fields,
     name(value?: T.Identifier | T.RestPattern) { return _fs(config, tupleParameter, 'name', value, config?.name); },
     typeField(value?: T.TypeAnnotation) { return _fs(config, tupleParameter, 'type', value, config?.type); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.TupleParameterTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.TupleParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3656,12 +3656,12 @@ export function optionalTupleParameter(config: T.OptionalTupleParameter.Config) 
     $fields: fields,
     name(value?: T.Identifier) { return _fs(config, optionalTupleParameter, 'name', value, config?.name); },
     typeField(value?: T.TypeAnnotation) { return _fs(config, optionalTupleParameter, 'type', value, config?.type); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.OptionalTupleParameterTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.OptionalTupleParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3675,12 +3675,12 @@ export function optionalType(config: T.OptionalType.Config) {
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _fs(config, optionalType, 'type', value, config?.type); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.OptionalTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.OptionalTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3694,12 +3694,12 @@ export function restType(config: T.RestType.Config) {
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _fs(config, restType, 'type', value, config?.type); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.RestTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.RestTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3719,12 +3719,12 @@ export function constructorType(config: T.ConstructorType.Config) {
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, constructorType, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, constructorType, 'parameters', value, config?.parameters); },
     typeField(value?: T.Type) { return _fs(config, constructorType, 'type', value, config?.type); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ConstructorTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ConstructorTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3735,12 +3735,12 @@ export function templateType(child?: (T.PrimaryType | T.InferType)) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.TemplateTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.TemplateTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3750,12 +3750,12 @@ export function templateLiteralType(...children: (T.StringFragment | T.TemplateT
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.TemplateLiteralTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.TemplateLiteralTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3771,12 +3771,12 @@ export function inferType(config: T.InferType.Config) {
     $fields: fields,
     typeIdentifier(value?: T.TypeIdentifier) { return _fs(config, inferType, 'typeIdentifier', value, config?.typeIdentifier); },
     constraint(value?: "extends" | T.Type | undefined) { return _fs(config, inferType, 'constraint', value, config?.constraint); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.InferTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.InferTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3796,12 +3796,12 @@ export function conditionalType(config: T.ConditionalType.Config) {
     right(value?: T.Type) { return _fs(config, conditionalType, 'right', value, config?.right); },
     consequence(value?: T.Type) { return _fs(config, conditionalType, 'consequence', value, config?.consequence); },
     alternative(value?: T.Type) { return _fs(config, conditionalType, 'alternative', value, config?.alternative); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ConditionalTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ConditionalTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3817,12 +3817,12 @@ export function genericType(config: T.GenericType.Config) {
     $fields: fields,
     name(value?: T.TypeIdentifier | T.NestedTypeIdentifier) { return _fs(config, genericType, 'name', value, config?.name); },
     typeArguments(value?: T.TypeArguments) { return _fs(config, genericType, 'typeArguments', value, config?.typeArguments); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.GenericTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.GenericTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3838,12 +3838,12 @@ export function typePredicate(config: T.TypePredicate.Config) {
     $fields: fields,
     name(value?: T.Identifier | T.This) { return _fs(config, typePredicate, 'name', value, config?.name); },
     typeField(value?: T.Type) { return _fs(config, typePredicate, 'type', value, config?.type); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.TypePredicateTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.TypePredicateTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3857,12 +3857,12 @@ export function typePredicateAnnotation(config: T.TypePredicateAnnotation.Config
     $named: true as const,
     $fields: fields,
     typePredicate(value?: ":" | T.TypePredicate) { return _fs(config, typePredicateAnnotation, 'typePredicate', value, config?.typePredicate); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.TypePredicateAnnotationTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.TypePredicateAnnotationTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3873,12 +3873,12 @@ export function typeQuery(child?: (T.TypeQuerySubscriptExpression | T.TypeQueryM
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.TypeQueryTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.TypeQueryTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3892,12 +3892,12 @@ export function indexTypeQuery(config: T.IndexTypeQuery.Config) {
     $named: true as const,
     $fields: fields,
     primaryType(value?: T.PrimaryType) { return _fs(config, indexTypeQuery, 'primaryType', value, config?.primaryType); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.IndexTypeQueryTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.IndexTypeQueryTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3913,12 +3913,12 @@ export function lookupType(config: T.LookupType.Config) {
     $fields: fields,
     primaryType(value?: T.PrimaryType) { return _fs(config, lookupType, 'primaryType', value, config?.primaryType); },
     indexType(value?: T.Type) { return _fs(config, lookupType, 'indexType', value, config?.indexType); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.LookupTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.LookupTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3936,12 +3936,12 @@ export function mappedTypeClause(config: T.MappedTypeClause.Config) {
     name(value?: T.TypeIdentifier) { return _fs(config, mappedTypeClause, 'name', value, config?.name); },
     typeField(value?: T.Type) { return _fs(config, mappedTypeClause, 'type', value, config?.type); },
     alias(value?: T.Type | undefined) { return _fs(config, mappedTypeClause, 'alias', value, config?.alias); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.MappedTypeClauseTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.MappedTypeClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3952,12 +3952,12 @@ export function literalType(child?: (T._Number | T.Number | T.String | T.True | 
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.LiteralTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.LiteralTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3971,12 +3971,12 @@ export function flowMaybeType(config: T.FlowMaybeType.Config) {
     $named: true as const,
     $fields: fields,
     primaryType(value?: T.PrimaryType) { return _fs(config, flowMaybeType, 'primaryType', value, config?.primaryType); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.FlowMaybeTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.FlowMaybeTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -3990,12 +3990,12 @@ export function parenthesizedType(config: T.ParenthesizedType.Config) {
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _fs(config, parenthesizedType, 'type', value, config?.type); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ParenthesizedTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ParenthesizedTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4019,12 +4019,12 @@ export function typeArguments(...children: T.Type[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.TypeArgumentsTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.TypeArgumentsTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4042,12 +4042,12 @@ export function objectType(config: T.ObjectType.Config) {
     opening(value?: "{" | "{|") { return _fs(config, objectType, 'opening', value, config?.opening); },
     members(...values: NonEmptyArray<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>) { return _fsm(config, objectType, 'members', values, config?.members); },
     closing(value?: "}" | "|}") { return _fs(config, objectType, 'closing', value, config?.closing); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ObjectTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ObjectTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4062,12 +4062,12 @@ export function objectTypeCurly(config?: T.ObjectTypeCurly.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ObjectTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ObjectTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4082,12 +4082,12 @@ export function objectTypeFlow(config?: T.ObjectTypeFlow.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ObjectTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ObjectTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4105,12 +4105,12 @@ export function callSignature(config: T.CallSignature.Config) {
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, callSignature, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, callSignature, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _fs(config, callSignature, 'returnType', value, config?.returnType); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.CallSignatureTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.CallSignatureTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4138,12 +4138,12 @@ export function propertySignature(config: T.PropertySignature.Config) {
       if (value === undefined) return children[0];
       return propertySignature({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.PropertySignatureTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.PropertySignatureTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4154,12 +4154,12 @@ export function typeParameters(...children: T.TypeParameter[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.TypeParametersTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.TypeParametersTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4179,12 +4179,12 @@ export function typeParameter(config: T.TypeParameter.Config) {
     name(value?: T.TypeIdentifier) { return _fs(config, typeParameter, 'name', value, config?.name); },
     constraint(value?: T.Constraint | undefined) { return _fs(config, typeParameter, 'constraint', value, config?.constraint); },
     value(value?: T.DefaultType | undefined) { return _fs(config, typeParameter, 'value', value, config?.value); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.TypeParameterTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.TypeParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4198,12 +4198,12 @@ export function defaultType(config: T.DefaultType.Config) {
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _fs(config, defaultType, 'type', value, config?.type); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.DefaultTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.DefaultTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4217,12 +4217,12 @@ export function constraint(config: T.Constraint.Config) {
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _fs(config, constraint, 'type', value, config?.type); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ConstraintTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ConstraintTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4242,12 +4242,12 @@ export function constructSignature(config: T.ConstructSignature.Config) {
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, constructSignature, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, constructSignature, 'parameters', value, config?.parameters); },
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, constructSignature, 'type', value, config?.type); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ConstructSignatureTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ConstructSignatureTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4298,12 +4298,12 @@ export function indexSignatureUFormColon(config: Omit<ConfigOf<T.IndexSignatureU
       if (value === undefined) return inner.$fields.index_type;
       return indexSignatureUFormColon({ sign: config.sign, type: config.type, name: inner.$fields.name, indexType: value });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.IndexSignatureUFormColonTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.IndexSignatureUFormColonTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 export function indexSignatureUFormMappedTypeClause(config: Omit<ConfigOf<T.IndexSignatureUFormMappedTypeClause>, '$variant'>) {
@@ -4325,12 +4325,12 @@ export function indexSignatureUFormMappedTypeClause(config: Omit<ConfigOf<T.Inde
       if (value === undefined) return children[0];
       return indexSignatureUFormMappedTypeClause({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.IndexSignatureUFormMappedTypeClauseTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.IndexSignatureUFormMappedTypeClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4344,12 +4344,12 @@ export function arrayType(config: T.ArrayType.Config) {
     $named: true as const,
     $fields: fields,
     primaryType(value?: T.PrimaryType) { return _fs(config, arrayType, 'primaryType', value, config?.primaryType); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ArrayTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ArrayTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4359,12 +4359,12 @@ export function tupleType(...children: T.TupleTypeMember[]) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.TupleTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.TupleTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4378,12 +4378,12 @@ export function readonlyType(config: T.ReadonlyType.Config) {
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _fs(config, readonlyType, 'type', value, config?.type); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ReadonlyTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ReadonlyTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4399,12 +4399,12 @@ export function unionType(config: T.UnionType.Config) {
     $fields: fields,
     left(value?: T.Type | undefined) { return _fs(config, unionType, 'left', value, config?.left); },
     right(value?: T.Type) { return _fs(config, unionType, 'right', value, config?.right); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.UnionTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.UnionTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4420,12 +4420,12 @@ export function intersectionType(config: T.IntersectionType.Config) {
     $fields: fields,
     left(value?: T.Type | undefined) { return _fs(config, intersectionType, 'left', value, config?.left); },
     right(value?: T.Type) { return _fs(config, intersectionType, 'right', value, config?.right); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.IntersectionTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.IntersectionTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4443,12 +4443,12 @@ export function functionType(config: T.FunctionType.Config) {
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, functionType, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, functionType, 'parameters', value, config?.parameters); },
     returnType(value?: T.Type | T.Asserts | T.TypePredicate) { return _fs(config, functionType, 'returnType', value, config?.returnType); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.FunctionTypeTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.FunctionTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4459,12 +4459,12 @@ export function typeIdentifier(child: T.Identifier) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.TypeIdentifierTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.TypeIdentifierTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4478,12 +4478,12 @@ export function arrowFunctionParameter(config: T.ArrowFunctionParameter.Config) 
     $named: true as const,
     $fields: fields,
     parameter(value?: T.ReservedIdentifier) { return _fs(config, arrowFunctionParameter, 'parameter', value, config?.parameter); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ArrowFunctionParameterTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ArrowFunctionParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4501,12 +4501,12 @@ export function arrowFunctionUCallSignature(config: T.ArrowFunctionUCallSignatur
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, arrowFunctionUCallSignature, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, arrowFunctionUCallSignature, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _fs(config, arrowFunctionUCallSignature, 'returnType', value, config?.returnType); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ArrowFunctionUCallSignatureTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ArrowFunctionUCallSignatureTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4517,12 +4517,12 @@ export function classHeritageExtendsClause(child: (T.ExtendsClause | T.Implement
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ClassHeritageExtendsClauseTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ClassHeritageExtendsClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4533,12 +4533,12 @@ export function classHeritageImplementsClause(child: T.ImplementsClause) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ClassHeritageImplementsClauseTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ClassHeritageImplementsClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4549,12 +4549,12 @@ export function importClauseNamespaceImport(child: T.NamespaceImport) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ImportClauseNamespaceImportTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ImportClauseNamespaceImportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4565,12 +4565,12 @@ export function importClauseNamedImports(child: T.NamedImports) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ImportClauseNamedImportsTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ImportClauseNamedImportsTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4581,12 +4581,12 @@ export function importClauseDefaultImport(child: (T.ImportIdentifier | T.Namespa
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ImportClauseDefaultImportTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ImportClauseDefaultImportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4600,12 +4600,12 @@ export function importSpecifierName(config: T.ImportSpecifierName.Config) {
     $named: true as const,
     $fields: fields,
     name(value?: T.ImportIdentifier) { return _fs(config, importSpecifierName, 'name', value, config?.name); },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ImportSpecifierNameTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ImportSpecifierNameTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4616,12 +4616,12 @@ export function indexSignatureMappedTypeClause(child: T.MappedTypeClause) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.IndexSignatureMappedTypeClauseTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.IndexSignatureMappedTypeClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4632,12 +4632,12 @@ export function parenthesizedExpressionSequence(child: T.SequenceExpression) {
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ParenthesizedExpressionSequenceTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ParenthesizedExpressionSequenceTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4662,12 +4662,12 @@ export function exportStatementDefaultForm0(config: Omit<ConfigOf<T.ExportStatem
       if (value === undefined) return children[0];
       return exportStatementDefaultForm0({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ExportStatementDefaultForm0Tree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ExportStatementDefaultForm0Tree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 export function exportStatementDefaultForm1(config: Omit<ConfigOf<T.ExportStatementDefaultForm1>, '$variant'>) {
@@ -4691,12 +4691,12 @@ export function exportStatementDefaultForm1(config: Omit<ConfigOf<T.ExportStatem
       if (value === undefined) return children[0];
       return exportStatementDefaultForm1({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ExportStatementDefaultForm1Tree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ExportStatementDefaultForm1Tree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4716,12 +4716,12 @@ export function exportStatementTypeExport(config: T.ExportStatementTypeExport.Co
       if (value === undefined) return children[0];
       return exportStatementTypeExport({ ...config, children: [value] });
     },
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ExportStatementTypeExportTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ExportStatementTypeExportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4732,12 +4732,12 @@ export function exportStatementEqualsExport(child: (T.Expression | T.Semicolon))
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ExportStatementEqualsExportTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ExportStatementEqualsExportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4748,12 +4748,12 @@ export function exportStatementNamespaceExport(child: (T.Identifier | T.Semicolo
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.ExportStatementNamespaceExportTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.ExportStatementNamespaceExportTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4763,12 +4763,12 @@ export function stringDouble(...children: (T.UnescapedDoubleStringFragment | T.E
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.StringDoubleTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.StringDoubleTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4778,12 +4778,12 @@ export function stringSingle(...children: (T.UnescapedSingleStringFragment | T.E
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
-    render(): string { return render(this as unknown as AnyNodeData); },
-    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);
-      return toEdit(this as unknown as AnyNodeData, startOrRange);
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
     },
-    replace(target: T.StringSingleTree): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },
+    replace(this: AnyNodeData, target: T.StringSingleTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 

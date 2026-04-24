@@ -818,20 +818,37 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
     isParameterless?: boolean
 
     /**
-     * Code-gen stamp expression for this parameterless kind.
+     * Code-gen stamp expression for this parameterless kind — **field
+     * context**. Used when a parent stamps this kind into its
+     * `$fields` slot. Defined iff `isParameterless` is true. Two shapes:
      *
-     * Defined iff `isParameterless` is true. Two shapes:
+     * - **Keyword / terminal**: JSON-encoded literal with `as const`
+     *   (e.g. `'"break" as const'`). Matches the interface's field type
+     *   (`readonly op: "break"`) and the render pipeline's acceptance
+     *   of plain string values in `$fields`.
+     * - **Parameterless compound**: factory-call string
+     *   (e.g. `"breakExpression()"`). Returns the full NodeData.
      *
-     * - **Keyword / terminal**: JSON-encoded literal, e.g. `"'break'"`.
-     *   Parent factory stamps the field as the literal value.
-     * - **Parameterless compound**: factory-call string, e.g.
-     *   `"breakExpression()"`. Parent factory stamps the field by calling
-     *   the referenced kind's factory with no arguments, producing the
-     *   expected NodeData.
-     *
-     * Populated by `markParameterlessKinds` alongside `isParameterless`.
+     * Self-set by `AssembledKeyword` / `AssembledToken` constructors;
+     * set for compounds by `markParameterlessKinds` fixpoint pass.
      */
     stampExpression?: string
+
+    /**
+     * Stamp expression for this kind in **child context** — used when a
+     * parent stamps this kind into its `$children` slot. Defaults to
+     * `stampExpression`, but terminal classes override to return the
+     * full NodeData literal (`{ $type, $text, $source, $named }`)
+     * because child interfaces expose the NodeData shape
+     * (`$children: readonly [Crate]` where `Crate` is
+     * `Terminal<"crate", "crate">`), not the plain string.
+     *
+     * Compounds' `stampExpression` is already a factory call that
+     * returns NodeData, so they share the default.
+     */
+    get stampChildExpression(): string | undefined {
+        return this.stampExpression
+    }
     /**
      * The grammar rule that produced this assembled node. All 10 concrete
      * subclasses store their rule here. The generic parameter `R` narrows
@@ -1595,9 +1612,9 @@ export class AssembledKeyword extends AssembledNodeBase<StringRule> {
     constructor(kind: string, rule: StringRule, opts?: { factoryName?: string; irKey?: string; hidden?: boolean }) {
         super(kind, rule, opts)
         // Keywords are always parameterless — they produce a fixed
-        // single text value. The stamp is the literal (as const) so
-        // parent factories can inline it directly into `$fields`. The
-        // `markParameterlessKinds` fixpoint pass propagates this
+        // single text value. The field stamp is the literal (as const)
+        // so parent factories can inline it directly into `$fields`.
+        // The `markParameterlessKinds` fixpoint pass propagates this
         // status upward to compounds that reference the keyword.
         this.isParameterless = true
         this.stampExpression = `${JSON.stringify(this.rule.value)} as const`
@@ -1605,6 +1622,19 @@ export class AssembledKeyword extends AssembledNodeBase<StringRule> {
 
     /** The literal text this keyword produces (read from the StringRule). */
     get text(): string { return this.rule.value }
+
+    /**
+     * Child-context stamp: wrap the literal in a NodeData object so
+     * the parent's `$children` slot matches the `Terminal<kind, text>`
+     * interface shape. `$named: true` because keywords are named
+     * (`_kw_async` / `async` etc. surface as named nodes in tree-
+     * sitter's output).
+     */
+    override get stampChildExpression(): string {
+        const kind = JSON.stringify(this.kind)
+        const text = JSON.stringify(this.rule.value)
+        return `{ $type: ${kind} as const, $text: ${text} as const, $source: 'factory' as const, $named: true as const }`
+    }
 }
 
 export class AssembledToken extends AssembledNodeBase<StringRule | TokenRule> {
@@ -1627,6 +1657,12 @@ export class AssembledToken extends AssembledNodeBase<StringRule | TokenRule> {
     // No emitFactory — tokens are always hidden, no factoryName.
 
     /**
+     * Child-context stamp: wrap the single-literal text in a NodeData
+     * object. `$named: false` — tokens are anonymous in tree-sitter's
+     * output (non-word literals like `..` / `=>` never have a named
+     * entry in `node-types.json`).
+     */
+    /**
      * The literal text this token produces when its rule body is a
      * single string (post-optimize inline of `token(string)` or
      * `prec(n, string)` wrappers around a bare literal). Returns
@@ -1636,6 +1672,19 @@ export class AssembledToken extends AssembledNodeBase<StringRule | TokenRule> {
     get text(): string | undefined {
         if (this.rule.type === 'string') return this.rule.value
         return undefined
+    }
+
+    /**
+     * Child-context stamp: wrap the single-literal text in a NodeData
+     * object. `$named: false` — tokens are anonymous in tree-sitter's
+     * output (non-word literals like `..` / `=>` never have a named
+     * entry in `node-types.json`).
+     */
+    override get stampChildExpression(): string | undefined {
+        if (this.rule.type !== 'string') return undefined
+        const kind = JSON.stringify(this.kind)
+        const text = JSON.stringify(this.rule.value)
+        return `{ $type: ${kind} as const, $text: ${text} as const, $source: 'factory' as const, $named: false as const }`
     }
 }
 

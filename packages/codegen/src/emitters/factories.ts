@@ -848,18 +848,31 @@ function emitFieldCarryingFactory(
         }
         lines.push('  };')
     }
+    // `childrenUserConfigurable` is false when every required child
+    // auto-stamps AND there are no optional children. In that case
+    // the Config (post-ConfigOf) has no `children` slot — ConfigOf
+    // filters auto-stamp entries out — so the factory must neither
+    // read `config.children` nor expose a child setter. Canonical
+    // case: `visibility_modifier__form_0` (single required child
+    // auto-stamps from `_crate`; Config is empty).
+    const requiredChildren = hasChildren ? children.filter(c => isRequired(c)) : []
+    const optionalChildren = hasChildren ? children.filter(c => !isRequired(c)) : []
+    const allRequiredAutoStamp = hasChildren && requiredChildren.length > 0
+        && requiredChildren.every(c => isAutoStampSlot(c, nodeMap))
+    const childrenUserConfigurable = hasChildren
+        && !(allRequiredAutoStamp && optionalChildren.length === 0)
     if (hasChildren) {
-        // If every required child slot is auto-stamp-eligible, pre-stamp them
-        // directly rather than reading from config. The stamp expression for
-        // each required slot is a factory call or literal value. Optional
-        // children contribute nothing (they default to absent in the array).
-        const requiredChildren = children.filter(c => isRequired(c))
-        const allRequiredAutoStamp = requiredChildren.length > 0
-            && requiredChildren.every(c => isAutoStampSlot(c, nodeMap))
+        // Stamp expressions use child-context (NodeData wrapper) so
+        // the resulting `$children` array matches the parent's
+        // interface shape (`readonly [Crate]` = NodeData tuples, not
+        // raw strings).
         if (allRequiredAutoStamp) {
-            // Build the pre-stamped children array literal.
-            const stampedItems = requiredChildren.map(c => stampExpressionFor(c, nodeMap) ?? 'undefined')
-            lines.push(`  const children = config${opt}.children ?? [${stampedItems.join(', ')}];`)
+            const stampedItems = requiredChildren.map(c => stampExpressionFor(c, nodeMap, 'child') ?? 'undefined')
+            if (!childrenUserConfigurable) {
+                lines.push(`  const children = [${stampedItems.join(', ')}] as const;`)
+            } else {
+                lines.push(`  const children = config${opt}.children ?? [${stampedItems.join(', ')}];`)
+            }
         } else {
             lines.push(`  const children = config${opt}.children ?? [];`)
         }
@@ -876,7 +889,7 @@ function emitFieldCarryingFactory(
 
     lines.push(...emitFluentFieldMethods(fn, fields, nodeMap))
 
-    if (hasChildren) {
+    if (childrenUserConfigurable) {
         const childElem = childElementType({ children }, nodeMap)
         if (childrenMultiple) {
             // Unified fluent `children()` — no-arg getter, varargs setter.
@@ -1249,7 +1262,7 @@ function emitPolymorphFactory(node: PolymorphNode, nodeMap: NodeMap): string {
 
     if (forms.length === 0) {
         // Defensive stub — shouldn't happen after classifier fix.
-        return `export function ${fn}(_config?: unknown) { return { $type: '${node.kind}' as const, $source: 'factory' as const, $named: true as const, render(): string { return render(this as unknown as AnyNodeData); }, toEdit(s: number | ByteRange, e?: number): Edit { return typeof s === 'number' ? toEdit(this as unknown as AnyNodeData, s, e!) : toEdit(this as unknown as AnyNodeData, s); }, replace(t: T.${node.treeTypeName}): Edit { const r = t.range(); return toEdit(this as unknown as AnyNodeData, r); } }; }`
+        return `export function ${fn}(_config?: unknown) { return { $type: '${node.kind}' as const, $source: 'factory' as const, $named: true as const, render(this: AnyNodeData): string { return render(this); }, toEdit(this: AnyNodeData, s: number | ByteRange, e?: number): Edit { return typeof s === 'number' ? toEdit(this, s, e!) : toEdit(this, s); }, replace(this: AnyNodeData, t: T.${node.treeTypeName}): Edit { const r = t.range(); return toEdit(this, r); } }; }`
     }
 
     const parts: string[] = []
@@ -1722,20 +1735,20 @@ function stripUselessEscapes(pattern: string): string {
  * toEdit(...), replace(target).
  */
 function factorySuffix(treeTypeName: string): string[] {
-    // Explicit return-type annotations collapse the assignability check
-    // TS performs on `render(this)` / `toEdit(this, …)` — otherwise TS
-    // recursively expands the factory's object-literal shape to verify
-    // `this` satisfies `AnyNodeData`, which explodes on large grammars
-    // into hundreds of "excessive stack depth" / "not assignable to
-    // AnyNodeData" errors. Typed `: string` / `: Edit` short-circuit the
-    // inference.
+    // `this: AnyNodeData` parameter on each method short-circuits the
+    // assignability check TS otherwise performs by expanding the
+    // factory's entire return-type object-literal — the factory output
+    // has all AnyNodeData fields plus extra methods, so it's assignable
+    // by width, and the explicit `this` annotation tells TS to trust
+    // the shape without recursively verifying it. Replaces the previous
+    // `as unknown as AnyNodeData` cast at each call site.
     return [
-        `    render(): string { return render(this as unknown as AnyNodeData); },`,
-        `    toEdit(startOrRange: number | ByteRange, endPos?: number): Edit {`,
-        `      if (typeof startOrRange === 'number') return toEdit(this as unknown as AnyNodeData, startOrRange, endPos!);`,
-        `      return toEdit(this as unknown as AnyNodeData, startOrRange);`,
+        `    render(this: AnyNodeData): string { return render(this); },`,
+        `    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {`,
+        `      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);`,
+        `      return toEdit(this, startOrRange);`,
         `    },`,
-        `    replace(target: T.${treeTypeName}): Edit { const r = target.range(); return toEdit(this as unknown as AnyNodeData, r); },`,
+        `    replace(this: AnyNodeData, target: T.${treeTypeName}): Edit { const r = target.range(); return toEdit(this, r); },`,
     ]
 }
 
