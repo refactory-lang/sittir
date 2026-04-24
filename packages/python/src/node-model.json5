@@ -4048,12 +4048,18 @@
           "propertyName": "value",
           "paramName": "value",
           "required": false,
-          "multiple": false,
-          "nonEmpty": false,
+          "multiple": true,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
+              "name": "expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
               "name": "expression",
               "unresolved": true
             }
@@ -6638,6 +6644,12 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
+              "name": "expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
               "name": "expression",
               "unresolved": true
             }

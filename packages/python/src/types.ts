@@ -582,7 +582,7 @@ export interface TryStatement {
 export interface ExceptClause {
   readonly $type: 'except_clause';
   readonly $fields: {
-    readonly value?: Expression;
+    readonly value?: NonEmptyArray<Expression>;
     readonly alias?: Expression;
   };
   readonly $children: readonly [Suite];

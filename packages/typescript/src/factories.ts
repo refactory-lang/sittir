@@ -662,7 +662,7 @@ export function forStatement(config: T.ForStatement.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    initializer(value?: T.LexicalDeclaration | T.VariableDeclaration) { return _fs(config, forStatement, 'initializer', value, config?.initializer); },
+    initializer(value?: T.LexicalDeclaration | T.VariableDeclaration | T.Expressions | T.EmptyStatement) { return _fs(config, forStatement, 'initializer', value, config?.initializer); },
     condition(value?: T.Expressions | T.EmptyStatement) { return _fs(config, forStatement, 'condition', value, config?.condition); },
     increment(value?: T.Expressions | undefined) { return _fs(config, forStatement, 'increment', value, config?.increment); },
     body(value?: T.Statement) { return _fs(config, forStatement, 'body', value, config?.body); },
@@ -3781,7 +3781,7 @@ export function typePredicate(config: T.TypePredicate.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    name(value?: T.Identifier | T.This) { return _fs(config, typePredicate, 'name', value, config?.name); },
+    name(value?: T.PredefinedType | T.This) { return _fs(config, typePredicate, 'name', value, config?.name); },
     typeField(value?: T.Type) { return _fs(config, typePredicate, 'type', value, config?.type); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {

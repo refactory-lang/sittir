@@ -28,11 +28,6 @@ export const suggestedTransforms = {
   // _export_statement_default: 2 inferred field(s)
   // [held] _export_statement_default field 'semicolon' on $._semicolon — 87% agreement, 15 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
   // [held] _export_statement_default field 'semicolon' on $._semicolon — 87% agreement, 15 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  _export_statement_default: {
-      "0": variant("form0"),
-      "1": variant("form1"),
-  },
 
   // _export_statement_equals_export: 1 inferred field(s)
   _export_statement_equals_export: {
@@ -55,16 +50,16 @@ export const suggestedTransforms = {
   // [held] polymorph — 1 choice position(s), 3 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: declaration
   ambient_declaration: {
-      "1/0": variant("declaration"),
-      "1/1": variant("global"),
-      "1/2": variant("module"),
+      "1/0": variant("form0"),
+      "1/1": variant("form1"),
+      "1/2": variant("form2"),
   },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: type_annotation
   as_expression: {
-      "2/0": variant("const"),
-      "2/1": variant("type"),
+      "2/0": variant("form0"),
+      "2/1": variant("form1"),
   },
 
   // class_body: 2 inferred field(s)
@@ -74,37 +69,37 @@ export const suggestedTransforms = {
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: condition
   for_statement: {
-      "3/0": variant("semi"),
-      "3/1": variant("empty_statement"),
+      "3/0": variant("form0"),
+      "3/1": variant("form1"),
   },
 
   // [held] polymorph — 1 choice position(s), 3 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: from_clause
   import_statement: {
-      "2/0": variant("import_clause"),
-      "2/1": variant("import_require_clause"),
-      "2/2": variant("source"),
+      "2/0": variant("form0"),
+      "2/1": variant("form1"),
+      "2/2": variant("form2"),
   },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   member_expression: {
-      "1/0": variant("dot"),
-      "1/1": variant("optional_chain"),
+      "1/0": variant("form0"),
+      "1/1": variant("form1"),
   },
 
   // [held] polymorph — 1 choice position(s), 4 arm(s) total
   public_field_definition: {
-      "2/0": variant("form_0"),
-      "2/1": variant("form_1"),
-      "2/2": variant("form_2"),
-      "2/3": variant("form_3"),
+      "2/0": variant("form0"),
+      "2/1": variant("form1"),
+      "2/2": variant("form2"),
+      "2/3": variant("form3"),
   },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: expression
   yield_expression: {
-      "1/0": variant("star"),
-      "1/1": variant("form_1"),
+      "1/0": variant("form0"),
+      "1/1": variant("form1"),
   },
 
 };

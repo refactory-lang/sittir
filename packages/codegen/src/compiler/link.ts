@@ -87,7 +87,15 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
     // files that wrap their base in `enrich(base)` get it automatically,
     // and the Link phase no longer mutates rules for this purpose.
 
-    tagAllRulesVariants(rules, raw.inline)
+    // tagAllRulesVariants removed (spec 013). Auto-wrapping every
+    // visible choice branch in anonymous `variant(form_N)` tags was a
+    // heuristic for polymorph candidacy that now serves only to block
+    // the simplify `mergeChoiceBranches` + `hoistSharedFieldAcross-
+    // ChoiceBranches` passes and mask real adoption work. The
+    // polymorph-surface classifier still recognizes user-declared
+    // variants from override-side `variant()` / `polymorphs:`; choices
+    // that surface in the audit as non-canonical are the kinds that
+    // genuinely need named variant() declarations in overrides.ts.
     detectAndLogPolymorphs(rules, derivations)
 
     // Override-source polymorph classification — variant() metadata.
@@ -1131,20 +1139,28 @@ function applyVariantScaffoldPushDown(
 }
 
 export function findVariantChoice(rule: Rule): VariantChoiceLocation | null {
-    if (isChoice(rule) && rule.members.some(isVariant)) {
+    // Pre-spec-013 this required at least one branch to be
+    // variant-wrapped — the `tagAllRulesVariants` pass used to supply
+    // that wrapping for every visible choice. With auto-tag removed,
+    // a top-level choice of bare symbols is the canonical shape for
+    // polymorph-adopted kinds (e.g. python's
+    // `assignment = choice(assignment_eq, assignment_type)`); match
+    // it here. The caller `applyOverridePolymorphs` validates via
+    // `variantChildSymbolNames` before acting, so picking up a non-
+    // polymorph choice here is harmless — it just gets rejected
+    // downstream.
+    if (isChoice(rule)) {
         return { choice: rule, prefix: [], suffix: [] }
     }
-    // A seq containing exactly one variant-choice. The other members
+    // A seq containing exactly one choice. The other members
     // (anonymous delimiters, field wrappers, symbol refs) travel along
     // with each form so the polymorph faithfully renders the whole rule.
     if (rule.type === 'seq') {
-        const choiceIdx = rule.members.findIndex(m =>
-            m.type === 'choice' && m.members.some(mm => mm.type === 'variant'),
-        )
+        const choiceIdx = rule.members.findIndex(m => m.type === 'choice')
         if (choiceIdx === -1) return null
-        // More than one variant-choice in the seq is ambiguous — bail.
+        // More than one choice in the seq is ambiguous — bail.
         const more = rule.members.findIndex(
-            (m, i) => i !== choiceIdx && m.type === 'choice' && m.members.some(mm => mm.type === 'variant'),
+            (m, i) => i !== choiceIdx && m.type === 'choice',
         )
         if (more !== -1) return null
         return {

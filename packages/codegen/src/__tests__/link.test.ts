@@ -286,10 +286,16 @@ describe('Link — T016a hidden choice classification', () => {
 })
 
 describe('Link — variant tagging + polymorph promotion', () => {
-    it('tagVariants wraps visible choice members in variant rules', () => {
-        // Moved from optimize.test.ts after variant tagging relocated to
-        // Link. Variant wrapping is classification (it adds wrapper nodes
-        // that name each branch) — not simplification.
+    it('leaves visible choice members un-wrapped — named variants are the grammar-author path', () => {
+        // Pre-spec-013 Link ran `tagAllRulesVariants` to auto-wrap every
+        // visible choice branch in `variant('form_N' | leading-literal)`.
+        // That was a heuristic for polymorph-promotion candidacy; with the
+        // simplify pipeline's cross-branch hoist + mergeChoiceBranches
+        // handling same-shape merges directly, anonymous auto-tags
+        // served only to block those passes and to mask the grammar
+        // author's need to declare named `variant()` in overrides.ts.
+        // Link now leaves the choice structure alone — promotion happens
+        // via `applyOverridePolymorphs` on user-declared variants only.
         const raw = makeRaw({
             statement: {
                 type: 'choice',
@@ -302,12 +308,8 @@ describe('Link — variant tagging + polymorph promotion', () => {
         })
         const linked = link(raw)
         const stmt = linked.rules['statement'] as any
-        // Both branches have the same (empty) field shape, so promotePolymorph
-        // leaves this as a choice with variant-wrapped members.
         expect(stmt.type).toBe('choice')
-        expect(stmt.members.every((m: any) => m.type === 'variant')).toBe(true)
-        expect(stmt.members[0].name).toBe('if')
-        expect(stmt.members[1].name).toBe('while')
+        expect(stmt.members.every((m: any) => m.type === 'seq')).toBe(true)
     })
 
     it('promotePolymorph detects heterogeneous-field choices (suggestion-only, no mutation)', () => {
@@ -438,10 +440,12 @@ describe('Link — variant tagging + polymorph promotion', () => {
         expect(poly.forms.map(f => f.name).sort()).toEqual(['eq', 'type'])
     })
 
-    it('homogeneous-field choices stay as choice + variants (not polymorph)', () => {
-        // Two variants, both with a single `value` field — same field set
-        // → not a polymorph. Must carry symbol refs so promoteTerminals
-        // doesn't kick in first.
+    it('homogeneous-field choices stay as raw choice (not polymorph)', () => {
+        // Two branches, both with a single `value` field — same field set
+        // → not a polymorph. Post-spec-013 Link doesn't auto-wrap them
+        // in `variant(...)`; the downstream simplify `mergeChoiceBranches`
+        // pass handles same-shape branches by collapsing them into a
+        // flat seq with per-position unioned contents.
         const raw = makeRaw({
             literal: {
                 type: 'choice',
@@ -460,9 +464,8 @@ describe('Link — variant tagging + polymorph promotion', () => {
         })
         const linked = link(raw)
         const literal = linked.rules['literal'] as any
-        // Same field shape across variants — stays as choice+variants,
-        // not a polymorph.
         expect(literal.type).toBe('choice')
-        expect(literal.members.every((m: any) => m.type === 'variant')).toBe(true)
+        // No variant wrappers — branches travel as bare seqs through Link.
+        expect(literal.members.every((m: any) => m.type === 'seq')).toBe(true)
     })
 })

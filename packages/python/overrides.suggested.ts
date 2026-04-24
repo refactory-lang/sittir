@@ -53,40 +53,40 @@ export const suggestedTransforms = {
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   expression_list: {
-      "1/0": variant("comma"),
-      "1/1": variant("form_1"),
+      "1/0": variant("form0"),
+      "1/1": variant("form1"),
   },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   future_import_statement: {
-      "3/0": variant("_import_list"),
-      "3/1": variant("paren"),
+      "3/0": variant("form0"),
+      "3/1": variant("form1"),
   },
 
   // [held] polymorph — 1 choice position(s), 3 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: wildcard_import
   import_from_statement: {
-      "3/0": variant("wildcard_import"),
-      "3/1": variant("_import_list"),
-      "3/2": variant("paren"),
+      "3/0": variant("form0"),
+      "3/1": variant("form1"),
+      "3/2": variant("form2"),
   },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   pattern_list: {
-      "1/0": variant("comma"),
-      "1/1": variant("form_1"),
+      "1/0": variant("form0"),
+      "1/1": variant("form1"),
   },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   splat_pattern: {
-      "1/0": variant("identifier"),
-      "1/1": variant("_"),
+      "1/0": variant("form0"),
+      "1/1": variant("form1"),
   },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   yield: {
-      "1/0": variant("from"),
-      "1/1": variant("form_1"),
+      "1/0": variant("form0"),
+      "1/1": variant("form1"),
   },
 
 };

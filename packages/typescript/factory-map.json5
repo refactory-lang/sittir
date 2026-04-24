@@ -304,6 +304,9 @@
     "_type_query_call_expression_in_type_annotation.function": {
       "member_expression": "_type_query_member_expression_in_type_annotation"
     },
+    "type_predicate.name": {
+      "identifier": "predefined_type"
+    },
     "_type_query_member_expression.object": {
       "subscript_expression": "_type_query_subscript_expression",
       "member_expression": "_type_query_member_expression",

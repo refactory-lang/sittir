@@ -620,7 +620,7 @@ export function exceptClause(config: T.ExceptClause.Config) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    value(value?: T.Expression | undefined) { return _fs(config, exceptClause, 'value', value, config?.value); },
+    value(...values: NonEmptyArray<T.Expression>) { return _fsm(config, exceptClause, 'value', values, config?.value); },
     alias(value?: T.Expression | undefined) { return _fs(config, exceptClause, 'alias', value, config?.alias); },
     child(value?: T.Suite) {
       if (value === undefined) return children[0];

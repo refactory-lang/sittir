@@ -1446,7 +1446,7 @@ export function wrapGenericType(data: _NodeData, tree: TreeHandle): WrappedNode<
 export function wrapTypePredicate(data: _NodeData, tree: TreeHandle): WrappedNode<TypePredicate> {
   return {
     ...data,
-    get name() { return drillIn(data.$fields?.['name'], tree); },
+    get name() { return drillAs(data.$fields?.['name'], tree, "identifier", "predefined_type"); },
     get typeField() { return drillIn(data.$fields?.['type'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<TypePredicate>;

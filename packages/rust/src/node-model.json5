@@ -12926,6 +12926,12 @@
               "multiplicity": "optional",
               "name": "bracketed_type",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "generic_type",
+              "unresolved": true
             }
           ],
           "source": "grammar",
@@ -12934,7 +12940,8 @@
             "kinds": [
               "_path",
               "generic_type_with_turbofish",
-              "bracketed_type"
+              "bracketed_type",
+              "generic_type"
             ]
           },
           "aliasSources": {

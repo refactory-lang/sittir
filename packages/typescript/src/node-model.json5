@@ -8652,6 +8652,18 @@
               "multiplicity": "single",
               "name": "variable_declaration",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_expressions",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "empty_statement",
+              "unresolved": true
             }
           ],
           "source": "grammar",
@@ -8659,7 +8671,9 @@
             "typeName": "",
             "kinds": [
               "lexical_declaration",
-              "variable_declaration"
+              "variable_declaration",
+              "_expressions",
+              "empty_statement"
             ]
           }
         },
@@ -16827,6 +16841,12 @@
               "multiplicity": "single",
               "name": "this",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "predefined_type",
+              "unresolved": true
             }
           ],
           "source": "grammar",
@@ -16834,8 +16854,12 @@
             "typeName": "",
             "kinds": [
               "identifier",
-              "this"
+              "this",
+              "predefined_type"
             ]
+          },
+          "aliasSources": {
+            "identifier": "predefined_type"
           }
         },
         {

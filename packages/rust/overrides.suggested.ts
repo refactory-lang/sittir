@@ -15,8 +15,8 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  9  (0 applied, 9 held)
-// Rule promotions:   92  (86 applied, 6 held)
-// Repeated shapes:   5  (advisory — suggested supertypes/groups)
+// Rule promotions:   94  (86 applied, 8 held)
+// Repeated shapes:   4  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
 // suggestedTransforms — drop entries into your overrides.ts
@@ -25,6 +25,7 @@
 // candidates target the same kind).
 // ---------------------------------------------------------------
 export const suggestedTransforms = {
+
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: body
   _closure_expression_expr: {
@@ -40,6 +41,7 @@ export const suggestedTransforms = {
       "3": variant("form3"),
       "4": variant("form4"),
   },
+
 
   // _non_special_token: 1 inferred field(s)
   // [held] _non_special_token field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 8 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
@@ -66,14 +68,14 @@ export const suggestedTransforms = {
   // [held] reference_expression field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 8 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   reference_expression: {
-      "1/0": variant("raw"),
-      "1/1": variant("form_1"),
+      "1/0": variant("form0"),
+      "1/1": variant("form1"),
   },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   return_expression: {
-      "0": variant("return"),
-      "1": variant("return"),
+      "0": variant("form0"),
+      "1": variant("form1"),
   },
 
   // static_item: 1 inferred field(s)
@@ -88,8 +90,8 @@ export const suggestedTransforms = {
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   yield_expression: {
-      "0": variant("yield"),
-      "1": variant("yield"),
+      "0": variant("form0"),
+      "1": variant("form1"),
   },
 
 };
@@ -157,9 +159,6 @@ export const suggestedRules = {
   // parents: _function_type_trait_form, struct_pattern
   _type_identifier: $ => choice($._type_identifier, $.scoped_type_identifier),
 
-  // parents: scoped_identifier, scoped_type_identifier
-  _shared_3: $ => choice($._path, $.bracketed_type, $.generic_type),
-
 };
 
 // ---------------------------------------------------------------
@@ -193,8 +192,10 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "integer_literal", classification: "terminal", applied: true },
   { kind: "unit_expression", classification: "terminal", applied: true },
   { kind: "unit_type", classification: "terminal", applied: true },
+  { kind: "_block_doc_comment_marker", classification: "polymorph", applied: false },
   { kind: "_closure_expression_expr", classification: "polymorph", applied: false },
   { kind: "_let_chain", classification: "polymorph", applied: false },
+  { kind: "_line_doc_comment_marker", classification: "polymorph", applied: false },
   { kind: "array_expression", classification: "polymorph", applied: true },
   { kind: "array_expression_list", classification: "polymorph", applied: true },
   { kind: "array_expression_semi", classification: "polymorph", applied: true },
@@ -297,5 +298,4 @@ export const repeatedShapes: readonly RepeatedShape[] = [
   { suggestedName: "_shared_2", kinds: ["_field_identifier","integer_literal"], parents: ["field_expression","field_initializer"], shape: "supertype" },
   { suggestedName: "_type_identifier", kinds: ["_type_identifier","scoped_type_identifier"], parents: ["_function_type_trait_form","struct_pattern"], shape: "supertype" },
   { suggestedName: "_shared_2", kinds: ["_literal_pattern","_path"], parents: ["_range_pattern_left","_range_pattern_prefix"], shape: "supertype" },
-  { suggestedName: "_shared_3", kinds: ["_path","bracketed_type","generic_type"], parents: ["scoped_identifier","scoped_type_identifier"], shape: "supertype" },
 ];
