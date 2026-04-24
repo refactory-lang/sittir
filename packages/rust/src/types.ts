@@ -1575,9 +1575,7 @@ export interface TupleExpression {
   readonly $type: 'tuple_expression';
   readonly $fields: {
     readonly attributes: readonly (AttributeItem)[];
-    readonly elements: Expression;
-    readonly elements: readonly (Expression)[];
-    readonly elements?: Expression;
+    readonly elements?: readonly (Expression)[];
   };
 }
 

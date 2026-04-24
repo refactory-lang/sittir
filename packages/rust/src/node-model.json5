@@ -15097,8 +15097,8 @@
           "name": "elements",
           "propertyName": "elements",
           "paramName": "elements",
-          "required": true,
-          "multiple": false,
+          "required": false,
+          "multiple": true,
           "nonEmpty": false,
           "values": [
             {
@@ -15106,47 +15106,13 @@
               "multiplicity": "single",
               "name": "_expression",
               "unresolved": true
-            }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_expression"
-            ]
-          }
-        },
-        {
-          "name": "elements",
-          "propertyName": "elements",
-          "paramName": "elements",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_expression",
               "unresolved": true
-            }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_expression"
-            ]
-          }
-        },
-        {
-          "name": "elements",
-          "propertyName": "elements",
-          "paramName": "elements",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",

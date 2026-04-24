@@ -354,7 +354,6 @@
       "identifier"
     ],
     "import_attribute": [
-      "object",
       "object"
     ],
     "variable_declaration": [
@@ -692,7 +691,6 @@
       "arguments"
     ],
     "asserts_annotation": [
-      "asserts",
       "asserts"
     ],
     "tuple_parameter": [
@@ -734,7 +732,6 @@
       "type"
     ],
     "type_predicate_annotation": [
-      "type_predicate",
       "type_predicate"
     ],
     "_type_query_member_expression": [

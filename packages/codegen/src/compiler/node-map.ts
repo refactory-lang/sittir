@@ -496,7 +496,44 @@ export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
 
 export function deriveFields(rule: Rule): AssembledField[] {
     auditDerivationShape(rule, 'fields')
-    return deriveFieldsRaw(rule, 'single')
+    return mergeFieldsByName(deriveFieldsRaw(rule, 'single'))
+}
+
+/**
+ * Fold fields with the same grammar name into a single AssembledField whose
+ * `values` is the union of the contributing fields' values. Tree-sitter allows
+ * the same field name to appear multiple times in a rule (e.g. Python's
+ * `if_statement` has `field('alternative', $.elif_clause)` inside a repeat AND
+ * `field('alternative', $.else_clause)` inside an optional, producing a single
+ * `alternative` slot at runtime whose values span both kinds). Emitters that
+ * iterate `node.structuralFields` — the types emitter, the factory emitter,
+ * the from-emitter — must see ONE slot per name, not the raw unmerged list.
+ *
+ * @remarks
+ * We keep the first occurrence's `propertyName` / `paramName` / `source` /
+ * `projection.typeName` (none of them vary per-occurrence for the same name
+ * in practice — the name determines all three). Projection `kinds` and
+ * `aliasSources` are merged per the values they reference.
+ */
+function mergeFieldsByName(fields: AssembledField[]): AssembledField[] {
+    if (fields.length <= 1) return fields
+    const byName = new Map<string, AssembledField>()
+    for (const f of fields) {
+        const existing = byName.get(f.name)
+        if (!existing) { byName.set(f.name, f); continue }
+        const mergedValues = dedupeValues([...existing.values, ...f.values])
+        const mergedKinds = [...new Set([...existing.projection.kinds, ...f.projection.kinds])]
+        const mergedAliases = (existing.aliasSources || f.aliasSources)
+            ? { ...existing.aliasSources, ...f.aliasSources }
+            : undefined
+        byName.set(f.name, {
+            ...existing,
+            values: mergedValues,
+            aliasSources: mergedAliases && Object.keys(mergedAliases).length > 0 ? mergedAliases : undefined,
+            projection: { ...existing.projection, kinds: mergedKinds },
+        })
+    }
+    return Array.from(byName.values())
 }
 
 /**

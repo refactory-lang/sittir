@@ -188,12 +188,12 @@ describe("continue_statement", () => {
 
 describe('if_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.ifStatement({ condition: { $type: 'expression', $text: 'test' } as any, consequence: { $type: '_suite', $text: 'test' } as any, alternative: [{ $type: 'elif_clause', $text: 'test' } as any] });
+    const node = ir.ifStatement({ condition: { $type: 'expression', $text: 'test' } as any, consequence: { $type: '_suite', $text: 'test' } as any });
     expect(node.$type).toBe('if_statement');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.ifStatement({ condition: { $type: 'expression', $text: 'test' } as any, consequence: { $type: '_suite', $text: 'test' } as any, alternative: [{ $type: 'elif_clause', $text: 'test' } as any] });
+    const node = ir.ifStatement({ condition: { $type: 'expression', $text: 'test' } as any, consequence: { $type: '_suite', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -867,12 +867,12 @@ describe('type', () => {
 
 describe('splat_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.splatType({ identifier: 'test' as any, identifier: { $type: 'identifier', $text: 'test' } as any });
+    const node = ir.splatType({ identifier: { $type: 'identifier', $text: 'test' } as any });
     expect(node.$type).toBe('splat_type');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.splatType({ identifier: 'test' as any, identifier: { $type: 'identifier', $text: 'test' } as any });
+    const node = ir.splatType({ identifier: { $type: 'identifier', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

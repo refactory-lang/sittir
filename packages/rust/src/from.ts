@@ -217,11 +217,15 @@ function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | 
   return undefined;
 }
 
+function _isFromKind(k: string): k is keyof _FromMap {
+  return k in _fromMap;
+}
+
 function _resolveByKind<K extends keyof _FromMap>(
   kind: K,
   rest: _FromFieldInput,
 ): ReturnType<_FromMap[K]> {
-  const fn = _fromMap[kind];
+  const fn = _fromMap[kind] as (rest: _FromFieldInput) => ReturnType<_FromMap[K]>;
   return fn(rest);
 }
 
@@ -246,25 +250,25 @@ function _resolveOne<T>(
   leafKinds: readonly string[],
   branchKinds: readonly string[],
 ): T {
-  if (v === undefined || v === null) return v;
-  if (isNodeData(v)) return v;
+  if (v === undefined || v === null) return v as T;
+  if (isNodeData(v)) return v as T;
   if (typeof v === "boolean" || typeof v === "number") {
     const scalar = _resolveScalar(v);
-    if (scalar !== undefined) return scalar;
+    if (scalar !== undefined) return scalar as T;
   }
   if (typeof v === "string" && leafKinds.length > 0) {
     const leaf = _resolveLeafString(v, leafKinds);
-    if (leaf !== undefined) return leaf;
+    if (leaf !== undefined) return leaf as T;
   }
   if (typeof v === "object" && !Array.isArray(v) && "kind" in v) {
     const { kind, ...rest } = v;
-    if (typeof kind === "string" && kind in _fromMap) return _resolveByKind(kind, rest);
+    if (typeof kind === "string" && _isFromKind(kind)) return _resolveByKind(kind, rest) as T;
   }
   if (branchKinds.length === 1 && typeof v === "object" && !Array.isArray(v)) {
     const bk = branchKinds[0]!;
-    if (bk in _fromMap) return _resolveByKind(bk, v);
+    if (_isFromKind(bk)) return _resolveByKind(bk, v) as T;
   }
-  return v;
+  return v as T;
 }
 
 function _resolveMany<T>(
@@ -278,34 +282,34 @@ function _resolveMany<T>(
 }
 
 function _resolveOneLeaf<T>(v: _FromFieldInput, kind: string): T {
-  if (v === undefined || v === null) return v;
-  if (isNodeData(v)) return v;
+  if (v === undefined || v === null) return v as T;
+  if (isNodeData(v)) return v as T;
   if (typeof v === "boolean" || typeof v === "number") {
     const scalar = _resolveScalar(v);
-    if (scalar !== undefined) return scalar;
+    if (scalar !== undefined) return scalar as T;
   }
   if (typeof v === "string") {
     const e = _leafRegistry[kind];
-    if (e !== undefined) return e.factory(v);
+    if (e !== undefined) return e.factory(v) as T;
   }
   if (typeof v === "object" && !Array.isArray(v) && "kind" in v) {
     const { kind: k, ...rest } = v;
-    if (typeof k === "string" && k in _fromMap) return _resolveByKind(k, rest);
+    if (typeof k === "string" && _isFromKind(k)) return _resolveByKind(k, rest) as T;
   }
-  return v;
+  return v as T;
 }
 
 function _resolveOneBranch<T>(v: _FromFieldInput, kind: string): T {
-  if (v === undefined || v === null) return v;
-  if (isNodeData(v)) return v;
+  if (v === undefined || v === null) return v as T;
+  if (isNodeData(v)) return v as T;
   if (typeof v === "object" && !Array.isArray(v)) {
     if ("kind" in v) {
       const { kind: k, ...rest } = v;
-      if (typeof k === "string" && k in _fromMap) return _resolveByKind(k, rest);
+      if (typeof k === "string" && _isFromKind(k)) return _resolveByKind(k, rest) as T;
     }
-    if (kind in _fromMap) return _resolveByKind(kind, v);
+    if (_isFromKind(kind)) return _resolveByKind(kind, v) as T;
   }
-  return v;
+  return v as T;
 }
 
 function _resolveManyLeaf<T>(v: _FromFieldInput, kind: string): readonly T[] {
@@ -321,19 +325,19 @@ function _resolveManyBranch<T>(v: _FromFieldInput, kind: string): readonly T[] {
 }
 
 function _resolveBooleanKeyword<T>(v: _FromFieldInput): T {
-  if (v === undefined || v === null) return v;
+  if (v === undefined || v === null) return v as T;
   if (v === true || v === false) return v as T;
-  if (isNodeData(v)) return v;
-  if (Array.isArray(v)) return v as unknown as T;
+  if (isNodeData(v)) return v as T;
+  if (Array.isArray(v)) return v as T;
   return v as T;
 }
 
 function _resolveBitflag<T>(v: _FromFieldInput): T {
-  if (v === undefined || v === null) return v;
-  if (typeof v === "number") return v as unknown as T;
-  if (typeof v === "string") return v as unknown as T;
-  if (Array.isArray(v)) return v as unknown as T;
-  if (isNodeData(v)) return v;
+  if (v === undefined || v === null) return v as T;
+  if (typeof v === "number") return v as T;
+  if (typeof v === "string") return v as T;
+  if (Array.isArray(v)) return v as T;
+  if (isNodeData(v)) return v as T;
   return v as T;
 }
 
@@ -392,15 +396,15 @@ const _K41: readonly string[] = ["expression_statement","const_item","macro_invo
 const _K42: readonly string[] = ["_type_identifier","scoped_type_identifier"];
 const _K43: readonly string[] = ["integer_literal","float_literal"];
 
-export function sourceFileFrom(input: T.SourceFile.Loose): ReturnType<typeof F.sourceFile> {
+export function sourceFileFrom(input: T.SourceFile.Loose): ReturnType<typeof F.sourceFile> | T.SourceFile {
   if (isNodeData(input)) return input;
   return F.sourceFile({
-    shebang: _resolveOneLeaf(input.shebang, "shebang"),
-    statements: _resolveMany(input.statements, _K0, _K1),
+    shebang: _resolveOneLeaf<T.Shebang>(input.shebang, "shebang"),
+    statements: _resolveMany<T.Statement>(input.statements, _K0, _K1),
   });
 }
 
-export function expressionStatementFrom(input?: T.ExpressionStatement.Loose): ReturnType<typeof F.expressionStatement> {
+export function expressionStatementFrom(input?: T.ExpressionStatement.Loose): ReturnType<typeof F.expressionStatement> | T.ExpressionStatement {
   if (input !== undefined && isNodeData(input)) return input;
   return F.expressionStatement(input as Parameters<typeof F.expressionStatement>[0]);
 }
@@ -413,38 +417,38 @@ export function expressionStatementUFormBlockEndingFrom(input: Omit<ConfigOf<T.E
   return F.expressionStatementUFormBlockEnding(input);
 }
 
-export function macroDefinitionFrom(input?: T.MacroDefinition.Loose): ReturnType<typeof F.macroDefinition> {
+export function macroDefinitionFrom(input?: T.MacroDefinition.Loose): ReturnType<typeof F.macroDefinition> | T.MacroDefinition {
   if (input !== undefined && isNodeData(input)) return input;
   return F.macroDefinition(input as Parameters<typeof F.macroDefinition>[0]);
 }
 
 export function macroDefinitionUFormParenFrom(input: Omit<ConfigOf<T.MacroDefinitionUFormParen>, '$variant'>) {
   return F.macroDefinitionUFormParen({
-    name: _resolveOne(input.name, _K2, _K3),
+    name: _resolveOne<T.Identifier | T.ReservedIdentifier>(input.name, _K2, _K3),
   });
 }
 
 export function macroDefinitionUFormBracketFrom(input: Omit<ConfigOf<T.MacroDefinitionUFormBracket>, '$variant'>) {
   return F.macroDefinitionUFormBracket({
-    name: _resolveOne(input.name, _K2, _K3),
+    name: _resolveOne<T.Identifier | T.ReservedIdentifier>(input.name, _K2, _K3),
   });
 }
 
 export function macroDefinitionUFormBraceFrom(input: Omit<ConfigOf<T.MacroDefinitionUFormBrace>, '$variant'>) {
   return F.macroDefinitionUFormBrace({
-    name: _resolveOne(input.name, _K2, _K3),
+    name: _resolveOne<T.Identifier | T.ReservedIdentifier>(input.name, _K2, _K3),
   });
 }
 
-export function macroRuleFrom(input: T.MacroRule.Loose): ReturnType<typeof F.macroRule> {
+export function macroRuleFrom(input: T.MacroRule.Loose): ReturnType<typeof F.macroRule> | T.MacroRule {
   if (isNodeData(input)) return input;
   return F.macroRule({
-    left: _resolveOneBranch(input.left, "token_tree_pattern"),
-    right: _resolveOneBranch(input.right, "token_tree"),
+    left: _resolveOneBranch<T.TokenTreePattern>(input.left, "token_tree_pattern"),
+    right: _resolveOneBranch<T.TokenTree>(input.right, "token_tree"),
   });
 }
 
-export function tokenTreePatternFrom(input?: T.TokenTreePattern.Loose): ReturnType<typeof F.tokenTreePattern> {
+export function tokenTreePatternFrom(input?: T.TokenTreePattern.Loose): ReturnType<typeof F.tokenTreePattern> | T.TokenTreePattern {
   if (input !== undefined && isNodeData(input)) return input;
   return F.tokenTreePattern(input as Parameters<typeof F.tokenTreePattern>[0]);
 }
@@ -461,11 +465,11 @@ export function tokenTreePatternUFormBraceFrom(input: Omit<ConfigOf<T.TokenTreeP
   return F.tokenTreePatternUFormBrace(input);
 }
 
-export function tokenBindingPatternFrom(input: T.TokenBindingPattern.Loose): ReturnType<typeof F.tokenBindingPattern> {
+export function tokenBindingPatternFrom(input: T.TokenBindingPattern.Loose): ReturnType<typeof F.tokenBindingPattern> | T.TokenBindingPattern {
   if (isNodeData(input)) return input;
   return F.tokenBindingPattern({
-    name: _resolveOneLeaf(input.name, "metavariable"),
-    type: _resolveOneLeaf(input.type, "fragment_specifier"),
+    name: _resolveOneLeaf<T.Metavariable>(input.name, "metavariable"),
+    type: _resolveOneLeaf<T.FragmentSpecifier>(input.type, "fragment_specifier"),
   });
 }
 
@@ -474,15 +478,15 @@ export function tokenRepetitionPatternFrom(...input: readonly (NonNullable<T.Tok
     const data = input[0];
     return F.tokenRepetitionPattern(...(data.$children ?? []));
   }
-  return F.tokenRepetitionPattern(...input);
+  return F.tokenRepetitionPattern(...(input as readonly NonNullable<T.TokenRepetitionPattern.Config['children']>[number][]));
 }
 
 export function fragmentSpecifierFrom(input: string | T.FragmentSpecifier) {
-  if (isNodeData(input)) return input;
+  if (typeof input !== 'string') return input;
   return F.fragmentSpecifier(input);
 }
 
-export function tokenTreeFrom(input?: T.TokenTree.Loose): ReturnType<typeof F.tokenTree> {
+export function tokenTreeFrom(input?: T.TokenTree.Loose): ReturnType<typeof F.tokenTree> | T.TokenTree {
   if (input !== undefined && isNodeData(input)) return input;
   return F.tokenTree(input as Parameters<typeof F.tokenTree>[0]);
 }
@@ -504,60 +508,60 @@ export function tokenRepetitionFrom(...input: readonly (NonNullable<T.TokenRepet
     const data = input[0];
     return F.tokenRepetition(...(data.$children ?? []));
   }
-  return F.tokenRepetition(...input);
+  return F.tokenRepetition(...(input as readonly NonNullable<T.TokenRepetition.Config['children']>[number][]));
 }
 
-export function attributeItemFrom(input: T.AttributeItem.Loose): ReturnType<typeof F.attributeItem> {
+export function attributeItemFrom(input: T.AttributeItem.Loose): ReturnType<typeof F.attributeItem> | T.AttributeItem {
   if (isNodeData(input)) return input;
   return F.attributeItem({
-    attribute: _resolveOneBranch(input.attribute, "attribute"),
+    attribute: _resolveOneBranch<T.Attribute>(input.attribute, "attribute"),
   });
 }
 
-export function innerAttributeItemFrom(input: T.InnerAttributeItem.Loose): ReturnType<typeof F.innerAttributeItem> {
+export function innerAttributeItemFrom(input: T.InnerAttributeItem.Loose): ReturnType<typeof F.innerAttributeItem> | T.InnerAttributeItem {
   if (isNodeData(input)) return input;
   return F.innerAttributeItem({
-    attribute: _resolveOneBranch(input.attribute, "attribute"),
+    attribute: _resolveOneBranch<T.Attribute>(input.attribute, "attribute"),
   });
 }
 
-export function attributeFrom(input: T.Attribute.Loose): ReturnType<typeof F.attribute> {
+export function attributeFrom(input: T.Attribute.Loose): ReturnType<typeof F.attribute> | T.Attribute {
   return F.attribute(input);
 }
 
-export function modItemFrom(input?: T.ModItem.Loose): ReturnType<typeof F.modItem> {
+export function modItemFrom(input?: T.ModItem.Loose): ReturnType<typeof F.modItem> | T.ModItem {
   if (input !== undefined && isNodeData(input)) return input;
   return F.modItem(input as Parameters<typeof F.modItem>[0]);
 }
 
 export function modItemUFormExternalFrom(input: Omit<ConfigOf<T.ModItemUFormExternal>, '$variant'>) {
   return F.modItemUFormExternal({
-    visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
-    name: _resolveOneLeaf(input.name, "identifier"),
+    visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
+    name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
   });
 }
 
 export function modItemUFormInlineFrom(input: Omit<ConfigOf<T.ModItemUFormInline>, '$variant'>) {
   return F.modItemUFormInline({
-    visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
-    name: _resolveOneLeaf(input.name, "identifier"),
+    visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
+    name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
   });
 }
 
-export function foreignModItemFrom(input?: T.ForeignModItem.Loose): ReturnType<typeof F.foreignModItem> {
+export function foreignModItemFrom(input?: T.ForeignModItem.Loose): ReturnType<typeof F.foreignModItem> | T.ForeignModItem {
   if (input !== undefined && isNodeData(input)) return input;
   return F.foreignModItem(input as Parameters<typeof F.foreignModItem>[0]);
 }
 
 export function foreignModItemUFormSemiFrom(input: Omit<ConfigOf<T.ForeignModItemUFormSemi>, '$variant'>) {
   return F.foreignModItemUFormSemi({
-    externModifier: _resolveOneBranch(input.externModifier, "extern_modifier"),
+    externModifier: _resolveOneBranch<T.ExternModifier>(input.externModifier, "extern_modifier"),
   });
 }
 
 export function foreignModItemUFormBodyFrom(input: Omit<ConfigOf<T.ForeignModItemUFormBody>, '$variant'>) {
   return F.foreignModItemUFormBody({
-    externModifier: _resolveOneBranch(input.externModifier, "extern_modifier"),
+    externModifier: _resolveOneBranch<T.ExternModifier>(input.externModifier, "extern_modifier"),
   });
 }
 
@@ -566,57 +570,57 @@ export function declarationListFrom(...input: readonly (NonNullable<T.Declaratio
     const data = input[0];
     return F.declarationList(...(data.$children ?? []));
   }
-  return F.declarationList(...input);
+  return F.declarationList(...(input as readonly NonNullable<T.DeclarationList.Config['children']>[number][]));
 }
 
-export function structItemFrom(input?: T.StructItem.Loose): ReturnType<typeof F.structItem> {
+export function structItemFrom(input?: T.StructItem.Loose): ReturnType<typeof F.structItem> | T.StructItem {
   if (input !== undefined && isNodeData(input)) return input;
   return F.structItem(input as Parameters<typeof F.structItem>[0]);
 }
 
 export function structItemUFormBraceFrom(input: Omit<ConfigOf<T.StructItemUFormBrace>, '$variant'>) {
   return F.structItemUFormBrace({
-    visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
-    name: _resolveOneBranch(input.name, "_type_identifier"),
-    typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
+    visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
+    name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
+    typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
   });
 }
 
 export function structItemUFormTupleFrom(input: Omit<ConfigOf<T.StructItemUFormTuple>, '$variant'>) {
   return F.structItemUFormTuple({
-    visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
-    name: _resolveOneBranch(input.name, "_type_identifier"),
-    typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
+    visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
+    name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
+    typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
   });
 }
 
 export function structItemUFormUnitFrom(input: Omit<ConfigOf<T.StructItemUFormUnit>, '$variant'>) {
   return F.structItemUFormUnit({
-    visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
-    name: _resolveOneBranch(input.name, "_type_identifier"),
-    typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
+    visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
+    name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
+    typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
   });
 }
 
-export function unionItemFrom(input: T.UnionItem.Loose): ReturnType<typeof F.unionItem> {
+export function unionItemFrom(input: T.UnionItem.Loose): ReturnType<typeof F.unionItem> | T.UnionItem {
   if (isNodeData(input)) return input;
   return F.unionItem({
-    visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
-    name: _resolveOneBranch(input.name, "_type_identifier"),
-    typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
-    whereClause: _resolveOneBranch(input.whereClause, "where_clause"),
-    body: _resolveOneBranch(input.body, "field_declaration_list"),
+    visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
+    name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
+    typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
+    whereClause: _resolveOneBranch<T.WhereClause>(input.whereClause, "where_clause"),
+    body: _resolveOneBranch<T.FieldDeclarationList>(input.body, "field_declaration_list"),
   });
 }
 
-export function enumItemFrom(input: T.EnumItem.Loose): ReturnType<typeof F.enumItem> {
+export function enumItemFrom(input: T.EnumItem.Loose): ReturnType<typeof F.enumItem> | T.EnumItem {
   if (isNodeData(input)) return input;
   return F.enumItem({
-    visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
-    name: _resolveOneBranch(input.name, "_type_identifier"),
-    typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
-    whereClause: _resolveOneBranch(input.whereClause, "where_clause"),
-    body: _resolveOneBranch(input.body, "enum_variant_list"),
+    visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
+    name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
+    typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
+    whereClause: _resolveOneBranch<T.WhereClause>(input.whereClause, "where_clause"),
+    body: _resolveOneBranch<T.EnumVariantList>(input.body, "enum_variant_list"),
   });
 }
 
@@ -625,16 +629,16 @@ export function enumVariantListFrom(...input: readonly (NonNullable<T.EnumVarian
     const data = input[0];
     return F.enumVariantList(...(data.$children ?? []));
   }
-  return F.enumVariantList(...input);
+  return F.enumVariantList(...(input as readonly NonNullable<T.EnumVariantList.Config['children']>[number][]));
 }
 
-export function enumVariantFrom(input: T.EnumVariant.Loose): ReturnType<typeof F.enumVariant> {
+export function enumVariantFrom(input: T.EnumVariant.Loose): ReturnType<typeof F.enumVariant> | T.EnumVariant {
   if (isNodeData(input)) return input;
   return F.enumVariant({
-    visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
-    name: _resolveOneLeaf(input.name, "identifier"),
-    body: _resolveOne(input.body, _K0, _K4),
-    value: _resolveOne(input.value, _K5, _K6),
+    visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
+    name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
+    body: _resolveOne<T.FieldDeclarationList | T.OrderedFieldDeclarationList>(input.body, _K0, _K4),
+    value: _resolveOne<T.Expression>(input.value, _K5, _K6),
   });
 }
 
@@ -643,97 +647,97 @@ export function fieldDeclarationListFrom(...input: readonly (NonNullable<T.Field
     const data = input[0];
     return F.fieldDeclarationList(...(data.$children ?? []));
   }
-  return F.fieldDeclarationList(...input);
+  return F.fieldDeclarationList(...(input as readonly NonNullable<T.FieldDeclarationList.Config['children']>[number][]));
 }
 
-export function fieldDeclarationFrom(input: T.FieldDeclaration.Loose): ReturnType<typeof F.fieldDeclaration> {
+export function fieldDeclarationFrom(input: T.FieldDeclaration.Loose): ReturnType<typeof F.fieldDeclaration> | T.FieldDeclaration {
   if (isNodeData(input)) return input;
   return F.fieldDeclaration({
-    visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
-    name: _resolveOneBranch(input.name, "_field_identifier"),
-    type: _resolveOne(input.type, _K7, _K8),
+    visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
+    name: _resolveOneBranch<T.FieldIdentifier>(input.name, "_field_identifier"),
+    type: _resolveOne<T._Type>(input.type, _K7, _K8),
   });
 }
 
-export function orderedFieldDeclarationListFrom(input: T.OrderedFieldDeclarationList.Loose): ReturnType<typeof F.orderedFieldDeclarationList> {
+export function orderedFieldDeclarationListFrom(input: T.OrderedFieldDeclarationList.Loose): ReturnType<typeof F.orderedFieldDeclarationList> | T.OrderedFieldDeclarationList {
   if (isNodeData(input)) return input;
   return F.orderedFieldDeclarationList({
-    type: _resolveMany(input.type, _K7, _K8),
+    type: _resolveMany<T._Type>(input.type, _K7, _K8),
   });
 }
 
-export function externCrateDeclarationFrom(input: T.ExternCrateDeclaration.Loose): ReturnType<typeof F.externCrateDeclaration> {
+export function externCrateDeclarationFrom(input: T.ExternCrateDeclaration.Loose): ReturnType<typeof F.externCrateDeclaration> | T.ExternCrateDeclaration {
   if (isNodeData(input)) return input;
   return F.externCrateDeclaration({
-    visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
-    crate: _resolveOneLeaf(input.crate, "crate"),
-    name: _resolveOneLeaf(input.name, "identifier"),
-    alias: _resolveOneLeaf(input.alias, "identifier"),
+    visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
+    crate: _resolveOneLeaf<T.Crate>(input.crate, "crate"),
+    name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
+    alias: _resolveOneLeaf<T.Identifier>(input.alias, "identifier"),
   });
 }
 
-export function constItemFrom(input: T.ConstItem.Loose): ReturnType<typeof F.constItem> {
+export function constItemFrom(input: T.ConstItem.Loose): ReturnType<typeof F.constItem> | T.ConstItem {
   if (isNodeData(input)) return input;
   return F.constItem({
-    visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
-    name: _resolveOneLeaf(input.name, "identifier"),
-    type: _resolveOne(input.type, _K7, _K8),
-    value: _resolveOne(input.value, _K5, _K6),
+    visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
+    name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
+    type: _resolveOne<T._Type>(input.type, _K7, _K8),
+    value: _resolveOne<T.Expression>(input.value, _K5, _K6),
   });
 }
 
-export function staticItemFrom(input: T.StaticItem.Loose): ReturnType<typeof F.staticItem> {
+export function staticItemFrom(input: T.StaticItem.Loose): ReturnType<typeof F.staticItem> | T.StaticItem {
   if (isNodeData(input)) return input;
   return F.staticItem({
-    visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
+    visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
     mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
-    name: _resolveOneLeaf(input.name, "identifier"),
-    type: _resolveOne(input.type, _K7, _K8),
-    value: _resolveOne(input.value, _K5, _K6),
+    name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
+    type: _resolveOne<T._Type>(input.type, _K7, _K8),
+    value: _resolveOne<T.Expression>(input.value, _K5, _K6),
     children: _resolveOneLeaf(input.children, "mutable_specifier"),
   });
 }
 
-export function typeItemFrom(input: T.TypeItem.Loose): ReturnType<typeof F.typeItem> {
+export function typeItemFrom(input: T.TypeItem.Loose): ReturnType<typeof F.typeItem> | T.TypeItem {
   if (isNodeData(input)) return input;
   return F.typeItem({
-    visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
-    name: _resolveOneBranch(input.name, "_type_identifier"),
-    typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
-    whereClause: _resolveOneBranch(input.whereClause, "where_clause"),
-    type: _resolveOne(input.type, _K7, _K8),
-    trailingWhereClause: _resolveOneBranch(input.trailingWhereClause, "where_clause"),
+    visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
+    name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
+    typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
+    whereClause: _resolveOneBranch<T.WhereClause>(input.whereClause, "where_clause"),
+    type: _resolveOne<T._Type>(input.type, _K7, _K8),
+    trailingWhereClause: _resolveOneBranch<T.WhereClause>(input.trailingWhereClause, "where_clause"),
   });
 }
 
-export function functionItemFrom(input: T.FunctionItem.Loose): ReturnType<typeof F.functionItem> {
+export function functionItemFrom(input: T.FunctionItem.Loose): ReturnType<typeof F.functionItem> | T.FunctionItem {
   if (isNodeData(input)) return input;
   return F.functionItem({
-    visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
-    functionModifiers: _resolveOneBranch(input.functionModifiers, "function_modifiers"),
-    name: _resolveOne(input.name, _K9, _K0),
-    typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
-    parameters: _resolveOneBranch(input.parameters, "parameters"),
-    returnType: _resolveOne(input.returnType, _K7, _K8),
-    whereClause: _resolveOneBranch(input.whereClause, "where_clause"),
-    body: _resolveOneBranch(input.body, "block"),
+    visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
+    functionModifiers: _resolveOneBranch<T.FunctionModifiers>(input.functionModifiers, "function_modifiers"),
+    name: _resolveOne<T.Identifier | T.Metavariable>(input.name, _K9, _K0),
+    typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
+    parameters: _resolveOneBranch<T.Parameters>(input.parameters, "parameters"),
+    returnType: _resolveOne<T._Type>(input.returnType, _K7, _K8),
+    whereClause: _resolveOneBranch<T.WhereClause>(input.whereClause, "where_clause"),
+    body: _resolveOneBranch<T.Block>(input.body, "block"),
   });
 }
 
-export function functionSignatureItemFrom(input: T.FunctionSignatureItem.Loose): ReturnType<typeof F.functionSignatureItem> {
+export function functionSignatureItemFrom(input: T.FunctionSignatureItem.Loose): ReturnType<typeof F.functionSignatureItem> | T.FunctionSignatureItem {
   if (isNodeData(input)) return input;
   return F.functionSignatureItem({
-    visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
-    functionModifiers: _resolveOneBranch(input.functionModifiers, "function_modifiers"),
-    name: _resolveOne(input.name, _K9, _K0),
-    typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
-    parameters: _resolveOneBranch(input.parameters, "parameters"),
-    returnType: _resolveOne(input.returnType, _K7, _K8),
-    whereClause: _resolveOneBranch(input.whereClause, "where_clause"),
+    visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
+    functionModifiers: _resolveOneBranch<T.FunctionModifiers>(input.functionModifiers, "function_modifiers"),
+    name: _resolveOne<T.Identifier | T.Metavariable>(input.name, _K9, _K0),
+    typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
+    parameters: _resolveOneBranch<T.Parameters>(input.parameters, "parameters"),
+    returnType: _resolveOne<T._Type>(input.returnType, _K7, _K8),
+    whereClause: _resolveOneBranch<T.WhereClause>(input.whereClause, "where_clause"),
   });
 }
 
-export function functionModifiersFrom(input: T.FunctionModifiers.Loose): ReturnType<typeof F.functionModifiers> {
+export function functionModifiersFrom(input: T.FunctionModifiers.Loose): ReturnType<typeof F.functionModifiers> | T.FunctionModifiers {
   return F.functionModifiers(input);
 }
 
@@ -742,18 +746,18 @@ export function whereClauseFrom(...input: readonly (NonNullable<T.WhereClause.Co
     const data = input[0];
     return F.whereClause(...(data.$children ?? []));
   }
-  return F.whereClause(...input);
+  return F.whereClause(...(input as readonly NonNullable<T.WhereClause.Config['children']>[number][]));
 }
 
-export function wherePredicateFrom(input: T.WherePredicate.Loose): ReturnType<typeof F.wherePredicate> {
+export function wherePredicateFrom(input: T.WherePredicate.Loose): ReturnType<typeof F.wherePredicate> | T.WherePredicate {
   if (isNodeData(input)) return input;
   return F.wherePredicate({
-    left: _resolveOne(input.left, _K10, _K11),
-    bounds: _resolveOneBranch(input.bounds, "trait_bounds"),
+    left: _resolveOne<T.Lifetime | T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.ReferenceType | T.PointerType | T.TupleType | T.ArrayType | T.HigherRankedTraitBound | T.PrimitiveType>(input.left, _K10, _K11),
+    bounds: _resolveOneBranch<T.TraitBounds>(input.bounds, "trait_bounds"),
   });
 }
 
-export function implItemFrom(input?: T.ImplItem.Loose): ReturnType<typeof F.implItem> {
+export function implItemFrom(input?: T.ImplItem.Loose): ReturnType<typeof F.implItem> | T.ImplItem {
   if (input !== undefined && isNodeData(input)) return input;
   return F.implItem(input as Parameters<typeof F.implItem>[0]);
 }
@@ -761,43 +765,43 @@ export function implItemFrom(input?: T.ImplItem.Loose): ReturnType<typeof F.impl
 export function implItemUFormBodyFrom(input: Omit<ConfigOf<T.ImplItemUFormBody>, '$variant'>) {
   return F.implItemUFormBody({
     unsafe: _resolveBooleanKeyword(input.unsafe),
-    typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
-    trait: _resolveOne(input.trait, _K0, _K12),
-    type: _resolveOne(input.type, _K7, _K8),
-    whereClause: _resolveOneBranch(input.whereClause, "where_clause"),
+    typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
+    trait: _resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType>(input.trait, _K0, _K12),
+    type: _resolveOne<T._Type>(input.type, _K7, _K8),
+    whereClause: _resolveOneBranch<T.WhereClause>(input.whereClause, "where_clause"),
   });
 }
 
 export function implItemUFormSemiFrom(input: Omit<ConfigOf<T.ImplItemUFormSemi>, '$variant'>) {
   return F.implItemUFormSemi({
     unsafe: _resolveBooleanKeyword(input.unsafe),
-    typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
-    trait: _resolveOne(input.trait, _K0, _K12),
-    type: _resolveOne(input.type, _K7, _K8),
-    whereClause: _resolveOneBranch(input.whereClause, "where_clause"),
+    typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
+    trait: _resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType>(input.trait, _K0, _K12),
+    type: _resolveOne<T._Type>(input.type, _K7, _K8),
+    whereClause: _resolveOneBranch<T.WhereClause>(input.whereClause, "where_clause"),
   });
 }
 
-export function traitItemFrom(input: T.TraitItem.Loose): ReturnType<typeof F.traitItem> {
+export function traitItemFrom(input: T.TraitItem.Loose): ReturnType<typeof F.traitItem> | T.TraitItem {
   if (isNodeData(input)) return input;
   return F.traitItem({
-    visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
+    visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
     unsafe: _resolveBooleanKeyword(input.unsafe),
-    name: _resolveOneBranch(input.name, "_type_identifier"),
-    typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
-    bounds: _resolveOneBranch(input.bounds, "trait_bounds"),
-    whereClause: _resolveOneBranch(input.whereClause, "where_clause"),
-    body: _resolveOneBranch(input.body, "declaration_list"),
+    name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
+    typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
+    bounds: _resolveOneBranch<T.TraitBounds>(input.bounds, "trait_bounds"),
+    whereClause: _resolveOneBranch<T.WhereClause>(input.whereClause, "where_clause"),
+    body: _resolveOneBranch<T.DeclarationList>(input.body, "declaration_list"),
   });
 }
 
-export function associatedTypeFrom(input: T.AssociatedType.Loose): ReturnType<typeof F.associatedType> {
+export function associatedTypeFrom(input: T.AssociatedType.Loose): ReturnType<typeof F.associatedType> | T.AssociatedType {
   if (isNodeData(input)) return input;
   return F.associatedType({
-    name: _resolveOneBranch(input.name, "_type_identifier"),
-    typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
-    bounds: _resolveOneBranch(input.bounds, "trait_bounds"),
-    whereClause: _resolveOneBranch(input.whereClause, "where_clause"),
+    name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
+    typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
+    bounds: _resolveOneBranch<T.TraitBounds>(input.bounds, "trait_bounds"),
+    whereClause: _resolveOneBranch<T.WhereClause>(input.whereClause, "where_clause"),
   });
 }
 
@@ -806,14 +810,14 @@ export function traitBoundsFrom(...input: readonly (NonNullable<T.TraitBounds.Co
     const data = input[0];
     return F.traitBounds(...(data.$children ?? []));
   }
-  return F.traitBounds(...input);
+  return F.traitBounds(...(input as readonly NonNullable<T.TraitBounds.Config['children']>[number][]));
 }
 
-export function higherRankedTraitBoundFrom(input: T.HigherRankedTraitBound.Loose): ReturnType<typeof F.higherRankedTraitBound> {
+export function higherRankedTraitBoundFrom(input: T.HigherRankedTraitBound.Loose): ReturnType<typeof F.higherRankedTraitBound> | T.HigherRankedTraitBound {
   if (isNodeData(input)) return input;
   return F.higherRankedTraitBound({
-    typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
-    type: _resolveOne(input.type, _K7, _K8),
+    typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
+    type: _resolveOne<T._Type>(input.type, _K7, _K8),
   });
 }
 
@@ -821,9 +825,9 @@ export function removedTraitBoundFrom(input?: NonNullable<T.RemovedTraitBound.Co
   if (isNodeData(input) && input.$type === 'removed_trait_bound') {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
-    return F.removedTraitBound(child);
+    return F.removedTraitBound(child as Parameters<typeof F.removedTraitBound>[0]);
   }
-  return F.removedTraitBound(input);
+  return F.removedTraitBound(input as Parameters<typeof F.removedTraitBound>[0]);
 }
 
 export function typeParametersFrom(...input: readonly (NonNullable<T.TypeParameters.Config['children']>[number] | T.TypeParameters)[]) {
@@ -831,59 +835,59 @@ export function typeParametersFrom(...input: readonly (NonNullable<T.TypeParamet
     const data = input[0];
     return F.typeParameters(...(data.$children ?? []));
   }
-  return F.typeParameters(...input);
+  return F.typeParameters(...(input as readonly NonNullable<T.TypeParameters.Config['children']>[number][]));
 }
 
-export function constParameterFrom(input: T.ConstParameter.Loose): ReturnType<typeof F.constParameter> {
+export function constParameterFrom(input: T.ConstParameter.Loose): ReturnType<typeof F.constParameter> | T.ConstParameter {
   if (isNodeData(input)) return input;
   return F.constParameter({
-    name: _resolveOneLeaf(input.name, "identifier"),
-    type: _resolveOne(input.type, _K7, _K8),
-    value: _resolveOne(input.value, _K13, _K14),
+    name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
+    type: _resolveOne<T._Type>(input.type, _K7, _K8),
+    value: _resolveOne<T.Block | T.Identifier | T.Literal | T.NegativeLiteral>(input.value, _K13, _K14),
   });
 }
 
-export function typeParameterFrom(input: T.TypeParameter.Loose): ReturnType<typeof F.typeParameter> {
+export function typeParameterFrom(input: T.TypeParameter.Loose): ReturnType<typeof F.typeParameter> | T.TypeParameter {
   if (isNodeData(input)) return input;
   return F.typeParameter({
-    name: _resolveOneBranch(input.name, "_type_identifier"),
-    bounds: _resolveOneBranch(input.bounds, "trait_bounds"),
-    defaultType: _resolveOne(input.defaultType, _K7, _K8),
+    name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
+    bounds: _resolveOneBranch<T.TraitBounds>(input.bounds, "trait_bounds"),
+    defaultType: _resolveOne<T._Type>(input.defaultType, _K7, _K8),
   });
 }
 
-export function lifetimeParameterFrom(input: T.LifetimeParameter.Loose): ReturnType<typeof F.lifetimeParameter> {
+export function lifetimeParameterFrom(input: T.LifetimeParameter.Loose): ReturnType<typeof F.lifetimeParameter> | T.LifetimeParameter {
   if (isNodeData(input)) return input;
   return F.lifetimeParameter({
-    name: _resolveOneBranch(input.name, "lifetime"),
-    bounds: _resolveOneBranch(input.bounds, "trait_bounds"),
+    name: _resolveOneBranch<T.Lifetime>(input.name, "lifetime"),
+    bounds: _resolveOneBranch<T.TraitBounds>(input.bounds, "trait_bounds"),
   });
 }
 
-export function letDeclarationFrom(input: T.LetDeclaration.Loose): ReturnType<typeof F.letDeclaration> {
+export function letDeclarationFrom(input: T.LetDeclaration.Loose): ReturnType<typeof F.letDeclaration> | T.LetDeclaration {
   if (isNodeData(input)) return input;
   return F.letDeclaration({
     mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
-    pattern: _resolveOne(input.pattern, _K15, _K16),
-    type: _resolveOne(input.type, _K7, _K8),
-    value: _resolveOne(input.value, _K5, _K6),
-    alternative: _resolveOneBranch(input.alternative, "block"),
+    pattern: _resolveOne<T.Pattern>(input.pattern, _K15, _K16),
+    type: _resolveOne<T._Type>(input.type, _K7, _K8),
+    value: _resolveOne<T.Expression>(input.value, _K5, _K6),
+    alternative: _resolveOneBranch<T.Block>(input.alternative, "block"),
   });
 }
 
-export function useDeclarationFrom(input: T.UseDeclaration.Loose): ReturnType<typeof F.useDeclaration> {
+export function useDeclarationFrom(input: T.UseDeclaration.Loose): ReturnType<typeof F.useDeclaration> | T.UseDeclaration {
   if (isNodeData(input)) return input;
   return F.useDeclaration({
-    visibilityModifier: _resolveOneBranch(input.visibilityModifier, "visibility_modifier"),
-    argument: _resolveOne(input.argument, _K17, _K18),
+    visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
+    argument: _resolveOne<T.UseClause>(input.argument, _K17, _K18),
   });
 }
 
-export function scopedUseListFrom(input: T.ScopedUseList.Loose): ReturnType<typeof F.scopedUseList> {
+export function scopedUseListFrom(input: T.ScopedUseList.Loose): ReturnType<typeof F.scopedUseList> | T.ScopedUseList {
   if (isNodeData(input)) return input;
   return F.scopedUseList({
-    path: _resolveOne(input.path, _K17, _K19),
-    list: _resolveOneBranch(input.list, "use_list"),
+    path: _resolveOne<T.Path>(input.path, _K17, _K19),
+    list: _resolveOneBranch<T.UseList>(input.list, "use_list"),
   });
 }
 
@@ -892,21 +896,21 @@ export function useListFrom(...input: readonly (NonNullable<T.UseList.Config['ch
     const data = input[0];
     return F.useList(...(data.$children ?? []));
   }
-  return F.useList(...input);
+  return F.useList(...(input as readonly NonNullable<T.UseList.Config['children']>[number][]));
 }
 
-export function useAsClauseFrom(input: T.UseAsClause.Loose): ReturnType<typeof F.useAsClause> {
+export function useAsClauseFrom(input: T.UseAsClause.Loose): ReturnType<typeof F.useAsClause> | T.UseAsClause {
   if (isNodeData(input)) return input;
   return F.useAsClause({
-    path: _resolveOne(input.path, _K17, _K19),
-    alias: _resolveOneLeaf(input.alias, "identifier"),
+    path: _resolveOne<T.Path>(input.path, _K17, _K19),
+    alias: _resolveOneLeaf<T.Identifier>(input.alias, "identifier"),
   });
 }
 
-export function useWildcardFrom(input?: T.UseWildcard.Loose): ReturnType<typeof F.useWildcard> {
+export function useWildcardFrom(input?: T.UseWildcard.Loose): ReturnType<typeof F.useWildcard> | T.UseWildcard {
   if (input !== undefined && isNodeData(input)) return input;
   return F.useWildcard({
-    path: _resolveOne(input?.path, _K17, _K19),
+    path: _resolveOne<T.Path>(input?.path, _K17, _K19),
   });
 }
 
@@ -915,44 +919,44 @@ export function parametersFrom(...input: readonly (NonNullable<T.Parameters.Conf
     const data = input[0];
     return F.parameters(...(data.$children ?? []));
   }
-  return F.parameters(...input);
+  return F.parameters(...(input as readonly NonNullable<T.Parameters.Config['children']>[number][]));
 }
 
-export function selfParameterFrom(input: T.SelfParameter.Loose): ReturnType<typeof F.selfParameter> {
+export function selfParameterFrom(input: T.SelfParameter.Loose): ReturnType<typeof F.selfParameter> | T.SelfParameter {
   if (isNodeData(input)) return input;
   return F.selfParameter({
     lifetime: _resolveBooleanKeyword(input.lifetime),
-    lifetimeName: _resolveOneBranch(input.lifetimeName, "lifetime"),
+    lifetimeName: _resolveOneBranch<T.Lifetime>(input.lifetimeName, "lifetime"),
     mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
-    self: _resolveOneLeaf(input.self, "self"),
+    self: _resolveOneLeaf<T.Self>(input.self, "self"),
   });
 }
 
-export function variadicParameterFrom(input?: T.VariadicParameter.Loose): ReturnType<typeof F.variadicParameter> {
+export function variadicParameterFrom(input?: T.VariadicParameter.Loose): ReturnType<typeof F.variadicParameter> | T.VariadicParameter {
   if (input !== undefined && isNodeData(input)) return input;
   return F.variadicParameter({
     mutableSpecifier: _resolveBooleanKeyword(input?.mutableSpecifier),
-    pattern: _resolveOne(input?.pattern, _K15, _K16),
+    pattern: _resolveOne<T.Pattern>(input?.pattern, _K15, _K16),
   });
 }
 
-export function parameterFrom(input: T.Parameter.Loose): ReturnType<typeof F.parameter> {
+export function parameterFrom(input: T.Parameter.Loose): ReturnType<typeof F.parameter> | T.Parameter {
   if (isNodeData(input)) return input;
   return F.parameter({
     mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
-    pattern: _resolveOne(input.pattern, _K20, _K16),
-    type: _resolveOne(input.type, _K7, _K8),
+    pattern: _resolveOne<T.Pattern | T.Self>(input.pattern, _K20, _K16),
+    type: _resolveOne<T._Type>(input.type, _K7, _K8),
   });
 }
 
-export function externModifierFrom(input?: T.ExternModifier.Loose): ReturnType<typeof F.externModifier> {
+export function externModifierFrom(input?: T.ExternModifier.Loose): ReturnType<typeof F.externModifier> | T.ExternModifier {
   if (input !== undefined && isNodeData(input)) return input;
   return F.externModifier({
-    stringLiteral: _resolveOneBranch(input?.stringLiteral, "string_literal"),
+    stringLiteral: _resolveOneBranch<T.StringLiteral>(input?.stringLiteral, "string_literal"),
   });
 }
 
-export function visibilityModifierFrom(input?: T.VisibilityModifier.Loose): ReturnType<typeof F.visibilityModifier> {
+export function visibilityModifierFrom(input?: T.VisibilityModifier.Loose): ReturnType<typeof F.visibilityModifier> | T.VisibilityModifier {
   if (input !== undefined && isNodeData(input)) return input;
   return F.visibilityModifier(input as Parameters<typeof F.visibilityModifier>[0]);
 }
@@ -969,31 +973,31 @@ export function bracketedTypeFrom(input?: NonNullable<T.BracketedType.Config['ch
   if (isNodeData(input) && input.$type === 'bracketed_type') {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
-    return F.bracketedType(child);
+    return F.bracketedType(child as Parameters<typeof F.bracketedType>[0]);
   }
-  return F.bracketedType(input);
+  return F.bracketedType(input as Parameters<typeof F.bracketedType>[0]);
 }
 
-export function qualifiedTypeFrom(input: T.QualifiedType.Loose): ReturnType<typeof F.qualifiedType> {
+export function qualifiedTypeFrom(input: T.QualifiedType.Loose): ReturnType<typeof F.qualifiedType> | T.QualifiedType {
   if (isNodeData(input)) return input;
   return F.qualifiedType({
-    type: _resolveOne(input.type, _K7, _K8),
-    alias: _resolveOne(input.alias, _K7, _K8),
+    type: _resolveOne<T._Type>(input.type, _K7, _K8),
+    alias: _resolveOne<T._Type>(input.alias, _K7, _K8),
   });
 }
 
-export function lifetimeFrom(input: T.Lifetime.Loose): ReturnType<typeof F.lifetime> {
+export function lifetimeFrom(input: T.Lifetime.Loose): ReturnType<typeof F.lifetime> | T.Lifetime {
   if (isNodeData(input)) return input;
   return F.lifetime({
-    identifier: _resolveOneLeaf(input.identifier, "identifier"),
+    identifier: _resolveOneLeaf<T.Identifier>(input.identifier, "identifier"),
   });
 }
 
-export function arrayTypeFrom(input: T.ArrayType.Loose): ReturnType<typeof F.arrayType> {
+export function arrayTypeFrom(input: T.ArrayType.Loose): ReturnType<typeof F.arrayType> | T.ArrayType {
   if (isNodeData(input)) return input;
   return F.arrayType({
-    element: _resolveOne(input.element, _K7, _K8),
-    length: _resolveOne(input.length, _K5, _K6),
+    element: _resolveOne<T._Type>(input.element, _K7, _K8),
+    length: _resolveOne<T.Expression>(input.length, _K5, _K6),
   });
 }
 
@@ -1002,15 +1006,15 @@ export function forLifetimesFrom(...input: readonly (NonNullable<T.ForLifetimes.
     const data = input[0];
     return F.forLifetimes(...(data.$children ?? []));
   }
-  return F.forLifetimes(...input);
+  return F.forLifetimes(...(input as readonly NonNullable<T.ForLifetimes.Config['children']>[number][]));
 }
 
-export function functionTypeFrom(input: T.FunctionType.Loose): ReturnType<typeof F.functionType> {
+export function functionTypeFrom(input: T.FunctionType.Loose): ReturnType<typeof F.functionType> | T.FunctionType {
   if (isNodeData(input)) return input;
   return F.functionType({
-    forLifetimes: _resolveOneBranch(input.forLifetimes, "for_lifetimes"),
-    parameters: _resolveOneBranch(input.parameters, "parameters"),
-    returnType: _resolveOne(input.returnType, _K7, _K8),
+    forLifetimes: _resolveOneBranch<T.ForLifetimes>(input.forLifetimes, "for_lifetimes"),
+    parameters: _resolveOneBranch<T.Parameters>(input.parameters, "parameters"),
+    returnType: _resolveOne<T._Type>(input.returnType, _K7, _K8),
     children: _resolveOne(input.children, _K0, _K21),
   });
 }
@@ -1020,43 +1024,43 @@ export function tupleTypeFrom(...input: readonly (NonNullable<T.TupleType.Config
     const data = input[0];
     return F.tupleType(...(data.$children ?? []));
   }
-  return F.tupleType(...input);
+  return F.tupleType(...(input as readonly NonNullable<T.TupleType.Config['children']>[number][]));
 }
 
 export function unitTypeFrom(input: string | T.UnitType) {
-  if (isNodeData(input)) return input;
+  if (typeof input !== 'string') return input;
   return F.unitType(input);
 }
 
-export function genericFunctionFrom(input: T.GenericFunction.Loose): ReturnType<typeof F.genericFunction> {
+export function genericFunctionFrom(input: T.GenericFunction.Loose): ReturnType<typeof F.genericFunction> | T.GenericFunction {
   if (isNodeData(input)) return input;
   return F.genericFunction({
-    function: _resolveOne(input.function, _K2, _K22),
-    typeArguments: _resolveOneBranch(input.typeArguments, "type_arguments"),
+    function: _resolveOne<T.Identifier | T.ScopedIdentifier | T.FieldExpression>(input.function, _K2, _K22),
+    typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
   });
 }
 
-export function genericTypeFrom(input: T.GenericType.Loose): ReturnType<typeof F.genericType> {
+export function genericTypeFrom(input: T.GenericType.Loose): ReturnType<typeof F.genericType> | T.GenericType {
   if (isNodeData(input)) return input;
   return F.genericType({
-    type: _resolveOne(input.type, _K0, _K23),
-    typeArguments: _resolveOneBranch(input.typeArguments, "type_arguments"),
+    type: _resolveOne<T.TypeIdentifier | T.ReservedIdentifier | T.ScopedTypeIdentifier>(input.type, _K0, _K23),
+    typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
   });
 }
 
-export function genericTypeWithTurbofishFrom(input: T.GenericTypeWithTurbofish.Loose): ReturnType<typeof F.genericTypeWithTurbofish> {
+export function genericTypeWithTurbofishFrom(input: T.GenericTypeWithTurbofish.Loose): ReturnType<typeof F.genericTypeWithTurbofish> | T.GenericTypeWithTurbofish {
   if (isNodeData(input)) return input;
   return F.genericTypeWithTurbofish({
-    type: _resolveOne(input.type, _K0, _K24),
-    typeArguments: _resolveOneBranch(input.typeArguments, "type_arguments"),
+    type: _resolveOne<T.TypeIdentifier | T.ScopedIdentifier>(input.type, _K0, _K24),
+    typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
   });
 }
 
-export function boundedTypeFrom(input: T.BoundedType.Loose): ReturnType<typeof F.boundedType> {
+export function boundedTypeFrom(input: T.BoundedType.Loose): ReturnType<typeof F.boundedType> | T.BoundedType {
   if (isNodeData(input)) return input;
   return F.boundedType({
-    left: _resolveOne(input.left, _K7, _K25),
-    right: _resolveOne(input.right, _K7, _K25),
+    left: _resolveOne<T.Lifetime | T._Type | T.UseBounds>(input.left, _K7, _K25),
+    right: _resolveOne<T.Lifetime | T._Type | T.UseBounds>(input.right, _K7, _K25),
   });
 }
 
@@ -1065,7 +1069,7 @@ export function useBoundsFrom(...input: readonly (NonNullable<T.UseBounds.Config
     const data = input[0];
     return F.useBounds(...(data.$children ?? []));
   }
-  return F.useBounds(...input);
+  return F.useBounds(...(input as readonly NonNullable<T.UseBounds.Config['children']>[number][]));
 }
 
 export function typeArgumentsFrom(...input: readonly (NonNullable<T.TypeArguments.Config['children']>[number] | T.TypeArguments)[]) {
@@ -1073,56 +1077,56 @@ export function typeArgumentsFrom(...input: readonly (NonNullable<T.TypeArgument
     const data = input[0];
     return F.typeArguments(...(data.$children ?? []));
   }
-  return F.typeArguments(...input);
+  return F.typeArguments(...(input as readonly NonNullable<T.TypeArguments.Config['children']>[number][]));
 }
 
-export function typeBindingFrom(input: T.TypeBinding.Loose): ReturnType<typeof F.typeBinding> {
+export function typeBindingFrom(input: T.TypeBinding.Loose): ReturnType<typeof F.typeBinding> | T.TypeBinding {
   if (isNodeData(input)) return input;
   return F.typeBinding({
-    name: _resolveOneBranch(input.name, "_type_identifier"),
-    typeArguments: _resolveOneBranch(input.typeArguments, "type_arguments"),
-    type: _resolveOne(input.type, _K7, _K8),
+    name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
+    typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
+    type: _resolveOne<T._Type>(input.type, _K7, _K8),
   });
 }
 
-export function referenceTypeFrom(input: T.ReferenceType.Loose): ReturnType<typeof F.referenceType> {
+export function referenceTypeFrom(input: T.ReferenceType.Loose): ReturnType<typeof F.referenceType> | T.ReferenceType {
   if (isNodeData(input)) return input;
   return F.referenceType({
-    lifetime: _resolveOneBranch(input.lifetime, "lifetime"),
+    lifetime: _resolveOneBranch<T.Lifetime>(input.lifetime, "lifetime"),
     mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
-    type: _resolveOne(input.type, _K7, _K8),
+    type: _resolveOne<T._Type>(input.type, _K7, _K8),
   });
 }
 
-export function pointerTypeFrom(input?: T.PointerType.Loose): ReturnType<typeof F.pointerType> {
+export function pointerTypeFrom(input?: T.PointerType.Loose): ReturnType<typeof F.pointerType> | T.PointerType {
   if (input !== undefined && isNodeData(input)) return input;
   return F.pointerType(input as Parameters<typeof F.pointerType>[0]);
 }
 
 export function pointerTypeUFormConstFrom(input: Omit<ConfigOf<T.PointerTypeUFormConst>, '$variant'>) {
   return F.pointerTypeUFormConst({
-    type: _resolveOne(input.type, _K7, _K8),
+    type: _resolveOne<T._Type>(input.type, _K7, _K8),
   });
 }
 
 export function pointerTypeUFormMutFrom(input: Omit<ConfigOf<T.PointerTypeUFormMut>, '$variant'>) {
   return F.pointerTypeUFormMut({
-    type: _resolveOne(input.type, _K7, _K8),
+    type: _resolveOne<T._Type>(input.type, _K7, _K8),
   });
 }
 
-export function abstractTypeFrom(input: T.AbstractType.Loose): ReturnType<typeof F.abstractType> {
+export function abstractTypeFrom(input: T.AbstractType.Loose): ReturnType<typeof F.abstractType> | T.AbstractType {
   if (isNodeData(input)) return input;
   return F.abstractType({
-    typeParameters: _resolveOneBranch(input.typeParameters, "type_parameters"),
-    trait: _resolveOne(input.trait, _K0, _K26),
+    typeParameters: _resolveOneBranch<"for" | T.TypeParameters>(input.typeParameters, "type_parameters"),
+    trait: _resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.RemovedTraitBound | T.GenericType | T.FunctionType | T.TupleType | T.BoundedType>(input.trait, _K0, _K26),
   });
 }
 
-export function dynamicTypeFrom(input: T.DynamicType.Loose): ReturnType<typeof F.dynamicType> {
+export function dynamicTypeFrom(input: T.DynamicType.Loose): ReturnType<typeof F.dynamicType> | T.DynamicType {
   if (isNodeData(input)) return input;
   return F.dynamicType({
-    trait: _resolveOne(input.trait, _K0, _K27),
+    trait: _resolveOne<T.HigherRankedTraitBound | T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.FunctionType | T.TupleType>(input.trait, _K0, _K27),
   });
 }
 
@@ -1131,15 +1135,15 @@ export function mutableSpecifierFrom(input?: T.MutableSpecifier) {
   return F.mutableSpecifier();
 }
 
-export function macroInvocationFrom(input: T.MacroInvocation.Loose): ReturnType<typeof F.macroInvocation> {
+export function macroInvocationFrom(input: T.MacroInvocation.Loose): ReturnType<typeof F.macroInvocation> | T.MacroInvocation {
   if (isNodeData(input)) return input;
   return F.macroInvocation({
-    macro: _resolveOne(input.macro, _K2, _K28),
-    tokenTree: _resolveOneBranch(input.tokenTree, "delim_token_tree"),
+    macro: _resolveOne<T.ScopedIdentifier | T.Identifier | T.ReservedIdentifier>(input.macro, _K2, _K28),
+    tokenTree: _resolveOneBranch<T.DelimTokenTree>(input.tokenTree, "delim_token_tree"),
   });
 }
 
-export function delimTokenTreeFrom(input?: T.DelimTokenTree.Loose): ReturnType<typeof F.delimTokenTree> {
+export function delimTokenTreeFrom(input?: T.DelimTokenTree.Loose): ReturnType<typeof F.delimTokenTree> | T.DelimTokenTree {
   if (input !== undefined && isNodeData(input)) return input;
   return F.delimTokenTree(input as Parameters<typeof F.delimTokenTree>[0]);
 }
@@ -1156,31 +1160,31 @@ export function delimTokenTreeUFormBraceFrom(input: Omit<ConfigOf<T.DelimTokenTr
   return F.delimTokenTreeUFormBrace(input);
 }
 
-export function scopedIdentifierFrom(input: T.ScopedIdentifier.Loose): ReturnType<typeof F.scopedIdentifier> {
+export function scopedIdentifierFrom(input: T.ScopedIdentifier.Loose): ReturnType<typeof F.scopedIdentifier> | T.ScopedIdentifier {
   if (isNodeData(input)) return input;
   return F.scopedIdentifier({
-    path: _resolveOne(input.path, _K17, _K29),
-    name: _resolveOne(input.name, _K30, _K0),
+    path: _resolveOne<T.Path | T.BracketedType | T.GenericTypeWithTurbofish>(input.path, _K17, _K29),
+    name: _resolveOne<T.Identifier | T.Super>(input.name, _K30, _K0),
   });
 }
 
-export function scopedTypeIdentifierInExpressionPositionFrom(input: T.ScopedTypeIdentifierInExpressionPosition.Loose): ReturnType<typeof F.scopedTypeIdentifierInExpressionPosition> {
+export function scopedTypeIdentifierInExpressionPositionFrom(input: T.ScopedTypeIdentifierInExpressionPosition.Loose): ReturnType<typeof F.scopedTypeIdentifierInExpressionPosition> | T.ScopedTypeIdentifierInExpressionPosition {
   if (isNodeData(input)) return input;
   return F.scopedTypeIdentifierInExpressionPosition({
-    path: _resolveOne(input.path, _K17, _K31),
-    name: _resolveOneBranch(input.name, "_type_identifier"),
+    path: _resolveOne<T.Path | T.GenericTypeWithTurbofish>(input.path, _K17, _K31),
+    name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
   });
 }
 
-export function scopedTypeIdentifierFrom(input: T.ScopedTypeIdentifier.Loose): ReturnType<typeof F.scopedTypeIdentifier> {
+export function scopedTypeIdentifierFrom(input: T.ScopedTypeIdentifier.Loose): ReturnType<typeof F.scopedTypeIdentifier> | T.ScopedTypeIdentifier {
   if (isNodeData(input)) return input;
   return F.scopedTypeIdentifier({
-    path: _resolveOne(input.path, _K17, _K32),
-    name: _resolveOneBranch(input.name, "_type_identifier"),
+    path: _resolveOne<T.Path | T.GenericTypeWithTurbofish | T.BracketedType>(input.path, _K17, _K32),
+    name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
   });
 }
 
-export function rangeExpressionFrom(input?: T.RangeExpression.Loose): ReturnType<typeof F.rangeExpression> {
+export function rangeExpressionFrom(input?: T.RangeExpression.Loose): ReturnType<typeof F.rangeExpression> | T.RangeExpression {
   if (input !== undefined && isNodeData(input)) return input;
   return F.rangeExpression(input as Parameters<typeof F.rangeExpression>[0]);
 }
@@ -1201,60 +1205,60 @@ export function rangeExpressionUFormBareFrom(input?: Omit<ConfigOf<T.RangeExpres
   return F.rangeExpressionUFormBare(input);
 }
 
-export function unaryExpressionFrom(input: T.UnaryExpression.Loose): ReturnType<typeof F.unaryExpression> {
+export function unaryExpressionFrom(input: T.UnaryExpression.Loose): ReturnType<typeof F.unaryExpression> | T.UnaryExpression {
   if (isNodeData(input)) return input;
   return F.unaryExpression({
-    operator: _resolveOne(input.operator, _K0, _K0),
-    operand: _resolveOne(input.operand, _K5, _K6),
+    operator: _resolveOne<"-" | "*" | "!">(input.operator, _K0, _K0),
+    operand: _resolveOne<T.Expression>(input.operand, _K5, _K6),
   });
 }
 
-export function tryExpressionFrom(input: T.TryExpression.Loose): ReturnType<typeof F.tryExpression> {
+export function tryExpressionFrom(input: T.TryExpression.Loose): ReturnType<typeof F.tryExpression> | T.TryExpression {
   if (isNodeData(input)) return input;
   return F.tryExpression({
-    value: _resolveOne(input.value, _K5, _K6),
+    value: _resolveOne<T.Expression>(input.value, _K5, _K6),
   });
 }
 
-export function referenceExpressionFrom(input: T.ReferenceExpression.Loose): ReturnType<typeof F.referenceExpression> {
+export function referenceExpressionFrom(input: T.ReferenceExpression.Loose): ReturnType<typeof F.referenceExpression> | T.ReferenceExpression {
   if (isNodeData(input)) return input;
   return F.referenceExpression({
-    value: _resolveOne(input.value, _K5, _K6),
+    value: _resolveOne<T.Expression>(input.value, _K5, _K6),
     children: _resolveOne(input.children, _K33, _K34),
   });
 }
 
-export function binaryExpressionFrom(input: T.BinaryExpression.Loose): ReturnType<typeof F.binaryExpression> {
+export function binaryExpressionFrom(input: T.BinaryExpression.Loose): ReturnType<typeof F.binaryExpression> | T.BinaryExpression {
   if (isNodeData(input)) return input;
   return F.binaryExpression({
-    left: _resolveOne(input.left, _K5, _K6),
-    operator: _resolveOne(input.operator, _K0, _K0),
-    right: _resolveOne(input.right, _K5, _K6),
+    left: _resolveOne<T.Expression>(input.left, _K5, _K6),
+    operator: _resolveOne<"&&" | "||" | "&" | "|" | "^" | "==" | "!=" | "<" | "<=" | ">" | ">=" | "<<" | ">>" | "+" | "-" | "*" | "/" | "%">(input.operator, _K0, _K0),
+    right: _resolveOne<T.Expression>(input.right, _K5, _K6),
   });
 }
 
-export function assignmentExpressionFrom(input: T.AssignmentExpression.Loose): ReturnType<typeof F.assignmentExpression> {
+export function assignmentExpressionFrom(input: T.AssignmentExpression.Loose): ReturnType<typeof F.assignmentExpression> | T.AssignmentExpression {
   if (isNodeData(input)) return input;
   return F.assignmentExpression({
-    left: _resolveOne(input.left, _K5, _K6),
-    right: _resolveOne(input.right, _K5, _K6),
+    left: _resolveOne<T.Expression>(input.left, _K5, _K6),
+    right: _resolveOne<T.Expression>(input.right, _K5, _K6),
   });
 }
 
-export function compoundAssignmentExprFrom(input: T.CompoundAssignmentExpr.Loose): ReturnType<typeof F.compoundAssignmentExpr> {
+export function compoundAssignmentExprFrom(input: T.CompoundAssignmentExpr.Loose): ReturnType<typeof F.compoundAssignmentExpr> | T.CompoundAssignmentExpr {
   if (isNodeData(input)) return input;
   return F.compoundAssignmentExpr({
-    left: _resolveOne(input.left, _K5, _K6),
-    operator: _resolveOne(input.operator, _K0, _K0),
-    right: _resolveOne(input.right, _K5, _K6),
+    left: _resolveOne<T.Expression>(input.left, _K5, _K6),
+    operator: _resolveOne<"+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "|=" | "^=" | "<<=" | ">>=">(input.operator, _K0, _K0),
+    right: _resolveOne<T.Expression>(input.right, _K5, _K6),
   });
 }
 
-export function typeCastExpressionFrom(input: T.TypeCastExpression.Loose): ReturnType<typeof F.typeCastExpression> {
+export function typeCastExpressionFrom(input: T.TypeCastExpression.Loose): ReturnType<typeof F.typeCastExpression> | T.TypeCastExpression {
   if (isNodeData(input)) return input;
   return F.typeCastExpression({
-    value: _resolveOne(input.value, _K5, _K6),
-    type: _resolveOne(input.type, _K7, _K8),
+    value: _resolveOne<T.Expression>(input.value, _K5, _K6),
+    type: _resolveOne<T._Type>(input.type, _K7, _K8),
   });
 }
 
@@ -1262,25 +1266,25 @@ export function returnExpressionFrom(input?: NonNullable<T.ReturnExpression.Conf
   if (isNodeData(input) && input.$type === 'return_expression') {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
-    return F.returnExpression(child);
+    return F.returnExpression(child as Parameters<typeof F.returnExpression>[0]);
   }
-  return F.returnExpression(input);
+  return F.returnExpression(input as Parameters<typeof F.returnExpression>[0]);
 }
 
 export function yieldExpressionFrom(input?: NonNullable<T.YieldExpression.Config['children']>[number] | T.YieldExpression) {
   if (isNodeData(input) && input.$type === 'yield_expression') {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
-    return F.yieldExpression(child);
+    return F.yieldExpression(child as Parameters<typeof F.yieldExpression>[0]);
   }
-  return F.yieldExpression(input);
+  return F.yieldExpression(input as Parameters<typeof F.yieldExpression>[0]);
 }
 
-export function callExpressionFrom(input: T.CallExpression.Loose): ReturnType<typeof F.callExpression> {
+export function callExpressionFrom(input: T.CallExpression.Loose): ReturnType<typeof F.callExpression> | T.CallExpression {
   if (isNodeData(input)) return input;
   return F.callExpression({
-    function: _resolveOne(input.function, _K5, _K35),
-    arguments: _resolveOneBranch(input.arguments, "arguments"),
+    function: _resolveOne<T.ExpressionExceptRange>(input.function, _K5, _K35),
+    arguments: _resolveOneBranch<T.Arguments>(input.arguments, "arguments"),
   });
 }
 
@@ -1289,10 +1293,10 @@ export function arguments_From(...input: readonly (NonNullable<T.Arguments.Confi
     const data = input[0];
     return F.arguments_(...(data.$children ?? []));
   }
-  return F.arguments_(...input);
+  return F.arguments_(...(input as readonly NonNullable<T.Arguments.Config['children']>[number][]));
 }
 
-export function arrayExpressionFrom(input?: T.ArrayExpression.Loose): ReturnType<typeof F.arrayExpression> {
+export function arrayExpressionFrom(input?: T.ArrayExpression.Loose): ReturnType<typeof F.arrayExpression> | T.ArrayExpression {
   if (input !== undefined && isNodeData(input)) return input;
   return F.arrayExpression(input as Parameters<typeof F.arrayExpression>[0]);
 }
@@ -1309,31 +1313,29 @@ export function parenthesizedExpressionFrom(input?: NonNullable<T.ParenthesizedE
   if (isNodeData(input) && input.$type === 'parenthesized_expression') {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
-    return F.parenthesizedExpression(child);
+    return F.parenthesizedExpression(child as Parameters<typeof F.parenthesizedExpression>[0]);
   }
-  return F.parenthesizedExpression(input);
+  return F.parenthesizedExpression(input as Parameters<typeof F.parenthesizedExpression>[0]);
 }
 
-export function tupleExpressionFrom(input: T.TupleExpression.Loose): ReturnType<typeof F.tupleExpression> {
+export function tupleExpressionFrom(input: T.TupleExpression.Loose): ReturnType<typeof F.tupleExpression> | T.TupleExpression {
   if (isNodeData(input)) return input;
   return F.tupleExpression({
-    attributes: _resolveManyBranch(input.attributes, "attribute_item"),
-    elements: _resolveOne(input.elements, _K5, _K6),
-    elements: _resolveMany(input.elements, _K5, _K6),
-    elements: _resolveOne(input.elements, _K5, _K6),
+    attributes: _resolveManyBranch<T.AttributeItem>(input.attributes, "attribute_item"),
+    elements: _resolveMany<T.Expression>(input.elements, _K5, _K6),
   });
 }
 
 export function unitExpressionFrom(input: string | T.UnitExpression) {
-  if (isNodeData(input)) return input;
+  if (typeof input !== 'string') return input;
   return F.unitExpression(input);
 }
 
-export function structExpressionFrom(input: T.StructExpression.Loose): ReturnType<typeof F.structExpression> {
+export function structExpressionFrom(input: T.StructExpression.Loose): ReturnType<typeof F.structExpression> | T.StructExpression {
   if (isNodeData(input)) return input;
   return F.structExpression({
-    name: _resolveOne(input.name, _K0, _K36),
-    body: _resolveOneBranch(input.body, "field_initializer_list"),
+    name: _resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifierInExpressionPosition | T.GenericTypeWithTurbofish>(input.name, _K0, _K36),
+    body: _resolveOneBranch<T.FieldInitializerList>(input.body, "field_initializer_list"),
   });
 }
 
@@ -1342,22 +1344,22 @@ export function fieldInitializerListFrom(...input: readonly (NonNullable<T.Field
     const data = input[0];
     return F.fieldInitializerList(...(data.$children ?? []));
   }
-  return F.fieldInitializerList(...input);
+  return F.fieldInitializerList(...(input as readonly NonNullable<T.FieldInitializerList.Config['children']>[number][]));
 }
 
-export function shorthandFieldInitializerFrom(input: T.ShorthandFieldInitializer.Loose): ReturnType<typeof F.shorthandFieldInitializer> {
+export function shorthandFieldInitializerFrom(input: T.ShorthandFieldInitializer.Loose): ReturnType<typeof F.shorthandFieldInitializer> | T.ShorthandFieldInitializer {
   if (isNodeData(input)) return input;
   return F.shorthandFieldInitializer({
-    attributes: _resolveManyBranch(input.attributes, "attribute_item"),
-    identifier: _resolveOneLeaf(input.identifier, "identifier"),
+    attributes: _resolveManyBranch<T.AttributeItem>(input.attributes, "attribute_item"),
+    identifier: _resolveOneLeaf<T.Identifier>(input.identifier, "identifier"),
   });
 }
 
-export function fieldInitializerFrom(input: T.FieldInitializer.Loose): ReturnType<typeof F.fieldInitializer> {
+export function fieldInitializerFrom(input: T.FieldInitializer.Loose): ReturnType<typeof F.fieldInitializer> | T.FieldInitializer {
   if (isNodeData(input)) return input;
   return F.fieldInitializer({
-    field: _resolveOne(input.field, _K37, _K38),
-    value: _resolveOne(input.value, _K5, _K6),
+    field: _resolveOne<T.FieldIdentifier | T.IntegerLiteral>(input.field, _K37, _K38),
+    value: _resolveOne<T.Expression>(input.value, _K5, _K6),
     children: _resolveManyBranch(input.children, "attribute_item"),
   });
 }
@@ -1366,25 +1368,25 @@ export function baseFieldInitializerFrom(input?: NonNullable<T.BaseFieldInitiali
   if (isNodeData(input) && input.$type === 'base_field_initializer') {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
-    return F.baseFieldInitializer(child);
+    return F.baseFieldInitializer(child as Parameters<typeof F.baseFieldInitializer>[0]);
   }
-  return F.baseFieldInitializer(input);
+  return F.baseFieldInitializer(input as Parameters<typeof F.baseFieldInitializer>[0]);
 }
 
-export function ifExpressionFrom(input: T.IfExpression.Loose): ReturnType<typeof F.ifExpression> {
+export function ifExpressionFrom(input: T.IfExpression.Loose): ReturnType<typeof F.ifExpression> | T.IfExpression {
   if (isNodeData(input)) return input;
   return F.ifExpression({
-    condition: _resolveOne(input.condition, _K5, _K39),
-    consequence: _resolveOneBranch(input.consequence, "block"),
-    alternative: _resolveOneBranch(input.alternative, "else_clause"),
+    condition: _resolveOne<T.Condition>(input.condition, _K5, _K39),
+    consequence: _resolveOneBranch<T.Block>(input.consequence, "block"),
+    alternative: _resolveOneBranch<T.ElseClause>(input.alternative, "else_clause"),
   });
 }
 
-export function letConditionFrom(input: T.LetCondition.Loose): ReturnType<typeof F.letCondition> {
+export function letConditionFrom(input: T.LetCondition.Loose): ReturnType<typeof F.letCondition> | T.LetCondition {
   if (isNodeData(input)) return input;
   return F.letCondition({
-    pattern: _resolveOne(input.pattern, _K15, _K16),
-    value: _resolveOne(input.value, _K5, _K6),
+    pattern: _resolveOne<T.Pattern>(input.pattern, _K15, _K16),
+    value: _resolveOne<T.Expression>(input.value, _K5, _K6),
   });
 }
 
@@ -1392,16 +1394,16 @@ export function elseClauseFrom(input?: NonNullable<T.ElseClause.Config['children
   if (isNodeData(input) && input.$type === 'else_clause') {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
-    return F.elseClause(child);
+    return F.elseClause(child as Parameters<typeof F.elseClause>[0]);
   }
-  return F.elseClause(input);
+  return F.elseClause(input as Parameters<typeof F.elseClause>[0]);
 }
 
-export function matchExpressionFrom(input: T.MatchExpression.Loose): ReturnType<typeof F.matchExpression> {
+export function matchExpressionFrom(input: T.MatchExpression.Loose): ReturnType<typeof F.matchExpression> | T.MatchExpression {
   if (isNodeData(input)) return input;
   return F.matchExpression({
-    value: _resolveOne(input.value, _K5, _K6),
-    body: _resolveOneBranch(input.body, "match_block"),
+    value: _resolveOne<T.Expression>(input.value, _K5, _K6),
+    body: _resolveOneBranch<T.MatchBlock>(input.body, "match_block"),
   });
 }
 
@@ -1410,78 +1412,78 @@ export function matchBlockFrom(...input: readonly (NonNullable<T.MatchBlock.Conf
     const data = input[0];
     return F.matchBlock(...(data.$children ?? []));
   }
-  return F.matchBlock(...input);
+  return F.matchBlock(...(input as readonly NonNullable<T.MatchBlock.Config['children']>[number][]));
 }
 
-export function matchArmFrom(input?: T.MatchArm.Loose): ReturnType<typeof F.matchArm> {
+export function matchArmFrom(input?: T.MatchArm.Loose): ReturnType<typeof F.matchArm> | T.MatchArm {
   if (input !== undefined && isNodeData(input)) return input;
   return F.matchArm(input as Parameters<typeof F.matchArm>[0]);
 }
 
 export function matchArmUFormWithCommaFrom(input: Omit<ConfigOf<T.MatchArmUFormWithComma>, '$variant'>) {
   return F.matchArmUFormWithComma({
-    pattern: _resolveOneBranch(input.pattern, "match_pattern"),
+    pattern: _resolveOneBranch<T.MatchPattern>(input.pattern, "match_pattern"),
   });
 }
 
 export function matchArmUFormBlockEndingFrom(input: Omit<ConfigOf<T.MatchArmUFormBlockEnding>, '$variant'>) {
   return F.matchArmUFormBlockEnding({
-    pattern: _resolveOneBranch(input.pattern, "match_pattern"),
+    pattern: _resolveOneBranch<T.MatchPattern>(input.pattern, "match_pattern"),
   });
 }
 
-export function lastMatchArmFrom(input: T.LastMatchArm.Loose): ReturnType<typeof F.lastMatchArm> {
+export function lastMatchArmFrom(input: T.LastMatchArm.Loose): ReturnType<typeof F.lastMatchArm> | T.LastMatchArm {
   if (isNodeData(input)) return input;
   return F.lastMatchArm({
-    pattern: _resolveOneBranch(input.pattern, "match_pattern"),
-    value: _resolveOne(input.value, _K5, _K6),
+    pattern: _resolveOneBranch<T.MatchPattern>(input.pattern, "match_pattern"),
+    value: _resolveOne<T.Expression>(input.value, _K5, _K6),
     children: _resolveMany(input.children, _K0, _K40),
   });
 }
 
-export function matchPatternFrom(input: T.MatchPattern.Loose): ReturnType<typeof F.matchPattern> {
+export function matchPatternFrom(input: T.MatchPattern.Loose): ReturnType<typeof F.matchPattern> | T.MatchPattern {
   if (isNodeData(input)) return input;
   return F.matchPattern({
-    condition: _resolveOne(input.condition, _K5, _K39),
+    condition: _resolveOne<T.Condition>(input.condition, _K5, _K39),
     children: _resolveOne(input.children, _K15, _K16),
   });
 }
 
-export function whileExpressionFrom(input: T.WhileExpression.Loose): ReturnType<typeof F.whileExpression> {
+export function whileExpressionFrom(input: T.WhileExpression.Loose): ReturnType<typeof F.whileExpression> | T.WhileExpression {
   if (isNodeData(input)) return input;
   return F.whileExpression({
-    label: _resolveOneBranch(input.label, "label"),
-    condition: _resolveOne(input.condition, _K5, _K39),
-    body: _resolveOneBranch(input.body, "block"),
+    label: _resolveOneBranch<T.Label>(input.label, "label"),
+    condition: _resolveOne<T.Condition>(input.condition, _K5, _K39),
+    body: _resolveOneBranch<T.Block>(input.body, "block"),
   });
 }
 
-export function loopExpressionFrom(input: T.LoopExpression.Loose): ReturnType<typeof F.loopExpression> {
+export function loopExpressionFrom(input: T.LoopExpression.Loose): ReturnType<typeof F.loopExpression> | T.LoopExpression {
   if (isNodeData(input)) return input;
   return F.loopExpression({
-    label: _resolveOneBranch(input.label, "label"),
-    body: _resolveOneBranch(input.body, "block"),
+    label: _resolveOneBranch<T.Label>(input.label, "label"),
+    body: _resolveOneBranch<T.Block>(input.body, "block"),
   });
 }
 
-export function forExpressionFrom(input: T.ForExpression.Loose): ReturnType<typeof F.forExpression> {
+export function forExpressionFrom(input: T.ForExpression.Loose): ReturnType<typeof F.forExpression> | T.ForExpression {
   if (isNodeData(input)) return input;
   return F.forExpression({
-    label: _resolveOneBranch(input.label, "label"),
-    pattern: _resolveOne(input.pattern, _K15, _K16),
-    value: _resolveOne(input.value, _K5, _K6),
-    body: _resolveOneBranch(input.body, "block"),
+    label: _resolveOneBranch<T.Label>(input.label, "label"),
+    pattern: _resolveOne<T.Pattern>(input.pattern, _K15, _K16),
+    value: _resolveOne<T.Expression>(input.value, _K5, _K6),
+    body: _resolveOneBranch<T.Block>(input.body, "block"),
   });
 }
 
-export function constBlockFrom(input: T.ConstBlock.Loose): ReturnType<typeof F.constBlock> {
+export function constBlockFrom(input: T.ConstBlock.Loose): ReturnType<typeof F.constBlock> | T.ConstBlock {
   if (isNodeData(input)) return input;
   return F.constBlock({
-    body: _resolveOneBranch(input.body, "block"),
+    body: _resolveOneBranch<T.Block>(input.body, "block"),
   });
 }
 
-export function closureExpressionFrom(input?: T.ClosureExpression.Loose): ReturnType<typeof F.closureExpression> {
+export function closureExpressionFrom(input?: T.ClosureExpression.Loose): ReturnType<typeof F.closureExpression> | T.ClosureExpression {
   if (input !== undefined && isNodeData(input)) return input;
   return F.closureExpression(input as Parameters<typeof F.closureExpression>[0]);
 }
@@ -1491,7 +1493,7 @@ export function closureExpressionUFormBlockFrom(input: Omit<ConfigOf<T.ClosureEx
     static: _resolveBooleanKeyword(input.static),
     async: _resolveBooleanKeyword(input.async),
     move: _resolveBooleanKeyword(input.move),
-    parameters: _resolveOneBranch(input.parameters, "closure_parameters"),
+    parameters: _resolveOneBranch<T.ClosureParameters>(input.parameters, "closure_parameters"),
   });
 }
 
@@ -1500,7 +1502,7 @@ export function closureExpressionUFormExprFrom(input: Omit<ConfigOf<T.ClosureExp
     static: _resolveBooleanKeyword(input.static),
     async: _resolveBooleanKeyword(input.async),
     move: _resolveBooleanKeyword(input.move),
-    parameters: _resolveOneBranch(input.parameters, "closure_parameters"),
+    parameters: _resolveOneBranch<T.ClosureParameters>(input.parameters, "closure_parameters"),
   });
 }
 
@@ -1509,36 +1511,36 @@ export function closureParametersFrom(...input: readonly (NonNullable<T.ClosureP
     const data = input[0];
     return F.closureParameters(...(data.$children ?? []));
   }
-  return F.closureParameters(...input);
+  return F.closureParameters(...(input as readonly NonNullable<T.ClosureParameters.Config['children']>[number][]));
 }
 
-export function labelFrom(input: T.Label.Loose): ReturnType<typeof F.label> {
+export function labelFrom(input: T.Label.Loose): ReturnType<typeof F.label> | T.Label {
   if (isNodeData(input)) return input;
   return F.label({
-    identifier: _resolveOneLeaf(input.identifier, "identifier"),
+    identifier: _resolveOneLeaf<T.Identifier>(input.identifier, "identifier"),
   });
 }
 
-export function breakExpressionFrom(input?: T.BreakExpression.Loose): ReturnType<typeof F.breakExpression> {
+export function breakExpressionFrom(input?: T.BreakExpression.Loose): ReturnType<typeof F.breakExpression> | T.BreakExpression {
   if (input !== undefined && isNodeData(input)) return input;
   return F.breakExpression({
-    label: _resolveOneBranch(input?.label, "label"),
-    expression: _resolveOne(input?.expression, _K5, _K6),
+    label: _resolveOneBranch<T.Label>(input?.label, "label"),
+    expression: _resolveOne<T.Expression>(input?.expression, _K5, _K6),
   });
 }
 
-export function continueExpressionFrom(input?: T.ContinueExpression.Loose): ReturnType<typeof F.continueExpression> {
+export function continueExpressionFrom(input?: T.ContinueExpression.Loose): ReturnType<typeof F.continueExpression> | T.ContinueExpression {
   if (input !== undefined && isNodeData(input)) return input;
   return F.continueExpression({
-    label: _resolveOneBranch(input?.label, "label"),
+    label: _resolveOneBranch<T.Label>(input?.label, "label"),
   });
 }
 
-export function indexExpressionFrom(input: T.IndexExpression.Loose): ReturnType<typeof F.indexExpression> {
+export function indexExpressionFrom(input: T.IndexExpression.Loose): ReturnType<typeof F.indexExpression> | T.IndexExpression {
   if (isNodeData(input)) return input;
   return F.indexExpression({
-    object: _resolveOne(input.object, _K5, _K6),
-    index: _resolveOne(input.index, _K5, _K6),
+    object: _resolveOne<T.Expression>(input.object, _K5, _K6),
+    index: _resolveOne<T.Expression>(input.index, _K5, _K6),
   });
 }
 
@@ -1546,61 +1548,61 @@ export function awaitExpressionFrom(input?: NonNullable<T.AwaitExpression.Config
   if (isNodeData(input) && input.$type === 'await_expression') {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
-    return F.awaitExpression(child);
+    return F.awaitExpression(child as Parameters<typeof F.awaitExpression>[0]);
   }
-  return F.awaitExpression(input);
+  return F.awaitExpression(input as Parameters<typeof F.awaitExpression>[0]);
 }
 
-export function fieldExpressionFrom(input: T.FieldExpression.Loose): ReturnType<typeof F.fieldExpression> {
+export function fieldExpressionFrom(input: T.FieldExpression.Loose): ReturnType<typeof F.fieldExpression> | T.FieldExpression {
   if (isNodeData(input)) return input;
   return F.fieldExpression({
-    value: _resolveOne(input.value, _K5, _K6),
-    field: _resolveOne(input.field, _K37, _K38),
+    value: _resolveOne<T.Expression>(input.value, _K5, _K6),
+    field: _resolveOne<T.FieldIdentifier | T.IntegerLiteral>(input.field, _K37, _K38),
   });
 }
 
-export function unsafeBlockFrom(input: T.UnsafeBlock.Loose): ReturnType<typeof F.unsafeBlock> {
+export function unsafeBlockFrom(input: T.UnsafeBlock.Loose): ReturnType<typeof F.unsafeBlock> | T.UnsafeBlock {
   if (isNodeData(input)) return input;
   return F.unsafeBlock({
-    block: _resolveOneBranch(input.block, "block"),
+    block: _resolveOneBranch<T.Block>(input.block, "block"),
   });
 }
 
-export function asyncBlockFrom(input: T.AsyncBlock.Loose): ReturnType<typeof F.asyncBlock> {
+export function asyncBlockFrom(input: T.AsyncBlock.Loose): ReturnType<typeof F.asyncBlock> | T.AsyncBlock {
   if (isNodeData(input)) return input;
   return F.asyncBlock({
     move: _resolveBooleanKeyword(input.move),
-    block: _resolveOneBranch(input.block, "block"),
+    block: _resolveOneBranch<T.Block>(input.block, "block"),
   });
 }
 
-export function genBlockFrom(input: T.GenBlock.Loose): ReturnType<typeof F.genBlock> {
+export function genBlockFrom(input: T.GenBlock.Loose): ReturnType<typeof F.genBlock> | T.GenBlock {
   if (isNodeData(input)) return input;
   return F.genBlock({
     move: _resolveBooleanKeyword(input.move),
-    block: _resolveOneBranch(input.block, "block"),
+    block: _resolveOneBranch<T.Block>(input.block, "block"),
   });
 }
 
-export function tryBlockFrom(input: T.TryBlock.Loose): ReturnType<typeof F.tryBlock> {
+export function tryBlockFrom(input: T.TryBlock.Loose): ReturnType<typeof F.tryBlock> | T.TryBlock {
   if (isNodeData(input)) return input;
   return F.tryBlock({
-    block: _resolveOneBranch(input.block, "block"),
+    block: _resolveOneBranch<T.Block>(input.block, "block"),
   });
 }
 
-export function blockFrom(input: T.Block.Loose): ReturnType<typeof F.block> {
+export function blockFrom(input: T.Block.Loose): ReturnType<typeof F.block> | T.Block {
   if (isNodeData(input)) return input;
   return F.block({
-    label: _resolveOneBranch(input.label, "label"),
+    label: _resolveOneBranch<T.Label>(input.label, "label"),
     children: _resolveMany(input.children, _K5, _K41),
   });
 }
 
-export function genericPatternFrom(input: T.GenericPattern.Loose): ReturnType<typeof F.genericPattern> {
+export function genericPatternFrom(input: T.GenericPattern.Loose): ReturnType<typeof F.genericPattern> | T.GenericPattern {
   if (isNodeData(input)) return input;
   return F.genericPattern({
-    typeArguments: _resolveOneBranch(input.typeArguments, "type_arguments"),
+    typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
     children: _resolveOne(input.children, _K2, _K19),
   });
 }
@@ -1610,7 +1612,7 @@ export function tuplePatternFrom(...input: readonly (NonNullable<T.TuplePattern.
     const data = input[0];
     return F.tuplePattern(...(data.$children ?? []));
   }
-  return F.tuplePattern(...input);
+  return F.tuplePattern(...(input as readonly NonNullable<T.TuplePattern.Config['children']>[number][]));
 }
 
 export function slicePatternFrom(...input: readonly (NonNullable<T.SlicePattern.Config['children']>[number] | T.SlicePattern)[]) {
@@ -1618,26 +1620,26 @@ export function slicePatternFrom(...input: readonly (NonNullable<T.SlicePattern.
     const data = input[0];
     return F.slicePattern(...(data.$children ?? []));
   }
-  return F.slicePattern(...input);
+  return F.slicePattern(...(input as readonly NonNullable<T.SlicePattern.Config['children']>[number][]));
 }
 
-export function tupleStructPatternFrom(input: T.TupleStructPattern.Loose): ReturnType<typeof F.tupleStructPattern> {
+export function tupleStructPatternFrom(input: T.TupleStructPattern.Loose): ReturnType<typeof F.tupleStructPattern> | T.TupleStructPattern {
   if (isNodeData(input)) return input;
   return F.tupleStructPattern({
-    type: _resolveOne(input.type, _K2, _K31),
+    type: _resolveOne<T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish>(input.type, _K2, _K31),
     children: _resolveMany(input.children, _K15, _K16),
   });
 }
 
-export function structPatternFrom(input: T.StructPattern.Loose): ReturnType<typeof F.structPattern> {
+export function structPatternFrom(input: T.StructPattern.Loose): ReturnType<typeof F.structPattern> | T.StructPattern {
   if (isNodeData(input)) return input;
   return F.structPattern({
-    type: _resolveOne(input.type, _K0, _K42),
+    type: _resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier>(input.type, _K0, _K42),
     children: _resolveManyBranch(input.children, "field_pattern"),
   });
 }
 
-export function fieldPatternFrom(input?: T.FieldPattern.Loose): ReturnType<typeof F.fieldPattern> {
+export function fieldPatternFrom(input?: T.FieldPattern.Loose): ReturnType<typeof F.fieldPattern> | T.FieldPattern {
   if (input !== undefined && isNodeData(input)) return input;
   return F.fieldPattern(input as Parameters<typeof F.fieldPattern>[0]);
 }
@@ -1656,15 +1658,15 @@ export function fieldPatternUFormNamedFrom(input: Omit<ConfigOf<T.FieldPatternUF
   });
 }
 
-export function mutPatternFrom(input: T.MutPattern.Loose): ReturnType<typeof F.mutPattern> {
+export function mutPatternFrom(input: T.MutPattern.Loose): ReturnType<typeof F.mutPattern> | T.MutPattern {
   if (isNodeData(input)) return input;
   return F.mutPattern({
-    mutableSpecifier: _resolveOneLeaf(input.mutableSpecifier, "mutable_specifier"),
-    pattern: _resolveOne(input.pattern, _K15, _K16),
+    mutableSpecifier: _resolveOneLeaf<T.MutableSpecifier>(input.mutableSpecifier, "mutable_specifier"),
+    pattern: _resolveOne<T.Pattern>(input.pattern, _K15, _K16),
   });
 }
 
-export function rangePatternFrom(input?: T.RangePattern.Loose): ReturnType<typeof F.rangePattern> {
+export function rangePatternFrom(input?: T.RangePattern.Loose): ReturnType<typeof F.rangePattern> | T.RangePattern {
   if (input !== undefined && isNodeData(input)) return input;
   return F.rangePattern(input as Parameters<typeof F.rangePattern>[0]);
 }
@@ -1685,28 +1687,28 @@ export function refPatternFrom(input?: NonNullable<T.RefPattern.Config['children
   if (isNodeData(input) && input.$type === 'ref_pattern') {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
-    return F.refPattern(child);
+    return F.refPattern(child as Parameters<typeof F.refPattern>[0]);
   }
-  return F.refPattern(input);
+  return F.refPattern(input as Parameters<typeof F.refPattern>[0]);
 }
 
-export function capturedPatternFrom(input: T.CapturedPattern.Loose): ReturnType<typeof F.capturedPattern> {
+export function capturedPatternFrom(input: T.CapturedPattern.Loose): ReturnType<typeof F.capturedPattern> | T.CapturedPattern {
   if (isNodeData(input)) return input;
   return F.capturedPattern({
-    identifier: _resolveOneLeaf(input.identifier, "identifier"),
-    pattern: _resolveOne(input.pattern, _K15, _K16),
+    identifier: _resolveOneLeaf<T.Identifier>(input.identifier, "identifier"),
+    pattern: _resolveOne<T.Pattern>(input.pattern, _K15, _K16),
   });
 }
 
-export function referencePatternFrom(input: T.ReferencePattern.Loose): ReturnType<typeof F.referencePattern> {
+export function referencePatternFrom(input: T.ReferencePattern.Loose): ReturnType<typeof F.referencePattern> | T.ReferencePattern {
   if (isNodeData(input)) return input;
   return F.referencePattern({
     mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
-    pattern: _resolveOne(input.pattern, _K15, _K16),
+    pattern: _resolveOne<T.Pattern>(input.pattern, _K15, _K16),
   });
 }
 
-export function orPatternFrom(input?: T.OrPattern.Loose): ReturnType<typeof F.orPattern> {
+export function orPatternFrom(input?: T.OrPattern.Loose): ReturnType<typeof F.orPattern> | T.OrPattern {
   if (input !== undefined && isNodeData(input)) return input;
   return F.orPattern(input as Parameters<typeof F.orPattern>[0]);
 }
@@ -1719,15 +1721,15 @@ export function orPatternUFormPrefixFrom(input: Omit<ConfigOf<T.OrPatternUFormPr
   return F.orPatternUFormPrefix(input);
 }
 
-export function negativeLiteralFrom(input: T.NegativeLiteral.Loose): ReturnType<typeof F.negativeLiteral> {
+export function negativeLiteralFrom(input: T.NegativeLiteral.Loose): ReturnType<typeof F.negativeLiteral> | T.NegativeLiteral {
   if (isNodeData(input)) return input;
   return F.negativeLiteral({
-    value: _resolveOne(input.value, _K43, _K0),
+    value: _resolveOne<T.IntegerLiteral | T.FloatLiteral>(input.value, _K43, _K0),
   });
 }
 
 export function integerLiteralFrom(input: string | T.IntegerLiteral) {
-  if (isNodeData(input)) return input;
+  if (typeof input !== 'string') return input;
   return F.integerLiteral(input);
 }
 
@@ -1736,30 +1738,30 @@ export function stringLiteralFrom(...input: readonly (NonNullable<T.StringLitera
     const data = input[0];
     return F.stringLiteral(...(data.$children ?? []));
   }
-  return F.stringLiteral(...input);
+  return F.stringLiteral(...(input as readonly NonNullable<T.StringLiteral.Config['children']>[number][]));
 }
 
-export function rawStringLiteralFrom(input: T.RawStringLiteral.Loose): ReturnType<typeof F.rawStringLiteral> {
+export function rawStringLiteralFrom(input: T.RawStringLiteral.Loose): ReturnType<typeof F.rawStringLiteral> | T.RawStringLiteral {
   if (isNodeData(input)) return input;
   return F.rawStringLiteral({
-    rawStringLiteralStart: _resolveOne(input.rawStringLiteralStart, _K0, _K0),
-    stringContent: _resolveOneBranch(input.stringContent, "_string_content"),
-    rawStringLiteralEnd: _resolveOne(input.rawStringLiteralEnd, _K0, _K0),
+    rawStringLiteralStart: _resolveOne<string>(input.rawStringLiteralStart, _K0, _K0),
+    stringContent: _resolveOneBranch<T._StringContent>(input.stringContent, "_string_content"),
+    rawStringLiteralEnd: _resolveOne<string>(input.rawStringLiteralEnd, _K0, _K0),
   });
 }
 
 export function charLiteralFrom(input: string | T.CharLiteral) {
-  if (isNodeData(input)) return input;
+  if (typeof input !== 'string') return input;
   return F.charLiteral(input);
 }
 
 export function escapeSequenceFrom(input: string | T.EscapeSequence) {
-  if (isNodeData(input)) return input;
+  if (typeof input !== 'string') return input;
   return F.escapeSequence(input);
 }
 
 export function booleanLiteralFrom(input: string | T.BooleanLiteral) {
-  if (isNodeData(input)) return input;
+  if (typeof input !== 'string') return input;
   return F.booleanLiteral(input);
 }
 
@@ -1767,12 +1769,12 @@ export function commentFrom(input?: NonNullable<T.Comment.Config['children']>[nu
   if (isNodeData(input) && input.$type === 'comment') {
     const data = input;
     const child = data.$children ? data.$children[0] : undefined;
-    return F.comment(child);
+    return F.comment(child as Parameters<typeof F.comment>[0]);
   }
-  return F.comment(input);
+  return F.comment(input as Parameters<typeof F.comment>[0]);
 }
 
-export function lineCommentFrom(input?: T.LineComment.Loose): ReturnType<typeof F.lineComment> {
+export function lineCommentFrom(input?: T.LineComment.Loose): ReturnType<typeof F.lineComment> | T.LineComment {
   if (input !== undefined && isNodeData(input)) return input;
   return F.lineComment(input as Parameters<typeof F.lineComment>[0]);
 }
@@ -1789,20 +1791,20 @@ export function lineCommentUFormContentFrom(input: Omit<ConfigOf<T.LineCommentUF
   return F.lineCommentUFormContent(input);
 }
 
-export function blockCommentFrom(input?: T.BlockComment.Loose): ReturnType<typeof F.blockComment> {
+export function blockCommentFrom(input?: T.BlockComment.Loose): ReturnType<typeof F.blockComment> | T.BlockComment {
   if (input !== undefined && isNodeData(input)) return input;
   return F.blockComment({
-    doc: _resolveOneLeaf(input?.doc, "_doc_comment"),
+    doc: _resolveOneLeaf<T.DocComment>(input?.doc, "_doc_comment"),
   });
 }
 
 export function identifierFrom(input: string | T.Identifier) {
-  if (isNodeData(input)) return input;
+  if (typeof input !== 'string') return input;
   return F.identifier(input);
 }
 
 export function shebangFrom(input: string | T.Shebang) {
-  if (isNodeData(input)) return input;
+  if (typeof input !== 'string') return input;
   return F.shebang(input);
 }
 
@@ -1822,21 +1824,21 @@ export function crateFrom(input?: T.Crate) {
 }
 
 export function metavariableFrom(input: string | T.Metavariable) {
-  if (isNodeData(input)) return input;
+  if (typeof input !== 'string') return input;
   return F.metavariable(input);
 }
 
 export function stringContentFrom(input: string | T.StringContent) {
-  if (isNodeData(input)) return input;
+  if (typeof input !== 'string') return input;
   return F.stringContent(input);
 }
 
 export function rawStringLiteralContentFrom(input: string | T.RawStringLiteralContent) {
-  if (isNodeData(input)) return input;
+  if (typeof input !== 'string') return input;
   return F.rawStringLiteralContent(input);
 }
 
 export function floatLiteralFrom(input: string | T.FloatLiteral) {
-  if (isNodeData(input)) return input;
+  if (typeof input !== 'string') return input;
   return F.floatLiteral(input);
 }

@@ -2679,8 +2679,6 @@ export function tupleExpression(config: T.TupleExpression.Config) {
   const fields = {
     attributes: config.attributes,
     elements: config.elements,
-    elements: config.elements,
-    elements: config.elements,
   };
   return {
     $type: 'tuple_expression' as const,
@@ -2688,9 +2686,7 @@ export function tupleExpression(config: T.TupleExpression.Config) {
     $named: true as const,
     $fields: fields,
     attributes(...values: T.AttributeItem[]) { return _fsm(config, tupleExpression, 'attributes', values, config?.attributes); },
-    elements(value?: T.Expression) { return _fs(config, tupleExpression, 'elements', value, config?.elements); },
     elements(...values: T.Expression[]) { return _fsm(config, tupleExpression, 'elements', values, config?.elements); },
-    elements(value?: T.Expression | undefined) { return _fs(config, tupleExpression, 'elements', value, config?.elements); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

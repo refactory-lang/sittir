@@ -5402,22 +5402,7 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": ":"
-            }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
-        },
-        {
-          "name": "asserts",
-          "propertyName": "asserts",
-          "paramName": "asserts",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -5425,7 +5410,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10551,22 +10536,7 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "assert"
-            }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
-        },
-        {
-          "name": "object",
-          "propertyName": "object",
-          "paramName": "object",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -10574,7 +10544,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17274,22 +17244,7 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": ":"
-            }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
-        },
-        {
-          "name": "type_predicate",
-          "propertyName": "typePredicate",
-          "paramName": "typePredicate",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -17297,7 +17252,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [

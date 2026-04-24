@@ -876,9 +876,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'tuple_expression': [
     { name: 'attributes', required: true, multiple: true },
-    { name: 'elements', required: true, multiple: false },
-    { name: 'elements', required: true, multiple: true },
-    { name: 'elements', required: false, multiple: false },
+    { name: 'elements', required: false, multiple: true },
   ],
   'tuple_pattern': [
   ],

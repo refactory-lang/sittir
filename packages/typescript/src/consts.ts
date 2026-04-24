@@ -523,7 +523,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'asserts_annotation': [
     { name: 'asserts', required: true, multiple: false },
-    { name: 'asserts', required: true, multiple: false },
   ],
   'assignment_expression': [
     { name: 'using', required: false, multiple: false },
@@ -758,7 +757,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'semicolon', required: true, multiple: false },
   ],
   'import_attribute': [
-    { name: 'object', required: true, multiple: false },
     { name: 'object', required: true, multiple: false },
   ],
   'import_clause': [
@@ -1072,7 +1070,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: true, multiple: false },
   ],
   'type_predicate_annotation': [
-    { name: 'typePredicate', required: true, multiple: false },
     { name: 'typePredicate', required: true, multiple: false },
   ],
   'type_query': [

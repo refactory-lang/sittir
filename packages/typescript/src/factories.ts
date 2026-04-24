@@ -421,15 +421,13 @@ export function importSpecifierUFormAs(config: Omit<ConfigOf<T.ImportSpecifierUF
 export function importAttribute(config: T.ImportAttribute.Config) {
   const fields = {
     object: config.object,
-    object: config.object,
   };
   return {
     $type: 'import_attribute' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    object(value?: "with" | "assert") { return _fs(config, importAttribute, 'object', value, config?.object); },
-    object(value?: T.Object) { return _fs(config, importAttribute, 'object', value, config?.object); },
+    object(value?: "with" | "assert" | T.Object) { return _fs(config, importAttribute, 'object', value, config?.object); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3488,7 +3486,6 @@ export function asserts(child: (T.TypePredicate | T.Identifier | T.This)) {
 
 export function assertsAnnotation(config: T.AssertsAnnotation.Config) {
   const fields = {
-    asserts: ":" as const,
     asserts: config.asserts,
   };
   return {
@@ -3496,8 +3493,7 @@ export function assertsAnnotation(config: T.AssertsAnnotation.Config) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    get asserts() { return fields.asserts; },
-    asserts(value?: T.Asserts) { return _fs(config, assertsAnnotation, 'asserts', value, config?.asserts); },
+    asserts(value?: ":" | T.Asserts) { return _fs(config, assertsAnnotation, 'asserts', value, config?.asserts); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3733,7 +3729,6 @@ export function typePredicate(config: T.TypePredicate.Config) {
 
 export function typePredicateAnnotation(config: T.TypePredicateAnnotation.Config) {
   const fields = {
-    type_predicate: ":" as const,
     type_predicate: config.typePredicate,
   };
   return {
@@ -3741,8 +3736,7 @@ export function typePredicateAnnotation(config: T.TypePredicateAnnotation.Config
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    get typePredicate() { return fields.type_predicate; },
-    typePredicate(value?: T.TypePredicate) { return _fs(config, typePredicateAnnotation, 'typePredicate', value, config?.typePredicate); },
+    typePredicate(value?: ":" | T.TypePredicate) { return _fs(config, typePredicateAnnotation, 'typePredicate', value, config?.typePredicate); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

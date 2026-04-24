@@ -148,12 +148,12 @@ describe('import_specifier', () => {
 
 describe('import_attribute', () => {
   it('factory produces correct type', () => {
-    const node = ir.importAttribute({ object: 'test' as any, object: { $type: 'object', $text: 'test' } as any });
+    const node = ir.importAttribute({ object: { $type: 'object', $text: 'test' } as any });
     expect(node.$type).toBe('import_attribute');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.importAttribute({ object: 'test' as any, object: { $type: 'object', $text: 'test' } as any });
+    const node = ir.importAttribute({ object: { $type: 'object', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

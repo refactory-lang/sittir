@@ -668,6 +668,12 @@ function childElementType(node: { children: readonly AssembledChild[] }, nodeMap
     const parts = new Set<string>()
     for (const c of node.children) {
         for (const t of slotKindNames(c)) {
+            // Hidden-keyword kinds (`_not_escape_sequence` → `'\\'`) inline
+            // their literal as a string type member — same rule types.ts
+            // applies to `fieldTypeComponents`. Avoids dangling references
+            // to `NotEscapeSequence` / `KwMove` etc.
+            const lit = resolveHiddenKeywordLiteral(t, nodeMap)
+            if (lit !== undefined) { parts.add(JSON.stringify(lit)); continue }
             const ref = nodeMap.nodes.get(t)
             if (!ref) { parts.add(JSON.stringify(t)); continue }
             const name = ref.typeName

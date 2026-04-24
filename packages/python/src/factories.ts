@@ -390,7 +390,6 @@ export function ifStatement(config: T.IfStatement.Config) {
     condition: config.condition,
     consequence: config.consequence,
     alternative: config.alternative,
-    alternative: config.alternative,
   };
   return {
     $type: 'if_statement' as const,
@@ -399,8 +398,7 @@ export function ifStatement(config: T.IfStatement.Config) {
     $fields: fields,
     condition(value?: T.Expression) { return _fs(config, ifStatement, 'condition', value, config?.condition); },
     consequence(value?: T.Suite) { return _fs(config, ifStatement, 'consequence', value, config?.consequence); },
-    alternative(...values: T.ElifClause[]) { return _fsm(config, ifStatement, 'alternative', values, config?.alternative); },
-    alternative(value?: T.ElseClause | undefined) { return _fs(config, ifStatement, 'alternative', value, config?.alternative); },
+    alternative(...values: (T.ElifClause | T.ElseClause)[]) { return _fsm(config, ifStatement, 'alternative', values, config?.alternative); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1873,15 +1871,13 @@ export function type(child: (T.Expression | T.SplatType | T.GenericType | T.Unio
 export function splatType(config: T.SplatType.Config) {
   const fields = {
     identifier: config.identifier,
-    identifier: config.identifier,
   };
   return {
     $type: 'splat_type' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    identifier(value?: "*" | "**") { return _fs(config, splatType, 'identifier', value, config?.identifier); },
-    identifier(value?: T.Identifier) { return _fs(config, splatType, 'identifier', value, config?.identifier); },
+    identifier(value?: "*" | "**" | T.Identifier) { return _fs(config, splatType, 'identifier', value, config?.identifier); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2307,7 +2303,7 @@ export function string(text: string) {
   };
 }
 
-export function stringContent(...children: (T.EscapeInterpolation | T.EscapeSequence | T.NotEscapeSequence | T._StringContent)[]) {
+export function stringContent(...children: (T.EscapeInterpolation | T.EscapeSequence | "\\" | T._StringContent)[]) {
   _assertNonEmpty(children, 'string_content.children');
   return {
     $type: 'string_content' as const,

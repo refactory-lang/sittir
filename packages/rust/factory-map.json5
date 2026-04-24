@@ -493,8 +493,6 @@
     ],
     "tuple_expression": [
       "attributes",
-      "elements",
-      "elements",
       "elements"
     ],
     "struct_expression": [

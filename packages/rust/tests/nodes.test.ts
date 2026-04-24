@@ -1090,12 +1090,12 @@ describe('parenthesized_expression', () => {
 
 describe('tuple_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.tuple({ attributes: [{ $type: 'attribute_item', $text: 'test' } as any], elements: { $type: '_expression', $text: 'test' } as any, elements: [{ $type: '_expression', $text: 'test' } as any] });
+    const node = ir.tuple({ attributes: [{ $type: 'attribute_item', $text: 'test' } as any] });
     expect(node.$type).toBe('tuple_expression');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.tuple({ attributes: [{ $type: 'attribute_item', $text: 'test' } as any], elements: { $type: '_expression', $text: 'test' } as any, elements: [{ $type: '_expression', $text: 'test' } as any] });
+    const node = ir.tuple({ attributes: [{ $type: 'attribute_item', $text: 'test' } as any] });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

@@ -2,6 +2,7 @@
 
 import type { PythonGrammar } from './grammar.js';
 import type { NodeData as BaseNodeData, NodeConfig as BaseNodeConfig, TreeNode as BaseTreeNode, ConfigOf, NodeKind, NodeNs, AnyTreeNodeOf as AnyTreeNode, Terminal, NonEmptyArray, AutoStamp, BooleanKeyword, Bitflag } from '@sittir/types';
+import { Operators } from './consts.js';
 
 export type { PythonGrammar };
 
@@ -469,10 +470,12 @@ export interface AssertStatement {
   readonly $children: NonEmptyArray<Expression>;
 }
 
-export interface ExpressionStatement {
+export interface ExpressionStatementUFormTuple {
   readonly $type: 'expression_statement';
+  readonly $variant: 'tuple';
 }
 
+export type ExpressionStatement = ExpressionStatementUFormTuple;
 export interface NamedExpression {
   readonly $type: 'named_expression';
   readonly $fields: {
@@ -504,8 +507,7 @@ export interface IfStatement {
   readonly $fields: {
     readonly condition: Expression;
     readonly consequence: Suite;
-    readonly alternative: readonly (ElifClause)[];
-    readonly alternative?: ElseClause;
+    readonly alternative?: readonly (ElifClause | ElseClause)[];
   };
 }
 
@@ -1027,8 +1029,7 @@ export interface Type {
 export interface SplatType {
   readonly $type: 'splat_type';
   readonly $fields: {
-    readonly identifier: "*" | "**";
-    readonly identifier: Identifier;
+    readonly identifier: "*" | "**" | Identifier;
   };
 }
 
@@ -1193,7 +1194,7 @@ export interface String {
 
 export interface StringContent {
   readonly $type: 'string_content';
-  readonly $children: NonEmptyArray<EscapeInterpolation | EscapeSequence | NotEscapeSequence | _StringContent>;
+  readonly $children: NonEmptyArray<EscapeInterpolation | EscapeSequence | "\\" | _StringContent>;
 }
 
 export interface Interpolation {
@@ -1296,6 +1297,7 @@ export interface PrintStatementTree extends TreeNode<'print_statement'> {}
 export interface ChevronTree extends TreeNode<'chevron'> {}
 export interface AssertStatementTree extends TreeNode<'assert_statement'> {}
 export interface ExpressionStatementTree extends TreeNode<'expression_statement'> {}
+export interface ExpressionStatementUFormTupleTree extends TreeNode<'expression_statement'> {}
 export interface NamedExpressionTree extends TreeNode<'named_expression'> {}
 export interface ReturnStatementTree extends TreeNode<'return_statement'> {}
 export interface DeleteStatementTree extends TreeNode<'delete_statement'> {}
@@ -1916,6 +1918,7 @@ export interface KindMap {
 }
 
 export interface VariantMap {
+  'expression_statement': { tuple: ExpressionStatementUFormTuple };
   'with_clause': { bare: WithClauseUFormBare; paren: WithClauseUFormParen };
   'assignment': { eq: AssignmentUFormEq; type: AssignmentUFormType; typed: AssignmentUFormTyped };
 }

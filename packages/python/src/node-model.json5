@@ -5048,7 +5048,7 @@
           "name": "alternative",
           "propertyName": "alternative",
           "paramName": "alternative",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -5057,24 +5057,7 @@
               "multiplicity": "array",
               "name": "elif_clause",
               "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "elif_clause"
-            ]
-          }
-        },
-        {
-          "name": "alternative",
-          "propertyName": "alternative",
-          "paramName": "alternative",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -5086,6 +5069,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
+              "elif_clause",
               "else_clause"
             ]
           }
@@ -7059,22 +7043,7 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "**"
-            }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
-        },
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -7082,7 +7051,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [

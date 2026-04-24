@@ -1035,9 +1035,7 @@ export function wrapTupleExpression(data: _NodeData, tree: TreeHandle): WrappedN
   return {
     ...data,
     get attributes() { return drillInAll(data.$fields?.['attributes'], tree); },
-    get elements() { return drillIn(data.$fields?.['elements'], tree); },
     get elements() { return drillInAll(data.$fields?.['elements'], tree); },
-    get elements() { return drillIn(data.$fields?.['elements'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<TupleExpression>;
 }

@@ -196,7 +196,6 @@
     "if_statement": [
       "condition",
       "consequence",
-      "alternative",
       "alternative"
     ],
     "elif_clause": [
@@ -345,7 +344,6 @@
       "arguments"
     ],
     "splat_type": [
-      "identifier",
       "identifier"
     ],
     "generic_type": [

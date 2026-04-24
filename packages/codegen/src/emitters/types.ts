@@ -20,6 +20,7 @@ import type {
 import {
     AssembledBranch, AssembledContainer, AssembledPolymorph,
     AssembledSupertype, snakeToCamel,
+    isNodeRef, isTerminalValue, isUnresolvedRef,
 } from '../compiler/node-map.ts'
 import { loadRawEntries } from '../validate/node-types-loader.ts'
 import { isAutoStampField, isRequired, isMultiple, isNonEmpty, slotKindNames, slotLiteralValues, resolveHiddenKeywordLiteral, isAutoStampSlot, referencedKinds, fieldTypeComponents, isValidIdent, keywordPresenceKind, keywordPresenceValues } from './shared.ts'
@@ -35,9 +36,11 @@ export interface EmitTypesConfig {
 }
 
 const missingKindTypes = new Map<string, string>()
+const referencedBitflagConsts = new Set<string>()
 
 export function emitTypes(config: EmitTypesConfig): string {
     missingKindTypes.clear()
+    referencedBitflagConsts.clear()
     const { grammar, nodeMap } = config
     const grammarKeys = buildGrammarKeySet(grammar)
     const { structNodes, leafKinds, supertypes, keywordKinds, leafValueMap } =
@@ -122,14 +125,28 @@ export function emitTypes(config: EmitTypesConfig): string {
     for (const node of structNodes) {
         generatedTypes.add(node.typeName)
 
-        if (node.modelType === 'polymorph' && node.forms.length > 1) {
+        // Polymorph kinds always emit per-form interfaces so factories /
+        // from / dispatch code can reference `T.<FormTypeName>` without
+        // drift. Single-form polymorphs still need the form interface
+        // because the dispatcher types its `config` parameter as
+        // `ConfigOf<T.<FormTypeName>>` — gating on `forms.length > 1`
+        // produced dangling imports for grammars like python whose
+        // `expression_statement` collapses to one tuple form.
+        if (node.modelType === 'polymorph' && node.forms.length > 0) {
             const formTypeNames: string[] = []
             for (const form of node.forms) {
                 const ftn = resolvePolymorphFormTypeName(form)
                 formTypeNames.push(ftn)
                 emitFormInterface(lines, node, form, ftn, nodeMap, lookupUnion)
             }
-            lines.push(`export type ${node.typeName} = ${formTypeNames.join(' | ')};`)
+            if (node.forms.length > 1) {
+                lines.push(`export type ${node.typeName} = ${formTypeNames.join(' | ')};`)
+            } else {
+                // Single-form polymorph — expose the parent kind's type name
+                // as an alias over the lone form so consumer references to
+                // `T.<ParentTypeName>` continue to resolve.
+                lines.push(`export type ${node.typeName} = ${formTypeNames[0]};`)
+            }
             polymorphTypeNames.set(node.kind, formTypeNames)
         } else {
             emitInterface(lines, node, nodeMap, lookupUnion)
@@ -266,6 +283,17 @@ export function emitTypes(config: EmitTypesConfig): string {
         emitNamespaceSugarBlock(lines, kind, node, refineInfoByKind.get(kind))
     }
     lines.push('')
+
+    // Splice in the bitflag const-enum import after the main header imports.
+    // Collected during emit so only consts actually referenced by `Bitflag<>`
+    // expressions are imported — no dead identifiers.
+    if (referencedBitflagConsts.size > 0) {
+        const sortedNames = [...referencedBitflagConsts].sort()
+        const importLine = `import { ${sortedNames.join(', ')} } from './consts.js';`
+        // Header layout (lines 0-4): comment, blank, grammar import, sittir import, blank.
+        // Insert the consts import at index 4 so it sits with the other imports.
+        lines.splice(4, 0, importLine)
+    }
 
     return lines.join('\n')
 }
@@ -888,7 +916,27 @@ function fieldTypeParts(field: AssembledField, nodeMap?: NodeMap): string[] {
 }
 
 function childContentParts(child: AssembledChild, nodeMap: NodeMap): string[] {
-    return slotKindNames(child).map(t => {
+    // Inline pure-literal values as string-literal types, mirroring
+    // `fieldTypeComponents`. A child slot that carries terminal values
+    // alongside node refs (e.g. `children` on a union) would surface the
+    // literal text as a string-literal union member.
+    const parts: string[] = []
+    for (const v of child.values) {
+        if (isTerminalValue(v)) {
+            parts.push(JSON.stringify(v.value))
+            continue
+        }
+        if (!isNodeRef(v)) continue
+        const t = isUnresolvedRef(v.node) ? v.node.name : v.node.kind
+        // Hidden-keyword kinds (`_not_escape_sequence` → `'\\'`) inline
+        // their literal text — same rule as `fieldTypeComponents`. Avoids
+        // the dangling `NotEscapeSequence` reference that would otherwise
+        // require an extra stub alias.
+        const lit = resolveHiddenKeywordLiteral(t, nodeMap)
+        if (lit !== undefined) {
+            parts.push(JSON.stringify(lit))
+            continue
+        }
         const n = nodeMap.nodes.get(t)
         if (!n) {
             throw new Error(
@@ -896,8 +944,9 @@ function childContentParts(child: AssembledChild, nodeMap: NodeMap): string[] {
             )
         }
         const name = n.typeName
-        return /^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t)
-    })
+        parts.push(/^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t))
+    }
+    return parts
 }
 
 // `childrenOf` → `node.structuralChildren` (getter on AssembledNodeBase +
@@ -1087,6 +1136,7 @@ function wrapFieldTypeForBrand(
     if (kw === 'boolean') return `BooleanKeyword<${typeExpr}>`
     if (kw === 'bitflag') {
         const constName = resolveBitflagConstName(kind, f, nodeMap) ?? 'number'
+        if (constName !== 'number') referencedBitflagConsts.add(constName)
         return `Bitflag<${constName}, ${typeExpr}>`
     }
     if (isAutoStampField(f, nodeMap)) return `AutoStamp<${typeExpr}>`

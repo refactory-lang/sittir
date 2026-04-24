@@ -719,8 +719,7 @@ export type ImportSpecifier = ImportSpecifierUFormName | ImportSpecifierUFormAs;
 export interface ImportAttribute {
   readonly $type: 'import_attribute';
   readonly $fields: {
-    readonly object: "with" | "assert";
-    readonly object: Object;
+    readonly object: "with" | "assert" | Object;
   };
 }
 
@@ -1762,8 +1761,7 @@ export interface Asserts {
 export interface AssertsAnnotation {
   readonly $type: 'asserts_annotation';
   readonly $fields: {
-    readonly asserts: AutoStamp<":">;
-    readonly asserts: Asserts;
+    readonly asserts: ":" | Asserts;
   };
 }
 
@@ -1854,8 +1852,7 @@ export interface TypePredicate {
 export interface TypePredicateAnnotation {
   readonly $type: 'type_predicate_annotation';
   readonly $fields: {
-    readonly type_predicate: AutoStamp<":">;
-    readonly type_predicate: TypePredicate;
+    readonly type_predicate: ":" | TypePredicate;
   };
 }
 
