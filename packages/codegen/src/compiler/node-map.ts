@@ -495,40 +495,7 @@ export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
 
 export function deriveFields(rule: Rule): AssembledField[] {
     auditDerivationShape(rule, 'fields')
-    const raw = deriveFieldsRaw(rule, 'single')
-    // Merge entries with the same field name. Sources of duplicates:
-    //  - Python commaSep patterns: `seq(field('name', x), repeat(seq(',',
-    //    field('name', x))))` surfaces two entries with the same name
-    //    but different outer multiplicities; merging unions their value
-    //    sets and carries forward the stronger multiplicity.
-    //  - Override-source wrapper fields that descend into a choice and
-    //    collect inner fields (see the `rule.source === 'override'`
-    //    branch in `deriveFieldsRaw`); the outer wrapper and some inner
-    //    branches can share a field name.
-    // Single-source fields skip the clone/merge fast path so the
-    // common case allocates zero extra objects.
-    if (raw.length <= 1) return raw
-    const byName = new Map<string, AssembledField>()
-    for (const f of raw) {
-        const existing = byName.get(f.name)
-        if (!existing) {
-            byName.set(f.name, f)
-            continue
-        }
-        const mergedAliasSources = (existing.aliasSources || f.aliasSources)
-            ? { ...(existing.aliasSources ?? {}), ...(f.aliasSources ?? {}) }
-            : undefined
-        byName.set(f.name, {
-            ...existing,
-            values: dedupeValues([...existing.values, ...f.values]),
-            aliasSources: mergedAliasSources,
-            projection: {
-                ...existing.projection,
-                kinds: Array.from(new Set([...existing.projection.kinds, ...f.projection.kinds])),
-            },
-        })
-    }
-    return Array.from(byName.values())
+    return deriveFieldsRaw(rule, 'single')
 }
 
 /**
@@ -583,34 +550,6 @@ function deriveFieldsRaw(
                 projection: { typeName: '', kinds: projectionKinds },
             }
 
-            // Override-wrapper fields wrapping a choice whose branches
-            // carry their own inner fields (e.g. Python's import_from_statement
-            // where `field('wildcard_import', choice(wildcard_import,
-            // _import_list, ...))` and `_import_list` expands to a commaSep1
-            // of `field('name', ...)`). Tree-sitter at parse time assigns
-            // whichever field the concrete branch declares, so BOTH the
-            // outer wrapper name AND any inner field names can appear in
-            // the live parse. The factory needs parameters for both so the
-            // generated Config surface / fluent setters match runtime
-            // reality. Descend into the choice and merge inner fields.
-            // Duplicate-name drops silently (outer wins) — a field name
-            // shared between inner and outer is the rare pathological case
-            // and the outer wrapper's declared shape is canonical.
-            if (rule.source === 'override' && rule.content.type === 'choice') {
-                const innerFields = deriveFieldsRaw(rule.content, 'optional')
-                const seen = new Set([rule.name])
-                const extras: AssembledField[] = []
-                for (const f of innerFields) {
-                    if (seen.has(f.name)) continue
-                    seen.add(f.name)
-                    // Inner branches are alternatives, so inner fields are
-                    // structurally optional from the parent's perspective.
-                    // Downgrade any 'single'/'nonEmptyArray' values to optional/array.
-                    const optValues = f.values.map(v => ({ ...v, multiplicity: toOptionalMultiplicity(v.multiplicity) }))
-                    extras.push({ ...f, values: optValues })
-                }
-                if (extras.length > 0) return [outerField, ...extras]
-            }
             return [outerField]
         }
         case 'seq':
@@ -621,39 +560,12 @@ function deriveFieldsRaw(
             return deriveFieldsRaw(rule.content, 'array')
         case 'repeat1':
             return deriveFieldsRaw(rule.content, 'nonEmptyArray')
-        case 'choice': {
-            // Walk each branch independently, then merge: a field is
-            // required (and non-empty) only if it appears in EVERY
-            // branch. Fields present in only some branches are
-            // optional from the parent's perspective — another branch
-            // could be taken instead — so values of absent-branch
-            // fields get their multiplicity downgraded to 'optional'.
-            // This distinguishes `update_expression`-style choices
-            // (every branch contributes the same fields, all required)
-            // from `function_modifiers`-style choices (each branch
-            // contributes a different field, each optional).
-            const perBranch = rule.members.map(m =>
-                deriveFieldsRaw(m, outerMultiplicity),
-            )
-            const inAll = (name: string) =>
-                perBranch.every(branch => branch.some(f => f.name === name))
-            const result: AssembledField[] = []
-            const seen = new Set<string>()
-            for (const branch of perBranch) {
-                for (const f of branch) {
-                    if (seen.has(f.name)) continue
-                    seen.add(f.name)
-                    if (inAll(f.name)) {
-                        result.push(f)
-                    } else {
-                        // Not in all branches → optional slot: downgrade multiplicities
-                        const optValues = f.values.map(v => ({ ...v, multiplicity: toOptionalMultiplicity(v.multiplicity) }))
-                        result.push({ ...f, values: optValues })
-                    }
-                }
-            }
-            return result
-        }
+        case 'choice':
+            // Canonical choices are union-shaped (all arms token-like /
+            // symbol-like / aliased variants). They contribute children,
+            // not fields — any fields they would contribute ride on the
+            // concrete node kind each arm resolves to.
+            return []
         case 'clause':
             return deriveFieldsRaw(rule.content, 'optional')
         case 'variant':
@@ -693,23 +605,6 @@ function deriveFieldsRaw(
                 `simplify should have stripped / classified it before derivation. ` +
                 `currentAuditKind=${currentAuditKind ?? '(none)'}`,
             )
-    }
-}
-
-/**
- * Convert a non-optional multiplicity to its optional equivalent.
- * Used when a field appears in only some choice branches.
- *
- * - `single` → `optional`
- * - `nonEmptyArray` → `array` (can now be empty from parent's perspective)
- * - `array` → `array` (already allows empty)
- * - `optional` → `optional` (already optional)
- */
-function toOptionalMultiplicity(m: Multiplicity): Multiplicity {
-    switch (m) {
-        case 'single': return 'optional'
-        case 'nonEmptyArray': return 'array'
-        default: return m
     }
 }
 
@@ -836,34 +731,14 @@ function walkForChildren(
         case 'repeat1':
             walkForChildren(rule.content, out, 'nonEmptyArray')
             break
-        case 'choice': {
-            // Walk each branch into a scratch bucket, then merge into
-            // `out`: a child slot is only required / non-empty if it
-            // appears in EVERY branch of the choice. Children in only
-            // some branches get their multiplicity downgraded to optional.
-            const perBranch: AssembledChild[][] = rule.members.map(m => {
-                const bucket: AssembledChild[] = []
-                walkForChildren(m, bucket, multiplicity)
-                return bucket
-            })
-            const inAll = (name: string) =>
-                perBranch.every(branch => branch.some(c => c.name === name))
-            const seen = new Set<string>()
-            for (const branch of perBranch) {
-                for (const c of branch) {
-                    if (seen.has(c.name)) continue
-                    seen.add(c.name)
-                    if (inAll(c.name)) {
-                        out.push(c)
-                    } else {
-                        // Not in every branch → downgrade multiplicities to optional
-                        const optValues = c.values.map(v => ({ ...v, multiplicity: toOptionalMultiplicity(v.multiplicity) }))
-                        out.push({ ...c, values: optValues })
-                    }
-                }
-            }
+        case 'choice':
+            // Canonical choice: union of symbol-like arms — each arm
+            // contributes ONE child value at the same multiplicity.
+            // Walk arms directly; per-branch merge + downgrade is no
+            // longer needed now that heterogeneous-field choices are
+            // all resolved via variant() adoption upstream.
+            for (const m of rule.members) walkForChildren(m, out, multiplicity)
             break
-        }
         case 'field':
             // Fields are handled by deriveFields, not children
             break

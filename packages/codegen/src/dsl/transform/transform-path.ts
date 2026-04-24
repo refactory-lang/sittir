@@ -354,7 +354,7 @@ function descendThroughAlias(
  * target shape. Direct spread preserves exactly what we received.
  */
 function reconstructAlias(rule: RuntimeRule, newContent: RuntimeRule): RuntimeRule {
-    return { ...(rule as object), content: newContent } as RuntimeRule
+    return { ...(rule as unknown as Record<string, unknown>), content: newContent } as unknown as RuntimeRule
 }
 
 /**

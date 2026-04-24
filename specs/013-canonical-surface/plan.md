@@ -293,3 +293,72 @@ separately so Phase 2 can be reverted independently.
   sidecar Map<fieldName, separatorSpec> that the assemble layer
   attaches to the AssembledBranch — or a rule-level annotation.
   Decide when we get there.
+
+## Delivered
+
+### Phase 1 — Canonical form + simplify pipeline additions
+
+- `mergeChoiceBranches` + `hoistSharedFieldAcrossChoiceBranches`
+  folded into `simplifyRule` (commits before this session).
+- Cross-branch field hoist added (session commit `459e4953`).
+- `classifyTopLevelShape` in node-map.ts — recursive walker that
+  flags every non-canonical choice reaching derivation. Audit env
+  var `SITTIR_AUDIT_DERIVE` controls report vs strict vs off.
+
+### Phase 2 — Walker shrink + strict-audit default
+
+Pipeline infrastructure:
+- **Infra (A)** — `wire.ts` composes polymorphs onto hidden-rule
+  parents (commit `be602c05`). `buildPolymorphParentFn` reads
+  `context.deposits` for hidden-name parents; inject skips keys
+  compose filled; `injectSyntheticRules` (evaluate.ts) skips keys
+  the rule fn already wrote. Added `polymorphVisibleName` /
+  `polymorphHiddenName` helpers that strip leading `_` from
+  hidden parents so nested variants don't inherit the hidden-ness
+  of their parent.
+- **Infra (B)** — `applyPath` descends through `alias` (commit
+  `c5d121c2`). Symmetric to the existing field / optional / repeat
+  descent; unblocks polymorph adoption on rules whose path crosses
+  an alias boundary (python `dict_pattern`).
+
+Grammar-author adoption drained the audit:
+- Rust `_visibility_modifier_pub: {'1/0/1/3':'in_path'}` —
+  nested split unlocked by (A).
+- Python `_match_block: {0:'block'}` — base-grammar hidden rule
+  as polymorph parent.
+- Python `dict_pattern: {'1/0/0/0':'kv'}` — unlocked by (B).
+- Typescript `_export_statement_default` — three-level cascade
+  (outer split → from_arm inner → decl_arm default_kw inner).
+- Typescript `class_body: {'1/0/0':'method','1/0/1':'method_sig','1/0/3':'member'}`.
+- Typescript `_for_header: {'1/0':'lhs','1/1':'var_kind','1/2':'let_const_kind'}`.
+- Typescript `public_field_definition: {'1/0/0':'declare_first','1/0/1':'access_first','2/0':'static_mods','2/1':'abstract_first','2/2':'readonly_first','2/3':'accessor_opt'}`
+  — resolved via tree-sitter's `inline:` config (commit `df8a8fa3`)
+  rather than GLR conflicts. Each variant body is folded into the
+  parent's LR state machine at the alias site; the alias survives
+  inlining so sittir's canonical shape classification still holds.
+
+Walker shrink (commit `aba04edf` + follow-up):
+- **`DERIVE_AUDIT_MODE` default flipped to `'strict'`.** Env var
+  opt-outs: `SITTIR_AUDIT_DERIVE=1` → `'report'`;
+  `SITTIR_AUDIT_DERIVE=off` → `'off'`. `real-grammar.test.ts` uses
+  `beforeAll` to switch to report mode since it consumes raw base
+  grammars. The `deriveAuditMode()` accessor reads env dynamically
+  so test-level overrides take effect.
+- **`deriveFields` collapsed** from merge-loop to a single
+  `deriveFieldsRaw(rule, 'single')` call — canonical input never
+  produces duplicate field names, so the map-and-merge step is
+  dead.
+- **`deriveFieldsRaw` `case 'choice'` shrunk** to `return []`.
+  Canonical choices are union-shaped (token-like / symbol-like);
+  they contribute children, not fields — fields ride on concrete
+  node kinds each arm resolves to.
+- **`deriveFieldsRaw` override-wrapper-choice branch deleted**.
+  With audit strict, these choices are canonical and the inner
+  descent + `toOptionalMultiplicity` downgrade is dead.
+- **`walkForChildren` `case 'choice'` shrunk** to a flat loop
+  over arms (same multiplicity, no per-branch+downgrade merge).
+- **`toOptionalMultiplicity` deleted** — no remaining callers.
+
+Corpus floors: 6 failures (1 less than pre-session baseline of 7 —
+typescript factory round-trip test now passes). Audit clean across
+rust, python, typescript.
