@@ -31,7 +31,7 @@
  * produces a full `simplifiedRules` map on `OptimizedGrammar`.
  */
 
-import type { Rule, ChoiceRule, SeqRule, FieldRule } from './rule.ts'
+import type { Rule, ChoiceRule, SeqRule, FieldRule, RepeatRule, Repeat1Rule } from './rule.ts'
 
 /** Does this string lex as a "word" under the grammar's `word` rule? */
 function isKeywordShape(value: string, wordMatcher: RegExp | undefined): boolean {
@@ -152,30 +152,39 @@ export function simplifyRules(
 ): Record<string, Rule> {
     const out: Record<string, Rule> = {}
     for (const [name, rule] of Object.entries(rules)) {
-        out[name] = normalizeToFixpoint(rule, wordMatcher)
+        out[name] = normalizeToFixpoint(rule, wordMatcher, rules)
     }
     return out
 }
 
 /**
- * Run `simplifyRule` + `canonicalize` to fixpoint. Each individual
- * transformation is non-increasing on rule nesting and designed to be
- * idempotent on its own, but the two passes can enable each other —
- * e.g. canonicalize may merge a choice into a seq whose inner members
- * are shapes simplifyRule can further collapse (single-member seqs,
- * empty-seq sentinels from freshly-stripped literals, etc.). A single
- * forward pass misses those cascaded simplifications.
+ * Run `inlineGroupRefs` + `simplifyRule` + `canonicalize` to fixpoint.
+ * Each individual transformation is non-increasing on rule nesting
+ * and designed to be idempotent on its own, but the three passes can
+ * enable each other:
  *
- * The loop terminates because both transformations are non-increasing
- * on the rule's structural size (member counts, nesting depth); any
- * change produces a strictly smaller tree by one of those metrics.
- * Safety cap at 16 iterations — a real grammar converges in 2-3.
+ *   - `inlineGroupRefs` substitutes a hidden group/multi's body for
+ *     its symbol reference. When the body is a seq and the ref sat
+ *     inside another seq, the substitution creates a nested-seq
+ *     shape `simplifyRule` can flatten.
+ *   - `simplifyRule` strips anonymous delimiters and collapses
+ *     single-member wrappers; a freshly-stripped branch may enable
+ *     `canonicalize` to merge a sibling choice whose arms now agree.
+ *   - `canonicalize` merges a choice of structurally-equivalent
+ *     branches into a flat seq; the merged members may themselves
+ *     be shapes `simplifyRule` can further collapse.
+ *
+ * The loop terminates because all three transformations are
+ * non-increasing on the rule's structural size (member counts,
+ * nesting depth); any change produces a strictly smaller tree by one
+ * of those metrics. Safety cap at 16 iterations — a real grammar
+ * converges in 2-3.
  */
-function normalizeToFixpoint(rule: Rule, wordMatcher?: RegExp): Rule {
+function normalizeToFixpoint(rule: Rule, wordMatcher: RegExp | undefined, rules: Readonly<Record<string, Rule>>): Rule {
     const MAX_ITERS = 16
     let current = rule
     for (let i = 0; i < MAX_ITERS; i++) {
-        const next = canonicalize(simplifyRule(current, wordMatcher))
+        const next = canonicalize(simplifyRule(inlineGroupRefs(current, rules), wordMatcher))
         if (rulesStructurallyEqual(current, next)) return next
         current = next
     }
@@ -466,3 +475,105 @@ function dedupeByJson(rules: readonly Rule[]): Rule[] {
 // compileWordMatcher moved to ./common.ts — it is consumed by assemble,
 // optimize, and emitters/templates.ts, so it belongs in a shared utility
 // module rather than in the "simplify" phase file.
+
+// ---------------------------------------------------------------------------
+// Hidden group / multi inlining (moved from assemble.ts to participate in
+// the simplify fixpoint).
+// ---------------------------------------------------------------------------
+
+/**
+ * Inline symbol references to GROUP-classified hidden rules by
+ * substituting each `symbol` ref with the group's content. Matches
+ * tree-sitter's parse-time behavior: groups are "hidden seq with
+ * fields" helpers (e.g. python's `_import_list`) whose fields surface
+ * on the referencer's parse tree. Preserving the symbol reference
+ * would force the NodeMap to claim a child slot that tree-sitter
+ * never produces.
+ *
+ * Scope limited to GROUPS + MULTI helpers specifically (not all hidden
+ * rules):
+ *   - Supertypes — polymorph dispatch points; the reference IS the
+ *     structural child slot. Stay as-is.
+ *   - Other hidden rules (helpers that classify as branch/container
+ *     because they lack fields, or leaves/tokens) — no field data
+ *     to inline. Stay as-is.
+ *   - Visible symbols — distinct parse-tree nodes with their own
+ *     $type. Stay as-is.
+ *
+ * Cycles: visited set prevents infinite loops across chained groups.
+ */
+export function inlineGroupRefs(
+    rule: Rule,
+    rules: Readonly<Record<string, Rule>>,
+    visited: ReadonlySet<string> = new Set(),
+): Rule {
+    const recurse = (r: Rule, v: ReadonlySet<string>): Rule => inlineGroupRefs(r, rules, v)
+    switch (rule.type) {
+        case 'symbol': {
+            if (!rule.hidden) return rule
+            if (visited.has(rule.name)) return rule
+            const target = rules[rule.name]
+            if (!target) return rule
+            const inlineTarget = resolveGroupOrMultiInlineTarget(target)
+            if (!inlineTarget) return rule
+            const next = new Set(visited); next.add(rule.name)
+            return inlineGroupRefs(inlineTarget, rules, next)
+        }
+        case 'seq':
+            return { ...rule, members: rule.members.map(m => recurse(m, visited)) }
+        case 'choice':
+            return { ...rule, members: rule.members.map(m => recurse(m, visited)) }
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'field':
+        case 'variant':
+        case 'clause':
+        case 'group':
+        case 'token':
+            return { ...rule, content: recurse((rule as { content: Rule }).content, visited) } as Rule
+        default:
+            return rule
+    }
+}
+
+/**
+ * Return the rule to inline for a hidden symbol target, or `null` if the
+ * target should not be inlined. Two target shapes are inlined:
+ *  - Hidden GROUP rules (`target.type === 'group'`): inline the group's
+ *    `content` (the seq-with-fields) so the referrer's field walker
+ *    sees the fields directly.
+ *  - Hidden MULTI helpers (body unwraps to a `repeat` / `repeat1`):
+ *    inline the whole target rule so the wrapper survives and the
+ *    walker marks the child slot as multi-valued.
+ * All other hidden rules stay as-is — they are distinct structural
+ * nodes or dispatch points.
+ */
+function resolveGroupOrMultiInlineTarget(target: Rule): Rule | null {
+    const isGroup = target.type === 'group'
+    const isMulti = extractRepeatShape(target) !== null
+    if (!isGroup && !isMulti) return null
+    return isGroup ? (target as { content: Rule }).content : target
+}
+
+/**
+ * Unwrap structural wrappers around a repeat / repeat1 so the caller
+ * can detect `optional(repeat(...))`, `group(repeat1(...))`, etc.
+ * Returns `null` for anything that isn't ultimately a repeat shape.
+ */
+export function extractRepeatShape(rule: Rule): { repeat: RepeatRule | Repeat1Rule; nonEmpty: boolean } | null {
+    switch (rule.type) {
+        case 'repeat':
+            return { repeat: rule, nonEmpty: false }
+        case 'repeat1':
+            return { repeat: rule, nonEmpty: true }
+        case 'optional':
+        case 'variant':
+        case 'clause':
+        case 'group':
+        case 'token':
+            return extractRepeatShape((rule as { content: Rule }).content)
+        default:
+            return null
+    }
+}

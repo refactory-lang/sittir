@@ -245,20 +245,44 @@ function auditDerivationShape(rule: Rule, context: 'fields' | 'children'): void 
         const kinds = auditKindsByShape.get(key) ?? []
         if (!kinds.includes(currentAuditKind)) kinds.push(currentAuditKind)
         auditKindsByShape.set(key, kinds)
+        // SITTIR_AUDIT_DUMP=<kind> dumps the rule tree for that kind.
+        if (process.env.SITTIR_AUDIT_DUMP === currentAuditKind) {
+            console.error(`[audit-dump] ${currentAuditKind} (${key}):`)
+            console.error(JSON.stringify(rule, null, 2).slice(0, 3000))
+        }
     }
 }
 function classifyTopLevelShape(rule: Rule): string {
-    // Canonical: a top-level seq, OR a single atomic member (field /
-    // repeat / symbol / string etc.). Everything else — nested choice,
-    // optional-wrapping a seq, group/variant/clause wrappers, polymorph
-    // at top — is pre-canonical.
+    // Canonical for the Phase 2 trivial walk: shapes the walk can
+    // handle via a small recursion (descend through structural
+    // wrappers, iterate seq / choice members, read single atomics).
+    //
+    //  - `seq` with non-seq members (no nested seq, but nested choice
+    //     is fine — each branch is just another case for the walk)
+    //  - single atomic: `field`, `repeat`, `repeat1`, `symbol`,
+    //     `string`, `pattern`, `terminal`
+    //  - structural wrappers at the top: `optional(...)`, `choice(...)`
+    //     — walk descends into them before filtering for fields /
+    //     children
+    //
+    // Non-canonical — shapes that indicate simplify didn't finish
+    // normalizing:
+    //
+    //  - `seq-with-nested-seq`: flattening gap (my recent fixpoint +
+    //     flatten should eliminate these)
+    //  - `group` / `variant` / `clause` / `alias` / `token` wrappers
+    //     at the top level: should have been peeled by simplifyRule's
+    //     single-member collapse
+    //  - `polymorph` at top: should have been classified into its own
+    //     polymorph modelType, not reached derivation
+    //  - `optional` wrapping a seq-with-nested-seq: the inner seq
+    //     still has flattening gaps
     switch (rule.type) {
         case 'seq': {
-            // Inspect members — nested seq or nested choice with
-            // heterogeneous field sets is pre-canonical.
-            const innerShapes = rule.members.map(m => m.type)
-            if (innerShapes.some(t => t === 'seq')) return 'seq-with-nested-seq'
-            if (innerShapes.some(t => t === 'choice')) return 'seq-with-nested-choice'
+            // Nested seq is the only intra-seq shape we flag — nested
+            // choice / optional / repeat inside a seq are all walkable
+            // cases the trivial recursion handles.
+            if (rule.members.some(m => m.type === 'seq')) return 'seq-with-nested-seq'
             return 'canonical'
         }
         case 'field':
@@ -270,9 +294,23 @@ function classifyTopLevelShape(rule: Rule): string {
         case 'terminal':
             return 'canonical'
         case 'choice':
-            return 'top-level-choice'
-        case 'optional':
-            return `optional-wrapping-${rule.content.type}`
+            // Top-level choice should have been either (a) merged by
+            // mergeChoiceBranches into a flat seq (structurally
+            // equivalent branches — typical for binary_expression-style
+            // polymorph-collapse candidates), or (b) marked with
+            // `variant()` in the grammar override (heterogeneous
+            // branches — polymorph semantics). A bare top-level choice
+            // reaching derivation means neither happened — the kind
+            // needs variant() adoption in overrides, or a simplify
+            // pass to flatten if branches agree.
+            return 'top-level-choice-needs-variant-or-merge'
+        case 'optional': {
+            // Optional wrapping any canonical shape is itself canonical
+            // — the walk descends through optional and keeps going.
+            // Flag only optionals wrapping a pre-canonical shape.
+            const innerShape = classifyTopLevelShape(rule.content)
+            return innerShape === 'canonical' ? 'canonical' : `optional-wrapping-${innerShape}`
+        }
         case 'group':
         case 'variant':
         case 'clause':

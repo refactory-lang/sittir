@@ -26,7 +26,7 @@ import {
     nameNode,
     isRequired, isMultiple, isNodeRef, isTerminalValue, isUnresolvedRef,
 } from './node-map.ts'
-import { simplifyRule } from './simplify.ts'
+import { simplifyRule, inlineGroupRefs, extractRepeatShape } from './simplify.ts'
 import { compileWordMatcher } from './common.ts'
 
 // ---------------------------------------------------------------------------
@@ -47,10 +47,15 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
     }
 
     for (const [kind, rule] of Object.entries(optimized.rules)) {
+        // `inlinedRule` still uses inlineGroupRefs here because the
+        // RAW rule path (for template emission + classification) isn't
+        // run through simplify. Only `simplifiedRule` (derivation view)
+        // picks up inlining from the simplify fixpoint.
         const inlinedRule = inlineGroupRefs(rule, optimized.rules)
         const modelType = classifyNode(kind, inlinedRule, { variantParents })
-        const rawSimplifiedRule = optimized.simplifiedRules[kind]!
-        const simplifiedRule = inlineGroupRefs(rawSimplifiedRule, optimized.simplifiedRules)
+        // `simplifiedRules[kind]` is already inlined + fixpoint-reduced
+        // by `simplifyRules` in optimize — pass through as-is.
+        const simplifiedRule = optimized.simplifiedRules[kind]!
         const variantChildKinds = variantChildrenByParent.get(kind)
 
         switch (modelType) {
@@ -1074,87 +1079,10 @@ function walkForFieldNames(rule: Rule, out: Set<string>): void {
     }
 }
 
-/**
- * Return the rule to inline for a hidden symbol target, or `null` if the
- * target should not be inlined.
- *
- * @param target - The resolved rule body of a hidden symbol reference.
- * @returns The sub-rule to inline in place of the symbol reference, or `null`
- *   when the target is neither a group nor a pure-repeat multi helper.
- * @remarks
- *   Two target shapes are inlined:
- *   - Hidden GROUP rules (`target.type === 'group'`): inline the group's
- *     `content` (the seq-with-fields) so the referrer's field walker sees the
- *     fields directly.
- *   - Hidden MULTI helpers (body unwraps to a `repeat`/`repeat1`): inline the
- *     whole target rule so the `repeat`/`repeat1` wrapper survives and the
- *     walker marks the child slot as multi-valued.
- *
- *   All other hidden rules (supertypes, branches, leaves, tokens) are NOT
- *   inlined — they are distinct structural nodes or dispatch points.
- */
-function resolveGroupOrMultiInlineTarget(target: Rule): Rule | null {
-    const isGroup = target.type === 'group'
-    const isMulti = extractRepeatShape(target) !== null
-    if (!isGroup && !isMulti) return null
-    // Groups: inline content; multi: inline whole rule (see JSDoc @remarks).
-    return isGroup ? (target as { content: Rule }).content : target
-}
-
-/**
- * Inline symbol references to GROUP-classified hidden rules by
- * substituting each `symbol` ref with the group's content. Matches
- * tree-sitter's parse-time behavior: groups are "hidden seq with
- * fields" helpers (e.g. python's `_import_list`) whose fields surface
- * on the referencer's parse tree. Preserving the symbol reference
- * would force the NodeMap to claim a child slot that tree-sitter
- * never produces.
- *
- * Scope limited to GROUPS specifically (not all hidden rules):
- *   - Supertypes — polymorph dispatch points; the reference IS the
- *     structural child slot. Stay as-is.
- *   - Other hidden rules (helpers that classify as branch/container
- *     because they lack fields, or leaves/tokens) — no field data
- *     to inline. Stay as-is.
- *   - Visible symbols — distinct parse-tree nodes with their own
- *     $type. Stay as-is.
- *
- * Cycles: visited set prevents infinite loops across chained groups.
- */
-function inlineGroupRefs(
-    rule: Rule,
-    rules: Readonly<Record<string, Rule>>,
-    visited: ReadonlySet<string> = new Set(),
-): Rule {
-    const recurse = (r: Rule, v: ReadonlySet<string>): Rule => inlineGroupRefs(r, rules, v)
-    switch (rule.type) {
-        case 'symbol': {
-            if (!rule.hidden) return rule
-            if (visited.has(rule.name)) return rule
-            const target = rules[rule.name]
-            if (!target) return rule
-            const inlineTarget = resolveGroupOrMultiInlineTarget(target)
-            if (!inlineTarget) return rule
-            const next = new Set(visited); next.add(rule.name)
-            return inlineGroupRefs(inlineTarget, rules, next)
-        }
-        case 'seq':
-            return { ...rule, members: rule.members.map(m => recurse(m, visited)) }
-        case 'choice':
-            return { ...rule, members: rule.members.map(m => recurse(m, visited)) }
-        case 'optional':
-        case 'repeat':
-        case 'repeat1':
-        case 'field':
-        case 'variant':
-        case 'clause':
-        case 'group':
-        case 'token':
-            return { ...rule, content: recurse((rule as { content: Rule }).content, visited) } as Rule
-        default:
-            return rule
-    }
-}
+// `inlineGroupRefs` / `resolveGroupOrMultiInlineTarget` moved to
+// `simplify.ts` so the group-inlining happens inside the simplify
+// fixpoint (enables flatten + canonicalize to re-fire on inlined
+// content). Imported above; no longer defined here.
 
 /**
  * Classify a rule into a model type by pure rule.type dispatch.
@@ -1344,32 +1272,10 @@ export function nameField(fieldName: string): { propertyName: string; paramName:
     return { propertyName, paramName }
 }
 
-// ---------------------------------------------------------------------------
-// extractRepeatShape — peel optional/variant/clause/group/token wrappers to
-// see if the rule's structural body is a `repeat` / `repeat1`. Returns the
-// repeat node + a `nonEmpty` flag when the source was `repeat1`. Returns
-// null for rules whose body is not a pure repeat — even a `seq(...)` that
-// happens to contain a repeat inside won't match, because that means the
-// hidden rule carries additional structure (delimiters, flanks) and needs
-// the different "hidden structural seq" treatment (separate future work).
-// ---------------------------------------------------------------------------
-
-export function extractRepeatShape(rule: Rule): { repeat: RepeatRule | Repeat1Rule; nonEmpty: boolean } | null {
-    switch (rule.type) {
-        case 'repeat':
-            return { repeat: rule, nonEmpty: false }
-        case 'repeat1':
-            return { repeat: rule, nonEmpty: true }
-        case 'optional':
-        case 'variant':
-        case 'clause':
-        case 'group':
-        case 'token':
-            return extractRepeatShape((rule as { content: Rule }).content)
-        default:
-            return null
-    }
-}
+// `extractRepeatShape` moved to `simplify.ts` (needed by the inlining
+// fixpoint and re-exported for the remaining assemble call sites). The
+// function's own semantics are unchanged — peels optional / variant /
+// clause / group / token wrappers to expose a `repeat` / `repeat1`.
 
 // ---------------------------------------------------------------------------
 // extractVariantChildSymbol — recover the variant child kind name from a
