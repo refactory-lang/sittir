@@ -55,12 +55,14 @@ function pf(pass: number, total: number): ParityFixtures {
 }
 
 function entry(): GrammarEntry {
+    // Validator keys MUST be sorted ascending to satisfy
+    // validateBaselineShape — coverage, factoryRoundtrip, from, roundtrip.
     return {
         validators: {
-            from: vr(10, 10),
             coverage: vr(10, 10),
-            roundtrip: rt(10, 10, 10),
             factoryRoundtrip: rt(10, 10, 10),
+            from: vr(10, 10),
+            roundtrip: rt(10, 10, 10),
         },
         parityFixtures: pf(10, 10),
     }
@@ -194,5 +196,62 @@ describe('checkRegression', () => {
         head.totals.fail = 0
         const verdict = checkRegression(base, head)
         expect(verdict.ok).toBe(true)
+    })
+
+    it('parity-fixtures count rise — fail (rule #5)', () => {
+        const base = baseline()
+        const head = clone(base)
+        // Base has empty failingByKind; head adds two failure ids under one
+        // kind. parityFixturesSum grows from 0 → 2 → format-deferred-rise.
+        head.grammars.rust.parityFixtures.failingByKind = {
+            list_comprehension: ['render #1', 'render #2'],
+        }
+        const verdict = checkRegression(base, head)
+        expectFail(verdict)
+        expect(verdict.reason).toBe('format-deferred-rise')
+        expect(verdict.details.path).toContain('grammars.rust.parityFixtures')
+    })
+
+    it('parity-fixtures unsorted keys — fail (schema)', () => {
+        const base = baseline()
+        const head = clone(base)
+        // Inject a keys-unsorted object on head. The schema check must
+        // surface it BEFORE any count comparison runs.
+        head.grammars.rust.parityFixtures.failingByKind = {
+            zebra: ['render #1'],
+            alpha: ['render #2'],
+        }
+        const verdict = checkRegression(base, head)
+        expectFail(verdict)
+        expect(verdict.reason).toBe('schema-violation')
+        expect(verdict.details.path).toContain('parityFixtures.failingByKind')
+    })
+
+    it('grammars-keys unsorted — fail (schema)', () => {
+        const base = baseline()
+        const head = clone(base)
+        // Rebuild grammars in declaration order (rust, python, typescript)
+        // — keys are not ascending. Schema check must reject.
+        const reorderedGrammars: Record<string, GrammarEntry> = {}
+        reorderedGrammars['rust'] = head.grammars.rust
+        reorderedGrammars['python'] = head.grammars.python
+        reorderedGrammars['typescript'] = head.grammars.typescript
+        ;(head as { grammars: unknown }).grammars = reorderedGrammars
+        const verdict = checkRegression(base, head)
+        expectFail(verdict)
+        expect(verdict.reason).toBe('schema-violation')
+        expect(verdict.details.path).toBe('head.grammars')
+    })
+
+    it('backend mismatch — fail (schema)', () => {
+        const base = baseline('typescript')
+        const head = clone(base)
+        head.backend = 'native'
+        const verdict = checkRegression(base, head)
+        expectFail(verdict)
+        expect(verdict.reason).toBe('schema-violation')
+        expect(verdict.details.path).toBe('backend')
+        expect(verdict.details.before).toBe('typescript')
+        expect(verdict.details.after).toBe('native')
     })
 })

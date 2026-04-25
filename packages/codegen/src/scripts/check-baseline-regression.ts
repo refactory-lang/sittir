@@ -251,6 +251,15 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
             details: { path: `${label}.grammars`, after: grammars },
         }
     }
+    const grammarKeys = Object.keys(grammars as object)
+    if (!isSorted(grammarKeys)) {
+        return {
+            ok: false,
+            reason: 'schema-violation',
+            summary: `schema violation: ${label}.grammars keys are not sorted ascending`,
+            details: { path: `${label}.grammars`, after: grammarKeys, note: 'object keys must be sorted ascending' },
+        }
+    }
     for (const g of GRAMMARS) {
         const gPath = `${label}.grammars.${g}`
         const ge = (grammars as Record<string, unknown>)[g]
@@ -277,6 +286,15 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
                 reason: 'schema-violation',
                 summary: `${gPath}.validators is not an object`,
                 details: { path: `${gPath}.validators`, after: validators },
+            }
+        }
+        const validatorKeys = Object.keys(validators as object)
+        if (!isSorted(validatorKeys)) {
+            return {
+                ok: false,
+                reason: 'schema-violation',
+                summary: `schema violation: ${gPath}.validators keys are not sorted ascending`,
+                details: { path: `${gPath}.validators`, after: validatorKeys, note: 'object keys must be sorted ascending' },
             }
         }
         for (const vName of VALIDATORS) {
@@ -450,22 +468,37 @@ function checkFormatDeferredRise(base: BackendBaseline, head: BackendBaseline): 
  * encountered, in the order:
  *   1. schema-violation (head)        — bad input → don't trust it
  *   2. schema-violation (base)        — bad input → don't trust it
- *   3. total-drop
- *   4. pass-count-drop
- *   5. total-fail-rise
- *   6. format-deferred-rise
+ *   3. schema-violation (backend mismatch) — comparing counts across
+ *      backends is meaningless; reject before any count comparison.
+ *   4. total-drop
+ *   5. pass-count-drop
+ *   6. total-fail-rise
+ *   7. format-deferred-rise
  *
  * The schema check runs first so subsequent checks may safely cast to
  * the typed shape. Within the rest, total-drop precedes pass-count-drop
  * because a fixture deletion is the more-actionable signal — naming
  * the missing fixture is usually clearer than naming the field whose
  * pass count happens to drop as a side effect.
+ *
+ * Precondition for the success summary: after the backend-mismatch
+ * check, `base.backend === head.backend` is guaranteed, so the summary
+ * may quote `head.backend` without ambiguity.
  */
 export function checkRegression(base: BackendBaseline, head: BackendBaseline): RegressionVerdict {
     const headSchema = validateBaselineShape(head, 'head')
     if (headSchema) return headSchema
     const baseSchema = validateBaselineShape(base, 'base')
     if (baseSchema) return baseSchema
+
+    if (base.backend !== head.backend) {
+        return {
+            ok: false,
+            reason: 'schema-violation',
+            summary: `backend mismatch: base=${base.backend}, head=${head.backend}`,
+            details: { path: 'backend', before: base.backend, after: head.backend },
+        }
+    }
 
     const totalDrop = checkTotalDrop(base, head)
     if (totalDrop) return totalDrop
