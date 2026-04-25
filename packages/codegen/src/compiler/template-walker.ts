@@ -33,7 +33,6 @@ import type {
     Rule, ChoiceRule,
 } from './rule.ts'
 import { isSyntheticFieldWrapper, unwrapStructuralPassthroughs } from './node-map.ts'
-import { tokenToName } from './link.ts'
 
 /**
  * Extract anonymous-string literals flanking the main content of a field
@@ -183,6 +182,7 @@ export function renderRuleTemplate(
     inRepeat = false,
     rules?: Record<string, Rule>,
     wordMatcher?: RegExp,
+    optionalFields?: ReadonlySet<string>,
 ): WalkResult {
     const clauses: Record<string, string> = {}
     const joinByField: Record<string, string> = {}
@@ -193,7 +193,7 @@ export function renderRuleTemplate(
     // position, but both should render as the same multi-valued slot.
     const repeatedFields = new Set<string>()
     collectRepeatedFields(rule, false, repeatedFields, rules, new Set())
-    const parts = walkRuleForTemplate(rule, new Set(), inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
+    const parts = walkRuleForTemplate(rule, new Set(), inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher, optionalFields)
     return { template: parts.join(''), clauses, joinByField }
 }
 
@@ -311,6 +311,7 @@ function walkRuleForTemplate(
     repeatedFields?: ReadonlySet<string>,
     joinByField?: Record<string, string>,
     wordMatcher?: RegExp,
+    optionalFields?: ReadonlySet<string>,
 ): string[] {
     switch (rule.type) {
         case 'seq': {
@@ -443,7 +444,7 @@ function walkRuleForTemplate(
             for (const m of rule.members) {
                 if (m.type === 'string' && skipSeps.has(m.value)) continue
                 const substituted = substituteMember(m)
-                const parts = walkRuleForTemplate(substituted, seen, inRepeat, clauses, rules, augmentedRepeatedFields, joinByField, wordMatcher)
+                const parts = walkRuleForTemplate(substituted, seen, inRepeat, clauses, rules, augmentedRepeatedFields, joinByField, wordMatcher, optionalFields)
                 // Drop a leading literal from `parts` that duplicates the
                 // trailing literal already in `out`. This collapses cases
                 // like rust line_comment where an outer `'//'` token is
@@ -462,31 +463,28 @@ function walkRuleForTemplate(
                 }
                 if (out.length > 0 && parts.length > 0) {
                     // When the adjacent placeholder is a clause whose body is
-                    // a bare non-word-punctuation literal (e.g. `bang_clause: "!"`
-                    // emitted by the optional-punct walker), use the underlying
+                    // a bare non-word-punctuation literal, use the underlying
                     // literal for spacing rather than the placeholder's own
-                    // identifier characters. Prevents `$BANG_CLAUSE $TRAIT` from
-                    // inserting a spurious space between `!` and the trait name
-                    // in `impl !Foo for Bar`.
-                    const effectiveLastChar = (s: string): string => {
-                        const m = s.match(/^\$([A-Z_][A-Z0-9_]*)_CLAUSE$/)
-                        if (m) {
-                            const body = clauses[`${m[1]!.toLowerCase()}_clause`]
-                            if (body && /^[^\w\s]+$/.test(body)) return body.slice(-1)
-                        }
-                        return s.slice(-1)
+                    // identifier characters.
+                    //
+                    // Cluster F step 3 (016): the walker now emits
+                    // Jinja-inline conditionals (`{% if x | isPresent %}…{% endif %}`)
+                    // directly for synthesized optional emissions, so a
+                    // part can begin/end with `{%`. For spacing decisions
+                    // we look INTO the conditional body's edge text — the
+                    // body governs the rendered output when the conditional
+                    // fires, and `needsSpace` operates on rendered chars.
+                    const lastChar = effectiveSpacingChar(out[out.length - 1]!, 'last')
+                    const firstChar = effectiveSpacingChar(parts[0]!, 'first')
+                    if (needsSpace(lastChar, firstChar, wordMatcher)) {
+                        // For Jinja-inline optional fragments, route the
+                        // leading separator INSIDE the conditional body so
+                        // the separator disappears alongside an absent
+                        // value. Required emissions and anonymous tokens
+                        // keep the unconditional push.
+                        const moved = absorbLeadingSeparatorIntoJinjaConditional(parts, ' ')
+                        if (!moved) out.push(' ')
                     }
-                    const effectiveFirstChar = (s: string): string => {
-                        const m = s.match(/^\$([A-Z_][A-Z0-9_]*)_CLAUSE$/)
-                        if (m) {
-                            const body = clauses[`${m[1]!.toLowerCase()}_clause`]
-                            if (body && /^[^\w\s]+$/.test(body)) return body.charAt(0)
-                        }
-                        return s.charAt(0)
-                    }
-                    const lastChar = effectiveLastChar(out[out.length - 1]!)
-                    const firstChar = effectiveFirstChar(parts[0]!)
-                    if (needsSpace(lastChar, firstChar, wordMatcher)) out.push(' ')
                 }
                 out.push(...parts)
             }
@@ -526,7 +524,7 @@ function walkRuleForTemplate(
             const branchResults: { parts: string[]; index: number }[] = []
             for (let i = 0; i < rule.members.length; i++) {
                 const branchSeen = new Set(seen)
-                const parts = walkRuleForTemplate(rule.members[i]!, branchSeen, inRepeat, {}, rules, repeatedFields, {}, wordMatcher)
+                const parts = walkRuleForTemplate(rule.members[i]!, branchSeen, inRepeat, {}, rules, repeatedFields, {}, wordMatcher, optionalFields)
                 if (parts.length === 0) continue
                 branchResults.push({ parts, index: i })
             }
@@ -564,9 +562,9 @@ function walkRuleForTemplate(
             // reach the caller). Append $-placeholders from other
             // branches that the primary didn't already produce.
             const primaryIdx = branchResults[0]!.index
-            const out = [...walkRuleForTemplate(rule.members[primaryIdx]!, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)]
+            const out = [...walkRuleForTemplate(rule.members[primaryIdx]!, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher, optionalFields)]
             for (let k = 1; k < branchResults.length; k++) {
-                const parts = walkRuleForTemplate(rule.members[branchResults[k]!.index]!, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
+                const parts = walkRuleForTemplate(rule.members[branchResults[k]!.index]!, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher, optionalFields)
                 for (const p of parts) {
                     if (p.startsWith('$') && !out.includes(p)) out.push(p)
                 }
@@ -575,20 +573,18 @@ function walkRuleForTemplate(
         }
 
         case 'optional': {
-            // Optional of a single keyword-shape literal (`async`,
-            // `move`, `pub`, `static`, `unsafe`, …) — emit a clause
-            // whose body is a `$KW` placeholder. The renderer's
-            // children-by-kind-name fallback fires only when
-            // readNode captured an anonymous child with that text,
-            // so the token round-trips: absent on parse → absent on
-            // render, present on parse → present on render.
+            // Cluster F step 3 (016): emit Jinja inline directly for
+            // every synthesized optional case. No `clauses` map writes,
+            // no `$NAME_CLAUSE` placeholder indirection — the walker
+            // produces the final `{% if X | isPresent %}body{% endif %}`
+            // wrapper here so downstream `inlineJinjaClauses` only
+            // touches real grammar-clause emissions.
             //
-            // Non-word punctuation (`,`, `;`, `::`, …) is a bigger
-            // problem — the existing seq walker already emits those
-            // literals unconditionally via other paths, so intercepting
-            // them here double-emits or eats children out from under
-            // sibling slots. Left for a follow-up that reworks the
-            // seq/optional interaction.
+            // Optional of a single keyword-shape literal (`async`,
+            // `move`, `pub`, `static`, `unsafe`, …): the renderer's
+            // children-by-kind-name fallback fires when readNode
+            // captured an anonymous child with that text, so the
+            // keyword name (lowercased) is the conditional predicate.
             //
             // The word matcher is the grammar's own `word` rule.
             // Grammars without a word rule fall back to `/^\w+$/`.
@@ -598,34 +594,22 @@ function walkRuleForTemplate(
                     ? wordMatcher.test(kwString)
                     : /^\w+$/.test(kwString)
                 if (matches) {
-                    const clauseKey = `${kwString}_clause`
-                    if (!(clauseKey in clauses)) {
-                        clauses[clauseKey] = `$${kwString.toUpperCase()}`
-                    }
-                    return [`$${kwString.toUpperCase()}_CLAUSE`]
+                    return [emitJinjaConditional(kwString, `$${kwString.toUpperCase()}`)]
                 }
-                // Non-word punctuation that carries semantic meaning in a
-                // specific grammar position (e.g. rust `impl_item` trait
-                // negation `!`, `?` modifiers). Emit a bare-literal clause
-                // — renderClause's no-placeholder branch fires the clause
-                // only when readNode captured the anon token. The clause
-                // body is the literal itself so the renderer emits the
-                // exact text; the slot name derives from tokenToName so
-                // it's a legal template identifier.
-                //
-                // Trailing-separator `optional(',')` inside list-shaped
-                // seqs is filtered earlier at the seq level, so this path
-                // only fires for standalone optionals that don't collide
-                // with separator detection. Any other list-separator
-                // punctuation (`,`, `;`, `:`) reaching here without that
-                // filter is handled by the seq walker's joinByTrailing /
-                // skipSeps logic.
-                const punctName = tokenToName(kwString)
-                const clauseKey = `${punctName}_clause`
-                if (!(clauseKey in clauses)) {
-                    clauses[clauseKey] = kwString
-                }
-                return [`$${punctName.toUpperCase()}_CLAUSE`]
+                // Non-word punctuation in a standalone optional (e.g.
+                // rust `impl_item` trait negation `!`, `?` modifiers).
+                // The renderer can't predicate a Jinja conditional on
+                // the literal text — `node.$fields` IS keyed by the
+                // literal text, but Jinja identifiers can't include
+                // `!`/`?`/etc. Emit nothing here so the existing
+                // `$$$CHILDREN` slot (or the parent's text-shape
+                // fallback) round-trips the token. Matches the prior
+                // synthesized-`<punctName>_clause` runtime behaviour
+                // where the conditional always evaluated false because
+                // the predicate name was unbound. Standalone optional-
+                // punct round-trip is a known gap (see specs/016
+                // walker plan).
+                return []
             }
             // `optional(',')` and friends — pure punctuation in an optional
             // wrapper is context-dependent and including it unconditionally
@@ -633,33 +617,27 @@ function walkRuleForTemplate(
             // whole optional when its content has no field/symbol ref.
             if (containsOnlyPunctuation(rule.content)) return []
             // Lift `optional(...)` contents that match one of these
-            // shapes into per-field clauses. The flanking literals move
-            // into the clause body so they render only when the field
-            // is populated:
+            // shapes into per-field Jinja conditionals. The flanking
+            // literals move INSIDE the conditional body so they render
+            // only when the field is populated:
             //   * `optional(choice(seq(literal, field), field, ...))`
             //     rust `attribute` — `=value` vs bare `#[name]`.
             //   * `optional(seq(literal, field))` — e.g. javascript
             //     `_initializer` inlined into `variable_declarator`:
-            //     `seq('=', field('value', ...))`. Without lifting, the
-            //     `=` renders unconditionally and `var x: T;` becomes
-            //     `var x: T=;`.
-            //   * `optional(field)` — handled by the walker's default
-            //     recursion already (field branch emits `$NAME`).
+            //     `seq('=', field('value', ...))`.
+            //   * `optional(field)` — emit `{% if name | isPresent %}$NAME{% endif %}`.
             const toLift: Rule = rule.content.type === 'choice'
                 ? rule.content
                 : { type: 'choice', members: [rule.content] } as Rule
-            const lifted = liftChoiceBranchesToClauses(toLift as ChoiceRule, clauses, seen)
+            const lifted = liftChoiceBranchesToInlineJinja(toLift as ChoiceRule, seen)
             if (lifted !== null) {
                 // Mark the lifted fields as seen so sibling members
                 // inside the enclosing seq don't re-emit the same slot
                 // via the default walker path.
-                for (const p of lifted) {
-                    const m = p.match(/^\$([A-Za-z_][\w]*)_CLAUSE$/)
-                    if (m) seen.add(m[1]!.toLowerCase())
-                }
-                return lifted
+                for (const fname of lifted.fieldsConsumed) seen.add(fname)
+                return lifted.parts
             }
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
+            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher, optionalFields)
         }
 
         case 'repeat':
@@ -680,7 +658,7 @@ function walkRuleForTemplate(
                 const fname = peel(rule.content)
                 if (fname && !(fname in joinByField)) joinByField[fname] = rule.separator
             }
-            return walkRuleForTemplate(rule.content, seen, true, clauses, rules, repeatedFields, joinByField, wordMatcher)
+            return walkRuleForTemplate(rule.content, seen, true, clauses, rules, repeatedFields, joinByField, wordMatcher, optionalFields)
         }
 
         case 'field': {
@@ -699,7 +677,7 @@ function walkRuleForTemplate(
                 // Don't add rule.name to `seen` — we're not emitting
                 // that slot, so inner fields may legitimately reuse the
                 // same name (rare but possible).
-                return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
+                return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher, optionalFields)
             }
             seen.add(rule.name)
             const varName = rule.name.toUpperCase()
@@ -745,12 +723,15 @@ function walkRuleForTemplate(
                 const inner = rule.content.content
                 const optFlank = extractFlankingLiterals(inner)
                 if (optFlank.leading || optFlank.trailing) {
-                    const clauseTmpl = optFlank.leading + slot + optFlank.trailing
-                    clauses[`${rule.name}_clause`] = clauseTmpl
-                    const placeholder = `$${varName}_CLAUSE`
+                    // Cluster F step 3 (016): emit Jinja inline directly
+                    // — no synthesized `<field>_clause` companion. The
+                    // flanking literals belong INSIDE the conditional so
+                    // they only render when the field is populated.
+                    const body = `${optFlank.leading}${slot}${optFlank.trailing}`
+                    const conditional = emitJinjaConditional(rule.name, body)
                     return rule.blockBearer
-                        ? ['\n  ', placeholder, '\n']
-                        : [placeholder]
+                        ? ['\n  ', conditional, '\n']
+                        : [conditional]
                 }
             }
             const flank = extractFlankingLiterals(rule.content)
@@ -785,7 +766,7 @@ function walkRuleForTemplate(
             if (rule.source === 'override' && rule.content.type === 'choice') {
                 const innerSeen = new Set(seen)
                 const innerParts = walkRuleForTemplate(
-                    rule.content, innerSeen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher,
+                    rule.content, innerSeen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher, optionalFields,
                 )
                 const innerPlaceholders: string[] = []
                 for (const p of innerParts) {
@@ -822,7 +803,7 @@ function walkRuleForTemplate(
                 const target = rules[symName]
                 if (target && !seen.has(`@${symName}`)) {
                     seen.add(`@${symName}`)
-                    const parts = walkRuleForTemplate(target, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
+                    const parts = walkRuleForTemplate(target, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher, optionalFields)
                     if (parts.length > 0) return parts
                 }
             }
@@ -849,25 +830,38 @@ function walkRuleForTemplate(
             return rule.members.length > 0 ? [rule.members[0]!.value] : []
 
         case 'variant':
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
+            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher, optionalFields)
 
         case 'clause': {
-            // Emit a separate sub-template and reference it from the main
-            // template as `$NAME_CLAUSE`. Fresh seen set for clause body
-            // so fields don't collide with main-template tracking.
+            // Cluster F step 3 (016): emit Jinja-inline directly using
+            // the clause's name as the conditional predicate and its
+            // content's walked output as the body. The `clause(name, ...)`
+            // node was minted by Link's `detectClause` from a flanking-
+            // literal-around-a-field pattern, so `name` IS the field
+            // name to gate on — no synthesized companion variable, no
+            // intermediate `clauses` map entry, output goes straight
+            // into the template body.
             if (seen.has(rule.name)) return []
             seen.add(rule.name)
-            const clauseSeen = new Set<string>()
-            const clauseParts = walkRuleForTemplate(rule.content, clauseSeen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
-            const clauseTemplate = clauseParts.join('')
-            // Clause key mirrors the emitted var (`$NAME_CLAUSE` →
-            // `name_clause`) so the renderer's clauseKey lookup matches.
-            if (clauseTemplate) clauses[`${rule.name}_clause`] = clauseTemplate
-            return [`$${rule.name.toUpperCase()}_CLAUSE`]
+            // Fresh seen set for the body walk so the inner field is
+            // free to emit (the outer `seen.add(rule.name)` above is
+            // tracking the clause name, not the inner field's slot
+            // emission state). Pass `undefined` for optionalFields so
+            // fields walked inside this conditional don't get re-
+            // promoted into their own per-field conditionals — the
+            // enclosing conditional already provides the gate, and
+            // the inner field shares its name with the clause in the
+            // canonical `clause('alternative', seq('else', field(
+            // 'alternative', ...)))` shape, which would collide.
+            const bodySeen = new Set<string>()
+            const bodyParts = walkRuleForTemplate(rule.content, bodySeen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher, undefined)
+            const body = bodyParts.join('')
+            if (!body) return []
+            return [emitJinjaConditional(rule.name, body)]
         }
 
         case 'group':
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
+            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher, optionalFields)
 
         case 'supertype':
             if (seen.has('children')) return []
@@ -887,7 +881,7 @@ function walkRuleForTemplate(
                 seen.add('children')
                 return ['$$$CHILDREN']
             }
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
+            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher, optionalFields)
 
         case 'indent':
             return ['\n  ']
@@ -897,7 +891,7 @@ function walkRuleForTemplate(
             return ['\n']
 
         case 'terminal':
-            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher)
+            return walkRuleForTemplate(rule.content, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher, optionalFields)
 
         case 'polymorph':
             // Polymorphs are dispatched by AssembledPolymorph.renderTemplate
@@ -936,30 +930,31 @@ function extractSingleKeywordString(rule: Rule): string | null {
 }
 
 /**
- * Lift each branch of `optional(choice(...))` into a clause keyed by
- * its field name, so flanking literals render only when the field is
- * present. Canonical case: rust `attribute = seq(_path, optional(
- * choice(seq('=', field('value')), field('arguments'))))` — default
- * walker emits `=$VALUE$ARGUMENTS`, which produces `#[name=]` for a
- * bare attribute. With the lift, each branch becomes its own clause
- * (`value_clause: "=$VALUE"`, `arguments_clause: "$ARGUMENTS"`) and
- * the template reads `$$$CHILDREN$VALUE_CLAUSE$ARGUMENTS_CLAUSE` —
- * each flank renders iff the slot is populated.
+ * Lift each branch of `optional(choice(...))` into an inline Jinja
+ * conditional keyed by the branch's field name, so flanking literals
+ * render only when the field is present.
+ *
+ * Canonical case: rust `attribute = seq(_path, optional(choice(
+ * seq('=', field('value')), field('arguments'))))`. With the lift,
+ * each branch becomes its own conditional:
+ *   `{% if value | isPresent %}=$VALUE{% endif %}{% if arguments | isPresent %}$ARGUMENTS{% endif %}`.
  *
  * Returns null if any branch doesn't match the single-field shape
  * (string/pattern/symbol literals, punctuation-only branches, or
  * branches with multiple named fields). Falls back to default walk.
+ *
+ * Cluster F step 3 (016) replaces the older `liftChoiceBranchesToClauses`
+ * — emits Jinja inline so no synthesized `<field>_clause` companion
+ * variable enters the template. The body's `$NAME` placeholder gets
+ * translated to `{{ name }}` by the downstream `translateToJinja`
+ * pass.
  */
-function liftChoiceBranchesToClauses(
+function liftChoiceBranchesToInlineJinja(
     choice: ChoiceRule,
-    clauses: Record<string, string>,
     seen?: Set<string>,
-): string[] | null {
-    const placeholders: string[] = []
-    // Each branch: unwrap variant/clause/group/terminal layers, then
-    // try to match one of:
-    //   - field(name, ...) directly                       → `$NAME`
-    //   - seq(literal*, field, literal*)                  → `<lit>$NAME<lit>`
+): { parts: string[]; fieldsConsumed: string[] } | null {
+    const parts: string[] = []
+    const fieldsConsumed: string[] = []
     for (const member of choice.members) {
         const stripped = stripWrappers(member)
         const extracted = extractClauseBranch(stripped)
@@ -969,16 +964,14 @@ function liftChoiceBranchesToClauses(
         // rule (e.g. rust `tuple_expression`'s trailing
         // `optional(field('elements', ...))` after the same field
         // appeared inside a repeat earlier — the multi-valued slot
-        // already captures those values; a clause would double-count).
+        // already captures those values; a conditional would
+        // double-count).
         if (seen?.has(fieldName)) return null
-        const clauseKey = `${fieldName}_clause`
-        const placeholder = `$${fieldName.toUpperCase()}_CLAUSE`
-        if (!(clauseKey in clauses)) {
-            clauses[clauseKey] = `${leading}$${fieldName.toUpperCase()}${trailing}`
-        }
-        placeholders.push(placeholder)
+        const body = `${leading}$${fieldName.toUpperCase()}${trailing}`
+        parts.push(emitJinjaConditional(fieldName, body))
+        fieldsConsumed.push(fieldName)
     }
-    return placeholders
+    return { parts, fieldsConsumed }
 }
 
 function stripWrappers(rule: Rule): Rule {
@@ -1140,6 +1133,76 @@ export function findRepeatFlag(rule: Rule, flag: 'trailing' | 'leading'): boolea
         default:
             return false
     }
+}
+
+/**
+ * Cluster F step 3 (016): for a Jinja-inline optional emission whose
+ * head fragment opens with `{% if X | isPresent %}`, route the leading
+ * `separator` INSIDE the conditional body so it disappears alongside
+ * an absent value.
+ *
+ * Detection is purely textual on the part fragment — the walker now
+ * emits Jinja inline directly for every synthesized optional case
+ * (clause-rule, optional-keyword, optional-with-flanking-field, field-
+ * with-optional-flanking-content), so a single regex covers them all.
+ *
+ * Returns `true` when the absorption succeeded (caller skips the
+ * unconditional `out.push(separator)`); `false` when the head fragment
+ * isn't a Jinja-inline conditional.
+ */
+function absorbLeadingSeparatorIntoJinjaConditional(parts: string[], separator: string): boolean {
+    if (parts.length === 0) return false
+    const head = parts[0]!
+    const m = head.match(/^(\{%-? if [^%]+-?%\})/)
+    if (!m) return false
+    parts[0] = `${m[1]}${separator}${head.slice(m[1]!.length)}`
+    return true
+}
+
+/**
+ * Compute the effective edge character of a template fragment for
+ * `needsSpace` — operate on the RENDERED text the fragment will
+ * produce, ignoring Jinja control syntax.
+ *
+ *   - For a Jinja-inline conditional `{% if X | isPresent %}<body>{% endif %}`,
+ *     return the matching edge char of `<body>`. The conditional
+ *     itself emits no characters; the body governs spacing when the
+ *     conditional fires.
+ *   - For a placeholder reference `$NAME` / `$NAME_CLAUSE` /
+ *     `$$$NAME`, treat the placeholder as identifier-like (a real
+ *     value will substitute at render time).
+ *   - For literal text, take the literal edge char.
+ */
+function effectiveSpacingChar(s: string, edge: 'first' | 'last'): string {
+    // Jinja-inline conditional — peel the wrapper and inspect the body.
+    // For spacing purposes:
+    //  * If the body is pure non-word punctuation (`:`, `=`, `!`, etc.),
+    //    use that punct as the edge char so adjacent literal punctuation
+    //    won't double up.
+    //  * Otherwise (body contains placeholders or a mix), treat the
+    //    fragment as word-like-on-this-side. The conditional WILL emit a
+    //    placeholder that typically resolves to word content at render
+    //    time, so the boundary should behave as if the prev/next was
+    //    identifier-like — matching the legacy synthesized-clause path
+    //    where `$NAME_CLAUSE` was always word-like.
+    const cond = s.match(/^(\{%-? if [^%]+-?%\})(.*)(\{%-? endif -?%\})$/)
+    if (cond) {
+        const body = cond[2]!
+        if (body.length > 0) {
+            if (/^[^\w\s$]+$/.test(body)) return effectiveSpacingChar(body, edge)
+            return 'a'
+        }
+    }
+    return edge === 'first' ? (s[0] ?? '') : (s[s.length - 1] ?? '')
+}
+
+/**
+ * Emit the canonical Jinja inline conditional `{% if NAME | isPresent %}body{% endif %}`.
+ * Used by clause-rule walking and any other walker site that produces a
+ * gated emission tied to a field/keyword/clause name.
+ */
+function emitJinjaConditional(name: string, body: string): string {
+    return `{% if ${name} | isPresent %}${body}{% endif %}`
 }
 
 const TEMPLATE_WORD = /\w/

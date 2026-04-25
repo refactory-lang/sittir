@@ -66,16 +66,22 @@ describe('renderRuleTemplate — baselines', () => {
         expect(renderRuleTemplate(r).template).toBe('$$$CHILDREN')
     })
 
-    it('optional pure-punctuation becomes an isPresent-gated clause', () => {
-        // Updated in 016/walker-refactor-2: optional-punct allowlist
-        // replaced with tokenToName derivation. The clause is gated by
-        // `{% if comma | isPresent %}` at render time so output is
-        // unchanged when no anon-comma is captured (e.g. python
-        // `match X:` still renders without a trailing comma).
+    it('optional pure-punctuation emits nothing — round-tripped via $$$CHILDREN', () => {
+        // Updated in 016/walker-refactor-3: the synthesized
+        // `<punct>_clause` companion variable is gone (per the
+        // no-walker-synthesized-clauses directive). The standalone
+        // optional-punct case can't be predicated on a Jinja-legal
+        // identifier (the renderer keys `node.$fields` by the literal
+        // text, but Jinja vars can't include `,`/`!`/`?`), so the
+        // walker emits nothing here. Anon-comma round-trip flows
+        // through `$$$CHILDREN` (or the parent's text-shape fallback)
+        // for kinds that surface it as a child. Standalone optional-
+        // punct round-trip remains a known gap (see specs/016 walker
+        // plan).
         const r = seq(sym('expression'), optional(str(',')), str(':'))
         const result = renderRuleTemplate(r)
-        expect(result.template).toBe('$$$CHILDREN$COMMA_CLAUSE:')
-        expect(result.clauses.comma_clause).toBe(',')
+        expect(result.template).toBe('$$$CHILDREN:')
+        expect(result.clauses).toEqual({})
     })
 })
 

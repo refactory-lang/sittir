@@ -223,8 +223,8 @@ const FROZEN_CASES: FrozenCase[] = [
         name: 'if without else renders without trailing space',
         source: 'fn main() { if x { 1 } }',
         target: 'if x { 1 }',
-        mode: 'fail',
-        why: 'Template ends with `{% if alternative | isPresent %}{{ alternative }}{% endif %}` preceded by a literal space. Absent alternative leaves a trailing space.',
+        mode: 'pass',
+        why: 'Fixed in 016/walker-refactor-3 — separator absorbed into the alternative conditional body, so the trailing space disappears alongside the absent slot.',
     },
     {
         grammar: 'rust',

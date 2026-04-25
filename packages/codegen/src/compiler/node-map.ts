@@ -1551,6 +1551,25 @@ export function filterForFlanks(key: string, meta: JinjaTranslateMeta): string {
 }
 
 /**
+ * Cluster F step 3 (016): collect raw field names whose `isRequired`
+ * derivation is false, for the walker's optional-field detection.
+ *
+ * `AssembledField.isRequired` is computed across the WHOLE rule tree
+ * — it correctly catches fields that are required at their declaration
+ * site but enclosed in an `optional(seq(...))` (rust `impl_item`'s
+ * `trait` is the canonical case). The walker uses this set as a
+ * fallback when local member inspection can't see the enclosing
+ * structural wrapper.
+ */
+function deriveOptionalFieldNames(fields: readonly AssembledField[]): Set<string> {
+    const out = new Set<string>()
+    for (const f of fields) {
+        if (!isRequired(f)) out.add(f.name)
+    }
+    return out
+}
+
+/**
  * Prevent `{$$$CHILDREN}` → `{{{ children }}}` parse failure by
  * inserting a space between a literal brace and an adjacent Jinja
  * interpolation. Iterative to cover stacked cases.
@@ -1640,7 +1659,8 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
         // Template walking stays on the RAW rule — templates need the
         // anonymous delimiters ('(', '{', ';', etc.) to surface as
         // template text. Only derivations use simplifiedRule.
-        const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules, wordMatcher)
+        const optionalFields = deriveOptionalFieldNames(this.fields)
+        const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules, wordMatcher, optionalFields)
         if (!template) {
             throw new Error(
                 `AssembledBranch.renderTemplate: '${this.kind}' produced an empty template. ` +
@@ -1890,7 +1910,8 @@ export class AssembledContainer extends AssembledNodeBase<SeqRule | ChoiceRule |
         const textShape = this.textTemplate(externals)
         if (textShape) return textShape
         // Template walking stays on RAW rule (needs literals); derivations
-        // and separator discovery use simplifiedRule.
+        // and separator discovery use simplifiedRule. Containers carry no
+        // fields (children-only), so the optional-field set is empty.
         const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules, wordMatcher)
         if (!template) {
             throw new Error(
@@ -2278,7 +2299,8 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
         if (textShape) return textShape
         // Template walking stays on RAW rule (needs literals); derivations
         // and separator discovery use simplifiedRule.
-        const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules, wordMatcher)
+        const optionalFields = deriveOptionalFieldNames(this.fields)
+        const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules, wordMatcher, optionalFields)
         if (!template) {
             throw new Error(
                 `AssembledGroup.renderTemplate: '${this.kind}' produced an empty template. ` +
@@ -2305,7 +2327,8 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
      * encapsulated — the sibling class doesn't reach in.
      */
     renderParts(rules?: Record<string, Rule>, wordMatcher?: RegExp): { template: string; clauses: Record<string, string>; joinByField: Record<string, string> } {
-        return renderRuleTemplate(this.rule, false, rules, wordMatcher)
+        const optionalFields = deriveOptionalFieldNames(this.fields)
+        return renderRuleTemplate(this.rule, false, rules, wordMatcher, optionalFields)
     }
 
 }

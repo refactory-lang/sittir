@@ -274,7 +274,7 @@
       "$nodeId": 1638352,
       "$named": true
     },
-    "expectedOutput": "interface IFoo   {\n  bar(): number,\n  baz(): IBaz,\n}"
+    "expectedOutput": "interface IFoo  {\n  bar(): number,\n  baz(): IBaz,\n}"
   },
   {
     "kind": "roundtrip",
@@ -282,9 +282,9 @@
     "sourceIn": "interface IFoo {\n  bar(): number,\n  baz(): IBaz,\n}",
     "pattern": "interface_declaration",
     "edits": [],
-    "expectedSourceOut": "interface IFoo   {\n  bar(): number,\n  baz(): IBaz,\n}",
+    "expectedSourceOut": "interface IFoo  {\n  bar(): number,\n  baz(): IBaz,\n}",
     "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))) members: (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))",
-    "wrappedText": "interface IFoo   {\n  bar(): number,\n  baz(): IBaz,\n}",
+    "wrappedText": "interface IFoo  {\n  bar(): number,\n  baz(): IBaz,\n}",
     "wrappedOffset": 0
   },
   {
@@ -1111,7 +1111,7 @@
       "$nodeId": 1683984,
       "$named": true
     },
-    "expectedOutput": "interface IAppState   {\n  public readonly users: ReadonlyArray<User>\n}"
+    "expectedOutput": "interface IAppState  {\n  public readonly users: ReadonlyArray<User>\n}"
   },
   {
     "kind": "roundtrip",
@@ -1119,9 +1119,9 @@
     "sourceIn": "interface IAppState {\n  public readonly users: ReadonlyArray<User>\n}",
     "pattern": "interface_declaration",
     "edits": [],
-    "expectedSourceOut": "interface IAppState   {\n  public readonly users: ReadonlyArray<User>\n}",
+    "expectedSourceOut": "interface IAppState  {\n  public readonly users: ReadonlyArray<User>\n}",
     "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (property_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (type_identifier)))))))",
-    "wrappedText": "interface IAppState   {\n  public readonly users: ReadonlyArray<User>\n}",
+    "wrappedText": "interface IAppState  {\n  public readonly users: ReadonlyArray<User>\n}",
     "wrappedOffset": 0
   },
   {
@@ -2148,7 +2148,7 @@
       "$nodeId": 1751408,
       "$named": true
     },
-    "expectedOutput": "interface Foo   {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}"
+    "expectedOutput": "interface Foo  {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}"
   },
   {
     "kind": "roundtrip",
@@ -2156,9 +2156,9 @@
     "sourceIn": "interface Foo {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
     "pattern": "interface_declaration",
     "edits": [],
-    "expectedSourceOut": "interface Foo   {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
+    "expectedSourceOut": "interface Foo  {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
     "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier)) (type_parameter name: (type_identifier))) parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_identifier) (type_identifier)))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (type_identifier) (type_identifier))))))))))",
-    "wrappedText": "interface Foo   {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
+    "wrappedText": "interface Foo  {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
     "wrappedOffset": 0
   },
   {
@@ -2730,7 +2730,7 @@
       "$nodeId": 1789768,
       "$named": true
     },
-    "expectedOutput": "interface Bar   {\n  }"
+    "expectedOutput": "interface Bar  {\n  }"
   },
   {
     "kind": "roundtrip",
@@ -2738,9 +2738,9 @@
     "sourceIn": "interface Bar {\n  }",
     "pattern": "interface_declaration",
     "edits": [],
-    "expectedSourceOut": "interface Bar   {\n  }",
+    "expectedSourceOut": "interface Bar  {\n  }",
     "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body))",
-    "wrappedText": "interface Bar   {\n  }",
+    "wrappedText": "interface Bar  {\n  }",
     "wrappedOffset": 0
   },
   {
@@ -3031,7 +3031,7 @@
       "$nodeId": 1844928,
       "$named": true
     },
-    "expectedOutput": "@baz @bam class Foo   {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n} "
+    "expectedOutput": "@baz @bam class Foo  {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n} "
   },
   {
     "kind": "roundtrip",
@@ -3039,9 +3039,9 @@
     "sourceIn": "@baz @bam class Foo {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n}",
     "pattern": "class_declaration",
     "edits": [],
-    "expectedSourceOut": "@baz @bam class Foo   {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n} ",
+    "expectedSourceOut": "@baz @bam class Foo  {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n} ",
     "expectedReparseTree": "(class_declaration decorator: (decorator (identifier)) decorator: (decorator (identifier)) name: (type_identifier) body: (class_body (class_body_member (public_field_definition decorator: (decorator (identifier)) (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)))) (class_body_member (public_field_definition decorator: (decorator (call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments (identifier)))) (public_field_definition_access_first) (public_field_definition_static_mods) name: (number) type: (type_annotation type: (predefined_type)) value: (string (string_single (string_fragment))))) (class_body_member (public_field_definition decorator: (decorator (identifier)) (public_field_definition_readonly_first) name: (string (string_single (string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single (string_fragment))))) (class_body_method decorator: (decorator (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters (required_parameter decorator: (decorator (identifier)) pattern: (identifier) type: (type_annotation type: (predefined_type))) (optional_parameter decorator: (decorator (identifier)) pattern: (identifier) type: (type_annotation type: (predefined_type)))) body: (statement_block)))))",
-    "wrappedText": "@baz @bam class Foo   {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n} ",
+    "wrappedText": "@baz @bam class Foo  {\n  @foo static 2: string;\n  @bar.buzz(grue) public static 2: string = 'string';\n  @readonly readonly 'hello'?: int = 'string';\n  @readonly fooBar(@required param: any, @optional param2?: any) {\n  }\n} ",
     "wrappedOffset": 0
   },
   {
@@ -4705,7 +4705,7 @@
       "$nodeId": 1985928,
       "$named": true
     },
-    "expectedOutput": "if ( foo ) {\n\tset[ 1 ].apply()\n} "
+    "expectedOutput": "if ( foo ) {\n\tset[ 1 ].apply()\n}"
   },
   {
     "kind": "roundtrip",
@@ -4713,9 +4713,9 @@
     "sourceIn": "if ( foo ) {\n\tset[ 1 ].apply()\n}",
     "pattern": "if_statement",
     "edits": [],
-    "expectedSourceOut": "if ( foo ) {\n\tset[ 1 ].apply()\n} ",
+    "expectedSourceOut": "if ( foo ) {\n\tset[ 1 ].apply()\n}",
     "expectedReparseTree": "(if_statement condition: (parenthesized_expression (parenthesized_expression_typed (identifier))) consequence: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (member_expression object: (subscript_expression object: (identifier) index: (number)) property: (property_identifier)) arguments: (arguments))))))",
-    "wrappedText": "if ( foo ) {\n\tset[ 1 ].apply()\n} ",
+    "wrappedText": "if ( foo ) {\n\tset[ 1 ].apply()\n}",
     "wrappedOffset": 0
   },
   {
@@ -5046,7 +5046,7 @@
       "$nodeId": 1984632,
       "$named": true
     },
-    "expectedOutput": "set [1]"
+    "expectedOutput": "set[1]"
   },
   {
     "kind": "roundtrip",
@@ -5054,9 +5054,9 @@
     "sourceIn": "set[ 1 ]",
     "pattern": "subscript_expression",
     "edits": [],
-    "expectedSourceOut": "set [1]",
+    "expectedSourceOut": "set[1]",
     "expectedReparseTree": "(subscript_expression object: (identifier) index: (number))",
-    "wrappedText": "let _ = set [1];",
+    "wrappedText": "let _ = set[1];",
     "wrappedOffset": 8
   },
   {
@@ -8347,7 +8347,7 @@
       "$nodeId": 2265016,
       "$named": true
     },
-    "expectedOutput": "interface UserInterface   {}"
+    "expectedOutput": "interface UserInterface  {}"
   },
   {
     "kind": "roundtrip",
@@ -8355,9 +8355,9 @@
     "sourceIn": "interface UserInterface {}",
     "pattern": "interface_declaration",
     "edits": [],
-    "expectedSourceOut": "interface UserInterface   {}",
+    "expectedSourceOut": "interface UserInterface  {}",
     "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body))",
-    "wrappedText": "interface UserInterface   {}",
+    "wrappedText": "interface UserInterface  {}",
     "wrappedOffset": 0
   },
   {
@@ -8674,7 +8674,7 @@
       "$nodeId": 2296616,
       "$named": true
     },
-    "expectedOutput": "interface A   { a: string; }"
+    "expectedOutput": "interface A  { a: string; }"
   },
   {
     "kind": "roundtrip",
@@ -8682,9 +8682,9 @@
     "sourceIn": "interface A { a: string; }",
     "pattern": "interface_declaration",
     "edits": [],
-    "expectedSourceOut": "interface A   { a: string; }",
+    "expectedSourceOut": "interface A  { a: string; }",
     "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))",
-    "wrappedText": "interface A   { a: string; }",
+    "wrappedText": "interface A  { a: string; }",
     "wrappedOffset": 0
   },
   {
@@ -9748,7 +9748,7 @@
       "$nodeId": 2354752,
       "$named": true
     },
-    "expectedOutput": "interface X   {\n  x(): Promise<Array<Foo>>;\n}"
+    "expectedOutput": "interface X  {\n  x(): Promise<Array<Foo>>;\n}"
   },
   {
     "kind": "roundtrip",
@@ -9756,9 +9756,9 @@
     "sourceIn": "interface X {\n  x(): Promise<Array<Foo>>;\n}",
     "pattern": "interface_declaration",
     "edits": [],
-    "expectedSourceOut": "interface X   {\n  x(): Promise<Array<Foo>>;\n}",
+    "expectedSourceOut": "interface X  {\n  x(): Promise<Array<Foo>>;\n}",
     "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (generic_type name: (type_identifier) type_arguments: (type_arguments (type_identifier)))))))))",
-    "wrappedText": "interface X   {\n  x(): Promise<Array<Foo>>;\n}",
+    "wrappedText": "interface X  {\n  x(): Promise<Array<Foo>>;\n}",
     "wrappedOffset": 0
   },
   {

@@ -265,7 +265,7 @@
       "$nodeId": 1398680,
       "$named": true
     },
-    "expectedOutput": "async  {}"
+    "expectedOutput": "async {}"
   },
   {
     "kind": "roundtrip",
@@ -273,9 +273,9 @@
     "sourceIn": "async {}",
     "pattern": "async_block",
     "edits": [],
-    "expectedSourceOut": "async  {}",
+    "expectedSourceOut": "async {}",
     "expectedReparseTree": "(async_block block: (block))",
-    "wrappedText": "fn _f() { let _ = async  {}; }",
+    "wrappedText": "fn _f() { let _ = async {}; }",
     "wrappedOffset": 18
   },
   {
@@ -400,7 +400,7 @@
       "$nodeId": 1399504,
       "$named": true
     },
-    "expectedOutput": "let  x  =10 ;"
+    "expectedOutput": "let x =10;"
   },
   {
     "kind": "roundtrip",
@@ -408,9 +408,9 @@
     "sourceIn": "let x = 10;",
     "pattern": "let_declaration",
     "edits": [],
-    "expectedSourceOut": "let  x  =10 ;",
+    "expectedSourceOut": "let x =10;",
     "expectedReparseTree": "(let_declaration pattern: (identifier) value: (integer_literal))",
-    "wrappedText": "let  x  =10 ;",
+    "wrappedText": "let x =10;",
     "wrappedOffset": 0
   },
   {
@@ -484,7 +484,7 @@
       "$nodeId": 1405776,
       "$named": true
     },
-    "expectedOutput": "let  _  =async || () ;"
+    "expectedOutput": "let _ =async || ();"
   },
   {
     "kind": "roundtrip",
@@ -492,9 +492,9 @@
     "sourceIn": "let _ = async || ();",
     "pattern": "let_declaration",
     "edits": [],
-    "expectedSourceOut": "let  _  =async || () ;",
+    "expectedSourceOut": "let _ =async || ();",
     "expectedReparseTree": "(let_declaration pattern: (wildcard_pattern) value: (closure_expression parameters: (closure_parameters) (closure_expression_expr body: (unit_expression))))",
-    "wrappedText": "let  _  =async || () ;",
+    "wrappedText": "let _ =async || ();",
     "wrappedOffset": 0
   },
   {
@@ -568,7 +568,7 @@
       "$nodeId": 1410376,
       "$named": true
     },
-    "expectedOutput": "let  a  =async move || async move {} ;"
+    "expectedOutput": "let a =async move || async move {};"
   },
   {
     "kind": "roundtrip",
@@ -576,9 +576,9 @@
     "sourceIn": "let a = async move || async move {};",
     "pattern": "let_declaration",
     "edits": [],
-    "expectedSourceOut": "let  a  =async move || async move {} ;",
+    "expectedSourceOut": "let a =async move || async move {};",
     "expectedReparseTree": "(let_declaration pattern: (identifier) value: (closure_expression parameters: (closure_parameters) (closure_expression_expr body: (async_block block: (block)))))",
-    "wrappedText": "let  a  =async move || async move {} ;",
+    "wrappedText": "let a =async move || async move {};",
     "wrappedOffset": 0
   },
   {
@@ -721,7 +721,7 @@
       "$nodeId": 1417864,
       "$named": true
     },
-    "expectedOutput": "gen  {}"
+    "expectedOutput": "gen {}"
   },
   {
     "kind": "roundtrip",
@@ -729,9 +729,9 @@
     "sourceIn": "gen {}",
     "pattern": "gen_block",
     "edits": [],
-    "expectedSourceOut": "gen  {}",
+    "expectedSourceOut": "gen {}",
     "expectedReparseTree": "(gen_block block: (block))",
-    "wrappedText": "fn _f() { let _ = gen  {}; }",
+    "wrappedText": "fn _f() { let _ = gen {}; }",
     "wrappedOffset": 18
   },
   {
@@ -856,7 +856,7 @@
       "$nodeId": 1418976,
       "$named": true
     },
-    "expectedOutput": "let  x  =10 ;"
+    "expectedOutput": "let x =10;"
   },
   {
     "kind": "roundtrip",
@@ -864,9 +864,9 @@
     "sourceIn": "let x = 10;",
     "pattern": "let_declaration",
     "edits": [],
-    "expectedSourceOut": "let  x  =10 ;",
+    "expectedSourceOut": "let x =10;",
     "expectedReparseTree": "(let_declaration pattern: (identifier) value: (integer_literal))",
-    "wrappedText": "let  x  =10 ;",
+    "wrappedText": "let x =10;",
     "wrappedOffset": 0
   },
   {
@@ -971,7 +971,7 @@
       "$nodeId": 1488024,
       "$named": true
     },
-    "expectedOutput": "let  x   ;"
+    "expectedOutput": "let x;"
   },
   {
     "kind": "roundtrip",
@@ -979,9 +979,9 @@
     "sourceIn": "let x;",
     "pattern": "let_declaration",
     "edits": [],
-    "expectedSourceOut": "let  x   ;",
+    "expectedSourceOut": "let x;",
     "expectedReparseTree": "(let_declaration pattern: (identifier))",
-    "wrappedText": "let  x   ;",
+    "wrappedText": "let x;",
     "wrappedOffset": 0
   },
   {
@@ -1130,7 +1130,7 @@
       "$nodeId": 1499568,
       "$named": true
     },
-    "expectedOutput": "let  Foo::Bar {\n    texts,\n    values,\n}  =foo().bar().await? else {\n    return Err(index)\n};"
+    "expectedOutput": "let Foo::Bar {\n    texts,\n    values,\n} =foo().bar().await? else {\n    return Err(index)\n};"
   },
   {
     "kind": "roundtrip",
@@ -1138,9 +1138,9 @@
     "sourceIn": "let Foo::Bar {\n    texts,\n    values,\n} = foo().bar().await? else {\n    return Err(index)\n};",
     "pattern": "let_declaration",
     "edits": [],
-    "expectedSourceOut": "let  Foo::Bar {\n    texts,\n    values,\n}  =foo().bar().await? else {\n    return Err(index)\n};",
+    "expectedSourceOut": "let Foo::Bar {\n    texts,\n    values,\n} =foo().bar().await? else {\n    return Err(index)\n};",
     "expectedReparseTree": "(let_declaration pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) (field_pattern (field_pattern_shorthand name: (shorthand_field_identifier))) (field_pattern (field_pattern_shorthand name: (shorthand_field_identifier)))) value: (try_expression value: (await_expression (call_expression function: (field_expression value: (call_expression function: (identifier) arguments: (arguments)) field: (field_identifier)) arguments: (arguments)))) alternative: (block (return_expression (call_expression function: (identifier) arguments: (arguments (identifier))))))",
-    "wrappedText": "let  Foo::Bar {\n    texts,\n    values,\n}  =foo().bar().await? else {\n    return Err(index)\n};",
+    "wrappedText": "let Foo::Bar {\n    texts,\n    values,\n} =foo().bar().await? else {\n    return Err(index)\n};",
     "wrappedOffset": 0
   },
   {
@@ -1760,7 +1760,7 @@
       "$nodeId": 1501376,
       "$named": true
     },
-    "expectedOutput": "break  "
+    "expectedOutput": "break "
   },
   {
     "kind": "roundtrip",
@@ -1768,9 +1768,9 @@
     "sourceIn": "break",
     "pattern": "break_expression",
     "edits": [],
-    "expectedSourceOut": "break  ",
+    "expectedSourceOut": "break ",
     "expectedReparseTree": "(break_expression)",
-    "wrappedText": "fn _f() { let _ = break  ; }",
+    "wrappedText": "fn _f() { let _ = break ; }",
     "wrappedOffset": 18
   },
   {
@@ -1800,7 +1800,7 @@
       "$nodeId": 1502512,
       "$named": true
     },
-    "expectedOutput": "continue "
+    "expectedOutput": "continue"
   },
   {
     "kind": "roundtrip",
@@ -1808,9 +1808,9 @@
     "sourceIn": "continue",
     "pattern": "continue_expression",
     "edits": [],
-    "expectedSourceOut": "continue ",
+    "expectedSourceOut": "continue",
     "expectedReparseTree": "(continue_expression)",
-    "wrappedText": "fn _f() { let _ = continue ; }",
+    "wrappedText": "fn _f() { let _ = continue; }",
     "wrappedOffset": 18
   },
   {
@@ -1884,7 +1884,7 @@
       "$nodeId": 1529344,
       "$named": true
     },
-    "expectedOutput": "let  a  =if b {\n    c\n} else {\n    d\n} ;"
+    "expectedOutput": "let a =if b {\n    c\n} else {\n    d\n};"
   },
   {
     "kind": "roundtrip",
@@ -1892,9 +1892,9 @@
     "sourceIn": "let a = if b {\n    c\n} else {\n    d\n};",
     "pattern": "let_declaration",
     "edits": [],
-    "expectedSourceOut": "let  a  =if b {\n    c\n} else {\n    d\n} ;",
+    "expectedSourceOut": "let a =if b {\n    c\n} else {\n    d\n};",
     "expectedReparseTree": "(let_declaration pattern: (identifier) value: (if_expression condition: (identifier) consequence: (block (identifier)) alternative: (else_clause (block (identifier)))))",
-    "wrappedText": "let  a  =if b {\n    c\n} else {\n    d\n} ;",
+    "wrappedText": "let a =if b {\n    c\n} else {\n    d\n};",
     "wrappedOffset": 0
   },
   {
@@ -2105,7 +2105,7 @@
       "$nodeId": 1535728,
       "$named": true
     },
-    "expectedOutput": "let  default  =1 ;"
+    "expectedOutput": "let default =1;"
   },
   {
     "kind": "roundtrip",
@@ -2113,9 +2113,9 @@
     "sourceIn": "let default = 1;",
     "pattern": "let_declaration",
     "edits": [],
-    "expectedSourceOut": "let  default  =1 ;",
+    "expectedSourceOut": "let default =1;",
     "expectedReparseTree": "(let_declaration pattern: (identifier) value: (integer_literal))",
-    "wrappedText": "let  default  =1 ;",
+    "wrappedText": "let default =1;",
     "wrappedOffset": 0
   },
   {
@@ -2178,7 +2178,7 @@
       "$nodeId": 1549752,
       "$named": true
     },
-    "expectedOutput": "pub union in6_addr__bindgen_ty_1   {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}"
+    "expectedOutput": "pub union in6_addr__bindgen_ty_1  {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}"
   },
   {
     "kind": "roundtrip",
@@ -2186,9 +2186,9 @@
     "sourceIn": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}",
     "pattern": "union_item",
     "edits": [],
-    "expectedSourceOut": "pub union in6_addr__bindgen_ty_1   {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}",
+    "expectedSourceOut": "pub union in6_addr__bindgen_ty_1  {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}",
     "expectedReparseTree": "(union_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (field_declaration_list (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal))) (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal))) (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal))) (field_declaration name: (field_identifier) type: (array_type element: (primitive_type) length: (integer_literal)))))",
-    "wrappedText": "pub union in6_addr__bindgen_ty_1   {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}",
+    "wrappedText": "pub union in6_addr__bindgen_ty_1  {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}",
     "wrappedOffset": 0
   },
   {
@@ -2386,7 +2386,7 @@
       "$nodeId": 1563520,
       "$named": true
     },
-    "expectedOutput": "pub enum Option <T>  {\n    None,\n    Some(T),\n}"
+    "expectedOutput": "pub enum Option <T> {\n    None,\n    Some(T),\n}"
   },
   {
     "kind": "roundtrip",
@@ -2394,9 +2394,9 @@
     "sourceIn": "pub enum Option<T> {\n    None,\n    Some(T),\n}",
     "pattern": "enum_item",
     "edits": [],
-    "expectedSourceOut": "pub enum Option <T>  {\n    None,\n    Some(T),\n}",
+    "expectedSourceOut": "pub enum Option <T> {\n    None,\n    Some(T),\n}",
     "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) body: (enum_variant_list (enum_variant name: (identifier)) (enum_variant name: (identifier) body: (ordered_field_declaration_list type: (type_identifier)))))",
-    "wrappedText": "pub enum Option <T>  {\n    None,\n    Some(T),\n}",
+    "wrappedText": "pub enum Option <T> {\n    None,\n    Some(T),\n}",
     "wrappedOffset": 0
   },
   {
@@ -2623,7 +2623,7 @@
       "$nodeId": 1572776,
       "$named": true
     },
-    "expectedOutput": "pub enum c_style_enum   {\n    val1 = 1,\n    val2 = 2\n}"
+    "expectedOutput": "pub enum c_style_enum  {\n    val1 = 1,\n    val2 = 2\n}"
   },
   {
     "kind": "roundtrip",
@@ -2631,9 +2631,9 @@
     "sourceIn": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}",
     "pattern": "enum_item",
     "edits": [],
-    "expectedSourceOut": "pub enum c_style_enum   {\n    val1 = 1,\n    val2 = 2\n}",
+    "expectedSourceOut": "pub enum c_style_enum  {\n    val1 = 1,\n    val2 = 2\n}",
     "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant name: (identifier) value: (integer_literal)) (enum_variant name: (identifier) value: (integer_literal))))",
-    "wrappedText": "pub enum c_style_enum   {\n    val1 = 1,\n    val2 = 2\n}",
+    "wrappedText": "pub enum c_style_enum  {\n    val1 = 1,\n    val2 = 2\n}",
     "wrappedOffset": 0
   },
   {
@@ -3134,7 +3134,7 @@
       "$nodeId": 1697056,
       "$named": true
     },
-    "expectedOutput": "unsafe impl   Foo  {\n}"
+    "expectedOutput": "unsafe impl  Foo {\n}"
   },
   {
     "kind": "roundtrip",
@@ -3142,9 +3142,9 @@
     "sourceIn": "unsafe impl Foo {\n}",
     "pattern": "impl_item",
     "edits": [],
-    "expectedSourceOut": "unsafe impl   Foo  {\n}",
+    "expectedSourceOut": "unsafe impl  Foo {\n}",
     "expectedReparseTree": "(impl_item type: (type_identifier) (impl_item_body body: (declaration_list)))",
-    "wrappedText": "unsafe impl   Foo  {\n}",
+    "wrappedText": "unsafe impl  Foo {\n}",
     "wrappedOffset": 0
   },
   {
@@ -3218,7 +3218,7 @@
       "$nodeId": 1700064,
       "$named": true
     },
-    "expectedOutput": "pub unsafe trait Trait    {}"
+    "expectedOutput": "pub unsafe trait Trait   {}"
   },
   {
     "kind": "roundtrip",
@@ -3226,9 +3226,9 @@
     "sourceIn": "pub unsafe trait Trait {}",
     "pattern": "trait_item",
     "edits": [],
-    "expectedSourceOut": "pub unsafe trait Trait    {}",
+    "expectedSourceOut": "pub unsafe trait Trait   {}",
     "expectedReparseTree": "(trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (declaration_list))",
-    "wrappedText": "pub unsafe trait Trait    {}",
+    "wrappedText": "pub unsafe trait Trait   {}",
     "wrappedOffset": 0
   },
   {
@@ -3355,7 +3355,7 @@
       "$nodeId": 1701512,
       "$named": true
     },
-    "expectedOutput": "unsafe impl  Trait for dyn (::std::any::Any) + Send  { }"
+    "expectedOutput": "unsafe impl  Trait for dyn (::std::any::Any) + Send { }"
   },
   {
     "kind": "roundtrip",
@@ -3363,9 +3363,9 @@
     "sourceIn": "unsafe impl Trait for dyn (::std::any::Any) + Send { }",
     "pattern": "impl_item",
     "edits": [],
-    "expectedSourceOut": "unsafe impl  Trait for dyn (::std::any::Any) + Send  { }",
+    "expectedSourceOut": "unsafe impl  Trait for dyn (::std::any::Any) + Send { }",
     "expectedReparseTree": "(impl_item trait: (type_identifier) type: (bounded_type left: (dynamic_type trait: (tuple_type (scoped_type_identifier path: (scoped_identifier path: (scoped_identifier name: (identifier)) name: (identifier)) name: (type_identifier)))) right: (type_identifier)) (impl_item_body body: (declaration_list)))",
-    "wrappedText": "unsafe impl  Trait for dyn (::std::any::Any) + Send  { }",
+    "wrappedText": "unsafe impl  Trait for dyn (::std::any::Any) + Send { }",
     "wrappedOffset": 0
   },
   {
@@ -3729,7 +3729,7 @@
       "$nodeId": 1739696,
       "$named": true
     },
-    "expectedOutput": "pub  trait Graph    {\n    type N: fmt::Display;\n    type E;\n}"
+    "expectedOutput": "pub trait Graph   {\n    type N: fmt::Display;\n    type E;\n}"
   },
   {
     "kind": "roundtrip",
@@ -3737,9 +3737,9 @@
     "sourceIn": "pub trait Graph {\n    type N: fmt::Display;\n    type E;\n}",
     "pattern": "trait_item",
     "edits": [],
-    "expectedSourceOut": "pub  trait Graph    {\n    type N: fmt::Display;\n    type E;\n}",
+    "expectedSourceOut": "pub trait Graph   {\n    type N: fmt::Display;\n    type E;\n}",
     "expectedReparseTree": "(trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (declaration_list (associated_type name: (type_identifier) bounds: (trait_bounds (scoped_type_identifier path: (identifier) name: (type_identifier)))) (associated_type name: (type_identifier))))",
-    "wrappedText": "pub  trait Graph    {\n    type N: fmt::Display;\n    type E;\n}",
+    "wrappedText": "pub trait Graph   {\n    type N: fmt::Display;\n    type E;\n}",
     "wrappedOffset": 0
   },
   {
@@ -3842,7 +3842,7 @@
       "$nodeId": 1739104,
       "$named": true
     },
-    "expectedOutput": "type N  : fmt::Display ;"
+    "expectedOutput": "type N  : fmt::Display;"
   },
   {
     "kind": "roundtrip",
@@ -3850,9 +3850,9 @@
     "sourceIn": "type N: fmt::Display;",
     "pattern": "associated_type",
     "edits": [],
-    "expectedSourceOut": "type N  : fmt::Display ;",
+    "expectedSourceOut": "type N  : fmt::Display;",
     "expectedReparseTree": "(associated_type name: (type_identifier) bounds: (trait_bounds (scoped_type_identifier path: (identifier) name: (type_identifier))))",
-    "wrappedText": "type N  : fmt::Display ;",
+    "wrappedText": "type N  : fmt::Display;",
     "wrappedOffset": 0
   },
   {
@@ -3977,7 +3977,7 @@
       "$nodeId": 1748896,
       "$named": true
     },
-    "expectedOutput": "pub  trait Database    {\n    type F<'a, D>: Future<Output = D> + 'a;\n}"
+    "expectedOutput": "pub trait Database   {\n    type F<'a, D>: Future<Output = D> + 'a;\n}"
   },
   {
     "kind": "roundtrip",
@@ -3985,9 +3985,9 @@
     "sourceIn": "pub trait Database {\n    type F<'a, D>: Future<Output = D> + 'a;\n}",
     "pattern": "trait_item",
     "edits": [],
-    "expectedSourceOut": "pub  trait Database    {\n    type F<'a, D>: Future<Output = D> + 'a;\n}",
+    "expectedSourceOut": "pub trait Database   {\n    type F<'a, D>: Future<Output = D> + 'a;\n}",
     "expectedReparseTree": "(trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (declaration_list (associated_type name: (type_identifier) type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier))) (type_parameter name: (type_identifier))) bounds: (trait_bounds (generic_type type: (type_identifier) type_arguments: (type_arguments (type_binding name: (type_identifier) type: (type_identifier)))) (lifetime identifier: (identifier))))))",
-    "wrappedText": "pub  trait Database    {\n    type F<'a, D>: Future<Output = D> + 'a;\n}",
+    "wrappedText": "pub trait Database   {\n    type F<'a, D>: Future<Output = D> + 'a;\n}",
     "wrappedOffset": 0
   },
   {
@@ -4101,7 +4101,7 @@
       "$nodeId": 1748592,
       "$named": true
     },
-    "expectedOutput": "type F <'a, D> : Future<Output = D> + 'a ;"
+    "expectedOutput": "type F <'a, D> : Future<Output = D> + 'a;"
   },
   {
     "kind": "roundtrip",
@@ -4109,9 +4109,9 @@
     "sourceIn": "type F<'a, D>: Future<Output = D> + 'a;",
     "pattern": "associated_type",
     "edits": [],
-    "expectedSourceOut": "type F <'a, D> : Future<Output = D> + 'a ;",
+    "expectedSourceOut": "type F <'a, D> : Future<Output = D> + 'a;",
     "expectedReparseTree": "(associated_type name: (type_identifier) type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier))) (type_parameter name: (type_identifier))) bounds: (trait_bounds (generic_type type: (type_identifier) type_arguments: (type_arguments (type_binding name: (type_identifier) type: (type_identifier)))) (lifetime identifier: (identifier))))",
-    "wrappedText": "type F <'a, D> : Future<Output = D> + 'a ;",
+    "wrappedText": "type F <'a, D> : Future<Output = D> + 'a;",
     "wrappedOffset": 0
   },
   {
@@ -4236,7 +4236,7 @@
       "$nodeId": 1769336,
       "$named": true
     },
-    "expectedOutput": "pub  fn a  ()   {}"
+    "expectedOutput": "pub fn a  () {}"
   },
   {
     "kind": "roundtrip",
@@ -4244,9 +4244,9 @@
     "sourceIn": "pub fn a() {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "pub  fn a  ()   {}",
+    "expectedSourceOut": "pub fn a  () {}",
     "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) parameters: (parameters) body: (block))",
-    "wrappedText": "pub  fn a  ()   {}",
+    "wrappedText": "pub fn a  () {}",
     "wrappedOffset": 0
   },
   {
@@ -4725,7 +4725,7 @@
       "$nodeId": 1808680,
       "$named": true
     },
-    "expectedOutput": "crate  fn foo  ()   { }"
+    "expectedOutput": "crate fn foo  () { }"
   },
   {
     "kind": "roundtrip",
@@ -4733,9 +4733,9 @@
     "sourceIn": "crate fn foo() { }",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "crate  fn foo  ()   { }",
+    "expectedSourceOut": "crate fn foo  () { }",
     "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_crate (crate))) name: (identifier) parameters: (parameters) body: (block))",
-    "wrappedText": "crate  fn foo  ()   { }",
+    "wrappedText": "crate fn foo  () { }",
     "wrappedOffset": 0
   },
   {
@@ -6108,7 +6108,7 @@
       "$nodeId": 1909712,
       "$named": true
     },
-    "expectedOutput": "let  character  =integer as char ;"
+    "expectedOutput": "let character =integer as char;"
   },
   {
     "kind": "roundtrip",
@@ -6116,9 +6116,9 @@
     "sourceIn": "let character = integer as char;",
     "pattern": "let_declaration",
     "edits": [],
-    "expectedSourceOut": "let  character  =integer as char ;",
+    "expectedSourceOut": "let character =integer as char;",
     "expectedReparseTree": "(let_declaration pattern: (identifier) value: (type_cast_expression value: (identifier) type: (primitive_type)))",
-    "wrappedText": "let  character  =integer as char ;",
+    "wrappedText": "let character =integer as char;",
     "wrappedOffset": 0
   },
   {
@@ -6694,7 +6694,7 @@
       "$nodeId": 1947224,
       "$named": true
     },
-    "expectedOutput": "let  (x, y, z)  =(1, 2, 3) ;"
+    "expectedOutput": "let (x, y, z) =(1, 2, 3);"
   },
   {
     "kind": "roundtrip",
@@ -6702,9 +6702,9 @@
     "sourceIn": "let (x, y, z) = (1, 2, 3);",
     "pattern": "let_declaration",
     "edits": [],
-    "expectedSourceOut": "let  (x, y, z)  =(1, 2, 3) ;",
+    "expectedSourceOut": "let (x, y, z) =(1, 2, 3);",
     "expectedReparseTree": "(let_declaration pattern: (tuple_pattern (identifier) (identifier) (identifier)) value: (tuple_expression elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))",
-    "wrappedText": "let  (x, y, z)  =(1, 2, 3) ;",
+    "wrappedText": "let (x, y, z) =(1, 2, 3);",
     "wrappedOffset": 0
   },
   {
@@ -6937,7 +6937,7 @@
       "$nodeId": 1958248,
       "$named": true
     },
-    "expectedOutput": "let  a  =SomeStruct { field1, field2: expression, field3, } ;"
+    "expectedOutput": "let a =SomeStruct { field1, field2: expression, field3, };"
   },
   {
     "kind": "roundtrip",
@@ -6945,9 +6945,9 @@
     "sourceIn": "let a = SomeStruct { field1, field2: expression, field3, };",
     "pattern": "let_declaration",
     "edits": [],
-    "expectedSourceOut": "let  a  =SomeStruct { field1, field2: expression, field3, } ;",
+    "expectedSourceOut": "let a =SomeStruct { field1, field2: expression, field3, };",
     "expectedReparseTree": "(let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list (shorthand_field_initializer identifier: (identifier)) (field_initializer field: (field_identifier) value: (identifier)) (shorthand_field_initializer identifier: (identifier)))))",
-    "wrappedText": "let  a  =SomeStruct { field1, field2: expression, field3, } ;",
+    "wrappedText": "let a =SomeStruct { field1, field2: expression, field3, };",
     "wrappedOffset": 0
   },
   {
@@ -7322,7 +7322,7 @@
       "$nodeId": 1977240,
       "$named": true
     },
-    "expectedOutput": "let  u  =User{name, ..current_user()} ;"
+    "expectedOutput": "let u =User{name, ..current_user()};"
   },
   {
     "kind": "roundtrip",
@@ -7330,9 +7330,9 @@
     "sourceIn": "let u = User{name, ..current_user()};",
     "pattern": "let_declaration",
     "edits": [],
-    "expectedSourceOut": "let  u  =User{name, ..current_user()} ;",
+    "expectedSourceOut": "let u =User{name, ..current_user()};",
     "expectedReparseTree": "(let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list (shorthand_field_initializer identifier: (identifier)) (base_field_initializer (call_expression function: (identifier) arguments: (arguments))))))",
-    "wrappedText": "let  u  =User{name, ..current_user()} ;",
+    "wrappedText": "let u =User{name, ..current_user()};",
     "wrappedOffset": 0
   },
   {
@@ -7486,7 +7486,7 @@
       "$nodeId": 1997368,
       "$named": true
     },
-    "expectedOutput": "if let Some(a) = b\n    && c\n    && d\n    && let Some(e) = f {\n} "
+    "expectedOutput": "if let Some(a) = b\n    && c\n    && d\n    && let Some(e) = f {\n}"
   },
   {
     "kind": "roundtrip",
@@ -7494,9 +7494,9 @@
     "sourceIn": "if let Some(a) = b\n    && c\n    && d\n    && let Some(e) = f\n{\n}",
     "pattern": "if_expression",
     "edits": [],
-    "expectedSourceOut": "if let Some(a) = b\n    && c\n    && d\n    && let Some(e) = f {\n} ",
+    "expectedSourceOut": "if let Some(a) = b\n    && c\n    && d\n    && let Some(e) = f {\n}",
     "expectedReparseTree": "(if_expression condition: (let_chain (let_condition pattern: (tuple_struct_pattern type: (identifier) (identifier)) value: (identifier)) (identifier) (identifier) (let_condition pattern: (tuple_struct_pattern type: (identifier) (identifier)) value: (identifier))) consequence: (block))",
-    "wrappedText": "fn _f() { let _ = if let Some(a) = b\n    && c\n    && d\n    && let Some(e) = f {\n} ; }",
+    "wrappedText": "fn _f() { let _ = if let Some(a) = b\n    && c\n    && d\n    && let Some(e) = f {\n}; }",
     "wrappedOffset": 18
   },
   {
@@ -7674,7 +7674,7 @@
       "$nodeId": 2005592,
       "$named": true
     },
-    "expectedOutput": "if let (\"Bacon\", b) = dish {\n} "
+    "expectedOutput": "if let (\"Bacon\", b) = dish {\n}"
   },
   {
     "kind": "roundtrip",
@@ -7682,9 +7682,9 @@
     "sourceIn": "if let (\"Bacon\", b) = dish {\n}",
     "pattern": "if_expression",
     "edits": [],
-    "expectedSourceOut": "if let (\"Bacon\", b) = dish {\n} ",
+    "expectedSourceOut": "if let (\"Bacon\", b) = dish {\n}",
     "expectedReparseTree": "(if_expression condition: (let_condition pattern: (tuple_pattern (string_literal (string_content)) (identifier)) value: (identifier)) consequence: (block))",
-    "wrappedText": "fn _f() { let _ = if let (\"Bacon\", b) = dish {\n} ; }",
+    "wrappedText": "fn _f() { let _ = if let (\"Bacon\", b) = dish {\n}; }",
     "wrappedOffset": 18
   },
   {
@@ -8410,7 +8410,7 @@
       "$nodeId": 2050512,
       "$named": true
     },
-    "expectedOutput": "let  msg  =match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n      if a {\n        \"200 (but this is not very stylish)\"\n      }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n} ;"
+    "expectedOutput": "let msg =match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n      if a {\n        \"200 (but this is not very stylish)\"\n      }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};"
   },
   {
     "kind": "roundtrip",
@@ -8418,9 +8418,9 @@
     "sourceIn": "let msg = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n      if a {\n        \"200 (but this is not very stylish)\"\n      }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};",
     "pattern": "let_declaration",
     "edits": [],
-    "expectedSourceOut": "let  msg  =match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n      if a {\n        \"200 (but this is not very stylish)\"\n      }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n} ;",
+    "expectedSourceOut": "let msg =match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n      if a {\n        \"200 (but this is not very stylish)\"\n      }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};",
     "expectedReparseTree": "(let_declaration pattern: (identifier) value: (match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal)))) (match_arm_with_comma value: (string_literal (string_content)))) (match_arm pattern: (match_pattern (identifier) condition: (binary_expression left: (identifier) right: (integer_literal))) (match_arm_with_comma value: (string_literal (string_content)))) (match_arm pattern: (match_pattern (identifier) condition: (binary_expression left: (identifier) right: (integer_literal))) (match_arm_block_ending value: (if_expression condition: (identifier) consequence: (block (string_literal (string_content)))))) (match_arm pattern: (match_pattern (identifier) condition: (let_chain (let_condition pattern: (tuple_struct_pattern type: (identifier) (identifier)) value: (identifier)) (identifier) (let_condition pattern: (tuple_struct_pattern type: (identifier) (identifier)) value: (identifier)))) (match_arm_with_comma value: (string_literal (string_content)))) (match_arm pattern: (match_pattern (wildcard_pattern)) value: (string_literal (string_content))))))",
-    "wrappedText": "let  msg  =match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n      if a {\n        \"200 (but this is not very stylish)\"\n      }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n} ;",
+    "wrappedText": "let msg =match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n      if a {\n        \"200 (but this is not very stylish)\"\n      }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};",
     "wrappedOffset": 0
   },
   {
@@ -8574,7 +8574,7 @@
       "$nodeId": 2045976,
       "$named": true
     },
-    "expectedOutput": "if a {\n        \"200 (but this is not very stylish)\"\n      } "
+    "expectedOutput": "if a {\n        \"200 (but this is not very stylish)\"\n      }"
   },
   {
     "kind": "roundtrip",
@@ -8582,9 +8582,9 @@
     "sourceIn": "if a {\n        \"200 (but this is not very stylish)\"\n      }",
     "pattern": "if_expression",
     "edits": [],
-    "expectedSourceOut": "if a {\n        \"200 (but this is not very stylish)\"\n      } ",
+    "expectedSourceOut": "if a {\n        \"200 (but this is not very stylish)\"\n      }",
     "expectedReparseTree": "(if_expression condition: (identifier) consequence: (block (string_literal (string_content))))",
-    "wrappedText": "fn _f() { let _ = if a {\n        \"200 (but this is not very stylish)\"\n      } ; }",
+    "wrappedText": "fn _f() { let _ = if a {\n        \"200 (but this is not very stylish)\"\n      }; }",
     "wrappedOffset": 18
   },
   {
@@ -10591,7 +10591,7 @@
       "$nodeId": 2233368,
       "$named": true
     },
-    "expectedOutput": "let  three_ranges  =[const { (0..=5).into_inner() }; 3] ;"
+    "expectedOutput": "let three_ranges =[const { (0..=5).into_inner() }; 3];"
   },
   {
     "kind": "roundtrip",
@@ -10599,9 +10599,9 @@
     "sourceIn": "let three_ranges = [const { (0..=5).into_inner() }; 3];",
     "pattern": "let_declaration",
     "edits": [],
-    "expectedSourceOut": "let  three_ranges  =[const { (0..=5).into_inner() }; 3] ;",
+    "expectedSourceOut": "let three_ranges =[const { (0..=5).into_inner() }; 3];",
     "expectedReparseTree": "(let_declaration pattern: (identifier) value: (array_expression (array_expression_semi elements: (const_block body: (block (call_expression function: (field_expression value: (parenthesized_expression (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal)))) field: (field_identifier)) arguments: (arguments)))) length: (integer_literal))))",
-    "wrappedText": "let  three_ranges  =[const { (0..=5).into_inner() }; 3] ;",
+    "wrappedText": "let three_ranges =[const { (0..=5).into_inner() }; 3];",
     "wrappedOffset": 0
   },
   {
@@ -12719,7 +12719,7 @@
       "$nodeId": 2473544,
       "$named": true
     },
-    "expectedOutput": "if let A(x) | B(x) = expr {\n    do_stuff_with(x);\n} "
+    "expectedOutput": "if let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}"
   },
   {
     "kind": "roundtrip",
@@ -12727,9 +12727,9 @@
     "sourceIn": "if let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}",
     "pattern": "if_expression",
     "edits": [],
-    "expectedSourceOut": "if let A(x) | B(x) = expr {\n    do_stuff_with(x);\n} ",
+    "expectedSourceOut": "if let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}",
     "expectedReparseTree": "(if_expression condition: (let_condition pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (identifier)) right: (tuple_struct_pattern type: (identifier) (identifier)))) value: (identifier)) consequence: (block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments (identifier)))))))",
-    "wrappedText": "fn _f() { let _ = if let A(x) | B(x) = expr {\n    do_stuff_with(x);\n} ; }",
+    "wrappedText": "fn _f() { let _ = if let A(x) | B(x) = expr {\n    do_stuff_with(x);\n}; }",
     "wrappedOffset": 18
   },
   {
