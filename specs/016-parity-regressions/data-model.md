@@ -43,9 +43,20 @@ This feature operates on existing in-memory entities (validator results, NodeDat
         "python":     { "…": "same shape" }
     },
     "totals": {
-        "pass": 1234,                 // sum of all validator + parity passes across grammars
-        "fail": 16,                   // matches the spec's headline "16 baseline failures" at b4ccc6cc
-        "total": 1250
+        // Roll-up across all per-grammar validators + parity fixtures.
+        // `pass` is the sum of every `validators[*].pass` and
+        // `parityFixtures.pass`; `total` is the analogous sum of `total`s;
+        // `fail = total - pass`. At baseline (commit d0d03d94) this is
+        // ts={pass:3134, fail:1825, total:4959}, native={pass:2819,
+        // fail:2140, total:4959}. NOTE: this is the validator-level
+        // count, NOT the vitest test count — the spec's headline "16
+        // baseline failures" refers to the latter (16 it() calls failing
+        // out of 2514) and is not directly operationalised in this JSON.
+        // The regression-checker's verdict rules cover both layers
+        // because per-validator pass counts are also tracked.
+        "pass": 3134,
+        "fail": 1825,
+        "total": 4959
     }
 }
 ```
