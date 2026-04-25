@@ -572,12 +572,25 @@ export type ConfigOf<T> = T extends unknown ? Simplify<
 	//   a single discriminator at the outer level while preserving
 	//   the inner's fields / children.
 	//
+	// - Inner is a polymorph supertype UNION (e.g.
+	//   `$children: readonly [VisibilityModifier]` where
+	//   `VisibilityModifier = UFormCrate | UFormPub`): drilling into
+	//   each arm's `$children[0]` distributes ConfigOf and exposes the
+	//   inner-inner contents (`Crate | Self | Super |
+	//   VisibilityModifierPubInPath`) instead of stopping at the
+	//   polymorph boundary. `IsSingleType<C>` gates the hoist to
+	//   single concrete kinds only — polymorph unions fall through to
+	//   `Partial<ChildSlotsOf<T>>`, surfacing the union as a
+	//   `children: readonly [VisibilityModifier]` passthrough.
+	//
 	// Everything else (non-polymorph or multi-child) exposes
 	// `Partial<{ children }>` directly.
 	& (T extends { readonly $variant: string; readonly $children: readonly [infer C] }
-		? (keyof ConfigOf<C> extends never
-			? Partial<ChildSlotsOf<T>>
-			: Omit<ConfigOf<C>, '$variant'>)
+		? IsSingleType<C> extends true
+			? (keyof ConfigOf<C> extends never
+				? Partial<ChildSlotsOf<T>>
+				: Omit<ConfigOf<C>, '$variant'>)
+			: Partial<ChildSlotsOf<T>>
 		: Partial<ChildSlotsOf<T>>)
 	// $variant discriminator: carried verbatim on the Config surface
 	// whenever the interface declares one (independent of whether the
