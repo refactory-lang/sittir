@@ -251,7 +251,7 @@ export function assertStatement(...children: T.Expression[]) {
 export function expressionStatement(config: Omit<ConfigOf<T.ExpressionStatementUFormTuple>, '$variant'>) {
   return expressionStatementUFormTuple(config as Parameters<typeof expressionStatementUFormTuple>[0]);
 }
-export function expressionStatementUFormTuple(config?: Omit<ConfigOf<T.ExpressionStatementUFormTuple>, '$variant'>) {
+export function expressionStatementUFormTuple(_config?: Omit<ConfigOf<T.ExpressionStatementUFormTuple>, '$variant'>) {
   return {
     $type: 'expression_statement' as const,
     $source: 'factory' as const,
@@ -661,7 +661,7 @@ export function withClause(config: ConfigOf<T.WithClauseUFormBare> | ConfigOf<T.
   }
   throw new Error(`withClause: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'bare' | 'paren'.`);
 }
-export function withClauseUFormBare(config?: Omit<ConfigOf<T.WithClauseUFormBare>, '$variant'>) {
+export function withClauseUFormBare(_config?: Omit<ConfigOf<T.WithClauseUFormBare>, '$variant'>) {
   return {
     $type: 'with_clause' as const,
     $source: 'factory' as const,

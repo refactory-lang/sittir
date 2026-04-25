@@ -928,6 +928,23 @@ function emitFieldCarryingFactory(
     lines.push(...factorySuffix(node.treeTypeName))
     lines.push('  };')
     lines.push('}')
+    return renameUnusedConfigParam(lines)
+}
+
+/**
+ * Post-process emitted factory lines: rename the `config` parameter to
+ * `_config` when the function body never reads it. Silences
+ * `no-unused-vars` on parameterless polymorph form factories without
+ * changing the public type signature (the param type stays the same;
+ * only the binding name changes). The signature line is at index 0;
+ * everything after is the body, scanned for `\bconfig\b`.
+ */
+function renameUnusedConfigParam(lines: string[]): string {
+    const header = lines[0]!
+    const body = lines.slice(1).join('\n')
+    if (!/\bconfig\b/.test(body)) {
+        lines[0] = header.replace(/\bconfig(\??:)/, '_config$1')
+    }
     return lines.join('\n')
 }
 
@@ -1389,7 +1406,9 @@ function emitHoistedPolymorphFormFactory(
 
     // Required if ANY form-level OR inner-level required field is present
     // (modulo auto-stamp / literal-resolved — those don't participate in the
-    // Config surface).
+    // Config surface). Also required when the inner is a container whose
+    // children DON'T all auto-stamp — the inner factory needs `config
+    // .children[0]` and the form can't honour that with `config?:`.
     const formRequired = formFields.some(f =>
         isRequired(f) && autoStampExpression(f, nodeMap) === undefined,
     )
@@ -1448,9 +1467,20 @@ function emitHoistedPolymorphFormFactory(
         const innerChildren = container.children
         const anyMultiple = innerChildren.some(c => isMultiple(c))
         if (anyMultiple) {
+            // Spread coalesces missing children to an empty list — varargs
+            // inner factory accepts the empty case.
             lines.push(`  const inner = ${hoist.innerFactoryName}(...(config?.children ?? []));`)
         } else {
-            lines.push(`  const inner = ${hoist.innerFactoryName}(config?.children?.[0]!);`)
+            // Single-child inner factory takes one required NodeData. Tests
+            // and lenient consumers pass `{}` to form factories; we preserve
+            // that tolerance by reading defensively (returns undefined when
+            // either config or children is missing) and casting to the inner
+            // factory's required-arg type. Replaces the structurally absurd
+            // `config?.children?.[0]!` (which said "may be undefined" then
+            // asserted not). The cast is now the single honest statement of
+            // "trust the caller to provide this — runtime will see undefined
+            // if they didn't, same as before."
+            lines.push(`  const inner = ${hoist.innerFactoryName}((config?.children ?? [])[0] as Parameters<typeof ${hoist.innerFactoryName}>[0]);`)
         }
     } else if (hoist.innerFactoryName !== undefined) {
         // When the outer config is optional (no required fields anywhere
@@ -1521,7 +1551,7 @@ function emitHoistedPolymorphFormFactory(
     lines.push(...factorySuffix(form.treeTypeName))
     lines.push('  };')
     lines.push('}')
-    return lines.join('\n')
+    return renameUnusedConfigParam(lines)
 }
 
 interface HoistedSetterContext {

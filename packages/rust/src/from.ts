@@ -983,7 +983,7 @@ export function visibilityModifierUFormCrateFrom(input?: Omit<ConfigOf<T.Visibil
   return F.visibilityModifierUFormCrate(input);
 }
 
-export function visibilityModifierUFormPubFrom(input: Omit<ConfigOf<T.VisibilityModifierUFormPub>, '$variant'>) {
+export function visibilityModifierUFormPubFrom(_input: Omit<ConfigOf<T.VisibilityModifierUFormPub>, '$variant'>) {
   return F.visibilityModifierUFormPub({
   });
 }

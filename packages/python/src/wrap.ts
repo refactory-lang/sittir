@@ -149,11 +149,6 @@ function drillAs(entry: unknown, tree: TreeHandle, fromType: string, toType: str
   if (e.$nodeId == null) return entry;
   return readTreeNode(tree, e.$nodeId, { from: fromType, to: toType });
 }
-function drillAsAll(entries: unknown, tree: TreeHandle, fromType: string, toType: string): unknown[] {
-  if (!entries) return [];
-  const arr = Array.isArray(entries) ? entries : [entries];
-  return arr.map(e => drillAs(e, tree, fromType, toType));
-}
 
 export function wrapModule(data: _NodeData, tree: TreeHandle): WrappedNode<Module> {
   return {

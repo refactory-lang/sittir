@@ -38,6 +38,26 @@ export function emitWrap(config: EmitWrapConfig): string {
         : undefined
 
     // ------------------------------------------------------------------
+    // Per-kind wrap functions — emit first so we can scan for which
+    // drill helpers are actually referenced, then conditionally emit
+    // only the used ones in the preamble below. Avoids dead-helper
+    // lint warnings (`no-unused-vars` on drillAsAll for grammars with
+    // no multiple-cardinality alias-source fields).
+    // ------------------------------------------------------------------
+    const bodyLines: string[] = []
+    for (const [, node] of nodeMap.nodes) {
+        const source = renderWrapForNode(node)
+        if (source === undefined) continue
+        bodyLines.push(source)
+        bodyLines.push('')
+    }
+    const bodySource = bodyLines.join('\n')
+    const usesDrillIn = /\bdrillIn\b/.test(bodySource)
+    const usesDrillInAll = /\bdrillInAll\b/.test(bodySource)
+    const usesDrillAs = /\bdrillAs\b/.test(bodySource)
+    const usesDrillAsAll = /\bdrillAsAll\b/.test(bodySource)
+
+    // ------------------------------------------------------------------
     // Preamble
     // ------------------------------------------------------------------
     const lines: string[] = [
@@ -57,47 +77,46 @@ export function emitWrap(config: EmitWrapConfig): string {
         '//     → readNode (handle-driven — tree.read for native, JS walker otherwise)',
         '//       → wrapNode (dispatches on $type)',
         '//         → drillIn / drillAs → readTreeNode (recurse)',
-        'function drillIn(entry: unknown, tree: TreeHandle): unknown {',
-        '  if (!entry) return undefined;',
-        '  const e = entry as _NodeData;',
-        '  if (e.$nodeId != null) return readTreeNode(tree, e.$nodeId);',
-        '  return entry;',
-        '}',
-        'function drillInAll(entries: unknown, tree: TreeHandle): unknown[] {',
-        '  if (!entries) return [];',
-        '  const arr = Array.isArray(entries) ? entries : [entries];',
-        '  return arr.map(e => drillIn(e, tree));',
-        '}',
-        '// drillAs — field-site unalias for grammar `alias($.source, $.target)`',
-        '// declarations (ADR-0006). The `asType` override rewrites $type from',
-        '// tree-sitter\'s alias target back to the codegen-canonical source',
-        '// name between the read and the wrap. Conditional rewrite: only',
-        '// fires when the child\'s actual $type matches `fromType`; mixed-',
-        '// union fields (e.g. Path | BracketedType | GenericTypeWithTurbofish)',
-        '// pass through unchanged when the child arrived as a non-alias kind.',
-        'function drillAs(entry: unknown, tree: TreeHandle, fromType: string, toType: string): unknown {',
-        '  if (!entry) return undefined;',
-        '  const e = entry as _NodeData;',
-        '  if (e.$nodeId == null) return entry;',
-        '  return readTreeNode(tree, e.$nodeId, { from: fromType, to: toType });',
-        '}',
-        'function drillAsAll(entries: unknown, tree: TreeHandle, fromType: string, toType: string): unknown[] {',
-        '  if (!entries) return [];',
-        '  const arr = Array.isArray(entries) ? entries : [entries];',
-        '  return arr.map(e => drillAs(e, tree, fromType, toType));',
-        '}',
+        ...(usesDrillIn ? [
+            'function drillIn(entry: unknown, tree: TreeHandle): unknown {',
+            '  if (!entry) return undefined;',
+            '  const e = entry as _NodeData;',
+            '  if (e.$nodeId != null) return readTreeNode(tree, e.$nodeId);',
+            '  return entry;',
+            '}',
+        ] : []),
+        ...(usesDrillInAll ? [
+            'function drillInAll(entries: unknown, tree: TreeHandle): unknown[] {',
+            '  if (!entries) return [];',
+            '  const arr = Array.isArray(entries) ? entries : [entries];',
+            '  return arr.map(e => drillIn(e, tree));',
+            '}',
+        ] : []),
+        ...(usesDrillAs ? [
+            '// drillAs — field-site unalias for grammar `alias($.source, $.target)`',
+            '// declarations (ADR-0006). The `asType` override rewrites $type from',
+            '// tree-sitter\'s alias target back to the codegen-canonical source',
+            '// name between the read and the wrap. Conditional rewrite: only',
+            '// fires when the child\'s actual $type matches `fromType`; mixed-',
+            '// union fields (e.g. Path | BracketedType | GenericTypeWithTurbofish)',
+            '// pass through unchanged when the child arrived as a non-alias kind.',
+            'function drillAs(entry: unknown, tree: TreeHandle, fromType: string, toType: string): unknown {',
+            '  if (!entry) return undefined;',
+            '  const e = entry as _NodeData;',
+            '  if (e.$nodeId == null) return entry;',
+            '  return readTreeNode(tree, e.$nodeId, { from: fromType, to: toType });',
+            '}',
+        ] : []),
+        ...(usesDrillAsAll ? [
+            'function drillAsAll(entries: unknown, tree: TreeHandle, fromType: string, toType: string): unknown[] {',
+            '  if (!entries) return [];',
+            '  const arr = Array.isArray(entries) ? entries : [entries];',
+            '  return arr.map(e => drillAs(e, tree, fromType, toType));',
+            '}',
+        ] : []),
         '',
     ]
-
-    // ------------------------------------------------------------------
-    // Per-kind wrap functions — local dispatch on modelType.
-    // ------------------------------------------------------------------
-    for (const [, node] of nodeMap.nodes) {
-        const source = renderWrapForNode(node)
-        if (source === undefined) continue
-        lines.push(source)
-        lines.push('')
-    }
+    lines.push(bodySource)
 
     // ------------------------------------------------------------------
     // _wrapTable — runtime dispatch by kind

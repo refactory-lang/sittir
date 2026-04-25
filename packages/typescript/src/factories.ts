@@ -129,7 +129,7 @@ export function exportStatementUFormTypeExport(config?: Omit<ConfigOf<T.ExportSt
   };
 }
 export function exportStatementUFormEqualsExport(config?: Omit<ConfigOf<T.ExportStatementUFormEqualsExport>, '$variant'>) {
-  const inner = exportStatementEqualsExport(config?.children?.[0]!);
+  const inner = exportStatementEqualsExport((config?.children ?? [])[0] as Parameters<typeof exportStatementEqualsExport>[0]);
   const children = [inner] as const;
   return {
     $type: 'export_statement' as const,
@@ -146,7 +146,7 @@ export function exportStatementUFormEqualsExport(config?: Omit<ConfigOf<T.Export
   };
 }
 export function exportStatementUFormNamespaceExport(config?: Omit<ConfigOf<T.ExportStatementUFormNamespaceExport>, '$variant'>) {
-  const inner = exportStatementNamespaceExport(config?.children?.[0]!);
+  const inner = exportStatementNamespaceExport((config?.children ?? [])[0] as Parameters<typeof exportStatementNamespaceExport>[0]);
   const children = [inner] as const;
   return {
     $type: 'export_statement' as const,
@@ -264,7 +264,7 @@ export function importClause(config: ConfigOf<T.ImportClauseUFormNamespaceImport
   throw new Error(`importClause: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'namespace_import' | 'named_imports' | 'default_import'.`);
 }
 export function importClauseUFormNamespaceImport(config?: Omit<ConfigOf<T.ImportClauseUFormNamespaceImport>, '$variant'>) {
-  const inner = importClauseNamespaceImport(config?.children?.[0]!);
+  const inner = importClauseNamespaceImport((config?.children ?? [])[0] as Parameters<typeof importClauseNamespaceImport>[0]);
   const children = [inner] as const;
   return {
     $type: 'import_clause' as const,
@@ -281,7 +281,7 @@ export function importClauseUFormNamespaceImport(config?: Omit<ConfigOf<T.Import
   };
 }
 export function importClauseUFormNamedImports(config?: Omit<ConfigOf<T.ImportClauseUFormNamedImports>, '$variant'>) {
-  const inner = importClauseNamedImports(config?.children?.[0]!);
+  const inner = importClauseNamedImports((config?.children ?? [])[0] as Parameters<typeof importClauseNamedImports>[0]);
   const children = [inner] as const;
   return {
     $type: 'import_clause' as const,
@@ -298,7 +298,7 @@ export function importClauseUFormNamedImports(config?: Omit<ConfigOf<T.ImportCla
   };
 }
 export function importClauseUFormDefaultImport(config?: Omit<ConfigOf<T.ImportClauseUFormDefaultImport>, '$variant'>) {
-  const inner = importClauseDefaultImport(config?.children?.[0]!);
+  const inner = importClauseDefaultImport((config?.children ?? [])[0] as Parameters<typeof importClauseDefaultImport>[0]);
   const children = [inner] as const;
   return {
     $type: 'import_clause' as const,
@@ -1019,7 +1019,7 @@ export function parenthesizedExpressionUFormTyped(config?: Omit<ConfigOf<T.Paren
   };
 }
 export function parenthesizedExpressionUFormSequence(config?: Omit<ConfigOf<T.ParenthesizedExpressionUFormSequence>, '$variant'>) {
-  const inner = parenthesizedExpressionSequence(config?.children?.[0]!);
+  const inner = parenthesizedExpressionSequence((config?.children ?? [])[0] as Parameters<typeof parenthesizedExpressionSequence>[0]);
   const children = [inner] as const;
   return {
     $type: 'parenthesized_expression' as const,
@@ -1435,7 +1435,7 @@ export function classHeritage(config: ConfigOf<T.ClassHeritageUFormExtendsClause
   throw new Error(`classHeritage: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'extends_clause' | 'implements_clause'.`);
 }
 export function classHeritageUFormExtendsClause(config?: Omit<ConfigOf<T.ClassHeritageUFormExtendsClause>, '$variant'>) {
-  const inner = classHeritageExtendsClause(config?.children?.[0]!);
+  const inner = classHeritageExtendsClause((config?.children ?? [])[0] as Parameters<typeof classHeritageExtendsClause>[0]);
   const children = [inner] as const;
   return {
     $type: 'class_heritage' as const,
@@ -1452,7 +1452,7 @@ export function classHeritageUFormExtendsClause(config?: Omit<ConfigOf<T.ClassHe
   };
 }
 export function classHeritageUFormImplementsClause(config?: Omit<ConfigOf<T.ClassHeritageUFormImplementsClause>, '$variant'>) {
-  const inner = classHeritageImplementsClause(config?.children?.[0]!);
+  const inner = classHeritageImplementsClause((config?.children ?? [])[0] as Parameters<typeof classHeritageImplementsClause>[0]);
   const children = [inner] as const;
   return {
     $type: 'class_heritage' as const,
@@ -4168,7 +4168,7 @@ export function indexSignatureUFormMappedTypeClause(config: Omit<ConfigOf<T.Inde
     sign: config.sign,
     type: config.type,
   };
-  const inner = indexSignatureMappedTypeClause(config?.children?.[0]!);
+  const inner = indexSignatureMappedTypeClause((config?.children ?? [])[0] as Parameters<typeof indexSignatureMappedTypeClause>[0]);
   const children = [inner] as const;
   return {
     $type: 'index_signature' as const,
@@ -4621,7 +4621,7 @@ export function publicFieldDefinitionDeclareFirst(child?: T.AccessibilityModifie
   };
 }
 
-export function publicFieldDefinitionAccessorOpt(config?: ConfigOf<T.PublicFieldDefinitionAccessorOpt>) {
+export function publicFieldDefinitionAccessorOpt(_config?: ConfigOf<T.PublicFieldDefinitionAccessorOpt>) {
   const fields = {
     accessor: "accessor" as const,
   };

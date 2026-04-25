@@ -165,10 +165,12 @@ function descendThroughSingleWrapper(rule, head, rest, patch, precStack) {
       );
     }
     case "kind-match":
-    case "fieldName":
+    case "fieldName": {
+      throw new Error(`descendThroughSingleWrapper: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`);
+    }
     default: {
       const _exhaustive = head;
-      throw new Error(`descendThroughSingleWrapper: unexpected segment kind '${_exhaustive.kind}' \u2014 this is a bug in applyPath dispatch`);
+      throw new Error(`descendThroughSingleWrapper: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`);
     }
   }
 }
@@ -188,10 +190,12 @@ function descendThroughAlias(rule, head, rest, patch, precStack) {
       );
     }
     case "kind-match":
-    case "fieldName":
+    case "fieldName": {
+      throw new Error(`descendThroughAlias: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`);
+    }
     default: {
       const _exhaustive = head;
-      throw new Error(`descendThroughAlias: unexpected segment kind '${_exhaustive.kind}' \u2014 this is a bug in applyPath dispatch`);
+      throw new Error(`descendThroughAlias: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`);
     }
   }
 }
@@ -330,10 +334,12 @@ function applyToMembers(rule, head, rest, patch, precStack) {
     case "wildcard":
       return applyWildcardToMembers(rule, members, rest, patch, precStack);
     case "kind-match":
-    case "fieldName":
+    case "fieldName": {
+      throw new Error(`applyToMembers: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`);
+    }
     default: {
       const _exhaustive = head;
-      throw new Error(`applyToMembers: unexpected segment kind '${_exhaustive.kind}' \u2014 this is a bug in applyPath dispatch`);
+      throw new Error(`applyToMembers: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`);
     }
   }
 }

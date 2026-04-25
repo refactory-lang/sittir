@@ -66,7 +66,7 @@ export function expressionStatement(config: ConfigOf<T.ExpressionStatementUFormW
   throw new Error(`expressionStatement: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'with_semi' | 'block_ending'.`);
 }
 export function expressionStatementUFormWithSemi(config?: Omit<ConfigOf<T.ExpressionStatementUFormWithSemi>, '$variant'>) {
-  const inner = expressionStatementWithSemi(config?.children?.[0]!);
+  const inner = expressionStatementWithSemi((config?.children ?? [])[0] as Parameters<typeof expressionStatementWithSemi>[0]);
   const children = [inner] as const;
   return {
     $type: 'expression_statement' as const,
@@ -83,7 +83,7 @@ export function expressionStatementUFormWithSemi(config?: Omit<ConfigOf<T.Expres
   };
 }
 export function expressionStatementUFormBlockEnding(config?: Omit<ConfigOf<T.ExpressionStatementUFormBlockEnding>, '$variant'>) {
-  const inner = expressionStatementBlockEnding(config?.children?.[0]!);
+  const inner = expressionStatementBlockEnding((config?.children ?? [])[0] as Parameters<typeof expressionStatementBlockEnding>[0]);
   const children = [inner] as const;
   return {
     $type: 'expression_statement' as const,
@@ -1620,7 +1620,7 @@ export function visibilityModifier(config: ConfigOf<T.VisibilityModifierUFormInP
   }
   throw new Error(`visibilityModifier: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'in_path' | 'crate' | 'pub'.`);
 }
-export function visibilityModifierUFormInPath(config?: Omit<ConfigOf<T.VisibilityModifierUFormInPath>, '$variant'>) {
+export function visibilityModifierUFormInPath(_config?: Omit<ConfigOf<T.VisibilityModifierUFormInPath>, '$variant'>) {
   return {
     $type: 'visibility_modifier' as const,
     $source: 'factory' as const,
@@ -1635,7 +1635,7 @@ export function visibilityModifierUFormInPath(config?: Omit<ConfigOf<T.Visibilit
   };
 }
 export function visibilityModifierUFormCrate(config?: Omit<ConfigOf<T.VisibilityModifierUFormCrate>, '$variant'>) {
-  const inner = visibilityModifierCrate(config?.children?.[0]!);
+  const inner = visibilityModifierCrate((config?.children ?? [])[0] as Parameters<typeof visibilityModifierCrate>[0]);
   const children = [inner] as const;
   return {
     $type: 'visibility_modifier' as const,
@@ -1651,7 +1651,7 @@ export function visibilityModifierUFormCrate(config?: Omit<ConfigOf<T.Visibility
     replace(this: AnyNodeData, target: T.VisibilityModifierUFormCrateTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function visibilityModifierUFormPub(config?: Omit<ConfigOf<T.VisibilityModifierUFormPub>, '$variant'>) {
+export function visibilityModifierUFormPub(_config?: Omit<ConfigOf<T.VisibilityModifierUFormPub>, '$variant'>) {
   const inner = {
     $type: 'visibility_modifier_pub' as const,
     $source: 'factory' as const,
@@ -2023,7 +2023,7 @@ export function pointerTypeUFormMut(config: Omit<ConfigOf<T.PointerTypeUFormMut>
   const fields = {
     type: config.type,
   };
-  const inner = pointerTypeMut(config?.children?.[0]!);
+  const inner = pointerTypeMut((config?.children ?? [])[0] as Parameters<typeof pointerTypeMut>[0]);
   const children = [inner] as const;
   return {
     $type: 'pointer_type' as const,
@@ -3711,7 +3711,7 @@ export function rangePattern(config: ConfigOf<T.RangePatternUFormLeftWithRight> 
   }
   throw new Error(`rangePattern: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'left_with_right' | 'left_bare' | 'prefix'.`);
 }
-export function rangePatternUFormLeftWithRight(config?: Omit<ConfigOf<T.RangePatternUFormLeftWithRight>, '$variant'>) {
+export function rangePatternUFormLeftWithRight(_config?: Omit<ConfigOf<T.RangePatternUFormLeftWithRight>, '$variant'>) {
   return {
     $type: 'range_pattern' as const,
     $source: 'factory' as const,
@@ -3725,7 +3725,7 @@ export function rangePatternUFormLeftWithRight(config?: Omit<ConfigOf<T.RangePat
     replace(this: AnyNodeData, target: T.RangePatternUFormLeftWithRightTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function rangePatternUFormLeftBare(config?: Omit<ConfigOf<T.RangePatternUFormLeftBare>, '$variant'>) {
+export function rangePatternUFormLeftBare(_config?: Omit<ConfigOf<T.RangePatternUFormLeftBare>, '$variant'>) {
   return {
     $type: 'range_pattern' as const,
     $source: 'factory' as const,
@@ -4433,7 +4433,7 @@ export function modItemInline(config: ConfigOf<T.ModItemInline>) {
   };
 }
 
-export function rangeExpressionBare(config?: ConfigOf<T.RangeExpressionBare>) {
+export function rangeExpressionBare(_config?: ConfigOf<T.RangeExpressionBare>) {
   const fields = {
     operator: ".." as const,
   };
