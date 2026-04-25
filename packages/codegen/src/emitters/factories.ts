@@ -758,7 +758,14 @@ function keywordPresenceAssignmentExpr(
     // `_kw_*` OR all direct-terminal OR all visible-keyword — the
     // grammar won't mix them). Use the first triple's flag.
     const named = triples[0]!.named
-    return `_bf(${access}, ${kinds}, ${texts}, ${named})`
+    // Pass the element type as `<T>` so `_bf<T>(...)` returns
+    // `readonly T[] | undefined` matching the slot's `Bitflag<E, T>`-branded
+    // tuple shape — without it the field assignment sees `readonly unknown[]`
+    // and the `$fields` shape stops satisfying AnyNodeData's NodeFieldValue
+    // index signature. Element type uses the literal-string union (matching
+    // the `texts` array passed at runtime).
+    const elementType = triples.map(t => JSON.stringify(t.text)).join(' | ')
+    return `_bf<${elementType}>(${access}, ${kinds}, ${texts}, ${named})`
 }
 
 /**
@@ -1605,6 +1612,15 @@ function emitPolymorphDispatcher(node: PolymorphNode, forms: AssembledGroup[]): 
  *   the same way.
  */
 function buildPolymorphConfigUnion(forms: AssembledGroup[]): string {
+    // Single-form polymorphs have no actual variant choice — the dispatcher
+    // always routes to the single form factory, which stamps `$variant`
+    // itself. Strip `$variant` from the dispatcher's accepted Config so
+    // callers can `factoryFn({})` without supplying a tag the form fills
+    // in. Multi-form dispatchers preserve `$variant` on the input — the
+    // discriminator drives the switch.
+    if (forms.length === 1) {
+        return `Omit<ConfigOf<T.${forms[0]!.typeName}>, '$variant'>`
+    }
     return forms.map(f => `ConfigOf<T.${f.typeName}>`).join(' | ')
 }
 

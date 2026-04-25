@@ -253,7 +253,7 @@ export function assertStatement(...children: T.Expression[]) {
   };
 }
 
-export function expressionStatement(config: ConfigOf<T.ExpressionStatementUFormTuple>) {
+export function expressionStatement(config: Omit<ConfigOf<T.ExpressionStatementUFormTuple>, '$variant'>) {
   return expressionStatementUFormTuple(config as Parameters<typeof expressionStatementUFormTuple>[0]);
 }
 export function expressionStatementUFormTuple(config?: Omit<ConfigOf<T.ExpressionStatementUFormTuple>, '$variant'>) {
@@ -1491,7 +1491,7 @@ export function unaryOperator(config: ConfigOf<T.UnaryOperator>) {
 export function comparisonOperator(config: ConfigOf<T.ComparisonOperator>) {
   const fields = {
     left: config.left,
-    operators: _bf(config.operators, ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"], ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"], false),
+    operators: _bf<"<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not">(config.operators, ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"], ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"], false),
   };
   return {
     $type: 'comparison_operator' as const,

@@ -5,7 +5,7 @@
 
 import type { NodeMap } from '../compiler/types.ts'
 import type { AssembledNode, AssembledField } from '../compiler/node-map.ts'
-import { isValidIdent, isAutoStampField, isAutoStampSlot, isRequired, isMultiple, isNonEmpty, slotKindNames, resolveHoistedForm } from './shared.ts'
+import { isValidIdent, isAutoStampField, isAutoStampSlot, isRequired, isMultiple, isNonEmpty, slotKindNames, resolveHoistedForm, keywordPresenceKind } from './shared.ts'
 
 export interface EmitTestsConfig {
     grammar: string
@@ -89,7 +89,7 @@ function emitBranchTest(lines: string[], node: AssembledNode, kind: string, key:
     const typeConfigParts: string[] = []
     for (const f of node.fields) {
         if (isRequired(f) && !isAutoStampField(f, nodeMap)) {
-            typeConfigParts.push(`${f.propertyName}: ${dummyValue(f)}`)
+            typeConfigParts.push(`${f.propertyName}: ${dummyValue(f, nodeMap)}`)
         }
     }
     if (node.children && node.children.length > 0) {
@@ -203,7 +203,7 @@ function emitPolymorphTest(lines: string[], node: AssembledNode, kind: string, k
         if (hoist) allFields.push(...hoist.innerFields)
         const configParts = allFields
             .filter(f => isRequired(f) && !isAutoStampField(f, nodeMap))
-            .map(f => `${f.propertyName}: ${dummyValue(f)}`)
+            .map(f => `${f.propertyName}: ${dummyValue(f, nodeMap)}`)
         // Container-shaped hoist targets: inner factory accepts `...children`
         // via the form's `children` surface. The inner container may assert
         // non-empty so supply a single dummy child of the slot's first kind.
@@ -348,7 +348,15 @@ function resolveInnerContainerNonEmptyChild(innerNode: AssembledNode): string | 
     return `{ $type: '${kinds[0]}', $text: 'test' } as any`
 }
 
-function dummyValue(field: AssembledField): string {
+function dummyValue(field: AssembledField, nodeMap?: NodeMap): string {
+    // Keyword-presence brands (boolean / bitflag) take a number / scalar at
+    // the Config surface, not a NodeData / array. Pre-empt the generic
+    // structural fallback below.
+    if (nodeMap) {
+        const kw = keywordPresenceKind(field, nodeMap)
+        if (kw === 'boolean') return 'true'
+        if (kw === 'bitflag') return '0 as never'
+    }
     // Multiple fields need a non-empty dummy array so templates with
     // `$FIELD`/`joinBy` produce non-empty output; otherwise the generated
     // `render produces non-empty string` test fails for kinds where
