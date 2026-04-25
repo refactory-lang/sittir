@@ -118,10 +118,12 @@ const config: WireConfig<RustGrammar> = {
         // the optional `move` choice). Autogen placed the override at
         // position 1, which wrapped the move choice and dropped the
         // block routing entirely.
-        async_block: {
-            '1/0': field('move'),  // optional('move') → surface as field
-            // pos 2 `$.block` auto-labelled by enrich (kind-to-name pass)
-        },
+        // async_block entirely handled by enrich:
+        //   pos 0 'async'             — leading-keyword (not auto-labelled, see below)
+        //   pos 1 optional('move')    — optional-keyword pass wraps field('move')
+        //   pos 2 $.block             — kind-to-name pass wraps field('block')
+        // (leading-keyword 'async' at pos 0 is intentionally NOT auto-
+        // promoted — enrich.ts pass-2 docstring documents the regression.)
 
         // block: 1 field(s)
         block: {
@@ -146,12 +148,9 @@ const config: WireConfig<RustGrammar> = {
             2: field('pattern'), // _pattern (underscore-prefixed, enrich skips)
         },
 
-        // closure_expression — label the three optional modifiers so readNode
-        // can route `async`, `move`, `static` tokens to named fields instead
-        // of leaving them as anonymous children.
-        closure_expression: [
-            { 0: field('static'), 1: field('async'), 2: field('move') },
-        ],
+        // closure_expression — the three optional modifiers
+        // (`optional('static')`, `optional('async')`, `optional('move')`)
+        // are auto-labelled by enrich's optional-keyword pass.
 
         // const_item: 1 field(s)
         const_item: {
@@ -301,12 +300,8 @@ const config: WireConfig<RustGrammar> = {
             { 0: field('for_lifetimes') },
         ],
 
-        // gen_block: same fix as async_block — the block symbol is
-        // at position 2, position 1 is the optional `move` choice.
-        gen_block: {
-            '1/0': field('move'),  // optional('move') → surface as field
-            // pos 2 `$.block` auto-labelled by enrich
-        },
+        // gen_block: entirely handled by enrich (same pattern as
+        // async_block — `optional('move')` and bare `$.block`).
 
         // generic_type_with_turbofish: aliased to `generic_type` at 4 call
         // sites. Wrap `::` at pos 1 as a field('turbofish') so the aliased-
@@ -332,7 +327,7 @@ const config: WireConfig<RustGrammar> = {
         // drops without a polymorph split.
         impl_item: [
             {
-                '0/0': field('unsafe'),  // optional('unsafe') → surface as field
+                // pos 0 `optional('unsafe')` auto-labelled by enrich
                 5: field('where_clause'),
             },
         ],
@@ -510,7 +505,7 @@ const config: WireConfig<RustGrammar> = {
         // declared in the base grammar.
         trait_item: {
             0: field('visibility_modifier'),
-            '1/0': field('unsafe'),   // optional('unsafe')
+            // pos 1 `optional('unsafe')` auto-labelled by enrich
             6: field('where_clause'), // inferred 88% agreement across 8 parents
         },
 
