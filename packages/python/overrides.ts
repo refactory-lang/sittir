@@ -192,7 +192,6 @@ export default grammar(enrich(base), wire({
 
         // relative_import: 2 field(s)
         relative_import: {
-            1: field('dotted_name'), // dotted_name [struct=1]
         },
 
         // slice: 3 field(s)
@@ -231,8 +230,6 @@ export default grammar(enrich(base), wire({
         // try_statement: 3 field(s)
         try_statement: {
             3: field('except_clauses'), // except_clause [struct=0]
-            4: field('else_clause'), // else_clause [struct=1]
-            5: field('finally_clause'), // finally_clause [struct=2]
         },
 
         // union_type: 2 field(s)

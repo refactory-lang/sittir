@@ -1137,7 +1137,7 @@ export function pointerTypeUFormMutFrom(input: Omit<ConfigOf<T.PointerTypeUFormM
 export function abstractTypeFrom(input: T.AbstractType.Loose): ReturnType<typeof F.abstractType> | T.AbstractType {
   if (isNodeData(input)) return input;
   return F.abstractType({
-    typeParameters: _resolveOneBranch<"for" | T.TypeParameters>(input.typeParameters, "type_parameters"),
+    typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     trait: _resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.RemovedTraitBound | T.GenericType | T.FunctionType | T.TupleType | T.BoundedType>(input.trait, _K0, _K27),
   });
 }

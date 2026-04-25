@@ -97,7 +97,6 @@ const config: WireConfig<RustGrammar> = {
     transforms: {
         // abstract_type: 1 field(s)
         abstract_type: {
-            1: field('type_parameters'), // type_parameters [struct=0]
         },
 
         // array_expression polymorph splits '2/0' (semi) / '2/1' (list).
@@ -116,14 +115,6 @@ const config: WireConfig<RustGrammar> = {
 
         // extern_modifier: 1 field(s)
         extern_modifier: {
-            1: field('string_literal'), // string_literal [struct=0]
-        },
-
-        // field_pattern: 1 field(s)
-        // Grammar: seq(optional('ref'), optional(mutable_specifier), choice(...))
-        // Position 0 = optional('ref') [anonymous], position 1 = optional(mutable_specifier)
-        field_pattern: {
-            1: field('mutable_specifier'), // mutable_specifier [struct=0]
         },
 
         // function_modifiers — base is
@@ -197,9 +188,7 @@ const config: WireConfig<RustGrammar> = {
         // 'fn' literal because it's only in one arm. Polymorph-split each
         // arm. prec is transparent to path addressing, so path `1/0` is
         // the choice inside.
-        function_type: [
-            { 0: field('for_lifetimes') },
-        ],
+        function_type: [],
         generic_type_with_turbofish: {
             1: field('turbofish'),
         },
@@ -216,11 +205,7 @@ const config: WireConfig<RustGrammar> = {
         // choice(field('body', declaration_list), ';'). The ';' arm is
         // the trait-signature form (no body), which the template walker
         // drops without a polymorph split.
-        impl_item: [
-            {
-                5: field('where_clause'),
-            },
-        ],
+        impl_item: [],
 
         // index_expression: 2 field(s)
         index_expression: {
@@ -244,9 +229,7 @@ const config: WireConfig<RustGrammar> = {
         // mod_item: two forms — `mod name;` (external) vs `mod name { ... }`
         // (inline). Polymorph-split so each form's template emits the
         // right terminator (trailing `;` vs `{...}` body).
-        mod_item: [
-            { 0: field('visibility_modifier') },
-        ],
+        mod_item: [],
 
         // mut_pattern: 2 field(s)
         //
@@ -324,7 +307,6 @@ const config: WireConfig<RustGrammar> = {
 
         // reference_type: 2 field(s)
         reference_type: {
-            1: field('lifetime'), // lifetime [struct=0]
         },
 
         // self_parameter: canonical tree-sitter-rust has no fields here;
@@ -334,8 +316,6 @@ const config: WireConfig<RustGrammar> = {
         // name to avoid colliding with pos 0's label.
         self_parameter: {
             0: field('reference'),          // optional('&')
-            1: field('lifetime'),     // optional($.lifetime)
-            2: field('mutable_specifier'), // optional($.mutable_specifier)
         },
 
         // shorthand_field_initializer: 2 field(s)
@@ -346,7 +326,6 @@ const config: WireConfig<RustGrammar> = {
 
         // source_file: 2 field(s)
         source_file: {
-            0: field('shebang'), // shebang [struct=0]
             1: field('statements'), // _statement [struct=1]
         },
 
@@ -360,9 +339,7 @@ const config: WireConfig<RustGrammar> = {
         // variant so the trailing `;` on tuple/unit forms gets rendered
         // (the flat template dropped it because `;` is an anonymous
         // token not routed to any field).
-        struct_item: [
-            { 0: field('visibility_modifier') },
-        ],
+        struct_item: [],
 
         // try_block: 1 field(s)
         // try_expression: 2 field(s)
@@ -401,7 +378,6 @@ const config: WireConfig<RustGrammar> = {
 
         // variadic_parameter: 1 field(s)
         variadic_parameter: {
-            0: field('mutable_specifier'), // mutable_specifier [struct=0]
         },
 
 

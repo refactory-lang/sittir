@@ -266,13 +266,10 @@ export default grammar(enrich(base), wire({
         // pos 0 is REPEAT(field('decorator')) — don't touch it, it's a real
         // base-grammar field and the original override clobbered it.
         abstract_class_declaration: {
-            5: field('class_heritage'),
         },
 
         // abstract_method_signature: 2 field(s)
         abstract_method_signature: {
-            0: field('accessibility_modifier'), // accessibility_modifier [struct=0]
-            2: field('override_modifier'), // override_modifier [struct=1]
         },
 
         // ambient_declaration: 3 field(s)
@@ -301,14 +298,12 @@ export default grammar(enrich(base), wire({
 
         // class: wrap pos 4 (class_heritage choice). pos 0 is decorator repeat.
         class: {
-            4: field('class_heritage'),
         },
 
         // class_declaration: wrap pos 4 (class_heritage choice) and pos 6
         // (automatic_semicolon choice). pos 0 is decorator repeat — leave it
         // alone so the base 'decorator' field survives.
         class_declaration: {
-            4: field('class_heritage'),
             6: field('automatic_semicolon'),
         },
 
@@ -350,7 +345,6 @@ export default grammar(enrich(base), wire({
         import_statement: {
             1: field('import_clause'), // import_clause | import_require_clause [struct=0]
             2: field('from_clause'), //  [struct=1]
-            3: field('import_attribute'), // import_attribute [struct=2]
             4: field('semicolon'), //  [struct=3]
         },
 
@@ -371,7 +365,6 @@ export default grammar(enrich(base), wire({
 
         // interface_declaration: 1 field(s)
         interface_declaration: {
-            3: field('extends_type_clause'), // extends_type_clause [struct=0]
         },
 
         // intersection_type: 2 field(s)
@@ -393,13 +386,11 @@ export default grammar(enrich(base), wire({
 
         // method_definition: 2 field(s)
         method_definition: {
-            0: field('accessibility_modifier'), // accessibility_modifier [struct=0]
             1: field('override_modifier'), // override_modifier [struct=1]
         },
 
         // method_signature: 2 field(s)
         method_signature: {
-            0: field('accessibility_modifier'), // accessibility_modifier [struct=0]
             1: field('override_modifier'), // override_modifier [struct=1]
         },
 
@@ -422,7 +413,6 @@ export default grammar(enrich(base), wire({
 
         // property_signature: 2 field(s)
         property_signature: {
-            0: field('accessibility_modifier'), // accessibility_modifier [struct=0]
             1: field('override_modifier'), // override_modifier [struct=1]
         },
 

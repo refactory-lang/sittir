@@ -3106,23 +3106,18 @@
           "name": "type_parameters",
           "propertyName": "typeParameters",
           "paramName": "typeParameters",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "for"
-            },
-            {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "type_parameters",
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6263,7 +6258,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6655,7 +6650,7 @@
                   "unresolved": true
                 }
               ],
-              "source": "override",
+              "source": "enriched",
               "projection": {
                 "typeName": "",
                 "kinds": [
@@ -6728,7 +6723,7 @@
                   "unresolved": true
                 }
               ],
-              "source": "override",
+              "source": "enriched",
               "projection": {
                 "typeName": "",
                 "kinds": [
@@ -6805,7 +6800,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6880,7 +6875,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7858,7 +7853,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8613,7 +8608,7 @@
                   "unresolved": true
                 }
               ],
-              "source": "override",
+              "source": "enriched",
               "projection": {
                 "typeName": "",
                 "kinds": [
@@ -8769,7 +8764,7 @@
                   "unresolved": true
                 }
               ],
-              "source": "override",
+              "source": "enriched",
               "projection": {
                 "typeName": "",
                 "kinds": [
@@ -8929,7 +8924,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9087,7 +9082,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10915,7 +10910,7 @@
                   "unresolved": true
                 }
               ],
-              "source": "override",
+              "source": "enriched",
               "projection": {
                 "typeName": "",
                 "kinds": [
@@ -10988,7 +10983,7 @@
                   "unresolved": true
                 }
               ],
-              "source": "override",
+              "source": "enriched",
               "projection": {
                 "typeName": "",
                 "kinds": [
@@ -11065,7 +11060,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11140,7 +11135,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12665,7 +12660,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13134,7 +13129,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13157,7 +13152,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13306,7 +13301,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13653,7 +13648,7 @@
                   "unresolved": true
                 }
               ],
-              "source": "override",
+              "source": "enriched",
               "projection": {
                 "typeName": "",
                 "kinds": [
@@ -13749,7 +13744,7 @@
                   "unresolved": true
                 }
               ],
-              "source": "override",
+              "source": "enriched",
               "projection": {
                 "typeName": "",
                 "kinds": [
@@ -13845,7 +13840,7 @@
                   "unresolved": true
                 }
               ],
-              "source": "override",
+              "source": "enriched",
               "projection": {
                 "typeName": "",
                 "kinds": [
@@ -13945,7 +13940,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14043,7 +14038,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14141,7 +14136,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16351,7 +16346,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [

@@ -444,7 +444,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_visibility_modifier_crate': [
   ],
   'abstract_type': [
-    { name: 'typeParameters', required: true, multiple: false },
+    { name: 'typeParameters', required: false, multiple: false },
     { name: 'trait', required: true, multiple: false },
   ],
   'arguments': [

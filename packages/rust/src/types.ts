@@ -1388,7 +1388,7 @@ export type PointerType = PointerTypeUFormConst | PointerTypeUFormMut;
 export interface AbstractType {
   readonly $type: 'abstract_type';
   readonly $fields: {
-    readonly type_parameters: "for" | TypeParameters;
+    readonly type_parameters?: TypeParameters;
     readonly trait: TypeIdentifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
   };
 }

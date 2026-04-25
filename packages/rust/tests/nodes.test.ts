@@ -832,12 +832,12 @@ describe('pointer_type', () => {
 
 describe('abstract_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.abstractType({ typeParameters: { $type: 'type_parameters', $text: 'test' } as any, trait: { $type: '_type_identifier', $text: 'test' } as any });
+    const node = ir.abstractType({ trait: { $type: '_type_identifier', $text: 'test' } as any });
     expect(node.$type).toBe('abstract_type');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.abstractType({ typeParameters: { $type: 'type_parameters', $text: 'test' } as any, trait: { $type: '_type_identifier', $text: 'test' } as any });
+    const node = ir.abstractType({ trait: { $type: '_type_identifier', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

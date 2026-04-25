@@ -2060,7 +2060,7 @@ export function abstractType(config: ConfigOf<T.AbstractType>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    typeParameters(value?: "for" | T.TypeParameters) { return _fs(config, abstractType, 'typeParameters', value, config?.typeParameters); },
+    typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, abstractType, 'typeParameters', value, config?.typeParameters); },
     trait(value?: T.TypeIdentifier | T.ScopedTypeIdentifier | T.RemovedTraitBound | T.GenericType | T.FunctionType | T.TupleType | T.BoundedType) { return _fs(config, abstractType, 'trait', value, config?.trait); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
