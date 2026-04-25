@@ -182,11 +182,11 @@ export interface IsGuards {
     ModItemInline<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_mod_item_inline' };
     RangeExpressionBare<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_range_expression_bare' };
     VisibilityModifierCrate<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_visibility_modifier_crate' };
-    ForeignModItemBody<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_foreign_mod_item_body' };
     PointerTypeMut<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_pointer_type_mut' };
     ReferenceExpressionRawMut<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_reference_expression_raw_mut' };
     ExpressionStatementWithSemi<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_expression_statement_with_semi' };
     ExpressionStatementBlockEnding<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_expression_statement_block_ending' };
+    ForeignModItemBody<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_foreign_mod_item_body' };
     MatchArmBlockEnding<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_match_arm_block_ending' };
     TokenTreePatternParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_token_tree_pattern_paren' };
     TokenTreePatternBracket<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_token_tree_pattern_bracket' };
@@ -375,11 +375,11 @@ export interface AssertGuards {
     ModItemInline(v: { readonly $type: string }): asserts v is { readonly $type: '_mod_item_inline' };
     RangeExpressionBare(v: { readonly $type: string }): asserts v is { readonly $type: '_range_expression_bare' };
     VisibilityModifierCrate(v: { readonly $type: string }): asserts v is { readonly $type: '_visibility_modifier_crate' };
-    ForeignModItemBody(v: { readonly $type: string }): asserts v is { readonly $type: '_foreign_mod_item_body' };
     PointerTypeMut(v: { readonly $type: string }): asserts v is { readonly $type: '_pointer_type_mut' };
     ReferenceExpressionRawMut(v: { readonly $type: string }): asserts v is { readonly $type: '_reference_expression_raw_mut' };
     ExpressionStatementWithSemi(v: { readonly $type: string }): asserts v is { readonly $type: '_expression_statement_with_semi' };
     ExpressionStatementBlockEnding(v: { readonly $type: string }): asserts v is { readonly $type: '_expression_statement_block_ending' };
+    ForeignModItemBody(v: { readonly $type: string }): asserts v is { readonly $type: '_foreign_mod_item_body' };
     MatchArmBlockEnding(v: { readonly $type: string }): asserts v is { readonly $type: '_match_arm_block_ending' };
     TokenTreePatternParen(v: { readonly $type: string }): asserts v is { readonly $type: '_token_tree_pattern_paren' };
     TokenTreePatternBracket(v: { readonly $type: string }): asserts v is { readonly $type: '_token_tree_pattern_bracket' };
@@ -593,11 +593,11 @@ export const is = {
     ModItemInline: _g("_mod_item_inline"),
     RangeExpressionBare: _g("_range_expression_bare"),
     VisibilityModifierCrate: _g("_visibility_modifier_crate"),
-    ForeignModItemBody: _g("_foreign_mod_item_body"),
     PointerTypeMut: _g("_pointer_type_mut"),
     ReferenceExpressionRawMut: _g("_reference_expression_raw_mut"),
     ExpressionStatementWithSemi: _g("_expression_statement_with_semi"),
     ExpressionStatementBlockEnding: _g("_expression_statement_block_ending"),
+    ForeignModItemBody: _g("_foreign_mod_item_body"),
     MatchArmBlockEnding: _g("_match_arm_block_ending"),
     TokenTreePatternParen: _g("_token_tree_pattern_paren"),
     TokenTreePatternBracket: _g("_token_tree_pattern_bracket"),
@@ -807,11 +807,11 @@ export const assert = {
     ModItemInline: _makeAssert('ModItemInline', is.ModItemInline as _AnyGuard),
     RangeExpressionBare: _makeAssert('RangeExpressionBare', is.RangeExpressionBare as _AnyGuard),
     VisibilityModifierCrate: _makeAssert('VisibilityModifierCrate', is.VisibilityModifierCrate as _AnyGuard),
-    ForeignModItemBody: _makeAssert('ForeignModItemBody', is.ForeignModItemBody as _AnyGuard),
     PointerTypeMut: _makeAssert('PointerTypeMut', is.PointerTypeMut as _AnyGuard),
     ReferenceExpressionRawMut: _makeAssert('ReferenceExpressionRawMut', is.ReferenceExpressionRawMut as _AnyGuard),
     ExpressionStatementWithSemi: _makeAssert('ExpressionStatementWithSemi', is.ExpressionStatementWithSemi as _AnyGuard),
     ExpressionStatementBlockEnding: _makeAssert('ExpressionStatementBlockEnding', is.ExpressionStatementBlockEnding as _AnyGuard),
+    ForeignModItemBody: _makeAssert('ForeignModItemBody', is.ForeignModItemBody as _AnyGuard),
     MatchArmBlockEnding: _makeAssert('MatchArmBlockEnding', is.MatchArmBlockEnding as _AnyGuard),
     TokenTreePatternParen: _makeAssert('TokenTreePatternParen', is.TokenTreePatternParen as _AnyGuard),
     TokenTreePatternBracket: _makeAssert('TokenTreePatternBracket', is.TokenTreePatternBracket as _AnyGuard),

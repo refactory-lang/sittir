@@ -536,21 +536,17 @@ export function foreignModItem(config: ConfigOf<T.ForeignModItemUFormSemi> | Con
 }
 export function foreignModItemUFormSemi(config: Omit<ConfigOf<T.ForeignModItemUFormSemi>, '$variant'>) {
   const fields = {
+    visibility_modifier: config.visibilityModifier,
     extern_modifier: config.externModifier,
   };
-  const children = config.children ?? [];
   return {
     $type: 'foreign_mod_item' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'semi' as const,
     $fields: fields,
-    $children: children,
+    visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, foreignModItemUFormSemi, 'visibilityModifier', value, config?.visibilityModifier); },
     externModifier(value?: T.ExternModifier) { return _fs(config, foreignModItemUFormSemi, 'externModifier', value, config?.externModifier); },
-    child(value?: T.VisibilityModifier) {
-      if (value === undefined) return children[0];
-      return foreignModItemUFormSemi({ ...config, children: [value] });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -561,9 +557,11 @@ export function foreignModItemUFormSemi(config: Omit<ConfigOf<T.ForeignModItemUF
 }
 export function foreignModItemUFormBody(config: Omit<ConfigOf<T.ForeignModItemUFormBody>, '$variant'>) {
   const fields = {
+    visibility_modifier: config.visibilityModifier,
     extern_modifier: config.externModifier,
   };
-  const children = config.children ?? [];
+  const inner = foreignModItemBody(config);
+  const children = [inner] as const;
   return {
     $type: 'foreign_mod_item' as const,
     $source: 'factory' as const,
@@ -571,10 +569,17 @@ export function foreignModItemUFormBody(config: Omit<ConfigOf<T.ForeignModItemUF
     $variant: 'body' as const,
     $fields: fields,
     $children: children,
-    externModifier(value?: T.ExternModifier) { return _fs(config, foreignModItemUFormBody, 'externModifier', value, config?.externModifier); },
-    child(value?: (T.VisibilityModifier | T.ForeignModItemBody)) {
-      if (value === undefined) return children[0];
-      return foreignModItemUFormBody({ ...config, children: [value] });
+    visibilityModifier(value?: T.VisibilityModifier | undefined) {
+      if (value === undefined) return fields.visibility_modifier;
+      return foreignModItemUFormBody({ externModifier: config.externModifier, body: inner.$fields.body, visibilityModifier: value });
+    },
+    externModifier(value?: T.ExternModifier) {
+      if (value === undefined) return fields.extern_modifier;
+      return foreignModItemUFormBody({ visibilityModifier: config.visibilityModifier, body: inner.$fields.body, externModifier: value });
+    },
+    body(value?: T.DeclarationList) {
+      if (value === undefined) return inner.$fields.body;
+      return foreignModItemUFormBody({ visibilityModifier: config.visibilityModifier, externModifier: config.externModifier, body: value });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -931,27 +936,21 @@ export function constItem(config: ConfigOf<T.ConstItem>) {
 export function staticItem(config: ConfigOf<T.StaticItem>) {
   const fields = {
     visibility_modifier: config.visibilityModifier,
-    mutable_specifier: config.mutableSpecifier ? "ref" as const : undefined,
+    mutable_specifier: config.mutableSpecifier,
     name: config.name,
     type: config.type,
     value: config.value,
   };
-  const children = config.children ?? [];
   return {
     $type: 'static_item' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    $children: children,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, staticItem, 'visibilityModifier', value, config?.visibilityModifier); },
-    mutableSpecifier(value?: "ref" | undefined) { return _fs(config, staticItem, 'mutableSpecifier', value, config?.mutableSpecifier); },
+    mutableSpecifier(value?: "ref" | T.MutableSpecifier | undefined) { return _fs(config, staticItem, 'mutableSpecifier', value, config?.mutableSpecifier); },
     name(value?: T.Identifier) { return _fs(config, staticItem, 'name', value, config?.name); },
     typeField(value?: T._Type) { return _fs(config, staticItem, 'type', value, config?.type); },
     value(value?: T.Expression | undefined) { return _fs(config, staticItem, 'value', value, config?.value); },
-    child(value?: T.MutableSpecifier) {
-      if (value === undefined) return children[0];
-      return staticItem({ ...config, children: [value] });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -4462,25 +4461,6 @@ export function visibilityModifierCrate(child: T.Crate) {
   };
 }
 
-export function foreignModItemBody(config: ConfigOf<T.ForeignModItemBody>) {
-  const fields = {
-    body: config.body,
-  };
-  return {
-    $type: '_foreign_mod_item_body' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    body(value?: T.DeclarationList) { return _fs(config, foreignModItemBody, 'body', value, config?.body); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ForeignModItemBodyTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
 export function pointerTypeMut(child: T.MutableSpecifier) {
   const children = [child];
   return {
@@ -4555,6 +4535,25 @@ export function expressionStatementBlockEnding(child: T.ExpressionEndingWithBloc
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T.ExpressionStatementBlockEndingTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function foreignModItemBody(config: ConfigOf<T.ForeignModItemBody>) {
+  const fields = {
+    body: config.body,
+  };
+  return {
+    $type: '_foreign_mod_item_body' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    body(value?: T.DeclarationList) { return _fs(config, foreignModItemBody, 'body', value, config?.body); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ForeignModItemBodyTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -4950,12 +4949,12 @@ export type FluentKindMap = {
   "_mod_item_inline": FluentNode<"_mod_item_inline", T.ModItemInline.Config>;
   "_range_expression_bare": FluentNode<"_range_expression_bare", T.RangeExpressionBare.Config>;
   "_visibility_modifier_crate": FluentNode<"_visibility_modifier_crate", T.VisibilityModifierCrate.Config>;
-  "_foreign_mod_item_body": FluentNode<"_foreign_mod_item_body", T.ForeignModItemBody.Config>;
   "_pointer_type_mut": FluentNode<"_pointer_type_mut", T.PointerTypeMut.Config>;
   "_reference_expression_raw_const": T.ReferenceExpressionRawConst;
   "_reference_expression_raw_mut": FluentNode<"_reference_expression_raw_mut", T.ReferenceExpressionRawMut.Config>;
   "_expression_statement_with_semi": FluentNode<"_expression_statement_with_semi", T.ExpressionStatementWithSemi.Config>;
   "_expression_statement_block_ending": FluentNode<"_expression_statement_block_ending", T.ExpressionStatementBlockEnding.Config>;
+  "_foreign_mod_item_body": FluentNode<"_foreign_mod_item_body", T.ForeignModItemBody.Config>;
   "_match_arm_block_ending": FluentNode<"_match_arm_block_ending", T.MatchArmBlockEnding.Config>;
   "_line_comment_regular_dslash": T.LineCommentRegularDslash;
   "_line_comment_content": T.LineCommentContent;
@@ -5146,12 +5145,12 @@ export const _factoryMap = {
   "_mod_item_inline": modItemInline,
   "_range_expression_bare": rangeExpressionBare,
   "_visibility_modifier_crate": visibilityModifierCrate,
-  "_foreign_mod_item_body": foreignModItemBody,
   "_pointer_type_mut": pointerTypeMut,
   "_reference_expression_raw_const": referenceExpressionRawConst,
   "_reference_expression_raw_mut": referenceExpressionRawMut,
   "_expression_statement_with_semi": expressionStatementWithSemi,
   "_expression_statement_block_ending": expressionStatementBlockEnding,
+  "_foreign_mod_item_body": foreignModItemBody,
   "_match_arm_block_ending": matchArmBlockEnding,
   "_line_comment_regular_dslash": lineCommentRegularDslash,
   "_line_comment_content": lineCommentContent,

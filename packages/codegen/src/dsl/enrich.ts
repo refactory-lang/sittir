@@ -25,6 +25,13 @@
  *   3. Optional keyword-prefix promotion — `optional(identifier-literal)`
  *      at any seq position → wrap inner as the same FIELD(SYMBOL) form.
  *
+ *   4. Optional-symbol promotion — `optional($.kind)` at a TOP-LEVEL
+ *      seq position (peeled through `CHOICE(kind, BLANK)` — tree-
+ *      sitter's normalized form for `optional()`) → wrap inner with
+ *      `field('kind', $.kind)`. Only descends ONE level (into the
+ *      optional); mirrors pass 1 for the wrapped-in-optional shape.
+ *      Same uniqueness + claimed-name guards as pass 1.
+ *
  * All passes collision-aware: skip (stderr notification) when the
  * promotion would shadow an existing field name. Strictly local — no
  * cross-rule analysis, no thresholds. All enrich-added FIELDs carry
@@ -101,6 +108,7 @@ function applyEnrichPasses(ruleName: string, rule: Rule, kwRules: Record<string,
     // generator tables, breaking unrelated rules' reparse (rust corpus
     // regresses by ~47/136 with this pass on).
     r = applyOptionalKeyword(ruleName, r, kwRules)
+    r = applyOptionalSymbol(ruleName, r)
     return r
 }
 
@@ -342,4 +350,77 @@ function rebuildOptional(optionalRule: Rule, newInner: Rule): Rule {
         return t === 'BLANK' || t === 'blank' ? m : newInner
     })
     return { ...optionalRule, members: newMembers } as Rule
+}
+
+// ---------------------------------------------------------------------------
+// Pass 3: optional-symbol promotion
+// ---------------------------------------------------------------------------
+//
+// Counterpart to pass 1 for the wrapped-in-optional case. Walks
+// TOP-LEVEL seq members (never recurses into nested seqs / choices /
+// repeats) and, for each `optional($.kind)` whose inner is a bare
+// SYMBOL, wraps the inner with `field('kind', $.kind)` — producing
+// `optional(field('kind', $.kind))`. Stays at a single descent level
+// on purpose: deeper patterns (e.g. `optional(seq($.label, ':'))`)
+// need explicit override guidance since the intent is less uniform.
+//
+// Guards (same as pass 1):
+//   - Symbol name must not start with `_` (hidden supertype).
+//   - Symbol must appear exactly once at top level across seq members.
+//   - Field name must not already be claimed on the seq.
+//
+// Handles both runtime shapes for optional:
+//   - sittir:      `{ type: 'optional', content: SYMBOL }`
+//   - tree-sitter: `{ type: 'CHOICE', members: [SYMBOL, BLANK] }`
+// (via the shared `peelOptional` helper).
+
+function applyOptionalSymbol(ruleName: string, rule: Rule): Rule {
+    if (!isSeqType(rule.type)) return rule
+    const members = (rule as unknown as { members: Rule[] }).members
+    // Count bare-symbol targets at top level — including those already
+    // inside `optional(...)` — so a symbol that appears twice doesn't
+    // get promoted at one position and collide at another.
+    const kindCounts = new Map<string, number>()
+    for (const m of members) {
+        const bare = bareSymbolTarget(m)
+        if (bare !== null) kindCounts.set(bare, (kindCounts.get(bare) ?? 0) + 1)
+    }
+    const existing = collectFieldNamesRuntime(rule)
+    let changed = false
+    const newMembers = members.map((m) => {
+        const peeled = peelOptional(m)
+        if (!peeled.isOptional) return m
+        const innerN = normalizeMember(peeled.inner)
+        if (!isSymbolType(innerN.type) || typeof innerN.name !== 'string') return m
+        const k = innerN.name
+        if (k.startsWith('_')) return m
+        if ((kindCounts.get(k) ?? 0) > 1) return m
+        if (existing.has(k)) {
+            reportSkip('optional-symbol', ruleName, `field '${k}' already exists`)
+            return m
+        }
+        existing.add(k)
+        changed = true
+        const fieldNode = makeField(m, k, peeled.inner)
+        return rebuildOptional(m, fieldNode)
+    })
+    if (!changed) return rule
+    return { ...rule, members: newMembers } as Rule
+}
+
+/**
+ * @internal — for the uniqueness-count pre-scan. Returns the SYMBOL
+ * name for `$.kind` (bare) and for `optional($.kind)` / `CHOICE(kind,
+ * BLANK)`; null for everything else. One level of descent only.
+ */
+function bareSymbolTarget(m: Rule): string | null {
+    if (isSymbolType(m.type) && typeof (m as { name?: unknown }).name === 'string') {
+        return (m as { name: string }).name
+    }
+    const peeled = peelOptional(m)
+    if (peeled.isOptional) {
+        const n = normalizeMember(peeled.inner)
+        if (isSymbolType(n.type) && typeof n.name === 'string') return n.name
+    }
+    return null
 }

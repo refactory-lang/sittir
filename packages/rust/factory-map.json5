@@ -297,6 +297,13 @@
       "type",
       "value"
     ],
+    "static_item": [
+      "visibility_modifier",
+      "mutable_specifier",
+      "name",
+      "type",
+      "value"
+    ],
     "type_item": [
       "visibility_modifier",
       "name",

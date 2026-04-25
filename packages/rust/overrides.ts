@@ -100,11 +100,6 @@ const config: WireConfig<RustGrammar> = {
             1: field('type_parameters'), // type_parameters [struct=0]
         },
 
-        // associated_type: 1 field(s)
-        associated_type: {
-            4: field('where_clause'), // where_clause [struct=0]
-        },
-
         // array_expression polymorph splits '2/0' (semi) / '2/1' (list).
         // These base-shape patches add field labels BEFORE polymorph
         // aliasing — composition-order inversion in wire() lets this
@@ -113,19 +108,6 @@ const config: WireConfig<RustGrammar> = {
             { 1: field('attributes') },
             { '2/(_expression)': field('elements') },
         ],
-
-        // async_block: position 2 is the `block` symbol (position 1 is
-        // the optional `move` choice). Autogen placed the override at
-        // position 1, which wrapped the move choice and dropped the
-        // block routing entirely.
-        // async_block entirely handled by enrich:
-        //   pos 0 'async'             — leading-keyword (not auto-labelled, see below)
-        //   pos 1 optional('move')    — optional-keyword pass wraps field('move')
-        //   pos 2 $.block             — kind-to-name pass wraps field('block')
-        // (leading-keyword 'async' at pos 0 is intentionally NOT auto-
-        // promoted — enrich.ts pass-2 docstring documents the regression.)
-
-        // block: 1 field(s)
         block: {
             0: field('label'), // label [struct=0]
         },
@@ -144,17 +126,7 @@ const config: WireConfig<RustGrammar> = {
 
         // captured_pattern: 2 field(s)
         captured_pattern: {
-            // pos 0 `$.identifier` auto-labelled by enrich
             2: field('pattern'), // _pattern (underscore-prefixed, enrich skips)
-        },
-
-        // closure_expression — the three optional modifiers
-        // (`optional('static')`, `optional('async')`, `optional('move')`)
-        // are auto-labelled by enrich's optional-keyword pass.
-
-        // const_item: 1 field(s)
-        const_item: {
-            0: field('visibility_modifier'), // visibility_modifier [struct=0]
         },
 
         // continue_expression: 1 field(s)
@@ -162,31 +134,9 @@ const config: WireConfig<RustGrammar> = {
             1: field('label'), // label [struct=0]
         },
 
-        // enum_item: 2 field(s)
-        enum_item: {
-            0: field('visibility_modifier'), // visibility_modifier [struct=0]
-            4: field('where_clause'), // where_clause [struct=1]
-        },
-
-        // enum_variant: 1 field(s)
-        enum_variant: {
-            0: field('visibility_modifier'), // visibility_modifier [struct=0]
-        },
-
-        // extern_crate_declaration: 2 field(s)
-        extern_crate_declaration: {
-            0: field('visibility_modifier'), // optional($.visibility_modifier) — enrich skips
-            // pos 2 `$.crate` auto-labelled by enrich
-        },
-
         // extern_modifier: 1 field(s)
         extern_modifier: {
             1: field('string_literal'), // string_literal [struct=0]
-        },
-
-        // field_declaration: 1 field(s)
-        field_declaration: {
-            0: field('visibility_modifier'), // visibility_modifier [struct=0]
         },
 
         // field_pattern: 1 field(s)
@@ -199,12 +149,6 @@ const config: WireConfig<RustGrammar> = {
         // for_expression: 1 field(s)
         for_expression: {
             0: field('label'), // label [struct=0]
-        },
-
-        // foreign_mod_item: 2 field(s)
-        foreign_mod_item: {
-            0: field('visibility_modifier'), // optional($.visibility_modifier) — enrich skips
-            // pos 1 `$.extern_modifier` auto-labelled by enrich
         },
 
         // function_modifiers — base is
@@ -269,24 +213,6 @@ const config: WireConfig<RustGrammar> = {
             '1/1/0/1/3/0': field('in'),
         },
 
-        // function_item: pos 6 is optional(seq('->', field('return_type', ..))) —
-        // don't touch it, return_type is already a base-grammar field. The
-        // where_clause symbol lives at pos 7. Pos 8 is the body block (also
-        // already a base field).
-        function_item: {
-            0: field('visibility_modifier'), // visibility_modifier
-            1: field('function_modifiers'), // function_modifiers
-            7: field('where_clause'), // where_clause
-        },
-
-        // function_signature_item: same shape as function_item but ends in
-        // ';' instead of a body block — pos 7 is where_clause here too.
-        function_signature_item: {
-            0: field('visibility_modifier'), // visibility_modifier
-            1: field('function_modifiers'), // function_modifiers
-            7: field('where_clause'), // where_clause
-        },
-
         // function_type: top-level seq is
         //   [for_lifetimes, prec(call, seq(choice(trait, fn_form), parameters)),
         //    optional(->return_type)]
@@ -299,16 +225,6 @@ const config: WireConfig<RustGrammar> = {
         function_type: [
             { 0: field('for_lifetimes') },
         ],
-
-        // gen_block: entirely handled by enrich (same pattern as
-        // async_block — `optional('move')` and bare `$.block`).
-
-        // generic_type_with_turbofish: aliased to `generic_type` at 4 call
-        // sites. Wrap `::` at pos 1 as a field('turbofish') so the aliased-
-        // shape generic_type surfaces it (confirmed: parse produces
-        // field=turbofish for `C::<D>`). The generic_type template itself
-        // still needs to reference $TURBOFISH — handled via its override
-        // below.
         generic_type_with_turbofish: {
             1: field('turbofish'),
         },
@@ -327,7 +243,6 @@ const config: WireConfig<RustGrammar> = {
         // drops without a polymorph split.
         impl_item: [
             {
-                // pos 0 `optional('unsafe')` auto-labelled by enrich
                 5: field('where_clause'),
             },
         ],
@@ -346,11 +261,6 @@ const config: WireConfig<RustGrammar> = {
         // label: 1 field(s)
         label: {
             1: field('identifier'), // identifier [struct=0]
-        },
-
-        // let_declaration: 1 field(s)
-        let_declaration: {
-            1: field('mutable_specifier'), // mutable_specifier [struct=0]
         },
 
         // lifetime: 1 field(s)
@@ -414,11 +324,6 @@ const config: WireConfig<RustGrammar> = {
             '0/0': field('left'), '0/2': field('right'), '1/1': field('right'),
         },
 
-        // parameter: 1 field(s)
-        parameter: {
-            0: field('mutable_specifier'), // mutable_specifier [struct=0]
-        },
-
         // pointer_type: position 1 is `choice('const', $.mutable_specifier)`.
         // Wrapping the choice as `field('mutable_specifier')` makes BOTH
         // the `const` string and the `mutable_specifier` symbol route to
@@ -451,14 +356,12 @@ const config: WireConfig<RustGrammar> = {
 
         // reference_pattern: 2 field(s)
         reference_pattern: {
-            1: field('mutable_specifier'), // mutable_specifier [struct=0]
             2: field('pattern'), // _pattern [struct=1]
         },
 
         // reference_type: 2 field(s)
         reference_type: {
             1: field('lifetime'), // lifetime [struct=0]
-            2: field('mutable_specifier'), // mutable_specifier [struct=1]
         },
 
         // self_parameter: canonical tree-sitter-rust has no fields here;
@@ -486,7 +389,6 @@ const config: WireConfig<RustGrammar> = {
 
         // static_item: 2 field(s)
         static_item: {
-            0: field('visibility_modifier'), // visibility_modifier [struct=0]
             2: field('mutable_specifier'), // mutable_specifier [struct=1]
         },
 
@@ -498,16 +400,6 @@ const config: WireConfig<RustGrammar> = {
         struct_item: [
             { 0: field('visibility_modifier') },
         ],
-
-        // trait_item: position 0 is the same visibility_modifier
-        // optional choice as struct_item. The where_clause at
-        // position 6 and the body field at position 7 stay as
-        // declared in the base grammar.
-        trait_item: {
-            0: field('visibility_modifier'),
-            // pos 1 `optional('unsafe')` auto-labelled by enrich
-            6: field('where_clause'), // inferred 88% agreement across 8 parents
-        },
 
         // try_block: 1 field(s)
         // try_expression: 2 field(s)
@@ -525,7 +417,6 @@ const config: WireConfig<RustGrammar> = {
 
         // type_item: 3 field(s)
         type_item: {
-            0: field('visibility_modifier'), // visibility_modifier [struct=0]
             4: field('where_clause'), // where_clause [struct=1]
             7: field('trailing_where_clause'), // where_clause [struct=2]
         },
@@ -538,18 +429,6 @@ const config: WireConfig<RustGrammar> = {
         unary_expression: {
             0: field('operator'), // choice('-', '*', '!')
             1: field('operand'),  // $._expression
-        },
-
-        // union_item: 2 field(s)
-        union_item: {
-            0: field('visibility_modifier'), // visibility_modifier [struct=0]
-            4: field('where_clause'), // where_clause [struct=1]
-        },
-
-        // unsafe_block: 1 field(s)
-        // use_declaration: 1 field(s)
-        use_declaration: {
-            0: field('visibility_modifier'), // visibility_modifier [struct=0]
         },
 
         // use_wildcard: 1 field(s)

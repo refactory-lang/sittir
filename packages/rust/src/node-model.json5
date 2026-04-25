@@ -3579,7 +3579,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5133,7 +5133,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5755,7 +5755,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5824,7 +5824,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5881,7 +5881,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6174,7 +6174,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6311,7 +6311,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7100,6 +7100,29 @@
           "parentKind": "foreign_mod_item",
           "fields": [
             {
+              "name": "visibility_modifier",
+              "propertyName": "visibilityModifier",
+              "paramName": "visibilityModifier",
+              "required": false,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "optional",
+                  "name": "visibility_modifier",
+                  "unresolved": true
+                }
+              ],
+              "source": "enriched",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "visibility_modifier"
+                ]
+              }
+            },
+            {
               "name": "extern_modifier",
               "propertyName": "externModifier",
               "paramName": "externModifier",
@@ -7124,21 +7147,6 @@
             }
           ],
           "children": [
-            {
-              "name": "visibility_modifier",
-              "propertyName": "visibilityModifier",
-              "required": false,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "optional",
-                  "name": "visibility_modifier",
-                  "unresolved": true
-                }
-              ]
-            },
             {
               "name": "foreign_mod_item_semi",
               "propertyName": "foreignModItemSemi",
@@ -7165,6 +7173,29 @@
           "parentKind": "foreign_mod_item",
           "fields": [
             {
+              "name": "visibility_modifier",
+              "propertyName": "visibilityModifier",
+              "paramName": "visibilityModifier",
+              "required": false,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "optional",
+                  "name": "visibility_modifier",
+                  "unresolved": true
+                }
+              ],
+              "source": "enriched",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "visibility_modifier"
+                ]
+              }
+            },
+            {
               "name": "extern_modifier",
               "propertyName": "externModifier",
               "paramName": "externModifier",
@@ -7189,21 +7220,6 @@
             }
           ],
           "children": [
-            {
-              "name": "visibility_modifier",
-              "propertyName": "visibilityModifier",
-              "required": false,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "optional",
-                  "name": "visibility_modifier",
-                  "unresolved": true
-                }
-              ]
-            },
             {
               "name": "foreign_mod_item_body",
               "propertyName": "foreignModItemBody",
@@ -7234,6 +7250,29 @@
       "parentKind": "foreign_mod_item",
       "fields": [
         {
+          "name": "visibility_modifier",
+          "propertyName": "visibilityModifier",
+          "paramName": "visibilityModifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "visibility_modifier",
+              "unresolved": true
+            }
+          ],
+          "source": "enriched",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "visibility_modifier"
+            ]
+          }
+        },
+        {
           "name": "extern_modifier",
           "propertyName": "externModifier",
           "paramName": "externModifier",
@@ -7258,21 +7297,6 @@
         }
       ],
       "children": [
-        {
-          "name": "visibility_modifier",
-          "propertyName": "visibilityModifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "visibility_modifier",
-              "unresolved": true
-            }
-          ]
-        },
         {
           "name": "foreign_mod_item_body",
           "propertyName": "foreignModItemBody",
@@ -7301,6 +7325,29 @@
       "parentKind": "foreign_mod_item",
       "fields": [
         {
+          "name": "visibility_modifier",
+          "propertyName": "visibilityModifier",
+          "paramName": "visibilityModifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "visibility_modifier",
+              "unresolved": true
+            }
+          ],
+          "source": "enriched",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "visibility_modifier"
+            ]
+          }
+        },
+        {
           "name": "extern_modifier",
           "propertyName": "externModifier",
           "paramName": "externModifier",
@@ -7325,21 +7372,6 @@
         }
       ],
       "children": [
-        {
-          "name": "visibility_modifier",
-          "propertyName": "visibilityModifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "visibility_modifier",
-              "unresolved": true
-            }
-          ]
-        },
         {
           "name": "foreign_mod_item_semi",
           "propertyName": "foreignModItemSemi",
@@ -7405,7 +7437,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7428,7 +7460,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7550,7 +7582,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7661,7 +7693,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7684,7 +7716,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7806,7 +7838,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9417,7 +9449,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11492,7 +11524,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12590,7 +12622,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12670,7 +12702,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13355,7 +13387,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -13376,13 +13408,20 @@
               "multiplicity": "optional",
               "name": "_kw_ref",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "mutable_specifier",
+              "unresolved": true
             }
           ],
           "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_ref"
+              "_kw_ref",
+              "mutable_specifier"
             ]
           }
         },
@@ -13456,23 +13495,7 @@
           }
         }
       ],
-      "children": [
-        {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "mutable_specifier",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
+      "children": []
     },
     {
       "kind": "string_content",
@@ -14842,7 +14865,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14957,7 +14980,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15543,7 +15566,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15932,7 +15955,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16001,7 +16024,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16225,7 +16248,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [

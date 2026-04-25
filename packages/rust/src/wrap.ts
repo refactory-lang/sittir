@@ -331,6 +331,7 @@ export function wrapModItem(data: _NodeData, tree: TreeHandle): WrappedNode<ModI
 export function wrapForeignModItem(data: _NodeData, tree: TreeHandle): WrappedNode<ForeignModItem> {
   return {
     ...data,
+    get visibilityModifier() { return drillIn(data.$fields?.['visibility_modifier'], tree); },
     get externModifier() { return drillIn(data.$fields?.['extern_modifier'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ForeignModItem>;
@@ -450,7 +451,7 @@ export function wrapStaticItem(data: _NodeData, tree: TreeHandle): WrappedNode<S
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get typeField() { return drillIn(data.$fields?.['type'], tree); },
     get value() { return drillIn(data.$fields?.['value'], tree); },
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<StaticItem>;
 }
 
@@ -1557,14 +1558,6 @@ export function wrapVisibilityModifierCrate(data: _NodeData, tree: TreeHandle): 
   } as unknown as WrappedNode<VisibilityModifierCrate>;
 }
 
-export function wrapForeignModItemBody(data: _NodeData, tree: TreeHandle): WrappedNode<ForeignModItemBody> {
-  return {
-    ...data,
-    get body() { return drillIn(data.$fields?.['body'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<ForeignModItemBody>;
-}
-
 export function wrapPointerTypeMut(data: _NodeData, tree: TreeHandle): WrappedNode<PointerTypeMut> {
   return {
     ...data,
@@ -1591,6 +1584,14 @@ export function wrapExpressionStatementBlockEnding(data: _NodeData, tree: TreeHa
     ...data,
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ExpressionStatementBlockEnding>;
+}
+
+export function wrapForeignModItemBody(data: _NodeData, tree: TreeHandle): WrappedNode<ForeignModItemBody> {
+  return {
+    ...data,
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ForeignModItemBody>;
 }
 
 export function wrapMatchArmBlockEnding(data: _NodeData, tree: TreeHandle): WrappedNode<MatchArmBlockEnding> {
@@ -1846,13 +1847,13 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_mod_item_inline': (d, t) => wrapModItemInline(d, t),
   '_range_expression_bare': (d, t) => wrapRangeExpressionBare(d, t),
   '_visibility_modifier_crate': (d, t) => wrapVisibilityModifierCrate(d, t),
-  '_foreign_mod_item_body': (d, t) => wrapForeignModItemBody(d, t),
   '_pointer_type_const': (d) => d,
   '_pointer_type_mut': (d, t) => wrapPointerTypeMut(d, t),
   '_reference_expression_raw_const': (d) => d,
   '_reference_expression_raw_mut': (d, t) => wrapReferenceExpressionRawMut(d, t),
   '_expression_statement_with_semi': (d, t) => wrapExpressionStatementWithSemi(d, t),
   '_expression_statement_block_ending': (d, t) => wrapExpressionStatementBlockEnding(d, t),
+  '_foreign_mod_item_body': (d, t) => wrapForeignModItemBody(d, t),
   '_match_arm_block_ending': (d, t) => wrapMatchArmBlockEnding(d, t),
   '_line_comment_regular_dslash': (d) => d,
   '_line_comment_content': (d) => d,

@@ -604,6 +604,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'for_lifetimes': [
   ],
   'foreign_mod_item': [
+    { name: 'visibilityModifier', required: false, multiple: false },
     { name: 'externModifier', required: true, multiple: false },
   ],
   'function_item': [

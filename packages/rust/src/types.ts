@@ -241,11 +241,11 @@ export const enum SyntaxKind {
   VisibilityModifierCrate = '_visibility_modifier_crate',
   VisibilityModifierPub = '_visibility_modifier_pub',
   VisibilityModifierInPath = '_visibility_modifier_in_path',
-  ForeignModItemBody = '_foreign_mod_item_body',
   PointerTypeMut = '_pointer_type_mut',
   ReferenceExpressionRawMut = '_reference_expression_raw_mut',
   ExpressionStatementWithSemi = '_expression_statement_with_semi',
   ExpressionStatementBlockEnding = '_expression_statement_block_ending',
+  ForeignModItemBody = '_foreign_mod_item_body',
   MatchArmWithComma = '_match_arm_with_comma',
   MatchArmBlockEnding = '_match_arm_block_ending',
   LineCommentDoc = '_line_comment_doc',
@@ -854,18 +854,19 @@ export interface ForeignModItemUFormSemi {
   readonly $type: 'foreign_mod_item';
   readonly $variant: 'semi';
   readonly $fields: {
+    readonly visibility_modifier?: VisibilityModifier;
     readonly extern_modifier: ExternModifier;
   };
-  readonly $children: readonly [VisibilityModifier];
 }
 
 export interface ForeignModItemUFormBody {
   readonly $type: 'foreign_mod_item';
   readonly $variant: 'body';
   readonly $fields: {
+    readonly visibility_modifier?: VisibilityModifier;
     readonly extern_modifier: ExternModifier;
   };
-  readonly $children: readonly [VisibilityModifier | ForeignModItemBody];
+  readonly $children: readonly [ForeignModItemBody];
 }
 
 export type ForeignModItem = ForeignModItemUFormSemi | ForeignModItemUFormBody;
@@ -989,12 +990,11 @@ export interface StaticItem {
   readonly $type: 'static_item';
   readonly $fields: {
     readonly visibility_modifier?: VisibilityModifier;
-    readonly mutable_specifier?: BooleanKeyword<"ref">;
+    readonly mutable_specifier?: "ref" | MutableSpecifier;
     readonly name: Identifier;
     readonly type: _Type;
     readonly value?: Expression;
   };
-  readonly $children: readonly [MutableSpecifier];
 }
 
 export interface TypeItem {
@@ -2211,13 +2211,6 @@ export interface VisibilityModifierInPath {
   readonly $children: readonly [Path];
 }
 
-export interface ForeignModItemBody {
-  readonly $type: 'foreign_mod_item_body';
-  readonly $fields: {
-    readonly body: DeclarationList;
-  };
-}
-
 export interface PointerTypeMut {
   readonly $type: 'pointer_type_mut';
   readonly $children: readonly [MutableSpecifier];
@@ -2236,6 +2229,13 @@ export interface ExpressionStatementWithSemi {
 export interface ExpressionStatementBlockEnding {
   readonly $type: 'expression_statement_block_ending';
   readonly $children: readonly [ExpressionEndingWithBlock];
+}
+
+export interface ForeignModItemBody {
+  readonly $type: 'foreign_mod_item_body';
+  readonly $fields: {
+    readonly body: DeclarationList;
+  };
 }
 
 export interface MatchArmWithComma {
@@ -2553,11 +2553,11 @@ export interface StructItemTupleTree extends AnyTreeNode { readonly type: "_stru
 export interface VisibilityModifierCrateTree extends AnyTreeNode { readonly type: "_visibility_modifier_crate"; }
 export interface VisibilityModifierPubTree extends AnyTreeNode { readonly type: "_visibility_modifier_pub"; }
 export interface VisibilityModifierInPathTree extends AnyTreeNode { readonly type: "_visibility_modifier_in_path"; }
-export interface ForeignModItemBodyTree extends AnyTreeNode { readonly type: "_foreign_mod_item_body"; }
 export interface PointerTypeMutTree extends AnyTreeNode { readonly type: "_pointer_type_mut"; }
 export interface ReferenceExpressionRawMutTree extends AnyTreeNode { readonly type: "_reference_expression_raw_mut"; }
 export interface ExpressionStatementWithSemiTree extends AnyTreeNode { readonly type: "_expression_statement_with_semi"; }
 export interface ExpressionStatementBlockEndingTree extends AnyTreeNode { readonly type: "_expression_statement_block_ending"; }
+export interface ForeignModItemBodyTree extends AnyTreeNode { readonly type: "_foreign_mod_item_body"; }
 export interface MatchArmWithCommaTree extends AnyTreeNode { readonly type: "_match_arm_with_comma"; }
 export interface MatchArmBlockEndingTree extends AnyTreeNode { readonly type: "_match_arm_block_ending"; }
 export interface LineCommentDocTree extends AnyTreeNode { readonly type: "_line_comment_doc"; }
@@ -3203,11 +3203,11 @@ export type RustNode =
   | VisibilityModifierCrate
   | VisibilityModifierPub
   | VisibilityModifierInPath
-  | ForeignModItemBody
   | PointerTypeMut
   | ReferenceExpressionRawMut
   | ExpressionStatementWithSemi
   | ExpressionStatementBlockEnding
+  | ForeignModItemBody
   | MatchArmWithComma
   | MatchArmBlockEnding
   | LineCommentDoc
@@ -3395,11 +3395,11 @@ export interface KindMap {
   '_visibility_modifier_crate': VisibilityModifierCrate;
   '_visibility_modifier_pub': VisibilityModifierPub;
   '_visibility_modifier_in_path': VisibilityModifierInPath;
-  '_foreign_mod_item_body': ForeignModItemBody;
   '_pointer_type_mut': PointerTypeMut;
   '_reference_expression_raw_mut': ReferenceExpressionRawMut;
   '_expression_statement_with_semi': ExpressionStatementWithSemi;
   '_expression_statement_block_ending': ExpressionStatementBlockEnding;
+  '_foreign_mod_item_body': ForeignModItemBody;
   '_match_arm_with_comma': MatchArmWithComma;
   '_match_arm_block_ending': MatchArmBlockEnding;
   '_line_comment_doc': LineCommentDoc;
@@ -3634,11 +3634,11 @@ export interface StructItemTupleNs extends NodeNs<StructItemTuple, LeafScalarMap
 export interface VisibilityModifierCrateNs extends NodeNs<VisibilityModifierCrate, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface VisibilityModifierPubNs extends NodeNs<VisibilityModifierPub, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface VisibilityModifierInPathNs extends NodeNs<VisibilityModifierInPath, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ForeignModItemBodyNs extends NodeNs<ForeignModItemBody, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface PointerTypeMutNs extends NodeNs<PointerTypeMut, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ReferenceExpressionRawMutNs extends NodeNs<ReferenceExpressionRawMut, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExpressionStatementWithSemiNs extends NodeNs<ExpressionStatementWithSemi, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExpressionStatementBlockEndingNs extends NodeNs<ExpressionStatementBlockEnding, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ForeignModItemBodyNs extends NodeNs<ForeignModItemBody, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MatchArmWithCommaNs extends NodeNs<MatchArmWithComma, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MatchArmBlockEndingNs extends NodeNs<MatchArmBlockEnding, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface LineCommentDocNs extends NodeNs<LineCommentDoc, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3825,11 +3825,11 @@ export interface NamespaceMap {
   '_visibility_modifier_crate': VisibilityModifierCrateNs;
   '_visibility_modifier_pub': VisibilityModifierPubNs;
   '_visibility_modifier_in_path': VisibilityModifierInPathNs;
-  '_foreign_mod_item_body': ForeignModItemBodyNs;
   '_pointer_type_mut': PointerTypeMutNs;
   '_reference_expression_raw_mut': ReferenceExpressionRawMutNs;
   '_expression_statement_with_semi': ExpressionStatementWithSemiNs;
   '_expression_statement_block_ending': ExpressionStatementBlockEndingNs;
+  '_foreign_mod_item_body': ForeignModItemBodyNs;
   '_match_arm_with_comma': MatchArmWithCommaNs;
   '_match_arm_block_ending': MatchArmBlockEndingNs;
   '_line_comment_doc': LineCommentDocNs;
@@ -5055,13 +5055,6 @@ export namespace VisibilityModifierInPath {
   export type Tree = TreeFor<'_visibility_modifier_in_path'>;
   export type Kind = '_visibility_modifier_in_path';
 }
-export namespace ForeignModItemBody {
-  export type Config = ConfigFor<'_foreign_mod_item_body'>;
-  export type Fluent = FluentFor<'_foreign_mod_item_body'>;
-  export type Loose = LooseFor<'_foreign_mod_item_body'>;
-  export type Tree = TreeFor<'_foreign_mod_item_body'>;
-  export type Kind = '_foreign_mod_item_body';
-}
 export namespace PointerTypeMut {
   export type Config = ConfigFor<'_pointer_type_mut'>;
   export type Fluent = FluentFor<'_pointer_type_mut'>;
@@ -5089,6 +5082,13 @@ export namespace ExpressionStatementBlockEnding {
   export type Loose = LooseFor<'_expression_statement_block_ending'>;
   export type Tree = TreeFor<'_expression_statement_block_ending'>;
   export type Kind = '_expression_statement_block_ending';
+}
+export namespace ForeignModItemBody {
+  export type Config = ConfigFor<'_foreign_mod_item_body'>;
+  export type Fluent = FluentFor<'_foreign_mod_item_body'>;
+  export type Loose = LooseFor<'_foreign_mod_item_body'>;
+  export type Tree = TreeFor<'_foreign_mod_item_body'>;
+  export type Kind = '_foreign_mod_item_body';
 }
 export namespace MatchArmWithComma {
   export type Config = ConfigFor<'_match_arm_with_comma'>;
