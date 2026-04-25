@@ -64,6 +64,60 @@ jobs:
         run: pnpm audit --audit-level moderate
         continue-on-error: true
 
+  # Spec 016 T009 — regression-checker. Compares the PR base's
+  # `specs/016-parity-regressions/baselines/{ts,native}.json` against
+  # the head's. Fails the job on any of the five verdict rules in
+  # `specs/016-parity-regressions/contracts/baseline-json.md`
+  # (pass-count drop, total drop, total-fail rise, schema violation,
+  # format-deferred-count rise).
+  #
+  # Native-mode collection requires the per-grammar boundary's `render`
+  # to dispatch through napi; without prebuilt `.node` artifacts in this
+  # job (the napi matrix builds those separately) the native baseline
+  # collection will throw. The regression-checker therefore only runs
+  # the TS-mode comparison here — native-mode regressions are caught by
+  # the existing `rust-parity` and `napi-build` parity-suite jobs.
+  #
+  # Skipped on direct pushes (no base ref to diff against). Only runs
+  # on `pull_request` events.
+  regression-checker:
+    name: 016 baseline regression-checker
+    runs-on: ubuntu-latest
+    needs: CI
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout PR head with full history
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Resolve base SHA
+        id: base
+        run: echo "sha=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
+      - name: Snapshot base ts.json
+        run: |
+          mkdir -p /tmp/016-base
+          git show "${{ steps.base.outputs.sha }}:specs/016-parity-regressions/baselines/ts.json" \
+            > /tmp/016-base/ts.json
+      - name: Collect head ts.json
+        run: |
+          mkdir -p /tmp/016-head
+          SITTIR_BACKEND=typescript npx tsx packages/codegen/src/scripts/collect-baseline.ts \
+            > /tmp/016-head/ts.json
+      - name: Diff ts.json against base (verdict rules)
+        run: |
+          npx tsx packages/codegen/src/scripts/check-baseline-regression.ts \
+            --base /tmp/016-base/ts.json \
+            --head /tmp/016-head/ts.json
+
   # Rust workspace compile check (spec 012 Phase 1 T007).
   # A single cargo-check job — clippy, platform matrix, and release
   # artifacts come in Phase 4 (T053-T057, T064). The parity harness
