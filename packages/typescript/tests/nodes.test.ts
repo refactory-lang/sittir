@@ -1174,7 +1174,7 @@ describe('method_definition', () => {
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.method({ name: { $type: '_property_name', $text: 'test' } as any, parameters: { $type: 'formal_parameters', $text: 'test' } as any, body: { $type: 'statement_block', $text: 'test' } as any, children: [{ $type: 'override_modifier', $text: 'test' } as any] as any });
+    const node = ir.method({ name: { $type: '_property_name', $text: 'test' } as any, parameters: { $type: 'formal_parameters', $text: 'test' } as any, body: { $type: 'statement_block', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1246,7 +1246,7 @@ describe('method_signature', () => {
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.methodSignature({ name: { $type: '_property_name', $text: 'test' } as any, parameters: { $type: 'formal_parameters', $text: 'test' } as any, children: [{ $type: 'override_modifier', $text: 'test' } as any] as any });
+    const node = ir.methodSignature({ name: { $type: '_property_name', $text: 'test' } as any, parameters: { $type: 'formal_parameters', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1694,12 +1694,12 @@ describe('template_literal_type', () => {
 
 describe('infer_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.inferType({ typeIdentifier: { $type: '_type_identifier', $text: 'test' } as any });
+    const node = ir.inferType({ typeIdentifier: { $type: '_type_identifier', $text: 'test' } as any, constraint: { $type: 'type', $text: 'test' } as any });
     expect(node.$type).toBe('infer_type');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.inferType({ typeIdentifier: { $type: '_type_identifier', $text: 'test' } as any });
+    const node = ir.inferType({ typeIdentifier: { $type: '_type_identifier', $text: 'test' } as any, constraint: { $type: 'type', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1876,7 +1876,7 @@ describe('property_signature', () => {
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.propertySignature({ name: { $type: '_property_name', $text: 'test' } as any, children: [{ $type: 'override_modifier', $text: 'test' } as any] as any });
+    const node = ir.propertySignature({ name: { $type: '_property_name', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

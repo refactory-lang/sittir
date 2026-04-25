@@ -782,7 +782,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'infer_type': [
     { name: 'typeIdentifier', required: true, multiple: false },
-    { name: 'constraint', required: false, multiple: false },
+    { name: 'constraint', required: true, multiple: false },
   ],
   'instantiation_expression': [
     { name: 'expression', required: true, multiple: false },

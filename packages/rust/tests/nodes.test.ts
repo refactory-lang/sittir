@@ -185,7 +185,7 @@ describe('foreign_mod_item', () => {
     expect(node.$source).toBe('factory');
   });
   it('body form produces correct type', () => {
-    const node = ir.foreignMod.body({ externModifier: { $type: 'extern_modifier', $text: 'test' } as any });
+    const node = ir.foreignMod.body({ externModifier: { $type: 'extern_modifier', $text: 'test' } as any, body: { $type: 'declaration_list', $text: 'test' } as any });
     expect(node.$type).toBe('foreign_mod_item');
     expect(node.$source).toBe('factory');
   });
@@ -324,7 +324,7 @@ describe('static_item', () => {
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.staticItem({ name: { $type: 'identifier', $text: 'test' } as any, type: { $type: '_type', $text: 'test' } as any, children: [{ $type: 'mutable_specifier', $text: 'test' } as any] as any });
+    const node = ir.staticItem({ name: { $type: 'identifier', $text: 'test' } as any, type: { $type: '_type', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -367,12 +367,12 @@ describe('function_signature_item', () => {
 
 describe('function_modifiers', () => {
   it('factory produces correct type', () => {
-    const node = ir.functionModifiers({ children: [{ $type: 'extern_modifier', $text: 'test' } as any] as any });
+    const node = ir.functionModifiers({ modifier: [{ $type: 'extern_modifier', $text: 'test' } as any] });
     expect(node.$type).toBe('function_modifiers');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.functionModifiers({ children: [{ $type: 'extern_modifier', $text: 'test' } as any] as any });
+    const node = ir.functionModifiers({ modifier: [{ $type: 'extern_modifier', $text: 'test' } as any] });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -631,6 +631,11 @@ describe('extern_modifier', () => {
 });
 
 describe('visibility_modifier', () => {
+  it('in_path form produces correct type', () => {
+    const node = ir.visibilityModifier.in_path({});
+    expect(node.$type).toBe('visibility_modifier');
+    expect(node.$source).toBe('factory');
+  });
   it('crate form produces correct type', () => {
     const node = ir.visibilityModifier.crate({});
     expect(node.$type).toBe('visibility_modifier');
@@ -827,12 +832,12 @@ describe('pointer_type', () => {
 
 describe('abstract_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.abstractType({ trait: { $type: '_type_identifier', $text: 'test' } as any });
+    const node = ir.abstractType({ typeParameters: { $type: 'type_parameters', $text: 'test' } as any, trait: { $type: '_type_identifier', $text: 'test' } as any });
     expect(node.$type).toBe('abstract_type');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.abstractType({ trait: { $type: '_type_identifier', $text: 'test' } as any });
+    const node = ir.abstractType({ typeParameters: { $type: 'type_parameters', $text: 'test' } as any, trait: { $type: '_type_identifier', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1337,9 +1342,9 @@ describe('break_expression', () => {
     expect(node.$type).toBe('break_expression');
     expect(node.$source).toBe('factory');
   });
-  it('render does not throw on minimal config', () => {
-    const node = ir.breakExpression({});
-    expect(() => node.render()).not.toThrow();
+  it('render produces non-empty string', () => {
+    const node = ir.breakExpression({ children: [{ $type: '_expression', $text: 'test' } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -1525,11 +1530,6 @@ describe('mut_pattern', () => {
 });
 
 describe('range_pattern', () => {
-  it('prefix form produces correct type', () => {
-    const node = ir.rangePattern.prefix({ right: { $type: '_literal_pattern', $text: 'test' } as any });
-    expect(node.$type).toBe('range_pattern');
-    expect(node.$source).toBe('factory');
-  });
   it('left_with_right form produces correct type', () => {
     const node = ir.rangePattern.left_with_right({});
     expect(node.$type).toBe('range_pattern');
@@ -1537,6 +1537,11 @@ describe('range_pattern', () => {
   });
   it('left_bare form produces correct type', () => {
     const node = ir.rangePattern.left_bare({});
+    expect(node.$type).toBe('range_pattern');
+    expect(node.$source).toBe('factory');
+  });
+  it('prefix form produces correct type', () => {
+    const node = ir.rangePattern.prefix({ right: { $type: '_literal_pattern', $text: 'test' } as any });
     expect(node.$type).toBe('range_pattern');
     expect(node.$source).toBe('factory');
   });
@@ -1552,12 +1557,12 @@ describe('ref_pattern', () => {
 
 describe('captured_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.capturedPattern({ identifier: { $type: 'identifier', $text: 'test' } as any, pattern: { $type: '_pattern', $text: 'test' } as any });
+    const node = ir.capturedPattern({ identifier: { $type: 'identifier', $text: 'test' } as any, children: [{ $type: '_pattern', $text: 'test' } as any] as any });
     expect(node.$type).toBe('captured_pattern');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.capturedPattern({ identifier: { $type: 'identifier', $text: 'test' } as any, pattern: { $type: '_pattern', $text: 'test' } as any });
+    const node = ir.capturedPattern({ identifier: { $type: 'identifier', $text: 'test' } as any, children: [{ $type: '_pattern', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

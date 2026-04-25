@@ -2060,7 +2060,7 @@ export function abstractType(config: ConfigOf<T.AbstractType>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    typeParameters(value?: "for" | T.TypeParameters | undefined) { return _fs(config, abstractType, 'typeParameters', value, config?.typeParameters); },
+    typeParameters(value?: "for" | T.TypeParameters) { return _fs(config, abstractType, 'typeParameters', value, config?.typeParameters); },
     trait(value?: T.TypeIdentifier | T.ScopedTypeIdentifier | T.RemovedTraitBound | T.GenericType | T.FunctionType | T.TupleType | T.BoundedType) { return _fs(config, abstractType, 'trait', value, config?.trait); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -3281,15 +3281,19 @@ export function label(config: ConfigOf<T.Label>) {
 export function breakExpression(config?: ConfigOf<T.BreakExpression>) {
   const fields = {
     label: config?.label,
-    expression: config?.expression,
   };
+  const children = config?.children ?? [];
   return {
     $type: 'break_expression' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
+    $children: children,
     label(value?: T.Label | undefined) { return _fs(config, breakExpression, 'label', value, config?.label); },
-    expression(value?: T.Expression | undefined) { return _fs(config, breakExpression, 'expression', value, config?.expression); },
+    child(value?: T.Expression) {
+      if (value === undefined) return children[0];
+      return breakExpression({ ...config, children: [value] });
+    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3784,15 +3788,19 @@ export function refPattern(child: T.Pattern) {
 export function capturedPattern(config: ConfigOf<T.CapturedPattern>) {
   const fields = {
     identifier: config.identifier,
-    pattern: config.pattern,
   };
+  const children = config.children ?? [];
   return {
     $type: 'captured_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
+    $children: children,
     identifier(value?: T.Identifier) { return _fs(config, capturedPattern, 'identifier', value, config?.identifier); },
-    pattern(value?: T.Pattern) { return _fs(config, capturedPattern, 'pattern', value, config?.pattern); },
+    child(value?: T.Pattern) {
+      if (value === undefined) return children[0];
+      return capturedPattern({ ...config, children: [value] });
+    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

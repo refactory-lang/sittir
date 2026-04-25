@@ -562,6 +562,17 @@
       "property",
       "value"
     ],
+    "method_definition": [
+      "accessibility_modifier",
+      "override_modifier",
+      "readonly",
+      "async",
+      "name",
+      "type_parameters",
+      "parameters",
+      "return_type",
+      "body"
+    ],
     "pair": [
       "key",
       "value"
@@ -575,6 +586,16 @@
     ],
     "non_null_expression": [
       "expression"
+    ],
+    "method_signature": [
+      "accessibility_modifier",
+      "override_modifier",
+      "readonly",
+      "async",
+      "name",
+      "type_parameters",
+      "parameters",
+      "return_type"
     ],
     "abstract_method_signature": [
       "accessibility_modifier",
@@ -773,6 +794,13 @@
       "type_parameters",
       "parameters",
       "return_type"
+    ],
+    "property_signature": [
+      "accessibility_modifier",
+      "override_modifier",
+      "readonly",
+      "name",
+      "type"
     ],
     "type_parameter": [
       "const",

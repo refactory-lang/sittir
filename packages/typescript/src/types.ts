@@ -1398,7 +1398,7 @@ export interface MethodDefinition {
   readonly $type: 'method_definition';
   readonly $fields: {
     readonly accessibility_modifier?: AccessibilityModifier;
-    readonly override_modifier?: BooleanKeyword<"static">;
+    readonly override_modifier?: "static" | OverrideModifier;
     readonly readonly?: BooleanKeyword<"readonly">;
     readonly async?: BooleanKeyword<"async">;
     readonly name: PropertyName;
@@ -1407,7 +1407,6 @@ export interface MethodDefinition {
     readonly return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
     readonly body: StatementBlock;
   };
-  readonly $children: readonly [OverrideModifier];
 }
 
 export interface Pair {
@@ -1464,7 +1463,7 @@ export interface MethodSignature {
   readonly $type: 'method_signature';
   readonly $fields: {
     readonly accessibility_modifier?: AccessibilityModifier;
-    readonly override_modifier?: BooleanKeyword<"static">;
+    readonly override_modifier?: "static" | OverrideModifier;
     readonly readonly?: BooleanKeyword<"readonly">;
     readonly async?: BooleanKeyword<"async">;
     readonly name: PropertyName;
@@ -1472,7 +1471,6 @@ export interface MethodSignature {
     readonly parameters: FormalParameters;
     readonly return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
   };
-  readonly $children: readonly [OverrideModifier];
 }
 
 export interface AbstractMethodSignature {
@@ -1819,7 +1817,7 @@ export interface InferType {
   readonly $type: 'infer_type';
   readonly $fields: {
     readonly type_identifier: TypeIdentifier;
-    readonly constraint?: "extends" | Type;
+    readonly constraint: "extends" | Type;
   };
 }
 
@@ -1971,12 +1969,11 @@ export interface PropertySignature {
   readonly $type: 'property_signature';
   readonly $fields: {
     readonly accessibility_modifier?: AccessibilityModifier;
-    readonly override_modifier?: BooleanKeyword<"static">;
+    readonly override_modifier?: "static" | OverrideModifier;
     readonly readonly?: BooleanKeyword<"readonly">;
     readonly name: PropertyName;
     readonly type?: TypeAnnotation;
   };
-  readonly $children: readonly [OverrideModifier];
 }
 
 export interface TypeParameters {

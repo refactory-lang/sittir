@@ -1566,7 +1566,7 @@ export function breakExpressionFrom(input?: T.BreakExpression.Loose): ReturnType
   if (input !== undefined && isNodeData(input)) return input;
   return F.breakExpression({
     label: _resolveOneBranch<T.Label>(input?.label, "label"),
-    expression: _resolveOne<T.Expression>(input?.expression, _K5, _K6),
+    children: _resolveOne(input?.children, _K5, _K6),
   });
 }
 
@@ -1742,7 +1742,7 @@ export function capturedPatternFrom(input: T.CapturedPattern.Loose): ReturnType<
   if (isNodeData(input)) return input;
   return F.capturedPattern({
     identifier: _resolveOneLeaf<T.Identifier>(input.identifier, "identifier"),
-    pattern: _resolveOne<T.Pattern>(input.pattern, _K16, _K17),
+    children: _resolveOne(input.children, _K16, _K17),
   });
 }
 

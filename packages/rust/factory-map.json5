@@ -547,10 +547,6 @@
     "label": [
       "identifier"
     ],
-    "break_expression": [
-      "label",
-      "expression"
-    ],
     "continue_expression": [
       "label"
     ],
@@ -578,10 +574,6 @@
     ],
     "mut_pattern": [
       "mutable_specifier",
-      "pattern"
-    ],
-    "captured_pattern": [
-      "identifier",
       "pattern"
     ],
     "reference_pattern": [

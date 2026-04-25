@@ -14,8 +14,8 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences:  9  (0 applied, 9 held)
-// Rule promotions:   98  (90 applied, 8 held)
+// Field inferences:  1  (0 applied, 1 held)
+// Rule promotions:   99  (91 applied, 8 held)
 // Repeated shapes:   4  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -43,30 +43,7 @@ export const suggestedTransforms = {
   },
 
 
-  // _non_special_token: 1 inferred field(s)
-  // [held] _non_special_token field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 8 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
-  // _pointer_type_mut: 1 inferred field(s)
-  // [held] _pointer_type_mut field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 8 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
-  // _reference_expression_raw_mut: 1 inferred field(s)
-  _reference_expression_raw_mut: {
-      // [held] 100% agreement, 8 parents
-      1: field("mutable_specifier"),  // $.mutable_specifier
-  },
-
-  // _struct_item_brace: 1 inferred field(s)
-  // [held] _struct_item_brace field 'where_clause' on $.where_clause — 89% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
-  // _struct_item_tuple: 1 inferred field(s)
-  // [held] _struct_item_tuple field 'where_clause' on $.where_clause — 89% agreement, 9 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
-  // foreign_mod_item: 1 inferred field(s)
-  // [held] foreign_mod_item field 'visibility_modifier' on $.visibility_modifier — 93% agreement, 15 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
-
-  // reference_expression: 1 inferred field(s)
-  // [held] reference_expression field 'mutable_specifier' on $.mutable_specifier — 100% agreement, 8 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   reference_expression: {
       "1/0": variant("form0"),
@@ -77,12 +54,6 @@ export const suggestedTransforms = {
   return_expression: {
       "0": variant("form0"),
       "1": variant("form1"),
-  },
-
-  // static_item: 1 inferred field(s)
-  static_item: {
-      // [held] 100% agreement, 8 parents
-      3: field("mutable_specifier"),  // $.mutable_specifier
   },
 
   // type_arguments: 1 inferred field(s)
@@ -266,6 +237,7 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "token_tree_pattern_paren", classification: "polymorph", applied: true },
   { kind: "visibility_modifier", classification: "polymorph", applied: true },
   { kind: "visibility_modifier_crate", classification: "polymorph", applied: true },
+  { kind: "visibility_modifier_in_path", classification: "polymorph", applied: true },
   { kind: "visibility_modifier_pub", classification: "polymorph", applied: true },
   { kind: "yield_expression", classification: "polymorph", applied: false },
 ];
@@ -280,14 +252,6 @@ export interface InferredField {
   readonly applied: boolean;
 }
 export const inferredFields: readonly InferredField[] = [
-  { kind: "foreign_mod_item", fieldName: "visibility_modifier", targetSymbol: "visibility_modifier", confidence: "medium", agreement: 0.933, sampleSize: 15, applied: false },
-  { kind: "_non_special_token", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 8, applied: false },
-  { kind: "_pointer_type_mut", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 8, applied: false },
-  { kind: "_reference_expression_raw_mut", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 8, applied: false },
-  { kind: "_struct_item_brace", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.889, sampleSize: 9, applied: false },
-  { kind: "_struct_item_tuple", fieldName: "where_clause", targetSymbol: "where_clause", confidence: "medium", agreement: 0.889, sampleSize: 9, applied: false },
-  { kind: "reference_expression", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 8, applied: false },
-  { kind: "static_item", fieldName: "mutable_specifier", targetSymbol: "mutable_specifier", confidence: "high", agreement: 1.000, sampleSize: 8, applied: false },
   { kind: "type_arguments", fieldName: "bounds", targetSymbol: "trait_bounds", confidence: "high", agreement: 1.000, sampleSize: 5, applied: false },
 ];
 

@@ -108,30 +108,10 @@ const config: WireConfig<RustGrammar> = {
             { 1: field('attributes') },
             { '2/(_expression)': field('elements') },
         ],
-        block: {
-            0: field('label'), // label [struct=0]
-        },
-
         // bounded_type: 2 field(s)
         bounded_type: {
             0: field('left'), // lifetime | _type | use_bounds [struct=0]
             2: field('right'), // lifetime | _type | use_bounds [struct=1]
-        },
-
-        // break_expression: 2 field(s)
-        break_expression: {
-            1: field('label'), // label [struct=0]
-            2: field('expression'), // _expression [struct=1]
-        },
-
-        // captured_pattern: 2 field(s)
-        captured_pattern: {
-            2: field('pattern'), // _pattern (underscore-prefixed, enrich skips)
-        },
-
-        // continue_expression: 1 field(s)
-        continue_expression: {
-            1: field('label'), // label [struct=0]
         },
 
         // extern_modifier: 1 field(s)
@@ -144,11 +124,6 @@ const config: WireConfig<RustGrammar> = {
         // Position 0 = optional('ref') [anonymous], position 1 = optional(mutable_specifier)
         field_pattern: {
             1: field('mutable_specifier'), // mutable_specifier [struct=0]
-        },
-
-        // for_expression: 1 field(s)
-        for_expression: {
-            0: field('label'), // label [struct=0]
         },
 
         // function_modifiers — base is
@@ -268,10 +243,6 @@ const config: WireConfig<RustGrammar> = {
             1: field('identifier'), // identifier [struct=0]
         },
 
-        // loop_expression: 1 field(s)
-        loop_expression: {
-            0: field('label'), // label [struct=0]
-        },
 
         // macro_invocation: 1 field(s)
         macro_invocation: {
@@ -441,10 +412,6 @@ const config: WireConfig<RustGrammar> = {
             0: field('mutable_specifier'), // mutable_specifier [struct=0]
         },
 
-        // while_expression: 1 field(s)
-        while_expression: {
-            0: field('label'), // label [struct=0]
-        },
 
         // expression_statement: choice(seq(_expression, ';'),
         //                              prec(1, _expression_ending_with_block)).

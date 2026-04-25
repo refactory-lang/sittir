@@ -2608,7 +2608,7 @@ export function restPattern(child: T.LhsExpression) {
 export function methodDefinition(config: ConfigOf<T.MethodDefinition>) {
   const fields = {
     accessibility_modifier: config.accessibilityModifier,
-    override_modifier: config.overrideModifier ? "static" as const : undefined,
+    override_modifier: config.overrideModifier,
     readonly: config.readonly ? "readonly" as const : undefined,
     async: config.async ? "async" as const : undefined,
     name: config.name,
@@ -2617,15 +2617,13 @@ export function methodDefinition(config: ConfigOf<T.MethodDefinition>) {
     return_type: config.returnType,
     body: config.body,
   };
-  const children = config.children ?? [];
   return {
     $type: 'method_definition' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    $children: children,
     accessibilityModifier(value?: T.AccessibilityModifier | undefined) { return _fs(config, methodDefinition, 'accessibilityModifier', value, config?.accessibilityModifier); },
-    overrideModifier(value?: "static" | undefined) { return _fs(config, methodDefinition, 'overrideModifier', value, config?.overrideModifier); },
+    overrideModifier(value?: "static" | T.OverrideModifier | undefined) { return _fs(config, methodDefinition, 'overrideModifier', value, config?.overrideModifier); },
     readonly(value?: "readonly" | undefined) { return _fs(config, methodDefinition, 'readonly', value, config?.readonly); },
     async(value?: "async" | undefined) { return _fs(config, methodDefinition, 'async', value, config?.async); },
     name(value?: T.PropertyName) { return _fs(config, methodDefinition, 'name', value, config?.name); },
@@ -2633,10 +2631,6 @@ export function methodDefinition(config: ConfigOf<T.MethodDefinition>) {
     parameters(value?: T.FormalParameters) { return _fs(config, methodDefinition, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _fs(config, methodDefinition, 'returnType', value, config?.returnType); },
     body(value?: T.StatementBlock) { return _fs(config, methodDefinition, 'body', value, config?.body); },
-    child(value?: T.OverrideModifier) {
-      if (value === undefined) return children[0];
-      return methodDefinition({ ...config, children: [value] });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2786,7 +2780,7 @@ export function nonNullExpression(config: ConfigOf<T.NonNullExpression>) {
 export function methodSignature(config: ConfigOf<T.MethodSignature>) {
   const fields = {
     accessibility_modifier: config.accessibilityModifier,
-    override_modifier: config.overrideModifier ? "static" as const : undefined,
+    override_modifier: config.overrideModifier,
     readonly: config.readonly ? "readonly" as const : undefined,
     async: config.async ? "async" as const : undefined,
     name: config.name,
@@ -2794,25 +2788,19 @@ export function methodSignature(config: ConfigOf<T.MethodSignature>) {
     parameters: config.parameters,
     return_type: config.returnType,
   };
-  const children = config.children ?? [];
   return {
     $type: 'method_signature' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    $children: children,
     accessibilityModifier(value?: T.AccessibilityModifier | undefined) { return _fs(config, methodSignature, 'accessibilityModifier', value, config?.accessibilityModifier); },
-    overrideModifier(value?: "static" | undefined) { return _fs(config, methodSignature, 'overrideModifier', value, config?.overrideModifier); },
+    overrideModifier(value?: "static" | T.OverrideModifier | undefined) { return _fs(config, methodSignature, 'overrideModifier', value, config?.overrideModifier); },
     readonly(value?: "readonly" | undefined) { return _fs(config, methodSignature, 'readonly', value, config?.readonly); },
     async(value?: "async" | undefined) { return _fs(config, methodSignature, 'async', value, config?.async); },
     name(value?: T.PropertyName) { return _fs(config, methodSignature, 'name', value, config?.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, methodSignature, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, methodSignature, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _fs(config, methodSignature, 'returnType', value, config?.returnType); },
-    child(value?: T.OverrideModifier) {
-      if (value === undefined) return children[0];
-      return methodSignature({ ...config, children: [value] });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3650,7 +3638,7 @@ export function inferType(config: ConfigOf<T.InferType>) {
     $named: true as const,
     $fields: fields,
     typeIdentifier(value?: T.TypeIdentifier) { return _fs(config, inferType, 'typeIdentifier', value, config?.typeIdentifier); },
-    constraint(value?: "extends" | T.Type | undefined) { return _fs(config, inferType, 'constraint', value, config?.constraint); },
+    constraint(value?: "extends" | T.Type) { return _fs(config, inferType, 'constraint', value, config?.constraint); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3997,27 +3985,21 @@ export function callSignature(config: ConfigOf<T.CallSignature>) {
 export function propertySignature(config: ConfigOf<T.PropertySignature>) {
   const fields = {
     accessibility_modifier: config.accessibilityModifier,
-    override_modifier: config.overrideModifier ? "static" as const : undefined,
+    override_modifier: config.overrideModifier,
     readonly: config.readonly ? "readonly" as const : undefined,
     name: config.name,
     type: config.type,
   };
-  const children = config.children ?? [];
   return {
     $type: 'property_signature' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    $children: children,
     accessibilityModifier(value?: T.AccessibilityModifier | undefined) { return _fs(config, propertySignature, 'accessibilityModifier', value, config?.accessibilityModifier); },
-    overrideModifier(value?: "static" | undefined) { return _fs(config, propertySignature, 'overrideModifier', value, config?.overrideModifier); },
+    overrideModifier(value?: "static" | T.OverrideModifier | undefined) { return _fs(config, propertySignature, 'overrideModifier', value, config?.overrideModifier); },
     readonly(value?: "readonly" | undefined) { return _fs(config, propertySignature, 'readonly', value, config?.readonly); },
     name(value?: T.PropertyName) { return _fs(config, propertySignature, 'name', value, config?.name); },
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, propertySignature, 'type', value, config?.type); },
-    child(value?: T.OverrideModifier) {
-      if (value === undefined) return children[0];
-      return propertySignature({ ...config, children: [value] });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

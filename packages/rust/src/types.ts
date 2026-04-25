@@ -1388,7 +1388,7 @@ export type PointerType = PointerTypeUFormConst | PointerTypeUFormMut;
 export interface AbstractType {
   readonly $type: 'abstract_type';
   readonly $fields: {
-    readonly type_parameters?: "for" | TypeParameters;
+    readonly type_parameters: "for" | TypeParameters;
     readonly trait: TypeIdentifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
   };
 }
@@ -1768,8 +1768,8 @@ export interface BreakExpression {
   readonly $type: 'break_expression';
   readonly $fields: {
     readonly label?: Label;
-    readonly expression?: Expression;
   };
+  readonly $children: readonly [Expression];
 }
 
 export interface ContinueExpression {
@@ -1927,8 +1927,8 @@ export interface CapturedPattern {
   readonly $type: 'captured_pattern';
   readonly $fields: {
     readonly identifier: Identifier;
-    readonly pattern: Pattern;
   };
+  readonly $children: readonly [Pattern];
 }
 
 export interface ReferencePattern {

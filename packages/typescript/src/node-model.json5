@@ -11532,18 +11532,18 @@
           "name": "constraint",
           "propertyName": "constraint",
           "paramName": "constraint",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "terminal",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "value": "extends"
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "type",
               "unresolved": true
             }
@@ -12869,13 +12869,20 @@
               "multiplicity": "optional",
               "name": "_kw_static",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "override_modifier",
+              "unresolved": true
             }
           ],
           "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_static"
+              "_kw_static",
+              "override_modifier"
             ]
           }
         },
@@ -13055,23 +13062,7 @@
           }
         }
       ],
-      "children": [
-        {
-          "name": "override_modifier",
-          "propertyName": "overrideModifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "override_modifier",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
+      "children": []
     },
     {
       "kind": "method_signature",
@@ -13117,13 +13108,20 @@
               "multiplicity": "optional",
               "name": "_kw_static",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "override_modifier",
+              "unresolved": true
             }
           ],
           "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_static"
+              "_kw_static",
+              "override_modifier"
             ]
           }
         },
@@ -13280,23 +13278,7 @@
           }
         }
       ],
-      "children": [
-        {
-          "name": "override_modifier",
-          "propertyName": "overrideModifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "override_modifier",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
+      "children": []
     },
     {
       "kind": "module",
@@ -14937,13 +14919,20 @@
               "multiplicity": "optional",
               "name": "_kw_static",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "override_modifier",
+              "unresolved": true
             }
           ],
           "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_static"
+              "_kw_static",
+              "override_modifier"
             ]
           }
         },
@@ -15017,23 +15006,7 @@
           }
         }
       ],
-      "children": [
-        {
-          "name": "override_modifier",
-          "propertyName": "overrideModifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "override_modifier",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
+      "children": []
     },
     {
       "kind": "public_field_definition",

@@ -1010,7 +1010,7 @@ export function wrapMethodDefinition(data: _NodeData, tree: TreeHandle): Wrapped
     get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
     get returnType() { return drillIn(data.$fields?.['return_type'], tree); },
     get body() { return drillIn(data.$fields?.['body'], tree); },
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<MethodDefinition>;
 }
 
@@ -1070,7 +1070,7 @@ export function wrapMethodSignature(data: _NodeData, tree: TreeHandle): WrappedN
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
     get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
     get returnType() { return drillIn(data.$fields?.['return_type'], tree); },
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<MethodSignature>;
 }
 
@@ -1550,7 +1550,7 @@ export function wrapPropertySignature(data: _NodeData, tree: TreeHandle): Wrappe
     get readonly() { return drillIn(data.$fields?.['readonly'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get typeField() { return drillIn(data.$fields?.['type'], tree); },
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<PropertySignature>;
 }
 

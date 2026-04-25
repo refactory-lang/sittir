@@ -444,7 +444,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_visibility_modifier_crate': [
   ],
   'abstract_type': [
-    { name: 'typeParameters', required: false, multiple: false },
+    { name: 'typeParameters', required: true, multiple: false },
     { name: 'trait', required: true, multiple: false },
   ],
   'arguments': [
@@ -497,7 +497,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'break_expression': [
     { name: 'label', required: false, multiple: false },
-    { name: 'expression', required: false, multiple: false },
   ],
   'call_expression': [
     { name: 'function', required: true, multiple: false },
@@ -505,7 +504,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'captured_pattern': [
     { name: 'identifier', required: true, multiple: false },
-    { name: 'pattern', required: true, multiple: false },
   ],
   'closure_expression': [
     { name: 'static', required: false, multiple: false },

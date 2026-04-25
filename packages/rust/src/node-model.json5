@@ -3106,18 +3106,18 @@
           "name": "type_parameters",
           "propertyName": "typeParameters",
           "paramName": "typeParameters",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "terminal",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "value": "for"
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "type_parameters",
               "unresolved": true
             }
@@ -3962,7 +3962,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4211,18 +4211,19 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
               "label"
             ]
           }
-        },
+        }
+      ],
+      "children": [
         {
           "name": "expression",
           "propertyName": "expression",
-          "paramName": "expression",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -4233,17 +4234,9 @@
               "name": "_expression",
               "unresolved": true
             }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_expression"
-            ]
-          }
+          ]
         }
-      ],
-      "children": []
+      ]
     },
     {
       "kind": "call_expression",
@@ -4332,11 +4325,12 @@
               "identifier"
             ]
           }
-        },
+        }
+      ],
+      "children": [
         {
           "name": "pattern",
           "propertyName": "pattern",
-          "paramName": "pattern",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -4347,17 +4341,9 @@
               "name": "_pattern",
               "unresolved": true
             }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_pattern"
-            ]
-          }
+          ]
         }
-      ],
-      "children": []
+      ]
     },
     {
       "kind": "char_literal",
@@ -5347,7 +5333,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6972,7 +6958,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9855,7 +9841,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16771,7 +16757,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [

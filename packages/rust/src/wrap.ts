@@ -1225,8 +1225,7 @@ export function wrapBreakExpression(data: _NodeData, tree: TreeHandle): WrappedN
   return {
     ...data,
     get label() { return drillIn(data.$fields?.['label'], tree); },
-    get expression() { return drillIn(data.$fields?.['expression'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<BreakExpression>;
 }
 
@@ -1379,8 +1378,7 @@ export function wrapCapturedPattern(data: _NodeData, tree: TreeHandle): WrappedN
   return {
     ...data,
     get identifier() { return drillIn(data.$fields?.['identifier'], tree); },
-    get pattern() { return drillIn(data.$fields?.['pattern'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<CapturedPattern>;
 }
 
