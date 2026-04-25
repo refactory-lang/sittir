@@ -2056,7 +2056,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_class_body_member': (d, t) => wrapClassBodyMember(d, t),
   '_for_header_lhs': (d, t) => wrapForHeaderLhs(d, t),
   '_public_field_definition_declare_first': (d, t) => wrapPublicFieldDefinitionDeclareFirst(d, t),
-  '_public_field_definition_readonly_first': (d) => d,
   '_public_field_definition_accessor_opt': (d, t) => wrapPublicFieldDefinitionAccessorOpt(d, t),
   '_parenthesized_expression_sequence': (d, t) => wrapParenthesizedExpressionSequence(d, t),
   '_export_statement_type_export': (d, t) => wrapExportStatementTypeExport(d, t),

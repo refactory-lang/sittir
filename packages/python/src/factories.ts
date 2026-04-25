@@ -1116,6 +1116,22 @@ export function simplePattern(child: (T.ClassPattern | T.SplatPattern | T.UnionP
   };
 }
 
+export function _asPattern(child: (T.CasePattern | T.Identifier)) {
+  const children = [child];
+  return {
+    $type: '_as_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T._AsPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function unionPattern(...children: T.SimplePattern[]) {
   _assertNonEmpty(children, 'union_pattern.children');
   return {
@@ -2079,7 +2095,6 @@ export function pair(config: ConfigOf<T.Pair>) {
 export function listComprehension(config: ConfigOf<T.ListComprehension>) {
   const fields = {
     body: config.body,
-    for_in_clause: config.forInClause,
   };
   const children = config.children ?? [];
   return {
@@ -2089,10 +2104,9 @@ export function listComprehension(config: ConfigOf<T.ListComprehension>) {
     $fields: fields,
     $children: children,
     body(value?: T.Expression) { return _fs(config, listComprehension, 'body', value, config?.body); },
-    forInClause(value?: T.ForInClause) { return _fs(config, listComprehension, 'forInClause', value, config?.forInClause); },
-    children(...items: (T.ForInClause | T.IfClause)[]) {
-      if (items.length === 0) return children;
-      return listComprehension({ ...config, children: items });
+    child(value?: T.ComprehensionClauses) {
+      if (value === undefined) return children[0];
+      return listComprehension({ ...config, children: [value] });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -2106,7 +2120,6 @@ export function listComprehension(config: ConfigOf<T.ListComprehension>) {
 export function dictionaryComprehension(config: ConfigOf<T.DictionaryComprehension>) {
   const fields = {
     body: config.body,
-    for_in_clause: config.forInClause,
   };
   const children = config.children ?? [];
   return {
@@ -2116,10 +2129,9 @@ export function dictionaryComprehension(config: ConfigOf<T.DictionaryComprehensi
     $fields: fields,
     $children: children,
     body(value?: T.Pair) { return _fs(config, dictionaryComprehension, 'body', value, config?.body); },
-    forInClause(value?: T.ForInClause) { return _fs(config, dictionaryComprehension, 'forInClause', value, config?.forInClause); },
-    children(...items: (T.ForInClause | T.IfClause)[]) {
-      if (items.length === 0) return children;
-      return dictionaryComprehension({ ...config, children: items });
+    child(value?: T.ComprehensionClauses) {
+      if (value === undefined) return children[0];
+      return dictionaryComprehension({ ...config, children: [value] });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -2133,7 +2145,6 @@ export function dictionaryComprehension(config: ConfigOf<T.DictionaryComprehensi
 export function setComprehension(config: ConfigOf<T.SetComprehension>) {
   const fields = {
     body: config.body,
-    for_in_clause: config.forInClause,
   };
   const children = config.children ?? [];
   return {
@@ -2143,10 +2154,9 @@ export function setComprehension(config: ConfigOf<T.SetComprehension>) {
     $fields: fields,
     $children: children,
     body(value?: T.Expression) { return _fs(config, setComprehension, 'body', value, config?.body); },
-    forInClause(value?: T.ForInClause) { return _fs(config, setComprehension, 'forInClause', value, config?.forInClause); },
-    children(...items: (T.ForInClause | T.IfClause)[]) {
-      if (items.length === 0) return children;
-      return setComprehension({ ...config, children: items });
+    child(value?: T.ComprehensionClauses) {
+      if (value === undefined) return children[0];
+      return setComprehension({ ...config, children: [value] });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -2160,7 +2170,6 @@ export function setComprehension(config: ConfigOf<T.SetComprehension>) {
 export function generatorExpression(config: ConfigOf<T.GeneratorExpression>) {
   const fields = {
     body: config.body,
-    for_in_clause: config.forInClause,
   };
   const children = config.children ?? [];
   return {
@@ -2170,10 +2179,9 @@ export function generatorExpression(config: ConfigOf<T.GeneratorExpression>) {
     $fields: fields,
     $children: children,
     body(value?: T.Expression) { return _fs(config, generatorExpression, 'body', value, config?.body); },
-    forInClause(value?: T.ForInClause) { return _fs(config, generatorExpression, 'forInClause', value, config?.forInClause); },
-    children(...items: (T.ForInClause | T.IfClause)[]) {
-      if (items.length === 0) return children;
-      return generatorExpression({ ...config, children: items });
+    child(value?: T.ComprehensionClauses) {
+      if (value === undefined) return children[0];
+      return generatorExpression({ ...config, children: [value] });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -2181,6 +2189,21 @@ export function generatorExpression(config: ConfigOf<T.GeneratorExpression>) {
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T.GeneratorExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function comprehensionClauses(...children: (T.ForInClause | T.IfClause)[]) {
+  return {
+    $type: '_comprehension_clauses' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ComprehensionClausesTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2691,6 +2714,7 @@ export type FluentKindMap = {
   "dotted_name": FluentNode<"dotted_name", T.DottedName.Config>;
   "case_pattern": FluentNode<"case_pattern", T.CasePattern.Config>;
   "_simple_pattern": FluentNode<"_simple_pattern", T.SimplePattern.Config>;
+  "_as_pattern": FluentNode<"_as_pattern", T._AsPattern.Config>;
   "union_pattern": FluentNode<"union_pattern", T.UnionPattern.Config>;
   "_list_pattern": FluentNode<"_list_pattern", T._ListPattern.Config>;
   "_tuple_pattern": FluentNode<"_tuple_pattern", T._TuplePattern.Config>;
@@ -2738,6 +2762,7 @@ export type FluentKindMap = {
   "dictionary_comprehension": FluentNode<"dictionary_comprehension", T.DictionaryComprehension.Config>;
   "set_comprehension": FluentNode<"set_comprehension", T.SetComprehension.Config>;
   "generator_expression": FluentNode<"generator_expression", T.GeneratorExpression.Config>;
+  "_comprehension_clauses": FluentNode<"_comprehension_clauses", T.ComprehensionClauses.Config>;
   "parenthesized_expression": FluentNode<"parenthesized_expression", T.ParenthesizedExpression.Config>;
   "for_in_clause": FluentNode<"for_in_clause", T.ForInClause.Config>;
   "if_clause": FluentNode<"if_clause", T.IfClause.Config>;
@@ -2825,6 +2850,7 @@ export const _factoryMap = {
   "dotted_name": dottedName,
   "case_pattern": casePattern,
   "_simple_pattern": simplePattern,
+  "_as_pattern": _asPattern,
   "union_pattern": unionPattern,
   "_list_pattern": _listPattern,
   "_tuple_pattern": _tuplePattern,
@@ -2872,6 +2898,7 @@ export const _factoryMap = {
   "dictionary_comprehension": dictionaryComprehension,
   "set_comprehension": setComprehension,
   "generator_expression": generatorExpression,
+  "_comprehension_clauses": comprehensionClauses,
   "parenthesized_expression": parenthesizedExpression,
   "for_in_clause": forInClause,
   "if_clause": ifClause,

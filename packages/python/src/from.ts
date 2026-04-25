@@ -338,7 +338,6 @@ const _K11: readonly string[] = ["keyword_identifier","subscript","attribute","l
 const _K12: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","primary_expression","conditional_expression","named_expression","as_pattern","slice"];
 const _K13: readonly string[] = ["generator_expression","argument_list"];
 const _K14: readonly string[] = ["list_splat_pattern","dictionary_splat_pattern"];
-const _K15: readonly string[] = ["for_in_clause","if_clause"];
 
 export function moduleFrom(...input: readonly (NonNullable<T.Module.Config['children']>[number] | T.Module)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'module') {
@@ -1129,8 +1128,7 @@ export function listComprehensionFrom(input: T.ListComprehension.Loose): ReturnT
   if (isNodeData(input)) return input;
   return F.listComprehension({
     body: _resolveOne<T.Expression>(input.body, _K0, _super_expression),
-    forInClause: _resolveOneBranch<T.ForInClause>(input.forInClause, "for_in_clause"),
-    children: _resolveMany(input.children, _K0, _K15),
+    children: _resolveOneBranch(input.children, "_comprehension_clauses"),
   });
 }
 
@@ -1138,8 +1136,7 @@ export function dictionaryComprehensionFrom(input: T.DictionaryComprehension.Loo
   if (isNodeData(input)) return input;
   return F.dictionaryComprehension({
     body: _resolveOneBranch<T.Pair>(input.body, "pair"),
-    forInClause: _resolveOneBranch<T.ForInClause>(input.forInClause, "for_in_clause"),
-    children: _resolveMany(input.children, _K0, _K15),
+    children: _resolveOneBranch(input.children, "_comprehension_clauses"),
   });
 }
 
@@ -1147,8 +1144,7 @@ export function setComprehensionFrom(input: T.SetComprehension.Loose): ReturnTyp
   if (isNodeData(input)) return input;
   return F.setComprehension({
     body: _resolveOne<T.Expression>(input.body, _K0, _super_expression),
-    forInClause: _resolveOneBranch<T.ForInClause>(input.forInClause, "for_in_clause"),
-    children: _resolveMany(input.children, _K0, _K15),
+    children: _resolveOneBranch(input.children, "_comprehension_clauses"),
   });
 }
 
@@ -1156,8 +1152,7 @@ export function generatorExpressionFrom(input: T.GeneratorExpression.Loose): Ret
   if (isNodeData(input)) return input;
   return F.generatorExpression({
     body: _resolveOne<T.Expression>(input.body, _K0, _super_expression),
-    forInClause: _resolveOneBranch<T.ForInClause>(input.forInClause, "for_in_clause"),
-    children: _resolveMany(input.children, _K0, _K15),
+    children: _resolveOneBranch(input.children, "_comprehension_clauses"),
   });
 }
 

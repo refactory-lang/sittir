@@ -282,6 +282,7 @@ export const enum SyntaxKind {
   PublicFieldDefinitionAccessFirst = '_public_field_definition_access_first',
   PublicFieldDefinitionStaticMods = '_public_field_definition_static_mods',
   PublicFieldDefinitionAbstractFirst = '_public_field_definition_abstract_first',
+  PublicFieldDefinitionReadonlyFirst = '_public_field_definition_readonly_first',
   PublicFieldDefinitionAccessorOpt = '_public_field_definition_accessor_opt',
   ParenthesizedExpressionTyped = '_parenthesized_expression_typed',
   ParenthesizedExpressionSequence = '_parenthesized_expression_sequence',
@@ -327,7 +328,6 @@ export const enum SyntaxKind {
   KwReadonly = '_kw_readonly',
   KwAbstract = '_kw_abstract',
   KwConst = '_kw_const',
-  PublicFieldDefinitionReadonlyFirst = '_public_field_definition_readonly_first',
   AutomaticSemicolon = '_automatic_semicolon',
   TernaryQmark = '_ternary_qmark',
   HtmlComment = 'html_comment',
@@ -2272,6 +2272,15 @@ export interface PublicFieldDefinitionAbstractFirst {
   readonly $type: 'public_field_definition_abstract_first';
   readonly $fields: {
     readonly abstract: AutoStamp<"abstract">;
+    readonly readonly?: BooleanKeyword<"readonly">;
+  };
+}
+
+export interface PublicFieldDefinitionReadonlyFirst {
+  readonly $type: 'public_field_definition_readonly_first';
+  readonly $fields: {
+    readonly readonly: AutoStamp<"readonly">;
+    readonly abstract?: BooleanKeyword<"abstract">;
   };
 }
 
@@ -2394,7 +2403,6 @@ export type StringFragment = Terminal<"_string_fragment", string>;
 export type AccessibilityModifier = Terminal<"accessibility_modifier", "public" | "private" | "protected">;
 export type OverrideModifier = Terminal<"override_modifier", "override">;
 export type PredefinedType = Terminal<"predefined_type", string>;
-export type PublicFieldDefinitionReadonlyFirst = Terminal<"_public_field_definition_readonly_first", string>;
 export type AutomaticSemicolon = Terminal<"_automatic_semicolon", string>;
 export type TernaryQmark = Terminal<"_ternary_qmark", string>;
 export type HtmlComment = Terminal<"html_comment", string>;
@@ -2632,6 +2640,7 @@ export interface PublicFieldDefinitionDeclareFirstTree extends AnyTreeNode { rea
 export interface PublicFieldDefinitionAccessFirstTree extends AnyTreeNode { readonly type: "_public_field_definition_access_first"; }
 export interface PublicFieldDefinitionStaticModsTree extends AnyTreeNode { readonly type: "_public_field_definition_static_mods"; }
 export interface PublicFieldDefinitionAbstractFirstTree extends AnyTreeNode { readonly type: "_public_field_definition_abstract_first"; }
+export interface PublicFieldDefinitionReadonlyFirstTree extends AnyTreeNode { readonly type: "_public_field_definition_readonly_first"; }
 export interface PublicFieldDefinitionAccessorOptTree extends AnyTreeNode { readonly type: "_public_field_definition_accessor_opt"; }
 export interface ParenthesizedExpressionTypedTree extends AnyTreeNode { readonly type: "_parenthesized_expression_typed"; }
 export interface ParenthesizedExpressionSequenceTree extends AnyTreeNode { readonly type: "_parenthesized_expression_sequence"; }
@@ -2672,7 +2681,6 @@ export interface StringFragmentTree extends AnyTreeNode { readonly type: "_strin
 export interface AccessibilityModifierTree extends TreeNode<'accessibility_modifier'> {}
 export interface OverrideModifierTree extends AnyTreeNode { readonly type: "override_modifier"; }
 export interface PredefinedTypeTree extends TreeNode<'predefined_type'> {}
-export interface PublicFieldDefinitionReadonlyFirstTree extends AnyTreeNode { readonly type: "_public_field_definition_readonly_first"; }
 export interface AutomaticSemicolonTree extends AnyTreeNode { readonly type: "_automatic_semicolon"; }
 export interface TernaryQmarkTree extends AnyTreeNode { readonly type: "_ternary_qmark"; }
 export interface HtmlCommentTree extends TreeNode<'html_comment'> {}
@@ -3215,6 +3223,7 @@ export type TypescriptNode =
   | PublicFieldDefinitionAccessFirst
   | PublicFieldDefinitionStaticMods
   | PublicFieldDefinitionAbstractFirst
+  | PublicFieldDefinitionReadonlyFirst
   | PublicFieldDefinitionAccessorOpt
   | ParenthesizedExpressionTyped
   | ParenthesizedExpressionSequence
@@ -3435,6 +3444,7 @@ export interface KindMap {
   '_public_field_definition_access_first': PublicFieldDefinitionAccessFirst;
   '_public_field_definition_static_mods': PublicFieldDefinitionStaticMods;
   '_public_field_definition_abstract_first': PublicFieldDefinitionAbstractFirst;
+  '_public_field_definition_readonly_first': PublicFieldDefinitionReadonlyFirst;
   '_public_field_definition_accessor_opt': PublicFieldDefinitionAccessorOpt;
   '_parenthesized_expression_typed': ParenthesizedExpressionTyped;
   '_parenthesized_expression_sequence': ParenthesizedExpressionSequence;
@@ -3475,7 +3485,6 @@ export interface KindMap {
   'accessibility_modifier': AccessibilityModifier;
   'override_modifier': OverrideModifier;
   'predefined_type': PredefinedType;
-  '_public_field_definition_readonly_first': PublicFieldDefinitionReadonlyFirst;
   '_automatic_semicolon': AutomaticSemicolon;
   '_ternary_qmark': TernaryQmark;
   'html_comment': HtmlComment;
@@ -3703,6 +3712,7 @@ export interface PublicFieldDefinitionDeclareFirstNs extends NodeNs<PublicFieldD
 export interface PublicFieldDefinitionAccessFirstNs extends NodeNs<PublicFieldDefinitionAccessFirst, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface PublicFieldDefinitionStaticModsNs extends NodeNs<PublicFieldDefinitionStaticMods, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface PublicFieldDefinitionAbstractFirstNs extends NodeNs<PublicFieldDefinitionAbstractFirst, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface PublicFieldDefinitionReadonlyFirstNs extends NodeNs<PublicFieldDefinitionReadonlyFirst, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface PublicFieldDefinitionAccessorOptNs extends NodeNs<PublicFieldDefinitionAccessorOpt, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ParenthesizedExpressionTypedNs extends NodeNs<ParenthesizedExpressionTyped, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ParenthesizedExpressionSequenceNs extends NodeNs<ParenthesizedExpressionSequence, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3922,6 +3932,7 @@ export interface NamespaceMap {
   '_public_field_definition_access_first': PublicFieldDefinitionAccessFirstNs;
   '_public_field_definition_static_mods': PublicFieldDefinitionStaticModsNs;
   '_public_field_definition_abstract_first': PublicFieldDefinitionAbstractFirstNs;
+  '_public_field_definition_readonly_first': PublicFieldDefinitionReadonlyFirstNs;
   '_public_field_definition_accessor_opt': PublicFieldDefinitionAccessorOptNs;
   '_parenthesized_expression_typed': ParenthesizedExpressionTypedNs;
   '_parenthesized_expression_sequence': ParenthesizedExpressionSequenceNs;
@@ -5380,6 +5391,13 @@ export namespace PublicFieldDefinitionAbstractFirst {
   export type Loose = LooseFor<'_public_field_definition_abstract_first'>;
   export type Tree = TreeFor<'_public_field_definition_abstract_first'>;
   export type Kind = '_public_field_definition_abstract_first';
+}
+export namespace PublicFieldDefinitionReadonlyFirst {
+  export type Config = ConfigFor<'_public_field_definition_readonly_first'>;
+  export type Fluent = FluentFor<'_public_field_definition_readonly_first'>;
+  export type Loose = LooseFor<'_public_field_definition_readonly_first'>;
+  export type Tree = TreeFor<'_public_field_definition_readonly_first'>;
+  export type Kind = '_public_field_definition_readonly_first';
 }
 export namespace PublicFieldDefinitionAccessorOpt {
   export type Config = ConfigFor<'_public_field_definition_accessor_opt'>;

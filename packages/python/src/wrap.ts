@@ -26,6 +26,7 @@ import type {
   ClassPattern,
   ComparisonOperator,
   ComplexPattern,
+  ComprehensionClauses,
   ConcatenatedString,
   ConditionalExpression,
   ConstrainedType,
@@ -113,6 +114,7 @@ import type {
   WithItem,
   WithStatement,
   Yield,
+  _AsPattern,
   _ListPattern,
   _TuplePattern,
 } from './types.js';
@@ -568,6 +570,13 @@ export function wrapSimplePattern(data: _NodeData, tree: TreeHandle): WrappedNod
   } as unknown as WrappedNode<SimplePattern>;
 }
 
+export function wrap_AsPattern(data: _NodeData, tree: TreeHandle): WrappedNode<_AsPattern> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<_AsPattern>;
+}
+
 export function wrapUnionPattern(data: _NodeData, tree: TreeHandle): WrappedNode<UnionPattern> {
   return {
     ...data,
@@ -930,8 +939,7 @@ export function wrapListComprehension(data: _NodeData, tree: TreeHandle): Wrappe
   return {
     ...data,
     get body() { return drillIn(data.$fields?.['body'], tree); },
-    get forInClause() { return drillIn(data.$fields?.['for_in_clause'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ListComprehension>;
 }
 
@@ -939,8 +947,7 @@ export function wrapDictionaryComprehension(data: _NodeData, tree: TreeHandle): 
   return {
     ...data,
     get body() { return drillIn(data.$fields?.['body'], tree); },
-    get forInClause() { return drillIn(data.$fields?.['for_in_clause'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<DictionaryComprehension>;
 }
 
@@ -948,8 +955,7 @@ export function wrapSetComprehension(data: _NodeData, tree: TreeHandle): Wrapped
   return {
     ...data,
     get body() { return drillIn(data.$fields?.['body'], tree); },
-    get forInClause() { return drillIn(data.$fields?.['for_in_clause'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<SetComprehension>;
 }
 
@@ -957,9 +963,15 @@ export function wrapGeneratorExpression(data: _NodeData, tree: TreeHandle): Wrap
   return {
     ...data,
     get body() { return drillIn(data.$fields?.['body'], tree); },
-    get forInClause() { return drillIn(data.$fields?.['for_in_clause'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<GeneratorExpression>;
+}
+
+export function wrapComprehensionClauses(data: _NodeData, tree: TreeHandle): WrappedNode<ComprehensionClauses> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ComprehensionClauses>;
 }
 
 export function wrapParenthesizedExpression(data: _NodeData, tree: TreeHandle): WrappedNode<ParenthesizedExpression> {
@@ -1109,6 +1121,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'dotted_name': (d, t) => wrapDottedName(d, t),
   'case_pattern': (d, t) => wrapCasePattern(d, t),
   '_simple_pattern': (d, t) => wrapSimplePattern(d, t),
+  '_as_pattern': (d, t) => wrap_AsPattern(d, t),
   'union_pattern': (d, t) => wrapUnionPattern(d, t),
   '_list_pattern': (d, t) => wrap_ListPattern(d, t),
   '_tuple_pattern': (d, t) => wrap_TuplePattern(d, t),
@@ -1158,6 +1171,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'dictionary_comprehension': (d, t) => wrapDictionaryComprehension(d, t),
   'set_comprehension': (d, t) => wrapSetComprehension(d, t),
   'generator_expression': (d, t) => wrapGeneratorExpression(d, t),
+  '_comprehension_clauses': (d, t) => wrapComprehensionClauses(d, t),
   'parenthesized_expression': (d, t) => wrapParenthesizedExpression(d, t),
   'for_in_clause': (d, t) => wrapForInClause(d, t),
   'if_clause': (d, t) => wrapIfClause(d, t),

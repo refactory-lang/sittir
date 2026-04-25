@@ -3303,6 +3303,29 @@
               "_kw_abstract"
             ]
           }
+        },
+        {
+          "name": "readonly",
+          "propertyName": "readonly",
+          "paramName": "readonly",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_kw_readonly",
+              "unresolved": true
+            }
+          ],
+          "source": "enriched",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_kw_readonly"
+            ]
+          }
         }
       ],
       "children": []
@@ -3414,11 +3437,60 @@
     },
     {
       "kind": "_public_field_definition_readonly_first",
-      "modelType": "leaf",
+      "modelType": "group",
       "typeName": "PublicFieldDefinitionReadonlyFirst",
-      "factoryName": "publicFieldDefinitionReadonlyFirst",
       "irKey": "publicFieldDefinitionReadonlyFirst",
-      "hidden": false
+      "hidden": true,
+      "name": "_public_field_definition_readonly_first",
+      "fields": [
+        {
+          "name": "readonly",
+          "propertyName": "readonly",
+          "paramName": "readonly",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_kw_readonly",
+              "unresolved": true
+            }
+          ],
+          "source": "enriched",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_kw_readonly"
+            ]
+          }
+        },
+        {
+          "name": "abstract",
+          "propertyName": "abstract",
+          "paramName": "abstract",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_kw_abstract",
+              "unresolved": true
+            }
+          ],
+          "source": "enriched",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_kw_abstract"
+            ]
+          }
+        }
+      ],
+      "children": []
     },
     {
       "kind": "_public_field_definition_static_mods",

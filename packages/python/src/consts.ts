@@ -2,6 +2,8 @@
 
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
+  '_as_pattern',
+  '_comprehension_clauses',
   '_list_pattern',
   '_match_block',
   '_simple_pattern',
@@ -275,6 +277,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   required: boolean;
   multiple: boolean;
 }>> = {
+  '_as_pattern': [
+  ],
+  '_comprehension_clauses': [
+  ],
   '_list_pattern': [
   ],
   '_match_block': [
@@ -390,7 +396,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'dictionary_comprehension': [
     { name: 'body', required: true, multiple: false },
-    { name: 'forInClause', required: true, multiple: false },
   ],
   'dictionary_splat': [
     { name: 'expression', required: true, multiple: false },
@@ -449,7 +454,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'generator_expression': [
     { name: 'body', required: true, multiple: false },
-    { name: 'forInClause', required: true, multiple: false },
   ],
   'generic_type': [
     { name: 'identifier', required: true, multiple: false },
@@ -499,7 +503,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'list_comprehension': [
     { name: 'body', required: true, multiple: false },
-    { name: 'forInClause', required: true, multiple: false },
   ],
   'list_pattern': [
   ],
@@ -556,7 +559,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'set_comprehension': [
     { name: 'body', required: true, multiple: false },
-    { name: 'forInClause', required: true, multiple: false },
   ],
   'slice': [
     { name: 'start', required: false, multiple: false },

@@ -199,7 +199,6 @@ export const LEAF_KINDS = [
   '_kw_const',
   '_kw_readonly',
   '_kw_static',
-  '_public_field_definition_readonly_first',
   '_reserved_identifier',
   '_string_fragment',
   '_ternary_qmark',

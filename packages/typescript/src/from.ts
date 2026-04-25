@@ -415,24 +415,23 @@ const _K22: readonly string[] = ["identifier","private_property_identifier","num
 const _K23: readonly string[] = ["string","computed_property_name"];
 const _K24: readonly string[] = ["_kw_static","override_modifier"];
 const _K25: readonly string[] = ["member_expression","subscript_expression","object_pattern","array_pattern","non_null_expression","rest_pattern","assignment_pattern"];
-const _K26: readonly string[] = ["_public_field_definition_readonly_first"];
-const _K27: readonly string[] = ["_public_field_definition_declare_first","_public_field_definition_access_first","_public_field_definition_static_mods","_public_field_definition_abstract_first","_public_field_definition_accessor_opt"];
-const _K28: readonly string[] = ["_automatic_semicolon","_function_signature_automatic_semicolon"];
-const _K29: readonly string[] = ["identifier","_automatic_semicolon"];
-const _K30: readonly string[] = ["function_signature","abstract_class_declaration","module","internal_module","type_alias_declaration","enum_declaration","interface_declaration","import_alias","ambient_declaration","statement_block","primary_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation"];
-const _K31: readonly string[] = ["string","nested_identifier"];
-const _K32: readonly string[] = ["_type_identifier","nested_type_identifier","generic_type"];
-const _K33: readonly string[] = ["string","computed_property_name","enum_assignment"];
-const _K34: readonly string[] = ["undefined","identifier","this"];
-const _K35: readonly string[] = ["accessibility_modifier","override_modifier"];
-const _K36: readonly string[] = ["rest_pattern"];
-const _K37: readonly string[] = ["_type_identifier","nested_type_identifier"];
-const _K38: readonly string[] = ["identifier","this","predefined_type"];
-const _K39: readonly string[] = ["predefined_type","identifier","this"];
-const _K40: readonly string[] = ["parenthesized_type","nested_type_identifier","generic_type","object_type","array_type","tuple_type","flow_maybe_type","type_query","index_type_query","literal_type","lookup_type","conditional_type","template_literal_type","intersection_type","union_type"];
-const _K41: readonly string[] = ["export_statement","property_signature","call_signature","construct_signature","index_signature","method_signature"];
-const _K42: readonly string[] = ["type_annotation","omitting_type_annotation","adding_type_annotation","opting_type_annotation"];
-const _K43: readonly string[] = ["primary_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation","asserts","type_predicate"];
+const _K26: readonly string[] = ["_public_field_definition_declare_first","_public_field_definition_access_first","_public_field_definition_static_mods","_public_field_definition_abstract_first","_public_field_definition_readonly_first","_public_field_definition_accessor_opt"];
+const _K27: readonly string[] = ["_automatic_semicolon","_function_signature_automatic_semicolon"];
+const _K28: readonly string[] = ["identifier","_automatic_semicolon"];
+const _K29: readonly string[] = ["function_signature","abstract_class_declaration","module","internal_module","type_alias_declaration","enum_declaration","interface_declaration","import_alias","ambient_declaration","statement_block","primary_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation"];
+const _K30: readonly string[] = ["string","nested_identifier"];
+const _K31: readonly string[] = ["_type_identifier","nested_type_identifier","generic_type"];
+const _K32: readonly string[] = ["string","computed_property_name","enum_assignment"];
+const _K33: readonly string[] = ["undefined","identifier","this"];
+const _K34: readonly string[] = ["accessibility_modifier","override_modifier"];
+const _K35: readonly string[] = ["rest_pattern"];
+const _K36: readonly string[] = ["_type_identifier","nested_type_identifier"];
+const _K37: readonly string[] = ["identifier","this","predefined_type"];
+const _K38: readonly string[] = ["predefined_type","identifier","this"];
+const _K39: readonly string[] = ["parenthesized_type","nested_type_identifier","generic_type","object_type","array_type","tuple_type","flow_maybe_type","type_query","index_type_query","literal_type","lookup_type","conditional_type","template_literal_type","intersection_type","union_type"];
+const _K40: readonly string[] = ["export_statement","property_signature","call_signature","construct_signature","index_signature","method_signature"];
+const _K41: readonly string[] = ["type_annotation","omitting_type_annotation","adding_type_annotation","opting_type_annotation"];
+const _K42: readonly string[] = ["primary_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation","asserts","type_predicate"];
 
 export function programFrom(input: T.Program.Loose): ReturnType<typeof F.program> | T.Program {
   if (isNodeData(input)) return input;
@@ -1424,7 +1423,7 @@ export function publicFieldDefinitionFrom(input: T.PublicFieldDefinition.Loose):
     name: _resolveOne<T.PropertyName>(input.name, _K22, _K23),
     type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),
     value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
-    children: _resolveOne(input.children, _K26, _K27),
+    children: _resolveOne(input.children, _K0, _K26),
   });
 }
 
@@ -1469,7 +1468,7 @@ export function functionSignatureFrom(input: T.FunctionSignature.Loose): ReturnT
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
     returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K0, _K12),
-    semicolon: _resolveOne<T.Semicolon | T.FunctionSignatureAutomaticSemicolon>(input.semicolon, _K28, _K0),
+    semicolon: _resolveOne<T.Semicolon | T.FunctionSignatureAutomaticSemicolon>(input.semicolon, _K27, _K0),
   });
 }
 
@@ -1543,7 +1542,7 @@ export function implementsClauseFrom(...input: readonly (NonNullable<T.Implement
 export function ambientDeclarationFrom(input: T.AmbientDeclaration.Loose): ReturnType<typeof F.ambientDeclaration> | T.AmbientDeclaration {
   if (isNodeData(input)) return input;
   return F.ambientDeclaration({
-    declaration: _resolveOne<T.Declaration | "global" | T.StatementBlock | "module" | T.Identifier | T.Type | T.Semicolon>(input.declaration, _K29, _K30),
+    declaration: _resolveOne<T.Declaration | "global" | T.StatementBlock | "module" | T.Identifier | T.Type | T.Semicolon>(input.declaration, _K28, _K29),
   });
 }
 
@@ -1561,7 +1560,7 @@ export function abstractClassDeclarationFrom(input: T.AbstractClassDeclaration.L
 export function moduleFrom(input: T.Module.Loose): ReturnType<typeof F.module> | T.Module {
   if (isNodeData(input)) return input;
   return F.module({
-    name: _resolveOne<T.String | T.Identifier | T.NestedIdentifier>(input.name, _super_import_identifier, _K31),
+    name: _resolveOne<T.String | T.Identifier | T.NestedIdentifier>(input.name, _super_import_identifier, _K30),
     body: _resolveOneBranch<T.StatementBlock>(input.body, "statement_block"),
   });
 }
@@ -1569,7 +1568,7 @@ export function moduleFrom(input: T.Module.Loose): ReturnType<typeof F.module> |
 export function internalModuleFrom(input: T.InternalModule.Loose): ReturnType<typeof F.internalModule> | T.InternalModule {
   if (isNodeData(input)) return input;
   return F.internalModule({
-    name: _resolveOne<T.String | T.Identifier | T.NestedIdentifier>(input.name, _super_import_identifier, _K31),
+    name: _resolveOne<T.String | T.Identifier | T.NestedIdentifier>(input.name, _super_import_identifier, _K30),
     body: _resolveOneBranch<T.StatementBlock>(input.body, "statement_block"),
   });
 }
@@ -1603,7 +1602,7 @@ export function interfaceDeclarationFrom(input: T.InterfaceDeclaration.Loose): R
 
 export function extendsTypeClauseFrom(input: T.ExtendsTypeClause.Loose): ReturnType<typeof F.extendsTypeClause> | T.ExtendsTypeClause {
   if (isNodeData(input)) return input;
-  const _ne_type = _resolveMany<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>(input.type, _K0, _K32);
+  const _ne_type = _resolveMany<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>(input.type, _K0, _K31);
   _assertNonEmpty(_ne_type, 'extends_type_clause.type');
   return F.extendsTypeClause({
     type: _ne_type,
@@ -1621,7 +1620,7 @@ export function enumDeclarationFrom(input: T.EnumDeclaration.Loose): ReturnType<
 
 export function enumBodyFrom(input: T.EnumBody.Loose): ReturnType<typeof F.enumBody> | T.EnumBody {
   if (isNodeData(input)) return input;
-  const _ne_opening = _resolveMany<T.PropertyName | T.EnumAssignment>(input.opening, _K22, _K33);
+  const _ne_opening = _resolveMany<T.PropertyName | T.EnumAssignment>(input.opening, _K22, _K32);
   _assertNonEmpty(_ne_opening, 'enum_body.opening');
   return F.enumBody({
     opening: _ne_opening,
@@ -1661,10 +1660,10 @@ export function requiredParameterFrom(input: T.RequiredParameter.Loose): ReturnT
   return F.requiredParameter({
     decorator: _resolveManyBranch<T.Decorator>(input.decorator, "decorator"),
     readonly: _resolveBooleanKeyword(input.readonly),
-    pattern: _resolveOne<T.Pattern | T.This>(input.pattern, _K34, _K6),
+    pattern: _resolveOne<T.Pattern | T.This>(input.pattern, _K33, _K6),
     type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),
     value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
-    children: _resolveOne(input.children, _K35, _K0),
+    children: _resolveOne(input.children, _K34, _K0),
   });
 }
 
@@ -1673,10 +1672,10 @@ export function optionalParameterFrom(input: T.OptionalParameter.Loose): ReturnT
   return F.optionalParameter({
     decorator: _resolveManyBranch<T.Decorator>(input.decorator, "decorator"),
     readonly: _resolveBooleanKeyword(input.readonly),
-    pattern: _resolveOne<T.Pattern | T.This>(input.pattern, _K34, _K6),
+    pattern: _resolveOne<T.Pattern | T.This>(input.pattern, _K33, _K6),
     type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),
     value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
-    children: _resolveOne(input.children, _K35, _K0),
+    children: _resolveOne(input.children, _K34, _K0),
   });
 }
 
@@ -1727,7 +1726,7 @@ export function assertsAnnotationFrom(input: T.AssertsAnnotation.Loose): ReturnT
 export function tupleParameterFrom(input: T.TupleParameter.Loose): ReturnType<typeof F.tupleParameter> | T.TupleParameter {
   if (isNodeData(input)) return input;
   return F.tupleParameter({
-    name: _resolveOne<T.Identifier | T.RestPattern>(input.name, _super_import_identifier, _K36),
+    name: _resolveOne<T.Identifier | T.RestPattern>(input.name, _super_import_identifier, _K35),
     type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),
   });
 }
@@ -1802,7 +1801,7 @@ export function conditionalTypeFrom(input: T.ConditionalType.Loose): ReturnType<
 export function genericTypeFrom(input: T.GenericType.Loose): ReturnType<typeof F.genericType> | T.GenericType {
   if (isNodeData(input)) return input;
   return F.genericType({
-    name: _resolveOne<T.TypeIdentifier | T.NestedTypeIdentifier>(input.name, _K0, _K37),
+    name: _resolveOne<T.TypeIdentifier | T.NestedTypeIdentifier>(input.name, _K0, _K36),
     typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
   });
 }
@@ -1810,7 +1809,7 @@ export function genericTypeFrom(input: T.GenericType.Loose): ReturnType<typeof F
 export function typePredicateFrom(input: T.TypePredicate.Loose): ReturnType<typeof F.typePredicate> | T.TypePredicate {
   if (isNodeData(input)) return input;
   return F.typePredicate({
-    name: _resolveOne<T.PredefinedType | T.This>(input.name, _K38, _K0),
+    name: _resolveOne<T.PredefinedType | T.This>(input.name, _K37, _K0),
     type: _resolveOne<T.Type>(input.type, _K0, _super_type),
   });
 }
@@ -1834,14 +1833,14 @@ export function typeQueryFrom(input?: NonNullable<T.TypeQuery.Config['children']
 export function indexTypeQueryFrom(input: T.IndexTypeQuery.Loose): ReturnType<typeof F.indexTypeQuery> | T.IndexTypeQuery {
   if (isNodeData(input)) return input;
   return F.indexTypeQuery({
-    primaryType: _resolveOne<T.PrimaryType>(input.primaryType, _K39, _K40),
+    primaryType: _resolveOne<T.PrimaryType>(input.primaryType, _K38, _K39),
   });
 }
 
 export function lookupTypeFrom(input: T.LookupType.Loose): ReturnType<typeof F.lookupType> | T.LookupType {
   if (isNodeData(input)) return input;
   return F.lookupType({
-    primaryType: _resolveOne<T.PrimaryType>(input.primaryType, _K39, _K40),
+    primaryType: _resolveOne<T.PrimaryType>(input.primaryType, _K38, _K39),
     indexType: _resolveOne<T.Type>(input.indexType, _K0, _super_type),
   });
 }
@@ -1867,7 +1866,7 @@ export function literalTypeFrom(input?: NonNullable<T.LiteralType.Config['childr
 export function flowMaybeTypeFrom(input: T.FlowMaybeType.Loose): ReturnType<typeof F.flowMaybeType> | T.FlowMaybeType {
   if (isNodeData(input)) return input;
   return F.flowMaybeType({
-    primaryType: _resolveOne<T.PrimaryType>(input.primaryType, _K39, _K40),
+    primaryType: _resolveOne<T.PrimaryType>(input.primaryType, _K38, _K39),
   });
 }
 
@@ -1893,7 +1892,7 @@ export function typeArgumentsFrom(...input: readonly (NonNullable<T.TypeArgument
 
 export function objectTypeFrom(input: T.ObjectType.Loose): ReturnType<typeof F.objectType> | T.ObjectType {
   if (isNodeData(input)) return input;
-  const _ne_members = _resolveMany<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>(input.members, _super_semicolon, _K41);
+  const _ne_members = _resolveMany<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>(input.members, _super_semicolon, _K40);
   _assertNonEmpty(_ne_members, 'object_type.members');
   return F.objectType({
     opening: _resolveOne<"{" | "{|">(input.opening, _K0, _K0),
@@ -1972,7 +1971,7 @@ export function indexSignatureFrom(input?: T.IndexSignature.Loose): ReturnType<t
 export function indexSignatureUFormColonFrom(input: Omit<ConfigOf<T.IndexSignatureUFormColon>, '$variant'>) {
   return F.indexSignatureUFormColon({
     sign: _resolveOne<"-" | "+">(input.sign, _K0, _K0),
-    type: _resolveOne<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(input.type, _K0, _K42),
+    type: _resolveOne<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(input.type, _K0, _K41),
     name: _resolveOne<T.ReservedIdentifier>(input.name, _super_statement_identifier, _K0),
     indexType: _resolveOne<T.Type>(input.indexType, _K0, _super_type),
   });
@@ -1981,14 +1980,14 @@ export function indexSignatureUFormColonFrom(input: Omit<ConfigOf<T.IndexSignatu
 export function indexSignatureUFormMappedTypeClauseFrom(input: Omit<ConfigOf<T.IndexSignatureUFormMappedTypeClause>, '$variant'>) {
   return F.indexSignatureUFormMappedTypeClause({
     sign: _resolveOne<"-" | "+">(input.sign, _K0, _K0),
-    type: _resolveOne<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(input.type, _K0, _K42),
+    type: _resolveOne<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(input.type, _K0, _K41),
   });
 }
 
 export function arrayTypeFrom(input: T.ArrayType.Loose): ReturnType<typeof F.arrayType> | T.ArrayType {
   if (isNodeData(input)) return input;
   return F.arrayType({
-    primaryType: _resolveOne<T.PrimaryType>(input.primaryType, _K39, _K40),
+    primaryType: _resolveOne<T.PrimaryType>(input.primaryType, _K38, _K39),
   });
 }
 
@@ -2028,7 +2027,7 @@ export function functionTypeFrom(input: T.FunctionType.Loose): ReturnType<typeof
   return F.functionType({
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
-    returnType: _resolveOne<T.Type | T.Asserts | T.TypePredicate>(input.returnType, _K0, _K43),
+    returnType: _resolveOne<T.Type | T.Asserts | T.TypePredicate>(input.returnType, _K0, _K42),
   });
 }
 

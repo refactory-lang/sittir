@@ -118,15 +118,31 @@ function applyEnrichPasses(
     kwRules: Record<string, Rule>,
     supertypeNames: ReadonlySet<string>,
 ): Rule {
+    // Fixed-point loop. The current pass set has well-defined
+    // non-overlapping outputs (symbol-to-field wraps SYMBOLs as FIELD;
+    // optional-keyword wraps optional(STRING) as FIELD(SYMBOL(_kw_<x>))),
+    // so a single iteration converges in practice. Looping is defensive:
+    // if a pass's output ever exposes new candidates for an earlier
+    // pass (e.g. structural simplification creates a new top-level
+    // SYMBOL position), we converge instead of silently losing the
+    // promotion. `MAX_ITERATIONS` caps blow-ups from any future pass
+    // that accidentally produces ever-changing output.
+    const MAX_ITERATIONS = 8
     let r = rule
-    r = applyKindToName(ruleName, r, supertypeNames)
-    // Bare leading-keyword pass intentionally omitted — the docstring
-    // above explains why: wrapping bare leading literals as FIELD(SYM)
-    // adds `_kw_<name>` hidden rules that shift tree-sitter's parser-
-    // generator tables, breaking unrelated rules' reparse (rust corpus
-    // regresses by ~47/136 with this pass on).
-    r = applyOptionalKeyword(ruleName, r, kwRules)
-    r = applyOptionalSymbol(ruleName, r, supertypeNames)
+    for (let i = 0; i < MAX_ITERATIONS; i++) {
+        const before = r
+        r = applySymbolToField(ruleName, r, supertypeNames)
+        // Bare leading-keyword pass intentionally omitted — the docstring
+        // above explains why: wrapping bare leading literals as FIELD(SYM)
+        // adds `_kw_<name>` hidden rules that shift tree-sitter's parser-
+        // generator tables, breaking unrelated rules' reparse (rust corpus
+        // regresses by ~47/136 with this pass on).
+        r = applyOptionalKeyword(ruleName, r, kwRules)
+        if (r === before) return r
+    }
+    if (!process.env.SITTIR_QUIET) {
+        process.stderr.write(`enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations\n`)
+    }
     return r
 }
 
@@ -321,17 +337,121 @@ function reportSkip(pass: string, ruleName: string, reason: string): void {
 }
 
 // ---------------------------------------------------------------------------
-// Pass 1: kind-to-name
+// Pass 1+3: symbol-to-field promotion
 // ---------------------------------------------------------------------------
+//
+// Walks TOP-LEVEL seq members of every non-hidden rule (after peeling
+// prec wrappers). For each member that targets exactly one SYMBOL, wraps
+// the inner symbol with a `field('<symbol-name>', SYMBOL)`. Three
+// member shapes are recognised:
+//
+//   1. bare SYMBOL                       → `field(name, SYMBOL)` replaces it
+//   2. `optional(SYMBOL)`                → `optional(field(name, SYMBOL))`
+//   3. `optional(seq(SYMBOL, <anon…>))`  → `optional(seq(field(name, SYMBOL), <anon…>))`
+//      (the seq must contain exactly one SYMBOL; all other members must
+//       be anonymous STRING / PATTERN literals)
+//
+// Both runtime shapes of optional are handled (sittir lowercase + tree-
+// sitter normalised `CHOICE(X, BLANK)`) via `peelOptional`.
+//
+// Guards (uniform across all three shapes):
+//   - Hidden helper rules (ruleName starts with `_`) are skipped — tree-
+//     sitter inlines their bodies into every call site, so adding fields
+//     here would propagate silently into multiple parents.
+//   - Symbols starting with `_` are accepted ONLY when declared in
+//     `supertypes:` (e.g. `$._expression`); the field name drops the
+//     leading underscore to match how the kind surfaces in
+//     `node-types.json`.
+//   - The targeted SYMBOL must appear at most once across the top-level
+//     seq members (counted across all three shapes — a bare $.foo and
+//     an optional($.foo) on the same parent collide).
+//   - The field name must not already be claimed on the seq (some other
+//     member, override, or earlier-iteration promotion).
+//
+// Bare leading-keyword pass (pass 2 in earlier numbering) is
+// intentionally absent — wrapping bare leading literals as FIELD(SYM)
+// with a hidden `_kw_<name>` rule shifts tree-sitter's parser-
+// generator tables in a way that breaks unrelated rules' reparse
+// (validated empirically: rust corpus goes 132/136 → 84/136 with that
+// pass on). readNode's `promoteAnonymousKeyword` picks up bare leading
+// literals at runtime without grammar-side wrapping.
 
-function applyKindToName(ruleName: string, rule: Rule, supertypeNames: ReadonlySet<string>): Rule {
-    // Peel prec wrappers so rules like rust `lifetime: prec(1, seq('\'',
-    // $.identifier))` are reachable. Without this, pass 1's
-    // isSeqType-only entry guard skips every prec-wrapped seq and the
-    // grammar.json tree-sitter generates from .sittir/grammar.js shows
-    // `fields: {}` even though sittir's own evaluate (which strips prec
-    // before running enrich) sees the FIELD. Mirrors pass 3's
-    // prec-peel — the prec wrapper rides back on top after rebuild.
+interface SymbolTarget {
+    /** Raw symbol name (preserves any leading underscore for supertype detection). */
+    readonly name: string
+    /** The SYMBOL rule itself, used as the FIELD's content. */
+    readonly symbolRule: Rule
+    /** Rebuild the original seq-member rule around a freshly-built FIELD node. */
+    wrap(fieldNode: Rule): Rule
+}
+
+/** @internal — detect which of the three shapes (bare / optional /
+ *  optional-seq) the seq member is, and return a SymbolTarget that
+ *  knows how to rebuild it once the inner SYMBOL is FIELD-wrapped.
+ *  Returns null for any other shape (including multi-symbol seqs,
+ *  optional(seq) with non-anon members, or non-symbol leaves). */
+function detectSymbolTarget(member: Rule): SymbolTarget | null {
+    // Shape 1: bare SYMBOL.
+    if (isSymbolType(member.type) && typeof (member as { name?: unknown }).name === 'string') {
+        const name = (member as { name: string }).name
+        return {
+            name,
+            symbolRule: member,
+            wrap: (fieldNode) => fieldNode,
+        }
+    }
+    const peeled = peelOptional(member)
+    if (!peeled.isOptional) return null
+    const innerN = normalizeMember(peeled.inner)
+    // Shape 2: optional(SYMBOL).
+    if (isSymbolType(innerN.type) && typeof innerN.name === 'string') {
+        return {
+            name: innerN.name,
+            symbolRule: peeled.inner,
+            wrap: (fieldNode) => rebuildOptional(member, fieldNode),
+        }
+    }
+    // Shape 3: optional(seq(SYMBOL, <anon…>)) — exactly one SYMBOL,
+    // all other seq members anonymous (STRING / PATTERN).
+    if (!isSeqType(innerN.type)) return null
+    const seqMembers = (peeled.inner as unknown as { members: Rule[] }).members
+    let symIdx = -1
+    for (let i = 0; i < seqMembers.length; i++) {
+        const sn = normalizeMember(seqMembers[i]!)
+        if (isSymbolType(sn.type) && typeof sn.name === 'string') {
+            if (symIdx !== -1) return null // >1 SYMBOL — too complex
+            symIdx = i
+        } else if (!isStringType(sn.type) && sn.type !== 'PATTERN' && sn.type !== 'pattern') {
+            return null // non-anonymous, non-symbol — too complex
+        }
+    }
+    if (symIdx === -1) return null
+    const symMember = seqMembers[symIdx]!
+    const sn = normalizeMember(symMember)
+    if (!isSymbolType(sn.type) || typeof sn.name !== 'string') return null
+    const seqRule = peeled.inner
+    return {
+        name: sn.name,
+        symbolRule: symMember,
+        wrap: (fieldNode) => {
+            const newSeqMembers = seqMembers.map((mm, i) => i === symIdx ? fieldNode : mm)
+            const newSeq = { ...seqRule, members: newSeqMembers } as Rule
+            return rebuildOptional(member, newSeq)
+        },
+    }
+}
+
+function applySymbolToField(ruleName: string, rule: Rule, supertypeNames: ReadonlySet<string>): Rule {
+    // Skip hidden helpers — tree-sitter inlines their bodies into each
+    // call site, so field wrappers added here would propagate silently
+    // to every parent. The earlier two-pass split applied this guard
+    // only to pass 3; pass 1 relied on pass 1's per-symbol underscore
+    // check, which doesn't catch the parent-rule-is-hidden case. Move
+    // the guard up.
+    if (ruleName.startsWith('_')) return rule
+    // Peel prec wrappers so prec-wrapped rules (rust `lifetime: prec(1,
+    // seq('\'', $.identifier))`, `break_expression: prec.left(seq(...))`)
+    // are reachable. The prec stack rides back on top after rebuild.
     const precStack: Rule[] = []
     let cursor: Rule = rule
     while (isPrecWrapper(cursor as { type: string })) {
@@ -340,35 +460,33 @@ function applyKindToName(ruleName: string, rule: Rule, supertypeNames: ReadonlyS
     }
     if (!isSeqType(cursor.type)) return rule
     const members = (cursor as unknown as { members: Rule[] }).members
+    // Pre-scan: count target symbols across ALL three shapes so a
+    // collision between (e.g.) a bare $.foo and an optional($.foo) on
+    // the same parent prevents both from getting field-wrapped.
     const kindCounts = new Map<string, number>()
-    for (const m of members) {
-        if (isSymbolType(m.type) && typeof (m as { name?: unknown }).name === 'string') {
-            const n = (m as { name: string }).name
-            kindCounts.set(n, (kindCounts.get(n) ?? 0) + 1)
-        }
+    const targetByIdx: Array<SymbolTarget | null> = members.map(detectSymbolTarget)
+    for (const t of targetByIdx) {
+        if (t) kindCounts.set(t.name, (kindCounts.get(t.name) ?? 0) + 1)
     }
     const existing = collectFieldNamesRuntime(cursor)
     let changed = false
-    const newMembers = members.map((m) => {
-        if (!isSymbolType(m.type) || typeof (m as { name?: unknown }).name !== 'string') return m
-        const k = (m as { name: string }).name
-        // Leading-underscore symbols are accepted only when declared
-        // as a supertype — in that case the field name drops the
-        // prefix (`$._expression` → `field('expression', …)`) to
-        // match how the kind surfaces in `node-types.json`.
-        let fieldName = k
-        if (k.startsWith('_')) {
-            if (!supertypeNames.has(k)) return m
-            fieldName = k.slice(1)
+    const newMembers = members.map((m, i) => {
+        const t = targetByIdx[i]
+        if (!t) return m
+        let fieldName = t.name
+        if (t.name.startsWith('_')) {
+            if (!supertypeNames.has(t.name)) return m
+            fieldName = t.name.slice(1)
         }
-        if ((kindCounts.get(k) ?? 0) > 1) return m
+        if ((kindCounts.get(t.name) ?? 0) > 1) return m
         if (existing.has(fieldName)) {
-            reportSkip('kind-to-name', ruleName, `field '${fieldName}' already exists`)
+            reportSkip('symbol-to-field', ruleName, `field '${fieldName}' already exists`)
             return m
         }
         existing.add(fieldName)
         changed = true
-        return makeField(cursor, fieldName, m)
+        const fieldNode = makeField(cursor, fieldName, t.symbolRule)
+        return t.wrap(fieldNode)
     })
     if (!changed) return rule
     let result: Rule = { ...cursor, members: newMembers } as Rule
@@ -377,15 +495,6 @@ function applyKindToName(ruleName: string, rule: Rule, supertypeNames: ReadonlyS
     }
     return result
 }
-
-// Bare leading-keyword pass intentionally removed — wrapping bare
-// leading literals as FIELD(SYM) with a hidden `_kw_<name>` rule
-// shifts tree-sitter's parser-generator tables in a way that breaks
-// unrelated rules' reparse (validated empirically: rust corpus goes
-// from 132/136 → 84/136 with this pass enabled). The docstring at
-// the top of this file documents the design intent: readNode's
-// `promoteAnonymousKeyword` picks up bare leading literals at runtime
-// without grammar-side wrapping.
 
 // ---------------------------------------------------------------------------
 // Pass 2: optional keyword-prefix
@@ -476,176 +585,3 @@ function rebuildOptional(optionalRule: Rule, newInner: Rule): Rule {
     return { ...optionalRule, members: newMembers } as Rule
 }
 
-// ---------------------------------------------------------------------------
-// Pass 3: optional-symbol promotion
-// ---------------------------------------------------------------------------
-//
-// Counterpart to pass 1 for the wrapped-in-optional case. Walks
-// TOP-LEVEL seq members (never recurses into nested seqs / choices /
-// repeats) and, for each `optional($.kind)` whose inner is a bare
-// SYMBOL, wraps the inner with `field('kind', $.kind)` — producing
-// `optional(field('kind', $.kind))`. Stays at a single descent level
-// on purpose: deeper patterns (e.g. `optional(seq($.label, ':'))`)
-// need explicit override guidance since the intent is less uniform.
-//
-// Guards (same as pass 1):
-//   - Symbol name must not start with `_` (hidden supertype).
-//   - Symbol must appear exactly once at top level across seq members.
-//   - Field name must not already be claimed on the seq.
-//
-// Handles both runtime shapes for optional:
-//   - sittir:      `{ type: 'optional', content: SYMBOL }`
-//   - tree-sitter: `{ type: 'CHOICE', members: [SYMBOL, BLANK] }`
-// (via the shared `peelOptional` helper).
-
-function applyOptionalSymbol(
-    ruleName: string,
-    rule: Rule,
-    supertypeNames: ReadonlySet<string>,
-): Rule {
-    // Skip hidden helper rules (leading `_`). Tree-sitter inlines their
-    // bodies into each call site, so field wrappers added here propagate
-    // silently to every parent — templates authored against the parent's
-    // raw shape would see unexpected fields. pass 1 (kind-to-name) only
-    // avoids this by its own uniqueness guard; pass 3 needs an explicit
-    // skip because the inlined body can introduce the same symbol
-    // across many parents at different structural positions.
-    if (ruleName.startsWith('_')) return rule
-    // Peel precedence wrappers transparently — `prec.left(seq(...))` and
-    // friends are common wrappers around the actual structural seq
-    // (e.g. rust `break_expression: prec.left(seq('break', optional($.label),
-    // optional($._expression)))`). The promotion only cares about the
-    // inner seq's members; the prec stays on top.
-    const precStack: Rule[] = []
-    let cursor = rule
-    while (isPrecWrapper(cursor)) {
-        precStack.push(cursor)
-        cursor = (cursor as unknown as { content: Rule }).content
-    }
-    if (!isSeqType(cursor.type)) return rule
-    const members = (cursor as unknown as { members: Rule[] }).members
-    // Count bare-symbol targets at top level — including those already
-    // inside `optional(...)` or inside `optional(seq(SYMBOL, anon…))` —
-    // so a symbol that appears twice doesn't get promoted at one
-    // position and collide at another.
-    const kindCounts = new Map<string, number>()
-    for (const m of members) {
-        const bare = bareSymbolTarget(m)
-        if (bare !== null) kindCounts.set(bare, (kindCounts.get(bare) ?? 0) + 1)
-    }
-    const existing = collectFieldNamesRuntime(cursor)
-    let changed = false
-    const newMembers = members.map((m) => {
-        const peeled = peelOptional(m)
-        if (!peeled.isOptional) return m
-        // Case A: optional(SYMBOL) — wrap the inner symbol.
-        const directSym = normalizeMember(peeled.inner)
-        if (isSymbolType(directSym.type) && typeof directSym.name === 'string') {
-            return tryPromote(m, peeled.inner, directSym.name, null)
-        }
-        // Case B: optional(seq(SYMBOL, <anonymous tokens>)) — the seq
-        // has exactly one SYMBOL member, the rest are literal
-        // STRING/PATTERN (anonymous terminals like ':'). Wrap the
-        // SYMBOL inside the seq with a FIELD; leave the rest alone.
-        if (isSeqType(directSym.type)) {
-            const seqMembers = (peeled.inner as unknown as { members: Rule[] }).members
-            const symIndexes: number[] = []
-            let anyNonAnon = false
-            for (let i = 0; i < seqMembers.length; i++) {
-                const member = seqMembers[i]!
-                const n = normalizeMember(member)
-                if (isSymbolType(n.type) && typeof n.name === 'string') {
-                    symIndexes.push(i)
-                } else if (!isStringType(n.type) && n.type !== 'PATTERN' && n.type !== 'pattern') {
-                    anyNonAnon = true
-                    break
-                }
-            }
-            if (!anyNonAnon && symIndexes.length === 1) {
-                const symIdx = symIndexes[0]!
-                const symMember = seqMembers[symIdx]!
-                const n = normalizeMember(symMember)
-                const name = n.name!
-                return tryPromote(m, symMember, name, { kind: 'seq', seq: peeled.inner, index: symIdx })
-            }
-        }
-        return m
-    })
-    if (!changed) return rule
-    // Rebuild seq, then re-wrap with any peeled prec wrappers.
-    let result: Rule = { ...cursor, members: newMembers } as Rule
-    for (let i = precStack.length - 1; i >= 0; i--) {
-        result = { ...precStack[i]!, content: result } as Rule
-    }
-    return result
-
-    /** @internal — shared guard + build logic for cases A and B.
-     *
-     *  `name` is the raw SYMBOL target name. If it starts with `_`, it's
-     *  accepted only when the symbol is a declared supertype — in which
-     *  case the field name drops the underscore (e.g. `$._expression` →
-     *  `field('expression', …)`). Supertypes surface in
-     *  `node-types.json` as their stripped names anyway, so the field
-     *  labelling matches the downstream node kind.
-     */
-    function tryPromote(
-        optionalRule: Rule,
-        innerSymbol: Rule,
-        name: string,
-        seqContext: { kind: 'seq'; seq: Rule; index: number } | null,
-    ): Rule {
-        let fieldName = name
-        if (name.startsWith('_')) {
-            if (!supertypeNames.has(name)) return optionalRule
-            fieldName = name.slice(1)
-        }
-        if ((kindCounts.get(name) ?? 0) > 1) return optionalRule
-        if (existing.has(fieldName)) {
-            reportSkip('optional-symbol', ruleName, `field '${fieldName}' already exists`)
-            return optionalRule
-        }
-        existing.add(fieldName)
-        changed = true
-        const fieldNode = makeField(optionalRule, fieldName, innerSymbol)
-        if (seqContext === null) {
-            return rebuildOptional(optionalRule, fieldNode)
-        }
-        // Rebuild the seq with FIELD replacing the symbol at its index,
-        // then rebuild the optional around the new seq.
-        const oldMembers = (seqContext.seq as unknown as { members: Rule[] }).members
-        const newSeqMembers = oldMembers.map((mm, i) => i === seqContext.index ? fieldNode : mm)
-        const newSeq = { ...seqContext.seq, members: newSeqMembers } as Rule
-        return rebuildOptional(optionalRule, newSeq)
-    }
-}
-
-/**
- * @internal — for the uniqueness-count pre-scan. Returns the SYMBOL
- * name for `$.kind` (bare), `optional($.kind)` / `CHOICE(kind,
- * BLANK)`, and `optional(seq($.kind, <anon…>))`; null for everything
- * else. At most one level of descent beyond the optional wrapper.
- */
-function bareSymbolTarget(m: Rule): string | null {
-    if (isSymbolType(m.type) && typeof (m as { name?: unknown }).name === 'string') {
-        return (m as { name: string }).name
-    }
-    const peeled = peelOptional(m)
-    if (!peeled.isOptional) return null
-    const n = normalizeMember(peeled.inner)
-    if (isSymbolType(n.type) && typeof n.name === 'string') return n.name
-    if (isSeqType(n.type)) {
-        const seqMembers = (peeled.inner as unknown as { members: Rule[] }).members
-        let foundName: string | null = null
-        for (const sm of seqMembers) {
-            const sn = normalizeMember(sm)
-            if (isSymbolType(sn.type) && typeof sn.name === 'string') {
-                if (foundName !== null) return null // >1 symbol → not a unique target
-                foundName = sn.name
-            } else if (!isStringType(sn.type) && sn.type !== 'PATTERN' && sn.type !== 'pattern') {
-                return null // non-anonymous non-symbol member → too complex
-            }
-        }
-        return foundName
-    }
-    return null
-}

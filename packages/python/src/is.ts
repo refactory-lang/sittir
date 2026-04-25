@@ -74,6 +74,7 @@ export interface IsGuards {
     dottedName<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'dotted_name' };
     casePattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'case_pattern' };
     SimplePattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_simple_pattern' };
+    AsPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_as_pattern' };
     unionPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'union_pattern' };
     ListPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_list_pattern' };
     TuplePattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_tuple_pattern' };
@@ -121,6 +122,7 @@ export interface IsGuards {
     dictionaryComprehension<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'dictionary_comprehension' };
     setComprehension<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'set_comprehension' };
     generatorExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'generator_expression' };
+    ComprehensionClauses<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_comprehension_clauses' };
     parenthesizedExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'parenthesized_expression' };
     forInClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'for_in_clause' };
     ifClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'if_clause' };
@@ -202,6 +204,7 @@ export interface AssertGuards {
     dottedName(v: { readonly $type: string }): asserts v is { readonly $type: 'dotted_name' };
     casePattern(v: { readonly $type: string }): asserts v is { readonly $type: 'case_pattern' };
     SimplePattern(v: { readonly $type: string }): asserts v is { readonly $type: '_simple_pattern' };
+    AsPattern(v: { readonly $type: string }): asserts v is { readonly $type: '_as_pattern' };
     unionPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'union_pattern' };
     ListPattern(v: { readonly $type: string }): asserts v is { readonly $type: '_list_pattern' };
     TuplePattern(v: { readonly $type: string }): asserts v is { readonly $type: '_tuple_pattern' };
@@ -249,6 +252,7 @@ export interface AssertGuards {
     dictionaryComprehension(v: { readonly $type: string }): asserts v is { readonly $type: 'dictionary_comprehension' };
     setComprehension(v: { readonly $type: string }): asserts v is { readonly $type: 'set_comprehension' };
     generatorExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'generator_expression' };
+    ComprehensionClauses(v: { readonly $type: string }): asserts v is { readonly $type: '_comprehension_clauses' };
     parenthesizedExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'parenthesized_expression' };
     forInClause(v: { readonly $type: string }): asserts v is { readonly $type: 'for_in_clause' };
     ifClause(v: { readonly $type: string }): asserts v is { readonly $type: 'if_clause' };
@@ -354,6 +358,7 @@ export const is = {
     dottedName: _g("dotted_name"),
     casePattern: _g("case_pattern"),
     SimplePattern: _g("_simple_pattern"),
+    AsPattern: _g("_as_pattern"),
     unionPattern: _g("union_pattern"),
     ListPattern: _g("_list_pattern"),
     TuplePattern: _g("_tuple_pattern"),
@@ -401,6 +406,7 @@ export const is = {
     dictionaryComprehension: _g("dictionary_comprehension"),
     setComprehension: _g("set_comprehension"),
     generatorExpression: _g("generator_expression"),
+    ComprehensionClauses: _g("_comprehension_clauses"),
     parenthesizedExpression: _g("parenthesized_expression"),
     forInClause: _g("for_in_clause"),
     ifClause: _g("if_clause"),
@@ -503,6 +509,7 @@ export const assert = {
     dottedName: _makeAssert('dottedName', is.dottedName as _AnyGuard),
     casePattern: _makeAssert('casePattern', is.casePattern as _AnyGuard),
     SimplePattern: _makeAssert('SimplePattern', is.SimplePattern as _AnyGuard),
+    AsPattern: _makeAssert('AsPattern', is.AsPattern as _AnyGuard),
     unionPattern: _makeAssert('unionPattern', is.unionPattern as _AnyGuard),
     ListPattern: _makeAssert('ListPattern', is.ListPattern as _AnyGuard),
     TuplePattern: _makeAssert('TuplePattern', is.TuplePattern as _AnyGuard),
@@ -550,6 +557,7 @@ export const assert = {
     dictionaryComprehension: _makeAssert('dictionaryComprehension', is.dictionaryComprehension as _AnyGuard),
     setComprehension: _makeAssert('setComprehension', is.setComprehension as _AnyGuard),
     generatorExpression: _makeAssert('generatorExpression', is.generatorExpression as _AnyGuard),
+    ComprehensionClauses: _makeAssert('ComprehensionClauses', is.ComprehensionClauses as _AnyGuard),
     parenthesizedExpression: _makeAssert('parenthesizedExpression', is.parenthesizedExpression as _AnyGuard),
     forInClause: _makeAssert('forInClause', is.forInClause as _AnyGuard),
     ifClause: _makeAssert('ifClause', is.ifClause as _AnyGuard),

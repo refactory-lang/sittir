@@ -4626,19 +4626,6 @@ export function publicFieldDefinitionDeclareFirst(child?: T.AccessibilityModifie
   };
 }
 
-export function publicFieldDefinitionReadonlyFirst(text: string) {
-  if (text.length === 0) throw new Error(`_public_field_definition_readonly_first: text must be non-empty`);
-  return {
-    $type: '_public_field_definition_readonly_first' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.PublicFieldDefinitionReadonlyFirstTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
 export function publicFieldDefinitionAccessorOpt(config?: ConfigOf<T.PublicFieldDefinitionAccessorOpt>) {
   const fields = {
     accessor: "accessor" as const,
@@ -5030,7 +5017,6 @@ export type FluentKindMap = {
   "_class_body_member": FluentNode<"_class_body_member", T.ClassBodyMember.Config>;
   "_for_header_lhs": FluentNode<"_for_header_lhs", T.ForHeaderLhs.Config>;
   "_public_field_definition_declare_first": FluentNode<"_public_field_definition_declare_first", T.PublicFieldDefinitionDeclareFirst.Config>;
-  "_public_field_definition_readonly_first": T.PublicFieldDefinitionReadonlyFirst;
   "_public_field_definition_accessor_opt": FluentNode<"_public_field_definition_accessor_opt", T.PublicFieldDefinitionAccessorOpt.Config>;
   "_parenthesized_expression_sequence": FluentNode<"_parenthesized_expression_sequence", T.ParenthesizedExpressionSequence.Config>;
   "_export_statement_type_export": FluentNode<"_export_statement_type_export", T.ExportStatementTypeExport.Config>;
@@ -5249,7 +5235,6 @@ export const _factoryMap = {
   "_class_body_member": classBodyMember,
   "_for_header_lhs": forHeaderLhs,
   "_public_field_definition_declare_first": publicFieldDefinitionDeclareFirst,
-  "_public_field_definition_readonly_first": publicFieldDefinitionReadonlyFirst,
   "_public_field_definition_accessor_opt": publicFieldDefinitionAccessorOpt,
   "_parenthesized_expression_sequence": parenthesizedExpressionSequence,
   "_export_statement_type_export": exportStatementTypeExport,

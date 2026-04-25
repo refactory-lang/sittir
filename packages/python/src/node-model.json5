@@ -330,16 +330,15 @@
     },
     {
       "kind": "_as_pattern",
-      "modelType": "group",
+      "modelType": "container",
       "typeName": "_AsPattern",
-      "irKey": "asPattern",
-      "hidden": true,
-      "name": "_as_pattern",
-      "fields": [
+      "factoryName": "_asPattern",
+      "irKey": "_asPattern",
+      "hidden": false,
+      "children": [
         {
           "name": "case_pattern",
           "propertyName": "casePattern",
-          "paramName": "casePattern",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -350,19 +349,11 @@
               "name": "case_pattern",
               "unresolved": true
             }
-          ],
-          "source": "enriched",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "case_pattern"
-            ]
-          }
+          ]
         },
         {
           "name": "identifier",
           "propertyName": "identifier",
-          "paramName": "identifier",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -373,17 +364,9 @@
               "name": "identifier",
               "unresolved": true
             }
-          ],
-          "source": "enriched",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "identifier"
-            ]
-          }
+          ]
         }
-      ],
-      "children": []
+      ]
     },
     {
       "kind": "_assignment_eq",
@@ -546,36 +529,11 @@
     },
     {
       "kind": "_comprehension_clauses",
-      "modelType": "group",
+      "modelType": "container",
       "typeName": "ComprehensionClauses",
+      "factoryName": "comprehensionClauses",
       "irKey": "comprehensionClauses",
-      "hidden": true,
-      "name": "_comprehension_clauses",
-      "fields": [
-        {
-          "name": "for_in_clause",
-          "propertyName": "forInClause",
-          "paramName": "forInClause",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "for_in_clause",
-              "unresolved": true
-            }
-          ],
-          "source": "enriched",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "for_in_clause"
-            ]
-          }
-        }
-      ],
+      "hidden": false,
       "children": [
         {
           "name": "for_in_clause",
@@ -584,6 +542,12 @@
           "multiple": true,
           "nonEmpty": false,
           "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "for_in_clause",
+              "unresolved": true
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -3626,11 +3590,12 @@
               "pair"
             ]
           }
-        },
+        }
+      ],
+      "children": [
         {
-          "name": "for_in_clause",
-          "propertyName": "forInClause",
-          "paramName": "forInClause",
+          "name": "comprehension_clauses",
+          "propertyName": "comprehensionClauses",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3638,46 +3603,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "for_in_clause",
-              "unresolved": true
-            }
-          ],
-          "source": "enriched",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "for_in_clause"
-            ]
-          }
-        }
-      ],
-      "children": [
-        {
-          "name": "for_in_clause",
-          "propertyName": "forInClause",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "for_in_clause",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "if_clause",
-          "propertyName": "ifClause",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "if_clause",
+              "name": "_comprehension_clauses",
               "unresolved": true
             }
           ]
@@ -4787,11 +4713,12 @@
               "expression"
             ]
           }
-        },
+        }
+      ],
+      "children": [
         {
-          "name": "for_in_clause",
-          "propertyName": "forInClause",
-          "paramName": "forInClause",
+          "name": "comprehension_clauses",
+          "propertyName": "comprehensionClauses",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -4799,46 +4726,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "for_in_clause",
-              "unresolved": true
-            }
-          ],
-          "source": "enriched",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "for_in_clause"
-            ]
-          }
-        }
-      ],
-      "children": [
-        {
-          "name": "for_in_clause",
-          "propertyName": "forInClause",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "for_in_clause",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "if_clause",
-          "propertyName": "ifClause",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "if_clause",
+              "name": "_comprehension_clauses",
               "unresolved": true
             }
           ]
@@ -5701,11 +5589,12 @@
               "expression"
             ]
           }
-        },
+        }
+      ],
+      "children": [
         {
-          "name": "for_in_clause",
-          "propertyName": "forInClause",
-          "paramName": "forInClause",
+          "name": "comprehension_clauses",
+          "propertyName": "comprehensionClauses",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -5713,46 +5602,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "for_in_clause",
-              "unresolved": true
-            }
-          ],
-          "source": "enriched",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "for_in_clause"
-            ]
-          }
-        }
-      ],
-      "children": [
-        {
-          "name": "for_in_clause",
-          "propertyName": "forInClause",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "for_in_clause",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "if_clause",
-          "propertyName": "ifClause",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "if_clause",
+              "name": "_comprehension_clauses",
               "unresolved": true
             }
           ]
@@ -6828,11 +6678,12 @@
               "expression"
             ]
           }
-        },
+        }
+      ],
+      "children": [
         {
-          "name": "for_in_clause",
-          "propertyName": "forInClause",
-          "paramName": "forInClause",
+          "name": "comprehension_clauses",
+          "propertyName": "comprehensionClauses",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6840,46 +6691,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "for_in_clause",
-              "unresolved": true
-            }
-          ],
-          "source": "enriched",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "for_in_clause"
-            ]
-          }
-        }
-      ],
-      "children": [
-        {
-          "name": "for_in_clause",
-          "propertyName": "forInClause",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "for_in_clause",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "if_clause",
-          "propertyName": "ifClause",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "if_clause",
+              "name": "_comprehension_clauses",
               "unresolved": true
             }
           ]

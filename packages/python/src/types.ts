@@ -761,10 +761,7 @@ export interface SimplePattern {
 
 export interface _AsPattern {
   readonly $type: 'as_pattern';
-  readonly $fields: {
-    readonly case_pattern: CasePattern;
-    readonly identifier: Identifier;
-  };
+  readonly $children: readonly [CasePattern | Identifier];
 }
 
 export interface UnionPattern {
@@ -1105,44 +1102,37 @@ export interface ListComprehension {
   readonly $type: 'list_comprehension';
   readonly $fields: {
     readonly body: Expression;
-    readonly for_in_clause: ForInClause;
   };
-  readonly $children: readonly (ForInClause | IfClause)[];
+  readonly $children: readonly [ComprehensionClauses];
 }
 
 export interface DictionaryComprehension {
   readonly $type: 'dictionary_comprehension';
   readonly $fields: {
     readonly body: Pair;
-    readonly for_in_clause: ForInClause;
   };
-  readonly $children: readonly (ForInClause | IfClause)[];
+  readonly $children: readonly [ComprehensionClauses];
 }
 
 export interface SetComprehension {
   readonly $type: 'set_comprehension';
   readonly $fields: {
     readonly body: Expression;
-    readonly for_in_clause: ForInClause;
   };
-  readonly $children: readonly (ForInClause | IfClause)[];
+  readonly $children: readonly [ComprehensionClauses];
 }
 
 export interface GeneratorExpression {
   readonly $type: 'generator_expression';
   readonly $fields: {
     readonly body: Expression;
-    readonly for_in_clause: ForInClause;
   };
-  readonly $children: readonly (ForInClause | IfClause)[];
+  readonly $children: readonly [ComprehensionClauses];
 }
 
 export interface ComprehensionClauses {
   readonly $type: 'comprehension_clauses';
-  readonly $fields: {
-    readonly for_in_clause: ForInClause;
-  };
-  readonly $children: readonly (ForInClause | IfClause)[];
+  readonly $children: readonly (ForInClause | ForInClause | IfClause)[];
 }
 
 export interface ParenthesizedExpression {
