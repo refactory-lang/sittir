@@ -228,16 +228,13 @@ const config: WireConfig<RustGrammar> = {
             2: field('index'), // _expression [struct=1]
         },
 
-        // inner_attribute_item: 1 field(s)
-        inner_attribute_item: {
-            3: field('attribute'), // attribute [struct=0]
-        },
 
-        // lifetime: 1 field(s)
+        // lifetime: pos 1 ($.identifier) is enrich-redundant but
+        // dropping it causes a from() divergence — "named children
+        // 1 vs 0". Keep explicit until the divergence is understood.
         lifetime: {
-            1: field('identifier'), // identifier [struct=0]
+            1: field('identifier'),
         },
-
 
         // macro_invocation: 1 field(s)
         macro_invocation: {
@@ -344,7 +341,7 @@ const config: WireConfig<RustGrammar> = {
         // shorthand_field_initializer: 2 field(s)
         shorthand_field_initializer: {
             0: field('attributes'), // attribute_item [struct=0]
-            1: field('identifier'), // identifier [struct=1]
+            // pos 1 $.identifier auto-labelled by enrich pass 1
         },
 
         // source_file: 2 field(s)

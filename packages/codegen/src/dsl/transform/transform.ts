@@ -630,6 +630,23 @@ function resolveFieldPlaceholder(
 ): RuntimeRule {
     let content: unknown = originalMember
     if (isFieldLike(content) && content.source === 'enriched') {
+        // Override landing on an already-enriched position is redundant —
+        // the one-line entry could be deleted and enrich would produce
+        // the same FIELD automatically. Warn so the author can clean it
+        // up on the next cycle. Gated on SITTIR_QUIET like the enrich
+        // reportSkip helper.
+        if (!process.env.SITTIR_QUIET) {
+            const parentKind = wireGetCurrentRuleKind() ?? '(unknown)'
+            const overrideName = patch.name
+            const enrichName = (content as { name?: string }).name ?? '(unknown)'
+            const tag = overrideName === enrichName
+                ? `duplicate name ('${overrideName}')`
+                : `override renames '${enrichName}' → '${overrideName}'`
+            process.stderr.write(
+                `transform: override field('${overrideName}') on '${parentKind}' wraps an enrich-labeled FIELD — ${tag}. ` +
+                `Drop the override entry if the names match; enrich will cover it automatically.\n`,
+            )
+        }
         content = content.content
     }
     const maybeSymbolized = maybeKeywordSymbol(
