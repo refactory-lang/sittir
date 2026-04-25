@@ -49,7 +49,16 @@ const GRAMMARS: readonly Grammar[] = ['python', 'rust', 'typescript']
 export interface ValidatorResult {
     pass: number
     total: number
+    /** Template-shape failures: AST diverges between source and rendered output. */
     failingKinds: string[]
+    /**
+     * Format-only failures: AST shapes match but bytes differ (whitespace,
+     * quote style, numeric literal style, optional tokens, comment placement,
+     * or any other variation the grammar treats as semantically equivalent).
+     * Deferred to feature 017-format-inference. See contracts/baseline-json.md
+     * for the triage rules.
+     */
+    formatDeferredKinds: string[]
 }
 
 export interface RoundtripResult extends ValidatorResult {
@@ -59,7 +68,10 @@ export interface RoundtripResult extends ValidatorResult {
 export interface ParityFixtures {
     pass: number
     total: number
+    /** Template-shape failures by kind → fixture id list. */
     failingByKind: { readonly [kind: string]: readonly string[] }
+    /** Format-only failures by kind → fixture id list. Deferred to 017. */
+    formatDeferredByKind: { readonly [kind: string]: readonly string[] }
 }
 
 export interface GrammarEntry {
@@ -270,6 +282,12 @@ async function collectParityFixtures(
         pass,
         total: fixtures.length,
         failingByKind: sortedFailingByKind,
+        // 016 captures every failure as template-shape by default.
+        // Format-vs-template triage runs during cluster commits — when
+        // a fixture is reclassified, it's MOVED from `failingByKind` to
+        // `formatDeferredByKind`. At baseline (commit 6e06f93f / no
+        // triage performed), this is always empty.
+        formatDeferredByKind: {},
     }
 }
 
@@ -291,16 +309,26 @@ async function collectValidatorsForGrammar(grammar: Grammar): Promise<GrammarEnt
         validateFactoryRoundTrip(grammar, tp),
     ])
 
+    // Format-deferred kinds default to []. Triage runs during cluster
+    // commits — see contracts/baseline-json.md verdict rules. When a
+    // template-shape fix surfaces an underlying format-only failure,
+    // the cluster commit MOVES the kind from `failingKinds` into
+    // `formatDeferredKinds` (preserving the regression-checker's
+    // `failingKinds + formatDeferredKinds` non-growth invariant within
+    // 016). At baseline, no triage has happened — every entry is [].
+    const empty: string[] = []
     return {
         from: {
             pass: from.pass,
             total: from.total,
             failingKinds: uniqSorted(from.errors.map(e => e.kind)),
+            formatDeferredKinds: empty,
         },
         coverage: {
             pass: cov.pass,
             total: cov.total,
             failingKinds: uniqSorted(cov.issues.map(i => i.kind)),
+            formatDeferredKinds: empty,
         },
         roundtrip: {
             pass: rt.pass,
@@ -311,6 +339,7 @@ async function collectValidatorsForGrammar(grammar: Grammar): Promise<GrammarEnt
                     .map(e => kindFromRoundtripName(e.name))
                     .filter((k): k is string => k !== null),
             ),
+            formatDeferredKinds: empty,
         },
         factoryRoundtrip: {
             pass: fac.pass,
@@ -319,6 +348,7 @@ async function collectValidatorsForGrammar(grammar: Grammar): Promise<GrammarEnt
             failingKinds: uniqSorted(
                 [...fac.errors, ...fac.astMismatches].map(e => e.kind),
             ),
+            formatDeferredKinds: empty,
         },
     }
 }

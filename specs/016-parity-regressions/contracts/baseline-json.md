@@ -51,10 +51,32 @@ interface ValidatorResult {
     pass: number
     total: number
     /**
-     * Sorted ascending. Empty array (NOT undefined) when no failures.
+     * Kinds whose fixtures fail with a TEMPLATE-SHAPE diff — the
+     * rendered output's AST shape differs from the source's AST shape
+     * (kind missing/extra/reordered, named field absent, child slot
+     * empty). Sorted ascending. Empty array (NOT undefined) when none.
      * Determinism requirement — JSON keys in the same order across runs.
      */
     failingKinds: string[]
+    /**
+     * Kinds whose fixtures fail with a FORMAT-only diff — the rendered
+     * output and the source parse to the same AST, but byte-compare
+     * differently (whitespace, quote style, numeric literal style,
+     * optional tokens, comment placement, or any other variation the
+     * grammar treats as semantically equivalent). Sorted ascending.
+     * Empty array (NOT undefined) when none. Triage signal: if both
+     * parses produce the same AST shape recursively (kinds, fields,
+     * named-child ordering — ignoring `$text`/`$span`/anonymous-token
+     * text), the failure is format. See spec.md "Format-attributable
+     * failures vs template-shape failures" edge case.
+     *
+     * Format-deferred items are addressed by feature 017-format-
+     * inference, not by feature 016. The regression-checker's verdict
+     * treats `formatDeferredKinds` like `failingKinds` — counts may
+     * shrink or stay equal across commits within feature 016, only
+     * feature 017 may grow them.
+     */
+    formatDeferredKinds: string[]
 }
 
 interface RoundtripResult extends ValidatorResult {
@@ -66,12 +88,19 @@ interface ParityFixtures {
     pass: number
     total: number
     /**
-     * Map of kind → list of failing fixture IDs (e.g. "render #344").
+     * Map of kind → list of failing fixture IDs (e.g. "render #344")
+     * for TEMPLATE-SHAPE failures (AST diverges).
      * Object keys MUST be sorted ascending; failure-id values stay in
      * fixture-file declaration order.
      * Empty object (NOT undefined) when zero failures.
      */
     failingByKind: { readonly [kind: string]: readonly string[] }
+    /**
+     * Map of kind → list of failing fixture IDs for FORMAT-only
+     * failures (AST shapes match; bytes differ). Same ordering rules
+     * as `failingByKind`. Empty object when none.
+     */
+    formatDeferredByKind: { readonly [kind: string]: readonly string[] }
 }
 ```
 
@@ -101,7 +130,8 @@ The CI step compares `<commit>:specs/016-parity-regressions/baselines/<backend>.
     - `totals.pass`
 2. **Total drop**: `totals.total` decreased — almost always means a fixture was deleted; flag for human review.
 3. **Total-fail rise**: `totals.fail` increased — covers cases where `pass` stayed flat but `total` increased due to new fixtures.
-4. **Schema violation**: the JSON doesn't conform to the schema above (e.g. missing `failingByKind` key, unsorted `failingKinds`).
+4. **Schema violation**: the JSON doesn't conform to the schema above (e.g. missing `failingByKind` key, unsorted `failingKinds`, missing `formatDeferredKinds`).
+5. **Format-deferred-count rise (within feature 016)**: `length(formatDeferredKinds)` or `length(values(formatDeferredByKind))` grew vs the base commit. Format-deferred items may move FROM `failingKinds` INTO `formatDeferredKinds` during a cluster commit (template-shape fix surfaced an underlying format issue) — that's not a count rise as long as the corresponding `failingKinds` shrank. Cluster commits MUST keep the inequality `length(failingKinds_before) + length(formatDeferredKinds_before) >= length(failingKinds_after) + length(formatDeferredKinds_after)`. Once feature 017 lands and starts emptying `formatDeferredKinds`, this rule no longer applies; 017's regression-checker handles the inverse direction.
 
 The CI step does NOT fail on:
 - Changes to `commit` (informational).

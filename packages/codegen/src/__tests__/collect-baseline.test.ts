@@ -80,43 +80,69 @@ describe('collect-baseline', () => {
                 ['coverage', 'factoryRoundtrip', 'from', 'roundtrip'],
             )
 
+            // Each validator entry has failingKinds AND formatDeferredKinds.
+            // Roundtrip variants additionally have astMatchPass.
+            for (const vname of ['coverage', 'factoryRoundtrip', 'from', 'roundtrip'] as const) {
+                const v = validators[vname] as Record<string, unknown>
+                const expected = vname === 'from' || vname === 'coverage'
+                    ? ['failingKinds', 'formatDeferredKinds', 'pass', 'total']
+                    : ['astMatchPass', 'failingKinds', 'formatDeferredKinds', 'pass', 'total']
+                expect(Object.keys(v).sort()).toEqual(expected)
+            }
+
             const fixtures = entry['parityFixtures'] as Record<string, unknown>
-            expect(Object.keys(fixtures).sort()).toEqual(['failingByKind', 'pass', 'total'])
+            expect(Object.keys(fixtures).sort()).toEqual([
+                'failingByKind', 'formatDeferredByKind', 'pass', 'total',
+            ])
         }
     })
 
-    it('failingKinds arrays are sorted ascending', () => {
+    it('failingKinds and formatDeferredKinds arrays are sorted ascending', () => {
         for (const grammar of grammarKeys) {
             const validators = result.grammars[grammar].validators
             for (const name of ['from', 'coverage', 'roundtrip', 'factoryRoundtrip'] as const) {
-                const arr = validators[name].failingKinds
-                expect(Array.isArray(arr)).toBe(true)
-                expect(arr).toEqual([...arr].sort())
+                const fk = validators[name].failingKinds
+                const fdk = validators[name].formatDeferredKinds
+                expect(Array.isArray(fk)).toBe(true)
+                expect(fk).toEqual([...fk].sort())
+                expect(Array.isArray(fdk)).toBe(true)
+                expect(fdk).toEqual([...fdk].sort())
             }
         }
     })
 
-    it('failingByKind keys are sorted ascending', () => {
+    it('failingByKind and formatDeferredByKind keys are sorted ascending', () => {
         for (const grammar of grammarKeys) {
-            const obj = result.grammars[grammar].parityFixtures.failingByKind
-            const keys = Object.keys(obj)
-            expect(keys).toEqual([...keys].sort())
+            const fp = result.grammars[grammar].parityFixtures
+            for (const obj of [fp.failingByKind, fp.formatDeferredByKind]) {
+                const keys = Object.keys(obj)
+                expect(keys).toEqual([...keys].sort())
+            }
         }
     })
 
-    it('empty collections are explicit (failingKinds: [], failingByKind: {})', () => {
-        // Walk every validator + parityFixtures bucket and check the field is
-        // present even when empty. (The whole point — distinguishes "no
-        // failures observed" from "this validator wasn't run".)
+    it('empty collections are explicit (failingKinds: [], failingByKind: {}, format-deferred too)', () => {
+        // Walk every validator + parityFixtures bucket and check both the
+        // failure-class fields are present even when empty. (Distinguishes
+        // "no failures observed" from "this validator wasn't run". The
+        // formatDeferredKinds / formatDeferredByKind fields should always
+        // be empty at baseline since no triage has run yet.)
         for (const grammar of grammarKeys) {
             const validators = result.grammars[grammar].validators
             for (const name of ['from', 'coverage', 'roundtrip', 'factoryRoundtrip'] as const) {
                 expect(Array.isArray(validators[name].failingKinds)).toBe(true)
+                expect(Array.isArray(validators[name].formatDeferredKinds)).toBe(true)
+                // At baseline, no triage has been performed.
+                expect(validators[name].formatDeferredKinds).toEqual([])
             }
-            const obj = result.grammars[grammar].parityFixtures.failingByKind
-            expect(typeof obj).toBe('object')
-            expect(obj).not.toBeNull()
-            expect(Array.isArray(obj)).toBe(false)
+            const fp = result.grammars[grammar].parityFixtures
+            for (const obj of [fp.failingByKind, fp.formatDeferredByKind]) {
+                expect(typeof obj).toBe('object')
+                expect(obj).not.toBeNull()
+                expect(Array.isArray(obj)).toBe(false)
+            }
+            // formatDeferredByKind always empty at baseline.
+            expect(Object.keys(fp.formatDeferredByKind)).toEqual([])
         }
     })
 
