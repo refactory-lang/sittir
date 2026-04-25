@@ -120,12 +120,7 @@ const config: WireConfig<RustGrammar> = {
         // block routing entirely.
         async_block: {
             '1/0': field('move'),  // optional('move') → surface as field
-            2: field('block'),
-        },
-
-        // attribute_item: 1 field(s)
-        attribute_item: {
-            2: field('attribute'), // attribute [struct=0]
+            // pos 2 `$.block` auto-labelled by enrich (kind-to-name pass)
         },
 
         // block: 1 field(s)
@@ -147,8 +142,8 @@ const config: WireConfig<RustGrammar> = {
 
         // captured_pattern: 2 field(s)
         captured_pattern: {
-            0: field('identifier'), // identifier [struct=0]
-            2: field('pattern'), // _pattern [struct=1]
+            // pos 0 `$.identifier` auto-labelled by enrich
+            2: field('pattern'), // _pattern (underscore-prefixed, enrich skips)
         },
 
         // closure_expression — label the three optional modifiers so readNode
@@ -181,8 +176,8 @@ const config: WireConfig<RustGrammar> = {
 
         // extern_crate_declaration: 2 field(s)
         extern_crate_declaration: {
-            0: field('visibility_modifier'), // visibility_modifier [struct=0]
-            2: field('crate'), // crate [struct=1]
+            0: field('visibility_modifier'), // optional($.visibility_modifier) — enrich skips
+            // pos 2 `$.crate` auto-labelled by enrich
         },
 
         // extern_modifier: 1 field(s)
@@ -209,8 +204,8 @@ const config: WireConfig<RustGrammar> = {
 
         // foreign_mod_item: 2 field(s)
         foreign_mod_item: {
-            0: field('visibility_modifier'), // visibility_modifier [struct=0]
-            1: field('extern_modifier'), // extern_modifier [struct=1]
+            0: field('visibility_modifier'), // optional($.visibility_modifier) — enrich skips
+            // pos 1 `$.extern_modifier` auto-labelled by enrich
         },
 
         // function_modifiers — base is
@@ -310,7 +305,7 @@ const config: WireConfig<RustGrammar> = {
         // at position 2, position 1 is the optional `move` choice.
         gen_block: {
             '1/0': field('move'),  // optional('move') → surface as field
-            2: field('block'),
+            // pos 2 `$.block` auto-labelled by enrich
         },
 
         // generic_type_with_turbofish: aliased to `generic_type` at 4 call
@@ -386,9 +381,19 @@ const config: WireConfig<RustGrammar> = {
         ],
 
         // mut_pattern: 2 field(s)
+        //
+        // pos 0 (`$.mutable_specifier`) LOOKS enrich-redundant (bare
+        // top-level seq member, appears once) but dropping the
+        // explicit field here causes 3 RT failures — "kind not found
+        // at rendered offset 26" on closure / reference-pattern / or-
+        // pattern corpus. Likely because enrich's `source: 'inferred'`
+        // FIELD wraps something that downstream RT / render treats
+        // differently than a `source: 'override'` FIELD at this kind.
+        // Keep the explicit override until the inferred-vs-override
+        // divergence is understood.
         mut_pattern: {
-            0: field('mutable_specifier'), // mutable_specifier [struct=0]
-            1: field('pattern'), // _pattern [struct=1]
+            0: field('mutable_specifier'), // explicit — see above
+            1: field('pattern'), // _pattern (underscore-prefixed, enrich skips)
         },
 
         // negative_literal: 2 field(s)
@@ -510,10 +515,6 @@ const config: WireConfig<RustGrammar> = {
         },
 
         // try_block: 1 field(s)
-        try_block: {
-            1: field('block'), // block [struct=0]
-        },
-
         // try_expression: 2 field(s)
         try_expression: {
             0: field('value'), // _expression [struct=0]
@@ -551,10 +552,6 @@ const config: WireConfig<RustGrammar> = {
         },
 
         // unsafe_block: 1 field(s)
-        unsafe_block: {
-            1: field('block'), // block [struct=0]
-        },
-
         // use_declaration: 1 field(s)
         use_declaration: {
             0: field('visibility_modifier'), // visibility_modifier [struct=0]
