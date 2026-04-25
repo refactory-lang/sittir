@@ -233,11 +233,6 @@ const config: WireConfig<RustGrammar> = {
             3: field('attribute'), // attribute [struct=0]
         },
 
-        // label: 1 field(s)
-        label: {
-            1: field('identifier'), // identifier [struct=0]
-        },
-
         // lifetime: 1 field(s)
         lifetime: {
             1: field('identifier'), // identifier [struct=0]
