@@ -66,11 +66,16 @@ describe('renderRuleTemplate — baselines', () => {
         expect(renderRuleTemplate(r).template).toBe('$$$CHILDREN')
     })
 
-    it('optional pure punctuation is skipped', () => {
-        // python match pattern: `match X,:` would be invalid — the walker
-        // drops optional(',') entirely.
+    it('optional pure-punctuation becomes an isPresent-gated clause', () => {
+        // Updated in 016/walker-refactor-2: optional-punct allowlist
+        // replaced with tokenToName derivation. The clause is gated by
+        // `{% if comma | isPresent %}` at render time so output is
+        // unchanged when no anon-comma is captured (e.g. python
+        // `match X:` still renders without a trailing comma).
         const r = seq(sym('expression'), optional(str(',')), str(':'))
-        expect(renderRuleTemplate(r).template).toBe('$$$CHILDREN:')
+        const result = renderRuleTemplate(r)
+        expect(result.template).toBe('$$$CHILDREN$COMMA_CLAUSE:')
+        expect(result.clauses.comma_clause).toBe(',')
     })
 })
 

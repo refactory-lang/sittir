@@ -33,6 +33,7 @@ import type {
     Rule, ChoiceRule,
 } from './rule.ts'
 import { isSyntheticFieldWrapper, unwrapStructuralPassthroughs } from './node-map.ts'
+import { tokenToName } from './link.ts'
 
 /**
  * Extract anonymous-string literals flanking the main content of a field
@@ -612,25 +613,19 @@ function walkRuleForTemplate(
                 // exact text; the slot name derives from tokenToName so
                 // it's a legal template identifier.
                 //
-                // Gated to a safe allowlist — list-separator punctuation
-                // (`,`, `;`, `:`) is handled by the seq walker's
-                // joinByTrailing / skipSeps logic and would double-emit
-                // if intercepted here. Trailing-separator `optional(',')`
-                // inside list-shaped seqs is filtered earlier at the seq
-                // level, so this path only fires for standalone optionals
-                // that don't collide with separator detection.
-                const CLAUSE_PUNCT_NAMES: Record<string, string> = {
-                    '!': 'bang',
-                    '?': 'question',
+                // Trailing-separator `optional(',')` inside list-shaped
+                // seqs is filtered earlier at the seq level, so this path
+                // only fires for standalone optionals that don't collide
+                // with separator detection. Any other list-separator
+                // punctuation (`,`, `;`, `:`) reaching here without that
+                // filter is handled by the seq walker's joinByTrailing /
+                // skipSeps logic.
+                const punctName = tokenToName(kwString)
+                const clauseKey = `${punctName}_clause`
+                if (!(clauseKey in clauses)) {
+                    clauses[clauseKey] = kwString
                 }
-                const punctName = CLAUSE_PUNCT_NAMES[kwString]
-                if (punctName) {
-                    const clauseKey = `${punctName}_clause`
-                    if (!(clauseKey in clauses)) {
-                        clauses[clauseKey] = kwString
-                    }
-                    return [`$${punctName.toUpperCase()}_CLAUSE`]
-                }
+                return [`$${punctName.toUpperCase()}_CLAUSE`]
             }
             // `optional(',')` and friends — pure punctuation in an optional
             // wrapper is context-dependent and including it unconditionally
