@@ -106,12 +106,10 @@ export default grammar(enrich(base), wire({
 
         // chevron: 1 field(s)
         chevron: {
-            1: field('expression'), // expression [struct=0]
         },
 
         // class_pattern: 2 field(s)
         class_pattern: {
-            0: field('dotted_name'), // dotted_name [struct=0]
             2: field('arguments'), // case_pattern [struct=1]
         },
 
@@ -142,13 +140,11 @@ export default grammar(enrich(base), wire({
 
         // decorator: 2 field(s)
         decorator: {
-            1: field('expression'), // expression [struct=0]
             2: field('newline'), //  [struct=1]
         },
 
         // dictionary_splat: 1 field(s)
         dictionary_splat: {
-            1: field('expression'), // expression [struct=0]
         },
 
         // exec_statement: grammar is seq('exec', code, optional(seq('in', exprs)))
@@ -173,7 +169,6 @@ export default grammar(enrich(base), wire({
 
         // if_clause: 1 field(s)
         if_clause: {
-            1: field('expression'), // expression [struct=0]
         },
 
         // import_from_statement: 1 field(s)
@@ -183,24 +178,20 @@ export default grammar(enrich(base), wire({
 
         // keyword_pattern: 2 field(s)
         keyword_pattern: {
-            0: field('identifier'), // identifier | class_pattern | complex_pattern | concatenated_string | dict_pattern | dotted_name | false | float | integer | list_pattern | none | splat_pattern | string | true | tuple_pattern | union_pattern [struct=0]
             2: field('simple_pattern'), // _simple_pattern | class_pattern | complex_pattern | concatenated_string | dict_pattern | dotted_name | false | float | integer | list_pattern | none | splat_pattern | string | true | tuple_pattern | union_pattern [struct=1]
         },
 
         // list_splat: 1 field(s)
         list_splat: {
-            1: field('expression'), // expression | attribute | identifier | subscript [struct=0]
         },
 
         // member_type: 2 field(s)
         member_type: {
             0: field('base_type'), // type [struct=0]
-            2: field('identifier'), // identifier [struct=1]
         },
 
         // relative_import: 2 field(s)
         relative_import: {
-            0: field('import_prefix'), // import_prefix [struct=0]
             1: field('dotted_name'), // dotted_name [struct=1]
         },
 
@@ -223,9 +214,7 @@ export default grammar(enrich(base), wire({
 
         // string: 3 field(s)
         string: {
-            0: field('string_start'), // string_start [struct=0]
             1: field('content'), // interpolation | string_content [struct=1]
-            2: field('string_end'), // string_end [struct=2]
         },
 
         // type_alias_statement: wrap base position 0 (bare 'type' literal)

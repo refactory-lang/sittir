@@ -282,7 +282,6 @@ export default grammar(enrich(base), wire({
 
         // array_type: 1 field(s)
         array_type: {
-            0: field('primary_type'), // primary_type [struct=0]
         },
 
         // as_expression: 2 field(s)
@@ -298,7 +297,6 @@ export default grammar(enrich(base), wire({
 
         // await_expression: 1 field(s)
         await_expression: {
-            1: field('expression'), // expression [struct=0]
         },
 
         // class: wrap pos 4 (class_heritage choice). pos 0 is decorator repeat.
@@ -316,12 +314,10 @@ export default grammar(enrich(base), wire({
 
         // computed_property_name: 1 field(s)
         computed_property_name: {
-            1: field('expression'), // expression [struct=0]
         },
 
         // else_clause: 1 field(s)
         else_clause: {
-            1: field('statement'), // statement [struct=0]
         },
 
         // enum_body: 2 field(s)
@@ -348,7 +344,6 @@ export default grammar(enrich(base), wire({
 
         // import_require_clause: 1 field(s)
         import_require_clause: {
-            0: field('identifier'), // identifier [struct=0]
         },
 
         // import_statement: 4 field(s)
@@ -361,7 +356,6 @@ export default grammar(enrich(base), wire({
 
         // index_type_query: 1 field(s)
         index_type_query: {
-            1: field('primary_type'), // primary_type [struct=0]
         },
 
         // infer_type: 2 field(s)
@@ -394,7 +388,6 @@ export default grammar(enrich(base), wire({
 
         // lookup_type: 2 field(s)
         lookup_type: {
-            0: field('primary_type'), // primary_type [struct=0]
             2: field('index_type'), // type [struct=1]
         },
 
@@ -412,7 +405,6 @@ export default grammar(enrich(base), wire({
 
         // namespace_import: 1 field(s)
         namespace_import: {
-            2: field('identifier'), // identifier [struct=0]
         },
 
         // non_null_expression: 1 field(s)
@@ -442,7 +434,6 @@ export default grammar(enrich(base), wire({
 
         // spread_element: 1 field(s)
         spread_element: {
-            1: field('expression'), // expression [struct=0]
         },
 
         // statement_block: 2 field(s)
@@ -453,8 +444,6 @@ export default grammar(enrich(base), wire({
 
         // type_assertion: 2 field(s)
         type_assertion: {
-            0: field('type_arguments'), // type_arguments [struct=0]
-            1: field('expression'), // expression [struct=1]
         },
 
         // type_predicate_annotation: 1 field(s)
