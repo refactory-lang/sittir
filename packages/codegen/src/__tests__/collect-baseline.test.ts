@@ -14,17 +14,33 @@
  * - `totals.pass + totals.fail === totals.total`.
  * - `commit` is a 7-char hex.
  * - No embedded timestamps anywhere in the serialised JSON.
+ * - Native-mode boundary-import failure surfaces as a thrown error,
+ *   never as a silent TS-fallback masquerading under `"backend": "native"`.
  *
- * The test calls the exported `collectBaseline()` function directly so
- * we don't have to spawn a subprocess. Backend defaults to 'typescript'
- * to match the script's CLI default, which is the cheaper of the two
- * collection paths (no native engine init).
+ * Performance note: most tests share a single `collectBaseline('typescript')`
+ * result hoisted in `beforeAll`. The determinism test keeps its own pair of
+ * calls so it actually exercises two collection runs. Net cost across the
+ * suite is exactly 3 collection runs (2 determinism + 1 shared), down from
+ * 8 — corpus collection is non-trivial and the result is read-only here.
  */
 
-import { describe, it, expect } from 'vitest'
-import { collectBaseline, serialiseBaseline } from '../scripts/collect-baseline.ts'
+import { describe, it, expect, beforeAll } from 'vitest'
+import {
+    collectBaseline,
+    loadBoundaryRender,
+    serialiseBaseline,
+    type BackendBaseline,
+} from '../scripts/collect-baseline.ts'
+
+const grammarKeys = ['python', 'rust', 'typescript'] as const
 
 describe('collect-baseline', () => {
+    let result: BackendBaseline
+
+    beforeAll(async () => {
+        result = await collectBaseline('typescript')
+    }, 600_000)
+
     it('determinism — two runs produce byte-identical serialised output', async () => {
         const a = await collectBaseline('typescript')
         const b = await collectBaseline('typescript')
@@ -46,17 +62,16 @@ describe('collect-baseline', () => {
         expect(sa).toBe(sb)
     }, 600_000)
 
-    it('schema conformance — top-level, per-grammar, per-validator keys match contract', async () => {
-        const result = await collectBaseline('typescript')
+    it('schema conformance — top-level, per-grammar, per-validator keys match contract', () => {
         // Round-trip through serialise/parse to verify what's persisted is what's checked.
         const parsed = JSON.parse(serialiseBaseline(result)) as Record<string, unknown>
 
         expect(Object.keys(parsed).sort()).toEqual(['backend', 'commit', 'grammars', 'totals'])
 
         const grammars = parsed['grammars'] as Record<string, unknown>
-        expect(Object.keys(grammars)).toEqual(['python', 'rust', 'typescript'])
+        expect(Object.keys(grammars)).toEqual([...grammarKeys])
 
-        for (const g of ['python', 'rust', 'typescript'] as const) {
+        for (const g of grammarKeys) {
             const entry = grammars[g] as Record<string, unknown>
             expect(Object.keys(entry).sort()).toEqual(['parityFixtures', 'validators'])
 
@@ -68,11 +83,10 @@ describe('collect-baseline', () => {
             const fixtures = entry['parityFixtures'] as Record<string, unknown>
             expect(Object.keys(fixtures).sort()).toEqual(['failingByKind', 'pass', 'total'])
         }
-    }, 600_000)
+    })
 
-    it('failingKinds arrays are sorted ascending', async () => {
-        const result = await collectBaseline('typescript')
-        for (const grammar of Object.keys(result.grammars) as ('python' | 'rust' | 'typescript')[]) {
+    it('failingKinds arrays are sorted ascending', () => {
+        for (const grammar of grammarKeys) {
             const validators = result.grammars[grammar].validators
             for (const name of ['from', 'coverage', 'roundtrip', 'factoryRoundtrip'] as const) {
                 const arr = validators[name].failingKinds
@@ -80,23 +94,21 @@ describe('collect-baseline', () => {
                 expect(arr).toEqual([...arr].sort())
             }
         }
-    }, 600_000)
+    })
 
-    it('failingByKind keys are sorted ascending', async () => {
-        const result = await collectBaseline('typescript')
-        for (const grammar of Object.keys(result.grammars) as ('python' | 'rust' | 'typescript')[]) {
+    it('failingByKind keys are sorted ascending', () => {
+        for (const grammar of grammarKeys) {
             const obj = result.grammars[grammar].parityFixtures.failingByKind
             const keys = Object.keys(obj)
             expect(keys).toEqual([...keys].sort())
         }
-    }, 600_000)
+    })
 
-    it('empty collections are explicit (failingKinds: [], failingByKind: {})', async () => {
-        const result = await collectBaseline('typescript')
+    it('empty collections are explicit (failingKinds: [], failingByKind: {})', () => {
         // Walk every validator + parityFixtures bucket and check the field is
         // present even when empty. (The whole point — distinguishes "no
         // failures observed" from "this validator wasn't run".)
-        for (const grammar of Object.keys(result.grammars) as ('python' | 'rust' | 'typescript')[]) {
+        for (const grammar of grammarKeys) {
             const validators = result.grammars[grammar].validators
             for (const name of ['from', 'coverage', 'roundtrip', 'factoryRoundtrip'] as const) {
                 expect(Array.isArray(validators[name].failingKinds)).toBe(true)
@@ -106,20 +118,17 @@ describe('collect-baseline', () => {
             expect(obj).not.toBeNull()
             expect(Array.isArray(obj)).toBe(false)
         }
-    }, 600_000)
+    })
 
-    it('totals consistency — pass + fail === total', async () => {
-        const result = await collectBaseline('typescript')
+    it('totals consistency — pass + fail === total', () => {
         expect(result.totals.pass + result.totals.fail).toBe(result.totals.total)
-    }, 600_000)
+    })
 
-    it('commit field is a 7-character hex string', async () => {
-        const result = await collectBaseline('typescript')
+    it('commit field is a 7-character hex string', () => {
         expect(result.commit).toMatch(/^[a-f0-9]{7}$/)
-    }, 600_000)
+    })
 
-    it('serialised output contains no timestamps (ISO-8601 or unix-ms magnitude)', async () => {
-        const result = await collectBaseline('typescript')
+    it('serialised output contains no timestamps (ISO-8601 or unix-ms magnitude)', () => {
         const text = serialiseBaseline(result)
         expect(text).not.toMatch(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/)
         // 13-digit numbers (millisecond unix timestamps) — the JSON
@@ -127,5 +136,18 @@ describe('collect-baseline', () => {
         // appear as count totals if the universe ever explodes
         // dramatically, but 13+ digits would only be a wall-clock value.
         expect(text).not.toMatch(/\b\d{13,}\b/)
-    }, 600_000)
+    })
+
+    it('native-mode boundary-import failure throws with grammar + path in message', async () => {
+        // Tests the per-grammar boundary-load helper through its
+        // injectable importFn, so we can deterministically force a
+        // failure without patching the filesystem. The integration
+        // with `collectBaseline()` (which calls this helper in native
+        // mode) is correct by construction: any caller that uses the
+        // default importer and gets a rejection here surfaces it.
+        const badImport = () => Promise.reject(new Error('module not found'))
+        await expect(loadBoundaryRender('rust', badImport)).rejects.toThrow(
+            /failed to import native boundary for grammar 'rust'.*packages\/rust\/src\/boundary\.ts.*module not found/,
+        )
+    })
 })

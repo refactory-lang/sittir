@@ -145,6 +145,57 @@ interface ParityRenderer {
     render: (node: unknown) => string
 }
 
+/** Resolved per-grammar boundary path used for native parity render. */
+function boundaryPathFor(grammar: Grammar): string {
+    return pathToFileURL(
+        resolve(repoRoot, `packages/${grammar}/src/boundary.ts`),
+    ).href
+}
+
+/**
+ * Type of the dynamic-import function injected by tests. Kept narrow on
+ * purpose — tests pass in a stub that resolves or rejects to exercise
+ * the error branch deterministically.
+ */
+export type BoundaryImporter = (path: string) => Promise<unknown>
+
+/**
+ * Load the per-grammar `boundary.ts` and return its `render` function.
+ * Throws `Error` (with grammar name + the import path it tried) when
+ * the import fails or the module doesn't expose a `render` function.
+ *
+ * Caller decides whether to recover (TS mode = optional, swallow the
+ * error and use the createRenderer fallback) or escalate (native mode =
+ * the failure means our "native" baseline would lie about which engine
+ * produced its numbers — surface it).
+ *
+ * Exported for tests so the failure mode can be exercised without
+ * patching the filesystem. `importFn` defaults to a real dynamic
+ * import; tests inject a stub.
+ */
+export async function loadBoundaryRender(
+    grammar: Grammar,
+    importFn: BoundaryImporter = (p) => import(p),
+): Promise<(node: unknown) => string> {
+    const boundaryPath = boundaryPathFor(grammar)
+    let mod: unknown
+    try {
+        mod = await importFn(boundaryPath)
+    } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e)
+        throw new Error(
+            `failed to import native boundary for grammar '${grammar}' from ${boundaryPath}: ${msg}`,
+        )
+    }
+    const render = (mod as { render?: unknown }).render
+    if (typeof render !== 'function') {
+        throw new Error(
+            `native boundary for grammar '${grammar}' at ${boundaryPath} does not export a 'render' function`,
+        )
+    }
+    return render as (node: unknown) => string
+}
+
 /**
  * Resolve the render function used for parity fixtures. In TS mode we
  * use `createRenderer` over the per-grammar templates directory. In
@@ -153,27 +204,18 @@ interface ParityRenderer {
  * validators use through `buildReadHandle` — keeping parity-fixture
  * render with the validators' read path).
  *
- * Boundary import is dynamic so an unbuilt napi crate doesn't break TS
- * collection. If the boundary fails to load in native mode we fall
- * back to the TS renderer so the script still produces output — the
- * `commit` + counts will reflect whichever path actually ran.
+ * Failure policy: in `native` mode we surface the import error so a
+ * silent TS fallback can't poison the dual-baseline regression check
+ * with TS numbers labelled `"backend": "native"`. TS mode is the only
+ * path that may legitimately reach the createRenderer fallback.
  */
 async function buildParityRenderer(
     grammar: Grammar,
     backend: Backend,
 ): Promise<ParityRenderer> {
     if (backend === 'native') {
-        try {
-            const boundaryPath = pathToFileURL(
-                resolve(repoRoot, `packages/${grammar}/src/boundary.ts`),
-            ).href
-            const mod = (await import(boundaryPath)) as { render: (node: unknown) => string }
-            if (typeof mod.render === 'function') {
-                return { render: mod.render }
-            }
-        } catch {
-            // fall through to TS renderer below
-        }
+        const render = await loadBoundaryRender(grammar)
+        return { render }
     }
     // Lazy import of @sittir/core's createRenderer — keeps the module
     // import-cheap when the test target only exercises the type shape.
@@ -253,12 +295,12 @@ async function collectValidatorsForGrammar(grammar: Grammar): Promise<GrammarEnt
         from: {
             pass: from.pass,
             total: from.total,
-            failingKinds: uniqSorted(from.errors.map(e => e.kind).filter(Boolean)),
+            failingKinds: uniqSorted(from.errors.map(e => e.kind)),
         },
         coverage: {
             pass: cov.pass,
             total: cov.total,
-            failingKinds: uniqSorted(cov.issues.map(i => i.kind).filter(Boolean)),
+            failingKinds: uniqSorted(cov.issues.map(i => i.kind)),
         },
         roundtrip: {
             pass: rt.pass,
@@ -275,7 +317,7 @@ async function collectValidatorsForGrammar(grammar: Grammar): Promise<GrammarEnt
             total: fac.total,
             astMatchPass: fac.astMatchPass,
             failingKinds: uniqSorted(
-                [...fac.errors, ...fac.astMismatches].map(e => e.kind).filter(Boolean),
+                [...fac.errors, ...fac.astMismatches].map(e => e.kind),
             ),
         },
     }
@@ -311,11 +353,15 @@ function computeTotals(
     let total = 0
     for (const g of GRAMMARS) {
         const entry = grammars[g]
-        for (const v of [entry.validators.from, entry.validators.coverage] as const) {
-            pass += v.pass
-            total += v.total
-        }
-        for (const v of [entry.validators.roundtrip, entry.validators.factoryRoundtrip] as const) {
+        // RoundtripResult extends ValidatorResult, so this iteration is
+        // type-correct over the union of validator shapes.
+        const validators: readonly ValidatorResult[] = [
+            entry.validators.from,
+            entry.validators.coverage,
+            entry.validators.roundtrip,
+            entry.validators.factoryRoundtrip,
+        ]
+        for (const v of validators) {
             pass += v.pass
             total += v.total
         }
@@ -325,25 +371,36 @@ function computeTotals(
     return { pass, fail: total - pass, total }
 }
 
+async function collectGrammarEntry(
+    grammar: Grammar,
+    backend: Backend,
+): Promise<GrammarEntry> {
+    const [validators, parityFixtures] = await Promise.all([
+        collectValidatorsForGrammar(grammar),
+        collectParityFixtures(grammar, backend),
+    ])
+    return { validators, parityFixtures }
+}
+
 export async function collectBaseline(backendInput?: string): Promise<BackendBaseline> {
     const backend = resolveBackend(backendInput)
     const commit = shortSha()
 
-    const entries: Partial<Record<Grammar, GrammarEntry>> = {}
+    // Per-grammar sequential execution: each grammar pulls its own
+    // tree-sitter language + corpus into memory, and the native-engine
+    // module is cached per-grammar in `validate/common.ts`. Running
+    // them sequentially keeps memory bounded and the order of
+    // diagnostic logs (warnings from inferPolymorphVariant et al.)
+    // stable across runs — material for the determinism guarantee.
+    const tuples: [Grammar, GrammarEntry][] = []
     for (const g of GRAMMARS) {
-        // Per-grammar sequential execution: each grammar pulls its own
-        // tree-sitter language + corpus into memory, and the native-engine
-        // module is cached per-grammar in `validate/common.ts`. Running
-        // them sequentially keeps memory bounded and the order of
-        // diagnostic logs (warnings from inferPolymorphVariant et al.)
-        // stable across runs — material for the determinism guarantee.
-        const [validators, parityFixtures] = await Promise.all([
-            collectValidatorsForGrammar(g),
-            collectParityFixtures(g, backend),
-        ])
-        entries[g] = { validators, parityFixtures }
+        tuples.push([g, await collectGrammarEntry(g, backend)])
     }
-    const grammars = entries as BackendBaseline['grammars']
+    // The cast remains because TS can't narrow Object.fromEntries over a
+    // tuple union to the exact `Record<Grammar, GrammarEntry>` shape, but
+    // it's now over a proven-complete object — every Grammar key is
+    // present by construction (loop iterates the full GRAMMARS list).
+    const grammars = Object.fromEntries(tuples) as BackendBaseline['grammars']
 
     return {
         backend,
@@ -383,10 +440,6 @@ function sortKeysDeep(value: unknown): unknown {
 }
 
 export function serialiseBaseline(baseline: BackendBaseline): string {
-    // Pre-sort failingKinds (defensive — `uniqSorted` already sorts,
-    // but parity-fixture's `failingByKind` value arrays must NOT be
-    // sorted; this pre-pass only sorts the keys of failingByKind, the
-    // sortKeysDeep walk handles the rest).
     const sorted = sortKeysDeep(baseline)
     return `${JSON.stringify(sorted, null, 4)}\n`
 }
