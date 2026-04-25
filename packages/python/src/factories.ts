@@ -2,12 +2,7 @@
 
 import type * as T from './types.js';
 import type { AnyNodeData, ByteRange, ConfigOf, Edit, FluentNode, NonEmptyArray } from '@sittir/types';
-import { createRenderer } from '@sittir/core';
-import { join, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const { render, toEdit } = createRenderer(join(__dirname, '..', 'templates'));
+import { render, toEdit } from './boundary.ts';
 
 function _fs<T, R, K extends keyof T>(
   cfg: T | undefined,

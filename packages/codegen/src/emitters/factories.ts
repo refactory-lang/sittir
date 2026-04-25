@@ -55,12 +55,12 @@ export function emitFactories(config: EmitFactoriesConfig): string {
     if (usesConfigOf) utilImports.push('ConfigOf')
     if (usesNonEmptyArray) utilImports.push('NonEmptyArray')
     lines.push(`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`)
-    lines.push("import { createRenderer } from '@sittir/core';")
-    lines.push("import { join, dirname } from 'node:path';")
-    lines.push("import { fileURLToPath } from 'node:url';")
-    lines.push('')
-    lines.push('const __dirname = dirname(fileURLToPath(import.meta.url));')
-    lines.push("const { render, toEdit } = createRenderer(join(__dirname, '..', 'templates'));")
+    // Spec 012 boundary shim — `render` / `toEdit` dispatch through
+    // `getActiveBackend()` so factory-method `node.render()` /
+    // `node.toEdit()` honor the active backend (native napi vs TS
+    // Nunjucks). Was: `import { createRenderer } from '@sittir/core'`
+    // + lazily-bound renderer pinned to the package's `templates/`.
+    lines.push("import { render, toEdit } from './boundary.ts';")
     lines.push('')
     lines.push(...emitFluentSetterHelpers())
     lines.push(...emitNonEmptyAssertHelper())

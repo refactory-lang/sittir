@@ -17,7 +17,7 @@
 
 import { createRenderer, readNode as coreReadNode } from '@sittir/core';
 import type { TreeHandle } from '@sittir/core';
-import type { AnyNodeData, Edit } from '@sittir/types';
+import type { AnyNodeData, ByteRange, Edit } from '@sittir/types';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getActiveBackend, type NativeEngine } from './backend.js';
@@ -78,6 +78,31 @@ export function render(node: AnyNodeData): string {
 		}
 	}
 	return getTsRenderer().render(node);
+}
+
+/**
+ * Render `node` and return an Edit that splices the rendered text
+ * into the given range. Mirrors `@sittir/core`'s `BoundRenderer.toEdit`
+ * but uses the backend-dispatching `render()` above so the Edit's
+ * `insertedText` comes from whichever engine `getActiveBackend()`
+ * reports — keeping the factory-method `node.toEdit(...)` consistent
+ * with `node.render()`.
+ */
+export function toEdit(node: AnyNodeData, startOrRange: number | ByteRange, end?: number): Edit {
+	const insertedText = render(node);
+	if (typeof startOrRange === 'number') {
+		if (typeof end !== 'number') {
+			throw new Error('endPos is required when startPos is a number');
+		}
+		if (startOrRange < 0 || end < 0) {
+			throw new Error(`Edit positions must be non-negative (got start=${startOrRange}, end=${end})`);
+		}
+		if (startOrRange > end) {
+			throw new Error(`Edit startPos (${startOrRange}) must not exceed endPos (${end})`);
+		}
+		return { startPos: startOrRange, endPos: end, insertedText };
+	}
+	return { startPos: startOrRange.start.index, endPos: startOrRange.end.index, insertedText };
 }
 
 /**
