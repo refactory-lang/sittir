@@ -663,31 +663,56 @@ type OptionalNonAutoStampKeys<T> = {
  *   1 of spec 009 — cached indexed access instead of fresh `FromInputOf`
  *   instantiation). When `{}` (default), falls back to recursive projection.
  */
-export type FromInputOf<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMap = {}> = Simplify<
+/**
+ * @param Visited - Set of `$type` discriminants already seen on the
+ *   current expansion path. Combined with `Depth`, gives belt-and-
+ *   suspenders cycle protection: `Depth` caps non-cyclic chains at
+ *   `MaxDepth`; `Visited` short-circuits as soon as a kind reappears,
+ *   even within depth budget. Necessary because TypeScript's
+ *   recursive-mapped-type checker computes both branches of a
+ *   conditional eagerly when a generic parameter could distribute, so
+ *   a structural cycle (e.g. rust `Statement → ConstItem → type:
+ *   _Type → PointerType → type: _Type → …`) trips TS2615 before the
+ *   `Depth` arm fires. `Contains<Visited, K>` makes the cycle visible
+ *   as a literal-tuple membership check that TS resolves
+ *   non-recursively.
+ */
+export type FromInputOf<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMap = {}, Visited extends string[] = []> = Simplify<
 	Depth['length'] extends MaxDepth ? T
-	: (T extends { readonly $type: infer K } ? { readonly $type?: K } : {})
+	: T extends { readonly $type: infer K extends string }
+		? Contains<Visited, K> extends true ? T
+		: FromInputBody<T, Scalars, Strings, Depth, NsMap, [K, ...Visited]>
+	: FromInputBody<T, Scalars, Strings, Depth, NsMap, Visited>
+>;
+
+/** @internal — body of `FromInputOf`, factored out so the cycle-check
+ *  conditional in the parent type stays scannable. The discriminant
+ *  branch happens in `FromInputOf` itself; here we just emit the
+ *  field/children projections with the (possibly extended) `Visited`. */
+type FromInputBody<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends string[]> =
+	(T extends { readonly $type: infer K } ? { readonly $type?: K } : {})
 	& {
 		readonly [K in keyof FieldsOf<T> as K extends RequiredNonAutoStampKeys<FieldsOf<T>> ? CamelCase<K> : never]:
-			WidenSlotValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0], NsMap>;
+			WidenSlotValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0], NsMap, Visited>;
 	} & {
 		readonly [K in keyof FieldsOf<T> as K extends OptionalNonAutoStampKeys<FieldsOf<T>> ? CamelCase<K> : never]?:
-			WidenSlotValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0], NsMap>;
+			WidenSlotValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0], NsMap, Visited>;
 	} & (T extends { readonly $children: infer C }
-		? { readonly children?: WidenChildSlot<C, Scalars, Strings, [...Depth, 0], NsMap> }
-		: {})
->;
+		? { readonly children?: WidenChildSlot<C, Scalars, Strings, [...Depth, 0], NsMap, Visited> }
+		: {});
 
 /** @internal — slot-level widen that projects boolean-keyword / bitflag
  * brands to their Config surface BEFORE delegating to WidenValue for
- * the recursive structural case. */
-type WidenSlotValue<T, Scalars, Strings, Depth extends number[], NsMap> =
+ * the recursive structural case. Threads `Visited` so the structural
+ * branch can detect $type cycles. */
+type WidenSlotValue<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends string[] = []> =
 	IsBooleanKeywordSlot<T> extends true
 		? boolean | T | (T extends readonly (infer E)[] ? E : T) extends infer U
 			? U | (U extends { readonly $text: infer V } ? V : never)
 			: never
 	: IsBitflagSlot<T> extends true
 		? BitflagSlotEnum<T> | readonly string[] | string | T
-	: WidenValue<T, Scalars, Strings, Depth, NsMap>;
+	: WidenValue<T, Scalars, Strings, Depth, NsMap, Visited>;
 
 /** Keys of T that are required (not optional). */
 type RequiredKeys<T> = { [K in keyof T]-?: {} extends Pick<T, K> ? never : K }[keyof T];
@@ -761,11 +786,13 @@ type IsHomogeneous<T, NsMap> =
  * that helper — inline `… extends never ? … : …` collapses under union
  * distribution.
  */
-type TagEachArm<T, Scalars, Strings, Depth extends number[], NsMap> = T extends infer U
+type TagEachArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends string[] = []> = T extends infer U
 	? U extends { readonly $type: infer K extends string }
-		? ({ kind: K } & ([LooseProjection<U, NsMap>] extends [never]
-			? FromInputOf<U, Scalars, Strings, [...Depth, 0], NsMap>
-			: LooseProjection<U, NsMap>)) | U
+		? Contains<Visited, K> extends true
+			? U
+			: ({ kind: K } & ([LooseProjection<U, NsMap>] extends [never]
+				? FromInputOf<U, Scalars, Strings, [...Depth, 0], NsMap, Visited>
+				: LooseProjection<U, NsMap>)) | U
 		: never
 	: never;
 
@@ -796,12 +823,18 @@ type LooseProjection<T, NsMap> = T extends { readonly $type: infer K extends key
  * `LooseProjection<T>`, silently dropping the `T` passthrough (and thus
  * the "caller already has a NodeData" escape hatch).
  */
-type LooseOrFromInput<T, Scalars, Strings, Depth extends number[], NsMap> =
-	[LooseProjection<T, NsMap>] extends [never]
-		? FromInputOf<T, Scalars, Strings, [...Depth, 0], NsMap> | T
-		: LooseProjection<T, NsMap> | T;
+type LooseOrFromInput<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends string[] = []> =
+	T extends { readonly $type: infer K extends string }
+		? Contains<Visited, K> extends true
+			? T
+			: [LooseProjection<T, NsMap>] extends [never]
+				? FromInputOf<T, Scalars, Strings, [...Depth, 0], NsMap, Visited> | T
+				: LooseProjection<T, NsMap> | T
+		: [LooseProjection<T, NsMap>] extends [never]
+			? FromInputOf<T, Scalars, Strings, [...Depth, 0], NsMap, Visited> | T
+			: LooseProjection<T, NsMap> | T;
 
-type WidenValue<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMap = {}> =
+type WidenValue<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMap = {}, Visited extends string[] = []> =
 	Depth['length'] extends MaxDepth ? T
 	// ADR-0012 — keyword-presence brands project to their Config surface
 	// first (boolean / const-enum), with the underlying NodeData / string
@@ -815,8 +848,8 @@ type WidenValue<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMa
 		? BitflagEnum<T> | readonly string[] | string | T
 	: T extends readonly (infer E)[]
 		? [readonly []] extends [T]
-			? (WidenValue<E, Scalars, Strings, Depth, NsMap>)[] | WidenValue<E, Scalars, Strings, Depth, NsMap>
-			: NonEmptyArray<WidenValue<E, Scalars, Strings, Depth, NsMap>> | WidenValue<E, Scalars, Strings, Depth, NsMap>
+			? (WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>)[] | WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
+			: NonEmptyArray<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>> | WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
 	: T extends { readonly $type: infer K extends string; readonly $text: string }
 		// Leaf — distributes per leaf-kind arm to pick up each one's narrowed
 		// string / scalar. A union of leaves becomes a union of widenings.
@@ -825,23 +858,23 @@ type WidenValue<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMa
 		// Branch(es) — decide single/homogeneous/heterogeneous ONCE for the
 		// whole union, then emit accordingly.
 		? IsSingleType<T> extends true
-			? LooseOrFromInput<T, Scalars, Strings, Depth, NsMap>
+			? LooseOrFromInput<T, Scalars, Strings, Depth, NsMap, Visited>
 		: IsHomogeneous<T, NsMap> extends true
 			// Multi-branch, but every arm's Loose projection is identical
 			// (via NsMap lookups). Runtime resolver picks any arm by
 			// field-presence — no `kind` tag needed at the type level.
-			? LooseOrFromInput<T, Scalars, Strings, Depth, NsMap>
+			? LooseOrFromInput<T, Scalars, Strings, Depth, NsMap, Visited>
 			// Heterogeneous multi-branch → tag each arm for discrimination.
-			: TagEachArm<T, Scalars, Strings, Depth, NsMap>
+			: TagEachArm<T, Scalars, Strings, Depth, NsMap, Visited>
 	: T;
 
 /** Widen a child slot type for FromInput (applies WidenValue to arrays and single values). */
-type WidenChildSlot<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMap = {}> =
+type WidenChildSlot<T, Scalars = {}, Strings = {}, Depth extends number[] = [], NsMap = {}, Visited extends string[] = []> =
 	T extends readonly (infer E)[]
 		? [readonly []] extends [T]
-			? WidenValue<E, Scalars, Strings, Depth, NsMap>[] | WidenValue<E, Scalars, Strings, Depth, NsMap>
-			: NonEmptyArray<WidenValue<E, Scalars, Strings, Depth, NsMap>> | WidenValue<E, Scalars, Strings, Depth, NsMap>
-		: WidenValue<T, Scalars, Strings, Depth, NsMap>;
+			? WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>[] | WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
+			: NonEmptyArray<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>> | WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
+		: WidenValue<T, Scalars, Strings, Depth, NsMap, Visited>;
 
 // ---------------------------------------------------------------------------
 // NodeNs<T> — single computed base per-kind namespace
