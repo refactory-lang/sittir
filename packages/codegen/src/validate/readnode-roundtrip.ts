@@ -34,6 +34,7 @@ import { loadRawEntries } from './node-types-loader.ts'
 import {
     loadLanguageForGrammar,
     treeHandle,
+    buildReadHandle,
     findFirst,
     collectKinds,
     type TSNode,
@@ -271,7 +272,7 @@ export async function validateReadNodeRoundTrip(
                 continue
             }
 
-            const handle = treeHandle(tree)
+            const handle = buildReadHandle(grammar, tree, entry.source)
             let data: AnyNodeData
             try {
                 data = readNode(handle, node.id)

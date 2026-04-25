@@ -20,6 +20,7 @@ import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
 	treeHandle,
+	buildReadHandle,
 	findFirst,
 	collectKinds,
 	buildKindToSupertypes,
@@ -549,7 +550,7 @@ export async function validateFactoryRoundTrip(
 		const tree1 = parser.parse(entry.source) as TSTree;
 		if (tree1.rootNode.hasError) continue;
 
-		const handle = treeHandle(tree1);
+		const handle = buildReadHandle(grammar, tree1, entry.source);
 		const kinds = new Set(collectKinds(tree1.rootNode));
 		const nodeIdToEffectiveType = new Map<number, string>();
 		if (readTreeNodeFn) {

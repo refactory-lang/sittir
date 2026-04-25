@@ -204,6 +204,59 @@ export function nativeTreeHandle(engine: NativeEngineLike, source: string): Tree
 
 interface AnyNodeDataLike { readonly $type: string }
 
+/**
+ * Build the read-side TreeHandle for the corpus validators. Selects
+ * between the wasm/JS handle (default) and a native-engine handle
+ * (when `SITTIR_BACKEND=native` is set AND the per-grammar napi
+ * package loads). Native handles route every read — root + drill-in +
+ * drillAs — through `engine.readNode(id)` so the suite exercises the
+ * full native pipeline end-to-end.
+ *
+ * The wasm `tree` is still required: validators use it for kind
+ * navigation (`findFirst`, `collectKinds`) — that traversal needs a
+ * raw tree-sitter tree the JS side can walk. The native engine owns
+ * its own internal tree for reads; the two coexist within one probe.
+ *
+ * Cached per process: the napi engine instance is reused across all
+ * invocations to amortize the (small) per-engine init. Each call
+ * still parses fresh — the engine internally replaces its tree.
+ */
+let _cachedNativeEngine: { grammar: string; engine: NativeEngineLike } | null = null
+function loadNativeEngineForGrammar(grammar: string): NativeEngineLike | null {
+    if (_cachedNativeEngine && _cachedNativeEngine.grammar === grammar) {
+        return _cachedNativeEngine.engine
+    }
+    try {
+        // Match probe-kind's loader — try the published package, fall
+        // back to the workspace-local napi build directory.
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { createRequire } = require('node:module') as typeof import('node:module')
+        const req = createRequire(import.meta.url)
+        const pkg = `@sittir/${grammar}-native`
+        const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '')
+        const localCratePath = `${repoRoot}/rust/crates/sittir-${grammar}-napi`
+        let mod: { SittirEngine: new () => NativeEngineLike }
+        try { mod = req(pkg) as typeof mod }
+        catch { mod = req(localCratePath) as typeof mod }
+        const engine = new mod.SittirEngine()
+        _cachedNativeEngine = { grammar, engine }
+        return engine
+    } catch {
+        return null
+    }
+}
+
+export function buildReadHandle(grammar: string, tree: TS.Tree, source: string): TreeHandle {
+    if (process.env.SITTIR_BACKEND === 'native') {
+        const engine = loadNativeEngineForGrammar(grammar)
+        if (engine) return nativeTreeHandle(engine, source)
+        // SITTIR_BACKEND=native explicitly requested but native unavailable —
+        // fall through to wasm so the validator surfaces the actual gap
+        // (e.g. corpus failure modes) rather than a load error.
+    }
+    return treeHandle(tree, source)
+}
+
 export function findFirst(node: TS.Node, kind: string): TS.Node | null {
     if (node.type === kind) return node
     for (const child of node.children) {

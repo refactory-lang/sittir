@@ -17,6 +17,7 @@ import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
 	treeHandle,
+	buildReadHandle,
 	findFirst,
 	collectKinds,
 	buildKindToSupertypes,
@@ -263,10 +264,12 @@ function discoverAliasSourceKinds(
 	readTreeNodeFn: ((handle: TreeHandle, nodeId?: number) => unknown) | null,
 	tree: TSTree,
 	kinds: Set<string>,
+	grammar: string,
+	source: string,
 ): Map<number, string> {
 	const nodeIdToEffectiveType = new Map<number, string>();
 	if (readTreeNodeFn) {
-		const handle = treeHandle(tree);
+		const handle = buildReadHandle(grammar, tree, source);
 		const wrappedRoot = readTreeNodeFn(handle) as WrappedNodeData;
 		walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
 			if (w.$nodeId != null) nodeIdToEffectiveType.set(w.$nodeId, w.$type);
@@ -464,7 +467,7 @@ export async function validateRoundTrip(
 			}
 
 			const kinds = new Set(collectKinds(tree1.rootNode));
-			const nodeIdToEffectiveType = discoverAliasSourceKinds(readTreeNodeFn, tree1, kinds);
+			const nodeIdToEffectiveType = discoverAliasSourceKinds(readTreeNodeFn, tree1, kinds, grammar, entry.source);
 			const testableKinds = [...kinds].filter(k => ruleKinds.has(k));
 
 			if (testableKinds.length === 0) {
@@ -479,7 +482,7 @@ export async function validateRoundTrip(
 				const node1 = resolveNodeForKind(kind, nodeIdToEffectiveType, tree1);
 				if (!node1) continue;
 
-				const handle = treeHandle(tree1);
+				const handle = buildReadHandle(grammar, tree1, entry.source);
 				// Shallow read — RT validator relies on the $text
 				// short-circuit: readNode returns a NodeData with
 				// $text=source-span, render() falls through to emit
