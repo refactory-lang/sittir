@@ -1,27 +1,12 @@
 {
     "backend": "typescript",
-    "commit": "9b55e3b",
+    "commit": "bd7bb77",
     "grammars": {
         "python": {
             "parityFixtures": {
-                "failingByKind": {
-                    "dictionary_comprehension": [
-                        "render #94"
-                    ],
-                    "generator_expression": [
-                        "render #40",
-                        "render #101"
-                    ],
-                    "list_comprehension": [
-                        "render #55",
-                        "render #84"
-                    ],
-                    "set_comprehension": [
-                        "render #98"
-                    ]
-                },
+                "failingByKind": {},
                 "formatDeferredByKind": {},
-                "pass": 189,
+                "pass": 195,
                 "total": 195
             },
             "validators": {
@@ -241,8 +226,8 @@
         }
     },
     "totals": {
-        "fail": 1825,
-        "pass": 3134,
+        "fail": 1819,
+        "pass": 3140,
         "total": 4959
     }
 }

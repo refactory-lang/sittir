@@ -1,59 +1,18 @@
 {
     "backend": "native",
-    "commit": "9b55e3b",
+    "commit": "bd7bb77",
     "grammars": {
         "python": {
             "parityFixtures": {
                 "failingByKind": {
                     "dictionary": [
-                        "render #12",
                         "render #16",
-                        "render #90",
                         "render #97",
                         "render #189"
-                    ],
-                    "dictionary_comprehension": [
-                        "render #94"
-                    ],
-                    "list": [
-                        "render #57",
-                        "render #58",
-                        "render #81",
-                        "render #87",
-                        "render #128",
-                        "render #129",
-                        "render #133",
-                        "render #167"
-                    ],
-                    "list_pattern": [
-                        "render #107",
-                        "render #111",
-                        "render #115",
-                        "render #119",
-                        "render #123"
-                    ],
-                    "set_comprehension": [
-                        "render #98"
-                    ],
-                    "tuple": [
-                        "render #47",
-                        "render #48",
-                        "render #50",
-                        "render #51",
-                        "render #86",
-                        "render #104",
-                        "render #137",
-                        "render #176",
-                        "render #193"
-                    ],
-                    "tuple_pattern": [
-                        "render #145",
-                        "render #149",
-                        "render #152"
                     ]
                 },
                 "formatDeferredByKind": {},
-                "pass": 163,
+                "pass": 192,
                 "total": 195
             },
             "validators": {
@@ -571,10 +530,6 @@
                         "render #328",
                         "render #335"
                     ],
-                    "tuple_type": [
-                        "render #196",
-                        "render #399"
-                    ],
                     "type_alias_declaration": [
                         "render #121",
                         "render #235",
@@ -597,7 +552,7 @@
                     ]
                 },
                 "formatDeferredByKind": {},
-                "pass": 283,
+                "pass": 285,
                 "total": 410
             },
             "validators": {
@@ -671,8 +626,8 @@
         }
     },
     "totals": {
-        "fail": 2140,
-        "pass": 2819,
+        "fail": 2109,
+        "pass": 2850,
         "total": 4959
     }
 }

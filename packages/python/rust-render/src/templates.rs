@@ -38,10 +38,6 @@ pub struct _AsPatternTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub case_pattern: String,
-    pub case_pattern_list: Vec<String>,
-    pub identifier: String,
-    pub identifier_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -83,6 +79,17 @@ pub struct AssignmentTypedTemplate {
     pub right_list: Vec<String>,
     pub r#type: String,
     pub r#type_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_comprehension_clauses.jinja", escape = "none")]
+pub struct ComprehensionClausesTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
 }
 
 #[derive(::askama::Template)]
@@ -567,8 +574,6 @@ pub struct DictionaryComprehensionTemplate {
     pub leading_sep: bool,
     pub body: String,
     pub body_list: Vec<String>,
-    pub for_in_clause: String,
-    pub for_in_clause_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -808,8 +813,6 @@ pub struct GeneratorExpressionTemplate {
     pub leading_sep: bool,
     pub body: String,
     pub body_list: Vec<String>,
-    pub for_in_clause: String,
-    pub for_in_clause_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -997,8 +1000,6 @@ pub struct ListComprehensionTemplate {
     pub leading_sep: bool,
     pub body: String,
     pub body_list: Vec<String>,
-    pub for_in_clause: String,
-    pub for_in_clause_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1251,8 +1252,6 @@ pub struct SetComprehensionTemplate {
     pub leading_sep: bool,
     pub body: String,
     pub body_list: Vec<String>,
-    pub for_in_clause: String,
-    pub for_in_clause_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1591,10 +1590,6 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                case_pattern: ctx.fields.get("case_pattern").cloned().unwrap_or_default(),
-                case_pattern_list: ctx.fields_list.get("case_pattern").cloned().unwrap_or_default(),
-                identifier: ctx.fields.get("identifier").cloned().unwrap_or_default(),
-                identifier_list: ctx.fields_list.get("identifier").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -1636,6 +1631,17 @@ pub fn render_dispatch(
                 right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "_comprehension_clauses" => {
+            let t = ComprehensionClausesTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
             };
             t.render_with_values(&_values)
         }
@@ -2120,8 +2126,6 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
                 body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
-                for_in_clause: ctx.fields.get("for_in_clause").cloned().unwrap_or_default(),
-                for_in_clause_list: ctx.fields_list.get("for_in_clause").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -2361,8 +2365,6 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
                 body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
-                for_in_clause: ctx.fields.get("for_in_clause").cloned().unwrap_or_default(),
-                for_in_clause_list: ctx.fields_list.get("for_in_clause").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -2550,8 +2552,6 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
                 body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
-                for_in_clause: ctx.fields.get("for_in_clause").cloned().unwrap_or_default(),
-                for_in_clause_list: ctx.fields_list.get("for_in_clause").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -2804,8 +2804,6 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 body: ctx.fields.get("body").cloned().unwrap_or_default(),
                 body_list: ctx.fields_list.get("body").cloned().unwrap_or_default(),
-                for_in_clause: ctx.fields.get("for_in_clause").cloned().unwrap_or_default(),
-                for_in_clause_list: ctx.fields_list.get("for_in_clause").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3162,7 +3160,7 @@ impl ::sittir_core::prepare::GrammarMeta for PythonGrammarMeta {
     }
     fn is_list_container(&self, kind: &str) -> bool {
         matches!(kind,
-            "_list_pattern" | "_match_block" | "_simple_pattern" | "_simple_statements" | "_suite" | "_tuple_pattern" | "_with_clause_paren" | "argument_list" | "assert_statement" | "block" | "case_pattern" | "delete_statement" | "dict_pattern" | "dictionary" | "dictionary_splat_pattern" | "dotted_name" | "format_specifier" | "global_statement" | "lambda_parameters" | "list" | "list_pattern" | "list_splat_pattern" | "module" | "nonlocal_statement" | "parameters" | "parenthesized_expression" | "parenthesized_list_splat" | "return_statement" | "set" | "string_content" | "tuple" | "tuple_pattern" | "type" | "type_parameter" | "union_pattern" | "yield"
+            "_as_pattern" | "_comprehension_clauses" | "_list_pattern" | "_match_block" | "_simple_pattern" | "_simple_statements" | "_suite" | "_tuple_pattern" | "_with_clause_paren" | "argument_list" | "assert_statement" | "block" | "case_pattern" | "delete_statement" | "dict_pattern" | "dictionary" | "dictionary_splat_pattern" | "dotted_name" | "format_specifier" | "global_statement" | "lambda_parameters" | "list" | "list_pattern" | "list_splat_pattern" | "module" | "nonlocal_statement" | "parameters" | "parenthesized_expression" | "parenthesized_list_splat" | "return_statement" | "set" | "string_content" | "tuple" | "tuple_pattern" | "type" | "type_parameter" | "union_pattern" | "yield"
         )
     }
 }
