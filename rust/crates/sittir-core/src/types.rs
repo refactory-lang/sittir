@@ -68,12 +68,20 @@ pub struct NodeData {
     )]
     pub span: Option<Span>,
 
+    /// Tree-sitter's canonical node id (from `Node::id()`, a pointer-
+    /// derived `usize`). Identical id-space on both engines: JS-side
+    /// `TreeHandle.nodeById` and the napi `readNode($nodeId)` consume
+    /// the same value. Was a synthetic monotonic counter pre-fix —
+    /// that invented a parallel id-space and broke drill-in dispatch
+    /// across engines. Serialized as a JSON number; macOS / Linux
+    /// user-space pointers fit in 53 bits so the f64 round-trip is
+    /// exact.
     #[serde(
         rename = "$nodeId",
         default,
         skip_serializing_if = "Option::is_none"
     )]
-    pub node_id: Option<u32>,
+    pub node_id: Option<u64>,
 }
 
 /// Where a `NodeData` originated. `Ts` = `readNode` over a tree-sitter

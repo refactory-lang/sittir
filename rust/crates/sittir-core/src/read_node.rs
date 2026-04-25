@@ -20,15 +20,10 @@
 //!   caller retains them). Leaves skip this.
 //! - `$text`     — leaf text. Populated ONLY on leaves (no named children).
 //! - `$span`     — `{start, end}` from `node.byte_range()`.
-//! - `$nodeId`   — monotonic counter assigned from `next_node_id`, shared
-//!   across the whole traversal pass (per data-model.md §4).
-//!
-//! # nodeId invariant
-//!
-//! `next_node_id` is a `&mut u32` owned by the caller (the engine
-//! resets it per `find_and_read` call). Every call site that recursively
-//! reads children threads the same counter so IDs are unique within one
-//! pass. The counter increments **pre-order** (parent before children).
+//! - `$nodeId`   — tree-sitter's canonical `Node::id()` (a pointer-
+//!   derived `usize`, surfaced as `u64` on the wire). Identical id-
+//!   space on both engines so drill-in dispatch (`engine.readNode(id)`
+//!   vs JS `tree.nodeById(id)`) is symmetric.
 
 use crate::types::{FieldValue, NodeData, Source, Span};
 use std::collections::HashMap;
@@ -38,60 +33,44 @@ use std::collections::HashMap;
 ///
 /// # Arguments
 ///
-/// * `tree`         — the parsed tree. Borrowed; not mutated.
-/// * `source`       — the source string the tree was parsed from. Used
-///   for extracting leaf `$text` via byte-range slicing.
-/// * `node_id`      — which node to start reading from, addressed by
-///   the pass-unique `$nodeId` that was assigned during a previous
-///   traversal. `None` reads the root node and assigns IDs starting
-///   from the current `*next_node_id`.
-/// * `next_node_id` — monotonic counter, mutated during traversal.
-///   The engine resets this to 0 before each `find_and_read`.
+/// * `tree`    — the parsed tree. Borrowed; not mutated.
+/// * `source`  — the source string the tree was parsed from. Used for
+///   extracting leaf `$text` via byte-range slicing.
+/// * `node_id` — which node to start reading from, addressed by
+///   tree-sitter's `Node::id()`. `None` reads the root node.
 ///
 /// # Panics
 ///
-/// Panics if `node_id` is `Some(id)` but no node with that ID exists
-/// after a fresh traversal. The napi wrapper (T033+) translates this
-/// into the `"node id N not found in current tree"` error surface.
+/// Panics if `node_id` is `Some(id)` but no node with that id exists
+/// in the current tree. The napi wrapper translates this into the
+/// `"node id N not found in current tree"` error surface.
 pub fn read_node(
     tree: &tree_sitter::Tree,
     source: &str,
-    node_id: Option<u32>,
-    next_node_id: &mut u32,
+    node_id: Option<u64>,
 ) -> NodeData {
     let root = tree.root_node();
     match node_id {
-        None => read_ts_node(root, source, next_node_id),
-        Some(target) => {
-            // To find a node by ID, we re-walk the tree counting with a
-            // fresh local counter — the stored `next_node_id` is not
-            // consulted because the engine already used it once in the
-            // initial `find_and_read` pass. We rebuild the NodeData for
-            // the subtree rooted at the targeted node.
-            let mut counter: u32 = 0;
-            match find_by_id(root, target, &mut counter) {
-                Some(found) => read_ts_node(found, source, next_node_id),
-                None => panic!("node id {target} not found in current tree"),
-            }
-        }
+        None => read_ts_node(root, source),
+        Some(target) => match find_by_id(root, target) {
+            Some(found) => read_ts_node(found, source),
+            None => panic!("node id {target} not found in current tree"),
+        },
     }
 }
 
-/// Depth-first search for the tree-sitter node whose pre-order position
-/// matches `target`. Uses `counter` as a running pre-order index.
+/// Depth-first search for the tree-sitter node whose canonical
+/// `Node::id()` matches `target`.
 fn find_by_id<'a>(
     node: tree_sitter::Node<'a>,
-    target: u32,
-    counter: &mut u32,
+    target: u64,
 ) -> Option<tree_sitter::Node<'a>> {
-    let here = *counter;
-    *counter += 1;
-    if here == target {
+    if node.id() as u64 == target {
         return Some(node);
     }
     let mut cursor = node.walk();
     for child in node.children(&mut cursor) {
-        if let Some(found) = find_by_id(child, target, counter) {
+        if let Some(found) = find_by_id(child, target) {
             return Some(found);
         }
     }
@@ -99,16 +78,11 @@ fn find_by_id<'a>(
 }
 
 /// Recursive core — converts a tree-sitter `Node` into `NodeData`.
-///
-/// Pre-order nodeId assignment: the current node claims `*next_node_id`
-/// first (by post-increment), then children recurse.
 fn read_ts_node(
     node: tree_sitter::Node<'_>,
     source: &str,
-    next_node_id: &mut u32,
 ) -> NodeData {
-    let assigned_id = *next_node_id;
-    *next_node_id += 1;
+    let assigned_id = node.id() as u64;
 
     let kind = node.kind().to_string();
     let named = node.is_named();
@@ -118,7 +92,7 @@ fn read_ts_node(
         end: byte_range.end as u32,
     };
 
-    let (fields, children) = read_children(node, source, next_node_id);
+    let (fields, children) = read_children(node, source);
 
     // Leaf heuristic: no named fields AND no (named) children. The
     // tree-sitter convention is that purely-anonymous terminals are
@@ -170,13 +144,9 @@ fn read_ts_node(
 fn read_children(
     node: tree_sitter::Node<'_>,
     source: &str,
-    next_node_id: &mut u32,
 ) -> (Option<HashMap<String, FieldValue>>, Option<Vec<NodeData>>) {
     let mut fields_acc: HashMap<String, Vec<NodeData>> = HashMap::new();
     let mut children_acc: Vec<NodeData> = Vec::new();
-    let mut cursor = node.walk();
-    // Iterate children by index so we can query `field_name_for_child`
-    // — `children(&mut cursor)` doesn't expose the child index.
     let child_count = node.child_count();
     for i in 0..child_count {
         let child = match node.child(i) {
@@ -184,16 +154,12 @@ fn read_children(
             None => continue,
         };
         let field_name = node.field_name_for_child(i as u32);
-        let data = read_ts_node(child, source, next_node_id);
+        let data = read_ts_node(child, source);
         match field_name {
             Some(name) => fields_acc.entry(name.to_string()).or_default().push(data),
             None => children_acc.push(data),
         }
     }
-    // Silence the unused-mut lint on `cursor` — kept to match the
-    // tree-sitter idiom even though the index-based loop above doesn't
-    // use it directly. Used for the future switch to `children(&mut cursor)`.
-    let _ = &mut cursor;
 
     let fields = if fields_acc.is_empty() {
         None

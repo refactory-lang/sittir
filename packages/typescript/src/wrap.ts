@@ -2084,11 +2084,11 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
  * `drillIn` and `drillAs` all read through THIS function so the
  * wrap layer is engine-agnostic. Native dispatch fires when
  * `getActiveBackend()` reports native AND the TreeHandle carries
- * `source`. Initial root NodeData is cached per-TreeHandle on a
- * WeakMap so repeated reads share engine state. Drill-ins by
- * `$nodeId` fall back to the JS reader because the native
- * engine's sequential counter is incompatible with tree-sitter's
- * pointer ids; that's a follow-up.
+ * `source`. Both engines now share tree-sitter's canonical
+ * `Node::id()` as the `$nodeId` value, so drill-ins on the
+ * native path go through `engine.readNode(nodeId)` directly —
+ * no id-space translation, no JS fallback. Engine + cached
+ * root NodeData are kept on a WeakMap keyed by TreeHandle.
  */
 function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
   const backend = getActiveBackend();
@@ -2106,6 +2106,17 @@ function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
     ENGINE_CACHE.set(tree, cached);
   }
   if (nodeId == null) return cached.rootData;
+  // Drill-in caveat: tree-sitter `Node::id()` is per-tree,
+  // not per-process. The wasm parser (TreeHandle) and the
+  // napi engine each parse independently, producing two
+  // distinct trees with two distinct id spaces — even though
+  // the id type is the same. So passing a wasm-side nodeId
+  // to `engine.readNode(...)` panics with "node id N not
+  // found in current tree". Real fix: unify the parse — JS
+  // side stops parsing separately and the TreeHandle wraps
+  // the napi engine's tree (engine.readNode is the only
+  // reader). Until that lands, drill-in falls back to the
+  // JS reader against the wasm tree.
   return readNodeJs(tree, nodeId);
 }
 

@@ -22,7 +22,6 @@ pub struct SittirEngine {
     parser: tree_sitter::Parser,
     source: Option<String>,
     tree: Option<tree_sitter::Tree>,
-    next_node_id: u32,
 }
 
 #[napi]
@@ -38,7 +37,6 @@ impl SittirEngine {
             parser,
             source: None,
             tree: None,
-            next_node_id: 0,
         })
     }
 
@@ -63,72 +61,38 @@ impl SittirEngine {
             .ok_or_else(|| Error::from_reason("parse failed"))?;
         self.source = Some(source.clone());
         self.tree = Some(tree.clone());
-        self.next_node_id = 0;
         let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            let mut local_counter: u32 = self.next_node_id;
-            let data = sittir_core::read_node::read_node(
+            sittir_core::read_node::read_node(
                 self.tree.as_ref().unwrap(),
                 self.source.as_ref().unwrap(),
                 None,
-                &mut local_counter,
-            );
-            (data, local_counter)
+            )
         }));
         match result {
-            Ok((data, advanced)) => {
-                self.next_node_id = advanced;
-                serde_json::to_string(&data)
-                    .map_err(|e| Error::from_reason(format!("serialize NodeData failed: {e}")))
-            }
-            Err(panic_payload) => {
-                let msg = if let Some(s) = panic_payload.downcast_ref::<String>() {
-                    s.clone()
-                } else if let Some(s) = panic_payload.downcast_ref::<&str>() {
-                    s.to_string()
-                } else {
-                    String::from("read_node panicked")
-                };
-                Err(Error::from_reason(msg))
-            }
+            Ok(data) => serde_json::to_string(&data)
+                .map_err(|e| Error::from_reason(format!("serialize NodeData failed: {e}"))),
+            Err(panic_payload) => Err(Error::from_reason(panic_msg(panic_payload, "parse_and_read panicked"))),
         }
     }
 
     #[napi]
-    pub fn read_node(&mut self, node_id: u32) -> Result<String> {
+    pub fn read_node(&mut self, node_id: f64) -> Result<String> {
         let tree = self
             .tree
             .as_ref()
-            .ok_or_else(|| Error::from_reason("no tree cached — call findAndRead first"))?;
+            .ok_or_else(|| Error::from_reason("no tree cached — call parseAndRead first"))?;
         let source = self
             .source
             .as_ref()
-            .ok_or_else(|| Error::from_reason("no source cached — call findAndRead first"))?;
+            .ok_or_else(|| Error::from_reason("no source cached — call parseAndRead first"))?;
+        let id = node_id as u64;
         let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            let mut local_counter: u32 = self.next_node_id;
-            let data = sittir_core::read_node::read_node(
-                tree,
-                source,
-                Some(node_id),
-                &mut local_counter,
-            );
-            (data, local_counter)
+            sittir_core::read_node::read_node(tree, source, Some(id))
         }));
         match result {
-            Ok((data, advanced)) => {
-                self.next_node_id = advanced;
-                serde_json::to_string(&data)
-                    .map_err(|e| Error::from_reason(format!("serialize NodeData failed: {e}")))
-            }
-            Err(panic_payload) => {
-                let msg = if let Some(s) = panic_payload.downcast_ref::<String>() {
-                    s.clone()
-                } else if let Some(s) = panic_payload.downcast_ref::<&str>() {
-                    s.to_string()
-                } else {
-                    format!("node id {node_id} not found in current tree")
-                };
-                Err(Error::from_reason(msg))
-            }
+            Ok(data) => serde_json::to_string(&data)
+                .map_err(|e| Error::from_reason(format!("serialize NodeData failed: {e}"))),
+            Err(panic_payload) => Err(Error::from_reason(panic_msg(panic_payload, &format!("node id {id} not found in current tree")))),
         }
     }
 
@@ -147,6 +111,16 @@ impl SittirEngine {
     #[napi]
     pub fn apply_edits(&self, source: String, edits: Vec<Edit>) -> Result<String> {
         splice_apply_edits(&source, edits).map_err(|e| Error::from_reason(format!("{e}")))
+    }
+}
+
+fn panic_msg(payload: Box<dyn std::any::Any + Send>, fallback: &str) -> String {
+    if let Some(s) = payload.downcast_ref::<String>() {
+        s.clone()
+    } else if let Some(s) = payload.downcast_ref::<&str>() {
+        s.to_string()
+    } else {
+        fallback.to_string()
     }
 }
 
