@@ -878,11 +878,9 @@ function emitPolymorphFormFrom(
         fLines.push(`  return ${formFactory}(input);`)
     }
     fLines.push('}')
-    // Rename unused `input` param to `_input` for `no-unused-vars`.
-    // Triggers when every form field auto-stamps — the loop body
-    // emitted nothing, so the factory call is `{}` and `input` is
-    // never read. The public type signature stays the same; only
-    // the binding name changes.
+    // Rename unused `input` to `_input` for `no-unused-vars` (lint
+    // exempts `_`-prefixed names). Type signature stays stable so
+    // the polymorph From dispatcher's forwarding call still type-checks.
     const header = fLines[0]!
     const body = fLines.slice(1).join('\n')
     if (!/\binput\b/.test(body)) {

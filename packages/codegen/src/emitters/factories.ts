@@ -934,10 +934,11 @@ function emitFieldCarryingFactory(
 /**
  * Post-process emitted factory lines: rename the `config` parameter to
  * `_config` when the function body never reads it. Silences
- * `no-unused-vars` on parameterless polymorph form factories without
- * changing the public type signature (the param type stays the same;
- * only the binding name changes). The signature line is at index 0;
- * everything after is the body, scanned for `\bconfig\b`.
+ * `no-unused-vars` (lint rule explicitly exempts `_`-prefixed names)
+ * without changing the public type signature — dispatchers and From
+ * wrappers that forward `config` to these form factories continue to
+ * type-check. Dropping the param entirely cascades into the dispatcher
+ * + From emit, which is invasive; rename is the contained fix.
  */
 function renameUnusedConfigParam(lines: string[]): string {
     const header = lines[0]!
