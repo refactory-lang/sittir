@@ -308,7 +308,7 @@ export async function probe(
             : (opts.baselineDir
                 ? await loadReadTreeNodeFromPath(resolveBaselinePath(opts.baselineDir, 'src/wrap.ts'))
                 : await loadReadTreeNode(grammar))
-        const handle = treeHandle(tree)
+        const handle = treeHandle(tree, source)
         const nodeId = targetNode === tree.rootNode ? undefined : targetNode.id
         nodeData = readTreeNodeFn
             ? readTreeNodeFn(handle, nodeId)

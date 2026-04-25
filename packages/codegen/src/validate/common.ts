@@ -135,7 +135,7 @@ export function adaptNode(node: TS.Node) : AnyTreeNode {
     }
 }
 
-export function treeHandle(tree: TS.Tree) {
+export function treeHandle(tree: TS.Tree, source?: string) {
     const nodeMap = new Map<number, TS.Node>()
     function collect(node: TS.Node) {
         nodeMap.set(node.id, node)
@@ -150,6 +150,11 @@ export function treeHandle(tree: TS.Tree) {
             if (!node) throw new Error(`Node ${id} not found`)
             return adaptNode(node)
         },
+        // Optional `source` plumbed for native-engine dispatch in
+        // `readTreeNode` (see TreeHandle docstring). Absent when the
+        // caller doesn't pass it; native dispatch then degrades to the
+        // existing in-process JS reader.
+        source,
     }
 }
 

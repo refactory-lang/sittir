@@ -3,9 +3,10 @@
 
 import { readNode } from '@sittir/core';
 import type { TreeHandle } from '@sittir/core';
+import { getActiveBackend } from './backend.ts';
 // Spec 008 US4 — import _NodeData (== AnyNodeData) from @sittir/types
 // instead of re-declaring locally. Single source of truth.
-import type { AnyNodeData as _NodeData, WrappedNode } from '@sittir/types';
+import type { AnyNodeData as _NodeData, WrappedNode, AnyNodeData } from '@sittir/types';
 import type {
   AbstractType,
   Arguments,
@@ -1879,8 +1880,61 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 /**
  * Read a parsed tree node into a lazily-wrapped NodeData.
  * One level deep — getters drill into subtrees on demand.
+ *
+ * When `getActiveBackend()` reports the native engine AND the
+ * TreeHandle carries `source`, the read dispatches through
+ * `@sittir/rust-native`'s `SittirEngine.parseAndRead(source)` once
+ * per source string (cached on the handle), then `readNode($nodeId)`
+ * for drill-ins. Otherwise the in-process JS reader runs as before.
+ *
+ * The wrap layer's `drillAs` rewrites are applied on top of the
+ * native NodeData so consumers see the same shape regardless of
+ * which engine produced the bytes — that's the spec-012 parity
+ * promise. Surface a divergence here and the parity test in
+ * `cargo test -p sittir-parity-tests` fires.
  */
 export function readTreeNode(tree: TreeHandle, nodeId?: number): unknown {
-  const data = readNode(tree, nodeId);
+  const data = readViaActiveBackend(tree, nodeId);
   return wrapNode(data, tree);
+}
+
+interface NativeEngineHandle {
+  parseAndRead(source: string): string;
+  readNode(nodeId: number): string;
+}
+interface CachedEngine {
+  engine: NativeEngineHandle;
+  rootData: AnyNodeData;
+}
+const ENGINE_CACHE = new WeakMap<TreeHandle, CachedEngine>();
+
+function readViaActiveBackend(tree: TreeHandle, nodeId?: number): AnyNodeData {
+  const backend = getActiveBackend();
+  if (backend.name !== 'native' || !tree.source) {
+    return readNode(tree, nodeId);
+  }
+  let cached = ENGINE_CACHE.get(tree);
+  if (!cached) {
+    const native = backend.native;
+    if (!native) return readNode(tree, nodeId);
+    const engine = new native.SittirEngine() as unknown as NativeEngineHandle;
+    const rootJson = engine.parseAndRead(tree.source);
+    const rootData = JSON.parse(rootJson) as AnyNodeData;
+    cached = { engine, rootData };
+    ENGINE_CACHE.set(tree, cached);
+  }
+  if (nodeId == null) return cached.rootData;
+  // Drill-in dispatch is suppressed today — the native engine
+  // assigns sequential counter ids in `parseAndRead`, but the
+  // legacy JS path passes tree-sitter pointer ids, and the two id
+  // spaces don't match. Calling `engine.readNode(pointerId)` panics
+  // the napi side. We skip native drill-in entirely and let the JS
+  // reader serve the request; this still gives consumers the
+  // native parse + initial read benefit on the whole-tree call,
+  // which is the expensive path. Drill-ins through the wrap layer's
+  // lazy getters are cheap JS work over already-cached
+  // `cached.rootData` anyway. Follow-up: have sittir_core::read_node
+  // accept tree-sitter Node ids OR have wrap.ts maintain a
+  // pointer-id → $nodeId mapping built during the initial read.
+  return readNode(tree, nodeId);
 }

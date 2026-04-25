@@ -26,6 +26,16 @@ export interface TreeHandle {
 	nodeById(id: number): AnyTreeNode;
 	/** The root node of the tree. */
 	rootNode: AnyTreeNode;
+	/**
+	 * Original source text. Optional — populated by tree-handle
+	 * factories that have it on hand (e.g. `validate/common.ts:treeHandle`)
+	 * so per-grammar `readTreeNode` implementations can dispatch to a
+	 * native engine via `parseAndRead(source)` when `getActiveBackend()`
+	 * reports `name === 'native'`. Absent when the consumer constructs
+	 * a TreeHandle without source (legacy paths) — `readTreeNode` falls
+	 * back to the in-process JS reader in that case.
+	 */
+	source?: string;
 }
 
 /**
