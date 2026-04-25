@@ -173,8 +173,6 @@ async function main(): Promise<void> {
         ? { ...report, baseline: baselineReport, compare }
         : { ...report }
     if (engineRaw === 'native') {
-        // --engine native — collapse so the user sees the native
-        // result as the primary report (not a sidecar).
         Object.assign(out, engineNativeReport)
     } else if (engineRaw === 'both') {
         out.engineNative = engineNativeReport
