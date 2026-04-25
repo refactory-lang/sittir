@@ -304,6 +304,8 @@ that the directive would split — granularity per comment block.
 - File system — per-grammar generated output under `packages/{rust,typescript,python}/src/` (008-factory-ergonomic-cleanup)
 - N/A — the engine is a pure transformation over in-memory strings and parse trees. No persistence layer. (012-rust-core-port)
 - Rust 1.82+, sittir-core, askama 0.14, napi-rs 3, per-grammar render crates at `packages/{lang}/rust-render/` (012-rust-core-port)
+- TypeScript 6.0.2 (ESM, `.ts` extensions in imports), Rust 1.82+ for native render path (already shipped on 012). + `@sittir/codegen` (walker / emitter / link / assemble / evaluate pipeline), `@sittir/core` (render, readNode, edit), `@sittir/types` (NodeData, ConfigOf, FromInput type projections), per-grammar packages (`@sittir/{rust,typescript,python}`), per-grammar napi crates (`sittir-{rust,typescript,python}-napi` for native render). Vitest for the test suite that defines the baseline. (016-parity-regressions)
+- File system — `specs/016-parity-regressions/baselines/{ts,native}.json` is the durable contract; generated TS/templates under `packages/{lang}/src/` and `packages/{lang}/templates/*.jinja` are codegen output (never hand-edited). (016-parity-regressions)
 
 ## Recent Changes
 - 004-yaml-render-templates: Added TypeScript (ESM, `.ts` extensions in imports), TypeScript 6.0.2 + `@sittir/core`, `@sittir/types`, `@sittir/codegen`; tree-sitter grammars (grammar.json + node-types.json)
