@@ -262,6 +262,7 @@ export const KEYWORDS = [
   '_inner_line_doc_comment_marker',
   '_kw_async',
   '_kw_move',
+  '_kw_negative',
   '_kw_operator',
   '_kw_ref',
   '_kw_static',
@@ -466,7 +467,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'whereClause', required: false, multiple: false },
   ],
   'async_block': [
-    { name: 'move', required: false, multiple: false },
+    { name: 'moveMarker', required: false, multiple: false },
     { name: 'block', required: true, multiple: false },
   ],
   'attribute': [
@@ -506,9 +507,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'identifier', required: true, multiple: false },
   ],
   'closure_expression': [
-    { name: 'static', required: false, multiple: false },
+    { name: 'staticMarker', required: false, multiple: false },
     { name: 'async', required: false, multiple: false },
-    { name: 'move', required: false, multiple: false },
+    { name: 'moveMarker', required: false, multiple: false },
     { name: 'parameters', required: true, multiple: false },
   ],
   'closure_parameters': [
@@ -633,7 +634,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'returnType', required: false, multiple: false },
   ],
   'gen_block': [
-    { name: 'move', required: false, multiple: false },
+    { name: 'moveMarker', required: false, multiple: false },
     { name: 'block', required: true, multiple: false },
   ],
   'generic_function': [
@@ -662,8 +663,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alternative', required: false, multiple: false },
   ],
   'impl_item': [
-    { name: 'unsafe', required: false, multiple: false },
+    { name: 'unsafeMarker', required: false, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
+    { name: 'negative', required: false, multiple: false },
     { name: 'trait', required: false, multiple: false },
     { name: 'type', required: true, multiple: false },
     { name: 'whereClause', required: false, multiple: false },
@@ -856,7 +858,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'trait_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
-    { name: 'unsafe', required: false, multiple: false },
+    { name: 'unsafeMarker', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'bounds', required: false, multiple: false },

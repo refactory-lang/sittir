@@ -715,8 +715,8 @@ pub struct AsyncBlockTemplate {
     pub leading_sep: bool,
     pub block: String,
     pub block_list: Vec<String>,
-    pub r#move: String,
-    pub r#move_list: Vec<String>,
+    pub move_marker: String,
+    pub move_marker_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -894,12 +894,12 @@ pub struct ClosureExpressionTemplate {
     pub leading_sep: bool,
     pub r#async: String,
     pub r#async_list: Vec<String>,
-    pub r#move: String,
-    pub r#move_list: Vec<String>,
+    pub move_marker: String,
+    pub move_marker_list: Vec<String>,
     pub parameters: String,
     pub parameters_list: Vec<String>,
-    pub r#static: String,
-    pub r#static_list: Vec<String>,
+    pub static_marker: String,
+    pub static_marker_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1365,8 +1365,8 @@ pub struct GenBlockTemplate {
     pub leading_sep: bool,
     pub block: String,
     pub block_list: Vec<String>,
-    pub r#move: String,
-    pub r#move_list: Vec<String>,
+    pub move_marker: String,
+    pub move_marker_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1470,14 +1470,16 @@ pub struct ImplItemTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
+    pub negative: String,
+    pub negative_list: Vec<String>,
     pub r#trait: String,
     pub r#trait_list: Vec<String>,
     pub r#type: String,
     pub r#type_list: Vec<String>,
     pub type_parameters: String,
     pub type_parameters_list: Vec<String>,
-    pub r#unsafe: String,
-    pub r#unsafe_list: Vec<String>,
+    pub unsafe_marker: String,
+    pub unsafe_marker_list: Vec<String>,
     pub where_clause: String,
     pub where_clause_list: Vec<String>,
 }
@@ -2250,8 +2252,8 @@ pub struct TraitItemTemplate {
     pub name_list: Vec<String>,
     pub type_parameters: String,
     pub type_parameters_list: Vec<String>,
-    pub r#unsafe: String,
-    pub r#unsafe_list: Vec<String>,
+    pub unsafe_marker: String,
+    pub unsafe_marker_list: Vec<String>,
     pub visibility_modifier: String,
     pub visibility_modifier_list: Vec<String>,
     pub where_clause: String,
@@ -3324,8 +3326,8 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 block: ctx.fields.get("block").cloned().unwrap_or_default(),
                 block_list: ctx.fields_list.get("block").cloned().unwrap_or_default(),
-                r#move: ctx.fields.get("move").cloned().unwrap_or_default(),
-                r#move_list: ctx.fields_list.get("move").cloned().unwrap_or_default(),
+                move_marker: ctx.fields.get("move_marker").cloned().unwrap_or_default(),
+                move_marker_list: ctx.fields_list.get("move_marker").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3503,12 +3505,12 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 r#async: ctx.fields.get("async").cloned().unwrap_or_default(),
                 r#async_list: ctx.fields_list.get("async").cloned().unwrap_or_default(),
-                r#move: ctx.fields.get("move").cloned().unwrap_or_default(),
-                r#move_list: ctx.fields_list.get("move").cloned().unwrap_or_default(),
+                move_marker: ctx.fields.get("move_marker").cloned().unwrap_or_default(),
+                move_marker_list: ctx.fields_list.get("move_marker").cloned().unwrap_or_default(),
                 parameters: ctx.fields.get("parameters").cloned().unwrap_or_default(),
                 parameters_list: ctx.fields_list.get("parameters").cloned().unwrap_or_default(),
-                r#static: ctx.fields.get("static").cloned().unwrap_or_default(),
-                r#static_list: ctx.fields_list.get("static").cloned().unwrap_or_default(),
+                static_marker: ctx.fields.get("static_marker").cloned().unwrap_or_default(),
+                static_marker_list: ctx.fields_list.get("static_marker").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3974,8 +3976,8 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 block: ctx.fields.get("block").cloned().unwrap_or_default(),
                 block_list: ctx.fields_list.get("block").cloned().unwrap_or_default(),
-                r#move: ctx.fields.get("move").cloned().unwrap_or_default(),
-                r#move_list: ctx.fields_list.get("move").cloned().unwrap_or_default(),
+                move_marker: ctx.fields.get("move_marker").cloned().unwrap_or_default(),
+                move_marker_list: ctx.fields_list.get("move_marker").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -4079,14 +4081,16 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
+                negative: ctx.fields.get("negative").cloned().unwrap_or_default(),
+                negative_list: ctx.fields_list.get("negative").cloned().unwrap_or_default(),
                 r#trait: ctx.fields.get("trait").cloned().unwrap_or_default(),
                 r#trait_list: ctx.fields_list.get("trait").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
                 type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
-                r#unsafe: ctx.fields.get("unsafe").cloned().unwrap_or_default(),
-                r#unsafe_list: ctx.fields_list.get("unsafe").cloned().unwrap_or_default(),
+                unsafe_marker: ctx.fields.get("unsafe_marker").cloned().unwrap_or_default(),
+                unsafe_marker_list: ctx.fields_list.get("unsafe_marker").cloned().unwrap_or_default(),
                 where_clause: ctx.fields.get("where_clause").cloned().unwrap_or_default(),
                 where_clause_list: ctx.fields_list.get("where_clause").cloned().unwrap_or_default(),
             };
@@ -4859,8 +4863,8 @@ pub fn render_dispatch(
                 name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
                 type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
-                r#unsafe: ctx.fields.get("unsafe").cloned().unwrap_or_default(),
-                r#unsafe_list: ctx.fields_list.get("unsafe").cloned().unwrap_or_default(),
+                unsafe_marker: ctx.fields.get("unsafe_marker").cloned().unwrap_or_default(),
+                unsafe_marker_list: ctx.fields_list.get("unsafe_marker").cloned().unwrap_or_default(),
                 visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
                 visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
                 where_clause: ctx.fields.get("where_clause").cloned().unwrap_or_default(),

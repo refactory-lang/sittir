@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 371,
+  "nodeCount": 372,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -1349,6 +1349,16 @@
       "isParameterless": true,
       "stampExpression": "\"move\" as const",
       "text": "move"
+    },
+    {
+      "kind": "_kw_negative",
+      "modelType": "token",
+      "typeName": "KwNegative",
+      "irKey": "kwNegative",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"!\" as const",
+      "text": "!"
     },
     {
       "kind": "_kw_operator",
@@ -3604,9 +3614,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "move",
-          "propertyName": "move",
-          "paramName": "move",
+          "name": "move_marker",
+          "propertyName": "moveMarker",
+          "paramName": "moveMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -3618,7 +3628,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4371,9 +4381,9 @@
           "parentKind": "closure_expression",
           "fields": [
             {
-              "name": "static",
-              "propertyName": "static",
-              "paramName": "static_",
+              "name": "static_marker",
+              "propertyName": "staticMarker",
+              "paramName": "staticMarker",
               "required": false,
               "multiple": false,
               "nonEmpty": false,
@@ -4385,7 +4395,7 @@
                   "unresolved": true
                 }
               ],
-              "source": "enriched",
+              "source": "override",
               "projection": {
                 "typeName": "",
                 "kinds": [
@@ -4417,9 +4427,9 @@
               }
             },
             {
-              "name": "move",
-              "propertyName": "move",
-              "paramName": "move",
+              "name": "move_marker",
+              "propertyName": "moveMarker",
+              "paramName": "moveMarker",
               "required": false,
               "multiple": false,
               "nonEmpty": false,
@@ -4431,7 +4441,7 @@
                   "unresolved": true
                 }
               ],
-              "source": "enriched",
+              "source": "override",
               "projection": {
                 "typeName": "",
                 "kinds": [
@@ -4490,9 +4500,9 @@
           "parentKind": "closure_expression",
           "fields": [
             {
-              "name": "static",
-              "propertyName": "static",
-              "paramName": "static_",
+              "name": "static_marker",
+              "propertyName": "staticMarker",
+              "paramName": "staticMarker",
               "required": false,
               "multiple": false,
               "nonEmpty": false,
@@ -4504,7 +4514,7 @@
                   "unresolved": true
                 }
               ],
-              "source": "enriched",
+              "source": "override",
               "projection": {
                 "typeName": "",
                 "kinds": [
@@ -4536,9 +4546,9 @@
               }
             },
             {
-              "name": "move",
-              "propertyName": "move",
-              "paramName": "move",
+              "name": "move_marker",
+              "propertyName": "moveMarker",
+              "paramName": "moveMarker",
               "required": false,
               "multiple": false,
               "nonEmpty": false,
@@ -4550,7 +4560,7 @@
                   "unresolved": true
                 }
               ],
-              "source": "enriched",
+              "source": "override",
               "projection": {
                 "typeName": "",
                 "kinds": [
@@ -4613,9 +4623,9 @@
       "parentKind": "closure_expression",
       "fields": [
         {
-          "name": "static",
-          "propertyName": "static",
-          "paramName": "static_",
+          "name": "static_marker",
+          "propertyName": "staticMarker",
+          "paramName": "staticMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -4627,7 +4637,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4659,9 +4669,9 @@
           }
         },
         {
-          "name": "move",
-          "propertyName": "move",
-          "paramName": "move",
+          "name": "move_marker",
+          "propertyName": "moveMarker",
+          "paramName": "moveMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -4673,7 +4683,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4734,9 +4744,9 @@
       "parentKind": "closure_expression",
       "fields": [
         {
-          "name": "static",
-          "propertyName": "static",
-          "paramName": "static_",
+          "name": "static_marker",
+          "propertyName": "staticMarker",
+          "paramName": "staticMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -4748,7 +4758,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4780,9 +4790,9 @@
           }
         },
         {
-          "name": "move",
-          "propertyName": "move",
-          "paramName": "move",
+          "name": "move_marker",
+          "propertyName": "moveMarker",
+          "paramName": "moveMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -4794,7 +4804,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7960,9 +7970,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "move",
-          "propertyName": "move",
-          "paramName": "move",
+          "name": "move_marker",
+          "propertyName": "moveMarker",
+          "paramName": "moveMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -7974,7 +7984,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8488,9 +8498,9 @@
           "parentKind": "impl_item",
           "fields": [
             {
-              "name": "unsafe",
-              "propertyName": "unsafe",
-              "paramName": "unsafe",
+              "name": "unsafe_marker",
+              "propertyName": "unsafeMarker",
+              "paramName": "unsafeMarker",
               "required": false,
               "multiple": false,
               "nonEmpty": false,
@@ -8502,7 +8512,7 @@
                   "unresolved": true
                 }
               ],
-              "source": "enriched",
+              "source": "override",
               "projection": {
                 "typeName": "",
                 "kinds": [
@@ -8530,6 +8540,29 @@
                 "typeName": "",
                 "kinds": [
                   "type_parameters"
+                ]
+              }
+            },
+            {
+              "name": "negative",
+              "propertyName": "negative",
+              "paramName": "negative",
+              "required": false,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "optional",
+                  "name": "_kw_negative",
+                  "unresolved": true
+                }
+              ],
+              "source": "override",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_kw_negative"
                 ]
               }
             },
@@ -8644,9 +8677,9 @@
           "parentKind": "impl_item",
           "fields": [
             {
-              "name": "unsafe",
-              "propertyName": "unsafe",
-              "paramName": "unsafe",
+              "name": "unsafe_marker",
+              "propertyName": "unsafeMarker",
+              "paramName": "unsafeMarker",
               "required": false,
               "multiple": false,
               "nonEmpty": false,
@@ -8658,7 +8691,7 @@
                   "unresolved": true
                 }
               ],
-              "source": "enriched",
+              "source": "override",
               "projection": {
                 "typeName": "",
                 "kinds": [
@@ -8686,6 +8719,29 @@
                 "typeName": "",
                 "kinds": [
                   "type_parameters"
+                ]
+              }
+            },
+            {
+              "name": "negative",
+              "propertyName": "negative",
+              "paramName": "negative",
+              "required": false,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "optional",
+                  "name": "_kw_negative",
+                  "unresolved": true
+                }
+              ],
+              "source": "override",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_kw_negative"
                 ]
               }
             },
@@ -8804,9 +8860,9 @@
       "parentKind": "impl_item",
       "fields": [
         {
-          "name": "unsafe",
-          "propertyName": "unsafe",
-          "paramName": "unsafe",
+          "name": "unsafe_marker",
+          "propertyName": "unsafeMarker",
+          "paramName": "unsafeMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8818,7 +8874,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8846,6 +8902,29 @@
             "typeName": "",
             "kinds": [
               "type_parameters"
+            ]
+          }
+        },
+        {
+          "name": "negative",
+          "propertyName": "negative",
+          "paramName": "negative",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_kw_negative",
+              "unresolved": true
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_kw_negative"
             ]
           }
         },
@@ -8962,9 +9041,9 @@
       "parentKind": "impl_item",
       "fields": [
         {
-          "name": "unsafe",
-          "propertyName": "unsafe",
-          "paramName": "unsafe",
+          "name": "unsafe_marker",
+          "propertyName": "unsafeMarker",
+          "paramName": "unsafeMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8976,7 +9055,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9004,6 +9083,29 @@
             "typeName": "",
             "kinds": [
               "type_parameters"
+            ]
+          }
+        },
+        {
+          "name": "negative",
+          "propertyName": "negative",
+          "paramName": "negative",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_kw_negative",
+              "unresolved": true
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_kw_negative"
             ]
           }
         },
@@ -14848,9 +14950,9 @@
           }
         },
         {
-          "name": "unsafe",
-          "propertyName": "unsafe",
-          "paramName": "unsafe",
+          "name": "unsafe_marker",
+          "propertyName": "unsafeMarker",
+          "paramName": "unsafeMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -14862,7 +14964,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [

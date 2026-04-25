@@ -2706,8 +2706,13 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "unsafe"
+              "type": "FIELD",
+              "name": "unsafe_marker",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_kw_unsafe_marker"
+              },
+              "source": "override"
             },
             {
               "type": "BLANK"
@@ -2744,8 +2749,13 @@
                   "type": "CHOICE",
                   "members": [
                     {
-                      "type": "STRING",
-                      "value": "!"
+                      "type": "FIELD",
+                      "name": "negative",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_kw_negative"
+                      },
+                      "source": "override"
                     },
                     {
                       "type": "BLANK"
@@ -2858,8 +2868,13 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "unsafe"
+              "type": "FIELD",
+              "name": "unsafe_marker",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_kw_unsafe_marker"
+              },
+              "source": "override"
             },
             {
               "type": "BLANK"
@@ -7533,8 +7548,13 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "STRING",
-                "value": "static"
+                "type": "FIELD",
+                "name": "static_marker",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_kw_static_marker"
+                },
+                "source": "override"
               },
               {
                 "type": "BLANK"
@@ -7557,8 +7577,13 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "STRING",
-                "value": "move"
+                "type": "FIELD",
+                "name": "move_marker",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_kw_move_marker"
+                },
+                "source": "override"
               },
               {
                 "type": "BLANK"
@@ -7876,8 +7901,13 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "move"
+              "type": "FIELD",
+              "name": "move_marker",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_kw_move_marker"
+              },
+              "source": "override"
             },
             {
               "type": "BLANK"
@@ -7906,8 +7936,13 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "move"
+              "type": "FIELD",
+              "name": "move_marker",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_kw_move_marker"
+              },
+              "source": "override"
             },
             {
               "type": "BLANK"
@@ -10369,6 +10404,14 @@
         }
       ]
     },
+    "_kw_move_marker": {
+      "type": "PREC",
+      "value": -1,
+      "content": {
+        "type": "STRING",
+        "value": "move"
+      }
+    },
     "_kw_attributes": {
       "type": "BLANK"
     },
@@ -10380,6 +10423,18 @@
     },
     "_kw_right": {
       "type": "BLANK"
+    },
+    "_kw_static_marker": {
+      "type": "PREC",
+      "value": -1,
+      "content": {
+        "type": "PREC",
+        "value": -1,
+        "content": {
+          "type": "STRING",
+          "value": "static"
+        }
+      }
     },
     "_kw_modifier": {
       "type": "BLANK"
@@ -10406,6 +10461,22 @@
       "content": {
         "type": "STRING",
         "value": "::"
+      }
+    },
+    "_kw_unsafe_marker": {
+      "type": "PREC",
+      "value": -1,
+      "content": {
+        "type": "STRING",
+        "value": "unsafe"
+      }
+    },
+    "_kw_negative": {
+      "type": "PREC",
+      "value": -1,
+      "content": {
+        "type": "STRING",
+        "value": "!"
       }
     },
     "_kw_object": {

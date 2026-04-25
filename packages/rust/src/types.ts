@@ -1060,8 +1060,9 @@ export interface ImplItemUFormBody {
   readonly $type: 'impl_item';
   readonly $variant: 'body';
   readonly $fields: {
-    readonly unsafe?: BooleanKeyword<"unsafe">;
+    readonly unsafe_marker?: BooleanKeyword<"unsafe">;
     readonly type_parameters?: TypeParameters;
+    readonly negative?: BooleanKeyword<"!">;
     readonly trait?: TypeIdentifier | ScopedTypeIdentifier | GenericType;
     readonly type: _Type;
     readonly where_clause?: WhereClause;
@@ -1073,8 +1074,9 @@ export interface ImplItemUFormSemi {
   readonly $type: 'impl_item';
   readonly $variant: 'semi';
   readonly $fields: {
-    readonly unsafe?: BooleanKeyword<"unsafe">;
+    readonly unsafe_marker?: BooleanKeyword<"unsafe">;
     readonly type_parameters?: TypeParameters;
+    readonly negative?: BooleanKeyword<"!">;
     readonly trait?: TypeIdentifier | ScopedTypeIdentifier | GenericType;
     readonly type: _Type;
     readonly where_clause?: WhereClause;
@@ -1086,7 +1088,7 @@ export interface TraitItem {
   readonly $type: 'trait_item';
   readonly $fields: {
     readonly visibility_modifier?: VisibilityModifier;
-    readonly unsafe?: BooleanKeyword<"unsafe">;
+    readonly unsafe_marker?: BooleanKeyword<"unsafe">;
     readonly name: TypeIdentifier;
     readonly type_parameters?: TypeParameters;
     readonly bounds?: TraitBounds;
@@ -1731,9 +1733,9 @@ export interface ClosureExpressionUFormBlock {
   readonly $type: 'closure_expression';
   readonly $variant: 'block';
   readonly $fields: {
-    readonly static?: BooleanKeyword<"static">;
+    readonly static_marker?: BooleanKeyword<"static">;
     readonly async?: BooleanKeyword<"async">;
-    readonly move?: BooleanKeyword<"move">;
+    readonly move_marker?: BooleanKeyword<"move">;
     readonly parameters: ClosureParameters;
   };
   readonly $children: readonly [ClosureExpressionBlock];
@@ -1743,9 +1745,9 @@ export interface ClosureExpressionUFormExpr {
   readonly $type: 'closure_expression';
   readonly $variant: 'expr';
   readonly $fields: {
-    readonly static?: BooleanKeyword<"static">;
+    readonly static_marker?: BooleanKeyword<"static">;
     readonly async?: BooleanKeyword<"async">;
-    readonly move?: BooleanKeyword<"move">;
+    readonly move_marker?: BooleanKeyword<"move">;
     readonly parameters: ClosureParameters;
   };
   readonly $children: readonly [ClosureExpressionExpr];
@@ -1810,7 +1812,7 @@ export interface UnsafeBlock {
 export interface AsyncBlock {
   readonly $type: 'async_block';
   readonly $fields: {
-    readonly move?: BooleanKeyword<"move">;
+    readonly move_marker?: BooleanKeyword<"move">;
     readonly block: Block;
   };
 }
@@ -1818,7 +1820,7 @@ export interface AsyncBlock {
 export interface GenBlock {
   readonly $type: 'gen_block';
   readonly $fields: {
-    readonly move?: BooleanKeyword<"move">;
+    readonly move_marker?: BooleanKeyword<"move">;
     readonly block: Block;
   };
 }

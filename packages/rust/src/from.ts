@@ -777,8 +777,9 @@ export function implItemFrom(input?: T.ImplItem.Loose): ReturnType<typeof F.impl
 
 export function implItemUFormBodyFrom(input: Omit<ConfigOf<T.ImplItemUFormBody>, '$variant'>) {
   return F.implItemUFormBody({
-    unsafe: _resolveBooleanKeyword(input.unsafe),
+    unsafeMarker: _resolveBooleanKeyword(input.unsafeMarker),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
+    negative: _resolveBooleanKeyword(input.negative),
     trait: _resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType>(input.trait, _K0, _K13),
     type: _resolveOne<T._Type>(input.type, _K7, _K8),
     whereClause: _resolveOneBranch<T.WhereClause>(input.whereClause, "where_clause"),
@@ -788,8 +789,9 @@ export function implItemUFormBodyFrom(input: Omit<ConfigOf<T.ImplItemUFormBody>,
 
 export function implItemUFormSemiFrom(input: Omit<ConfigOf<T.ImplItemUFormSemi>, '$variant'>) {
   return F.implItemUFormSemi({
-    unsafe: _resolveBooleanKeyword(input.unsafe),
+    unsafeMarker: _resolveBooleanKeyword(input.unsafeMarker),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
+    negative: _resolveBooleanKeyword(input.negative),
     trait: _resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType>(input.trait, _K0, _K13),
     type: _resolveOne<T._Type>(input.type, _K7, _K8),
     whereClause: _resolveOneBranch<T.WhereClause>(input.whereClause, "where_clause"),
@@ -800,7 +802,7 @@ export function traitItemFrom(input: T.TraitItem.Loose): ReturnType<typeof F.tra
   if (isNodeData(input)) return input;
   return F.traitItem({
     visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
-    unsafe: _resolveBooleanKeyword(input.unsafe),
+    unsafeMarker: _resolveBooleanKeyword(input.unsafeMarker),
     name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     bounds: _resolveOneBranch<T.TraitBounds>(input.bounds, "trait_bounds"),
@@ -1528,9 +1530,9 @@ export function closureExpressionFrom(input?: T.ClosureExpression.Loose): Return
 
 export function closureExpressionUFormBlockFrom(input: Omit<ConfigOf<T.ClosureExpressionUFormBlock>, '$variant'>) {
   return F.closureExpressionUFormBlock({
-    static: _resolveBooleanKeyword(input.static),
+    staticMarker: _resolveBooleanKeyword(input.staticMarker),
     async: _resolveBooleanKeyword(input.async),
-    move: _resolveBooleanKeyword(input.move),
+    moveMarker: _resolveBooleanKeyword(input.moveMarker),
     parameters: _resolveOneBranch<T.ClosureParameters>(input.parameters, "closure_parameters"),
     returnType: _resolveOne<T._Type>(input.returnType, _K7, _K8),
     body: _resolveOneBranch<T.Block>(input.body, "block"),
@@ -1539,9 +1541,9 @@ export function closureExpressionUFormBlockFrom(input: Omit<ConfigOf<T.ClosureEx
 
 export function closureExpressionUFormExprFrom(input: Omit<ConfigOf<T.ClosureExpressionUFormExpr>, '$variant'>) {
   return F.closureExpressionUFormExpr({
-    static: _resolveBooleanKeyword(input.static),
+    staticMarker: _resolveBooleanKeyword(input.staticMarker),
     async: _resolveBooleanKeyword(input.async),
-    move: _resolveBooleanKeyword(input.move),
+    moveMarker: _resolveBooleanKeyword(input.moveMarker),
     parameters: _resolveOneBranch<T.ClosureParameters>(input.parameters, "closure_parameters"),
     body: _resolveOne<T.Expression | "_">(input.body, _K5, _K6),
   });
@@ -1612,7 +1614,7 @@ export function unsafeBlockFrom(input: T.UnsafeBlock.Loose): ReturnType<typeof F
 export function asyncBlockFrom(input: T.AsyncBlock.Loose): ReturnType<typeof F.asyncBlock> | T.AsyncBlock {
   if (isNodeData(input)) return input;
   return F.asyncBlock({
-    move: _resolveBooleanKeyword(input.move),
+    moveMarker: _resolveBooleanKeyword(input.moveMarker),
     block: _resolveOneBranch<T.Block>(input.block, "block"),
   });
 }
@@ -1620,7 +1622,7 @@ export function asyncBlockFrom(input: T.AsyncBlock.Loose): ReturnType<typeof F.a
 export function genBlockFrom(input: T.GenBlock.Loose): ReturnType<typeof F.genBlock> | T.GenBlock {
   if (isNodeData(input)) return input;
   return F.genBlock({
-    move: _resolveBooleanKeyword(input.move),
+    moveMarker: _resolveBooleanKeyword(input.moveMarker),
     block: _resolveOneBranch<T.Block>(input.block, "block"),
   });
 }

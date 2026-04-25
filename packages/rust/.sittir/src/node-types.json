@@ -742,6 +742,16 @@
             "named": true
           }
         ]
+      },
+      "move_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "move",
+            "named": false
+          }
+        ]
       }
     }
   },
@@ -1322,6 +1332,16 @@
     "type": "closure_expression",
     "named": true,
     "fields": {
+      "move_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "move",
+            "named": false
+          }
+        ]
+      },
       "parameters": {
         "multiple": false,
         "required": true,
@@ -1329,6 +1349,16 @@
           {
             "type": "closure_parameters",
             "named": true
+          }
+        ]
+      },
+      "static_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "static",
+            "named": false
           }
         ]
       }
@@ -2738,6 +2768,16 @@
             "named": true
           }
         ]
+      },
+      "move_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "move",
+            "named": false
+          }
+        ]
       }
     }
   },
@@ -2967,6 +3007,16 @@
     "type": "impl_item",
     "named": true,
     "fields": {
+      "negative": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "!",
+            "named": false
+          }
+        ]
+      },
       "trait": {
         "multiple": false,
         "required": false,
@@ -3002,6 +3052,16 @@
           {
             "type": "type_parameters",
             "named": true
+          }
+        ]
+      },
+      "unsafe_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "unsafe",
+            "named": false
           }
         ]
       },
@@ -5627,6 +5687,16 @@
           {
             "type": "type_parameters",
             "named": true
+          }
+        ]
+      },
+      "unsafe_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "unsafe",
+            "named": false
           }
         ]
       },

@@ -340,7 +340,7 @@
     ],
     "trait_item": [
       "visibility_modifier",
-      "unsafe",
+      "unsafe_marker",
       "name",
       "type_parameters",
       "bounds",
@@ -562,11 +562,11 @@
       "block"
     ],
     "async_block": [
-      "move",
+      "move_marker",
       "block"
     ],
     "gen_block": [
-      "move",
+      "move_marker",
       "block"
     ],
     "try_block": [

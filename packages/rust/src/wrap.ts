@@ -517,8 +517,9 @@ export function wrapWherePredicate(data: _NodeData, tree: TreeHandle): WrappedNo
 export function wrapImplItem(data: _NodeData, tree: TreeHandle): WrappedNode<ImplItem> {
   return {
     ...data,
-    get unsafe() { return drillIn(data.$fields?.['unsafe'], tree); },
+    get unsafeMarker() { return drillIn(data.$fields?.['unsafe_marker'], tree); },
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
+    get negative() { return drillIn(data.$fields?.['negative'], tree); },
     get trait() { return drillIn(data.$fields?.['trait'], tree); },
     get typeField() { return drillIn(data.$fields?.['type'], tree); },
     get whereClause() { return drillIn(data.$fields?.['where_clause'], tree); },
@@ -530,7 +531,7 @@ export function wrapTraitItem(data: _NodeData, tree: TreeHandle): WrappedNode<Tr
   return {
     ...data,
     get visibilityModifier() { return drillIn(data.$fields?.['visibility_modifier'], tree); },
-    get unsafe() { return drillIn(data.$fields?.['unsafe'], tree); },
+    get unsafeMarker() { return drillIn(data.$fields?.['unsafe_marker'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
     get bounds() { return drillIn(data.$fields?.['bounds'], tree); },
@@ -1191,9 +1192,9 @@ export function wrapConstBlock(data: _NodeData, tree: TreeHandle): WrappedNode<C
 export function wrapClosureExpression(data: _NodeData, tree: TreeHandle): WrappedNode<ClosureExpression> {
   return {
     ...data,
-    get static() { return drillIn(data.$fields?.['static'], tree); },
+    get staticMarker() { return drillIn(data.$fields?.['static_marker'], tree); },
     get async() { return drillIn(data.$fields?.['async'], tree); },
-    get move() { return drillIn(data.$fields?.['move'], tree); },
+    get moveMarker() { return drillIn(data.$fields?.['move_marker'], tree); },
     get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ClosureExpression>;
@@ -1266,7 +1267,7 @@ export function wrapUnsafeBlock(data: _NodeData, tree: TreeHandle): WrappedNode<
 export function wrapAsyncBlock(data: _NodeData, tree: TreeHandle): WrappedNode<AsyncBlock> {
   return {
     ...data,
-    get move() { return drillIn(data.$fields?.['move'], tree); },
+    get moveMarker() { return drillIn(data.$fields?.['move_marker'], tree); },
     get block() { return drillIn(data.$fields?.['block'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<AsyncBlock>;
@@ -1275,7 +1276,7 @@ export function wrapAsyncBlock(data: _NodeData, tree: TreeHandle): WrappedNode<A
 export function wrapGenBlock(data: _NodeData, tree: TreeHandle): WrappedNode<GenBlock> {
   return {
     ...data,
-    get move() { return drillIn(data.$fields?.['move'], tree); },
+    get moveMarker() { return drillIn(data.$fields?.['move_marker'], tree); },
     get block() { return drillIn(data.$fields?.['block'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<GenBlock>;

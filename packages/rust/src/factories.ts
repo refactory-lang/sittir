@@ -1115,8 +1115,9 @@ export function implItem(config: ConfigOf<T.ImplItemUFormBody> | ConfigOf<T.Impl
 }
 export function implItemUFormBody(config: Omit<ConfigOf<T.ImplItemUFormBody>, '$variant'>) {
   const fields = {
-    unsafe: config.unsafe,
+    unsafe_marker: config.unsafeMarker,
     type_parameters: config.typeParameters,
+    negative: config.negative,
     trait: config.trait,
     type: config.type,
     where_clause: config.whereClause,
@@ -1130,29 +1131,33 @@ export function implItemUFormBody(config: Omit<ConfigOf<T.ImplItemUFormBody>, '$
     $variant: 'body' as const,
     $fields: fields,
     $children: children,
-    unsafe(value?: "unsafe" | undefined) {
-      if (value === undefined) return fields.unsafe;
-      return implItemUFormBody({ typeParameters: config.typeParameters, trait: config.trait, type: config.type, whereClause: config.whereClause, body: inner.$fields.body, unsafe: value });
+    unsafeMarker(value?: "unsafe" | undefined) {
+      if (value === undefined) return fields.unsafe_marker;
+      return implItemUFormBody({ typeParameters: config.typeParameters, negative: config.negative, trait: config.trait, type: config.type, whereClause: config.whereClause, body: inner.$fields.body, unsafeMarker: value });
     },
     typeParameters(value?: T.TypeParameters | undefined) {
       if (value === undefined) return fields.type_parameters;
-      return implItemUFormBody({ unsafe: config.unsafe, trait: config.trait, type: config.type, whereClause: config.whereClause, body: inner.$fields.body, typeParameters: value });
+      return implItemUFormBody({ unsafeMarker: config.unsafeMarker, negative: config.negative, trait: config.trait, type: config.type, whereClause: config.whereClause, body: inner.$fields.body, typeParameters: value });
+    },
+    negative(value?: "!" | undefined) {
+      if (value === undefined) return fields.negative;
+      return implItemUFormBody({ unsafeMarker: config.unsafeMarker, typeParameters: config.typeParameters, trait: config.trait, type: config.type, whereClause: config.whereClause, body: inner.$fields.body, negative: value });
     },
     trait(value?: T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | undefined) {
       if (value === undefined) return fields.trait;
-      return implItemUFormBody({ unsafe: config.unsafe, typeParameters: config.typeParameters, type: config.type, whereClause: config.whereClause, body: inner.$fields.body, trait: value });
+      return implItemUFormBody({ unsafeMarker: config.unsafeMarker, typeParameters: config.typeParameters, negative: config.negative, type: config.type, whereClause: config.whereClause, body: inner.$fields.body, trait: value });
     },
     typeField(value?: T._Type) {
       if (value === undefined) return fields.type;
-      return implItemUFormBody({ unsafe: config.unsafe, typeParameters: config.typeParameters, trait: config.trait, whereClause: config.whereClause, body: inner.$fields.body, type: value });
+      return implItemUFormBody({ unsafeMarker: config.unsafeMarker, typeParameters: config.typeParameters, negative: config.negative, trait: config.trait, whereClause: config.whereClause, body: inner.$fields.body, type: value });
     },
     whereClause(value?: T.WhereClause | undefined) {
       if (value === undefined) return fields.where_clause;
-      return implItemUFormBody({ unsafe: config.unsafe, typeParameters: config.typeParameters, trait: config.trait, type: config.type, body: inner.$fields.body, whereClause: value });
+      return implItemUFormBody({ unsafeMarker: config.unsafeMarker, typeParameters: config.typeParameters, negative: config.negative, trait: config.trait, type: config.type, body: inner.$fields.body, whereClause: value });
     },
     body(value?: T.DeclarationList) {
       if (value === undefined) return inner.$fields.body;
-      return implItemUFormBody({ unsafe: config.unsafe, typeParameters: config.typeParameters, trait: config.trait, type: config.type, whereClause: config.whereClause, body: value });
+      return implItemUFormBody({ unsafeMarker: config.unsafeMarker, typeParameters: config.typeParameters, negative: config.negative, trait: config.trait, type: config.type, whereClause: config.whereClause, body: value });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -1164,8 +1169,9 @@ export function implItemUFormBody(config: Omit<ConfigOf<T.ImplItemUFormBody>, '$
 }
 export function implItemUFormSemi(config: Omit<ConfigOf<T.ImplItemUFormSemi>, '$variant'>) {
   const fields = {
-    unsafe: config.unsafe ? "unsafe" as const : undefined,
+    unsafe_marker: config.unsafeMarker ? "unsafe" as const : undefined,
     type_parameters: config.typeParameters,
+    negative: config.negative ? "!" as const : undefined,
     trait: config.trait,
     type: config.type,
     where_clause: config.whereClause,
@@ -1176,8 +1182,9 @@ export function implItemUFormSemi(config: Omit<ConfigOf<T.ImplItemUFormSemi>, '$
     $named: true as const,
     $variant: 'semi' as const,
     $fields: fields,
-    unsafe(value?: "unsafe" | undefined) { return _fs(config, implItemUFormSemi, 'unsafe', value, config?.unsafe); },
+    unsafeMarker(value?: "unsafe" | undefined) { return _fs(config, implItemUFormSemi, 'unsafeMarker', value, config?.unsafeMarker); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, implItemUFormSemi, 'typeParameters', value, config?.typeParameters); },
+    negative(value?: "!" | undefined) { return _fs(config, implItemUFormSemi, 'negative', value, config?.negative); },
     trait(value?: T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | undefined) { return _fs(config, implItemUFormSemi, 'trait', value, config?.trait); },
     typeField(value?: T._Type) { return _fs(config, implItemUFormSemi, 'type', value, config?.type); },
     whereClause(value?: T.WhereClause | undefined) { return _fs(config, implItemUFormSemi, 'whereClause', value, config?.whereClause); },
@@ -1193,7 +1200,7 @@ export function implItemUFormSemi(config: Omit<ConfigOf<T.ImplItemUFormSemi>, '$
 export function traitItem(config: ConfigOf<T.TraitItem>) {
   const fields = {
     visibility_modifier: config.visibilityModifier,
-    unsafe: config.unsafe ? "unsafe" as const : undefined,
+    unsafe_marker: config.unsafeMarker ? "unsafe" as const : undefined,
     name: config.name,
     type_parameters: config.typeParameters,
     bounds: config.bounds,
@@ -1206,7 +1213,7 @@ export function traitItem(config: ConfigOf<T.TraitItem>) {
     $named: true as const,
     $fields: fields,
     visibilityModifier(value?: T.VisibilityModifier | undefined) { return _fs(config, traitItem, 'visibilityModifier', value, config?.visibilityModifier); },
-    unsafe(value?: "unsafe" | undefined) { return _fs(config, traitItem, 'unsafe', value, config?.unsafe); },
+    unsafeMarker(value?: "unsafe" | undefined) { return _fs(config, traitItem, 'unsafeMarker', value, config?.unsafeMarker); },
     name(value?: T.TypeIdentifier) { return _fs(config, traitItem, 'name', value, config?.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, traitItem, 'typeParameters', value, config?.typeParameters); },
     bounds(value?: T.TraitBounds | undefined) { return _fs(config, traitItem, 'bounds', value, config?.bounds); },
@@ -3140,9 +3147,9 @@ export function closureExpression(config: ConfigOf<T.ClosureExpressionUFormBlock
 }
 export function closureExpressionUFormBlock(config: Omit<ConfigOf<T.ClosureExpressionUFormBlock>, '$variant'>) {
   const fields = {
-    static: config.static,
+    static_marker: config.staticMarker,
     async: config.async,
-    move: config.move,
+    move_marker: config.moveMarker,
     parameters: config.parameters,
   };
   const inner = {
@@ -3162,29 +3169,29 @@ export function closureExpressionUFormBlock(config: Omit<ConfigOf<T.ClosureExpre
     $variant: 'block' as const,
     $fields: fields,
     $children: children,
-    static(value?: "static" | undefined) {
-      if (value === undefined) return fields.static;
-      return closureExpressionUFormBlock({ async: config.async, move: config.move, parameters: config.parameters, returnType: inner.$fields.return_type, body: inner.$fields.body, static: value });
+    staticMarker(value?: "static" | undefined) {
+      if (value === undefined) return fields.static_marker;
+      return closureExpressionUFormBlock({ async: config.async, moveMarker: config.moveMarker, parameters: config.parameters, returnType: inner.$fields.return_type, body: inner.$fields.body, staticMarker: value });
     },
     async(value?: "async" | undefined) {
       if (value === undefined) return fields.async;
-      return closureExpressionUFormBlock({ static: config.static, move: config.move, parameters: config.parameters, returnType: inner.$fields.return_type, body: inner.$fields.body, async: value });
+      return closureExpressionUFormBlock({ staticMarker: config.staticMarker, moveMarker: config.moveMarker, parameters: config.parameters, returnType: inner.$fields.return_type, body: inner.$fields.body, async: value });
     },
-    move(value?: "move" | undefined) {
-      if (value === undefined) return fields.move;
-      return closureExpressionUFormBlock({ static: config.static, async: config.async, parameters: config.parameters, returnType: inner.$fields.return_type, body: inner.$fields.body, move: value });
+    moveMarker(value?: "move" | undefined) {
+      if (value === undefined) return fields.move_marker;
+      return closureExpressionUFormBlock({ staticMarker: config.staticMarker, async: config.async, parameters: config.parameters, returnType: inner.$fields.return_type, body: inner.$fields.body, moveMarker: value });
     },
     parameters(value?: T.ClosureParameters) {
       if (value === undefined) return fields.parameters;
-      return closureExpressionUFormBlock({ static: config.static, async: config.async, move: config.move, returnType: inner.$fields.return_type, body: inner.$fields.body, parameters: value });
+      return closureExpressionUFormBlock({ staticMarker: config.staticMarker, async: config.async, moveMarker: config.moveMarker, returnType: inner.$fields.return_type, body: inner.$fields.body, parameters: value });
     },
     returnType(value?: T._Type | undefined) {
       if (value === undefined) return inner.$fields.return_type;
-      return closureExpressionUFormBlock({ static: config.static, async: config.async, move: config.move, parameters: config.parameters, body: inner.$fields.body, returnType: value });
+      return closureExpressionUFormBlock({ staticMarker: config.staticMarker, async: config.async, moveMarker: config.moveMarker, parameters: config.parameters, body: inner.$fields.body, returnType: value });
     },
     body(value?: T.Block) {
       if (value === undefined) return inner.$fields.body;
-      return closureExpressionUFormBlock({ static: config.static, async: config.async, move: config.move, parameters: config.parameters, returnType: inner.$fields.return_type, body: value });
+      return closureExpressionUFormBlock({ staticMarker: config.staticMarker, async: config.async, moveMarker: config.moveMarker, parameters: config.parameters, returnType: inner.$fields.return_type, body: value });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -3196,9 +3203,9 @@ export function closureExpressionUFormBlock(config: Omit<ConfigOf<T.ClosureExpre
 }
 export function closureExpressionUFormExpr(config: Omit<ConfigOf<T.ClosureExpressionUFormExpr>, '$variant'>) {
   const fields = {
-    static: config.static,
+    static_marker: config.staticMarker,
     async: config.async,
-    move: config.move,
+    move_marker: config.moveMarker,
     parameters: config.parameters,
   };
   const inner = closureExpressionExpr(config);
@@ -3210,25 +3217,25 @@ export function closureExpressionUFormExpr(config: Omit<ConfigOf<T.ClosureExpres
     $variant: 'expr' as const,
     $fields: fields,
     $children: children,
-    static(value?: "static" | undefined) {
-      if (value === undefined) return fields.static;
-      return closureExpressionUFormExpr({ async: config.async, move: config.move, parameters: config.parameters, body: inner.$fields.body, static: value });
+    staticMarker(value?: "static" | undefined) {
+      if (value === undefined) return fields.static_marker;
+      return closureExpressionUFormExpr({ async: config.async, moveMarker: config.moveMarker, parameters: config.parameters, body: inner.$fields.body, staticMarker: value });
     },
     async(value?: "async" | undefined) {
       if (value === undefined) return fields.async;
-      return closureExpressionUFormExpr({ static: config.static, move: config.move, parameters: config.parameters, body: inner.$fields.body, async: value });
+      return closureExpressionUFormExpr({ staticMarker: config.staticMarker, moveMarker: config.moveMarker, parameters: config.parameters, body: inner.$fields.body, async: value });
     },
-    move(value?: "move" | undefined) {
-      if (value === undefined) return fields.move;
-      return closureExpressionUFormExpr({ static: config.static, async: config.async, parameters: config.parameters, body: inner.$fields.body, move: value });
+    moveMarker(value?: "move" | undefined) {
+      if (value === undefined) return fields.move_marker;
+      return closureExpressionUFormExpr({ staticMarker: config.staticMarker, async: config.async, parameters: config.parameters, body: inner.$fields.body, moveMarker: value });
     },
     parameters(value?: T.ClosureParameters) {
       if (value === undefined) return fields.parameters;
-      return closureExpressionUFormExpr({ static: config.static, async: config.async, move: config.move, body: inner.$fields.body, parameters: value });
+      return closureExpressionUFormExpr({ staticMarker: config.staticMarker, async: config.async, moveMarker: config.moveMarker, body: inner.$fields.body, parameters: value });
     },
     body(value?: T.Expression | "_") {
       if (value === undefined) return inner.$fields.body;
-      return closureExpressionUFormExpr({ static: config.static, async: config.async, move: config.move, parameters: config.parameters, body: value });
+      return closureExpressionUFormExpr({ staticMarker: config.staticMarker, async: config.async, moveMarker: config.moveMarker, parameters: config.parameters, body: value });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -3396,7 +3403,7 @@ export function unsafeBlock(config: ConfigOf<T.UnsafeBlock>) {
 
 export function asyncBlock(config: ConfigOf<T.AsyncBlock>) {
   const fields = {
-    move: config.move ? "move" as const : undefined,
+    move_marker: config.moveMarker ? "move" as const : undefined,
     block: config.block,
   };
   return {
@@ -3404,7 +3411,7 @@ export function asyncBlock(config: ConfigOf<T.AsyncBlock>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    move(value?: "move" | undefined) { return _fs(config, asyncBlock, 'move', value, config?.move); },
+    moveMarker(value?: "move" | undefined) { return _fs(config, asyncBlock, 'moveMarker', value, config?.moveMarker); },
     block(value?: T.Block) { return _fs(config, asyncBlock, 'block', value, config?.block); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -3417,7 +3424,7 @@ export function asyncBlock(config: ConfigOf<T.AsyncBlock>) {
 
 export function genBlock(config: ConfigOf<T.GenBlock>) {
   const fields = {
-    move: config.move ? "move" as const : undefined,
+    move_marker: config.moveMarker ? "move" as const : undefined,
     block: config.block,
   };
   return {
@@ -3425,7 +3432,7 @@ export function genBlock(config: ConfigOf<T.GenBlock>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    move(value?: "move" | undefined) { return _fs(config, genBlock, 'move', value, config?.move); },
+    moveMarker(value?: "move" | undefined) { return _fs(config, genBlock, 'moveMarker', value, config?.moveMarker); },
     block(value?: T.Block) { return _fs(config, genBlock, 'block', value, config?.block); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {

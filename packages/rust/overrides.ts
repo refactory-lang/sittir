@@ -99,6 +99,14 @@ const config: WireConfig<RustGrammar> = {
         abstract_type: {
         },
 
+        // async_block: seq('async', optional('move'), $.block).
+        // Field-promotion wave 1 (016 task #23): label the standalone
+        // optional `move` punct as `move_marker` so render preserves it
+        // (`async move { ... }` vs `async { ... }`).
+        async_block: {
+            '1/0': field('move_marker'),
+        },
+
         // array_expression polymorph splits '2/0' (semi) / '2/1' (list).
         // These base-shape patches add field labels BEFORE polymorph
         // aliasing — composition-order inversion in wire() lets this
@@ -111,6 +119,35 @@ const config: WireConfig<RustGrammar> = {
         bounded_type: {
             0: field('left'), // lifetime | _type | use_bounds [struct=0]
             2: field('right'), // lifetime | _type | use_bounds [struct=1]
+        },
+
+        // closure_expression: prec(closure, seq(
+        //   optional('static'),  // pos 0  →  '0/0' = bare 'static'
+        //   optional('async'),   // pos 1  →  '1/0' = bare 'async'  (DEFERRED — see below)
+        //   optional('move'),    // pos 2  →  '2/0' = bare 'move'
+        //   field('parameters', ...),  // pos 3
+        //   choice(...),               // pos 4 — polymorph split block/expr
+        // ))
+        // Field-promotion wave 1 (016 task #23): label each standalone
+        // optional marker so render preserves them (`static move |x| ...`
+        // vs `|x| ...`). prec is transparent to path addressing.
+        //
+        // DEFERRED: pos 1 `async_marker`. Wrapping `optional('async')` in
+        // `field('async_marker', _kw_async_marker)` introduces a parse-time
+        // ambiguity with `async_block`'s own bare `'async'` keyword: the
+        // corpus entry `let a = async move || async move {}` (closure
+        // containing async_block) regresses from clean parse to error
+        // (entire let_declaration becomes ERROR, dropping let / closure /
+        // async_block fixtures from the parity corpus). Tree-sitter
+        // accepts the grammar (no LR conflict at generate time) but the
+        // hidden `_kw_async_marker` symbol's runtime precedence diverges
+        // from the bare `'async'` token's. Needs either a conflict
+        // declaration spanning closure_expression × async_block, or a
+        // different field-promotion mechanism that doesn't synthesize a
+        // hidden rule for this position. Tracked for a follow-up wave.
+        closure_expression: {
+            '0/0': field('static_marker'),
+            '2/0': field('move_marker'),
         },
 
         // extern_modifier: 1 field(s)
@@ -189,6 +226,15 @@ const config: WireConfig<RustGrammar> = {
         // arm. prec is transparent to path addressing, so path `1/0` is
         // the choice inside.
         function_type: [],
+
+        // gen_block: seq('gen', optional('move'), $.block).
+        // Field-promotion wave 1 (016 task #23): symmetric to async_block —
+        // label the optional `move` punct as `move_marker` so render
+        // preserves it (`gen move { ... }` vs `gen { ... }`).
+        gen_block: {
+            '1/0': field('move_marker'),
+        },
+
         generic_type_with_turbofish: {
             1: field('turbofish'),
         },
@@ -205,7 +251,20 @@ const config: WireConfig<RustGrammar> = {
         // choice(field('body', declaration_list), ';'). The ';' arm is
         // the trait-signature form (no body), which the template walker
         // drops without a polymorph split.
-        impl_item: [],
+        //
+        // Field-promotion wave 1 (016 task #23):
+        //   - pos 0 = `optional('unsafe')` — leading `unsafe` marker on
+        //     `unsafe impl` blocks. Path `0/0` descends into the optional
+        //     and labels the bare literal.
+        //   - pos 3/0/0 = `optional('!')` — the `!` in `impl !Send for X`
+        //     (negative trait impl). Path `3/0/0/0` reaches the bare `!`
+        //     literal inside the inner-seq's leading optional. Restores
+        //     impl_item bang round-trip after the step-3 walker refactor
+        //     deleted the punct-clause synthesis path.
+        impl_item: {
+            '0/0':     field('unsafe_marker'),
+            '3/0/0/0': field('negative'),
+        },
 
         // index_expression: 2 field(s)
         index_expression: {
@@ -318,6 +377,18 @@ const config: WireConfig<RustGrammar> = {
         // (the flat template dropped it because `;` is an anonymous
         // token not routed to any field).
         struct_item: [],
+
+        // trait_item: seq(
+        //   optional($.visibility_modifier),  // pos 0
+        //   optional('unsafe'),                // pos 1  →  '1/0' = bare 'unsafe'
+        //   'trait', ...
+        // )
+        // Field-promotion wave 1 (016 task #23): label the standalone
+        // optional `unsafe` punct as `unsafe_marker` so render preserves
+        // it (`unsafe trait Foo { ... }` vs `trait Foo { ... }`).
+        trait_item: {
+            '1/0': field('unsafe_marker'),
+        },
 
         // try_block: 1 field(s)
         // try_expression: 2 field(s)
