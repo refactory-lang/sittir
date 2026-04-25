@@ -205,12 +205,49 @@ export function withWireContext<T>(
 // ---------------------------------------------------------------------------
 
 /**
+ * Shape of the type parameter to `wire()` / `transform()` / the
+ * polymorph & transform config interfaces. Two shapes accepted:
+ *
+ * 1. **Flat sittir-emitted grammar type** (preferred) — the
+ *    `RustGrammar` / `TypeScriptGrammar` / `PythonGrammar` types
+ *    emitted at `packages/{lang}/src/grammar.ts`. Top-level keys are
+ *    the kind names (visible AND hidden, e.g. `_expression`,
+ *    `_visibility_modifier_pub`). Authors write `wire<RustGrammar>(...)`.
+ *
+ * 2. **Tree-sitter native base grammar** — `typeof base` from
+ *    `tree-sitter-<lang>/grammar.js`, shape `{ rules: { … } }`.
+ *    Less authoritative (no hidden kinds added by overrides), but
+ *    works for authors that already have `import base from
+ *    '…/grammar.js'` in scope and want to bind to it directly.
+ *
+ * `BaseKind<Base>` projects the kind-name union out of either shape.
+ * The default (`Record<string, unknown>`) collapses to plain `string`
+ * keys, preserving the pre-generics behaviour of every call site that
+ * doesn't supply a base type.
+ */
+export type GrammarBase = Record<string, unknown> | { readonly rules: Record<string, unknown> }
+
+/** @internal — extract the rule-kind string union from a base grammar.
+ *  Handles both shapes: `{ rules: { … } }` (tree-sitter native) and
+ *  flat top-level keys (sittir-emitted `<Lang>Grammar`). */
+type BaseKind<Base extends GrammarBase> =
+    Base extends { readonly rules: infer R }
+        ? keyof R & string
+        : keyof Base & string
+
+/**
  * Declarative polymorph map: parent rule kind → (path-in-original → suffix).
  *
  * @example
  *   { assignment: { '1/0': 'eq', '1/1': 'type', '1/2': 'typed' } }
+ *
+ * Keys are typed as `keyof Base['rules']` when a base grammar is
+ * supplied; else fall back to plain `string`. Path strings and suffix
+ * names stay untyped — paths describe runtime descents into the rule
+ * tree (`seq`/`choice` indices), suffixes are author-introduced.
  */
-export type PolymorphsConfig = Record<string, Record<string, string>>
+export type PolymorphsConfig<Base extends GrammarBase = GrammarBase> =
+    Partial<Record<BaseKind<Base>, Record<string, string>>>
 
 /**
  * Declarative transforms map: each rule kind → a patch-map (or array
@@ -235,7 +272,8 @@ export type PolymorphsConfig = Record<string, Record<string, string>>
  * resolution deposits captured content into wire's context; the
  * deferred fns read deposits.
  */
-export type TransformsConfig = Record<string, PatchMap | PatchMap[]>
+export type TransformsConfig<Base extends GrammarBase = GrammarBase> =
+    Partial<Record<BaseKind<Base>, PatchMap | PatchMap[]>>
 
 /** A single patch-map — path-in-original → patch value. */
 export type PatchMap = Record<string, unknown>
@@ -244,12 +282,19 @@ export type PatchMap = Record<string, unknown>
  * Shape of an options argument passed to tree-sitter's `grammar()` — the
  * fields `wire()` knows about. Extra fields are passed through
  * unchanged.
+ *
+ * `Base` is the base tree-sitter grammar's type (typically `typeof base`
+ * imported from `tree-sitter-<lang>/grammar.js`). Constrains
+ * `polymorphs` / `transforms` keys to base rule kinds; `rules` stays
+ * permissive (`Partial<Record<BaseKind, RuleFn>> & Record<string, RuleFn>`)
+ * to keep the hidden-name escape hatch for synthesized rules
+ * (`_kw_<field>`, `_<parent>_<variant>`, `_<alias>`).
  */
-export interface WireConfig {
+export interface WireConfig<Base extends GrammarBase = GrammarBase> {
     readonly name?: string
-    readonly rules: Record<string, RuleFn>
-    readonly polymorphs?: PolymorphsConfig
-    readonly transforms?: TransformsConfig
+    readonly rules: Partial<Record<BaseKind<Base>, RuleFn>> & Record<string, RuleFn>
+    readonly polymorphs?: PolymorphsConfig<Base>
+    readonly transforms?: TransformsConfig<Base>
     readonly conflicts?: ConflictsFn
     readonly externals?: DollarFn<unknown[]>
     readonly extras?: DollarFn<unknown[]>
@@ -297,7 +342,7 @@ type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T
  *   `Object.keys()` snapshot; content resolves via deferred-content fns
  *   as tree-sitter iterates.
  */
-export function wire(config: WireConfig): WiredOpts {
+export function wire<Base extends GrammarBase = GrammarBase>(config: WireConfig<Base>): WiredOpts {
     const context: WireContext = {
         deposits: new Map(),
         polymorphVariants: [],
@@ -370,6 +415,7 @@ function composeOrSynthesizePolymorphParents(
     context: WireContext,
 ): void {
     for (const [parent, armMap] of Object.entries(polymorphs)) {
+        if (!armMap) continue
         const userFn = rules[parent]
         rules[parent] = buildPolymorphParentFn(parent, armMap, userFn, context)
     }
@@ -433,6 +479,7 @@ function injectHiddenRulePlaceholders(
     context: WireContext,
 ): void {
     for (const [parent, armMap] of Object.entries(polymorphs)) {
+        if (!armMap) continue
         for (const suffix of Object.values(armMap)) {
             const hiddenName = polymorphHiddenName(parent, suffix)
             if (hiddenName in rules) continue
@@ -475,6 +522,7 @@ function composeOrSynthesizeTransformParents(
     transforms: TransformsConfig,
 ): void {
     for (const [kind, entry] of Object.entries(transforms)) {
+        if (!entry) continue
         const patchSets = Array.isArray(entry) ? entry : [entry]
         const userFn = rules[kind]
         rules[kind] = buildTransformParentFn(patchSets, userFn)
@@ -522,6 +570,7 @@ function injectTransformHiddenRulePlaceholders(
     context: WireContext,
 ): void {
     for (const [kind, entry] of Object.entries(transforms)) {
+        if (!entry) continue
         const patchSets = Array.isArray(entry) ? entry : [entry]
         for (const patchMap of patchSets) {
             for (const value of Object.values(patchMap)) {

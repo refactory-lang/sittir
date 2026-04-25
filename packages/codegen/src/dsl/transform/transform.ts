@@ -71,7 +71,15 @@ import type { RuntimeRule } from '../runtime-shapes.ts'
  */
 type PatchSet = Record<number | string, RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder>
 
-export function transform(
+/**
+ * @typeparam Base - The base tree-sitter grammar's type (typically
+ *   `typeof base` from `tree-sitter-<lang>/grammar.js`). Reserved for
+ *   future grammar-aware path validation; currently a phantom parameter
+ *   that lets call sites write `transform<typeof base>(original, ...)`
+ *   so the generic surface is uniform with `wire<Base>` /
+ *   `PolymorphsConfig<Base>` / `TransformsConfig<Base>`.
+ */
+export function transform<_Base = unknown>(
     original: RuntimeRule,
     ...patchSets: PatchSet[]
 ): RuntimeRule {

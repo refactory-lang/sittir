@@ -452,6 +452,7 @@ function wire(config) {
 }
 function composeOrSynthesizePolymorphParents(rules, polymorphs, context) {
   for (const [parent, armMap] of Object.entries(polymorphs)) {
+    if (!armMap) continue;
     const userFn = rules[parent];
     rules[parent] = buildPolymorphParentFn(parent, armMap, userFn, context);
   }
@@ -476,6 +477,7 @@ function buildPolymorphParentFn(parent, armMap, userFn, context) {
 }
 function injectHiddenRulePlaceholders(rules, polymorphs, context) {
   for (const [parent, armMap] of Object.entries(polymorphs)) {
+    if (!armMap) continue;
     for (const suffix of Object.values(armMap)) {
       const hiddenName = polymorphHiddenName(parent, suffix);
       if (hiddenName in rules) continue;
@@ -492,6 +494,7 @@ function polymorphHiddenName(parentKind, suffix) {
 }
 function composeOrSynthesizeTransformParents(rules, transforms) {
   for (const [kind, entry] of Object.entries(transforms)) {
+    if (!entry) continue;
     const patchSets = Array.isArray(entry) ? entry : [entry];
     const userFn = rules[kind];
     rules[kind] = buildTransformParentFn(patchSets, userFn);
@@ -505,6 +508,7 @@ function buildTransformParentFn(patchSets, userFn) {
 }
 function injectTransformHiddenRulePlaceholders(rules, transforms, context) {
   for (const [kind, entry] of Object.entries(transforms)) {
+    if (!entry) continue;
     const patchSets = Array.isArray(entry) ? entry : [entry];
     for (const patchMap of patchSets) {
       for (const value of Object.values(patchMap)) {

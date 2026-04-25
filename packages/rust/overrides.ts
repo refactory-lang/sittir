@@ -7,12 +7,17 @@
  * @generated from overrides.json — review before committing
  */
 
-// @ts-nocheck — grammar.js is untyped; overrides use sittir DSL
+// @ts-nocheck — grammar.js is untyped; overrides use sittir DSL.
+// The `wire<RustGrammar>` generic below still binds kind-name
+// autocomplete + typo protection to `polymorphs` / `transforms` /
+// `rules` keys; @ts-nocheck only suppresses errors on the untyped
+// `grammar(...)` / `$._rule` / `base` surface.
 import base from '../../node_modules/.pnpm/tree-sitter-rust@0.24.0/node_modules/tree-sitter-rust/grammar.js'
 import { transform, enrich, field, alias, variant, wire } from '../codegen/src/dsl/index.ts'
+import type { RustGrammar } from './src/grammar.ts'
 
 
-export default grammar(enrich(base), wire({
+export default grammar(enrich(base), wire<RustGrammar>({
     name: 'rust',
     // `previous` is the base grammar's conflicts list — concat so we
     // don't drop the base entries (`$._type`, `$._pattern`, etc.).
