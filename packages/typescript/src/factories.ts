@@ -45,7 +45,7 @@ const _leafRe_unescapedDoubleStringFragment = /^(?:[^"\\\r\n]+)/u;
 const _leafRe_unescapedSingleStringFragment = /^(?:[^'\\\r\n]+)/u;
 const _leafRe_regexFlags = /^(?:[a-z]+)/u;
 
-export function program(config: T.Program.Config) {
+export function program(config: ConfigOf<T.Program>) {
   const fields = {
     hash_bang_line: config.hashBangLine,
     statements: config.statements,
@@ -199,7 +199,7 @@ export function exportClause(...children: T.ExportSpecifier[]) {
   };
 }
 
-export function exportSpecifier(config: T.ExportSpecifier.Config) {
+export function exportSpecifier(config: ConfigOf<T.ExportSpecifier>) {
   const fields = {
     name: config.name,
     alias: config.alias,
@@ -232,7 +232,7 @@ export function import_() {
   };
 }
 
-export function importStatement(config: T.ImportStatement.Config) {
+export function importStatement(config: ConfigOf<T.ImportStatement>) {
   const fields = {
     import_clause: config.importClause,
     from_clause: config.fromClause,
@@ -320,7 +320,7 @@ export function importClauseUFormDefaultImport(config?: Omit<ConfigOf<T.ImportCl
   };
 }
 
-export function namespaceImport(config: T.NamespaceImport.Config) {
+export function namespaceImport(config: ConfigOf<T.NamespaceImport>) {
   const fields = {
     identifier: config.identifier,
   };
@@ -418,7 +418,7 @@ export function importSpecifierUFormAs(config: Omit<ConfigOf<T.ImportSpecifierUF
   };
 }
 
-export function importAttribute(config: T.ImportAttribute.Config) {
+export function importAttribute(config: ConfigOf<T.ImportAttribute>) {
   const fields = {
     object: config.object,
   };
@@ -437,7 +437,7 @@ export function importAttribute(config: T.ImportAttribute.Config) {
   };
 }
 
-export function expressionStatement(config: T.ExpressionStatement.Config) {
+export function expressionStatement(config: ConfigOf<T.ExpressionStatement>) {
   const fields = {
     semicolon: config.semicolon,
   };
@@ -462,7 +462,7 @@ export function expressionStatement(config: T.ExpressionStatement.Config) {
   };
 }
 
-export function variableDeclaration(config: T.VariableDeclaration.Config) {
+export function variableDeclaration(config: ConfigOf<T.VariableDeclaration>) {
   const fields = {
     declarators: config.declarators,
     semicolon: config.semicolon,
@@ -483,7 +483,7 @@ export function variableDeclaration(config: T.VariableDeclaration.Config) {
   };
 }
 
-export function lexicalDeclaration(config: T.LexicalDeclaration.Config) {
+export function lexicalDeclaration(config: ConfigOf<T.LexicalDeclaration>) {
   const fields = {
     kind: config.kind,
     declarators: config.declarators,
@@ -506,7 +506,7 @@ export function lexicalDeclaration(config: T.LexicalDeclaration.Config) {
   };
 }
 
-export function variableDeclarator(config: T.VariableDeclarator.Config) {
+export function variableDeclarator(config: ConfigOf<T.VariableDeclarator>) {
   const fields = {
     name: config.name,
     type: config.type,
@@ -529,7 +529,7 @@ export function variableDeclarator(config: T.VariableDeclarator.Config) {
   };
 }
 
-export function statementBlock(config: T.StatementBlock.Config) {
+export function statementBlock(config: ConfigOf<T.StatementBlock>) {
   const fields = {
     statements: config.statements,
     automatic_semicolon: config.automaticSemicolon,
@@ -550,7 +550,7 @@ export function statementBlock(config: T.StatementBlock.Config) {
   };
 }
 
-export function elseClause(config: T.ElseClause.Config) {
+export function elseClause(config: ConfigOf<T.ElseClause>) {
   const fields = {
     statement: config.statement,
   };
@@ -569,7 +569,7 @@ export function elseClause(config: T.ElseClause.Config) {
   };
 }
 
-export function ifStatement(config: T.IfStatement.Config) {
+export function ifStatement(config: ConfigOf<T.IfStatement>) {
   const fields = {
     condition: config.condition,
     consequence: config.consequence,
@@ -592,7 +592,7 @@ export function ifStatement(config: T.IfStatement.Config) {
   };
 }
 
-export function switchStatement(config: T.SwitchStatement.Config) {
+export function switchStatement(config: ConfigOf<T.SwitchStatement>) {
   const fields = {
     value: config.value,
     body: config.body,
@@ -613,7 +613,7 @@ export function switchStatement(config: T.SwitchStatement.Config) {
   };
 }
 
-export function forStatement(config: T.ForStatement.Config) {
+export function forStatement(config: ConfigOf<T.ForStatement>) {
   const fields = {
     initializer: config.initializer,
     condition: config.condition,
@@ -638,7 +638,7 @@ export function forStatement(config: T.ForStatement.Config) {
   };
 }
 
-export function forInStatement(config: T.ForInStatement.Config) {
+export function forInStatement(config: ConfigOf<T.ForInStatement>) {
   const fields = {
     await: config.await ? "await" as const : undefined,
     operator: config.operator,
@@ -669,7 +669,7 @@ export function forInStatement(config: T.ForInStatement.Config) {
   };
 }
 
-export function whileStatement(config: T.WhileStatement.Config) {
+export function whileStatement(config: ConfigOf<T.WhileStatement>) {
   const fields = {
     condition: config.condition,
     body: config.body,
@@ -690,7 +690,7 @@ export function whileStatement(config: T.WhileStatement.Config) {
   };
 }
 
-export function doStatement(config: T.DoStatement.Config) {
+export function doStatement(config: ConfigOf<T.DoStatement>) {
   const fields = {
     body: config.body,
     condition: config.condition,
@@ -713,7 +713,7 @@ export function doStatement(config: T.DoStatement.Config) {
   };
 }
 
-export function tryStatement(config: T.TryStatement.Config) {
+export function tryStatement(config: ConfigOf<T.TryStatement>) {
   const fields = {
     body: config.body,
     handler: config.handler,
@@ -736,7 +736,7 @@ export function tryStatement(config: T.TryStatement.Config) {
   };
 }
 
-export function withStatement(config: T.WithStatement.Config) {
+export function withStatement(config: ConfigOf<T.WithStatement>) {
   const fields = {
     object: config.object,
     body: config.body,
@@ -757,7 +757,7 @@ export function withStatement(config: T.WithStatement.Config) {
   };
 }
 
-export function breakStatement(config: T.BreakStatement.Config) {
+export function breakStatement(config: ConfigOf<T.BreakStatement>) {
   const fields = {
     label: config.label,
     semicolon: config.semicolon,
@@ -778,7 +778,7 @@ export function breakStatement(config: T.BreakStatement.Config) {
   };
 }
 
-export function continueStatement(config: T.ContinueStatement.Config) {
+export function continueStatement(config: ConfigOf<T.ContinueStatement>) {
   const fields = {
     label: config.label,
     semicolon: config.semicolon,
@@ -799,7 +799,7 @@ export function continueStatement(config: T.ContinueStatement.Config) {
   };
 }
 
-export function debuggerStatement(config: T.DebuggerStatement.Config) {
+export function debuggerStatement(config: ConfigOf<T.DebuggerStatement>) {
   const fields = {
     semicolon: config.semicolon,
   };
@@ -818,7 +818,7 @@ export function debuggerStatement(config: T.DebuggerStatement.Config) {
   };
 }
 
-export function returnStatement(config: T.ReturnStatement.Config) {
+export function returnStatement(config: ConfigOf<T.ReturnStatement>) {
   const fields = {
     semicolon: config.semicolon,
   };
@@ -843,7 +843,7 @@ export function returnStatement(config: T.ReturnStatement.Config) {
   };
 }
 
-export function throwStatement(config: T.ThrowStatement.Config) {
+export function throwStatement(config: ConfigOf<T.ThrowStatement>) {
   const fields = {
     semicolon: config.semicolon,
   };
@@ -868,7 +868,7 @@ export function throwStatement(config: T.ThrowStatement.Config) {
   };
 }
 
-export function labeledStatement(config: T.LabeledStatement.Config) {
+export function labeledStatement(config: ConfigOf<T.LabeledStatement>) {
   const fields = {
     label: config.label,
     body: config.body,
@@ -904,7 +904,7 @@ export function switchBody(...children: (T.SwitchCase | T.SwitchDefault)[]) {
   };
 }
 
-export function switchCase(config: T.SwitchCase.Config) {
+export function switchCase(config: ConfigOf<T.SwitchCase>) {
   const fields = {
     value: config.value,
     body: config.body,
@@ -925,7 +925,7 @@ export function switchCase(config: T.SwitchCase.Config) {
   };
 }
 
-export function switchDefault(config: T.SwitchDefault.Config) {
+export function switchDefault(config: ConfigOf<T.SwitchDefault>) {
   const fields = {
     body: config.body,
   };
@@ -944,7 +944,7 @@ export function switchDefault(config: T.SwitchDefault.Config) {
   };
 }
 
-export function catchClause(config: T.CatchClause.Config) {
+export function catchClause(config: ConfigOf<T.CatchClause>) {
   const fields = {
     parameter: config.parameter,
     type: config.type,
@@ -967,7 +967,7 @@ export function catchClause(config: T.CatchClause.Config) {
   };
 }
 
-export function finallyClause(config: T.FinallyClause.Config) {
+export function finallyClause(config: ConfigOf<T.FinallyClause>) {
   const fields = {
     body: config.body,
   };
@@ -1001,7 +1001,7 @@ export function parenthesizedExpressionUFormTyped(config?: Omit<ConfigOf<T.Paren
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
-      type: config.type,
+      type: config?.type,
     },
   };
   const children = [inner] as const;
@@ -1041,7 +1041,7 @@ export function parenthesizedExpressionUFormSequence(config?: Omit<ConfigOf<T.Pa
   };
 }
 
-export function yieldExpression(config?: T.YieldExpression.Config) {
+export function yieldExpression(config?: ConfigOf<T.YieldExpression>) {
   const fields = {
     expression: config?.expression,
   };
@@ -1090,7 +1090,7 @@ export function objectPattern(...children: (T.PairPattern | T.RestPattern | T.Ob
   };
 }
 
-export function assignmentPattern(config: T.AssignmentPattern.Config) {
+export function assignmentPattern(config: ConfigOf<T.AssignmentPattern>) {
   const fields = {
     left: config.left,
     right: config.right,
@@ -1111,7 +1111,7 @@ export function assignmentPattern(config: T.AssignmentPattern.Config) {
   };
 }
 
-export function objectAssignmentPattern(config: T.ObjectAssignmentPattern.Config) {
+export function objectAssignmentPattern(config: ConfigOf<T.ObjectAssignmentPattern>) {
   const fields = {
     left: config.left,
     right: config.right,
@@ -1162,7 +1162,7 @@ export function arrayPattern(...children: (T.Pattern | T.AssignmentPattern)[]) {
   };
 }
 
-export function jsxElement(config: T.JsxElement.Config) {
+export function jsxElement(config: ConfigOf<T.JsxElement>) {
   const fields = {
     open_tag: config.openTag,
     close_tag: config.closeTag,
@@ -1218,7 +1218,7 @@ export function jsxExpression(child?: (T.Expression | T.SequenceExpression | T.S
   };
 }
 
-export function jsxOpeningElement(config: T.JsxOpeningElement.Config) {
+export function jsxOpeningElement(config: ConfigOf<T.JsxOpeningElement>) {
   const fields = {
     name: config.name,
     type_arguments: config.typeArguments,
@@ -1254,7 +1254,7 @@ export function jsxIdentifier(text: string) {
   };
 }
 
-export function nestedIdentifier(config: T.NestedIdentifier.Config) {
+export function nestedIdentifier(config: ConfigOf<T.NestedIdentifier>) {
   const fields = {
     object: config.object,
     property: config.property,
@@ -1290,7 +1290,7 @@ export function jsxNamespaceName(...children: T._JsxIdentifier[]) {
   };
 }
 
-export function jsxClosingElement(config?: T.JsxClosingElement.Config) {
+export function jsxClosingElement(config?: ConfigOf<T.JsxClosingElement>) {
   const fields = {
     name: config?.name,
   };
@@ -1309,7 +1309,7 @@ export function jsxClosingElement(config?: T.JsxClosingElement.Config) {
   };
 }
 
-export function jsxSelfClosingElement(config: T.JsxSelfClosingElement.Config) {
+export function jsxSelfClosingElement(config: ConfigOf<T.JsxSelfClosingElement>) {
   const fields = {
     name: config.name,
     type_arguments: config.typeArguments,
@@ -1374,7 +1374,7 @@ export function unescapedSingleJsxStringFragment(text: string) {
   };
 }
 
-export function class_(config: T.Class.Config) {
+export function class_(config: ConfigOf<T.Class>) {
   const fields = {
     decorator: config.decorator,
     name: config.name,
@@ -1401,7 +1401,7 @@ export function class_(config: T.Class.Config) {
   };
 }
 
-export function classDeclaration(config: T.ClassDeclaration.Config) {
+export function classDeclaration(config: ConfigOf<T.ClassDeclaration>) {
   const fields = {
     decorator: config.decorator,
     name: config.name,
@@ -1474,7 +1474,7 @@ export function classHeritageUFormImplementsClause(config?: Omit<ConfigOf<T.Clas
   };
 }
 
-export function functionExpression(config: T.FunctionExpression.Config) {
+export function functionExpression(config: ConfigOf<T.FunctionExpression>) {
   const fields = {
     async: config.async ? "async" as const : undefined,
     name: config.name,
@@ -1503,7 +1503,7 @@ export function functionExpression(config: T.FunctionExpression.Config) {
   };
 }
 
-export function functionDeclaration(config: T.FunctionDeclaration.Config) {
+export function functionDeclaration(config: ConfigOf<T.FunctionDeclaration>) {
   const fields = {
     async: config.async ? "async" as const : undefined,
     name: config.name,
@@ -1538,7 +1538,7 @@ export function functionDeclaration(config: T.FunctionDeclaration.Config) {
   };
 }
 
-export function generatorFunction(config: T.GeneratorFunction.Config) {
+export function generatorFunction(config: ConfigOf<T.GeneratorFunction>) {
   const fields = {
     async: config.async ? "async" as const : undefined,
     name: config.name,
@@ -1567,7 +1567,7 @@ export function generatorFunction(config: T.GeneratorFunction.Config) {
   };
 }
 
-export function generatorFunctionDeclaration(config: T.GeneratorFunctionDeclaration.Config) {
+export function generatorFunctionDeclaration(config: ConfigOf<T.GeneratorFunctionDeclaration>) {
   const fields = {
     async: config.async ? "async" as const : undefined,
     name: config.name,
@@ -1809,7 +1809,7 @@ export function callExpressionUFormMember(config: Omit<ConfigOf<T.CallExpression
   };
 }
 
-export function newExpression(config: T.NewExpression.Config) {
+export function newExpression(config: ConfigOf<T.NewExpression>) {
   const fields = {
     constructor: config.constructor,
     type_arguments: config.typeArguments,
@@ -1832,7 +1832,7 @@ export function newExpression(config: T.NewExpression.Config) {
   };
 }
 
-export function awaitExpression(config: T.AwaitExpression.Config) {
+export function awaitExpression(config: ConfigOf<T.AwaitExpression>) {
   const fields = {
     expression: config.expression,
   };
@@ -1851,7 +1851,7 @@ export function awaitExpression(config: T.AwaitExpression.Config) {
   };
 }
 
-export function memberExpression(config: T.MemberExpression.Config) {
+export function memberExpression(config: ConfigOf<T.MemberExpression>) {
   const fields = {
     object: config.object,
     property: config.property,
@@ -1872,7 +1872,7 @@ export function memberExpression(config: T.MemberExpression.Config) {
   };
 }
 
-export function subscriptExpression(config: T.SubscriptExpression.Config) {
+export function subscriptExpression(config: ConfigOf<T.SubscriptExpression>) {
   const fields = {
     object: config.object,
     optional_chain: config.optionalChain ? "?." as const : undefined,
@@ -1911,7 +1911,7 @@ export function lhsExpression(child: (T.MemberExpression | T.SubscriptExpression
   };
 }
 
-export function assignmentExpression(config: T.AssignmentExpression.Config) {
+export function assignmentExpression(config: ConfigOf<T.AssignmentExpression>) {
   const fields = {
     using: config.using ? "using" as const : undefined,
     left: config.left,
@@ -1934,7 +1934,7 @@ export function assignmentExpression(config: T.AssignmentExpression.Config) {
   };
 }
 
-export function augmentedAssignmentExpression(config: T.AugmentedAssignmentExpression.Config) {
+export function augmentedAssignmentExpression(config: ConfigOf<T.AugmentedAssignmentExpression>) {
   const fields = {
     left: config.left,
     operator: config.operator,
@@ -1957,7 +1957,7 @@ export function augmentedAssignmentExpression(config: T.AugmentedAssignmentExpre
   };
 }
 
-export function spreadElement(config: T.SpreadElement.Config) {
+export function spreadElement(config: ConfigOf<T.SpreadElement>) {
   const fields = {
     expression: config.expression,
   };
@@ -1976,7 +1976,7 @@ export function spreadElement(config: T.SpreadElement.Config) {
   };
 }
 
-export function ternaryExpression(config: T.TernaryExpression.Config) {
+export function ternaryExpression(config: ConfigOf<T.TernaryExpression>) {
   const fields = {
     condition: config.condition,
     consequence: config.consequence,
@@ -1999,7 +1999,7 @@ export function ternaryExpression(config: T.TernaryExpression.Config) {
   };
 }
 
-export function binaryExpression(config: T.BinaryExpression.Config) {
+export function binaryExpression(config: ConfigOf<T.BinaryExpression>) {
   const fields = {
     left: config.left,
     operator: config.operator,
@@ -2022,7 +2022,7 @@ export function binaryExpression(config: T.BinaryExpression.Config) {
   };
 }
 
-export function unaryExpression(config: T.UnaryExpression.Config) {
+export function unaryExpression(config: ConfigOf<T.UnaryExpression>) {
   const fields = {
     operator: config.operator,
     argument: config.argument,
@@ -2262,7 +2262,7 @@ export function templateSubstitution(child: T.Expressions) {
   };
 }
 
-export function regex(config: T.Regex.Config) {
+export function regex(config: ConfigOf<T.Regex>) {
   const fields = {
     pattern: config.pattern,
     flags: config.flags,
@@ -2464,7 +2464,7 @@ export function decorator(child: (T.Identifier | T.DecoratorMemberExpression | T
   };
 }
 
-export function decoratorMemberExpression(config: T.DecoratorMemberExpression.Config) {
+export function decoratorMemberExpression(config: ConfigOf<T.DecoratorMemberExpression>) {
   const fields = {
     object: config.object,
     property: config.property,
@@ -2485,7 +2485,7 @@ export function decoratorMemberExpression(config: T.DecoratorMemberExpression.Co
   };
 }
 
-export function decoratorCallExpression(config: T.DecoratorCallExpression.Config) {
+export function decoratorCallExpression(config: ConfigOf<T.DecoratorCallExpression>) {
   const fields = {
     function: config.function,
     type_arguments: config.typeArguments,
@@ -2523,7 +2523,7 @@ export function classBody(...children: (T.ClassBodyMethod | T.ClassBodyMethodSig
   };
 }
 
-export function fieldDefinition(config: T.FieldDefinition.Config) {
+export function fieldDefinition(config: ConfigOf<T.FieldDefinition>) {
   const fields = {
     decorator: config.decorator,
     static: config.static ? "static" as const : undefined,
@@ -2564,7 +2564,7 @@ export function formalParameters(...children: T.FormalParameter[]) {
   };
 }
 
-export function classStaticBlock(config: T.ClassStaticBlock.Config) {
+export function classStaticBlock(config: ConfigOf<T.ClassStaticBlock>) {
   const fields = {
     body: config.body,
   };
@@ -2605,7 +2605,7 @@ export function restPattern(child: T.LhsExpression) {
   };
 }
 
-export function methodDefinition(config: T.MethodDefinition.Config) {
+export function methodDefinition(config: ConfigOf<T.MethodDefinition>) {
   const fields = {
     accessibility_modifier: config.accessibilityModifier,
     override_modifier: config.overrideModifier ? "static" as const : undefined,
@@ -2646,7 +2646,7 @@ export function methodDefinition(config: T.MethodDefinition.Config) {
   };
 }
 
-export function pair(config: T.Pair.Config) {
+export function pair(config: ConfigOf<T.Pair>) {
   const fields = {
     key: config.key,
     value: config.value,
@@ -2667,7 +2667,7 @@ export function pair(config: T.Pair.Config) {
   };
 }
 
-export function pairPattern(config: T.PairPattern.Config) {
+export function pairPattern(config: ConfigOf<T.PairPattern>) {
   const fields = {
     key: config.key,
     value: config.value,
@@ -2688,7 +2688,7 @@ export function pairPattern(config: T.PairPattern.Config) {
   };
 }
 
-export function computedPropertyName(config: T.ComputedPropertyName.Config) {
+export function computedPropertyName(config: ConfigOf<T.ComputedPropertyName>) {
   const fields = {
     expression: config.expression,
   };
@@ -2733,7 +2733,7 @@ export function stringFragment(text: string) {
   };
 }
 
-export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
+export function publicFieldDefinition(config: ConfigOf<T.PublicFieldDefinition>) {
   const fields = {
     decorator: config.decorator,
     name: config.name,
@@ -2764,7 +2764,7 @@ export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
   };
 }
 
-export function nonNullExpression(config: T.NonNullExpression.Config) {
+export function nonNullExpression(config: ConfigOf<T.NonNullExpression>) {
   const fields = {
     expression: config.expression,
   };
@@ -2783,7 +2783,7 @@ export function nonNullExpression(config: T.NonNullExpression.Config) {
   };
 }
 
-export function methodSignature(config: T.MethodSignature.Config) {
+export function methodSignature(config: ConfigOf<T.MethodSignature>) {
   const fields = {
     accessibility_modifier: config.accessibilityModifier,
     override_modifier: config.overrideModifier ? "static" as const : undefined,
@@ -2822,7 +2822,7 @@ export function methodSignature(config: T.MethodSignature.Config) {
   };
 }
 
-export function abstractMethodSignature(config: T.AbstractMethodSignature.Config) {
+export function abstractMethodSignature(config: ConfigOf<T.AbstractMethodSignature>) {
   const fields = {
     accessibility_modifier: config.accessibilityModifier,
     override_modifier: config.overrideModifier ? "override" as const : undefined,
@@ -2851,7 +2851,7 @@ export function abstractMethodSignature(config: T.AbstractMethodSignature.Config
   };
 }
 
-export function functionSignature(config: T.FunctionSignature.Config) {
+export function functionSignature(config: ConfigOf<T.FunctionSignature>) {
   const fields = {
     async: config.async ? "async" as const : undefined,
     name: config.name,
@@ -2896,7 +2896,7 @@ export function decoratorParenthesizedExpression(child: (T.Identifier | T.Decora
   };
 }
 
-export function typeAssertion(config: T.TypeAssertion.Config) {
+export function typeAssertion(config: ConfigOf<T.TypeAssertion>) {
   const fields = {
     type_arguments: config.typeArguments,
     expression: config.expression,
@@ -2917,7 +2917,7 @@ export function typeAssertion(config: T.TypeAssertion.Config) {
   };
 }
 
-export function asExpression(config: T.AsExpression.Config) {
+export function asExpression(config: ConfigOf<T.AsExpression>) {
   const fields = {
     expression: config.expression,
     type_annotation: config.typeAnnotation,
@@ -2938,7 +2938,7 @@ export function asExpression(config: T.AsExpression.Config) {
   };
 }
 
-export function satisfiesExpression(config: T.SatisfiesExpression.Config) {
+export function satisfiesExpression(config: ConfigOf<T.SatisfiesExpression>) {
   const fields = {
     expression: config.expression,
     type_annotation: config.typeAnnotation,
@@ -2959,7 +2959,7 @@ export function satisfiesExpression(config: T.SatisfiesExpression.Config) {
   };
 }
 
-export function instantiationExpression(config: T.InstantiationExpression.Config) {
+export function instantiationExpression(config: ConfigOf<T.InstantiationExpression>) {
   const fields = {
     expression: config.expression,
     type_arguments: config.typeArguments,
@@ -2980,7 +2980,7 @@ export function instantiationExpression(config: T.InstantiationExpression.Config
   };
 }
 
-export function importRequireClause(config: T.ImportRequireClause.Config) {
+export function importRequireClause(config: ConfigOf<T.ImportRequireClause>) {
   const fields = {
     identifier: config.identifier,
     source: config.source,
@@ -3001,7 +3001,7 @@ export function importRequireClause(config: T.ImportRequireClause.Config) {
   };
 }
 
-export function extendsClause(config: T.ExtendsClause.Config) {
+export function extendsClause(config: ConfigOf<T.ExtendsClause>) {
   const fields = {
     value: config.value,
     type_arguments: config.typeArguments,
@@ -3038,7 +3038,7 @@ export function implementsClause(...children: T.Type[]) {
   };
 }
 
-export function ambientDeclaration(config: T.AmbientDeclaration.Config) {
+export function ambientDeclaration(config: ConfigOf<T.AmbientDeclaration>) {
   const fields = {
     declaration: config.declaration,
   };
@@ -3057,7 +3057,7 @@ export function ambientDeclaration(config: T.AmbientDeclaration.Config) {
   };
 }
 
-export function abstractClassDeclaration(config: T.AbstractClassDeclaration.Config) {
+export function abstractClassDeclaration(config: ConfigOf<T.AbstractClassDeclaration>) {
   const fields = {
     decorator: config.decorator,
     name: config.name,
@@ -3084,7 +3084,7 @@ export function abstractClassDeclaration(config: T.AbstractClassDeclaration.Conf
   };
 }
 
-export function module(config: T.Module.Config) {
+export function module(config: ConfigOf<T.Module>) {
   const fields = {
     name: config.name,
     body: config.body,
@@ -3105,7 +3105,7 @@ export function module(config: T.Module.Config) {
   };
 }
 
-export function internalModule(config: T.InternalModule.Config) {
+export function internalModule(config: ConfigOf<T.InternalModule>) {
   const fields = {
     name: config.name,
     body: config.body,
@@ -3126,7 +3126,7 @@ export function internalModule(config: T.InternalModule.Config) {
   };
 }
 
-export function importAlias(config: T.ImportAlias.Config) {
+export function importAlias(config: ConfigOf<T.ImportAlias>) {
   const fields = {
     name: config.name,
     value: config.value,
@@ -3149,7 +3149,7 @@ export function importAlias(config: T.ImportAlias.Config) {
   };
 }
 
-export function nestedTypeIdentifier(config: T.NestedTypeIdentifier.Config) {
+export function nestedTypeIdentifier(config: ConfigOf<T.NestedTypeIdentifier>) {
   const fields = {
     module: config.module,
     name: config.name,
@@ -3170,7 +3170,7 @@ export function nestedTypeIdentifier(config: T.NestedTypeIdentifier.Config) {
   };
 }
 
-export function interfaceDeclaration(config: T.InterfaceDeclaration.Config) {
+export function interfaceDeclaration(config: ConfigOf<T.InterfaceDeclaration>) {
   const fields = {
     name: config.name,
     type_parameters: config.typeParameters,
@@ -3195,7 +3195,7 @@ export function interfaceDeclaration(config: T.InterfaceDeclaration.Config) {
   };
 }
 
-export function extendsTypeClause(config: T.ExtendsTypeClause.Config) {
+export function extendsTypeClause(config: ConfigOf<T.ExtendsTypeClause>) {
   const fields = {
     type: config.type,
   };
@@ -3214,7 +3214,7 @@ export function extendsTypeClause(config: T.ExtendsTypeClause.Config) {
   };
 }
 
-export function enumDeclaration(config: T.EnumDeclaration.Config) {
+export function enumDeclaration(config: ConfigOf<T.EnumDeclaration>) {
   const fields = {
     const: config.const ? "const" as const : undefined,
     name: config.name,
@@ -3237,7 +3237,7 @@ export function enumDeclaration(config: T.EnumDeclaration.Config) {
   };
 }
 
-export function enumBody(config: T.EnumBody.Config) {
+export function enumBody(config: ConfigOf<T.EnumBody>) {
   const fields = {
     opening: config.opening,
   };
@@ -3256,7 +3256,7 @@ export function enumBody(config: T.EnumBody.Config) {
   };
 }
 
-export function enumAssignment(config: T.EnumAssignment.Config) {
+export function enumAssignment(config: ConfigOf<T.EnumAssignment>) {
   const fields = {
     name: config.name,
     value: config.value,
@@ -3277,7 +3277,7 @@ export function enumAssignment(config: T.EnumAssignment.Config) {
   };
 }
 
-export function typeAliasDeclaration(config: T.TypeAliasDeclaration.Config) {
+export function typeAliasDeclaration(config: ConfigOf<T.TypeAliasDeclaration>) {
   const fields = {
     name: config.name,
     type_parameters: config.typeParameters,
@@ -3326,7 +3326,7 @@ export function overrideModifier() {
   };
 }
 
-export function requiredParameter(config: T.RequiredParameter.Config) {
+export function requiredParameter(config: ConfigOf<T.RequiredParameter>) {
   const fields = {
     decorator: config.decorator,
     readonly: config.readonly ? "readonly" as const : undefined,
@@ -3359,7 +3359,7 @@ export function requiredParameter(config: T.RequiredParameter.Config) {
   };
 }
 
-export function optionalParameter(config: T.OptionalParameter.Config) {
+export function optionalParameter(config: ConfigOf<T.OptionalParameter>) {
   const fields = {
     decorator: config.decorator,
     readonly: config.readonly ? "readonly" as const : undefined,
@@ -3392,7 +3392,7 @@ export function optionalParameter(config: T.OptionalParameter.Config) {
   };
 }
 
-export function omittingTypeAnnotation(config: T.OmittingTypeAnnotation.Config) {
+export function omittingTypeAnnotation(config: ConfigOf<T.OmittingTypeAnnotation>) {
   const fields = {
     type: config.type,
   };
@@ -3411,7 +3411,7 @@ export function omittingTypeAnnotation(config: T.OmittingTypeAnnotation.Config) 
   };
 }
 
-export function addingTypeAnnotation(config: T.AddingTypeAnnotation.Config) {
+export function addingTypeAnnotation(config: ConfigOf<T.AddingTypeAnnotation>) {
   const fields = {
     type: config.type,
   };
@@ -3430,7 +3430,7 @@ export function addingTypeAnnotation(config: T.AddingTypeAnnotation.Config) {
   };
 }
 
-export function optingTypeAnnotation(config: T.OptingTypeAnnotation.Config) {
+export function optingTypeAnnotation(config: ConfigOf<T.OptingTypeAnnotation>) {
   const fields = {
     type: config.type,
   };
@@ -3449,7 +3449,7 @@ export function optingTypeAnnotation(config: T.OptingTypeAnnotation.Config) {
   };
 }
 
-export function typeAnnotation(config: T.TypeAnnotation.Config) {
+export function typeAnnotation(config: ConfigOf<T.TypeAnnotation>) {
   const fields = {
     type: config.type,
   };
@@ -3484,7 +3484,7 @@ export function asserts(child: (T.TypePredicate | T.Identifier | T.This)) {
   };
 }
 
-export function assertsAnnotation(config: T.AssertsAnnotation.Config) {
+export function assertsAnnotation(config: ConfigOf<T.AssertsAnnotation>) {
   const fields = {
     asserts: config.asserts,
   };
@@ -3503,7 +3503,7 @@ export function assertsAnnotation(config: T.AssertsAnnotation.Config) {
   };
 }
 
-export function tupleParameter(config: T.TupleParameter.Config) {
+export function tupleParameter(config: ConfigOf<T.TupleParameter>) {
   const fields = {
     name: config.name,
     type: config.type,
@@ -3524,7 +3524,7 @@ export function tupleParameter(config: T.TupleParameter.Config) {
   };
 }
 
-export function optionalTupleParameter(config: T.OptionalTupleParameter.Config) {
+export function optionalTupleParameter(config: ConfigOf<T.OptionalTupleParameter>) {
   const fields = {
     name: config.name,
     type: config.type,
@@ -3545,7 +3545,7 @@ export function optionalTupleParameter(config: T.OptionalTupleParameter.Config) 
   };
 }
 
-export function optionalType(config: T.OptionalType.Config) {
+export function optionalType(config: ConfigOf<T.OptionalType>) {
   const fields = {
     type: config.type,
   };
@@ -3564,7 +3564,7 @@ export function optionalType(config: T.OptionalType.Config) {
   };
 }
 
-export function restType(config: T.RestType.Config) {
+export function restType(config: ConfigOf<T.RestType>) {
   const fields = {
     type: config.type,
   };
@@ -3583,7 +3583,7 @@ export function restType(config: T.RestType.Config) {
   };
 }
 
-export function constructorType(config: T.ConstructorType.Config) {
+export function constructorType(config: ConfigOf<T.ConstructorType>) {
   const fields = {
     abstract: config.abstract ? "abstract" as const : undefined,
     type_parameters: config.typeParameters,
@@ -3639,7 +3639,7 @@ export function templateLiteralType(...children: (T.StringFragment | T.TemplateT
   };
 }
 
-export function inferType(config: T.InferType.Config) {
+export function inferType(config: ConfigOf<T.InferType>) {
   const fields = {
     type_identifier: config.typeIdentifier,
     constraint: config.constraint,
@@ -3660,7 +3660,7 @@ export function inferType(config: T.InferType.Config) {
   };
 }
 
-export function conditionalType(config: T.ConditionalType.Config) {
+export function conditionalType(config: ConfigOf<T.ConditionalType>) {
   const fields = {
     left: config.left,
     right: config.right,
@@ -3685,7 +3685,7 @@ export function conditionalType(config: T.ConditionalType.Config) {
   };
 }
 
-export function genericType(config: T.GenericType.Config) {
+export function genericType(config: ConfigOf<T.GenericType>) {
   const fields = {
     name: config.name,
     type_arguments: config.typeArguments,
@@ -3706,7 +3706,7 @@ export function genericType(config: T.GenericType.Config) {
   };
 }
 
-export function typePredicate(config: T.TypePredicate.Config) {
+export function typePredicate(config: ConfigOf<T.TypePredicate>) {
   const fields = {
     name: config.name,
     type: config.type,
@@ -3727,7 +3727,7 @@ export function typePredicate(config: T.TypePredicate.Config) {
   };
 }
 
-export function typePredicateAnnotation(config: T.TypePredicateAnnotation.Config) {
+export function typePredicateAnnotation(config: ConfigOf<T.TypePredicateAnnotation>) {
   const fields = {
     type_predicate: config.typePredicate,
   };
@@ -3762,7 +3762,7 @@ export function typeQuery(child: (T.TypeQuerySubscriptExpression | T.TypeQueryMe
   };
 }
 
-export function indexTypeQuery(config: T.IndexTypeQuery.Config) {
+export function indexTypeQuery(config: ConfigOf<T.IndexTypeQuery>) {
   const fields = {
     primary_type: config.primaryType,
   };
@@ -3781,7 +3781,7 @@ export function indexTypeQuery(config: T.IndexTypeQuery.Config) {
   };
 }
 
-export function lookupType(config: T.LookupType.Config) {
+export function lookupType(config: ConfigOf<T.LookupType>) {
   const fields = {
     primary_type: config.primaryType,
     index_type: config.indexType,
@@ -3802,7 +3802,7 @@ export function lookupType(config: T.LookupType.Config) {
   };
 }
 
-export function mappedTypeClause(config: T.MappedTypeClause.Config) {
+export function mappedTypeClause(config: ConfigOf<T.MappedTypeClause>) {
   const fields = {
     name: config.name,
     type: config.type,
@@ -3841,7 +3841,7 @@ export function literalType(child: (T._Number | T.Number | T.String | T.True | T
   };
 }
 
-export function flowMaybeType(config: T.FlowMaybeType.Config) {
+export function flowMaybeType(config: ConfigOf<T.FlowMaybeType>) {
   const fields = {
     primary_type: config.primaryType,
   };
@@ -3860,7 +3860,7 @@ export function flowMaybeType(config: T.FlowMaybeType.Config) {
   };
 }
 
-export function parenthesizedType(config: T.ParenthesizedType.Config) {
+export function parenthesizedType(config: ConfigOf<T.ParenthesizedType>) {
   const fields = {
     type: config.type,
   };
@@ -3908,7 +3908,7 @@ export function typeArguments(...children: T.Type[]) {
   };
 }
 
-export function objectType(config: T.ObjectType.Config) {
+export function objectType(config: ConfigOf<T.ObjectType>) {
   const fields = {
     opening: config.opening,
     members: config.members,
@@ -3931,7 +3931,7 @@ export function objectType(config: T.ObjectType.Config) {
   };
 }
 
-export function objectTypeCurly(config?: T.ObjectTypeCurly.Config) {
+export function objectTypeCurly(config?: T.ObjectType.Curly.Config) {
   const fields = {
     opening: "{" as const,
     members: config?.members,
@@ -3951,7 +3951,7 @@ export function objectTypeCurly(config?: T.ObjectTypeCurly.Config) {
   };
 }
 
-export function objectTypeFlow(config?: T.ObjectTypeFlow.Config) {
+export function objectTypeFlow(config?: T.ObjectType.Flow.Config) {
   const fields = {
     opening: "{|" as const,
     members: config?.members,
@@ -3971,7 +3971,7 @@ export function objectTypeFlow(config?: T.ObjectTypeFlow.Config) {
   };
 }
 
-export function callSignature(config: T.CallSignature.Config) {
+export function callSignature(config: ConfigOf<T.CallSignature>) {
   const fields = {
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -3994,7 +3994,7 @@ export function callSignature(config: T.CallSignature.Config) {
   };
 }
 
-export function propertySignature(config: T.PropertySignature.Config) {
+export function propertySignature(config: ConfigOf<T.PropertySignature>) {
   const fields = {
     accessibility_modifier: config.accessibilityModifier,
     override_modifier: config.overrideModifier ? "static" as const : undefined,
@@ -4043,7 +4043,7 @@ export function typeParameters(...children: T.TypeParameter[]) {
   };
 }
 
-export function typeParameter(config: T.TypeParameter.Config) {
+export function typeParameter(config: ConfigOf<T.TypeParameter>) {
   const fields = {
     const: config.const ? "const" as const : undefined,
     name: config.name,
@@ -4068,7 +4068,7 @@ export function typeParameter(config: T.TypeParameter.Config) {
   };
 }
 
-export function defaultType(config: T.DefaultType.Config) {
+export function defaultType(config: ConfigOf<T.DefaultType>) {
   const fields = {
     type: config.type,
   };
@@ -4087,7 +4087,7 @@ export function defaultType(config: T.DefaultType.Config) {
   };
 }
 
-export function constraint(config: T.Constraint.Config) {
+export function constraint(config: ConfigOf<T.Constraint>) {
   const fields = {
     type: config.type,
   };
@@ -4106,7 +4106,7 @@ export function constraint(config: T.Constraint.Config) {
   };
 }
 
-export function constructSignature(config: T.ConstructSignature.Config) {
+export function constructSignature(config: ConfigOf<T.ConstructSignature>) {
   const fields = {
     abstract: config.abstract ? "abstract" as const : undefined,
     type_parameters: config.typeParameters,
@@ -4217,7 +4217,7 @@ export function indexSignatureUFormMappedTypeClause(config: Omit<ConfigOf<T.Inde
   };
 }
 
-export function arrayType(config: T.ArrayType.Config) {
+export function arrayType(config: ConfigOf<T.ArrayType>) {
   const fields = {
     primary_type: config.primaryType,
   };
@@ -4251,7 +4251,7 @@ export function tupleType(...children: T.TupleTypeMember[]) {
   };
 }
 
-export function readonlyType(config: T.ReadonlyType.Config) {
+export function readonlyType(config: ConfigOf<T.ReadonlyType>) {
   const fields = {
     type: config.type,
   };
@@ -4270,7 +4270,7 @@ export function readonlyType(config: T.ReadonlyType.Config) {
   };
 }
 
-export function unionType(config: T.UnionType.Config) {
+export function unionType(config: ConfigOf<T.UnionType>) {
   const fields = {
     left: config.left,
     right: config.right,
@@ -4291,7 +4291,7 @@ export function unionType(config: T.UnionType.Config) {
   };
 }
 
-export function intersectionType(config: T.IntersectionType.Config) {
+export function intersectionType(config: ConfigOf<T.IntersectionType>) {
   const fields = {
     left: config.left,
     right: config.right,
@@ -4312,7 +4312,7 @@ export function intersectionType(config: T.IntersectionType.Config) {
   };
 }
 
-export function functionType(config: T.FunctionType.Config) {
+export function functionType(config: ConfigOf<T.FunctionType>) {
   const fields = {
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -4351,7 +4351,7 @@ export function typeIdentifier(child: T.Identifier) {
   };
 }
 
-export function arrowFunctionParameter(config: T.ArrowFunctionParameter.Config) {
+export function arrowFunctionParameter(config: ConfigOf<T.ArrowFunctionParameter>) {
   const fields = {
     parameter: config.parameter,
   };
@@ -4370,7 +4370,7 @@ export function arrowFunctionParameter(config: T.ArrowFunctionParameter.Config) 
   };
 }
 
-export function arrowFunctionUCallSignature(config: T.ArrowFunctionUCallSignature.Config) {
+export function arrowFunctionUCallSignature(config: ConfigOf<T.ArrowFunctionUCallSignature>) {
   const fields = {
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -4473,7 +4473,7 @@ export function importClauseDefaultImport(child: (T.ImportIdentifier | T.Namespa
   };
 }
 
-export function importSpecifierName(config: T.ImportSpecifierName.Config) {
+export function importSpecifierName(config: ConfigOf<T.ImportSpecifierName>) {
   const fields = {
     name: config.name,
   };
@@ -4508,7 +4508,7 @@ export function indexSignatureMappedTypeClause(child: T.MappedTypeClause) {
   };
 }
 
-export function exportStatementDefaultFromArmStarFrom(config: T.ExportStatementDefaultFromArmStarFrom.Config) {
+export function exportStatementDefaultFromArmStarFrom(config: ConfigOf<T.ExportStatementDefaultFromArmStarFrom>) {
   const fields = {
     source: config.source,
   };
@@ -4527,7 +4527,7 @@ export function exportStatementDefaultFromArmStarFrom(config: T.ExportStatementD
   };
 }
 
-export function exportStatementDefaultFromArmNsFrom(config: T.ExportStatementDefaultFromArmNsFrom.Config) {
+export function exportStatementDefaultFromArmNsFrom(config: ConfigOf<T.ExportStatementDefaultFromArmNsFrom>) {
   const fields = {
     source: config.source,
   };
@@ -4552,7 +4552,7 @@ export function exportStatementDefaultFromArmNsFrom(config: T.ExportStatementDef
   };
 }
 
-export function exportStatementDefaultFromArmClauseFrom(config: T.ExportStatementDefaultFromArmClauseFrom.Config) {
+export function exportStatementDefaultFromArmClauseFrom(config: ConfigOf<T.ExportStatementDefaultFromArmClauseFrom>) {
   const fields = {
     source: config.source,
   };
@@ -4609,7 +4609,7 @@ export function classBodyMember(child: (T.AbstractMethodSignature | T.IndexSigna
   };
 }
 
-export function forHeaderLhs(config: T.ForHeaderLhs.Config) {
+export function forHeaderLhs(config: ConfigOf<T.ForHeaderLhs>) {
   const fields = {
     left: config.left,
   };
@@ -4657,7 +4657,7 @@ export function publicFieldDefinitionReadonlyFirst(text: string) {
   };
 }
 
-export function publicFieldDefinitionAccessorOpt(config?: T.PublicFieldDefinitionAccessorOpt.Config) {
+export function publicFieldDefinitionAccessorOpt(config?: ConfigOf<T.PublicFieldDefinitionAccessorOpt>) {
   const fields = {
     accessor: "accessor" as const,
   };
@@ -4692,7 +4692,7 @@ export function parenthesizedExpressionSequence(child: T.SequenceExpression) {
   };
 }
 
-export function exportStatementTypeExport(config: T.ExportStatementTypeExport.Config) {
+export function exportStatementTypeExport(config: ConfigOf<T.ExportStatementTypeExport>) {
   const fields = {
     source: config.source,
   };

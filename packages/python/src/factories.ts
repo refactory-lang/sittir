@@ -79,7 +79,7 @@ export function simpleStatements(...children: T.SimpleStatement[]) {
   };
 }
 
-export function importStatement(config: T.ImportStatement.Config) {
+export function importStatement(config: ConfigOf<T.ImportStatement>) {
   const fields = {
     name: config.name,
   };
@@ -111,7 +111,7 @@ export function importPrefix(text: string) {
   };
 }
 
-export function relativeImport(config: T.RelativeImport.Config) {
+export function relativeImport(config: ConfigOf<T.RelativeImport>) {
   const fields = {
     import_prefix: config.importPrefix,
     dotted_name: config.dottedName,
@@ -132,7 +132,7 @@ export function relativeImport(config: T.RelativeImport.Config) {
   };
 }
 
-export function futureImportStatement(config: T.FutureImportStatement.Config) {
+export function futureImportStatement(config: ConfigOf<T.FutureImportStatement>) {
   const fields = {
     name: config.name,
   };
@@ -151,7 +151,7 @@ export function futureImportStatement(config: T.FutureImportStatement.Config) {
   };
 }
 
-export function importFromStatement(config: T.ImportFromStatement.Config) {
+export function importFromStatement(config: ConfigOf<T.ImportFromStatement>) {
   const fields = {
     module_name: config.moduleName,
     wildcard_import: config.wildcardImport,
@@ -172,7 +172,7 @@ export function importFromStatement(config: T.ImportFromStatement.Config) {
   };
 }
 
-export function aliasedImport(config: T.AliasedImport.Config) {
+export function aliasedImport(config: ConfigOf<T.AliasedImport>) {
   const fields = {
     name: config.name,
     alias: config.alias,
@@ -193,7 +193,7 @@ export function aliasedImport(config: T.AliasedImport.Config) {
   };
 }
 
-export function printStatement(config: T.PrintStatement.Config) {
+export function printStatement(config: ConfigOf<T.PrintStatement>) {
   const fields = {
     argument: config.argument,
   };
@@ -218,7 +218,7 @@ export function printStatement(config: T.PrintStatement.Config) {
   };
 }
 
-export function chevron(config: T.Chevron.Config) {
+export function chevron(config: ConfigOf<T.Chevron>) {
   const fields = {
     expression: config.expression,
   };
@@ -271,7 +271,7 @@ export function expressionStatementUFormTuple(config?: Omit<ConfigOf<T.Expressio
   };
 }
 
-export function namedExpression(config: T.NamedExpression.Config) {
+export function namedExpression(config: ConfigOf<T.NamedExpression>) {
   const fields = {
     name: config.name,
     value: config.value,
@@ -324,7 +324,7 @@ export function deleteStatement(child: T.Expressions) {
   };
 }
 
-export function raiseStatement(config?: T.RaiseStatement.Config) {
+export function raiseStatement(config?: ConfigOf<T.RaiseStatement>) {
   const fields = {
     cause: config?.cause,
   };
@@ -385,7 +385,7 @@ export function continueStatement() {
   };
 }
 
-export function ifStatement(config: T.IfStatement.Config) {
+export function ifStatement(config: ConfigOf<T.IfStatement>) {
   const fields = {
     condition: config.condition,
     consequence: config.consequence,
@@ -408,7 +408,7 @@ export function ifStatement(config: T.IfStatement.Config) {
   };
 }
 
-export function elifClause(config: T.ElifClause.Config) {
+export function elifClause(config: ConfigOf<T.ElifClause>) {
   const fields = {
     condition: config.condition,
     consequence: config.consequence,
@@ -429,7 +429,7 @@ export function elifClause(config: T.ElifClause.Config) {
   };
 }
 
-export function elseClause(config: T.ElseClause.Config) {
+export function elseClause(config: ConfigOf<T.ElseClause>) {
   const fields = {
     body: config.body,
   };
@@ -448,7 +448,7 @@ export function elseClause(config: T.ElseClause.Config) {
   };
 }
 
-export function matchStatement(config: T.MatchStatement.Config) {
+export function matchStatement(config: ConfigOf<T.MatchStatement>) {
   const fields = {
     subject: config.subject,
     body: config.body,
@@ -485,7 +485,7 @@ export function matchBlock(child: T.MatchBlockBlock) {
   };
 }
 
-export function caseClause(config: T.CaseClause.Config) {
+export function caseClause(config: ConfigOf<T.CaseClause>) {
   const fields = {
     guard: config.guard,
     consequence: config.consequence,
@@ -513,7 +513,7 @@ export function caseClause(config: T.CaseClause.Config) {
   };
 }
 
-export function forStatement(config: T.ForStatement.Config) {
+export function forStatement(config: ConfigOf<T.ForStatement>) {
   const fields = {
     async: config.async ? "async" as const : undefined,
     left: config.left,
@@ -540,7 +540,7 @@ export function forStatement(config: T.ForStatement.Config) {
   };
 }
 
-export function whileStatement(config: T.WhileStatement.Config) {
+export function whileStatement(config: ConfigOf<T.WhileStatement>) {
   const fields = {
     condition: config.condition,
     body: config.body,
@@ -563,7 +563,7 @@ export function whileStatement(config: T.WhileStatement.Config) {
   };
 }
 
-export function tryStatement(config: T.TryStatement.Config) {
+export function tryStatement(config: ConfigOf<T.TryStatement>) {
   const fields = {
     body: config.body,
     except_clauses: config.exceptClauses,
@@ -588,7 +588,7 @@ export function tryStatement(config: T.TryStatement.Config) {
   };
 }
 
-export function exceptClause(config: T.ExceptClause.Config) {
+export function exceptClause(config: ConfigOf<T.ExceptClause>) {
   const fields = {
     value: config.value,
     alias: config.alias,
@@ -615,7 +615,7 @@ export function exceptClause(config: T.ExceptClause.Config) {
   };
 }
 
-export function finallyClause(config: T.FinallyClause.Config) {
+export function finallyClause(config: ConfigOf<T.FinallyClause>) {
   const fields = {
     block: config.block,
   };
@@ -634,7 +634,7 @@ export function finallyClause(config: T.FinallyClause.Config) {
   };
 }
 
-export function withStatement(config: T.WithStatement.Config) {
+export function withStatement(config: ConfigOf<T.WithStatement>) {
   const fields = {
     async: config.async ? "async" as const : undefined,
     with_clause: config.withClause,
@@ -698,7 +698,7 @@ export function withClauseUFormParen(config?: Omit<ConfigOf<T.WithClauseUFormPar
   };
 }
 
-export function withItem(config: T.WithItem.Config) {
+export function withItem(config: ConfigOf<T.WithItem>) {
   const fields = {
     value: config.value,
   };
@@ -717,7 +717,7 @@ export function withItem(config: T.WithItem.Config) {
   };
 }
 
-export function functionDefinition(config: T.FunctionDefinition.Config) {
+export function functionDefinition(config: ConfigOf<T.FunctionDefinition>) {
   const fields = {
     async: config.async ? "async" as const : undefined,
     name: config.name,
@@ -778,7 +778,7 @@ export function lambdaParameters(...children: T.Parameter[]) {
   };
 }
 
-export function listSplat(config: T.ListSplat.Config) {
+export function listSplat(config: ConfigOf<T.ListSplat>) {
   const fields = {
     expression: config.expression,
   };
@@ -797,7 +797,7 @@ export function listSplat(config: T.ListSplat.Config) {
   };
 }
 
-export function dictionarySplat(config: T.DictionarySplat.Config) {
+export function dictionarySplat(config: ConfigOf<T.DictionarySplat>) {
   const fields = {
     expression: config.expression,
   };
@@ -848,7 +848,7 @@ export function nonlocalStatement(...children: T.Identifier[]) {
   };
 }
 
-export function execStatement(config: T.ExecStatement.Config) {
+export function execStatement(config: ConfigOf<T.ExecStatement>) {
   const fields = {
     code: config.code,
     in_clause: config.inClause,
@@ -869,7 +869,7 @@ export function execStatement(config: T.ExecStatement.Config) {
   };
 }
 
-export function typeAliasStatement(config: T.TypeAliasStatement.Config) {
+export function typeAliasStatement(config: ConfigOf<T.TypeAliasStatement>) {
   const fields = {
     type: "type" as const,
     left: config.left,
@@ -892,7 +892,7 @@ export function typeAliasStatement(config: T.TypeAliasStatement.Config) {
   };
 }
 
-export function classDefinition(config: T.ClassDefinition.Config) {
+export function classDefinition(config: ConfigOf<T.ClassDefinition>) {
   const fields = {
     name: config.name,
     type_parameters: config.typeParameters,
@@ -964,7 +964,7 @@ export function argumentList(...children: (T.Expression | T.ListSplat | T.Dictio
   };
 }
 
-export function decoratedDefinition(config: T.DecoratedDefinition.Config) {
+export function decoratedDefinition(config: ConfigOf<T.DecoratedDefinition>) {
   const fields = {
     definition: config.definition,
   };
@@ -990,7 +990,7 @@ export function decoratedDefinition(config: T.DecoratedDefinition.Config) {
   };
 }
 
-export function decorator(config: T.Decorator.Config) {
+export function decorator(config: ConfigOf<T.Decorator>) {
   const fields = {
     expression: config.expression,
     newline: config.newline,
@@ -1042,7 +1042,7 @@ export function block(...children: T.Statement[]) {
   };
 }
 
-export function expressionList(config: T.ExpressionList.Config) {
+export function expressionList(config: ConfigOf<T.ExpressionList>) {
   const fields = {
     expression: config.expression,
   };
@@ -1179,7 +1179,7 @@ export function dictPattern(...children: T.DictPatternKv[]) {
   };
 }
 
-export function keywordPattern(config: T.KeywordPattern.Config) {
+export function keywordPattern(config: ConfigOf<T.KeywordPattern>) {
   const fields = {
     identifier: config.identifier,
     simple_pattern: config.simplePattern,
@@ -1200,7 +1200,7 @@ export function keywordPattern(config: T.KeywordPattern.Config) {
   };
 }
 
-export function splatPattern(config: T.SplatPattern.Config) {
+export function splatPattern(config: ConfigOf<T.SplatPattern>) {
   const fields = {
     identifier: config.identifier,
   };
@@ -1225,7 +1225,7 @@ export function splatPattern(config: T.SplatPattern.Config) {
   };
 }
 
-export function classPattern(config: T.ClassPattern.Config) {
+export function classPattern(config: ConfigOf<T.ClassPattern>) {
   const fields = {
     dotted_name: config.dottedName,
     arguments: config.arguments,
@@ -1246,7 +1246,7 @@ export function classPattern(config: T.ClassPattern.Config) {
   };
 }
 
-export function complexPattern(config: T.ComplexPattern.Config) {
+export function complexPattern(config: ConfigOf<T.ComplexPattern>) {
   const fields = {
     real: config.real ? "-" as const : undefined,
     imaginary: config.imaginary,
@@ -1305,7 +1305,7 @@ export function listPattern(...children: T.Pattern[]) {
   };
 }
 
-export function defaultParameter(config: T.DefaultParameter.Config) {
+export function defaultParameter(config: ConfigOf<T.DefaultParameter>) {
   const fields = {
     name: config.name,
     value: config.value,
@@ -1326,7 +1326,7 @@ export function defaultParameter(config: T.DefaultParameter.Config) {
   };
 }
 
-export function typedDefaultParameter(config: T.TypedDefaultParameter.Config) {
+export function typedDefaultParameter(config: ConfigOf<T.TypedDefaultParameter>) {
   const fields = {
     name: config.name,
     type: config.type,
@@ -1381,7 +1381,7 @@ export function dictionarySplatPattern(child: (T.Identifier | T.KeywordIdentifie
   };
 }
 
-export function asPattern(config: T.AsPattern.Config) {
+export function asPattern(config: ConfigOf<T.AsPattern>) {
   const fields = {
     expression: config.expression,
     alias: config.alias,
@@ -1402,7 +1402,7 @@ export function asPattern(config: T.AsPattern.Config) {
   };
 }
 
-export function notOperator(config: T.NotOperator.Config) {
+export function notOperator(config: ConfigOf<T.NotOperator>) {
   const fields = {
     argument: config.argument,
   };
@@ -1421,7 +1421,7 @@ export function notOperator(config: T.NotOperator.Config) {
   };
 }
 
-export function booleanOperator(config: T.BooleanOperator.Config) {
+export function booleanOperator(config: ConfigOf<T.BooleanOperator>) {
   const fields = {
     left: config.left,
     operator: config.operator,
@@ -1444,7 +1444,7 @@ export function booleanOperator(config: T.BooleanOperator.Config) {
   };
 }
 
-export function binaryOperator(config: T.BinaryOperator.Config) {
+export function binaryOperator(config: ConfigOf<T.BinaryOperator>) {
   const fields = {
     left: config.left,
     operator: config.operator,
@@ -1467,7 +1467,7 @@ export function binaryOperator(config: T.BinaryOperator.Config) {
   };
 }
 
-export function unaryOperator(config: T.UnaryOperator.Config) {
+export function unaryOperator(config: ConfigOf<T.UnaryOperator>) {
   const fields = {
     operator: config.operator,
     argument: config.argument,
@@ -1488,7 +1488,7 @@ export function unaryOperator(config: T.UnaryOperator.Config) {
   };
 }
 
-export function comparisonOperator(config: T.ComparisonOperator.Config) {
+export function comparisonOperator(config: ConfigOf<T.ComparisonOperator>) {
   const fields = {
     left: config.left,
     operators: _bf(config.operators, ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"], ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"], false),
@@ -1509,7 +1509,7 @@ export function comparisonOperator(config: T.ComparisonOperator.Config) {
   };
 }
 
-export function lambda(config: T.Lambda.Config) {
+export function lambda(config: ConfigOf<T.Lambda>) {
   const fields = {
     parameters: config.parameters,
     body: config.body,
@@ -1530,7 +1530,7 @@ export function lambda(config: T.Lambda.Config) {
   };
 }
 
-export function lambdaWithinForInClause(config: T.LambdaWithinForInClause.Config) {
+export function lambdaWithinForInClause(config: ConfigOf<T.LambdaWithinForInClause>) {
   const fields = {
     parameters: config.parameters,
     body: config.body,
@@ -1676,7 +1676,7 @@ export function assignmentUFormTyped(config: Omit<ConfigOf<T.AssignmentUFormType
   };
 }
 
-export function augmentedAssignment(config: T.AugmentedAssignment.Config) {
+export function augmentedAssignment(config: ConfigOf<T.AugmentedAssignment>) {
   const fields = {
     left: config.left,
     operator: config.operator,
@@ -1699,7 +1699,7 @@ export function augmentedAssignment(config: T.AugmentedAssignment.Config) {
   };
 }
 
-export function patternList(config: T.PatternList.Config) {
+export function patternList(config: ConfigOf<T.PatternList>) {
   const fields = {
     pattern: config.pattern,
   };
@@ -1741,7 +1741,7 @@ export function yield_(child: (T.Expression | T.Expressions)) {
   };
 }
 
-export function attribute(config: T.Attribute.Config) {
+export function attribute(config: ConfigOf<T.Attribute>) {
   const fields = {
     object: config.object,
     attribute: config.attribute,
@@ -1762,7 +1762,7 @@ export function attribute(config: T.Attribute.Config) {
   };
 }
 
-export function subscript(config: T.Subscript.Config) {
+export function subscript(config: ConfigOf<T.Subscript>) {
   const fields = {
     value: config.value,
     subscript: config.subscript,
@@ -1783,7 +1783,7 @@ export function subscript(config: T.Subscript.Config) {
   };
 }
 
-export function slice(config?: T.Slice.Config) {
+export function slice(config?: ConfigOf<T.Slice>) {
   const fields = {
     start: config?.start,
     stop: config?.stop,
@@ -1806,7 +1806,7 @@ export function slice(config?: T.Slice.Config) {
   };
 }
 
-export function call(config: T.Call.Config) {
+export function call(config: ConfigOf<T.Call>) {
   const fields = {
     function: config.function,
     arguments: config.arguments,
@@ -1827,7 +1827,7 @@ export function call(config: T.Call.Config) {
   };
 }
 
-export function typedParameter(config: T.TypedParameter.Config) {
+export function typedParameter(config: ConfigOf<T.TypedParameter>) {
   const fields = {
     type: config.type,
   };
@@ -1868,7 +1868,7 @@ export function type(child: (T.Expression | T.SplatType | T.GenericType | T.Unio
   };
 }
 
-export function splatType(config: T.SplatType.Config) {
+export function splatType(config: ConfigOf<T.SplatType>) {
   const fields = {
     identifier: config.identifier,
   };
@@ -1887,7 +1887,7 @@ export function splatType(config: T.SplatType.Config) {
   };
 }
 
-export function genericType(config: T.GenericType.Config) {
+export function genericType(config: ConfigOf<T.GenericType>) {
   const fields = {
     identifier: config.identifier,
     type_parameter: config.typeParameter,
@@ -1908,7 +1908,7 @@ export function genericType(config: T.GenericType.Config) {
   };
 }
 
-export function unionType(config: T.UnionType.Config) {
+export function unionType(config: ConfigOf<T.UnionType>) {
   const fields = {
     left: config.left,
     right: config.right,
@@ -1929,7 +1929,7 @@ export function unionType(config: T.UnionType.Config) {
   };
 }
 
-export function constrainedType(config: T.ConstrainedType.Config) {
+export function constrainedType(config: ConfigOf<T.ConstrainedType>) {
   const fields = {
     base_type: config.baseType,
     constraint: config.constraint,
@@ -1950,7 +1950,7 @@ export function constrainedType(config: T.ConstrainedType.Config) {
   };
 }
 
-export function memberType(config: T.MemberType.Config) {
+export function memberType(config: ConfigOf<T.MemberType>) {
   const fields = {
     base_type: config.baseType,
     identifier: config.identifier,
@@ -1971,7 +1971,7 @@ export function memberType(config: T.MemberType.Config) {
   };
 }
 
-export function keywordArgument(config: T.KeywordArgument.Config) {
+export function keywordArgument(config: ConfigOf<T.KeywordArgument>) {
   const fields = {
     name: config.name,
     value: config.value,
@@ -2055,7 +2055,7 @@ export function dictionary(...children: (T.Pair | T.DictionarySplat)[]) {
   };
 }
 
-export function pair(config: T.Pair.Config) {
+export function pair(config: ConfigOf<T.Pair>) {
   const fields = {
     key: config.key,
     value: config.value,
@@ -2076,7 +2076,7 @@ export function pair(config: T.Pair.Config) {
   };
 }
 
-export function listComprehension(config: T.ListComprehension.Config) {
+export function listComprehension(config: ConfigOf<T.ListComprehension>) {
   const fields = {
     body: config.body,
     for_in_clause: config.forInClause,
@@ -2103,7 +2103,7 @@ export function listComprehension(config: T.ListComprehension.Config) {
   };
 }
 
-export function dictionaryComprehension(config: T.DictionaryComprehension.Config) {
+export function dictionaryComprehension(config: ConfigOf<T.DictionaryComprehension>) {
   const fields = {
     body: config.body,
     for_in_clause: config.forInClause,
@@ -2130,7 +2130,7 @@ export function dictionaryComprehension(config: T.DictionaryComprehension.Config
   };
 }
 
-export function setComprehension(config: T.SetComprehension.Config) {
+export function setComprehension(config: ConfigOf<T.SetComprehension>) {
   const fields = {
     body: config.body,
     for_in_clause: config.forInClause,
@@ -2157,7 +2157,7 @@ export function setComprehension(config: T.SetComprehension.Config) {
   };
 }
 
-export function generatorExpression(config: T.GeneratorExpression.Config) {
+export function generatorExpression(config: ConfigOf<T.GeneratorExpression>) {
   const fields = {
     body: config.body,
     for_in_clause: config.forInClause,
@@ -2200,7 +2200,7 @@ export function parenthesizedExpression(child: (T.Expression | T.Yield)) {
   };
 }
 
-export function forInClause(config: T.ForInClause.Config) {
+export function forInClause(config: ConfigOf<T.ForInClause>) {
   const fields = {
     async: config.async ? "async" as const : undefined,
     left: config.left,
@@ -2223,7 +2223,7 @@ export function forInClause(config: T.ForInClause.Config) {
   };
 }
 
-export function ifClause(config: T.IfClause.Config) {
+export function ifClause(config: ConfigOf<T.IfClause>) {
   const fields = {
     expression: config.expression,
   };
@@ -2242,7 +2242,7 @@ export function ifClause(config: T.IfClause.Config) {
   };
 }
 
-export function conditionalExpression(config: T.ConditionalExpression.Config) {
+export function conditionalExpression(config: ConfigOf<T.ConditionalExpression>) {
   const fields = {
     body: config.body,
     condition: config.condition,
@@ -2265,7 +2265,7 @@ export function conditionalExpression(config: T.ConditionalExpression.Config) {
   };
 }
 
-export function concatenatedString(config: T.ConcatenatedString.Config) {
+export function concatenatedString(config: ConfigOf<T.ConcatenatedString>) {
   const fields = {
     string: config.string,
   };
@@ -2319,7 +2319,7 @@ export function stringContent(...children: (T.EscapeInterpolation | T.EscapeSequ
   };
 }
 
-export function interpolation(config: T.Interpolation.Config) {
+export function interpolation(config: ConfigOf<T.Interpolation>) {
   const fields = {
     expression: config.expression,
     type_conversion: config.typeConversion,
@@ -2458,7 +2458,7 @@ export function none() {
   };
 }
 
-export function await_(config: T.Await.Config) {
+export function await_(config: ConfigOf<T.Await>) {
   const fields = {
     primary_expression: config.primaryExpression,
   };

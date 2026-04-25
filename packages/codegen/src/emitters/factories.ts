@@ -964,8 +964,12 @@ function emitRefineFormFactory(
     const hasChildren = children.length > 0
     const opt = resolveRefineFormConfigOptional(fields, children, nodeMap, narrowed)
     const formTypeName = refineFormTypeName(info.typeName, form.name)
+    const formShortName = formTypeName.slice(info.typeName.length)
     const lines: string[] = []
-    lines.push(`export function ${formFn}(config${opt}: T.${formTypeName}.Config) {`)
+    // Refine form Config lives at `T.<Parent>.<FormShort>.Config` per
+    // emitRefineFormSubNamespaces — the flat `T.<ParentForm>` identifier
+    // is not emitted as a top-level namespace.
+    lines.push(`export function ${formFn}(config${opt}: T.${info.typeName}.${formShortName}.Config) {`)
     if (hasFields) {
         lines.push('  const fields = {')
         for (const f of fields) {
@@ -1082,9 +1086,16 @@ function resolveConfigType(node: FieldCarryingNode, isPolymorphForm: boolean): s
     // as input would be redundant. Parent (dispatcher) factories use
     // `T.${parent}.Config` which resolves to `ConfigOf<union>` and
     // REQUIRES `$variant` (discriminated-union narrowing).
+    //
+    // Refined kinds also alias their parent `T.<TypeName>.Config` to the
+    // first-declared form's narrowed Config (per emitRefineFormSubNamespaces),
+    // dropping the narrowed-out fields. The parent factory still references
+    // those fields directly, so route through `ConfigOf<T.<TypeName>>` here
+    // to get the full Config — same shape as the spec 008 generic indirection
+    // for polymorph dispatchers, just minus the `$variant` Omit.
     return isPolymorphForm
         ? `Omit<ConfigOf<T.${node.typeName}>, '$variant'>`
-        : `T.${node.typeName}.Config`
+        : `ConfigOf<T.${node.typeName}>`
 }
 
 /**
@@ -1391,7 +1402,10 @@ function emitHoistedPolymorphFormFactory(
                 lines.push(`    ${f.name}: ${stamp},`)
                 continue
             }
-            lines.push(`    ${f.name}: config.${f.propertyName},`)
+            // Match the optional-config marker — when `config?:` was used
+            // (no required field anywhere), reads need optional chaining
+            // so TS doesn't complain about `config` possibly being undefined.
+            lines.push(`    ${f.name}: config${opt}.${f.propertyName},`)
         }
         lines.push('  };')
     }
@@ -1447,12 +1461,12 @@ function emitHoistedPolymorphFormFactory(
                     lines.push(`      ${f.name}: ${stamp},`)
                     continue
                 }
-                const kwExpr = keywordPresenceAssignmentExpr(f, '', nodeMap)
+                const kwExpr = keywordPresenceAssignmentExpr(f, opt, nodeMap)
                 if (kwExpr !== undefined) {
                     lines.push(`      ${f.name}: ${kwExpr},`)
                     continue
                 }
-                lines.push(`      ${f.name}: config.${f.propertyName},`)
+                lines.push(`      ${f.name}: config${opt}.${f.propertyName},`)
             }
             lines.push('    },')
         }

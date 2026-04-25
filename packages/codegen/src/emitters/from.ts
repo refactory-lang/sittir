@@ -292,6 +292,17 @@ function renderFromForNode(node: AssembledNode, nodeMap: NodeMap, intern: KindIn
     if (!node.rawFactoryName || !node.fromFunctionName) return undefined
     switch (node.modelType) {
         case 'branch':
+            // Text-template branches (e.g. rust raw_string_literal) emit a
+            // factory of shape `(text: string)` per factory-map.json5, not a
+            // Config object. Route them through the string-like from() so
+            // the from() signature matches the factory's text-only contract.
+            if (node.isTextTemplate(nodeMap.externals)) {
+                return emitStringLikeFrom({
+                    typeName: node.typeName,
+                    rawFactoryName: node.rawFactoryName,
+                    fromFunctionName: node.fromFunctionName,
+                })
+            }
             return emitBranchFrom(node, nodeMap, intern)
         case 'container':
             return emitContainerFrom(node)
@@ -463,8 +474,45 @@ function emitNonEmptyChildrenHoist(
     kind: string,
 ): void {
     const call = resolveChildrenFromTypedInput(childSlots, nodeMap, typeName, intern, 'input', inputOptional)
-    lines.push(`  const _ne_children = ${call};`)
+    // Annotate the hoist with the resolved element type so the slot
+    // assignment downstream sees a `readonly T[]` (TS would otherwise
+    // infer `unknown` when the `_resolveMany*<T>` call's `T` has no
+    // contextual type — the result flows into a `const`, not a typed
+    // slot). `_assertNonEmpty` then narrows it to the non-empty tuple.
+    const elementType = childrenSlotElementType(childSlots, nodeMap)
+    const annotation = elementType ? `: readonly (${elementType})[]` : ''
+    lines.push(`  const _ne_children${annotation} = ${call};`)
     lines.push(`  _assertNonEmpty(_ne_children, '${kind}.children');`)
+}
+
+/**
+ * Compute the element type expression for a children-slot resolver hoist.
+ *
+ * Produces a `T.X | T.Y | ...` union over the resolved kinds in the merged
+ * children-slot values list. Mirrors the `factories.ts::childElementType`
+ * walker but lives here to keep the from-emitter standalone.
+ */
+function childrenSlotElementType(
+    childSlots: readonly AssembledChild[],
+    nodeMap: NodeMap,
+): string | undefined {
+    const parts = new Set<string>()
+    for (const c of childSlots) {
+        for (const v of c.values) {
+            if (isTerminalValue(v)) {
+                parts.add(JSON.stringify(v.value))
+                continue
+            }
+            if (!isNodeRef(v)) continue
+            const t = isUnresolvedRef(v.node) ? v.node.name : v.node.kind
+            const node = nodeMap.nodes.get(t)
+            if (!node) continue
+            const name = node.typeName
+            parts.add(isValidIdent(name) ? `T.${name}` : JSON.stringify(t))
+        }
+    }
+    if (parts.size === 0) return undefined
+    return [...parts].join(' | ')
 }
 
 /**
@@ -521,9 +569,16 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
     if (fields.length > 0) {
         emitBranchNodeDataPassthrough(lines, inputOptional, returnType)
         const neName = (f: AssembledField) => `_ne_${f.propertyName}`
+        // Keyword-presence fields (boolean / bitflag) are NOT array-shaped on
+        // the factory's Config surface — they're a `Bitflag<Const, T>` /
+        // `BooleanKeyword<T>` brand. Skip the non-empty hoist for those even
+        // when the underlying values are repeat1, otherwise we generate a
+        // `_ne_X` array hoist + `_assertNonEmpty` call against a non-array.
+        const needsNonEmptyHoist = (f: AssembledField): boolean =>
+            isNonEmpty(f) && isMultiple(f) && keywordPresenceKind(f, nodeMap) === null
         for (const f of fields) {
             if (isAutoStampField(f, nodeMap)) continue  // factory stamps these; no Config slot
-            if (isNonEmpty(f) && isMultiple(f)) {
+            if (needsNonEmptyHoist(f)) {
                 const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional)
                 lines.push(`  const ${neName(f)} = ${call};`)
                 lines.push(`  _assertNonEmpty(${neName(f)}, '${node.kind}.${f.propertyName}');`)
@@ -536,7 +591,7 @@ function emitBranchFrom(node: BranchLikeNode, nodeMap: NodeMap, intern: KindInte
         lines.push(`  return ${factory}({`)
         for (const f of fields) {
             if (isAutoStampField(f, nodeMap)) continue  // factory stamps these; no Config slot
-            if (isNonEmpty(f) && isMultiple(f)) {
+            if (needsNonEmptyHoist(f)) {
                 lines.push(`    ${f.propertyName}: ${neName(f)},`)
             } else {
                 lines.push(`    ${f.propertyName}: ${resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional)},`)
@@ -605,12 +660,15 @@ function emitRepeatedContainerFrom(
     // funnels the post-guard input into the factory's accepted shape — at
     // this point any `${tName}` element has been ruled out by structural
     // selection (the only way to land here with the union is a single
-    // self-NodeData first arg, handled above).
+    // self-NodeData first arg, handled above). The unwrap branch's
+    // `data.$children` is typed as `readonly NodeChildValue[]` (the loose
+    // generic shape on `AnyNodeData`); the same boundary cast funnels it
+    // into the factory's narrow children-element type.
     return [
         `export function ${fn}(...input: readonly (${elementType} | ${tName})[]) {`,
         `  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === '${kind}') {`,
         `    const data = input[0];`,
-        `    return ${factory}(...(data.$children ?? []));`,
+        `    return ${factory}(...((data.$children ?? []) as readonly ${elementType}[]));`,
         `  }`,
         `  return ${factory}(...(input as readonly ${elementType}[]));`,
         '}',
