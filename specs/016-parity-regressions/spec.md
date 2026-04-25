@@ -93,8 +93,9 @@ A maintainer needs the native-mode (`SITTIR_BACKEND=native`) test suite to produ
 - **SC-003**: Every commit on this branch carries before/after counts in its message, and the committed `baselines/<backend>.json` matches the "After" numbers byte-for-byte. Verifiable post-merge by replaying the regen + collection command on each commit and diff'ing.
 - **SC-004**: Zero TS-mode regressions across the lifetime of this feature — every count in `baselines/ts.json` either stays equal or moves up across commits. Verified by a regression-checker script that diffs successive baseline commits.
 - **SC-005**: Phase-0 invariants (build green, lint clean, jinja-check green, API-surface snapshots match) hold at every commit. Verified by a green CI run on every push.
-- **SC-006**: Time-to-fix per cluster (from "cluster identified" to "cluster commit landed") averages under 4 hours of focused work. Sustaining a fast cluster cadence is what keeps the feature scoped — clusters that exceed this are split or deferred.
-- **SC-007**: Generated-output drift between consecutive commits and a clean regen is zero. Verified by `git diff --quiet` after running `pnpm tsx packages/codegen/src/cli.ts --grammar <each> --all` on the post-cluster checkout.
+- **SC-006**: Generated-output drift between consecutive commits and a clean regen is zero. Verified by `git diff --quiet` after running `pnpm tsx packages/codegen/src/cli.ts --grammar <each> --all` on the post-cluster checkout.
+
+> **Note on cadence**: an earlier draft of this spec carried a "≤4 hours of focused work per cluster" metric as SC-007. It was removed during `/speckit.superb.review` because cadence is process advice, not a measurable feature outcome — clusters that exceed it are split or deferred per the spec's existing scope-drift edge case, not failed against a contract. The pacing guidance lives in `quickstart.md` instead.
 
 ## Assumptions
 

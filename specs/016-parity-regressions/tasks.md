@@ -106,20 +106,20 @@ This is a pnpm workspace. Touch surface for this feature:
 
 - [ ] T023 [US2] Inspect `packages/codegen/tests/integration/validate-all.test.ts` "rust e2e validation > round-trip validation > factory round-trip" failure output. Cross-reference with `project_factory_validator_is_passthrough.md` (memory note flagged factory-rt validator behaviour previously).
 - [ ] T024 [US2] Fix the integration test failure at the codegen / factory-emit level: `packages/codegen/src/emitters/factories.ts` and/or `packages/codegen/src/validate/factory-roundtrip.ts`. Do NOT skip the test or weaken assertions.
-- [ ] T025 [US2] Regenerate, verify invariants, re-collect baselines, run tests (T013/T014/T015 pattern). Commit `016/factory-rt: <summary>` + Before/After.
+- [ ] T025 [US2] Regenerate, verify invariants, re-collect baselines, run tests (T013/T014/T015 pattern). Commit `016/factory-rt: <summary>` + Before/After. Update or delete relevant memory notes per FR-008 (`project_factory_validator_is_passthrough.md` likely candidate).
 
 ### Cluster D — ts-template-coverage (138 → ≥140)
 
 - [ ] T026 [US2] Run `pnpm --filter @sittir/codegen test src/__tests__/corpus-validation.test.ts` and locate which 2+ TypeScript kinds are missing templates (the floor is 140; current 138). Use `npx tsx packages/codegen/src/scripts/counts.ts` if helpful for kind enumeration.
 - [ ] T027 [US2] Add render-template emission for the missing kinds via `packages/codegen/src/emitters/templates.ts` walker logic and/or `packages/typescript/overrides.ts` if grammar-shape patches are needed.
-- [ ] T028 [US2] Regenerate, verify invariants, re-collect baselines, run tests. Confirm ts coverage ≥140 with no rust/python coverage regressions. Commit `016/ts-template-coverage: <summary>` + Before/After.
+- [ ] T028 [US2] Regenerate, verify invariants, re-collect baselines, run tests. Confirm ts coverage ≥140 with no rust/python coverage regressions. Commit `016/ts-template-coverage: <summary>` + Before/After. Update or delete relevant memory notes per FR-008.
 
 ### Cluster E — dsl tests (3 fixtures, unrelated)
 
 - [ ] T029 [US2] Fix `packages/codegen/src/__tests__/refine-emit.test.ts > types the per-form factory parameter with the narrowed Config`. Inspect emitter output for the per-form factory parameter type; align with the test's expectation. May involve `packages/codegen/src/emitters/refine-emit.ts` or `factories.ts`.
 - [ ] T030 [US2] Fix `packages/codegen/src/dsl/__tests__/enrich.test.ts > kind-to-name field wrapping > skips when a field with the same name already exists`. The stderr "skipped kind-to-name on …" message wasn't emitted — adjust `packages/codegen/src/dsl/enrich.ts` to emit it (or update the test if the message intent changed).
 - [ ] T031 [US2] Fix `packages/codegen/src/dsl/__tests__/transform-path.test.ts > unwraps an enrich-inferred field on the original member before re-wrapping`. The test expects `{type: 'symbol', name: 'expr'}` but receives `{type: 'field', name: 'inferred_name'}` — investigate transform-path's interaction with enrich-inferred fields in `packages/codegen/src/dsl/transform/transform-path.ts`.
-- [ ] T032 [US2] After all three dsl fixes, regenerate (no codegen output should change since these are pipeline-internal fixes, not template-affecting), verify invariants, re-collect baselines, run tests. May commit T029/T030/T031 as one combined `016/dsl-fixes: <summary>` commit OR three small commits — use the combined approach if the fixes share any helper code; three commits otherwise. Each must carry Before/After.
+- [ ] T032 [US2] After all three dsl fixes, regenerate (no codegen output should change since these are pipeline-internal fixes, not template-affecting), verify invariants, re-collect baselines, run tests. May commit T029/T030/T031 as one combined `016/dsl-fixes: <summary>` commit OR three small commits — use the combined approach if the fixes share any helper code; three commits otherwise. Each must carry Before/After. Update or delete relevant memory notes per FR-008.
 
 **Checkpoint**: TS-mode `totals.fail: 0` in `baselines/ts.json`. SC-001 met.
 
@@ -138,12 +138,13 @@ This is a pnpm workspace. Touch surface for this feature:
 - [ ] T035 [US3] Apply fixes in `packages/codegen/src/emitters/rust-render.ts` (the Rust render emitter) and/or `packages/codegen/src/emitters/templates.ts` (the shared Jinja emitter). The fix is at the dispatcher / walker level — never hand-edit per-kind Rust template files. Per FR-005, target counts are determined by measurement; lower bound is 50% of TS-mode pass rate.
 - [ ] T036 [US3] Regenerate all three grammars (T013 command). The Rust render crate also rebuilds via `cargo build` triggered by the napi build step (verify the `.node` files refresh).
 - [ ] T037 [US3] Verify phase-0 invariants. Re-collect baselines for BOTH backends — confirm native counts moved up AND TS counts unchanged.
-- [ ] T038 [US3] Run `SITTIR_BACKEND=native pnpm test`; verify floors reach the SC-002 target (full-RT + AST-match > 0 across all 3 grammars; ≥50% of TS-mode rate). Commit `016/native-render-gaps: <summary>` + Before/After (both backends).
+- [ ] T037a [US3] Re-run `npx tsx packages/codegen/src/scripts/probe-kind.ts --grammar rust --source 'fn main() {}' --engine both --reparse` and verify the `compareEngines.summary` field reads "TS and native engines agree on render output". Repeat the both-engine probe for the other kinds named in the spec US3 acceptance scenario (`function_item`, `let_declaration`) and any other high-traffic kinds the cluster targeted. Document the probe results in the cluster-commit message — closes spec acceptance scenario US3#1.
+- [ ] T038 [US3] Run `SITTIR_BACKEND=native pnpm test`; verify floors reach the SC-002 target (full-RT + AST-match > 0 across all 3 grammars; ≥50% of TS-mode rate). Commit `016/native-render-gaps: <summary>` + Before/After (both backends). Update or delete relevant memory notes per FR-008.
 
 ### Cluster G — native polymorph null-forms (out-of-scope unless waterfall)
 
 - [ ] T039 [US3] If after T038 the native floors are still below SC-002, investigate the polymorph null-forms cluster (`project_recursive_factory_cluster.md` flags ~30 forms with `modelType=none` that render-crash). Otherwise SKIP this task and document the deferral in the spec's edge-case section.
-- [ ] T040 [US3] If T039 is run: apply the null-form fix at `packages/codegen/src/compiler/assemble.ts` (the modelType classifier) and/or template emission. Regenerate, verify invariants, re-collect, run tests, commit per the cluster pattern.
+- [ ] T040 [US3] If T039 is run: apply the null-form fix at `packages/codegen/src/compiler/assemble.ts` (the modelType classifier) and/or template emission. Regenerate, verify invariants, re-collect, run tests, commit per the cluster pattern. Update or delete `project_recursive_factory_cluster.md` per FR-008.
 
 **Checkpoint**: Native floors above zero across all 3 grammars; ≥50% of TS-mode pass rate per grammar. SC-002 met. Final `baselines/{ts,native}.json` reflect the full-feature end state.
 
@@ -154,7 +155,7 @@ This is a pnpm workspace. Touch surface for this feature:
 **Purpose**: Verify the feature's measurable success criteria are all met; clean up working artifacts; finalise PR description.
 
 - [ ] T041 Run the full test suite under both backends one final time: `SITTIR_BACKEND=typescript pnpm test` (expect 0 failures), `SITTIR_BACKEND=native pnpm test` (expect floors at ≥50% of TS-mode). Record final pass counts.
-- [ ] T042 Verify `git diff --quiet` after a clean regen across all three grammars (SC-007). If diffs appear, the last cluster commit didn't capture all regen changes — ship a follow-up commit.
+- [ ] T042 Verify `git diff --quiet` after a clean regen across all three grammars (SC-006). If diffs appear, the last cluster commit didn't capture all regen changes — ship a follow-up commit.
 - [ ] T043 Run a dry regression-checker pass against the entire branch: `git log --oneline 012-rust-core-port..HEAD` enumerates the cluster commits; for each, replay `collect-baseline` against that commit and diff against its parent. SC-004 means zero count drops appear anywhere in this trace.
 - [ ] T044 Update `MEMORY.md` index per FR-008 — every cluster fix should have either deleted a memory note (cluster fully closed) or added a one-line "deferred to follow-up" entry. Re-confirm there are no stale notes pointing at clusters this feature closed.
 - [ ] T045 Finalise PR `#016` description: include the final TS-mode and native-mode count summary table (initial → final per grammar), list of cluster commits with one-line subject each, link to the baseline JSON in the branch tip. Mark PR ready for review.
@@ -232,7 +233,7 @@ This is genuinely useful by itself: it gives every future PR a regression check,
 
 **Incremental delivery beyond MVP**: each cluster commit (T016, T022, T025, T028, T032, T038, T040) is independently mergeable. If review feedback delays Cluster B, Clusters A + C + D + E can still ship. The base-branch stack (against `012-rust-core-port`) handles the ordering — every cluster commit appears in the same PR thread but lands on master in isolation if the PR is reviewed commit-by-commit.
 
-**Suggested cadence**: one cluster per working day (per spec SC-006: under 4 hours each), plus baseline tooling on day 1. End-to-end timeline ≈ 7 working days for the full feature, assuming no cluster spawns a recursive investigation that splits it.
+**Suggested cadence**: one cluster per working day (~4 hours of focused work each — guidance, not a contract per `/speckit.superb.review`'s SC-006 → quickstart move), plus baseline tooling on day 1. End-to-end timeline ≈ 7 working days for the full feature, assuming no cluster spawns a recursive investigation that splits it.
 
 ---
 

@@ -15,7 +15,7 @@ Lift the corpus-validator pass counts above the baseline measured at `b4ccc6cc` 
 **Testing**: vitest (baseline truth), oxlint --deny-warnings on `packages/{lang}/src` (phase-0 invariant), tsgo strict-build (phase-0 invariant), `scripts/check-jinja-templates.ts` (header check), `npx tsx packages/codegen/src/scripts/probe-kind.ts --engine both` for engine-vs-engine render diffing.
 **Target Platform**: Local dev + CI (GitHub Actions, Node 20.x and 24.x matrix, x86_64 linux).
 **Project Type**: Internal codegen pipeline — pure transformation over in-memory parse trees + on-disk grammar files, no runtime persistence layer.
-**Performance Goals**: Baseline collection completes in under 30s on a warm checkout; regression-checker CI step adds under 1 min total. Cluster cadence target (per spec SC-006): under 4 hours of focused work per cluster commit, averaged across all clusters in scope.
+**Performance Goals**: Baseline collection completes in under 30s on a warm checkout; regression-checker CI step adds under 1 min total. Cluster cadence guidance (in quickstart.md, not a hard SC): roughly 4 hours of focused work per cluster commit; clusters that exceed it are split or deferred per the spec's scope-drift edge case.
 **Constraints**:
 - Fix-the-generator only: hand-edits to `packages/{lang}/src/*` or `templates/*.jinja` are forbidden (Constitution III, XI).
 - Zero TS-mode regressions across the lifetime of the feature (spec SC-004) — every count in `baselines/ts.json` may only move up.
