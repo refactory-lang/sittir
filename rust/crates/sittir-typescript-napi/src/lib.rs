@@ -54,6 +54,45 @@ impl SittirEngine {
         ))
     }
 
+    /// See sittir-rust-napi::parse_and_read for the full doc.
+    #[napi]
+    pub fn parse_and_read(&mut self, source: String) -> Result<String> {
+        let tree = self
+            .parser
+            .parse(&source, None)
+            .ok_or_else(|| Error::from_reason("parse failed"))?;
+        self.source = Some(source.clone());
+        self.tree = Some(tree.clone());
+        self.next_node_id = 0;
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let mut local_counter: u32 = self.next_node_id;
+            let data = sittir_core::read_node::read_node(
+                self.tree.as_ref().unwrap(),
+                self.source.as_ref().unwrap(),
+                None,
+                &mut local_counter,
+            );
+            (data, local_counter)
+        }));
+        match result {
+            Ok((data, advanced)) => {
+                self.next_node_id = advanced;
+                serde_json::to_string(&data)
+                    .map_err(|e| Error::from_reason(format!("serialize NodeData failed: {e}")))
+            }
+            Err(panic_payload) => {
+                let msg = if let Some(s) = panic_payload.downcast_ref::<String>() {
+                    s.clone()
+                } else if let Some(s) = panic_payload.downcast_ref::<&str>() {
+                    s.to_string()
+                } else {
+                    String::from("read_node panicked")
+                };
+                Err(Error::from_reason(msg))
+            }
+        }
+    }
+
     #[napi]
     pub fn read_node(&mut self, node_id: u32) -> Result<String> {
         let tree = self
@@ -110,3 +149,4 @@ impl SittirEngine {
         splice_apply_edits(&source, edits).map_err(|e| Error::from_reason(format!("{e}")))
     }
 }
+

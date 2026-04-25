@@ -100,6 +100,66 @@ impl SittirEngine {
         ))
     }
 
+    /// Parse `source` with the embedded tree-sitter parser, cache the
+    /// resulting tree + source on this engine instance, then run
+    /// `sittir_core::read_node::read_node` on the root and return the
+    /// resulting whole-tree `NodeData` as a JSON string.
+    ///
+    /// Distinct from `find_and_read` (which is ast-grep-pattern-based and
+    /// currently stubbed) — this is the plain "parse and read" path
+    /// every probe / parity / e2e harness wants. After the call, the
+    /// instance's cached tree is populated, so subsequent `read_node`
+    /// drill-ins by `$nodeId` work as documented.
+    ///
+    /// Caller drills to a specific kind by walking the returned JSON
+    /// NodeData tree (filter by `$type`); the previous Rust-side kind
+    /// filter was removed because tree-sitter's `Node::id()` returns
+    /// a pointer-style identifier that does not correspond to the
+    /// `$nodeId` counter `read_node` consumes.
+    ///
+    /// Errors:
+    ///   - "parse failed": tree-sitter returned None.
+    #[napi]
+    pub fn parse_and_read(&mut self, source: String) -> Result<String> {
+        let tree = self
+            .parser
+            .parse(&source, None)
+            .ok_or_else(|| Error::from_reason("parse failed"))?;
+        // Cache for subsequent read_node($nodeId) calls.
+        self.source = Some(source.clone());
+        self.tree = Some(tree.clone());
+        // Reset the per-instance counter — fresh parse means stale IDs
+        // from any prior parse are invalidated.
+        self.next_node_id = 0;
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let mut local_counter: u32 = self.next_node_id;
+            let data = sittir_core::read_node::read_node(
+                self.tree.as_ref().unwrap(),
+                self.source.as_ref().unwrap(),
+                None,
+                &mut local_counter,
+            );
+            (data, local_counter)
+        }));
+        match result {
+            Ok((data, advanced)) => {
+                self.next_node_id = advanced;
+                serde_json::to_string(&data)
+                    .map_err(|e| Error::from_reason(format!("serialize NodeData failed: {e}")))
+            }
+            Err(panic_payload) => {
+                let msg = if let Some(s) = panic_payload.downcast_ref::<String>() {
+                    s.clone()
+                } else if let Some(s) = panic_payload.downcast_ref::<&str>() {
+                    s.to_string()
+                } else {
+                    String::from("read_node panicked")
+                };
+                Err(Error::from_reason(msg))
+            }
+        }
+    }
+
     /// Drill into a previously-returned node by its `$nodeId`. Returns
     /// the primitive `NodeData` JSON.
     ///
@@ -170,3 +230,4 @@ impl SittirEngine {
         splice_apply_edits(&source, edits).map_err(|e| Error::from_reason(format!("{e}")))
     }
 }
+

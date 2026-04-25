@@ -105,6 +105,20 @@ async function main(): Promise<void> {
                 // and current). Default off — assumes the parser is
                 // current and only render-side artifacts differ.
             },
+            // --engine native|typescript|both: select which render
+            // engine renders the NodeData. Parse + readNode stay on
+            // the JS / wasm path (the native crate's `find_and_read`
+            // is currently a stub); only the render leg branches.
+            //   - typescript: `@sittir/core` createRenderer + .jinja
+            //                 templates (the current default).
+            //   - native:     `@sittir/<lang>-native` napi `.node`
+            //                 → `SittirEngine.render(JSON.stringify(nodeData))`.
+            //                 No web-tree-sitter; the napi crate
+            //                 uses the `tree_sitter` Rust crate +
+            //                 `tree_sitter_<lang>::LANGUAGE`.
+            //   - both:       runs both, emits a `compareEngines`
+            //                 block with rendered-equal verdict.
+            engine: { type: 'string' },
         },
     })
     if (!values.grammar) {
@@ -121,12 +135,18 @@ async function main(): Promise<void> {
     }
 
     const parsedRange = values.range ? parseRange(values.range as string) : undefined
+    const engineRaw = (values.engine as string | undefined) ?? 'typescript'
+    if (!['typescript', 'native', 'both'].includes(engineRaw)) {
+        console.error(`probe-kind: --engine must be 'typescript' | 'native' | 'both' (got '${engineRaw}')`)
+        process.exit(2)
+    }
     const opts = {
         noRender: values['no-render'] === true,
         noWrap: values['no-wrap'] === true,
         kind: values.kind as string | undefined,
         range: parsedRange,
         reparse: values.reparse === true,
+        engine: (engineRaw === 'both' ? 'typescript' : engineRaw) as 'typescript' | 'native',
     }
     const report = await probe(grammar, source, opts)
     let baselineReport: ProbeReport | undefined
@@ -140,10 +160,26 @@ async function main(): Promise<void> {
         })
         compare = computeCompare(report, baselineReport)
     }
+    let engineNativeReport: ProbeReport | undefined
+    let compareEngines: ProbeEngineCompare | undefined
+    if (engineRaw === 'both' || engineRaw === 'native') {
+        engineNativeReport = await probe(grammar, source, { ...opts, engine: 'native' })
+        if (engineRaw === 'both') {
+            compareEngines = computeEngineCompare(report, engineNativeReport)
+        }
+    }
     const indent = values.pretty ? 2 : undefined
-    const out = baselineReport
+    const out: Record<string, unknown> = baselineReport
         ? { ...report, baseline: baselineReport, compare }
-        : report
+        : { ...report }
+    if (engineRaw === 'native') {
+        // --engine native — collapse so the user sees the native
+        // result as the primary report (not a sidecar).
+        Object.assign(out, engineNativeReport)
+    } else if (engineRaw === 'both') {
+        out.engineNative = engineNativeReport
+        out.compareEngines = compareEngines
+    }
     process.stdout.write(JSON.stringify(out, null, indent) + '\n')
 }
 
@@ -154,6 +190,11 @@ async function main(): Promise<void> {
 export interface ProbeReport {
     grammar: string
     source: string
+    /** Render engine used for this report. `'typescript'` is the
+     *  default; `'native'` indicates the `@sittir/<lang>-native`
+     *  napi engine. Stamped so a `--engine both` consumer can tell
+     *  which side of the compare each block came from. */
+    engine?: 'typescript' | 'native'
     /** Source sub-range probed (absent when probing the full source). */
     probeRange?: { start: number; end: number; kind?: string; text: string }
     cst: CstNode
@@ -195,6 +236,20 @@ export async function probe(
          *  instead of the current package's. Default false — most baselines
          *  only differ in render-side artifacts. */
         useBaselineParser?: boolean
+        /** Which render engine renders the NodeData:
+         *    - `typescript`: parse via web-tree-sitter wasm, read via
+         *                    `<lang>/src/wrap.ts:readTreeNode`, render
+         *                    via `@sittir/core` createRenderer.
+         *    - `native`:     parse via `@sittir/<lang>-native`'s
+         *                    embedded `tree_sitter` Rust crate (no
+         *                    wasm), read via napi `parseAndRead`,
+         *                    render via napi `render`. Fully native
+         *                    end-to-end — zero web-tree-sitter and
+         *                    zero JS-side wrap traversal on this path.
+         *  Tree-sitter wasm is still used for the CST dump
+         *  (cosmetic — informational `cst` block) regardless of
+         *  engine, so the JSON output is comparable across both. */
+        engine?: 'typescript' | 'native'
     } = {},
 ): Promise<ProbeReport> {
     const { Parser, lang } = opts.baselineDir && opts.useBaselineParser
@@ -226,16 +281,39 @@ export async function probe(
 
     const cst = dumpCst(targetNode, null)
 
-    const readTreeNodeFn = opts.noWrap
-        ? null
-        : (opts.baselineDir
-            ? await loadReadTreeNodeFromPath(resolveBaselinePath(opts.baselineDir, 'src/wrap.ts'))
-            : await loadReadTreeNode(grammar))
-    const handle = treeHandle(tree)
-    const nodeId = targetNode === tree.rootNode ? undefined : targetNode.id
-    const nodeData = readTreeNodeFn
-        ? readTreeNodeFn(handle, nodeId)
-        : await fallbackReadNode(handle, nodeId)
+    // Fully-native path: parse + read via the napi engine, bypassing
+    // web-tree-sitter and the JS-side wrap module entirely. Render
+    // also goes through the napi engine below. Same `tree_sitter`
+    // Rust crate that the native engine uses for parsing internally;
+    // wasm parser above is kept only so the `cst` dump is comparable
+    // to the TS path.
+    let nodeData: unknown
+    let nativeEngine: NativeProbeEngine | undefined
+    if (opts.engine === 'native' && !opts.noWrap) {
+        nativeEngine = await loadNativeEngine(grammar)
+        // Native parses the WHOLE source from the napi engine's
+        // embedded `tree_sitter` Rust crate (zero web-tree-sitter)
+        // and returns the root NodeData JSON. When the user passed
+        // `--kind`, walk the JSON tree to find the first node with
+        // matching `$type` and probe that subtree.
+        const json = nativeEngine.parseAndRead(source)
+        const root = JSON.parse(json)
+        nodeData = opts.kind ? findInNodeData(root, opts.kind) ?? root : root
+        if (opts.kind && !findInNodeData(root, opts.kind)) {
+            throw new Error(`probe-kind: --engine native: no node of kind '${opts.kind}' found in NodeData tree`)
+        }
+    } else {
+        const readTreeNodeFn = opts.noWrap
+            ? null
+            : (opts.baselineDir
+                ? await loadReadTreeNodeFromPath(resolveBaselinePath(opts.baselineDir, 'src/wrap.ts'))
+                : await loadReadTreeNode(grammar))
+        const handle = treeHandle(tree)
+        const nodeId = targetNode === tree.rootNode ? undefined : targetNode.id
+        nodeData = readTreeNodeFn
+            ? readTreeNodeFn(handle, nodeId)
+            : await fallbackReadNode(handle, nodeId)
+    }
 
     let rendered: string | undefined
     let sameText: boolean | undefined
@@ -243,9 +321,13 @@ export async function probe(
     let reparsedCst: CstNode | undefined
     let astDiff: ProbeReport['astDiff'] | undefined
     if (!opts.noRender) {
-        rendered = opts.baselineDir
-            ? await renderNodeDataFromPath(resolveBaselinePath(opts.baselineDir, 'templates'), nodeData)
-            : await renderNodeData(grammar, nodeData)
+        rendered = opts.engine === 'native'
+            ? (nativeEngine
+                ? nativeEngine.render(JSON.stringify(stripBigInts(nodeData)))
+                : await renderNodeDataNative(grammar, nodeData))
+            : opts.baselineDir
+                ? await renderNodeDataFromPath(resolveBaselinePath(opts.baselineDir, 'templates'), nodeData)
+                : await renderNodeData(grammar, nodeData)
         renderedLen = rendered.length
         const originalText = probeRange ? probeRange.text : source
         sameText = rendered === originalText
@@ -273,6 +355,7 @@ export async function probe(
     return {
         grammar,
         source,
+        engine: opts.engine ?? 'typescript',
         probeRange,
         cst,
         nodeData: stripBigInts(nodeData),
@@ -379,6 +462,53 @@ async function renderNodeDataFromPath(templatesPath: string, nodeData: unknown):
     return bound.render(nodeData as Parameters<typeof bound.render>[0])
 }
 
+/** @internal — load the native napi engine for `grammar`. Mirrors
+ *  the `createRequire` pattern in `backend.ts`. Throws on failure so
+ *  `--engine native` / `both` modes can't silently fall back to the
+ *  TS render and mask a parity issue. */
+interface NativeProbeEngine {
+    parseAndRead(source: string): string
+    render(nodeJson: string): string
+}
+async function loadNativeEngine(grammar: string): Promise<NativeProbeEngine> {
+    const { createRequire } = await import('node:module')
+    const req = createRequire(import.meta.url)
+    // Try the published package name first; fall back to the
+    // workspace-local napi build at `rust/crates/sittir-<grammar>-napi/`
+    // when the package isn't installed (the common case during
+    // development before `pnpm install` picks up the workspace
+    // package). The crate's package.json `main` points at the local
+    // platform-specific `.node` artifact.
+    const pkg = `@sittir/${grammar}-native`
+    const repoRoot = new URL('../../../..', import.meta.url).pathname.replace(/\/$/, '')
+    const localCratePath = `${repoRoot}/rust/crates/sittir-${grammar}-napi`
+    let mod: { SittirEngine: new () => NativeProbeEngine }
+    try {
+        mod = req(pkg) as typeof mod
+    } catch {
+        try {
+            mod = req(localCratePath) as typeof mod
+        } catch (err) {
+            const message = err instanceof Error ? err.message : String(err)
+            throw new Error(
+                `probe-kind: --engine native could not load '${pkg}' or '${localCratePath}' — build the native binary with \`cd rust/crates/sittir-${grammar}-napi && pnpm exec napi build --release\`. Underlying error: ${message}`,
+            )
+        }
+    }
+    return new mod.SittirEngine()
+}
+
+/** @internal — render via the native napi engine.
+ *  `SittirEngine.render(JSON.stringify(nodeData))` — stateless, no
+ *  parse / tree dependency. The native crate uses the `tree_sitter`
+ *  Rust crate + `tree_sitter_<lang>::LANGUAGE`; zero web-tree-sitter
+ *  on this path. */
+async function renderNodeDataNative(grammar: string, nodeData: unknown): Promise<string> {
+    const engine = await loadNativeEngine(grammar)
+    const json = JSON.stringify(stripBigInts(nodeData))
+    return engine.render(json)
+}
+
 /** @internal — load `readTreeNode` from an explicit `src/wrap.ts`
  *  path. Mirrors `loadReadTreeNode` in `validate/common.ts` but
  *  without the kind-name registry — caller passes the absolute path. */
@@ -442,6 +572,63 @@ function computeCompare(current: ProbeReport, baseline: ProbeReport): ProbeCompa
 
 function shapeOf(node: CstNode): string {
     return `${node.named ? node.type : `"${node.type}"`}(${node.children.map(shapeOf).join(',')})`
+}
+
+/** @internal — depth-first walk a NodeData tree, returning the first
+ *  subtree whose `$type` matches `kind`. Used by the native-engine
+ *  path to find a kind-specific subtree once `parse_and_read` has
+ *  returned the whole-tree NodeData. */
+function findInNodeData(node: unknown, kind: string): unknown | null {
+    if (!node || typeof node !== 'object') return null
+    const n = node as { $type?: string; $fields?: Record<string, unknown>; $children?: unknown[] }
+    if (n.$type === kind) return node
+    if (n.$fields) {
+        for (const v of Object.values(n.$fields)) {
+            if (Array.isArray(v)) {
+                for (const item of v) {
+                    const found = findInNodeData(item, kind)
+                    if (found) return found
+                }
+            } else {
+                const found = findInNodeData(v, kind)
+                if (found) return found
+            }
+        }
+    }
+    if (Array.isArray(n.$children)) {
+        for (const c of n.$children) {
+            const found = findInNodeData(c, kind)
+            if (found) return found
+        }
+    }
+    return null
+}
+
+/** @internal — engine-vs-engine compare summary for `--engine both`.
+ *  TS and native render the same NodeData; equal output means the
+ *  napi crate's `render_dispatch` agrees with `@sittir/core`'s
+ *  `createRenderer`. */
+export interface ProbeEngineCompare {
+    /** Both engines rendered identical text. */
+    renderedEqual: boolean
+    /** length(currentRendered) - length(nativeRendered). */
+    renderedLenDelta: number
+    /** Astdiff agreement when --reparse used; undefined otherwise. */
+    astShapeEqual?: boolean
+    summary: string
+}
+
+function computeEngineCompare(ts: ProbeReport, native: ProbeReport): ProbeEngineCompare {
+    const renderedEqual = ts.rendered === native.rendered
+    const renderedLenDelta = (ts.diff.renderedLen ?? 0) - (native.diff.renderedLen ?? 0)
+    let astShapeEqual: boolean | undefined
+    if (ts.astDiff && native.astDiff) {
+        astShapeEqual = ts.astDiff.reparsedShape === native.astDiff.reparsedShape
+    }
+    const summary = renderedEqual
+        ? 'TS and native engines agree on render output'
+        : `engines disagree (TS - native = ${renderedLenDelta >= 0 ? '+' : ''}${renderedLenDelta} chars)`
+    return { renderedEqual, renderedLenDelta, astShapeEqual, summary }
 }
 
 function stripBigInts(v: unknown): unknown {
