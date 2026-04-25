@@ -305,14 +305,14 @@ var PREC_VARIANT_MAP = {
 function reconstructPrec(rule, newContent) {
   const t = rule.type.toLowerCase();
   const value = rule.value ?? 0;
-  const prec2 = nativeRequired("prec");
+  const prec = nativeRequired("prec");
   const variant2 = PREC_VARIANT_MAP[t];
   if (variant2) {
-    const fn = prec2[variant2];
+    const fn = prec[variant2];
     if (typeof fn !== "function") throw new Error(`transform: native prec.${variant2} not available`);
     return fn(value, newContent);
   }
-  return prec2(value, newContent);
+  return prec(value, newContent);
 }
 function wrapInPrecStack(content, precStack, reconstructPrec2) {
   if (!precStack?.length) return content;
@@ -421,7 +421,7 @@ function wireRegisterConflict(names) {
 function wireGetCurrentRuleKind() {
   return currentContext?.currentRuleKind ?? null;
 }
-function wire(config) {
+function wire(config2) {
   const context = {
     deposits: /* @__PURE__ */ new Map(),
     polymorphVariants: [],
@@ -429,17 +429,17 @@ function wire(config) {
     refineForms: /* @__PURE__ */ new Map(),
     currentRuleKind: null
   };
-  const polymorphs = config.polymorphs ?? {};
-  const transforms = config.transforms ?? {};
-  const outRules = { ...config.rules };
+  const polymorphs = config2.polymorphs ?? {};
+  const transforms = config2.transforms ?? {};
+  const outRules = { ...config2.rules };
   composeOrSynthesizeTransformParents(outRules, transforms);
   composeOrSynthesizePolymorphParents(outRules, polymorphs, context);
   injectHiddenRulePlaceholders(outRules, polymorphs, context);
   injectTransformHiddenRulePlaceholders(outRules, transforms, context);
   wrapAllRuleFns(outRules, context);
-  const conflicts = wrapConflictsCallback(config.conflicts, context);
+  const conflicts = wrapConflictsCallback(config2.conflicts, context);
   const wired = {
-    ...config,
+    ...config2,
     rules: outRules,
     ...conflicts === void 0 ? {} : { conflicts }
   };
@@ -698,10 +698,13 @@ function partitionPatchesByVariant(patches) {
   return { variantEntries, otherEntries };
 }
 function applyVariantPatches(rule, variantEntries) {
-  const hoisted = tryHoistSiblingVariants(rule, variantEntries);
+  const ordered = [...variantEntries].sort(
+    ([a], [b]) => parsePath(b).length - parsePath(a).length
+  );
+  const hoisted = tryHoistSiblingVariants(rule, ordered);
   if (hoisted) {
     let result2 = hoisted.rule;
-    for (const [key, value] of variantEntries) {
+    for (const [key, value] of ordered) {
       if (hoisted.consumed.has(key)) continue;
       const segments = parsePath(key);
       result2 = applyPath(result2, segments, (member, precStack) => resolvePatch(value, member, precStack));
@@ -709,7 +712,7 @@ function applyVariantPatches(rule, variantEntries) {
     return result2;
   }
   let result = rule;
-  for (const [key, value] of variantEntries) {
+  for (const [key, value] of ordered) {
     const segments = parsePath(key);
     result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, precStack));
   }
@@ -726,14 +729,14 @@ function tryHoistSiblingVariants(rule, variantEntries) {
   if (parsed.some((p) => p.choicePos !== choicePos)) return bail(`variant patches target mixed choice positions (${parsed.map((p) => p.choicePos).join(",")}) \u2014 hoist needs all siblings at one choice`);
   const seqMembers = [...membersOf2(core)];
   const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
-  const choice2 = seqMembers[resolvedPos];
-  if (!choice2 || !isChoiceType(choice2.type)) return bail(`position ${resolvedPos} is '${choice2?.type}', not choice/CHOICE`);
-  const choiceMembers = membersOf2(choice2);
+  const choice = seqMembers[resolvedPos];
+  if (!choice || !isChoiceType(choice.type)) return bail(`position ${resolvedPos} is '${choice?.type}', not choice/CHOICE`);
+  const choiceMembers = membersOf2(choice);
   const anyEmpty = parsed.some((p) => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx]));
   if (!anyEmpty) return null;
   const parentKind = wireGetCurrentRuleKind();
   if (!parentKind) return bail("no current rule kind (variant()/transform() called outside rule callback?)");
-  return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, parentKind, precStack);
+  return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice, parsed, parentKind, precStack);
 }
 function peelPrecWrappersFromRule(rule) {
   const dbg = typeof process !== "undefined" ? process?.env?.SITTIR_DEBUG : void 0;
@@ -760,7 +763,7 @@ function parseVariantPathsForHoist(variantEntries, bail) {
   }
   return parsed;
 }
-function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, parentKind, precStack) {
+function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice, parsed, parentKind, precStack) {
   const refs = [];
   const isUpperCase = core.type === core.type.toUpperCase();
   for (const p of parsed) {
@@ -785,7 +788,7 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     });
   }
   registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, p.v.name)));
-  const newChoice = reconstructContainer(choice2, refs);
+  const newChoice = reconstructContainer(choice, refs);
   return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
 function registerHoistedVariantConflicts(variantNames) {
@@ -870,7 +873,17 @@ function resolvePatch(patch, originalMember, precStack) {
 }
 function resolveFieldPlaceholder(patch, originalMember, precStack) {
   let content = originalMember;
-  if (isFieldLike(content) && content.source === "inferred") {
+  if (isFieldLike(content) && content.source === "enriched") {
+    if (!process.env.SITTIR_QUIET) {
+      const parentKind = wireGetCurrentRuleKind() ?? "(unknown)";
+      const overrideName = patch.name;
+      const enrichName = content.name ?? "(unknown)";
+      const tag = overrideName === enrichName ? `duplicate name ('${overrideName}')` : `override renames '${enrichName}' \u2192 '${overrideName}'`;
+      process.stderr.write(
+        `transform: override field('${overrideName}') on '${parentKind}' wraps an enrich-labeled FIELD \u2014 ${tag}. Drop the override entry if the names match; enrich will cover it automatically.
+`
+      );
+    }
     content = content.content;
   }
   const maybeSymbolized = maybeKeywordSymbol(
@@ -912,11 +925,11 @@ function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrap
     value: aliasValue
   };
   if (factored) {
-    const optional2 = globalThis.optional;
-    if (typeof optional2 !== "function") {
+    const optional = globalThis.optional;
+    if (typeof optional !== "function") {
       throw new Error("transform: no global optional() found \u2014 variant()/alias() on empty-matching content needs runtime optional()");
     }
-    return optional2(aliasNode);
+    return optional(aliasNode);
   }
   return aliasNode;
 }
@@ -979,11 +992,12 @@ function enrich(base2) {
   const hasWrapper = "grammar" in base2;
   const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
   if (!rulesBag) return base2;
+  const supertypeNames = extractSupertypeNames(base2, hasWrapper);
   const kwRules = {};
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
     const rule = rulesBag[name];
-    enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules) : rule;
+    enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules, supertypeNames) : rule;
   }
   const mergedRules = { ...enrichedRules, ...kwRules };
   if (hasWrapper) {
@@ -991,23 +1005,73 @@ function enrich(base2) {
   }
   return { ...base2, rules: mergedRules };
 }
-function applyEnrichPasses(ruleName, rule, kwRules) {
+function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames) {
+  const MAX_ITERATIONS = 8;
   let r = rule;
-  r = applyKindToName(ruleName, r);
-  r = applyOptionalKeyword(ruleName, r, kwRules);
+  for (let i = 0; i < MAX_ITERATIONS; i++) {
+    const before = r;
+    r = applySymbolToField(ruleName, r, supertypeNames);
+    r = applyOptionalKeyword(ruleName, r, kwRules);
+    if (r === before) return r;
+  }
+  if (!process.env.SITTIR_QUIET) {
+    process.stderr.write(`enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations
+`);
+  }
   return r;
+}
+function extractSupertypeNames(base2, hasWrapper) {
+  const root = hasWrapper ? base2.grammar : base2;
+  const fn = root?.supertypes;
+  if (typeof fn !== "function") return /* @__PURE__ */ new Set();
+  const dollar = new Proxy({}, {
+    get(_t, prop) {
+      if (typeof prop === "string") return { type: "SYMBOL", name: prop };
+      return void 0;
+    }
+  });
+  let result;
+  try {
+    result = fn(dollar);
+  } catch {
+    return /* @__PURE__ */ new Set();
+  }
+  if (!Array.isArray(result)) return /* @__PURE__ */ new Set();
+  const names = /* @__PURE__ */ new Set();
+  for (const r of result) {
+    const n = r?.name;
+    if (typeof n === "string") names.add(n);
+  }
+  return names;
 }
 function detectCase(referenceRule) {
   const t = referenceRule?.type ?? "";
   return t.length > 0 && t === t.toUpperCase() ? "upper" : "lower";
 }
 function makeField(referenceRule, name, content) {
+  propagateFieldName(content, name);
   return {
     type: detectCase(referenceRule) === "upper" ? "FIELD" : "field",
     name,
     content,
-    source: "inferred"
+    source: "enriched"
   };
+}
+function propagateFieldName(rule, fieldName) {
+  if (!rule || typeof rule !== "object") return;
+  const r = rule;
+  if (r._ref && r._ref.fieldName === void 0) {
+    r._ref.fieldName = fieldName;
+  }
+  const t = r.type;
+  if (t === "seq" || t === "SEQ" || t === "choice" || t === "CHOICE") {
+    if (Array.isArray(r.members)) for (const m of r.members) propagateFieldName(m, fieldName);
+    return;
+  }
+  if (t === "optional" || t === "OPTIONAL" || t === "repeat" || t === "REPEAT" || t === "repeat1" || t === "REPEAT1" || t === "prec" || t === "PREC" || t === "prec_left" || t === "PREC_LEFT" || t === "prec_right" || t === "PREC_RIGHT" || t === "prec_dynamic" || t === "PREC_DYNAMIC") {
+    if (r.content !== void 0) propagateFieldName(r.content, fieldName);
+    return;
+  }
 }
 function makeSymbol(referenceRule, name) {
   return {
@@ -1071,33 +1135,93 @@ function reportSkip(pass, ruleName, reason) {
   process.stderr.write(`enrich: skipped ${pass} on ${ruleName} (${reason})
 `);
 }
-function applyKindToName(ruleName, rule) {
-  if (!isSeqType(rule.type)) return rule;
-  const members = rule.members;
-  const kindCounts = /* @__PURE__ */ new Map();
-  for (const m of members) {
-    if (isSymbolType(m.type) && typeof m.name === "string") {
-      const n = m.name;
-      kindCounts.set(n, (kindCounts.get(n) ?? 0) + 1);
+function detectSymbolTarget(member) {
+  if (isSymbolType(member.type) && typeof member.name === "string") {
+    const name = member.name;
+    return {
+      name,
+      symbolRule: member,
+      wrap: (fieldNode) => fieldNode
+    };
+  }
+  const peeled = peelOptional(member);
+  if (!peeled.isOptional) return null;
+  const innerN = normalizeMember(peeled.inner);
+  if (isSymbolType(innerN.type) && typeof innerN.name === "string") {
+    return {
+      name: innerN.name,
+      symbolRule: peeled.inner,
+      wrap: (fieldNode) => rebuildOptional(member, fieldNode)
+    };
+  }
+  if (!isSeqType(innerN.type)) return null;
+  const seqMembers = peeled.inner.members;
+  let symIdx = -1;
+  for (let i = 0; i < seqMembers.length; i++) {
+    const sn2 = normalizeMember(seqMembers[i]);
+    if (isSymbolType(sn2.type) && typeof sn2.name === "string") {
+      if (symIdx !== -1) return null;
+      symIdx = i;
+    } else if (!isStringType(sn2.type) && sn2.type !== "PATTERN" && sn2.type !== "pattern") {
+      return null;
     }
   }
-  const existing = collectFieldNamesRuntime(rule);
+  if (symIdx === -1) return null;
+  const symMember = seqMembers[symIdx];
+  const sn = normalizeMember(symMember);
+  if (!isSymbolType(sn.type) || typeof sn.name !== "string") return null;
+  const seqRule = peeled.inner;
+  return {
+    name: sn.name,
+    symbolRule: symMember,
+    wrap: (fieldNode) => {
+      const newSeqMembers = seqMembers.map((mm, i) => i === symIdx ? fieldNode : mm);
+      const newSeq = { ...seqRule, members: newSeqMembers };
+      return rebuildOptional(member, newSeq);
+    }
+  };
+}
+function applySymbolToField(ruleName, rule, supertypeNames) {
+  if (ruleName.startsWith("_")) return rule;
+  const precStack = [];
+  let cursor = rule;
+  while (isPrecWrapper(cursor)) {
+    precStack.push(cursor);
+    cursor = cursor.content;
+  }
+  if (!isSeqType(cursor.type)) return rule;
+  const members = cursor.members;
+  const kindCounts = /* @__PURE__ */ new Map();
+  const targetByIdx = members.map(detectSymbolTarget);
+  for (const t of targetByIdx) {
+    if (t) kindCounts.set(t.name, (kindCounts.get(t.name) ?? 0) + 1);
+  }
+  const existing = collectFieldNamesRuntime(cursor);
   let changed = false;
-  const newMembers = members.map((m) => {
-    if (!isSymbolType(m.type) || typeof m.name !== "string") return m;
-    const k = m.name;
-    if (k.startsWith("_")) return m;
-    if ((kindCounts.get(k) ?? 0) > 1) return m;
-    if (existing.has(k)) {
-      reportSkip("kind-to-name", ruleName, `field '${k}' already exists`);
+  const newMembers = members.map((m, i) => {
+    const t = targetByIdx[i];
+    if (!t) return m;
+    let fieldName = t.name;
+    if (t.name.startsWith("_")) {
+      if (!supertypeNames.has(t.name)) return m;
+      fieldName = t.name.slice(1);
+    }
+    if ((kindCounts.get(t.name) ?? 0) > 1) return m;
+    if (existing.has(fieldName)) {
+      reportSkip("symbol-to-field", ruleName, `field '${fieldName}' already exists`);
       return m;
     }
-    existing.add(k);
+    existing.add(fieldName);
     changed = true;
-    return makeField(rule, k, m);
+    const fieldNode = makeField(cursor, fieldName, t.symbolRule);
+    return t.wrap(fieldNode);
   });
   if (!changed) return rule;
-  return { ...rule, members: newMembers };
+  let result = { ...cursor, members: newMembers };
+  for (let i = precStack.length - 1; i >= 0; i--) {
+    result = { ...precStack[i], content: result };
+  }
+  return result;
 }
 function applyOptionalKeyword(ruleName, rule, kwRules) {
   const claimed = isSeqType(rule.type) ? collectFieldNamesRuntime(rule) : /* @__PURE__ */ new Set();
@@ -1171,7 +1295,7 @@ function rebuildOptional(optionalRule, newInner) {
 }
 
 // packages/rust/overrides.ts
-var overrides_default = grammar(enrich(import_grammar.default), wire({
+var config = {
   name: "rust",
   // `previous` is the base grammar's conflicts list — concat so we
   // don't drop the base entries (`$._type`, `$._pattern`, etc.).
@@ -1211,26 +1335,32 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     // bare `..` doesn't) means these are genuine structural variants.
     range_pattern: { "0/1/0": "left_with_right", "0/1/1": "left_bare", "1": "prefix" },
     struct_item: { "4/0": "brace", "4/1": "tuple", "4/2": "unit" },
-    visibility_modifier: { "0": "crate", "1": "pub" },
-    // `_visibility_modifier_pub` is the body of `visibility_modifier`'s
-    // `pub` arm — `seq('pub', optional(seq('(', choice(self, super,
-    // crate, seq('in', _path)), ')')))`. The inner choice has three
-    // bare symbols plus one seq (`seq('in', _path)`), which makes it
-    // heterogeneous. Split the seq arm into its own variant so the
-    // inner choice becomes four bare symbols (canonical).
-    _visibility_modifier_pub: { "1/0/1/3": "in_path" }
+    // visibility_modifier — three variants at two nesting depths,
+    // all addressed from the top-level rule:
+    //   - `1/1/0/1/3` in_path
+    //                     → `visibility_modifier_in_path`
+    //     (inside the pub arm's `seq('(', choice(self, super,
+    //     crate, seq('in', _path)), ')')` — the `seq('in', _path)`
+    //     branch). Without this split the inner choice is
+    //     heterogeneous and the shape classifier throws
+    //     `'seq-member-optional-wrapping-choice-needs-variant-or-merge'`.
+    //   - `0` crate       → `visibility_modifier_crate`
+    //   - `1` pub         → `visibility_modifier_pub`
+    //
+    // Order matters: variant patches apply in iteration order, and
+    // once `'1'` aliases arm 1 into `_visibility_modifier_pub`, the
+    // deeper `'1/1/0/1/3'` path can no longer descend into it.
+    // Same convention the range_pattern entry above uses — put the
+    // deepest paths first.
+    visibility_modifier: {
+      "1/1/0/1/3": "in_path",
+      "0": "crate",
+      "1": "pub"
+    }
   },
   transforms: {
     // abstract_type: 1 field(s)
-    abstract_type: {
-      1: field("type_parameters")
-      // type_parameters [struct=0]
-    },
-    // associated_type: 1 field(s)
-    associated_type: {
-      4: field("where_clause")
-      // where_clause [struct=0]
-    },
+    abstract_type: {},
     // array_expression polymorph splits '2/0' (semi) / '2/1' (list).
     // These base-shape patches add field labels BEFORE polymorph
     // aliasing — composition-order inversion in wire() lets this
@@ -1239,25 +1369,6 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
       { 1: field("attributes") },
       { "2/(_expression)": field("elements") }
     ],
-    // async_block: position 2 is the `block` symbol (position 1 is
-    // the optional `move` choice). Autogen placed the override at
-    // position 1, which wrapped the move choice and dropped the
-    // block routing entirely.
-    async_block: {
-      "1/0": field("move"),
-      // optional('move') → surface as field
-      2: field("block")
-    },
-    // attribute_item: 1 field(s)
-    attribute_item: {
-      2: field("attribute")
-      // attribute [struct=0]
-    },
-    // block: 1 field(s)
-    block: {
-      0: field("label")
-      // label [struct=0]
-    },
     // bounded_type: 2 field(s)
     bounded_type: {
       0: field("left"),
@@ -1265,105 +1376,67 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
       2: field("right")
       // lifetime | _type | use_bounds [struct=1]
     },
-    // break_expression: 2 field(s)
-    break_expression: {
-      1: field("label"),
-      // label [struct=0]
-      2: field("expression")
-      // _expression [struct=1]
-    },
-    // captured_pattern: 2 field(s)
-    captured_pattern: {
-      0: field("identifier"),
-      // identifier [struct=0]
-      2: field("pattern")
-      // _pattern [struct=1]
-    },
-    // closure_expression — label the three optional modifiers so readNode
-    // can route `async`, `move`, `static` tokens to named fields instead
-    // of leaving them as anonymous children.
-    closure_expression: [
-      { 0: field("static"), 1: field("async"), 2: field("move") }
-    ],
-    // const_item: 1 field(s)
-    const_item: {
-      0: field("visibility_modifier")
-      // visibility_modifier [struct=0]
-    },
-    // continue_expression: 1 field(s)
-    continue_expression: {
-      1: field("label")
-      // label [struct=0]
-    },
-    // enum_item: 2 field(s)
-    enum_item: {
-      0: field("visibility_modifier"),
-      // visibility_modifier [struct=0]
-      4: field("where_clause")
-      // where_clause [struct=1]
-    },
-    // enum_variant: 1 field(s)
-    enum_variant: {
-      0: field("visibility_modifier")
-      // visibility_modifier [struct=0]
-    },
-    // extern_crate_declaration: 2 field(s)
-    extern_crate_declaration: {
-      0: field("visibility_modifier"),
-      // visibility_modifier [struct=0]
-      2: field("crate")
-      // crate [struct=1]
-    },
     // extern_modifier: 1 field(s)
-    extern_modifier: {
-      1: field("string_literal")
-      // string_literal [struct=0]
+    extern_modifier: {},
+    // function_modifiers — base is
+    //   repeat1(choice('async', 'default', 'const', 'unsafe', $.extern_modifier))
+    // Wrap the inner choice (path `0` = repeat1's content) with a single
+    // `field('modifier')`. Tree-sitter then reports the per-arm token
+    // union in node-types.json under `function_modifiers.fields.modifier`,
+    // which lets sittir surface the modifier set as an enum / bitflag
+    // (ADR-0012) rather than dropping the anonymous arms from $children.
+    function_modifiers: {
+      // Wildcard `_` forces path-mode (a pure numeric key `0`
+      // would trigger flat-mode, which descends into each choice
+      // arm individually rather than wrapping the whole choice).
+      // At a single-content wrapper (REPEAT1), wildcard means
+      // "descend into the content and patch there" — equivalent
+      // to `field('modifier', <inner choice>)`.
+      //
+      // TODO(ADR-0012 bitflag): the resulting type
+      //   `modifier: NonEmptyArray<"async" | "default" | "const" |
+      //    "unsafe" | ExternModifier>`
+      // is correctly enum-shaped but each modifier is genuinely
+      // mutually-exclusive and set-like (order doesn't matter,
+      // duplicates aren't meaningful). This ought to surface as a
+      // Bitflag<FunctionMod, …> brand so the Config / Loose surface
+      // projects to a flags enum instead of an array. Deferred —
+      // needs bitflag detection in the walker for the repeat1+field
+      // combination, not just seq-positioned boolean-keyword slots.
+      "_": field("modifier")
     },
-    // field_declaration: 1 field(s)
-    field_declaration: {
-      0: field("visibility_modifier")
-      // visibility_modifier [struct=0]
-    },
-    // field_pattern: 1 field(s)
-    // Grammar: seq(optional('ref'), optional(mutable_specifier), choice(...))
-    // Position 0 = optional('ref') [anonymous], position 1 = optional(mutable_specifier)
-    field_pattern: {
-      1: field("mutable_specifier")
-      // mutable_specifier [struct=0]
-    },
-    // for_expression: 1 field(s)
-    for_expression: {
-      0: field("label")
-      // label [struct=0]
-    },
-    // foreign_mod_item: 2 field(s)
-    foreign_mod_item: {
-      0: field("visibility_modifier"),
-      // visibility_modifier [struct=0]
-      1: field("extern_modifier")
-      // extern_modifier [struct=1]
-    },
-    // function_item: pos 6 is optional(seq('->', field('return_type', ..))) —
-    // don't touch it, return_type is already a base-grammar field. The
-    // where_clause symbol lives at pos 7. Pos 8 is the body block (also
-    // already a base field).
-    function_item: {
-      0: field("visibility_modifier"),
-      // visibility_modifier
-      1: field("function_modifiers"),
-      // function_modifiers
-      7: field("where_clause")
-      // where_clause
-    },
-    // function_signature_item: same shape as function_item but ends in
-    // ';' instead of a body block — pos 7 is where_clause here too.
-    function_signature_item: {
-      0: field("visibility_modifier"),
-      // visibility_modifier
-      1: field("function_modifiers"),
-      // function_modifiers
-      7: field("where_clause")
-      // where_clause
+    // visibility_modifier — replaces the hand-authored rule below
+    // that wrapped bare keywords in `_kw_pub` / `_kw_in` hidden
+    // SYMBOLs so FIELD would survive tree-sitter normalization.
+    // The one-arg `field('pub')` / `field('in')` placeholders land
+    // on bare STRINGs; `maybeKeywordSymbol` (dsl/primitives/field.ts)
+    // auto-synthesizes `_kw_pub` / `_kw_in` hidden rules and swaps
+    // each STRING for a SYMBOL ref — same net effect, zero hand-
+    // authored rule body.
+    //
+    // Base shape:
+    //   choice(
+    //     $.crate,                                 ← 0
+    //     seq(                                     ← 1
+    //       'pub',                                 ← 1/0        ← field('pub')
+    //       optional(seq(                          ← 1/1
+    //         '(',                                 ← 1/1/0/0
+    //         choice(                              ← 1/1/0/1
+    //           $.self,                            ← 1/1/0/1/0
+    //           $.super,                          ← 1/1/0/1/1
+    //           $.crate,                          ← 1/1/0/1/2
+    //           seq(                              ← 1/1/0/1/3
+    //             'in',                           ← 1/1/0/1/3/0 ← field('in')
+    //             $._path,                        ← 1/1/0/1/3/1
+    //           ),
+    //         ),
+    //         ')',                                 ← 1/1/0/2
+    //       )),
+    //     ),
+    //   )
+    visibility_modifier: {
+      "1/0": field("pub"),
+      "1/1/0/1/3/0": field("in")
     },
     // function_type: top-level seq is
     //   [for_lifetimes, prec(call, seq(choice(trait, fn_form), parameters)),
@@ -1374,22 +1447,7 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     // 'fn' literal because it's only in one arm. Polymorph-split each
     // arm. prec is transparent to path addressing, so path `1/0` is
     // the choice inside.
-    function_type: [
-      { 0: field("for_lifetimes") }
-    ],
-    // gen_block: same fix as async_block — the block symbol is
-    // at position 2, position 1 is the optional `move` choice.
-    gen_block: {
-      "1/0": field("move"),
-      // optional('move') → surface as field
-      2: field("block")
-    },
-    // generic_type_with_turbofish: aliased to `generic_type` at 4 call
-    // sites. Wrap `::` at pos 1 as a field('turbofish') so the aliased-
-    // shape generic_type surfaces it (confirmed: parse produces
-    // field=turbofish for `C::<D>`). The generic_type template itself
-    // still needs to reference $TURBOFISH — handled via its override
-    // below.
+    function_type: [],
     generic_type_with_turbofish: {
       1: field("turbofish")
     },
@@ -1404,44 +1462,13 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     // choice(field('body', declaration_list), ';'). The ';' arm is
     // the trait-signature form (no body), which the template walker
     // drops without a polymorph split.
-    impl_item: [
-      {
-        "0/0": field("unsafe"),
-        // optional('unsafe') → surface as field
-        5: field("where_clause")
-      }
-    ],
+    impl_item: [],
     // index_expression: 2 field(s)
     index_expression: {
       0: field("object"),
       // _expression [struct=0]
       2: field("index")
       // _expression [struct=1]
-    },
-    // inner_attribute_item: 1 field(s)
-    inner_attribute_item: {
-      3: field("attribute")
-      // attribute [struct=0]
-    },
-    // label: 1 field(s)
-    label: {
-      1: field("identifier")
-      // identifier [struct=0]
-    },
-    // let_declaration: 1 field(s)
-    let_declaration: {
-      1: field("mutable_specifier")
-      // mutable_specifier [struct=0]
-    },
-    // lifetime: 1 field(s)
-    lifetime: {
-      1: field("identifier")
-      // identifier [struct=0]
-    },
-    // loop_expression: 1 field(s)
-    loop_expression: {
-      0: field("label")
-      // label [struct=0]
     },
     // macro_invocation: 1 field(s)
     macro_invocation: {
@@ -1451,16 +1478,7 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     // mod_item: two forms — `mod name;` (external) vs `mod name { ... }`
     // (inline). Polymorph-split so each form's template emits the
     // right terminator (trailing `;` vs `{...}` body).
-    mod_item: [
-      { 0: field("visibility_modifier") }
-    ],
-    // mut_pattern: 2 field(s)
-    mut_pattern: {
-      0: field("mutable_specifier"),
-      // mutable_specifier [struct=0]
-      1: field("pattern")
-      // _pattern [struct=1]
-    },
+    mod_item: [],
     // negative_literal: 2 field(s)
     negative_literal: {
       1: field("value")
@@ -1484,11 +1502,6 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
       "0/0": field("left"),
       "0/2": field("right"),
       "1/1": field("right")
-    },
-    // parameter: 1 field(s)
-    parameter: {
-      0: field("mutable_specifier")
-      // mutable_specifier [struct=0]
     },
     // pointer_type: position 1 is `choice('const', $.mutable_specifier)`.
     // Wrapping the choice as `field('mutable_specifier')` makes BOTH
@@ -1526,49 +1539,33 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     },
     // reference_pattern: 2 field(s)
     reference_pattern: {
-      1: field("mutable_specifier"),
-      // mutable_specifier [struct=0]
       2: field("pattern")
       // _pattern [struct=1]
     },
     // reference_type: 2 field(s)
-    reference_type: {
-      1: field("lifetime"),
-      // lifetime [struct=0]
-      2: field("mutable_specifier")
-      // mutable_specifier [struct=1]
-    },
+    reference_type: {},
     // self_parameter: canonical tree-sitter-rust has no fields here;
     // labels below are ours. `&` is the lifetime marker (pos 0,
     // routed through _kw_lifetime so FIELD survives). `$.lifetime`
     // at pos 1 is the explicit lifetime name ('a etc.) — distinct
     // name to avoid colliding with pos 0's label.
     self_parameter: {
-      0: field("lifetime"),
+      0: field("reference")
       // optional('&')
-      1: field("lifetime_name"),
-      // optional($.lifetime)
-      2: field("mutable_specifier")
-      // optional($.mutable_specifier)
     },
     // shorthand_field_initializer: 2 field(s)
     shorthand_field_initializer: {
-      0: field("attributes"),
+      0: field("attributes")
       // attribute_item [struct=0]
-      1: field("identifier")
-      // identifier [struct=1]
+      // pos 1 $.identifier auto-labelled by enrich pass 1
     },
     // source_file: 2 field(s)
     source_file: {
-      0: field("shebang"),
-      // shebang [struct=0]
       1: field("statements")
       // _statement [struct=1]
     },
     // static_item: 2 field(s)
     static_item: {
-      0: field("visibility_modifier"),
-      // visibility_modifier [struct=0]
       2: field("mutable_specifier")
       // mutable_specifier [struct=1]
     },
@@ -1577,25 +1574,8 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     // variant so the trailing `;` on tuple/unit forms gets rendered
     // (the flat template dropped it because `;` is an anonymous
     // token not routed to any field).
-    struct_item: [
-      { 0: field("visibility_modifier") }
-    ],
-    // trait_item: position 0 is the same visibility_modifier
-    // optional choice as struct_item. The where_clause at
-    // position 6 and the body field at position 7 stay as
-    // declared in the base grammar.
-    trait_item: {
-      0: field("visibility_modifier"),
-      "1/0": field("unsafe"),
-      // optional('unsafe')
-      6: field("where_clause")
-      // inferred 88% agreement across 8 parents
-    },
+    struct_item: [],
     // try_block: 1 field(s)
-    try_block: {
-      1: field("block")
-      // block [struct=0]
-    },
     // try_expression: 2 field(s)
     try_expression: {
       0: field("value")
@@ -1610,8 +1590,6 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     },
     // type_item: 3 field(s)
     type_item: {
-      0: field("visibility_modifier"),
-      // visibility_modifier [struct=0]
       4: field("where_clause"),
       // where_clause [struct=1]
       7: field("trailing_where_clause")
@@ -1628,38 +1606,13 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
       1: field("operand")
       // $._expression
     },
-    // union_item: 2 field(s)
-    union_item: {
-      0: field("visibility_modifier"),
-      // visibility_modifier [struct=0]
-      4: field("where_clause")
-      // where_clause [struct=1]
-    },
-    // unsafe_block: 1 field(s)
-    unsafe_block: {
-      1: field("block")
-      // block [struct=0]
-    },
-    // use_declaration: 1 field(s)
-    use_declaration: {
-      0: field("visibility_modifier")
-      // visibility_modifier [struct=0]
-    },
     // use_wildcard: 1 field(s)
     use_wildcard: {
       0: field("path")
       // crate | identifier | metavariable | scoped_identifier | self | super [struct=0]
     },
     // variadic_parameter: 1 field(s)
-    variadic_parameter: {
-      0: field("mutable_specifier")
-      // mutable_specifier [struct=0]
-    },
-    // while_expression: 1 field(s)
-    while_expression: {
-      0: field("label")
-      // label [struct=0]
-    },
+    variadic_parameter: {},
     // expression_statement: choice(seq(_expression, ';'),
     //                              prec(1, _expression_ending_with_block)).
     // Heterogeneous — the ';'-terminated form and the block-ending
@@ -1742,29 +1695,14 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     // branch.
   },
   rules: {
-    // function_modifiers — full replacement: label each choice alternative
-    // so readNode can route `async`, `const`, `default`, `unsafe` tokens.
-    // Route the bare-keyword strings through `_kw_<name>` hidden rules
-    // (declared below) so FIELD survives tree-sitter normalization —
-    // FIELD around bare STRING gets stripped; FIELD around SYMBOL survives.
-    function_modifiers: ($) => repeat1(choice(
-      field("async", $._kw_async),
-      field("default", $._kw_default),
-      field("const", $._kw_const),
-      field("unsafe", $._kw_unsafe),
-      $.extern_modifier
-    )),
-    // Hand-authored `_kw_<name>` hidden rules. Required for
-    // function_modifiers and visibility_modifier to route bare
-    // keywords through SYMBOLs so FIELD wrappers survive. These
-    // could also live in a shared module if more grammars start
-    // needing the same keyword set; for now, rust is the only one.
-    _kw_async: ($) => prec(-1, "async"),
-    _kw_default: ($) => prec(-1, "default"),
-    _kw_const: ($) => prec(-1, "const"),
-    _kw_unsafe: ($) => prec(-1, "unsafe"),
-    _kw_pub: ($) => prec(-1, "pub"),
-    _kw_in: ($) => prec(-1, "in"),
+    // Hidden `_kw_*` rules that previously sat here
+    // (`_kw_async` / `_kw_default` / `_kw_const` / `_kw_unsafe` /
+    // `_kw_pub` / `_kw_in`) have been deleted. They're now
+    // auto-synthesized by `maybeKeywordSymbol` (field.ts) whenever
+    // the declarative `transforms:` entries above land a one-arg
+    // `field('name')` on a bare STRING — see the
+    // `function_modifiers` / `visibility_modifier` entries above.
+    //
     // _pattern — the wildcard `_` is a bare literal alternative
     // (position 20) of the _pattern supertype choice. At multi-valued
     // list positions (rust `sepBy(',', $._pattern)` used by
@@ -1788,25 +1726,8 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     // The hidden rule `_wildcard_pattern` is just the `_` literal;
     // the named alias on `_pattern` above promotes it to a proper
     // `wildcard_pattern` kind at parse time.
-    _wildcard_pattern: ($) => "_",
-    // visibility_modifier — label the `pub` keyword and the `in` keyword
-    // (inside `pub(in path)`) so readNode can route them to named fields.
-    visibility_modifier: ($) => choice(
-      $.crate,
-      seq(
-        field("pub", $._kw_pub),
-        optional(seq(
-          "(",
-          choice(
-            $.self,
-            $.super,
-            $.crate,
-            seq(field("in", $._kw_in), $._path)
-          ),
-          ")"
-        ))
-      )
-    )
+    _wildcard_pattern: ($) => "_"
   }
-}));
+};
+var overrides_default = grammar(enrich(import_grammar.default), wire(config));
 if (module.exports && module.exports.default) module.exports = module.exports.default;

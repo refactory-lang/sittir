@@ -46,18 +46,17 @@ export function emitWrap(config: EmitWrapConfig): string {
         '',
         "import { readNode as readNodeJs } from '@sittir/core';",
         "import type { TreeHandle } from '@sittir/core';",
-        "import { getActiveBackend } from './backend.ts';",
         "// Spec 008 US4 — import _NodeData (== AnyNodeData) from @sittir/types",
         "// instead of re-declaring locally. Single source of truth.",
         "import type { AnyNodeData as _NodeData, WrappedNode, AnyNodeData } from '@sittir/types';",
         ...(typeImportLine ? [typeImportLine] : []),
         '',
         '// Drill-in helpers — call back through `readTreeNode` so the same',
-        '// backend-dispatch + wrap pipeline runs at every level. Layering:',
-        '//   readTreeNode (JS, public entry)',
-        '//     → readNode (backend — JS or native via getActiveBackend)',
-        '//       → wrapNode (JS, dispatches on $type)',
-        '//         → drillIn / drillAs (JS) → readTreeNode (recurse)',
+        '// per-handle dispatch + wrap pipeline runs at every level. Layering:',
+        '//   readTreeNode (public entry)',
+        '//     → readNode (handle-driven — tree.read for native, JS walker otherwise)',
+        '//       → wrapNode (dispatches on $type)',
+        '//         → drillIn / drillAs → readTreeNode (recurse)',
         'function drillIn(entry: unknown, tree: TreeHandle): unknown {',
         '  if (!entry) return undefined;',
         '  const e = entry as _NodeData;',
@@ -127,56 +126,26 @@ export function emitWrap(config: EmitWrapConfig): string {
     lines.push('}')
     lines.push('')
     lines.push('/**')
-    lines.push(' * Backend-dispatching `readNode` — the architectural seam where')
+    lines.push(' * Per-handle dispatching `readNode` — the architectural seam where')
     lines.push(' * the engine choice (JS vs native) lives. `readTreeNode`,')
     lines.push(' * `drillIn` and `drillAs` all read through THIS function so the')
-    lines.push(' * wrap layer is engine-agnostic. Native dispatch fires when')
-    lines.push(' * `getActiveBackend()` reports native AND the TreeHandle carries')
-    lines.push(' * `source`. Both engines now share tree-sitter\'s canonical')
-    lines.push(' * `Node::id()` as the `$nodeId` value, so drill-ins on the')
-    lines.push(' * native path go through `engine.readNode(nodeId)` directly —')
-    lines.push(' * no id-space translation, no JS fallback. Engine + cached')
-    lines.push(' * root NodeData are kept on a WeakMap keyed by TreeHandle.')
+    lines.push(' * wrap layer is engine-agnostic. tree-sitter `Node::id()` is')
+    lines.push(' * documented as "unique within a given syntax tree" and is a')
+    lines.push(' * raw pointer cast — different parses yield different ids — so')
+    lines.push(' * the engine that parsed the tree is the only thing that can')
+    lines.push(' * dereference its ids. Native handles set `tree.read` to a')
+    lines.push(' * closure that routes through napi; wasm/JS handles leave it')
+    lines.push(' * absent and fall back to `readNodeJs` (the in-process walker).')
     lines.push(' */')
     lines.push('function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {')
-    lines.push('  const backend = getActiveBackend();')
-    lines.push('  if (backend.name !== \'native\' || !tree.source) {')
-    lines.push('    return readNodeJs(tree, nodeId);')
-    lines.push('  }')
-    lines.push('  let cached = ENGINE_CACHE.get(tree);')
-    lines.push('  if (!cached) {')
-    lines.push('    const native = backend.native;')
-    lines.push('    if (!native) return readNodeJs(tree, nodeId);')
-    lines.push('    const engine = new native.SittirEngine() as unknown as NativeEngineHandle;')
-    lines.push('    const rootJson = engine.parseAndRead(tree.source);')
-    lines.push('    const rootData = JSON.parse(rootJson) as AnyNodeData;')
-    lines.push('    cached = { engine, rootData };')
-    lines.push('    ENGINE_CACHE.set(tree, cached);')
-    lines.push('  }')
-    lines.push('  if (nodeId == null) return cached.rootData;')
-    lines.push('  // Drill-in caveat: tree-sitter `Node::id()` is per-tree,')
-    lines.push('  // not per-process. The wasm parser (TreeHandle) and the')
-    lines.push('  // napi engine each parse independently, producing two')
-    lines.push('  // distinct trees with two distinct id spaces — even though')
-    lines.push('  // the id type is the same. So passing a wasm-side nodeId')
-    lines.push('  // to `engine.readNode(...)` panics with "node id N not')
-    lines.push('  // found in current tree". Real fix: unify the parse — JS')
-    lines.push('  // side stops parsing separately and the TreeHandle wraps')
-    lines.push('  // the napi engine\'s tree (engine.readNode is the only')
-    lines.push('  // reader). Until that lands, drill-in falls back to the')
-    lines.push('  // JS reader against the wasm tree.')
-    lines.push('  return readNodeJs(tree, nodeId);')
+    lines.push('  // Per-handle dispatch: native-engine handles carry a `read`')
+    lines.push('  // closure that routes through napi (engine owns the tree;')
+    lines.push('  // tree-sitter Node::id() is per-tree, so the engine that')
+    lines.push('  // parsed the tree is the only thing that can dereference')
+    lines.push('  // its ids). Wasm/JS handles leave `read` absent and fall')
+    lines.push('  // back to the in-process JS walker.')
+    lines.push('  return tree.read ? tree.read(nodeId) : readNodeJs(tree, nodeId);')
     lines.push('}')
-    lines.push('')
-    lines.push('interface NativeEngineHandle {')
-    lines.push('  parseAndRead(source: string): string;')
-    lines.push('  readNode(nodeId: number): string;')
-    lines.push('}')
-    lines.push('interface CachedEngine {')
-    lines.push('  engine: NativeEngineHandle;')
-    lines.push('  rootData: AnyNodeData;')
-    lines.push('}')
-    lines.push('const ENGINE_CACHE = new WeakMap<TreeHandle, CachedEngine>();')
     lines.push('')
     lines.push('/**')
     lines.push(' * Read a parsed tree node into a lazily-wrapped NodeData.')

@@ -135,7 +135,7 @@ export function adaptNode(node: TS.Node) : AnyTreeNode {
     }
 }
 
-export function treeHandle(tree: TS.Tree, source?: string) {
+export function treeHandle(tree: TS.Tree, source?: string): TreeHandle {
     const nodeMap = new Map<number, TS.Node>()
     function collect(node: TS.Node) {
         nodeMap.set(node.id, node)
@@ -143,20 +143,66 @@ export function treeHandle(tree: TS.Tree, source?: string) {
     }
     collect(tree.rootNode)
 
-    return {
+    const handle: TreeHandle = {
         rootNode: adaptNode(tree.rootNode),
         nodeById: (id: number) => {
             const node = nodeMap.get(id)
             if (!node) throw new Error(`Node ${id} not found`)
             return adaptNode(node)
         },
-        // Optional `source` plumbed for native-engine dispatch in
-        // `readTreeNode` (see TreeHandle docstring). Absent when the
-        // caller doesn't pass it; native dispatch then degrades to the
-        // existing in-process JS reader.
         source,
+        read(nodeId?: number) {
+            return readNodeFn(handle, nodeId)
+        },
     }
+    return handle
 }
+
+/**
+ * Native TreeHandle — wraps a `SittirEngine` napi instance so reads
+ * (root + drill-in) all flow through napi. Used by validators /
+ * probe-kind to exercise the full native pipeline end-to-end without
+ * any JS-side parse or walker fallback. The engine owns the tree, and
+ * the tree-sitter `Node::id()` returned in `$nodeId` is dereferenced
+ * by the same engine that produced it — no cross-engine id leakage.
+ */
+export interface NativeEngineLike {
+    parseAndRead(source: string): string
+    readNode(nodeId: number): string
+}
+export function nativeTreeHandle(engine: NativeEngineLike, source: string): TreeHandle {
+    let rootData: AnyNodeDataLike | null = null
+    function ensureRoot(): AnyNodeDataLike {
+        if (rootData === null) {
+            rootData = JSON.parse(engine.parseAndRead(source)) as AnyNodeDataLike
+        }
+        return rootData
+    }
+    const handle: TreeHandle = {
+        // The native engine doesn't expose JS-side raw tree-sitter Node
+        // wrappers; reads always go through `read` below. The required
+        // rootNode / nodeById slots throw to surface accidental fallbacks.
+        get rootNode(): AnyTreeNode {
+            throw new Error('nativeTreeHandle: rootNode unavailable — native handle reads via tree.read()')
+        },
+        nodeById(_id: number): AnyTreeNode {
+            throw new Error('nativeTreeHandle: nodeById() unavailable — native handle reads via tree.read()')
+        },
+        source,
+        read(nodeId?: number) {
+            if (nodeId === undefined) {
+                return ensureRoot() as unknown as ReturnType<NonNullable<TreeHandle['read']>>
+            }
+            // Ensure the engine has parsed (populates its tree cache);
+            // readNode(id) returns "no tree cached" otherwise.
+            ensureRoot()
+            return JSON.parse(engine.readNode(nodeId)) as ReturnType<NonNullable<TreeHandle['read']>>
+        },
+    }
+    return handle
+}
+
+interface AnyNodeDataLike { readonly $type: string }
 
 export function findFirst(node: TS.Node, kind: string): TS.Node | null {
     if (node.type === kind) return node
@@ -540,7 +586,7 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 // older camelFields behavior so other validators can adopt this helper
 // without the recursion cost.
 export interface NodeToConfigOpts {
-    readonly tree?: { nodeById(id: number): unknown }
+    readonly tree?: TreeHandle
     readonly factoryMap?: Record<string, (...args: unknown[]) => unknown>
     /** Per-kind factory signature hint (from the generated `_factoryShapes`
      * map). `'config'` expects a Config object; `'children'` is rest-
@@ -682,9 +728,12 @@ function resolveChild(
     if (shouldHaltRecursion(_depth, tree, factoryMap)) return child
     // Drill into the child to materialize its own $fields/$children.
     let drilled: ReadNodeLike = c
-    if (c.$nodeId != null) {
+    if (c.$nodeId != null && tree) {
         try {
-            drilled = readNodeFn(tree as Parameters<typeof readNodeFn>[0], c.$nodeId) as ReadNodeLike
+            // Per-handle dispatch: native handles read via napi (tree.read);
+            // wasm handles fall through to the JS walker. Validators stay
+            // backend-agnostic.
+            drilled = (tree.read ? tree.read(c.$nodeId) : readNodeFn(tree, c.$nodeId)) as ReadNodeLike
         } catch {
             // Tree handle lacked the node (factory-built subtree?) — fall
             // back to the shallow entry we already have.

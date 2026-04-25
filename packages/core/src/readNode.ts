@@ -26,16 +26,21 @@ export interface TreeHandle {
 	nodeById(id: number): AnyTreeNode;
 	/** The root node of the tree. */
 	rootNode: AnyTreeNode;
-	/**
-	 * Original source text. Optional — populated by tree-handle
-	 * factories that have it on hand (e.g. `validate/common.ts:treeHandle`)
-	 * so per-grammar `readTreeNode` implementations can dispatch to a
-	 * native engine via `parseAndRead(source)` when `getActiveBackend()`
-	 * reports `name === 'native'`. Absent when the consumer constructs
-	 * a TreeHandle without source (legacy paths) — `readTreeNode` falls
-	 * back to the in-process JS reader in that case.
-	 */
+	/** Original source text. Optional — populated when the factory has it. */
 	source?: string;
+	/**
+	 * Per-handle read dispatch. When present, the wrap layer reads
+	 * through this method instead of running `readNode(handle, id)`
+	 * directly. Native-engine handles set this to a closure that
+	 * calls `engine.parseAndRead(source)` (root) / `engine.readNode(id)`
+	 * (drill-in) so reads stay inside the engine that owns the tree.
+	 *
+	 * Why per-handle: tree-sitter `Node::id()` is documented as
+	 * "unique within a given syntax tree" and is a raw-pointer cast,
+	 * so a wasm-tree id cannot address a node in the napi engine's
+	 * tree. The dispatch must live on the handle that owns the tree.
+	 */
+	read?(nodeId?: number): AnyNodeData;
 }
 
 /**

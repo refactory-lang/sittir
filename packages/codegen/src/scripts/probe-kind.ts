@@ -56,7 +56,7 @@
  */
 
 import { parseArgs } from 'node:util'
-import { loadLanguageForGrammar, loadWebTreeSitter, treeHandle, adaptNode } from '../validate/common.ts'
+import { loadLanguageForGrammar, loadWebTreeSitter, treeHandle, adaptNode, nativeTreeHandle } from '../validate/common.ts'
 import { loadReadTreeNode } from '../validate/common.ts'
 import type * as TS from 'web-tree-sitter'
 import type { AnyTreeNode } from '@sittir/types'
@@ -259,16 +259,22 @@ export async function probe(
     if (!tree) throw new Error('probe-kind: parse returned null')
 
     // Resolve probe target: root node, or a specific sub-tree.
+    // `tree.rootNode` is a getter that returns a fresh wrapper each
+    // call, so identity comparison with subsequent getter accesses
+    // is unreliable — track "is this root?" with a flag.
     let targetNode: any = tree.rootNode
+    let isRoot = true
     let probeRange: ProbeReport['probeRange'] | undefined
     if (opts.range) {
         targetNode = findNodeCoveringRange(tree.rootNode, opts.range.start, opts.range.end)
         if (!targetNode) throw new Error(`probe-kind: no node covers range ${opts.range.start}–${opts.range.end}`)
+        isRoot = false
     } else if (opts.kind) {
         targetNode = findFirstByKind(tree.rootNode, opts.kind)
         if (!targetNode) throw new Error(`probe-kind: no node of kind '${opts.kind}' found`)
+        isRoot = false
     }
-    if (targetNode !== tree.rootNode) {
+    if (!isRoot) {
         probeRange = {
             start: targetNode.startIndex,
             end: targetNode.endIndex,
@@ -279,26 +285,40 @@ export async function probe(
 
     const cst = dumpCst(targetNode, null)
 
-    // Fully-native path: parse + read via the napi engine, bypassing
-    // web-tree-sitter and the JS-side wrap module entirely. Render
-    // also goes through the napi engine below. Same `tree_sitter`
-    // Rust crate that the native engine uses for parsing internally;
-    // wasm parser above is kept only so the `cst` dump is comparable
-    // to the TS path.
+    // Fully-native path: parse + read via the napi engine end-to-end.
+    // The native engine parses internally via the `tree_sitter` Rust
+    // crate (zero web-tree-sitter). A `nativeTreeHandle` wraps the
+    // engine; the grammar's `readTreeNode` then routes the read +
+    // every drill-in / drillAs through `tree.read(id)` → napi. tree-
+    // sitter `Node::id()` is per-tree, so the engine that parsed the
+    // tree owns the id space — the per-handle dispatch keeps reads
+    // inside that engine. Wasm parser above is kept only so the
+    // (informational) `cst` dump is comparable across paths.
     let nodeData: unknown
     let nativeEngine: NativeProbeEngine | undefined
     if (opts.engine === 'native' && !opts.noWrap) {
         nativeEngine = await loadNativeEngine(grammar)
-        // Native parses the WHOLE source from the napi engine's
-        // embedded `tree_sitter` Rust crate (zero web-tree-sitter)
-        // and returns the root NodeData JSON. When the user passed
-        // `--kind`, walk the JSON tree to find the first node with
-        // matching `$type` and probe that subtree.
-        const json = nativeEngine.parseAndRead(source)
-        const root = JSON.parse(json)
-        nodeData = opts.kind ? findInNodeData(root, opts.kind) ?? root : root
-        if (opts.kind && !findInNodeData(root, opts.kind)) {
-            throw new Error(`probe-kind: --engine native: no node of kind '${opts.kind}' found in NodeData tree`)
+        const readTreeNodeFn = await loadReadTreeNode(grammar)
+        const handle = nativeTreeHandle(nativeEngine, source)
+        if (isRoot) {
+            nodeData = readTreeNodeFn ? readTreeNodeFn(handle) : handle.read?.()
+        } else {
+            // For --kind / --range, the wasm `targetNode.id` does not
+            // address the native engine's tree (separate id spaces).
+            // Read root via the native handle, walk its NodeData to
+            // find the matching subtree, then re-read THAT node by its
+            // native `$nodeId` so drillAs / drillIn fire under napi.
+            const root = readTreeNodeFn ? readTreeNodeFn(handle) : handle.read?.()
+            const target = opts.kind
+                ? findInNodeData(root, opts.kind)
+                : findInNodeDataByRange(root, opts.range!.start, opts.range!.end)
+            if (!target) {
+                throw new Error(`probe-kind: --engine native: no node match in NodeData tree`)
+            }
+            const targetId = (target as { $nodeId?: number }).$nodeId
+            nodeData = targetId !== undefined && readTreeNodeFn
+                ? readTreeNodeFn(handle, targetId)
+                : target
         }
     } else {
         const readTreeNodeFn = opts.noWrap
@@ -307,7 +327,7 @@ export async function probe(
                 ? await loadReadTreeNodeFromPath(resolveBaselinePath(opts.baselineDir, 'src/wrap.ts'))
                 : await loadReadTreeNode(grammar))
         const handle = treeHandle(tree, source)
-        const nodeId = targetNode === tree.rootNode ? undefined : targetNode.id
+        const nodeId = isRoot ? undefined : targetNode.id
         nodeData = readTreeNodeFn
             ? readTreeNodeFn(handle, nodeId)
             : await fallbackReadNode(handle, nodeId)
@@ -335,7 +355,7 @@ export async function probe(
                 // Re-parse root is a whole program; drill down to the
                 // same-kind node for comparison when we probed a
                 // sub-tree.
-                const root2 = targetNode === tree.rootNode
+                const root2 = isRoot
                     ? tree2.rootNode
                     : (findFirstByKind(tree2.rootNode, targetNode.type) ?? tree2.rootNode)
                 reparsedCst = dumpCst(root2, null)
@@ -466,6 +486,7 @@ async function renderNodeDataFromPath(templatesPath: string, nodeData: unknown):
  *  TS render and mask a parity issue. */
 interface NativeProbeEngine {
     parseAndRead(source: string): string
+    readNode(nodeId: number): string
     render(nodeJson: string): string
 }
 async function loadNativeEngine(grammar: string): Promise<NativeProbeEngine> {
@@ -600,6 +621,44 @@ function findInNodeData(node: unknown, kind: string): unknown | null {
         }
     }
     return null
+}
+
+/** @internal — locate the smallest NodeData subtree whose `$span`
+ *  exactly covers `[start, end)`. Pre-order with narrowing — descend
+ *  whenever a child's span contains the target, fall back to the
+ *  smallest containing node when no child does. Used by the native
+ *  engine `--range` path where the wasm `targetNode.id` doesn't apply. */
+function findInNodeDataByRange(node: unknown, start: number, end: number): unknown | null {
+    if (!node || typeof node !== 'object') return null
+    const n = node as {
+        $span?: { start: number; end: number }
+        $fields?: Record<string, unknown>
+        $children?: unknown[]
+    }
+    if (!n.$span) return null
+    if (n.$span.start > start || n.$span.end < end) return null
+    const recurseInto = (child: unknown): unknown | null =>
+        findInNodeDataByRange(child, start, end)
+    if (n.$fields) {
+        for (const v of Object.values(n.$fields)) {
+            if (Array.isArray(v)) {
+                for (const item of v) {
+                    const f = recurseInto(item)
+                    if (f) return f
+                }
+            } else {
+                const f = recurseInto(v)
+                if (f) return f
+            }
+        }
+    }
+    if (Array.isArray(n.$children)) {
+        for (const c of n.$children) {
+            const f = recurseInto(c)
+            if (f) return f
+        }
+    }
+    return node
 }
 
 /** @internal — engine-vs-engine compare summary for `--engine both`.

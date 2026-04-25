@@ -510,13 +510,9 @@
         ]
       },
       "type_parameters": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": "for",
-            "named": false
-          },
           {
             "type": "type_parameters",
             "named": true
@@ -746,16 +742,6 @@
             "named": true
           }
         ]
-      },
-      "move": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "move",
-            "named": false
-          }
-        ]
       }
     }
   },
@@ -970,13 +956,9 @@
     "named": true,
     "fields": {
       "label": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": ":",
-            "named": false
-          },
           {
             "type": "label",
             "named": true
@@ -1110,16 +1092,6 @@
     "type": "break_expression",
     "named": true,
     "fields": {
-      "expression": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "_expression",
-            "named": true
-          }
-        ]
-      },
       "label": {
         "multiple": false,
         "required": false,
@@ -1130,6 +1102,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "_expression",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -1323,43 +1305,23 @@
             "named": true
           }
         ]
-      },
-      "pattern": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_pattern",
-            "named": true
-          }
-        ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "_pattern",
+          "named": true
+        }
+      ]
     }
   },
   {
     "type": "closure_expression",
     "named": true,
     "fields": {
-      "async": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "async",
-            "named": false
-          }
-        ]
-      },
-      "move": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "move",
-            "named": false
-          }
-        ]
-      },
       "parameters": {
         "multiple": false,
         "required": true,
@@ -1367,16 +1329,6 @@
           {
             "type": "closure_parameters",
             "named": true
-          }
-        ]
-      },
-      "static": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "static",
-            "named": false
           }
         ]
       }
@@ -2374,13 +2326,9 @@
         ]
       },
       "label": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": ":",
-            "named": false
-          },
           {
             "type": "label",
             "named": true
@@ -2437,10 +2385,20 @@
             "named": true
           }
         ]
+      },
+      "visibility_modifier": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "visibility_modifier",
+            "named": true
+          }
+        ]
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
@@ -2449,10 +2407,6 @@
         },
         {
           "type": "foreign_mod_item_semi",
-          "named": true
-        },
-        {
-          "type": "visibility_modifier",
           "named": true
         }
       ]
@@ -2578,56 +2532,32 @@
     "type": "function_modifiers",
     "named": true,
     "fields": {
-      "async": {
+      "modifier": {
         "multiple": true,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "async",
             "named": false
-          }
-        ]
-      },
-      "const": {
-        "multiple": true,
-        "required": false,
-        "types": [
+          },
           {
             "type": "const",
             "named": false
-          }
-        ]
-      },
-      "default": {
-        "multiple": true,
-        "required": false,
-        "types": [
+          },
           {
             "type": "default",
             "named": false
-          }
-        ]
-      },
-      "unsafe": {
-        "multiple": true,
-        "required": false,
-        "types": [
+          },
+          {
+            "type": "extern_modifier",
+            "named": true
+          },
           {
             "type": "unsafe",
             "named": false
           }
         ]
       }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "extern_modifier",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -2806,16 +2736,6 @@
           {
             "type": "block",
             "named": true
-          }
-        ]
-      },
-      "move": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "move",
-            "named": false
           }
         ]
       }
@@ -3082,16 +3002,6 @@
           {
             "type": "type_parameters",
             "named": true
-          }
-        ]
-      },
-      "unsafe": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "unsafe",
-            "named": false
           }
         ]
       },
@@ -3428,13 +3338,9 @@
         ]
       },
       "label": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": ":",
-            "named": false
-          },
           {
             "type": "label",
             "named": true
@@ -3847,17 +3753,17 @@
             "named": true
           }
         ]
-      },
-      "pattern": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_pattern",
-            "named": true
-          }
-        ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "_pattern",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -4782,16 +4688,6 @@
         "required": false,
         "types": [
           {
-            "type": "&",
-            "named": false
-          }
-        ]
-      },
-      "lifetime_name": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
             "type": "lifetime",
             "named": true
           }
@@ -4804,6 +4700,16 @@
           {
             "type": "mutable_specifier",
             "named": true
+          }
+        ]
+      },
+      "reference": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "&",
+            "named": false
           }
         ]
       },
@@ -4896,9 +4802,13 @@
     "named": true,
     "fields": {
       "mutable_specifier": {
-        "multiple": false,
+        "multiple": true,
         "required": false,
         "types": [
+          {
+            "type": "mutable_specifier",
+            "named": true
+          },
           {
             "type": "ref",
             "named": false
@@ -4945,16 +4855,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "mutable_specifier",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -5727,16 +5627,6 @@
           {
             "type": "type_parameters",
             "named": true
-          }
-        ]
-      },
-      "unsafe": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "unsafe",
-            "named": false
           }
         ]
       },
@@ -6513,45 +6403,7 @@
     }
   },
   {
-    "type": "visibility_modifier_pub",
-    "named": true,
-    "fields": {
-      "pub": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "pub",
-            "named": false
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "crate",
-          "named": true
-        },
-        {
-          "type": "self",
-          "named": true
-        },
-        {
-          "type": "super",
-          "named": true
-        },
-        {
-          "type": "visibility_modifier_pub_in_path",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "visibility_modifier_pub_in_path",
+    "type": "visibility_modifier_in_path",
     "named": true,
     "fields": {
       "in": {
@@ -6591,6 +6443,44 @@
         },
         {
           "type": "super",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "visibility_modifier_pub",
+    "named": true,
+    "fields": {
+      "pub": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "pub",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "crate",
+          "named": true
+        },
+        {
+          "type": "self",
+          "named": true
+        },
+        {
+          "type": "super",
+          "named": true
+        },
+        {
+          "type": "visibility_modifier_in_path",
           "named": true
         }
       ]
@@ -6706,13 +6596,9 @@
         ]
       },
       "label": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": ":",
-            "named": false
-          },
           {
             "type": "label",
             "named": true

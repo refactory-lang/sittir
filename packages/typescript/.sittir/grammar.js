@@ -444,6 +444,7 @@ function wire(config) {
 }
 function composeOrSynthesizePolymorphParents(rules, polymorphs, context) {
   for (const [parent, armMap] of Object.entries(polymorphs)) {
+    if (!armMap) continue;
     const userFn = rules[parent];
     rules[parent] = buildPolymorphParentFn(parent, armMap, userFn, context);
   }
@@ -468,6 +469,7 @@ function buildPolymorphParentFn(parent, armMap, userFn, context) {
 }
 function injectHiddenRulePlaceholders(rules, polymorphs, context) {
   for (const [parent, armMap] of Object.entries(polymorphs)) {
+    if (!armMap) continue;
     for (const suffix of Object.values(armMap)) {
       const hiddenName = polymorphHiddenName(parent, suffix);
       if (hiddenName in rules) continue;
@@ -484,6 +486,7 @@ function polymorphHiddenName(parentKind, suffix) {
 }
 function composeOrSynthesizeTransformParents(rules, transforms) {
   for (const [kind, entry] of Object.entries(transforms)) {
+    if (!entry) continue;
     const patchSets = Array.isArray(entry) ? entry : [entry];
     const userFn = rules[kind];
     rules[kind] = buildTransformParentFn(patchSets, userFn);
@@ -497,6 +500,7 @@ function buildTransformParentFn(patchSets, userFn) {
 }
 function injectTransformHiddenRulePlaceholders(rules, transforms, context) {
   for (const [kind, entry] of Object.entries(transforms)) {
+    if (!entry) continue;
     const patchSets = Array.isArray(entry) ? entry : [entry];
     for (const patchMap of patchSets) {
       for (const value of Object.values(patchMap)) {
@@ -686,10 +690,13 @@ function partitionPatchesByVariant(patches) {
   return { variantEntries, otherEntries };
 }
 function applyVariantPatches(rule, variantEntries) {
-  const hoisted = tryHoistSiblingVariants(rule, variantEntries);
+  const ordered = [...variantEntries].sort(
+    ([a], [b]) => parsePath(b).length - parsePath(a).length
+  );
+  const hoisted = tryHoistSiblingVariants(rule, ordered);
   if (hoisted) {
     let result2 = hoisted.rule;
-    for (const [key, value] of variantEntries) {
+    for (const [key, value] of ordered) {
       if (hoisted.consumed.has(key)) continue;
       const segments = parsePath(key);
       result2 = applyPath(result2, segments, (member, precStack) => resolvePatch(value, member, precStack));
@@ -697,7 +704,7 @@ function applyVariantPatches(rule, variantEntries) {
     return result2;
   }
   let result = rule;
-  for (const [key, value] of variantEntries) {
+  for (const [key, value] of ordered) {
     const segments = parsePath(key);
     result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, precStack));
   }
@@ -858,7 +865,17 @@ function resolvePatch(patch, originalMember, precStack) {
 }
 function resolveFieldPlaceholder(patch, originalMember, precStack) {
   let content = originalMember;
-  if (isFieldLike(content) && content.source === "inferred") {
+  if (isFieldLike(content) && content.source === "enriched") {
+    if (!process.env.SITTIR_QUIET) {
+      const parentKind = wireGetCurrentRuleKind() ?? "(unknown)";
+      const overrideName = patch.name;
+      const enrichName = content.name ?? "(unknown)";
+      const tag = overrideName === enrichName ? `duplicate name ('${overrideName}')` : `override renames '${enrichName}' \u2192 '${overrideName}'`;
+      process.stderr.write(
+        `transform: override field('${overrideName}') on '${parentKind}' wraps an enrich-labeled FIELD \u2014 ${tag}. Drop the override entry if the names match; enrich will cover it automatically.
+`
+      );
+    }
     content = content.content;
   }
   const maybeSymbolized = maybeKeywordSymbol(
@@ -967,11 +984,12 @@ function enrich(base2) {
   const hasWrapper = "grammar" in base2;
   const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
   if (!rulesBag) return base2;
+  const supertypeNames = extractSupertypeNames(base2, hasWrapper);
   const kwRules = {};
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
     const rule = rulesBag[name];
-    enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules) : rule;
+    enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules, supertypeNames) : rule;
   }
   const mergedRules = { ...enrichedRules, ...kwRules };
   if (hasWrapper) {
@@ -979,23 +997,73 @@ function enrich(base2) {
   }
   return { ...base2, rules: mergedRules };
 }
-function applyEnrichPasses(ruleName, rule, kwRules) {
+function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames) {
+  const MAX_ITERATIONS = 8;
   let r = rule;
-  r = applyKindToName(ruleName, r);
-  r = applyOptionalKeyword(ruleName, r, kwRules);
+  for (let i = 0; i < MAX_ITERATIONS; i++) {
+    const before = r;
+    r = applySymbolToField(ruleName, r, supertypeNames);
+    r = applyOptionalKeyword(ruleName, r, kwRules);
+    if (r === before) return r;
+  }
+  if (!process.env.SITTIR_QUIET) {
+    process.stderr.write(`enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations
+`);
+  }
   return r;
+}
+function extractSupertypeNames(base2, hasWrapper) {
+  const root = hasWrapper ? base2.grammar : base2;
+  const fn = root?.supertypes;
+  if (typeof fn !== "function") return /* @__PURE__ */ new Set();
+  const dollar = new Proxy({}, {
+    get(_t, prop) {
+      if (typeof prop === "string") return { type: "SYMBOL", name: prop };
+      return void 0;
+    }
+  });
+  let result;
+  try {
+    result = fn(dollar);
+  } catch {
+    return /* @__PURE__ */ new Set();
+  }
+  if (!Array.isArray(result)) return /* @__PURE__ */ new Set();
+  const names = /* @__PURE__ */ new Set();
+  for (const r of result) {
+    const n = r?.name;
+    if (typeof n === "string") names.add(n);
+  }
+  return names;
 }
 function detectCase(referenceRule) {
   const t = referenceRule?.type ?? "";
   return t.length > 0 && t === t.toUpperCase() ? "upper" : "lower";
 }
 function makeField(referenceRule, name, content) {
+  propagateFieldName(content, name);
   return {
     type: detectCase(referenceRule) === "upper" ? "FIELD" : "field",
     name,
     content,
-    source: "inferred"
+    source: "enriched"
   };
+}
+function propagateFieldName(rule, fieldName) {
+  if (!rule || typeof rule !== "object") return;
+  const r = rule;
+  if (r._ref && r._ref.fieldName === void 0) {
+    r._ref.fieldName = fieldName;
+  }
+  const t = r.type;
+  if (t === "seq" || t === "SEQ" || t === "choice" || t === "CHOICE") {
+    if (Array.isArray(r.members)) for (const m of r.members) propagateFieldName(m, fieldName);
+    return;
+  }
+  if (t === "optional" || t === "OPTIONAL" || t === "repeat" || t === "REPEAT" || t === "repeat1" || t === "REPEAT1" || t === "prec" || t === "PREC" || t === "prec_left" || t === "PREC_LEFT" || t === "prec_right" || t === "PREC_RIGHT" || t === "prec_dynamic" || t === "PREC_DYNAMIC") {
+    if (r.content !== void 0) propagateFieldName(r.content, fieldName);
+    return;
+  }
 }
 function makeSymbol(referenceRule, name) {
   return {
@@ -1059,33 +1127,93 @@ function reportSkip(pass, ruleName, reason) {
   process.stderr.write(`enrich: skipped ${pass} on ${ruleName} (${reason})
 `);
 }
-function applyKindToName(ruleName, rule) {
-  if (!isSeqType(rule.type)) return rule;
-  const members = rule.members;
-  const kindCounts = /* @__PURE__ */ new Map();
-  for (const m of members) {
-    if (isSymbolType(m.type) && typeof m.name === "string") {
-      const n = m.name;
-      kindCounts.set(n, (kindCounts.get(n) ?? 0) + 1);
+function detectSymbolTarget(member) {
+  if (isSymbolType(member.type) && typeof member.name === "string") {
+    const name = member.name;
+    return {
+      name,
+      symbolRule: member,
+      wrap: (fieldNode) => fieldNode
+    };
+  }
+  const peeled = peelOptional(member);
+  if (!peeled.isOptional) return null;
+  const innerN = normalizeMember(peeled.inner);
+  if (isSymbolType(innerN.type) && typeof innerN.name === "string") {
+    return {
+      name: innerN.name,
+      symbolRule: peeled.inner,
+      wrap: (fieldNode) => rebuildOptional(member, fieldNode)
+    };
+  }
+  if (!isSeqType(innerN.type)) return null;
+  const seqMembers = peeled.inner.members;
+  let symIdx = -1;
+  for (let i = 0; i < seqMembers.length; i++) {
+    const sn2 = normalizeMember(seqMembers[i]);
+    if (isSymbolType(sn2.type) && typeof sn2.name === "string") {
+      if (symIdx !== -1) return null;
+      symIdx = i;
+    } else if (!isStringType(sn2.type) && sn2.type !== "PATTERN" && sn2.type !== "pattern") {
+      return null;
     }
   }
-  const existing = collectFieldNamesRuntime(rule);
+  if (symIdx === -1) return null;
+  const symMember = seqMembers[symIdx];
+  const sn = normalizeMember(symMember);
+  if (!isSymbolType(sn.type) || typeof sn.name !== "string") return null;
+  const seqRule = peeled.inner;
+  return {
+    name: sn.name,
+    symbolRule: symMember,
+    wrap: (fieldNode) => {
+      const newSeqMembers = seqMembers.map((mm, i) => i === symIdx ? fieldNode : mm);
+      const newSeq = { ...seqRule, members: newSeqMembers };
+      return rebuildOptional(member, newSeq);
+    }
+  };
+}
+function applySymbolToField(ruleName, rule, supertypeNames) {
+  if (ruleName.startsWith("_")) return rule;
+  const precStack = [];
+  let cursor = rule;
+  while (isPrecWrapper(cursor)) {
+    precStack.push(cursor);
+    cursor = cursor.content;
+  }
+  if (!isSeqType(cursor.type)) return rule;
+  const members = cursor.members;
+  const kindCounts = /* @__PURE__ */ new Map();
+  const targetByIdx = members.map(detectSymbolTarget);
+  for (const t of targetByIdx) {
+    if (t) kindCounts.set(t.name, (kindCounts.get(t.name) ?? 0) + 1);
+  }
+  const existing = collectFieldNamesRuntime(cursor);
   let changed = false;
-  const newMembers = members.map((m) => {
-    if (!isSymbolType(m.type) || typeof m.name !== "string") return m;
-    const k = m.name;
-    if (k.startsWith("_")) return m;
-    if ((kindCounts.get(k) ?? 0) > 1) return m;
-    if (existing.has(k)) {
-      reportSkip("kind-to-name", ruleName, `field '${k}' already exists`);
+  const newMembers = members.map((m, i) => {
+    const t = targetByIdx[i];
+    if (!t) return m;
+    let fieldName = t.name;
+    if (t.name.startsWith("_")) {
+      if (!supertypeNames.has(t.name)) return m;
+      fieldName = t.name.slice(1);
+    }
+    if ((kindCounts.get(t.name) ?? 0) > 1) return m;
+    if (existing.has(fieldName)) {
+      reportSkip("symbol-to-field", ruleName, `field '${fieldName}' already exists`);
       return m;
     }
-    existing.add(k);
+    existing.add(fieldName);
     changed = true;
-    return makeField(rule, k, m);
+    const fieldNode = makeField(cursor, fieldName, t.symbolRule);
+    return t.wrap(fieldNode);
   });
   if (!changed) return rule;
-  return { ...rule, members: newMembers };
+  let result = { ...cursor, members: newMembers };
+  for (let i = precStack.length - 1; i >= 0; i--) {
+    result = { ...precStack[i], content: result };
+  }
+  return result;
 }
 function applyOptionalKeyword(ruleName, rule, kwRules) {
   const claimed = isSeqType(rule.type) ? collectFieldNamesRuntime(rule) : /* @__PURE__ */ new Set();
@@ -1432,30 +1560,18 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     // abstract_class_declaration: wrap pos 5 (class_heritage choice).
     // pos 0 is REPEAT(field('decorator')) — don't touch it, it's a real
     // base-grammar field and the original override clobbered it.
-    abstract_class_declaration: {
-      5: field("class_heritage")
-    },
+    abstract_class_declaration: {},
     // abstract_method_signature: 2 field(s)
-    abstract_method_signature: {
-      0: field("accessibility_modifier"),
-      // accessibility_modifier [struct=0]
-      2: field("override_modifier")
-      // override_modifier [struct=1]
-    },
+    abstract_method_signature: {},
     // ambient_declaration: 3 field(s)
     ambient_declaration: {
       1: field("declaration")
       // declaration | statement_block | property_identifier [struct=0]
     },
     // array_type: 1 field(s)
-    array_type: {
-      0: field("primary_type")
-      // primary_type [struct=0]
-    },
+    array_type: {},
     // as_expression: 2 field(s)
     as_expression: {
-      0: field("expression"),
-      // expression [struct=0]
       2: field("type_annotation")
       // type [struct=1]
     },
@@ -1465,41 +1581,26 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
       // asserts [struct=0]
     },
     // await_expression: 1 field(s)
-    await_expression: {
-      1: field("expression")
-      // expression [struct=0]
-    },
+    await_expression: {},
     // class: wrap pos 4 (class_heritage choice). pos 0 is decorator repeat.
-    class: {
-      4: field("class_heritage")
-    },
+    class: {},
     // class_declaration: wrap pos 4 (class_heritage choice) and pos 6
     // (automatic_semicolon choice). pos 0 is decorator repeat — leave it
     // alone so the base 'decorator' field survives.
     class_declaration: {
-      4: field("class_heritage"),
       6: field("automatic_semicolon")
     },
     // computed_property_name: 1 field(s)
-    computed_property_name: {
-      1: field("expression")
-      // expression [struct=0]
-    },
+    computed_property_name: {},
     // else_clause: 1 field(s)
-    else_clause: {
-      1: field("statement")
-      // statement [struct=0]
-    },
+    else_clause: {},
     // enum_body: 2 field(s)
     enum_body: {
       1: field("opening")
       // enum_assignment [struct=0]
     },
     // flow_maybe_type: 1 field(s)
-    flow_maybe_type: {
-      1: field("primary_type")
-      // primary_type [struct=0]
-    },
+    flow_maybe_type: {},
     // import_alias: 3 field(s)
     import_alias: {
       1: field("name"),
@@ -1515,26 +1616,18 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
       // object [struct=0]
     },
     // import_require_clause: 1 field(s)
-    import_require_clause: {
-      0: field("identifier")
-      // identifier [struct=0]
-    },
+    import_require_clause: {},
     // import_statement: 4 field(s)
     import_statement: {
       1: field("import_clause"),
       // import_clause | import_require_clause [struct=0]
       2: field("from_clause"),
       //  [struct=1]
-      3: field("import_attribute"),
-      // import_attribute [struct=2]
       4: field("semicolon")
       //  [struct=3]
     },
     // index_type_query: 1 field(s)
-    index_type_query: {
-      1: field("primary_type")
-      // primary_type [struct=0]
-    },
+    index_type_query: {},
     // infer_type: 2 field(s)
     infer_type: {
       1: field("type_identifier"),
@@ -1543,15 +1636,9 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
       // type | type_identifier [struct=1]
     },
     // instantiation_expression: 1 field(s)
-    instantiation_expression: {
-      0: field("expression")
-      // expression [struct=0]
-    },
+    instantiation_expression: {},
     // interface_declaration: 1 field(s)
-    interface_declaration: {
-      3: field("extends_type_clause")
-      // extends_type_clause [struct=0]
-    },
+    interface_declaration: {},
     // intersection_type: 2 field(s)
     intersection_type: {
       0: field("left"),
@@ -1568,35 +1655,23 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     },
     // lookup_type: 2 field(s)
     lookup_type: {
-      0: field("primary_type"),
-      // primary_type [struct=0]
       2: field("index_type")
       // type [struct=1]
     },
     // method_definition: 2 field(s)
     method_definition: {
-      0: field("accessibility_modifier"),
-      // accessibility_modifier [struct=0]
       1: field("override_modifier")
       // override_modifier [struct=1]
     },
     // method_signature: 2 field(s)
     method_signature: {
-      0: field("accessibility_modifier"),
-      // accessibility_modifier [struct=0]
       1: field("override_modifier")
       // override_modifier [struct=1]
     },
     // namespace_import: 1 field(s)
-    namespace_import: {
-      2: field("identifier")
-      // identifier [struct=0]
-    },
+    namespace_import: {},
     // non_null_expression: 1 field(s)
-    non_null_expression: {
-      0: field("expression")
-      // expression [struct=0]
-    },
+    non_null_expression: {},
     // object_type: handled by refine() in rules: — see below.
     // program: 2 field(s)
     program: {
@@ -1607,23 +1682,16 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     },
     // property_signature: 2 field(s)
     property_signature: {
-      0: field("accessibility_modifier"),
-      // accessibility_modifier [struct=0]
       1: field("override_modifier")
       // override_modifier [struct=1]
     },
     // satisfies_expression: 2 field(s)
     satisfies_expression: {
-      0: field("expression"),
-      // expression [struct=0]
       2: field("type_annotation")
       // type [struct=1]
     },
     // spread_element: 1 field(s)
-    spread_element: {
-      1: field("expression")
-      // expression [struct=0]
-    },
+    spread_element: {},
     // statement_block: 2 field(s)
     statement_block: {
       1: field("statements"),
@@ -1632,12 +1700,7 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
       //  [struct=1]
     },
     // type_assertion: 2 field(s)
-    type_assertion: {
-      0: field("type_arguments"),
-      // type_arguments [struct=0]
-      1: field("expression")
-      // expression [struct=1]
-    },
+    type_assertion: {},
     // type_predicate_annotation: 1 field(s)
     type_predicate_annotation: {
       0: field("type_predicate")
