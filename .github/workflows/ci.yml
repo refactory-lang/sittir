@@ -217,19 +217,24 @@ jobs:
   # grammar's `test-fixtures.json` and asserts the Rust engine
   # reproduces the TS engine's captured render + roundtrip outputs.
   #
-  # At MVP the three per-grammar test cases are `#[ignore]` until the
-  # flank-metadata plumbing lands (see
-  # `rust/crates/sittir-parity-tests/tests/parity.rs`). The job still
-  # runs `--ignored` so the harness compiles, fixtures load, and
-  # diagnostic output surfaces in CI logs for regression detection;
-  # `continue-on-error: true` keeps the overall pipeline green while
-  # the gap closes. Flip to required-gate when all three tests pass
-  # un-ignored.
+  # **Important: continue-on-error scope** — the JOB-level
+  # `continue-on-error: true` was removed during 016 (Cluster A
+  # post-review) because it was masking fixture data-rot: the python
+  # comprehensions cluster failed for 6 fixtures NOT because of any
+  # template bug but because `test-fixtures.json` was captured at
+  # commit 5c89aeda (pre-spec-012) and never refreshed when readNode +
+  # templates moved on. The "Fixture check" step below is now
+  # ENFORCING (no per-step continue-on-error → step inherits job
+  # default which is fail-on-error). The `cargo test parity` step
+  # below it KEEPS its advisory shape via per-step
+  # `continue-on-error: true` while the `#[ignore]`'d test cases
+  # await the flank-metadata plumbing
+  # (`rust/crates/sittir-parity-tests/tests/parity.rs`). Flip the
+  # parity-test step to enforcing once those tests pass un-ignored.
   rust-parity:
     name: cargo test parity (advisory)
     runs-on: ubuntu-22.04
     needs: rust
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v6
       - name: Install pnpm
@@ -248,15 +253,23 @@ jobs:
       - name: Regenerate fixtures
         # The test-fixtures.json files are checked in, but regenerating
         # here catches drift between committed fixtures and current
-        # render behavior — the pipeline should fail LOUDLY if a codegen
+        # render behavior — the pipeline fails LOUDLY if a codegen
         # change silently shifts the capture without a matching commit.
         run: |
           npx tsx packages/codegen/src/cli.ts --grammar rust --all --rust-render --output packages/rust/src
           npx tsx packages/codegen/src/cli.ts --grammar typescript --all --rust-render --output packages/typescript/src
           npx tsx packages/codegen/src/cli.ts --grammar python --all --rust-render --output packages/python/src
       - name: Fixture check — no drift from committed
+        # ENFORCING (no per-step continue-on-error). 016 Cluster A
+        # established that fixture drift → silent data-rot → 6
+        # parity tests failing for the wrong reason. Failing CI
+        # forces the next maintainer to commit the regen output
+        # alongside whatever codegen change caused the drift.
         run: git diff --exit-code packages/*/rust-render/test-fixtures.json
       - name: cargo test parity (--ignored for diagnostic)
+        # Advisory until #[ignore]'d tests pass un-ignored — see job
+        # docstring above.
+        continue-on-error: true
         run: cargo test -p sittir-parity-tests --test parity -- --ignored --nocapture
 
   # Spec 012 Phase 4 — platform matrix for napi `.node` artifact builds
