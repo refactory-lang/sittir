@@ -291,12 +291,13 @@ function descendThroughSingleWrapper(
             )
         }
         case 'kind-match':
-        case 'fieldName':
+        case 'fieldName': {
+            // Dispatched before reaching descendThroughSingleWrapper — should never arrive here.
+            throw new Error(`descendThroughSingleWrapper: unexpected segment kind '${head.kind}' — this is a bug in applyPath dispatch`)
+        }
         default: {
-            // 'kind-match' and 'fieldName' are dispatched before reaching
-            // descendThroughSingleWrapper — they should never arrive here.
             const _exhaustive: never = head
-            throw new Error(`descendThroughSingleWrapper: unexpected segment kind '${(_exhaustive as PathSegment).kind}' — this is a bug in applyPath dispatch`)
+            throw new Error(`descendThroughSingleWrapper: unexpected segment ${JSON.stringify(_exhaustive)} — this is a bug in applyPath dispatch`)
         }
     }
 }
@@ -336,10 +337,12 @@ function descendThroughAlias(
             )
         }
         case 'kind-match':
-        case 'fieldName':
+        case 'fieldName': {
+            throw new Error(`descendThroughAlias: unexpected segment kind '${head.kind}' — this is a bug in applyPath dispatch`)
+        }
         default: {
             const _exhaustive: never = head
-            throw new Error(`descendThroughAlias: unexpected segment kind '${(_exhaustive as PathSegment).kind}' — this is a bug in applyPath dispatch`)
+            throw new Error(`descendThroughAlias: unexpected segment ${JSON.stringify(_exhaustive)} — this is a bug in applyPath dispatch`)
         }
     }
 }
@@ -698,13 +701,13 @@ function applyToMembers(
             return applyWildcardToMembers(rule, members, rest, patch, precStack)
 
         case 'kind-match':
-        case 'fieldName':
+        case 'fieldName': {
+            // Dispatched before reaching applyToMembers — should never arrive here.
+            throw new Error(`applyToMembers: unexpected segment kind '${head.kind}' — this is a bug in applyPath dispatch`)
+        }
         default: {
-            // 'kind-match' and 'fieldName' are dispatched before reaching
-            // applyToMembers — they should never arrive here. Other unknown
-            // segment kinds are a bug. Both cases are hard errors.
             const _exhaustive: never = head
-            throw new Error(`applyToMembers: unexpected segment kind '${(_exhaustive as PathSegment).kind}' — this is a bug in applyPath dispatch`)
+            throw new Error(`applyToMembers: unexpected segment ${JSON.stringify(_exhaustive)} — this is a bug in applyPath dispatch`)
         }
     }
 }

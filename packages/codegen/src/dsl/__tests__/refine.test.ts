@@ -16,7 +16,7 @@ describe('refine()', () => {
 
     it('registers form metadata on the active wire context', () => {
         const { ctx, result } = withWireContext('interface_body', () => {
-            return refine(rule as unknown as object, {
+            return refine(rule, {
                 curly: { 'opening:': '{',  'closing:': '}'  },
                 flow:  { 'opening:': '{|', 'closing:': '|}' },
             })
@@ -34,7 +34,7 @@ describe('refine()', () => {
 
     it('preserves form declaration order (first is the default)', () => {
         const { ctx } = withWireContext('x', () => {
-            refine(rule as unknown as object, {
+            refine(rule, {
                 second: { 'p:': 2 },
                 first:  { 'p:': 1 },
                 third:  { 'p:': 3 },
@@ -46,13 +46,13 @@ describe('refine()', () => {
 
     it('throws without an active wire context', () => {
         expect(() => {
-            refine(rule as unknown as object, { curly: { 'opening:': '{' } })
+            refine(rule, { curly: { 'opening:': '{' } })
         }).toThrow(/no active wire context/)
     })
 
     it('accepts numeric branch-index selections alongside string literals', () => {
         const { ctx } = withWireContext('y', () => {
-            refine(rule as unknown as object, {
+            refine(rule, {
                 branchZero: { '0/_:': 0 },
                 literal:    { '0/_:': 'semi' },
             })
@@ -65,7 +65,7 @@ describe('refine()', () => {
     it('defensive-copies the selections map', () => {
         const selections = { 'a:': 1 }
         const { ctx } = withWireContext('z', () => {
-            refine(rule as unknown as object, { form: selections })
+            refine(rule, { form: selections })
         })
         selections['a:'] = 99
         const forms = ctx.refineForms.get('z')!

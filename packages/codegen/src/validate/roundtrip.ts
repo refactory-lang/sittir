@@ -11,6 +11,7 @@
 import { createRequire } from 'node:module';
 import { readNode, createRenderer } from '@sittir/core';
 import type { TreeHandle } from '@sittir/core';
+import type { AnyNodeData } from '@sittir/types';
 import { deriveRuleKinds } from './templates-path.ts';
 import { loadRawEntries } from './node-types-loader.ts';
 import {
@@ -59,17 +60,25 @@ function deepReadNode(
 	deepReadKinds: ReadonlySet<string>,
 ): ReturnType<typeof readNode> {
 	const data = readNode(tree, nodeId);
-	const shouldDrill = (entry: ReturnType<typeof readNode>): boolean =>
-		entry.$named === true
+	// NodeChildValue / NodeFieldValue widened to AnyNodeData | string | number.
+	// Narrow to NodeData before reading $nodeId / $type.
+	const isNodeData = (v: unknown): v is AnyNodeData =>
+		typeof v === 'object' && v !== null && '$type' in v;
+	const shouldDrill = (entry: unknown): entry is AnyNodeData & { $nodeId: number } =>
+		isNodeData(entry)
+		&& entry.$named === true
 		&& typeof entry.$nodeId === 'number'
 		&& deepReadKinds.has(entry.$type);
 	if (data.$children) {
-		data.$children = data.$children.map(c =>
+		const drilled = data.$children.map(c =>
 			shouldDrill(c) ? deepReadNode(tree, c.$nodeId, deepReadKinds) : c,
 		);
+		(data as { $children?: typeof drilled }).$children = drilled;
 	}
 	if (data.$fields) {
-		const newFields: typeof data.$fields = {};
+		// $fields has a readonly index signature; rebuild as a mutable map
+		// then assign back via a structural cast.
+		const newFields: Record<string, AnyNodeData | string | number | readonly (AnyNodeData | string | number)[] | undefined> = {};
 		for (const [key, value] of Object.entries(data.$fields)) {
 			if (Array.isArray(value)) {
 				newFields[key] = value.map(entry =>
@@ -81,7 +90,7 @@ function deepReadNode(
 					: value;
 			}
 		}
-		data.$fields = newFields;
+		(data as { $fields?: typeof newFields }).$fields = newFields;
 	}
 	return data;
 }
