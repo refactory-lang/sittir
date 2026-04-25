@@ -936,8 +936,8 @@ export function parametersFrom(...input: readonly (NonNullable<T.Parameters.Conf
 export function selfParameterFrom(input: T.SelfParameter.Loose): ReturnType<typeof F.selfParameter> | T.SelfParameter {
   if (isNodeData(input)) return input;
   return F.selfParameter({
-    lifetime: _resolveBooleanKeyword(input.lifetime),
-    lifetimeName: _resolveOneBranch<T.Lifetime>(input.lifetimeName, "lifetime"),
+    reference: _resolveBooleanKeyword(input.reference),
+    lifetime: _resolveOneBranch<T.Lifetime>(input.lifetime, "lifetime"),
     mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
     self: _resolveOneLeaf<T.Self>(input.self, "self"),
   });
@@ -970,6 +970,10 @@ export function externModifierFrom(input?: T.ExternModifier.Loose): ReturnType<t
 export function visibilityModifierFrom(input?: T.VisibilityModifier.Loose): ReturnType<typeof F.visibilityModifier> | T.VisibilityModifier {
   if (input !== undefined && isNodeData(input)) return input;
   return F.visibilityModifier(input as Parameters<typeof F.visibilityModifier>[0]);
+}
+
+export function visibilityModifierUFormInPathFrom(input: Omit<ConfigOf<T.VisibilityModifierUFormInPath>, '$variant'>) {
+  return F.visibilityModifierUFormInPath(input);
 }
 
 export function visibilityModifierUFormCrateFrom(input?: Omit<ConfigOf<T.VisibilityModifierUFormCrate>, '$variant'>) {
@@ -1708,18 +1712,18 @@ export function rangePatternFrom(input?: T.RangePattern.Loose): ReturnType<typeo
   return F.rangePattern(input as Parameters<typeof F.rangePattern>[0]);
 }
 
-export function rangePatternUFormPrefixFrom(input: Omit<ConfigOf<T.RangePatternUFormPrefix>, '$variant'>) {
-  return F.rangePatternUFormPrefix({
-    right: _resolveOne<T.LiteralPattern | T.Path>(input.right, _K43, _K44),
-  });
-}
-
 export function rangePatternUFormLeftWithRightFrom(input: Omit<ConfigOf<T.RangePatternUFormLeftWithRight>, '$variant'>) {
   return F.rangePatternUFormLeftWithRight(input);
 }
 
 export function rangePatternUFormLeftBareFrom(input: Omit<ConfigOf<T.RangePatternUFormLeftBare>, '$variant'>) {
   return F.rangePatternUFormLeftBare(input);
+}
+
+export function rangePatternUFormPrefixFrom(input: Omit<ConfigOf<T.RangePatternUFormPrefix>, '$variant'>) {
+  return F.rangePatternUFormPrefix({
+    right: _resolveOne<T.LiteralPattern | T.Path>(input.right, _K43, _K44),
+  });
 }
 
 export function refPatternFrom(input?: NonNullable<T.RefPattern.Config['children']>[number] | T.RefPattern) {

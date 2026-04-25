@@ -387,8 +387,8 @@
       "path"
     ],
     "self_parameter": [
+      "reference",
       "lifetime",
-      "lifetime_name",
       "mutable_specifier",
       "self"
     ],
@@ -657,6 +657,7 @@
     "visibility_modifier": {
       "source": "override",
       "childKind": {
+        "visibility_modifier_in_path": "in_path",
         "visibility_modifier_crate": "crate",
         "visibility_modifier_pub": "pub"
       }
@@ -730,9 +731,9 @@
     "range_pattern": {
       "source": "override",
       "childKind": {
-        "range_pattern_prefix": "prefix",
         "range_pattern_left_with_right": "left_with_right",
-        "range_pattern_left_bare": "left_bare"
+        "range_pattern_left_bare": "left_bare",
+        "range_pattern_prefix": "prefix"
       }
     },
     "or_pattern": {

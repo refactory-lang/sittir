@@ -71,14 +71,28 @@ const config: WireConfig<RustGrammar> = {
         // bare `..` doesn't) means these are genuine structural variants.
         range_pattern:       { '0/1/0': 'left_with_right', '0/1/1': 'left_bare', '1': 'prefix' },
         struct_item:         { '4/0': 'brace', '4/1': 'tuple', '4/2': 'unit' },
-        visibility_modifier: { '0': 'crate', '1': 'pub' },
-        // `_visibility_modifier_pub` is the body of `visibility_modifier`'s
-        // `pub` arm — `seq('pub', optional(seq('(', choice(self, super,
-        // crate, seq('in', _path)), ')')))`. The inner choice has three
-        // bare symbols plus one seq (`seq('in', _path)`), which makes it
-        // heterogeneous. Split the seq arm into its own variant so the
-        // inner choice becomes four bare symbols (canonical).
-        _visibility_modifier_pub: { '1/0/1/3': 'in_path' },
+        // visibility_modifier — three variants at two nesting depths,
+        // all addressed from the top-level rule:
+        //   - `1/1/0/1/3` in_path
+        //                     → `visibility_modifier_in_path`
+        //     (inside the pub arm's `seq('(', choice(self, super,
+        //     crate, seq('in', _path)), ')')` — the `seq('in', _path)`
+        //     branch). Without this split the inner choice is
+        //     heterogeneous and the shape classifier throws
+        //     `'seq-member-optional-wrapping-choice-needs-variant-or-merge'`.
+        //   - `0` crate       → `visibility_modifier_crate`
+        //   - `1` pub         → `visibility_modifier_pub`
+        //
+        // Order matters: variant patches apply in iteration order, and
+        // once `'1'` aliases arm 1 into `_visibility_modifier_pub`, the
+        // deeper `'1/1/0/1/3'` path can no longer descend into it.
+        // Same convention the range_pattern entry above uses — put the
+        // deepest paths first.
+        visibility_modifier: {
+            '1/1/0/1/3': 'in_path',
+            '0':         'crate',
+            '1':         'pub',
+        },
     },
     transforms: {
         // abstract_type: 1 field(s)
@@ -453,8 +467,8 @@ const config: WireConfig<RustGrammar> = {
         // at pos 1 is the explicit lifetime name ('a etc.) — distinct
         // name to avoid colliding with pos 0's label.
         self_parameter: {
-            0: field('lifetime'),          // optional('&')
-            1: field('lifetime_name'),     // optional($.lifetime)
+            0: field('reference'),          // optional('&')
+            1: field('lifetime'),     // optional($.lifetime)
             2: field('mutable_specifier'), // optional($.mutable_specifier)
         },
 

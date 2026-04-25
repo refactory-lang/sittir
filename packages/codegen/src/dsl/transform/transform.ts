@@ -181,10 +181,21 @@ function applyVariantPatches(
     rule: RuntimeRule,
     variantEntries: ReadonlyArray<[string, VariantPlaceholder]>,
 ): RuntimeRule {
-    const hoisted = tryHoistSiblingVariants(rule, variantEntries)
+    // Sort deepest-first so variants at greater path depth run before
+    // shallower ones. Without this, a shallower variant that aliases
+    // an ancestor position would block later descents through it
+    // (ALIAS wrappers only allow index 0/-1). Also unblocks the common
+    // case where mixed numeric + path keys coexist in one polymorph:
+    // JS object iteration places pure-numeric keys first in numeric
+    // order regardless of insertion order, so relying on author-
+    // specified ordering isn't portable.
+    const ordered = [...variantEntries].sort(
+        ([a], [b]) => parsePath(b).length - parsePath(a).length,
+    )
+    const hoisted = tryHoistSiblingVariants(rule, ordered)
     if (hoisted) {
         let result = hoisted.rule
-        for (const [key, value] of variantEntries) {
+        for (const [key, value] of ordered) {
             if (hoisted.consumed.has(key)) continue
             const segments = parsePath(key)
             result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, precStack))
@@ -192,7 +203,7 @@ function applyVariantPatches(
         return result
     }
     let result = rule
-    for (const [key, value] of variantEntries) {
+    for (const [key, value] of ordered) {
         const segments = parsePath(key)
         result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, precStack))
     }

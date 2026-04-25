@@ -806,8 +806,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'list', required: true, multiple: false },
   ],
   'self_parameter': [
+    { name: 'reference', required: false, multiple: false },
     { name: 'lifetime', required: false, multiple: false },
-    { name: 'lifetimeName', required: false, multiple: false },
     { name: 'mutableSpecifier', required: false, multiple: false },
     { name: 'self', required: true, multiple: false },
   ],

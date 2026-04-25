@@ -1529,8 +1529,8 @@ export function parameters(...children: (T.AttributeItem | T.Parameter | T.SelfP
 
 export function selfParameter(config?: ConfigOf<T.SelfParameter>) {
   const fields = {
-    lifetime: config?.lifetime ? "&" as const : undefined,
-    lifetime_name: config?.lifetimeName,
+    reference: config?.reference ? "&" as const : undefined,
+    lifetime: config?.lifetime,
     mutable_specifier: config?.mutableSpecifier ? "mut" as const : undefined,
     self: "self" as const,
   };
@@ -1539,8 +1539,8 @@ export function selfParameter(config?: ConfigOf<T.SelfParameter>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    lifetime(value?: "&" | undefined) { return _fs(config, selfParameter, 'lifetime', value, config?.lifetime); },
-    lifetimeName(value?: T.Lifetime | undefined) { return _fs(config, selfParameter, 'lifetimeName', value, config?.lifetimeName); },
+    reference(value?: "&" | undefined) { return _fs(config, selfParameter, 'reference', value, config?.reference); },
+    lifetime(value?: T.Lifetime | undefined) { return _fs(config, selfParameter, 'lifetime', value, config?.lifetime); },
     mutableSpecifier(value?: T.MutableSpecifier | undefined) { return _fs(config, selfParameter, 'mutableSpecifier', value, config?.mutableSpecifier); },
     get self() { return fields.self; },
     render(this: AnyNodeData): string { return render(this); },
@@ -1615,14 +1615,30 @@ export function externModifier(config?: ConfigOf<T.ExternModifier>) {
   };
 }
 
+export function visibilityModifier(config: ConfigOf<T.VisibilityModifierUFormInPath>): ReturnType<typeof visibilityModifierUFormInPath>;
 export function visibilityModifier(config: ConfigOf<T.VisibilityModifierUFormCrate>): ReturnType<typeof visibilityModifierUFormCrate>;
 export function visibilityModifier(config: ConfigOf<T.VisibilityModifierUFormPub>): ReturnType<typeof visibilityModifierUFormPub>;
-export function visibilityModifier(config: ConfigOf<T.VisibilityModifierUFormCrate> | ConfigOf<T.VisibilityModifierUFormPub>) {
+export function visibilityModifier(config: ConfigOf<T.VisibilityModifierUFormInPath> | ConfigOf<T.VisibilityModifierUFormCrate> | ConfigOf<T.VisibilityModifierUFormPub>) {
   switch (config.$variant) {
+    case 'in_path': return visibilityModifierUFormInPath(config as Parameters<typeof visibilityModifierUFormInPath>[0]);
     case 'crate': return visibilityModifierUFormCrate(config as Parameters<typeof visibilityModifierUFormCrate>[0]);
     case 'pub': return visibilityModifierUFormPub(config as Parameters<typeof visibilityModifierUFormPub>[0]);
   }
-  throw new Error(`visibilityModifier: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'crate' | 'pub'.`);
+  throw new Error(`visibilityModifier: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'in_path' | 'crate' | 'pub'.`);
+}
+export function visibilityModifierUFormInPath(config?: Omit<ConfigOf<T.VisibilityModifierUFormInPath>, '$variant'>) {
+  return {
+    $type: 'visibility_modifier' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'in_path' as const,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.VisibilityModifierUFormInPathTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
 }
 export function visibilityModifierUFormCrate(config?: Omit<ConfigOf<T.VisibilityModifierUFormCrate>, '$variant'>) {
   const inner = visibilityModifierCrate(config?.children?.[0]!);
@@ -3682,44 +3698,16 @@ export function mutPattern(config: ConfigOf<T.MutPattern>) {
   };
 }
 
-export function rangePattern(config: ConfigOf<T.RangePatternUFormPrefix>): ReturnType<typeof rangePatternUFormPrefix>;
 export function rangePattern(config: ConfigOf<T.RangePatternUFormLeftWithRight>): ReturnType<typeof rangePatternUFormLeftWithRight>;
 export function rangePattern(config: ConfigOf<T.RangePatternUFormLeftBare>): ReturnType<typeof rangePatternUFormLeftBare>;
-export function rangePattern(config: ConfigOf<T.RangePatternUFormPrefix> | ConfigOf<T.RangePatternUFormLeftWithRight> | ConfigOf<T.RangePatternUFormLeftBare>) {
+export function rangePattern(config: ConfigOf<T.RangePatternUFormPrefix>): ReturnType<typeof rangePatternUFormPrefix>;
+export function rangePattern(config: ConfigOf<T.RangePatternUFormLeftWithRight> | ConfigOf<T.RangePatternUFormLeftBare> | ConfigOf<T.RangePatternUFormPrefix>) {
   switch (config.$variant) {
-    case 'prefix': return rangePatternUFormPrefix(config as Parameters<typeof rangePatternUFormPrefix>[0]);
     case 'left_with_right': return rangePatternUFormLeftWithRight(config as Parameters<typeof rangePatternUFormLeftWithRight>[0]);
     case 'left_bare': return rangePatternUFormLeftBare(config as Parameters<typeof rangePatternUFormLeftBare>[0]);
+    case 'prefix': return rangePatternUFormPrefix(config as Parameters<typeof rangePatternUFormPrefix>[0]);
   }
-  throw new Error(`rangePattern: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'prefix' | 'left_with_right' | 'left_bare'.`);
-}
-export function rangePatternUFormPrefix(config: Omit<ConfigOf<T.RangePatternUFormPrefix>, '$variant'>) {
-  const inner = {
-    $type: 'range_pattern_prefix' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: {
-      right: config.right,
-    },
-  };
-  const children = [inner] as const;
-  return {
-    $type: 'range_pattern' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $variant: 'prefix' as const,
-    $children: children,
-    right(value?: T.LiteralPattern | T.Path) {
-      if (value === undefined) return inner.$fields.right;
-      return rangePatternUFormPrefix({ right: value });
-    },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.RangePatternUFormPrefixTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  throw new Error(`rangePattern: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'left_with_right' | 'left_bare' | 'prefix'.`);
 }
 export function rangePatternUFormLeftWithRight(config?: Omit<ConfigOf<T.RangePatternUFormLeftWithRight>, '$variant'>) {
   return {
@@ -3747,6 +3735,34 @@ export function rangePatternUFormLeftBare(config?: Omit<ConfigOf<T.RangePatternU
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T.RangePatternUFormLeftBareTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function rangePatternUFormPrefix(config: Omit<ConfigOf<T.RangePatternUFormPrefix>, '$variant'>) {
+  const inner = {
+    $type: 'range_pattern_prefix' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: {
+      right: config.right,
+    },
+  };
+  const children = [inner] as const;
+  return {
+    $type: 'range_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'prefix' as const,
+    $children: children,
+    right(value?: T.LiteralPattern | T.Path) {
+      if (value === undefined) return inner.$fields.right;
+      return rangePatternUFormPrefix({ right: value });
+    },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.RangePatternUFormPrefixTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 

@@ -215,7 +215,6 @@ export const enum SyntaxKind {
   TypeIdentifier = '_type_identifier',
   FieldIdentifier = '_field_identifier',
   _StringContent = '_string_content',
-  VisibilityModifierPub = '_visibility_modifier_pub',
   ArrayExpressionSemi = '_array_expression_semi',
   ArrayExpressionList = '_array_expression_list',
   ClosureExpressionBlock = '_closure_expression_block',
@@ -240,7 +239,8 @@ export const enum SyntaxKind {
   StructItemBrace = '_struct_item_brace',
   StructItemTuple = '_struct_item_tuple',
   VisibilityModifierCrate = '_visibility_modifier_crate',
-  VisibilityModifierPubInPath = '_visibility_modifier_pub_in_path',
+  VisibilityModifierPub = '_visibility_modifier_pub',
+  VisibilityModifierInPath = '_visibility_modifier_in_path',
   ForeignModItemBody = '_foreign_mod_item_body',
   PointerTypeMut = '_pointer_type_mut',
   ReferenceExpressionRawMut = '_reference_expression_raw_mut',
@@ -1209,8 +1209,8 @@ export interface Parameters {
 export interface SelfParameter {
   readonly $type: 'self_parameter';
   readonly $fields: {
-    readonly lifetime?: BooleanKeyword<"&">;
-    readonly lifetime_name?: Lifetime;
+    readonly reference?: BooleanKeyword<"&">;
+    readonly lifetime?: Lifetime;
     readonly mutable_specifier?: BooleanKeyword<MutableSpecifier>;
     readonly self: Self;
   };
@@ -1240,6 +1240,11 @@ export interface ExternModifier {
   };
 }
 
+export interface VisibilityModifierUFormInPath {
+  readonly $type: 'visibility_modifier';
+  readonly $variant: 'in_path';
+}
+
 export interface VisibilityModifierUFormCrate {
   readonly $type: 'visibility_modifier';
   readonly $variant: 'crate';
@@ -1252,7 +1257,7 @@ export interface VisibilityModifierUFormPub {
   readonly $children: readonly [VisibilityModifierPub];
 }
 
-export type VisibilityModifier = VisibilityModifierUFormCrate | VisibilityModifierUFormPub;
+export type VisibilityModifier = VisibilityModifierUFormInPath | VisibilityModifierUFormCrate | VisibilityModifierUFormPub;
 export interface BracketedType {
   readonly $type: 'bracketed_type';
   readonly $children: readonly [_Type | QualifiedType];
@@ -1896,12 +1901,6 @@ export interface MutPattern {
   };
 }
 
-export interface RangePatternUFormPrefix {
-  readonly $type: 'range_pattern';
-  readonly $variant: 'prefix';
-  readonly $children: readonly [RangePatternPrefix];
-}
-
 export interface RangePatternUFormLeftWithRight {
   readonly $type: 'range_pattern';
   readonly $variant: 'left_with_right';
@@ -1912,7 +1911,13 @@ export interface RangePatternUFormLeftBare {
   readonly $variant: 'left_bare';
 }
 
-export type RangePattern = RangePatternUFormPrefix | RangePatternUFormLeftWithRight | RangePatternUFormLeftBare;
+export interface RangePatternUFormPrefix {
+  readonly $type: 'range_pattern';
+  readonly $variant: 'prefix';
+  readonly $children: readonly [RangePatternPrefix];
+}
+
+export type RangePattern = RangePatternUFormLeftWithRight | RangePatternUFormLeftBare | RangePatternUFormPrefix;
 export interface RefPattern {
   readonly $type: 'ref_pattern';
   readonly $children: readonly [Pattern];
@@ -2017,14 +2022,6 @@ export interface FieldIdentifier {
 export interface _StringContent {
   readonly $type: 'string_content';
   readonly $children: readonly [RawStringLiteralContent];
-}
-
-export interface VisibilityModifierPub {
-  readonly $type: 'visibility_modifier_pub';
-  readonly $fields: {
-    readonly pub: AutoStamp<"pub">;
-  };
-  readonly $children: readonly [Self | Super | Crate | VisibilityModifierPubInPath];
 }
 
 export interface ArrayExpressionSemi {
@@ -2198,8 +2195,16 @@ export interface VisibilityModifierCrate {
   readonly $children: readonly [Crate];
 }
 
-export interface VisibilityModifierPubInPath {
-  readonly $type: 'visibility_modifier_pub_in_path';
+export interface VisibilityModifierPub {
+  readonly $type: 'visibility_modifier_pub';
+  readonly $fields: {
+    readonly pub: AutoStamp<"pub">;
+  };
+  readonly $children: readonly [Self | Super | Crate | VisibilityModifierInPath];
+}
+
+export interface VisibilityModifierInPath {
+  readonly $type: 'visibility_modifier_in_path';
   readonly $fields: {
     readonly in: AutoStamp<"in">;
   };
@@ -2403,6 +2408,7 @@ export interface VariadicParameterTree extends TreeNode<'variadic_parameter'> {}
 export interface ParameterTree extends TreeNode<'parameter'> {}
 export interface ExternModifierTree extends TreeNode<'extern_modifier'> {}
 export interface VisibilityModifierTree extends TreeNode<'visibility_modifier'> {}
+export interface VisibilityModifierUFormInPathTree extends TreeNode<'visibility_modifier'> {}
 export interface VisibilityModifierUFormCrateTree extends TreeNode<'visibility_modifier'> {}
 export interface VisibilityModifierUFormPubTree extends TreeNode<'visibility_modifier'> {}
 export interface BracketedTypeTree extends TreeNode<'bracketed_type'> {}
@@ -2499,9 +2505,9 @@ export interface FieldPatternUFormShorthandTree extends TreeNode<'field_pattern'
 export interface FieldPatternUFormNamedTree extends TreeNode<'field_pattern'> {}
 export interface MutPatternTree extends TreeNode<'mut_pattern'> {}
 export interface RangePatternTree extends TreeNode<'range_pattern'> {}
-export interface RangePatternUFormPrefixTree extends TreeNode<'range_pattern'> {}
 export interface RangePatternUFormLeftWithRightTree extends TreeNode<'range_pattern'> {}
 export interface RangePatternUFormLeftBareTree extends TreeNode<'range_pattern'> {}
+export interface RangePatternUFormPrefixTree extends TreeNode<'range_pattern'> {}
 export interface RefPatternTree extends TreeNode<'ref_pattern'> {}
 export interface CapturedPatternTree extends TreeNode<'captured_pattern'> {}
 export interface ReferencePatternTree extends TreeNode<'reference_pattern'> {}
@@ -2521,7 +2527,6 @@ export interface ReservedIdentifierTree extends AnyTreeNode { readonly type: "_r
 export interface TypeIdentifierTree extends AnyTreeNode { readonly type: "_type_identifier"; }
 export interface FieldIdentifierTree extends AnyTreeNode { readonly type: "_field_identifier"; }
 export interface _StringContentTree extends AnyTreeNode { readonly type: "_string_content"; }
-export interface VisibilityModifierPubTree extends AnyTreeNode { readonly type: "_visibility_modifier_pub"; }
 export interface ArrayExpressionSemiTree extends AnyTreeNode { readonly type: "_array_expression_semi"; }
 export interface ArrayExpressionListTree extends AnyTreeNode { readonly type: "_array_expression_list"; }
 export interface ClosureExpressionBlockTree extends AnyTreeNode { readonly type: "_closure_expression_block"; }
@@ -2546,7 +2551,8 @@ export interface RangePatternLeftWithRightTree extends AnyTreeNode { readonly ty
 export interface StructItemBraceTree extends AnyTreeNode { readonly type: "_struct_item_brace"; }
 export interface StructItemTupleTree extends AnyTreeNode { readonly type: "_struct_item_tuple"; }
 export interface VisibilityModifierCrateTree extends AnyTreeNode { readonly type: "_visibility_modifier_crate"; }
-export interface VisibilityModifierPubInPathTree extends AnyTreeNode { readonly type: "_visibility_modifier_pub_in_path"; }
+export interface VisibilityModifierPubTree extends AnyTreeNode { readonly type: "_visibility_modifier_pub"; }
+export interface VisibilityModifierInPathTree extends AnyTreeNode { readonly type: "_visibility_modifier_in_path"; }
 export interface ForeignModItemBodyTree extends AnyTreeNode { readonly type: "_foreign_mod_item_body"; }
 export interface PointerTypeMutTree extends AnyTreeNode { readonly type: "_pointer_type_mut"; }
 export interface ReferenceExpressionRawMutTree extends AnyTreeNode { readonly type: "_reference_expression_raw_mut"; }
@@ -3171,7 +3177,6 @@ export type RustNode =
   | TypeIdentifier
   | FieldIdentifier
   | _StringContent
-  | VisibilityModifierPub
   | ArrayExpressionSemi
   | ArrayExpressionList
   | ClosureExpressionBlock
@@ -3196,7 +3201,8 @@ export type RustNode =
   | StructItemBrace
   | StructItemTuple
   | VisibilityModifierCrate
-  | VisibilityModifierPubInPath
+  | VisibilityModifierPub
+  | VisibilityModifierInPath
   | ForeignModItemBody
   | PointerTypeMut
   | ReferenceExpressionRawMut
@@ -3363,7 +3369,6 @@ export interface KindMap {
   '_type_identifier': TypeIdentifier;
   '_field_identifier': FieldIdentifier;
   '_string_content': _StringContent;
-  '_visibility_modifier_pub': VisibilityModifierPub;
   '_array_expression_semi': ArrayExpressionSemi;
   '_array_expression_list': ArrayExpressionList;
   '_closure_expression_block': ClosureExpressionBlock;
@@ -3388,7 +3393,8 @@ export interface KindMap {
   '_struct_item_brace': StructItemBrace;
   '_struct_item_tuple': StructItemTuple;
   '_visibility_modifier_crate': VisibilityModifierCrate;
-  '_visibility_modifier_pub_in_path': VisibilityModifierPubInPath;
+  '_visibility_modifier_pub': VisibilityModifierPub;
+  '_visibility_modifier_in_path': VisibilityModifierInPath;
   '_foreign_mod_item_body': ForeignModItemBody;
   '_pointer_type_mut': PointerTypeMut;
   '_reference_expression_raw_mut': ReferenceExpressionRawMut;
@@ -3442,7 +3448,7 @@ export interface VariantMap {
   'foreign_mod_item': { semi: ForeignModItemUFormSemi; body: ForeignModItemUFormBody };
   'struct_item': { brace: StructItemUFormBrace; tuple: StructItemUFormTuple; unit: StructItemUFormUnit };
   'impl_item': { body: ImplItemUFormBody; semi: ImplItemUFormSemi };
-  'visibility_modifier': { crate: VisibilityModifierUFormCrate; pub: VisibilityModifierUFormPub };
+  'visibility_modifier': { in_path: VisibilityModifierUFormInPath; crate: VisibilityModifierUFormCrate; pub: VisibilityModifierUFormPub };
   'pointer_type': { const: PointerTypeUFormConst; mut: PointerTypeUFormMut };
   'delim_token_tree': { paren: DelimTokenTreeUFormParen; bracket: DelimTokenTreeUFormBracket; brace: DelimTokenTreeUFormBrace };
   'range_expression': { binary: RangeExpressionUFormBinary; postfix: RangeExpressionUFormPostfix; prefix: RangeExpressionUFormPrefix; bare: RangeExpressionUFormBare };
@@ -3450,7 +3456,7 @@ export interface VariantMap {
   'match_arm': { with_comma: MatchArmUFormWithComma; block_ending: MatchArmUFormBlockEnding };
   'closure_expression': { block: ClosureExpressionUFormBlock; expr: ClosureExpressionUFormExpr };
   'field_pattern': { shorthand: FieldPatternUFormShorthand; named: FieldPatternUFormNamed };
-  'range_pattern': { prefix: RangePatternUFormPrefix; left_with_right: RangePatternUFormLeftWithRight; left_bare: RangePatternUFormLeftBare };
+  'range_pattern': { left_with_right: RangePatternUFormLeftWithRight; left_bare: RangePatternUFormLeftBare; prefix: RangePatternUFormPrefix };
   'or_pattern': { binary: OrPatternUFormBinary; prefix: OrPatternUFormPrefix };
   'line_comment': { regular_dslash: LineCommentUFormRegularDslash; doc: LineCommentUFormDoc; content: LineCommentUFormContent };
 }
@@ -3602,7 +3608,6 @@ export interface ReservedIdentifierNs extends NodeNs<ReservedIdentifier, LeafSca
 export interface TypeIdentifierNs extends NodeNs<TypeIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FieldIdentifierNs extends NodeNs<FieldIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _StringContentNs extends NodeNs<_StringContent, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface VisibilityModifierPubNs extends NodeNs<VisibilityModifierPub, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ArrayExpressionSemiNs extends NodeNs<ArrayExpressionSemi, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ArrayExpressionListNs extends NodeNs<ArrayExpressionList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ClosureExpressionBlockNs extends NodeNs<ClosureExpressionBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3627,7 +3632,8 @@ export interface RangePatternLeftWithRightNs extends NodeNs<RangePatternLeftWith
 export interface StructItemBraceNs extends NodeNs<StructItemBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface StructItemTupleNs extends NodeNs<StructItemTuple, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface VisibilityModifierCrateNs extends NodeNs<VisibilityModifierCrate, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface VisibilityModifierPubInPathNs extends NodeNs<VisibilityModifierPubInPath, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface VisibilityModifierPubNs extends NodeNs<VisibilityModifierPub, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface VisibilityModifierInPathNs extends NodeNs<VisibilityModifierInPath, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ForeignModItemBodyNs extends NodeNs<ForeignModItemBody, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface PointerTypeMutNs extends NodeNs<PointerTypeMut, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ReferenceExpressionRawMutNs extends NodeNs<ReferenceExpressionRawMut, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3793,7 +3799,6 @@ export interface NamespaceMap {
   '_type_identifier': TypeIdentifierNs;
   '_field_identifier': FieldIdentifierNs;
   '_string_content': _StringContentNs;
-  '_visibility_modifier_pub': VisibilityModifierPubNs;
   '_array_expression_semi': ArrayExpressionSemiNs;
   '_array_expression_list': ArrayExpressionListNs;
   '_closure_expression_block': ClosureExpressionBlockNs;
@@ -3818,7 +3823,8 @@ export interface NamespaceMap {
   '_struct_item_brace': StructItemBraceNs;
   '_struct_item_tuple': StructItemTupleNs;
   '_visibility_modifier_crate': VisibilityModifierCrateNs;
-  '_visibility_modifier_pub_in_path': VisibilityModifierPubInPathNs;
+  '_visibility_modifier_pub': VisibilityModifierPubNs;
+  '_visibility_modifier_in_path': VisibilityModifierInPathNs;
   '_foreign_mod_item_body': ForeignModItemBodyNs;
   '_pointer_type_mut': PointerTypeMutNs;
   '_reference_expression_raw_mut': ReferenceExpressionRawMutNs;
@@ -4867,13 +4873,6 @@ export namespace _StringContent {
   export type Tree = TreeFor<'_string_content'>;
   export type Kind = '_string_content';
 }
-export namespace VisibilityModifierPub {
-  export type Config = ConfigFor<'_visibility_modifier_pub'>;
-  export type Fluent = FluentFor<'_visibility_modifier_pub'>;
-  export type Loose = LooseFor<'_visibility_modifier_pub'>;
-  export type Tree = TreeFor<'_visibility_modifier_pub'>;
-  export type Kind = '_visibility_modifier_pub';
-}
 export namespace ArrayExpressionSemi {
   export type Config = ConfigFor<'_array_expression_semi'>;
   export type Fluent = FluentFor<'_array_expression_semi'>;
@@ -5042,12 +5041,19 @@ export namespace VisibilityModifierCrate {
   export type Tree = TreeFor<'_visibility_modifier_crate'>;
   export type Kind = '_visibility_modifier_crate';
 }
-export namespace VisibilityModifierPubInPath {
-  export type Config = ConfigFor<'_visibility_modifier_pub_in_path'>;
-  export type Fluent = FluentFor<'_visibility_modifier_pub_in_path'>;
-  export type Loose = LooseFor<'_visibility_modifier_pub_in_path'>;
-  export type Tree = TreeFor<'_visibility_modifier_pub_in_path'>;
-  export type Kind = '_visibility_modifier_pub_in_path';
+export namespace VisibilityModifierPub {
+  export type Config = ConfigFor<'_visibility_modifier_pub'>;
+  export type Fluent = FluentFor<'_visibility_modifier_pub'>;
+  export type Loose = LooseFor<'_visibility_modifier_pub'>;
+  export type Tree = TreeFor<'_visibility_modifier_pub'>;
+  export type Kind = '_visibility_modifier_pub';
+}
+export namespace VisibilityModifierInPath {
+  export type Config = ConfigFor<'_visibility_modifier_in_path'>;
+  export type Fluent = FluentFor<'_visibility_modifier_in_path'>;
+  export type Loose = LooseFor<'_visibility_modifier_in_path'>;
+  export type Tree = TreeFor<'_visibility_modifier_in_path'>;
+  export type Kind = '_visibility_modifier_in_path';
 }
 export namespace ForeignModItemBody {
   export type Config = ConfigFor<'_foreign_mod_item_body'>;

@@ -680,8 +680,8 @@ export function wrapParameters(data: _NodeData, tree: TreeHandle): WrappedNode<P
 export function wrapSelfParameter(data: _NodeData, tree: TreeHandle): WrappedNode<SelfParameter> {
   return {
     ...data,
+    get reference() { return drillIn(data.$fields?.['reference'], tree); },
     get lifetime() { return drillIn(data.$fields?.['lifetime'], tree); },
-    get lifetimeName() { return drillIn(data.$fields?.['lifetime_name'], tree); },
     get mutableSpecifier() { return drillIn(data.$fields?.['mutable_specifier'], tree); },
     get self() { return drillIn(data.$fields?.['self'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
