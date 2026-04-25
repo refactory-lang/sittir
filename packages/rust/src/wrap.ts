@@ -183,9 +183,11 @@ import type {
 } from './types.js';
 
 // Drill-in helpers — call back through `readTreeNode` so the same
-// backend-dispatch + wrap pipeline runs at every level (the layering
-// is `readTreeNode → readNode (dispatch) → wrapNode → drillAs/drillIn
-// → readTreeNode (recurse)`).
+// backend-dispatch + wrap pipeline runs at every level. Layering:
+//   readTreeNode (JS, public entry)
+//     → readNode (backend — JS or native via getActiveBackend)
+//       → wrapNode (JS, dispatches on $type)
+//         → drillIn / drillAs (JS) → readTreeNode (recurse)
 function drillIn(entry: unknown, tree: TreeHandle): unknown {
   if (!entry) return undefined;
   const e = entry as _NodeData;
@@ -1875,25 +1877,15 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 
 /**
  * Backend-dispatching `readNode` — the architectural seam where
- * the engine choice (JS vs native) lives. `readTreeNode`, `drillIn`
- * and `drillAs` all read through THIS function so the wrap layer
- * is engine-agnostic: consumers call `readTreeNode` (JS), this
- * routes to either `@sittir/core`'s JS reader or `@sittir/rust-
- * native`'s `SittirEngine`, the result goes through `wrapNode`
- * (JS) which builds lazy getters that recursively call
- * `readTreeNode` for sub-trees. Layering:
- *
- *     readTreeNode (JS)
- *       → readNode (backend — JS or native, this fn)
- *         → wrap.ts:wrapNode (JS) → drillAs (JS) → readTreeNode (recurse)
- *
- * Native dispatch fires when `getActiveBackend()` reports native
- * AND the TreeHandle carries `source` (so the napi engine has
- * something to parse). Native pass + initial root NodeData are
- * cached per-TreeHandle on a WeakMap so repeated reads share
- * engine state. Drill-ins by `$nodeId` fall back to the JS reader
- * because the native engine uses a sequential counter incompatible
- * with tree-sitter's pointer ids; that's a follow-up.
+ * the engine choice (JS vs native) lives. `readTreeNode`,
+ * `drillIn` and `drillAs` all read through THIS function so the
+ * wrap layer is engine-agnostic. Native dispatch fires when
+ * `getActiveBackend()` reports native AND the TreeHandle carries
+ * `source`. Initial root NodeData is cached per-TreeHandle on a
+ * WeakMap so repeated reads share engine state. Drill-ins by
+ * `$nodeId` fall back to the JS reader because the native
+ * engine's sequential counter is incompatible with tree-sitter's
+ * pointer ids; that's a follow-up.
  */
 function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
   const backend = getActiveBackend();
@@ -1932,11 +1924,7 @@ const ENGINE_CACHE = new WeakMap<TreeHandle, CachedEngine>();
  * Optional `asType: { from, to }` rewrites `$type` between the read
  * and the wrap when the node's actual `$type === from`. Used by
  * `drillAs` for ADR-0006 alias-target → alias-source rewrites at
- * declared field sites; the rewrite must precede `wrapNode`
- * because `wrapNode` dispatches on `$type` to pick the per-kind
- * wrap function. Threading the override through this function
- * keeps the engine-dispatch + wrap pipeline single-call from
- * every caller, including `drillAs`.
+ * declared field sites.
  */
 export function readTreeNode(
   tree: TreeHandle,
