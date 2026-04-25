@@ -240,8 +240,8 @@ const FROZEN_CASES: FrozenCase[] = [
         name: 'while without label renders without leading space',
         source: 'fn main() { while x {} }',
         target: 'while x {}',
-        mode: 'fail',
-        why: 'Optional `label` field has its trailing `:` and following space outside the conditional, so absent label leaves a leading space.',
+        mode: 'pass',
+        why: 'Fixed in 016/walker-refactor-3.5 — leading-optional-at-template-head absorbs the trailing space INSIDE the conditional so the absent label leaves no stray leading space.',
     },
     {
         grammar: 'rust',
@@ -249,8 +249,8 @@ const FROZEN_CASES: FrozenCase[] = [
         name: 'plain closure without modifiers renders without leading spaces',
         source: 'fn main() { let f = || 1; }',
         target: '|| 1',
-        mode: 'fail',
-        why: 'Optional static/async/move modifiers each leave a literal space behind when absent — three leading spaces accumulate before parameters.',
+        mode: 'pass',
+        why: 'Fixed in 016/walker-refactor-3.5 — chain of leading-optionals at template head all absorb trailing space INTO their bodies, so all-absent renders with no leading space.',
     },
 
     // -------------------------------------------------------------------

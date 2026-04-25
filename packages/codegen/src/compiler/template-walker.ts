@@ -488,6 +488,7 @@ function walkRuleForTemplate(
                 }
                 out.push(...parts)
             }
+            absorbHeadLeadingSeparatorIntoConditionals(out)
             return out
         }
 
@@ -1157,6 +1158,61 @@ function absorbLeadingSeparatorIntoJinjaConditional(parts: string[], separator: 
     if (!m) return false
     parts[0] = `${m[1]}${separator}${head.slice(m[1]!.length)}`
     return true
+}
+
+const JINJA_CONDITIONAL_FULL = /^(\{%-? if [^%]+-?%\})(.*)(\{%-? endif -?%\})$/
+const JINJA_IF_HEAD = /^\{%-? if [^%]+-?%\}/
+
+/**
+ * Cluster F step 3.5 (016): leading-space-at-template-head fix.
+ *
+ * When a seq's emission starts with a run of consecutive Jinja
+ * conditionals followed by an unconditional separator and required
+ * content, ALL the conditionals being absent leaves the separator
+ * stranded at offset 0 (the canonical ` fn ...` symptom). Fixed by:
+ *
+ *   1. Stripping any leading-edge separator step 3 placed inside each
+ *      conditional in the head run (those leading-edge separators are
+ *      only correct between two conditionals where one of them is
+ *      preceded by required content).
+ *   2. Adding the unconditional separator as a TRAILING-edge separator
+ *      inside each conditional (so it disappears alongside an absent
+ *      conditional, and chains correctly when consecutive conditionals
+ *      fire).
+ *   3. Removing the now-redundant unconditional separator that sat
+ *      between the run and the required content.
+ *
+ * Trailing-on-each works for every combination of present/absent in
+ * the run — see template-walker-frozen freeze tests for proofs across
+ * single-conditional (`type_item`, `while_expression`) and multi-
+ * conditional (`function_item`, `closure_expression`, `trait_item`)
+ * heads.
+ */
+function absorbHeadLeadingSeparatorIntoConditionals(out: string[]): void {
+    let runEnd = 0
+    while (runEnd < out.length && JINJA_IF_HEAD.test(out[runEnd]!)) runEnd++
+    if (runEnd === 0) return
+    if (runEnd >= out.length) return
+    const sepIdx = runEnd
+    const sep = out[sepIdx]!
+    if (sep !== ' ') return
+    if (sepIdx + 1 >= out.length) return
+    const tail = out[sepIdx + 1]!
+    if (tail.length === 0) return
+    if (JINJA_IF_HEAD.test(tail)) return
+
+    for (let i = 0; i < runEnd; i++) {
+        const cond = out[i]!
+        const m = cond.match(JINJA_CONDITIONAL_FULL)
+        if (!m) continue
+        const ifTag = m[1]!
+        let body = m[2]!
+        const endTag = m[3]!
+        if (body.startsWith(sep)) body = body.slice(sep.length)
+        if (!body.endsWith(sep)) body = `${body}${sep}`
+        out[i] = `${ifTag}${body}${endTag}`
+    }
+    out.splice(sepIdx, 1)
 }
 
 /**
