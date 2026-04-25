@@ -1,0 +1,233 @@
+{
+    "backend": "typescript",
+    "commit": "d0d03d9",
+    "grammars": {
+        "python": {
+            "parityFixtures": {
+                "failingByKind": {
+                    "dictionary_comprehension": [
+                        "render #94"
+                    ],
+                    "generator_expression": [
+                        "render #40",
+                        "render #101"
+                    ],
+                    "list_comprehension": [
+                        "render #55",
+                        "render #84"
+                    ],
+                    "set_comprehension": [
+                        "render #98"
+                    ]
+                },
+                "pass": 189,
+                "total": 195
+            },
+            "validators": {
+                "coverage": {
+                    "failingKinds": [
+                        "comparison_operator",
+                        "dict_pattern",
+                        "dotted_name"
+                    ],
+                    "pass": 97,
+                    "total": 100
+                },
+                "factoryRoundtrip": {
+                    "astMatchPass": 196,
+                    "failingKinds": [
+                        "as_pattern",
+                        "assignment",
+                        "attribute",
+                        "boolean_operator",
+                        "comparison_operator",
+                        "dotted_name",
+                        "list",
+                        "list_splat",
+                        "parameters",
+                        "parenthesized_expression",
+                        "set",
+                        "subscript",
+                        "tuple",
+                        "tuple_pattern",
+                        "type"
+                    ],
+                    "pass": 205,
+                    "total": 860
+                },
+                "from": {
+                    "failingKinds": [
+                        "dotted_name",
+                        "expression_statement",
+                        "list",
+                        "list_splat",
+                        "tuple"
+                    ],
+                    "pass": 107,
+                    "total": 114
+                },
+                "roundtrip": {
+                    "astMatchPass": 100,
+                    "failingKinds": [
+                        "as_pattern",
+                        "attribute",
+                        "boolean_operator",
+                        "comparison_operator",
+                        "list_splat",
+                        "parenthesized_expression",
+                        "tuple",
+                        "tuple_pattern",
+                        "type"
+                    ],
+                    "pass": 105,
+                    "total": 115
+                }
+            }
+        },
+        "rust": {
+            "parityFixtures": {
+                "failingByKind": {
+                    "captured_pattern": [
+                        "render #402",
+                        "render #418"
+                    ],
+                    "mut_pattern": [
+                        "render #344",
+                        "render #393",
+                        "render #417"
+                    ]
+                },
+                "pass": 465,
+                "total": 470
+            },
+            "validators": {
+                "coverage": {
+                    "failingKinds": [
+                        "generic_type",
+                        "match_arm",
+                        "ordered_field_declaration_list",
+                        "range_pattern"
+                    ],
+                    "pass": 132,
+                    "total": 136
+                },
+                "factoryRoundtrip": {
+                    "astMatchPass": 420,
+                    "failingKinds": [
+                        "array_expression",
+                        "block",
+                        "closure_expression",
+                        "delim_token_tree",
+                        "field_pattern",
+                        "generic_type_with_turbofish",
+                        "impl_item",
+                        "macro_definition",
+                        "match_arm",
+                        "mod_item",
+                        "or_pattern",
+                        "pointer_type",
+                        "range_expression",
+                        "struct_item",
+                        "token_tree",
+                        "visibility_modifier"
+                    ],
+                    "pass": 424,
+                    "total": 965
+                },
+                "from": {
+                    "failingKinds": [
+                        "attribute"
+                    ],
+                    "pass": 130,
+                    "total": 148
+                },
+                "roundtrip": {
+                    "astMatchPass": 121,
+                    "failingKinds": [
+                        "block",
+                        "impl_item",
+                        "range_pattern"
+                    ],
+                    "pass": 122,
+                    "total": 136
+                }
+            }
+        },
+        "typescript": {
+            "parityFixtures": {
+                "failingByKind": {},
+                "pass": 410,
+                "total": 410
+            },
+            "validators": {
+                "coverage": {
+                    "failingKinds": [
+                        "call_expression",
+                        "enum_body",
+                        "infer_type",
+                        "instantiation_expression",
+                        "optional_parameter",
+                        "required_parameter",
+                        "sequence_expression"
+                    ],
+                    "pass": 138,
+                    "total": 145
+                },
+                "factoryRoundtrip": {
+                    "astMatchPass": 377,
+                    "failingKinds": [
+                        "ambient_declaration",
+                        "array",
+                        "arrow_function",
+                        "assignment_expression",
+                        "call_expression",
+                        "export_statement",
+                        "formal_parameters",
+                        "function_declaration",
+                        "import_statement",
+                        "index_signature",
+                        "instantiation_expression",
+                        "member_expression",
+                        "module",
+                        "object_type",
+                        "parenthesized_expression",
+                        "string",
+                        "template_literal_type",
+                        "update_expression"
+                    ],
+                    "pass": 387,
+                    "total": 916
+                },
+                "from": {
+                    "failingKinds": [],
+                    "pass": 127,
+                    "total": 137
+                },
+                "roundtrip": {
+                    "astMatchPass": 86,
+                    "failingKinds": [
+                        "ambient_declaration",
+                        "array",
+                        "assignment_expression",
+                        "call_expression",
+                        "function_declaration",
+                        "import_statement",
+                        "instantiation_expression",
+                        "member_expression",
+                        "object_type",
+                        "parenthesized_expression",
+                        "string",
+                        "template_literal_type"
+                    ],
+                    "pass": 96,
+                    "total": 112
+                }
+            }
+        }
+    },
+    "totals": {
+        "fail": 1825,
+        "pass": 3134,
+        "total": 4959
+    }
+}

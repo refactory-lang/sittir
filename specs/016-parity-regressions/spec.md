@@ -2,7 +2,7 @@
 
 **Feature Branch**: `016-parity-regressions`
 **Created**: 2026-04-25
-**Status**: Draft
+**Status**: Implementing
 **Input**: User description: "parity-and-regressions — lift the TS-mode and native-mode corpus floors above the current baseline measured at the head of branch 012-rust-core-port (commit b4ccc6cc). Phase 0 cleanup (build/lint/jinja-check green) already shipped on 012; this feature targets the 16 pre-existing TS-mode parity-baseline failures and the broader native-mode template gaps."
 
 ## User Scenarios & Testing *(mandatory)*
