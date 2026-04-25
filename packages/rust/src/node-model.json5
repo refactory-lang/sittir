@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 372,
+  "nodeCount": 370,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -1337,28 +1337,6 @@
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
       "text": "async"
-    },
-    {
-      "kind": "_kw_const",
-      "modelType": "keyword",
-      "typeName": "KwConst",
-      "factoryName": "kwConst",
-      "irKey": "kwConst",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"const\" as const",
-      "text": "const"
-    },
-    {
-      "kind": "_kw_default",
-      "modelType": "keyword",
-      "typeName": "KwDefault",
-      "factoryName": "kwDefault",
-      "irKey": "kwDefault",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"default\" as const",
-      "text": "default"
     },
     {
       "kind": "_kw_move",
@@ -7612,24 +7590,52 @@
       "factoryName": "functionModifiers",
       "irKey": "functionModifiers",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
-          "name": "extern_modifier",
-          "propertyName": "externModifier",
+          "name": "modifier",
+          "propertyName": "modifier",
+          "paramName": "modifier",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
           "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "async"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "default"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "const"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "unsafe"
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "extern_modifier",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "extern_modifier"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "function_signature_item",

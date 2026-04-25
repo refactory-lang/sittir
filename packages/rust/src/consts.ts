@@ -183,8 +183,6 @@ export const LEAF_KINDS = [
   '_error_sentinel',
   '_inner_doc_comment_marker',
   '_kw_async',
-  '_kw_const',
-  '_kw_default',
   '_kw_move',
   '_kw_ref',
   '_kw_static',
@@ -263,8 +261,6 @@ export const KEYWORDS = [
   '_impl_item_semi',
   '_inner_line_doc_comment_marker',
   '_kw_async',
-  '_kw_const',
-  '_kw_default',
   '_kw_move',
   '_kw_operator',
   '_kw_ref',
@@ -621,6 +617,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'function_modifiers': [
+    { name: 'modifier', required: true, multiple: true },
   ],
   'function_signature_item': [
     { name: 'visibilityModifier', required: false, multiple: false },

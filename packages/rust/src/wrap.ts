@@ -499,6 +499,7 @@ export function wrapFunctionSignatureItem(data: _NodeData, tree: TreeHandle): Wr
 export function wrapFunctionModifiers(data: _NodeData, tree: TreeHandle): WrappedNode<FunctionModifiers> {
   return {
     ...data,
+    get modifier() { return drillInAll(data.$fields?.['modifier'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<FunctionModifiers>;
 }
@@ -1833,8 +1834,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_kw_static': (d) => d,
   '_kw_async': (d) => d,
   '_kw_move': (d) => d,
-  '_kw_default': (d) => d,
-  '_kw_const': (d) => d,
   '_wildcard_pattern': (d) => d,
   '_closure_expression_expr': (d, t) => wrapClosureExpressionExpr(d, t),
   '_field_pattern_shorthand': (d, t) => wrapFieldPatternShorthand(d, t),

@@ -7,17 +7,32 @@
  * @generated from overrides.json — review before committing
  */
 
-// @ts-nocheck — grammar.js is untyped; overrides use sittir DSL.
-// The `wire<RustGrammar>` generic below still binds kind-name
-// autocomplete + typo protection to `polymorphs` / `transforms` /
-// `rules` keys; @ts-nocheck only suppresses errors on the untyped
-// `grammar(...)` / `$._rule` / `base` surface.
+// grammar.js + tree-sitter's injected global DSL (`grammar`, `$._rule`
+// proxy, `seq` / `choice` / `prec` / ...) are intentionally untyped.
+// We narrow the @ts-nocheck blast radius by lifting the wire payload
+// into a typed `const config: WireConfig<RustGrammar>` — that
+// declaration type-checks with kind-name autocomplete + typo
+// protection on `polymorphs` / `transforms` / `rules` keys. Only the
+// final `grammar(enrich(base), wire(config))` line and the injected
+// DSL globals inside rule callbacks need suppression.
 import base from '../../node_modules/.pnpm/tree-sitter-rust@0.24.0/node_modules/tree-sitter-rust/grammar.js'
 import { transform, enrich, field, alias, variant, wire } from '../codegen/src/dsl/index.ts'
+import type { WireConfig } from '../codegen/src/dsl/index.ts'
 import type { RustGrammar } from './src/grammar.ts'
 
+// Injected globals from tree-sitter's grammar() + DSL — declare so the
+// typed `config` below can reference `$.<rule>` / `seq(...)` / etc.
+// without pulling in an untyped `any` sink.
+declare const grammar: (base: unknown, opts: unknown) => unknown
+declare const seq: (...args: unknown[]) => unknown
+declare const choice: (...args: unknown[]) => unknown
+declare const prec: { (p: number, r: unknown): unknown; left: (p: number, r: unknown) => unknown; right: (p: number, r: unknown) => unknown }
+declare const repeat: (r: unknown) => unknown
+declare const repeat1: (r: unknown) => unknown
+declare const optional: (r: unknown) => unknown
+declare const token: { (r: unknown): unknown; immediate: (r: unknown) => unknown }
 
-export default grammar(enrich(base), wire<RustGrammar>({
+const config: WireConfig<RustGrammar> = {
     name: 'rust',
     // `previous` is the base grammar's conflicts list — concat so we
     // don't drop the base entries (`$._type`, `$._pattern`, etc.).
@@ -182,6 +197,68 @@ export default grammar(enrich(base), wire<RustGrammar>({
         foreign_mod_item: {
             0: field('visibility_modifier'), // visibility_modifier [struct=0]
             1: field('extern_modifier'), // extern_modifier [struct=1]
+        },
+
+        // function_modifiers — base is
+        //   repeat1(choice('async', 'default', 'const', 'unsafe', $.extern_modifier))
+        // Wrap the inner choice (path `0` = repeat1's content) with a single
+        // `field('modifier')`. Tree-sitter then reports the per-arm token
+        // union in node-types.json under `function_modifiers.fields.modifier`,
+        // which lets sittir surface the modifier set as an enum / bitflag
+        // (ADR-0012) rather than dropping the anonymous arms from $children.
+        function_modifiers: {
+            // Wildcard `_` forces path-mode (a pure numeric key `0`
+            // would trigger flat-mode, which descends into each choice
+            // arm individually rather than wrapping the whole choice).
+            // At a single-content wrapper (REPEAT1), wildcard means
+            // "descend into the content and patch there" — equivalent
+            // to `field('modifier', <inner choice>)`.
+            //
+            // TODO(ADR-0012 bitflag): the resulting type
+            //   `modifier: NonEmptyArray<"async" | "default" | "const" |
+            //    "unsafe" | ExternModifier>`
+            // is correctly enum-shaped but each modifier is genuinely
+            // mutually-exclusive and set-like (order doesn't matter,
+            // duplicates aren't meaningful). This ought to surface as a
+            // Bitflag<FunctionMod, …> brand so the Config / Loose surface
+            // projects to a flags enum instead of an array. Deferred —
+            // needs bitflag detection in the walker for the repeat1+field
+            // combination, not just seq-positioned boolean-keyword slots.
+            '_': field('modifier'),
+        },
+
+        // visibility_modifier — replaces the hand-authored rule below
+        // that wrapped bare keywords in `_kw_pub` / `_kw_in` hidden
+        // SYMBOLs so FIELD would survive tree-sitter normalization.
+        // The one-arg `field('pub')` / `field('in')` placeholders land
+        // on bare STRINGs; `maybeKeywordSymbol` (dsl/primitives/field.ts)
+        // auto-synthesizes `_kw_pub` / `_kw_in` hidden rules and swaps
+        // each STRING for a SYMBOL ref — same net effect, zero hand-
+        // authored rule body.
+        //
+        // Base shape:
+        //   choice(
+        //     $.crate,                                 ← 0
+        //     seq(                                     ← 1
+        //       'pub',                                 ← 1/0        ← field('pub')
+        //       optional(seq(                          ← 1/1
+        //         '(',                                 ← 1/1/0/0
+        //         choice(                              ← 1/1/0/1
+        //           $.self,                            ← 1/1/0/1/0
+        //           $.super,                          ← 1/1/0/1/1
+        //           $.crate,                          ← 1/1/0/1/2
+        //           seq(                              ← 1/1/0/1/3
+        //             'in',                           ← 1/1/0/1/3/0 ← field('in')
+        //             $._path,                        ← 1/1/0/1/3/1
+        //           ),
+        //         ),
+        //         ')',                                 ← 1/1/0/2
+        //       )),
+        //     ),
+        //   )
+        visibility_modifier: {
+            '1/0': field('pub'),
+            '1/1/0/1/3/0': field('in'),
         },
 
         // function_item: pos 6 is optional(seq('->', field('return_type', ..))) —
@@ -575,31 +652,14 @@ export default grammar(enrich(base), wire<RustGrammar>({
 
     },
     rules: {
-        // function_modifiers — full replacement: label each choice alternative
-        // so readNode can route `async`, `const`, `default`, `unsafe` tokens.
-        // Route the bare-keyword strings through `_kw_<name>` hidden rules
-        // (declared below) so FIELD survives tree-sitter normalization —
-        // FIELD around bare STRING gets stripped; FIELD around SYMBOL survives.
-        function_modifiers: ($) => repeat1(choice(
-            field('async', $._kw_async),
-            field('default', $._kw_default),
-            field('const', $._kw_const),
-            field('unsafe', $._kw_unsafe),
-            $.extern_modifier,
-        )),
-
-        // Hand-authored `_kw_<name>` hidden rules. Required for
-        // function_modifiers and visibility_modifier to route bare
-        // keywords through SYMBOLs so FIELD wrappers survive. These
-        // could also live in a shared module if more grammars start
-        // needing the same keyword set; for now, rust is the only one.
-        _kw_async:   $ => prec(-1, 'async'),
-        _kw_default: $ => prec(-1, 'default'),
-        _kw_const:   $ => prec(-1, 'const'),
-        _kw_unsafe:  $ => prec(-1, 'unsafe'),
-        _kw_pub:     $ => prec(-1, 'pub'),
-        _kw_in:      $ => prec(-1, 'in'),
-
+        // Hidden `_kw_*` rules that previously sat here
+        // (`_kw_async` / `_kw_default` / `_kw_const` / `_kw_unsafe` /
+        // `_kw_pub` / `_kw_in`) have been deleted. They're now
+        // auto-synthesized by `maybeKeywordSymbol` (field.ts) whenever
+        // the declarative `transforms:` entries above land a one-arg
+        // `field('name')` on a bare STRING — see the
+        // `function_modifiers` / `visibility_modifier` entries above.
+        //
         // _pattern — the wildcard `_` is a bare literal alternative
         // (position 20) of the _pattern supertype choice. At multi-valued
         // list positions (rust `sepBy(',', $._pattern)` used by
@@ -625,25 +685,10 @@ export default grammar(enrich(base), wire<RustGrammar>({
         // the named alias on `_pattern` above promotes it to a proper
         // `wildcard_pattern` kind at parse time.
         _wildcard_pattern: $ => '_',
-
-        // visibility_modifier — label the `pub` keyword and the `in` keyword
-        // (inside `pub(in path)`) so readNode can route them to named fields.
-        visibility_modifier: ($) => choice(
-            $.crate,
-            seq(
-                field('pub', $._kw_pub),
-                optional(seq(
-                    '(',
-                    choice(
-                        $.self,
-                        $.super,
-                        $.crate,
-                        seq(field('in', $._kw_in), $._path),
-                    ),
-                    ')',
-                )),
-            ),
-        ),
-
     },
-}))
+}
+
+// The typed `config` above is validated against WireConfig<RustGrammar>.
+// `grammar()` is tree-sitter's injected global (declared at top of file);
+// `base` comes from the untyped `grammar.js` import.
+export default grammar(enrich(base), wire<RustGrammar>(config))

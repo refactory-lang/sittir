@@ -743,7 +743,12 @@ export function functionSignatureItemFrom(input: T.FunctionSignatureItem.Loose):
 }
 
 export function functionModifiersFrom(input: T.FunctionModifiers.Loose): ReturnType<typeof F.functionModifiers> | T.FunctionModifiers {
-  return F.functionModifiers(input as Parameters<typeof F.functionModifiers>[0]);
+  if (isNodeData(input)) return input;
+  const _ne_modifier = _resolveManyBranch<"async" | "default" | "const" | "unsafe" | T.ExternModifier>(input.modifier, "extern_modifier");
+  _assertNonEmpty(_ne_modifier, 'function_modifiers.modifier');
+  return F.functionModifiers({
+    modifier: _ne_modifier,
+  });
 }
 
 export function whereClauseFrom(...input: readonly (NonNullable<T.WhereClause.Config['children']>[number] | T.WhereClause)[]) {

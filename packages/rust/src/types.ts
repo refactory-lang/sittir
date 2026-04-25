@@ -25,8 +25,6 @@ export type LeafStringMap = {
   _kw_static: "static";
   _kw_async: "async";
   _kw_move: "move";
-  _kw_default: "default";
-  _kw_const: "const";
   _wildcard_pattern: "_";
   _pointer_type_const: "const";
   as: "as";
@@ -283,8 +281,6 @@ export const enum SyntaxKind {
   KwStatic = '_kw_static',
   KwAsync = '_kw_async',
   KwMove = '_kw_move',
-  KwDefault = '_kw_default',
-  KwConst = '_kw_const',
   WildcardPattern = '_wildcard_pattern',
   PointerTypeConst = '_pointer_type_const',
   ReferenceExpressionRawConst = '_reference_expression_raw_const',
@@ -1042,7 +1038,9 @@ export interface FunctionSignatureItem {
 
 export interface FunctionModifiers {
   readonly $type: 'function_modifiers';
-  readonly $children: NonEmptyArray<ExternModifier>;
+  readonly $fields: {
+    readonly modifier: NonEmptyArray<"async" | "default" | "const" | "unsafe" | ExternModifier>;
+  };
 }
 
 export interface WhereClause {
