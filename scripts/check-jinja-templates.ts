@@ -31,7 +31,11 @@ const GRAMMARS = ['rust', 'typescript', 'python']
 // `lastIndex` would silently skip matches at early offsets on
 // subsequent files.
 const FORBIDDEN_SRC = /\{%-?\s*(extends|macro|include|match|set)\b/
-const HEADER_RE = /^\{#\s*@generated\s+by\s+@sittir\/codegen/
+// Accept both whitespace-stripped (`{#-`) and plain (`{#`) comment
+// openers. The emitter uses `{#-` so nested-render whitespace gets
+// stripped at render time; legacy templates that were committed with
+// the plain form (or are hand-authored fixtures) match the same check.
+const HEADER_RE = /^\{#-?\s*@generated\s+by\s+@sittir\/codegen/
 
 interface Violation {
 	file: string
