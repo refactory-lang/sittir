@@ -113,7 +113,7 @@ async function main(): Promise<void> {
         try {
             const types = emitTypes({ grammar, nodeMap })
             const ifacePat = new RegExp(`export interface ${kindToPascal(kind)}[^\\{]*\\{[\\s\\S]*?\\n\\}`, 'm')
-            const m = types.content.match(ifacePat)
+            const m = (types as unknown as string).match(ifacePat)
             stages.emitInterface = m ? m[0] : null
         } catch (e) {
             stages.emitInterface = { error: String((e as Error).message ?? e) }

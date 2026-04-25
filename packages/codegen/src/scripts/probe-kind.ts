@@ -1,11 +1,20 @@
 /**
- * probe-kind — structured diagnostics for one parse → readNode → render cycle.
+ * probe-kind — structured diagnostics for one parse → readNode → render cycle,
+ * with optional baseline comparison for new-vs-legacy pipeline diffs.
  *
  * ## Usage
  *
  * ```sh
+ * # Single-pipeline probe.
  * npx tsx packages/codegen/src/scripts/probe-kind.ts \
  *     --grammar typescript --source 'break;'
+ *
+ * # New-vs-legacy comparison: stage a baseline package dir
+ * # (e.g. `cp -r packages/rust packages/rust-baseline` from a prior commit,
+ * # or `git worktree add` it from a baseline ref + regen).
+ * npx tsx packages/codegen/src/scripts/probe-kind.ts \
+ *     --grammar rust --source "fn f<'a>() {}" --kind lifetime \
+ *     --reparse --baseline packages/rust-baseline --pretty
  * ```
  *
  * ## Output
@@ -23,6 +32,14 @@
  * - `diff`:      trivial comparison: source length, rendered length,
  *                same-text flag.
  *
+ * With `--baseline <dir>`:
+ *   - `baseline`: same shape as the top-level report, computed via the
+ *                 baseline dir's `src/wrap.ts` + `templates/` (and optionally
+ *                 `.sittir/parser.wasm` with `--baseline-parser`).
+ *   - `compare`:  `{ renderedEqual, renderedLenDelta, astShapeEqual,
+ *                   inputAstShapeEqual, summary }` — quick verdict on
+ *                 whether the two pipelines agreed.
+ *
  * ## Why this exists
  *
  * Debugging RT failures repeatedly required writing one-off `/tmp/probe-X.ts`
@@ -31,19 +48,18 @@
  * instead of re-writing the probe. If a needed flag is missing, extend this
  * file; don't fork a new throwaway.
  *
- * ## Extending
- *
- * Flags to add as needs surface:
- *   - `--kind <k>`: only dump CST / nodeData subtrees for nodes with this type
- *   - `--field <f>`: drill into a specific field on the root
- *   - `--reparse`: render → re-parse and include the reparsed CST
- *   - `--ast-diff`: structural diff of source CST vs rendered CST
+ * The `--baseline` flag covers the lighter end of new-vs-legacy diffing —
+ * it swaps render-side artifacts (templates + wrap) only; the parser stays
+ * shared unless `--baseline-parser` is passed. For full git-ref-based
+ * comparison (auto-checkout-and-regen of a historical commit), see the
+ * follow-up note in this file's docstring at the bottom of the diff.
  */
 
 import { parseArgs } from 'node:util'
-import { loadLanguageForGrammar, treeHandle, adaptNode } from '../validate/common.ts'
+import { loadLanguageForGrammar, loadWebTreeSitter, treeHandle, adaptNode } from '../validate/common.ts'
 import { loadReadTreeNode } from '../validate/common.ts'
-import type { AnyTreeNode } from '@sittir/core'
+import type * as TS from 'web-tree-sitter'
+import type { AnyTreeNode } from '@sittir/types'
 
 // ---------------------------------------------------------------------------
 // CLI
@@ -68,6 +84,27 @@ async function main(): Promise<void> {
             },
             reparse: { type: 'boolean', default: false },
             pretty: { type: 'boolean', default: false },
+            // --baseline <path-to-package-dir>: also run the same
+            // probe against the baseline-package's `src/wrap.ts`,
+            // `templates/`, and `.sittir/parser.wasm`. Output gains
+            // a `baseline` block (same shape as the primary report)
+            // and a `compare` summary. Useful for diffing pre-change
+            // vs post-change generated output: stage a baseline by
+            // copying / git-checkout-ing the prior `packages/<lang>/`
+            // into a sibling dir (e.g. `packages/rust-baseline/`),
+            // then `--baseline packages/rust-baseline`. Same parser
+            // is used by default unless --baseline-parser is set.
+            baseline: { type: 'string' },
+            'baseline-parser': {
+                type: 'boolean',
+                default: false,
+                // Use baseline's `.sittir/parser.wasm` for the
+                // baseline pass instead of the current package's.
+                // Only enable if you regenerated the baseline's
+                // parser too (grammar.json drift between baseline
+                // and current). Default off — assumes the parser is
+                // current and only render-side artifacts differ.
+            },
         },
     })
     if (!values.grammar) {
@@ -84,15 +121,30 @@ async function main(): Promise<void> {
     }
 
     const parsedRange = values.range ? parseRange(values.range as string) : undefined
-    const report = await probe(grammar, source, {
+    const opts = {
         noRender: values['no-render'] === true,
         noWrap: values['no-wrap'] === true,
         kind: values.kind as string | undefined,
         range: parsedRange,
         reparse: values.reparse === true,
-    })
+    }
+    const report = await probe(grammar, source, opts)
+    let baselineReport: ProbeReport | undefined
+    let compare: ProbeCompare | undefined
+    if (values.baseline) {
+        const baselineDir = values.baseline as string
+        baselineReport = await probe(grammar, source, {
+            ...opts,
+            baselineDir,
+            useBaselineParser: values['baseline-parser'] === true,
+        })
+        compare = computeCompare(report, baselineReport)
+    }
     const indent = values.pretty ? 2 : undefined
-    process.stdout.write(JSON.stringify(report, null, indent) + '\n')
+    const out = baselineReport
+        ? { ...report, baseline: baselineReport, compare }
+        : report
+    process.stdout.write(JSON.stringify(out, null, indent) + '\n')
 }
 
 // ---------------------------------------------------------------------------
@@ -134,9 +186,20 @@ export async function probe(
         range?: { start: number; end: number }
         /** Render → re-parse → include reparsed CST + structural diff. */
         reparse?: boolean
+        /** Absolute or repo-relative path to a baseline package dir
+         *  (e.g. `packages/rust-baseline`). When set, swaps wrap.ts
+         *  + templates/ resolution to that dir for this probe pass.
+         *  See `--baseline` CLI flag. */
+        baselineDir?: string
+        /** When true, also load the parser from `<baselineDir>/.sittir/parser.wasm`
+         *  instead of the current package's. Default false — most baselines
+         *  only differ in render-side artifacts. */
+        useBaselineParser?: boolean
     } = {},
 ): Promise<ProbeReport> {
-    const { Parser, lang } = await loadLanguageForGrammar(grammar)
+    const { Parser, lang } = opts.baselineDir && opts.useBaselineParser
+        ? await loadLanguageFromPath(resolveBaselinePath(opts.baselineDir, '.sittir/parser.wasm'))
+        : await loadLanguageForGrammar(grammar)
     const parser = new Parser()
     parser.setLanguage(lang)
     const tree = parser.parse(source)
@@ -163,7 +226,11 @@ export async function probe(
 
     const cst = dumpCst(targetNode, null)
 
-    const readTreeNodeFn = opts.noWrap ? null : await loadReadTreeNode(grammar)
+    const readTreeNodeFn = opts.noWrap
+        ? null
+        : (opts.baselineDir
+            ? await loadReadTreeNodeFromPath(resolveBaselinePath(opts.baselineDir, 'src/wrap.ts'))
+            : await loadReadTreeNode(grammar))
     const handle = treeHandle(tree)
     const nodeId = targetNode === tree.rootNode ? undefined : targetNode.id
     const nodeData = readTreeNodeFn
@@ -176,7 +243,9 @@ export async function probe(
     let reparsedCst: CstNode | undefined
     let astDiff: ProbeReport['astDiff'] | undefined
     if (!opts.noRender) {
-        rendered = await renderNodeData(grammar, nodeData)
+        rendered = opts.baselineDir
+            ? await renderNodeDataFromPath(resolveBaselinePath(opts.baselineDir, 'templates'), nodeData)
+            : await renderNodeData(grammar, nodeData)
         renderedLen = rendered.length
         const originalText = probeRange ? probeRange.text : source
         sameText = rendered === originalText
@@ -300,6 +369,79 @@ async function renderNodeData(grammar: string, nodeData: unknown): Promise<strin
     const templatesPath = new URL(`../../../${grammar}/templates`, thisFile).pathname
     const bound = createRenderer(templatesPath)
     return bound.render(nodeData as Parameters<typeof bound.render>[0])
+}
+
+/** @internal — render via templates from an explicit absolute path
+ *  (used by --baseline mode to swap render-side artifacts). */
+async function renderNodeDataFromPath(templatesPath: string, nodeData: unknown): Promise<string> {
+    const { createRenderer } = await import('@sittir/core')
+    const bound = createRenderer(templatesPath)
+    return bound.render(nodeData as Parameters<typeof bound.render>[0])
+}
+
+/** @internal — load `readTreeNode` from an explicit `src/wrap.ts`
+ *  path. Mirrors `loadReadTreeNode` in `validate/common.ts` but
+ *  without the kind-name registry — caller passes the absolute path. */
+async function loadReadTreeNodeFromPath(
+    wrapTsPath: string,
+): Promise<((handle: unknown, nodeId?: number) => unknown) | null> {
+    try {
+        const mod = await import(wrapTsPath)
+        return (mod as { readTreeNode?: (h: unknown, id?: number) => unknown }).readTreeNode ?? null
+    } catch (e) {
+        process.stderr.write(`probe-kind: failed to load baseline wrap module at ${wrapTsPath}: ${(e as Error).message}\n`)
+        return null
+    }
+}
+
+/** @internal — load a tree-sitter Language from an explicit wasm path
+ *  (used by --baseline-parser mode). */
+async function loadLanguageFromPath(wasmPath: string): Promise<{ Parser: typeof TS.Parser; lang: TS.Language }> {
+    const { Parser, Language } = await loadWebTreeSitter()
+    const lang = await Language.load(wasmPath)
+    return { Parser, lang }
+}
+
+/** @internal — resolve a baseline-relative path to an absolute path.
+ *  Accepts a baseline dir as either an absolute path or a repo-relative
+ *  path (e.g. `packages/rust-baseline`). */
+function resolveBaselinePath(baselineDir: string, sub: string): string {
+    if (baselineDir.startsWith('/')) return `${baselineDir}/${sub}`
+    const repoRoot = new URL('../../../..', import.meta.url).pathname.replace(/\/$/, '')
+    return `${repoRoot}/${baselineDir}/${sub}`
+}
+
+/** @internal — top-level diff summary between current and baseline probes. */
+export interface ProbeCompare {
+    /** Both rendered outputs are byte-equal. */
+    renderedEqual: boolean
+    /** Length delta (currentLen - baselineLen); 0 when both undefined. */
+    renderedLenDelta: number
+    /** Reparsed-CST shape strings match. Undefined when --reparse not set. */
+    astShapeEqual?: boolean
+    /** Original-source CST shape strings match (sanity — should always be true
+     *  unless --baseline-parser triggered a different parser). */
+    inputAstShapeEqual: boolean
+    /** Rendered-output drift summary, one line. */
+    summary: string
+}
+
+function computeCompare(current: ProbeReport, baseline: ProbeReport): ProbeCompare {
+    const renderedEqual = current.rendered === baseline.rendered
+    const renderedLenDelta = (current.diff.renderedLen ?? 0) - (baseline.diff.renderedLen ?? 0)
+    const inputAstShapeEqual = shapeOf(current.cst) === shapeOf(baseline.cst)
+    let astShapeEqual: boolean | undefined
+    if (current.astDiff && baseline.astDiff) {
+        astShapeEqual = current.astDiff.reparsedShape === baseline.astDiff.reparsedShape
+    }
+    const summary = renderedEqual
+        ? 'rendered output identical'
+        : `rendered output differs (${renderedLenDelta >= 0 ? '+' : ''}${renderedLenDelta} chars)`
+    return { renderedEqual, renderedLenDelta, astShapeEqual, inputAstShapeEqual, summary }
+}
+
+function shapeOf(node: CstNode): string {
+    return `${node.named ? node.type : `"${node.type}"`}(${node.children.map(shapeOf).join(',')})`
 }
 
 function stripBigInts(v: unknown): unknown {
