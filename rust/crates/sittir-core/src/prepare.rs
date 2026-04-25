@@ -310,96 +310,25 @@ pub fn render_any<M: GrammarMeta>(
         }
     }
     let ctx = build_template_context(node, meta, render_dispatch)?;
-    let rendered = render_dispatch(&node.type_, &ctx)?;
-    // Parity with the TS engine's inline space-collapse pass
-    // (`packages/core/src/render.ts:871`). Empty `{{ optional }}` slots
-    // leave adjacent literal spaces behind; collapsing runs of 2+
-    // spaces (not preceded by newline or space — indentation lines are
-    // preserved) matches the TS output byte-for-byte. Idempotent, so
-    // safe to apply at every recursion level.
-    Ok(collapse_inner_spaces(&rendered))
+    render_dispatch(&node.type_, &ctx)
+    // Honest raw output — no whitespace post-processing. Empty optional
+    // slots leave their adjacent literal spaces in place; that's a signal
+    // to surface walker bugs (per `feedback_no_silent_formatting.md` on
+    // the TS side) rather than hide them. The napi inline render path
+    // already used raw dispatch output; this aligns the top-level entry.
 }
 
 /// Top-level render entry point. Equivalent to the TS engine's
-/// `boundRender`: calls `render_any` for the recursive path, then
-/// `.trim()` strips the outermost leading/trailing whitespace that
-/// outer-position empty slots can introduce. Trim ONLY at the top —
-/// inner field / child renders may legitimately carry leading /
-/// trailing whitespace that their parent template's literal chars
-/// compose with.
+/// `boundRender`: emits the template's raw output without trim or
+/// collapse. Outer-position whitespace artifacts indicate walker bugs
+/// (template emits a trailing/leading space when an optional field is
+/// absent) and must surface, not be hidden.
 pub fn render<M: GrammarMeta>(
     node: &NodeData,
     meta: &M,
     render_dispatch: RenderDispatch,
 ) -> Result<String, askama::Error> {
-    let inner = render_any(node, meta, render_dispatch)?;
-    Ok(inner.trim().to_string())
-}
-
-/// Collapse runs of 2+ consecutive spaces — UNLESS they're preceded
-/// by a newline or another space. Same semantics as the TS engine's
-/// `rendered.replace(/(?<![\n ]) {2,}/g, ' ')`. Rust's `regex` crate
-/// doesn't support lookbehind so we emulate: walk the string, emit
-/// each character, but when we hit a space that isn't already
-/// preceded by a space or newline AND the next character is also a
-/// space, only emit one space and skip subsequent spaces.
-fn collapse_inner_spaces(s: &str) -> String {
-    let bytes = s.as_bytes();
-    let mut out = String::with_capacity(bytes.len());
-    let mut i = 0;
-    while i < bytes.len() {
-        let c = bytes[i];
-        if c == b' ' {
-            // Count the run length.
-            let mut j = i;
-            while j < bytes.len() && bytes[j] == b' ' {
-                j += 1;
-            }
-            let run_len = j - i;
-            // Preceding char: previous byte (or start-of-string).
-            let prev = if i == 0 { None } else { Some(bytes[i - 1]) };
-            let preceded_by_space_or_nl = matches!(prev, Some(b' ') | Some(b'\n'));
-            // Collapse only when the run is 2+ AND NOT preceded by
-            // space/newline. "Preceded by space" can't happen here
-            // because we consumed the whole run, but preserved by
-            // mirroring the TS regex for clarity.
-            if run_len >= 2 && !preceded_by_space_or_nl {
-                out.push(' ');
-            } else {
-                for _ in 0..run_len {
-                    out.push(' ');
-                }
-            }
-            i = j;
-        } else {
-            // Non-space: push it. Handle multi-byte chars safely by
-            // pushing the whole char rather than one byte.
-            let ch_end = utf8_char_end(bytes, i);
-            out.push_str(&s[i..ch_end]);
-            i = ch_end;
-        }
-    }
-    out
-}
-
-/// Locate the end byte offset of the UTF-8 character starting at `i`
-/// within `bytes`. Standard UTF-8 leading-byte width decoding.
-fn utf8_char_end(bytes: &[u8], i: usize) -> usize {
-    let b = bytes[i];
-    let width = if b < 0x80 {
-        1
-    } else if b < 0xC0 {
-        // Continuation byte in unexpected position — walk one byte
-        // defensively. Shouldn't happen in well-formed UTF-8.
-        1
-    } else if b < 0xE0 {
-        2
-    } else if b < 0xF0 {
-        3
-    } else {
-        4
-    };
-    (i + width).min(bytes.len())
+    render_any(node, meta, render_dispatch)
 }
 
 /// Render a single `FieldValue` into both a joined scalar AND a

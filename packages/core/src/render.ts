@@ -101,7 +101,7 @@ function resolveTemplate(rule: TemplateRule, node: AnyNodeData, varPattern: RegE
 //
 // applyTemplate() does the regex-free substitution: iterate the
 // precomputed substitution list, apply column-aware re-indentation
-// at each site, run the final absent-field space-absorption pass.
+// at each site, return raw output (no whitespace post-processing).
 //
 // This shape is the precondition for swapping the hand-rolled
 // substitutor for a declarative template engine (askama / Nunjucks):
@@ -511,14 +511,12 @@ function applyTemplate(prepared: PreparedRender): string {
 	}
 	result += template.slice(lastIdx);
 
-	// FR-017: Absent-field space absorption — collapse runs of 2+ spaces
-	// left by empty variable interpolations. The negative lookbehind skips
-	// runs whose immediately-preceding character is a newline OR another
-	// space, so line-leading indentation (any depth) is preserved verbatim.
-	// No trim here: recursive sub-renders may legitimately start/end with
-	// whitespace (block-bearer fields emit `\n  …\n`). The top-level
-	// `boundRender` wrapper trims once at the end of the render tree.
-	return result.replace(/(?<![\n ]) {2,}/g, ' ');
+	// Honest raw output — no whitespace post-processing. Empty optional
+	// interpolations leave their adjacent literal spaces in place; that's
+	// a signal to surface walker bugs (per `feedback_no_silent_formatting.md`)
+	// rather than hide them behind a collapse regex. Native engine emits
+	// raw too — symmetric across backends.
+	return result;
 }
 
 function render(node: AnyNodeData, ctx: InternalRenderContext): string {
@@ -865,10 +863,9 @@ function renderNunjucks(
 			{ cause: err },
 		);
 	}
-	// FR-017 absent-field space absorption — collapse runs of 2+ spaces
-	// left by empty variable interpolations. Same regex as the legacy
-	// substitutor path so output stays byte-identical across engines.
-	return rendered.replace(/(?<![\n ]) {2,}/g, ' ');
+	// Honest raw output — see `applyTemplate` for the rationale. Symmetric
+	// with the native engine and with the legacy substitutor path.
+	return rendered;
 }
 
 /**
@@ -1046,10 +1043,14 @@ export function createRendererFromConfig(config: RulesConfig, options?: Renderer
 	const templatesDir = options?.templatesDir;
 
 	function boundRender(node: AnyNodeData): string {
+		// No `.trim()` — emit the template's raw output. Outer-position
+		// whitespace artifacts indicate walker bugs (template emits a
+		// trailing/leading space when an optional field is absent) and
+		// must surface, not be hidden. Native engine matches this contract.
 		if (nunjucksEnv || templatesDir) {
-			return renderNunjucks(node, ctx, nunjucksEnv, templatesDir).trim();
+			return renderNunjucks(node, ctx, nunjucksEnv, templatesDir);
 		}
-		return render(node, ctx).trim();
+		return render(node, ctx);
 	}
 
 	function boundToEdit(node: AnyNodeData, startOrRange: number | ByteRange, end?: number): Edit {

@@ -593,8 +593,8 @@ pub struct VisibilityModifierCrateTemplate {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_visibility_modifier_pub_in_path.jinja", escape = "none")]
-pub struct VisibilityModifierPubInPathTemplate {
+#[template(path = "_visibility_modifier_in_path.jinja", escape = "none")]
+pub struct VisibilityModifierInPathTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -851,8 +851,6 @@ pub struct BreakExpressionTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub expression: String,
-    pub expression_list: Vec<String>,
     pub label: String,
     pub label_list: Vec<String>,
 }
@@ -883,8 +881,6 @@ pub struct CapturedPatternTemplate {
     pub leading_sep: bool,
     pub identifier: String,
     pub identifier_list: Vec<String>,
-    pub pattern: String,
-    pub pattern_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1272,6 +1268,8 @@ pub struct ForeignModItemTemplate {
     pub leading_sep: bool,
     pub extern_modifier: String,
     pub extern_modifier_list: Vec<String>,
+    pub visibility_modifier: String,
+    pub visibility_modifier_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1310,14 +1308,8 @@ pub struct FunctionModifiersTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#async: String,
-    pub r#async_list: Vec<String>,
-    pub r#const: String,
-    pub r#const_list: Vec<String>,
-    pub default: String,
-    pub default_list: Vec<String>,
-    pub r#unsafe: String,
-    pub r#unsafe_list: Vec<String>,
+    pub modifier: String,
+    pub modifier_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1759,8 +1751,6 @@ pub struct MutPatternTemplate {
     pub leading_sep: bool,
     pub mutable_specifier: String,
     pub mutable_specifier_list: Vec<String>,
-    pub pattern: String,
-    pub pattern_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2049,10 +2039,10 @@ pub struct SelfParameterTemplate {
     pub leading_sep: bool,
     pub lifetime: String,
     pub lifetime_list: Vec<String>,
-    pub lifetime_name: String,
-    pub lifetime_name_list: Vec<String>,
     pub mutable_specifier: String,
     pub mutable_specifier_list: Vec<String>,
+    pub reference: String,
+    pub reference_list: Vec<String>,
     pub self_: String,
     pub self__list: Vec<String>,
 }
@@ -3214,8 +3204,8 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
-        "_visibility_modifier_pub_in_path" => {
-            let t = VisibilityModifierPubInPathTemplate {
+        "_visibility_modifier_in_path" => {
+            let t = VisibilityModifierInPathTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3472,8 +3462,6 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                expression: ctx.fields.get("expression").cloned().unwrap_or_default(),
-                expression_list: ctx.fields_list.get("expression").cloned().unwrap_or_default(),
                 label: ctx.fields.get("label").cloned().unwrap_or_default(),
                 label_list: ctx.fields_list.get("label").cloned().unwrap_or_default(),
             };
@@ -3504,8 +3492,6 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 identifier: ctx.fields.get("identifier").cloned().unwrap_or_default(),
                 identifier_list: ctx.fields_list.get("identifier").cloned().unwrap_or_default(),
-                pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
-                pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3893,6 +3879,8 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 extern_modifier: ctx.fields.get("extern_modifier").cloned().unwrap_or_default(),
                 extern_modifier_list: ctx.fields_list.get("extern_modifier").cloned().unwrap_or_default(),
+                visibility_modifier: ctx.fields.get("visibility_modifier").cloned().unwrap_or_default(),
+                visibility_modifier_list: ctx.fields_list.get("visibility_modifier").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3931,14 +3919,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#async: ctx.fields.get("async").cloned().unwrap_or_default(),
-                r#async_list: ctx.fields_list.get("async").cloned().unwrap_or_default(),
-                r#const: ctx.fields.get("const").cloned().unwrap_or_default(),
-                r#const_list: ctx.fields_list.get("const").cloned().unwrap_or_default(),
-                default: ctx.fields.get("default").cloned().unwrap_or_default(),
-                default_list: ctx.fields_list.get("default").cloned().unwrap_or_default(),
-                r#unsafe: ctx.fields.get("unsafe").cloned().unwrap_or_default(),
-                r#unsafe_list: ctx.fields_list.get("unsafe").cloned().unwrap_or_default(),
+                modifier: ctx.fields.get("modifier").cloned().unwrap_or_default(),
+                modifier_list: ctx.fields_list.get("modifier").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -4380,8 +4362,6 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 mutable_specifier: ctx.fields.get("mutable_specifier").cloned().unwrap_or_default(),
                 mutable_specifier_list: ctx.fields_list.get("mutable_specifier").cloned().unwrap_or_default(),
-                pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
-                pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -4670,10 +4650,10 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 lifetime: ctx.fields.get("lifetime").cloned().unwrap_or_default(),
                 lifetime_list: ctx.fields_list.get("lifetime").cloned().unwrap_or_default(),
-                lifetime_name: ctx.fields.get("lifetime_name").cloned().unwrap_or_default(),
-                lifetime_name_list: ctx.fields_list.get("lifetime_name").cloned().unwrap_or_default(),
                 mutable_specifier: ctx.fields.get("mutable_specifier").cloned().unwrap_or_default(),
                 mutable_specifier_list: ctx.fields_list.get("mutable_specifier").cloned().unwrap_or_default(),
+                reference: ctx.fields.get("reference").cloned().unwrap_or_default(),
+                reference_list: ctx.fields_list.get("reference").cloned().unwrap_or_default(),
                 self_: ctx.fields.get("self").cloned().unwrap_or_default(),
                 self__list: ctx.fields_list.get("self").cloned().unwrap_or_default(),
             };
@@ -5356,9 +5336,9 @@ impl ::sittir_core::prepare::GrammarMeta for RustGrammarMeta {
             ("range_pattern", "range_pattern__form_left_bare") => Some("left_bare"),
             ("range_pattern", "range_pattern__form_left_with_right") => Some("left_with_right"),
             ("range_pattern", "range_pattern__form_prefix") => Some("prefix"),
-            ("range_pattern", "range_pattern_left_bare") => Some("prefix"),
-            ("range_pattern", "range_pattern_left_with_right") => Some("prefix"),
-            ("range_pattern", "range_pattern_prefix") => Some("prefix"),
+            ("range_pattern", "range_pattern_left_bare") => Some("left_with_right"),
+            ("range_pattern", "range_pattern_left_with_right") => Some("left_with_right"),
+            ("range_pattern", "range_pattern_prefix") => Some("left_with_right"),
             ("struct_item", "struct_item__form_brace") => Some("brace"),
             ("struct_item", "struct_item__form_tuple") => Some("tuple"),
             ("struct_item", "struct_item__form_unit") => Some("unit"),
@@ -5378,9 +5358,11 @@ impl ::sittir_core::prepare::GrammarMeta for RustGrammarMeta {
             ("token_tree_pattern", "token_tree_pattern_bracket") => Some("paren"),
             ("token_tree_pattern", "token_tree_pattern_paren") => Some("paren"),
             ("visibility_modifier", "visibility_modifier__form_crate") => Some("crate"),
+            ("visibility_modifier", "visibility_modifier__form_in_path") => Some("in_path"),
             ("visibility_modifier", "visibility_modifier__form_pub") => Some("pub"),
-            ("visibility_modifier", "visibility_modifier_crate") => Some("crate"),
-            ("visibility_modifier", "visibility_modifier_pub") => Some("crate"),
+            ("visibility_modifier", "visibility_modifier_crate") => Some("in_path"),
+            ("visibility_modifier", "visibility_modifier_in_path") => Some("in_path"),
+            ("visibility_modifier", "visibility_modifier_pub") => Some("in_path"),
             _ => None,
         }
     }

@@ -513,6 +513,21 @@ pub struct PublicFieldDefinitionDeclareFirstTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_public_field_definition_readonly_first.jinja", escape = "none")]
+pub struct PublicFieldDefinitionReadonlyFirstTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub r#abstract: String,
+    pub r#abstract_list: Vec<String>,
+    pub readonly: String,
+    pub readonly_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_public_field_definition_static_mods.jinja", escape = "none")]
 pub struct PublicFieldDefinitionStaticModsTemplate {
     pub children: Vec<String>,
@@ -3541,6 +3556,21 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "_public_field_definition_readonly_first" => {
+            let t = PublicFieldDefinitionReadonlyFirstTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                r#abstract: ctx.fields.get("abstract").cloned().unwrap_or_default(),
+                r#abstract_list: ctx.fields_list.get("abstract").cloned().unwrap_or_default(),
+                readonly: ctx.fields.get("readonly").cloned().unwrap_or_default(),
+                readonly_list: ctx.fields_list.get("readonly").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }

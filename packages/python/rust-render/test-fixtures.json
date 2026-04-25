@@ -934,7 +934,7 @@
       "$nodeId": 603128,
       "$named": true
     },
-    "expectedOutput": "{ }"
+    "expectedOutput": "{  }"
   },
   {
     "kind": "roundtrip",
@@ -942,9 +942,9 @@
     "sourceIn": "{}",
     "pattern": "dictionary",
     "edits": [],
-    "expectedSourceOut": "{ }",
+    "expectedSourceOut": "{  }",
     "expectedReparseTree": "(dictionary)",
-    "wrappedText": "_ = { }",
+    "wrappedText": "_ = {  }",
     "wrappedOffset": 4
   },
   {
@@ -6180,7 +6180,7 @@
       "$nodeId": 1002528,
       "$named": true
     },
-    "expectedOutput": "{ }"
+    "expectedOutput": "{  }"
   },
   {
     "kind": "roundtrip",
@@ -6188,9 +6188,9 @@
     "sourceIn": "{}",
     "pattern": "dictionary",
     "edits": [],
-    "expectedSourceOut": "{ }",
+    "expectedSourceOut": "{  }",
     "expectedReparseTree": "(dictionary)",
-    "wrappedText": "_ = { }",
+    "wrappedText": "_ = {  }",
     "wrappedOffset": 4
   },
   {
@@ -11893,7 +11893,7 @@
       "$nodeId": 1514192,
       "$named": true
     },
-    "expectedOutput": "{ }"
+    "expectedOutput": "{  }"
   },
   {
     "kind": "roundtrip",
@@ -11901,9 +11901,9 @@
     "sourceIn": "{}",
     "pattern": "dictionary",
     "edits": [],
-    "expectedSourceOut": "{ }",
+    "expectedSourceOut": "{  }",
     "expectedReparseTree": "(dictionary)",
-    "wrappedText": "_ = { }",
+    "wrappedText": "_ = {  }",
     "wrappedOffset": 4
   },
   {

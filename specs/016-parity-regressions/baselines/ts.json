@@ -1,6 +1,6 @@
 {
     "backend": "typescript",
-    "commit": "bd7bb77",
+    "commit": "1565ae6",
     "grammars": {
         "python": {
             "parityFixtures": {
@@ -76,20 +76,10 @@
         },
         "rust": {
             "parityFixtures": {
-                "failingByKind": {
-                    "captured_pattern": [
-                        "render #402",
-                        "render #418"
-                    ],
-                    "mut_pattern": [
-                        "render #344",
-                        "render #393",
-                        "render #417"
-                    ]
-                },
+                "failingByKind": {},
                 "formatDeferredByKind": {},
-                "pass": 465,
-                "total": 470
+                "pass": 214,
+                "total": 214
             },
             "validators": {
                 "coverage": {
@@ -136,14 +126,25 @@
                     "total": 148
                 },
                 "roundtrip": {
-                    "astMatchPass": 121,
+                    "astMatchPass": 59,
                     "failingKinds": [
-                        "block",
+                        "closure_expression",
+                        "const_item",
+                        "extern_crate_declaration",
+                        "for_expression",
+                        "function_item",
                         "impl_item",
-                        "range_pattern"
+                        "mod_item",
+                        "range_pattern",
+                        "static_item",
+                        "struct_item",
+                        "trait_item",
+                        "type_item",
+                        "use_declaration",
+                        "while_expression"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 122,
+                    "pass": 59,
                     "total": 136
                 }
             }
@@ -152,8 +153,8 @@
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
-                "pass": 410,
-                "total": 410
+                "pass": 249,
+                "total": 249
             },
             "validators": {
                 "coverage": {
@@ -203,31 +204,38 @@
                     "total": 137
                 },
                 "roundtrip": {
-                    "astMatchPass": 86,
+                    "astMatchPass": 50,
                     "failingKinds": [
+                        "abstract_class_declaration",
                         "ambient_declaration",
                         "array",
+                        "arrow_function",
                         "assignment_expression",
                         "call_expression",
+                        "class",
+                        "class_declaration",
+                        "constructor_type",
+                        "enum_declaration",
                         "function_declaration",
+                        "function_expression",
+                        "function_signature",
+                        "function_type",
                         "import_statement",
                         "instantiation_expression",
                         "member_expression",
                         "object_type",
-                        "parenthesized_expression",
-                        "string",
                         "template_literal_type"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 96,
+                    "pass": 56,
                     "total": 112
                 }
             }
         }
     },
     "totals": {
-        "fail": 1819,
-        "pass": 3140,
-        "total": 4959
+        "fail": 1917,
+        "pass": 2625,
+        "total": 4542
     }
 }

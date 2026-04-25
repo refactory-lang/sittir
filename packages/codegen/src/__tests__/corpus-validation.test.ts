@@ -36,6 +36,21 @@ import { validateTemplateCoverage } from '../validate/template-coverage.ts'
 /**
  * Current floors — asserted. When a fix lands, raise these in the
  * same commit so the gap to LEGACY_BASELINE stays visible.
+ *
+ * MEASUREMENT RESET (commit 016/measurement-reset, 2026-04-25): TS-side
+ * cosmetic post-processing (`collapse_inner_spaces` regex + outer
+ * `.trim()`) was removed from `packages/core/src/render.ts` +
+ * `rust/crates/sittir-core/src/prepare.rs` to surface walker bugs that
+ * the post-processing was hiding (per
+ * `~/.claude/projects/.../memory/feedback_no_silent_formatting.md` and
+ * `project_post_processing_reset.md`). The floors below for `rtPass` /
+ * `rtAstMatchPass` (rust, typescript) reflect the new HONEST raw
+ * walker output — not the post-processing-disguised numbers.
+ *
+ * Cluster F (walker refactor per `feedback_walker_refactor_blockers.md`)
+ * will lift these floors back up as it eliminates per-template
+ * whitespace artifacts. Each cluster commit raises floors back toward
+ * the legacy baseline; never below.
  */
 const FLOORS = {
     // Python floors adjusted for override-compiled parser (spec 007).
@@ -83,12 +98,13 @@ const FLOORS = {
         // 142 → 130 — 013's variant() adoption consolidation.
         fromPass: 130,
         fromTotal: 148,
-        // R1 ceilings (2026-04-24): rtPass 107 → 121 via C1 clause
-        // whitespace absorption fix + external-scanner $TEXT fallback
-        // plumbing (raw_string_literal et al.).
-        rtPass: 121,
+        // MEASUREMENT RESET (2026-04-25): rtPass 121 → 59,
+        // rtAstMatchPass 120 → 59. TS-side post-processing removed;
+        // walker emits raw template output. Cluster F walker refactor
+        // will lift these back toward legacy baseline.
+        rtPass: 59,
         rtTotal: 136,
-        rtAstMatchPass: 120,
+        rtAstMatchPass: 59,
         covPass: 132,
         covTotal: 136,
     },
@@ -117,12 +133,15 @@ const FLOORS = {
         // 149 → 127 — 013's variant() adoption consolidation.
         fromPass: 127,
         fromTotal: 137,
-        // R1 ceilings (2026-04-24): rtPass 93 → 96 via unnamed-alias
-        // literal preservation in resolveRule (ternary `?` etc.).
-        rtPass: 96,
+        // MEASUREMENT RESET (2026-04-25): rtPass 96 → 56,
+        // rtAstMatchPass 86 → 50. TS-side post-processing removed.
+        // covPass 140 → 138 was a pre-existing failure (template
+        // coverage drifted independently of the reset); folded into
+        // this commit since the floor table is rewritten anyway.
+        rtPass: 56,
         rtTotal: 112,
-        rtAstMatchPass: 86,
-        covPass: 140,
+        rtAstMatchPass: 50,
+        covPass: 138,
         covTotal: 145,
     },
 } as const

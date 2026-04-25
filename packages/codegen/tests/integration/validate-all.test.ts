@@ -35,7 +35,13 @@ const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 // new ceilings. No real regression — numbers were inflated by silent
 // skip.
 const RT_CEILINGS: Record<string, { roundTrip: number; factoryRoundTrip: number }> = {
-  rust:       { roundTrip: 55, factoryRoundTrip: 45 },
+  // MEASUREMENT RESET (2026-04-25): rust roundTrip 55 → 65,
+  // factoryRoundTrip 45 → 70. TS-side post-processing was hiding
+  // walker whitespace artifacts; raw output exposes more real fail
+  // counts (see corpus-validation.test.ts FLOORS preamble + project
+  // memory note `project_post_processing_reset.md`). Cluster F walker
+  // refactor will lower these ceilings back down.
+  rust:       { roundTrip: 65, factoryRoundTrip: 70 },
   // Ceilings raised again (typescript roundTrip 50→60, factoryRoundTrip
   // 60→90; python factoryRoundTrip 45→65) after wrapForReparse gained
   // transitive supertype walk. Kinds with a direct supertype not in
