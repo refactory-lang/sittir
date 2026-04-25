@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  7  (0 applied, 7 held)
-// Rule promotions:   89  (81 applied, 8 held)
+// Rule promotions:   88  (80 applied, 8 held)
 // Repeated shapes:   7  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -258,7 +258,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "primary_type", classification: "supertype", applied: true },
   { kind: "statement", classification: "supertype", applied: true },
   { kind: "type", classification: "supertype", applied: true },
-  { kind: "_public_field_definition_readonly_first", classification: "terminal", applied: true },
   { kind: "_reserved_identifier", classification: "terminal", applied: true },
   { kind: "comment", classification: "terminal", applied: true },
   { kind: "escape_sequence", classification: "terminal", applied: true },

@@ -983,48 +983,48 @@ describe('pair', () => {
 
 describe('list_comprehension', () => {
   it('factory produces correct type', () => {
-    const node = ir.listComprehension({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any, children: [{ $type: 'for_in_clause', $text: 'test' } as any] as any });
+    const node = ir.listComprehension({ body: { $type: 'expression', $text: 'test' } as any, children: [{ $type: '_comprehension_clauses', $text: 'test' } as any] as any });
     expect(node.$type).toBe('list_comprehension');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.listComprehension({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any, children: [{ $type: 'for_in_clause', $text: 'test' } as any] as any });
+    const node = ir.listComprehension({ body: { $type: 'expression', $text: 'test' } as any, children: [{ $type: '_comprehension_clauses', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('dictionary_comprehension', () => {
   it('factory produces correct type', () => {
-    const node = ir.dictionaryComprehension({ body: { $type: 'pair', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any, children: [{ $type: 'for_in_clause', $text: 'test' } as any] as any });
+    const node = ir.dictionaryComprehension({ body: { $type: 'pair', $text: 'test' } as any, children: [{ $type: '_comprehension_clauses', $text: 'test' } as any] as any });
     expect(node.$type).toBe('dictionary_comprehension');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.dictionaryComprehension({ body: { $type: 'pair', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any, children: [{ $type: 'for_in_clause', $text: 'test' } as any] as any });
+    const node = ir.dictionaryComprehension({ body: { $type: 'pair', $text: 'test' } as any, children: [{ $type: '_comprehension_clauses', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('set_comprehension', () => {
   it('factory produces correct type', () => {
-    const node = ir.setComprehension({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any, children: [{ $type: 'for_in_clause', $text: 'test' } as any] as any });
+    const node = ir.setComprehension({ body: { $type: 'expression', $text: 'test' } as any, children: [{ $type: '_comprehension_clauses', $text: 'test' } as any] as any });
     expect(node.$type).toBe('set_comprehension');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.setComprehension({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any, children: [{ $type: 'for_in_clause', $text: 'test' } as any] as any });
+    const node = ir.setComprehension({ body: { $type: 'expression', $text: 'test' } as any, children: [{ $type: '_comprehension_clauses', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('generator_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.generator({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any, children: [{ $type: 'for_in_clause', $text: 'test' } as any] as any });
+    const node = ir.generator({ body: { $type: 'expression', $text: 'test' } as any, children: [{ $type: '_comprehension_clauses', $text: 'test' } as any] as any });
     expect(node.$type).toBe('generator_expression');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.generator({ body: { $type: 'expression', $text: 'test' } as any, forInClause: { $type: 'for_in_clause', $text: 'test' } as any, children: [{ $type: 'for_in_clause', $text: 'test' } as any] as any });
+    const node = ir.generator({ body: { $type: 'expression', $text: 'test' } as any, children: [{ $type: '_comprehension_clauses', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
