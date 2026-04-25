@@ -1519,12 +1519,12 @@ describe('field_pattern', () => {
 
 describe('mut_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.mutPattern({ mutableSpecifier: { $type: 'mutable_specifier', $text: 'test' } as any, pattern: { $type: '_pattern', $text: 'test' } as any });
+    const node = ir.mutPattern({ mutableSpecifier: { $type: 'mutable_specifier', $text: 'test' } as any, children: [{ $type: '_pattern', $text: 'test' } as any] as any });
     expect(node.$type).toBe('mut_pattern');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.mutPattern({ mutableSpecifier: { $type: 'mutable_specifier', $text: 'test' } as any, pattern: { $type: '_pattern', $text: 'test' } as any });
+    const node = ir.mutPattern({ mutableSpecifier: { $type: 'mutable_specifier', $text: 'test' } as any, children: [{ $type: '_pattern', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

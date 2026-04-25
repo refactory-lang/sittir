@@ -735,7 +735,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'mut_pattern': [
     { name: 'mutableSpecifier', required: true, multiple: false },
-    { name: 'pattern', required: true, multiple: false },
   ],
   'negative_literal': [
     { name: 'value', required: true, multiple: false },

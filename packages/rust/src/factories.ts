@@ -3683,15 +3683,19 @@ export function fieldPatternUFormNamed(config: Omit<ConfigOf<T.FieldPatternUForm
 export function mutPattern(config: ConfigOf<T.MutPattern>) {
   const fields = {
     mutable_specifier: "mut" as const,
-    pattern: config.pattern,
   };
+  const children = config.children ?? [];
   return {
     $type: 'mut_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
+    $children: children,
     get mutableSpecifier() { return fields.mutable_specifier; },
-    pattern(value?: T.Pattern) { return _fs(config, mutPattern, 'pattern', value, config?.pattern); },
+    child(value?: T.Pattern) {
+      if (value === undefined) return children[0];
+      return mutPattern({ ...config, children: [value] });
+    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

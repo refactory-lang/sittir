@@ -1706,7 +1706,7 @@ export function mutPatternFrom(input: T.MutPattern.Loose): ReturnType<typeof F.m
   if (isNodeData(input)) return input;
   return F.mutPattern({
     mutableSpecifier: _resolveOneLeaf<T.MutableSpecifier>(input.mutableSpecifier, "mutable_specifier"),
-    pattern: _resolveOne<T.Pattern>(input.pattern, _K16, _K17),
+    children: _resolveOne(input.children, _K16, _K17),
   });
 }
 

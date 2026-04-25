@@ -9556,7 +9556,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -11228,18 +11228,19 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
               "mutable_specifier"
             ]
           }
-        },
+        }
+      ],
+      "children": [
         {
           "name": "pattern",
           "propertyName": "pattern",
-          "paramName": "pattern",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -11250,17 +11251,9 @@
               "name": "_pattern",
               "unresolved": true
             }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_pattern"
-            ]
-          }
+          ]
         }
-      ],
-      "children": []
+      ]
     },
     {
       "kind": "mutable_specifier",

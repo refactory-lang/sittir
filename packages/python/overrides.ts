@@ -96,12 +96,10 @@ export default grammar(enrich(base), wire({
     transforms: {
         // as_pattern: 1 field(s)
         as_pattern: {
-            0: field('expression'), // expression | case_pattern | identifier [struct=0]
         },
 
         // await: 1 field(s)
         await: {
-            1: field('primary_expression'), // primary_expression [struct=0]
         },
 
         // chevron: 1 field(s)
@@ -164,7 +162,6 @@ export default grammar(enrich(base), wire({
         // generic_type: 2 field(s)
         generic_type: {
             0: field('identifier'), // identifier [struct=0]
-            1: field('type_parameter'), // type_parameter [struct=1]
         },
 
         // if_clause: 1 field(s)

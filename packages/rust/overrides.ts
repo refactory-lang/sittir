@@ -214,13 +214,6 @@ const config: WireConfig<RustGrammar> = {
         },
 
 
-        // lifetime: pos 1 ($.identifier) is enrich-redundant but
-        // dropping it causes a from() divergence — "named children
-        // 1 vs 0". Keep explicit until the divergence is understood.
-        lifetime: {
-            1: field('identifier'),
-        },
-
         // macro_invocation: 1 field(s)
         macro_invocation: {
             2: field('token_tree'), // token_tree [struct=0]
@@ -231,21 +224,6 @@ const config: WireConfig<RustGrammar> = {
         // right terminator (trailing `;` vs `{...}` body).
         mod_item: [],
 
-        // mut_pattern: 2 field(s)
-        //
-        // pos 0 (`$.mutable_specifier`) LOOKS enrich-redundant (bare
-        // top-level seq member, appears once) but dropping the
-        // explicit field here causes 3 RT failures — "kind not found
-        // at rendered offset 26" on closure / reference-pattern / or-
-        // pattern corpus. Likely because enrich's `source: 'enriched'`
-        // FIELD wraps something that downstream RT / render treats
-        // differently than a `source: 'override'` FIELD at this kind.
-        // Keep the explicit override until the inferred-vs-override
-        // divergence is understood.
-        mut_pattern: {
-            0: field('mutable_specifier'), // explicit — see above
-            1: field('pattern'), // _pattern (underscore-prefixed, enrich skips)
-        },
 
         // negative_literal: 2 field(s)
         negative_literal: {

@@ -572,10 +572,6 @@
     "try_block": [
       "block"
     ],
-    "mut_pattern": [
-      "mutable_specifier",
-      "pattern"
-    ],
     "reference_pattern": [
       "mutable_specifier",
       "pattern"

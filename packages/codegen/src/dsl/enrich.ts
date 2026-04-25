@@ -179,12 +179,54 @@ function detectCase(referenceRule: unknown): 'upper' | 'lower' {
 }
 
 function makeField(referenceRule: unknown, name: string, content: unknown): Rule {
+    // Propagate `fieldName` onto inner symbol `_ref` metadata, mirroring
+    // the runtime `field()` helper in evaluate.ts. Without this, an
+    // enrich-promoted FIELD wraps the same SYMBOL as an override-promoted
+    // FIELD but the inner symbol's `_ref.fieldName` stays unset — and
+    // downstream passes (link's symbol-reference graph, factory emit,
+    // from-validator's named-children comparison) treat the two
+    // structurally-identical FIELDs differently. Same propagation rules:
+    // skip when fieldName already set, stop at inner field/alias
+    // boundaries.
+    propagateFieldName(content, name)
     return {
         type: detectCase(referenceRule) === 'upper' ? 'FIELD' : 'field',
         name,
         content,
         source: 'enriched',
     } as unknown as Rule
+}
+
+/** @internal — walk symbol refs inside `content` and stamp `fieldName`
+ *  on each ref whose fieldName is unset. Mirrors evaluate.ts's
+ *  `walkRefs` traversal: descends through seq/choice/optional/repeat/
+ *  repeat1/prec wrappers; stops at nested field/alias boundaries
+ *  (those own their own field name). No-op when `_ref` is absent
+ *  (e.g. enrich running before evaluate has annotated refs). */
+function propagateFieldName(rule: unknown, fieldName: string): void {
+    if (!rule || typeof rule !== 'object') return
+    const r = rule as { type?: string; _ref?: { fieldName?: string }; content?: unknown; members?: unknown[] }
+    if (r._ref && r._ref.fieldName === undefined) {
+        r._ref.fieldName = fieldName
+    }
+    const t = r.type
+    if (t === 'seq' || t === 'SEQ' || t === 'choice' || t === 'CHOICE') {
+        if (Array.isArray(r.members)) for (const m of r.members) propagateFieldName(m, fieldName)
+        return
+    }
+    if (
+        t === 'optional' || t === 'OPTIONAL'
+        || t === 'repeat' || t === 'REPEAT'
+        || t === 'repeat1' || t === 'REPEAT1'
+        || t === 'prec' || t === 'PREC'
+        || t === 'prec_left' || t === 'PREC_LEFT'
+        || t === 'prec_right' || t === 'PREC_RIGHT'
+        || t === 'prec_dynamic' || t === 'PREC_DYNAMIC'
+    ) {
+        if (r.content !== undefined) propagateFieldName(r.content, fieldName)
+        return
+    }
+    // field / alias / token / symbol / string / pattern / blank — stop.
 }
 
 function makeSymbol(referenceRule: unknown, name: string): Rule {
@@ -283,8 +325,21 @@ function reportSkip(pass: string, ruleName: string, reason: string): void {
 // ---------------------------------------------------------------------------
 
 function applyKindToName(ruleName: string, rule: Rule, supertypeNames: ReadonlySet<string>): Rule {
-    if (!isSeqType(rule.type)) return rule
-    const members = (rule as unknown as { members: Rule[] }).members
+    // Peel prec wrappers so rules like rust `lifetime: prec(1, seq('\'',
+    // $.identifier))` are reachable. Without this, pass 1's
+    // isSeqType-only entry guard skips every prec-wrapped seq and the
+    // grammar.json tree-sitter generates from .sittir/grammar.js shows
+    // `fields: {}` even though sittir's own evaluate (which strips prec
+    // before running enrich) sees the FIELD. Mirrors pass 3's
+    // prec-peel — the prec wrapper rides back on top after rebuild.
+    const precStack: Rule[] = []
+    let cursor: Rule = rule
+    while (isPrecWrapper(cursor as { type: string })) {
+        precStack.push(cursor)
+        cursor = (cursor as unknown as { content: Rule }).content
+    }
+    if (!isSeqType(cursor.type)) return rule
+    const members = (cursor as unknown as { members: Rule[] }).members
     const kindCounts = new Map<string, number>()
     for (const m of members) {
         if (isSymbolType(m.type) && typeof (m as { name?: unknown }).name === 'string') {
@@ -292,7 +347,7 @@ function applyKindToName(ruleName: string, rule: Rule, supertypeNames: ReadonlyS
             kindCounts.set(n, (kindCounts.get(n) ?? 0) + 1)
         }
     }
-    const existing = collectFieldNamesRuntime(rule)
+    const existing = collectFieldNamesRuntime(cursor)
     let changed = false
     const newMembers = members.map((m) => {
         if (!isSymbolType(m.type) || typeof (m as { name?: unknown }).name !== 'string') return m
@@ -313,10 +368,14 @@ function applyKindToName(ruleName: string, rule: Rule, supertypeNames: ReadonlyS
         }
         existing.add(fieldName)
         changed = true
-        return makeField(rule, fieldName, m)
+        return makeField(cursor, fieldName, m)
     })
     if (!changed) return rule
-    return { ...rule, members: newMembers } as Rule
+    let result: Rule = { ...cursor, members: newMembers } as Rule
+    for (let i = precStack.length - 1; i >= 0; i--) {
+        result = { ...precStack[i]!, content: result } as Rule
+    }
+    return result
 }
 
 // Bare leading-keyword pass intentionally removed — wrapping bare

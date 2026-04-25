@@ -112,7 +112,7 @@ export type RustGrammar = {
   readonly "mod_item": {"type":"mod_item","named":true,"fields":{"name":{"multiple":false,"required":true,"types":[{"type":"identifier","named":true}]},"visibility_modifier":{"multiple":false,"required":false,"types":[{"type":"visibility_modifier","named":true}]}},"children":{"multiple":false,"required":true,"types":[{"type":"mod_item_external","named":true},{"type":"mod_item_inline","named":true}]}};
   readonly "mod_item_external": {"type":"mod_item_external","named":true,"fields":{}};
   readonly "mod_item_inline": {"type":"mod_item_inline","named":true,"fields":{"body":{"multiple":false,"required":true,"types":[{"type":"declaration_list","named":true}]}}};
-  readonly "mut_pattern": {"type":"mut_pattern","named":true,"fields":{"mutable_specifier":{"multiple":false,"required":true,"types":[{"type":"mutable_specifier","named":true}]},"pattern":{"multiple":false,"required":true,"types":[{"type":"_pattern","named":true}]}}};
+  readonly "mut_pattern": {"type":"mut_pattern","named":true,"fields":{"mutable_specifier":{"multiple":false,"required":true,"types":[{"type":"mutable_specifier","named":true}]}},"children":{"multiple":false,"required":true,"types":[{"type":"_pattern","named":true}]}};
   readonly "negative_literal": {"type":"negative_literal","named":true,"fields":{"value":{"multiple":false,"required":true,"types":[{"type":"float_literal","named":true},{"type":"integer_literal","named":true}]}}};
   readonly "never_type": {"type":"never_type","named":true,"fields":{}};
   readonly "or_pattern": {"type":"or_pattern","named":true,"fields":{},"children":{"multiple":false,"required":true,"types":[{"type":"or_pattern_binary","named":true},{"type":"or_pattern_prefix","named":true}]}};

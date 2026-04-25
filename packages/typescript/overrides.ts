@@ -283,7 +283,6 @@ export default grammar(enrich(base), wire({
 
         // as_expression: 2 field(s)
         as_expression: {
-            0: field('expression'), // expression [struct=0]
             2: field('type_annotation'), // type [struct=1]
         },
 
@@ -322,7 +321,6 @@ export default grammar(enrich(base), wire({
 
         // flow_maybe_type: 1 field(s)
         flow_maybe_type: {
-            1: field('primary_type'), // primary_type [struct=0]
         },
 
         // import_alias: 3 field(s)
@@ -360,7 +358,6 @@ export default grammar(enrich(base), wire({
 
         // instantiation_expression: 1 field(s)
         instantiation_expression: {
-            0: field('expression'), // expression [struct=0]
         },
 
         // interface_declaration: 1 field(s)
@@ -400,7 +397,6 @@ export default grammar(enrich(base), wire({
 
         // non_null_expression: 1 field(s)
         non_null_expression: {
-            0: field('expression'), // expression [struct=0]
         },
 
         // object_type: handled by refine() in rules: — see below.
@@ -418,7 +414,6 @@ export default grammar(enrich(base), wire({
 
         // satisfies_expression: 2 field(s)
         satisfies_expression: {
-            0: field('expression'), // expression [struct=0]
             2: field('type_annotation'), // type [struct=1]
         },
 

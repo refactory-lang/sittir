@@ -1355,8 +1355,7 @@ export function wrapMutPattern(data: _NodeData, tree: TreeHandle): WrappedNode<M
   return {
     ...data,
     get mutableSpecifier() { return drillIn(data.$fields?.['mutable_specifier'], tree); },
-    get pattern() { return drillIn(data.$fields?.['pattern'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<MutPattern>;
 }
 

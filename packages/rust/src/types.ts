@@ -1897,8 +1897,8 @@ export interface MutPattern {
   readonly $type: 'mut_pattern';
   readonly $fields: {
     readonly mutable_specifier: MutableSpecifier;
-    readonly pattern: Pattern;
   };
+  readonly $children: readonly [Pattern];
 }
 
 export interface RangePatternUFormLeftWithRight {
