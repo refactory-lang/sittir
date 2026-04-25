@@ -56,7 +56,7 @@ interface SerializedSlot {
 
 interface SerializedField extends SerializedSlot {
     paramName: string
-    source: 'grammar' | 'override' | 'inlined' | 'inferred'
+    source: 'grammar' | 'override' | 'inlined' | 'enriched' | 'inferred'
     projection: { typeName: string; kinds: string[] }
     aliasSources?: Record<string, string>
 }

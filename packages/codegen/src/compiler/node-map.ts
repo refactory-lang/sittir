@@ -1372,7 +1372,7 @@ export interface AssembledField extends AssembledChild {
      * common case). See ADR-0006.
      */
     readonly aliasSources?: Readonly<Record<string, string>>
-    readonly source: 'grammar' | 'override' | 'inlined' | 'inferred'
+    readonly source: 'grammar' | 'override' | 'inlined' | 'enriched' | 'inferred'
     readonly projection: KindProjection
 }
 

@@ -13,7 +13,7 @@
  *
  *   1. Unambiguous kind-to-name field wrapping — bare `$.kind` symbol
  *      at a top-level seq position appearing exactly once → wrap as
- *      `field('kind', $.kind)` with `source: 'inferred'`.
+ *      `field('kind', $.kind)` with `source: 'enriched'`.
  *
  *   2. Bare leading-keyword field promotion — first seq member is an
  *      identifier-shaped string literal (`'break'`, `'async'`) →
@@ -28,7 +28,7 @@
  * All passes collision-aware: skip (stderr notification) when the
  * promotion would shadow an existing field name. Strictly local — no
  * cross-rule analysis, no thresholds. All enrich-added FIELDs carry
- * `source: 'inferred'` so downstream passes distinguish them from
+ * `source: 'enriched'` so downstream passes distinguish them from
  * user-authored overrides.
  *
  * Why inject `_kw_<name>` into `base.grammar.rules` instead of using
@@ -118,7 +118,7 @@ function makeField(referenceRule: unknown, name: string, content: unknown): Rule
         type: detectCase(referenceRule) === 'upper' ? 'FIELD' : 'field',
         name,
         content,
-        source: 'inferred',
+        source: 'enriched',
     } as unknown as Rule
 }
 

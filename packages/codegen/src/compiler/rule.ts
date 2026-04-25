@@ -97,7 +97,7 @@ export interface FieldRule {
     readonly type: 'field'
     readonly name: string
     readonly content: Rule
-    readonly source?: 'grammar' | 'override' | 'inlined' | 'inferred'
+    readonly source?: 'grammar' | 'override' | 'inlined' | 'enriched' | 'inferred'
     readonly nameFrom?: 'grammar' | 'kind' | 'override' | 'usage'
     /**
      * True if the field's value is rendered as an indented block — its

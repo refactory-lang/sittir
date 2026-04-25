@@ -386,7 +386,7 @@ const config: WireConfig<RustGrammar> = {
         // top-level seq member, appears once) but dropping the
         // explicit field here causes 3 RT failures — "kind not found
         // at rendered offset 26" on closure / reference-pattern / or-
-        // pattern corpus. Likely because enrich's `source: 'inferred'`
+        // pattern corpus. Likely because enrich's `source: 'enriched'`
         // FIELD wraps something that downstream RT / render treats
         // differently than a `source: 'override'` FIELD at this kind.
         // Keep the explicit override until the inferred-vs-override

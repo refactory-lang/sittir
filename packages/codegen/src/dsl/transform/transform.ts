@@ -603,7 +603,7 @@ function resolvePatch(
  * tree-sitter uppercase `'FIELD'`).
  *
  * An enrich-inferred field on the original member is unwrapped to avoid
- * nested `field('override', field('inferred', inner))`.
+ * nested `field('override', field('enriched', inner))`.
  *
  * Bare STRING content is handled specially: tree-sitter strips FIELD
  * wrappers around anonymous string literals during grammar normalization
@@ -629,7 +629,7 @@ function resolveFieldPlaceholder(
     precStack?: readonly RuntimeRule[],
 ): RuntimeRule {
     let content: unknown = originalMember
-    if (isFieldLike(content) && content.source === 'inferred') {
+    if (isFieldLike(content) && content.source === 'enriched') {
         content = content.content
     }
     const maybeSymbolized = maybeKeywordSymbol(

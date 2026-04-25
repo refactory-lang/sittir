@@ -351,7 +351,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -374,7 +374,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -567,7 +567,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -3130,7 +3130,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -3642,7 +3642,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4157,7 +4157,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4349,7 +4349,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4429,7 +4429,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4590,7 +4590,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4803,7 +4803,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5717,7 +5717,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6437,7 +6437,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6844,7 +6844,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8333,7 +8333,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8356,7 +8356,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [

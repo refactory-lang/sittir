@@ -78,13 +78,13 @@ describe('enrich()', () => {
                 type: 'field',
                 name: 'function',
                 content: { type: 'symbol', name: 'function' },
-                source: 'inferred',
+                source: 'enriched',
             })
             expect(rule.members[2]).toMatchObject({
                 type: 'field',
                 name: 'arguments',
                 content: { type: 'symbol', name: 'arguments' },
-                source: 'inferred',
+                source: 'enriched',
             })
             // String delimiters untouched
             expect(rule.members[1]).toMatchObject({ type: 'string', value: '(' })
@@ -171,7 +171,7 @@ describe('enrich()', () => {
             expect(rule.members[2]).toMatchObject({
                 type: 'field',
                 name: 'rhs',
-                source: 'inferred',
+                source: 'enriched',
             })
         })
     })
@@ -200,7 +200,7 @@ describe('enrich()', () => {
                     type: 'field',
                     name: 'async',
                     content: { type: 'symbol', name: '_kw_async' },
-                    source: 'inferred',
+                    source: 'enriched',
                 },
             })
             // 'def' is NOT promoted — bare leading literal, only the
