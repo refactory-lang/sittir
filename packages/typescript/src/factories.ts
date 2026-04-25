@@ -113,7 +113,7 @@ export function exportStatementUFormDefault(config: Omit<ConfigOf<T.ExportStatem
   };
 }
 export function exportStatementUFormTypeExport(config?: Omit<ConfigOf<T.ExportStatementUFormTypeExport>, '$variant'>) {
-  const inner = exportStatementTypeExport(config);
+  const inner = exportStatementTypeExport(config as Parameters<typeof exportStatementTypeExport>[0]);
   const children = [inner] as const;
   return {
     $type: 'export_statement' as const,

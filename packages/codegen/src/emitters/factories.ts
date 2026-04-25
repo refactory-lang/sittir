@@ -1453,7 +1453,15 @@ function emitHoistedPolymorphFormFactory(
             lines.push(`  const inner = ${hoist.innerFactoryName}(config?.children?.[0]!);`)
         }
     } else if (hoist.innerFactoryName !== undefined) {
-        lines.push(`  const inner = ${hoist.innerFactoryName}(config);`)
+        // When the outer config is optional (no required fields anywhere
+        // in the hoisted surface), TS sees `config` as `Config | undefined`
+        // and the inner factory's required-Config parameter rejects it.
+        // Pass through with the boundary cast — the inner factory's own
+        // optional-field handling treats undefined fields as missing.
+        const innerArg = opt === '?'
+            ? `config as Parameters<typeof ${hoist.innerFactoryName}>[0]`
+            : `config`
+        lines.push(`  const inner = ${hoist.innerFactoryName}(${innerArg});`)
     } else {
         const innerKind = hoist.innerKind
         lines.push('  const inner = {')
