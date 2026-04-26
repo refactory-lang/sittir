@@ -469,10 +469,10 @@ pub struct PublicFieldDefinitionAbstractFirstTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#abstract: String,
-    pub r#abstract_list: Vec<String>,
-    pub readonly: String,
-    pub readonly_list: Vec<String>,
+    pub abstract_marker: String,
+    pub abstract_marker_list: Vec<String>,
+    pub readonly_marker: String,
+    pub readonly_marker_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -484,8 +484,8 @@ pub struct PublicFieldDefinitionAccessFirstTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub declare: String,
-    pub declare_list: Vec<String>,
+    pub declare_marker: String,
+    pub declare_marker_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -497,8 +497,8 @@ pub struct PublicFieldDefinitionAccessorOptTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub accessor: String,
-    pub accessor_list: Vec<String>,
+    pub accessor_marker: String,
+    pub accessor_marker_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -521,10 +521,10 @@ pub struct PublicFieldDefinitionReadonlyFirstTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub r#abstract: String,
-    pub r#abstract_list: Vec<String>,
-    pub readonly: String,
-    pub readonly_list: Vec<String>,
+    pub abstract_marker: String,
+    pub abstract_marker_list: Vec<String>,
+    pub readonly_marker: String,
+    pub readonly_marker_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -536,10 +536,10 @@ pub struct PublicFieldDefinitionStaticModsTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub readonly: String,
-    pub readonly_list: Vec<String>,
-    pub r#static: String,
-    pub r#static_list: Vec<String>,
+    pub readonly_marker: String,
+    pub readonly_marker_list: Vec<String>,
+    pub static_marker: String,
+    pub static_marker_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1433,8 +1433,8 @@ pub struct FieldDefinitionTemplate {
     pub decorator_list: Vec<String>,
     pub property: String,
     pub property_list: Vec<String>,
-    pub r#static: String,
-    pub r#static_list: Vec<String>,
+    pub static_marker: String,
+    pub static_marker_list: Vec<String>,
     pub value: String,
     pub value_list: Vec<String>,
 }
@@ -2100,8 +2100,8 @@ pub struct MethodDefinitionTemplate {
     pub readonly_marker_list: Vec<String>,
     pub return_type: String,
     pub return_type_list: Vec<String>,
-    pub r#static: String,
-    pub r#static_list: Vec<String>,
+    pub static_marker: String,
+    pub static_marker_list: Vec<String>,
     pub type_parameters: String,
     pub type_parameters_list: Vec<String>,
 }
@@ -2133,8 +2133,8 @@ pub struct MethodSignatureTemplate {
     pub readonly_marker_list: Vec<String>,
     pub return_type: String,
     pub return_type_list: Vec<String>,
-    pub r#static: String,
-    pub r#static_list: Vec<String>,
+    pub static_marker: String,
+    pub static_marker_list: Vec<String>,
     pub type_parameters: String,
     pub type_parameters_list: Vec<String>,
 }
@@ -2466,8 +2466,8 @@ pub struct PropertySignatureTemplate {
     pub override_modifier_list: Vec<String>,
     pub readonly_marker: String,
     pub readonly_marker_list: Vec<String>,
-    pub r#static: String,
-    pub r#static_list: Vec<String>,
+    pub static_marker: String,
+    pub static_marker_list: Vec<String>,
     pub r#type: String,
     pub r#type_list: Vec<String>,
 }
@@ -3531,10 +3531,10 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#abstract: ctx.fields.get("abstract").cloned().unwrap_or_default(),
-                r#abstract_list: ctx.fields_list.get("abstract").cloned().unwrap_or_default(),
-                readonly: ctx.fields.get("readonly").cloned().unwrap_or_default(),
-                readonly_list: ctx.fields_list.get("readonly").cloned().unwrap_or_default(),
+                abstract_marker: ctx.fields.get("abstract_marker").cloned().unwrap_or_default(),
+                abstract_marker_list: ctx.fields_list.get("abstract_marker").cloned().unwrap_or_default(),
+                readonly_marker: ctx.fields.get("readonly_marker").cloned().unwrap_or_default(),
+                readonly_marker_list: ctx.fields_list.get("readonly_marker").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3546,8 +3546,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                declare: ctx.fields.get("declare").cloned().unwrap_or_default(),
-                declare_list: ctx.fields_list.get("declare").cloned().unwrap_or_default(),
+                declare_marker: ctx.fields.get("declare_marker").cloned().unwrap_or_default(),
+                declare_marker_list: ctx.fields_list.get("declare_marker").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3559,8 +3559,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                accessor: ctx.fields.get("accessor").cloned().unwrap_or_default(),
-                accessor_list: ctx.fields_list.get("accessor").cloned().unwrap_or_default(),
+                accessor_marker: ctx.fields.get("accessor_marker").cloned().unwrap_or_default(),
+                accessor_marker_list: ctx.fields_list.get("accessor_marker").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3583,10 +3583,10 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                r#abstract: ctx.fields.get("abstract").cloned().unwrap_or_default(),
-                r#abstract_list: ctx.fields_list.get("abstract").cloned().unwrap_or_default(),
-                readonly: ctx.fields.get("readonly").cloned().unwrap_or_default(),
-                readonly_list: ctx.fields_list.get("readonly").cloned().unwrap_or_default(),
+                abstract_marker: ctx.fields.get("abstract_marker").cloned().unwrap_or_default(),
+                abstract_marker_list: ctx.fields_list.get("abstract_marker").cloned().unwrap_or_default(),
+                readonly_marker: ctx.fields.get("readonly_marker").cloned().unwrap_or_default(),
+                readonly_marker_list: ctx.fields_list.get("readonly_marker").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3598,10 +3598,10 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                readonly: ctx.fields.get("readonly").cloned().unwrap_or_default(),
-                readonly_list: ctx.fields_list.get("readonly").cloned().unwrap_or_default(),
-                r#static: ctx.fields.get("static").cloned().unwrap_or_default(),
-                r#static_list: ctx.fields_list.get("static").cloned().unwrap_or_default(),
+                readonly_marker: ctx.fields.get("readonly_marker").cloned().unwrap_or_default(),
+                readonly_marker_list: ctx.fields_list.get("readonly_marker").cloned().unwrap_or_default(),
+                static_marker: ctx.fields.get("static_marker").cloned().unwrap_or_default(),
+                static_marker_list: ctx.fields_list.get("static_marker").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -4495,8 +4495,8 @@ pub fn render_dispatch(
                 decorator_list: ctx.fields_list.get("decorator").cloned().unwrap_or_default(),
                 property: ctx.fields.get("property").cloned().unwrap_or_default(),
                 property_list: ctx.fields_list.get("property").cloned().unwrap_or_default(),
-                r#static: ctx.fields.get("static").cloned().unwrap_or_default(),
-                r#static_list: ctx.fields_list.get("static").cloned().unwrap_or_default(),
+                static_marker: ctx.fields.get("static_marker").cloned().unwrap_or_default(),
+                static_marker_list: ctx.fields_list.get("static_marker").cloned().unwrap_or_default(),
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
                 value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
             };
@@ -5162,8 +5162,8 @@ pub fn render_dispatch(
                 readonly_marker_list: ctx.fields_list.get("readonly_marker").cloned().unwrap_or_default(),
                 return_type: ctx.fields.get("return_type").cloned().unwrap_or_default(),
                 return_type_list: ctx.fields_list.get("return_type").cloned().unwrap_or_default(),
-                r#static: ctx.fields.get("static").cloned().unwrap_or_default(),
-                r#static_list: ctx.fields_list.get("static").cloned().unwrap_or_default(),
+                static_marker: ctx.fields.get("static_marker").cloned().unwrap_or_default(),
+                static_marker_list: ctx.fields_list.get("static_marker").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
                 type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
             };
@@ -5195,8 +5195,8 @@ pub fn render_dispatch(
                 readonly_marker_list: ctx.fields_list.get("readonly_marker").cloned().unwrap_or_default(),
                 return_type: ctx.fields.get("return_type").cloned().unwrap_or_default(),
                 return_type_list: ctx.fields_list.get("return_type").cloned().unwrap_or_default(),
-                r#static: ctx.fields.get("static").cloned().unwrap_or_default(),
-                r#static_list: ctx.fields_list.get("static").cloned().unwrap_or_default(),
+                static_marker: ctx.fields.get("static_marker").cloned().unwrap_or_default(),
+                static_marker_list: ctx.fields_list.get("static_marker").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
                 type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
             };
@@ -5528,8 +5528,8 @@ pub fn render_dispatch(
                 override_modifier_list: ctx.fields_list.get("override_modifier").cloned().unwrap_or_default(),
                 readonly_marker: ctx.fields.get("readonly_marker").cloned().unwrap_or_default(),
                 readonly_marker_list: ctx.fields_list.get("readonly_marker").cloned().unwrap_or_default(),
-                r#static: ctx.fields.get("static").cloned().unwrap_or_default(),
-                r#static_list: ctx.fields_list.get("static").cloned().unwrap_or_default(),
+                static_marker: ctx.fields.get("static_marker").cloned().unwrap_or_default(),
+                static_marker_list: ctx.fields_list.get("static_marker").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
             };

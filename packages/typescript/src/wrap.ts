@@ -964,7 +964,7 @@ export function wrapFieldDefinition(data: _NodeData, tree: TreeHandle): WrappedN
   return {
     ...data,
     get decorator() { return drillInAll(data.$fields?.['decorator'], tree); },
-    get static() { return drillIn(data.$fields?.['static'], tree); },
+    get staticMarker() { return drillIn(data.$fields?.['static_marker'], tree); },
     get property() { return drillIn(data.$fields?.['property'], tree); },
     get value() { return drillIn(data.$fields?.['value'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
@@ -1799,7 +1799,7 @@ export function wrapPublicFieldDefinitionDeclareFirst(data: _NodeData, tree: Tre
 export function wrapPublicFieldDefinitionAccessorOpt(data: _NodeData, tree: TreeHandle): WrappedNode<PublicFieldDefinitionAccessorOpt> {
   return {
     ...data,
-    get accessor() { return drillIn(data.$fields?.['accessor'], tree); },
+    get accessorMarker() { return drillIn(data.$fields?.['accessor_marker'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<PublicFieldDefinitionAccessorOpt>;
 }
@@ -2036,12 +2036,11 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'intersection_type': (d, t) => wrapIntersectionType(d, t),
   'function_type': (d, t) => wrapFunctionType(d, t),
   '_type_identifier': (d, t) => wrapTypeIdentifier(d, t),
-  '_kw_async': (d) => d,
-  '_kw_static': (d) => d,
-  '_kw_readonly': (d) => d,
-  '_kw_abstract': (d) => d,
-  '_kw_const': (d) => d,
   '_kw_async_marker': (d) => d,
+  '_kw_static_marker': (d) => d,
+  '_kw_readonly_marker': (d) => d,
+  '_kw_abstract_marker': (d) => d,
+  '_kw_const_marker': (d) => d,
   '_export_statement_default_from_arm': (d, t) => wrapExportStatementDefaultFromArm(d, t),
   '_arrow_function_parameter': (d, t) => wrapArrowFunctionParameter(d, t),
   '_arrow_function__call_signature': (d, t) => wrapArrowFunctionUCallSignature(d, t),

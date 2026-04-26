@@ -194,12 +194,11 @@ export const LEAF_KINDS = [
   '__error_recovery',
   '_automatic_semicolon',
   '_function_signature_automatic_semicolon',
-  '_kw_abstract',
-  '_kw_async',
+  '_kw_abstract_marker',
   '_kw_async_marker',
-  '_kw_const',
-  '_kw_readonly',
-  '_kw_static',
+  '_kw_const_marker',
+  '_kw_readonly_marker',
+  '_kw_static_marker',
   '_reserved_identifier',
   '_string_fragment',
   '_ternary_qmark',
@@ -286,13 +285,12 @@ export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 
 /** Language keywords (alphabetic anonymous tokens). */
 export const KEYWORDS = [
-  '_kw_abstract',
-  '_kw_async',
+  '_kw_abstract_marker',
   '_kw_async_marker',
-  '_kw_const',
+  '_kw_const_marker',
   '_kw_optional_marker',
-  '_kw_readonly',
-  '_kw_static',
+  '_kw_readonly_marker',
+  '_kw_static_marker',
   'abstract',
   'accessor',
   'as',
@@ -473,7 +471,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_parenthesized_expression_sequence': [
   ],
   '_public_field_definition_accessor_opt': [
-    { name: 'accessor', required: true, multiple: false },
+    { name: 'accessorMarker', required: true, multiple: false },
   ],
   '_public_field_definition_declare_first': [
   ],
@@ -675,7 +673,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'field_definition': [
     { name: 'decorator', required: true, multiple: true },
-    { name: 'static', required: false, multiple: false },
+    { name: 'staticMarker', required: false, multiple: false },
     { name: 'property', required: true, multiple: false },
     { name: 'value', required: false, multiple: false },
   ],

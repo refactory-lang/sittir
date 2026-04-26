@@ -227,16 +227,17 @@ describe('enrich()', () => {
             })
             const out = runEnrich(input)
             const rule = out.grammar.rules.function_definition as { type: 'seq', members: Rule[] }
-            // optional(field(kw, SYMBOL(_kw_async))) — the FIELD's
-            // content is a synthesized SYMBOL reference so tree-sitter's
-            // normalizer preserves it. Tagged 'override' now that the
-            // parser carries the field natively.
+            // optional(field('<kw>_marker', SYMBOL(_kw_<kw>_marker))) —
+            // the FIELD's content is a synthesized SYMBOL reference so
+            // tree-sitter's normalizer preserves it. The `_marker` suffix
+            // is the canonical semantic name (avoids JS-reserved-keyword
+            // collisions like `async` / `static` / `const`).
             expect(rule.members[0]).toMatchObject({
                 type: 'optional',
                 content: {
                     type: 'field',
-                    name: 'async',
-                    content: { type: 'symbol', name: '_kw_async' },
+                    name: 'async_marker',
+                    content: { type: 'symbol', name: '_kw_async_marker' },
                     source: 'enriched',
                 },
             })
@@ -272,7 +273,7 @@ describe('enrich()', () => {
                     members: [
                         {
                             type: 'field',
-                            name: 'async',
+                            name: 'async_marker',
                             content: { type: 'string', value: 'async' },
                         },
                         { type: 'optional', content: { type: 'string', value: 'async' } },
@@ -281,7 +282,8 @@ describe('enrich()', () => {
             })
             const out = runEnrich(input)
             const rule = out.grammar.rules.decorated_fn as { type: 'seq', members: Rule[] }
-            // Second member stays unpromoted — collision
+            // Second member stays unpromoted — `async_marker` collides
+            // with the existing FIELD on member 0.
             expect(rule.members[1]).toMatchObject({
                 type: 'optional',
                 content: { type: 'string', value: 'async' },
@@ -315,15 +317,16 @@ describe('enrich()', () => {
             const out = runEnrich(input)
             const rule = out.grammar.rules.stmt as { type: 'choice', members: Array<{ type: 'seq', members: Rule[] }> }
             // Both choice branches get the optional-keyword promotion
+            // (named `<token>_marker`).
             const branch0 = rule.members[0]!
             const branch1 = rule.members[1]!
             expect(branch0.members[0]).toMatchObject({
                 type: 'optional',
-                content: { type: 'field', name: 'let' },
+                content: { type: 'field', name: 'let_marker' },
             })
             expect(branch1.members[0]).toMatchObject({
                 type: 'optional',
-                content: { type: 'field', name: 'const' },
+                content: { type: 'field', name: 'const_marker' },
             })
         })
 
@@ -344,7 +347,7 @@ describe('enrich()', () => {
             const rule = out.grammar.rules.block as { type: 'repeat', content: { type: 'seq', members: Rule[] } }
             expect(rule.content.members[0]).toMatchObject({
                 type: 'optional',
-                content: { type: 'field', name: 'pub' },
+                content: { type: 'field', name: 'pub_marker' },
             })
         })
     })

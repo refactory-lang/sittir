@@ -118,7 +118,12 @@ const config: WireConfig<RustGrammar> = {
         // async_block: seq('async', optional('move'), $.block).
         // Field-promotion wave 1 (016 task #23): label the standalone
         // optional `move` punct as `move_marker` so render preserves it
-        // (`async move { ... }` vs `async { ... }`).
+        // (`async move { ... }` vs `async { ... }`). Naming follows the
+        // `<token>_marker` convention enrich uses for auto-promotion
+        // (016 task #30); kept hand-promoted because the hand-emitted
+        // template renders without the spacing that auto-promotion
+        // introduces (the `async move {}` parity fixture round-trips
+        // only with this entry).
         async_block: {
             '1/0': field('move_marker'),
         },
@@ -146,13 +151,13 @@ const config: WireConfig<RustGrammar> = {
         // ))
         // Field-promotion wave 1 (016 task #23) + wave-1 follow-up (task
         // #27): label each standalone optional marker so render preserves
-        // them (`static async move |x| ...` vs `|x| ...`). prec is
-        // transparent to path addressing. The `async_marker` promotion
-        // requires `_kw_async_marker` to appear in the top-level
-        // `inline:` array (see above) — without that, the synthesized
-        // hidden symbol's runtime precedence diverges from
-        // async_block's bare `'async'` token and `let a = async move
-        // || async move {}` regresses to ERROR.
+        // them (`static async move |x| ...` vs `|x| ...`). Naming follows
+        // the `<token>_marker` convention enrich now uses for auto-promoted
+        // sites (016 task #30); the prec-wrapped seq isn't reached by
+        // enrich's walker, so these positions are still hand-promoted.
+        // The `_kw_async_marker` inline declaration above (wave-1
+        // follow-up, task #27) is required to keep `let a = async move
+        // || async move {}` from regressing to ERROR.
         closure_expression: {
             '0/0': field('static_marker'),
             '1/0': field('async_marker'),
@@ -237,9 +242,10 @@ const config: WireConfig<RustGrammar> = {
         function_type: [],
 
         // gen_block: seq('gen', optional('move'), $.block).
-        // Field-promotion wave 1 (016 task #23): symmetric to async_block —
-        // label the optional `move` punct as `move_marker` so render
-        // preserves it (`gen move { ... }` vs `gen { ... }`).
+        // Field-promotion wave 1 (016 task #23): symmetric to async_block
+        // — label the optional `move` punct as `move_marker` so render
+        // preserves it. Kept hand-promoted for the same render-spacing
+        // reason as async_block (see note above).
         gen_block: {
             '1/0': field('move_marker'),
         },
@@ -264,12 +270,15 @@ const config: WireConfig<RustGrammar> = {
         // Field-promotion wave 1 (016 task #23):
         //   - pos 0 = `optional('unsafe')` — leading `unsafe` marker on
         //     `unsafe impl` blocks. Path `0/0` descends into the optional
-        //     and labels the bare literal.
+        //     and labels the bare literal as `unsafe_marker` (016 task
+        //     #30 naming convention). Kept hand-promoted because enrich's
+        //     auto-promotion at this position introduces extra spacing
+        //     in the rendered output (`unsafe impl Foo {}` round-trips
+        //     only with the manual override).
         //   - pos 3/0/0 = `optional('!')` — the `!` in `impl !Send for X`
         //     (negative trait impl). Path `3/0/0/0` reaches the bare `!`
-        //     literal inside the inner-seq's leading optional. Restores
-        //     impl_item bang round-trip after the step-3 walker refactor
-        //     deleted the punct-clause synthesis path.
+        //     literal inside the inner-seq's leading optional. The
+        //     `negative` name is context-specific (not `bang_marker`).
         impl_item: {
             '0/0':     field('unsafe_marker'),
             '3/0/0/0': field('negative'),
@@ -394,7 +403,9 @@ const config: WireConfig<RustGrammar> = {
         // )
         // Field-promotion wave 1 (016 task #23): label the standalone
         // optional `unsafe` punct as `unsafe_marker` so render preserves
-        // it (`unsafe trait Foo { ... }` vs `trait Foo { ... }`).
+        // it (`unsafe trait Foo { ... }` vs `trait Foo { ... }`). Kept
+        // hand-promoted for the same render-spacing reason as async_block
+        // (see note above).
         trait_item: {
             '1/0': field('unsafe_marker'),
         },

@@ -57,12 +57,12 @@ describe('future_import_statement', () => {
 
 describe('import_from_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.importFrom({ moduleName: { $type: 'relative_import', $text: 'test' } as any, wildcardImport: [{ $type: 'wildcard_import', $text: 'test' } as any] });
+    const node = ir.importFrom({ moduleName: { $type: 'relative_import', $text: 'test' } as any });
     expect(node.$type).toBe('import_from_statement');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.importFrom({ moduleName: { $type: 'relative_import', $text: 'test' } as any, wildcardImport: [{ $type: 'wildcard_import', $text: 'test' } as any] });
+    const node = ir.importFrom({ moduleName: { $type: 'relative_import', $text: 'test' } as any, children: [{ $type: 'wildcard_import', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

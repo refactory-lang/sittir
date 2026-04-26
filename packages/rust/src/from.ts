@@ -360,7 +360,7 @@ const _K5: readonly string[] = ["char_literal","boolean_literal","integer_litera
 const _K6: readonly string[] = ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"];
 const _K7: readonly string[] = ["metavariable","unit_type","identifier","_primitive_type"];
 const _K8: readonly string[] = ["abstract_type","reference_type","pointer_type","generic_type","scoped_type_identifier","tuple_type","array_type","function_type","macro_invocation","dynamic_type","bounded_type","removed_trait_bound"];
-const _K9: readonly string[] = ["_kw_ref","mutable_specifier"];
+const _K9: readonly string[] = ["_kw_ref_marker","mutable_specifier"];
 const _K10: readonly string[] = ["identifier","metavariable"];
 const _K11: readonly string[] = ["_primitive_type"];
 const _K12: readonly string[] = ["lifetime","_type_identifier","scoped_type_identifier","generic_type","reference_type","pointer_type","tuple_type","array_type","higher_ranked_trait_bound"];
@@ -1689,7 +1689,7 @@ export function fieldPatternFrom(input?: T.FieldPattern.Loose): ReturnType<typeo
 
 export function fieldPatternUFormShorthandFrom(input: Omit<ConfigOf<T.FieldPatternUFormShorthand>, '$variant'>) {
   return F.fieldPatternUFormShorthand({
-    ref: _resolveBooleanKeyword(input.ref),
+    refMarker: _resolveBooleanKeyword(input.refMarker),
     mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
   });
@@ -1697,7 +1697,7 @@ export function fieldPatternUFormShorthandFrom(input: Omit<ConfigOf<T.FieldPatte
 
 export function fieldPatternUFormNamedFrom(input: Omit<ConfigOf<T.FieldPatternUFormNamed>, '$variant'>) {
   return F.fieldPatternUFormNamed({
-    ref: _resolveBooleanKeyword(input.ref),
+    refMarker: _resolveBooleanKeyword(input.refMarker),
     mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
     name: _resolveOneBranch<T.FieldIdentifier>(input.name, "_field_identifier"),
     pattern: _resolveOne<T.Pattern>(input.pattern, _K16, _K17),

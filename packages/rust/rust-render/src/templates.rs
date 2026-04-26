@@ -1223,8 +1223,8 @@ pub struct FieldPatternTemplate {
     pub leading_sep: bool,
     pub mutable_specifier: String,
     pub mutable_specifier_list: Vec<String>,
-    pub r#ref: String,
-    pub r#ref_list: Vec<String>,
+    pub ref_marker: String,
+    pub ref_marker_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2101,8 +2101,8 @@ pub struct StaticItemTemplate {
     pub mutable_specifier_list: Vec<String>,
     pub name: String,
     pub name_list: Vec<String>,
-    pub r#ref: String,
-    pub r#ref_list: Vec<String>,
+    pub ref_marker: String,
+    pub ref_marker_list: Vec<String>,
     pub r#type: String,
     pub r#type_list: Vec<String>,
     pub value: String,
@@ -3836,8 +3836,8 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 mutable_specifier: ctx.fields.get("mutable_specifier").cloned().unwrap_or_default(),
                 mutable_specifier_list: ctx.fields_list.get("mutable_specifier").cloned().unwrap_or_default(),
-                r#ref: ctx.fields.get("ref").cloned().unwrap_or_default(),
-                r#ref_list: ctx.fields_list.get("ref").cloned().unwrap_or_default(),
+                ref_marker: ctx.fields.get("ref_marker").cloned().unwrap_or_default(),
+                ref_marker_list: ctx.fields_list.get("ref_marker").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -4714,8 +4714,8 @@ pub fn render_dispatch(
                 mutable_specifier_list: ctx.fields_list.get("mutable_specifier").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
                 name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
-                r#ref: ctx.fields.get("ref").cloned().unwrap_or_default(),
-                r#ref_list: ctx.fields_list.get("ref").cloned().unwrap_or_default(),
+                ref_marker: ctx.fields.get("ref_marker").cloned().unwrap_or_default(),
+                ref_marker_list: ctx.fields_list.get("ref_marker").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),

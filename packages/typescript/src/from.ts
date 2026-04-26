@@ -413,7 +413,7 @@ const _K20: readonly string[] = ["private_property_identifier"];
 const _K21: readonly string[] = ["decorator_member_expression"];
 const _K22: readonly string[] = ["identifier","private_property_identifier","number"];
 const _K23: readonly string[] = ["string","computed_property_name"];
-const _K24: readonly string[] = ["_kw_static","override_modifier"];
+const _K24: readonly string[] = ["_kw_static_marker","override_modifier"];
 const _K25: readonly string[] = ["member_expression","subscript_expression","object_pattern","array_pattern","non_null_expression","rest_pattern","assignment_pattern"];
 const _K26: readonly string[] = ["_public_field_definition_declare_first","_public_field_definition_access_first","_public_field_definition_static_mods","_public_field_definition_abstract_first","_public_field_definition_readonly_first","_public_field_definition_accessor_opt"];
 const _K27: readonly string[] = ["_automatic_semicolon","_function_signature_automatic_semicolon"];
@@ -1349,7 +1349,7 @@ export function fieldDefinitionFrom(input: T.FieldDefinition.Loose): ReturnType<
   if (isNodeData(input)) return input;
   return F.fieldDefinition({
     decorator: _resolveManyBranch<T.Decorator>(input.decorator, "decorator"),
-    static: _resolveBooleanKeyword(input.static),
+    staticMarker: _resolveBooleanKeyword(input.staticMarker),
     property: _resolveOne<T.PropertyName>(input.property, _K22, _K23),
     value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
   });

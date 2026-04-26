@@ -3602,7 +3602,7 @@ export function fieldPattern(config: ConfigOf<T.FieldPatternUFormShorthand> | Co
 }
 export function fieldPatternUFormShorthand(config: Omit<ConfigOf<T.FieldPatternUFormShorthand>, '$variant'>) {
   const fields = {
-    ref: config.ref,
+    ref_marker: config.refMarker,
     mutable_specifier: config.mutableSpecifier,
   };
   const inner = fieldPatternShorthand(config);
@@ -3614,17 +3614,17 @@ export function fieldPatternUFormShorthand(config: Omit<ConfigOf<T.FieldPatternU
     $variant: 'shorthand' as const,
     $fields: fields,
     $children: children,
-    ref(value?: "ref" | undefined) {
-      if (value === undefined) return fields.ref;
-      return fieldPatternUFormShorthand({ mutableSpecifier: config.mutableSpecifier, name: inner.$fields.name, ref: value });
+    refMarker(value?: "ref" | undefined) {
+      if (value === undefined) return fields.ref_marker;
+      return fieldPatternUFormShorthand({ mutableSpecifier: config.mutableSpecifier, name: inner.$fields.name, refMarker: value });
     },
     mutableSpecifier(value?: T.MutableSpecifier | undefined) {
       if (value === undefined) return fields.mutable_specifier;
-      return fieldPatternUFormShorthand({ ref: config.ref, name: inner.$fields.name, mutableSpecifier: value });
+      return fieldPatternUFormShorthand({ refMarker: config.refMarker, name: inner.$fields.name, mutableSpecifier: value });
     },
     name(value?: T.Identifier) {
       if (value === undefined) return inner.$fields.name;
-      return fieldPatternUFormShorthand({ ref: config.ref, mutableSpecifier: config.mutableSpecifier, name: value });
+      return fieldPatternUFormShorthand({ refMarker: config.refMarker, mutableSpecifier: config.mutableSpecifier, name: value });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -3636,7 +3636,7 @@ export function fieldPatternUFormShorthand(config: Omit<ConfigOf<T.FieldPatternU
 }
 export function fieldPatternUFormNamed(config: Omit<ConfigOf<T.FieldPatternUFormNamed>, '$variant'>) {
   const fields = {
-    ref: config.ref,
+    ref_marker: config.refMarker,
     mutable_specifier: config.mutableSpecifier,
   };
   const inner = {
@@ -3656,21 +3656,21 @@ export function fieldPatternUFormNamed(config: Omit<ConfigOf<T.FieldPatternUForm
     $variant: 'named' as const,
     $fields: fields,
     $children: children,
-    ref(value?: "ref" | undefined) {
-      if (value === undefined) return fields.ref;
-      return fieldPatternUFormNamed({ mutableSpecifier: config.mutableSpecifier, name: inner.$fields.name, pattern: inner.$fields.pattern, ref: value });
+    refMarker(value?: "ref" | undefined) {
+      if (value === undefined) return fields.ref_marker;
+      return fieldPatternUFormNamed({ mutableSpecifier: config.mutableSpecifier, name: inner.$fields.name, pattern: inner.$fields.pattern, refMarker: value });
     },
     mutableSpecifier(value?: T.MutableSpecifier | undefined) {
       if (value === undefined) return fields.mutable_specifier;
-      return fieldPatternUFormNamed({ ref: config.ref, name: inner.$fields.name, pattern: inner.$fields.pattern, mutableSpecifier: value });
+      return fieldPatternUFormNamed({ refMarker: config.refMarker, name: inner.$fields.name, pattern: inner.$fields.pattern, mutableSpecifier: value });
     },
     name(value?: T.FieldIdentifier) {
       if (value === undefined) return inner.$fields.name;
-      return fieldPatternUFormNamed({ ref: config.ref, mutableSpecifier: config.mutableSpecifier, pattern: inner.$fields.pattern, name: value });
+      return fieldPatternUFormNamed({ refMarker: config.refMarker, mutableSpecifier: config.mutableSpecifier, pattern: inner.$fields.pattern, name: value });
     },
     pattern(value?: T.Pattern) {
       if (value === undefined) return inner.$fields.pattern;
-      return fieldPatternUFormNamed({ ref: config.ref, mutableSpecifier: config.mutableSpecifier, name: inner.$fields.name, pattern: value });
+      return fieldPatternUFormNamed({ refMarker: config.refMarker, mutableSpecifier: config.mutableSpecifier, name: inner.$fields.name, pattern: value });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {

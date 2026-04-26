@@ -20,11 +20,11 @@ export type LeafStringMap = {
   super: "super";
   crate: "crate";
   _primitive_type: "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char";
-  _kw_ref: "ref";
-  _kw_unsafe: "unsafe";
-  _kw_static: "static";
-  _kw_async: "async";
-  _kw_move: "move";
+  _kw_ref_marker: "ref";
+  _kw_unsafe_marker: "unsafe";
+  _kw_static_marker: "static";
+  _kw_async_marker: "async";
+  _kw_move_marker: "move";
   _wildcard_pattern: "_";
   _pointer_type_const: "const";
   as: "as";
@@ -276,11 +276,11 @@ export const enum SyntaxKind {
   DocComment = '_doc_comment',
   OuterDocCommentMarker = '_outer_doc_comment_marker',
   InnerDocCommentMarker = '_inner_doc_comment_marker',
-  KwRef = '_kw_ref',
-  KwUnsafe = '_kw_unsafe',
-  KwStatic = '_kw_static',
-  KwAsync = '_kw_async',
-  KwMove = '_kw_move',
+  KwRefMarker = '_kw_ref_marker',
+  KwUnsafeMarker = '_kw_unsafe_marker',
+  KwStaticMarker = '_kw_static_marker',
+  KwAsyncMarker = '_kw_async_marker',
+  KwMoveMarker = '_kw_move_marker',
   WildcardPattern = '_wildcard_pattern',
   PointerTypeConst = '_pointer_type_const',
   ReferenceExpressionRawConst = '_reference_expression_raw_const',
@@ -1878,7 +1878,7 @@ export interface FieldPatternUFormShorthand {
   readonly $type: 'field_pattern';
   readonly $variant: 'shorthand';
   readonly $fields: {
-    readonly ref?: BooleanKeyword<"ref">;
+    readonly ref_marker?: BooleanKeyword<"ref">;
     readonly mutable_specifier?: BooleanKeyword<MutableSpecifier>;
   };
   readonly $children: readonly [FieldPatternShorthand];
@@ -1888,7 +1888,7 @@ export interface FieldPatternUFormNamed {
   readonly $type: 'field_pattern';
   readonly $variant: 'named';
   readonly $fields: {
-    readonly ref?: BooleanKeyword<"ref">;
+    readonly ref_marker?: BooleanKeyword<"ref">;
     readonly mutable_specifier?: BooleanKeyword<MutableSpecifier>;
   };
   readonly $children: readonly [FieldPatternNamed];

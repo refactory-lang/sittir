@@ -1339,7 +1339,7 @@ export function wrapStructPattern(data: _NodeData, tree: TreeHandle): WrappedNod
 export function wrapFieldPattern(data: _NodeData, tree: TreeHandle): WrappedNode<FieldPattern> {
   return {
     ...data,
-    get ref() { return drillIn(data.$fields?.['ref'], tree); },
+    get refMarker() { return drillIn(data.$fields?.['ref_marker'], tree); },
     get mutableSpecifier() { return drillIn(data.$fields?.['mutable_specifier'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<FieldPattern>;
@@ -1821,11 +1821,11 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_doc_comment': (d) => d,
   '_outer_doc_comment_marker': (d) => d,
   '_inner_doc_comment_marker': (d) => d,
-  '_kw_ref': (d) => d,
-  '_kw_unsafe': (d) => d,
-  '_kw_static': (d) => d,
-  '_kw_async': (d) => d,
-  '_kw_move': (d) => d,
+  '_kw_ref_marker': (d) => d,
+  '_kw_unsafe_marker': (d) => d,
+  '_kw_static_marker': (d) => d,
+  '_kw_async_marker': (d) => d,
+  '_kw_move_marker': (d) => d,
   '_wildcard_pattern': (d) => d,
   '_closure_expression_expr': (d, t) => wrapClosureExpressionExpr(d, t),
   '_field_pattern_shorthand': (d, t) => wrapFieldPatternShorthand(d, t),

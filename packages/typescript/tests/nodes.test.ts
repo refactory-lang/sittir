@@ -1473,12 +1473,12 @@ describe('enum_declaration', () => {
 
 describe('enum_body', () => {
   it('factory produces correct type', () => {
-    const node = ir.enumBody({ opening: [{ $type: '_property_name', $text: 'test' } as any] });
+    const node = ir.enumBody({ children: [{ $type: 'enum_assignment', $text: 'test' } as any] as any });
     expect(node.$type).toBe('enum_body');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.enumBody({ opening: [{ $type: '_property_name', $text: 'test' } as any] });
+    const node = ir.enumBody({ children: [{ $type: 'enum_assignment', $text: 'test' } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1694,12 +1694,12 @@ describe('template_literal_type', () => {
 
 describe('infer_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.inferType({ typeIdentifier: { $type: '_type_identifier', $text: 'test' } as any, constraint: { $type: 'type', $text: 'test' } as any });
+    const node = ir.inferType({ typeIdentifier: { $type: '_type_identifier', $text: 'test' } as any });
     expect(node.$type).toBe('infer_type');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.inferType({ typeIdentifier: { $type: '_type_identifier', $text: 'test' } as any, constraint: { $type: 'type', $text: 'test' } as any });
+    const node = ir.inferType({ typeIdentifier: { $type: '_type_identifier', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

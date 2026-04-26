@@ -755,11 +755,11 @@
       "children": []
     },
     {
-      "kind": "_kw_async",
+      "kind": "_kw_async_marker",
       "modelType": "keyword",
-      "typeName": "KwAsync",
-      "factoryName": "kwAsync",
-      "irKey": "kwAsync",
+      "typeName": "KwAsyncMarker",
+      "factoryName": "kwAsyncMarker",
+      "irKey": "kwAsyncMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
@@ -4233,7 +4233,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_async",
+              "name": "_kw_async_marker",
               "unresolved": true
             }
           ],
@@ -4241,7 +4241,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_async"
+              "_kw_async_marker"
             ]
           }
         },
@@ -4313,15 +4313,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_async",
+              "name": "_kw_async_marker",
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_async"
+              "_kw_async_marker"
             ]
           }
         },
@@ -4474,15 +4474,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_async",
+              "name": "_kw_async_marker",
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_async"
+              "_kw_async_marker"
             ]
           }
         },
@@ -8063,15 +8063,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_async",
+              "name": "_kw_async_marker",
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_async"
+              "_kw_async_marker"
             ]
           }
         },

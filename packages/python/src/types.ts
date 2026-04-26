@@ -20,7 +20,7 @@ export type LeafStringMap = {
   true: "True";
   false: "False";
   none: "None";
-  _kw_async: "async";
+  _kw_async_marker: "async";
   import: "import";
   from: "from";
   __future__: "__future__";
@@ -192,7 +192,7 @@ export const enum SyntaxKind {
   None = 'none',
   Comment = 'comment',
   LineContinuation = 'line_continuation',
-  KwAsync = '_kw_async',
+  KwAsyncMarker = '_kw_async_marker',
   Newline = '_newline',
   Indent = '_indent',
   Dedent = '_dedent',

@@ -451,18 +451,19 @@ export default grammar(enrich(base), wire({
         //   field('body', $.statement_block)))    // pos 9
         // Field-promotion wave 3 (016 task #25): label `async`, the
         // accessor `get`/`set`/`*`, and trailing `?` so render preserves
-        // `async get foo?(): T {}` shapes.
-        // Wave-3 follow-up (016 task #28): `readonly_marker` was deferred
-        // in wave 3 because the synthesized `_kw_readonly_marker` hidden
-        // symbol's parse precedence diverges from the bare `'readonly'`
-        // token in sibling rules — `class Foo { readonly bar?(): T {} }`
-        // regressed to ERROR (parser took `readonly` as the property
-        // identifier instead of the marker). Same pattern as wave-1's
-        // closure_expression.async_marker; resolved by adding
-        // `_kw_readonly_marker` to the top-level `inline:` array (see
-        // above), which folds the hidden rule's body into every reference
-        // site at LR-table generation while preserving the FIELD wrapper
-        // for the parse tree.
+        // `async get foo?(): T {}` shapes. Naming follows `<token>_marker`
+        // (016 task #30); enrich's CHOICE-form-of-optional path doesn't
+        // fire on tree-sitter-evaluated rules so these positions are
+        // hand-promoted. Wave-3 follow-up (016 task #28): `readonly_marker`
+        // was deferred in wave 3 because the synthesized
+        // `_kw_readonly_marker` hidden symbol's parse precedence diverges
+        // from the bare `'readonly'` token in sibling rules — `class Foo
+        // { readonly bar?(): T {} }` regressed to ERROR (parser took
+        // `readonly` as the property identifier instead of the marker).
+        // Resolved by adding `_kw_readonly_marker` to the top-level
+        // `inline:` array (see above), which folds the hidden rule's body
+        // into every reference site at LR-table generation while preserving
+        // the FIELD wrapper for the parse tree.
         method_definition: {
             1: field('override_modifier'), // override_modifier [struct=1]
             '3/0': field('readonly_marker'),
@@ -473,21 +474,21 @@ export default grammar(enrich(base), wire({
 
         // method_signature: seq(
         //   optional($.accessibility_modifier),    // pos 0
-        //   optional('static'),                    // pos 1  (DEFERRED — see method_definition note)
-        //   optional($.override_modifier),         // pos 2 (existing field below)
-        //   optional('readonly'),                  // pos 3  →  '3/0'  (readonly_marker)
-        //   optional('async'),                     // pos 4  →  '4/0'  (async_marker)
+        //   optional('static'),                    // pos 1  (auto-promoted: static_marker)
+        //   optional($.override_modifier),         // pos 2 (existing field below — entry positionally targets pos 1)
+        //   optional('readonly'),                  // pos 3  (auto-promoted: readonly_marker by enrich, 016 task #30)
+        //   optional('async'),                     // pos 4  (auto-promoted: async_marker by enrich, 016 task #30)
         //   optional(choice('get','set','*')),    // pos 5  →  '5/0'  (accessor_kind, choice-of-strings)
         //   field('name', $._property_name),       // pos 6
         //   optional('?'),                         // pos 7  →  '7/0'  (optional_marker)
         //   $._call_signature)                     // pos 8
-        // Field-promotion wave 3 (016 task #25): symmetric to
-        // method_definition. Wave-3 follow-up adds `readonly_marker`
-        // (resolved via inline; see method_definition note above).
+        // Standalone `optional('static')` / `optional('readonly')` /
+        // `optional('async')` are auto-promoted by enrich. Kept entries:
+        // accessor_kind (choice-of-strings, enrich skips), optional_marker
+        // (`?` not identifier-shaped), and the inherited override_modifier
+        // entry (preserved as-is — see method_definition note above).
         method_signature: {
             1: field('override_modifier'), // override_modifier [struct=1]
-            '3/0': field('readonly_marker'),
-            '4/0': field('async_marker'),
             '5/0': field('accessor_kind'),
             '7/0': field('optional_marker'),
         },
@@ -510,19 +511,17 @@ export default grammar(enrich(base), wire({
 
         // property_signature: seq(
         //   optional($.accessibility_modifier),  // pos 0
-        //   optional('static'),                   // pos 1  (DEFERRED — see method_definition note re: static)
+        //   optional('static'),                   // pos 1  (auto-promoted: static_marker)
         //   optional($.override_modifier),         // pos 2 (existing field below — note position drift; entry kept as 1)
-        //   optional('readonly'),                  // pos 3  →  '3/0'  (readonly_marker)
+        //   optional('readonly'),                  // pos 3  (auto-promoted: readonly_marker by enrich, 016 task #30)
         //   field('name', $._property_name),       // pos 4
         //   optional('?'),                         // pos 5  →  '5/0'  (optional_marker)
         //   field('type', optional($.type_annotation)))  // pos 6
-        // Field-promotion wave 3 (016 task #25): label trailing `?` so
-        // render preserves `foo?: string` shapes. Wave-3 follow-up adds
-        // `readonly_marker` (resolved via inline; see method_definition
-        // note above).
+        // Standalone `optional('readonly')` is auto-promoted by enrich.
+        // Kept entries: optional_marker (`?` non-identifier), and the
+        // inherited override_modifier entry (see method_definition note above).
         property_signature: {
             1: field('override_modifier'), // override_modifier [struct=1]
-            '3/0': field('readonly_marker'),
             '5/0': field('optional_marker'),
         },
 
@@ -596,15 +595,15 @@ export default grammar(enrich(base), wire({
 
         // function_signature: seq(
         //   optional('async'),  // pos 0  →  '0/0'  (async_marker)
-        //   'function',
-        //   field('name'),
-        //   _call_signature,
+        //   'function', field('name'), _call_signature,
         //   choice(_semicolon, _function_signature_automatic_semicolon))
         // The trailing choice carries the semi (either explicit or auto);
         // labeling pos 4 as a semicolon field lets it render.
         // Wave-3 follow-up (016 task #28): adds `async_marker` along with
         // the JS-inherited function family — see the inline declaration
-        // above for `_kw_async_marker`.
+        // above for `_kw_async_marker`. Kept hand-promoted because the
+        // factoryRoundtrip AST match fails when only enrich auto-promotes
+        // (the synthesized `_kw_async_marker` content shape diverges).
         function_signature: {
             '0/0': field('async_marker'),
             4: field('semicolon'),
@@ -624,6 +623,12 @@ export default grammar(enrich(base), wire({
         // function rule's state machine — same shape as the
         // pre-promotion grammar — while the FIELD wrapper survives the
         // inlining so the parse tree still labels the marker.
+        //
+        // function_expression / function_declaration / generator_function /
+        // generator_function_declaration are wrapped in `prec(...)`. Enrich's
+        // optional-keyword pass doesn't descend through prec, so these
+        // positions still need hand-promotion. arrow_function is bare-seq
+        // → enrich auto-promotes it; the manual entry is now redundant.
 
         // function_expression: prec('literal', seq(
         //   optional('async'), 'function', field('name', optional($.identifier)),
@@ -657,10 +662,8 @@ export default grammar(enrich(base), wire({
         },
 
         // arrow_function: seq(optional('async'), choice(field('parameter',…),
-        //   $._call_signature), '=>', field('body', …))
-        arrow_function: {
-            '0/0': field('async_marker'),
-        },
+        //   $._call_signature), '=>', field('body', …)).
+        // Auto-promoted by enrich (bare seq); manual entry now redundant.
 
         // break_statement: seq('break', field('label', optional(...)),
         // _semicolon). Label the trailing `;` at pos 2.
@@ -687,79 +690,42 @@ export default grammar(enrich(base), wire({
 
         // -------------------------------------------------------------------
         // Field-promotion wave 3 (016 task #25) — standalone optional-punct
-        // → semantic field markers. Each rule is a one-line addition.
+        // → semantic field markers. After enrich auto-promotion (016 task
+        // #30), only the prec-wrapped sites need hand-promotion (enrich's
+        // walker doesn't descend through `prec(...)`); bare-seq sites are
+        // covered by enrich and the wave-3 entries become redundant.
         // -------------------------------------------------------------------
 
         // constructor_type: prec.left(seq(
         //   optional('abstract'),  // pos 0  →  '0/0'  (abstract_marker)
         //   'new', type_parameters?, parameters, '=>', type))
+        // prec.left wrapper hides the seq from enrich; hand-promoted here.
         constructor_type: {
             '0/0': field('abstract_marker'),
         },
 
-        // construct_signature: seq(
-        //   optional('abstract'),  // pos 0  →  '0/0'  (abstract_marker)
-        //   'new', type_parameters?, parameters, type?)
-        construct_signature: {
-            '0/0': field('abstract_marker'),
-        },
+        // construct_signature / type_parameter / for_in_statement /
+        // _parameter_name are bare-seq rules — their standalone optional
+        // markers (`abstract`, `const`, `await`, `readonly`) are
+        // auto-promoted by enrich. Wave 3's manual entries are now
+        // redundant.
 
         // enum_declaration: seq(
         //   optional('const'),  // pos 0  →  '0/0'  (const_marker)
         //   'enum', name, body)
+        // Kept hand-promoted because the factoryRoundtrip AST match fails
+        // when only enrich auto-promotes (synthesized `_kw_const_marker`
+        // content shape diverges).
         enum_declaration: {
             '0/0': field('const_marker'),
-        },
-
-        // type_parameter: seq(
-        //   optional('const'),  // pos 0  →  '0/0'  (const_marker)
-        //   field('name', $._type_identifier),
-        //   field('constraint', optional(...)),
-        //   field('value', optional(...)))
-        // NOTE: same field name as enum_declaration — documented borderline
-        // reuse. Different runtime impact (compile-time discriminator on a
-        // type parameter vs literal-preserving on an enum) but same
-        // conceptual "compile-time / literal-preserving" prefix.
-        type_parameter: {
-            '0/0': field('const_marker'),
-        },
-
-        // for_in_statement: seq(
-        //   'for',                  // pos 0
-        //   optional('await'),       // pos 1  →  '1/0'  (await_marker)
-        //   $._for_header,           // pos 2
-        //   field('body', $.statement))  // pos 3
-        // Cross-grammar reuse: same name as python's for/with-style await
-        // markers (wave 2).
-        for_in_statement: {
-            '1/0': field('await_marker'),
         },
 
         // assignment_expression: prec.right('assign', seq(
         //   optional('using'),  // pos 0  →  '0/0'  (using_marker)
         //   field('left', ...), '=', field('right', ...)))
-        // prec.right is transparent to path addressing.
+        // prec.right wrapper hides the seq from enrich; hand-promoted here.
         assignment_expression: {
             '0/0': field('using_marker'),
-        },
-
-        // _parameter_name: seq(
-        //   repeat(field('decorator', $.decorator)),  // pos 0
-        //   optional($.accessibility_modifier),         // pos 1
-        //   optional($.override_modifier),              // pos 2
-        //   optional('readonly'),                       // pos 3  →  '3/0'  (readonly_marker)
-        //   field('pattern', choice($.pattern, $.this)))  // pos 4
-        // _parameter_name is a hidden helper inlined into required_parameter
-        // and optional_parameter. Promoting `readonly` here surfaces it on
-        // both wrapping kinds.
-        //
-        // NOTE re: soft-keyword risk — unlike method_definition.readonly_marker
-        // (DEFERRED above), the parameter-position `readonly` is preceded by
-        // a `(` or `,` in every grammar context (formal_parameters), so the
-        // synthesized `_kw_readonly_marker`'s parse-precedence shouldn't
-        // collide with `readonly` as a property identifier in a class body.
-        _parameter_name: {
-            '3/0': field('readonly_marker'),
         },
 
         // export_specifier: seq(

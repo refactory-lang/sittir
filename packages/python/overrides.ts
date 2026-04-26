@@ -154,36 +154,16 @@ export default grammar(enrich(base), wire({
             2: field('in_clause'),
         },
 
-        // for_statement: seq(optional('async'), 'for', ...).
-        // Field-promotion wave 2 (016 task #24): label the standalone
-        // optional `async` punct as `async_marker` so render preserves
-        // the `async for` form (vs plain `for`).
-        for_statement: {
-            '0/0': field('async_marker'),
-        },
+        // for_statement / function_definition / with_statement: each
+        // starts with `optional('async')` at pos 0. Auto-promoted by
+        // enrich (016 task #30) as `field('async_marker', SYMBOL(_kw_async_marker))`.
+        // Wave 2's manual entries are now redundant.
 
         // for_in_clause: prec.left(seq(optional('async'), 'for', ...)).
-        // Field-promotion wave 2 (016 task #24): symmetric to for_statement
-        // — label the standalone optional `async` punct as `async_marker`
-        // (`async for ... in` comprehensions). prec is transparent to path
-        // addressing.
+        // The prec.left wrapper hides the seq from enrich's auto-promotion
+        // walker, so the position is still hand-promoted (016 task #30
+        // naming convention).
         for_in_clause: {
-            '0/0': field('async_marker'),
-        },
-
-        // function_definition: seq(optional('async'), 'def', ...).
-        // Field-promotion wave 2 (016 task #24): label the standalone
-        // optional `async` punct as `async_marker` so render preserves
-        // `async def` (coroutine functions) vs plain `def`.
-        function_definition: {
-            '0/0': field('async_marker'),
-        },
-
-        // with_statement: seq(optional('async'), 'with', ...).
-        // Field-promotion wave 2 (016 task #24): label the standalone
-        // optional `async` punct as `async_marker` so render preserves
-        // `async with` (async context managers) vs plain `with`.
-        with_statement: {
             '0/0': field('async_marker'),
         },
 

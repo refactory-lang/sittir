@@ -24,6 +24,10 @@
  *
  *   3. Optional keyword-prefix promotion — `optional(identifier-literal)`
  *      at any seq position → wrap inner as the same FIELD(SYMBOL) form.
+ *      Field is named `<token>_marker` (semantic suffix indicating
+ *      "presence-indicator slot for this literal"); avoids JS-reserved-
+ *      keyword collisions (`async`, `static`, `const`) at the
+ *      factory/config surface.
  *
  *   4. Optional-symbol promotion — at a TOP-LEVEL seq position:
  *
@@ -632,13 +636,23 @@ function tryPromoteInnerKeyword(
     if (!isStringType(innerNorm.type)) return null
     const kw = innerNorm.value
     if (typeof kw !== 'string' || !isIdentifierShaped(kw)) return null
-    if (claimed.has(kw)) {
-        reportSkip('optional-keyword-prefix', ruleName, `field '${kw}' already exists`)
+    // Auto-name promoted optional keywords as `<token>_marker` rather
+    // than the bare token name. The semantic suffix conveys
+    // "presence-indicator slot for this literal" and avoids JS-reserved-
+    // keyword collisions (`async`, `static`, `const`) at the
+    // factory/config surface — these names projected as bare property
+    // keys would clash with reserved identifiers in some emitter
+    // contexts. Manual overrides only need to fire for genuinely
+    // context-specific cases (e.g. `negative` for `!`,
+    // `accessor_kind`/`optionality_marker` for choice-of-strings).
+    const fieldName = `${kw}_marker`
+    if (claimed.has(fieldName)) {
+        reportSkip('optional-keyword-prefix', ruleName, `field '${fieldName}' already exists`)
         return null
     }
-    claimed.add(kw)
-    const symbolRef = registerKwRule(optionalRule, inner, kw, kwRules)
-    const fieldNode = makeField(optionalRule, kw, symbolRef)
+    claimed.add(fieldName)
+    const symbolRef = registerKwRule(optionalRule, inner, fieldName, kwRules)
+    const fieldNode = makeField(optionalRule, fieldName, symbolRef)
     return rebuildOptional(optionalRule, fieldNode)
 }
 

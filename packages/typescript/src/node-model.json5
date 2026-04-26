@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 410,
+  "nodeCount": 409,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -2769,26 +2769,15 @@
       ]
     },
     {
-      "kind": "_kw_abstract",
+      "kind": "_kw_abstract_marker",
       "modelType": "keyword",
-      "typeName": "KwAbstract",
-      "factoryName": "kwAbstract",
-      "irKey": "kwAbstract",
+      "typeName": "KwAbstractMarker",
+      "factoryName": "kwAbstractMarker",
+      "irKey": "kwAbstractMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"abstract\" as const",
       "text": "abstract"
-    },
-    {
-      "kind": "_kw_async",
-      "modelType": "keyword",
-      "typeName": "KwAsync",
-      "factoryName": "kwAsync",
-      "irKey": "kwAsync",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"async\" as const",
-      "text": "async"
     },
     {
       "kind": "_kw_async_marker",
@@ -2802,11 +2791,11 @@
       "text": "async"
     },
     {
-      "kind": "_kw_const",
+      "kind": "_kw_const_marker",
       "modelType": "keyword",
-      "typeName": "KwConst",
-      "factoryName": "kwConst",
-      "irKey": "kwConst",
+      "typeName": "KwConstMarker",
+      "factoryName": "kwConstMarker",
+      "irKey": "kwConstMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"const\" as const",
@@ -2823,22 +2812,22 @@
       "text": "?"
     },
     {
-      "kind": "_kw_readonly",
+      "kind": "_kw_readonly_marker",
       "modelType": "keyword",
-      "typeName": "KwReadonly",
-      "factoryName": "kwReadonly",
-      "irKey": "kwReadonly",
+      "typeName": "KwReadonlyMarker",
+      "factoryName": "kwReadonlyMarker",
+      "irKey": "kwReadonlyMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"readonly\" as const",
       "text": "readonly"
     },
     {
-      "kind": "_kw_static",
+      "kind": "_kw_static_marker",
       "modelType": "keyword",
-      "typeName": "KwStatic",
-      "factoryName": "kwStatic",
-      "irKey": "kwStatic",
+      "typeName": "KwStaticMarker",
+      "factoryName": "kwStaticMarker",
+      "irKey": "kwStaticMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"static\" as const",
@@ -3118,15 +3107,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_readonly",
+              "name": "_kw_readonly_marker",
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_readonly"
+              "_kw_readonly_marker"
             ]
           }
         },
@@ -3303,9 +3292,9 @@
       "name": "_public_field_definition_abstract_first",
       "fields": [
         {
-          "name": "abstract",
-          "propertyName": "abstract",
-          "paramName": "abstract",
+          "name": "abstract_marker",
+          "propertyName": "abstractMarker",
+          "paramName": "abstractMarker",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3313,7 +3302,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_kw_abstract",
+              "name": "_kw_abstract_marker",
               "unresolved": true
             }
           ],
@@ -3321,14 +3310,14 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_abstract"
+              "_kw_abstract_marker"
             ]
           }
         },
         {
-          "name": "readonly",
-          "propertyName": "readonly",
-          "paramName": "readonly",
+          "name": "readonly_marker",
+          "propertyName": "readonlyMarker",
+          "paramName": "readonlyMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -3336,7 +3325,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_readonly",
+              "name": "_kw_readonly_marker",
               "unresolved": true
             }
           ],
@@ -3344,7 +3333,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_readonly"
+              "_kw_readonly_marker"
             ]
           }
         }
@@ -3360,9 +3349,9 @@
       "name": "_public_field_definition_access_first",
       "fields": [
         {
-          "name": "declare",
-          "propertyName": "declare",
-          "paramName": "declare",
+          "name": "declare_marker",
+          "propertyName": "declareMarker",
+          "paramName": "declareMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -3409,9 +3398,9 @@
       "stampExpression": "publicFieldDefinitionAccessorOpt()",
       "fields": [
         {
-          "name": "accessor",
-          "propertyName": "accessor",
-          "paramName": "accessor",
+          "name": "accessor_marker",
+          "propertyName": "accessorMarker",
+          "paramName": "accessorMarker",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3465,9 +3454,9 @@
       "name": "_public_field_definition_readonly_first",
       "fields": [
         {
-          "name": "readonly",
-          "propertyName": "readonly",
-          "paramName": "readonly",
+          "name": "readonly_marker",
+          "propertyName": "readonlyMarker",
+          "paramName": "readonlyMarker",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3475,7 +3464,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_kw_readonly",
+              "name": "_kw_readonly_marker",
               "unresolved": true
             }
           ],
@@ -3483,14 +3472,14 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_readonly"
+              "_kw_readonly_marker"
             ]
           }
         },
         {
-          "name": "abstract",
-          "propertyName": "abstract",
-          "paramName": "abstract",
+          "name": "abstract_marker",
+          "propertyName": "abstractMarker",
+          "paramName": "abstractMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -3498,7 +3487,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_abstract",
+              "name": "_kw_abstract_marker",
               "unresolved": true
             }
           ],
@@ -3506,7 +3495,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_abstract"
+              "_kw_abstract_marker"
             ]
           }
         }
@@ -3522,9 +3511,9 @@
       "name": "_public_field_definition_static_mods",
       "fields": [
         {
-          "name": "static",
-          "propertyName": "static",
-          "paramName": "static_",
+          "name": "static_marker",
+          "propertyName": "staticMarker",
+          "paramName": "staticMarker",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3532,7 +3521,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_kw_static",
+              "name": "_kw_static_marker",
               "unresolved": true
             }
           ],
@@ -3540,14 +3529,14 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_static"
+              "_kw_static_marker"
             ]
           }
         },
         {
-          "name": "readonly",
-          "propertyName": "readonly",
-          "paramName": "readonly",
+          "name": "readonly_marker",
+          "propertyName": "readonlyMarker",
+          "paramName": "readonlyMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -3555,7 +3544,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_readonly",
+              "name": "_kw_readonly_marker",
               "unresolved": true
             }
           ],
@@ -3563,7 +3552,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_readonly"
+              "_kw_readonly_marker"
             ]
           }
         }
@@ -5094,15 +5083,15 @@
                 {
                   "kind": "node-ref",
                   "multiplicity": "optional",
-                  "name": "_kw_async",
+                  "name": "_kw_async_marker",
                   "unresolved": true
                 }
               ],
-              "source": "override",
+              "source": "enriched",
               "projection": {
                 "typeName": "",
                 "kinds": [
-                  "_kw_async"
+                  "_kw_async_marker"
                 ]
               }
             },
@@ -5174,15 +5163,15 @@
                 {
                   "kind": "node-ref",
                   "multiplicity": "optional",
-                  "name": "_kw_async",
+                  "name": "_kw_async_marker",
                   "unresolved": true
                 }
               ],
-              "source": "override",
+              "source": "enriched",
               "projection": {
                 "typeName": "",
                 "kinds": [
-                  "_kw_async"
+                  "_kw_async_marker"
                 ]
               }
             },
@@ -5258,15 +5247,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_async",
+              "name": "_kw_async_marker",
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_async"
+              "_kw_async_marker"
             ]
           }
         },
@@ -5340,15 +5329,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_async",
+              "name": "_kw_async_marker",
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_async"
+              "_kw_async_marker"
             ]
           }
         },
@@ -7328,15 +7317,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_abstract",
+              "name": "_kw_abstract_marker",
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_abstract"
+              "_kw_abstract_marker"
             ]
           }
         },
@@ -7431,7 +7420,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_abstract",
+              "name": "_kw_abstract_marker",
               "unresolved": true
             }
           ],
@@ -7439,7 +7428,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_abstract"
+              "_kw_abstract_marker"
             ]
           }
         },
@@ -8242,7 +8231,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_const",
+              "name": "_kw_const_marker",
               "unresolved": true
             }
           ],
@@ -8250,7 +8239,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_const"
+              "_kw_const_marker"
             ]
           }
         },
@@ -8905,9 +8894,9 @@
           }
         },
         {
-          "name": "static",
-          "propertyName": "static",
-          "paramName": "static_",
+          "name": "static_marker",
+          "propertyName": "staticMarker",
+          "paramName": "staticMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8915,7 +8904,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_static",
+              "name": "_kw_static_marker",
               "unresolved": true
             }
           ],
@@ -8923,7 +8912,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_static"
+              "_kw_static_marker"
             ]
           }
         },
@@ -9086,7 +9075,7 @@
               "value": "await"
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": []
@@ -9407,7 +9396,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_async",
+              "name": "_kw_async_marker",
               "unresolved": true
             }
           ],
@@ -9415,7 +9404,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_async"
+              "_kw_async_marker"
             ]
           }
         },
@@ -9586,7 +9575,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_async",
+              "name": "_kw_async_marker",
               "unresolved": true
             }
           ],
@@ -9594,7 +9583,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_async"
+              "_kw_async_marker"
             ]
           }
         },
@@ -9749,7 +9738,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_async",
+              "name": "_kw_async_marker",
               "unresolved": true
             }
           ],
@@ -9757,7 +9746,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_async"
+              "_kw_async_marker"
             ]
           }
         },
@@ -10013,7 +10002,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_async",
+              "name": "_kw_async_marker",
               "unresolved": true
             }
           ],
@@ -10021,7 +10010,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_async"
+              "_kw_async_marker"
             ]
           }
         },
@@ -10176,7 +10165,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_async",
+              "name": "_kw_async_marker",
               "unresolved": true
             }
           ],
@@ -10184,7 +10173,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_async"
+              "_kw_async_marker"
             ]
           }
         },
@@ -13122,7 +13111,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_static",
+              "name": "_kw_static_marker",
               "unresolved": true
             },
             {
@@ -13136,7 +13125,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_static",
+              "_kw_static_marker",
               "override_modifier"
             ]
           }
@@ -13152,7 +13141,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_readonly",
+              "name": "_kw_readonly_marker",
               "unresolved": true
             }
           ],
@@ -13160,7 +13149,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_readonly"
+              "_kw_readonly_marker"
             ]
           }
         },
@@ -13175,7 +13164,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_async",
+              "name": "_kw_async_marker",
               "unresolved": true
             }
           ],
@@ -13183,7 +13172,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_async"
+              "_kw_async_marker"
             ]
           }
         },
@@ -13414,7 +13403,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_static",
+              "name": "_kw_static_marker",
               "unresolved": true
             },
             {
@@ -13428,7 +13417,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_static",
+              "_kw_static_marker",
               "override_modifier"
             ]
           }
@@ -13444,15 +13433,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_readonly",
+              "name": "_kw_readonly_marker",
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_readonly"
+              "_kw_readonly_marker"
             ]
           }
         },
@@ -13467,15 +13456,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_async",
+              "name": "_kw_async_marker",
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_async"
+              "_kw_async_marker"
             ]
           }
         },
@@ -14595,15 +14584,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_readonly",
+              "name": "_kw_readonly_marker",
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_readonly"
+              "_kw_readonly_marker"
             ]
           }
         },
@@ -15278,7 +15267,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_static",
+              "name": "_kw_static_marker",
               "unresolved": true
             },
             {
@@ -15292,7 +15281,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_static",
+              "_kw_static_marker",
               "override_modifier"
             ]
           }
@@ -15308,15 +15297,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_readonly",
+              "name": "_kw_readonly_marker",
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_readonly"
+              "_kw_readonly_marker"
             ]
           }
         },
@@ -15781,15 +15770,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_readonly",
+              "name": "_kw_readonly_marker",
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_readonly"
+              "_kw_readonly_marker"
             ]
           }
         },
@@ -17422,15 +17411,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_kw_const",
+              "name": "_kw_const_marker",
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_kw_const"
+              "_kw_const_marker"
             ]
           }
         },

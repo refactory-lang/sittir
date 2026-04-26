@@ -22,12 +22,11 @@ export type LeafStringMap = {
   undefined: "undefined";
   accessibility_modifier: "public" | "private" | "protected";
   override_modifier: "override";
-  _kw_async: "async";
-  _kw_static: "static";
-  _kw_readonly: "readonly";
-  _kw_abstract: "abstract";
-  _kw_const: "const";
   _kw_async_marker: "async";
+  _kw_static_marker: "static";
+  _kw_readonly_marker: "readonly";
+  _kw_abstract_marker: "abstract";
+  _kw_const_marker: "const";
   as: "as";
   from: "from";
   var: "var";
@@ -324,12 +323,11 @@ export const enum SyntaxKind {
   AccessibilityModifier = 'accessibility_modifier',
   OverrideModifier = 'override_modifier',
   PredefinedType = 'predefined_type',
-  KwAsync = '_kw_async',
-  KwStatic = '_kw_static',
-  KwReadonly = '_kw_readonly',
-  KwAbstract = '_kw_abstract',
-  KwConst = '_kw_const',
   KwAsyncMarker = '_kw_async_marker',
+  KwStaticMarker = '_kw_static_marker',
+  KwReadonlyMarker = '_kw_readonly_marker',
+  KwAbstractMarker = '_kw_abstract_marker',
+  KwConstMarker = '_kw_const_marker',
   AutomaticSemicolon = '_automatic_semicolon',
   TernaryQmark = '_ternary_qmark',
   HtmlComment = 'html_comment',
@@ -1379,7 +1377,7 @@ export interface FieldDefinition {
   readonly $type: 'field_definition';
   readonly $fields: {
     readonly decorator: readonly (Decorator)[];
-    readonly static?: BooleanKeyword<"static">;
+    readonly static_marker?: BooleanKeyword<"static">;
     readonly property: PropertyName;
     readonly value?: Expression;
   };
@@ -2269,7 +2267,7 @@ export interface PublicFieldDefinitionDeclareFirst {
 export interface PublicFieldDefinitionAccessFirst {
   readonly $type: 'public_field_definition_access_first';
   readonly $fields: {
-    readonly declare?: BooleanKeyword<"declare">;
+    readonly declare_marker?: BooleanKeyword<"declare">;
   };
   readonly $children: readonly [AccessibilityModifier];
 }
@@ -2277,8 +2275,8 @@ export interface PublicFieldDefinitionAccessFirst {
 export interface PublicFieldDefinitionStaticMods {
   readonly $type: 'public_field_definition_static_mods';
   readonly $fields: {
-    readonly static: AutoStamp<"static">;
-    readonly readonly?: BooleanKeyword<"readonly">;
+    readonly static_marker: AutoStamp<"static">;
+    readonly readonly_marker?: BooleanKeyword<"readonly">;
   };
   readonly $children: readonly [OverrideModifier];
 }
@@ -2286,23 +2284,23 @@ export interface PublicFieldDefinitionStaticMods {
 export interface PublicFieldDefinitionAbstractFirst {
   readonly $type: 'public_field_definition_abstract_first';
   readonly $fields: {
-    readonly abstract: AutoStamp<"abstract">;
-    readonly readonly?: BooleanKeyword<"readonly">;
+    readonly abstract_marker: AutoStamp<"abstract">;
+    readonly readonly_marker?: BooleanKeyword<"readonly">;
   };
 }
 
 export interface PublicFieldDefinitionReadonlyFirst {
   readonly $type: 'public_field_definition_readonly_first';
   readonly $fields: {
-    readonly readonly: AutoStamp<"readonly">;
-    readonly abstract?: BooleanKeyword<"abstract">;
+    readonly readonly_marker: AutoStamp<"readonly">;
+    readonly abstract_marker?: BooleanKeyword<"abstract">;
   };
 }
 
 export interface PublicFieldDefinitionAccessorOpt {
   readonly $type: 'public_field_definition_accessor_opt';
   readonly $fields: {
-    readonly accessor: AutoStamp<"accessor">;
+    readonly accessor_marker: AutoStamp<"accessor">;
   };
 }
 

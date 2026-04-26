@@ -559,7 +559,7 @@
     ],
     "field_definition": [
       "decorator",
-      "static",
+      "static_marker",
       "property",
       "value"
     ],

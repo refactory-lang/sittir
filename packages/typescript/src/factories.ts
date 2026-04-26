@@ -2539,7 +2539,7 @@ export function classBody(...children: (T.ClassBodyMethod | T.ClassBodyMethodSig
 export function fieldDefinition(config: ConfigOf<T.FieldDefinition>) {
   const fields = {
     decorator: config.decorator,
-    static: config.static ? "static" as const : undefined,
+    static_marker: config.staticMarker ? "static" as const : undefined,
     property: config.property,
     value: config.value,
   };
@@ -2549,7 +2549,7 @@ export function fieldDefinition(config: ConfigOf<T.FieldDefinition>) {
     $named: true as const,
     $fields: fields,
     decorator(...values: T.Decorator[]) { return _fsm(config, fieldDefinition, 'decorator', values, config?.decorator); },
-    static(value?: "static" | undefined) { return _fs(config, fieldDefinition, 'static', value, config?.static); },
+    staticMarker(value?: "static" | undefined) { return _fs(config, fieldDefinition, 'staticMarker', value, config?.staticMarker); },
     property(value?: T.PropertyName) { return _fs(config, fieldDefinition, 'property', value, config?.property); },
     value(value?: T.Expression | undefined) { return _fs(config, fieldDefinition, 'value', value, config?.value); },
     render(this: AnyNodeData): string { return render(this); },
@@ -4657,14 +4657,14 @@ export function publicFieldDefinitionDeclareFirst(child?: T.AccessibilityModifie
 
 export function publicFieldDefinitionAccessorOpt(_config?: ConfigOf<T.PublicFieldDefinitionAccessorOpt>) {
   const fields = {
-    accessor: "accessor" as const,
+    accessor_marker: "accessor" as const,
   };
   return {
     $type: '_public_field_definition_accessor_opt' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    get accessor() { return fields.accessor; },
+    get accessorMarker() { return fields.accessor_marker; },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
