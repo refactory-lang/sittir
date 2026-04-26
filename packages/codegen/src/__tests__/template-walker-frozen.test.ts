@@ -306,8 +306,8 @@ const FROZEN_CASES: FrozenCase[] = [
         name: 'minimal interface renders without stray spaces',
         source: 'interface Foo {}',
         target: 'interface Foo {}',
-        mode: 'fail',
-        why: 'Optional type_parameters + extends_type_clause leave double space before body when absent.',
+        mode: 'pass',
+        why: 'Fixed in 016/walker-refactor-4 — optional `type_parameters` placeholder is now wrapped with `{% if type_parameters | isPresent %} {{ type_parameters }}{% endif %}` (leading separator absorbed) by the post-walker `wrapOptionalFieldPlaceholders` pass, so the absent slot contributes zero whitespace.',
     },
     {
         grammar: 'typescript',
@@ -315,8 +315,8 @@ const FROZEN_CASES: FrozenCase[] = [
         name: 'interface with extends',
         source: 'interface Foo extends Bar {}',
         target: 'interface Foo extends Bar {}',
-        mode: 'fail',
-        why: 'Same separator-outside-conditional issue around the optional type_parameters even when extends_type_clause is present.',
+        mode: 'pass',
+        why: 'Fixed in 016/walker-refactor-4 — same as the minimal-interface case; the optional type_parameters wrapping cleans up double-space even when the heritage clause is present.',
     },
     {
         grammar: 'typescript',

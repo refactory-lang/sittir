@@ -70,7 +70,7 @@
       "$nodeId": 1420712,
       "$named": true
     },
-    "expectedOutput": "async fn abc  () {}"
+    "expectedOutput": "async fn abc () {}"
   },
   {
     "kind": "roundtrip",
@@ -78,9 +78,9 @@
     "sourceIn": "async fn abc() {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "async fn abc  () {}",
+    "expectedSourceOut": "async fn abc () {}",
     "expectedReparseTree": "(function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) body: (block))",
-    "wrappedText": "async fn abc  () {}",
+    "wrappedText": "async fn abc () {}",
     "wrappedOffset": 0
   },
   {
@@ -1785,7 +1785,7 @@
       "$nodeId": 1485864,
       "$named": true
     },
-    "expectedOutput": "fn main  () {}"
+    "expectedOutput": "fn main () {}"
   },
   {
     "kind": "roundtrip",
@@ -1793,9 +1793,9 @@
     "sourceIn": "fn main() {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn main  () {}",
+    "expectedSourceOut": "fn main () {}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block))",
-    "wrappedText": "fn main  () {}",
+    "wrappedText": "fn main () {}",
     "wrappedOffset": 0
   },
   {
@@ -2869,7 +2869,7 @@
       "$nodeId": 1529320,
       "$named": true
     },
-    "expectedOutput": "const fn main  () {}"
+    "expectedOutput": "const fn main () {}"
   },
   {
     "kind": "roundtrip",
@@ -2877,9 +2877,9 @@
     "sourceIn": "const fn main() {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "const fn main  () {}",
+    "expectedSourceOut": "const fn main () {}",
     "expectedReparseTree": "(function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) body: (block))",
-    "wrappedText": "const fn main  () {}",
+    "wrappedText": "const fn main () {}",
     "wrappedOffset": 0
   },
   {
@@ -3015,7 +3015,7 @@
       "$nodeId": 1533328,
       "$named": true
     },
-    "expectedOutput": "fn triples  (a: impl B) ->impl Iterator<Item=(usize)> {\n}"
+    "expectedOutput": "fn triples (a: impl B) ->impl Iterator<Item=(usize)> {\n}"
   },
   {
     "kind": "roundtrip",
@@ -3023,9 +3023,9 @@
     "sourceIn": "fn triples(a: impl B) -> impl Iterator<Item=(usize)> {\n}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn triples  (a: impl B) ->impl Iterator<Item=(usize)> {\n}",
+    "expectedSourceOut": "fn triples (a: impl B) ->impl Iterator<Item=(usize)> {\n}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameter pattern: (identifier) type: (abstract_type trait: (type_identifier)))) return_type: (abstract_type trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_binding name: (type_identifier) type: (tuple_type (primitive_type)))))) body: (block))",
-    "wrappedText": "fn triples  (a: impl B) ->impl Iterator<Item=(usize)> {\n}",
+    "wrappedText": "fn triples (a: impl B) ->impl Iterator<Item=(usize)> {\n}",
     "wrappedOffset": 0
   },
   {
@@ -3575,7 +3575,7 @@
       "$nodeId": 1550864,
       "$named": true
     },
-    "expectedOutput": "fn aborts  () ->! {}"
+    "expectedOutput": "fn aborts () ->! {}"
   },
   {
     "kind": "roundtrip",
@@ -3583,9 +3583,9 @@
     "sourceIn": "fn aborts() -> ! {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn aborts  () ->! {}",
+    "expectedSourceOut": "fn aborts () ->! {}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) return_type: (never_type) body: (block))",
-    "wrappedText": "fn aborts  () ->! {}",
+    "wrappedText": "fn aborts () ->! {}",
     "wrappedOffset": 0
   },
   {
@@ -3710,7 +3710,7 @@
       "$nodeId": 1554176,
       "$named": true
     },
-    "expectedOutput": "extern \"C\" fn foo  () {}"
+    "expectedOutput": "extern \"C\" fn foo () {}"
   },
   {
     "kind": "roundtrip",
@@ -3718,9 +3718,9 @@
     "sourceIn": "extern \"C\" fn foo() {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "extern \"C\" fn foo  () {}",
+    "expectedSourceOut": "extern \"C\" fn foo () {}",
     "expectedReparseTree": "(function_item function_modifiers: (function_modifiers modifier: (extern_modifier string_literal: (string_literal (string_content)))) name: (identifier) parameters: (parameters) body: (block))",
-    "wrappedText": "extern \"C\" fn foo  () {}",
+    "wrappedText": "extern \"C\" fn foo () {}",
     "wrappedOffset": 0
   },
   {
@@ -5466,7 +5466,7 @@
       "$nodeId": 1633816,
       "$named": true
     },
-    "expectedOutput": "struct Proton  ;"
+    "expectedOutput": "struct Proton ;"
   },
   {
     "kind": "roundtrip",
@@ -5474,9 +5474,9 @@
     "sourceIn": "struct Proton;",
     "pattern": "struct_item",
     "edits": [],
-    "expectedSourceOut": "struct Proton  ;",
+    "expectedSourceOut": "struct Proton ;",
     "expectedReparseTree": "(struct_item name: (type_identifier) (struct_item_unit))",
-    "wrappedText": "struct Proton  ;",
+    "wrappedText": "struct Proton ;",
     "wrappedOffset": 0
   },
   {
@@ -5652,7 +5652,7 @@
       "$nodeId": 1647208,
       "$named": true
     },
-    "expectedOutput": "pub union in6_addr__bindgen_ty_1  {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}"
+    "expectedOutput": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}"
   },
   {
     "kind": "roundtrip",
@@ -5660,9 +5660,9 @@
     "sourceIn": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}",
     "pattern": "union_item",
     "edits": [],
-    "expectedSourceOut": "pub union in6_addr__bindgen_ty_1  {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}",
+    "expectedSourceOut": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}",
     "expectedReparseTree": "(union_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (field_declaration_list (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal))) (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal))) (field_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (field_identifier) type: (array_type element: (type_identifier) length: (integer_literal))) (field_declaration name: (field_identifier) type: (array_type element: (primitive_type) length: (integer_literal)))))",
-    "wrappedText": "pub union in6_addr__bindgen_ty_1  {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}",
+    "wrappedText": "pub union in6_addr__bindgen_ty_1 {\n    pub __u6_addr8: [__uint8_t; 16usize],\n    pub __u6_addr16: [__uint16_t; 8usize],\n    pub __u6_addr32: [__uint32_t; 4usize],\n    _bindgen_union_align: [u32; 4usize],\n}",
     "wrappedOffset": 0
   },
   {
@@ -6245,7 +6245,7 @@
       "$nodeId": 1670792,
       "$named": true
     },
-    "expectedOutput": "pub enum c_style_enum  {\n    val1 = 1,\n    val2 = 2\n}"
+    "expectedOutput": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}"
   },
   {
     "kind": "roundtrip",
@@ -6253,9 +6253,9 @@
     "sourceIn": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}",
     "pattern": "enum_item",
     "edits": [],
-    "expectedSourceOut": "pub enum c_style_enum  {\n    val1 = 1,\n    val2 = 2\n}",
+    "expectedSourceOut": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}",
     "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (enum_variant name: (identifier) value: (integer_literal)) (enum_variant name: (identifier) value: (integer_literal))))",
-    "wrappedText": "pub enum c_style_enum  {\n    val1 = 1,\n    val2 = 2\n}",
+    "wrappedText": "pub enum c_style_enum {\n    val1 = 1,\n    val2 = 2\n}",
     "wrappedOffset": 0
   },
   {
@@ -6358,7 +6358,7 @@
       "$nodeId": 1678872,
       "$named": true
     },
-    "expectedOutput": "fn foo  (mut x : u32) {\n}"
+    "expectedOutput": "fn foo (mut x : u32) {\n}"
   },
   {
     "kind": "roundtrip",
@@ -6366,9 +6366,9 @@
     "sourceIn": "fn foo(mut x : u32) {\n}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn foo  (mut x : u32) {\n}",
+    "expectedSourceOut": "fn foo (mut x : u32) {\n}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameter mutable_specifier: (mutable_specifier) pattern: (identifier) type: (primitive_type))) body: (block))",
-    "wrappedText": "fn foo  (mut x : u32) {\n}",
+    "wrappedText": "fn foo (mut x : u32) {\n}",
     "wrappedOffset": 0
   },
   {
@@ -6482,7 +6482,7 @@
       "$nodeId": 1682968,
       "$named": true
     },
-    "expectedOutput": "fn f1  ([x, y]: [u32; 2]) {}"
+    "expectedOutput": "fn f1 ([x, y]: [u32; 2]) {}"
   },
   {
     "kind": "roundtrip",
@@ -6490,9 +6490,9 @@
     "sourceIn": "fn f1([x, y]: [u32; 2]) {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn f1  ([x, y]: [u32; 2]) {}",
+    "expectedSourceOut": "fn f1 ([x, y]: [u32; 2]) {}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameter pattern: (slice_pattern (identifier) (identifier)) type: (array_type element: (primitive_type) length: (integer_literal)))) body: (block))",
-    "wrappedText": "fn f1  ([x, y]: [u32; 2]) {}",
+    "wrappedText": "fn f1 ([x, y]: [u32; 2]) {}",
     "wrappedOffset": 0
   },
   {
@@ -7039,7 +7039,7 @@
       "$nodeId": 1697824,
       "$named": true
     },
-    "expectedOutput": "trait Callback   {\n    fn call(self: Box<Self>);\n}"
+    "expectedOutput": "trait Callback {\n    fn call(self: Box<Self>);\n}"
   },
   {
     "kind": "roundtrip",
@@ -7047,9 +7047,9 @@
     "sourceIn": "trait Callback {\n    fn call(self: Box<Self>);\n}",
     "pattern": "trait_item",
     "edits": [],
-    "expectedSourceOut": "trait Callback   {\n    fn call(self: Box<Self>);\n}",
+    "expectedSourceOut": "trait Callback {\n    fn call(self: Box<Self>);\n}",
     "expectedReparseTree": "(trait_item name: (type_identifier) body: (declaration_list (function_signature_item name: (identifier) parameters: (parameters (parameter pattern: (self) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier))))))))",
-    "wrappedText": "trait Callback   {\n    fn call(self: Box<Self>);\n}",
+    "wrappedText": "trait Callback {\n    fn call(self: Box<Self>);\n}",
     "wrappedOffset": 0
   },
   {
@@ -7112,7 +7112,7 @@
       "$nodeId": 1697528,
       "$named": true
     },
-    "expectedOutput": "fn call  (self: Box<Self>);"
+    "expectedOutput": "fn call (self: Box<Self>);"
   },
   {
     "kind": "roundtrip",
@@ -7120,9 +7120,9 @@
     "sourceIn": "fn call(self: Box<Self>);",
     "pattern": "function_signature_item",
     "edits": [],
-    "expectedSourceOut": "fn call  (self: Box<Self>);",
+    "expectedSourceOut": "fn call (self: Box<Self>);",
     "expectedReparseTree": "(function_signature_item name: (identifier) parameters: (parameters (parameter pattern: (self) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier))))))",
-    "wrappedText": "fn call  (self: Box<Self>);",
+    "wrappedText": "fn call (self: Box<Self>);",
     "wrappedOffset": 0
   },
   {
@@ -7331,7 +7331,7 @@
       "$nodeId": 1702528,
       "$named": true
     },
-    "expectedOutput": "trait Foo   {\n    const X: u8;\n}"
+    "expectedOutput": "trait Foo {\n    const X: u8;\n}"
   },
   {
     "kind": "roundtrip",
@@ -7339,9 +7339,9 @@
     "sourceIn": "trait Foo {\n    const X: u8;\n}",
     "pattern": "trait_item",
     "edits": [],
-    "expectedSourceOut": "trait Foo   {\n    const X: u8;\n}",
+    "expectedSourceOut": "trait Foo {\n    const X: u8;\n}",
     "expectedReparseTree": "(trait_item name: (type_identifier) body: (declaration_list (const_item name: (identifier) type: (primitive_type))))",
-    "wrappedText": "trait Foo   {\n    const X: u8;\n}",
+    "wrappedText": "trait Foo {\n    const X: u8;\n}",
     "wrappedOffset": 0
   },
   {
@@ -7742,7 +7742,7 @@
       "$nodeId": 1710696,
       "$named": true
     },
-    "expectedOutput": "type Inch  =u64 ;"
+    "expectedOutput": "type Inch=u64;"
   },
   {
     "kind": "roundtrip",
@@ -7750,9 +7750,9 @@
     "sourceIn": "type Inch = u64;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type Inch  =u64 ;",
+    "expectedSourceOut": "type Inch=u64;",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (primitive_type))",
-    "wrappedText": "type Inch  =u64 ;",
+    "wrappedText": "type Inch=u64;",
     "wrappedOffset": 0
   },
   {
@@ -8140,7 +8140,7 @@
       "$nodeId": 1721672,
       "$named": true
     },
-    "expectedOutput": "type Foo <T> where T: Copy=Box<T> ;"
+    "expectedOutput": "type Foo <T> where T: Copy=Box<T>;"
   },
   {
     "kind": "roundtrip",
@@ -8148,9 +8148,9 @@
     "sourceIn": "type Foo<T> where T: Copy = Box<T>;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type Foo <T> where T: Copy=Box<T> ;",
+    "expectedSourceOut": "type Foo <T> where T: Copy=Box<T>;",
     "expectedReparseTree": "(type_item name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) where_clause: (where_clause (where_predicate left: (type_identifier) bounds: (trait_bounds (type_identifier)))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier))))",
-    "wrappedText": "type Foo <T> where T: Copy=Box<T> ;",
+    "wrappedText": "type Foo <T> where T: Copy=Box<T>;",
     "wrappedOffset": 0
   },
   {
@@ -8264,7 +8264,7 @@
       "$nodeId": 1725584,
       "$named": true
     },
-    "expectedOutput": "fn main  () {\n    ;\n}"
+    "expectedOutput": "fn main () {\n    ;\n}"
   },
   {
     "kind": "roundtrip",
@@ -8272,9 +8272,9 @@
     "sourceIn": "fn main() {\n    ;\n}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn main  () {\n    ;\n}",
+    "expectedSourceOut": "fn main () {\n    ;\n}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block (empty_statement)))",
-    "wrappedText": "fn main  () {\n    ;\n}",
+    "wrappedText": "fn main () {\n    ;\n}",
     "wrappedOffset": 0
   },
   {
@@ -8474,7 +8474,7 @@
       "$nodeId": 1729160,
       "$named": true
     },
-    "expectedOutput": "fn test_foo  () {}"
+    "expectedOutput": "fn test_foo () {}"
   },
   {
     "kind": "roundtrip",
@@ -8482,9 +8482,9 @@
     "sourceIn": "fn test_foo() {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn test_foo  () {}",
+    "expectedSourceOut": "fn test_foo () {}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block))",
-    "wrappedText": "fn test_foo  () {}",
+    "wrappedText": "fn test_foo () {}",
     "wrappedOffset": 0
   },
   {
@@ -8589,7 +8589,7 @@
       "$nodeId": 1730560,
       "$named": true
     },
-    "expectedOutput": "struct Baz  ;"
+    "expectedOutput": "struct Baz ;"
   },
   {
     "kind": "roundtrip",
@@ -8597,9 +8597,9 @@
     "sourceIn": "struct Baz;",
     "pattern": "struct_item",
     "edits": [],
-    "expectedSourceOut": "struct Baz  ;",
+    "expectedSourceOut": "struct Baz ;",
     "expectedReparseTree": "(struct_item name: (type_identifier) (struct_item_unit))",
-    "wrappedText": "struct Baz  ;",
+    "wrappedText": "struct Baz ;",
     "wrappedOffset": 0
   },
   {
@@ -9710,7 +9710,7 @@
       "$nodeId": 1782208,
       "$named": true
     },
-    "expectedOutput": "fn foo  () {}"
+    "expectedOutput": "fn foo () {}"
   },
   {
     "kind": "roundtrip",
@@ -9718,9 +9718,9 @@
     "sourceIn": "fn foo() {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn foo  () {}",
+    "expectedSourceOut": "fn foo () {}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block))",
-    "wrappedText": "fn foo  () {}",
+    "wrappedText": "fn foo () {}",
     "wrappedOffset": 0
   },
   {
@@ -10217,7 +10217,7 @@
       "$nodeId": 1822544,
       "$named": true
     },
-    "expectedOutput": "pub enum Error  {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}"
+    "expectedOutput": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}"
   },
   {
     "kind": "roundtrip",
@@ -10225,9 +10225,9 @@
     "sourceIn": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
     "pattern": "enum_item",
     "edits": [],
-    "expectedSourceOut": "pub enum Error  {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
+    "expectedSourceOut": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
     "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (string_literal (string_content)) (identifier) (token_tree (delim_token_tree_paren (integer_literal))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list type: (type_identifier))) (attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (string_literal (string_content)) (identifier) (identifier) (identifier) (identifier))))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration name: (field_identifier) type: (primitive_type)) (field_declaration name: (field_identifier) type: (type_identifier))))))",
-    "wrappedText": "pub enum Error  {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
+    "wrappedText": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
     "wrappedOffset": 0
   },
   {
@@ -10394,7 +10394,7 @@
       "$nodeId": 1846832,
       "$named": true
     },
-    "expectedOutput": "fn foo  () {\n   bar(x,\n       #[cfg(foo = \"bar\")]\n       y);\n   let z = [#[hello] 2, 7, 8];\n   let t = (#[hello] 2, 7, 8);\n}"
+    "expectedOutput": "fn foo () {\n   bar(x,\n       #[cfg(foo = \"bar\")]\n       y);\n   let z = [#[hello] 2, 7, 8];\n   let t = (#[hello] 2, 7, 8);\n}"
   },
   {
     "kind": "roundtrip",
@@ -10402,9 +10402,9 @@
     "sourceIn": "fn foo() {\n   bar(x,\n       #[cfg(foo = \"bar\")]\n       y);\n   let z = [#[hello] 2, 7, 8];\n   let t = (#[hello] 2, 7, 8);\n}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn foo  () {\n   bar(x,\n       #[cfg(foo = \"bar\")]\n       y);\n   let z = [#[hello] 2, 7, 8];\n   let t = (#[hello] 2, 7, 8);\n}",
+    "expectedSourceOut": "fn foo () {\n   bar(x,\n       #[cfg(foo = \"bar\")]\n       y);\n   let z = [#[hello] 2, 7, 8];\n   let t = (#[hello] 2, 7, 8);\n}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments (identifier) (attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (string_literal (string_content)))))) (identifier))))) (let_declaration pattern: (identifier) value: (array_expression (array_expression_list (attribute_item attribute: (attribute (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))) (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))))",
-    "wrappedText": "fn foo  () {\n   bar(x,\n       #[cfg(foo = \"bar\")]\n       y);\n   let z = [#[hello] 2, 7, 8];\n   let t = (#[hello] 2, 7, 8);\n}",
+    "wrappedText": "fn foo () {\n   bar(x,\n       #[cfg(foo = \"bar\")]\n       y);\n   let z = [#[hello] 2, 7, 8];\n   let t = (#[hello] 2, 7, 8);\n}",
     "wrappedOffset": 0
   },
   {
@@ -10988,7 +10988,7 @@
       "$nodeId": 1887416,
       "$named": true
     },
-    "expectedOutput": "unsafe impl  Foo {\n}"
+    "expectedOutput": "unsafe impl Foo {\n}"
   },
   {
     "kind": "roundtrip",
@@ -10996,9 +10996,9 @@
     "sourceIn": "unsafe impl Foo {\n}",
     "pattern": "impl_item",
     "edits": [],
-    "expectedSourceOut": "unsafe impl  Foo {\n}",
+    "expectedSourceOut": "unsafe impl Foo {\n}",
     "expectedReparseTree": "(impl_item type: (type_identifier) (impl_item_body body: (declaration_list)))",
-    "wrappedText": "unsafe impl  Foo {\n}",
+    "wrappedText": "unsafe impl Foo {\n}",
     "wrappedOffset": 0
   },
   {
@@ -11085,7 +11085,7 @@
       "$nodeId": 1889008,
       "$named": true
     },
-    "expectedOutput": "impl  ! Send for Foo {}"
+    "expectedOutput": "impl ! Send for Foo {}"
   },
   {
     "kind": "roundtrip",
@@ -11093,9 +11093,9 @@
     "sourceIn": "impl !Send for Foo {}",
     "pattern": "impl_item",
     "edits": [],
-    "expectedSourceOut": "impl  ! Send for Foo {}",
+    "expectedSourceOut": "impl ! Send for Foo {}",
     "expectedReparseTree": "(impl_item trait: (type_identifier) type: (type_identifier) (impl_item_body body: (declaration_list)))",
-    "wrappedText": "impl  ! Send for Foo {}",
+    "wrappedText": "impl ! Send for Foo {}",
     "wrappedOffset": 0
   },
   {
@@ -11169,7 +11169,7 @@
       "$nodeId": 1890696,
       "$named": true
     },
-    "expectedOutput": "pub unsafe trait Trait   {}"
+    "expectedOutput": "pub unsafe trait Trait {}"
   },
   {
     "kind": "roundtrip",
@@ -11177,9 +11177,9 @@
     "sourceIn": "pub unsafe trait Trait {}",
     "pattern": "trait_item",
     "edits": [],
-    "expectedSourceOut": "pub unsafe trait Trait   {}",
+    "expectedSourceOut": "pub unsafe trait Trait {}",
     "expectedReparseTree": "(trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (declaration_list))",
-    "wrappedText": "pub unsafe trait Trait   {}",
+    "wrappedText": "pub unsafe trait Trait {}",
     "wrappedOffset": 0
   },
   {
@@ -11306,7 +11306,7 @@
       "$nodeId": 1892232,
       "$named": true
     },
-    "expectedOutput": "unsafe impl  Trait for dyn (::std::any::Any) + Send { }"
+    "expectedOutput": "unsafe impl Trait for dyn (::std::any::Any) + Send { }"
   },
   {
     "kind": "roundtrip",
@@ -11314,9 +11314,9 @@
     "sourceIn": "unsafe impl Trait for dyn (::std::any::Any) + Send { }",
     "pattern": "impl_item",
     "edits": [],
-    "expectedSourceOut": "unsafe impl  Trait for dyn (::std::any::Any) + Send { }",
+    "expectedSourceOut": "unsafe impl Trait for dyn (::std::any::Any) + Send { }",
     "expectedReparseTree": "(impl_item trait: (type_identifier) type: (bounded_type left: (dynamic_type trait: (tuple_type (scoped_type_identifier path: (scoped_identifier path: (scoped_identifier name: (identifier)) name: (identifier)) name: (type_identifier)))) right: (type_identifier)) (impl_item_body body: (declaration_list)))",
-    "wrappedText": "unsafe impl  Trait for dyn (::std::any::Any) + Send { }",
+    "wrappedText": "unsafe impl Trait for dyn (::std::any::Any) + Send { }",
     "wrappedOffset": 0
   },
   {
@@ -11819,7 +11819,7 @@
       "$nodeId": 1909784,
       "$named": true
     },
-    "expectedOutput": "impl  Foo {\n  const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }\n}"
+    "expectedOutput": "impl Foo {\n  const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }\n}"
   },
   {
     "kind": "roundtrip",
@@ -11827,9 +11827,9 @@
     "sourceIn": "impl Foo {\n  const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }\n}",
     "pattern": "impl_item",
     "edits": [],
-    "expectedSourceOut": "impl  Foo {\n  const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }\n}",
+    "expectedSourceOut": "impl Foo {\n  const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }\n}",
     "expectedReparseTree": "(impl_item type: (type_identifier) (impl_item_body body: (declaration_list (function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) return_type: (primitive_type) body: (block (line_comment (line_comment_content)) (expression_statement (expression_statement_with_semi (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))))))",
-    "wrappedText": "impl  Foo {\n  const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }\n}",
+    "wrappedText": "impl Foo {\n  const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }\n}",
     "wrappedOffset": 0
   },
   {
@@ -11925,7 +11925,7 @@
       "$nodeId": 1909400,
       "$named": true
     },
-    "expectedOutput": "const default fn bar  () ->i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }"
+    "expectedOutput": "const default fn bar () ->i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }"
   },
   {
     "kind": "roundtrip",
@@ -11933,9 +11933,9 @@
     "sourceIn": "const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "const default fn bar  () ->i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }",
+    "expectedSourceOut": "const default fn bar () ->i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }",
     "expectedReparseTree": "(function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) return_type: (primitive_type) body: (block (line_comment (line_comment_content)) (expression_statement (expression_statement_with_semi (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))))))",
-    "wrappedText": "const default fn bar  () ->i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }",
+    "wrappedText": "const default fn bar () ->i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }",
     "wrappedOffset": 0
   },
   {
@@ -11998,7 +11998,7 @@
       "$nodeId": 1920808,
       "$named": true
     },
-    "expectedOutput": "trait Add <RHS=Self>  {\n    type Output;\n    fn add(self, rhs: RHS) -> Self::Output;\n}"
+    "expectedOutput": "trait Add <RHS=Self> {\n    type Output;\n    fn add(self, rhs: RHS) -> Self::Output;\n}"
   },
   {
     "kind": "roundtrip",
@@ -12006,9 +12006,9 @@
     "sourceIn": "trait Add<RHS=Self> {\n    type Output;\n    fn add(self, rhs: RHS) -> Self::Output;\n}",
     "pattern": "trait_item",
     "edits": [],
-    "expectedSourceOut": "trait Add <RHS=Self>  {\n    type Output;\n    fn add(self, rhs: RHS) -> Self::Output;\n}",
+    "expectedSourceOut": "trait Add <RHS=Self> {\n    type Output;\n    fn add(self, rhs: RHS) -> Self::Output;\n}",
     "expectedReparseTree": "(trait_item name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier) default_type: (type_identifier))) body: (declaration_list (associated_type name: (type_identifier)) (function_signature_item name: (identifier) parameters: (parameters (self_parameter self: (self)) (parameter pattern: (identifier) type: (type_identifier))) return_type: (scoped_type_identifier path: (identifier) name: (type_identifier)))))",
-    "wrappedText": "trait Add <RHS=Self>  {\n    type Output;\n    fn add(self, rhs: RHS) -> Self::Output;\n}",
+    "wrappedText": "trait Add <RHS=Self> {\n    type Output;\n    fn add(self, rhs: RHS) -> Self::Output;\n}",
     "wrappedOffset": 0
   },
   {
@@ -12060,7 +12060,7 @@
       "$nodeId": 1919424,
       "$named": true
     },
-    "expectedOutput": "type Output  ;"
+    "expectedOutput": "type Output;"
   },
   {
     "kind": "roundtrip",
@@ -12068,9 +12068,9 @@
     "sourceIn": "type Output;",
     "pattern": "associated_type",
     "edits": [],
-    "expectedSourceOut": "type Output  ;",
+    "expectedSourceOut": "type Output;",
     "expectedReparseTree": "(associated_type name: (type_identifier))",
-    "wrappedText": "type Output  ;",
+    "wrappedText": "type Output;",
     "wrappedOffset": 0
   },
   {
@@ -12155,7 +12155,7 @@
       "$nodeId": 1920408,
       "$named": true
     },
-    "expectedOutput": "fn add  (self, rhs: RHS) ->Self::Output;"
+    "expectedOutput": "fn add (self, rhs: RHS) ->Self::Output;"
   },
   {
     "kind": "roundtrip",
@@ -12163,9 +12163,9 @@
     "sourceIn": "fn add(self, rhs: RHS) -> Self::Output;",
     "pattern": "function_signature_item",
     "edits": [],
-    "expectedSourceOut": "fn add  (self, rhs: RHS) ->Self::Output;",
+    "expectedSourceOut": "fn add (self, rhs: RHS) ->Self::Output;",
     "expectedReparseTree": "(function_signature_item name: (identifier) parameters: (parameters (self_parameter self: (self)) (parameter pattern: (identifier) type: (type_identifier))) return_type: (scoped_type_identifier path: (identifier) name: (type_identifier)))",
-    "wrappedText": "fn add  (self, rhs: RHS) ->Self::Output;",
+    "wrappedText": "fn add (self, rhs: RHS) ->Self::Output;",
     "wrappedOffset": 0
   },
   {
@@ -12290,7 +12290,7 @@
       "$nodeId": 1926304,
       "$named": true
     },
-    "expectedOutput": "trait Foo <T: ?Sized>  {\n}"
+    "expectedOutput": "trait Foo <T: ?Sized> {\n}"
   },
   {
     "kind": "roundtrip",
@@ -12298,9 +12298,9 @@
     "sourceIn": "trait Foo<T: ?Sized> {\n}",
     "pattern": "trait_item",
     "edits": [],
-    "expectedSourceOut": "trait Foo <T: ?Sized>  {\n}",
+    "expectedSourceOut": "trait Foo <T: ?Sized> {\n}",
     "expectedReparseTree": "(trait_item name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier) bounds: (trait_bounds (removed_trait_bound (type_identifier))))) body: (declaration_list))",
-    "wrappedText": "trait Foo <T: ?Sized>  {\n}",
+    "wrappedText": "trait Foo <T: ?Sized> {\n}",
     "wrappedOffset": 0
   },
   {
@@ -12416,7 +12416,7 @@
       "$nodeId": 1928856,
       "$named": true
     },
-    "expectedOutput": "fn univariant  (this: &impl ?Sized, that: &(impl LayoutCalculator + ?Sized)) {}"
+    "expectedOutput": "fn univariant (this: &impl ?Sized, that: &(impl LayoutCalculator + ?Sized)) {}"
   },
   {
     "kind": "roundtrip",
@@ -12424,9 +12424,9 @@
     "sourceIn": "fn univariant(this: &impl ?Sized, that: &(impl LayoutCalculator + ?Sized)) {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn univariant  (this: &impl ?Sized, that: &(impl LayoutCalculator + ?Sized)) {}",
+    "expectedSourceOut": "fn univariant (this: &impl ?Sized, that: &(impl LayoutCalculator + ?Sized)) {}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameter pattern: (identifier) type: (reference_type type: (abstract_type trait: (removed_trait_bound (type_identifier))))) (parameter pattern: (identifier) type: (reference_type type: (tuple_type (bounded_type left: (abstract_type trait: (type_identifier)) right: (removed_trait_bound (type_identifier))))))) body: (block))",
-    "wrappedText": "fn univariant  (this: &impl ?Sized, that: &(impl LayoutCalculator + ?Sized)) {}",
+    "wrappedText": "fn univariant (this: &impl ?Sized, that: &(impl LayoutCalculator + ?Sized)) {}",
     "wrappedOffset": 0
   },
   {
@@ -12916,7 +12916,7 @@
       "$nodeId": 1947216,
       "$named": true
     },
-    "expectedOutput": "pub trait Graph   {\n    type N: fmt::Display;\n    type E;\n}"
+    "expectedOutput": "pub trait Graph {\n    type N: fmt::Display;\n    type E;\n}"
   },
   {
     "kind": "roundtrip",
@@ -12924,9 +12924,9 @@
     "sourceIn": "pub trait Graph {\n    type N: fmt::Display;\n    type E;\n}",
     "pattern": "trait_item",
     "edits": [],
-    "expectedSourceOut": "pub trait Graph   {\n    type N: fmt::Display;\n    type E;\n}",
+    "expectedSourceOut": "pub trait Graph {\n    type N: fmt::Display;\n    type E;\n}",
     "expectedReparseTree": "(trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (declaration_list (associated_type name: (type_identifier) bounds: (trait_bounds (scoped_type_identifier path: (identifier) name: (type_identifier)))) (associated_type name: (type_identifier))))",
-    "wrappedText": "pub trait Graph   {\n    type N: fmt::Display;\n    type E;\n}",
+    "wrappedText": "pub trait Graph {\n    type N: fmt::Display;\n    type E;\n}",
     "wrappedOffset": 0
   },
   {
@@ -13029,7 +13029,7 @@
       "$nodeId": 1946624,
       "$named": true
     },
-    "expectedOutput": "type N  : fmt::Display;"
+    "expectedOutput": "type N : fmt::Display;"
   },
   {
     "kind": "roundtrip",
@@ -13037,9 +13037,9 @@
     "sourceIn": "type N: fmt::Display;",
     "pattern": "associated_type",
     "edits": [],
-    "expectedSourceOut": "type N  : fmt::Display;",
+    "expectedSourceOut": "type N : fmt::Display;",
     "expectedReparseTree": "(associated_type name: (type_identifier) bounds: (trait_bounds (scoped_type_identifier path: (identifier) name: (type_identifier))))",
-    "wrappedText": "type N  : fmt::Display;",
+    "wrappedText": "type N : fmt::Display;",
     "wrappedOffset": 0
   },
   {
@@ -13177,7 +13177,7 @@
       "$nodeId": 1952656,
       "$named": true
     },
-    "expectedOutput": "impl  Trait for T {\n    type Associated = T where 'static: 'static;\n}"
+    "expectedOutput": "impl Trait for T {\n    type Associated = T where 'static: 'static;\n}"
   },
   {
     "kind": "roundtrip",
@@ -13185,9 +13185,9 @@
     "sourceIn": "impl Trait for T {\n    type Associated = T where 'static: 'static;\n}",
     "pattern": "impl_item",
     "edits": [],
-    "expectedSourceOut": "impl  Trait for T {\n    type Associated = T where 'static: 'static;\n}",
+    "expectedSourceOut": "impl Trait for T {\n    type Associated = T where 'static: 'static;\n}",
     "expectedReparseTree": "(impl_item trait: (type_identifier) type: (type_identifier) (impl_item_body body: (declaration_list (type_item name: (type_identifier) type: (type_identifier) trailing_where_clause: (where_clause (where_predicate left: (lifetime identifier: (identifier)) bounds: (trait_bounds (lifetime identifier: (identifier)))))))))",
-    "wrappedText": "impl  Trait for T {\n    type Associated = T where 'static: 'static;\n}",
+    "wrappedText": "impl Trait for T {\n    type Associated = T where 'static: 'static;\n}",
     "wrappedOffset": 0
   },
   {
@@ -13261,7 +13261,7 @@
       "$nodeId": 1952256,
       "$named": true
     },
-    "expectedOutput": "type Associated  =T where 'static: 'static;"
+    "expectedOutput": "type Associated=T where 'static: 'static;"
   },
   {
     "kind": "roundtrip",
@@ -13269,9 +13269,9 @@
     "sourceIn": "type Associated = T where 'static: 'static;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type Associated  =T where 'static: 'static;",
+    "expectedSourceOut": "type Associated=T where 'static: 'static;",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (type_identifier) trailing_where_clause: (where_clause (where_predicate left: (lifetime identifier: (identifier)) bounds: (trait_bounds (lifetime identifier: (identifier))))))",
-    "wrappedText": "type Associated  =T where 'static: 'static;",
+    "wrappedText": "type Associated=T where 'static: 'static;",
     "wrappedOffset": 0
   },
   {
@@ -13334,7 +13334,7 @@
       "$nodeId": 1957472,
       "$named": true
     },
-    "expectedOutput": "pub trait Database   {\n    type F<'a, D>: Future<Output = D> + 'a;\n}"
+    "expectedOutput": "pub trait Database {\n    type F<'a, D>: Future<Output = D> + 'a;\n}"
   },
   {
     "kind": "roundtrip",
@@ -13342,9 +13342,9 @@
     "sourceIn": "pub trait Database {\n    type F<'a, D>: Future<Output = D> + 'a;\n}",
     "pattern": "trait_item",
     "edits": [],
-    "expectedSourceOut": "pub trait Database   {\n    type F<'a, D>: Future<Output = D> + 'a;\n}",
+    "expectedSourceOut": "pub trait Database {\n    type F<'a, D>: Future<Output = D> + 'a;\n}",
     "expectedReparseTree": "(trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (declaration_list (associated_type name: (type_identifier) type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier))) (type_parameter name: (type_identifier))) bounds: (trait_bounds (generic_type type: (type_identifier) type_arguments: (type_arguments (type_binding name: (type_identifier) type: (type_identifier)))) (lifetime identifier: (identifier))))))",
-    "wrappedText": "pub trait Database   {\n    type F<'a, D>: Future<Output = D> + 'a;\n}",
+    "wrappedText": "pub trait Database {\n    type F<'a, D>: Future<Output = D> + 'a;\n}",
     "wrappedOffset": 0
   },
   {
@@ -13595,7 +13595,7 @@
       "$nodeId": 1959320,
       "$named": true
     },
-    "expectedOutput": "impl  Database for Foo {\n    type F<'a, D> = DatabaseFuture<'a, D>;\n}"
+    "expectedOutput": "impl Database for Foo {\n    type F<'a, D> = DatabaseFuture<'a, D>;\n}"
   },
   {
     "kind": "roundtrip",
@@ -13603,9 +13603,9 @@
     "sourceIn": "impl Database for Foo {\n    type F<'a, D> = DatabaseFuture<'a, D>;\n}",
     "pattern": "impl_item",
     "edits": [],
-    "expectedSourceOut": "impl  Database for Foo {\n    type F<'a, D> = DatabaseFuture<'a, D>;\n}",
+    "expectedSourceOut": "impl Database for Foo {\n    type F<'a, D> = DatabaseFuture<'a, D>;\n}",
     "expectedReparseTree": "(impl_item trait: (type_identifier) type: (type_identifier) (impl_item_body body: (declaration_list (type_item name: (type_identifier) type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier))) (type_parameter name: (type_identifier))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (lifetime identifier: (identifier)) (type_identifier)))))))",
-    "wrappedText": "impl  Database for Foo {\n    type F<'a, D> = DatabaseFuture<'a, D>;\n}",
+    "wrappedText": "impl Database for Foo {\n    type F<'a, D> = DatabaseFuture<'a, D>;\n}",
     "wrappedOffset": 0
   },
   {
@@ -13679,7 +13679,7 @@
       "$nodeId": 1958920,
       "$named": true
     },
-    "expectedOutput": "type F <'a, D> =DatabaseFuture<'a, D> ;"
+    "expectedOutput": "type F <'a, D>=DatabaseFuture<'a, D>;"
   },
   {
     "kind": "roundtrip",
@@ -13687,9 +13687,9 @@
     "sourceIn": "type F<'a, D> = DatabaseFuture<'a, D>;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type F <'a, D> =DatabaseFuture<'a, D> ;",
+    "expectedSourceOut": "type F <'a, D>=DatabaseFuture<'a, D>;",
     "expectedReparseTree": "(type_item name: (type_identifier) type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier))) (type_parameter name: (type_identifier))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (lifetime identifier: (identifier)) (type_identifier))))",
-    "wrappedText": "type F <'a, D> =DatabaseFuture<'a, D> ;",
+    "wrappedText": "type F <'a, D>=DatabaseFuture<'a, D>;",
     "wrappedOffset": 0
   },
   {
@@ -13887,7 +13887,7 @@
       "$nodeId": 1977368,
       "$named": true
     },
-    "expectedOutput": "trait T  : for<'a> AddAssign<&'a usize> {\n}"
+    "expectedOutput": "trait T : for<'a> AddAssign<&'a usize> {\n}"
   },
   {
     "kind": "roundtrip",
@@ -13895,9 +13895,9 @@
     "sourceIn": "trait T: for<'a> AddAssign<&'a usize> {\n}",
     "pattern": "trait_item",
     "edits": [],
-    "expectedSourceOut": "trait T  : for<'a> AddAssign<&'a usize> {\n}",
+    "expectedSourceOut": "trait T : for<'a> AddAssign<&'a usize> {\n}",
     "expectedReparseTree": "(trait_item name: (type_identifier) bounds: (trait_bounds (higher_ranked_trait_bound type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier)))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (reference_type lifetime: (lifetime identifier: (identifier)) type: (primitive_type)))))) body: (declaration_list))",
-    "wrappedText": "trait T  : for<'a> AddAssign<&'a usize> {\n}",
+    "wrappedText": "trait T : for<'a> AddAssign<&'a usize> {\n}",
     "wrappedOffset": 0
   },
   {
@@ -14084,7 +14084,7 @@
       "$nodeId": 1979968,
       "$named": true
     },
-    "expectedOutput": "type FnObject <'b> =dyn for<'a> FnLike<&'a isize, &'a isize> + 'b ;"
+    "expectedOutput": "type FnObject <'b>=dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;"
   },
   {
     "kind": "roundtrip",
@@ -14092,9 +14092,9 @@
     "sourceIn": "type FnObject<'b> = dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type FnObject <'b> =dyn for<'a> FnLike<&'a isize, &'a isize> + 'b ;",
+    "expectedSourceOut": "type FnObject <'b>=dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;",
     "expectedReparseTree": "(type_item name: (type_identifier) type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier)))) type: (bounded_type left: (dynamic_type trait: (higher_ranked_trait_bound type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier)))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (reference_type lifetime: (lifetime identifier: (identifier)) type: (primitive_type)) (reference_type lifetime: (lifetime identifier: (identifier)) type: (primitive_type)))))) right: (lifetime identifier: (identifier))))",
-    "wrappedText": "type FnObject <'b> =dyn for<'a> FnLike<&'a isize, &'a isize> + 'b ;",
+    "wrappedText": "type FnObject <'b>=dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;",
     "wrappedOffset": 0
   },
   {
@@ -14281,7 +14281,7 @@
       "$nodeId": 1991928,
       "$named": true
     },
-    "expectedOutput": "pub fn a  () {}"
+    "expectedOutput": "pub fn a () {}"
   },
   {
     "kind": "roundtrip",
@@ -14289,9 +14289,9 @@
     "sourceIn": "pub fn a() {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "pub fn a  () {}",
+    "expectedSourceOut": "pub fn a () {}",
     "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) parameters: (parameters) body: (block))",
-    "wrappedText": "pub fn a  () {}",
+    "wrappedText": "pub fn a () {}",
     "wrappedOffset": 0
   },
   {
@@ -14507,7 +14507,7 @@
       "$nodeId": 2001560,
       "$named": true
     },
-    "expectedOutput": "fn foo  (str: *const c_char) {}"
+    "expectedOutput": "fn foo (str: *const c_char) {}"
   },
   {
     "kind": "roundtrip",
@@ -14515,9 +14515,9 @@
     "sourceIn": "fn foo(str: *const c_char) {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn foo  (str: *const c_char) {}",
+    "expectedSourceOut": "fn foo (str: *const c_char) {}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameter pattern: (identifier) type: (pointer_type (pointer_type_const) type: (type_identifier)))) body: (block))",
-    "wrappedText": "fn foo  (str: *const c_char) {}",
+    "wrappedText": "fn foo (str: *const c_char) {}",
     "wrappedOffset": 0
   },
   {
@@ -14812,7 +14812,7 @@
       "$nodeId": 2032528,
       "$named": true
     },
-    "expectedOutput": "crate struct Foo  (crate crate::Bar);"
+    "expectedOutput": "crate struct Foo (crate crate::Bar);"
   },
   {
     "kind": "roundtrip",
@@ -14820,9 +14820,9 @@
     "sourceIn": "crate struct Foo(crate crate::Bar);",
     "pattern": "struct_item",
     "edits": [],
-    "expectedSourceOut": "crate struct Foo  (crate crate::Bar);",
+    "expectedSourceOut": "crate struct Foo (crate crate::Bar);",
     "expectedReparseTree": "(struct_item visibility_modifier: (visibility_modifier (visibility_modifier_crate (crate))) name: (type_identifier) (struct_item_tuple body: (ordered_field_declaration_list attributes: (visibility_modifier (visibility_modifier_crate (crate))) type: (scoped_type_identifier path: (crate) name: (type_identifier)))))",
-    "wrappedText": "crate struct Foo  (crate crate::Bar);",
+    "wrappedText": "crate struct Foo (crate crate::Bar);",
     "wrappedOffset": 0
   },
   {
@@ -14958,7 +14958,7 @@
       "$nodeId": 2033288,
       "$named": true
     },
-    "expectedOutput": "crate fn foo  () { }"
+    "expectedOutput": "crate fn foo () { }"
   },
   {
     "kind": "roundtrip",
@@ -14966,9 +14966,9 @@
     "sourceIn": "crate fn foo() { }",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "crate fn foo  () { }",
+    "expectedSourceOut": "crate fn foo () { }",
     "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_crate (crate))) name: (identifier) parameters: (parameters) body: (block))",
-    "wrappedText": "crate fn foo  () { }",
+    "wrappedText": "crate fn foo () { }",
     "wrappedOffset": 0
   },
   {
@@ -15190,7 +15190,7 @@
       "$nodeId": 2042200,
       "$named": true
     },
-    "expectedOutput": "struct A  {\n  a: default::B,\n  b: union::C,\n}"
+    "expectedOutput": "struct A {\n  a: default::B,\n  b: union::C,\n}"
   },
   {
     "kind": "roundtrip",
@@ -15198,9 +15198,9 @@
     "sourceIn": "struct A {\n  a: default::B,\n  b: union::C,\n}",
     "pattern": "struct_item",
     "edits": [],
-    "expectedSourceOut": "struct A  {\n  a: default::B,\n  b: union::C,\n}",
+    "expectedSourceOut": "struct A {\n  a: default::B,\n  b: union::C,\n}",
     "expectedReparseTree": "(struct_item name: (type_identifier) (struct_item_brace body: (field_declaration_list (field_declaration name: (field_identifier) type: (scoped_type_identifier path: (identifier) name: (type_identifier))) (field_declaration name: (field_identifier) type: (scoped_type_identifier path: (identifier) name: (type_identifier))))))",
-    "wrappedText": "struct A  {\n  a: default::B,\n  b: union::C,\n}",
+    "wrappedText": "struct A {\n  a: default::B,\n  b: union::C,\n}",
     "wrappedOffset": 0
   },
   {
@@ -15816,7 +15816,7 @@
       "$nodeId": 2059312,
       "$named": true
     },
-    "expectedOutput": "fn main  () {\n  abc;\n}"
+    "expectedOutput": "fn main () {\n  abc;\n}"
   },
   {
     "kind": "roundtrip",
@@ -15824,9 +15824,9 @@
     "sourceIn": "fn main() {\n  abc;\n}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn main  () {\n  abc;\n}",
+    "expectedSourceOut": "fn main () {\n  abc;\n}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block (expression_statement (expression_statement_with_semi (identifier)))))",
-    "wrappedText": "fn main  () {\n  abc;\n}",
+    "wrappedText": "fn main () {\n  abc;\n}",
     "wrappedOffset": 0
   },
   {
@@ -15953,7 +15953,7 @@
       "$nodeId": 2064528,
       "$named": true
     },
-    "expectedOutput": "fn main  () {\n  (r#abc as r#Def).r#ghi;\n}"
+    "expectedOutput": "fn main () {\n  (r#abc as r#Def).r#ghi;\n}"
   },
   {
     "kind": "roundtrip",
@@ -15961,9 +15961,9 @@
     "sourceIn": "fn main() {\n  (r#abc as r#Def).r#ghi;\n}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn main  () {\n  (r#abc as r#Def).r#ghi;\n}",
+    "expectedSourceOut": "fn main () {\n  (r#abc as r#Def).r#ghi;\n}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block (expression_statement (expression_statement_with_semi (field_expression value: (parenthesized_expression (type_cast_expression value: (identifier) type: (type_identifier))) field: (field_identifier))))))",
-    "wrappedText": "fn main  () {\n  (r#abc as r#Def).r#ghi;\n}",
+    "wrappedText": "fn main () {\n  (r#abc as r#Def).r#ghi;\n}",
     "wrappedOffset": 0
   },
   {
@@ -18683,7 +18683,7 @@
       "$nodeId": 2225048,
       "$named": true
     },
-    "expectedOutput": "fn main  () {\n  if n == 1 {\n  } else if n == 2 {\n  } else {\n  }\n}"
+    "expectedOutput": "fn main () {\n  if n == 1 {\n  } else if n == 2 {\n  } else {\n  }\n}"
   },
   {
     "kind": "roundtrip",
@@ -18691,9 +18691,9 @@
     "sourceIn": "fn main() {\n  if n == 1 {\n  } else if n == 2 {\n  } else {\n  }\n}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn main  () {\n  if n == 1 {\n  } else if n == 2 {\n  } else {\n  }\n}",
+    "expectedSourceOut": "fn main () {\n  if n == 1 {\n  } else if n == 2 {\n  } else {\n  }\n}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block (expression_statement (expression_statement_block_ending (if_expression condition: (binary_expression left: (identifier) right: (integer_literal)) consequence: (block) alternative: (else_clause (if_expression condition: (binary_expression left: (identifier) right: (integer_literal)) consequence: (block) alternative: (else_clause (block)))))))))",
-    "wrappedText": "fn main  () {\n  if n == 1 {\n  } else if n == 2 {\n  } else {\n  }\n}",
+    "wrappedText": "fn main () {\n  if n == 1 {\n  } else if n == 2 {\n  } else {\n  }\n}",
     "wrappedOffset": 0
   },
   {
@@ -27222,7 +27222,7 @@
       "$nodeId": 2795952,
       "$named": true
     },
-    "expectedOutput": "fn foo  ((1 | 2 | 3): u8) {}"
+    "expectedOutput": "fn foo ((1 | 2 | 3): u8) {}"
   },
   {
     "kind": "roundtrip",
@@ -27230,9 +27230,9 @@
     "sourceIn": "fn foo((1 | 2 | 3): u8) {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn foo  ((1 | 2 | 3): u8) {}",
+    "expectedSourceOut": "fn foo ((1 | 2 | 3): u8) {}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameter pattern: (tuple_pattern (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal)))) type: (primitive_type))) body: (block))",
-    "wrappedText": "fn foo  ((1 | 2 | 3): u8) {}",
+    "wrappedText": "fn foo ((1 | 2 | 3): u8) {}",
     "wrappedOffset": 0
   },
   {
@@ -27357,7 +27357,7 @@
       "$nodeId": 2844072,
       "$named": true
     },
-    "expectedOutput": "fn foo  (x: i32) {\n    const CUBE: i32 = 3.pow(3);\n    match x {\n        CUBE => println!(\"three cubed\"),\n        _ => {}\n    }\n}"
+    "expectedOutput": "fn foo (x: i32) {\n    const CUBE: i32 = 3.pow(3);\n    match x {\n        CUBE => println!(\"three cubed\"),\n        _ => {}\n    }\n}"
   },
   {
     "kind": "roundtrip",
@@ -27365,9 +27365,9 @@
     "sourceIn": "fn foo(x: i32) {\n    const CUBE: i32 = 3.pow(3);\n    match x {\n        CUBE => println!(\"three cubed\"),\n        _ => {}\n    }\n}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn foo  (x: i32) {\n    const CUBE: i32 = 3.pow(3);\n    match x {\n        CUBE => println!(\"three cubed\"),\n        _ => {}\n    }\n}",
+    "expectedSourceOut": "fn foo (x: i32) {\n    const CUBE: i32 = 3.pow(3);\n    match x {\n        CUBE => println!(\"three cubed\"),\n        _ => {}\n    }\n}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameter pattern: (identifier) type: (primitive_type))) body: (block (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (integer_literal)))) (expression_statement (expression_statement_block_ending (match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern (identifier)) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (string_literal (string_content))))))) (match_arm pattern: (match_pattern (wildcard_pattern)) value: (block))))))))",
-    "wrappedText": "fn foo  (x: i32) {\n    const CUBE: i32 = 3.pow(3);\n    match x {\n        CUBE => println!(\"three cubed\"),\n        _ => {}\n    }\n}",
+    "wrappedText": "fn foo (x: i32) {\n    const CUBE: i32 = 3.pow(3);\n    match x {\n        CUBE => println!(\"three cubed\"),\n        _ => {}\n    }\n}",
     "wrappedOffset": 0
   },
   {
@@ -28089,7 +28089,7 @@
       "$nodeId": 2884600,
       "$named": true
     },
-    "expectedOutput": "type A  =() ;"
+    "expectedOutput": "type A=();"
   },
   {
     "kind": "roundtrip",
@@ -28097,9 +28097,9 @@
     "sourceIn": "type A = ();",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type A  =() ;",
+    "expectedSourceOut": "type A=();",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (unit_type))",
-    "wrappedText": "type A  =() ;",
+    "wrappedText": "type A=();",
     "wrappedOffset": 0
   },
   {
@@ -28162,7 +28162,7 @@
       "$nodeId": 2886128,
       "$named": true
     },
-    "expectedOutput": "type A  =(i32, String) ;"
+    "expectedOutput": "type A=(i32, String);"
   },
   {
     "kind": "roundtrip",
@@ -28170,9 +28170,9 @@
     "sourceIn": "type A = (i32, String);",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type A  =(i32, String) ;",
+    "expectedSourceOut": "type A=(i32, String);",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (tuple_type (primitive_type) (type_identifier)))",
-    "wrappedText": "type A  =(i32, String) ;",
+    "wrappedText": "type A=(i32, String);",
     "wrappedOffset": 0
   },
   {
@@ -28321,7 +28321,7 @@
       "$nodeId": 2888696,
       "$named": true
     },
-    "expectedOutput": "type A  =&B ;"
+    "expectedOutput": "type A=&B;"
   },
   {
     "kind": "roundtrip",
@@ -28329,9 +28329,9 @@
     "sourceIn": "type A = &B;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type A  =&B ;",
+    "expectedSourceOut": "type A=&B;",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (reference_type type: (type_identifier)))",
-    "wrappedText": "type A  =&B ;",
+    "wrappedText": "type A=&B;",
     "wrappedOffset": 0
   },
   {
@@ -28445,7 +28445,7 @@
       "$nodeId": 2892504,
       "$named": true
     },
-    "expectedOutput": "type A  =*mut B ;"
+    "expectedOutput": "type A=*mut B;"
   },
   {
     "kind": "roundtrip",
@@ -28453,9 +28453,9 @@
     "sourceIn": "type A = *mut B;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type A  =*mut B ;",
+    "expectedSourceOut": "type A=*mut B;",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (pointer_type (pointer_type_mut (mutable_specifier)) type: (type_identifier)))",
-    "wrappedText": "type A  =*mut B ;",
+    "wrappedText": "type A=*mut B;",
     "wrappedOffset": 0
   },
   {
@@ -28582,7 +28582,7 @@
       "$nodeId": 2895728,
       "$named": true
     },
-    "expectedOutput": "type A  =B<C> ;"
+    "expectedOutput": "type A=B<C>;"
   },
   {
     "kind": "roundtrip",
@@ -28590,9 +28590,9 @@
     "sourceIn": "type A = B<C>;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type A  =B<C> ;",
+    "expectedSourceOut": "type A=B<C>;",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier))))",
-    "wrappedText": "type A  =B<C> ;",
+    "wrappedText": "type A=B<C>;",
     "wrappedOffset": 0
   },
   {
@@ -28706,7 +28706,7 @@
       "$nodeId": 2900824,
       "$named": true
     },
-    "expectedOutput": "type A  =B::C ;"
+    "expectedOutput": "type A=B::C;"
   },
   {
     "kind": "roundtrip",
@@ -28714,9 +28714,9 @@
     "sourceIn": "type A = B::C;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type A  =B::C ;",
+    "expectedSourceOut": "type A=B::C;",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (scoped_type_identifier path: (identifier) name: (type_identifier)))",
-    "wrappedText": "type A  =B::C ;",
+    "wrappedText": "type A=B::C;",
     "wrappedOffset": 0
   },
   {
@@ -29005,7 +29005,7 @@
       "$nodeId": 2908808,
       "$named": true
     },
-    "expectedOutput": "type A  =[B; 4] ;"
+    "expectedOutput": "type A=[B; 4];"
   },
   {
     "kind": "roundtrip",
@@ -29013,9 +29013,9 @@
     "sourceIn": "type A = [B; 4];",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type A  =[B; 4] ;",
+    "expectedSourceOut": "type A=[B; 4];",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (array_type element: (type_identifier) length: (integer_literal)))",
-    "wrappedText": "type A  =[B; 4] ;",
+    "wrappedText": "type A=[B; 4];",
     "wrappedOffset": 0
   },
   {
@@ -29235,7 +29235,7 @@
       "$nodeId": 2914416,
       "$named": true
     },
-    "expectedOutput": "fn high_order1  (value: i32, f: fn(i32)) ->i32 {}"
+    "expectedOutput": "fn high_order1 (value: i32, f: fn(i32)) ->i32 {}"
   },
   {
     "kind": "roundtrip",
@@ -29243,9 +29243,9 @@
     "sourceIn": "fn high_order1(value: i32, f: fn(i32)) -> i32 {}",
     "pattern": "function_item",
     "edits": [],
-    "expectedSourceOut": "fn high_order1  (value: i32, f: fn(i32)) ->i32 {}",
+    "expectedSourceOut": "fn high_order1 (value: i32, f: fn(i32)) ->i32 {}",
     "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameter pattern: (identifier) type: (primitive_type)) (parameter pattern: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (primitive_type))))) return_type: (primitive_type) body: (block))",
-    "wrappedText": "fn high_order1  (value: i32, f: fn(i32)) ->i32 {}",
+    "wrappedText": "fn high_order1 (value: i32, f: fn(i32)) ->i32 {}",
     "wrappedOffset": 0
   },
   {
@@ -29514,7 +29514,7 @@
       "$nodeId": 2922504,
       "$named": true
     },
-    "expectedOutput": "type F  =for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C ;"
+    "expectedOutput": "type F=for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C;"
   },
   {
     "kind": "roundtrip",
@@ -29522,9 +29522,9 @@
     "sourceIn": "type F = for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type F  =for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C ;",
+    "expectedSourceOut": "type F=for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C;",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (function_type for_lifetimes: (for_lifetimes (lifetime identifier: (identifier)) (lifetime identifier: (identifier))) (function_type_fn_form) parameters: (parameters (parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier))) (parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (lifetime identifier: (identifier)) (lifetime identifier: (identifier))))))) return_type: (type_identifier)))",
-    "wrappedText": "type F  =for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C ;",
+    "wrappedText": "type F=for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C;",
     "wrappedOffset": 0
   },
   {
@@ -29638,7 +29638,7 @@
       "$nodeId": 2935504,
       "$named": true
     },
-    "expectedOutput": "type a  =extern \"C\" fn(*mut c_void) ;"
+    "expectedOutput": "type a=extern \"C\" fn(*mut c_void);"
   },
   {
     "kind": "roundtrip",
@@ -29646,9 +29646,9 @@
     "sourceIn": "type a = extern \"C\" fn(*mut c_void);",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type a  =extern \"C\" fn(*mut c_void) ;",
+    "expectedSourceOut": "type a=extern \"C\" fn(*mut c_void);",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (function_type (function_type_fn_form (function_modifiers modifier: (extern_modifier string_literal: (string_literal (string_content))))) parameters: (parameters (pointer_type (pointer_type_mut (mutable_specifier)) type: (type_identifier)))))",
-    "wrappedText": "type a  =extern \"C\" fn(*mut c_void) ;",
+    "wrappedText": "type a=extern \"C\" fn(*mut c_void);",
     "wrappedOffset": 0
   },
   {
@@ -29892,7 +29892,7 @@
       "$nodeId": 2944520,
       "$named": true
     },
-    "expectedOutput": "type a  =Box<Something + 'a> ;"
+    "expectedOutput": "type a=Box<Something + 'a>;"
   },
   {
     "kind": "roundtrip",
@@ -29900,9 +29900,9 @@
     "sourceIn": "type a = Box<Something + 'a>;",
     "pattern": "type_item",
     "edits": [],
-    "expectedSourceOut": "type a  =Box<Something + 'a> ;",
+    "expectedSourceOut": "type a=Box<Something + 'a>;",
     "expectedReparseTree": "(type_item name: (type_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (bounded_type left: (type_identifier) right: (lifetime identifier: (identifier))))))",
-    "wrappedText": "type a  =Box<Something + 'a> ;",
+    "wrappedText": "type a=Box<Something + 'a>;",
     "wrappedOffset": 0
   },
   {

@@ -1391,14 +1391,28 @@ var config = {
     },
     // closure_expression: prec(closure, seq(
     //   optional('static'),  // pos 0  →  '0/0' = bare 'static'
-    //   optional('async'),   // pos 1  →  '1/0' = bare 'async'
+    //   optional('async'),   // pos 1  →  '1/0' = bare 'async'  (DEFERRED — see below)
     //   optional('move'),    // pos 2  →  '2/0' = bare 'move'
     //   field('parameters', ...),  // pos 3
     //   choice(...),               // pos 4 — polymorph split block/expr
     // ))
     // Field-promotion wave 1 (016 task #23): label each standalone
-    // optional marker so render preserves them (`static async move
-    // |x| ...` vs `|x| ...`). prec is transparent to path addressing.
+    // optional marker so render preserves them (`static move |x| ...`
+    // vs `|x| ...`). prec is transparent to path addressing.
+    //
+    // DEFERRED: pos 1 `async_marker`. Wrapping `optional('async')` in
+    // `field('async_marker', _kw_async_marker)` introduces a parse-time
+    // ambiguity with `async_block`'s own bare `'async'` keyword: the
+    // corpus entry `let a = async move || async move {}` (closure
+    // containing async_block) regresses from clean parse to error
+    // (entire let_declaration becomes ERROR, dropping let / closure /
+    // async_block fixtures from the parity corpus). Tree-sitter
+    // accepts the grammar (no LR conflict at generate time) but the
+    // hidden `_kw_async_marker` symbol's runtime precedence diverges
+    // from the bare `'async'` token's. Needs either a conflict
+    // declaration spanning closure_expression × async_block, or a
+    // different field-promotion mechanism that doesn't synthesize a
+    // hidden rule for this position. Tracked for a follow-up wave.
     closure_expression: {
       "0/0": field("static_marker"),
       "2/0": field("move_marker")

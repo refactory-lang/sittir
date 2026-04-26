@@ -1517,13 +1517,23 @@ export interface JinjaTranslateMeta {
     joinByField?: Record<string, string>
     joinByLeading?: boolean
     joinByTrailing?: boolean
+    /**
+     * Cluster F step 4 (016): set of raw field names whose `isRequired`
+     * derivation is false. Used by `translateToJinja` to wrap unguarded
+     * `$NAME` placeholders with `{% if name | isPresent %}` conditionals
+     * so empty optional fields contribute no whitespace to the rendered
+     * output. Placeholders already enclosed in a walker-emitted
+     * `{% if %}…{% endif %}` block are left untouched.
+     */
+    optionalFields?: ReadonlySet<string>
 }
 
 /** @internal — exported for direct unit testing. */
 export function translateToJinja(tmpl: string, meta: JinjaTranslateMeta): string {
+    const guarded = wrapOptionalFieldPlaceholders(tmpl, meta.optionalFields)
     const varPattern = /(\$\$\$|\$\$|\$_|\$)([A-Z][A-Z0-9_]*)/g
     const defaultSep = meta.joinBy ?? ' '
-    const translated = tmpl.replace(varPattern, (_full, pfx: string, name: string) => {
+    const translated = guarded.replace(varPattern, (_full, pfx: string, name: string) => {
         const key = name.toLowerCase()
         if (key === 'newline') return '\n'
         if (key === 'indent') return ''
@@ -1540,6 +1550,103 @@ export function translateToJinja(tmpl: string, meta: JinjaTranslateMeta): string
     return escapeJinjaBraceCollisions(translated)
 }
 
+/**
+ * Wrap each unguarded `$NAME` placeholder whose lower-cased name is in
+ * `optionalFields` with `{% if name | isPresent %}…{% endif %}`. The
+ * leading whitespace adjacent to the placeholder is absorbed INTO the
+ * conditional body so an absent optional contributes zero output —
+ * preventing the `fn f  ()` double-space gap when `type_parameters`
+ * renders empty. Trailing whitespace is left outside so the next
+ * required slot still has its own separator.
+ *
+ * @remarks
+ * Placeholders enclosed in a `{% if … %}…{% endif %}` block emitted by
+ * the walker (e.g. for fields with flanking literals like `:type` or
+ * `=value`) are skipped — those already carry their own conditional
+ * gating, and double-wrapping would produce nested-conditional noise.
+ *
+ * Detection of "inside a guard" walks the template scanning for
+ * `{% if %}` / `{% endif %}` markers and tracks nesting depth. Only
+ * matches at depth 0 are wrapped.
+ */
+function wrapOptionalFieldPlaceholders(
+    tmpl: string,
+    optionalFields: ReadonlySet<string> | undefined,
+): string {
+    if (!optionalFields || optionalFields.size === 0) return tmpl
+    const placeholder = /(?<lead> *)\$([A-Z][A-Z0-9_]*)/g
+    const guardedRanges = computeGuardedRanges(tmpl)
+    return tmpl.replace(placeholder, (full: string, lead: string, name: string, offset: number) => {
+        const key = name.toLowerCase()
+        if (!optionalFields.has(key)) return full
+        // Special walker placeholders (`$NEWLINE`, `$INDENT`, `$DEDENT`,
+        // `$TEXT`, `$CHILDREN`) aren't real fields — `translateToJinja`
+        // converts them to literal characters or list joins. Even if a
+        // `newline`/`indent`/etc. field exists in the AssembledField
+        // list (e.g. python's decorator carries an empty-values
+        // `newline` slot from the walker's NEWLINE token wrapping), the
+        // placeholder is already structural and must not be gated.
+        if (SPECIAL_PLACEHOLDERS.has(key)) return full
+        // Skip multi-dollar placeholders (`$$$NAME`, `$$NAME`, `$_NAME`).
+        // Only single-dollar `$NAME` is the per-field placeholder shape;
+        // the others are list/special markers that don't take an
+        // `isPresent` predicate.
+        const dollarStart = offset + lead.length
+        if (dollarStart > 0 && tmpl[dollarStart - 1] === '$') return full
+        if (offset >= tmpl.length) return full
+        // Skip placeholders enclosed in a walker-emitted Jinja
+        // conditional — the placeholder is already guarded.
+        if (isWithinGuardedRange(dollarStart, guardedRanges)) return full
+        return `{% if ${key} | isPresent %}${lead}$${name}{% endif %}`
+    })
+}
+
+const SPECIAL_PLACEHOLDERS: ReadonlySet<string> = new Set([
+    'newline', 'indent', 'dedent', 'text', 'children',
+])
+
+/**
+ * Compute the half-open `[start, end)` byte ranges in `tmpl` that lie
+ * INSIDE a top-level `{% if … %}…{% endif %}` block. Nested `{% if %}`
+ * tags increment a depth counter; only the OUTER pair contributes a
+ * range, so inner `$NAME` placeholders are still considered "guarded"
+ * for the purposes of the optional-field wrapper.
+ *
+ * Tracks `{%-` / `-%}` whitespace-control variants and tolerates
+ * unrelated tags (`{% for %}`, `{% set %}`) by counting only `if` /
+ * `endif` markers.
+ */
+function computeGuardedRanges(tmpl: string): Array<readonly [number, number]> {
+    const ranges: Array<readonly [number, number]> = []
+    const tagPattern = /\{%-?\s*(if|endif)\b[^%]*-?%\}/g
+    let depth = 0
+    let openOffset = -1
+    for (let m = tagPattern.exec(tmpl); m !== null; m = tagPattern.exec(tmpl)) {
+        const tag = m[1]!
+        if (tag === 'if') {
+            if (depth === 0) openOffset = m.index
+            depth++
+        } else if (tag === 'endif') {
+            depth--
+            if (depth === 0 && openOffset !== -1) {
+                ranges.push([openOffset, m.index + m[0].length])
+                openOffset = -1
+            }
+        }
+    }
+    return ranges
+}
+
+function isWithinGuardedRange(
+    offset: number,
+    ranges: ReadonlyArray<readonly [number, number]>,
+): boolean {
+    for (const [s, e] of ranges) {
+        if (offset >= s && offset < e) return true
+    }
+    return false
+}
+
 /** `$$$CHILDREN` is the only slot that carries flank permission. */
 /** @internal — exported for direct unit testing. */
 export function filterForFlanks(key: string, meta: JinjaTranslateMeta): string {
@@ -1548,6 +1655,21 @@ export function filterForFlanks(key: string, meta: JinjaTranslateMeta): string {
     if (meta.joinByTrailing) return 'joinWithTrailing'
     if (meta.joinByLeading) return 'joinWithLeading'
     return 'join'
+}
+
+/**
+ * Cluster F step 4 (016): convenience wrapper around
+ * `wrapOptionalFieldPlaceholders` for callers that already have an
+ * `AssembledField` array. Used by `AssembledPolymorph.renderTemplate`
+ * to gate per-form `$NAME` placeholders BEFORE the variant chain is
+ * assembled — once the variant `{% if variant == X %}` blocks form, my
+ * `computeGuardedRanges` would treat all interior placeholders as
+ * already-guarded and the wrapper would no-op.
+ */
+function wrapFormOptionalPlaceholders(template: string, fields: readonly AssembledField[]): string {
+    const optionalFields = deriveOptionalFieldNames(fields)
+    if (optionalFields.size === 0) return template
+    return wrapOptionalFieldPlaceholders(template, optionalFields)
 }
 
 /**
@@ -1678,6 +1800,7 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
         if (findRepeatFlag(this.simplifiedRule, 'trailing')) meta.joinByTrailing = true
         if (findRepeatFlag(this.simplifiedRule, 'leading')) meta.joinByLeading = true
         if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField
+        if (optionalFields.size > 0) meta.optionalFields = optionalFields
         return { template: translateToJinja(withClauses, meta) }
     }
 }
@@ -2003,6 +2126,11 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
         const detect: Record<string, string> = {}
         const mergedClauses: Record<string, string> = {}
         const mergedJoinByField: Record<string, string> = {}
+        // Cluster F step 4 (016): collect optional fields per form so the
+        // polymorph's eventual `translateToJinja` can wrap each form's
+        // unguarded `$NAME` placeholder. Wrapping per-form (instead of
+        // once on the merged template) keeps each `{% if variant == X %}`
+        // body honest about which fields are optional in THAT form.
         for (const form of this.#forms) {
             const { template, clauses, joinByField } = form.renderParts(rules, wordMatcher)
             if (!template) {
@@ -2011,7 +2139,8 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
                     `produced an empty template.`,
                 )
             }
-            variants[form.name] = template
+            const wrapped = wrapFormOptionalPlaceholders(template, form.fields)
+            variants[form.name] = wrapped
             if (form.detectToken) detect[form.name] = form.detectToken
             Object.assign(mergedClauses, clauses)
             Object.assign(mergedJoinByField, joinByField)
@@ -2314,6 +2443,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
         if (findRepeatFlag(this.simplifiedRule, 'trailing')) meta.joinByTrailing = true
         if (findRepeatFlag(this.simplifiedRule, 'leading')) meta.joinByLeading = true
         if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField
+        if (optionalFields.size > 0) meta.optionalFields = optionalFields
         return { template: translateToJinja(withClauses, meta) }
     }
 

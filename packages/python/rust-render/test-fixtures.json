@@ -5561,7 +5561,7 @@
       "$nodeId": 967568,
       "$named": true
     },
-    "expectedOutput": "lambda :True"
+    "expectedOutput": "lambda:True"
   },
   {
     "kind": "roundtrip",
@@ -5569,9 +5569,9 @@
     "sourceIn": "lambda: True",
     "pattern": "lambda",
     "edits": [],
-    "expectedSourceOut": "lambda :True",
+    "expectedSourceOut": "lambda:True",
     "expectedReparseTree": "(lambda body: (true))",
-    "wrappedText": "_ = lambda :True",
+    "wrappedText": "_ = lambda:True",
     "wrappedOffset": 4
   },
   {
