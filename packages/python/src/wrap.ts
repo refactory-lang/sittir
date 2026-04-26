@@ -1196,8 +1196,40 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'except': (d) => d,
 };
 
+const _aliasTargetToSource: Record<string, string> = {
+  'assignment_eq': '_assignment_eq',
+  'assignment_type': '_assignment_type',
+  'assignment_typed': '_assignment_typed',
+  'comprehension_clauses': '_comprehension_clauses',
+  'dict_pattern_kv': '_dict_pattern_kv',
+  'expression_within_for_in_clause': '_expression_within_for_in_clause',
+  'expressions': '_expressions',
+  'f_expression': '_f_expression',
+  'kw_async_marker': '_kw_async_marker',
+  'left_hand_side': '_left_hand_side',
+  'match_block': '_match_block',
+  'match_block_block': '_match_block_block',
+  'named_expression_lhs': '_named_expression_lhs',
+  'newline': '_newline',
+  'right_hand_side': '_right_hand_side',
+  'simple_pattern': '_simple_pattern',
+  'simple_statement': '_simple_statement',
+  'simple_statements': '_simple_statements',
+  'statement': '_statement',
+  'suite': '_suite',
+  'with_clause_paren': '_with_clause_paren',
+};
+
 /** Wrap a NodeData into its lazy read-only view. */
 export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
+  // Canonical-hidden remap (Option Y): parser-output `$type`
+  // is the visible alias target (e.g. `range_pattern_left_with_right`);
+  // remap to the hidden alias source (`_range_pattern_left_with_right`)
+  // so dispatch + downstream consumers see the canonical form.
+  const canonical = _aliasTargetToSource[data.$type];
+  if (canonical !== undefined) {
+    data = { ...data, $type: canonical };
+  }
   const fn = _wrapTable[data.$type];
   if (!fn) return data; // unknown kind — return as-is
   return fn(data, tree);

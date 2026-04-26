@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "17a2835",
+    "commit": "863cc80",
     "grammars": {
         "python": {
             "parityFixtures": {
@@ -16,14 +16,13 @@
                         "dict_pattern"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 98,
-                    "total": 100
+                    "pass": 103,
+                    "total": 105
                 },
                 "factoryRoundtrip": {
                     "astMatchPass": 203,
                     "failingKinds": [
                         "as_pattern",
-                        "assignment",
                         "boolean_operator",
                         "comparison_operator",
                         "list_splat",
@@ -34,7 +33,7 @@
                     ],
                     "formatDeferredKinds": [],
                     "pass": 210,
-                    "total": 860
+                    "total": 898
                 },
                 "from": {
                     "failingKinds": [
@@ -46,7 +45,7 @@
                     "total": 114
                 },
                 "roundtrip": {
-                    "astMatchPass": 103,
+                    "astMatchPass": 104,
                     "failingKinds": [
                         "as_pattern",
                         "comparison_operator",
@@ -55,7 +54,7 @@
                         "tuple_pattern"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 106,
+                    "pass": 107,
                     "total": 115
                 }
             }
@@ -80,11 +79,11 @@
                         "range_pattern"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 149,
-                    "total": 153
+                    "pass": 176,
+                    "total": 180
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 422,
+                    "astMatchPass": 474,
                     "failingKinds": [
                         "array_expression",
                         "closure_expression",
@@ -98,11 +97,12 @@
                         "pointer_type",
                         "range_pattern",
                         "struct_item",
-                        "token_tree"
+                        "token_tree",
+                        "tuple_expression"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 431,
-                    "total": 1012
+                    "pass": 491,
+                    "total": 1205
                 },
                 "from": {
                     "failingKinds": [
@@ -113,12 +113,10 @@
                     "total": 148
                 },
                 "roundtrip": {
-                    "astMatchPass": 123,
-                    "failingKinds": [
-                        "range_pattern"
-                    ],
+                    "astMatchPass": 124,
+                    "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 123,
+                    "pass": 124,
                     "total": 136
                 }
             }
@@ -139,11 +137,11 @@
                         "required_parameter"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 141,
-                    "total": 145
+                    "pass": 175,
+                    "total": 179
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 378,
+                    "astMatchPass": 438,
                     "failingKinds": [
                         "ambient_declaration",
                         "array",
@@ -153,18 +151,16 @@
                         "export_statement",
                         "function_declaration",
                         "import_statement",
-                        "index_signature",
                         "instantiation_expression",
                         "member_expression",
                         "module",
                         "object_type",
                         "parenthesized_expression",
-                        "string",
-                        "update_expression"
+                        "string"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 387,
-                    "total": 916
+                    "pass": 447,
+                    "total": 1054
                 },
                 "from": {
                     "failingKinds": [],
@@ -173,7 +169,7 @@
                     "total": 137
                 },
                 "roundtrip": {
-                    "astMatchPass": 90,
+                    "astMatchPass": 91,
                     "failingKinds": [
                         "ambient_declaration",
                         "array",
@@ -193,8 +189,8 @@
         }
     },
     "totals": {
-        "fail": 1838,
-        "pass": 3204,
-        "total": 5042
+        "fail": 2085,
+        "pass": 3392,
+        "total": 5477
     }
 }

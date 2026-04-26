@@ -844,15 +844,12 @@ function emitInterface(
     const fields = node.structuralFields
     const children = node.structuralChildren
     lines.push(`export interface ${node.typeName} {`)
-    // Hidden-source kinds (`_foo`) are exposed at parse time via
-    // `alias(_foo, 'foo')` — tree-sitter emits `$type: 'foo'`, NEVER
-    // the underscore form. Strip the leading underscore so the
-    // interface's declared `$type` matches what readTreeNode produces
-    // AND what the factory stamps (factories always stamp the
-    // unprefixed kind). Commit 8b5e67d0 punted a follow-up to remap
-    // CST `$type: X` → `$type: _X` at readTreeNode time; stripping
-    // here is the cheaper direction.
-    lines.push(`  readonly $type: '${node.kind.replace(/^_+/, '')}';`)
+    // Canonical-hidden architecture (Option Y): hidden alias-source kinds
+    // (`_foo`) keep the leading underscore in the declared `$type`.
+    // Factories stamp `_foo`; `wrapNode` canonicalizes parser-output
+    // `foo` back to `_foo` before dispatch. The interface's declared
+    // `$type` is the single source of truth for both producer paths.
+    lines.push(`  readonly $type: '${node.kind}';`)
 
     if (fields.length > 0) {
         lines.push('  readonly $fields: {')
@@ -1001,9 +998,12 @@ function emitFormInterface(
     lookupUnion?: LookupUnion,
 ): void {
     lines.push(`export interface ${typeName} {`)
-    // Same underscore strip as `emitInterface` — UForm parents alias
-    // through to a visible kind at parse time.
-    lines.push(`  readonly $type: '${node.kind.replace(/^_+/, '')}';`)
+    // Canonical-hidden architecture (Option Y): UForm interfaces declare
+    // the parent polymorph's kind verbatim — no underscore strip — so
+    // factory output (which stamps the parent kind) and `wrapNode`
+    // output (which canonicalizes via the alias map) converge on the
+    // same `$type` literal that the interface declares.
+    lines.push(`  readonly $type: '${node.kind}';`)
     // `$variant` literal discriminant — matches what the form factory stamps
     // on its output (`$variant: '<form.name>' as const`). Makes the parent
     // polymorph union a discriminated union so consumers can narrow via

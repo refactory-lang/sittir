@@ -2074,8 +2074,93 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '__error_recovery': (d) => d,
 };
 
+const _aliasTargetToSource: Record<string, string> = {
+  'arrow_function__call_signature': '_arrow_function__call_signature',
+  'arrow_function_parameter': '_arrow_function_parameter',
+  'automatic_semicolon': '_automatic_semicolon',
+  'call_expression_call': '_call_expression_call',
+  'call_expression_member': '_call_expression_member',
+  'call_expression_template_call': '_call_expression_template_call',
+  'class_body_member': '_class_body_member',
+  'class_body_method': '_class_body_method',
+  'class_body_method_sig': '_class_body_method_sig',
+  'class_heritage_extends_clause': '_class_heritage_extends_clause',
+  'class_heritage_implements_clause': '_class_heritage_implements_clause',
+  'destructuring_pattern': '_destructuring_pattern',
+  'export_statement_default': '_export_statement_default',
+  'export_statement_default_decl_arm_default_kw': '_export_statement_default_decl_arm_default_kw',
+  'export_statement_default_decl_arm_default_kw_value': '_export_statement_default_decl_arm_default_kw_value',
+  'export_statement_default_from_arm_clause_from': '_export_statement_default_from_arm_clause_from',
+  'export_statement_default_from_arm_ns_from': '_export_statement_default_from_arm_ns_from',
+  'export_statement_default_from_arm_star_from': '_export_statement_default_from_arm_star_from',
+  'export_statement_equals_export': '_export_statement_equals_export',
+  'export_statement_namespace_export': '_export_statement_namespace_export',
+  'export_statement_type_export': '_export_statement_type_export',
+  'expressions': '_expressions',
+  'for_header_let_const_kind': '_for_header_let_const_kind',
+  'for_header_lhs': '_for_header_lhs',
+  'for_header_var_kind': '_for_header_var_kind',
+  'formal_parameter': '_formal_parameter',
+  'function_signature_automatic_semicolon': '_function_signature_automatic_semicolon',
+  'import_clause_default_import': '_import_clause_default_import',
+  'import_clause_named_imports': '_import_clause_named_imports',
+  'import_clause_namespace_import': '_import_clause_namespace_import',
+  'import_identifier': '_import_identifier',
+  'import_specifier_as': '_import_specifier_as',
+  'import_specifier_name': '_import_specifier_name',
+  'index_signature_colon': '_index_signature_colon',
+  'index_signature_mapped_type_clause': '_index_signature_mapped_type_clause',
+  'initializer': '_initializer',
+  'jsx_attribute_name': '_jsx_attribute_name',
+  'jsx_attribute_value': '_jsx_attribute_value',
+  'jsx_child': '_jsx_child',
+  'jsx_element_name': '_jsx_element_name',
+  'kw_abstract_marker': '_kw_abstract_marker',
+  'kw_async_marker': '_kw_async_marker',
+  'kw_const_marker': '_kw_const_marker',
+  'kw_readonly_marker': '_kw_readonly_marker',
+  'kw_static_marker': '_kw_static_marker',
+  'lhs_expression': '_lhs_expression',
+  'module_export_name': '_module_export_name',
+  'parenthesized_expression_sequence': '_parenthesized_expression_sequence',
+  'parenthesized_expression_typed': '_parenthesized_expression_typed',
+  'property_name': '_property_name',
+  'public_field_definition_abstract_first': '_public_field_definition_abstract_first',
+  'public_field_definition_access_first': '_public_field_definition_access_first',
+  'public_field_definition_accessor_opt': '_public_field_definition_accessor_opt',
+  'public_field_definition_declare_first': '_public_field_definition_declare_first',
+  'public_field_definition_readonly_first': '_public_field_definition_readonly_first',
+  'public_field_definition_static_mods': '_public_field_definition_static_mods',
+  'reserved_identifier': '_reserved_identifier',
+  'semicolon': '_semicolon',
+  'shorthand_property_identifier': '_shorthand_property_identifier',
+  'shorthand_property_identifier_pattern': '_shorthand_property_identifier_pattern',
+  'statement_identifier': '_statement_identifier',
+  'string_double': '_string_double',
+  'string_fragment': '_string_fragment',
+  'string_single': '_string_single',
+  'tuple_type_member': '_tuple_type_member',
+  'type_identifier': '_type_identifier',
+  'type_query_call_expression': '_type_query_call_expression',
+  'type_query_call_expression_in_type_annotation': '_type_query_call_expression_in_type_annotation',
+  'type_query_instantiation_expression': '_type_query_instantiation_expression',
+  'type_query_member_expression': '_type_query_member_expression',
+  'type_query_member_expression_in_type_annotation': '_type_query_member_expression_in_type_annotation',
+  'type_query_subscript_expression': '_type_query_subscript_expression',
+  'update_expression_postfix': '_update_expression_postfix',
+  'update_expression_prefix': '_update_expression_prefix',
+};
+
 /** Wrap a NodeData into its lazy read-only view. */
 export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
+  // Canonical-hidden remap (Option Y): parser-output `$type`
+  // is the visible alias target (e.g. `range_pattern_left_with_right`);
+  // remap to the hidden alias source (`_range_pattern_left_with_right`)
+  // so dispatch + downstream consumers see the canonical form.
+  const canonical = _aliasTargetToSource[data.$type];
+  if (canonical !== undefined) {
+    data = { ...data, $type: canonical };
+  }
   const fn = _wrapTable[data.$type];
   if (!fn) return data; // unknown kind — return as-is
   return fn(data, tree);

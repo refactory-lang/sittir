@@ -510,6 +510,15 @@ export function wrapForReparse(
 ): WrapForReparseResult | null {
     const wrappers = REPARSE_WRAPPERS[grammar]
     if (!wrappers) return null
+    // Canonical-hidden architecture (Option Y): the validator may pass
+    // a canonical hidden kind (`_x`) where REPARSE_WRAPPERS and
+    // `kindToSupertypes` are keyed on the visible alias-target name
+    // (`x`) — tree-sitter parser only sees visible names. Pre-strip
+    // for both lookups, but preserve the original `kind` for kind-
+    // specific lookups (e.g. `_expression` is itself a wrapper key).
+    const visibleKind = kind.startsWith('_') && !wrappers[kind]
+        ? kind.replace(/^_+/, '')
+        : kind
     // Alias-target wrapper preference: when `kind` (renderedKind, the
     // alias source after drillAs) differs from `targetKind` (the
     // tree-sitter-emitted alias target), a wrapper keyed on the alias
@@ -526,16 +535,17 @@ export function wrapForReparse(
     // appear in contexts their supertype's generic wrapper doesn't
     // produce (e.g. rust `mut_pattern` surfaces in match/if-let but
     // NOT in plain `let` statements, which flatten it away).
-    const direct = wrappers[kind]
+    const direct = wrappers[kind] ?? wrappers[visibleKind]
     if (direct) {
-        const gated = VARIANT_ADOPTION_GATED_WRAPPERS[grammar]?.includes(kind) ?? false
-        const adopted = opts?.adoptedVariantKinds?.has(kind) ?? false
+        const gateKey = wrappers[kind] ? kind : visibleKind
+        const gated = VARIANT_ADOPTION_GATED_WRAPPERS[grammar]?.includes(gateKey) ?? false
+        const adopted = opts?.adoptedVariantKinds?.has(gateKey) ?? false
         if (gated && !adopted) {
-            return selectAndApplySupertypeWrapper(kind, wrappers, kindToSupertypes, rendered)
+            return selectAndApplySupertypeWrapper(visibleKind, wrappers, kindToSupertypes, rendered)
         }
         return applyWrapperTemplate(rendered, direct)
     }
-    return selectAndApplySupertypeWrapper(kind, wrappers, kindToSupertypes, rendered)
+    return selectAndApplySupertypeWrapper(visibleKind, wrappers, kindToSupertypes, rendered)
 }
 
 // ---------------------------------------------------------------------------

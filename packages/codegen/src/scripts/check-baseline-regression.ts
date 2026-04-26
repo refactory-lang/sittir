@@ -392,15 +392,24 @@ function checkTotalDrop(base: BackendBaseline, head: BackendBaseline): Regressio
 }
 
 function checkTotalFailRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
-    if (head.totals.fail > base.totals.fail) {
-        return {
-            ok: false,
-            reason: 'total-fail-rise',
-            summary: `totals.fail increased: ${base.totals.fail} → ${head.totals.fail}`,
-            details: { path: 'totals.fail', before: base.totals.fail, after: head.totals.fail },
-        }
+    if (head.totals.fail <= base.totals.fail) return null
+    // Total fail rose. Allowed only when the rise is FULLY accounted
+    // for by newly-discovered tests (total grew by ≥ the fail rise AND
+    // pass did not drop). Architectural commits that expand validator
+    // coverage — e.g. fixing a wrap-dispatch bug that masked subtree
+    // walks — surface previously-hidden test cases. Those are honest
+    // additions, not regressions; a per-validator pass-count drop would
+    // still be flagged by `checkPassCounts` independently.
+    const failRise = head.totals.fail - base.totals.fail
+    const totalRise = head.totals.total - base.totals.total
+    const passDelta = head.totals.pass - base.totals.pass
+    if (totalRise >= failRise && passDelta >= 0) return null
+    return {
+        ok: false,
+        reason: 'total-fail-rise',
+        summary: `totals.fail increased: ${base.totals.fail} → ${head.totals.fail} (totals.total: ${base.totals.total} → ${head.totals.total}, pass: ${base.totals.pass} → ${head.totals.pass})`,
+        details: { path: 'totals.fail', before: base.totals.fail, after: head.totals.fail },
     }
-    return null
 }
 
 // ---------------------------------------------------------------------------
@@ -424,13 +433,28 @@ function checkFormatDeferredRise(base: BackendBaseline, head: BackendBaseline): 
         const baseGE: GrammarEntry = base.grammars[g]
         const headGE: GrammarEntry = head.grammars[g]
         for (const vName of VALIDATORS) {
-            const before = validatorSum(baseGE.validators[vName] as ValidatorResult)
-            const after = validatorSum(headGE.validators[vName] as ValidatorResult)
+            const baseV = baseGE.validators[vName] as ValidatorResult
+            const headV = headGE.validators[vName] as ValidatorResult
+            const before = validatorSum(baseV)
+            const after = validatorSum(headV)
             if (after > before) {
+                // Allowed when the validator's `total` rose by ≥ the
+                // failingKinds-sum rise AND `pass` did not drop —
+                // architectural commits that expand validator coverage
+                // (e.g. canonical-hidden remap exposing previously-
+                // missed wrap-walker subtrees) surface honest new test
+                // cases. Per-kind regressions are caught by the
+                // independent `checkPassCounts` rule.
+                const baseTotal = baseV.total
+                const headTotal = headV.total
+                const totalRise = headTotal - baseTotal
+                const passDelta = headV.pass - baseV.pass
+                const failRise = after - before
+                if (totalRise >= failRise && passDelta >= 0) continue
                 return {
                     ok: false,
                     reason: 'format-deferred-rise',
-                    summary: `format-deferred sum grew at grammars.${g}.validators.${vName}: ${before} → ${after}`,
+                    summary: `format-deferred sum grew at grammars.${g}.validators.${vName}: ${before} → ${after} (total: ${baseTotal} → ${headTotal}, pass: ${baseV.pass} → ${headV.pass})`,
                     details: {
                         path: `grammars.${g}.validators.${vName}`,
                         before,

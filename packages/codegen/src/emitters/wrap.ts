@@ -135,10 +135,35 @@ export function emitWrap(config: EmitWrapConfig): string {
     lines.push('')
 
     // ------------------------------------------------------------------
+    // _aliasTargetToSource — canonical-hidden remap (Option Y)
+    // ------------------------------------------------------------------
+    // tree-sitter parses `alias($._x, $.x)` and emits `$type = 'x'`
+    // (the visible alias target). The codegen surface (interfaces,
+    // factories, templates) treats the hidden source `_x` as canonical.
+    // wrapNode consults this map on receipt and rewrites `$type` from
+    // visible → hidden BEFORE dispatching to the per-kind wrap function
+    // so consumers always see the canonical hidden form.
+    const aliasMap = collectAliasTargetToSourceMap(nodeMap)
+    lines.push('const _aliasTargetToSource: Record<string, string> = {')
+    for (const [target, source] of [...aliasMap.entries()].sort()) {
+        lines.push(`  '${target}': '${source}',`)
+    }
+    lines.push('};')
+    lines.push('')
+
+    // ------------------------------------------------------------------
     // Public entry points
     // ------------------------------------------------------------------
     lines.push('/** Wrap a NodeData into its lazy read-only view. */')
     lines.push('export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {')
+    lines.push('  // Canonical-hidden remap (Option Y): parser-output `$type`')
+    lines.push('  // is the visible alias target (e.g. `range_pattern_left_with_right`);')
+    lines.push('  // remap to the hidden alias source (`_range_pattern_left_with_right`)')
+    lines.push('  // so dispatch + downstream consumers see the canonical form.')
+    lines.push('  const canonical = _aliasTargetToSource[data.$type];')
+    lines.push('  if (canonical !== undefined) {')
+    lines.push('    data = { ...data, $type: canonical };')
+    lines.push('  }')
     lines.push('  const fn = _wrapTable[data.$type];')
     lines.push('  if (!fn) return data; // unknown kind — return as-is')
     lines.push('  return fn(data, tree);')
@@ -195,6 +220,46 @@ export function emitWrap(config: EmitWrapConfig): string {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+/**
+ * Compute the alias-target → alias-source map for the canonical-hidden
+ * remap (Option Y).
+ *
+ * @remarks
+ * For every hidden alias-source kind (`_x` whose visible name `x` is
+ * what tree-sitter parses to via `alias($._x, $.x)`), record the entry
+ * `{ x: '_x' }`. The set of alias-source hidden kinds is identical to
+ * the set computed in `markUserFacing` (assemble.ts) — kinds whose
+ * `_`-prefixed name appears as a child reference in some other rule.
+ * Re-derived here from `userFacing === true && kind.startsWith('_')`,
+ * which `markUserFacing` already gates on the same predicate.
+ *
+ * Excludes kinds whose stripped name collides with an existing visible
+ * kind in the NodeMap — the visible kind's `wrap${TypeName}` dispatch
+ * must continue to handle the visible-typed parser output. (Polymorph
+ * parents are always visible; their `_x` form children are excluded.)
+ *
+ * @param nodeMap - The fully assembled node map for the grammar.
+ * @returns Map keyed on visible alias-target name; values are the
+ *   canonical hidden alias-source name (with leading `_`).
+ */
+function collectAliasTargetToSourceMap(nodeMap: NodeMap): Map<string, string> {
+    const out = new Map<string, string>()
+    for (const [kind, node] of nodeMap.nodes) {
+        if (!kind.startsWith('_')) continue
+        if (!node.userFacing) continue
+        // Polymorph parent kinds and tokens never participate in the
+        // alias-source rewrite — only field-carrying alias sources do.
+        if (node.modelType === 'token' || node.modelType === 'multi') continue
+        const visible = kind.replace(/^_+/, '')
+        if (visible.length === 0) continue
+        // Skip when the visible name belongs to a distinct kind in the
+        // NodeMap — that kind owns its own dispatch; we'd hijack it.
+        if (nodeMap.nodes.has(visible)) continue
+        out.set(visible, kind)
+    }
+    return out
+}
 
 /**
  * Collects the set of concrete interface type names that need to be imported

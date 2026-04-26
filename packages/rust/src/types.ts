@@ -807,7 +807,7 @@ export interface TokenRepetition {
 }
 
 export interface NonSpecialToken {
-  readonly $type: 'non_special_token';
+  readonly $type: '_non_special_token';
   readonly $children: readonly [Literal | Identifier | MutableSpecifier | Self | Super | Crate | PrimitiveType];
 }
 
@@ -1638,7 +1638,7 @@ export interface LetCondition {
 }
 
 export interface LetChain {
-  readonly $type: 'let_chain';
+  readonly $type: '_let_chain';
   readonly $children: readonly [LetChain | LetCondition | Expression];
 }
 
@@ -2009,27 +2009,27 @@ export interface BlockComment {
 }
 
 export interface ReservedIdentifier {
-  readonly $type: 'reserved_identifier';
+  readonly $type: '_reserved_identifier';
   readonly $children: readonly [Identifier];
 }
 
 export interface TypeIdentifier {
-  readonly $type: 'type_identifier';
+  readonly $type: '_type_identifier';
   readonly $children: readonly [Identifier];
 }
 
 export interface FieldIdentifier {
-  readonly $type: 'field_identifier';
+  readonly $type: '_field_identifier';
   readonly $children: readonly [Identifier];
 }
 
 export interface _StringContent {
-  readonly $type: 'string_content';
+  readonly $type: '_string_content';
   readonly $children: readonly [RawStringLiteralContent];
 }
 
 export interface ArrayExpressionSemi {
-  readonly $type: 'array_expression_semi';
+  readonly $type: '_array_expression_semi';
   readonly $fields: {
     readonly attributes: readonly (AttributeItem)[];
     readonly elements: Expression;
@@ -2038,7 +2038,7 @@ export interface ArrayExpressionSemi {
 }
 
 export interface ArrayExpressionList {
-  readonly $type: 'array_expression_list';
+  readonly $type: '_array_expression_list';
   readonly $fields: {
     readonly attributes: readonly (AttributeItem)[];
     readonly elements: readonly (Expression)[];
@@ -2047,7 +2047,7 @@ export interface ArrayExpressionList {
 }
 
 export interface ClosureExpressionBlock {
-  readonly $type: 'closure_expression_block';
+  readonly $type: '_closure_expression_block';
   readonly $fields: {
     readonly return_type?: _Type;
     readonly body: Block;
@@ -2055,21 +2055,21 @@ export interface ClosureExpressionBlock {
 }
 
 export interface ClosureExpressionExpr {
-  readonly $type: 'closure_expression_expr';
+  readonly $type: '_closure_expression_expr';
   readonly $fields: {
     readonly body: Expression | "_";
   };
 }
 
 export interface FieldPatternShorthand {
-  readonly $type: 'field_pattern_shorthand';
+  readonly $type: '_field_pattern_shorthand';
   readonly $fields: {
     readonly name: Identifier;
   };
 }
 
 export interface FieldPatternNamed {
-  readonly $type: 'field_pattern_named';
+  readonly $type: '_field_pattern_named';
   readonly $fields: {
     readonly name: FieldIdentifier;
     readonly pattern: Pattern;
@@ -2077,48 +2077,48 @@ export interface FieldPatternNamed {
 }
 
 export interface FunctionTypeTraitForm {
-  readonly $type: 'function_type_trait_form';
+  readonly $type: '_function_type_trait_form';
   readonly $fields: {
     readonly trait: TypeIdentifier | ScopedTypeIdentifier;
   };
 }
 
 export interface FunctionTypeFnForm {
-  readonly $type: 'function_type_fn_form';
+  readonly $type: '_function_type_fn_form';
   readonly $children: readonly [FunctionModifiers];
 }
 
 export interface ImplItemBody {
-  readonly $type: 'impl_item_body';
+  readonly $type: '_impl_item_body';
   readonly $fields: {
     readonly body: DeclarationList;
   };
 }
 
 export interface MacroDefinitionParen {
-  readonly $type: 'macro_definition_paren';
+  readonly $type: '_macro_definition_paren';
   readonly $children: readonly (MacroRule | MacroRule)[];
 }
 
 export interface MacroDefinitionBracket {
-  readonly $type: 'macro_definition_bracket';
+  readonly $type: '_macro_definition_bracket';
   readonly $children: readonly (MacroRule | MacroRule)[];
 }
 
 export interface MacroDefinitionBrace {
-  readonly $type: 'macro_definition_brace';
+  readonly $type: '_macro_definition_brace';
   readonly $children: readonly (MacroRule | MacroRule)[];
 }
 
 export interface ModItemInline {
-  readonly $type: 'mod_item_inline';
+  readonly $type: '_mod_item_inline';
   readonly $fields: {
     readonly body: DeclarationList;
   };
 }
 
 export interface OrPatternBinary {
-  readonly $type: 'or_pattern_binary';
+  readonly $type: '_or_pattern_binary';
   readonly $fields: {
     readonly left: Pattern;
     readonly right: Pattern;
@@ -2126,14 +2126,14 @@ export interface OrPatternBinary {
 }
 
 export interface OrPatternPrefix {
-  readonly $type: 'or_pattern_prefix';
+  readonly $type: '_or_pattern_prefix';
   readonly $fields: {
     readonly right: Pattern;
   };
 }
 
 export interface RangeExpressionBinary {
-  readonly $type: 'range_expression_binary';
+  readonly $type: '_range_expression_binary';
   readonly $fields: {
     readonly start: Expression;
     readonly operator: ".." | "..." | "..=";
@@ -2142,7 +2142,7 @@ export interface RangeExpressionBinary {
 }
 
 export interface RangeExpressionPostfix {
-  readonly $type: 'range_expression_postfix';
+  readonly $type: '_range_expression_postfix';
   readonly $fields: {
     readonly start: Expression;
     readonly operator: "..";
@@ -2150,7 +2150,7 @@ export interface RangeExpressionPostfix {
 }
 
 export interface RangeExpressionPrefix {
-  readonly $type: 'range_expression_prefix';
+  readonly $type: '_range_expression_prefix';
   readonly $fields: {
     readonly operator: "..";
     readonly end: Expression;
@@ -2158,28 +2158,28 @@ export interface RangeExpressionPrefix {
 }
 
 export interface RangeExpressionBare {
-  readonly $type: 'range_expression_bare';
+  readonly $type: '_range_expression_bare';
   readonly $fields: {
     readonly operator: "..";
   };
 }
 
 export interface RangePatternPrefix {
-  readonly $type: 'range_pattern_prefix';
+  readonly $type: '_range_pattern_prefix';
   readonly $fields: {
     readonly right: LiteralPattern | Path;
   };
 }
 
 export interface RangePatternLeftWithRight {
-  readonly $type: 'range_pattern_left_with_right';
+  readonly $type: '_range_pattern_left_with_right';
   readonly $fields: {
     readonly right: LiteralPattern | Path;
   };
 }
 
 export interface StructItemBrace {
-  readonly $type: 'struct_item_brace';
+  readonly $type: '_struct_item_brace';
   readonly $fields: {
     readonly body: FieldDeclarationList;
   };
@@ -2187,7 +2187,7 @@ export interface StructItemBrace {
 }
 
 export interface StructItemTuple {
-  readonly $type: 'struct_item_tuple';
+  readonly $type: '_struct_item_tuple';
   readonly $fields: {
     readonly body: OrderedFieldDeclarationList;
   };
@@ -2195,12 +2195,12 @@ export interface StructItemTuple {
 }
 
 export interface VisibilityModifierCrate {
-  readonly $type: 'visibility_modifier_crate';
+  readonly $type: '_visibility_modifier_crate';
   readonly $children: readonly [Crate];
 }
 
 export interface VisibilityModifierPub {
-  readonly $type: 'visibility_modifier_pub';
+  readonly $type: '_visibility_modifier_pub';
   readonly $fields: {
     readonly pub: AutoStamp<"pub">;
   };
@@ -2208,7 +2208,7 @@ export interface VisibilityModifierPub {
 }
 
 export interface VisibilityModifierInPath {
-  readonly $type: 'visibility_modifier_in_path';
+  readonly $type: '_visibility_modifier_in_path';
   readonly $fields: {
     readonly in: AutoStamp<"in">;
   };
@@ -2216,95 +2216,95 @@ export interface VisibilityModifierInPath {
 }
 
 export interface PointerTypeMut {
-  readonly $type: 'pointer_type_mut';
+  readonly $type: '_pointer_type_mut';
   readonly $children: readonly [MutableSpecifier];
 }
 
 export interface ReferenceExpressionRawMut {
-  readonly $type: 'reference_expression_raw_mut';
+  readonly $type: '_reference_expression_raw_mut';
   readonly $children: readonly [MutableSpecifier];
 }
 
 export interface ExpressionStatementWithSemi {
-  readonly $type: 'expression_statement_with_semi';
+  readonly $type: '_expression_statement_with_semi';
   readonly $children: readonly [Expression];
 }
 
 export interface ExpressionStatementBlockEnding {
-  readonly $type: 'expression_statement_block_ending';
+  readonly $type: '_expression_statement_block_ending';
   readonly $children: readonly [ExpressionEndingWithBlock];
 }
 
 export interface ForeignModItemBody {
-  readonly $type: 'foreign_mod_item_body';
+  readonly $type: '_foreign_mod_item_body';
   readonly $fields: {
     readonly body: DeclarationList;
   };
 }
 
 export interface MatchArmWithComma {
-  readonly $type: 'match_arm_with_comma';
+  readonly $type: '_match_arm_with_comma';
   readonly $fields: {
     readonly value: Expression;
   };
 }
 
 export interface MatchArmBlockEnding {
-  readonly $type: 'match_arm_block_ending';
+  readonly $type: '_match_arm_block_ending';
   readonly $fields: {
     readonly value: ExpressionEndingWithBlock;
   };
 }
 
 export interface LineCommentDoc {
-  readonly $type: 'line_comment_doc';
+  readonly $type: '_line_comment_doc';
   readonly $fields: {
     readonly doc: DocComment;
   };
 }
 
 export interface TokenTreePatternParen {
-  readonly $type: 'token_tree_pattern_paren';
+  readonly $type: '_token_tree_pattern_paren';
   readonly $children: readonly (TokenPattern)[];
 }
 
 export interface TokenTreePatternBracket {
-  readonly $type: 'token_tree_pattern_bracket';
+  readonly $type: '_token_tree_pattern_bracket';
   readonly $children: readonly (TokenPattern)[];
 }
 
 export interface TokenTreePatternBrace {
-  readonly $type: 'token_tree_pattern_brace';
+  readonly $type: '_token_tree_pattern_brace';
   readonly $children: readonly (TokenPattern)[];
 }
 
 export interface TokenTreeParen {
-  readonly $type: 'token_tree_paren';
+  readonly $type: '_token_tree_paren';
   readonly $children: readonly (Tokens)[];
 }
 
 export interface TokenTreeBracket {
-  readonly $type: 'token_tree_bracket';
+  readonly $type: '_token_tree_bracket';
   readonly $children: readonly (Tokens)[];
 }
 
 export interface TokenTreeBrace {
-  readonly $type: 'token_tree_brace';
+  readonly $type: '_token_tree_brace';
   readonly $children: readonly (Tokens)[];
 }
 
 export interface DelimTokenTreeParen {
-  readonly $type: 'delim_token_tree_paren';
+  readonly $type: '_delim_token_tree_paren';
   readonly $children: readonly (DelimTokens)[];
 }
 
 export interface DelimTokenTreeBracket {
-  readonly $type: 'delim_token_tree_bracket';
+  readonly $type: '_delim_token_tree_bracket';
   readonly $children: readonly (DelimTokens)[];
 }
 
 export interface DelimTokenTreeBrace {
-  readonly $type: 'delim_token_tree_brace';
+  readonly $type: '_delim_token_tree_brace';
   readonly $children: readonly (DelimTokens)[];
 }
 

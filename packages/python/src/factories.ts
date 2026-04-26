@@ -1561,7 +1561,7 @@ export function assignmentUFormEq(config: Omit<ConfigOf<T.AssignmentUFormEq>, '$
     left: config.left,
   };
   const inner = {
-    $type: 'assignment_eq' as const,
+    $type: '_assignment_eq' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -1597,7 +1597,7 @@ export function assignmentUFormType(config: Omit<ConfigOf<T.AssignmentUFormType>
     left: config.left,
   };
   const inner = {
-    $type: 'assignment_type' as const,
+    $type: '_assignment_type' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -1633,7 +1633,7 @@ export function assignmentUFormTyped(config: Omit<ConfigOf<T.AssignmentUFormType
     left: config.left,
   };
   const inner = {
-    $type: 'assignment_typed' as const,
+    $type: '_assignment_typed' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {

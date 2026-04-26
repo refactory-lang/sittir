@@ -1495,8 +1495,13 @@ function emitHoistedPolymorphFormFactory(
         lines.push(`  const inner = ${hoist.innerFactoryName}(${innerArg});`)
     } else {
         const innerKind = hoist.innerKind
+        // Canonical-hidden architecture (Option Y): the inner $type
+        // retains its `_` prefix when the inner is a hidden alias-source
+        // kind. Templates, interfaces, factories all key on the same
+        // hidden name; wrap canonicalizes parser output (visible →
+        // hidden) so consumers always see the canonical hidden form.
         lines.push('  const inner = {')
-        lines.push(`    $type: '${innerKind.replace(/^_+/, '')}' as const,`)
+        lines.push(`    $type: '${innerKind}' as const,`)
         lines.push(`    $source: 'factory' as const,`)
         lines.push('    $named: true as const,')
         if (hoist.innerFields.length > 0) {

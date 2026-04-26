@@ -75,8 +75,10 @@
     "await_expression": "config",
     "member_expression": "config",
     "subscript_expression": "config",
+    "_lhs_expression": "children",
     "assignment_expression": "config",
     "augmented_assignment_expression": "config",
+    "_initializer": "config",
     "spread_element": "config",
     "ternary_expression": "config",
     "binary_expression": "config",
@@ -117,6 +119,7 @@
     "pair_pattern": "config",
     "computed_property_name": "config",
     "_reserved_identifier": "text",
+    "_string_fragment": "text",
     "public_field_definition": "config",
     "non_null_expression": "config",
     "method_signature": "config",
@@ -169,11 +172,13 @@
     "_type_query_member_expression": "config",
     "_type_query_subscript_expression": "config",
     "_type_query_call_expression": "config",
+    "_type_query_instantiation_expression": "config",
     "type_query": "children",
     "index_type_query": "config",
     "lookup_type": "config",
     "mapped_type_clause": "config",
     "literal_type": "children",
+    "_number": "config",
     "flow_maybe_type": "config",
     "parenthesized_type": "config",
     "predefined_type": "text",
@@ -193,9 +198,57 @@
     "union_type": "config",
     "intersection_type": "config",
     "function_type": "config",
+    "_type_identifier": "children",
+    "_kw_async_marker": "text",
+    "_kw_static_marker": "text",
+    "_kw_readonly_marker": "text",
+    "_kw_abstract_marker": "text",
+    "_kw_const_marker": "text",
+    "_export_statement_default_decl_arm_default_kw": "config",
+    "_arrow_function_parameter": "config",
+    "_arrow_function__call_signature": "config",
+    "_class_heritage_extends_clause": "children",
+    "_class_heritage_implements_clause": "children",
+    "_import_clause_namespace_import": "children",
+    "_import_clause_named_imports": "children",
+    "_import_clause_default_import": "children",
+    "_import_specifier_name": "config",
+    "_import_specifier_as": "config",
+    "_index_signature_colon": "config",
+    "_index_signature_mapped_type_clause": "children",
+    "_export_statement_default_from_arm_star_from": "config",
+    "_export_statement_default_from_arm_ns_from": "config",
+    "_export_statement_default_from_arm_clause_from": "config",
+    "_export_statement_default_decl_arm_default_kw_value": "config",
+    "_class_body_method": "config",
+    "_class_body_method_sig": "children",
+    "_class_body_member": "children",
+    "_for_header_lhs": "config",
+    "_for_header_var_kind": "config",
+    "_for_header_let_const_kind": "config",
+    "_public_field_definition_declare_first": "children",
+    "_public_field_definition_access_first": "config",
+    "_public_field_definition_static_mods": "config",
+    "_public_field_definition_abstract_first": "config",
+    "_public_field_definition_readonly_first": "config",
+    "_public_field_definition_accessor_opt": "config",
+    "_parenthesized_expression_typed": "config",
+    "_parenthesized_expression_sequence": "children",
+    "_export_statement_type_export": "config",
+    "_export_statement_equals_export": "children",
+    "_export_statement_namespace_export": "children",
+    "_call_expression_call": "config",
+    "_call_expression_template_call": "config",
+    "_call_expression_member": "config",
+    "_string_double": "children",
+    "_string_single": "children",
+    "_update_expression_postfix": "config",
+    "_update_expression_prefix": "config",
+    "_automatic_semicolon": "text",
     "html_comment": "text",
     "||": "text",
     "jsx_text": "text",
+    "_function_signature_automatic_semicolon": "text",
     "as": "text",
     "from": "text",
     "var": "text",
@@ -527,6 +580,9 @@
       "operator",
       "right"
     ],
+    "_initializer": [
+      "value"
+    ],
     "spread_element": [
       "expression"
     ],
@@ -771,6 +827,10 @@
       "function",
       "arguments"
     ],
+    "_type_query_instantiation_expression": [
+      "function",
+      "type_arguments"
+    ],
     "index_type_query": [
       "primary_type"
     ],
@@ -782,6 +842,10 @@
       "name",
       "type",
       "alias"
+    ],
+    "_number": [
+      "operator",
+      "argument"
     ],
     "flow_maybe_type": [
       "primary_type"
@@ -843,6 +907,64 @@
       "type_parameters",
       "parameters",
       "return_type"
+    ],
+    "_arrow_function_parameter": [
+      "parameter"
+    ],
+    "_arrow_function__call_signature": [
+      "type_parameters",
+      "parameters",
+      "return_type"
+    ],
+    "_import_specifier_name": [
+      "name"
+    ],
+    "_import_specifier_as": [
+      "name",
+      "alias"
+    ],
+    "_index_signature_colon": [
+      "name",
+      "index_type"
+    ],
+    "_export_statement_default_from_arm_star_from": [
+      "source"
+    ],
+    "_for_header_lhs": [
+      "left"
+    ],
+    "_public_field_definition_abstract_first": [
+      "abstract_marker",
+      "readonly_marker"
+    ],
+    "_public_field_definition_readonly_first": [
+      "readonly_marker",
+      "abstract_marker"
+    ],
+    "_public_field_definition_accessor_opt": [
+      "accessor_marker"
+    ],
+    "_call_expression_call": [
+      "function",
+      "type_arguments",
+      "arguments"
+    ],
+    "_call_expression_template_call": [
+      "function",
+      "arguments"
+    ],
+    "_call_expression_member": [
+      "function",
+      "type_arguments",
+      "arguments"
+    ],
+    "_update_expression_postfix": [
+      "argument",
+      "operator"
+    ],
+    "_update_expression_prefix": [
+      "operator",
+      "argument"
     ]
   },
   "polymorphVariants": {

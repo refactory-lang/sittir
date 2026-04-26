@@ -180,6 +180,8 @@ function shapeOf(node: AssembledNode, nodeMap: NodeMap): 'config' | 'children' |
 
 function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
     const out = new Set<string>()
+    // Field-site alias sources (ADR-0006) — fields declared as
+    // `alias($.source, $.target)` in some other rule's field slot.
     for (const [, n] of nodeMap.nodes) {
         const fs = n.modelType === 'polymorph' ? n.allFormFields
             : (n.modelType === 'branch' || n.modelType === 'group') ? n.fields : []
@@ -187,6 +189,20 @@ function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
             if (!f.aliasSources) continue
             for (const source of Object.values(f.aliasSources)) out.add(source)
         }
+    }
+    // Rule-level alias sources (canonical-hidden architecture, Option Y) —
+    // hidden kinds whose visible alias-target name is what tree-sitter
+    // emits at parse time. `wrapNode` canonicalizes the visible $type to
+    // the hidden source on receipt; the factory & validator surface for
+    // these kinds is keyed on the canonical hidden name. `markUserFacing`
+    // (assemble.ts) flagged them as `userFacing=true` for exactly this
+    // reason — re-derived here from the same predicate to keep both
+    // emitters consistent.
+    for (const [kind, n] of nodeMap.nodes) {
+        if (!kind.startsWith('_')) continue
+        if (!n.userFacing) continue
+        if (n.modelType === 'token' || n.modelType === 'multi') continue
+        out.add(kind)
     }
     return out
 }

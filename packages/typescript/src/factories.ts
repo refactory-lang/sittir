@@ -394,7 +394,7 @@ export function importSpecifierUFormAs(config: Omit<ConfigOf<T.ImportSpecifierUF
     import_kind: config.importKind,
   };
   const inner = {
-    $type: 'import_specifier_as' as const,
+    $type: '_import_specifier_as' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -1010,7 +1010,7 @@ export function parenthesizedExpression(config: ConfigOf<T.ParenthesizedExpressi
 }
 export function parenthesizedExpressionUFormTyped(config?: Omit<ConfigOf<T.ParenthesizedExpressionUFormTyped>, '$variant'>) {
   const inner = {
-    $type: 'parenthesized_expression_typed' as const,
+    $type: '_parenthesized_expression_typed' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -1714,7 +1714,7 @@ export function callExpression(config: ConfigOf<T.CallExpressionUFormCall> | Con
 }
 export function callExpressionUFormCall(config: Omit<ConfigOf<T.CallExpressionUFormCall>, '$variant'>) {
   const inner = {
-    $type: 'call_expression_call' as const,
+    $type: '_call_expression_call' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -1752,7 +1752,7 @@ export function callExpressionUFormCall(config: Omit<ConfigOf<T.CallExpressionUF
 }
 export function callExpressionUFormTemplateCall(config: Omit<ConfigOf<T.CallExpressionUFormTemplateCall>, '$variant'>) {
   const inner = {
-    $type: 'call_expression_template_call' as const,
+    $type: '_call_expression_template_call' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -1785,7 +1785,7 @@ export function callExpressionUFormTemplateCall(config: Omit<ConfigOf<T.CallExpr
 }
 export function callExpressionUFormMember(config: Omit<ConfigOf<T.CallExpressionUFormMember>, '$variant'>) {
   const inner = {
-    $type: 'call_expression_member' as const,
+    $type: '_call_expression_member' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -2067,7 +2067,7 @@ export function updateExpression(config: ConfigOf<T.UpdateExpressionUFormPostfix
 }
 export function updateExpressionUFormPostfix(config: Omit<ConfigOf<T.UpdateExpressionUFormPostfix>, '$variant'>) {
   const inner = {
-    $type: 'update_expression_postfix' as const,
+    $type: '_update_expression_postfix' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -2100,7 +2100,7 @@ export function updateExpressionUFormPostfix(config: Omit<ConfigOf<T.UpdateExpre
 }
 export function updateExpressionUFormPrefix(config: Omit<ConfigOf<T.UpdateExpressionUFormPrefix>, '$variant'>) {
   const inner = {
-    $type: 'update_expression_prefix' as const,
+    $type: '_update_expression_prefix' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -4157,7 +4157,7 @@ export function indexSignatureUFormColon(config: Omit<ConfigOf<T.IndexSignatureU
     type: config.type,
   };
   const inner = {
-    $type: 'index_signature_colon' as const,
+    $type: '_index_signature_colon' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {

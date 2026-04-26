@@ -840,14 +840,26 @@ function renderNunjucks(
 		throw new Error('renderNunjucks: neither nunjucksEnv nor templatesDir provided');
 	}
 
-	const templateName = `${node.$type}.jinja`;
-
-	// Check if a template exists for this kind. If not, fall back to
-	// the token-shaped-kind path (FR-017 / T027a). Filesystem check
-	// distinguishes "file absent" (→ fallback) from "file present but
-	// malformed" (→ propagate Nunjucks's compile error).
+	// Canonical-hidden short-circuit (Option Y): when render is called
+	// with a non-canonicalized NodeData (visible `$type` for a hidden
+	// alias-source kind), look up the underscore-prefixed template
+	// first. The codegen surface treats `_x` as canonical; templates
+	// live at `_x.jinja` only. Wrapped consumers already see `_x` (via
+	// `wrapNode`'s alias remap) so this fallback covers the rarer
+	// case where a parser-output node reaches render before being
+	// wrapped (e.g. tests that bypass the wrap layer).
+	let templateName = `${node.$type}.jinja`;
 	if (!templateFileExists(templatesDir, templateName)) {
-		return tokenShapedFallback(node);
+		const hiddenTemplateName = `_${node.$type}.jinja`;
+		if (templateFileExists(templatesDir, hiddenTemplateName)) {
+			templateName = hiddenTemplateName;
+		} else {
+			// Check if a template exists for this kind. If not, fall back to
+			// the token-shaped-kind path (FR-017 / T027a). Filesystem check
+			// distinguishes "file absent" (→ fallback) from "file present but
+			// malformed" (→ propagate Nunjucks's compile error).
+			return tokenShapedFallback(node);
+		}
 	}
 
 	// Build TemplateContext by recursively rendering children/fields.

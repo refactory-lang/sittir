@@ -164,7 +164,13 @@ export function validateTemplateCoverage(
         const hasChildren = entry.children !== undefined
         if (!hasFields && !hasChildren) continue
 
-        const rule = rules[entry.type]
+        // Canonical-hidden architecture (Option Y): tree-sitter
+        // node-types.json reports the visible alias-target name (`x`),
+        // but the codegen-canonical template lives at `_x.jinja` for
+        // hidden alias-source kinds. Fall back to the underscore form
+        // when the visible name has no direct rule — `wrapNode` and
+        // `render.ts` perform the same remap on the runtime side.
+        const rule = rules[entry.type] ?? rules[`_${entry.type}`]
         if (rule === undefined) continue // validate-renderable catches this.
 
         total++

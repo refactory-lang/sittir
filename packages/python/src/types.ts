@@ -401,7 +401,7 @@ export interface Module {
 }
 
 export interface SimpleStatements {
-  readonly $type: 'simple_statements';
+  readonly $type: '_simple_statements';
   readonly $children: NonEmptyArray<SimpleStatement>;
 }
 
@@ -436,7 +436,7 @@ export interface ImportFromStatement {
 }
 
 export interface ImportList {
-  readonly $type: 'import_list';
+  readonly $type: '_import_list';
   readonly $fields: {
     readonly name: NonEmptyArray<DottedName | AliasedImport>;
   };
@@ -535,7 +535,7 @@ export interface MatchStatement {
 }
 
 export interface MatchBlock {
-  readonly $type: 'match_block';
+  readonly $type: '_match_block';
   readonly $children: readonly [MatchBlockBlock];
 }
 
@@ -727,7 +727,7 @@ export interface Decorator {
 }
 
 export interface Suite {
-  readonly $type: 'suite';
+  readonly $type: '_suite';
   readonly $children: readonly [SimpleStatements | Block | Newline];
 }
 
@@ -752,12 +752,12 @@ export interface CasePattern {
 }
 
 export interface SimplePattern {
-  readonly $type: 'simple_pattern';
+  readonly $type: '_simple_pattern';
   readonly $children: readonly [ClassPattern | SplatPattern | UnionPattern | _ListPattern | _TuplePattern | DictPattern | String | ConcatenatedString | True | False | None | Integer | Float | ComplexPattern | DottedName];
 }
 
 export interface _AsPattern {
-  readonly $type: 'as_pattern';
+  readonly $type: '_as_pattern';
   readonly $children: readonly [CasePattern | Identifier];
 }
 
@@ -767,12 +767,12 @@ export interface UnionPattern {
 }
 
 export interface _ListPattern {
-  readonly $type: 'list_pattern';
+  readonly $type: '_list_pattern';
   readonly $children: readonly (CasePattern)[];
 }
 
 export interface _TuplePattern {
-  readonly $type: 'tuple_pattern';
+  readonly $type: '_tuple_pattern';
   readonly $children: readonly (CasePattern)[];
 }
 
@@ -782,7 +782,7 @@ export interface DictPattern {
 }
 
 export interface KeyValuePattern {
-  readonly $type: 'key_value_pattern';
+  readonly $type: '_key_value_pattern';
   readonly $fields: {
     readonly key: SimplePattern;
     readonly value: CasePattern;
@@ -1125,7 +1125,7 @@ export interface GeneratorExpression {
 }
 
 export interface ComprehensionClauses {
-  readonly $type: 'comprehension_clauses';
+  readonly $type: '_comprehension_clauses';
   readonly $children: readonly (ForInClause | ForInClause | IfClause)[];
 }
 
@@ -1200,21 +1200,21 @@ export interface Await {
 }
 
 export interface AssignmentEq {
-  readonly $type: 'assignment_eq';
+  readonly $type: '_assignment_eq';
   readonly $fields: {
     readonly right: RightHandSide;
   };
 }
 
 export interface AssignmentType {
-  readonly $type: 'assignment_type';
+  readonly $type: '_assignment_type';
   readonly $fields: {
     readonly type: Type;
   };
 }
 
 export interface AssignmentTyped {
-  readonly $type: 'assignment_typed';
+  readonly $type: '_assignment_typed';
   readonly $fields: {
     readonly type: Type;
     readonly right: RightHandSide;
@@ -1222,12 +1222,12 @@ export interface AssignmentTyped {
 }
 
 export interface WithClauseParen {
-  readonly $type: 'with_clause_paren';
+  readonly $type: '_with_clause_paren';
   readonly $children: NonEmptyArray<WithItem>;
 }
 
 export interface MatchBlockBlock {
-  readonly $type: 'match_block_block';
+  readonly $type: '_match_block_block';
   readonly $fields: {
     readonly alternative: readonly (CaseClause)[];
   };

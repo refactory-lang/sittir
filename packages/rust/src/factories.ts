@@ -618,7 +618,7 @@ export function structItemUFormBrace(config: Omit<ConfigOf<T.StructItemUFormBrac
     type_parameters: config.typeParameters,
   };
   const inner = {
-    $type: 'struct_item_brace' as const,
+    $type: '_struct_item_brace' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -664,7 +664,7 @@ export function structItemUFormTuple(config: Omit<ConfigOf<T.StructItemUFormTupl
     type_parameters: config.typeParameters,
   };
   const inner = {
-    $type: 'struct_item_tuple' as const,
+    $type: '_struct_item_tuple' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -1628,7 +1628,7 @@ export function visibilityModifier(config: ConfigOf<T.VisibilityModifierUFormInP
 }
 export function visibilityModifierUFormInPath(_config?: Omit<ConfigOf<T.VisibilityModifierUFormInPath>, '$variant'>) {
   const inner = {
-    $type: 'visibility_modifier_in_path' as const,
+    $type: '_visibility_modifier_in_path' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -1670,7 +1670,7 @@ export function visibilityModifierUFormCrate(config?: Omit<ConfigOf<T.Visibility
 }
 export function visibilityModifierUFormPub(_config?: Omit<ConfigOf<T.VisibilityModifierUFormPub>, '$variant'>) {
   const inner = {
-    $type: 'visibility_modifier_pub' as const,
+    $type: '_visibility_modifier_pub' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -2276,7 +2276,7 @@ export function rangeExpression(config: ConfigOf<T.RangeExpressionUFormBinary> |
 }
 export function rangeExpressionUFormBinary(config: Omit<ConfigOf<T.RangeExpressionUFormBinary>, '$variant'>) {
   const inner = {
-    $type: 'range_expression_binary' as const,
+    $type: '_range_expression_binary' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -2314,7 +2314,7 @@ export function rangeExpressionUFormBinary(config: Omit<ConfigOf<T.RangeExpressi
 }
 export function rangeExpressionUFormPostfix(config: Omit<ConfigOf<T.RangeExpressionUFormPostfix>, '$variant'>) {
   const inner = {
-    $type: 'range_expression_postfix' as const,
+    $type: '_range_expression_postfix' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -2344,7 +2344,7 @@ export function rangeExpressionUFormPostfix(config: Omit<ConfigOf<T.RangeExpress
 }
 export function rangeExpressionUFormPrefix(config: Omit<ConfigOf<T.RangeExpressionUFormPrefix>, '$variant'>) {
   const inner = {
-    $type: 'range_expression_prefix' as const,
+    $type: '_range_expression_prefix' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -2623,7 +2623,7 @@ export function arrayExpression(config: ConfigOf<T.ArrayExpressionUFormSemi> | C
 }
 export function arrayExpressionUFormSemi(config: Omit<ConfigOf<T.ArrayExpressionUFormSemi>, '$variant'>) {
   const inner = {
-    $type: 'array_expression_semi' as const,
+    $type: '_array_expression_semi' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -2658,7 +2658,7 @@ export function arrayExpressionUFormSemi(config: Omit<ConfigOf<T.ArrayExpression
 }
 export function arrayExpressionUFormList(config: Omit<ConfigOf<T.ArrayExpressionUFormList>, '$variant'>) {
   const inner = {
-    $type: 'array_expression_list' as const,
+    $type: '_array_expression_list' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -3163,7 +3163,7 @@ export function closureExpressionUFormBlock(config: Omit<ConfigOf<T.ClosureExpre
     parameters: config.parameters,
   };
   const inner = {
-    $type: 'closure_expression_block' as const,
+    $type: '_closure_expression_block' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -3651,7 +3651,7 @@ export function fieldPatternUFormNamed(config: Omit<ConfigOf<T.FieldPatternUForm
     mutable_specifier: config.mutableSpecifier,
   };
   const inner = {
-    $type: 'field_pattern_named' as const,
+    $type: '_field_pattern_named' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -3730,7 +3730,7 @@ export function rangePattern(config: ConfigOf<T.RangePatternUFormLeftWithRight> 
 }
 export function rangePatternUFormLeftWithRight(config: Omit<ConfigOf<T.RangePatternUFormLeftWithRight>, '$variant'>) {
   const inner = {
-    $type: 'range_pattern_left_with_right' as const,
+    $type: '_range_pattern_left_with_right' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -3772,7 +3772,7 @@ export function rangePatternUFormLeftBare(_config?: Omit<ConfigOf<T.RangePattern
 }
 export function rangePatternUFormPrefix(config: Omit<ConfigOf<T.RangePatternUFormPrefix>, '$variant'>) {
   const inner = {
-    $type: 'range_pattern_prefix' as const,
+    $type: '_range_pattern_prefix' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -3872,7 +3872,7 @@ export function orPattern(config: ConfigOf<T.OrPatternUFormBinary> | ConfigOf<T.
 }
 export function orPatternUFormBinary(config: Omit<ConfigOf<T.OrPatternUFormBinary>, '$variant'>) {
   const inner = {
-    $type: 'or_pattern_binary' as const,
+    $type: '_or_pattern_binary' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -3905,7 +3905,7 @@ export function orPatternUFormBinary(config: Omit<ConfigOf<T.OrPatternUFormBinar
 }
 export function orPatternUFormPrefix(config: Omit<ConfigOf<T.OrPatternUFormPrefix>, '$variant'>) {
   const inner = {
-    $type: 'or_pattern_prefix' as const,
+    $type: '_or_pattern_prefix' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {
@@ -4078,7 +4078,7 @@ export function lineCommentUFormRegularDslash(config: Omit<ConfigOf<T.LineCommen
 }
 export function lineCommentUFormDoc(config: Omit<ConfigOf<T.LineCommentUFormDoc>, '$variant'>) {
   const inner = {
-    $type: 'line_comment_doc' as const,
+    $type: '_line_comment_doc' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: {

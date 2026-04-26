@@ -1863,8 +1863,91 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_error_sentinel': (d) => d,
 };
 
+const _aliasTargetToSource: Record<string, string> = {
+  'array_expression_list': '_array_expression_list',
+  'array_expression_semi': '_array_expression_semi',
+  'closure_expression_block': '_closure_expression_block',
+  'closure_expression_expr': '_closure_expression_expr',
+  'condition': '_condition',
+  'declaration_statement': '_declaration_statement',
+  'delim_token_tree_brace': '_delim_token_tree_brace',
+  'delim_token_tree_bracket': '_delim_token_tree_bracket',
+  'delim_token_tree_paren': '_delim_token_tree_paren',
+  'delim_tokens': '_delim_tokens',
+  'doc_comment': '_doc_comment',
+  'expression': '_expression',
+  'expression_ending_with_block': '_expression_ending_with_block',
+  'expression_except_range': '_expression_except_range',
+  'expression_statement_block_ending': '_expression_statement_block_ending',
+  'expression_statement_with_semi': '_expression_statement_with_semi',
+  'field_identifier': '_field_identifier',
+  'field_pattern_named': '_field_pattern_named',
+  'field_pattern_shorthand': '_field_pattern_shorthand',
+  'foreign_mod_item_body': '_foreign_mod_item_body',
+  'function_type_fn_form': '_function_type_fn_form',
+  'function_type_trait_form': '_function_type_trait_form',
+  'impl_item_body': '_impl_item_body',
+  'kw_async_marker': '_kw_async_marker',
+  'kw_move_marker': '_kw_move_marker',
+  'kw_ref_marker': '_kw_ref_marker',
+  'kw_static_marker': '_kw_static_marker',
+  'kw_unsafe_marker': '_kw_unsafe_marker',
+  'let_chain': '_let_chain',
+  'line_comment_content': '_line_comment_content',
+  'line_comment_doc': '_line_comment_doc',
+  'line_comment_regular_dslash': '_line_comment_regular_dslash',
+  'literal': '_literal',
+  'literal_pattern': '_literal_pattern',
+  'macro_definition_brace': '_macro_definition_brace',
+  'macro_definition_bracket': '_macro_definition_bracket',
+  'macro_definition_paren': '_macro_definition_paren',
+  'match_arm_block_ending': '_match_arm_block_ending',
+  'match_arm_with_comma': '_match_arm_with_comma',
+  'mod_item_inline': '_mod_item_inline',
+  'or_pattern_binary': '_or_pattern_binary',
+  'or_pattern_prefix': '_or_pattern_prefix',
+  'path': '_path',
+  'pattern': '_pattern',
+  'pointer_type_const': '_pointer_type_const',
+  'pointer_type_mut': '_pointer_type_mut',
+  'primitive_type': '_primitive_type',
+  'range_expression_bare': '_range_expression_bare',
+  'range_expression_binary': '_range_expression_binary',
+  'range_expression_postfix': '_range_expression_postfix',
+  'range_expression_prefix': '_range_expression_prefix',
+  'range_pattern_left_with_right': '_range_pattern_left_with_right',
+  'range_pattern_prefix': '_range_pattern_prefix',
+  'reference_expression_raw_const': '_reference_expression_raw_const',
+  'reference_expression_raw_mut': '_reference_expression_raw_mut',
+  'reserved_identifier': '_reserved_identifier',
+  'statement': '_statement',
+  'struct_item_brace': '_struct_item_brace',
+  'struct_item_tuple': '_struct_item_tuple',
+  'token_pattern': '_token_pattern',
+  'token_tree_brace': '_token_tree_brace',
+  'token_tree_bracket': '_token_tree_bracket',
+  'token_tree_paren': '_token_tree_paren',
+  'token_tree_pattern_brace': '_token_tree_pattern_brace',
+  'token_tree_pattern_bracket': '_token_tree_pattern_bracket',
+  'token_tree_pattern_paren': '_token_tree_pattern_paren',
+  'tokens': '_tokens',
+  'type_identifier': '_type_identifier',
+  'use_clause': '_use_clause',
+  'visibility_modifier_crate': '_visibility_modifier_crate',
+  'visibility_modifier_in_path': '_visibility_modifier_in_path',
+  'visibility_modifier_pub': '_visibility_modifier_pub',
+};
+
 /** Wrap a NodeData into its lazy read-only view. */
 export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
+  // Canonical-hidden remap (Option Y): parser-output `$type`
+  // is the visible alias target (e.g. `range_pattern_left_with_right`);
+  // remap to the hidden alias source (`_range_pattern_left_with_right`)
+  // so dispatch + downstream consumers see the canonical form.
+  const canonical = _aliasTargetToSource[data.$type];
+  if (canonical !== undefined) {
+    data = { ...data, $type: canonical };
+  }
   const fn = _wrapTable[data.$type];
   if (!fn) return data; // unknown kind — return as-is
   return fn(data, tree);
