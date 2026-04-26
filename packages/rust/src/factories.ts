@@ -3717,12 +3717,17 @@ export function rangePattern(config: ConfigOf<T.RangePatternUFormLeftWithRight> 
   }
   throw new Error(`rangePattern: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'left_with_right' | 'left_bare' | 'prefix'.`);
 }
-export function rangePatternUFormLeftWithRight(_config?: Omit<ConfigOf<T.RangePatternUFormLeftWithRight>, '$variant'>) {
+export function rangePatternUFormLeftWithRight(config: Omit<ConfigOf<T.RangePatternUFormLeftWithRight>, '$variant'>) {
+  const fields = {
+    left: config.left,
+  };
   return {
     $type: 'range_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'left_with_right' as const,
+    $fields: fields,
+    left(value?: T.LiteralPattern | T.Path) { return _fs(config, rangePatternUFormLeftWithRight, 'left', value, config?.left); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3731,12 +3736,17 @@ export function rangePatternUFormLeftWithRight(_config?: Omit<ConfigOf<T.RangePa
     replace(this: AnyNodeData, target: T.RangePatternUFormLeftWithRightTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
-export function rangePatternUFormLeftBare(_config?: Omit<ConfigOf<T.RangePatternUFormLeftBare>, '$variant'>) {
+export function rangePatternUFormLeftBare(config: Omit<ConfigOf<T.RangePatternUFormLeftBare>, '$variant'>) {
+  const fields = {
+    left: config.left,
+  };
   return {
     $type: 'range_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'left_bare' as const,
+    $fields: fields,
+    left(value?: T.LiteralPattern | T.Path) { return _fs(config, rangePatternUFormLeftBare, 'left', value, config?.left); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

@@ -111,12 +111,10 @@
                     "total": 148
                 },
                 "roundtrip": {
-                    "astMatchPass": 123,
-                    "failingKinds": [
-                        "range_pattern"
-                    ],
+                    "astMatchPass": 124,
+                    "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 123,
+                    "pass": 124,
                     "total": 136
                 }
             }
@@ -191,8 +189,8 @@
         }
     },
     "totals": {
-        "fail": 1796,
-        "pass": 3172,
+        "fail": 1795,
+        "pass": 3173,
         "total": 4968
     }
 }

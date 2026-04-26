@@ -1906,11 +1906,17 @@ export interface MutPattern {
 export interface RangePatternUFormLeftWithRight {
   readonly $type: 'range_pattern';
   readonly $variant: 'left_with_right';
+  readonly $fields: {
+    readonly left: LiteralPattern | Path;
+  };
 }
 
 export interface RangePatternUFormLeftBare {
   readonly $type: 'range_pattern';
   readonly $variant: 'left_bare';
+  readonly $fields: {
+    readonly left: LiteralPattern | Path;
+  };
 }
 
 export interface RangePatternUFormPrefix {

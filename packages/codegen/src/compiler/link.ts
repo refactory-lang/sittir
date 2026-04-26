@@ -759,22 +759,8 @@ export function applyOverridePolymorphs(
 
         const forms = children.map(child => {
             const fullName = `${parentKind}_${child}`
-            const variantMember = found.choice.members.find(m => {
-                if (m.type === 'variant') {
-                    const sym = m.content
-                    return sym.type === 'symbol' && sym.name === fullName
-                }
-                return m.type === 'symbol' && m.name === fullName
-            })
-
-            const content = variantMember?.type === 'variant'
-                ? variantMember.content
-                : variantMember ?? ({ type: 'symbol', name: fullName } as Rule)
-            const fused = found.prefix.length > 0 || found.suffix.length > 0
-                ? { type: 'seq' as const, members: [...found.prefix, content, ...found.suffix] } as Rule
-                : content
-
-            return { name: child, content: fused }
+            const content = resolveFormContent(found, fullName)
+            return { name: child, content }
         })
 
         rules[parentKind] = {
@@ -987,6 +973,85 @@ function applyVariantScaffoldPushDown(
     const remaining = seq.members.filter((m, i) => i === choiceIdx || m.type !== 'string')
     if (remaining.length === 1) return remaining[0]!
     return { type: 'seq', members: remaining }
+}
+
+/**
+ * Resolve the `content` for one polymorph form given a
+ * `VariantChoiceLocation` and the variant's full symbol name.
+ *
+ * Tries three strategies in order:
+ *
+ * 1. **Direct match** — the symbol appears as a direct member of
+ *    `found.choice` (possibly inside a `variant` wrapper). Fuses the
+ *    outer `prefix`/`suffix` around it.
+ *
+ * 2. **Nested match** — the symbol is not a direct member but IS nested
+ *    inside one of the outer choice's arms. The canonical pattern is
+ *    `choice(seq(field('left', X), inner_choice(sym_A, sym_B)), sym_C)`:
+ *    `sym_A` and `sym_B` don't appear at the top of the outer choice, but
+ *    they live inside arm 0's inner choice. For each arm that is a `seq`,
+ *    we scan the seq's members for a `choice` that directly contains
+ *    `fullName`. When found, we substitute the inner choice with a bare
+ *    `symbol(fullName)` and collapse the arm to either that symbol or a
+ *    new `seq` with the arm's other members preserved (e.g.
+ *    `field('left', X)` stays). This lifts the parent-field positions
+ *    into the polymorph form so the render template for `left_with_right`
+ *    includes `$left $right` instead of just `$right`. The outer
+ *    `prefix`/`suffix` from the enclosing seq (if any) are fused around
+ *    the reconstructed arm.
+ *
+ * 3. **Bare symbol fallback** — neither strategy located `fullName`.
+ *    Returns `symbol(fullName)` so downstream emitters still see the kind.
+ *
+ * @param found - Location struct from `findVariantChoice`.
+ * @param fullName - Full variant-child kind name (`${parent}_${child}`).
+ * @returns The `content` rule to embed in the polymorph form.
+ */
+function resolveFormContent(found: VariantChoiceLocation, fullName: string): Rule {
+    const { choice, prefix, suffix } = found
+
+    /** Fuse outer prefix/suffix around a resolved content rule. */
+    const fuse = (content: Rule): Rule =>
+        prefix.length > 0 || suffix.length > 0
+            ? { type: 'seq', members: [...prefix, content, ...suffix] }
+            : content
+
+    // Strategy 1: direct member of the outer choice.
+    const directMatch = choice.members.find(m => {
+        const core = m.type === 'variant' ? m.content : m
+        return core.type === 'symbol' && core.name === fullName
+    })
+    if (directMatch) {
+        const core = directMatch.type === 'variant' ? directMatch.content : directMatch
+        return fuse(core)
+    }
+
+    // Strategy 2: the variant symbol lives inside one of the outer
+    // choice's arms (a seq whose members include an inner choice that
+    // contains fullName). Walk each arm looking for that pattern.
+    for (const arm of choice.members) {
+        const armCore = arm.type === 'variant' ? arm.content : arm
+        if (armCore.type !== 'seq') continue
+        const innerChoiceIdx = armCore.members.findIndex(m => m.type === 'choice')
+        if (innerChoiceIdx === -1) continue
+        const innerChoice = armCore.members[innerChoiceIdx] as ChoiceRule
+        const innerMatch = innerChoice.members.some(m => {
+            const core = m.type === 'variant' ? m.content : m
+            return core.type === 'symbol' && core.name === fullName
+        })
+        if (!innerMatch) continue
+        // Substitute the inner choice with symbol(fullName) and rebuild
+        // the arm seq, preserving siblings (e.g. field('left', ...)).
+        const symNode: Rule = { type: 'symbol', name: fullName }
+        const newMembers = armCore.members.map((m, i) => i === innerChoiceIdx ? symNode : m)
+        const reconstructed: Rule = newMembers.length === 1
+            ? newMembers[0]!
+            : { type: 'seq', members: newMembers }
+        return fuse(reconstructed)
+    }
+
+    // Strategy 3: bare symbol fallback.
+    return fuse({ type: 'symbol', name: fullName })
 }
 
 export function findVariantChoice(rule: Rule): VariantChoiceLocation | null {

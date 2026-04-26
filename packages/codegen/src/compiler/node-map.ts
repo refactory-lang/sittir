@@ -948,6 +948,26 @@ export function isSyntheticFieldWrapper(content: Rule): boolean {
 }
 
 /**
+ * Return the name of the trailing visible (non-underscore) symbol in a rule,
+ * if one exists. Used by {@link AssembledGroup.renderParts} to detect form
+ * content shapes like `seq(field('left'), symbol('range_pattern_left_with_right'))`
+ * where the visible child kind renders as its `$text` (no template file). In
+ * those cases the walker inserts a stray space before `$$$CHILDREN`; this
+ * predicate lets `renderParts` strip the space and set `joinByField.children = ''`.
+ *
+ * @param rule - The form's content rule.
+ * @returns The visible symbol name, or `null` if none.
+ */
+function trailingVisibleSymbol(rule: Rule): string | null {
+    if (rule.type === 'symbol' && !rule.name.startsWith('_')) return rule.name
+    if (rule.type === 'seq' && rule.members.length > 0) {
+        const last = rule.members[rule.members.length - 1]!
+        if (last.type === 'symbol' && !last.name.startsWith('_')) return last.name
+    }
+    return null
+}
+
+/**
  * Unified walker that produces `NodeOrTerminal[]` directly from a field's
  * content rule. Each entry carries its own per-value `multiplicity` — this
  * preserves information that the old parallel `deriveContentTypes` +
@@ -2221,8 +2241,15 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
         // unguarded `$NAME` placeholder. Wrapping per-form (instead of
         // once on the merged template) keeps each `{% if variant == X %}`
         // body honest about which fields are optional in THAT form.
+        // Pass the parent polymorph's variantChildKinds so renderParts can
+        // detect forms whose trailing symbol is one of those variant children
+        // (they render as $text and may start with a non-word operator like
+        // `..=`; in that case the space before $$$CHILDREN must be stripped).
+        const variantChildSet = this.variantChildKinds.length > 0
+            ? new Set(this.variantChildKinds)
+            : undefined
         for (const form of this.#forms) {
-            const { template, clauses, joinByField } = form.renderParts(rules, wordMatcher)
+            const { template, clauses, joinByField } = form.renderParts(rules, wordMatcher, variantChildSet)
             if (!template) {
                 throw new Error(
                     `AssembledPolymorph.renderTemplate: '${this.kind}' form '${form.name}' ` +
@@ -2545,10 +2572,53 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
      * Returns the walker's raw output so the polymorph can merge multiple
      * forms' clauses into a single parent entry. Keeps `this.rule`
      * encapsulated — the sibling class doesn't reach in.
+     *
+     * @param variantChildKinds - Optional set of visible variant-child kind names
+     *   from the parent override polymorph. When provided, the method detects
+     *   forms whose content ends with a symbol that is one of these variant
+     *   children (i.e. the child renders as `$text` at runtime). For those
+     *   forms, the walker's space before `$$$CHILDREN` is stripped and
+     *   `joinByField.children` is pinned to `""` so the child's `$text`
+     *   concatenates flush (e.g. `range_pattern` renders `1..=10` not `1 ..=10`).
      */
-    renderParts(rules?: Record<string, Rule>, wordMatcher?: RegExp): { template: string; clauses: Record<string, string>; joinByField: Record<string, string> } {
+    renderParts(
+        rules?: Record<string, Rule>,
+        wordMatcher?: RegExp,
+        variantChildKinds?: ReadonlySet<string>,
+    ): { template: string; clauses: Record<string, string>; joinByField: Record<string, string> } {
         const optionalFields = deriveOptionalFieldNames(this.fields)
-        return renderRuleTemplate(this.rule, false, rules, wordMatcher, optionalFields)
+        const { template, clauses, joinByField } = renderRuleTemplate(this.rule, false, rules, wordMatcher, optionalFields)
+        // Variant-child flush-join: when a form's content is a seq whose members
+        // are ALL named fields (no optional wrappers, no string literals) followed
+        // by a visible variant-child symbol, the child may render as its `$text`
+        // starting with a non-word character (e.g. `..=` for range_pattern_left_with_right).
+        // The walker's needsSpace heuristic inserts a stray space between `$FIELD`
+        // and `$$$CHILDREN`, which is incorrect in this case.
+        //
+        // Applies only when:
+        //   1. The form content is a `seq` (not a bare symbol from Strategy 1/3).
+        //   2. All members before the trailing symbol are `field`-type nodes — this
+        //      distinguishes Strategy-2 forms (inner-choice seq like range_pattern's
+        //      `seq(field('left'), symbol(child_kind))`) from Strategy-1 prefix-fused
+        //      forms (closure_expression's `seq(optional(...), ..., symbol(child_kind))`
+        //      where the prefix includes optional wrappers).
+        //   3. The trailing symbol is one of the parent's variantChildKinds.
+        if (variantChildKinds && template.includes(' $$$CHILDREN') && !('children' in joinByField)) {
+            const trailSym = trailingVisibleSymbol(this.rule)
+            if (trailSym && variantChildKinds.has(trailSym) && this.rule.type === 'seq') {
+                const prefixMembers = this.rule.members.slice(0, -1)
+                const allPrefixAreFields = prefixMembers.length > 0
+                    && prefixMembers.every(m => m.type === 'field')
+                if (allPrefixAreFields) {
+                    return {
+                        template: template.replace(' $$$CHILDREN', '$$$CHILDREN'),
+                        clauses,
+                        joinByField: { ...joinByField, children: '' },
+                    }
+                }
+            }
+        }
+        return { template, clauses, joinByField }
     }
 
 }
