@@ -12,13 +12,12 @@
 //! # Scope caveat (T033)
 //!
 //! `find_and_read(source, pattern)` is currently stubbed because
-//! `ast-grep-core` is deferred (see `sittir-core/Cargo.toml` comments:
-//! every `ast-grep-core` release ≥0.40 pulls `tree-sitter = ^0.26.3`
-//! which conflicts with the three grammar crates we ship). The stub
-//! returns `Error("find_and_read not yet implemented — ast-grep-core integration pending")`
-//! so consumers that accidentally reach the native backend before
-//! Phase 3 search support lands fall back cleanly (FR-020 / backend
-//! selection shim emits the TS fallback path).
+//! `ast-grep-core` integration is deferred to Phase 3 (T022+). The dep
+//! version conflict that previously blocked it is resolved (see
+//! `Cargo.toml` root for rationale). The stub returns
+//! `Error("find_and_read not yet implemented — ast-grep-core integration pending")`
+//! so consumers fall back cleanly to the TS engine before Phase 3
+//! search support lands (FR-020 / backend selection shim).
 //!
 //! Everything else on the contract surface is fully wired:
 //!
@@ -84,10 +83,9 @@ impl SittirEngine {
     /// Parse `source`, run an ast-grep pattern match, return the matched
     /// `NodeData`s as a JSON array string.
     ///
-    /// **Deferred (T033):** ast-grep-core integration is blocked on a
-    /// version conflict with our pinned tree-sitter crate (see module
-    /// docs). This stub returns an error so callers fall through the
-    /// backend-selection shim to the TS engine.
+    /// **Deferred (T033):** ast-grep-core integration is Phase 3 work
+    /// (see module docs). This stub returns an error so callers fall
+    /// through the backend-selection shim to the TS engine.
     #[napi]
     pub fn find_and_read(&mut self, _source: String, _pattern: String) -> Result<String> {
         Err(Error::from_reason(

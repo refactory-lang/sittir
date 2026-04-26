@@ -20,15 +20,13 @@ tree-sitter = { workspace = true }
 # attribute on `Edit`.
 napi = { version = "3", default-features = false, features = ["napi4"] }
 napi-derive = "3"
-# ast-grep-core is named in spec 012 T003 but deferred from Phase 1
-# because every published version >=0.40 pulls tree-sitter ^0.26.3 via
-# its `links = "tree-sitter"` dep, which conflicts with the three
-# grammar crates named in T004 (tree-sitter-rust 0.24 -> tree-sitter
-# ^0.25; tree-sitter-typescript 0.23 -> tree-sitter ^0.24;
-# tree-sitter-python 0.25 -> tree-sitter ^0.25.8). ast-grep-core is
-# only exercised by Phase 3 T022+ (pattern search via
-# `find_and_read`); the dep + version-alignment decision belongs in
-# that task, not here. Phase 1 scaffold stays clean without it.
+# ast-grep-core is named in spec 012 T003 but deferred from Phase 1;
+# the version conflict that previously blocked it (grammar crates
+# requiring tree-sitter ^0.24/^0.25 while ast-grep-core >=0.40 requires
+# tree-sitter ^0.26.3) is resolved — grammar crates only use
+# tree-sitter as a *dev-dep*, production dep is tree-sitter-language 0.1.
+# ast-grep-core is only exercised by Phase 3 T022+ (pattern search via
+# `find_and_read`); the integration work belongs in that task.
 # ast-grep-core = "0.42"
 sha2 = { workspace = true }
 askama = { workspace = true }

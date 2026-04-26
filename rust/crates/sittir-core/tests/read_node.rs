@@ -8,8 +8,9 @@
 //! might slip in on leaves vs branches are both covered.
 //!
 //! Also sanity-checks that `$source` is always `"ts"` from this code
-//! path, that `$nodeId` is a monotonically-assigned counter, and that
-//! field-slot arity produces `Single` vs `Multiple` correctly.
+//! path, that `$nodeId` values are unique (pointer-derived, not a
+//! sequential counter), and that field-slot arity produces `Single` vs
+//! `Multiple` correctly.
 
 use serde_json::Value;
 use sittir_core::read_node::read_node;
@@ -67,8 +68,7 @@ fn parse_and_read(language: tree_sitter::Language, source: &str) -> NodeData {
     let mut parser = tree_sitter::Parser::new();
     parser.set_language(&language).expect("set language");
     let tree = parser.parse(source, None).expect("parse succeeds");
-    let mut counter: u32 = 0;
-    read_node(&tree, source, None, &mut counter)
+    read_node(&tree, source, None)
 }
 
 #[test]
@@ -122,14 +122,11 @@ fn no_enrichment_fields_on_any_node() {
 }
 
 #[test]
-fn node_ids_are_unique_and_dense() {
-    // Every emitted NodeData carries a distinct `$nodeId`, and the
-    // assigned IDs form a contiguous range starting at 0 (since this
-    // is a fresh traversal with counter reset). We don't check
-    // pre-order position here — the JSON walker visits `$fields` (a
-    // HashMap) in non-deterministic order, so the collected ID
-    // sequence is a permutation of 0..N rather than the original
-    // assignment order.
+fn node_ids_are_unique() {
+    // Every emitted NodeData carries a distinct `$nodeId`. IDs are
+    // tree-sitter's pointer-derived `Node::id()` values (not a
+    // sequential counter), so they are unique within a tree but not
+    // necessarily contiguous or starting at 0.
     let lang: tree_sitter::Language = tree_sitter_python::LANGUAGE.into();
     let source = "x = 1\ny = 2\n";
     let node = parse_and_read(lang, source);
@@ -137,17 +134,13 @@ fn node_ids_are_unique_and_dense() {
     let mut ids: Vec<u64> = Vec::new();
     collect_node_ids(&json, &mut ids);
     assert!(!ids.is_empty(), "should see at least the root");
+    // All IDs must be distinct within the tree.
+    let before = ids.len();
     ids.sort_unstable();
-    assert_eq!(ids[0], 0, "first assigned nodeId must be 0 after counter reset");
-    for pair in ids.windows(2) {
-        assert!(
-            pair[1] == pair[0] + 1,
-            "nodeIds must be contiguous 0..N (got gap): {ids:?}"
-        );
-    }
-    // Root NodeData directly exposes its own id — that's the one that
-    // gets assigned first, so it must be the minimum (0).
-    assert_eq!(node.node_id, Some(0), "root must claim id 0");
+    ids.dedup();
+    assert_eq!(ids.len(), before, "node IDs must be unique within the tree");
+    // Root must carry its own node_id.
+    assert!(node.node_id.is_some(), "root must have a nodeId");
 }
 
 /// Pre-order walk over the JSON NodeData tree, pushing every `$nodeId`
