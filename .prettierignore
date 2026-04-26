@@ -1,0 +1,4 @@
+# Generated files that use JSON.stringify format (quoted keys).
+# oxfmt reformats these to JSON5 (unquoted keys), which breaks
+# the validator's JSON.parse-based factory-map loader.
+**/factory-map.json5
