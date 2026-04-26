@@ -113,9 +113,34 @@ function registerSittirFilters(env: nunjucks.Environment): void {
 		)
 	}
 	const sepOf = (sep: unknown): string => typeof sep === 'string' ? sep : ''
+	// Line-comment-aware join. When a child ends with a `//` or `#`
+	// line-terminated comment, force the following separator to be `\n`
+	// instead of the configured one — otherwise joining with ` ` (block's
+	// default) folds the next sibling into the comment at reparse time.
+	// Mirrors the legacy `$$$CHILDREN` path's `endsLineComment` fixup in
+	// `render.ts`, lifted here so the Jinja-driven `{{ children | join }}`
+	// path handles it too. Cluster J (016): block round-trip on fixtures
+	// containing `// comment` followed by a statement.
+	const endsLineComment = (s: string): boolean => {
+		const trimmed = s.replace(/[ \t]+$/, '')
+		if (trimmed.endsWith('\n')) return false
+		return /(?:^|\n)\s*(?:\/\/|#)[^\n]*$/.test(trimmed)
+	}
+	const joinWithLineCommentFix = (parts: readonly string[], sep: string): string => {
+		if (parts.length === 0) return ''
+		if (parts.length === 1) return parts[0]!
+		const out: string[] = []
+		for (let i = 0; i < parts.length; i++) {
+			out.push(parts[i]!)
+			if (i < parts.length - 1) {
+				out.push(endsLineComment(parts[i]!) ? '\n' : sep)
+			}
+		}
+		return out.join('')
+	}
 	env.addFilter('join', (value: unknown, sep: unknown) => {
 		const v = normalizeJoinValue(value, 'join')
-		return Array.isArray(v) ? v.join(sepOf(sep)) : v
+		return Array.isArray(v) ? joinWithLineCommentFix(v, sepOf(sep)) : v
 	})
 	const flankJoin = (
 		value: unknown,
@@ -134,7 +159,7 @@ function registerSittirFilters(env: nunjucks.Environment): void {
 		const flanked = v as FlankedChildArray
 		const prefix = sides.leading && flanked._leading_anon === s ? s : ''
 		const suffix = sides.trailing && flanked._trailing_anon === s ? s : ''
-		return prefix + v.join(s) + suffix
+		return prefix + joinWithLineCommentFix(v, s) + suffix
 	}
 	env.addFilter('joinWithTrailing', (value: unknown, sep: unknown) =>
 		flankJoin(value, sep, 'joinWithTrailing', { leading: false, trailing: true }),

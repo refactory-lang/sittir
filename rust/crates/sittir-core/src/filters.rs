@@ -71,12 +71,53 @@ pub fn joinby<S: AsRef<str>>(
     }
     let prefix = if leading { sep } else { "" };
     let suffix = if trailing { sep } else { "" };
-    let joined = xs
-        .iter()
-        .map(|s| s.as_ref())
-        .collect::<Vec<_>>()
-        .join(sep);
+    let joined = join_with_line_comment_fix(xs, sep);
     Ok(format!("{prefix}{joined}{suffix}"))
+}
+
+/// Detect whether a rendered child ends with a `//` or `#` line-terminated
+/// comment. Mirrors the TS `endsLineComment` helper in
+/// `packages/core/src/templates/nunjucks-env.ts` — used by the join helpers
+/// to force a `\n` separator after a line-comment-ending child so the
+/// following sibling doesn't get folded into the comment at reparse time.
+fn ends_line_comment(s: &str) -> bool {
+    let trimmed = s.trim_end_matches([' ', '\t']);
+    if trimmed.ends_with('\n') {
+        return false;
+    }
+    // Find the start of the last line (everything after the final `\n`).
+    let last_line_start = trimmed.rfind('\n').map_or(0, |i| i + 1);
+    let last_line = &trimmed[last_line_start..];
+    let stripped = last_line.trim_start();
+    stripped.starts_with("//") || stripped.starts_with('#')
+}
+
+/// Join `xs` with `sep`, but force `\n` instead of `sep` after any element
+/// that ends with a line-terminated comment (`//` or `#`). Joining with
+/// ` ` would otherwise fold the next sibling into the comment at reparse
+/// time. Cluster J (016): mirrors the TS Nunjucks `join` filter so the
+/// two engines stay byte-identical on fixtures containing `// comment`
+/// followed by a statement (e.g. rust block round-trip).
+fn join_with_line_comment_fix<S: AsRef<str>>(xs: &[S], sep: &str) -> String {
+    if xs.is_empty() {
+        return String::new();
+    }
+    if xs.len() == 1 {
+        return xs[0].as_ref().to_string();
+    }
+    let mut out = String::new();
+    for (i, item) in xs.iter().enumerate() {
+        let s = item.as_ref();
+        out.push_str(s);
+        if i + 1 < xs.len() {
+            if ends_line_comment(s) {
+                out.push('\n');
+            } else {
+                out.push_str(sep);
+            }
+        }
+    }
+    out
 }
 
 /// Presence test — true when a field is absent / empty / whitespace-only.
