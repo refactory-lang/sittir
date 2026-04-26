@@ -574,8 +574,30 @@ function applySymbolToField(ruleName: string, rule: Rule, supertypeNames: Readon
 // ---------------------------------------------------------------------------
 
 function applyOptionalKeyword(ruleName: string, rule: Rule, kwRules: Record<string, Rule>): Rule {
-    const claimed = isSeqType(rule.type) ? collectFieldNamesRuntime(rule) : new Set<string>()
+    // Peel prec wrappers transparently when computing the seq-level
+    // claimed-name set, so prec-wrapped seqs (rust `closure_expression:
+    // prec(closure, seq(...))`, python `for_in_clause: prec.left(seq(...))`,
+    // ts `function_expression: prec('literal', seq(...))`) get the same
+    // claimed-name view as a bare top-level seq. Without this the
+    // top-level test `isSeqType(rule.type)` is false on a prec wrapper
+    // so existing field names inside the inner seq don't shadow new
+    // promotions — but more importantly, `walkOptionalKeyword`'s descent
+    // through prec wrappers (added below) would then walk the inner seq
+    // with an EMPTY claimed-set, mis-handling collisions.
+    const inner = peelPrec(rule)
+    const claimed = isSeqType(inner.type) ? collectFieldNamesRuntime(inner) : new Set<string>()
     return walkOptionalKeyword(ruleName, rule, claimed, kwRules) ?? rule
+}
+
+/** @internal — strip any number of prec/prec.left/prec.right/prec.dynamic
+ *  wrappers and return the innermost rule. Returns the input unchanged
+ *  when no prec wrapper is present. */
+function peelPrec(rule: Rule): Rule {
+    let cursor: Rule = rule
+    while (isPrecWrapper(cursor as { type: string })) {
+        cursor = (cursor as unknown as { content: Rule }).content
+    }
+    return cursor
 }
 
 function walkOptionalKeyword(
@@ -617,6 +639,24 @@ function walkOptionalKeyword(
         return null
     }
     if (isRepeatType(rule.type) || isFieldType(rule.type)) {
+        const content = (rule as unknown as { content: Rule }).content
+        const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules)
+        if (out === null) return null
+        return { ...rule, content: out } as Rule
+    }
+    // Descend through prec / prec.left / prec.right / prec.dynamic. The
+    // wrapper has no semantic effect on field promotion — it only
+    // adjusts LR(1) precedence at parser-generation time. Preserves the
+    // wrapper around the rewritten content so prec metadata isn't
+    // dropped (that's a different optimization). Without this case, prec-
+    // wrapped seqs (rust `closure_expression: prec(closure, seq(optional(
+    // 'static'), ...))`, python `for_in_clause: prec.left(seq(optional(
+    // 'async'), ...))`, ts `function_expression: prec('literal',
+    // seq(optional('async'), ...))`) silently miss auto-promotion at the
+    // in-memory codegen surface (the parser-level field-promotion via
+    // override is independent — this only affects what enrich exposes
+    // to types.ts / factories.ts emitters).
+    if (isPrecWrapper(rule as { type: string })) {
         const content = (rule as unknown as { content: Rule }).content
         const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules)
         if (out === null) return null

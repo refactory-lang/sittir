@@ -152,9 +152,21 @@ const config: WireConfig<RustGrammar> = {
         // Field-promotion wave 1 (016 task #23) + wave-1 follow-up (task
         // #27): label each standalone optional marker so render preserves
         // them (`static async move |x| ...` vs `|x| ...`). Naming follows
-        // the `<token>_marker` convention enrich now uses for auto-promoted
-        // sites (016 task #30); the prec-wrapped seq isn't reached by
-        // enrich's walker, so these positions are still hand-promoted.
+        // the `<token>_marker` convention enrich uses for auto-promoted
+        // sites (016 task #30).
+        //
+        // 016 task #35: enrich's optional-keyword pass now descends through
+        // `prec(...)` wrappers — but ONLY at the in-memory codegen surface
+        // (types.ts, factories.ts). The tree-sitter-cli `grammar.json`
+        // generation receives base rules as callbacks BEFORE evaluation,
+        // so enrich's modifications don't reach the synthesized `_kw_*`
+        // hidden rules / FIELD wrappers in grammar.json. Removing this
+        // override leaves the parser emitting bare anon `static`/`async`/
+        // `move` tokens; readNode promotes them to `$fields.<bare-text>`
+        // (not `$fields.<text>_marker`), the generated `.jinja` template
+        // references the `_marker` keys → render drops them → round-trip
+        // regresses. Keep this entry until enrich runs on tree-sitter-cli's
+        // post-evaluation rule shape too (deferred).
         // The `_kw_async_marker` inline declaration above (wave-1
         // follow-up, task #27) is required to keep `let a = async move
         // || async move {}` from regressing to ERROR.

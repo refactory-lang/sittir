@@ -350,6 +350,176 @@ describe('enrich()', () => {
                 content: { type: 'field', name: 'pub_marker' },
             })
         })
+
+        it('descends through prec(...) wrappers (rust closure_expression)', () => {
+            // closure_expression: prec(closure, seq(
+            //   optional('static'), optional('async'), optional('move'),
+            //   field('parameters', ...), ...))
+            // Without prec descent, the optional puncts inside the prec'd
+            // seq would NOT be auto-promoted at the codegen surface.
+            const input = mkGrammar({
+                closure_expression: {
+                    type: 'prec',
+                    value: 1,
+                    content: {
+                        type: 'seq',
+                        members: [
+                            { type: 'optional', content: { type: 'string', value: 'static' } },
+                            { type: 'optional', content: { type: 'string', value: 'async' } },
+                            { type: 'optional', content: { type: 'string', value: 'move' } },
+                            { type: 'symbol', name: 'parameters' },
+                        ],
+                    },
+                } as unknown as Rule,
+            })
+            const out = runEnrich(input)
+            const rule = out.grammar.rules.closure_expression as unknown as {
+                type: 'prec', value: number, content: { type: 'seq', members: Rule[] }
+            }
+            // prec wrapper preserved (we ride the wrapper back on top, not strip it).
+            expect(rule.type).toBe('prec')
+            expect(rule.value).toBe(1)
+            // Each optional-keyword promoted as `<token>_marker`.
+            expect(rule.content.members[0]).toMatchObject({
+                type: 'optional',
+                content: { type: 'field', name: 'static_marker' },
+            })
+            expect(rule.content.members[1]).toMatchObject({
+                type: 'optional',
+                content: { type: 'field', name: 'async_marker' },
+            })
+            expect(rule.content.members[2]).toMatchObject({
+                type: 'optional',
+                content: { type: 'field', name: 'move_marker' },
+            })
+        })
+
+        it('descends through prec.left(...) wrappers (python for_in_clause)', () => {
+            // for_in_clause: prec.left(seq(optional('async'), 'for', ...)).
+            const input = mkGrammar({
+                for_in_clause: {
+                    type: 'prec_left',
+                    value: 1,
+                    content: {
+                        type: 'seq',
+                        members: [
+                            { type: 'optional', content: { type: 'string', value: 'async' } },
+                            { type: 'string', value: 'for' },
+                            { type: 'symbol', name: 'pattern' },
+                        ],
+                    },
+                } as unknown as Rule,
+            })
+            const out = runEnrich(input)
+            const rule = out.grammar.rules.for_in_clause as unknown as {
+                type: 'prec_left', value: number, content: { type: 'seq', members: Rule[] }
+            }
+            expect(rule.type).toBe('prec_left')
+            expect(rule.content.members[0]).toMatchObject({
+                type: 'optional',
+                content: { type: 'field', name: 'async_marker' },
+            })
+        })
+
+        it('descends through prec.right(...) wrappers (ts assignment_expression)', () => {
+            // assignment_expression: prec.right('assign', seq(
+            //   optional('using'), field('left', ...), '=', field('right', ...)))
+            const input = mkGrammar({
+                assignment_expression: {
+                    type: 'prec_right',
+                    value: 'assign',
+                    content: {
+                        type: 'seq',
+                        members: [
+                            { type: 'optional', content: { type: 'string', value: 'using' } },
+                            {
+                                type: 'field',
+                                name: 'left',
+                                content: { type: 'symbol', name: 'expression' },
+                            },
+                            { type: 'string', value: '=' },
+                            {
+                                type: 'field',
+                                name: 'right',
+                                content: { type: 'symbol', name: 'expression' },
+                            },
+                        ],
+                    },
+                } as unknown as Rule,
+            })
+            const out = runEnrich(input)
+            const rule = out.grammar.rules.assignment_expression as unknown as {
+                type: 'prec_right', value: string, content: { type: 'seq', members: Rule[] }
+            }
+            expect(rule.type).toBe('prec_right')
+            expect(rule.content.members[0]).toMatchObject({
+                type: 'optional',
+                content: { type: 'field', name: 'using_marker' },
+            })
+            // Existing `field('left', ...)` and `field('right', ...)` untouched.
+            expect(rule.content.members[1]).toMatchObject({ type: 'field', name: 'left' })
+            expect(rule.content.members[3]).toMatchObject({ type: 'field', name: 'right' })
+        })
+
+        it('descends through prec.dynamic(...) wrappers', () => {
+            const input = mkGrammar({
+                dyn_rule: {
+                    type: 'prec_dynamic',
+                    value: 5,
+                    content: {
+                        type: 'seq',
+                        members: [
+                            { type: 'optional', content: { type: 'string', value: 'extern' } },
+                            { type: 'symbol', name: 'body' },
+                        ],
+                    },
+                } as unknown as Rule,
+            })
+            const out = runEnrich(input)
+            const rule = out.grammar.rules.dyn_rule as unknown as {
+                type: 'prec_dynamic', value: number, content: { type: 'seq', members: Rule[] }
+            }
+            expect(rule.type).toBe('prec_dynamic')
+            expect(rule.content.members[0]).toMatchObject({
+                type: 'optional',
+                content: { type: 'field', name: 'extern_marker' },
+            })
+        })
+
+        it('respects pre-existing field-name claims on the inner seq of a prec wrapper', () => {
+            // prec-wrapped seq with an existing `field('async_marker', ...)`
+            // on a sibling position — the optional('async') below MUST be
+            // skipped (collision) instead of silently double-binding the name.
+            const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true)
+            const input = mkGrammar({
+                wrapped: {
+                    type: 'prec',
+                    value: 1,
+                    content: {
+                        type: 'seq',
+                        members: [
+                            {
+                                type: 'field',
+                                name: 'async_marker',
+                                content: { type: 'string', value: 'async' },
+                            },
+                            { type: 'optional', content: { type: 'string', value: 'async' } },
+                        ],
+                    },
+                } as unknown as Rule,
+            })
+            const out = runEnrich(input)
+            const rule = out.grammar.rules.wrapped as unknown as {
+                type: 'prec', content: { type: 'seq', members: Rule[] }
+            }
+            // Second member stays unpromoted — collision with member 0.
+            expect(rule.content.members[1]).toMatchObject({
+                type: 'optional',
+                content: { type: 'string', value: 'async' },
+            })
+            const calls = stderrSpy.mock.calls.map(c => String(c[0]))
+            expect(calls.some(c => c.includes('skipped optional-keyword-prefix on wrapped'))).toBe(true)
+        })
     })
 
     describe('non-seq rules', () => {
