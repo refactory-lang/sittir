@@ -258,7 +258,15 @@ export function buildReadHandle(grammar: string, tree: TS.Tree, source: string):
 }
 
 export function findFirst(node: TS.Node, kind: string): TS.Node | null {
-    if (node.type === kind) return node
+    // Cluster H (016): match only named nodes — the kind set comes from
+    // `collectKinds` which is named-only, but tree-sitter exposes both
+    // named and anonymous nodes that can share a `type` string (ts has a
+    // named `string` kind for `'…'`/`"…"` literals AND an anonymous
+    // `string` keyword inside `predefined_type` choice). Without the
+    // named filter, `findFirst` resolves to the anonymous keyword node
+    // when scanning a class with `: string` annotations and the rt
+    // probe tries to round-trip the bare keyword.
+    if (node.type === kind && node.isNamed) return node
     for (const child of node.children) {
         const found = findFirst(child, kind)
         if (found) return found

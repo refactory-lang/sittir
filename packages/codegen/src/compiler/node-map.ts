@@ -1564,9 +1564,11 @@ export function translateToJinja(tmpl: string, meta: JinjaTranslateMeta): string
         if (key === 'indent') return ''
         if (key === 'dedent') return ''
         if (pfx === '$$$') {
-            const sep = key === 'children'
-                ? defaultSep
-                : meta.joinByField?.[key] ?? defaultSep
+            // Cluster H (016): `joinByField['children']` IS honoured — the
+            // walker pins it to `""` for separator-less repeats over visible
+            // children (template_literal_type, template_string) so adjacent
+            // substitutions concatenate without a stray space.
+            const sep = meta.joinByField?.[key] ?? defaultSep
             const filter = filterForFlanks(key, meta)
             return `{{ ${key} | ${filter}(${JSON.stringify(sep)}) }}`
         }

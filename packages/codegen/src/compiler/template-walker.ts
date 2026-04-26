@@ -388,6 +388,26 @@ function walkRuleForTemplate(
                     if (seenFirst && m.type === 'string') { joinByField['children'] = m.value; break }
                 }
             }
+            // Cluster H (016): string-template detection. When the seq is
+            // wrapped in matching string-quote delimiters (`` ` ``, `"`,
+            // `'`) and the body is a separator-less repeat over visible
+            // children (e.g. `seq("`", repeat(choice(string_fragment,
+            // template_type)), "`")`), the children represent
+            // concatenated text fragments — joining with the default
+            // `' '` separator inserts a stray space between adjacent
+            // substitutions (`${B}${C}` → `${B} ${C}`). Pin the children
+            // join to `""` so the template re-renders byte-exactly.
+            // Restricted to genuine string-quote delimiters so block-
+            // shaped seq's (`{`, `}`, `[`, `]`, `(`, `)`) keep the
+            // statement-separating space.
+            if (joinByField && !('children' in joinByField) && rule.members.length >= 3) {
+                const first = rule.members[0]!
+                const last = rule.members[rule.members.length - 1]!
+                if (first.type === 'string' && last.type === 'string'
+                    && first.value === last.value && /^[`"']$/.test(first.value)) {
+                    joinByField['children'] = ''
+                }
+            }
             let augmentedRepeatedFields = repeatedFields
             for (const [fname, cnt] of fieldCounts) {
                 if (cnt <= 1) continue
@@ -483,7 +503,31 @@ function walkRuleForTemplate(
                         // value. Required emissions and anonymous tokens
                         // keep the unconditional push.
                         const moved = absorbLeadingSeparatorIntoJinjaConditional(parts, ' ')
-                        if (!moved) out.push(' ')
+                        if (!moved) {
+                            // Cluster H (016): conversely, when the tail
+                            // of out is a Jinja conditional, route the
+                            // separator INSIDE that conditional's body
+                            // (so it vanishes alongside an absent optional)
+                            // — but ONLY when the part before the
+                            // conditional doesn't itself need a separator
+                            // against the upcoming required content.
+                            // Otherwise dropping the unconditional space
+                            // yields collisions like `letx` (rust
+                            // let_declaration: `let` + optional mutable +
+                            // required pattern). Safe absorption case:
+                            // member_expression `.` + optional optional_chain
+                            // + required property, since `.` and identifier
+                            // already concatenate cleanly.
+                            const tailIsConditional = out.length > 0 && JINJA_CONDITIONAL_FULL.test(out[out.length - 1]!)
+                            let absorbed = false
+                            if (tailIsConditional && out.length >= 2) {
+                                const beforeLast = effectiveSpacingChar(out[out.length - 2]!, 'last')
+                                if (!needsSpace(beforeLast, firstChar, wordMatcher)) {
+                                    absorbed = absorbTrailingSeparatorIntoJinjaConditional(out, ' ')
+                                }
+                            }
+                            if (!absorbed) out.push(' ')
+                        }
                     }
                 }
                 out.push(...parts)
@@ -564,10 +608,29 @@ function walkRuleForTemplate(
             // branches that the primary didn't already produce.
             const primaryIdx = branchResults[0]!.index
             const out = [...walkRuleForTemplate(rule.members[primaryIdx]!, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher, optionalFields)]
+            // Cluster H (016): placeholders coming from non-primary
+            // branches in a heterogeneous-literal choice are conditional
+            // on those branches firing at parse time. Wrap each `$NAME`
+            // placeholder in a Jinja `{% if name | isPresent %}…{% endif %}`
+            // so it emits only when the field is actually populated.
+            // Without the wrap, the placeholder renders empty but the
+            // surrounding spaces remain (member_expression's
+            // `{{ object }}.{{ optional_chain }} {{ property }}` →
+            // `super. decorate` when optional_chain is absent).
+            const placeholderField = (p: string): string | null => {
+                const m = p.match(/^\$([A-Z][A-Z0-9_]*)$/)
+                return m ? m[1]!.toLowerCase() : null
+            }
             for (let k = 1; k < branchResults.length; k++) {
                 const parts = walkRuleForTemplate(rule.members[branchResults[k]!.index]!, seen, inRepeat, clauses, rules, repeatedFields, joinByField, wordMatcher, optionalFields)
                 for (const p of parts) {
-                    if (p.startsWith('$') && !out.includes(p)) out.push(p)
+                    if (!p.startsWith('$') || out.includes(p)) continue
+                    const fname = placeholderField(p)
+                    if (fname && !['newline', 'indent', 'dedent', 'children', 'text'].includes(fname)) {
+                        out.push(emitJinjaConditional(fname, p))
+                    } else {
+                        out.push(p)
+                    }
                 }
             }
             return out
@@ -1157,6 +1220,27 @@ function absorbLeadingSeparatorIntoJinjaConditional(parts: string[], separator: 
     const m = head.match(/^(\{%-? if [^%]+-?%\})/)
     if (!m) return false
     parts[0] = `${m[1]}${separator}${head.slice(m[1]!.length)}`
+    return true
+}
+
+/**
+ * Inverse of {@link absorbLeadingSeparatorIntoJinjaConditional}: when the
+ * out-array's tail is a complete Jinja conditional, route the trailing
+ * `separator` INSIDE that conditional's body (just before the `{% endif %}`
+ * tag) so the separator emits only when the conditional fires. Used by
+ * the seq case so an optional placeholder followed by a required one
+ * ({{X}} {{Y}}) doesn't leave a stray space when X is absent.
+ *
+ * Returns `true` when the absorption succeeded (caller skips the
+ * unconditional `out.push(separator)`); `false` when the tail isn't a
+ * Jinja-inline conditional.
+ */
+function absorbTrailingSeparatorIntoJinjaConditional(out: string[], separator: string): boolean {
+    if (out.length === 0) return false
+    const tail = out[out.length - 1]!
+    const m = tail.match(/^(\{%-? if [^%]+-?%\})(.*)(\{%-? endif -?%\})$/)
+    if (!m) return false
+    out[out.length - 1] = `${m[1]}${m[2]}${separator}${m[3]}`
     return true
 }
 

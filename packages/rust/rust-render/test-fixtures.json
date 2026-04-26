@@ -6754,7 +6754,7 @@
       "$nodeId": 1683384,
       "$named": true
     },
-    "expectedOutput": "& x"
+    "expectedOutput": "&x"
   },
   {
     "kind": "roundtrip",
@@ -6762,9 +6762,9 @@
     "sourceIn": "&x",
     "pattern": "reference_pattern",
     "edits": [],
-    "expectedSourceOut": "& x",
+    "expectedSourceOut": "&x",
     "expectedReparseTree": "(reference_pattern pattern: (identifier))",
-    "wrappedText": "fn _f() { let & x = (); }",
+    "wrappedText": "fn _f() { let &x = (); }",
     "wrappedOffset": 14
   },
   {
