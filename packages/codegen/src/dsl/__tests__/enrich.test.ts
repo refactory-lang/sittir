@@ -111,7 +111,9 @@ describe('enrich()', () => {
             // Second member (bare symbol) stays bare — already-taken name
             expect(rule.members[1]).toMatchObject({ type: 'symbol', name: 'expression' })
             const calls = stderrSpy.mock.calls.map(c => String(c[0]))
-            expect(calls.some(c => c.includes("skipped kind-to-name on foo"))).toBe(true)
+            // Pass was renamed kind-to-name → symbol-to-field in 80ee7ad9
+            // (passes 1+3 merged into one symbol-to-field pass + fixed-point loop).
+            expect(calls.some(c => c.includes("skipped symbol-to-field on foo"))).toBe(true)
         })
 
         it('skips ambiguous references — same kind appears multiple times', () => {

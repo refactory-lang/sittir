@@ -882,7 +882,7 @@ function resolvePatch(patch, originalMember, precStack) {
 }
 function resolveFieldPlaceholder(patch, originalMember, precStack) {
   let content = originalMember;
-  if (isFieldLike(content) && content.source === "enriched") {
+  if (isFieldLike(content) && (content.source === "enriched" || content.source === "inferred")) {
     if (!process.env.SITTIR_QUIET) {
       const parentKind = wireGetCurrentRuleKind() ?? "(unknown)";
       const overrideName = patch.name;

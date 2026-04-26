@@ -214,8 +214,8 @@ const FROZEN_CASES: FrozenCase[] = [
         name: 'minimal trait without bounds renders cleanly',
         source: 'trait Foo {}',
         target: 'trait Foo {}',
-        mode: 'fail',
-        why: 'visibility_modifier, unsafe, type_parameters, bounds, where_clause are all optional — absent slots leave 4 stray spaces before the body brace.',
+        mode: 'pass',
+        why: 'fixed by Cluster F step 3.5 (leading-space-at-template-head) + step 4 (wrapOptionalFieldPlaceholders): all optional fields now collapse cleanly when absent.',
     },
     {
         grammar: 'rust',

@@ -235,7 +235,10 @@ describe('factories emitter — per-form factory emission', () => {
         const { factoriesSrc } = runPipeline([
             { name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } },
         ])
-        expect(factoriesSrc).toMatch(/export function ifaceBodyCurly\(config\??: T\.IfaceBodyCurly\.Config\)/)
+        // Per-form Config lives under the parent namespace as a sub-namespace
+        // (`T.IfaceBody.Curly.Config`), not as a flat alias. See
+        // emitRefineFormSubNamespaces in emitters/types.ts.
+        expect(factoriesSrc).toMatch(/export function ifaceBodyCurly\(config\??: T\.IfaceBody\.Curly\.Config\)/)
     })
 })
 

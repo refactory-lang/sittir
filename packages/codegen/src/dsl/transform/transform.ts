@@ -629,12 +629,15 @@ function resolveFieldPlaceholder(
     precStack?: readonly RuntimeRule[],
 ): RuntimeRule {
     let content: unknown = originalMember
-    if (isFieldLike(content) && content.source === 'enriched') {
-        // Override landing on an already-enriched position is redundant —
-        // the one-line entry could be deleted and enrich would produce
-        // the same FIELD automatically. Warn so the author can clean it
-        // up on the next cycle. Gated on SITTIR_QUIET like the enrich
-        // reportSkip helper.
+    if (isFieldLike(content) && (content.source === 'enriched' || content.source === 'inferred')) {
+        // Override landing on an already-enriched/inferred position is
+        // redundant — the one-line entry could be deleted and the
+        // enrich/link auto-inference pass would produce the same FIELD
+        // automatically. Warn so the author can clean it up on the next
+        // cycle. Gated on SITTIR_QUIET like the enrich reportSkip helper.
+        // Both 'enriched' (dsl/enrich.ts) and 'inferred' (compiler/link.ts)
+        // mark fields we synthesized — neither should leak into the override
+        // result as a nested wrapper.
         if (!process.env.SITTIR_QUIET) {
             const parentKind = wireGetCurrentRuleKind() ?? '(unknown)'
             const overrideName = patch.name
