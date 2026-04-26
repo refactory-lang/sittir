@@ -1288,8 +1288,16 @@ function applySymbolToField(ruleName, rule, supertypeNames) {
   return result;
 }
 function applyOptionalKeyword(ruleName, rule, kwRules) {
-  const claimed = isSeqType(rule.type) ? collectFieldNamesRuntime(rule) : /* @__PURE__ */ new Set();
+  const inner = peelPrec(rule);
+  const claimed = isSeqType(inner.type) ? collectFieldNamesRuntime(inner) : /* @__PURE__ */ new Set();
   return walkOptionalKeyword(ruleName, rule, claimed, kwRules) ?? rule;
+}
+function peelPrec(rule) {
+  let cursor = rule;
+  while (isPrecWrapper(cursor)) {
+    cursor = cursor.content;
+  }
+  return cursor;
 }
 function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules) {
   if (isSeqType(rule.type)) {
@@ -1325,6 +1333,12 @@ function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules) {
     return null;
   }
   if (isRepeatType(rule.type) || isFieldType(rule.type)) {
+    const content = rule.content;
+    const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules);
+    if (out === null) return null;
+    return { ...rule, content: out };
+  }
+  if (isPrecWrapper(rule)) {
     const content = rule.content;
     const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules);
     if (out === null) return null;

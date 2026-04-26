@@ -262,8 +262,8 @@ const FROZEN_CASES: FrozenCase[] = [
         name: 'minimal class renders cleanly',
         source: 'class Foo {}',
         target: 'class Foo {}',
-        mode: 'fail',
-        why: 'Template starts with `{{ decorator | join(" ") }}` (empty leading space) and includes optional class_heritage + automatic_semicolon as separator-outside-conditional. Result is " class Foo   {} " — leading space, double space before body, trailing space.',
+        mode: 'pass',
+        why: 'Fixed in 016/cluster-G — wrapOptionalFieldPlaceholders extended to wrap may-be-empty list-shaped `$$$NAME` placeholders (e.g. `$$$DECORATOR`); absorbHeadConditionalTrailingSpace pulls the unconditional separator INTO the head conditional body so the absent decorator list leaves no leading space.',
     },
     {
         grammar: 'typescript',
@@ -271,8 +271,8 @@ const FROZEN_CASES: FrozenCase[] = [
         name: 'class with extends heritage',
         source: 'class Foo extends Bar {}',
         target: 'class Foo extends Bar {}',
-        mode: 'fail',
-        why: 'Same separator-outside-conditional issue surfaces around type_parameters and automatic_semicolon even when class_heritage is present.',
+        mode: 'pass',
+        why: 'Fixed in 016/cluster-G — same pattern: empty decorator list at template head no longer emits a leading space; existing `{% if class_heritage | isPresent %} {{ class_heritage }}{% endif %}` conditional handles the heritage spacing as before.',
     },
     {
         grammar: 'typescript',

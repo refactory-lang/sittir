@@ -1572,7 +1572,49 @@ export function translateToJinja(tmpl: string, meta: JinjaTranslateMeta): string
         }
         return `{{ ${key} }}`
     })
-    return escapeJinjaBraceCollisions(translated)
+    return escapeJinjaBraceCollisions(absorbHeadConditionalTrailingSpace(translated))
+}
+
+/**
+ * Cluster G (016): leading-list-conditional space absorption.
+ *
+ * After `wrapOptionalFieldPlaceholders` wraps a `$$$NAME` placeholder
+ * sitting at the template head with `{% if name | isPresent %}…{% endif %}`,
+ * the unconditional space between the conditional and the next required
+ * token is still emitted when the list is empty. Pull that trailing
+ * space INSIDE the conditional body so it disappears with the absent
+ * list. Mirrors `absorbHeadLeadingSeparatorIntoConditionals`'s behaviour
+ * for walker-emitted single-field conditionals — but operates on the
+ * post-translation string so it can reach the conditionals that were
+ * synthesized by `wrapOptionalFieldPlaceholders` (which runs on the
+ * raw `$$$NAME` form before translation).
+ *
+ * Runs greedily: a chain of consecutive head conditionals each absorb
+ * the trailing space, so all-absent renders cleanly with no leading
+ * whitespace and a single conditional firing places its content
+ * followed by the absorbed separator before the required-content head.
+ */
+function absorbHeadConditionalTrailingSpace(tmpl: string): string {
+    let work = tmpl
+    let runStart = 0
+    // Walk past walker-injected `{#- @generated -#}` headers if present.
+    const commentMatch = work.match(/^\{#-?[^#]*-?#\}/)
+    if (commentMatch) runStart = commentMatch[0].length
+    const condFull = /^(\{%-? if [^%]+-?%\})(.*?)(\{%-? endif -?%\}) /s
+    while (true) {
+        const head = work.slice(runStart)
+        const m = head.match(condFull)
+        if (!m) break
+        const ifTag = m[1]!
+        let body = m[2]!
+        const endTag = m[3]!
+        if (body.includes('{% if') || body.includes('{%- if')) break
+        if (!body.endsWith(' ')) body = `${body} `
+        const replacement = `${ifTag}${body}${endTag}`
+        work = work.slice(0, runStart) + replacement + work.slice(runStart + m[0].length)
+        runStart += replacement.length
+    }
+    return work
 }
 
 /**
@@ -1583,6 +1625,11 @@ export function translateToJinja(tmpl: string, meta: JinjaTranslateMeta): string
  * preventing the `fn f  ()` double-space gap when `type_parameters`
  * renders empty. Trailing whitespace is left outside so the next
  * required slot still has its own separator.
+ *
+ * Cluster G (016): also wraps `$$$NAME` list placeholders for optional
+ * list-shaped fields. The list-shape filter `isPresent` returns false
+ * for empty arrays, so wrapping `$$$DECORATOR` etc. gates surrounding
+ * separators on whether the list actually has elements.
  *
  * @remarks
  * Placeholders enclosed in a `{% if … %}…{% endif %}` block emitted by
@@ -1599,9 +1646,12 @@ function wrapOptionalFieldPlaceholders(
     optionalFields: ReadonlySet<string> | undefined,
 ): string {
     if (!optionalFields || optionalFields.size === 0) return tmpl
-    const placeholder = /(?<lead> *)\$([A-Z][A-Z0-9_]*)/g
+    // Match either `$NAME` (single dollar) or `$$$NAME` (list dollar).
+    // The capture distinguishes the two so the replacement preserves
+    // the dollar count.
+    const placeholder = /(?<lead> *)(\$\$\$|\$)([A-Z][A-Z0-9_]*)/g
     const guardedRanges = computeGuardedRanges(tmpl)
-    return tmpl.replace(placeholder, (full: string, lead: string, name: string, offset: number) => {
+    return tmpl.replace(placeholder, (full: string, lead: string, dollars: string, name: string, offset: number) => {
         const key = name.toLowerCase()
         if (!optionalFields.has(key)) return full
         // Special walker placeholders (`$NEWLINE`, `$INDENT`, `$DEDENT`,
@@ -1612,17 +1662,15 @@ function wrapOptionalFieldPlaceholders(
         // `newline` slot from the walker's NEWLINE token wrapping), the
         // placeholder is already structural and must not be gated.
         if (SPECIAL_PLACEHOLDERS.has(key)) return full
-        // Skip multi-dollar placeholders (`$$$NAME`, `$$NAME`, `$_NAME`).
-        // Only single-dollar `$NAME` is the per-field placeholder shape;
-        // the others are list/special markers that don't take an
-        // `isPresent` predicate.
         const dollarStart = offset + lead.length
+        // Defensive: ensure no straggling `$` before the matched dollar
+        // run (i.e. the regex didn't truncate a `$$NAME` mid-dollars).
         if (dollarStart > 0 && tmpl[dollarStart - 1] === '$') return full
         if (offset >= tmpl.length) return full
         // Skip placeholders enclosed in a walker-emitted Jinja
         // conditional — the placeholder is already guarded.
         if (isWithinGuardedRange(dollarStart, guardedRanges)) return full
-        return `{% if ${key} | isPresent %}${lead}$${name}{% endif %}`
+        return `{% if ${key} | isPresent %}${lead}${dollars}${name}{% endif %}`
     })
 }
 
@@ -1711,7 +1759,16 @@ function wrapFormOptionalPlaceholders(template: string, fields: readonly Assembl
 function deriveOptionalFieldNames(fields: readonly AssembledField[]): Set<string> {
     const out = new Set<string>()
     for (const f of fields) {
-        if (!isRequired(f)) out.add(f.name)
+        if (!isRequired(f)) {
+            out.add(f.name)
+            continue
+        }
+        // Cluster G (016): required-at-slot-level but list-shaped + may-be-empty
+        // (a bare `repeat()` whose values are all `array`, none `nonEmptyArray`).
+        // Wrapping the `$$$NAME` placeholder gates the surrounding separators
+        // on whether the list actually has elements — ts class_declaration's
+        // empty `decorator` no longer leaves a leading space.
+        if (isMultiple(f) && !isNonEmpty(f)) out.add(f.name)
     }
     return out
 }
@@ -1727,6 +1784,12 @@ function escapeJinjaBraceCollisions(s: string): string {
         const next = prev
             .replace(/\{(\{\{[^}]+\}\})/g, '{ $1')
             .replace(/(\{\{[^}]+\}\})\}/g, '$1 }')
+            // Cluster G (016): also handle `{` literal adjacent to `{% … %}`
+            // block tag (`{{% if … %}`) — introduced when an optional
+            // list-shaped field gets wrapped at the head of a brace-flanked
+            // rule like typescript `statement_block`.
+            .replace(/\{(\{%-? [^%]+-?%\})/g, '{ $1')
+            .replace(/(\{%-? [^%]+-?%\})\}/g, '$1 }')
         if (next === prev) return next
         prev = next
     }
