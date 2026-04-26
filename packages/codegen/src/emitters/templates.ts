@@ -84,7 +84,27 @@ export function emitJinjaTemplates(config: EmitTemplatesConfig): EmittedTemplate
             )
         }
         if (body === null) continue
-        bodies.set(kind, `${GENERATED_HEADER}\n${body}`)
+        // Alias-source hidden groups with NO standalone factory
+        // (e.g. `_range_pattern_left_with_right`) are emitted at the VISIBLE
+        // name (no `_` prefix) so the renderer's `${node.$type}.jinja` lookup
+        // succeeds — their polymorph-form parent inlines the inner node
+        // construction using `innerKind.replace(/^_+/, '')`, so the rendered
+        // NodeData carries the visible `$type`.
+        //
+        // Hidden nodes WITH a standalone factory (e.g. `_expression_statement_with_semi`)
+        // stamp the hidden `$type` in their factory output and must retain the
+        // hidden-prefix template name so the renderer finds them.
+        //
+        // Discriminator: `node.rawFactoryName === undefined` means no standalone
+        // factory → inline construction → visible `$type` at runtime.
+        // Token modelType is excluded: those are out of scope and need a
+        // separate handling decision (deferred follow-up task).
+        const emitKind = kind.startsWith('_')
+            && node.modelType !== 'token'
+            && node.rawFactoryName === undefined
+            ? kind.slice(1)
+            : kind
+        bodies.set(emitKind, `${GENERATED_HEADER}\n${body}`)
     }
     return { bodies }
 }
