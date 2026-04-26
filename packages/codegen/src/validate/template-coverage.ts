@@ -26,10 +26,12 @@
  * its source.
  */
 
+import { existsSync, readFileSync } from 'node:fs'
+import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { loadRawEntries } from './node-types-loader.ts'
 import type { RawNodeEntry, RawFieldEntry } from './node-types-loader.ts'
 import { loadRulesFromPath as loadRulesFromTemplatesPath } from './templates-path.ts'
-import { loadGrammarJson, computeNestedFields } from './grammar-fields.ts'
 
 /**
  * Load the rules map from either a legacy YAML file or a directory of
@@ -129,16 +131,25 @@ export function validateTemplateCoverage(
 ): TemplateCoverageResult {
     const entries = loadRawEntries(grammar)
     const rules = loadRulesFromPath(templatesPath)
-    // Tree-sitter `node-types.json` flattens nested-field-paths to the
-    // top level. A field declared inside another `field(...)` block in
-    // the rule shows up as a top-level field of the kind even though
-    // it's only reachable via the parent placeholder's emission. We
-    // load the source grammar to recover the nesting and skip
-    // coverage-checking those flatten artifacts. When `grammar.json`
-    // is absent (older fixtures), `nestedByKind` is empty and the
-    // checker behaves as it did before.
+    // Tree-sitter's `node-types.json` flattens nested-field-paths to the
+    // top level: `field('outer', wrapper(seq(literals?, field('inner',
+    // X))))` declares BOTH `outer` (whose runtime value is the
+    // structural literal flanking `X`) AND `inner` as top-level fields
+    // of the parent kind. simplify's hoist drops the OUTER `field`
+    // wrapper so the inner field surfaces directly in the rule passed
+    // to the template-walker (see `hoistInnerFieldsForTemplate` in
+    // `compiler/simplify.ts`); the inner field then gets its placeholder
+    // and renders correctly. The outer field stays in `node-types.json`
+    // (tree-sitter still produces it at parse time), but its content is
+    // now emitted via the template's structural-literal text — there is
+    // no `$OUTER` placeholder to require. Skip those during coverage
+    // checking. When `grammar.json` is absent (older fixtures),
+    // `hoistedOuterByKind` is empty and the checker behaves as it did
+    // before.
     const grammarJson = loadGrammarJson(grammar)
-    const nestedByKind = grammarJson ? computeNestedFields(grammarJson) : new Map<string, Set<string>>()
+    const hoistedOuterByKind = grammarJson
+        ? computeHoistedOuterFields(grammarJson)
+        : new Map<string, Set<string>>()
 
     const issues: CoverageIssue[] = []
     let total = 0
@@ -157,7 +168,7 @@ export function validateTemplateCoverage(
         if (rule === undefined) continue // validate-renderable catches this.
 
         total++
-        const kindIssues = checkRule(entry, rule, nestedByKind.get(entry.type) ?? new Set())
+        const kindIssues = checkRule(entry, rule, hoistedOuterByKind.get(entry.type) ?? new Set())
         if (kindIssues.length === 0) {
             pass++
         } else {
@@ -237,7 +248,7 @@ function checkVariantsForLiteralLeaks(
 function checkRule(
     entry: RawNodeEntry,
     rule: TemplateRule,
-    nestedFields: Set<string>,
+    hoistedOuterFields: Set<string>,
 ): CoverageIssue[] {
     const fields = entry.fields ?? {}
     const fieldNames = Object.keys(fields)
@@ -264,11 +275,16 @@ function checkRule(
 
     for (const fname of fieldNames) {
         if (isFieldReferenced(fname, unionPlaceholders, clauseKeys, clauseTemplates)) continue
-        // Tree-sitter flatten artifact: `fname` is declared on the
-        // kind but is nested inside another `field(...)` block in the
-        // rule. The template emits it via the parent placeholder, so
-        // direct reference is neither required nor possible.
-        if (nestedFields.has(fname)) continue
+        // Hoisted-outer flatten artifact: `fname` is declared on the
+        // kind in `node-types.json` but our simplify hoist drops the
+        // `field('fname', ...)` wrapper from the rule passed to the
+        // template-walker. The wrapper's structural-literal content is
+        // preserved verbatim in the template (`extends`, `,`, …) and
+        // the inner field that triggered the hoist gets its own
+        // placeholder — `fname` is transitively covered by the
+        // surrounding template text. See `hoistInnerFieldsForTemplate`
+        // in `compiler/simplify.ts`.
+        if (hoistedOuterFields.has(fname)) continue
         // Show all variant bodies so the caller can see which one(s) to patch.
         const bodies = variants.length === 1
             ? JSON.stringify(variants[0]!.template)
@@ -446,3 +462,229 @@ export function formatTemplateCoverageReport(result: TemplateCoverageResult): st
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type _FieldUse = RawFieldEntry // keep import alive for docs
+
+// ---------------------------------------------------------------------------
+// Hoisted-outer-field detection — the validator's complement to
+// simplify's `hoistInnerFieldsForTemplate` pass.
+// ---------------------------------------------------------------------------
+
+/**
+ * Compute, for each visible rule kind in `grammar`, the set of OUTER
+ * `field` names whose `field('outer', ...)` wrapper our simplify hoist
+ * drops from the rule passed to the template-walker. Those outer fields
+ * are still declared in `node-types.json` (tree-sitter produces them at
+ * parse time), but their content surfaces in the template via the
+ * structural-literal text + the inner field's placeholder — there is no
+ * `$OUTER` placeholder to require.
+ *
+ * Mirrors the predicate inside `compiler/simplify.ts`'s
+ * `hoistInnerFieldOutOfFieldWrapper`. Walks the source `grammar.json`
+ * (the SAME structural source the simplify pipeline reads via Evaluate)
+ * so the two derivations stay in lock-step.
+ *
+ * @remarks
+ * The hoist condition (mirrored here):
+ *   1. Field's content is NOT a direct field (`field('outer', field('inner'…))`
+ *      is handled by the existing single-content-wrapper hoist).
+ *   2. Field's content carries an inner `field()` reachable through
+ *      structural wrappers (`optional`/`repeat*`/`choice`/seq/aliases of
+ *      hidden helpers) without crossing into another field's content,
+ *      a visible symbol, supertype, named alias, or terminal.
+ *   3. Field's content has NO named-symbol / supertype sibling of the
+ *      inner field (those would lose their outer-field label).
+ */
+function computeHoistedOuterFields(grammar: GrammarJson): Map<string, Set<string>> {
+    const rules = grammar.rules
+    const out = new Map<string, Set<string>>()
+    for (const kind of Object.keys(rules)) {
+        if (kind.startsWith('_')) continue
+        const fields = new Set<string>()
+        collectHoistedOuterFields(rules[kind], rules, fields, new Set())
+        out.set(kind, fields)
+    }
+    return out
+}
+
+/**
+ * Walk a rule node, recording every FIELD whose simplify-hoist
+ * condition fires. Hidden `_*` symbols are inlined (their bodies are
+ * spliced into the parent at parse time, so any field hoist they
+ * trigger applies to the parent kind). Visible symbols and named
+ * aliases stop the walk — those are distinct parse-tree nodes with
+ * their own field namespace.
+ */
+function collectHoistedOuterFields(
+    node: unknown,
+    rules: Record<string, unknown>,
+    out: Set<string>,
+    visited: Set<string>,
+): void {
+    if (!node || typeof node !== 'object') return
+    if (isField(node)) {
+        if (fieldHoistsViaSimplify(node.content, rules)) out.add(node.name)
+        // Recurse into the FIELD's content too — a field deeper inside
+        // can also hoist relative to ITS parent (which here is `node`,
+        // not the visible kind we started from). We still emit only
+        // top-level field names on the visible kind, so the recursion
+        // is for transitive coverage of hidden-helper inlining.
+        collectHoistedOuterFields(node.content, rules, out, visited)
+        return
+    }
+    if (isAlias(node)) {
+        if (node.named) return
+        collectHoistedOuterFields(node.content, rules, out, visited)
+        return
+    }
+    if (isSymbol(node)) {
+        if (!node.name.startsWith('_')) return
+        if (visited.has(node.name)) return
+        const target = rules[node.name]
+        if (target === undefined) return
+        const next = new Set(visited); next.add(node.name)
+        collectHoistedOuterFields(target, rules, out, next)
+        return
+    }
+    const n = node as { content?: unknown; members?: unknown[] }
+    if (n.content !== undefined) collectHoistedOuterFields(n.content, rules, out, visited)
+    if (Array.isArray(n.members)) for (const m of n.members) collectHoistedOuterFields(m, rules, out, visited)
+}
+
+/**
+ * Mirror of `hoistInnerFieldOutOfFieldWrapper`'s predicate, but
+ * operating on tree-sitter's grammar.json node shape (UPPERCASE
+ * discriminants) instead of the internal `Rule` union. Returns true
+ * when the outer field would be dropped by the simplify hoist.
+ */
+function fieldHoistsViaSimplify(content: unknown, rules: Record<string, unknown>): boolean {
+    if (!content || typeof content !== 'object') return false
+    if (isField(content)) return false  // direct field-of-field, different hoist path
+    if (!hasInnerFieldAtExposableDepthGrammar(content, rules, new Set())) return false
+    if (hasNamedSiblingOfInnerFieldGrammar(content)) return false
+    return true
+}
+
+/**
+ * Mirror of `hasInnerFieldAtExposableDepth` for grammar.json shapes.
+ * Recurses through structural wrappers (OPTIONAL / REPEAT / REPEAT1 /
+ * CHOICE / SEQ / PREC* / TOKEN / IMMEDIATE_TOKEN) AND through hidden
+ * `_*` symbol references (tree-sitter inlines them at parse time so
+ * any inner field they carry surfaces on the enclosing kind).
+ */
+function hasInnerFieldAtExposableDepthGrammar(
+    node: unknown,
+    rules: Record<string, unknown>,
+    visited: Set<string>,
+): boolean {
+    if (!node || typeof node !== 'object') return false
+    if (isField(node)) return true
+    if (isSymbol(node)) {
+        if (!node.name.startsWith('_')) return false
+        if (visited.has(node.name)) return false
+        const target = rules[node.name]
+        if (target === undefined) return false
+        const next = new Set(visited); next.add(node.name)
+        return hasInnerFieldAtExposableDepthGrammar(target, rules, next)
+    }
+    if (isAlias(node)) {
+        if (node.named) return false
+        return hasInnerFieldAtExposableDepthGrammar(node.content, rules, visited)
+    }
+    const n = node as { type?: string; content?: unknown; members?: unknown[] }
+    // Stop at terminal-bearing or schema-isolating wrappers — STRING /
+    // PATTERN / BLANK / ALIAS{named:true} (handled above).
+    if (n.type === 'STRING' || n.type === 'PATTERN' || n.type === 'BLANK') return false
+    if (n.content !== undefined && hasInnerFieldAtExposableDepthGrammar(n.content, rules, visited)) return true
+    if (Array.isArray(n.members)) {
+        for (const m of n.members) {
+            if (hasInnerFieldAtExposableDepthGrammar(m, rules, visited)) return true
+        }
+    }
+    return false
+}
+
+/**
+ * Mirror of `hasNamedSiblingOfInnerField` for grammar.json shapes.
+ * Walks SEQ members looking for a position that mixes a FIELD with
+ * a NAMED reference (visible SYMBOL or named ALIAS) at the SEQ level
+ * — that's the case where the outer field would lose a sibling's
+ * runtime label if dropped.
+ */
+function hasNamedSiblingOfInnerFieldGrammar(node: unknown): boolean {
+    if (!node || typeof node !== 'object') return false
+    const n = node as { type?: string; members?: unknown[]; content?: unknown }
+    if (n.type === 'SEQ' && Array.isArray(n.members)) {
+        const hasField = n.members.some(m => isField(m))
+        if (hasField) {
+            for (const m of n.members) {
+                if (isField(m)) continue
+                if (isNamedReferenceGrammar(m)) return true
+            }
+        }
+        return n.members.some(hasNamedSiblingOfInnerFieldGrammar)
+    }
+    if (n.type === 'CHOICE' && Array.isArray(n.members)) {
+        return n.members.some(hasNamedSiblingOfInnerFieldGrammar)
+    }
+    if (n.content !== undefined) {
+        return hasNamedSiblingOfInnerFieldGrammar(n.content)
+    }
+    return false
+}
+
+/**
+ * Is `node` a reference tree-sitter would attach a field label to at
+ * parse time? Visible SYMBOLs and named ALIASes qualify. Hidden `_*`
+ * symbols don't — they inline transparently. Strings / patterns /
+ * other anonymous tokens don't — they don't carry a parse-tree node.
+ * Walks through structural passthroughs so wrapped references
+ * (OPTIONAL{SYMBOL}, REPEAT{SYMBOL}, …) are still detected.
+ */
+function isNamedReferenceGrammar(node: unknown): boolean {
+    if (!node || typeof node !== 'object') return false
+    if (isSymbol(node)) return !node.name.startsWith('_')
+    if (isAlias(node)) return node.named === true
+    const n = node as { type?: string; content?: unknown }
+    if (n.type === 'OPTIONAL' || n.type === 'REPEAT' || n.type === 'REPEAT1'
+        || n.type === 'TOKEN' || n.type === 'IMMEDIATE_TOKEN'
+        || n.type === 'PREC' || n.type === 'PREC_LEFT' || n.type === 'PREC_RIGHT' || n.type === 'PREC_DYNAMIC') {
+        return n.content !== undefined && isNamedReferenceGrammar(n.content)
+    }
+    return false
+}
+
+// ---------------------------------------------------------------------------
+// grammar.json loader (was in `validate/grammar-fields.ts`; inlined here
+// after the cluster D workaround retired on the simplify-hoist landing).
+// ---------------------------------------------------------------------------
+
+const packagesDir = fileURLToPath(new URL('../../../', import.meta.url))
+
+interface GrammarJson {
+    rules: Record<string, unknown>
+}
+
+interface FieldNode { type: 'FIELD'; name: string; content: unknown }
+interface SymbolNode { type: 'SYMBOL'; name: string }
+interface AliasNode { type: 'ALIAS'; value: string; named?: boolean; content: unknown }
+
+function isField(n: unknown): n is FieldNode {
+    return !!n && typeof n === 'object' && (n as { type?: unknown }).type === 'FIELD'
+}
+function isSymbol(n: unknown): n is SymbolNode {
+    return !!n && typeof n === 'object' && (n as { type?: unknown }).type === 'SYMBOL'
+}
+function isAlias(n: unknown): n is AliasNode {
+    return !!n && typeof n === 'object' && (n as { type?: unknown }).type === 'ALIAS'
+}
+
+/**
+ * Load a grammar's `grammar.json` from `packages/<grammar>/.sittir/src/`.
+ * Returns null when the file isn't present (older test fixtures, fresh
+ * checkouts where codegen hasn't run) — caller should treat the absence
+ * as "no transitive-coverage data; fall back to strict checking".
+ */
+function loadGrammarJson(grammar: string): GrammarJson | null {
+    const path = join(packagesDir, grammar, '.sittir', 'src', 'grammar.json')
+    if (!existsSync(path)) return null
+    return JSON.parse(readFileSync(path, 'utf8')) as GrammarJson
+}

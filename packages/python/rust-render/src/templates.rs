@@ -880,8 +880,6 @@ pub struct ImportFromStatementTemplate {
     pub module_name_list: Vec<String>,
     pub name: String,
     pub name_list: Vec<String>,
-    pub wildcard_import: String,
-    pub wildcard_import_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2426,8 +2424,6 @@ pub fn render_dispatch(
                 module_name_list: ctx.fields_list.get("module_name").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
                 name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
-                wildcard_import: ctx.fields.get("wildcard_import").cloned().unwrap_or_default(),
-                wildcard_import_list: ctx.fields_list.get("wildcard_import").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }

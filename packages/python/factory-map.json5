@@ -178,10 +178,6 @@
     "future_import_statement": [
       "name"
     ],
-    "import_from_statement": [
-      "module_name",
-      "wildcard_import"
-    ],
     "aliased_import": [
       "name",
       "alias"

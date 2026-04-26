@@ -171,13 +171,24 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
             const next = { ...rule, content: simplifyRule(rule.content, wordMatcher, inField) }
             return hoistFieldOutOfSingleContentWrapper(next)
         }
-        case 'field':
+        case 'field': {
             // Recurse into the field's content so inner anonymous
             // delimiters get stripped. The field wrapper itself stays
             // intact — its `name` is the derivation anchor. Thread
             // `inField=true` so `optional(anonymous-string)` inside
             // the field survives (it's labelled content, not a hint).
-            return { ...rule, content: simplifyRule(rule.content, wordMatcher, true) }
+            const recursed: Rule = { ...rule, content: simplifyRule(rule.content, wordMatcher, true) }
+            // Drop the OUTER field wrapper when its content contains a
+            // top-level inner field. Tree-sitter flattens nested-field-
+            // paths so the inner field IS already a top-level field of
+            // the parent kind at parse time. Keeping the outer wrapper
+            // makes the template walker emit a placeholder for the
+            // outer field (whose runtime value is just a structural
+            // literal like `extends` or `,`) and SKIP the inner field
+            // entirely. See `hoistInnerFieldOutOfFieldWrapper` JSDoc
+            // for the canonical example (`infer_type`).
+            return hoistInnerFieldOutOfFieldWrapper(recursed)
+        }
         case 'group':
             return { ...rule, content: simplifyRule(rule.content, wordMatcher, inField) }
         case 'variant':
@@ -343,6 +354,201 @@ function hoistFieldOutOfSingleContentWrapper(rule: Rule): Rule {
     if (inner.type !== 'field') return rule
     const wrapper: Rule = { ...rule, content: inner.content }
     return { ...inner, content: wrapper }
+}
+
+/**
+ * Drop an OUTER `field('outer', X)` wrapper when X (after walking
+ * through `optional` / `repeat` / `repeat1` / `clause` / `group` /
+ * `variant` / `seq` / `choice` wrappers) contains an inner `field()`
+ * directly reachable without crossing a `symbol` / `supertype` /
+ * `enum` / `pattern` / nested `field` boundary.
+ *
+ * Tree-sitter's `field()` declarations propagate to the nearest named-
+ * rule ancestor: a `field('inner', X)` nested inside `field('outer',
+ * wrapper(seq(literals?, field('inner', X), ...)))` shows up as a
+ * TOP-LEVEL field on the parent kind in `node-types.json`. Two failure
+ * modes follow when the outer wrapper survives into the template:
+ *
+ *   1. The template-walker emits `{{ outer }}` and stops — the inner
+ *      field never gets a placeholder, so its runtime value drops on
+ *      the floor. (Example: `infer_type` template
+ *      `infer {{ type_identifier }} {{ constraint }}` renders
+ *      `infer U extends`, dropping the `string` after `extends`.)
+ *
+ *   2. The coverage validator declares the inner field "missing" from
+ *      the template (it IS missing) — the cluster D `grammar-fields.ts`
+ *      walker side-stepped this by computing a separate "transitively
+ *      covered" allow-list. Hoisting eliminates the divergence at the
+ *      source.
+ *
+ * Canonical example (typescript `infer_type`):
+ *
+ *   before:
+ *     field('constraint', clause('type', seq('extends', field('type', X))))
+ *   after:
+ *     clause('type', seq('extends', field('type', X)))
+ *
+ * The structural literals (`extends`) and conditional gating (`clause`
+ * / `optional`) are preserved — the walker's `clause` case emits
+ * `{% if type %}extends {{ type }}{% endif %}` from the hoisted shape.
+ *
+ * Safety bails (return the input unchanged):
+ *   - Outer is not a `field`. Nothing to hoist.
+ *   - Outer's content has no exposable inner `field()` — the outer
+ *     field is the only field, and dropping it would destroy data.
+ *   - Outer's content is a bare `field()` (no surrounding wrapper) —
+ *     that's a `field('outer', field('inner', ...))` shape that the
+ *     pre-existing `hoistFieldOutOfSingleContentWrapper` and friends
+ *     handle differently.
+ */
+export function hoistInnerFieldOutOfFieldWrapper(rule: Rule): Rule {
+    if (rule.type !== 'field') return rule
+    const content = rule.content
+    // A `field('outer', field('inner', ...))` direct nesting is left
+    // for the existing hoist passes. We're targeting the case where
+    // the inner field sits inside a STRUCTURAL wrapper (optional /
+    // repeat / clause / group / variant / seq / choice).
+    if (content.type === 'field') return rule
+    if (!hasInnerFieldAtExposableDepth(content)) return rule
+    // Conservative bail: any seq sibling of the inner field that is a
+    // NAMED reference (symbol / supertype) carries a meaningful runtime
+    // label from the OUTER field name (tree-sitter labels every direct
+    // child of `field('outer', seq(...))` with `outer` unless an inner
+    // field re-labels it). Dropping the outer wrapper would strip that
+    // label and force the walker to render the named sibling via the
+    // generic `$$$CHILDREN` slot — losing the per-slot semantics.
+    //
+    // The hoist target is shapes where the inner field's siblings are
+    // STRUCTURAL ONLY (anonymous strings like `extends` / `,`, plus
+    // other inner fields whose names already speak for themselves).
+    if (hasNamedSiblingOfInnerField(content)) return rule
+    return content
+}
+
+/**
+ * Does `rule` contain a `field()` reachable at "exposable depth" —
+ * i.e., reachable while traversing only structural / metadata wrappers
+ * (`optional` / `repeat` / `repeat1` / `clause` / `group` / `variant` /
+ * `seq` / `choice`) and WITHOUT crossing into another `field()`'s
+ * content, a `symbol` reference, a `supertype`, an `enum`, a `pattern`,
+ * a `string`, a `terminal`, or a `token`?
+ *
+ * @remarks
+ * This is the predicate {@link hoistInnerFieldOutOfFieldWrapper} uses
+ * to decide whether the OUTER field wrapper can be safely dropped. The
+ * structural wrappers we recurse through are exactly those tree-sitter
+ * propagates field declarations through — once we hit a `field` boundary
+ * or an opaque reference (symbol / supertype / leaf), the field
+ * propagation stops at the runtime parse tree, so an inner field nested
+ * past such a boundary is NOT exposed as a top-level field on the
+ * containing kind. Dropping the outer wrapper in those cases would lose
+ * structural information without recovering the inner field.
+ */
+/**
+ * Does any `seq` somewhere inside `rule` (reached through optional /
+ * repeat / repeat1 / clause / group / variant / choice wrappers) carry
+ * BOTH (a) a `field()` member AND (b) a NAMED member (symbol /
+ * supertype) that is NOT itself a field?
+ *
+ * @remarks
+ * The hoist guard. If the outer `field('outer', ...)` wraps a seq with
+ * a mix of (inner fields) + (bare named symbols), tree-sitter labels
+ * every bare named symbol with the OUTER field name (and the inner
+ * fields with their inner names). Dropping the outer wrapper strips
+ * the label from the bare named symbols — they become unlabeled
+ * children rendered via the generic `$$$CHILDREN` slot, losing the
+ * per-slot semantics the outer field provided. We bail in that case.
+ *
+ * Permitted siblings of an inner field — inside a sibling-bearing seq —
+ * are anonymous strings (literal punctuation / keywords like `extends`,
+ * `,`) and other fields. Both round-trip cleanly: anonymous strings
+ * surface verbatim in the template, fields keep their own names.
+ */
+function hasNamedSiblingOfInnerField(rule: Rule): boolean {
+    switch (rule.type) {
+        case 'seq': {
+            const containsField = rule.members.some(m => m.type === 'field')
+            if (containsField) {
+                for (const m of rule.members) {
+                    if (m.type === 'field') continue
+                    if (isNamedReference(m)) return true
+                }
+            }
+            // Even when this seq itself is fine, a NESTED seq deeper
+            // in the tree might mix fields with named refs — keep
+            // walking. Same reasoning for choice arms.
+            return rule.members.some(hasNamedSiblingOfInnerField)
+        }
+        case 'choice':
+            return rule.members.some(hasNamedSiblingOfInnerField)
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'clause':
+        case 'group':
+        case 'variant':
+            return hasNamedSiblingOfInnerField(rule.content)
+        default:
+            return false
+    }
+}
+
+/**
+ * Is `rule` a NAMED reference that a tree-sitter `field()` declaration
+ * would attach a label to at parse time? Symbols (visible parse-tree
+ * kinds) and supertypes (union dispatch points) qualify. Strings,
+ * patterns, enums, literals do NOT — anonymous tokens are unlabeled
+ * regardless of any enclosing `field()`.
+ *
+ * @remarks
+ * Walks through structural passthroughs (optional / clause / group /
+ * variant / token / terminal / repeat / repeat1) so a wrapped reference
+ * (`optional(symbol(x))`, `clause('y', symbol(x))`) is still detected.
+ * Stops at `field` (those are inner fields, handled separately) and at
+ * `seq` / `choice` (compound shapes — the caller walks into their
+ * members).
+ */
+function isNamedReference(rule: Rule): boolean {
+    switch (rule.type) {
+        case 'symbol':
+        case 'supertype':
+            return true
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'clause':
+        case 'group':
+        case 'variant':
+        case 'token':
+        case 'terminal':
+            return isNamedReference(rule.content)
+        default:
+            return false
+    }
+}
+
+function hasInnerFieldAtExposableDepth(rule: Rule): boolean {
+    switch (rule.type) {
+        case 'field':
+            return true
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'clause':
+        case 'group':
+        case 'variant':
+            return hasInnerFieldAtExposableDepth(rule.content)
+        case 'seq':
+        case 'choice':
+            return rule.members.some(hasInnerFieldAtExposableDepth)
+        // symbol / supertype / enum / pattern / string / terminal /
+        // token / polymorph / indent / dedent / newline / alias all
+        // terminate the search — tree-sitter's field-flattening does
+        // not cross these boundaries, so an inner field reached past
+        // them is NOT a runtime top-level field of the containing kind.
+        default:
+            return false
+    }
 }
 
 /**
@@ -673,6 +879,66 @@ function dedupeByJson(rules: readonly Rule[]): Rule[] {
 // compileWordMatcher moved to ./common.ts — it is consumed by assemble,
 // optimize, and emitters/templates.ts, so it belongs in a shared utility
 // module rather than in the "simplify" phase file.
+
+// ---------------------------------------------------------------------------
+// Template-side hoist — applies the same nested-field hoist used inside
+// `simplifyRule`'s field case, but DOES NOT strip anonymous delimiters or
+// collapse seq/choice members. The template-walker reads the rule
+// produced by this pass via `assemble.ts → AssembledBranch.rule`, so the
+// literals (`,`, `(`, `;`, …) survive into template emission while the
+// hoist still flattens `field('outer', wrapper(... field('inner') ...))`
+// shapes that tree-sitter flattens at parse time.
+//
+// Without this pass the template-walker would walk the un-hoisted raw
+// rule and emit a `{{ outer }}` placeholder that drops the inner field
+// entirely (typescript `infer_type` rendered `infer U extends`, missing
+// the `string` after `extends`). With this pass the walker sees the
+// hoisted shape and emits the inner field's placeholder + the structural
+// literals as template text. See
+// `project_simplify_template_walker_divergence.md` for the full
+// architectural context.
+// ---------------------------------------------------------------------------
+
+/**
+ * Apply the inner-field hoist throughout the rule tree, without doing
+ * any other simplify-pipeline work. Preserves literals, anonymous
+ * tokens, single-member wrappers, and overall structure — the only
+ * change is dropping outer `field('outer', ...)` wrappers when their
+ * content carries an inner field at exposable depth (and no named-
+ * symbol siblings of that inner field).
+ *
+ * Bottom-up walk: recurse into content/members first so a nested
+ * `field('outer', ...)` is hoisted before its enclosing field is
+ * considered.
+ *
+ * Idempotent — running the pass twice returns the same shape.
+ *
+ * @see hoistInnerFieldOutOfFieldWrapper for the underlying transformation.
+ * @see project_simplify_template_walker_divergence.md for the architectural rationale.
+ */
+export function hoistInnerFieldsForTemplate(rule: Rule): Rule {
+    switch (rule.type) {
+        case 'seq':
+            return { ...rule, members: rule.members.map(hoistInnerFieldsForTemplate) }
+        case 'choice':
+            return { ...rule, members: rule.members.map(hoistInnerFieldsForTemplate) }
+        case 'optional':
+        case 'repeat':
+        case 'repeat1':
+        case 'group':
+        case 'variant':
+        case 'clause':
+        case 'token':
+        case 'terminal':
+            return { ...rule, content: hoistInnerFieldsForTemplate((rule as { content: Rule }).content) } as Rule
+        case 'field': {
+            const recursed: Rule = { ...rule, content: hoistInnerFieldsForTemplate(rule.content) }
+            return hoistInnerFieldOutOfFieldWrapper(recursed)
+        }
+        default:
+            return rule
+    }
+}
 
 // ---------------------------------------------------------------------------
 // Hidden group / multi inlining (moved from assemble.ts to participate in

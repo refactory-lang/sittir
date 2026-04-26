@@ -685,9 +685,6 @@
       "name",
       "body"
     ],
-    "enum_body": [
-      "opening"
-    ],
     "enum_assignment": [
       "name",
       "value"
@@ -743,7 +740,7 @@
     ],
     "infer_type": [
       "type_identifier",
-      "constraint"
+      "type"
     ],
     "conditional_type": [
       "left",

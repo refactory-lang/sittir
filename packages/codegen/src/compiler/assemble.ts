@@ -26,7 +26,7 @@ import {
     nameNode,
     isRequired, isMultiple, isNodeRef, isTerminalValue, isUnresolvedRef,
 } from './node-map.ts'
-import { simplifyRule, inlineGroupRefs, extractRepeatShape } from './simplify.ts'
+import { simplifyRule, inlineGroupRefs, extractRepeatShape, hoistInnerFieldsForTemplate } from './simplify.ts'
 import { compileWordMatcher } from './common.ts'
 
 // ---------------------------------------------------------------------------
@@ -51,7 +51,16 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
         // RAW rule path (for template emission + classification) isn't
         // run through simplify. Only `simplifiedRule` (derivation view)
         // picks up inlining from the simplify fixpoint.
-        const inlinedRule = inlineGroupRefs(rule, optimized.rules)
+        //
+        // `hoistInnerFieldsForTemplate` then drops outer
+        // `field('outer', ...)` wrappers when their content carries an
+        // inner field tree-sitter would expose at the top level of the
+        // parent kind. The literal-stripping / single-member-collapsing
+        // work that simplify also does is intentionally NOT applied
+        // here — templates need anonymous delimiters (`,`, `(`, `;`,
+        // …) to surface as template text. See
+        // `project_simplify_template_walker_divergence.md`.
+        const inlinedRule = hoistInnerFieldsForTemplate(inlineGroupRefs(rule, optimized.rules))
         const modelType = classifyNode(kind, inlinedRule, { variantParents })
         // `simplifiedRules[kind]` is already inlined + fixpoint-reduced
         // by `simplifyRules` in optimize — pass through as-is.

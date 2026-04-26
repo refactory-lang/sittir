@@ -1666,9 +1666,7 @@ export interface EnumDeclaration {
 
 export interface EnumBody {
   readonly $type: 'enum_body';
-  readonly $fields: {
-    readonly opening: readonly (PropertyName | EnumAssignment)[];
-  };
+  readonly $children: readonly (EnumAssignment)[];
 }
 
 export interface EnumAssignment {
@@ -1833,7 +1831,7 @@ export interface InferType {
   readonly $type: 'infer_type';
   readonly $fields: {
     readonly type_identifier: TypeIdentifier;
-    readonly constraint: "extends" | Type;
+    readonly type?: Type;
   };
 }
 

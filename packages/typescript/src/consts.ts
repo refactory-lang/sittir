@@ -648,7 +648,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'enum_body': [
-    { name: 'opening', required: true, multiple: true },
   ],
   'enum_declaration': [
     { name: 'constMarker', required: false, multiple: false },
@@ -788,7 +787,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'infer_type': [
     { name: 'typeIdentifier', required: true, multiple: false },
-    { name: 'constraint', required: true, multiple: false },
+    { name: 'type', required: false, multiple: false },
   ],
   'instantiation_expression': [
     { name: 'expression', required: true, multiple: false },

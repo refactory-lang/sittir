@@ -215,7 +215,7 @@ const FROZEN_CASES: FrozenCase[] = [
         source: 'trait Foo {}',
         target: 'trait Foo {}',
         mode: 'pass',
-        why: 'fixed by Cluster F step 3.5 (leading-space-at-template-head) + step 4 (wrapOptionalFieldPlaceholders): all optional fields now collapse cleanly when absent.',
+        why: 'Fixed by walker steps 3.5/4 (leading-space-at-template-head + wrapOptionalFieldPlaceholders) and reinforced by 016/simplify-hoist-and-bridge (outer-field wrappers around purely-structural literals are dropped, leaving Jinja conditionals that absorb the optional spacing).',
     },
     {
         grammar: 'rust',

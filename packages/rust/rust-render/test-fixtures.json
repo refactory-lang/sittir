@@ -7437,7 +7437,7 @@
       "$nodeId": 1705152,
       "$named": true
     },
-    "expectedOutput": "static  N:i32 =5;"
+    "expectedOutput": "static N:i32 =5;"
   },
   {
     "kind": "roundtrip",
@@ -7445,9 +7445,9 @@
     "sourceIn": "static N: i32 = 5;",
     "pattern": "static_item",
     "edits": [],
-    "expectedSourceOut": "static  N:i32 =5;",
+    "expectedSourceOut": "static N:i32 =5;",
     "expectedReparseTree": "(static_item name: (identifier) type: (primitive_type) value: (integer_literal))",
-    "wrappedText": "static  N:i32 =5;",
+    "wrappedText": "static N:i32 =5;",
     "wrappedOffset": 0
   },
   {

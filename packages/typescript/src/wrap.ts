@@ -1259,7 +1259,6 @@ export function wrapEnumDeclaration(data: _NodeData, tree: TreeHandle): WrappedN
 export function wrapEnumBody(data: _NodeData, tree: TreeHandle): WrappedNode<EnumBody> {
   return {
     ...data,
-    get opening() { return drillInAll(data.$fields?.['opening'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<EnumBody>;
 }
@@ -1418,7 +1417,7 @@ export function wrapInferType(data: _NodeData, tree: TreeHandle): WrappedNode<In
   return {
     ...data,
     get typeIdentifier() { return drillIn(data.$fields?.['type_identifier'], tree); },
-    get constraint() { return drillIn(data.$fields?.['constraint'], tree); },
+    get typeField() { return drillIn(data.$fields?.['type'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<InferType>;
 }

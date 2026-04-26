@@ -1319,8 +1319,8 @@ pub struct EnumBodyTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub opening: String,
-    pub opening_list: Vec<String>,
+    pub name: String,
+    pub name_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1767,8 +1767,6 @@ pub struct ImportStatementTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub from_clause: String,
-    pub from_clause_list: Vec<String>,
     pub import_attribute: String,
     pub import_attribute_list: Vec<String>,
     pub import_clause: String,
@@ -1816,8 +1814,8 @@ pub struct InferTypeTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub constraint: String,
-    pub constraint_list: Vec<String>,
+    pub r#type: String,
+    pub r#type_list: Vec<String>,
     pub type_identifier: String,
     pub type_identifier_list: Vec<String>,
 }
@@ -2102,6 +2100,8 @@ pub struct MethodDefinitionTemplate {
     pub readonly_marker_list: Vec<String>,
     pub return_type: String,
     pub return_type_list: Vec<String>,
+    pub r#static: String,
+    pub r#static_list: Vec<String>,
     pub type_parameters: String,
     pub type_parameters_list: Vec<String>,
 }
@@ -2133,6 +2133,8 @@ pub struct MethodSignatureTemplate {
     pub readonly_marker_list: Vec<String>,
     pub return_type: String,
     pub return_type_list: Vec<String>,
+    pub r#static: String,
+    pub r#static_list: Vec<String>,
     pub type_parameters: String,
     pub type_parameters_list: Vec<String>,
 }
@@ -2464,6 +2466,8 @@ pub struct PropertySignatureTemplate {
     pub override_modifier_list: Vec<String>,
     pub readonly_marker: String,
     pub readonly_marker_list: Vec<String>,
+    pub r#static: String,
+    pub r#static_list: Vec<String>,
     pub r#type: String,
     pub r#type_list: Vec<String>,
 }
@@ -4377,8 +4381,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                opening: ctx.fields.get("opening").cloned().unwrap_or_default(),
-                opening_list: ctx.fields_list.get("opening").cloned().unwrap_or_default(),
+                name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -4825,8 +4829,6 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                from_clause: ctx.fields.get("from_clause").cloned().unwrap_or_default(),
-                from_clause_list: ctx.fields_list.get("from_clause").cloned().unwrap_or_default(),
                 import_attribute: ctx.fields.get("import_attribute").cloned().unwrap_or_default(),
                 import_attribute_list: ctx.fields_list.get("import_attribute").cloned().unwrap_or_default(),
                 import_clause: ctx.fields.get("import_clause").cloned().unwrap_or_default(),
@@ -4874,8 +4876,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                constraint: ctx.fields.get("constraint").cloned().unwrap_or_default(),
-                constraint_list: ctx.fields_list.get("constraint").cloned().unwrap_or_default(),
+                r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
+                r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
                 type_identifier: ctx.fields.get("type_identifier").cloned().unwrap_or_default(),
                 type_identifier_list: ctx.fields_list.get("type_identifier").cloned().unwrap_or_default(),
             };
@@ -5160,6 +5162,8 @@ pub fn render_dispatch(
                 readonly_marker_list: ctx.fields_list.get("readonly_marker").cloned().unwrap_or_default(),
                 return_type: ctx.fields.get("return_type").cloned().unwrap_or_default(),
                 return_type_list: ctx.fields_list.get("return_type").cloned().unwrap_or_default(),
+                r#static: ctx.fields.get("static").cloned().unwrap_or_default(),
+                r#static_list: ctx.fields_list.get("static").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
                 type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
             };
@@ -5191,6 +5195,8 @@ pub fn render_dispatch(
                 readonly_marker_list: ctx.fields_list.get("readonly_marker").cloned().unwrap_or_default(),
                 return_type: ctx.fields.get("return_type").cloned().unwrap_or_default(),
                 return_type_list: ctx.fields_list.get("return_type").cloned().unwrap_or_default(),
+                r#static: ctx.fields.get("static").cloned().unwrap_or_default(),
+                r#static_list: ctx.fields_list.get("static").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
                 type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
             };
@@ -5522,6 +5528,8 @@ pub fn render_dispatch(
                 override_modifier_list: ctx.fields_list.get("override_modifier").cloned().unwrap_or_default(),
                 readonly_marker: ctx.fields.get("readonly_marker").cloned().unwrap_or_default(),
                 readonly_marker_list: ctx.fields_list.get("readonly_marker").cloned().unwrap_or_default(),
+                r#static: ctx.fields.get("static").cloned().unwrap_or_default(),
+                r#static_list: ctx.fields_list.get("static").cloned().unwrap_or_default(),
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
             };

@@ -3252,15 +3252,16 @@ export function enumDeclaration(config: ConfigOf<T.EnumDeclaration>) {
 }
 
 export function enumBody(config: ConfigOf<T.EnumBody>) {
-  const fields = {
-    opening: config.opening,
-  };
+  const children = config.children ?? [];
   return {
     $type: 'enum_body' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
-    opening(...values: (T.PropertyName | T.EnumAssignment)[]) { return _fsm(config, enumBody, 'opening', values, config?.opening); },
+    $children: children,
+    children(...items: T.EnumAssignment[]) {
+      if (items.length === 0) return children;
+      return enumBody({ ...config, children: items });
+    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3656,7 +3657,7 @@ export function templateLiteralType(...children: (T.StringFragment | T.TemplateT
 export function inferType(config: ConfigOf<T.InferType>) {
   const fields = {
     type_identifier: config.typeIdentifier,
-    constraint: config.constraint,
+    type: config.type,
   };
   return {
     $type: 'infer_type' as const,
@@ -3664,7 +3665,7 @@ export function inferType(config: ConfigOf<T.InferType>) {
     $named: true as const,
     $fields: fields,
     typeIdentifier(value?: T.TypeIdentifier) { return _fs(config, inferType, 'typeIdentifier', value, config?.typeIdentifier); },
-    constraint(value?: "extends" | T.Type) { return _fs(config, inferType, 'constraint', value, config?.constraint); },
+    typeField(value?: T.Type | undefined) { return _fs(config, inferType, 'type', value, config?.type); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

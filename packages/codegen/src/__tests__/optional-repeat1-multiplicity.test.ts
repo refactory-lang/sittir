@@ -32,7 +32,7 @@ describe('node-map — optional(repeat1(...)) multiplicity', () => {
                     content: {
                         type: 'repeat1',
                         content: { type: 'symbol', name: 'parameter' },
-                        separator: { type: 'string', value: ',' },
+                        separator: ',',
                     },
                 },
                 { type: 'string', value: ')' },

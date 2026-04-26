@@ -4974,46 +4974,25 @@
               "dotted_name"
             ]
           }
-        },
+        }
+      ],
+      "children": [
         {
           "name": "wildcard_import",
           "propertyName": "wildcardImport",
-          "paramName": "wildcardImport",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "wildcard_import",
               "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "dotted_name",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "aliased_import",
-              "unresolved": true
             }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "wildcard_import",
-              "dotted_name",
-              "aliased_import"
-            ]
-          }
+          ]
         }
-      ],
-      "children": []
+      ]
     },
     {
       "kind": "import_prefix",

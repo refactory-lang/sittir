@@ -431,8 +431,8 @@ export interface ImportFromStatement {
   readonly $type: 'import_from_statement';
   readonly $fields: {
     readonly module_name: RelativeImport | DottedName;
-    readonly wildcard_import: NonEmptyArray<WildcardImport | DottedName | AliasedImport>;
   };
+  readonly $children: readonly [WildcardImport];
 }
 
 export interface ImportList {

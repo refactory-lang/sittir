@@ -379,11 +379,9 @@ export function futureImportStatementFrom(input: T.FutureImportStatement.Loose):
 
 export function importFromStatementFrom(input: T.ImportFromStatement.Loose): ReturnType<typeof F.importFromStatement> | T.ImportFromStatement {
   if (isNodeData(input)) return input;
-  const _ne_wildcardImport = _resolveMany<T.WildcardImport | T.DottedName | T.AliasedImport>(input.wildcardImport, _K0, _K1);
-  _assertNonEmpty(_ne_wildcardImport, 'import_from_statement.wildcardImport');
   return F.importFromStatement({
     moduleName: _resolveOne<T.RelativeImport | T.DottedName>(input.moduleName, _K0, _K2),
-    wildcardImport: _ne_wildcardImport,
+    children: _resolveOne(input.children, _K0, _K0),
   });
 }
 

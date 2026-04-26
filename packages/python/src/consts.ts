@@ -469,7 +469,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'import_from_statement': [
     { name: 'moduleName', required: true, multiple: false },
-    { name: 'wildcardImport', required: true, multiple: true },
   ],
   'import_statement': [
     { name: 'name', required: true, multiple: true },

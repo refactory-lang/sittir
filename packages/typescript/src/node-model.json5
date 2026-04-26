@@ -8204,11 +8204,11 @@
       "factoryName": "enumBody",
       "irKey": "enumBody",
       "hidden": false,
-      "fields": [
+      "fields": [],
+      "children": [
         {
-          "name": "opening",
-          "propertyName": "opening",
-          "paramName": "opening",
+          "name": "enum_assignment",
+          "propertyName": "enumAssignment",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -8216,27 +8216,12 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_property_name",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
               "name": "enum_assignment",
               "unresolved": true
             }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_property_name",
-              "enum_assignment"
-            ]
-          }
+          ]
         }
-      ],
-      "children": []
+      ]
     },
     {
       "kind": "enum_declaration",
@@ -11804,26 +11789,21 @@
           }
         },
         {
-          "name": "constraint",
-          "propertyName": "constraint",
-          "paramName": "constraint",
-          "required": true,
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "extends"
-            },
-            {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "type",
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [

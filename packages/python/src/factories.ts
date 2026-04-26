@@ -149,7 +149,6 @@ export function futureImportStatement(config: ConfigOf<T.FutureImportStatement>)
 export function importFromStatement(config: ConfigOf<T.ImportFromStatement>) {
   const fields = {
     module_name: config.moduleName,
-    wildcard_import: config.wildcardImport,
   };
   return {
     $type: 'import_from_statement' as const,
@@ -157,7 +156,6 @@ export function importFromStatement(config: ConfigOf<T.ImportFromStatement>) {
     $named: true as const,
     $fields: fields,
     moduleName(value?: T.RelativeImport | T.DottedName) { return _fs(config, importFromStatement, 'moduleName', value, config?.moduleName); },
-    wildcardImport(...values: NonEmptyArray<T.WildcardImport | T.DottedName | T.AliasedImport>) { return _fsm(config, importFromStatement, 'wildcardImport', values, config?.wildcardImport); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

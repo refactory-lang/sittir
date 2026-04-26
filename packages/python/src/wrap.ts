@@ -193,8 +193,7 @@ export function wrapImportFromStatement(data: _NodeData, tree: TreeHandle): Wrap
   return {
     ...data,
     get moduleName() { return drillIn(data.$fields?.['module_name'], tree); },
-    get wildcardImport() { return drillInAll(data.$fields?.['wildcard_import'], tree); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ImportFromStatement>;
 }
 
