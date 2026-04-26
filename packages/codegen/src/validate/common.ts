@@ -385,6 +385,25 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
         // assignment patterns (`a, *rest = xs`) and function parameter
         // lists. Wrap in an assignment-target position.
         'list_splat_pattern': r => `${r} = (1,)`,
+        // Kind-specific: `attribute` (`a.b`) and `subscript` (`a[b]`)
+        // — tree-sitter-python parses `*a.b` and `*a[b]` as an
+        // attribute / subscript whose object is a list_splat (the
+        // `Lists` corpus exercises this through `[*a.b]` / `[*a[b].c]`).
+        // The generic `expression` wrapper `_ = ${r}` rejects
+        // `_ = *a.b` standalone. List-literal context accepts both
+        // the splat-prefix form AND plain accesses (`[obj.attr]`,
+        // `[*a.b]`, `[obj[k]]`, `[*a[b]]`). (016 Cluster I.)
+        'attribute': r => `[${r}]`,
+        'subscript': r => `[${r}]`,
+        // Kind-specific: `parenthesized_expression` (`(expr)`) — the
+        // `Function definitions` corpus exercises `(*a)` from
+        // `j(((*a)))`. The generic `expression` wrapper `_ = (*a)`
+        // reparses as `tuple` (since bare `*a` is only valid inside
+        // a collection). Wrap as a single-arg call so the inner
+        // parens stay parenthesized_expression: `f((*a))` keeps the
+        // outer `(...)` as the argument list and the inner `(*a)`
+        // as a parenthesized_expression. (016 Cluster I.)
+        'parenthesized_expression': r => `f(${r})`,
     },
 }
 

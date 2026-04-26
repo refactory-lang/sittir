@@ -1,6 +1,6 @@
 {
     "backend": "typescript",
-    "commit": "bb9ed7d",
+    "commit": "29da5f6",
     "grammars": {
         "python": {
             "parityFixtures": {
@@ -20,23 +20,20 @@
                     "total": 100
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 200,
+                    "astMatchPass": 203,
                     "failingKinds": [
                         "as_pattern",
                         "assignment",
-                        "attribute",
                         "boolean_operator",
                         "comparison_operator",
                         "list_splat",
-                        "parenthesized_expression",
                         "set",
-                        "subscript",
                         "tuple",
                         "tuple_pattern",
                         "type"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 209,
+                    "pass": 210,
                     "total": 860
                 },
                 "from": {
@@ -49,20 +46,16 @@
                     "total": 114
                 },
                 "roundtrip": {
-                    "astMatchPass": 100,
+                    "astMatchPass": 103,
                     "failingKinds": [
                         "as_pattern",
-                        "attribute",
-                        "boolean_operator",
                         "comparison_operator",
                         "list_splat",
-                        "parenthesized_expression",
                         "tuple",
-                        "tuple_pattern",
-                        "type"
+                        "tuple_pattern"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 105,
+                    "pass": 106,
                     "total": 115
                 }
             }
@@ -180,13 +173,12 @@
                     "total": 137
                 },
                 "roundtrip": {
-                    "astMatchPass": 89,
+                    "astMatchPass": 90,
                     "failingKinds": [
                         "ambient_declaration",
                         "array",
                         "assignment_expression",
                         "call_expression",
-                        "function_declaration",
                         "import_statement",
                         "instantiation_expression",
                         "member_expression",
@@ -201,8 +193,8 @@
         }
     },
     "totals": {
-        "fail": 1800,
-        "pass": 3168,
+        "fail": 1798,
+        "pass": 3170,
         "total": 4968
     }
 }

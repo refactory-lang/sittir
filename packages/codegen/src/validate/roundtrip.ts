@@ -190,27 +190,49 @@ function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
  * Returns `null` if the subtrees match, otherwise a short human-
  * readable diff path explaining the first mismatch.
  */
-function astStructuralDiff(a: TSNode, b: TSNode, path: string = ''): string | null {
+/**
+ * Per-grammar set of `extras` kind names that are NAMED in tree-sitter's
+ * output (line continuations, comments) and therefore appear as children
+ * in the strict structural compare. Render reads NodeData fields/children
+ * — extras aren't part of the rule structure and don't surface there —
+ * so the rendered output can never re-emit them. Filtering them from
+ * BOTH sides keeps the compare focused on rule-structural content.
+ *
+ * Anonymous extras (whitespace regex patterns) are already invisible to
+ * the compare's named-child filter. Only NAMED extras need explicit
+ * exclusion. (016 Cluster I.)
+ */
+const NAMED_EXTRAS_BY_GRAMMAR: Record<string, ReadonlySet<string>> = {
+	rust: new Set(['line_comment', 'block_comment']),
+	typescript: new Set(['comment', 'html_comment']),
+	python: new Set(['comment', 'line_continuation']),
+};
+
+function collectVisibleChildren(n: TSNode, namedExtras: ReadonlySet<string>): TSNode[] {
+	const out: TSNode[] = [];
+	for (let i = 0; i < n.childCount; i++) {
+		const c = n.child(i);
+		if (!c) continue;
+		if (c.isNamed && namedExtras.has(c.type)) continue;
+		out.push(c);
+	}
+	return out;
+}
+
+function astStructuralDiff(a: TSNode, b: TSNode, namedExtras: ReadonlySet<string>, path: string = ''): string | null {
 	if (a.type !== b.type) {
 		return `${path || 'root'}: type ${a.type} ≠ ${b.type}`;
 	}
-	if (a.childCount !== b.childCount) {
-		const aChildren = Array.from({ length: a.childCount }, (_, i) => {
-			const c = a.child(i);
-			return c ? (c.isNamed ? c.type : JSON.stringify(c.text)) : '?';
-		}).join(',');
-		const bChildren = Array.from({ length: b.childCount }, (_, i) => {
-			const c = b.child(i);
-			return c ? (c.isNamed ? c.type : JSON.stringify(c.text)) : '?';
-		}).join(',');
-		return `${path || a.type}: childCount ${a.childCount} ≠ ${b.childCount} [${aChildren}] vs [${bChildren}]`;
+	const aChildren = collectVisibleChildren(a, namedExtras);
+	const bChildren = collectVisibleChildren(b, namedExtras);
+	if (aChildren.length !== bChildren.length) {
+		const aDesc = aChildren.map(c => c.isNamed ? c.type : JSON.stringify(c.text)).join(',');
+		const bDesc = bChildren.map(c => c.isNamed ? c.type : JSON.stringify(c.text)).join(',');
+		return `${path || a.type}: childCount ${aChildren.length} ≠ ${bChildren.length} [${aDesc}] vs [${bDesc}]`;
 	}
-	for (let i = 0; i < a.childCount; i++) {
-		const ac = a.child(i);
-		const bc = b.child(i);
-		if (!ac || !bc) {
-			return `${path || a.type}[${i}]: missing child`;
-		}
+	for (let i = 0; i < aChildren.length; i++) {
+		const ac = aChildren[i]!;
+		const bc = bChildren[i]!;
 		if (ac.isNamed !== bc.isNamed) {
 			return `${path || a.type}[${i}]: named flag ${ac.isNamed} ≠ ${bc.isNamed}`;
 		}
@@ -222,7 +244,7 @@ function astStructuralDiff(a: TSNode, b: TSNode, path: string = ''): string | nu
 			continue;
 		}
 		// Named child — recurse.
-		const sub = astStructuralDiff(ac, bc, `${path || a.type}[${i}].${ac.type}`);
+		const sub = astStructuralDiff(ac, bc, namedExtras, `${path || a.type}[${i}].${ac.type}`);
 		if (sub) return sub;
 	}
 	return null;
@@ -281,6 +303,19 @@ function discoverAliasSourceKinds(
 		const handle = buildReadHandle(grammar, tree, source);
 		const wrappedRoot = readTreeNodeFn(handle) as WrappedNodeData;
 		walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
+			// Cluster I (016): skip anonymous tokens. The wrap layer
+			// surfaces field-promoted anonymous tokens (e.g. python's
+			// `type_alias_statement` wraps the literal `'type'` keyword
+			// as `$fields.type`) with the same `$type` string as the
+			// named supertype `type`. Recording an anonymous keyword as
+			// "effective type=type" makes `resolveNodeForKind` pick the
+			// keyword node when the round-trip validator probes the
+			// supertype kind, producing nonsense reparse comparisons
+			// (anon-token text "type" reparses as `expression_statement`).
+			// Named-only filter aligns with `collectKinds` and
+			// `findFirst`, which both restrict to named nodes for the
+			// same reason.
+			if (w.$named === false) return;
 			if (w.$nodeId != null) nodeIdToEffectiveType.set(w.$nodeId, w.$type);
 			kinds.add(w.$type);
 		});
@@ -549,7 +584,8 @@ export async function validateRoundTrip(
 						break;
 					}
 
-					const diff = astStructuralDiff(node1, node2);
+					const namedExtras = NAMED_EXTRAS_BY_GRAMMAR[grammar] ?? new Set<string>();
+					const diff = astStructuralDiff(node1, node2, namedExtras);
 					if (diff) {
 						astMismatches.push({
 							name: `${entry.name} [${renderedKind}]`,
