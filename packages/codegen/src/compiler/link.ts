@@ -767,9 +767,20 @@ export function applyOverridePolymorphs(
                 return m.type === 'symbol' && m.name === fullName
             })
 
+            // When the variant symbol is not a direct member of the outer
+            // choice (e.g. it lives inside a SEQ arm: the arm 0 of
+            // range_pattern is `seq(field('left', ...), choice(left_with_right,
+            // left_bare))`), extract that SEQ arm and replace the inner alias
+            // with the resolved symbol so field('left', ...) travels with the
+            // form content. This preserves structural context that the bare
+            // symbol fallback would otherwise drop.
+            const seqArmContent = variantMember
+                ? null
+                : findVariantSymbolInSeqArm(found.choice, fullName, rules)
+
             const content = variantMember?.type === 'variant'
                 ? variantMember.content
-                : variantMember ?? (
+                : seqArmContent ?? variantMember ?? (
                     rules[`_${fullName}`]
                         ? ({ type: 'symbol', name: fullName, aliasedFrom: `_${fullName}` } as Rule)
                         : ({ type: 'symbol', name: fullName } as Rule)
@@ -1023,6 +1034,58 @@ export function findVariantChoice(rule: Rule): VariantChoiceLocation | null {
             prefix: rule.members.slice(0, choiceIdx),
             suffix: rule.members.slice(choiceIdx + 1),
         }
+    }
+    return null
+}
+
+/**
+ * Search `choice.members` for a SEQ arm that contains a reference to
+ * `targetSymbolName` (either as a direct symbol member or inside an inner
+ * choice). When found, return a copy of the SEQ with the inner alias/symbol
+ * replaced by the resolved symbol `symbol(targetSymbolName, aliasedFrom)`,
+ * so the outer SEQ's non-symbol members (e.g. `field('left', ...)`) travel
+ * with the form content.
+ *
+ * Canonical case: `range_pattern` outer choice arm 0 is
+ * `seq(field('left', ...), choice(alias(left_with_right), alias(left_bare)))`.
+ * For `left_with_right`, this function returns
+ * `seq(field('left', ...), symbol('range_pattern_left_with_right'))` so the
+ * rendered template includes the left operand.
+ *
+ * Returns `null` when no SEQ arm contains the target.
+ */
+function findVariantSymbolInSeqArm(
+    choice: ChoiceRule,
+    targetSymbolName: string,
+    rules: Record<string, Rule>,
+): Rule | null {
+    for (const arm of choice.members) {
+        if (arm.type !== 'seq') continue
+        // Does this SEQ arm contain the target? Check direct and inner-choice positions.
+        const foundIdx = arm.members.findIndex(m => {
+            if (m.type === 'symbol') return m.name === targetSymbolName
+            if (m.type === 'alias') return m.value === targetSymbolName
+            if (m.type === 'choice') {
+                return m.members.some(mm => {
+                    const core = mm.type === 'variant' ? mm.content : mm
+                    if (core.type === 'symbol') return core.name === targetSymbolName
+                    if (core.type === 'alias') return core.value === targetSymbolName
+                    return false
+                })
+            }
+            return false
+        })
+        if (foundIdx === -1) continue
+        // Build the resolved symbol for `targetSymbolName`.
+        const hiddenAlias = `_${targetSymbolName}`
+        const resolvedSymbol: SymbolRule = rules[hiddenAlias]
+            ? { type: 'symbol', name: targetSymbolName, aliasedFrom: hiddenAlias }
+            : { type: 'symbol', name: targetSymbolName }
+        // Reconstruct the SEQ with the matched position replaced by the resolved symbol.
+        const newMembers: Rule[] = arm.members.map((m, i) =>
+            i === foundIdx ? resolvedSymbol : m,
+        )
+        return newMembers.length === 1 ? newMembers[0]! : { type: 'seq', members: newMembers }
     }
     return null
 }

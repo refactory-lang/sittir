@@ -733,6 +733,68 @@ function flankSepForField(node: AnyNodeData, fieldKey: string, sep: string, side
 	return '';
 }
 
+/**
+ * Detect the trailing anonymous separator for a named multi-valued field.
+ * Works like `flankSepForField` but does NOT require knowing the separator
+ * text in advance: it finds any anonymous token whose span starts at-or-after
+ * the last named element's span end, then returns that token's `$text`.
+ *
+ * Used by `buildNunjucksTemplateContext` to attach `_trailing_anon` to
+ * multi-valued field arrays so `joinWithTrailing(sep)` can emit a trailing
+ * separator (e.g. the trailing comma in `(0,)` or `(0, 1, 2,)`).
+ *
+ * Returns `''` when no trailing anon is found (spans absent or no candidate).
+ */
+function detectTrailingAnonForField(
+	node: AnyNodeData,
+	fieldKey: string,
+	namedItems: readonly unknown[],
+): string {
+	// Find the span end of the last named element.
+	let boundary = -1;
+	for (const item of namedItems) {
+		if (!item || typeof item !== 'object') continue;
+		const n = item as AnyNodeData;
+		if (n.$named === false) continue;
+		if (n.$span && n.$span.end > boundary) boundary = n.$span.end;
+	}
+	if (boundary < 0) return '';
+
+	// Collect all anonymous token candidates from $fields (other keys) and $children.
+	const candidates: AnyNodeData[] = [];
+	if (node.$fields) {
+		for (const [key, val] of Object.entries(node.$fields)) {
+			if (key === fieldKey) continue; // skip the field itself
+			const arr = Array.isArray(val) ? val : [val];
+			for (const x of arr) {
+				if (x && typeof x === 'object' && (x as AnyNodeData).$named === false) {
+					candidates.push(x as AnyNodeData);
+				}
+			}
+		}
+	}
+	if (node.$children) {
+		for (const c of node.$children) {
+			if (c && typeof c === 'object' && (c as AnyNodeData).$named === false) {
+				candidates.push(c as AnyNodeData);
+			}
+		}
+	}
+
+	// Sort candidates by span.start so we reliably pick the FIRST anon
+	// token after the boundary — the one immediately adjacent to the last
+	// named element (the separator `,`) rather than a later delimiter (`)`).
+	candidates.sort((a, b) => (a.$span?.start ?? Infinity) - (b.$span?.start ?? Infinity));
+
+	// Return text of the first anon token whose span starts at-or-after boundary.
+	for (const c of candidates) {
+		if (c.$span && c.$span.start >= boundary && typeof c.$text === 'string' && c.$text.length > 0) {
+			return c.$text;
+		}
+	}
+	return '';
+}
+
 function flankSep(children: readonly unknown[], side: 'leading' | 'trailing', sep: string): string {
 	const isNamed = (c: unknown): boolean =>
 		typeof c === 'object' && c !== null && (c as AnyNodeData).$named !== false;
@@ -976,9 +1038,19 @@ function buildNunjucksTemplateContext(
 					return (item as AnyNodeData).$named !== false;
 				});
 				if (effective.length === 0) continue;
-				fields[fieldName] = effective.map(item =>
+				// Build a MutableFlankedChildArray so `joinWithTrailing` /
+				// `joinWithLeading` filters can emit trailing / leading anon
+				// separators (e.g. trailing comma in `(0,)`). The cast through
+				// `unknown` is necessary because `Array.map` returns `string[]`
+				// while `MutableFlankedChildArray` extends `string[]` with
+				// optional side-channel properties — structurally identical at
+				// runtime, just needs the type widened.
+				const rendered = effective.map(item =>
 					renderChild(item as AnyNodeData | string | number),
-				);
+				) as unknown as MutableFlankedChildArray;
+				const trailingAnon = detectTrailingAnonForField(node, fieldName, effective);
+				if (trailingAnon !== '') rendered._trailing_anon = trailingAnon;
+				fields[fieldName] = rendered;
 			} else {
 				fields[fieldName] = renderChild(raw as AnyNodeData | string | number);
 			}

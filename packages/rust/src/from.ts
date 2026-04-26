@@ -1720,12 +1720,15 @@ export function rangePatternFrom(input?: T.RangePattern.Loose): ReturnType<typeo
 
 export function rangePatternUFormLeftWithRightFrom(input: Omit<ConfigOf<T.RangePatternUFormLeftWithRight>, '$variant'>) {
   return F.rangePatternUFormLeftWithRight({
+    left: _resolveOne<T.LiteralPattern | T.Path>(input.left, _K44, _K45),
     right: _resolveOne<T.LiteralPattern | T.Path>(input.right, _K44, _K45),
   });
 }
 
-export function rangePatternUFormLeftBareFrom(input?: Omit<ConfigOf<T.RangePatternUFormLeftBare>, '$variant'>) {
-  return F.rangePatternUFormLeftBare(input);
+export function rangePatternUFormLeftBareFrom(input: Omit<ConfigOf<T.RangePatternUFormLeftBare>, '$variant'>) {
+  return F.rangePatternUFormLeftBare({
+    left: _resolveOne<T.LiteralPattern | T.Path>(input.left, _K44, _K45),
+  });
 }
 
 export function rangePatternUFormPrefixFrom(input: Omit<ConfigOf<T.RangePatternUFormPrefix>, '$variant'>) {

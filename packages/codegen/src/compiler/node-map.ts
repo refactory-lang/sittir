@@ -38,6 +38,7 @@ import {
     renderRuleTemplate,
     findRepeatSeparator,
     findRepeatFlag,
+    findFieldsWithRepeatFlag,
 } from './template-walker.ts'
 import { tokenToName } from './optimize.ts'
 import { assertNever } from '../polymorph-variant.ts'
@@ -1543,6 +1544,17 @@ export interface JinjaTranslateMeta {
     joinByLeading?: boolean
     joinByTrailing?: boolean
     /**
+     * Per-field trailing-separator set: names of named fields whose repeat
+     * content carries `trailing: true`. Populated from `findFieldsWithRepeatFlag`.
+     * Used by `filterForFlanks` to restrict `joinWithTrailing` to the specific
+     * fields whose repeats carry the flag — rather than applying it globally
+     * whenever the whole rule has any trailing repeat (`joinByTrailing` is
+     * global and would incorrectly promote all named fields).
+     */
+    trailingFields?: ReadonlySet<string>
+    /** Mirror of `trailingFields` for leading-separator fields. */
+    leadingFields?: ReadonlySet<string>
+    /**
      * Cluster F step 4 (016): set of raw field names whose `isRequired`
      * derivation is false. Used by `translateToJinja` to wrap unguarded
      * `$NAME` placeholders with `{% if name | isPresent %}` conditionals
@@ -1596,6 +1608,7 @@ export function translateToJinja(tmpl: string, meta: JinjaTranslateMeta): string
  * whitespace and a single conditional firing places its content
  * followed by the absorbed separator before the required-content head.
  */
+
 function absorbHeadConditionalTrailingSpace(tmpl: string): string {
     let work = tmpl
     let runStart = 0
@@ -1725,10 +1738,32 @@ function isWithinGuardedRange(
 /** `$$$CHILDREN` is the only slot that carries flank permission. */
 /** @internal — exported for direct unit testing. */
 export function filterForFlanks(key: string, meta: JinjaTranslateMeta): string {
-    if (key !== 'children') return 'join'
-    if (meta.joinByLeading && meta.joinByTrailing) return 'joinWithFlanks'
-    if (meta.joinByTrailing) return 'joinWithTrailing'
-    if (meta.joinByLeading) return 'joinWithLeading'
+    // Bug 2 fix (016): named-field slots also carry flank permission when
+    // the repeat for THIS SPECIFIC FIELD has `trailing: true` (tracked in
+    // `meta.trailingFields`). Previously only `children` used the trailing
+    // filter; named list fields (e.g. `elements` in `tuple_expression`) now
+    // also honour `joinWithTrailing` so trailing commas render correctly.
+    //
+    // The per-field `trailingFields` set is preferred over the global
+    // `joinByTrailing` flag to avoid promoting ALL fields on a rule where
+    // only ONE field's repeat is trailing (e.g. `tuple_expression` where
+    // `elements` has trailing but `attributes` does not).
+    if (key === 'children') {
+        if (meta.joinByLeading && meta.joinByTrailing) return 'joinWithFlanks'
+        if (meta.joinByTrailing) return 'joinWithTrailing'
+        if (meta.joinByLeading) return 'joinWithLeading'
+        return 'join'
+    }
+    // Named fields: use per-field trailing/leading sets when available.
+    // Do NOT fall back to the global `joinByTrailing` / `joinByLeading` flags
+    // here — those are whole-rule flags and would incorrectly promote fields
+    // that don't have their own trailing repeat (e.g. `attributes` on
+    // `tuple_expression` where only `elements` has `trailing: true`).
+    const hasTrailing = meta.trailingFields?.has(key) ?? false
+    const hasLeading = meta.leadingFields?.has(key) ?? false
+    if (hasLeading && hasTrailing) return 'joinWithFlanks'
+    if (hasTrailing) return 'joinWithTrailing'
+    if (hasLeading) return 'joinWithLeading'
     return 'join'
 }
 
@@ -1773,6 +1808,91 @@ function deriveOptionalFieldNames(fields: readonly AssembledField[]): Set<string
         if (isMultiple(f) && !isNonEmpty(f)) out.add(f.name)
     }
     return out
+}
+
+/**
+ * Compute the set of field names that appear in SOME polymorph forms but
+ * not all. These are "cross-form optional" — from the parent polymorph's
+ * perspective the field is absent in at least one form, so any form that
+ * DOES have it should render it under an `{% if field | isPresent %}`
+ * guard. This lets forms that differ only by leading optional fields
+ * collapse to a single template (the guard produces `""` when the field
+ * is absent, same output as the form that never had the field).
+ *
+ * Canonical case: `range_pattern` has `left` in `left_with_right` and
+ * `left_bare` forms but NOT in `prefix`. All three forms collapse to
+ * `{% if left | isPresent %}{{ left }}{% endif %}{{ children | join("") }}`.
+ */
+function deriveCrossFormOptionalFields(forms: readonly AssembledGroup[]): Set<string> {
+    if (forms.length <= 1) return new Set()
+    const perForm = forms.map(f => new Set(f.fields.map(ff => ff.name)))
+    const allNames = new Set(perForm.flatMap(s => [...s]))
+    const out = new Set<string>()
+    for (const name of allNames) {
+        if (!perForm.every(s => s.has(name))) out.add(name)
+    }
+    return out
+}
+
+/**
+ * Attempt to collapse polymorph form templates that differ only because some
+ * forms have extra "cross-form optional" field prefixes absent from others.
+ *
+ * Canonical case: `range_pattern` forms `left_with_right` and `left_bare`
+ * produce `$LEFT $$$CHILDREN` (they have a `left` field in their rule),
+ * while `prefix` produces `$$$CHILDREN` (no `left`). Stripping `$LEFT ` from
+ * the first two normalizes all forms to `$$$CHILDREN`, and then prepending
+ * `{% if left | isPresent %}$LEFT{% endif %}` (no separator — the range
+ * operator is part of the child's template) to all forms produces the single
+ * unified template `{% if left | isPresent %}$LEFT{% endif %}$$$CHILDREN`.
+ *
+ * This avoids a `{% if variant == "X" %}` chain that fails for parsed nodes
+ * (where `node.$variant` is always null).
+ *
+ * Returns `null` when the forms cannot be collapsed via this mechanism.
+ *
+ * @param forms - The polymorph's `AssembledGroup` forms (used for field set).
+ * @param rawTemplates - Per-form raw `$VAR`-placeholder templates (before any
+ *   wrapping or translation).
+ * @param formNames - Ordered form names (matches `rawTemplates` keys).
+ */
+function tryCrossFormOptionalCollapse(
+    forms: readonly AssembledGroup[],
+    rawTemplates: Record<string, string>,
+    formNames: string[],
+): string | null {
+    const crossFormOptional = deriveCrossFormOptionalFields(forms)
+    if (crossFormOptional.size === 0) return null
+
+    // For each cross-form optional field, build a stripping regex that
+    // matches `$FIELD ` or `$FIELD` at the start or anywhere — but we
+    // want to strip it from the BEGINNING of forms that have it so the
+    // remaining suffix is the common part. Strip leading occurrence only.
+    const fieldNames = [...crossFormOptional]
+    const stripPatterns = fieldNames.map(f =>
+        new RegExp(`^\\$${f.toUpperCase()} ?`, 'i'),
+    )
+
+    // Strip cross-form optional field placeholders from the beginning of
+    // each form's raw template.
+    const suffixes: string[] = formNames.map(name => {
+        let tmpl = rawTemplates[name]!
+        for (const pat of stripPatterns) tmpl = tmpl.replace(pat, '')
+        return tmpl
+    })
+
+    // All suffixes must be equal for collapse to work.
+    if (!suffixes.every(s => s === suffixes[0])) return null
+
+    // Build the cross-form optional prefix: `{% if field | isPresent %}$FIELD{% endif %}`
+    // for each cross-form optional field. No separator between the prefix
+    // and the suffix — the separator (range operator, etc.) is part of
+    // the variant child's own template.
+    const prefix = fieldNames
+        .map(f => `{% if ${f} | isPresent %}$${f.toUpperCase()}{% endif %}`)
+        .join('')
+
+    return prefix + suffixes[0]!
 }
 
 /**
@@ -1889,6 +2009,10 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
         if (sep) meta.joinBy = sep
         if (findRepeatFlag(this.simplifiedRule, 'trailing')) meta.joinByTrailing = true
         if (findRepeatFlag(this.simplifiedRule, 'leading')) meta.joinByLeading = true
+        const trailingFields = findFieldsWithRepeatFlag(this.simplifiedRule, 'trailing')
+        const leadingFields = findFieldsWithRepeatFlag(this.simplifiedRule, 'leading')
+        if (trailingFields.size > 0) meta.trailingFields = trailingFields
+        if (leadingFields.size > 0) meta.leadingFields = leadingFields
         if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField
         if (optionalFields.size > 0) meta.optionalFields = optionalFields
         return { template: translateToJinja(withClauses, meta) }
@@ -2138,6 +2262,10 @@ export class AssembledContainer extends AssembledNodeBase<SeqRule | ChoiceRule |
         if (sep) meta.joinBy = sep
         if (findRepeatFlag(this.simplifiedRule, 'trailing')) meta.joinByTrailing = true
         if (findRepeatFlag(this.simplifiedRule, 'leading')) meta.joinByLeading = true
+        const trailingFields = findFieldsWithRepeatFlag(this.simplifiedRule, 'trailing')
+        const leadingFields = findFieldsWithRepeatFlag(this.simplifiedRule, 'leading')
+        if (trailingFields.size > 0) meta.trailingFields = trailingFields
+        if (leadingFields.size > 0) meta.leadingFields = leadingFields
         if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField
         return { template: translateToJinja(withClauses, meta) }
     }
@@ -2221,6 +2349,7 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
         // unguarded `$NAME` placeholder. Wrapping per-form (instead of
         // once on the merged template) keeps each `{% if variant == X %}`
         // body honest about which fields are optional in THAT form.
+        const rawTemplates: Record<string, string> = {}
         for (const form of this.#forms) {
             const { template, clauses, joinByField } = form.renderParts(rules, wordMatcher)
             if (!template) {
@@ -2229,7 +2358,11 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
                     `produced an empty template.`,
                 )
             }
-            const wrapped = wrapFormOptionalPlaceholders(template, form.fields)
+            rawTemplates[form.name] = template
+            const localOptional = deriveOptionalFieldNames(form.fields)
+            const wrapped = localOptional.size > 0
+                ? wrapOptionalFieldPlaceholders(template, localOptional)
+                : template
             variants[form.name] = wrapped
             if (form.detectToken) detect[form.name] = form.detectToken
             Object.assign(mergedClauses, clauses)
@@ -2250,24 +2383,53 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
         if (allEqual) {
             templateStr = variants[formNames[0]!]!
         } else {
-            // Build the `{%- if variant == "a" -%}A:$NAME{%- elif … -%}…{%- endif -%}`
-            // chain. Whitespace-controls suppress the newlines between
-            // the template fragments so the output joins cleanly.
-            const parts: string[] = []
-            for (let i = 0; i < formNames.length; i++) {
-                const formName = formNames[i]!
-                const keyword = i === 0 ? 'if' : 'elif'
-                parts.push(`{%- ${keyword} variant == ${JSON.stringify(formName)} -%}`)
-                parts.push(variants[formName]!)
+            // Bug 1 fix (016): cross-form-optional collapse. When forms differ
+            // ONLY because some have extra cross-form-optional field prefixes
+            // (e.g. `range_pattern`: `left_with_right` and `left_bare` start
+            // with `$LEFT` but `prefix` doesn't), normalize by:
+            //   1. Stripping `$FIELD ` from forms that have it.
+            //   2. Prepending `{% if field | isPresent %}$FIELD{% endif %}`
+            //      (no sep — range operator is part of the child's template).
+            //   3. Checking all normalized forms are equal.
+            // If so, collapse to that single prefix+suffix template. This avoids
+            // a `{% if variant == "X" %}` chain that fails for parsed nodes
+            // (where `$variant` is always null).
+            const crossFormCollapsed = tryCrossFormOptionalCollapse(
+                this.#forms, rawTemplates, formNames,
+            )
+            if (crossFormCollapsed) {
+                templateStr = crossFormCollapsed
+            } else {
+                // Build the `{%- if variant == "a" -%}A:$NAME{%- elif … -%}…{%- endif -%}`
+                // chain. Whitespace-controls suppress the newlines between
+                // the template fragments so the output joins cleanly.
+                const parts: string[] = []
+                for (let i = 0; i < formNames.length; i++) {
+                    const formName = formNames[i]!
+                    const keyword = i === 0 ? 'if' : 'elif'
+                    parts.push(`{%- ${keyword} variant == ${JSON.stringify(formName)} -%}`)
+                    parts.push(variants[formName]!)
+                }
+                parts.push('{%- endif -%}')
+                templateStr = parts.join('\n')
             }
-            parts.push('{%- endif -%}')
-            templateStr = parts.join('\n')
         }
         // Inline the merged per-form clauses as `{% if x %}body{% endif %}`,
         // then apply the final `$VAR` → `{{ var }}` Jinja translation
         // using the polymorph's aggregated field-separator overrides.
         const withClauses = inlineJinjaClauses(templateStr, mergedClauses)
         const meta: JinjaTranslateMeta = {}
+        // Aggregate per-field trailing/leading flags across all forms so
+        // `filterForFlanks` can apply `joinWithTrailing` only to the specific
+        // named fields whose repeats carry the flag.
+        const mergedTrailingFields = new Set<string>()
+        const mergedLeadingFields = new Set<string>()
+        for (const form of this.#forms) {
+            for (const f of findFieldsWithRepeatFlag(form.simplifiedRule, 'trailing')) mergedTrailingFields.add(f)
+            for (const f of findFieldsWithRepeatFlag(form.simplifiedRule, 'leading')) mergedLeadingFields.add(f)
+        }
+        if (mergedTrailingFields.size > 0) meta.trailingFields = mergedTrailingFields
+        if (mergedLeadingFields.size > 0) meta.leadingFields = mergedLeadingFields
         if (Object.keys(mergedJoinByField).length > 0) meta.joinByField = mergedJoinByField
         return { template: translateToJinja(withClauses, meta) }
     }
@@ -2532,6 +2694,10 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
         if (sep) meta.joinBy = sep
         if (findRepeatFlag(this.simplifiedRule, 'trailing')) meta.joinByTrailing = true
         if (findRepeatFlag(this.simplifiedRule, 'leading')) meta.joinByLeading = true
+        const trailingFields = findFieldsWithRepeatFlag(this.simplifiedRule, 'trailing')
+        const leadingFields = findFieldsWithRepeatFlag(this.simplifiedRule, 'leading')
+        if (trailingFields.size > 0) meta.trailingFields = trailingFields
+        if (leadingFields.size > 0) meta.leadingFields = leadingFields
         if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField
         if (optionalFields.size > 0) meta.optionalFields = optionalFields
         return { template: translateToJinja(withClauses, meta) }

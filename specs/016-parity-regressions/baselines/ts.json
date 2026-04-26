@@ -1,6 +1,6 @@
 {
     "backend": "typescript",
-    "commit": "863cc80",
+    "commit": "1d41138",
     "grammars": {
         "python": {
             "parityFixtures": {
@@ -71,11 +71,10 @@
                     "failingKinds": [
                         "generic_type",
                         "match_arm",
-                        "ordered_field_declaration_list",
-                        "range_pattern"
+                        "ordered_field_declaration_list"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 176,
+                    "pass": 177,
                     "total": 180
                 },
                 "factoryRoundtrip": {
@@ -185,8 +184,8 @@
         }
     },
     "totals": {
-        "fail": 2084,
-        "pass": 3393,
+        "fail": 2083,
+        "pass": 3394,
         "total": 5477
     }
 }

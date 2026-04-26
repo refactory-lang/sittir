@@ -1200,6 +1200,51 @@ export function findRepeatFlag(rule: Rule, flag: 'trailing' | 'leading'): boolea
 }
 
 /**
+ * Collect the names of named fields whose content contains a `repeat` /
+ * `repeat1` with the given flag (`trailing` or `leading`). Returns a
+ * `Set<string>` of field names — empty when no such field is found.
+ *
+ * Used by the template emitter to build a per-field trailing-separator
+ * set so `filterForFlanks` can restrict `joinWithTrailing` to the
+ * specific fields whose repeats carry the flag, rather than applying it
+ * globally whenever the whole rule has any trailing repeat.
+ */
+export function findFieldsWithRepeatFlag(
+    rule: Rule,
+    flag: 'trailing' | 'leading',
+): Set<string> {
+    const out = new Set<string>()
+    collectFieldsWithRepeatFlag(rule, flag, out)
+    return out
+}
+
+function collectFieldsWithRepeatFlag(
+    rule: Rule,
+    flag: 'trailing' | 'leading',
+    acc: Set<string>,
+): void {
+    switch (rule.type) {
+        case 'field':
+            if (findRepeatFlag(rule.content, flag)) acc.add(rule.name)
+            return
+        case 'seq':
+        case 'choice':
+            for (const m of rule.members) collectFieldsWithRepeatFlag(m, flag, acc)
+            return
+        case 'repeat':
+        case 'repeat1':
+        case 'optional':
+        case 'variant':
+        case 'clause':
+        case 'group':
+            collectFieldsWithRepeatFlag(rule.content, flag, acc)
+            return
+        default:
+            return
+    }
+}
+
+/**
  * Cluster F step 3 (016): for a Jinja-inline optional emission whose
  * head fragment opens with `{% if X | isPresent %}`, route the leading
  * `separator` INSIDE the conditional body so it disappears alongside

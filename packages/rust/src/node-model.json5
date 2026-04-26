@@ -12320,7 +12320,38 @@
           "factoryName": "rangePatternUFormLeftWithRight",
           "irKey": "rangePatternUFormLeftWithRight",
           "parentKind": "range_pattern",
-          "fields": [],
+          "fields": [
+            {
+              "name": "left",
+              "propertyName": "left",
+              "paramName": "left",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_literal_pattern",
+                  "unresolved": true
+                },
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_path",
+                  "unresolved": true
+                }
+              ],
+              "source": "grammar",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_literal_pattern",
+                  "_path"
+                ]
+              }
+            }
+          ],
           "children": [
             {
               "name": "range_pattern_left_with_right",
@@ -12346,7 +12377,38 @@
           "factoryName": "rangePatternUFormLeftBare",
           "irKey": "rangePatternUFormLeftBare",
           "parentKind": "range_pattern",
-          "fields": [],
+          "fields": [
+            {
+              "name": "left",
+              "propertyName": "left",
+              "paramName": "left",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_literal_pattern",
+                  "unresolved": true
+                },
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_path",
+                  "unresolved": true
+                }
+              ],
+              "source": "grammar",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_literal_pattern",
+                  "_path"
+                ]
+              }
+            }
+          ],
           "children": [
             {
               "name": "range_pattern_left_bare",
@@ -12400,11 +12462,40 @@
       "factoryName": "rangePatternUFormLeftBare",
       "irKey": "rangePatternUFormLeftBare",
       "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "rangePatternUFormLeftBare()",
       "name": "left_bare",
       "parentKind": "range_pattern",
-      "fields": [],
+      "fields": [
+        {
+          "name": "left",
+          "propertyName": "left",
+          "paramName": "left",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_literal_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_path",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_literal_pattern",
+              "_path"
+            ]
+          }
+        }
+      ],
       "children": [
         {
           "name": "range_pattern_left_bare",
@@ -12432,7 +12523,38 @@
       "hidden": false,
       "name": "left_with_right",
       "parentKind": "range_pattern",
-      "fields": [],
+      "fields": [
+        {
+          "name": "left",
+          "propertyName": "left",
+          "paramName": "left",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_literal_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_path",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_literal_pattern",
+              "_path"
+            ]
+          }
+        }
+      ],
       "children": [
         {
           "name": "range_pattern_left_with_right",
