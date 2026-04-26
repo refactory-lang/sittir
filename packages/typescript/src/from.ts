@@ -489,6 +489,7 @@ export function exportClauseFrom(...input: readonly (NonNullable<T.ExportClause.
 export function exportSpecifierFrom(input: T.ExportSpecifier.Loose): ReturnType<typeof F.exportSpecifier> | T.ExportSpecifier {
   if (isNodeData(input)) return input;
   return F.exportSpecifier({
+    exportKind: _resolveOne<"type" | "typeof">(input.exportKind, _K0, _K0),
     name: _resolveOne<T.ModuleExportName>(input.name, _super_import_identifier, _K2),
     alias: _resolveOne<T.ModuleExportName>(input.alias, _super_import_identifier, _K2),
   });
@@ -548,12 +549,14 @@ export function importSpecifierFrom(input?: T.ImportSpecifier.Loose): ReturnType
 
 export function importSpecifierUFormNameFrom(input: Omit<ConfigOf<T.ImportSpecifierUFormName>, '$variant'>) {
   return F.importSpecifierUFormName({
+    importKind: _resolveOne<"type" | "typeof">(input.importKind, _K0, _K0),
     name: _resolveOneLeaf<T.ImportIdentifier>(input.name, "identifier"),
   });
 }
 
 export function importSpecifierUFormAsFrom(input: Omit<ConfigOf<T.ImportSpecifierUFormAs>, '$variant'>) {
   return F.importSpecifierUFormAs({
+    importKind: _resolveOne<"type" | "typeof">(input.importKind, _K0, _K0),
     name: _resolveOne<T.ModuleExportName | T.Identifier>(input.name, _super_import_identifier, _K2),
     alias: _resolveOneLeaf<T.ImportIdentifier>(input.alias, "identifier"),
   });
@@ -649,7 +652,7 @@ export function forStatementFrom(input: T.ForStatement.Loose): ReturnType<typeof
 export function forInStatementFrom(input: T.ForInStatement.Loose): ReturnType<typeof F.forInStatement> | T.ForInStatement {
   if (isNodeData(input)) return input;
   return F.forInStatement({
-    await: _resolveBooleanKeyword(input.await),
+    awaitMarker: _resolveBooleanKeyword(input.awaitMarker),
     operator: _resolveOne<"in" | "of">(input.operator, _K0, _K0),
     right: _resolveOne<T.Expressions>(input.right, _K0, _super_expressions),
     body: _resolveOne<T.Statement>(input.body, _K0, _K1),
@@ -1108,7 +1111,7 @@ export function subscriptExpressionFrom(input: T.SubscriptExpression.Loose): Ret
 export function assignmentExpressionFrom(input: T.AssignmentExpression.Loose): ReturnType<typeof F.assignmentExpression> | T.AssignmentExpression {
   if (isNodeData(input)) return input;
   return F.assignmentExpression({
-    using: _resolveBooleanKeyword(input.using),
+    usingMarker: _resolveBooleanKeyword(input.usingMarker),
     left: _resolveOne<T.ParenthesizedExpression | T.LhsExpression>(input.left, _K0, _K18),
     right: _resolveOne<T.Expression>(input.right, _K0, _super_expression),
   });
@@ -1384,8 +1387,10 @@ export function methodDefinitionFrom(input: T.MethodDefinition.Loose): ReturnTyp
     accessibilityModifier: _resolveOneLeaf<T.AccessibilityModifier>(input.accessibilityModifier, "accessibility_modifier"),
     overrideModifier: _resolveOne<"static" | T.OverrideModifier>(input.overrideModifier, _K24, _K0),
     readonly: _resolveBooleanKeyword(input.readonly),
-    async: _resolveBooleanKeyword(input.async),
+    asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
+    accessorKind: _resolveOne<"get" | "set" | "*">(input.accessorKind, _K0, _K0),
     name: _resolveOne<T.PropertyName>(input.name, _K22, _K23),
+    optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
     returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K0, _K12),
@@ -1421,6 +1426,7 @@ export function publicFieldDefinitionFrom(input: T.PublicFieldDefinition.Loose):
   return F.publicFieldDefinition({
     decorator: _resolveManyBranch<T.Decorator>(input.decorator, "decorator"),
     name: _resolveOne<T.PropertyName>(input.name, _K22, _K23),
+    optionalityMarker: _resolveOne<"?" | "!">(input.optionalityMarker, _K0, _K0),
     type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),
     value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
     children: _resolveOne(input.children, _K0, _K26),
@@ -1440,8 +1446,10 @@ export function methodSignatureFrom(input: T.MethodSignature.Loose): ReturnType<
     accessibilityModifier: _resolveOneLeaf<T.AccessibilityModifier>(input.accessibilityModifier, "accessibility_modifier"),
     overrideModifier: _resolveOne<"static" | T.OverrideModifier>(input.overrideModifier, _K24, _K0),
     readonly: _resolveBooleanKeyword(input.readonly),
-    async: _resolveBooleanKeyword(input.async),
+    asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
+    accessorKind: _resolveOne<"get" | "set" | "*">(input.accessorKind, _K0, _K0),
     name: _resolveOne<T.PropertyName>(input.name, _K22, _K23),
+    optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
     returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K0, _K12),
@@ -1453,7 +1461,9 @@ export function abstractMethodSignatureFrom(input: T.AbstractMethodSignature.Loo
   return F.abstractMethodSignature({
     accessibilityModifier: _resolveOneLeaf<T.AccessibilityModifier>(input.accessibilityModifier, "accessibility_modifier"),
     overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
+    accessorKind: _resolveOne<"get" | "set" | "*">(input.accessorKind, _K0, _K0),
     name: _resolveOne<T.PropertyName>(input.name, _K22, _K23),
+    optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
     returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(input.returnType, _K0, _K12),
@@ -1612,7 +1622,7 @@ export function extendsTypeClauseFrom(input: T.ExtendsTypeClause.Loose): ReturnT
 export function enumDeclarationFrom(input: T.EnumDeclaration.Loose): ReturnType<typeof F.enumDeclaration> | T.EnumDeclaration {
   if (isNodeData(input)) return input;
   return F.enumDeclaration({
-    const: _resolveBooleanKeyword(input.const),
+    constMarker: _resolveBooleanKeyword(input.constMarker),
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
     body: _resolveOneBranch<T.EnumBody>(input.body, "enum_body"),
   });
@@ -1659,7 +1669,7 @@ export function requiredParameterFrom(input: T.RequiredParameter.Loose): ReturnT
   if (isNodeData(input)) return input;
   return F.requiredParameter({
     decorator: _resolveManyBranch<T.Decorator>(input.decorator, "decorator"),
-    readonly: _resolveBooleanKeyword(input.readonly),
+    readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
     pattern: _resolveOne<T.Pattern | T.This>(input.pattern, _K33, _K6),
     type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),
     value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
@@ -1671,7 +1681,7 @@ export function optionalParameterFrom(input: T.OptionalParameter.Loose): ReturnT
   if (isNodeData(input)) return input;
   return F.optionalParameter({
     decorator: _resolveManyBranch<T.Decorator>(input.decorator, "decorator"),
-    readonly: _resolveBooleanKeyword(input.readonly),
+    readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
     pattern: _resolveOne<T.Pattern | T.This>(input.pattern, _K33, _K6),
     type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),
     value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
@@ -1756,7 +1766,7 @@ export function restTypeFrom(input: T.RestType.Loose): ReturnType<typeof F.restT
 export function constructorTypeFrom(input: T.ConstructorType.Loose): ReturnType<typeof F.constructorType> | T.ConstructorType {
   if (isNodeData(input)) return input;
   return F.constructorType({
-    abstract: _resolveBooleanKeyword(input.abstract),
+    abstractMarker: _resolveBooleanKeyword(input.abstractMarker),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
     type: _resolveOne<T.Type>(input.type, _K0, _super_type),
@@ -1917,6 +1927,7 @@ export function propertySignatureFrom(input: T.PropertySignature.Loose): ReturnT
     overrideModifier: _resolveOne<"static" | T.OverrideModifier>(input.overrideModifier, _K24, _K0),
     readonly: _resolveBooleanKeyword(input.readonly),
     name: _resolveOne<T.PropertyName>(input.name, _K22, _K23),
+    optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
     type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),
   });
 }
@@ -1932,7 +1943,7 @@ export function typeParametersFrom(...input: readonly (NonNullable<T.TypeParamet
 export function typeParameterFrom(input: T.TypeParameter.Loose): ReturnType<typeof F.typeParameter> | T.TypeParameter {
   if (isNodeData(input)) return input;
   return F.typeParameter({
-    const: _resolveBooleanKeyword(input.const),
+    constMarker: _resolveBooleanKeyword(input.constMarker),
     name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
     constraint: _resolveOneBranch<T.Constraint>(input.constraint, "constraint"),
     value: _resolveOneBranch<T.DefaultType>(input.value, "default_type"),
@@ -1956,7 +1967,7 @@ export function constraintFrom(input: T.Constraint.Loose): ReturnType<typeof F.c
 export function constructSignatureFrom(input: T.ConstructSignature.Loose): ReturnType<typeof F.constructSignature> | T.ConstructSignature {
   if (isNodeData(input)) return input;
   return F.constructSignature({
-    abstract: _resolveBooleanKeyword(input.abstract),
+    abstractMarker: _resolveBooleanKeyword(input.abstractMarker),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
     type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),

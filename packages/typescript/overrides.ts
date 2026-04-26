@@ -268,8 +268,20 @@ export default grammar(enrich(base), wire({
         abstract_class_declaration: {
         },
 
-        // abstract_method_signature: 2 field(s)
+        // abstract_method_signature: seq(
+        //   optional($.accessibility_modifier),    // pos 0
+        //   'abstract',                             // pos 1 (literal, not optional)
+        //   optional($.override_modifier),          // pos 2
+        //   optional(choice('get','set','*')),     // pos 3  →  '3/0'  (accessor_kind, choice-of-strings)
+        //   field('name', $._property_name),        // pos 4
+        //   optional('?'),                          // pos 5  →  '5/0'  (optional_marker)
+        //   $._call_signature)                      // pos 6
+        // Field-promotion wave 3 (016 task #25): symmetric to
+        // method_definition / method_signature for the trailing `?` plus
+        // the accessor keyword.
         abstract_method_signature: {
+            '3/0': field('accessor_kind'),
+            '5/0': field('optional_marker'),
         },
 
         // ambient_declaration: 3 field(s)
@@ -381,14 +393,51 @@ export default grammar(enrich(base), wire({
             2: field('index_type'), // type [struct=1]
         },
 
-        // method_definition: 2 field(s)
+        // method_definition: prec.left(seq(
+        //   optional($.accessibility_modifier),    // pos 0
+        //   optional('static'),                    // pos 1  (DEFERRED — `static` adjacent to public_field_definition's
+        //                                          //         static_mods polymorph; promoting the bare 'static' here
+        //                                          //         risks parse drift across the two class-member shapes.)
+        //   optional($.override_modifier),         // pos 2 (existing field below)
+        //   optional('readonly'),                  // pos 3  (DEFERRED — `readonly` is a soft keyword; promoting it
+        //                                          //         via _kw_readonly_marker hidden symbol triggers parse
+        //                                          //         ERROR on `class Foo { readonly bar?(): T {} }` —
+        //                                          //         the parser takes `readonly` as the property identifier
+        //                                          //         instead of the marker. Same parse-precedence-divergence
+        //                                          //         pattern as wave-1's deferred closure_expression.async_marker.)
+        //   optional('async'),                     // pos 4  →  '4/0'  (async_marker)
+        //   optional(choice('get','set','*')),    // pos 5  →  '5/0'  (accessor_kind, choice-of-strings)
+        //   field('name', $._property_name),       // pos 6
+        //   optional('?'),                         // pos 7  →  '7/0'  (optional_marker)
+        //   $._call_signature,                     // pos 8
+        //   field('body', $.statement_block)))    // pos 9
+        // Field-promotion wave 3 (016 task #25): label `async`, the
+        // accessor `get`/`set`/`*`, and trailing `?` so render preserves
+        // `async get foo?(): T {}` shapes.
         method_definition: {
             1: field('override_modifier'), // override_modifier [struct=1]
+            '4/0': field('async_marker'),
+            '5/0': field('accessor_kind'),
+            '7/0': field('optional_marker'),
         },
 
-        // method_signature: 2 field(s)
+        // method_signature: seq(
+        //   optional($.accessibility_modifier),    // pos 0
+        //   optional('static'),                    // pos 1  (DEFERRED — see method_definition note)
+        //   optional($.override_modifier),         // pos 2 (existing field below)
+        //   optional('readonly'),                  // pos 3  (DEFERRED — soft-keyword parse regression, see above)
+        //   optional('async'),                     // pos 4  →  '4/0'  (async_marker)
+        //   optional(choice('get','set','*')),    // pos 5  →  '5/0'  (accessor_kind, choice-of-strings)
+        //   field('name', $._property_name),       // pos 6
+        //   optional('?'),                         // pos 7  →  '7/0'  (optional_marker)
+        //   $._call_signature)                     // pos 8
+        // Field-promotion wave 3 (016 task #25): symmetric to
+        // method_definition.
         method_signature: {
             1: field('override_modifier'), // override_modifier [struct=1]
+            '4/0': field('async_marker'),
+            '5/0': field('accessor_kind'),
+            '7/0': field('optional_marker'),
         },
 
         // namespace_import: 1 field(s)
@@ -407,9 +456,19 @@ export default grammar(enrich(base), wire({
             1: field('statements'), // statement [struct=1]
         },
 
-        // property_signature: 2 field(s)
+        // property_signature: seq(
+        //   optional($.accessibility_modifier),  // pos 0
+        //   optional('static'),                   // pos 1  (DEFERRED — see method_definition note re: static)
+        //   optional($.override_modifier),         // pos 2 (existing field below — note position drift; entry kept as 1)
+        //   optional('readonly'),                  // pos 3  (DEFERRED — soft-keyword parse regression risk)
+        //   field('name', $._property_name),       // pos 4
+        //   optional('?'),                         // pos 5  →  '5/0'  (optional_marker)
+        //   field('type', optional($.type_annotation)))  // pos 6
+        // Field-promotion wave 3 (016 task #25): label trailing `?` so
+        // render preserves `foo?: string` shapes.
         property_signature: {
             1: field('override_modifier'), // override_modifier [struct=1]
+            '5/0': field('optional_marker'),
         },
 
         // satisfies_expression: 2 field(s)
@@ -485,9 +544,53 @@ export default grammar(enrich(base), wire({
         // _function_signature_automatic_semicolon)). The trailing
         // choice carries the semi (either explicit or auto); labeling
         // pos 4 as a semicolon field lets it render.
+        //
+        // DEFERRED for the entire JS-inherited function family + this
+        // TS-specific function_signature: see the multi-line note
+        // BELOW (after function_signature) for the full deferral
+        // rationale. function_signature alone fails to compile because
+        // the synthesized `_kw_async_marker` rule competes with the
+        // base function_declaration / function_expression /
+        // generator_function rules' bare `'async'` token on the
+        // `'async' • 'function'` lookahead — splitting only ONE rule
+        // leaves the others using the bare token at a different prec
+        // class, which tree-sitter can't resolve.
         function_signature: {
             4: field('semicolon'),
         },
+
+        // JS-inherited function family — all start with `optional('async')` at pos 0.
+        //
+        // DEFERRED for the entire family (function_expression / function_declaration /
+        // generator_function / generator_function_declaration / arrow_function):
+        // wrapping pos 0/0 in `field('async_marker', _kw_async_marker)` synthesizes
+        // a hidden `_kw_async_marker` symbol that competes with `primary_expression`
+        // and `_property_name` on the `{ async (` prefix. Tree-sitter raises:
+        //
+        //   Unresolved conflict for symbol sequence: '{' 'async' • '(' ...
+        //   Possible interpretations:
+        //     1: '{' (_kw_async_marker 'async') • '('   (precedence: -1)
+        //     2: '{' (_property_name 'async') • '('     (precedence: 0)
+        //     3: '{' (primary_expression 'async') • '(' ...
+        //
+        // The shape `{ async (...) }` is genuinely ambiguous between an object
+        // literal containing a `async`-keyed method/function shorthand vs an
+        // expression statement calling the `async` identifier as a function.
+        // The unsplit `'async'` token's runtime LR state resolves this; the
+        // synthesized hidden rule's prec=-1 doesn't. Same parse-time precedence
+        // divergence pattern as wave-1's deferred closure_expression.async_marker.
+        //
+        // Function_signature ABOVE works because it's a TS-specific rule that
+        // only appears in declaration contexts (no `{ async (` ambiguity).
+        // method_definition / method_signature also work because the `{ async (`
+        // case is in fact a method_definition with `async`-named property — and
+        // there the conflict is already encoded in tree-sitter's existing LR
+        // table for that kind. The JS-inherited function family lifts `async`
+        // into a synthesized rule that gets a fresh prec slot, breaking the
+        // resolution.
+        //
+        // Tracked for a follow-up wave with either explicit conflicts entries
+        // or a non-symbol field-promotion mechanism.
 
         // break_statement: seq('break', field('label', optional(...)),
         // _semicolon). Label the trailing `;` at pos 2.
@@ -511,6 +614,133 @@ export default grammar(enrich(base), wire({
         do_statement: {
             4: field('semicolon'),
         },
+
+        // -------------------------------------------------------------------
+        // Field-promotion wave 3 (016 task #25) — standalone optional-punct
+        // → semantic field markers. Each rule is a one-line addition.
+        // -------------------------------------------------------------------
+
+        // constructor_type: prec.left(seq(
+        //   optional('abstract'),  // pos 0  →  '0/0'  (abstract_marker)
+        //   'new', type_parameters?, parameters, '=>', type))
+        constructor_type: {
+            '0/0': field('abstract_marker'),
+        },
+
+        // construct_signature: seq(
+        //   optional('abstract'),  // pos 0  →  '0/0'  (abstract_marker)
+        //   'new', type_parameters?, parameters, type?)
+        construct_signature: {
+            '0/0': field('abstract_marker'),
+        },
+
+        // enum_declaration: seq(
+        //   optional('const'),  // pos 0  →  '0/0'  (const_marker)
+        //   'enum', name, body)
+        enum_declaration: {
+            '0/0': field('const_marker'),
+        },
+
+        // type_parameter: seq(
+        //   optional('const'),  // pos 0  →  '0/0'  (const_marker)
+        //   field('name', $._type_identifier),
+        //   field('constraint', optional(...)),
+        //   field('value', optional(...)))
+        // NOTE: same field name as enum_declaration — documented borderline
+        // reuse. Different runtime impact (compile-time discriminator on a
+        // type parameter vs literal-preserving on an enum) but same
+        // conceptual "compile-time / literal-preserving" prefix.
+        type_parameter: {
+            '0/0': field('const_marker'),
+        },
+
+        // for_in_statement: seq(
+        //   'for',                  // pos 0
+        //   optional('await'),       // pos 1  →  '1/0'  (await_marker)
+        //   $._for_header,           // pos 2
+        //   field('body', $.statement))  // pos 3
+        // Cross-grammar reuse: same name as python's for/with-style await
+        // markers (wave 2).
+        for_in_statement: {
+            '1/0': field('await_marker'),
+        },
+
+        // assignment_expression: prec.right('assign', seq(
+        //   optional('using'),  // pos 0  →  '0/0'  (using_marker)
+        //   field('left', ...), '=', field('right', ...)))
+        // prec.right is transparent to path addressing.
+        assignment_expression: {
+            '0/0': field('using_marker'),
+        },
+
+        // _parameter_name: seq(
+        //   repeat(field('decorator', $.decorator)),  // pos 0
+        //   optional($.accessibility_modifier),         // pos 1
+        //   optional($.override_modifier),              // pos 2
+        //   optional('readonly'),                       // pos 3  →  '3/0'  (readonly_marker)
+        //   field('pattern', choice($.pattern, $.this)))  // pos 4
+        // _parameter_name is a hidden helper inlined into required_parameter
+        // and optional_parameter. Promoting `readonly` here surfaces it on
+        // both wrapping kinds.
+        //
+        // NOTE re: soft-keyword risk — unlike method_definition.readonly_marker
+        // (DEFERRED above), the parameter-position `readonly` is preceded by
+        // a `(` or `,` in every grammar context (formal_parameters), so the
+        // synthesized `_kw_readonly_marker`'s parse-precedence shouldn't
+        // collide with `readonly` as a property identifier in a class body.
+        _parameter_name: {
+            '3/0': field('readonly_marker'),
+        },
+
+        // export_specifier: seq(
+        //   optional(choice('type', 'typeof')),  // pos 0  →  '0/0'  (export_kind)
+        //   previous)
+        // Choice-of-strings: tree-sitter strips FIELD wrappers around bare
+        // STRING but retains FIELD around CHOICE. The synthesized
+        // `_kw_<name>` indirection in maybeKeywordSymbol only targets bare
+        // STRING / OPTIONAL(STRING) shapes — falls through here unchanged
+        // (CHOICE without BLANK is not handled). Risk: tree-sitter may
+        // strip the FIELD around the bare-STRING choice arms.
+        export_specifier: {
+            '0/0': field('export_kind'),
+        },
+
+        // import_specifier: seq(
+        //   optional(choice('type', 'typeof')),  // pos 0  →  '0/0'  (import_kind)
+        //   choice(...))
+        // Same caveat as export_specifier above re: choice-of-strings.
+        import_specifier: {
+            '0/0': field('import_kind'),
+        },
+
+        // public_field_definition: seq(
+        //   repeat(field('decorator', ...)),                // pos 0
+        //   optional(choice(...)),                           // pos 1 (POLYMORPHED — declare_first / access_first)
+        //   choice(...),                                     // pos 2 (POLYMORPHED — static_mods / abstract_first / readonly_first / accessor_opt)
+        //   field('name', $._property_name),                 // pos 3
+        //   optional(choice('?', '!')),                     // pos 4  →  '4/0'  (optionality_marker)
+        //   field('type', optional($.type_annotation)),     // pos 5
+        //   optional($._initializer))                        // pos 6
+        // Field-promotion wave 3 (016 task #25): label the `?`/`!` choice
+        // as `optionality_marker`. Different semantics in one slot
+        // (`?` = optional field, `!` = definite-assignment) — keep as one
+        // discriminator field; the literal value distinguishes.
+        public_field_definition: {
+            '4/0': field('optionality_marker'),
+        },
+
+        // _type_query_subscript_expression: DEFERRED. Tree-sitter aliases
+        // this hidden rule to the public `subscript_expression` kind via
+        // `alias($._type_query_subscript_expression, $.subscript_expression)`.
+        // The base JS `subscript_expression` already labels its `?.` with
+        // `optional(field('optional_chain', $.optional_chain))`. Adding
+        // `optional_chain_marker` on the hidden alias source extends the
+        // merged kind's field set, but the merged template (emitted from
+        // the canonical `subscript_expression` rule) only references
+        // `optional_chain` — coverage validator flags the unreferenced
+        // `optional_chain_marker` field. Promotion at the alias source
+        // requires either coalescing both field names downstream or
+        // overriding the canonical rule too. Tracked as a follow-up.
 
         // parenthesized_expression: variant() adoption. Shape is
         // `seq('(', choice(typed_expr, sequence_expression), ')')`.

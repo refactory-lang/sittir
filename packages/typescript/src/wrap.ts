@@ -258,6 +258,7 @@ export function wrapExportClause(data: _NodeData, tree: TreeHandle): WrappedNode
 export function wrapExportSpecifier(data: _NodeData, tree: TreeHandle): WrappedNode<ExportSpecifier> {
   return {
     ...data,
+    get exportKind() { return drillIn(data.$fields?.['export_kind'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get alias() { return drillIn(data.$fields?.['alias'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
@@ -300,6 +301,7 @@ export function wrapNamedImports(data: _NodeData, tree: TreeHandle): WrappedNode
 export function wrapImportSpecifier(data: _NodeData, tree: TreeHandle): WrappedNode<ImportSpecifier> {
   return {
     ...data,
+    get importKind() { return drillIn(data.$fields?.['import_kind'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ImportSpecifier>;
 }
@@ -399,7 +401,7 @@ export function wrapForStatement(data: _NodeData, tree: TreeHandle): WrappedNode
 export function wrapForInStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ForInStatement> {
   return {
     ...data,
-    get await() { return drillIn(data.$fields?.['await'], tree); },
+    get awaitMarker() { return drillIn(data.$fields?.['await_marker'], tree); },
     get operator() { return drillIn(data.$fields?.['operator'], tree); },
     get right() { return drillIn(data.$fields?.['right'], tree); },
     get body() { return drillIn(data.$fields?.['body'], tree); },
@@ -820,7 +822,7 @@ export function wrapLhsExpression(data: _NodeData, tree: TreeHandle): WrappedNod
 export function wrapAssignmentExpression(data: _NodeData, tree: TreeHandle): WrappedNode<AssignmentExpression> {
   return {
     ...data,
-    get using() { return drillIn(data.$fields?.['using'], tree); },
+    get usingMarker() { return drillIn(data.$fields?.['using_marker'], tree); },
     get left() { return drillIn(data.$fields?.['left'], tree); },
     get right() { return drillIn(data.$fields?.['right'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
@@ -997,8 +999,10 @@ export function wrapMethodDefinition(data: _NodeData, tree: TreeHandle): Wrapped
     get accessibilityModifier() { return drillIn(data.$fields?.['accessibility_modifier'], tree); },
     get overrideModifier() { return drillIn(data.$fields?.['override_modifier'], tree); },
     get readonly() { return drillIn(data.$fields?.['readonly'], tree); },
-    get async() { return drillIn(data.$fields?.['async'], tree); },
+    get asyncMarker() { return drillIn(data.$fields?.['async_marker'], tree); },
+    get accessorKind() { return drillIn(data.$fields?.['accessor_kind'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
+    get optionalMarker() { return drillIn(data.$fields?.['optional_marker'], tree); },
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
     get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
     get returnType() { return drillIn(data.$fields?.['return_type'], tree); },
@@ -1038,6 +1042,7 @@ export function wrapPublicFieldDefinition(data: _NodeData, tree: TreeHandle): Wr
     ...data,
     get decorator() { return drillInAll(data.$fields?.['decorator'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
+    get optionalityMarker() { return drillIn(data.$fields?.['optionality_marker'], tree); },
     get typeField() { return drillIn(data.$fields?.['type'], tree); },
     get value() { return drillIn(data.$fields?.['value'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },
@@ -1058,8 +1063,10 @@ export function wrapMethodSignature(data: _NodeData, tree: TreeHandle): WrappedN
     get accessibilityModifier() { return drillIn(data.$fields?.['accessibility_modifier'], tree); },
     get overrideModifier() { return drillIn(data.$fields?.['override_modifier'], tree); },
     get readonly() { return drillIn(data.$fields?.['readonly'], tree); },
-    get async() { return drillIn(data.$fields?.['async'], tree); },
+    get asyncMarker() { return drillIn(data.$fields?.['async_marker'], tree); },
+    get accessorKind() { return drillIn(data.$fields?.['accessor_kind'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
+    get optionalMarker() { return drillIn(data.$fields?.['optional_marker'], tree); },
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
     get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
     get returnType() { return drillIn(data.$fields?.['return_type'], tree); },
@@ -1072,7 +1079,9 @@ export function wrapAbstractMethodSignature(data: _NodeData, tree: TreeHandle): 
     ...data,
     get accessibilityModifier() { return drillIn(data.$fields?.['accessibility_modifier'], tree); },
     get overrideModifier() { return drillIn(data.$fields?.['override_modifier'], tree); },
+    get accessorKind() { return drillIn(data.$fields?.['accessor_kind'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
+    get optionalMarker() { return drillIn(data.$fields?.['optional_marker'], tree); },
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
     get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
     get returnType() { return drillIn(data.$fields?.['return_type'], tree); },
@@ -1240,7 +1249,7 @@ export function wrapExtendsTypeClause(data: _NodeData, tree: TreeHandle): Wrappe
 export function wrapEnumDeclaration(data: _NodeData, tree: TreeHandle): WrappedNode<EnumDeclaration> {
   return {
     ...data,
-    get const() { return drillIn(data.$fields?.['const'], tree); },
+    get constMarker() { return drillIn(data.$fields?.['const_marker'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get body() { return drillIn(data.$fields?.['body'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
@@ -1279,7 +1288,7 @@ export function wrapRequiredParameter(data: _NodeData, tree: TreeHandle): Wrappe
   return {
     ...data,
     get decorator() { return drillInAll(data.$fields?.['decorator'], tree); },
-    get readonly() { return drillIn(data.$fields?.['readonly'], tree); },
+    get readonlyMarker() { return drillIn(data.$fields?.['readonly_marker'], tree); },
     get pattern() { return drillIn(data.$fields?.['pattern'], tree); },
     get typeField() { return drillIn(data.$fields?.['type'], tree); },
     get value() { return drillIn(data.$fields?.['value'], tree); },
@@ -1291,7 +1300,7 @@ export function wrapOptionalParameter(data: _NodeData, tree: TreeHandle): Wrappe
   return {
     ...data,
     get decorator() { return drillInAll(data.$fields?.['decorator'], tree); },
-    get readonly() { return drillIn(data.$fields?.['readonly'], tree); },
+    get readonlyMarker() { return drillIn(data.$fields?.['readonly_marker'], tree); },
     get pattern() { return drillIn(data.$fields?.['pattern'], tree); },
     get typeField() { return drillIn(data.$fields?.['type'], tree); },
     get value() { return drillIn(data.$fields?.['value'], tree); },
@@ -1383,7 +1392,7 @@ export function wrapRestType(data: _NodeData, tree: TreeHandle): WrappedNode<Res
 export function wrapConstructorType(data: _NodeData, tree: TreeHandle): WrappedNode<ConstructorType> {
   return {
     ...data,
-    get abstract() { return drillIn(data.$fields?.['abstract'], tree); },
+    get abstractMarker() { return drillIn(data.$fields?.['abstract_marker'], tree); },
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
     get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
     get typeField() { return drillIn(data.$fields?.['type'], tree); },
@@ -1542,6 +1551,7 @@ export function wrapPropertySignature(data: _NodeData, tree: TreeHandle): Wrappe
     get overrideModifier() { return drillIn(data.$fields?.['override_modifier'], tree); },
     get readonly() { return drillIn(data.$fields?.['readonly'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
+    get optionalMarker() { return drillIn(data.$fields?.['optional_marker'], tree); },
     get typeField() { return drillIn(data.$fields?.['type'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<PropertySignature>;
@@ -1557,7 +1567,7 @@ export function wrapTypeParameters(data: _NodeData, tree: TreeHandle): WrappedNo
 export function wrapTypeParameter(data: _NodeData, tree: TreeHandle): WrappedNode<TypeParameter> {
   return {
     ...data,
-    get const() { return drillIn(data.$fields?.['const'], tree); },
+    get constMarker() { return drillIn(data.$fields?.['const_marker'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get constraint() { return drillIn(data.$fields?.['constraint'], tree); },
     get value() { return drillIn(data.$fields?.['value'], tree); },
@@ -1584,7 +1594,7 @@ export function wrapConstraint(data: _NodeData, tree: TreeHandle): WrappedNode<C
 export function wrapConstructSignature(data: _NodeData, tree: TreeHandle): WrappedNode<ConstructSignature> {
   return {
     ...data,
-    get abstract() { return drillIn(data.$fields?.['abstract'], tree); },
+    get abstractMarker() { return drillIn(data.$fields?.['abstract_marker'], tree); },
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
     get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
     get typeField() { return drillIn(data.$fields?.['type'], tree); },

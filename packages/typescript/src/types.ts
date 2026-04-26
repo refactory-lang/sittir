@@ -650,6 +650,7 @@ export interface ExportClause {
 export interface ExportSpecifier {
   readonly $type: 'export_specifier';
   readonly $fields: {
+    readonly export_kind?: "type" | "typeof";
     readonly name: ModuleExportName;
     readonly alias?: ModuleExportName;
   };
@@ -706,12 +707,18 @@ export interface NamedImports {
 export interface ImportSpecifierUFormName {
   readonly $type: 'import_specifier';
   readonly $variant: 'name';
+  readonly $fields: {
+    readonly import_kind?: "type" | "typeof";
+  };
   readonly $children: readonly [ImportSpecifierName];
 }
 
 export interface ImportSpecifierUFormAs {
   readonly $type: 'import_specifier';
   readonly $variant: 'as';
+  readonly $fields: {
+    readonly import_kind?: "type" | "typeof";
+  };
   readonly $children: readonly [ImportSpecifierAs];
 }
 
@@ -802,7 +809,7 @@ export interface ForStatement {
 export interface ForInStatement {
   readonly $type: 'for_in_statement';
   readonly $fields: {
-    readonly await?: BooleanKeyword<"await">;
+    readonly await_marker?: BooleanKeyword<"await">;
     readonly operator: "in" | "of";
     readonly right: Expressions;
     readonly body: Statement;
@@ -1230,7 +1237,7 @@ export interface LhsExpression {
 export interface AssignmentExpression {
   readonly $type: 'assignment_expression';
   readonly $fields: {
-    readonly using?: BooleanKeyword<"using">;
+    readonly using_marker?: BooleanKeyword<"using">;
     readonly left: ParenthesizedExpression | LhsExpression;
     readonly right: Expression;
   };
@@ -1400,8 +1407,10 @@ export interface MethodDefinition {
     readonly accessibility_modifier?: AccessibilityModifier;
     readonly override_modifier?: "static" | OverrideModifier;
     readonly readonly?: BooleanKeyword<"readonly">;
-    readonly async?: BooleanKeyword<"async">;
+    readonly async_marker?: BooleanKeyword<"async">;
+    readonly accessor_kind?: "get" | "set" | "*";
     readonly name: PropertyName;
+    readonly optional_marker?: BooleanKeyword<"?">;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
     readonly return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
@@ -1437,6 +1446,7 @@ export interface PublicFieldDefinition {
   readonly $fields: {
     readonly decorator: readonly (Decorator)[];
     readonly name: PropertyName;
+    readonly optionality_marker?: "?" | "!";
     readonly type?: TypeAnnotation;
     readonly value?: Expression;
   };
@@ -1465,8 +1475,10 @@ export interface MethodSignature {
     readonly accessibility_modifier?: AccessibilityModifier;
     readonly override_modifier?: "static" | OverrideModifier;
     readonly readonly?: BooleanKeyword<"readonly">;
-    readonly async?: BooleanKeyword<"async">;
+    readonly async_marker?: BooleanKeyword<"async">;
+    readonly accessor_kind?: "get" | "set" | "*";
     readonly name: PropertyName;
+    readonly optional_marker?: BooleanKeyword<"?">;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
     readonly return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
@@ -1478,7 +1490,9 @@ export interface AbstractMethodSignature {
   readonly $fields: {
     readonly accessibility_modifier?: AccessibilityModifier;
     readonly override_modifier?: BooleanKeyword<OverrideModifier>;
+    readonly accessor_kind?: "get" | "set" | "*";
     readonly name: PropertyName;
+    readonly optional_marker?: BooleanKeyword<"?">;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
     readonly return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
@@ -1642,7 +1656,7 @@ export interface ExtendsTypeClause {
 export interface EnumDeclaration {
   readonly $type: 'enum_declaration';
   readonly $fields: {
-    readonly const?: BooleanKeyword<"const">;
+    readonly const_marker?: BooleanKeyword<"const">;
     readonly name: Identifier;
     readonly body: EnumBody;
   };
@@ -1677,7 +1691,7 @@ export interface RequiredParameter {
   readonly $type: 'required_parameter';
   readonly $fields: {
     readonly decorator: readonly (Decorator)[];
-    readonly readonly?: BooleanKeyword<"readonly">;
+    readonly readonly_marker?: BooleanKeyword<"readonly">;
     readonly pattern: Pattern | This;
     readonly type?: TypeAnnotation;
     readonly value?: Expression;
@@ -1689,7 +1703,7 @@ export interface OptionalParameter {
   readonly $type: 'optional_parameter';
   readonly $fields: {
     readonly decorator: readonly (Decorator)[];
-    readonly readonly?: BooleanKeyword<"readonly">;
+    readonly readonly_marker?: BooleanKeyword<"readonly">;
     readonly pattern: Pattern | This;
     readonly type?: TypeAnnotation;
     readonly value?: Expression;
@@ -1701,7 +1715,7 @@ export interface ParameterName {
   readonly $type: 'parameter_name';
   readonly $fields: {
     readonly decorator: readonly (Decorator)[];
-    readonly readonly?: BooleanKeyword<"readonly">;
+    readonly readonly_marker?: BooleanKeyword<"readonly">;
     readonly pattern: Pattern | This;
   };
   readonly $children: readonly [AccessibilityModifier | OverrideModifier];
@@ -1796,7 +1810,7 @@ export interface RestType {
 export interface ConstructorType {
   readonly $type: 'constructor_type';
   readonly $fields: {
-    readonly abstract?: BooleanKeyword<"abstract">;
+    readonly abstract_marker?: BooleanKeyword<"abstract">;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
     readonly type: Type;
@@ -1972,6 +1986,7 @@ export interface PropertySignature {
     readonly override_modifier?: "static" | OverrideModifier;
     readonly readonly?: BooleanKeyword<"readonly">;
     readonly name: PropertyName;
+    readonly optional_marker?: BooleanKeyword<"?">;
     readonly type?: TypeAnnotation;
   };
 }
@@ -1984,7 +1999,7 @@ export interface TypeParameters {
 export interface TypeParameter {
   readonly $type: 'type_parameter';
   readonly $fields: {
-    readonly const?: BooleanKeyword<"const">;
+    readonly const_marker?: BooleanKeyword<"const">;
     readonly name: TypeIdentifier;
     readonly constraint?: Constraint;
     readonly value?: DefaultType;
@@ -2008,7 +2023,7 @@ export interface Constraint {
 export interface ConstructSignature {
   readonly $type: 'construct_signature';
   readonly $fields: {
-    readonly abstract?: BooleanKeyword<"abstract">;
+    readonly abstract_marker?: BooleanKeyword<"abstract">;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
     readonly type?: TypeAnnotation;

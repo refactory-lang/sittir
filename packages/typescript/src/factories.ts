@@ -196,6 +196,7 @@ export function exportClause(...children: T.ExportSpecifier[]) {
 
 export function exportSpecifier(config: ConfigOf<T.ExportSpecifier>) {
   const fields = {
+    export_kind: config.exportKind,
     name: config.name,
     alias: config.alias,
   };
@@ -204,6 +205,7 @@ export function exportSpecifier(config: ConfigOf<T.ExportSpecifier>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
+    exportKind(value?: "type" | "typeof" | undefined) { return _fs(config, exportSpecifier, 'exportKind', value, config?.exportKind); },
     name(value?: T.ModuleExportName) { return _fs(config, exportSpecifier, 'name', value, config?.name); },
     alias(value?: T.ModuleExportName | undefined) { return _fs(config, exportSpecifier, 'alias', value, config?.alias); },
     render(this: AnyNodeData): string { return render(this); },
@@ -359,6 +361,9 @@ export function importSpecifier(config: ConfigOf<T.ImportSpecifierUFormName> | C
   throw new Error(`importSpecifier: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'name' | 'as'.`);
 }
 export function importSpecifierUFormName(config: Omit<ConfigOf<T.ImportSpecifierUFormName>, '$variant'>) {
+  const fields = {
+    import_kind: config.importKind,
+  };
   const inner = importSpecifierName(config);
   const children = [inner] as const;
   return {
@@ -366,10 +371,15 @@ export function importSpecifierUFormName(config: Omit<ConfigOf<T.ImportSpecifier
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'name' as const,
+    $fields: fields,
     $children: children,
+    importKind(value?: "type" | "typeof" | undefined) {
+      if (value === undefined) return fields.import_kind;
+      return importSpecifierUFormName({ name: inner.$fields.name, importKind: value });
+    },
     name(value?: T.ImportIdentifier) {
       if (value === undefined) return inner.$fields.name;
-      return importSpecifierUFormName({ name: value });
+      return importSpecifierUFormName({ importKind: config.importKind, name: value });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -380,6 +390,9 @@ export function importSpecifierUFormName(config: Omit<ConfigOf<T.ImportSpecifier
   };
 }
 export function importSpecifierUFormAs(config: Omit<ConfigOf<T.ImportSpecifierUFormAs>, '$variant'>) {
+  const fields = {
+    import_kind: config.importKind,
+  };
   const inner = {
     $type: 'import_specifier_as' as const,
     $source: 'factory' as const,
@@ -395,14 +408,19 @@ export function importSpecifierUFormAs(config: Omit<ConfigOf<T.ImportSpecifierUF
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'as' as const,
+    $fields: fields,
     $children: children,
+    importKind(value?: "type" | "typeof" | undefined) {
+      if (value === undefined) return fields.import_kind;
+      return importSpecifierUFormAs({ name: inner.$fields.name, alias: inner.$fields.alias, importKind: value });
+    },
     name(value?: T.ModuleExportName | T.Identifier) {
       if (value === undefined) return inner.$fields.name;
-      return importSpecifierUFormAs({ alias: inner.$fields.alias, name: value });
+      return importSpecifierUFormAs({ importKind: config.importKind, alias: inner.$fields.alias, name: value });
     },
     alias(value?: T.ImportIdentifier) {
       if (value === undefined) return inner.$fields.alias;
-      return importSpecifierUFormAs({ name: inner.$fields.name, alias: value });
+      return importSpecifierUFormAs({ importKind: config.importKind, name: inner.$fields.name, alias: value });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -635,7 +653,7 @@ export function forStatement(config: ConfigOf<T.ForStatement>) {
 
 export function forInStatement(config: ConfigOf<T.ForInStatement>) {
   const fields = {
-    await: config.await ? "await" as const : undefined,
+    await_marker: config.awaitMarker ? "await" as const : undefined,
     operator: config.operator,
     right: config.right,
     body: config.body,
@@ -647,7 +665,7 @@ export function forInStatement(config: ConfigOf<T.ForInStatement>) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    await(value?: "await" | undefined) { return _fs(config, forInStatement, 'await', value, config?.await); },
+    awaitMarker(value?: "await" | undefined) { return _fs(config, forInStatement, 'awaitMarker', value, config?.awaitMarker); },
     operator(value?: "in" | "of") { return _fs(config, forInStatement, 'operator', value, config?.operator); },
     right(value?: T.Expressions) { return _fs(config, forInStatement, 'right', value, config?.right); },
     body(value?: T.Statement) { return _fs(config, forInStatement, 'body', value, config?.body); },
@@ -1908,7 +1926,7 @@ export function lhsExpression(child: (T.MemberExpression | T.SubscriptExpression
 
 export function assignmentExpression(config: ConfigOf<T.AssignmentExpression>) {
   const fields = {
-    using: config.using ? "using" as const : undefined,
+    using_marker: config.usingMarker ? "using" as const : undefined,
     left: config.left,
     right: config.right,
   };
@@ -1917,7 +1935,7 @@ export function assignmentExpression(config: ConfigOf<T.AssignmentExpression>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    using(value?: "using" | undefined) { return _fs(config, assignmentExpression, 'using', value, config?.using); },
+    usingMarker(value?: "using" | undefined) { return _fs(config, assignmentExpression, 'usingMarker', value, config?.usingMarker); },
     left(value?: T.ParenthesizedExpression | T.LhsExpression) { return _fs(config, assignmentExpression, 'left', value, config?.left); },
     right(value?: T.Expression) { return _fs(config, assignmentExpression, 'right', value, config?.right); },
     render(this: AnyNodeData): string { return render(this); },
@@ -2605,8 +2623,10 @@ export function methodDefinition(config: ConfigOf<T.MethodDefinition>) {
     accessibility_modifier: config.accessibilityModifier,
     override_modifier: config.overrideModifier,
     readonly: config.readonly ? "readonly" as const : undefined,
-    async: config.async ? "async" as const : undefined,
+    async_marker: config.asyncMarker ? "async" as const : undefined,
+    accessor_kind: config.accessorKind,
     name: config.name,
+    optional_marker: config.optionalMarker ? "?" as const : undefined,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
     return_type: config.returnType,
@@ -2620,8 +2640,10 @@ export function methodDefinition(config: ConfigOf<T.MethodDefinition>) {
     accessibilityModifier(value?: T.AccessibilityModifier | undefined) { return _fs(config, methodDefinition, 'accessibilityModifier', value, config?.accessibilityModifier); },
     overrideModifier(value?: "static" | T.OverrideModifier | undefined) { return _fs(config, methodDefinition, 'overrideModifier', value, config?.overrideModifier); },
     readonly(value?: "readonly" | undefined) { return _fs(config, methodDefinition, 'readonly', value, config?.readonly); },
-    async(value?: "async" | undefined) { return _fs(config, methodDefinition, 'async', value, config?.async); },
+    asyncMarker(value?: "async" | undefined) { return _fs(config, methodDefinition, 'asyncMarker', value, config?.asyncMarker); },
+    accessorKind(value?: "get" | "set" | "*" | undefined) { return _fs(config, methodDefinition, 'accessorKind', value, config?.accessorKind); },
     name(value?: T.PropertyName) { return _fs(config, methodDefinition, 'name', value, config?.name); },
+    optionalMarker(value?: "?" | undefined) { return _fs(config, methodDefinition, 'optionalMarker', value, config?.optionalMarker); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, methodDefinition, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, methodDefinition, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _fs(config, methodDefinition, 'returnType', value, config?.returnType); },
@@ -2726,6 +2748,7 @@ export function publicFieldDefinition(config: ConfigOf<T.PublicFieldDefinition>)
   const fields = {
     decorator: config.decorator,
     name: config.name,
+    optionality_marker: config.optionalityMarker,
     type: config.type,
     value: config.value,
   };
@@ -2738,6 +2761,7 @@ export function publicFieldDefinition(config: ConfigOf<T.PublicFieldDefinition>)
     $children: children,
     decorator(...values: T.Decorator[]) { return _fsm(config, publicFieldDefinition, 'decorator', values, config?.decorator); },
     name(value?: T.PropertyName) { return _fs(config, publicFieldDefinition, 'name', value, config?.name); },
+    optionalityMarker(value?: "?" | "!" | undefined) { return _fs(config, publicFieldDefinition, 'optionalityMarker', value, config?.optionalityMarker); },
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, publicFieldDefinition, 'type', value, config?.type); },
     value(value?: T.Expression | undefined) { return _fs(config, publicFieldDefinition, 'value', value, config?.value); },
     child(value?: (T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst | T.PublicFieldDefinitionStaticMods | T.PublicFieldDefinitionAbstractFirst | T.PublicFieldDefinitionReadonlyFirst | T.PublicFieldDefinitionAccessorOpt)) {
@@ -2777,8 +2801,10 @@ export function methodSignature(config: ConfigOf<T.MethodSignature>) {
     accessibility_modifier: config.accessibilityModifier,
     override_modifier: config.overrideModifier,
     readonly: config.readonly ? "readonly" as const : undefined,
-    async: config.async ? "async" as const : undefined,
+    async_marker: config.asyncMarker ? "async" as const : undefined,
+    accessor_kind: config.accessorKind,
     name: config.name,
+    optional_marker: config.optionalMarker ? "?" as const : undefined,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
     return_type: config.returnType,
@@ -2791,8 +2817,10 @@ export function methodSignature(config: ConfigOf<T.MethodSignature>) {
     accessibilityModifier(value?: T.AccessibilityModifier | undefined) { return _fs(config, methodSignature, 'accessibilityModifier', value, config?.accessibilityModifier); },
     overrideModifier(value?: "static" | T.OverrideModifier | undefined) { return _fs(config, methodSignature, 'overrideModifier', value, config?.overrideModifier); },
     readonly(value?: "readonly" | undefined) { return _fs(config, methodSignature, 'readonly', value, config?.readonly); },
-    async(value?: "async" | undefined) { return _fs(config, methodSignature, 'async', value, config?.async); },
+    asyncMarker(value?: "async" | undefined) { return _fs(config, methodSignature, 'asyncMarker', value, config?.asyncMarker); },
+    accessorKind(value?: "get" | "set" | "*" | undefined) { return _fs(config, methodSignature, 'accessorKind', value, config?.accessorKind); },
     name(value?: T.PropertyName) { return _fs(config, methodSignature, 'name', value, config?.name); },
+    optionalMarker(value?: "?" | undefined) { return _fs(config, methodSignature, 'optionalMarker', value, config?.optionalMarker); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, methodSignature, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, methodSignature, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _fs(config, methodSignature, 'returnType', value, config?.returnType); },
@@ -2809,7 +2837,9 @@ export function abstractMethodSignature(config: ConfigOf<T.AbstractMethodSignatu
   const fields = {
     accessibility_modifier: config.accessibilityModifier,
     override_modifier: config.overrideModifier ? "override" as const : undefined,
+    accessor_kind: config.accessorKind,
     name: config.name,
+    optional_marker: config.optionalMarker ? "?" as const : undefined,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
     return_type: config.returnType,
@@ -2821,7 +2851,9 @@ export function abstractMethodSignature(config: ConfigOf<T.AbstractMethodSignatu
     $fields: fields,
     accessibilityModifier(value?: T.AccessibilityModifier | undefined) { return _fs(config, abstractMethodSignature, 'accessibilityModifier', value, config?.accessibilityModifier); },
     overrideModifier(value?: T.OverrideModifier | undefined) { return _fs(config, abstractMethodSignature, 'overrideModifier', value, config?.overrideModifier); },
+    accessorKind(value?: "get" | "set" | "*" | undefined) { return _fs(config, abstractMethodSignature, 'accessorKind', value, config?.accessorKind); },
     name(value?: T.PropertyName) { return _fs(config, abstractMethodSignature, 'name', value, config?.name); },
+    optionalMarker(value?: "?" | undefined) { return _fs(config, abstractMethodSignature, 'optionalMarker', value, config?.optionalMarker); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, abstractMethodSignature, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, abstractMethodSignature, 'parameters', value, config?.parameters); },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) { return _fs(config, abstractMethodSignature, 'returnType', value, config?.returnType); },
@@ -3199,7 +3231,7 @@ export function extendsTypeClause(config: ConfigOf<T.ExtendsTypeClause>) {
 
 export function enumDeclaration(config: ConfigOf<T.EnumDeclaration>) {
   const fields = {
-    const: config.const ? "const" as const : undefined,
+    const_marker: config.constMarker ? "const" as const : undefined,
     name: config.name,
     body: config.body,
   };
@@ -3208,7 +3240,7 @@ export function enumDeclaration(config: ConfigOf<T.EnumDeclaration>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    const(value?: "const" | undefined) { return _fs(config, enumDeclaration, 'const', value, config?.const); },
+    constMarker(value?: "const" | undefined) { return _fs(config, enumDeclaration, 'constMarker', value, config?.constMarker); },
     name(value?: T.Identifier) { return _fs(config, enumDeclaration, 'name', value, config?.name); },
     body(value?: T.EnumBody) { return _fs(config, enumDeclaration, 'body', value, config?.body); },
     render(this: AnyNodeData): string { return render(this); },
@@ -3312,7 +3344,7 @@ export function overrideModifier() {
 export function requiredParameter(config: ConfigOf<T.RequiredParameter>) {
   const fields = {
     decorator: config.decorator,
-    readonly: config.readonly ? "readonly" as const : undefined,
+    readonly_marker: config.readonlyMarker ? "readonly" as const : undefined,
     pattern: config.pattern,
     type: config.type,
     value: config.value,
@@ -3325,7 +3357,7 @@ export function requiredParameter(config: ConfigOf<T.RequiredParameter>) {
     $fields: fields,
     $children: children,
     decorator(...values: T.Decorator[]) { return _fsm(config, requiredParameter, 'decorator', values, config?.decorator); },
-    readonly(value?: "readonly" | undefined) { return _fs(config, requiredParameter, 'readonly', value, config?.readonly); },
+    readonlyMarker(value?: "readonly" | undefined) { return _fs(config, requiredParameter, 'readonlyMarker', value, config?.readonlyMarker); },
     pattern(value?: T.Pattern | T.This) { return _fs(config, requiredParameter, 'pattern', value, config?.pattern); },
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, requiredParameter, 'type', value, config?.type); },
     value(value?: T.Expression | undefined) { return _fs(config, requiredParameter, 'value', value, config?.value); },
@@ -3345,7 +3377,7 @@ export function requiredParameter(config: ConfigOf<T.RequiredParameter>) {
 export function optionalParameter(config: ConfigOf<T.OptionalParameter>) {
   const fields = {
     decorator: config.decorator,
-    readonly: config.readonly ? "readonly" as const : undefined,
+    readonly_marker: config.readonlyMarker ? "readonly" as const : undefined,
     pattern: config.pattern,
     type: config.type,
     value: config.value,
@@ -3358,7 +3390,7 @@ export function optionalParameter(config: ConfigOf<T.OptionalParameter>) {
     $fields: fields,
     $children: children,
     decorator(...values: T.Decorator[]) { return _fsm(config, optionalParameter, 'decorator', values, config?.decorator); },
-    readonly(value?: "readonly" | undefined) { return _fs(config, optionalParameter, 'readonly', value, config?.readonly); },
+    readonlyMarker(value?: "readonly" | undefined) { return _fs(config, optionalParameter, 'readonlyMarker', value, config?.readonlyMarker); },
     pattern(value?: T.Pattern | T.This) { return _fs(config, optionalParameter, 'pattern', value, config?.pattern); },
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, optionalParameter, 'type', value, config?.type); },
     value(value?: T.Expression | undefined) { return _fs(config, optionalParameter, 'value', value, config?.value); },
@@ -3568,7 +3600,7 @@ export function restType(config: ConfigOf<T.RestType>) {
 
 export function constructorType(config: ConfigOf<T.ConstructorType>) {
   const fields = {
-    abstract: config.abstract ? "abstract" as const : undefined,
+    abstract_marker: config.abstractMarker ? "abstract" as const : undefined,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
     type: config.type,
@@ -3578,7 +3610,7 @@ export function constructorType(config: ConfigOf<T.ConstructorType>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    abstract(value?: "abstract" | undefined) { return _fs(config, constructorType, 'abstract', value, config?.abstract); },
+    abstractMarker(value?: "abstract" | undefined) { return _fs(config, constructorType, 'abstractMarker', value, config?.abstractMarker); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, constructorType, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, constructorType, 'parameters', value, config?.parameters); },
     typeField(value?: T.Type) { return _fs(config, constructorType, 'type', value, config?.type); },
@@ -3983,6 +4015,7 @@ export function propertySignature(config: ConfigOf<T.PropertySignature>) {
     override_modifier: config.overrideModifier,
     readonly: config.readonly ? "readonly" as const : undefined,
     name: config.name,
+    optional_marker: config.optionalMarker ? "?" as const : undefined,
     type: config.type,
   };
   return {
@@ -3994,6 +4027,7 @@ export function propertySignature(config: ConfigOf<T.PropertySignature>) {
     overrideModifier(value?: "static" | T.OverrideModifier | undefined) { return _fs(config, propertySignature, 'overrideModifier', value, config?.overrideModifier); },
     readonly(value?: "readonly" | undefined) { return _fs(config, propertySignature, 'readonly', value, config?.readonly); },
     name(value?: T.PropertyName) { return _fs(config, propertySignature, 'name', value, config?.name); },
+    optionalMarker(value?: "?" | undefined) { return _fs(config, propertySignature, 'optionalMarker', value, config?.optionalMarker); },
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, propertySignature, 'type', value, config?.type); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -4022,7 +4056,7 @@ export function typeParameters(...children: T.TypeParameter[]) {
 
 export function typeParameter(config: ConfigOf<T.TypeParameter>) {
   const fields = {
-    const: config.const ? "const" as const : undefined,
+    const_marker: config.constMarker ? "const" as const : undefined,
     name: config.name,
     constraint: config.constraint,
     value: config.value,
@@ -4032,7 +4066,7 @@ export function typeParameter(config: ConfigOf<T.TypeParameter>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    const(value?: "const" | undefined) { return _fs(config, typeParameter, 'const', value, config?.const); },
+    constMarker(value?: "const" | undefined) { return _fs(config, typeParameter, 'constMarker', value, config?.constMarker); },
     name(value?: T.TypeIdentifier) { return _fs(config, typeParameter, 'name', value, config?.name); },
     constraint(value?: T.Constraint | undefined) { return _fs(config, typeParameter, 'constraint', value, config?.constraint); },
     value(value?: T.DefaultType | undefined) { return _fs(config, typeParameter, 'value', value, config?.value); },
@@ -4085,7 +4119,7 @@ export function constraint(config: ConfigOf<T.Constraint>) {
 
 export function constructSignature(config: ConfigOf<T.ConstructSignature>) {
   const fields = {
-    abstract: config.abstract ? "abstract" as const : undefined,
+    abstract_marker: config.abstractMarker ? "abstract" as const : undefined,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
     type: config.type,
@@ -4095,7 +4129,7 @@ export function constructSignature(config: ConfigOf<T.ConstructSignature>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    abstract(value?: "abstract" | undefined) { return _fs(config, constructSignature, 'abstract', value, config?.abstract); },
+    abstractMarker(value?: "abstract" | undefined) { return _fs(config, constructSignature, 'abstractMarker', value, config?.abstractMarker); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, constructSignature, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, constructSignature, 'parameters', value, config?.parameters); },
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, constructSignature, 'type', value, config?.type); },

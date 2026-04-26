@@ -341,6 +341,7 @@
       "statements"
     ],
     "export_specifier": [
+      "export_kind",
       "name",
       "alias"
     ],
@@ -517,7 +518,7 @@
       "index"
     ],
     "assignment_expression": [
-      "using",
+      "using_marker",
       "left",
       "right"
     ],
@@ -566,8 +567,10 @@
       "accessibility_modifier",
       "override_modifier",
       "readonly",
-      "async",
+      "async_marker",
+      "accessor_kind",
       "name",
+      "optional_marker",
       "type_parameters",
       "parameters",
       "return_type",
@@ -591,8 +594,10 @@
       "accessibility_modifier",
       "override_modifier",
       "readonly",
-      "async",
+      "async_marker",
+      "accessor_kind",
       "name",
+      "optional_marker",
       "type_parameters",
       "parameters",
       "return_type"
@@ -600,7 +605,9 @@
     "abstract_method_signature": [
       "accessibility_modifier",
       "override_modifier",
+      "accessor_kind",
       "name",
+      "optional_marker",
       "type_parameters",
       "parameters",
       "return_type"
@@ -674,7 +681,7 @@
       "type"
     ],
     "enum_declaration": [
-      "const",
+      "const_marker",
       "name",
       "body"
     ],
@@ -729,7 +736,7 @@
       "type"
     ],
     "constructor_type": [
-      "abstract",
+      "abstract_marker",
       "type_parameters",
       "parameters",
       "type"
@@ -800,10 +807,11 @@
       "override_modifier",
       "readonly",
       "name",
+      "optional_marker",
       "type"
     ],
     "type_parameter": [
-      "const",
+      "const_marker",
       "name",
       "constraint",
       "value"
@@ -815,7 +823,7 @@
       "type"
     ],
     "construct_signature": [
-      "abstract",
+      "abstract_marker",
       "type_parameters",
       "parameters",
       "type"

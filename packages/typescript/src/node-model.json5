@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 408,
+  "nodeCount": 409,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -2802,6 +2802,16 @@
       "text": "const"
     },
     {
+      "kind": "_kw_optional_marker",
+      "modelType": "token",
+      "typeName": "KwOptionalMarker",
+      "irKey": "kwOptionalMarker",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"?\" as const",
+      "text": "?"
+    },
+    {
       "kind": "_kw_readonly",
       "modelType": "keyword",
       "typeName": "KwReadonly",
@@ -3087,9 +3097,9 @@
           }
         },
         {
-          "name": "readonly",
-          "propertyName": "readonly",
-          "paramName": "readonly",
+          "name": "readonly_marker",
+          "propertyName": "readonlyMarker",
+          "paramName": "readonlyMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -3101,7 +3111,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4590,6 +4600,36 @@
           }
         },
         {
+          "name": "accessor_kind",
+          "propertyName": "accessorKind",
+          "paramName": "accessorKind",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "get"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "set"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "*"
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
           "name": "name",
           "propertyName": "name",
           "paramName": "name",
@@ -4609,6 +4649,29 @@
             "typeName": "",
             "kinds": [
               "_property_name"
+            ]
+          }
+        },
+        {
+          "name": "optional_marker",
+          "propertyName": "optionalMarker",
+          "paramName": "optionalMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_kw_optional_marker",
+              "unresolved": true
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_kw_optional_marker"
             ]
           }
         },
@@ -5502,9 +5565,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "using",
-          "propertyName": "using",
-          "paramName": "using",
+          "name": "using_marker",
+          "propertyName": "usingMarker",
+          "paramName": "usingMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -5515,7 +5578,7 @@
               "value": "using"
             }
           ],
-          "source": "enriched",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": []
@@ -7244,9 +7307,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "abstract",
-          "propertyName": "abstract",
-          "paramName": "abstract",
+          "name": "abstract_marker",
+          "propertyName": "abstractMarker",
+          "paramName": "abstractMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -7258,7 +7321,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7347,9 +7410,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "abstract",
-          "propertyName": "abstract",
-          "paramName": "abstract",
+          "name": "abstract_marker",
+          "propertyName": "abstractMarker",
+          "paramName": "abstractMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -7361,7 +7424,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8173,9 +8236,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "const",
-          "propertyName": "const",
-          "paramName": "const_",
+          "name": "const_marker",
+          "propertyName": "constMarker",
+          "paramName": "constMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8187,7 +8250,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8306,6 +8369,31 @@
       "irKey": "exportSpecifier",
       "hidden": false,
       "fields": [
+        {
+          "name": "export_kind",
+          "propertyName": "exportKind",
+          "paramName": "exportKind",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "typeof"
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
         {
           "name": "name",
           "propertyName": "name",
@@ -8989,9 +9077,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "await",
-          "propertyName": "await",
-          "paramName": "await_",
+          "name": "await_marker",
+          "propertyName": "awaitMarker",
+          "paramName": "awaitMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -9002,7 +9090,7 @@
               "value": "await"
             }
           ],
-          "source": "enriched",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": []
@@ -10884,7 +10972,33 @@
           "factoryName": "importSpecifierUFormName",
           "irKey": "importSpecifierUFormName",
           "parentKind": "import_specifier",
-          "fields": [],
+          "fields": [
+            {
+              "name": "import_kind",
+              "propertyName": "importKind",
+              "paramName": "importKind",
+              "required": false,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "terminal",
+                  "multiplicity": "optional",
+                  "value": "type"
+                },
+                {
+                  "kind": "terminal",
+                  "multiplicity": "optional",
+                  "value": "typeof"
+                }
+              ],
+              "source": "override",
+              "projection": {
+                "typeName": "",
+                "kinds": []
+              }
+            }
+          ],
           "children": [
             {
               "name": "import_specifier_name",
@@ -10910,7 +11024,33 @@
           "factoryName": "importSpecifierUFormAs",
           "irKey": "importSpecifierUFormAs",
           "parentKind": "import_specifier",
-          "fields": [],
+          "fields": [
+            {
+              "name": "import_kind",
+              "propertyName": "importKind",
+              "paramName": "importKind",
+              "required": false,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "terminal",
+                  "multiplicity": "optional",
+                  "value": "type"
+                },
+                {
+                  "kind": "terminal",
+                  "multiplicity": "optional",
+                  "value": "typeof"
+                }
+              ],
+              "source": "override",
+              "projection": {
+                "typeName": "",
+                "kinds": []
+              }
+            }
+          ],
           "children": [
             {
               "name": "import_specifier_as",
@@ -10940,7 +11080,33 @@
       "hidden": false,
       "name": "as",
       "parentKind": "import_specifier",
-      "fields": [],
+      "fields": [
+        {
+          "name": "import_kind",
+          "propertyName": "importKind",
+          "paramName": "importKind",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "typeof"
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        }
+      ],
       "children": [
         {
           "name": "import_specifier_as",
@@ -10968,7 +11134,33 @@
       "hidden": false,
       "name": "name",
       "parentKind": "import_specifier",
-      "fields": [],
+      "fields": [
+        {
+          "name": "import_kind",
+          "propertyName": "importKind",
+          "paramName": "importKind",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "typeof"
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        }
+      ],
       "children": [
         {
           "name": "import_specifier_name",
@@ -12982,9 +13174,9 @@
           }
         },
         {
-          "name": "async",
-          "propertyName": "async",
-          "paramName": "async",
+          "name": "async_marker",
+          "propertyName": "asyncMarker",
+          "paramName": "asyncMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -12996,12 +13188,42 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
               "_kw_async"
             ]
+          }
+        },
+        {
+          "name": "accessor_kind",
+          "propertyName": "accessorKind",
+          "paramName": "accessorKind",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "get"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "set"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "*"
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": []
           }
         },
         {
@@ -13024,6 +13246,29 @@
             "typeName": "",
             "kinds": [
               "_property_name"
+            ]
+          }
+        },
+        {
+          "name": "optional_marker",
+          "propertyName": "optionalMarker",
+          "paramName": "optionalMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_kw_optional_marker",
+              "unresolved": true
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_kw_optional_marker"
             ]
           }
         },
@@ -13221,9 +13466,9 @@
           }
         },
         {
-          "name": "async",
-          "propertyName": "async",
-          "paramName": "async",
+          "name": "async_marker",
+          "propertyName": "asyncMarker",
+          "paramName": "asyncMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -13235,12 +13480,42 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
               "_kw_async"
             ]
+          }
+        },
+        {
+          "name": "accessor_kind",
+          "propertyName": "accessorKind",
+          "paramName": "accessorKind",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "get"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "set"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "*"
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": []
           }
         },
         {
@@ -13263,6 +13538,29 @@
             "typeName": "",
             "kinds": [
               "_property_name"
+            ]
+          }
+        },
+        {
+          "name": "optional_marker",
+          "propertyName": "optionalMarker",
+          "paramName": "optionalMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_kw_optional_marker",
+              "unresolved": true
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_kw_optional_marker"
             ]
           }
         },
@@ -14296,9 +14594,9 @@
           }
         },
         {
-          "name": "readonly",
-          "propertyName": "readonly",
-          "paramName": "readonly",
+          "name": "readonly_marker",
+          "propertyName": "readonlyMarker",
+          "paramName": "readonlyMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -14310,7 +14608,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15055,6 +15353,29 @@
           }
         },
         {
+          "name": "optional_marker",
+          "propertyName": "optionalMarker",
+          "paramName": "optionalMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_kw_optional_marker",
+              "unresolved": true
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_kw_optional_marker"
+            ]
+          }
+        },
+        {
           "name": "type",
           "propertyName": "type",
           "paramName": "type",
@@ -15132,6 +15453,31 @@
             "kinds": [
               "_property_name"
             ]
+          }
+        },
+        {
+          "name": "optionality_marker",
+          "propertyName": "optionalityMarker",
+          "paramName": "optionalityMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "?"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "!"
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": []
           }
         },
         {
@@ -15434,9 +15780,9 @@
           }
         },
         {
-          "name": "readonly",
-          "propertyName": "readonly",
-          "paramName": "readonly",
+          "name": "readonly_marker",
+          "propertyName": "readonlyMarker",
+          "paramName": "readonlyMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -15448,7 +15794,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17075,9 +17421,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "const",
-          "propertyName": "const",
-          "paramName": "const_",
+          "name": "const_marker",
+          "propertyName": "constMarker",
+          "paramName": "constMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -17089,7 +17435,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
