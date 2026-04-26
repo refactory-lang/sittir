@@ -977,8 +977,9 @@ export function visibilityModifierFrom(input?: T.VisibilityModifier.Loose): Retu
   return F.visibilityModifier(input as Parameters<typeof F.visibilityModifier>[0]);
 }
 
-export function visibilityModifierUFormInPathFrom(input: Omit<ConfigOf<T.VisibilityModifierUFormInPath>, '$variant'>) {
-  return F.visibilityModifierUFormInPath(input);
+export function visibilityModifierUFormInPathFrom(_input: Omit<ConfigOf<T.VisibilityModifierUFormInPath>, '$variant'>) {
+  return F.visibilityModifierUFormInPath({
+  });
 }
 
 export function visibilityModifierUFormCrateFrom(input?: Omit<ConfigOf<T.VisibilityModifierUFormCrate>, '$variant'>) {
@@ -1718,10 +1719,12 @@ export function rangePatternFrom(input?: T.RangePattern.Loose): ReturnType<typeo
 }
 
 export function rangePatternUFormLeftWithRightFrom(input: Omit<ConfigOf<T.RangePatternUFormLeftWithRight>, '$variant'>) {
-  return F.rangePatternUFormLeftWithRight(input);
+  return F.rangePatternUFormLeftWithRight({
+    right: _resolveOne<T.LiteralPattern | T.Path>(input.right, _K44, _K45),
+  });
 }
 
-export function rangePatternUFormLeftBareFrom(input: Omit<ConfigOf<T.RangePatternUFormLeftBare>, '$variant'>) {
+export function rangePatternUFormLeftBareFrom(input?: Omit<ConfigOf<T.RangePatternUFormLeftBare>, '$variant'>) {
   return F.rangePatternUFormLeftBare(input);
 }
 

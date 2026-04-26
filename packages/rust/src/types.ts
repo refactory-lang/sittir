@@ -1245,6 +1245,7 @@ export interface ExternModifier {
 export interface VisibilityModifierUFormInPath {
   readonly $type: 'visibility_modifier';
   readonly $variant: 'in_path';
+  readonly $children: readonly [VisibilityModifierInPath];
 }
 
 export interface VisibilityModifierUFormCrate {
@@ -1906,6 +1907,7 @@ export interface MutPattern {
 export interface RangePatternUFormLeftWithRight {
   readonly $type: 'range_pattern';
   readonly $variant: 'left_with_right';
+  readonly $children: readonly [RangePatternLeftWithRight];
 }
 
 export interface RangePatternUFormLeftBare {

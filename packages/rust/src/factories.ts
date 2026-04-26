@@ -1627,11 +1627,22 @@ export function visibilityModifier(config: ConfigOf<T.VisibilityModifierUFormInP
   throw new Error(`visibilityModifier: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'in_path' | 'crate' | 'pub'.`);
 }
 export function visibilityModifierUFormInPath(_config?: Omit<ConfigOf<T.VisibilityModifierUFormInPath>, '$variant'>) {
+  const inner = {
+    $type: 'visibility_modifier_in_path' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: {
+      in: "in" as const,
+    },
+  };
+  const children = [inner] as const;
   return {
     $type: 'visibility_modifier' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'in_path' as const,
+    $children: children,
+    get in() { return inner.$fields.in; },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3717,12 +3728,26 @@ export function rangePattern(config: ConfigOf<T.RangePatternUFormLeftWithRight> 
   }
   throw new Error(`rangePattern: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'left_with_right' | 'left_bare' | 'prefix'.`);
 }
-export function rangePatternUFormLeftWithRight(_config?: Omit<ConfigOf<T.RangePatternUFormLeftWithRight>, '$variant'>) {
+export function rangePatternUFormLeftWithRight(config: Omit<ConfigOf<T.RangePatternUFormLeftWithRight>, '$variant'>) {
+  const inner = {
+    $type: 'range_pattern_left_with_right' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: {
+      right: config.right,
+    },
+  };
+  const children = [inner] as const;
   return {
     $type: 'range_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
     $variant: 'left_with_right' as const,
+    $children: children,
+    right(value?: T.LiteralPattern | T.Path) {
+      if (value === undefined) return inner.$fields.right;
+      return rangePatternUFormLeftWithRight({ right: value });
+    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

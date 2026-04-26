@@ -769,7 +769,11 @@ export function applyOverridePolymorphs(
 
             const content = variantMember?.type === 'variant'
                 ? variantMember.content
-                : variantMember ?? ({ type: 'symbol', name: fullName } as Rule)
+                : variantMember ?? (
+                    rules[`_${fullName}`]
+                        ? ({ type: 'symbol', name: fullName, aliasedFrom: `_${fullName}` } as Rule)
+                        : ({ type: 'symbol', name: fullName } as Rule)
+                )
             const fused = found.prefix.length > 0 || found.suffix.length > 0
                 ? { type: 'seq' as const, members: [...found.prefix, content, ...found.suffix] } as Rule
                 : content

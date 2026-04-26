@@ -12332,7 +12332,7 @@
                 {
                   "kind": "node-ref",
                   "multiplicity": "single",
-                  "name": "range_pattern_left_with_right",
+                  "name": "_range_pattern_left_with_right",
                   "unresolved": true
                 }
               ]
@@ -12358,7 +12358,7 @@
                 {
                   "kind": "node-ref",
                   "multiplicity": "single",
-                  "name": "range_pattern_left_bare",
+                  "name": "_range_pattern_left_bare",
                   "unresolved": true
                 }
               ]
@@ -12400,6 +12400,8 @@
       "factoryName": "rangePatternUFormLeftBare",
       "irKey": "rangePatternUFormLeftBare",
       "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "rangePatternUFormLeftBare()",
       "name": "left_bare",
       "parentKind": "range_pattern",
       "fields": [],
@@ -12414,7 +12416,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "range_pattern_left_bare",
+              "name": "_range_pattern_left_bare",
               "unresolved": true
             }
           ]
@@ -12442,7 +12444,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "range_pattern_left_with_right",
+              "name": "_range_pattern_left_with_right",
               "unresolved": true
             }
           ]
@@ -16509,7 +16511,7 @@
                 {
                   "kind": "node-ref",
                   "multiplicity": "single",
-                  "name": "visibility_modifier_in_path",
+                  "name": "_visibility_modifier_in_path",
                   "unresolved": true
                 }
               ]
@@ -16621,7 +16623,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "visibility_modifier_in_path",
+              "name": "_visibility_modifier_in_path",
               "unresolved": true
             }
           ]

@@ -94,6 +94,7 @@
                         "or_pattern",
                         "pointer_type",
                         "range_expression",
+                        "range_pattern",
                         "struct_item",
                         "token_tree",
                         "visibility_modifier"

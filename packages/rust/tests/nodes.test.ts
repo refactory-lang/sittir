@@ -1531,7 +1531,7 @@ describe('mut_pattern', () => {
 
 describe('range_pattern', () => {
   it('left_with_right form produces correct type', () => {
-    const node = ir.rangePattern.left_with_right({});
+    const node = ir.rangePattern.left_with_right({ right: { $type: '_literal_pattern', $text: 'test' } as any });
     expect(node.$type).toBe('range_pattern');
     expect(node.$source).toBe('factory');
   });
