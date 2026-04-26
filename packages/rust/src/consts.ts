@@ -508,7 +508,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'closure_expression': [
     { name: 'staticMarker', required: false, multiple: false },
-    { name: 'async', required: false, multiple: false },
+    { name: 'asyncMarker', required: false, multiple: false },
     { name: 'moveMarker', required: false, multiple: false },
     { name: 'parameters', required: true, multiple: false },
   ],

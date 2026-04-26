@@ -3148,7 +3148,7 @@ export function closureExpression(config: ConfigOf<T.ClosureExpressionUFormBlock
 export function closureExpressionUFormBlock(config: Omit<ConfigOf<T.ClosureExpressionUFormBlock>, '$variant'>) {
   const fields = {
     static_marker: config.staticMarker,
-    async: config.async,
+    async_marker: config.asyncMarker,
     move_marker: config.moveMarker,
     parameters: config.parameters,
   };
@@ -3171,27 +3171,27 @@ export function closureExpressionUFormBlock(config: Omit<ConfigOf<T.ClosureExpre
     $children: children,
     staticMarker(value?: "static" | undefined) {
       if (value === undefined) return fields.static_marker;
-      return closureExpressionUFormBlock({ async: config.async, moveMarker: config.moveMarker, parameters: config.parameters, returnType: inner.$fields.return_type, body: inner.$fields.body, staticMarker: value });
+      return closureExpressionUFormBlock({ asyncMarker: config.asyncMarker, moveMarker: config.moveMarker, parameters: config.parameters, returnType: inner.$fields.return_type, body: inner.$fields.body, staticMarker: value });
     },
-    async(value?: "async" | undefined) {
-      if (value === undefined) return fields.async;
-      return closureExpressionUFormBlock({ staticMarker: config.staticMarker, moveMarker: config.moveMarker, parameters: config.parameters, returnType: inner.$fields.return_type, body: inner.$fields.body, async: value });
+    asyncMarker(value?: "async" | undefined) {
+      if (value === undefined) return fields.async_marker;
+      return closureExpressionUFormBlock({ staticMarker: config.staticMarker, moveMarker: config.moveMarker, parameters: config.parameters, returnType: inner.$fields.return_type, body: inner.$fields.body, asyncMarker: value });
     },
     moveMarker(value?: "move" | undefined) {
       if (value === undefined) return fields.move_marker;
-      return closureExpressionUFormBlock({ staticMarker: config.staticMarker, async: config.async, parameters: config.parameters, returnType: inner.$fields.return_type, body: inner.$fields.body, moveMarker: value });
+      return closureExpressionUFormBlock({ staticMarker: config.staticMarker, asyncMarker: config.asyncMarker, parameters: config.parameters, returnType: inner.$fields.return_type, body: inner.$fields.body, moveMarker: value });
     },
     parameters(value?: T.ClosureParameters) {
       if (value === undefined) return fields.parameters;
-      return closureExpressionUFormBlock({ staticMarker: config.staticMarker, async: config.async, moveMarker: config.moveMarker, returnType: inner.$fields.return_type, body: inner.$fields.body, parameters: value });
+      return closureExpressionUFormBlock({ staticMarker: config.staticMarker, asyncMarker: config.asyncMarker, moveMarker: config.moveMarker, returnType: inner.$fields.return_type, body: inner.$fields.body, parameters: value });
     },
     returnType(value?: T._Type | undefined) {
       if (value === undefined) return inner.$fields.return_type;
-      return closureExpressionUFormBlock({ staticMarker: config.staticMarker, async: config.async, moveMarker: config.moveMarker, parameters: config.parameters, body: inner.$fields.body, returnType: value });
+      return closureExpressionUFormBlock({ staticMarker: config.staticMarker, asyncMarker: config.asyncMarker, moveMarker: config.moveMarker, parameters: config.parameters, body: inner.$fields.body, returnType: value });
     },
     body(value?: T.Block) {
       if (value === undefined) return inner.$fields.body;
-      return closureExpressionUFormBlock({ staticMarker: config.staticMarker, async: config.async, moveMarker: config.moveMarker, parameters: config.parameters, returnType: inner.$fields.return_type, body: value });
+      return closureExpressionUFormBlock({ staticMarker: config.staticMarker, asyncMarker: config.asyncMarker, moveMarker: config.moveMarker, parameters: config.parameters, returnType: inner.$fields.return_type, body: value });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -3204,7 +3204,7 @@ export function closureExpressionUFormBlock(config: Omit<ConfigOf<T.ClosureExpre
 export function closureExpressionUFormExpr(config: Omit<ConfigOf<T.ClosureExpressionUFormExpr>, '$variant'>) {
   const fields = {
     static_marker: config.staticMarker,
-    async: config.async,
+    async_marker: config.asyncMarker,
     move_marker: config.moveMarker,
     parameters: config.parameters,
   };
@@ -3219,23 +3219,23 @@ export function closureExpressionUFormExpr(config: Omit<ConfigOf<T.ClosureExpres
     $children: children,
     staticMarker(value?: "static" | undefined) {
       if (value === undefined) return fields.static_marker;
-      return closureExpressionUFormExpr({ async: config.async, moveMarker: config.moveMarker, parameters: config.parameters, body: inner.$fields.body, staticMarker: value });
+      return closureExpressionUFormExpr({ asyncMarker: config.asyncMarker, moveMarker: config.moveMarker, parameters: config.parameters, body: inner.$fields.body, staticMarker: value });
     },
-    async(value?: "async" | undefined) {
-      if (value === undefined) return fields.async;
-      return closureExpressionUFormExpr({ staticMarker: config.staticMarker, moveMarker: config.moveMarker, parameters: config.parameters, body: inner.$fields.body, async: value });
+    asyncMarker(value?: "async" | undefined) {
+      if (value === undefined) return fields.async_marker;
+      return closureExpressionUFormExpr({ staticMarker: config.staticMarker, moveMarker: config.moveMarker, parameters: config.parameters, body: inner.$fields.body, asyncMarker: value });
     },
     moveMarker(value?: "move" | undefined) {
       if (value === undefined) return fields.move_marker;
-      return closureExpressionUFormExpr({ staticMarker: config.staticMarker, async: config.async, parameters: config.parameters, body: inner.$fields.body, moveMarker: value });
+      return closureExpressionUFormExpr({ staticMarker: config.staticMarker, asyncMarker: config.asyncMarker, parameters: config.parameters, body: inner.$fields.body, moveMarker: value });
     },
     parameters(value?: T.ClosureParameters) {
       if (value === undefined) return fields.parameters;
-      return closureExpressionUFormExpr({ staticMarker: config.staticMarker, async: config.async, moveMarker: config.moveMarker, body: inner.$fields.body, parameters: value });
+      return closureExpressionUFormExpr({ staticMarker: config.staticMarker, asyncMarker: config.asyncMarker, moveMarker: config.moveMarker, body: inner.$fields.body, parameters: value });
     },
     body(value?: T.Expression | "_") {
       if (value === undefined) return inner.$fields.body;
-      return closureExpressionUFormExpr({ staticMarker: config.staticMarker, async: config.async, moveMarker: config.moveMarker, parameters: config.parameters, body: value });
+      return closureExpressionUFormExpr({ staticMarker: config.staticMarker, asyncMarker: config.asyncMarker, moveMarker: config.moveMarker, parameters: config.parameters, body: value });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {

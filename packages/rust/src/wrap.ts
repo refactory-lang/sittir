@@ -1193,7 +1193,7 @@ export function wrapClosureExpression(data: _NodeData, tree: TreeHandle): Wrappe
   return {
     ...data,
     get staticMarker() { return drillIn(data.$fields?.['static_marker'], tree); },
-    get async() { return drillIn(data.$fields?.['async'], tree); },
+    get asyncMarker() { return drillIn(data.$fields?.['async_marker'], tree); },
     get moveMarker() { return drillIn(data.$fields?.['move_marker'], tree); },
     get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },

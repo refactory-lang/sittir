@@ -1531,7 +1531,7 @@ export function closureExpressionFrom(input?: T.ClosureExpression.Loose): Return
 export function closureExpressionUFormBlockFrom(input: Omit<ConfigOf<T.ClosureExpressionUFormBlock>, '$variant'>) {
   return F.closureExpressionUFormBlock({
     staticMarker: _resolveBooleanKeyword(input.staticMarker),
-    async: _resolveBooleanKeyword(input.async),
+    asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
     moveMarker: _resolveBooleanKeyword(input.moveMarker),
     parameters: _resolveOneBranch<T.ClosureParameters>(input.parameters, "closure_parameters"),
     returnType: _resolveOne<T._Type>(input.returnType, _K7, _K8),
@@ -1542,7 +1542,7 @@ export function closureExpressionUFormBlockFrom(input: Omit<ConfigOf<T.ClosureEx
 export function closureExpressionUFormExprFrom(input: Omit<ConfigOf<T.ClosureExpressionUFormExpr>, '$variant'>) {
   return F.closureExpressionUFormExpr({
     staticMarker: _resolveBooleanKeyword(input.staticMarker),
-    async: _resolveBooleanKeyword(input.async),
+    asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
     moveMarker: _resolveBooleanKeyword(input.moveMarker),
     parameters: _resolveOneBranch<T.ClosureParameters>(input.parameters, "closure_parameters"),
     body: _resolveOne<T.Expression | "_">(input.body, _K5, _K6),

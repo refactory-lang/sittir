@@ -1332,6 +1332,16 @@
     "type": "closure_expression",
     "named": true,
     "fields": {
+      "async_marker": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "async",
+            "named": false
+          }
+        ]
+      },
       "move_marker": {
         "multiple": false,
         "required": false,

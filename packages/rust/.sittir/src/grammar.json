@@ -7565,8 +7565,13 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "STRING",
-                "value": "async"
+                "type": "FIELD",
+                "name": "async_marker",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_kw_async_marker"
+                },
+                "source": "override"
               },
               {
                 "type": "BLANK"
@@ -10436,6 +10441,18 @@
         }
       }
     },
+    "_kw_async_marker": {
+      "type": "PREC",
+      "value": -1,
+      "content": {
+        "type": "PREC",
+        "value": -1,
+        "content": {
+          "type": "STRING",
+          "value": "async"
+        }
+      }
+    },
     "_kw_modifier": {
       "type": "BLANK"
     },
@@ -11000,7 +11017,8 @@
     "_non_special_token",
     "_declaration_statement",
     "_reserved_identifier",
-    "_expression_ending_with_block"
+    "_expression_ending_with_block",
+    "_kw_async_marker"
   ],
   "supertypes": [
     "_expression",

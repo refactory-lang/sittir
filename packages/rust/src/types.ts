@@ -1734,7 +1734,7 @@ export interface ClosureExpressionUFormBlock {
   readonly $variant: 'block';
   readonly $fields: {
     readonly static_marker?: BooleanKeyword<"static">;
-    readonly async?: BooleanKeyword<"async">;
+    readonly async_marker?: BooleanKeyword<"async">;
     readonly move_marker?: BooleanKeyword<"move">;
     readonly parameters: ClosureParameters;
   };
@@ -1746,7 +1746,7 @@ export interface ClosureExpressionUFormExpr {
   readonly $variant: 'expr';
   readonly $fields: {
     readonly static_marker?: BooleanKeyword<"static">;
-    readonly async?: BooleanKeyword<"async">;
+    readonly async_marker?: BooleanKeyword<"async">;
     readonly move_marker?: BooleanKeyword<"move">;
     readonly parameters: ClosureParameters;
   };
