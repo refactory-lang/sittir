@@ -977,7 +977,7 @@ export function classHeritageUFormImplementsClauseFrom(input: Omit<ConfigOf<T.Cl
 export function functionExpressionFrom(input: T.FunctionExpression.Loose): ReturnType<typeof F.functionExpression> | T.FunctionExpression {
   if (isNodeData(input)) return input;
   return F.functionExpression({
-    async: _resolveBooleanKeyword(input.async),
+    asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
@@ -989,7 +989,7 @@ export function functionExpressionFrom(input: T.FunctionExpression.Loose): Retur
 export function functionDeclarationFrom(input: T.FunctionDeclaration.Loose): ReturnType<typeof F.functionDeclaration> | T.FunctionDeclaration {
   if (isNodeData(input)) return input;
   return F.functionDeclaration({
-    async: _resolveBooleanKeyword(input.async),
+    asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
@@ -1002,7 +1002,7 @@ export function functionDeclarationFrom(input: T.FunctionDeclaration.Loose): Ret
 export function generatorFunctionFrom(input: T.GeneratorFunction.Loose): ReturnType<typeof F.generatorFunction> | T.GeneratorFunction {
   if (isNodeData(input)) return input;
   return F.generatorFunction({
-    async: _resolveBooleanKeyword(input.async),
+    asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
@@ -1014,7 +1014,7 @@ export function generatorFunctionFrom(input: T.GeneratorFunction.Loose): ReturnT
 export function generatorFunctionDeclarationFrom(input: T.GeneratorFunctionDeclaration.Loose): ReturnType<typeof F.generatorFunctionDeclaration> | T.GeneratorFunctionDeclaration {
   if (isNodeData(input)) return input;
   return F.generatorFunctionDeclaration({
-    async: _resolveBooleanKeyword(input.async),
+    asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
@@ -1031,7 +1031,7 @@ export function arrowFunctionFrom(input?: T.ArrowFunction.Loose): ReturnType<typ
 
 export function arrowFunctionUFormParameterFrom(input: Omit<ConfigOf<T.ArrowFunctionUFormParameter>, '$variant'>) {
   return F.arrowFunctionUFormParameter({
-    async: _resolveBooleanKeyword(input.async),
+    asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
     body: _resolveOne<T.Expression | T.StatementBlock>(input.body, _K0, _K13),
     parameter: _resolveOne<T.ReservedIdentifier>(input.parameter, _super_statement_identifier, _K0),
   });
@@ -1039,7 +1039,7 @@ export function arrowFunctionUFormParameterFrom(input: Omit<ConfigOf<T.ArrowFunc
 
 export function arrowFunctionUFormUCallSignatureFrom(input: Omit<ConfigOf<T.ArrowFunctionUFormUCallSignature>, '$variant'>) {
   return F.arrowFunctionUFormUCallSignature({
-    async: _resolveBooleanKeyword(input.async),
+    asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
     body: _resolveOne<T.Expression | T.StatementBlock>(input.body, _K0, _K13),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
@@ -1386,7 +1386,7 @@ export function methodDefinitionFrom(input: T.MethodDefinition.Loose): ReturnTyp
   return F.methodDefinition({
     accessibilityModifier: _resolveOneLeaf<T.AccessibilityModifier>(input.accessibilityModifier, "accessibility_modifier"),
     overrideModifier: _resolveOne<"static" | T.OverrideModifier>(input.overrideModifier, _K24, _K0),
-    readonly: _resolveBooleanKeyword(input.readonly),
+    readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
     asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
     accessorKind: _resolveOne<"get" | "set" | "*">(input.accessorKind, _K0, _K0),
     name: _resolveOne<T.PropertyName>(input.name, _K22, _K23),
@@ -1445,7 +1445,7 @@ export function methodSignatureFrom(input: T.MethodSignature.Loose): ReturnType<
   return F.methodSignature({
     accessibilityModifier: _resolveOneLeaf<T.AccessibilityModifier>(input.accessibilityModifier, "accessibility_modifier"),
     overrideModifier: _resolveOne<"static" | T.OverrideModifier>(input.overrideModifier, _K24, _K0),
-    readonly: _resolveBooleanKeyword(input.readonly),
+    readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
     asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
     accessorKind: _resolveOne<"get" | "set" | "*">(input.accessorKind, _K0, _K0),
     name: _resolveOne<T.PropertyName>(input.name, _K22, _K23),
@@ -1473,7 +1473,7 @@ export function abstractMethodSignatureFrom(input: T.AbstractMethodSignature.Loo
 export function functionSignatureFrom(input: T.FunctionSignature.Loose): ReturnType<typeof F.functionSignature> | T.FunctionSignature {
   if (isNodeData(input)) return input;
   return F.functionSignature({
-    async: _resolveBooleanKeyword(input.async),
+    asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, "formal_parameters"),
@@ -1925,7 +1925,7 @@ export function propertySignatureFrom(input: T.PropertySignature.Loose): ReturnT
   return F.propertySignature({
     accessibilityModifier: _resolveOneLeaf<T.AccessibilityModifier>(input.accessibilityModifier, "accessibility_modifier"),
     overrideModifier: _resolveOne<"static" | T.OverrideModifier>(input.overrideModifier, _K24, _K0),
-    readonly: _resolveBooleanKeyword(input.readonly),
+    readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
     name: _resolveOne<T.PropertyName>(input.name, _K22, _K23),
     optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
     type: _resolveOneBranch<T.TypeAnnotation>(input.type, "type_annotation"),

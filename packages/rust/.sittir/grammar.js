@@ -1415,7 +1415,12 @@ var config = {
     // Field-promotion wave 1 (016 task #23) + wave-1 follow-up (task
     // #27): label each standalone optional marker so render preserves
     // them (`static async move |x| ...` vs `|x| ...`). prec is
-    // transparent to path addressing.
+    // transparent to path addressing. The `async_marker` promotion
+    // requires `_kw_async_marker` to appear in the top-level
+    // `inline:` array (see above) — without that, the synthesized
+    // hidden symbol's runtime precedence diverges from
+    // async_block's bare `'async'` token and `let a = async move
+    // || async move {}` regresses to ERROR.
     closure_expression: {
       "0/0": field("static_marker"),
       "1/0": field("async_marker"),

@@ -710,7 +710,7 @@ export function wrapClassHeritage(data: _NodeData, tree: TreeHandle): WrappedNod
 export function wrapFunctionExpression(data: _NodeData, tree: TreeHandle): WrappedNode<FunctionExpression> {
   return {
     ...data,
-    get async() { return drillIn(data.$fields?.['async'], tree); },
+    get asyncMarker() { return drillIn(data.$fields?.['async_marker'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
     get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
@@ -723,7 +723,7 @@ export function wrapFunctionExpression(data: _NodeData, tree: TreeHandle): Wrapp
 export function wrapFunctionDeclaration(data: _NodeData, tree: TreeHandle): WrappedNode<FunctionDeclaration> {
   return {
     ...data,
-    get async() { return drillIn(data.$fields?.['async'], tree); },
+    get asyncMarker() { return drillIn(data.$fields?.['async_marker'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
     get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
@@ -736,7 +736,7 @@ export function wrapFunctionDeclaration(data: _NodeData, tree: TreeHandle): Wrap
 export function wrapGeneratorFunction(data: _NodeData, tree: TreeHandle): WrappedNode<GeneratorFunction> {
   return {
     ...data,
-    get async() { return drillIn(data.$fields?.['async'], tree); },
+    get asyncMarker() { return drillIn(data.$fields?.['async_marker'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
     get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
@@ -749,7 +749,7 @@ export function wrapGeneratorFunction(data: _NodeData, tree: TreeHandle): Wrappe
 export function wrapGeneratorFunctionDeclaration(data: _NodeData, tree: TreeHandle): WrappedNode<GeneratorFunctionDeclaration> {
   return {
     ...data,
-    get async() { return drillIn(data.$fields?.['async'], tree); },
+    get asyncMarker() { return drillIn(data.$fields?.['async_marker'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
     get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
@@ -762,7 +762,7 @@ export function wrapGeneratorFunctionDeclaration(data: _NodeData, tree: TreeHand
 export function wrapArrowFunction(data: _NodeData, tree: TreeHandle): WrappedNode<ArrowFunction> {
   return {
     ...data,
-    get async() { return drillIn(data.$fields?.['async'], tree); },
+    get asyncMarker() { return drillIn(data.$fields?.['async_marker'], tree); },
     get body() { return drillIn(data.$fields?.['body'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ArrowFunction>;
@@ -998,7 +998,7 @@ export function wrapMethodDefinition(data: _NodeData, tree: TreeHandle): Wrapped
     ...data,
     get accessibilityModifier() { return drillIn(data.$fields?.['accessibility_modifier'], tree); },
     get overrideModifier() { return drillIn(data.$fields?.['override_modifier'], tree); },
-    get readonly() { return drillIn(data.$fields?.['readonly'], tree); },
+    get readonlyMarker() { return drillIn(data.$fields?.['readonly_marker'], tree); },
     get asyncMarker() { return drillIn(data.$fields?.['async_marker'], tree); },
     get accessorKind() { return drillIn(data.$fields?.['accessor_kind'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
@@ -1062,7 +1062,7 @@ export function wrapMethodSignature(data: _NodeData, tree: TreeHandle): WrappedN
     ...data,
     get accessibilityModifier() { return drillIn(data.$fields?.['accessibility_modifier'], tree); },
     get overrideModifier() { return drillIn(data.$fields?.['override_modifier'], tree); },
-    get readonly() { return drillIn(data.$fields?.['readonly'], tree); },
+    get readonlyMarker() { return drillIn(data.$fields?.['readonly_marker'], tree); },
     get asyncMarker() { return drillIn(data.$fields?.['async_marker'], tree); },
     get accessorKind() { return drillIn(data.$fields?.['accessor_kind'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
@@ -1092,7 +1092,7 @@ export function wrapAbstractMethodSignature(data: _NodeData, tree: TreeHandle): 
 export function wrapFunctionSignature(data: _NodeData, tree: TreeHandle): WrappedNode<FunctionSignature> {
   return {
     ...data,
-    get async() { return drillIn(data.$fields?.['async'], tree); },
+    get asyncMarker() { return drillIn(data.$fields?.['async_marker'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
     get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
@@ -1549,7 +1549,7 @@ export function wrapPropertySignature(data: _NodeData, tree: TreeHandle): Wrappe
     ...data,
     get accessibilityModifier() { return drillIn(data.$fields?.['accessibility_modifier'], tree); },
     get overrideModifier() { return drillIn(data.$fields?.['override_modifier'], tree); },
-    get readonly() { return drillIn(data.$fields?.['readonly'], tree); },
+    get readonlyMarker() { return drillIn(data.$fields?.['readonly_marker'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get optionalMarker() { return drillIn(data.$fields?.['optional_marker'], tree); },
     get typeField() { return drillIn(data.$fields?.['type'], tree); },
@@ -2042,6 +2042,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_kw_readonly': (d) => d,
   '_kw_abstract': (d) => d,
   '_kw_const': (d) => d,
+  '_kw_async_marker': (d) => d,
   '_export_statement_default_from_arm': (d, t) => wrapExportStatementDefaultFromArm(d, t),
   '_arrow_function_parameter': (d, t) => wrapArrowFunctionParameter(d, t),
   '_arrow_function__call_signature': (d, t) => wrapArrowFunctionUCallSignature(d, t),

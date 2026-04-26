@@ -119,6 +119,16 @@ export default grammar(enrich(base), wire({
         // the `export` prefix, propagated to the two outer variants.
         [$.primary_expression, $._export_statement_default_from_arm],
         [$.primary_expression, $._export_statement_default_decl_arm],
+        // Wave-3 follow-up (016 task #28): inlining `_kw_readonly_marker`
+        // into `_parameter_name` makes the bare `'readonly'` token visible
+        // in `_parameter_name`'s state machine. At `'<' '(' 'readonly' • '('`
+        // (a generic-typed function-type parameter), the parser now sees three
+        // possible interpretations: `_parameter_name 'readonly' • pattern`,
+        // `primary_expression 'readonly'` (treating `readonly` as identifier),
+        // and `readonly_type 'readonly' • type`. Tree-sitter cannot
+        // disambiguate via static precedence; declare the conflict so it
+        // forks via GLR.
+        [$.primary_expression, $._parameter_name, $.readonly_type],
         // class_body repeat-choice split: the `method` arm ends with
         // `optional(_semicolon)` — tree-sitter can't decide whether to
         // consume the `;` as part of `_class_body_method` or as the
@@ -163,6 +173,38 @@ export default grammar(enrich(base), wire({
         $._public_field_definition_abstract_first,
         $._public_field_definition_readonly_first,
         $._public_field_definition_accessor_opt,
+        // Wave-3 follow-up (016 task #28): inline `_kw_readonly_marker`
+        // so the synthesized hidden rule's body folds into every
+        // reference site at LR-table generation. Without inlining, the
+        // hidden rule's `prec(-1, 'readonly')` body diverges from the
+        // bare `'readonly'` token in sibling rules at runtime — the
+        // parser takes `readonly` as the property identifier instead
+        // of the marker on `class C { readonly foo() {} }`. Same
+        // pattern as wave-1 follow-up's `_kw_async_marker` for rust
+        // (commit c00636a5). The FIELD wrapper survives inlining so
+        // the parse tree still surfaces the named `readonly_marker`
+        // child.
+        $._kw_readonly_marker,
+        // Wave-3 follow-up (016 task #28): same mechanism for the
+        // function-family `async_marker` promotion (function_signature,
+        // function_expression, function_declaration, generator_function,
+        // generator_function_declaration, arrow_function). Without
+        // inlining, the synthesized `_kw_async_marker` rule's body
+        // collides with `primary_expression` and `_property_name` on
+        // `{ async (` (method-shorthand vs async-function ambiguity)
+        // and with the bare `'async'` token on `'async' • 'function'`
+        // lookahead in sibling function rules. Inlining folds the body
+        // into each function rule's state machine — same shape as the
+        // pre-promotion grammar — while the FIELD wrapper survives in
+        // the parse tree. NOTE: the default `_kw_async_marker` body is
+        // `prec(-1, 'async')`, which would be inlined as a strictly
+        // lower-precedence wrap and lose to primary_expression's bare
+        // `'async'` (prec 0) on `async () =>` (parser commits to call
+        // expression and ERRORs at `=>`). To prevent this, the rule is
+        // re-authored below in `rules:` as `() => 'async'` (prec 0) so
+        // the existing `[primary_expression, arrow_function]` conflict
+        // can engage GLR to disambiguate.
+        $._kw_async_marker,
     ],
     polymorphs: {
         arrow_function:  { '1/0': 'parameter',        '1/1': '_call_signature' },
@@ -278,7 +320,8 @@ export default grammar(enrich(base), wire({
         //   $._call_signature)                      // pos 6
         // Field-promotion wave 3 (016 task #25): symmetric to
         // method_definition / method_signature for the trailing `?` plus
-        // the accessor keyword.
+        // the accessor keyword. NOTE: no readonly_marker — `'abstract'` is
+        // a required literal at pos 1, not optional.
         abstract_method_signature: {
             '3/0': field('accessor_kind'),
             '5/0': field('optional_marker'),
@@ -399,12 +442,7 @@ export default grammar(enrich(base), wire({
         //                                          //         static_mods polymorph; promoting the bare 'static' here
         //                                          //         risks parse drift across the two class-member shapes.)
         //   optional($.override_modifier),         // pos 2 (existing field below)
-        //   optional('readonly'),                  // pos 3  (DEFERRED — `readonly` is a soft keyword; promoting it
-        //                                          //         via _kw_readonly_marker hidden symbol triggers parse
-        //                                          //         ERROR on `class Foo { readonly bar?(): T {} }` —
-        //                                          //         the parser takes `readonly` as the property identifier
-        //                                          //         instead of the marker. Same parse-precedence-divergence
-        //                                          //         pattern as wave-1's deferred closure_expression.async_marker.)
+        //   optional('readonly'),                  // pos 3  →  '3/0'  (readonly_marker)
         //   optional('async'),                     // pos 4  →  '4/0'  (async_marker)
         //   optional(choice('get','set','*')),    // pos 5  →  '5/0'  (accessor_kind, choice-of-strings)
         //   field('name', $._property_name),       // pos 6
@@ -414,8 +452,20 @@ export default grammar(enrich(base), wire({
         // Field-promotion wave 3 (016 task #25): label `async`, the
         // accessor `get`/`set`/`*`, and trailing `?` so render preserves
         // `async get foo?(): T {}` shapes.
+        // Wave-3 follow-up (016 task #28): `readonly_marker` was deferred
+        // in wave 3 because the synthesized `_kw_readonly_marker` hidden
+        // symbol's parse precedence diverges from the bare `'readonly'`
+        // token in sibling rules — `class Foo { readonly bar?(): T {} }`
+        // regressed to ERROR (parser took `readonly` as the property
+        // identifier instead of the marker). Same pattern as wave-1's
+        // closure_expression.async_marker; resolved by adding
+        // `_kw_readonly_marker` to the top-level `inline:` array (see
+        // above), which folds the hidden rule's body into every reference
+        // site at LR-table generation while preserving the FIELD wrapper
+        // for the parse tree.
         method_definition: {
             1: field('override_modifier'), // override_modifier [struct=1]
+            '3/0': field('readonly_marker'),
             '4/0': field('async_marker'),
             '5/0': field('accessor_kind'),
             '7/0': field('optional_marker'),
@@ -425,16 +475,18 @@ export default grammar(enrich(base), wire({
         //   optional($.accessibility_modifier),    // pos 0
         //   optional('static'),                    // pos 1  (DEFERRED — see method_definition note)
         //   optional($.override_modifier),         // pos 2 (existing field below)
-        //   optional('readonly'),                  // pos 3  (DEFERRED — soft-keyword parse regression, see above)
+        //   optional('readonly'),                  // pos 3  →  '3/0'  (readonly_marker)
         //   optional('async'),                     // pos 4  →  '4/0'  (async_marker)
         //   optional(choice('get','set','*')),    // pos 5  →  '5/0'  (accessor_kind, choice-of-strings)
         //   field('name', $._property_name),       // pos 6
         //   optional('?'),                         // pos 7  →  '7/0'  (optional_marker)
         //   $._call_signature)                     // pos 8
         // Field-promotion wave 3 (016 task #25): symmetric to
-        // method_definition.
+        // method_definition. Wave-3 follow-up adds `readonly_marker`
+        // (resolved via inline; see method_definition note above).
         method_signature: {
             1: field('override_modifier'), // override_modifier [struct=1]
+            '3/0': field('readonly_marker'),
             '4/0': field('async_marker'),
             '5/0': field('accessor_kind'),
             '7/0': field('optional_marker'),
@@ -460,14 +512,17 @@ export default grammar(enrich(base), wire({
         //   optional($.accessibility_modifier),  // pos 0
         //   optional('static'),                   // pos 1  (DEFERRED — see method_definition note re: static)
         //   optional($.override_modifier),         // pos 2 (existing field below — note position drift; entry kept as 1)
-        //   optional('readonly'),                  // pos 3  (DEFERRED — soft-keyword parse regression risk)
+        //   optional('readonly'),                  // pos 3  →  '3/0'  (readonly_marker)
         //   field('name', $._property_name),       // pos 4
         //   optional('?'),                         // pos 5  →  '5/0'  (optional_marker)
         //   field('type', optional($.type_annotation)))  // pos 6
         // Field-promotion wave 3 (016 task #25): label trailing `?` so
-        // render preserves `foo?: string` shapes.
+        // render preserves `foo?: string` shapes. Wave-3 follow-up adds
+        // `readonly_marker` (resolved via inline; see method_definition
+        // note above).
         property_signature: {
             1: field('override_modifier'), // override_modifier [struct=1]
+            '3/0': field('readonly_marker'),
             '5/0': field('optional_marker'),
         },
 
@@ -539,58 +594,73 @@ export default grammar(enrich(base), wire({
             2: field('semicolon'),
         },
 
-        // function_signature: seq(optional('async'), 'function',
-        // field('name'), _call_signature, choice(_semicolon,
-        // _function_signature_automatic_semicolon)). The trailing
-        // choice carries the semi (either explicit or auto); labeling
-        // pos 4 as a semicolon field lets it render.
-        //
-        // DEFERRED for the entire JS-inherited function family + this
-        // TS-specific function_signature: see the multi-line note
-        // BELOW (after function_signature) for the full deferral
-        // rationale. function_signature alone fails to compile because
-        // the synthesized `_kw_async_marker` rule competes with the
-        // base function_declaration / function_expression /
-        // generator_function rules' bare `'async'` token on the
-        // `'async' • 'function'` lookahead — splitting only ONE rule
-        // leaves the others using the bare token at a different prec
-        // class, which tree-sitter can't resolve.
+        // function_signature: seq(
+        //   optional('async'),  // pos 0  →  '0/0'  (async_marker)
+        //   'function',
+        //   field('name'),
+        //   _call_signature,
+        //   choice(_semicolon, _function_signature_automatic_semicolon))
+        // The trailing choice carries the semi (either explicit or auto);
+        // labeling pos 4 as a semicolon field lets it render.
+        // Wave-3 follow-up (016 task #28): adds `async_marker` along with
+        // the JS-inherited function family — see the inline declaration
+        // above for `_kw_async_marker`.
         function_signature: {
+            '0/0': field('async_marker'),
             4: field('semicolon'),
         },
 
         // JS-inherited function family — all start with `optional('async')` at pos 0.
         //
-        // DEFERRED for the entire family (function_expression / function_declaration /
-        // generator_function / generator_function_declaration / arrow_function):
-        // wrapping pos 0/0 in `field('async_marker', _kw_async_marker)` synthesizes
-        // a hidden `_kw_async_marker` symbol that competes with `primary_expression`
-        // and `_property_name` on the `{ async (` prefix. Tree-sitter raises:
-        //
-        //   Unresolved conflict for symbol sequence: '{' 'async' • '(' ...
-        //   Possible interpretations:
-        //     1: '{' (_kw_async_marker 'async') • '('   (precedence: -1)
-        //     2: '{' (_property_name 'async') • '('     (precedence: 0)
-        //     3: '{' (primary_expression 'async') • '(' ...
-        //
-        // The shape `{ async (...) }` is genuinely ambiguous between an object
-        // literal containing a `async`-keyed method/function shorthand vs an
-        // expression statement calling the `async` identifier as a function.
-        // The unsplit `'async'` token's runtime LR state resolves this; the
-        // synthesized hidden rule's prec=-1 doesn't. Same parse-time precedence
-        // divergence pattern as wave-1's deferred closure_expression.async_marker.
-        //
-        // Function_signature ABOVE works because it's a TS-specific rule that
-        // only appears in declaration contexts (no `{ async (` ambiguity).
-        // method_definition / method_signature also work because the `{ async (`
-        // case is in fact a method_definition with `async`-named property — and
-        // there the conflict is already encoded in tree-sitter's existing LR
-        // table for that kind. The JS-inherited function family lifts `async`
-        // into a synthesized rule that gets a fresh prec slot, breaking the
-        // resolution.
-        //
-        // Tracked for a follow-up wave with either explicit conflicts entries
-        // or a non-symbol field-promotion mechanism.
+        // Wave-3 follow-up (016 task #28): label pos 0/0 in each as
+        // `async_marker` so render preserves `async function …` /
+        // `async function* …` / `async () =>` shapes. Resolved via
+        // inlining `_kw_async_marker` into every reference site (see
+        // `inline:` above) — without inlining, the synthesized hidden
+        // rule's prec(-1) body collides with `primary_expression` /
+        // `_property_name` on `{ async (` (method-shorthand vs
+        // async-function ambiguity) and with sibling function rules on
+        // `'async' • 'function'`. Inlining folds the body into each
+        // function rule's state machine — same shape as the
+        // pre-promotion grammar — while the FIELD wrapper survives the
+        // inlining so the parse tree still labels the marker.
+
+        // function_expression: prec('literal', seq(
+        //   optional('async'), 'function', field('name', optional($.identifier)),
+        //   $._call_signature, field('body', $.statement_block)))
+        function_expression: {
+            '0/0': field('async_marker'),
+        },
+
+        // function_declaration: prec.right('declaration', seq(
+        //   optional('async'), 'function', field('name', $.identifier),
+        //   $._call_signature, field('body', $.statement_block),
+        //   optional($._automatic_semicolon)))
+        function_declaration: {
+            '0/0': field('async_marker'),
+        },
+
+        // generator_function: prec('literal', seq(
+        //   optional('async'), 'function', '*',
+        //   field('name', optional($.identifier)),
+        //   $._call_signature, field('body', $.statement_block)))
+        generator_function: {
+            '0/0': field('async_marker'),
+        },
+
+        // generator_function_declaration: prec.right('declaration', seq(
+        //   optional('async'), 'function', '*', field('name', $.identifier),
+        //   $._call_signature, field('body', $.statement_block),
+        //   optional($._automatic_semicolon)))
+        generator_function_declaration: {
+            '0/0': field('async_marker'),
+        },
+
+        // arrow_function: seq(optional('async'), choice(field('parameter',…),
+        //   $._call_signature), '=>', field('body', …))
+        arrow_function: {
+            '0/0': field('async_marker'),
+        },
 
         // break_statement: seq('break', field('label', optional(...)),
         // _semicolon). Label the trailing `;` at pos 2.
@@ -859,6 +929,19 @@ export default grammar(enrich(base), wire({
         // `?` — drop the synthetic `parameter_name` wrapper override and
         // let the walker inline the `_parameter_name` helper's fields.
         required_parameter: ($, original) => original,
+
+        // Wave-3 follow-up (016 task #28): override the synthesized
+        // `_kw_async_marker` body to drop the default `prec(-1, …)`
+        // wrapper. The default body is `prec(-1, 'async')` which makes
+        // the bare `'async'` token strictly LOWER precedence than
+        // primary_expression's bare `'async'` (prec 0). When inlined
+        // into arrow_function (`async • _arrow_function__call_signature
+        // => …`), the parser commits to the higher-precedence
+        // primary_expression path and ERRORs at `=>`. Authoring the
+        // hidden rule with no precedence wrap puts both at prec 0 so the
+        // existing `[primary_expression, arrow_function]` conflict
+        // declaration can engage GLR to disambiguate.
+        _kw_async_marker: () => 'async',
 
         // object_type / interface_body — correlated choice selection
         // across non-adjacent positions: the opening and closing

@@ -27,6 +27,7 @@ export type LeafStringMap = {
   _kw_readonly: "readonly";
   _kw_abstract: "abstract";
   _kw_const: "const";
+  _kw_async_marker: "async";
   as: "as";
   from: "from";
   var: "var";
@@ -328,6 +329,7 @@ export const enum SyntaxKind {
   KwReadonly = '_kw_readonly',
   KwAbstract = '_kw_abstract',
   KwConst = '_kw_const',
+  KwAsyncMarker = '_kw_async_marker',
   AutomaticSemicolon = '_automatic_semicolon',
   TernaryQmark = '_ternary_qmark',
   HtmlComment = 'html_comment',
@@ -1100,7 +1102,7 @@ export type ClassHeritage = ClassHeritageUFormExtendsClause | ClassHeritageUForm
 export interface FunctionExpression {
   readonly $type: 'function_expression';
   readonly $fields: {
-    readonly async?: BooleanKeyword<"async">;
+    readonly async_marker?: BooleanKeyword<"async">;
     readonly name?: Identifier;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
@@ -1112,7 +1114,7 @@ export interface FunctionExpression {
 export interface FunctionDeclaration {
   readonly $type: 'function_declaration';
   readonly $fields: {
-    readonly async?: BooleanKeyword<"async">;
+    readonly async_marker?: BooleanKeyword<"async">;
     readonly name: Identifier;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
@@ -1125,7 +1127,7 @@ export interface FunctionDeclaration {
 export interface GeneratorFunction {
   readonly $type: 'generator_function';
   readonly $fields: {
-    readonly async?: BooleanKeyword<"async">;
+    readonly async_marker?: BooleanKeyword<"async">;
     readonly name?: Identifier;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
@@ -1137,7 +1139,7 @@ export interface GeneratorFunction {
 export interface GeneratorFunctionDeclaration {
   readonly $type: 'generator_function_declaration';
   readonly $fields: {
-    readonly async?: BooleanKeyword<"async">;
+    readonly async_marker?: BooleanKeyword<"async">;
     readonly name: Identifier;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
@@ -1151,7 +1153,7 @@ export interface ArrowFunctionUFormParameter {
   readonly $type: 'arrow_function';
   readonly $variant: 'parameter';
   readonly $fields: {
-    readonly async?: BooleanKeyword<"async">;
+    readonly async_marker?: BooleanKeyword<"async">;
     readonly body: Expression | StatementBlock;
   };
   readonly $children: readonly [ArrowFunctionParameter];
@@ -1161,7 +1163,7 @@ export interface ArrowFunctionUFormUCallSignature {
   readonly $type: 'arrow_function';
   readonly $variant: '_call_signature';
   readonly $fields: {
-    readonly async?: BooleanKeyword<"async">;
+    readonly async_marker?: BooleanKeyword<"async">;
     readonly body: Expression | StatementBlock;
   };
   readonly $children: readonly [ArrowFunctionUCallSignature];
@@ -1406,7 +1408,7 @@ export interface MethodDefinition {
   readonly $fields: {
     readonly accessibility_modifier?: AccessibilityModifier;
     readonly override_modifier?: "static" | OverrideModifier;
-    readonly readonly?: BooleanKeyword<"readonly">;
+    readonly readonly_marker?: BooleanKeyword<"readonly">;
     readonly async_marker?: BooleanKeyword<"async">;
     readonly accessor_kind?: "get" | "set" | "*";
     readonly name: PropertyName;
@@ -1474,7 +1476,7 @@ export interface MethodSignature {
   readonly $fields: {
     readonly accessibility_modifier?: AccessibilityModifier;
     readonly override_modifier?: "static" | OverrideModifier;
-    readonly readonly?: BooleanKeyword<"readonly">;
+    readonly readonly_marker?: BooleanKeyword<"readonly">;
     readonly async_marker?: BooleanKeyword<"async">;
     readonly accessor_kind?: "get" | "set" | "*";
     readonly name: PropertyName;
@@ -1502,7 +1504,7 @@ export interface AbstractMethodSignature {
 export interface FunctionSignature {
   readonly $type: 'function_signature';
   readonly $fields: {
-    readonly async?: BooleanKeyword<"async">;
+    readonly async_marker?: BooleanKeyword<"async">;
     readonly name: Identifier;
     readonly type_parameters?: TypeParameters;
     readonly parameters: FormalParameters;
@@ -1984,7 +1986,7 @@ export interface PropertySignature {
   readonly $fields: {
     readonly accessibility_modifier?: AccessibilityModifier;
     readonly override_modifier?: "static" | OverrideModifier;
-    readonly readonly?: BooleanKeyword<"readonly">;
+    readonly readonly_marker?: BooleanKeyword<"readonly">;
     readonly name: PropertyName;
     readonly optional_marker?: BooleanKeyword<"?">;
     readonly type?: TypeAnnotation;

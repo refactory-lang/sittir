@@ -485,7 +485,7 @@
       "automatic_semicolon"
     ],
     "function_expression": [
-      "async",
+      "async_marker",
       "name",
       "type_parameters",
       "parameters",
@@ -493,7 +493,7 @@
       "body"
     ],
     "generator_function": [
-      "async",
+      "async_marker",
       "name",
       "type_parameters",
       "parameters",
@@ -566,7 +566,7 @@
     "method_definition": [
       "accessibility_modifier",
       "override_modifier",
-      "readonly",
+      "readonly_marker",
       "async_marker",
       "accessor_kind",
       "name",
@@ -593,7 +593,7 @@
     "method_signature": [
       "accessibility_modifier",
       "override_modifier",
-      "readonly",
+      "readonly_marker",
       "async_marker",
       "accessor_kind",
       "name",
@@ -613,7 +613,7 @@
       "return_type"
     ],
     "function_signature": [
-      "async",
+      "async_marker",
       "name",
       "type_parameters",
       "parameters",
@@ -805,7 +805,7 @@
     "property_signature": [
       "accessibility_modifier",
       "override_modifier",
-      "readonly",
+      "readonly_marker",
       "name",
       "optional_marker",
       "type"

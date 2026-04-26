@@ -1489,7 +1489,7 @@ export function classHeritageUFormImplementsClause(config?: Omit<ConfigOf<T.Clas
 
 export function functionExpression(config: ConfigOf<T.FunctionExpression>) {
   const fields = {
-    async: config.async ? "async" as const : undefined,
+    async_marker: config.asyncMarker ? "async" as const : undefined,
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -1501,7 +1501,7 @@ export function functionExpression(config: ConfigOf<T.FunctionExpression>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    async(value?: "async" | undefined) { return _fs(config, functionExpression, 'async', value, config?.async); },
+    asyncMarker(value?: "async" | undefined) { return _fs(config, functionExpression, 'asyncMarker', value, config?.asyncMarker); },
     name(value?: T.Identifier | undefined) { return _fs(config, functionExpression, 'name', value, config?.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, functionExpression, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, functionExpression, 'parameters', value, config?.parameters); },
@@ -1518,7 +1518,7 @@ export function functionExpression(config: ConfigOf<T.FunctionExpression>) {
 
 export function functionDeclaration(config: ConfigOf<T.FunctionDeclaration>) {
   const fields = {
-    async: config.async ? "async" as const : undefined,
+    async_marker: config.asyncMarker ? "async" as const : undefined,
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -1532,7 +1532,7 @@ export function functionDeclaration(config: ConfigOf<T.FunctionDeclaration>) {
     $named: true as const,
     $fields: fields,
     $children: children,
-    async(value?: "async" | undefined) { return _fs(config, functionDeclaration, 'async', value, config?.async); },
+    asyncMarker(value?: "async" | undefined) { return _fs(config, functionDeclaration, 'asyncMarker', value, config?.asyncMarker); },
     name(value?: T.Identifier) { return _fs(config, functionDeclaration, 'name', value, config?.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, functionDeclaration, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, functionDeclaration, 'parameters', value, config?.parameters); },
@@ -1553,7 +1553,7 @@ export function functionDeclaration(config: ConfigOf<T.FunctionDeclaration>) {
 
 export function generatorFunction(config: ConfigOf<T.GeneratorFunction>) {
   const fields = {
-    async: config.async ? "async" as const : undefined,
+    async_marker: config.asyncMarker ? "async" as const : undefined,
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -1565,7 +1565,7 @@ export function generatorFunction(config: ConfigOf<T.GeneratorFunction>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    async(value?: "async" | undefined) { return _fs(config, generatorFunction, 'async', value, config?.async); },
+    asyncMarker(value?: "async" | undefined) { return _fs(config, generatorFunction, 'asyncMarker', value, config?.asyncMarker); },
     name(value?: T.Identifier | undefined) { return _fs(config, generatorFunction, 'name', value, config?.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, generatorFunction, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, generatorFunction, 'parameters', value, config?.parameters); },
@@ -1582,7 +1582,7 @@ export function generatorFunction(config: ConfigOf<T.GeneratorFunction>) {
 
 export function generatorFunctionDeclaration(config: ConfigOf<T.GeneratorFunctionDeclaration>) {
   const fields = {
-    async: config.async ? "async" as const : undefined,
+    async_marker: config.asyncMarker ? "async" as const : undefined,
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -1596,7 +1596,7 @@ export function generatorFunctionDeclaration(config: ConfigOf<T.GeneratorFunctio
     $named: true as const,
     $fields: fields,
     $children: children,
-    async(value?: "async" | undefined) { return _fs(config, generatorFunctionDeclaration, 'async', value, config?.async); },
+    asyncMarker(value?: "async" | undefined) { return _fs(config, generatorFunctionDeclaration, 'asyncMarker', value, config?.asyncMarker); },
     name(value?: T.Identifier) { return _fs(config, generatorFunctionDeclaration, 'name', value, config?.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, generatorFunctionDeclaration, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, generatorFunctionDeclaration, 'parameters', value, config?.parameters); },
@@ -1626,7 +1626,7 @@ export function arrowFunction(config: ConfigOf<T.ArrowFunctionUFormParameter> | 
 }
 export function arrowFunctionUFormParameter(config: Omit<ConfigOf<T.ArrowFunctionUFormParameter>, '$variant'>) {
   const fields = {
-    async: config.async,
+    async_marker: config.asyncMarker,
     body: config.body,
   };
   const inner = arrowFunctionParameter(config);
@@ -1638,17 +1638,17 @@ export function arrowFunctionUFormParameter(config: Omit<ConfigOf<T.ArrowFunctio
     $variant: 'parameter' as const,
     $fields: fields,
     $children: children,
-    async(value?: "async" | undefined) {
-      if (value === undefined) return fields.async;
-      return arrowFunctionUFormParameter({ body: config.body, parameter: inner.$fields.parameter, async: value });
+    asyncMarker(value?: "async" | undefined) {
+      if (value === undefined) return fields.async_marker;
+      return arrowFunctionUFormParameter({ body: config.body, parameter: inner.$fields.parameter, asyncMarker: value });
     },
     body(value?: T.Expression | T.StatementBlock) {
       if (value === undefined) return fields.body;
-      return arrowFunctionUFormParameter({ async: config.async, parameter: inner.$fields.parameter, body: value });
+      return arrowFunctionUFormParameter({ asyncMarker: config.asyncMarker, parameter: inner.$fields.parameter, body: value });
     },
     parameter(value?: T.ReservedIdentifier) {
       if (value === undefined) return inner.$fields.parameter;
-      return arrowFunctionUFormParameter({ async: config.async, body: config.body, parameter: value });
+      return arrowFunctionUFormParameter({ asyncMarker: config.asyncMarker, body: config.body, parameter: value });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -1660,7 +1660,7 @@ export function arrowFunctionUFormParameter(config: Omit<ConfigOf<T.ArrowFunctio
 }
 export function arrowFunctionUFormUCallSignature(config: Omit<ConfigOf<T.ArrowFunctionUFormUCallSignature>, '$variant'>) {
   const fields = {
-    async: config.async,
+    async_marker: config.asyncMarker,
     body: config.body,
   };
   const inner = arrowFunctionUCallSignature(config);
@@ -1672,25 +1672,25 @@ export function arrowFunctionUFormUCallSignature(config: Omit<ConfigOf<T.ArrowFu
     $variant: '_call_signature' as const,
     $fields: fields,
     $children: children,
-    async(value?: "async" | undefined) {
-      if (value === undefined) return fields.async;
-      return arrowFunctionUFormUCallSignature({ body: config.body, typeParameters: inner.$fields.type_parameters, parameters: inner.$fields.parameters, returnType: inner.$fields.return_type, async: value });
+    asyncMarker(value?: "async" | undefined) {
+      if (value === undefined) return fields.async_marker;
+      return arrowFunctionUFormUCallSignature({ body: config.body, typeParameters: inner.$fields.type_parameters, parameters: inner.$fields.parameters, returnType: inner.$fields.return_type, asyncMarker: value });
     },
     body(value?: T.Expression | T.StatementBlock) {
       if (value === undefined) return fields.body;
-      return arrowFunctionUFormUCallSignature({ async: config.async, typeParameters: inner.$fields.type_parameters, parameters: inner.$fields.parameters, returnType: inner.$fields.return_type, body: value });
+      return arrowFunctionUFormUCallSignature({ asyncMarker: config.asyncMarker, typeParameters: inner.$fields.type_parameters, parameters: inner.$fields.parameters, returnType: inner.$fields.return_type, body: value });
     },
     typeParameters(value?: T.TypeParameters | undefined) {
       if (value === undefined) return inner.$fields.type_parameters;
-      return arrowFunctionUFormUCallSignature({ async: config.async, body: config.body, parameters: inner.$fields.parameters, returnType: inner.$fields.return_type, typeParameters: value });
+      return arrowFunctionUFormUCallSignature({ asyncMarker: config.asyncMarker, body: config.body, parameters: inner.$fields.parameters, returnType: inner.$fields.return_type, typeParameters: value });
     },
     parameters(value?: T.FormalParameters) {
       if (value === undefined) return inner.$fields.parameters;
-      return arrowFunctionUFormUCallSignature({ async: config.async, body: config.body, typeParameters: inner.$fields.type_parameters, returnType: inner.$fields.return_type, parameters: value });
+      return arrowFunctionUFormUCallSignature({ asyncMarker: config.asyncMarker, body: config.body, typeParameters: inner.$fields.type_parameters, returnType: inner.$fields.return_type, parameters: value });
     },
     returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) {
       if (value === undefined) return inner.$fields.return_type;
-      return arrowFunctionUFormUCallSignature({ async: config.async, body: config.body, typeParameters: inner.$fields.type_parameters, parameters: inner.$fields.parameters, returnType: value });
+      return arrowFunctionUFormUCallSignature({ asyncMarker: config.asyncMarker, body: config.body, typeParameters: inner.$fields.type_parameters, parameters: inner.$fields.parameters, returnType: value });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
@@ -2622,7 +2622,7 @@ export function methodDefinition(config: ConfigOf<T.MethodDefinition>) {
   const fields = {
     accessibility_modifier: config.accessibilityModifier,
     override_modifier: config.overrideModifier,
-    readonly: config.readonly ? "readonly" as const : undefined,
+    readonly_marker: config.readonlyMarker ? "readonly" as const : undefined,
     async_marker: config.asyncMarker ? "async" as const : undefined,
     accessor_kind: config.accessorKind,
     name: config.name,
@@ -2639,7 +2639,7 @@ export function methodDefinition(config: ConfigOf<T.MethodDefinition>) {
     $fields: fields,
     accessibilityModifier(value?: T.AccessibilityModifier | undefined) { return _fs(config, methodDefinition, 'accessibilityModifier', value, config?.accessibilityModifier); },
     overrideModifier(value?: "static" | T.OverrideModifier | undefined) { return _fs(config, methodDefinition, 'overrideModifier', value, config?.overrideModifier); },
-    readonly(value?: "readonly" | undefined) { return _fs(config, methodDefinition, 'readonly', value, config?.readonly); },
+    readonlyMarker(value?: "readonly" | undefined) { return _fs(config, methodDefinition, 'readonlyMarker', value, config?.readonlyMarker); },
     asyncMarker(value?: "async" | undefined) { return _fs(config, methodDefinition, 'asyncMarker', value, config?.asyncMarker); },
     accessorKind(value?: "get" | "set" | "*" | undefined) { return _fs(config, methodDefinition, 'accessorKind', value, config?.accessorKind); },
     name(value?: T.PropertyName) { return _fs(config, methodDefinition, 'name', value, config?.name); },
@@ -2800,7 +2800,7 @@ export function methodSignature(config: ConfigOf<T.MethodSignature>) {
   const fields = {
     accessibility_modifier: config.accessibilityModifier,
     override_modifier: config.overrideModifier,
-    readonly: config.readonly ? "readonly" as const : undefined,
+    readonly_marker: config.readonlyMarker ? "readonly" as const : undefined,
     async_marker: config.asyncMarker ? "async" as const : undefined,
     accessor_kind: config.accessorKind,
     name: config.name,
@@ -2816,7 +2816,7 @@ export function methodSignature(config: ConfigOf<T.MethodSignature>) {
     $fields: fields,
     accessibilityModifier(value?: T.AccessibilityModifier | undefined) { return _fs(config, methodSignature, 'accessibilityModifier', value, config?.accessibilityModifier); },
     overrideModifier(value?: "static" | T.OverrideModifier | undefined) { return _fs(config, methodSignature, 'overrideModifier', value, config?.overrideModifier); },
-    readonly(value?: "readonly" | undefined) { return _fs(config, methodSignature, 'readonly', value, config?.readonly); },
+    readonlyMarker(value?: "readonly" | undefined) { return _fs(config, methodSignature, 'readonlyMarker', value, config?.readonlyMarker); },
     asyncMarker(value?: "async" | undefined) { return _fs(config, methodSignature, 'asyncMarker', value, config?.asyncMarker); },
     accessorKind(value?: "get" | "set" | "*" | undefined) { return _fs(config, methodSignature, 'accessorKind', value, config?.accessorKind); },
     name(value?: T.PropertyName) { return _fs(config, methodSignature, 'name', value, config?.name); },
@@ -2868,7 +2868,7 @@ export function abstractMethodSignature(config: ConfigOf<T.AbstractMethodSignatu
 
 export function functionSignature(config: ConfigOf<T.FunctionSignature>) {
   const fields = {
-    async: config.async ? "async" as const : undefined,
+    async_marker: config.asyncMarker ? "async" as const : undefined,
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -2880,7 +2880,7 @@ export function functionSignature(config: ConfigOf<T.FunctionSignature>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    async(value?: "async" | undefined) { return _fs(config, functionSignature, 'async', value, config?.async); },
+    asyncMarker(value?: "async" | undefined) { return _fs(config, functionSignature, 'asyncMarker', value, config?.asyncMarker); },
     name(value?: T.Identifier) { return _fs(config, functionSignature, 'name', value, config?.name); },
     typeParameters(value?: T.TypeParameters | undefined) { return _fs(config, functionSignature, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.FormalParameters) { return _fs(config, functionSignature, 'parameters', value, config?.parameters); },
@@ -4013,7 +4013,7 @@ export function propertySignature(config: ConfigOf<T.PropertySignature>) {
   const fields = {
     accessibility_modifier: config.accessibilityModifier,
     override_modifier: config.overrideModifier,
-    readonly: config.readonly ? "readonly" as const : undefined,
+    readonly_marker: config.readonlyMarker ? "readonly" as const : undefined,
     name: config.name,
     optional_marker: config.optionalMarker ? "?" as const : undefined,
     type: config.type,
@@ -4025,7 +4025,7 @@ export function propertySignature(config: ConfigOf<T.PropertySignature>) {
     $fields: fields,
     accessibilityModifier(value?: T.AccessibilityModifier | undefined) { return _fs(config, propertySignature, 'accessibilityModifier', value, config?.accessibilityModifier); },
     overrideModifier(value?: "static" | T.OverrideModifier | undefined) { return _fs(config, propertySignature, 'overrideModifier', value, config?.overrideModifier); },
-    readonly(value?: "readonly" | undefined) { return _fs(config, propertySignature, 'readonly', value, config?.readonly); },
+    readonlyMarker(value?: "readonly" | undefined) { return _fs(config, propertySignature, 'readonlyMarker', value, config?.readonlyMarker); },
     name(value?: T.PropertyName) { return _fs(config, propertySignature, 'name', value, config?.name); },
     optionalMarker(value?: "?" | undefined) { return _fs(config, propertySignature, 'optionalMarker', value, config?.optionalMarker); },
     typeField(value?: T.TypeAnnotation | undefined) { return _fs(config, propertySignature, 'type', value, config?.type); },
