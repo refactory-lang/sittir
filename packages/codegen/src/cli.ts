@@ -48,6 +48,7 @@ interface CliArgs {
 	tsGenerate?: boolean;
 	skipTsChain?: boolean;
 	rustRender?: boolean;
+	buildNative?: boolean;
 	help?: boolean;
 }
 
@@ -93,6 +94,9 @@ function parseArgs(argv: string[]): CliArgs {
 			case '--rust-render':
 				args.rustRender = true;
 				break;
+			case '--no-build-native':
+				args.buildNative = false;
+				break;
 			case '--help':
 			case '-h':
 				args.help = true;
@@ -129,7 +133,13 @@ Options:
                    (spec 012 T016+): packages/<grammar>/rust-render/src/hash.rs
                    and packages/<grammar>/src/hash.ts. The JS backend shim
                    uses the TS-side hash to detect drift vs. the native
-                   binary (FR-020).
+                   binary (FR-020). After regenerating templates, automatically
+                   rebuilds the corresponding napi crate so the native render
+                   path picks up template changes (otherwise native baseline
+                   collection silently falls back to TS render with stale
+                   templates). Suppress with --no-build-native.
+  --no-build-native  Skip the post-regen napi crate rebuild (use when you
+                   only need the TS-side artifacts; faster regen).
   --help, -h       Show this help
 
 With --all (without --skip-ts-chain), the CLI chains:
@@ -359,6 +369,28 @@ if (cliArgs.rustRender) {
 	console.log(
 		`    ${fxPath} (${extracted.renderCount} render + ${extracted.roundTripCount} roundtrip, ${extracted.coveredKinds.size} kinds)`,
 	);
+
+	// Rebuild the corresponding napi crate so the native render path
+	// picks up the new templates. Askama compiles templates at the
+	// crate's build time via proc macro; without a rebuild, native
+	// baseline collection silently falls back to TS render with the
+	// previous templates baked in. Opt out with --no-build-native.
+	if (cliArgs.buildNative !== false) {
+		const napiCrate = `rust/crates/sittir-${grammar}-napi`;
+		console.log(`  → rebuilding napi crate (sittir-${grammar}-napi)…`);
+		try {
+			execSync(`pnpm -C ${napiCrate} run build`, {
+				stdio: 'inherit',
+				cwd: process.cwd(),
+			});
+		} catch (e) {
+			console.error(
+				`    napi rebuild failed for ${grammar}. Native baseline collection will use stale templates. ` +
+				`Re-run with --no-build-native to suppress this attempt, or fix the cargo build error.`,
+			);
+			throw e;
+		}
+	}
 }
 
 // Write validator-only factory metadata.

@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "ae54940",
+    "commit": "823ddf6",
     "grammars": {
         "python": {
             "parityFixtures": {
