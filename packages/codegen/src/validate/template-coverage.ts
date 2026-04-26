@@ -29,6 +29,7 @@
 import { loadRawEntries } from './node-types-loader.ts'
 import type { RawNodeEntry, RawFieldEntry } from './node-types-loader.ts'
 import { loadRulesFromPath as loadRulesFromTemplatesPath } from './templates-path.ts'
+import { loadGrammarJson, computeNestedFields } from './grammar-fields.ts'
 
 /**
  * Load the rules map from either a legacy YAML file or a directory of
@@ -128,6 +129,16 @@ export function validateTemplateCoverage(
 ): TemplateCoverageResult {
     const entries = loadRawEntries(grammar)
     const rules = loadRulesFromPath(templatesPath)
+    // Tree-sitter `node-types.json` flattens nested-field-paths to the
+    // top level. A field declared inside another `field(...)` block in
+    // the rule shows up as a top-level field of the kind even though
+    // it's only reachable via the parent placeholder's emission. We
+    // load the source grammar to recover the nesting and skip
+    // coverage-checking those flatten artifacts. When `grammar.json`
+    // is absent (older fixtures), `nestedByKind` is empty and the
+    // checker behaves as it did before.
+    const grammarJson = loadGrammarJson(grammar)
+    const nestedByKind = grammarJson ? computeNestedFields(grammarJson) : new Map<string, Set<string>>()
 
     const issues: CoverageIssue[] = []
     let total = 0
@@ -146,7 +157,7 @@ export function validateTemplateCoverage(
         if (rule === undefined) continue // validate-renderable catches this.
 
         total++
-        const kindIssues = checkRule(entry, rule)
+        const kindIssues = checkRule(entry, rule, nestedByKind.get(entry.type) ?? new Set())
         if (kindIssues.length === 0) {
             pass++
         } else {
@@ -223,7 +234,11 @@ function checkVariantsForLiteralLeaks(
     return issues
 }
 
-function checkRule(entry: RawNodeEntry, rule: TemplateRule): CoverageIssue[] {
+function checkRule(
+    entry: RawNodeEntry,
+    rule: TemplateRule,
+    nestedFields: Set<string>,
+): CoverageIssue[] {
     const fields = entry.fields ?? {}
     const fieldNames = Object.keys(fields)
     const issues: CoverageIssue[] = []
@@ -249,6 +264,11 @@ function checkRule(entry: RawNodeEntry, rule: TemplateRule): CoverageIssue[] {
 
     for (const fname of fieldNames) {
         if (isFieldReferenced(fname, unionPlaceholders, clauseKeys, clauseTemplates)) continue
+        // Tree-sitter flatten artifact: `fname` is declared on the
+        // kind but is nested inside another `field(...)` block in the
+        // rule. The template emits it via the parent placeholder, so
+        // direct reference is neither required nor possible.
+        if (nestedFields.has(fname)) continue
         // Show all variant bodies so the caller can see which one(s) to patch.
         const bodies = variants.length === 1
             ? JSON.stringify(variants[0]!.template)

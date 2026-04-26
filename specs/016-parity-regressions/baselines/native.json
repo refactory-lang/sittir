@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "8fed3d9",
+    "commit": "e2f0577",
     "grammars": {
         "python": {
             "parityFixtures": {
@@ -148,15 +148,13 @@
                 "coverage": {
                     "failingKinds": [
                         "call_expression",
-                        "enum_body",
-                        "infer_type",
                         "instantiation_expression",
                         "optional_parameter",
                         "required_parameter",
                         "sequence_expression"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 138,
+                    "pass": 140,
                     "total": 145
                 },
                 "factoryRoundtrip": {
@@ -217,8 +215,8 @@
         }
     },
     "totals": {
-        "fail": 1841,
-        "pass": 3014,
+        "fail": 1839,
+        "pass": 3016,
         "total": 4855
     }
 }
