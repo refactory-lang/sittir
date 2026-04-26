@@ -765,7 +765,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'range_expression': [
   ],
   'range_pattern': [
-    { name: 'left', required: true, multiple: false },
   ],
   'raw_string_literal': [
     { name: 'rawStringLiteralStart', required: false, multiple: false },

@@ -1356,14 +1356,6 @@ export function wrapMutPattern(data: _NodeData, tree: TreeHandle): WrappedNode<M
 export function wrapRangePattern(data: _NodeData, tree: TreeHandle): WrappedNode<RangePattern> {
   return {
     ...data,
-    get left() { return drillIn(data.$fields?.['left'], tree); },
-    get $variant() {
-      const childType = data.$children?.[0]?.$type;
-      if (childType === 'range_pattern_left_with_right') return 'left_with_right';
-      if (childType === 'range_pattern_left_bare') return 'left_bare';
-      if (childType === 'range_pattern_prefix') return 'prefix';
-      return data.$variant ?? '';
-    },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<RangePattern>;
 }

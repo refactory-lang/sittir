@@ -1531,12 +1531,12 @@ describe('mut_pattern', () => {
 
 describe('range_pattern', () => {
   it('left_with_right form produces correct type', () => {
-    const node = ir.rangePattern.left_with_right({ left: { $type: '_literal_pattern', $text: 'test' } as any });
+    const node = ir.rangePattern.left_with_right({});
     expect(node.$type).toBe('range_pattern');
     expect(node.$source).toBe('factory');
   });
   it('left_bare form produces correct type', () => {
-    const node = ir.rangePattern.left_bare({ left: { $type: '_literal_pattern', $text: 'test' } as any });
+    const node = ir.rangePattern.left_bare({});
     expect(node.$type).toBe('range_pattern');
     expect(node.$source).toBe('factory');
   });

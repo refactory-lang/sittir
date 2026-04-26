@@ -13624,6 +13624,92 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
+      "$type": "function_declaration",
+      "$source": "ts",
+      "$text": "function bar()\n  // above is a function declaration\n{}",
+      "$fields": {
+        "function": {
+          "$type": "function",
+          "$source": "ts",
+          "$text": "function",
+          "$span": {
+            "start": 49,
+            "end": 57
+          },
+          "$nodeId": 2303848,
+          "$named": false
+        },
+        "name": {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "bar",
+          "$span": {
+            "start": 58,
+            "end": 61
+          },
+          "$nodeId": 2303856,
+          "$named": true
+        },
+        "parameters": {
+          "$type": "formal_parameters",
+          "$source": "ts",
+          "$text": "()",
+          "$span": {
+            "start": 61,
+            "end": 63
+          },
+          "$nodeId": 2303576,
+          "$named": true
+        },
+        "body": {
+          "$type": "statement_block",
+          "$source": "ts",
+          "$text": "{}",
+          "$span": {
+            "start": 101,
+            "end": 103
+          },
+          "$nodeId": 2303880,
+          "$named": true
+        }
+      },
+      "$children": [
+        {
+          "$type": "comment",
+          "$source": "ts",
+          "$text": "// above is a function declaration",
+          "$span": {
+            "start": 66,
+            "end": 100
+          },
+          "$nodeId": 2303872,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 49,
+        "end": 103
+      },
+      "$nodeId": 2303976,
+      "$named": true
+    },
+    "expectedOutput": "function bar () {} // above is a function declaration"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "function bar()\n  // above is a function declaration\n{}",
+    "pattern": "function_declaration",
+    "edits": [],
+    "expectedSourceOut": "function bar () {} // above is a function declaration",
+    "expectedReparseTree": "(function_declaration name: (identifier) parameters: (formal_parameters) body: (statement_block (comment)))",
+    "wrappedText": "function bar () {} // above is a function declaration",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
       "$type": "statement_block",
       "$source": "ts",
       "$text": "{}",

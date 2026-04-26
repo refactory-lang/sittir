@@ -1,13 +1,13 @@
 {
     "backend": "typescript",
-    "commit": "7d048b8",
+    "commit": "df3f566",
     "grammars": {
         "python": {
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
-                "pass": 195,
-                "total": 195
+                "pass": 201,
+                "total": 201
             },
             "validators": {
                 "coverage": {
@@ -64,8 +64,8 @@
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
-                "pass": 475,
-                "total": 475
+                "pass": 478,
+                "total": 478
             },
             "validators": {
                 "coverage": {
@@ -111,10 +111,12 @@
                     "total": 148
                 },
                 "roundtrip": {
-                    "astMatchPass": 124,
-                    "failingKinds": [],
+                    "astMatchPass": 123,
+                    "failingKinds": [
+                        "range_pattern"
+                    ],
                     "formatDeferredKinds": [],
-                    "pass": 124,
+                    "pass": 123,
                     "total": 136
                 }
             }
@@ -123,8 +125,8 @@
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
-                "pass": 414,
-                "total": 414
+                "pass": 415,
+                "total": 415
             },
             "validators": {
                 "coverage": {
@@ -189,8 +191,8 @@
         }
     },
     "totals": {
-        "fail": 1795,
-        "pass": 3173,
-        "total": 4968
+        "fail": 1796,
+        "pass": 3182,
+        "total": 4978
     }
 }

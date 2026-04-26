@@ -231,8 +231,7 @@ function renderWrapForNode(node: AssembledNode): string | undefined {
             return emitFieldCarryingWrap(node, [], node.children)
         case 'polymorph': {
             const { fields, children } = mergePolymorphFormsIntoFieldsAndChildren(node)
-            const variantGetter = buildVariantGetter(node, fields)
-            return emitFieldCarryingWrap(node, fields, children, variantGetter)
+            return emitFieldCarryingWrap(node, fields, children)
         }
         default:
             return undefined
@@ -379,74 +378,10 @@ function emitWrappedNodeCast(lines: string[], typeName: string): void {
     lines.push('}')
 }
 
-/**
- * Build a `get $variant()` getter line for override polymorphs that need
- * child-type dispatch. Required when the polymorph's forms have non-uniform
- * field sets — the parent Jinja template uses
- * `{%- if variant == "name" -%}` branching and `variant` is
- * `node.$variant ?? ''` in the render context.
- *
- * For parse-tree nodes `$variant` is not set by `readNode` (factories set
- * it explicitly). This getter derives the variant name from the type of the
- * first child so that round-trip rendering (`readNode` → `render()`) works
- * without a factory-sourced `$variant`.
- *
- * Only emitted when:
- *   - The polymorph is source='override' (has `variantChildKinds`), AND
- *   - The merged field set is non-empty, AND
- *   - At least one form lacks a field that another form has (i.e. the
- *     template would use `{% if variant %}` branching).
- *
- * @param node  - The assembled override polymorph.
- * @param mergedFields - All fields across all forms (already merged by
- *   `mergePolymorphFormsIntoFieldsAndChildren`).
- * @returns An array containing one getter line, or `undefined` if not needed.
- */
-function buildVariantGetter(
-    node: AssembledPolymorph,
-    mergedFields: readonly AssembledField[],
-): string[] | undefined {
-    // Only relevant for override polymorphs with real visible child kinds.
-    if (node.source !== 'override' || node.variantChildKinds.length === 0) return undefined
-
-    // Check whether forms have heterogeneous field sets — same heuristic the
-    // template emitter uses to decide between allEqual vs {% if variant %}.
-    const mergedFieldNames = new Set(mergedFields.map(f => f.name))
-    if (mergedFieldNames.size === 0) return undefined // no fields → always allEqual
-
-    const formsAllHaveAllFields = node.forms.every(form =>
-        mergedFields.every(f => form.fields.some(ff => ff.name === f.name))
-    )
-    if (formsAllHaveAllFields) return undefined // uniform → allEqual → no $variant
-
-    // Emit a $variant getter that maps child.$type → form name by stripping
-    // the parent-kind prefix. Maps each `${parentKind}_${formName}` child
-    // type to `formName`.
-    const parentKind = node.kind
-    const mappings = node.variantChildKinds
-        .map(childKind => {
-            const prefix = `${parentKind}_`
-            const formName = childKind.startsWith(prefix)
-                ? childKind.slice(prefix.length)
-                : childKind
-            return `      if (childType === '${childKind}') return '${formName}';`
-        })
-        .join('\n')
-
-    return [
-        `    get $variant() {`,
-        `      const childType = data.$children?.[0]?.$type;`,
-        mappings,
-        `      return data.$variant ?? '';`,
-        `    },`,
-    ]
-}
-
 function emitFieldCarryingWrap(
     node: WrapNode,
     fields: readonly AssembledField[],
     children: readonly AssembledChild[],
-    extraGetters?: string[],
 ): string {
     const fn = `wrap${node.typeName}`
     const lines: string[] = []
@@ -458,10 +393,6 @@ function emitFieldCarryingWrap(
         // Avoid shadowing built-in property names on the returned view.
         const method = f.propertyName === 'type' ? 'typeField' : f.propertyName
         emitFieldGetterLine(lines, f, method)
-    }
-
-    if (extraGetters) {
-        for (const g of extraGetters) lines.push(g)
     }
 
     emitChildrenSlotGetters(lines, children)
