@@ -1387,7 +1387,7 @@ export interface FieldDefinition {
 
 export interface FormalParameters {
   readonly $type: 'formal_parameters';
-  readonly $children: NonEmptyArray<FormalParameter>;
+  readonly $children: readonly (FormalParameter)[];
 }
 
 export interface ClassStaticBlock {
@@ -1667,7 +1667,7 @@ export interface EnumDeclaration {
 export interface EnumBody {
   readonly $type: 'enum_body';
   readonly $fields: {
-    readonly opening: NonEmptyArray<PropertyName | EnumAssignment>;
+    readonly opening: readonly (PropertyName | EnumAssignment)[];
   };
 }
 

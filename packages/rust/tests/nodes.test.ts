@@ -379,7 +379,7 @@ describe('function_modifiers', () => {
 
 describe('where_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.whereClause({ type: "where_predicate" } as never);
+    const node = ir.whereClause();
     expect(node.$type).toBe('where_clause');
     expect(node.$source).toBe('factory');
   });

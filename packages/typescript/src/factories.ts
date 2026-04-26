@@ -2562,7 +2562,6 @@ export function fieldDefinition(config: ConfigOf<T.FieldDefinition>) {
 }
 
 export function formalParameters(...children: T.FormalParameter[]) {
-  _assertNonEmpty(children, 'formal_parameters.children');
   return {
     $type: 'formal_parameters' as const,
     $source: 'factory' as const,
@@ -3261,7 +3260,7 @@ export function enumBody(config: ConfigOf<T.EnumBody>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    opening(...values: NonEmptyArray<T.PropertyName | T.EnumAssignment>) { return _fsm(config, enumBody, 'opening', values, config?.opening); },
+    opening(...values: (T.PropertyName | T.EnumAssignment)[]) { return _fsm(config, enumBody, 'opening', values, config?.opening); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

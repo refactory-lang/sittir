@@ -1179,6 +1179,38 @@ function detectSymbolTarget(member) {
     }
   };
 }
+function countSymbolsInRepeat(node, kindCounts, inRepeat = false) {
+  if (!node) return;
+  const t = node.type;
+  if (!t) return;
+  if (isFieldType(t)) return;
+  if (t === "ALIAS" || t === "alias") return;
+  if (isSymbolType(t)) {
+    if (!inRepeat) return;
+    const name = node.name;
+    if (typeof name === "string") {
+      kindCounts.set(name, (kindCounts.get(name) ?? 0) + 1);
+    }
+    return;
+  }
+  if (isRepeatType(t)) {
+    const content = node.content;
+    countSymbolsInRepeat(content, kindCounts, true);
+    return;
+  }
+  if (isSeqType(t) || isChoiceType(t)) {
+    const members = node.members;
+    if (Array.isArray(members)) {
+      for (const m of members) countSymbolsInRepeat(m, kindCounts, inRepeat);
+    }
+    return;
+  }
+  if (isOptionalType(t) || isPrecWrapper(node)) {
+    const content = node.content;
+    countSymbolsInRepeat(content, kindCounts, inRepeat);
+    return;
+  }
+}
 function applySymbolToField(ruleName, rule, supertypeNames) {
   if (ruleName.startsWith("_")) return rule;
   const precStack = [];
@@ -1193,6 +1225,9 @@ function applySymbolToField(ruleName, rule, supertypeNames) {
   const targetByIdx = members.map(detectSymbolTarget);
   for (const t of targetByIdx) {
     if (t) kindCounts.set(t.name, (kindCounts.get(t.name) ?? 0) + 1);
+  }
+  for (const m of members) {
+    countSymbolsInRepeat(m, kindCounts);
   }
   const existing = collectFieldNamesRuntime(cursor);
   let changed = false;

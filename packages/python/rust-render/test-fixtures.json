@@ -15,7 +15,7 @@
             "start": 5,
             "end": 8
           },
-          "$nodeId": 532000,
+          "$nodeId": 531944,
           "$named": true
         },
         "operator": {
@@ -26,7 +26,7 @@
             "start": 9,
             "end": 10
           },
-          "$nodeId": 532768,
+          "$nodeId": 532712,
           "$named": false
         },
         "right": {
@@ -37,7 +37,7 @@
             "start": 11,
             "end": 14
           },
-          "$nodeId": 532504,
+          "$nodeId": 532448,
           "$named": true
         }
       },
@@ -45,7 +45,7 @@
         "start": 5,
         "end": 14
       },
-      "$nodeId": 532864,
+      "$nodeId": 532808,
       "$named": true
     },
     "expectedOutput": "β_γ + Ψ_5"
@@ -77,7 +77,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 535264,
+          "$nodeId": 535208,
           "$named": true
         },
         "[": {
@@ -88,7 +88,7 @@
             "start": 1,
             "end": 2
           },
-          "$nodeId": 535616,
+          "$nodeId": 535560,
           "$named": false
         },
         "subscript": {
@@ -99,7 +99,7 @@
             "start": 2,
             "end": 3
           },
-          "$nodeId": 535352,
+          "$nodeId": 535296,
           "$named": true
         },
         "]": {
@@ -110,7 +110,7 @@
             "start": 3,
             "end": 4
           },
-          "$nodeId": 535632,
+          "$nodeId": 535576,
           "$named": false
         }
       },
@@ -118,7 +118,7 @@
         "start": 0,
         "end": 4
       },
-      "$nodeId": 535720,
+      "$nodeId": 535664,
       "$named": true
     },
     "expectedOutput": "a[1]"
@@ -150,7 +150,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 540272,
+          "$nodeId": 540216,
           "$named": true
         },
         "[": {
@@ -161,7 +161,7 @@
             "start": 1,
             "end": 2
           },
-          "$nodeId": 540536,
+          "$nodeId": 540480,
           "$named": false
         },
         "subscript": {
@@ -172,7 +172,7 @@
             "start": 2,
             "end": 3
           },
-          "$nodeId": 540544,
+          "$nodeId": 540488,
           "$named": true
         },
         "]": {
@@ -183,7 +183,7 @@
             "start": 3,
             "end": 4
           },
-          "$nodeId": 540552,
+          "$nodeId": 540496,
           "$named": false
         }
       },
@@ -191,7 +191,7 @@
         "start": 0,
         "end": 4
       },
-      "$nodeId": 540640,
+      "$nodeId": 540584,
       "$named": true
     },
     "expectedOutput": "a[:]"
@@ -223,7 +223,7 @@
             "start": 0,
             "end": 3
           },
-          "$nodeId": 545880,
+          "$nodeId": 545824,
           "$named": true
         },
         ".": {
@@ -234,7 +234,7 @@
             "start": 3,
             "end": 4
           },
-          "$nodeId": 546056,
+          "$nodeId": 546000,
           "$named": false
         },
         "attribute": {
@@ -245,7 +245,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 546064,
+          "$nodeId": 546008,
           "$named": true
         }
       },
@@ -253,7 +253,7 @@
         "start": 0,
         "end": 5
       },
-      "$nodeId": 546152,
+      "$nodeId": 546096,
       "$named": true
     },
     "expectedOutput": "a.b.c"
@@ -285,7 +285,7 @@
             "start": 0,
             "end": 5
           },
-          "$nodeId": 548984,
+          "$nodeId": 548928,
           "$named": false
         },
         "primary_expression": {
@@ -296,7 +296,7 @@
             "start": 6,
             "end": 13
           },
-          "$nodeId": 548896,
+          "$nodeId": 548840,
           "$named": true
         }
       },
@@ -304,7 +304,7 @@
         "start": 0,
         "end": 13
       },
-      "$nodeId": 549080,
+      "$nodeId": 549024,
       "$named": true
     },
     "expectedOutput": "await i(j, 5)"
@@ -336,7 +336,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 548072,
+          "$nodeId": 548016,
           "$named": true
         },
         "arguments": {
@@ -347,7 +347,7 @@
             "start": 7,
             "end": 13
           },
-          "$nodeId": 548808,
+          "$nodeId": 548752,
           "$named": true
         }
       },
@@ -355,7 +355,7 @@
         "start": 6,
         "end": 13
       },
-      "$nodeId": 548896,
+      "$nodeId": 548840,
       "$named": true
     },
     "expectedOutput": "i (j, 5)"
@@ -387,7 +387,7 @@
             "start": 67,
             "end": 70
           },
-          "$nodeId": 551168,
+          "$nodeId": 551112,
           "$named": true
         }
       ],
@@ -395,7 +395,7 @@
         "start": 67,
         "end": 70
       },
-      "$nodeId": 551448,
+      "$nodeId": 551392,
       "$named": true
     },
     "expectedOutput": "str"
@@ -427,7 +427,7 @@
             "start": 0,
             "end": 5
           },
-          "$nodeId": 561704,
+          "$nodeId": 561648,
           "$named": true
         },
         "arguments": {
@@ -438,7 +438,7 @@
             "start": 5,
             "end": 7
           },
-          "$nodeId": 562392,
+          "$nodeId": 562336,
           "$named": true
         }
       },
@@ -446,7 +446,7 @@
         "start": 0,
         "end": 7
       },
-      "$nodeId": 562480,
+      "$nodeId": 562424,
       "$named": true
     },
     "expectedOutput": "__a__ ()"
@@ -478,7 +478,7 @@
             "start": 0,
             "end": 5
           },
-          "$nodeId": 567800,
+          "$nodeId": 567744,
           "$named": true
         },
         "arguments": {
@@ -489,7 +489,7 @@
             "start": 5,
             "end": 7
           },
-          "$nodeId": 568616,
+          "$nodeId": 568560,
           "$named": true
         }
       },
@@ -497,7 +497,7 @@
         "start": 0,
         "end": 7
       },
-      "$nodeId": 568704,
+      "$nodeId": 568648,
       "$named": true
     },
     "expectedOutput": "print ()"
@@ -529,7 +529,7 @@
             "start": 50,
             "end": 51
           },
-          "$nodeId": 581880,
+          "$nodeId": 581824,
           "$named": false
         }
       },
@@ -542,7 +542,7 @@
             "start": 51,
             "end": 56
           },
-          "$nodeId": 581888,
+          "$nodeId": 581832,
           "$named": true
         }
       ],
@@ -550,7 +550,7 @@
         "start": 50,
         "end": 56
       },
-      "$nodeId": 581296,
+      "$nodeId": 581240,
       "$named": true
     },
     "expectedOutput": "*print"
@@ -582,7 +582,7 @@
             "start": 0,
             "end": 4
           },
-          "$nodeId": 586784,
+          "$nodeId": 586728,
           "$named": true
         },
         "arguments": {
@@ -593,7 +593,7 @@
             "start": 4,
             "end": 122
           },
-          "$nodeId": 589952,
+          "$nodeId": 589896,
           "$named": true
         }
       },
@@ -601,7 +601,7 @@
         "start": 0,
         "end": 122
       },
-      "$nodeId": 590040,
+      "$nodeId": 589984,
       "$named": true
     },
     "expectedOutput": "exec (\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\" : None}, safe_dict)"
@@ -633,7 +633,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 587840,
+          "$nodeId": 587784,
           "$named": true
         },
         "content": {
@@ -644,7 +644,7 @@
             "start": 6,
             "end": 84
           },
-          "$nodeId": 587848,
+          "$nodeId": 587792,
           "$named": true
         },
         "string_end": {
@@ -655,7 +655,7 @@
             "start": 84,
             "end": 85
           },
-          "$nodeId": 587856,
+          "$nodeId": 587800,
           "$named": true
         }
       },
@@ -663,7 +663,7 @@
         "start": 5,
         "end": 85
       },
-      "$nodeId": 587944,
+      "$nodeId": 587888,
       "$named": true
     },
     "expectedOutput": "\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\""
@@ -695,7 +695,7 @@
             "start": 87,
             "end": 88
           },
-          "$nodeId": 589008,
+          "$nodeId": 588952,
           "$named": false
         },
         "}": {
@@ -706,7 +706,7 @@
             "start": 109,
             "end": 110
           },
-          "$nodeId": 589024,
+          "$nodeId": 588968,
           "$named": false
         }
       },
@@ -719,7 +719,7 @@
             "start": 88,
             "end": 109
           },
-          "$nodeId": 589016,
+          "$nodeId": 588960,
           "$named": true
         }
       ],
@@ -727,7 +727,7 @@
         "start": 87,
         "end": 110
       },
-      "$nodeId": 589112,
+      "$nodeId": 589056,
       "$named": true
     },
     "expectedOutput": "{ \"__builtins__\" : None }"
@@ -759,7 +759,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 602400,
+          "$nodeId": 602344,
           "$named": true
         },
         "arguments": {
@@ -770,7 +770,7 @@
             "start": 1,
             "end": 6
           },
-          "$nodeId": 603144,
+          "$nodeId": 603088,
           "$named": true
         }
       },
@@ -778,7 +778,7 @@
         "start": 0,
         "end": 6
       },
-      "$nodeId": 603232,
+      "$nodeId": 603176,
       "$named": true
     },
     "expectedOutput": "a (*())"
@@ -810,7 +810,7 @@
             "start": 2,
             "end": 3
           },
-          "$nodeId": 602856,
+          "$nodeId": 602800,
           "$named": false
         },
         "expression": {
@@ -821,7 +821,7 @@
             "start": 3,
             "end": 5
           },
-          "$nodeId": 602680,
+          "$nodeId": 602624,
           "$named": true
         }
       },
@@ -829,7 +829,7 @@
         "start": 2,
         "end": 5
       },
-      "$nodeId": 603040,
+      "$nodeId": 602984,
       "$named": true
     },
     "expectedOutput": "*()"
@@ -861,7 +861,7 @@
             "start": 3,
             "end": 4
           },
-          "$nodeId": 602584,
+          "$nodeId": 602528,
           "$named": false
         },
         ")": {
@@ -872,7 +872,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 602592,
+          "$nodeId": 602536,
           "$named": false
         }
       },
@@ -880,7 +880,7 @@
         "start": 3,
         "end": 5
       },
-      "$nodeId": 602680,
+      "$nodeId": 602624,
       "$named": true
     },
     "expectedOutput": "()"
@@ -912,7 +912,7 @@
             "start": 11,
             "end": 12
           },
-          "$nodeId": 603760,
+          "$nodeId": 603704,
           "$named": false
         },
         "}": {
@@ -923,7 +923,7 @@
             "start": 12,
             "end": 13
           },
-          "$nodeId": 603768,
+          "$nodeId": 603712,
           "$named": false
         }
       },
@@ -931,7 +931,7 @@
         "start": 11,
         "end": 13
       },
-      "$nodeId": 603856,
+      "$nodeId": 603800,
       "$named": true
     },
     "expectedOutput": "{  }"
@@ -963,7 +963,7 @@
             "start": 0,
             "end": 14
           },
-          "$nodeId": 613776,
+          "$nodeId": 613720,
           "$named": true
         },
         "operator": {
@@ -974,7 +974,7 @@
             "start": 15,
             "end": 16
           },
-          "$nodeId": 614320,
+          "$nodeId": 614264,
           "$named": false
         },
         "right": {
@@ -985,7 +985,7 @@
             "start": 17,
             "end": 22
           },
-          "$nodeId": 614224,
+          "$nodeId": 614168,
           "$named": true
         }
       },
@@ -993,7 +993,7 @@
         "start": 0,
         "end": 22
       },
-      "$nodeId": 614416,
+      "$nodeId": 614360,
       "$named": true
     },
     "expectedOutput": "a + b * c ** d - e / 5"
@@ -1025,7 +1025,7 @@
             "start": 30,
             "end": 31
           },
-          "$nodeId": 615760,
+          "$nodeId": 615704,
           "$named": false
         },
         "argument": {
@@ -1036,7 +1036,7 @@
             "start": 31,
             "end": 32
           },
-          "$nodeId": 615400,
+          "$nodeId": 615344,
           "$named": true
         }
       },
@@ -1044,7 +1044,7 @@
         "start": 30,
         "end": 32
       },
-      "$nodeId": 615856,
+      "$nodeId": 615800,
       "$named": true
     },
     "expectedOutput": "- 5"
@@ -1076,7 +1076,7 @@
             "start": 0,
             "end": 2
           },
-          "$nodeId": 621416,
+          "$nodeId": 621360,
           "$named": true
         },
         "operator": {
@@ -1087,7 +1087,7 @@
             "start": 2,
             "end": 3
           },
-          "$nodeId": 621680,
+          "$nodeId": 621624,
           "$named": false
         },
         "right": {
@@ -1098,7 +1098,7 @@
             "start": 3,
             "end": 5
           },
-          "$nodeId": 621584,
+          "$nodeId": 621528,
           "$named": true
         }
       },
@@ -1106,7 +1106,7 @@
         "start": 0,
         "end": 5
       },
-      "$nodeId": 621776,
+      "$nodeId": 621720,
       "$named": true
     },
     "expectedOutput": ".1 - .0"
@@ -1138,7 +1138,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 627584,
+          "$nodeId": 627528,
           "$named": true
         },
         "operator": {
@@ -1149,7 +1149,7 @@
             "start": 1,
             "end": 3
           },
-          "$nodeId": 628128,
+          "$nodeId": 628072,
           "$named": false
         },
         "right": {
@@ -1160,7 +1160,7 @@
             "start": 3,
             "end": 7
           },
-          "$nodeId": 628032,
+          "$nodeId": 627976,
           "$named": true
         }
       },
@@ -1168,7 +1168,7 @@
         "start": 0,
         "end": 7
       },
-      "$nodeId": 628224,
+      "$nodeId": 628168,
       "$named": true
     },
     "expectedOutput": "2 ** 2**3"
@@ -1200,7 +1200,7 @@
             "start": 8,
             "end": 9
           },
-          "$nodeId": 629032,
+          "$nodeId": 628976,
           "$named": false
         },
         "argument": {
@@ -1211,7 +1211,7 @@
             "start": 9,
             "end": 13
           },
-          "$nodeId": 628944,
+          "$nodeId": 628888,
           "$named": true
         }
       },
@@ -1219,7 +1219,7 @@
         "start": 8,
         "end": 13
       },
-      "$nodeId": 629128,
+      "$nodeId": 629072,
       "$named": true
     },
     "expectedOutput": "- 2**2"
@@ -1251,7 +1251,7 @@
             "start": 0,
             "end": 3
           },
-          "$nodeId": 632968,
+          "$nodeId": 632912,
           "$named": true
         },
         "operator": {
@@ -1262,7 +1262,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 634272,
+          "$nodeId": 634216,
           "$named": false
         },
         "right": {
@@ -1273,7 +1273,7 @@
             "start": 6,
             "end": 18
           },
-          "$nodeId": 634176,
+          "$nodeId": 634120,
           "$named": true
         }
       },
@@ -1281,7 +1281,7 @@
         "start": 0,
         "end": 18
       },
-      "$nodeId": 634368,
+      "$nodeId": 634312,
       "$named": true
     },
     "expectedOutput": "a() + b[c] * c.d.e"
@@ -1313,7 +1313,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 632688,
+          "$nodeId": 632632,
           "$named": true
         },
         "arguments": {
@@ -1324,7 +1324,7 @@
             "start": 1,
             "end": 3
           },
-          "$nodeId": 632880,
+          "$nodeId": 632824,
           "$named": true
         }
       },
@@ -1332,7 +1332,7 @@
         "start": 0,
         "end": 3
       },
-      "$nodeId": 632968,
+      "$nodeId": 632912,
       "$named": true
     },
     "expectedOutput": "a ()"
@@ -1364,7 +1364,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 633056,
+          "$nodeId": 633000,
           "$named": true
         },
         "[": {
@@ -1375,7 +1375,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 633328,
+          "$nodeId": 633272,
           "$named": false
         },
         "subscript": {
@@ -1386,7 +1386,7 @@
             "start": 8,
             "end": 9
           },
-          "$nodeId": 633144,
+          "$nodeId": 633088,
           "$named": true
         },
         "]": {
@@ -1397,7 +1397,7 @@
             "start": 9,
             "end": 10
           },
-          "$nodeId": 633344,
+          "$nodeId": 633288,
           "$named": false
         }
       },
@@ -1405,7 +1405,7 @@
         "start": 6,
         "end": 10
       },
-      "$nodeId": 633432,
+      "$nodeId": 633376,
       "$named": true
     },
     "expectedOutput": "b[c]"
@@ -1437,7 +1437,7 @@
             "start": 13,
             "end": 16
           },
-          "$nodeId": 633712,
+          "$nodeId": 633656,
           "$named": true
         },
         ".": {
@@ -1448,7 +1448,7 @@
             "start": 16,
             "end": 17
           },
-          "$nodeId": 633888,
+          "$nodeId": 633832,
           "$named": false
         },
         "attribute": {
@@ -1459,7 +1459,7 @@
             "start": 17,
             "end": 18
           },
-          "$nodeId": 633896,
+          "$nodeId": 633840,
           "$named": true
         }
       },
@@ -1467,7 +1467,7 @@
         "start": 13,
         "end": 18
       },
-      "$nodeId": 633984,
+      "$nodeId": 633928,
       "$named": true
     },
     "expectedOutput": "c.d.e"
@@ -1499,7 +1499,7 @@
             "start": 0,
             "end": 6
           },
-          "$nodeId": 641624,
+          "$nodeId": 641568,
           "$named": true
         },
         "operator": {
@@ -1510,7 +1510,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 642728,
+          "$nodeId": 642672,
           "$named": false
         },
         "right": {
@@ -1521,7 +1521,7 @@
             "start": 9,
             "end": 23
           },
-          "$nodeId": 642632,
+          "$nodeId": 642576,
           "$named": true
         }
       },
@@ -1529,7 +1529,7 @@
         "start": 0,
         "end": 23
       },
-      "$nodeId": 642824,
+      "$nodeId": 642768,
       "$named": true
     },
     "expectedOutput": "a << b | c >> d & e ^ f"
@@ -1561,7 +1561,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 645760,
+          "$nodeId": 645704,
           "$named": true
         },
         "operator": {
@@ -1572,7 +1572,7 @@
             "start": 2,
             "end": 4
           },
-          "$nodeId": 646568,
+          "$nodeId": 646512,
           "$named": false
         },
         "right": {
@@ -1583,7 +1583,7 @@
             "start": 5,
             "end": 12
           },
-          "$nodeId": 646472,
+          "$nodeId": 646416,
           "$named": true
         }
       },
@@ -1591,7 +1591,7 @@
         "start": 0,
         "end": 12
       },
-      "$nodeId": 646664,
+      "$nodeId": 646608,
       "$named": true
     },
     "expectedOutput": "a or b and c"
@@ -1623,7 +1623,7 @@
             "start": 13,
             "end": 16
           },
-          "$nodeId": 647192,
+          "$nodeId": 647136,
           "$named": false
         },
         "argument": {
@@ -1634,7 +1634,7 @@
             "start": 17,
             "end": 18
           },
-          "$nodeId": 646840,
+          "$nodeId": 646784,
           "$named": true
         }
       },
@@ -1642,7 +1642,7 @@
         "start": 13,
         "end": 18
       },
-      "$nodeId": 647288,
+      "$nodeId": 647232,
       "$named": true
     },
     "expectedOutput": "not d"
@@ -1674,7 +1674,7 @@
             "start": 21,
             "end": 22
           },
-          "$nodeId": 665064,
+          "$nodeId": 665008,
           "$named": false
         }
       },
@@ -1687,7 +1687,7 @@
             "start": 22,
             "end": 23
           },
-          "$nodeId": 665072,
+          "$nodeId": 665016,
           "$named": true
         }
       ],
@@ -1695,7 +1695,7 @@
         "start": 21,
         "end": 23
       },
-      "$nodeId": 665160,
+      "$nodeId": 665104,
       "$named": true
     },
     "expectedOutput": "*c"
@@ -1727,7 +1727,7 @@
             "start": 44,
             "end": 45
           },
-          "$nodeId": 667736,
+          "$nodeId": 667680,
           "$named": true
         },
         "[": {
@@ -1738,7 +1738,7 @@
             "start": 45,
             "end": 46
           },
-          "$nodeId": 668008,
+          "$nodeId": 667952,
           "$named": false
         },
         "subscript": {
@@ -1749,7 +1749,7 @@
             "start": 46,
             "end": 47
           },
-          "$nodeId": 667824,
+          "$nodeId": 667768,
           "$named": true
         },
         "]": {
@@ -1760,7 +1760,7 @@
             "start": 47,
             "end": 48
           },
-          "$nodeId": 668024,
+          "$nodeId": 667968,
           "$named": false
         }
       },
@@ -1768,7 +1768,7 @@
         "start": 44,
         "end": 48
       },
-      "$nodeId": 668112,
+      "$nodeId": 668056,
       "$named": true
     },
     "expectedOutput": "a[b]"
@@ -1800,7 +1800,7 @@
             "start": 61,
             "end": 62
           },
-          "$nodeId": 669832,
+          "$nodeId": 669776,
           "$named": true
         },
         ".": {
@@ -1811,7 +1811,7 @@
             "start": 62,
             "end": 63
           },
-          "$nodeId": 670496,
+          "$nodeId": 670440,
           "$named": false
         },
         "attribute": {
@@ -1822,7 +1822,7 @@
             "start": 63,
             "end": 64
           },
-          "$nodeId": 670504,
+          "$nodeId": 670448,
           "$named": true
         }
       },
@@ -1830,7 +1830,7 @@
         "start": 61,
         "end": 64
       },
-      "$nodeId": 670704,
+      "$nodeId": 670648,
       "$named": true
     },
     "expectedOutput": "b.c"
@@ -1862,7 +1862,7 @@
             "start": 13,
             "end": 23
           },
-          "$nodeId": 675368,
+          "$nodeId": 675312,
           "$named": true
         }
       ],
@@ -1870,7 +1870,7 @@
         "start": 13,
         "end": 23
       },
-      "$nodeId": 675904,
+      "$nodeId": 675848,
       "$named": true
     },
     "expectedOutput": "List[Leaf]"
@@ -1902,7 +1902,7 @@
             "start": 26,
             "end": 27
           },
-          "$nodeId": 675536,
+          "$nodeId": 675480,
           "$named": false
         },
         "]": {
@@ -1913,7 +1913,7 @@
             "start": 27,
             "end": 28
           },
-          "$nodeId": 675544,
+          "$nodeId": 675488,
           "$named": false
         }
       },
@@ -1921,7 +1921,7 @@
         "start": 26,
         "end": 28
       },
-      "$nodeId": 675632,
+      "$nodeId": 675576,
       "$named": true
     },
     "expectedOutput": "[]"
@@ -1953,7 +1953,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 689728,
+          "$nodeId": 689672,
           "$named": true
         },
         ":=": {
@@ -1964,7 +1964,7 @@
             "start": 2,
             "end": 4
           },
-          "$nodeId": 690080,
+          "$nodeId": 690024,
           "$named": false
         },
         "value": {
@@ -1975,7 +1975,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 689896,
+          "$nodeId": 689840,
           "$named": true
         }
       },
@@ -1983,7 +1983,7 @@
         "start": 0,
         "end": 6
       },
-      "$nodeId": 690176,
+      "$nodeId": 690120,
       "$named": true
     },
     "expectedOutput": "a:=x"
@@ -2015,7 +2015,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 691448,
+          "$nodeId": 691392,
           "$named": false
         },
         ")": {
@@ -2026,7 +2026,7 @@
             "start": 17,
             "end": 18
           },
-          "$nodeId": 691464,
+          "$nodeId": 691408,
           "$named": false
         }
       },
@@ -2039,7 +2039,7 @@
             "start": 8,
             "end": 17
           },
-          "$nodeId": 691360,
+          "$nodeId": 691304,
           "$named": true
         }
       ],
@@ -2047,7 +2047,7 @@
         "start": 7,
         "end": 18
       },
-      "$nodeId": 691552,
+      "$nodeId": 691496,
       "$named": true
     },
     "expectedOutput": "(y := f(x))"
@@ -2079,7 +2079,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 690616,
+          "$nodeId": 690560,
           "$named": true
         },
         "arguments": {
@@ -2090,7 +2090,7 @@
             "start": 14,
             "end": 17
           },
-          "$nodeId": 690992,
+          "$nodeId": 690936,
           "$named": true
         }
       },
@@ -2098,7 +2098,7 @@
         "start": 13,
         "end": 17
       },
-      "$nodeId": 691080,
+      "$nodeId": 691024,
       "$named": true
     },
     "expectedOutput": "f (x)"
@@ -2130,7 +2130,7 @@
             "start": 116,
             "end": 125
           },
-          "$nodeId": 698680,
+          "$nodeId": 698624,
           "$named": true
         }
       ],
@@ -2138,7 +2138,7 @@
         "start": 116,
         "end": 125
       },
-      "$nodeId": 699136,
+      "$nodeId": 699080,
       "$named": true
     },
     "expectedOutput": "(p := 42)"
@@ -2170,7 +2170,7 @@
             "start": 165,
             "end": 166
           },
-          "$nodeId": 701328,
+          "$nodeId": 701272,
           "$named": true
         },
         "content": {
@@ -2181,7 +2181,7 @@
             "start": 166,
             "end": 172
           },
-          "$nodeId": 701336,
+          "$nodeId": 701280,
           "$named": true
         },
         "string_end": {
@@ -2192,7 +2192,7 @@
             "start": 172,
             "end": 173
           },
-          "$nodeId": 701344,
+          "$nodeId": 701288,
           "$named": true
         }
       },
@@ -2200,7 +2200,7 @@
         "start": 165,
         "end": 173
       },
-      "$nodeId": 701432,
+      "$nodeId": 701376,
       "$named": true
     },
     "expectedOutput": "'vector'"
@@ -2232,7 +2232,7 @@
             "start": 75,
             "end": 76
           },
-          "$nodeId": 718104,
+          "$nodeId": 718048,
           "$named": false
         },
         ")": {
@@ -2243,7 +2243,7 @@
             "start": 112,
             "end": 113
           },
-          "$nodeId": 718120,
+          "$nodeId": 718064,
           "$named": false
         }
       },
@@ -2256,7 +2256,7 @@
             "start": 76,
             "end": 112
           },
-          "$nodeId": 718112,
+          "$nodeId": 718056,
           "$named": true
         }
       ],
@@ -2264,7 +2264,7 @@
         "start": 75,
         "end": 113
       },
-      "$nodeId": 718208,
+      "$nodeId": 718152,
       "$named": true
     },
     "expectedOutput": "(yield from (x for x in range(1, 10)))"
@@ -2296,7 +2296,7 @@
             "start": 87,
             "end": 88
           },
-          "$nodeId": 717632,
+          "$nodeId": 717576,
           "$named": false
         },
         "body": {
@@ -2307,7 +2307,7 @@
             "start": 88,
             "end": 89
           },
-          "$nodeId": 715488,
+          "$nodeId": 715432,
           "$named": true
         },
         ")": {
@@ -2318,7 +2318,7 @@
             "start": 111,
             "end": 112
           },
-          "$nodeId": 717656,
+          "$nodeId": 717600,
           "$named": false
         }
       },
@@ -2331,7 +2331,7 @@
             "start": 90,
             "end": 111
           },
-          "$nodeId": 717544,
+          "$nodeId": 717488,
           "$named": true
         }
       ],
@@ -2339,7 +2339,7 @@
         "start": 87,
         "end": 112
       },
-      "$nodeId": 717744,
+      "$nodeId": 717688,
       "$named": true
     },
     "expectedOutput": "(x for x in range(1, 10))"
@@ -2371,7 +2371,7 @@
             "start": 99,
             "end": 104
           },
-          "$nodeId": 715752,
+          "$nodeId": 715696,
           "$named": true
         },
         "arguments": {
@@ -2382,7 +2382,7 @@
             "start": 104,
             "end": 111
           },
-          "$nodeId": 717080,
+          "$nodeId": 717024,
           "$named": true
         }
       },
@@ -2390,7 +2390,7 @@
         "start": 99,
         "end": 111
       },
-      "$nodeId": 717168,
+      "$nodeId": 717112,
       "$named": true
     },
     "expectedOutput": "range (1, 10)"
@@ -2422,7 +2422,7 @@
             "start": 0,
             "end": 6
           },
-          "$nodeId": 728328,
+          "$nodeId": 728272,
           "$named": false
         },
         "parameters": {
@@ -2433,7 +2433,7 @@
             "start": 7,
             "end": 11
           },
-          "$nodeId": 728336,
+          "$nodeId": 728280,
           "$named": true
         },
         ":": {
@@ -2444,7 +2444,7 @@
             "start": 11,
             "end": 12
           },
-          "$nodeId": 728344,
+          "$nodeId": 728288,
           "$named": false
         },
         "body": {
@@ -2455,7 +2455,7 @@
             "start": 13,
             "end": 23
           },
-          "$nodeId": 728152,
+          "$nodeId": 728096,
           "$named": true
         }
       },
@@ -2463,7 +2463,7 @@
         "start": 0,
         "end": 23
       },
-      "$nodeId": 728440,
+      "$nodeId": 728384,
       "$named": true
     },
     "expectedOutput": "lambda b, c:d(\"e\" % f)"
@@ -2495,7 +2495,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 726896,
+          "$nodeId": 726840,
           "$named": true
         },
         "arguments": {
@@ -2506,7 +2506,7 @@
             "start": 14,
             "end": 23
           },
-          "$nodeId": 728064,
+          "$nodeId": 728008,
           "$named": true
         }
       },
@@ -2514,7 +2514,7 @@
         "start": 13,
         "end": 23
       },
-      "$nodeId": 728152,
+      "$nodeId": 728096,
       "$named": true
     },
     "expectedOutput": "d (\"e\" % f)"
@@ -2546,7 +2546,7 @@
             "start": 15,
             "end": 18
           },
-          "$nodeId": 727416,
+          "$nodeId": 727360,
           "$named": true
         },
         "operator": {
@@ -2557,7 +2557,7 @@
             "start": 19,
             "end": 20
           },
-          "$nodeId": 727600,
+          "$nodeId": 727544,
           "$named": false
         },
         "right": {
@@ -2568,7 +2568,7 @@
             "start": 21,
             "end": 22
           },
-          "$nodeId": 727504,
+          "$nodeId": 727448,
           "$named": true
         }
       },
@@ -2576,7 +2576,7 @@
         "start": 15,
         "end": 22
       },
-      "$nodeId": 727696,
+      "$nodeId": 727640,
       "$named": true
     },
     "expectedOutput": "\"e\" % f"
@@ -2608,7 +2608,7 @@
             "start": 15,
             "end": 16
           },
-          "$nodeId": 727312,
+          "$nodeId": 727256,
           "$named": true
         },
         "content": {
@@ -2619,7 +2619,7 @@
             "start": 16,
             "end": 17
           },
-          "$nodeId": 727320,
+          "$nodeId": 727264,
           "$named": true
         },
         "string_end": {
@@ -2630,7 +2630,7 @@
             "start": 17,
             "end": 18
           },
-          "$nodeId": 727328,
+          "$nodeId": 727272,
           "$named": true
         }
       },
@@ -2638,7 +2638,7 @@
         "start": 15,
         "end": 18
       },
-      "$nodeId": 727416,
+      "$nodeId": 727360,
       "$named": true
     },
     "expectedOutput": "\"e\""
@@ -2670,7 +2670,7 @@
             "start": 54,
             "end": 55
           },
-          "$nodeId": 730072,
+          "$nodeId": 730016,
           "$named": false
         }
       },
@@ -2683,7 +2683,7 @@
             "start": 55,
             "end": 56
           },
-          "$nodeId": 730080,
+          "$nodeId": 730024,
           "$named": true
         }
       ],
@@ -2691,7 +2691,7 @@
         "start": 54,
         "end": 56
       },
-      "$nodeId": 730168,
+      "$nodeId": 730112,
       "$named": true
     },
     "expectedOutput": "*d"
@@ -2723,7 +2723,7 @@
             "start": 80,
             "end": 81
           },
-          "$nodeId": 733024,
+          "$nodeId": 732968,
           "$named": false
         },
         ",": {
@@ -2734,7 +2734,7 @@
             "start": 82,
             "end": 83
           },
-          "$nodeId": 732832,
+          "$nodeId": 732776,
           "$named": false
         },
         ")": {
@@ -2745,7 +2745,7 @@
             "start": 85,
             "end": 86
           },
-          "$nodeId": 733040,
+          "$nodeId": 732984,
           "$named": false
         }
       },
@@ -2758,7 +2758,7 @@
             "start": 81,
             "end": 82
           },
-          "$nodeId": 732480,
+          "$nodeId": 732424,
           "$named": true
         },
         {
@@ -2769,7 +2769,7 @@
             "start": 84,
             "end": 85
           },
-          "$nodeId": 732656,
+          "$nodeId": 732600,
           "$named": true
         }
       ],
@@ -2777,7 +2777,7 @@
         "start": 80,
         "end": 86
       },
-      "$nodeId": 733128,
+      "$nodeId": 733072,
       "$named": true
     },
     "expectedOutput": "(a,b)"
@@ -2809,7 +2809,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 748600,
+          "$nodeId": 748544,
           "$named": false
         },
         ",": {
@@ -2820,7 +2820,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 748216,
+          "$nodeId": 748160,
           "$named": false
         },
         ")": {
@@ -2831,7 +2831,7 @@
             "start": 16,
             "end": 17
           },
-          "$nodeId": 748616,
+          "$nodeId": 748560,
           "$named": false
         }
       },
@@ -2844,7 +2844,7 @@
             "start": 1,
             "end": 4
           },
-          "$nodeId": 747408,
+          "$nodeId": 747352,
           "$named": true
         },
         {
@@ -2855,7 +2855,7 @@
             "start": 6,
             "end": 10
           },
-          "$nodeId": 748224,
+          "$nodeId": 748168,
           "$named": true
         },
         {
@@ -2866,7 +2866,7 @@
             "start": 10,
             "end": 11
           },
-          "$nodeId": 749056,
+          "$nodeId": 749000,
           "$named": false
         },
         {
@@ -2877,7 +2877,7 @@
             "start": 12,
             "end": 16
           },
-          "$nodeId": 749064,
+          "$nodeId": 749008,
           "$named": true
         }
       ],
@@ -2885,7 +2885,7 @@
         "start": 0,
         "end": 17
       },
-      "$nodeId": 748872,
+      "$nodeId": 748816,
       "$named": true
     },
     "expectedOutput": "(foo,*bar,*baz)"
@@ -2917,7 +2917,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 748120,
+          "$nodeId": 748064,
           "$named": false
         },
         "expression": {
@@ -2928,7 +2928,7 @@
             "start": 7,
             "end": 10
           },
-          "$nodeId": 747584,
+          "$nodeId": 747528,
           "$named": true
         }
       },
@@ -2936,7 +2936,7 @@
         "start": 6,
         "end": 10
       },
-      "$nodeId": 748224,
+      "$nodeId": 748168,
       "$named": true
     },
     "expectedOutput": "*bar"
@@ -2968,7 +2968,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 753696,
+          "$nodeId": 753640,
           "$named": false
         },
         ",": {
@@ -2979,7 +2979,7 @@
             "start": 2,
             "end": 3
           },
-          "$nodeId": 753504,
+          "$nodeId": 753448,
           "$named": false
         },
         ")": {
@@ -2990,7 +2990,7 @@
             "start": 17,
             "end": 18
           },
-          "$nodeId": 753712,
+          "$nodeId": 753656,
           "$named": false
         }
       },
@@ -3003,7 +3003,7 @@
             "start": 1,
             "end": 2
           },
-          "$nodeId": 752408,
+          "$nodeId": 752352,
           "$named": true
         },
         {
@@ -3014,7 +3014,7 @@
             "start": 4,
             "end": 17
           },
-          "$nodeId": 753512,
+          "$nodeId": 753456,
           "$named": true
         }
       ],
@@ -3022,7 +3022,7 @@
         "start": 0,
         "end": 18
       },
-      "$nodeId": 753800,
+      "$nodeId": 753744,
       "$named": true
     },
     "expectedOutput": "(a,yield a, b, c)"
@@ -3034,7 +3034,7 @@
     "pattern": "tuple",
     "edits": [],
     "expectedSourceOut": "(a,yield a, b, c)",
-    "expectedReparseTree": "(tuple (identifier) (yield (expression_list expression: (identifier) (identifier) (identifier))))",
+    "expectedReparseTree": "(tuple (identifier) (yield (expression_list (identifier) (identifier) (identifier))))",
     "wrappedText": "_ = (a,yield a, b, c)",
     "wrappedOffset": 4
   },
@@ -3054,7 +3054,7 @@
             "start": 21,
             "end": 22
           },
-          "$nodeId": 757744,
+          "$nodeId": 757688,
           "$named": false
         },
         ",": {
@@ -3065,7 +3065,7 @@
             "start": 23,
             "end": 24
           },
-          "$nodeId": 757552,
+          "$nodeId": 757496,
           "$named": false
         },
         ")": {
@@ -3076,7 +3076,7 @@
             "start": 26,
             "end": 27
           },
-          "$nodeId": 757760,
+          "$nodeId": 757704,
           "$named": false
         }
       },
@@ -3089,7 +3089,7 @@
             "start": 22,
             "end": 23
           },
-          "$nodeId": 757200,
+          "$nodeId": 757144,
           "$named": true
         },
         {
@@ -3100,7 +3100,7 @@
             "start": 25,
             "end": 26
           },
-          "$nodeId": 757376,
+          "$nodeId": 757320,
           "$named": true
         }
       ],
@@ -3108,7 +3108,7 @@
         "start": 21,
         "end": 27
       },
-      "$nodeId": 757848,
+      "$nodeId": 757792,
       "$named": true
     },
     "expectedOutput": "(3,4)"
@@ -3140,7 +3140,7 @@
             "start": 18,
             "end": 29
           },
-          "$nodeId": 765104,
+          "$nodeId": 765048,
           "$named": true
         },
         "if": {
@@ -3151,7 +3151,7 @@
             "start": 30,
             "end": 32
           },
-          "$nodeId": 765720,
+          "$nodeId": 765664,
           "$named": false
         },
         "condition": {
@@ -3162,7 +3162,7 @@
             "start": 33,
             "end": 34
           },
-          "$nodeId": 765280,
+          "$nodeId": 765224,
           "$named": true
         },
         "else": {
@@ -3173,7 +3173,7 @@
             "start": 35,
             "end": 39
           },
-          "$nodeId": 765736,
+          "$nodeId": 765680,
           "$named": false
         },
         "alternative": {
@@ -3184,7 +3184,7 @@
             "start": 40,
             "end": 41
           },
-          "$nodeId": 765536,
+          "$nodeId": 765480,
           "$named": true
         }
       },
@@ -3192,7 +3192,7 @@
         "start": 18,
         "end": 41
       },
-      "$nodeId": 765832,
+      "$nodeId": 765776,
       "$named": true
     },
     "expectedOutput": "something() if a else d"
@@ -3224,7 +3224,7 @@
             "start": 18,
             "end": 27
           },
-          "$nodeId": 764824,
+          "$nodeId": 764768,
           "$named": true
         },
         "arguments": {
@@ -3235,7 +3235,7 @@
             "start": 27,
             "end": 29
           },
-          "$nodeId": 765016,
+          "$nodeId": 764960,
           "$named": true
         }
       },
@@ -3243,7 +3243,7 @@
         "start": 18,
         "end": 29
       },
-      "$nodeId": 765104,
+      "$nodeId": 765048,
       "$named": true
     },
     "expectedOutput": "something ()"
@@ -3275,7 +3275,7 @@
             "start": 11,
             "end": 12
           },
-          "$nodeId": 771696,
+          "$nodeId": 771640,
           "$named": true
         },
         "as": {
@@ -3286,7 +3286,7 @@
             "start": 13,
             "end": 15
           },
-          "$nodeId": 772056,
+          "$nodeId": 772000,
           "$named": false
         },
         "alias": {
@@ -3297,7 +3297,7 @@
             "start": 16,
             "end": 17
           },
-          "$nodeId": 772064,
+          "$nodeId": 772008,
           "$named": true
         }
       },
@@ -3305,7 +3305,7 @@
         "start": 11,
         "end": 17
       },
-      "$nodeId": 772152,
+      "$nodeId": 772096,
       "$named": true
     },
     "expectedOutput": "a as b"
@@ -3337,7 +3337,7 @@
             "start": 44,
             "end": 45
           },
-          "$nodeId": 773832,
+          "$nodeId": 773776,
           "$named": false
         },
         "body": {
@@ -3348,7 +3348,7 @@
             "start": 45,
             "end": 46
           },
-          "$nodeId": 773016,
+          "$nodeId": 772960,
           "$named": true
         },
         "]": {
@@ -3359,7 +3359,7 @@
             "start": 63,
             "end": 64
           },
-          "$nodeId": 773856,
+          "$nodeId": 773800,
           "$named": false
         }
       },
@@ -3372,7 +3372,7 @@
             "start": 47,
             "end": 63
           },
-          "$nodeId": 773664,
+          "$nodeId": 773608,
           "$named": true
         }
       ],
@@ -3380,7 +3380,7 @@
         "start": 44,
         "end": 64
       },
-      "$nodeId": 773944,
+      "$nodeId": 773888,
       "$named": true
     },
     "expectedOutput": "[e async for f in g]"
@@ -3412,7 +3412,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 778408,
+          "$nodeId": 778352,
           "$named": true
         },
         "arguments": {
@@ -3423,7 +3423,7 @@
             "start": 14,
             "end": 26
           },
-          "$nodeId": 779144,
+          "$nodeId": 779088,
           "$named": true
         }
       },
@@ -3431,7 +3431,7 @@
         "start": 13,
         "end": 26
       },
-      "$nodeId": 779232,
+      "$nodeId": 779176,
       "$named": true
     },
     "expectedOutput": "b (\n1,\n2\n    )"
@@ -3463,7 +3463,7 @@
             "start": 36,
             "end": 37
           },
-          "$nodeId": 780024,
+          "$nodeId": 779968,
           "$named": false
         },
         "]": {
@@ -3474,7 +3474,7 @@
             "start": 44,
             "end": 45
           },
-          "$nodeId": 780040,
+          "$nodeId": 779984,
           "$named": false
         }
       },
@@ -3487,7 +3487,7 @@
             "start": 38,
             "end": 39
           },
-          "$nodeId": 779760,
+          "$nodeId": 779704,
           "$named": true
         }
       ],
@@ -3495,7 +3495,7 @@
         "start": 36,
         "end": 45
       },
-      "$nodeId": 780128,
+      "$nodeId": 780072,
       "$named": true
     },
     "expectedOutput": "[3]"
@@ -3527,7 +3527,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 785272,
+          "$nodeId": 785216,
           "$named": false
         },
         ",": {
@@ -3538,7 +3538,7 @@
             "start": 8,
             "end": 9
           },
-          "$nodeId": 785080,
+          "$nodeId": 785024,
           "$named": false
         },
         "]": {
@@ -3549,7 +3549,7 @@
             "start": 10,
             "end": 11
           },
-          "$nodeId": 785288,
+          "$nodeId": 785232,
           "$named": false
         }
       },
@@ -3562,7 +3562,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 784448,
+          "$nodeId": 784392,
           "$named": true
         },
         {
@@ -3573,7 +3573,7 @@
             "start": 9,
             "end": 10
           },
-          "$nodeId": 784624,
+          "$nodeId": 784568,
           "$named": true
         }
       ],
@@ -3581,7 +3581,7 @@
         "start": 6,
         "end": 11
       },
-      "$nodeId": 785376,
+      "$nodeId": 785320,
       "$named": true
     },
     "expectedOutput": "[1,2]"
@@ -3613,7 +3613,7 @@
             "start": 0,
             "end": 5
           },
-          "$nodeId": 791984,
+          "$nodeId": 791928,
           "$named": true
         },
         "arguments": {
@@ -3624,7 +3624,7 @@
             "start": 5,
             "end": 17
           },
-          "$nodeId": 793792,
+          "$nodeId": 793736,
           "$named": true
         }
       },
@@ -3632,7 +3632,7 @@
         "start": 0,
         "end": 17
       },
-      "$nodeId": 793880,
+      "$nodeId": 793824,
       "$named": true
     },
     "expectedOutput": "match (r1, r2, r3)"
@@ -3664,7 +3664,7 @@
             "start": 3,
             "end": 11
           },
-          "$nodeId": 796536,
+          "$nodeId": 796480,
           "$named": true
         }
       ],
@@ -3672,7 +3672,7 @@
         "start": 3,
         "end": 11
       },
-      "$nodeId": 796632,
+      "$nodeId": 796576,
       "$named": true
     },
     "expectedOutput": "A[T] | B"
@@ -3704,7 +3704,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 800752,
+          "$nodeId": 800696,
           "$named": false
         },
         "argument": {
@@ -3715,7 +3715,7 @@
             "start": 1,
             "end": 2
           },
-          "$nodeId": 800664,
+          "$nodeId": 800608,
           "$named": true
         }
       },
@@ -3723,7 +3723,7 @@
         "start": 0,
         "end": 2
       },
-      "$nodeId": 800848,
+      "$nodeId": 800792,
       "$named": true
     },
     "expectedOutput": "- 1"
@@ -3755,7 +3755,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 809272,
+          "$nodeId": 809216,
           "$named": false
         },
         "argument": {
@@ -3766,7 +3766,7 @@
             "start": 1,
             "end": 5
           },
-          "$nodeId": 809184,
+          "$nodeId": 809128,
           "$named": true
         }
       },
@@ -3774,7 +3774,7 @@
         "start": 0,
         "end": 5
       },
-      "$nodeId": 809368,
+      "$nodeId": 809312,
       "$named": true
     },
     "expectedOutput": "- .6_6"
@@ -3806,7 +3806,7 @@
             "start": 29,
             "end": 30
           },
-          "$nodeId": 817776,
+          "$nodeId": 817720,
           "$named": false
         },
         "argument": {
@@ -3817,7 +3817,7 @@
             "start": 30,
             "end": 34
           },
-          "$nodeId": 817416,
+          "$nodeId": 817360,
           "$named": true
         }
       },
@@ -3825,7 +3825,7 @@
         "start": 29,
         "end": 34
       },
-      "$nodeId": 817872,
+      "$nodeId": 817816,
       "$named": true
     },
     "expectedOutput": "- 1e10"
@@ -3857,7 +3857,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 820008,
+          "$nodeId": 819952,
           "$named": true
         },
         "content": {
@@ -3868,7 +3868,7 @@
             "start": 1,
             "end": 7
           },
-          "$nodeId": 820016,
+          "$nodeId": 819960,
           "$named": true
         },
         "string_end": {
@@ -3879,7 +3879,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 820024,
+          "$nodeId": 819968,
           "$named": true
         }
       },
@@ -3887,7 +3887,7 @@
         "start": 0,
         "end": 8
       },
-      "$nodeId": 820112,
+      "$nodeId": 820056,
       "$named": true
     },
     "expectedOutput": "\"I'm ok\""
@@ -3919,7 +3919,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 838392,
+          "$nodeId": 838336,
           "$named": true
         },
         "content": {
@@ -3930,7 +3930,7 @@
             "start": 1,
             "end": 9
           },
-          "$nodeId": 838400,
+          "$nodeId": 838344,
           "$named": true
         },
         "string_end": {
@@ -3941,7 +3941,7 @@
             "start": 9,
             "end": 10
           },
-          "$nodeId": 838408,
+          "$nodeId": 838352,
           "$named": true
         }
       },
@@ -3949,7 +3949,7 @@
         "start": 0,
         "end": 10
       },
-      "$nodeId": 838496,
+      "$nodeId": 838440,
       "$named": true
     },
     "expectedOutput": "'ab\\x00cd'"
@@ -3981,7 +3981,7 @@
             "start": 0,
             "end": 10
           },
-          "$nodeId": 847000,
+          "$nodeId": 846944,
           "$named": true
         },
         "arguments": {
@@ -3992,7 +3992,7 @@
             "start": 10,
             "end": 85
           },
-          "$nodeId": 848416,
+          "$nodeId": 848360,
           "$named": true
         }
       },
@@ -4000,7 +4000,7 @@
         "start": 0,
         "end": 85
       },
-      "$nodeId": 848504,
+      "$nodeId": 848448,
       "$named": true
     },
     "expectedOutput": "re.compile (r\"(\\n|\\A)#include\\s*['\\\"]\"\n           r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\")"
@@ -4012,7 +4012,7 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "re.compile (r\"(\\n|\\A)#include\\s*['\\\"]\"\n           r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\")",
-    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (concatenated_string string: (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))))",
+    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (concatenated_string (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))))",
     "wrappedText": "_ = re.compile (r\"(\\n|\\A)#include\\s*['\\\"]\"\n           r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\")",
     "wrappedOffset": 4
   },
@@ -4032,7 +4032,7 @@
             "start": 0,
             "end": 2
           },
-          "$nodeId": 846808,
+          "$nodeId": 846752,
           "$named": true
         },
         ".": {
@@ -4043,7 +4043,7 @@
             "start": 2,
             "end": 3
           },
-          "$nodeId": 846904,
+          "$nodeId": 846848,
           "$named": false
         },
         "attribute": {
@@ -4054,7 +4054,7 @@
             "start": 3,
             "end": 10
           },
-          "$nodeId": 846912,
+          "$nodeId": 846856,
           "$named": true
         }
       },
@@ -4062,7 +4062,7 @@
         "start": 0,
         "end": 10
       },
-      "$nodeId": 847000,
+      "$nodeId": 846944,
       "$named": true
     },
     "expectedOutput": "re.compile"
@@ -4085,8 +4085,8 @@
       "$type": "concatenated_string",
       "$source": "ts",
       "$text": "r\"(\\n|\\A)#include\\s*['\\\"]\"\n           r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\"",
-      "$fields": {
-        "string": {
+      "$children": [
+        {
           "$type": "string",
           "$source": "ts",
           "$text": "r\"(\\n|\\A)#include\\s*['\\\"]\"",
@@ -4094,11 +4094,9 @@
             "start": 11,
             "end": 37
           },
-          "$nodeId": 847952,
+          "$nodeId": 847896,
           "$named": true
-        }
-      },
-      "$children": [
+        },
         {
           "$type": "string",
           "$source": "ts",
@@ -4107,7 +4105,7 @@
             "start": 49,
             "end": 84
           },
-          "$nodeId": 847960,
+          "$nodeId": 847904,
           "$named": true
         }
       ],
@@ -4115,7 +4113,7 @@
         "start": 11,
         "end": 84
       },
-      "$nodeId": 848048,
+      "$nodeId": 847992,
       "$named": true
     },
     "expectedOutput": "r\"(\\n|\\A)#include\\s*['\\\"]\" r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\""
@@ -4127,7 +4125,7 @@
     "pattern": "concatenated_string",
     "edits": [],
     "expectedSourceOut": "r\"(\\n|\\A)#include\\s*['\\\"]\" r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\"",
-    "expectedReparseTree": "(concatenated_string string: (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))",
+    "expectedReparseTree": "(concatenated_string (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))",
     "wrappedText": "_ = r\"(\\n|\\A)#include\\s*['\\\"]\" r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\"",
     "wrappedOffset": 4
   },
@@ -4147,7 +4145,7 @@
             "start": 11,
             "end": 13
           },
-          "$nodeId": 847496,
+          "$nodeId": 847440,
           "$named": true
         },
         "content": {
@@ -4158,7 +4156,7 @@
             "start": 13,
             "end": 36
           },
-          "$nodeId": 847504,
+          "$nodeId": 847448,
           "$named": true
         },
         "string_end": {
@@ -4169,7 +4167,7 @@
             "start": 36,
             "end": 37
           },
-          "$nodeId": 847512,
+          "$nodeId": 847456,
           "$named": true
         }
       },
@@ -4177,7 +4175,7 @@
         "start": 11,
         "end": 37
       },
-      "$nodeId": 847952,
+      "$nodeId": 847896,
       "$named": true
     },
     "expectedOutput": "r\"(\\n|\\A)#include\\s*['\\\"]\""
@@ -4209,7 +4207,7 @@
             "start": 10,
             "end": 12
           },
-          "$nodeId": 858800,
+          "$nodeId": 858744,
           "$named": true
         },
         "content": [
@@ -4221,7 +4219,7 @@
               "start": 12,
               "end": 14
             },
-            "$nodeId": 858360,
+            "$nodeId": 858304,
             "$named": true
           },
           {
@@ -4232,7 +4230,7 @@
               "start": 14,
               "end": 29
             },
-            "$nodeId": 858368,
+            "$nodeId": 858312,
             "$named": true
           },
           {
@@ -4243,7 +4241,7 @@
               "start": 29,
               "end": 31
             },
-            "$nodeId": 858632,
+            "$nodeId": 858576,
             "$named": true
           }
         ],
@@ -4255,7 +4253,7 @@
             "start": 31,
             "end": 32
           },
-          "$nodeId": 858816,
+          "$nodeId": 858760,
           "$named": true
         }
       },
@@ -4263,7 +4261,7 @@
         "start": 10,
         "end": 32
       },
-      "$nodeId": 858904,
+      "$nodeId": 858848,
       "$named": true
     },
     "expectedOutput": "f\"a {b(f'c {e} d')} e\""
@@ -4295,7 +4293,7 @@
             "start": 15,
             "end": 16
           },
-          "$nodeId": 856288,
+          "$nodeId": 856232,
           "$named": true
         },
         "arguments": {
@@ -4306,7 +4304,7 @@
             "start": 16,
             "end": 28
           },
-          "$nodeId": 857824,
+          "$nodeId": 857768,
           "$named": true
         }
       },
@@ -4314,7 +4312,7 @@
         "start": 15,
         "end": 28
       },
-      "$nodeId": 857912,
+      "$nodeId": 857856,
       "$named": true
     },
     "expectedOutput": "b (f'c {e} d')"
@@ -4346,7 +4344,7 @@
             "start": 0,
             "end": 2
           },
-          "$nodeId": 890736,
+          "$nodeId": 890680,
           "$named": true
         },
         "content": [
@@ -4358,7 +4356,7 @@
               "start": 2,
               "end": 4
             },
-            "$nodeId": 887944,
+            "$nodeId": 887888,
             "$named": true
           },
           {
@@ -4369,7 +4367,7 @@
               "start": 4,
               "end": 9
             },
-            "$nodeId": 887952,
+            "$nodeId": 887896,
             "$named": true
           },
           {
@@ -4380,7 +4378,7 @@
               "start": 9,
               "end": 10
             },
-            "$nodeId": 888136,
+            "$nodeId": 888080,
             "$named": true
           },
           {
@@ -4391,7 +4389,7 @@
               "start": 10,
               "end": 18
             },
-            "$nodeId": 890568,
+            "$nodeId": 890512,
             "$named": true
           }
         ],
@@ -4403,7 +4401,7 @@
             "start": 18,
             "end": 19
           },
-          "$nodeId": 890752,
+          "$nodeId": 890696,
           "$named": true
         }
       },
@@ -4411,7 +4409,7 @@
         "start": 0,
         "end": 19
       },
-      "$nodeId": 890840,
+      "$nodeId": 890784,
       "$named": true
     },
     "expectedOutput": "f\"a {b:2} {c:34.5}\""
@@ -4443,7 +4441,7 @@
             "start": 26,
             "end": 27
           },
-          "$nodeId": 891544,
+          "$nodeId": 891488,
           "$named": true
         },
         ".": {
@@ -4454,7 +4452,7 @@
             "start": 27,
             "end": 28
           },
-          "$nodeId": 891640,
+          "$nodeId": 891584,
           "$named": false
         },
         "attribute": {
@@ -4465,7 +4463,7 @@
             "start": 28,
             "end": 29
           },
-          "$nodeId": 891648,
+          "$nodeId": 891592,
           "$named": true
         }
       },
@@ -4473,7 +4471,7 @@
         "start": 26,
         "end": 29
       },
-      "$nodeId": 891736,
+      "$nodeId": 891680,
       "$named": true
     },
     "expectedOutput": "c.d"
@@ -4505,7 +4503,7 @@
             "start": 81,
             "end": 86
           },
-          "$nodeId": 898032,
+          "$nodeId": 897976,
           "$named": true
         },
         "operator": {
@@ -4516,7 +4514,7 @@
             "start": 87,
             "end": 88
           },
-          "$nodeId": 898216,
+          "$nodeId": 898160,
           "$named": false
         },
         "right": {
@@ -4527,7 +4525,7 @@
             "start": 89,
             "end": 96
           },
-          "$nodeId": 898120,
+          "$nodeId": 898064,
           "$named": true
         }
       },
@@ -4535,7 +4533,7 @@
         "start": 81,
         "end": 96
       },
-      "$nodeId": 898312,
+      "$nodeId": 898256,
       "$named": true
     },
     "expectedOutput": "width + padding"
@@ -4567,7 +4565,7 @@
             "start": 0,
             "end": 2
           },
-          "$nodeId": 907504,
+          "$nodeId": 907448,
           "$named": true
         },
         "content": [
@@ -4579,7 +4577,7 @@
               "start": 2,
               "end": 9
             },
-            "$nodeId": 906336,
+            "$nodeId": 906280,
             "$named": true
           },
           {
@@ -4590,7 +4588,7 @@
               "start": 9,
               "end": 21
             },
-            "$nodeId": 906344,
+            "$nodeId": 906288,
             "$named": true
           },
           {
@@ -4601,7 +4599,7 @@
               "start": 21,
               "end": 22
             },
-            "$nodeId": 907064,
+            "$nodeId": 907008,
             "$named": true
           },
           {
@@ -4612,7 +4610,7 @@
               "start": 22,
               "end": 33
             },
-            "$nodeId": 907072,
+            "$nodeId": 907016,
             "$named": true
           },
           {
@@ -4623,7 +4621,7 @@
               "start": 33,
               "end": 34
             },
-            "$nodeId": 907336,
+            "$nodeId": 907280,
             "$named": true
           }
         ],
@@ -4635,7 +4633,7 @@
             "start": 34,
             "end": 35
           },
-          "$nodeId": 907520,
+          "$nodeId": 907464,
           "$named": true
         }
       },
@@ -4643,7 +4641,7 @@
         "start": 0,
         "end": 35
       },
-      "$nodeId": 907608,
+      "$nodeId": 907552,
       "$named": true
     },
     "expectedOutput": "t\"Hello, {first_name} {last_name}!\""
@@ -4675,7 +4673,7 @@
             "start": 159,
             "end": 160
           },
-          "$nodeId": 915688,
+          "$nodeId": 915632,
           "$named": true
         },
         "operator": {
@@ -4686,7 +4684,7 @@
             "start": 161,
             "end": 162
           },
-          "$nodeId": 915872,
+          "$nodeId": 915816,
           "$named": false
         },
         "right": {
@@ -4697,7 +4695,7 @@
             "start": 163,
             "end": 164
           },
-          "$nodeId": 915776,
+          "$nodeId": 915720,
           "$named": true
         }
       },
@@ -4705,7 +4703,7 @@
         "start": 159,
         "end": 164
       },
-      "$nodeId": 915968,
+      "$nodeId": 915912,
       "$named": true
     },
     "expectedOutput": "a + b"
@@ -4737,7 +4735,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 922272,
+          "$nodeId": 922216,
           "$named": true
         },
         "content": {
@@ -4748,7 +4746,7 @@
             "start": 1,
             "end": 17
           },
-          "$nodeId": 922280,
+          "$nodeId": 922224,
           "$named": true
         },
         "string_end": {
@@ -4759,7 +4757,7 @@
             "start": 17,
             "end": 18
           },
-          "$nodeId": 922288,
+          "$nodeId": 922232,
           "$named": true
         }
       },
@@ -4767,7 +4765,7 @@
         "start": 0,
         "end": 18
       },
-      "$nodeId": 922376,
+      "$nodeId": 922320,
       "$named": true
     },
     "expectedOutput": "\"\\x12 \\123 \\u1234\""
@@ -4790,8 +4788,8 @@
       "$type": "concatenated_string",
       "$source": "ts",
       "$text": "\"one\" \"two\" \"three\"",
-      "$fields": {
-        "string": {
+      "$children": [
+        {
           "$type": "string",
           "$source": "ts",
           "$text": "\"one\"",
@@ -4799,11 +4797,9 @@
             "start": 0,
             "end": 5
           },
-          "$nodeId": 927896,
+          "$nodeId": 927840,
           "$named": true
-        }
-      },
-      "$children": [
+        },
         {
           "$type": "string",
           "$source": "ts",
@@ -4812,7 +4808,7 @@
             "start": 6,
             "end": 11
           },
-          "$nodeId": 927800,
+          "$nodeId": 927744,
           "$named": true
         },
         {
@@ -4823,7 +4819,7 @@
             "start": 12,
             "end": 19
           },
-          "$nodeId": 927808,
+          "$nodeId": 927752,
           "$named": true
         }
       ],
@@ -4831,7 +4827,7 @@
         "start": 0,
         "end": 19
       },
-      "$nodeId": 927992,
+      "$nodeId": 927936,
       "$named": true
     },
     "expectedOutput": "\"one\" \"two\" \"three\""
@@ -4843,7 +4839,7 @@
     "pattern": "concatenated_string",
     "edits": [],
     "expectedSourceOut": "\"one\" \"two\" \"three\"",
-    "expectedReparseTree": "(concatenated_string string: (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))",
+    "expectedReparseTree": "(concatenated_string (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))",
     "wrappedText": "_ = \"one\" \"two\" \"three\"",
     "wrappedOffset": 4
   },
@@ -4863,7 +4859,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 926832,
+          "$nodeId": 926776,
           "$named": true
         },
         "content": {
@@ -4874,7 +4870,7 @@
             "start": 1,
             "end": 4
           },
-          "$nodeId": 926840,
+          "$nodeId": 926784,
           "$named": true
         },
         "string_end": {
@@ -4885,7 +4881,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 926848,
+          "$nodeId": 926792,
           "$named": true
         }
       },
@@ -4893,7 +4889,7 @@
         "start": 0,
         "end": 5
       },
-      "$nodeId": 927896,
+      "$nodeId": 927840,
       "$named": true
     },
     "expectedOutput": "\"one\""
@@ -4925,7 +4921,7 @@
             "start": 0,
             "end": 3
           },
-          "$nodeId": 932760,
+          "$nodeId": 932704,
           "$named": true
         },
         "content": {
@@ -4936,7 +4932,7 @@
             "start": 3,
             "end": 59
           },
-          "$nodeId": 932768,
+          "$nodeId": 932712,
           "$named": true
         },
         "string_end": {
@@ -4947,7 +4943,7 @@
             "start": 59,
             "end": 62
           },
-          "$nodeId": 932776,
+          "$nodeId": 932720,
           "$named": true
         }
       },
@@ -4955,7 +4951,7 @@
         "start": 0,
         "end": 62
       },
-      "$nodeId": 932864,
+      "$nodeId": 932808,
       "$named": true
     },
     "expectedOutput": "\"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\""
@@ -4987,7 +4983,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 943456,
+          "$nodeId": 943400,
           "$named": false
         },
         ",": {
@@ -4998,7 +4994,7 @@
             "start": 2,
             "end": 3
           },
-          "$nodeId": 942912,
+          "$nodeId": 942856,
           "$named": false
         },
         "]": {
@@ -5009,7 +5005,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 943472,
+          "$nodeId": 943416,
           "$named": false
         }
       },
@@ -5022,7 +5018,7 @@
             "start": 1,
             "end": 2
           },
-          "$nodeId": 942560,
+          "$nodeId": 942504,
           "$named": true
         },
         {
@@ -5033,7 +5029,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 942736,
+          "$nodeId": 942680,
           "$named": true
         },
         {
@@ -5044,7 +5040,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 944752,
+          "$nodeId": 944696,
           "$named": false
         },
         {
@@ -5055,7 +5051,7 @@
             "start": 7,
             "end": 13
           },
-          "$nodeId": 944576,
+          "$nodeId": 944520,
           "$named": true
         }
       ],
@@ -5063,7 +5059,7 @@
         "start": 0,
         "end": 14
       },
-      "$nodeId": 944096,
+      "$nodeId": 944040,
       "$named": true
     },
     "expectedOutput": "[a,b,[c, d]]"
@@ -5095,7 +5091,7 @@
             "start": 16,
             "end": 17
           },
-          "$nodeId": 944288,
+          "$nodeId": 944232,
           "$named": false
         },
         "expression": {
@@ -5106,7 +5102,7 @@
             "start": 17,
             "end": 19
           },
-          "$nodeId": 943104,
+          "$nodeId": 943048,
           "$named": true
         }
       },
@@ -5114,7 +5110,7 @@
         "start": 16,
         "end": 19
       },
-      "$nodeId": 943368,
+      "$nodeId": 943312,
       "$named": true
     },
     "expectedOutput": "*()"
@@ -5146,7 +5142,7 @@
             "start": 17,
             "end": 18
           },
-          "$nodeId": 944192,
+          "$nodeId": 944136,
           "$named": false
         },
         ")": {
@@ -5157,7 +5153,7 @@
             "start": 18,
             "end": 19
           },
-          "$nodeId": 944200,
+          "$nodeId": 944144,
           "$named": false
         }
       },
@@ -5165,7 +5161,7 @@
         "start": 17,
         "end": 19
       },
-      "$nodeId": 943104,
+      "$nodeId": 943048,
       "$named": true
     },
     "expectedOutput": "()"
@@ -5197,7 +5193,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 958408,
+          "$nodeId": 958352,
           "$named": false
         },
         "body": {
@@ -5208,7 +5204,7 @@
             "start": 1,
             "end": 6
           },
-          "$nodeId": 957456,
+          "$nodeId": 957400,
           "$named": true
         },
         "]": {
@@ -5219,7 +5215,7 @@
             "start": 26,
             "end": 27
           },
-          "$nodeId": 958432,
+          "$nodeId": 958376,
           "$named": false
         }
       },
@@ -5232,7 +5228,7 @@
             "start": 7,
             "end": 26
           },
-          "$nodeId": 958320,
+          "$nodeId": 958264,
           "$named": true
         }
       ],
@@ -5240,7 +5236,7 @@
         "start": 0,
         "end": 27
       },
-      "$nodeId": 958520,
+      "$nodeId": 958464,
       "$named": true
     },
     "expectedOutput": "[a + b for (a, b) in items]"
@@ -5272,7 +5268,7 @@
             "start": 1,
             "end": 2
           },
-          "$nodeId": 957632,
+          "$nodeId": 957576,
           "$named": true
         },
         "operator": {
@@ -5283,7 +5279,7 @@
             "start": 3,
             "end": 4
           },
-          "$nodeId": 957848,
+          "$nodeId": 957792,
           "$named": false
         },
         "right": {
@@ -5294,7 +5290,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 957368,
+          "$nodeId": 957312,
           "$named": true
         }
       },
@@ -5302,7 +5298,7 @@
         "start": 1,
         "end": 6
       },
-      "$nodeId": 957456,
+      "$nodeId": 957400,
       "$named": true
     },
     "expectedOutput": "a + b"
@@ -5334,7 +5330,7 @@
             "start": 55,
             "end": 56
           },
-          "$nodeId": 963352,
+          "$nodeId": 963296,
           "$named": false
         },
         ",": {
@@ -5345,7 +5341,7 @@
             "start": 57,
             "end": 58
           },
-          "$nodeId": 962880,
+          "$nodeId": 962824,
           "$named": false
         },
         ")": {
@@ -5356,7 +5352,7 @@
             "start": 59,
             "end": 60
           },
-          "$nodeId": 963368,
+          "$nodeId": 963312,
           "$named": false
         }
       },
@@ -5369,7 +5365,7 @@
             "start": 56,
             "end": 57
           },
-          "$nodeId": 962528,
+          "$nodeId": 962472,
           "$named": true
         },
         {
@@ -5380,7 +5376,7 @@
             "start": 58,
             "end": 59
           },
-          "$nodeId": 962704,
+          "$nodeId": 962648,
           "$named": true
         }
       ],
@@ -5388,7 +5384,7 @@
         "start": 55,
         "end": 60
       },
-      "$nodeId": 963456,
+      "$nodeId": 963400,
       "$named": true
     },
     "expectedOutput": "(x,y)"
@@ -5420,7 +5416,7 @@
             "start": 70,
             "end": 71
           },
-          "$nodeId": 964280,
+          "$nodeId": 964224,
           "$named": false
         },
         ",": {
@@ -5431,7 +5427,7 @@
             "start": 72,
             "end": 73
           },
-          "$nodeId": 963720,
+          "$nodeId": 963664,
           "$named": false
         },
         "]": {
@@ -5442,7 +5438,7 @@
             "start": 76,
             "end": 77
           },
-          "$nodeId": 964296,
+          "$nodeId": 964240,
           "$named": false
         }
       },
@@ -5455,7 +5451,7 @@
             "start": 71,
             "end": 72
           },
-          "$nodeId": 963072,
+          "$nodeId": 963016,
           "$named": true
         },
         {
@@ -5466,7 +5462,7 @@
             "start": 73,
             "end": 74
           },
-          "$nodeId": 963248,
+          "$nodeId": 963192,
           "$named": true
         },
         {
@@ -5477,7 +5473,7 @@
             "start": 74,
             "end": 75
           },
-          "$nodeId": 963992,
+          "$nodeId": 963936,
           "$named": false
         },
         {
@@ -5488,7 +5484,7 @@
             "start": 75,
             "end": 76
           },
-          "$nodeId": 963816,
+          "$nodeId": 963760,
           "$named": true
         }
       ],
@@ -5496,7 +5492,7 @@
         "start": 70,
         "end": 77
       },
-      "$nodeId": 964384,
+      "$nodeId": 964328,
       "$named": true
     },
     "expectedOutput": "[1,2,3]"
@@ -5528,7 +5524,7 @@
             "start": 116,
             "end": 122
           },
-          "$nodeId": 967880,
+          "$nodeId": 967824,
           "$named": false
         },
         ":": {
@@ -5539,7 +5535,7 @@
             "start": 122,
             "end": 123
           },
-          "$nodeId": 967888,
+          "$nodeId": 967832,
           "$named": false
         },
         "body": {
@@ -5550,7 +5546,7 @@
             "start": 124,
             "end": 128
           },
-          "$nodeId": 967616,
+          "$nodeId": 967560,
           "$named": true
         }
       },
@@ -5558,7 +5554,7 @@
         "start": 116,
         "end": 128
       },
-      "$nodeId": 968472,
+      "$nodeId": 968416,
       "$named": true
     },
     "expectedOutput": "lambda:True"
@@ -5590,7 +5586,7 @@
             "start": 147,
             "end": 148
           },
-          "$nodeId": 968568,
+          "$nodeId": 968512,
           "$named": true
         },
         "arguments": {
@@ -5601,7 +5597,7 @@
             "start": 148,
             "end": 150
           },
-          "$nodeId": 968760,
+          "$nodeId": 968704,
           "$named": true
         }
       },
@@ -5609,7 +5605,7 @@
         "start": 147,
         "end": 150
       },
-      "$nodeId": 968848,
+      "$nodeId": 968792,
       "$named": true
     },
     "expectedOutput": "a ()"
@@ -5641,7 +5637,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 982776,
+          "$nodeId": 982720,
           "$named": false
         },
         ",": {
@@ -5652,7 +5648,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 982600,
+          "$nodeId": 982544,
           "$named": false
         },
         "}": {
@@ -5663,7 +5659,7 @@
             "start": 11,
             "end": 12
           },
-          "$nodeId": 982800,
+          "$nodeId": 982744,
           "$named": false
         }
       },
@@ -5676,7 +5672,7 @@
             "start": 1,
             "end": 5
           },
-          "$nodeId": 982784,
+          "$nodeId": 982728,
           "$named": true
         },
         {
@@ -5687,7 +5683,7 @@
             "start": 7,
             "end": 11
           },
-          "$nodeId": 982608,
+          "$nodeId": 982552,
           "$named": true
         }
       ],
@@ -5695,7 +5691,7 @@
         "start": 0,
         "end": 12
       },
-      "$nodeId": 982888,
+      "$nodeId": 982832,
       "$named": true
     },
     "expectedOutput": "{ a: 1,b: 2 }"
@@ -5727,7 +5723,7 @@
             "start": 32,
             "end": 33
           },
-          "$nodeId": 985608,
+          "$nodeId": 985552,
           "$named": true
         },
         ".": {
@@ -5738,7 +5734,7 @@
             "start": 33,
             "end": 34
           },
-          "$nodeId": 985976,
+          "$nodeId": 985920,
           "$named": false
         },
         "attribute": {
@@ -5749,7 +5745,7 @@
             "start": 34,
             "end": 35
           },
-          "$nodeId": 985984,
+          "$nodeId": 985928,
           "$named": true
         }
       },
@@ -5757,7 +5753,7 @@
         "start": 32,
         "end": 35
       },
-      "$nodeId": 986072,
+      "$nodeId": 986016,
       "$named": true
     },
     "expectedOutput": "a.b"
@@ -5789,7 +5785,7 @@
             "start": 40,
             "end": 41
           },
-          "$nodeId": 986712,
+          "$nodeId": 986656,
           "$named": true
         },
         "[": {
@@ -5800,7 +5796,7 @@
             "start": 41,
             "end": 42
           },
-          "$nodeId": 987256,
+          "$nodeId": 987200,
           "$named": false
         },
         "subscript": {
@@ -5811,7 +5807,7 @@
             "start": 42,
             "end": 43
           },
-          "$nodeId": 987072,
+          "$nodeId": 987016,
           "$named": true
         },
         "]": {
@@ -5822,7 +5818,7 @@
             "start": 43,
             "end": 44
           },
-          "$nodeId": 987272,
+          "$nodeId": 987216,
           "$named": false
         }
       },
@@ -5830,7 +5826,7 @@
         "start": 40,
         "end": 44
       },
-      "$nodeId": 987360,
+      "$nodeId": 987304,
       "$named": true
     },
     "expectedOutput": "a[b]"
@@ -5862,7 +5858,7 @@
             "start": 51,
             "end": 52
           },
-          "$nodeId": 988192,
+          "$nodeId": 988136,
           "$named": true
         },
         "arguments": {
@@ -5873,7 +5869,7 @@
             "start": 52,
             "end": 54
           },
-          "$nodeId": 988656,
+          "$nodeId": 988600,
           "$named": true
         }
       },
@@ -5881,7 +5877,7 @@
         "start": 51,
         "end": 54
       },
-      "$nodeId": 988744,
+      "$nodeId": 988688,
       "$named": true
     },
     "expectedOutput": "a ()"
@@ -5913,7 +5909,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 996888,
+          "$nodeId": 996832,
           "$named": false
         },
         "body": {
@@ -5924,7 +5920,7 @@
             "start": 1,
             "end": 5
           },
-          "$nodeId": 996896,
+          "$nodeId": 996840,
           "$named": true
         },
         "}": {
@@ -5935,7 +5931,7 @@
             "start": 23,
             "end": 24
           },
-          "$nodeId": 996912,
+          "$nodeId": 996856,
           "$named": false
         }
       },
@@ -5948,7 +5944,7 @@
             "start": 6,
             "end": 23
           },
-          "$nodeId": 996720,
+          "$nodeId": 996664,
           "$named": true
         }
       ],
@@ -5956,7 +5952,7 @@
         "start": 0,
         "end": 24
       },
-      "$nodeId": 997000,
+      "$nodeId": 996944,
       "$named": true
     },
     "expectedOutput": "{ a: b for a, b in items }"
@@ -5968,7 +5964,7 @@
     "pattern": "dictionary_comprehension",
     "edits": [],
     "expectedSourceOut": "{ a: b for a, b in items }",
-    "expectedReparseTree": "(dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (for_in_clause left: (pattern_list pattern: (identifier) (identifier)) right: (identifier)))",
+    "expectedReparseTree": "(dictionary_comprehension body: (pair key: (identifier) value: (identifier)) (for_in_clause left: (pattern_list (identifier) (identifier)) right: (identifier)))",
     "wrappedText": "_ = { a: b for a, b in items }",
     "wrappedOffset": 4
   },
@@ -5988,7 +5984,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 1003064,
+          "$nodeId": 1003008,
           "$named": false
         },
         ",": {
@@ -5999,7 +5995,7 @@
             "start": 2,
             "end": 3
           },
-          "$nodeId": 1002416,
+          "$nodeId": 1002360,
           "$named": false
         },
         "}": {
@@ -6010,7 +6006,7 @@
             "start": 9,
             "end": 10
           },
-          "$nodeId": 1003080,
+          "$nodeId": 1003024,
           "$named": false
         }
       },
@@ -6023,7 +6019,7 @@
             "start": 1,
             "end": 2
           },
-          "$nodeId": 1002064,
+          "$nodeId": 1002008,
           "$named": true
         },
         {
@@ -6034,7 +6030,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 1002240,
+          "$nodeId": 1002184,
           "$named": true
         },
         {
@@ -6045,7 +6041,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 1002688,
+          "$nodeId": 1002632,
           "$named": false
         },
         {
@@ -6056,7 +6052,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 1002512,
+          "$nodeId": 1002456,
           "$named": true
         },
         {
@@ -6067,7 +6063,7 @@
             "start": 8,
             "end": 9
           },
-          "$nodeId": 1002896,
+          "$nodeId": 1002840,
           "$named": false
         }
       ],
@@ -6075,7 +6071,7 @@
         "start": 0,
         "end": 10
       },
-      "$nodeId": 1003168,
+      "$nodeId": 1003112,
       "$named": true
     },
     "expectedOutput": "{ a,b,c, }"
@@ -6107,7 +6103,7 @@
             "start": 12,
             "end": 13
           },
-          "$nodeId": 1003880,
+          "$nodeId": 1003824,
           "$named": false
         },
         "expression": {
@@ -6118,7 +6114,7 @@
             "start": 13,
             "end": 15
           },
-          "$nodeId": 1003432,
+          "$nodeId": 1003376,
           "$named": true
         }
       },
@@ -6126,7 +6122,7 @@
         "start": 12,
         "end": 15
       },
-      "$nodeId": 1003976,
+      "$nodeId": 1003920,
       "$named": true
     },
     "expectedOutput": "*{}"
@@ -6158,7 +6154,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 1003696,
+          "$nodeId": 1003640,
           "$named": false
         },
         "}": {
@@ -6169,7 +6165,7 @@
             "start": 14,
             "end": 15
           },
-          "$nodeId": 1003704,
+          "$nodeId": 1003648,
           "$named": false
         }
       },
@@ -6177,7 +6173,7 @@
         "start": 13,
         "end": 15
       },
-      "$nodeId": 1003432,
+      "$nodeId": 1003376,
       "$named": true
     },
     "expectedOutput": "{  }"
@@ -6209,7 +6205,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 1011136,
+          "$nodeId": 1011080,
           "$named": false
         },
         "body": {
@@ -6220,7 +6216,7 @@
             "start": 1,
             "end": 8
           },
-          "$nodeId": 1009768,
+          "$nodeId": 1009712,
           "$named": true
         },
         "}": {
@@ -6231,7 +6227,7 @@
             "start": 29,
             "end": 30
           },
-          "$nodeId": 1011160,
+          "$nodeId": 1011104,
           "$named": false
         }
       },
@@ -6244,7 +6240,7 @@
             "start": 9,
             "end": 29
           },
-          "$nodeId": 1010968,
+          "$nodeId": 1010912,
           "$named": true
         }
       ],
@@ -6252,7 +6248,7 @@
         "start": 0,
         "end": 30
       },
-      "$nodeId": 1011248,
+      "$nodeId": 1011192,
       "$named": true
     },
     "expectedOutput": "{ a[b][c] for a, b, c in items }"
@@ -6264,7 +6260,7 @@
     "pattern": "set_comprehension",
     "edits": [],
     "expectedSourceOut": "{ a[b][c] for a, b, c in items }",
-    "expectedReparseTree": "(set_comprehension body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) (for_in_clause left: (pattern_list pattern: (identifier) (identifier) (identifier)) right: (identifier)))",
+    "expectedReparseTree": "(set_comprehension body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) (for_in_clause left: (pattern_list (identifier) (identifier) (identifier)) right: (identifier)))",
     "wrappedText": "_ = { a[b][c] for a, b, c in items }",
     "wrappedOffset": 4
   },
@@ -6284,7 +6280,7 @@
             "start": 1,
             "end": 5
           },
-          "$nodeId": 1009392,
+          "$nodeId": 1009336,
           "$named": true
         },
         "[": {
@@ -6295,7 +6291,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 1009664,
+          "$nodeId": 1009608,
           "$named": false
         },
         "subscript": {
@@ -6306,7 +6302,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 1009480,
+          "$nodeId": 1009424,
           "$named": true
         },
         "]": {
@@ -6317,7 +6313,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 1009680,
+          "$nodeId": 1009624,
           "$named": false
         }
       },
@@ -6325,7 +6321,7 @@
         "start": 1,
         "end": 8
       },
-      "$nodeId": 1009768,
+      "$nodeId": 1009712,
       "$named": true
     },
     "expectedOutput": "a[b][c]"
@@ -6357,7 +6353,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 1018528,
+          "$nodeId": 1018472,
           "$named": false
         },
         ")": {
@@ -6368,7 +6364,7 @@
             "start": 1,
             "end": 2
           },
-          "$nodeId": 1018536,
+          "$nodeId": 1018480,
           "$named": false
         }
       },
@@ -6376,7 +6372,7 @@
         "start": 0,
         "end": 2
       },
-      "$nodeId": 1018624,
+      "$nodeId": 1018568,
       "$named": true
     },
     "expectedOutput": "()"
@@ -6408,7 +6404,7 @@
             "start": 0,
             "end": 1
           },
-          "$nodeId": 1026328,
+          "$nodeId": 1026272,
           "$named": false
         },
         "body": {
@@ -6419,7 +6415,7 @@
             "start": 1,
             "end": 8
           },
-          "$nodeId": 1024960,
+          "$nodeId": 1024904,
           "$named": true
         },
         ")": {
@@ -6430,7 +6426,7 @@
             "start": 29,
             "end": 30
           },
-          "$nodeId": 1026352,
+          "$nodeId": 1026296,
           "$named": false
         }
       },
@@ -6443,7 +6439,7 @@
             "start": 9,
             "end": 29
           },
-          "$nodeId": 1026160,
+          "$nodeId": 1026104,
           "$named": true
         }
       ],
@@ -6451,7 +6447,7 @@
         "start": 0,
         "end": 30
       },
-      "$nodeId": 1026440,
+      "$nodeId": 1026384,
       "$named": true
     },
     "expectedOutput": "(a[b][c] for a, b, c in items)"
@@ -6463,7 +6459,7 @@
     "pattern": "generator_expression",
     "edits": [],
     "expectedSourceOut": "(a[b][c] for a, b, c in items)",
-    "expectedReparseTree": "(generator_expression body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) (for_in_clause left: (pattern_list pattern: (identifier) (identifier) (identifier)) right: (identifier)))",
+    "expectedReparseTree": "(generator_expression body: (subscript value: (subscript value: (identifier) subscript: (identifier)) subscript: (identifier)) (for_in_clause left: (pattern_list (identifier) (identifier) (identifier)) right: (identifier)))",
     "wrappedText": "_ = (a[b][c] for a, b, c in items)",
     "wrappedOffset": 4
   },
@@ -6483,7 +6479,7 @@
             "start": 1,
             "end": 5
           },
-          "$nodeId": 1024584,
+          "$nodeId": 1024528,
           "$named": true
         },
         "[": {
@@ -6494,7 +6490,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 1024856,
+          "$nodeId": 1024800,
           "$named": false
         },
         "subscript": {
@@ -6505,7 +6501,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 1024672,
+          "$nodeId": 1024616,
           "$named": true
         },
         "]": {
@@ -6516,7 +6512,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 1024872,
+          "$nodeId": 1024816,
           "$named": false
         }
       },
@@ -6524,7 +6520,7 @@
         "start": 1,
         "end": 8
       },
-      "$nodeId": 1024960,
+      "$nodeId": 1024904,
       "$named": true
     },
     "expectedOutput": "a[b][c]"
@@ -6556,7 +6552,7 @@
             "start": 31,
             "end": 35
           },
-          "$nodeId": 1026704,
+          "$nodeId": 1026648,
           "$named": true
         },
         "arguments": {
@@ -6567,7 +6563,7 @@
             "start": 35,
             "end": 57
           },
-          "$nodeId": 1028744,
+          "$nodeId": 1028688,
           "$named": true
         }
       },
@@ -6575,7 +6571,7 @@
         "start": 31,
         "end": 57
       },
-      "$nodeId": 1028832,
+      "$nodeId": 1028776,
       "$named": true
     },
     "expectedOutput": "dict ((a, b) for a, b in d)"
@@ -6587,7 +6583,7 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "dict ((a, b) for a, b in d)",
-    "expectedReparseTree": "(call function: (identifier) arguments: (generator_expression body: (tuple (identifier) (identifier)) (for_in_clause left: (pattern_list pattern: (identifier) (identifier)) right: (identifier))))",
+    "expectedReparseTree": "(call function: (identifier) arguments: (generator_expression body: (tuple (identifier) (identifier)) (for_in_clause left: (pattern_list (identifier) (identifier)) right: (identifier))))",
     "wrappedText": "_ = dict ((a, b) for a, b in d)",
     "wrappedOffset": 4
   },
@@ -6607,7 +6603,7 @@
             "start": 36,
             "end": 37
           },
-          "$nodeId": 1027512,
+          "$nodeId": 1027456,
           "$named": false
         },
         ",": {
@@ -6618,7 +6614,7 @@
             "start": 38,
             "end": 39
           },
-          "$nodeId": 1027320,
+          "$nodeId": 1027264,
           "$named": false
         },
         ")": {
@@ -6629,7 +6625,7 @@
             "start": 41,
             "end": 42
           },
-          "$nodeId": 1027528,
+          "$nodeId": 1027472,
           "$named": false
         }
       },
@@ -6642,7 +6638,7 @@
             "start": 37,
             "end": 38
           },
-          "$nodeId": 1026968,
+          "$nodeId": 1026912,
           "$named": true
         },
         {
@@ -6653,7 +6649,7 @@
             "start": 40,
             "end": 41
           },
-          "$nodeId": 1027144,
+          "$nodeId": 1027088,
           "$named": true
         }
       ],
@@ -6661,7 +6657,7 @@
         "start": 36,
         "end": 42
       },
-      "$nodeId": 1027616,
+      "$nodeId": 1027560,
       "$named": true
     },
     "expectedOutput": "(a,b)"
@@ -6693,7 +6689,7 @@
             "start": 6,
             "end": 19
           },
-          "$nodeId": 1043216,
+          "$nodeId": 1043160,
           "$named": true
         },
         "arguments": {
@@ -6704,7 +6700,7 @@
             "start": 19,
             "end": 21
           },
-          "$nodeId": 1041928,
+          "$nodeId": 1041872,
           "$named": true
         }
       },
@@ -6712,7 +6708,7 @@
         "start": 6,
         "end": 21
       },
-      "$nodeId": 1042016,
+      "$nodeId": 1041960,
       "$named": true
     },
     "expectedOutput": "command.split ()"
@@ -6744,7 +6740,7 @@
             "start": 6,
             "end": 13
           },
-          "$nodeId": 1042928,
+          "$nodeId": 1042872,
           "$named": true
         },
         ".": {
@@ -6755,7 +6751,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 1043120,
+          "$nodeId": 1043064,
           "$named": false
         },
         "attribute": {
@@ -6766,7 +6762,7 @@
             "start": 14,
             "end": 19
           },
-          "$nodeId": 1043128,
+          "$nodeId": 1043072,
           "$named": true
         }
       },
@@ -6774,7 +6770,7 @@
         "start": 6,
         "end": 19
       },
-      "$nodeId": 1043216,
+      "$nodeId": 1043160,
       "$named": true
     },
     "expectedOutput": "command.split"
@@ -6806,7 +6802,7 @@
             "start": 32,
             "end": 33
           },
-          "$nodeId": 1044080,
+          "$nodeId": 1044024,
           "$named": false
         },
         "]": {
@@ -6817,7 +6813,7 @@
             "start": 39,
             "end": 40
           },
-          "$nodeId": 1044096,
+          "$nodeId": 1044040,
           "$named": false
         }
       },
@@ -6830,7 +6826,7 @@
             "start": 33,
             "end": 39
           },
-          "$nodeId": 1044088,
+          "$nodeId": 1044032,
           "$named": true
         }
       ],
@@ -6838,7 +6834,7 @@
         "start": 32,
         "end": 40
       },
-      "$nodeId": 1044184,
+      "$nodeId": 1044128,
       "$named": true
     },
     "expectedOutput": "[\"quit\"]"
@@ -6870,7 +6866,7 @@
             "start": 33,
             "end": 34
           },
-          "$nodeId": 1043800,
+          "$nodeId": 1043744,
           "$named": true
         },
         "content": {
@@ -6881,7 +6877,7 @@
             "start": 34,
             "end": 38
           },
-          "$nodeId": 1043808,
+          "$nodeId": 1043752,
           "$named": true
         },
         "string_end": {
@@ -6892,7 +6888,7 @@
             "start": 38,
             "end": 39
           },
-          "$nodeId": 1043816,
+          "$nodeId": 1043760,
           "$named": true
         }
       },
@@ -6900,7 +6896,7 @@
         "start": 33,
         "end": 39
       },
-      "$nodeId": 1043904,
+      "$nodeId": 1043848,
       "$named": true
     },
     "expectedOutput": "\"quit\""
@@ -6932,7 +6928,7 @@
             "start": 6,
             "end": 19
           },
-          "$nodeId": 1062288,
+          "$nodeId": 1062232,
           "$named": true
         },
         "arguments": {
@@ -6943,7 +6939,7 @@
             "start": 19,
             "end": 21
           },
-          "$nodeId": 1062480,
+          "$nodeId": 1062424,
           "$named": true
         }
       },
@@ -6951,7 +6947,7 @@
         "start": 6,
         "end": 21
       },
-      "$nodeId": 1062568,
+      "$nodeId": 1062512,
       "$named": true
     },
     "expectedOutput": "command.split ()"
@@ -6983,7 +6979,7 @@
             "start": 6,
             "end": 13
           },
-          "$nodeId": 1062000,
+          "$nodeId": 1061944,
           "$named": true
         },
         ".": {
@@ -6994,7 +6990,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 1062192,
+          "$nodeId": 1062136,
           "$named": false
         },
         "attribute": {
@@ -7005,7 +7001,7 @@
             "start": 14,
             "end": 19
           },
-          "$nodeId": 1062200,
+          "$nodeId": 1062144,
           "$named": true
         }
       },
@@ -7013,7 +7009,7 @@
         "start": 6,
         "end": 19
       },
-      "$nodeId": 1062288,
+      "$nodeId": 1062232,
       "$named": true
     },
     "expectedOutput": "command.split"
@@ -7045,7 +7041,7 @@
             "start": 32,
             "end": 33
           },
-          "$nodeId": 1063712,
+          "$nodeId": 1063656,
           "$named": false
         },
         ",": {
@@ -7056,7 +7052,7 @@
             "start": 39,
             "end": 40
           },
-          "$nodeId": 1063616,
+          "$nodeId": 1063560,
           "$named": false
         },
         "]": {
@@ -7067,7 +7063,7 @@
             "start": 49,
             "end": 50
           },
-          "$nodeId": 1063736,
+          "$nodeId": 1063680,
           "$named": false
         }
       },
@@ -7080,7 +7076,7 @@
             "start": 33,
             "end": 39
           },
-          "$nodeId": 1063720,
+          "$nodeId": 1063664,
           "$named": true
         },
         {
@@ -7091,7 +7087,7 @@
             "start": 41,
             "end": 49
           },
-          "$nodeId": 1063624,
+          "$nodeId": 1063568,
           "$named": true
         }
       ],
@@ -7099,7 +7095,7 @@
         "start": 32,
         "end": 50
       },
-      "$nodeId": 1063824,
+      "$nodeId": 1063768,
       "$named": true
     },
     "expectedOutput": "[\"drop\",*objects]"
@@ -7131,7 +7127,7 @@
             "start": 33,
             "end": 34
           },
-          "$nodeId": 1063152,
+          "$nodeId": 1063096,
           "$named": true
         },
         "content": {
@@ -7142,7 +7138,7 @@
             "start": 34,
             "end": 38
           },
-          "$nodeId": 1063160,
+          "$nodeId": 1063104,
           "$named": true
         },
         "string_end": {
@@ -7153,7 +7149,7 @@
             "start": 38,
             "end": 39
           },
-          "$nodeId": 1063168,
+          "$nodeId": 1063112,
           "$named": true
         }
       },
@@ -7161,7 +7157,7 @@
         "start": 33,
         "end": 39
       },
-      "$nodeId": 1063256,
+      "$nodeId": 1063200,
       "$named": true
     },
     "expectedOutput": "\"drop\""
@@ -7193,7 +7189,7 @@
             "start": 6,
             "end": 19
           },
-          "$nodeId": 1073536,
+          "$nodeId": 1073480,
           "$named": true
         },
         "arguments": {
@@ -7204,7 +7200,7 @@
             "start": 19,
             "end": 21
           },
-          "$nodeId": 1073728,
+          "$nodeId": 1073672,
           "$named": true
         }
       },
@@ -7212,7 +7208,7 @@
         "start": 6,
         "end": 21
       },
-      "$nodeId": 1073816,
+      "$nodeId": 1073760,
       "$named": true
     },
     "expectedOutput": "command.split ()"
@@ -7244,7 +7240,7 @@
             "start": 6,
             "end": 13
           },
-          "$nodeId": 1073344,
+          "$nodeId": 1073288,
           "$named": true
         },
         ".": {
@@ -7255,7 +7251,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 1073440,
+          "$nodeId": 1073384,
           "$named": false
         },
         "attribute": {
@@ -7266,7 +7262,7 @@
             "start": 14,
             "end": 19
           },
-          "$nodeId": 1073448,
+          "$nodeId": 1073392,
           "$named": true
         }
       },
@@ -7274,7 +7270,7 @@
         "start": 6,
         "end": 19
       },
-      "$nodeId": 1073536,
+      "$nodeId": 1073480,
       "$named": true
     },
     "expectedOutput": "command.split"
@@ -7306,7 +7302,7 @@
             "start": 48,
             "end": 49
           },
-          "$nodeId": 1074680,
+          "$nodeId": 1074624,
           "$named": false
         },
         "]": {
@@ -7317,7 +7313,7 @@
             "start": 55,
             "end": 56
           },
-          "$nodeId": 1074696,
+          "$nodeId": 1074640,
           "$named": false
         }
       },
@@ -7330,7 +7326,7 @@
             "start": 49,
             "end": 55
           },
-          "$nodeId": 1074688,
+          "$nodeId": 1074632,
           "$named": true
         }
       ],
@@ -7338,7 +7334,7 @@
         "start": 48,
         "end": 56
       },
-      "$nodeId": 1074784,
+      "$nodeId": 1074728,
       "$named": true
     },
     "expectedOutput": "[\"quit\"]"
@@ -7370,7 +7366,7 @@
             "start": 49,
             "end": 50
           },
-          "$nodeId": 1074400,
+          "$nodeId": 1074344,
           "$named": true
         },
         "content": {
@@ -7381,7 +7377,7 @@
             "start": 50,
             "end": 54
           },
-          "$nodeId": 1074408,
+          "$nodeId": 1074352,
           "$named": true
         },
         "string_end": {
@@ -7392,7 +7388,7 @@
             "start": 54,
             "end": 55
           },
-          "$nodeId": 1074416,
+          "$nodeId": 1074360,
           "$named": true
         }
       },
@@ -7400,7 +7396,7 @@
         "start": 49,
         "end": 55
       },
-      "$nodeId": 1074504,
+      "$nodeId": 1074448,
       "$named": true
     },
     "expectedOutput": "\"quit\""
@@ -7432,7 +7428,7 @@
             "start": 6,
             "end": 19
           },
-          "$nodeId": 1088096,
+          "$nodeId": 1088040,
           "$named": true
         },
         "arguments": {
@@ -7443,7 +7439,7 @@
             "start": 19,
             "end": 21
           },
-          "$nodeId": 1088288,
+          "$nodeId": 1088232,
           "$named": true
         }
       },
@@ -7451,7 +7447,7 @@
         "start": 6,
         "end": 21
       },
-      "$nodeId": 1088376,
+      "$nodeId": 1088320,
       "$named": true
     },
     "expectedOutput": "command.split ()"
@@ -7483,7 +7479,7 @@
             "start": 6,
             "end": 13
           },
-          "$nodeId": 1087808,
+          "$nodeId": 1087752,
           "$named": true
         },
         ".": {
@@ -7494,7 +7490,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 1088000,
+          "$nodeId": 1087944,
           "$named": false
         },
         "attribute": {
@@ -7505,7 +7501,7 @@
             "start": 14,
             "end": 19
           },
-          "$nodeId": 1088008,
+          "$nodeId": 1087952,
           "$named": true
         }
       },
@@ -7513,7 +7509,7 @@
         "start": 6,
         "end": 19
       },
-      "$nodeId": 1088096,
+      "$nodeId": 1088040,
       "$named": true
     },
     "expectedOutput": "command.split"
@@ -7545,7 +7541,7 @@
             "start": 32,
             "end": 33
           },
-          "$nodeId": 1089240,
+          "$nodeId": 1089184,
           "$named": false
         },
         "]": {
@@ -7556,7 +7552,7 @@
             "start": 40,
             "end": 41
           },
-          "$nodeId": 1089256,
+          "$nodeId": 1089200,
           "$named": false
         }
       },
@@ -7569,7 +7565,7 @@
             "start": 33,
             "end": 40
           },
-          "$nodeId": 1089248,
+          "$nodeId": 1089192,
           "$named": true
         }
       ],
@@ -7577,7 +7573,7 @@
         "start": 32,
         "end": 41
       },
-      "$nodeId": 1090864,
+      "$nodeId": 1090808,
       "$named": true
     },
     "expectedOutput": "[\"north\"]"
@@ -7609,7 +7605,7 @@
             "start": 33,
             "end": 34
           },
-          "$nodeId": 1088960,
+          "$nodeId": 1088904,
           "$named": true
         },
         "content": {
@@ -7620,7 +7616,7 @@
             "start": 34,
             "end": 39
           },
-          "$nodeId": 1088968,
+          "$nodeId": 1088912,
           "$named": true
         },
         "string_end": {
@@ -7631,7 +7627,7 @@
             "start": 39,
             "end": 40
           },
-          "$nodeId": 1088976,
+          "$nodeId": 1088920,
           "$named": true
         }
       },
@@ -7639,7 +7635,7 @@
         "start": 33,
         "end": 40
       },
-      "$nodeId": 1089064,
+      "$nodeId": 1089008,
       "$named": true
     },
     "expectedOutput": "\"north\""
@@ -7671,7 +7667,7 @@
             "start": 6,
             "end": 19
           },
-          "$nodeId": 1106376,
+          "$nodeId": 1106320,
           "$named": true
         },
         "arguments": {
@@ -7682,7 +7678,7 @@
             "start": 19,
             "end": 21
           },
-          "$nodeId": 1106568,
+          "$nodeId": 1106512,
           "$named": true
         }
       },
@@ -7690,7 +7686,7 @@
         "start": 6,
         "end": 21
       },
-      "$nodeId": 1106656,
+      "$nodeId": 1106600,
       "$named": true
     },
     "expectedOutput": "command.split ()"
@@ -7722,7 +7718,7 @@
             "start": 6,
             "end": 13
           },
-          "$nodeId": 1106184,
+          "$nodeId": 1106128,
           "$named": true
         },
         ".": {
@@ -7733,7 +7729,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 1106280,
+          "$nodeId": 1106224,
           "$named": false
         },
         "attribute": {
@@ -7744,7 +7740,7 @@
             "start": 14,
             "end": 19
           },
-          "$nodeId": 1106288,
+          "$nodeId": 1106232,
           "$named": true
         }
       },
@@ -7752,7 +7748,7 @@
         "start": 6,
         "end": 19
       },
-      "$nodeId": 1106376,
+      "$nodeId": 1106320,
       "$named": true
     },
     "expectedOutput": "command.split"
@@ -7784,7 +7780,7 @@
             "start": 32,
             "end": 33
           },
-          "$nodeId": 1110744,
+          "$nodeId": 1110688,
           "$named": false
         },
         ",": {
@@ -7795,7 +7791,7 @@
             "start": 37,
             "end": 38
           },
-          "$nodeId": 1110648,
+          "$nodeId": 1110592,
           "$named": false
         },
         "]": {
@@ -7806,7 +7802,7 @@
             "start": 89,
             "end": 90
           },
-          "$nodeId": 1110768,
+          "$nodeId": 1110712,
           "$named": false
         }
       },
@@ -7819,7 +7815,7 @@
             "start": 33,
             "end": 37
           },
-          "$nodeId": 1110752,
+          "$nodeId": 1110696,
           "$named": true
         },
         {
@@ -7830,7 +7826,7 @@
             "start": 39,
             "end": 89
           },
-          "$nodeId": 1110656,
+          "$nodeId": 1110600,
           "$named": true
         }
       ],
@@ -7838,7 +7834,7 @@
         "start": 32,
         "end": 90
       },
-      "$nodeId": 1110856,
+      "$nodeId": 1110800,
       "$named": true
     },
     "expectedOutput": "[\"go\",(\"north\" | \"south\" | \"east\" | \"west\") as direction]"
@@ -7870,7 +7866,7 @@
             "start": 33,
             "end": 34
           },
-          "$nodeId": 1107240,
+          "$nodeId": 1107184,
           "$named": true
         },
         "content": {
@@ -7881,7 +7877,7 @@
             "start": 34,
             "end": 36
           },
-          "$nodeId": 1107248,
+          "$nodeId": 1107192,
           "$named": true
         },
         "string_end": {
@@ -7892,7 +7888,7 @@
             "start": 36,
             "end": 37
           },
-          "$nodeId": 1107256,
+          "$nodeId": 1107200,
           "$named": true
         }
       },
@@ -7900,7 +7896,7 @@
         "start": 33,
         "end": 37
       },
-      "$nodeId": 1107344,
+      "$nodeId": 1107288,
       "$named": true
     },
     "expectedOutput": "\"go\""
@@ -7932,7 +7928,7 @@
             "start": 33,
             "end": 36
           },
-          "$nodeId": 1125592,
+          "$nodeId": 1125536,
           "$named": true
         }
       ],
@@ -7940,7 +7936,7 @@
         "start": 33,
         "end": 36
       },
-      "$nodeId": 1126128,
+      "$nodeId": 1126072,
       "$named": true
     },
     "expectedOutput": "int"
@@ -7972,7 +7968,7 @@
             "start": 60,
             "end": 61
           },
-          "$nodeId": 1127496,
+          "$nodeId": 1127440,
           "$named": true
         },
         "content": {
@@ -7983,7 +7979,7 @@
             "start": 61,
             "end": 76
           },
-          "$nodeId": 1127504,
+          "$nodeId": 1127448,
           "$named": true
         },
         "string_end": {
@@ -7994,7 +7990,7 @@
             "start": 76,
             "end": 77
           },
-          "$nodeId": 1127512,
+          "$nodeId": 1127456,
           "$named": true
         }
       },
@@ -8002,7 +7998,7 @@
         "start": 60,
         "end": 77
       },
-      "$nodeId": 1127600,
+      "$nodeId": 1127544,
       "$named": true
     },
     "expectedOutput": "\"hey, what's up?\""
@@ -8034,7 +8030,7 @@
             "start": 78,
             "end": 79
           },
-          "$nodeId": 1128440,
+          "$nodeId": 1128384,
           "$named": false
         }
       },
@@ -8047,7 +8043,7 @@
             "start": 79,
             "end": 84
           },
-          "$nodeId": 1128448,
+          "$nodeId": 1128392,
           "$named": true
         }
       ],
@@ -8055,7 +8051,7 @@
         "start": 78,
         "end": 84
       },
-      "$nodeId": 1128536,
+      "$nodeId": 1128480,
       "$named": true
     },
     "expectedOutput": "*match"
@@ -8087,7 +8083,7 @@
             "start": 93,
             "end": 94
           },
-          "$nodeId": 1129896,
+          "$nodeId": 1129840,
           "$named": false
         },
         ",": {
@@ -8098,7 +8094,7 @@
             "start": 95,
             "end": 96
           },
-          "$nodeId": 1129256,
+          "$nodeId": 1129200,
           "$named": false
         },
         "]": {
@@ -8109,7 +8105,7 @@
             "start": 101,
             "end": 102
           },
-          "$nodeId": 1129912,
+          "$nodeId": 1129856,
           "$named": false
         }
       },
@@ -8122,7 +8118,7 @@
             "start": 94,
             "end": 95
           },
-          "$nodeId": 1128624,
+          "$nodeId": 1128568,
           "$named": true
         },
         {
@@ -8133,7 +8129,7 @@
             "start": 97,
             "end": 98
           },
-          "$nodeId": 1128800,
+          "$nodeId": 1128744,
           "$named": true
         },
         {
@@ -8144,7 +8140,7 @@
             "start": 98,
             "end": 99
           },
-          "$nodeId": 1129528,
+          "$nodeId": 1129472,
           "$named": false
         },
         {
@@ -8155,7 +8151,7 @@
             "start": 100,
             "end": 101
           },
-          "$nodeId": 1129352,
+          "$nodeId": 1129296,
           "$named": true
         }
       ],
@@ -8163,7 +8159,7 @@
         "start": 93,
         "end": 102
       },
-      "$nodeId": 1130000,
+      "$nodeId": 1129944,
       "$named": true
     },
     "expectedOutput": "[1,2,3]"
@@ -8195,7 +8191,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 1138464,
+          "$nodeId": 1138408,
           "$named": false
         },
         "]": {
@@ -8206,7 +8202,7 @@
             "start": 10,
             "end": 11
           },
-          "$nodeId": 1138480,
+          "$nodeId": 1138424,
           "$named": false
         }
       },
@@ -8219,7 +8215,7 @@
             "start": 5,
             "end": 10
           },
-          "$nodeId": 1138032,
+          "$nodeId": 1137976,
           "$named": true
         }
       ],
@@ -8227,7 +8223,7 @@
         "start": 4,
         "end": 11
       },
-      "$nodeId": 1138568,
+      "$nodeId": 1138512,
       "$named": true
     },
     "expectedOutput": "[match]"
@@ -8259,7 +8255,7 @@
             "start": 8,
             "end": 12
           },
-          "$nodeId": 1140840,
+          "$nodeId": 1140784,
           "$named": true
         },
         "arguments": {
@@ -8270,7 +8266,7 @@
             "start": 12,
             "end": 31
           },
-          "$nodeId": 1142872,
+          "$nodeId": 1142816,
           "$named": true
         }
       },
@@ -8278,7 +8274,7 @@
         "start": 8,
         "end": 31
       },
-      "$nodeId": 1142960,
+      "$nodeId": 1142904,
       "$named": true
     },
     "expectedOutput": "call (match=r\".*\\.txt$\")"
@@ -8310,7 +8306,7 @@
             "start": 19,
             "end": 21
           },
-          "$nodeId": 1142296,
+          "$nodeId": 1142240,
           "$named": true
         },
         "content": {
@@ -8321,7 +8317,7 @@
             "start": 21,
             "end": 29
           },
-          "$nodeId": 1142304,
+          "$nodeId": 1142248,
           "$named": true
         },
         "string_end": {
@@ -8332,7 +8328,7 @@
             "start": 29,
             "end": 30
           },
-          "$nodeId": 1142312,
+          "$nodeId": 1142256,
           "$named": true
         }
       },
@@ -8340,7 +8336,7 @@
         "start": 19,
         "end": 30
       },
-      "$nodeId": 1142400,
+      "$nodeId": 1142344,
       "$named": true
     },
     "expectedOutput": "r\".*\\.txt$\""
@@ -8372,7 +8368,7 @@
             "start": 8,
             "end": 13
           },
-          "$nodeId": 1147200,
+          "$nodeId": 1147144,
           "$named": true
         },
         "arguments": {
@@ -8383,7 +8379,7 @@
             "start": 13,
             "end": 33
           },
-          "$nodeId": 1148040,
+          "$nodeId": 1147984,
           "$named": true
         }
       },
@@ -8391,7 +8387,7 @@
         "start": 8,
         "end": 33
       },
-      "$nodeId": 1148128,
+      "$nodeId": 1148072,
       "$named": true
     },
     "expectedOutput": "match (match=match, match)"
@@ -8423,7 +8419,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 1151312,
+          "$nodeId": 1151256,
           "$named": false
         },
         "]": {
@@ -8434,7 +8430,7 @@
             "start": 9,
             "end": 10
           },
-          "$nodeId": 1151328,
+          "$nodeId": 1151272,
           "$named": false
         }
       },
@@ -8447,7 +8443,7 @@
             "start": 5,
             "end": 9
           },
-          "$nodeId": 1150880,
+          "$nodeId": 1150824,
           "$named": true
         }
       ],
@@ -8455,7 +8451,7 @@
         "start": 4,
         "end": 10
       },
-      "$nodeId": 1151416,
+      "$nodeId": 1151360,
       "$named": true
     },
     "expectedOutput": "[case]"
@@ -8487,7 +8483,7 @@
             "start": 40,
             "end": 47
           },
-          "$nodeId": 1152320,
+          "$nodeId": 1152264,
           "$named": true
         },
         "arguments": {
@@ -8498,7 +8494,7 @@
             "start": 47,
             "end": 58
           },
-          "$nodeId": 1153800,
+          "$nodeId": 1153744,
           "$named": true
         }
       },
@@ -8506,7 +8502,7 @@
         "start": 40,
         "end": 58
       },
-      "$nodeId": 1153888,
+      "$nodeId": 1153832,
       "$named": true
     },
     "expectedOutput": "call_me (case=True)"
@@ -8538,7 +8534,7 @@
             "start": 48,
             "end": 49
           },
-          "$nodeId": 1163784,
+          "$nodeId": 1163728,
           "$named": true
         },
         "content": {
@@ -8549,7 +8545,7 @@
             "start": 49,
             "end": 58
           },
-          "$nodeId": 1163792,
+          "$nodeId": 1163736,
           "$named": true
         },
         "string_end": {
@@ -8560,7 +8556,7 @@
             "start": 58,
             "end": 59
           },
-          "$nodeId": 1163800,
+          "$nodeId": 1163744,
           "$named": true
         }
       },
@@ -8568,7 +8564,7 @@
         "start": 48,
         "end": 59
       },
-      "$nodeId": 1163888,
+      "$nodeId": 1163832,
       "$named": true
     },
     "expectedOutput": "\"something\""
@@ -8591,8 +8587,8 @@
       "$type": "concatenated_string",
       "$source": "ts",
       "$text": "\"something\" \"else\"",
-      "$fields": {
-        "string": {
+      "$children": [
+        {
           "$type": "string",
           "$source": "ts",
           "$text": "\"something\"",
@@ -8600,11 +8596,9 @@
             "start": 81,
             "end": 92
           },
-          "$nodeId": 1165752,
+          "$nodeId": 1165696,
           "$named": true
-        }
-      },
-      "$children": [
+        },
         {
           "$type": "string",
           "$source": "ts",
@@ -8613,7 +8607,7 @@
             "start": 93,
             "end": 99
           },
-          "$nodeId": 1165760,
+          "$nodeId": 1165704,
           "$named": true
         }
       ],
@@ -8621,7 +8615,7 @@
         "start": 81,
         "end": 99
       },
-      "$nodeId": 1165848,
+      "$nodeId": 1165792,
       "$named": true
     },
     "expectedOutput": "\"something\" \"else\""
@@ -8633,7 +8627,7 @@
     "pattern": "concatenated_string",
     "edits": [],
     "expectedSourceOut": "\"something\" \"else\"",
-    "expectedReparseTree": "(concatenated_string string: (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))",
+    "expectedReparseTree": "(concatenated_string (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))",
     "wrappedText": "_ = \"something\" \"else\"",
     "wrappedOffset": 4
   },
@@ -8653,7 +8647,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 1175736,
+          "$nodeId": 1175680,
           "$named": false
         },
         ",": {
@@ -8664,7 +8658,7 @@
             "start": 8,
             "end": 9
           },
-          "$nodeId": 1174712,
+          "$nodeId": 1174656,
           "$named": false
         },
         ")": {
@@ -8675,7 +8669,7 @@
             "start": 14,
             "end": 15
           },
-          "$nodeId": 1175752,
+          "$nodeId": 1175696,
           "$named": false
         }
       },
@@ -8688,7 +8682,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 1174008,
+          "$nodeId": 1173952,
           "$named": true
         },
         {
@@ -8699,7 +8693,7 @@
             "start": 10,
             "end": 11
           },
-          "$nodeId": 1174360,
+          "$nodeId": 1174304,
           "$named": true
         },
         {
@@ -8710,7 +8704,7 @@
             "start": 11,
             "end": 12
           },
-          "$nodeId": 1175256,
+          "$nodeId": 1175200,
           "$named": false
         },
         {
@@ -8721,7 +8715,7 @@
             "start": 13,
             "end": 14
           },
-          "$nodeId": 1174904,
+          "$nodeId": 1174848,
           "$named": true
         }
       ],
@@ -8729,7 +8723,7 @@
         "start": 6,
         "end": 15
       },
-      "$nodeId": 1175840,
+      "$nodeId": 1175784,
       "$named": true
     },
     "expectedOutput": "(0,1,2)"
@@ -8761,7 +8755,7 @@
             "start": 46,
             "end": 52
           },
-          "$nodeId": 1184720,
+          "$nodeId": 1184664,
           "$named": true
         },
         "arguments": {
@@ -8772,7 +8766,7 @@
             "start": 52,
             "end": 54
           },
-          "$nodeId": 1184992,
+          "$nodeId": 1184936,
           "$named": true
         }
       },
@@ -8780,7 +8774,7 @@
         "start": 46,
         "end": 54
       },
-      "$nodeId": 1185080,
+      "$nodeId": 1185024,
       "$named": true
     },
     "expectedOutput": "locals ()"
@@ -8812,7 +8806,7 @@
             "start": 3,
             "end": 8
           },
-          "$nodeId": 1191048,
+          "$nodeId": 1190992,
           "$named": true
         },
         ":=": {
@@ -8823,7 +8817,7 @@
             "start": 9,
             "end": 11
           },
-          "$nodeId": 1193448,
+          "$nodeId": 1193392,
           "$named": false
         },
         "value": {
@@ -8834,7 +8828,7 @@
             "start": 12,
             "end": 80
           },
-          "$nodeId": 1193264,
+          "$nodeId": 1193208,
           "$named": true
         }
       },
@@ -8842,7 +8836,7 @@
         "start": 3,
         "end": 80
       },
-      "$nodeId": 1193544,
+      "$nodeId": 1193488,
       "$named": true
     },
     "expectedOutput": "match:=re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)"
@@ -8874,7 +8868,7 @@
             "start": 12,
             "end": 24
           },
-          "$nodeId": 1191424,
+          "$nodeId": 1191368,
           "$named": true
         },
         "arguments": {
@@ -8885,7 +8879,7 @@
             "start": 24,
             "end": 80
           },
-          "$nodeId": 1193176,
+          "$nodeId": 1193120,
           "$named": true
         }
       },
@@ -8893,7 +8887,7 @@
         "start": 12,
         "end": 80
       },
-      "$nodeId": 1193264,
+      "$nodeId": 1193208,
       "$named": true
     },
     "expectedOutput": "re.fullmatch (r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)"
@@ -8925,7 +8919,7 @@
             "start": 12,
             "end": 14
           },
-          "$nodeId": 1191232,
+          "$nodeId": 1191176,
           "$named": true
         },
         ".": {
@@ -8936,7 +8930,7 @@
             "start": 14,
             "end": 15
           },
-          "$nodeId": 1191328,
+          "$nodeId": 1191272,
           "$named": false
         },
         "attribute": {
@@ -8947,7 +8941,7 @@
             "start": 15,
             "end": 24
           },
-          "$nodeId": 1191336,
+          "$nodeId": 1191280,
           "$named": true
         }
       },
@@ -8955,7 +8949,7 @@
         "start": 12,
         "end": 24
       },
-      "$nodeId": 1191424,
+      "$nodeId": 1191368,
       "$named": true
     },
     "expectedOutput": "re.fullmatch"
@@ -8987,7 +8981,7 @@
             "start": 25,
             "end": 27
           },
-          "$nodeId": 1191840,
+          "$nodeId": 1191784,
           "$named": true
         },
         "content": {
@@ -8998,7 +8992,7 @@
             "start": 27,
             "end": 56
           },
-          "$nodeId": 1191848,
+          "$nodeId": 1191792,
           "$named": true
         },
         "string_end": {
@@ -9009,7 +9003,7 @@
             "start": 56,
             "end": 57
           },
-          "$nodeId": 1191856,
+          "$nodeId": 1191800,
           "$named": true
         }
       },
@@ -9017,7 +9011,7 @@
         "start": 25,
         "end": 57
       },
-      "$nodeId": 1191944,
+      "$nodeId": 1191888,
       "$named": true
     },
     "expectedOutput": "r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\""
@@ -9049,7 +9043,7 @@
             "start": 6,
             "end": 15
           },
-          "$nodeId": 1203680,
+          "$nodeId": 1203624,
           "$named": true
         },
         "arguments": {
@@ -9060,7 +9054,7 @@
             "start": 15,
             "end": 17
           },
-          "$nodeId": 1203872,
+          "$nodeId": 1203816,
           "$named": true
         }
       },
@@ -9068,7 +9062,7 @@
         "start": 6,
         "end": 17
       },
-      "$nodeId": 1203960,
+      "$nodeId": 1203904,
       "$named": true
     },
     "expectedOutput": "event.get ()"
@@ -9100,7 +9094,7 @@
             "start": 6,
             "end": 11
           },
-          "$nodeId": 1203488,
+          "$nodeId": 1203432,
           "$named": true
         },
         ".": {
@@ -9111,7 +9105,7 @@
             "start": 11,
             "end": 12
           },
-          "$nodeId": 1203584,
+          "$nodeId": 1203528,
           "$named": false
         },
         "attribute": {
@@ -9122,7 +9116,7 @@
             "start": 12,
             "end": 15
           },
-          "$nodeId": 1203592,
+          "$nodeId": 1203536,
           "$named": true
         }
       },
@@ -9130,7 +9124,7 @@
         "start": 6,
         "end": 15
       },
-      "$nodeId": 1203680,
+      "$nodeId": 1203624,
       "$named": true
     },
     "expectedOutput": "event.get"
@@ -9162,7 +9156,7 @@
             "start": 43,
             "end": 44
           },
-          "$nodeId": 1204928,
+          "$nodeId": 1204872,
           "$named": false
         },
         ",": {
@@ -9173,7 +9167,7 @@
             "start": 45,
             "end": 46
           },
-          "$nodeId": 1204832,
+          "$nodeId": 1204776,
           "$named": false
         },
         ")": {
@@ -9184,7 +9178,7 @@
             "start": 48,
             "end": 49
           },
-          "$nodeId": 1204952,
+          "$nodeId": 1204896,
           "$named": false
         }
       },
@@ -9197,7 +9191,7 @@
             "start": 44,
             "end": 45
           },
-          "$nodeId": 1204936,
+          "$nodeId": 1204880,
           "$named": true
         },
         {
@@ -9208,7 +9202,7 @@
             "start": 47,
             "end": 48
           },
-          "$nodeId": 1204840,
+          "$nodeId": 1204784,
           "$named": true
         }
       ],
@@ -9216,7 +9210,7 @@
         "start": 43,
         "end": 49
       },
-      "$nodeId": 1205056,
+      "$nodeId": 1205000,
       "$named": true
     },
     "expectedOutput": "(x,y)"
@@ -9228,7 +9222,7 @@
     "pattern": "tuple_pattern",
     "edits": [],
     "expectedSourceOut": "(x,y)",
-    "expectedReparseTree": "(tuple_pattern (case_pattern (dotted_name identifier: (identifier))) (case_pattern (dotted_name identifier: (identifier))))",
+    "expectedReparseTree": "(tuple_pattern (case_pattern (dotted_name (identifier))) (case_pattern (dotted_name (identifier))))",
     "wrappedText": "match _:\n  case (x,y): pass",
     "wrappedOffset": 16
   },
@@ -9248,7 +9242,7 @@
             "start": 109,
             "end": 110
           },
-          "$nodeId": 1207496,
+          "$nodeId": 1207440,
           "$named": true
         },
         "content": {
@@ -9259,7 +9253,7 @@
             "start": 110,
             "end": 111
           },
-          "$nodeId": 1207504,
+          "$nodeId": 1207448,
           "$named": true
         },
         "string_end": {
@@ -9270,7 +9264,7 @@
             "start": 111,
             "end": 112
           },
-          "$nodeId": 1207512,
+          "$nodeId": 1207456,
           "$named": true
         }
       },
@@ -9278,7 +9272,7 @@
         "start": 109,
         "end": 112
       },
-      "$nodeId": 1207600,
+      "$nodeId": 1207544,
       "$named": true
     },
     "expectedOutput": "\"Q\""
@@ -9310,7 +9304,7 @@
             "start": 6,
             "end": 15
           },
-          "$nodeId": 1223456,
+          "$nodeId": 1223400,
           "$named": true
         },
         "arguments": {
@@ -9321,7 +9315,7 @@
             "start": 15,
             "end": 17
           },
-          "$nodeId": 1223648,
+          "$nodeId": 1223592,
           "$named": true
         }
       },
@@ -9329,7 +9323,7 @@
         "start": 6,
         "end": 17
       },
-      "$nodeId": 1223736,
+      "$nodeId": 1223680,
       "$named": true
     },
     "expectedOutput": "event.get ()"
@@ -9361,7 +9355,7 @@
             "start": 6,
             "end": 11
           },
-          "$nodeId": 1223264,
+          "$nodeId": 1223208,
           "$named": true
         },
         ".": {
@@ -9372,7 +9366,7 @@
             "start": 11,
             "end": 12
           },
-          "$nodeId": 1223360,
+          "$nodeId": 1223304,
           "$named": false
         },
         "attribute": {
@@ -9383,7 +9377,7 @@
             "start": 12,
             "end": 15
           },
-          "$nodeId": 1223368,
+          "$nodeId": 1223312,
           "$named": true
         }
       },
@@ -9391,7 +9385,7 @@
         "start": 6,
         "end": 15
       },
-      "$nodeId": 1223456,
+      "$nodeId": 1223400,
       "$named": true
     },
     "expectedOutput": "event.get"
@@ -9423,7 +9417,7 @@
             "start": 34,
             "end": 35
           },
-          "$nodeId": 1224704,
+          "$nodeId": 1224648,
           "$named": false
         },
         ",": {
@@ -9434,7 +9428,7 @@
             "start": 36,
             "end": 37
           },
-          "$nodeId": 1224608,
+          "$nodeId": 1224552,
           "$named": false
         },
         ")": {
@@ -9445,7 +9439,7 @@
             "start": 39,
             "end": 40
           },
-          "$nodeId": 1224728,
+          "$nodeId": 1224672,
           "$named": false
         }
       },
@@ -9458,7 +9452,7 @@
             "start": 35,
             "end": 36
           },
-          "$nodeId": 1224712,
+          "$nodeId": 1224656,
           "$named": true
         },
         {
@@ -9469,7 +9463,7 @@
             "start": 38,
             "end": 39
           },
-          "$nodeId": 1224616,
+          "$nodeId": 1224560,
           "$named": true
         }
       ],
@@ -9477,7 +9471,7 @@
         "start": 34,
         "end": 40
       },
-      "$nodeId": 1224816,
+      "$nodeId": 1224760,
       "$named": true
     },
     "expectedOutput": "(x,y)"
@@ -9489,7 +9483,7 @@
     "pattern": "tuple_pattern",
     "edits": [],
     "expectedSourceOut": "(x,y)",
-    "expectedReparseTree": "(tuple_pattern (case_pattern (dotted_name identifier: (identifier))) (case_pattern (dotted_name identifier: (identifier))))",
+    "expectedReparseTree": "(tuple_pattern (case_pattern (dotted_name (identifier))) (case_pattern (dotted_name (identifier))))",
     "wrappedText": "match _:\n  case (x,y): pass",
     "wrappedOffset": 16
   },
@@ -9509,7 +9503,7 @@
             "start": 6,
             "end": 15
           },
-          "$nodeId": 1232192,
+          "$nodeId": 1232136,
           "$named": true
         },
         "arguments": {
@@ -9520,7 +9514,7 @@
             "start": 15,
             "end": 17
           },
-          "$nodeId": 1232384,
+          "$nodeId": 1232328,
           "$named": true
         }
       },
@@ -9528,7 +9522,7 @@
         "start": 6,
         "end": 17
       },
-      "$nodeId": 1232472,
+      "$nodeId": 1232416,
       "$named": true
     },
     "expectedOutput": "event.get ()"
@@ -9560,7 +9554,7 @@
             "start": 6,
             "end": 11
           },
-          "$nodeId": 1232000,
+          "$nodeId": 1231944,
           "$named": true
         },
         ".": {
@@ -9571,7 +9565,7 @@
             "start": 11,
             "end": 12
           },
-          "$nodeId": 1232096,
+          "$nodeId": 1232040,
           "$named": false
         },
         "attribute": {
@@ -9582,7 +9576,7 @@
             "start": 12,
             "end": 15
           },
-          "$nodeId": 1232104,
+          "$nodeId": 1232048,
           "$named": true
         }
       },
@@ -9590,7 +9584,7 @@
         "start": 6,
         "end": 15
       },
-      "$nodeId": 1232192,
+      "$nodeId": 1232136,
       "$named": true
     },
     "expectedOutput": "event.get"
@@ -9622,7 +9616,7 @@
             "start": 34,
             "end": 35
           },
-          "$nodeId": 1233440,
+          "$nodeId": 1233384,
           "$named": false
         },
         ",": {
@@ -9633,7 +9627,7 @@
             "start": 36,
             "end": 37
           },
-          "$nodeId": 1233344,
+          "$nodeId": 1233288,
           "$named": false
         },
         ")": {
@@ -9644,7 +9638,7 @@
             "start": 39,
             "end": 40
           },
-          "$nodeId": 1233464,
+          "$nodeId": 1233408,
           "$named": false
         }
       },
@@ -9657,7 +9651,7 @@
             "start": 35,
             "end": 36
           },
-          "$nodeId": 1233448,
+          "$nodeId": 1233392,
           "$named": true
         },
         {
@@ -9668,7 +9662,7 @@
             "start": 38,
             "end": 39
           },
-          "$nodeId": 1233352,
+          "$nodeId": 1233296,
           "$named": true
         }
       ],
@@ -9676,7 +9670,7 @@
         "start": 34,
         "end": 40
       },
-      "$nodeId": 1233552,
+      "$nodeId": 1233496,
       "$named": true
     },
     "expectedOutput": "(x,y)"
@@ -9688,7 +9682,7 @@
     "pattern": "tuple_pattern",
     "edits": [],
     "expectedSourceOut": "(x,y)",
-    "expectedReparseTree": "(tuple_pattern (case_pattern (dotted_name identifier: (identifier))) (case_pattern (dotted_name identifier: (identifier))))",
+    "expectedReparseTree": "(tuple_pattern (case_pattern (dotted_name (identifier))) (case_pattern (dotted_name (identifier))))",
     "wrappedText": "match _:\n  case (x,y): pass",
     "wrappedOffset": 16
   },
@@ -9708,7 +9702,7 @@
             "start": 55,
             "end": 56
           },
-          "$nodeId": 1243264,
+          "$nodeId": 1243208,
           "$named": true
         },
         "content": {
@@ -9719,7 +9713,7 @@
             "start": 56,
             "end": 60
           },
-          "$nodeId": 1243272,
+          "$nodeId": 1243216,
           "$named": true
         },
         "string_end": {
@@ -9730,7 +9724,7 @@
             "start": 60,
             "end": 61
           },
-          "$nodeId": 1243280,
+          "$nodeId": 1243224,
           "$named": true
         }
       },
@@ -9738,7 +9732,7 @@
         "start": 55,
         "end": 61
       },
-      "$nodeId": 1243368,
+      "$nodeId": 1243312,
       "$named": true
     },
     "expectedOutput": "\"text\""
@@ -9770,7 +9764,7 @@
             "start": 97,
             "end": 114
           },
-          "$nodeId": 1245368,
+          "$nodeId": 1245312,
           "$named": true
         },
         "arguments": {
@@ -9781,7 +9775,7 @@
             "start": 114,
             "end": 117
           },
-          "$nodeId": 1245824,
+          "$nodeId": 1245768,
           "$named": true
         }
       },
@@ -9789,7 +9783,7 @@
         "start": 97,
         "end": 117
       },
-      "$nodeId": 1245912,
+      "$nodeId": 1245856,
       "$named": true
     },
     "expectedOutput": "ui.set_text_color (c)"
@@ -9821,7 +9815,7 @@
             "start": 97,
             "end": 99
           },
-          "$nodeId": 1245176,
+          "$nodeId": 1245120,
           "$named": true
         },
         ".": {
@@ -9832,7 +9826,7 @@
             "start": 99,
             "end": 100
           },
-          "$nodeId": 1245272,
+          "$nodeId": 1245216,
           "$named": false
         },
         "attribute": {
@@ -9843,7 +9837,7 @@
             "start": 100,
             "end": 114
           },
-          "$nodeId": 1245280,
+          "$nodeId": 1245224,
           "$named": true
         }
       },
@@ -9851,7 +9845,7 @@
         "start": 97,
         "end": 114
       },
-      "$nodeId": 1245368,
+      "$nodeId": 1245312,
       "$named": true
     },
     "expectedOutput": "ui.set_text_color"
@@ -9883,7 +9877,7 @@
             "start": 55,
             "end": 56
           },
-          "$nodeId": 1266728,
+          "$nodeId": 1266672,
           "$named": true
         },
         "content": {
@@ -9894,7 +9888,7 @@
             "start": 56,
             "end": 60
           },
-          "$nodeId": 1266736,
+          "$nodeId": 1266680,
           "$named": true
         },
         "string_end": {
@@ -9905,7 +9899,7 @@
             "start": 60,
             "end": 61
           },
-          "$nodeId": 1266744,
+          "$nodeId": 1266688,
           "$named": true
         }
       },
@@ -9913,7 +9907,7 @@
         "start": 55,
         "end": 61
       },
-      "$nodeId": 1266832,
+      "$nodeId": 1266776,
       "$named": true
     },
     "expectedOutput": "\"text\""
@@ -9945,7 +9939,7 @@
             "start": 107,
             "end": 124
           },
-          "$nodeId": 1269408,
+          "$nodeId": 1269352,
           "$named": true
         },
         "arguments": {
@@ -9956,7 +9950,7 @@
             "start": 124,
             "end": 127
           },
-          "$nodeId": 1269864,
+          "$nodeId": 1269808,
           "$named": true
         }
       },
@@ -9964,7 +9958,7 @@
         "start": 107,
         "end": 127
       },
-      "$nodeId": 1269952,
+      "$nodeId": 1269896,
       "$named": true
     },
     "expectedOutput": "ui.set_text_color (c)"
@@ -9996,7 +9990,7 @@
             "start": 107,
             "end": 109
           },
-          "$nodeId": 1269216,
+          "$nodeId": 1269160,
           "$named": true
         },
         ".": {
@@ -10007,7 +10001,7 @@
             "start": 109,
             "end": 110
           },
-          "$nodeId": 1269312,
+          "$nodeId": 1269256,
           "$named": false
         },
         "attribute": {
@@ -10018,7 +10012,7 @@
             "start": 110,
             "end": 124
           },
-          "$nodeId": 1269320,
+          "$nodeId": 1269264,
           "$named": true
         }
       },
@@ -10026,7 +10020,7 @@
         "start": 107,
         "end": 124
       },
-      "$nodeId": 1269408,
+      "$nodeId": 1269352,
       "$named": true
     },
     "expectedOutput": "ui.set_text_color"
@@ -10058,7 +10052,7 @@
             "start": 49,
             "end": 53
           },
-          "$nodeId": 1288824,
+          "$nodeId": 1288768,
           "$named": true
         },
         "arguments": {
@@ -10069,7 +10063,7 @@
             "start": 53,
             "end": 55
           },
-          "$nodeId": 1289096,
+          "$nodeId": 1289040,
           "$named": true
         }
       },
@@ -10077,7 +10071,7 @@
         "start": 49,
         "end": 55
       },
-      "$nodeId": 1289184,
+      "$nodeId": 1289128,
       "$named": true
     },
     "expectedOutput": "foo1 ()"
@@ -10109,7 +10103,7 @@
             "start": 25,
             "end": 26
           },
-          "$nodeId": 1332936,
+          "$nodeId": 1332880,
           "$named": true
         },
         "operator": {
@@ -10120,7 +10114,7 @@
             "start": 27,
             "end": 29
           },
-          "$nodeId": 1333296,
+          "$nodeId": 1333240,
           "$named": false
         },
         "right": {
@@ -10131,7 +10125,7 @@
             "start": 30,
             "end": 31
           },
-          "$nodeId": 1333112,
+          "$nodeId": 1333056,
           "$named": true
         }
       },
@@ -10139,7 +10133,7 @@
         "start": 25,
         "end": 31
       },
-      "$nodeId": 1333392,
+      "$nodeId": 1333336,
       "$named": true
     },
     "expectedOutput": "0 or 1"
@@ -10171,7 +10165,7 @@
             "start": 60,
             "end": 63
           },
-          "$nodeId": 1335672,
+          "$nodeId": 1335616,
           "$named": false
         },
         "argument": {
@@ -10182,7 +10176,7 @@
             "start": 64,
             "end": 68
           },
-          "$nodeId": 1335496,
+          "$nodeId": 1335440,
           "$named": true
         }
       },
@@ -10190,7 +10184,7 @@
         "start": 60,
         "end": 68
       },
-      "$nodeId": 1335768,
+      "$nodeId": 1335712,
       "$named": true
     },
     "expectedOutput": "not True"
@@ -10222,7 +10216,7 @@
             "start": 23,
             "end": 24
           },
-          "$nodeId": 1339832,
+          "$nodeId": 1339776,
           "$named": true
         },
         "content": {
@@ -10233,7 +10227,7 @@
             "start": 24,
             "end": 25
           },
-          "$nodeId": 1339840,
+          "$nodeId": 1339784,
           "$named": true
         },
         "string_end": {
@@ -10244,7 +10238,7 @@
             "start": 25,
             "end": 26
           },
-          "$nodeId": 1339848,
+          "$nodeId": 1339792,
           "$named": true
         }
       },
@@ -10252,7 +10246,7 @@
         "start": 23,
         "end": 26
       },
-      "$nodeId": 1339936,
+      "$nodeId": 1339880,
       "$named": true
     },
     "expectedOutput": "\"b\""
@@ -10284,7 +10278,7 @@
             "start": 2,
             "end": 3
           },
-          "$nodeId": 1344712,
+          "$nodeId": 1344656,
           "$named": true
         },
         "operator": {
@@ -10295,7 +10289,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 1345072,
+          "$nodeId": 1345016,
           "$named": false
         },
         "right": {
@@ -10306,7 +10300,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 1344976,
+          "$nodeId": 1344920,
           "$named": true
         }
       },
@@ -10314,7 +10308,7 @@
         "start": 2,
         "end": 7
       },
-      "$nodeId": 1345168,
+      "$nodeId": 1345112,
       "$named": true
     },
     "expectedOutput": "b + c"
@@ -10346,7 +10340,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 1349448,
+          "$nodeId": 1349392,
           "$named": true
         },
         "[": {
@@ -10357,7 +10351,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 1349816,
+          "$nodeId": 1349760,
           "$named": false
         },
         "subscript": {
@@ -10368,7 +10362,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 1349632,
+          "$nodeId": 1349576,
           "$named": true
         },
         "]": {
@@ -10379,7 +10373,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 1349832,
+          "$nodeId": 1349776,
           "$named": false
         }
       },
@@ -10387,7 +10381,7 @@
         "start": 4,
         "end": 8
       },
-      "$nodeId": 1349920,
+      "$nodeId": 1349864,
       "$named": true
     },
     "expectedOutput": "a[1]"
@@ -10419,7 +10413,7 @@
             "start": 14,
             "end": 15
           },
-          "$nodeId": 1354568,
+          "$nodeId": 1354512,
           "$named": true
         },
         "operator": {
@@ -10430,7 +10424,7 @@
             "start": 16,
             "end": 17
           },
-          "$nodeId": 1354752,
+          "$nodeId": 1354696,
           "$named": false
         },
         "right": {
@@ -10441,7 +10435,7 @@
             "start": 18,
             "end": 19
           },
-          "$nodeId": 1354656,
+          "$nodeId": 1354600,
           "$named": true
         }
       },
@@ -10449,7 +10443,7 @@
         "start": 14,
         "end": 19
       },
-      "$nodeId": 1354848,
+      "$nodeId": 1354792,
       "$named": true
     },
     "expectedOutput": "a + b"
@@ -10481,7 +10475,7 @@
             "start": 30,
             "end": 33
           },
-          "$nodeId": 1356016,
+          "$nodeId": 1355960,
           "$named": false
         },
         "argument": {
@@ -10492,7 +10486,7 @@
             "start": 34,
             "end": 35
           },
-          "$nodeId": 1355840,
+          "$nodeId": 1355784,
           "$named": true
         }
       },
@@ -10500,7 +10494,7 @@
         "start": 30,
         "end": 35
       },
-      "$nodeId": 1356112,
+      "$nodeId": 1356056,
       "$named": true
     },
     "expectedOutput": "not b"
@@ -10532,7 +10526,7 @@
             "start": 110,
             "end": 111
           },
-          "$nodeId": 1380848,
+          "$nodeId": 1380792,
           "$named": false
         },
         ",": {
@@ -10543,7 +10537,7 @@
             "start": 115,
             "end": 116
           },
-          "$nodeId": 1379912,
+          "$nodeId": 1379856,
           "$named": false
         },
         "]": {
@@ -10554,7 +10548,7 @@
             "start": 127,
             "end": 128
           },
-          "$nodeId": 1380864,
+          "$nodeId": 1380808,
           "$named": false
         }
       },
@@ -10567,7 +10561,7 @@
             "start": 111,
             "end": 115
           },
-          "$nodeId": 1379184,
+          "$nodeId": 1379128,
           "$named": true
         },
         {
@@ -10578,7 +10572,7 @@
             "start": 117,
             "end": 121
           },
-          "$nodeId": 1379736,
+          "$nodeId": 1379680,
           "$named": true
         },
         {
@@ -10589,7 +10583,7 @@
             "start": 121,
             "end": 122
           },
-          "$nodeId": 1380560,
+          "$nodeId": 1380504,
           "$named": false
         },
         {
@@ -10600,7 +10594,7 @@
             "start": 123,
             "end": 127
           },
-          "$nodeId": 1380384,
+          "$nodeId": 1380328,
           "$named": true
         }
       ],
@@ -10608,7 +10602,7 @@
         "start": 110,
         "end": 128
       },
-      "$nodeId": 1380952,
+      "$nodeId": 1380896,
       "$named": true
     },
     "expectedOutput": "[(1,),(2,),(3,)]"
@@ -10640,7 +10634,7 @@
             "start": 30,
             "end": 31
           },
-          "$nodeId": 1387856,
+          "$nodeId": 1387800,
           "$named": true
         },
         "as": {
@@ -10651,7 +10645,7 @@
             "start": 32,
             "end": 34
           },
-          "$nodeId": 1388608,
+          "$nodeId": 1388552,
           "$named": false
         },
         "alias": {
@@ -10662,7 +10656,7 @@
             "start": 35,
             "end": 36
           },
-          "$nodeId": 1388616,
+          "$nodeId": 1388560,
           "$named": true
         }
       },
@@ -10670,7 +10664,7 @@
         "start": 30,
         "end": 36
       },
-      "$nodeId": 1388704,
+      "$nodeId": 1388648,
       "$named": true
     },
     "expectedOutput": "d as e"
@@ -10702,7 +10696,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 1402592,
+          "$nodeId": 1402536,
           "$named": true
         },
         "as": {
@@ -10713,7 +10707,7 @@
             "start": 7,
             "end": 9
           },
-          "$nodeId": 1403048,
+          "$nodeId": 1402992,
           "$named": false
         },
         "alias": {
@@ -10724,7 +10718,7 @@
             "start": 10,
             "end": 11
           },
-          "$nodeId": 1403056,
+          "$nodeId": 1403000,
           "$named": true
         }
       },
@@ -10732,7 +10726,7 @@
         "start": 5,
         "end": 11
       },
-      "$nodeId": 1403144,
+      "$nodeId": 1403088,
       "$named": true
     },
     "expectedOutput": "a as b"
@@ -10764,7 +10758,7 @@
             "start": 24,
             "end": 28
           },
-          "$nodeId": 1403920,
+          "$nodeId": 1403864,
           "$named": true
         },
         "arguments": {
@@ -10775,7 +10769,7 @@
             "start": 28,
             "end": 33
           },
-          "$nodeId": 1405120,
+          "$nodeId": 1405064,
           "$named": true
         }
       },
@@ -10783,7 +10777,7 @@
         "start": 24,
         "end": 33
       },
-      "$nodeId": 1405208,
+      "$nodeId": 1405152,
       "$named": true
     },
     "expectedOutput": "open ('d')"
@@ -10815,7 +10809,7 @@
             "start": 29,
             "end": 30
           },
-          "$nodeId": 1404728,
+          "$nodeId": 1404672,
           "$named": true
         },
         "content": {
@@ -10826,7 +10820,7 @@
             "start": 30,
             "end": 31
           },
-          "$nodeId": 1404736,
+          "$nodeId": 1404680,
           "$named": true
         },
         "string_end": {
@@ -10837,7 +10831,7 @@
             "start": 31,
             "end": 32
           },
-          "$nodeId": 1404744,
+          "$nodeId": 1404688,
           "$named": true
         }
       },
@@ -10845,7 +10839,7 @@
         "start": 29,
         "end": 32
       },
-      "$nodeId": 1404832,
+      "$nodeId": 1404776,
       "$named": true
     },
     "expectedOutput": "'d'"
@@ -10877,7 +10871,7 @@
             "start": 81,
             "end": 84
           },
-          "$nodeId": 1419752,
+          "$nodeId": 1419696,
           "$named": true
         }
       ],
@@ -10885,7 +10879,7 @@
         "start": 81,
         "end": 84
       },
-      "$nodeId": 1420032,
+      "$nodeId": 1419976,
       "$named": true
     },
     "expectedOutput": "str"
@@ -10917,7 +10911,7 @@
             "start": 107,
             "end": 108
           },
-          "$nodeId": 1421416,
+          "$nodeId": 1421360,
           "$named": true
         },
         ".": {
@@ -10928,7 +10922,7 @@
             "start": 108,
             "end": 109
           },
-          "$nodeId": 1421512,
+          "$nodeId": 1421456,
           "$named": false
         },
         "attribute": {
@@ -10939,7 +10933,7 @@
             "start": 109,
             "end": 110
           },
-          "$nodeId": 1421520,
+          "$nodeId": 1421464,
           "$named": true
         }
       },
@@ -10947,7 +10941,7 @@
         "start": 107,
         "end": 110
       },
-      "$nodeId": 1421608,
+      "$nodeId": 1421552,
       "$named": true
     },
     "expectedOutput": "b.c"
@@ -10979,7 +10973,7 @@
             "start": 177,
             "end": 178
           },
-          "$nodeId": 1426056,
+          "$nodeId": 1426000,
           "$named": false
         }
       },
@@ -10992,7 +10986,7 @@
             "start": 178,
             "end": 179
           },
-          "$nodeId": 1426064,
+          "$nodeId": 1426008,
           "$named": true
         }
       ],
@@ -11000,7 +10994,7 @@
         "start": 177,
         "end": 179
       },
-      "$nodeId": 1426152,
+      "$nodeId": 1426096,
       "$named": true
     },
     "expectedOutput": "*c"
@@ -11032,7 +11026,7 @@
             "start": 254,
             "end": 255
           },
-          "$nodeId": 1430568,
+          "$nodeId": 1430512,
           "$named": true
         },
         "content": {
@@ -11043,7 +11037,7 @@
             "start": 255,
             "end": 262
           },
-          "$nodeId": 1430576,
+          "$nodeId": 1430520,
           "$named": true
         },
         "string_end": {
@@ -11054,7 +11048,7 @@
             "start": 262,
             "end": 263
           },
-          "$nodeId": 1430584,
+          "$nodeId": 1430528,
           "$named": true
         }
       },
@@ -11062,7 +11056,7 @@
         "start": 254,
         "end": 263
       },
-      "$nodeId": 1430672,
+      "$nodeId": 1430616,
       "$named": true
     },
     "expectedOutput": "\"default\""
@@ -11094,7 +11088,7 @@
             "start": 23,
             "end": 24
           },
-          "$nodeId": 1439744,
+          "$nodeId": 1439688,
           "$named": false
         },
         ",": {
@@ -11105,7 +11099,7 @@
             "start": 25,
             "end": 26
           },
-          "$nodeId": 1439472,
+          "$nodeId": 1439416,
           "$named": false
         },
         ")": {
@@ -11116,7 +11110,7 @@
             "start": 27,
             "end": 28
           },
-          "$nodeId": 1439760,
+          "$nodeId": 1439704,
           "$named": false
         }
       },
@@ -11129,7 +11123,7 @@
             "start": 24,
             "end": 25
           },
-          "$nodeId": 1439120,
+          "$nodeId": 1439064,
           "$named": true
         },
         {
@@ -11140,7 +11134,7 @@
             "start": 26,
             "end": 27
           },
-          "$nodeId": 1439296,
+          "$nodeId": 1439240,
           "$named": true
         }
       ],
@@ -11148,7 +11142,7 @@
         "start": 23,
         "end": 28
       },
-      "$nodeId": 1439848,
+      "$nodeId": 1439792,
       "$named": true
     },
     "expectedOutput": "(a,b)"
@@ -11180,7 +11174,7 @@
             "start": 36,
             "end": 37
           },
-          "$nodeId": 1440520,
+          "$nodeId": 1440464,
           "$named": false
         }
       },
@@ -11193,7 +11187,7 @@
             "start": 37,
             "end": 41
           },
-          "$nodeId": 1440528,
+          "$nodeId": 1440472,
           "$named": true
         }
       ],
@@ -11201,7 +11195,7 @@
         "start": 36,
         "end": 41
       },
-      "$nodeId": 1440880,
+      "$nodeId": 1440824,
       "$named": true
     },
     "expectedOutput": "*list"
@@ -11233,7 +11227,7 @@
             "start": 43,
             "end": 46
           },
-          "$nodeId": 1440616,
+          "$nodeId": 1440560,
           "$named": true
         }
       ],
@@ -11241,7 +11235,7 @@
         "start": 43,
         "end": 46
       },
-      "$nodeId": 1440896,
+      "$nodeId": 1440840,
       "$named": true
     },
     "expectedOutput": "str"
@@ -11273,7 +11267,7 @@
             "start": 183,
             "end": 184
           },
-          "$nodeId": 1449624,
+          "$nodeId": 1449568,
           "$named": true
         },
         "arguments": {
@@ -11284,7 +11278,7 @@
             "start": 184,
             "end": 190
           },
-          "$nodeId": 1450832,
+          "$nodeId": 1450776,
           "$named": true
         }
       },
@@ -11292,7 +11286,7 @@
         "start": 183,
         "end": 190
       },
-      "$nodeId": 1450920,
+      "$nodeId": 1450864,
       "$named": true
     },
     "expectedOutput": "i ((*a))"
@@ -11324,7 +11318,7 @@
             "start": 219,
             "end": 220
           },
-          "$nodeId": 1465328,
+          "$nodeId": 1465272,
           "$named": true
         },
         "arguments": {
@@ -11335,7 +11329,7 @@
             "start": 220,
             "end": 222
           },
-          "$nodeId": 1465520,
+          "$nodeId": 1465464,
           "$named": true
         }
       },
@@ -11343,7 +11337,7 @@
         "start": 219,
         "end": 222
       },
-      "$nodeId": 1465608,
+      "$nodeId": 1465552,
       "$named": true
     },
     "expectedOutput": "f ()"
@@ -11375,7 +11369,7 @@
             "start": 122,
             "end": 130
           },
-          "$nodeId": 1472056,
+          "$nodeId": 1472000,
           "$named": true
         },
         "[": {
@@ -11386,7 +11380,7 @@
             "start": 130,
             "end": 131
           },
-          "$nodeId": 1472328,
+          "$nodeId": 1472272,
           "$named": false
         },
         "subscript": {
@@ -11397,7 +11391,7 @@
             "start": 131,
             "end": 132
           },
-          "$nodeId": 1472144,
+          "$nodeId": 1472088,
           "$named": true
         },
         "]": {
@@ -11408,7 +11402,7 @@
             "start": 132,
             "end": 133
           },
-          "$nodeId": 1472344,
+          "$nodeId": 1472288,
           "$named": false
         }
       },
@@ -11416,7 +11410,7 @@
         "start": 122,
         "end": 133
       },
-      "$nodeId": 1472432,
+      "$nodeId": 1472376,
       "$named": true
     },
     "expectedOutput": "Sequence[T]"
@@ -11448,7 +11442,7 @@
             "start": 25,
             "end": 31
           },
-          "$nodeId": 1480784,
+          "$nodeId": 1480728,
           "$named": true
         },
         ".": {
@@ -11459,7 +11453,7 @@
             "start": 31,
             "end": 32
           },
-          "$nodeId": 1480960,
+          "$nodeId": 1480904,
           "$named": false
         },
         "attribute": {
@@ -11470,7 +11464,7 @@
             "start": 32,
             "end": 33
           },
-          "$nodeId": 1480968,
+          "$nodeId": 1480912,
           "$named": true
         }
       },
@@ -11478,7 +11472,7 @@
         "start": 25,
         "end": 33
       },
-      "$nodeId": 1481056,
+      "$nodeId": 1481000,
       "$named": true
     },
     "expectedOutput": "e[2].f.g"
@@ -11510,7 +11504,7 @@
             "start": 17,
             "end": 18
           },
-          "$nodeId": 1479392,
+          "$nodeId": 1479336,
           "$named": true
         },
         "arguments": {
@@ -11521,7 +11515,7 @@
             "start": 18,
             "end": 21
           },
-          "$nodeId": 1479848,
+          "$nodeId": 1479792,
           "$named": true
         }
       },
@@ -11529,7 +11523,7 @@
         "start": 17,
         "end": 21
       },
-      "$nodeId": 1479936,
+      "$nodeId": 1479880,
       "$named": true
     },
     "expectedOutput": "d (1)"
@@ -11561,7 +11555,7 @@
             "start": 25,
             "end": 26
           },
-          "$nodeId": 1480216,
+          "$nodeId": 1480160,
           "$named": true
         },
         "[": {
@@ -11572,7 +11566,7 @@
             "start": 26,
             "end": 27
           },
-          "$nodeId": 1480488,
+          "$nodeId": 1480432,
           "$named": false
         },
         "subscript": {
@@ -11583,7 +11577,7 @@
             "start": 27,
             "end": 28
           },
-          "$nodeId": 1480304,
+          "$nodeId": 1480248,
           "$named": true
         },
         "]": {
@@ -11594,7 +11588,7 @@
             "start": 28,
             "end": 29
           },
-          "$nodeId": 1480504,
+          "$nodeId": 1480448,
           "$named": false
         }
       },
@@ -11602,7 +11596,7 @@
         "start": 25,
         "end": 29
       },
-      "$nodeId": 1480592,
+      "$nodeId": 1480536,
       "$named": true
     },
     "expectedOutput": "e[2]"
@@ -11634,7 +11628,7 @@
             "start": 12,
             "end": 24
           },
-          "$nodeId": 1491696,
+          "$nodeId": 1491640,
           "$named": true
         },
         "arguments": {
@@ -11645,7 +11639,7 @@
             "start": 24,
             "end": 30
           },
-          "$nodeId": 1492584,
+          "$nodeId": 1492528,
           "$named": true
         }
       },
@@ -11653,7 +11647,7 @@
         "start": 12,
         "end": 30
       },
-      "$nodeId": 1492672,
+      "$nodeId": 1492616,
       "$named": true
     },
     "expectedOutput": "RuntimeError ('NO')"
@@ -11685,7 +11679,7 @@
             "start": 25,
             "end": 26
           },
-          "$nodeId": 1492112,
+          "$nodeId": 1492056,
           "$named": true
         },
         "content": {
@@ -11696,7 +11690,7 @@
             "start": 26,
             "end": 28
           },
-          "$nodeId": 1492120,
+          "$nodeId": 1492064,
           "$named": true
         },
         "string_end": {
@@ -11707,7 +11701,7 @@
             "start": 28,
             "end": 29
           },
-          "$nodeId": 1492128,
+          "$nodeId": 1492072,
           "$named": true
         }
       },
@@ -11715,7 +11709,7 @@
         "start": 25,
         "end": 29
       },
-      "$nodeId": 1492216,
+      "$nodeId": 1492160,
       "$named": true
     },
     "expectedOutput": "'NO'"
@@ -11747,7 +11741,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 1508480,
+          "$nodeId": 1508424,
           "$named": true
         },
         "content": {
@@ -11758,7 +11752,7 @@
             "start": 7,
             "end": 8
           },
-          "$nodeId": 1508488,
+          "$nodeId": 1508432,
           "$named": true
         },
         "string_end": {
@@ -11769,7 +11763,7 @@
             "start": 8,
             "end": 9
           },
-          "$nodeId": 1508496,
+          "$nodeId": 1508440,
           "$named": true
         }
       },
@@ -11777,7 +11771,7 @@
         "start": 6,
         "end": 9
       },
-      "$nodeId": 1508584,
+      "$nodeId": 1508528,
       "$named": true
     },
     "expectedOutput": "\"a\""
@@ -11809,7 +11803,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 1511824,
+          "$nodeId": 1511768,
           "$named": true
         },
         "content": {
@@ -11820,7 +11814,7 @@
             "start": 6,
             "end": 9
           },
-          "$nodeId": 1511832,
+          "$nodeId": 1511776,
           "$named": true
         },
         "string_end": {
@@ -11831,7 +11825,7 @@
             "start": 9,
             "end": 10
           },
-          "$nodeId": 1511840,
+          "$nodeId": 1511784,
           "$named": true
         }
       },
@@ -11839,7 +11833,7 @@
         "start": 5,
         "end": 10
       },
-      "$nodeId": 1511936,
+      "$nodeId": 1511880,
       "$named": true
     },
     "expectedOutput": "'1+1'"
@@ -11871,7 +11865,7 @@
             "start": 79,
             "end": 80
           },
-          "$nodeId": 1515800,
+          "$nodeId": 1515744,
           "$named": false
         },
         "}": {
@@ -11882,7 +11876,7 @@
             "start": 80,
             "end": 81
           },
-          "$nodeId": 1515808,
+          "$nodeId": 1515752,
           "$named": false
         }
       },
@@ -11890,7 +11884,7 @@
         "start": 79,
         "end": 81
       },
-      "$nodeId": 1515896,
+      "$nodeId": 1515840,
       "$named": true
     },
     "expectedOutput": "{  }"
@@ -11922,7 +11916,7 @@
             "start": 12,
             "end": 13
           },
-          "$nodeId": 1519240,
+          "$nodeId": 1519184,
           "$named": true
         },
         "arguments": {
@@ -11933,7 +11927,7 @@
             "start": 13,
             "end": 15
           },
-          "$nodeId": 1519512,
+          "$nodeId": 1519456,
           "$named": true
         }
       },
@@ -11941,7 +11935,7 @@
         "start": 12,
         "end": 15
       },
-      "$nodeId": 1519600,
+      "$nodeId": 1519544,
       "$named": true
     },
     "expectedOutput": "b ()"
@@ -11973,7 +11967,7 @@
             "start": 0,
             "end": 3
           },
-          "$nodeId": 1524456,
+          "$nodeId": 1524400,
           "$named": true
         },
         "arguments": {
@@ -11984,7 +11978,7 @@
             "start": 3,
             "end": 8
           },
-          "$nodeId": 1525520,
+          "$nodeId": 1525464,
           "$named": true
         }
       },
@@ -11992,7 +11986,7 @@
         "start": 0,
         "end": 8
       },
-      "$nodeId": 1525608,
+      "$nodeId": 1525552,
       "$named": true
     },
     "expectedOutput": "len (\"a\")"
@@ -12024,7 +12018,7 @@
             "start": 4,
             "end": 5
           },
-          "$nodeId": 1524968,
+          "$nodeId": 1524912,
           "$named": true
         },
         "content": {
@@ -12035,7 +12029,7 @@
             "start": 5,
             "end": 6
           },
-          "$nodeId": 1524976,
+          "$nodeId": 1524920,
           "$named": true
         },
         "string_end": {
@@ -12046,7 +12040,7 @@
             "start": 6,
             "end": 7
           },
-          "$nodeId": 1524984,
+          "$nodeId": 1524928,
           "$named": true
         }
       },
@@ -12054,7 +12048,7 @@
         "start": 4,
         "end": 7
       },
-      "$nodeId": 1525072,
+      "$nodeId": 1525016,
       "$named": true
     },
     "expectedOutput": "\"a\""
@@ -12086,7 +12080,7 @@
             "start": 264,
             "end": 265
           },
-          "$nodeId": 1546352,
+          "$nodeId": 1546296,
           "$named": false
         },
         ",": {
@@ -12097,7 +12091,7 @@
             "start": 268,
             "end": 269
           },
-          "$nodeId": 1546160,
+          "$nodeId": 1546104,
           "$named": false
         },
         ")": {
@@ -12108,7 +12102,7 @@
             "start": 273,
             "end": 274
           },
-          "$nodeId": 1546368,
+          "$nodeId": 1546312,
           "$named": false
         }
       },
@@ -12121,7 +12115,7 @@
             "start": 265,
             "end": 268
           },
-          "$nodeId": 1545808,
+          "$nodeId": 1545752,
           "$named": true
         },
         {
@@ -12132,7 +12126,7 @@
             "start": 270,
             "end": 273
           },
-          "$nodeId": 1545984,
+          "$nodeId": 1545928,
           "$named": true
         }
       ],
@@ -12140,7 +12134,7 @@
         "start": 264,
         "end": 274
       },
-      "$nodeId": 1546456,
+      "$nodeId": 1546400,
       "$named": true
     },
     "expectedOutput": "(int,str)"
@@ -12172,7 +12166,7 @@
             "start": 17,
             "end": 18
           },
-          "$nodeId": 1551336,
+          "$nodeId": 1551280,
           "$named": true
         }
       ],
@@ -12180,7 +12174,7 @@
         "start": 17,
         "end": 18
       },
-      "$nodeId": 1552160,
+      "$nodeId": 1552104,
       "$named": true
     },
     "expectedOutput": "T"

@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "e2f0577",
+    "commit": "5547169",
     "grammars": {
         "python": {
             "parityFixtures": {
@@ -13,25 +13,21 @@
                 "coverage": {
                     "failingKinds": [
                         "comparison_operator",
-                        "dict_pattern",
-                        "dotted_name"
+                        "dict_pattern"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 97,
+                    "pass": 98,
                     "total": 100
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 196,
+                    "astMatchPass": 200,
                     "failingKinds": [
                         "as_pattern",
                         "assignment",
                         "attribute",
                         "boolean_operator",
                         "comparison_operator",
-                        "dotted_name",
-                        "list",
                         "list_splat",
-                        "parameters",
                         "parenthesized_expression",
                         "set",
                         "subscript",
@@ -40,19 +36,16 @@
                         "type"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 205,
+                    "pass": 209,
                     "total": 860
                 },
                 "from": {
                     "failingKinds": [
-                        "dotted_name",
                         "expression_statement",
-                        "list",
-                        "list_splat",
-                        "tuple"
+                        "list_splat"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 107,
+                    "pass": 110,
                     "total": 114
                 },
                 "roundtrip": {
@@ -150,11 +143,10 @@
                         "call_expression",
                         "instantiation_expression",
                         "optional_parameter",
-                        "required_parameter",
-                        "sequence_expression"
+                        "required_parameter"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 140,
+                    "pass": 141,
                     "total": 145
                 },
                 "factoryRoundtrip": {
@@ -166,7 +158,6 @@
                         "assignment_expression",
                         "call_expression",
                         "export_statement",
-                        "formal_parameters",
                         "function_declaration",
                         "import_statement",
                         "index_signature",
@@ -215,8 +206,8 @@
         }
     },
     "totals": {
-        "fail": 1839,
-        "pass": 3016,
+        "fail": 1830,
+        "pass": 3025,
         "total": 4855
     }
 }

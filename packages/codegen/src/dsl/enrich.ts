@@ -441,6 +441,60 @@ function detectSymbolTarget(member: Rule): SymbolTarget | null {
     }
 }
 
+/**
+ * @internal — walk `node` looking for SYMBOL references nested inside
+ * REPEAT/REPEAT1 wrappers, incrementing `kindCounts[name]` for each one
+ * found. Used by `applySymbolToField` to disqualify bare top-level
+ * symbols whose kind ALSO appears under a repeat (the repeated copies
+ * surface as un-fielded `$children`, so promoting the bare one to a
+ * field splits the same kind across `$fields[name]` and `$children`).
+ *
+ * Descent rules:
+ * - SEQ / CHOICE / OPTIONAL / PREC{,_LEFT,_RIGHT,_DYNAMIC} → recurse
+ * - REPEAT / REPEAT1 → mark `inRepeat=true` for descent
+ * - FIELD / ALIAS → STOP (these carve out their own surface; the
+ *   referenced symbol becomes a named field/alias kind, not a sibling
+ *   bare child of the parent rule)
+ * - SYMBOL → if `inRepeat`, increment count
+ */
+function countSymbolsInRepeat(
+    node: Rule | undefined | null,
+    kindCounts: Map<string, number>,
+    inRepeat: boolean = false,
+): void {
+    if (!node) return
+    const t = (node as { type?: string }).type
+    if (!t) return
+    if (isFieldType(t)) return
+    if (t === 'ALIAS' || t === 'alias') return
+    if (isSymbolType(t)) {
+        if (!inRepeat) return
+        const name = (node as unknown as { name?: string }).name
+        if (typeof name === 'string') {
+            kindCounts.set(name, (kindCounts.get(name) ?? 0) + 1)
+        }
+        return
+    }
+    if (isRepeatType(t)) {
+        const content = (node as unknown as { content?: Rule }).content
+        countSymbolsInRepeat(content, kindCounts, true)
+        return
+    }
+    if (isSeqType(t) || isChoiceType(t)) {
+        const members = (node as unknown as { members?: Rule[] }).members
+        if (Array.isArray(members)) {
+            for (const m of members) countSymbolsInRepeat(m, kindCounts, inRepeat)
+        }
+        return
+    }
+    if (isOptionalType(t) || isPrecWrapper(node as { type: string })) {
+        const content = (node as unknown as { content?: Rule }).content
+        countSymbolsInRepeat(content, kindCounts, inRepeat)
+        return
+    }
+    // STRING / PATTERN / TOKEN / BLANK — leaves with no symbols.
+}
+
 function applySymbolToField(ruleName: string, rule: Rule, supertypeNames: ReadonlySet<string>): Rule {
     // Skip hidden helpers — tree-sitter inlines their bodies into each
     // call site, so field wrappers added here would propagate silently
@@ -467,6 +521,21 @@ function applySymbolToField(ruleName: string, rule: Rule, supertypeNames: Readon
     const targetByIdx: Array<SymbolTarget | null> = members.map(detectSymbolTarget)
     for (const t of targetByIdx) {
         if (t) kindCounts.set(t.name, (kindCounts.get(t.name) ?? 0) + 1)
+    }
+    // Also count SYMBOL refs that appear inside REPEAT/REPEAT1 wrappers
+    // at any depth in the parent's body (e.g. `sep1($.identifier, '.')`
+    // expands to `seq($.identifier, repeat(seq('.', $.identifier)))` —
+    // the bare top-level $.identifier and the repeated $.identifier are
+    // the same kind, but the latter renders as an unfielded child).
+    // Wrapping the bare one as field('identifier', $.identifier) would
+    // make readNode produce `$fields.identifier` for the leading match
+    // and `$children: [Identifier...]` for the repeated tail — a split
+    // surface that the factory's `(...children: Identifier[])` shape
+    // can't reconstruct (the factory has no leading-field slot). Stop
+    // descent at FIELD/ALIAS boundaries since those carve out their own
+    // scope.
+    for (const m of members) {
+        countSymbolsInRepeat(m, kindCounts)
     }
     const existing = collectFieldNamesRuntime(cursor)
     let changed = false

@@ -1630,10 +1630,8 @@ export function enumDeclarationFrom(input: T.EnumDeclaration.Loose): ReturnType<
 
 export function enumBodyFrom(input: T.EnumBody.Loose): ReturnType<typeof F.enumBody> | T.EnumBody {
   if (isNodeData(input)) return input;
-  const _ne_opening = _resolveMany<T.PropertyName | T.EnumAssignment>(input.opening, _K22, _K32);
-  _assertNonEmpty(_ne_opening, 'enum_body.opening');
   return F.enumBody({
-    opening: _ne_opening,
+    opening: _resolveMany<T.PropertyName | T.EnumAssignment>(input.opening, _K22, _K32),
   });
 }
 

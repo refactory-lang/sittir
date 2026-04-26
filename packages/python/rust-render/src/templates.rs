@@ -464,8 +464,6 @@ pub struct ConcatenatedStringTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub string: String,
-    pub string_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -689,8 +687,6 @@ pub struct ExpressionListTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub expression: String,
-    pub expression_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1185,8 +1181,6 @@ pub struct PatternListTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
-    pub pattern: String,
-    pub pattern_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -2016,8 +2010,6 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                string: ctx.fields.get("string").cloned().unwrap_or_default(),
-                string_list: ctx.fields_list.get("string").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -2241,8 +2233,6 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                expression: ctx.fields.get("expression").cloned().unwrap_or_default(),
-                expression_list: ctx.fields_list.get("expression").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -2737,8 +2727,6 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
-                pattern: ctx.fields.get("pattern").cloned().unwrap_or_default(),
-                pattern_list: ctx.fields_list.get("pattern").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3160,7 +3148,7 @@ impl ::sittir_core::prepare::GrammarMeta for PythonGrammarMeta {
     }
     fn is_list_container(&self, kind: &str) -> bool {
         matches!(kind,
-            "_as_pattern" | "_comprehension_clauses" | "_list_pattern" | "_match_block" | "_simple_pattern" | "_simple_statements" | "_suite" | "_tuple_pattern" | "_with_clause_paren" | "argument_list" | "assert_statement" | "block" | "case_pattern" | "delete_statement" | "dict_pattern" | "dictionary" | "dictionary_splat_pattern" | "dotted_name" | "format_specifier" | "global_statement" | "lambda_parameters" | "list" | "list_pattern" | "list_splat_pattern" | "module" | "nonlocal_statement" | "parameters" | "parenthesized_expression" | "parenthesized_list_splat" | "return_statement" | "set" | "string_content" | "tuple" | "tuple_pattern" | "type" | "type_parameter" | "union_pattern" | "yield"
+            "_as_pattern" | "_comprehension_clauses" | "_list_pattern" | "_match_block" | "_simple_pattern" | "_simple_statements" | "_suite" | "_tuple_pattern" | "_with_clause_paren" | "argument_list" | "assert_statement" | "block" | "case_pattern" | "concatenated_string" | "delete_statement" | "dict_pattern" | "dictionary" | "dictionary_splat_pattern" | "dotted_name" | "expression_list" | "format_specifier" | "global_statement" | "lambda_parameters" | "list" | "list_pattern" | "list_splat_pattern" | "module" | "nonlocal_statement" | "parameters" | "parenthesized_expression" | "parenthesized_list_splat" | "pattern_list" | "return_statement" | "set" | "string_content" | "tuple" | "tuple_pattern" | "type" | "type_parameter" | "union_pattern" | "yield"
         )
     }
 }

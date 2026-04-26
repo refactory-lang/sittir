@@ -134,6 +134,41 @@ describe('enrich()', () => {
             expect(rule.members[2]).toMatchObject({ type: 'symbol', name: 'expression' })
         })
 
+        it('skips when the same kind also appears inside a REPEAT in the same body', () => {
+            // python `dotted_name: prec(1, sep1($.identifier, '.'))` =
+            //   `seq($.identifier, repeat(seq('.', $.identifier)))`.
+            // The bare top-level identifier was being auto-promoted to
+            // `field('identifier', $.identifier)` because the symbol-count
+            // scan only looked at top-level seq positions. The repeat-
+            // wrapped identifier surfaces as an unfielded `$children`
+            // entry — promoting the bare one splits the same kind across
+            // `$fields.identifier` and `$children`, which the variadic
+            // factory `dottedName(...children: Identifier[])` can't
+            // reconstruct (no leading-field slot).
+            const input = mkGrammar({
+                dotted_name: {
+                    type: 'seq',
+                    members: [
+                        { type: 'symbol', name: 'identifier' },
+                        {
+                            type: 'repeat',
+                            content: {
+                                type: 'seq',
+                                members: [
+                                    { type: 'string', value: '.' },
+                                    { type: 'symbol', name: 'identifier' },
+                                ],
+                            },
+                        },
+                    ],
+                },
+            })
+            const out = runEnrich(input)
+            const rule = out.grammar.rules.dotted_name as { type: 'seq', members: Rule[] }
+            // Top-level identifier MUST stay bare (no enrich-added field)
+            expect(rule.members[0]).toMatchObject({ type: 'symbol', name: 'identifier' })
+        })
+
         it('skips hidden-kind references (leading underscore)', () => {
             const input = mkGrammar({
                 foo: {

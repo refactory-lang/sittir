@@ -636,7 +636,7 @@ export interface FunctionDefinition {
 
 export interface Parameters {
   readonly $type: 'parameters';
-  readonly $children: NonEmptyArray<Parameter>;
+  readonly $children: readonly (Parameter)[];
 }
 
 export interface LambdaParameters {
@@ -738,10 +738,7 @@ export interface Block {
 
 export interface ExpressionList {
   readonly $type: 'expression_list';
-  readonly $fields: {
-    readonly expression: Expression;
-  };
-  readonly $children: NonEmptyArray<Expression>;
+  readonly $children: NonEmptyArray<Expression | Expression>;
 }
 
 export interface DottedName {
@@ -771,12 +768,12 @@ export interface UnionPattern {
 
 export interface _ListPattern {
   readonly $type: 'list_pattern';
-  readonly $children: NonEmptyArray<CasePattern>;
+  readonly $children: readonly (CasePattern)[];
 }
 
 export interface _TuplePattern {
   readonly $type: 'tuple_pattern';
-  readonly $children: NonEmptyArray<CasePattern>;
+  readonly $children: readonly (CasePattern)[];
 }
 
 export interface DictPattern {
@@ -812,7 +809,7 @@ export interface ClassPattern {
   readonly $type: 'class_pattern';
   readonly $fields: {
     readonly dotted_name: DottedName;
-    readonly arguments: NonEmptyArray<CasePattern>;
+    readonly arguments: readonly (CasePattern)[];
   };
 }
 
@@ -827,12 +824,12 @@ export interface ComplexPattern {
 
 export interface TuplePattern {
   readonly $type: 'tuple_pattern';
-  readonly $children: NonEmptyArray<Pattern>;
+  readonly $children: readonly (Pattern)[];
 }
 
 export interface ListPattern {
   readonly $type: 'list_pattern';
-  readonly $children: NonEmptyArray<Pattern>;
+  readonly $children: readonly (Pattern)[];
 }
 
 export interface DefaultParameter {
@@ -966,10 +963,7 @@ export interface AugmentedAssignment {
 
 export interface PatternList {
   readonly $type: 'pattern_list';
-  readonly $fields: {
-    readonly pattern: Pattern;
-  };
-  readonly $children: NonEmptyArray<Pattern>;
+  readonly $children: NonEmptyArray<Pattern | Pattern>;
 }
 
 export interface Yield {
@@ -1072,7 +1066,7 @@ export interface KeywordArgument {
 
 export interface List {
   readonly $type: 'list';
-  readonly $children: NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat>;
+  readonly $children: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 }
 
 export interface Set {
@@ -1082,7 +1076,7 @@ export interface Set {
 
 export interface Tuple {
   readonly $type: 'tuple';
-  readonly $children: NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat>;
+  readonly $children: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 }
 
 export interface Dictionary {
@@ -1167,10 +1161,7 @@ export interface ConditionalExpression {
 
 export interface ConcatenatedString {
   readonly $type: 'concatenated_string';
-  readonly $fields: {
-    readonly string: String;
-  };
-  readonly $children: NonEmptyArray<String>;
+  readonly $children: NonEmptyArray<String | String>;
 }
 
 export interface String {

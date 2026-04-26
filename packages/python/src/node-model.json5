@@ -789,11 +789,11 @@
           "propertyName": "casePattern",
           "required": true,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "case_pattern",
               "unresolved": true
             }
@@ -1300,11 +1300,11 @@
           "propertyName": "casePattern",
           "required": true,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "case_pattern",
               "unresolved": true
             }
@@ -2847,11 +2847,11 @@
           "paramName": "arguments_",
           "required": true,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "case_pattern",
               "unresolved": true
             }
@@ -3073,36 +3073,11 @@
     },
     {
       "kind": "concatenated_string",
-      "modelType": "branch",
+      "modelType": "container",
       "typeName": "ConcatenatedString",
       "factoryName": "concatenatedString",
       "irKey": "concatenatedString",
       "hidden": false,
-      "fields": [
-        {
-          "name": "string",
-          "propertyName": "string",
-          "paramName": "string",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "string",
-              "unresolved": true
-            }
-          ],
-          "source": "enriched",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "string"
-            ]
-          }
-        }
-      ],
       "children": [
         {
           "name": "string",
@@ -3111,6 +3086,12 @@
           "multiple": true,
           "nonEmpty": true,
           "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "string",
+              "unresolved": true
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
@@ -4062,36 +4043,11 @@
     },
     {
       "kind": "expression_list",
-      "modelType": "branch",
+      "modelType": "container",
       "typeName": "ExpressionList",
       "factoryName": "expressionList",
       "irKey": "expressionList",
       "hidden": false,
-      "fields": [
-        {
-          "name": "expression",
-          "propertyName": "expression",
-          "paramName": "expression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "expression",
-              "unresolved": true
-            }
-          ],
-          "source": "enriched",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "expression"
-            ]
-          }
-        }
-      ],
       "children": [
         {
           "name": "expression",
@@ -4100,6 +4056,12 @@
           "multiple": true,
           "nonEmpty": true,
           "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "expression",
+              "unresolved": true
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
@@ -5502,11 +5464,11 @@
           "propertyName": "expression",
           "required": true,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "expression",
               "unresolved": true
             }
@@ -5517,11 +5479,11 @@
           "propertyName": "yield",
           "required": true,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "yield",
               "unresolved": true
             }
@@ -5532,11 +5494,11 @@
           "propertyName": "listSplat",
           "required": true,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "list_splat",
               "unresolved": true
             }
@@ -5547,11 +5509,11 @@
           "propertyName": "parenthesizedListSplat",
           "required": true,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "parenthesized_list_splat",
               "unresolved": true
             }
@@ -5622,11 +5584,11 @@
           "propertyName": "pattern",
           "required": true,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "pattern",
               "unresolved": true
             }
@@ -6135,11 +6097,11 @@
           "propertyName": "parameter",
           "required": true,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "parameter",
               "unresolved": true
             }
@@ -6266,36 +6228,11 @@
     },
     {
       "kind": "pattern_list",
-      "modelType": "branch",
+      "modelType": "container",
       "typeName": "PatternList",
       "factoryName": "patternList",
       "irKey": "patternList",
       "hidden": false,
-      "fields": [
-        {
-          "name": "pattern",
-          "propertyName": "pattern",
-          "paramName": "pattern",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "pattern",
-              "unresolved": true
-            }
-          ],
-          "source": "enriched",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "pattern"
-            ]
-          }
-        }
-      ],
       "children": [
         {
           "name": "pattern",
@@ -6304,6 +6241,12 @@
           "multiple": true,
           "nonEmpty": true,
           "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "pattern",
+              "unresolved": true
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
@@ -7248,11 +7191,11 @@
           "propertyName": "expression",
           "required": true,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "expression",
               "unresolved": true
             }
@@ -7263,11 +7206,11 @@
           "propertyName": "yield",
           "required": true,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "yield",
               "unresolved": true
             }
@@ -7278,11 +7221,11 @@
           "propertyName": "listSplat",
           "required": true,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "list_splat",
               "unresolved": true
             }
@@ -7293,11 +7236,11 @@
           "propertyName": "parenthesizedListSplat",
           "required": true,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "parenthesized_list_splat",
               "unresolved": true
             }
@@ -7318,11 +7261,11 @@
           "propertyName": "pattern",
           "required": true,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "pattern",
               "unresolved": true
             }

@@ -537,7 +537,6 @@ export function wrapBlock(data: _NodeData, tree: TreeHandle): WrappedNode<Block>
 export function wrapExpressionList(data: _NodeData, tree: TreeHandle): WrappedNode<ExpressionList> {
   return {
     ...data,
-    get expression() { return drillIn(data.$fields?.['expression'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ExpressionList>;
 }
@@ -774,7 +773,6 @@ export function wrapAugmentedAssignment(data: _NodeData, tree: TreeHandle): Wrap
 export function wrapPatternList(data: _NodeData, tree: TreeHandle): WrappedNode<PatternList> {
   return {
     ...data,
-    get pattern() { return drillIn(data.$fields?.['pattern'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<PatternList>;
 }
@@ -1005,7 +1003,6 @@ export function wrapConditionalExpression(data: _NodeData, tree: TreeHandle): Wr
 export function wrapConcatenatedString(data: _NodeData, tree: TreeHandle): WrappedNode<ConcatenatedString> {
   return {
     ...data,
-    get string() { return drillIn(data.$fields?.['string'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ConcatenatedString>;
 }

@@ -366,7 +366,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'imaginary', required: true, multiple: false },
   ],
   'concatenated_string': [
-    { name: 'string', required: true, multiple: false },
   ],
   'conditional_expression': [
     { name: 'body', required: true, multiple: false },
@@ -420,7 +419,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'inClause', required: false, multiple: true },
   ],
   'expression_list': [
-    { name: 'expression', required: true, multiple: false },
   ],
   'expression_statement': [
   ],
@@ -541,7 +539,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'parenthesized_list_splat': [
   ],
   'pattern_list': [
-    { name: 'pattern', required: true, multiple: false },
   ],
   'print_statement': [
     { name: 'argument', required: true, multiple: true },

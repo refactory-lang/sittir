@@ -357,7 +357,7 @@ describe('function_definition', () => {
 
 describe('parameters', () => {
   it('factory produces correct type', () => {
-    const node = ir.parameters({ type: "parameter" } as never);
+    const node = ir.parameters();
     expect(node.$type).toBe('parameters');
     expect(node.$source).toBe('factory');
   });
@@ -505,13 +505,9 @@ describe('block', () => {
 
 describe('expression_list', () => {
   it('factory produces correct type', () => {
-    const node = ir.expressionList({ expression: { $type: 'expression', $text: 'test' } as any, children: [{ $type: 'expression', $text: 'test' } as any] as any });
+    const node = ir.expressionList({ type: "expression" } as never);
     expect(node.$type).toBe('expression_list');
     expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.expressionList({ expression: { $type: 'expression', $text: 'test' } as any, children: [{ $type: 'expression', $text: 'test' } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -597,7 +593,7 @@ describe('complex_pattern', () => {
 
 describe('tuple_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.tuplePattern({ type: "pattern" } as never);
+    const node = ir.tuplePattern();
     expect(node.$type).toBe('tuple_pattern');
     expect(node.$source).toBe('factory');
   });
@@ -605,7 +601,7 @@ describe('tuple_pattern', () => {
 
 describe('list_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.listPattern({ type: "pattern" } as never);
+    const node = ir.listPattern();
     expect(node.$type).toBe('list_pattern');
     expect(node.$source).toBe('factory');
   });
@@ -779,13 +775,9 @@ describe('augmented_assignment', () => {
 
 describe('pattern_list', () => {
   it('factory produces correct type', () => {
-    const node = ir.patternList({ pattern: { $type: 'pattern', $text: 'test' } as any, children: [{ $type: 'pattern', $text: 'test' } as any] as any });
+    const node = ir.patternList({ type: "pattern" } as never);
     expect(node.$type).toBe('pattern_list');
     expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.patternList({ pattern: { $type: 'pattern', $text: 'test' } as any, children: [{ $type: 'pattern', $text: 'test' } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -939,7 +931,7 @@ describe('keyword_argument', () => {
 
 describe('list', () => {
   it('factory produces correct type', () => {
-    const node = ir.list({ type: "expression" } as never);
+    const node = ir.list();
     expect(node.$type).toBe('list');
     expect(node.$source).toBe('factory');
   });
@@ -955,7 +947,7 @@ describe('set', () => {
 
 describe('tuple', () => {
   it('factory produces correct type', () => {
-    const node = ir.tuple({ type: "expression" } as never);
+    const node = ir.tuple();
     expect(node.$type).toBe('tuple');
     expect(node.$source).toBe('factory');
   });
@@ -1075,13 +1067,9 @@ describe('conditional_expression', () => {
 
 describe('concatenated_string', () => {
   it('factory produces correct type', () => {
-    const node = ir.concatenatedString({ string: { $type: 'string', $text: 'test' } as any, children: [{ $type: 'string', $text: 'test' } as any] as any });
+    const node = ir.concatenatedString({ type: "string" } as never);
     expect(node.$type).toBe('concatenated_string');
     expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.concatenatedString({ string: { $type: 'string', $text: 'test' } as any, children: [{ $type: 'string', $text: 'test' } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 

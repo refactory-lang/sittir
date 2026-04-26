@@ -334,10 +334,9 @@ const _K7: readonly string[] = ["integer","float"];
 const _K8: readonly string[] = ["tuple_pattern"];
 const _K9: readonly string[] = ["identifier","integer","float","true","false","none"];
 const _K10: readonly string[] = ["await","binary_operator","keyword_identifier","string","concatenated_string","unary_operator","attribute","subscript","call","list","list_comprehension","dictionary","dictionary_comprehension","set","set_comprehension","tuple","parenthesized_expression","generator_expression","list_splat_pattern"];
-const _K11: readonly string[] = ["keyword_identifier","subscript","attribute","list_splat_pattern","tuple_pattern","list_pattern"];
-const _K12: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","primary_expression","conditional_expression","named_expression","as_pattern","slice"];
-const _K13: readonly string[] = ["generator_expression","argument_list"];
-const _K14: readonly string[] = ["list_splat_pattern","dictionary_splat_pattern"];
+const _K11: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","primary_expression","conditional_expression","named_expression","as_pattern","slice"];
+const _K12: readonly string[] = ["generator_expression","argument_list"];
+const _K13: readonly string[] = ["list_splat_pattern","dictionary_splat_pattern"];
 
 export function moduleFrom(...input: readonly (NonNullable<T.Module.Config['children']>[number] | T.Module)[]) {
   if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'module') {
@@ -736,14 +735,12 @@ export function blockFrom(...input: readonly (NonNullable<T.Block.Config['childr
   return F.block(...(input as readonly NonNullable<T.Block.Config['children']>[number][]));
 }
 
-export function expressionListFrom(input: T.ExpressionList.Loose): ReturnType<typeof F.expressionList> | T.ExpressionList {
-  if (isNodeData(input)) return input;
-  const _ne_children: readonly (T.Expression)[] = _resolveMany(input.children, _K0, _super_expression);
-  _assertNonEmpty(_ne_children, 'expression_list.children');
-  return F.expressionList({
-    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
-    children: _ne_children,
-  });
+export function expressionListFrom(...input: readonly (NonNullable<T.ExpressionList.Config['children']>[number] | T.ExpressionList)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'expression_list') {
+    const data = input[0];
+    return F.expressionList(...((data.$children ?? []) as readonly NonNullable<T.ExpressionList.Config['children']>[number][]));
+  }
+  return F.expressionList(...(input as readonly NonNullable<T.ExpressionList.Config['children']>[number][]));
 }
 
 export function dottedNameFrom(...input: readonly (NonNullable<T.DottedName.Config['children']>[number] | T.DottedName)[]) {
@@ -797,11 +794,9 @@ export function splatPatternFrom(input: T.SplatPattern.Loose): ReturnType<typeof
 
 export function classPatternFrom(input: T.ClassPattern.Loose): ReturnType<typeof F.classPattern> | T.ClassPattern {
   if (isNodeData(input)) return input;
-  const _ne_arguments = _resolveManyBranch<T.CasePattern>(input.arguments, "case_pattern");
-  _assertNonEmpty(_ne_arguments, 'class_pattern.arguments');
   return F.classPattern({
     dottedName: _resolveOneBranch<T.DottedName>(input.dottedName, "dotted_name"),
-    arguments: _ne_arguments,
+    arguments: _resolveManyBranch<T.CasePattern>(input.arguments, "case_pattern"),
   });
 }
 
@@ -966,14 +961,12 @@ export function augmentedAssignmentFrom(input: T.AugmentedAssignment.Loose): Ret
   });
 }
 
-export function patternListFrom(input: T.PatternList.Loose): ReturnType<typeof F.patternList> | T.PatternList {
-  if (isNodeData(input)) return input;
-  const _ne_children: readonly (T.Pattern)[] = _resolveMany(input.children, _super_keyword_identifier, _K11);
-  _assertNonEmpty(_ne_children, 'pattern_list.children');
-  return F.patternList({
-    pattern: _resolveOne<T.Pattern>(input.pattern, _super_keyword_identifier, _K11),
-    children: _ne_children,
-  });
+export function patternListFrom(...input: readonly (NonNullable<T.PatternList.Config['children']>[number] | T.PatternList)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'pattern_list') {
+    const data = input[0];
+    return F.patternList(...((data.$children ?? []) as readonly NonNullable<T.PatternList.Config['children']>[number][]));
+  }
+  return F.patternList(...(input as readonly NonNullable<T.PatternList.Config['children']>[number][]));
 }
 
 export function yield_From(input?: NonNullable<T.Yield.Config['children']>[number] | T.Yield) {
@@ -995,7 +988,7 @@ export function attributeFrom(input: T.Attribute.Loose): ReturnType<typeof F.att
 
 export function subscriptFrom(input: T.Subscript.Loose): ReturnType<typeof F.subscript> | T.Subscript {
   if (isNodeData(input)) return input;
-  const _ne_subscript = _resolveMany<T.Expression | T.Slice>(input.subscript, _K0, _K12);
+  const _ne_subscript = _resolveMany<T.Expression | T.Slice>(input.subscript, _K0, _K11);
   _assertNonEmpty(_ne_subscript, 'subscript.subscript');
   return F.subscript({
     value: _resolveOne<T.PrimaryExpression>(input.value, _K9, _K10),
@@ -1016,7 +1009,7 @@ export function callFrom(input: T.Call.Loose): ReturnType<typeof F.call> | T.Cal
   if (isNodeData(input)) return input;
   return F.call({
     function: _resolveOne<T.PrimaryExpression>(input.function, _K9, _K10),
-    arguments: _resolveOne<T.GeneratorExpression | T.ArgumentList>(input.arguments, _K0, _K13),
+    arguments: _resolveOne<T.GeneratorExpression | T.ArgumentList>(input.arguments, _K0, _K12),
   });
 }
 
@@ -1024,7 +1017,7 @@ export function typedParameterFrom(input: T.TypedParameter.Loose): ReturnType<ty
   if (isNodeData(input)) return input;
   return F.typedParameter({
     type: _resolveOneBranch<T.Type>(input.type, "type"),
-    children: _resolveOne(input.children, _super_keyword_identifier, _K14),
+    children: _resolveOne(input.children, _super_keyword_identifier, _K13),
   });
 }
 
@@ -1192,14 +1185,12 @@ export function conditionalExpressionFrom(input: T.ConditionalExpression.Loose):
   });
 }
 
-export function concatenatedStringFrom(input: T.ConcatenatedString.Loose): ReturnType<typeof F.concatenatedString> | T.ConcatenatedString {
-  if (isNodeData(input)) return input;
-  const _ne_children: readonly (T.String)[] = _resolveManyBranch(input.children, "string");
-  _assertNonEmpty(_ne_children, 'concatenated_string.children');
-  return F.concatenatedString({
-    string: _resolveOneBranch<T.String>(input.string, "string"),
-    children: _ne_children,
-  });
+export function concatenatedStringFrom(...input: readonly (NonNullable<T.ConcatenatedString.Config['children']>[number] | T.ConcatenatedString)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'concatenated_string') {
+    const data = input[0];
+    return F.concatenatedString(...((data.$children ?? []) as readonly NonNullable<T.ConcatenatedString.Config['children']>[number][]));
+  }
+  return F.concatenatedString(...(input as readonly NonNullable<T.ConcatenatedString.Config['children']>[number][]));
 }
 
 export function stringFrom(input: string | T.String) {

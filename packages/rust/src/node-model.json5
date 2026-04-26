@@ -16679,11 +16679,11 @@
           "propertyName": "wherePredicate",
           "required": true,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "where_predicate",
               "unresolved": true
             }

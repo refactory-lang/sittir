@@ -799,7 +799,24 @@ function collectChildFromMember(rule: Rule, out: AssembledChild[], multiplicity:
             }
             break
         case 'optional':
-            collectChildFromMember(rule.content, out, 'optional')
+            // `optional(repeat1(X, sep))` (the canonical lift of
+            // `optional(commaSep1(X))`, e.g. python's
+            // `parameters: seq('(', optional(_parameters), ')')`
+            // where `_parameters` inlines to `repeat1($.parameter, ',')`)
+            // surfaces ZERO-or-more occurrences at the parent slot — the
+            // empty case (`()`) is valid input. Recursing with multiplicity
+            // 'optional' would let the inner `repeat1` case clobber it
+            // back to 'nonEmptyArray', producing a slot the factory
+            // refuses to construct empty (`_assertNonEmpty` throws on
+            // `parameters()`). Downgrade the inner repeat1 to 'array'
+            // here so the outer-optional semantics survive merging.
+            // Mirrors `fieldContentMultiplicity`'s
+            // `optional(repeat1) → array` rule for field-level slots.
+            if (rule.content.type === 'repeat1') {
+                collectChildFromMember(rule.content.content, out, 'array')
+            } else {
+                collectChildFromMember(rule.content, out, 'optional')
+            }
             break
         case 'repeat':
             collectChildFromMember(rule.content, out, 'array')
@@ -975,10 +992,18 @@ function deriveValuesForRule(
             // their own multiplicity if they wrap repeat/optional differently.
             return rule.members.flatMap(m => deriveValuesForRule(m, multiplicity))
         case 'optional':
-            // Optional wrapper forces multiplicity to 'optional'. If the
-            // inner rule already produces multi entries (repeat inside optional),
-            // that case shouldn't arise after evaluate (optional(repeat) →
-            // repeat with trailing semantics), but handle gracefully.
+            // `optional(repeat1(X, sep))` survives evaluate when the
+            // optional wraps the canonical commaSep1 lift (e.g. python's
+            // `parameters: seq('(', optional(_parameters), ')')`).
+            // Recursing with multiplicity 'optional' lets the inner
+            // 'repeat1' case clobber it back to 'nonEmptyArray', which
+            // mis-marks the slot as never-empty even though `()` is
+            // valid. Downgrade to 'array' when the inner is repeat1, so
+            // the outer-optional semantics survive. Mirrors the
+            // `collectChildFromMember` rule for child slots.
+            if (rule.content.type === 'repeat1') {
+                return deriveValuesForRule(rule.content.content, 'array')
+            }
             return deriveValuesForRule(rule.content, 'optional')
         case 'repeat':
             return deriveValuesForRule(rule.content, 'array')

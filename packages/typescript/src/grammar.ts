@@ -163,7 +163,7 @@ export type TypescriptGrammar = {
   readonly "rest_type": {"type":"rest_type","named":true,"fields":{"type":{"multiple":false,"required":true,"types":[{"type":"type","named":true}]}}};
   readonly "return_statement": {"type":"return_statement","named":true,"fields":{"semicolon":{"multiple":false,"required":false,"types":[{"type":";","named":false}]}},"children":{"multiple":false,"required":false,"types":[{"type":"expression","named":true},{"type":"sequence_expression","named":true}]}};
   readonly "satisfies_expression": {"type":"satisfies_expression","named":true,"fields":{"expression":{"multiple":false,"required":true,"types":[{"type":"expression","named":true}]},"type_annotation":{"multiple":false,"required":true,"types":[{"type":"type","named":true}]}}};
-  readonly "sequence_expression": {"type":"sequence_expression","named":true,"fields":{"expression":{"multiple":false,"required":true,"types":[{"type":"expression","named":true}]}},"children":{"multiple":true,"required":false,"types":[{"type":"expression","named":true}]}};
+  readonly "sequence_expression": {"type":"sequence_expression","named":true,"fields":{},"children":{"multiple":true,"required":true,"types":[{"type":"expression","named":true}]}};
   readonly "spread_element": {"type":"spread_element","named":true,"fields":{"expression":{"multiple":false,"required":true,"types":[{"type":"expression","named":true}]}}};
   readonly "statement_block": {"type":"statement_block","named":true,"fields":{"statements":{"multiple":true,"required":false,"types":[{"type":"statement","named":true}]}}};
   readonly "string": {"type":"string","named":true,"fields":{},"children":{"multiple":false,"required":true,"types":[{"type":"string_double","named":true},{"type":"string_single","named":true}]}};

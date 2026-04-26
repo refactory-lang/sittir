@@ -1141,7 +1141,7 @@ describe('field_definition', () => {
 
 describe('formal_parameters', () => {
   it('factory produces correct type', () => {
-    const node = ir.formalParameters({ type: "_formal_parameter" } as never);
+    const node = ir.formalParameters();
     expect(node.$type).toBe('formal_parameters');
     expect(node.$source).toBe('factory');
   });

@@ -1068,7 +1068,6 @@ export function functionModifiers(config: ConfigOf<T.FunctionModifiers>) {
 }
 
 export function whereClause(...children: T.WherePredicate[]) {
-  _assertNonEmpty(children, 'where_clause.children');
   return {
     $type: 'where_clause' as const,
     $source: 'factory' as const,

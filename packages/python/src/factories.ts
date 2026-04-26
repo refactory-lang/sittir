@@ -742,7 +742,6 @@ export function functionDefinition(config: ConfigOf<T.FunctionDefinition>) {
 }
 
 export function parameters(...children: T.Parameter[]) {
-  _assertNonEmpty(children, 'parameters.children');
   return {
     $type: 'parameters' as const,
     $source: 'factory' as const,
@@ -1037,23 +1036,13 @@ export function block(...children: T.Statement[]) {
   };
 }
 
-export function expressionList(config: ConfigOf<T.ExpressionList>) {
-  const fields = {
-    expression: config.expression,
-  };
-  const children = config.children ?? [];
+export function expressionList(...children: T.Expression[]) {
+  _assertNonEmpty(children, 'expression_list.children');
   return {
     $type: 'expression_list' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
     $children: children,
-    expression(value?: T.Expression) { return _fs(config, expressionList, 'expression', value, config?.expression); },
-    children(...items: T.Expression[]) {
-      if (items.length === 0) return children;
-      _assertNonEmpty(items, 'expression_list.children');
-      return expressionList({ ...config, children: items });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1144,7 +1133,6 @@ export function unionPattern(...children: T.SimplePattern[]) {
 }
 
 export function _listPattern(...children: T.CasePattern[]) {
-  _assertNonEmpty(children, '_list_pattern.children');
   return {
     $type: '_list_pattern' as const,
     $source: 'factory' as const,
@@ -1160,7 +1148,6 @@ export function _listPattern(...children: T.CasePattern[]) {
 }
 
 export function _tuplePattern(...children: T.CasePattern[]) {
-  _assertNonEmpty(children, '_tuple_pattern.children');
   return {
     $type: '_tuple_pattern' as const,
     $source: 'factory' as const,
@@ -1247,7 +1234,7 @@ export function classPattern(config: ConfigOf<T.ClassPattern>) {
     $named: true as const,
     $fields: fields,
     dottedName(value?: T.DottedName) { return _fs(config, classPattern, 'dottedName', value, config?.dottedName); },
-    arguments(...values: NonEmptyArray<T.CasePattern>) { return _fsm(config, classPattern, 'arguments', values, config?.arguments); },
+    arguments(...values: T.CasePattern[]) { return _fsm(config, classPattern, 'arguments', values, config?.arguments); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -1285,7 +1272,6 @@ export function complexPattern(config: ConfigOf<T.ComplexPattern>) {
 }
 
 export function tuplePattern(...children: T.Pattern[]) {
-  _assertNonEmpty(children, 'tuple_pattern.children');
   return {
     $type: 'tuple_pattern' as const,
     $source: 'factory' as const,
@@ -1301,7 +1287,6 @@ export function tuplePattern(...children: T.Pattern[]) {
 }
 
 export function listPattern(...children: T.Pattern[]) {
-  _assertNonEmpty(children, 'list_pattern.children');
   return {
     $type: 'list_pattern' as const,
     $source: 'factory' as const,
@@ -1710,23 +1695,13 @@ export function augmentedAssignment(config: ConfigOf<T.AugmentedAssignment>) {
   };
 }
 
-export function patternList(config: ConfigOf<T.PatternList>) {
-  const fields = {
-    pattern: config.pattern,
-  };
-  const children = config.children ?? [];
+export function patternList(...children: T.Pattern[]) {
+  _assertNonEmpty(children, 'pattern_list.children');
   return {
     $type: 'pattern_list' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
     $children: children,
-    pattern(value?: T.Pattern) { return _fs(config, patternList, 'pattern', value, config?.pattern); },
-    children(...items: T.Pattern[]) {
-      if (items.length === 0) return children;
-      _assertNonEmpty(items, 'pattern_list.children');
-      return patternList({ ...config, children: items });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -2004,7 +1979,6 @@ export function keywordArgument(config: ConfigOf<T.KeywordArgument>) {
 }
 
 export function list(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
-  _assertNonEmpty(children, 'list.children');
   return {
     $type: 'list' as const,
     $source: 'factory' as const,
@@ -2036,7 +2010,6 @@ export function set(...children: (T.Expression | T.Yield | T.ListSplat | T.Paren
 }
 
 export function tuple(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
-  _assertNonEmpty(children, 'tuple.children');
   return {
     $type: 'tuple' as const,
     $source: 'factory' as const,
@@ -2283,23 +2256,13 @@ export function conditionalExpression(config: ConfigOf<T.ConditionalExpression>)
   };
 }
 
-export function concatenatedString(config: ConfigOf<T.ConcatenatedString>) {
-  const fields = {
-    string: config.string,
-  };
-  const children = config.children ?? [];
+export function concatenatedString(...children: T.String[]) {
+  _assertNonEmpty(children, 'concatenated_string.children');
   return {
     $type: 'concatenated_string' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
     $children: children,
-    string(value?: T.String) { return _fs(config, concatenatedString, 'string', value, config?.string); },
-    children(...items: T.String[]) {
-      if (items.length === 0) return children;
-      _assertNonEmpty(items, 'concatenated_string.children');
-      return concatenatedString({ ...config, children: items });
-    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);

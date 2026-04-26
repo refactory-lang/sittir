@@ -1045,7 +1045,7 @@ export interface FunctionModifiers {
 
 export interface WhereClause {
   readonly $type: 'where_clause';
-  readonly $children: NonEmptyArray<WherePredicate>;
+  readonly $children: readonly (WherePredicate)[];
 }
 
 export interface WherePredicate {

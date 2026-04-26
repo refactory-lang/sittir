@@ -8211,17 +8211,17 @@
           "paramName": "opening",
           "required": true,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "_property_name",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "enum_assignment",
               "unresolved": true
             }
@@ -9371,11 +9371,11 @@
           "propertyName": "formalParameter",
           "required": true,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "_formal_parameter",
               "unresolved": true
             }
