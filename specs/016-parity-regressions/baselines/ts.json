@@ -1,6 +1,6 @@
 {
     "backend": "typescript",
-    "commit": "bbc16ca",
+    "commit": "c00636a",
     "grammars": {
         "python": {
             "parityFixtures": {

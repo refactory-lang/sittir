@@ -525,7 +525,7 @@ export function caseClauseFrom(input: T.CaseClause.Loose): ReturnType<typeof F.c
 export function forStatementFrom(input: T.ForStatement.Loose): ReturnType<typeof F.forStatement> | T.ForStatement {
   if (isNodeData(input)) return input;
   return F.forStatement({
-    async: _resolveBooleanKeyword(input.async),
+    asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
     left: _resolveOne<T.LeftHandSide>(input.left, _K0, _super_left_hand_side),
     right: _resolveOne<T.Expressions>(input.right, _K0, _super_expressions),
     body: _resolveOneBranch<T.Suite>(input.body, "_suite"),
@@ -573,7 +573,7 @@ export function finallyClauseFrom(input: T.FinallyClause.Loose): ReturnType<type
 export function withStatementFrom(input: T.WithStatement.Loose): ReturnType<typeof F.withStatement> | T.WithStatement {
   if (isNodeData(input)) return input;
   return F.withStatement({
-    async: _resolveBooleanKeyword(input.async),
+    asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
     withClause: _resolveOneBranch<T.WithClause>(input.withClause, "with_clause"),
     body: _resolveOneBranch<T.Suite>(input.body, "_suite"),
   });
@@ -602,7 +602,7 @@ export function withItemFrom(input: T.WithItem.Loose): ReturnType<typeof F.withI
 export function functionDefinitionFrom(input: T.FunctionDefinition.Loose): ReturnType<typeof F.functionDefinition> | T.FunctionDefinition {
   if (isNodeData(input)) return input;
   return F.functionDefinition({
-    async: _resolveBooleanKeyword(input.async),
+    asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameter>(input.typeParameters, "type_parameter"),
     parameters: _resolveOneBranch<T.Parameters>(input.parameters, "parameters"),
@@ -1170,7 +1170,7 @@ export function forInClauseFrom(input: T.ForInClause.Loose): ReturnType<typeof F
   const _ne_right = _resolveMany<T.ExpressionWithinForInClause>(input.right, _K0, _super_expression_within_for_in_clause);
   _assertNonEmpty(_ne_right, 'for_in_clause.right');
   return F.forInClause({
-    async: _resolveBooleanKeyword(input.async),
+    asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
     left: _resolveOne<T.LeftHandSide>(input.left, _K0, _super_left_hand_side),
     right: _ne_right,
   });

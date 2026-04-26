@@ -1454,6 +1454,35 @@ var overrides_default = grammar(enrich(import_grammar.default), wire({
     exec_statement: {
       2: field("in_clause")
     },
+    // for_statement: seq(optional('async'), 'for', ...).
+    // Field-promotion wave 2 (016 task #24): label the standalone
+    // optional `async` punct as `async_marker` so render preserves
+    // the `async for` form (vs plain `for`).
+    for_statement: {
+      "0/0": field("async_marker")
+    },
+    // for_in_clause: prec.left(seq(optional('async'), 'for', ...)).
+    // Field-promotion wave 2 (016 task #24): symmetric to for_statement
+    // — label the standalone optional `async` punct as `async_marker`
+    // (`async for ... in` comprehensions). prec is transparent to path
+    // addressing.
+    for_in_clause: {
+      "0/0": field("async_marker")
+    },
+    // function_definition: seq(optional('async'), 'def', ...).
+    // Field-promotion wave 2 (016 task #24): label the standalone
+    // optional `async` punct as `async_marker` so render preserves
+    // `async def` (coroutine functions) vs plain `def`.
+    function_definition: {
+      "0/0": field("async_marker")
+    },
+    // with_statement: seq(optional('async'), 'with', ...).
+    // Field-promotion wave 2 (016 task #24): label the standalone
+    // optional `async` punct as `async_marker` so render preserves
+    // `async with` (async context managers) vs plain `with`.
+    with_statement: {
+      "0/0": field("async_marker")
+    },
     // finally_clause: 1 field(s)
     finally_clause: {
       2: field("block")

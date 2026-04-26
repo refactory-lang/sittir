@@ -510,7 +510,7 @@ export function caseClause(config: ConfigOf<T.CaseClause>) {
 
 export function forStatement(config: ConfigOf<T.ForStatement>) {
   const fields = {
-    async: config.async ? "async" as const : undefined,
+    async_marker: config.asyncMarker ? "async" as const : undefined,
     left: config.left,
     right: config.right,
     body: config.body,
@@ -521,7 +521,7 @@ export function forStatement(config: ConfigOf<T.ForStatement>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    async(value?: "async" | undefined) { return _fs(config, forStatement, 'async', value, config?.async); },
+    asyncMarker(value?: "async" | undefined) { return _fs(config, forStatement, 'asyncMarker', value, config?.asyncMarker); },
     left(value?: T.LeftHandSide) { return _fs(config, forStatement, 'left', value, config?.left); },
     right(value?: T.Expressions) { return _fs(config, forStatement, 'right', value, config?.right); },
     body(value?: T.Suite) { return _fs(config, forStatement, 'body', value, config?.body); },
@@ -631,7 +631,7 @@ export function finallyClause(config: ConfigOf<T.FinallyClause>) {
 
 export function withStatement(config: ConfigOf<T.WithStatement>) {
   const fields = {
-    async: config.async ? "async" as const : undefined,
+    async_marker: config.asyncMarker ? "async" as const : undefined,
     with_clause: config.withClause,
     body: config.body,
   };
@@ -640,7 +640,7 @@ export function withStatement(config: ConfigOf<T.WithStatement>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    async(value?: "async" | undefined) { return _fs(config, withStatement, 'async', value, config?.async); },
+    asyncMarker(value?: "async" | undefined) { return _fs(config, withStatement, 'asyncMarker', value, config?.asyncMarker); },
     withClause(value?: T.WithClause) { return _fs(config, withStatement, 'withClause', value, config?.withClause); },
     body(value?: T.Suite) { return _fs(config, withStatement, 'body', value, config?.body); },
     render(this: AnyNodeData): string { return render(this); },
@@ -714,7 +714,7 @@ export function withItem(config: ConfigOf<T.WithItem>) {
 
 export function functionDefinition(config: ConfigOf<T.FunctionDefinition>) {
   const fields = {
-    async: config.async ? "async" as const : undefined,
+    async_marker: config.asyncMarker ? "async" as const : undefined,
     name: config.name,
     type_parameters: config.typeParameters,
     parameters: config.parameters,
@@ -726,7 +726,7 @@ export function functionDefinition(config: ConfigOf<T.FunctionDefinition>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    async(value?: "async" | undefined) { return _fs(config, functionDefinition, 'async', value, config?.async); },
+    asyncMarker(value?: "async" | undefined) { return _fs(config, functionDefinition, 'asyncMarker', value, config?.asyncMarker); },
     name(value?: T.Identifier) { return _fs(config, functionDefinition, 'name', value, config?.name); },
     typeParameters(value?: T.TypeParameter | undefined) { return _fs(config, functionDefinition, 'typeParameters', value, config?.typeParameters); },
     parameters(value?: T.Parameters) { return _fs(config, functionDefinition, 'parameters', value, config?.parameters); },
@@ -2220,7 +2220,7 @@ export function parenthesizedExpression(child: (T.Expression | T.Yield)) {
 
 export function forInClause(config: ConfigOf<T.ForInClause>) {
   const fields = {
-    async: config.async ? "async" as const : undefined,
+    async_marker: config.asyncMarker ? "async" as const : undefined,
     left: config.left,
     right: config.right,
   };
@@ -2229,7 +2229,7 @@ export function forInClause(config: ConfigOf<T.ForInClause>) {
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    async(value?: "async" | undefined) { return _fs(config, forInClause, 'async', value, config?.async); },
+    asyncMarker(value?: "async" | undefined) { return _fs(config, forInClause, 'asyncMarker', value, config?.asyncMarker); },
     left(value?: T.LeftHandSide) { return _fs(config, forInClause, 'left', value, config?.left); },
     right(...values: NonEmptyArray<T.ExpressionWithinForInClause>) { return _fsm(config, forInClause, 'right', values, config?.right); },
     render(this: AnyNodeData): string { return render(this); },

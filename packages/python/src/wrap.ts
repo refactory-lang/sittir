@@ -323,7 +323,7 @@ export function wrapCaseClause(data: _NodeData, tree: TreeHandle): WrappedNode<C
 export function wrapForStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ForStatement> {
   return {
     ...data,
-    get async() { return drillIn(data.$fields?.['async'], tree); },
+    get asyncMarker() { return drillIn(data.$fields?.['async_marker'], tree); },
     get left() { return drillIn(data.$fields?.['left'], tree); },
     get right() { return drillIn(data.$fields?.['right'], tree); },
     get body() { return drillIn(data.$fields?.['body'], tree); },
@@ -373,7 +373,7 @@ export function wrapFinallyClause(data: _NodeData, tree: TreeHandle): WrappedNod
 export function wrapWithStatement(data: _NodeData, tree: TreeHandle): WrappedNode<WithStatement> {
   return {
     ...data,
-    get async() { return drillIn(data.$fields?.['async'], tree); },
+    get asyncMarker() { return drillIn(data.$fields?.['async_marker'], tree); },
     get withClause() { return drillIn(data.$fields?.['with_clause'], tree); },
     get body() { return drillIn(data.$fields?.['body'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
@@ -398,7 +398,7 @@ export function wrapWithItem(data: _NodeData, tree: TreeHandle): WrappedNode<Wit
 export function wrapFunctionDefinition(data: _NodeData, tree: TreeHandle): WrappedNode<FunctionDefinition> {
   return {
     ...data,
-    get async() { return drillIn(data.$fields?.['async'], tree); },
+    get asyncMarker() { return drillIn(data.$fields?.['async_marker'], tree); },
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get typeParameters() { return drillIn(data.$fields?.['type_parameters'], tree); },
     get parameters() { return drillIn(data.$fields?.['parameters'], tree); },
@@ -977,7 +977,7 @@ export function wrapParenthesizedExpression(data: _NodeData, tree: TreeHandle): 
 export function wrapForInClause(data: _NodeData, tree: TreeHandle): WrappedNode<ForInClause> {
   return {
     ...data,
-    get async() { return drillIn(data.$fields?.['async'], tree); },
+    get asyncMarker() { return drillIn(data.$fields?.['async_marker'], tree); },
     get left() { return drillIn(data.$fields?.['left'], tree); },
     get right() { return drillInAll(data.$fields?.['right'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },

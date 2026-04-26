@@ -210,7 +210,7 @@
       "body"
     ],
     "for_statement": [
-      "async",
+      "async_marker",
       "left",
       "right",
       "body",
@@ -231,7 +231,7 @@
       "block"
     ],
     "with_statement": [
-      "async",
+      "async_marker",
       "with_clause",
       "body"
     ],
@@ -239,7 +239,7 @@
       "value"
     ],
     "function_definition": [
-      "async",
+      "async_marker",
       "name",
       "type_parameters",
       "parameters",
@@ -371,7 +371,7 @@
       "value"
     ],
     "for_in_clause": [
-      "async",
+      "async_marker",
       "left",
       "right"
     ],

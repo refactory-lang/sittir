@@ -428,12 +428,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'block', required: true, multiple: false },
   ],
   'for_in_clause': [
-    { name: 'async', required: false, multiple: false },
+    { name: 'asyncMarker', required: false, multiple: false },
     { name: 'left', required: true, multiple: false },
     { name: 'right', required: true, multiple: true },
   ],
   'for_statement': [
-    { name: 'async', required: false, multiple: false },
+    { name: 'asyncMarker', required: false, multiple: false },
     { name: 'left', required: true, multiple: false },
     { name: 'right', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
@@ -442,7 +442,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'format_specifier': [
   ],
   'function_definition': [
-    { name: 'async', required: false, multiple: false },
+    { name: 'asyncMarker', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'parameters', required: true, multiple: false },
@@ -630,7 +630,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'with_statement': [
-    { name: 'async', required: false, multiple: false },
+    { name: 'asyncMarker', required: false, multiple: false },
     { name: 'withClause', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
