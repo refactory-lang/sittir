@@ -14,6 +14,7 @@
 import { describe, it, expect } from "vitest";
 import { readNode } from "../src/readNode.ts";
 import type { AnyTreeNode, TreeHandle } from "../src/readNode.ts";
+import type { NodeId } from "../src/types.ts";
 
 interface FakeChild {
 	type: string;
@@ -29,7 +30,7 @@ function makeHandle(rootType: string, children: FakeChild[]): TreeHandle {
 	const idMap = new Map<number, AnyTreeNode>();
 	const root: AnyTreeNode = {
 		type: rootType,
-		id: () => 0,
+		id: () => 0 as NodeId,
 		text: () => "",
 		range: () => ({ start: { index: 0 }, end: { index: 0 } }),
 		isNamed: () => true,
@@ -40,7 +41,7 @@ function makeHandle(rootType: string, children: FakeChild[]): TreeHandle {
 		(c, _i): AnyTreeNode =>
 			({
 				type: c.type,
-				id: () => c.id,
+				id: () => c.id as NodeId,
 				text: () => c.text,
 				range: () => ({
 					start: { index: c.start ?? 0 },
@@ -55,7 +56,7 @@ function makeHandle(rootType: string, children: FakeChild[]): TreeHandle {
 	childNodes.forEach((n, i) => idMap.set(children[i]!.id, n));
 	return {
 		rootNode: root,
-		nodeById: (id: number) => idMap.get(id) as AnyTreeNode,
+		nodeById: (id: NodeId) => idMap.get(id) as AnyTreeNode,
 	};
 }
 

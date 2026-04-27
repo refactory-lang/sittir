@@ -72,7 +72,7 @@ export function emitWrap(config: EmitWrapConfig): string {
 		"import type { TreeHandle } from '@sittir/core';",
 		"// Spec 008 US4 — import _NodeData (== AnyNodeData) from @sittir/types",
 		"// instead of re-declaring locally. Single source of truth.",
-		"import type { AnyNodeData as _NodeData, WrappedNode, AnyNodeData } from '@sittir/types';",
+		"import type { AnyNodeData as _NodeData, WrappedNode, AnyNodeData, NodeId } from '@sittir/types';",
 		...(typeImportLine ? [typeImportLine] : []),
 		"",
 		"// Drill-in helpers — call back through `readTreeNode` so the same",
@@ -203,7 +203,7 @@ export function emitWrap(config: EmitWrapConfig): string {
 	lines.push(" * closure that routes through napi; wasm/JS handles leave it");
 	lines.push(" * absent and fall back to `readNodeJs` (the in-process walker).");
 	lines.push(" */");
-	lines.push("function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {");
+	lines.push("function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {");
 	lines.push("  // Per-handle dispatch: native-engine handles carry a `read`");
 	lines.push("  // closure that routes through napi (engine owns the tree;");
 	lines.push("  // tree-sitter Node::id() is per-tree, so the engine that");
@@ -225,7 +225,7 @@ export function emitWrap(config: EmitWrapConfig): string {
 	lines.push(" */");
 	lines.push("export function readTreeNode(");
 	lines.push("  tree: TreeHandle,");
-	lines.push("  nodeId?: number,");
+	lines.push("  nodeId?: NodeId,");
 	lines.push("  asType?: { from: string; to: string },");
 	lines.push("): unknown {");
 	lines.push("  let data = readNode(tree, nodeId);");

@@ -36,6 +36,11 @@ export type NodeFieldValue =
  */
 export type NodeChildValue = AnyNodeData | string | number;
 
+declare const nodeIdBrand: unique symbol;
+
+/** Opaque tree-owned node id used for drill-in APIs. */
+export type NodeId = number & { readonly [nodeIdBrand]: true };
+
 /**
  * Runtime node shape — grammar-agnostic. Used by @sittir/core functions
  * that accept any node regardless of grammar.
@@ -75,7 +80,7 @@ export interface AnyNodeData {
 	/** Byte offset span in source. */
 	$span?: { start: number; end: number };
 	/** Tree-sitter node id for O(1) drill-in via tree.nodeById(). */
-	$nodeId?: number;
+	$nodeId?: NodeId;
 	/** Whether this is a named (vs anonymous) node in the grammar.
 	 * Optional at the type level because generated kind interfaces
 	 * omit it by convention (factory output always sets it at runtime). */
@@ -92,7 +97,7 @@ export interface NativeNodeData {
 	readonly $children?: readonly NativeNodeData[];
 	readonly $text?: string;
 	readonly $span?: { readonly start: number; readonly end: number };
-	readonly $nodeId?: number;
+	readonly $nodeId?: NodeId;
 }
 
 // ---------------------------------------------------------------------------
@@ -233,7 +238,7 @@ export interface ReplaceTarget<T extends string = string> {
  * Structurally compatible with ast-grep SgNode.
  */
 export interface AnyTreeNode extends ReplaceTarget {
-	id(): number;
+	id(): NodeId;
 	field(name: string): AnyTreeNode | null;
 	fieldChildren(name: string): AnyTreeNode[];
 	fieldNameForChild?(index: number): string | null;

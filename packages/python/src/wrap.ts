@@ -5,7 +5,7 @@ import { readNode as readNodeJs } from "@sittir/core";
 import type { TreeHandle } from "@sittir/core";
 // Spec 008 US4 — import _NodeData (== AnyNodeData) from @sittir/types
 // instead of re-declaring locally. Single source of truth.
-import type { AnyNodeData as _NodeData, WrappedNode, AnyNodeData } from "@sittir/types";
+import type { AnyNodeData as _NodeData, WrappedNode, AnyNodeData, NodeId } from "@sittir/types";
 import type {
 	AliasedImport,
 	ArgumentList,
@@ -1923,7 +1923,7 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
  * closure that routes through napi; wasm/JS handles leave it
  * absent and fall back to `readNodeJs` (the in-process walker).
  */
-function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
+function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
 	// Per-handle dispatch: native-engine handles carry a `read`
 	// closure that routes through napi (engine owns the tree;
 	// tree-sitter Node::id() is per-tree, so the engine that
@@ -1945,7 +1945,7 @@ function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
  */
 export function readTreeNode(
 	tree: TreeHandle,
-	nodeId?: number,
+	nodeId?: NodeId,
 	asType?: { from: string; to: string },
 ): unknown {
 	let data = readNode(tree, nodeId);

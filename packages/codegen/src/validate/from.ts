@@ -12,13 +12,14 @@
 import { createRequire } from "node:module";
 import { parse as parseYaml } from "yaml";
 import { readNode } from "@sittir/core";
-import type { AnyNodeData, RulesConfig } from "@sittir/types";
+import type { AnyNodeData, NodeId, RulesConfig } from "@sittir/types";
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
 	treeHandle,
 	buildReadHandle,
 	findFirst,
+	findNativeNodeId,
 	collectKinds,
 	emitValidatorMetrics,
 	type TSTree,
@@ -219,13 +220,20 @@ export async function validateFrom(
 			if (!node1) continue;
 
 			const handle = buildReadHandle(grammar, tree1, entry.source, backend);
+			// Native engine Rust-heap IDs differ from WASM linear-memory IDs.
+			// Resolve via the native data tree; if the kind is an alias target
+			// the native engine emits under a different rule name, skip rather
+			// than fall back to a mismatched WASM ID.
+			const nativeId = findNativeNodeId(handle, kind);
+			if (nativeId === null && handle.read) continue;
+			const nodeId = nativeId ?? (node1.id as NodeId);
 			// Use readTreeNode (wrapped via per-kind dispatch) when available,
 			// so `.from()` sees a fluent NodeData — the supported input shape
 			// per spec 008 US3. Fall back to raw readNode if the wrap module
 			// isn't loaded (bootstrap scenarios).
 			const readData = readTreeNode
-				? (readTreeNode(handle, node1.id) as AnyNodeData)
-				: readNode(handle, node1.id);
+				? (readTreeNode(handle, nodeId) as AnyNodeData)
+				: readNode(handle, nodeId);
 
 			try {
 				const fromResult = fromMap[kind]!(readData) as AnyNodeData;

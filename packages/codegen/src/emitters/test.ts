@@ -114,7 +114,7 @@ function emitBranchTest(
 		);
 		if (hasNonAutoStampRequired) {
 			const firstKind = slotKindNames(node.children[0]!)[0];
-			const dummy = firstKind ? `{ $type: '${firstKind}', $text: 'test' } as any` : `'test' as any`;
+			const dummy = firstKind ? `{ $type: '${firstKind}', $text: 'test', $source: 'factory', $named: true } as any` : `'test' as any`;
 			typeConfigParts.push(`children: [${dummy}] as any`);
 		}
 	}
@@ -125,7 +125,7 @@ function emitBranchTest(
 		!renderConfigParts.some((p) => p.startsWith("children"))
 	) {
 		const firstKind = slotKindNames(node.children[0]!)[0];
-		const dummy = firstKind ? `{ $type: '${firstKind}', $text: 'test' } as any` : `'test' as any`;
+		const dummy = firstKind ? `{ $type: '${firstKind}', $text: 'test', $source: 'factory', $named: true } as any` : `'test' as any`;
 		renderConfigParts.push(`children: [${dummy}] as any`);
 	}
 
@@ -389,7 +389,7 @@ function resolveInnerContainerNonEmptyChild(innerNode: AssembledNode): string | 
 	if (!firstRequired) return null;
 	const kinds = slotKindNames(firstRequired);
 	if (kinds.length === 0) return null;
-	return `{ $type: '${kinds[0]}', $text: 'test' } as any`;
+	return `{ $type: '${kinds[0]}', $text: 'test', $source: 'factory', $named: true } as any`;
 }
 
 function dummyValue(field: AssembledField, nodeMap?: NodeMap): string {
@@ -408,13 +408,13 @@ function dummyValue(field: AssembledField, nodeMap?: NodeMap): string {
 	const kinds = slotKindNames(field);
 	if (isMultiple(field)) {
 		if (kinds.length > 0) {
-			return `[{ $type: '${kinds[0]}', $text: 'test' } as any]`;
+			return `[{ $type: '${kinds[0]}', $text: 'test', $source: 'factory', $named: true } as any]`;
 		}
 		return `['test' as any]`;
 	}
 	if (kinds.length > 0) {
 		// Use first content type to generate a dummy
-		return `{ $type: '${kinds[0]}', $text: 'test' } as any`;
+		return `{ $type: '${kinds[0]}', $text: 'test', $source: 'factory', $named: true } as any`;
 	}
 	return "'test' as any";
 }

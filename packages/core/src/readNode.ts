@@ -19,7 +19,7 @@
  * on branch nodes for debugging purposes.
  */
 
-import type { AnyNodeData, AnyTreeNode } from "./types.ts";
+import type { AnyNodeData, AnyTreeNode, NodeId } from "./types.ts";
 
 /**
  * Whether to emit `$text` on branch nodes (those with `$fields` or
@@ -33,8 +33,8 @@ const DEBUG_TEXT = process.env.SITTIR_DEBUG_TEXT === "1";
  * Structurally compatible with ast-grep SgRoot and tree-sitter Tree.
  */
 export interface TreeHandle {
-	/** Look up a node by its numeric id (O(1)). */
-	nodeById(id: number): AnyTreeNode;
+	/** Look up a node by its tree-owned id (O(1)). */
+	nodeById(id: NodeId): AnyTreeNode;
 	/** The root node of the tree. */
 	rootNode: AnyTreeNode;
 	/** Original source text. Optional — populated when the factory has it. */
@@ -51,7 +51,11 @@ export interface TreeHandle {
 	 * so a wasm-tree id cannot address a node in the napi engine's
 	 * tree. The dispatch must live on the handle that owns the tree.
 	 */
-	read?(nodeId?: number): AnyNodeData;
+	read?(nodeId?: NodeId): AnyNodeData;
+}
+
+function toNodeId(id: number): NodeId {
+	return id as NodeId;
 }
 
 /**
@@ -90,7 +94,7 @@ function promoteAnonymousKeyword(
  * @param tree - The tree handle for node lookup
  * @param nodeId - If provided, read this node; otherwise read the root
  */
-export function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
+export function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
 	// Native-handle dispatch: when `tree.read` is present the handle owns a
 	// Rust/napi engine that produces `AnyNodeData` directly (no JS-side tree
 	// walk needed). TS handles do NOT set `tree.read` so this branch is
@@ -120,7 +124,7 @@ export function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
 			$source: "ts",
 			$text: child.text(),
 			$span: { start: child.range().start.index, end: child.range().end.index },
-			$nodeId: child.id(),
+			$nodeId: toNodeId(child.id()),
 			$named: child.isNamed(),
 		};
 
@@ -168,7 +172,7 @@ export function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
 		$fields: Object.keys(fields).length > 0 ? fields : undefined,
 		$children: children.length > 0 ? children : undefined,
 		$span: { start: node.range().start.index, end: node.range().end.index },
-		$nodeId: node.id(),
+		$nodeId: toNodeId(node.id()),
 		$named: node.isNamed(),
 	};
 }

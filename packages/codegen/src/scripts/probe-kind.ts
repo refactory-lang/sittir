@@ -65,7 +65,7 @@ import {
 } from "../validate/common.ts";
 import { loadReadTreeNode } from "../validate/common.ts";
 import type * as TS from "web-tree-sitter";
-import type { AnyTreeNode } from "@sittir/types";
+import type { AnyTreeNode, NodeId } from "@sittir/types";
 
 // ---------------------------------------------------------------------------
 // CLI
@@ -323,7 +323,7 @@ export async function probe(
 			if (!target) {
 				throw new Error(`probe-kind: --engine native: no node match in NodeData tree`);
 			}
-			const targetId = (target as { $nodeId?: number }).$nodeId;
+			const targetId = (target as { $nodeId?: NodeId }).$nodeId;
 			nodeData =
 				targetId !== undefined && readTreeNodeFn ? readTreeNodeFn(handle, targetId) : target;
 		}
@@ -334,7 +334,7 @@ export async function probe(
 				? await loadReadTreeNodeFromPath(resolveBaselinePath(opts.baselineDir, "src/wrap.ts"))
 				: await loadReadTreeNode(grammar);
 		const handle = treeHandle(tree, source);
-		const nodeId = isRoot ? undefined : targetNode.id;
+		const nodeId = isRoot ? undefined : (targetNode.id as NodeId);
 		nodeData = readTreeNodeFn
 			? readTreeNodeFn(handle, nodeId)
 			: await fallbackReadNode(handle, nodeId);
@@ -425,7 +425,7 @@ function dumpCst(node: any, fieldName: string | null): CstNode {
 
 async function fallbackReadNode(
 	handle: ReturnType<typeof treeHandle>,
-	nodeId?: number,
+	nodeId?: NodeId,
 ): Promise<unknown> {
 	const { readNode } = await import("@sittir/core");
 	return readNode(handle, nodeId);
@@ -494,7 +494,7 @@ async function renderNodeDataFromPath(templatesPath: string, nodeData: unknown):
  *  TS render and mask a parity issue. */
 interface NativeProbeEngine {
 	parseAndRead(source: string): string;
-	readNode(nodeId: number): string;
+	readNode(nodeId: NodeId): string;
 	render(nodeJson: string): string;
 }
 async function loadNativeEngine(grammar: string): Promise<NativeProbeEngine> {

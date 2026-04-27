@@ -13,6 +13,7 @@
  */
 
 import { createRequire } from "node:module";
+import type { NodeId } from "@sittir/types";
 import { TEMPLATE_BUNDLE_HASH } from "./hash.js";
 
 /** Which backend is currently serving render/read/splice. */
@@ -42,7 +43,7 @@ export type BackendStatus = NativeBackendStatus | TypeScriptBackendStatus;
 export interface NativeEngine {
 	readonly templateBundleHash: string;
 	findAndRead(source: string, pattern: string): string;
-	readNode(nodeId: number): string;
+	readNode(nodeId: NodeId): string;
 	render(nodeJson: string): string;
 	applyEdits(
 		source: string,

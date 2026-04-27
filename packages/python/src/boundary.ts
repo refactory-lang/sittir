@@ -24,7 +24,7 @@ import {
 	metricsEnabled,
 } from "@sittir/core";
 import type { TreeHandle } from "@sittir/core";
-import type { AnyNodeData, ByteRange, Edit } from "@sittir/types";
+import type { AnyNodeData, ByteRange, Edit, NodeId } from "@sittir/types";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { getActiveBackend, type NativeEngine } from "./backend.js";
@@ -170,7 +170,7 @@ function applyEditsTs(source: string, edits: readonly Edit[]): string {
  * through the TS path (correct: that's the only path that can read
  * a tree the engine doesn't own).
  */
-export function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
+export function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
 	// A TreeHandle from ast-grep / tree-sitter isn't directly addressable
 	// from the native engine's internal state — there's no cross-boundary
 	// identity. So native dispatch for this entry point is only meaningful

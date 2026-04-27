@@ -75,6 +75,8 @@ export type Verdict =
 	| { kind: "ok" }
 	| { kind: "platform-mismatch"; baselinePlatform: string; freshPlatform: string }
 	| { kind: "schema-mismatch"; baselineVersion: number; freshVersion: number }
+	| { kind: "backend-mismatch"; freshBackend: string }
+	| { kind: "missing-ffi" }
 	| {
 			kind: "regression";
 			field: "meanRoundtripMs" | "totalCalls";
@@ -103,6 +105,9 @@ export function evaluateVerdict(
 			freshVersion: fresh.schemaVersion,
 		};
 	}
+	if (fresh.backend !== "native") {
+		return { kind: "backend-mismatch", freshBackend: fresh.backend };
+	}
 	if (baseline.collectedOn.platform !== fresh.collectedOn.platform) {
 		return {
 			kind: "platform-mismatch",
@@ -112,9 +117,7 @@ export function evaluateVerdict(
 	}
 	const ffi = fresh.ffi;
 	if (!ffi) {
-		// No FFI block in fresh metrics — only the native backend produces
-		// it. Treat as "ok" (the gate doesn't apply to TS-backend runs).
-		return { kind: "ok" };
+		return { kind: "missing-ffi" };
 	}
 	const meanDelta = pctDelta(baseline.ffi.meanRoundtripMs, ffi.meanRoundtripMs);
 	if (meanDelta > REGRESSION_THRESHOLD_PCT) {
@@ -191,6 +194,18 @@ export function checkPerfBaseline(
 	switch (verdict.kind) {
 		case "ok":
 			return { exitCode: 0, verdict };
+		case "backend-mismatch":
+			return {
+				exitCode: 1,
+				verdict,
+				stderrLine: `[ERROR] backend mismatch — native perf gate requires backend=native, got backend=${verdict.freshBackend}`,
+			};
+		case "missing-ffi":
+			return {
+				exitCode: 1,
+				verdict,
+				stderrLine: "[ERROR] native metrics missing ffi block — cannot evaluate perf gate",
+			};
 		case "schema-mismatch":
 			return {
 				exitCode: 2,

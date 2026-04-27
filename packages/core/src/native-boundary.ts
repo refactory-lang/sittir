@@ -58,6 +58,9 @@ function assertNativeFields(value: unknown, path: string): void {
 		throw new TypeError(`${path} must be an object, got ${describe(value)}`);
 	}
 	for (const [key, entry] of Object.entries(value)) {
+		// Optional fields are stored as `undefined` in factory nodes; JSON.stringify
+		// strips them before the native engine sees the data, so they are safe to skip.
+		if (entry === undefined) continue;
 		assertNativeFieldValue(entry, `${path}.${key}`);
 	}
 }

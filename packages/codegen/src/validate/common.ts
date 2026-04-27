@@ -17,11 +17,12 @@ import { readFileSync, readdirSync, existsSync } from "node:fs";
 import type { Mode } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 import { readNode as readNodeFn, dumpMetrics, metricsEnabled } from "@sittir/core";
 import type * as TS from "web-tree-sitter";
 import type { SgNode, Pos, Range } from "@ast-grep/wasm";
 
-import type { AnyTreeNode } from "@sittir/types";
+import type { AnyNodeData, AnyTreeNode, NodeId } from "@sittir/types";
 import type { TreeHandle } from "@sittir/core";
 import {
 	assertNever,
@@ -119,7 +120,7 @@ export async function loadWebTreeSitter(): Promise<{
 export function adaptNode(node: TS.Node): AnyTreeNode {
 	return {
 		type: node.type,
-		id: () => node.id,
+		id: () => node.id as NodeId,
 		text: () => node.text,
 		isNamed: () => node.isNamed,
 		field: (name: string) => {
@@ -166,7 +167,7 @@ export function treeHandle(tree: TS.Tree, source?: string): TreeHandle {
 	// through the napi engine without a JS-side tree walk.
 	const handle: TreeHandle = {
 		rootNode: adaptNode(tree.rootNode),
-		nodeById: (id: number) => {
+		nodeById: (id: NodeId) => {
 			const node = nodeMap.get(id);
 			if (!node) throw new Error(`Node ${id} not found`);
 			return adaptNode(node);
@@ -186,7 +187,7 @@ export function treeHandle(tree: TS.Tree, source?: string): TreeHandle {
  */
 export interface NativeEngineLike {
 	parseAndRead(source: string): string;
-	readNode(nodeId: number): string;
+	readNode(nodeId: NodeId): string;
 }
 export function nativeTreeHandle(engine: NativeEngineLike, source: string): TreeHandle {
 	let rootData: AnyNodeDataLike | null = null;
@@ -205,13 +206,13 @@ export function nativeTreeHandle(engine: NativeEngineLike, source: string): Tree
 				"nativeTreeHandle: rootNode unavailable — native handle reads via tree.read()",
 			);
 		},
-		nodeById(_id: number): AnyTreeNode {
+		nodeById(_id: NodeId): AnyTreeNode {
 			throw new Error(
 				"nativeTreeHandle: nodeById() unavailable — native handle reads via tree.read()",
 			);
 		},
 		source,
-		read(nodeId?: number) {
+		read(nodeId?: NodeId) {
 			if (nodeId === undefined) {
 				return ensureRoot() as unknown as ReturnType<NonNullable<TreeHandle["read"]>>;
 			}
@@ -253,8 +254,6 @@ function loadNativeEngineForGrammar(grammar: string): NativeEngineLike | null {
 	try {
 		// Match probe-kind's loader — try the published package, fall
 		// back to the workspace-local napi build directory.
-		// eslint-disable-next-line @typescript-eslint/no-require-imports
-		const { createRequire } = require("node:module") as typeof import("node:module");
 		const req = createRequire(import.meta.url);
 		const pkg = `@sittir/${grammar}-native`;
 		const repoRoot = fileURLToPath(new URL("../../../..", import.meta.url)).replace(/\/$/, "");
@@ -290,6 +289,46 @@ export function buildReadHandle(
 		return nativeTreeHandle(engine, source);
 	}
 	return treeHandle(tree, source);
+}
+
+/**
+ * For a native TreeHandle (`handle.read` is present), walk the root
+ * NodeData tree to find the `$nodeId` of the first node whose `$type`
+ * equals `kind`. Native engine IDs and WASM/JS engine IDs occupy
+ * different address spaces (pointer-derived usize in Rust vs. WASM
+ * linear-memory offset in web-tree-sitter), so WASM node IDs must
+ * never be passed to a native handle's `readNode(id)`.
+ *
+ * Returns null when `handle` is a WASM handle (no `handle.read`) —
+ * callers fall back to the JS tree's `node.id` in that case.
+ */
+export function findNativeNodeId(handle: TreeHandle, kind: string): NodeId | null {
+	if (!handle.read) return null;
+	const root = handle.read();
+
+	function walk(d: AnyNodeData): NodeId | null {
+		if (d.$type === kind && d.$nodeId !== undefined) return d.$nodeId;
+		const fields = d.$fields;
+		if (fields) {
+			for (const v of Object.values(fields)) {
+				const candidates = Array.isArray(v) ? v : [v];
+				for (const c of candidates) {
+					const found = walk(c as AnyNodeData);
+					if (found !== null) return found;
+				}
+			}
+		}
+		const children = d.$children;
+		if (children) {
+			for (const c of children) {
+				const found = walk(c as AnyNodeData);
+				if (found !== null) return found;
+			}
+		}
+		return null;
+	}
+
+	return walk(root);
 }
 
 export function findFirst(node: TS.Node, kind: string): TS.Node | null {
@@ -664,7 +703,7 @@ export function walkWrappedTree(root: unknown, visit: (w: WrappedNodeData) => vo
 
 export interface WrappedNodeData {
 	readonly $type: string;
-	readonly $nodeId?: number;
+	readonly $nodeId?: NodeId;
 	readonly [k: string]: unknown;
 }
 function isWrappedNodeData(v: unknown): v is WrappedNodeData {
@@ -765,7 +804,7 @@ export interface NodeToConfigOpts {
 interface ReadNodeLike {
 	readonly $type?: string;
 	readonly $text?: string;
-	readonly $nodeId?: number;
+	readonly $nodeId?: NodeId;
 	readonly $fields?: Readonly<Record<string, unknown>>;
 	readonly $children?: readonly unknown[];
 	readonly $named?: boolean;

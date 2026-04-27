@@ -5,6 +5,7 @@
 export type {
 	AnyNodeData,
 	AnyTreeNode,
+	NodeId,
 	TemplateRule,
 	TemplateRuleObject,
 	RulesConfig,

@@ -11,7 +11,7 @@
 import { createRequire } from "node:module";
 import { readNode, createRenderer } from "@sittir/core";
 import type { TreeHandle } from "@sittir/core";
-import type { AnyNodeData } from "@sittir/types";
+import type { AnyNodeData, NodeId } from "@sittir/types";
 import { deriveRuleKinds } from "./templates-path.ts";
 import { loadRawEntries } from "./node-types-loader.ts";
 import {
@@ -20,6 +20,7 @@ import {
 	treeHandle,
 	buildReadHandle,
 	findFirst,
+	findNativeNodeId,
 	collectKinds,
 	buildKindToSupertypes,
 	wrapForReparse,
@@ -57,7 +58,7 @@ import {
  */
 function deepReadNode(
 	tree: TreeHandle,
-	nodeId: number | undefined,
+	nodeId: NodeId | undefined,
 	deepReadKinds: ReadonlySet<string>,
 ): ReturnType<typeof readNode> {
 	const data = readNode(tree, nodeId);
@@ -65,7 +66,7 @@ function deepReadNode(
 	// Narrow to NodeData before reading $nodeId / $type.
 	const isNodeData = (v: unknown): v is AnyNodeData =>
 		typeof v === "object" && v !== null && "$type" in v;
-	const shouldDrill = (entry: unknown): entry is AnyNodeData & { $nodeId: number } =>
+	const shouldDrill = (entry: unknown): entry is AnyNodeData & { $nodeId: NodeId } =>
 		isNodeData(entry) &&
 		entry.$named === true &&
 		typeof entry.$nodeId === "number" &&
@@ -631,7 +632,12 @@ export async function validateRoundTrip(
 					// validator (factory-roundtrip.ts), which needs the
 					// structural data to call factory functions and
 					// reconstruct the tree from scratch.
-					const rawData = readNode(handle, node1.id);
+					// Native engine IDs differ from WASM IDs; skip alias-
+					// target kinds the native engine emits under a different
+					// rule name rather than falling back to a mismatched ID.
+					const nativeId = findNativeNodeId(handle, kind);
+					if (nativeId === null && handle.read) continue;
+					const rawData = readNode(handle, nativeId ?? (node1.id as NodeId));
 					const { data, renderedKind, targetKind } = applyAliasResolution(
 						rawData,
 						node1.id,

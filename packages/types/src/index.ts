@@ -26,6 +26,7 @@ export type {
 	AnyNodeData,
 	NativeNodeData,
 	NativeFieldValue,
+	NodeId,
 	NodeFieldValue,
 	NodeChildValue,
 	AnyTreeNode,

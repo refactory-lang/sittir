@@ -12,7 +12,7 @@
 
 import { createRequire } from "node:module";
 import { readNode, createRenderer } from "@sittir/core";
-import type { AnyNodeData, NodeFieldValue } from "@sittir/types";
+import type { AnyNodeData, NodeFieldValue, NodeId } from "@sittir/types";
 import type { PolymorphVariantMap } from "../polymorph-variant.ts";
 import { deriveRuleKinds } from "./templates-path.ts";
 import { loadRawEntries } from "./node-types-loader.ts";
@@ -22,6 +22,7 @@ import {
 	treeHandle,
 	buildReadHandle,
 	findFirst,
+	findNativeNodeId,
 	collectKinds,
 	buildKindToSupertypes,
 	wrapForReparse,
@@ -641,7 +642,15 @@ export async function validateFactoryRoundTrip(
 			const inputSource = node1.text;
 
 			// readNode → direct factory call → render → re-parse
-			const rawReadData = readNode(handle, node1.id);
+			// Native engine uses Rust-heap pointer IDs; WASM engine uses
+			// linear-memory IDs. Resolve via the native data tree. If the
+			// kind is an alias target that the native engine emits under its
+			// underlying rule name (e.g. `with_clause_bare` → `with_clause`),
+			// findNativeNodeId returns null — skip rather than fall back to a
+			// mismatched WASM ID.
+			const nativeId = findNativeNodeId(handle, kind);
+			if (nativeId === null && handle.read) continue;
+			const rawReadData = readNode(handle, nativeId ?? (node1.id as NodeId));
 			const effective = nodeIdToEffectiveType.get(node1.id);
 			const readData =
 				effective && effective !== rawReadData.$type
