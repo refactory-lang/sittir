@@ -28,7 +28,34 @@ Push-ready on origin already except where noted.
 
 **Current counts** (as of `15d92f0e`):
 - TS-mode: 84 test files / 4451 tests pass / 12 expected-fail. Un-renderable per-grammar: rust 0, ts 1, python 3 (total 4 — the real failures).
-- Native: pre-existing infra blocker on `nativeTreeHandle.nodeById()` for full collection; per-validator counts hold.
+- **Native: 8 test files FAIL / 4142 pass / 300 fail / 12 expected-fail.** All 300 failures cascade from one unimplemented stub at `packages/codegen/src/validate/common.ts:209`: `nativeTreeHandle.nodeById()` throws. This is THE top blocker — see §2.0.
+
+---
+
+## 2.0. **TOP BLOCKER: native `nodeById()` is unimplemented**
+
+`packages/codegen/src/validate/common.ts:209` defines a stub that throws:
+
+```ts
+nodeById(_id: number): AnyTreeNode {
+  throw new Error("nativeTreeHandle: nodeById() unavailable — native handle reads via tree.read()");
+}
+```
+
+This blocks `readNode()` whenever it's called on a native tree, which cascades into 300 native test failures across 8 files: `validate-all.test.ts` (factory round-trip × 3 grammars), `nodes.test.ts` × 3 grammars, `corpus-validation.test.ts`, `collect-baseline.test.ts`, `us1-codemod.test.ts`, `us1-hash-mismatch.test.ts`. Until this stub is replaced with a real implementation, native parity for ANY new render-side change cannot be verified beyond the basic `tree.read()` path.
+
+What works in native mode today: rendering (perf-tracking collected 893 FFI calls successfully), basic tree iteration. What's blocked: any drill-down that resolves a node by ID — which is the entire post-readNode validator suite.
+
+**Fix scope** (deferred from 012 rust-core-port):
+- Likely implementation in `packages/core/src/loader.ts` or `cst.ts` (the native-handle adapter).
+- May need a Rust-side index (HashMap<NodeId, NodeRef>) in `rust/crates/sittir-rust-napi/src/lib.rs` so the napi binding can answer the lookup in O(1).
+- The TS handle has the same method working (`packages/codegen/src/validate/common.ts` — search for the TS-side handle implementation as the reference).
+
+**Sequence implication**: ship `nodeById()` BEFORE C1/C2 land — otherwise the un-renderable kind regressions can't be verified in native mode, and the handoff's "zero regression" guarantee on those clusters is unenforceable.
+
+**Risk**: medium. Touches FFI surface. Must coordinate with napi rebuild (`pnpm -C rust/crates/sittir-rust-napi run build`).
+
+
 
 ---
 
@@ -291,7 +318,8 @@ GITHUB_TOKEN= git push origin 016-parity-regressions
 
 ## 7. Recommended next-session sequencing
 
-1. **C1** — un-renderable polymorph children (assemble.ts). Ship first; small, scoped, clears 2 of 4 remaining.
+0. **`nativeTreeHandle.nodeById()`** — implement (§2.0). This is the prerequisite — without it, native parity can't be verified on subsequent changes.
+1. **C1** — un-renderable polymorph children (assemble.ts). Ship after #0; small, scoped, clears 2 of 4 remaining.
 2. **C2** — un-renderable structural symbol-aliases (evaluate.ts). Ship next; clears the last 2.
 3. **Open PR** for `016-parity-regressions` with the cluster commits enumerated.
 4. **First CI run** — collect linux `metrics-native.json` artifact, commit as the linux baseline (or per-platform baseline structure).
