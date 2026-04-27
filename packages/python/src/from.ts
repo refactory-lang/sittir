@@ -27,6 +27,7 @@ export const _fromMap = {
   "print_statement": printStatementFrom,
   "chevron": chevronFrom,
   "assert_statement": assertStatementFrom,
+  "expression_statement_tuple": expressionStatementTupleFrom,
   "expression_statement": expressionStatementFrom,
   "named_expression": namedExpressionFrom,
   "return_statement": returnStatementFrom,
@@ -46,6 +47,8 @@ export const _fromMap = {
   "except_clause": exceptClauseFrom,
   "finally_clause": finallyClauseFrom,
   "with_statement": withStatementFrom,
+  "with_clause_bare": withClauseBareFrom,
+  "with_clause_paren": withClauseParenFrom,
   "with_clause": withClauseFrom,
   "with_item": withItemFrom,
   "function_definition": functionDefinitionFrom,
@@ -418,6 +421,14 @@ export function assertStatementFrom(...input: readonly (NonNullable<T.AssertStat
   return F.assertStatement(...(input as readonly NonNullable<T.AssertStatement.Config['children']>[number][]));
 }
 
+export function expressionStatementTupleFrom(...input: readonly (NonNullable<T.ExpressionStatementTuple.Config['children']>[number] | T.ExpressionStatementTuple)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'expression_statement_tuple') {
+    const data = input[0];
+    return F.expressionStatementTuple(...((data.$children ?? []) as readonly NonNullable<T.ExpressionStatementTuple.Config['children']>[number][]));
+  }
+  return F.expressionStatementTuple(...(input as readonly NonNullable<T.ExpressionStatementTuple.Config['children']>[number][]));
+}
+
 export function expressionStatementFrom(input?: T.ExpressionStatement.Loose): ReturnType<typeof F.expressionStatement> | T.ExpressionStatement {
   if (input !== undefined && isNodeData(input)) return input;
   return F.expressionStatement(input as Parameters<typeof F.expressionStatement>[0]);
@@ -576,6 +587,22 @@ export function withStatementFrom(input: T.WithStatement.Loose): ReturnType<type
     withClause: _resolveOneBranch<T.WithClause>(input.withClause, "with_clause"),
     body: _resolveOneBranch<T.Suite>(input.body, "_suite"),
   });
+}
+
+export function withClauseBareFrom(...input: readonly (NonNullable<T.WithClauseBare.Config['children']>[number] | T.WithClauseBare)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'with_clause_bare') {
+    const data = input[0];
+    return F.withClauseBare(...((data.$children ?? []) as readonly NonNullable<T.WithClauseBare.Config['children']>[number][]));
+  }
+  return F.withClauseBare(...(input as readonly NonNullable<T.WithClauseBare.Config['children']>[number][]));
+}
+
+export function withClauseParenFrom(...input: readonly (NonNullable<T.WithClauseParen.Config['children']>[number] | T.WithClauseParen)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'with_clause_paren') {
+    const data = input[0];
+    return F.withClauseParen(...((data.$children ?? []) as readonly NonNullable<T.WithClauseParen.Config['children']>[number][]));
+  }
+  return F.withClauseParen(...(input as readonly NonNullable<T.WithClauseParen.Config['children']>[number][]));
 }
 
 export function withClauseFrom(input?: T.WithClause.Loose): ReturnType<typeof F.withClause> | T.WithClause {
@@ -864,7 +891,7 @@ export function asPatternFrom(input: T.AsPattern.Loose): ReturnType<typeof F.asP
   if (isNodeData(input)) return input;
   return F.asPattern({
     expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
-    alias: _resolveOneBranch<T.AsPatternTarget>(input.alias, "as_pattern_target"),
+    alias: _resolveOneBranch<T.AsPatternTarget>(input.alias, "_as_pattern_target"),
   });
 }
 

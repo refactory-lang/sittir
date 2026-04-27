@@ -28249,6 +28249,67 @@
       "$source": "ts",
       "$fields": {
         "expression": {
+          "$type": "identifier",
+          "$source": "ts",
+          "$text": "a",
+          "$span": {
+            "start": 5,
+            "end": 6
+          },
+          "$nodeId": 1890672,
+          "$named": true
+        },
+        "as": {
+          "$type": "as",
+          "$source": "ts",
+          "$text": "as",
+          "$span": {
+            "start": 7,
+            "end": 9
+          },
+          "$nodeId": 1891032,
+          "$named": false
+        },
+        "alias": {
+          "$type": "as_pattern_target",
+          "$source": "ts",
+          "$text": "b",
+          "$span": {
+            "start": 10,
+            "end": 11
+          },
+          "$nodeId": 1891040,
+          "$named": true
+        }
+      },
+      "$span": {
+        "start": 5,
+        "end": 11
+      },
+      "$nodeId": 1891128,
+      "$named": true
+    },
+    "expectedOutput": "a as b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a as b",
+    "pattern": "as_pattern",
+    "edits": [],
+    "expectedSourceOut": "a as b",
+    "expectedReparseTree": "(as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))",
+    "wrappedText": "_ = a as b",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": "as_pattern",
+      "$source": "ts",
+      "$fields": {
+        "expression": {
           "$type": "call",
           "$source": "ts",
           "$text": "open('d')",
@@ -28361,67 +28422,6 @@
     "expectedSourceOut": "open('e') as e",
     "expectedReparseTree": "(as_pattern expression: (call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end)))) alias: (as_pattern_target (identifier)))",
     "wrappedText": "_ = open('e') as e",
-    "wrappedOffset": 4
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": "as_pattern",
-      "$source": "ts",
-      "$fields": {
-        "expression": {
-          "$type": "identifier",
-          "$source": "ts",
-          "$text": "a",
-          "$span": {
-            "start": 5,
-            "end": 6
-          },
-          "$nodeId": 1890672,
-          "$named": true
-        },
-        "as": {
-          "$type": "as",
-          "$source": "ts",
-          "$text": "as",
-          "$span": {
-            "start": 7,
-            "end": 9
-          },
-          "$nodeId": 1891032,
-          "$named": false
-        },
-        "alias": {
-          "$type": "as_pattern_target",
-          "$source": "ts",
-          "$text": "b",
-          "$span": {
-            "start": 10,
-            "end": 11
-          },
-          "$nodeId": 1891040,
-          "$named": true
-        }
-      },
-      "$span": {
-        "start": 5,
-        "end": 11
-      },
-      "$nodeId": 1891128,
-      "$named": true
-    },
-    "expectedOutput": "a as b"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "a as b",
-    "pattern": "as_pattern",
-    "edits": [],
-    "expectedSourceOut": "a as b",
-    "expectedReparseTree": "(as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))",
-    "wrappedText": "_ = a as b",
     "wrappedOffset": 4
   },
   {

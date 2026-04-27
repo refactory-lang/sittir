@@ -3,7 +3,9 @@
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
   '_as_pattern',
+  '_as_pattern_target',
   '_comprehension_clauses',
+  '_format_expression',
   '_list_pattern',
   '_match_block',
   '_simple_pattern_negative',
@@ -49,6 +51,7 @@ export const NODE_KINDS = [
   'exec_statement',
   'expression_list',
   'expression_statement',
+  'expression_statement_tuple',
   'finally_clause',
   'for_in_clause',
   'for_statement',
@@ -109,6 +112,8 @@ export const NODE_KINDS = [
   'union_type',
   'while_statement',
   'with_clause',
+  'with_clause_bare',
+  'with_clause_paren',
   'with_item',
   'with_statement',
   'yield',
@@ -279,7 +284,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
 }>> = {
   '_as_pattern': [
   ],
+  '_as_pattern_target': [
+  ],
   '_comprehension_clauses': [
+  ],
+  '_format_expression': [
   ],
   '_list_pattern': [
   ],
@@ -421,6 +430,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'expression_list': [
   ],
   'expression_statement': [
+  ],
+  'expression_statement_tuple': [
   ],
   'finally_clause': [
     { name: 'block', required: true, multiple: false },
@@ -621,6 +632,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alternative', required: false, multiple: false },
   ],
   'with_clause': [
+  ],
+  'with_clause_bare': [
+  ],
+  'with_clause_paren': [
   ],
   'with_item': [
     { name: 'value', required: true, multiple: false },

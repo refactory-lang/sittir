@@ -71,6 +71,7 @@ export const enum SyntaxKind {
   PrintStatement = 'print_statement',
   Chevron = 'chevron',
   AssertStatement = 'assert_statement',
+  ExpressionStatementTuple = 'expression_statement_tuple',
   ExpressionStatement = 'expression_statement',
   NamedExpression = 'named_expression',
   ReturnStatement = 'return_statement',
@@ -88,6 +89,8 @@ export const enum SyntaxKind {
   ExceptClause = 'except_clause',
   FinallyClause = 'finally_clause',
   WithStatement = 'with_statement',
+  WithClauseBare = 'with_clause_bare',
+  WithClauseParen = 'with_clause_paren',
   WithClause = 'with_clause',
   WithItem = 'with_item',
   FunctionDefinition = 'function_definition',
@@ -170,10 +173,12 @@ export const enum SyntaxKind {
   Interpolation = 'interpolation',
   FormatSpecifier = 'format_specifier',
   Await = 'await',
+  AsPatternTarget = '_as_pattern_target',
+  FormatExpression = '_format_expression',
   AssignmentEq = '_assignment_eq',
   AssignmentType = '_assignment_type',
   AssignmentTyped = '_assignment_typed',
-  WithClauseParen = '_with_clause_paren',
+  _WithClauseParen = '_with_clause_paren',
   MatchBlockBlock = '_match_block_block',
   SimplePatternNegative = '_simple_pattern_negative',
   ImportPrefix = 'import_prefix',
@@ -487,6 +492,11 @@ export interface AssertStatement {
   readonly $children: NonEmptyArray<Expression>;
 }
 
+export interface ExpressionStatementTuple {
+  readonly $type: 'expression_statement_tuple';
+  readonly $children: NonEmptyArray<Expression>;
+}
+
 export interface ExpressionStatementUFormTuple {
   readonly $type: 'expression_statement';
   readonly $variant: 'tuple';
@@ -620,6 +630,16 @@ export interface WithStatement {
   };
 }
 
+export interface WithClauseBare {
+  readonly $type: 'with_clause_bare';
+  readonly $children: NonEmptyArray<WithItem>;
+}
+
+export interface WithClauseParen {
+  readonly $type: 'with_clause_paren';
+  readonly $children: NonEmptyArray<WithItem>;
+}
+
 export interface WithClauseUFormBare {
   readonly $type: 'with_clause';
   readonly $variant: 'bare';
@@ -628,7 +648,7 @@ export interface WithClauseUFormBare {
 export interface WithClauseUFormParen {
   readonly $type: 'with_clause';
   readonly $variant: 'paren';
-  readonly $children: readonly [WithClauseParen];
+  readonly $children: readonly [_WithClauseParen];
 }
 
 export type WithClause = WithClauseUFormBare | WithClauseUFormParen;
@@ -1201,7 +1221,7 @@ export interface Interpolation {
 
 export interface FormatSpecifier {
   readonly $type: 'format_specifier';
-  readonly $children: readonly (Interpolation)[];
+  readonly $children: readonly (FormatExpression)[];
 }
 
 export interface Await {
@@ -1209,6 +1229,16 @@ export interface Await {
   readonly $fields: {
     readonly primary_expression: PrimaryExpression;
   };
+}
+
+export interface AsPatternTarget {
+  readonly $type: '_as_pattern_target';
+  readonly $children: readonly [Expression];
+}
+
+export interface FormatExpression {
+  readonly $type: '_format_expression';
+  readonly $children: readonly [Interpolation];
 }
 
 export interface AssignmentEq {
@@ -1233,7 +1263,7 @@ export interface AssignmentTyped {
   };
 }
 
-export interface WithClauseParen {
+export interface _WithClauseParen {
   readonly $type: '_with_clause_paren';
   readonly $children: NonEmptyArray<WithItem>;
 }
@@ -1280,8 +1310,6 @@ export type CloseParen = Terminal<")", string>;
 export type CloseBrace = Terminal<"}", string>;
 export type Except = Terminal<"except", string>;
 
-export type AsPatternTarget = Terminal<"as_pattern_target", string>;
-
 // Tree types
 export interface ModuleTree extends TreeNode<'module'> {}
 export interface SimpleStatementsTree extends AnyTreeNode { readonly type: "_simple_statements"; }
@@ -1294,6 +1322,7 @@ export interface AliasedImportTree extends TreeNode<'aliased_import'> {}
 export interface PrintStatementTree extends TreeNode<'print_statement'> {}
 export interface ChevronTree extends TreeNode<'chevron'> {}
 export interface AssertStatementTree extends TreeNode<'assert_statement'> {}
+export interface ExpressionStatementTupleTree extends TreeNode<'expression_statement_tuple'> {}
 export interface ExpressionStatementTree extends TreeNode<'expression_statement'> {}
 export interface ExpressionStatementUFormTupleTree extends TreeNode<'expression_statement'> {}
 export interface NamedExpressionTree extends TreeNode<'named_expression'> {}
@@ -1312,6 +1341,8 @@ export interface TryStatementTree extends TreeNode<'try_statement'> {}
 export interface ExceptClauseTree extends TreeNode<'except_clause'> {}
 export interface FinallyClauseTree extends TreeNode<'finally_clause'> {}
 export interface WithStatementTree extends TreeNode<'with_statement'> {}
+export interface WithClauseBareTree extends TreeNode<'with_clause_bare'> {}
+export interface WithClauseParenTree extends TreeNode<'with_clause_paren'> {}
 export interface WithClauseTree extends TreeNode<'with_clause'> {}
 export interface WithClauseUFormBareTree extends TreeNode<'with_clause'> {}
 export interface WithClauseUFormParenTree extends TreeNode<'with_clause'> {}
@@ -1399,10 +1430,12 @@ export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface InterpolationTree extends TreeNode<'interpolation'> {}
 export interface FormatSpecifierTree extends TreeNode<'format_specifier'> {}
 export interface AwaitTree extends TreeNode<'await'> {}
+export interface AsPatternTargetTree extends AnyTreeNode { readonly type: "_as_pattern_target"; }
+export interface FormatExpressionTree extends AnyTreeNode { readonly type: "_format_expression"; }
 export interface AssignmentEqTree extends AnyTreeNode { readonly type: "_assignment_eq"; }
 export interface AssignmentTypeTree extends AnyTreeNode { readonly type: "_assignment_type"; }
 export interface AssignmentTypedTree extends AnyTreeNode { readonly type: "_assignment_typed"; }
-export interface WithClauseParenTree extends AnyTreeNode { readonly type: "_with_clause_paren"; }
+export interface _WithClauseParenTree extends AnyTreeNode { readonly type: "_with_clause_paren"; }
 export interface MatchBlockBlockTree extends AnyTreeNode { readonly type: "_match_block_block"; }
 export interface SimplePatternNegativeTree extends AnyTreeNode { readonly type: "_simple_pattern_negative"; }
 export interface ImportPrefixTree extends TreeNode<'import_prefix'> {}
@@ -1681,6 +1714,7 @@ export type PythonNode =
   | PrintStatement
   | Chevron
   | AssertStatement
+  | ExpressionStatementTuple
   | ExpressionStatement
   | NamedExpression
   | ReturnStatement
@@ -1698,6 +1732,8 @@ export type PythonNode =
   | ExceptClause
   | FinallyClause
   | WithStatement
+  | WithClauseBare
+  | WithClauseParen
   | WithClause
   | WithItem
   | FunctionDefinition
@@ -1780,10 +1816,12 @@ export type PythonNode =
   | Interpolation
   | FormatSpecifier
   | Await
+  | AsPatternTarget
+  | FormatExpression
   | AssignmentEq
   | AssignmentType
   | AssignmentTyped
-  | WithClauseParen
+  | _WithClauseParen
   | MatchBlockBlock
   | SimplePatternNegative
 ;
@@ -1800,6 +1838,7 @@ export interface KindMap {
   'print_statement': PrintStatement;
   'chevron': Chevron;
   'assert_statement': AssertStatement;
+  'expression_statement_tuple': ExpressionStatementTuple;
   'expression_statement': ExpressionStatement;
   'named_expression': NamedExpression;
   'return_statement': ReturnStatement;
@@ -1817,6 +1856,8 @@ export interface KindMap {
   'except_clause': ExceptClause;
   'finally_clause': FinallyClause;
   'with_statement': WithStatement;
+  'with_clause_bare': WithClauseBare;
+  'with_clause_paren': WithClauseParen;
   'with_clause': WithClause;
   'with_item': WithItem;
   'function_definition': FunctionDefinition;
@@ -1899,10 +1940,12 @@ export interface KindMap {
   'interpolation': Interpolation;
   'format_specifier': FormatSpecifier;
   'await': Await;
+  '_as_pattern_target': AsPatternTarget;
+  '_format_expression': FormatExpression;
   '_assignment_eq': AssignmentEq;
   '_assignment_type': AssignmentType;
   '_assignment_typed': AssignmentTyped;
-  '_with_clause_paren': WithClauseParen;
+  '_with_clause_paren': _WithClauseParen;
   '_match_block_block': MatchBlockBlock;
   '_simple_pattern_negative': SimplePatternNegative;
   'import_prefix': ImportPrefix;
@@ -1952,6 +1995,7 @@ export interface AliasedImportNs extends NodeNs<AliasedImport, LeafScalarMap, Le
 export interface PrintStatementNs extends NodeNs<PrintStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ChevronNs extends NodeNs<Chevron, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssertStatementNs extends NodeNs<AssertStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExpressionStatementTupleNs extends NodeNs<ExpressionStatementTuple, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExpressionStatementNs extends NodeNs<ExpressionStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface NamedExpressionNs extends NodeNs<NamedExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ReturnStatementNs extends NodeNs<ReturnStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -1969,6 +2013,8 @@ export interface TryStatementNs extends NodeNs<TryStatement, LeafScalarMap, Leaf
 export interface ExceptClauseNs extends NodeNs<ExceptClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FinallyClauseNs extends NodeNs<FinallyClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface WithStatementNs extends NodeNs<WithStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface WithClauseBareNs extends NodeNs<WithClauseBare, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface WithClauseParenNs extends NodeNs<WithClauseParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface WithClauseNs extends NodeNs<WithClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface WithItemNs extends NodeNs<WithItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FunctionDefinitionNs extends NodeNs<FunctionDefinition, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -2051,10 +2097,12 @@ export interface StringContentNs extends NodeNs<StringContent, LeafScalarMap, Le
 export interface InterpolationNs extends NodeNs<Interpolation, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FormatSpecifierNs extends NodeNs<FormatSpecifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AwaitNs extends NodeNs<Await, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AsPatternTargetNs extends NodeNs<AsPatternTarget, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface FormatExpressionNs extends NodeNs<FormatExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentEqNs extends NodeNs<AssignmentEq, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentTypeNs extends NodeNs<AssignmentType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AssignmentTypedNs extends NodeNs<AssignmentTyped, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface WithClauseParenNs extends NodeNs<WithClauseParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _WithClauseParenNs extends NodeNs<_WithClauseParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MatchBlockBlockNs extends NodeNs<MatchBlockBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface SimplePatternNegativeNs extends NodeNs<SimplePatternNegative, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 
@@ -2070,6 +2118,7 @@ export interface NamespaceMap {
   'print_statement': PrintStatementNs;
   'chevron': ChevronNs;
   'assert_statement': AssertStatementNs;
+  'expression_statement_tuple': ExpressionStatementTupleNs;
   'expression_statement': ExpressionStatementNs;
   'named_expression': NamedExpressionNs;
   'return_statement': ReturnStatementNs;
@@ -2087,6 +2136,8 @@ export interface NamespaceMap {
   'except_clause': ExceptClauseNs;
   'finally_clause': FinallyClauseNs;
   'with_statement': WithStatementNs;
+  'with_clause_bare': WithClauseBareNs;
+  'with_clause_paren': WithClauseParenNs;
   'with_clause': WithClauseNs;
   'with_item': WithItemNs;
   'function_definition': FunctionDefinitionNs;
@@ -2169,10 +2220,12 @@ export interface NamespaceMap {
   'interpolation': InterpolationNs;
   'format_specifier': FormatSpecifierNs;
   'await': AwaitNs;
+  '_as_pattern_target': AsPatternTargetNs;
+  '_format_expression': FormatExpressionNs;
   '_assignment_eq': AssignmentEqNs;
   '_assignment_type': AssignmentTypeNs;
   '_assignment_typed': AssignmentTypedNs;
-  '_with_clause_paren': WithClauseParenNs;
+  '_with_clause_paren': _WithClauseParenNs;
   '_match_block_block': MatchBlockBlockNs;
   '_simple_pattern_negative': SimplePatternNegativeNs;
 }
@@ -2260,6 +2313,13 @@ export namespace AssertStatement {
   export type Loose = LooseFor<'assert_statement'>;
   export type Tree = TreeFor<'assert_statement'>;
   export type Kind = 'assert_statement';
+}
+export namespace ExpressionStatementTuple {
+  export type Config = ConfigFor<'expression_statement_tuple'>;
+  export type Fluent = FluentFor<'expression_statement_tuple'>;
+  export type Loose = LooseFor<'expression_statement_tuple'>;
+  export type Tree = TreeFor<'expression_statement_tuple'>;
+  export type Kind = 'expression_statement_tuple';
 }
 export namespace ExpressionStatement {
   export type Config = ConfigFor<'expression_statement'>;
@@ -2379,6 +2439,20 @@ export namespace WithStatement {
   export type Loose = LooseFor<'with_statement'>;
   export type Tree = TreeFor<'with_statement'>;
   export type Kind = 'with_statement';
+}
+export namespace WithClauseBare {
+  export type Config = ConfigFor<'with_clause_bare'>;
+  export type Fluent = FluentFor<'with_clause_bare'>;
+  export type Loose = LooseFor<'with_clause_bare'>;
+  export type Tree = TreeFor<'with_clause_bare'>;
+  export type Kind = 'with_clause_bare';
+}
+export namespace WithClauseParen {
+  export type Config = ConfigFor<'with_clause_paren'>;
+  export type Fluent = FluentFor<'with_clause_paren'>;
+  export type Loose = LooseFor<'with_clause_paren'>;
+  export type Tree = TreeFor<'with_clause_paren'>;
+  export type Kind = 'with_clause_paren';
 }
 export namespace WithClause {
   export type Config = ConfigFor<'with_clause'>;
@@ -2954,6 +3028,20 @@ export namespace Await {
   export type Tree = TreeFor<'await'>;
   export type Kind = 'await';
 }
+export namespace AsPatternTarget {
+  export type Config = ConfigFor<'_as_pattern_target'>;
+  export type Fluent = FluentFor<'_as_pattern_target'>;
+  export type Loose = LooseFor<'_as_pattern_target'>;
+  export type Tree = TreeFor<'_as_pattern_target'>;
+  export type Kind = '_as_pattern_target';
+}
+export namespace FormatExpression {
+  export type Config = ConfigFor<'_format_expression'>;
+  export type Fluent = FluentFor<'_format_expression'>;
+  export type Loose = LooseFor<'_format_expression'>;
+  export type Tree = TreeFor<'_format_expression'>;
+  export type Kind = '_format_expression';
+}
 export namespace AssignmentEq {
   export type Config = ConfigFor<'_assignment_eq'>;
   export type Fluent = FluentFor<'_assignment_eq'>;
@@ -2975,7 +3063,7 @@ export namespace AssignmentTyped {
   export type Tree = TreeFor<'_assignment_typed'>;
   export type Kind = '_assignment_typed';
 }
-export namespace WithClauseParen {
+export namespace _WithClauseParen {
   export type Config = ConfigFor<'_with_clause_paren'>;
   export type Fluent = FluentFor<'_with_clause_paren'>;
   export type Loose = LooseFor<'_with_clause_paren'>;

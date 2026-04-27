@@ -111,6 +111,14 @@ describe('assert_statement', () => {
   });
 });
 
+describe('expression_statement_tuple', () => {
+  it('factory produces correct type', () => {
+    const node = ir.expressionStatementTuple({ type: "expression" } as never);
+    expect(node.$type).toBe('expression_statement_tuple');
+    expect(node.$source).toBe('factory');
+  });
+});
+
 describe('expression_statement', () => {
   it('factory produces correct type', () => {
     const node = ir.expressionStatement({});
@@ -315,6 +323,22 @@ describe('with_statement', () => {
   it('render produces non-empty string', () => {
     const node = ir.withStatement({ withClause: { $type: 'with_clause', $text: 'test' } as any, body: { $type: '_suite', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('with_clause_bare', () => {
+  it('factory produces correct type', () => {
+    const node = ir.withClauseBare({ type: "with_item" } as never);
+    expect(node.$type).toBe('with_clause_bare');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('with_clause_paren', () => {
+  it('factory produces correct type', () => {
+    const node = ir.withClauseParen({ type: "with_item" } as never);
+    expect(node.$type).toBe('with_clause_paren');
+    expect(node.$source).toBe('factory');
   });
 });
 
@@ -649,12 +673,12 @@ describe('dictionary_splat_pattern', () => {
 
 describe('as_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.asPattern({ expression: { $type: 'expression', $text: 'test' } as any, alias: { $type: 'as_pattern_target', $text: 'test' } as any });
+    const node = ir.asPattern({ expression: { $type: 'expression', $text: 'test' } as any, alias: { $type: '_as_pattern_target', $text: 'test' } as any });
     expect(node.$type).toBe('as_pattern');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.asPattern({ expression: { $type: 'expression', $text: 'test' } as any, alias: { $type: 'as_pattern_target', $text: 'test' } as any });
+    const node = ir.asPattern({ expression: { $type: 'expression', $text: 'test' } as any, alias: { $type: '_as_pattern_target', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

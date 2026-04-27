@@ -178,7 +178,30 @@ import type {
   WherePredicate,
   WhileExpression,
   YieldExpression,
+  _ClosureExpressionExpr,
+  _DelimTokenTreeBrace,
+  _DelimTokenTreeBracket,
+  _DelimTokenTreeParen,
+  _ExpressionStatementBlockEnding,
+  _ExpressionStatementWithSemi,
+  _FieldPatternShorthand,
+  _ForeignModItemBody,
+  _ImplItemBody,
+  _MacroDefinitionBrace,
+  _MacroDefinitionBracket,
+  _MacroDefinitionParen,
+  _MatchArmBlockEnding,
+  _ModItemInline,
+  _PointerTypeMut,
+  _RangeExpressionBare,
   _StringContent,
+  _TokenTreeBrace,
+  _TokenTreeBracket,
+  _TokenTreeParen,
+  _TokenTreePatternBrace,
+  _TokenTreePatternBracket,
+  _TokenTreePatternParen,
+  _VisibilityModifierCrate,
 } from './types.js';
 
 // Drill-in helpers — call back through `readTreeNode` so the same
@@ -221,11 +244,46 @@ export function wrapSourceFile(data: _NodeData, tree: TreeHandle): WrappedNode<S
   } as unknown as WrappedNode<SourceFile>;
 }
 
+export function wrapExpressionStatementWithSemi(data: _NodeData, tree: TreeHandle): WrappedNode<ExpressionStatementWithSemi> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<ExpressionStatementWithSemi>;
+}
+
+export function wrapExpressionStatementBlockEnding(data: _NodeData, tree: TreeHandle): WrappedNode<ExpressionStatementBlockEnding> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<ExpressionStatementBlockEnding>;
+}
+
 export function wrapExpressionStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ExpressionStatement> {
   return {
     ...data,
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ExpressionStatement>;
+}
+
+export function wrapMacroDefinitionParen(data: _NodeData, tree: TreeHandle): WrappedNode<MacroDefinitionParen> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<MacroDefinitionParen>;
+}
+
+export function wrapMacroDefinitionBracket(data: _NodeData, tree: TreeHandle): WrappedNode<MacroDefinitionBracket> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<MacroDefinitionBracket>;
+}
+
+export function wrapMacroDefinitionBrace(data: _NodeData, tree: TreeHandle): WrappedNode<MacroDefinitionBrace> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<MacroDefinitionBrace>;
 }
 
 export function wrapMacroDefinition(data: _NodeData, tree: TreeHandle): WrappedNode<MacroDefinition> {
@@ -243,6 +301,27 @@ export function wrapMacroRule(data: _NodeData, tree: TreeHandle): WrappedNode<Ma
     get right() { return drillIn(data.$fields?.['right'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<MacroRule>;
+}
+
+export function wrapTokenTreePatternParen(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTreePatternParen> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<TokenTreePatternParen>;
+}
+
+export function wrapTokenTreePatternBracket(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTreePatternBracket> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<TokenTreePatternBracket>;
+}
+
+export function wrapTokenTreePatternBrace(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTreePatternBrace> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<TokenTreePatternBrace>;
 }
 
 export function wrapTokenTreePattern(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTreePattern> {
@@ -266,6 +345,27 @@ export function wrapTokenRepetitionPattern(data: _NodeData, tree: TreeHandle): W
     ...data,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<TokenRepetitionPattern>;
+}
+
+export function wrapTokenTreeParen(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTreeParen> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<TokenTreeParen>;
+}
+
+export function wrapTokenTreeBracket(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTreeBracket> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<TokenTreeBracket>;
+}
+
+export function wrapTokenTreeBrace(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTreeBrace> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<TokenTreeBrace>;
 }
 
 export function wrapTokenTree(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTree> {
@@ -312,6 +412,14 @@ export function wrapAttribute(data: _NodeData, tree: TreeHandle): WrappedNode<At
   } as unknown as WrappedNode<Attribute>;
 }
 
+export function wrapModItemInline(data: _NodeData, tree: TreeHandle): WrappedNode<ModItemInline> {
+  return {
+    ...data,
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ModItemInline>;
+}
+
 export function wrapModItem(data: _NodeData, tree: TreeHandle): WrappedNode<ModItem> {
   return {
     ...data,
@@ -319,6 +427,14 @@ export function wrapModItem(data: _NodeData, tree: TreeHandle): WrappedNode<ModI
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<ModItem>;
+}
+
+export function wrapForeignModItemBody(data: _NodeData, tree: TreeHandle): WrappedNode<ForeignModItemBody> {
+  return {
+    ...data,
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ForeignModItemBody>;
 }
 
 export function wrapForeignModItem(data: _NodeData, tree: TreeHandle): WrappedNode<ForeignModItem> {
@@ -512,6 +628,14 @@ export function wrapWherePredicate(data: _NodeData, tree: TreeHandle): WrappedNo
     get bounds() { return drillIn(data.$fields?.['bounds'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<WherePredicate>;
+}
+
+export function wrapImplItemBody(data: _NodeData, tree: TreeHandle): WrappedNode<ImplItemBody> {
+  return {
+    ...data,
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ImplItemBody>;
 }
 
 export function wrapImplItem(data: _NodeData, tree: TreeHandle): WrappedNode<ImplItem> {
@@ -710,6 +834,13 @@ export function wrapExternModifier(data: _NodeData, tree: TreeHandle): WrappedNo
   } as unknown as WrappedNode<ExternModifier>;
 }
 
+export function wrapVisibilityModifierCrate(data: _NodeData, tree: TreeHandle): WrappedNode<VisibilityModifierCrate> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<VisibilityModifierCrate>;
+}
+
 export function wrapVisibilityModifier(data: _NodeData, tree: TreeHandle): WrappedNode<VisibilityModifier> {
   return {
     ...data,
@@ -845,6 +976,13 @@ export function wrapReferenceType(data: _NodeData, tree: TreeHandle): WrappedNod
   } as unknown as WrappedNode<ReferenceType>;
 }
 
+export function wrapPointerTypeMut(data: _NodeData, tree: TreeHandle): WrappedNode<PointerTypeMut> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<PointerTypeMut>;
+}
+
 export function wrapPointerType(data: _NodeData, tree: TreeHandle): WrappedNode<PointerType> {
   return {
     ...data,
@@ -879,6 +1017,27 @@ export function wrapMacroInvocation(data: _NodeData, tree: TreeHandle): WrappedN
   } as unknown as WrappedNode<MacroInvocation>;
 }
 
+export function wrapDelimTokenTreeParen(data: _NodeData, tree: TreeHandle): WrappedNode<DelimTokenTreeParen> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<DelimTokenTreeParen>;
+}
+
+export function wrapDelimTokenTreeBracket(data: _NodeData, tree: TreeHandle): WrappedNode<DelimTokenTreeBracket> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<DelimTokenTreeBracket>;
+}
+
+export function wrapDelimTokenTreeBrace(data: _NodeData, tree: TreeHandle): WrappedNode<DelimTokenTreeBrace> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<DelimTokenTreeBrace>;
+}
+
 export function wrapDelimTokenTree(data: _NodeData, tree: TreeHandle): WrappedNode<DelimTokenTree> {
   return {
     ...data,
@@ -911,6 +1070,14 @@ export function wrapScopedTypeIdentifier(data: _NodeData, tree: TreeHandle): Wra
     get name() { return drillIn(data.$fields?.['name'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ScopedTypeIdentifier>;
+}
+
+export function wrapRangeExpressionBare(data: _NodeData, tree: TreeHandle): WrappedNode<RangeExpressionBare> {
+  return {
+    ...data,
+    get operator() { return drillIn(data.$fields?.['operator'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<RangeExpressionBare>;
 }
 
 export function wrapRangeExpression(data: _NodeData, tree: TreeHandle): WrappedNode<RangeExpression> {
@@ -1126,6 +1293,14 @@ export function wrapMatchBlock(data: _NodeData, tree: TreeHandle): WrappedNode<M
   } as unknown as WrappedNode<MatchBlock>;
 }
 
+export function wrapMatchArmBlockEnding(data: _NodeData, tree: TreeHandle): WrappedNode<MatchArmBlockEnding> {
+  return {
+    ...data,
+    get value() { return drillIn(data.$fields?.['value'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<MatchArmBlockEnding>;
+}
+
 export function wrapMatchArm(data: _NodeData, tree: TreeHandle): WrappedNode<MatchArm> {
   return {
     ...data,
@@ -1187,6 +1362,14 @@ export function wrapConstBlock(data: _NodeData, tree: TreeHandle): WrappedNode<C
     get body() { return drillIn(data.$fields?.['body'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ConstBlock>;
+}
+
+export function wrapClosureExpressionExpr(data: _NodeData, tree: TreeHandle): WrappedNode<ClosureExpressionExpr> {
+  return {
+    ...data,
+    get body() { return drillIn(data.$fields?.['body'], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ClosureExpressionExpr>;
 }
 
 export function wrapClosureExpression(data: _NodeData, tree: TreeHandle): WrappedNode<ClosureExpression> {
@@ -1336,6 +1519,14 @@ export function wrapStructPattern(data: _NodeData, tree: TreeHandle): WrappedNod
   } as unknown as WrappedNode<StructPattern>;
 }
 
+export function wrapFieldPatternShorthand(data: _NodeData, tree: TreeHandle): WrappedNode<FieldPatternShorthand> {
+  return {
+    ...data,
+    get name() { return drillAs(data.$fields?.['name'], tree, "shorthand_field_identifier", "identifier"); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<FieldPatternShorthand>;
+}
+
 export function wrapFieldPattern(data: _NodeData, tree: TreeHandle): WrappedNode<FieldPattern> {
   return {
     ...data,
@@ -1467,20 +1658,20 @@ export function wrap_StringContent(data: _NodeData, tree: TreeHandle): WrappedNo
   } as unknown as WrappedNode<_StringContent>;
 }
 
-export function wrapClosureExpressionExpr(data: _NodeData, tree: TreeHandle): WrappedNode<ClosureExpressionExpr> {
+export function wrap_ClosureExpressionExpr(data: _NodeData, tree: TreeHandle): WrappedNode<_ClosureExpressionExpr> {
   return {
     ...data,
     get body() { return drillIn(data.$fields?.['body'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<ClosureExpressionExpr>;
+  } as unknown as WrappedNode<_ClosureExpressionExpr>;
 }
 
-export function wrapFieldPatternShorthand(data: _NodeData, tree: TreeHandle): WrappedNode<FieldPatternShorthand> {
+export function wrap_FieldPatternShorthand(data: _NodeData, tree: TreeHandle): WrappedNode<_FieldPatternShorthand> {
   return {
     ...data,
     get name() { return drillAs(data.$fields?.['name'], tree, "shorthand_field_identifier", "identifier"); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<FieldPatternShorthand>;
+  } as unknown as WrappedNode<_FieldPatternShorthand>;
 }
 
 export function wrapFunctionTypeTraitForm(data: _NodeData, tree: TreeHandle): WrappedNode<FunctionTypeTraitForm> {
@@ -1498,63 +1689,63 @@ export function wrapFunctionTypeFnForm(data: _NodeData, tree: TreeHandle): Wrapp
   } as unknown as WrappedNode<FunctionTypeFnForm>;
 }
 
-export function wrapImplItemBody(data: _NodeData, tree: TreeHandle): WrappedNode<ImplItemBody> {
+export function wrap_ImplItemBody(data: _NodeData, tree: TreeHandle): WrappedNode<_ImplItemBody> {
   return {
     ...data,
     get body() { return drillIn(data.$fields?.['body'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<ImplItemBody>;
+  } as unknown as WrappedNode<_ImplItemBody>;
 }
 
-export function wrapMacroDefinitionParen(data: _NodeData, tree: TreeHandle): WrappedNode<MacroDefinitionParen> {
+export function wrap_MacroDefinitionParen(data: _NodeData, tree: TreeHandle): WrappedNode<_MacroDefinitionParen> {
   return {
     ...data,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<MacroDefinitionParen>;
+  } as unknown as WrappedNode<_MacroDefinitionParen>;
 }
 
-export function wrapMacroDefinitionBracket(data: _NodeData, tree: TreeHandle): WrappedNode<MacroDefinitionBracket> {
+export function wrap_MacroDefinitionBracket(data: _NodeData, tree: TreeHandle): WrappedNode<_MacroDefinitionBracket> {
   return {
     ...data,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<MacroDefinitionBracket>;
+  } as unknown as WrappedNode<_MacroDefinitionBracket>;
 }
 
-export function wrapMacroDefinitionBrace(data: _NodeData, tree: TreeHandle): WrappedNode<MacroDefinitionBrace> {
+export function wrap_MacroDefinitionBrace(data: _NodeData, tree: TreeHandle): WrappedNode<_MacroDefinitionBrace> {
   return {
     ...data,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<MacroDefinitionBrace>;
+  } as unknown as WrappedNode<_MacroDefinitionBrace>;
 }
 
-export function wrapModItemInline(data: _NodeData, tree: TreeHandle): WrappedNode<ModItemInline> {
+export function wrap_ModItemInline(data: _NodeData, tree: TreeHandle): WrappedNode<_ModItemInline> {
   return {
     ...data,
     get body() { return drillIn(data.$fields?.['body'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<ModItemInline>;
+  } as unknown as WrappedNode<_ModItemInline>;
 }
 
-export function wrapRangeExpressionBare(data: _NodeData, tree: TreeHandle): WrappedNode<RangeExpressionBare> {
+export function wrap_RangeExpressionBare(data: _NodeData, tree: TreeHandle): WrappedNode<_RangeExpressionBare> {
   return {
     ...data,
     get operator() { return drillIn(data.$fields?.['operator'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<RangeExpressionBare>;
+  } as unknown as WrappedNode<_RangeExpressionBare>;
 }
 
-export function wrapVisibilityModifierCrate(data: _NodeData, tree: TreeHandle): WrappedNode<VisibilityModifierCrate> {
+export function wrap_VisibilityModifierCrate(data: _NodeData, tree: TreeHandle): WrappedNode<_VisibilityModifierCrate> {
   return {
     ...data,
     get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<VisibilityModifierCrate>;
+  } as unknown as WrappedNode<_VisibilityModifierCrate>;
 }
 
-export function wrapPointerTypeMut(data: _NodeData, tree: TreeHandle): WrappedNode<PointerTypeMut> {
+export function wrap_PointerTypeMut(data: _NodeData, tree: TreeHandle): WrappedNode<_PointerTypeMut> {
   return {
     ...data,
     get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<PointerTypeMut>;
+  } as unknown as WrappedNode<_PointerTypeMut>;
 }
 
 export function wrapReferenceExpressionRawMut(data: _NodeData, tree: TreeHandle): WrappedNode<ReferenceExpressionRawMut> {
@@ -1564,115 +1755,128 @@ export function wrapReferenceExpressionRawMut(data: _NodeData, tree: TreeHandle)
   } as unknown as WrappedNode<ReferenceExpressionRawMut>;
 }
 
-export function wrapExpressionStatementWithSemi(data: _NodeData, tree: TreeHandle): WrappedNode<ExpressionStatementWithSemi> {
+export function wrap_ExpressionStatementWithSemi(data: _NodeData, tree: TreeHandle): WrappedNode<_ExpressionStatementWithSemi> {
   return {
     ...data,
     get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<ExpressionStatementWithSemi>;
+  } as unknown as WrappedNode<_ExpressionStatementWithSemi>;
 }
 
-export function wrapExpressionStatementBlockEnding(data: _NodeData, tree: TreeHandle): WrappedNode<ExpressionStatementBlockEnding> {
+export function wrap_ExpressionStatementBlockEnding(data: _NodeData, tree: TreeHandle): WrappedNode<_ExpressionStatementBlockEnding> {
   return {
     ...data,
     get child() { return drillIn(data.$children?.[0], tree); },
-  } as unknown as WrappedNode<ExpressionStatementBlockEnding>;
+  } as unknown as WrappedNode<_ExpressionStatementBlockEnding>;
 }
 
-export function wrapForeignModItemBody(data: _NodeData, tree: TreeHandle): WrappedNode<ForeignModItemBody> {
+export function wrap_ForeignModItemBody(data: _NodeData, tree: TreeHandle): WrappedNode<_ForeignModItemBody> {
   return {
     ...data,
     get body() { return drillIn(data.$fields?.['body'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<ForeignModItemBody>;
+  } as unknown as WrappedNode<_ForeignModItemBody>;
 }
 
-export function wrapMatchArmBlockEnding(data: _NodeData, tree: TreeHandle): WrappedNode<MatchArmBlockEnding> {
+export function wrap_MatchArmBlockEnding(data: _NodeData, tree: TreeHandle): WrappedNode<_MatchArmBlockEnding> {
   return {
     ...data,
     get value() { return drillIn(data.$fields?.['value'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<MatchArmBlockEnding>;
+  } as unknown as WrappedNode<_MatchArmBlockEnding>;
 }
 
-export function wrapTokenTreePatternParen(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTreePatternParen> {
+export function wrap_TokenTreePatternParen(data: _NodeData, tree: TreeHandle): WrappedNode<_TokenTreePatternParen> {
   return {
     ...data,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<TokenTreePatternParen>;
+  } as unknown as WrappedNode<_TokenTreePatternParen>;
 }
 
-export function wrapTokenTreePatternBracket(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTreePatternBracket> {
+export function wrap_TokenTreePatternBracket(data: _NodeData, tree: TreeHandle): WrappedNode<_TokenTreePatternBracket> {
   return {
     ...data,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<TokenTreePatternBracket>;
+  } as unknown as WrappedNode<_TokenTreePatternBracket>;
 }
 
-export function wrapTokenTreePatternBrace(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTreePatternBrace> {
+export function wrap_TokenTreePatternBrace(data: _NodeData, tree: TreeHandle): WrappedNode<_TokenTreePatternBrace> {
   return {
     ...data,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<TokenTreePatternBrace>;
+  } as unknown as WrappedNode<_TokenTreePatternBrace>;
 }
 
-export function wrapTokenTreeParen(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTreeParen> {
+export function wrap_TokenTreeParen(data: _NodeData, tree: TreeHandle): WrappedNode<_TokenTreeParen> {
   return {
     ...data,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<TokenTreeParen>;
+  } as unknown as WrappedNode<_TokenTreeParen>;
 }
 
-export function wrapTokenTreeBracket(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTreeBracket> {
+export function wrap_TokenTreeBracket(data: _NodeData, tree: TreeHandle): WrappedNode<_TokenTreeBracket> {
   return {
     ...data,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<TokenTreeBracket>;
+  } as unknown as WrappedNode<_TokenTreeBracket>;
 }
 
-export function wrapTokenTreeBrace(data: _NodeData, tree: TreeHandle): WrappedNode<TokenTreeBrace> {
+export function wrap_TokenTreeBrace(data: _NodeData, tree: TreeHandle): WrappedNode<_TokenTreeBrace> {
   return {
     ...data,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<TokenTreeBrace>;
+  } as unknown as WrappedNode<_TokenTreeBrace>;
 }
 
-export function wrapDelimTokenTreeParen(data: _NodeData, tree: TreeHandle): WrappedNode<DelimTokenTreeParen> {
+export function wrap_DelimTokenTreeParen(data: _NodeData, tree: TreeHandle): WrappedNode<_DelimTokenTreeParen> {
   return {
     ...data,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<DelimTokenTreeParen>;
+  } as unknown as WrappedNode<_DelimTokenTreeParen>;
 }
 
-export function wrapDelimTokenTreeBracket(data: _NodeData, tree: TreeHandle): WrappedNode<DelimTokenTreeBracket> {
+export function wrap_DelimTokenTreeBracket(data: _NodeData, tree: TreeHandle): WrappedNode<_DelimTokenTreeBracket> {
   return {
     ...data,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<DelimTokenTreeBracket>;
+  } as unknown as WrappedNode<_DelimTokenTreeBracket>;
 }
 
-export function wrapDelimTokenTreeBrace(data: _NodeData, tree: TreeHandle): WrappedNode<DelimTokenTreeBrace> {
+export function wrap_DelimTokenTreeBrace(data: _NodeData, tree: TreeHandle): WrappedNode<_DelimTokenTreeBrace> {
   return {
     ...data,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<DelimTokenTreeBrace>;
+  } as unknown as WrappedNode<_DelimTokenTreeBrace>;
 }
 
 const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {
   'source_file': (d, t) => wrapSourceFile(d, t),
+  'expression_statement_with_semi': (d, t) => wrapExpressionStatementWithSemi(d, t),
+  'expression_statement_block_ending': (d, t) => wrapExpressionStatementBlockEnding(d, t),
   'expression_statement': (d, t) => wrapExpressionStatement(d, t),
+  'macro_definition_paren': (d, t) => wrapMacroDefinitionParen(d, t),
+  'macro_definition_bracket': (d, t) => wrapMacroDefinitionBracket(d, t),
+  'macro_definition_brace': (d, t) => wrapMacroDefinitionBrace(d, t),
   'macro_definition': (d, t) => wrapMacroDefinition(d, t),
   'macro_rule': (d, t) => wrapMacroRule(d, t),
+  'token_tree_pattern_paren': (d, t) => wrapTokenTreePatternParen(d, t),
+  'token_tree_pattern_bracket': (d, t) => wrapTokenTreePatternBracket(d, t),
+  'token_tree_pattern_brace': (d, t) => wrapTokenTreePatternBrace(d, t),
   'token_tree_pattern': (d, t) => wrapTokenTreePattern(d, t),
   'token_binding_pattern': (d, t) => wrapTokenBindingPattern(d, t),
   'token_repetition_pattern': (d, t) => wrapTokenRepetitionPattern(d, t),
   'fragment_specifier': (d) => d,
+  'token_tree_paren': (d, t) => wrapTokenTreeParen(d, t),
+  'token_tree_bracket': (d, t) => wrapTokenTreeBracket(d, t),
+  'token_tree_brace': (d, t) => wrapTokenTreeBrace(d, t),
   'token_tree': (d, t) => wrapTokenTree(d, t),
   'token_repetition': (d, t) => wrapTokenRepetition(d, t),
   '_non_special_token': (d, t) => wrapNonSpecialToken(d, t),
   'attribute_item': (d, t) => wrapAttributeItem(d, t),
   'inner_attribute_item': (d, t) => wrapInnerAttributeItem(d, t),
   'attribute': (d, t) => wrapAttribute(d, t),
+  'mod_item_inline': (d, t) => wrapModItemInline(d, t),
   'mod_item': (d, t) => wrapModItem(d, t),
+  'foreign_mod_item_body': (d, t) => wrapForeignModItemBody(d, t),
   'foreign_mod_item': (d, t) => wrapForeignModItem(d, t),
   'declaration_list': (d, t) => wrapDeclarationList(d, t),
   'struct_item': (d, t) => wrapStructItem(d, t),
@@ -1692,6 +1896,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'function_modifiers': (d, t) => wrapFunctionModifiers(d, t),
   'where_clause': (d, t) => wrapWhereClause(d, t),
   'where_predicate': (d, t) => wrapWherePredicate(d, t),
+  'impl_item_body': (d, t) => wrapImplItemBody(d, t),
   'impl_item': (d, t) => wrapImplItem(d, t),
   'trait_item': (d, t) => wrapTraitItem(d, t),
   'associated_type': (d, t) => wrapAssociatedType(d, t),
@@ -1713,6 +1918,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'variadic_parameter': (d, t) => wrapVariadicParameter(d, t),
   'parameter': (d, t) => wrapParameter(d, t),
   'extern_modifier': (d, t) => wrapExternModifier(d, t),
+  'visibility_modifier_crate': (d, t) => wrapVisibilityModifierCrate(d, t),
   'visibility_modifier': (d, t) => wrapVisibilityModifier(d, t),
   'bracketed_type': (d, t) => wrapBracketedType(d, t),
   'qualified_type': (d, t) => wrapQualifiedType(d, t),
@@ -1730,15 +1936,20 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'type_arguments': (d, t) => wrapTypeArguments(d, t),
   'type_binding': (d, t) => wrapTypeBinding(d, t),
   'reference_type': (d, t) => wrapReferenceType(d, t),
+  'pointer_type_mut': (d, t) => wrapPointerTypeMut(d, t),
   'pointer_type': (d, t) => wrapPointerType(d, t),
   'abstract_type': (d, t) => wrapAbstractType(d, t),
   'dynamic_type': (d, t) => wrapDynamicType(d, t),
   'mutable_specifier': (d) => d,
   'macro_invocation': (d, t) => wrapMacroInvocation(d, t),
+  'delim_token_tree_paren': (d, t) => wrapDelimTokenTreeParen(d, t),
+  'delim_token_tree_bracket': (d, t) => wrapDelimTokenTreeBracket(d, t),
+  'delim_token_tree_brace': (d, t) => wrapDelimTokenTreeBrace(d, t),
   'delim_token_tree': (d, t) => wrapDelimTokenTree(d, t),
   'scoped_identifier': (d, t) => wrapScopedIdentifier(d, t),
   'scoped_type_identifier_in_expression_position': (d, t) => wrapScopedTypeIdentifierInExpressionPosition(d, t),
   'scoped_type_identifier': (d, t) => wrapScopedTypeIdentifier(d, t),
+  'range_expression_bare': (d, t) => wrapRangeExpressionBare(d, t),
   'range_expression': (d, t) => wrapRangeExpression(d, t),
   'unary_expression': (d, t) => wrapUnaryExpression(d, t),
   'try_expression': (d, t) => wrapTryExpression(d, t),
@@ -1766,6 +1977,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'else_clause': (d, t) => wrapElseClause(d, t),
   'match_expression': (d, t) => wrapMatchExpression(d, t),
   'match_block': (d, t) => wrapMatchBlock(d, t),
+  'match_arm_block_ending': (d, t) => wrapMatchArmBlockEnding(d, t),
   'match_arm': (d, t) => wrapMatchArm(d, t),
   'last_match_arm': (d, t) => wrapLastMatchArm(d, t),
   'match_pattern': (d, t) => wrapMatchPattern(d, t),
@@ -1773,6 +1985,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'loop_expression': (d, t) => wrapLoopExpression(d, t),
   'for_expression': (d, t) => wrapForExpression(d, t),
   'const_block': (d, t) => wrapConstBlock(d, t),
+  'closure_expression_expr': (d, t) => wrapClosureExpressionExpr(d, t),
   'closure_expression': (d, t) => wrapClosureExpression(d, t),
   'closure_parameters': (d, t) => wrapClosureParameters(d, t),
   'label': (d, t) => wrapLabel(d, t),
@@ -1791,6 +2004,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'slice_pattern': (d, t) => wrapSlicePattern(d, t),
   'tuple_struct_pattern': (d, t) => wrapTupleStructPattern(d, t),
   'struct_pattern': (d, t) => wrapStructPattern(d, t),
+  'field_pattern_shorthand': (d, t) => wrapFieldPatternShorthand(d, t),
   'field_pattern': (d, t) => wrapFieldPattern(d, t),
   'mut_pattern': (d, t) => wrapMutPattern(d, t),
   'range_pattern': (d, t) => wrapRangePattern(d, t),
@@ -1828,36 +2042,36 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_kw_async_marker': (d) => d,
   '_kw_move_marker': (d) => d,
   '_wildcard_pattern': (d) => d,
-  '_closure_expression_expr': (d, t) => wrapClosureExpressionExpr(d, t),
-  '_field_pattern_shorthand': (d, t) => wrapFieldPatternShorthand(d, t),
+  '_closure_expression_expr': (d, t) => wrap_ClosureExpressionExpr(d, t),
+  '_field_pattern_shorthand': (d, t) => wrap_FieldPatternShorthand(d, t),
   '_function_type_trait_form': (d, t) => wrapFunctionTypeTraitForm(d, t),
   '_function_type_fn_form': (d, t) => wrapFunctionTypeFnForm(d, t),
-  '_impl_item_body': (d, t) => wrapImplItemBody(d, t),
-  '_macro_definition_paren': (d, t) => wrapMacroDefinitionParen(d, t),
-  '_macro_definition_bracket': (d, t) => wrapMacroDefinitionBracket(d, t),
-  '_macro_definition_brace': (d, t) => wrapMacroDefinitionBrace(d, t),
-  '_mod_item_inline': (d, t) => wrapModItemInline(d, t),
-  '_range_expression_bare': (d, t) => wrapRangeExpressionBare(d, t),
-  '_visibility_modifier_crate': (d, t) => wrapVisibilityModifierCrate(d, t),
+  '_impl_item_body': (d, t) => wrap_ImplItemBody(d, t),
+  '_macro_definition_paren': (d, t) => wrap_MacroDefinitionParen(d, t),
+  '_macro_definition_bracket': (d, t) => wrap_MacroDefinitionBracket(d, t),
+  '_macro_definition_brace': (d, t) => wrap_MacroDefinitionBrace(d, t),
+  '_mod_item_inline': (d, t) => wrap_ModItemInline(d, t),
+  '_range_expression_bare': (d, t) => wrap_RangeExpressionBare(d, t),
+  '_visibility_modifier_crate': (d, t) => wrap_VisibilityModifierCrate(d, t),
   '_pointer_type_const': (d) => d,
-  '_pointer_type_mut': (d, t) => wrapPointerTypeMut(d, t),
+  '_pointer_type_mut': (d, t) => wrap_PointerTypeMut(d, t),
   '_reference_expression_raw_const': (d) => d,
   '_reference_expression_raw_mut': (d, t) => wrapReferenceExpressionRawMut(d, t),
-  '_expression_statement_with_semi': (d, t) => wrapExpressionStatementWithSemi(d, t),
-  '_expression_statement_block_ending': (d, t) => wrapExpressionStatementBlockEnding(d, t),
-  '_foreign_mod_item_body': (d, t) => wrapForeignModItemBody(d, t),
-  '_match_arm_block_ending': (d, t) => wrapMatchArmBlockEnding(d, t),
+  '_expression_statement_with_semi': (d, t) => wrap_ExpressionStatementWithSemi(d, t),
+  '_expression_statement_block_ending': (d, t) => wrap_ExpressionStatementBlockEnding(d, t),
+  '_foreign_mod_item_body': (d, t) => wrap_ForeignModItemBody(d, t),
+  '_match_arm_block_ending': (d, t) => wrap_MatchArmBlockEnding(d, t),
   '_line_comment_regular_dslash': (d) => d,
   '_line_comment_content': (d) => d,
-  '_token_tree_pattern_paren': (d, t) => wrapTokenTreePatternParen(d, t),
-  '_token_tree_pattern_bracket': (d, t) => wrapTokenTreePatternBracket(d, t),
-  '_token_tree_pattern_brace': (d, t) => wrapTokenTreePatternBrace(d, t),
-  '_token_tree_paren': (d, t) => wrapTokenTreeParen(d, t),
-  '_token_tree_bracket': (d, t) => wrapTokenTreeBracket(d, t),
-  '_token_tree_brace': (d, t) => wrapTokenTreeBrace(d, t),
-  '_delim_token_tree_paren': (d, t) => wrapDelimTokenTreeParen(d, t),
-  '_delim_token_tree_bracket': (d, t) => wrapDelimTokenTreeBracket(d, t),
-  '_delim_token_tree_brace': (d, t) => wrapDelimTokenTreeBrace(d, t),
+  '_token_tree_pattern_paren': (d, t) => wrap_TokenTreePatternParen(d, t),
+  '_token_tree_pattern_bracket': (d, t) => wrap_TokenTreePatternBracket(d, t),
+  '_token_tree_pattern_brace': (d, t) => wrap_TokenTreePatternBrace(d, t),
+  '_token_tree_paren': (d, t) => wrap_TokenTreeParen(d, t),
+  '_token_tree_bracket': (d, t) => wrap_TokenTreeBracket(d, t),
+  '_token_tree_brace': (d, t) => wrap_TokenTreeBrace(d, t),
+  '_delim_token_tree_paren': (d, t) => wrap_DelimTokenTreeParen(d, t),
+  '_delim_token_tree_bracket': (d, t) => wrap_DelimTokenTreeBracket(d, t),
+  '_delim_token_tree_brace': (d, t) => wrap_DelimTokenTreeBrace(d, t),
   'string_content': (d) => d,
   'raw_string_literal_content': (d) => d,
   'float_literal': (d) => d,
@@ -1868,26 +2082,17 @@ const _aliasTargetToSource: Record<string, string> = {
   'array_expression_list': '_array_expression_list',
   'array_expression_semi': '_array_expression_semi',
   'closure_expression_block': '_closure_expression_block',
-  'closure_expression_expr': '_closure_expression_expr',
   'condition': '_condition',
   'declaration_statement': '_declaration_statement',
-  'delim_token_tree_brace': '_delim_token_tree_brace',
-  'delim_token_tree_bracket': '_delim_token_tree_bracket',
-  'delim_token_tree_paren': '_delim_token_tree_paren',
   'delim_tokens': '_delim_tokens',
   'doc_comment': '_doc_comment',
   'expression': '_expression',
   'expression_ending_with_block': '_expression_ending_with_block',
   'expression_except_range': '_expression_except_range',
-  'expression_statement_block_ending': '_expression_statement_block_ending',
-  'expression_statement_with_semi': '_expression_statement_with_semi',
   'field_identifier': '_field_identifier',
   'field_pattern_named': '_field_pattern_named',
-  'field_pattern_shorthand': '_field_pattern_shorthand',
-  'foreign_mod_item_body': '_foreign_mod_item_body',
   'function_type_fn_form': '_function_type_fn_form',
   'function_type_trait_form': '_function_type_trait_form',
-  'impl_item_body': '_impl_item_body',
   'kw_async_marker': '_kw_async_marker',
   'kw_move_marker': '_kw_move_marker',
   'kw_ref_marker': '_kw_ref_marker',
@@ -1899,20 +2104,13 @@ const _aliasTargetToSource: Record<string, string> = {
   'line_comment_regular_dslash': '_line_comment_regular_dslash',
   'literal': '_literal',
   'literal_pattern': '_literal_pattern',
-  'macro_definition_brace': '_macro_definition_brace',
-  'macro_definition_bracket': '_macro_definition_bracket',
-  'macro_definition_paren': '_macro_definition_paren',
-  'match_arm_block_ending': '_match_arm_block_ending',
   'match_arm_with_comma': '_match_arm_with_comma',
-  'mod_item_inline': '_mod_item_inline',
   'or_pattern_binary': '_or_pattern_binary',
   'or_pattern_prefix': '_or_pattern_prefix',
   'path': '_path',
   'pattern': '_pattern',
   'pointer_type_const': '_pointer_type_const',
-  'pointer_type_mut': '_pointer_type_mut',
   'primitive_type': '_primitive_type',
-  'range_expression_bare': '_range_expression_bare',
   'range_expression_binary': '_range_expression_binary',
   'range_expression_postfix': '_range_expression_postfix',
   'range_expression_prefix': '_range_expression_prefix',
@@ -1925,16 +2123,9 @@ const _aliasTargetToSource: Record<string, string> = {
   'struct_item_brace': '_struct_item_brace',
   'struct_item_tuple': '_struct_item_tuple',
   'token_pattern': '_token_pattern',
-  'token_tree_brace': '_token_tree_brace',
-  'token_tree_bracket': '_token_tree_bracket',
-  'token_tree_paren': '_token_tree_paren',
-  'token_tree_pattern_brace': '_token_tree_pattern_brace',
-  'token_tree_pattern_bracket': '_token_tree_pattern_bracket',
-  'token_tree_pattern_paren': '_token_tree_pattern_paren',
   'tokens': '_tokens',
   'type_identifier': '_type_identifier',
   'use_clause': '_use_clause',
-  'visibility_modifier_crate': '_visibility_modifier_crate',
   'visibility_modifier_in_path': '_visibility_modifier_in_path',
   'visibility_modifier_pub': '_visibility_modifier_pub',
 };

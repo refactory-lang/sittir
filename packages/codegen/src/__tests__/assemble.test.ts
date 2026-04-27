@@ -351,3 +351,58 @@ describe("Assemble — T029a identical detect tokens", () => {
 		expect(decl?.modelType).toBe("polymorph");
 	});
 });
+
+describe("Assemble — override polymorph visible child kinds", () => {
+	it("registers visible variant-child kinds from hidden source rules", () => {
+		const optimized = makeOptimized({
+			with_clause: {
+				type: "polymorph",
+				source: "override",
+				forms: [
+					{
+						name: "bare",
+						content: { type: "symbol", name: "with_clause_bare" },
+					},
+					{
+						name: "paren",
+						content: { type: "symbol", name: "with_clause_paren" },
+					},
+				],
+			},
+			_with_clause_bare: {
+				type: "seq",
+				members: [
+					{ type: "field", name: "items", content: { type: "symbol", name: "with_item" } },
+					{
+						type: "repeat",
+						content: {
+							type: "seq",
+							members: [
+								{ type: "string", value: "," },
+								{ type: "field", name: "items", content: { type: "symbol", name: "with_item" } },
+							],
+						},
+					},
+				],
+			},
+			_with_clause_paren: {
+				type: "seq",
+				members: [
+					{ type: "string", value: "(" },
+					{ type: "field", name: "items", content: { type: "symbol", name: "with_item" } },
+					{ type: "string", value: ")" },
+				],
+			},
+			with_item: { type: "pattern", value: "[a-z]+" },
+		});
+		const nodeMap = assemble(optimized);
+		const bare = nodeMap.nodes.get("with_clause_bare");
+		const paren = nodeMap.nodes.get("with_clause_paren");
+		expect(bare).toBeDefined();
+		expect(paren).toBeDefined();
+		expect(bare?.modelType).not.toBe("multi");
+		expect(paren?.modelType).not.toBe("multi");
+		expect(bare?.factoryName).toBe("withClauseBare");
+		expect(paren?.factoryName).toBe("withClauseParen");
+	});
+});

@@ -1,4 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -516,5 +518,31 @@ describe("Evaluate — evaluate()", () => {
 				expect.objectContaining({ to: "_expression", fieldName: "value" }),
 			]),
 		);
+	});
+
+	it("synthesizes hidden sources for named aliases to bare symbol targets when the target kind is undeclared", async () => {
+		const dir = mkdtempSync(resolve(tmpdir(), "sittir-evaluate-"));
+		const entry = resolve(dir, "grammar.js");
+		writeFileSync(
+			entry,
+			`module.exports = grammar({
+  name: "alias-target-synthesis",
+  rules: {
+    source_file: ($) => $.container,
+    object_type: ($) => seq("{", optional($.identifier), "}"),
+    container: ($) => alias($.object_type, $.interface_body),
+    identifier: ($) => /[a-z_]+/,
+  },
+});\n`,
+			"utf8",
+		);
+		try {
+			const raw = await evaluate(entry);
+			expect(raw.rules["_interface_body"]).toEqual(
+				expect.objectContaining({ type: "symbol", name: "object_type" }),
+			);
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
 	});
 });

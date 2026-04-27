@@ -265,6 +265,22 @@ export function assertStatement(...children: T.Expression[]) {
   };
 }
 
+export function expressionStatementTuple(...children: T.Expression[]) {
+  _assertNonEmpty(children, 'expression_statement_tuple.children');
+  return {
+    $type: 'expression_statement_tuple' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ExpressionStatementTupleTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function expressionStatement(config: Omit<ConfigOf<T.ExpressionStatementUFormTuple>, '$variant'>) {
   return expressionStatementUFormTuple(config as Parameters<typeof expressionStatementUFormTuple>[0]);
 }
@@ -669,6 +685,38 @@ export function withStatement(config: ConfigOf<T.WithStatement>) {
   };
 }
 
+export function withClauseBare(...children: T.WithItem[]) {
+  _assertNonEmpty(children, 'with_clause_bare.children');
+  return {
+    $type: 'with_clause_bare' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.WithClauseBareTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function withClauseParen(...children: T.WithItem[]) {
+  _assertNonEmpty(children, 'with_clause_paren.children');
+  return {
+    $type: 'with_clause_paren' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.WithClauseParenTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function withClause(config: ConfigOf<T.WithClauseUFormBare>): ReturnType<typeof withClauseUFormBare>;
 export function withClause(config: ConfigOf<T.WithClauseUFormParen>): ReturnType<typeof withClauseUFormParen>;
 export function withClause(config: ConfigOf<T.WithClauseUFormBare> | ConfigOf<T.WithClauseUFormParen>) {
@@ -693,7 +741,7 @@ export function withClauseUFormBare(_config?: Omit<ConfigOf<T.WithClauseUFormBar
   };
 }
 export function withClauseUFormParen(config?: Omit<ConfigOf<T.WithClauseUFormParen>, '$variant'>) {
-  const inner = withClauseParen(...(config?.children ?? []));
+  const inner = _withClauseParen(...(config?.children ?? []));
   const children = [inner] as const;
   return {
     $type: 'with_clause' as const,
@@ -2362,7 +2410,7 @@ export function escapeSequence(text: string) {
   };
 }
 
-export function formatSpecifier(...children: T.Interpolation[]) {
+export function formatSpecifier(...children: T.FormatExpression[]) {
   return {
     $type: 'format_specifier' as const,
     $source: 'factory' as const,
@@ -2510,6 +2558,38 @@ export function lineContinuation(text: string) {
   };
 }
 
+export function asPatternTarget(child: T.Expression) {
+  const children = [child];
+  return {
+    $type: '_as_pattern_target' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.AsPatternTargetTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function formatExpression(child: T.Interpolation) {
+  const children = [child];
+  return {
+    $type: '_format_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.FormatExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function _assignmentEq(config: ConfigOf<T.AssignmentEq>) {
   const fields = {
     right: config.right,
@@ -2569,7 +2649,7 @@ export function _assignmentTyped(config: ConfigOf<T.AssignmentTyped>) {
   };
 }
 
-export function withClauseParen(...children: T.WithItem[]) {
+export function _withClauseParen(...children: T.WithItem[]) {
   _assertNonEmpty(children, '_with_clause_paren.children');
   return {
     $type: '_with_clause_paren' as const,
@@ -2581,7 +2661,7 @@ export function withClauseParen(...children: T.WithItem[]) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.WithClauseParenTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T._WithClauseParenTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2772,6 +2852,7 @@ export type FluentKindMap = {
   "print_statement": FluentNode<"print_statement", T.PrintStatement.Config>;
   "chevron": FluentNode<"chevron", T.Chevron.Config>;
   "assert_statement": FluentNode<"assert_statement", T.AssertStatement.Config>;
+  "expression_statement_tuple": FluentNode<"expression_statement_tuple", T.ExpressionStatementTuple.Config>;
   "expression_statement": FluentNode<"expression_statement", T.ExpressionStatement.Config>;
   "named_expression": FluentNode<"named_expression", T.NamedExpression.Config>;
   "return_statement": FluentNode<"return_statement", T.ReturnStatement.Config>;
@@ -2792,6 +2873,8 @@ export type FluentKindMap = {
   "except_clause": FluentNode<"except_clause", T.ExceptClause.Config>;
   "finally_clause": FluentNode<"finally_clause", T.FinallyClause.Config>;
   "with_statement": FluentNode<"with_statement", T.WithStatement.Config>;
+  "with_clause_bare": FluentNode<"with_clause_bare", T.WithClauseBare.Config>;
+  "with_clause_paren": FluentNode<"with_clause_paren", T.WithClauseParen.Config>;
   "with_clause": FluentNode<"with_clause", T.WithClause.Config>;
   "with_item": FluentNode<"with_item", T.WithItem.Config>;
   "function_definition": FluentNode<"function_definition", T.FunctionDefinition.Config>;
@@ -2886,10 +2969,12 @@ export type FluentKindMap = {
   "await": FluentNode<"await", T.Await.Config>;
   "comment": T.Comment;
   "line_continuation": T.LineContinuation;
+  "_as_pattern_target": FluentNode<"_as_pattern_target", T.AsPatternTarget.Config>;
+  "_format_expression": FluentNode<"_format_expression", T.FormatExpression.Config>;
   "_assignment_eq": T.AssignmentEq;
   "_assignment_type": T.AssignmentType;
   "_assignment_typed": T.AssignmentTyped;
-  "_with_clause_paren": FluentNode<"_with_clause_paren", T.WithClauseParen.Config>;
+  "_with_clause_paren": FluentNode<"_with_clause_paren", T._WithClauseParen.Config>;
   "_match_block_block": T.MatchBlockBlock;
   "_simple_pattern_negative": FluentNode<"_simple_pattern_negative", T.SimplePatternNegative.Config>;
   "_newline": T.Newline;
@@ -2918,6 +3003,7 @@ export const _factoryMap = {
   "print_statement": printStatement,
   "chevron": chevron,
   "assert_statement": assertStatement,
+  "expression_statement_tuple": expressionStatementTuple,
   "expression_statement": expressionStatement,
   "named_expression": namedExpression,
   "return_statement": returnStatement,
@@ -2938,6 +3024,8 @@ export const _factoryMap = {
   "except_clause": exceptClause,
   "finally_clause": finallyClause,
   "with_statement": withStatement,
+  "with_clause_bare": withClauseBare,
+  "with_clause_paren": withClauseParen,
   "with_clause": withClause,
   "with_item": withItem,
   "function_definition": functionDefinition,
@@ -3032,10 +3120,12 @@ export const _factoryMap = {
   "await": await_,
   "comment": comment,
   "line_continuation": lineContinuation,
+  "_as_pattern_target": asPatternTarget,
+  "_format_expression": formatExpression,
   "_assignment_eq": _assignmentEq,
   "_assignment_type": _assignmentType,
   "_assignment_typed": _assignmentTyped,
-  "_with_clause_paren": withClauseParen,
+  "_with_clause_paren": _withClauseParen,
   "_match_block_block": _matchBlockBlock,
   "_simple_pattern_negative": simplePatternNegative,
   "_newline": newline,

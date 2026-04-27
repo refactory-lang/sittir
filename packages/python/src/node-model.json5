@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 236,
+  "nodeCount": 241,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -370,6 +370,31 @@
       ]
     },
     {
+      "kind": "_as_pattern_target",
+      "modelType": "container",
+      "typeName": "AsPatternTarget",
+      "factoryName": "asPatternTarget",
+      "irKey": "asPatternTarget",
+      "hidden": false,
+      "children": [
+        {
+          "name": "expression",
+          "propertyName": "expression",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "expression",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
       "kind": "_assignment_eq",
       "modelType": "group",
       "typeName": "AssignmentEq",
@@ -599,7 +624,7 @@
     {
       "kind": "_expression_statement_tuple",
       "modelType": "multi",
-      "typeName": "ExpressionStatementTuple",
+      "typeName": "_ExpressionStatementTuple",
       "irKey": "expressionStatementTuple",
       "hidden": true,
       "nonEmpty": true,
@@ -642,6 +667,31 @@
         "expression_list",
         "pattern_list",
         "yield"
+      ]
+    },
+    {
+      "kind": "_format_expression",
+      "modelType": "container",
+      "typeName": "FormatExpression",
+      "factoryName": "formatExpression",
+      "irKey": "format",
+      "hidden": false,
+      "children": [
+        {
+          "name": "interpolation",
+          "propertyName": "interpolation",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "interpolation",
+              "unresolved": true
+            }
+          ]
+        }
       ]
     },
     {
@@ -1150,7 +1200,7 @@
     {
       "kind": "_with_clause_bare",
       "modelType": "multi",
-      "typeName": "WithClauseBare",
+      "typeName": "_WithClauseBare",
       "irKey": "withClauseBare",
       "hidden": true,
       "nonEmpty": true,
@@ -1163,9 +1213,9 @@
     {
       "kind": "_with_clause_paren",
       "modelType": "container",
-      "typeName": "WithClauseParen",
-      "factoryName": "withClauseParen",
-      "irKey": "withClauseParen",
+      "typeName": "_WithClauseParen",
+      "factoryName": "_withClauseParen",
+      "irKey": "_withClauseParen",
       "hidden": false,
       "children": [
         {
@@ -1420,7 +1470,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "as_pattern_target",
+              "name": "_as_pattern_target",
               "unresolved": true
             }
           ],
@@ -1428,8 +1478,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "as_pattern_target"
+              "_as_pattern_target"
             ]
+          },
+          "aliasSources": {
+            "as_pattern_target": "_as_pattern_target"
           }
         }
       ],
@@ -3977,6 +4030,32 @@
       ]
     },
     {
+      "kind": "expression_statement_tuple",
+      "modelType": "container",
+      "typeName": "ExpressionStatementTuple",
+      "factoryName": "expressionStatementTuple",
+      "irKey": "expressionStatementTuple",
+      "hidden": false,
+      "children": [
+        {
+          "name": "expression",
+          "propertyName": "expression",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "expression",
+              "unresolved": true
+            }
+          ]
+        }
+      ],
+      "separator": ","
+    },
+    {
       "kind": "false",
       "modelType": "keyword",
       "typeName": "False",
@@ -4273,7 +4352,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "interpolation",
+              "name": "_format_expression",
               "unresolved": true
             }
           ]
@@ -7844,6 +7923,58 @@
           ]
         }
       ]
+    },
+    {
+      "kind": "with_clause_bare",
+      "modelType": "container",
+      "typeName": "WithClauseBare",
+      "factoryName": "withClauseBare",
+      "irKey": "withClauseBare",
+      "hidden": false,
+      "children": [
+        {
+          "name": "with_item",
+          "propertyName": "withItem",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "with_item",
+              "unresolved": true
+            }
+          ]
+        }
+      ],
+      "separator": ","
+    },
+    {
+      "kind": "with_clause_paren",
+      "modelType": "container",
+      "typeName": "WithClauseParen",
+      "factoryName": "withClauseParen",
+      "irKey": "withClauseParen",
+      "hidden": false,
+      "children": [
+        {
+          "name": "with_item",
+          "propertyName": "withItem",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "with_item",
+              "unresolved": true
+            }
+          ]
+        }
+      ],
+      "separator": ","
     },
     {
       "kind": "with_item",
