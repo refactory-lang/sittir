@@ -234,8 +234,32 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 		const childrenAllAnon =
 			!node.$children ||
 			(node.$children as readonly AnyNodeData[]).every((c) => c.$named === false);
-		if (node.$text !== undefined && fieldsAllAnon && childrenAllAnon)
-			return { kind: "text", text: node.$text };
+		if (fieldsAllAnon && childrenAllAnon) {
+			// Parsed-tree path: $text is the full span (present when DEBUG_TEXT=1
+			// or the node is a true leaf). Branch $text is omitted by default —
+			// synthesize from anonymous entries when $text is absent.
+			if (node.$text !== undefined) return { kind: "text", text: node.$text };
+			const parts: string[] = [];
+			if (node.$fields) {
+				for (const v of Object.values(node.$fields)) {
+					const items = Array.isArray(v) ? v : [v];
+					for (const item of items) {
+						const n = item as AnyNodeData | null | undefined;
+						if (n?.$text !== undefined) parts.push(n.$text);
+					}
+				}
+			}
+			if (node.$children) {
+				for (const c of node.$children) {
+					const n = c as AnyNodeData | null | undefined;
+					if (n?.$text !== undefined) parts.push(n.$text);
+				}
+			}
+			// Only succeed when there was something to synthesize from.
+			// An empty node ($fields: {}, no children, no $text) is a real
+			// branch-without-template error, not a degenerate token.
+			if (parts.length > 0) return { kind: "text", text: parts.join("") };
+		}
 		throw new Error(`No render rule for '${node.$type}'`);
 	}
 
@@ -1008,10 +1032,13 @@ function renderNunjucks(
 }
 
 /**
- * Token-shaped-kind fallback (FR-017): a node with $text whose fields
- * and children are all anonymous renders as its $text. A node with
- * named structure but no template is an error — the grammar declared
- * a rule the renderer doesn't know how to render.
+ * Token-shaped-kind fallback (FR-017): a node whose fields and children
+ * are all anonymous renders as either `$text` (when present, i.e. parsed-
+ * tree path) or a best-effort concatenation of anonymous entries' text
+ * (when `$text` is absent — branch `$text` is omitted by default since
+ * `SITTIR_DEBUG_TEXT` is not set). A node with named structure but no
+ * template is an error — the grammar declared a rule the renderer doesn't
+ * know how to render.
  */
 function tokenShapedFallback(node: AnyNodeData): string {
 	const isAnonEntry = (v: unknown): boolean => {
@@ -1025,7 +1052,34 @@ function tokenShapedFallback(node: AnyNodeData): string {
 		);
 	const childrenAllAnon =
 		!node.$children || (node.$children as readonly AnyNodeData[]).every((c) => c.$named === false);
-	if (node.$text !== undefined && fieldsAllAnon && childrenAllAnon) return node.$text;
+	if (fieldsAllAnon && childrenAllAnon) {
+		// Parsed-tree path: $text is the full span (present when DEBUG_TEXT=1
+		// or the node is a true leaf). Factory / no-debug path: synthesize by
+		// collecting each anonymous entry's $text in field-declaration order,
+		// then appending anonymous children. Covers token-shaped named kinds
+		// whose $text was omitted because readNode treats them as branches.
+		if (node.$text !== undefined) return node.$text;
+		const parts: string[] = [];
+		if (node.$fields) {
+			for (const v of Object.values(node.$fields)) {
+				const items = Array.isArray(v) ? v : [v];
+				for (const item of items) {
+					const n = item as AnyNodeData | null | undefined;
+					if (n?.$text !== undefined) parts.push(n.$text);
+				}
+			}
+		}
+		if (node.$children) {
+			for (const c of node.$children) {
+				const n = c as AnyNodeData | null | undefined;
+				if (n?.$text !== undefined) parts.push(n.$text);
+			}
+		}
+		// Only succeed when there was something to synthesize from.
+		// An empty node ($fields: {}, no children, no $text) is a real
+		// branch-without-template error, not a degenerate token.
+		if (parts.length > 0) return parts.join("");
+	}
 	throw new Error(
 		`No render template for '${node.$type}' (no <kind>.jinja file and node has named fields/children)`,
 	);

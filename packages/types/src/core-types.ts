@@ -54,6 +54,23 @@ export interface AnyNodeData {
 	$variant?: string;
 	$fields?: { readonly [key: string]: NodeFieldValue };
 	$children?: readonly NodeChildValue[];
+	/**
+	 * Source text for this node.
+	 *
+	 * **Leaf nodes** (`$fields` and `$children` both absent): always
+	 * populated — the render fast-path short-circuits to `$text` without
+	 * walking children.
+	 *
+	 * **Branch nodes** (`$fields` and/or `$children` present): omitted by
+	 * default. Branches reconstruct their text via the render template,
+	 * so carrying `$text` is redundant and confusing. Set the environment
+	 * variable `SITTIR_DEBUG_TEXT=1` before loading `@sittir/core` to
+	 * include `$text` on branch nodes (read once at module load time in
+	 * `readNode.ts`).
+	 *
+	 * Factory-built nodes never set `$text`; the `$TEXT` template
+	 * variable falls back to a best-effort field+children concatenation.
+	 */
 	$text?: string;
 	/** Byte offset span in source. */
 	$span?: { start: number; end: number };

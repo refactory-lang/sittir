@@ -250,7 +250,15 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 							: (camelFields ?? {});
 						factoryResult = factory(config) as AnyNodeData;
 					} else if (shape === "text") {
-						factoryResult = (factory as (text: string) => AnyNodeData)(readData.$text ?? "");
+						// readData.$text is absent on branch nodes (gated by
+						// SITTIR_DEBUG_TEXT). For text-shaped factories, fall back to
+						// slicing the source span directly when $text is absent.
+						const textForFactory =
+							readData.$text ??
+							(readData.$span
+								? entry.source.slice(readData.$span.start, readData.$span.end)
+								: "");
+						factoryResult = (factory as (text: string) => AnyNodeData)(textForFactory);
 					} else {
 						const namedChildren = (readData.$children ?? []).filter(
 							(c: any) => c?.$named !== false,

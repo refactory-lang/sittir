@@ -5,7 +5,17 @@ import type { AnyNodeData, AnyTreeNodeOf } from '@sittir/types';
 import type { NamespaceMap } from './types.js';
 
 /**
- * Type guard: returns true if `v` is a NodeData (has `$type` + `$fields` or `$text`).
+ * Type guard: returns true if `v` is a NodeData.
+ *
+ * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished
+ * from loose config bags by the presence of any of:
+ *   - `$fields` (branch nodes with named children),
+ *   - `$text` (leaf nodes, or branch nodes with `SITTIR_DEBUG_TEXT=1`),
+ *   - `$children` (container nodes whose children arrive without field names),
+ *   - `$source` (provenance tag stamped by `readNode` and every factory).
+ *
+ * The `$source` discriminant covers container-style branch nodes (e.g. `match_pattern`)
+ * that carry neither `$fields` nor `$text` when `SITTIR_DEBUG_TEXT` is unset.
  */
 export function isNodeData<K extends keyof NamespaceMap>(
   v: NamespaceMap[K]['Node'] | NamespaceMap[K]['Loose'] | NamespaceMap[K]['Tree']
@@ -15,7 +25,10 @@ export function isNodeData(v: unknown): v is AnyNodeData {
   if (v === null || typeof v !== 'object') return false;
   const o = v as Record<string, unknown>;
   if (typeof o['$type'] !== 'string') return false;
-  return (o['$fields'] !== null && typeof o['$fields'] === 'object') || typeof o['$text'] === 'string';
+  return (o['$fields'] !== null && typeof o['$fields'] === 'object')
+    || typeof o['$text'] === 'string'
+    || Array.isArray(o['$children'])
+    || o['$source'] === 'ts' || o['$source'] === 'sg' || o['$source'] === 'factory';
 }
 
 /**

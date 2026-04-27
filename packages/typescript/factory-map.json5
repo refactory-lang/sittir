@@ -204,6 +204,8 @@
     "_kw_readonly_marker": "text",
     "_kw_abstract_marker": "text",
     "_kw_const_marker": "text",
+    "_export_statement_default_from_arm": "children",
+    "_export_statement_default_decl_arm": "config",
     "_export_statement_default_decl_arm_default_kw": "config",
     "_arrow_function_parameter": "config",
     "_arrow_function__call_signature": "config",
@@ -1062,6 +1064,14 @@
       "childKind": {
         "index_signature_colon": "colon",
         "index_signature_mapped_type_clause": "mapped_type_clause"
+      }
+    },
+    "_export_statement_default_from_arm": {
+      "source": "override",
+      "childKind": {
+        "_export_statement_default_from_arm_star_from": "star_from",
+        "_export_statement_default_from_arm_ns_from": "ns_from",
+        "_export_statement_default_from_arm_clause_from": "clause_from"
       }
     }
   }
