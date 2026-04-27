@@ -195,11 +195,14 @@ describe("collect-baseline", () => {
 			seen.add(process.env.SITTIR_BACKEND);
 			return original(...args);
 		});
-		// collectBaseline may throw if the native engine has a pre-existing
-		// bug (e.g. Task 4 node-id issue). We only need to verify that
-		// buildReadHandle was called with SITTIR_BACKEND=native, which
-		// happens before any downstream native engine crash.
-		await baseline.collectBaseline("native").catch(() => {});
+		// 1. Loud-failure assertion: native collection must throw (not silently
+		//    fall back to TS and return TS numbers labelled "native").
+		//    With the Task 4 node-id bug, the native engine panics during
+		//    readNode — that error must propagate, not be swallowed.
+		await expect(baseline.collectBaseline("native")).rejects.toBeInstanceOf(Error);
+		// 2. Dispatch assertion: buildReadHandle was called with
+		//    SITTIR_BACKEND=native (set by withBackendEnv), not undefined
+		//    (which would mean validators silently ran under the TS engine).
 		expect(seen).toEqual(new Set(["native"]));
 		spy.mockRestore();
 	});
@@ -242,20 +245,17 @@ describe("collect-baseline", () => {
 	});
 
 	it("native baseline failures point at bundle drift instead of looking like parity noise", async () => {
-		// Before Task 3, collectBaseline("native") would silently fall back
-		// to TS and return TS numbers labelled "native" — the failure was
-		// invisible as parity noise. Now failures propagate visibly.
-		// The native engine may still have pre-existing issues (Task 4
-		// node-id Rust work); this test only verifies the error is surfaced,
-		// not that native is fully operational.
-		try {
-			const native = await baseline.collectBaseline("native");
-			expect(native.backend).toBe("native");
-			expect(native.totals.total).toBeGreaterThan(0);
-		} catch (error) {
-			// Native engine has a pre-existing issue (Task 4). Verify the
-			// failure propagates as a real Error rather than being swallowed.
-			expect(error).toBeInstanceOf(Error);
-		}
+		// Before Task 3: collectBaseline("native") silently succeeded — it
+		// fell back to the TS engine and returned TS numbers labelled
+		// "native". The failure was invisible as parity noise.
+		//
+		// After Task 3: errors propagate. This assertion is the regression
+		// lock: it FAILS if the call silently succeeds (pre-Task-3 behavior),
+		// and PASSES when errors surface loudly (Task-3 behavior).
+		//
+		// With the Task 4 node-id bug still unfixed, the native engine throws
+		// "node id not found in current tree" — that error must escape, not
+		// be rewritten into quiet parity numbers.
+		await expect(baseline.collectBaseline("native")).rejects.toBeInstanceOf(Error);
 	}, 600_000);
 });
