@@ -117,6 +117,17 @@ pub struct MatchBlockTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_simple_pattern_negative.jinja", escape = "none")]
+pub struct SimplePatternNegativeTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_simple_statements.jinja", escape = "none")]
 pub struct SimpleStatementsTemplate {
     pub children: Vec<String>,
@@ -1628,6 +1639,17 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "_simple_pattern_negative" => {
+            let t = SimplePatternNegativeTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
         "_simple_statements" => {
             let t = SimpleStatementsTemplate {
                 children: ctx.children_list.clone(),
@@ -3078,7 +3100,7 @@ impl ::sittir_core::prepare::GrammarMeta for PythonGrammarMeta {
     }
     fn is_list_container(&self, kind: &str) -> bool {
         matches!(kind,
-            "_as_pattern" | "_comprehension_clauses" | "_match_block" | "_simple_statements" | "_suite" | "_with_clause_paren" | "argument_list" | "assert_statement" | "block" | "case_pattern" | "concatenated_string" | "delete_statement" | "dict_pattern" | "dictionary" | "dictionary_splat_pattern" | "dotted_name" | "expression_list" | "format_specifier" | "global_statement" | "lambda_parameters" | "list" | "list_pattern" | "list_splat_pattern" | "module" | "nonlocal_statement" | "parameters" | "parenthesized_expression" | "parenthesized_list_splat" | "pattern_list" | "return_statement" | "set" | "string_content" | "tuple" | "tuple_pattern" | "type" | "type_parameter" | "union_pattern" | "yield"
+            "_as_pattern" | "_comprehension_clauses" | "_match_block" | "_simple_pattern_negative" | "_simple_statements" | "_suite" | "_with_clause_paren" | "argument_list" | "assert_statement" | "block" | "case_pattern" | "concatenated_string" | "delete_statement" | "dict_pattern" | "dictionary" | "dictionary_splat_pattern" | "dotted_name" | "expression_list" | "format_specifier" | "global_statement" | "lambda_parameters" | "list" | "list_pattern" | "list_splat_pattern" | "module" | "nonlocal_statement" | "parameters" | "parenthesized_expression" | "parenthesized_list_splat" | "pattern_list" | "return_statement" | "set" | "string_content" | "tuple" | "tuple_pattern" | "type" | "type_parameter" | "union_pattern" | "yield"
         )
     }
 }

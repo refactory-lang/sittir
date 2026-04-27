@@ -192,6 +192,21 @@ pub struct ExportStatementDefaultDeclArmDefaultKwTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_export_statement_default_decl_arm.jinja", escape = "none")]
+pub struct ExportStatementDefaultDeclArmTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub declaration: String,
+    pub declaration_list: Vec<String>,
+    pub decorator: String,
+    pub decorator_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_export_statement_default_from_arm_clause_from.jinja", escape = "none")]
 pub struct ExportStatementDefaultFromArmClauseFromTemplate {
     pub children: Vec<String>,
@@ -228,6 +243,17 @@ pub struct ExportStatementDefaultFromArmStarFromTemplate {
     pub leading_sep: bool,
     pub source: String,
     pub source_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_export_statement_default_from_arm.jinja", escape = "none")]
+pub struct ExportStatementDefaultFromArmTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
 }
 
 #[derive(::askama::Template)]
@@ -3254,6 +3280,21 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "_export_statement_default_decl_arm" => {
+            let t = ExportStatementDefaultDeclArmTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                declaration: ctx.fields.get("declaration").cloned().unwrap_or_default(),
+                declaration_list: ctx.fields_list.get("declaration").cloned().unwrap_or_default(),
+                decorator: ctx.fields.get("decorator").cloned().unwrap_or_default(),
+                decorator_list: ctx.fields_list.get("decorator").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
         "_export_statement_default_from_arm_clause_from" => {
             let t = ExportStatementDefaultFromArmClauseFromTemplate {
                 children: ctx.children_list.clone(),
@@ -3290,6 +3331,17 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 source: ctx.fields.get("source").cloned().unwrap_or_default(),
                 source_list: ctx.fields_list.get("source").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "_export_statement_default_from_arm" => {
+            let t = ExportStatementDefaultFromArmTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
             };
             t.render_with_values(&_values)
         }
@@ -6218,7 +6270,7 @@ impl ::sittir_core::prepare::GrammarMeta for TypescriptGrammarMeta {
     }
     fn is_list_container(&self, kind: &str) -> bool {
         matches!(kind,
-            "_class_body_member" | "_class_body_method_sig" | "_class_heritage_extends_clause" | "_class_heritage_implements_clause" | "_export_statement_equals_export" | "_export_statement_namespace_export" | "_import_clause_default_import" | "_import_clause_named_imports" | "_import_clause_namespace_import" | "_index_signature_mapped_type_clause" | "_lhs_expression" | "_parenthesized_expression_sequence" | "_public_field_definition_declare_first" | "_string_double" | "_string_single" | "_type_identifier" | "arguments" | "array" | "array_pattern" | "asserts" | "class_body" | "decorator" | "decorator_parenthesized_expression" | "export_clause" | "formal_parameters" | "implements_clause" | "jsx_attribute" | "jsx_expression" | "jsx_namespace_name" | "literal_type" | "named_imports" | "namespace_export" | "object" | "object_pattern" | "rest_pattern" | "sequence_expression" | "switch_body" | "template_literal_type" | "template_string" | "template_substitution" | "template_type" | "tuple_type" | "type_arguments" | "type_parameters" | "type_query"
+            "_class_body_member" | "_class_body_method_sig" | "_class_heritage_extends_clause" | "_class_heritage_implements_clause" | "_export_statement_default_from_arm" | "_export_statement_equals_export" | "_export_statement_namespace_export" | "_import_clause_default_import" | "_import_clause_named_imports" | "_import_clause_namespace_import" | "_index_signature_mapped_type_clause" | "_lhs_expression" | "_parenthesized_expression_sequence" | "_public_field_definition_declare_first" | "_string_double" | "_string_single" | "_type_identifier" | "arguments" | "array" | "array_pattern" | "asserts" | "class_body" | "decorator" | "decorator_parenthesized_expression" | "export_clause" | "formal_parameters" | "implements_clause" | "jsx_attribute" | "jsx_expression" | "jsx_namespace_name" | "literal_type" | "named_imports" | "namespace_export" | "object" | "object_pattern" | "rest_pattern" | "sequence_expression" | "switch_body" | "template_literal_type" | "template_string" | "template_substitution" | "template_type" | "tuple_type" | "type_arguments" | "type_parameters" | "type_query"
         )
     }
 }

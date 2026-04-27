@@ -5,7 +5,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "β_γ + Ψ_5",
       "$fields": {
         "left": {
           "$type": "identifier",
@@ -67,7 +66,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "a[1]",
       "$fields": {
         "value": {
           "$type": "identifier",
@@ -140,7 +138,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "b[2, 3]",
       "$fields": {
         "value": {
           "$type": "identifier",
@@ -237,7 +234,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "c[4, 5,]",
       "$fields": {
         "value": {
           "$type": "identifier",
@@ -347,7 +343,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "a[:]",
       "$fields": {
         "value": {
           "$type": "identifier",
@@ -420,7 +415,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "b[5:]",
       "$fields": {
         "value": {
           "$type": "identifier",
@@ -493,7 +487,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "b[5:6, ...]",
       "$fields": {
         "value": {
           "$type": "identifier",
@@ -590,7 +583,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "c[::]",
       "$fields": {
         "value": {
           "$type": "identifier",
@@ -663,7 +655,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "a.b.c",
       "$fields": {
         "object": {
           "$type": "attribute",
@@ -725,7 +716,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "a.b",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -787,7 +777,6 @@
     "input": {
       "$type": "await",
       "$source": "ts",
-      "$text": "await i(j, 5)",
       "$fields": {
         "await": {
           "$type": "await",
@@ -838,7 +827,6 @@
     "input": {
       "$type": "await",
       "$source": "ts",
-      "$text": "await i(j, 5)",
       "$fields": {
         "await": {
           "$type": "await",
@@ -889,7 +877,6 @@
     "input": {
       "$type": "await",
       "$source": "ts",
-      "$text": "await a(b)",
       "$fields": {
         "await": {
           "$type": "await",
@@ -940,7 +927,6 @@
     "input": {
       "$type": "await",
       "$source": "ts",
-      "$text": "await all_regions()",
       "$fields": {
         "await": {
           "$type": "await",
@@ -991,7 +977,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "i(j, 5)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -1042,7 +1027,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "i(j, 5)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -1093,7 +1077,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "a(b)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -1144,7 +1127,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "all_regions()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -1195,7 +1177,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "str",
       "$children": [
         {
           "$type": "identifier",
@@ -1235,7 +1216,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "bool",
       "$children": [
         {
           "$type": "identifier",
@@ -1275,7 +1255,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "__a__()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -1326,7 +1305,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "b(1)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -1377,7 +1355,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "c(e, f=g)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -1428,7 +1405,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "i(j, 5,)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -1479,7 +1455,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "print()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -1530,7 +1505,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "print(a)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -1581,7 +1555,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "print(a, b=c)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -1632,7 +1605,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "print(d, e)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -1683,7 +1655,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "print(d, *e)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -1734,7 +1705,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "print(*f, **g,)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -1785,7 +1755,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "a(print)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -1836,7 +1805,6 @@
     "input": {
       "$type": "list_splat",
       "$source": "ts",
-      "$text": "*f",
       "$fields": {
         "*": {
           "$type": "*",
@@ -1887,7 +1855,6 @@
     "input": {
       "$type": "list_splat_pattern",
       "$source": "ts",
-      "$text": "*print",
       "$fields": {
         "*": {
           "$type": "*",
@@ -1940,7 +1907,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "exec(\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\" : None}, safe_dict)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -1991,7 +1957,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "exec(\"\"\"exec _code_ in _globs_, _locs_\"\"\")",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -2042,7 +2007,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -2104,7 +2068,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"__builtins__\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -2166,7 +2129,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"\"\"exec _code_ in _globs_, _locs_\"\"\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -2228,7 +2190,6 @@
     "input": {
       "$type": "dictionary",
       "$source": "ts",
-      "$text": "{\"__builtins__\" : None}",
       "$fields": {
         "{": {
           "$type": "{",
@@ -2292,7 +2253,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "a(*())",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -2343,7 +2303,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "a(**{})",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -2394,7 +2353,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "a(*b)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -2445,7 +2403,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "c(d, *e, **g)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -2496,7 +2453,6 @@
     "input": {
       "$type": "list_splat",
       "$source": "ts",
-      "$text": "*()",
       "$fields": {
         "*": {
           "$type": "*",
@@ -2547,7 +2503,6 @@
     "input": {
       "$type": "list_splat",
       "$source": "ts",
-      "$text": "*b",
       "$fields": {
         "*": {
           "$type": "*",
@@ -2598,7 +2553,6 @@
     "input": {
       "$type": "list_splat",
       "$source": "ts",
-      "$text": "*e",
       "$fields": {
         "*": {
           "$type": "*",
@@ -2649,7 +2603,6 @@
     "input": {
       "$type": "tuple",
       "$source": "ts",
-      "$text": "()",
       "$fields": {
         "(": {
           "$type": "(",
@@ -2700,7 +2653,6 @@
     "input": {
       "$type": "dictionary",
       "$source": "ts",
-      "$text": "{}",
       "$fields": {
         "{": {
           "$type": "{",
@@ -2751,7 +2703,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "a + b * c ** d - e / 5",
       "$fields": {
         "left": {
           "$type": "binary_operator",
@@ -2813,7 +2764,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "a + b * c ** d",
       "$fields": {
         "left": {
           "$type": "identifier",
@@ -2875,7 +2825,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "b * c ** d",
       "$fields": {
         "left": {
           "$type": "identifier",
@@ -2937,7 +2886,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "c ** d",
       "$fields": {
         "left": {
           "$type": "identifier",
@@ -2999,7 +2947,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "e / 5",
       "$fields": {
         "left": {
           "$type": "identifier",
@@ -3061,7 +3008,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "a // 2",
       "$fields": {
         "left": {
           "$type": "identifier",
@@ -3123,7 +3069,6 @@
     "input": {
       "$type": "unary_operator",
       "$source": "ts",
-      "$text": "-5",
       "$fields": {
         "operator": {
           "$type": "-",
@@ -3174,7 +3119,6 @@
     "input": {
       "$type": "unary_operator",
       "$source": "ts",
-      "$text": "+x",
       "$fields": {
         "operator": {
           "$type": "+",
@@ -3225,7 +3169,6 @@
     "input": {
       "$type": "unary_operator",
       "$source": "ts",
-      "$text": "~x",
       "$fields": {
         "operator": {
           "$type": "~",
@@ -3276,7 +3219,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": ".1-.0",
       "$fields": {
         "left": {
           "$type": "float",
@@ -3338,7 +3280,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": ".1+.0",
       "$fields": {
         "left": {
           "$type": "float",
@@ -3400,7 +3341,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": ".1-0",
       "$fields": {
         "left": {
           "$type": "float",
@@ -3462,7 +3402,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": ".1+0",
       "$fields": {
         "left": {
           "$type": "float",
@@ -3524,7 +3463,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "1-.0",
       "$fields": {
         "left": {
           "$type": "integer",
@@ -3586,7 +3524,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "1+.0",
       "$fields": {
         "left": {
           "$type": "integer",
@@ -3648,7 +3585,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "2**2**3",
       "$fields": {
         "left": {
           "$type": "integer",
@@ -3710,7 +3646,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "2**3",
       "$fields": {
         "left": {
           "$type": "integer",
@@ -3772,7 +3707,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "2**2",
       "$fields": {
         "left": {
           "$type": "integer",
@@ -3834,7 +3768,6 @@
     "input": {
       "$type": "unary_operator",
       "$source": "ts",
-      "$text": "-2**2",
       "$fields": {
         "operator": {
           "$type": "-",
@@ -3885,7 +3818,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "a() + b[c] * c.d.e",
       "$fields": {
         "left": {
           "$type": "call",
@@ -3947,7 +3879,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "b[c] * c.d.e",
       "$fields": {
         "left": {
           "$type": "subscript",
@@ -4009,7 +3940,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "a()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -4060,7 +3990,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "b[c]",
       "$fields": {
         "value": {
           "$type": "identifier",
@@ -4133,7 +4062,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "c.d.e",
       "$fields": {
         "object": {
           "$type": "attribute",
@@ -4195,7 +4123,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "c.d",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -4257,7 +4184,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "a << b | c >> d & e ^ f",
       "$fields": {
         "left": {
           "$type": "binary_operator",
@@ -4319,7 +4245,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "a << b",
       "$fields": {
         "left": {
           "$type": "identifier",
@@ -4381,7 +4306,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "c >> d & e ^ f",
       "$fields": {
         "left": {
           "$type": "binary_operator",
@@ -4443,7 +4367,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "c >> d",
       "$fields": {
         "left": {
           "$type": "identifier",
@@ -4505,7 +4428,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "e ^ f",
       "$fields": {
         "left": {
           "$type": "identifier",
@@ -4567,7 +4489,6 @@
     "input": {
       "$type": "boolean_operator",
       "$source": "ts",
-      "$text": "a or b and c",
       "$fields": {
         "left": {
           "$type": "identifier",
@@ -4629,7 +4550,6 @@
     "input": {
       "$type": "boolean_operator",
       "$source": "ts",
-      "$text": "b and c",
       "$fields": {
         "left": {
           "$type": "identifier",
@@ -4691,7 +4611,6 @@
     "input": {
       "$type": "boolean_operator",
       "$source": "ts",
-      "$text": "not a and b or c",
       "$fields": {
         "left": {
           "$type": "boolean_operator",
@@ -4753,7 +4672,6 @@
     "input": {
       "$type": "boolean_operator",
       "$source": "ts",
-      "$text": "not a and b",
       "$fields": {
         "left": {
           "$type": "not_operator",
@@ -4815,7 +4733,6 @@
     "input": {
       "$type": "boolean_operator",
       "$source": "ts",
-      "$text": "a and not b and c",
       "$fields": {
         "left": {
           "$type": "boolean_operator",
@@ -4877,7 +4794,6 @@
     "input": {
       "$type": "boolean_operator",
       "$source": "ts",
-      "$text": "a and not b",
       "$fields": {
         "left": {
           "$type": "identifier",
@@ -4939,7 +4855,6 @@
     "input": {
       "$type": "not_operator",
       "$source": "ts",
-      "$text": "not d",
       "$fields": {
         "not": {
           "$type": "not",
@@ -4990,7 +4905,6 @@
     "input": {
       "$type": "not_operator",
       "$source": "ts",
-      "$text": "not a",
       "$fields": {
         "not": {
           "$type": "not",
@@ -5041,7 +4955,6 @@
     "input": {
       "$type": "not_operator",
       "$source": "ts",
-      "$text": "not b",
       "$fields": {
         "not": {
           "$type": "not",
@@ -5092,7 +5005,6 @@
     "input": {
       "$type": "list_splat_pattern",
       "$source": "ts",
-      "$text": "*c",
       "$fields": {
         "*": {
           "$type": "*",
@@ -5145,7 +5057,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "a[b]",
       "$fields": {
         "value": {
           "$type": "identifier",
@@ -5218,7 +5129,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "b.c",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -5280,7 +5190,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "List[Leaf]",
       "$children": [
         {
           "$type": "generic_type",
@@ -5320,7 +5229,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "Leaf",
       "$children": [
         {
           "$type": "identifier",
@@ -5360,7 +5268,6 @@
     "input": {
       "$type": "list",
       "$source": "ts",
-      "$text": "[]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -5411,7 +5318,6 @@
     "input": {
       "$type": "named_expression",
       "$source": "ts",
-      "$text": "a := x",
       "$fields": {
         "name": {
           "$type": "identifier",
@@ -5473,7 +5379,6 @@
     "input": {
       "$type": "named_expression",
       "$source": "ts",
-      "$text": "y := f(x)",
       "$fields": {
         "name": {
           "$type": "identifier",
@@ -5535,7 +5440,6 @@
     "input": {
       "$type": "named_expression",
       "$source": "ts",
-      "$text": "y := f(x)",
       "$fields": {
         "name": {
           "$type": "identifier",
@@ -5597,7 +5501,6 @@
     "input": {
       "$type": "named_expression",
       "$source": "ts",
-      "$text": "p := 42",
       "$fields": {
         "name": {
           "$type": "identifier",
@@ -5659,7 +5562,6 @@
     "input": {
       "$type": "named_expression",
       "$source": "ts",
-      "$text": "p := 42",
       "$fields": {
         "name": {
           "$type": "identifier",
@@ -5721,7 +5623,6 @@
     "input": {
       "$type": "named_expression",
       "$source": "ts",
-      "$text": "x := 3",
       "$fields": {
         "name": {
           "$type": "identifier",
@@ -5783,7 +5684,6 @@
     "input": {
       "$type": "named_expression",
       "$source": "ts",
-      "$text": "z := (y := (x := 0))",
       "$fields": {
         "name": {
           "$type": "identifier",
@@ -5845,7 +5745,6 @@
     "input": {
       "$type": "named_expression",
       "$source": "ts",
-      "$text": "y := (x := 0)",
       "$fields": {
         "name": {
           "$type": "identifier",
@@ -5907,7 +5806,6 @@
     "input": {
       "$type": "named_expression",
       "$source": "ts",
-      "$text": "x := 0",
       "$fields": {
         "name": {
           "$type": "identifier",
@@ -5969,7 +5867,6 @@
     "input": {
       "$type": "named_expression",
       "$source": "ts",
-      "$text": "y1 := f(x)",
       "$fields": {
         "name": {
           "$type": "identifier",
@@ -6031,7 +5928,6 @@
     "input": {
       "$type": "parenthesized_expression",
       "$source": "ts",
-      "$text": "(y := f(x))",
       "$fields": {
         "(": {
           "$type": "(",
@@ -6095,7 +5991,6 @@
     "input": {
       "$type": "parenthesized_expression",
       "$source": "ts",
-      "$text": "(y := f(x))",
       "$fields": {
         "(": {
           "$type": "(",
@@ -6159,7 +6054,6 @@
     "input": {
       "$type": "parenthesized_expression",
       "$source": "ts",
-      "$text": "(p := 42)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -6223,7 +6117,6 @@
     "input": {
       "$type": "parenthesized_expression",
       "$source": "ts",
-      "$text": "(p := 42)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -6287,7 +6180,6 @@
     "input": {
       "$type": "parenthesized_expression",
       "$source": "ts",
-      "$text": "(z := (y := (x := 0)))",
       "$fields": {
         "(": {
           "$type": "(",
@@ -6351,7 +6243,6 @@
     "input": {
       "$type": "parenthesized_expression",
       "$source": "ts",
-      "$text": "(y := (x := 0))",
       "$fields": {
         "(": {
           "$type": "(",
@@ -6415,7 +6306,6 @@
     "input": {
       "$type": "parenthesized_expression",
       "$source": "ts",
-      "$text": "(x := 0)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -6479,7 +6369,6 @@
     "input": {
       "$type": "parenthesized_expression",
       "$source": "ts",
-      "$text": "(y1 := f(x))",
       "$fields": {
         "(": {
           "$type": "(",
@@ -6543,7 +6432,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "f(x)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -6594,7 +6482,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "foo(x=(y := f(x)))",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -6645,7 +6532,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "f(x)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -6696,7 +6582,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "foo(x := 3, cat='vector')",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -6747,7 +6632,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "f(x)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -6798,7 +6682,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "(p := 42)",
       "$children": [
         {
           "$type": "parenthesized_expression",
@@ -6838,7 +6721,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "'vector'",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -6900,7 +6782,6 @@
     "input": {
       "$type": "parenthesized_expression",
       "$source": "ts",
-      "$text": "(yield from (x for x in range(1, 10)))",
       "$fields": {
         "(": {
           "$type": "(",
@@ -6964,7 +6845,6 @@
     "input": {
       "$type": "generator_expression",
       "$source": "ts",
-      "$text": "(x for x in range(1, 10))",
       "$fields": {
         "(": {
           "$type": "(",
@@ -7039,7 +6919,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "range(1, 10)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -7090,7 +6969,6 @@
     "input": {
       "$type": "lambda",
       "$source": "ts",
-      "$text": "lambda b, c: d(\"e\" % f)",
       "$fields": {
         "lambda": {
           "$type": "lambda",
@@ -7163,7 +7041,6 @@
     "input": {
       "$type": "lambda",
       "$source": "ts",
-      "$text": "lambda: True",
       "$fields": {
         "lambda": {
           "$type": "lambda",
@@ -7225,7 +7102,6 @@
     "input": {
       "$type": "lambda",
       "$source": "ts",
-      "$text": "lambda a, b = c, *d, **e: a",
       "$fields": {
         "lambda": {
           "$type": "lambda",
@@ -7298,7 +7174,6 @@
     "input": {
       "$type": "lambda",
       "$source": "ts",
-      "$text": "lambda (a, b): (a, b)",
       "$fields": {
         "lambda": {
           "$type": "lambda",
@@ -7371,7 +7246,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "d(\"e\" % f)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -7422,7 +7296,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "\"e\" % f",
       "$fields": {
         "left": {
           "$type": "string",
@@ -7484,7 +7357,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"e\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -7546,7 +7418,6 @@
     "input": {
       "$type": "list_splat_pattern",
       "$source": "ts",
-      "$text": "*d",
       "$fields": {
         "*": {
           "$type": "*",
@@ -7599,7 +7470,6 @@
     "input": {
       "$type": "tuple",
       "$source": "ts",
-      "$text": "(a, b)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -7685,7 +7555,6 @@
     "input": {
       "$type": "tuple",
       "$source": "ts",
-      "$text": "(foo, *bar, *baz)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -7793,7 +7662,6 @@
     "input": {
       "$type": "list_splat",
       "$source": "ts",
-      "$text": "*bar",
       "$fields": {
         "*": {
           "$type": "*",
@@ -7844,7 +7712,6 @@
     "input": {
       "$type": "list_splat",
       "$source": "ts",
-      "$text": "*baz",
       "$fields": {
         "*": {
           "$type": "*",
@@ -7895,7 +7762,6 @@
     "input": {
       "$type": "tuple",
       "$source": "ts",
-      "$text": "(a, yield a, b, c)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -7981,7 +7847,6 @@
     "input": {
       "$type": "tuple",
       "$source": "ts",
-      "$text": "(3, 4)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -8067,7 +7932,6 @@
     "input": {
       "$type": "conditional_expression",
       "$source": "ts",
-      "$text": "something() if a else d",
       "$fields": {
         "body": {
           "$type": "call",
@@ -8151,7 +8015,6 @@
     "input": {
       "$type": "conditional_expression",
       "$source": "ts",
-      "$text": "slice(1,1,1) if a else d",
       "$fields": {
         "body": {
           "$type": "call",
@@ -8235,7 +8098,6 @@
     "input": {
       "$type": "conditional_expression",
       "$source": "ts",
-      "$text": "b if c else d",
       "$fields": {
         "body": {
           "$type": "identifier",
@@ -8319,7 +8181,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "something()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -8370,7 +8231,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "slice(1,1,1)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -8421,7 +8281,6 @@
     "input": {
       "$type": "as_pattern",
       "$source": "ts",
-      "$text": "a as b",
       "$fields": {
         "expression": {
           "$type": "identifier",
@@ -8483,7 +8342,6 @@
     "input": {
       "$type": "list_comprehension",
       "$source": "ts",
-      "$text": "[e async for f in g]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -8558,7 +8416,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "b(\n1,\n2\n    )",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -8609,7 +8466,6 @@
     "input": {
       "$type": "list",
       "$source": "ts",
-      "$text": "[\n3\n    ]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -8673,7 +8529,6 @@
     "input": {
       "$type": "list",
       "$source": "ts",
-      "$text": "[1,2]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -8759,7 +8614,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "match(r1, r2, r3)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -8810,7 +8664,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "A[T] | B",
       "$children": [
         {
           "$type": "union_type",
@@ -8850,7 +8703,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "type[int]",
       "$children": [
         {
           "$type": "generic_type",
@@ -8890,7 +8742,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "A[T]",
       "$children": [
         {
           "$type": "generic_type",
@@ -8930,7 +8781,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "B",
       "$children": [
         {
           "$type": "identifier",
@@ -8970,7 +8820,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "int",
       "$children": [
         {
           "$type": "identifier",
@@ -9010,7 +8859,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "T",
       "$children": [
         {
           "$type": "identifier",
@@ -9050,7 +8898,6 @@
     "input": {
       "$type": "unary_operator",
       "$source": "ts",
-      "$text": "-1",
       "$fields": {
         "operator": {
           "$type": "-",
@@ -9101,7 +8948,6 @@
     "input": {
       "$type": "unary_operator",
       "$source": "ts",
-      "$text": "-1j",
       "$fields": {
         "operator": {
           "$type": "-",
@@ -9152,7 +8998,6 @@
     "input": {
       "$type": "unary_operator",
       "$source": "ts",
-      "$text": "-.6_6",
       "$fields": {
         "operator": {
           "$type": "-",
@@ -9203,7 +9048,6 @@
     "input": {
       "$type": "unary_operator",
       "$source": "ts",
-      "$text": "+.1_1",
       "$fields": {
         "operator": {
           "$type": "+",
@@ -9254,7 +9098,6 @@
     "input": {
       "$type": "unary_operator",
       "$source": "ts",
-      "$text": "-1e10",
       "$fields": {
         "operator": {
           "$type": "-",
@@ -9305,7 +9148,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"I'm ok\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -9367,7 +9209,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "'\"ok\"'",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -9429,7 +9270,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "UR'bye'",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -9491,7 +9331,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "b'sup'",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -9553,7 +9392,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "B\"sup\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -9615,7 +9453,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "`1`",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -9677,7 +9514,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"\\\\\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -9739,7 +9575,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"/\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -9801,7 +9636,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"multiline \\\nstring\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -9863,7 +9697,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "b\"\\x12\\u12\\U12\\x13\\N{WINKING FACE}\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -9925,7 +9758,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"\\xab\\1\\12\\123\\'\\\"\\a\\b\\f\\r\\n\\t\\v\\\\\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -9987,7 +9819,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"\\xgh\\o123\\p\\q\\c\\d\\e\\u12\\U1234\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -10049,7 +9880,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f'\\N{GREEK CAPITAL LETTER DELTA}'",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -10111,7 +9941,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "'ab\\x00cd'",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -10173,7 +10002,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"\\n\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -10235,7 +10063,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "r'ab\\x00cd'",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -10297,7 +10124,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "ur\"\\n\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -10359,7 +10185,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "fr\"\\{0}\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -10434,7 +10259,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "r\"\\\\\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -10485,7 +10309,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "r'\"a\\\nde\\\nfg\"'",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -10547,7 +10370,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "re.compile(r\"(\\n|\\A)#include\\s*['\\\"]\"\n           r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\")",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -10598,7 +10420,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "re.compile",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -10660,7 +10481,6 @@
     "input": {
       "$type": "concatenated_string",
       "$source": "ts",
-      "$text": "r\"(\\n|\\A)#include\\s*['\\\"]\"\n           r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\"",
       "$children": [
         {
           "$type": "string",
@@ -10711,7 +10531,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "r\"(\\n|\\A)#include\\s*['\\\"]\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -10773,7 +10592,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -10835,7 +10653,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f\"a {b(f'c {e} d')} e\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -10921,7 +10738,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f'c {e} d'",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -11007,7 +10823,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f\"\"\"a\"{b}c\"\"\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -11093,7 +10908,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f\"\"\"a\"\"{b}c\"\"\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -11179,7 +10993,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f\"a {{}} e\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -11241,7 +11054,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f\"a {b}}}\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -11327,7 +11139,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f\"a {{{b}\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -11402,7 +11213,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f\"a {{b}}\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -11464,7 +11274,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f\"a {{{b}}}\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -11550,7 +11359,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f\"{c,}\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -11612,7 +11420,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f\"{yield d}\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -11674,7 +11481,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f\"{*a,}\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -11736,7 +11542,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -11811,7 +11616,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"string1\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -11873,7 +11677,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"string2\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -11935,7 +11738,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f'''A complex trick: {\n2  # two\n}'''",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -12010,7 +11812,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "'A complex trick: 2'",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -12072,7 +11873,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "b(f'c {e} d')",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -12123,7 +11923,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "self.assertEqual(f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -12174,7 +11973,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f\"a {b:2} {c:34.5}\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -12271,7 +12069,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f\"{b:{c.d}.{d.e}}\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -12333,7 +12130,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f\"{a:#06x}\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -12395,7 +12191,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f\"{a=}\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -12457,7 +12252,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f\"{a=:.2f}\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -12519,7 +12313,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f\"{value:{width + padding!r}.{precision}}\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -12581,7 +12374,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "c.d",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -12643,7 +12435,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "d.e",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -12705,7 +12496,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "width + padding",
       "$fields": {
         "left": {
           "$type": "identifier",
@@ -12767,7 +12557,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "t\"Hello, {first_name} {last_name}!\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -12875,7 +12664,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "t\"a {b:2} {c:34.5}\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -12972,7 +12760,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "tr\"Path: {path}\\n\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -13058,7 +12845,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "t\"\"\"\nMulti-line template\nwith {variable}\n\"\"\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -13144,7 +12930,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "t\"Use {{braces}} to escape\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -13206,7 +12991,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "t\"Result: {a + b}\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -13281,7 +13065,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "a + b",
       "$fields": {
         "left": {
           "$type": "identifier",
@@ -13343,7 +13126,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"\\x12 \\123 \\u1234\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -13405,7 +13187,6 @@
     "input": {
       "$type": "concatenated_string",
       "$source": "ts",
-      "$text": "\"one\" \"two\" \"three\"",
       "$children": [
         {
           "$type": "string",
@@ -13467,7 +13248,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"one\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -13529,7 +13309,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"two\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -13591,7 +13370,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"three\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -13653,7 +13431,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -13715,7 +13492,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"\"\"\nA double quote \"hello\",\nwith double quotes.\n\"\"\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -13777,7 +13553,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"\"\"\nA double quote 'hello',\nwith single quotes.\n\"\"\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -13839,7 +13614,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "'''\nA single quote hello,\nwithout double or single quotes.\n'''",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -13901,7 +13675,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "'''\nA single quote 'hello',\nwith single quotes.\n'''",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -13963,7 +13736,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "'''\nA single quote \"hello\",\nwith double quotes.\n'''",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -14025,7 +13797,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"\"\"\nA double quote hello\\n\\\nwith an escaped newline\\n\\\nand another escaped newline\\n\\\n\"\"\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -14087,7 +13858,6 @@
     "input": {
       "$type": "list",
       "$source": "ts",
-      "$text": "[a, b, [c, d]]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -14195,7 +13965,6 @@
     "input": {
       "$type": "list",
       "$source": "ts",
-      "$text": "[c, d]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -14281,7 +14050,6 @@
     "input": {
       "$type": "list",
       "$source": "ts",
-      "$text": "[*()]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -14345,7 +14113,6 @@
     "input": {
       "$type": "list",
       "$source": "ts",
-      "$text": "[*[]]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -14409,7 +14176,6 @@
     "input": {
       "$type": "list",
       "$source": "ts",
-      "$text": "[]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -14460,7 +14226,6 @@
     "input": {
       "$type": "list",
       "$source": "ts",
-      "$text": "[*a]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -14524,7 +14289,6 @@
     "input": {
       "$type": "list",
       "$source": "ts",
-      "$text": "[*a.b]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -14588,7 +14352,6 @@
     "input": {
       "$type": "list",
       "$source": "ts",
-      "$text": "[*a[b].c]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -14652,7 +14415,6 @@
     "input": {
       "$type": "list",
       "$source": "ts",
-      "$text": "[*a()]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -14716,7 +14478,6 @@
     "input": {
       "$type": "list_splat",
       "$source": "ts",
-      "$text": "*()",
       "$fields": {
         "*": {
           "$type": "*",
@@ -14767,7 +14528,6 @@
     "input": {
       "$type": "list_splat",
       "$source": "ts",
-      "$text": "*[]",
       "$fields": {
         "*": {
           "$type": "*",
@@ -14818,7 +14578,6 @@
     "input": {
       "$type": "tuple",
       "$source": "ts",
-      "$text": "()",
       "$fields": {
         "(": {
           "$type": "(",
@@ -14869,7 +14628,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "*a.b",
       "$fields": {
         "object": {
           "$type": "list_splat",
@@ -14931,7 +14689,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "*a[b].c",
       "$fields": {
         "object": {
           "$type": "subscript",
@@ -14993,7 +14750,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "*a[b]",
       "$fields": {
         "value": {
           "$type": "list_splat",
@@ -15066,7 +14822,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "*a()",
       "$fields": {
         "function": {
           "$type": "list_splat",
@@ -15117,7 +14872,6 @@
     "input": {
       "$type": "list_comprehension",
       "$source": "ts",
-      "$text": "[a + b for (a, b) in items]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -15192,7 +14946,6 @@
     "input": {
       "$type": "list_comprehension",
       "$source": "ts",
-      "$text": "[a for b in c for a in b]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -15278,7 +15031,6 @@
     "input": {
       "$type": "list_comprehension",
       "$source": "ts",
-      "$text": "[(x,y) for x in [1,2,3] for y in [1,2,3] if True]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -15375,7 +15127,6 @@
     "input": {
       "$type": "list_comprehension",
       "$source": "ts",
-      "$text": "[a for a in lambda: True, lambda: False if a()]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -15461,7 +15212,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "a + b",
       "$fields": {
         "left": {
           "$type": "identifier",
@@ -15523,7 +15273,6 @@
     "input": {
       "$type": "tuple",
       "$source": "ts",
-      "$text": "(x,y)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -15609,7 +15358,6 @@
     "input": {
       "$type": "list",
       "$source": "ts",
-      "$text": "[1,2,3]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -15717,7 +15465,6 @@
     "input": {
       "$type": "list",
       "$source": "ts",
-      "$text": "[1,2,3]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -15825,7 +15572,6 @@
     "input": {
       "$type": "lambda",
       "$source": "ts",
-      "$text": "lambda: True",
       "$fields": {
         "lambda": {
           "$type": "lambda",
@@ -15887,7 +15633,6 @@
     "input": {
       "$type": "lambda",
       "$source": "ts",
-      "$text": "lambda: False",
       "$fields": {
         "lambda": {
           "$type": "lambda",
@@ -15949,7 +15694,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "a()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -16000,7 +15744,6 @@
     "input": {
       "$type": "dictionary",
       "$source": "ts",
-      "$text": "{a: 1, b: 2}",
       "$fields": {
         "{": {
           "$type": "{",
@@ -16086,7 +15829,6 @@
     "input": {
       "$type": "dictionary",
       "$source": "ts",
-      "$text": "{}",
       "$fields": {
         "{": {
           "$type": "{",
@@ -16137,7 +15879,6 @@
     "input": {
       "$type": "dictionary",
       "$source": "ts",
-      "$text": "{**{}}",
       "$fields": {
         "{": {
           "$type": "{",
@@ -16201,7 +15942,6 @@
     "input": {
       "$type": "dictionary",
       "$source": "ts",
-      "$text": "{}",
       "$fields": {
         "{": {
           "$type": "{",
@@ -16252,7 +15992,6 @@
     "input": {
       "$type": "dictionary",
       "$source": "ts",
-      "$text": "{**a}",
       "$fields": {
         "{": {
           "$type": "{",
@@ -16316,7 +16055,6 @@
     "input": {
       "$type": "dictionary",
       "$source": "ts",
-      "$text": "{**a.b}",
       "$fields": {
         "{": {
           "$type": "{",
@@ -16380,7 +16118,6 @@
     "input": {
       "$type": "dictionary",
       "$source": "ts",
-      "$text": "{**a[b].c}",
       "$fields": {
         "{": {
           "$type": "{",
@@ -16444,7 +16181,6 @@
     "input": {
       "$type": "dictionary",
       "$source": "ts",
-      "$text": "{**a()}",
       "$fields": {
         "{": {
           "$type": "{",
@@ -16508,7 +16244,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "a.b",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -16570,7 +16305,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "a[b].c",
       "$fields": {
         "object": {
           "$type": "subscript",
@@ -16632,7 +16366,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "a[b]",
       "$fields": {
         "value": {
           "$type": "identifier",
@@ -16705,7 +16438,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "a()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -16756,7 +16488,6 @@
     "input": {
       "$type": "dictionary_comprehension",
       "$source": "ts",
-      "$text": "{a: b for a, b in items}",
       "$fields": {
         "{": {
           "$type": "{",
@@ -16831,7 +16562,6 @@
     "input": {
       "$type": "dictionary_comprehension",
       "$source": "ts",
-      "$text": "{a: b for c in d for e in items}",
       "$fields": {
         "{": {
           "$type": "{",
@@ -16917,7 +16647,6 @@
     "input": {
       "$type": "set",
       "$source": "ts",
-      "$text": "{a, b, c,}",
       "$fields": {
         "{": {
           "$type": "{",
@@ -17036,7 +16765,6 @@
     "input": {
       "$type": "set",
       "$source": "ts",
-      "$text": "{*{}}",
       "$fields": {
         "{": {
           "$type": "{",
@@ -17100,7 +16828,6 @@
     "input": {
       "$type": "list_splat",
       "$source": "ts",
-      "$text": "*{}",
       "$fields": {
         "*": {
           "$type": "*",
@@ -17151,7 +16878,6 @@
     "input": {
       "$type": "dictionary",
       "$source": "ts",
-      "$text": "{}",
       "$fields": {
         "{": {
           "$type": "{",
@@ -17202,7 +16928,6 @@
     "input": {
       "$type": "set_comprehension",
       "$source": "ts",
-      "$text": "{a[b][c] for a, b, c in items}",
       "$fields": {
         "{": {
           "$type": "{",
@@ -17277,7 +17002,6 @@
     "input": {
       "$type": "set_comprehension",
       "$source": "ts",
-      "$text": "{r for s in qs for n in ms}",
       "$fields": {
         "{": {
           "$type": "{",
@@ -17363,7 +17087,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "a[b][c]",
       "$fields": {
         "value": {
           "$type": "subscript",
@@ -17436,7 +17159,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "a[b]",
       "$fields": {
         "value": {
           "$type": "identifier",
@@ -17509,7 +17231,6 @@
     "input": {
       "$type": "tuple",
       "$source": "ts",
-      "$text": "()",
       "$fields": {
         "(": {
           "$type": "(",
@@ -17560,7 +17281,6 @@
     "input": {
       "$type": "tuple",
       "$source": "ts",
-      "$text": "(a, b)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -17646,7 +17366,6 @@
     "input": {
       "$type": "tuple",
       "$source": "ts",
-      "$text": "(a, b, c,)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -17765,7 +17484,6 @@
     "input": {
       "$type": "tuple",
       "$source": "ts",
-      "$text": "(print, exec)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -17851,7 +17569,6 @@
     "input": {
       "$type": "generator_expression",
       "$source": "ts",
-      "$text": "(a[b][c] for a, b, c in items)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -17926,7 +17643,6 @@
     "input": {
       "$type": "generator_expression",
       "$source": "ts",
-      "$text": "((a, b) for a, b in d)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -18001,7 +17717,6 @@
     "input": {
       "$type": "generator_expression",
       "$source": "ts",
-      "$text": "(a for b in c for d in e,)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -18087,7 +17802,6 @@
     "input": {
       "$type": "generator_expression",
       "$source": "ts",
-      "$text": "(x for x in range(1, 10))",
       "$fields": {
         "(": {
           "$type": "(",
@@ -18162,7 +17876,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "a[b][c]",
       "$fields": {
         "value": {
           "$type": "subscript",
@@ -18235,7 +17948,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "a[b]",
       "$fields": {
         "value": {
           "$type": "identifier",
@@ -18308,7 +18020,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "dict((a, b) for a, b in d)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -18359,7 +18070,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "range(1, 10)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -18410,7 +18120,6 @@
     "input": {
       "$type": "tuple",
       "$source": "ts",
-      "$text": "(a, b)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -18496,7 +18205,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "command.split()",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -18547,7 +18255,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "print(\"Goodbye!\")",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -18598,7 +18305,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "quit_game()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -18649,7 +18355,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "current_room.describe()",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -18700,7 +18405,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "character.get(obj, current_room)",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -18751,7 +18455,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "current_room.neighbor(direction)",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -18802,7 +18505,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "command.split",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -18864,7 +18566,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "current_room.describe",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -18926,7 +18627,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "character.get",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -18988,7 +18688,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "current_room.neighbor",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -19050,7 +18749,6 @@
     "input": {
       "$type": "list_pattern",
       "$source": "ts",
-      "$text": "[\"quit\"]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -19114,7 +18812,6 @@
     "input": {
       "$type": "list_pattern",
       "$source": "ts",
-      "$text": "[\"look\"]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -19178,7 +18875,6 @@
     "input": {
       "$type": "list_pattern",
       "$source": "ts",
-      "$text": "[\"get\", obj]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -19264,7 +18960,6 @@
     "input": {
       "$type": "list_pattern",
       "$source": "ts",
-      "$text": "[\"go\", direction]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -19350,7 +19045,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"quit\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -19412,7 +19106,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"look\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -19474,7 +19167,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"get\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -19536,7 +19228,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"go\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -19598,7 +19289,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"Goodbye!\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -19660,7 +19350,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "command.split()",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -19711,7 +19400,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "character.drop(obj, current_room)",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -19762,7 +19450,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "command.split",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -19824,7 +19511,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "character.drop",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -19886,7 +19572,6 @@
     "input": {
       "$type": "list_pattern",
       "$source": "ts",
-      "$text": "[\"drop\", *objects]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -19972,7 +19657,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"drop\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -20034,7 +19718,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "command.split()",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -20085,7 +19768,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "print(f\"Sorry, I couldn't understand {command!r}\")",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -20136,7 +19818,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "command.split",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -20198,7 +19879,6 @@
     "input": {
       "$type": "list_pattern",
       "$source": "ts",
-      "$text": "[\"quit\"]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -20262,7 +19942,6 @@
     "input": {
       "$type": "list_pattern",
       "$source": "ts",
-      "$text": "[\"go\", direction]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -20348,7 +20027,6 @@
     "input": {
       "$type": "list_pattern",
       "$source": "ts",
-      "$text": "[\"drop\", *objects]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -20434,7 +20112,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"quit\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -20496,7 +20173,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"go\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -20558,7 +20234,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"drop\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -20620,7 +20295,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f\"Sorry, I couldn't understand {command!r}\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -20695,7 +20369,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "command.split()",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -20746,7 +20419,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "current_room.neighbor(\"north\")",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -20797,7 +20469,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "command.split",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -20859,7 +20530,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "current_room.neighbor",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -20921,7 +20591,6 @@
     "input": {
       "$type": "list_pattern",
       "$source": "ts",
-      "$text": "[\"north\"]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -20985,7 +20654,6 @@
     "input": {
       "$type": "list_pattern",
       "$source": "ts",
-      "$text": "[\"go\", \"north\"]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -21071,7 +20739,6 @@
     "input": {
       "$type": "list_pattern",
       "$source": "ts",
-      "$text": "[\"get\", obj]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -21157,7 +20824,6 @@
     "input": {
       "$type": "list_pattern",
       "$source": "ts",
-      "$text": "[\"pick\", \"up\", obj]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -21265,7 +20931,6 @@
     "input": {
       "$type": "list_pattern",
       "$source": "ts",
-      "$text": "[\"pick\", obj, \"up\"]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -21373,7 +21038,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"north\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -21435,7 +21099,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"go\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -21497,7 +21160,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"north\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -21559,7 +21221,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"get\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -21621,7 +21282,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"pick\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -21683,7 +21343,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"up\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -21745,7 +21404,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"pick\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -21807,7 +21465,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"up\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -21869,7 +21526,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"north\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -21931,7 +21587,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "command.split()",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -21982,7 +21637,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "current_room.neighbor(direction)",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -22033,7 +21687,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "command.split",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -22095,7 +21748,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "current_room.neighbor",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -22157,7 +21809,6 @@
     "input": {
       "$type": "list_pattern",
       "$source": "ts",
-      "$text": "[\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -22243,7 +21894,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"go\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -22305,7 +21955,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"north\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -22367,7 +22016,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"south\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -22429,7 +22077,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"east\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -22491,7 +22138,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"west\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -22553,7 +22199,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "int",
       "$children": [
         {
           "$type": "identifier",
@@ -22593,7 +22238,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"hey, what's up?\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -22655,7 +22299,6 @@
     "input": {
       "$type": "list_splat_pattern",
       "$source": "ts",
-      "$text": "*match",
       "$fields": {
         "*": {
           "$type": "*",
@@ -22708,7 +22351,6 @@
     "input": {
       "$type": "list",
       "$source": "ts",
-      "$text": "[1, 2, 3]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -22816,7 +22458,6 @@
     "input": {
       "$type": "list",
       "$source": "ts",
-      "$text": "[match]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -22880,7 +22521,6 @@
     "input": {
       "$type": "list",
       "$source": "ts",
-      "$text": "[match]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -22944,7 +22584,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "call(match=r\".*\\.txt$\")",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -22995,7 +22634,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "r\".*\\.txt$\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -23057,7 +22695,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "match(match=match, match)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -23108,7 +22745,6 @@
     "input": {
       "$type": "list",
       "$source": "ts",
-      "$text": "[case]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -23172,7 +22808,6 @@
     "input": {
       "$type": "list",
       "$source": "ts",
-      "$text": "[case]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -23236,7 +22871,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "call_me(case=True)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -23287,7 +22921,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"something\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -23349,7 +22982,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"something\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -23411,7 +23043,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"else\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -23473,7 +23104,6 @@
     "input": {
       "$type": "concatenated_string",
       "$source": "ts",
-      "$text": "\"something\" \"else\"",
       "$children": [
         {
           "$type": "string",
@@ -23524,7 +23154,6 @@
     "input": {
       "$type": "tuple",
       "$source": "ts",
-      "$text": "(0, 1, 2)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -23632,7 +23261,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "locals()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -23683,7 +23311,6 @@
     "input": {
       "$type": "named_expression",
       "$source": "ts",
-      "$text": "match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)",
       "$fields": {
         "name": {
           "$type": "identifier",
@@ -23745,7 +23372,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -23796,7 +23422,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "re.fullmatch",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -23858,7 +23483,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "re.ASCII",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -23920,7 +23544,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -23982,7 +23605,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "event.get()",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -24033,7 +23655,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "handle_click_at(x, y)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -24084,7 +23705,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "game.quit()",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -24135,7 +23755,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "game.go_north()",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -24186,7 +23805,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "ValueError(f\"Unrecognized event: {other_event}\")",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -24237,7 +23855,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "event.get",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -24299,7 +23916,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "game.quit",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -24361,7 +23977,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "game.go_north",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -24423,7 +24038,6 @@
     "input": {
       "$type": "tuple_pattern",
       "$source": "ts",
-      "$text": "(x, y)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -24509,7 +24123,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"up arrow\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -24571,7 +24184,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "f\"Unrecognized event: {other_event}\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -24646,7 +24258,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"Q\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -24708,7 +24319,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "event.get()",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -24759,7 +24369,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "handle_click_at(x, y)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -24810,7 +24419,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "event.get",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -24872,7 +24480,6 @@
     "input": {
       "$type": "tuple_pattern",
       "$source": "ts",
-      "$text": "(x, y)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -24958,7 +24565,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "event.get()",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -25009,7 +24615,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "handle_click_at(x, y)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -25060,7 +24665,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "event.get",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -25122,7 +24726,6 @@
     "input": {
       "$type": "tuple_pattern",
       "$source": "ts",
-      "$text": "(x, y)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -25208,7 +24811,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"color\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -25270,7 +24872,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"format\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -25332,7 +24933,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"format\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -25394,7 +24994,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"text\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -25456,7 +25055,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"sleep\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -25518,7 +25116,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"sound\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -25580,7 +25177,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"ogg\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -25642,7 +25238,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"sound\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -25704,7 +25299,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"Unsupported audio format\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -25766,7 +25360,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "ui.set_text_color(c)",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -25817,7 +25410,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "ui.display(message)",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -25868,7 +25460,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "ui.wait(duration)",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -25919,7 +25510,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "ui.play(url)",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -25970,7 +25560,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "action()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -26021,7 +25610,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "warning(\"Unsupported audio format\")",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -26072,7 +25660,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "ui.set_text_color",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -26134,7 +25721,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "ui.display",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -26196,7 +25782,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "ui.wait",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -26258,7 +25843,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "ui.play",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -26320,7 +25904,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"color\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -26382,7 +25965,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"format\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -26444,7 +26026,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"format\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -26506,7 +26087,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"text\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -26568,7 +26148,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"sleep\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -26630,7 +26209,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"sound\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -26692,7 +26270,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"ogg\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -26754,7 +26331,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"sound\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -26816,7 +26392,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"Unsupported audio format\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -26878,7 +26453,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "ui.set_text_color(c)",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -26929,7 +26503,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "ui.display(message)",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -26980,7 +26553,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "ui.wait(duration)",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -27031,7 +26603,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "ui.play(url)",
       "$fields": {
         "function": {
           "$type": "attribute",
@@ -27082,7 +26653,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "warning(\"Unsupported audio format\")",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -27133,7 +26703,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "ui.set_text_color",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -27195,7 +26764,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "ui.display",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -27257,7 +26825,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "ui.wait",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -27319,7 +26886,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "ui.play",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -27381,7 +26947,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "foo1()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -27432,7 +26997,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "foo2()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -27483,7 +27047,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "foo3()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -27534,7 +27097,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "foo4()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -27585,7 +27147,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "foo5()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -27636,7 +27197,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "foo6()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -27687,7 +27247,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "foo7()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -27738,7 +27297,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "foo8()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -27789,7 +27347,6 @@
     "input": {
       "$type": "boolean_operator",
       "$source": "ts",
-      "$text": "0 or 1",
       "$fields": {
         "left": {
           "$type": "integer",
@@ -27851,7 +27408,6 @@
     "input": {
       "$type": "boolean_operator",
       "$source": "ts",
-      "$text": "1 or 0",
       "$fields": {
         "left": {
           "$type": "integer",
@@ -27913,7 +27469,6 @@
     "input": {
       "$type": "boolean_operator",
       "$source": "ts",
-      "$text": "0 or 1",
       "$fields": {
         "left": {
           "$type": "integer",
@@ -27975,7 +27530,6 @@
     "input": {
       "$type": "not_operator",
       "$source": "ts",
-      "$text": "not True",
       "$fields": {
         "not": {
           "$type": "not",
@@ -28026,7 +27580,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"b\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -28088,7 +27641,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"c\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -28150,7 +27702,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "b + c",
       "$fields": {
         "left": {
           "$type": "identifier",
@@ -28212,7 +27763,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "a[1]",
       "$fields": {
         "value": {
           "$type": "identifier",
@@ -28285,7 +27835,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "b[2]",
       "$fields": {
         "value": {
           "$type": "identifier",
@@ -28358,7 +27907,6 @@
     "input": {
       "$type": "binary_operator",
       "$source": "ts",
-      "$text": "a + b",
       "$fields": {
         "left": {
           "$type": "identifier",
@@ -28420,7 +27968,6 @@
     "input": {
       "$type": "not_operator",
       "$source": "ts",
-      "$text": "not b",
       "$fields": {
         "not": {
           "$type": "not",
@@ -28471,7 +28018,6 @@
     "input": {
       "$type": "list",
       "$source": "ts",
-      "$text": "[(1,), (2,), (3,)]",
       "$fields": {
         "[": {
           "$type": "[",
@@ -28579,7 +28125,6 @@
     "input": {
       "$type": "as_pattern",
       "$source": "ts",
-      "$text": "d as e",
       "$fields": {
         "expression": {
           "$type": "identifier",
@@ -28641,7 +28186,6 @@
     "input": {
       "$type": "as_pattern",
       "$source": "ts",
-      "$text": "d as e",
       "$fields": {
         "expression": {
           "$type": "identifier",
@@ -28703,7 +28247,6 @@
     "input": {
       "$type": "as_pattern",
       "$source": "ts",
-      "$text": "open('d') as d",
       "$fields": {
         "expression": {
           "$type": "call",
@@ -28765,7 +28308,6 @@
     "input": {
       "$type": "as_pattern",
       "$source": "ts",
-      "$text": "open('e') as e",
       "$fields": {
         "expression": {
           "$type": "call",
@@ -28827,7 +28369,6 @@
     "input": {
       "$type": "as_pattern",
       "$source": "ts",
-      "$text": "a as b",
       "$fields": {
         "expression": {
           "$type": "identifier",
@@ -28889,7 +28430,6 @@
     "input": {
       "$type": "as_pattern",
       "$source": "ts",
-      "$text": "e as f",
       "$fields": {
         "expression": {
           "$type": "identifier",
@@ -28951,7 +28491,6 @@
     "input": {
       "$type": "as_pattern",
       "$source": "ts",
-      "$text": "g as h",
       "$fields": {
         "expression": {
           "$type": "identifier",
@@ -29013,7 +28552,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "open('d')",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -29064,7 +28602,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "open('e')",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -29115,7 +28652,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "'d'",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -29177,7 +28713,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "'e'",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -29239,7 +28774,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "str",
       "$children": [
         {
           "$type": "identifier",
@@ -29279,7 +28813,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "b.c",
       "$children": [
         {
           "$type": "attribute",
@@ -29319,7 +28852,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "Sequence[T]",
       "$children": [
         {
           "$type": "generic_type",
@@ -29359,7 +28891,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "T",
       "$children": [
         {
           "$type": "identifier",
@@ -29399,7 +28930,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "T",
       "$children": [
         {
           "$type": "identifier",
@@ -29439,7 +28969,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "str",
       "$children": [
         {
           "$type": "identifier",
@@ -29479,7 +29008,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "None",
       "$children": [
         {
           "$type": "none",
@@ -29519,7 +29047,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "str",
       "$children": [
         {
           "$type": "identifier",
@@ -29559,7 +29086,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "None",
       "$children": [
         {
           "$type": "none",
@@ -29599,7 +29125,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "b.c",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -29661,7 +29186,6 @@
     "input": {
       "$type": "list_splat_pattern",
       "$source": "ts",
-      "$text": "*c",
       "$fields": {
         "*": {
           "$type": "*",
@@ -29714,7 +29238,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"default\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -29776,7 +29299,6 @@
     "input": {
       "$type": "tuple",
       "$source": "ts",
-      "$text": "(a,b)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -29862,7 +29384,6 @@
     "input": {
       "$type": "list_splat_pattern",
       "$source": "ts",
-      "$text": "*list",
       "$fields": {
         "*": {
           "$type": "*",
@@ -29915,7 +29436,6 @@
     "input": {
       "$type": "list_splat_pattern",
       "$source": "ts",
-      "$text": "*a",
       "$fields": {
         "*": {
           "$type": "*",
@@ -29968,7 +29488,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "str",
       "$children": [
         {
           "$type": "identifier",
@@ -30008,7 +29527,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "str",
       "$children": [
         {
           "$type": "identifier",
@@ -30048,7 +29566,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "i((*a))",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -30099,7 +29616,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "j(((*a)))",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -30150,7 +29666,6 @@
     "input": {
       "$type": "parenthesized_expression",
       "$source": "ts",
-      "$text": "(*a)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -30214,7 +29729,6 @@
     "input": {
       "$type": "parenthesized_expression",
       "$source": "ts",
-      "$text": "((*a))",
       "$fields": {
         "(": {
           "$type": "(",
@@ -30278,7 +29792,6 @@
     "input": {
       "$type": "parenthesized_expression",
       "$source": "ts",
-      "$text": "(*a)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -30342,7 +29855,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "f()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -30393,7 +29905,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "Sequence[T]",
       "$fields": {
         "value": {
           "$type": "identifier",
@@ -30466,7 +29977,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "Sequence[T, U]",
       "$fields": {
         "value": {
           "$type": "identifier",
@@ -30563,7 +30073,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "e[2].f.g",
       "$fields": {
         "object": {
           "$type": "attribute",
@@ -30625,7 +30134,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "e[2].f",
       "$fields": {
         "object": {
           "$type": "subscript",
@@ -30687,7 +30195,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "a.b",
       "$fields": {
         "object": {
           "$type": "identifier",
@@ -30749,7 +30256,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "buttons[0].clicked.connect",
       "$fields": {
         "object": {
           "$type": "attribute",
@@ -30811,7 +30317,6 @@
     "input": {
       "$type": "attribute",
       "$source": "ts",
-      "$text": "buttons[0].clicked",
       "$fields": {
         "object": {
           "$type": "subscript",
@@ -30873,7 +30378,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "d(1)",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -30924,7 +30428,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "f()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -30975,7 +30478,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "e[2]",
       "$fields": {
         "value": {
           "$type": "identifier",
@@ -31048,7 +30550,6 @@
     "input": {
       "$type": "subscript",
       "$source": "ts",
-      "$text": "buttons[0]",
       "$fields": {
         "value": {
           "$type": "identifier",
@@ -31121,7 +30622,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "RuntimeError('NO')",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -31172,7 +30672,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "RunTimeError('NO')",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -31223,7 +30722,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "'NO'",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -31285,7 +30783,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "'NO'",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -31347,7 +30844,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"a\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -31409,7 +30905,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "'1+1'",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -31471,7 +30966,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "'x+=1'",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -31533,7 +31027,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "'x+=1'",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -31595,7 +31088,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"print\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -31657,7 +31149,6 @@
     "input": {
       "$type": "dictionary",
       "$source": "ts",
-      "$text": "{}",
       "$fields": {
         "{": {
           "$type": "{",
@@ -31708,7 +31199,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "b()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -31759,7 +31249,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "c()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -31810,7 +31299,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "e()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -31861,7 +31349,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "f()",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -31912,7 +31399,6 @@
     "input": {
       "$type": "boolean_operator",
       "$source": "ts",
-      "$text": "len(\"a\") \\\nor len(\"aa\")",
       "$fields": {
         "left": {
           "$type": "call",
@@ -31987,7 +31473,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "len(\"a\")",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -32038,7 +31523,6 @@
     "input": {
       "$type": "call",
       "$source": "ts",
-      "$text": "len(\"aa\")",
       "$fields": {
         "function": {
           "$type": "identifier",
@@ -32089,7 +31573,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"a\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -32151,7 +31634,6 @@
     "input": {
       "$type": "string",
       "$source": "ts",
-      "$text": "\"aa\"",
       "$fields": {
         "string_start": {
           "$type": "string_start",
@@ -32213,7 +31695,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "Point",
       "$children": [
         {
           "$type": "identifier",
@@ -32253,7 +31734,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "tuple[float, float]",
       "$children": [
         {
           "$type": "generic_type",
@@ -32293,7 +31773,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "float",
       "$children": [
         {
           "$type": "identifier",
@@ -32333,7 +31812,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "float",
       "$children": [
         {
           "$type": "identifier",
@@ -32373,7 +31851,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "Point[T]",
       "$children": [
         {
           "$type": "generic_type",
@@ -32413,7 +31890,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "T",
       "$children": [
         {
           "$type": "identifier",
@@ -32453,7 +31929,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "tuple[T, T]",
       "$children": [
         {
           "$type": "generic_type",
@@ -32493,7 +31968,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "T",
       "$children": [
         {
           "$type": "identifier",
@@ -32533,7 +32007,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "T",
       "$children": [
         {
           "$type": "identifier",
@@ -32573,7 +32046,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "IntFunc[**P]",
       "$children": [
         {
           "$type": "generic_type",
@@ -32613,7 +32085,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "**P",
       "$children": [
         {
           "$type": "splat_type",
@@ -32653,7 +32124,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "Callable[P, int]",
       "$children": [
         {
           "$type": "generic_type",
@@ -32693,7 +32163,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "P",
       "$children": [
         {
           "$type": "identifier",
@@ -32733,7 +32202,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "int",
       "$children": [
         {
           "$type": "identifier",
@@ -32773,7 +32241,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "LabeledTuple[*Ts]",
       "$children": [
         {
           "$type": "generic_type",
@@ -32813,7 +32280,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "*Ts",
       "$children": [
         {
           "$type": "splat_type",
@@ -32853,7 +32319,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "tuple[str, *Ts]",
       "$children": [
         {
           "$type": "generic_type",
@@ -32893,7 +32358,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "str",
       "$children": [
         {
           "$type": "identifier",
@@ -32933,7 +32397,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "*Ts",
       "$children": [
         {
           "$type": "splat_type",
@@ -32973,7 +32436,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "HashableSequence[T: Hashable]",
       "$children": [
         {
           "$type": "generic_type",
@@ -33013,7 +32475,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "T: Hashable",
       "$children": [
         {
           "$type": "constrained_type",
@@ -33053,7 +32514,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "T",
       "$children": [
         {
           "$type": "identifier",
@@ -33093,7 +32553,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "Hashable",
       "$children": [
         {
           "$type": "identifier",
@@ -33133,7 +32592,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "Sequence[T]",
       "$children": [
         {
           "$type": "generic_type",
@@ -33173,7 +32631,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "T",
       "$children": [
         {
           "$type": "identifier",
@@ -33213,7 +32670,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "IntOrStrSequence[T: (int, str)]",
       "$children": [
         {
           "$type": "generic_type",
@@ -33253,7 +32709,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "T: (int, str)",
       "$children": [
         {
           "$type": "constrained_type",
@@ -33293,7 +32748,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "T",
       "$children": [
         {
           "$type": "identifier",
@@ -33333,7 +32787,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "(int, str)",
       "$children": [
         {
           "$type": "tuple",
@@ -33373,7 +32826,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "Sequence[T]",
       "$children": [
         {
           "$type": "generic_type",
@@ -33413,7 +32865,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "T",
       "$children": [
         {
           "$type": "identifier",
@@ -33453,7 +32904,6 @@
     "input": {
       "$type": "tuple",
       "$source": "ts",
-      "$text": "(int, str)",
       "$fields": {
         "(": {
           "$type": "(",
@@ -33539,7 +32989,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "T",
       "$children": [
         {
           "$type": "identifier",
@@ -33579,7 +33028,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "*Ts",
       "$children": [
         {
           "$type": "splat_type",
@@ -33619,7 +33067,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "**P",
       "$children": [
         {
           "$type": "splat_type",
@@ -33659,7 +33106,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "TA[T2, *Ts2, **P2]",
       "$children": [
         {
           "$type": "generic_type",
@@ -33699,7 +33145,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "T2",
       "$children": [
         {
           "$type": "identifier",
@@ -33739,7 +33184,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "*Ts2",
       "$children": [
         {
           "$type": "splat_type",
@@ -33779,7 +33223,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "**P2",
       "$children": [
         {
           "$type": "splat_type",
@@ -33819,7 +33262,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]",
       "$children": [
         {
           "$type": "generic_type",
@@ -33859,7 +33301,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "Callable[P, tuple[T, *Ts]]",
       "$children": [
         {
           "$type": "generic_type",
@@ -33899,7 +33340,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "P",
       "$children": [
         {
           "$type": "identifier",
@@ -33939,7 +33379,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "tuple[T, *Ts]",
       "$children": [
         {
           "$type": "generic_type",
@@ -33979,7 +33418,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "T",
       "$children": [
         {
           "$type": "identifier",
@@ -34019,7 +33457,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "*Ts",
       "$children": [
         {
           "$type": "splat_type",
@@ -34059,7 +33496,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "Callable[P2, tuple[T2, *Ts2]]",
       "$children": [
         {
           "$type": "generic_type",
@@ -34099,7 +33535,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "P2",
       "$children": [
         {
           "$type": "identifier",
@@ -34139,7 +33574,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "tuple[T2, *Ts2]",
       "$children": [
         {
           "$type": "generic_type",
@@ -34179,7 +33613,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "T2",
       "$children": [
         {
           "$type": "identifier",
@@ -34219,7 +33652,6 @@
     "input": {
       "$type": "type",
       "$source": "ts",
-      "$text": "*Ts2",
       "$children": [
         {
           "$type": "splat_type",
