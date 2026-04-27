@@ -136,21 +136,59 @@ pub fn isBlank(s: &str, _values: &dyn askama::Values) -> Result<bool, askama::Er
     Ok(s.trim().is_empty())
 }
 
-/// Inverse of `isBlank` — true when a field has non-whitespace content.
-/// Sugar for `{% if not (foo | isBlank) %}`; used as
-/// `{% if foo | isPresent %}`.
+/// Private trait powering the generic `isPresent` filter.
 ///
-/// Works on both scalar (`String`) and list fields — by convention the
-/// generated struct emits a field's scalar form (`foo`) alongside its
-/// list form (`foo_list`) for every user-declared field; `isPresent`
-/// always targets the scalar. The scalar for list-shaped fields is the
-/// pre-joined string, so an empty list reduces to empty string which
-/// reads as "not present" (matches the TS engine's semantics where a
-/// never-populated field and an empty-array field both render as
-/// blank).
-#[allow(non_snake_case)]
-pub fn isPresent(s: &str, _values: &dyn askama::Values) -> Result<bool, askama::Error> {
-    Ok(!s.trim().is_empty())
+/// Two implementations exist:
+/// - `str` / `String` — non-whitespace text is "present".
+/// - `Vec<S>` — a non-empty list is "present".
+///
+/// The `Vec` case arises when generated template structs expose the
+/// `children` slot as `Vec<String>` and the `.jinja` template uses
+/// `children | isPresent` to gate rendering (e.g. `jsx_expression`,
+/// `named_imports`, `object`, `switch_body`, and their equivalents in
+/// the python and rust grammars). The TS/Nunjucks engine treats any
+/// non-empty array as present; this trait mirrors that semantic on the
+/// Rust/askama side.
+pub(crate) trait PresenceCheck {
+    fn is_present_check(&self) -> bool;
+}
+
+impl PresenceCheck for str {
+    fn is_present_check(&self) -> bool {
+        !self.trim().is_empty()
+    }
+}
+
+impl PresenceCheck for String {
+    fn is_present_check(&self) -> bool {
+        !self.trim().is_empty()
+    }
+}
+
+impl<S> PresenceCheck for Vec<S> {
+    fn is_present_check(&self) -> bool {
+        !self.is_empty()
+    }
+}
+
+/// Inverse of `isBlank` — true when a field has non-whitespace content
+/// (for scalar fields) or is non-empty (for list fields).
+///
+/// Used as `{% if foo | isPresent %}` in Jinja templates. Works for:
+/// - `String` / `str` fields — non-blank string is present.
+/// - `Vec<String>` fields — non-empty list is present (e.g. the
+///   `children` slot on nodes like `jsx_expression`, `named_imports`,
+///   `object`, `switch_body`, `class_body` in generated template
+///   structs for the typescript, python, and rust grammars).
+///
+/// Matches the TS engine's semantics where an empty string and an
+/// empty array both render as "not present".
+#[allow(non_snake_case, private_bounds)]
+pub fn isPresent<T: PresenceCheck + ?Sized>(
+    s: &T,
+    _values: &dyn askama::Values,
+) -> Result<bool, askama::Error> {
+    Ok(s.is_present_check())
 }
 
 /// Probe `values` for a flank-anon text registered under `key`. Returns
