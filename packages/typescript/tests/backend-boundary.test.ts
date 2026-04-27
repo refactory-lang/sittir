@@ -9,13 +9,14 @@ const identifier = {
 
 describe("boundary", () => {
 	afterEach(() => {
-		vi.doUnmock("../src/backend.ts");
+		vi.doUnmock("../src/backend.js");
 		vi.restoreAllMocks();
 		vi.resetModules();
 	});
 
-	it("surfaces native render failures instead of silently retrying on TS", async () => {
-		vi.doMock("../src/backend.ts", () => ({
+	function mockNativeFailureBackend(): void {
+		vi.resetModules();
+		vi.doMock("../src/backend.js", () => ({
 			getActiveBackend: () => ({
 				name: "native",
 				hashMatch: true,
@@ -32,8 +33,17 @@ describe("boundary", () => {
 				},
 			}),
 		}));
+	}
 
+	it("surfaces native render failures instead of silently retrying on TS", async () => {
+		mockNativeFailureBackend();
 		const { render } = await import("../src/boundary.ts");
 		expect(() => render(identifier)).toThrow(/native render boom/);
+	});
+
+	it("surfaces native applyEdits failures instead of silently retrying on TS", async () => {
+		mockNativeFailureBackend();
+		const { applyEdits } = await import("../src/boundary.ts");
+		expect(() => applyEdits("abc", [])).toThrow(/native apply boom/);
 	});
 });

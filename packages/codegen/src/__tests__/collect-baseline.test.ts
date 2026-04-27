@@ -29,6 +29,7 @@ import * as common from "../validate/common.ts";
 import * as baseline from "../scripts/collect-baseline.ts";
 
 const grammarKeys = ["python", "rust", "typescript"] as const;
+const pythonBackendModule = "../../../python/src/backend.js";
 
 describe("collect-baseline", () => {
 	let result: baseline.BackendBaseline;
@@ -38,7 +39,9 @@ describe("collect-baseline", () => {
 	}, 600_000);
 
 	afterEach(() => {
+		vi.doUnmock(pythonBackendModule);
 		vi.restoreAllMocks();
+		vi.resetModules();
 		delete process.env.SITTIR_BACKEND;
 	});
 
@@ -198,10 +201,38 @@ describe("collect-baseline", () => {
 	});
 
 	it("parity render exceptions surface with fixture context", async () => {
-		vi.spyOn(baseline, "loadBoundaryRender").mockResolvedValue(() => {
-			throw new Error("boom");
-		});
-		await expect(baseline.collectBaseline("native")).rejects.toThrow(
+		vi.resetModules();
+		vi.doMock(pythonBackendModule, () => ({
+			getActiveBackend: () => ({
+				name: "native",
+				hashMatch: true,
+				native: {
+					SittirEngine: class {
+						get templateBundleHash() {
+							return "mock-hash";
+						}
+
+						render() {
+							throw new Error("boom");
+						}
+
+						applyEdits() {
+							throw new Error("native apply boom");
+						}
+
+						findAndRead() {
+							throw new Error("unused in parity render test");
+						}
+
+						readNode() {
+							throw new Error("unused in parity render test");
+						}
+					},
+				},
+			}),
+		}));
+		const isolatedBaseline = await import("../scripts/collect-baseline.ts");
+		await expect(isolatedBaseline.collectBaseline("native")).rejects.toThrow(
 			/\[python\]\[native\]\[render #0\].*boom/,
 		);
 	});
