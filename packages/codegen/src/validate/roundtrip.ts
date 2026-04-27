@@ -8,12 +8,12 @@
  * Requires web-tree-sitter + language WASM files.
  */
 
-import { createRequire } from 'node:module';
-import { readNode, createRenderer } from '@sittir/core';
-import type { TreeHandle } from '@sittir/core';
-import type { AnyNodeData } from '@sittir/types';
-import { deriveRuleKinds } from './templates-path.ts';
-import { loadRawEntries } from './node-types-loader.ts';
+import { createRequire } from "node:module";
+import { readNode, createRenderer } from "@sittir/core";
+import type { TreeHandle } from "@sittir/core";
+import type { AnyNodeData } from "@sittir/types";
+import { deriveRuleKinds } from "./templates-path.ts";
+import { loadRawEntries } from "./node-types-loader.ts";
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
@@ -25,10 +25,11 @@ import {
 	wrapForReparse,
 	loadReadTreeNode,
 	walkWrappedTree,
+	emitValidatorMetrics,
 	type TSNode,
 	type TSTree,
 	type WrappedNodeData,
-} from './common.ts';
+} from "./common.ts";
 
 /**
  * Read a tree node and selectively populate `$children` / `$fields` of
@@ -63,14 +64,14 @@ function deepReadNode(
 	// NodeChildValue / NodeFieldValue widened to AnyNodeData | string | number.
 	// Narrow to NodeData before reading $nodeId / $type.
 	const isNodeData = (v: unknown): v is AnyNodeData =>
-		typeof v === 'object' && v !== null && '$type' in v;
+		typeof v === "object" && v !== null && "$type" in v;
 	const shouldDrill = (entry: unknown): entry is AnyNodeData & { $nodeId: number } =>
-		isNodeData(entry)
-		&& entry.$named === true
-		&& typeof entry.$nodeId === 'number'
-		&& deepReadKinds.has(entry.$type);
+		isNodeData(entry) &&
+		entry.$named === true &&
+		typeof entry.$nodeId === "number" &&
+		deepReadKinds.has(entry.$type);
 	if (data.$children) {
-		const drilled = data.$children.map(c =>
+		const drilled = data.$children.map((c) =>
 			shouldDrill(c) ? deepReadNode(tree, c.$nodeId, deepReadKinds) : c,
 		);
 		(data as { $children?: typeof drilled }).$children = drilled;
@@ -78,10 +79,13 @@ function deepReadNode(
 	if (data.$fields) {
 		// $fields has a readonly index signature; rebuild as a mutable map
 		// then assign back via a structural cast.
-		const newFields: Record<string, AnyNodeData | string | number | readonly (AnyNodeData | string | number)[] | undefined> = {};
+		const newFields: Record<
+			string,
+			AnyNodeData | string | number | readonly (AnyNodeData | string | number)[] | undefined
+		> = {};
 		for (const [key, value] of Object.entries(data.$fields)) {
 			if (Array.isArray(value)) {
-				newFields[key] = value.map(entry =>
+				newFields[key] = value.map((entry) =>
 					shouldDrill(entry) ? deepReadNode(tree, entry.$nodeId, deepReadKinds) : entry,
 				);
 			} else {
@@ -116,8 +120,8 @@ async function loadVariantAdoptedKinds(grammar: string): Promise<ReadonlySet<str
 	// the catch{} swallowed the ENOENT.
 	const factoryMapPath = new URL(`../../../${grammar}/factory-map.json5`, import.meta.url).pathname;
 	try {
-		const fs = await import('node:fs');
-		const content = fs.readFileSync(factoryMapPath, 'utf-8');
+		const fs = await import("node:fs");
+		const content = fs.readFileSync(factoryMapPath, "utf-8");
 		const kinds = new Set<string>();
 		// Scan the WHOLE file for parent entries — the shape
 		// `"<name>": { "source": "override", "childKind": { ... } }`
@@ -126,7 +130,8 @@ async function loadVariantAdoptedKinds(grammar: string): Promise<ReadonlySet<str
 		// so we don't need to isolate the surrounding block (nested
 		// brace matching in regex is brittle and the outer non-greedy
 		// scan stops at the first `}` inside the inner object).
-		const parentEntryRe = /["'](\w+)["']\s*:\s*\{[^}]*["']source["']\s*:\s*["']override["'][^{]*["']childKind["']\s*:\s*\{([^}]*)\}/g;
+		const parentEntryRe =
+			/["'](\w+)["']\s*:\s*\{[^}]*["']source["']\s*:\s*["']override["'][^{]*["']childKind["']\s*:\s*\{([^}]*)\}/g;
 		let m: RegExpExecArray | null;
 		while ((m = parentEntryRe.exec(content)) !== null) {
 			kinds.add(m[1]!);
@@ -165,18 +170,18 @@ function findNodeById(node: TSNode, nodeId: number): TSNode | null {
 }
 
 function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
-	if (node.type === kind && node.startIndex === offset) return node
+	if (node.type === kind && node.startIndex === offset) return node;
 	for (let i = 0; i < node.childCount; i++) {
-		const c = node.child(i)
-		if (!c) continue
+		const c = node.child(i);
+		if (!c) continue;
 		// Quick prune: the rendered fragment must be inside this child's range.
-		if (offset < c.startIndex || offset >= c.endIndex) continue
-		const hit = findNodeAt(c, kind, offset)
-		if (hit) return hit
+		if (offset < c.startIndex || offset >= c.endIndex) continue;
+		const hit = findNodeAt(c, kind, offset);
+		if (hit) return hit;
 	}
 	// Fallback: any node of the right kind whose range starts at offset.
-	if (node.type === kind && node.startIndex === offset) return node
-	return null
+	if (node.type === kind && node.startIndex === offset) return node;
+	return null;
 }
 
 /**
@@ -203,9 +208,9 @@ function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
  * exclusion. (016 Cluster I.)
  */
 const NAMED_EXTRAS_BY_GRAMMAR: Record<string, ReadonlySet<string>> = {
-	rust: new Set(['line_comment', 'block_comment']),
-	typescript: new Set(['comment', 'html_comment']),
-	python: new Set(['comment', 'line_continuation']),
+	rust: new Set(["line_comment", "block_comment"]),
+	typescript: new Set(["comment", "html_comment"]),
+	python: new Set(["comment", "line_continuation"]),
 };
 
 function collectVisibleChildren(n: TSNode, namedExtras: ReadonlySet<string>): TSNode[] {
@@ -219,15 +224,20 @@ function collectVisibleChildren(n: TSNode, namedExtras: ReadonlySet<string>): TS
 	return out;
 }
 
-function astStructuralDiff(a: TSNode, b: TSNode, namedExtras: ReadonlySet<string>, path: string = ''): string | null {
+function astStructuralDiff(
+	a: TSNode,
+	b: TSNode,
+	namedExtras: ReadonlySet<string>,
+	path: string = "",
+): string | null {
 	if (a.type !== b.type) {
-		return `${path || 'root'}: type ${a.type} ≠ ${b.type}`;
+		return `${path || "root"}: type ${a.type} ≠ ${b.type}`;
 	}
 	const aChildren = collectVisibleChildren(a, namedExtras);
 	const bChildren = collectVisibleChildren(b, namedExtras);
 	if (aChildren.length !== bChildren.length) {
-		const aDesc = aChildren.map(c => c.isNamed ? c.type : JSON.stringify(c.text)).join(',');
-		const bDesc = bChildren.map(c => c.isNamed ? c.type : JSON.stringify(c.text)).join(',');
+		const aDesc = aChildren.map((c) => (c.isNamed ? c.type : JSON.stringify(c.text))).join(",");
+		const bDesc = bChildren.map((c) => (c.isNamed ? c.type : JSON.stringify(c.text))).join(",");
 		return `${path || a.type}: childCount ${aChildren.length} ≠ ${bChildren.length} [${aDesc}] vs [${bDesc}]`;
 	}
 	for (let i = 0; i < aChildren.length; i++) {
@@ -424,9 +434,8 @@ function applyAliasResolution(
 	nodeIdToEffectiveType: Map<number, string>,
 ): { data: typeof rawData; renderedKind: string; targetKind: string } {
 	const effective = nodeIdToEffectiveType.get(nodeId);
-	const data = effective && effective !== rawData.$type
-		? { ...rawData, $type: effective }
-		: rawData;
+	const data =
+		effective && effective !== rawData.$type ? { ...rawData, $type: effective } : rawData;
 	const renderedKind = data.$type;
 	const targetKind = rawData.$type;
 	return { data, renderedKind, targetKind };
@@ -469,58 +478,58 @@ function findReparsedNodeAtOffset(
  * end-to-end semantic parity (SC-001b).
  */
 export interface RenderFixture {
-	kind: 'render'
-	grammar: string
+	kind: "render";
+	grammar: string;
 	/** NodeData input — the deep-read result from readTreeNode, ready
 	 *  for the Rust engine's `render_dispatch` or the TS engine's
 	 *  `render()`. Serialized to JSON verbatim. */
-	input: unknown
+	input: unknown;
 	/** The string the TS engine produced for `input`. Parity gate
 	 *  asserts the Rust engine produces the same bytes. */
-	expectedOutput: string
+	expectedOutput: string;
 }
 
 export interface RoundTripFixture {
-	kind: 'roundtrip'
-	grammar: string
+	kind: "roundtrip";
+	grammar: string;
 	/** Original source text for the probed node. */
-	sourceIn: string
+	sourceIn: string;
 	/** The kind name — functions as the ast-grep-style pattern
 	 *  ("match anything of this kind"). No actual edits are applied
 	 *  at MVP; the fixture exists to anchor full-pipeline parity. */
-	pattern: string
+	pattern: string;
 	/** Edit spec list — empty at MVP (render-only round-trip). Kept
 	 *  in the schema so future fixtures can exercise applyEdits. */
-	edits: readonly unknown[]
+	edits: readonly unknown[];
 	/** Expected source after render (equals `sourceIn` for render-only
 	 *  round-trips that match byte-for-byte; may differ when render
 	 *  normalizes whitespace). */
-	expectedSourceOut: string
+	expectedSourceOut: string;
 	/** S-expression serialization of the re-parsed SUBTREE rooted at
 	 *  `pattern` (`node2.toString()` on the web-tree-sitter side). The
 	 *  subtree comes from parsing `wrappedText` and locating the node
 	 *  at `wrappedOffset`. Cross-engine parity harnesses reproduce it
 	 *  by parsing `wrappedText` with their own tree-sitter binding. */
-	expectedReparseTree: string
+	expectedReparseTree: string;
 	/** The rendered fragment wrapped in a supertype / direct-kind
 	 *  reparse context so tree-sitter can parse it (bare fragments
 	 *  like `"pub"` alone don't parse). Captured by the TS validator's
 	 *  `wrapForReparse` — the SAME text the TS side reparsed. */
-	wrappedText: string
+	wrappedText: string;
 	/** Byte offset within `wrappedText` where the rendered fragment
 	 *  was spliced in. Parity harnesses use this to locate the
 	 *  subtree to compare against `expectedReparseTree`. */
-	wrappedOffset: number
+	wrappedOffset: number;
 }
 
-export type ParityFixture = RenderFixture | RoundTripFixture
+export type ParityFixture = RenderFixture | RoundTripFixture;
 
 export interface ValidateRoundTripOptions {
 	/** Called once per successfully round-tripped kind — emits a
 	 *  `RenderFixture` then a `RoundTripFixture`. When omitted,
 	 *  validator runs its normal pass/fail accounting without
 	 *  fixture capture (zero added cost). */
-	onFixture?: (fx: ParityFixture) => void
+	onFixture?: (fx: ParityFixture) => void;
 }
 
 export async function validateRoundTrip(
@@ -563,8 +572,14 @@ export async function validateRoundTrip(
 			}
 
 			const kinds = new Set(collectKinds(tree1.rootNode));
-			const nodeIdToEffectiveType = discoverAliasSourceKinds(readTreeNodeFn, tree1, kinds, grammar, entry.source);
-			const testableKinds = [...kinds].filter(k => ruleKinds.has(k));
+			const nodeIdToEffectiveType = discoverAliasSourceKinds(
+				readTreeNodeFn,
+				tree1,
+				kinds,
+				grammar,
+				entry.source,
+			);
+			const testableKinds = [...kinds].filter((k) => ruleKinds.has(k));
 
 			if (testableKinds.length === 0) {
 				skip++;
@@ -610,14 +625,21 @@ export async function validateRoundTrip(
 					// structural data to call factory functions and
 					// reconstruct the tree from scratch.
 					const rawData = readNode(handle, node1.id);
-					const { data, renderedKind, targetKind } = applyAliasResolution(rawData, node1.id, nodeIdToEffectiveType);
+					const { data, renderedKind, targetKind } = applyAliasResolution(
+						rawData,
+						node1.id,
+						nodeIdToEffectiveType,
+					);
 
 					try {
 						const inputSource = node1.text;
 						const rendered = render(data);
 
 						// Wrap for reparse using supertype context
-						const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, { adoptedVariantKinds: deepReadKinds, targetKind });
+						const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, {
+							adoptedVariantKinds: deepReadKinds,
+							targetKind,
+						});
 						if (wrapped === null) continue; // no supertype - skip this candidate
 						kindHadCandidate = true;
 
@@ -639,8 +661,11 @@ export async function validateRoundTrip(
 						// doesn't re-alias — ts's interface_body rendered as
 						// object_type inside `type _X = …;`). Accept either
 						// at the rendered offset.
-						const node2 = findReparsedNodeAtOffset(tree2, targetKind, wrapped)
-							?? (renderedKind !== targetKind ? findReparsedNodeAtOffset(tree2, renderedKind, wrapped) : null);
+						const node2 =
+							findReparsedNodeAtOffset(tree2, targetKind, wrapped) ??
+							(renderedKind !== targetKind
+								? findReparsedNodeAtOffset(tree2, renderedKind, wrapped)
+								: null);
 						if (!node2) {
 							kindErrors.push({
 								name: `${entry.name} [${renderedKind}]`,
@@ -670,13 +695,13 @@ export async function validateRoundTrip(
 								// data we have matches both shapes; only the shape
 								// type tag differs.
 								options.onFixture({
-									kind: 'render',
+									kind: "render",
 									grammar,
 									input: data,
 									expectedOutput: rendered,
 								});
 								options.onFixture({
-									kind: 'roundtrip',
+									kind: "roundtrip",
 									grammar,
 									sourceIn: inputSource,
 									pattern: renderedKind,
@@ -689,7 +714,10 @@ export async function validateRoundTrip(
 							}
 						}
 					} catch (e) {
-						kindErrors.push({ name: `${entry.name} [${renderedKind}]`, message: `render: ${(e as Error).message.slice(0, 100)}` });
+						kindErrors.push({
+							name: `${entry.name} [${renderedKind}]`,
+							message: `render: ${(e as Error).message.slice(0, 100)}`,
+						});
 					}
 				}
 
@@ -726,6 +754,7 @@ export async function validateRoundTrip(
 	// fields already tested by Check 6 (the end-to-end corpus loop).
 	// Duplicate work checking a stale invariant.
 
+	emitValidatorMetrics();
 	return {
 		grammar,
 		total,
@@ -740,9 +769,13 @@ export async function validateRoundTrip(
 
 export function formatRoundTripReport(result: RoundTripResult): string {
 	const lines: string[] = [];
-	const icon = result.fail === 0 ? 'v' : 'x';
-	lines.push(`  ${icon} ${result.pass}/${result.total} round-trip (${result.skip} skipped, ${result.errors.length} errors)`);
-	lines.push(`    ast-match ${result.astMatchPass}/${result.total} (${result.astMismatches.length} structural mismatches)`);
+	const icon = result.fail === 0 ? "v" : "x";
+	lines.push(
+		`  ${icon} ${result.pass}/${result.total} round-trip (${result.skip} skipped, ${result.errors.length} errors)`,
+	);
+	lines.push(
+		`    ast-match ${result.astMatchPass}/${result.total} (${result.astMismatches.length} structural mismatches)`,
+	);
 	if (result.errors.length > 0) {
 		for (const e of result.errors) {
 			lines.push(`    x ${e.name}: ${e.message}`);
@@ -756,5 +789,5 @@ export function formatRoundTripReport(result: RoundTripResult): string {
 			lines.push(`    … and ${result.astMismatches.length - 20} more`);
 		}
 	}
-	return lines.join('\n');
+	return lines.join("\n");
 }

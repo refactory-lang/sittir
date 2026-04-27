@@ -9,10 +9,18 @@
 // maintained here — the project's browser-facing render path is
 // Rust→WASM (Phase B) post-port; TS is Node-only by design.
 
-import { existsSync } from 'node:fs';
-import { join as pathJoin } from 'node:path';
-import type { AnyNodeData, Edit, ByteRange, RulesConfig, TemplateRule, TemplateRuleObject } from './types.ts';
-import { createNunjucksEnvironment } from './templates/nunjucks-env.ts';
+import { existsSync } from "node:fs";
+import { join as pathJoin } from "node:path";
+import type {
+	AnyNodeData,
+	Edit,
+	ByteRange,
+	RulesConfig,
+	TemplateRule,
+	TemplateRuleObject,
+} from "./types.ts";
+import { createNunjucksEnvironment } from "./templates/nunjucks-env.ts";
+import { withMetrics } from "./metrics.ts";
 
 export type { RulesConfig };
 
@@ -35,10 +43,14 @@ interface InternalRenderContext {
 }
 
 function buildRenderContext(config: RulesConfig): InternalRenderContext {
-	const prefix = config.expandoChar ?? '$';
-	const varPattern = prefix === '$'
-		? DEFAULT_VAR_RE
-		: new RegExp(`(${escapeRegex(prefix)}{3}|${escapeRegex(prefix)}{2}|${escapeRegex(prefix)}_|${escapeRegex(prefix)})([A-Z][A-Z0-9_]*)`, 'g');
+	const prefix = config.expandoChar ?? "$";
+	const varPattern =
+		prefix === "$"
+			? DEFAULT_VAR_RE
+			: new RegExp(
+					`(${escapeRegex(prefix)}{3}|${escapeRegex(prefix)}{2}|${escapeRegex(prefix)}_|${escapeRegex(prefix)})([A-Z][A-Z0-9_]*)`,
+					"g",
+				);
 	return { config, varPattern, prefix };
 }
 
@@ -55,7 +67,7 @@ function buildRenderContext(config: RulesConfig): InternalRenderContext {
  *   or a field-presence fallback across the variant values.
  */
 function resolveTemplate(rule: TemplateRule, node: AnyNodeData, varPattern: RegExp): string {
-	if (typeof rule === 'string') return rule;
+	if (typeof rule === "string") return rule;
 
 	const obj = rule as TemplateRuleObject;
 
@@ -120,8 +132,12 @@ interface Substitution {
 }
 
 export type PreparedRender =
-	| { readonly kind: 'text'; readonly text: string }
-	| { readonly kind: 'template'; readonly template: string; readonly substitutions: readonly Substitution[] };
+	| { readonly kind: "text"; readonly text: string }
+	| {
+			readonly kind: "template";
+			readonly template: string;
+			readonly substitutions: readonly Substitution[];
+	  };
 
 /**
  * Bag passed to Nunjucks for a single render. Named field slots arrive
@@ -181,10 +197,13 @@ type MutableFlankedChildArray = string[] & {
  * the node's tree-sitter structure.
  */
 export function prepare(node: AnyNodeData, ctx: InternalRenderContext): PreparedRender {
-	if (node.$text !== undefined && !node.$fields && !node.$children) return { kind: 'text', text: node.$text };
+	if (node.$text !== undefined && !node.$fields && !node.$children)
+		return { kind: "text", text: node.$text };
 
 	if (!node.$fields && !node.$children) {
-		throw new Error(`Node '${node.$type}' has no 'fields' or 'children' — did you mean to set 'text' for a leaf node?`);
+		throw new Error(
+			`Node '${node.$type}' has no 'fields' or 'children' — did you mean to set 'text' for a leaf node?`,
+		);
 	}
 
 	const rule = ctx.config.rules[node.$type];
@@ -203,20 +222,25 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 		// Narrow fallback so a real missing-rule bug (node with actual
 		// named fields or named children) still throws.
 		const isAnonEntry = (v: unknown): boolean => {
-			if (v == null || typeof v !== 'object') return false;
+			if (v == null || typeof v !== "object") return false;
 			const n = v as AnyNodeData;
 			return n.$named === false;
 		};
-		const fieldsAllAnon = !node.$fields || Object.values(node.$fields).every(v =>
-			Array.isArray(v) ? v.every(isAnonEntry) : isAnonEntry(v),
-		);
-		const childrenAllAnon = !node.$children ||
-			(node.$children as readonly AnyNodeData[]).every(c => c.$named === false);
-		if (node.$text !== undefined && fieldsAllAnon && childrenAllAnon) return { kind: 'text', text: node.$text };
+		const fieldsAllAnon =
+			!node.$fields ||
+			Object.values(node.$fields).every((v) =>
+				Array.isArray(v) ? v.every(isAnonEntry) : isAnonEntry(v),
+			);
+		const childrenAllAnon =
+			!node.$children ||
+			(node.$children as readonly AnyNodeData[]).every((c) => c.$named === false);
+		if (node.$text !== undefined && fieldsAllAnon && childrenAllAnon)
+			return { kind: "text", text: node.$text };
 		throw new Error(`No render rule for '${node.$type}'`);
 	}
 
-	const ruleObj = typeof rule === 'string' ? undefined : rule as unknown as Record<string, unknown>;
+	const ruleObj =
+		typeof rule === "string" ? undefined : (rule as unknown as Record<string, unknown>);
 
 	const { varPattern, prefix } = ctx;
 
@@ -224,7 +248,7 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 	const rawTemplate = resolveTemplate(rule, node, varPattern);
 
 	// Trim trailing newline from YAML | block scalar
-	const tmpl = rawTemplate.endsWith('\n') ? rawTemplate.slice(0, -1) : rawTemplate;
+	const tmpl = rawTemplate.endsWith("\n") ? rawTemplate.slice(0, -1) : rawTemplate;
 
 	// Consumption model: track which children indices have been used.
 	// $$$CHILDREN renders only the unconsumed remainder.
@@ -247,12 +271,12 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 		// character(s) because tree-sitter consumes the physical token
 		// as part of its layout engine without exposing it as a concrete
 		// child node — so a field/children lookup would never find it.
-		if (fieldKey === 'newline') return '\n';
-		if (fieldKey === 'indent') return '';  // render-time indent is handled by column tracking
-		if (fieldKey === 'dedent') return '';
-		if (fieldKey === 'text') {
+		if (fieldKey === "newline") return "\n";
+		if (fieldKey === "indent") return ""; // render-time indent is handled by column tracking
+		if (fieldKey === "dedent") return "";
+		if (fieldKey === "text") {
 			// Parsed-tree path: readNode captured the full source span.
-			if (node.$text !== undefined && node.$text !== '') return node.$text;
+			if (node.$text !== undefined && node.$text !== "") return node.$text;
 			// Factory-built path: the node never saw a source span.
 			// Best-effort concatenate the fields + children so round-
 			// trip tests for `$TEXT` rules still produce non-empty
@@ -281,19 +305,19 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 					parts.push(renderValue(c as AnyNodeData | string | number, ctx));
 				}
 			}
-			return parts.join('');
+			return parts.join("");
 		}
 
 		// 1. Clause reference (e.g., $RETURN_TYPE_CLAUSE → return_type_clause key in rule)
 		// Exclude rule-object meta keys and require the value be a string template.
 		if (
-			ruleObj
-			&& clauseKey in ruleObj
-			&& clauseKey !== 'template'
-			&& clauseKey !== 'joinBy'
-			&& clauseKey !== 'variants'
-			&& clauseKey !== 'detect'
-			&& typeof ruleObj[clauseKey] === 'string'
+			ruleObj &&
+			clauseKey in ruleObj &&
+			clauseKey !== "template" &&
+			clauseKey !== "joinBy" &&
+			clauseKey !== "variants" &&
+			clauseKey !== "detect" &&
+			typeof ruleObj[clauseKey] === "string"
 		) {
 			const clauseTemplate = ruleObj[clauseKey] as string;
 			return renderClause(clauseTemplate, node, ctx, consumed, ruleObj);
@@ -311,11 +335,13 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 				// list. Mirrors the rule for `$$$CHILDREN`. A lone
 				// anonymous token on a single-value field survives
 				// because the else-branch below skips this filter.
-				const named = items.filter(item => {
-					if (typeof item !== 'object' || item === null) return true;
+				const named = items.filter((item) => {
+					if (typeof item !== "object" || item === null) return true;
 					return (item as AnyNodeData).$named !== false;
 				});
-				const joined = named.map(item => renderValue(item as AnyNodeData | string | number, ctx)).join(sep);
+				const joined = named
+					.map((item) => renderValue(item as AnyNodeData | string | number, ctx))
+					.join(sep);
 				// Apply joinByLeading / joinByTrailing to multi-valued
 				// fields too (not just $$$CHILDREN). Mandatory-separator
 				// patterns like rust's tuple_expression `seq(expr, ',')`
@@ -325,8 +351,14 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 				// the trailing anon sep; when missing from $children it
 				// falls back to presence on $fields keyed by sep text.
 				if (!sep || sep.length === 0 || named.length === 0) return joined;
-				const prefix2 = ruleObj?.['joinByLeading'] === true ? flankSepForField(node, fieldKey, sep, 'leading') : '';
-				const suffix = ruleObj?.['joinByTrailing'] === true ? flankSepForField(node, fieldKey, sep, 'trailing') : '';
+				const prefix2 =
+					ruleObj?.["joinByLeading"] === true
+						? flankSepForField(node, fieldKey, sep, "leading")
+						: "";
+				const suffix =
+					ruleObj?.["joinByTrailing"] === true
+						? flankSepForField(node, fieldKey, sep, "trailing")
+						: "";
 				return prefix2 + joined + suffix;
 			}
 			if (Array.isArray(value)) {
@@ -351,10 +383,10 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 		// Anonymous tokens (delimiters, separators, keywords) are template-structural:
 		// delimiters are in template text, separators are in joinBy, keywords are
 		// in override fields. Only named children carry user content.
-		if ((pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) && fieldKey === 'children') {
-			if (!node.$children) return '';
-			const remaining = node.$children.filter((c, i) =>
-				!consumed.has(i) && (c as AnyNodeData).$named !== false
+		if ((pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) && fieldKey === "children") {
+			if (!node.$children) return "";
+			const remaining = node.$children.filter(
+				(c, i) => !consumed.has(i) && (c as AnyNodeData).$named !== false,
 			);
 			const sep = resolveJoinBy(ruleObj, name);
 			// Render each child, then join. A line_comment child forces
@@ -364,20 +396,20 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 			// into the comment at reparse time. Grammar-agnostic: any
 			// node kind whose text starts with `//` or `#` and doesn't
 			// already end in `\n` gets a `\n` suffix.
-			const rendered = remaining.map(c => renderValue(c as AnyNodeData | string | number, ctx));
+			const rendered = remaining.map((c) => renderValue(c as AnyNodeData | string | number, ctx));
 			const endsLineComment = (s: string): boolean => {
 				const trimmed = s.trimEnd();
-				if (trimmed.endsWith('\n')) return false;
+				if (trimmed.endsWith("\n")) return false;
 				return /(?:^|\n)\s*(?:\/\/|#)[^\n]*$/.test(trimmed);
 			};
 			const pieces: string[] = [];
 			for (let i = 0; i < rendered.length; i++) {
 				pieces.push(rendered[i]!);
 				if (i < rendered.length - 1) {
-					pieces.push(endsLineComment(rendered[i]!) ? '\n' : sep);
+					pieces.push(endsLineComment(rendered[i]!) ? "\n" : sep);
 				}
 			}
-			const joined = pieces.join('');
+			const joined = pieces.join("");
 			if (!sep || sep.length === 0 || remaining.length === 0) return joined;
 			// Leading / trailing-separator fidelity: codegen emits
 			// `joinByLeading: true` / `joinByTrailing: true` when the
@@ -388,8 +420,10 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 			// named-child run and emit it when present — preserves
 			// the original's with-or-without-flank state so ast-match
 			// stays stable.
-			const prefix = ruleObj?.['joinByLeading'] === true ? flankSep(node.$children, 'leading', sep) : '';
-			const suffix = ruleObj?.['joinByTrailing'] === true ? flankSep(node.$children, 'trailing', sep) : '';
+			const prefix =
+				ruleObj?.["joinByLeading"] === true ? flankSep(node.$children, "leading", sep) : "";
+			const suffix =
+				ruleObj?.["joinByTrailing"] === true ? flankSep(node.$children, "trailing", sep) : "";
 			return prefix + joined + suffix;
 		}
 
@@ -404,19 +438,20 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 		// content. Single-valued slot only (`$FIELD`, not `$$$FIELD`) —
 		// multi-valued slots fall through to existing logic.
 		if (
-			(pfx === prefix || pfx.length === 1)
-			&& node.$children
-			&& Array.isArray(node.$children)
-			&& !tmpl.includes(`${prefix}${prefix}${prefix}CHILDREN`)
-			&& !tmpl.includes(`${prefix}${prefix}${prefix}${fieldKey.toUpperCase()}`)
+			(pfx === prefix || pfx.length === 1) &&
+			node.$children &&
+			Array.isArray(node.$children) &&
+			!tmpl.includes(`${prefix}${prefix}${prefix}CHILDREN`) &&
+			!tmpl.includes(`${prefix}${prefix}${prefix}${fieldKey.toUpperCase()}`)
 		) {
-			const unconsumedNamed = node.$children.findIndex((c: any, i: number) =>
-				!consumed.has(i) && (c as AnyNodeData).$named !== false
+			const unconsumedNamed = node.$children.findIndex(
+				(c: any, i: number) => !consumed.has(i) && (c as AnyNodeData).$named !== false,
 			);
 			if (unconsumedNamed >= 0) {
-				const onlyOne = node.$children
-					.filter((c: any, i: number) => !consumed.has(i) && (c as AnyNodeData).$named !== false)
-					.length === 1;
+				const onlyOne =
+					node.$children.filter(
+						(c: any, i: number) => !consumed.has(i) && (c as AnyNodeData).$named !== false,
+					).length === 1;
 				if (onlyOne) {
 					consumed.add(unconsumedNamed);
 					return renderValue(node.$children[unconsumedNamed] as AnyNodeData | string | number, ctx);
@@ -426,8 +461,9 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 
 		// 4. Named child by kind — consume first unconsumed named match
 		if (node.$children && Array.isArray(node.$children)) {
-			const idx = node.$children.findIndex((c: any, i: number) =>
-				!consumed.has(i) && c?.$type === fieldKey && (c as AnyNodeData).$named !== false
+			const idx = node.$children.findIndex(
+				(c: any, i: number) =>
+					!consumed.has(i) && c?.$type === fieldKey && (c as AnyNodeData).$named !== false,
 			);
 			if (idx >= 0) {
 				consumed.add(idx);
@@ -443,14 +479,16 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 						}
 					}
 					const sep = resolveJoinBy(ruleObj, name);
-					return items.map(item => renderValue(item as AnyNodeData | string | number, ctx)).join(sep);
+					return items
+						.map((item) => renderValue(item as AnyNodeData | string | number, ctx))
+						.join(sep);
 				}
 				return renderValue(child as AnyNodeData | string | number, ctx);
 			}
 		}
 
 		// 5. $CHILDREN (single) — first unconsumed named child
-		if (fieldKey === 'children' && node.$children) {
+		if (fieldKey === "children" && node.$children) {
 			for (let i = 0; i < node.$children.length; i++) {
 				const c = node.$children[i] as AnyNodeData;
 				if (!consumed.has(i) && c.$named !== false) {
@@ -461,7 +499,7 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 		}
 
 		// 6. Absent → empty
-		return '';
+		return "";
 	};
 
 	// Walk the template's `$VAR` placeholders in order, resolving each
@@ -477,7 +515,7 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
 			value: resolveSlot(match[1]!, match[2]!),
 		});
 	}
-	return { kind: 'template', template: tmpl, substitutions };
+	return { kind: "template", template: tmpl, substitutions };
 }
 
 /**
@@ -487,7 +525,7 @@ export function prepare(node: AnyNodeData, ctx: InternalRenderContext): Prepared
  * reach-back into node structure.
  */
 function applyTemplate(prepared: PreparedRender): string {
-	if (prepared.kind === 'text') return prepared.text;
+	if (prepared.kind === "text") return prepared.text;
 	const { template, substitutions } = prepared;
 
 	// Substitute with column-aware re-indentation. For each `$VAR` we look
@@ -497,15 +535,16 @@ function applyTemplate(prepared: PreparedRender): string {
 	// lets nested blocks compound their indent levels without baking
 	// depth into templates or joinBy strings — block joinBy is just `\n`
 	// and each outer substitution re-indents the joined content.
-	let result = '';
+	let result = "";
 	let lastIdx = 0;
 	for (const sub of substitutions) {
 		result += template.slice(lastIdx, sub.matchIndex);
-		const lastNl = result.lastIndexOf('\n');
+		const lastNl = result.lastIndexOf("\n");
 		const lineLead = lastNl === -1 ? result : result.slice(lastNl + 1);
-		const indented = lineLead.length > 0 && /^ +$/.test(lineLead)
-			? sub.value.replace(/\n/g, '\n' + lineLead)
-			: sub.value;
+		const indented =
+			lineLead.length > 0 && /^ +$/.test(lineLead)
+				? sub.value.replace(/\n/g, "\n" + lineLead)
+				: sub.value;
 		result += indented;
 		lastIdx = sub.matchIndex + sub.matchLength;
 	}
@@ -527,28 +566,33 @@ function render(node: AnyNodeData, ctx: InternalRenderContext): string {
  * Pick the best variant template: the first where all $VARIABLES resolve.
  * Falls back to the first template with the most resolved variables.
  */
-function pickTemplate(
-	templates: string[],
-	node: AnyNodeData,
-	varPattern: RegExp,
-): string | null {
+function pickTemplate(templates: string[], node: AnyNodeData, varPattern: RegExp): string | null {
 	// Score each template by variable resolution against the node.
 	// Lower `unresolved` is better — a template with all variables
 	// resolved beats one with any phantoms. On ties, prefer more total
 	// variables (more specific).
-	const scored = templates.map(tmpl => {
+	const scored = templates.map((tmpl) => {
 		let total = 0;
 		let resolved = 0;
-		const tpl = tmpl.endsWith('\n') ? tmpl.slice(0, -1) : tmpl;
+		const tpl = tmpl.endsWith("\n") ? tmpl.slice(0, -1) : tmpl;
 		tpl.replace(varPattern, (_match: string, _pfx: string, name: string) => {
 			const fieldKey = name.toLowerCase();
 			total++;
-			if (node.$fields?.[fieldKey] !== undefined) { resolved++; return ''; }
-			if (fieldKey === 'children' && node.$children && node.$children.length > 0) { resolved++; return ''; }
-			if (node.$children && Array.isArray(node.$children)) {
-				if (node.$children.some((c: any) => c?.$type === fieldKey)) { resolved++; return ''; }
+			if (node.$fields?.[fieldKey] !== undefined) {
+				resolved++;
+				return "";
 			}
-			return '';
+			if (fieldKey === "children" && node.$children && node.$children.length > 0) {
+				resolved++;
+				return "";
+			}
+			if (node.$children && Array.isArray(node.$children)) {
+				if (node.$children.some((c: any) => c?.$type === fieldKey)) {
+					resolved++;
+					return "";
+				}
+			}
+			return "";
 		});
 		return { tmpl, total, resolved, unresolved: total - resolved };
 	});
@@ -579,7 +623,7 @@ function renderClause(
 		if (!ruleObj) return false;
 		const k = name.toLowerCase();
 		const v = ruleObj[k];
-		return typeof v === 'string' && k !== 'template' && k !== 'joinBy';
+		return typeof v === "string" && k !== "template" && k !== "joinBy";
 	};
 
 	// Bare-literal clauses (no `$VAR` placeholders) are anonymous-token
@@ -593,8 +637,8 @@ function renderClause(
 		// Reset stateful regex — .test() advances lastIndex when global.
 		varPattern.lastIndex = 0;
 		if (node.$children && Array.isArray(node.$children)) {
-			const idx = node.$children.findIndex((c: any, i: number) =>
-				!consumed.has(i) && c?.$type === clauseTemplate
+			const idx = node.$children.findIndex(
+				(c: any, i: number) => !consumed.has(i) && c?.$type === clauseTemplate,
 			);
 			if (idx >= 0) {
 				consumed.add(idx);
@@ -609,7 +653,7 @@ function renderClause(
 		if (node.$fields && node.$fields[clauseTemplate] !== undefined) {
 			return clauseTemplate;
 		}
-		return '';
+		return "";
 	}
 	varPattern.lastIndex = 0;
 
@@ -617,20 +661,20 @@ function renderClause(
 	let allPresent = true;
 	clauseTemplate.replace(varPattern, (_match: string, _pfx: string, name: string) => {
 		const fieldKey = name.toLowerCase();
-		if (node.$fields?.[fieldKey] !== undefined) return '';
+		if (node.$fields?.[fieldKey] !== undefined) return "";
 		// Also check children by kind
 		if (node.$children && Array.isArray(node.$children)) {
-			const idx = node.$children.findIndex((c: any, i: number) =>
-				!consumed.has(i) && c?.$type === fieldKey
+			const idx = node.$children.findIndex(
+				(c: any, i: number) => !consumed.has(i) && c?.$type === fieldKey,
 			);
-			if (idx >= 0) return '';
+			if (idx >= 0) return "";
 		}
-		if (isNestedClauseRef(name)) return '';
+		if (isNestedClauseRef(name)) return "";
 		allPresent = false;
-		return '';
+		return "";
 	});
 
-	if (!allPresent) return '';
+	if (!allPresent) return "";
 
 	// Second pass: actually render (consuming children)
 	return clauseTemplate.replace(varPattern, (_match: string, _pfx: string, name: string) => {
@@ -647,22 +691,24 @@ function renderClause(
 			// entry (same convention as the `$NAME` single-slot
 			// path above in resolveSlot).
 			const value = Array.isArray(raw)
-				? (raw.length > 0 ? raw[0] as AnyNodeData | string | number : '')
-				: raw as AnyNodeData | string | number;
-			if (value === '') return '';
+				? raw.length > 0
+					? (raw[0] as AnyNodeData | string | number)
+					: ""
+				: (raw as AnyNodeData | string | number);
+			if (value === "") return "";
 			return renderValue(value, ctx);
 		}
 		// Children by kind fallback
 		if (node.$children && Array.isArray(node.$children)) {
-			const idx = node.$children.findIndex((c: any, i: number) =>
-				!consumed.has(i) && c?.$type === fieldKey
+			const idx = node.$children.findIndex(
+				(c: any, i: number) => !consumed.has(i) && c?.$type === fieldKey,
 			);
 			if (idx >= 0) {
 				consumed.add(idx);
 				return renderValue(node.$children[idx] as AnyNodeData | string | number, ctx);
 			}
 		}
-		return '';
+		return "";
 	});
 }
 
@@ -693,7 +739,12 @@ function renderClause(
  * for "leading" with span.end ≤ first value's span.start. Probes the
  * separator-keyed $fields entry plus any anon in $children.
  */
-function flankSepForField(node: AnyNodeData, fieldKey: string, sep: string, side: 'leading' | 'trailing'): string {
+function flankSepForField(
+	node: AnyNodeData,
+	fieldKey: string,
+	sep: string,
+	side: "leading" | "trailing",
+): string {
 	// Anchor the leading/trailing boundary on the spans of THIS specific
 	// multi-valued field's named entries. Anchoring on every named field
 	// in the node is wrong: rust `match_statement`'s `$$$SUBJECT` with a
@@ -705,32 +756,42 @@ function flankSepForField(node: AnyNodeData, fieldKey: string, sep: string, side
 	if (value !== undefined) {
 		const arr = Array.isArray(value) ? value : [value];
 		for (const item of arr) {
-			if (!item || typeof item !== 'object') continue;
+			if (!item || typeof item !== "object") continue;
 			const n = item as AnyNodeData;
 			if (n.$named === false) continue;
 			if (n.$span) fieldSpans.push(n.$span);
 		}
 	}
-	if (fieldSpans.length === 0) return '';
-	const boundary = side === 'leading'
-		? Math.min(...fieldSpans.map(s => s.start))
-		: Math.max(...fieldSpans.map(s => s.end));
+	if (fieldSpans.length === 0) return "";
+	const boundary =
+		side === "leading"
+			? Math.min(...fieldSpans.map((s) => s.start))
+			: Math.max(...fieldSpans.map((s) => s.end));
 	// Collect candidate anon sep tokens from $fields[sep] and $children.
 	const candidates: AnyNodeData[] = [];
 	const sepEntry = node.$fields?.[sep];
 	if (sepEntry) {
 		const arr = Array.isArray(sepEntry) ? sepEntry : [sepEntry];
-		for (const x of arr) if (x && typeof x === 'object' && (x as AnyNodeData).$named === false) candidates.push(x as AnyNodeData);
+		for (const x of arr)
+			if (x && typeof x === "object" && (x as AnyNodeData).$named === false)
+				candidates.push(x as AnyNodeData);
 	}
 	if (node.$children) {
-		for (const c of node.$children) if (c && typeof c === 'object' && (c as AnyNodeData).$named === false && (c as AnyNodeData).$text === sep) candidates.push(c as AnyNodeData);
+		for (const c of node.$children)
+			if (
+				c &&
+				typeof c === "object" &&
+				(c as AnyNodeData).$named === false &&
+				(c as AnyNodeData).$text === sep
+			)
+				candidates.push(c as AnyNodeData);
 	}
 	for (const c of candidates) {
 		if (!c.$span || c.$text !== sep) continue;
-		if (side === 'trailing' && c.$span.start >= boundary) return sep;
-		if (side === 'leading' && c.$span.end <= boundary) return sep;
+		if (side === "trailing" && c.$span.start >= boundary) return sep;
+		if (side === "leading" && c.$span.end <= boundary) return sep;
 	}
-	return '';
+	return "";
 }
 
 /**
@@ -753,12 +814,12 @@ function detectTrailingAnonForField(
 	// Find the span end of the last named element.
 	let boundary = -1;
 	for (const item of namedItems) {
-		if (!item || typeof item !== 'object') continue;
+		if (!item || typeof item !== "object") continue;
 		const n = item as AnyNodeData;
 		if (n.$named === false) continue;
 		if (n.$span && n.$span.end > boundary) boundary = n.$span.end;
 	}
-	if (boundary < 0) return '';
+	if (boundary < 0) return "";
 
 	// Collect all anonymous token candidates from $fields (other keys) and $children.
 	const candidates: AnyNodeData[] = [];
@@ -767,7 +828,7 @@ function detectTrailingAnonForField(
 			if (key === fieldKey) continue; // skip the field itself
 			const arr = Array.isArray(val) ? val : [val];
 			for (const x of arr) {
-				if (x && typeof x === 'object' && (x as AnyNodeData).$named === false) {
+				if (x && typeof x === "object" && (x as AnyNodeData).$named === false) {
 					candidates.push(x as AnyNodeData);
 				}
 			}
@@ -775,7 +836,7 @@ function detectTrailingAnonForField(
 	}
 	if (node.$children) {
 		for (const c of node.$children) {
-			if (c && typeof c === 'object' && (c as AnyNodeData).$named === false) {
+			if (c && typeof c === "object" && (c as AnyNodeData).$named === false) {
 				candidates.push(c as AnyNodeData);
 			}
 		}
@@ -788,41 +849,40 @@ function detectTrailingAnonForField(
 
 	// Return text of the first anon token whose span starts at-or-after boundary.
 	for (const c of candidates) {
-		if (c.$span && c.$span.start >= boundary && typeof c.$text === 'string' && c.$text.length > 0) {
+		if (c.$span && c.$span.start >= boundary && typeof c.$text === "string" && c.$text.length > 0) {
 			return c.$text;
 		}
 	}
-	return '';
+	return "";
 }
 
-function flankSep(children: readonly unknown[], side: 'leading' | 'trailing', sep: string): string {
+function flankSep(children: readonly unknown[], side: "leading" | "trailing", sep: string): string {
 	const isNamed = (c: unknown): boolean =>
-		typeof c === 'object' && c !== null && (c as AnyNodeData).$named !== false;
-	const namedIdx = side === 'leading'
-		? children.findIndex(isNamed)
-		: children.findLastIndex(isNamed);
-	if (namedIdx < 0) return '';
-	const neighborIdx = side === 'leading' ? namedIdx - 1 : namedIdx + 1;
-	if (neighborIdx < 0 || neighborIdx >= children.length) return '';
+		typeof c === "object" && c !== null && (c as AnyNodeData).$named !== false;
+	const namedIdx =
+		side === "leading" ? children.findIndex(isNamed) : children.findLastIndex(isNamed);
+	if (namedIdx < 0) return "";
+	const neighborIdx = side === "leading" ? namedIdx - 1 : namedIdx + 1;
+	if (neighborIdx < 0 || neighborIdx >= children.length) return "";
 	const neighbor = children[neighborIdx] as AnyNodeData | undefined;
-	return neighbor && neighbor.$named === false && neighbor.$text === sep ? sep : '';
+	return neighbor && neighbor.$named === false && neighbor.$text === sep ? sep : "";
 }
 
 function resolveJoinBy(ruleObj: Record<string, unknown> | undefined, varName: string): string {
-	if (!ruleObj) return ' ';
-	const joinByField = ruleObj['joinByField'] as Record<string, string> | undefined;
+	if (!ruleObj) return " ";
+	const joinByField = ruleObj["joinByField"] as Record<string, string> | undefined;
 	if (joinByField) {
 		const fieldKey = varName.toLowerCase();
 		if (fieldKey in joinByField) return joinByField[fieldKey]!;
 	}
-	const joinBy = ruleObj['joinBy'] as string | undefined;
-	return joinBy ?? ' ';
+	const joinBy = ruleObj["joinBy"] as string | undefined;
+	return joinBy ?? " ";
 }
 
 /** Render a field value — handles AnyNodeData, string, and number. */
 function renderValue(value: AnyNodeData | string | number, ctx: InternalRenderContext): string {
-	if (typeof value === 'string') return value;
-	if (typeof value === 'number') return String(value);
+	if (typeof value === "string") return value;
+	if (typeof value === "number") return String(value);
 	// Guard against undefined / null reaching the NodeData branch. Callers
 	// that iterate a parent's fields can legitimately see an optional-field
 	// slot come through undefined; they should filter before calling here,
@@ -830,14 +890,16 @@ function renderValue(value: AnyNodeData | string | number, ctx: InternalRenderCo
 	// `Cannot read properties of undefined (reading '$text')` from
 	// `render()`'s first line.
 	if (value === undefined || value === null) {
-		throw new Error(`renderValue: value is ${value === null ? 'null' : 'undefined'} — filter absent fields before calling`);
+		throw new Error(
+			`renderValue: value is ${value === null ? "null" : "undefined"} — filter absent fields before calling`,
+		);
 	}
 	return render(value, ctx);
 }
 
 /** Escape a string for use in a RegExp. */
 function escapeRegex(s: string): string {
-	return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 // ---------------------------------------------------------------------------
@@ -897,9 +959,13 @@ function renderNunjucks(
 		return node.$text;
 	}
 
-	const env = providedEnv ?? (templatesDir ? createNunjucksEnvironment(templatesDir) as unknown as NunjucksEnvLike : undefined);
+	const env =
+		providedEnv ??
+		(templatesDir
+			? (createNunjucksEnvironment(templatesDir) as unknown as NunjucksEnvLike)
+			: undefined);
 	if (!env) {
-		throw new Error('renderNunjucks: neither nunjucksEnv nor templatesDir provided');
+		throw new Error("renderNunjucks: neither nunjucksEnv nor templatesDir provided");
 	}
 
 	// Canonical-hidden short-circuit (Option Y): when render is called
@@ -932,10 +998,9 @@ function renderNunjucks(
 		rendered = env.render(templateName, tc);
 	} catch (err) {
 		const cause = err instanceof Error ? err.message : String(err);
-		throw new Error(
-			`render: template '${templateName}' (rule '${node.$type}') failed — ${cause}`,
-			{ cause: err },
-		);
+		throw new Error(`render: template '${templateName}' (rule '${node.$type}') failed — ${cause}`, {
+			cause: err,
+		});
 	}
 	// Honest raw output — see `applyTemplate` for the rationale. Symmetric
 	// with the native engine and with the legacy substitutor path.
@@ -950,16 +1015,20 @@ function renderNunjucks(
  */
 function tokenShapedFallback(node: AnyNodeData): string {
 	const isAnonEntry = (v: unknown): boolean => {
-		if (v == null || typeof v !== 'object') return false;
+		if (v == null || typeof v !== "object") return false;
 		return (v as AnyNodeData).$named === false;
 	};
-	const fieldsAllAnon = !node.$fields || Object.values(node.$fields).every(v =>
-		Array.isArray(v) ? v.every(isAnonEntry) : isAnonEntry(v),
-	);
-	const childrenAllAnon = !node.$children ||
-		(node.$children as readonly AnyNodeData[]).every(c => c.$named === false);
+	const fieldsAllAnon =
+		!node.$fields ||
+		Object.values(node.$fields).every((v) =>
+			Array.isArray(v) ? v.every(isAnonEntry) : isAnonEntry(v),
+		);
+	const childrenAllAnon =
+		!node.$children || (node.$children as readonly AnyNodeData[]).every((c) => c.$named === false);
 	if (node.$text !== undefined && fieldsAllAnon && childrenAllAnon) return node.$text;
-	throw new Error(`No render template for '${node.$type}' (no <kind>.jinja file and node has named fields/children)`);
+	throw new Error(
+		`No render template for '${node.$type}' (no <kind>.jinja file and node has named fields/children)`,
+	);
 }
 
 /**
@@ -976,8 +1045,8 @@ function buildNunjucksTemplateContext(
 	templatesDir: string | undefined,
 ): TemplateContext {
 	const renderChild = (value: AnyNodeData | string | number): string => {
-		if (typeof value === 'string') return value;
-		if (typeof value === 'number') return String(value);
+		if (typeof value === "string") return value;
+		if (typeof value === "number") return String(value);
 		return renderNunjucks(value, ctx, env, templatesDir);
 	};
 
@@ -1001,13 +1070,13 @@ function buildNunjucksTemplateContext(
 		}
 		if (firstNamedIdx > 0) {
 			const before = node.$children[firstNamedIdx - 1] as AnyNodeData | undefined;
-			if (before && before.$named === false && typeof before.$text === 'string') {
+			if (before && before.$named === false && typeof before.$text === "string") {
 				children._leading_anon = before.$text;
 			}
 		}
 		if (lastNamedIdx >= 0 && lastNamedIdx < node.$children.length - 1) {
 			const after = node.$children[lastNamedIdx + 1] as AnyNodeData | undefined;
-			if (after && after.$named === false && typeof after.$text === 'string') {
+			if (after && after.$named === false && typeof after.$text === "string") {
 				children._trailing_anon = after.$text;
 			}
 		}
@@ -1033,8 +1102,8 @@ function buildNunjucksTemplateContext(
 			if (raw === undefined || raw === null) continue;
 			const isMulti = Array.isArray(raw);
 			if (isMulti) {
-				const effective = (raw as unknown[]).filter(item => {
-					if (typeof item !== 'object' || item === null) return true;
+				const effective = (raw as unknown[]).filter((item) => {
+					if (typeof item !== "object" || item === null) return true;
 					return (item as AnyNodeData).$named !== false;
 				});
 				if (effective.length === 0) continue;
@@ -1045,11 +1114,11 @@ function buildNunjucksTemplateContext(
 				// while `MutableFlankedChildArray` extends `string[]` with
 				// optional side-channel properties — structurally identical at
 				// runtime, just needs the type widened.
-				const rendered = effective.map(item =>
+				const rendered = effective.map((item) =>
 					renderChild(item as AnyNodeData | string | number),
 				) as unknown as MutableFlankedChildArray;
 				const trailingAnon = detectTrailingAnonForField(node, fieldName, effective);
-				if (trailingAnon !== '') rendered._trailing_anon = trailingAnon;
+				if (trailingAnon !== "") rendered._trailing_anon = trailingAnon;
 				fields[fieldName] = rendered;
 			} else {
 				fields[fieldName] = renderChild(raw as AnyNodeData | string | number);
@@ -1061,8 +1130,8 @@ function buildNunjucksTemplateContext(
 	// template but never saw a source span. Best-effort concat of
 	// rendered field + children values. Only fires when $text is empty
 	// AND there's structure to synthesize from.
-	let synthesizedText = node.$text ?? '';
-	if (synthesizedText === '' && (node.$fields || node.$children)) {
+	let synthesizedText = node.$text ?? "";
+	if (synthesizedText === "" && (node.$fields || node.$children)) {
 		const parts: string[] = [];
 		if (node.$fields) {
 			for (const v of Object.values(node.$fields)) {
@@ -1080,13 +1149,13 @@ function buildNunjucksTemplateContext(
 				parts.push(renderChild(c as AnyNodeData | string | number));
 			}
 		}
-		synthesizedText = parts.join('');
+		synthesizedText = parts.join("");
 	}
 
 	return {
 		...fields,
 		children,
-		variant: node.$variant ?? '',
+		variant: node.$variant ?? "",
 		text: synthesizedText,
 	};
 }
@@ -1121,29 +1190,52 @@ export interface RendererOptions {
  * provided, the renderer uses Nunjucks-backed per-rule `.jinja` files.
  * Otherwise, the legacy regex substitutor path runs (default).
  */
-export function createRendererFromConfig(config: RulesConfig, options?: RendererOptions): BoundRenderer {
+/**
+ * Infer a grammar label from a templates directory path for metrics
+ * attribution. The path follows the convention
+ * `packages/{grammar}/templates` so the parent directory's name is the
+ * grammar. Falls back to `"core"` for unrecognised paths.
+ */
+function grammarFromTemplatesDir(dir: string | undefined): string {
+	if (!dir) return "core";
+	// Normalise separators and split on last two segments.
+	const parts = dir.replace(/\\/g, "/").replace(/\/$/, "").split("/");
+	// Expected: [..., "{grammar}", "templates"]
+	if (parts.at(-1) === "templates") return parts.at(-2) ?? "core";
+	return "core";
+}
+
+export function createRendererFromConfig(
+	config: RulesConfig,
+	options?: RendererOptions,
+): BoundRenderer {
 	const ctx = buildRenderContext(config);
 	const nunjucksEnv = options?.nunjucksEnv;
 	const templatesDir = options?.templatesDir;
+	const grammar = grammarFromTemplatesDir(templatesDir);
 
 	function boundRender(node: AnyNodeData): string {
 		// No `.trim()` — emit the template's raw output. Outer-position
 		// whitespace artifacts indicate walker bugs (template emits a
 		// trailing/leading space when an optional field is absent) and
 		// must surface, not be hidden. Native engine matches this contract.
-		if (nunjucksEnv || templatesDir) {
-			return renderNunjucks(node, ctx, nunjucksEnv, templatesDir);
-		}
-		return render(node, ctx);
+		return withMetrics(grammar, node.$type, () => {
+			if (nunjucksEnv || templatesDir) {
+				return renderNunjucks(node, ctx, nunjucksEnv, templatesDir);
+			}
+			return render(node, ctx);
+		});
 	}
 
 	function boundToEdit(node: AnyNodeData, startOrRange: number | ByteRange, end?: number): Edit {
-		if (typeof startOrRange === 'number') {
-			if (typeof end !== 'number') {
-				throw new Error('endPos is required when startPos is a number');
+		if (typeof startOrRange === "number") {
+			if (typeof end !== "number") {
+				throw new Error("endPos is required when startPos is a number");
 			}
 			if (startOrRange < 0 || end < 0) {
-				throw new Error(`Edit positions must be non-negative (got start=${startOrRange}, end=${end})`);
+				throw new Error(
+					`Edit positions must be non-negative (got start=${startOrRange}, end=${end})`,
+				);
 			}
 			if (startOrRange > end) {
 				throw new Error(`Edit startPos (${startOrRange}) must not exceed endPos (${end})`);
@@ -1157,5 +1249,5 @@ export function createRendererFromConfig(config: RulesConfig, options?: Renderer
 		};
 	}
 
-	return { render: boundRender, toEdit: boundToEdit as BoundRenderer['toEdit'] };
+	return { render: boundRender, toEdit: boundToEdit as BoundRenderer["toEdit"] };
 }

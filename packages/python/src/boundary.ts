@@ -15,14 +15,15 @@
  * (`readNode`, `bindRange`).
  */
 
-import { createRenderer, readNode as coreReadNode } from '@sittir/core';
-import type { TreeHandle } from '@sittir/core';
-import type { AnyNodeData, ByteRange, Edit } from '@sittir/types';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { getActiveBackend, type NativeEngine } from './backend.js';
+import { createRenderer, readNode as coreReadNode, recordFfi, metricsEnabled } from "@sittir/core";
+import type { TreeHandle } from "@sittir/core";
+import type { AnyNodeData, ByteRange, Edit } from "@sittir/types";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { getActiveBackend, type NativeEngine } from "./backend.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const GRAMMAR = "python";
 
 /**
  * Package-level Nunjucks renderer. Lazily built on first render call
@@ -32,7 +33,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 let tsRenderer: ReturnType<typeof createRenderer> | null = null;
 function getTsRenderer(): ReturnType<typeof createRenderer> {
 	if (tsRenderer === null) {
-		tsRenderer = createRenderer(join(__dirname, '..', 'templates'));
+		tsRenderer = createRenderer(join(__dirname, "..", "templates"));
 	}
 	return tsRenderer;
 }
@@ -46,7 +47,7 @@ function getTsRenderer(): ReturnType<typeof createRenderer> {
 let nativeEngine: NativeEngine | null = null;
 function getNativeEngine(): NativeEngine | null {
 	const status = getActiveBackend();
-	if (status.name !== 'native' || !status.native) return null;
+	if (status.name !== "native" || !status.native) return null;
 	if (nativeEngine === null) {
 		try {
 			nativeEngine = new status.native.SittirEngine();
@@ -67,9 +68,19 @@ function getNativeEngine(): NativeEngine | null {
  * (FR-002a).
  */
 export function render(node: AnyNodeData): string {
+	const kind = node.$type;
 	const engine = getNativeEngine();
 	if (engine !== null) {
 		try {
+			if (metricsEnabled) {
+				const json = JSON.stringify(node);
+				const payloadBytes = json.length;
+				const t0 = performance.now();
+				const result = engine.render(json);
+				const roundtripMs = performance.now() - t0;
+				recordFfi(GRAMMAR, kind, payloadBytes, roundtripMs, result.length);
+				return result;
+			}
 			return engine.render(JSON.stringify(node));
 		} catch {
 			// Runtime render failures on native are rare (template defects
@@ -90,12 +101,14 @@ export function render(node: AnyNodeData): string {
  */
 export function toEdit(node: AnyNodeData, startOrRange: number | ByteRange, end?: number): Edit {
 	const insertedText = render(node);
-	if (typeof startOrRange === 'number') {
-		if (typeof end !== 'number') {
-			throw new Error('endPos is required when startPos is a number');
+	if (typeof startOrRange === "number") {
+		if (typeof end !== "number") {
+			throw new Error("endPos is required when startPos is a number");
 		}
 		if (startOrRange < 0 || end < 0) {
-			throw new Error(`Edit positions must be non-negative (got start=${startOrRange}, end=${end})`);
+			throw new Error(
+				`Edit positions must be non-negative (got start=${startOrRange}, end=${end})`,
+			);
 		}
 		if (startOrRange > end) {
 			throw new Error(`Edit startPos (${startOrRange}) must not exceed endPos (${end})`);
@@ -117,7 +130,10 @@ export function applyEdits(source: string, edits: readonly Edit[]): string {
 	const engine = getNativeEngine();
 	if (engine !== null) {
 		try {
-			return engine.applyEdits(source, edits.map((e) => ({ ...e })));
+			return engine.applyEdits(
+				source,
+				edits.map((e) => ({ ...e })),
+			);
 		} catch {
 			// Fall through to TS splice on any native failure.
 		}
@@ -179,10 +195,10 @@ export function findMatches(_source: string, _pattern: string): never {
 	const engine = getNativeEngine();
 	if (engine !== null) {
 		throw new Error(
-			'findMatches not yet routable through native backend — ast-grep-core integration pending (T033 deferral)',
+			"findMatches not yet routable through native backend — ast-grep-core integration pending (T033 deferral)",
 		);
 	}
 	throw new Error(
-		'findMatches not yet implemented in the TS backend of @sittir/python — use ast-grep directly and feed TreeHandle to readNode()',
+		"findMatches not yet implemented in the TS backend of @sittir/python — use ast-grep directly and feed TreeHandle to readNode()",
 	);
 }

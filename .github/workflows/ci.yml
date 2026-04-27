@@ -25,7 +25,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -95,7 +95,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 20.x
-          cache: 'pnpm'
+          cache: "pnpm"
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Resolve base SHA
@@ -153,7 +153,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 20.x
-          cache: 'pnpm'
+          cache: "pnpm"
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Download napi `.node` artifacts (linux x86_64-gnu)
@@ -194,6 +194,66 @@ jobs:
           npx tsx packages/codegen/src/scripts/check-baseline-regression.ts \
             --base /tmp/016-base/native.json \
             --head /tmp/016-head/native.json
+
+  # Spec 054 — perf regression-checker (native only). Compares the FFI
+  # roundtrip + call-count from a fresh native-backend metrics run against
+  # the committed `specs/054-post-016-perf-tracking/baselines/perf-native.json`.
+  # Regressions > 10% on `ffi.meanRoundtripMs` or `ffi.totalCalls` fail the
+  # build EXCEPT when `SITTIR_METRICS_FFI_WARN_ONLY=1` (set below for the
+  # one-month calibration window per FR-008). Skipped when napi build
+  # artifacts are unavailable. Cross-platform deltas auto-skip via the
+  # check's `[INFO] platform mismatch` branch — the perf gate is darwin-only
+  # for now (the baseline was collected on Apple M4 Pro). Linux baseline
+  # collection is a follow-up; until then, the gate is a no-op on linux
+  # CI but the metrics artifacts still get uploaded for inspection.
+  perf-regression-checker:
+    name: 054 perf regression-checker (native, warn-only)
+    runs-on: ubuntu-22.04
+    needs: napi-build
+    if: github.event_name == 'pull_request'
+    env:
+      # Warn-only window: 2026-04-26 → 2026-05-26 per spec 054 FR-008.
+      # Flip to enforcing by removing this env block after the window.
+      SITTIR_METRICS_FFI_WARN_ONLY: "1"
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20.x
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Download napi `.node` artifacts (linux x86_64-gnu)
+        uses: actions/download-artifact@v4
+        with:
+          name: bindings-x86_64-unknown-linux-gnu
+          path: /tmp/054-bindings
+      - name: Stage `.node` artifacts next to napi crates
+        run: |
+          if [ -d /tmp/054-bindings/rust/crates ]; then
+            cp -R /tmp/054-bindings/rust/crates/. rust/crates/
+          else
+            for crate in sittir-rust-napi sittir-typescript-napi sittir-python-napi; do
+              find /tmp/054-bindings -name "*.node" -exec cp {} "rust/crates/${crate}/" \;
+            done
+          fi
+      - name: Collect fresh metrics (native backend)
+        run: |
+          SITTIR_BACKEND=native SITTIR_METRICS=1 \
+            npx tsx packages/codegen/src/scripts/collect-baseline.ts > /dev/null
+      - name: Check perf baseline (warn-only window)
+        run: npx tsx packages/codegen/src/scripts/check-perf-baseline.ts
+      - name: Upload metrics artifact for inspection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: metrics-native-${{ github.run_id }}
+          path: metrics-native.json
+          if-no-files-found: warn
 
   # Rust workspace compile check (spec 012 Phase 1 T007).
   # A single cargo-check job — clippy, platform matrix, and release

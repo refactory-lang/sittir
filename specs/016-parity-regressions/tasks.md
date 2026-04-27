@@ -17,6 +17,7 @@
 ## Path Conventions
 
 This is a pnpm workspace. Touch surface for this feature:
+
 - Codegen pipeline: `packages/codegen/src/{compiler,emitters,dsl,validate,scripts}/`
 - Per-grammar overrides (hand-authored): `packages/{rust,typescript,python}/overrides.ts`
 - Per-grammar generated output (codegen-only): `packages/{rust,typescript,python}/src/`, `packages/{rust,typescript,python}/templates/*.jinja`
@@ -29,8 +30,8 @@ This is a pnpm workspace. Touch surface for this feature:
 
 **Purpose**: No new package init needed — this feature layers on top of an existing pnpm workspace. Setup tasks here are spec-side scaffolding only.
 
-- [X] T001 Verify branch `016-parity-regressions` is checked out and based on `012-rust-core-port`@`b4ccc6cc`. Run `git status` + `git log --oneline -3`; confirm clean tree and expected base.
-- [X] T002 Create directory `specs/016-parity-regressions/baselines/` (already created by Phase 1 plan) and add `.gitkeep` so the dir lands in commit #1 even if both JSON files end up in the same commit.
+- [x] T001 Verify branch `016-parity-regressions` is checked out and based on `012-rust-core-port`@`b4ccc6cc`. Run `git status` + `git log --oneline -3`; confirm clean tree and expected base.
+- [x] T002 Create directory `specs/016-parity-regressions/baselines/` (already created by Phase 1 plan) and add `.gitkeep` so the dir lands in commit #1 even if both JSON files end up in the same commit.
 
 **Checkpoint**: Branch + spec-side dirs ready.
 
@@ -50,14 +51,14 @@ This is a pnpm workspace. Touch surface for this feature:
 
 **Independent Test**: Per spec — a fresh checkout of `016-parity-regressions` after this phase has the script + initial JSONs; running the script twice in a row produces byte-identical output (determinism); a contrived count-drop in a hand-edited JSON makes CI fire red.
 
-- [X] T003 [US1] Create `packages/codegen/src/scripts/collect-baseline.ts` script that imports the four corpus validators (`validateRoundTrip`, `validateFromCorpus`, `validateFactoryRoundtrip`, `readnode-roundtrip`) from `packages/codegen/src/validate/*.ts`, runs each against all three grammars (rust, typescript, python), and prints the resulting `BackendBaseline` JSON to stdout.
-- [X] T004 [US1] In `collect-baseline.ts`, select the read handle via `buildReadHandle(grammar, tree, source)` from `packages/codegen/src/validate/common.ts` so the script honours `SITTIR_BACKEND` and produces TS-mode counts when unset/`typescript`, native counts when `native`.
-- [X] T005 [US1] In `collect-baseline.ts`, also collect parity-fixture results by importing the fixture-render machinery from `packages/{rust,typescript,python}/tests/parity.test.ts` (factor out the fixture iteration if needed; do NOT shell out to vitest). Group failures by `$type` for the `failingByKind` map per `contracts/baseline-json.md`.
-- [X] T006 [US1] Implement deterministic serialisation in `collect-baseline.ts`: 4-space indent, `\n` line endings, sorted keys at every level, sorted `failingKinds` arrays, sorted `failingByKind` keys (failure-id values stay in fixture order). Spot-check by running twice — output MUST be byte-identical.
-- [X] T007 [P] [US1] Run `SITTIR_BACKEND=typescript npx tsx packages/codegen/src/scripts/collect-baseline.ts > specs/016-parity-regressions/baselines/ts.json` and verify the output reproduces the 16 known TS-mode failures: 6 python comprehensions, 5 rust patterns, 1 factory-rt, 1 ts coverage, 3 dsl tests.
-- [X] T008 [P] [US1] Run `SITTIR_BACKEND=native npx tsx packages/codegen/src/scripts/collect-baseline.ts > specs/016-parity-regressions/baselines/native.json` and verify the output reproduces the native 0-floor pattern (most floors at zero, render-template parity gaps for `source_file`, `function_item`, `let_declaration` etc.).
-- [X] T009 [US1] Add a new GitHub Actions job `regression-checker` to `.github/workflows/ci.yml`. The job runs after the existing test step; checks out the PR base, runs `collect-baseline` for both backends, diffs against `<head>:specs/016-parity-regressions/baselines/<backend>.json`, and exits 1 on any count drop per the verdict rules in `contracts/baseline-json.md`. (TS-mode job landed in commit `285f6585`; native-mode sibling job `regression-checker-native`, gated on `napi-build` for the `.node` artifacts, landed in this follow-up after spec-reviewer found that the original commit's "deferred to rust-parity / napi-build" rationale was inaccurate — those jobs run `--ignored` parity tests under `continue-on-error: true` and never read the baseline files.)
-- [X] T010 [US1] Commit and push commit #1 with subject `016/baseline: collect-baseline script + initial ts/native JSONs + CI regression-checker`. Open PR `#016` against `012-rust-core-port` (NOT `master`). Verify CI runs the new job and passes (no count drops vs the brand-new files because they're identical to themselves).
+- [x] T003 [US1] Create `packages/codegen/src/scripts/collect-baseline.ts` script that imports the four corpus validators (`validateRoundTrip`, `validateFromCorpus`, `validateFactoryRoundtrip`, `readnode-roundtrip`) from `packages/codegen/src/validate/*.ts`, runs each against all three grammars (rust, typescript, python), and prints the resulting `BackendBaseline` JSON to stdout.
+- [x] T004 [US1] In `collect-baseline.ts`, select the read handle via `buildReadHandle(grammar, tree, source)` from `packages/codegen/src/validate/common.ts` so the script honours `SITTIR_BACKEND` and produces TS-mode counts when unset/`typescript`, native counts when `native`.
+- [x] T005 [US1] In `collect-baseline.ts`, also collect parity-fixture results by importing the fixture-render machinery from `packages/{rust,typescript,python}/tests/parity.test.ts` (factor out the fixture iteration if needed; do NOT shell out to vitest). Group failures by `$type` for the `failingByKind` map per `contracts/baseline-json.md`.
+- [x] T006 [US1] Implement deterministic serialisation in `collect-baseline.ts`: 4-space indent, `\n` line endings, sorted keys at every level, sorted `failingKinds` arrays, sorted `failingByKind` keys (failure-id values stay in fixture order). Spot-check by running twice — output MUST be byte-identical.
+- [x] T007 [P] [US1] Run `SITTIR_BACKEND=typescript npx tsx packages/codegen/src/scripts/collect-baseline.ts > specs/016-parity-regressions/baselines/ts.json` and verify the output reproduces the 16 known TS-mode failures: 6 python comprehensions, 5 rust patterns, 1 factory-rt, 1 ts coverage, 3 dsl tests.
+- [x] T008 [P] [US1] Run `SITTIR_BACKEND=native npx tsx packages/codegen/src/scripts/collect-baseline.ts > specs/016-parity-regressions/baselines/native.json` and verify the output reproduces the native 0-floor pattern (most floors at zero, render-template parity gaps for `source_file`, `function_item`, `let_declaration` etc.).
+- [x] T009 [US1] Add a new GitHub Actions job `regression-checker` to `.github/workflows/ci.yml`. The job runs after the existing test step; checks out the PR base, runs `collect-baseline` for both backends, diffs against `<head>:specs/016-parity-regressions/baselines/<backend>.json`, and exits 1 on any count drop per the verdict rules in `contracts/baseline-json.md`. (TS-mode job landed in commit `285f6585`; native-mode sibling job `regression-checker-native`, gated on `napi-build` for the `.node` artifacts, landed in this follow-up after spec-reviewer found that the original commit's "deferred to rust-parity / napi-build" rationale was inaccurate — those jobs run `--ignored` parity tests under `continue-on-error: true` and never read the baseline files.)
+- [x] T010 [US1] Commit and push commit #1 with subject `016/baseline: collect-baseline script + initial ts/native JSONs + CI regression-checker`. Open PR `#016` against `012-rust-core-port` (NOT `master`). Verify CI runs the new job and passes (no count drops vs the brand-new files because they're identical to themselves).
 
 **Checkpoint**: Tooling ready — cluster work can now begin in any order, with each commit measured against the committed baseline.
 
@@ -70,6 +71,7 @@ This is a pnpm workspace. Touch surface for this feature:
 **Independent Test**: Per spec — final TS-mode test run reports zero failures; `baselines/ts.json` shows `totals.fail: 0` and every `failingKinds` array is empty.
 
 > **Cluster ordering** (high-leverage first, per research.md):
+>
 > 1. python-comprehensions × 6
 > 2. rust-patterns × 5
 > 3. factory-rt × 1
@@ -77,6 +79,7 @@ This is a pnpm workspace. Touch surface for this feature:
 > 5. dsl-tests × 3 (split into 3 sub-tasks because the underlying fixes are unrelated)
 
 > **Per-cluster pattern** — every cluster has these tasks:
+>
 > - Probe to confirm root-cause hypothesis
 > - Apply fix at codegen pipeline OR `overrides.ts`
 > - Regenerate all 3 grammars
@@ -134,13 +137,14 @@ This is a pnpm workspace. Touch surface for this feature:
 **Sub-commit budget (revised)**: ~3 sub-commits (was 5). Reduced because empirical Jinja-whitespace research (`specs/016-parity-regressions/research-jinja-whitespace.md`) established the corrected emission shape up front, so the freeze-tests step targets the CORRECTED output directly — no intermediate "freeze broken → re-freeze fixed" cycle is needed. The walker-fix step may bundle T034 (derive clause names via `tokenToName`) into T035 (seq-case emission) since both touch the same walker file. T036 (`optional(seq(...))` enclosing conditional) remains its own piece because it touches a separate dispatch path. T037 (validate) collapses into the same commit as the walker-fix.
 
 **Independent Test**: After all sub-commits land, re-run `pnpm test` and verify:
+
 - TS-mode parity counts are AT or ABOVE the pre-reset HEAD numbers (+161 rust, +125 typescript, +3 python).
 - Native counts match TS exactly (since both consume the same template output).
 - `formatDeferredKinds` / `formatDeferredByKind` arrays are empty across the entire baseline JSON (the walker refactor's outputs are template-shape passes, not format-deferred).
 
 ### Cluster F — walker refactor (sub-commits per `feedback_walker_refactor_blockers.md` + `research-jinja-whitespace.md`)
 
-- [X] T032a [US-walker] **Walker plan corrected per research-jinja-whitespace.md** — `is defined` rejected (broken on Askama; compile-time check returns constant `true` for always-present TemplateContext struct fields). `| isPresent` confirmed via prototype on both engines (Nunjucks 3.2.4 + Askama 0.14). Cluster F sub-commits ~3 instead of ~5 because freeze-tests target corrected output directly. No production-walker change yet — this is documentation-only acknowledgement of the prior research commit. Marked done because the research artifact is committed and the spec/tasks/memory updates capturing its findings are part of this same commit.
+- [x] T032a [US-walker] **Walker plan corrected per research-jinja-whitespace.md** — `is defined` rejected (broken on Askama; compile-time check returns constant `true` for always-present TemplateContext struct fields). `| isPresent` confirmed via prototype on both engines (Nunjucks 3.2.4 + Askama 0.14). Cluster F sub-commits ~3 instead of ~5 because freeze-tests target corrected output directly. No production-walker change yet — this is documentation-only acknowledgement of the prior research commit. Marked done because the research artifact is committed and the spec/tasks/memory updates capturing its findings are part of this same commit.
 - [ ] T033 [US-walker] Step 1: **Freeze-template unit tests.** Add `packages/codegen/src/__tests__/template-walker-frozen.test.ts` (or extend the existing test file) that captures the template emission output for ~15 representative kinds across rust/typescript/python (the highest-magnitude entries in the post-reset `failingByKind`: rust `function_item`, `block`, `let_declaration`, `type_item`, `trait_item`; ts `class_declaration`, `type_alias_declaration`, `statement_block`, `interface_declaration`, `function_type`; python `dictionary`). The tests freeze the **TARGET CORRECTED output** computed per the research artifact's recommended `{% if FIELD | isPresent %}<separator>{{ FIELD }}{% endif %}` shape — NOT current broken output. (This skips the intermediate "freeze-then-update" cycle from the original walker plan because the corrected target is now known up front.) Without this freeze, the walker fix in T035 has no regression detection. Commit titled `016/walker-refactor-1: freeze representative templates (corrected target)`.
 - [ ] T034 [US-walker] Step 2: **Remove `CLAUSE_PUNCT_NAMES` hardcode.** `packages/codegen/src/compiler/template-walker.ts:620` (approximate) has `const CLAUSE_PUNCT_NAMES: Record<string, string> = { '!': 'bang', '?': 'question' }`. Replace with a derivation via the existing `tokenToName(punctString)` helper. No allowlist; any optional-punct clause derives its name from the punct text. May bundle with T035 since both touch the same walker file; per the cluster-header revised budget, T034+T035 land as one sub-commit unless review feedback requests they split.
 - [ ] T035 [US-walker] Step 3: **Walker seq case — new space model.** Per-member, detect optional-field locally OR via the `optionalFields` set computed from `AssembledField.fields` (handles nested `optional(seq(field(...)))`). Emit `{% if foo | isPresent %} {{ foo }}{% endif %}` for optional fields with leading space INSIDE the conditional. Required word-like fields keep unconditional leading space. Update freeze-tests to reflect the corrected shapes (the freeze in T033 already captured the target; this step makes the walker emit the target, so the tests should pass without further freeze updates). **Note**: The walker plan's original `{% if foo is defined %}` was empirically broken on Askama (compile-time check returns constant `true` for always-present TemplateContext struct fields). `| isPresent` is the verified intersection-safe primitive (already shipped on both backends, parity-tested). See `research-jinja-whitespace.md`. Strip markers (`{%- -%}`) are NOT used (they eat intentional spaces). Commit titled `016/walker-refactor-2: jinja isPresent-conditional spacing for optional fields`.
@@ -163,6 +167,18 @@ This is a pnpm workspace. Touch surface for this feature:
 - [ ] T044 Update `MEMORY.md` index per FR-008 — every cluster fix should have either deleted a memory note (cluster fully closed) or added a one-line "deferred to follow-up" entry. Re-confirm there are no stale notes pointing at clusters this feature closed.
 - [ ] T045 Finalise PR `#016` description: include the final TS-mode and native-mode count summary table (initial → final per grammar), list of cluster commits with one-line subject each, link to the baseline JSON in the branch tip. Mark PR ready for review.
 - [ ] T046 If/when PR `#12` (`012-rust-core-port`) merges to master, GitHub auto-rebases `#016`. After rebase, re-run T041–T043 once more locally to confirm no breakage from the rebase. Push.
+
+---
+
+## Phase 6: Follow-ups Discovered During Implementation
+
+**Purpose**: Capture concrete tasks surfaced during Cluster B–F work that fall within the parity-regressions umbrella but were not part of the original Phase 3–5 task list. Each can ship as a standalone commit on this branch (or a fast-follow PR if the parent merges first). All five must respect the same zero-regression contract as Phase 3–5 clusters (SC-004).
+
+- [ ] T047 [Followup] Python `_simple_pattern.negative` via variant() adoption — `packages/python/overrides.ts`. Hidden-rule polymorph form currently fails roundtrip on the negative-prefix arm. Mirror the variant() pattern used for rust `range_pattern` (link.ts findVariantSymbolInSeqArm) on the python override. Affected counter: native-mode `pyRtFail`. Acceptance: roundtrip pass for `negative` form added; no other python rt regression.
+- [ ] T048 [Followup] TS `override_modifier` position bug — `packages/typescript/overrides.ts`. Field `override_modifier` is currently emitted at position 1 in the parent rule's seq; should be position 2 per grammar spec. Prior in-foreground attempt (stashed, see MEMORY.md `feedback_overrides_and_variants` for the full pattern) caused +17 fail rise. Needs a deeper investigation pass — likely interacts with the field-promotion wave's named-anon resolution. Acceptance: position fix applied; tsRtFail count drops with no upstream regression in fromInput / coverage.
+- [ ] T049 [Followup] Empty-body cosmetic spacing in list-kind templates — `packages/codegen/src/emitters/templates.ts`. After the `collapse_inner_spaces` post-processing reset (project_post_processing_reset in MEMORY.md), kinds with optional-empty bodies (e.g. python `parameters`, ts `formal_parameters`) now emit stray space between the open delimiter and the next placeholder when the body is empty. Use the Jinja-conditional spacing pattern called out in feedback_no_silent_formatting. Acceptance: factoryRT for empty-body kinds passes byte-equal across both backends.
+- [ ] T050 [Followup] Hidden-group fragment factories + per-form parent body activation — `packages/codegen/src/emitters/factories.ts:331`. Relax the `if (kind.startsWith('_')) continue` gate so hidden-group rules emit their fragment factories, allowing per-form parent bodies to compose them. Currently in flight as background agent `a4ffe1f663f841089` on sonnet. Acceptance: fragment factories exposed via `_x` getters; no upstream Config / NamespaceMap regression; rt count net-positive.
+- [ ] T051 [Followup] DRY hasTrailing/hasLeading on AssembledField — `packages/codegen/src/compiler/node-map.ts`. Replace the four call sites of `findFieldsWithRepeatFlag` (in `template-walker.ts` ~L1212) with a derived property on AssembledField populated at construction. **simplifiedRule trap**: prior attempt (failed; reverted) used `rule.content` instead of `simplifiedRule`, causing a 560-fixture native parity divergence. The two trees yield different repeat-flag answers — the derivation MUST run on `simplifiedRule` (the same rule the existing walker walks). Acceptance: byte-equal output across both backends; no test deltas.
 
 ---
 
@@ -228,6 +244,7 @@ wait
 ## Implementation Strategy — MVP First, Incremental Delivery
 
 **MVP** = US1 alone (T001–T010). Branch ships with:
+
 - A working baseline-collection script
 - Two committed JSONs reflecting the current state
 - A CI gate that prevents regressions
@@ -242,20 +259,23 @@ This is genuinely useful by itself: it gives every future PR a regression check,
 
 ## Format Validation
 
-All 46 tasks above use the required checklist format:
+All 51 tasks above use the required checklist format:
+
 - ✅ `- [ ]` checkbox prefix
-- ✅ Task ID (T001–T046)
+- ✅ Task ID (T001–T051)
 - ✅ `[P]` parallel marker where applicable
-- ✅ `[Story]` label (US1 / US2 / US3) on phase 3+ tasks; absent on Setup/Foundational/Polish per format rule
+- ✅ `[Story]` label (US1 / US2 / US3) on phase 3+ tasks; `[Followup]` label on phase 6 tasks; absent on Setup/Foundational/Polish per format rule
 - ✅ Concrete file path or path-equivalent (validator name, package directory) in every task description
 
-**Total task count**: 46
+**Total task count**: 51
 **Per user story**:
+
 - US1 (P1, foundational): 8 (T003–T010)
 - US2 (P1, TS-mode floor): 22 (T011–T032)
 - US3 (P2, native floor): 8 (T033–T040)
 - Setup: 2 (T001–T002)
 - Polish: 6 (T041–T046)
+- Follow-ups: 5 (T047–T051)
 
 **Parallel opportunities identified**: T007/T008 within US1; T029/T030/T031 within US2 Cluster E. Most cluster work is sequential by zero-regression contract.
 

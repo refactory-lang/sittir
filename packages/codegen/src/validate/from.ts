@@ -9,10 +9,10 @@
  * No tree-sitter re-parsing needed — pure structural comparison.
  */
 
-import { createRequire } from 'node:module';
-import { parse as parseYaml } from 'yaml';
-import { readNode } from '@sittir/core';
-import type { AnyNodeData, RulesConfig } from '@sittir/types';
+import { createRequire } from "node:module";
+import { parse as parseYaml } from "yaml";
+import { readNode } from "@sittir/core";
+import type { AnyNodeData, RulesConfig } from "@sittir/types";
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
@@ -20,27 +20,28 @@ import {
 	buildReadHandle,
 	findFirst,
 	collectKinds,
+	emitValidatorMetrics,
 	type TSTree,
-} from './common.ts';
+} from "./common.ts";
 
 const require = createRequire(import.meta.url);
 
 const FROM_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/from.ts',
-	typescript: '../../../typescript/src/from.ts',
-	python: '../../../python/src/from.ts',
+	rust: "../../../rust/src/from.ts",
+	typescript: "../../../typescript/src/from.ts",
+	python: "../../../python/src/from.ts",
 };
 
 const FACTORY_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/factories.ts',
-	typescript: '../../../typescript/src/factories.ts',
-	python: '../../../python/src/factories.ts',
+	rust: "../../../rust/src/factories.ts",
+	typescript: "../../../typescript/src/factories.ts",
+	python: "../../../python/src/factories.ts",
 };
 
 const WRAP_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/wrap.ts',
-	typescript: '../../../typescript/src/wrap.ts',
-	python: '../../../python/src/wrap.ts',
+	rust: "../../../rust/src/wrap.ts",
+	typescript: "../../../typescript/src/wrap.ts",
+	python: "../../../python/src/wrap.ts",
 };
 
 // ---------------------------------------------------------------------------
@@ -53,19 +54,19 @@ const WRAP_MODULE_PATHS: Record<string, string> = {
  * `undefined` (the `undefined` keyword), and every valid Undefined
  * node tripped the check. Narrow to the actual intent: a node whose
  * `$type` is the JS undefined value (malformed construction). */
-function findUndefined(node: AnyNodeData, path = ''): string[] {
+function findUndefined(node: AnyNodeData, path = ""): string[] {
 	const results: string[] = [];
-	if (node.$type === undefined) results.push(path || 'root');
+	if (node.$type === undefined) results.push(path || "root");
 
 	if (node.$fields) {
 		for (const [key, value] of Object.entries(node.$fields)) {
 			if (Array.isArray(value)) {
 				value.forEach((v, i) => {
-					if (typeof v === 'object' && v !== null && '$type' in v) {
+					if (typeof v === "object" && v !== null && "$type" in v) {
 						results.push(...findUndefined(v as AnyNodeData, `${path}.${key}[${i}]`));
 					}
 				});
-			} else if (typeof value === 'object' && value !== null && '$type' in value) {
+			} else if (typeof value === "object" && value !== null && "$type" in value) {
 				results.push(...findUndefined(value as AnyNodeData, `${path}.${key}`));
 			}
 		}
@@ -73,7 +74,7 @@ function findUndefined(node: AnyNodeData, path = ''): string[] {
 
 	if (node.$children) {
 		(node.$children as AnyNodeData[]).forEach((c, i) => {
-			if (typeof c === 'object' && c !== null) {
+			if (typeof c === "object" && c !== null) {
 				results.push(...findUndefined(c, `${path}.children[${i}]`));
 			}
 		});
@@ -107,18 +108,20 @@ function structuralDiff(a: AnyNodeData, b: AnyNodeData): string[] {
 			.map(([k]) => k);
 
 	const bKeys = new Set(definedKeys(b.$fields as Record<string, unknown> | undefined));
-	const aKeysMatchingB = definedKeys(a.$fields as Record<string, unknown> | undefined)
-		.filter(k => bKeys.has(k));
+	const aKeysMatchingB = definedKeys(a.$fields as Record<string, unknown> | undefined).filter((k) =>
+		bKeys.has(k),
+	);
 
 	// One-way check: fields factory declared that from() didn't fill in.
-	const missingInA = [...bKeys].filter(k => !aKeysMatchingB.includes(k)).sort();
-	if (missingInA.length) diffs.push(`from() missing declared fields: ${missingInA.join(', ')}`);
+	const missingInA = [...bKeys].filter((k) => !aKeysMatchingB.includes(k)).sort();
+	if (missingInA.length) diffs.push(`from() missing declared fields: ${missingInA.join(", ")}`);
 
 	// Compare only named children — anonymous tokens (delimiters, separators)
 	// are reconstructed from templates, not carried in factory output
 	const aNamed = (a.$children ?? []).filter((c: any) => c?.$named !== false);
 	const bNamed = (b.$children ?? []).filter((c: any) => c?.$named !== false);
-	if (aNamed.length !== bNamed.length) diffs.push(`named children: ${aNamed.length} vs ${bNamed.length}`);
+	if (aNamed.length !== bNamed.length)
+		diffs.push(`named children: ${aNamed.length} vs ${bNamed.length}`);
 
 	return diffs;
 }
@@ -129,7 +132,7 @@ function structuralDiff(a: AnyNodeData, b: AnyNodeData): string[] {
 
 export interface FromValidationError {
 	kind: string;
-	severity: 'error' | 'warning';
+	severity: "error" | "warning";
 	message: string;
 }
 
@@ -156,29 +159,39 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	// wrap function, producing a fluent NodeData that `.from()` accepts.
 	let fromMap: Record<string, (input: object) => unknown> = {};
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
-	let factoryShapes: Record<string, 'config' | 'children' | 'text'> = {};
+	let factoryShapes: Record<string, "config" | "children" | "text"> = {};
 	let readTreeNode: ((tree: unknown, nodeId?: number) => unknown) | undefined;
 	try {
 		const fromModule = await import(new URL(FROM_MODULE_PATHS[grammar]!, import.meta.url).pathname);
 		fromMap = fromModule._fromMap ?? {};
-	} catch { /* from module unavailable */ }
+	} catch {
+		/* from module unavailable */
+	}
 	try {
-		const factoryModule = await import(new URL(FACTORY_MODULE_PATHS[grammar]!, import.meta.url).pathname);
+		const factoryModule = await import(
+			new URL(FACTORY_MODULE_PATHS[grammar]!, import.meta.url).pathname
+		);
 		factoryMap = factoryModule._factoryMap ?? {};
 		// Validator-only metadata (shapes, field-alias, factoryFields)
 		// moved to factory-map.json5. See emitters/factory-map.ts.
 		try {
 			const mapPath = `../../../${grammar}/factory-map.json5`;
-			const { readFileSync } = await import('node:fs');
-			const content = readFileSync(new URL(mapPath, import.meta.url).pathname, 'utf-8');
-			const jsonOnly = content.replace(/^\s*\/\/.*$/gm, '').trim();
+			const { readFileSync } = await import("node:fs");
+			const content = readFileSync(new URL(mapPath, import.meta.url).pathname, "utf-8");
+			const jsonOnly = content.replace(/^\s*\/\/.*$/gm, "").trim();
 			factoryShapes = JSON.parse(jsonOnly).factoryShapes ?? {};
-		} catch { /* factory-map.json5 unavailable */ }
-	} catch { /* factory module unavailable */ }
+		} catch {
+			/* factory-map.json5 unavailable */
+		}
+	} catch {
+		/* factory module unavailable */
+	}
 	try {
 		const wrapModule = await import(new URL(WRAP_MODULE_PATHS[grammar]!, import.meta.url).pathname);
 		readTreeNode = wrapModule.readTreeNode;
-	} catch { /* wrap module unavailable */ }
+	} catch {
+		/* wrap module unavailable */
+	}
 
 	const entries = loadCorpusEntries(grammar);
 	const errors: FromValidationError[] = [];
@@ -221,30 +234,28 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 					// containers (python `()` has promoted `(`/`)` fields
 					// but `children === undefined`, yet is a children-shape
 					// factory that must dispatch as `factory()` with no args).
-					const shape = factoryShapes[kind] ?? 'config';
+					const shape = factoryShapes[kind] ?? "config";
 					const factory = factoryMap[kind]!;
-					if (shape === 'config') {
+					if (shape === "config") {
 						const camelFields = readData.$fields
 							? Object.fromEntries(
-								Object.entries(readData.$fields).map(([k, v]) => [
-									k.replace(/_([a-z])/g, (_, c) => c.toUpperCase()),
-									v,
-								]),
-							)
+									Object.entries(readData.$fields).map(([k, v]) => [
+										k.replace(/_([a-z])/g, (_, c) => c.toUpperCase()),
+										v,
+									]),
+								)
 							: undefined;
 						const config = readData.$children
 							? { ...camelFields, children: readData.$children }
-							: camelFields ?? {};
+							: (camelFields ?? {});
 						factoryResult = factory(config) as AnyNodeData;
-					} else if (shape === 'text') {
-						factoryResult = (factory as (text: string) => AnyNodeData)(readData.$text ?? '');
+					} else if (shape === "text") {
+						factoryResult = (factory as (text: string) => AnyNodeData)(readData.$text ?? "");
 					} else {
 						const namedChildren = (readData.$children ?? []).filter(
 							(c: any) => c?.$named !== false,
 						);
-						factoryResult = (factory as (...args: unknown[]) => AnyNodeData)(
-							...namedChildren,
-						);
+						factoryResult = (factory as (...args: unknown[]) => AnyNodeData)(...namedChildren);
 					}
 				} catch {
 					skip++;
@@ -257,8 +268,8 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 					undefinedCount++;
 					errors.push({
 						kind,
-						severity: 'error',
-						message: `from() produces undefined nodes at: ${undefinedNodes.slice(0, 3).join(', ')}`,
+						severity: "error",
+						message: `from() produces undefined nodes at: ${undefinedNodes.slice(0, 3).join(", ")}`,
 					});
 					continue;
 				}
@@ -269,8 +280,8 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 					divergentCount++;
 					errors.push({
 						kind,
-						severity: 'warning',
-						message: `from() diverges: ${diffs.slice(0, 3).join('; ')}`,
+						severity: "warning",
+						message: `from() diverges: ${diffs.slice(0, 3).join("; ")}`,
 					});
 					continue;
 				}
@@ -279,25 +290,37 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 			} catch (e) {
 				errors.push({
 					kind,
-					severity: 'error',
+					severity: "error",
 					message: `from() throws: ${(e as Error).message.slice(0, 80)}`,
 				});
 			}
 		}
 	}
 
-	return { grammar, total, pass, fail: total - pass - skip, skip, undefinedCount, divergentCount, errors };
+	emitValidatorMetrics();
+	return {
+		grammar,
+		total,
+		pass,
+		fail: total - pass - skip,
+		skip,
+		undefinedCount,
+		divergentCount,
+		errors,
+	};
 }
 
 export function formatFromReport(result: FromValidationResult): string {
 	const lines: string[] = [];
-	const icon = result.fail === 0 ? 'v' : 'x';
-	lines.push(`  ${icon} ${result.pass}/${result.total} from() correctness (${result.undefinedCount} undefined, ${result.divergentCount} divergent, ${result.skip} skipped)`);
+	const icon = result.fail === 0 ? "v" : "x";
+	lines.push(
+		`  ${icon} ${result.pass}/${result.total} from() correctness (${result.undefinedCount} undefined, ${result.divergentCount} divergent, ${result.skip} skipped)`,
+	);
 	if (result.errors.length > 0) {
 		for (const e of result.errors) {
-			const prefix = e.severity === 'error' ? 'x' : '!';
+			const prefix = e.severity === "error" ? "x" : "!";
 			lines.push(`    ${prefix} ${e.kind}: ${e.message}`);
 		}
 	}
-	return lines.join('\n');
+	return lines.join("\n");
 }
