@@ -65,6 +65,7 @@ fn find_by_id<'a>(
     node: tree_sitter::Node<'a>,
     target: u64,
 ) -> Option<tree_sitter::Node<'a>> {
+
     if node.id() as u64 == target {
         return Some(node);
     }
@@ -85,6 +86,7 @@ fn read_ts_node(
     let assigned_id = node.id() as u64;
 
     let kind = node.kind().to_string();
+
     let named = node.is_named();
     let byte_range = node.byte_range();
     let span = Span {

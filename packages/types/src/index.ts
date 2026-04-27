@@ -24,6 +24,8 @@ import type { CamelCase, SimplifyDeep } from "type-fest";
 
 export type {
 	AnyNodeData,
+	NativeNodeData,
+	NativeFieldValue,
 	NodeFieldValue,
 	NodeChildValue,
 	AnyTreeNode,

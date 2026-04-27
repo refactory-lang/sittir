@@ -82,6 +82,19 @@ export interface AnyNodeData {
 	$named?: boolean;
 }
 
+export type NativeFieldValue = NativeNodeData | readonly NativeNodeData[] | string;
+
+export interface NativeNodeData {
+	readonly $type: string;
+	readonly $source: "ts" | "sg" | "factory";
+	readonly $named: boolean;
+	readonly $fields?: { readonly [key: string]: NativeFieldValue };
+	readonly $children?: readonly NativeNodeData[];
+	readonly $text?: string;
+	readonly $span?: { readonly start: number; readonly end: number };
+	readonly $nodeId?: number;
+}
+
 // ---------------------------------------------------------------------------
 // YAML render templates — ast-grep-style $VARIABLE syntax
 // ---------------------------------------------------------------------------

@@ -11,3 +11,4 @@ export { readNode } from "./readNode.ts";
 export type { TreeHandle } from "./readNode.ts";
 export { withMetrics, recordFfi, dumpMetrics, metricsEnabled } from "./metrics.ts";
 export type { MetricsFile, PerKindMetrics, FfiMetrics } from "./metrics.ts";
+export { assertNativeNodeData, isNativeNodeData } from "./native-boundary.ts";
