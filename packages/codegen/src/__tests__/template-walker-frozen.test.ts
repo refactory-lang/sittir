@@ -344,8 +344,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: "empty dictionary renders as {} with no inner spacing",
 		source: "{}",
 		target: "{}",
-		mode: "fail",
-		why: 'Template `{ {{ children | joinWithTrailing(",") }} }` leaves "{  }" when children is empty.',
+		mode: "pass",
+		why: 'T049 (016): translateToJinja now wraps flanking spaces in {%- if children | isPresent %} … {% endif -%} when childrenMayBeEmpty is true — empty dictionary renders as "{}" with no inner spacing.',
 	},
 	{
 		grammar: "python",

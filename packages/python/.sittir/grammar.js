@@ -1575,7 +1575,38 @@ var overrides_default = grammar(
       // Splitting the key-value arm into `dict_pattern_kv` leaves the
       // remaining choice all symbol-like. Requires infra (B)'s alias
       // descent in applyPath.
-      dict_pattern: { "1/0/0/0": "kv" }
+      dict_pattern: { "1/0/0/0": "kv" },
+      // _simple_pattern: base rule is
+      //   prec(1, choice(
+      //     class_pattern,               ← 0
+      //     splat_pattern,               ← 1
+      //     union_pattern,               ← 2
+      //     alias(_list_pattern, …),     ← 3
+      //     alias(_tuple_pattern, …),    ← 4
+      //     dict_pattern,                ← 5
+      //     string,                      ← 6
+      //     concatenated_string,         ← 7
+      //     true,                        ← 8
+      //     false,                       ← 9
+      //     none,                        ← 10
+      //     seq(optional('-'),           ← 11 — negative literal arm
+      //         choice(integer, float)),
+      //     complex_pattern,             ← 12
+      //     dotted_name,                 ← 13
+      //     '_',                         ← 14
+      //   ))
+      // Arm 11 is a SEQ containing an optional anonymous '-' token.
+      // The anonymous token is not a named child, so the parent template
+      // `{{ children | join(" ") }}` renders only the integer/float,
+      // silently dropping '-' for negative patterns like `-1` or `-1.0`.
+      // Adopting arm 11 as `simple_pattern_negative` (visible kind,
+      // leading '_' stripped per polymorphVisibleName convention) gives it
+      // its own template that includes the '-' prefix literal.
+      //
+      // Note: `_simple_pattern` is a hidden rule, so no conflicts entry
+      // is needed — tree-sitter inlines it into parent rules directly.
+      // The visible variant kind is `simple_pattern_negative`.
+      _simple_pattern: { "11": "negative" }
     },
     transforms: {
       // as_pattern: 1 field(s)

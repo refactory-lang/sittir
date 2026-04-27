@@ -433,6 +433,19 @@ pub struct RangeExpressionPrefixTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_range_pattern_left_with_right.jinja", escape = "none")]
+pub struct RangePatternLeftWithRightTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub right: String,
+    pub right_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_range_pattern_prefix.jinja", escape = "none")]
 pub struct RangePatternPrefixTemplate {
     pub children: Vec<String>,
@@ -1877,6 +1890,8 @@ pub struct RangePatternTemplate {
     pub text: String,
     pub trailing_sep: bool,
     pub leading_sep: bool,
+    pub left: String,
+    pub left_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -3043,6 +3058,19 @@ pub fn render_dispatch(
                 end_list: ctx.fields_list.get("end").cloned().unwrap_or_default(),
                 operator: ctx.fields.get("operator").cloned().unwrap_or_default(),
                 operator_list: ctx.fields_list.get("operator").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "_range_pattern_left_with_right" => {
+            let t = RangePatternLeftWithRightTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                right: ctx.fields.get("right").cloned().unwrap_or_default(),
+                right_list: ctx.fields_list.get("right").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -4490,6 +4518,8 @@ pub fn render_dispatch(
                 text: ctx.text.clone(),
                 trailing_sep: ctx.trailing_sep,
                 leading_sep: ctx.leading_sep,
+                left: ctx.fields.get("left").cloned().unwrap_or_default(),
+                left_list: ctx.fields_list.get("left").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }

@@ -26,6 +26,7 @@ import type {
 	KindProjection,
 	SignaturePool,
 	ProjectionContext,
+	PolymorphVariant,
 } from "./types.ts";
 import { computePolymorphFormKinds } from "./types.ts";
 import type { AssembledNode, AssembledField, AssembledChild } from "./node-map.ts";
@@ -187,6 +188,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 	resolveIrKeys(nodes);
 	markParameterlessKinds(nodes);
 	markUserFacing(nodes);
+	markVariantChildrenUserFacing(nodes, optimized.polymorphVariants ?? []);
 
 	return {
 		name: optimized.name,
@@ -734,6 +736,34 @@ function markUserFacing(nodes: Map<string, AssembledNode>): void {
 		// Hidden — user-facing only when referenced as alias source,
 		// or when it's a polymorph (dispatched into via $variant).
 		n.userFacing = aliasSourceKinds.has(kind) || n.modelType === "polymorph";
+	}
+}
+
+/**
+ * Ensure hidden variant-child rules are marked user-facing so the template
+ * and factory emitters include them.
+ *
+ * @param nodes - Assembled node map; modified in place.
+ * @param variants - Polymorph variant registrations from the grammar.
+ * @remarks
+ *   When the variant parent is classified as a supertype (e.g. python's
+ *   `_simple_pattern`), `markUserFacing`'s slot walker never iterates
+ *   supertype subtypes, so the hidden variant-child rule
+ *   (`_${parent}_${child}`, e.g. `_simple_pattern_negative`) never enters
+ *   `aliasSourceKinds` and stays `userFacing=false`. This pass explicitly
+ *   marks each hidden child so its `.jinja` template, wrap-table entry,
+ *   and `_aliasTargetToSource` remap are emitted by downstream emitters.
+ */
+function markVariantChildrenUserFacing(
+	nodes: Map<string, AssembledNode>,
+	variants: readonly PolymorphVariant[],
+): void {
+	for (const v of variants) {
+		const hiddenChildKind = `${v.parent}_${v.child}`;
+		const childNode = nodes.get(hiddenChildKind);
+		if (childNode && !childNode.userFacing) {
+			childNode.userFacing = true;
+		}
 	}
 }
 

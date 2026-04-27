@@ -1465,7 +1465,15 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 		) {
 			return true;
 		}
-		return isVerbatimTokenStream(this.rule);
+		if (isVerbatimTokenStream(this.rule)) return true;
+		// Container with optional-punct prefix: the template walker emits
+		// nothing for `optional(punct)` (see `containsOnlyPunctuation`
+		// path in `template-walker.ts` optional case). A seq whose FIRST
+		// member is an optional-punctuation wrapper — e.g.
+		// `seq(optional('-'), choice(integer, float))` for
+		// `_simple_pattern_negative` — would silently drop the prefix.
+		// Fall back to `{{ text }}` so the anonymous prefix is preserved.
+		return hasOptionalPunctPrefix(this.rule);
 	}
 
 	/**
@@ -1754,6 +1762,140 @@ export interface JinjaTranslateMeta {
 	 * `{% if %}…{% endif %}` block are left untouched.
 	 */
 	optionalFields?: ReadonlySet<string>;
+	/**
+	 * T049 (016): true when the container's children may be empty (the
+	 * rule is a `repeat()` — zero-or-more — rather than `repeat1()`). When
+	 * set, `translateToJinja` wraps the flanking spaces around
+	 * `{{ children | ... }}` inside `{% if children | isPresent %}`
+	 * conditionals so an empty-children render produces no stray space
+	 * between the surrounding delimiters (e.g. `{}` instead of `{  }`).
+	 */
+	optionalChildren?: boolean;
+}
+
+/**
+ * T049 (016): detect whether a container's children slot may be empty.
+ *
+ * Returns `true` when the rule is a `repeat()` (zero-or-more) at any
+ * level reachable without crossing a `repeat1()` boundary, or when a
+ * `choice` includes a `blank`-equivalent arm, or when the whole subtree
+ * is `optional`. `repeat1()` means at least one child is required —
+ * children are never empty in that case.
+ *
+ * This is deliberately conservative: false positives (reporting
+ * "may be empty" when children are actually always present) only produce
+ * unnecessary `{% if %}` guards — wrong output is never emitted.
+ */
+function childrenMayBeEmpty(rule: Rule): boolean {
+	switch (rule.type) {
+		case "repeat":
+		case "optional":
+			return true;
+		case "repeat1":
+			return false;
+		case "choice":
+			// `blank()` is encoded as `choice([])` (empty members). An
+			// empty-members choice means "blank" — definitely zero children.
+			if (rule.members.length === 0) return true;
+			// Any member that may-be-empty makes the whole choice potentially empty.
+			return rule.members.some((m) => childrenMayBeEmpty(m));
+		case "seq":
+			// A seq is empty only if every member may be empty.
+			return rule.members.every((m) => childrenMayBeEmpty(m));
+		// Terminal / leaf cases — always contribute at least one token.
+		case "symbol":
+		case "string":
+		case "pattern":
+		case "token":
+		case "supertype":
+		case "enum":
+		case "terminal":
+		case "polymorph":
+		case "alias":
+		case "indent":
+		case "dedent":
+		case "newline":
+			return false;
+		case "field":
+		case "variant":
+		case "clause":
+		case "group":
+			return childrenMayBeEmpty(rule.content);
+		default:
+			return assertNever(rule);
+	}
+}
+
+/**
+ * T049 (016): when `optionalChildren` is set, absorb the flanking spaces
+ * around `{{ children | ... }}` into a whitespace-controlled
+ * `{%- if children | isPresent %} ... {% endif -%}` conditional so an
+ * empty-children render emits no stray whitespace between surrounding
+ * delimiters.
+ *
+ * Transforms the pattern `<delim> {{ children | filter(...) }} <delim>`
+ * by replacing the middle ` {{ children | ... }} ` with
+ * `{%- if children | isPresent %} {{ children | ... }} {% endif -%}`.
+ * The `escapeJinjaBraceCollisions` step that follows in `translateToJinja`
+ * then inserts a space inside the `{` / `}` delimiter adjacency (producing
+ * `{ {%- if ... %} ... {% endif -%} }`), which renders as:
+ *   - empty children → `{}` (no spaces — both `{%-` and `-%}` suppress the
+ *     adjacent spaces in the output stream when the block is absent)
+ *   - non-empty children → `{ 1,2 }` (spaces preserved — the body fires
+ *     and emits the leading/trailing spaces from inside the conditional)
+ *
+ * Cross-renderer safe: `{%-` / `-%}` whitespace-control markers work
+ * identically in Nunjucks (TS) and Askama (Rust) — see memory note
+ * `project_jinja_intersection_safe_primitives`. `isPresent` is the
+ * canonical cross-engine presence filter.
+ *
+ * @remarks
+ * Only fires when the children expression is surrounded by literal
+ * spaces on both sides (`<space>{{ children | ... }}<space>`). Templates
+ * that have no surrounding spaces are left untouched.
+ */
+function absorbFlankingChildrenSpaces(tmpl: string): string {
+	// The children block is `{{ children | <filter>("<sep>") }}`.
+	// Absorb the adjacent whitespace (or inject it when absent) around the
+	// block into a whitespace-controlled `{%- if children | isPresent %} …
+	// {% endif -%}` conditional, so an empty-children render produces `{}`
+	// instead of `{  }`.
+	//
+	// Two source forms (from the grammar walker):
+	//   Space-padded : walker emitted `{ $$$CHILDREN }` → translated to
+	//                  `{ {{ children | ... }} }` (spaces inside the braces).
+	//   No-space     : walker emitted `{$$$CHILDREN}` → translated to
+	//                  `{{{ children | ... }}}` (no spaces).
+	//
+	// Target form for both (before `escapeJinjaBraceCollisions`):
+	//   `{<SP>{%- if children | isPresent %} {{ children | ... }} {% endif -%}<SP>}`
+	//   → `escapeJinjaBraceCollisions` splits `{<SP>{%-` correctly and
+	//     yields `{ {%- if ... %} {{ children | ... }} {% endif -%} }`.
+	//   Empty render: `{}` (whitespace-control markers suppress the spaces).
+	//   Non-empty:    `{ item1,item2 }`.
+	//
+	// `[^)]*` captures the separator argument (e.g. `","`, `" "`) — it never
+	// contains `)`.
+
+	// Case 1: space-padded — replace ` {{ children | ... }} ` (note leading
+	// and trailing literal spaces) with the conditional form. The surrounding
+	// `{` / `}` delimiters are NOT captured; they remain in place. The
+	// `escapeJinjaBraceCollisions` step later inserts a separating space
+	// between the dict-brace `{` and the leading `{%-` tag.
+	let result = tmpl.replace(
+		/ (\{\{ children \| \w+\([^)]*\) \}\}) /g,
+		"{%- if children | isPresent %} $1 {% endif -%}",
+	);
+	// Case 2: no-space form — `{{{ children | ... }}}` — the outer `{` and `}`
+	// are the Python dict braces that immediately flank the Jinja block. Replace
+	// just the Jinja block and inject spaces so the result has the same shape as
+	// case 1 after the space-absorb step. The replacement injects ` ` before and
+	// after so the surrounding `{` / `}` produce `{ {%- if ... -%} }`.
+	result = result.replace(
+		/\{(\{\{ children \| \w+\([^)]*\) \}\})\}/g,
+		"{ {%- if children | isPresent %} $1 {% endif -%} }",
+	);
+	return result;
 }
 
 /** @internal — exported for direct unit testing. */
@@ -1777,7 +1919,10 @@ export function translateToJinja(tmpl: string, meta: JinjaTranslateMeta): string
 		}
 		return `{{ ${key} }}`;
 	});
-	return escapeJinjaBraceCollisions(absorbHeadConditionalTrailingSpace(translated));
+	const postProcessed = meta.optionalChildren
+		? absorbFlankingChildrenSpaces(translated)
+		: translated;
+	return escapeJinjaBraceCollisions(absorbHeadConditionalTrailingSpace(postProcessed));
 }
 
 /**
@@ -2276,6 +2421,59 @@ function isVerbatimTokenStream(rule: Rule): boolean {
 }
 
 /**
+ * Return `true` when a rule is a `seq` whose first member is
+ * `optional(<punct>)` — a purely-punctuation optional the template
+ * walker unconditionally drops.
+ *
+ * The canonical example is python's `_simple_pattern_negative`:
+ *   `seq(optional('-'), choice(integer, float))`
+ * whose optional `-` prefix is silently lost by
+ * `template-walker.ts`'s `containsOnlyPunctuation` branch. Falling
+ * back to `{{ text }}` preserves the prefix for roundtrip fidelity.
+ *
+ * Only fires for containers — branch nodes with named fields are handled
+ * by the field-conditional path and don't reach `isTextTemplate`.
+ */
+function hasOptionalPunctPrefix(rule: Rule): boolean {
+	if (rule.type !== "seq" || rule.members.length < 2) return false;
+	const first = rule.members[0]!;
+	if (first.type !== "optional") return false;
+	// The optional's content must be purely punctuation (no symbols/fields).
+	return isAllPunct(first.content);
+}
+
+/** Return true when a rule contains only string/pattern literals with no
+ *  symbol references or field wrappers. Mirrors `containsOnlyPunctuation`
+ *  in `template-walker.ts` (kept local to avoid a cross-file import). */
+function isAllPunct(rule: Rule): boolean {
+	switch (rule.type) {
+		case "string":
+		case "pattern":
+		case "indent":
+		case "dedent":
+		case "newline":
+			return true;
+		case "field":
+		case "symbol":
+		case "supertype":
+		case "enum":
+			return false;
+		case "seq":
+		case "choice":
+			return (rule as { members: Rule[] }).members.every(isAllPunct);
+		case "optional":
+		case "repeat":
+		case "repeat1":
+		case "variant":
+		case "clause":
+		case "group":
+			return isAllPunct((rule as { content: Rule }).content);
+		default:
+			return false;
+	}
+}
+
+/**
  * Peel structural passthrough wrappers off a rule until reaching a
  * non-passthrough core. Single source of truth for the "find the
  * meaningful inner rule" walk that otherwise gets re-inlined every
@@ -2510,6 +2708,10 @@ export class AssembledContainer extends AssembledNodeBase<
 		// empty; omit the findFieldsWithRepeatFlag calls (DRY: derived once on
 		// AssembledField.hasTrailing/hasLeading; containers have no AssembledField).
 		if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField;
+		// T049 (016): flag when children may be zero so translateToJinja can
+		// absorb flanking spaces into an isPresent conditional — prevents
+		// stray `{  }` when an empty-body factory node renders via this template.
+		if (childrenMayBeEmpty(this.simplifiedRule)) meta.optionalChildren = true;
 		return { template: translateToJinja(withClauses, meta) };
 	}
 }
