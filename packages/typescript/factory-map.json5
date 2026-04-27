@@ -621,6 +621,7 @@
     ],
     "method_definition": [
       "accessibility_modifier",
+      "static_marker",
       "override_modifier",
       "readonly_marker",
       "async_marker",
@@ -648,6 +649,7 @@
     ],
     "method_signature": [
       "accessibility_modifier",
+      "static_marker",
       "override_modifier",
       "readonly_marker",
       "async_marker",
@@ -865,6 +867,7 @@
     ],
     "property_signature": [
       "accessibility_modifier",
+      "static_marker",
       "override_modifier",
       "readonly_marker",
       "name",

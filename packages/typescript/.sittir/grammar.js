@@ -1915,11 +1915,11 @@ var overrides_default = grammar(
         // type [struct=1]
       },
       // method_definition: prec.left(seq(
-      //   optional($.accessibility_modifier),    // pos 0
-      //   optional('static'),                    // pos 1  (DEFERRED — `static` adjacent to public_field_definition's
-      //                                          //         static_mods polymorph; promoting the bare 'static' here
-      //                                          //         risks parse drift across the two class-member shapes.)
-      //   optional($.override_modifier),         // pos 2 (existing field below)
+      //   optional($.accessibility_modifier),    // pos 0  (auto-promoted: accessibility_modifier by enrich)
+      //   optional('static'),                    // pos 1  →  'static_marker' (T048: was wrongly labeled
+      //                                          //         override_modifier; _kw_static_marker synthesized
+      //                                          //         here; add to inline: if parse drift emerges)
+      //   optional($.override_modifier),         // pos 2  (auto-promoted: override_modifier by enrich)
       //   optional('readonly'),                  // pos 3  →  '3/0'  (readonly_marker)
       //   optional('async'),                     // pos 4  →  '4/0'  (async_marker)
       //   optional(choice('get','set','*')),    // pos 5  →  '5/0'  (accessor_kind, choice-of-strings)
@@ -1943,31 +1943,32 @@ var overrides_default = grammar(
       // into every reference site at LR-table generation while preserving
       // the FIELD wrapper for the parse tree.
       method_definition: {
-        1: field("override_modifier"),
-        // override_modifier [struct=1]
+        1: field("static_marker"),
+        // 'static' [pos=1] — T048: fixed from override_modifier
         "3/0": field("readonly_marker"),
         "4/0": field("async_marker"),
         "5/0": field("accessor_kind"),
         "7/0": field("optional_marker")
       },
       // method_signature: seq(
-      //   optional($.accessibility_modifier),    // pos 0
-      //   optional('static'),                    // pos 1  (auto-promoted: static_marker)
-      //   optional($.override_modifier),         // pos 2 (existing field below — entry positionally targets pos 1)
-      //   optional('readonly'),                  // pos 3  (auto-promoted: readonly_marker by enrich, 016 task #30)
-      //   optional('async'),                     // pos 4  (auto-promoted: async_marker by enrich, 016 task #30)
+      //   optional($.accessibility_modifier),    // pos 0  (auto-promoted: accessibility_modifier by enrich)
+      //   optional('static'),                    // pos 1  →  'static_marker' (T048: was wrongly labeled
+      //                                          //         override_modifier; pos 2 override_modifier
+      //                                          //         auto-promoted by enrich)
+      //   optional($.override_modifier),         // pos 2  (auto-promoted: override_modifier by enrich)
+      //   optional('readonly'),                  // pos 3  (auto-promoted: readonly_marker by enrich)
+      //   optional('async'),                     // pos 4  (auto-promoted: async_marker by enrich)
       //   optional(choice('get','set','*')),    // pos 5  →  '5/0'  (accessor_kind, choice-of-strings)
       //   field('name', $._property_name),       // pos 6
       //   optional('?'),                         // pos 7  →  '7/0'  (optional_marker)
       //   $._call_signature)                     // pos 8
-      // Standalone `optional('static')` / `optional('readonly')` /
-      // `optional('async')` are auto-promoted by enrich. Kept entries:
-      // accessor_kind (choice-of-strings, enrich skips), optional_marker
-      // (`?` not identifier-shaped), and the inherited override_modifier
-      // entry (preserved as-is — see method_definition note above).
+      // Standalone `optional('readonly')` / `optional('async')` are
+      // auto-promoted by enrich. Kept entries: accessor_kind
+      // (choice-of-strings, enrich skips), optional_marker
+      // (`?` not identifier-shaped).
       method_signature: {
-        1: field("override_modifier"),
-        // override_modifier [struct=1]
+        1: field("static_marker"),
+        // 'static' [pos=1] — T048: fixed from override_modifier
         "5/0": field("accessor_kind"),
         "7/0": field("optional_marker")
       },
@@ -1984,19 +1985,20 @@ var overrides_default = grammar(
         // statement [struct=1]
       },
       // property_signature: seq(
-      //   optional($.accessibility_modifier),  // pos 0
-      //   optional('static'),                   // pos 1  (auto-promoted: static_marker)
-      //   optional($.override_modifier),         // pos 2 (existing field below — note position drift; entry kept as 1)
-      //   optional('readonly'),                  // pos 3  (auto-promoted: readonly_marker by enrich, 016 task #30)
+      //   optional($.accessibility_modifier),  // pos 0  (auto-promoted: accessibility_modifier by enrich)
+      //   optional('static'),                   // pos 1  →  'static_marker' (T048: was wrongly labeled
+      //                                         //         override_modifier; pos 2 override_modifier
+      //                                         //         auto-promoted by enrich)
+      //   optional($.override_modifier),         // pos 2  (auto-promoted: override_modifier by enrich)
+      //   optional('readonly'),                  // pos 3  (auto-promoted: readonly_marker by enrich)
       //   field('name', $._property_name),       // pos 4
       //   optional('?'),                         // pos 5  →  '5/0'  (optional_marker)
       //   field('type', optional($.type_annotation)))  // pos 6
       // Standalone `optional('readonly')` is auto-promoted by enrich.
-      // Kept entries: optional_marker (`?` non-identifier), and the
-      // inherited override_modifier entry (see method_definition note above).
+      // Kept entries: optional_marker (`?` non-identifier).
       property_signature: {
-        1: field("override_modifier"),
-        // override_modifier [struct=1]
+        1: field("static_marker"),
+        // 'static' [pos=1] — T048: fixed from override_modifier
         "5/0": field("optional_marker")
       },
       // satisfies_expression: 2 field(s)
