@@ -218,9 +218,13 @@ export async function loadBoundaryRender(
  * with TS numbers labelled `"backend": "native"`. TS mode is the only
  * path that may legitimately reach the createRenderer fallback.
  */
-async function buildParityRenderer(grammar: Grammar, backend: Backend): Promise<ParityRenderer> {
+async function buildParityRenderer(
+	grammar: Grammar,
+	backend: Backend,
+	importFn?: BoundaryImporter,
+): Promise<ParityRenderer> {
 	if (backend === "native") {
-		const render = await loadBoundaryRender(grammar);
+		const render = await loadBoundaryRender(grammar, importFn);
 		return { render };
 	}
 	// Lazy import of @sittir/core's createRenderer — keeps the module
@@ -232,9 +236,13 @@ async function buildParityRenderer(grammar: Grammar, backend: Backend): Promise<
 	return { render: r.render.bind(r) };
 }
 
-async function collectParityFixtures(grammar: Grammar, backend: Backend): Promise<ParityFixtures> {
+export async function collectParityFixtures(
+	grammar: Grammar,
+	backend: Backend,
+	importFn?: BoundaryImporter,
+): Promise<ParityFixtures> {
 	const fixtures = loadRenderFixtures(grammar);
-	const renderer = await buildParityRenderer(grammar, backend);
+	const renderer = await buildParityRenderer(grammar, backend, importFn);
 
 	let pass = 0;
 	// Map insertion order matches fixture-file declaration order — keep

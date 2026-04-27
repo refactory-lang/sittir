@@ -29,7 +29,6 @@ import * as common from "../validate/common.ts";
 import * as baseline from "../scripts/collect-baseline.ts";
 
 const grammarKeys = ["python", "rust", "typescript"] as const;
-const pythonBackendModule = "../../../python/src/backend.js";
 
 describe("collect-baseline", () => {
 	let result: baseline.BackendBaseline;
@@ -39,7 +38,6 @@ describe("collect-baseline", () => {
 	}, 600_000);
 
 	afterEach(() => {
-		vi.doUnmock(pythonBackendModule);
 		vi.restoreAllMocks();
 		vi.resetModules();
 		delete process.env.SITTIR_BACKEND;
@@ -208,40 +206,18 @@ describe("collect-baseline", () => {
 	});
 
 	it("parity render exceptions surface with fixture context", async () => {
-		vi.resetModules();
-		vi.doMock(pythonBackendModule, () => ({
-			getActiveBackend: () => ({
-				name: "native",
-				hashMatch: true,
-				native: {
-					SittirEngine: class {
-						get templateBundleHash() {
-							return "mock-hash";
-						}
-
-						render() {
-							throw new Error("boom");
-						}
-
-						applyEdits() {
-							throw new Error("native apply boom");
-						}
-
-						findAndRead() {
-							throw new Error("unused in parity render test");
-						}
-
-						readNode() {
-							throw new Error("unused in parity render test");
-						}
-					},
-				},
-			}),
-		}));
-		const isolatedBaseline = await import("../scripts/collect-baseline.ts");
-		await expect(isolatedBaseline.collectBaseline("native")).rejects.toThrow(
-			/\[python\]\[native\]\[render #0\].*boom/,
-		);
+		// Inject a boundary importer that returns a render function which always
+		// throws. The importFn injection path bypasses the file:// URL that
+		// vi.doMock cannot intercept, making this a pure unit test of the
+		// exception-wrapping logic in collectParityFixtures.
+		const throwingImportFn: baseline.BoundaryImporter = async () => ({
+			render() {
+				throw new Error("boom");
+			},
+		});
+		await expect(
+			baseline.collectParityFixtures("python", "native", throwingImportFn),
+		).rejects.toThrow(/\[python\]\[native\]\[render #0\].*boom/);
 	});
 
 	it("native baseline failures point at bundle drift instead of looking like parity noise", async () => {
