@@ -9,8 +9,8 @@ insertion. Every whitespace decision in a generated `.jinja` template
 must be EXPLICIT — either a literal token from the grammar rule or a
 Jinja conditional tied to the presence of a specific field.
 
-User directive: *"get rid of needsSpace at runtime, only use the
-Jinja conditionals"*.
+User directive: _"get rid of needsSpace at runtime, only use the
+Jinja conditionals"_.
 
 Reference: https://jinja.palletsprojects.com/en/stable/templates/
 
@@ -54,10 +54,10 @@ decision based on two signals from the rule tree:
 
 Resulting placeholder shapes:
 
-| Content | Required | Optional |
-|---|---|---|
+| Content   | Required                        | Optional                       |
+| --------- | ------------------------------- | ------------------------------ |
 | word-like | ` $FOO` (leading space literal) | `{% if foo %} $FOO{% endif %}` |
-| punct | `$FOO` (no space) | `{% if foo %}$FOO{% endif %}` |
+| punct     | `$FOO` (no space)               | `{% if foo %}$FOO{% endif %}`  |
 
 The seq walker loses its `out.push(' ')` call entirely. Whatever
 the field emits is what lands in the output. Literal tokens emit
@@ -68,22 +68,26 @@ themselves unchanged.
 ### `break_statement` (`seq('break', field('label', optional(...)), _semicolon)`)
 
 Walker emits:
+
 ```
 break{% if label %} $LABEL{% endif %}$SEMICOLON
 ```
 
 Translated:
+
 ```
 break{% if label %} {{ label }}{% endif %}{{ semicolon }}
 ```
 
 Renders:
+
 - `break;` source → `break;` ✓
 - `break foo;` source → `break foo;` ✓
 
 ### `let_declaration` (`seq('let', field('mutable_specifier', optional(...)), field('pattern', ...), ..., _semicolon)`)
 
 Walker emits:
+
 ```
 let{% if mutable_specifier %} $MUTABLE_SPECIFIER{% endif %} $PATTERN...$SEMICOLON
 ```
@@ -93,14 +97,15 @@ Renders both `let foo;` and `let mut foo;` correctly.
 ### `function_item` (stacked optional modifiers)
 
 Walker emits:
+
 ```
 {% if visibility_modifier %} $VISIBILITY_MODIFIER{% endif %}{% if function_modifiers %} $FUNCTION_MODIFIERS{% endif %} fn $NAME...
 ```
 
-*Note the leading-space-inside pattern is fine for middle/end
+_Note the leading-space-inside pattern is fine for middle/end
 position but leaves a stray leading space when the entire
 prefix is absent (`{% if %}{% endif %}{% if %}{% endif %} fn foo`
-renders as ` fn foo` when both vis and mods are absent).*
+renders as ` fn foo` when both vis and mods are absent)._
 
 For top-level kinds, a post-process pass (or a top-level
 `.trim()` on the renderer output — already present in
@@ -110,10 +115,10 @@ For top-level kinds, a post-process pass (or a top-level
 
 Files touched:
 
-| File | Change |
-|---|---|
+| File                                               | Change                                                                                                                                                                               |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `packages/codegen/src/compiler/template-walker.ts` | Delete `out.push(' ')` in seq case; delete `needsSpace` helper. `field` / `symbol` cases gain per-placeholder leading-whitespace logic based on content word-likeness + optionality. |
-| `packages/codegen/src/compiler/node-map.ts` | `translateToJinja` becomes simpler — drops the `optionalFields`-aware conditional emission I tried (since walker now emits the conditional directly). |
+| `packages/codegen/src/compiler/node-map.ts`        | `translateToJinja` becomes simpler — drops the `optionalFields`-aware conditional emission I tried (since walker now emits the conditional directly).                                |
 
 ## Risks
 
@@ -135,12 +140,13 @@ Files touched:
 ## Test gate
 
 Before landing:
+
 - All 516 codegen-internal tests pass
 - `corpus-validation` rtPass / rtAstMatchPass numbers ≥ current
   values for ALL three grammars
 - No new un-renderable kinds
 - Regression-test: `probe-kind --grammar typescript --source
-  'break;' --kind break_statement` must show `rendered: 'break;'`
+'break;' --kind break_statement` must show `rendered: 'break;'`
   and `astDiff.childCountMatch: true`
 
 ## Commit sequence

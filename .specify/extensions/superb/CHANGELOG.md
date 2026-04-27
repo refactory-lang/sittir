@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [1.3.0] - 2026-04-16
+
 ### Changed
 
 - No extension payload changes since `1.1.0`; current unreleased work only corrects release metadata wording for the existing bridge package.

@@ -15,7 +15,7 @@
  * No recursion — lazy getters in wrap.ts call readNode again when needed.
  */
 
-import type { AnyNodeData, AnyTreeNode } from './types.ts';
+import type { AnyNodeData, AnyTreeNode } from "./types.ts";
 
 /**
  * A handle to the parsed tree, providing node lookup by id.
@@ -61,7 +61,7 @@ function promoteAnonymousKeyword(
 	fields: Record<string, AnyNodeData | AnyNodeData[]>,
 ): boolean {
 	if (child.isNamed()) return false;
-	const text = entry.$text ?? '';
+	const text = entry.$text ?? "";
 	if (text.length === 0) return false;
 	if (fields[text] !== undefined) return false;
 	fields[text] = entry;
@@ -100,7 +100,7 @@ export function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
 
 		const entry: AnyNodeData = {
 			$type: child.type,
-			$source: 'ts',
+			$source: "ts",
 			$text: child.text(),
 			$span: { start: child.range().start.index, end: child.range().end.index },
 			$nodeId: child.id(),
@@ -141,7 +141,7 @@ export function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
 
 	return {
 		$type: node.type,
-		$source: 'ts',
+		$source: "ts",
 		$text: node.text(),
 		$fields: Object.keys(fields).length > 0 ? fields : undefined,
 		$children: children.length > 0 ? children : undefined,

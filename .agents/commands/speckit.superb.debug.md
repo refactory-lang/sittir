@@ -4,9 +4,9 @@ description: Systematic debugging protocol. Bridges an installed obra/superpower
   Use when TDD hits repeated failures or any unexpected behavior surfaces during implementation.
 ---
 
-
 <!-- Extension: superb -->
 <!-- Config: .specify/extensions/superb/ -->
+
 # Systematic Debugging — Root Cause Before Fixes
 
 > **Type:** Superpowers-adapted command

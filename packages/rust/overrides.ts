@@ -15,581 +15,579 @@
 // protection on `polymorphs` / `transforms` / `rules` keys. Only the
 // final `grammar(enrich(base), wire(config))` line and the injected
 // DSL globals inside rule callbacks need suppression.
-import base from '../../node_modules/.pnpm/tree-sitter-rust@0.24.0/node_modules/tree-sitter-rust/grammar.js'
-import { transform, enrich, field, alias, variant, wire } from '../codegen/src/dsl/index.ts'
-import type { WireConfig } from '../codegen/src/dsl/index.ts'
-import type { RustGrammar } from './src/grammar.ts'
+import base from "../../node_modules/.pnpm/tree-sitter-rust@0.24.0/node_modules/tree-sitter-rust/grammar.js";
+import { transform, enrich, field, alias, variant, wire } from "../codegen/src/dsl/index.ts";
+import type { WireConfig } from "../codegen/src/dsl/index.ts";
+import type { RustGrammar } from "./src/grammar.ts";
 
 // Injected globals from tree-sitter's grammar() + DSL — declare so the
 // typed `config` below can reference `$.<rule>` / `seq(...)` / etc.
 // without pulling in an untyped `any` sink.
-declare const grammar: (base: unknown, opts: unknown) => unknown
-declare const seq: (...args: unknown[]) => unknown
-declare const choice: (...args: unknown[]) => unknown
-declare const prec: { (p: number, r: unknown): unknown; left: (p: number, r: unknown) => unknown; right: (p: number, r: unknown) => unknown }
-declare const repeat: (r: unknown) => unknown
-declare const repeat1: (r: unknown) => unknown
-declare const optional: (r: unknown) => unknown
-declare const token: { (r: unknown): unknown; immediate: (r: unknown) => unknown }
+declare const grammar: (base: unknown, opts: unknown) => unknown;
+declare const seq: (...args: unknown[]) => unknown;
+declare const choice: (...args: unknown[]) => unknown;
+declare const prec: {
+	(p: number, r: unknown): unknown;
+	left: (p: number, r: unknown) => unknown;
+	right: (p: number, r: unknown) => unknown;
+};
+declare const repeat: (r: unknown) => unknown;
+declare const repeat1: (r: unknown) => unknown;
+declare const optional: (r: unknown) => unknown;
+declare const token: { (r: unknown): unknown; immediate: (r: unknown) => unknown };
 
 const config: WireConfig<RustGrammar> = {
-    name: 'rust',
-    // `previous` is the base grammar's conflicts list — concat so we
-    // don't drop the base entries (`$._type`, `$._pattern`, etc.).
-    conflicts: ($, previous) => [...(previous ?? []),
-        // match_arm split: the `seq(expr, ',')` vs block-ending variants
-        // expose a shared-prefix conflict with other expression
-        // contexts when the parser sees `… => if_expr (`.
-        [$._expression_except_range, $._match_arm_block_ending],
-        // visibility_modifier variant extraction: `pub(crate)` vs
-        // `crate::foo` share the `crate` prefix.
-        [$.scoped_identifier, $.scoped_type_identifier, $._visibility_modifier_crate],
-        // visibility_modifier variant extraction: `pub` vs `pub(x)`
-        // share the `pub` prefix; parser needs lookahead.
-        [$._visibility_modifier_pub],
-    ],
-    // Inline the synthesized hidden `_kw_async_marker` rule's body at
-    // every reference site. Without inlining, `closure_expression`'s
-    // `optional(_kw_async_marker)` (a SYMBOL ref to a `prec(-1, 'async')`
-    // body) parses differently from `async_block`'s bare `'async'` token
-    // — same lexeme, different LR state — and corpus inputs containing a
-    // closure with an inner async_block (e.g. `async move || async move
-    // {}`) regress to ERROR. Inlining folds the hidden rule's body into
-    // closure_expression's state machine so the bare `'async'` token
-    // surfaces directly in the LR table — restoring parity with the
-    // pre-promotion shape — while the FIELD wrapper survives inlining
-    // so the parse tree still surfaces the named `async_marker` field.
-    // Wave-1 follow-up (016 task #27).
-    inline: ($, previous) => [
-        ...(previous ?? []),
-        $._kw_async_marker,
-    ],
-    polymorphs: {
-        array_expression:    { '2/0': 'semi', '2/1': 'list' },
-        closure_expression:  { '4/0': 'block', '4/1': 'expr' },
-        field_pattern:       { '2/0': 'shorthand', '2/1': 'named' },
-        function_type:       { '1/0/0': 'trait_form', '1/0/1': 'fn_form' },
-        impl_item:           { '6/0': 'body', '6/1': 'semi' },
-        macro_definition:    { '2/0': 'paren', '2/1': 'bracket', '2/2': 'brace' },
-        mod_item:            { '3/0': 'external', '3/1': 'inline' },
-        or_pattern:          { '0': 'binary', '1': 'prefix' },
-        range_expression:    { '0': 'binary', '1': 'postfix', '2': 'prefix', '3': 'bare' },
-        // range_pattern: the base rule is
-        //   choice(
-        //     seq(field('left', X), choice(             ← 0
-        //       seq(enum('...', '..=', '..'), field('right', X)),  ← 0/1/0 "left_with_right"
-        //       '..',                                               ← 0/1/1 "left_bare"
-        //     )),
-        //     seq(enum, field('right', X)),             ← 1 "prefix"
-        //   )
-        // Flatten the adoption so the inner-choice arms get their own
-        // variant names — the asymmetry (`..=`/`...` require a right,
-        // bare `..` doesn't) means these are genuine structural variants.
-        range_pattern:       { '0/1/0': 'left_with_right', '0/1/1': 'left_bare', '1': 'prefix' },
-        struct_item:         { '4/0': 'brace', '4/1': 'tuple', '4/2': 'unit' },
-        // visibility_modifier — three variants at two nesting depths,
-        // all addressed from the top-level rule:
-        //   - `1/1/0/1/3` in_path
-        //                     → `visibility_modifier_in_path`
-        //     (inside the pub arm's `seq('(', choice(self, super,
-        //     crate, seq('in', _path)), ')')` — the `seq('in', _path)`
-        //     branch). Without this split the inner choice is
-        //     heterogeneous and the shape classifier throws
-        //     `'seq-member-optional-wrapping-choice-needs-variant-or-merge'`.
-        //   - `0` crate       → `visibility_modifier_crate`
-        //   - `1` pub         → `visibility_modifier_pub`
-        //
-        // Order matters: variant patches apply in iteration order, and
-        // once `'1'` aliases arm 1 into `_visibility_modifier_pub`, the
-        // deeper `'1/1/0/1/3'` path can no longer descend into it.
-        // Same convention the range_pattern entry above uses — put the
-        // deepest paths first.
-        visibility_modifier: {
-            '1/1/0/1/3': 'in_path',
-            '0':         'crate',
-            '1':         'pub',
-        },
-    },
-    transforms: {
-        // abstract_type: 1 field(s)
-        abstract_type: {
-        },
+	name: "rust",
+	// `previous` is the base grammar's conflicts list — concat so we
+	// don't drop the base entries (`$._type`, `$._pattern`, etc.).
+	conflicts: ($, previous) => [
+		...(previous ?? []),
+		// match_arm split: the `seq(expr, ',')` vs block-ending variants
+		// expose a shared-prefix conflict with other expression
+		// contexts when the parser sees `… => if_expr (`.
+		[$._expression_except_range, $._match_arm_block_ending],
+		// visibility_modifier variant extraction: `pub(crate)` vs
+		// `crate::foo` share the `crate` prefix.
+		[$.scoped_identifier, $.scoped_type_identifier, $._visibility_modifier_crate],
+		// visibility_modifier variant extraction: `pub` vs `pub(x)`
+		// share the `pub` prefix; parser needs lookahead.
+		[$._visibility_modifier_pub],
+	],
+	// Inline the synthesized hidden `_kw_async_marker` rule's body at
+	// every reference site. Without inlining, `closure_expression`'s
+	// `optional(_kw_async_marker)` (a SYMBOL ref to a `prec(-1, 'async')`
+	// body) parses differently from `async_block`'s bare `'async'` token
+	// — same lexeme, different LR state — and corpus inputs containing a
+	// closure with an inner async_block (e.g. `async move || async move
+	// {}`) regress to ERROR. Inlining folds the hidden rule's body into
+	// closure_expression's state machine so the bare `'async'` token
+	// surfaces directly in the LR table — restoring parity with the
+	// pre-promotion shape — while the FIELD wrapper survives inlining
+	// so the parse tree still surfaces the named `async_marker` field.
+	// Wave-1 follow-up (016 task #27).
+	inline: ($, previous) => [...(previous ?? []), $._kw_async_marker],
+	polymorphs: {
+		array_expression: { "2/0": "semi", "2/1": "list" },
+		closure_expression: { "4/0": "block", "4/1": "expr" },
+		field_pattern: { "2/0": "shorthand", "2/1": "named" },
+		function_type: { "1/0/0": "trait_form", "1/0/1": "fn_form" },
+		impl_item: { "6/0": "body", "6/1": "semi" },
+		macro_definition: { "2/0": "paren", "2/1": "bracket", "2/2": "brace" },
+		mod_item: { "3/0": "external", "3/1": "inline" },
+		or_pattern: { "0": "binary", "1": "prefix" },
+		range_expression: { "0": "binary", "1": "postfix", "2": "prefix", "3": "bare" },
+		// range_pattern: the base rule is
+		//   choice(
+		//     seq(field('left', X), choice(             ← 0
+		//       seq(enum('...', '..=', '..'), field('right', X)),  ← 0/1/0 "left_with_right"
+		//       '..',                                               ← 0/1/1 "left_bare"
+		//     )),
+		//     seq(enum, field('right', X)),             ← 1 "prefix"
+		//   )
+		// Flatten the adoption so the inner-choice arms get their own
+		// variant names — the asymmetry (`..=`/`...` require a right,
+		// bare `..` doesn't) means these are genuine structural variants.
+		range_pattern: { "0/1/0": "left_with_right", "0/1/1": "left_bare", "1": "prefix" },
+		struct_item: { "4/0": "brace", "4/1": "tuple", "4/2": "unit" },
+		// visibility_modifier — three variants at two nesting depths,
+		// all addressed from the top-level rule:
+		//   - `1/1/0/1/3` in_path
+		//                     → `visibility_modifier_in_path`
+		//     (inside the pub arm's `seq('(', choice(self, super,
+		//     crate, seq('in', _path)), ')')` — the `seq('in', _path)`
+		//     branch). Without this split the inner choice is
+		//     heterogeneous and the shape classifier throws
+		//     `'seq-member-optional-wrapping-choice-needs-variant-or-merge'`.
+		//   - `0` crate       → `visibility_modifier_crate`
+		//   - `1` pub         → `visibility_modifier_pub`
+		//
+		// Order matters: variant patches apply in iteration order, and
+		// once `'1'` aliases arm 1 into `_visibility_modifier_pub`, the
+		// deeper `'1/1/0/1/3'` path can no longer descend into it.
+		// Same convention the range_pattern entry above uses — put the
+		// deepest paths first.
+		visibility_modifier: {
+			"1/1/0/1/3": "in_path",
+			"0": "crate",
+			"1": "pub",
+		},
+	},
+	transforms: {
+		// abstract_type: 1 field(s)
+		abstract_type: {},
 
-        // async_block: seq('async', optional('move'), $.block).
-        // Field-promotion wave 1 (016 task #23): label the standalone
-        // optional `move` punct as `move_marker` so render preserves it
-        // (`async move { ... }` vs `async { ... }`). Naming follows the
-        // `<token>_marker` convention enrich uses for auto-promotion
-        // (016 task #30); kept hand-promoted because the hand-emitted
-        // template renders without the spacing that auto-promotion
-        // introduces (the `async move {}` parity fixture round-trips
-        // only with this entry).
-        async_block: {
-            '1/0': field('move_marker'),
-        },
+		// async_block: seq('async', optional('move'), $.block).
+		// Field-promotion wave 1 (016 task #23): label the standalone
+		// optional `move` punct as `move_marker` so render preserves it
+		// (`async move { ... }` vs `async { ... }`). Naming follows the
+		// `<token>_marker` convention enrich uses for auto-promotion
+		// (016 task #30); kept hand-promoted because the hand-emitted
+		// template renders without the spacing that auto-promotion
+		// introduces (the `async move {}` parity fixture round-trips
+		// only with this entry).
+		async_block: {
+			"1/0": field("move_marker"),
+		},
 
-        // array_expression polymorph splits '2/0' (semi) / '2/1' (list).
-        // These base-shape patches add field labels BEFORE polymorph
-        // aliasing — composition-order inversion in wire() lets this
-        // flow declaratively instead of inline in rules:.
-        array_expression: [
-            { 1: field('attributes') },
-            { '2/(_expression)': field('elements') },
-        ],
-        // bounded_type: 2 field(s)
-        bounded_type: {
-            0: field('left'), // lifetime | _type | use_bounds [struct=0]
-            2: field('right'), // lifetime | _type | use_bounds [struct=1]
-        },
+		// array_expression polymorph splits '2/0' (semi) / '2/1' (list).
+		// These base-shape patches add field labels BEFORE polymorph
+		// aliasing — composition-order inversion in wire() lets this
+		// flow declaratively instead of inline in rules:.
+		array_expression: [{ 1: field("attributes") }, { "2/(_expression)": field("elements") }],
+		// bounded_type: 2 field(s)
+		bounded_type: {
+			0: field("left"), // lifetime | _type | use_bounds [struct=0]
+			2: field("right"), // lifetime | _type | use_bounds [struct=1]
+		},
 
-        // closure_expression: prec(closure, seq(
-        //   optional('static'),  // pos 0  →  '0/0' = bare 'static'
-        //   optional('async'),   // pos 1  →  '1/0' = bare 'async'
-        //   optional('move'),    // pos 2  →  '2/0' = bare 'move'
-        //   field('parameters', ...),  // pos 3
-        //   choice(...),               // pos 4 — polymorph split block/expr
-        // ))
-        // Field-promotion wave 1 (016 task #23) + wave-1 follow-up (task
-        // #27): label each standalone optional marker so render preserves
-        // them (`static async move |x| ...` vs `|x| ...`). Naming follows
-        // the `<token>_marker` convention enrich uses for auto-promoted
-        // sites (016 task #30).
-        //
-        // 016 task #35: enrich's optional-keyword pass now descends through
-        // `prec(...)` wrappers — but ONLY at the in-memory codegen surface
-        // (types.ts, factories.ts). The tree-sitter-cli `grammar.json`
-        // generation receives base rules as callbacks BEFORE evaluation,
-        // so enrich's modifications don't reach the synthesized `_kw_*`
-        // hidden rules / FIELD wrappers in grammar.json. Removing this
-        // override leaves the parser emitting bare anon `static`/`async`/
-        // `move` tokens; readNode promotes them to `$fields.<bare-text>`
-        // (not `$fields.<text>_marker`), the generated `.jinja` template
-        // references the `_marker` keys → render drops them → round-trip
-        // regresses. Keep this entry until enrich runs on tree-sitter-cli's
-        // post-evaluation rule shape too (deferred).
-        // The `_kw_async_marker` inline declaration above (wave-1
-        // follow-up, task #27) is required to keep `let a = async move
-        // || async move {}` from regressing to ERROR.
-        closure_expression: {
-            '0/0': field('static_marker'),
-            '1/0': field('async_marker'),
-            '2/0': field('move_marker'),
-        },
+		// closure_expression: prec(closure, seq(
+		//   optional('static'),  // pos 0  →  '0/0' = bare 'static'
+		//   optional('async'),   // pos 1  →  '1/0' = bare 'async'
+		//   optional('move'),    // pos 2  →  '2/0' = bare 'move'
+		//   field('parameters', ...),  // pos 3
+		//   choice(...),               // pos 4 — polymorph split block/expr
+		// ))
+		// Field-promotion wave 1 (016 task #23) + wave-1 follow-up (task
+		// #27): label each standalone optional marker so render preserves
+		// them (`static async move |x| ...` vs `|x| ...`). Naming follows
+		// the `<token>_marker` convention enrich uses for auto-promoted
+		// sites (016 task #30).
+		//
+		// 016 task #35: enrich's optional-keyword pass now descends through
+		// `prec(...)` wrappers — but ONLY at the in-memory codegen surface
+		// (types.ts, factories.ts). The tree-sitter-cli `grammar.json`
+		// generation receives base rules as callbacks BEFORE evaluation,
+		// so enrich's modifications don't reach the synthesized `_kw_*`
+		// hidden rules / FIELD wrappers in grammar.json. Removing this
+		// override leaves the parser emitting bare anon `static`/`async`/
+		// `move` tokens; readNode promotes them to `$fields.<bare-text>`
+		// (not `$fields.<text>_marker`), the generated `.jinja` template
+		// references the `_marker` keys → render drops them → round-trip
+		// regresses. Keep this entry until enrich runs on tree-sitter-cli's
+		// post-evaluation rule shape too (deferred).
+		// The `_kw_async_marker` inline declaration above (wave-1
+		// follow-up, task #27) is required to keep `let a = async move
+		// || async move {}` from regressing to ERROR.
+		closure_expression: {
+			"0/0": field("static_marker"),
+			"1/0": field("async_marker"),
+			"2/0": field("move_marker"),
+		},
 
-        // extern_modifier: 1 field(s)
-        extern_modifier: {
-        },
+		// extern_modifier: 1 field(s)
+		extern_modifier: {},
 
-        // function_modifiers — base is
-        //   repeat1(choice('async', 'default', 'const', 'unsafe', $.extern_modifier))
-        // Wrap the inner choice (path `0` = repeat1's content) with a single
-        // `field('modifier')`. Tree-sitter then reports the per-arm token
-        // union in node-types.json under `function_modifiers.fields.modifier`,
-        // which lets sittir surface the modifier set as an enum / bitflag
-        // (ADR-0012) rather than dropping the anonymous arms from $children.
-        function_modifiers: {
-            // Wildcard `_` forces path-mode (a pure numeric key `0`
-            // would trigger flat-mode, which descends into each choice
-            // arm individually rather than wrapping the whole choice).
-            // At a single-content wrapper (REPEAT1), wildcard means
-            // "descend into the content and patch there" — equivalent
-            // to `field('modifier', <inner choice>)`.
-            //
-            // TODO(ADR-0012 bitflag): the resulting type
-            //   `modifier: NonEmptyArray<"async" | "default" | "const" |
-            //    "unsafe" | ExternModifier>`
-            // is correctly enum-shaped but each modifier is genuinely
-            // mutually-exclusive and set-like (order doesn't matter,
-            // duplicates aren't meaningful). This ought to surface as a
-            // Bitflag<FunctionMod, …> brand so the Config / Loose surface
-            // projects to a flags enum instead of an array. Deferred —
-            // needs bitflag detection in the walker for the repeat1+field
-            // combination, not just seq-positioned boolean-keyword slots.
-            '_': field('modifier'),
-        },
+		// function_modifiers — base is
+		//   repeat1(choice('async', 'default', 'const', 'unsafe', $.extern_modifier))
+		// Wrap the inner choice (path `0` = repeat1's content) with a single
+		// `field('modifier')`. Tree-sitter then reports the per-arm token
+		// union in node-types.json under `function_modifiers.fields.modifier`,
+		// which lets sittir surface the modifier set as an enum / bitflag
+		// (ADR-0012) rather than dropping the anonymous arms from $children.
+		function_modifiers: {
+			// Wildcard `_` forces path-mode (a pure numeric key `0`
+			// would trigger flat-mode, which descends into each choice
+			// arm individually rather than wrapping the whole choice).
+			// At a single-content wrapper (REPEAT1), wildcard means
+			// "descend into the content and patch there" — equivalent
+			// to `field('modifier', <inner choice>)`.
+			//
+			// TODO(ADR-0012 bitflag): the resulting type
+			//   `modifier: NonEmptyArray<"async" | "default" | "const" |
+			//    "unsafe" | ExternModifier>`
+			// is correctly enum-shaped but each modifier is genuinely
+			// mutually-exclusive and set-like (order doesn't matter,
+			// duplicates aren't meaningful). This ought to surface as a
+			// Bitflag<FunctionMod, …> brand so the Config / Loose surface
+			// projects to a flags enum instead of an array. Deferred —
+			// needs bitflag detection in the walker for the repeat1+field
+			// combination, not just seq-positioned boolean-keyword slots.
+			_: field("modifier"),
+		},
 
-        // visibility_modifier — replaces the hand-authored rule below
-        // that wrapped bare keywords in `_kw_pub` / `_kw_in` hidden
-        // SYMBOLs so FIELD would survive tree-sitter normalization.
-        // The one-arg `field('pub')` / `field('in')` placeholders land
-        // on bare STRINGs; `maybeKeywordSymbol` (dsl/primitives/field.ts)
-        // auto-synthesizes `_kw_pub` / `_kw_in` hidden rules and swaps
-        // each STRING for a SYMBOL ref — same net effect, zero hand-
-        // authored rule body.
-        //
-        // Base shape:
-        //   choice(
-        //     $.crate,                                 ← 0
-        //     seq(                                     ← 1
-        //       'pub',                                 ← 1/0        ← field('pub')
-        //       optional(seq(                          ← 1/1
-        //         '(',                                 ← 1/1/0/0
-        //         choice(                              ← 1/1/0/1
-        //           $.self,                            ← 1/1/0/1/0
-        //           $.super,                          ← 1/1/0/1/1
-        //           $.crate,                          ← 1/1/0/1/2
-        //           seq(                              ← 1/1/0/1/3
-        //             'in',                           ← 1/1/0/1/3/0 ← field('in')
-        //             $._path,                        ← 1/1/0/1/3/1
-        //           ),
-        //         ),
-        //         ')',                                 ← 1/1/0/2
-        //       )),
-        //     ),
-        //   )
-        visibility_modifier: {
-            '1/0': field('pub'),
-            '1/1/0/1/3/0': field('in'),
-        },
+		// visibility_modifier — replaces the hand-authored rule below
+		// that wrapped bare keywords in `_kw_pub` / `_kw_in` hidden
+		// SYMBOLs so FIELD would survive tree-sitter normalization.
+		// The one-arg `field('pub')` / `field('in')` placeholders land
+		// on bare STRINGs; `maybeKeywordSymbol` (dsl/primitives/field.ts)
+		// auto-synthesizes `_kw_pub` / `_kw_in` hidden rules and swaps
+		// each STRING for a SYMBOL ref — same net effect, zero hand-
+		// authored rule body.
+		//
+		// Base shape:
+		//   choice(
+		//     $.crate,                                 ← 0
+		//     seq(                                     ← 1
+		//       'pub',                                 ← 1/0        ← field('pub')
+		//       optional(seq(                          ← 1/1
+		//         '(',                                 ← 1/1/0/0
+		//         choice(                              ← 1/1/0/1
+		//           $.self,                            ← 1/1/0/1/0
+		//           $.super,                          ← 1/1/0/1/1
+		//           $.crate,                          ← 1/1/0/1/2
+		//           seq(                              ← 1/1/0/1/3
+		//             'in',                           ← 1/1/0/1/3/0 ← field('in')
+		//             $._path,                        ← 1/1/0/1/3/1
+		//           ),
+		//         ),
+		//         ')',                                 ← 1/1/0/2
+		//       )),
+		//     ),
+		//   )
+		visibility_modifier: {
+			"1/0": field("pub"),
+			"1/1/0/1/3/0": field("in"),
+		},
 
-        // function_type: top-level seq is
-        //   [for_lifetimes, prec(call, seq(choice(trait, fn_form), parameters)),
-        //    optional(->return_type)]
-        // The choice at position 1 inner-seq[0] chooses between trait form
-        // (bare type with field('trait', ...)) and fn form (seq with
-        // optional modifiers + 'fn' literal). Template walker drops the
-        // 'fn' literal because it's only in one arm. Polymorph-split each
-        // arm. prec is transparent to path addressing, so path `1/0` is
-        // the choice inside.
-        function_type: [],
+		// function_type: top-level seq is
+		//   [for_lifetimes, prec(call, seq(choice(trait, fn_form), parameters)),
+		//    optional(->return_type)]
+		// The choice at position 1 inner-seq[0] chooses between trait form
+		// (bare type with field('trait', ...)) and fn form (seq with
+		// optional modifiers + 'fn' literal). Template walker drops the
+		// 'fn' literal because it's only in one arm. Polymorph-split each
+		// arm. prec is transparent to path addressing, so path `1/0` is
+		// the choice inside.
+		function_type: [],
 
-        // gen_block: seq('gen', optional('move'), $.block).
-        // Field-promotion wave 1 (016 task #23): symmetric to async_block
-        // — label the optional `move` punct as `move_marker` so render
-        // preserves it. Kept hand-promoted for the same render-spacing
-        // reason as async_block (see note above).
-        gen_block: {
-            '1/0': field('move_marker'),
-        },
+		// gen_block: seq('gen', optional('move'), $.block).
+		// Field-promotion wave 1 (016 task #23): symmetric to async_block
+		// — label the optional `move` punct as `move_marker` so render
+		// preserves it. Kept hand-promoted for the same render-spacing
+		// reason as async_block (see note above).
+		gen_block: {
+			"1/0": field("move_marker"),
+		},
 
-        generic_type_with_turbofish: {
-            1: field('turbofish'),
-        },
+		generic_type_with_turbofish: {
+			1: field("turbofish"),
+		},
 
-        // generic_type: base rule unchanged. ADR-0006 dispatches via
-        // drillAs at alias-declared field sites so consumers see source-
-        // typed views (`generic_type_with_turbofish` with the turbofish
-        // template). Validators walk the wrapped tree, rewrite `$type`
-        // to source, and use the `generic_type_with_turbofish` reparse
-        // wrapper that accepts turbofish in a scoped-path context.
+		// generic_type: base rule unchanged. ADR-0006 dispatches via
+		// drillAs at alias-declared field sites so consumers see source-
+		// typed views (`generic_type_with_turbofish` with the turbofish
+		// template). Validators walk the wrapped tree, rewrite `$type`
+		// to source, and use the `generic_type_with_turbofish` reparse
+		// wrapper that accepts turbofish in a scoped-path context.
 
-        // impl_item: field('where_clause') at pos 5 (inferred from 86%
-        // agreement across 7 parents), plus polymorph at pos 6 —
-        // choice(field('body', declaration_list), ';'). The ';' arm is
-        // the trait-signature form (no body), which the template walker
-        // drops without a polymorph split.
-        //
-        // Field-promotion wave 1 (016 task #23):
-        //   - pos 0 = `optional('unsafe')` — leading `unsafe` marker on
-        //     `unsafe impl` blocks. Path `0/0` descends into the optional
-        //     and labels the bare literal as `unsafe_marker` (016 task
-        //     #30 naming convention). Kept hand-promoted because enrich's
-        //     auto-promotion at this position introduces extra spacing
-        //     in the rendered output (`unsafe impl Foo {}` round-trips
-        //     only with the manual override).
-        //   - pos 3/0/0 = `optional('!')` — the `!` in `impl !Send for X`
-        //     (negative trait impl). Path `3/0/0/0` reaches the bare `!`
-        //     literal inside the inner-seq's leading optional. The
-        //     `negative` name is context-specific (not `bang_marker`).
-        impl_item: {
-            '0/0':     field('unsafe_marker'),
-            '3/0/0/0': field('negative'),
-        },
+		// impl_item: field('where_clause') at pos 5 (inferred from 86%
+		// agreement across 7 parents), plus polymorph at pos 6 —
+		// choice(field('body', declaration_list), ';'). The ';' arm is
+		// the trait-signature form (no body), which the template walker
+		// drops without a polymorph split.
+		//
+		// Field-promotion wave 1 (016 task #23):
+		//   - pos 0 = `optional('unsafe')` — leading `unsafe` marker on
+		//     `unsafe impl` blocks. Path `0/0` descends into the optional
+		//     and labels the bare literal as `unsafe_marker` (016 task
+		//     #30 naming convention). Kept hand-promoted because enrich's
+		//     auto-promotion at this position introduces extra spacing
+		//     in the rendered output (`unsafe impl Foo {}` round-trips
+		//     only with the manual override).
+		//   - pos 3/0/0 = `optional('!')` — the `!` in `impl !Send for X`
+		//     (negative trait impl). Path `3/0/0/0` reaches the bare `!`
+		//     literal inside the inner-seq's leading optional. The
+		//     `negative` name is context-specific (not `bang_marker`).
+		impl_item: {
+			"0/0": field("unsafe_marker"),
+			"3/0/0/0": field("negative"),
+		},
 
-        // index_expression: 2 field(s)
-        index_expression: {
-            0: field('object'), // _expression [struct=0]
-            2: field('index'), // _expression [struct=1]
-        },
+		// index_expression: 2 field(s)
+		index_expression: {
+			0: field("object"), // _expression [struct=0]
+			2: field("index"), // _expression [struct=1]
+		},
 
+		// macro_invocation: 1 field(s)
+		macro_invocation: {
+			2: field("token_tree"), // token_tree [struct=0]
+		},
 
-        // macro_invocation: 1 field(s)
-        macro_invocation: {
-            2: field('token_tree'), // token_tree [struct=0]
-        },
+		// mod_item: two forms — `mod name;` (external) vs `mod name { ... }`
+		// (inline). Polymorph-split so each form's template emits the
+		// right terminator (trailing `;` vs `{...}` body).
+		mod_item: [],
 
-        // mod_item: two forms — `mod name;` (external) vs `mod name { ... }`
-        // (inline). Polymorph-split so each form's template emits the
-        // right terminator (trailing `;` vs `{...}` body).
-        mod_item: [],
+		// negative_literal: 2 field(s)
+		negative_literal: {
+			1: field("value"), // integer_literal | float_literal [struct=0]
+		},
 
+		// ordered_field_declaration_list: 1 field(s)
+		// The original override had position 2 for `visibility_modifier`
+		// targeting `optional(',')` (trailing comma). After evaluate's
+		// `absorbTrailingSeparator` collapses the trailing comma into the
+		// repeat's `trailing: true` flag, position 2 becomes `)` — wrong.
+		// Also `visibility_modifier` is inside the per-element seq, not at
+		// the outer level, so the position 2 override was structurally
+		// incorrect. Only wrapping position 1 (the per-element group).
+		ordered_field_declaration_list: {
+			1: field("attributes"), // per-element group [struct=0]
+		},
 
-        // negative_literal: 2 field(s)
-        negative_literal: {
-            1: field('value'), // integer_literal | float_literal [struct=0]
-        },
+		// or_pattern polymorph splits '0' (binary) / '1' (prefix).
+		// Field labels land on base-shape choice arms pre-alias.
+		or_pattern: {
+			"0/0": field("left"),
+			"0/2": field("right"),
+			"1/1": field("right"),
+		},
 
-        // ordered_field_declaration_list: 1 field(s)
-        // The original override had position 2 for `visibility_modifier`
-        // targeting `optional(',')` (trailing comma). After evaluate's
-        // `absorbTrailingSeparator` collapses the trailing comma into the
-        // repeat's `trailing: true` flag, position 2 becomes `)` — wrong.
-        // Also `visibility_modifier` is inside the per-element seq, not at
-        // the outer level, so the position 2 override was structurally
-        // incorrect. Only wrapping position 1 (the per-element group).
-        ordered_field_declaration_list: {
-            1: field('attributes'), // per-element group [struct=0]
-        },
+		// pointer_type: position 1 is `choice('const', $.mutable_specifier)`.
+		// Wrapping the choice as `field('mutable_specifier')` makes BOTH
+		// the `const` string and the `mutable_specifier` symbol route to
+		// the named slot at readNode time, so the template can emit the
+		// actual qualifier text instead of hardcoding "const".
+		pointer_type: {
+			1: field("mutable_specifier"),
+		},
 
-        // or_pattern polymorph splits '0' (binary) / '1' (prefix).
-        // Field labels land on base-shape choice arms pre-alias.
-        or_pattern: {
-            '0/0': field('left'), '0/2': field('right'), '1/1': field('right'),
-        },
+		// raw_string_literal: 3 field(s)
+		raw_string_literal: {
+			0: field("raw_string_literal_start"), //  [struct=0]
+			1: field("string_content"), // string_content [struct=1]
+			2: field("raw_string_literal_end"), //  [struct=2]
+		},
 
-        // pointer_type: position 1 is `choice('const', $.mutable_specifier)`.
-        // Wrapping the choice as `field('mutable_specifier')` makes BOTH
-        // the `const` string and the `mutable_specifier` symbol route to
-        // the named slot at readNode time, so the template can emit the
-        // actual qualifier text instead of hardcoding "const".
-        pointer_type: {
-            1: field('mutable_specifier'),
-        },
+		// range_expression polymorph splits '0'..'3'. Field labels
+		// land on base-shape choice arms pre-alias.
+		range_expression: {
+			"0/0": field("start"),
+			"0/1": field("operator"),
+			"0/2": field("end"),
+			"1/0": field("start"),
+			"1/1": field("operator"),
+			"2/0": field("operator"),
+			"2/1": field("end"),
+			"3": field("operator"),
+		},
 
-        // raw_string_literal: 3 field(s)
-        raw_string_literal: {
-            0: field('raw_string_literal_start'), //  [struct=0]
-            1: field('string_content'), // string_content [struct=1]
-            2: field('raw_string_literal_end'), //  [struct=2]
-        },
+		// reference_expression: 1 field(s)
+		reference_expression: {
+			1: field("mutable_specifier"), // mutable_specifier [struct=0]
+		},
 
-        // range_expression polymorph splits '0'..'3'. Field labels
-        // land on base-shape choice arms pre-alias.
-        range_expression: {
-            '0/0': field('start'), '0/1': field('operator'), '0/2': field('end'),
-            '1/0': field('start'), '1/1': field('operator'),
-            '2/0': field('operator'), '2/1': field('end'),
-            '3': field('operator'),
-        },
+		// reference_pattern: 2 field(s)
+		reference_pattern: {
+			2: field("pattern"), // _pattern [struct=1]
+		},
 
-        // reference_expression: 1 field(s)
-        reference_expression: {
-            1: field('mutable_specifier'), // mutable_specifier [struct=0]
-        },
+		// reference_type: 2 field(s)
+		reference_type: {},
 
-        // reference_pattern: 2 field(s)
-        reference_pattern: {
-            2: field('pattern'), // _pattern [struct=1]
-        },
+		// self_parameter: canonical tree-sitter-rust has no fields here;
+		// labels below are ours. `&` is the lifetime marker (pos 0,
+		// routed through _kw_lifetime so FIELD survives). `$.lifetime`
+		// at pos 1 is the explicit lifetime name ('a etc.) — distinct
+		// name to avoid colliding with pos 0's label.
+		self_parameter: {
+			0: field("reference"), // optional('&')
+		},
 
-        // reference_type: 2 field(s)
-        reference_type: {
-        },
+		// shorthand_field_initializer: 2 field(s)
+		shorthand_field_initializer: {
+			0: field("attributes"), // attribute_item [struct=0]
+			// pos 1 $.identifier auto-labelled by enrich pass 1
+		},
 
-        // self_parameter: canonical tree-sitter-rust has no fields here;
-        // labels below are ours. `&` is the lifetime marker (pos 0,
-        // routed through _kw_lifetime so FIELD survives). `$.lifetime`
-        // at pos 1 is the explicit lifetime name ('a etc.) — distinct
-        // name to avoid colliding with pos 0's label.
-        self_parameter: {
-            0: field('reference'),          // optional('&')
-        },
+		// source_file: 2 field(s)
+		source_file: {
+			1: field("statements"), // _statement [struct=1]
+		},
 
-        // shorthand_field_initializer: 2 field(s)
-        shorthand_field_initializer: {
-            0: field('attributes'), // attribute_item [struct=0]
-            // pos 1 $.identifier auto-labelled by enrich pass 1
-        },
+		// static_item: 2 field(s)
+		static_item: {
+			2: field("mutable_specifier"), // mutable_specifier [struct=1]
+		},
 
-        // source_file: 2 field(s)
-        source_file: {
-            1: field('statements'), // _statement [struct=1]
-        },
+		// struct_item: three body shapes — brace (`{ ... }`), tuple
+		// (`(...)` + `;`), unit (`;`). Polymorph-split each into a visible
+		// variant so the trailing `;` on tuple/unit forms gets rendered
+		// (the flat template dropped it because `;` is an anonymous
+		// token not routed to any field).
+		struct_item: [],
 
-        // static_item: 2 field(s)
-        static_item: {
-            2: field('mutable_specifier'), // mutable_specifier [struct=1]
-        },
+		// trait_item: seq(
+		//   optional($.visibility_modifier),  // pos 0
+		//   optional('unsafe'),                // pos 1  →  '1/0' = bare 'unsafe'
+		//   'trait', ...
+		// )
+		// Field-promotion wave 1 (016 task #23): label the standalone
+		// optional `unsafe` punct as `unsafe_marker` so render preserves
+		// it (`unsafe trait Foo { ... }` vs `trait Foo { ... }`). Kept
+		// hand-promoted for the same render-spacing reason as async_block
+		// (see note above).
+		trait_item: {
+			"1/0": field("unsafe_marker"),
+		},
 
-        // struct_item: three body shapes — brace (`{ ... }`), tuple
-        // (`(...)` + `;`), unit (`;`). Polymorph-split each into a visible
-        // variant so the trailing `;` on tuple/unit forms gets rendered
-        // (the flat template dropped it because `;` is an anonymous
-        // token not routed to any field).
-        struct_item: [],
+		// try_block: 1 field(s)
+		// try_expression: 2 field(s)
+		try_expression: {
+			0: field("value"), // _expression [struct=0]
+		},
 
-        // trait_item: seq(
-        //   optional($.visibility_modifier),  // pos 0
-        //   optional('unsafe'),                // pos 1  →  '1/0' = bare 'unsafe'
-        //   'trait', ...
-        // )
-        // Field-promotion wave 1 (016 task #23): label the standalone
-        // optional `unsafe` punct as `unsafe_marker` so render preserves
-        // it (`unsafe trait Foo { ... }` vs `trait Foo { ... }`). Kept
-        // hand-promoted for the same render-spacing reason as async_block
-        // (see note above).
-        trait_item: {
-            '1/0': field('unsafe_marker'),
-        },
+		// tuple_expression: flat list of expressions comma-separated.
+		// Kind-match labels every `_expression` as `elements` without
+		// capturing the `,` separators (same pattern as array_expression).
+		tuple_expression: {
+			1: field("attributes"),
+			"(_expression)": field("elements"),
+		},
 
-        // try_block: 1 field(s)
-        // try_expression: 2 field(s)
-        try_expression: {
-            0: field('value'), // _expression [struct=0]
-        },
+		// type_item: 3 field(s)
+		type_item: {
+			4: field("where_clause"), // where_clause [struct=1]
+			7: field("trailing_where_clause"), // where_clause [struct=2]
+		},
 
-        // tuple_expression: flat list of expressions comma-separated.
-        // Kind-match labels every `_expression` as `elements` without
-        // capturing the `,` separators (same pattern as array_expression).
-        tuple_expression: {
-            1: field('attributes'),
-            '(_expression)': field('elements'),
-        },
+		// unary_expression — label both the operator token (pos 0) and
+		// the operand expression (pos 1). overrides.json promotes both
+		// to fields at readNode time; the walker needs matching IR
+		// fields so the template emits `$OPERATOR$OPERAND` instead of
+		// `$OPERATOR $$$CHILDREN` (which reads empty after field promotion).
+		unary_expression: {
+			0: field("operator"), // choice('-', '*', '!')
+			1: field("operand"), // $._expression
+		},
 
-        // type_item: 3 field(s)
-        type_item: {
-            4: field('where_clause'), // where_clause [struct=1]
-            7: field('trailing_where_clause'), // where_clause [struct=2]
-        },
+		// use_wildcard: 1 field(s)
+		use_wildcard: {
+			0: field("path"), // crate | identifier | metavariable | scoped_identifier | self | super [struct=0]
+		},
 
-        // unary_expression — label both the operator token (pos 0) and
-        // the operand expression (pos 1). overrides.json promotes both
-        // to fields at readNode time; the walker needs matching IR
-        // fields so the template emits `$OPERATOR$OPERAND` instead of
-        // `$OPERATOR $$$CHILDREN` (which reads empty after field promotion).
-        unary_expression: {
-            0: field('operator'), // choice('-', '*', '!')
-            1: field('operand'),  // $._expression
-        },
+		// variadic_parameter: 1 field(s)
+		variadic_parameter: {},
 
-        // use_wildcard: 1 field(s)
-        use_wildcard: {
-            0: field('path'), // crate | identifier | metavariable | scoped_identifier | self | super [struct=0]
-        },
+		// expression_statement: choice(seq(_expression, ';'),
+		//                              prec(1, _expression_ending_with_block)).
+		// Heterogeneous — the ';'-terminated form and the block-ending
+		// form have structurally distinct templates. Each becomes its
+		// own variant child kind.
+		expression_statement: {
+			0: variant("with_semi"),
+			1: variant("block_ending"),
+		},
 
-        // variadic_parameter: 1 field(s)
-        variadic_parameter: {
-        },
+		// foreign_mod_item: choice at pos 2 between ';' (bare extern
+		// decl) and field('body', declaration_list) (block extern).
+		// Variant-adopt so each arm owns its own template.
+		foreign_mod_item: {
+			"2/0": variant("semi"),
+			"2/1": variant("body"),
+		},
 
+		// pointer_type: choice('const', mutable_specifier) at pos 1.
+		// Literal 'const' vs symbol → split arms.
+		pointer_type: {
+			"1/0": variant("const"),
+			"1/1": variant("mut"),
+		},
 
-        // expression_statement: choice(seq(_expression, ';'),
-        //                              prec(1, _expression_ending_with_block)).
-        // Heterogeneous — the ';'-terminated form and the block-ending
-        // form have structurally distinct templates. Each becomes its
-        // own variant child kind.
-        expression_statement: {
-            0: variant('with_semi'),
-            1: variant('block_ending'),
-        },
+		// reference_expression: inner choice at path 1/0/1 selects
+		// `const` vs `mutable_specifier` inside the `&raw (…) …`
+		// form. Same const-vs-mut shape as pointer_type.
+		reference_expression: {
+			"1/0/1/0": variant("raw_const"),
+			"1/0/1/1": variant("raw_mut"),
+		},
 
-        // foreign_mod_item: choice at pos 2 between ';' (bare extern
-        // decl) and field('body', declaration_list) (block extern).
-        // Variant-adopt so each arm owns its own template.
-        foreign_mod_item: {
-            '2/0': variant('semi'),
-            '2/1': variant('body'),
-        },
+		// match_arm: choice(seq(field('value',expr), ','),
+		//                   field('value', prec(1, _expr_ending_with_block)))
+		// The ','-terminated form vs block-ending form have distinct
+		// literals. Split arms.
+		match_arm: {
+			"3/0": variant("with_comma"),
+			"3/1": variant("block_ending"),
+		},
 
-        // pointer_type: choice('const', mutable_specifier) at pos 1.
-        // Literal 'const' vs symbol → split arms.
-        pointer_type: {
-            '1/0': variant('const'),
-            '1/1': variant('mut'),
-        },
+		// line_comment: choice at pos 1 between regular double-slash,
+		// doc-comment, and regular content. Each arm has its own
+		// distinct literal prefix.
+		line_comment: {
+			"1/0": variant("regular_dslash"),
+			"1/1": variant("doc"),
+			"1/2": variant("content"),
+		},
 
-        // reference_expression: inner choice at path 1/0/1 selects
-        // `const` vs `mutable_specifier` inside the `&raw (…) …`
-        // form. Same const-vs-mut shape as pointer_type.
-        reference_expression: {
-            '1/0/1/0': variant('raw_const'),
-            '1/0/1/1': variant('raw_mut'),
-        },
+		// token_tree_pattern / token_tree / delim_token_tree: each is
+		// choice(seq('(', repeat(inner), ')'), seq('[', ..., ']'), seq('{', ..., '}')).
+		// Three delimiter-variants — distinct opening/closing literals per
+		// arm, same inner content. Split so each arm owns its template.
+		token_tree_pattern: {
+			0: variant("paren"),
+			1: variant("bracket"),
+			2: variant("brace"),
+		},
+		token_tree: {
+			0: variant("paren"),
+			1: variant("bracket"),
+			2: variant("brace"),
+		},
+		delim_token_tree: {
+			0: variant("paren"),
+			1: variant("bracket"),
+			2: variant("brace"),
+		},
 
-        // match_arm: choice(seq(field('value',expr), ','),
-        //                   field('value', prec(1, _expr_ending_with_block)))
-        // The ','-terminated form vs block-ending form have distinct
-        // literals. Split arms.
-        match_arm: {
-            '3/0': variant('with_comma'),
-            '3/1': variant('block_ending'),
-        },
+		// _let_chain: left-recursive `_let_chain && let_condition` vs
+		// base `let_condition`. Hidden rule — tree-sitter flattens the
+		// recursion at parse time, so variant() adoption would emit
+		// unreachable `_let_chain_and` / `_let_chain_base` kinds. The
+		// non-canonical audit for this kind reflects the derive walker's
+		// view of an inlined helper; it doesn't surface as a user-facing
+		// shape. Leave as-is.
 
-        // line_comment: choice at pos 1 between regular double-slash,
-        // doc-comment, and regular content. Each arm has its own
-        // distinct literal prefix.
-        line_comment: {
-            '1/0': variant('regular_dslash'),
-            '1/1': variant('doc'),
-            '1/2': variant('content'),
-        },
+		// block_comment: deferred. Inner choice at `1/0` branches on
+		// doc-marker form vs bare `_block_comment_content`, but the
+		// latter is an EXTERNAL token (lexer callback). Variant hoist
+		// tries to reference `_block_comment_content` from a generated
+		// hidden rule, and tree-sitter rejects it as "used as both an
+		// external token and a non-terminal rule." Resolving this
+		// needs either conflicts-awareness in the hoist or a
+		// merge-branches path that doesn't extract the external-token
+		// branch.
+	},
+	rules: {
+		// Hidden `_kw_*` rules that previously sat here
+		// (`_kw_async` / `_kw_default` / `_kw_const` / `_kw_unsafe` /
+		// `_kw_pub` / `_kw_in`) have been deleted. They're now
+		// auto-synthesized by `maybeKeywordSymbol` (field.ts) whenever
+		// the declarative `transforms:` entries above land a one-arg
+		// `field('name')` on a bare STRING — see the
+		// `function_modifiers` / `visibility_modifier` entries above.
+		//
+		// _pattern — the wildcard `_` is a bare literal alternative
+		// (position 20) of the _pattern supertype choice. At multi-valued
+		// list positions (rust `sepBy(',', $._pattern)` used by
+		// tuple_struct_pattern, tuple_pattern, slice_pattern, closure
+		// parameters) tree-sitter surfaces `_` as an anonymous child,
+		// which readNode promotes to $fields['_'] and $$$CHILDREN's
+		// named-only filter subsequently drops. Aliasing `_` to a named
+		// `wildcard_pattern` kind gives it a proper node in the tree so
+		// every `_pattern` list position round-trips cleanly without any
+		// render-side heuristics. The hidden `_wildcard_pattern` rule is
+		// declared explicitly below so tree-sitter's `ruleMap` snapshot
+		// picks it up — no runtime synthesis, no wrapper machinery.
+		//
+		// Why inline here instead of declarative `transforms:` — the
+		// patch value needs `$` (tree-sitter's symbol proxy) at call
+		// time. `transforms:` values are evaluated at config-object-
+		// literal time, before `$` exists. See ADR-0009 §Task-7.
+		_pattern: ($, original) =>
+			transform(original, {
+				"-1": alias($._wildcard_pattern, $.wildcard_pattern),
+			}),
 
-        // token_tree_pattern / token_tree / delim_token_tree: each is
-        // choice(seq('(', repeat(inner), ')'), seq('[', ..., ']'), seq('{', ..., '}')).
-        // Three delimiter-variants — distinct opening/closing literals per
-        // arm, same inner content. Split so each arm owns its template.
-        token_tree_pattern: {
-            0: variant('paren'),
-            1: variant('bracket'),
-            2: variant('brace'),
-        },
-        token_tree: {
-            0: variant('paren'),
-            1: variant('bracket'),
-            2: variant('brace'),
-        },
-        delim_token_tree: {
-            0: variant('paren'),
-            1: variant('bracket'),
-            2: variant('brace'),
-        },
-
-        // _let_chain: left-recursive `_let_chain && let_condition` vs
-        // base `let_condition`. Hidden rule — tree-sitter flattens the
-        // recursion at parse time, so variant() adoption would emit
-        // unreachable `_let_chain_and` / `_let_chain_base` kinds. The
-        // non-canonical audit for this kind reflects the derive walker's
-        // view of an inlined helper; it doesn't surface as a user-facing
-        // shape. Leave as-is.
-
-        // block_comment: deferred. Inner choice at `1/0` branches on
-        // doc-marker form vs bare `_block_comment_content`, but the
-        // latter is an EXTERNAL token (lexer callback). Variant hoist
-        // tries to reference `_block_comment_content` from a generated
-        // hidden rule, and tree-sitter rejects it as "used as both an
-        // external token and a non-terminal rule." Resolving this
-        // needs either conflicts-awareness in the hoist or a
-        // merge-branches path that doesn't extract the external-token
-        // branch.
-
-    },
-    rules: {
-        // Hidden `_kw_*` rules that previously sat here
-        // (`_kw_async` / `_kw_default` / `_kw_const` / `_kw_unsafe` /
-        // `_kw_pub` / `_kw_in`) have been deleted. They're now
-        // auto-synthesized by `maybeKeywordSymbol` (field.ts) whenever
-        // the declarative `transforms:` entries above land a one-arg
-        // `field('name')` on a bare STRING — see the
-        // `function_modifiers` / `visibility_modifier` entries above.
-        //
-        // _pattern — the wildcard `_` is a bare literal alternative
-        // (position 20) of the _pattern supertype choice. At multi-valued
-        // list positions (rust `sepBy(',', $._pattern)` used by
-        // tuple_struct_pattern, tuple_pattern, slice_pattern, closure
-        // parameters) tree-sitter surfaces `_` as an anonymous child,
-        // which readNode promotes to $fields['_'] and $$$CHILDREN's
-        // named-only filter subsequently drops. Aliasing `_` to a named
-        // `wildcard_pattern` kind gives it a proper node in the tree so
-        // every `_pattern` list position round-trips cleanly without any
-        // render-side heuristics. The hidden `_wildcard_pattern` rule is
-        // declared explicitly below so tree-sitter's `ruleMap` snapshot
-        // picks it up — no runtime synthesis, no wrapper machinery.
-        //
-        // Why inline here instead of declarative `transforms:` — the
-        // patch value needs `$` (tree-sitter's symbol proxy) at call
-        // time. `transforms:` values are evaluated at config-object-
-        // literal time, before `$` exists. See ADR-0009 §Task-7.
-        _pattern: ($, original) => transform(original, {
-            '-1': alias($._wildcard_pattern, $.wildcard_pattern),
-        }),
-
-        // The hidden rule `_wildcard_pattern` is just the `_` literal;
-        // the named alias on `_pattern` above promotes it to a proper
-        // `wildcard_pattern` kind at parse time.
-        _wildcard_pattern: $ => '_',
-    },
-}
+		// The hidden rule `_wildcard_pattern` is just the `_` literal;
+		// the named alias on `_pattern` above promotes it to a proper
+		// `wildcard_pattern` kind at parse time.
+		_wildcard_pattern: ($) => "_",
+	},
+};
 
 // The typed `config` above is validated against WireConfig<RustGrammar>.
 // `grammar()` is tree-sitter's injected global (declared at top of file);
 // `base` comes from the untyped `grammar.js` import.
-export default grammar(enrich(base), wire<RustGrammar>(config))
+export default grammar(enrich(base), wire<RustGrammar>(config));

@@ -15,6 +15,7 @@ Use `/speckit.hotfix` when:
 - Every minute of downtime costs money/reputation
 
 **Do NOT use `/speckit.hotfix` for**:
+
 - Non-urgent bugs → use `/speckit.bugfix` instead
 - Planned changes → use `/speckit.modify` or `/speckit.specify` instead
 - Known issues that can wait → use normal workflow
@@ -40,29 +41,34 @@ Use `/speckit.hotfix` when:
 ## Process
 
 ### Phase 1: Immediate Response (URGENT)
+
 1. **Assess** - How bad is it? How many users affected?
 2. **Notify** - Alert incident commander, stakeholders
 3. **Reproduce** - Confirm the issue exists
 4. **Investigate** - Find root cause quickly
 
 ### Phase 2: Fix Implementation (FAST BUT SAFE)
+
 1. **Strategy** - Quick fix? Rollback? Feature flag disable?
 2. **Implement** - Minimal code changes to stop the bleeding
 3. **Test locally** - Verify fix works, check for side effects
 4. **Quick review** - 5-minute sanity check (skip if P0)
 
 ### Phase 3: Deployment (URGENT)
+
 1. **Rollback plan** - Know how to undo if it makes things worse
 2. **Deploy** - Get the fix live
 3. **Verify** - Confirm issue resolved in production
 4. **Monitor** - Watch error rates, be ready to rollback
 
 ### Phase 4: Monitoring (24-48 Hours)
+
 1. **Active monitoring** - First 2 hours, watch closely
 2. **Extended monitoring** - 24 hours, check regularly
 3. **Stability confirmation** - Verify no related issues
 
 ### Phase 5: Post-Incident (Within 48 Hours)
+
 1. **Regression test** - Write test NOW (was deferred during emergency)
 2. **Full test suite** - Ensure no regressions
 3. **Post-mortem** - Required within 48 hours
@@ -97,6 +103,7 @@ specs/
 ```
 
 This will:
+
 1. Create branch `hotfix/001-database-connection-pool`
 2. Generate `hotfix.md` with incident timestamp
 3. Generate `post-mortem.md` template
@@ -105,6 +112,7 @@ This will:
 6. Show "Next Steps" for expedited emergency workflow
 
 **Next steps after running the command (URGENT):**
+
 1. Quick assessment - severity (P0/P1/P2), impact, affected users
 2. Notify stakeholders - incident commander, on-call team
 3. Run `/speckit.plan` to create fast-track fix plan (skip extensive analysis)
@@ -118,26 +126,31 @@ This will:
 The hotfix workflow uses an **expedited checkpoint approach** for emergencies while still providing critical review points:
 
 ### Phase 1: Incident Response
+
 - **Command**: `/speckit.hotfix "incident description"`
 - **Creates**: `hotfix.md` with incident timestamp and `post-mortem.md` template
 - **Checkpoint**: Quick assessment - P0/P1/P2 severity? How many users affected? Notify stakeholders immediately.
 
 ### Phase 2: Emergency Planning (FAST)
+
 - **Command**: `/speckit.plan`
 - **Creates**: `plan.md` with fast-track fix approach
 - **Checkpoint**: Quick review (2-5 minutes) - Is the fix safe? Do we have a rollback plan? For P0, this may be skipped.
 
 ### Phase 3: Task Creation (URGENT)
+
 - **Command**: `/speckit.tasks`
 - **Creates**: `tasks.md` with immediate action tasks
 - **Checkpoint**: Quick sanity check - Are tasks in the right order? Critical steps covered?
 
 ### Phase 4: Emergency Deployment
+
 - **Command**: `/speckit.implement`
 - **Executes**: Fix deployment with monitoring
 - **Result**: Issue resolved, service restored
 
 ### Phase 5: Post-Incident (Required within 48 hours)
+
 - Write regression test (deferred from emergency)
 - Complete post-mortem document
 - Create prevention tasks
@@ -168,26 +181,32 @@ The hotfix workflow uses an **expedited checkpoint approach** for emergencies wh
 ## Immediate Fix Applied
 
 ### What Changed
+
 **Files Modified**:
+
 - app/db/connection.ts - lines 15-20: Increased max connections from 10 to 50
 - app/db/connection.ts - lines 28-32: Added connection timeout of 30s
 
 **Commit SHA**: a3b4c5d
 
 ### Why This Fix
+
 Connection pool of 10 was insufficient for production traffic. During high load, all connections were held and new requests timed out causing 503 errors. Increasing pool size allows more concurrent database operations.
 
 ## Impact
 
 ### Users Affected
+
 - **Estimated Users**: ~5,000 (all active users during incident)
 - **Geographic Region**: Global
 - **User Segments**: All user types
 
 ### Downtime
+
 - **Total Downtime**: 46 minutes (service completely unavailable)
 
 ### Business Impact
+
 - **Revenue Impact**: ~$1,200 estimated (based on avg revenue/minute)
 - **Support Tickets**: 47 tickets created during incident
 - **SLA Breach**: Yes (99.9% uptime SLA)
@@ -195,16 +214,19 @@ Connection pool of 10 was insufficient for production traffic. During high load,
 ## Root Cause (Quick Analysis)
 
 ### What Happened
+
 Database connection pool configured with max 10 connections. Under high load, all 10 connections were held by long-running queries. New requests couldn't acquire connections and timed out.
 
 ### Why It Happened
+
 - Default configuration from development environment was used in production
 - Load testing didn't simulate realistic concurrent user patterns
 - No monitoring on connection pool utilization
 
 ### Why It Wasn't Caught Earlier
-- [X] No monitoring for this scenario (connection pool metrics not tracked)
-- [X] Load testing insufficient (didn't simulate production traffic)
+
+- [x] No monitoring for this scenario (connection pool metrics not tracked)
+- [x] Load testing insufficient (didn't simulate production traffic)
 ```
 
 ## Post-Mortem Document
@@ -219,21 +241,24 @@ Required within 48 hours of resolution:
 **Participants**: Alice (Incident Commander), Bob (Backend), Carol (DevOps)
 
 ## Executive Summary
+
 Production database ran out of available connections during high traffic, causing complete service outage for 46 minutes affecting 5,000 users. Root cause was insufficient connection pool size carried over from dev config. Fixed by increasing pool size and adding timeout.
 
 ## Timeline
-| Time | Event | Who | Notes |
-|------|-------|-----|-------|
-| 14:32 | Incident began | System | Traffic spike started |
-| 14:33 | Detection | Datadog | Alert fired |
-| 14:35 | Investigation | Alice | Checked error logs |
-| 14:48 | Root cause found | Bob | Pool size too small |
-| 15:12 | Fix deployed | Bob | Increased pool to 50 |
-| 15:18 | Verified resolved | Alice | Error rate back to 0 |
+
+| Time  | Event             | Who     | Notes                 |
+| ----- | ----------------- | ------- | --------------------- |
+| 14:32 | Incident began    | System  | Traffic spike started |
+| 14:33 | Detection         | Datadog | Alert fired           |
+| 14:35 | Investigation     | Alice   | Checked error logs    |
+| 14:48 | Root cause found  | Bob     | Pool size too small   |
+| 15:12 | Fix deployed      | Bob     | Increased pool to 50  |
+| 15:18 | Verified resolved | Alice   | Error rate back to 0  |
 
 ## Root Cause Analysis
 
 **Five Whys**:
+
 1. Why did service go down? → Database connections exhausted
 2. Why were connections exhausted? → Pool size only 10
 3. Why was pool size only 10? → Dev config used in production
@@ -245,7 +270,8 @@ Production database ran out of available connections during high traffic, causin
 ## Action Items
 
 ### Immediate (This Week)
-- [X] **AI-001**: Add connection pool metrics to monitoring
+
+- [x] **AI-001**: Add connection pool metrics to monitoring
   - Owner: Carol
   - Due: 2025-10-03
   - Why: Prevents recurrence
@@ -256,18 +282,21 @@ Production database ran out of available connections during high traffic, causin
   - Why: Find similar issues proactively
 
 ### Short-Term (This Month)
+
 - [ ] **AI-003**: Create environment config checklist for deployments
   - Owner: Alice
   - Due: 2025-10-15
   - Why: Prevents wrong config in production
 
 ### Long-Term (This Quarter)
+
 - [ ] **AI-004**: Implement load testing as part of CI/CD
   - Owner: Carol
   - Due: 2025-12-01
   - Why: Catch capacity issues before production
 
 ## Lessons Learned
+
 1. Development configs are never appropriate for production
 2. Missing monitoring makes incidents harder to diagnose
 3. Load testing scenarios need to match production patterns
@@ -278,6 +307,7 @@ Production database ran out of available connections during high traffic, causin
 Hotfix is the **only workflow** that bypasses normal TDD process:
 
 **Normal Process Skipped**:
+
 - ✅ Tests before implementation (tests written AFTER fix deployed)
 - ✅ Full planning phase (expedited due to emergency)
 - ✅ Extended code review (5-minute sanity check only)
@@ -286,6 +316,7 @@ Hotfix is the **only workflow** that bypasses normal TDD process:
 **Justification**: When the service is down, every minute matters. Writing comprehensive tests before fixing would cost too much time and money. The post-mortem and regression test ensure the issue is properly documented and won't recur.
 
 **Post-Fix Compliance**:
+
 - Regression test added within 24 hours
 - Post-mortem completed within 48 hours
 - Documentation updated
@@ -315,12 +346,14 @@ Is issue caused by recent deployment?
 ### Rollback vs. Forward Fix
 
 **Rollback when**:
+
 - Recent deployment is the cause
 - Previous version was stable
 - Rollback is faster than fixing
 - Risk of fix is high
 
 **Forward fix when**:
+
 - Issue existed before recent deployment
 - No stable version to return to
 - Fix is simple and obvious
@@ -329,11 +362,13 @@ Is issue caused by recent deployment?
 ### Communication During Incident
 
 **Status Updates (every 15 minutes)**:
+
 - What's happening right now
 - What we're trying next
 - ETA for resolution (if known)
 
 **Final Update**:
+
 - Issue resolved
 - Root cause summary
 - What we're doing to prevent recurrence
@@ -341,6 +376,7 @@ Is issue caused by recent deployment?
 ## Integration with Constitution
 
 This workflow is **explicitly exempted** from:
+
 - Section III: Test-Driven Development (tests after fix, not before)
 - Quality Gates: Testing requirements relaxed during emergency
 
@@ -360,4 +396,4 @@ This is the ONLY workflow with this exception.
 
 ---
 
-*Hotfix Workflow Documentation - Part of Specify Extension System*
+_Hotfix Workflow Documentation - Part of Specify Extension System_

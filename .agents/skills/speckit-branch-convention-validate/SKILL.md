@@ -40,16 +40,16 @@ You **MUST** consider the user input before proceeding (if not empty). The user 
 
 3. **Validate each item**: For every branch and folder, check:
 
-   | Check | Rule | Example Violation |
-   |-------|------|-------------------|
-   | Pattern match | Branch matches `branch_pattern` structure | `user-auth` missing sequence number |
-   | Type prefix | If pattern includes `{type}`, prefix must be in `type_prefix` map | `feature/003-auth` instead of `feat/003-auth` |
-   | Sequence format | `{seq}` must be zero-padded to `seq_padding` digits | `3-auth` instead of `003-auth` |
-   | Length limit | Branch name must not exceed `max_length` characters | `003-very-long-branch-name-that-exceeds-limit...` |
-   | Case rule | If `lowercase: true`, no uppercase characters (except ticket IDs) | `003-User-Auth` |
-   | Separator | Words must use configured `separator` | `003_user_auth` when separator is `-` |
-   | Branch-folder sync | Branch name and folder name must be derivable from same source | Branch `feat/003-auth` but folder `004-auth` |
-   | Ticket format | If pattern includes `{ticket}`, must match `ticket_pattern` regex | `proj-142` when pattern requires `[A-Z]+-[0-9]+` |
+   | Check              | Rule                                                              | Example Violation                                 |
+   | ------------------ | ----------------------------------------------------------------- | ------------------------------------------------- |
+   | Pattern match      | Branch matches `branch_pattern` structure                         | `user-auth` missing sequence number               |
+   | Type prefix        | If pattern includes `{type}`, prefix must be in `type_prefix` map | `feature/003-auth` instead of `feat/003-auth`     |
+   | Sequence format    | `{seq}` must be zero-padded to `seq_padding` digits               | `3-auth` instead of `003-auth`                    |
+   | Length limit       | Branch name must not exceed `max_length` characters               | `003-very-long-branch-name-that-exceeds-limit...` |
+   | Case rule          | If `lowercase: true`, no uppercase characters (except ticket IDs) | `003-User-Auth`                                   |
+   | Separator          | Words must use configured `separator`                             | `003_user_auth` when separator is `-`             |
+   | Branch-folder sync | Branch name and folder name must be derivable from same source    | Branch `feat/003-auth` but folder `004-auth`      |
+   | Ticket format      | If pattern includes `{ticket}`, must match `ticket_pattern` regex | `proj-142` when pattern requires `[A-Z]+-[0-9]+`  |
 
 4. **Output compliance report**:
 
@@ -62,19 +62,21 @@ You **MUST** consider the user input before proceeding (if not empty). The user 
 
    ## Results
 
-   | Branch | Folder | Status | Issues |
-   |--------|--------|--------|--------|
-   | feat/003-user-auth | 003-user-auth | ✅ Compliant | — |
-   | 004-chat-system | 004-chat-system | ⚠️ Non-compliant | Missing type prefix |
-   | feat/5-api | 5-api | ⚠️ Non-compliant | Sequence not zero-padded |
+   | Branch             | Folder          | Status           | Issues                   |
+   | ------------------ | --------------- | ---------------- | ------------------------ |
+   | feat/003-user-auth | 003-user-auth   | ✅ Compliant     | —                        |
+   | 004-chat-system    | 004-chat-system | ⚠️ Non-compliant | Missing type prefix      |
+   | feat/5-api         | 5-api           | ⚠️ Non-compliant | Sequence not zero-padded |
 
    ## Summary
+
    - **Total**: {N} branches
    - **Compliant**: {X} ✅
    - **Non-compliant**: {Y} ⚠️
    - **Orphaned folders** (no branch): {Z}
 
    ## Recommended Actions
+
    1. Run `/speckit.branch-convention.rename` to fix non-compliant items
    ```
 

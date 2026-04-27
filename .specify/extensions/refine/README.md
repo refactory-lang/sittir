@@ -15,12 +15,12 @@ Spec Kit's `/speckit.specify` command is optimized for creating new specificatio
 
 The Refine extension adds four commands that close the iteration gap:
 
-| Command | Purpose | Modifies Files? |
-|---------|---------|-----------------|
-| `/speckit.refine.update` | Update spec.md in-place based on new requirements or feedback | Yes — spec.md |
-| `/speckit.refine.propagate` | Cascade spec changes to plan.md and tasks.md | Yes — plan.md, tasks.md |
-| `/speckit.refine.diff` | Preview impact of spec changes before propagating | No — read-only |
-| `/speckit.refine.status` | Show sync status between spec, plan, and tasks | No — read-only |
+| Command                     | Purpose                                                       | Modifies Files?         |
+| --------------------------- | ------------------------------------------------------------- | ----------------------- |
+| `/speckit.refine.update`    | Update spec.md in-place based on new requirements or feedback | Yes — spec.md           |
+| `/speckit.refine.propagate` | Cascade spec changes to plan.md and tasks.md                  | Yes — plan.md, tasks.md |
+| `/speckit.refine.diff`      | Preview impact of spec changes before propagating             | No — read-only          |
+| `/speckit.refine.status`    | Show sync status between spec, plan, and tasks                | No — read-only          |
 
 ## Installation
 
@@ -51,6 +51,7 @@ Requirements change
 ### `/speckit.refine.update`
 
 Updates an existing spec.md without creating a new feature branch. Handles:
+
 - Adding new user stories (assigned next priority)
 - Modifying existing requirements
 - Removing requirements (marked with strikethrough, never deleted)
@@ -60,6 +61,7 @@ Updates an existing spec.md without creating a new feature branch. Handles:
 ### `/speckit.refine.propagate`
 
 Surgically updates plan.md and tasks.md to reflect spec changes:
+
 - Adds new plan sections for new user stories
 - Adds new task phases with proper IDs, dependencies, and story labels
 - Marks removed items with strikethrough (never deletes)
@@ -70,6 +72,7 @@ Surgically updates plan.md and tasks.md to reflect spec changes:
 ### `/speckit.refine.diff`
 
 Read-only impact analysis before propagating:
+
 - Lists all refinement changes detected
 - Shows which plan sections are affected
 - Shows which tasks are affected (by ID)
@@ -79,6 +82,7 @@ Read-only impact analysis before propagating:
 ### `/speckit.refine.status`
 
 Dashboard showing artifact synchronization:
+
 - Shows status of all artifacts (spec, plan, tasks, research, data-model, contracts)
 - Identifies stale artifacts that need propagation
 - Shows refinement history
@@ -87,6 +91,7 @@ Dashboard showing artifact synchronization:
 ## Hooks
 
 The extension registers optional hooks:
+
 - **after_specify**: Shows sync status after generating a new spec
 - **after_plan**: Shows sync status after generating a plan
 

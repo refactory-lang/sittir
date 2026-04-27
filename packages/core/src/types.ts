@@ -16,4 +16,4 @@ export type {
 	ReplaceTarget,
 	Renderable,
 	KindOf,
-} from '@sittir/types';
+} from "@sittir/types";

@@ -3,54 +3,54 @@
  * derived from tree-sitter's node-types.json.
  */
 
-import { loadRawEntries } from '../validate/node-types-loader.ts';
-import { snakeToCamel } from '../compiler/node-map.ts';
+import { loadRawEntries } from "../validate/node-types-loader.ts";
+import { snakeToCamel } from "../compiler/node-map.ts";
 
 function toGrammarTypeName(grammar: string): string {
-  const camel = snakeToCamel(grammar);
-  return camel.charAt(0).toUpperCase() + camel.slice(1) + 'Types';
+	const camel = snakeToCamel(grammar);
+	return camel.charAt(0).toUpperCase() + camel.slice(1) + "Types";
 }
 
 export interface EmitGrammarConfig {
-  grammar: string;
+	grammar: string;
 }
 
 interface RawNodeEntry {
-  type: string;
-  named: boolean;
-  fields?: Record<string, unknown>;
-  children?: unknown;
-  subtypes?: unknown[];
+	type: string;
+	named: boolean;
+	fields?: Record<string, unknown>;
+	children?: unknown;
+	subtypes?: unknown[];
 }
 
 export function emitGrammar(config: EmitGrammarConfig): string {
-  const { grammar } = config;
-  const grammarTypeName = toGrammarTypeName(grammar);
-  const grammarPrefix = grammarTypeName.slice(0, -5);
-  const grammarAlias = `${grammarPrefix}Grammar`;
+	const { grammar } = config;
+	const grammarTypeName = toGrammarTypeName(grammar);
+	const grammarPrefix = grammarTypeName.slice(0, -5);
+	const grammarAlias = `${grammarPrefix}Grammar`;
 
-  const entries: RawNodeEntry[] = loadRawEntries(grammar);
+	const entries: RawNodeEntry[] = loadRawEntries(grammar);
 
-  const lines: string[] = [];
+	const lines: string[] = [];
 
-  lines.push('// Auto-generated grammar type from tree-sitter-' + grammar + '/src/node-types.json');
-  lines.push('// Structurally compatible with @codemod.com/jssg-types ' + grammarTypeName);
-  lines.push('');
-  lines.push(`export type ${grammarAlias} = {`);
+	lines.push("// Auto-generated grammar type from tree-sitter-" + grammar + "/src/node-types.json");
+	lines.push("// Structurally compatible with @codemod.com/jssg-types " + grammarTypeName);
+	lines.push("");
+	lines.push(`export type ${grammarAlias} = {`);
 
-  // Deduplicate: some types appear twice (named + unnamed).
-  // Use "type:named" as the key to avoid duplicate property names.
-  const seen = new Set<string>();
-  for (const entry of entries) {
-    const key = entry.named ? entry.type : `_anonymous_${entry.type}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    const json = JSON.stringify(entry);
-    lines.push(`  readonly ${JSON.stringify(key)}: ${json};`);
-  }
+	// Deduplicate: some types appear twice (named + unnamed).
+	// Use "type:named" as the key to avoid duplicate property names.
+	const seen = new Set<string>();
+	for (const entry of entries) {
+		const key = entry.named ? entry.type : `_anonymous_${entry.type}`;
+		if (seen.has(key)) continue;
+		seen.add(key);
+		const json = JSON.stringify(entry);
+		lines.push(`  readonly ${JSON.stringify(key)}: ${json};`);
+	}
 
-  lines.push('};');
-  lines.push('');
+	lines.push("};");
+	lines.push("");
 
-  return lines.join('\n');
+	return lines.join("\n");
 }

@@ -1,10 +1,11 @@
 ---
 name: speckit-superb-verify
-description: 'Mandatory completion gate. Bridges an installed obra/superpowers verification-before-completion
-  skill and extends it with spec-kit''s spec-coverage checklist. No task may be marked
+description:
+  "Mandatory completion gate. Bridges an installed obra/superpowers verification-before-completion
+  skill and extends it with spec-kit's spec-coverage checklist. No task may be marked
   done without fresh evidence.
 
-  '
+  "
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
@@ -22,6 +23,7 @@ metadata:
 ## Step 1 — Resolve Installed Skill
 
 Any user context provided:
+
 ```
 $ARGUMENTS
 ```
@@ -135,6 +137,7 @@ When all checks pass, output:
 All spec requirements are met. Implementation is verified complete.
 
 Suggested next steps:
+
 - Run `speckit.superb.critique` for code review against spec
 - Or proceed to PR creation
 ```

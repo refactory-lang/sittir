@@ -28,12 +28,12 @@ structural node construction:
 
 ```ts
 // Boolean keyword today — caller must construct a node to say "mutable"
-ir.selfParameter({ mutableSpecifier: mutableSpecifier() })
+ir.selfParameter({ mutableSpecifier: mutableSpecifier() });
 
 // Bitflag today — caller constructs individual keyword nodes, passes as
 // array; the container factory forwards them; the render engine
 // concatenates. Duplicates slip through, order is the caller's problem.
-ir.functionModifiers(externModifier())
+ir.functionModifiers(externModifier());
 ```
 
 Post-ADR-0010, the single-literal auto-stamp rule already removes the
@@ -46,11 +46,11 @@ treatment.
 
 A three-row taxonomy captures what the factory surface should accept:
 
-| Pattern                         | Values | Factory type               | Example                                     |
-|---------------------------------|--------|----------------------------|---------------------------------------------|
-| `optional(string)`              | 1      | `boolean`                  | `mut?: true`                                |
-| `optional(enum)` / `enum`       | 2+     | string literal union       | `visibility?: 'pub' \| 'pub(crate)'`        |
-| `repeat(enum)` / `repeat1(enum)`| 2+     | `number` (bitwise OR)      | `modifiers: Mod.Async \| Mod.Unsafe`        |
+| Pattern                          | Values | Factory type          | Example                              |
+| -------------------------------- | ------ | --------------------- | ------------------------------------ |
+| `optional(string)`               | 1      | `boolean`             | `mut?: true`                         |
+| `optional(enum)` / `enum`        | 2+     | string literal union  | `visibility?: 'pub' \| 'pub(crate)'` |
+| `repeat(enum)` / `repeat1(enum)` | 2+     | `number` (bitwise OR) | `modifiers: Mod.Async \| Mod.Unsafe` |
 
 The middle row (string literal union) is already emitted correctly today —
 that's the existing `enum` classification flowing through auto-stamp when
@@ -132,15 +132,15 @@ The language can't say `async async fn`; a one-bit bitflag is ceremony.
   Typed-bitflag representation choice rationale: TypeScript has no native
   bitflag type, and three candidate representations each fall short in
   different ways:
-    - **Regular `enum`** — `Mod.Async | Mod.Unsafe` widens to `number`,
-      losing type information at the aggregate site.
-    - **`as const` object + `typeof Obj[keyof typeof Obj]` union** — the
-      type is the literal-value union (`1 | 2 | 4 | …`); the OR result
-      (`3`) isn't in the union, so the combination doesn't type-check.
-    - **`const enum`** — TypeScript special-cases bitwise OR on `const
-      enum` members so `Mod.Async | Mod.Unsafe` stays typed as `Mod`.
-      Keeps intellisense, preserves the brand through arbitrary OR
-      combinations, no casts required.
+  - **Regular `enum`** — `Mod.Async | Mod.Unsafe` widens to `number`,
+    losing type information at the aggregate site.
+  - **`as const` object + `typeof Obj[keyof typeof Obj]` union** — the
+    type is the literal-value union (`1 | 2 | 4 | …`); the OR result
+    (`3`) isn't in the union, so the combination doesn't type-check.
+  - **`const enum`** — TypeScript special-cases bitwise OR on `const
+enum` members so `Mod.Async | Mod.Unsafe` stays typed as `Mod`.
+    Keeps intellisense, preserves the brand through arbitrary OR
+    combinations, no casts required.
 
   Sittir already emits `const enum` elsewhere (`SyntaxKind`), so the
   downstream tsconfig supports it. `FunctionMod` plugs into
@@ -225,7 +225,7 @@ authoring surface — callers use the bitflag field on the parent.
   Bitflag unpacking must produce the same children sequence as the
   original grammar expects.
 - Per-grammar snapshot of `ir.functionItem({ functionModifiers: Mod.Async
-  | Mod.Unsafe })` → serialized source — must equal the hand-written
+| Mod.Unsafe })` → serialized source — must equal the hand-written
   `async unsafe fn …`. If the child-order is wrong, either the render
   template is wrong or enum-declaration order is the wrong canonical
   order; at that point, revisit "costs" above.

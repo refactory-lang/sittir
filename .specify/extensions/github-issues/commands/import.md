@@ -1,7 +1,7 @@
 ---
 description: "Import a GitHub Issue and generate spec.md with structured requirements"
 tools:
-  - 'bash/gh'
+  - "bash/gh"
 ---
 
 # Import GitHub Issue to Spec
@@ -15,6 +15,7 @@ $ARGUMENTS
 Expected format: `<owner>/<repo>#<issue_number>` or just `#<issue_number>` (uses current repo)
 
 Examples:
+
 - `github/spec-kit#2175`
 - `#2175` (if in a GitHub repository)
 
@@ -81,6 +82,7 @@ labels=$(echo "$issue_data" | jq -r '.labels[].name' | paste -sd ',' -)
 ### 3. Parse Issue Body
 
 Extract structured information from the issue body:
+
 - Problem statement
 - Proposed solution
 - Acceptance criteria
@@ -159,6 +161,7 @@ $solution
 **So that** [benefit]
 
 **Acceptance Criteria:**
+
 - [ ] Criterion 1
 - [ ] Criterion 2
 
@@ -171,6 +174,7 @@ $solution
 **Description:** [Detailed description]
 
 **Acceptance Criteria:**
+
 - [ ] Criterion 1
 - [ ] Criterion 2
 

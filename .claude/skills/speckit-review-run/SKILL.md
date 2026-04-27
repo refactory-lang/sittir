@@ -28,7 +28,6 @@ Run a comprehensive pull request review using multiple specialized agents, each 
    - Default (no arguments): Run all applicable reviews that are enabled in config.
 
 3. **Available Review Aspects:**
-
    - **comments** - Analyze code comment accuracy and maintainability
    - **tests** - Review test coverage quality and completeness
    - **errors** - Check error handling for silent failures
@@ -38,7 +37,6 @@ Run a comprehensive pull request review using multiple specialized agents, each 
    - **all** - Run all applicable reviews (default)
 
 4. **Identify Changed Files**
-
    - If the user provided a file list or explicit instructions on how to retrieve files (e.g., only staged, only unstaged, a specific folder, etc.), follow those instructions directly.
    - Otherwise, you **MUST** execute the `{SCRIPT}` with `--json` to detect changed files. **Do not** attempt to detect changes by running `git` commands directly, reading git state manually, or using any other method — always delegate to the script.
      - The script automatically picks the best detection mode:
@@ -81,22 +79,28 @@ Run a comprehensive pull request review using multiple specialized agents, each 
 8. **Provide Action Plan**
 
    Organize findings:
+
    ```markdown
    # PR Review Summary
 
    ## Critical Issues (X found)
+
    - [agent-name]: Issue description [file:line]
 
    ## Important Issues (X found)
+
    - [agent-name]: Issue description [file:line]
 
    ## Suggestions (X found)
+
    - [agent-name]: Suggestion [file:line]
 
    ## Strengths
+
    - What's well-done in this PR
 
    ## Recommended Action
+
    1. Fix critical issues first
    2. Address important issues
    3. Consider suggestions
@@ -106,11 +110,13 @@ Run a comprehensive pull request review using multiple specialized agents, each 
 ## Usage Examples:
 
 **Full review (default):**
+
 ```
 /speckit.review.run
 ```
 
 **Specific aspects:**
+
 ```
 /speckit.review.run tests errors
 # Reviews only test coverage and error handling
@@ -123,6 +129,7 @@ Run a comprehensive pull request review using multiple specialized agents, each 
 ```
 
 **Parallel review:**
+
 ```
 /speckit.review.run all parallel
 # Launches all agents in parallel
@@ -131,31 +138,37 @@ Run a comprehensive pull request review using multiple specialized agents, each 
 ## Agent Descriptions:
 
 **comment**:
+
 - Verifies comment accuracy vs code
 - Identifies comment rot
 - Checks documentation completeness
 
 **tests**:
+
 - Reviews behavioral test coverage
 - Identifies critical gaps
 - Evaluates test quality
 
 **errors**:
+
 - Finds silent failures
 - Reviews catch blocks
 - Checks error logging
 
 **types**:
+
 - Analyzes type encapsulation
 - Reviews invariant expression
 - Rates type design quality
 
 **code**:
+
 - Checks project-specific guidelines (`.specify/memory/constitution.md`, `CLAUDE.md`, `.github/copilot-instructions.md`, or equivalent) compliance
 - Detects bugs and issues
 - Reviews general code quality
 
 **simplify**:
+
 - Simplifies complex code
 - Improves clarity and readability
 - Applies project standards

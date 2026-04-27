@@ -6,30 +6,32 @@ Implemented in `packages/codegen/src/emitters/jinja-translator.ts`.
 
 ## Input → Output summary
 
-| YAML-era construct | `.jinja` output | Notes |
-|--------------------|-----------------|-------|
-| `kind: "$NAME_PLACEHOLDER_TEMPLATE"` (bare string) | Direct translation of `$VAR` → `{{ var }}` | Most rules post ADR-0013 Task 2 collapse |
-| `kind: { template: "...", joinBy: "X" }` | Single `.jinja` file; `joinBy` applied in `prepare()` (pre-joined into `children`) | Template itself uses `{{ children }}` |
-| `kind: { template: "...", <field>_clause: "..." }` | Template + `{% if <field> %}...{% endif %}` | Clause bodies inlined into the template |
-| `kind: { variants: { form_a: "T_a", form_b: "T_b" } }` | For the 5 rules that genuinely branch, emit `{% if variant == "form_a" %}...{% elif variant == "form_b" %}...{% endif %}`. For collapsed-identical (post ADR-0013 Task 2), emit the single body. | |
-| `$NAME` | `{{ name }}` | snake_case preserved |
-| `$$$NAME` (multi-valued, pre-joined) | `{{ name }}` | `joinBy` already applied by `prepare()` |
-| `$$$CHILDREN` | `{{ children }}` | |
-| `$$$NAME` (per-item iteration needed, rare) | `{% for item in name_list %}{{ item }}{% if not loop.last %}<sep>{% endif %}{% endfor %}` | Reserved for edge cases where the per-joined string doesn't capture intent |
-| `$TEXT` | `{{ text }}` | |
-| `$NEWLINE` | `\n` literal | Emitted as a literal newline in the `.jinja` file |
-| `$INDENT`, `$DEDENT` | Empty string (column tracking handles) | Stripped — render-time indent logic unchanged |
+| YAML-era construct                                     | `.jinja` output                                                                                                                                                                                  | Notes                                                                      |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| `kind: "$NAME_PLACEHOLDER_TEMPLATE"` (bare string)     | Direct translation of `$VAR` → `{{ var }}`                                                                                                                                                       | Most rules post ADR-0013 Task 2 collapse                                   |
+| `kind: { template: "...", joinBy: "X" }`               | Single `.jinja` file; `joinBy` applied in `prepare()` (pre-joined into `children`)                                                                                                               | Template itself uses `{{ children }}`                                      |
+| `kind: { template: "...", <field>_clause: "..." }`     | Template + `{% if <field> %}...{% endif %}`                                                                                                                                                      | Clause bodies inlined into the template                                    |
+| `kind: { variants: { form_a: "T_a", form_b: "T_b" } }` | For the 5 rules that genuinely branch, emit `{% if variant == "form_a" %}...{% elif variant == "form_b" %}...{% endif %}`. For collapsed-identical (post ADR-0013 Task 2), emit the single body. |                                                                            |
+| `$NAME`                                                | `{{ name }}`                                                                                                                                                                                     | snake_case preserved                                                       |
+| `$$$NAME` (multi-valued, pre-joined)                   | `{{ name }}`                                                                                                                                                                                     | `joinBy` already applied by `prepare()`                                    |
+| `$$$CHILDREN`                                          | `{{ children }}`                                                                                                                                                                                 |                                                                            |
+| `$$$NAME` (per-item iteration needed, rare)            | `{% for item in name_list %}{{ item }}{% if not loop.last %}<sep>{% endif %}{% endfor %}`                                                                                                        | Reserved for edge cases where the per-joined string doesn't capture intent |
+| `$TEXT`                                                | `{{ text }}`                                                                                                                                                                                     |                                                                            |
+| `$NEWLINE`                                             | `\n` literal                                                                                                                                                                                     | Emitted as a literal newline in the `.jinja` file                          |
+| `$INDENT`, `$DEDENT`                                   | Empty string (column tracking handles)                                                                                                                                                           | Stripped — render-time indent logic unchanged                              |
 
 ## Detailed mapping rules
 
 ### Rule 1: Single-template branch / container
 
 **Input** (post collapse):
+
 ```yaml
 struct_item: $VISIBILITY_MODIFIER struct $NAME $TYPE_PARAMETERS $$$CHILDREN
 ```
 
 **Output** (`struct_item.jinja`):
+
 ```jinja
 {# @generated by @sittir/codegen — do not edit. #}
 {{ visibility_modifier }} struct {{ name }}{{ type_parameters }}{{ children }}
@@ -40,6 +42,7 @@ Rationale: `$VAR` → `{{ var }}`, one-to-one. `$$$CHILDREN` → `{{ children }}
 ### Rule 2: Clause-bearing template
 
 **Input**:
+
 ```yaml
 function_item:
   template: fn $NAME $PARAMETERS $RETURN_TYPE_CLAUSE $BODY_CLAUSE
@@ -48,6 +51,7 @@ function_item:
 ```
 
 **Output** (`function_item.jinja`):
+
 ```jinja
 {# @generated by @sittir/codegen — do not edit. #}
 fn {{ name }} {{ parameters }}
@@ -60,6 +64,7 @@ Rationale: Clauses become `{% if <field> %}<body>{% endif %}`. The body itself u
 ### Rule 3: Variant-branching rule (5 total)
 
 **Input**:
+
 ```yaml
 visibility_modifier:
   variants:
@@ -68,6 +73,7 @@ visibility_modifier:
 ```
 
 **Output** (`visibility_modifier.jinja`):
+
 ```jinja
 {# @generated by @sittir/codegen — do not edit. #}
 {%- if variant == "form0" -%}

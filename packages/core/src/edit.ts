@@ -1,5 +1,13 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
-import type { AnyNodeData, Edit, ByteRange, ReplaceTarget, AnyTreeNode, Renderable, KindOf } from './types.ts';
+import type {
+	AnyNodeData,
+	Edit,
+	ByteRange,
+	ReplaceTarget,
+	AnyTreeNode,
+	Renderable,
+	KindOf,
+} from "./types.ts";
 
 export type { ReplaceTarget, AnyTreeNode, Renderable, KindOf };
 
@@ -7,10 +15,7 @@ export type { ReplaceTarget, AnyTreeNode, Renderable, KindOf };
 // replace — loosely typed, any AnyNodeData
 // ---------------------------------------------------------------------------
 
-export function replace(
-	target: ReplaceTarget,
-	replacement: AnyNodeData & Renderable,
-): Edit {
+export function replace(target: ReplaceTarget, replacement: AnyNodeData & Renderable): Edit {
 	const range = target.range();
 	return {
 		startPos: range.start.index,
@@ -53,10 +58,7 @@ export function bindRange<T extends { readonly type: string; render(): string }>
 // replaceField — type-safe field replacement via selector lambda
 // ---------------------------------------------------------------------------
 
-export function replaceField<
-	TNode extends { readonly type: string },
-	TField extends ReplaceTarget,
->(
+export function replaceField<TNode extends { readonly type: string }, TField extends ReplaceTarget>(
 	target: TNode,
 	selector: (node: TNode) => TField | undefined,
 	replacement: AnyNodeData & Renderable,
@@ -64,7 +66,7 @@ export function replaceField<
 	const fieldNode = selector(target);
 	if (!fieldNode) {
 		throw new Error(
-			`Cannot replace undefined field on '${target.type}' — field is not present on the target node`
+			`Cannot replace undefined field on '${target.type}' — field is not present on the target node`,
 		);
 	}
 	const range = fieldNode.range();

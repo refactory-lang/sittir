@@ -94,12 +94,12 @@ hasChildren(rule: GrammarRule): boolean
 
 ```typescript
 type EnrichedRule =
-  | SupertypeRule    // { modelType: 'supertype', subtypes, rule }
-  | BranchRule       // { modelType: 'branch', fields, children?, separators, rule }
-  | ContainerRule    // { modelType: 'container', children, separators, rule }
-  | KeywordRule      // { modelType: 'keyword', text, rule }
-  | EnumRule         // { modelType: 'enum', values, rule }
-  | LeafRule;        // { modelType: 'leaf', pattern: string | null, rule }
+	| SupertypeRule // { modelType: 'supertype', subtypes, rule }
+	| BranchRule // { modelType: 'branch', fields, children?, separators, rule }
+	| ContainerRule // { modelType: 'container', children, separators, rule }
+	| KeywordRule // { modelType: 'keyword', text, rule }
+	| EnumRule // { modelType: 'enum', values, rule }
+	| LeafRule; // { modelType: 'leaf', pattern: string | null, rule }
 
 // All variants carry the original GrammarRule for downstream use.
 // Anonymous tokens have no grammar rules — handled in node-model.ts initialization.

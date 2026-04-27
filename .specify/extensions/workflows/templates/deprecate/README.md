@@ -16,6 +16,7 @@ Use `/speckit.deprecate` when:
 - Technical debt reduction initiative
 
 **Do NOT use `/speckit.deprecate` for**:
+
 - Quick bug fixes → use `/speckit.bugfix` instead
 - Temporary feature disabling → use feature flags
 - Emergency removal → explain why it's urgent first
@@ -105,6 +106,7 @@ specs/
 ```
 
 This will:
+
 1. Find original feature `014-edit-profile-form`
 2. Run dependency scan automatically
 3. Create branch `deprecate/001-edit-profile-form`
@@ -114,6 +116,7 @@ This will:
 7. Show "Next Steps" for checkpoint-based workflow
 
 **Next steps after running the command:**
+
 1. Review `deprecation.md` and `dependencies.md` - are all dependencies identified?
 2. Assess business impact - get stakeholder approvals for deprecation
 3. Define 3-phase timeline - how long should each phase take?
@@ -144,33 +147,41 @@ This will:
 ## Rationale
 
 ### Why Deprecate?
-- [X] Replaced by better alternative (new profile editor with live preview)
-- [X] Low usage (0.8% of users in last 30 days)
-- [X] High maintenance burden (12 bug tickets in 6 months)
+
+- [x] Replaced by better alternative (new profile editor with live preview)
+- [x] Low usage (0.8% of users in last 30 days)
+- [x] High maintenance burden (12 bug tickets in 6 months)
 
 ### Supporting Data
+
 **Usage Statistics**:
+
 - Active users (last 30 days): 42 out of 5,000 (0.84%)
 - API calls (last 30 days): 127
 - Feature engagement: Declining 15% month-over-month
 
 **Maintenance Cost**:
+
 - LOC maintained: 1,245
 - Bug tickets: 12 in last 6 months
 - Engineering hours/month: ~4 hours
 - Support tickets: 8/month
 
 **Business Impact**:
+
 - Revenue: Negligible (<$50/month estimated)
 - Strategic value: Low (superseded by new editor)
 
 ## Affected Users
 
 ### User Segments
+
 **Internal Users**:
+
 - QA team: Uses for testing (can migrate easily)
 
 **External Users**:
+
 - 42 active users in last 30 days
 - Mostly power users who prefer old UI
 
@@ -179,6 +190,7 @@ This will:
 **Recommended Alternative**: New Profile Editor (feature 023)
 
 **Why better**:
+
 - Live preview of changes
 - Drag-and-drop avatar upload
 - Auto-save functionality
@@ -191,6 +203,7 @@ This will:
 ## Dependencies (from scan)
 
 **Code Dependencies**:
+
 - `app/routes/profile.edit.tsx` (direct feature file)
 - `app/components/EditProfileForm.tsx` (direct feature file)
 - `app/routes/settings.tsx` (imports EditProfileForm)
@@ -200,11 +213,13 @@ This will:
 ## Phase 1: Warnings (Oct 1 - Dec 1)
 
 **Technical Changes**:
+
 - Banner in old profile editor: "This editor will be removed Feb 1. Switch to new editor."
 - Console warning when rendering old component
 - API response includes `Deprecation` header
 
 **Communication**:
+
 - Email to 42 active users
 - Blog post announcement
 - In-app notification
@@ -213,24 +228,28 @@ This will:
 ## Phase 2: Disabled by Default (Dec 1 - Feb 1)
 
 **Technical Changes**:
+
 - Old editor disabled by default
 - Opt-in via settings toggle
 - Modal warning before enabling
 - Stronger deprecation notice
 
 **Communication**:
+
 - Email reminder to remaining users
 - Personal outreach to high-usage accounts
 
 ## Phase 3: Complete Removal (Feb 1+)
 
 **Technical Changes**:
+
 - Remove all old editor code
 - Remove routes
 - Update settings page
 - Archive documentation
 
 **Communication**:
+
 - Final warning email
 - Changelog entry
 ```
@@ -246,15 +265,19 @@ The `scan-dependencies.sh` script generates:
 **Scan Date**: 2025-10-01
 
 ## Feature Files (Created by This Feature)
+
 - `app/routes/profile.edit.tsx` (245 lines)
 - `app/components/EditProfileForm.tsx` (180 lines)
 - `tests/profile-edit.test.ts` (95 lines)
 
 ## Code Dependencies (Other Files Importing Feature Files)
+
 Files importing `app/components/EditProfileForm.tsx`:
+
 - `app/routes/settings.tsx`
 
 ## Summary
+
 - **Feature Files**: 3
 - **Dependency Categories**: 1
 
@@ -266,21 +289,25 @@ Files importing `app/components/EditProfileForm.tsx`:
 The deprecation workflow uses checkpoints to ensure proper planning and stakeholder alignment before executing a multi-month sunset:
 
 ### Phase 1: Analysis & Dependency Scan
+
 - **Command**: `/speckit.deprecate 014 "reason"`
 - **Creates**: `deprecation.md` plan template and auto-generated `dependencies.md`
 - **Checkpoint**: Review dependencies and usage data - is deprecation justified? Are there hidden dependencies the scan missed?
 
 ### Phase 2: Stakeholder Alignment & Timeline Planning
+
 - **Command**: `/speckit.plan`
 - **Creates**: `plan.md` with 3-phase timeline and communication strategy
 - **Checkpoint**: Review plan - get stakeholder approvals (Product, Engineering, Support). Is timeline realistic for user migration? Is communication strategy comprehensive?
 
 ### Phase 3: Task Breakdown
+
 - **Command**: `/speckit.tasks`
 - **Creates**: `tasks.md` with phased tasks across all 3 deprecation phases
 - **Checkpoint**: Review tasks - are all 3 phases represented? Are communication tasks included for each phase? Migration guide creation planned?
 
 ### Phase 4: Phased Execution (Spans 3-6 months)
+
 - **Command**: `/speckit.implement`
 - **Executes**: Tasks across months, one phase at a time
 - **Result**: Feature successfully sunset with users migrated to alternative
@@ -292,16 +319,19 @@ The deprecation workflow uses checkpoints to ensure proper planning and stakehol
 ### Setting Realistic Timelines
 
 **Phase 1 Duration** (Warnings):
+
 - Internal/power users: 1 month minimum
 - Consumer product: 2-3 months
 - Enterprise/API: 6-12 months (longer contracts)
 
 **Phase 2 Duration** (Disabled):
+
 - Low-stakes feature: 1 month
 - Medium-stakes: 2 months
 - High-stakes: 3+ months
 
 **Total Sunset**:
+
 - Minor feature: 3 months
 - Major feature: 6 months
 - Core functionality: 12+ months
@@ -309,6 +339,7 @@ The deprecation workflow uses checkpoints to ensure proper planning and stakehol
 ### Effective Communication
 
 **Email Template**:
+
 ```
 Subject: [Feature Name] will be retired on [Date]
 
@@ -390,6 +421,7 @@ This workflow upholds:
 ## Communication Templates
 
 ### API Deprecation Header
+
 ```
 Deprecation: version="1.0"
 Sunset: "2026-02-01T00:00:00Z"
@@ -397,6 +429,7 @@ Link: <https://example.com/docs/migration-guide>; rel="deprecation"
 ```
 
 ### In-App Warning
+
 ```
 ⚠️ This feature will be removed on February 1, 2026
 
@@ -406,13 +439,14 @@ We recommend switching to the new [Feature Name].
 ```
 
 ### Console Warning
+
 ```javascript
 console.warn(
-  '[DEPRECATED] OldFeature will be removed on 2026-02-01. ' +
-  'Please migrate to NewFeature. See: https://example.com/migration'
-)
+	"[DEPRECATED] OldFeature will be removed on 2026-02-01. " +
+		"Please migrate to NewFeature. See: https://example.com/migration",
+);
 ```
 
 ---
 
-*Deprecation Workflow Documentation - Part of Specify Extension System*
+_Deprecation Workflow Documentation - Part of Specify Extension System_

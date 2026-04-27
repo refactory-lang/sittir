@@ -73,33 +73,34 @@ Produce a compact diagnostic report:
 ## Superpowers Bridge Check
 
 **Discovery roots**
+
 - Workspace: [path]
 - Global: [path]
 
 ## Skill Status
 
-| Skill | Required | Source | Path | Status |
-|-------|----------|--------|------|--------|
-| test-driven-development | Hard | workspace | ./.agents/skills/test-driven-development/SKILL.md | READY |
-| verification-before-completion | Hard | global | ~/.agents/skills/verification-before-completion/SKILL.md | READY |
-| systematic-debugging | Optional | — | — | MISSING |
+| Skill                          | Required | Source    | Path                                                     | Status  |
+| ------------------------------ | -------- | --------- | -------------------------------------------------------- | ------- |
+| test-driven-development        | Hard     | workspace | ./.agents/skills/test-driven-development/SKILL.md        | READY   |
+| verification-before-completion | Hard     | global    | ~/.agents/skills/verification-before-completion/SKILL.md | READY   |
+| systematic-debugging           | Optional | —         | —                                                        | MISSING |
 
 ## Hook Readiness
 
-| Hook | Command | Status | Reason |
-|------|---------|--------|--------|
-| before_implement | /speckit.superb.tdd | READY | Hard dependency installed |
-| after_implement | /speckit.superb.verify | READY | Hard dependency installed |
-| after_tasks | /speckit.superb.review | READY | Bridge-native command |
+| Hook             | Command                | Status | Reason                    |
+| ---------------- | ---------------------- | ------ | ------------------------- |
+| before_implement | /speckit.superb.tdd    | READY  | Hard dependency installed |
+| after_implement  | /speckit.superb.verify | READY  | Hard dependency installed |
+| after_tasks      | /speckit.superb.review | READY  | Bridge-native command     |
 
 ## Standalone Commands
 
-| Command | Status | Reason |
-|---------|--------|--------|
-| /speckit.superb.debug | UNAVAILABLE | systematic-debugging missing |
-| /speckit.superb.respond | READY | receiving-code-review installed |
-| /speckit.superb.finish | UNAVAILABLE | finishing-a-development-branch missing |
-| /speckit.superb.critique | READY | Bridge-native command |
+| Command                  | Status      | Reason                                 |
+| ------------------------ | ----------- | -------------------------------------- |
+| /speckit.superb.debug    | UNAVAILABLE | systematic-debugging missing           |
+| /speckit.superb.respond  | READY       | receiving-code-review installed        |
+| /speckit.superb.finish   | UNAVAILABLE | finishing-a-development-branch missing |
+| /speckit.superb.critique | READY       | Bridge-native command                  |
 
 ## Verdict
 

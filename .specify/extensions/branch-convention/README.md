@@ -16,11 +16,11 @@ Spec Kit's `/specify` command creates branches and spec folders using a fixed na
 
 The Branch Convention extension adds three commands that make naming fully configurable:
 
-| Command | Purpose | Modifies Files? |
-|---------|---------|-----------------|
-| `/speckit.branch-convention.configure` | Set up naming rules with presets or custom patterns | Yes — `.specify/branch-convention.yml` |
-| `/speckit.branch-convention.validate` | Check branches and folders against the convention | No — read-only |
-| `/speckit.branch-convention.rename` | Fix non-compliant branches and folders | Yes — branches, folders, artifact references |
+| Command                                | Purpose                                             | Modifies Files?                              |
+| -------------------------------------- | --------------------------------------------------- | -------------------------------------------- |
+| `/speckit.branch-convention.configure` | Set up naming rules with presets or custom patterns | Yes — `.specify/branch-convention.yml`       |
+| `/speckit.branch-convention.validate`  | Check branches and folders against the convention   | No — read-only                               |
+| `/speckit.branch-convention.rename`    | Fix non-compliant branches and folders              | Yes — branches, folders, artifact references |
 
 ## Installation
 
@@ -32,23 +32,23 @@ specify extension add --from https://github.com/Quratulain-bilal/spec-kit-branch
 
 Choose from built-in presets or define a custom pattern:
 
-| Preset | Branch Pattern | Example |
-|--------|---------------|---------|
-| `default` | `{seq}-{kebab}` | `003-user-auth` |
+| Preset    | Branch Pattern         | Example              |
+| --------- | ---------------------- | -------------------- |
+| `default` | `{seq}-{kebab}`        | `003-user-auth`      |
 | `gitflow` | `{type}/{seq}-{kebab}` | `feat/003-user-auth` |
-| `ticket` | `{ticket}-{kebab}` | `PROJ-142-user-auth` |
-| `date` | `{date}-{kebab}` | `20260408-user-auth` |
-| `custom` | User-defined | — |
+| `ticket`  | `{ticket}-{kebab}`     | `PROJ-142-user-auth` |
+| `date`    | `{date}-{kebab}`       | `20260408-user-auth` |
+| `custom`  | User-defined           | —                    |
 
 ## Template Tokens
 
-| Token | Description | Example |
-|-------|-------------|---------|
-| `{seq}` | Zero-padded sequence number | `003` |
-| `{kebab}` | Kebab-case feature summary | `user-auth-flow` |
-| `{ticket}` | Ticket/issue ID | `PROJ-142` |
-| `{date}` | Date in configured format | `20260408` |
-| `{type}` | Branch type prefix | `feat` |
+| Token       | Description                          | Example          |
+| ----------- | ------------------------------------ | ---------------- |
+| `{seq}`     | Zero-padded sequence number          | `003`            |
+| `{kebab}`   | Kebab-case feature summary           | `user-auth-flow` |
+| `{ticket}`  | Ticket/issue ID                      | `PROJ-142`       |
+| `{date}`    | Date in configured format            | `20260408`       |
+| `{type}`    | Branch type prefix                   | `feat`           |
 | `{summary}` | Raw feature summary (spaces allowed) | `user auth flow` |
 
 ## Workflow

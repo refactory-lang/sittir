@@ -19,15 +19,15 @@ NodeTypes (raw) ──► NodeModel (7 variants, mutable)
 
 ```typescript
 interface Grammar {
-  name: string;
-  rules: Record<string, GrammarRule>;
-  extras: GrammarRule[];
-  conflicts: string[][];
-  precedences: PrecedenceEntry[];
-  externals: GrammarRule[];
-  inline: string[];
-  supertypes: string[];
-  word: string | null;
+	name: string;
+	rules: Record<string, GrammarRule>;
+	extras: GrammarRule[];
+	conflicts: string[][];
+	precedences: PrecedenceEntry[];
+	externals: GrammarRule[];
+	inline: string[];
+	supertypes: string[];
+	word: string | null;
 }
 ```
 
@@ -39,12 +39,12 @@ interface Grammar {
 
 ```typescript
 type EnrichedRule =
-  | SupertypeRule     // subtypes: string[]
-  | BranchRule        // fields, children?, separators
-  | ContainerRule     // children, separators
-  | KeywordRule       // text: string
-  | EnumRule          // values: string[]
-  | LeafRule;         // pattern: string | null
+	| SupertypeRule // subtypes: string[]
+	| BranchRule // fields, children?, separators
+	| ContainerRule // children, separators
+	| KeywordRule // text: string
+	| EnumRule // values: string[]
+	| LeafRule; // pattern: string | null
 ```
 
 **Identity**: kind name (key in `Map<string, EnrichedRule>`)
@@ -55,21 +55,21 @@ type EnrichedRule =
 
 ```typescript
 interface NodeTypes {
-  entries: Map<string, NodeTypeEntry>;
+	entries: Map<string, NodeTypeEntry>;
 }
 
 interface NodeTypeEntry {
-  type: string;
-  named: boolean;
-  fields?: Record<string, NodeTypeField>;
-  children?: NodeTypeField;
-  subtypes?: { type: string; named: boolean }[];
+	type: string;
+	named: boolean;
+	fields?: Record<string, NodeTypeField>;
+	children?: NodeTypeField;
+	subtypes?: { type: string; named: boolean }[];
 }
 
 interface NodeTypeField {
-  multiple: boolean;
-  required: boolean;
-  types: { type: string; named: boolean }[];
+	multiple: boolean;
+	required: boolean;
+	types: { type: string; named: boolean }[];
 }
 ```
 
@@ -82,13 +82,13 @@ interface NodeTypeField {
 
 ```typescript
 type NodeModel =
-  | BranchModel
-  | ContainerModel
-  | LeafModel
-  | EnumModel
-  | KeywordModel
-  | TokenModel
-  | SupertypeModel;
+	| BranchModel
+	| ContainerModel
+	| LeafModel
+	| EnumModel
+	| KeywordModel
+	| TokenModel
+	| SupertypeModel;
 ```
 
 **Identity**: `kind` (unique across all models, key in `Map<string, NodeModel>`)
@@ -97,24 +97,24 @@ type NodeModel =
 
 ### Model Variants
 
-| Variant | modelType | Unique Fields | Relationships |
-|---------|-----------|--------------|---------------|
-| BranchModel | `'branch'` | `fields: FieldModel[]`, `children?: ChildModel[]`, `members: NodeMember[]`, `rule: EnrichedRule` | fields → kinds (string[]), children → kinds (string[]) |
-| ContainerModel | `'container'` | `children: ChildModel[]`, `members: NodeMember[]`, `rule: EnrichedRule` | children → kinds (string[]) |
-| LeafModel | `'leaf'` | `pattern: string \| null`, `rule: EnrichedRule \| null` | — |
-| EnumModel | `'enum'` | `values: string[]`, `rule: EnrichedRule \| null` | — |
-| KeywordModel | `'keyword'` | `text: string`, `rule: EnrichedRule \| null` | — |
-| TokenModel | `'token'` | `rule: EnrichedRule \| null` | — |
-| SupertypeModel | `'supertype'` | `subtypes: string[]`, `rule: EnrichedRule \| null` | subtypes → kind names |
+| Variant        | modelType     | Unique Fields                                                                                    | Relationships                                          |
+| -------------- | ------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------ |
+| BranchModel    | `'branch'`    | `fields: FieldModel[]`, `children?: ChildModel[]`, `members: NodeMember[]`, `rule: EnrichedRule` | fields → kinds (string[]), children → kinds (string[]) |
+| ContainerModel | `'container'` | `children: ChildModel[]`, `members: NodeMember[]`, `rule: EnrichedRule`                          | children → kinds (string[])                            |
+| LeafModel      | `'leaf'`      | `pattern: string \| null`, `rule: EnrichedRule \| null`                                          | —                                                      |
+| EnumModel      | `'enum'`      | `values: string[]`, `rule: EnrichedRule \| null`                                                 | —                                                      |
+| KeywordModel   | `'keyword'`   | `text: string`, `rule: EnrichedRule \| null`                                                     | —                                                      |
+| TokenModel     | `'token'`     | `rule: EnrichedRule \| null`                                                                     | —                                                      |
+| SupertypeModel | `'supertype'` | `subtypes: string[]`, `rule: EnrichedRule \| null`                                               | subtypes → kind names                                  |
 
 ### Common Base
 
 ```typescript
 interface NodeModelBase {
-  modelType: string;
-  kind: string;
-  typeName?: string;       // added by naming step
-  factoryName?: string;    // added by naming step
+	modelType: string;
+	kind: string;
+	typeName?: string; // added by naming step
+	factoryName?: string; // added by naming step
 }
 ```
 
@@ -122,19 +122,19 @@ interface NodeModelBase {
 
 #### FieldModel (discriminated by `multiple`)
 
-| Variant | multiple | Extra Fields |
-|---------|----------|-------------|
-| SingleFieldModel | `false` | — |
-| ListFieldModel | `true` | `separator: string \| null` |
+| Variant          | multiple | Extra Fields                |
+| ---------------- | -------- | --------------------------- |
+| SingleFieldModel | `false`  | —                           |
+| ListFieldModel   | `true`   | `separator: string \| null` |
 
 Common: `name`, `required`, `kinds: string[]`, `propertyName?`, `fieldSignature?` (added by optimization)
 
 #### ChildModel (discriminated by `multiple`)
 
-| Variant | multiple | Extra Fields |
-|---------|----------|-------------|
-| SingleChildModel | `false` | — |
-| ListChildModel | `true` | `separator: string \| null` |
+| Variant          | multiple | Extra Fields                |
+| ---------------- | -------- | --------------------------- |
+| SingleChildModel | `false`  | —                           |
+| ListChildModel   | `true`   | `separator: string \| null` |
 
 Common: `required`, `kinds: string[]`, `childSignature?` (added by optimization)
 
@@ -142,38 +142,40 @@ Common: `required`, `kinds: string[]`, `childSignature?` (added by optimization)
 
 ```typescript
 type NodeMember =
-  | { member: 'field'; field: FieldModel }
-  | { member: 'token'; value: string; optional: boolean }
-  | { member: 'child'; child: ChildModel }
-  | { member: 'choice'; branches: NodeMember[][] };
+	| { member: "field"; field: FieldModel }
+	| { member: "token"; value: string; optional: boolean }
+	| { member: "child"; child: ChildModel }
+	| { member: "choice"; branches: NodeMember[][] };
 ```
 
 ## Hydrated Types (post-hydration, frozen)
 
 ```typescript
-type Hydrate<T> =
-  T extends { kinds: string[] }
-    ? Readonly<Omit<T, 'kinds'> & { kinds: HydratedNodeModel[] }>
-    : T extends { fields: FieldModel[] }
-      ? Readonly<Omit<T, 'fields' | 'children'> & {
-          fields: Hydrate<FieldModel>[];
-          children?: Hydrate<ChildModel>[];
-        }>
-      : T extends { children: ChildModel[] }
-        ? Readonly<Omit<T, 'children'> & { children: Hydrate<ChildModel>[] }>
-        : Readonly<T>;
+type Hydrate<T> = T extends { kinds: string[] }
+	? Readonly<Omit<T, "kinds"> & { kinds: HydratedNodeModel[] }>
+	: T extends { fields: FieldModel[] }
+		? Readonly<
+				Omit<T, "fields" | "children"> & {
+					fields: Hydrate<FieldModel>[];
+					children?: Hydrate<ChildModel>[];
+				}
+			>
+		: T extends { children: ChildModel[] }
+			? Readonly<Omit<T, "children"> & { children: Hydrate<ChildModel>[] }>
+			: Readonly<T>;
 
 type HydratedNodeModel =
-  | Hydrate<BranchModel>
-  | Hydrate<ContainerModel>
-  | Hydrate<LeafModel>
-  | Hydrate<EnumModel>
-  | Hydrate<KeywordModel>
-  | Hydrate<TokenModel>
-  | Hydrate<SupertypeModel>;
+	| Hydrate<BranchModel>
+	| Hydrate<ContainerModel>
+	| Hydrate<LeafModel>
+	| Hydrate<EnumModel>
+	| Hydrate<KeywordModel>
+	| Hydrate<TokenModel>
+	| Hydrate<SupertypeModel>;
 ```
 
 **Invariants**:
+
 - All `kinds` arrays contain `HydratedNodeModel` references (not strings)
 - All properties are `readonly`
 - References form a DAG (no cycles — supertypes reference concrete types, fields reference any type)
@@ -182,14 +184,14 @@ type HydratedNodeModel =
 
 ```typescript
 interface GrammarModel {
-  readonly name: string;
-  readonly models: ReadonlyMap<string, HydratedNodeModel>;
-  readonly signatures: SignaturePool;
+	readonly name: string;
+	readonly models: ReadonlyMap<string, HydratedNodeModel>;
+	readonly signatures: SignaturePool;
 }
 
 interface SignaturePool {
-  readonly field: Map<string, FieldSignature>;
-  readonly child: Map<string, ChildSignature>;
+	readonly field: Map<string, FieldSignature>;
+	readonly child: Map<string, ChildSignature>;
 }
 ```
 
@@ -218,8 +220,10 @@ EnrichedRule ───reconcile──────────► NodeModel (enri
 ```
 
 Narrowing transitions (during reconcile):
+
 - `LeafModel` → `KeywordModel` (grammar found constant text)
 - `LeafModel` → `EnumModel` (grammar found CHOICE of STRINGs)
 
 Reclassification (during refine):
+
 - `BranchModel` → `ContainerModel` (no fields after member application, only children)

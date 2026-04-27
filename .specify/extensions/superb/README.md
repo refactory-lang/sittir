@@ -127,32 +127,32 @@ Run the diagnostics command after installation:
 
 ## Commands
 
-| Command | Type | Purpose |
-|---|---|---|
-| `/speckit.superb.check` | Standalone | Verify installed skill availability and hook readiness |
-| `/speckit.superb.tdd` | Hookable | Enforce RED-GREEN-REFACTOR before code changes |
-| `/speckit.superb.review` | Hookable | Check `tasks.md` coverage and TDD-readiness |
-| `/speckit.superb.verify` | Hookable | Block completion claims without fresh evidence |
-| `/speckit.superb.critique` | Standalone | Bridge-native spec-aligned code review |
-| `/speckit.superb.debug` | Standalone | Systematic root-cause debugging |
-| `/speckit.superb.finish` | Standalone | Post-verify branch completion workflow |
-| `/speckit.superb.respond` | Standalone | Process and implement review feedback rigorously |
+| Command                    | Type       | Purpose                                                |
+| -------------------------- | ---------- | ------------------------------------------------------ |
+| `/speckit.superb.check`    | Standalone | Verify installed skill availability and hook readiness |
+| `/speckit.superb.tdd`      | Hookable   | Enforce RED-GREEN-REFACTOR before code changes         |
+| `/speckit.superb.review`   | Hookable   | Check `tasks.md` coverage and TDD-readiness            |
+| `/speckit.superb.verify`   | Hookable   | Block completion claims without fresh evidence         |
+| `/speckit.superb.critique` | Standalone | Bridge-native spec-aligned code review                 |
+| `/speckit.superb.debug`    | Standalone | Systematic root-cause debugging                        |
+| `/speckit.superb.finish`   | Standalone | Post-verify branch completion workflow                 |
+| `/speckit.superb.respond`  | Standalone | Process and implement review feedback rigorously       |
 
 ## When To Use Each Command
 
 This table is the practical entry point for users. It shows when each command
 should be used, whether it is automatic or manual, and what problem it solves.
 
-| Command | Automatic? | Best Time To Use | Solves |
-|---|---|---|---|
-| `/speckit.superb.check` | Manual | Right after installing the extension or when bridge behavior looks wrong | Confirms which superpowers skills were found, where they were found, and which hooks or standalone commands are ready |
-| `/speckit.superb.review` | Optional hook after `tasks` | After `tasks.md` is generated, before implementation starts | Checks whether `tasks.md` really covers `spec.md` and whether the task set is precise enough for strict TDD |
-| `/speckit.superb.tdd` | Mandatory hook before `implement` | Immediately before implementation begins | Enforces RED-GREEN-REFACTOR and blocks speculative production code before a failing test |
-| `/speckit.superb.verify` | Mandatory hook after `implement` | Immediately after implementation claims are made | Requires fresh evidence before any completion claim and verifies spec coverage against passing tests |
-| `/speckit.superb.critique` | Manual | After a major task, after implementation, or before opening a PR | Reviews the code diff against `spec.md`, `plan.md`, and `tasks.md` to catch implementation drift |
-| `/speckit.superb.debug` | Manual | When TDD is stuck, repeated fixes failed, or behavior is still unexplained | Switches from trial-and-error to root-cause debugging |
-| `/speckit.superb.respond` | Manual | After receiving critique output, PR comments, or external review feedback | Processes review items rigorously before implementing or rejecting them |
-| `/speckit.superb.finish` | Manual | After verification passes and the work is ready to integrate | Handles merge / PR / keep / discard decisions in a structured way |
+| Command                    | Automatic?                        | Best Time To Use                                                           | Solves                                                                                                                |
+| -------------------------- | --------------------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `/speckit.superb.check`    | Manual                            | Right after installing the extension or when bridge behavior looks wrong   | Confirms which superpowers skills were found, where they were found, and which hooks or standalone commands are ready |
+| `/speckit.superb.review`   | Optional hook after `tasks`       | After `tasks.md` is generated, before implementation starts                | Checks whether `tasks.md` really covers `spec.md` and whether the task set is precise enough for strict TDD           |
+| `/speckit.superb.tdd`      | Mandatory hook before `implement` | Immediately before implementation begins                                   | Enforces RED-GREEN-REFACTOR and blocks speculative production code before a failing test                              |
+| `/speckit.superb.verify`   | Mandatory hook after `implement`  | Immediately after implementation claims are made                           | Requires fresh evidence before any completion claim and verifies spec coverage against passing tests                  |
+| `/speckit.superb.critique` | Manual                            | After a major task, after implementation, or before opening a PR           | Reviews the code diff against `spec.md`, `plan.md`, and `tasks.md` to catch implementation drift                      |
+| `/speckit.superb.debug`    | Manual                            | When TDD is stuck, repeated fixes failed, or behavior is still unexplained | Switches from trial-and-error to root-cause debugging                                                                 |
+| `/speckit.superb.respond`  | Manual                            | After receiving critique output, PR comments, or external review feedback  | Processes review items rigorously before implementing or rejecting them                                               |
+| `/speckit.superb.finish`   | Manual                            | After verification passes and the work is ready to integrate               | Handles merge / PR / keep / discard decisions in a structured way                                                     |
 
 ## Typical Usage Order
 
@@ -181,13 +181,13 @@ actually observe with the current hook surface.
 
 ### Bridge-Owned States
 
-| State | Written By | Meaning |
-|---|---|---|
-| `Tasked` | `after_tasks` via `/speckit.superb.review` | `tasks.md` exists and the feature has entered task-driven implementation preparation |
-| `Implementing` | `before_implement` via `/speckit.superb.tdd` | implementation has formally entered execution |
-| `Verified` | `/speckit.superb.verify` | implementation passed the verification gate and requirement evidence checks |
-| `In Review` | `/speckit.superb.finish` after successful PR creation | work has been handed off into external review/merge flow |
-| `Abandoned` | `/speckit.superb.finish` after successful discard | work was explicitly discarded |
+| State          | Written By                                            | Meaning                                                                              |
+| -------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `Tasked`       | `after_tasks` via `/speckit.superb.review`            | `tasks.md` exists and the feature has entered task-driven implementation preparation |
+| `Implementing` | `before_implement` via `/speckit.superb.tdd`          | implementation has formally entered execution                                        |
+| `Verified`     | `/speckit.superb.verify`                              | implementation passed the verification gate and requirement evidence checks          |
+| `In Review`    | `/speckit.superb.finish` after successful PR creation | work has been handed off into external review/merge flow                             |
+| `Abandoned`    | `/speckit.superb.finish` after successful discard     | work was explicitly discarded                                                        |
 
 ### Why There Is No `Completed`
 
@@ -243,17 +243,17 @@ remote fallbacks or bundled skill content.
 
 ## Responsibility Boundaries
 
-| Responsibility | Owner |
-|---|---|
-| Create and update `spec.md` | Spec Kit |
-| Clarify unresolved spec decisions | Spec Kit |
-| Build `plan.md` and `tasks.md` | Spec Kit |
-| Analyze artifact consistency | Spec Kit |
-| Generate requirements-quality checklists | Spec Kit |
-| Enforce TDD discipline during implementation | Superpowers Bridge |
-| Enforce verification before completion | Superpowers Bridge |
-| Review task coverage and TDD-readiness | Superpowers Bridge |
-| Review implementation against spec/plan/tasks | Superpowers Bridge |
+| Responsibility                                         | Owner              |
+| ------------------------------------------------------ | ------------------ |
+| Create and update `spec.md`                            | Spec Kit           |
+| Clarify unresolved spec decisions                      | Spec Kit           |
+| Build `plan.md` and `tasks.md`                         | Spec Kit           |
+| Analyze artifact consistency                           | Spec Kit           |
+| Generate requirements-quality checklists               | Spec Kit           |
+| Enforce TDD discipline during implementation           | Superpowers Bridge |
+| Enforce verification before completion                 | Superpowers Bridge |
+| Review task coverage and TDD-readiness                 | Superpowers Bridge |
+| Review implementation against spec/plan/tasks          | Superpowers Bridge |
 | Synchronize bridge-owned lifecycle states in `spec.md` | Superpowers Bridge |
 
 ## Stage Boundaries
@@ -263,22 +263,22 @@ already own specification quality and artifact consistency.
 
 ### `clarify` vs Bridge Commands
 
-| Command | Owner | Primary Artifact | Solves |
-|---|---|---|---|
-| `/speckit.clarify` | Spec Kit | `spec.md` | Resolves underspecified or ambiguous product requirements and writes the answers back into the spec |
-| `/speckit.superb.review` | Superpowers Bridge | `tasks.md` against `spec.md` / `plan.md` | Checks whether the generated task plan actually covers the spec and is specific enough for a strict TDD gate |
-| `/speckit.superb.critique` | Superpowers Bridge | code diff against `spec.md` / `plan.md` / `tasks.md` | Reviews implementation output against declared requirements and implementation intent |
+| Command                    | Owner              | Primary Artifact                                     | Solves                                                                                                       |
+| -------------------------- | ------------------ | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `/speckit.clarify`         | Spec Kit           | `spec.md`                                            | Resolves underspecified or ambiguous product requirements and writes the answers back into the spec          |
+| `/speckit.superb.review`   | Superpowers Bridge | `tasks.md` against `spec.md` / `plan.md`             | Checks whether the generated task plan actually covers the spec and is specific enough for a strict TDD gate |
+| `/speckit.superb.critique` | Superpowers Bridge | code diff against `spec.md` / `plan.md` / `tasks.md` | Reviews implementation output against declared requirements and implementation intent                        |
 
 ### `checklist` vs `analyze` vs Bridge Commands
 
-| Command | Owner | Primary Focus | Solves |
-|---|---|---|---|
-| `/speckit.checklist` | Spec Kit | Requirements-writing quality | Tests whether requirements are complete, clear, consistent, measurable, and ready for implementation |
-| `/speckit.analyze` | Spec Kit | Cross-artifact consistency | Detects contradictions, ambiguity, duplication, and missing links across `spec.md`, `plan.md`, and `tasks.md` |
-| `/speckit.superb.review` | Superpowers Bridge | Coverage + TDD readiness | Determines whether `tasks.md` is implementation-ready and can support `before_implement` TDD enforcement |
-| `/speckit.superb.tdd` | Superpowers Bridge | Implementation discipline | Enforces RED-GREEN-REFACTOR once implementation begins |
-| `/speckit.superb.verify` | Superpowers Bridge | Completion evidence | Blocks completion claims unless full verification evidence exists |
-| `/speckit.superb.finish` | Superpowers Bridge | Integration handoff state | Moves the feature into `In Review` after PR creation or `Abandoned` after successful discard |
+| Command                  | Owner              | Primary Focus                | Solves                                                                                                        |
+| ------------------------ | ------------------ | ---------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `/speckit.checklist`     | Spec Kit           | Requirements-writing quality | Tests whether requirements are complete, clear, consistent, measurable, and ready for implementation          |
+| `/speckit.analyze`       | Spec Kit           | Cross-artifact consistency   | Detects contradictions, ambiguity, duplication, and missing links across `spec.md`, `plan.md`, and `tasks.md` |
+| `/speckit.superb.review` | Superpowers Bridge | Coverage + TDD readiness     | Determines whether `tasks.md` is implementation-ready and can support `before_implement` TDD enforcement      |
+| `/speckit.superb.tdd`    | Superpowers Bridge | Implementation discipline    | Enforces RED-GREEN-REFACTOR once implementation begins                                                        |
+| `/speckit.superb.verify` | Superpowers Bridge | Completion evidence          | Blocks completion claims unless full verification evidence exists                                             |
+| `/speckit.superb.finish` | Superpowers Bridge | Integration handoff state    | Moves the feature into `In Review` after PR creation or `Abandoned` after successful discard                  |
 
 ### Responsibility Map
 

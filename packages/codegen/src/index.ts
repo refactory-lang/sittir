@@ -5,5 +5,5 @@
  * is exposed as `generate`.
  */
 
-export { generate } from './compiler/generate.ts'
-export type { GenerateConfig, GeneratedFiles } from './compiler/generate.ts'
+export { generate } from "./compiler/generate.ts";
+export type { GenerateConfig, GeneratedFiles } from "./compiler/generate.ts";

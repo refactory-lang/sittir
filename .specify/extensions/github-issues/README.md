@@ -79,6 +79,7 @@ Convert a GitHub Issue into a structured spec.md file:
 ```
 
 **What it does:**
+
 - Fetches issue title, body, labels, and comments
 - Parses structured sections (problem, solution, alternatives)
 - Generates `spec.md` with requirements and acceptance criteria
@@ -86,6 +87,7 @@ Convert a GitHub Issue into a structured spec.md file:
 - Preserves discussion context from comments
 
 **Output:**
+
 ```
 ✓ Spec generated at: .specify/specs/001-generate-spec-artifacts/spec.md
 ✓ Linked to issue: https://github.com/github/spec-kit/issues/2175
@@ -106,12 +108,14 @@ Add bidirectional traceability between an existing spec and a GitHub Issue:
 ```
 
 **What it does:**
+
 - Adds issue reference to spec frontmatter
 - Creates `.issue-link` metadata file
 - Posts a comment on the GitHub Issue linking back to the spec
 - Establishes bidirectional traceability
 
 **Output:**
+
 ```
 ✓ Added issue link to spec
 ✓ Created link metadata
@@ -138,6 +142,7 @@ Keep your spec synchronized with changes to the source GitHub Issue:
 ```
 
 **What it does:**
+
 - Detects changes in linked issues (title, body, labels, comments)
 - Shows what will be updated
 - Prompts for confirmation
@@ -146,6 +151,7 @@ Keep your spec synchronized with changes to the source GitHub Issue:
 - Updates metadata timestamps
 
 **Output:**
+
 ```
 Found 1 linked issue(s)
 Checking github/spec-kit#2175...
@@ -175,7 +181,7 @@ repository:
 # Import settings
 import:
   include_comments: true
-  max_comments: 0  # 0 = unlimited
+  max_comments: 0 # 0 = unlimited
   include_labels: true
 
 # Sync settings
@@ -233,6 +239,7 @@ specify extension add github-issues
 **Description:** Import a GitHub Issue and generate structured spec.md
 
 **Examples:**
+
 ```bash
 /speckit.github-issues.import github/spec-kit#2175
 /speckit.github-issues.import #2175
@@ -245,6 +252,7 @@ specify extension add github-issues
 **Description:** Sync spec artifacts with updates from source issues
 
 **Examples:**
+
 ```bash
 /speckit.github-issues.sync                    # Sync all linked issues
 /speckit.github-issues.sync 001-feature-name   # Sync specific feature
@@ -258,6 +266,7 @@ specify extension add github-issues
 **Description:** Add bidirectional traceability between spec and issue
 
 **Examples:**
+
 ```bash
 /speckit.github-issues.link github/spec-kit#2175
 /speckit.github-issues.link #2175
@@ -270,6 +279,7 @@ specify extension add github-issues
 **Error:** `Failed to fetch issue. Check repository access and issue number.`
 
 **Solution:**
+
 ```bash
 gh auth login
 ```
@@ -325,6 +335,7 @@ MIT License - see [LICENSE](LICENSE) file for details
 ## Author
 
 **Fatima367**
+
 - GitHub: [@Fatima367](https://github.com/Fatima367)
 - Repository: [spec-kit-github-issues](https://github.com/Fatima367/spec-kit-github-issues)
 

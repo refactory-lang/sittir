@@ -12,9 +12,9 @@ union slots. Example — a field that accepts `HomoLeft | HomoRight`, both with
 identical `{ x, y }` shape, still forced consumers to write:
 
 ```ts
-loose.child = { kind: 'homo_left', x: 1, y: 2 };
+loose.child = { kind: "homo_left", x: 1, y: 2 };
 // OR
-loose.child = { kind: 'homo_right', x: 1, y: 2 };
+loose.child = { kind: "homo_right", x: 1, y: 2 };
 ```
 
 At runtime, the factory dispatcher for `source='promoted'` polymorphs already

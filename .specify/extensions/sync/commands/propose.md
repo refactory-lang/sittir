@@ -19,6 +19,7 @@ Run `speckit.sync.analyze` first to generate the drift report.
 ## Context
 
 Read the drift report:
+
 - `.specify/sync/drift-report.json`
 
 ## Steps
@@ -34,12 +35,14 @@ Analyze the drift and determine resolution direction:
 #### Backfill (Code → Spec)
 
 Recommend when:
+
 - Code has working, tested features not in spec
 - Design docs exist that supersede the spec
 - The code represents intentional evolution
 - Tests pass for the current behavior
 
 Generate:
+
 - Updated spec requirement text
 - New acceptance scenarios if needed
 - Rationale for why code is authoritative
@@ -47,12 +50,14 @@ Generate:
 #### Align (Spec → Code)
 
 Recommend when:
+
 - Spec was recently reviewed/approved
 - Code appears to be a bug or misunderstanding
 - The spec represents agreed architectural decisions
 - Changing the spec would violate constraints
 
 Generate:
+
 - Code change description or diff
 - Task for implementation
 - Rationale for why spec is authoritative
@@ -60,12 +65,14 @@ Generate:
 #### Human Decision Required
 
 Flag when:
+
 - Both interpretations seem valid
 - Architectural trade-offs involved
 - Insufficient context to decide
 - Conflicting design documents
 
 Generate:
+
 - Summary of both options
 - Questions that would help decide
 - Request for human input
@@ -73,6 +80,7 @@ Generate:
 ### 3. For Each Unspecced Feature
 
 Propose a new spec:
+
 - Suggested spec ID (next available number)
 - Draft title
 - Draft user stories based on code behavior
@@ -82,6 +90,7 @@ Propose a new spec:
 ### 4. For Each Not-Implemented Requirement
 
 Determine:
+
 - Is it still needed? (may be obsolete)
 - Should it be removed from spec?
 - Should it be implemented?
@@ -100,13 +109,13 @@ Based on: drift-report from [timestamp]
 
 ## Summary
 
-| Resolution Type | Count |
-|-----------------|-------|
-| Backfill (Code → Spec) | X |
-| Align (Spec → Code) | X |
-| Human Decision | X |
-| New Specs | X |
-| Remove from Spec | X |
+| Resolution Type        | Count |
+| ---------------------- | ----- |
+| Backfill (Code → Spec) | X     |
+| Align (Spec → Code)    | X     |
+| Human Decision         | X     |
+| New Specs              | X     |
+| Remove from Spec       | X     |
 
 ## Proposals
 
@@ -115,6 +124,7 @@ Based on: drift-report from [timestamp]
 **Direction**: BACKFILL | ALIGN | HUMAN_DECISION
 
 **Current State**:
+
 - Spec says: "[spec text]"
 - Code does: "[actual behavior]"
 
@@ -129,6 +139,7 @@ Based on: drift-report from [timestamp]
 **Confidence**: HIGH | MEDIUM | LOW
 
 **Action**:
+
 - [ ] Approve
 - [ ] Reject
 - [ ] Modify
@@ -149,6 +160,7 @@ Based on: drift-report from [timestamp]
 ## User Scenarios
 
 ### User Story 1 - [story]
+
 [generated from code behavior]
 
 ## Requirements
@@ -158,6 +170,7 @@ Based on: drift-report from [timestamp]
 **Confidence**: MEDIUM
 
 **Action**:
+
 - [ ] Approve and create spec
 - [ ] Reject
 - [ ] Modify
@@ -166,6 +179,7 @@ Based on: drift-report from [timestamp]
 ### 6. Save Proposals
 
 Write to:
+
 - `.specify/sync/proposals.md` (human-readable)
 - `.specify/sync/proposals.json` (machine-readable)
 

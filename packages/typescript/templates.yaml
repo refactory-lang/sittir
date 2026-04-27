@@ -159,7 +159,7 @@ rules:
   sequence_expression:
     template: $$$CHILDREN
     joinBy: ","
-  string: "\"$$$CHILDREN\""
+  string: '"$$$CHILDREN"'
   template_string: "`$$$CHILDREN`"
   template_substitution: "${$$$CHILDREN}"
   regex:

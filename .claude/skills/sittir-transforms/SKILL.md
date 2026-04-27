@@ -10,7 +10,7 @@ Reference for authoring `overrides.ts` transform patches that modify tree-sitter
 ## Imports
 
 ```typescript
-import { transform, enrich, field, variant } from '../codegen/src/dsl/index.ts'
+import { transform, enrich, field, variant } from "../codegen/src/dsl/index.ts";
 ```
 
 - `field(name)` — one-arg placeholder: wraps original content at target position
@@ -48,6 +48,7 @@ or_pattern: ($, original) => transform(original, {
 ```
 
 Path rules:
+
 - No leading/trailing slash
 - `*` matches every sibling at that level (not recursive)
 - Out-of-bounds and zero-match wildcards are hard errors
@@ -83,6 +84,7 @@ assignment: ($, original) => transform(original, {
 ```
 
 What happens:
+
 1. Creates hidden rule `_assignment_eq` with captured content
 2. Replaces choice member with `alias($._assignment_eq, $.assignment_eq)`
 3. Registers polymorph metadata: `assignment → [assignment_eq, assignment_type, assignment_typed]`
@@ -115,6 +117,7 @@ visibility_modifier: ($) => choice(
 ## Enrich Base
 
 `enrich(base)` applies mechanical enrichment passes before override callbacks run:
+
 1. Wraps bare `$.kind` symbols as `field('kind', $.kind, source: 'inferred')` (if unambiguous)
 2. Wraps `optional('keyword')` as `optional(field('keyword', 'keyword'))` for identifier-shaped literals
 

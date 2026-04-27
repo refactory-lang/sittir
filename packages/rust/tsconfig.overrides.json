@@ -1,21 +1,17 @@
 {
-  "//": "Dedicated tsconfig for overrides.ts — NON-COMPOSITE so the IDE can",
-  "//": "traverse cross-package source imports into @sittir/codegen's DSL.",
-  "//": "The package build (`tsgo -p tsconfig.json`) is unaffected; this file",
-  "//": "only drives editor/LSP type-checking of overrides.ts so",
-  "//": "`wire<RustGrammar>(...)` pulls its generic surface through.",
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "composite": false,
-    "declaration": false,
-    "declarationMap": false,
-    "noEmit": true,
-    "rootDir": "../..",
-    "types": ["node"]
-  },
-  "include": [
-    "overrides.ts",
-    "src/grammar.ts",
-    "../codegen/src/**/*.ts"
-  ]
+	"//": "Dedicated tsconfig for overrides.ts — NON-COMPOSITE so the IDE can",
+	"//": "traverse cross-package source imports into @sittir/codegen's DSL.",
+	"//": "The package build (`tsgo -p tsconfig.json`) is unaffected; this file",
+	"//": "only drives editor/LSP type-checking of overrides.ts so",
+	"//": "`wire<RustGrammar>(...)` pulls its generic surface through.",
+	"extends": "../../tsconfig.json",
+	"compilerOptions": {
+		"composite": false,
+		"declaration": false,
+		"declarationMap": false,
+		"noEmit": true,
+		"rootDir": "../..",
+		"types": ["node"]
+	},
+	"include": ["overrides.ts", "src/grammar.ts", "../codegen/src/**/*.ts"]
 }

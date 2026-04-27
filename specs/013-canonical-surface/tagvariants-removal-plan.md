@@ -9,19 +9,19 @@ every member of every visible choice in a `variant` rule. After the
 structural-homogeneity skip (commit b852fc8) it still produces:
 
 | Grammar | Override polymorphs | Auto-promoted | Phantom variant wrappers |
-|---------|---------------------|----------------|--------------------------|
-| rust    | 15 kinds            | **0**          | 48 kinds × 142 wrappers  |
-| ts      |  9 kinds            | **0**          | 59 kinds × 202 wrappers  |
-| python  |  1 kind             | **0**          | 29 kinds × 89 wrappers   |
+| ------- | ------------------- | ------------- | ------------------------ |
+| rust    | 15 kinds            | **0**         | 48 kinds × 142 wrappers  |
+| ts      | 9 kinds             | **0**         | 59 kinds × 202 wrappers  |
+| python  | 1 kind              | **0**         | 29 kinds × 89 wrappers   |
 
 **Zero polymorphs are auto-promoted across all three grammars.**
 Every polymorph in the final IR came from an explicit `variant()` in
 overrides. The 400+ remaining wrappers are phantom — the only reason
 they exist is that `tagVariants` inserts them unconditionally.
 
-User's diagnosis: *"we were silently identifying variants before but
+User's diagnosis: _"we were silently identifying variants before but
 not doing anything with them elsewhere in the code, b/c 'phantom'
-variants weren't part of any polymorphs."*
+variants weren't part of any polymorphs."_
 
 Confirmed by the inventory. Phantom wrappers are a pure cost —
 they:
@@ -43,7 +43,7 @@ Variants become **override-only**. The authoring surface stays
 exactly as it is today — `variant('name')` in overrides — but the
 pipeline no longer speculatively wraps anything.
 
-For choices the author *might* want to promote, the codegen emits a
+For choices the author _might_ want to promote, the codegen emits a
 **diagnostic suggestion** into `overrides.suggested.ts`:
 
 ```ts
@@ -99,11 +99,11 @@ patching a walker we're trying to remove. The fix is:
 2. **Canonicalize pushes the container shape to the top level.**
    For a rule like `_string_double` whose surface is a repeated
    choice-of-two-children, the canonical form becomes either:
-     - `repeat(choice(string_fragment, escape_sequence))` (as today,
-       but with alias flattened), or
-     - A flat list of child refs annotated with multiplicity,
-       following the container-rule pattern in 013 plan §"Canonical
-       form".
+   - `repeat(choice(string_fragment, escape_sequence))` (as today,
+     but with alias flattened), or
+   - A flat list of child refs annotated with multiplicity,
+     following the container-rule pattern in 013 plan §"Canonical
+     form".
 
    Decision point: does the canonical form for container-style rules
    keep the `repeat(choice(...))` shape, or normalize further into an
@@ -122,6 +122,7 @@ patching a walker we're trying to remove. The fix is:
    alias, auto-stamps wrongly) goes with them.
 
 Sanity checks post-deletion:
+
 - `StringDouble.$children: readonly (StringFragment | EscapeSequence)[]`
   — alias flattened, both children surfaced.
 - `BinaryExpression.operator` stays as the literal union (current

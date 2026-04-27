@@ -16,6 +16,7 @@ Capture usage patterns during spec-kit workflows to help improve prompts and tem
 ## Purpose
 
 This skill helps collect data that can be used to improve spec-kit-extensions:
+
 - Tracks workflow completion patterns
 - Identifies friction points
 - Reminds to export chat logs at key moments
@@ -42,6 +43,7 @@ The spec-kit team uses this data to improve prompts and templates.
 ### Friction Detected
 
 When the conversation shows signs of friction:
+
 - Multiple clarification questions
 - Retries or corrections
 - User redirecting the agent
@@ -88,14 +90,14 @@ Throughout the session, this skill tracks:
 
 When these occur, make a mental note for the summary:
 
-| Pattern | Indicates |
-|---------|-----------|
-| "I don't understand" | Prompt clarity issue |
-| "Let me try again" | Instruction ambiguity |
-| "Actually, I meant..." | Template structure issue |
-| Skipped template section | Section may be unnecessary |
-| Added content not in template | Missing template section |
-| User took over a step | Automation gap |
+| Pattern                       | Indicates                  |
+| ----------------------------- | -------------------------- |
+| "I don't understand"          | Prompt clarity issue       |
+| "Let me try again"            | Instruction ambiguity      |
+| "Actually, I meant..."        | Template structure issue   |
+| Skipped template section      | Section may be unnecessary |
+| Added content not in template | Missing template section   |
+| User took over a step         | Automation gap             |
 
 ## End-of-Session Summary
 
@@ -166,6 +168,7 @@ If submitting to spec-kit-extensions for analysis, include:
 ### Privacy Note
 
 Before sharing:
+
 - Remove proprietary business logic
 - Redact API keys, passwords, personal info
 - Keep workflow structure and agent interactions
@@ -199,13 +202,13 @@ Ways to share feedback:
 
 This skill complements the spec-kit commands:
 
-| Command | This Skill's Role |
-|---------|-------------------|
-| `/speckit.specify` | Track spec creation friction |
-| `/speckit.plan` | Note planning clarifications |
-| `/speckit.tasks` | Observe task breakdown issues |
-| `/speckit.bugfix` | Monitor regression test compliance |
-| `/speckit.review` | Capture review feedback |
+| Command            | This Skill's Role                  |
+| ------------------ | ---------------------------------- |
+| `/speckit.specify` | Track spec creation friction       |
+| `/speckit.plan`    | Note planning clarifications       |
+| `/speckit.tasks`   | Observe task breakdown issues      |
+| `/speckit.bugfix`  | Monitor regression test compliance |
+| `/speckit.review`  | Capture review feedback            |
 
 ## Suggested Workflow Tags
 

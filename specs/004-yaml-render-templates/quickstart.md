@@ -6,10 +6,10 @@ Render templates moved from S-expression strings in TypeScript to YAML files wit
 
 ## Key files per grammar package
 
-| Before | After | Notes |
-|--------|-------|-------|
-| `src/rules.ts` (S-expr map) | `templates.yaml` | YAML loaded by core at runtime |
-| `src/joinby.ts` (empty map) | Per-rule `joinBy` in YAML | Merged into template rules |
+| Before                      | After                     | Notes                          |
+| --------------------------- | ------------------------- | ------------------------------ |
+| `src/rules.ts` (S-expr map) | `templates.yaml`          | YAML loaded by core at runtime |
+| `src/joinby.ts` (empty map) | Per-rule `joinBy` in YAML | Merged into template rules     |
 
 ## Reading a template
 
@@ -32,6 +32,7 @@ function_item:
 ```
 
 **Variable syntax** (ast-grep conventions):
+
 - `$NAME` — single named field → `fields.name`
 - `$$$NAME` — multi field (array) → `fields.name`, joined by `joinBy`
 - `$NAME_CLAUSE` — clause reference → looks up `name_clause` key in same rule
@@ -44,8 +45,8 @@ Some tree-sitter grammars lack explicit FIELDs for certain nodes (e.g., Rust `in
 
 ```json
 {
-  "index_expression": { "fields": { "value": {}, "index": {} } },
-  "unary_expression": { "fields": { "operator": { "anonymous": true }, "argument": {} } }
+	"index_expression": { "fields": { "value": {}, "index": {} } },
+	"unary_expression": { "fields": { "operator": { "anonymous": true }, "argument": {} } }
 }
 ```
 
@@ -75,6 +76,7 @@ Existing factory→render tests validate the new engine without changes.
 ## Modifying the render engine
 
 The render engine lives in `packages/core/src/render.ts`. It:
+
 1. Returns `node.text` for leaf nodes
 2. Looks up `config.rules[node.type]`
 3. Scans template string left-to-right for `$` variables

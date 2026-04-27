@@ -42,17 +42,18 @@ Runs **once per module load** (effectively once per Node process under normal ES
 export type BackendName = "native" | "typescript";
 
 export interface BackendStatus {
-  name: BackendName;
-  /** Populated on fallback. Absent when name === 'native'. */
-  reason?: string;
-  /** Hash-comparison outcome when native was considered. Absent when native didn't load at all. */
-  hashMatch?: boolean;
+	name: BackendName;
+	/** Populated on fallback. Absent when name === 'native'. */
+	reason?: string;
+	/** Hash-comparison outcome when native was considered. Absent when native didn't load at all. */
+	hashMatch?: boolean;
 }
 
 export function getActiveBackend(): BackendStatus;
 ```
 
 Exported from `packages/{lang}/src/index.ts`:
+
 ```ts
 export { getActiveBackend } from "./backend.ts";
 export type { BackendName, BackendStatus } from "./backend.ts";
@@ -73,10 +74,13 @@ export type { BackendName, BackendStatus } from "./backend.ts";
 
 - **Unset / empty**: no diagnostic output. Default.
 - **Any non-empty value** (`"1"`, `"true"`, `"yes"`, etc.): writes exactly one line to `process.stderr` at first backend selection, formatted as:
+
   ```
   sittir/{lang}: backend = <name>
   ```
+
   or, on fallback:
+
   ```
   sittir/{lang}: backend = typescript, reason = <reason>
   ```
@@ -106,7 +110,7 @@ import { getActiveBackend } from "@sittir/rust";
 
 const status = getActiveBackend();
 if (status.name === "typescript") {
-  console.warn("[perf] running on TS backend:", status.reason ?? "default");
+	console.warn("[perf] running on TS backend:", status.reason ?? "default");
 }
 ```
 

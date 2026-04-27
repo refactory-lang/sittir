@@ -1,5 +1,5 @@
 ---
-description: 'Security review of staged changes only (git diff --cached)'
+description: "Security review of staged changes only (git diff --cached)"
 ---
 
 # Security Review — Staged Changes

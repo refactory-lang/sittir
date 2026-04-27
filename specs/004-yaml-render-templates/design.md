@@ -9,10 +9,12 @@ Templates are generated as TypeScript objects in `rules.ts` per grammar package.
 ```ts
 // packages/rust/src/rules.ts (auto-generated, 143 entries)
 export const rules: RulesRegistry = {
-  'function_item': '(function_item (_)* "fn" name: (_) type_parameters: (_)? parameters: (_) return_type: (_)? (_)* body: (_))',
-  'let_declaration': '(let_declaration "let" (_)* pattern: (_) type: (_)? value: (_)? alternative: (_)? ";")',
-  'binary_expression': '(binary_expression left: (_) operator: (_) right: (_))',
-  // ...
+	function_item:
+		'(function_item (_)* "fn" name: (_) type_parameters: (_)? parameters: (_) return_type: (_)? (_)* body: (_))',
+	let_declaration:
+		'(let_declaration "let" (_)* pattern: (_) type: (_)? value: (_)? alternative: (_)? ";")',
+	binary_expression: "(binary_expression left: (_) operator: (_) right: (_))",
+	// ...
 };
 ```
 
@@ -20,21 +22,21 @@ export const rules: RulesRegistry = {
 
 Parsed by `packages/core/src/sexpr.ts` (119 lines):
 
-| Syntax | Meaning |
-|---|---|
-| `"fn"` | Literal token |
-| `name: (_)` | Required field |
-| `name: (_)?` | Optional field |
+| Syntax       | Meaning            |
+| ------------ | ------------------ |
+| `"fn"`       | Literal token      |
+| `name: (_)`  | Required field     |
+| `name: (_)?` | Optional field     |
 | `name: (_)*` | Zero-or-more field |
-| `name: (_)+` | One-or-more field |
-| `(_)*` | Unnamed children |
+| `name: (_)+` | One-or-more field  |
+| `(_)*`       | Unnamed children   |
 
 ### Render engine
 
 `packages/core/src/render.ts` (133 lines). Joins all non-empty parts with a single space:
 
 ```ts
-return parts.filter(p => p !== '').join(' ');
+return parts.filter((p) => p !== "").join(" ");
 ```
 
 ### Separator map
@@ -43,13 +45,13 @@ return parts.filter(p => p !== '').join(' ');
 
 ### Known issues (from `specs/open-issues.md`)
 
-| # | Issue | Severity |
-|---|---|---|
-| 1 | Optional CHOICE drops tokens paired with fields — `-> return_type` renders as just `i32`, missing `->` | Medium |
-| 5 | Single separator per node type — can't have `, ` for params and `\n` for statements | Medium |
-| 7 | All parts joined with space — `fn main ( ) -> i32 { }` instead of `fn main() -> i32 {}` | Low (design) |
-| 8 | S-expression parser backslash unescape incomplete | Medium |
-| 9 | S-expression parser doesn't handle nested parentheses | Low |
+| #   | Issue                                                                                                  | Severity     |
+| --- | ------------------------------------------------------------------------------------------------------ | ------------ |
+| 1   | Optional CHOICE drops tokens paired with fields — `-> return_type` renders as just `i32`, missing `->` | Medium       |
+| 5   | Single separator per node type — can't have `, ` for params and `\n` for statements                    | Medium       |
+| 7   | All parts joined with space — `fn main ( ) -> i32 { }` instead of `fn main() -> i32 {}`                | Low (design) |
+| 8   | S-expression parser backslash unescape incomplete                                                      | Medium       |
+| 9   | S-expression parser doesn't handle nested parentheses                                                  | Low          |
 
 ### Pipeline context
 
@@ -71,13 +73,13 @@ The template syntax is **ast-grep's meta variable language, unmodified.** No sit
 
 Identical to ast-grep conventions:
 
-| Syntax | Meaning | ast-grep origin |
-|---|---|---|
-| `$NAME` | Single named node | Pattern matching |
-| `$$NAME` | Single unnamed (anonymous) node | Unnamed node capture |
-| `$$$NAME` | Zero or more nodes | Multi meta variable |
-| `$$$` | Zero or more unnamed children | Anonymous multi match |
-| `$_NAME` | Non-capturing wildcard | Non-capturing match |
+| Syntax    | Meaning                         | ast-grep origin       |
+| --------- | ------------------------------- | --------------------- |
+| `$NAME`   | Single named node               | Pattern matching      |
+| `$$NAME`  | Single unnamed (anonymous) node | Unnamed node capture  |
+| `$$$NAME` | Zero or more nodes              | Multi meta variable   |
+| `$$$`     | Zero or more unnamed children   | Anonymous multi match |
+| `$_NAME`  | Non-capturing wildcard          | Non-capturing match   |
 
 Everything else in the template is literal output — keywords, operators, delimiters, spaces, newlines. What you see is what renders.
 
@@ -111,9 +113,9 @@ No quantifier syntax on the variable. The YAML structure is the signal.
 
 ### Grammar nodes vs. synthesized clauses
 
-| | Example | Where it lives | Why |
-|---|---|---|---|
-| **Grammar node** | `where_clause`, `else_clause`, `type_arguments` | Top-level rule | Real node kind — has its own `NodeData` |
+|                        | Example                                              | Where it lives      | Why                                                                  |
+| ---------------------- | ---------------------------------------------------- | ------------------- | -------------------------------------------------------------------- |
+| **Grammar node**       | `where_clause`, `else_clause`, `type_arguments`      | Top-level rule      | Real node kind — has its own `NodeData`                              |
 | **Synthesized clause** | `return_type_clause`, `value_clause`, `alias_clause` | Nested under parent | Not a grammar node — anonymous token bundled with non-required field |
 
 A grammar node like `$WHERE_CLAUSE` is a `NodeData` in `fields` — the engine looks it up and renders it with its own top-level template. A synthesized clause like `$RETURN_TYPE_CLAUSE` is a YAML key under the parent rule — the engine checks the underlying field's presence and renders the sub-template.
@@ -137,13 +139,13 @@ return_type_clause: "-> $RETURN_TYPE "
 
 Common patterns:
 
-| Grammar pattern | Clause |
-|---|---|
+| Grammar pattern           | Clause                                   |
+| ------------------------- | ---------------------------------------- |
 | `"->" FIELD(return_type)` | `return_type_clause: "-> $RETURN_TYPE "` |
-| `":" FIELD(type)` | `type_clause: ": $TYPE"` |
-| `"=" FIELD(value)` | `value_clause: " = $VALUE"` |
-| `"as" FIELD(alias)` | `alias_clause: " as $ALIAS"` |
-| `FIELD(trait) "for"` | `trait_clause: "$TRAIT for "` |
+| `":" FIELD(type)`         | `type_clause: ": $TYPE"`                 |
+| `"=" FIELD(value)`        | `value_clause: " = $VALUE"`              |
+| `"as" FIELD(alias)`       | `alias_clause: " as $ALIAS"`             |
+| `FIELD(trait) "for"`      | `trait_clause: "$TRAIT for "`            |
 
 ### Formatting
 
@@ -183,7 +185,7 @@ transform:
     rewrite:
       rewriters: [some-rewrite]
       source: $$$ARGS
-      joinBy: ', '
+      joinBy: ", "
 ```
 
 In sittir, `joinBy` lives inside the rule object:
@@ -230,23 +232,23 @@ rules:
 
 #### Top-level keys
 
-| Key | Origin | Purpose |
-|---|---|---|
-| `language` | ast-grep rule config | Language identifier |
-| `extensions` | ast-grep sgconfig `customLanguages` | File extensions for this grammar |
-| `expandoChar` | ast-grep sgconfig `customLanguages` | Replaces `$` in templates for languages that use `$` literally (PHP, shell). Default: null (`$` used) |
-| `metadata` | ast-grep rule config | Arbitrary extra data — grammar version, codegen timestamp |
-| `rules` | sittir (maps to ast-grep `fix` structurally) | Template registry |
+| Key           | Origin                                       | Purpose                                                                                               |
+| ------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `language`    | ast-grep rule config                         | Language identifier                                                                                   |
+| `extensions`  | ast-grep sgconfig `customLanguages`          | File extensions for this grammar                                                                      |
+| `expandoChar` | ast-grep sgconfig `customLanguages`          | Replaces `$` in templates for languages that use `$` literally (PHP, shell). Default: null (`$` used) |
+| `metadata`    | ast-grep rule config                         | Arbitrary extra data — grammar version, codegen timestamp                                             |
+| `rules`       | sittir (maps to ast-grep `fix` structurally) | Template registry                                                                                     |
 
 #### Casing convention
 
 Two conventions coexist, each from its source system:
 
-| Convention | Applies to | Source | Examples |
-|---|---|---|---|
-| **camelCase** | Config/structural keys | ast-grep | `expandoChar`, `joinBy`, `metadata` |
-| **snake_case** | Rule names, clause names, field names | tree-sitter | `function_item`, `return_type_clause`, `let_declaration` |
-| **UPPER_SNAKE** | Template variables | ast-grep patterns | `$NAME`, `$$$PARAMETERS`, `$RETURN_TYPE_CLAUSE` |
+| Convention      | Applies to                            | Source            | Examples                                                 |
+| --------------- | ------------------------------------- | ----------------- | -------------------------------------------------------- |
+| **camelCase**   | Config/structural keys                | ast-grep          | `expandoChar`, `joinBy`, `metadata`                      |
+| **snake_case**  | Rule names, clause names, field names | tree-sitter       | `function_item`, `return_type_clause`, `let_declaration` |
+| **UPPER_SNAKE** | Template variables                    | ast-grep patterns | `$NAME`, `$$$PARAMETERS`, `$RETURN_TYPE_CLAUSE`          |
 
 The rule: **if it comes from tree-sitter, snake_case. If it comes from ast-grep conventions, camelCase.** Casing tells you provenance.
 
@@ -280,12 +282,12 @@ function_item:
     BODY: "\n"
 ```
 
-| ast-grep FixConfig key | sittir rule key | Notes |
-|---|---|---|
-| `template` | `template` | The template string — identical concept |
-| `expandStart` / `expandEnd` | — | N/A (sittir constructs, doesn't expand match ranges) |
-| — | `*_clause` (snake_case) | Synthesized clauses — sittir addition, YAML structure |
-| — (from rewriter) | `joinBy` (camelCase) | Separator for `$$$` variables |
+| ast-grep FixConfig key      | sittir rule key         | Notes                                                 |
+| --------------------------- | ----------------------- | ----------------------------------------------------- |
+| `template`                  | `template`              | The template string — identical concept               |
+| `expandStart` / `expandEnd` | —                       | N/A (sittir constructs, doesn't expand match ranges)  |
+| —                           | `*_clause` (snake_case) | Synthesized clauses — sittir addition, YAML structure |
+| — (from rewriter)           | `joinBy` (camelCase)    | Separator for `$$$` variables                         |
 
 ### Unnamed children resolution — consumption model
 
@@ -347,36 +349,37 @@ Mirrors the shape of `node-types.json`. An override entry is the fields block th
 
 ```json
 {
-  "index_expression": {
-    "fields": {
-      "value": {},
-      "index": {}
-    }
-  },
-  "unary_expression": {
-    "fields": {
-      "operator": { "anonymous": true },
-      "argument": {}
-    }
-  },
-  "range_expression": {
-    "fields": {
-      "start": {},
-      "operator": { "anonymous": true },
-      "end": {}
-    }
-  },
-  "macro_definition": {
-    "fields": {
-      "delimiter": { "anonymous": true }
-    }
-  }
+	"index_expression": {
+		"fields": {
+			"value": {},
+			"index": {}
+		}
+	},
+	"unary_expression": {
+		"fields": {
+			"operator": { "anonymous": true },
+			"argument": {}
+		}
+	},
+	"range_expression": {
+		"fields": {
+			"start": {},
+			"operator": { "anonymous": true },
+			"end": {}
+		}
+	},
+	"macro_definition": {
+		"fields": {
+			"delimiter": { "anonymous": true }
+		}
+	}
 }
 ```
 
 `anonymous: true` marks entries that map to anonymous tokens (operators, delimiters). The codegen merges override fields with node-types.json fields during enrichment. The overrides.json file is codegen-time only, not shipped at runtime.
 
 The codegen detects overrides.json candidates automatically:
+
 - **Same-kind positional:** grammar rule simplification produces `SEQ(X, X)` — log: "needs synthetic names"
 - **Discriminator tokens:** CHOICE branches identical after token removal — log: "discriminator token at position N"
 
@@ -399,14 +402,17 @@ The grammar has `CHOICE("-", "*", "!")` — an anonymous token. The wrap functio
 
 ```ts
 // Generated wrap code for unary_expression (heuristic 3 with per-token matching):
-config['operator'] = (() => {
-  const _vals = new Set(["-", "*", "!", "&"]);
-  for (let i = 0; i < _allChildren.length; i++) {
-    if (_consumed.has(i)) continue;
-    const c = _allChildren[i]!;
-    if (!c.isNamed() && _vals.has(c.text())) { _consumed.add(i); return c.text(); }
-  }
-  return undefined;
+config["operator"] = (() => {
+	const _vals = new Set(["-", "*", "!", "&"]);
+	for (let i = 0; i < _allChildren.length; i++) {
+		if (_consumed.has(i)) continue;
+		const c = _allChildren[i]!;
+		if (!c.isNamed() && _vals.has(c.text())) {
+			_consumed.add(i);
+			return c.text();
+		}
+	}
+	return undefined;
 })();
 ```
 
@@ -418,13 +424,13 @@ The wrap function uses the consumed-index tracking to assign children to the cor
 
 **Summary of heuristics:**
 
-| Heuristic | Trigger | Promotion logic | Overrides needed? |
-|---|---|---|---|
-| 1. Field by name | tree-sitter FIELD | `target.field(name)` | No |
-| 2. Child by kind | Unnamed, unique kind | Find in children by kind set | Yes — for the field name |
-| 3. Token as value | Anonymous token | Match by `values` from overrides | Yes — name + values |
-| 4. Position by token | Same kind, positional | Consume in order from children | Yes — for the names |
-| 5. Branch by token | Top-level CHOICE | Token position determines assignment | Yes — for the names |
+| Heuristic            | Trigger               | Promotion logic                      | Overrides needed?        |
+| -------------------- | --------------------- | ------------------------------------ | ------------------------ |
+| 1. Field by name     | tree-sitter FIELD     | `target.field(name)`                 | No                       |
+| 2. Child by kind     | Unnamed, unique kind  | Find in children by kind set         | Yes — for the field name |
+| 3. Token as value    | Anonymous token       | Match by `values` from overrides     | Yes — name + values      |
+| 4. Position by token | Same kind, positional | Consume in order from children       | Yes — for the names      |
+| 5. Branch by token   | Top-level CHOICE      | Token position determines assignment | Yes — for the names      |
 
 Heuristic 1 is fully automatic (tree-sitter FIELD). Heuristics 2-5 need `overrides.json` entries.
 
@@ -436,48 +442,48 @@ The codegen classifies each node's unnamed children by simplifying the grammar r
 2. **Unwrap single-member SEQs** — the only structural simplification
 3. **Leave CHOICEs intact** — identical branches after token removal = discriminator detected
 
-| Simplified root | Example | Template |
-|---|---|---|
-| **SYMBOL** | `abstract_type` → `type_parameters` | `$$$CHILDREN` |
-| **REPEAT** | `declaration_list` → `_declaration_statement*` | `$$$CHILDREN` + joinBy |
-| **SEQ** | `function_item` → `SEQ(vis, mods, where)` | Fields + `$$$CHILDREN` for unnamed |
-| **SEQ with REPEAT** | `block` → `SEQ(label, stmt*, expr)` | `$LABEL ... $$$CHILDREN ...` |
-| **CHOICE** | `range_expression` → multiple forms | `$$$CHILDREN` (tokens disambiguate at wrap time) |
+| Simplified root     | Example                                        | Template                                         |
+| ------------------- | ---------------------------------------------- | ------------------------------------------------ |
+| **SYMBOL**          | `abstract_type` → `type_parameters`            | `$$$CHILDREN`                                    |
+| **REPEAT**          | `declaration_list` → `_declaration_statement*` | `$$$CHILDREN` + joinBy                           |
+| **SEQ**             | `function_item` → `SEQ(vis, mods, where)`      | Fields + `$$$CHILDREN` for unnamed               |
+| **SEQ with REPEAT** | `block` → `SEQ(label, stmt*, expr)`            | `$LABEL ... $$$CHILDREN ...`                     |
+| **CHOICE**          | `range_expression` → multiple forms            | `$$$CHILDREN` (tokens disambiguate at wrap time) |
 
 ## What changes
 
 ### Files removed
 
-| File | Role | Replaced by |
-|---|---|---|
-| `packages/{lang}/src/rules.ts` | S-expression templates (TypeScript) | `templates.yaml` |
-| `packages/{lang}/src/joinby.ts` | Separator map (TypeScript) | Per-rule `joinBy` key |
-| `packages/core/src/sexpr.ts` | S-expression parser (119 lines) | Trivial `$` scanner in render engine |
+| File                            | Role                                | Replaced by                          |
+| ------------------------------- | ----------------------------------- | ------------------------------------ |
+| `packages/{lang}/src/rules.ts`  | S-expression templates (TypeScript) | `templates.yaml`                     |
+| `packages/{lang}/src/joinby.ts` | Separator map (TypeScript)          | Per-rule `joinBy` key                |
+| `packages/core/src/sexpr.ts`    | S-expression parser (119 lines)     | Trivial `$` scanner in render engine |
 
 ### Files modified
 
-| File | Change |
-|---|---|
-| `packages/core/src/render.ts` | Replace S-expression dispatch with YAML template interpolation. Drop `parts.join(' ')`. ~50 lines. |
-| `packages/core/src/types.ts` | `RulesRegistry` type changes from `Record<string, string>` to loaded YAML shape. `ParsedTemplate`/`TemplateElement` types removed. |
-| `packages/codegen/src/emitters/rules.ts` | Emit YAML instead of TypeScript. Walk `EnrichedRule` from `NodeModel.rule`. |
-| `packages/codegen/src/emitters/joinby.ts` | Merged into rules emitter (per-rule `joinBy` key). |
+| File                                      | Change                                                                                                                             |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/core/src/render.ts`             | Replace S-expression dispatch with YAML template interpolation. Drop `parts.join(' ')`. ~50 lines.                                 |
+| `packages/core/src/types.ts`              | `RulesRegistry` type changes from `Record<string, string>` to loaded YAML shape. `ParsedTemplate`/`TemplateElement` types removed. |
+| `packages/codegen/src/emitters/rules.ts`  | Emit YAML instead of TypeScript. Walk `EnrichedRule` from `NodeModel.rule`.                                                        |
+| `packages/codegen/src/emitters/joinby.ts` | Merged into rules emitter (per-rule `joinBy` key).                                                                                 |
 
 ### Files added
 
-| File | Role |
-|---|---|
+| File                             | Role                               |
+| -------------------------------- | ---------------------------------- |
 | `packages/{lang}/templates.yaml` | Language config + render templates |
 
 ### Open issues resolved
 
-| # | Issue | How resolved |
-|---|---|---|
-| 1 | Optional CHOICE drops tokens paired with fields | Clauses bundle token + field. Absent field → omit clause including tokens. |
-| 5 | Single separator per node type | Per-rule `joinBy` — string for all fields, or object keyed by variable name. |
-| 7 | Parts joined with space | Formatting is literal in templates. Render engine concatenates. |
-| 8 | Backslash unescape incomplete | S-expression parser eliminated. |
-| 9 | Nested parens not handled | S-expression parser eliminated. |
+| #   | Issue                                           | How resolved                                                                 |
+| --- | ----------------------------------------------- | ---------------------------------------------------------------------------- |
+| 1   | Optional CHOICE drops tokens paired with fields | Clauses bundle token + field. Absent field → omit clause including tokens.   |
+| 5   | Single separator per node type                  | Per-rule `joinBy` — string for all fields, or object keyed by variable name. |
+| 7   | Parts joined with space                         | Formatting is literal in templates. Render engine concatenates.              |
+| 8   | Backslash unescape incomplete                   | S-expression parser eliminated.                                              |
+| 9   | Nested parens not handled                       | S-expression parser eliminated.                                              |
 
 ## Render engine
 
@@ -523,16 +529,16 @@ resolveJoinBy(joinBy, varName):
 
 ## Syntax additions over ast-grep: zero
 
-| Feature | ast-grep | sittir |
-|---|---|---|
-| `$NAME` single | ✓ | ✓ |
-| `$$NAME` unnamed | ✓ | ✓ |
-| `$$$NAME` multi | ✓ | ✓ |
-| `$_` non-capturing | ✓ | ✓ |
-| Absent → empty string | ✓ (fix strings) | ✓ |
-| Indentation preservation | ✓ (fix strings) | ✓ |
-| `joinBy` | ✓ (rewriter) | ✓ |
-| Clauses | — | YAML structure (not template syntax) |
+| Feature                  | ast-grep        | sittir                               |
+| ------------------------ | --------------- | ------------------------------------ |
+| `$NAME` single           | ✓               | ✓                                    |
+| `$$NAME` unnamed         | ✓               | ✓                                    |
+| `$$$NAME` multi          | ✓               | ✓                                    |
+| `$_` non-capturing       | ✓               | ✓                                    |
+| Absent → empty string    | ✓ (fix strings) | ✓                                    |
+| Indentation preservation | ✓ (fix strings) | ✓                                    |
+| `joinBy`                 | ✓ (rewriter)    | ✓                                    |
+| Clauses                  | —               | YAML structure (not template syntax) |
 
 ## Full Rust example
 
@@ -926,6 +932,7 @@ rules:
 ### Current architecture (as of branch `001-codegen-grammarjs-rewrite`)
 
 The `NodeModel` has seven variants discriminated by `modelType`. Structural nodes (`BranchModel`, `ContainerModel`) carry:
+
 - `fields: FieldModel[]` — field metadata (required, multiple, kinds, separator)
 - `children?: ChildrenModel` — unnamed children metadata
 - `rule: EnrichedRule` — the annotated grammar rule tree, attached during reconcile
@@ -936,15 +943,15 @@ The current rules emitter (`packages/codegen/src/emitters/rules.ts`, 230 lines) 
 
 The same `ruleToSExpr()` walk drives the new template format. The grammar rule tree IS the template schema — no intermediate representation needed. The walk changes output, not input:
 
-| Current S-expression output | Proposed YAML template output |
-|---|---|
-| `"fn"` → quoted token | `fn ` → literal text with spacing |
-| `name: (_)` → field reference | `$NAME` |
-| `name: (_)?` → non-required field | `$NAME` (absent → empty) or clause if token-paired |
-| `name: (_)*` → repeated field | `$$$NAME` |
-| `(_)*` → unnamed children | `$$$CHILDREN` or `$$$` |
-| `IMMEDIATE_TOKEN` → quoted token | Token with no leading space in template |
-| Token adjacent to non-required field → dropped | Synthesized clause nested under parent rule |
+| Current S-expression output                    | Proposed YAML template output                      |
+| ---------------------------------------------- | -------------------------------------------------- |
+| `"fn"` → quoted token                          | `fn ` → literal text with spacing                  |
+| `name: (_)` → field reference                  | `$NAME`                                            |
+| `name: (_)?` → non-required field              | `$NAME` (absent → empty) or clause if token-paired |
+| `name: (_)*` → repeated field                  | `$$$NAME`                                          |
+| `(_)*` → unnamed children                      | `$$$CHILDREN` or `$$$`                             |
+| `IMMEDIATE_TOKEN` → quoted token               | Token with no leading space in template            |
+| Token adjacent to non-required field → dropped | Synthesized clause nested under parent rule        |
 
 The walker also gains formatting awareness: `IMMEDIATE_TOKEN` signals no-space-before, delimiter pairs (`(` ... `)`) signal attached tokens, block delimiters (`{` ... `}` wrapping statement children) signal multiline with indentation. These derive from the same grammar rule structure the walker already traverses.
 
@@ -960,13 +967,13 @@ Output format changes from TypeScript (`rules.ts` exporting `RulesRegistry`) to 
 
 ### Open issues closed by this change
 
-| Issue | Description | How this spec resolves it |
-|---|---|---|
-| **#1** CHOICE drops tokens paired with non-required fields | `->` dropped when `return_type` has `required: false` | Clauses bundle token + field — both present or both absent |
-| **#5** Single separator per node type | `joinBy` maps one sep per kind | Per-rule `joinBy` — string for all fields, or object keyed by variable name |
-| **#7** Parts joined with single space | `parts.join(' ')` produces `fn main ( )` | Formatting is literal in templates — `fn $NAME($$$PARAMETERS)` renders `fn main(params)` |
-| **#8** Backslash unescape incomplete | `sexpr.ts` parser limitation | S-expression parser eliminated entirely |
-| **#9** Nested parens not handled | `sexpr.ts` parser limitation | S-expression parser eliminated entirely |
+| Issue                                                      | Description                                           | How this spec resolves it                                                                |
+| ---------------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| **#1** CHOICE drops tokens paired with non-required fields | `->` dropped when `return_type` has `required: false` | Clauses bundle token + field — both present or both absent                               |
+| **#5** Single separator per node type                      | `joinBy` maps one sep per kind                        | Per-rule `joinBy` — string for all fields, or object keyed by variable name              |
+| **#7** Parts joined with single space                      | `parts.join(' ')` produces `fn main ( )`              | Formatting is literal in templates — `fn $NAME($$$PARAMETERS)` renders `fn main(params)` |
+| **#8** Backslash unescape incomplete                       | `sexpr.ts` parser limitation                          | S-expression parser eliminated entirely                                                  |
+| **#9** Nested parens not handled                           | `sexpr.ts` parser limitation                          | S-expression parser eliminated entirely                                                  |
 
 ### Render engine changes (`packages/core/src/render.ts`)
 
@@ -979,12 +986,14 @@ The `sexpr.ts` module (S-expression parser) is eliminated.
 ### Type changes (`packages/types/src/core-types.ts`)
 
 Remove:
+
 - `RenderTemplate` (string alias for S-expression)
 - `RenderRule` (string alias)
 - `TemplateElement` (parsed S-expression element union: `token` / `field` / `children`)
 - `ParsedTemplate` (cached parse result with `kind` + `elements`)
 
 Add:
+
 - `TemplateRule` — `string | { template: string; [clauseKey: string]: string }`
 - `RulesConfig` — full YAML shape: `{ language, extensions, expandoChar, metadata, rules }` (joinBy is per-rule)
 

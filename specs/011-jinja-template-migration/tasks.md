@@ -145,7 +145,7 @@ description: "Task list for Jinja template migration"
 
 - [ ] T045 [US2] Create `crates/sittir-render/src/filters.rs` registering Nunjucks-compatible filter aliases: `upper` → `uppercase`, `lower` → `lowercase`, plus any others where askama's native name differs. Use askama's filter-registration mechanism.
 - [ ] T046 [P] [US2] Add unit tests in `crates/sittir-render/src/filters.rs` verifying each alias renders identically to its askama-native counterpart.
-- [ ] T046a [US2] Audit the six standardized filters (`join`, `length`, `default`, `trim`, `upper`, `lower`) for *semantic* divergence (not just name) between Nunjucks and askama (spec R42 / edge case #2). Produce `specs/011-jinja-template-migration/filter-semantic-audit.md` documenting each filter's behavior on edge inputs (empty string, null/None, whitespace-only, non-ASCII / Unicode). Any divergence found MUST either (a) be normalized on the TS or Rust side before the template sees the value, or (b) be added to the forbidden-construct list in `contracts/jinja-subset.md`. No silent semantic divergence may ship.
+- [ ] T046a [US2] Audit the six standardized filters (`join`, `length`, `default`, `trim`, `upper`, `lower`) for _semantic_ divergence (not just name) between Nunjucks and askama (spec R42 / edge case #2). Produce `specs/011-jinja-template-migration/filter-semantic-audit.md` documenting each filter's behavior on edge inputs (empty string, null/None, whitespace-only, non-ASCII / Unicode). Any divergence found MUST either (a) be normalized on the TS or Rust side before the template sees the value, or (b) be added to the forbidden-construct list in `contracts/jinja-subset.md`. No silent semantic divergence may ship.
 
 ### Codegen: emit Rust askama structs
 
@@ -211,7 +211,7 @@ Phase 4 (US2 Rust) — DEFERRED, waits on full @sittir/core Rust port.
 waits on the full `@sittir/core` Rust port. When that port lands, the
 askama render path is built inside the ported core rather than as a
 separate `crates/sittir-render/` scaffold. `.jinja` files are
-unchanged; only Phase 4's *delivery vehicle* moves.
+unchanged; only Phase 4's _delivery vehicle_ moves.
 
 **US3 is non-blocking**: Phase 5 tasks are nice-to-have; can land any time after Phase 3 completes.
 
@@ -220,32 +220,38 @@ unchanged; only Phase 4's *delivery vehicle* moves.
 ## Parallel Execution Examples
 
 **Within Phase 1 (setup)**:
+
 ```
 T002 + T003 + T004 + T005  — all independent (different files/dirs)
 ```
 
 **Within Phase 2 (foundational)**:
+
 ```
 T010 (test) + T012 (test skeleton)  — both can land while T008/T009 happen serially on render.ts
 ```
 
 **Within Phase 3 (US1)**:
+
 ```
 T017 + T019 + T020  — different mapping rules in jinja-translator.ts, can parallelize authoring, need one integration pass to merge
 T038 + T039  — independent test files
 ```
 
 **Within Phase 4 (US2)**:
+
 ```
 T042 + T046 + T054  — directory setup, filter tests, benchmark harness all independent
 ```
 
 **Within Phase 5 (US3)**:
+
 ```
 T057 + T060  — editorconfig + integration test, different files
 ```
 
 **Within Phase 6 (polish)**:
+
 ```
 T061 + T062 + T063 + T064  — all independent (docs, ADR, perf benchmarks)
 ```
@@ -276,6 +282,7 @@ T061 + T062 + T063 + T064  — all independent (docs, ADR, perf benchmarks)
 ## Validation Checklist
 
 Format check (every task):
+
 - [x] All tasks start with `- [ ]`
 - [x] Every task has a sequential ID (T001–T065 + T020a/T027a/T046a/T061a from coverage review)
 - [x] Parallel tasks marked with `[P]` where applicable
@@ -285,6 +292,7 @@ Format check (every task):
 - [x] No placeholder text (`[TBD]`, `implement later`, etc.)
 
 Content check (per spec):
+
 - [x] User Story 1 has complete implementation tasks (T013–T039 + T020a, T027a)
 - [x] User Story 2 has complete implementation tasks (T040–T055 + T046a)
 - [x] User Story 3 has complete implementation tasks (T056–T060)

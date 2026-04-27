@@ -44,7 +44,10 @@ tree-sitter-python = "0.25"
 # `benches/render.rs` and uses a synthetic NodeData + a stub
 # RenderDispatch (sittir-core can't depend on the per-grammar render
 # crates without inverting the layering).
-criterion = { version = "0.5", default-features = false, features = ["plotters", "cargo_bench_support"] }
+criterion = { version = "0.5", default-features = false, features = [
+  "plotters",
+  "cargo_bench_support",
+] }
 
 [[bench]]
 name = "render"

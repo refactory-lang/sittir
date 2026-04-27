@@ -1,10 +1,10 @@
 ---
 name: speckit-superb-tdd
-description: 'Mandatory pre-implement TDD gate. Bridges an installed obra/superpowers
-  test-driven-development skill into spec-kit''s tasks.md task structure and enforces
+description: "Mandatory pre-implement TDD gate. Bridges an installed obra/superpowers
+  test-driven-development skill into spec-kit's tasks.md task structure and enforces
   RED-GREEN-REFACTOR for every task.
 
-  '
+  "
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
@@ -117,10 +117,12 @@ Do not attempt fix #3 without completing the debugging protocol first.
 ## Enforcement Checklist (per task)
 
 Before starting:
+
 - [ ] No production code written yet for this task
 - [ ] Test target identified from `tasks.md`
 
 After completing:
+
 - [ ] Saw the test FAIL before writing production code
 - [ ] Wrote the MINIMUM code to pass
 - [ ] Full test suite passes (no regressions)

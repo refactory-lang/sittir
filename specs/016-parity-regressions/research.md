@@ -11,6 +11,7 @@ No `NEEDS CLARIFICATION` markers in the Technical Context — every decision was
 ## Decision: Cluster ordering — high-leverage first
 
 **Decision**: Land cluster fixes in this order:
+
 1. Python comprehensions × 6 (`generator_expression`, `list_comprehension` × 2, `dictionary_comprehension`, `set_comprehension`)
 2. Rust patterns × 5 (`mut_pattern` × 3, `captured_pattern` × 2)
 3. Codegen factory round-trip integration × 1
@@ -20,6 +21,7 @@ No `NEEDS CLARIFICATION` markers in the Technical Context — every decision was
 **Rationale**: Spec exists because parity work is the load-bearing problem. The python-comprehension cluster is the highest-leverage fix (6 tests, suspected single shared root cause); landing it on commit #2 confirms the "shared root cause → many tests pass" hypothesis fast. If the hypothesis fails, that signal also arrives early — better to discover surprise complexity on commit #2 than commit #5. DSL tests are bookkeeping that don't block anything; saving them for last preserves momentum on the parity arc.
 
 **Alternatives considered**:
+
 - **By size, smallest first** (3 dsl → 1 ts cov → 1 factory-rt → 5 rust → 6 python): rejected because it puts 3 commits of bookkeeping ahead of any signal-bearing parity work.
 - **Easy wins first** (1 ts cov → 3 dsl → 1 factory-rt → 6 python → 5 rust): rejected because it defers the architectural insight from python/rust clusters that may inform native parity (US3) work.
 
@@ -32,6 +34,7 @@ No `NEEDS CLARIFICATION` markers in the Technical Context — every decision was
 **Rationale**: The spec's contract (per-commit baseline JSON, regression-checker-verified) requires the tooling to exist before the contract has teeth. Doing it last makes the whole approach retroactive; the regression-checker can't catch a drop on commit #2 if commit #1 was the cluster fix. Tooling-first is also lower-risk: ~50–100 lines of harness with no behaviour change is mechanical work that derisks the rest of the feature.
 
 **Alternatives considered**:
+
 - **Fix-driven baseline** (piggyback the JSON onto the first cluster commit): rejected because conflating tooling and fix in the same commit makes the regression-checker's first reference point a moving target.
 - **Manual baseline + script later**: rejected because SC-004 (zero regressions) becomes unverifiable for the first few cluster commits — you're trusting vitest output reads.
 
@@ -44,6 +47,7 @@ No `NEEDS CLARIFICATION` markers in the Technical Context — every decision was
 **Rationale**: Matches existing convention for diagnostic scripts. Reuses validator infrastructure (`loadCorpusEntries`, `loadLanguageForGrammar`, `treeHandle`, `nativeTreeHandle`, `validateRoundTrip`, `validateFromCorpus`, `validateFactoryRoundtrip`, `readnode-roundtrip`) directly without crossing package boundaries. Output path stays at `specs/016-parity-regressions/baselines/<backend>.json` regardless of script location.
 
 **Alternatives considered**:
+
 - **Repo-root `scripts/collect-baseline.ts`**: rejected because it pulls validator functions across the codegen-package boundary (extra import paths) and adds another scripts directory contributors must know about.
 - **Bash wrapper around `pnpm test --reporter=json`**: rejected because vitest's reporter contract isn't stable across versions; brittle long-term.
 
@@ -56,6 +60,7 @@ No `NEEDS CLARIFICATION` markers in the Technical Context — every decision was
 **Rationale**: Authoritative — runs on every PR regardless of local config. Reuses CI's existing test-running setup. Catches the same problem a pre-commit hook would, with one extra job and zero contributor-side setup. Standard convention on this repo for "did this change break anything."
 
 **Alternatives considered**:
+
 - **Pre-commit Git hook**: rejected because it requires per-contributor installation and doesn't catch drift in CI for contributors who skip the hook. Could add later as a nice-to-have.
 - **Vitest test that asserts `current ≥ committed`**: rejected because the test loads the file the same commit just wrote — circular reference. Also flaky risk if reading vs writing ordering differs.
 
@@ -68,6 +73,7 @@ No `NEEDS CLARIFICATION` markers in the Technical Context — every decision was
 **Rationale**: The JSON is ground truth, and the commit message is the natural place to note "this fix turned out broader than expected." Splitting commits to separate "intentional" from "downstream" effects is bookkeeping that adds noise without changing the regression-checker's verdict. Renaming clusters mid-feature treats the spec as a contract when it's a working plan.
 
 **Alternatives considered**:
+
 - **Split into two commits** (cluster-fix + incidental-update): rejected as bookkeeping with no signal beyond what the JSON diff already shows.
 - **Rename clusters when waterfalls exceed scope**: rejected — the spec churn is not worth the truth-tracking it provides.
 
@@ -80,6 +86,7 @@ No `NEEDS CLARIFICATION` markers in the Technical Context — every decision was
 **Rationale**: PR `#12` is blocked by token-permission issues that need admin coordination — we cannot reliably predict when it merges. Stacking decouples this feature's progress from that timing. The baseline-tooling commit is small enough that it doesn't muddy `#012`'s review even if it sits behind it temporarily. Standard pattern when downstream work needs to continue without waiting on a merge.
 
 **Alternatives considered**:
+
 - **Wait for `#12` to merge** before any `#016` commits: rejected because the wait is unbounded, dependent on admin action you can't fully control.
 - **Fold baseline tooling into `#12`**: rejected because it grows `#12`'s scope right when you're trying to merge it; "one feature, one PR" boundary is a deliberate guard rail.
 
@@ -92,6 +99,7 @@ No `NEEDS CLARIFICATION` markers in the Technical Context — every decision was
 **Rationale**: The memory notes were written across multiple sessions and may reflect outdated state (clusters that were partially fixed, walker behaviour that has since changed, override patterns that no longer apply). Trusting them blindly risks fixing a phantom problem. Each cluster fix begins with a probe (e.g. `npx tsx packages/codegen/src/scripts/probe-kind.ts --grammar X --kind Y --reparse`) that confirms the failure shape before any code change.
 
 **Alternatives considered**:
+
 - **Treat memory notes as contract**: rejected per FR-008 — notes are updated/deleted as clusters land, not relied upon as-is.
 - **Discard memory notes entirely**: rejected because they encode hard-won investigation context that saves probe time per cluster.
 
@@ -104,6 +112,7 @@ No `NEEDS CLARIFICATION` markers in the Technical Context — every decision was
 **Rationale**: Both backends consume the same per-rule template intent (assumption in spec). A cluster fix that touches TS render but leaves native broken creates an artificial split — the next commit would have to reopen the same investigation. The before/after table covers both backends per FR-002, so the commit shape doesn't grow.
 
 **Alternatives considered**:
+
 - **TS-only first, native as a follow-up cluster pass**: rejected because it doubles the commit count for shared root-cause clusters with no diagnostic benefit.
 - **Native-only commits separate from TS commits**: rejected for the same reason; also creates ambiguous attribution when waterfalls cross backends.
 

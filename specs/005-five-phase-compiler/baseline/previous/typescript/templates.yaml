@@ -213,7 +213,7 @@ rules:
   jsx_attribute:
     template: $$$CHILDREN=
   _jsx_string:
-    template: "\"$$$CHILDREN\""
+    template: '"$$$CHILDREN"'
   class:
     template: $CLASS_HERITAGE class $NAME $TYPE_PARAMETERS $$$CHILDREN $BODY
   class_declaration:
@@ -281,7 +281,7 @@ rules:
     template: $$$CHILDREN
     joinBy: ","
   string:
-    template: "\"$$$CHILDREN\""
+    template: '"$$$CHILDREN"'
   template_string:
     template: "`$$$CHILDREN`"
   template_substitution:

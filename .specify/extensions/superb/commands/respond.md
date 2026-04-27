@@ -60,13 +60,14 @@ For each review item, classify and verify:
 ```markdown
 ## Review Response
 
-| # | Item | Severity | Verdict | Reasoning |
-|---|------|----------|---------|-----------|
-| 1 | [summary] | Critical/Important/Minor | Accept/Reject/Clarify | [technical reason] |
-| 2 | [summary] | ... | ... | ... |
+| #   | Item      | Severity                 | Verdict               | Reasoning          |
+| --- | --------- | ------------------------ | --------------------- | ------------------ |
+| 1   | [summary] | Critical/Important/Minor | Accept/Reject/Clarify | [technical reason] |
+| 2   | [summary] | ...                      | ...                   | ...                |
 ```
 
 **Verdict rules:**
+
 - **Accept** — item is technically correct for this codebase and aligns with spec.
 - **Reject** — item is wrong, breaks existing behavior, violates YAGNI, or
   conflicts with spec. Push back with technical reasoning.
@@ -83,6 +84,7 @@ Follow this strict order:
 3. **Minor issues** (naming, style, minor improvements)
 
 For each accepted item:
+
 - Make ONE change
 - Run the full test suite
 - Verify no regressions
@@ -102,9 +104,11 @@ After all accepted items are implemented:
 **Pending clarification:** [K] items
 
 ### Rejections
+
 - Item [#]: [one-line technical reason]
 
 ### Test Evidence
+
 [Full test suite output — N tests, N passing, 0 failing]
 ```
 

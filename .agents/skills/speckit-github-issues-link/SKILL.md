@@ -18,6 +18,7 @@ $ARGUMENTS
 Expected format: `<owner>/<repo>#<issue_number>` or just `#<issue_number>` (uses current repo)
 
 Examples:
+
 - `github/spec-kit#2175`
 - `#2175` (if in a GitHub repository)
 
@@ -124,7 +125,7 @@ else
   # Add source issue link to spec frontmatter
   # Find the first heading and insert before it
   temp_file=$(mktemp)
-  
+
   # Read spec and add link after title
   awk -v repo="$repo" -v num="$issue_number" -v url="$url" -v state="$state" '
     /^# Feature Specification:/ {
@@ -137,7 +138,7 @@ else
     }
     { print }
   ' "$spec_file" > "$temp_file"
-  
+
   mv "$temp_file" "$spec_file"
   echo "✓ Added issue link to spec"
 fi
@@ -234,6 +235,7 @@ echo "  • Continue with /speckit.plan to create implementation plan"
 ## Configuration
 
 Load configuration from `.specify/extensions/github-issues/github-issues-config.yml`:
+
 - `link.add_to_frontmatter`: Add issue link to spec frontmatter
 - `link.add_to_body`: Add issue reference to spec body
 - `link.link_format`: Format for the link in spec body

@@ -7,6 +7,7 @@
 Spec 013 Phase 1 + Phase 2 (walker shrink + strict audit default) are landed. Audit clean across all 3 grammars. Corpus floors: 6 pre-existing failures. `deriveChildren` restructured into top-level + per-member (commit `826bbd02`).
 
 Categories of nested seqs still reaching `deriveChildren` (from the probe):
+
 1. **`clause(seq(...))` — 12 kinds — FINE**, clause is our "named optional group" mechanism.
 2. **`repeat(seq(...))` / `repeat1(seq(...))` — 11 kinds — positional ambiguity**, need field names on inner seq members.
 3. **`optional(seq(...))` — 10 kinds — should be clause**, user agreed these are miscategorized clauses.
@@ -21,17 +22,20 @@ Attempts this session (all reverted at end) surfaced **architectural issues** th
 Enrich runs in BOTH the tree-sitter CLI runtime (transpiled `.sittir/grammar.js`, uppercase tree-sitter-JSON types) AND sittir's evaluate pipeline (direct overrides.ts import, lowercase sittir types). `base.grammar.rules` is evaluated ONCE per runtime — each runtime evaluates it with its own DSL helpers.
 
 Sittir's DSL helpers do structural collapses at evaluation time:
+
 - `seq(...)` runs `liftCommaSep`: `seq(sym, repeat(seq(sep, sym)))` → `repeat1(sym, sep=X)`
 - `optional(repeat(...))` collapses to `repeat(...)` inside fields
 - `absorbTrailingSeparator`, `collapseOptionalRepeatInField`, `hoistFieldOutOfSingleContentWrapper`
 
 Tree-sitter's DSL does none of these. So:
+
 - Tree-sitter path: enrich sees uncollapsed `seq(sym, repeat(seq(sep, sym)))`.
 - Sittir path: enrich sees collapsed `repeat1(sym, sep=',')`.
 
 Any enrich transform that pattern-matches on shape diverges between runtimes. The output grammar.json (tree-sitter CLI) won't match the codegen types / factories / templates (sittir) unless enrich is runtime-agnostic or the two paths are unified.
 
 **Directions considered:**
+
 1. **Pragmatic** — dual-detection in enrich (match both raw + collapsed shapes). Works per-transform but doesn't scale; every new transform needs dual-case handling.
 2. **Architectural** — move `liftCommaSep`, `absorbTrailingSeparator`, `collapseOptionalRepeatInField`, `hoistFieldOutOfSingleContentWrapper`, etc. OUT of sittir's DSL helpers and into a post-evaluate compiler pass. Then both runtimes see the same pre-collapsed shape at enrich time. Clean long-term fix.
 3. **Normalize in enrich** — wrap the bare symbol directly wherever it appears (approach (2)'s output works because both runtimes still contain the bare symbol, even after collapse).
@@ -43,6 +47,7 @@ Python's `_patterns` hidden rule is `repeat1(sym('pattern'), sep=',')`. `pattern
 `tuple_pattern` inlines `_patterns`. But `tuple_pattern` ALSO appears inside `case_pattern` contexts (python match statements), so tree-sitter's node-types for `tuple_pattern` merges children types from all contexts: `{case_pattern, pattern}`.
 
 When enrich wraps the inner `pattern` symbol inside `_patterns` as `field('pattern', sym)`:
+
 - Tree-sitter's CST for `tuple_pattern`: field `pattern` (multi=true, types={pattern}) + loose children for anything matching `case_pattern` (which isn't a pattern subtype).
 - Source `(a, b)` in match context: `a` and `b` are `case_pattern`-typed → go to loose children.
 - Render template says `({{ pattern | join(",") }})` → only reads the field → empty content.
@@ -51,8 +56,9 @@ When enrich wraps the inner `pattern` symbol inside `_patterns` as `field('patte
 Python regressed -7 rtAstMatch, -9 factoryAstMatch on this cluster.
 
 **Resolution paths:**
+
 1. **Don't hoist when content is polymorphic** — detect if the symbol is a supertype AND the enclosing rule's effective content spans types outside that supertype's subtrees. Skip enrich for those rules.
-2. **Wrap the commaSep1 container instead of the inner symbol** — `field(X, repeat1(sym, sep=',')))`. Tree-sitter still applies field to all occurrences, but the field covers the whole range. Template references the field container. Downside: breaks public_field_definition variant extraction (empty-matching subtree) and _let_chain polymorph classification (non-uniform arms when wrapped inside a choice).
+2. **Wrap the commaSep1 container instead of the inner symbol** — `field(X, repeat1(sym, sep=',')))`. Tree-sitter still applies field to all occurrences, but the field covers the whole range. Template references the field container. Downside: breaks public_field_definition variant extraction (empty-matching subtree) and \_let_chain polymorph classification (non-uniform arms when wrapped inside a choice).
 3. **Teach render template to handle the split** — `$$$CHILDREN` + `$FIELD` combined rendering when fields can have overflow children.
 
 ### Issue C — choice recursion
@@ -70,6 +76,7 @@ In priority order:
 Biggest architectural win. Unwinds the DSL-runtime divergence (Issue A). Sittir's `seq()` / `optional()` / `field()` become thin wrappers; the collapses move to a dedicated normalize pass after evaluate, runs in sittir's pipeline only. Tree-sitter continues to see raw shapes.
 
 Files:
+
 - `packages/codegen/src/compiler/evaluate.ts`: remove `liftCommaSep`, `absorbTrailingSeparator`, `collapseOptionalRepeatInField`, `hoistFieldOutOfSingleContentWrapper` call sites from DSL helpers.
 - Add `packages/codegen/src/compiler/normalize.ts`: dedicated pass that runs on the output of evaluate (before link). Consolidates the collapsed transforms.
 - Test that the existing corpus still passes (should — semantic equivalence).
@@ -81,6 +88,7 @@ Once unified, enrich can extend without dual-detection.
 Addresses Issue B. Teach `walkRuleForTemplate` that `repeat1(field(X, sym), sep=',')` is equivalent to `repeat1(sym, sep=',')` for template emission purposes. The multi-valued slot's source should be detected regardless of inner field wrap.
 
 Files:
+
 - `packages/codegen/src/compiler/template-walker.ts`: in the `repeat` / `repeat1` cases, unwrap an inner `field(...)` when computing the element kind / slot reference. The sibling-repeated-field logic already handles `seq(field(X), SEP)` sub-patterns — extend to bare `field` inside repeat.
 
 After this, the inner-symbol enrich hoist can land without the split-first-vs-rest regression.
@@ -96,9 +104,10 @@ Much smaller surgery than Paths 1/2 but more fragile — future transform patter
 Use `npx tsx packages/codegen/src/scripts/counts.ts` (new in this session) to get per-grammar raw counts each iteration. DO NOT rely on aggregate pass/fail. Each line shows `fromPass/fromTotal covPass/covTotal rtPass/rtTotal rtAstMatchPass factoryPass/factoryTotal factoryAstMatchPass` — focus on what's changing kind-by-kind.
 
 **Baseline to match or exceed:**
-- rust: fromPass=130/148  covPass=132/136  rtPass=114/136  rtAstMatchPass=113  factoryPass=417/959  factoryAstMatchPass=413
-- typescript: fromPass=127/137  covPass=140/145  rtPass=93/112  rtAstMatchPass=83  factoryPass=384/915  factoryAstMatchPass=374
-- python: fromPass=107/114  covPass=97/100  rtPass=96/115  rtAstMatchPass=92  factoryPass=193/860  factoryAstMatchPass=184
+
+- rust: fromPass=130/148 covPass=132/136 rtPass=114/136 rtAstMatchPass=113 factoryPass=417/959 factoryAstMatchPass=413
+- typescript: fromPass=127/137 covPass=140/145 rtPass=93/112 rtAstMatchPass=83 factoryPass=384/915 factoryAstMatchPass=374
+- python: fromPass=107/114 covPass=97/100 rtPass=96/115 rtAstMatchPass=92 factoryPass=193/860 factoryAstMatchPass=184
 
 Totals dropping = real regression (kinds fell out of validation universe). Pass counts changing = shape shifts (good or bad).
 

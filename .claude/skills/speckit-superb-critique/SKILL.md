@@ -1,11 +1,11 @@
 ---
 name: speckit-superb-critique
-description: 'Spec-aligned code review agent. Acts as a dedicated independent reviewer:
+description: "Spec-aligned code review agent. Acts as a dedicated independent reviewer:
   loads spec.md, plan.md, and tasks.md, then reviews every code change against declared
   requirements, reporting issues by severity. Use after any significant implementation
   to catch spec divergence before it compounds.
 
-  '
+  "
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
@@ -39,6 +39,7 @@ Invoke with the argument context:
 ```
 
 User Context:
+
 ```
 $ARGUMENTS
 ```
@@ -130,12 +131,12 @@ For each requirement in `spec.md`:
 Compliance table:
 
 ```markdown
-| Req  | Requirement                        | Task | Status      | Notes |
-|------|------------------------------------|------|-------------|-------|
-| R01  | [description]                      | T3   | ✓ Met       |       |
-| R02  | [description]                      | T4   | ✗ Not met   | [why] |
-| R03  | [description]                      | —    | ✗ Missing   | No task, no code |
-| R04  | [description]                      | T6   | ~ Partial   | [what's missing] |
+| Req | Requirement   | Task | Status    | Notes            |
+| --- | ------------- | ---- | --------- | ---------------- |
+| R01 | [description] | T3   | ✓ Met     |                  |
+| R02 | [description] | T4   | ✗ Not met | [why]            |
+| R03 | [description] | —    | ✗ Missing | No task, no code |
+| R04 | [description] | T6   | ~ Partial | [what's missing] |
 ```
 
 ---
@@ -144,14 +145,14 @@ Compliance table:
 
 Evaluate the implementation against the plan's architecture:
 
-| Dimension | Checks |
-|---|---|
-| **Architecture** | Does the structure match `plan.md`? Are boundary violations present? |
-| **Interface contracts** | Do method signatures match `contracts/`? Are types correct? |
-| **Data model** | Does persistence match `data-model.md`? Any schema drift? |
-| **Test quality** | Are tests testing real behavior or just mocking everything? Tests written before code (TDD)? |
-| **Error handling** | Are error paths tested? Do they surface useful messages? |
-| **Security** | Any input validation gaps? Injection risks? Privilege escalation? |
+| Dimension               | Checks                                                                                       |
+| ----------------------- | -------------------------------------------------------------------------------------------- |
+| **Architecture**        | Does the structure match `plan.md`? Are boundary violations present?                         |
+| **Interface contracts** | Do method signatures match `contracts/`? Are types correct?                                  |
+| **Data model**          | Does persistence match `data-model.md`? Any schema drift?                                    |
+| **Test quality**        | Are tests testing real behavior or just mocking everything? Tests written before code (TDD)? |
+| **Error handling**      | Are error paths tested? Do they surface useful messages?                                     |
+| **Security**            | Any input validation gaps? Injection risks? Privilege escalation?                            |
 
 ---
 
@@ -223,18 +224,21 @@ correct work is noise.
 ```
 
 If Critical issues exist:
+
 ```
 🔴 BLOCKED: Fix all Critical issues above before continuing.
 Do not write new code or start new tasks until resolved.
 ```
 
 If no Critical issues, Important issues exist:
+
 ```
 🟠 FIX BEFORE MERGE: Address Important issues before creating PR.
 You may continue to the next task but must return to fix these.
 ```
 
 If only Minor issues:
+
 ```
 ✓ CLEAR TO PROCEED: Implementation meets spec requirements.
 Minor issues tracked. Safe to continue to next task or create PR.
@@ -257,10 +261,10 @@ Push-back is valid. Ignoring the review is not.
 
 ## Integration with Spec-Kit Workflow
 
-| Workflow Stage | Review Scope |
-|---|---|
-| After `speckit.tasks` | Use `speckit.superb.review` instead (task coverage) |
-| After each major task | Run Critique on the task's scope |
-| After `speckit.implement` | Full implementation review |
-| Before PR creation | Full review, all Critical and Important issues resolved |
-| After subagent work | Verify agent claims are real, not assumed |
+| Workflow Stage            | Review Scope                                            |
+| ------------------------- | ------------------------------------------------------- |
+| After `speckit.tasks`     | Use `speckit.superb.review` instead (task coverage)     |
+| After each major task     | Run Critique on the task's scope                        |
+| After `speckit.implement` | Full implementation review                              |
+| Before PR creation        | Full review, all Critical and Important issues resolved |
+| After subagent work       | Verify agent claims are real, not assumed               |

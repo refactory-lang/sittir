@@ -9,9 +9,9 @@
  * walker-per-emitter duplication.
  */
 
-import type { NodeMap, RefineForm } from '../compiler/types.ts'
-import type { AssembledNode } from '../compiler/node-map.ts'
-import { narrowedFieldLiteralsForForm } from '../compiler/link-refine.ts'
+import type { NodeMap, RefineForm } from "../compiler/types.ts";
+import type { AssembledNode } from "../compiler/node-map.ts";
+import { narrowedFieldLiteralsForForm } from "../compiler/link-refine.ts";
 
 /**
  * Per-kind refine descriptor collected once, consumed by every emitter
@@ -19,18 +19,18 @@ import { narrowedFieldLiteralsForForm } from '../compiler/link-refine.ts'
  * per form so downstream emission doesn't re-walk the rule tree.
  */
 export interface RefineKindInfo {
-    readonly kind: string
-    readonly typeName: string
-    readonly node: AssembledNode
-    readonly forms: readonly RefineFormInfo[]
+	readonly kind: string;
+	readonly typeName: string;
+	readonly node: AssembledNode;
+	readonly forms: readonly RefineFormInfo[];
 }
 
 export interface RefineFormInfo {
-    readonly name: string
-    readonly form: RefineForm
-    /** Per-form field narrowings: each entry says "in this form, field
-     *  `fieldName` should be narrowed to the literal `literal`". */
-    readonly narrowedFields: ReadonlyArray<{ fieldName: string; literal: string }>
+	readonly name: string;
+	readonly form: RefineForm;
+	/** Per-form field narrowings: each entry says "in this form, field
+	 *  `fieldName` should be narrowed to the literal `literal`". */
+	readonly narrowedFields: ReadonlyArray<{ fieldName: string; literal: string }>;
 }
 
 /**
@@ -48,21 +48,21 @@ export interface RefineFormInfo {
  * literals.
  */
 export function collectRefineKindInfos(nodeMap: NodeMap): RefineKindInfo[] | undefined {
-    const forms = nodeMap.refineForms
-    if (!forms || forms.size === 0) return undefined
-    const out: RefineKindInfo[] = []
-    for (const [kind, kindForms] of forms) {
-        const node = nodeMap.nodes.get(kind)
-        if (!node) continue
-        const rule = nodeMap.rules?.[kind]
-        const infos: RefineFormInfo[] = []
-        for (const form of kindForms) {
-            const narrowed = rule ? narrowedFieldLiteralsForForm(rule, form) : []
-            infos.push({ name: form.name, form, narrowedFields: narrowed })
-        }
-        out.push({ kind, typeName: node.typeName, node, forms: infos })
-    }
-    return out
+	const forms = nodeMap.refineForms;
+	if (!forms || forms.size === 0) return undefined;
+	const out: RefineKindInfo[] = [];
+	for (const [kind, kindForms] of forms) {
+		const node = nodeMap.nodes.get(kind);
+		if (!node) continue;
+		const rule = nodeMap.rules?.[kind];
+		const infos: RefineFormInfo[] = [];
+		for (const form of kindForms) {
+			const narrowed = rule ? narrowedFieldLiteralsForForm(rule, form) : [];
+			infos.push({ name: form.name, form, narrowedFields: narrowed });
+		}
+		out.push({ kind, typeName: node.typeName, node, forms: infos });
+	}
+	return out;
 }
 
 /**
@@ -70,9 +70,11 @@ export function collectRefineKindInfos(nodeMap: NodeMap): RefineKindInfo[] | und
  * word boundary so `snake_case` forms pascal-case correctly.
  */
 export function pascalCase(s: string): string {
-    return s.split(/[_\s-]+/).filter(p => p.length > 0)
-        .map(p => p.charAt(0).toUpperCase() + p.slice(1))
-        .join('')
+	return s
+		.split(/[_\s-]+/)
+		.filter((p) => p.length > 0)
+		.map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+		.join("");
 }
 
 /**
@@ -80,10 +82,16 @@ export function pascalCase(s: string): string {
  * (e.g. `ir.interfaceBody.curly`).
  */
 export function camelCase(s: string): string {
-    const parts = s.split(/[_\s-]+/).filter(p => p.length > 0)
-    if (parts.length === 0) return s
-    return parts[0]!.charAt(0).toLowerCase() + parts[0]!.slice(1) +
-        parts.slice(1).map(p => p.charAt(0).toUpperCase() + p.slice(1)).join('')
+	const parts = s.split(/[_\s-]+/).filter((p) => p.length > 0);
+	if (parts.length === 0) return s;
+	return (
+		parts[0]!.charAt(0).toLowerCase() +
+		parts[0]!.slice(1) +
+		parts
+			.slice(1)
+			.map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+			.join("")
+	);
 }
 
 /**
@@ -91,7 +99,7 @@ export function camelCase(s: string): string {
  * Example: `InterfaceBody` + `curly` → `InterfaceBodyCurly`.
  */
 export function refineFormTypeName(parentTypeName: string, formName: string): string {
-    return `${parentTypeName}${pascalCase(formName)}`
+	return `${parentTypeName}${pascalCase(formName)}`;
 }
 
 /**
@@ -99,5 +107,5 @@ export function refineFormTypeName(parentTypeName: string, formName: string): st
  * the base factory-naming convention already used for polymorph forms.
  */
 export function refineFormFactoryName(baseFactoryName: string, formName: string): string {
-    return `${baseFactoryName}${pascalCase(formName)}`
+	return `${baseFactoryName}${pascalCase(formName)}`;
 }

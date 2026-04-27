@@ -7,12 +7,12 @@
 
 ```ts
 export interface NodeNs<T extends { readonly type: string }> {
-    readonly Node: T;
-    readonly Config: ConfigOf<T>;
-    readonly Fluent: FluentNodeOf<T>;
-    readonly Loose: FromInputOf<T, LeafScalarMap, LeafStringMap>;
-    readonly Tree: TreeNodeOf<T>;
-    readonly Kind: T extends { readonly type: infer K } ? K : never;
+	readonly Node: T;
+	readonly Config: ConfigOf<T>;
+	readonly Fluent: FluentNodeOf<T>;
+	readonly Loose: FromInputOf<T, LeafScalarMap, LeafStringMap>;
+	readonly Tree: TreeNodeOf<T>;
+	readonly Kind: T extends { readonly type: infer K } ? K : never;
 }
 ```
 

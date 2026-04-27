@@ -28,6 +28,7 @@ These are re-exports of tree-sitter's own DSL functions, provided so override fi
 Pure function. Applies mechanical-only passes and returns a new grammar.
 
 **Contract**:
+
 - Pure: same input → same output.
 - Idempotent: `enrich(enrich(g))` equals `enrich(g)`.
 - Non-mutating: `base` is not modified.
@@ -37,6 +38,7 @@ Pure function. Applies mechanical-only passes and returns a new grammar.
 - Skips are reported to stderr (suppressed when `SITTIR_QUIET` is set), non-fatal.
 
 **Usage**:
+
 ```js
 grammar(enrich(base), {
   name: 'python',
@@ -51,6 +53,7 @@ grammar(enrich(base), {
 Records a role binding as a side-effect on the current grammar's role accumulator. Returns the symbol unchanged so the call site remains a valid tree-sitter rule expression.
 
 **Contract**:
+
 - Pushes `{ symbol, roleName }` onto the current grammar's role accumulator.
 - Returns `symbol` unchanged — the call is transparent to tree-sitter.
 - Silent no-op when called outside a `grammar(...)` scope (tree-sitter CLI compat).
@@ -58,15 +61,16 @@ Records a role binding as a side-effect on the current grammar's role accumulato
 - `roleName` must be one of `'indent' | 'dedent' | 'newline'` — validated at runtime.
 
 **Usage** (inline in externals callback):
+
 ```js
 grammar(enrich(base), {
-  name: 'python',
-  rules: {
-    _indent: ($) => role($._indent, 'indent'),
-    _dedent: ($) => role($._dedent, 'dedent'),
-    _newline: ($) => role($._newline, 'newline'),
-  },
-})
+	name: "python",
+	rules: {
+		_indent: ($) => role($._indent, "indent"),
+		_dedent: ($) => role($._dedent, "dedent"),
+		_newline: ($) => role($._newline, "newline"),
+	},
+});
 ```
 
 ---
@@ -76,6 +80,7 @@ grammar(enrich(base), {
 Applies structural patches to a rule without rewriting it. Takes an object map of patch keys to values.
 
 **Contract**:
+
 - `rule` is the tree-sitter rule to patch.
 - `patches` is an object where keys are either numeric indices (flat mode) or forward-slash-delimited paths (path mode).
 - **Flat mode** (all keys are pure integers): `{ 0: field('x'), 2: field('y') }` — patches by positional index. Out-of-bounds is a hard error.
@@ -85,18 +90,19 @@ Applies structural patches to a rule without rewriting it. Takes an object map o
 - Returns `RuntimeRule` (`{ readonly type: string }`) — honest cross-runtime type.
 
 **Usage**:
+
 ```js
 // Flat positional (numeric keys)
 transform(original, {
-  0: field('expression'),
-  2: field('body'),
-})
+	0: field("expression"),
+	2: field("body"),
+});
 
 // Path-addressed (string keys with /)
 transform(original, {
-  '0/1': field('name'),
-  '0/*/0': field('item'),
-})
+	"0/1": field("name"),
+	"0/*/0": field("item"),
+});
 ```
 
 ---
@@ -106,6 +112,7 @@ transform(original, {
 Single-patch convenience wrappers around `transform()`.
 
 **Contract**:
+
 - `insert(rule, path, value)` — inserts `value` before the position at `path`, shifting subsequent entries right.
 - `replace(rule, path, value)` — replaces the entry at `path` with `value`.
 - Same path syntax and error behavior as `transform()`.
@@ -125,6 +132,7 @@ Tree-sitter `field()` re-export.
 Extended `alias()`. When called with one argument, expands to `alias(target, target)`.
 
 **Contract**:
+
 - `alias($.name, $.name)` — tree-sitter standard form, unchanged
 - `alias($.name)` — sittir shorthand, equivalent to `alias($.name, $.name)`
 - Any other shape passes through to tree-sitter's own `alias()` unchanged.
@@ -136,6 +144,7 @@ Extended `alias()`. When called with one argument, expands to `alias(target, tar
 Not a separate exported function — this is the behavior of `grammar(base, config)` when `config` declares `supertypes`, `externals`, `extras`, or `word`.
 
 **Contract**:
+
 - `supertypes`: `[...base.supertypes, ...config.supertypes]` with reference-equality dedupe
 - `externals`: `[...base.externals, ...config.externals]` with reference-equality dedupe
 - `extras`: `[...base.extras, ...config.extras]` with reference-equality dedupe

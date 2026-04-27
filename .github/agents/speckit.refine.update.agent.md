@@ -2,9 +2,9 @@
 description: Update an existing spec.md in-place based on new requirements or feedback
 ---
 
-
 <!-- Extension: refine -->
 <!-- Config: .specify/extensions/refine/ -->
+
 # Refine Specification
 
 Update an existing specification in-place without creating a new feature branch. Use this when requirements change, feedback arrives, or you need to iterate on an existing spec.

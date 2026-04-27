@@ -1,14 +1,14 @@
 [workspace]
 resolver = "2"
 members = [
-    "rust/crates/sittir-core",
-    "rust/crates/sittir-rust-napi",
-    "rust/crates/sittir-typescript-napi",
-    "rust/crates/sittir-python-napi",
-    "rust/crates/sittir-parity-tests",
-    "packages/rust/rust-render",
-    "packages/typescript/rust-render",
-    "packages/python/rust-render",
+  "rust/crates/sittir-core",
+  "rust/crates/sittir-rust-napi",
+  "rust/crates/sittir-typescript-napi",
+  "rust/crates/sittir-python-napi",
+  "rust/crates/sittir-parity-tests",
+  "packages/rust/rust-render",
+  "packages/typescript/rust-render",
+  "packages/python/rust-render",
 ]
 
 # NOTE on workspace-root location (deviation from spec 012 task T002):

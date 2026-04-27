@@ -33,13 +33,13 @@
  * migrate independently.
  */
 
-import type { PolymorphVariant } from '../../compiler/types.ts'
-import type { RuntimeRule } from '../runtime-shapes.ts'
-import { variant as variantPlaceholder } from '../primitives/variant.ts'
-import { transform as transformFn } from '../transform/transform.ts'
-import { isFieldPlaceholder } from '../primitives/field.ts'
-import { isAliasPlaceholder } from '../primitives/alias.ts'
-import { isVariantPlaceholder } from '../primitives/variant.ts'
+import type { PolymorphVariant } from "../../compiler/types.ts";
+import type { RuntimeRule } from "../runtime-shapes.ts";
+import { variant as variantPlaceholder } from "../primitives/variant.ts";
+import { transform as transformFn } from "../transform/transform.ts";
+import { isFieldPlaceholder } from "../primitives/field.ts";
+import { isAliasPlaceholder } from "../primitives/alias.ts";
+import { isVariantPlaceholder } from "../primitives/variant.ts";
 
 // ---------------------------------------------------------------------------
 // WireContext + module-level current pointer
@@ -51,26 +51,26 @@ import { isVariantPlaceholder } from '../primitives/variant.ts'
  * rule-fn wrapper has this context installed.
  */
 export interface WireContext {
-    /** Hidden-rule name → captured content body. */
-    readonly deposits: Map<string, RuntimeRule>
-    /** `{parent, child}` pairs registered by variant(). Sittir's Link
-     *  reads these to classify polymorphs — tree-sitter ignores them. */
-    readonly polymorphVariants: PolymorphVariant[]
-    /** Conflict groups (rule-name arrays) registered by variant() for
-     *  sibling-variant ambiguity. Drained by the wrapped `conflicts`
-     *  callback when tree-sitter invokes it. */
-    readonly conflictGroups: string[][]
-    /** Per-rule form declarations registered by refine(). Ordered list
-     *  — the first form is the default the bare factory call routes to.
-     *  Emitters consume this to generate namespace-keyed factories
-     *  (`ir.interfaceBody.curly(...)`) with narrowed Configs. The rule
-     *  tree itself is unchanged by refine(); tree-sitter parses with
-     *  the original shape. */
-    readonly refineForms: Map<string, RefineForm[]>
-    /** Name of the rule currently being evaluated, for variant()'s
-     *  auto-prefix behavior (`variant('eq')` under `assignment` →
-     *  `_assignment_eq`). Set by the rule-fn wrapper. */
-    currentRuleKind: string | null
+	/** Hidden-rule name → captured content body. */
+	readonly deposits: Map<string, RuntimeRule>;
+	/** `{parent, child}` pairs registered by variant(). Sittir's Link
+	 *  reads these to classify polymorphs — tree-sitter ignores them. */
+	readonly polymorphVariants: PolymorphVariant[];
+	/** Conflict groups (rule-name arrays) registered by variant() for
+	 *  sibling-variant ambiguity. Drained by the wrapped `conflicts`
+	 *  callback when tree-sitter invokes it. */
+	readonly conflictGroups: string[][];
+	/** Per-rule form declarations registered by refine(). Ordered list
+	 *  — the first form is the default the bare factory call routes to.
+	 *  Emitters consume this to generate namespace-keyed factories
+	 *  (`ir.interfaceBody.curly(...)`) with narrowed Configs. The rule
+	 *  tree itself is unchanged by refine(); tree-sitter parses with
+	 *  the original shape. */
+	readonly refineForms: Map<string, RefineForm[]>;
+	/** Name of the rule currently being evaluated, for variant()'s
+	 *  auto-prefix behavior (`variant('eq')` under `assignment` →
+	 *  `_assignment_eq`). Set by the rule-fn wrapper. */
+	currentRuleKind: string | null;
 }
 
 /**
@@ -80,18 +80,18 @@ export interface WireContext {
  * arm's string values. See ADR-0010 phase 2 for the full design.
  */
 export interface RefineForm {
-    readonly name: string
-    readonly selections: Record<string, number | string>
+	readonly name: string;
+	readonly selections: Record<string, number | string>;
 }
 
-let currentContext: WireContext | null = null
+let currentContext: WireContext | null = null;
 
 /** Read the active wire context, or null if no `wire()`-wrapped rule
  *  fn is currently executing. DSL helpers use this to decide whether
  *  to route state into the wire closure or into the legacy module
  *  accumulator in `synthetic-rules.ts`. */
 export function getCurrentWireContext(): WireContext | null {
-    return currentContext
+	return currentContext;
 }
 
 /**
@@ -100,9 +100,9 @@ export function getCurrentWireContext(): WireContext | null {
  * active context (caller falls back to the legacy accumulator).
  */
 export function wireRegisterSyntheticRule(name: string, content: RuntimeRule): boolean {
-    if (!currentContext) return false
-    currentContext.deposits.set(name, content)
-    return true
+	if (!currentContext) return false;
+	currentContext.deposits.set(name, content);
+	return true;
 }
 
 /**
@@ -121,12 +121,14 @@ export function wireRegisterSyntheticRule(name: string, content: RuntimeRule): b
  * the first at JS object-literal level.
  */
 export function wireRegisterPolymorphVariant(parent: string, child: string): boolean {
-    if (!currentContext) return false
-    const exists = currentContext.polymorphVariants.some(v => v.parent === parent && v.child === child)
-    if (!exists) {
-        currentContext.polymorphVariants.push({ parent, child })
-    }
-    return true
+	if (!currentContext) return false;
+	const exists = currentContext.polymorphVariants.some(
+		(v) => v.parent === parent && v.child === child,
+	);
+	if (!exists) {
+		currentContext.polymorphVariants.push({ parent, child });
+	}
+	return true;
 }
 
 /**
@@ -134,14 +136,14 @@ export function wireRegisterPolymorphVariant(parent: string, child: string): boo
  * by exact group membership (same names in same order).
  */
 export function wireRegisterConflict(names: readonly string[]): boolean {
-    if (!currentContext) return false
-    if (names.length === 0) return true
-    const key = names.join('\u0000')
-    const exists = currentContext.conflictGroups.some(g => g.join('\u0000') === key)
-    if (!exists) {
-        currentContext.conflictGroups.push([...names])
-    }
-    return true
+	if (!currentContext) return false;
+	if (names.length === 0) return true;
+	const key = names.join("\u0000");
+	const exists = currentContext.conflictGroups.some((g) => g.join("\u0000") === key);
+	if (!exists) {
+		currentContext.conflictGroups.push([...names]);
+	}
+	return true;
 }
 
 /**
@@ -159,14 +161,14 @@ export function wireRegisterConflict(names: readonly string[]): boolean {
  * there is no active context.
  */
 export function wireRegisterRefineForms(kind: string, forms: RefineForm[]): boolean {
-    if (!currentContext) return false
-    currentContext.refineForms.set(kind, forms)
-    return true
+	if (!currentContext) return false;
+	currentContext.refineForms.set(kind, forms);
+	return true;
 }
 
 /** Current rule kind on the active wire context, or null when inactive. */
 export function wireGetCurrentRuleKind(): string | null {
-    return currentContext?.currentRuleKind ?? null
+	return currentContext?.currentRuleKind ?? null;
 }
 
 /**
@@ -180,24 +182,24 @@ export function wireGetCurrentRuleKind(): string | null {
  * composition. Production callers should use `wire()`.
  */
 export function withWireContext<T>(
-    ruleKind: string | null,
-    fn: (ctx: WireContext) => T,
+	ruleKind: string | null,
+	fn: (ctx: WireContext) => T,
 ): { result: T; ctx: WireContext } {
-    const ctx: WireContext = {
-        deposits: new Map(),
-        polymorphVariants: [],
-        conflictGroups: [],
-        refineForms: new Map(),
-        currentRuleKind: ruleKind,
-    }
-    const prev = currentContext
-    currentContext = ctx
-    try {
-        const result = fn(ctx)
-        return { result, ctx }
-    } finally {
-        currentContext = prev
-    }
+	const ctx: WireContext = {
+		deposits: new Map(),
+		polymorphVariants: [],
+		conflictGroups: [],
+		refineForms: new Map(),
+		currentRuleKind: ruleKind,
+	};
+	const prev = currentContext;
+	currentContext = ctx;
+	try {
+		const result = fn(ctx);
+		return { result, ctx };
+	} finally {
+		currentContext = prev;
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -225,15 +227,14 @@ export function withWireContext<T>(
  * keys, preserving the pre-generics behaviour of every call site that
  * doesn't supply a base type.
  */
-export type GrammarBase = Record<string, unknown> | { readonly rules: Record<string, unknown> }
+export type GrammarBase = Record<string, unknown> | { readonly rules: Record<string, unknown> };
 
 /** @internal — extract the rule-kind string union from a base grammar.
  *  Handles both shapes: `{ rules: { … } }` (tree-sitter native) and
  *  flat top-level keys (sittir-emitted `<Lang>Grammar`). */
-type BaseKind<Base extends GrammarBase> =
-    Base extends { readonly rules: infer R }
-        ? keyof R & string
-        : keyof Base & string
+type BaseKind<Base extends GrammarBase> = Base extends { readonly rules: infer R }
+	? keyof R & string
+	: keyof Base & string;
 
 /**
  * Declarative polymorph map: parent rule kind → (path-in-original → suffix).
@@ -246,8 +247,9 @@ type BaseKind<Base extends GrammarBase> =
  * names stay untyped — paths describe runtime descents into the rule
  * tree (`seq`/`choice` indices), suffixes are author-introduced.
  */
-export type PolymorphsConfig<Base extends GrammarBase = GrammarBase> =
-    Partial<Record<BaseKind<Base>, Record<string, string>>>
+export type PolymorphsConfig<Base extends GrammarBase = GrammarBase> = Partial<
+	Record<BaseKind<Base>, Record<string, string>>
+>;
 
 /**
  * Declarative transforms map: each rule kind → a patch-map (or array
@@ -272,11 +274,12 @@ export type PolymorphsConfig<Base extends GrammarBase = GrammarBase> =
  * resolution deposits captured content into wire's context; the
  * deferred fns read deposits.
  */
-export type TransformsConfig<Base extends GrammarBase = GrammarBase> =
-    Partial<Record<BaseKind<Base>, PatchMap | PatchMap[]>>
+export type TransformsConfig<Base extends GrammarBase = GrammarBase> = Partial<
+	Record<BaseKind<Base>, PatchMap | PatchMap[]>
+>;
 
 /** A single patch-map — path-in-original → patch value. */
-export type PatchMap = Record<string, unknown>
+export type PatchMap = Record<string, unknown>;
 
 /**
  * Shape of an options argument passed to tree-sitter's `grammar()` — the
@@ -291,46 +294,46 @@ export type PatchMap = Record<string, unknown>
  * (`_kw_<field>`, `_<parent>_<variant>`, `_<alias>`).
  */
 export interface WireConfig<Base extends GrammarBase = GrammarBase> {
-    readonly name?: string
-    readonly rules: Partial<Record<BaseKind<Base>, RuleFn>> & Record<string, RuleFn>
-    readonly polymorphs?: PolymorphsConfig<Base>
-    readonly transforms?: TransformsConfig<Base>
-    readonly conflicts?: ConflictsFn
-    readonly externals?: DollarFn<unknown[]>
-    readonly extras?: DollarFn<unknown[]>
-    readonly supertypes?: DollarFn<unknown[]>
-    readonly inline?: DollarFn<unknown[]>
-    readonly word?: DollarFn<unknown>
-    readonly precedences?: DollarFn<unknown[][]>
-    readonly reserved?: Record<string, DollarFn<unknown[]>>
-    /** Side-channel from `enrich()` — preserved unchanged. */
-    readonly __enrichOverrides__?: Record<string, RuleFn>
+	readonly name?: string;
+	readonly rules: Partial<Record<BaseKind<Base>, RuleFn>> & Record<string, RuleFn>;
+	readonly polymorphs?: PolymorphsConfig<Base>;
+	readonly transforms?: TransformsConfig<Base>;
+	readonly conflicts?: ConflictsFn;
+	readonly externals?: DollarFn<unknown[]>;
+	readonly extras?: DollarFn<unknown[]>;
+	readonly supertypes?: DollarFn<unknown[]>;
+	readonly inline?: DollarFn<unknown[]>;
+	readonly word?: DollarFn<unknown>;
+	readonly precedences?: DollarFn<unknown[][]>;
+	readonly reserved?: Record<string, DollarFn<unknown[]>>;
+	/** Side-channel from `enrich()` — preserved unchanged. */
+	readonly __enrichOverrides__?: Record<string, RuleFn>;
 }
 
 export interface WiredOpts {
-    readonly name?: string
-    readonly rules: Record<string, RuleFn>
-    readonly conflicts?: ConflictsFn
-    readonly externals?: DollarFn<unknown[]>
-    readonly extras?: DollarFn<unknown[]>
-    readonly supertypes?: DollarFn<unknown[]>
-    readonly inline?: DollarFn<unknown[]>
-    readonly word?: DollarFn<unknown>
-    readonly precedences?: DollarFn<unknown[][]>
-    readonly reserved?: Record<string, DollarFn<unknown[]>>
-    readonly __enrichOverrides__?: Record<string, RuleFn>
-    /**
-     * Attached so sittir's compiler pipeline (evaluate → link) can read
-     * the polymorph metadata without driving rule evaluation a second
-     * time. Non-enumerable on the returned object so tree-sitter's
-     * own iteration doesn't trip on it.
-     */
-    readonly __wireContext__?: WireContext
+	readonly name?: string;
+	readonly rules: Record<string, RuleFn>;
+	readonly conflicts?: ConflictsFn;
+	readonly externals?: DollarFn<unknown[]>;
+	readonly extras?: DollarFn<unknown[]>;
+	readonly supertypes?: DollarFn<unknown[]>;
+	readonly inline?: DollarFn<unknown[]>;
+	readonly word?: DollarFn<unknown>;
+	readonly precedences?: DollarFn<unknown[][]>;
+	readonly reserved?: Record<string, DollarFn<unknown[]>>;
+	readonly __enrichOverrides__?: Record<string, RuleFn>;
+	/**
+	 * Attached so sittir's compiler pipeline (evaluate → link) can read
+	 * the polymorph metadata without driving rule evaluation a second
+	 * time. Non-enumerable on the returned object so tree-sitter's
+	 * own iteration doesn't trip on it.
+	 */
+	readonly __wireContext__?: WireContext;
 }
 
-type RuleFn = (this: unknown, $: unknown, previous?: unknown) => unknown
-type ConflictsFn = (this: unknown, $: unknown, previous?: unknown[][]) => unknown[][]
-type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T
+type RuleFn = (this: unknown, $: unknown, previous?: unknown) => unknown;
+type ConflictsFn = (this: unknown, $: unknown, previous?: unknown[][]) => unknown[][];
+type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 
 /**
  * Wrap the user's grammar options with wire-managed polymorph plumbing.
@@ -343,53 +346,53 @@ type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T
  *   as tree-sitter iterates.
  */
 export function wire<Base extends GrammarBase = GrammarBase>(config: WireConfig<Base>): WiredOpts {
-    const context: WireContext = {
-        deposits: new Map(),
-        polymorphVariants: [],
-        conflictGroups: [],
-        refineForms: new Map(),
-        currentRuleKind: null,
-    }
+	const context: WireContext = {
+		deposits: new Map(),
+		polymorphVariants: [],
+		conflictGroups: [],
+		refineForms: new Map(),
+		currentRuleKind: null,
+	};
 
-    const polymorphs = config.polymorphs ?? {}
-    const transforms = config.transforms ?? {}
-    const outRules: Record<string, RuleFn> = { ...config.rules }
+	const polymorphs = config.polymorphs ?? {};
+	const transforms = config.transforms ?? {};
+	const outRules: Record<string, RuleFn> = { ...config.rules };
 
-    // Transforms first, polymorphs second — transforms wrap the user
-    // fn innermost and see the base-shape rule tree; polymorphs wrap
-    // the transforms-wrapped fn outermost and split what remains.
-    // Reversing this (polymorphs first) made inline transforms that
-    // address base-shape paths (e.g. 'N/_expression' kind-match) break
-    // because the polymorph already aliased the choice arms.
-    //
-    // Compose runs BEFORE inject so iteration order at runtime puts
-    // polymorph parents ahead of their hidden arms — parents populate
-    // deposits via transformFn; arms read those deposits when their
-    // deferred-content fn later runs. The injection pass is careful not
-    // to clobber a polymorph-parent fn already installed by compose:
-    // when a hidden name is BOTH an arm of one polymorph AND itself a
-    // polymorph parent (e.g. `_visibility_modifier_pub`), compose wins
-    // and the parent fn reads the outer's deposit at run time (see
-    // `buildPolymorphParentFn`).
-    composeOrSynthesizeTransformParents(outRules, transforms)
-    composeOrSynthesizePolymorphParents(outRules, polymorphs, context)
-    injectHiddenRulePlaceholders(outRules, polymorphs, context)
-    injectTransformHiddenRulePlaceholders(outRules, transforms, context)
-    wrapAllRuleFns(outRules, context)
+	// Transforms first, polymorphs second — transforms wrap the user
+	// fn innermost and see the base-shape rule tree; polymorphs wrap
+	// the transforms-wrapped fn outermost and split what remains.
+	// Reversing this (polymorphs first) made inline transforms that
+	// address base-shape paths (e.g. 'N/_expression' kind-match) break
+	// because the polymorph already aliased the choice arms.
+	//
+	// Compose runs BEFORE inject so iteration order at runtime puts
+	// polymorph parents ahead of their hidden arms — parents populate
+	// deposits via transformFn; arms read those deposits when their
+	// deferred-content fn later runs. The injection pass is careful not
+	// to clobber a polymorph-parent fn already installed by compose:
+	// when a hidden name is BOTH an arm of one polymorph AND itself a
+	// polymorph parent (e.g. `_visibility_modifier_pub`), compose wins
+	// and the parent fn reads the outer's deposit at run time (see
+	// `buildPolymorphParentFn`).
+	composeOrSynthesizeTransformParents(outRules, transforms);
+	composeOrSynthesizePolymorphParents(outRules, polymorphs, context);
+	injectHiddenRulePlaceholders(outRules, polymorphs, context);
+	injectTransformHiddenRulePlaceholders(outRules, transforms, context);
+	wrapAllRuleFns(outRules, context);
 
-    const conflicts = wrapConflictsCallback(config.conflicts, context)
+	const conflicts = wrapConflictsCallback(config.conflicts, context);
 
-    const wired: WiredOpts = {
-        ...config,
-        rules: outRules,
-        ...(conflicts === undefined ? {} : { conflicts }),
-    }
-    Object.defineProperty(wired, '__wireContext__', {
-        value: context,
-        enumerable: false,
-        configurable: true,
-    })
-    return wired
+	const wired: WiredOpts = {
+		...config,
+		rules: outRules,
+		...(conflicts === undefined ? {} : { conflicts }),
+	};
+	Object.defineProperty(wired, "__wireContext__", {
+		value: context,
+		enumerable: false,
+		configurable: true,
+	});
+	return wired;
 }
 
 // ---------------------------------------------------------------------------
@@ -410,15 +413,15 @@ export function wire<Base extends GrammarBase = GrammarBase>(config: WireConfig<
  * its arm body; the inner's parent fn reads that deposit as its base.
  */
 function composeOrSynthesizePolymorphParents(
-    rules: Record<string, RuleFn>,
-    polymorphs: PolymorphsConfig,
-    context: WireContext,
+	rules: Record<string, RuleFn>,
+	polymorphs: PolymorphsConfig,
+	context: WireContext,
 ): void {
-    for (const [parent, armMap] of Object.entries(polymorphs)) {
-        if (!armMap) continue
-        const userFn = rules[parent]
-        rules[parent] = buildPolymorphParentFn(parent, armMap, userFn, context)
-    }
+	for (const [parent, armMap] of Object.entries(polymorphs)) {
+		if (!armMap) continue;
+		const userFn = rules[parent];
+		rules[parent] = buildPolymorphParentFn(parent, armMap, userFn, context);
+	}
 }
 
 /**
@@ -436,27 +439,27 @@ function composeOrSynthesizePolymorphParents(
  *      the base grammar's body of this rule).
  */
 function buildPolymorphParentFn(
-    parent: string,
-    armMap: Record<string, string>,
-    userFn: RuleFn | undefined,
-    context: WireContext,
+	parent: string,
+	armMap: Record<string, string>,
+	userFn: RuleFn | undefined,
+	context: WireContext,
 ): RuleFn {
-    const patches: Record<string, unknown> = {}
-    for (const [path, suffix] of Object.entries(armMap)) {
-        patches[path] = variantPlaceholder(suffix)
-    }
-    const isHidden = parent.startsWith('_')
-    return function wiredPolymorphParent(this: unknown, $: unknown, original: unknown): unknown {
-        let base: unknown
-        if (userFn) {
-            base = userFn.call(this, $, original)
-        } else if (isHidden && context.deposits.has(parent)) {
-            base = context.deposits.get(parent)
-        } else {
-            base = original
-        }
-        return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, patches)
-    }
+	const patches: Record<string, unknown> = {};
+	for (const [path, suffix] of Object.entries(armMap)) {
+		patches[path] = variantPlaceholder(suffix);
+	}
+	const isHidden = parent.startsWith("_");
+	return function wiredPolymorphParent(this: unknown, $: unknown, original: unknown): unknown {
+		let base: unknown;
+		if (userFn) {
+			base = userFn.call(this, $, original);
+		} else if (isHidden && context.deposits.has(parent)) {
+			base = context.deposits.get(parent);
+		} else {
+			base = original;
+		}
+		return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, patches);
+	};
 }
 
 /**
@@ -474,18 +477,18 @@ function buildPolymorphParentFn(
  * overwrite would drop the inner split.
  */
 function injectHiddenRulePlaceholders(
-    rules: Record<string, RuleFn>,
-    polymorphs: PolymorphsConfig,
-    context: WireContext,
+	rules: Record<string, RuleFn>,
+	polymorphs: PolymorphsConfig,
+	context: WireContext,
 ): void {
-    for (const [parent, armMap] of Object.entries(polymorphs)) {
-        if (!armMap) continue
-        for (const suffix of Object.values(armMap)) {
-            const hiddenName = polymorphHiddenName(parent, suffix)
-            if (hiddenName in rules) continue
-            rules[hiddenName] = makeDeferredContentFn(context, hiddenName)
-        }
-    }
+	for (const [parent, armMap] of Object.entries(polymorphs)) {
+		if (!armMap) continue;
+		for (const suffix of Object.values(armMap)) {
+			const hiddenName = polymorphHiddenName(parent, suffix);
+			if (hiddenName in rules) continue;
+			rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+		}
+	}
 }
 
 /**
@@ -502,13 +505,13 @@ function injectHiddenRulePlaceholders(
  * variant-resolution paths so both agree on the rule name.
  */
 export function polymorphVisibleName(parentKind: string, suffix: string): string {
-    const visibleParent = parentKind.startsWith('_') ? parentKind.slice(1) : parentKind
-    return `${visibleParent}_${suffix}`
+	const visibleParent = parentKind.startsWith("_") ? parentKind.slice(1) : parentKind;
+	return `${visibleParent}_${suffix}`;
 }
 
 /** Hidden rule name for a polymorph variant — underscore-prefixed visible form. */
 export function polymorphHiddenName(parentKind: string, suffix: string): string {
-    return `_${polymorphVisibleName(parentKind, suffix)}`
+	return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
 
 /**
@@ -518,15 +521,15 @@ export function polymorphHiddenName(parentKind: string, suffix: string): string 
  * user fn runs first, transform patches apply on its output.
  */
 function composeOrSynthesizeTransformParents(
-    rules: Record<string, RuleFn>,
-    transforms: TransformsConfig,
+	rules: Record<string, RuleFn>,
+	transforms: TransformsConfig,
 ): void {
-    for (const [kind, entry] of Object.entries(transforms)) {
-        if (!entry) continue
-        const patchSets = Array.isArray(entry) ? entry : [entry]
-        const userFn = rules[kind]
-        rules[kind] = buildTransformParentFn(patchSets, userFn)
-    }
+	for (const [kind, entry] of Object.entries(transforms)) {
+		if (!entry) continue;
+		const patchSets = Array.isArray(entry) ? entry : [entry];
+		const userFn = rules[kind];
+		rules[kind] = buildTransformParentFn(patchSets, userFn);
+	}
 }
 
 /**
@@ -537,13 +540,13 @@ function composeOrSynthesizeTransformParents(
  * they did when the call was written inline in the rule body.
  */
 function buildTransformParentFn(
-    patchSets: readonly PatchMap[],
-    userFn: RuleFn | undefined,
+	patchSets: readonly PatchMap[],
+	userFn: RuleFn | undefined,
 ): RuleFn {
-    return function wiredTransformParent(this: unknown, $: unknown, original: unknown): unknown {
-        const base = userFn ? userFn.call(this, $, original) : original
-        return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets)
-    }
+	return function wiredTransformParent(this: unknown, $: unknown, original: unknown): unknown {
+		const base = userFn ? userFn.call(this, $, original) : original;
+		return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets);
+	};
 }
 
 /**
@@ -565,19 +568,19 @@ function buildTransformParentFn(
  * placeholder objects that remain unresolved until `transform()` fires.
  */
 function injectTransformHiddenRulePlaceholders(
-    rules: Record<string, RuleFn>,
-    transforms: TransformsConfig,
-    context: WireContext,
+	rules: Record<string, RuleFn>,
+	transforms: TransformsConfig,
+	context: WireContext,
 ): void {
-    for (const [kind, entry] of Object.entries(transforms)) {
-        if (!entry) continue
-        const patchSets = Array.isArray(entry) ? entry : [entry]
-        for (const patchMap of patchSets) {
-            for (const value of Object.values(patchMap)) {
-                registerHiddenRuleForPlaceholder(value, kind, rules, context)
-            }
-        }
-    }
+	for (const [kind, entry] of Object.entries(transforms)) {
+		if (!entry) continue;
+		const patchSets = Array.isArray(entry) ? entry : [entry];
+		for (const patchMap of patchSets) {
+			for (const value of Object.values(patchMap)) {
+				registerHiddenRuleForPlaceholder(value, kind, rules, context);
+			}
+		}
+	}
 }
 
 /**
@@ -590,26 +593,26 @@ function injectTransformHiddenRulePlaceholders(
  *   placeholder lives under, used for the auto-prefix `_<parent>_<suffix>`.
  */
 function registerHiddenRuleForPlaceholder(
-    value: unknown,
-    parentKind: string,
-    rules: Record<string, RuleFn>,
-    context: WireContext,
+	value: unknown,
+	parentKind: string,
+	rules: Record<string, RuleFn>,
+	context: WireContext,
 ): void {
-    if (isFieldPlaceholder(value)) {
-        const hiddenName = `_kw_${value.name}`
-        if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName)
-        return
-    }
-    if (isVariantPlaceholder(value)) {
-        const hiddenName = `_${parentKind}_${value.name}`
-        if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName)
-        return
-    }
-    if (isAliasPlaceholder(value)) {
-        const hiddenName = `_${value.name}`
-        if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName)
-        return
-    }
+	if (isFieldPlaceholder(value)) {
+		const hiddenName = `_kw_${value.name}`;
+		if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+		return;
+	}
+	if (isVariantPlaceholder(value)) {
+		const hiddenName = `_${parentKind}_${value.name}`;
+		if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+		return;
+	}
+	if (isAliasPlaceholder(value)) {
+		const hiddenName = `_${value.name}`;
+		if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+		return;
+	}
 }
 
 /**
@@ -639,13 +642,13 @@ function registerHiddenRuleForPlaceholder(
  *      BLANK orphans don't pollute the grammar.
  */
 function makeDeferredContentFn(context: WireContext, hiddenName: string): RuleFn {
-    return function deferredHiddenRule(this: unknown, _$: unknown, previous?: unknown): unknown {
-        const body = context.deposits.get(hiddenName)
-        if (body) return body
-        if (previous !== undefined) return previous
-        const blankFn = (globalThis as { blank?: () => unknown }).blank
-        return blankFn ? blankFn() : { type: 'BLANK' }
-    }
+	return function deferredHiddenRule(this: unknown, _$: unknown, previous?: unknown): unknown {
+		const body = context.deposits.get(hiddenName);
+		if (body) return body;
+		if (previous !== undefined) return previous;
+		const blankFn = (globalThis as { blank?: () => unknown }).blank;
+		return blankFn ? blankFn() : { type: "BLANK" };
+	};
 }
 
 /**
@@ -655,9 +658,9 @@ function makeDeferredContentFn(context: WireContext, hiddenName: string): RuleFn
  * state into each other.
  */
 function wrapAllRuleFns(rules: Record<string, RuleFn>, context: WireContext): void {
-    for (const [name, fn] of Object.entries(rules)) {
-        rules[name] = wrapOneRuleFn(name, fn, context)
-    }
+	for (const [name, fn] of Object.entries(rules)) {
+		rules[name] = wrapOneRuleFn(name, fn, context);
+	}
 }
 
 /**
@@ -665,18 +668,18 @@ function wrapAllRuleFns(rules: Record<string, RuleFn>, context: WireContext): vo
  * currentRuleKind, installs this context, runs the fn, restores.
  */
 function wrapOneRuleFn(name: string, fn: RuleFn, context: WireContext): RuleFn {
-    return function wiredRuleFn(this: unknown, $: unknown, previous?: unknown): unknown {
-        const prevContext = currentContext
-        const prevKind = context.currentRuleKind
-        currentContext = context
-        context.currentRuleKind = name
-        try {
-            return fn.call(this, $, previous)
-        } finally {
-            context.currentRuleKind = prevKind
-            currentContext = prevContext
-        }
-    }
+	return function wiredRuleFn(this: unknown, $: unknown, previous?: unknown): unknown {
+		const prevContext = currentContext;
+		const prevKind = context.currentRuleKind;
+		currentContext = context;
+		context.currentRuleKind = name;
+		try {
+			return fn.call(this, $, previous);
+		} finally {
+			context.currentRuleKind = prevKind;
+			currentContext = prevContext;
+		}
+	};
 }
 
 /**
@@ -690,10 +693,10 @@ function wrapOneRuleFn(name: string, fn: RuleFn, context: WireContext): RuleFn {
  * through unchanged.
  */
 function wrapConflictsCallback(
-    userConflicts: ConflictsFn | undefined,
-    context: WireContext,
+	userConflicts: ConflictsFn | undefined,
+	context: WireContext,
 ): ConflictsFn | undefined {
-    return buildWiredConflictsFn(userConflicts, context)
+	return buildWiredConflictsFn(userConflicts, context);
 }
 
 /**
@@ -713,15 +716,17 @@ function wrapConflictsCallback(
  * @returns A wrapped conflicts callback that appends symbolized group entries.
  */
 function buildWiredConflictsFn(
-    userConflicts: ConflictsFn | undefined,
-    context: WireContext,
+	userConflicts: ConflictsFn | undefined,
+	context: WireContext,
 ): ConflictsFn {
-    return function wiredConflicts(this: unknown, $: unknown, previous?: unknown[][]): unknown[][] {
-        const base = userConflicts ? userConflicts.call(this, $, previous) : (previous ?? [])
-        if (context.conflictGroups.length === 0) return base as unknown[][]
-        const symbolized = context.conflictGroups.map(group => group.map(name => symbolizeRef($, name)))
-        return [...(base as unknown[][]), ...symbolized]
-    }
+	return function wiredConflicts(this: unknown, $: unknown, previous?: unknown[][]): unknown[][] {
+		const base = userConflicts ? userConflicts.call(this, $, previous) : (previous ?? []);
+		if (context.conflictGroups.length === 0) return base as unknown[][];
+		const symbolized = context.conflictGroups.map((group) =>
+			group.map((name) => symbolizeRef($, name)),
+		);
+		return [...(base as unknown[][]), ...symbolized];
+	};
 }
 
 /**
@@ -746,5 +751,5 @@ function buildWiredConflictsFn(
  * without changing the surface.
  */
 function symbolizeRef(_$: unknown, name: string): unknown {
-    return { type: 'SYMBOL', name }
+	return { type: "SYMBOL", name };
 }

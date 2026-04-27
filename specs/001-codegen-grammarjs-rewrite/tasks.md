@@ -73,7 +73,7 @@
 
 - [x] T027 [US2] Implement ir namespace emitter in `packages/codegen/src/emitters/ir-namespace.ts` — short names, collision detection, keyword/leaf/operator sections
 - [x] T028 [US2] Handle factory name collision detection and disambiguation — implemented in ir-namespace.ts via resolveIrKey() with fallback to full factory name
-- [x] T029 [US2] Implement template literal type generation — escape_sequence: `\`\\${string}\``, boolean_literal: `'true' | 'false'`, enum-like kinds: literal unions — for terminal factories, derive type constraints from grammar rules: PATTERN rules → template literal types (e.g., escape_sequence → `` `\\${string}` ``), enum-like kinds → literal unions (e.g., `'true' | 'false'`), keyword kinds → single string literal. Use `listEnumValues()` and `extractConstantText()` from grammar-reader (FR-020)
+- [x] T029 [US2] Implement template literal type generation — escape_sequence: `\`\\${string}\``, boolean_literal: `'true' | 'false'`, enum-like kinds: literal unions — for terminal factories, derive type constraints from grammar rules: PATTERN rules → template literal types (e.g., escape_sequence → `` `\\${string}` ``), enum-like kinds → literal unions (e.g., `'true' | 'false'`), keyword kinds → single string literal. Use `listEnumValues()`and`extractConstantText()` from grammar-reader (FR-020)
 - [x] T030 [US2] Implement string shorthand sugar + single-field compression — stringLiteral('hello') works, children-only nodes accept string directly in `packages/codegen/src/emitters/factories.ts` — for fields that accept only leaf kinds, generate widened union types: `string | TemplatePattern | NodeData`. Generate runtime resolution in factory body: match value against template literal patterns to infer node kind, fall back to default leaf kind for unmatched strings, pass through NodeData as-is (FR-021). For single-field nodes, generate a compressed overload that accepts the field value directly as the first positional argument: e.g., `ir.string('hello')` instead of `ir.string({ content: 'hello' })` (FR-022)
 - [x] T030a [US2] Implement O(1) input validation — RESERVED_KEYWORDS set emitted, identifier/type_identifier/field_identifier factories validate on creation in `packages/codegen/src/emitters/factories.ts` — for terminal factories accepting string inputs, emit: (a) reserved keyword rejection using `Set.has()` against grammar's keyword list from `listKeywords()`; (b) pattern validation using grammar-derived regex from terminal rules. Validation fires at factory creation time, not render time (FR-023)
 - [x] T031 [US2] Generate `@sittir/rust` package — all files generated into `packages/rust/src/`
@@ -221,7 +221,7 @@
 - [x] T100 Add render tests: leaf without `fields`, branch without `fields`
 - [x] T101 Update stale emitter tests: types.test.ts (6 fixes), factories.test.ts (1 fix)
 - [x] T102 Add new emitter tests: assign.test.ts (7 tests), from.test.ts (7 tests)
-- [x] T103 Update stale integration test assertions (RustNode, *Tree)
+- [x] T103 Update stale integration test assertions (RustNode, \*Tree)
 - [x] T104 Use named `*Tree` interfaces in assign.ts and from.ts instead of generic `TreeNode<'kind'>`
 - [x] T105 Typed `edit()` return: `Simplify<NodeData<K> & methods>` — K flows from input to output
 - [x] T106 Export `Simplify` from `@sittir/types` (inlined from type-fest with attribution)

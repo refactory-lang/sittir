@@ -11,40 +11,42 @@
  * distinct — still holds; the factory fills `$fields.type` automatically.
  */
 
-import { describe, it, expect } from 'vitest';
-import { ir } from '../src/index.ts';
+import { describe, it, expect } from "vitest";
+import { ir } from "../src/index.ts";
 
-describe('python type_alias_statement collision (spec 008 US7)', () => {
-	it('$type holds the kind discriminant, $fields.type holds the `type` keyword field', () => {
+describe("python type_alias_statement collision (spec 008 US7)", () => {
+	it("$type holds the kind discriminant, $fields.type holds the `type` keyword field", () => {
 		const node = ir.typeAlias({
-			left: { $type: 'type', $text: 'Foo' } as any,
-			right: { $type: 'type', $text: 'u64' } as any,
+			left: { $type: "type", $text: "Foo" } as any,
+			right: { $type: "type", $text: "u64" } as any,
 		});
 
 		// Kind discriminant
-		expect(node.$type).toBe('type_alias_statement');
+		expect(node.$type).toBe("type_alias_statement");
 
 		// `type` keyword field — auto-stamped by the factory (ADR-0010)
 		expect(node.$fields).toBeDefined();
-		expect((node.$fields as Record<string, unknown>).type).toBe('type');
+		expect((node.$fields as Record<string, unknown>).type).toBe("type");
 
 		// Provenance tag also present on the factory output
-		expect(node.$source).toBe('factory');
+		expect(node.$source).toBe("factory");
 	});
 
-	it('the two accessors do not alias — modifying one must not affect the other', () => {
+	it("the two accessors do not alias — modifying one must not affect the other", () => {
 		const a = ir.typeAlias({
-			left: { $type: 'type', $text: 'A' } as any,
-			right: { $type: 'type', $text: 'B' } as any,
+			left: { $type: "type", $text: "A" } as any,
+			right: { $type: "type", $text: "B" } as any,
 		});
 		const b = ir.typeAlias({
-			left: { $type: 'type', $text: 'X' } as any,
-			right: { $type: 'type', $text: 'Y' } as any,
+			left: { $type: "type", $text: "X" } as any,
+			right: { $type: "type", $text: "Y" } as any,
 		});
 
 		// Both instances share kind but have distinct field content.
 		expect(a.$type).toBe(b.$type);
-		expect((a.$fields as Record<string, unknown>).type).toBe((b.$fields as Record<string, unknown>).type);
+		expect((a.$fields as Record<string, unknown>).type).toBe(
+			(b.$fields as Record<string, unknown>).type,
+		);
 		// Left/right distinguish — sanity check the `type` field isn't a global.
 		const aLeft = (a.$fields as { left?: { $text?: string } }).left?.$text;
 		const bLeft = (b.$fields as { left?: { $text?: string } }).left?.$text;

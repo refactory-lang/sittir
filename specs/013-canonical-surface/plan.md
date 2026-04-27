@@ -103,6 +103,7 @@ supertype:  emitted as SupertypeRule (already the case today)
 
 `simplify` strips anon literals, collapses single-member seqs.
 Produces a Rule that may still contain:
+
 - `choice(seq(field('a',x), …), seq(field('a',y), …))` with
   same-named fields across branches
 - Nested seqs with fields interleaved with other wrappers
@@ -117,10 +118,11 @@ duplicate-named occurrences.
 ### Target (post-013)
 
 `simplify` does everything above PLUS:
+
 - If the top-level is a choice whose branches each have the same
   field shape (same set of field names), union per-branch contents
   into a flat `seq([field('a', unionedContent), field('b',
-  unionedContent), …])`.
+unionedContent), …])`.
 - If the top-level is a choice whose branches have heterogeneous
   field sets (pattern A: ε `update_expression`; pattern B:
   `function_modifiers`), promote to PolymorphRule (already partially
@@ -134,17 +136,15 @@ Derivation reduces to:
 
 ```ts
 function deriveFields(rule: Rule): AssembledField[] {
-    const members = rule.type === 'seq' ? rule.members : [rule]
-    return members
-        .filter(isField)
-        .map(f => buildAssembledField(f))
+	const members = rule.type === "seq" ? rule.members : [rule];
+	return members.filter(isField).map((f) => buildAssembledField(f));
 }
 
 function deriveChildren(rule: Rule): AssembledChild[] {
-    const members = rule.type === 'seq' ? rule.members : [rule]
-    return members
-        .filter(m => m.type === 'symbol' || m.type === 'supertype')
-        .map(m => buildAssembledChild(m))
+	const members = rule.type === "seq" ? rule.members : [rule];
+	return members
+		.filter((m) => m.type === "symbol" || m.type === "supertype")
+		.map((m) => buildAssembledChild(m));
 }
 ```
 
@@ -165,7 +165,7 @@ per-case logic.
     variants / groups so the top-level seq's members are
     syntactically the surface positions.
   - `absorbChoicesIntoFields`: for `seq(field(a, …), choice(X, Y),
-    field(b, …))` — handle the choice by either polymorph-promoting
+field(b, …))` — handle the choice by either polymorph-promoting
     (distinct field sets) or merging it into adjacent fields'
     content (shared shape).
 
@@ -204,20 +204,20 @@ traversal, no per-case decisions — those all happen inside
 
 ```ts
 class AssembledBranch {
-    readonly simplifiedRule: Rule   // already canonicalized
-    // ... factory naming / irKey / etc.
+	readonly simplifiedRule: Rule; // already canonicalized
+	// ... factory naming / irKey / etc.
 
-    get fields(): AssembledField[] {
-        return projectFields(this.simplifiedRule)
-    }
-    get children(): AssembledChild[] {
-        return projectChildren(this.simplifiedRule)
-    }
+	get fields(): AssembledField[] {
+		return projectFields(this.simplifiedRule);
+	}
+	get children(): AssembledChild[] {
+		return projectChildren(this.simplifiedRule);
+	}
 }
 
 function projectFields(simplified: Rule): AssembledField[] {
-    const members = simplified.type === 'seq' ? simplified.members : [simplified]
-    return members.filter(isField).map(buildAssembledField)
+	const members = simplified.type === "seq" ? simplified.members : [simplified];
+	return members.filter(isField).map(buildAssembledField);
 }
 ```
 
@@ -244,7 +244,7 @@ etc.) that emitters need."
    505 unit tests.
 
 2. **Choice absorption subtlety.** `choice(seq(a, x), seq(a, y),
-   seq(a, z))` where `a` appears in all branches AND the inner
+seq(a, z))` where `a` appears in all branches AND the inner
    content differs — merges into `seq(a, seq_over_choice_of_x_y_z)`
    or directly `seq(a, choice(x, y, z))`. Both are equivalent at
    the value-derivation level. Pick one and document.
@@ -256,7 +256,7 @@ etc.) that emitters need."
 4. **Override fields + choice content.** The current
    `rule.source === 'override' && rule.content.type === 'choice'`
    special case — when a user's `field('wildcard', choice(inner_a,
-   inner_b, inner_c))` override wraps a choice with inner fields —
+inner_b, inner_c))` override wraps a choice with inner fields —
    simplify needs to preserve access to the inner fields (they
    promote to parent). Must not be lost in canonicalization.
 
@@ -308,6 +308,7 @@ separately so Phase 2 can be reverted independently.
 ### Phase 2 — Walker shrink + strict-audit default
 
 Pipeline infrastructure:
+
 - **Infra (A)** — `wire.ts` composes polymorphs onto hidden-rule
   parents (commit `be602c05`). `buildPolymorphParentFn` reads
   `context.deposits` for hidden-name parents; inject skips keys
@@ -322,6 +323,7 @@ Pipeline infrastructure:
   an alias boundary (python `dict_pattern`).
 
 Grammar-author adoption drained the audit:
+
 - Rust `_visibility_modifier_pub: {'1/0/1/3':'in_path'}` —
   nested split unlocked by (A).
 - Python `_match_block: {0:'block'}` — base-grammar hidden rule
@@ -338,6 +340,7 @@ Grammar-author adoption drained the audit:
   inlining so sittir's canonical shape classification still holds.
 
 Walker shrink (commit `aba04edf` + follow-up):
+
 - **`DERIVE_AUDIT_MODE` default flipped to `'strict'`.** Env var
   opt-outs: `SITTIR_AUDIT_DERIVE=1` → `'report'`;
   `SITTIR_AUDIT_DERIVE=off` → `'off'`. `real-grammar.test.ts` uses

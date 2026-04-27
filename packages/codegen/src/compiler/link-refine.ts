@@ -16,11 +16,20 @@
  * See ADR-0010 phase 2 for the full design.
  */
 
-import type { Rule, ChoiceRule, FieldRule, EnumRule } from './rule.ts'
-import { isChoice, isEnum, isField, isString, isSeq, isOptional, isRepeat, isRepeat1 } from './rule.ts'
-import type { RefineForm } from './types.ts'
-import { parsePath } from '../dsl/transform/transform-path.ts'
-import type { PathSegment } from '../dsl/transform/transform-path.ts'
+import type { Rule, ChoiceRule, FieldRule, EnumRule } from "./rule.ts";
+import {
+	isChoice,
+	isEnum,
+	isField,
+	isString,
+	isSeq,
+	isOptional,
+	isRepeat,
+	isRepeat1,
+} from "./rule.ts";
+import type { RefineForm } from "./types.ts";
+import { parsePath } from "../dsl/transform/transform-path.ts";
+import type { PathSegment } from "../dsl/transform/transform-path.ts";
 
 /**
  * The result of resolving a refine() path against a rule tree. Carries
@@ -29,17 +38,17 @@ import type { PathSegment } from '../dsl/transform/transform-path.ts'
  * field's literal values per form.
  */
 export interface RefinePathResolution {
-    /** The field name whose content resolves to the choice, when the
-     *  path descent crossed a `field(name, ...)` wrapper. `undefined`
-     *  when the choice is at the rule root or inside a non-field
-     *  wrapper (refine currently only supports the field-wrapping
-     *  case, but we keep this optional so future non-field refinement
-     *  sites don't need a schema change). */
-    readonly fieldName: string | undefined
-    /** The resolved choice rule — either a `ChoiceRule` or an `EnumRule`
-     *  (the normalized choice-of-strings). Both expose `members`, so
-     *  consumers that walk them uniformly work without adapting. */
-    readonly choice: ChoiceRule | EnumRule
+	/** The field name whose content resolves to the choice, when the
+	 *  path descent crossed a `field(name, ...)` wrapper. `undefined`
+	 *  when the choice is at the rule root or inside a non-field
+	 *  wrapper (refine currently only supports the field-wrapping
+	 *  case, but we keep this optional so future non-field refinement
+	 *  sites don't need a schema change). */
+	readonly fieldName: string | undefined;
+	/** The resolved choice rule — either a `ChoiceRule` or an `EnumRule`
+	 *  (the normalized choice-of-strings). Both expose `members`, so
+	 *  consumers that walk them uniformly work without adapting. */
+	readonly choice: ChoiceRule | EnumRule;
 }
 
 /**
@@ -51,17 +60,13 @@ export interface RefinePathResolution {
  * @param rule - Post-link rule tree for `kind`.
  * @param forms - Ordered list of refine forms declared for `kind`.
  */
-export function validateRefineForms(
-    kind: string,
-    rule: Rule,
-    forms: readonly RefineForm[],
-): void {
-    for (const form of forms) {
-        for (const [pathStr, selection] of Object.entries(form.selections)) {
-            const resolution = resolveRefinePath(kind, form.name, pathStr, rule)
-            validateSelection(kind, form.name, pathStr, resolution.choice, selection)
-        }
-    }
+export function validateRefineForms(kind: string, rule: Rule, forms: readonly RefineForm[]): void {
+	for (const form of forms) {
+		for (const [pathStr, selection] of Object.entries(form.selections)) {
+			const resolution = resolveRefinePath(kind, form.name, pathStr, rule);
+			validateSelection(kind, form.name, pathStr, resolution.choice, selection);
+		}
+	}
 }
 
 /**
@@ -76,32 +81,30 @@ export function validateRefineForms(
  * @throws When the path doesn't resolve, or resolves to a non-choice.
  */
 export function resolveRefinePath(
-    kind: string,
-    formName: string,
-    pathStr: string,
-    rule: Rule,
+	kind: string,
+	formName: string,
+	pathStr: string,
+	rule: Rule,
 ): RefinePathResolution {
-    const segments = parsePath(pathStr)
-    if (segments.length === 0) {
-        throw new Error(
-            `refine(${kind}) form '${formName}': path '${pathStr}' is empty`,
-        )
-    }
-    let cur: Rule = rule
-    let fieldName: string | undefined
-    for (let i = 0; i < segments.length; i++) {
-        const seg = segments[i]!
-        const res = stepPath(cur, seg, kind, formName, pathStr)
-        cur = res.next
-        if (seg.kind === 'fieldName') fieldName = seg.name
-    }
-    const final = unwrapToChoice(cur)
-    if (!final) {
-        throw new Error(
-            `refine(${kind}) form '${formName}': path '${pathStr}' does not resolve to a choice (got '${cur.type}')`,
-        )
-    }
-    return { fieldName, choice: final }
+	const segments = parsePath(pathStr);
+	if (segments.length === 0) {
+		throw new Error(`refine(${kind}) form '${formName}': path '${pathStr}' is empty`);
+	}
+	let cur: Rule = rule;
+	let fieldName: string | undefined;
+	for (let i = 0; i < segments.length; i++) {
+		const seg = segments[i]!;
+		const res = stepPath(cur, seg, kind, formName, pathStr);
+		cur = res.next;
+		if (seg.kind === "fieldName") fieldName = seg.name;
+	}
+	const final = unwrapToChoice(cur);
+	if (!final) {
+		throw new Error(
+			`refine(${kind}) form '${formName}': path '${pathStr}' does not resolve to a choice (got '${cur.type}')`,
+		);
+	}
+	return { fieldName, choice: final };
 }
 
 /**
@@ -113,53 +116,53 @@ export function resolveRefinePath(
  * `field(name, ...)` wrapper.
  */
 function stepPath(
-    rule: Rule,
-    seg: PathSegment,
-    kind: string,
-    formName: string,
-    pathStr: string,
+	rule: Rule,
+	seg: PathSegment,
+	kind: string,
+	formName: string,
+	pathStr: string,
 ): { next: Rule } {
-    switch (seg.kind) {
-        case 'fieldName': {
-            const target = findFieldByName(rule, seg.name)
-            if (!target) {
-                throw new Error(
-                    `refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.name}:' does not match any field in rule (type '${rule.type}')`,
-                )
-            }
-            return { next: target.content }
-        }
-        case 'index': {
-            const members = membersOf(rule)
-            if (!members) {
-                throw new Error(
-                    `refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.value}' cannot descend into '${rule.type}'`,
-                )
-            }
-            const idx = seg.value < 0 ? members.length + seg.value : seg.value
-            if (idx < 0 || idx >= members.length) {
-                throw new Error(
-                    `refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.value}' out of bounds for ${rule.type} (length ${members.length})`,
-                )
-            }
-            return { next: members[idx]! }
-        }
-        case 'wildcard': {
-            const members = membersOf(rule)
-            if (members && members.length > 0) {
-                return { next: members[0]! }
-            }
-            const content = singleContentOf(rule)
-            if (content) return { next: content }
-            throw new Error(
-                `refine(${kind}) form '${formName}': path '${pathStr}' wildcard cannot descend into '${rule.type}'`,
-            )
-        }
-        case 'kind-match':
-            throw new Error(
-                `refine(${kind}) form '${formName}': path '${pathStr}' uses kind-match '(${seg.name})' — refine paths only support positional indices and 'name:' field traversal`,
-            )
-    }
+	switch (seg.kind) {
+		case "fieldName": {
+			const target = findFieldByName(rule, seg.name);
+			if (!target) {
+				throw new Error(
+					`refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.name}:' does not match any field in rule (type '${rule.type}')`,
+				);
+			}
+			return { next: target.content };
+		}
+		case "index": {
+			const members = membersOf(rule);
+			if (!members) {
+				throw new Error(
+					`refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.value}' cannot descend into '${rule.type}'`,
+				);
+			}
+			const idx = seg.value < 0 ? members.length + seg.value : seg.value;
+			if (idx < 0 || idx >= members.length) {
+				throw new Error(
+					`refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.value}' out of bounds for ${rule.type} (length ${members.length})`,
+				);
+			}
+			return { next: members[idx]! };
+		}
+		case "wildcard": {
+			const members = membersOf(rule);
+			if (members && members.length > 0) {
+				return { next: members[0]! };
+			}
+			const content = singleContentOf(rule);
+			if (content) return { next: content };
+			throw new Error(
+				`refine(${kind}) form '${formName}': path '${pathStr}' wildcard cannot descend into '${rule.type}'`,
+			);
+		}
+		case "kind-match":
+			throw new Error(
+				`refine(${kind}) form '${formName}': path '${pathStr}' uses kind-match '(${seg.name})' — refine paths only support positional indices and 'name:' field traversal`,
+			);
+	}
 }
 
 /**
@@ -175,16 +178,16 @@ function stepPath(
  * information downstream so we surface it here instead of collapsing.
  */
 function unwrapToChoice(rule: Rule): ChoiceRule | EnumRule | undefined {
-    let cur = rule
-    for (;;) {
-        if (isChoice(cur)) return cur
-        if (isEnum(cur)) return cur
-        if (isOptional(cur) || isRepeat(cur) || isRepeat1(cur)) {
-            cur = cur.content
-            continue
-        }
-        return undefined
-    }
+	let cur = rule;
+	for (;;) {
+		if (isChoice(cur)) return cur;
+		if (isEnum(cur)) return cur;
+		if (isOptional(cur) || isRepeat(cur) || isRepeat1(cur)) {
+			cur = cur.content;
+			continue;
+		}
+		return undefined;
+	}
 }
 
 /**
@@ -194,18 +197,18 @@ function unwrapToChoice(rule: Rule): ChoiceRule | EnumRule | undefined {
  * segment; duplicate field names at the same level aren't meaningful).
  */
 function findFieldByName(rule: Rule, fieldName: string): FieldRule | undefined {
-    if (isField(rule)) return rule.name === fieldName ? rule : undefined
-    if (isSeq(rule)) {
-        for (const m of rule.members) {
-            const hit = findFieldByName(m, fieldName)
-            if (hit) return hit
-        }
-        return undefined
-    }
-    if (isOptional(rule) || isRepeat(rule) || isRepeat1(rule)) {
-        return findFieldByName(rule.content, fieldName)
-    }
-    return undefined
+	if (isField(rule)) return rule.name === fieldName ? rule : undefined;
+	if (isSeq(rule)) {
+		for (const m of rule.members) {
+			const hit = findFieldByName(m, fieldName);
+			if (hit) return hit;
+		}
+		return undefined;
+	}
+	if (isOptional(rule) || isRepeat(rule) || isRepeat1(rule)) {
+		return findFieldByName(rule.content, fieldName);
+	}
+	return undefined;
 }
 
 /**
@@ -219,27 +222,27 @@ function findFieldByName(rule: Rule, fieldName: string): FieldRule | undefined {
  *   matching one of the choice's string branches.
  */
 function validateSelection(
-    kind: string,
-    formName: string,
-    pathStr: string,
-    choice: ChoiceRule | EnumRule,
-    selection: number | string,
+	kind: string,
+	formName: string,
+	pathStr: string,
+	choice: ChoiceRule | EnumRule,
+	selection: number | string,
 ): void {
-    const arms: readonly Rule[] = choice.members
-    if (typeof selection === 'number') {
-        if (selection < 0 || selection >= arms.length) {
-            throw new Error(
-                `refine(${kind}) form '${formName}': path '${pathStr}' selection index ${selection} out of range (choice has ${arms.length} branches)`,
-            )
-        }
-        return
-    }
-    const stringValues = arms.map(unwrapToStringValue).filter((v): v is string => v !== undefined)
-    if (!stringValues.includes(selection)) {
-        throw new Error(
-            `refine(${kind}) form '${formName}': path '${pathStr}' selection '${selection}' does not match any string branch of the choice (available: ${stringValues.map(v => `'${v}'`).join(', ') || '<none>'})`,
-        )
-    }
+	const arms: readonly Rule[] = choice.members;
+	if (typeof selection === "number") {
+		if (selection < 0 || selection >= arms.length) {
+			throw new Error(
+				`refine(${kind}) form '${formName}': path '${pathStr}' selection index ${selection} out of range (choice has ${arms.length} branches)`,
+			);
+		}
+		return;
+	}
+	const stringValues = arms.map(unwrapToStringValue).filter((v): v is string => v !== undefined);
+	if (!stringValues.includes(selection)) {
+		throw new Error(
+			`refine(${kind}) form '${formName}': path '${pathStr}' selection '${selection}' does not match any string branch of the choice (available: ${stringValues.map((v) => `'${v}'`).join(", ") || "<none>"})`,
+		);
+	}
 }
 
 /**
@@ -250,12 +253,12 @@ function validateSelection(
  * return `undefined`.
  */
 function unwrapToStringValue(rule: Rule): string | undefined {
-    if (isString(rule)) return rule.value
-    if (rule.type === 'variant') {
-        const inner = (rule as { content: Rule }).content
-        if (isString(inner)) return inner.value
-    }
-    return undefined
+	if (isString(rule)) return rule.value;
+	if (rule.type === "variant") {
+		const inner = (rule as { content: Rule }).content;
+		if (isString(inner)) return inner.value;
+	}
+	return undefined;
 }
 
 /**
@@ -275,23 +278,23 @@ function unwrapToStringValue(rule: Rule): string | undefined {
  *   choice shape at parse time but don't qualify for auto-stamp.
  */
 export function narrowedFieldLiteralsForForm(
-    rule: Rule,
-    form: RefineForm,
+	rule: Rule,
+	form: RefineForm,
 ): Array<{ fieldName: string; literal: string }> {
-    const out: Array<{ fieldName: string; literal: string }> = []
-    for (const [pathStr, selection] of Object.entries(form.selections)) {
-        let resolution: RefinePathResolution
-        try {
-            resolution = resolveRefinePath('<emit>', form.name, pathStr, rule)
-        } catch {
-            continue
-        }
-        if (!resolution.fieldName) continue
-        const literal = resolveSelectionLiteral(resolution.choice, selection)
-        if (literal === undefined) continue
-        out.push({ fieldName: resolution.fieldName, literal })
-    }
-    return out
+	const out: Array<{ fieldName: string; literal: string }> = [];
+	for (const [pathStr, selection] of Object.entries(form.selections)) {
+		let resolution: RefinePathResolution;
+		try {
+			resolution = resolveRefinePath("<emit>", form.name, pathStr, rule);
+		} catch {
+			continue;
+		}
+		if (!resolution.fieldName) continue;
+		const literal = resolveSelectionLiteral(resolution.choice, selection);
+		if (literal === undefined) continue;
+		out.push({ fieldName: resolution.fieldName, literal });
+	}
+	return out;
 }
 
 /**
@@ -300,13 +303,13 @@ export function narrowedFieldLiteralsForForm(
  * non-string branch.
  */
 export function resolveSelectionLiteral(
-    choice: ChoiceRule | EnumRule,
-    selection: number | string,
+	choice: ChoiceRule | EnumRule,
+	selection: number | string,
 ): string | undefined {
-    if (typeof selection === 'string') return selection
-    const arm = choice.members[selection]
-    if (!arm) return undefined
-    return unwrapToStringValue(arm)
+	if (typeof selection === "string") return selection;
+	const arm = choice.members[selection];
+	if (!arm) return undefined;
+	return unwrapToStringValue(arm);
 }
 
 // ---------------------------------------------------------------------------
@@ -315,22 +318,22 @@ export function resolveSelectionLiteral(
 // ---------------------------------------------------------------------------
 
 function membersOf(rule: Rule): Rule[] | undefined {
-    if (rule.type === 'seq' || rule.type === 'choice') return rule.members
-    return undefined
+	if (rule.type === "seq" || rule.type === "choice") return rule.members;
+	return undefined;
 }
 
 function singleContentOf(rule: Rule): Rule | undefined {
-    switch (rule.type) {
-        case 'optional':
-        case 'repeat':
-        case 'repeat1':
-        case 'field':
-        case 'variant':
-        case 'clause':
-        case 'group':
-        case 'terminal':
-            return rule.content
-        default:
-            return undefined
-    }
+	switch (rule.type) {
+		case "optional":
+		case "repeat":
+		case "repeat1":
+		case "field":
+		case "variant":
+		case "clause":
+		case "group":
+		case "terminal":
+			return rule.content;
+		default:
+			return undefined;
+	}
 }

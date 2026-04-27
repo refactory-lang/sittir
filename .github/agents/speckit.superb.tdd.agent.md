@@ -1,17 +1,17 @@
 ---
-description: 'Mandatory pre-implement TDD gate. Bridges an installed obra/superpowers
-  test-driven-development skill into spec-kit''s tasks.md task structure and enforces
+description: "Mandatory pre-implement TDD gate. Bridges an installed obra/superpowers
+  test-driven-development skill into spec-kit's tasks.md task structure and enforces
   RED-GREEN-REFACTOR for every task.
 
-  '
+  "
 scripts:
   sh: .specify/scripts/bash/sync-spec-status.sh
   ps: .specify/scripts/powershell/sync-spec-status.ps1
 ---
 
-
 <!-- Extension: superb -->
 <!-- Config: .specify/extensions/superb/ -->
+
 # TDD Enforcement Gate — Before Implementation
 
 > **Type:** Superpowers-adapted command
@@ -118,10 +118,12 @@ Do not attempt fix #3 without completing the debugging protocol first.
 ## Enforcement Checklist (per task)
 
 Before starting:
+
 - [ ] No production code written yet for this task
 - [ ] Test target identified from `tasks.md`
 
 After completing:
+
 - [ ] Saw the test FAIL before writing production code
 - [ ] Wrote the MINIMUM code to pass
 - [ ] Full test suite passes (no regressions)

@@ -30,24 +30,24 @@ You **MUST** consider the user input before proceeding (if not empty). The user 
 
 2. **Build cleanup plan**: Based on user input, determine what to remove:
 
-   | User Input | Action |
-   |-----------|--------|
-   | Specific branch name | Remove that worktree only (with confirmation) |
-   | `merged` | Remove all merged worktrees |
-   | `stale` | Remove all stale worktrees (30+ days inactive) |
-   | `all` | Remove all worktrees except main (with strong warning) |
-   | No input | Remove merged and orphaned only (safest default) |
+   | User Input           | Action                                                 |
+   | -------------------- | ------------------------------------------------------ |
+   | Specific branch name | Remove that worktree only (with confirmation)          |
+   | `merged`             | Remove all merged worktrees                            |
+   | `stale`              | Remove all stale worktrees (30+ days inactive)         |
+   | `all`                | Remove all worktrees except main (with strong warning) |
+   | No input             | Remove merged and orphaned only (safest default)       |
 
 3. **Present cleanup plan**: Show a preview before making any changes:
 
    ```markdown
    # Worktree Cleanup Plan
 
-   | # | Branch | Status | Action | Disk Size |
-   |---|--------|--------|--------|-----------|
-   | 1 | 005-api-gateway | ✅ Merged | Remove | ~45 MB |
-   | 2 | 002-old-feature | ❌ Orphaned | Remove | ~32 MB |
-   | 3 | 004-chat-system | 🟡 Idle | Keep (not merged) | ~41 MB |
+   | #   | Branch          | Status      | Action            | Disk Size |
+   | --- | --------------- | ----------- | ----------------- | --------- |
+   | 1   | 005-api-gateway | ✅ Merged   | Remove            | ~45 MB    |
+   | 2   | 002-old-feature | ❌ Orphaned | Remove            | ~32 MB    |
+   | 3   | 004-chat-system | 🟡 Idle     | Keep (not merged) | ~41 MB    |
 
    **Will remove**: 2 worktrees (~77 MB)
    **Will keep**: 1 worktree

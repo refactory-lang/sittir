@@ -20,12 +20,12 @@
  * want surfaced as a first-class validation error.
  */
 
-import { loadRawEntries } from './node-types-loader.ts'
-import type { RawNodeEntry } from './node-types-loader.ts'
-import type { TemplateRule } from '@sittir/types'
-import type { NodeMap } from '../compiler/types.ts'
-import { buildRuleLookup } from './rule-lookup.ts'
-import { deriveRuleKinds, loadRulesFromPath } from './templates-path.ts'
+import { loadRawEntries } from "./node-types-loader.ts";
+import type { RawNodeEntry } from "./node-types-loader.ts";
+import type { TemplateRule } from "@sittir/types";
+import type { NodeMap } from "../compiler/types.ts";
+import { buildRuleLookup } from "./rule-lookup.ts";
+import { deriveRuleKinds, loadRulesFromPath } from "./templates-path.ts";
 
 /**
  * Derive the set of rule kinds the renderer can handle. For a directory
@@ -37,12 +37,12 @@ import { deriveRuleKinds, loadRulesFromPath } from './templates-path.ts'
  * possible or needed.
  */
 function collectRuleKindsFromPath(templatesPath: string): Set<string> {
-    const base = deriveRuleKinds(templatesPath)
-    if (!templatesPath.endsWith('.yaml') && !templatesPath.endsWith('.yml')) return base
-    // YAML path — expand variant subtypes recorded in the rule objects.
-    const rules = loadRulesFromPath(templatesPath) as Record<string, TemplateRule>
-    for (const rule of Object.values(rules)) collectVariantKindsFromRule(rule, base)
-    return base
+	const base = deriveRuleKinds(templatesPath);
+	if (!templatesPath.endsWith(".yaml") && !templatesPath.endsWith(".yml")) return base;
+	// YAML path — expand variant subtypes recorded in the rule objects.
+	const rules = loadRulesFromPath(templatesPath) as Record<string, TemplateRule>;
+	for (const rule of Object.values(rules)) collectVariantKindsFromRule(rule, base);
+	return base;
 }
 
 // ---------------------------------------------------------------------------
@@ -50,17 +50,17 @@ function collectRuleKindsFromPath(templatesPath: string): Set<string> {
 // ---------------------------------------------------------------------------
 
 export interface RenderableResult {
-    grammar: string
-    total: number
-    /** Count of kinds that are renderable via one of the three paths. */
-    renderable: number
-    /** Kinds that have NO viable path. */
-    missing: MissingKind[]
+	grammar: string;
+	total: number;
+	/** Count of kinds that are renderable via one of the three paths. */
+	renderable: number;
+	/** Kinds that have NO viable path. */
+	missing: MissingKind[];
 }
 
 export interface MissingKind {
-    kind: string
-    reason: string
+	kind: string;
+	reason: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -75,41 +75,41 @@ export interface MissingKind {
  *                       (feature 011) or a legacy `templates.yaml` file.
  */
 export function validateRenderable(grammar: string, templatesPath: string): RenderableResult {
-    const rawEntries = loadRawEntries(grammar)
-    const ruleKinds = collectRuleKindsFromPath(templatesPath)
+	const rawEntries = loadRawEntries(grammar);
+	const ruleKinds = collectRuleKindsFromPath(templatesPath);
 
-    // Post-synthesis-removal: every CST-visible kind `X` produced via
-    // `alias($._X, $.X)` has its template emitted under the SOURCE
-    // name `_X.jinja`. At runtime the renderer only sees source-kind
-    // `$type` values (drillAs remaps CST's `X` to sittir's `_X` at
-    // read time). Validation is at the top level — node-types.json
-    // lists visible `X` — so we treat `X` as renderable when `_X` is
-    // a known rule.
-    const expandedRuleKinds = new Set<string>(ruleKinds)
-    for (const kind of ruleKinds) {
-        if (kind.startsWith('_')) expandedRuleKinds.add(kind.slice(1))
-    }
+	// Post-synthesis-removal: every CST-visible kind `X` produced via
+	// `alias($._X, $.X)` has its template emitted under the SOURCE
+	// name `_X.jinja`. At runtime the renderer only sees source-kind
+	// `$type` values (drillAs remaps CST's `X` to sittir's `_X` at
+	// read time). Validation is at the top level — node-types.json
+	// lists visible `X` — so we treat `X` as renderable when `_X` is
+	// a known rule.
+	const expandedRuleKinds = new Set<string>(ruleKinds);
+	for (const kind of ruleKinds) {
+		if (kind.startsWith("_")) expandedRuleKinds.add(kind.slice(1));
+	}
 
-    const missing: MissingKind[] = []
-    let renderable = 0
-    let total = 0
+	const missing: MissingKind[] = [];
+	let renderable = 0;
+	let total = 0;
 
-    for (const entry of rawEntries) {
-        if (!isNamedEntry(entry)) continue
-        total++
+	for (const entry of rawEntries) {
+		if (!isNamedEntry(entry)) continue;
+		total++;
 
-        const path = classifyRenderability(entry, expandedRuleKinds)
-        if (path === null) {
-            missing.push({
-                kind: entry.type,
-                reason: reasonFor(entry, expandedRuleKinds),
-            })
-        } else {
-            renderable++
-        }
-    }
+		const path = classifyRenderability(entry, expandedRuleKinds);
+		if (path === null) {
+			missing.push({
+				kind: entry.type,
+				reason: reasonFor(entry, expandedRuleKinds),
+			});
+		} else {
+			renderable++;
+		}
+	}
 
-    return { grammar, total, renderable, missing }
+	return { grammar, total, renderable, missing };
 }
 
 /**
@@ -120,30 +120,33 @@ export function validateRenderable(grammar: string, templatesPath: string): Rend
  * returns one).
  */
 export function validateRenderableFromNodeMap(grammar: string, nodeMap: NodeMap): RenderableResult {
-    const rawEntries = loadRawEntries(grammar)
-    const lookup = buildRuleLookup(nodeMap)
+	const rawEntries = loadRawEntries(grammar);
+	const lookup = buildRuleLookup(nodeMap);
 
-    const missing: MissingKind[] = []
-    let renderable = 0
-    let total = 0
+	const missing: MissingKind[] = [];
+	let renderable = 0;
+	let total = 0;
 
-    for (const entry of rawEntries) {
-        if (!isNamedEntry(entry)) continue
-        total++
+	for (const entry of rawEntries) {
+		if (!isNamedEntry(entry)) continue;
+		total++;
 
-        if (lookup.renderable.has(entry.type)) {
-            renderable++
-        } else {
-            missing.push({
-                kind: entry.type,
-                reason: `no NodeMap render path for '${entry.type}' (kind is `
-                    + (lookup.kinds.has(entry.type) ? `modelType=${lookup.path.get(entry.type) ?? 'none'}` : `absent from NodeMap`)
-                    + ')',
-            })
-        }
-    }
+		if (lookup.renderable.has(entry.type)) {
+			renderable++;
+		} else {
+			missing.push({
+				kind: entry.type,
+				reason:
+					`no NodeMap render path for '${entry.type}' (kind is ` +
+					(lookup.kinds.has(entry.type)
+						? `modelType=${lookup.path.get(entry.type) ?? "none"}`
+						: `absent from NodeMap`) +
+					")",
+			});
+		}
+	}
 
-    return { grammar, total, renderable, missing }
+	return { grammar, total, renderable, missing };
 }
 
 // ---------------------------------------------------------------------------
@@ -160,37 +163,37 @@ export function validateRenderableFromNodeMap(grammar: string, nodeMap: NodeMap)
  *   no render call of their own.
  */
 function isNamedEntry(entry: RawNodeEntry): boolean {
-    return entry.named
+	return entry.named;
 }
 
 // ---------------------------------------------------------------------------
 // Renderability decision
 // ---------------------------------------------------------------------------
 
-type Path = 'supertype' | 'leaf' | 'rule'
+type Path = "supertype" | "leaf" | "rule";
 
 function classifyRenderability(entry: RawNodeEntry, ruleKinds: Set<string>): Path | null {
-    // 1. Supertype — dispatched, never rendered directly.
-    if (entry.subtypes && entry.subtypes.length > 0) return 'supertype'
+	// 1. Supertype — dispatched, never rendered directly.
+	if (entry.subtypes && entry.subtypes.length > 0) return "supertype";
 
-    // 2. Pure leaf — `render()` returns node.text directly.
-    const hasFields = entry.fields && Object.keys(entry.fields).length > 0
-    const hasChildren = entry.children !== undefined
-    if (!hasFields && !hasChildren) return 'leaf'
+	// 2. Pure leaf — `render()` returns node.text directly.
+	const hasFields = entry.fields && Object.keys(entry.fields).length > 0;
+	const hasChildren = entry.children !== undefined;
+	if (!hasFields && !hasChildren) return "leaf";
 
-    // 3. Has a template rule in templates.yaml.
-    if (ruleKinds.has(entry.type)) return 'rule'
+	// 3. Has a template rule in templates.yaml.
+	if (ruleKinds.has(entry.type)) return "rule";
 
-    return null
+	return null;
 }
 
 function reasonFor(entry: RawNodeEntry, ruleKinds: Set<string>): string {
-    const hasFields = entry.fields && Object.keys(entry.fields).length > 0
-    const hasChildren = entry.children !== undefined
-    const parts: string[] = []
-    if (hasFields) parts.push(`fields=[${Object.keys(entry.fields!).join(',')}]`)
-    if (hasChildren) parts.push('children')
-    return `structural node (${parts.join(', ')}) but no rule in templates.yaml`
+	const hasFields = entry.fields && Object.keys(entry.fields).length > 0;
+	const hasChildren = entry.children !== undefined;
+	const parts: string[] = [];
+	if (hasFields) parts.push(`fields=[${Object.keys(entry.fields!).join(",")}]`);
+	if (hasChildren) parts.push("children");
+	return `structural node (${parts.join(", ")}) but no rule in templates.yaml`;
 }
 
 // ---------------------------------------------------------------------------
@@ -208,14 +211,14 @@ function reasonFor(entry: RawNodeEntry, ruleKinds: Set<string>): string {
  *   `{ variants: [{ name, template, ... }, ...] }`.
  */
 function collectVariantKindsFromRule(rule: TemplateRule, kinds: Set<string>): void {
-    if (rule && typeof rule === 'object' && !Array.isArray(rule)) {
-        const variants = (rule as { variants?: Array<{ name?: string }> }).variants
-        if (Array.isArray(variants)) {
-            for (const v of variants) {
-                if (v?.name) kinds.add(v.name)
-            }
-        }
-    }
+	if (rule && typeof rule === "object" && !Array.isArray(rule)) {
+		const variants = (rule as { variants?: Array<{ name?: string }> }).variants;
+		if (Array.isArray(variants)) {
+			for (const v of variants) {
+				if (v?.name) kinds.add(v.name);
+			}
+		}
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -223,16 +226,16 @@ function collectVariantKindsFromRule(rule: TemplateRule, kinds: Set<string>): vo
 // ---------------------------------------------------------------------------
 
 export function formatRenderableReport(result: RenderableResult): string {
-    const lines: string[] = []
-    const icon = result.missing.length === 0 ? 'v' : 'x'
-    lines.push(
-        `  ${icon} ${result.renderable}/${result.total} kinds renderable` +
-        ` (${result.missing.length} un-renderable)`
-    )
-    if (result.missing.length > 0) {
-        for (const m of result.missing) {
-            lines.push(`    x ${m.kind}: ${m.reason}`)
-        }
-    }
-    return lines.join('\n')
+	const lines: string[] = [];
+	const icon = result.missing.length === 0 ? "v" : "x";
+	lines.push(
+		`  ${icon} ${result.renderable}/${result.total} kinds renderable` +
+			` (${result.missing.length} un-renderable)`,
+	);
+	if (result.missing.length > 0) {
+		for (const m of result.missing) {
+			lines.push(`    x ${m.kind}: ${m.reason}`);
+		}
+	}
+	return lines.join("\n");
 }

@@ -20,7 +20,7 @@
 - Q: Stylistic conventions to retain from old API? → A: Key conventions to carry forward, especially those based on supertypes: (1) supertype union types — `_expression` generates `type Expression = BinaryExpression | CallExpression | ...`, enabling fields typed as `Expression` to accept any concrete expression factory output; (2) `toShortName` for ir namespace keys — `ir.function` not `ir.functionItem`, trailing underscores dropped; (3) nested namespaces within `ir` for grouping by supertype. Also retain: camelCase field names, keyword factories (zero-arg), leaf factories (text-arg), semantic operator aliases.
 - Q: Parse-tree type support? → A: Yes. Generate `const enum SyntaxKind` for node kind discrimination. Two separate type projections from the same grammar: construction types (factory input shapes) and navigation types (parse-tree node shapes with `*Node` suffix, e.g., `name: IdentifierNode`, `body?: BlockNode`). Both generated in the same codegen pass, both using the same `SyntaxKind` enum.
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Generate Fluent Builders from grammar.js (Priority: P1)
 
@@ -112,7 +112,7 @@ The codegen system produces per-node test files alongside the factories, providi
 - What happens when a grammar rule contains ALIAS nodes that change the apparent type? The system respects `node-types.json` as authoritative for structure while using `grammar.json` for token ordering and constant text extraction.
 - What happens when a grammar is updated and regenerated? Regeneration is idempotent — running codegen on the same grammar version produces identical output.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -158,7 +158,7 @@ The codegen system produces per-node test files alongside the factories, providi
 - **Edit**: A byte-range replacement descriptor (startPos, endPos, insertedText) for integration with ast-grep and codemod tooling.
 - **NodeMeta**: The merged metadata for a single node kind — combines field info from `node-types.json` with rule structure from `grammar.json`.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

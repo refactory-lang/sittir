@@ -16,11 +16,11 @@ When bugs surface during implementation, the SDD workflow breaks down:
 
 The Bugfix Workflow extension adds three commands that close the gap between bug discovery and spec correction:
 
-| Command | Purpose | Modifies Files? |
-|---------|---------|-----------------|
-| `/speckit.bugfix.report` | Capture a bug and trace it back to the relevant spec, plan, and task artifacts | Yes — creates bug report file |
-| `/speckit.bugfix.patch` | Surgically update spec, plan, and tasks to address the reported bug | Yes — spec.md, plan.md, tasks.md |
-| `/speckit.bugfix.verify` | Verify that bugfix patches are consistent across all spec artifacts | No — read-only |
+| Command                  | Purpose                                                                        | Modifies Files?                  |
+| ------------------------ | ------------------------------------------------------------------------------ | -------------------------------- |
+| `/speckit.bugfix.report` | Capture a bug and trace it back to the relevant spec, plan, and task artifacts | Yes — creates bug report file    |
+| `/speckit.bugfix.patch`  | Surgically update spec, plan, and tasks to address the reported bug            | Yes — spec.md, plan.md, tasks.md |
+| `/speckit.bugfix.verify` | Verify that bugfix patches are consistent across all spec artifacts            | No — read-only                   |
 
 ## Installation
 
@@ -32,13 +32,13 @@ specify extension add --from https://github.com/Quratulain-bilal/spec-kit-bugfix
 
 The extension classifies bugs into five categories:
 
-| Type | Description | Example |
-|------|-------------|---------|
-| Spec gap | Requirement missing from spec | Auth flow doesn't handle expired tokens |
-| Spec conflict | Two requirements contradict | "Must be stateless" vs "Must track sessions" |
-| Implementation drift | Code diverges from spec | Spec says REST, code uses GraphQL |
-| Untested flow | Edge case not covered | Concurrent user updates not handled |
-| Dependency issue | External dependency changed | API response format differs from assumption |
+| Type                 | Description                   | Example                                      |
+| -------------------- | ----------------------------- | -------------------------------------------- |
+| Spec gap             | Requirement missing from spec | Auth flow doesn't handle expired tokens      |
+| Spec conflict        | Two requirements contradict   | "Must be stateless" vs "Must track sessions" |
+| Implementation drift | Code diverges from spec       | Spec says REST, code uses GraphQL            |
+| Untested flow        | Edge case not covered         | Concurrent user updates not handled          |
+| Dependency issue     | External dependency changed   | API response format differs from assumption  |
 
 ## Workflow
 

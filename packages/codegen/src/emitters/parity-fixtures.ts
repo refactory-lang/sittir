@@ -27,25 +27,25 @@ import {
 	type ParityFixture,
 	type RenderFixture,
 	type RoundTripFixture,
-} from '../validate/roundtrip.ts'
+} from "../validate/roundtrip.ts";
 
 /** FR-011 exception kinds — at least one fixture of each must appear
  *  in the extracted corpus for its matching grammar. See spec 012
  *  FR-011 and the plan.md exception-rule carve-out discussion. */
 const FR_011_REQUIRED: Record<string, readonly string[]> = {
-	rust: ['visibility_modifier'],
-	typescript: ['export_statement', 'call_expression'],
+	rust: ["visibility_modifier"],
+	typescript: ["export_statement", "call_expression"],
 	python: [],
-}
+};
 
 export interface ExtractResult {
-	grammar: string
-	fixtures: ParityFixture[]
+	grammar: string;
+	fixtures: ParityFixture[];
 	/** Render + round-trip counts for diagnostic logging. */
-	renderCount: number
-	roundTripCount: number
+	renderCount: number;
+	roundTripCount: number;
 	/** Kinds covered by at least one roundtrip fixture. */
-	coveredKinds: Set<string>
+	coveredKinds: Set<string>;
 }
 
 /**
@@ -58,21 +58,21 @@ export async function extractParityFixtures(
 	grammar: string,
 	templatesPath: string,
 ): Promise<ExtractResult> {
-	const fixtures: ParityFixture[] = []
-	const coveredKinds = new Set<string>()
-	let renderCount = 0
-	let roundTripCount = 0
+	const fixtures: ParityFixture[] = [];
+	const coveredKinds = new Set<string>();
+	let renderCount = 0;
+	let roundTripCount = 0;
 
 	await validateRoundTrip(grammar, templatesPath, {
 		onFixture: (fx) => {
-			fixtures.push(fx)
-			if (fx.kind === 'render') renderCount++
+			fixtures.push(fx);
+			if (fx.kind === "render") renderCount++;
 			else {
-				roundTripCount++
-				coveredKinds.add(fx.pattern)
+				roundTripCount++;
+				coveredKinds.add(fx.pattern);
 			}
 		},
-	})
+	});
 
 	// FR-011 gate — fail build on missing exception kinds. A kind
 	// counts as covered when ANY of the following is in the corpus:
@@ -84,25 +84,25 @@ export async function extractParityFixtures(
 	// always through a variant child. Accepting either satisfies the
 	// corpus-coverage intent without regressing on the parent-only
 	// pre-adoption case.
-	const required = FR_011_REQUIRED[grammar] ?? []
+	const required = FR_011_REQUIRED[grammar] ?? [];
 	const isCovered = (parent: string): boolean => {
-		if (coveredKinds.has(parent)) return true
-		const variantPrefix = `_${parent}_`
-		for (const k of coveredKinds) if (k.startsWith(variantPrefix)) return true
-		return false
-	}
-	const missing = required.filter((k) => !isCovered(k))
+		if (coveredKinds.has(parent)) return true;
+		const variantPrefix = `_${parent}_`;
+		for (const k of coveredKinds) if (k.startsWith(variantPrefix)) return true;
+		return false;
+	};
+	const missing = required.filter((k) => !isCovered(k));
 	if (missing.length > 0) {
 		throw new Error(
 			`parity-fixtures[${grammar}]: FR-011 exception kind(s) not covered by the ` +
-				`extracted corpus: ${missing.join(', ')}. The RT validator either ` +
+				`extracted corpus: ${missing.join(", ")}. The RT validator either ` +
 				`doesn't exercise these kinds (no matching corpus entry) or they ` +
 				`fail the render/reparse/AST-match gate. Fixture extraction can't ` +
 				`proceed until the corpus covers every FR-011 kind per spec 012.`,
-		)
+		);
 	}
 
-	return { grammar, fixtures, renderCount, roundTripCount, coveredKinds }
+	return { grammar, fixtures, renderCount, roundTripCount, coveredKinds };
 }
 
 /**
@@ -113,16 +113,16 @@ export async function extractParityFixtures(
  * `serde_json::from_str` against a matching enum.
  */
 export function serializeFixtures(fixtures: readonly ParityFixture[]): string {
-	return JSON.stringify(fixtures, null, 2) + '\n'
+	return JSON.stringify(fixtures, null, 2) + "\n";
 }
 
 /** Per-grammar output path. Kept alongside the rust-render crate so a
  *  single `packages/{lang}/` regen replaces both the Rust source and
  *  its test inputs. */
 export function fixturesOutputPath(grammar: string): string {
-	return `packages/${grammar}/rust-render/test-fixtures.json`
+	return `packages/${grammar}/rust-render/test-fixtures.json`;
 }
 
 // Re-export the fixture types so cli.ts / tests can reference them
 // without reaching into validate/ directly.
-export type { ParityFixture, RenderFixture, RoundTripFixture }
+export type { ParityFixture, RenderFixture, RoundTripFixture };

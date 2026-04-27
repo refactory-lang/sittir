@@ -118,6 +118,7 @@
 ### T050 [US3] — Polymorph factory ergonomics for nested-alias kinds
 
 **Context**: With nested-alias polymorphs, the parse tree stores data in a parent+variant-child structure:
+
 ```
 (assignment              ← parent: has field('left')
   (assignment_eq         ← variant child: has field('right')
@@ -130,6 +131,7 @@ readNode produces `{ type: 'assignment', fields: { left }, children: [{ type: 'a
 **Goal**: Generate polymorph-aware factories that present a flat ergonomic surface while keeping the tree structure intact internally.
 
 **Design**:
+
 - readNode/wrap: **no changes** — store the tree structure as-is (parent fields + variant child)
 - Registration: `alias('name')` in transform already registers the polymorph relationship via synthetic-rules accumulator. Extend to also register `{ parentKind, variantName, variantFields }` metadata
 - Link/Assemble: detect nested-alias pattern from node-types.json — when a kind's `children.types` are ALL alias variants (visible names with hidden `_name` counterparts), classify as a nested-alias polymorph. Produce `AssembledPolymorph` with forms derived from the variants

@@ -3,6 +3,7 @@
 Generate typed factory functions and YAML render templates from [tree-sitter](https://tree-sitter.github.io/) grammars.
 
 Given any tree-sitter grammar, sittir generates:
+
 - **Typed factories** — one per node kind, producing `NodeData` plain objects with fluent getters/setters
 - **YAML render templates** — `$FIELD_NAME` placeholder syntax with `joinBy` separators and polymorph variants, stored in `templates.yaml`
 - **`.from()` resolution** — ergonomic input with string/number/object coercion, fully tree-shakeable
@@ -20,53 +21,53 @@ Given any tree-sitter grammar, sittir generates:
 
 ## Packages
 
-| Package | Description |
-|---------|-------------|
-| [`@sittir/core`](packages/core) | Grammar-driven render engine, validation, CST, Edit creation |
-| [`@sittir/types`](packages/types) | Pure TypeScript types (zero runtime) — `AnyNodeData`, `ConfigOf<T>`, `TreeNodeOf<T>` |
-| [`@sittir/codegen`](packages/codegen) | Five-phase compiler: reads grammar.json + node-types.json, emits everything |
-| [`@sittir/rust`](packages/rust) | 210 generated Rust node kinds |
-| [`@sittir/typescript`](packages/typescript) | 269 generated TypeScript node kinds |
-| [`@sittir/python`](packages/python) | 176 generated Python node kinds |
+| Package                                     | Description                                                                          |
+| ------------------------------------------- | ------------------------------------------------------------------------------------ |
+| [`@sittir/core`](packages/core)             | Grammar-driven render engine, validation, CST, Edit creation                         |
+| [`@sittir/types`](packages/types)           | Pure TypeScript types (zero runtime) — `AnyNodeData`, `ConfigOf<T>`, `TreeNodeOf<T>` |
+| [`@sittir/codegen`](packages/codegen)       | Five-phase compiler: reads grammar.json + node-types.json, emits everything          |
+| [`@sittir/rust`](packages/rust)             | 210 generated Rust node kinds                                                        |
+| [`@sittir/typescript`](packages/typescript) | 269 generated TypeScript node kinds                                                  |
+| [`@sittir/python`](packages/python)         | 176 generated Python node kinds                                                      |
 
 ## Quick Start
 
 ### Factory API
 
 ```ts
-import { ir } from '@sittir/rust'
+import { ir } from "@sittir/rust";
 
 const node = ir.functionItem({
-  name: ir.identifier('main'),       // leaf factory takes text directly
-  parameters: ir.parameters(),       // rest-params (variadic children)
-  body: ir.block({ children: [] }),
-})
+	name: ir.identifier("main"), // leaf factory takes text directly
+	parameters: ir.parameters(), // rest-params (variadic children)
+	body: ir.block({ children: [] }),
+});
 
-console.log(node.type)               // 'function_item'
-console.log(node.name().text)        // 'main' (fluent getter, no-arg = get)
-const withBody = node.body(newBlock)  // with-arg = setter (returns new node)
+console.log(node.type); // 'function_item'
+console.log(node.name().text); // 'main' (fluent getter, no-arg = get)
+const withBody = node.body(newBlock); // with-arg = setter (returns new node)
 ```
 
 ### `.from()` API
 
 ```ts
-import { ir } from '@sittir/typescript'
+import { ir } from "@sittir/typescript";
 
 const fn = ir.functionDeclaration.from({
-  name: 'greet',             // string → identifier leaf node
-  body: ir.statementBlock.from({
-    children: [ir.returnStatement.from({ children: [ir.identifier('hello')] })],
-  }),
-})
+	name: "greet", // string → identifier leaf node
+	body: ir.statementBlock.from({
+		children: [ir.returnStatement.from({ children: [ir.identifier("hello")] })],
+	}),
+});
 ```
 
 ### Render
 
 ```ts
-import { render } from '@sittir/core'
-import { rules } from '@sittir/rust'
+import { render } from "@sittir/core";
+import { rules } from "@sittir/rust";
 
-const source = render(node, rules)  // YAML template expansion
+const source = render(node, rules); // YAML template expansion
 ```
 
 ### Codemod with ast-grep
@@ -74,26 +75,24 @@ const source = render(node, rules)  // YAML template expansion
 Find nodes with ast-grep, read into typed NodeData, modify with fluent setters, emit a text edit:
 
 ```ts
-import { parse, Lang } from '@ast-grep/napi'
-import { replace } from '@sittir/core'
-import { ir, readTreeNode } from '@sittir/rust'
+import { parse, Lang } from "@ast-grep/napi";
+import { replace } from "@sittir/core";
+import { ir, readTreeNode } from "@sittir/rust";
 
 // 1. Find all function items using ast-grep
-const root = parse(Lang.Rust, source).root()
-const matches = root.findAll({ rule: { kind: 'function_item' } })
+const root = parse(Lang.Rust, source).root();
+const matches = root.findAll({ rule: { kind: "function_item" } });
 
 for (const match of matches) {
-  // 2. Read the parse tree node into typed NodeData
-  const fn = readTreeNode(match) as ReturnType<typeof ir.functionItem>
+	// 2. Read the parse tree node into typed NodeData
+	const fn = readTreeNode(match) as ReturnType<typeof ir.functionItem>;
 
-  // 3. Modify — fluent setter returns a new node (immutable)
-  const updated = fn
-    .visibilityModifier(ir.visibilityModifier({ children: [] }))
-    .body(fn.body())
+	// 3. Modify — fluent setter returns a new node (immutable)
+	const updated = fn.visibilityModifier(ir.visibilityModifier({ children: [] })).body(fn.body());
 
-  // 4. replace() renders the node and pairs it with the target's byte range
-  const edit = replace(match, updated)
-  // edit = { startPos, endPos, insertedText }
+	// 4. replace() renders the node and pairs it with the target's byte range
+	const edit = replace(match, updated);
+	// edit = { startPos, endPos, insertedText }
 }
 ```
 
@@ -126,13 +125,13 @@ for (const match of matches) {
 
 ### Compiler Pipeline
 
-| Phase | Input | Output | Purpose |
-|-------|-------|--------|---------|
-| **Evaluate** | `grammar.json` + `overrides.ts` | Raw grammar with resolved rules | Parse grammar, apply DSL transforms, collect roles |
-| **Link** | Raw grammar + `node-types.json` | Linked `NodeMap` with field specs | Resolve symbols, classify kinds, detect polymorphs |
-| **Optimize** | Linked NodeMap | Optimized NodeMap | Merge variants, collapse repeated shapes |
-| **Assemble** | Optimized NodeMap | Assembly with render templates | Walk rules → YAML templates with `$FIELD` placeholders, `joinBy` separators |
-| **Emit** | Assembly | Generated `.ts` + `.yaml` files | Produce types, factories, from, wrap, rules, consts |
+| Phase        | Input                           | Output                            | Purpose                                                                     |
+| ------------ | ------------------------------- | --------------------------------- | --------------------------------------------------------------------------- |
+| **Evaluate** | `grammar.json` + `overrides.ts` | Raw grammar with resolved rules   | Parse grammar, apply DSL transforms, collect roles                          |
+| **Link**     | Raw grammar + `node-types.json` | Linked `NodeMap` with field specs | Resolve symbols, classify kinds, detect polymorphs                          |
+| **Optimize** | Linked NodeMap                  | Optimized NodeMap                 | Merge variants, collapse repeated shapes                                    |
+| **Assemble** | Optimized NodeMap               | Assembly with render templates    | Walk rules → YAML templates with `$FIELD` placeholders, `joinBy` separators |
+| **Emit**     | Assembly                        | Generated `.ts` + `.yaml` files   | Produce types, factories, from, wrap, rules, consts                         |
 
 ### Data Flow
 
@@ -154,22 +153,23 @@ Grammar maintainers author `packages/<lang>/overrides.ts` to patch field labels 
 
 ```ts
 // packages/python/overrides.ts
-import base from 'tree-sitter-python/grammar.js'
-import { transform, role, enrich, field } from '../codegen/src/dsl/index.ts'
+import base from "tree-sitter-python/grammar.js";
+import { transform, role, enrich, field } from "../codegen/src/dsl/index.ts";
 
 export default grammar(enrich(base), {
-  name: 'python',
-  rules: {
-    _indent: ($) => role($._indent, 'indent'),
-    _dedent: ($) => role($._dedent, 'dedent'),
+	name: "python",
+	rules: {
+		_indent: ($) => role($._indent, "indent"),
+		_dedent: ($) => role($._dedent, "dedent"),
 
-    conditional_expression: ($, original) => transform(original, {
-      0: field('body'),
-      2: field('condition'),
-      4: field('alternative'),
-    }),
-  },
-})
+		conditional_expression: ($, original) =>
+			transform(original, {
+				0: field("body"),
+				2: field("condition"),
+				4: field("alternative"),
+			}),
+	},
+});
 ```
 
 ## Development
@@ -203,9 +203,9 @@ per process — call it any time after the first `import` of the
 package.
 
 ```ts
-import { getActiveBackend } from '@sittir/rust'
+import { getActiveBackend } from "@sittir/rust";
 
-console.log(getActiveBackend())
+console.log(getActiveBackend());
 // { name: 'native', reason: 'loaded', hashMatch: true }
 // or
 // { name: 'typescript', reason: 'native package not installed', hashMatch: false }
@@ -213,11 +213,11 @@ console.log(getActiveBackend())
 
 ### Environment variables
 
-| Variable | Effect |
-|---|---|
-| `SITTIR_BACKEND=native` | Force the native backend; throw if it can't load. Useful for CI parity diffing. |
+| Variable                    | Effect                                                                                          |
+| --------------------------- | ----------------------------------------------------------------------------------------------- |
+| `SITTIR_BACKEND=native`     | Force the native backend; throw if it can't load. Useful for CI parity diffing.                 |
 | `SITTIR_BACKEND=typescript` | Skip the native load entirely; always use the TS engine. Useful for capturing reference output. |
-| `SITTIR_BACKEND_DEBUG=1` | Emit a single `stderr` line per package indicating which backend resolved and why. |
+| `SITTIR_BACKEND_DEBUG=1`    | Emit a single `stderr` line per package indicating which backend resolved and why.              |
 
 ### Silent-fallback semantics
 

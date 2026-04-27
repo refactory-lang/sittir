@@ -11,7 +11,7 @@
 - [x] Written for non-technical stakeholders
 - [x] All mandatory sections completed
 
-**Notes on content quality**: This specification intentionally names specific runtime technologies (Nunjucks, askama, Jinja) because the feature's scope *is* a migration between those technologies. The "what" (swap YAML templates for Jinja files consumed by two named engines) cannot be expressed without naming them. The specification remains technology-agnostic about internals within each side (e.g., it does not prescribe how Nunjucks is loaded or how askama's derive macro expands — only that outputs match). This is consistent with migration specs across the project.
+**Notes on content quality**: This specification intentionally names specific runtime technologies (Nunjucks, askama, Jinja) because the feature's scope _is_ a migration between those technologies. The "what" (swap YAML templates for Jinja files consumed by two named engines) cannot be expressed without naming them. The specification remains technology-agnostic about internals within each side (e.g., it does not prescribe how Nunjucks is loaded or how askama's derive macro expands — only that outputs match). This is consistent with migration specs across the project.
 
 ## Requirement Completeness
 
@@ -24,7 +24,7 @@
 - [x] Scope is clearly bounded
 - [x] Dependencies and assumptions identified
 
-**Notes on requirement completeness**: Success criteria (SC-001 through SC-008) focus on outcomes: byte-identical rendering, file-count invariants, build-time validation, diff noise reduction, performance bounds. SC-004, SC-005, and SC-008 name Nunjucks/askama/`cargo build` because the migration target requires them; the *outcome* measured (parity, build-time error surfacing, wall-clock render time) is observable regardless.
+**Notes on requirement completeness**: Success criteria (SC-001 through SC-008) focus on outcomes: byte-identical rendering, file-count invariants, build-time validation, diff noise reduction, performance bounds. SC-004, SC-005, and SC-008 name Nunjucks/askama/`cargo build` because the migration target requires them; the _outcome_ measured (parity, build-time error surfacing, wall-clock render time) is observable regardless.
 
 ## Feature Readiness
 

@@ -49,7 +49,7 @@ export type NodeChildValue = AnyNodeData | string | number;
 export interface AnyNodeData {
 	$type: string;
 	/** Which producer emitted this node. */
-	$source?: 'ts' | 'sg' | 'factory';
+	$source?: "ts" | "sg" | "factory";
 	/** Variant subtype name — set by factory, absent on readNode output. */
 	$variant?: string;
 	$fields?: { readonly [key: string]: NodeFieldValue };
@@ -88,9 +88,7 @@ export interface AnyNodeData {
  * anonymous tokens with non-required fields. If any variable in the
  * clause is absent, the entire clause is omitted.
  */
-export type TemplateRule =
-	| string
-	| TemplateRuleObject;
+export type TemplateRule = string | TemplateRuleObject;
 
 export interface TemplateRuleObject {
 	/** Standard template — mutually exclusive with `variants`. */
@@ -190,7 +188,6 @@ export interface RenderContext {
 // ---------------------------------------------------------------------------
 // Render registries
 // ---------------------------------------------------------------------------
-
 
 // ---------------------------------------------------------------------------
 // Edit helpers — structural types for ast-grep SgNode compatibility

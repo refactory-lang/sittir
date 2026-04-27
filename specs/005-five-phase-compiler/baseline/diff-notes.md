@@ -17,26 +17,26 @@ into one of these categories:
 
 ### (a) Intentional improvements
 
-| File | Direction | Notes |
-|---|---|---|
-| `types.ts` | v2 +9–19% | v2 emits stub interfaces for every kind referenced in field/child unions; v1 silently dropped them, leaving dangling references. Now fully type-clean via `tsgo --noEmit` (see T052, C19, commit `a77f94b`). |
-| `templates.yaml` | v2 +23–78% | v2's pure-switch classifier catches rules v1's heuristic path missed — particularly in typescript where the delta is +197 entries. |
-| `consts.ts` | v2 +11–17% | v2 emits the full set of kinds; v1 dropped hidden rules and some supertype members. |
-| `type-test.ts` | v2 +42% avg | v2 asserts `Tree['type']` narrows for every emitted kind; v1 skipped many. Caught a real class of type-level bugs. |
-| `factories.ts` (camelCase) | v2 –5–16% | v2 names factories `abstractType` vs v1's `abstract_type_`. Same semantic coverage; shorter identifiers. |
+| File                       | Direction   | Notes                                                                                                                                                                                                        |
+| -------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `types.ts`                 | v2 +9–19%   | v2 emits stub interfaces for every kind referenced in field/child unions; v1 silently dropped them, leaving dangling references. Now fully type-clean via `tsgo --noEmit` (see T052, C19, commit `a77f94b`). |
+| `templates.yaml`           | v2 +23–78%  | v2's pure-switch classifier catches rules v1's heuristic path missed — particularly in typescript where the delta is +197 entries.                                                                           |
+| `consts.ts`                | v2 +11–17%  | v2 emits the full set of kinds; v1 dropped hidden rules and some supertype members.                                                                                                                          |
+| `type-test.ts`             | v2 +42% avg | v2 asserts `Tree['type']` narrows for every emitted kind; v1 skipped many. Caught a real class of type-level bugs.                                                                                           |
+| `factories.ts` (camelCase) | v2 –5–16%   | v2 names factories `abstractType` vs v1's `abstract_type_`. Same semantic coverage; shorter identifiers.                                                                                                     |
 
 ### (b) Formatting-only
 
-| File | Notes |
-|---|---|
-| `grammar.ts` | **Byte-identical** across all three grammars. |
-| `index.ts` | **Byte-identical** across all three grammars. |
-| `ir.ts` | Within ±5% lines; differences are the `_attach(fn, props)` helper that replaces `Object.assign` (required for polymorphs with a form named `name`/`length`/etc.). |
+| File         | Notes                                                                                                                                                             |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `grammar.ts` | **Byte-identical** across all three grammars.                                                                                                                     |
+| `index.ts`   | **Byte-identical** across all three grammars.                                                                                                                     |
+| `ir.ts`      | Within ±5% lines; differences are the `_attach(fn, props)` helper that replaces `Object.assign` (required for polymorphs with a form named `name`/`length`/etc.). |
 
 ### (c) Regressions
 
-| File | Severity | Status |
-|---|---|---|
+| File      | Severity                             | Status                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| --------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `from.ts` | **Capability regression, not crash** | v2 `from.ts` is 60–72% smaller. The size drop is partly legitimate dedup, partly **missing resolver logic** — see "from.ts resolver gap" in the cleanup backlog under C6-prereq. v2 silently passes loose string/object/array inputs through without coercing them to the correct branch factories. Tracked separately; no test currently exercises the loose-input path so all 1111 tests pass with the regression in place. |
 
 ## Intentional bug fixes landed during baseline reconciliation

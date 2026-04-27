@@ -23,22 +23,22 @@ The feature rests directly on ADR-0013's completed cleanup: task 1 (loader split
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 Reviewed against `/Users/pmouli/GitHub.nosync/refactory-lang/sittir/.specify/memory/constitution.md` v1.2:
 
-| Principle | Check | Notes |
-|-----------|-------|-------|
-| I. Grammar Alignment | ✅ Pass | Templates keyed by tree-sitter `kind` (snake_case rule names). `variant` matches the codegen form name (post ADR-0013 Task 2 alignment). |
-| II. Fewer Abstractions | ✅ Pass | Phase A *removes* an abstraction (the hand-rolled `resolveSlot` / `renderClause` / `pickTemplate` trio) and replaces it with a standard template engine surface. No new sittir-specific type emerges — `TemplateContext` already exists as the output of `prepare()`. |
-| III. Generated vs Hand-Written | ✅ Pass | `.jinja` files are generated (by the template emitter). Each carries a `@generated` header comment. Nunjucks engine bindings are hand-written under `@sittir/core`. No overlap. |
-| IV. Test-First | ✅ Pass | Translator lands with unit tests covering each mapping rule. Phase A gates on the round-trip corpus (byte-identical). Phase B gates on cross-render parity test. TDD order per task below. |
-| V. Library-First | ✅ Pass | Renderer is a library primitive (`@sittir/core`). Engine swap does not change library boundaries; consumers import `createRenderer` unchanged. |
-| VI. Deterministic Output | ✅ Pass | Per-rule `.jinja` emission is stable (one file per rule, sorted by kind). Translator is idempotent. |
-| VII. Grammar-Agnostic Pipeline | ✅ Pass | `TemplateContext` is grammar-agnostic; `.jinja` files are per-rule assets in the generated grammar package. No grammar-specific branching in `@sittir/core`. |
-| VIII. Non-lossy Transformations | ✅ Pass | The translator fails loudly (FR-005) when a template cannot be represented in the target subset. No silent degradation. |
-| IX. @sittir/core is the Rust-port surface | ✅ Pass — with attention | The Nunjucks runtime binding added to `@sittir/core` must have a clean Rust analogue (askama). That is the explicit design: Phase A's render surface *is* the Phase B port target. Nunjucks/askama shared subset is the shared-runtime guarantee. |
-| X. Don't hand-roll types you can import | ✅ Pass | `TemplateContext` is defined once (post ADR-0013 Task 3 in `@sittir/core`). Rust side mirrors via `derive(Template)` over a codegen-emitted struct (generated, not hand-written). |
+| Principle                                 | Check                    | Notes                                                                                                                                                                                                                                                                 |
+| ----------------------------------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| I. Grammar Alignment                      | ✅ Pass                  | Templates keyed by tree-sitter `kind` (snake_case rule names). `variant` matches the codegen form name (post ADR-0013 Task 2 alignment).                                                                                                                              |
+| II. Fewer Abstractions                    | ✅ Pass                  | Phase A _removes_ an abstraction (the hand-rolled `resolveSlot` / `renderClause` / `pickTemplate` trio) and replaces it with a standard template engine surface. No new sittir-specific type emerges — `TemplateContext` already exists as the output of `prepare()`. |
+| III. Generated vs Hand-Written            | ✅ Pass                  | `.jinja` files are generated (by the template emitter). Each carries a `@generated` header comment. Nunjucks engine bindings are hand-written under `@sittir/core`. No overlap.                                                                                       |
+| IV. Test-First                            | ✅ Pass                  | Translator lands with unit tests covering each mapping rule. Phase A gates on the round-trip corpus (byte-identical). Phase B gates on cross-render parity test. TDD order per task below.                                                                            |
+| V. Library-First                          | ✅ Pass                  | Renderer is a library primitive (`@sittir/core`). Engine swap does not change library boundaries; consumers import `createRenderer` unchanged.                                                                                                                        |
+| VI. Deterministic Output                  | ✅ Pass                  | Per-rule `.jinja` emission is stable (one file per rule, sorted by kind). Translator is idempotent.                                                                                                                                                                   |
+| VII. Grammar-Agnostic Pipeline            | ✅ Pass                  | `TemplateContext` is grammar-agnostic; `.jinja` files are per-rule assets in the generated grammar package. No grammar-specific branching in `@sittir/core`.                                                                                                          |
+| VIII. Non-lossy Transformations           | ✅ Pass                  | The translator fails loudly (FR-005) when a template cannot be represented in the target subset. No silent degradation.                                                                                                                                               |
+| IX. @sittir/core is the Rust-port surface | ✅ Pass — with attention | The Nunjucks runtime binding added to `@sittir/core` must have a clean Rust analogue (askama). That is the explicit design: Phase A's render surface _is_ the Phase B port target. Nunjucks/askama shared subset is the shared-runtime guarantee.                     |
+| X. Don't hand-roll types you can import   | ✅ Pass                  | `TemplateContext` is defined once (post ADR-0013 Task 3 in `@sittir/core`). Rust side mirrors via `derive(Template)` over a codegen-emitted struct (generated, not hand-written).                                                                                     |
 
 **No violations requiring Complexity Tracking entries.**
 
@@ -99,4 +99,4 @@ crates/sittir-render/
 
 ## Complexity Tracking
 
-*No Constitution Check violations. Section intentionally empty.*
+_No Constitution Check violations. Section intentionally empty._

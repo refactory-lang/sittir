@@ -267,7 +267,7 @@ rules:
   reference_pattern: "&$MUTABLE_SPECIFIER $PATTERN"
   or_pattern: $$$CHILDREN
   negative_literal: "-$$$CHILDREN$VALUE"
-  string_literal: "\"$$$CHILDREN\""
+  string_literal: '"$$$CHILDREN"'
   raw_string_literal: $TEXT
   comment: $$$CHILDREN
   line_comment: //$OUTER$INNER$DOC

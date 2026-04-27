@@ -10,12 +10,14 @@
 Compiles the override grammar in `grammarDir/.sittir/` to a WASM parser, returning the path to the `.wasm` file.
 
 **Input**:
+
 - `grammarDir`: Absolute path to the grammar package (e.g., `packages/python`)
 - `options.force`: Skip mtime check and always recompile (default: false)
 
 **Output**: Absolute path to the compiled `.wasm` file
 
 **Behavior**:
+
 1. Check `grammarDir/.sittir/grammar.js` exists (error if not — overrides not transpiled)
 2. Check `grammarDir/.sittir/parser.wasm` exists and has `mtime > grammar.js mtime`
 3. If cache valid and `force` is false: return wasm path immediately
@@ -24,6 +26,7 @@ Compiles the override grammar in `grammarDir/.sittir/` to a WASM parser, returni
 6. Return wasm path
 
 **Error Cases**:
+
 - Missing `.sittir/grammar.js` → throw with message directing user to run transpile first
 - `tree-sitter generate` failure → throw with full stderr attached
 - `tree-sitter build --wasm` failure → throw with full stderr (likely Emscripten not installed)
@@ -38,6 +41,7 @@ Compiles (if needed) and loads the override parser for use in validators.
 **Output**: Initialized parser ready for `parser.setLanguage(lang); parser.parse(source)`
 
 **Behavior**:
+
 1. Call `compileParser(grammarDir)`
 2. Call `loadWebTreeSitter()` from `validators/common.ts`
 3. Call `Language.load(wasmPath)` with the compiled WASM
@@ -70,6 +74,7 @@ These fields exist because `overrides.ts` declares `transform(original, { 0: fie
 For a polymorphic rule converted to nested-alias form:
 
 **Parse tree structure**:
+
 ```
 (parent_kind        ← outer node, type = original kind name
   (variant_name     ← inner node, type = variant alias name

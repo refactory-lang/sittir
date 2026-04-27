@@ -1,149 +1,159 @@
-import { describe, it, expect } from 'vitest';
-import { createRenderer } from '../src/loader.ts';
-import type { RulesConfig } from '../src/types.ts';
-import type { AnyNodeData } from '../src/types.ts';
+import { describe, it, expect } from "vitest";
+import { createRenderer } from "../src/loader.ts";
+import type { RulesConfig } from "../src/types.ts";
+import type { AnyNodeData } from "../src/types.ts";
 
 const config: RulesConfig = {
-	language: 'test',
-	extensions: ['test'],
+	language: "test",
+	extensions: ["test"],
 	expandoChar: null,
-	metadata: { grammarSha: 'test' },
+	metadata: { grammarSha: "test" },
 	rules: {
 		function_item: {
-			template: 'fn $NAME($$$PARAMETERS) $RETURN_TYPE_CLAUSE$BODY_CLAUSE',
-			return_type_clause: '-> $RETURN_TYPE ',
-			body_clause: '$BODY',
-			joinBy: ', ',
+			template: "fn $NAME($$$PARAMETERS) $RETURN_TYPE_CLAUSE$BODY_CLAUSE",
+			return_type_clause: "-> $RETURN_TYPE ",
+			body_clause: "$BODY",
+			joinBy: ", ",
 		},
 		block: {
-			template: '{ $$$CHILDREN }',
-			joinBy: ' ',
+			template: "{ $$$CHILDREN }",
+			joinBy: " ",
 		},
-		parameter: '$NAME: $TYPE',
-		binary_expression: '$LEFT $OPERATOR $RIGHT',
+		parameter: "$NAME: $TYPE",
+		binary_expression: "$LEFT $OPERATOR $RIGHT",
 	},
 };
 
 const { render } = createRenderer(config);
 
-describe('render', () => {
-	it('renders a terminal node as its text', () => {
-		const node: AnyNodeData = { $type: 'identifier', $text: 'main' };
-		expect(render(node)).toBe('main');
+describe("render", () => {
+	it("renders a terminal node as its text", () => {
+		const node: AnyNodeData = { $type: "identifier", $text: "main" };
+		expect(render(node)).toBe("main");
 	});
 
-	it('renders a simple branch node with required field', () => {
+	it("renders a simple branch node with required field", () => {
 		const node: AnyNodeData = {
-			$type: 'function_item',
+			$type: "function_item",
 			$fields: {
-				name: { $type: 'identifier', $text: 'main' },
+				name: { $type: "identifier", $text: "main" },
 			},
 		};
 		// Absent clauses resolve to empty, template is literal
-		expect(render(node)).toContain('fn main()');
+		expect(render(node)).toContain("fn main()");
 	});
 
-	it('renders optional clause when field is present', () => {
+	it("renders optional clause when field is present", () => {
 		const node: AnyNodeData = {
-			$type: 'function_item',
+			$type: "function_item",
 			$fields: {
-				name: { $type: 'identifier', $text: 'add' },
-				return_type: { $type: 'primitive_type', $text: 'i32' },
-				body: { $type: 'block', $fields: {} },
+				name: { $type: "identifier", $text: "add" },
+				return_type: { $type: "primitive_type", $text: "i32" },
+				body: { $type: "block", $fields: {} },
 			},
 		};
-		expect(render(node)).toContain('fn add()');
-		expect(render(node)).toContain('-> i32');
+		expect(render(node)).toContain("fn add()");
+		expect(render(node)).toContain("-> i32");
 	});
 
-	it('omits clause when field is absent', () => {
+	it("omits clause when field is absent", () => {
 		const node: AnyNodeData = {
-			$type: 'function_item',
+			$type: "function_item",
 			$fields: {
-				name: { $type: 'identifier', $text: 'noop' },
-				body: { $type: 'block', $fields: {} },
+				name: { $type: "identifier", $text: "noop" },
+				body: { $type: "block", $fields: {} },
 			},
 		};
 		const result = render(node);
-		expect(result).toContain('fn noop()');
-		expect(result).not.toContain('->');
+		expect(result).toContain("fn noop()");
+		expect(result).not.toContain("->");
 	});
 
-	it('renders multiple fields with per-rule joinBy separator', () => {
+	it("renders multiple fields with per-rule joinBy separator", () => {
 		const node: AnyNodeData = {
-			$type: 'function_item',
+			$type: "function_item",
 			$fields: {
-				name: { $type: 'identifier', $text: 'add' },
+				name: { $type: "identifier", $text: "add" },
 				parameters: [
-					{ $type: 'parameter', $fields: { name: { $type: 'identifier', $text: 'a' }, type: { $type: 'primitive_type', $text: 'i32' } } },
-					{ $type: 'parameter', $fields: { name: { $type: 'identifier', $text: 'b' }, type: { $type: 'primitive_type', $text: 'i32' } } },
+					{
+						$type: "parameter",
+						$fields: {
+							name: { $type: "identifier", $text: "a" },
+							type: { $type: "primitive_type", $text: "i32" },
+						},
+					},
+					{
+						$type: "parameter",
+						$fields: {
+							name: { $type: "identifier", $text: "b" },
+							type: { $type: "primitive_type", $text: "i32" },
+						},
+					},
 				],
-				body: { $type: 'block', $fields: {} },
+				body: { $type: "block", $fields: {} },
 			},
 		};
-		expect(render(node)).toContain('fn add(a: i32, b: i32)');
+		expect(render(node)).toContain("fn add(a: i32, b: i32)");
 	});
 
-	it('throws on unknown node kind', () => {
-		const node: AnyNodeData = { $type: 'nonexistent', $fields: {} };
+	it("throws on unknown node kind", () => {
+		const node: AnyNodeData = { $type: "nonexistent", $fields: {} };
 		expect(() => render(node)).toThrow("No render rule for 'nonexistent'");
 	});
 
-	it('renders nested nodes recursively', () => {
+	it("renders nested nodes recursively", () => {
 		const node: AnyNodeData = {
-			$type: 'function_item',
+			$type: "function_item",
 			$fields: {
-				name: { $type: 'identifier', $text: 'main' },
-				return_type: { $type: 'primitive_type', $text: 'i32' },
+				name: { $type: "identifier", $text: "main" },
+				return_type: { $type: "primitive_type", $text: "i32" },
 				body: {
-					$type: 'block',
+					$type: "block",
 					$fields: {},
-					$children: [
-						{ $type: 'integer_literal', $text: '42' },
-					],
+					$children: [{ $type: "integer_literal", $text: "42" }],
 				},
 			},
 		};
-		expect(render(node)).toContain('fn main()');
-		expect(render(node)).toContain('-> i32');
-		expect(render(node)).toContain('42');
+		expect(render(node)).toContain("fn main()");
+		expect(render(node)).toContain("-> i32");
+		expect(render(node)).toContain("42");
 	});
 
-	it('renders binary expression', () => {
+	it("renders binary expression", () => {
 		const node: AnyNodeData = {
-			$type: 'binary_expression',
+			$type: "binary_expression",
 			$fields: {
-				left: { $type: 'identifier', $text: 'a' },
-				operator: '+',
-				right: { $type: 'identifier', $text: 'b' },
+				left: { $type: "identifier", $text: "a" },
+				operator: "+",
+				right: { $type: "identifier", $text: "b" },
 			},
 		};
-		expect(render(node)).toBe('a + b');
+		expect(render(node)).toBe("a + b");
 	});
 
-	it('renders block with children', () => {
+	it("renders block with children", () => {
 		const node: AnyNodeData = {
-			$type: 'block',
+			$type: "block",
 			$fields: {},
 			$children: [
-				{ $type: 'identifier', $text: 'x' },
-				{ $type: 'identifier', $text: 'y' },
+				{ $type: "identifier", $text: "x" },
+				{ $type: "identifier", $text: "y" },
 			],
 		};
-		expect(render(node)).toBe('{ x y }');
+		expect(render(node)).toBe("{ x y }");
 	});
 
-	it('renders leaf node without fields property', () => {
-		const node = { $type: 'identifier', $text: 'main' } as AnyNodeData;
-		expect(render(node)).toBe('main');
+	it("renders leaf node without fields property", () => {
+		const node = { $type: "identifier", $text: "main" } as AnyNodeData;
+		expect(render(node)).toBe("main");
 	});
 
-	it('throws on branch node without fields', () => {
-		const node = { $type: 'function_item' } as AnyNodeData;
+	it("throws on branch node without fields", () => {
+		const node = { $type: "function_item" } as AnyNodeData;
 		expect(() => render(node)).toThrow("has no 'fields'");
 	});
 
-	it('throws when a single-slot field is rendered from an empty array', () => {
+	it("throws when a single-slot field is rendered from an empty array", () => {
 		// Optional fields should be ABSENT (undefined), not empty-array.
 		// An empty array reaching a single-slot `$NAME` is a signal of
 		// an upstream bug (factory / readNode / from produced a
@@ -153,8 +163,12 @@ describe('render', () => {
 		// operand. Throw with a message that names both the rule and
 		// field so callers can pinpoint the source.
 		const node: AnyNodeData = {
-			$type: 'binary_expression',
-			$fields: { left: [], operator: { $type: 'op', $text: '+' }, right: { $type: 'literal', $text: '2' } },
+			$type: "binary_expression",
+			$fields: {
+				left: [],
+				operator: { $type: "op", $text: "+" },
+				right: { $type: "literal", $text: "2" },
+			},
 		};
 		expect(() => render(node)).toThrow(/empty array/);
 		expect(() => render(node)).toThrow(/binary_expression/);
@@ -166,43 +180,43 @@ describe('render', () => {
 // external-scanner support. Covered here so a regression (either
 // dropping the slot handler or breaking the fallback) surfaces at
 // unit level, not only via the rust raw_string_literal corpus case.
-describe('render — $TEXT slot', () => {
+describe("render — $TEXT slot", () => {
 	const textConfig: RulesConfig = {
-		language: 'test',
-		extensions: ['test'],
+		language: "test",
+		extensions: ["test"],
 		expandoChar: null,
-		metadata: { grammarSha: 'test' },
+		metadata: { grammarSha: "test" },
 		rules: {
-			raw_string_literal: '$TEXT',
+			raw_string_literal: "$TEXT",
 		},
 	};
 	const { render: renderText } = createRenderer(textConfig);
 
-	it('emits node.text verbatim when present (parsed-tree path)', () => {
+	it("emits node.text verbatim when present (parsed-tree path)", () => {
 		// Simulates readNode's output for a parsed raw_string_literal:
 		// span text captures the `r#"..."#` delimiters that the
 		// external scanner consumed.
 		const node: AnyNodeData = {
-			$type: 'raw_string_literal',
+			$type: "raw_string_literal",
 			$text: 'r#"abc"#',
 			$fields: {
-				string_content: { $type: 'string_content', $text: 'abc' },
+				string_content: { $type: "string_content", $text: "abc" },
 			},
 		};
 		expect(renderText(node)).toBe('r#"abc"#');
 	});
 
-	it('falls back to concatenating fields + children when text is absent (factory-built path)', () => {
+	it("falls back to concatenating fields + children when text is absent (factory-built path)", () => {
 		// Factories don't set node.text — they only know the config
 		// values. $TEXT must degrade gracefully to a best-effort
 		// concatenation so test-suite factories still produce non-
 		// empty output (regression guard on the fix in 813b20c).
 		const node: AnyNodeData = {
-			$type: 'raw_string_literal',
+			$type: "raw_string_literal",
 			$fields: {
-				string_content: { $type: 'string_content', $text: 'abc' },
+				string_content: { $type: "string_content", $text: "abc" },
 			},
 		};
-		expect(renderText(node)).toBe('abc');
+		expect(renderText(node)).toBe("abc");
 	});
 });

@@ -11,6 +11,7 @@ Three-layer architecture:
 - **`@sittir/codegen`** — Reads grammar.json + node-types.json, emits: YAML render templates, unified factory functions, ir namespace, const enums, navigation types, wrap/readNode functions, `.from()` resolution, tests.
 
 Generated packages (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) contain:
+
 - `grammar.ts` — grammar type literal for type projections
 - `types.ts` — `const enum SyntaxKind`, concrete interfaces (source of truth), `ConfigOf`-derived configs, `TreeNode<K>` interfaces, supertype unions, grammar-bound aliases
 - `rules.ts` — S-expression render templates (tree-sitter query syntax)
@@ -40,50 +41,52 @@ Generated packages (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) cont
 Three ways to reach the same per-kind type family — all resolve identically:
 
 ```ts
-import type { FunctionItem, ConfigFor, NamespaceMap } from '@sittir/rust';
+import type { FunctionItem, ConfigFor, NamespaceMap } from "@sittir/rust";
 
-FunctionItem.Config                            // namespace sugar (preferred)
-ConfigFor<'function_item'>                     // generic (kind-parametric code)
-NamespaceMap['function_item']['Config']        // direct map (meta-utilities)
+FunctionItem.Config; // namespace sugar (preferred)
+ConfigFor<"function_item">; // generic (kind-parametric code)
+NamespaceMap["function_item"]["Config"]; // direct map (meta-utilities)
 ```
 
 Guards — narrow through kind × shape (spec 008 US2):
 
 ```ts
-import { is, isTree, isNode, assert } from '@sittir/rust';
+import { is, isTree, isNode, assert } from "@sittir/rust";
 
-if (is.functionItem(v) && isNode(v)) {         // kind + data-shape
-    v.$fields.name;                             // typed
+if (is.functionItem(v) && isNode(v)) {
+	// kind + data-shape
+	v.$fields.name; // typed
 }
-if (is.expression(v) && isTree(v)) {           // supertype + tree-shape
-    v.field('name');                            // tree-sitter typed field
+if (is.expression(v) && isTree(v)) {
+	// supertype + tree-shape
+	v.field("name"); // tree-sitter typed field
 }
-assert.functionItem(v);                        // throws TypeError on mismatch
+assert.functionItem(v); // throws TypeError on mismatch
 ```
 
 IR namespace — flat + grouped (spec 008 US5), both tree-shakeable:
 
 ```ts
-import { ir, expression } from '@sittir/rust';
+import { ir, expression } from "@sittir/rust";
 
-ir.binary(config);                             // flat camelCase (supertype-stripped short name)
-ir.expression.binary(config);                  // grouped (attached to ir)
-expression.binary(config);                     // standalone (tree-shakeable)
+ir.binary(config); // flat camelCase (supertype-stripped short name)
+ir.expression.binary(config); // grouped (attached to ir)
+expression.binary(config); // standalone (tree-shakeable)
 ```
 
 ### Data Flow & API Tiers
 
 Seven surfaces, one common shape (`NodeData`):
 
-| Surface | Shape | Notes |
-|---------|-------|-------|
-| Factory input | `Config` (camelCase, named child slots) | Developer-facing ergonomic API |
-| Factory output | `NodeData` + fluent getters/setters + methods | Raw `$`-prefix metadata, `$fields` snake_case, fluent methods camelCase |
-| From input | `FromInput` (loose: strings, numbers, objects) | Adds resolution on top of factory |
-| From output | Same as factory output | Calls factory internally |
-| readNode input | `SgNode` / `TreeNode` (raw field names) | **ast-grep / tree-sitter owns this shape** |
-| readNode output | `NodeData` with `$source: 'ts'` | Direct mapping, no translation |
-| Render input | `AnyNodeData` — reads `node.$fields[rawName]` | Zero-cost from any producer |
+| Surface         | Shape                                          | Notes                                                                   |
+| --------------- | ---------------------------------------------- | ----------------------------------------------------------------------- |
+| Factory input   | `Config` (camelCase, named child slots)        | Developer-facing ergonomic API                                          |
+| Factory output  | `NodeData` + fluent getters/setters + methods  | Raw `$`-prefix metadata, `$fields` snake_case, fluent methods camelCase |
+| From input      | `FromInput` (loose: strings, numbers, objects) | Adds resolution on top of factory                                       |
+| From output     | Same as factory output                         | Calls factory internally                                                |
+| readNode input  | `SgNode` / `TreeNode` (raw field names)        | **ast-grep / tree-sitter owns this shape**                              |
+| readNode output | `NodeData` with `$source: 'ts'`                | Direct mapping, no translation                                          |
+| Render input    | `AnyNodeData` — reads `node.$fields[rawName]`  | Zero-cost from any producer                                             |
 
 Design targets per tier:
 
@@ -268,6 +271,7 @@ disagree with your code, the fix is either:
    introduced it.
 
 Allowed exceptions:
+
 - `as const` — legitimate narrowing, not a cast.
 - `@ts-nocheck` on `overrides.ts` files — the tree-sitter grammar.js
   shape is untyped by design; we bypass intentionally there.
@@ -292,6 +296,7 @@ that the directive would split — granularity per comment block.
 <!-- MANUAL ADDITIONS END -->
 
 ## Active Technologies
+
 - TypeScript (ESM, `.ts` extensions in imports), TypeScript 6.0.2 + `@sittir/core`, `@sittir/types`, `@sittir/codegen`; tree-sitter grammars (grammar.json + node-types.json) (004-yaml-render-templates)
 - File system (per-rule `.jinja` templates at `packages/{lang}/templates/<kind>.jinja`, read at render time by Nunjucks) (011-jinja-template-migration, supersedes 004's YAML templates)
 - TypeScript 6.0.2 (ESM, `.ts` extensions in imports) + None at runtime (zero-dep). Dev: vitest, oxlint, oxfmt, tsgo (005-five-phase-compiler)
@@ -308,8 +313,11 @@ that the directive would split — granularity per comment block.
 - File system — `specs/016-parity-regressions/baselines/{ts,native}.json` is the durable contract; generated TS/templates under `packages/{lang}/src/` and `packages/{lang}/templates/*.jinja` are codegen output (never hand-edited). (016-parity-regressions)
 
 ## Recent Changes
+
 - 004-yaml-render-templates: Added TypeScript (ESM, `.ts` extensions in imports), TypeScript 6.0.2 + `@sittir/core`, `@sittir/types`, `@sittir/codegen`; tree-sitter grammars (grammar.json + node-types.json)
 
 <!-- SPECKIT START -->
+
 Current plan: `specs/011-jinja-template-migration/plan.md`
+
 <!-- SPECKIT END -->

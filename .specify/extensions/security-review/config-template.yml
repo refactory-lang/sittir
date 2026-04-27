@@ -31,15 +31,15 @@ security-review:
   # File patterns to exclude from analysis
   # Default: Minified and bundled files
   exclude-files:
-    - '*.min.js'
-    - '*.min.css'
-    - '*.bundle.js'
-    - '*.chunk.js'
-    - '*.map'
-    - '*.lock'
-    - 'package-lock.json'
-    - 'yarn.lock'
-    - 'pnpm-lock.yaml'
+    - "*.min.js"
+    - "*.min.css"
+    - "*.bundle.js"
+    - "*.chunk.js"
+    - "*.map"
+    - "*.lock"
+    - "package-lock.json"
+    - "yarn.lock"
+    - "pnpm-lock.yaml"
 
   # ============================================================
   # FOCUS AREAS
@@ -107,7 +107,7 @@ security-review:
 
     # OWASP version to use
     # Default: 2025
-    version: '2025'
+    version: "2025"
 
     # Specific OWASP categories to focus on
     # Leave empty to check all categories
@@ -153,12 +153,12 @@ security-review:
     # File patterns to ignore for secrets scanning
     # Default: Example and sample files
     ignore-patterns:
-      - '*.example'
-      - '*.sample'
-      - '.env.example'
-      - '.env.sample'
-      - 'test/**'
-      - 'spec/**'
+      - "*.example"
+      - "*.sample"
+      - ".env.example"
+      - ".env.sample"
+      - "test/**"
+      - "spec/**"
 
   # ============================================================
   # ARCHITECTURE SETTINGS
@@ -234,7 +234,7 @@ security-review:
     # Report filename pattern
     # Use {date} for timestamp, {project} for project name
     # Default: security-report-{date}.md
-    filename-pattern: 'security-report-{date}.md'
+    filename-pattern: "security-report-{date}.md"
 
     # Include executive summary
     # Default: true

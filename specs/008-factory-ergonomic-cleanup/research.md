@@ -58,7 +58,7 @@ The premise that a snake-keyed NodeData at `.from()`'s boundary is always fluent
 
 - **Keep inline dual-access casts (297 per grammar).** Rejected: noise at every read site; diff churn on every field-type change; computed Config paths (`NonNullable<T.FunctionItemConfig['name']>`) are indirect.
 - **Extract `_f(input, snake, camel)` untyped helper.** Rejected: hides intent at the callsite. The dual-access logic is invisible without jumping to the helper.
-- **Extract `_f<NS, NC, V>(input, snake, camel)` generically typed helper.** Rejected for a better reason: even with types, the helper solves the wrong problem. The deeper question is *why* `.from()` reads snake-keyed fields at all — and the answer is "it shouldn't, because NodeData is already resolved."
+- **Extract `_f<NS, NC, V>(input, snake, camel)` generically typed helper.** Rejected for a better reason: even with types, the helper solves the wrong problem. The deeper question is _why_ `.from()` reads snake-keyed fields at all — and the answer is "it shouldn't, because NodeData is already resolved."
 - **Normalize at entry via `_toBag` (rewrite NodeData.fields keys snake→camel, then single-access).** Rejected: does unnecessary work on the NodeData branch, where the fields are already resolved and re-bagging them just to read them is waste. Quick-return identity is strictly better.
 
 ---
@@ -179,11 +179,11 @@ The premise that a snake-keyed NodeData at `.from()`'s boundary is always fluent
 
 **Pre-triage findings (run against `bcd65a0` master):**
 
-| Rule | Count | Category |
-|---|---|---|
-| `unicorn/no-useless-fallback-in-spread` | 122 | A — emitter fix (FR-035) |
-| `no-unused-vars` (dead imports + unused top-level + unused param `v`) | 18 | A — emitter fix (FR-036, FR-037) |
-| `no-useless-escape` | 2 | A — emitter fix (FR-038) |
+| Rule                                                                  | Count | Category                         |
+| --------------------------------------------------------------------- | ----- | -------------------------------- |
+| `unicorn/no-useless-fallback-in-spread`                               | 122   | A — emitter fix (FR-035)         |
+| `no-unused-vars` (dead imports + unused top-level + unused param `v`) | 18    | A — emitter fix (FR-036, FR-037) |
+| `no-useless-escape`                                                   | 2     | A — emitter fix (FR-038)         |
 
 Triage categories defined for this spec and future lint passes:
 

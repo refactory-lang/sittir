@@ -341,7 +341,7 @@ rules:
   negative_literal:
     template: "-$VALUE"
   string_literal:
-    template: "\"$$$CHILDREN\""
+    template: '"$$$CHILDREN"'
   raw_string_literal:
     template: $RAW_STRING_LITERAL_START $STRING_CONTENT $RAW_STRING_LITERAL_END
   comment:

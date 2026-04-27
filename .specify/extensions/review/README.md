@@ -46,6 +46,7 @@ Run all specialized agents against your changes and get a consolidated report:
 ```
 
 All commands (coordinator and individual agents) use the built-in `detect-changed-files` script to automatically identify what to review when no files are specified:
+
 - **Feature branch**: Committed changes since the merge base with the default branch (main/master), plus any uncommitted work
 - **Default branch**: Only uncommitted work (staged and unstaged changes)
 

@@ -22,18 +22,18 @@ Switch the sittir pipeline from heuristic field promotion (inferFieldNames, prom
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
-| Principle | Status | Notes |
-|-----------|--------|-------|
-| I. Grammar Alignment | ✓ PASS | Uses tree-sitter terminology throughout (kind, field, named, alias, supertype) |
-| II. Fewer Abstractions | ✓ PASS | Net reduction — deleting inferFieldNames mutation, promotePolymorph, readNode promotion heuristics. No new abstraction layers added |
-| III. Generated vs Hand-Written | ✓ PASS | Override files are hand-authored; generated output remains codegen-owned. Parser cache is a build artifact, not generated code |
-| IV. Test-First | ✓ PASS | Fidelity ceilings are the primary quality gate. New parse-tree field validation tests for override-compiled parser |
-| V. Library-First | ✓ PASS | No CLI changes beyond existing `--grammar` flag. Parser compilation is internal to codegen |
-| VI. Deterministic Output | ✓ PASS | Same overrides.ts + same grammar version → same generated output. Parser binary is cached but not part of generated output |
-| VII. Grammar-Agnostic Pipeline | ✓ PASS | All language-specific knowledge flows through override files. Parser compilation is grammar-parameterized, not language-conditional |
-| VIII. Non-lossy Transformations | ✓ PASS | Nested-alias preserves parent kind name (no information loss). inferFieldNames analysis preserved as suggestion-only |
+| Principle                       | Status | Notes                                                                                                                               |
+| ------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| I. Grammar Alignment            | ✓ PASS | Uses tree-sitter terminology throughout (kind, field, named, alias, supertype)                                                      |
+| II. Fewer Abstractions          | ✓ PASS | Net reduction — deleting inferFieldNames mutation, promotePolymorph, readNode promotion heuristics. No new abstraction layers added |
+| III. Generated vs Hand-Written  | ✓ PASS | Override files are hand-authored; generated output remains codegen-owned. Parser cache is a build artifact, not generated code      |
+| IV. Test-First                  | ✓ PASS | Fidelity ceilings are the primary quality gate. New parse-tree field validation tests for override-compiled parser                  |
+| V. Library-First                | ✓ PASS | No CLI changes beyond existing `--grammar` flag. Parser compilation is internal to codegen                                          |
+| VI. Deterministic Output        | ✓ PASS | Same overrides.ts + same grammar version → same generated output. Parser binary is cached but not part of generated output          |
+| VII. Grammar-Agnostic Pipeline  | ✓ PASS | All language-specific knowledge flows through override files. Parser compilation is grammar-parameterized, not language-conditional |
+| VIII. Non-lossy Transformations | ✓ PASS | Nested-alias preserves parent kind name (no information loss). inferFieldNames analysis preserved as suggestion-only                |
 
 **Gate result**: All 8 principles pass. No violations requiring justification.
 
@@ -102,16 +102,16 @@ packages/typescript/
 
 ## Post-Design Constitution Re-Check
 
-| Principle | Status | Notes |
-|-----------|--------|-------|
-| I. Grammar Alignment | ✓ PASS | Uses tree-sitter terminology: alias, field, kind, named. Nested-alias is a tree-sitter concept |
-| II. Fewer Abstractions | ✓ PASS | Net reduction: deleting 3 heuristic passes + readNode promotion. New: 1 module (compile-parser.ts) |
-| III. Generated vs Hand-Written | ✓ PASS | Override files hand-authored. Parser WASM is a build artifact. Generated output codegen-owned |
-| IV. Test-First | ✓ PASS | Fidelity ceilings validate field coverage. New compile-parser tests. Nested-alias verified via roundtrip |
-| V. Library-First | ✓ PASS | Parser compilation internal to codegen CLI. No new external dependencies in generated packages |
-| VI. Deterministic Output | ✓ PASS | Same overrides.ts → same WASM → same parse trees → same generated code |
-| VII. Grammar-Agnostic Pipeline | ✓ PASS | Compilation parameterized by grammar name. No language-specific conditionals. Polymorph overrides live in per-grammar override files |
-| VIII. Non-lossy Transformations | ✓ PASS | inferFieldNames analysis preserved as suggestion-only. Nested-alias preserves parent kind. No field coverage regression |
+| Principle                       | Status | Notes                                                                                                                                |
+| ------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| I. Grammar Alignment            | ✓ PASS | Uses tree-sitter terminology: alias, field, kind, named. Nested-alias is a tree-sitter concept                                       |
+| II. Fewer Abstractions          | ✓ PASS | Net reduction: deleting 3 heuristic passes + readNode promotion. New: 1 module (compile-parser.ts)                                   |
+| III. Generated vs Hand-Written  | ✓ PASS | Override files hand-authored. Parser WASM is a build artifact. Generated output codegen-owned                                        |
+| IV. Test-First                  | ✓ PASS | Fidelity ceilings validate field coverage. New compile-parser tests. Nested-alias verified via roundtrip                             |
+| V. Library-First                | ✓ PASS | Parser compilation internal to codegen CLI. No new external dependencies in generated packages                                       |
+| VI. Deterministic Output        | ✓ PASS | Same overrides.ts → same WASM → same parse trees → same generated code                                                               |
+| VII. Grammar-Agnostic Pipeline  | ✓ PASS | Compilation parameterized by grammar name. No language-specific conditionals. Polymorph overrides live in per-grammar override files |
+| VIII. Non-lossy Transformations | ✓ PASS | inferFieldNames analysis preserved as suggestion-only. Nested-alias preserves parent kind. No field coverage regression              |
 
 **Gate result**: All 8 principles pass post-design. No violations.
 
@@ -129,10 +129,10 @@ The spec defines 5 user stories with explicit dependencies:
 
 ### Risk Mitigation
 
-| Risk | Mitigation |
-|------|------------|
-| WASM compilation slow (Emscripten) | Mtime-based caching eliminates repeat builds. Cold compile measured at research time |
+| Risk                                   | Mitigation                                                                                                            |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| WASM compilation slow (Emscripten)     | Mtime-based caching eliminates repeat builds. Cold compile measured at research time                                  |
 | Bare keyword-prefix regresses fidelity | Conservative: leading position of top-level seq only, collision-aware. Same approach that worked for optional variant |
-| Nested-alias breaks ast-grep rules | Design: parent kind name preserved at outer level. Validate with existing ast-grep rule suite |
-| Emscripten not installed on CI/dev | Document prerequisite. CI: add emsdk setup step. Dev: one-time install |
-| Polymorph count exceeds estimate | Audited: 16 total (1 python, 6 rust, 9 typescript). Manageable |
+| Nested-alias breaks ast-grep rules     | Design: parent kind name preserved at outer level. Validate with existing ast-grep rule suite                         |
+| Emscripten not installed on CI/dev     | Document prerequisite. CI: add emsdk setup step. Dev: one-time install                                                |
+| Polymorph count exceeds estimate       | Audited: 16 total (1 python, 6 rust, 9 typescript). Manageable                                                        |

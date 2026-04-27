@@ -5,6 +5,7 @@
 **Status**: Work in progress (some review fixes already applied in uncommitted working tree)
 
 Combines:
+
 1. **Walker refactor** — eliminate the sittir-internal `$VAR` placeholder
    dialect now that Jinja is the authoritative template language.
 2. **Review fixes** — 8 critical, 10 important, 11 suggestion items from
@@ -24,6 +25,7 @@ deleted.
 **Architecture change**:
 
 Current flow (two template dialects):
+
 ```
 AssembledNode walker → sittir "$VAR" template string
   → jinja-translator (6 mapping rules, brace escape, clause inlining)
@@ -31,6 +33,7 @@ AssembledNode walker → sittir "$VAR" template string
 ```
 
 Target flow (one template language):
+
 ```
 AssembledNode walker → .jinja file body
 ```
@@ -40,17 +43,17 @@ AssembledNode walker → .jinja file body
 **File**: `packages/codegen/src/compiler/template-walker.ts`
 
 - [ ] Change `$NAME` emission (line 608 slot formatter) from
-  `` `$${varName}` `` to `` `{{ ${varName.toLowerCase()} }}` ``; same for
-  `$$$NAME` → `{{ name }}` (pre-joined in TemplateContext).
+      `` `$${varName}` `` to `` `{{ ${varName.toLowerCase()} }}` ``; same for
+      `$$$NAME` → `{{ name }}` (pre-joined in TemplateContext).
 - [ ] `$$$CHILDREN` (lines 709, 751) → `{{ children }}`.
 - [ ] `$TEXT` sites → `{{ text }}`.
 - [ ] `$NEWLINE` → literal `\n`.
 - [ ] `$INDENT` / `$DEDENT` → empty string.
 - [ ] Delete `TEMPLATE_WORD.test(next) || next === '$'` heuristics in
-  `needsSpace` (line 1029, 1034) — the Jinja emission is no longer
-  `$`-prefixed.
+      `needsSpace` (line 1029, 1034) — the Jinja emission is no longer
+      `$`-prefixed.
 - [ ] Update `repeatedFields` tracker comments / variable names to
-  reference Jinja placeholders.
+      reference Jinja placeholders.
 
 ### T1.2: Clauses inline at reference site
 
@@ -65,12 +68,12 @@ Target: walker emits `{% if x %}body{% endif %}` directly at the
 reference site. Drop the `clauses` record from `WalkResult`.
 
 - [ ] `liftChoiceBranchesToClauses` and `extractClauseBranch`
-  (lines 814, 858) — change them to produce `{% if x %}<translated body>{% endif %}`
-  strings instead of `$X_CLAUSE` markers + body entries.
+      (lines 814, 858) — change them to produce `{% if x %}<translated body>{% endif %}`
+      strings instead of `$X_CLAUSE` markers + body entries.
 - [ ] `WalkResult.clauses` field removed.
 - [ ] `AssembledBranch.renderTemplate` / `AssembledContainer.renderTemplate`
-  / `AssembledGroup.renderTemplate` no longer merge clauses into the
-  entry object.
+      / `AssembledGroup.renderTemplate` no longer merge clauses into the
+      entry object.
 
 ### T1.3: Polymorph variant branching inline
 
@@ -86,29 +89,29 @@ when forms differ; keeps the existing collapsed-single-template path
 as-is (it was already one string).
 
 - [ ] Update `AssembledPolymorph.renderTemplate` to emit the variant
-  chain in the template string.
+      chain in the template string.
 - [ ] `{% if variant == "form" %}` uses no whitespace-control markers
-  (match current translator output; FR-017 space absorption handles
-  empty cases).
+      (match current translator output; FR-017 space absorption handles
+      empty cases).
 
 ### T1.4: Emitter consumes walker output directly
 
 **File**: `packages/codegen/src/emitters/templates.ts`
 
 - [ ] `emitJinjaTemplates` reads `node.renderTemplate()` → `entry.template`
-  and prepends the `@generated` header. No translator call.
+      and prepends the `@generated` header. No translator call.
 - [ ] Drop the `translateToJinja` import.
 - [ ] Update the no-file-case logic (leaf / keyword / token / supertype /
-  enum / multi / non-polymorph-form group return early with `continue`;
-  polymorph-form groups are handled by existing `node.parentKind` check).
+      enum / multi / non-polymorph-form group return early with `continue`;
+      polymorph-form groups are handled by existing `node.parentKind` check).
 
 ### T1.5: Delete the translator module + its tests
 
 - [ ] Delete `packages/codegen/src/emitters/jinja-translator.ts`.
 - [ ] Delete `packages/codegen/src/__tests__/jinja-translator.test.ts`.
 - [ ] This obsoletes review items: #4 (exhaustive switch), #8
-  (brace-escape multi-pass), #11 (as-unknown-as cast), #15 (unused
-  clauses), #25 (`$$` / `$_` prefix collapse).
+      (brace-escape multi-pass), #11 (as-unknown-as cast), #15 (unused
+      clauses), #25 (`$$` / `$_` prefix collapse).
 
 ### T1.6: Template coverage adapter simplified
 
@@ -121,19 +124,19 @@ Target: the checker operates directly on Jinja syntax.
 `jinjaBodyToLegacyRule` / `jinjaInterpolationsToLegacy` deleted.
 
 - [ ] Update `checkRule` / supporting helpers to search for
-  `{{ name }}`, `{{ name | ...` and `{% if name %}` patterns instead of
-  `$NAME`, `$$$NAME`, `$NAME_CLAUSE`.
+      `{{ name }}`, `{{ name | ...` and `{% if name %}` patterns instead of
+      `$NAME`, `$$$NAME`, `$NAME_CLAUSE`.
 - [ ] This obsoletes review item #10 (reverse adapter is a second
-  source) and fixes #13 (variant-branching regex bug) by removing the
-  code entirely.
+      source) and fixes #13 (variant-branching regex bug) by removing the
+      code entirely.
 
 ### T1.7: Corpus byte-identical verification
 
 - [ ] Regenerate all three grammars.
 - [ ] Full test suite green at baseline (1415 passing + 1 pre-existing
-  `raw_string_literal` failure — or better if T2 fixes it).
+      `raw_string_literal` failure — or better if T2 fixes it).
 - [ ] Spot-check a few `.jinja` files — they should be byte-identical
-  or close to byte-identical vs. pre-refactor.
+      or close to byte-identical vs. pre-refactor.
 
 **Commit**: one commit for T1 (walker + emitter) + one for test/file
 deletion.
@@ -167,13 +170,13 @@ direction. After T1 lands, the walker has the full separator info
 and can emit the loop directly.
 
 - [ ] `walkRuleForTemplate` — when emitting a multi-valued slot with
-  non-default joinBy, emit a `{% for %}` loop with literal separator
-  instead of `{{ field }}` pre-joined.
+      non-default joinBy, emit a `{% for %}` loop with literal separator
+      instead of `{{ field }}` pre-joined.
 - [ ] TemplateContext still exposes both `children` (pre-joined) and
-  `children_list` for the loop path.
+      `children_list` for the loop path.
 - [ ] Per-rule joinByField handled the same way — the `$$$FIELD` slot
-  becomes a loop when the field's separator differs from the rule's
-  joinBy.
+      becomes a loop when the field's separator differs from the rule's
+      joinBy.
 
 ### T2.2: `$TEXT` best-effort fallback restored (#3)
 
@@ -183,10 +186,10 @@ Legacy behavior: factory-built nodes with no `$text` concat fields +
 children into the `text` slot as a best-effort.
 
 - [ ] When `node.$text` is empty, synthesize `text` from the rendered
-  children + fields (skip undefined/null entries). Match the legacy
-  `resolveSlot` lines 172-188 logic.
+      children + fields (skip undefined/null entries). Match the legacy
+      `resolveSlot` lines 172-188 logic.
 - [ ] This probably fixes the `raw_string_literal` pre-existing test
-  failure.
+      failure.
 
 ### T2.3: Empty-array guard (#6)
 
@@ -196,8 +199,8 @@ Legacy throws when a single-slot field receives `[]`; Jinja path joins
 to `''` silently.
 
 - [ ] Before the `.join(fieldJoinBy)` call, if the field is declared
-  single-valued (or the emitted template uses `{{ field }}` not a
-  `{% for %}` loop), empty-array → throw with rule kind + field name.
+      single-valued (or the emitted template uses `{{ field }}` not a
+      `{% for %}` loop), empty-array → throw with rule kind + field name.
 - [ ] Mirrors legacy `resolveSlot` lines 242-249.
 
 ### T2.4: Anonymous-entry filter divergence (#7)
@@ -209,12 +212,12 @@ promoted keywords (async/move/unsafe) but incorrectly inlines promoted
 separator tokens into multi-valued field join output (`a,,b,,c`).
 
 - [ ] Filter semantics per field-name: if the field name matches a
-  single-token-like keyword (identifier-shaped), keep the anon entry.
-  If it looks like a separator (punctuation), filter it.
+      single-token-like keyword (identifier-shaped), keep the anon entry.
+      If it looks like a separator (punctuation), filter it.
 - [ ] Alternative: check against the grammar's declared field set —
-  fields declared in the grammar keep anon entries; promoted
-  anon-text-as-field-name keys (commas, etc.) get filtered from
-  multi-valued joins.
+      fields declared in the grammar keep anon entries; promoted
+      anon-text-as-field-name keys (commas, etc.) get filtered from
+      multi-valued joins.
 - [ ] Add a unit test with a synthetic node exercising both cases.
 
 ---
@@ -236,8 +239,8 @@ separator tokens into multi-valued field join output (`a,,b,,c`).
 - [ ] Change `PreparedRender` from optional-fields shape to:
   ```ts
   type PreparedRender =
-    | { kind: 'text'; text: string }
-    | { kind: 'template'; template: string; substitutions: readonly Substitution[] };
+  	| { kind: "text"; text: string }
+  	| { kind: "template"; template: string; substitutions: readonly Substitution[] };
   ```
 - [ ] `applyTemplate` switches on `kind` with exhaustive `assertNever`.
 - [ ] Remove the silent `return ''` fallback.
@@ -248,17 +251,17 @@ separator tokens into multi-valued field join output (`a,,b,,c`).
 **File**: `packages/core/src/render.ts`
 
 - [ ] Change return type from `Record<string, unknown>` to
-  `TemplateContext`. Compiler catches misconstruction.
+      `TemplateContext`. Compiler catches misconstruction.
 - [ ] Possibly relax the `TemplateContext` index signature to
-  `string | readonly string[] | boolean | undefined` so the builder
-  typechecks without casts.
+      `string | readonly string[] | boolean | undefined` so the builder
+      typechecks without casts.
 
 ### T3.4: Preserve error stack in `renderNunjucks` (#26)
 
 **File**: `packages/core/src/render.ts`
 
 - [ ] Replace `new Error(msg)` with `new Error(msg, { cause: err })`
-  at the render wrapper.
+      at the render wrapper.
 
 ---
 
@@ -270,8 +273,8 @@ Four copies exist: `validate/roundtrip.ts`, `validate/factory-roundtrip.ts`,
 `validate/renderable.ts`, `validate/template-coverage.ts`.
 
 - [ ] Create `packages/codegen/src/validate/templates-path.ts` exporting
-  `deriveRuleKinds(templatesPath: string): Set<string>` and
-  `loadRulesFromPath(templatesPath: string): Record<string, TemplateRule>`.
+      `deriveRuleKinds(templatesPath: string): Set<string>` and
+      `loadRulesFromPath(templatesPath: string): Record<string, TemplateRule>`.
 - [ ] Delete the per-validator copies.
 
 ### T4.2: Specific `catch` on ENOENT only (#12)
@@ -287,7 +290,7 @@ After T4.1 this lives in one place.
 **File**: `packages/codegen/src/validate/from.ts`
 
 - [ ] Remove the parameter. Update call sites in
-  `corpus-validation.test.ts`, `cli.ts`, `validate-all.test.ts`.
+      `corpus-validation.test.ts`, `cli.ts`, `validate-all.test.ts`.
 
 ---
 
@@ -301,9 +304,9 @@ invariants that aren't currently asserted directly.
 **File**: new `packages/codegen/src/__tests__/variant-branching.test.ts`
 
 - [ ] Load each of the 5 genuinely-branching rules' emitted
-  `.jinja` files. Assert they contain
-  `{% if variant == "<expected_form>" %}` entries for every form the
-  grammar declares.
+      `.jinja` files. Assert they contain
+      `{% if variant == "<expected_form>" %}` entries for every form the
+      grammar declares.
 
 ### T5.2: Brace-collision regression test (#20)
 
@@ -317,23 +320,23 @@ via Nunjucks without error.
 **File**: new `packages/core/tests/space-absorption.test.ts`
 
 - [ ] Template: `"fn $A $B trait"` with `A` and `B` empty → expect
-  `"fn trait"` after FR-017 post-pass.
+      `"fn trait"` after FR-017 post-pass.
 
 ### T5.4: Promoted-keyword preservation (#22)
 
 **File**: `packages/core/tests/nunjucks-render.test.ts` (add case)
 
 - [ ] Synthetic node with `$fields.async: { $named: false, $text: 'async' }`
-  plus other named fields → template references `{{ async }}` → output
-  contains "async".
+      plus other named fields → template references `{{ async }}` → output
+      contains "async".
 
 ### T5.5: Filter inventory check (#23)
 
 **File**: `scripts/check-jinja-templates.ts` (extend)
 
 - [ ] Add a scan for filter tokens `| filter`. Reject anything outside
-  the approved list (`join`, `length`, `default`, `trim`, `upper`,
-  `lower`).
+      the approved list (`join`, `length`, `default`, `trim`, `upper`,
+      `lower`).
 
 ### T5.6: Deprecate the T038 dual-outcome test (#24)
 
@@ -347,7 +350,7 @@ asserting concrete contracts.
 These are fixed in the current working tree and just need to commit:
 
 - [x] #1 / #24: `throwOnUndefined` docstring reconciled with behavior;
-  T038 split into two targeted tests.
+      T038 split into two targeted tests.
 - [x] #5: CI regex per-file `lastIndex` state fix.
 - [x] #27: CLI "Done!" log updated (`templates.yaml` → `templates/*.jinja`).
 

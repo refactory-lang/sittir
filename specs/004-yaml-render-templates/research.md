@@ -7,6 +7,7 @@
 **Rationale**: The codegen produces YAML; core consumes it. A minor dependency in core (`yaml` package) is acceptable — core is hand-written infrastructure, not a generated package. The zero-runtime-deps constitution principle applies to generated builder packages themselves, not to core which is already a dependency of all generated packages.
 
 **Alternatives considered**:
+
 - **Codegen emits both YAML + TypeScript module**: Over-engineering — adds a derived artifact that must stay in sync. YAML is the single source of truth; core parses it directly.
 - **JSON instead of YAML**: YAML's `|` block scalars are significantly more readable for multiline templates (the primary use case). JSON would require escaped newlines throughout.
 
@@ -19,6 +20,7 @@
 **Rationale**: Constitution Principle VI requires byte-identical output for the same grammar version. A timestamp changes on every regeneration, breaking deterministic diffing and CI reproducibility.
 
 **Alternatives considered**:
+
 - **Keep timestamp, exclude from determinism check**: Adds complexity — which fields are deterministic and which aren't? Rejected for simplicity.
 - **Keep timestamp in YAML only, strip from .ts emission**: Still makes the YAML file non-deterministic. Rejected.
 
@@ -31,6 +33,7 @@
 **Rationale**: Codegen serializes template data to YAML. Core parses it at runtime. The `yaml` package (v2) is the standard TypeScript-native YAML library with full spec compliance and built-in types. One package covers both directions.
 
 **Alternatives considered**:
+
 - **js-yaml**: Older, less TypeScript-friendly. `yaml` (v2) is the modern successor.
 - **JSON5 instead of YAML**: Would work but YAML's `|` block scalars are significantly more readable for multiline templates (the primary use case).
 
@@ -41,6 +44,7 @@
 **Rationale**: The current split across `rules.ts` and `joinby.ts` is an artifact of the S-expression format where separators couldn't be expressed per-rule. With YAML templates containing per-rule `joinBy`, the data naturally lives in one file. Core parses the YAML and provides the typed `RulesConfig` to `createRenderer`.
 
 **Alternatives considered**:
+
 - **Keep separate .ts files**: Pointless duplication — the data comes from one YAML source.
 - **Emit a .ts module alongside YAML**: Over-engineering — core handles YAML parsing directly.
 
@@ -53,6 +57,7 @@
 **Rationale**: Render is entirely a core concern. Currently, generated `factories.ts` imports `rules` and `joinBy` from generated files, then passes them to `createRenderer`. With YAML templates, core should load and parse the YAML directly — factories should not be aware of template format or content. This keeps the boundary clean: factories produce `NodeData`, core renders it.
 
 **Alternatives considered**:
+
 - **Keep factories loading templates**: Mixes concerns — factories shouldn't know about render template format.
 - **Pass RulesConfig from generated package to core**: Still requires generated packages to parse YAML or hold template data. Core should own the entire template lifecycle.
 
@@ -65,6 +70,7 @@
 **Rationale**: Tree-sitter grammars vary in their use of FIELDs. Rust's grammar leaves ~10-15 nodes without field names for positional children (e.g., `index_expression` has two `_expression` children). Without overrides, templates would be forced to use positional `$$$CHILDREN` for these nodes, losing semantic clarity.
 
 **Alternatives considered**:
+
 - **Fully automatic naming**: The codegen can detect candidates (same-kind positional, discriminator tokens) but can't assign semantically meaningful names. "child_0" / "child_1" are worse than nothing.
 - **Inline in YAML templates**: Mixing structural metadata with render templates muddies the template format.
 - **Patch tree-sitter grammars upstream**: Impractical — grammar repos are maintained by different communities with different goals.
@@ -78,6 +84,7 @@
 **Rationale**: Each heuristic covers a distinct grammar pattern. Heuristics 1-2 are fully automatic (no overrides needed). Heuristics 3-5 require override names but the promotion logic is still generated automatically by the codegen.
 
 **Alternatives considered**:
+
 - **Single generic wrap function**: Too slow at runtime — per-kind functions inline the known field structure.
 - **No heuristics, manual wrap**: Defeats the purpose of codegen — would require hand-writing wrap functions for every node kind.
 - **Fewer heuristics**: Leaving out heuristic 4 or 5 would fail for `index_expression`, `range_expression`, and similar nodes that are common in Rust.
@@ -91,5 +98,6 @@
 **Rationale**: Different grammar rule shapes produce different template patterns. A REPEAT produces `$$$CHILDREN` + `joinBy`. A SEQ with mixed fields and children produces field variables + `$$$CHILDREN` for the unnamed portion. Classification drives correct template generation.
 
 **Alternatives considered**:
+
 - **No classification, uniform `$$$CHILDREN`**: Loses the ability to generate field-specific templates for SEQ-based nodes.
 - **Deep rule analysis**: Diminishing returns — the 5 simplified roots cover all observed patterns across Rust, TypeScript, and Python grammars.

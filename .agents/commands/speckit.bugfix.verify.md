@@ -2,9 +2,9 @@
 description: Verify that bugfix patches are consistent across all spec artifacts
 ---
 
-
 <!-- Extension: bugfix -->
 <!-- Config: .specify/extensions/bugfix/ -->
+
 # Verify Bugfix Consistency
 
 Verify that all spec artifacts are consistent after bugfix patches — checks that new requirements have corresponding plan sections and tasks, reopened tasks are not still marked complete, and no orphaned references exist.
@@ -33,11 +33,11 @@ You **MUST** consider the user input before proceeding (if not empty). The user 
 
 2. **Check bug report status**: For each bug report file:
 
-   | Check | Pass Condition | Fail Condition |
-   |-------|---------------|----------------|
-   | Report exists | Bug file is in `bugs/` directory | Missing bug file |
-   | Report is patched | Has `**Status**: Patched` marker | Still `Open` or missing status |
-   | Patch date present | Has `**Patched**: [DATE]` entry | Missing patch date |
+   | Check              | Pass Condition                   | Fail Condition                 |
+   | ------------------ | -------------------------------- | ------------------------------ |
+   | Report exists      | Bug file is in `bugs/` directory | Missing bug file               |
+   | Report is patched  | Has `**Status**: Patched` marker | Still `Open` or missing status |
+   | Patch date present | Has `**Patched**: [DATE]` entry  | Missing patch date             |
 
 3. **Verify spec.md consistency**: For each bugfix note in spec.md:
    - New requirements have clear acceptance criteria
@@ -67,24 +67,26 @@ You **MUST** consider the user input before proceeding (if not empty). The user 
    **Date**: [DATE]
 
    ## Bug Reports
-   | Bug ID | Title | Status | Patched |
-   |--------|-------|--------|---------|
-   | BUG-001 | [Title] | ✅ Patched | [DATE] |
-   | BUG-002 | [Title] | ⚠️ Open | — |
+
+   | Bug ID  | Title   | Status     | Patched |
+   | ------- | ------- | ---------- | ------- |
+   | BUG-001 | [Title] | ✅ Patched | [DATE]  |
+   | BUG-002 | [Title] | ⚠️ Open    | —       |
 
    ## Consistency Checks
 
-   | Check | Result | Details |
-   |-------|--------|---------|
-   | All bugs patched | ✅ Pass / ⚠️ Fail | [N patched, M open] |
-   | Spec requirements covered | ✅ Pass / ⚠️ Fail | [N requirements, all have tasks] |
-   | No false completions | ✅ Pass / ⚠️ Fail | [N tasks verified] |
-   | Reopened tasks annotated | ✅ Pass / ⚠️ Fail | [N reopened, all annotated] |
-   | Task IDs sequential | ✅ Pass / ⚠️ Fail | [Last ID: TNNN] |
-   | No circular dependencies | ✅ Pass / ⚠️ Fail | [DAG valid] |
-   | Cross-artifact traceability | ✅ Pass / ⚠️ Fail | [All specs → plan → tasks] |
+   | Check                       | Result            | Details                          |
+   | --------------------------- | ----------------- | -------------------------------- |
+   | All bugs patched            | ✅ Pass / ⚠️ Fail | [N patched, M open]              |
+   | Spec requirements covered   | ✅ Pass / ⚠️ Fail | [N requirements, all have tasks] |
+   | No false completions        | ✅ Pass / ⚠️ Fail | [N tasks verified]               |
+   | Reopened tasks annotated    | ✅ Pass / ⚠️ Fail | [N reopened, all annotated]      |
+   | Task IDs sequential         | ✅ Pass / ⚠️ Fail | [Last ID: TNNN]                  |
+   | No circular dependencies    | ✅ Pass / ⚠️ Fail | [DAG valid]                      |
+   | Cross-artifact traceability | ✅ Pass / ⚠️ Fail | [All specs → plan → tasks]       |
 
    ## Recommended Actions
+
    - [List any issues found and how to fix them]
    - If all checks pass: Resume `/speckit.implement` to apply the code fix
    ```

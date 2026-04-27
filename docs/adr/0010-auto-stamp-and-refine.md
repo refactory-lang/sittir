@@ -12,9 +12,9 @@ literal:
 
 ```ts
 ir.breakStatement({
-    break: 'break',    // typed as "break" — the ONLY valid value
-    label: 'outer',
-})
+	break: "break", // typed as "break" — the ONLY valid value
+	label: "outer",
+});
 ```
 
 The `break` keyword is information-free ceremony. The grammar baked the
@@ -124,9 +124,9 @@ Consequences at the factory surface:
 
 ```ts
 // Before:
-ir.breakStatement({ break: 'break', label: 'outer' })
+ir.breakStatement({ break: "break", label: "outer" });
 // After:
-ir.breakStatement({ label: 'outer' })   // "break" stamped automatically
+ir.breakStatement({ label: "outer" }); // "break" stamped automatically
 ```
 
 **Applies today** to any field whose grammar-derived type union collapses
@@ -180,13 +180,13 @@ Bundled because `refine()` uses paths and the syntax changes are small.
 
 Current path vocabulary:
 
-| Segment | Meaning | Status |
-|---------|---------|--------|
-| `N` | Positional index, 0-based | Unchanged |
-| `-N` | Reverse index from end | Unchanged |
-| `_` | Wildcard — any member at this level | **Migration from `*`** |
-| `(name)` | Kind match — named or anonymous | **Migration from bare `name`** |
-| `name:` | Field traversal — descend through `field('name', ...)` | **New** |
+| Segment  | Meaning                                                | Status                         |
+| -------- | ------------------------------------------------------ | ------------------------------ |
+| `N`      | Positional index, 0-based                              | Unchanged                      |
+| `-N`     | Reverse index from end                                 | Unchanged                      |
+| `_`      | Wildcard — any member at this level                    | **Migration from `*`**         |
+| `(name)` | Kind match — named or anonymous                        | **Migration from bare `name`** |
+| `name:`  | Field traversal — descend through `field('name', ...)` | **New**                        |
 
 Rationale:
 

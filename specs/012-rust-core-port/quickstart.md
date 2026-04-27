@@ -13,6 +13,7 @@
 - **Optional** — `cargo-criterion` for Rust-side benchmarks; `@napi-rs/cli` is a workspace devDependency (will be added in Phase 2).
 
 The MVP does NOT require:
+
 - `wasm-pack` / Emscripten (WASM path is deferred).
 - A published crates.io account (crate publication is deferred).
 
@@ -92,12 +93,14 @@ npx tsx packages/codegen/src/cli.ts \
 ```
 
 This emits (per grammar):
+
 - The existing TS output (unchanged).
 - `packages/{lang}/rust-render/src/templates.rs` — `match kind { ... }` dispatch + embedded templates.
 - `packages/{lang}/rust-render/src/hash.rs` — `pub const TEMPLATE_BUNDLE_HASH`.
 - `packages/{lang}/src/hash.ts` — `export const TEMPLATE_BUNDLE_HASH` (matches Rust const byte-for-byte).
 
 After regeneration, rebuild the Rust workspace:
+
 ```bash
 cd rust && cargo build --workspace
 ```
@@ -135,9 +138,9 @@ console.log("backend:", getActiveBackend());
 const source = await fs.readFile("some-file.rs", "utf8");
 const matches = findMatches(source, "fn $NAME($$$PARAMS) { $$$BODY }");
 for (const match of matches) {
-  const node = wrap(match);              // existing TS API
-  console.log(node.$fields.name.$text);
-  // ... codemod logic ...
+	const node = wrap(match); // existing TS API
+	console.log(node.$fields.name.$text);
+	// ... codemod logic ...
 }
 ```
 
@@ -183,16 +186,16 @@ New grammars inherit the Rust path automatically:
 
 ## Common operations cheat-sheet
 
-| Task | Command |
-|---|---|
-| Full rebuild (Rust + TS) | `pnpm -r run type-check && cd rust && cargo build --workspace` |
-| Regenerate all grammars (TS + Rust) | `pnpm -r exec npx tsx packages/codegen/src/cli.ts --grammar $G --all --rust-render` (loop over G) |
-| Run all tests | `pnpm test && cd rust && cargo test --workspace` |
-| Run only parity tests | `cd rust && cargo test -p sittir-parity-tests` |
-| Benchmark (micro) | `cd rust && cargo bench -p sittir-core` |
-| Benchmark (macro, wall-clock) | `./scripts/bench-codemod.sh native && ./scripts/bench-codemod.sh typescript` (script TBD in Phase 2) |
-| Force TS fallback | `SITTIR_BACKEND=typescript <command>` |
-| Diagnose backend | `SITTIR_BACKEND_DEBUG=1 <command>` |
+| Task                                | Command                                                                                              |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Full rebuild (Rust + TS)            | `pnpm -r run type-check && cd rust && cargo build --workspace`                                       |
+| Regenerate all grammars (TS + Rust) | `pnpm -r exec npx tsx packages/codegen/src/cli.ts --grammar $G --all --rust-render` (loop over G)    |
+| Run all tests                       | `pnpm test && cd rust && cargo test --workspace`                                                     |
+| Run only parity tests               | `cd rust && cargo test -p sittir-parity-tests`                                                       |
+| Benchmark (micro)                   | `cd rust && cargo bench -p sittir-core`                                                              |
+| Benchmark (macro, wall-clock)       | `./scripts/bench-codemod.sh native && ./scripts/bench-codemod.sh typescript` (script TBD in Phase 2) |
+| Force TS fallback                   | `SITTIR_BACKEND=typescript <command>`                                                                |
+| Diagnose backend                    | `SITTIR_BACKEND_DEBUG=1 <command>`                                                                   |
 
 ---
 

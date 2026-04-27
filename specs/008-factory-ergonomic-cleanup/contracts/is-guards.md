@@ -11,21 +11,21 @@
 export const is: IsGuards;
 
 type IsGuards = {
-    // Per-kind (camelCase keys)
-    [K in keyof NamespaceMap as CamelCase<K & string>]:
-        <T extends { readonly type: string }>(v: T)
-            => v is T & { readonly type: NamespaceMap[K]['Kind'] & string };
+	// Per-kind (camelCase keys)
+	[K in keyof NamespaceMap as CamelCase<K & string>]: <T extends { readonly type: string }>(
+		v: T,
+	) => v is T & { readonly type: NamespaceMap[K]["Kind"] & string };
 } & {
-    // Generic inverse
-    kind<K extends keyof NamespaceMap>(
-        v: { readonly type: string },
-        kind: K,
-    ): v is { readonly type: NamespaceMap[K]['Kind'] & string };
+	// Generic inverse
+	kind<K extends keyof NamespaceMap>(
+		v: { readonly type: string },
+		kind: K,
+	): v is { readonly type: NamespaceMap[K]["Kind"] & string };
 
-    // Per-supertype (one entry per supertype declared in the grammar)
-    expression: (v: { readonly type: string }) => v is Expression;
-    pattern:    (v: { readonly type: string }) => v is Pattern;
-    // ... etc. Emitted based on grammar's supertype declarations.
+	// Per-supertype (one entry per supertype declared in the grammar)
+	expression: (v: { readonly type: string }) => v is Expression;
+	pattern: (v: { readonly type: string }) => v is Pattern;
+	// ... etc. Emitted based on grammar's supertype declarations.
 };
 ```
 
@@ -34,14 +34,14 @@ type IsGuards = {
 ```ts
 // Kind already narrowed: resolves through NamespaceMap to the concrete Tree/Node type
 export function isTree<T extends { readonly type: K }, K extends keyof NamespaceMap & string>(
-    v: T,
-): v is T & NamespaceMap[K]['Tree'];
+	v: T,
+): v is T & NamespaceMap[K]["Tree"];
 // Kind unknown: falls back to generic AnyTreeNode
 export function isTree(v: { readonly type: string }): v is AnyTreeNode;
 
 export function isNode<T extends { readonly type: K }, K extends keyof NamespaceMap & string>(
-    v: T,
-): v is T & NamespaceMap[K]['Node'];
+	v: T,
+): v is T & NamespaceMap[K]["Node"];
 export function isNode(v: { readonly type: string }): v is AnyNodeData;
 ```
 
@@ -113,12 +113,12 @@ type AssertGuards = {
 
 The API mirrors Babel's `@babel/types`:
 
-| Sittir | Babel |
-|---|---|
-| `is.functionItem(v)` | `t.isFunctionDeclaration(v)` |
+| Sittir                        | Babel                                        |
+| ----------------------------- | -------------------------------------------- |
+| `is.functionItem(v)`          | `t.isFunctionDeclaration(v)`                 |
 | `is.kind(v, 'function_item')` | n/a (Babel doesn't expose a generic inverse) |
-| `is.expression(v)` | `t.isExpression(v)` |
-| `assert.functionItem(v)` | `t.assertFunctionDeclaration(v)` |
+| `is.expression(v)`            | `t.isExpression(v)`                          |
+| `assert.functionItem(v)`      | `t.assertFunctionDeclaration(v)`             |
 
 Divergences: sittir's camelCase keys match kind-string camelCasing (`is.functionItem`); Babel's are PascalCase (`t.isFunctionDeclaration`). Sittir's supertype guards use the supertype name (`is.expression`); Babel uses the same convention (`t.isExpression`). Sittir adds the composition-with-shape axis (`isTree` / `isNode`); Babel doesn't split this way because Babel nodes carry their methods and data in one shape.
 

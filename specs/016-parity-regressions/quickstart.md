@@ -96,6 +96,7 @@ git diff specs/016-parity-regressions/baselines/
 ```
 
 Every changed line should either:
+
 - decrease a `failingKinds` array (or shrink `failingByKind`),
 - increase a `pass` / `astMatchPass` / `totals.pass` count, or
 - change the `commit` informational field.
@@ -159,6 +160,7 @@ git push
 ```
 
 CI runs:
+
 - Build (tsgo strict)
 - Lint generated packages (oxlint --deny-warnings)
 - Check .jinja templates (header validator)

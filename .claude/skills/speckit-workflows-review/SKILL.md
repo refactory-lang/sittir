@@ -30,12 +30,14 @@ get_feature_paths
 ```
 
 This provides:
+
 - `FEATURE_DIR` - Feature directory path
 - `FEATURE_SPEC` - Specification file (spec.md)
 - `IMPL_PLAN` - Implementation plan (plan.md)
 - `TASKS` - Task list (tasks.md)
 
 Load these files to understand:
+
 - Feature requirements and acceptance criteria
 - Implementation approach and design decisions
 - Task breakdown and current status
@@ -43,10 +45,12 @@ Load these files to understand:
 ### 2. Identify Review Target
 
 **If user provided task ID** (e.g., "T001" in arguments):
+
 - Review that specific task
 - Focus review on changes related to that task
 
 **If no task ID provided**:
+
 - Review all pending tasks (marked with `[ ]` in tasks.md)
 - Or review most recent code changes
 - Ask user which tasks to review if unclear
@@ -56,6 +60,7 @@ Load these files to understand:
 Conduct thorough review:
 
 **A. Load Code Changes**
+
 ```bash
 # Show recent changes
 git diff main..HEAD
@@ -65,11 +70,13 @@ git diff main..HEAD -- path/to/file
 ```
 
 **B. Verify Against Specification**
+
 - Check if implementation meets acceptance criteria in spec.md
 - Verify design decisions from plan.md are followed
 - Ensure behavior matches expected outcomes
 
 **C. Check Code Quality**
+
 - Look for bugs, edge cases, error handling
 - Check code clarity and maintainability
 - Verify proper testing coverage
@@ -77,6 +84,7 @@ git diff main..HEAD -- path/to/file
 - Flag placeholder/TODO/FIXME code within the implementation scope
 
 **D. Run Tests** (if available)
+
 ```bash
 # Run test suite based on project structure
 npm test              # Node.js projects
@@ -87,6 +95,7 @@ go test ./...         # Go projects
 ```
 
 **E. Validate Against Quality Gates**
+
 - Code follows project standards
 - Tests exist and pass
 - Edge cases handled
@@ -101,6 +110,7 @@ Choose one of three outcomes:
 **Approved - Implementation Ready**
 
 Criteria:
+
 - All acceptance criteria met
 - All tests passing
 - No blocking issues found
@@ -110,6 +120,7 @@ Criteria:
 **Approved with Minor Notes**
 
 Criteria:
+
 - Core functionality works correctly
 - Tests passing
 - Minor improvements suggested (not blocking)
@@ -119,6 +130,7 @@ Criteria:
 **Needs Changes - Issues Must Be Fixed**
 
 Criteria:
+
 - Bugs or regressions found
 - Tests failing or missing
 - Acceptance criteria not met
@@ -139,6 +151,7 @@ For approved work, mark completed tasks as done:
 ```
 
 This updates tasks.md, changing:
+
 - `[ ] T001: Task description` -> `[X] T001: Task description`
 
 **For "Needs Changes" outcome**: Do NOT mark tasks as done. They remain pending until issues are fixed.
@@ -162,9 +175,11 @@ Create a comprehensive review report:
 ## Implementation Review
 
 ### What Was Reviewed
+
 - [List tasks or changes reviewed]
 
 ### Implementation Quality
+
 - **Code Quality**: [Assessment]
 - **Test Coverage**: [Assessment]
 - **Documentation**: [Assessment]
@@ -181,6 +196,7 @@ Create a comprehensive review report:
 ## Findings
 
 ### What Worked Well
+
 - [Positive aspect 1]
 - [Positive aspect 2]
 - [Positive aspect 3]
@@ -188,6 +204,7 @@ Create a comprehensive review report:
 ### Issues / Concerns (if any)
 
 #### [Issue Title]
+
 - **Severity**: [Critical / High / Medium / Low]
 - **Description**: [What the issue is]
 - **Impact**: [Why it matters]
@@ -198,10 +215,12 @@ Create a comprehensive review report:
 ## Tasks Status
 
 ### Completed (Marked as Done)
-- [X] T001: [Task description]
-- [X] T002: [Task description]
+
+- [x] T001: [Task description]
+- [x] T002: [Task description]
 
 ### Remaining Pending
+
 - [ ] T004: [Task description]
 - [ ] T005: [Task description]
 
@@ -212,16 +231,19 @@ Create a comprehensive review report:
 ## Next Steps
 
 **For Approved**:
+
 1. Tasks marked as complete in tasks.md
 2. Ready to merge feature branch
 3. Consider creating PR for team review
 
 **For Approved with Notes**:
+
 1. Tasks marked as complete in tasks.md
 2. Can merge with documented follow-up items
 3. Create follow-up tasks for minor improvements
 
 **For Needs Changes**:
+
 1. Fix listed issues
 2. Run tests to verify fixes
 3. Request re-review with `/speckit.workflows.review`
@@ -256,20 +278,24 @@ Issues: [N found]
 ## Edge Cases
 
 **No tasks.md exists**:
+
 - Review can still proceed
 - Document findings but skip task updates
 - Recommend creating tasks.md for tracking
 
 **No tests available**:
+
 - Review code manually without automated tests
 - Note lack of tests as a finding
 - Recommend adding tests
 
 **Multiple features in review**:
+
 - Review current feature based on branch/directory
 - Use FEATURE_DIR to scope the review
 
 **Ambiguous review target**:
+
 - Ask user to clarify which tasks to review
 - Or review all pending tasks by default
 

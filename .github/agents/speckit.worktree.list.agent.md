@@ -2,9 +2,9 @@
 description: Show all active worktrees with feature status and spec artifact summary
 ---
 
-
 <!-- Extension: worktree -->
 <!-- Config: .specify/extensions/worktree/ -->
+
 # List Worktrees
 
 Show all active git worktrees with their feature branch status, spec artifact availability, and task completion progress — a dashboard for parallel feature development.
@@ -39,12 +39,12 @@ You **MUST** consider the user input before proceeding (if not empty). The user 
 
 3. **Classify worktree status**:
 
-   | Status | Condition |
-   |--------|-----------|
-   | ✅ Active | Recent commits (within 7 days), unmerged |
-   | 🟡 Idle | No recent commits (7-30 days), unmerged |
-   | ⚠️ Stale | No commits for 30+ days, unmerged |
-   | ✅ Merged | Branch merged into main/master |
+   | Status      | Condition                                |
+   | ----------- | ---------------------------------------- |
+   | ✅ Active   | Recent commits (within 7 days), unmerged |
+   | 🟡 Idle     | No recent commits (7-30 days), unmerged  |
+   | ⚠️ Stale    | No commits for 30+ days, unmerged        |
+   | ✅ Merged   | Branch merged into main/master           |
    | ❌ Orphaned | Branch deleted but worktree still exists |
 
 4. **Output dashboard**:
@@ -52,19 +52,21 @@ You **MUST** consider the user input before proceeding (if not empty). The user 
    ```markdown
    # Active Worktrees
 
-   | # | Branch | Path | Status | Artifacts | Tasks | Last Activity |
-   |---|--------|------|--------|-----------|-------|---------------|
-   | 1 | 003-user-auth | .worktrees/003-user-auth/ | ✅ Active | spec ✅ plan ✅ tasks ✅ | 12/18 (67%) | 2 hours ago |
-   | 2 | 004-chat-system | .worktrees/004-chat-system/ | 🟡 Idle | spec ✅ plan ✅ tasks ❌ | — | 12 days ago |
-   | 3 | 005-api-gateway | .worktrees/005-api-gateway/ | ✅ Merged | spec ✅ plan ✅ tasks ✅ | 8/8 (100%) | 3 days ago |
+   | #   | Branch          | Path                        | Status    | Artifacts                | Tasks       | Last Activity |
+   | --- | --------------- | --------------------------- | --------- | ------------------------ | ----------- | ------------- |
+   | 1   | 003-user-auth   | .worktrees/003-user-auth/   | ✅ Active | spec ✅ plan ✅ tasks ✅ | 12/18 (67%) | 2 hours ago   |
+   | 2   | 004-chat-system | .worktrees/004-chat-system/ | 🟡 Idle   | spec ✅ plan ✅ tasks ❌ | —           | 12 days ago   |
+   | 3   | 005-api-gateway | .worktrees/005-api-gateway/ | ✅ Merged | spec ✅ plan ✅ tasks ✅ | 8/8 (100%)  | 3 days ago    |
 
    ## Summary
+
    - **Total worktrees**: 3 (+ main working directory)
    - **Active**: 1
    - **Idle**: 1
    - **Ready to clean**: 1 (merged)
 
    ## Recommended Actions
+
    - Run `/speckit.worktree.clean` to remove the merged worktree (005-api-gateway)
    - Resume work on 004-chat-system or run `/speckit.tasks` to generate tasks
    ```

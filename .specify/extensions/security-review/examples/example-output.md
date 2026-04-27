@@ -53,15 +53,11 @@ User-supplied credentials are concatenated directly into SQL queries without par
 ```javascript
 // src/auth/login.js:42-48
 async function authenticateUser(username, password) {
-  const query =
-    "SELECT * FROM users WHERE username = '" +
-    username +
-    "' AND password = '" +
-    password +
-    "'";
+	const query =
+		"SELECT * FROM users WHERE username = '" + username + "' AND password = '" + password + "'";
 
-  const result = await db.query(query);
-  return result.rows[0];
+	const result = await db.query(query);
+	return result.rows[0];
 }
 ```
 
@@ -97,19 +93,19 @@ Alternative data exfiltration:
 ```javascript
 // src/auth/login.js:42-52
 async function authenticateUser(username, password) {
-  // Input validation
-  if (!username || !password) {
-    throw new ValidationError('Username and password required');
-  }
+	// Input validation
+	if (!username || !password) {
+		throw new ValidationError("Username and password required");
+	}
 
-  // Parameterized query prevents SQL injection
-  const query = {
-    text: 'SELECT * FROM users WHERE username = $1 AND password = $2',
-    values: [username, password],
-  };
+	// Parameterized query prevents SQL injection
+	const query = {
+		text: "SELECT * FROM users WHERE username = $1 AND password = $2",
+		values: [username, password],
+	};
 
-  const result = await db.query(query);
-  return result.rows[0];
+	const result = await db.query(query);
+	return result.rows[0];
 }
 ```
 
@@ -139,11 +135,11 @@ Production API credentials for the payment processor are hardcoded directly in s
 
 ```javascript
 // src/services/payment.js:10-15
-const stripe = require('stripe');
+const stripe = require("stripe");
 
 // TODO: Move to environment variables
-const STRIPE_SECRET_KEY = 'this-is-dummy-secret-value';
-const STRIPE_WEBHOOK_SECRET = 'this-is-dummy-webhook-secret';
+const STRIPE_SECRET_KEY = "this-is-dummy-secret-value";
+const STRIPE_WEBHOOK_SECRET = "this-is-dummy-webhook-secret";
 
 const client = stripe(STRIPE_SECRET_KEY);
 ```
@@ -178,14 +174,14 @@ const client = stripe(STRIPE_SECRET_KEY);
 
 ```javascript
 // src/services/payment.js:10-18
-const stripe = require('stripe');
+const stripe = require("stripe");
 
 // Credentials loaded from environment or secrets manager
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 
 if (!STRIPE_SECRET_KEY) {
-  throw new ConfigurationError('STRIPE_SECRET_KEY not configured');
+	throw new ConfigurationError("STRIPE_SECRET_KEY not configured");
 }
 
 const client = stripe(STRIPE_SECRET_KEY);
@@ -216,18 +212,18 @@ Administrative API endpoints for user management do not require authentication o
 
 ```javascript
 // src/api/admin/routes.js:20-35
-router.get('/admin/users', async (req, res) => {
-  // Missing: authentication check
-  // Missing: authorization check (admin role)
-  const users = await User.findAll();
-  res.json(users);
+router.get("/admin/users", async (req, res) => {
+	// Missing: authentication check
+	// Missing: authorization check (admin role)
+	const users = await User.findAll();
+	res.json(users);
 });
 
-router.delete('/admin/users/:id', async (req, res) => {
-  // Missing: authentication check
-  // Missing: authorization check
-  await User.destroy({ where: { id: req.params.id } });
-  res.sendStatus(204);
+router.delete("/admin/users/:id", async (req, res) => {
+	// Missing: authentication check
+	// Missing: authorization check
+	await User.destroy({ where: { id: req.params.id } });
+	res.sendStatus(204);
 });
 ```
 
@@ -272,13 +268,13 @@ User profile endpoint uses user-supplied ID without verifying the requester owns
 
 ```javascript
 // src/api/users/profile.js:25-32
-router.get('/profile/:userId', async (req, res) => {
-  const userId = req.params.userId;
+router.get("/profile/:userId", async (req, res) => {
+	const userId = req.params.userId;
 
-  // Missing: verify req.user.id === userId
-  const profile = await UserProfile.findByUserId(userId);
+	// Missing: verify req.user.id === userId
+	const profile = await UserProfile.findByUserId(userId);
 
-  res.json(profile);
+	res.json(profile);
 });
 ```
 
@@ -299,17 +295,17 @@ router.get('/profile/:userId', async (req, res) => {
 #### Remediation
 
 ```javascript
-router.get('/profile/:userId', async (req, res) => {
-  const requestedUserId = parseInt(req.params.userId);
-  const authenticatedUserId = req.user.id;
+router.get("/profile/:userId", async (req, res) => {
+	const requestedUserId = parseInt(req.params.userId);
+	const authenticatedUserId = req.user.id;
 
-  // Authorization check
-  if (requestedUserId !== authenticatedUserId) {
-    return res.status(403).json({ error: 'Access denied' });
-  }
+	// Authorization check
+	if (requestedUserId !== authenticatedUserId) {
+		return res.status(403).json({ error: "Access denied" });
+	}
 
-  const profile = await UserProfile.findByUserId(requestedUserId);
-  res.json(profile);
+	const profile = await UserProfile.findByUserId(requestedUserId);
+	res.json(profile);
 });
 ```
 
@@ -346,11 +342,11 @@ Update package.json:
 
 ```json
 {
-  "dependencies": {
-    "lodash": "^4.17.21",
-    "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.0"
-  }
+	"dependencies": {
+		"lodash": "^4.17.21",
+		"express": "^4.18.2",
+		"jsonwebtoken": "^9.0.0"
+	}
 }
 ```
 
@@ -375,17 +371,17 @@ The application does not set Content-Security-Policy (CSP) headers, leaving user
 ```javascript
 // src/middleware/headers.js
 app.use((req, res, next) => {
-  res.setHeader(
-    'Content-Security-Policy',
-    "default-src 'self'; " +
-      "script-src 'self'; " +
-      "style-src 'self' 'unsafe-inline'; " +
-      "img-src 'self' data: https:; " +
-      "font-src 'self'; " +
-      "connect-src 'self'; " +
-      "frame-ancestors 'none';",
-  );
-  next();
+	res.setHeader(
+		"Content-Security-Policy",
+		"default-src 'self'; " +
+			"script-src 'self'; " +
+			"style-src 'self' 'unsafe-inline'; " +
+			"img-src 'self' data: https:; " +
+			"font-src 'self'; " +
+			"connect-src 'self'; " +
+			"frame-ancestors 'none';",
+	);
+	next();
 });
 ```
 

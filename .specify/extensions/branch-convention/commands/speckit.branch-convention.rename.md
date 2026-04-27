@@ -27,21 +27,21 @@ You **MUST** consider the user input before proceeding (if not empty). The user 
 
 2. **Build rename plan**: For each non-compliant item, compute the correct name:
 
-   | Current Name | Convention | New Name | Action |
-   |-------------|------------|----------|--------|
-   | `004-chat-system` | `{type}/{seq}-{kebab}` | `feat/004-chat-system` | Rename branch, keep folder |
-   | `5-api` | `{seq}-{kebab}` (pad 3) | `005-api` | Rename branch + move folder |
-   | `PROJ142-auth` | `{ticket}-{kebab}` | `PROJ-142-auth` | Rename branch + move folder |
+   | Current Name      | Convention              | New Name               | Action                      |
+   | ----------------- | ----------------------- | ---------------------- | --------------------------- |
+   | `004-chat-system` | `{type}/{seq}-{kebab}`  | `feat/004-chat-system` | Rename branch, keep folder  |
+   | `5-api`           | `{seq}-{kebab}` (pad 3) | `005-api`              | Rename branch + move folder |
+   | `PROJ142-auth`    | `{ticket}-{kebab}`      | `PROJ-142-auth`        | Rename branch + move folder |
 
 3. **Present the rename plan**: Show a preview table before making any changes:
 
    ```markdown
    # Rename Plan
 
-   | # | Current Branch | New Branch | Current Folder | New Folder |
-   |---|---------------|------------|----------------|------------|
-   | 1 | 004-chat-system | feat/004-chat-system | 004-chat-system | 004-chat-system (unchanged) |
-   | 2 | 5-api | feat/005-api | 5-api | 005-api |
+   | #   | Current Branch  | New Branch           | Current Folder  | New Folder                  |
+   | --- | --------------- | -------------------- | --------------- | --------------------------- |
+   | 1   | 004-chat-system | feat/004-chat-system | 004-chat-system | 004-chat-system (unchanged) |
+   | 2   | 5-api           | feat/005-api         | 5-api           | 005-api                     |
 
    **Actions**: {N} branches to rename, {M} folders to move
    ```

@@ -71,7 +71,9 @@ function dsl() {
 function nativeRequired(name) {
   const fn = dsl()[name];
   if (typeof fn !== "function") {
-    throw new Error(`transform: no global ${String(name)}() found \u2014 must be called inside a runtime that injects ${String(name)}() (sittir evaluate.ts or tree-sitter CLI)`);
+    throw new Error(
+      `transform: no global ${String(name)}() found \u2014 must be called inside a runtime that injects ${String(name)}() (sittir evaluate.ts or tree-sitter CLI)`
+    );
   }
   return fn;
 }
@@ -100,11 +102,17 @@ function parsePath(pathStr) {
     } else if (/^[A-Za-z_][A-Za-z0-9_]*:$/.test(part)) {
       segments.push({ kind: "fieldName", name: part.slice(0, -1) });
     } else if (part === "*") {
-      throw new Error(`parsePath: path segment '*' is no longer valid \u2014 use '_' for wildcard; see ADR-0010`);
+      throw new Error(
+        `parsePath: path segment '*' is no longer valid \u2014 use '_' for wildcard; see ADR-0010`
+      );
     } else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) {
-      throw new Error(`parsePath: bare kind name '${part}' is no longer valid as a path segment \u2014 use '(${part})' instead; see ADR-0010`);
+      throw new Error(
+        `parsePath: bare kind name '${part}' is no longer valid as a path segment \u2014 use '(${part})' instead; see ADR-0010`
+      );
     } else {
-      throw new Error(`parsePath: invalid segment '${part}' in path '${pathStr}' \u2014 must be a numeric index, '_' (wildcard), '(name)' (kind-match), or 'name:' (field traversal)`);
+      throw new Error(
+        `parsePath: invalid segment '${part}' in path '${pathStr}' \u2014 must be a numeric index, '_' (wildcard), '(name)' (kind-match), or 'name:' (field traversal)`
+      );
     }
   }
   return segments;
@@ -136,7 +144,9 @@ function applyPath(rule, segments, patch, precStack) {
       if (t === "alias" || t === "ALIAS") {
         return descendThroughAlias(rule, head, rest, patch, precStack);
       }
-      throw new ApplyPathSkip(`applyPath: cannot descend into '${rule.type}' rule (path has ${segments.length} segments left)`);
+      throw new ApplyPathSkip(
+        `applyPath: cannot descend into '${rule.type}' rule (path has ${segments.length} segments left)`
+      );
     }
     default: {
       const _exhaustive = head;
@@ -166,11 +176,15 @@ function descendThroughSingleWrapper(rule, head, rest, patch, precStack) {
     }
     case "kind-match":
     case "fieldName": {
-      throw new Error(`descendThroughSingleWrapper: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`);
+      throw new Error(
+        `descendThroughSingleWrapper: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`
+      );
     }
     default: {
       const _exhaustive = head;
-      throw new Error(`descendThroughSingleWrapper: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`);
+      throw new Error(
+        `descendThroughSingleWrapper: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`
+      );
     }
   }
 }
@@ -191,16 +205,23 @@ function descendThroughAlias(rule, head, rest, patch, precStack) {
     }
     case "kind-match":
     case "fieldName": {
-      throw new Error(`descendThroughAlias: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`);
+      throw new Error(
+        `descendThroughAlias: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`
+      );
     }
     default: {
       const _exhaustive = head;
-      throw new Error(`descendThroughAlias: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`);
+      throw new Error(
+        `descendThroughAlias: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`
+      );
     }
   }
 }
 function reconstructAlias(rule, newContent) {
-  return { ...rule, content: newContent };
+  return {
+    ...rule,
+    content: newContent
+  };
 }
 function descendThroughNamedField(rule, fieldName, rest, patch, precStack) {
   if (!isFieldType(rule.type)) {
@@ -223,7 +244,9 @@ function dispatchKindMatch(rule, kindName, rest, patch, precStack) {
 function applyKindMatch(rule, targetKind, rest, patch, precStack, insideNamedField) {
   const result = walkKindMatch(rule, targetKind, rest, patch, precStack, insideNamedField);
   if (!result.matched) {
-    throw new ApplyPathSkip(`applyPath: kind '${targetKind}' matched zero occurrences in this subtree`);
+    throw new ApplyPathSkip(
+      `applyPath: kind '${targetKind}' matched zero occurrences in this subtree`
+    );
   }
   return result.rule;
 }
@@ -242,24 +265,47 @@ function walkKindMatch(rule, targetKind, rest, patch, precStack, insideNamedFiel
   if (isPrecWrapper(rule)) {
     const stack = precStack ? [...precStack, rule] : [rule];
     const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, stack, insideNamedField);
-    return { rule: inner.matched ? reconstructPrec(rule, inner.rule) : rule, matched: inner.matched };
+    return {
+      rule: inner.matched ? reconstructPrec(rule, inner.rule) : rule,
+      matched: inner.matched
+    };
   }
   if (t === "symbol" || t === "SYMBOL") {
     return applyKindMatchToSymbol(rule, targetKind, rest, patch, precStack, insideNamedField);
   }
   if (t === "field" || t === "FIELD") {
     const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, precStack, true);
-    return { rule: inner.matched ? reconstructWrapper(rule, inner.rule) : rule, matched: inner.matched };
+    return {
+      rule: inner.matched ? reconstructWrapper(rule, inner.rule) : rule,
+      matched: inner.matched
+    };
   }
   if (isWrapperType(t)) {
-    const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, precStack, insideNamedField);
-    return { rule: inner.matched ? reconstructWrapper(rule, inner.rule) : rule, matched: inner.matched };
+    const inner = walkKindMatch(
+      contentOf(rule),
+      targetKind,
+      rest,
+      patch,
+      precStack,
+      insideNamedField
+    );
+    return {
+      rule: inner.matched ? reconstructWrapper(rule, inner.rule) : rule,
+      matched: inner.matched
+    };
   }
   if (isContainerType(t)) {
     const members = [...membersOf(rule)];
     let anyMatched = false;
     for (let i = 0; i < members.length; i++) {
-      const inner = walkKindMatch(members[i], targetKind, rest, patch, precStack, insideNamedField);
+      const inner = walkKindMatch(
+        members[i],
+        targetKind,
+        rest,
+        patch,
+        precStack,
+        insideNamedField
+      );
       if (inner.matched) {
         members[i] = inner.rule;
         anyMatched = true;
@@ -295,7 +341,9 @@ function reconstructWrapper(rule, newContent) {
 function reconstructRepeatWithMetadata(rule, newContent) {
   const r = rule;
   const t = r.type;
-  const baseNode = nativeRequired(t === "repeat" || t === "REPEAT" ? "repeat" : "repeat1")(newContent);
+  const baseNode = nativeRequired(t === "repeat" || t === "REPEAT" ? "repeat" : "repeat1")(
+    newContent
+  );
   if (r.separator !== void 0) baseNode.separator = r.separator;
   if (r.leading !== void 0) baseNode.leading = r.leading;
   if (r.trailing !== void 0) baseNode.trailing = r.trailing;
@@ -313,7 +361,8 @@ function reconstructPrec(rule, newContent) {
   const variant2 = PREC_VARIANT_MAP[t];
   if (variant2) {
     const fn = prec[variant2];
-    if (typeof fn !== "function") throw new Error(`transform: native prec.${variant2} not available`);
+    if (typeof fn !== "function")
+      throw new Error(`transform: native prec.${variant2} not available`);
     return fn(value, newContent);
   }
   return prec(value, newContent);
@@ -335,11 +384,15 @@ function applyToMembers(rule, head, rest, patch, precStack) {
       return applyWildcardToMembers(rule, members, rest, patch, precStack);
     case "kind-match":
     case "fieldName": {
-      throw new Error(`applyToMembers: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`);
+      throw new Error(
+        `applyToMembers: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`
+      );
     }
     default: {
       const _exhaustive = head;
-      throw new Error(`applyToMembers: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`);
+      throw new Error(
+        `applyToMembers: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`
+      );
     }
   }
 }
@@ -368,7 +421,9 @@ function applyWildcardToMembers(rule, members, rest, patch, precStack) {
     }
   }
   if (!anyApplied) {
-    throw new ApplyPathSkip(`applyPath: wildcard matched zero members successfully in ${rule.type} of length ${members.length}`);
+    throw new ApplyPathSkip(
+      `applyPath: wildcard matched zero members successfully in ${rule.type} of length ${members.length}`
+    );
   }
   return reconstructContainer(rule, members);
 }
@@ -391,7 +446,9 @@ function alias(rule, value) {
   }
   const native = globalThis.alias;
   if (typeof native !== "function") {
-    throw new Error("alias(): no global alias() found \u2014 must be called inside a runtime that injects alias() (sittir evaluate.ts or tree-sitter CLI)");
+    throw new Error(
+      "alias(): no global alias() found \u2014 must be called inside a runtime that injects alias() (sittir evaluate.ts or tree-sitter CLI)"
+    );
   }
   if (value !== void 0) {
     return native(rule, value);
@@ -408,7 +465,9 @@ function wireRegisterSyntheticRule(name, content) {
 }
 function wireRegisterPolymorphVariant(parent, child) {
   if (!currentContext) return false;
-  const exists = currentContext.polymorphVariants.some((v) => v.parent === parent && v.child === child);
+  const exists = currentContext.polymorphVariants.some(
+    (v) => v.parent === parent && v.child === child
+  );
   if (!exists) {
     currentContext.polymorphVariants.push({ parent, child });
   }
@@ -575,7 +634,9 @@ function buildWiredConflictsFn(userConflicts, context) {
   return function wiredConflicts($, previous) {
     const base2 = userConflicts ? userConflicts.call(this, $, previous) : previous ?? [];
     if (context.conflictGroups.length === 0) return base2;
-    const symbolized = context.conflictGroups.map((group) => group.map((name) => symbolizeRef($, name)));
+    const symbolized = context.conflictGroups.map(
+      (group) => group.map((name) => symbolizeRef($, name))
+    );
     return [...base2, ...symbolized];
   };
 }
@@ -613,7 +674,9 @@ function synthesizeKwSymbol(fieldName, content, wrapSyntheticBody) {
   let precBody = typeof nativePrec === "function" ? nativePrec(-1, content) : content;
   if (wrapSyntheticBody) precBody = wrapSyntheticBody(precBody);
   if (!wireRegisterSyntheticRule(hiddenName, precBody)) {
-    throw new Error(`field('${fieldName}', <STRING>): no active wire() context \u2014 call must occur inside a rule callback wrapped by wire()`);
+    throw new Error(
+      `field('${fieldName}', <STRING>): no active wire() context \u2014 call must occur inside a rule callback wrapped by wire()`
+    );
   }
   return {
     type: isUpperCase ? "SYMBOL" : "symbol",
@@ -637,7 +700,9 @@ function descendOptional(fieldName, content, wrapSyntheticBody, wrapperKind) {
     return nativeOptional(rewritten);
   }
   const c = content;
-  const newMembers = c.members.map((m) => m.type === "BLANK" || m.type === "blank" ? m : rewritten);
+  const newMembers = c.members.map(
+    (m) => m.type === "BLANK" || m.type === "blank" ? m : rewritten
+  );
   return { ...c, members: newMembers };
 }
 function isFieldPlaceholder(v) {
@@ -649,7 +714,9 @@ function field(name, content) {
   }
   const native = globalThis.field;
   if (typeof native !== "function") {
-    throw new Error("field(): no global field() found \u2014 must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)");
+    throw new Error(
+      "field(): no global field() found \u2014 must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)"
+    );
   }
   return buildTwoArgFieldResult(native, name, content);
 }
@@ -669,7 +736,9 @@ function transform(original, ...patchSets) {
   let rule = original;
   for (const patches of patchSets) {
     const hasPathKeys = requiresPathMode(patches);
-    const hasPlaceholderAlias = Object.values(patches).some((v) => isAliasPlaceholder(v) || isVariantPlaceholder(v));
+    const hasPlaceholderAlias = Object.values(patches).some(
+      (v) => isAliasPlaceholder(v) || isVariantPlaceholder(v)
+    );
     if (hasPathKeys || hasPlaceholderAlias) {
       rule = applyPathPatches(rule, patches);
     } else {
@@ -704,23 +773,29 @@ function partitionPatchesByVariant(patches) {
   return { variantEntries, otherEntries };
 }
 function applyVariantPatches(rule, variantEntries) {
-  const ordered = [...variantEntries].sort(
-    ([a], [b]) => parsePath(b).length - parsePath(a).length
-  );
+  const ordered = [...variantEntries].sort(([a], [b]) => parsePath(b).length - parsePath(a).length);
   const hoisted = tryHoistSiblingVariants(rule, ordered);
   if (hoisted) {
     let result2 = hoisted.rule;
     for (const [key, value] of ordered) {
       if (hoisted.consumed.has(key)) continue;
       const segments = parsePath(key);
-      result2 = applyPath(result2, segments, (member, precStack) => resolvePatch(value, member, precStack));
+      result2 = applyPath(
+        result2,
+        segments,
+        (member, precStack) => resolvePatch(value, member, precStack)
+      );
     }
     return result2;
   }
   let result = rule;
   for (const [key, value] of ordered) {
     const segments = parsePath(key);
-    result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, precStack));
+    result = applyPath(
+      result,
+      segments,
+      (member, precStack) => resolvePatch(value, member, precStack)
+    );
   }
   return result;
 }
@@ -732,17 +807,33 @@ function tryHoistSiblingVariants(rule, variantEntries) {
   const parsed = parseVariantPathsForHoist(variantEntries, bail);
   if (parsed === null) return null;
   const choicePos = parsed[0].choicePos;
-  if (parsed.some((p) => p.choicePos !== choicePos)) return bail(`variant patches target mixed choice positions (${parsed.map((p) => p.choicePos).join(",")}) \u2014 hoist needs all siblings at one choice`);
+  if (parsed.some((p) => p.choicePos !== choicePos))
+    return bail(
+      `variant patches target mixed choice positions (${parsed.map((p) => p.choicePos).join(",")}) \u2014 hoist needs all siblings at one choice`
+    );
   const seqMembers = [...membersOf2(core)];
   const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
   const choice = seqMembers[resolvedPos];
-  if (!choice || !isChoiceType(choice.type)) return bail(`position ${resolvedPos} is '${choice?.type}', not choice/CHOICE`);
+  if (!choice || !isChoiceType(choice.type))
+    return bail(`position ${resolvedPos} is '${choice?.type}', not choice/CHOICE`);
   const choiceMembers = membersOf2(choice);
-  const anyEmpty = parsed.some((p) => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx]));
+  const anyEmpty = parsed.some(
+    (p) => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx])
+  );
   if (!anyEmpty) return null;
   const parentKind = wireGetCurrentRuleKind();
-  if (!parentKind) return bail("no current rule kind (variant()/transform() called outside rule callback?)");
-  return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice, parsed, parentKind, precStack);
+  if (!parentKind)
+    return bail("no current rule kind (variant()/transform() called outside rule callback?)");
+  return buildHoistedVariants(
+    core,
+    seqMembers,
+    choiceMembers,
+    resolvedPos,
+    choice,
+    parsed,
+    parentKind,
+    precStack
+  );
 }
 function peelPrecWrappersFromRule(rule) {
   const dbg = typeof process !== "undefined" ? process?.env?.SITTIR_DEBUG : void 0;
@@ -763,8 +854,12 @@ function parseVariantPathsForHoist(variantEntries, bail) {
   const parsed = [];
   for (const [key, v] of variantEntries) {
     const segs = parsePath(key);
-    if (segs.length !== 2) return bail(`variant patch '${key}' has ${segs.length} segments (expected 2: N/M)`);
-    if (segs[0].kind !== "index" || segs[1].kind !== "index") return bail(`variant patch '${key}' uses non-index segments (kind-match / wildcard not supported for hoist)`);
+    if (segs.length !== 2)
+      return bail(`variant patch '${key}' has ${segs.length} segments (expected 2: N/M)`);
+    if (segs[0].kind !== "index" || segs[1].kind !== "index")
+      return bail(
+        `variant patch '${key}' uses non-index segments (kind-match / wildcard not supported for hoist)`
+      );
     parsed.push({ key, v, choicePos: segs[0].value, altIdx: segs[1].value });
   }
   return parsed;
@@ -781,7 +876,9 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     const visibleName = polymorphVisibleName(parentKind, p.v.name);
     const hiddenName = polymorphHiddenName(parentKind, p.v.name);
     if (!wireRegisterPolymorphVariant(parentKind, p.v.name)) {
-      throw new Error(`variant('${p.v.name}'): no active wire() context \u2014 variant() must run inside a rule callback under wire()`);
+      throw new Error(
+        `variant('${p.v.name}'): no active wire() context \u2014 variant() must run inside a rule callback under wire()`
+      );
     }
     if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {
       throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
@@ -863,14 +960,23 @@ function resolvePatch(patch, originalMember, precStack) {
   if (isVariantPlaceholder(patch)) {
     const parentKind = wireGetCurrentRuleKind();
     if (!parentKind) {
-      throw new Error(`variant('${patch.name}'): no current rule kind \u2014 variant() must be used inside a rule callback`);
+      throw new Error(
+        `variant('${patch.name}'): no current rule kind \u2014 variant() must be used inside a rule callback`
+      );
     }
     if (!wireRegisterPolymorphVariant(parentKind, patch.name)) {
-      throw new Error(`variant('${patch.name}'): no active wire() context \u2014 variant() must run inside a rule callback under wire()`);
+      throw new Error(
+        `variant('${patch.name}'): no active wire() context \u2014 variant() must run inside a rule callback under wire()`
+      );
     }
     const visibleName = polymorphVisibleName(parentKind, patch.name);
     const hiddenName = polymorphHiddenName(parentKind, patch.name);
-    return registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack));
+    return registerAliasedVariant(
+      hiddenName,
+      visibleName,
+      originalMember,
+      (body) => wrapInPrec(body, precStack)
+    );
   }
   if (isAliasPlaceholder(patch)) {
     return resolveAliasPlaceholder(patch, originalMember, precStack);
@@ -902,14 +1008,21 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
   }
   const native = globalThis.field;
   if (typeof native !== "function") {
-    throw new Error("transform: no global field() found \u2014 patches that use the one-arg field() form require a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)");
+    throw new Error(
+      "transform: no global field() found \u2014 patches that use the one-arg field() form require a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)"
+    );
   }
   const result = native(patch.name, content);
   return { ...result, source: "override" };
 }
 function resolveAliasPlaceholder(patch, originalMember, precStack) {
   const hiddenName = "_" + patch.name;
-  return registerAliasedVariant(hiddenName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
+  return registerAliasedVariant(
+    hiddenName,
+    patch.name,
+    originalMember,
+    (body) => wrapInPrec(body, precStack)
+  );
 }
 function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrapper) {
   const isUpperCase = originalMember.type === originalMember.type.toUpperCase();
@@ -933,7 +1046,9 @@ function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrap
   if (factored) {
     const optional = globalThis.optional;
     if (typeof optional !== "function") {
-      throw new Error("transform: no global optional() found \u2014 variant()/alias() on empty-matching content needs runtime optional()");
+      throw new Error(
+        "transform: no global optional() found \u2014 variant()/alias() on empty-matching content needs runtime optional()"
+      );
     }
     return optional(aliasNode);
   }
@@ -962,7 +1077,10 @@ function extractNonEmpty(rule) {
   const t = rule.type;
   if (isPlainRepeatType(t)) {
     const r = rule;
-    const nonEmpty = { ...r, type: t === "REPEAT" ? "REPEAT1" : "repeat1" };
+    const nonEmpty = {
+      ...r,
+      type: t === "REPEAT" ? "REPEAT1" : "repeat1"
+    };
     return { nonEmpty };
   }
   if (isOptionalType(t)) {
@@ -1021,8 +1139,10 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames) {
     if (r === before) return r;
   }
   if (!process.env.SITTIR_QUIET) {
-    process.stderr.write(`enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations
-`);
+    process.stderr.write(
+      `enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations
+`
+    );
   }
   return r;
 }
@@ -1030,12 +1150,15 @@ function extractSupertypeNames(base2, hasWrapper) {
   const root = hasWrapper ? base2.grammar : base2;
   const fn = root?.supertypes;
   if (typeof fn !== "function") return /* @__PURE__ */ new Set();
-  const dollar = new Proxy({}, {
-    get(_t, prop) {
-      if (typeof prop === "string") return { type: "SYMBOL", name: prop };
-      return void 0;
+  const dollar = new Proxy(
+    {},
+    {
+      get(_t, prop) {
+        if (typeof prop === "string") return { type: "SYMBOL", name: prop };
+        return void 0;
+      }
     }
-  });
+  );
   let result;
   try {
     result = fn(dollar);
@@ -1301,7 +1424,13 @@ function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules) {
   }
   const peeled = peelOptional(rule);
   if (peeled.isOptional) {
-    const replacement = tryPromoteInnerKeyword(ruleName, rule, peeled.inner, claimedAtSeqLevel, kwRules);
+    const replacement = tryPromoteInnerKeyword(
+      ruleName,
+      rule,
+      peeled.inner,
+      claimedAtSeqLevel,
+      kwRules
+    );
     if (replacement !== null) return replacement;
     const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules);
     if (innerRewritten !== null) {
@@ -1380,10 +1509,7 @@ var config = {
   // pre-promotion shape — while the FIELD wrapper survives inlining
   // so the parse tree still surfaces the named `async_marker` field.
   // Wave-1 follow-up (016 task #27).
-  inline: ($, previous) => [
-    ...previous ?? [],
-    $._kw_async_marker
-  ],
+  inline: ($, previous) => [...previous ?? [], $._kw_async_marker],
   polymorphs: {
     array_expression: { "2/0": "semi", "2/1": "list" },
     closure_expression: { "4/0": "block", "4/1": "expr" },
@@ -1449,10 +1575,7 @@ var config = {
     // These base-shape patches add field labels BEFORE polymorph
     // aliasing — composition-order inversion in wire() lets this
     // flow declaratively instead of inline in rules:.
-    array_expression: [
-      { 1: field("attributes") },
-      { "2/(_expression)": field("elements") }
-    ],
+    array_expression: [{ 1: field("attributes") }, { "2/(_expression)": field("elements") }],
     // bounded_type: 2 field(s)
     bounded_type: {
       0: field("left"),
@@ -1520,7 +1643,7 @@ var config = {
       // projects to a flags enum instead of an array. Deferred —
       // needs bitflag detection in the walker for the repeat1+field
       // combination, not just seq-positioned boolean-keyword slots.
-      "_": field("modifier")
+      _: field("modifier")
     },
     // visibility_modifier — replaces the hand-authored rule below
     // that wrapped bare keywords in `_kw_pub` / `_kw_in` hidden

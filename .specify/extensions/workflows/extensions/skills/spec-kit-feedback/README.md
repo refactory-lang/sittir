@@ -28,6 +28,7 @@ cp -r .specify/extensions/skills/spec-kit-feedback .claude/skills/
 ## How It Works
 
 The skill activates when it detects:
+
 - Workflow completion (review passed, PR created)
 - Friction patterns (clarifications, retries, confusion)
 - Quality gate issues (skipped gates, problems)
@@ -77,6 +78,7 @@ git log --oneline main..HEAD > feedback/commits.txt
 ## Privacy
 
 Before sharing feedback:
+
 - Remove API keys and credentials
 - Redact personal information
 - Remove proprietary business logic

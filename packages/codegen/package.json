@@ -1,58 +1,58 @@
 {
-  "name": "@sittir/codegen",
-  "version": "0.1.0",
-  "description": "Generate typed IR builders from tree-sitter grammars",
-  "license": "MIT",
-  "homepage": "https://github.com/refactory-lang/sittir#readme",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/refactory-lang/sittir.git",
-    "directory": "packages/codegen"
-  },
-  "keywords": [
-    "tree-sitter",
-    "ir",
-    "codegen",
-    "ast",
-    "code-generation"
-  ],
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    }
-  },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "bin": {
-    "sittir": "./src/cli.ts"
-  },
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "pnpm run clean && tsgo -p tsconfig.build.json",
-    "clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
-    "dev": "tsgo -p tsconfig.build.json --watch",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "type-check": "tsgo --noEmit"
-  },
-  "dependencies": {
-    "@sittir/core": "workspace:*",
-    "@sittir/types": "workspace:*",
-    "yaml": "^2.8.3"
-  },
-  "devDependencies": {
-    "@ast-grep/wasm": "^0.42.1",
-    "@sittir/typescript": "workspace:*",
-    "@types/node": "^25.6.0",
-    "esbuild": "^0.28.0",
-    "tree-sitter-go": "^0.25.0",
-    "tree-sitter-rust": "^0.24.0",
-    "tree-sitter-typescript": "^0.23.2",
-    "type-fest": "^5.6.0",
-    "web-tree-sitter": "^0.26.8"
-  }
+	"name": "@sittir/codegen",
+	"version": "0.1.0",
+	"description": "Generate typed IR builders from tree-sitter grammars",
+	"keywords": [
+		"ast",
+		"code-generation",
+		"codegen",
+		"ir",
+		"tree-sitter"
+	],
+	"homepage": "https://github.com/refactory-lang/sittir#readme",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/refactory-lang/sittir.git",
+		"directory": "packages/codegen"
+	},
+	"bin": {
+		"sittir": "./src/cli.ts"
+	},
+	"files": [
+		"dist"
+	],
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"build": "pnpm run clean && tsgo -p tsconfig.build.json",
+		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
+		"dev": "tsgo -p tsconfig.build.json --watch",
+		"test": "vitest run",
+		"test:coverage": "vitest run --coverage",
+		"type-check": "tsgo --noEmit"
+	},
+	"dependencies": {
+		"@sittir/core": "workspace:*",
+		"@sittir/types": "workspace:*",
+		"yaml": "^2.8.3"
+	},
+	"devDependencies": {
+		"@ast-grep/wasm": "^0.42.1",
+		"@sittir/typescript": "workspace:*",
+		"@types/node": "^25.6.0",
+		"esbuild": "^0.28.0",
+		"tree-sitter-go": "^0.25.0",
+		"tree-sitter-rust": "^0.24.0",
+		"tree-sitter-typescript": "^0.23.2",
+		"type-fest": "^5.6.0",
+		"web-tree-sitter": "^0.26.8"
+	}
 }

@@ -2,9 +2,9 @@
 description: Spawn an isolated git worktree for a new or existing feature branch
 ---
 
-
 <!-- Extension: worktree -->
 <!-- Config: .specify/extensions/worktree/ -->
+
 # Create Worktree
 
 Spawn an isolated git worktree for a feature branch so you can work on multiple features in parallel without switching branches. Each worktree gets its own directory with a full working copy.
@@ -52,13 +52,14 @@ You **MUST** consider the user input before proceeding (if not empty). The user 
    ```markdown
    # Worktree Created
 
-   | Field | Value |
-   |-------|-------|
-   | **Branch** | {branch-name} |
-   | **Worktree path** | .worktrees/{branch-name}/ |
+   | Field              | Value                               |
+   | ------------------ | ----------------------------------- |
+   | **Branch**         | {branch-name}                       |
+   | **Worktree path**  | .worktrees/{branch-name}/           |
    | **Spec artifacts** | spec.md ✅, plan.md ✅, tasks.md ❌ |
 
    ## Next Steps
+
    - `cd .worktrees/{branch-name}/` to work in the isolated worktree
    - Run `/speckit.implement` inside the worktree to build the feature
    - Run `/speckit.worktree.list` to see all active worktrees

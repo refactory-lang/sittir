@@ -6,24 +6,24 @@
 // generator would error.
 
 module.exports = grammar({
-    name: 'dedup_test',
+	name: "dedup_test",
 
-    externals: ($) => [
-        $._indent,
-        $._dedent,
-        $._indent, // intentional duplicate
-    ],
+	externals: ($) => [
+		$._indent,
+		$._dedent,
+		$._indent, // intentional duplicate
+	],
 
-    extras: ($) => [
-        /\s/,
-        /\s/, // intentional duplicate
-    ],
+	extras: ($) => [
+		/\s/,
+		/\s/, // intentional duplicate
+	],
 
-    rules: {
-        source_file: ($) => $._statement,
-        _statement: ($) => $.identifier,
-        identifier: ($) => /[a-z]+/,
-        _indent: ($) => 'INDENT',
-        _dedent: ($) => 'DEDENT',
-    },
-})
+	rules: {
+		source_file: ($) => $._statement,
+		_statement: ($) => $.identifier,
+		identifier: ($) => /[a-z]+/,
+		_indent: ($) => "INDENT",
+		_dedent: ($) => "DEDENT",
+	},
+});

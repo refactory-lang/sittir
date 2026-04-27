@@ -11,28 +11,28 @@
 ```ts
 // Type signature as seen from the TypeScript consumer side
 export class SittirEngine {
-  constructor();
+	constructor();
 
-  /** Template bundle hash baked at build time. Property access. */
-  readonly templateBundleHash: string;
+	/** Template bundle hash baked at build time. Property access. */
+	readonly templateBundleHash: string;
 
-  /** Parse source + search pattern + read matches. Returns JSON string. */
-  findAndRead(source: string, pattern: string): string;
+	/** Parse source + search pattern + read matches. Returns JSON string. */
+	findAndRead(source: string, pattern: string): string;
 
-  /** Drill into a previously-returned node by its $nodeId. Returns JSON string. */
-  readNode(nodeId: number): string;
+	/** Drill into a previously-returned node by its $nodeId. Returns JSON string. */
+	readNode(nodeId: number): string;
 
-  /** Render a NodeData to source. Input is a JSON string (TS does JSON.stringify). */
-  render(nodeJson: string): string;
+	/** Render a NodeData to source. Input is a JSON string (TS does JSON.stringify). */
+	render(nodeJson: string): string;
 
-  /** Apply a batch of edits to a source string; returns modified source. */
-  applyEdits(source: string, edits: EditSpec[]): string;
+	/** Apply a batch of edits to a source string; returns modified source. */
+	applyEdits(source: string, edits: EditSpec[]): string;
 }
 
 export interface EditSpec {
-  startPos: number;
-  endPos: number;
-  insertedText: string;
+	startPos: number;
+	endPos: number;
+	insertedText: string;
 }
 ```
 

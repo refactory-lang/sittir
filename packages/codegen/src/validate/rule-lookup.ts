@@ -10,8 +10,8 @@
  * authoritative output of Assemble.
  */
 
-import type { NodeMap } from '../compiler/types.ts'
-import type { AssembledNode } from '../compiler/node-map.ts'
+import type { NodeMap } from "../compiler/types.ts";
+import type { AssembledNode } from "../compiler/node-map.ts";
 
 /**
  * Classification of how a kind reaches a rendered output string.
@@ -26,17 +26,17 @@ import type { AssembledNode } from '../compiler/node-map.ts'
  *   `none`     — the kind is a hidden token or an unreachable
  *     rule that render() can't produce.
  */
-export type RenderKindPath = 'template' | 'text' | 'dispatch' | 'none'
+export type RenderKindPath = "template" | "text" | "dispatch" | "none";
 
 export interface RuleLookup {
-    /** All kinds known to the NodeMap, keyed by string. */
-    readonly kinds: ReadonlySet<string>
-    /** Kinds that reach a render path: template | text | dispatch. */
-    readonly renderable: ReadonlySet<string>
-    /** Kinds with a template.yaml rule entry (templates only). */
-    readonly templated: ReadonlySet<string>
-    /** Classification per kind. */
-    readonly path: ReadonlyMap<string, RenderKindPath>
+	/** All kinds known to the NodeMap, keyed by string. */
+	readonly kinds: ReadonlySet<string>;
+	/** Kinds that reach a render path: template | text | dispatch. */
+	readonly renderable: ReadonlySet<string>;
+	/** Kinds with a template.yaml rule entry (templates only). */
+	readonly templated: ReadonlySet<string>;
+	/** Classification per kind. */
+	readonly path: ReadonlyMap<string, RenderKindPath>;
 }
 
 /**
@@ -44,49 +44,49 @@ export interface RuleLookup {
  * no file I/O.
  */
 export function buildRuleLookup(nodeMap: NodeMap): RuleLookup {
-    const kinds = new Set<string>()
-    const renderable = new Set<string>()
-    const templated = new Set<string>()
-    const path = new Map<string, RenderKindPath>()
+	const kinds = new Set<string>();
+	const renderable = new Set<string>();
+	const templated = new Set<string>();
+	const path = new Map<string, RenderKindPath>();
 
-    for (const [kind, node] of nodeMap.nodes) {
-        kinds.add(kind)
-        const p = classify(node)
-        path.set(kind, p)
-        if (p !== 'none') renderable.add(kind)
-        if (p === 'template') templated.add(kind)
-        // Post-synthesis-removal: hidden `_X` kinds whose `userFacing`
-        // flag is set are the sittir-internal identity for CST kind
-        // `X` (via alias). node-types.json lists `X`; the renderable
-        // / templated sets must include it so validation passes.
-        if (node.userFacing && kind.startsWith('_')) {
-            const visible = kind.slice(1)
-            kinds.add(visible)
-            if (p !== 'none') renderable.add(visible)
-            if (p === 'template') templated.add(visible)
-            path.set(visible, p)
-        }
-    }
+	for (const [kind, node] of nodeMap.nodes) {
+		kinds.add(kind);
+		const p = classify(node);
+		path.set(kind, p);
+		if (p !== "none") renderable.add(kind);
+		if (p === "template") templated.add(kind);
+		// Post-synthesis-removal: hidden `_X` kinds whose `userFacing`
+		// flag is set are the sittir-internal identity for CST kind
+		// `X` (via alias). node-types.json lists `X`; the renderable
+		// / templated sets must include it so validation passes.
+		if (node.userFacing && kind.startsWith("_")) {
+			const visible = kind.slice(1);
+			kinds.add(visible);
+			if (p !== "none") renderable.add(visible);
+			if (p === "template") templated.add(visible);
+			path.set(visible, p);
+		}
+	}
 
-    return { kinds, renderable, templated, path }
+	return { kinds, renderable, templated, path };
 }
 
 function classify(node: AssembledNode): RenderKindPath {
-    switch (node.modelType) {
-        case 'branch':
-        case 'container':
-        case 'group':
-        case 'polymorph':
-            return 'template'
-        case 'leaf':
-        case 'keyword':
-        case 'enum':
-            return 'text'
-        case 'supertype':
-            return 'dispatch'
-        case 'token':
-            return 'none'
-        default:
-            return 'none'
-    }
+	switch (node.modelType) {
+		case "branch":
+		case "container":
+		case "group":
+		case "polymorph":
+			return "template";
+		case "leaf":
+		case "keyword":
+		case "enum":
+			return "text";
+		case "supertype":
+			return "dispatch";
+		case "token":
+			return "none";
+		default:
+			return "none";
+	}
 }

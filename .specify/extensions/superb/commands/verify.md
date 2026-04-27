@@ -19,6 +19,7 @@ scripts:
 ## Step 1 — Resolve Installed Skill
 
 Any user context provided:
+
 ```
 $ARGUMENTS
 ```
@@ -132,6 +133,7 @@ When all checks pass, output:
 All spec requirements are met. Implementation is verified complete.
 
 Suggested next steps:
+
 - Run `speckit.superb.critique` for code review against spec
 - Or proceed to PR creation
 ```

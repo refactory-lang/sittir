@@ -1,17 +1,18 @@
 ---
-description: 'Mandatory completion gate. Bridges an installed obra/superpowers verification-before-completion
-  skill and extends it with spec-kit''s spec-coverage checklist. No task may be marked
+description:
+  "Mandatory completion gate. Bridges an installed obra/superpowers verification-before-completion
+  skill and extends it with spec-kit's spec-coverage checklist. No task may be marked
   done without fresh evidence.
 
-  '
+  "
 scripts:
   sh: .specify/scripts/bash/sync-spec-status.sh
   ps: .specify/scripts/powershell/sync-spec-status.ps1
 ---
 
-
 <!-- Extension: superb -->
 <!-- Config: .specify/extensions/superb/ -->
+
 # Verification Before Completion — After Implementation
 
 > **Type:** Superpowers-adapted command
@@ -23,6 +24,7 @@ scripts:
 ## Step 1 — Resolve Installed Skill
 
 Any user context provided:
+
 ```
 $ARGUMENTS
 ```
@@ -136,6 +138,7 @@ When all checks pass, output:
 All spec requirements are met. Implementation is verified complete.
 
 Suggested next steps:
+
 - Run `speckit.superb.critique` for code review against spec
 - Or proceed to PR creation
 ```

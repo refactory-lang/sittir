@@ -114,10 +114,12 @@ Do not attempt fix #3 without completing the debugging protocol first.
 ## Enforcement Checklist (per task)
 
 Before starting:
+
 - [ ] No production code written yet for this task
 - [ ] Test target identified from `tasks.md`
 
 After completing:
+
 - [ ] Saw the test FAIL before writing production code
 - [ ] Wrote the MINIMUM code to pass
 - [ ] Full test suite passes (no regressions)

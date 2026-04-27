@@ -6,6 +6,7 @@
 **Plan**: [plan.md](plan.md)
 
 **Story map**:
+
 - US1 (P1) — Author an override file both tools understand
 - US2 (P1) — Get mechanical auto-transformations from `enrich(base)`
 - US3 (P2) — `role()` as effect accumulator
@@ -184,6 +185,7 @@ Phase 2 (Foundational) — blocks everything
 ```
 
 **Story independence**:
+
 - US2, US3, US4, US6 can be implemented in parallel after Phase 2 — they touch different files in `packages/codegen/src/dsl/`.
 - US1 (Phase 7) depends on all of them because it exercises the full DSL surface and requires the overrides.ts files to be updated.
 - US5 (Phase 8) is a structural invariant test that validates the combined result.
@@ -208,6 +210,7 @@ After all four converge, Phase 7 (transpile + CI wiring) integrates them and upd
 This delivers the highest-leverage principle — mechanical Link passes become visible in the override file — for one grammar (python). It validates the constitution's Grammar-Agnostic and Non-lossy principles against a real grammar, and it's the foundation the other stories rely on. Everything after Phase 3 is incremental surface area.
 
 **Incremental delivery**:
+
 1. Phase 3 lands → python uses `enrich()`, ceilings hold → ship.
 2. Phase 4 lands → role accumulator working → ship.
 3. Phase 5 lands → transform API richer → ship.
@@ -232,11 +235,11 @@ Each ship point is a usable increment — no big-bang merge required.
 
 ## Independent test criteria recap
 
-| Story | How to test it in isolation |
-|---|---|
-| US2 | Remove a hand-written keyword-prefix override from python, wrap base in `enrich()`, fidelity ceilings hold |
-| US3 | Add `role('indent')` inline in externals, confirm Link reads it from the sidecar |
-| US4 | Rewrite one nested-rule override as a path-addressed patch, fidelity ceilings hold |
-| US6 | Add a new external token without restating base externals, confirm both present after merge |
-| US1 | `pnpm sittir codegen --grammar rust && cd packages/rust && npx tree-sitter generate` succeeds |
-| US5 | `pre-evaluate-invariant.test.ts` passes for all three grammars |
+| Story | How to test it in isolation                                                                                |
+| ----- | ---------------------------------------------------------------------------------------------------------- |
+| US2   | Remove a hand-written keyword-prefix override from python, wrap base in `enrich()`, fidelity ceilings hold |
+| US3   | Add `role('indent')` inline in externals, confirm Link reads it from the sidecar                           |
+| US4   | Rewrite one nested-rule override as a path-addressed patch, fidelity ceilings hold                         |
+| US6   | Add a new external token without restating base externals, confirm both present after merge                |
+| US1   | `pnpm sittir codegen --grammar rust && cd packages/rust && npx tree-sitter generate` succeeds              |
+| US5   | `pre-evaluate-invariant.test.ts` passes for all three grammars                                             |

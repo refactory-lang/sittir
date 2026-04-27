@@ -5,7 +5,7 @@
 **Status**: Implementing
 **Input**: User description: "parity-and-regressions — lift the TS-mode and native-mode corpus floors above the current baseline measured at the head of branch 012-rust-core-port (commit b4ccc6cc). Phase 0 cleanup (build/lint/jinja-check green) already shipped on 012; this feature targets the 16 pre-existing TS-mode parity-baseline failures and the broader native-mode template gaps."
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Establish a measurable starting baseline (Priority: P1)
 
@@ -69,7 +69,7 @@ A maintainer needs the native-mode (`SITTIR_BACKEND=native`) test suite to produ
 
 - **Cluster F (walker refactor) — central workstream of 016**: Per `feedback_walker_refactor_blockers.md` the walker refactor is a multi-step plan: (1) freeze-template unit tests for ~15 representative kinds; (2) remove `CLAUSE_PUNCT_NAMES` hardcode; (3) walker seq case with new space model using Jinja conditionals + nested-optional fallback set; (4) handle `optional(seq(...))` properly; (5) validate against probe-kind for each frozen kind. Each step lifts pass-counts; the regression-checker passes per step because each step strictly improves counts. Cluster F is sized differently than Clusters A-E (~4-6h per the memory note for the full plan); plan to land it as ~3 sub-commits (was 5; reduced because freeze-tests target corrected output directly per the research below). Pre-existing memory notes flag two architectural blockers from the prior reverted attempt (nested-optional detection, hardcoded clause-punct); the plan addresses both. Empirical research (`specs/016-parity-regressions/research-jinja-whitespace.md`) established that the walker plan's original `{% if foo is defined %}` is broken on Askama (compile-time `defined` check is constant `true` for always-present struct fields). The verified intersection-safe primitive is `{% if FIELD | isPresent %}` — already shipped on both backends with parity tests. Cluster F's emission strategy is `{% if FIELD | isPresent %}<separator>{{ FIELD }}{% endif %}` with the separator placed INSIDE the conditional. Strip markers (`{%- -%}`) are not used (they eat intentional spaces).
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -84,20 +84,21 @@ A maintainer needs the native-mode (`SITTIR_BACKEND=native`) test suite to produ
 - **FR-007**: Phase-0 invariants (strict-build green, oxlint --deny-warnings clean on `packages/{lang}/src`, jinja-template header check passing on all 509 generated `.jinja` files, API-surface snapshots match) MUST hold at every commit on this branch. Any regression to these invariants must be fixed in the same commit.
 - **FR-008**: Pre-existing memory notes that flag clusters as "investigated, blocked on X" MUST be updated when their cluster lands. The corresponding memory file under `~/.claude/projects/-Users-pmouli-GitHub-nosync-refactory-lang-sittir/memory/` is either deleted (cluster fully resolved) or updated to reflect what changed and what's still open.
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **Backend Baseline JSON**: Per-backend (`ts.json`, `native.json`) snapshot of corpus validator counts. Keys: `grammar` (`rust` | `typescript` | `python`), `validator` (`from` | `coverage` | `roundtrip` | `factoryRoundtrip`), counts (`pass`, `total`, `astMatchPass` where applicable), `failingKinds` (sorted list of kinds whose fixtures failed). Stored under `specs/016-parity-regressions/baselines/`. Updated atomically per cluster commit.
 - **Failure Cluster**: A group of test failures that share a single root cause. Identified by inspection of error messages plus memory notes; documented in the spec or commit message. A cluster is "closed" when all its tests pass AND no other tests regressed.
 - **Render Template**: A `.jinja` file emitted by the codegen pipeline, one per kind per grammar. The render output of `render(NodeData)` reads the template indirectly through the rendering engine (Nunjucks for TS, Askama for Rust). Templates are treated as generated artifacts in this feature — fixes go through the codegen pipeline, not the file directly.
 - **Override File**: `packages/{rust,typescript,python}/overrides.ts` — the hand-authored DSL layer that customizes how the codegen pipeline interprets a grammar. Fixes for kind-specific shape mismatches typically land here (e.g. forcing a particular field name, declaring a polymorph variant, adopting variant() for a kind whose base template can't render correctly).
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 
 - **SC-001**: TS-mode (`SITTIR_BACKEND=typescript`) full test suite reports zero **template-shape** failures across all 6 packages, AND zero entries in `formatDeferredKinds` / `formatDeferredByKind` at the close of this feature. Confirmed by a green CI run with both `failingKinds` AND `formatDeferredKinds` arrays empty in `baselines/ts.json`. **Sharpening note (post Cluster B / TS post-processing drop)**: format-deferred is expected to be empty because the bulk of apparent "format-attributable" failures were actually walker bugs (silent whitespace from `needsSpace()` per `feedback_no_silent_formatting.md`) hidden by the now-removed TS-side `collapse_inner_spaces` + `.trim()` post-processing. Cluster F (walker refactor per `feedback_walker_refactor_blockers.md`'s 5-step plan) lifts these failures from `failingKinds` straight to PASS, not into `formatDeferredKinds`. The format-deferred bucket exists only for genuinely format-equivalent variations (quote style, trailing commas, optional separators the source genuinely encodes) — those land in feature 017-format-inference. If 016 closes with format-deferred entries, feature 017 inherits them as input corpus; if 016 closes with the bucket empty (the expected outcome), 017's input corpus comes from 017's own measurement.
 
-**Definition of format** (operational): format encompasses *any source-text variation that produces the same AST after parse* — i.e. any choice the grammar treats as equivalent. Concrete categories:
+**Definition of format** (operational): format encompasses _any source-text variation that produces the same AST after parse_ — i.e. any choice the grammar treats as equivalent. Concrete categories:
+
 - Whitespace placement (tab vs space indent, space around operators, blank-line distribution)
 - Quote style (`'` vs `"` in Python/JS; raw `r"…"` vs `"…"` in Rust; template literals vs string literals)
 - Numeric literal style (`1_000` vs `1000`; `0x10` vs `0X10` vs `16`; `1.` vs `1.0`; hex casing)
@@ -107,6 +108,7 @@ A maintainer needs the native-mode (`SITTIR_BACKEND=native`) test suite to produ
 - Block-vs-inline equivalents (Python `if x: y` vs newline-indented; single-vs-multi-line function signatures)
 
 Anything the grammar's `parse(source)` accepts as the same AST falls under format. This is a softening from the original "zero failures" criterion: `/speckit.superb.review` and subsequent triage during US1 surfaced that the parity target cannot be "render output exactly matches source" without a separate format-inference layer (the grammar template defines shape; format is the residual the source carries that the grammar treats as semantically equivalent).
+
 - **SC-002**: Native-mode (`SITTIR_BACKEND=native`) corpus full-roundtrip and AST-match floors are above zero for all three grammars (rust, typescript, python). Specific target percentages set during measurement; lower bound is "at least 50% of the TS-mode pass rate per grammar."
 - **SC-003**: Every commit on this branch carries before/after counts in its message, and the committed `baselines/<backend>.json` matches the "After" numbers byte-for-byte. Verifiable post-merge by replaying the regen + collection command on each commit and diff'ing.
 - **SC-004**: Zero TS-mode regressions across the lifetime of this feature — every count in `baselines/ts.json` either stays equal or moves up across commits. Verified by a regression-checker script that diffs successive baseline commits.
@@ -117,7 +119,7 @@ Anything the grammar's `parse(source)` accepts as the same AST falls under forma
 
 ## Out of Scope
 
-- **Source format inference**: capturing per-node format intent at parse time and applying it at render time. "Format" here means *any source-text variation that produces the same AST after parse* — encompassing whitespace, quote style, numeric literal style, trailing commas / optional tokens, comment placement, and any other choice the grammar treats as semantically equivalent. This is a separate, deeper architectural change deferred to feature 017-format-inference. Format-attributable parity failures surfaced during 016's cluster work are catalogued under `formatDeferredKinds` in the baseline JSON and become 017's input corpus. **Why deferred**: the thesis is `format = source_text − grammar_template_output`. The grammar template defines the shape (tokens, ordering, mandatory separators); format is the residual the source carries that the grammar treats as equivalent. Fixing the residual requires changes to NodeData shape (`$format` field), `readNode` (extraction), `render` (application), per-grammar regen, and the native render path — substantial architectural surface that doesn't belong in 016's cluster-fix arc.
+- **Source format inference**: capturing per-node format intent at parse time and applying it at render time. "Format" here means _any source-text variation that produces the same AST after parse_ — encompassing whitespace, quote style, numeric literal style, trailing commas / optional tokens, comment placement, and any other choice the grammar treats as semantically equivalent. This is a separate, deeper architectural change deferred to feature 017-format-inference. Format-attributable parity failures surfaced during 016's cluster work are catalogued under `formatDeferredKinds` in the baseline JSON and become 017's input corpus. **Why deferred**: the thesis is `format = source_text − grammar_template_output`. The grammar template defines the shape (tokens, ordering, mandatory separators); format is the residual the source carries that the grammar treats as equivalent. Fixing the residual requires changes to NodeData shape (`$format` field), `readNode` (extraction), `render` (application), per-grammar regen, and the native render path — substantial architectural surface that doesn't belong in 016's cluster-fix arc.
 - **Style normalisation / pretty-printing**: 016 does not impose canonical formatting; nor does 017 once it lands. Both features preserve whatever format the source had.
 - **New grammar features**: 016 fixes existing template/walker bugs; it does not add support for grammar constructs that aren't already represented.
 - **Per-handle dispatch refactoring**: shipped on branch `012-rust-core-port`; 016 builds on that machinery, doesn't modify it.

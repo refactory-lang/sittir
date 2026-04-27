@@ -39,7 +39,8 @@ var import_grammar = __toESM(require("tree-sitter-python/grammar.js"), 1);
 function isSymbolLike(v) {
   if (!v || typeof v !== "object") return false;
   const t = v.type;
-  if ((t === "symbol" || t === "SYMBOL") && typeof v.name === "string") return true;
+  if ((t === "symbol" || t === "SYMBOL") && typeof v.name === "string")
+    return true;
   return extractSymbolName(v) !== void 0;
 }
 function extractSymbolName(v) {
@@ -87,7 +88,9 @@ function dsl() {
 function nativeRequired(name) {
   const fn = dsl()[name];
   if (typeof fn !== "function") {
-    throw new Error(`transform: no global ${String(name)}() found \u2014 must be called inside a runtime that injects ${String(name)}() (sittir evaluate.ts or tree-sitter CLI)`);
+    throw new Error(
+      `transform: no global ${String(name)}() found \u2014 must be called inside a runtime that injects ${String(name)}() (sittir evaluate.ts or tree-sitter CLI)`
+    );
   }
   return fn;
 }
@@ -116,11 +119,17 @@ function parsePath(pathStr) {
     } else if (/^[A-Za-z_][A-Za-z0-9_]*:$/.test(part)) {
       segments.push({ kind: "fieldName", name: part.slice(0, -1) });
     } else if (part === "*") {
-      throw new Error(`parsePath: path segment '*' is no longer valid \u2014 use '_' for wildcard; see ADR-0010`);
+      throw new Error(
+        `parsePath: path segment '*' is no longer valid \u2014 use '_' for wildcard; see ADR-0010`
+      );
     } else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) {
-      throw new Error(`parsePath: bare kind name '${part}' is no longer valid as a path segment \u2014 use '(${part})' instead; see ADR-0010`);
+      throw new Error(
+        `parsePath: bare kind name '${part}' is no longer valid as a path segment \u2014 use '(${part})' instead; see ADR-0010`
+      );
     } else {
-      throw new Error(`parsePath: invalid segment '${part}' in path '${pathStr}' \u2014 must be a numeric index, '_' (wildcard), '(name)' (kind-match), or 'name:' (field traversal)`);
+      throw new Error(
+        `parsePath: invalid segment '${part}' in path '${pathStr}' \u2014 must be a numeric index, '_' (wildcard), '(name)' (kind-match), or 'name:' (field traversal)`
+      );
     }
   }
   return segments;
@@ -152,7 +161,9 @@ function applyPath(rule, segments, patch, precStack) {
       if (t === "alias" || t === "ALIAS") {
         return descendThroughAlias(rule, head, rest, patch, precStack);
       }
-      throw new ApplyPathSkip(`applyPath: cannot descend into '${rule.type}' rule (path has ${segments.length} segments left)`);
+      throw new ApplyPathSkip(
+        `applyPath: cannot descend into '${rule.type}' rule (path has ${segments.length} segments left)`
+      );
     }
     default: {
       const _exhaustive = head;
@@ -182,11 +193,15 @@ function descendThroughSingleWrapper(rule, head, rest, patch, precStack) {
     }
     case "kind-match":
     case "fieldName": {
-      throw new Error(`descendThroughSingleWrapper: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`);
+      throw new Error(
+        `descendThroughSingleWrapper: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`
+      );
     }
     default: {
       const _exhaustive = head;
-      throw new Error(`descendThroughSingleWrapper: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`);
+      throw new Error(
+        `descendThroughSingleWrapper: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`
+      );
     }
   }
 }
@@ -207,16 +222,23 @@ function descendThroughAlias(rule, head, rest, patch, precStack) {
     }
     case "kind-match":
     case "fieldName": {
-      throw new Error(`descendThroughAlias: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`);
+      throw new Error(
+        `descendThroughAlias: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`
+      );
     }
     default: {
       const _exhaustive = head;
-      throw new Error(`descendThroughAlias: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`);
+      throw new Error(
+        `descendThroughAlias: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`
+      );
     }
   }
 }
 function reconstructAlias(rule, newContent) {
-  return { ...rule, content: newContent };
+  return {
+    ...rule,
+    content: newContent
+  };
 }
 function descendThroughNamedField(rule, fieldName, rest, patch, precStack) {
   if (!isFieldType(rule.type)) {
@@ -239,7 +261,9 @@ function dispatchKindMatch(rule, kindName, rest, patch, precStack) {
 function applyKindMatch(rule, targetKind, rest, patch, precStack, insideNamedField) {
   const result = walkKindMatch(rule, targetKind, rest, patch, precStack, insideNamedField);
   if (!result.matched) {
-    throw new ApplyPathSkip(`applyPath: kind '${targetKind}' matched zero occurrences in this subtree`);
+    throw new ApplyPathSkip(
+      `applyPath: kind '${targetKind}' matched zero occurrences in this subtree`
+    );
   }
   return result.rule;
 }
@@ -258,24 +282,47 @@ function walkKindMatch(rule, targetKind, rest, patch, precStack, insideNamedFiel
   if (isPrecWrapper(rule)) {
     const stack = precStack ? [...precStack, rule] : [rule];
     const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, stack, insideNamedField);
-    return { rule: inner.matched ? reconstructPrec(rule, inner.rule) : rule, matched: inner.matched };
+    return {
+      rule: inner.matched ? reconstructPrec(rule, inner.rule) : rule,
+      matched: inner.matched
+    };
   }
   if (t === "symbol" || t === "SYMBOL") {
     return applyKindMatchToSymbol(rule, targetKind, rest, patch, precStack, insideNamedField);
   }
   if (t === "field" || t === "FIELD") {
     const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, precStack, true);
-    return { rule: inner.matched ? reconstructWrapper(rule, inner.rule) : rule, matched: inner.matched };
+    return {
+      rule: inner.matched ? reconstructWrapper(rule, inner.rule) : rule,
+      matched: inner.matched
+    };
   }
   if (isWrapperType(t)) {
-    const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, precStack, insideNamedField);
-    return { rule: inner.matched ? reconstructWrapper(rule, inner.rule) : rule, matched: inner.matched };
+    const inner = walkKindMatch(
+      contentOf(rule),
+      targetKind,
+      rest,
+      patch,
+      precStack,
+      insideNamedField
+    );
+    return {
+      rule: inner.matched ? reconstructWrapper(rule, inner.rule) : rule,
+      matched: inner.matched
+    };
   }
   if (isContainerType(t)) {
     const members = [...membersOf(rule)];
     let anyMatched = false;
     for (let i = 0; i < members.length; i++) {
-      const inner = walkKindMatch(members[i], targetKind, rest, patch, precStack, insideNamedField);
+      const inner = walkKindMatch(
+        members[i],
+        targetKind,
+        rest,
+        patch,
+        precStack,
+        insideNamedField
+      );
       if (inner.matched) {
         members[i] = inner.rule;
         anyMatched = true;
@@ -311,7 +358,9 @@ function reconstructWrapper(rule, newContent) {
 function reconstructRepeatWithMetadata(rule, newContent) {
   const r = rule;
   const t = r.type;
-  const baseNode = nativeRequired(t === "repeat" || t === "REPEAT" ? "repeat" : "repeat1")(newContent);
+  const baseNode = nativeRequired(t === "repeat" || t === "REPEAT" ? "repeat" : "repeat1")(
+    newContent
+  );
   if (r.separator !== void 0) baseNode.separator = r.separator;
   if (r.leading !== void 0) baseNode.leading = r.leading;
   if (r.trailing !== void 0) baseNode.trailing = r.trailing;
@@ -329,7 +378,8 @@ function reconstructPrec(rule, newContent) {
   const variant2 = PREC_VARIANT_MAP[t];
   if (variant2) {
     const fn = prec[variant2];
-    if (typeof fn !== "function") throw new Error(`transform: native prec.${variant2} not available`);
+    if (typeof fn !== "function")
+      throw new Error(`transform: native prec.${variant2} not available`);
     return fn(value, newContent);
   }
   return prec(value, newContent);
@@ -351,11 +401,15 @@ function applyToMembers(rule, head, rest, patch, precStack) {
       return applyWildcardToMembers(rule, members, rest, patch, precStack);
     case "kind-match":
     case "fieldName": {
-      throw new Error(`applyToMembers: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`);
+      throw new Error(
+        `applyToMembers: unexpected segment kind '${head.kind}' \u2014 this is a bug in applyPath dispatch`
+      );
     }
     default: {
       const _exhaustive = head;
-      throw new Error(`applyToMembers: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`);
+      throw new Error(
+        `applyToMembers: unexpected segment ${JSON.stringify(_exhaustive)} \u2014 this is a bug in applyPath dispatch`
+      );
     }
   }
 }
@@ -384,7 +438,9 @@ function applyWildcardToMembers(rule, members, rest, patch, precStack) {
     }
   }
   if (!anyApplied) {
-    throw new ApplyPathSkip(`applyPath: wildcard matched zero members successfully in ${rule.type} of length ${members.length}`);
+    throw new ApplyPathSkip(
+      `applyPath: wildcard matched zero members successfully in ${rule.type} of length ${members.length}`
+    );
   }
   return reconstructContainer(rule, members);
 }
@@ -411,7 +467,9 @@ function wireRegisterSyntheticRule(name, content) {
 }
 function wireRegisterPolymorphVariant(parent, child) {
   if (!currentContext) return false;
-  const exists = currentContext.polymorphVariants.some((v) => v.parent === parent && v.child === child);
+  const exists = currentContext.polymorphVariants.some(
+    (v) => v.parent === parent && v.child === child
+  );
   if (!exists) {
     currentContext.polymorphVariants.push({ parent, child });
   }
@@ -578,7 +636,9 @@ function buildWiredConflictsFn(userConflicts, context) {
   return function wiredConflicts($, previous) {
     const base2 = userConflicts ? userConflicts.call(this, $, previous) : previous ?? [];
     if (context.conflictGroups.length === 0) return base2;
-    const symbolized = context.conflictGroups.map((group) => group.map((name) => symbolizeRef($, name)));
+    const symbolized = context.conflictGroups.map(
+      (group) => group.map((name) => symbolizeRef($, name))
+    );
     return [...base2, ...symbolized];
   };
 }
@@ -616,7 +676,9 @@ function synthesizeKwSymbol(fieldName, content, wrapSyntheticBody) {
   let precBody = typeof nativePrec === "function" ? nativePrec(-1, content) : content;
   if (wrapSyntheticBody) precBody = wrapSyntheticBody(precBody);
   if (!wireRegisterSyntheticRule(hiddenName, precBody)) {
-    throw new Error(`field('${fieldName}', <STRING>): no active wire() context \u2014 call must occur inside a rule callback wrapped by wire()`);
+    throw new Error(
+      `field('${fieldName}', <STRING>): no active wire() context \u2014 call must occur inside a rule callback wrapped by wire()`
+    );
   }
   return {
     type: isUpperCase ? "SYMBOL" : "symbol",
@@ -640,7 +702,9 @@ function descendOptional(fieldName, content, wrapSyntheticBody, wrapperKind) {
     return nativeOptional(rewritten);
   }
   const c = content;
-  const newMembers = c.members.map((m) => m.type === "BLANK" || m.type === "blank" ? m : rewritten);
+  const newMembers = c.members.map(
+    (m) => m.type === "BLANK" || m.type === "blank" ? m : rewritten
+  );
   return { ...c, members: newMembers };
 }
 function isFieldPlaceholder(v) {
@@ -652,7 +716,9 @@ function field(name, content) {
   }
   const native = globalThis.field;
   if (typeof native !== "function") {
-    throw new Error("field(): no global field() found \u2014 must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)");
+    throw new Error(
+      "field(): no global field() found \u2014 must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)"
+    );
   }
   return buildTwoArgFieldResult(native, name, content);
 }
@@ -672,7 +738,9 @@ function transform(original, ...patchSets) {
   let rule = original;
   for (const patches of patchSets) {
     const hasPathKeys = requiresPathMode(patches);
-    const hasPlaceholderAlias = Object.values(patches).some((v) => isAliasPlaceholder(v) || isVariantPlaceholder(v));
+    const hasPlaceholderAlias = Object.values(patches).some(
+      (v) => isAliasPlaceholder(v) || isVariantPlaceholder(v)
+    );
     if (hasPathKeys || hasPlaceholderAlias) {
       rule = applyPathPatches(rule, patches);
     } else {
@@ -707,23 +775,29 @@ function partitionPatchesByVariant(patches) {
   return { variantEntries, otherEntries };
 }
 function applyVariantPatches(rule, variantEntries) {
-  const ordered = [...variantEntries].sort(
-    ([a], [b]) => parsePath(b).length - parsePath(a).length
-  );
+  const ordered = [...variantEntries].sort(([a], [b]) => parsePath(b).length - parsePath(a).length);
   const hoisted = tryHoistSiblingVariants(rule, ordered);
   if (hoisted) {
     let result2 = hoisted.rule;
     for (const [key, value] of ordered) {
       if (hoisted.consumed.has(key)) continue;
       const segments = parsePath(key);
-      result2 = applyPath(result2, segments, (member, precStack) => resolvePatch(value, member, precStack));
+      result2 = applyPath(
+        result2,
+        segments,
+        (member, precStack) => resolvePatch(value, member, precStack)
+      );
     }
     return result2;
   }
   let result = rule;
   for (const [key, value] of ordered) {
     const segments = parsePath(key);
-    result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, precStack));
+    result = applyPath(
+      result,
+      segments,
+      (member, precStack) => resolvePatch(value, member, precStack)
+    );
   }
   return result;
 }
@@ -735,17 +809,33 @@ function tryHoistSiblingVariants(rule, variantEntries) {
   const parsed = parseVariantPathsForHoist(variantEntries, bail);
   if (parsed === null) return null;
   const choicePos = parsed[0].choicePos;
-  if (parsed.some((p) => p.choicePos !== choicePos)) return bail(`variant patches target mixed choice positions (${parsed.map((p) => p.choicePos).join(",")}) \u2014 hoist needs all siblings at one choice`);
+  if (parsed.some((p) => p.choicePos !== choicePos))
+    return bail(
+      `variant patches target mixed choice positions (${parsed.map((p) => p.choicePos).join(",")}) \u2014 hoist needs all siblings at one choice`
+    );
   const seqMembers = [...membersOf2(core)];
   const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
   const choice = seqMembers[resolvedPos];
-  if (!choice || !isChoiceType(choice.type)) return bail(`position ${resolvedPos} is '${choice?.type}', not choice/CHOICE`);
+  if (!choice || !isChoiceType(choice.type))
+    return bail(`position ${resolvedPos} is '${choice?.type}', not choice/CHOICE`);
   const choiceMembers = membersOf2(choice);
-  const anyEmpty = parsed.some((p) => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx]));
+  const anyEmpty = parsed.some(
+    (p) => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx])
+  );
   if (!anyEmpty) return null;
   const parentKind = wireGetCurrentRuleKind();
-  if (!parentKind) return bail("no current rule kind (variant()/transform() called outside rule callback?)");
-  return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice, parsed, parentKind, precStack);
+  if (!parentKind)
+    return bail("no current rule kind (variant()/transform() called outside rule callback?)");
+  return buildHoistedVariants(
+    core,
+    seqMembers,
+    choiceMembers,
+    resolvedPos,
+    choice,
+    parsed,
+    parentKind,
+    precStack
+  );
 }
 function peelPrecWrappersFromRule(rule) {
   const dbg = typeof process !== "undefined" ? process?.env?.SITTIR_DEBUG : void 0;
@@ -766,8 +856,12 @@ function parseVariantPathsForHoist(variantEntries, bail) {
   const parsed = [];
   for (const [key, v] of variantEntries) {
     const segs = parsePath(key);
-    if (segs.length !== 2) return bail(`variant patch '${key}' has ${segs.length} segments (expected 2: N/M)`);
-    if (segs[0].kind !== "index" || segs[1].kind !== "index") return bail(`variant patch '${key}' uses non-index segments (kind-match / wildcard not supported for hoist)`);
+    if (segs.length !== 2)
+      return bail(`variant patch '${key}' has ${segs.length} segments (expected 2: N/M)`);
+    if (segs[0].kind !== "index" || segs[1].kind !== "index")
+      return bail(
+        `variant patch '${key}' uses non-index segments (kind-match / wildcard not supported for hoist)`
+      );
     parsed.push({ key, v, choicePos: segs[0].value, altIdx: segs[1].value });
   }
   return parsed;
@@ -784,7 +878,9 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     const visibleName = polymorphVisibleName(parentKind, p.v.name);
     const hiddenName = polymorphHiddenName(parentKind, p.v.name);
     if (!wireRegisterPolymorphVariant(parentKind, p.v.name)) {
-      throw new Error(`variant('${p.v.name}'): no active wire() context \u2014 variant() must run inside a rule callback under wire()`);
+      throw new Error(
+        `variant('${p.v.name}'): no active wire() context \u2014 variant() must run inside a rule callback under wire()`
+      );
     }
     if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {
       throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
@@ -866,14 +962,23 @@ function resolvePatch(patch, originalMember, precStack) {
   if (isVariantPlaceholder(patch)) {
     const parentKind = wireGetCurrentRuleKind();
     if (!parentKind) {
-      throw new Error(`variant('${patch.name}'): no current rule kind \u2014 variant() must be used inside a rule callback`);
+      throw new Error(
+        `variant('${patch.name}'): no current rule kind \u2014 variant() must be used inside a rule callback`
+      );
     }
     if (!wireRegisterPolymorphVariant(parentKind, patch.name)) {
-      throw new Error(`variant('${patch.name}'): no active wire() context \u2014 variant() must run inside a rule callback under wire()`);
+      throw new Error(
+        `variant('${patch.name}'): no active wire() context \u2014 variant() must run inside a rule callback under wire()`
+      );
     }
     const visibleName = polymorphVisibleName(parentKind, patch.name);
     const hiddenName = polymorphHiddenName(parentKind, patch.name);
-    return registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack));
+    return registerAliasedVariant(
+      hiddenName,
+      visibleName,
+      originalMember,
+      (body) => wrapInPrec(body, precStack)
+    );
   }
   if (isAliasPlaceholder(patch)) {
     return resolveAliasPlaceholder(patch, originalMember, precStack);
@@ -905,14 +1010,21 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
   }
   const native = globalThis.field;
   if (typeof native !== "function") {
-    throw new Error("transform: no global field() found \u2014 patches that use the one-arg field() form require a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)");
+    throw new Error(
+      "transform: no global field() found \u2014 patches that use the one-arg field() form require a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)"
+    );
   }
   const result = native(patch.name, content);
   return { ...result, source: "override" };
 }
 function resolveAliasPlaceholder(patch, originalMember, precStack) {
   const hiddenName = "_" + patch.name;
-  return registerAliasedVariant(hiddenName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
+  return registerAliasedVariant(
+    hiddenName,
+    patch.name,
+    originalMember,
+    (body) => wrapInPrec(body, precStack)
+  );
 }
 function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrapper) {
   const isUpperCase = originalMember.type === originalMember.type.toUpperCase();
@@ -936,7 +1048,9 @@ function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrap
   if (factored) {
     const optional = globalThis.optional;
     if (typeof optional !== "function") {
-      throw new Error("transform: no global optional() found \u2014 variant()/alias() on empty-matching content needs runtime optional()");
+      throw new Error(
+        "transform: no global optional() found \u2014 variant()/alias() on empty-matching content needs runtime optional()"
+      );
     }
     return optional(aliasNode);
   }
@@ -965,7 +1079,10 @@ function extractNonEmpty(rule) {
   const t = rule.type;
   if (isPlainRepeatType(t)) {
     const r = rule;
-    const nonEmpty = { ...r, type: t === "REPEAT" ? "REPEAT1" : "repeat1" };
+    const nonEmpty = {
+      ...r,
+      type: t === "REPEAT" ? "REPEAT1" : "repeat1"
+    };
     return { nonEmpty };
   }
   if (isOptionalType(t)) {
@@ -1044,8 +1161,10 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames) {
     if (r === before) return r;
   }
   if (!process.env.SITTIR_QUIET) {
-    process.stderr.write(`enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations
-`);
+    process.stderr.write(
+      `enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations
+`
+    );
   }
   return r;
 }
@@ -1053,12 +1172,15 @@ function extractSupertypeNames(base2, hasWrapper) {
   const root = hasWrapper ? base2.grammar : base2;
   const fn = root?.supertypes;
   if (typeof fn !== "function") return /* @__PURE__ */ new Set();
-  const dollar = new Proxy({}, {
-    get(_t, prop) {
-      if (typeof prop === "string") return { type: "SYMBOL", name: prop };
-      return void 0;
+  const dollar = new Proxy(
+    {},
+    {
+      get(_t, prop) {
+        if (typeof prop === "string") return { type: "SYMBOL", name: prop };
+        return void 0;
+      }
     }
-  });
+  );
   let result;
   try {
     result = fn(dollar);
@@ -1324,7 +1446,13 @@ function walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules) {
   }
   const peeled = peelOptional(rule);
   if (peeled.isOptional) {
-    const replacement = tryPromoteInnerKeyword(ruleName, rule, peeled.inner, claimedAtSeqLevel, kwRules);
+    const replacement = tryPromoteInnerKeyword(
+      ruleName,
+      rule,
+      peeled.inner,
+      claimedAtSeqLevel,
+      kwRules
+    );
     if (replacement !== null) return replacement;
     const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules);
     if (innerRewritten !== null) {
@@ -1374,225 +1502,228 @@ function rebuildOptional(optionalRule, newInner) {
 }
 
 // packages/python/overrides.ts
-var overrides_default = grammar(enrich(import_grammar.default), wire({
-  name: "python",
-  // Structural-whitespace role bindings — declared inline in the
-  // externals callback. `role(symbolRef, name)` returns the symbol
-  // unchanged (so externals still receives a valid token reference)
-  // and records the binding on a per-grammar accumulator that Link
-  // reads to drive symbol resolution. No more dummy `_indent` rules.
-  externals: ($, prev) => {
-    role($._indent, "indent");
-    role($._dedent, "dedent");
-    role($._newline, "newline");
-    return prev;
-  },
-  conflicts: ($, previous) => [
-    ...previous ?? [],
-    // expression_statement tuple-variant extraction: the bare
-    // `expression` arm and the hoisted `_expression_statement_tuple`
-    // both start with `expression • …`. In the base grammar
-    // tree-sitter's LR(1) table merged the common prefix into a
-    // single state; with the tuple form lifted into its own hidden
-    // rule, tree-sitter needs an explicit GLR fork group to decide
-    // between the bare expression and the tuple form on the `,`
-    // suffix that only the tuple accepts.
-    [$.expression_statement, $._expression_statement_tuple]
-  ],
-  polymorphs: {
-    assignment: { "1/0": "eq", "1/1": "type", "1/2": "typed" },
-    // expression_statement: bare expression / comma-separated tuple
-    // form / assignment / augmented_assignment / yield. Arms 0, 2,
-    // 3, 4 are bare symbol refs to existing visible kinds — the
-    // classifier treats the all-symbol shape as canonical, so they
-    // need no adoption. Arm 1 is the structural seq (tuple form);
-    // adopting it wraps the seq in an alias so the rule becomes an
-    // all-symbol choice from the walker's perspective. The
-    // `conflicts` entry above tells tree-sitter to fork between
-    // `expression` and `_expression_statement_tuple` when the LR
-    // table sees `expression • …` and needs to decide on the `,`
-    // continuation only the tuple form accepts.
-    expression_statement: {
-      1: "tuple"
+var overrides_default = grammar(
+  enrich(import_grammar.default),
+  wire({
+    name: "python",
+    // Structural-whitespace role bindings — declared inline in the
+    // externals callback. `role(symbolRef, name)` returns the symbol
+    // unchanged (so externals still receives a valid token reference)
+    // and records the binding on a per-grammar accumulator that Link
+    // reads to drive symbol resolution. No more dummy `_indent` rules.
+    externals: ($, prev) => {
+      role($._indent, "indent");
+      role($._dedent, "dedent");
+      role($._newline, "newline");
+      return prev;
     },
-    // with_clause: bare (`a, b, c`) vs parenthesized (`(a, b, c)`).
-    // Same with_item content on both arms; paren form wraps with
-    // '(' ... ')'. Split per variant so each owns its template.
-    with_clause: {
-      0: "bare",
-      1: "paren"
+    conflicts: ($, previous) => [
+      ...previous ?? [],
+      // expression_statement tuple-variant extraction: the bare
+      // `expression` arm and the hoisted `_expression_statement_tuple`
+      // both start with `expression • …`. In the base grammar
+      // tree-sitter's LR(1) table merged the common prefix into a
+      // single state; with the tuple form lifted into its own hidden
+      // rule, tree-sitter needs an explicit GLR fork group to decide
+      // between the bare expression and the tuple form on the `,`
+      // suffix that only the tuple accepts.
+      [$.expression_statement, $._expression_statement_tuple]
+    ],
+    polymorphs: {
+      assignment: { "1/0": "eq", "1/1": "type", "1/2": "typed" },
+      // expression_statement: bare expression / comma-separated tuple
+      // form / assignment / augmented_assignment / yield. Arms 0, 2,
+      // 3, 4 are bare symbol refs to existing visible kinds — the
+      // classifier treats the all-symbol shape as canonical, so they
+      // need no adoption. Arm 1 is the structural seq (tuple form);
+      // adopting it wraps the seq in an alias so the rule becomes an
+      // all-symbol choice from the walker's perspective. The
+      // `conflicts` entry above tells tree-sitter to fork between
+      // `expression` and `_expression_statement_tuple` when the LR
+      // table sees `expression • …` and needs to decide on the `,`
+      // continuation only the tuple form accepts.
+      expression_statement: {
+        1: "tuple"
+      },
+      // with_clause: bare (`a, b, c`) vs parenthesized (`(a, b, c)`).
+      // Same with_item content on both arms; paren form wraps with
+      // '(' ... ')'. Split per variant so each owns its template.
+      with_clause: {
+        0: "bare",
+        1: "paren"
+      },
+      // _match_block: base rule is
+      //   choice(
+      //     seq($._indent, repeat(field('alternative', $.case_clause)),
+      //         $._dedent),                         // arm 0 — block form
+      //     $._newline,                             // arm 1 — empty form
+      //   )
+      // Heterogeneous: one seq + one bare symbol. Splitting the seq arm
+      // into `_match_block_block` leaves the remaining choice as all
+      // symbol-like (alias + symbol) — canonical.
+      _match_block: { 0: "block" },
+      // dict_pattern: base rule is
+      //   seq('{', optional(seq(
+      //     commaSep1(choice($._key_value_pattern, $.splat_pattern)),
+      //     optional(','),
+      //   )), '}')
+      // liftCommaSep converts the commaSep1 into a repeat1 with
+      // separator, so after simplify the path to the heterogeneous
+      // choice is 1/0/0 (optional → seq → repeat1 → choice). One arm is
+      // the inlined `_key_value_pattern` seq (tree-sitter wraps the
+      // hidden rule in an alias); the other is `splat_pattern`.
+      // Splitting the key-value arm into `dict_pattern_kv` leaves the
+      // remaining choice all symbol-like. Requires infra (B)'s alias
+      // descent in applyPath.
+      dict_pattern: { "1/0/0/0": "kv" }
     },
-    // _match_block: base rule is
-    //   choice(
-    //     seq($._indent, repeat(field('alternative', $.case_clause)),
-    //         $._dedent),                         // arm 0 — block form
-    //     $._newline,                             // arm 1 — empty form
-    //   )
-    // Heterogeneous: one seq + one bare symbol. Splitting the seq arm
-    // into `_match_block_block` leaves the remaining choice as all
-    // symbol-like (alias + symbol) — canonical.
-    _match_block: { 0: "block" },
-    // dict_pattern: base rule is
-    //   seq('{', optional(seq(
-    //     commaSep1(choice($._key_value_pattern, $.splat_pattern)),
-    //     optional(','),
-    //   )), '}')
-    // liftCommaSep converts the commaSep1 into a repeat1 with
-    // separator, so after simplify the path to the heterogeneous
-    // choice is 1/0/0 (optional → seq → repeat1 → choice). One arm is
-    // the inlined `_key_value_pattern` seq (tree-sitter wraps the
-    // hidden rule in an alias); the other is `splat_pattern`.
-    // Splitting the key-value arm into `dict_pattern_kv` leaves the
-    // remaining choice all symbol-like. Requires infra (B)'s alias
-    // descent in applyPath.
-    dict_pattern: { "1/0/0/0": "kv" }
-  },
-  transforms: {
-    // as_pattern: 1 field(s)
-    as_pattern: {},
-    // await: 1 field(s)
-    await: {},
-    // chevron: 1 field(s)
-    chevron: {},
-    // class_pattern: 2 field(s)
-    class_pattern: {
-      2: field("arguments")
-      // case_pattern [struct=1]
+    transforms: {
+      // as_pattern: 1 field(s)
+      as_pattern: {},
+      // await: 1 field(s)
+      await: {},
+      // chevron: 1 field(s)
+      chevron: {},
+      // class_pattern: 2 field(s)
+      class_pattern: {
+        2: field("arguments")
+        // case_pattern [struct=1]
+      },
+      // comparison_operator: 2 field(s)
+      comparison_operator: {
+        0: field("left"),
+        // primary_expression [struct=0]
+        1: field("comparators")
+        // primary_expression [struct=1]
+      },
+      // complex_pattern: 2 field(s)
+      complex_pattern: {
+        0: field("real"),
+        // integer | float [struct=0]
+        1: field("imaginary")
+        // integer | float [struct=1]
+      },
+      // conditional_expression: 3 field(s)
+      conditional_expression: {
+        0: field("body"),
+        // expression [struct=0]
+        2: field("condition"),
+        // expression [struct=1]
+        4: field("alternative")
+        // expression [struct=2]
+      },
+      // constrained_type: 2 field(s)
+      constrained_type: {
+        0: field("base_type"),
+        // type [struct=0]
+        2: field("constraint")
+        // type [struct=1]
+      },
+      // decorator: 2 field(s)
+      decorator: {
+        2: field("newline")
+        //  [struct=1]
+      },
+      // dictionary_splat: 1 field(s)
+      dictionary_splat: {},
+      // exec_statement: grammar is seq('exec', code, optional(seq('in', exprs)))
+      // Template walker emits the `in` keyword as a literal at top level,
+      // which surfaces in rendering even when the optional(seq(...))
+      // didn't match. Wrap the optional as field('in_clause') so the
+      // whole clause (`in` + exprs) renders only when present.
+      exec_statement: {
+        2: field("in_clause")
+      },
+      // for_statement / function_definition / with_statement: each
+      // starts with `optional('async')` at pos 0. Auto-promoted by
+      // enrich (016 task #30) as `field('async_marker', SYMBOL(_kw_async_marker))`.
+      // Wave 2's manual entries are now redundant.
+      // for_in_clause: prec.left(seq(optional('async'), 'for', ...)).
+      // The prec.left wrapper hides the seq from enrich's auto-promotion
+      // walker, so the position is still hand-promoted (016 task #30
+      // naming convention).
+      for_in_clause: {
+        "0/0": field("async_marker")
+      },
+      // finally_clause: 1 field(s)
+      finally_clause: {
+        2: field("block")
+        // block [struct=0]
+      },
+      // generic_type: 2 field(s)
+      generic_type: {
+        0: field("identifier")
+        // identifier [struct=0]
+      },
+      // if_clause: 1 field(s)
+      if_clause: {},
+      // import_from_statement: 1 field(s)
+      import_from_statement: {
+        3: field("wildcard_import")
+        // wildcard_import [struct=0]
+      },
+      // keyword_pattern: 2 field(s)
+      keyword_pattern: {
+        2: field("simple_pattern")
+        // _simple_pattern | class_pattern | complex_pattern | concatenated_string | dict_pattern | dotted_name | false | float | integer | list_pattern | none | splat_pattern | string | true | tuple_pattern | union_pattern [struct=1]
+      },
+      // list_splat: 1 field(s)
+      list_splat: {},
+      // member_type: 2 field(s)
+      member_type: {
+        0: field("base_type")
+        // type [struct=0]
+      },
+      // relative_import: 2 field(s)
+      relative_import: {},
+      // slice: 3 field(s)
+      slice: {
+        0: field("start"),
+        // expression [struct=0]
+        2: field("stop"),
+        // expression [struct=1]
+        3: field("step")
+        // expression [struct=2]
+      },
+      // splat_pattern: 1 field(s)
+      splat_pattern: {
+        0: field("identifier")
+        // identifier [struct=0]
+      },
+      // splat_type: 1 field(s)
+      splat_type: {
+        0: field("identifier")
+        // identifier [struct=0]
+      },
+      // string: 3 field(s)
+      string: {
+        1: field("content")
+        // interpolation | string_content [struct=1]
+      },
+      // type_alias_statement: wrap base position 0 (bare 'type' literal)
+      // as field('type') so $fields.type carries the keyword. Without
+      // this override, enrich's bare-leading-keyword pass (globally off
+      // — rust corpus regresses with it on) leaves the literal
+      // unwrapped, and $fields only has left/right. The spec-008-US7
+      // regression test (python type_alias_statement collision)
+      // assumes the wrapped form.
+      type_alias_statement: {
+        0: field("type")
+      },
+      // try_statement: 3 field(s)
+      try_statement: {
+        3: field("except_clauses")
+        // except_clause [struct=0]
+      },
+      // union_type: 2 field(s)
+      union_type: {
+        0: field("left"),
+        // type [struct=0]
+        2: field("right")
+        // type [struct=1]
+      }
     },
-    // comparison_operator: 2 field(s)
-    comparison_operator: {
-      0: field("left"),
-      // primary_expression [struct=0]
-      1: field("comparators")
-      // primary_expression [struct=1]
-    },
-    // complex_pattern: 2 field(s)
-    complex_pattern: {
-      0: field("real"),
-      // integer | float [struct=0]
-      1: field("imaginary")
-      // integer | float [struct=1]
-    },
-    // conditional_expression: 3 field(s)
-    conditional_expression: {
-      0: field("body"),
-      // expression [struct=0]
-      2: field("condition"),
-      // expression [struct=1]
-      4: field("alternative")
-      // expression [struct=2]
-    },
-    // constrained_type: 2 field(s)
-    constrained_type: {
-      0: field("base_type"),
-      // type [struct=0]
-      2: field("constraint")
-      // type [struct=1]
-    },
-    // decorator: 2 field(s)
-    decorator: {
-      2: field("newline")
-      //  [struct=1]
-    },
-    // dictionary_splat: 1 field(s)
-    dictionary_splat: {},
-    // exec_statement: grammar is seq('exec', code, optional(seq('in', exprs)))
-    // Template walker emits the `in` keyword as a literal at top level,
-    // which surfaces in rendering even when the optional(seq(...))
-    // didn't match. Wrap the optional as field('in_clause') so the
-    // whole clause (`in` + exprs) renders only when present.
-    exec_statement: {
-      2: field("in_clause")
-    },
-    // for_statement / function_definition / with_statement: each
-    // starts with `optional('async')` at pos 0. Auto-promoted by
-    // enrich (016 task #30) as `field('async_marker', SYMBOL(_kw_async_marker))`.
-    // Wave 2's manual entries are now redundant.
-    // for_in_clause: prec.left(seq(optional('async'), 'for', ...)).
-    // The prec.left wrapper hides the seq from enrich's auto-promotion
-    // walker, so the position is still hand-promoted (016 task #30
-    // naming convention).
-    for_in_clause: {
-      "0/0": field("async_marker")
-    },
-    // finally_clause: 1 field(s)
-    finally_clause: {
-      2: field("block")
-      // block [struct=0]
-    },
-    // generic_type: 2 field(s)
-    generic_type: {
-      0: field("identifier")
-      // identifier [struct=0]
-    },
-    // if_clause: 1 field(s)
-    if_clause: {},
-    // import_from_statement: 1 field(s)
-    import_from_statement: {
-      3: field("wildcard_import")
-      // wildcard_import [struct=0]
-    },
-    // keyword_pattern: 2 field(s)
-    keyword_pattern: {
-      2: field("simple_pattern")
-      // _simple_pattern | class_pattern | complex_pattern | concatenated_string | dict_pattern | dotted_name | false | float | integer | list_pattern | none | splat_pattern | string | true | tuple_pattern | union_pattern [struct=1]
-    },
-    // list_splat: 1 field(s)
-    list_splat: {},
-    // member_type: 2 field(s)
-    member_type: {
-      0: field("base_type")
-      // type [struct=0]
-    },
-    // relative_import: 2 field(s)
-    relative_import: {},
-    // slice: 3 field(s)
-    slice: {
-      0: field("start"),
-      // expression [struct=0]
-      2: field("stop"),
-      // expression [struct=1]
-      3: field("step")
-      // expression [struct=2]
-    },
-    // splat_pattern: 1 field(s)
-    splat_pattern: {
-      0: field("identifier")
-      // identifier [struct=0]
-    },
-    // splat_type: 1 field(s)
-    splat_type: {
-      0: field("identifier")
-      // identifier [struct=0]
-    },
-    // string: 3 field(s)
-    string: {
-      1: field("content")
-      // interpolation | string_content [struct=1]
-    },
-    // type_alias_statement: wrap base position 0 (bare 'type' literal)
-    // as field('type') so $fields.type carries the keyword. Without
-    // this override, enrich's bare-leading-keyword pass (globally off
-    // — rust corpus regresses with it on) leaves the literal
-    // unwrapped, and $fields only has left/right. The spec-008-US7
-    // regression test (python type_alias_statement collision)
-    // assumes the wrapped form.
-    type_alias_statement: {
-      0: field("type")
-    },
-    // try_statement: 3 field(s)
-    try_statement: {
-      3: field("except_clauses")
-      // except_clause [struct=0]
-    },
-    // union_type: 2 field(s)
-    union_type: {
-      0: field("left"),
-      // type [struct=0]
-      2: field("right")
-      // type [struct=1]
-    }
-  },
-  rules: {}
-}));
+    rules: {}
+  })
+);
 if (module.exports && module.exports.default) module.exports = module.exports.default;

@@ -2,9 +2,9 @@
 description: Surgically update spec, plan, and tasks to address the reported bug
 ---
 
-
 <!-- Extension: bugfix -->
 <!-- Config: .specify/extensions/bugfix/ -->
+
 # Patch Spec Artifacts
 
 Surgically update spec.md, plan.md, and tasks.md to address a reported bug — adds missing requirements, fixes conflicts, reopens false completions, and adds new tasks. Minimal changes only, never regenerates from scratch.
@@ -33,13 +33,13 @@ You **MUST** consider the user input before proceeding (if not empty). The user 
 
 2. **Determine patches**: Based on the bug type, plan minimal changes:
 
-   | Bug Type | spec.md Patch | plan.md Patch | tasks.md Patch |
-   |----------|--------------|---------------|----------------|
-   | Spec gap | Add missing requirement to affected user story | Add implementation note to relevant section | Add new task(s) for the missing requirement |
-   | Spec conflict | Resolve conflict with strikethrough on superseded text + new clarified requirement | Update affected section | Update affected task descriptions |
-   | Implementation drift | Add clarification note to requirement | No change (plan was correct) | Reopen drifted task with correction note |
-   | Untested flow | Add success criterion for the edge case | Add edge case to complexity tracking | Add verification task |
-   | Dependency issue | Update assumption about external dependency | Update technical context | Add dependency investigation task |
+   | Bug Type             | spec.md Patch                                                                      | plan.md Patch                               | tasks.md Patch                              |
+   | -------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------- | ------------------------------------------- |
+   | Spec gap             | Add missing requirement to affected user story                                     | Add implementation note to relevant section | Add new task(s) for the missing requirement |
+   | Spec conflict        | Resolve conflict with strikethrough on superseded text + new clarified requirement | Update affected section                     | Update affected task descriptions           |
+   | Implementation drift | Add clarification note to requirement                                              | No change (plan was correct)                | Reopen drifted task with correction note    |
+   | Untested flow        | Add success criterion for the edge case                                            | Add edge case to complexity tracking        | Add verification task                       |
+   | Dependency issue     | Update assumption about external dependency                                        | Update technical context                    | Add dependency investigation task           |
 
 3. **Patch spec.md**:
    - Add missing requirements under the affected user story
@@ -71,6 +71,7 @@ You **MUST** consider the user input before proceeding (if not empty). The user 
      ```
 
 6. **Update bug report**: Mark the bug report file as patched:
+
    ```
    **Status**: Patched
    **Patched**: [DATE]

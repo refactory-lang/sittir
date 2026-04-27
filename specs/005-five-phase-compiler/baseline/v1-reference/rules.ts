@@ -8,17 +8,17 @@
  * Emits per-rule joinBy from separator metadata.
  */
 
-import { stringify as yamlStringify } from 'yaml';
-import type { GrammarRule } from '../grammar.ts';
-import { loadGrammar } from '../grammar.ts';
-import type { HydratedNodeModel, HydratedChildrenModel } from '../node-model.ts';
-import { isTupleChildren, eachChildSlot } from '../node-model.ts';
-import { type StructuralNode, structuralNodes, fieldsOf } from './utils.ts';
-import { buildProjectionContext, projectKinds } from './kind-projections.ts';
-import { applyOverrides, type OverrideFieldInfo } from '../enriched-grammar.ts';
-import { loadOverridesWithExternals, type ExternalRole } from '../overrides.ts';
-import type { RulesConfig, TemplateRule } from '@sittir/types';
-import { tokenName } from '../token-names.ts';
+import { stringify as yamlStringify } from "yaml";
+import type { GrammarRule } from "../grammar.ts";
+import { loadGrammar } from "../grammar.ts";
+import type { HydratedNodeModel, HydratedChildrenModel } from "../node-model.ts";
+import { isTupleChildren, eachChildSlot } from "../node-model.ts";
+import { type StructuralNode, structuralNodes, fieldsOf } from "./utils.ts";
+import { buildProjectionContext, projectKinds } from "./kind-projections.ts";
+import { applyOverrides, type OverrideFieldInfo } from "../enriched-grammar.ts";
+import { loadOverridesWithExternals, type ExternalRole } from "../overrides.ts";
+import type { RulesConfig, TemplateRule } from "@sittir/types";
+import { tokenName } from "../token-names.ts";
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -42,7 +42,6 @@ export function emitTemplatesYaml(config: EmitRulesYamlConfig): string {
 	_wordEndRe = wb.endRe;
 	_wordStartRe = wb.startRe;
 
-
 	const extensions = grammarExtensions(grammar);
 	const rulesConfig: RulesConfig = {
 		language: grammar,
@@ -59,7 +58,7 @@ export function emitTemplatesYaml(config: EmitRulesYamlConfig): string {
 	const { externals } = loadOverridesWithExternals(grammar);
 	_externalRoles = externals;
 
-	const ctx = buildProjectionContext(new Map(nodes.map(n => [n.kind, n])));
+	const ctx = buildProjectionContext(new Map(nodes.map((n) => [n.kind, n])));
 	for (const node of structuralNodes(nodes)) {
 		const rule = emitRuleForNode(node, grammarRules, ctx);
 		rulesConfig.rules[node.kind] = rule;
@@ -73,11 +72,15 @@ export function emitTemplatesYaml(config: EmitRulesYamlConfig): string {
 // ---------------------------------------------------------------------------
 
 interface ClauseEntry {
-	name: string;       // e.g. "return_type_clause"
-	template: string;   // e.g. "-> $RETURN_TYPE "
+	name: string; // e.g. "return_type_clause"
+	template: string; // e.g. "-> $RETURN_TYPE "
 }
 
-function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, GrammarRule>, ctx: ReturnType<typeof buildProjectionContext>): TemplateRule {
+function emitRuleForNode(
+	node: StructuralNode,
+	grammarRules: Record<string, GrammarRule>,
+	ctx: ReturnType<typeof buildProjectionContext>,
+): TemplateRule {
 	const nodeFields = fieldsOf(node);
 
 	// Build field metadata maps
@@ -88,14 +91,14 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 	for (const f of nodeFields) {
 		fieldRequired.set(f.name, f.required);
 		fieldMultiple.set(f.name, f.multiple);
-		if (f.multiple && 'separator' in f && f.separator) {
+		if (f.multiple && "separator" in f && f.separator) {
 			fieldSeparators.set(f.name, f.separator);
 		}
 	}
 
 	// Get separator data from enriched rule (only branch/container rules have separators)
 	const enrichedRule = node.rule;
-	if (enrichedRule && ('separators' in enrichedRule) && enrichedRule.separators) {
+	if (enrichedRule && "separators" in enrichedRule && enrichedRule.separators) {
 		for (const [key, sep] of enrichedRule.separators) {
 			if (!fieldSeparators.has(key)) {
 				fieldSeparators.set(key, sep);
@@ -108,14 +111,14 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 
 	// Build override field info for grammar enrichment
 	const overrideFields: OverrideFieldInfo[] = nodeFields
-		.filter(f => f.override)
+		.filter((f) => f.override)
 		.sort((a, b) => {
 			// Position -1 (anonymous-only) sorts after positional entries
 			const pa = (a.position ?? 0) === -1 ? Infinity : (a.position ?? 0);
 			const pb = (b.position ?? 0) === -1 ? Infinity : (b.position ?? 0);
 			return pa - pb;
 		})
-		.map(f => {
+		.map((f) => {
 			const anonymousKinds = new Set<string>(f.overrideValues ?? []);
 			const namedKinds = new Set<string>();
 			for (const k of f.kinds) {
@@ -125,15 +128,27 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 		});
 
 	// Build joinBy — check model separators, then recursive grammar patterns
-	const joinBy = buildJoinBy(fieldMultiple, fieldSeparators, node)
-		?? detectRecursiveSeparator(grammarRules, node.kind);
+	const joinBy =
+		buildJoinBy(fieldMultiple, fieldSeparators, node) ??
+		detectRecursiveSeparator(grammarRules, node.kind);
 
 	// --- Model variants: resolved rules from factoring.ts ---
 	// When the model has >1 variant, use each variant's resolved grammar rule
 	// with ruleToTemplate to produce correct per-variant template strings.
 	const modelVariants = node.variants;
 	if (modelVariants && modelVariants.length > 1) {
-		return emitFromModelVariants(modelVariants, nodeFields, fieldRequired, fieldMultiple, fieldSeparators, grammarRules, childSlotMap, overrideFields, node, joinBy);
+		return emitFromModelVariants(
+			modelVariants,
+			nodeFields,
+			fieldRequired,
+			fieldMultiple,
+			fieldSeparators,
+			grammarRules,
+			childSlotMap,
+			overrideFields,
+			node,
+			joinBy,
+		);
 	}
 
 	// --- Single variant or no variants: use the enriched rule directly ---
@@ -141,15 +156,24 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 	const enrichedGrammarRule = rawRule ? applyOverrides(rawRule, overrideFields) : rawRule;
 
 	// For single-variant model, use the resolved rule (inner CHOICEs already resolved)
-	const ruleToWalk = (modelVariants && modelVariants.length === 1)
-		? modelVariants[0]!.rule
-		: enrichedGrammarRule;
+	const ruleToWalk =
+		modelVariants && modelVariants.length === 1 ? modelVariants[0]!.rule : enrichedGrammarRule;
 
 	// Detect top-level CHOICE (variant node) — legacy fallback for nodes without model variants
 	if (!modelVariants || modelVariants.length === 0) {
 		const variantBranches = enrichedGrammarRule ? topLevelChoice(enrichedGrammarRule) : null;
 		if (variantBranches && variantBranches.length > 1) {
-			return emitVariantTemplates(variantBranches, nodeFields, fieldRequired, fieldMultiple, fieldSeparators, grammarRules, childSlotMap, overrideFields, node);
+			return emitVariantTemplates(
+				variantBranches,
+				nodeFields,
+				fieldRequired,
+				fieldMultiple,
+				fieldSeparators,
+				grammarRules,
+				childSlotMap,
+				overrideFields,
+				node,
+			);
 		}
 	}
 
@@ -157,13 +181,33 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 	const seen = new Set<string>();
 	const clauses: ClauseEntry[] = [];
 	const parts = ruleToWalk
-		? ruleToTemplate(ruleToWalk, false, seen, fieldRequired, fieldMultiple, grammarRules, clauses, false, childSlotMap)
+		? ruleToTemplate(
+				ruleToWalk,
+				false,
+				seen,
+				fieldRequired,
+				fieldMultiple,
+				grammarRules,
+				clauses,
+				false,
+				childSlotMap,
+			)
 		: [];
 
 	appendMissingFields(parts, nodeFields, seen);
 	appendChildrenIfNeeded(parts, node, seen, childSlotMap, overrideFields);
 
-	const templateStr = parts.join('').split('\n').map(l => { const m = l.match(/^(\s*)(.*)/); const indent = m![1]!; const rest = m![2]!.replace(/ {2,}/g, ' ').trim(); return indent + rest; }).join('\n').trim();
+	const templateStr = parts
+		.join("")
+		.split("\n")
+		.map((l) => {
+			const m = l.match(/^(\s*)(.*)/);
+			const indent = m![1]!;
+			const rest = m![2]!.replace(/ {2,}/g, " ").trim();
+			return indent + rest;
+		})
+		.join("\n")
+		.trim();
 
 	if (clauses.length === 0 && joinBy === undefined) {
 		return templateStr;
@@ -174,7 +218,7 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
 		ruleObj[c.name] = c.template;
 	}
 	if (joinBy !== undefined) {
-		ruleObj['joinBy'] = joinBy;
+		ruleObj["joinBy"] = joinBy;
 	}
 
 	return ruleObj as unknown as TemplateRule;
@@ -185,7 +229,7 @@ function emitRuleForNode(node: StructuralNode, grammarRules: Record<string, Gram
  * Runs ruleToTemplate on each variant's resolved grammar rule.
  */
 function emitFromModelVariants(
-	variants: readonly import('../node-model.ts').StructuralVariant[],
+	variants: readonly import("../node-model.ts").StructuralVariant[],
 	nodeFields: ReturnType<typeof fieldsOf>,
 	fieldRequired: Map<string, boolean>,
 	fieldMultiple: Map<string, boolean>,
@@ -207,14 +251,34 @@ function emitFromModelVariants(
 		for (const rule of rulesToWalk) {
 			const seen = new Set<string>();
 			const clauses: ClauseEntry[] = [];
-			const parts = ruleToTemplate(rule, false, seen, fieldRequired, fieldMultiple, grammarRules, clauses, false, childSlotMap);
+			const parts = ruleToTemplate(
+				rule,
+				false,
+				seen,
+				fieldRequired,
+				fieldMultiple,
+				grammarRules,
+				clauses,
+				false,
+				childSlotMap,
+			);
 
 			// Only append fields that belong to THIS variant, not all node fields
-			const variantFields = nodeFields.filter(f => variant.fields.has(f.name));
+			const variantFields = nodeFields.filter((f) => variant.fields.has(f.name));
 			appendMissingFields(parts, variantFields, seen);
 			appendChildrenIfNeeded(parts, node, seen, childSlotMap, overrideFields);
 
-			const templateStr = parts.join('').split('\n').map(l => { const m = l.match(/^(\s*)(.*)/); const indent = m![1]!; const rest = m![2]!.replace(/ {2,}/g, ' ').trim(); return indent + rest; }).join('\n').trim();
+			const templateStr = parts
+				.join("")
+				.split("\n")
+				.map((l) => {
+					const m = l.match(/^(\s*)(.*)/);
+					const indent = m![1]!;
+					const rest = m![2]!.replace(/ {2,}/g, " ").trim();
+					return indent + rest;
+				})
+				.join("\n")
+				.trim();
 			if (templateStr) templates.push(templateStr);
 
 			for (const c of clauses) {
@@ -229,16 +293,16 @@ function emitFromModelVariants(
 	// Deduplicate templates
 	const unique = [...new Set(templates)];
 	if (unique.length <= 1) {
-		const templateStr = unique[0] ?? '';
+		const templateStr = unique[0] ?? "";
 		if (allClauses.length === 0 && joinBy === undefined) return templateStr;
 		const ruleObj: Record<string, unknown> = { template: templateStr };
 		for (const c of allClauses) ruleObj[c.name] = c.template;
-		if (joinBy !== undefined) ruleObj['joinBy'] = joinBy;
+		if (joinBy !== undefined) ruleObj["joinBy"] = joinBy;
 		return ruleObj as unknown as TemplateRule;
 	}
 
 	// Multi-variant: try to build named variants with detect tokens
-	const withDetect = variants.filter(v => v.detectToken != null);
+	const withDetect = variants.filter((v) => v.detectToken != null);
 	if (withDetect.length >= unique.length) {
 		// Match detect tokens to deduplicated templates
 		const variantMap: Record<string, string> = {};
@@ -246,7 +310,7 @@ function emitFromModelVariants(
 		const used = new Set<string>();
 
 		for (const v of withDetect) {
-			const matched = unique.find(t => !used.has(t) && t.includes(v.detectToken!));
+			const matched = unique.find((t) => !used.has(t) && t.includes(v.detectToken!));
 			if (matched) {
 				variantMap[v.name] = matched;
 				detectMap[v.name] = v.detectToken!;
@@ -257,7 +321,7 @@ function emitFromModelVariants(
 		if (used.size === unique.length) {
 			const ruleObj: Record<string, unknown> = { variants: variantMap, detect: detectMap };
 			for (const c of allClauses) ruleObj[c.name] = c.template;
-			if (joinBy !== undefined) ruleObj['joinBy'] = joinBy;
+			if (joinBy !== undefined) ruleObj["joinBy"] = joinBy;
 			return ruleObj as unknown as TemplateRule;
 		}
 	}
@@ -271,7 +335,7 @@ function emitFromModelVariants(
 	}
 	const ruleObj: Record<string, unknown> = { template: unique };
 	for (const c of allClauses) ruleObj[c.name] = c.template;
-	if (joinBy !== undefined) ruleObj['joinBy'] = joinBy;
+	if (joinBy !== undefined) ruleObj["joinBy"] = joinBy;
 	return ruleObj as unknown as TemplateRule;
 }
 
@@ -286,11 +350,16 @@ function emitFromModelVariants(
  */
 function topLevelChoice(rule: GrammarRule): GrammarRule[] | null {
 	let r = rule;
-	while (r.type === 'PREC' || r.type === 'PREC_LEFT' || r.type === 'PREC_RIGHT' || r.type === 'PREC_DYNAMIC') {
+	while (
+		r.type === "PREC" ||
+		r.type === "PREC_LEFT" ||
+		r.type === "PREC_RIGHT" ||
+		r.type === "PREC_DYNAMIC"
+	) {
 		r = r.content;
 	}
-	if (r.type !== 'CHOICE') return null;
-	if (r.members.some(m => m.type === 'BLANK')) return null;
+	if (r.type !== "CHOICE") return null;
+	if (r.members.some((m) => m.type === "BLANK")) return null;
 	return r.members.length > 1 ? r.members : null;
 }
 
@@ -309,9 +378,15 @@ function extractVariables(template: string): Set<string> {
 function extractStringTokens(rule: GrammarRule): string[] {
 	const tokens: string[] = [];
 	function walk(r: GrammarRule) {
-		if (r.type === 'STRING') tokens.push(r.value);
-		else if (r.type === 'SEQ') for (const m of r.members) walk(m);
-		else if (r.type === 'PREC' || r.type === 'PREC_LEFT' || r.type === 'PREC_RIGHT' || r.type === 'PREC_DYNAMIC') walk(r.content);
+		if (r.type === "STRING") tokens.push(r.value);
+		else if (r.type === "SEQ") for (const m of r.members) walk(m);
+		else if (
+			r.type === "PREC" ||
+			r.type === "PREC_LEFT" ||
+			r.type === "PREC_RIGHT" ||
+			r.type === "PREC_DYNAMIC"
+		)
+			walk(r.content);
 	}
 	walk(rule);
 	return tokens;
@@ -332,7 +407,7 @@ function emitVariantTemplates(
 	childSlotMap: Map<string, ChildSlotInfo>,
 	overrideFields: OverrideFieldInfo[],
 	node: StructuralNode,
-	modelVariants?: readonly import('../node-model.ts').StructuralVariant[],
+	modelVariants?: readonly import("../node-model.ts").StructuralVariant[],
 ): TemplateRule {
 	const allClauses: ClauseEntry[] = [];
 	const clauseNames = new Set<string>();
@@ -341,12 +416,32 @@ function emitVariantTemplates(
 	for (const branch of branches) {
 		const seen = new Set<string>();
 		const clauses: ClauseEntry[] = [];
-		const parts = ruleToTemplate(branch, false, seen, fieldRequired, fieldMultiple, grammarRules, clauses, false, childSlotMap);
+		const parts = ruleToTemplate(
+			branch,
+			false,
+			seen,
+			fieldRequired,
+			fieldMultiple,
+			grammarRules,
+			clauses,
+			false,
+			childSlotMap,
+		);
 
 		// Append children if needed for this branch
 		appendChildrenIfNeeded(parts, node, seen, childSlotMap, overrideFields);
 
-		const templateStr = parts.join('').split('\n').map(l => { const m = l.match(/^(\s*)(.*)/); const indent = m![1]!; const rest = m![2]!.replace(/ {2,}/g, ' ').trim(); return indent + rest; }).join('\n').trim();
+		const templateStr = parts
+			.join("")
+			.split("\n")
+			.map((l) => {
+				const m = l.match(/^(\s*)(.*)/);
+				const indent = m![1]!;
+				const rest = m![2]!.replace(/ {2,}/g, " ").trim();
+				return indent + rest;
+			})
+			.join("\n")
+			.trim();
 		if (templateStr) templates.push(templateStr);
 
 		// Collect clauses (deduplicate by name)
@@ -362,12 +457,12 @@ function emitVariantTemplates(
 	const unique = [...new Set(templates)];
 	if (unique.length <= 1) {
 		// Collapsed to single template — return as normal string
-		const templateStr = unique[0] ?? '';
+		const templateStr = unique[0] ?? "";
 		const joinBy = buildJoinBy(fieldMultiple, fieldSeparators, node);
 		if (allClauses.length === 0 && joinBy === undefined) return templateStr;
 		const ruleObj: Record<string, unknown> = { template: templateStr };
 		for (const c of allClauses) ruleObj[c.name] = c.template;
-		if (joinBy !== undefined) ruleObj['joinBy'] = joinBy;
+		if (joinBy !== undefined) ruleObj["joinBy"] = joinBy;
 		return ruleObj as unknown as TemplateRule;
 	}
 
@@ -382,7 +477,7 @@ function emitVariantTemplates(
 				detect: variantResult.detect,
 			};
 			for (const c of allClauses) ruleObj[c.name] = c.template;
-			if (joinBy !== undefined) ruleObj['joinBy'] = joinBy;
+			if (joinBy !== undefined) ruleObj["joinBy"] = joinBy;
 			return ruleObj as unknown as TemplateRule;
 		}
 	}
@@ -396,7 +491,7 @@ function emitVariantTemplates(
 			detect: variantSubtypes.detect,
 		};
 		for (const c of allClauses) ruleObj[c.name] = c.template;
-		if (joinBy !== undefined) ruleObj['joinBy'] = joinBy;
+		if (joinBy !== undefined) ruleObj["joinBy"] = joinBy;
 		return ruleObj as unknown as TemplateRule;
 	}
 
@@ -407,7 +502,7 @@ function emitVariantTemplates(
 	}
 	const ruleObj: Record<string, unknown> = { template: unique };
 	for (const c of allClauses) ruleObj[c.name] = c.template;
-	if (joinBy !== undefined) ruleObj['joinBy'] = joinBy;
+	if (joinBy !== undefined) ruleObj["joinBy"] = joinBy;
 	return ruleObj as unknown as TemplateRule;
 }
 
@@ -417,10 +512,10 @@ function emitVariantTemplates(
  */
 function matchModelVariantsToTemplates(
 	templates: string[],
-	modelVariants: readonly import('../node-model.ts').StructuralVariant[],
+	modelVariants: readonly import("../node-model.ts").StructuralVariant[],
 ): { variants: Record<string, string>; detect: Record<string, string> } | null {
 	// Only use model variants if they have detect tokens
-	const withDetect = modelVariants.filter(v => v.detectToken != null);
+	const withDetect = modelVariants.filter((v) => v.detectToken != null);
 	if (withDetect.length < 2) return null;
 
 	// Try to match each model variant's detect token to a template
@@ -431,9 +526,7 @@ function matchModelVariantsToTemplates(
 
 	for (const mv of withDetect) {
 		// Find a template that contains this variant's detect token
-		const matched = templates.find(t =>
-			!usedTemplates.has(t) && t.includes(mv.detectToken!)
-		);
+		const matched = templates.find((t) => !usedTemplates.has(t) && t.includes(mv.detectToken!));
 		if (!matched) return null; // Can't match all model variants to templates
 		variants[mv.name] = matched;
 		detect[mv.name] = mv.detectToken!;
@@ -458,15 +551,15 @@ function detectVariantSubtypes(
 
 	// Check all templates have the same set of $VARIABLES
 	const varSets = templates.map(extractVariables);
-	const firstVars = [...varSets[0]!].sort().join(',');
+	const firstVars = [...varSets[0]!].sort().join(",");
 	for (let i = 1; i < varSets.length; i++) {
-		if ([...varSets[i]!].sort().join(',') !== firstVars) return null;
+		if ([...varSets[i]!].sort().join(",") !== firstVars) return null;
 	}
 
 	// Find a discriminating anonymous token for each branch.
 	// Extract tokens from each grammar branch and find unique ones.
 	const branchTokens = branches.map(extractStringTokens);
-	const allTokenSets = branchTokens.map(ts => new Set(ts));
+	const allTokenSets = branchTokens.map((ts) => new Set(ts));
 
 	const variants: Record<string, string> = {};
 	const detect: Record<string, string> = {};
@@ -477,7 +570,10 @@ function detectVariantSubtypes(
 		let discriminator: string | null = null;
 		for (const tok of myTokens) {
 			const unique = allTokenSets.every((s, j) => j === i || !s.has(tok));
-			if (unique) { discriminator = tok; break; }
+			if (unique) {
+				discriminator = tok;
+				break;
+			}
 		}
 		if (!discriminator) return null; // Can't find unique discriminator
 
@@ -490,7 +586,11 @@ function detectVariantSubtypes(
 }
 
 /** Append missing fields the walker didn't reach. */
-function appendMissingFields(parts: string[], nodeFields: ReturnType<typeof fieldsOf>, seen: Set<string>): void {
+function appendMissingFields(
+	parts: string[],
+	nodeFields: ReturnType<typeof fieldsOf>,
+	seen: Set<string>,
+): void {
 	for (const f of nodeFields) {
 		if (!seen.has(f.name)) {
 			const varName = f.name.toUpperCase();
@@ -508,36 +608,39 @@ function appendChildrenIfNeeded(
 	childSlotMap: Map<string, ChildSlotInfo>,
 	overrideFields: OverrideFieldInfo[],
 ): void {
-	if (node.children != null && !seen.has('children')) {
+	if (node.children != null && !seen.has("children")) {
 		let allChildrenCovered = true;
 		eachChildSlot(node.children, (slot) => {
 			for (const k of slot.kinds) {
 				const kind = k.kind;
 				const slotInfo = childSlotMap.get(kind);
 				if (slotInfo && seen.has(`child:${slotInfo.slotName}`)) continue;
-				if (overrideFields.some(of => of.namedKinds.has(kind) && seen.has(of.name))) continue;
+				if (overrideFields.some((of) => of.namedKinds.has(kind) && seen.has(of.name))) continue;
 				allChildrenCovered = false;
 			}
 		});
 		if (!allChildrenCovered) {
-			parts.push(' $$$CHILDREN');
+			parts.push(" $$$CHILDREN");
 		}
 	}
 }
 
 /** Convert camelCase to UPPER_SNAKE for template variable names. */
 function toSnakeUpper(camel: string): string {
-	return camel.replace(/[A-Z]/g, c => `_${c}`).toUpperCase();
+	return camel.replace(/[A-Z]/g, (c) => `_${c}`).toUpperCase();
 }
 
 interface ChildSlotInfo {
-	varName: string;  // UPPER_SNAKE variable name
+	varName: string; // UPPER_SNAKE variable name
 	multiple: boolean;
 	slotName: string; // camelCase slot name (for tracking in seen set)
 }
 
 /** Build a mapping from grammar kind → child slot variable info. */
-function buildChildSlotMap(node: StructuralNode, ctx: ReturnType<typeof buildProjectionContext>): Map<string, ChildSlotInfo> {
+function buildChildSlotMap(
+	node: StructuralNode,
+	ctx: ReturnType<typeof buildProjectionContext>,
+): Map<string, ChildSlotInfo> {
 	const map = new Map<string, ChildSlotInfo>();
 	if (!node.children) return map;
 
@@ -553,9 +656,9 @@ function buildChildSlotMap(node: StructuralNode, ctx: ReturnType<typeof buildPro
 		eachChildSlot(node.children, (slot) => {
 			for (const k of slot.kinds) {
 				// Skip supertypes — they don't appear as concrete child types
-				if ((k as any).modelType === 'supertype') continue;
+				if ((k as any).modelType === "supertype") continue;
 
-				const kindName = k.kind.replace(/^_/, '');
+				const kindName = k.kind.replace(/^_/, "");
 				const varName = kindName.toUpperCase();
 				const isMulti = slot.multiple || (kindSlotCount.get(k.kind) ?? 0) > 1;
 
@@ -571,7 +674,7 @@ function buildChildSlotMap(node: StructuralNode, ctx: ReturnType<typeof buildPro
 		// Single children slot — all kinds map to CHILDREN
 		const slot = Array.isArray(node.children) ? node.children[0]! : node.children;
 		for (const k of slot.kinds) {
-			map.set(k.kind, { varName: 'CHILDREN', multiple: slot.multiple, slotName: 'children' });
+			map.set(k.kind, { varName: "CHILDREN", multiple: slot.multiple, slotName: "children" });
 		}
 	}
 
@@ -595,17 +698,28 @@ function ruleToTemplate(
 	inRepeat = false,
 ): string[] {
 	switch (rule.type) {
-		case 'SEQ': {
+		case "SEQ": {
 			const parts: string[] = [];
 			for (let i = 0; i < rule.members.length; i++) {
 				const member = rule.members[i]!;
 				const isFirst = i === 0;
-				const memberParts = ruleToTemplate(member, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, inRepeat);
+				const memberParts = ruleToTemplate(
+					member,
+					optional,
+					seen,
+					fieldRequired,
+					fieldMultiple,
+					gr,
+					clauses,
+					immediate,
+					childSlotMap,
+					inRepeat,
+				);
 				if (!isFirst && memberParts.length > 0 && parts.length > 0) {
 					const lastPart = parts[parts.length - 1]!;
 					const nextPart = memberParts[0]!;
 					if (!immediate && needsSpace(lastPart, nextPart)) {
-						parts.push(' ');
+						parts.push(" ");
 					}
 				}
 				parts.push(...memberParts);
@@ -613,14 +727,14 @@ function ruleToTemplate(
 			return parts;
 		}
 
-		case 'STRING': {
+		case "STRING": {
 			if (optional) return [];
 			// Inside REPEAT, suppress separator/delimiter strings — joinBy handles them
 			if (inRepeat) return [];
 			return [rule.value];
 		}
 
-		case 'FIELD': {
+		case "FIELD": {
 			if (seen.has(rule.name)) return [];
 			seen.add(rule.name);
 			const multi = fieldMultiple.get(rule.name) ?? false;
@@ -628,80 +742,120 @@ function ruleToTemplate(
 			const varRef = multi ? `$$$${varName}` : `$${varName}`;
 			// Check if field content references an indented block via external roles
 			if (Object.keys(_externalRoles).length > 0) {
-				const contentName = rule.content.type === 'SYMBOL' ? rule.content.name : undefined;
-				if (contentName && gr[contentName] && ruleReferencesExternal(gr[contentName]!, 'indent', gr)) {
-					return ['\n  ', varRef, '\n'];
+				const contentName = rule.content.type === "SYMBOL" ? rule.content.name : undefined;
+				if (
+					contentName &&
+					gr[contentName] &&
+					ruleReferencesExternal(gr[contentName]!, "indent", gr)
+				) {
+					return ["\n  ", varRef, "\n"];
 				}
 			}
 			return [varRef];
 		}
 
-		case 'SYMBOL': {
+		case "SYMBOL": {
 			// Inline _-prefixed (hidden/abstract) rules that contain fields
-			if (rule.name.startsWith('_') && gr[rule.name]) {
+			if (rule.name.startsWith("_") && gr[rule.name]) {
 				const inlineSeen = new Set(seen);
-				const inlined = ruleToTemplate(gr[rule.name]!, optional, inlineSeen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, inRepeat);
-				const hasRelevantFields = [...inlineSeen].some(f => !seen.has(f) && fieldRequired.has(f));
+				const inlined = ruleToTemplate(
+					gr[rule.name]!,
+					optional,
+					inlineSeen,
+					fieldRequired,
+					fieldMultiple,
+					gr,
+					clauses,
+					immediate,
+					childSlotMap,
+					inRepeat,
+				);
+				const hasRelevantFields = [...inlineSeen].some((f) => !seen.has(f) && fieldRequired.has(f));
 				if (hasRelevantFields) {
 					for (const f of inlineSeen) {
 						if (fieldRequired.has(f)) seen.add(f);
 					}
-					if (inlineSeen.has('children')) seen.add('children');
+					if (inlineSeen.has("children")) seen.add("children");
 					return inlined;
 				}
 			}
 			// Check if this symbol maps to a named child slot
 			const childSlot = childSlotMap.get(rule.name);
 			if (childSlot) {
-				if (seen.has(`child:${childSlot.slotName}`) || (childSlot.slotName === 'children' && seen.has('children'))) return [];
+				if (
+					seen.has(`child:${childSlot.slotName}`) ||
+					(childSlot.slotName === "children" && seen.has("children"))
+				)
+					return [];
 				seen.add(`child:${childSlot.slotName}`);
-				if (childSlot.slotName === 'children') seen.add('children');
+				if (childSlot.slotName === "children") seen.add("children");
 				return [childSlot.multiple ? `$$$${childSlot.varName}` : `$${childSlot.varName}`];
 			}
 			// Hidden rules that couldn't be inlined and aren't in childSlotMap:
-			if (rule.name.startsWith('_')) {
+			if (rule.name.startsWith("_")) {
 				// External token roles from overrides (e.g. _indent → indent for Python)
 				const extRole = _externalRoles[rule.name];
 				if (extRole) {
-					if (extRole.role === 'indent') return ['\n  '];
-					if (extRole.role === 'dedent') return ['\n'];
-					if (extRole.role === 'newline') return ['\n'];
+					if (extRole.role === "indent") return ["\n  "];
+					if (extRole.role === "dedent") return ["\n"];
+					if (extRole.role === "newline") return ["\n"];
 				}
 				// If inside a REPEAT, they likely resolve to child types → emit $$$CHILDREN.
 				// Otherwise they're token-like (e.g. _semicolon) — no output.
-				if (inRepeat && !seen.has('children')) {
-					seen.add('children');
-					return ['$$$CHILDREN'];
+				if (inRepeat && !seen.has("children")) {
+					seen.add("children");
+					return ["$$$CHILDREN"];
 				}
 				return [];
 			}
 			// Unknown named symbol — generic children
-			if (seen.has('children')) return [];
-			seen.add('children');
-			return ['$$$CHILDREN'];
+			if (seen.has("children")) return [];
+			seen.add("children");
+			return ["$$$CHILDREN"];
 		}
 
-		case 'CHOICE': {
-			const hasBlank = rule.members.some(m => m.type === 'BLANK');
+		case "CHOICE": {
+			const hasBlank = rule.members.some((m) => m.type === "BLANK");
 			if (hasBlank) {
 				// Optional group — check if we should synthesize a clause
-				const nonBlank = rule.members.filter(m => m.type !== 'BLANK');
+				const nonBlank = rule.members.filter((m) => m.type !== "BLANK");
 				if (nonBlank.length === 1) {
 					const inner = nonBlank[0]!;
 
 					// Suppress optional bare STRING tokens (trailing commas, optional keywords).
 					// These are separators/delimiters that don't contribute to the template.
-					if (inner.type === 'STRING') return [];
+					if (inner.type === "STRING") return [];
 
-					const clauseResult = tryClause(inner, seen, fieldRequired, fieldMultiple, gr, clauses, immediate);
+					const clauseResult = tryClause(
+						inner,
+						seen,
+						fieldRequired,
+						fieldMultiple,
+						gr,
+						clauses,
+						immediate,
+					);
 					if (clauseResult) return clauseResult;
 				}
 
 				// No clause — mark fields as optional
 				const parts: string[] = [];
 				for (const m of rule.members) {
-					if (m.type === 'BLANK') continue;
-					parts.push(...ruleToTemplate(m, true, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, inRepeat));
+					if (m.type === "BLANK") continue;
+					parts.push(
+						...ruleToTemplate(
+							m,
+							true,
+							seen,
+							fieldRequired,
+							fieldMultiple,
+							gr,
+							clauses,
+							immediate,
+							childSlotMap,
+							inRepeat,
+						),
+					);
 				}
 				return parts;
 			}
@@ -717,16 +871,29 @@ function ruleToTemplate(
 			// members (not wrapped in FIELD after enrichment), suppress all
 			// literals — they're anonymous children that $$$CHILDREN renders.
 			{
-				const suppressLiterals = inRepeat && rule.members.some(m => {
-					if (m.type === 'BLANK') return false;
-					const u = unwrapPrec(m);
-					return u.type === 'STRING';
-				});
+				const suppressLiterals =
+					inRepeat &&
+					rule.members.some((m) => {
+						if (m.type === "BLANK") return false;
+						const u = unwrapPrec(m);
+						return u.type === "STRING";
+					});
 				const result: string[] = [];
 				let isFirst = true;
 				for (const m of rule.members) {
-					if (m.type === 'BLANK') continue;
-					const branchParts = ruleToTemplate(m, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, inRepeat);
+					if (m.type === "BLANK") continue;
+					const branchParts = ruleToTemplate(
+						m,
+						optional,
+						seen,
+						fieldRequired,
+						fieldMultiple,
+						gr,
+						clauses,
+						immediate,
+						childSlotMap,
+						inRepeat,
+					);
 					if (isFirst && !suppressLiterals) {
 						result.push(...branchParts);
 						isFirst = false;
@@ -734,8 +901,8 @@ function ruleToTemplate(
 						// Keep only variable references from non-first branches
 						// (or all branches when suppressing literals)
 						for (const part of branchParts) {
-							if (part.startsWith('$')) {
-								if (result.length > 0) result.push(' ');
+							if (part.startsWith("$")) {
+								if (result.length > 0) result.push(" ");
 								result.push(part);
 							}
 						}
@@ -746,53 +913,117 @@ function ruleToTemplate(
 			}
 		}
 
-		case 'REPEAT':
-		case 'REPEAT1':
-			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, true);
+		case "REPEAT":
+		case "REPEAT1":
+			return ruleToTemplate(
+				rule.content,
+				optional,
+				seen,
+				fieldRequired,
+				fieldMultiple,
+				gr,
+				clauses,
+				immediate,
+				childSlotMap,
+				true,
+			);
 
-		case 'PREC':
-		case 'PREC_LEFT':
-		case 'PREC_RIGHT':
-		case 'PREC_DYNAMIC':
-			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, inRepeat);
+		case "PREC":
+		case "PREC_LEFT":
+		case "PREC_RIGHT":
+		case "PREC_DYNAMIC":
+			return ruleToTemplate(
+				rule.content,
+				optional,
+				seen,
+				fieldRequired,
+				fieldMultiple,
+				gr,
+				clauses,
+				immediate,
+				childSlotMap,
+				inRepeat,
+			);
 
-		case 'TOKEN':
-			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, false, childSlotMap, inRepeat);
+		case "TOKEN":
+			return ruleToTemplate(
+				rule.content,
+				optional,
+				seen,
+				fieldRequired,
+				fieldMultiple,
+				gr,
+				clauses,
+				false,
+				childSlotMap,
+				inRepeat,
+			);
 
-		case 'IMMEDIATE_TOKEN': {
+		case "IMMEDIATE_TOKEN": {
 			let inner: GrammarRule = rule.content;
-			while (inner.type === 'PREC' || inner.type === 'PREC_LEFT' || inner.type === 'PREC_RIGHT' || inner.type === 'PREC_DYNAMIC') {
+			while (
+				inner.type === "PREC" ||
+				inner.type === "PREC_LEFT" ||
+				inner.type === "PREC_RIGHT" ||
+				inner.type === "PREC_DYNAMIC"
+			) {
 				inner = inner.content;
 			}
-			if (inner.type === 'STRING') {
+			if (inner.type === "STRING") {
 				if (optional) return [];
 				return [inner.value]; // no leading space — immediate
 			}
-			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, true, childSlotMap, inRepeat);
+			return ruleToTemplate(
+				rule.content,
+				optional,
+				seen,
+				fieldRequired,
+				fieldMultiple,
+				gr,
+				clauses,
+				true,
+				childSlotMap,
+				inRepeat,
+			);
 		}
 
-		case 'ALIAS':
+		case "ALIAS":
 			if (rule.named) {
-				const aliasName = rule.value ?? '';
+				const aliasName = rule.value ?? "";
 				const aliasSlot = childSlotMap.get(aliasName);
 				if (aliasSlot) {
-					if (seen.has(`child:${aliasSlot.slotName}`) || (aliasSlot.slotName === 'children' && seen.has('children'))) return [];
+					if (
+						seen.has(`child:${aliasSlot.slotName}`) ||
+						(aliasSlot.slotName === "children" && seen.has("children"))
+					)
+						return [];
 					seen.add(`child:${aliasSlot.slotName}`);
-					if (aliasSlot.slotName === 'children') seen.add('children');
+					if (aliasSlot.slotName === "children") seen.add("children");
 					return [aliasSlot.multiple ? `$$$${aliasSlot.varName}` : `$${aliasSlot.varName}`];
 				}
-				if (seen.has('children')) return [];
-				seen.add('children');
-				return ['$$$CHILDREN'];
+				if (seen.has("children")) return [];
+				seen.add("children");
+				return ["$$$CHILDREN"];
 			}
 			if (rule.value) {
 				if (optional) return [];
 				return [rule.value];
 			}
-			return ruleToTemplate(rule.content, optional, seen, fieldRequired, fieldMultiple, gr, clauses, immediate, childSlotMap, inRepeat);
+			return ruleToTemplate(
+				rule.content,
+				optional,
+				seen,
+				fieldRequired,
+				fieldMultiple,
+				gr,
+				clauses,
+				immediate,
+				childSlotMap,
+				inRepeat,
+			);
 
-		case 'BLANK':
-		case 'PATTERN':
+		case "BLANK":
+		case "PATTERN":
 			return [];
 	}
 }
@@ -817,25 +1048,25 @@ function tryClause(
 	immediate: boolean,
 ): string[] | null {
 	// Must be a SEQ with at least one STRING and one FIELD
-	const members = rule.type === 'SEQ' ? rule.members : [rule];
+	const members = rule.type === "SEQ" ? rule.members : [rule];
 
 	const tokens: string[] = [];
 	const fields: { name: string; multi: boolean }[] = [];
 
 	for (const m of members) {
 		const unwrapped = unwrapPrec(m);
-		if (unwrapped.type === 'STRING') {
+		if (unwrapped.type === "STRING") {
 			tokens.push(unwrapped.value);
-		} else if (unwrapped.type === 'FIELD') {
+		} else if (unwrapped.type === "FIELD") {
 			fields.push({ name: unwrapped.name, multi: fieldMultiple.get(unwrapped.name) ?? false });
-		} else if (unwrapped.type === 'SYMBOL' && !unwrapped.name.startsWith('_')) {
+		} else if (unwrapped.type === "SYMBOL" && !unwrapped.name.startsWith("_")) {
 			// Named symbol in optional context — treat as field-like
 			fields.push({ name: unwrapped.name, multi: false });
-		} else if (unwrapped.type === 'CHOICE') {
+		} else if (unwrapped.type === "CHOICE") {
 			// CHOICE(STRING | BLANK) = optional token inside clause — include it
-			const nonBlank = unwrapped.members.filter(mb => mb.type !== 'BLANK');
-			const hasBlank = unwrapped.members.some(mb => mb.type === 'BLANK');
-			if (hasBlank && nonBlank.length === 1 && nonBlank[0]!.type === 'STRING') {
+			const nonBlank = unwrapped.members.filter((mb) => mb.type !== "BLANK");
+			const hasBlank = unwrapped.members.some((mb) => mb.type === "BLANK");
+			if (hasBlank && nonBlank.length === 1 && nonBlank[0]!.type === "STRING") {
 				tokens.push(nonBlank[0]!.value);
 			} else {
 				return null; // Complex CHOICE — don't clausify
@@ -857,28 +1088,28 @@ function tryClause(
 	const clauseParts: string[] = [];
 	for (const m of members) {
 		const unwrapped = unwrapPrec(m);
-		if (unwrapped.type === 'STRING') {
+		if (unwrapped.type === "STRING") {
 			clauseParts.push(unwrapped.value);
-		} else if (unwrapped.type === 'FIELD') {
+		} else if (unwrapped.type === "FIELD") {
 			const varName = unwrapped.name.toUpperCase();
 			const multi = fieldMultiple.get(unwrapped.name) ?? false;
 			clauseParts.push(multi ? `$$$${varName}` : `$${varName}`);
 			seen.add(unwrapped.name);
-		} else if (unwrapped.type === 'SYMBOL' && !unwrapped.name.startsWith('_')) {
+		} else if (unwrapped.type === "SYMBOL" && !unwrapped.name.startsWith("_")) {
 			const varName = unwrapped.name.toUpperCase();
 			clauseParts.push(`$${varName}`);
 			seen.add(unwrapped.name);
-		} else if (unwrapped.type === 'CHOICE') {
+		} else if (unwrapped.type === "CHOICE") {
 			// CHOICE(STRING | BLANK) — include optional token in clause
-			const nonBlank = unwrapped.members.filter(mb => mb.type !== 'BLANK');
-			if (nonBlank.length === 1 && nonBlank[0]!.type === 'STRING') {
+			const nonBlank = unwrapped.members.filter((mb) => mb.type !== "BLANK");
+			if (nonBlank.length === 1 && nonBlank[0]!.type === "STRING") {
 				clauseParts.push(nonBlank[0]!.value);
 			}
 		}
 	}
 
 	const clauseName = `${primaryField.name}_clause`;
-	const clauseTemplate = clauseParts.join(' ');
+	const clauseTemplate = clauseParts.join(" ");
 	clauses.push({ name: clauseName, template: clauseTemplate });
 
 	// Return a reference to the clause in the parent template
@@ -886,7 +1117,12 @@ function tryClause(
 }
 
 function unwrapPrec(rule: GrammarRule): GrammarRule {
-	while (rule.type === 'PREC' || rule.type === 'PREC_LEFT' || rule.type === 'PREC_RIGHT' || rule.type === 'PREC_DYNAMIC') {
+	while (
+		rule.type === "PREC" ||
+		rule.type === "PREC_LEFT" ||
+		rule.type === "PREC_RIGHT" ||
+		rule.type === "PREC_DYNAMIC"
+	) {
 		rule = rule.content;
 	}
 	return rule;
@@ -895,7 +1131,6 @@ function unwrapPrec(rule: GrammarRule): GrammarRule {
 // ---------------------------------------------------------------------------
 // joinBy construction
 // ---------------------------------------------------------------------------
-
 
 function buildJoinBy(
 	fieldMultiple: Map<string, boolean>,
@@ -915,7 +1150,7 @@ function buildJoinBy(
 	if (node.children) {
 		const childArr = Array.isArray(node.children) ? node.children : [node.children];
 		for (const child of childArr) {
-			if (child.multiple && 'separator' in child && child.separator) {
+			if (child.multiple && "separator" in child && child.separator) {
 				seps.add(child.separator);
 			}
 		}
@@ -923,7 +1158,9 @@ function buildJoinBy(
 
 	if (seps.size === 0) return undefined;
 	if (seps.size > 1) {
-		throw new Error(`'${node.kind}' has multiple different separators (${[...seps].join(', ')}); joinBy must be a single string`);
+		throw new Error(
+			`'${node.kind}' has multiple different separators (${[...seps].join(", ")}); joinBy must be a single string`,
+		);
 	}
 
 	return [...seps][0];
@@ -939,7 +1176,10 @@ function buildJoinBy(
  * Handles rules like `_let_chain: X && Y | Y && X | ...` where
  * the rule references itself with a STRING separator between elements.
  */
-function detectRecursiveSeparator(grammarRules: Record<string, GrammarRule>, kind: string): string | undefined {
+function detectRecursiveSeparator(
+	grammarRules: Record<string, GrammarRule>,
+	kind: string,
+): string | undefined {
 	// Check both the kind and the _-prefixed hidden variant
 	for (const name of [kind, `_${kind}`]) {
 		const rule = grammarRules[name];
@@ -954,18 +1194,23 @@ function detectRecursiveSeparator(grammarRules: Record<string, GrammarRule>, kin
 
 /** Walk a rule looking for SEQ(self_ref, STRING, other) patterns. */
 function findRecursiveSeps(rule: GrammarRule, selfName: string, seps: Set<string>): void {
-	if (rule.type === 'SEQ') {
+	if (rule.type === "SEQ") {
 		// Look for STRING between a self-reference and another element
 		for (let i = 1; i < rule.members.length - 1; i++) {
 			const prev = unwrapPrec(rule.members[i - 1]!);
 			const curr = rule.members[i]!;
-			if (curr.type === 'STRING' && prev.type === 'SYMBOL' && prev.name === selfName) {
+			if (curr.type === "STRING" && prev.type === "SYMBOL" && prev.name === selfName) {
 				seps.add(curr.value);
 			}
 		}
 	}
-	if (rule.type === 'CHOICE') for (const m of rule.members) findRecursiveSeps(m, selfName, seps);
-	if (rule.type === 'PREC' || rule.type === 'PREC_LEFT' || rule.type === 'PREC_RIGHT' || rule.type === 'PREC_DYNAMIC') {
+	if (rule.type === "CHOICE") for (const m of rule.members) findRecursiveSeps(m, selfName, seps);
+	if (
+		rule.type === "PREC" ||
+		rule.type === "PREC_LEFT" ||
+		rule.type === "PREC_RIGHT" ||
+		rule.type === "PREC_DYNAMIC"
+	) {
 		findRecursiveSeps(rule.content, selfName, seps);
 	}
 }
@@ -994,18 +1239,25 @@ let _wordEndRe = /[\w\p{L}]$/u;
 let _externalRoles: Record<string, ExternalRole> = {};
 
 /** Check if a grammar rule references an external with the given role (non-recursive, max 2 levels). */
-function ruleReferencesExternal(rule: GrammarRule, role: string, gr: Record<string, GrammarRule>, depth = 0): boolean {
+function ruleReferencesExternal(
+	rule: GrammarRule,
+	role: string,
+	gr: Record<string, GrammarRule>,
+	depth = 0,
+): boolean {
 	if (depth > 2) return false;
-	if (rule.type === 'SYMBOL') {
+	if (rule.type === "SYMBOL") {
 		const ext = _externalRoles[rule.name];
 		if (ext?.role === role) return true;
-		if (rule.name.startsWith('_') && gr[rule.name] && depth < 2) {
+		if (rule.name.startsWith("_") && gr[rule.name] && depth < 2) {
 			return ruleReferencesExternal(gr[rule.name]!, role, gr, depth + 1);
 		}
 		return false;
 	}
-	if ('members' in rule) return rule.members.some(m => ruleReferencesExternal(m, role, gr, depth));
-	if ('content' in rule && rule.content) return ruleReferencesExternal(rule.content as GrammarRule, role, gr, depth);
+	if ("members" in rule)
+		return rule.members.some((m) => ruleReferencesExternal(m, role, gr, depth));
+	if ("content" in rule && rule.content)
+		return ruleReferencesExternal(rule.content as GrammarRule, role, gr, depth);
 	return false;
 }
 let _wordStartRe = /^[\p{L}_$]/u;
@@ -1018,8 +1270,8 @@ let _wordStartRe = /^[\p{L}_$]/u;
  * $VARIABLE parts are conservatively treated as word-like on both edges.
  */
 function needsSpace(prev: string, next: string): boolean {
-	const prevMayEndWord = _wordEndRe.test(prev) || prev.startsWith('$');
-	const nextMayStartWord = _wordStartRe.test(next) || next.startsWith('$');
+	const prevMayEndWord = _wordEndRe.test(prev) || prev.startsWith("$");
+	const nextMayStartWord = _wordStartRe.test(next) || next.startsWith("$");
 	return prevMayEndWord && nextMayStartWord;
 }
 
@@ -1029,14 +1281,23 @@ function needsSpace(prev: string, next: string): boolean {
 
 function grammarExtensions(grammar: string): string[] {
 	switch (grammar) {
-		case 'rust': return ['rs'];
-		case 'typescript': return ['ts', 'tsx'];
-		case 'python': return ['py'];
-		case 'javascript': return ['js', 'jsx'];
-		case 'go': return ['go'];
-		case 'java': return ['java'];
-		case 'c': return ['c', 'h'];
-		case 'cpp': return ['cpp', 'cc', 'cxx', 'hpp', 'hxx', 'h'];
-		default: return [];
+		case "rust":
+			return ["rs"];
+		case "typescript":
+			return ["ts", "tsx"];
+		case "python":
+			return ["py"];
+		case "javascript":
+			return ["js", "jsx"];
+		case "go":
+			return ["go"];
+		case "java":
+			return ["java"];
+		case "c":
+			return ["c", "h"];
+		case "cpp":
+			return ["cpp", "cc", "cxx", "hpp", "hxx", "h"];
+		default:
+			return [];
 	}
 }
