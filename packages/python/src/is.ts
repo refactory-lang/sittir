@@ -35,6 +35,7 @@ export interface IsGuards {
     printStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'print_statement' };
     chevron<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'chevron' };
     assertStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'assert_statement' };
+    expressionStatementTuple<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'expression_statement_tuple' };
     expressionStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'expression_statement' };
     namedExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'named_expression' };
     returnStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'return_statement' };
@@ -52,6 +53,8 @@ export interface IsGuards {
     exceptClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'except_clause' };
     finallyClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'finally_clause' };
     withStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'with_statement' };
+    withClauseBare<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'with_clause_bare' };
+    withClauseParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'with_clause_paren' };
     withClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'with_clause' };
     withItem<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'with_item' };
     functionDefinition<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'function_definition' };
@@ -133,6 +136,8 @@ export interface IsGuards {
     interpolation<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'interpolation' };
     formatSpecifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'format_specifier' };
     await<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'await' };
+    AsPatternTarget<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_as_pattern_target' };
+    FormatExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_format_expression' };
     WithClauseParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_with_clause_paren' };
     SimplePatternNegative<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_simple_pattern_negative' };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): v is { readonly $type: K & string };
@@ -166,6 +171,7 @@ export interface AssertGuards {
     printStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'print_statement' };
     chevron(v: { readonly $type: string }): asserts v is { readonly $type: 'chevron' };
     assertStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'assert_statement' };
+    expressionStatementTuple(v: { readonly $type: string }): asserts v is { readonly $type: 'expression_statement_tuple' };
     expressionStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'expression_statement' };
     namedExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'named_expression' };
     returnStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'return_statement' };
@@ -183,6 +189,8 @@ export interface AssertGuards {
     exceptClause(v: { readonly $type: string }): asserts v is { readonly $type: 'except_clause' };
     finallyClause(v: { readonly $type: string }): asserts v is { readonly $type: 'finally_clause' };
     withStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'with_statement' };
+    withClauseBare(v: { readonly $type: string }): asserts v is { readonly $type: 'with_clause_bare' };
+    withClauseParen(v: { readonly $type: string }): asserts v is { readonly $type: 'with_clause_paren' };
     withClause(v: { readonly $type: string }): asserts v is { readonly $type: 'with_clause' };
     withItem(v: { readonly $type: string }): asserts v is { readonly $type: 'with_item' };
     functionDefinition(v: { readonly $type: string }): asserts v is { readonly $type: 'function_definition' };
@@ -264,6 +272,8 @@ export interface AssertGuards {
     interpolation(v: { readonly $type: string }): asserts v is { readonly $type: 'interpolation' };
     formatSpecifier(v: { readonly $type: string }): asserts v is { readonly $type: 'format_specifier' };
     await(v: { readonly $type: string }): asserts v is { readonly $type: 'await' };
+    AsPatternTarget(v: { readonly $type: string }): asserts v is { readonly $type: '_as_pattern_target' };
+    FormatExpression(v: { readonly $type: string }): asserts v is { readonly $type: '_format_expression' };
     WithClauseParen(v: { readonly $type: string }): asserts v is { readonly $type: '_with_clause_paren' };
     SimplePatternNegative(v: { readonly $type: string }): asserts v is { readonly $type: '_simple_pattern_negative' };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): asserts v is { readonly $type: K & string };
@@ -322,6 +332,7 @@ export const is = {
     printStatement: _g("print_statement"),
     chevron: _g("chevron"),
     assertStatement: _g("assert_statement"),
+    expressionStatementTuple: _g("expression_statement_tuple"),
     expressionStatement: _g("expression_statement"),
     namedExpression: _g("named_expression"),
     returnStatement: _g("return_statement"),
@@ -339,6 +350,8 @@ export const is = {
     exceptClause: _g("except_clause"),
     finallyClause: _g("finally_clause"),
     withStatement: _g("with_statement"),
+    withClauseBare: _g("with_clause_bare"),
+    withClauseParen: _g("with_clause_paren"),
     withClause: _g("with_clause"),
     withItem: _g("with_item"),
     functionDefinition: _g("function_definition"),
@@ -420,6 +433,8 @@ export const is = {
     interpolation: _g("interpolation"),
     formatSpecifier: _g("format_specifier"),
     await: _g("await"),
+    AsPatternTarget: _g("_as_pattern_target"),
+    FormatExpression: _g("_format_expression"),
     WithClauseParen: _g("_with_clause_paren"),
     SimplePatternNegative: _g("_simple_pattern_negative"),
     kind: (v: { readonly $type: string }, k: string): boolean => v.$type === k,
@@ -474,6 +489,7 @@ export const assert = {
     printStatement: _makeAssert('printStatement', is.printStatement as _AnyGuard),
     chevron: _makeAssert('chevron', is.chevron as _AnyGuard),
     assertStatement: _makeAssert('assertStatement', is.assertStatement as _AnyGuard),
+    expressionStatementTuple: _makeAssert('expressionStatementTuple', is.expressionStatementTuple as _AnyGuard),
     expressionStatement: _makeAssert('expressionStatement', is.expressionStatement as _AnyGuard),
     namedExpression: _makeAssert('namedExpression', is.namedExpression as _AnyGuard),
     returnStatement: _makeAssert('returnStatement', is.returnStatement as _AnyGuard),
@@ -491,6 +507,8 @@ export const assert = {
     exceptClause: _makeAssert('exceptClause', is.exceptClause as _AnyGuard),
     finallyClause: _makeAssert('finallyClause', is.finallyClause as _AnyGuard),
     withStatement: _makeAssert('withStatement', is.withStatement as _AnyGuard),
+    withClauseBare: _makeAssert('withClauseBare', is.withClauseBare as _AnyGuard),
+    withClauseParen: _makeAssert('withClauseParen', is.withClauseParen as _AnyGuard),
     withClause: _makeAssert('withClause', is.withClause as _AnyGuard),
     withItem: _makeAssert('withItem', is.withItem as _AnyGuard),
     functionDefinition: _makeAssert('functionDefinition', is.functionDefinition as _AnyGuard),
@@ -572,6 +590,8 @@ export const assert = {
     interpolation: _makeAssert('interpolation', is.interpolation as _AnyGuard),
     formatSpecifier: _makeAssert('formatSpecifier', is.formatSpecifier as _AnyGuard),
     await: _makeAssert('await', is.await as _AnyGuard),
+    AsPatternTarget: _makeAssert('AsPatternTarget', is.AsPatternTarget as _AnyGuard),
+    FormatExpression: _makeAssert('FormatExpression', is.FormatExpression as _AnyGuard),
     WithClauseParen: _makeAssert('WithClauseParen', is.WithClauseParen as _AnyGuard),
     SimplePatternNegative: _makeAssert('SimplePatternNegative', is.SimplePatternNegative as _AnyGuard),
     kind: _makeAssertKind(is.kind as _AnyGuard),

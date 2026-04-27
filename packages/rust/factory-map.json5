@@ -5,19 +5,32 @@
 {
   "factoryShapes": {
     "source_file": "config",
+    "expression_statement_with_semi": "children",
+    "expression_statement_block_ending": "children",
     "expression_statement": "config",
+    "macro_definition_paren": "children",
+    "macro_definition_bracket": "children",
+    "macro_definition_brace": "children",
     "macro_definition": "config",
     "macro_rule": "config",
+    "token_tree_pattern_paren": "children",
+    "token_tree_pattern_bracket": "children",
+    "token_tree_pattern_brace": "children",
     "token_tree_pattern": "config",
     "token_binding_pattern": "config",
     "token_repetition_pattern": "children",
     "fragment_specifier": "text",
+    "token_tree_paren": "children",
+    "token_tree_bracket": "children",
+    "token_tree_brace": "children",
     "token_tree": "config",
     "token_repetition": "children",
     "attribute_item": "config",
     "inner_attribute_item": "config",
     "attribute": "config",
+    "mod_item_inline": "config",
     "mod_item": "config",
+    "foreign_mod_item_body": "config",
     "foreign_mod_item": "config",
     "declaration_list": "children",
     "struct_item": "config",
@@ -37,6 +50,7 @@
     "function_modifiers": "config",
     "where_clause": "children",
     "where_predicate": "config",
+    "impl_item_body": "config",
     "impl_item": "config",
     "trait_item": "config",
     "associated_type": "config",
@@ -58,6 +72,7 @@
     "variadic_parameter": "config",
     "parameter": "config",
     "extern_modifier": "config",
+    "visibility_modifier_crate": "children",
     "visibility_modifier": "config",
     "bracketed_type": "children",
     "qualified_type": "config",
@@ -75,15 +90,20 @@
     "type_arguments": "children",
     "type_binding": "config",
     "reference_type": "config",
+    "pointer_type_mut": "children",
     "pointer_type": "config",
     "abstract_type": "config",
     "dynamic_type": "config",
     "mutable_specifier": "text",
     "macro_invocation": "config",
+    "delim_token_tree_paren": "children",
+    "delim_token_tree_bracket": "children",
+    "delim_token_tree_brace": "children",
     "delim_token_tree": "config",
     "scoped_identifier": "config",
     "scoped_type_identifier_in_expression_position": "config",
     "scoped_type_identifier": "config",
+    "range_expression_bare": "config",
     "range_expression": "config",
     "unary_expression": "config",
     "try_expression": "config",
@@ -111,6 +131,7 @@
     "else_clause": "children",
     "match_expression": "config",
     "match_block": "children",
+    "match_arm_block_ending": "config",
     "match_arm": "config",
     "last_match_arm": "config",
     "match_pattern": "config",
@@ -118,6 +139,7 @@
     "loop_expression": "config",
     "for_expression": "config",
     "const_block": "config",
+    "closure_expression_expr": "config",
     "closure_expression": "config",
     "closure_parameters": "children",
     "label": "config",
@@ -136,6 +158,7 @@
     "slice_pattern": "children",
     "tuple_struct_pattern": "config",
     "struct_pattern": "config",
+    "field_pattern_shorthand": "config",
     "field_pattern": "config",
     "mut_pattern": "config",
     "range_pattern": "config",
@@ -281,6 +304,9 @@
     "tuple_struct_pattern.type": {
       "generic_type": "generic_type_with_turbofish"
     },
+    "field_pattern_shorthand.name": {
+      "shorthand_field_identifier": "identifier"
+    },
     "raw_string_literal.string_content": {
       "string_content": "_string_content"
     },
@@ -312,6 +338,12 @@
     ],
     "inner_attribute_item": [
       "attribute"
+    ],
+    "mod_item_inline": [
+      "body"
+    ],
+    "foreign_mod_item_body": [
+      "body"
     ],
     "union_item": [
       "visibility_modifier",
@@ -393,6 +425,9 @@
     "where_predicate": [
       "left",
       "bounds"
+    ],
+    "impl_item_body": [
+      "body"
     ],
     "trait_item": [
       "visibility_modifier",
@@ -528,6 +563,9 @@
       "path",
       "name"
     ],
+    "range_expression_bare": [
+      "operator"
+    ],
     "unary_expression": [
       "operator",
       "operand"
@@ -582,6 +620,9 @@
       "value",
       "body"
     ],
+    "match_arm_block_ending": [
+      "value"
+    ],
     "while_expression": [
       "label",
       "condition",
@@ -598,6 +639,9 @@
       "body"
     ],
     "const_block": [
+      "body"
+    ],
+    "closure_expression_expr": [
       "body"
     ],
     "label": [
@@ -627,6 +671,9 @@
     ],
     "try_block": [
       "block"
+    ],
+    "field_pattern_shorthand": [
+      "name"
     ],
     "reference_pattern": [
       "mutable_specifier",

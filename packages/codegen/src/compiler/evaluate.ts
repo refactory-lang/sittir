@@ -922,10 +922,12 @@ function rewriteInlineAliases(rule: Rule, rules: Record<string, Rule>): Rule {
 				// Synthesizing `_existingKind` would collide with /
 				// over-ride the existing kind's meaning.
 				const targetAlreadyExists = rules[rule.value] !== undefined;
-				if (!isBareSymbolToExistingRule && !targetAlreadyExists) {
+				if (!targetAlreadyExists) {
 					const syntheticHiddenName = `_${rule.value}`;
 					if (!rules[syntheticHiddenName]) {
-						rules[syntheticHiddenName] = recurse(rule.content);
+						rules[syntheticHiddenName] = isBareSymbolToExistingRule
+							? inner
+							: recurse(rule.content);
 					}
 					return {
 						...rule,

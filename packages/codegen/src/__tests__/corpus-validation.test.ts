@@ -296,15 +296,6 @@ const ALIAS_VARIANT_KINDS: Record<string, Set<string>> = {
 		"assignment_type",
 		"assignment_typed",
 		"format_expression",
-		// with_clause variant adoption: the `bare` form is `seq(with_item,
-		// repeat(','+with_item), optional(','))` — classifyHiddenSeqRule
-		// folds this into modelType=multi (repeat helper), which renders
-		// inline at the referrer rather than owning its own template.
-		"with_clause_bare",
-		// expression_statement variant adoption: the tuple form is also
-		// a multi-shape (`expression, expression, ...`), same situation
-		// as with_clause_bare.
-		"expression_statement_tuple",
 		// dict_pattern variant adoption: the `kv` arm's body is the
 		// inlined `_key_value_pattern` shape (`seq(field('key', ...), ':',
 		// field('value', ...))`). The assembler classifies the synthesized

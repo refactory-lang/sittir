@@ -14,6 +14,22 @@ describe('source_file', () => {
   });
 });
 
+describe('expression_statement_with_semi', () => {
+  it('factory produces correct type', () => {
+    const node = ir.expressionStatementWithSemi({ type: "_expression" } as never);
+    expect(node.$type).toBe('expression_statement_with_semi');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('expression_statement_block_ending', () => {
+  it('factory produces correct type', () => {
+    const node = ir.expressionStatementBlockEnding({ type: "_expression_ending_with_block" } as never);
+    expect(node.$type).toBe('expression_statement_block_ending');
+    expect(node.$source).toBe('factory');
+  });
+});
+
 describe('expression_statement', () => {
   it('with_semi form produces correct type', () => {
     const node = ir.expressionStatement.with_semi({});
@@ -23,6 +39,30 @@ describe('expression_statement', () => {
   it('block_ending form produces correct type', () => {
     const node = ir.expressionStatement.block_ending({});
     expect(node.$type).toBe('expression_statement');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('macro_definition_paren', () => {
+  it('factory produces correct type', () => {
+    const node = ir.macroDefinitionParen();
+    expect(node.$type).toBe('macro_definition_paren');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('macro_definition_bracket', () => {
+  it('factory produces correct type', () => {
+    const node = ir.macroDefinitionBracket();
+    expect(node.$type).toBe('macro_definition_bracket');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('macro_definition_brace', () => {
+  it('factory produces correct type', () => {
+    const node = ir.macroDefinitionBrace();
+    expect(node.$type).toBe('macro_definition_brace');
     expect(node.$source).toBe('factory');
   });
 });
@@ -54,6 +94,30 @@ describe('macro_rule', () => {
   it('render produces non-empty string', () => {
     const node = ir.macroRule({ left: { $type: 'token_tree_pattern', $text: 'test' } as any, right: { $type: 'token_tree', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('token_tree_pattern_paren', () => {
+  it('factory produces correct type', () => {
+    const node = ir.tokenTreePatternParen();
+    expect(node.$type).toBe('token_tree_pattern_paren');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('token_tree_pattern_bracket', () => {
+  it('factory produces correct type', () => {
+    const node = ir.tokenTreePatternBracket();
+    expect(node.$type).toBe('token_tree_pattern_bracket');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('token_tree_pattern_brace', () => {
+  it('factory produces correct type', () => {
+    const node = ir.tokenTreePatternBrace();
+    expect(node.$type).toBe('token_tree_pattern_brace');
+    expect(node.$source).toBe('factory');
   });
 });
 
@@ -99,6 +163,30 @@ describe('fragment_specifier', () => {
   it('factory accepts valid value', () => {
     const node = ir.fragmentSpecifier('block');
     expect(node.$type).toBe('fragment_specifier');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('token_tree_paren', () => {
+  it('factory produces correct type', () => {
+    const node = ir.tokenTreeParen();
+    expect(node.$type).toBe('token_tree_paren');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('token_tree_bracket', () => {
+  it('factory produces correct type', () => {
+    const node = ir.tokenTreeBracket();
+    expect(node.$type).toBe('token_tree_bracket');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('token_tree_brace', () => {
+  it('factory produces correct type', () => {
+    const node = ir.tokenTreeBrace();
+    expect(node.$type).toBe('token_tree_brace');
     expect(node.$source).toBe('factory');
   });
 });
@@ -165,6 +253,18 @@ describe('attribute', () => {
   });
 });
 
+describe('mod_item_inline', () => {
+  it('factory produces correct type', () => {
+    const node = ir.modItemInline({ body: { $type: 'declaration_list', $text: 'test' } as any });
+    expect(node.$type).toBe('mod_item_inline');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.modItemInline({ body: { $type: 'declaration_list', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
 describe('mod_item', () => {
   it('external form produces correct type', () => {
     const node = ir.mod.external({ name: { $type: 'identifier', $text: 'test' } as any });
@@ -175,6 +275,18 @@ describe('mod_item', () => {
     const node = ir.mod.inline({ name: { $type: 'identifier', $text: 'test' } as any, body: { $type: 'declaration_list', $text: 'test' } as any });
     expect(node.$type).toBe('mod_item');
     expect(node.$source).toBe('factory');
+  });
+});
+
+describe('foreign_mod_item_body', () => {
+  it('factory produces correct type', () => {
+    const node = ir.foreignModItemBody({ body: { $type: 'declaration_list', $text: 'test' } as any });
+    expect(node.$type).toBe('foreign_mod_item_body');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.foreignModItemBody({ body: { $type: 'declaration_list', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -393,6 +505,18 @@ describe('where_predicate', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.wherePredicate({ left: { $type: 'lifetime', $text: 'test' } as any, bounds: { $type: 'trait_bounds', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('impl_item_body', () => {
+  it('factory produces correct type', () => {
+    const node = ir.implItemBody({ body: { $type: 'declaration_list', $text: 'test' } as any });
+    expect(node.$type).toBe('impl_item_body');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.implItemBody({ body: { $type: 'declaration_list', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -630,6 +754,14 @@ describe('extern_modifier', () => {
   });
 });
 
+describe('visibility_modifier_crate', () => {
+  it('factory produces correct type', () => {
+    const node = ir.visibilityModifierCrate({ type: "crate" } as never);
+    expect(node.$type).toBe('visibility_modifier_crate');
+    expect(node.$source).toBe('factory');
+  });
+});
+
 describe('visibility_modifier', () => {
   it('in_path form produces correct type', () => {
     const node = ir.visibilityModifier.in_path({});
@@ -817,6 +949,14 @@ describe('reference_type', () => {
   });
 });
 
+describe('pointer_type_mut', () => {
+  it('factory produces correct type', () => {
+    const node = ir.pointerTypeMut({ type: "mutable_specifier" } as never);
+    expect(node.$type).toBe('pointer_type_mut');
+    expect(node.$source).toBe('factory');
+  });
+});
+
 describe('pointer_type', () => {
   it('const form produces correct type', () => {
     const node = ir.pointerType.const({ type: { $type: '_type', $text: 'test' } as any });
@@ -875,6 +1015,30 @@ describe('macro_invocation', () => {
   });
 });
 
+describe('delim_token_tree_paren', () => {
+  it('factory produces correct type', () => {
+    const node = ir.delimTokenTreeParen();
+    expect(node.$type).toBe('delim_token_tree_paren');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('delim_token_tree_bracket', () => {
+  it('factory produces correct type', () => {
+    const node = ir.delimTokenTreeBracket();
+    expect(node.$type).toBe('delim_token_tree_bracket');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('delim_token_tree_brace', () => {
+  it('factory produces correct type', () => {
+    const node = ir.delimTokenTreeBrace();
+    expect(node.$type).toBe('delim_token_tree_brace');
+    expect(node.$source).toBe('factory');
+  });
+});
+
 describe('delim_token_tree', () => {
   it('paren form produces correct type', () => {
     const node = ir.delimTokenTree.paren({});
@@ -925,6 +1089,18 @@ describe('scoped_type_identifier', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.scopedTypeIdentifier({ name: { $type: '_type_identifier', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('range_expression_bare', () => {
+  it('factory produces correct type', () => {
+    const node = ir.rangeExpressionBare({ operator: { $type: '_kw_operator', $text: 'test' } as any });
+    expect(node.$type).toBe('range_expression_bare');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.rangeExpressionBare({ operator: { $type: '_kw_operator', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1218,6 +1394,18 @@ describe('match_block', () => {
   });
 });
 
+describe('match_arm_block_ending', () => {
+  it('factory produces correct type', () => {
+    const node = ir.matchArmBlockEnding({ value: { $type: '_expression_ending_with_block', $text: 'test' } as any });
+    expect(node.$type).toBe('match_arm_block_ending');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.matchArmBlockEnding({ value: { $type: '_expression_ending_with_block', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
 describe('match_arm', () => {
   it('with_comma form produces correct type', () => {
     const node = ir.matchArm.with_comma({ pattern: { $type: 'match_pattern', $text: 'test' } as any });
@@ -1299,6 +1487,18 @@ describe('const_block', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.constBlock({ body: { $type: 'block', $text: 'test' } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('closure_expression_expr', () => {
+  it('factory produces correct type', () => {
+    const node = ir.closureExpressionExpr({ body: { $type: '_expression', $text: 'test' } as any });
+    expect(node.$type).toBe('closure_expression_expr');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.closureExpressionExpr({ body: { $type: '_expression', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1500,6 +1700,18 @@ describe('struct_pattern', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.structPattern({ type: { $type: '_type_identifier', $text: 'test' } as any, children: [{ $type: 'field_pattern', $text: 'test' } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('field_pattern_shorthand', () => {
+  it('factory produces correct type', () => {
+    const node = ir.fieldPatternShorthand({ name: { $type: 'identifier', $text: 'test' } as any });
+    expect(node.$type).toBe('field_pattern_shorthand');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.fieldPatternShorthand({ name: { $type: 'identifier', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

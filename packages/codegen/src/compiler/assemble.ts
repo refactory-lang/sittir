@@ -131,6 +131,9 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 						: "promoted";
 				const forms = buildAssembledFormGroups(kind, polyForms, polySource);
 				for (const form of forms) nodes.set(form.kind, form);
+				for (const child of buildVisibleVariantChildGroups(polySource, polyForms, optimized)) {
+					nodes.set(child.kind, child);
+				}
 				const variantChildKinds = collectOverrideVariantChildKinds(polySource, polyForms);
 				nodes.set(
 					kind,
@@ -302,6 +305,58 @@ function collectOverrideVariantChildKinds(
 ): string[] {
 	if (polySource !== "override") return [];
 	return polyForms.map((f) => extractVariantChildSymbol(f.content)).filter((s): s is string => !!s);
+}
+
+/**
+ * Register visible variant-child kinds for override polymorphs as standalone
+ * NodeMap entries backed by their hidden source rules.
+ *
+ * @remarks
+ * `variant()` adoption rewrites the parent into an override polymorph whose
+ * internal form groups use `${parent}__form_${child}` names to avoid colliding
+ * with the real parse-tree kind `${parent}_${child}`. The parser still emits
+ * that visible child kind, so NodeMap needs a concrete node entry for it when
+ * the hidden source rule `_${parent}_${child}` exists. Without this entry the
+ * generated template set omits kinds like `with_clause_bare` and
+ * `expression_statement_tuple`, leaving them un-renderable even though the
+ * structural source rule is present in `optimized.rules`.
+ */
+function buildVisibleVariantChildGroups(
+	polySource: "override" | "promoted",
+	polyForms: PolymorphRule["forms"],
+	optimized: OptimizedGrammar,
+): AssembledNode[] {
+	if (polySource !== "override") return [];
+	const groups: AssembledNode[] = [];
+	for (const form of polyForms) {
+		const visibleKind = extractVariantChildSymbol(form.content);
+		if (!visibleKind) continue;
+		const hiddenKind = `_${visibleKind}`;
+		const sourceRule = optimized.rules[hiddenKind];
+		if (!sourceRule) continue;
+		const inlinedRule = hoistInnerFieldsForTemplate(inlineGroupRefs(sourceRule, optimized.rules));
+		const simplifiedRule = optimized.simplifiedRules[hiddenKind] ?? simplifyRule(sourceRule);
+		const modelType = classifyNode(visibleKind, inlinedRule);
+		switch (modelType) {
+			case "branch":
+				groups.push(
+					new AssembledBranch(visibleKind, inlinedRule as SeqRule | ChoiceRule, simplifiedRule),
+				);
+				break;
+			case "container":
+				groups.push(
+					new AssembledContainer(
+						visibleKind,
+						inlinedRule as SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
+						simplifiedRule,
+					),
+				);
+				break;
+			default:
+				break;
+		}
+	}
+	return groups;
 }
 
 // ---------------------------------------------------------------------------

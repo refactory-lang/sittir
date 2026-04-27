@@ -21,13 +21,18 @@ export const NODE_KINDS = [
   '_import_clause_namespace_import',
   '_import_specifier_name',
   '_index_signature_mapped_type_clause',
+  '_interface_body',
   '_jsx_string',
   '_lhs_expression',
   '_parenthesized_expression_sequence',
+  '_property_identifier',
   '_public_field_definition_accessor_opt',
   '_public_field_definition_declare_first',
+  '_statement_identifier',
   '_string_double',
+  '_string_fragment',
   '_string_single',
+  '_this_type',
   '_type_identifier',
   'abstract_class_declaration',
   'abstract_method_signature',
@@ -38,6 +43,8 @@ export const NODE_KINDS = [
   'array_pattern',
   'array_type',
   'arrow_function',
+  'arrow_function__call_signature',
+  'arrow_function_parameter',
   'as_expression',
   'asserts',
   'asserts_annotation',
@@ -54,6 +61,8 @@ export const NODE_KINDS = [
   'class_body',
   'class_declaration',
   'class_heritage',
+  'class_heritage_extends_clause',
+  'class_heritage_implements_clause',
   'class_static_block',
   'computed_property_name',
   'conditional_type',
@@ -75,6 +84,9 @@ export const NODE_KINDS = [
   'export_clause',
   'export_specifier',
   'export_statement',
+  'export_statement_equals_export',
+  'export_statement_namespace_export',
+  'export_statement_type_export',
   'expression_statement',
   'extends_clause',
   'extends_type_clause',
@@ -96,10 +108,15 @@ export const NODE_KINDS = [
   'import_alias',
   'import_attribute',
   'import_clause',
+  'import_clause_default_import',
+  'import_clause_named_imports',
+  'import_clause_namespace_import',
   'import_require_clause',
   'import_specifier',
+  'import_specifier_name',
   'import_statement',
   'index_signature',
+  'index_signature_mapped_type_clause',
   'index_type_query',
   'infer_type',
   'instantiation_expression',
@@ -141,6 +158,7 @@ export const NODE_KINDS = [
   'pair',
   'pair_pattern',
   'parenthesized_expression',
+  'parenthesized_expression_sequence',
   'parenthesized_type',
   'program',
   'property_signature',
@@ -156,6 +174,8 @@ export const NODE_KINDS = [
   'spread_element',
   'statement_block',
   'string',
+  'string_double',
+  'string_single',
   'subscript_expression',
   'switch_body',
   'switch_case',
@@ -200,7 +220,7 @@ export const LEAF_KINDS = [
   '_kw_readonly_marker',
   '_kw_static_marker',
   '_reserved_identifier',
-  '_string_fragment',
+  '_template_chars',
   '_ternary_qmark',
   'abstract',
   'accessibility_modifier',
@@ -464,20 +484,30 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_index_signature_mapped_type_clause': [
   ],
+  '_interface_body': [
+  ],
   '_jsx_string': [
   ],
   '_lhs_expression': [
   ],
   '_parenthesized_expression_sequence': [
   ],
+  '_property_identifier': [
+  ],
   '_public_field_definition_accessor_opt': [
     { name: 'accessorMarker', required: true, multiple: false },
   ],
   '_public_field_definition_declare_first': [
   ],
+  '_statement_identifier': [
+  ],
   '_string_double': [
   ],
+  '_string_fragment': [
+  ],
   '_string_single': [
+  ],
+  '_this_type': [
   ],
   '_type_identifier': [
   ],
@@ -516,6 +546,14 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'arrow_function': [
     { name: 'asyncMarker', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
+  ],
+  'arrow_function__call_signature': [
+    { name: 'typeParameters', required: false, multiple: false },
+    { name: 'parameters', required: true, multiple: false },
+    { name: 'returnType', required: false, multiple: false },
+  ],
+  'arrow_function_parameter': [
+    { name: 'parameter', required: true, multiple: false },
   ],
   'as_expression': [
     { name: 'expression', required: true, multiple: false },
@@ -582,6 +620,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'automaticSemicolon', required: false, multiple: false },
   ],
   'class_heritage': [
+  ],
+  'class_heritage_extends_clause': [
+  ],
+  'class_heritage_implements_clause': [
   ],
   'class_static_block': [
     { name: 'body', required: true, multiple: false },
@@ -660,6 +702,13 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alias', required: false, multiple: false },
   ],
   'export_statement': [
+  ],
+  'export_statement_equals_export': [
+  ],
+  'export_statement_namespace_export': [
+  ],
+  'export_statement_type_export': [
+    { name: 'source', required: false, multiple: false },
   ],
   'expression_statement': [
     { name: 'semicolon', required: true, multiple: false },
@@ -763,12 +812,21 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'import_clause': [
   ],
+  'import_clause_default_import': [
+  ],
+  'import_clause_named_imports': [
+  ],
+  'import_clause_namespace_import': [
+  ],
   'import_require_clause': [
     { name: 'identifier', required: true, multiple: false },
     { name: 'source', required: true, multiple: false },
   ],
   'import_specifier': [
     { name: 'importKind', required: false, multiple: false },
+  ],
+  'import_specifier_name': [
+    { name: 'name', required: true, multiple: false },
   ],
   'import_statement': [
     { name: 'importClause', required: false, multiple: false },
@@ -779,6 +837,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'index_signature': [
     { name: 'sign', required: false, multiple: false },
     { name: 'type', required: true, multiple: false },
+  ],
+  'index_signature_mapped_type_clause': [
   ],
   'index_type_query': [
     { name: 'primaryType', required: true, multiple: false },
@@ -949,6 +1009,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'parenthesized_expression': [
   ],
+  'parenthesized_expression_sequence': [
+  ],
   'parenthesized_type': [
     { name: 'type', required: true, multiple: false },
   ],
@@ -1008,6 +1070,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'automaticSemicolon', required: false, multiple: false },
   ],
   'string': [
+  ],
+  'string_double': [
+  ],
+  'string_single': [
   ],
   'subscript_expression': [
     { name: 'object', required: true, multiple: false },

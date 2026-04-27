@@ -15,6 +15,7 @@
     "print_statement": "config",
     "chevron": "config",
     "assert_statement": "children",
+    "expression_statement_tuple": "children",
     "expression_statement": "config",
     "named_expression": "config",
     "return_statement": "children",
@@ -35,6 +36,8 @@
     "except_clause": "config",
     "finally_clause": "config",
     "with_statement": "config",
+    "with_clause_bare": "children",
+    "with_clause_paren": "children",
     "with_clause": "config",
     "with_item": "config",
     "function_definition": "config",
@@ -124,6 +127,8 @@
     "await": "config",
     "comment": "text",
     "line_continuation": "text",
+    "_as_pattern_target": "children",
+    "_format_expression": "children",
     "_kw_async_marker": "text",
     "_assignment_eq": "config",
     "_assignment_type": "config",
@@ -178,6 +183,9 @@
   "fieldAliasMap": {
     "match_statement.body": {
       "block": "_match_block"
+    },
+    "as_pattern.alias": {
+      "as_pattern_target": "_as_pattern_target"
     }
   },
   "factoryFields": {

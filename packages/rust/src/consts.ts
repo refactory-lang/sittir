@@ -54,6 +54,7 @@ export const NODE_KINDS = [
   'call_expression',
   'captured_pattern',
   'closure_expression',
+  'closure_expression_expr',
   'closure_parameters',
   'comment',
   'compound_assignment_expr',
@@ -63,12 +64,17 @@ export const NODE_KINDS = [
   'continue_expression',
   'declaration_list',
   'delim_token_tree',
+  'delim_token_tree_brace',
+  'delim_token_tree_bracket',
+  'delim_token_tree_paren',
   'dynamic_type',
   'else_clause',
   'enum_item',
   'enum_variant',
   'enum_variant_list',
   'expression_statement',
+  'expression_statement_block_ending',
+  'expression_statement_with_semi',
   'extern_crate_declaration',
   'extern_modifier',
   'field_declaration',
@@ -77,9 +83,11 @@ export const NODE_KINDS = [
   'field_initializer',
   'field_initializer_list',
   'field_pattern',
+  'field_pattern_shorthand',
   'for_expression',
   'for_lifetimes',
   'foreign_mod_item',
+  'foreign_mod_item_body',
   'function_item',
   'function_modifiers',
   'function_signature_item',
@@ -92,6 +100,7 @@ export const NODE_KINDS = [
   'higher_ranked_trait_bound',
   'if_expression',
   'impl_item',
+  'impl_item_body',
   'index_expression',
   'inner_attribute_item',
   'label',
@@ -103,13 +112,18 @@ export const NODE_KINDS = [
   'line_comment',
   'loop_expression',
   'macro_definition',
+  'macro_definition_brace',
+  'macro_definition_bracket',
+  'macro_definition_paren',
   'macro_invocation',
   'macro_rule',
   'match_arm',
+  'match_arm_block_ending',
   'match_block',
   'match_expression',
   'match_pattern',
   'mod_item',
+  'mod_item_inline',
   'mut_pattern',
   'negative_literal',
   'or_pattern',
@@ -118,8 +132,10 @@ export const NODE_KINDS = [
   'parameters',
   'parenthesized_expression',
   'pointer_type',
+  'pointer_type_mut',
   'qualified_type',
   'range_expression',
+  'range_expression_bare',
   'range_pattern',
   'raw_string_literal',
   'ref_pattern',
@@ -145,7 +161,13 @@ export const NODE_KINDS = [
   'token_repetition',
   'token_repetition_pattern',
   'token_tree',
+  'token_tree_brace',
+  'token_tree_bracket',
+  'token_tree_paren',
   'token_tree_pattern',
+  'token_tree_pattern_brace',
+  'token_tree_pattern_bracket',
+  'token_tree_pattern_paren',
   'trait_bounds',
   'trait_item',
   'try_block',
@@ -170,6 +192,7 @@ export const NODE_KINDS = [
   'use_wildcard',
   'variadic_parameter',
   'visibility_modifier',
+  'visibility_modifier_crate',
   'where_clause',
   'where_predicate',
   'while_expression',
@@ -512,6 +535,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'moveMarker', required: false, multiple: false },
     { name: 'parameters', required: true, multiple: false },
   ],
+  'closure_expression_expr': [
+    { name: 'body', required: true, multiple: false },
+  ],
   'closure_parameters': [
   ],
   'comment': [
@@ -542,6 +568,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'delim_token_tree': [
   ],
+  'delim_token_tree_brace': [
+  ],
+  'delim_token_tree_bracket': [
+  ],
+  'delim_token_tree_paren': [
+  ],
   'dynamic_type': [
     { name: 'trait', required: true, multiple: false },
   ],
@@ -563,6 +595,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'enum_variant_list': [
   ],
   'expression_statement': [
+  ],
+  'expression_statement_block_ending': [
+  ],
+  'expression_statement_with_semi': [
   ],
   'extern_crate_declaration': [
     { name: 'visibilityModifier', required: false, multiple: false },
@@ -594,6 +630,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'refMarker', required: false, multiple: false },
     { name: 'mutableSpecifier', required: false, multiple: false },
   ],
+  'field_pattern_shorthand': [
+    { name: 'name', required: true, multiple: false },
+  ],
   'for_expression': [
     { name: 'label', required: false, multiple: false },
     { name: 'pattern', required: true, multiple: false },
@@ -605,6 +644,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'foreign_mod_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
     { name: 'externModifier', required: true, multiple: false },
+  ],
+  'foreign_mod_item_body': [
+    { name: 'body', required: true, multiple: false },
   ],
   'function_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
@@ -670,6 +712,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: true, multiple: false },
     { name: 'whereClause', required: false, multiple: false },
   ],
+  'impl_item_body': [
+    { name: 'body', required: true, multiple: false },
+  ],
   'index_expression': [
     { name: 'object', required: true, multiple: false },
     { name: 'index', required: true, multiple: false },
@@ -711,6 +756,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'macro_definition': [
     { name: 'name', required: true, multiple: false },
   ],
+  'macro_definition_brace': [
+  ],
+  'macro_definition_bracket': [
+  ],
+  'macro_definition_paren': [
+  ],
   'macro_invocation': [
     { name: 'macro', required: true, multiple: false },
     { name: 'tokenTree', required: true, multiple: false },
@@ -721,6 +772,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'match_arm': [
     { name: 'pattern', required: true, multiple: false },
+  ],
+  'match_arm_block_ending': [
+    { name: 'value', required: true, multiple: false },
   ],
   'match_block': [
   ],
@@ -734,6 +788,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'mod_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
+  ],
+  'mod_item_inline': [
+    { name: 'body', required: true, multiple: false },
   ],
   'mut_pattern': [
     { name: 'mutableSpecifier', required: true, multiple: false },
@@ -758,11 +815,16 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'pointer_type': [
     { name: 'type', required: true, multiple: false },
   ],
+  'pointer_type_mut': [
+  ],
   'qualified_type': [
     { name: 'type', required: true, multiple: false },
     { name: 'alias', required: true, multiple: false },
   ],
   'range_expression': [
+  ],
+  'range_expression_bare': [
+    { name: 'operator', required: true, multiple: false },
   ],
   'range_pattern': [
     { name: 'left', required: true, multiple: false },
@@ -853,7 +915,19 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'token_tree': [
   ],
+  'token_tree_brace': [
+  ],
+  'token_tree_bracket': [
+  ],
+  'token_tree_paren': [
+  ],
   'token_tree_pattern': [
+  ],
+  'token_tree_pattern_brace': [
+  ],
+  'token_tree_pattern_bracket': [
+  ],
+  'token_tree_pattern_paren': [
   ],
   'trait_bounds': [
   ],
@@ -943,6 +1017,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'pattern', required: false, multiple: false },
   ],
   'visibility_modifier': [
+  ],
+  'visibility_modifier_crate': [
   ],
   'where_clause': [
   ],

@@ -26,19 +26,32 @@ import type {
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
     sourceFile<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'source_file' };
+    expressionStatementWithSemi<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'expression_statement_with_semi' };
+    expressionStatementBlockEnding<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'expression_statement_block_ending' };
     expressionStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'expression_statement' };
+    macroDefinitionParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_definition_paren' };
+    macroDefinitionBracket<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_definition_bracket' };
+    macroDefinitionBrace<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_definition_brace' };
     macroDefinition<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_definition' };
     macroRule<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_rule' };
+    tokenTreePatternParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'token_tree_pattern_paren' };
+    tokenTreePatternBracket<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'token_tree_pattern_bracket' };
+    tokenTreePatternBrace<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'token_tree_pattern_brace' };
     tokenTreePattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'token_tree_pattern' };
     tokenBindingPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'token_binding_pattern' };
     tokenRepetitionPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'token_repetition_pattern' };
+    tokenTreeParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'token_tree_paren' };
+    tokenTreeBracket<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'token_tree_bracket' };
+    tokenTreeBrace<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'token_tree_brace' };
     tokenTree<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'token_tree' };
     tokenRepetition<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'token_repetition' };
     NonSpecialToken<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_non_special_token' };
     attributeItem<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'attribute_item' };
     innerAttributeItem<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'inner_attribute_item' };
     attribute<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'attribute' };
+    modItemInline<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'mod_item_inline' };
     modItem<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'mod_item' };
+    foreignModItemBody<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'foreign_mod_item_body' };
     foreignModItem<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'foreign_mod_item' };
     declarationList<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'declaration_list' };
     structItem<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'struct_item' };
@@ -58,6 +71,7 @@ export interface IsGuards {
     functionModifiers<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'function_modifiers' };
     whereClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'where_clause' };
     wherePredicate<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'where_predicate' };
+    implItemBody<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'impl_item_body' };
     implItem<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'impl_item' };
     traitItem<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'trait_item' };
     associatedType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'associated_type' };
@@ -79,6 +93,7 @@ export interface IsGuards {
     variadicParameter<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'variadic_parameter' };
     parameter<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'parameter' };
     externModifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'extern_modifier' };
+    visibilityModifierCrate<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'visibility_modifier_crate' };
     visibilityModifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'visibility_modifier' };
     bracketedType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'bracketed_type' };
     qualifiedType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'qualified_type' };
@@ -95,14 +110,19 @@ export interface IsGuards {
     typeArguments<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'type_arguments' };
     typeBinding<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'type_binding' };
     referenceType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'reference_type' };
+    pointerTypeMut<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'pointer_type_mut' };
     pointerType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'pointer_type' };
     abstractType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'abstract_type' };
     dynamicType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'dynamic_type' };
     macroInvocation<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'macro_invocation' };
+    delimTokenTreeParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'delim_token_tree_paren' };
+    delimTokenTreeBracket<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'delim_token_tree_bracket' };
+    delimTokenTreeBrace<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'delim_token_tree_brace' };
     delimTokenTree<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'delim_token_tree' };
     scopedIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'scoped_identifier' };
     scopedTypeIdentifierInExpressionPosition<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'scoped_type_identifier_in_expression_position' };
     scopedTypeIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'scoped_type_identifier' };
+    rangeExpressionBare<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'range_expression_bare' };
     rangeExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'range_expression' };
     unaryExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'unary_expression' };
     tryExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'try_expression' };
@@ -129,6 +149,7 @@ export interface IsGuards {
     elseClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'else_clause' };
     matchExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'match_expression' };
     matchBlock<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'match_block' };
+    matchArmBlockEnding<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'match_arm_block_ending' };
     matchArm<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'match_arm' };
     lastMatchArm<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'last_match_arm' };
     matchPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'match_pattern' };
@@ -136,6 +157,7 @@ export interface IsGuards {
     loopExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'loop_expression' };
     forExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'for_expression' };
     constBlock<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'const_block' };
+    closureExpressionExpr<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'closure_expression_expr' };
     closureExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'closure_expression' };
     closureParameters<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'closure_parameters' };
     label<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'label' };
@@ -154,6 +176,7 @@ export interface IsGuards {
     slicePattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'slice_pattern' };
     tupleStructPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'tuple_struct_pattern' };
     structPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'struct_pattern' };
+    fieldPatternShorthand<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'field_pattern_shorthand' };
     fieldPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'field_pattern' };
     mutPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'mut_pattern' };
     rangePattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'range_pattern' };
@@ -219,19 +242,32 @@ export interface IsGuards {
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
     sourceFile(v: { readonly $type: string }): asserts v is { readonly $type: 'source_file' };
+    expressionStatementWithSemi(v: { readonly $type: string }): asserts v is { readonly $type: 'expression_statement_with_semi' };
+    expressionStatementBlockEnding(v: { readonly $type: string }): asserts v is { readonly $type: 'expression_statement_block_ending' };
     expressionStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'expression_statement' };
+    macroDefinitionParen(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_definition_paren' };
+    macroDefinitionBracket(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_definition_bracket' };
+    macroDefinitionBrace(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_definition_brace' };
     macroDefinition(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_definition' };
     macroRule(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_rule' };
+    tokenTreePatternParen(v: { readonly $type: string }): asserts v is { readonly $type: 'token_tree_pattern_paren' };
+    tokenTreePatternBracket(v: { readonly $type: string }): asserts v is { readonly $type: 'token_tree_pattern_bracket' };
+    tokenTreePatternBrace(v: { readonly $type: string }): asserts v is { readonly $type: 'token_tree_pattern_brace' };
     tokenTreePattern(v: { readonly $type: string }): asserts v is { readonly $type: 'token_tree_pattern' };
     tokenBindingPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'token_binding_pattern' };
     tokenRepetitionPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'token_repetition_pattern' };
+    tokenTreeParen(v: { readonly $type: string }): asserts v is { readonly $type: 'token_tree_paren' };
+    tokenTreeBracket(v: { readonly $type: string }): asserts v is { readonly $type: 'token_tree_bracket' };
+    tokenTreeBrace(v: { readonly $type: string }): asserts v is { readonly $type: 'token_tree_brace' };
     tokenTree(v: { readonly $type: string }): asserts v is { readonly $type: 'token_tree' };
     tokenRepetition(v: { readonly $type: string }): asserts v is { readonly $type: 'token_repetition' };
     NonSpecialToken(v: { readonly $type: string }): asserts v is { readonly $type: '_non_special_token' };
     attributeItem(v: { readonly $type: string }): asserts v is { readonly $type: 'attribute_item' };
     innerAttributeItem(v: { readonly $type: string }): asserts v is { readonly $type: 'inner_attribute_item' };
     attribute(v: { readonly $type: string }): asserts v is { readonly $type: 'attribute' };
+    modItemInline(v: { readonly $type: string }): asserts v is { readonly $type: 'mod_item_inline' };
     modItem(v: { readonly $type: string }): asserts v is { readonly $type: 'mod_item' };
+    foreignModItemBody(v: { readonly $type: string }): asserts v is { readonly $type: 'foreign_mod_item_body' };
     foreignModItem(v: { readonly $type: string }): asserts v is { readonly $type: 'foreign_mod_item' };
     declarationList(v: { readonly $type: string }): asserts v is { readonly $type: 'declaration_list' };
     structItem(v: { readonly $type: string }): asserts v is { readonly $type: 'struct_item' };
@@ -251,6 +287,7 @@ export interface AssertGuards {
     functionModifiers(v: { readonly $type: string }): asserts v is { readonly $type: 'function_modifiers' };
     whereClause(v: { readonly $type: string }): asserts v is { readonly $type: 'where_clause' };
     wherePredicate(v: { readonly $type: string }): asserts v is { readonly $type: 'where_predicate' };
+    implItemBody(v: { readonly $type: string }): asserts v is { readonly $type: 'impl_item_body' };
     implItem(v: { readonly $type: string }): asserts v is { readonly $type: 'impl_item' };
     traitItem(v: { readonly $type: string }): asserts v is { readonly $type: 'trait_item' };
     associatedType(v: { readonly $type: string }): asserts v is { readonly $type: 'associated_type' };
@@ -272,6 +309,7 @@ export interface AssertGuards {
     variadicParameter(v: { readonly $type: string }): asserts v is { readonly $type: 'variadic_parameter' };
     parameter(v: { readonly $type: string }): asserts v is { readonly $type: 'parameter' };
     externModifier(v: { readonly $type: string }): asserts v is { readonly $type: 'extern_modifier' };
+    visibilityModifierCrate(v: { readonly $type: string }): asserts v is { readonly $type: 'visibility_modifier_crate' };
     visibilityModifier(v: { readonly $type: string }): asserts v is { readonly $type: 'visibility_modifier' };
     bracketedType(v: { readonly $type: string }): asserts v is { readonly $type: 'bracketed_type' };
     qualifiedType(v: { readonly $type: string }): asserts v is { readonly $type: 'qualified_type' };
@@ -288,14 +326,19 @@ export interface AssertGuards {
     typeArguments(v: { readonly $type: string }): asserts v is { readonly $type: 'type_arguments' };
     typeBinding(v: { readonly $type: string }): asserts v is { readonly $type: 'type_binding' };
     referenceType(v: { readonly $type: string }): asserts v is { readonly $type: 'reference_type' };
+    pointerTypeMut(v: { readonly $type: string }): asserts v is { readonly $type: 'pointer_type_mut' };
     pointerType(v: { readonly $type: string }): asserts v is { readonly $type: 'pointer_type' };
     abstractType(v: { readonly $type: string }): asserts v is { readonly $type: 'abstract_type' };
     dynamicType(v: { readonly $type: string }): asserts v is { readonly $type: 'dynamic_type' };
     macroInvocation(v: { readonly $type: string }): asserts v is { readonly $type: 'macro_invocation' };
+    delimTokenTreeParen(v: { readonly $type: string }): asserts v is { readonly $type: 'delim_token_tree_paren' };
+    delimTokenTreeBracket(v: { readonly $type: string }): asserts v is { readonly $type: 'delim_token_tree_bracket' };
+    delimTokenTreeBrace(v: { readonly $type: string }): asserts v is { readonly $type: 'delim_token_tree_brace' };
     delimTokenTree(v: { readonly $type: string }): asserts v is { readonly $type: 'delim_token_tree' };
     scopedIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: 'scoped_identifier' };
     scopedTypeIdentifierInExpressionPosition(v: { readonly $type: string }): asserts v is { readonly $type: 'scoped_type_identifier_in_expression_position' };
     scopedTypeIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: 'scoped_type_identifier' };
+    rangeExpressionBare(v: { readonly $type: string }): asserts v is { readonly $type: 'range_expression_bare' };
     rangeExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'range_expression' };
     unaryExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'unary_expression' };
     tryExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'try_expression' };
@@ -322,6 +365,7 @@ export interface AssertGuards {
     elseClause(v: { readonly $type: string }): asserts v is { readonly $type: 'else_clause' };
     matchExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'match_expression' };
     matchBlock(v: { readonly $type: string }): asserts v is { readonly $type: 'match_block' };
+    matchArmBlockEnding(v: { readonly $type: string }): asserts v is { readonly $type: 'match_arm_block_ending' };
     matchArm(v: { readonly $type: string }): asserts v is { readonly $type: 'match_arm' };
     lastMatchArm(v: { readonly $type: string }): asserts v is { readonly $type: 'last_match_arm' };
     matchPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'match_pattern' };
@@ -329,6 +373,7 @@ export interface AssertGuards {
     loopExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'loop_expression' };
     forExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'for_expression' };
     constBlock(v: { readonly $type: string }): asserts v is { readonly $type: 'const_block' };
+    closureExpressionExpr(v: { readonly $type: string }): asserts v is { readonly $type: 'closure_expression_expr' };
     closureExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'closure_expression' };
     closureParameters(v: { readonly $type: string }): asserts v is { readonly $type: 'closure_parameters' };
     label(v: { readonly $type: string }): asserts v is { readonly $type: 'label' };
@@ -347,6 +392,7 @@ export interface AssertGuards {
     slicePattern(v: { readonly $type: string }): asserts v is { readonly $type: 'slice_pattern' };
     tupleStructPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'tuple_struct_pattern' };
     structPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'struct_pattern' };
+    fieldPatternShorthand(v: { readonly $type: string }): asserts v is { readonly $type: 'field_pattern_shorthand' };
     fieldPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'field_pattern' };
     mutPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'mut_pattern' };
     rangePattern(v: { readonly $type: string }): asserts v is { readonly $type: 'range_pattern' };
@@ -437,19 +483,32 @@ const _supertype_path = new Set<string>(["self", "identifier", "metavariable", "
 
 export const is = {
     sourceFile: _g("source_file"),
+    expressionStatementWithSemi: _g("expression_statement_with_semi"),
+    expressionStatementBlockEnding: _g("expression_statement_block_ending"),
     expressionStatement: _g("expression_statement"),
+    macroDefinitionParen: _g("macro_definition_paren"),
+    macroDefinitionBracket: _g("macro_definition_bracket"),
+    macroDefinitionBrace: _g("macro_definition_brace"),
     macroDefinition: _g("macro_definition"),
     macroRule: _g("macro_rule"),
+    tokenTreePatternParen: _g("token_tree_pattern_paren"),
+    tokenTreePatternBracket: _g("token_tree_pattern_bracket"),
+    tokenTreePatternBrace: _g("token_tree_pattern_brace"),
     tokenTreePattern: _g("token_tree_pattern"),
     tokenBindingPattern: _g("token_binding_pattern"),
     tokenRepetitionPattern: _g("token_repetition_pattern"),
+    tokenTreeParen: _g("token_tree_paren"),
+    tokenTreeBracket: _g("token_tree_bracket"),
+    tokenTreeBrace: _g("token_tree_brace"),
     tokenTree: _g("token_tree"),
     tokenRepetition: _g("token_repetition"),
     NonSpecialToken: _g("_non_special_token"),
     attributeItem: _g("attribute_item"),
     innerAttributeItem: _g("inner_attribute_item"),
     attribute: _g("attribute"),
+    modItemInline: _g("mod_item_inline"),
     modItem: _g("mod_item"),
+    foreignModItemBody: _g("foreign_mod_item_body"),
     foreignModItem: _g("foreign_mod_item"),
     declarationList: _g("declaration_list"),
     structItem: _g("struct_item"),
@@ -469,6 +528,7 @@ export const is = {
     functionModifiers: _g("function_modifiers"),
     whereClause: _g("where_clause"),
     wherePredicate: _g("where_predicate"),
+    implItemBody: _g("impl_item_body"),
     implItem: _g("impl_item"),
     traitItem: _g("trait_item"),
     associatedType: _g("associated_type"),
@@ -490,6 +550,7 @@ export const is = {
     variadicParameter: _g("variadic_parameter"),
     parameter: _g("parameter"),
     externModifier: _g("extern_modifier"),
+    visibilityModifierCrate: _g("visibility_modifier_crate"),
     visibilityModifier: _g("visibility_modifier"),
     bracketedType: _g("bracketed_type"),
     qualifiedType: _g("qualified_type"),
@@ -506,14 +567,19 @@ export const is = {
     typeArguments: _g("type_arguments"),
     typeBinding: _g("type_binding"),
     referenceType: _g("reference_type"),
+    pointerTypeMut: _g("pointer_type_mut"),
     pointerType: _g("pointer_type"),
     abstractType: _g("abstract_type"),
     dynamicType: _g("dynamic_type"),
     macroInvocation: _g("macro_invocation"),
+    delimTokenTreeParen: _g("delim_token_tree_paren"),
+    delimTokenTreeBracket: _g("delim_token_tree_bracket"),
+    delimTokenTreeBrace: _g("delim_token_tree_brace"),
     delimTokenTree: _g("delim_token_tree"),
     scopedIdentifier: _g("scoped_identifier"),
     scopedTypeIdentifierInExpressionPosition: _g("scoped_type_identifier_in_expression_position"),
     scopedTypeIdentifier: _g("scoped_type_identifier"),
+    rangeExpressionBare: _g("range_expression_bare"),
     rangeExpression: _g("range_expression"),
     unaryExpression: _g("unary_expression"),
     tryExpression: _g("try_expression"),
@@ -540,6 +606,7 @@ export const is = {
     elseClause: _g("else_clause"),
     matchExpression: _g("match_expression"),
     matchBlock: _g("match_block"),
+    matchArmBlockEnding: _g("match_arm_block_ending"),
     matchArm: _g("match_arm"),
     lastMatchArm: _g("last_match_arm"),
     matchPattern: _g("match_pattern"),
@@ -547,6 +614,7 @@ export const is = {
     loopExpression: _g("loop_expression"),
     forExpression: _g("for_expression"),
     constBlock: _g("const_block"),
+    closureExpressionExpr: _g("closure_expression_expr"),
     closureExpression: _g("closure_expression"),
     closureParameters: _g("closure_parameters"),
     label: _g("label"),
@@ -565,6 +633,7 @@ export const is = {
     slicePattern: _g("slice_pattern"),
     tupleStructPattern: _g("tuple_struct_pattern"),
     structPattern: _g("struct_pattern"),
+    fieldPatternShorthand: _g("field_pattern_shorthand"),
     fieldPattern: _g("field_pattern"),
     mutPattern: _g("mut_pattern"),
     rangePattern: _g("range_pattern"),
@@ -651,19 +720,32 @@ function _makeAssertKind(guard: _AnyGuard) {
 
 export const assert = {
     sourceFile: _makeAssert('sourceFile', is.sourceFile as _AnyGuard),
+    expressionStatementWithSemi: _makeAssert('expressionStatementWithSemi', is.expressionStatementWithSemi as _AnyGuard),
+    expressionStatementBlockEnding: _makeAssert('expressionStatementBlockEnding', is.expressionStatementBlockEnding as _AnyGuard),
     expressionStatement: _makeAssert('expressionStatement', is.expressionStatement as _AnyGuard),
+    macroDefinitionParen: _makeAssert('macroDefinitionParen', is.macroDefinitionParen as _AnyGuard),
+    macroDefinitionBracket: _makeAssert('macroDefinitionBracket', is.macroDefinitionBracket as _AnyGuard),
+    macroDefinitionBrace: _makeAssert('macroDefinitionBrace', is.macroDefinitionBrace as _AnyGuard),
     macroDefinition: _makeAssert('macroDefinition', is.macroDefinition as _AnyGuard),
     macroRule: _makeAssert('macroRule', is.macroRule as _AnyGuard),
+    tokenTreePatternParen: _makeAssert('tokenTreePatternParen', is.tokenTreePatternParen as _AnyGuard),
+    tokenTreePatternBracket: _makeAssert('tokenTreePatternBracket', is.tokenTreePatternBracket as _AnyGuard),
+    tokenTreePatternBrace: _makeAssert('tokenTreePatternBrace', is.tokenTreePatternBrace as _AnyGuard),
     tokenTreePattern: _makeAssert('tokenTreePattern', is.tokenTreePattern as _AnyGuard),
     tokenBindingPattern: _makeAssert('tokenBindingPattern', is.tokenBindingPattern as _AnyGuard),
     tokenRepetitionPattern: _makeAssert('tokenRepetitionPattern', is.tokenRepetitionPattern as _AnyGuard),
+    tokenTreeParen: _makeAssert('tokenTreeParen', is.tokenTreeParen as _AnyGuard),
+    tokenTreeBracket: _makeAssert('tokenTreeBracket', is.tokenTreeBracket as _AnyGuard),
+    tokenTreeBrace: _makeAssert('tokenTreeBrace', is.tokenTreeBrace as _AnyGuard),
     tokenTree: _makeAssert('tokenTree', is.tokenTree as _AnyGuard),
     tokenRepetition: _makeAssert('tokenRepetition', is.tokenRepetition as _AnyGuard),
     NonSpecialToken: _makeAssert('NonSpecialToken', is.NonSpecialToken as _AnyGuard),
     attributeItem: _makeAssert('attributeItem', is.attributeItem as _AnyGuard),
     innerAttributeItem: _makeAssert('innerAttributeItem', is.innerAttributeItem as _AnyGuard),
     attribute: _makeAssert('attribute', is.attribute as _AnyGuard),
+    modItemInline: _makeAssert('modItemInline', is.modItemInline as _AnyGuard),
     modItem: _makeAssert('modItem', is.modItem as _AnyGuard),
+    foreignModItemBody: _makeAssert('foreignModItemBody', is.foreignModItemBody as _AnyGuard),
     foreignModItem: _makeAssert('foreignModItem', is.foreignModItem as _AnyGuard),
     declarationList: _makeAssert('declarationList', is.declarationList as _AnyGuard),
     structItem: _makeAssert('structItem', is.structItem as _AnyGuard),
@@ -683,6 +765,7 @@ export const assert = {
     functionModifiers: _makeAssert('functionModifiers', is.functionModifiers as _AnyGuard),
     whereClause: _makeAssert('whereClause', is.whereClause as _AnyGuard),
     wherePredicate: _makeAssert('wherePredicate', is.wherePredicate as _AnyGuard),
+    implItemBody: _makeAssert('implItemBody', is.implItemBody as _AnyGuard),
     implItem: _makeAssert('implItem', is.implItem as _AnyGuard),
     traitItem: _makeAssert('traitItem', is.traitItem as _AnyGuard),
     associatedType: _makeAssert('associatedType', is.associatedType as _AnyGuard),
@@ -704,6 +787,7 @@ export const assert = {
     variadicParameter: _makeAssert('variadicParameter', is.variadicParameter as _AnyGuard),
     parameter: _makeAssert('parameter', is.parameter as _AnyGuard),
     externModifier: _makeAssert('externModifier', is.externModifier as _AnyGuard),
+    visibilityModifierCrate: _makeAssert('visibilityModifierCrate', is.visibilityModifierCrate as _AnyGuard),
     visibilityModifier: _makeAssert('visibilityModifier', is.visibilityModifier as _AnyGuard),
     bracketedType: _makeAssert('bracketedType', is.bracketedType as _AnyGuard),
     qualifiedType: _makeAssert('qualifiedType', is.qualifiedType as _AnyGuard),
@@ -720,14 +804,19 @@ export const assert = {
     typeArguments: _makeAssert('typeArguments', is.typeArguments as _AnyGuard),
     typeBinding: _makeAssert('typeBinding', is.typeBinding as _AnyGuard),
     referenceType: _makeAssert('referenceType', is.referenceType as _AnyGuard),
+    pointerTypeMut: _makeAssert('pointerTypeMut', is.pointerTypeMut as _AnyGuard),
     pointerType: _makeAssert('pointerType', is.pointerType as _AnyGuard),
     abstractType: _makeAssert('abstractType', is.abstractType as _AnyGuard),
     dynamicType: _makeAssert('dynamicType', is.dynamicType as _AnyGuard),
     macroInvocation: _makeAssert('macroInvocation', is.macroInvocation as _AnyGuard),
+    delimTokenTreeParen: _makeAssert('delimTokenTreeParen', is.delimTokenTreeParen as _AnyGuard),
+    delimTokenTreeBracket: _makeAssert('delimTokenTreeBracket', is.delimTokenTreeBracket as _AnyGuard),
+    delimTokenTreeBrace: _makeAssert('delimTokenTreeBrace', is.delimTokenTreeBrace as _AnyGuard),
     delimTokenTree: _makeAssert('delimTokenTree', is.delimTokenTree as _AnyGuard),
     scopedIdentifier: _makeAssert('scopedIdentifier', is.scopedIdentifier as _AnyGuard),
     scopedTypeIdentifierInExpressionPosition: _makeAssert('scopedTypeIdentifierInExpressionPosition', is.scopedTypeIdentifierInExpressionPosition as _AnyGuard),
     scopedTypeIdentifier: _makeAssert('scopedTypeIdentifier', is.scopedTypeIdentifier as _AnyGuard),
+    rangeExpressionBare: _makeAssert('rangeExpressionBare', is.rangeExpressionBare as _AnyGuard),
     rangeExpression: _makeAssert('rangeExpression', is.rangeExpression as _AnyGuard),
     unaryExpression: _makeAssert('unaryExpression', is.unaryExpression as _AnyGuard),
     tryExpression: _makeAssert('tryExpression', is.tryExpression as _AnyGuard),
@@ -754,6 +843,7 @@ export const assert = {
     elseClause: _makeAssert('elseClause', is.elseClause as _AnyGuard),
     matchExpression: _makeAssert('matchExpression', is.matchExpression as _AnyGuard),
     matchBlock: _makeAssert('matchBlock', is.matchBlock as _AnyGuard),
+    matchArmBlockEnding: _makeAssert('matchArmBlockEnding', is.matchArmBlockEnding as _AnyGuard),
     matchArm: _makeAssert('matchArm', is.matchArm as _AnyGuard),
     lastMatchArm: _makeAssert('lastMatchArm', is.lastMatchArm as _AnyGuard),
     matchPattern: _makeAssert('matchPattern', is.matchPattern as _AnyGuard),
@@ -761,6 +851,7 @@ export const assert = {
     loopExpression: _makeAssert('loopExpression', is.loopExpression as _AnyGuard),
     forExpression: _makeAssert('forExpression', is.forExpression as _AnyGuard),
     constBlock: _makeAssert('constBlock', is.constBlock as _AnyGuard),
+    closureExpressionExpr: _makeAssert('closureExpressionExpr', is.closureExpressionExpr as _AnyGuard),
     closureExpression: _makeAssert('closureExpression', is.closureExpression as _AnyGuard),
     closureParameters: _makeAssert('closureParameters', is.closureParameters as _AnyGuard),
     label: _makeAssert('label', is.label as _AnyGuard),
@@ -779,6 +870,7 @@ export const assert = {
     slicePattern: _makeAssert('slicePattern', is.slicePattern as _AnyGuard),
     tupleStructPattern: _makeAssert('tupleStructPattern', is.tupleStructPattern as _AnyGuard),
     structPattern: _makeAssert('structPattern', is.structPattern as _AnyGuard),
+    fieldPatternShorthand: _makeAssert('fieldPatternShorthand', is.fieldPatternShorthand as _AnyGuard),
     fieldPattern: _makeAssert('fieldPattern', is.fieldPattern as _AnyGuard),
     mutPattern: _makeAssert('mutPattern', is.mutPattern as _AnyGuard),
     rangePattern: _makeAssert('rangePattern', is.rangePattern as _AnyGuard),

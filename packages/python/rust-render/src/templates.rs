@@ -30,6 +30,17 @@ pub mod filters {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_as_pattern_target.jinja", escape = "none")]
+pub struct AsPatternTargetTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_as_pattern.jinja", escape = "none")]
 pub struct _AsPatternTemplate {
     pub children: Vec<String>,
@@ -93,6 +104,17 @@ pub struct ComprehensionClausesTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_format_expression.jinja", escape = "none")]
+pub struct FormatExpressionTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_match_block_block.jinja", escape = "none")]
 pub struct MatchBlockBlockTemplate {
     pub children: Vec<String>,
@@ -108,6 +130,17 @@ pub struct MatchBlockBlockTemplate {
 #[derive(::askama::Template)]
 #[template(path = "_match_block.jinja", escape = "none")]
 pub struct MatchBlockTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_simple_pattern_negative.jinja", escape = "none")]
+pub struct SimplePatternNegativeTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -140,7 +173,7 @@ pub struct SuiteTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_with_clause_paren.jinja", escape = "none")]
-pub struct WithClauseParenTemplate {
+pub struct _WithClauseParenTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -648,6 +681,17 @@ pub struct ExecStatementTemplate {
 #[derive(::askama::Template)]
 #[template(path = "expression_list.jinja", escape = "none")]
 pub struct ExpressionListTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "expression_statement_tuple.jinja", escape = "none")]
+pub struct ExpressionStatementTupleTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -1473,6 +1517,28 @@ pub struct WhileStatementTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "with_clause_bare.jinja", escape = "none")]
+pub struct WithClauseBareTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "with_clause_paren.jinja", escape = "none")]
+pub struct WithClauseParenTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "with_clause.jinja", escape = "none")]
 pub struct WithClauseTemplate {
     pub children: Vec<String>,
@@ -1541,6 +1607,17 @@ pub fn render_dispatch(
 ) -> Result<String, ::askama::Error> {
     let _values = ctx.as_values();
     match kind {
+        "_as_pattern_target" => {
+            let t = AsPatternTargetTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
         "_as_pattern" => {
             let t = _AsPatternTemplate {
                 children: ctx.children_list.clone(),
@@ -1604,6 +1681,17 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "_format_expression" => {
+            let t = FormatExpressionTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
         "_match_block_block" => {
             let t = MatchBlockBlockTemplate {
                 children: ctx.children_list.clone(),
@@ -1619,6 +1707,17 @@ pub fn render_dispatch(
         }
         "_match_block" => {
             let t = MatchBlockTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "_simple_pattern_negative" => {
+            let t = SimplePatternNegativeTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -1651,7 +1750,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_with_clause_paren" => {
-            let t = WithClauseParenTemplate {
+            let t = _WithClauseParenTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -2159,6 +2258,17 @@ pub fn render_dispatch(
         }
         "expression_list" => {
             let t = ExpressionListTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "expression_statement_tuple" => {
+            let t = ExpressionStatementTupleTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -2984,6 +3094,28 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "with_clause_bare" => {
+            let t = WithClauseBareTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "with_clause_paren" => {
+            let t = WithClauseParenTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
         "with_clause" => {
             let t = WithClauseTemplate {
                 children: ctx.children_list.clone(),
@@ -3053,9 +3185,12 @@ impl ::sittir_core::prepare::GrammarMeta for PythonGrammarMeta {
             "dict_pattern" => Some(","),
             "dictionary" => Some(","),
             "dotted_name" => Some("."),
+            "expression_statement_tuple" => Some(","),
             "lambda_parameters" => Some(","),
             "set" => Some(","),
             "type_parameter" => Some(","),
+            "with_clause_bare" => Some(","),
+            "with_clause_paren" => Some(","),
             _ => None,
         }
     }
@@ -3078,7 +3213,7 @@ impl ::sittir_core::prepare::GrammarMeta for PythonGrammarMeta {
     }
     fn is_list_container(&self, kind: &str) -> bool {
         matches!(kind,
-            "_as_pattern" | "_comprehension_clauses" | "_match_block" | "_simple_statements" | "_suite" | "_with_clause_paren" | "argument_list" | "assert_statement" | "block" | "case_pattern" | "concatenated_string" | "delete_statement" | "dict_pattern" | "dictionary" | "dictionary_splat_pattern" | "dotted_name" | "expression_list" | "format_specifier" | "global_statement" | "lambda_parameters" | "list" | "list_pattern" | "list_splat_pattern" | "module" | "nonlocal_statement" | "parameters" | "parenthesized_expression" | "parenthesized_list_splat" | "pattern_list" | "return_statement" | "set" | "string_content" | "tuple" | "tuple_pattern" | "type" | "type_parameter" | "union_pattern" | "yield"
+            "_as_pattern" | "_as_pattern_target" | "_comprehension_clauses" | "_format_expression" | "_match_block" | "_simple_pattern_negative" | "_simple_statements" | "_suite" | "_with_clause_paren" | "argument_list" | "assert_statement" | "block" | "case_pattern" | "concatenated_string" | "delete_statement" | "dict_pattern" | "dictionary" | "dictionary_splat_pattern" | "dotted_name" | "expression_list" | "expression_statement_tuple" | "format_specifier" | "global_statement" | "lambda_parameters" | "list" | "list_pattern" | "list_splat_pattern" | "module" | "nonlocal_statement" | "parameters" | "parenthesized_expression" | "parenthesized_list_splat" | "pattern_list" | "return_statement" | "set" | "string_content" | "tuple" | "tuple_pattern" | "type" | "type_parameter" | "union_pattern" | "with_clause_bare" | "with_clause_paren" | "yield"
         )
     }
 }

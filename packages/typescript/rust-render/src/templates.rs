@@ -31,7 +31,7 @@ pub mod filters {
 
 #[derive(::askama::Template)]
 #[template(path = "_arrow_function__call_signature.jinja", escape = "none")]
-pub struct ArrowFunctionUCallSignatureTemplate {
+pub struct _ArrowFunctionUCallSignatureTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -48,7 +48,7 @@ pub struct ArrowFunctionUCallSignatureTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_arrow_function_parameter.jinja", escape = "none")]
-pub struct ArrowFunctionParameterTemplate {
+pub struct _ArrowFunctionParameterTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -145,7 +145,7 @@ pub struct ClassBodyMethodTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_class_heritage_extends_clause.jinja", escape = "none")]
-pub struct ClassHeritageExtendsClauseTemplate {
+pub struct _ClassHeritageExtendsClauseTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -156,7 +156,7 @@ pub struct ClassHeritageExtendsClauseTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_class_heritage_implements_clause.jinja", escape = "none")]
-pub struct ClassHeritageImplementsClauseTemplate {
+pub struct _ClassHeritageImplementsClauseTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -189,6 +189,21 @@ pub struct ExportStatementDefaultDeclArmDefaultKwTemplate {
     pub leading_sep: bool,
     pub declaration: String,
     pub declaration_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_export_statement_default_decl_arm.jinja", escape = "none")]
+pub struct ExportStatementDefaultDeclArmTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub declaration: String,
+    pub declaration_list: Vec<String>,
+    pub decorator: String,
+    pub decorator_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -231,8 +246,19 @@ pub struct ExportStatementDefaultFromArmStarFromTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_export_statement_default_from_arm.jinja", escape = "none")]
+pub struct ExportStatementDefaultFromArmTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_export_statement_equals_export.jinja", escape = "none")]
-pub struct ExportStatementEqualsExportTemplate {
+pub struct _ExportStatementEqualsExportTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -243,7 +269,7 @@ pub struct ExportStatementEqualsExportTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_export_statement_namespace_export.jinja", escape = "none")]
-pub struct ExportStatementNamespaceExportTemplate {
+pub struct _ExportStatementNamespaceExportTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -254,7 +280,7 @@ pub struct ExportStatementNamespaceExportTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_export_statement_type_export.jinja", escape = "none")]
-pub struct ExportStatementTypeExportTemplate {
+pub struct _ExportStatementTypeExportTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -312,7 +338,7 @@ pub struct ForHeaderVarKindTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_import_clause_default_import.jinja", escape = "none")]
-pub struct ImportClauseDefaultImportTemplate {
+pub struct _ImportClauseDefaultImportTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -323,7 +349,7 @@ pub struct ImportClauseDefaultImportTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_import_clause_named_imports.jinja", escape = "none")]
-pub struct ImportClauseNamedImportsTemplate {
+pub struct _ImportClauseNamedImportsTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -334,7 +360,7 @@ pub struct ImportClauseNamedImportsTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_import_clause_namespace_import.jinja", escape = "none")]
-pub struct ImportClauseNamespaceImportTemplate {
+pub struct _ImportClauseNamespaceImportTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -360,7 +386,7 @@ pub struct ImportSpecifierAsTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_import_specifier_name.jinja", escape = "none")]
-pub struct ImportSpecifierNameTemplate {
+pub struct _ImportSpecifierNameTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -388,7 +414,7 @@ pub struct IndexSignatureColonTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_index_signature_mapped_type_clause.jinja", escape = "none")]
-pub struct IndexSignatureMappedTypeClauseTemplate {
+pub struct _IndexSignatureMappedTypeClauseTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -408,6 +434,17 @@ pub struct InitializerTemplate {
     pub leading_sep: bool,
     pub value: String,
     pub value_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_interface_body.jinja", escape = "none")]
+pub struct InterfaceBodyTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
 }
 
 #[derive(::askama::Template)]
@@ -438,7 +475,7 @@ pub struct _NumberTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_parenthesized_expression_sequence.jinja", escape = "none")]
-pub struct ParenthesizedExpressionSequenceTemplate {
+pub struct _ParenthesizedExpressionSequenceTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -458,6 +495,17 @@ pub struct ParenthesizedExpressionTypedTemplate {
     pub leading_sep: bool,
     pub r#type: String,
     pub r#type_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_property_identifier.jinja", escape = "none")]
+pub struct PropertyIdentifierTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
 }
 
 #[derive(::askama::Template)]
@@ -543,8 +591,30 @@ pub struct PublicFieldDefinitionStaticModsTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_statement_identifier.jinja", escape = "none")]
+pub struct StatementIdentifierTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_string_double.jinja", escape = "none")]
-pub struct StringDoubleTemplate {
+pub struct _StringDoubleTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_string_fragment.jinja", escape = "none")]
+pub struct StringFragmentTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -555,7 +625,7 @@ pub struct StringDoubleTemplate {
 
 #[derive(::askama::Template)]
 #[template(path = "_string_single.jinja", escape = "none")]
-pub struct StringSingleTemplate {
+pub struct _StringSingleTemplate {
     pub children: Vec<String>,
     pub children_list: Vec<String>,
     pub variant: String,
@@ -816,6 +886,36 @@ pub struct ArrayTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "arrow_function__call_signature.jinja", escape = "none")]
+pub struct ArrowFunctionUCallSignatureTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub parameters: String,
+    pub parameters_list: Vec<String>,
+    pub return_type: String,
+    pub return_type_list: Vec<String>,
+    pub type_parameters: String,
+    pub type_parameters_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "arrow_function_parameter.jinja", escape = "none")]
+pub struct ArrowFunctionParameterTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub parameter: String,
+    pub parameter_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "arrow_function.jinja", escape = "none")]
 pub struct ArrowFunctionTemplate {
     pub children: Vec<String>,
@@ -1040,6 +1140,28 @@ pub struct ClassDeclarationTemplate {
     pub name_list: Vec<String>,
     pub type_parameters: String,
     pub type_parameters_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "class_heritage_extends_clause.jinja", escape = "none")]
+pub struct ClassHeritageExtendsClauseTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "class_heritage_implements_clause.jinja", escape = "none")]
+pub struct ClassHeritageImplementsClauseTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
 }
 
 #[derive(::askama::Template)]
@@ -1366,6 +1488,41 @@ pub struct ExportSpecifierTemplate {
     pub export_kind_list: Vec<String>,
     pub name: String,
     pub name_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "export_statement_equals_export.jinja", escape = "none")]
+pub struct ExportStatementEqualsExportTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "export_statement_namespace_export.jinja", escape = "none")]
+pub struct ExportStatementNamespaceExportTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "export_statement_type_export.jinja", escape = "none")]
+pub struct ExportStatementTypeExportTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub source: String,
+    pub source_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1720,6 +1877,39 @@ pub struct ImportAttributeTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "import_clause_default_import.jinja", escape = "none")]
+pub struct ImportClauseDefaultImportTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "import_clause_named_imports.jinja", escape = "none")]
+pub struct ImportClauseNamedImportsTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "import_clause_namespace_import.jinja", escape = "none")]
+pub struct ImportClauseNamespaceImportTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "import_clause.jinja", escape = "none")]
 pub struct ImportClauseTemplate {
     pub children: Vec<String>,
@@ -1743,6 +1933,19 @@ pub struct ImportRequireClauseTemplate {
     pub identifier_list: Vec<String>,
     pub source: String,
     pub source_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "import_specifier_name.jinja", escape = "none")]
+pub struct ImportSpecifierNameTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+    pub name: String,
+    pub name_list: Vec<String>,
 }
 
 #[derive(::askama::Template)]
@@ -1775,6 +1978,17 @@ pub struct ImportStatementTemplate {
     pub semicolon_list: Vec<String>,
     pub source: String,
     pub source_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "index_signature_mapped_type_clause.jinja", escape = "none")]
+pub struct IndexSignatureMappedTypeClauseTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
 }
 
 #[derive(::askama::Template)]
@@ -2409,6 +2623,17 @@ pub struct PairTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "parenthesized_expression_sequence.jinja", escape = "none")]
+pub struct ParenthesizedExpressionSequenceTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "parenthesized_expression.jinja", escape = "none")]
 pub struct ParenthesizedExpressionTemplate {
     pub children: Vec<String>,
@@ -2631,6 +2856,28 @@ pub struct StatementBlockTemplate {
     pub automatic_semicolon_list: Vec<String>,
     pub statements: String,
     pub statements_list: Vec<String>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "string_double.jinja", escape = "none")]
+pub struct StringDoubleTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "string_single.jinja", escape = "none")]
+pub struct StringSingleTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
 }
 
 #[derive(::askama::Template)]
@@ -3093,7 +3340,7 @@ pub fn render_dispatch(
     let _values = ctx.as_values();
     match kind {
         "_arrow_function__call_signature" => {
-            let t = ArrowFunctionUCallSignatureTemplate {
+            let t = _ArrowFunctionUCallSignatureTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3110,7 +3357,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_arrow_function_parameter" => {
-            let t = ArrowFunctionParameterTemplate {
+            let t = _ArrowFunctionParameterTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3207,7 +3454,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_class_heritage_extends_clause" => {
-            let t = ClassHeritageExtendsClauseTemplate {
+            let t = _ClassHeritageExtendsClauseTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3218,7 +3465,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_class_heritage_implements_clause" => {
-            let t = ClassHeritageImplementsClauseTemplate {
+            let t = _ClassHeritageImplementsClauseTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3251,6 +3498,21 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 declaration: ctx.fields.get("declaration").cloned().unwrap_or_default(),
                 declaration_list: ctx.fields_list.get("declaration").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "_export_statement_default_decl_arm" => {
+            let t = ExportStatementDefaultDeclArmTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                declaration: ctx.fields.get("declaration").cloned().unwrap_or_default(),
+                declaration_list: ctx.fields_list.get("declaration").cloned().unwrap_or_default(),
+                decorator: ctx.fields.get("decorator").cloned().unwrap_or_default(),
+                decorator_list: ctx.fields_list.get("decorator").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -3293,8 +3555,19 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "_export_statement_default_from_arm" => {
+            let t = ExportStatementDefaultFromArmTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
         "_export_statement_equals_export" => {
-            let t = ExportStatementEqualsExportTemplate {
+            let t = _ExportStatementEqualsExportTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3305,7 +3578,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_export_statement_namespace_export" => {
-            let t = ExportStatementNamespaceExportTemplate {
+            let t = _ExportStatementNamespaceExportTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3316,7 +3589,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_export_statement_type_export" => {
-            let t = ExportStatementTypeExportTemplate {
+            let t = _ExportStatementTypeExportTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3374,7 +3647,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_import_clause_default_import" => {
-            let t = ImportClauseDefaultImportTemplate {
+            let t = _ImportClauseDefaultImportTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3385,7 +3658,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_import_clause_named_imports" => {
-            let t = ImportClauseNamedImportsTemplate {
+            let t = _ImportClauseNamedImportsTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3396,7 +3669,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_import_clause_namespace_import" => {
-            let t = ImportClauseNamespaceImportTemplate {
+            let t = _ImportClauseNamespaceImportTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3422,7 +3695,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_import_specifier_name" => {
-            let t = ImportSpecifierNameTemplate {
+            let t = _ImportSpecifierNameTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3450,7 +3723,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_index_signature_mapped_type_clause" => {
-            let t = IndexSignatureMappedTypeClauseTemplate {
+            let t = _IndexSignatureMappedTypeClauseTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3470,6 +3743,17 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 value: ctx.fields.get("value").cloned().unwrap_or_default(),
                 value_list: ctx.fields_list.get("value").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "_interface_body" => {
+            let t = InterfaceBodyTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
             };
             t.render_with_values(&_values)
         }
@@ -3500,7 +3784,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_parenthesized_expression_sequence" => {
-            let t = ParenthesizedExpressionSequenceTemplate {
+            let t = _ParenthesizedExpressionSequenceTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3520,6 +3804,17 @@ pub fn render_dispatch(
                 leading_sep: ctx.leading_sep,
                 r#type: ctx.fields.get("type").cloned().unwrap_or_default(),
                 r#type_list: ctx.fields_list.get("type").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "_property_identifier" => {
+            let t = PropertyIdentifierTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
             };
             t.render_with_values(&_values)
         }
@@ -3605,8 +3900,30 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "_statement_identifier" => {
+            let t = StatementIdentifierTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
         "_string_double" => {
-            let t = StringDoubleTemplate {
+            let t = _StringDoubleTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "_string_fragment" => {
+            let t = StringFragmentTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3617,7 +3934,7 @@ pub fn render_dispatch(
             t.render_with_values(&_values)
         }
         "_string_single" => {
-            let t = StringSingleTemplate {
+            let t = _StringSingleTemplate {
                 children: ctx.children_list.clone(),
                 children_list: ctx.children_list.clone(),
                 variant: ctx.variant.clone(),
@@ -3878,6 +4195,36 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "arrow_function__call_signature" => {
+            let t = ArrowFunctionUCallSignatureTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                parameters: ctx.fields.get("parameters").cloned().unwrap_or_default(),
+                parameters_list: ctx.fields_list.get("parameters").cloned().unwrap_or_default(),
+                return_type: ctx.fields.get("return_type").cloned().unwrap_or_default(),
+                return_type_list: ctx.fields_list.get("return_type").cloned().unwrap_or_default(),
+                type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
+                type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "arrow_function_parameter" => {
+            let t = ArrowFunctionParameterTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                parameter: ctx.fields.get("parameter").cloned().unwrap_or_default(),
+                parameter_list: ctx.fields_list.get("parameter").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
         "arrow_function" => {
             let t = ArrowFunctionTemplate {
                 children: ctx.children_list.clone(),
@@ -4102,6 +4449,28 @@ pub fn render_dispatch(
                 name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
                 type_parameters: ctx.fields.get("type_parameters").cloned().unwrap_or_default(),
                 type_parameters_list: ctx.fields_list.get("type_parameters").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "class_heritage_extends_clause" => {
+            let t = ClassHeritageExtendsClauseTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "class_heritage_implements_clause" => {
+            let t = ClassHeritageImplementsClauseTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
             };
             t.render_with_values(&_values)
         }
@@ -4428,6 +4797,41 @@ pub fn render_dispatch(
                 export_kind_list: ctx.fields_list.get("export_kind").cloned().unwrap_or_default(),
                 name: ctx.fields.get("name").cloned().unwrap_or_default(),
                 name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "export_statement_equals_export" => {
+            let t = ExportStatementEqualsExportTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "export_statement_namespace_export" => {
+            let t = ExportStatementNamespaceExportTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "export_statement_type_export" => {
+            let t = ExportStatementTypeExportTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                source: ctx.fields.get("source").cloned().unwrap_or_default(),
+                source_list: ctx.fields_list.get("source").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -4782,6 +5186,39 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "import_clause_default_import" => {
+            let t = ImportClauseDefaultImportTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "import_clause_named_imports" => {
+            let t = ImportClauseNamedImportsTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "import_clause_namespace_import" => {
+            let t = ImportClauseNamespaceImportTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
         "import_clause" => {
             let t = ImportClauseTemplate {
                 children: ctx.children_list.clone(),
@@ -4805,6 +5242,19 @@ pub fn render_dispatch(
                 identifier_list: ctx.fields_list.get("identifier").cloned().unwrap_or_default(),
                 source: ctx.fields.get("source").cloned().unwrap_or_default(),
                 source_list: ctx.fields_list.get("source").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "import_specifier_name" => {
+            let t = ImportSpecifierNameTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+                name: ctx.fields.get("name").cloned().unwrap_or_default(),
+                name_list: ctx.fields_list.get("name").cloned().unwrap_or_default(),
             };
             t.render_with_values(&_values)
         }
@@ -4837,6 +5287,17 @@ pub fn render_dispatch(
                 semicolon_list: ctx.fields_list.get("semicolon").cloned().unwrap_or_default(),
                 source: ctx.fields.get("source").cloned().unwrap_or_default(),
                 source_list: ctx.fields_list.get("source").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "index_signature_mapped_type_clause" => {
+            let t = IndexSignatureMappedTypeClauseTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
             };
             t.render_with_values(&_values)
         }
@@ -5471,6 +5932,17 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "parenthesized_expression_sequence" => {
+            let t = ParenthesizedExpressionSequenceTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
         "parenthesized_expression" => {
             let t = ParenthesizedExpressionTemplate {
                 children: ctx.children_list.clone(),
@@ -5693,6 +6165,28 @@ pub fn render_dispatch(
                 automatic_semicolon_list: ctx.fields_list.get("automatic_semicolon").cloned().unwrap_or_default(),
                 statements: ctx.fields.get("statements").cloned().unwrap_or_default(),
                 statements_list: ctx.fields_list.get("statements").cloned().unwrap_or_default(),
+            };
+            t.render_with_values(&_values)
+        }
+        "string_double" => {
+            let t = StringDoubleTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
+        "string_single" => {
+            let t = StringSingleTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
             };
             t.render_with_values(&_values)
         }
@@ -6218,7 +6712,7 @@ impl ::sittir_core::prepare::GrammarMeta for TypescriptGrammarMeta {
     }
     fn is_list_container(&self, kind: &str) -> bool {
         matches!(kind,
-            "_class_body_member" | "_class_body_method_sig" | "_class_heritage_extends_clause" | "_class_heritage_implements_clause" | "_export_statement_equals_export" | "_export_statement_namespace_export" | "_import_clause_default_import" | "_import_clause_named_imports" | "_import_clause_namespace_import" | "_index_signature_mapped_type_clause" | "_lhs_expression" | "_parenthesized_expression_sequence" | "_public_field_definition_declare_first" | "_string_double" | "_string_single" | "_type_identifier" | "arguments" | "array" | "array_pattern" | "asserts" | "class_body" | "decorator" | "decorator_parenthesized_expression" | "export_clause" | "formal_parameters" | "implements_clause" | "jsx_attribute" | "jsx_expression" | "jsx_namespace_name" | "literal_type" | "named_imports" | "namespace_export" | "object" | "object_pattern" | "rest_pattern" | "sequence_expression" | "switch_body" | "template_literal_type" | "template_string" | "template_substitution" | "template_type" | "tuple_type" | "type_arguments" | "type_parameters" | "type_query"
+            "_class_body_member" | "_class_body_method_sig" | "_class_heritage_extends_clause" | "_class_heritage_implements_clause" | "_export_statement_default_from_arm" | "_export_statement_equals_export" | "_export_statement_namespace_export" | "_import_clause_default_import" | "_import_clause_named_imports" | "_import_clause_namespace_import" | "_index_signature_mapped_type_clause" | "_interface_body" | "_lhs_expression" | "_parenthesized_expression_sequence" | "_property_identifier" | "_public_field_definition_declare_first" | "_statement_identifier" | "_string_double" | "_string_fragment" | "_string_single" | "_type_identifier" | "arguments" | "array" | "array_pattern" | "asserts" | "class_body" | "class_heritage_extends_clause" | "class_heritage_implements_clause" | "decorator" | "decorator_parenthesized_expression" | "export_clause" | "export_statement_equals_export" | "export_statement_namespace_export" | "formal_parameters" | "implements_clause" | "import_clause_default_import" | "import_clause_named_imports" | "import_clause_namespace_import" | "index_signature_mapped_type_clause" | "jsx_attribute" | "jsx_expression" | "jsx_namespace_name" | "literal_type" | "named_imports" | "namespace_export" | "object" | "object_pattern" | "parenthesized_expression_sequence" | "rest_pattern" | "sequence_expression" | "string_double" | "string_single" | "switch_body" | "template_literal_type" | "template_string" | "template_substitution" | "template_type" | "tuple_type" | "type_arguments" | "type_parameters" | "type_query"
         )
     }
 }

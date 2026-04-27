@@ -10,6 +10,7 @@ import type {
   AliasedImport,
   ArgumentList,
   AsPattern,
+  AsPatternTarget,
   AssertStatement,
   Assignment,
   Attribute,
@@ -46,9 +47,11 @@ import type {
   ExecStatement,
   ExpressionList,
   ExpressionStatement,
+  ExpressionStatementTuple,
   FinallyClause,
   ForInClause,
   ForStatement,
+  FormatExpression,
   FormatSpecifier,
   FunctionDefinition,
   FutureImportStatement,
@@ -110,6 +113,7 @@ import type {
   UnionType,
   WhileStatement,
   WithClause,
+  WithClauseBare,
   WithClauseParen,
   WithItem,
   WithStatement,
@@ -117,6 +121,7 @@ import type {
   _AsPattern,
   _ListPattern,
   _TuplePattern,
+  _WithClauseParen,
 } from './types.js';
 
 // Drill-in helpers — call back through `readTreeNode` so the same
@@ -227,6 +232,13 @@ export function wrapAssertStatement(data: _NodeData, tree: TreeHandle): WrappedN
     ...data,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<AssertStatement>;
+}
+
+export function wrapExpressionStatementTuple(data: _NodeData, tree: TreeHandle): WrappedNode<ExpressionStatementTuple> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<ExpressionStatementTuple>;
 }
 
 export function wrapExpressionStatement(data: _NodeData, tree: TreeHandle): WrappedNode<ExpressionStatement> {
@@ -377,6 +389,20 @@ export function wrapWithStatement(data: _NodeData, tree: TreeHandle): WrappedNod
     get body() { return drillIn(data.$fields?.['body'], tree); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<WithStatement>;
+}
+
+export function wrapWithClauseBare(data: _NodeData, tree: TreeHandle): WrappedNode<WithClauseBare> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<WithClauseBare>;
+}
+
+export function wrapWithClauseParen(data: _NodeData, tree: TreeHandle): WrappedNode<WithClauseParen> {
+  return {
+    ...data,
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+  } as unknown as WrappedNode<WithClauseParen>;
 }
 
 export function wrapWithClause(data: _NodeData, tree: TreeHandle): WrappedNode<WithClause> {
@@ -675,7 +701,7 @@ export function wrapAsPattern(data: _NodeData, tree: TreeHandle): WrappedNode<As
   return {
     ...data,
     get expression() { return drillIn(data.$fields?.['expression'], tree); },
-    get alias() { return drillIn(data.$fields?.['alias'], tree); },
+    get alias() { return drillAs(data.$fields?.['alias'], tree, "as_pattern_target", "_as_pattern_target"); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<AsPattern>;
 }
@@ -1041,11 +1067,25 @@ export function wrapAwait(data: _NodeData, tree: TreeHandle): WrappedNode<Await>
   } as unknown as WrappedNode<Await>;
 }
 
-export function wrapWithClauseParen(data: _NodeData, tree: TreeHandle): WrappedNode<WithClauseParen> {
+export function wrapAsPatternTarget(data: _NodeData, tree: TreeHandle): WrappedNode<AsPatternTarget> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<AsPatternTarget>;
+}
+
+export function wrapFormatExpression(data: _NodeData, tree: TreeHandle): WrappedNode<FormatExpression> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<FormatExpression>;
+}
+
+export function wrap_WithClauseParen(data: _NodeData, tree: TreeHandle): WrappedNode<_WithClauseParen> {
   return {
     ...data,
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
-  } as unknown as WrappedNode<WithClauseParen>;
+  } as unknown as WrappedNode<_WithClauseParen>;
 }
 
 export function wrapSimplePatternNegative(data: _NodeData, tree: TreeHandle): WrappedNode<SimplePatternNegative> {
@@ -1067,6 +1107,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'print_statement': (d, t) => wrapPrintStatement(d, t),
   'chevron': (d, t) => wrapChevron(d, t),
   'assert_statement': (d, t) => wrapAssertStatement(d, t),
+  'expression_statement_tuple': (d, t) => wrapExpressionStatementTuple(d, t),
   'expression_statement': (d, t) => wrapExpressionStatement(d, t),
   'named_expression': (d, t) => wrapNamedExpression(d, t),
   'return_statement': (d, t) => wrapReturnStatement(d, t),
@@ -1087,6 +1128,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'except_clause': (d, t) => wrapExceptClause(d, t),
   'finally_clause': (d, t) => wrapFinallyClause(d, t),
   'with_statement': (d, t) => wrapWithStatement(d, t),
+  'with_clause_bare': (d, t) => wrapWithClauseBare(d, t),
+  'with_clause_paren': (d, t) => wrapWithClauseParen(d, t),
   'with_clause': (d, t) => wrapWithClause(d, t),
   'with_item': (d, t) => wrapWithItem(d, t),
   'function_definition': (d, t) => wrapFunctionDefinition(d, t),
@@ -1180,8 +1223,10 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'await': (d, t) => wrapAwait(d, t),
   'comment': (d) => d,
   'line_continuation': (d) => d,
+  '_as_pattern_target': (d, t) => wrapAsPatternTarget(d, t),
+  '_format_expression': (d, t) => wrapFormatExpression(d, t),
   '_kw_async_marker': (d) => d,
-  '_with_clause_paren': (d, t) => wrapWithClauseParen(d, t),
+  '_with_clause_paren': (d, t) => wrap_WithClauseParen(d, t),
   '_simple_pattern_negative': (d, t) => wrapSimplePatternNegative(d, t),
   '_newline': (d) => d,
   '_indent': (d) => d,
@@ -1197,6 +1242,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 };
 
 const _aliasTargetToSource: Record<string, string> = {
+  'as_pattern_target': '_as_pattern_target',
   'assignment_eq': '_assignment_eq',
   'assignment_type': '_assignment_type',
   'assignment_typed': '_assignment_typed',
@@ -1205,6 +1251,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'expression_within_for_in_clause': '_expression_within_for_in_clause',
   'expressions': '_expressions',
   'f_expression': '_f_expression',
+  'format_expression': '_format_expression',
   'kw_async_marker': '_kw_async_marker',
   'left_hand_side': '_left_hand_side',
   'match_block': '_match_block',
@@ -1218,7 +1265,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'simple_statements': '_simple_statements',
   'statement': '_statement',
   'suite': '_suite',
-  'with_clause_paren': '_with_clause_paren',
 };
 
 /** Wrap a NodeData into its lazy read-only view. */
