@@ -131,8 +131,8 @@ Use this checklist before creating a new Git tag to keep release metadata consis
 5. Update `examples/example-output.md` footer version (if present).
 6. Add a new section in `CHANGELOG.md` for the target version and date.
 7. Verify there are no stale version strings:
-8. Add a new section in `CHANGELOG.md` for the target version and date.
-9. Verify there are no stale version strings:
+3. Add a new section in `CHANGELOG.md` for the target version and date.
+4. Verify there are no stale version strings:
 
 ```bash
 grep -RIn "version: 'OLD_VERSION'\|vOLD_VERSION.zip\|version-OLD_VERSION\|Extension vOLD_VERSION" .

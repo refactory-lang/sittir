@@ -293,6 +293,99 @@ cleanup`, `f72f540 codegen: wave 3 comment/decomposition cleanup`, and
 the wave 4 ADR-0009 follow-up. Match that style. Don't merge helpers
 that the directive would split — granularity per comment block.
 
+### Use `probe-kind.ts` before ad-hoc probes
+
+When debugging parse → `readNode` → render gaps, use
+`packages/codegen/src/scripts/probe-kind.ts` before writing any
+throwaway `/tmp/probe-*.ts` script. Extend `probe-kind.ts` if a flag is
+missing; don't fork one-off diagnostics. This is the standard debugging
+surface for CST / NodeData / render / reparse inspection.
+
+### Prefer overrides over inference
+
+When render/codegen logic is trying to guess grammar intent, stop and
+ask whether the structure should be made explicit in
+`packages/<lang>/overrides.ts` instead. Favor explicit grammar
+overrides over heuristics that reverse-engineer intent from parse
+output. Every heuristic removed is one less wrong-answer site.
+
+### Fix priority order for template/codegen gaps
+
+When diagnosing a template/from/round-trip failure, triage in this
+order:
+
+1. Check whether an existing override is wrong.
+2. If codegen must change, fix the earliest phase that still has the
+   information (Evaluate → Link → Assemble).
+3. If the needed fact is absent from the `Rule` / node type, extend the
+   type first, then fix the phase.
+4. Use `transform(original, { ... })` overrides as the last resort — do
+   not rewrite the whole rule wholesale.
+
+This prevents walker hacks from piling on top of broken overrides.
+
+### Jinja intersection-safe primitives
+
+Shared templates must stay inside the Nunjucks ∩ Askama intersection.
+The canonical conditional is:
+
+```jinja
+{% if field | isPresent %}...{% endif %}
+```
+
+Do **not** rely on:
+
+- `{% if foo is defined %}` — broken on Askama
+- truthy `{% if foo %}` — Askama rejects it
+- `{% if foo != "" %}` — diverges when undefined
+- `{% else if %}` — Askama-only spelling
+
+Use `{% elif %}` and keep separators **inside** the conditional.
+
+### Enrich only affects the codegen surface
+
+`enrich()` operates on post-evaluation `Rule` objects. It updates the
+TS-side codegen surface (`types.ts`, factories, templates, wrap) but it
+does **not** modify the parser surface that tree-sitter generates from
+rule callbacks. Do not retire parser-relevant `overrides.ts` entries
+just because enrich now produces the same field name on the TS side —
+the parser still needs the pre-generation patch.
+
+### Inline synthesized `_kw_*` rules for LR-precedence fixes
+
+When promoting a standalone optional punctuation/keyword token to
+`field('name', 'token')` causes a parse-time ERROR because a sibling arm
+still needs the bare token, add `_kw_<name>` to the grammar's
+`inline:` array. This preserves the field wrapper in the parse tree
+while folding the hidden rule away in LR-table generation. Prefer this
+over compensating with extra precedence or conflict noise.
+
+### `overrides.ts` recurring patterns
+
+Before editing `packages/<lang>/overrides.ts`, keep these defaults in
+mind:
+
+- use `variant()` for choice arms with different literals / delimiters /
+  separators
+- extend `conflicts` with `...(previous ?? [])` or
+  `previous.concat(...)`; never drop the base grammar's conflicts
+- use `field('semicolon', $._semicolon)` for hidden-semicolon drops
+- when variant/conflict work changes parser shape, rerun the full
+  transpile / generate / compile-parser / emit chain so `.sittir` wasm
+  and generated output stay aligned
+
+### Report raw per-grammar counts while iterating
+
+When working on corpus-affecting changes, report raw per-grammar counts
+on each rerun, not just aggregate pass/fail totals:
+
+- `fromPass/fromTotal`
+- `covPass/covTotal`
+- `rtPass/rtTotal/rtAstMatchPass`
+- `factoryPass/factoryTotal`
+
+Aggregate totals can hide kinds falling out of the validation universe.
+
 <!-- MANUAL ADDITIONS END -->
 
 ## Active Technologies
@@ -315,9 +408,3 @@ that the directive would split — granularity per comment block.
 ## Recent Changes
 
 - 004-yaml-render-templates: Added TypeScript (ESM, `.ts` extensions in imports), TypeScript 6.0.2 + `@sittir/core`, `@sittir/types`, `@sittir/codegen`; tree-sitter grammars (grammar.json + node-types.json)
-
-<!-- SPECKIT START -->
-
-Current plan: `specs/011-jinja-template-migration/plan.md`
-
-<!-- SPECKIT END -->
