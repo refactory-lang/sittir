@@ -273,8 +273,14 @@ function loadNativeEngineForGrammar(grammar: string): NativeEngineLike | null {
 	}
 }
 
-export function buildReadHandle(grammar: string, tree: TS.Tree, source: string): TreeHandle {
-	if (process.env.SITTIR_BACKEND === "native") {
+export function buildReadHandle(
+	grammar: string,
+	tree: TS.Tree,
+	source: string,
+	backend?: "native" | "typescript",
+): TreeHandle {
+	const effectiveBackend = backend ?? process.env.SITTIR_BACKEND;
+	if (effectiveBackend === "native") {
 		const engine = loadNativeEngineForGrammar(grammar);
 		if (!engine) {
 			throw new Error(

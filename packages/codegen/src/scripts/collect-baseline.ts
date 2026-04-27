@@ -287,83 +287,63 @@ async function collectParityFixtures(grammar: Grammar, backend: Backend): Promis
 // Validator collection
 // ---------------------------------------------------------------------------
 
-/**
- * Run `fn` with `SITTIR_BACKEND` set to the requested backend, then
- * restore the previous value (or delete it if it was absent). This
- * ensures validator collection exercises the correct engine path even
- * when the caller's ambient environment doesn't already carry the right
- * value.
- */
-async function withBackendEnv<T>(backend: Backend, fn: () => Promise<T>): Promise<T> {
-	const prev = process.env.SITTIR_BACKEND;
-	process.env.SITTIR_BACKEND = backend === "native" ? "native" : "typescript";
-	try {
-		return await fn();
-	} finally {
-		if (prev === undefined) delete process.env.SITTIR_BACKEND;
-		else process.env.SITTIR_BACKEND = prev;
-	}
-}
-
 async function collectValidatorsForGrammar(
 	grammar: Grammar,
 	backend: Backend,
 ): Promise<GrammarEntry["validators"]> {
-	return withBackendEnv(backend, async () => {
-		const tp = templatesPathFor(grammar);
+	const tp = templatesPathFor(grammar);
 
-		// Validators dispatch through `buildReadHandle` internally, so they
-		// already honour SITTIR_BACKEND. We just call them. Run in parallel
-		// — each pulls its own copy of corpus + tree, no shared mutable
-		// state.
-		const [from, cov, rt, fac] = await Promise.all([
-			validateFrom(grammar),
-			Promise.resolve(validateTemplateCoverage(grammar, tp)),
-			validateRoundTrip(grammar, tp),
-			validateFactoryRoundTrip(grammar, tp),
-		]);
+	// Pass backend explicitly so each validator uses the correct engine
+	// without touching process.env — avoids cross-contamination when
+	// collectBaseline() is called concurrently.
+	const backendArg: "native" | "typescript" = backend === "native" ? "native" : "typescript";
+	const [from, cov, rt, fac] = await Promise.all([
+		validateFrom(grammar, backendArg),
+		Promise.resolve(validateTemplateCoverage(grammar, tp)),
+		validateRoundTrip(grammar, tp, { backend: backendArg }),
+		validateFactoryRoundTrip(grammar, tp, backendArg),
+	]);
 
-		// Format-deferred kinds default to []. Triage runs during cluster
-		// commits — see contracts/baseline-json.md verdict rules. When a
-		// template-shape fix surfaces an underlying format-only failure,
-		// the cluster commit MOVES the kind from `failingKinds` into
-		// `formatDeferredKinds` (preserving the regression-checker's
-		// `failingKinds + formatDeferredKinds` non-growth invariant within
-		// 016). At baseline, no triage has happened — every entry is [].
-		const empty: string[] = [];
-		return {
-			from: {
-				pass: from.pass,
-				total: from.total,
-				failingKinds: uniqSorted(from.errors.map((e) => e.kind)),
-				formatDeferredKinds: empty,
-			},
-			coverage: {
-				pass: cov.pass,
-				total: cov.total,
-				failingKinds: uniqSorted(cov.issues.map((i) => i.kind)),
-				formatDeferredKinds: empty,
-			},
-			roundtrip: {
-				pass: rt.pass,
-				total: rt.total,
-				astMatchPass: rt.astMatchPass,
-				failingKinds: uniqSorted(
-					[...rt.errors, ...rt.astMismatches]
-						.map((e) => kindFromRoundtripName(e.name))
-						.filter((k): k is string => k !== null),
-				),
-				formatDeferredKinds: empty,
-			},
-			factoryRoundtrip: {
-				pass: fac.pass,
-				total: fac.total,
-				astMatchPass: fac.astMatchPass,
-				failingKinds: uniqSorted([...fac.errors, ...fac.astMismatches].map((e) => e.kind)),
-				formatDeferredKinds: empty,
-			},
-		};
-	});
+	// Format-deferred kinds default to []. Triage runs during cluster
+	// commits — see contracts/baseline-json.md verdict rules. When a
+	// template-shape fix surfaces an underlying format-only failure,
+	// the cluster commit MOVES the kind from `failingKinds` into
+	// `formatDeferredKinds` (preserving the regression-checker's
+	// `failingKinds + formatDeferredKinds` non-growth invariant within
+	// 016). At baseline, no triage has happened — every entry is [].
+	const empty: string[] = [];
+	return {
+		from: {
+			pass: from.pass,
+			total: from.total,
+			failingKinds: uniqSorted(from.errors.map((e) => e.kind)),
+			formatDeferredKinds: empty,
+		},
+		coverage: {
+			pass: cov.pass,
+			total: cov.total,
+			failingKinds: uniqSorted(cov.issues.map((i) => i.kind)),
+			formatDeferredKinds: empty,
+		},
+		roundtrip: {
+			pass: rt.pass,
+			total: rt.total,
+			astMatchPass: rt.astMatchPass,
+			failingKinds: uniqSorted(
+				[...rt.errors, ...rt.astMismatches]
+					.map((e) => kindFromRoundtripName(e.name))
+					.filter((k): k is string => k !== null),
+			),
+			formatDeferredKinds: empty,
+		},
+		factoryRoundtrip: {
+			pass: fac.pass,
+			total: fac.total,
+			astMatchPass: fac.astMatchPass,
+			failingKinds: uniqSorted([...fac.errors, ...fac.astMismatches].map((e) => e.kind)),
+			formatDeferredKinds: empty,
+		},
+	};
 }
 
 // ---------------------------------------------------------------------------

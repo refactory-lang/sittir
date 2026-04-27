@@ -307,10 +307,11 @@ function discoverAliasSourceKinds(
 	kinds: Set<string>,
 	grammar: string,
 	source: string,
+	backend?: "native" | "typescript",
 ): Map<number, string> {
 	const nodeIdToEffectiveType = new Map<number, string>();
 	if (readTreeNodeFn) {
-		const handle = buildReadHandle(grammar, tree, source);
+		const handle = buildReadHandle(grammar, tree, source, backend);
 		const wrappedRoot = readTreeNodeFn(handle) as WrappedNodeData;
 		walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
 			// Cluster I (016): skip anonymous tokens. The wrap layer
@@ -530,6 +531,9 @@ export interface ValidateRoundTripOptions {
 	 *  validator runs its normal pass/fail accounting without
 	 *  fixture capture (zero added cost). */
 	onFixture?: (fx: ParityFixture) => void;
+	/** Backend to use for `buildReadHandle`. When provided, takes
+	 *  precedence over `process.env.SITTIR_BACKEND`. */
+	backend?: "native" | "typescript";
 }
 
 export async function validateRoundTrip(
@@ -561,6 +565,8 @@ export async function validateRoundTrip(
 	let skip = 0;
 	let total = 0;
 
+	const { backend } = options;
+
 	for (const entry of entries) {
 		total++;
 		try {
@@ -578,6 +584,7 @@ export async function validateRoundTrip(
 				kinds,
 				grammar,
 				entry.source,
+				backend,
 			);
 			const testableKinds = [...kinds].filter((k) => ruleKinds.has(k));
 
@@ -611,7 +618,7 @@ export async function validateRoundTrip(
 				const kindAstMismatches: typeof astMismatches = [];
 
 				for (const node1 of candidates) {
-					const handle = buildReadHandle(grammar, tree1, entry.source);
+					const handle = buildReadHandle(grammar, tree1, entry.source, backend);
 					// Shallow read — RT validator relies on the $text
 					// short-circuit: readNode returns a NodeData with
 					// $text=source-span, render() falls through to emit

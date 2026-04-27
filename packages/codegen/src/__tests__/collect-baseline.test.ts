@@ -191,18 +191,25 @@ describe("collect-baseline", () => {
 	it("native baseline runs validators with SITTIR_BACKEND=native", async () => {
 		const seen = new Set<string | undefined>();
 		const original = common.buildReadHandle;
-		const spy = vi.spyOn(common, "buildReadHandle").mockImplementation((...args) => {
-			seen.add(process.env.SITTIR_BACKEND);
-			return original(...args);
-		});
+		const spy = vi
+			.spyOn(common, "buildReadHandle")
+			.mockImplementation((g, t, s, backend) => {
+				seen.add(backend);
+				return original(g, t, s, backend);
+			});
 		// 1. Loud-failure assertion: native collection must throw (not silently
 		//    fall back to TS and return TS numbers labelled "native").
 		//    With the Task 4 node-id bug, the native engine panics during
 		//    readNode — that error must propagate, not be swallowed.
-		await expect(baseline.collectBaseline("native")).rejects.toBeInstanceOf(Error);
-		// 2. Dispatch assertion: buildReadHandle was called with
-		//    SITTIR_BACKEND=native (set by withBackendEnv), not undefined
-		//    (which would mean validators silently ran under the TS engine).
+		//    Matches either the Task 3 "no native engine" message or the
+		//    Task 4 "node id not found" panic — both are specific to the
+		//    native engine path (not generic unrelated errors).
+		await expect(baseline.collectBaseline("native")).rejects.toThrow(
+			/no native engine is available|node id \d+ not found in current tree/,
+		);
+		// 2. Dispatch assertion: buildReadHandle was called with backend="native"
+		//    as an explicit argument (not via process.env). Before Task 3,
+		//    validators ran under the TS engine with process.env unset.
 		expect(seen).toEqual(new Set(["native"]));
 		spy.mockRestore();
 	});
@@ -245,17 +252,19 @@ describe("collect-baseline", () => {
 	});
 
 	it("native baseline failures point at bundle drift instead of looking like parity noise", async () => {
-		// Before Task 3: collectBaseline("native") silently succeeded — it
-		// fell back to the TS engine and returned TS numbers labelled
-		// "native". The failure was invisible as parity noise.
-		//
-		// After Task 3: errors propagate. This assertion is the regression
-		// lock: it FAILS if the call silently succeeds (pre-Task-3 behavior),
-		// and PASSES when errors surface loudly (Task-3 behavior).
-		//
-		// With the Task 4 node-id bug still unfixed, the native engine throws
-		// "node id not found in current tree" — that error must escape, not
-		// be rewritten into quiet parity numbers.
-		await expect(baseline.collectBaseline("native")).rejects.toBeInstanceOf(Error);
+		// Simulate the Task 3 scenario: native engine is unavailable for a grammar
+		// (e.g. bundle drift caused a hash mismatch that prevented engine load).
+		// Before Task 3: collectBaseline("native") silently succeeded — it fell
+		// back to the TS engine and returned TS numbers labelled "native".
+		// After Task 3: buildReadHandle throws explicitly; that error must
+		// propagate rather than being rewritten into quiet parity numbers.
+		vi.spyOn(common, "buildReadHandle").mockImplementation((g) => {
+			throw new Error(
+				`SITTIR_BACKEND=native but no native engine is available for grammar '${g}'`,
+			);
+		});
+		await expect(baseline.collectBaseline("native")).rejects.toThrow(
+			/no native engine is available for grammar/,
+		);
 	}, 600_000);
 });

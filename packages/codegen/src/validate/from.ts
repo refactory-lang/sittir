@@ -147,7 +147,10 @@ export interface FromValidationResult {
 	errors: FromValidationError[];
 }
 
-export async function validateFrom(grammar: string): Promise<FromValidationResult> {
+export async function validateFrom(
+	grammar: string,
+	backend?: "native" | "typescript",
+): Promise<FromValidationResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
@@ -215,7 +218,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 			const node1 = findFirst(tree1.rootNode, kind);
 			if (!node1) continue;
 
-			const handle = buildReadHandle(grammar, tree1, entry.source);
+			const handle = buildReadHandle(grammar, tree1, entry.source, backend);
 			// Use readTreeNode (wrapped via per-kind dispatch) when available,
 			// so `.from()` sees a fluent NodeData — the supported input shape
 			// per spec 008 US3. Fall back to raw readNode if the wrap module

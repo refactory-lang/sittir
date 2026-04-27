@@ -554,6 +554,7 @@ function recordAstStructuralComparison(
 export async function validateFactoryRoundTrip(
 	grammar: string,
 	templatesPath: string,
+	backend?: "native" | "typescript",
 ): Promise<FactoryRoundTripResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
@@ -618,7 +619,7 @@ export async function validateFactoryRoundTrip(
 		const tree1 = parser.parse(entry.source) as TSTree;
 		if (tree1.rootNode.hasError) continue;
 
-		const handle = buildReadHandle(grammar, tree1, entry.source);
+		const handle = buildReadHandle(grammar, tree1, entry.source, backend);
 		const kinds = new Set(collectKinds(tree1.rootNode));
 		const nodeIdToEffectiveType = new Map<number, string>();
 		if (readTreeNodeFn) {
