@@ -24,28 +24,29 @@
  * 8 — corpus collection is non-trivial and the result is read-only here.
  */
 
-import { describe, it, expect, beforeAll } from "vitest";
-import {
-	collectBaseline,
-	loadBoundaryRender,
-	serialiseBaseline,
-	type BackendBaseline,
-} from "../scripts/collect-baseline.ts";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import * as common from "../validate/common.ts";
+import * as baseline from "../scripts/collect-baseline.ts";
 
 const grammarKeys = ["python", "rust", "typescript"] as const;
 
 describe("collect-baseline", () => {
-	let result: BackendBaseline;
+	let result: baseline.BackendBaseline;
 
 	beforeAll(async () => {
-		result = await collectBaseline("typescript");
+		result = await baseline.collectBaseline("typescript");
 	}, 600_000);
 
+	afterEach(() => {
+		vi.restoreAllMocks();
+		delete process.env.SITTIR_BACKEND;
+	});
+
 	it("determinism — two runs produce byte-identical serialised output", async () => {
-		const a = await collectBaseline("typescript");
-		const b = await collectBaseline("typescript");
-		const sa = serialiseBaseline(a);
-		const sb = serialiseBaseline(b);
+		const a = await baseline.collectBaseline("typescript");
+		const b = await baseline.collectBaseline("typescript");
+		const sa = baseline.serialiseBaseline(a);
+		const sb = baseline.serialiseBaseline(b);
 		// Surface mismatches as a small diff for pinpoint diagnosis.
 		if (sa !== sb) {
 			const aLines = sa.split("\n");
@@ -64,7 +65,7 @@ describe("collect-baseline", () => {
 
 	it("schema conformance — top-level, per-grammar, per-validator keys match contract", () => {
 		// Round-trip through serialise/parse to verify what's persisted is what's checked.
-		const parsed = JSON.parse(serialiseBaseline(result)) as Record<string, unknown>;
+		const parsed = JSON.parse(baseline.serialiseBaseline(result)) as Record<string, unknown>;
 
 		expect(Object.keys(parsed).sort()).toEqual(["backend", "commit", "grammars", "totals"]);
 
@@ -162,7 +163,7 @@ describe("collect-baseline", () => {
 	});
 
 	it("serialised output contains no timestamps (ISO-8601 or unix-ms magnitude)", () => {
-		const text = serialiseBaseline(result);
+		const text = baseline.serialiseBaseline(result);
 		expect(text).not.toMatch(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/);
 		// 13-digit numbers (millisecond unix timestamps) — the JSON
 		// shouldn't carry any. Allow up to 12 digits which can still
@@ -179,14 +180,35 @@ describe("collect-baseline", () => {
 		// mode) is correct by construction: any caller that uses the
 		// default importer and gets a rejection here surfaces it.
 		const badImport = () => Promise.reject(new Error("module not found"));
-		await expect(loadBoundaryRender("rust", badImport)).rejects.toThrow(
+		await expect(baseline.loadBoundaryRender("rust", badImport)).rejects.toThrow(
 			/failed to import native boundary for grammar 'rust'.*packages\/rust\/src\/boundary\.ts.*module not found/,
+		);
+	});
+
+	it("native baseline runs validators with SITTIR_BACKEND=native", async () => {
+		const seen = new Set<string | undefined>();
+		const original = common.buildReadHandle;
+		const spy = vi.spyOn(common, "buildReadHandle").mockImplementation((...args) => {
+			seen.add(process.env.SITTIR_BACKEND);
+			return original(...args);
+		});
+		await baseline.collectBaseline("native");
+		expect(seen).toEqual(new Set(["native"]));
+		spy.mockRestore();
+	});
+
+	it("parity render exceptions surface with fixture context", async () => {
+		vi.spyOn(baseline, "loadBoundaryRender").mockResolvedValue(() => {
+			throw new Error("boom");
+		});
+		await expect(baseline.collectBaseline("native")).rejects.toThrow(
+			/\[python\]\[native\]\[render #0\].*boom/,
 		);
 	});
 
 	it("native baseline failures point at bundle drift instead of looking like parity noise", async () => {
 		try {
-			const native = await collectBaseline("native");
+			const native = await baseline.collectBaseline("native");
 			expect(native.backend).toBe("native");
 			expect(native.totals.total).toBeGreaterThan(0);
 		} catch (error) {

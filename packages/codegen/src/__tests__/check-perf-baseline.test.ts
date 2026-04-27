@@ -43,11 +43,11 @@ function makeBaseline(ffi: BaselineFfi): Parameters<typeof evaluateVerdict>[0] {
 
 function makeFresh(
 	ffi: BaselineFfi | undefined,
-	overrides: Partial<{ schemaVersion: number; platform: string }> = {},
+	overrides: Partial<{ schemaVersion: number; backend: "ts" | "native"; platform: string }> = {},
 ): Parameters<typeof evaluateVerdict>[1] {
 	return {
 		schemaVersion: overrides.schemaVersion ?? 1,
-		backend: "native",
+		backend: overrides.backend ?? "native",
 		collectedOn: {
 			platform: overrides.platform ?? "darwin",
 			nodeVersion: "v24.15.0",
@@ -136,9 +136,18 @@ describe("evaluateVerdict", () => {
 		expect(v.kind).toBe("schema-mismatch");
 	});
 
-	it("returns ok when fresh has no ffi block (TS-backend metrics)", () => {
+	it("rejects a metrics file with backend ts for the native perf gate", () => {
+		const v = evaluateVerdict(
+			makeBaseline(baselineFfi),
+			{ ...makeFresh(baselineFfi), backend: "ts" },
+			false,
+		);
+		expect(v.kind).toBe("backend-mismatch");
+	});
+
+	it("rejects a native metrics file with no ffi block", () => {
 		const v = evaluateVerdict(makeBaseline(baselineFfi), makeFresh(undefined), false);
-		expect(v.kind).toBe("ok");
+		expect(v.kind).toBe("missing-ffi");
 	});
 
 	it("prefers schema-mismatch over platform-mismatch when both differ", () => {
