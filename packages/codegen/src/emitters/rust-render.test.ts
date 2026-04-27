@@ -28,11 +28,14 @@ describe("emitHashFiles", () => {
 		expect(rsMatch?.[1]).toBe(tsMatch?.[1]);
 	});
 
-	it("includes the @generated header referencing the correct grammar", () => {
+	it("references the one-flag regen command in generated headers", () => {
 		const emit = emitHashFiles("typescript", sample);
 		expect(emit.hashRs.contents).toMatch(/@generated from packages\/typescript\/templates/);
-		expect(emit.hashRs.contents).toMatch(/--grammar typescript --rust-render/);
+		expect(emit.hashRs.contents).toMatch(/--grammar typescript --all/);
+		expect(emit.hashRs.contents).not.toMatch(/--rust-render/);
 		expect(emit.hashTs.contents).toMatch(/@generated from packages\/typescript\/templates/);
+		expect(emit.hashTs.contents).toMatch(/--grammar typescript --all/);
+		expect(emit.hashTs.contents).not.toMatch(/--rust-render/);
 	});
 
 	it("byte-identical output for identical inputs (determinism)", () => {

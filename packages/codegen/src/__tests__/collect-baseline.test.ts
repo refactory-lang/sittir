@@ -183,4 +183,21 @@ describe("collect-baseline", () => {
 			/failed to import native boundary for grammar 'rust'.*packages\/rust\/src\/boundary\.ts.*module not found/,
 		);
 	});
+
+	it("native baseline failures point at bundle drift instead of looking like parity noise", async () => {
+		try {
+			const native = await collectBaseline("native");
+			expect(native.backend).toBe("native");
+			expect(native.totals.total).toBeGreaterThan(0);
+		} catch (error) {
+			const message = error instanceof Error ? error.message : String(error);
+			throw new Error(
+				[
+					"native collectBaseline() failed before producing a baseline.",
+					"If this is template-bundle drift, resync packages/{grammar}/src/hash.ts and packages/{grammar}/rust-render/src/hash.rs before trusting parity results.",
+					`Original error: ${message}`,
+				].join("\n"),
+			);
+		}
+	}, 600_000);
 });
