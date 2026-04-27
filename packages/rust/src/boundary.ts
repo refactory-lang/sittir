@@ -1,5 +1,5 @@
 /**
- * Boundary shim — spec 012 T041.
+ * Boundary shim — spec 012 T042.
  *
  * Routes render / readNode / applyEdits / findMatches through the
  * active backend (native via napi, or the existing TS Nunjucks engine)
@@ -8,23 +8,29 @@
  *
  * Native path: lazily constructs a module-scoped `SittirEngine` from
  * the loaded `@sittir/rust-native` module carried on the backend
- * status. Falls back to the TS engine on any runtime error.
+ * status. Native runtime failures now surface with grammar-specific
+ * context instead of silently falling back.
  *
  * TS path: reuses the package-level renderer (bound to
  * `packages/rust/templates/`) and `@sittir/core` primitives
  * (`readNode`, `bindRange`).
  */
 
-import { createRenderer, readNode as coreReadNode, recordFfi, metricsEnabled } from "@sittir/core";
+import {
+	assertNativeNodeData,
+	createRenderer,
+	readNode as coreReadNode,
+	recordFfi,
+	metricsEnabled,
+} from "@sittir/core";
 import type { TreeHandle } from "@sittir/core";
 import type { AnyNodeData, ByteRange, Edit } from "@sittir/types";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { getActiveBackend, type NativeEngine } from "./backend.js";
 
-const GRAMMAR = "rust";
-
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const GRAMMAR = "rust";
 
 /**
  * Package-level Nunjucks renderer. Lazily built on first render call
@@ -39,6 +45,11 @@ function getTsRenderer(): ReturnType<typeof createRenderer> {
 	return tsRenderer;
 }
 
+function formatNativeError(operation: string, error: unknown): Error {
+	const message = error instanceof Error ? error.message : String(error);
+	return new Error(`@sittir/${GRAMMAR} native ${operation} failed: ${message}`, { cause: error });
+}
+
 /**
  * Module-scoped native engine. Constructed from the loaded native
  * module on first use; kept for the process lifetime. A single engine
@@ -48,15 +59,12 @@ function getTsRenderer(): ReturnType<typeof createRenderer> {
 let nativeEngine: NativeEngine | null = null;
 function getNativeEngine(): NativeEngine | null {
 	const status = getActiveBackend();
-	if (status.name !== "native" || !status.native) return null;
+	if (status.name !== "native") return null;
 	if (nativeEngine === null) {
 		try {
 			nativeEngine = new status.native.SittirEngine();
-		} catch {
-			// Construction failure is rare (set_language ABI mismatch, mostly);
-			// fall back silently to TS — the debug log line at selection
-			// already surfaced the issue if the consumer cared.
-			nativeEngine = null;
+		} catch (error) {
+			throw formatNativeError("engine initialization", error);
 		}
 	}
 	return nativeEngine;
@@ -69,25 +77,17 @@ function getNativeEngine(): NativeEngine | null {
  * (FR-002a).
  */
 export function render(node: AnyNodeData): string {
-	const kind = node.$type;
 	const engine = getNativeEngine();
 	if (engine !== null) {
-		try {
-			if (metricsEnabled) {
-				const json = JSON.stringify(node);
-				const payloadBytes = json.length;
-				const t0 = performance.now();
-				const result = engine.render(json);
-				const roundtripMs = performance.now() - t0;
-				recordFfi(GRAMMAR, kind, payloadBytes, roundtripMs, result.length);
-				return result;
-			}
-			return engine.render(JSON.stringify(node));
-		} catch {
-			// Runtime render failures on native are rare (template defects
-			// fail `cargo build` per FR-008). If one slips through, fall
-			// back to TS for this call — the next call retries native.
+		assertNativeNodeData(node);
+		const json = JSON.stringify(node);
+		if (metricsEnabled) {
+			const t0 = performance.now();
+			const result = engine.render(json);
+			recordFfi(GRAMMAR, node.$type, json.length, performance.now() - t0, result.length);
+			return result;
 		}
+		return engine.render(json);
 	}
 	return getTsRenderer().render(node);
 }
@@ -135,8 +135,8 @@ export function applyEdits(source: string, edits: readonly Edit[]): string {
 				source,
 				edits.map((e) => ({ ...e })),
 			);
-		} catch {
-			// Fall through to TS splice on any native failure.
+		} catch (error) {
+			throw formatNativeError("applyEdits", error);
 		}
 	}
 	return applyEditsTs(source, edits);

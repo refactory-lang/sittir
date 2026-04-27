@@ -1,7 +1,5 @@
 import type { AnyNodeData, NativeFieldValue, NativeNodeData } from "@sittir/types";
 
-const NATIVE_SOURCES = new Set<NativeNodeData["$source"]>(["ts", "sg", "factory"]);
-
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -31,7 +29,7 @@ function assertFiniteNumber(value: unknown, path: string): asserts value is numb
 }
 
 function assertNativeSource(value: unknown, path: string): asserts value is NativeNodeData["$source"] {
-	if (typeof value !== "string" || !NATIVE_SOURCES.has(value as NativeNodeData["$source"])) {
+	if (value !== "ts" && value !== "sg" && value !== "factory") {
 		throw new TypeError(`${path} must be one of "ts", "sg", or "factory", got ${describe(value)}`);
 	}
 }
