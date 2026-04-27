@@ -1,5 +1,5 @@
 ---
-description: 'Security review of changes introduced on a branch compared to a base branch'
+description: "Security review of changes introduced on a branch compared to a base branch"
 ---
 
 # Security Review — Branch Changes

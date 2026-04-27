@@ -113,36 +113,40 @@ The napi-rs bridge marshals a `RenderInput` object (serialised from TS-side Node
 
 ```ts
 interface MetricsFile {
-  schemaVersion: 1;
-  backend: 'ts' | 'native';
-  collectedAt: string;           // ISO 8601, UTC
-  collectedOn: {
-    platform: string;            // process.platform
-    nodeVersion: string;         // process.version
-    cpuModel: string;            // os.cpus()[0].model
-  };
-  memory: {
-    tsHeapDeltaBytes: number;
-    rustResidentDeltaBytes?: number;   // native only
-    napiCopyBytes?: number;            // native only
-    napiCopyBytesEstimate: boolean;    // always true for native
-  };
-  ffi?: {                        // native only
-    totalCalls: number;
-    meanRoundtripMs: number;
-    p99RoundtripMs: number;
-    meanPayloadBytes: number;
-  };
-  perKind: Record<string, {
-    grammar: string;
-    callCount: number;
-    meanMs: number;
-    p99Ms: number;
-    templateParseMs: number;
-    renderMs: number;
-    heapDeltaBytes: number;
-    napiCopyBytes?: number;      // native only
-  }>;
+	schemaVersion: 1;
+	backend: "ts" | "native";
+	collectedAt: string; // ISO 8601, UTC
+	collectedOn: {
+		platform: string; // process.platform
+		nodeVersion: string; // process.version
+		cpuModel: string; // os.cpus()[0].model
+	};
+	memory: {
+		tsHeapDeltaBytes: number;
+		rustResidentDeltaBytes?: number; // native only
+		napiCopyBytes?: number; // native only
+		napiCopyBytesEstimate: boolean; // always true for native
+	};
+	ffi?: {
+		// native only
+		totalCalls: number;
+		meanRoundtripMs: number;
+		p99RoundtripMs: number;
+		meanPayloadBytes: number;
+	};
+	perKind: Record<
+		string,
+		{
+			grammar: string;
+			callCount: number;
+			meanMs: number;
+			p99Ms: number;
+			templateParseMs: number;
+			renderMs: number;
+			heapDeltaBytes: number;
+			napiCopyBytes?: number; // native only
+		}
+	>;
 }
 ```
 
@@ -150,19 +154,19 @@ interface MetricsFile {
 
 ```ts
 interface PerfBaseline {
-  schemaVersion: 1;
-  warnOnlyUntil: string;         // ISO 8601 date — gate is warn-only before this
-  collectedOn: {
-    platform: string;
-    nodeVersion: string;
-    cpuModel: string;
-  };
-  ffi: {
-    totalCalls: number;
-    meanRoundtripMs: number;
-    p99RoundtripMs: number;
-    meanPayloadBytes: number;
-  };
+	schemaVersion: 1;
+	warnOnlyUntil: string; // ISO 8601 date — gate is warn-only before this
+	collectedOn: {
+		platform: string;
+		nodeVersion: string;
+		cpuModel: string;
+	};
+	ffi: {
+		totalCalls: number;
+		meanRoundtripMs: number;
+		p99RoundtripMs: number;
+		meanPayloadBytes: number;
+	};
 }
 ```
 

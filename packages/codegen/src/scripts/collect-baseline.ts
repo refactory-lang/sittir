@@ -473,8 +473,7 @@ const isCli = (() => {
 })();
 
 if (isCli) {
-	const metricsBackend: "ts" | "native" =
-		process.env.SITTIR_BACKEND === "native" ? "native" : "ts";
+	const metricsBackend: "ts" | "native" = process.env.SITTIR_BACKEND === "native" ? "native" : "ts";
 	const baseline = await collectBaseline(process.env.SITTIR_BACKEND);
 	process.stdout.write(serialiseBaseline(baseline));
 

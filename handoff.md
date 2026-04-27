@@ -12,21 +12,22 @@ This document captures everything the next operator needs to inherit the load-be
 
 Push-ready on origin already except where noted.
 
-| SHA | Title | What it actually does |
-|---|---|---|
-| `15d92f0e` | un-renderable A+B: leaf-check fixes 21 validator false positives | `validate/renderable.ts` — `isPureLeafEntry` from `node-types.json` makes the NodeMap-based validator agree with the file-based one. Un-renderable count 25→4. Zero behavioral delta — these all already rendered correctly via the text fast-path. |
-| `37c77ddc` | T054: gate branch `$text` behind `SITTIR_DEBUG_TEXT=1` | `readNode.ts` — top-level branch nodes no longer carry `$text` by default; leaves still do; child stubs always do (intentional, materialize-on-receipt symmetry). Required collateral fixes: `render.ts` synthesizes text from anon children; `validate/from.ts` slices source for text-shaped factory kinds; `client-utils.ts` widens `isNodeData` discriminant. |
-| `43cc6f58` | T047: python `_simple_pattern.negative` via variant() adoption | Two generator fixes: `assemble.ts:markVariantChildrenUserFacing` (variant children of supertypes weren't marked userFacing), and `node-map.ts:isTextTemplate` extended to recognise `seq(optional(punct), …)` shapes so the `-1` minus token isn't dropped. Python coverage 103/105→104/106. |
-| `af8b1ee8` | T049: jinja-conditional spacing for empty-body kinds | `node-map.ts:childrenMayBeEmpty` + `absorbFlankingChildrenSpaces` — containers with `repeat()`/`optional()` children now wrap the children placeholder in `{% if children \| isPresent %} … {% endif %}`. Affected ts/python container templates regenerated. |
-| `ba7ea88d` | T048: TS `override_modifier` position + `accessibility_modifier` pinning | `typescript/overrides.ts` — `method_definition`, `method_signature`, `property_signature` had position 1 mislabeled as `override_modifier` when it was actually `optional('static')`. Relabeled position 1 as `static_marker`; let enrich auto-promote the real `override_modifier` at position 2. `node-types.json` is now structurally correct (no more `static` contaminating the `override_modifier` field). Counts unchanged — corpus doesn't exercise the bug. |
-| `c5407b74` | T051: derive `hasTrailing`/`hasLeading` on `AssembledField` (DRY) | `node-map.ts` derives the two flags from `simplifiedRule` (the same tree the walker uses — see Section 4 trap below). 4 callers in `template-walker.ts` migrated to `this.fields.filter(f => f.hasTrailing)`. Pure refactor — byte-equal output across both backends, zero count change. |
-| `0180021a` | chore: project-wide oxfmt sweep + tooling drift sync | 1125 files. Quote-style + indent + semicolons across `.agents/`, `.claude/`, `.specify/`, `packages/`, `tests/`, `docs/`. Behavior unchanged. Was deferred during the long 016 session. |
-| `8cb69dca` | spec 053: trailing/leading anon synthesized-field architecture | Spec only — captures the architectural fix to replace the `MutableFlankedChildArray._trailing_anon` JS-side-channel (which `JSON.stringify` strips at the napi boundary, breaking native parity) with a true synthesized field. Implementation pending (#52). |
-| `bcab7daf` | spec 054: post-016 perf/memory/FFI tracking landing | Spec + implementation. New `packages/core/src/metrics.ts` (env-gated, zero overhead when off). `withMetrics` wraps `boundRender`; `recordFfi` instruments napi calls; `dumpMetrics` writes JSON. Validators (`validateRoundTrip`, `validateFactoryRoundTrip`, `validateFrom`, `validateReadNodeRoundTrip`) and `collect-baseline.ts` call `emitValidatorMetrics()` (DRY shared helper in `validate/common.ts`). New `check-perf-baseline.ts` regression-checker with 10 unit tests. New CI job `perf-regression-checker` (warn-only via `SITTIR_METRICS_FFI_WARN_ONLY=1` until 2026-05-26). Baselines: `perf-ts.json` (386 kinds, darwin/M4 Pro), `perf-native.json` (893 FFI calls, mean 0.0045 ms). |
+| SHA        | Title                                                                    | What it actually does                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ---------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `15d92f0e` | un-renderable A+B: leaf-check fixes 21 validator false positives         | `validate/renderable.ts` — `isPureLeafEntry` from `node-types.json` makes the NodeMap-based validator agree with the file-based one. Un-renderable count 25→4. Zero behavioral delta — these all already rendered correctly via the text fast-path.                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `37c77ddc` | T054: gate branch `$text` behind `SITTIR_DEBUG_TEXT=1`                   | `readNode.ts` — top-level branch nodes no longer carry `$text` by default; leaves still do; child stubs always do (intentional, materialize-on-receipt symmetry). Required collateral fixes: `render.ts` synthesizes text from anon children; `validate/from.ts` slices source for text-shaped factory kinds; `client-utils.ts` widens `isNodeData` discriminant.                                                                                                                                                                                                                                                                                                                                     |
+| `43cc6f58` | T047: python `_simple_pattern.negative` via variant() adoption           | Two generator fixes: `assemble.ts:markVariantChildrenUserFacing` (variant children of supertypes weren't marked userFacing), and `node-map.ts:isTextTemplate` extended to recognise `seq(optional(punct), …)` shapes so the `-1` minus token isn't dropped. Python coverage 103/105→104/106.                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `af8b1ee8` | T049: jinja-conditional spacing for empty-body kinds                     | `node-map.ts:childrenMayBeEmpty` + `absorbFlankingChildrenSpaces` — containers with `repeat()`/`optional()` children now wrap the children placeholder in `{% if children \| isPresent %} … {% endif %}`. Affected ts/python container templates regenerated.                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `ba7ea88d` | T048: TS `override_modifier` position + `accessibility_modifier` pinning | `typescript/overrides.ts` — `method_definition`, `method_signature`, `property_signature` had position 1 mislabeled as `override_modifier` when it was actually `optional('static')`. Relabeled position 1 as `static_marker`; let enrich auto-promote the real `override_modifier` at position 2. `node-types.json` is now structurally correct (no more `static` contaminating the `override_modifier` field). Counts unchanged — corpus doesn't exercise the bug.                                                                                                                                                                                                                                  |
+| `c5407b74` | T051: derive `hasTrailing`/`hasLeading` on `AssembledField` (DRY)        | `node-map.ts` derives the two flags from `simplifiedRule` (the same tree the walker uses — see Section 4 trap below). 4 callers in `template-walker.ts` migrated to `this.fields.filter(f => f.hasTrailing)`. Pure refactor — byte-equal output across both backends, zero count change.                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `0180021a` | chore: project-wide oxfmt sweep + tooling drift sync                     | 1125 files. Quote-style + indent + semicolons across `.agents/`, `.claude/`, `.specify/`, `packages/`, `tests/`, `docs/`. Behavior unchanged. Was deferred during the long 016 session.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `8cb69dca` | spec 053: trailing/leading anon synthesized-field architecture           | Spec only — captures the architectural fix to replace the `MutableFlankedChildArray._trailing_anon` JS-side-channel (which `JSON.stringify` strips at the napi boundary, breaking native parity) with a true synthesized field. Implementation pending (#52).                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `bcab7daf` | spec 054: post-016 perf/memory/FFI tracking landing                      | Spec + implementation. New `packages/core/src/metrics.ts` (env-gated, zero overhead when off). `withMetrics` wraps `boundRender`; `recordFfi` instruments napi calls; `dumpMetrics` writes JSON. Validators (`validateRoundTrip`, `validateFactoryRoundTrip`, `validateFrom`, `validateReadNodeRoundTrip`) and `collect-baseline.ts` call `emitValidatorMetrics()` (DRY shared helper in `validate/common.ts`). New `check-perf-baseline.ts` regression-checker with 10 unit tests. New CI job `perf-regression-checker` (warn-only via `SITTIR_METRICS_FFI_WARN_ONLY=1` until 2026-05-26). Baselines: `perf-ts.json` (386 kinds, darwin/M4 Pro), `perf-native.json` (893 FFI calls, mean 0.0045 ms). |
 
 **Pre-this-session, also on the branch**: `433bf34c` (T046 hidden-group factories, ships +6 net passes).
 
 **Current counts** (as of `15d92f0e`):
+
 - TS-mode: 84 test files / 4451 tests pass / 12 expected-fail. Un-renderable per-grammar: rust 0, ts 1, python 3 (total 4 — the real failures).
 - **Native: 8 test files FAIL / 4142 pass / 300 fail / 12 expected-fail.** All 300 failures cascade from one unimplemented stub at `packages/codegen/src/validate/common.ts:209`: `nativeTreeHandle.nodeById()` throws. This is THE top blocker — see §2.0.
 
@@ -47,6 +48,7 @@ This blocks `readNode()` whenever it's called on a native tree, which cascades i
 What works in native mode today: rendering (perf-tracking collected 893 FFI calls successfully), basic tree iteration. What's blocked: any drill-down that resolves a node by ID — which is the entire post-readNode validator suite.
 
 **Fix scope** (deferred from 012 rust-core-port):
+
 - Likely implementation in `packages/core/src/loader.ts` or `cst.ts` (the native-handle adapter).
 - May need a Rust-side index (HashMap<NodeId, NodeRef>) in `rust/crates/sittir-rust-napi/src/lib.rs` so the napi binding can answer the lookup in O(1).
 - The TS handle has the same method working (`packages/codegen/src/validate/common.ts` — search for the TS-side handle implementation as the reference).
@@ -54,8 +56,6 @@ What works in native mode today: rendering (perf-tracking collected 893 FFI call
 **Sequence implication**: ship `nodeById()` BEFORE C1/C2 land — otherwise the un-renderable kind regressions can't be verified in native mode, and the handoff's "zero regression" guarantee on those clusters is unenforceable.
 
 **Risk**: medium. Touches FFI surface. Must coordinate with napi rebuild (`pnpm -C rust/crates/sittir-rust-napi run build`).
-
-
 
 ---
 
@@ -66,6 +66,7 @@ The branch should be ready for PR after the un-renderable C1+C2 land and the lin
 ### 2a. In-flight (already in spec/tasks framing)
 
 #### **C1 — un-renderable polymorph-child kinds** (Python `with_clause_bare`, `expression_statement_tuple`)
+
 - **Status**: agent failed mid-task on org monthly usage limit; nothing committed; no partial state.
 - **Location**: `packages/codegen/src/compiler/assemble.ts` polymorph branch.
 - **Fix**: after building `AssembledPolymorph` and its internal `${parent}__form_${child}` `AssembledGroup`s, register each visible variant child kind (`${parent}_${child}`) as its own NodeMap entry. The hidden source rule (`_${parent}_${child}`) already exists in `optimized.rules` as a structural SEQ.
@@ -73,6 +74,7 @@ The branch should be ready for PR after the un-renderable C1+C2 land and the lin
 - **Risk**: medium. Needs to NOT touch `compiler/{node-map,template-walker}.ts` if at all possible — those are sensitive. If template-walker changes are needed, coordinate.
 
 #### **C2 — un-renderable structural symbol-aliases** (TS `interface_body`, Python `format_expression`)
+
 - **Status**: not started.
 - **Location**: `packages/codegen/src/compiler/evaluate.ts:synthesizeInlineAliasSources`.
 - **Fix**: extend the synthesis pass (or add a companion) to handle bare-symbol aliases. `alias($.object_type, $.interface_body)` should synthesize `_interface_body: symbol(object_type)` so link/assemble see it. Must NOT re-synthesize kinds that already have rules (check `synthesizeAliasTargetRules` interaction).
@@ -80,6 +82,7 @@ The branch should be ready for PR after the un-renderable C1+C2 land and the lin
 - **Risk**: medium-high. The synthesis pass is delicate. Read `feedback_synthesize_hidden_for_inline_alias` memory note before editing.
 
 #### **#52 — Trailing-anon synthesized field** (impl of spec 053)
+
 - **Status**: spec authored (`8cb69dca`). Implementation pending.
 - **Why it matters**: the current `MutableFlankedChildArray._trailing_anon` JS-side-channel in `render.ts` works for TS but is stripped by `JSON.stringify` at the napi boundary — breaks native parity for `tuple_expression` et al.
 - **Fix direction**: trailing/leading anons become true fields, created by enrich (auto-promotion) or explicit override. First-class — survives the marshal.
@@ -88,16 +91,19 @@ The branch should be ready for PR after the un-renderable C1+C2 land and the lin
 ### 2b. Open architectural specs (not yet authored)
 
 #### **#16 — Spec 021: slot IDs at evaluate stage**
+
 - Design direction documented in MEMORY.md (`project_slot_ids_in_rule_tree`).
 - Foundation work — replaces ad-hoc walkers with slot-table lookups. Cleans up multi-field ClauseRule, nested-optional detection, walker spacing.
 - DRY anti-pattern that this resolves: per-pass partial projections (multiple walkers each extracting same-shaped info differently — see MEMORY.md DRY section).
 - Substantial. Read `feedback_rule_type_discrimination` and `feedback_no_node_types_json_fallback` first.
 
 #### **#17 — Spec 022: collapse fields/children bifurcation**
+
 - Architectural — depends on #16 landing first. The current `$fields` (named) vs `$children` (unnamed/positional) split is a derivation duplication; slot IDs let us collapse to a single ordered slot array with provenance metadata per slot.
 - Substantial.
 
 #### **#31 — Spec 020: drop `_list` suffix divergence**
+
 - Concrete + scoped. TS templates use `{{ override_modifier }}`; rust-render mirrors use `{{ override_modifier_list }}` via `cli.ts:rewriteListUsage`. Two names for one fact (DRY anti-pattern).
 - Per memory note `project_template_list_suffix_divergence`: option 1 is to drop the suffix entirely.
 - Small spec. Worktree may already be staged at `.worktrees/020-*` per `project_pending_specs_post_016`.
@@ -105,6 +111,7 @@ The branch should be ready for PR after the un-renderable C1+C2 land and the lin
 ### 2c. Open implementation work (no spec needed)
 
 #### **#43 — `wrap.ts` setters**
+
 - Currently read-only; asymmetric with factories. `wrap()` produces NodeData with getters but no setters; factories produce NodeData with both. Implement setters following the factory pattern.
 - Touches `packages/codegen/src/emitters/wrap.ts` (codegen, NOT the generated `packages/{lang}/src/wrap.ts`).
 - Medium scope.
@@ -115,7 +122,7 @@ The branch should be ready for PR after the un-renderable C1+C2 land and the lin
 - **Open questions still in spec.md** (need user resolution before plan.md):
   1. Output dir default (`cwd()` vs repo root)
   2. `templateWarmCache` field for Nunjucks first-call vs cached-hit distinction
-  3. *(resolved this session: `warnOnlyUntil = 2026-05-26` hardcoded)*
+  3. _(resolved this session: `warnOnlyUntil = 2026-05-26` hardcoded)_
   4. `rustResidentDeltaBytes` accuracy (RSS proxy is coarse; defer to jemalloc integration?)
   5. FFI threshold (10% may false-positive on GHA; absolute ms vs %?)
 
@@ -126,20 +133,21 @@ The branch should be ready for PR after the un-renderable C1+C2 land and the lin
 
 ### 2f. Lower priority / unattributed
 
-| # | Task | Notes |
-|---|---|---|
-| #29 | Wave 2 follow-up: python `_simple_pattern.negative` via variant() | Closed by T047 (`43cc6f58`). |
-| #34 | Latent bug: TS method/property override_modifier | Closed by T048 (`ba7ea88d`). |
-| #40 | Empty-body cosmetic spacing | Closed by T049 (`af8b1ee8`). |
-| #51 | DRY hasTrailing/hasLeading | Closed by T051 (`c5407b74`). |
-| #54 | Branch $text behind debug flag | Closed by T054 (`37c77ddc`). |
-| #49 | Post-016 perf spec | Closed by spec 054 (`bcab7daf`); gaps in §2d. |
+| #   | Task                                                              | Notes                                         |
+| --- | ----------------------------------------------------------------- | --------------------------------------------- |
+| #29 | Wave 2 follow-up: python `_simple_pattern.negative` via variant() | Closed by T047 (`43cc6f58`).                  |
+| #34 | Latent bug: TS method/property override_modifier                  | Closed by T048 (`ba7ea88d`).                  |
+| #40 | Empty-body cosmetic spacing                                       | Closed by T049 (`af8b1ee8`).                  |
+| #51 | DRY hasTrailing/hasLeading                                        | Closed by T051 (`c5407b74`).                  |
+| #54 | Branch $text behind debug flag                                    | Closed by T054 (`37c77ddc`).                  |
+| #49 | Post-016 perf spec                                                | Closed by spec 054 (`bcab7daf`); gaps in §2d. |
 
 ---
 
 ## 3. Pre-PR checklist for `016-parity-regressions`
 
 Before merging to base:
+
 - [ ] Land C1 (un-renderable 4→2)
 - [ ] Land C2 (un-renderable 2→0) — optional; can ship as a fast-follow
 - [ ] Run `pnpm format:check` — currently fails on baselines/spec files; either accept or fix
@@ -167,6 +175,7 @@ Both clauses matter independently. Storage duplication drifts; derivation duplic
 ### 4b. **Fix the generator, not the generated output**
 
 Sittir generates a lot per grammar. Never hand-edit:
+
 - `packages/{rust,python,typescript}/src/*` — factories, types, node-model, etc.
 - `packages/{rust,python,typescript}/templates/*.jinja` — per-rule render templates (feature 011)
 - `packages/{rust,python,typescript}/.sittir/grammar.js` — transpiled overrides bridge
@@ -190,11 +199,11 @@ Several classes (AssembledBranch, AssembledGroup, etc.) hold both `rule` (raw, p
 
 Templates are consumed by both Nunjucks (TS) and Askama (Rust). Per memory note `project_jinja_intersection_safe_primitives` (research-jinja-whitespace.md, prototype-verified 2026-04-25):
 
-| Primitive | Status |
-|---|---|
-| `is defined`, truthy `{% if x %}`, `!= ""`, `if let` | **DIVERGE** — do not use in shared templates |
-| `\| isPresent` | Canonical conditional — works identically in both engines |
-| `{% if x \| isPresent %} … {% endif %}` | Use this for any shared-template conditional |
+| Primitive                                            | Status                                                    |
+| ---------------------------------------------------- | --------------------------------------------------------- |
+| `is defined`, truthy `{% if x %}`, `!= ""`, `if let` | **DIVERGE** — do not use in shared templates              |
+| `\| isPresent`                                       | Canonical conditional — works identically in both engines |
+| `{% if x \| isPresent %} … {% endif %}`              | Use this for any shared-template conditional              |
 
 Read this before editing any `.jinja` template OR walker emission.
 
@@ -206,7 +215,7 @@ Per memory note `feedback_enrich_post_evaluation_only`: enrich changes the TS-si
 
 Per memory note `feedback_no_node_types_json_fallback`: tree-sitter generates `node-types.json` from the same `grammar.json` we read. If our pipeline misses optionality or shape, fix our derivation — don't consult `node-types.json` as a workaround. DRY: one fact, one source, one derivation.
 
-(Caveat: A+B un-renderable fix at `15d92f0e` reads `node-types.json` for the leaf check — but only as a *validator* concession because the validator can't see the same kind information NodeMap sees. This is the rare exception; do NOT generalize to compiler/render paths.)
+(Caveat: A+B un-renderable fix at `15d92f0e` reads `node-types.json` for the leaf check — but only as a _validator_ concession because the validator can't see the same kind information NodeMap sees. This is the rare exception; do NOT generalize to compiler/render paths.)
 
 ### 4i. **Inline `_kw_*` for LR-precedence after field-promotion**
 
@@ -215,6 +224,7 @@ Per memory note `feedback_synthesized_field_inline_for_lr_precedence`: when prom
 ### 4j. **Overrides.ts patterns**
 
 Per memory note `feedback_overrides_and_variants`: read this before editing any grammar's `overrides.ts`. Core recurring patterns:
+
 - `variant()` adoption — the canonical way to split a polymorph
 - `conflicts.concat(previous)` — the only safe way to extend conflicts
 - `field('semicolon')` — semicolon promotion idiom
@@ -223,6 +233,7 @@ Per memory note `feedback_overrides_and_variants`: read this before editing any 
 ### 4k. **Rule type discrimination — switch first, type guards second**
 
 Per memory note `feedback_rule_type_discrimination` and CLAUDE.md "Rule type discrimination":
+
 1. Switch on `rule.type` with `default: assertNever(rule)` — exhaustive narrowing
 2. Per-variant type guards (`isSeq`, `isField`, `isSymbol`, …) for `.filter()` / `.find()` / `.some()` / `.every()`
 3. Inline `rule.type === 'seq'` checks inside switch arms or for one-off compound predicates

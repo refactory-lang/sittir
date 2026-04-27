@@ -1,5 +1,5 @@
 ---
-description: 'Perform a comprehensive security review of the current codebase'
+description: "Perform a comprehensive security review of the current codebase"
 ---
 
 # Security Review Command

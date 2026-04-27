@@ -925,9 +925,7 @@ function rewriteInlineAliases(rule: Rule, rules: Record<string, Rule>): Rule {
 				if (!targetAlreadyExists) {
 					const syntheticHiddenName = `_${rule.value}`;
 					if (!rules[syntheticHiddenName]) {
-						rules[syntheticHiddenName] = isBareSymbolToExistingRule
-							? inner
-							: recurse(rule.content);
+						rules[syntheticHiddenName] = isBareSymbolToExistingRule ? inner : recurse(rule.content);
 					}
 					return {
 						...rule,

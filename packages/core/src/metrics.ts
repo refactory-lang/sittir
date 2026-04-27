@@ -223,9 +223,7 @@ export function dumpMetrics(backend: "ts" | "native", outDir?: string): void {
 			p99Ms: Number(p99Ms.toFixed(4)),
 			outputBytes: b.outputBytes,
 			heapDeltaBytes: b.heapDeltaBytes,
-			...(backend === "native" && b.napiCopyBytes > 0
-				? { napiCopyBytes: b.napiCopyBytes }
-				: {}),
+			...(backend === "native" && b.napiCopyBytes > 0 ? { napiCopyBytes: b.napiCopyBytes } : {}),
 		};
 		perKindOut[kindName] = entry;
 		totalHeapDelta += b.heapDeltaBytes;

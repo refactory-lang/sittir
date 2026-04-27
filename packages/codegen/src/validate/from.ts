@@ -255,9 +255,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 						// slicing the source span directly when $text is absent.
 						const textForFactory =
 							readData.$text ??
-							(readData.$span
-								? entry.source.slice(readData.$span.start, readData.$span.end)
-								: "");
+							(readData.$span ? entry.source.slice(readData.$span.start, readData.$span.end) : "");
 						factoryResult = (factory as (text: string) => AnyNodeData)(textForFactory);
 					} else {
 						const namedChildren = (readData.$children ?? []).filter(

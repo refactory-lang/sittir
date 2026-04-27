@@ -3,9 +3,9 @@ description: Security review of changes introduced on a branch compared to a bas
   branch
 ---
 
-
 <!-- Extension: security-review -->
 <!-- Config: .specify/extensions/security-review/ -->
+
 # Security Review — Branch Changes
 
 ## User Input

@@ -2,9 +2,9 @@
 description: Perform a comprehensive security review of the current codebase
 ---
 
-
 <!-- Extension: security-review -->
 <!-- Config: .specify/extensions/security-review/ -->
+
 # Security Review Command
 
 ## User Input

@@ -1,3104 +1,3104 @@
 {
-  "schemaVersion": 1,
-  "backend": "ts",
-  "collectedAt": "2026-04-26T23:34:00.072Z",
-  "collectedOn": {
-    "platform": "darwin",
-    "nodeVersion": "v24.15.0",
-    "cpuModel": "Apple M4 Pro"
-  },
-  "memory": {
-    "tsHeapDeltaBytes": 144078856,
-    "napiCopyBytesEstimate": false
-  },
-  "perKind": {
-    "_assignment_eq": {
-      "grammar": "python",
-      "callCount": 41,
-      "meanMs": 0.0389,
-      "p99Ms": 0.1094,
-      "outputBytes": 392,
-      "heapDeltaBytes": 1516984
-    },
-    "_assignment_type": {
-      "grammar": "python",
-      "callCount": 2,
-      "meanMs": 0.0473,
-      "p99Ms": 0.0571,
-      "outputBytes": 18,
-      "heapDeltaBytes": 92872
-    },
-    "_assignment_typed": {
-      "grammar": "python",
-      "callCount": 6,
-      "meanMs": 0.0543,
-      "p99Ms": 0.0742,
-      "outputBytes": 78,
-      "heapDeltaBytes": 334960
-    },
-    "_match_block": {
-      "grammar": "python",
-      "callCount": 69,
-      "meanMs": 0.038,
-      "p99Ms": 0.0947,
-      "outputBytes": 11881,
-      "heapDeltaBytes": 3760128
-    },
-    "_match_block_block": {
-      "grammar": "python",
-      "callCount": 35,
-      "meanMs": 0.0555,
-      "p99Ms": 0.108,
-      "outputBytes": 5725,
-      "heapDeltaBytes": 2528568
-    },
-    "_with_clause_paren": {
-      "grammar": "python",
-      "callCount": 2,
-      "meanMs": 0.0517,
-      "p99Ms": 0.0529,
-      "outputBytes": 62,
-      "heapDeltaBytes": 120152
-    },
-    "aliased_import": {
-      "grammar": "python",
-      "callCount": 2,
-      "meanMs": 0.084,
-      "p99Ms": 0.0877,
-      "outputBytes": 16,
-      "heapDeltaBytes": 114568
-    },
-    "argument_list": {
-      "grammar": "python",
-      "callCount": 150,
-      "meanMs": 0.0443,
-      "p99Ms": 0.0914,
-      "outputBytes": 1473,
-      "heapDeltaBytes": 1410328
-    },
-    "as_pattern": {
-      "grammar": "python",
-      "callCount": 16,
-      "meanMs": 0.0466,
-      "p99Ms": 0.0944,
-      "outputBytes": 116,
-      "heapDeltaBytes": 877856
-    },
-    "assert_statement": {
-      "grammar": "python",
-      "callCount": 4,
-      "meanMs": 0.0591,
-      "p99Ms": 0.0895,
-      "outputBytes": 48,
-      "heapDeltaBytes": 228904
-    },
-    "assignment": {
-      "grammar": "python",
-      "callCount": 65,
-      "meanMs": 0.0637,
-      "p99Ms": 0.2474,
-      "outputBytes": 804,
-      "heapDeltaBytes": 5189840
-    },
-    "attribute": {
-      "grammar": "rust",
-      "callCount": 39,
-      "meanMs": 0.0587,
-      "p99Ms": 0.1664,
-      "outputBytes": 683,
-      "heapDeltaBytes": 4030568
-    },
-    "augmented_assignment": {
-      "grammar": "python",
-      "callCount": 14,
-      "meanMs": 0.0362,
-      "p99Ms": 0.0542,
-      "outputBytes": 90,
-      "heapDeltaBytes": 875792
-    },
-    "await": {
-      "grammar": "python",
-      "callCount": 10,
-      "meanMs": 0.0383,
-      "p99Ms": 0.1286,
-      "outputBytes": 101,
-      "heapDeltaBytes": 292592
-    },
-    "binary_operator": {
-      "grammar": "python",
-      "callCount": 53,
-      "meanMs": 0.0902,
-      "p99Ms": 1.6977,
-      "outputBytes": 517,
-      "heapDeltaBytes": -615448
-    },
-    "block": {
-      "grammar": "rust",
-      "callCount": 197,
-      "meanMs": 0.0523,
-      "p99Ms": 0.186,
-      "outputBytes": 3167,
-      "heapDeltaBytes": 17401080
-    },
-    "boolean_operator": {
-      "grammar": "python",
-      "callCount": 17,
-      "meanMs": 0.1123,
-      "p99Ms": 1.02,
-      "outputBytes": 211,
-      "heapDeltaBytes": -63005296
-    },
-    "call": {
-      "grammar": "python",
-      "callCount": 185,
-      "meanMs": 0.0484,
-      "p99Ms": 0.122,
-      "outputBytes": 3288,
-      "heapDeltaBytes": 3137808
-    },
-    "case_clause": {
-      "grammar": "python",
-      "callCount": 69,
-      "meanMs": 0.0559,
-      "p99Ms": 0.1327,
-      "outputBytes": 3536,
-      "heapDeltaBytes": 6574016
-    },
-    "case_pattern": {
-      "grammar": "python",
-      "callCount": 153,
-      "meanMs": 0.0387,
-      "p99Ms": 0.1299,
-      "outputBytes": 1641,
-      "heapDeltaBytes": 9151800
-    },
-    "chevron": {
-      "grammar": "python",
-      "callCount": 3,
-      "meanMs": 0.0721,
-      "p99Ms": 0.1056,
-      "outputBytes": 9,
-      "heapDeltaBytes": 143888
-    },
-    "class_definition": {
-      "grammar": "python",
-      "callCount": 10,
-      "meanMs": 0.0673,
-      "p99Ms": 0.1033,
-      "outputBytes": 436,
-      "heapDeltaBytes": 1119416
-    },
-    "class_pattern": {
-      "grammar": "python",
-      "callCount": 25,
-      "meanMs": 0.065,
-      "p99Ms": 0.1607,
-      "outputBytes": 413,
-      "heapDeltaBytes": 2203192
-    },
-    "comparison_operator": {
-      "grammar": "python",
-      "callCount": 12,
-      "meanMs": 0.0609,
-      "p99Ms": 0.1132,
-      "outputBytes": 83,
-      "heapDeltaBytes": 1007816
-    },
-    "concatenated_string": {
-      "grammar": "python",
-      "callCount": 9,
-      "meanMs": 0.0455,
-      "p99Ms": 0.0649,
-      "outputBytes": 297,
-      "heapDeltaBytes": 507792
-    },
-    "conditional_expression": {
-      "grammar": "python",
-      "callCount": 6,
-      "meanMs": 0.0682,
-      "p99Ms": 0.1395,
-      "outputBytes": 138,
-      "heapDeltaBytes": 399352
-    },
-    "constrained_type": {
-      "grammar": "python",
-      "callCount": 3,
-      "meanMs": 0.0836,
-      "p99Ms": 0.1387,
-      "outputBytes": 32,
-      "heapDeltaBytes": 169616
-    },
-    "decorated_definition": {
-      "grammar": "python",
-      "callCount": 5,
-      "meanMs": 0.0557,
-      "p99Ms": 0.0812,
-      "outputBytes": 264,
-      "heapDeltaBytes": 327976
-    },
-    "decorator": {
-      "grammar": "typescript",
-      "callCount": 15,
-      "meanMs": 0.044,
-      "p99Ms": 0.0822,
-      "outputBytes": 127,
-      "heapDeltaBytes": 814608
-    },
-    "default_parameter": {
-      "grammar": "python",
-      "callCount": 13,
-      "meanMs": 0.0426,
-      "p99Ms": 0.0563,
-      "outputBytes": 109,
-      "heapDeltaBytes": 250640
-    },
-    "delete_statement": {
-      "grammar": "python",
-      "callCount": 2,
-      "meanMs": 0.081,
-      "p99Ms": 0.0821,
-      "outputBytes": 28,
-      "heapDeltaBytes": 115112
-    },
-    "dict_pattern": {
-      "grammar": "python",
-      "callCount": 11,
-      "meanMs": 0.0412,
-      "p99Ms": 0.049,
-      "outputBytes": 210,
-      "heapDeltaBytes": 667768
-    },
-    "dictionary": {
-      "grammar": "python",
-      "callCount": 22,
-      "meanMs": 0.0552,
-      "p99Ms": 0.1115,
-      "outputBytes": 203,
-      "heapDeltaBytes": 2067816
-    },
-    "dictionary_comprehension": {
-      "grammar": "python",
-      "callCount": 4,
-      "meanMs": 0.0674,
-      "p99Ms": 0.107,
-      "outputBytes": 112,
-      "heapDeltaBytes": 290192
-    },
-    "dictionary_splat": {
-      "grammar": "python",
-      "callCount": 11,
-      "meanMs": 0.0449,
-      "p99Ms": 0.0807,
-      "outputBytes": 46,
-      "heapDeltaBytes": -273992
-    },
-    "dictionary_splat_pattern": {
-      "grammar": "python",
-      "callCount": 11,
-      "meanMs": 0.0555,
-      "p99Ms": 0.1406,
-      "outputBytes": 59,
-      "heapDeltaBytes": 615240
-    },
-    "dotted_name": {
-      "grammar": "python",
-      "callCount": 88,
-      "meanMs": 0.0413,
-      "p99Ms": 0.2445,
-      "outputBytes": 411,
-      "heapDeltaBytes": 4586360
-    },
-    "elif_clause": {
-      "grammar": "python",
-      "callCount": 2,
-      "meanMs": 0.0984,
-      "p99Ms": 0.1165,
-      "outputBytes": 24,
-      "heapDeltaBytes": 123672
-    },
-    "else_clause": {
-      "grammar": "typescript",
-      "callCount": 2,
-      "meanMs": 0.0625,
-      "p99Ms": 0.0636,
-      "outputBytes": 16,
-      "heapDeltaBytes": 95800
-    },
-    "except_clause": {
-      "grammar": "python",
-      "callCount": 8,
-      "meanMs": 0.084,
-      "p99Ms": 0.1697,
-      "outputBytes": 94,
-      "heapDeltaBytes": 983072
-    },
-    "exec_statement": {
-      "grammar": "python",
-      "callCount": 5,
-      "meanMs": 0.0872,
-      "p99Ms": 0.1662,
-      "outputBytes": 69,
-      "heapDeltaBytes": 432104
-    },
-    "expression_list": {
-      "grammar": "python",
-      "callCount": 23,
-      "meanMs": 0.0435,
-      "p99Ms": 0.0738,
-      "outputBytes": 160,
-      "heapDeltaBytes": 872736
-    },
-    "expression_statement": {
-      "grammar": "typescript",
-      "callCount": 90,
-      "meanMs": 0.0391,
-      "p99Ms": 0.0681,
-      "outputBytes": 1954,
-      "heapDeltaBytes": 5646024
-    },
-    "finally_clause": {
-      "grammar": "typescript",
-      "callCount": 4,
-      "meanMs": 0.0607,
-      "p99Ms": 0.1254,
-      "outputBytes": 42,
-      "heapDeltaBytes": 183472
-    },
-    "for_in_clause": {
-      "grammar": "python",
-      "callCount": 25,
-      "meanMs": 0.0673,
-      "p99Ms": 0.1409,
-      "outputBytes": 413,
-      "heapDeltaBytes": 1928520
-    },
-    "for_statement": {
-      "grammar": "typescript",
-      "callCount": 3,
-      "meanMs": 0.0732,
-      "p99Ms": 0.0916,
-      "outputBytes": 33,
-      "heapDeltaBytes": 280096
-    },
-    "format_specifier": {
-      "grammar": "python",
-      "callCount": 10,
-      "meanMs": 0.0493,
-      "p99Ms": 0.0976,
-      "outputBytes": 52,
-      "heapDeltaBytes": 552272
-    },
-    "function_definition": {
-      "grammar": "python",
-      "callCount": 55,
-      "meanMs": 0.085,
-      "p99Ms": 0.3006,
-      "outputBytes": 2084,
-      "heapDeltaBytes": 8143784
-    },
-    "future_import_statement": {
-      "grammar": "python",
-      "callCount": 4,
-      "meanMs": 0.1037,
-      "p99Ms": 0.1797,
-      "outputBytes": 185,
-      "heapDeltaBytes": 240632
-    },
-    "generator_expression": {
-      "grammar": "python",
-      "callCount": 9,
-      "meanMs": 0.0659,
-      "p99Ms": 0.1422,
-      "outputBytes": 238,
-      "heapDeltaBytes": 1028800
-    },
-    "generic_type": {
-      "grammar": "typescript",
-      "callCount": 62,
-      "meanMs": 0.0434,
-      "p99Ms": 0.2242,
-      "outputBytes": 1228,
-      "heapDeltaBytes": 3316112
-    },
-    "global_statement": {
-      "grammar": "python",
-      "callCount": 3,
-      "meanMs": 0.0785,
-      "p99Ms": 0.1266,
-      "outputBytes": 26,
-      "heapDeltaBytes": 173712
-    },
-    "if_clause": {
-      "grammar": "python",
-      "callCount": 6,
-      "meanMs": 0.0573,
-      "p99Ms": 0.0915,
-      "outputBytes": 43,
-      "heapDeltaBytes": 280880
-    },
-    "if_statement": {
-      "grammar": "typescript",
-      "callCount": 6,
-      "meanMs": 0.0547,
-      "p99Ms": 0.0592,
-      "outputBytes": 162,
-      "heapDeltaBytes": 487752
-    },
-    "import_from_statement": {
-      "grammar": "python",
-      "callCount": 9,
-      "meanMs": 0.0624,
-      "p99Ms": 0.1048,
-      "outputBytes": 141,
-      "heapDeltaBytes": 730776
-    },
-    "import_statement": {
-      "grammar": "typescript",
-      "callCount": 15,
-      "meanMs": 0.2697,
-      "p99Ms": 3.1079,
-      "outputBytes": 432,
-      "heapDeltaBytes": -31790112
-    },
-    "interpolation": {
-      "grammar": "python",
-      "callCount": 35,
-      "meanMs": 0.0668,
-      "p99Ms": 0.1254,
-      "outputBytes": 400,
-      "heapDeltaBytes": 3870808
-    },
-    "keyword_argument": {
-      "grammar": "python",
-      "callCount": 15,
-      "meanMs": 0.0747,
-      "p99Ms": 0.4988,
-      "outputBytes": 152,
-      "heapDeltaBytes": -6294016
-    },
-    "keyword_pattern": {
-      "grammar": "python",
-      "callCount": 19,
-      "meanMs": 0.0432,
-      "p99Ms": 0.0856,
-      "outputBytes": 136,
-      "heapDeltaBytes": 942352
-    },
-    "lambda": {
-      "grammar": "python",
-      "callCount": 16,
-      "meanMs": 0.12,
-      "p99Ms": 1.3168,
-      "outputBytes": 204,
-      "heapDeltaBytes": -1524600
-    },
-    "lambda_parameters": {
-      "grammar": "python",
-      "callCount": 4,
-      "meanMs": 0.0659,
-      "p99Ms": 0.1226,
-      "outputBytes": 26,
-      "heapDeltaBytes": 224832
-    },
-    "list": {
-      "grammar": "python",
-      "callCount": 38,
-      "meanMs": 0.0497,
-      "p99Ms": 0.1215,
-      "outputBytes": 257,
-      "heapDeltaBytes": 2328816
-    },
-    "list_comprehension": {
-      "grammar": "python",
-      "callCount": 9,
-      "meanMs": 0.0592,
-      "p99Ms": 0.1236,
-      "outputBytes": 262,
-      "heapDeltaBytes": 636712
-    },
-    "list_pattern": {
-      "grammar": "python",
-      "callCount": 24,
-      "meanMs": 0.0448,
-      "p99Ms": 0.0736,
-      "outputBytes": 424,
-      "heapDeltaBytes": 1476952
-    },
-    "list_splat": {
-      "grammar": "python",
-      "callCount": 30,
-      "meanMs": 0.0424,
-      "p99Ms": 0.084,
-      "outputBytes": 65,
-      "heapDeltaBytes": 1381656
-    },
-    "list_splat_pattern": {
-      "grammar": "python",
-      "callCount": 20,
-      "meanMs": 0.0584,
-      "p99Ms": 0.1667,
-      "outputBytes": 75,
-      "heapDeltaBytes": 757296
-    },
-    "match_statement": {
-      "grammar": "python",
-      "callCount": 36,
-      "meanMs": 0.0611,
-      "p99Ms": 0.5292,
-      "outputBytes": 6916,
-      "heapDeltaBytes": -5969232
-    },
-    "module": {
-      "grammar": "typescript",
-      "callCount": 25,
-      "meanMs": 0.0339,
-      "p99Ms": 0.0779,
-      "outputBytes": 1073,
-      "heapDeltaBytes": 966272
-    },
-    "named_expression": {
-      "grammar": "python",
-      "callCount": 15,
-      "meanMs": 0.0489,
-      "p99Ms": 0.1024,
-      "outputBytes": 306,
-      "heapDeltaBytes": 833120
-    },
-    "nonlocal_statement": {
-      "grammar": "python",
-      "callCount": 2,
-      "meanMs": 0.0769,
-      "p99Ms": 0.0771,
-      "outputBytes": 20,
-      "heapDeltaBytes": 128320
-    },
-    "not_operator": {
-      "grammar": "python",
-      "callCount": 12,
-      "meanMs": 0.0663,
-      "p99Ms": 0.172,
-      "outputBytes": 74,
-      "heapDeltaBytes": 574864
-    },
-    "pair": {
-      "grammar": "typescript",
-      "callCount": 10,
-      "meanMs": 0.0386,
-      "p99Ms": 0.0485,
-      "outputBytes": 117,
-      "heapDeltaBytes": 534648
-    },
-    "parameters": {
-      "grammar": "rust",
-      "callCount": 92,
-      "meanMs": 0.0431,
-      "p99Ms": 0.1527,
-      "outputBytes": 930,
-      "heapDeltaBytes": 5594960
-    },
-    "parenthesized_expression": {
-      "grammar": "typescript",
-      "callCount": 13,
-      "meanMs": 0.0564,
-      "p99Ms": 0.0914,
-      "outputBytes": 108,
-      "heapDeltaBytes": 1024624
-    },
-    "pattern_list": {
-      "grammar": "python",
-      "callCount": 23,
-      "meanMs": 0.0435,
-      "p99Ms": 0.0748,
-      "outputBytes": 138,
-      "heapDeltaBytes": 1373952
-    },
-    "print_statement": {
-      "grammar": "python",
-      "callCount": 23,
-      "meanMs": 0.0668,
-      "p99Ms": 0.1433,
-      "outputBytes": 264,
-      "heapDeltaBytes": 2192200
-    },
-    "raise_statement": {
-      "grammar": "python",
-      "callCount": 6,
-      "meanMs": 0.067,
-      "p99Ms": 0.0925,
-      "outputBytes": 175,
-      "heapDeltaBytes": 490352
-    },
-    "relative_import": {
-      "grammar": "python",
-      "callCount": 5,
-      "meanMs": 0.0629,
-      "p99Ms": 0.0892,
-      "outputBytes": 11,
-      "heapDeltaBytes": 365000
-    },
-    "return_statement": {
-      "grammar": "typescript",
-      "callCount": 19,
-      "meanMs": 0.0456,
-      "p99Ms": 0.0753,
-      "outputBytes": 367,
-      "heapDeltaBytes": 1215096
-    },
-    "set": {
-      "grammar": "python",
-      "callCount": 4,
-      "meanMs": 0.0512,
-      "p99Ms": 0.0677,
-      "outputBytes": 36,
-      "heapDeltaBytes": 245808
-    },
-    "set_comprehension": {
-      "grammar": "python",
-      "callCount": 4,
-      "meanMs": 0.0566,
-      "p99Ms": 0.0823,
-      "outputBytes": 125,
-      "heapDeltaBytes": 278424
-    },
-    "slice": {
-      "grammar": "python",
-      "callCount": 5,
-      "meanMs": 0.0948,
-      "p99Ms": 0.1498,
-      "outputBytes": 11,
-      "heapDeltaBytes": 571456
-    },
-    "splat_pattern": {
-      "grammar": "python",
-      "callCount": 10,
-      "meanMs": 0.0521,
-      "p99Ms": 0.0876,
-      "outputBytes": 56,
-      "heapDeltaBytes": 885512
-    },
-    "splat_type": {
-      "grammar": "python",
-      "callCount": 11,
-      "meanMs": 0.0567,
-      "p99Ms": 0.1402,
-      "outputBytes": 21,
-      "heapDeltaBytes": 603184
-    },
-    "string": {
-      "grammar": "typescript",
-      "callCount": 129,
-      "meanMs": 0.0397,
-      "p99Ms": 0.1265,
-      "outputBytes": 942,
-      "heapDeltaBytes": 6883552
-    },
-    "string_content": {
-      "grammar": "python",
-      "callCount": 166,
-      "meanMs": 0.0065,
-      "p99Ms": 0.0551,
-      "outputBytes": 1346,
-      "heapDeltaBytes": 1976680
-    },
-    "subscript": {
-      "grammar": "python",
-      "callCount": 43,
-      "meanMs": 0.0712,
-      "p99Ms": 0.4418,
-      "outputBytes": 242,
-      "heapDeltaBytes": -5872880
-    },
-    "try_statement": {
-      "grammar": "typescript",
-      "callCount": 6,
-      "meanMs": 0.0957,
-      "p99Ms": 0.2481,
-      "outputBytes": 216,
-      "heapDeltaBytes": 588840
-    },
-    "tuple": {
-      "grammar": "python",
-      "callCount": 43,
-      "meanMs": 0.052,
-      "p99Ms": 0.1564,
-      "outputBytes": 274,
-      "heapDeltaBytes": 2637584
-    },
-    "tuple_pattern": {
-      "grammar": "rust",
-      "callCount": 24,
-      "meanMs": 0.0454,
-      "p99Ms": 0.0793,
-      "outputBytes": 205,
-      "heapDeltaBytes": 673720
-    },
-    "type": {
-      "grammar": "python",
-      "callCount": 97,
-      "meanMs": 0.0361,
-      "p99Ms": 0.1552,
-      "outputBytes": 670,
-      "heapDeltaBytes": 4813456
-    },
-    "type_alias_statement": {
-      "grammar": "python",
-      "callCount": 9,
-      "meanMs": 0.049,
-      "p99Ms": 0.1091,
-      "outputBytes": 427,
-      "heapDeltaBytes": 568920
-    },
-    "type_parameter": {
-      "grammar": "typescript",
-      "callCount": 61,
-      "meanMs": 0.0666,
-      "p99Ms": 0.417,
-      "outputBytes": 259,
-      "heapDeltaBytes": 7511808
-    },
-    "typed_default_parameter": {
-      "grammar": "python",
-      "callCount": 4,
-      "meanMs": 0.0699,
-      "p99Ms": 0.0896,
-      "outputBytes": 66,
-      "heapDeltaBytes": 262616
-    },
-    "typed_parameter": {
-      "grammar": "python",
-      "callCount": 10,
-      "meanMs": 0.0533,
-      "p99Ms": 0.1072,
-      "outputBytes": 81,
-      "heapDeltaBytes": 642528
-    },
-    "unary_operator": {
-      "grammar": "python",
-      "callCount": 19,
-      "meanMs": 0.0712,
-      "p99Ms": 0.3339,
-      "outputBytes": 88,
-      "heapDeltaBytes": -15098344
-    },
-    "union_pattern": {
-      "grammar": "python",
-      "callCount": 10,
-      "meanMs": 0.0503,
-      "p99Ms": 0.0695,
-      "outputBytes": 212,
-      "heapDeltaBytes": 554808
-    },
-    "union_type": {
-      "grammar": "typescript",
-      "callCount": 29,
-      "meanMs": 0.1202,
-      "p99Ms": 2.1318,
-      "outputBytes": 437,
-      "heapDeltaBytes": -50102296
-    },
-    "while_statement": {
-      "grammar": "python",
-      "callCount": 7,
-      "meanMs": 0.0623,
-      "p99Ms": 0.1017,
-      "outputBytes": 156,
-      "heapDeltaBytes": 569968
-    },
-    "with_clause": {
-      "grammar": "python",
-      "callCount": 6,
-      "meanMs": 0.0414,
-      "p99Ms": 0.0487,
-      "outputBytes": 65,
-      "heapDeltaBytes": 323280
-    },
-    "with_item": {
-      "grammar": "python",
-      "callCount": 8,
-      "meanMs": 0.041,
-      "p99Ms": 0.0709,
-      "outputBytes": 72,
-      "heapDeltaBytes": 361976
-    },
-    "with_statement": {
-      "grammar": "python",
-      "callCount": 6,
-      "meanMs": 0.0712,
-      "p99Ms": 0.0955,
-      "outputBytes": 227,
-      "heapDeltaBytes": 542568
-    },
-    "yield": {
-      "grammar": "python",
-      "callCount": 19,
-      "meanMs": 0.0331,
-      "p99Ms": 0.156,
-      "outputBytes": 243,
-      "heapDeltaBytes": 1022912
-    },
-    "_array_expression_list": {
-      "grammar": "rust",
-      "callCount": 11,
-      "meanMs": 0.098,
-      "p99Ms": 0.3291,
-      "outputBytes": 141,
-      "heapDeltaBytes": 1475728
-    },
-    "_array_expression_semi": {
-      "grammar": "rust",
-      "callCount": 4,
-      "meanMs": 0.0741,
-      "p99Ms": 0.1273,
-      "outputBytes": 86,
-      "heapDeltaBytes": 383560
-    },
-    "_closure_expression_block": {
-      "grammar": "rust",
-      "callCount": 2,
-      "meanMs": 0.1265,
-      "p99Ms": 0.1504,
-      "outputBytes": 18,
-      "heapDeltaBytes": 156560
-    },
-    "_closure_expression_expr": {
-      "grammar": "rust",
-      "callCount": 13,
-      "meanMs": 0.0416,
-      "p99Ms": 0.102,
-      "outputBytes": 246,
-      "heapDeltaBytes": 574824
-    },
-    "_delim_token_tree_brace": {
-      "grammar": "rust",
-      "callCount": 7,
-      "meanMs": 0.0436,
-      "p99Ms": 0.0683,
-      "outputBytes": 74,
-      "heapDeltaBytes": 412264
-    },
-    "_delim_token_tree_bracket": {
-      "grammar": "rust",
-      "callCount": 6,
-      "meanMs": 0.047,
-      "p99Ms": 0.058,
-      "outputBytes": 14,
-      "heapDeltaBytes": 543144
-    },
-    "_delim_token_tree_paren": {
-      "grammar": "rust",
-      "callCount": 25,
-      "meanMs": 0.0386,
-      "p99Ms": 0.0947,
-      "outputBytes": 154,
-      "heapDeltaBytes": 1478824
-    },
-    "_expression_statement_block_ending": {
-      "grammar": "rust",
-      "callCount": 68,
-      "meanMs": 0.0359,
-      "p99Ms": 0.0755,
-      "outputBytes": 3473,
-      "heapDeltaBytes": 3596472
-    },
-    "_expression_statement_with_semi": {
-      "grammar": "rust",
-      "callCount": 208,
-      "meanMs": 0.0384,
-      "p99Ms": 0.0688,
-      "outputBytes": 2704,
-      "heapDeltaBytes": 12067056
-    },
-    "_field_identifier": {
-      "grammar": "rust",
-      "callCount": 55,
-      "meanMs": 0.0012,
-      "p99Ms": 0.0027,
-      "outputBytes": 295,
-      "heapDeltaBytes": 12760
-    },
-    "_field_pattern_named": {
-      "grammar": "rust",
-      "callCount": 2,
-      "meanMs": 0.0572,
-      "p99Ms": 0.0677,
-      "outputBytes": 6,
-      "heapDeltaBytes": 111088
-    },
-    "_field_pattern_shorthand": {
-      "grammar": "rust",
-      "callCount": 3,
-      "meanMs": 0.048,
-      "p99Ms": 0.068,
-      "outputBytes": 16,
-      "heapDeltaBytes": 132208
-    },
-    "_function_type_fn_form": {
-      "grammar": "rust",
-      "callCount": 7,
-      "meanMs": 0.0468,
-      "p99Ms": 0.0704,
-      "outputBytes": 58,
-      "heapDeltaBytes": 407400
-    },
-    "_function_type_trait_form": {
-      "grammar": "rust",
-      "callCount": 8,
-      "meanMs": 0.0585,
-      "p99Ms": 0.1383,
-      "outputBytes": 40,
-      "heapDeltaBytes": 354680
-    },
-    "_impl_item_body": {
-      "grammar": "rust",
-      "callCount": 14,
-      "meanMs": 0.0402,
-      "p99Ms": 0.1122,
-      "outputBytes": 436,
-      "heapDeltaBytes": 609632
-    },
-    "_let_chain": {
-      "grammar": "rust",
-      "callCount": 8,
-      "meanMs": 0.0508,
-      "p99Ms": 0.091,
-      "outputBytes": 244,
-      "heapDeltaBytes": 465656
-    },
-    "_macro_definition_brace": {
-      "grammar": "rust",
-      "callCount": 6,
-      "meanMs": 0.0426,
-      "p99Ms": 0.0599,
-      "outputBytes": 334,
-      "heapDeltaBytes": 358512
-    },
-    "_macro_definition_bracket": {
-      "grammar": "rust",
-      "callCount": 2,
-      "meanMs": 0.1155,
-      "p99Ms": 0.164,
-      "outputBytes": 23,
-      "heapDeltaBytes": 123720
-    },
-    "_match_arm_block_ending": {
-      "grammar": "rust",
-      "callCount": 3,
-      "meanMs": 0.0368,
-      "p99Ms": 0.0409,
-      "outputBytes": 77,
-      "heapDeltaBytes": 131176
-    },
-    "_match_arm_with_comma": {
-      "grammar": "rust",
-      "callCount": 31,
-      "meanMs": 0.0372,
-      "p99Ms": 0.0824,
-      "outputBytes": 244,
-      "heapDeltaBytes": 1489024
-    },
-    "_mod_item_inline": {
-      "grammar": "rust",
-      "callCount": 9,
-      "meanMs": 0.0367,
-      "p99Ms": 0.0716,
-      "outputBytes": 125,
-      "heapDeltaBytes": 391856
-    },
-    "_or_pattern_binary": {
-      "grammar": "rust",
-      "callCount": 16,
-      "meanMs": 0.0392,
-      "p99Ms": 0.0584,
-      "outputBytes": 223,
-      "heapDeltaBytes": 853680
-    },
-    "_pointer_type_mut": {
-      "grammar": "rust",
-      "callCount": 9,
-      "meanMs": 0.0385,
-      "p99Ms": 0.0468,
-      "outputBytes": 27,
-      "heapDeltaBytes": 475624
-    },
-    "_range_expression_bare": {
-      "grammar": "rust",
-      "callCount": 2,
-      "meanMs": 0.0821,
-      "p99Ms": 0.1029,
-      "outputBytes": 4,
-      "heapDeltaBytes": 91944
-    },
-    "_range_expression_binary": {
-      "grammar": "rust",
-      "callCount": 12,
-      "meanMs": 0.3031,
-      "p99Ms": 3.0189,
-      "outputBytes": 88,
-      "heapDeltaBytes": -43721328
-    },
-    "_range_expression_postfix": {
-      "grammar": "rust",
-      "callCount": 3,
-      "meanMs": 0.1156,
-      "p99Ms": 0.2058,
-      "outputBytes": 12,
-      "heapDeltaBytes": 162544
-    },
-    "_range_expression_prefix": {
-      "grammar": "rust",
-      "callCount": 2,
-      "meanMs": 0.0954,
-      "p99Ms": 0.122,
-      "outputBytes": 8,
-      "heapDeltaBytes": 110240
-    },
-    "_range_pattern_left_with_right": {
-      "grammar": "rust",
-      "callCount": 5,
-      "meanMs": 0.0403,
-      "p99Ms": 0.0585,
-      "outputBytes": 20,
-      "heapDeltaBytes": 228288
-    },
-    "_range_pattern_prefix": {
-      "grammar": "rust",
-      "callCount": 3,
-      "meanMs": 0.0488,
-      "p99Ms": 0.0595,
-      "outputBytes": 12,
-      "heapDeltaBytes": 138648
-    },
-    "_reference_expression_raw_mut": {
-      "grammar": "rust",
-      "callCount": 2,
-      "meanMs": 0.1471,
-      "p99Ms": 0.1835,
-      "outputBytes": 14,
-      "heapDeltaBytes": 5576
-    },
-    "_string_content": {
-      "grammar": "rust",
-      "callCount": 12,
-      "meanMs": 0.001,
-      "p99Ms": 0.0012,
-      "outputBytes": 63,
-      "heapDeltaBytes": 2784
-    },
-    "_struct_item_brace": {
-      "grammar": "rust",
-      "callCount": 12,
-      "meanMs": 0.0553,
-      "p99Ms": 0.1168,
-      "outputBytes": 170,
-      "heapDeltaBytes": 745080
-    },
-    "_struct_item_tuple": {
-      "grammar": "rust",
-      "callCount": 8,
-      "meanMs": 0.0471,
-      "p99Ms": 0.063,
-      "outputBytes": 119,
-      "heapDeltaBytes": 207440
-    },
-    "_token_tree_brace": {
-      "grammar": "rust",
-      "callCount": 5,
-      "meanMs": 0.0405,
-      "p99Ms": 0.0457,
-      "outputBytes": 50,
-      "heapDeltaBytes": 295752
-    },
-    "_token_tree_paren": {
-      "grammar": "rust",
-      "callCount": 7,
-      "meanMs": 0.0383,
-      "p99Ms": 0.0422,
-      "outputBytes": 140,
-      "heapDeltaBytes": 415064
-    },
-    "_token_tree_pattern_bracket": {
-      "grammar": "rust",
-      "callCount": 2,
-      "meanMs": 0.0473,
-      "p99Ms": 0.0511,
-      "outputBytes": 32,
-      "heapDeltaBytes": 116528
-    },
-    "_token_tree_pattern_paren": {
-      "grammar": "rust",
-      "callCount": 8,
-      "meanMs": 0.0374,
-      "p99Ms": 0.0424,
-      "outputBytes": 78,
-      "heapDeltaBytes": 468376
-    },
-    "_type_identifier": {
-      "grammar": "typescript",
-      "callCount": 388,
-      "meanMs": 0.0013,
-      "p99Ms": 0.0042,
-      "outputBytes": 993,
-      "heapDeltaBytes": 79112
-    },
-    "_visibility_modifier_crate": {
-      "grammar": "rust",
-      "callCount": 5,
-      "meanMs": 0.041,
-      "p99Ms": 0.0465,
-      "outputBytes": 25,
-      "heapDeltaBytes": 262320
-    },
-    "_visibility_modifier_pub": {
-      "grammar": "rust",
-      "callCount": 34,
-      "meanMs": 0.0494,
-      "p99Ms": 0.1523,
-      "outputBytes": 195,
-      "heapDeltaBytes": 1958040
-    },
-    "abstract_type": {
-      "grammar": "rust",
-      "callCount": 18,
-      "meanMs": 0.0524,
-      "p99Ms": 0.0758,
-      "outputBytes": 360,
-      "heapDeltaBytes": 1344808
-    },
-    "arguments": {
-      "grammar": "typescript",
-      "callCount": 39,
-      "meanMs": 0.0435,
-      "p99Ms": 0.1158,
-      "outputBytes": 207,
-      "heapDeltaBytes": 2229840
-    },
-    "array_expression": {
-      "grammar": "rust",
-      "callCount": 19,
-      "meanMs": 0.0684,
-      "p99Ms": 0.1455,
-      "outputBytes": 289,
-      "heapDeltaBytes": 1959928
-    },
-    "array_type": {
-      "grammar": "typescript",
-      "callCount": 38,
-      "meanMs": 0.0369,
-      "p99Ms": 0.0555,
-      "outputBytes": 220,
-      "heapDeltaBytes": 1841888
-    },
-    "assignment_expression": {
-      "grammar": "typescript",
-      "callCount": 9,
-      "meanMs": 0.0564,
-      "p99Ms": 0.0712,
-      "outputBytes": 188,
-      "heapDeltaBytes": 623920
-    },
-    "associated_type": {
-      "grammar": "rust",
-      "callCount": 10,
-      "meanMs": 0.0749,
-      "p99Ms": 0.1087,
-      "outputBytes": 232,
-      "heapDeltaBytes": 1263856
-    },
-    "async_block": {
-      "grammar": "rust",
-      "callCount": 8,
-      "meanMs": 0.0725,
-      "p99Ms": 0.1113,
-      "outputBytes": 97,
-      "heapDeltaBytes": 625192
-    },
-    "attribute_item": {
-      "grammar": "rust",
-      "callCount": 46,
-      "meanMs": 0.1031,
-      "p99Ms": 2.9115,
-      "outputBytes": 910,
-      "heapDeltaBytes": -40296664
-    },
-    "await_expression": {
-      "grammar": "rust",
-      "callCount": 14,
-      "meanMs": 0.0534,
-      "p99Ms": 0.1,
-      "outputBytes": 219,
-      "heapDeltaBytes": 833448
-    },
-    "base_field_initializer": {
-      "grammar": "rust",
-      "callCount": 2,
-      "meanMs": 0.0849,
-      "p99Ms": 0.0977,
-      "outputBytes": 32,
-      "heapDeltaBytes": 112664
-    },
-    "binary_expression": {
-      "grammar": "typescript",
-      "callCount": 28,
-      "meanMs": 0.0423,
-      "p99Ms": 0.0615,
-      "outputBytes": 718,
-      "heapDeltaBytes": 1750232
-    },
-    "block_comment": {
-      "grammar": "rust",
-      "callCount": 2,
-      "meanMs": 0.1206,
-      "p99Ms": 0.1228,
-      "outputBytes": 8,
-      "heapDeltaBytes": 194784
-    },
-    "bounded_type": {
-      "grammar": "rust",
-      "callCount": 20,
-      "meanMs": 0.05,
-      "p99Ms": 0.0817,
-      "outputBytes": 573,
-      "heapDeltaBytes": 1353976
-    },
-    "bracketed_type": {
-      "grammar": "rust",
-      "callCount": 6,
-      "meanMs": 0.0502,
-      "p99Ms": 0.0692,
-      "outputBytes": 66,
-      "heapDeltaBytes": 351824
-    },
-    "break_expression": {
-      "grammar": "rust",
-      "callCount": 7,
-      "meanMs": 0.0608,
-      "p99Ms": 0.0838,
-      "outputBytes": 67,
-      "heapDeltaBytes": 595344
-    },
-    "call_expression": {
-      "grammar": "typescript",
-      "callCount": 50,
-      "meanMs": 0.0522,
-      "p99Ms": 0.1799,
-      "outputBytes": 514,
-      "heapDeltaBytes": 3879528
-    },
-    "captured_pattern": {
-      "grammar": "rust",
-      "callCount": 11,
-      "meanMs": 0.0489,
-      "p99Ms": 0.0851,
-      "outputBytes": 96,
-      "heapDeltaBytes": 704640
-    },
-    "closure_expression": {
-      "grammar": "rust",
-      "callCount": 24,
-      "meanMs": 0.0825,
-      "p99Ms": 0.1445,
-      "outputBytes": 527,
-      "heapDeltaBytes": 3577928
-    },
-    "closure_parameters": {
-      "grammar": "rust",
-      "callCount": 17,
-      "meanMs": 0.0433,
-      "p99Ms": 0.0745,
-      "outputBytes": 99,
-      "heapDeltaBytes": 148400
-    },
-    "compound_assignment_expr": {
-      "grammar": "rust",
-      "callCount": 7,
-      "meanMs": 0.044,
-      "p99Ms": 0.0509,
-      "outputBytes": 42,
-      "heapDeltaBytes": 444032
-    },
-    "const_block": {
-      "grammar": "rust",
-      "callCount": 8,
-      "meanMs": 0.04,
-      "p99Ms": 0.0526,
-      "outputBytes": 151,
-      "heapDeltaBytes": 364696
-    },
-    "const_item": {
-      "grammar": "rust",
-      "callCount": 13,
-      "meanMs": 0.0765,
-      "p99Ms": 0.13,
-      "outputBytes": 278,
-      "heapDeltaBytes": 1496216
-    },
-    "const_parameter": {
-      "grammar": "rust",
-      "callCount": 4,
-      "meanMs": 0.0973,
-      "p99Ms": 0.1289,
-      "outputBytes": 64,
-      "heapDeltaBytes": 320792
-    },
-    "continue_expression": {
-      "grammar": "rust",
-      "callCount": 7,
-      "meanMs": 0.059,
-      "p99Ms": 0.0973,
-      "outputBytes": 84,
-      "heapDeltaBytes": 462160
-    },
-    "declaration_list": {
-      "grammar": "rust",
-      "callCount": 37,
-      "meanMs": 0.0451,
-      "p99Ms": 0.1793,
-      "outputBytes": 885,
-      "heapDeltaBytes": 811728
-    },
-    "delim_token_tree": {
-      "grammar": "rust",
-      "callCount": 60,
-      "meanMs": 0.0467,
-      "p99Ms": 0.2862,
-      "outputBytes": 560,
-      "heapDeltaBytes": 3649560
-    },
-    "dynamic_type": {
-      "grammar": "rust",
-      "callCount": 10,
-      "meanMs": 0.0515,
-      "p99Ms": 0.0953,
-      "outputBytes": 237,
-      "heapDeltaBytes": 462496
-    },
-    "enum_item": {
-      "grammar": "rust",
-      "callCount": 10,
-      "meanMs": 0.3902,
-      "p99Ms": 3.1463,
-      "outputBytes": 1251,
-      "heapDeltaBytes": -37148656
-    },
-    "enum_variant": {
-      "grammar": "rust",
-      "callCount": 11,
-      "meanMs": 0.0678,
-      "p99Ms": 0.0957,
-      "outputBytes": 212,
-      "heapDeltaBytes": 1323528
-    },
-    "enum_variant_list": {
-      "grammar": "rust",
-      "callCount": 7,
-      "meanMs": 0.0449,
-      "p99Ms": 0.0592,
-      "outputBytes": 664,
-      "heapDeltaBytes": 416392
-    },
-    "extern_crate_declaration": {
-      "grammar": "rust",
-      "callCount": 5,
-      "meanMs": 0.0812,
-      "p99Ms": 0.0945,
-      "outputBytes": 104,
-      "heapDeltaBytes": 575232
-    },
-    "extern_modifier": {
-      "grammar": "rust",
-      "callCount": 7,
-      "meanMs": 0.0584,
-      "p99Ms": 0.1121,
-      "outputBytes": 70,
-      "heapDeltaBytes": 465400
-    },
-    "field_declaration": {
-      "grammar": "rust",
-      "callCount": 20,
-      "meanMs": 0.0557,
-      "p99Ms": 0.1563,
-      "outputBytes": 351,
-      "heapDeltaBytes": 1207264
-    },
-    "field_declaration_list": {
-      "grammar": "rust",
-      "callCount": 19,
-      "meanMs": 0.041,
-      "p99Ms": 0.049,
-      "outputBytes": 607,
-      "heapDeltaBytes": 719256
-    },
-    "field_expression": {
-      "grammar": "rust",
-      "callCount": 60,
-      "meanMs": 0.0394,
-      "p99Ms": 0.0786,
-      "outputBytes": 646,
-      "heapDeltaBytes": 3213584
-    },
-    "field_initializer": {
-      "grammar": "rust",
-      "callCount": 8,
-      "meanMs": 0.0601,
-      "p99Ms": 0.134,
-      "outputBytes": 98,
-      "heapDeltaBytes": 573392
-    },
-    "field_initializer_list": {
-      "grammar": "rust",
-      "callCount": 8,
-      "meanMs": 0.0559,
-      "p99Ms": 0.1298,
-      "outputBytes": 183,
-      "heapDeltaBytes": 44584
-    },
-    "field_pattern": {
-      "grammar": "rust",
-      "callCount": 5,
-      "meanMs": 0.1309,
-      "p99Ms": 0.248,
-      "outputBytes": 16,
-      "heapDeltaBytes": 598488
-    },
-    "for_expression": {
-      "grammar": "rust",
-      "callCount": 13,
-      "meanMs": 0.0789,
-      "p99Ms": 0.2292,
-      "outputBytes": 496,
-      "heapDeltaBytes": 778840
-    },
-    "for_lifetimes": {
-      "grammar": "rust",
-      "callCount": 2,
-      "meanMs": 0.1166,
-      "p99Ms": 0.1545,
-      "outputBytes": 20,
-      "heapDeltaBytes": 124576
-    },
-    "function_item": {
-      "grammar": "rust",
-      "callCount": 102,
-      "meanMs": 0.0986,
-      "p99Ms": 0.1636,
-      "outputBytes": 4441,
-      "heapDeltaBytes": 19785704
-    },
-    "function_modifiers": {
-      "grammar": "rust",
-      "callCount": 14,
-      "meanMs": 0.0537,
-      "p99Ms": 0.0963,
-      "outputBytes": 95,
-      "heapDeltaBytes": 956824
-    },
-    "function_signature_item": {
-      "grammar": "rust",
-      "callCount": 6,
-      "meanMs": 0.1063,
-      "p99Ms": 0.1619,
-      "outputBytes": 195,
-      "heapDeltaBytes": 1161392
-    },
-    "function_type": {
-      "grammar": "typescript",
-      "callCount": 33,
-      "meanMs": 0.0469,
-      "p99Ms": 0.0681,
-      "outputBytes": 737,
-      "heapDeltaBytes": 2659400
-    },
-    "gen_block": {
-      "grammar": "rust",
-      "callCount": 6,
-      "meanMs": 0.0551,
-      "p99Ms": 0.0842,
-      "outputBytes": 65,
-      "heapDeltaBytes": 330216
-    },
-    "generic_function": {
-      "grammar": "rust",
-      "callCount": 4,
-      "meanMs": 0.0611,
-      "p99Ms": 0.0913,
-      "outputBytes": 62,
-      "heapDeltaBytes": 401240
-    },
-    "generic_pattern": {
-      "grammar": "rust",
-      "callCount": 3,
-      "meanMs": 0.0618,
-      "p99Ms": 0.0763,
-      "outputBytes": 27,
-      "heapDeltaBytes": 197648
-    },
-    "generic_type_with_turbofish": {
-      "grammar": "rust",
-      "callCount": 4,
-      "meanMs": 0.0618,
-      "p99Ms": 0.082,
-      "outputBytes": 26,
-      "heapDeltaBytes": 254976
-    },
-    "higher_ranked_trait_bound": {
-      "grammar": "rust",
-      "callCount": 3,
-      "meanMs": 0.1135,
-      "p99Ms": 0.1648,
-      "outputBytes": 95,
-      "heapDeltaBytes": 175632
-    },
-    "if_expression": {
-      "grammar": "rust",
-      "callCount": 33,
-      "meanMs": 0.0486,
-      "p99Ms": 0.0813,
-      "outputBytes": 1337,
-      "heapDeltaBytes": 2622952
-    },
-    "impl_item": {
-      "grammar": "rust",
-      "callCount": 25,
-      "meanMs": 0.113,
-      "p99Ms": 0.2136,
-      "outputBytes": 1204,
-      "heapDeltaBytes": 5377496
-    },
-    "index_expression": {
-      "grammar": "rust",
-      "callCount": 5,
-      "meanMs": 0.0503,
-      "p99Ms": 0.0713,
-      "outputBytes": 64,
-      "heapDeltaBytes": 292872
-    },
-    "inner_attribute_item": {
-      "grammar": "rust",
-      "callCount": 7,
-      "meanMs": 0.0441,
-      "p99Ms": 0.0674,
-      "outputBytes": 266,
-      "heapDeltaBytes": 350064
-    },
-    "label": {
-      "grammar": "rust",
-      "callCount": 9,
-      "meanMs": 0.0327,
-      "p99Ms": 0.0415,
-      "outputBytes": 54,
-      "heapDeltaBytes": 400144
-    },
-    "let_condition": {
-      "grammar": "rust",
-      "callCount": 18,
-      "meanMs": 0.0402,
-      "p99Ms": 0.0783,
-      "outputBytes": 321,
-      "heapDeltaBytes": 973480
-    },
-    "let_declaration": {
-      "grammar": "rust",
-      "callCount": 70,
-      "meanMs": 0.0786,
-      "p99Ms": 0.1842,
-      "outputBytes": 3149,
-      "heapDeltaBytes": 10392920
-    },
-    "lifetime": {
-      "grammar": "rust",
-      "callCount": 42,
-      "meanMs": 0.0417,
-      "p99Ms": 0.1205,
-      "outputBytes": 99,
-      "heapDeltaBytes": 1865056
-    },
-    "lifetime_parameter": {
-      "grammar": "rust",
-      "callCount": 15,
-      "meanMs": 0.0554,
-      "p99Ms": 0.0918,
-      "outputBytes": 30,
-      "heapDeltaBytes": 1028272
-    },
-    "line_comment": {
-      "grammar": "rust",
-      "callCount": 9,
-      "meanMs": 0.0595,
-      "p99Ms": 0.1525,
-      "outputBytes": 420,
-      "heapDeltaBytes": 488504
-    },
-    "loop_expression": {
-      "grammar": "rust",
-      "callCount": 4,
-      "meanMs": 0.0598,
-      "p99Ms": 0.0835,
-      "outputBytes": 265,
-      "heapDeltaBytes": 301032
-    },
-    "macro_definition": {
-      "grammar": "rust",
-      "callCount": 8,
-      "meanMs": 0.0709,
-      "p99Ms": 0.2122,
-      "outputBytes": 593,
-      "heapDeltaBytes": 561848
-    },
-    "macro_invocation": {
-      "grammar": "rust",
-      "callCount": 46,
-      "meanMs": 0.0435,
-      "p99Ms": 0.1276,
-      "outputBytes": 621,
-      "heapDeltaBytes": 2458456
-    },
-    "macro_rule": {
-      "grammar": "rust",
-      "callCount": 8,
-      "meanMs": 0.0526,
-      "p99Ms": 0.1338,
-      "outputBytes": 301,
-      "heapDeltaBytes": 430384
-    },
-    "match_arm": {
-      "grammar": "rust",
-      "callCount": 44,
-      "meanMs": 0.0456,
-      "p99Ms": 0.107,
-      "outputBytes": 956,
-      "heapDeltaBytes": 3008456
-    },
-    "match_block": {
-      "grammar": "rust",
-      "callCount": 19,
-      "meanMs": 0.0426,
-      "p99Ms": 0.0569,
-      "outputBytes": 1639,
-      "heapDeltaBytes": 1118824
-    },
-    "match_expression": {
-      "grammar": "rust",
-      "callCount": 27,
-      "meanMs": 0.0428,
-      "p99Ms": 0.0955,
-      "outputBytes": 2936,
-      "heapDeltaBytes": 1457376
-    },
-    "match_pattern": {
-      "grammar": "rust",
-      "callCount": 45,
-      "meanMs": 0.0493,
-      "p99Ms": 0.12,
-      "outputBytes": 446,
-      "heapDeltaBytes": 3539752
-    },
-    "mod_item": {
-      "grammar": "rust",
-      "callCount": 17,
-      "meanMs": 0.0604,
-      "p99Ms": 0.0865,
-      "outputBytes": 364,
-      "heapDeltaBytes": 1648568
-    },
-    "mut_pattern": {
-      "grammar": "rust",
-      "callCount": 9,
-      "meanMs": 0.0479,
-      "p99Ms": 0.0659,
-      "outputBytes": 87,
-      "heapDeltaBytes": 572760
-    },
-    "negative_literal": {
-      "grammar": "rust",
-      "callCount": 4,
-      "meanMs": 0.0757,
-      "p99Ms": 0.114,
-      "outputBytes": 11,
-      "heapDeltaBytes": 241640
-    },
-    "or_pattern": {
-      "grammar": "rust",
-      "callCount": 25,
-      "meanMs": 0.1845,
-      "p99Ms": 3.1593,
-      "outputBytes": 350,
-      "heapDeltaBytes": -35725096
-    },
-    "ordered_field_declaration_list": {
-      "grammar": "rust",
-      "callCount": 12,
-      "meanMs": 0.0723,
-      "p99Ms": 0.1293,
-      "outputBytes": 109,
-      "heapDeltaBytes": 1166488
-    },
-    "parameter": {
-      "grammar": "rust",
-      "callCount": 48,
-      "meanMs": 0.0504,
-      "p99Ms": 0.0882,
-      "outputBytes": 578,
-      "heapDeltaBytes": 4362560
-    },
-    "pointer_type": {
-      "grammar": "rust",
-      "callCount": 21,
-      "meanMs": 0.061,
-      "p99Ms": 0.1214,
-      "outputBytes": 245,
-      "heapDeltaBytes": 1484552
-    },
-    "qualified_type": {
-      "grammar": "rust",
-      "callCount": 4,
-      "meanMs": 0.0709,
-      "p99Ms": 0.1135,
-      "outputBytes": 38,
-      "heapDeltaBytes": 222504
-    },
-    "range_expression": {
-      "grammar": "rust",
-      "callCount": 21,
-      "meanMs": 0.0425,
-      "p99Ms": 0.1464,
-      "outputBytes": 91,
-      "heapDeltaBytes": 1249144
-    },
-    "range_pattern": {
-      "grammar": "rust",
-      "callCount": 8,
-      "meanMs": 0.059,
-      "p99Ms": 0.1587,
-      "outputBytes": 36,
-      "heapDeltaBytes": 628056
-    },
-    "raw_string_literal": {
-      "grammar": "rust",
-      "callCount": 15,
-      "meanMs": 0.0239,
-      "p99Ms": 0.0351,
-      "outputBytes": 177,
-      "heapDeltaBytes": 525576
-    },
-    "ref_pattern": {
-      "grammar": "rust",
-      "callCount": 8,
-      "meanMs": 0.045,
-      "p99Ms": 0.0566,
-      "outputBytes": 98,
-      "heapDeltaBytes": 441608
-    },
-    "reference_expression": {
-      "grammar": "rust",
-      "callCount": 18,
-      "meanMs": 0.0495,
-      "p99Ms": 0.0823,
-      "outputBytes": 131,
-      "heapDeltaBytes": 876464
-    },
-    "reference_pattern": {
-      "grammar": "rust",
-      "callCount": 6,
-      "meanMs": 0.0897,
-      "p99Ms": 0.2511,
-      "outputBytes": 24,
-      "heapDeltaBytes": 130216
-    },
-    "reference_type": {
-      "grammar": "rust",
-      "callCount": 32,
-      "meanMs": 0.0611,
-      "p99Ms": 0.132,
-      "outputBytes": 320,
-      "heapDeltaBytes": 2517040
-    },
-    "removed_trait_bound": {
-      "grammar": "rust",
-      "callCount": 5,
-      "meanMs": 0.0514,
-      "p99Ms": 0.0739,
-      "outputBytes": 30,
-      "heapDeltaBytes": 273816
-    },
-    "return_expression": {
-      "grammar": "rust",
-      "callCount": 12,
-      "meanMs": 0.0474,
-      "p99Ms": 0.1014,
-      "outputBytes": 136,
-      "heapDeltaBytes": 613592
-    },
-    "scoped_identifier": {
-      "grammar": "rust",
-      "callCount": 63,
-      "meanMs": 0.0484,
-      "p99Ms": 0.1289,
-      "outputBytes": 903,
-      "heapDeltaBytes": 4318296
-    },
-    "scoped_type_identifier": {
-      "grammar": "rust",
-      "callCount": 37,
-      "meanMs": 0.0492,
-      "p99Ms": 0.0814,
-      "outputBytes": 350,
-      "heapDeltaBytes": 2545600
-    },
-    "scoped_type_identifier_in_expression_position": {
-      "grammar": "rust",
-      "callCount": 6,
-      "meanMs": 0.05,
-      "p99Ms": 0.0585,
-      "outputBytes": 60,
-      "heapDeltaBytes": 410448
-    },
-    "scoped_use_list": {
-      "grammar": "rust",
-      "callCount": 7,
-      "meanMs": 0.0533,
-      "p99Ms": 0.0891,
-      "outputBytes": 221,
-      "heapDeltaBytes": 483136
-    },
-    "self_parameter": {
-      "grammar": "rust",
-      "callCount": 4,
-      "meanMs": 0.0898,
-      "p99Ms": 0.1183,
-      "outputBytes": 20,
-      "heapDeltaBytes": 374808
-    },
-    "shorthand_field_initializer": {
-      "grammar": "rust",
-      "callCount": 5,
-      "meanMs": 0.0652,
-      "p99Ms": 0.095,
-      "outputBytes": 26,
-      "heapDeltaBytes": 400648
-    },
-    "slice_pattern": {
-      "grammar": "rust",
-      "callCount": 3,
-      "meanMs": 0.0426,
-      "p99Ms": 0.046,
-      "outputBytes": 15,
-      "heapDeltaBytes": 177856
-    },
-    "source_file": {
-      "grammar": "rust",
-      "callCount": 248,
-      "meanMs": 0.0644,
-      "p99Ms": 0.1862,
-      "outputBytes": 22912,
-      "heapDeltaBytes": 21501632
-    },
-    "static_item": {
-      "grammar": "rust",
-      "callCount": 7,
-      "meanMs": 0.1029,
-      "p99Ms": 0.1863,
-      "outputBytes": 156,
-      "heapDeltaBytes": 1201992
-    },
-    "string_literal": {
-      "grammar": "rust",
-      "callCount": 89,
-      "meanMs": 0.0416,
-      "p99Ms": 0.1059,
-      "outputBytes": 926,
-      "heapDeltaBytes": 5164200
-    },
-    "struct_expression": {
-      "grammar": "rust",
-      "callCount": 10,
-      "meanMs": 0.0426,
-      "p99Ms": 0.0677,
-      "outputBytes": 327,
-      "heapDeltaBytes": 528328
-    },
-    "struct_item": {
-      "grammar": "rust",
-      "callCount": 29,
-      "meanMs": 0.076,
-      "p99Ms": 0.1785,
-      "outputBytes": 833,
-      "heapDeltaBytes": 3694448
-    },
-    "struct_pattern": {
-      "grammar": "rust",
-      "callCount": 6,
-      "meanMs": 0.0702,
-      "p99Ms": 0.1094,
-      "outputBytes": 120,
-      "heapDeltaBytes": 413000
-    },
-    "token_binding_pattern": {
-      "grammar": "rust",
-      "callCount": 6,
-      "meanMs": 0.0495,
-      "p99Ms": 0.0893,
-      "outputBytes": 42,
-      "heapDeltaBytes": 322096
-    },
-    "token_repetition": {
-      "grammar": "rust",
-      "callCount": 4,
-      "meanMs": 0.0465,
-      "p99Ms": 0.0635,
-      "outputBytes": 47,
-      "heapDeltaBytes": 239152
-    },
-    "token_repetition_pattern": {
-      "grammar": "rust",
-      "callCount": 4,
-      "meanMs": 0.0537,
-      "p99Ms": 0.07,
-      "outputBytes": 82,
-      "heapDeltaBytes": 242680
-    },
-    "token_tree": {
-      "grammar": "rust",
-      "callCount": 40,
-      "meanMs": 0.0393,
-      "p99Ms": 0.1156,
-      "outputBytes": 786,
-      "heapDeltaBytes": 2150600
-    },
-    "token_tree_pattern": {
-      "grammar": "rust",
-      "callCount": 9,
-      "meanMs": 0.0414,
-      "p99Ms": 0.086,
-      "outputBytes": 116,
-      "heapDeltaBytes": 518352
-    },
-    "trait_bounds": {
-      "grammar": "rust",
-      "callCount": 26,
-      "meanMs": 0.1406,
-      "p99Ms": 2.5985,
-      "outputBytes": 350,
-      "heapDeltaBytes": -43231568
-    },
-    "trait_item": {
-      "grammar": "rust",
-      "callCount": 24,
-      "meanMs": 0.0988,
-      "p99Ms": 0.2396,
-      "outputBytes": 1134,
-      "heapDeltaBytes": 4283072
-    },
-    "try_block": {
-      "grammar": "rust",
-      "callCount": 3,
-      "meanMs": 0.0473,
-      "p99Ms": 0.059,
-      "outputBytes": 18,
-      "heapDeltaBytes": 139896
-    },
-    "try_expression": {
-      "grammar": "rust",
-      "callCount": 17,
-      "meanMs": 0.0445,
-      "p99Ms": 0.0808,
-      "outputBytes": 254,
-      "heapDeltaBytes": 527752
-    },
-    "tuple_expression": {
-      "grammar": "rust",
-      "callCount": 10,
-      "meanMs": 0.0742,
-      "p99Ms": 0.1193,
-      "outputBytes": 90,
-      "heapDeltaBytes": 1067856
-    },
-    "tuple_struct_pattern": {
-      "grammar": "rust",
-      "callCount": 44,
-      "meanMs": 0.0864,
-      "p99Ms": 1.5374,
-      "outputBytes": 357,
-      "heapDeltaBytes": -52337480
-    },
-    "tuple_type": {
-      "grammar": "typescript",
-      "callCount": 14,
-      "meanMs": 0.0419,
-      "p99Ms": 0.0528,
-      "outputBytes": 181,
-      "heapDeltaBytes": 823264
-    },
-    "type_arguments": {
-      "grammar": "typescript",
-      "callCount": 75,
-      "meanMs": 0.0434,
-      "p99Ms": 0.1711,
-      "outputBytes": 730,
-      "heapDeltaBytes": 4411808
-    },
-    "type_binding": {
-      "grammar": "rust",
-      "callCount": 8,
-      "meanMs": 0.0736,
-      "p99Ms": 0.1848,
-      "outputBytes": 70,
-      "heapDeltaBytes": 637384
-    },
-    "type_cast_expression": {
-      "grammar": "rust",
-      "callCount": 12,
-      "meanMs": 0.0492,
-      "p99Ms": 0.0769,
-      "outputBytes": 162,
-      "heapDeltaBytes": 643752
-    },
-    "type_item": {
-      "grammar": "rust",
-      "callCount": 61,
-      "meanMs": 0.0772,
-      "p99Ms": 0.1418,
-      "outputBytes": 1587,
-      "heapDeltaBytes": 9892424
-    },
-    "type_parameters": {
-      "grammar": "typescript",
-      "callCount": 46,
-      "meanMs": 0.0429,
-      "p99Ms": 0.1325,
-      "outputBytes": 405,
-      "heapDeltaBytes": 2655056
-    },
-    "unary_expression": {
-      "grammar": "typescript",
-      "callCount": 9,
-      "meanMs": 0.0427,
-      "p99Ms": 0.0513,
-      "outputBytes": 91,
-      "heapDeltaBytes": 480344
-    },
-    "union_item": {
-      "grammar": "rust",
-      "callCount": 3,
-      "meanMs": 0.0983,
-      "p99Ms": 0.105,
-      "outputBytes": 615,
-      "heapDeltaBytes": 413328
-    },
-    "unsafe_block": {
-      "grammar": "rust",
-      "callCount": 3,
-      "meanMs": 0.0518,
-      "p99Ms": 0.0617,
-      "outputBytes": 48,
-      "heapDeltaBytes": 139176
-    },
-    "use_as_clause": {
-      "grammar": "rust",
-      "callCount": 4,
-      "meanMs": 0.065,
-      "p99Ms": 0.0997,
-      "outputBytes": 136,
-      "heapDeltaBytes": 218144
-    },
-    "use_declaration": {
-      "grammar": "rust",
-      "callCount": 17,
-      "meanMs": 0.0554,
-      "p99Ms": 0.0919,
-      "outputBytes": 455,
-      "heapDeltaBytes": 1329608
-    },
-    "use_list": {
-      "grammar": "rust",
-      "callCount": 7,
-      "meanMs": 0.0436,
-      "p99Ms": 0.0571,
-      "outputBytes": 154,
-      "heapDeltaBytes": 415144
-    },
-    "use_wildcard": {
-      "grammar": "rust",
-      "callCount": 5,
-      "meanMs": 0.0607,
-      "p99Ms": 0.0871,
-      "outputBytes": 75,
-      "heapDeltaBytes": 349176
-    },
-    "variadic_parameter": {
-      "grammar": "rust",
-      "callCount": 3,
-      "meanMs": 0.1164,
-      "p99Ms": 0.1777,
-      "outputBytes": 16,
-      "heapDeltaBytes": 289688
-    },
-    "visibility_modifier": {
-      "grammar": "rust",
-      "callCount": 60,
-      "meanMs": 0.0513,
-      "p99Ms": 0.1113,
-      "outputBytes": 297,
-      "heapDeltaBytes": 4265352
-    },
-    "where_clause": {
-      "grammar": "rust",
-      "callCount": 10,
-      "meanMs": 0.0503,
-      "p99Ms": 0.0859,
-      "outputBytes": 192,
-      "heapDeltaBytes": 550440
-    },
-    "where_predicate": {
-      "grammar": "rust",
-      "callCount": 8,
-      "meanMs": 0.0471,
-      "p99Ms": 0.0706,
-      "outputBytes": 140,
-      "heapDeltaBytes": 424936
-    },
-    "while_expression": {
-      "grammar": "rust",
-      "callCount": 12,
-      "meanMs": 0.0586,
-      "p99Ms": 0.1088,
-      "outputBytes": 510,
-      "heapDeltaBytes": 999144
-    },
-    "yield_expression": {
-      "grammar": "typescript",
-      "callCount": 3,
-      "meanMs": 0.079,
-      "p99Ms": 0.1104,
-      "outputBytes": 129,
-      "heapDeltaBytes": 232144
-    },
-    "_arrow_function__call_signature": {
-      "grammar": "typescript",
-      "callCount": 3,
-      "meanMs": 0.0944,
-      "p99Ms": 0.1256,
-      "outputBytes": 112,
-      "heapDeltaBytes": 299440
-    },
-    "_arrow_function_parameter": {
-      "grammar": "typescript",
-      "callCount": 2,
-      "meanMs": 0.0644,
-      "p99Ms": 0.071,
-      "outputBytes": 10,
-      "heapDeltaBytes": 90768
-    },
-    "_call_expression_call": {
-      "grammar": "typescript",
-      "callCount": 21,
-      "meanMs": 0.0537,
-      "p99Ms": 0.1396,
-      "outputBytes": 319,
-      "heapDeltaBytes": 590744
-    },
-    "_call_expression_member": {
-      "grammar": "typescript",
-      "callCount": 2,
-      "meanMs": 0.0641,
-      "p99Ms": 0.0849,
-      "outputBytes": 18,
-      "heapDeltaBytes": 163024
-    },
-    "_class_body_member": {
-      "grammar": "typescript",
-      "callCount": 25,
-      "meanMs": 0.0493,
-      "p99Ms": 0.1363,
-      "outputBytes": 809,
-      "heapDeltaBytes": 1440800
-    },
-    "_class_body_method": {
-      "grammar": "typescript",
-      "callCount": 19,
-      "meanMs": 0.0605,
-      "p99Ms": 0.1312,
-      "outputBytes": 665,
-      "heapDeltaBytes": 1716168
-    },
-    "_class_body_method_sig": {
-      "grammar": "typescript",
-      "callCount": 3,
-      "meanMs": 0.0407,
-      "p99Ms": 0.0497,
-      "outputBytes": 39,
-      "heapDeltaBytes": 174272
-    },
-    "_class_heritage_extends_clause": {
-      "grammar": "typescript",
-      "callCount": 13,
-      "meanMs": 0.0425,
-      "p99Ms": 0.0621,
-      "outputBytes": 259,
-      "heapDeltaBytes": 689088
-    },
-    "_export_statement_equals_export": {
-      "grammar": "typescript",
-      "callCount": 3,
-      "meanMs": 0.0753,
-      "p99Ms": 0.1151,
-      "outputBytes": 35,
-      "heapDeltaBytes": 170168
-    },
-    "_export_statement_type_export": {
-      "grammar": "typescript",
-      "callCount": 4,
-      "meanMs": 0.0583,
-      "p99Ms": 0.0807,
-      "outputBytes": 131,
-      "heapDeltaBytes": 331784
-    },
-    "_for_header_lhs": {
-      "grammar": "typescript",
-      "callCount": 2,
-      "meanMs": 0.0626,
-      "p99Ms": 0.072,
-      "outputBytes": 2,
-      "heapDeltaBytes": 92256
-    },
-    "_index_signature_colon": {
-      "grammar": "typescript",
-      "callCount": 18,
-      "meanMs": 0.0412,
-      "p99Ms": 0.0654,
-      "outputBytes": 115,
-      "heapDeltaBytes": 967944
-    },
-    "_index_signature_mapped_type_clause": {
-      "grammar": "typescript",
-      "callCount": 7,
-      "meanMs": 0.0423,
-      "p99Ms": 0.0538,
-      "outputBytes": 182,
-      "heapDeltaBytes": 370656
-    },
-    "_parenthesized_expression_typed": {
-      "grammar": "typescript",
-      "callCount": 7,
-      "meanMs": 0.0533,
-      "p99Ms": 0.0922,
-      "outputBytes": 22,
-      "heapDeltaBytes": 554928
-    },
-    "_public_field_definition_access_first": {
-      "grammar": "typescript",
-      "callCount": 4,
-      "meanMs": 0.0714,
-      "p99Ms": 0.0931,
-      "outputBytes": 0,
-      "heapDeltaBytes": 324264
-    },
-    "_public_field_definition_readonly_first": {
-      "grammar": "typescript",
-      "callCount": 5,
-      "meanMs": 0.0012,
-      "p99Ms": 0.0015,
-      "outputBytes": 40,
-      "heapDeltaBytes": 1160
-    },
-    "_public_field_definition_static_mods": {
-      "grammar": "typescript",
-      "callCount": 6,
-      "meanMs": 0.0026,
-      "p99Ms": 0.0053,
-      "outputBytes": 36,
-      "heapDeltaBytes": 1392
-    },
-    "_string_double": {
-      "grammar": "typescript",
-      "callCount": 33,
-      "meanMs": 0.0447,
-      "p99Ms": 0.1306,
-      "outputBytes": 224,
-      "heapDeltaBytes": 1912224
-    },
-    "_string_single": {
-      "grammar": "typescript",
-      "callCount": 27,
-      "meanMs": 0.0521,
-      "p99Ms": 0.132,
-      "outputBytes": 147,
-      "heapDeltaBytes": 1569128
-    },
-    "_update_expression_postfix": {
-      "grammar": "typescript",
-      "callCount": 2,
-      "meanMs": 0.059,
-      "p99Ms": 0.0844,
-      "outputBytes": 12,
-      "heapDeltaBytes": 110464
-    },
-    "abstract_class_declaration": {
-      "grammar": "typescript",
-      "callCount": 11,
-      "meanMs": 0.0827,
-      "p99Ms": 0.1093,
-      "outputBytes": 570,
-      "heapDeltaBytes": 1631432
-    },
-    "abstract_method_signature": {
-      "grammar": "typescript",
-      "callCount": 6,
-      "meanMs": 0.1126,
-      "p99Ms": 0.1727,
-      "outputBytes": 182,
-      "heapDeltaBytes": 1341912
-    },
-    "ambient_declaration": {
-      "grammar": "typescript",
-      "callCount": 38,
-      "meanMs": 0.0499,
-      "p99Ms": 0.2054,
-      "outputBytes": 2772,
-      "heapDeltaBytes": 2767056
-    },
-    "array": {
-      "grammar": "typescript",
-      "callCount": 5,
-      "meanMs": 0.0568,
-      "p99Ms": 0.0954,
-      "outputBytes": 20,
-      "heapDeltaBytes": 298128
-    },
-    "arrow_function": {
-      "grammar": "typescript",
-      "callCount": 7,
-      "meanMs": 0.1037,
-      "p99Ms": 0.2012,
-      "outputBytes": 150,
-      "heapDeltaBytes": 745784
-    },
-    "as_expression": {
-      "grammar": "typescript",
-      "callCount": 10,
-      "meanMs": 0.0484,
-      "p99Ms": 0.0675,
-      "outputBytes": 206,
-      "heapDeltaBytes": 694344
-    },
-    "asserts": {
-      "grammar": "typescript",
-      "callCount": 11,
-      "meanMs": 0.0281,
-      "p99Ms": 0.0693,
-      "outputBytes": 121,
-      "heapDeltaBytes": 383720
-    },
-    "asserts_annotation": {
-      "grammar": "typescript",
-      "callCount": 4,
-      "meanMs": 0.061,
-      "p99Ms": 0.1067,
-      "outputBytes": 56,
-      "heapDeltaBytes": 219088
-    },
-    "augmented_assignment_expression": {
-      "grammar": "typescript",
-      "callCount": 1,
-      "meanMs": 0.0445,
-      "p99Ms": 0.0445,
-      "outputBytes": 11,
-      "heapDeltaBytes": 63472
-    },
-    "break_statement": {
-      "grammar": "typescript",
-      "callCount": 5,
-      "meanMs": 0.0619,
-      "p99Ms": 0.0876,
-      "outputBytes": 35,
-      "heapDeltaBytes": 376440
-    },
-    "call_signature": {
-      "grammar": "typescript",
-      "callCount": 4,
-      "meanMs": 0.0544,
-      "p99Ms": 0.0659,
-      "outputBytes": 68,
-      "heapDeltaBytes": 387864
-    },
-    "catch_clause": {
-      "grammar": "typescript",
-      "callCount": 4,
-      "meanMs": 0.118,
-      "p99Ms": 0.2703,
-      "outputBytes": 70,
-      "heapDeltaBytes": 444000
-    },
-    "class": {
-      "grammar": "typescript",
-      "callCount": 4,
-      "meanMs": 0.09,
-      "p99Ms": 0.1567,
-      "outputBytes": 29,
-      "heapDeltaBytes": 511344
-    },
-    "class_body": {
-      "grammar": "typescript",
-      "callCount": 60,
-      "meanMs": 0.0401,
-      "p99Ms": 0.0593,
-      "outputBytes": 2528,
-      "heapDeltaBytes": 3508848
-    },
-    "class_declaration": {
-      "grammar": "typescript",
-      "callCount": 73,
-      "meanMs": 0.0805,
-      "p99Ms": 0.1625,
-      "outputBytes": 4700,
-      "heapDeltaBytes": 12815984
-    },
-    "class_heritage": {
-      "grammar": "typescript",
-      "callCount": 16,
-      "meanMs": 0.0704,
-      "p99Ms": 0.2185,
-      "outputBytes": 359,
-      "heapDeltaBytes": 1044560
-    },
-    "class_static_block": {
-      "grammar": "typescript",
-      "callCount": 3,
-      "meanMs": 0.0628,
-      "p99Ms": 0.0839,
-      "outputBytes": 95,
-      "heapDeltaBytes": 196392
-    },
-    "conditional_type": {
-      "grammar": "typescript",
-      "callCount": 21,
-      "meanMs": 0.0466,
-      "p99Ms": 0.0835,
-      "outputBytes": 840,
-      "heapDeltaBytes": 1545712
-    },
-    "constraint": {
-      "grammar": "typescript",
-      "callCount": 12,
-      "meanMs": 0.0446,
-      "p99Ms": 0.0876,
-      "outputBytes": 235,
-      "heapDeltaBytes": 538408
-    },
-    "constructor_type": {
-      "grammar": "typescript",
-      "callCount": 10,
-      "meanMs": 0.0747,
-      "p99Ms": 0.1773,
-      "outputBytes": 257,
-      "heapDeltaBytes": 1167784
-    },
-    "continue_statement": {
-      "grammar": "typescript",
-      "callCount": 3,
-      "meanMs": 0.0663,
-      "p99Ms": 0.0758,
-      "outputBytes": 30,
-      "heapDeltaBytes": 231280
-    },
-    "debugger_statement": {
-      "grammar": "typescript",
-      "callCount": 3,
-      "meanMs": 0.0509,
-      "p99Ms": 0.0621,
-      "outputBytes": 30,
-      "heapDeltaBytes": 139296
-    },
-    "do_statement": {
-      "grammar": "typescript",
-      "callCount": 3,
-      "meanMs": 0.0684,
-      "p99Ms": 0.0789,
-      "outputBytes": 63,
-      "heapDeltaBytes": 249104
-    },
-    "enum_assignment": {
-      "grammar": "typescript",
-      "callCount": 9,
-      "meanMs": 0.0395,
-      "p99Ms": 0.055,
-      "outputBytes": 155,
-      "heapDeltaBytes": 480280
-    },
-    "enum_body": {
-      "grammar": "typescript",
-      "callCount": 5,
-      "meanMs": 0.096,
-      "p99Ms": 0.1502,
-      "outputBytes": 42,
-      "heapDeltaBytes": 394712
-    },
-    "enum_declaration": {
-      "grammar": "typescript",
-      "callCount": 7,
-      "meanMs": 0.0656,
-      "p99Ms": 0.1125,
-      "outputBytes": 524,
-      "heapDeltaBytes": 592576
-    },
-    "export_clause": {
-      "grammar": "typescript",
-      "callCount": 4,
-      "meanMs": 0.0413,
-      "p99Ms": 0.049,
-      "outputBytes": 50,
-      "heapDeltaBytes": 237152
-    },
-    "export_specifier": {
-      "grammar": "typescript",
-      "callCount": 6,
-      "meanMs": 0.0727,
-      "p99Ms": 0.1738,
-      "outputBytes": 32,
-      "heapDeltaBytes": 581200
-    },
-    "export_statement": {
-      "grammar": "typescript",
-      "callCount": 66,
-      "meanMs": 0.0391,
-      "p99Ms": 0.0972,
-      "outputBytes": 2756,
-      "heapDeltaBytes": 3680848
-    },
-    "extends_clause": {
-      "grammar": "typescript",
-      "callCount": 16,
-      "meanMs": 0.0744,
-      "p99Ms": 0.1995,
-      "outputBytes": 289,
-      "heapDeltaBytes": 1505400
-    },
-    "extends_type_clause": {
-      "grammar": "typescript",
-      "callCount": 3,
-      "meanMs": 0.097,
-      "p99Ms": 0.1458,
-      "outputBytes": 40,
-      "heapDeltaBytes": 173696
-    },
-    "flow_maybe_type": {
-      "grammar": "typescript",
-      "callCount": 8,
-      "meanMs": 0.0467,
-      "p99Ms": 0.1193,
-      "outputBytes": 45,
-      "heapDeltaBytes": 360456
-    },
-    "for_in_statement": {
-      "grammar": "typescript",
-      "callCount": 3,
-      "meanMs": 0.0987,
-      "p99Ms": 0.1137,
-      "outputBytes": 51,
-      "heapDeltaBytes": 353104
-    },
-    "formal_parameters": {
-      "grammar": "typescript",
-      "callCount": 115,
-      "meanMs": 0.0411,
-      "p99Ms": 0.1137,
-      "outputBytes": 1007,
-      "heapDeltaBytes": 6914488
-    },
-    "function_declaration": {
-      "grammar": "typescript",
-      "callCount": 32,
-      "meanMs": 0.0777,
-      "p99Ms": 0.2097,
-      "outputBytes": 1495,
-      "heapDeltaBytes": 5330648
-    },
-    "function_expression": {
-      "grammar": "typescript",
-      "callCount": 3,
-      "meanMs": 0.1049,
-      "p99Ms": 0.1173,
-      "outputBytes": 81,
-      "heapDeltaBytes": 510112
-    },
-    "function_signature": {
-      "grammar": "typescript",
-      "callCount": 29,
-      "meanMs": 0.0764,
-      "p99Ms": 0.1296,
-      "outputBytes": 1116,
-      "heapDeltaBytes": 5125440
-    },
-    "generator_function_declaration": {
-      "grammar": "typescript",
-      "callCount": 3,
-      "meanMs": 0.1441,
-      "p99Ms": 0.2385,
-      "outputBytes": 324,
-      "heapDeltaBytes": 509808
-    },
-    "implements_clause": {
-      "grammar": "typescript",
-      "callCount": 6,
-      "meanMs": 0.082,
-      "p99Ms": 0.16,
-      "outputBytes": 72,
-      "heapDeltaBytes": 331264
-    },
-    "import_alias": {
-      "grammar": "typescript",
-      "callCount": 9,
-      "meanMs": 0.0563,
-      "p99Ms": 0.092,
-      "outputBytes": 120,
-      "heapDeltaBytes": 715560
-    },
-    "import_attribute": {
-      "grammar": "typescript",
-      "callCount": 1,
-      "meanMs": 0.0857,
-      "p99Ms": 0.0857,
-      "outputBytes": 15,
-      "heapDeltaBytes": 56608
-    },
-    "import_clause": {
-      "grammar": "typescript",
-      "callCount": 14,
-      "meanMs": 0.0533,
-      "p99Ms": 0.1153,
-      "outputBytes": 229,
-      "heapDeltaBytes": 822520
-    },
-    "import_specifier": {
-      "grammar": "typescript",
-      "callCount": 18,
-      "meanMs": 0.0585,
-      "p99Ms": 0.177,
-      "outputBytes": 147,
-      "heapDeltaBytes": 1454064
-    },
-    "index_signature": {
-      "grammar": "typescript",
-      "callCount": 26,
-      "meanMs": 0.0699,
-      "p99Ms": 0.1081,
-      "outputBytes": 493,
-      "heapDeltaBytes": 2633552
-    },
-    "index_type_query": {
-      "grammar": "typescript",
-      "callCount": 28,
-      "meanMs": 0.0387,
-      "p99Ms": 0.0679,
-      "outputBytes": 326,
-      "heapDeltaBytes": 1253928
-    },
-    "infer_type": {
-      "grammar": "typescript",
-      "callCount": 10,
-      "meanMs": 0.0541,
-      "p99Ms": 0.0967,
-      "outputBytes": 100,
-      "heapDeltaBytes": 713896
-    },
-    "instantiation_expression": {
-      "grammar": "typescript",
-      "callCount": 7,
-      "meanMs": 0.0523,
-      "p99Ms": 0.0894,
-      "outputBytes": 91,
-      "heapDeltaBytes": 382208
-    },
-    "interface_declaration": {
-      "grammar": "typescript",
-      "callCount": 34,
-      "meanMs": 0.0595,
-      "p99Ms": 0.0994,
-      "outputBytes": 1587,
-      "heapDeltaBytes": 3685880
-    },
-    "internal_module": {
-      "grammar": "typescript",
-      "callCount": 13,
-      "meanMs": 0.0485,
-      "p99Ms": 0.08,
-      "outputBytes": 1562,
-      "heapDeltaBytes": 820944
-    },
-    "intersection_type": {
-      "grammar": "typescript",
-      "callCount": 27,
-      "meanMs": 0.0436,
-      "p99Ms": 0.0679,
-      "outputBytes": 557,
-      "heapDeltaBytes": 1554536
-    },
-    "lexical_declaration": {
-      "grammar": "typescript",
-      "callCount": 68,
-      "meanMs": 0.0465,
-      "p99Ms": 0.2329,
-      "outputBytes": 2163,
-      "heapDeltaBytes": 4931048
-    },
-    "literal_type": {
-      "grammar": "typescript",
-      "callCount": 46,
-      "meanMs": 0.0338,
-      "p99Ms": 0.0481,
-      "outputBytes": 187,
-      "heapDeltaBytes": 2430536
-    },
-    "lookup_type": {
-      "grammar": "typescript",
-      "callCount": 25,
-      "meanMs": 0.0418,
-      "p99Ms": 0.0794,
-      "outputBytes": 324,
-      "heapDeltaBytes": 1447760
-    },
-    "mapped_type_clause": {
-      "grammar": "typescript",
-      "callCount": 9,
-      "meanMs": 0.0721,
-      "p99Ms": 0.1765,
-      "outputBytes": 206,
-      "heapDeltaBytes": 721040
-    },
-    "member_expression": {
-      "grammar": "typescript",
-      "callCount": 51,
-      "meanMs": 0.0476,
-      "p99Ms": 0.0781,
-      "outputBytes": 651,
-      "heapDeltaBytes": 3782352
-    },
-    "method_definition": {
-      "grammar": "typescript",
-      "callCount": 19,
-      "meanMs": 0.2698,
-      "p99Ms": 2.679,
-      "outputBytes": 629,
-      "heapDeltaBytes": -39354912
-    },
-    "method_signature": {
-      "grammar": "typescript",
-      "callCount": 14,
-      "meanMs": 0.1242,
-      "p99Ms": 0.174,
-      "outputBytes": 286,
-      "heapDeltaBytes": 4114896
-    },
-    "named_imports": {
-      "grammar": "typescript",
-      "callCount": 12,
-      "meanMs": 0.0486,
-      "p99Ms": 0.0919,
-      "outputBytes": 212,
-      "heapDeltaBytes": 715440
-    },
-    "nested_identifier": {
-      "grammar": "typescript",
-      "callCount": 6,
-      "meanMs": 0.0652,
-      "p99Ms": 0.1297,
-      "outputBytes": 26,
-      "heapDeltaBytes": 325952
-    },
-    "nested_type_identifier": {
-      "grammar": "typescript",
-      "callCount": 12,
-      "meanMs": 0.0448,
-      "p99Ms": 0.0765,
-      "outputBytes": 84,
-      "heapDeltaBytes": 633416
-    },
-    "new_expression": {
-      "grammar": "typescript",
-      "callCount": 3,
-      "meanMs": 0.0887,
-      "p99Ms": 0.0986,
-      "outputBytes": 69,
-      "heapDeltaBytes": 300400
-    },
-    "non_null_expression": {
-      "grammar": "typescript",
-      "callCount": 4,
-      "meanMs": 0.0587,
-      "p99Ms": 0.0868,
-      "outputBytes": 22,
-      "heapDeltaBytes": 198008
-    },
-    "object": {
-      "grammar": "typescript",
-      "callCount": 14,
-      "meanMs": 0.0457,
-      "p99Ms": 0.096,
-      "outputBytes": 334,
-      "heapDeltaBytes": 827600
-    },
-    "object_pattern": {
-      "grammar": "typescript",
-      "callCount": 3,
-      "meanMs": 0.0465,
-      "p99Ms": 0.063,
-      "outputBytes": 15,
-      "heapDeltaBytes": 165952
-    },
-    "object_type": {
-      "grammar": "typescript",
-      "callCount": 79,
-      "meanMs": 0.0547,
-      "p99Ms": 0.1631,
-      "outputBytes": 1997,
-      "heapDeltaBytes": 7280520
-    },
-    "omitting_type_annotation": {
-      "grammar": "typescript",
-      "callCount": 2,
-      "meanMs": 0.1271,
-      "p99Ms": 0.153,
-      "outputBytes": 12,
-      "heapDeltaBytes": 103520
-    },
-    "opting_type_annotation": {
-      "grammar": "typescript",
-      "callCount": 2,
-      "meanMs": 0.0703,
-      "p99Ms": 0.0729,
-      "outputBytes": 10,
-      "heapDeltaBytes": 93976
-    },
-    "optional_parameter": {
-      "grammar": "typescript",
-      "callCount": 7,
-      "meanMs": 0.1101,
-      "p99Ms": 0.2151,
-      "outputBytes": 101,
-      "heapDeltaBytes": 1259416
-    },
-    "optional_type": {
-      "grammar": "typescript",
-      "callCount": 2,
-      "meanMs": 0.0829,
-      "p99Ms": 0.0922,
-      "outputBytes": 14,
-      "heapDeltaBytes": 100680
-    },
-    "parenthesized_type": {
-      "grammar": "typescript",
-      "callCount": 25,
-      "meanMs": 0.0372,
-      "p99Ms": 0.0603,
-      "outputBytes": 382,
-      "heapDeltaBytes": 1225952
-    },
-    "program": {
-      "grammar": "typescript",
-      "callCount": 216,
-      "meanMs": 0.0598,
-      "p99Ms": 0.177,
-      "outputBytes": 22570,
-      "heapDeltaBytes": 22071032
-    },
-    "property_signature": {
-      "grammar": "typescript",
-      "callCount": 42,
-      "meanMs": 0.0908,
-      "p99Ms": 0.1417,
-      "outputBytes": 644,
-      "heapDeltaBytes": 8916112
-    },
-    "public_field_definition": {
-      "grammar": "typescript",
-      "callCount": 23,
-      "meanMs": 0.0881,
-      "p99Ms": 0.1348,
-      "outputBytes": 814,
-      "heapDeltaBytes": 3947240
-    },
-    "readonly_type": {
-      "grammar": "typescript",
-      "callCount": 10,
-      "meanMs": 0.0393,
-      "p99Ms": 0.0636,
-      "outputBytes": 157,
-      "heapDeltaBytes": 450248
-    },
-    "required_parameter": {
-      "grammar": "typescript",
-      "callCount": 76,
-      "meanMs": 0.0782,
-      "p99Ms": 0.1549,
-      "outputBytes": 785,
-      "heapDeltaBytes": 13297992
-    },
-    "rest_pattern": {
-      "grammar": "typescript",
-      "callCount": 7,
-      "meanMs": 0.0477,
-      "p99Ms": 0.0809,
-      "outputBytes": 40,
-      "heapDeltaBytes": 381856
-    },
-    "rest_type": {
-      "grammar": "typescript",
-      "callCount": 2,
-      "meanMs": 0.0584,
-      "p99Ms": 0.0685,
-      "outputBytes": 8,
-      "heapDeltaBytes": 93616
-    },
-    "satisfies_expression": {
-      "grammar": "typescript",
-      "callCount": 8,
-      "meanMs": 0.0414,
-      "p99Ms": 0.0578,
-      "outputBytes": 199,
-      "heapDeltaBytes": 437528
-    },
-    "statement_block": {
-      "grammar": "typescript",
-      "callCount": 109,
-      "meanMs": 0.0801,
-      "p99Ms": 0.1037,
-      "outputBytes": 2934,
-      "heapDeltaBytes": -39819432
-    },
-    "subscript_expression": {
-      "grammar": "typescript",
-      "callCount": 6,
-      "meanMs": 0.0613,
-      "p99Ms": 0.0833,
-      "outputBytes": 60,
-      "heapDeltaBytes": 507544
-    },
-    "switch_body": {
-      "grammar": "typescript",
-      "callCount": 2,
-      "meanMs": 0.041,
-      "p99Ms": 0.0425,
-      "outputBytes": 108,
-      "heapDeltaBytes": 118120
-    },
-    "switch_case": {
-      "grammar": "typescript",
-      "callCount": 2,
-      "meanMs": 0.0776,
-      "p99Ms": 0.0798,
-      "outputBytes": 26,
-      "heapDeltaBytes": 166896
-    },
-    "switch_default": {
-      "grammar": "typescript",
-      "callCount": 2,
-      "meanMs": 0.0708,
-      "p99Ms": 0.0747,
-      "outputBytes": 28,
-      "heapDeltaBytes": 148912
-    },
-    "switch_statement": {
-      "grammar": "typescript",
-      "callCount": 3,
-      "meanMs": 0.0591,
-      "p99Ms": 0.0774,
-      "outputBytes": 237,
-      "heapDeltaBytes": 169064
-    },
-    "template_literal_type": {
-      "grammar": "typescript",
-      "callCount": 20,
-      "meanMs": 0.0428,
-      "p99Ms": 0.0675,
-      "outputBytes": 298,
-      "heapDeltaBytes": 1170376
-    },
-    "template_type": {
-      "grammar": "typescript",
-      "callCount": 18,
-      "meanMs": 0.0434,
-      "p99Ms": 0.1218,
-      "outputBytes": 213,
-      "heapDeltaBytes": 755192
-    },
-    "ternary_expression": {
-      "grammar": "typescript",
-      "callCount": 3,
-      "meanMs": 0.0613,
-      "p99Ms": 0.077,
-      "outputBytes": 87,
-      "heapDeltaBytes": 197568
-    },
-    "throw_statement": {
-      "grammar": "typescript",
-      "callCount": 3,
-      "meanMs": 0.0724,
-      "p99Ms": 0.0979,
-      "outputBytes": 45,
-      "heapDeltaBytes": 246088
-    },
-    "type_alias_declaration": {
-      "grammar": "typescript",
-      "callCount": 124,
-      "meanMs": 0.0503,
-      "p99Ms": 0.0875,
-      "outputBytes": 5210,
-      "heapDeltaBytes": 10975152
-    },
-    "type_annotation": {
-      "grammar": "typescript",
-      "callCount": 228,
-      "meanMs": 0.0335,
-      "p99Ms": 0.071,
-      "outputBytes": 2093,
-      "heapDeltaBytes": 10011656
-    },
-    "type_predicate": {
-      "grammar": "typescript",
-      "callCount": 9,
-      "meanMs": 0.0496,
-      "p99Ms": 0.09,
-      "outputBytes": 95,
-      "heapDeltaBytes": 485808
-    },
-    "type_predicate_annotation": {
-      "grammar": "typescript",
-      "callCount": 6,
-      "meanMs": 0.0477,
-      "p99Ms": 0.0914,
-      "outputBytes": 57,
-      "heapDeltaBytes": 111304
-    },
-    "type_query": {
-      "grammar": "typescript",
-      "callCount": 27,
-      "meanMs": 0.0417,
-      "p99Ms": 0.1305,
-      "outputBytes": 363,
-      "heapDeltaBytes": 1466664
-    },
-    "update_expression": {
-      "grammar": "typescript",
-      "callCount": 6,
-      "meanMs": 0.0602,
-      "p99Ms": 0.1013,
-      "outputBytes": 54,
-      "heapDeltaBytes": 397240
-    },
-    "variable_declaration": {
-      "grammar": "typescript",
-      "callCount": 33,
-      "meanMs": 0.0476,
-      "p99Ms": 0.1041,
-      "outputBytes": 607,
-      "heapDeltaBytes": 1824528
-    },
-    "variable_declarator": {
-      "grammar": "typescript",
-      "callCount": 72,
-      "meanMs": 0.0525,
-      "p99Ms": 0.1151,
-      "outputBytes": 1519,
-      "heapDeltaBytes": 6864360
-    }
-  }
+	"schemaVersion": 1,
+	"backend": "ts",
+	"collectedAt": "2026-04-26T23:34:00.072Z",
+	"collectedOn": {
+		"platform": "darwin",
+		"nodeVersion": "v24.15.0",
+		"cpuModel": "Apple M4 Pro"
+	},
+	"memory": {
+		"tsHeapDeltaBytes": 144078856,
+		"napiCopyBytesEstimate": false
+	},
+	"perKind": {
+		"_assignment_eq": {
+			"grammar": "python",
+			"callCount": 41,
+			"meanMs": 0.0389,
+			"p99Ms": 0.1094,
+			"outputBytes": 392,
+			"heapDeltaBytes": 1516984
+		},
+		"_assignment_type": {
+			"grammar": "python",
+			"callCount": 2,
+			"meanMs": 0.0473,
+			"p99Ms": 0.0571,
+			"outputBytes": 18,
+			"heapDeltaBytes": 92872
+		},
+		"_assignment_typed": {
+			"grammar": "python",
+			"callCount": 6,
+			"meanMs": 0.0543,
+			"p99Ms": 0.0742,
+			"outputBytes": 78,
+			"heapDeltaBytes": 334960
+		},
+		"_match_block": {
+			"grammar": "python",
+			"callCount": 69,
+			"meanMs": 0.038,
+			"p99Ms": 0.0947,
+			"outputBytes": 11881,
+			"heapDeltaBytes": 3760128
+		},
+		"_match_block_block": {
+			"grammar": "python",
+			"callCount": 35,
+			"meanMs": 0.0555,
+			"p99Ms": 0.108,
+			"outputBytes": 5725,
+			"heapDeltaBytes": 2528568
+		},
+		"_with_clause_paren": {
+			"grammar": "python",
+			"callCount": 2,
+			"meanMs": 0.0517,
+			"p99Ms": 0.0529,
+			"outputBytes": 62,
+			"heapDeltaBytes": 120152
+		},
+		"aliased_import": {
+			"grammar": "python",
+			"callCount": 2,
+			"meanMs": 0.084,
+			"p99Ms": 0.0877,
+			"outputBytes": 16,
+			"heapDeltaBytes": 114568
+		},
+		"argument_list": {
+			"grammar": "python",
+			"callCount": 150,
+			"meanMs": 0.0443,
+			"p99Ms": 0.0914,
+			"outputBytes": 1473,
+			"heapDeltaBytes": 1410328
+		},
+		"as_pattern": {
+			"grammar": "python",
+			"callCount": 16,
+			"meanMs": 0.0466,
+			"p99Ms": 0.0944,
+			"outputBytes": 116,
+			"heapDeltaBytes": 877856
+		},
+		"assert_statement": {
+			"grammar": "python",
+			"callCount": 4,
+			"meanMs": 0.0591,
+			"p99Ms": 0.0895,
+			"outputBytes": 48,
+			"heapDeltaBytes": 228904
+		},
+		"assignment": {
+			"grammar": "python",
+			"callCount": 65,
+			"meanMs": 0.0637,
+			"p99Ms": 0.2474,
+			"outputBytes": 804,
+			"heapDeltaBytes": 5189840
+		},
+		"attribute": {
+			"grammar": "rust",
+			"callCount": 39,
+			"meanMs": 0.0587,
+			"p99Ms": 0.1664,
+			"outputBytes": 683,
+			"heapDeltaBytes": 4030568
+		},
+		"augmented_assignment": {
+			"grammar": "python",
+			"callCount": 14,
+			"meanMs": 0.0362,
+			"p99Ms": 0.0542,
+			"outputBytes": 90,
+			"heapDeltaBytes": 875792
+		},
+		"await": {
+			"grammar": "python",
+			"callCount": 10,
+			"meanMs": 0.0383,
+			"p99Ms": 0.1286,
+			"outputBytes": 101,
+			"heapDeltaBytes": 292592
+		},
+		"binary_operator": {
+			"grammar": "python",
+			"callCount": 53,
+			"meanMs": 0.0902,
+			"p99Ms": 1.6977,
+			"outputBytes": 517,
+			"heapDeltaBytes": -615448
+		},
+		"block": {
+			"grammar": "rust",
+			"callCount": 197,
+			"meanMs": 0.0523,
+			"p99Ms": 0.186,
+			"outputBytes": 3167,
+			"heapDeltaBytes": 17401080
+		},
+		"boolean_operator": {
+			"grammar": "python",
+			"callCount": 17,
+			"meanMs": 0.1123,
+			"p99Ms": 1.02,
+			"outputBytes": 211,
+			"heapDeltaBytes": -63005296
+		},
+		"call": {
+			"grammar": "python",
+			"callCount": 185,
+			"meanMs": 0.0484,
+			"p99Ms": 0.122,
+			"outputBytes": 3288,
+			"heapDeltaBytes": 3137808
+		},
+		"case_clause": {
+			"grammar": "python",
+			"callCount": 69,
+			"meanMs": 0.0559,
+			"p99Ms": 0.1327,
+			"outputBytes": 3536,
+			"heapDeltaBytes": 6574016
+		},
+		"case_pattern": {
+			"grammar": "python",
+			"callCount": 153,
+			"meanMs": 0.0387,
+			"p99Ms": 0.1299,
+			"outputBytes": 1641,
+			"heapDeltaBytes": 9151800
+		},
+		"chevron": {
+			"grammar": "python",
+			"callCount": 3,
+			"meanMs": 0.0721,
+			"p99Ms": 0.1056,
+			"outputBytes": 9,
+			"heapDeltaBytes": 143888
+		},
+		"class_definition": {
+			"grammar": "python",
+			"callCount": 10,
+			"meanMs": 0.0673,
+			"p99Ms": 0.1033,
+			"outputBytes": 436,
+			"heapDeltaBytes": 1119416
+		},
+		"class_pattern": {
+			"grammar": "python",
+			"callCount": 25,
+			"meanMs": 0.065,
+			"p99Ms": 0.1607,
+			"outputBytes": 413,
+			"heapDeltaBytes": 2203192
+		},
+		"comparison_operator": {
+			"grammar": "python",
+			"callCount": 12,
+			"meanMs": 0.0609,
+			"p99Ms": 0.1132,
+			"outputBytes": 83,
+			"heapDeltaBytes": 1007816
+		},
+		"concatenated_string": {
+			"grammar": "python",
+			"callCount": 9,
+			"meanMs": 0.0455,
+			"p99Ms": 0.0649,
+			"outputBytes": 297,
+			"heapDeltaBytes": 507792
+		},
+		"conditional_expression": {
+			"grammar": "python",
+			"callCount": 6,
+			"meanMs": 0.0682,
+			"p99Ms": 0.1395,
+			"outputBytes": 138,
+			"heapDeltaBytes": 399352
+		},
+		"constrained_type": {
+			"grammar": "python",
+			"callCount": 3,
+			"meanMs": 0.0836,
+			"p99Ms": 0.1387,
+			"outputBytes": 32,
+			"heapDeltaBytes": 169616
+		},
+		"decorated_definition": {
+			"grammar": "python",
+			"callCount": 5,
+			"meanMs": 0.0557,
+			"p99Ms": 0.0812,
+			"outputBytes": 264,
+			"heapDeltaBytes": 327976
+		},
+		"decorator": {
+			"grammar": "typescript",
+			"callCount": 15,
+			"meanMs": 0.044,
+			"p99Ms": 0.0822,
+			"outputBytes": 127,
+			"heapDeltaBytes": 814608
+		},
+		"default_parameter": {
+			"grammar": "python",
+			"callCount": 13,
+			"meanMs": 0.0426,
+			"p99Ms": 0.0563,
+			"outputBytes": 109,
+			"heapDeltaBytes": 250640
+		},
+		"delete_statement": {
+			"grammar": "python",
+			"callCount": 2,
+			"meanMs": 0.081,
+			"p99Ms": 0.0821,
+			"outputBytes": 28,
+			"heapDeltaBytes": 115112
+		},
+		"dict_pattern": {
+			"grammar": "python",
+			"callCount": 11,
+			"meanMs": 0.0412,
+			"p99Ms": 0.049,
+			"outputBytes": 210,
+			"heapDeltaBytes": 667768
+		},
+		"dictionary": {
+			"grammar": "python",
+			"callCount": 22,
+			"meanMs": 0.0552,
+			"p99Ms": 0.1115,
+			"outputBytes": 203,
+			"heapDeltaBytes": 2067816
+		},
+		"dictionary_comprehension": {
+			"grammar": "python",
+			"callCount": 4,
+			"meanMs": 0.0674,
+			"p99Ms": 0.107,
+			"outputBytes": 112,
+			"heapDeltaBytes": 290192
+		},
+		"dictionary_splat": {
+			"grammar": "python",
+			"callCount": 11,
+			"meanMs": 0.0449,
+			"p99Ms": 0.0807,
+			"outputBytes": 46,
+			"heapDeltaBytes": -273992
+		},
+		"dictionary_splat_pattern": {
+			"grammar": "python",
+			"callCount": 11,
+			"meanMs": 0.0555,
+			"p99Ms": 0.1406,
+			"outputBytes": 59,
+			"heapDeltaBytes": 615240
+		},
+		"dotted_name": {
+			"grammar": "python",
+			"callCount": 88,
+			"meanMs": 0.0413,
+			"p99Ms": 0.2445,
+			"outputBytes": 411,
+			"heapDeltaBytes": 4586360
+		},
+		"elif_clause": {
+			"grammar": "python",
+			"callCount": 2,
+			"meanMs": 0.0984,
+			"p99Ms": 0.1165,
+			"outputBytes": 24,
+			"heapDeltaBytes": 123672
+		},
+		"else_clause": {
+			"grammar": "typescript",
+			"callCount": 2,
+			"meanMs": 0.0625,
+			"p99Ms": 0.0636,
+			"outputBytes": 16,
+			"heapDeltaBytes": 95800
+		},
+		"except_clause": {
+			"grammar": "python",
+			"callCount": 8,
+			"meanMs": 0.084,
+			"p99Ms": 0.1697,
+			"outputBytes": 94,
+			"heapDeltaBytes": 983072
+		},
+		"exec_statement": {
+			"grammar": "python",
+			"callCount": 5,
+			"meanMs": 0.0872,
+			"p99Ms": 0.1662,
+			"outputBytes": 69,
+			"heapDeltaBytes": 432104
+		},
+		"expression_list": {
+			"grammar": "python",
+			"callCount": 23,
+			"meanMs": 0.0435,
+			"p99Ms": 0.0738,
+			"outputBytes": 160,
+			"heapDeltaBytes": 872736
+		},
+		"expression_statement": {
+			"grammar": "typescript",
+			"callCount": 90,
+			"meanMs": 0.0391,
+			"p99Ms": 0.0681,
+			"outputBytes": 1954,
+			"heapDeltaBytes": 5646024
+		},
+		"finally_clause": {
+			"grammar": "typescript",
+			"callCount": 4,
+			"meanMs": 0.0607,
+			"p99Ms": 0.1254,
+			"outputBytes": 42,
+			"heapDeltaBytes": 183472
+		},
+		"for_in_clause": {
+			"grammar": "python",
+			"callCount": 25,
+			"meanMs": 0.0673,
+			"p99Ms": 0.1409,
+			"outputBytes": 413,
+			"heapDeltaBytes": 1928520
+		},
+		"for_statement": {
+			"grammar": "typescript",
+			"callCount": 3,
+			"meanMs": 0.0732,
+			"p99Ms": 0.0916,
+			"outputBytes": 33,
+			"heapDeltaBytes": 280096
+		},
+		"format_specifier": {
+			"grammar": "python",
+			"callCount": 10,
+			"meanMs": 0.0493,
+			"p99Ms": 0.0976,
+			"outputBytes": 52,
+			"heapDeltaBytes": 552272
+		},
+		"function_definition": {
+			"grammar": "python",
+			"callCount": 55,
+			"meanMs": 0.085,
+			"p99Ms": 0.3006,
+			"outputBytes": 2084,
+			"heapDeltaBytes": 8143784
+		},
+		"future_import_statement": {
+			"grammar": "python",
+			"callCount": 4,
+			"meanMs": 0.1037,
+			"p99Ms": 0.1797,
+			"outputBytes": 185,
+			"heapDeltaBytes": 240632
+		},
+		"generator_expression": {
+			"grammar": "python",
+			"callCount": 9,
+			"meanMs": 0.0659,
+			"p99Ms": 0.1422,
+			"outputBytes": 238,
+			"heapDeltaBytes": 1028800
+		},
+		"generic_type": {
+			"grammar": "typescript",
+			"callCount": 62,
+			"meanMs": 0.0434,
+			"p99Ms": 0.2242,
+			"outputBytes": 1228,
+			"heapDeltaBytes": 3316112
+		},
+		"global_statement": {
+			"grammar": "python",
+			"callCount": 3,
+			"meanMs": 0.0785,
+			"p99Ms": 0.1266,
+			"outputBytes": 26,
+			"heapDeltaBytes": 173712
+		},
+		"if_clause": {
+			"grammar": "python",
+			"callCount": 6,
+			"meanMs": 0.0573,
+			"p99Ms": 0.0915,
+			"outputBytes": 43,
+			"heapDeltaBytes": 280880
+		},
+		"if_statement": {
+			"grammar": "typescript",
+			"callCount": 6,
+			"meanMs": 0.0547,
+			"p99Ms": 0.0592,
+			"outputBytes": 162,
+			"heapDeltaBytes": 487752
+		},
+		"import_from_statement": {
+			"grammar": "python",
+			"callCount": 9,
+			"meanMs": 0.0624,
+			"p99Ms": 0.1048,
+			"outputBytes": 141,
+			"heapDeltaBytes": 730776
+		},
+		"import_statement": {
+			"grammar": "typescript",
+			"callCount": 15,
+			"meanMs": 0.2697,
+			"p99Ms": 3.1079,
+			"outputBytes": 432,
+			"heapDeltaBytes": -31790112
+		},
+		"interpolation": {
+			"grammar": "python",
+			"callCount": 35,
+			"meanMs": 0.0668,
+			"p99Ms": 0.1254,
+			"outputBytes": 400,
+			"heapDeltaBytes": 3870808
+		},
+		"keyword_argument": {
+			"grammar": "python",
+			"callCount": 15,
+			"meanMs": 0.0747,
+			"p99Ms": 0.4988,
+			"outputBytes": 152,
+			"heapDeltaBytes": -6294016
+		},
+		"keyword_pattern": {
+			"grammar": "python",
+			"callCount": 19,
+			"meanMs": 0.0432,
+			"p99Ms": 0.0856,
+			"outputBytes": 136,
+			"heapDeltaBytes": 942352
+		},
+		"lambda": {
+			"grammar": "python",
+			"callCount": 16,
+			"meanMs": 0.12,
+			"p99Ms": 1.3168,
+			"outputBytes": 204,
+			"heapDeltaBytes": -1524600
+		},
+		"lambda_parameters": {
+			"grammar": "python",
+			"callCount": 4,
+			"meanMs": 0.0659,
+			"p99Ms": 0.1226,
+			"outputBytes": 26,
+			"heapDeltaBytes": 224832
+		},
+		"list": {
+			"grammar": "python",
+			"callCount": 38,
+			"meanMs": 0.0497,
+			"p99Ms": 0.1215,
+			"outputBytes": 257,
+			"heapDeltaBytes": 2328816
+		},
+		"list_comprehension": {
+			"grammar": "python",
+			"callCount": 9,
+			"meanMs": 0.0592,
+			"p99Ms": 0.1236,
+			"outputBytes": 262,
+			"heapDeltaBytes": 636712
+		},
+		"list_pattern": {
+			"grammar": "python",
+			"callCount": 24,
+			"meanMs": 0.0448,
+			"p99Ms": 0.0736,
+			"outputBytes": 424,
+			"heapDeltaBytes": 1476952
+		},
+		"list_splat": {
+			"grammar": "python",
+			"callCount": 30,
+			"meanMs": 0.0424,
+			"p99Ms": 0.084,
+			"outputBytes": 65,
+			"heapDeltaBytes": 1381656
+		},
+		"list_splat_pattern": {
+			"grammar": "python",
+			"callCount": 20,
+			"meanMs": 0.0584,
+			"p99Ms": 0.1667,
+			"outputBytes": 75,
+			"heapDeltaBytes": 757296
+		},
+		"match_statement": {
+			"grammar": "python",
+			"callCount": 36,
+			"meanMs": 0.0611,
+			"p99Ms": 0.5292,
+			"outputBytes": 6916,
+			"heapDeltaBytes": -5969232
+		},
+		"module": {
+			"grammar": "typescript",
+			"callCount": 25,
+			"meanMs": 0.0339,
+			"p99Ms": 0.0779,
+			"outputBytes": 1073,
+			"heapDeltaBytes": 966272
+		},
+		"named_expression": {
+			"grammar": "python",
+			"callCount": 15,
+			"meanMs": 0.0489,
+			"p99Ms": 0.1024,
+			"outputBytes": 306,
+			"heapDeltaBytes": 833120
+		},
+		"nonlocal_statement": {
+			"grammar": "python",
+			"callCount": 2,
+			"meanMs": 0.0769,
+			"p99Ms": 0.0771,
+			"outputBytes": 20,
+			"heapDeltaBytes": 128320
+		},
+		"not_operator": {
+			"grammar": "python",
+			"callCount": 12,
+			"meanMs": 0.0663,
+			"p99Ms": 0.172,
+			"outputBytes": 74,
+			"heapDeltaBytes": 574864
+		},
+		"pair": {
+			"grammar": "typescript",
+			"callCount": 10,
+			"meanMs": 0.0386,
+			"p99Ms": 0.0485,
+			"outputBytes": 117,
+			"heapDeltaBytes": 534648
+		},
+		"parameters": {
+			"grammar": "rust",
+			"callCount": 92,
+			"meanMs": 0.0431,
+			"p99Ms": 0.1527,
+			"outputBytes": 930,
+			"heapDeltaBytes": 5594960
+		},
+		"parenthesized_expression": {
+			"grammar": "typescript",
+			"callCount": 13,
+			"meanMs": 0.0564,
+			"p99Ms": 0.0914,
+			"outputBytes": 108,
+			"heapDeltaBytes": 1024624
+		},
+		"pattern_list": {
+			"grammar": "python",
+			"callCount": 23,
+			"meanMs": 0.0435,
+			"p99Ms": 0.0748,
+			"outputBytes": 138,
+			"heapDeltaBytes": 1373952
+		},
+		"print_statement": {
+			"grammar": "python",
+			"callCount": 23,
+			"meanMs": 0.0668,
+			"p99Ms": 0.1433,
+			"outputBytes": 264,
+			"heapDeltaBytes": 2192200
+		},
+		"raise_statement": {
+			"grammar": "python",
+			"callCount": 6,
+			"meanMs": 0.067,
+			"p99Ms": 0.0925,
+			"outputBytes": 175,
+			"heapDeltaBytes": 490352
+		},
+		"relative_import": {
+			"grammar": "python",
+			"callCount": 5,
+			"meanMs": 0.0629,
+			"p99Ms": 0.0892,
+			"outputBytes": 11,
+			"heapDeltaBytes": 365000
+		},
+		"return_statement": {
+			"grammar": "typescript",
+			"callCount": 19,
+			"meanMs": 0.0456,
+			"p99Ms": 0.0753,
+			"outputBytes": 367,
+			"heapDeltaBytes": 1215096
+		},
+		"set": {
+			"grammar": "python",
+			"callCount": 4,
+			"meanMs": 0.0512,
+			"p99Ms": 0.0677,
+			"outputBytes": 36,
+			"heapDeltaBytes": 245808
+		},
+		"set_comprehension": {
+			"grammar": "python",
+			"callCount": 4,
+			"meanMs": 0.0566,
+			"p99Ms": 0.0823,
+			"outputBytes": 125,
+			"heapDeltaBytes": 278424
+		},
+		"slice": {
+			"grammar": "python",
+			"callCount": 5,
+			"meanMs": 0.0948,
+			"p99Ms": 0.1498,
+			"outputBytes": 11,
+			"heapDeltaBytes": 571456
+		},
+		"splat_pattern": {
+			"grammar": "python",
+			"callCount": 10,
+			"meanMs": 0.0521,
+			"p99Ms": 0.0876,
+			"outputBytes": 56,
+			"heapDeltaBytes": 885512
+		},
+		"splat_type": {
+			"grammar": "python",
+			"callCount": 11,
+			"meanMs": 0.0567,
+			"p99Ms": 0.1402,
+			"outputBytes": 21,
+			"heapDeltaBytes": 603184
+		},
+		"string": {
+			"grammar": "typescript",
+			"callCount": 129,
+			"meanMs": 0.0397,
+			"p99Ms": 0.1265,
+			"outputBytes": 942,
+			"heapDeltaBytes": 6883552
+		},
+		"string_content": {
+			"grammar": "python",
+			"callCount": 166,
+			"meanMs": 0.0065,
+			"p99Ms": 0.0551,
+			"outputBytes": 1346,
+			"heapDeltaBytes": 1976680
+		},
+		"subscript": {
+			"grammar": "python",
+			"callCount": 43,
+			"meanMs": 0.0712,
+			"p99Ms": 0.4418,
+			"outputBytes": 242,
+			"heapDeltaBytes": -5872880
+		},
+		"try_statement": {
+			"grammar": "typescript",
+			"callCount": 6,
+			"meanMs": 0.0957,
+			"p99Ms": 0.2481,
+			"outputBytes": 216,
+			"heapDeltaBytes": 588840
+		},
+		"tuple": {
+			"grammar": "python",
+			"callCount": 43,
+			"meanMs": 0.052,
+			"p99Ms": 0.1564,
+			"outputBytes": 274,
+			"heapDeltaBytes": 2637584
+		},
+		"tuple_pattern": {
+			"grammar": "rust",
+			"callCount": 24,
+			"meanMs": 0.0454,
+			"p99Ms": 0.0793,
+			"outputBytes": 205,
+			"heapDeltaBytes": 673720
+		},
+		"type": {
+			"grammar": "python",
+			"callCount": 97,
+			"meanMs": 0.0361,
+			"p99Ms": 0.1552,
+			"outputBytes": 670,
+			"heapDeltaBytes": 4813456
+		},
+		"type_alias_statement": {
+			"grammar": "python",
+			"callCount": 9,
+			"meanMs": 0.049,
+			"p99Ms": 0.1091,
+			"outputBytes": 427,
+			"heapDeltaBytes": 568920
+		},
+		"type_parameter": {
+			"grammar": "typescript",
+			"callCount": 61,
+			"meanMs": 0.0666,
+			"p99Ms": 0.417,
+			"outputBytes": 259,
+			"heapDeltaBytes": 7511808
+		},
+		"typed_default_parameter": {
+			"grammar": "python",
+			"callCount": 4,
+			"meanMs": 0.0699,
+			"p99Ms": 0.0896,
+			"outputBytes": 66,
+			"heapDeltaBytes": 262616
+		},
+		"typed_parameter": {
+			"grammar": "python",
+			"callCount": 10,
+			"meanMs": 0.0533,
+			"p99Ms": 0.1072,
+			"outputBytes": 81,
+			"heapDeltaBytes": 642528
+		},
+		"unary_operator": {
+			"grammar": "python",
+			"callCount": 19,
+			"meanMs": 0.0712,
+			"p99Ms": 0.3339,
+			"outputBytes": 88,
+			"heapDeltaBytes": -15098344
+		},
+		"union_pattern": {
+			"grammar": "python",
+			"callCount": 10,
+			"meanMs": 0.0503,
+			"p99Ms": 0.0695,
+			"outputBytes": 212,
+			"heapDeltaBytes": 554808
+		},
+		"union_type": {
+			"grammar": "typescript",
+			"callCount": 29,
+			"meanMs": 0.1202,
+			"p99Ms": 2.1318,
+			"outputBytes": 437,
+			"heapDeltaBytes": -50102296
+		},
+		"while_statement": {
+			"grammar": "python",
+			"callCount": 7,
+			"meanMs": 0.0623,
+			"p99Ms": 0.1017,
+			"outputBytes": 156,
+			"heapDeltaBytes": 569968
+		},
+		"with_clause": {
+			"grammar": "python",
+			"callCount": 6,
+			"meanMs": 0.0414,
+			"p99Ms": 0.0487,
+			"outputBytes": 65,
+			"heapDeltaBytes": 323280
+		},
+		"with_item": {
+			"grammar": "python",
+			"callCount": 8,
+			"meanMs": 0.041,
+			"p99Ms": 0.0709,
+			"outputBytes": 72,
+			"heapDeltaBytes": 361976
+		},
+		"with_statement": {
+			"grammar": "python",
+			"callCount": 6,
+			"meanMs": 0.0712,
+			"p99Ms": 0.0955,
+			"outputBytes": 227,
+			"heapDeltaBytes": 542568
+		},
+		"yield": {
+			"grammar": "python",
+			"callCount": 19,
+			"meanMs": 0.0331,
+			"p99Ms": 0.156,
+			"outputBytes": 243,
+			"heapDeltaBytes": 1022912
+		},
+		"_array_expression_list": {
+			"grammar": "rust",
+			"callCount": 11,
+			"meanMs": 0.098,
+			"p99Ms": 0.3291,
+			"outputBytes": 141,
+			"heapDeltaBytes": 1475728
+		},
+		"_array_expression_semi": {
+			"grammar": "rust",
+			"callCount": 4,
+			"meanMs": 0.0741,
+			"p99Ms": 0.1273,
+			"outputBytes": 86,
+			"heapDeltaBytes": 383560
+		},
+		"_closure_expression_block": {
+			"grammar": "rust",
+			"callCount": 2,
+			"meanMs": 0.1265,
+			"p99Ms": 0.1504,
+			"outputBytes": 18,
+			"heapDeltaBytes": 156560
+		},
+		"_closure_expression_expr": {
+			"grammar": "rust",
+			"callCount": 13,
+			"meanMs": 0.0416,
+			"p99Ms": 0.102,
+			"outputBytes": 246,
+			"heapDeltaBytes": 574824
+		},
+		"_delim_token_tree_brace": {
+			"grammar": "rust",
+			"callCount": 7,
+			"meanMs": 0.0436,
+			"p99Ms": 0.0683,
+			"outputBytes": 74,
+			"heapDeltaBytes": 412264
+		},
+		"_delim_token_tree_bracket": {
+			"grammar": "rust",
+			"callCount": 6,
+			"meanMs": 0.047,
+			"p99Ms": 0.058,
+			"outputBytes": 14,
+			"heapDeltaBytes": 543144
+		},
+		"_delim_token_tree_paren": {
+			"grammar": "rust",
+			"callCount": 25,
+			"meanMs": 0.0386,
+			"p99Ms": 0.0947,
+			"outputBytes": 154,
+			"heapDeltaBytes": 1478824
+		},
+		"_expression_statement_block_ending": {
+			"grammar": "rust",
+			"callCount": 68,
+			"meanMs": 0.0359,
+			"p99Ms": 0.0755,
+			"outputBytes": 3473,
+			"heapDeltaBytes": 3596472
+		},
+		"_expression_statement_with_semi": {
+			"grammar": "rust",
+			"callCount": 208,
+			"meanMs": 0.0384,
+			"p99Ms": 0.0688,
+			"outputBytes": 2704,
+			"heapDeltaBytes": 12067056
+		},
+		"_field_identifier": {
+			"grammar": "rust",
+			"callCount": 55,
+			"meanMs": 0.0012,
+			"p99Ms": 0.0027,
+			"outputBytes": 295,
+			"heapDeltaBytes": 12760
+		},
+		"_field_pattern_named": {
+			"grammar": "rust",
+			"callCount": 2,
+			"meanMs": 0.0572,
+			"p99Ms": 0.0677,
+			"outputBytes": 6,
+			"heapDeltaBytes": 111088
+		},
+		"_field_pattern_shorthand": {
+			"grammar": "rust",
+			"callCount": 3,
+			"meanMs": 0.048,
+			"p99Ms": 0.068,
+			"outputBytes": 16,
+			"heapDeltaBytes": 132208
+		},
+		"_function_type_fn_form": {
+			"grammar": "rust",
+			"callCount": 7,
+			"meanMs": 0.0468,
+			"p99Ms": 0.0704,
+			"outputBytes": 58,
+			"heapDeltaBytes": 407400
+		},
+		"_function_type_trait_form": {
+			"grammar": "rust",
+			"callCount": 8,
+			"meanMs": 0.0585,
+			"p99Ms": 0.1383,
+			"outputBytes": 40,
+			"heapDeltaBytes": 354680
+		},
+		"_impl_item_body": {
+			"grammar": "rust",
+			"callCount": 14,
+			"meanMs": 0.0402,
+			"p99Ms": 0.1122,
+			"outputBytes": 436,
+			"heapDeltaBytes": 609632
+		},
+		"_let_chain": {
+			"grammar": "rust",
+			"callCount": 8,
+			"meanMs": 0.0508,
+			"p99Ms": 0.091,
+			"outputBytes": 244,
+			"heapDeltaBytes": 465656
+		},
+		"_macro_definition_brace": {
+			"grammar": "rust",
+			"callCount": 6,
+			"meanMs": 0.0426,
+			"p99Ms": 0.0599,
+			"outputBytes": 334,
+			"heapDeltaBytes": 358512
+		},
+		"_macro_definition_bracket": {
+			"grammar": "rust",
+			"callCount": 2,
+			"meanMs": 0.1155,
+			"p99Ms": 0.164,
+			"outputBytes": 23,
+			"heapDeltaBytes": 123720
+		},
+		"_match_arm_block_ending": {
+			"grammar": "rust",
+			"callCount": 3,
+			"meanMs": 0.0368,
+			"p99Ms": 0.0409,
+			"outputBytes": 77,
+			"heapDeltaBytes": 131176
+		},
+		"_match_arm_with_comma": {
+			"grammar": "rust",
+			"callCount": 31,
+			"meanMs": 0.0372,
+			"p99Ms": 0.0824,
+			"outputBytes": 244,
+			"heapDeltaBytes": 1489024
+		},
+		"_mod_item_inline": {
+			"grammar": "rust",
+			"callCount": 9,
+			"meanMs": 0.0367,
+			"p99Ms": 0.0716,
+			"outputBytes": 125,
+			"heapDeltaBytes": 391856
+		},
+		"_or_pattern_binary": {
+			"grammar": "rust",
+			"callCount": 16,
+			"meanMs": 0.0392,
+			"p99Ms": 0.0584,
+			"outputBytes": 223,
+			"heapDeltaBytes": 853680
+		},
+		"_pointer_type_mut": {
+			"grammar": "rust",
+			"callCount": 9,
+			"meanMs": 0.0385,
+			"p99Ms": 0.0468,
+			"outputBytes": 27,
+			"heapDeltaBytes": 475624
+		},
+		"_range_expression_bare": {
+			"grammar": "rust",
+			"callCount": 2,
+			"meanMs": 0.0821,
+			"p99Ms": 0.1029,
+			"outputBytes": 4,
+			"heapDeltaBytes": 91944
+		},
+		"_range_expression_binary": {
+			"grammar": "rust",
+			"callCount": 12,
+			"meanMs": 0.3031,
+			"p99Ms": 3.0189,
+			"outputBytes": 88,
+			"heapDeltaBytes": -43721328
+		},
+		"_range_expression_postfix": {
+			"grammar": "rust",
+			"callCount": 3,
+			"meanMs": 0.1156,
+			"p99Ms": 0.2058,
+			"outputBytes": 12,
+			"heapDeltaBytes": 162544
+		},
+		"_range_expression_prefix": {
+			"grammar": "rust",
+			"callCount": 2,
+			"meanMs": 0.0954,
+			"p99Ms": 0.122,
+			"outputBytes": 8,
+			"heapDeltaBytes": 110240
+		},
+		"_range_pattern_left_with_right": {
+			"grammar": "rust",
+			"callCount": 5,
+			"meanMs": 0.0403,
+			"p99Ms": 0.0585,
+			"outputBytes": 20,
+			"heapDeltaBytes": 228288
+		},
+		"_range_pattern_prefix": {
+			"grammar": "rust",
+			"callCount": 3,
+			"meanMs": 0.0488,
+			"p99Ms": 0.0595,
+			"outputBytes": 12,
+			"heapDeltaBytes": 138648
+		},
+		"_reference_expression_raw_mut": {
+			"grammar": "rust",
+			"callCount": 2,
+			"meanMs": 0.1471,
+			"p99Ms": 0.1835,
+			"outputBytes": 14,
+			"heapDeltaBytes": 5576
+		},
+		"_string_content": {
+			"grammar": "rust",
+			"callCount": 12,
+			"meanMs": 0.001,
+			"p99Ms": 0.0012,
+			"outputBytes": 63,
+			"heapDeltaBytes": 2784
+		},
+		"_struct_item_brace": {
+			"grammar": "rust",
+			"callCount": 12,
+			"meanMs": 0.0553,
+			"p99Ms": 0.1168,
+			"outputBytes": 170,
+			"heapDeltaBytes": 745080
+		},
+		"_struct_item_tuple": {
+			"grammar": "rust",
+			"callCount": 8,
+			"meanMs": 0.0471,
+			"p99Ms": 0.063,
+			"outputBytes": 119,
+			"heapDeltaBytes": 207440
+		},
+		"_token_tree_brace": {
+			"grammar": "rust",
+			"callCount": 5,
+			"meanMs": 0.0405,
+			"p99Ms": 0.0457,
+			"outputBytes": 50,
+			"heapDeltaBytes": 295752
+		},
+		"_token_tree_paren": {
+			"grammar": "rust",
+			"callCount": 7,
+			"meanMs": 0.0383,
+			"p99Ms": 0.0422,
+			"outputBytes": 140,
+			"heapDeltaBytes": 415064
+		},
+		"_token_tree_pattern_bracket": {
+			"grammar": "rust",
+			"callCount": 2,
+			"meanMs": 0.0473,
+			"p99Ms": 0.0511,
+			"outputBytes": 32,
+			"heapDeltaBytes": 116528
+		},
+		"_token_tree_pattern_paren": {
+			"grammar": "rust",
+			"callCount": 8,
+			"meanMs": 0.0374,
+			"p99Ms": 0.0424,
+			"outputBytes": 78,
+			"heapDeltaBytes": 468376
+		},
+		"_type_identifier": {
+			"grammar": "typescript",
+			"callCount": 388,
+			"meanMs": 0.0013,
+			"p99Ms": 0.0042,
+			"outputBytes": 993,
+			"heapDeltaBytes": 79112
+		},
+		"_visibility_modifier_crate": {
+			"grammar": "rust",
+			"callCount": 5,
+			"meanMs": 0.041,
+			"p99Ms": 0.0465,
+			"outputBytes": 25,
+			"heapDeltaBytes": 262320
+		},
+		"_visibility_modifier_pub": {
+			"grammar": "rust",
+			"callCount": 34,
+			"meanMs": 0.0494,
+			"p99Ms": 0.1523,
+			"outputBytes": 195,
+			"heapDeltaBytes": 1958040
+		},
+		"abstract_type": {
+			"grammar": "rust",
+			"callCount": 18,
+			"meanMs": 0.0524,
+			"p99Ms": 0.0758,
+			"outputBytes": 360,
+			"heapDeltaBytes": 1344808
+		},
+		"arguments": {
+			"grammar": "typescript",
+			"callCount": 39,
+			"meanMs": 0.0435,
+			"p99Ms": 0.1158,
+			"outputBytes": 207,
+			"heapDeltaBytes": 2229840
+		},
+		"array_expression": {
+			"grammar": "rust",
+			"callCount": 19,
+			"meanMs": 0.0684,
+			"p99Ms": 0.1455,
+			"outputBytes": 289,
+			"heapDeltaBytes": 1959928
+		},
+		"array_type": {
+			"grammar": "typescript",
+			"callCount": 38,
+			"meanMs": 0.0369,
+			"p99Ms": 0.0555,
+			"outputBytes": 220,
+			"heapDeltaBytes": 1841888
+		},
+		"assignment_expression": {
+			"grammar": "typescript",
+			"callCount": 9,
+			"meanMs": 0.0564,
+			"p99Ms": 0.0712,
+			"outputBytes": 188,
+			"heapDeltaBytes": 623920
+		},
+		"associated_type": {
+			"grammar": "rust",
+			"callCount": 10,
+			"meanMs": 0.0749,
+			"p99Ms": 0.1087,
+			"outputBytes": 232,
+			"heapDeltaBytes": 1263856
+		},
+		"async_block": {
+			"grammar": "rust",
+			"callCount": 8,
+			"meanMs": 0.0725,
+			"p99Ms": 0.1113,
+			"outputBytes": 97,
+			"heapDeltaBytes": 625192
+		},
+		"attribute_item": {
+			"grammar": "rust",
+			"callCount": 46,
+			"meanMs": 0.1031,
+			"p99Ms": 2.9115,
+			"outputBytes": 910,
+			"heapDeltaBytes": -40296664
+		},
+		"await_expression": {
+			"grammar": "rust",
+			"callCount": 14,
+			"meanMs": 0.0534,
+			"p99Ms": 0.1,
+			"outputBytes": 219,
+			"heapDeltaBytes": 833448
+		},
+		"base_field_initializer": {
+			"grammar": "rust",
+			"callCount": 2,
+			"meanMs": 0.0849,
+			"p99Ms": 0.0977,
+			"outputBytes": 32,
+			"heapDeltaBytes": 112664
+		},
+		"binary_expression": {
+			"grammar": "typescript",
+			"callCount": 28,
+			"meanMs": 0.0423,
+			"p99Ms": 0.0615,
+			"outputBytes": 718,
+			"heapDeltaBytes": 1750232
+		},
+		"block_comment": {
+			"grammar": "rust",
+			"callCount": 2,
+			"meanMs": 0.1206,
+			"p99Ms": 0.1228,
+			"outputBytes": 8,
+			"heapDeltaBytes": 194784
+		},
+		"bounded_type": {
+			"grammar": "rust",
+			"callCount": 20,
+			"meanMs": 0.05,
+			"p99Ms": 0.0817,
+			"outputBytes": 573,
+			"heapDeltaBytes": 1353976
+		},
+		"bracketed_type": {
+			"grammar": "rust",
+			"callCount": 6,
+			"meanMs": 0.0502,
+			"p99Ms": 0.0692,
+			"outputBytes": 66,
+			"heapDeltaBytes": 351824
+		},
+		"break_expression": {
+			"grammar": "rust",
+			"callCount": 7,
+			"meanMs": 0.0608,
+			"p99Ms": 0.0838,
+			"outputBytes": 67,
+			"heapDeltaBytes": 595344
+		},
+		"call_expression": {
+			"grammar": "typescript",
+			"callCount": 50,
+			"meanMs": 0.0522,
+			"p99Ms": 0.1799,
+			"outputBytes": 514,
+			"heapDeltaBytes": 3879528
+		},
+		"captured_pattern": {
+			"grammar": "rust",
+			"callCount": 11,
+			"meanMs": 0.0489,
+			"p99Ms": 0.0851,
+			"outputBytes": 96,
+			"heapDeltaBytes": 704640
+		},
+		"closure_expression": {
+			"grammar": "rust",
+			"callCount": 24,
+			"meanMs": 0.0825,
+			"p99Ms": 0.1445,
+			"outputBytes": 527,
+			"heapDeltaBytes": 3577928
+		},
+		"closure_parameters": {
+			"grammar": "rust",
+			"callCount": 17,
+			"meanMs": 0.0433,
+			"p99Ms": 0.0745,
+			"outputBytes": 99,
+			"heapDeltaBytes": 148400
+		},
+		"compound_assignment_expr": {
+			"grammar": "rust",
+			"callCount": 7,
+			"meanMs": 0.044,
+			"p99Ms": 0.0509,
+			"outputBytes": 42,
+			"heapDeltaBytes": 444032
+		},
+		"const_block": {
+			"grammar": "rust",
+			"callCount": 8,
+			"meanMs": 0.04,
+			"p99Ms": 0.0526,
+			"outputBytes": 151,
+			"heapDeltaBytes": 364696
+		},
+		"const_item": {
+			"grammar": "rust",
+			"callCount": 13,
+			"meanMs": 0.0765,
+			"p99Ms": 0.13,
+			"outputBytes": 278,
+			"heapDeltaBytes": 1496216
+		},
+		"const_parameter": {
+			"grammar": "rust",
+			"callCount": 4,
+			"meanMs": 0.0973,
+			"p99Ms": 0.1289,
+			"outputBytes": 64,
+			"heapDeltaBytes": 320792
+		},
+		"continue_expression": {
+			"grammar": "rust",
+			"callCount": 7,
+			"meanMs": 0.059,
+			"p99Ms": 0.0973,
+			"outputBytes": 84,
+			"heapDeltaBytes": 462160
+		},
+		"declaration_list": {
+			"grammar": "rust",
+			"callCount": 37,
+			"meanMs": 0.0451,
+			"p99Ms": 0.1793,
+			"outputBytes": 885,
+			"heapDeltaBytes": 811728
+		},
+		"delim_token_tree": {
+			"grammar": "rust",
+			"callCount": 60,
+			"meanMs": 0.0467,
+			"p99Ms": 0.2862,
+			"outputBytes": 560,
+			"heapDeltaBytes": 3649560
+		},
+		"dynamic_type": {
+			"grammar": "rust",
+			"callCount": 10,
+			"meanMs": 0.0515,
+			"p99Ms": 0.0953,
+			"outputBytes": 237,
+			"heapDeltaBytes": 462496
+		},
+		"enum_item": {
+			"grammar": "rust",
+			"callCount": 10,
+			"meanMs": 0.3902,
+			"p99Ms": 3.1463,
+			"outputBytes": 1251,
+			"heapDeltaBytes": -37148656
+		},
+		"enum_variant": {
+			"grammar": "rust",
+			"callCount": 11,
+			"meanMs": 0.0678,
+			"p99Ms": 0.0957,
+			"outputBytes": 212,
+			"heapDeltaBytes": 1323528
+		},
+		"enum_variant_list": {
+			"grammar": "rust",
+			"callCount": 7,
+			"meanMs": 0.0449,
+			"p99Ms": 0.0592,
+			"outputBytes": 664,
+			"heapDeltaBytes": 416392
+		},
+		"extern_crate_declaration": {
+			"grammar": "rust",
+			"callCount": 5,
+			"meanMs": 0.0812,
+			"p99Ms": 0.0945,
+			"outputBytes": 104,
+			"heapDeltaBytes": 575232
+		},
+		"extern_modifier": {
+			"grammar": "rust",
+			"callCount": 7,
+			"meanMs": 0.0584,
+			"p99Ms": 0.1121,
+			"outputBytes": 70,
+			"heapDeltaBytes": 465400
+		},
+		"field_declaration": {
+			"grammar": "rust",
+			"callCount": 20,
+			"meanMs": 0.0557,
+			"p99Ms": 0.1563,
+			"outputBytes": 351,
+			"heapDeltaBytes": 1207264
+		},
+		"field_declaration_list": {
+			"grammar": "rust",
+			"callCount": 19,
+			"meanMs": 0.041,
+			"p99Ms": 0.049,
+			"outputBytes": 607,
+			"heapDeltaBytes": 719256
+		},
+		"field_expression": {
+			"grammar": "rust",
+			"callCount": 60,
+			"meanMs": 0.0394,
+			"p99Ms": 0.0786,
+			"outputBytes": 646,
+			"heapDeltaBytes": 3213584
+		},
+		"field_initializer": {
+			"grammar": "rust",
+			"callCount": 8,
+			"meanMs": 0.0601,
+			"p99Ms": 0.134,
+			"outputBytes": 98,
+			"heapDeltaBytes": 573392
+		},
+		"field_initializer_list": {
+			"grammar": "rust",
+			"callCount": 8,
+			"meanMs": 0.0559,
+			"p99Ms": 0.1298,
+			"outputBytes": 183,
+			"heapDeltaBytes": 44584
+		},
+		"field_pattern": {
+			"grammar": "rust",
+			"callCount": 5,
+			"meanMs": 0.1309,
+			"p99Ms": 0.248,
+			"outputBytes": 16,
+			"heapDeltaBytes": 598488
+		},
+		"for_expression": {
+			"grammar": "rust",
+			"callCount": 13,
+			"meanMs": 0.0789,
+			"p99Ms": 0.2292,
+			"outputBytes": 496,
+			"heapDeltaBytes": 778840
+		},
+		"for_lifetimes": {
+			"grammar": "rust",
+			"callCount": 2,
+			"meanMs": 0.1166,
+			"p99Ms": 0.1545,
+			"outputBytes": 20,
+			"heapDeltaBytes": 124576
+		},
+		"function_item": {
+			"grammar": "rust",
+			"callCount": 102,
+			"meanMs": 0.0986,
+			"p99Ms": 0.1636,
+			"outputBytes": 4441,
+			"heapDeltaBytes": 19785704
+		},
+		"function_modifiers": {
+			"grammar": "rust",
+			"callCount": 14,
+			"meanMs": 0.0537,
+			"p99Ms": 0.0963,
+			"outputBytes": 95,
+			"heapDeltaBytes": 956824
+		},
+		"function_signature_item": {
+			"grammar": "rust",
+			"callCount": 6,
+			"meanMs": 0.1063,
+			"p99Ms": 0.1619,
+			"outputBytes": 195,
+			"heapDeltaBytes": 1161392
+		},
+		"function_type": {
+			"grammar": "typescript",
+			"callCount": 33,
+			"meanMs": 0.0469,
+			"p99Ms": 0.0681,
+			"outputBytes": 737,
+			"heapDeltaBytes": 2659400
+		},
+		"gen_block": {
+			"grammar": "rust",
+			"callCount": 6,
+			"meanMs": 0.0551,
+			"p99Ms": 0.0842,
+			"outputBytes": 65,
+			"heapDeltaBytes": 330216
+		},
+		"generic_function": {
+			"grammar": "rust",
+			"callCount": 4,
+			"meanMs": 0.0611,
+			"p99Ms": 0.0913,
+			"outputBytes": 62,
+			"heapDeltaBytes": 401240
+		},
+		"generic_pattern": {
+			"grammar": "rust",
+			"callCount": 3,
+			"meanMs": 0.0618,
+			"p99Ms": 0.0763,
+			"outputBytes": 27,
+			"heapDeltaBytes": 197648
+		},
+		"generic_type_with_turbofish": {
+			"grammar": "rust",
+			"callCount": 4,
+			"meanMs": 0.0618,
+			"p99Ms": 0.082,
+			"outputBytes": 26,
+			"heapDeltaBytes": 254976
+		},
+		"higher_ranked_trait_bound": {
+			"grammar": "rust",
+			"callCount": 3,
+			"meanMs": 0.1135,
+			"p99Ms": 0.1648,
+			"outputBytes": 95,
+			"heapDeltaBytes": 175632
+		},
+		"if_expression": {
+			"grammar": "rust",
+			"callCount": 33,
+			"meanMs": 0.0486,
+			"p99Ms": 0.0813,
+			"outputBytes": 1337,
+			"heapDeltaBytes": 2622952
+		},
+		"impl_item": {
+			"grammar": "rust",
+			"callCount": 25,
+			"meanMs": 0.113,
+			"p99Ms": 0.2136,
+			"outputBytes": 1204,
+			"heapDeltaBytes": 5377496
+		},
+		"index_expression": {
+			"grammar": "rust",
+			"callCount": 5,
+			"meanMs": 0.0503,
+			"p99Ms": 0.0713,
+			"outputBytes": 64,
+			"heapDeltaBytes": 292872
+		},
+		"inner_attribute_item": {
+			"grammar": "rust",
+			"callCount": 7,
+			"meanMs": 0.0441,
+			"p99Ms": 0.0674,
+			"outputBytes": 266,
+			"heapDeltaBytes": 350064
+		},
+		"label": {
+			"grammar": "rust",
+			"callCount": 9,
+			"meanMs": 0.0327,
+			"p99Ms": 0.0415,
+			"outputBytes": 54,
+			"heapDeltaBytes": 400144
+		},
+		"let_condition": {
+			"grammar": "rust",
+			"callCount": 18,
+			"meanMs": 0.0402,
+			"p99Ms": 0.0783,
+			"outputBytes": 321,
+			"heapDeltaBytes": 973480
+		},
+		"let_declaration": {
+			"grammar": "rust",
+			"callCount": 70,
+			"meanMs": 0.0786,
+			"p99Ms": 0.1842,
+			"outputBytes": 3149,
+			"heapDeltaBytes": 10392920
+		},
+		"lifetime": {
+			"grammar": "rust",
+			"callCount": 42,
+			"meanMs": 0.0417,
+			"p99Ms": 0.1205,
+			"outputBytes": 99,
+			"heapDeltaBytes": 1865056
+		},
+		"lifetime_parameter": {
+			"grammar": "rust",
+			"callCount": 15,
+			"meanMs": 0.0554,
+			"p99Ms": 0.0918,
+			"outputBytes": 30,
+			"heapDeltaBytes": 1028272
+		},
+		"line_comment": {
+			"grammar": "rust",
+			"callCount": 9,
+			"meanMs": 0.0595,
+			"p99Ms": 0.1525,
+			"outputBytes": 420,
+			"heapDeltaBytes": 488504
+		},
+		"loop_expression": {
+			"grammar": "rust",
+			"callCount": 4,
+			"meanMs": 0.0598,
+			"p99Ms": 0.0835,
+			"outputBytes": 265,
+			"heapDeltaBytes": 301032
+		},
+		"macro_definition": {
+			"grammar": "rust",
+			"callCount": 8,
+			"meanMs": 0.0709,
+			"p99Ms": 0.2122,
+			"outputBytes": 593,
+			"heapDeltaBytes": 561848
+		},
+		"macro_invocation": {
+			"grammar": "rust",
+			"callCount": 46,
+			"meanMs": 0.0435,
+			"p99Ms": 0.1276,
+			"outputBytes": 621,
+			"heapDeltaBytes": 2458456
+		},
+		"macro_rule": {
+			"grammar": "rust",
+			"callCount": 8,
+			"meanMs": 0.0526,
+			"p99Ms": 0.1338,
+			"outputBytes": 301,
+			"heapDeltaBytes": 430384
+		},
+		"match_arm": {
+			"grammar": "rust",
+			"callCount": 44,
+			"meanMs": 0.0456,
+			"p99Ms": 0.107,
+			"outputBytes": 956,
+			"heapDeltaBytes": 3008456
+		},
+		"match_block": {
+			"grammar": "rust",
+			"callCount": 19,
+			"meanMs": 0.0426,
+			"p99Ms": 0.0569,
+			"outputBytes": 1639,
+			"heapDeltaBytes": 1118824
+		},
+		"match_expression": {
+			"grammar": "rust",
+			"callCount": 27,
+			"meanMs": 0.0428,
+			"p99Ms": 0.0955,
+			"outputBytes": 2936,
+			"heapDeltaBytes": 1457376
+		},
+		"match_pattern": {
+			"grammar": "rust",
+			"callCount": 45,
+			"meanMs": 0.0493,
+			"p99Ms": 0.12,
+			"outputBytes": 446,
+			"heapDeltaBytes": 3539752
+		},
+		"mod_item": {
+			"grammar": "rust",
+			"callCount": 17,
+			"meanMs": 0.0604,
+			"p99Ms": 0.0865,
+			"outputBytes": 364,
+			"heapDeltaBytes": 1648568
+		},
+		"mut_pattern": {
+			"grammar": "rust",
+			"callCount": 9,
+			"meanMs": 0.0479,
+			"p99Ms": 0.0659,
+			"outputBytes": 87,
+			"heapDeltaBytes": 572760
+		},
+		"negative_literal": {
+			"grammar": "rust",
+			"callCount": 4,
+			"meanMs": 0.0757,
+			"p99Ms": 0.114,
+			"outputBytes": 11,
+			"heapDeltaBytes": 241640
+		},
+		"or_pattern": {
+			"grammar": "rust",
+			"callCount": 25,
+			"meanMs": 0.1845,
+			"p99Ms": 3.1593,
+			"outputBytes": 350,
+			"heapDeltaBytes": -35725096
+		},
+		"ordered_field_declaration_list": {
+			"grammar": "rust",
+			"callCount": 12,
+			"meanMs": 0.0723,
+			"p99Ms": 0.1293,
+			"outputBytes": 109,
+			"heapDeltaBytes": 1166488
+		},
+		"parameter": {
+			"grammar": "rust",
+			"callCount": 48,
+			"meanMs": 0.0504,
+			"p99Ms": 0.0882,
+			"outputBytes": 578,
+			"heapDeltaBytes": 4362560
+		},
+		"pointer_type": {
+			"grammar": "rust",
+			"callCount": 21,
+			"meanMs": 0.061,
+			"p99Ms": 0.1214,
+			"outputBytes": 245,
+			"heapDeltaBytes": 1484552
+		},
+		"qualified_type": {
+			"grammar": "rust",
+			"callCount": 4,
+			"meanMs": 0.0709,
+			"p99Ms": 0.1135,
+			"outputBytes": 38,
+			"heapDeltaBytes": 222504
+		},
+		"range_expression": {
+			"grammar": "rust",
+			"callCount": 21,
+			"meanMs": 0.0425,
+			"p99Ms": 0.1464,
+			"outputBytes": 91,
+			"heapDeltaBytes": 1249144
+		},
+		"range_pattern": {
+			"grammar": "rust",
+			"callCount": 8,
+			"meanMs": 0.059,
+			"p99Ms": 0.1587,
+			"outputBytes": 36,
+			"heapDeltaBytes": 628056
+		},
+		"raw_string_literal": {
+			"grammar": "rust",
+			"callCount": 15,
+			"meanMs": 0.0239,
+			"p99Ms": 0.0351,
+			"outputBytes": 177,
+			"heapDeltaBytes": 525576
+		},
+		"ref_pattern": {
+			"grammar": "rust",
+			"callCount": 8,
+			"meanMs": 0.045,
+			"p99Ms": 0.0566,
+			"outputBytes": 98,
+			"heapDeltaBytes": 441608
+		},
+		"reference_expression": {
+			"grammar": "rust",
+			"callCount": 18,
+			"meanMs": 0.0495,
+			"p99Ms": 0.0823,
+			"outputBytes": 131,
+			"heapDeltaBytes": 876464
+		},
+		"reference_pattern": {
+			"grammar": "rust",
+			"callCount": 6,
+			"meanMs": 0.0897,
+			"p99Ms": 0.2511,
+			"outputBytes": 24,
+			"heapDeltaBytes": 130216
+		},
+		"reference_type": {
+			"grammar": "rust",
+			"callCount": 32,
+			"meanMs": 0.0611,
+			"p99Ms": 0.132,
+			"outputBytes": 320,
+			"heapDeltaBytes": 2517040
+		},
+		"removed_trait_bound": {
+			"grammar": "rust",
+			"callCount": 5,
+			"meanMs": 0.0514,
+			"p99Ms": 0.0739,
+			"outputBytes": 30,
+			"heapDeltaBytes": 273816
+		},
+		"return_expression": {
+			"grammar": "rust",
+			"callCount": 12,
+			"meanMs": 0.0474,
+			"p99Ms": 0.1014,
+			"outputBytes": 136,
+			"heapDeltaBytes": 613592
+		},
+		"scoped_identifier": {
+			"grammar": "rust",
+			"callCount": 63,
+			"meanMs": 0.0484,
+			"p99Ms": 0.1289,
+			"outputBytes": 903,
+			"heapDeltaBytes": 4318296
+		},
+		"scoped_type_identifier": {
+			"grammar": "rust",
+			"callCount": 37,
+			"meanMs": 0.0492,
+			"p99Ms": 0.0814,
+			"outputBytes": 350,
+			"heapDeltaBytes": 2545600
+		},
+		"scoped_type_identifier_in_expression_position": {
+			"grammar": "rust",
+			"callCount": 6,
+			"meanMs": 0.05,
+			"p99Ms": 0.0585,
+			"outputBytes": 60,
+			"heapDeltaBytes": 410448
+		},
+		"scoped_use_list": {
+			"grammar": "rust",
+			"callCount": 7,
+			"meanMs": 0.0533,
+			"p99Ms": 0.0891,
+			"outputBytes": 221,
+			"heapDeltaBytes": 483136
+		},
+		"self_parameter": {
+			"grammar": "rust",
+			"callCount": 4,
+			"meanMs": 0.0898,
+			"p99Ms": 0.1183,
+			"outputBytes": 20,
+			"heapDeltaBytes": 374808
+		},
+		"shorthand_field_initializer": {
+			"grammar": "rust",
+			"callCount": 5,
+			"meanMs": 0.0652,
+			"p99Ms": 0.095,
+			"outputBytes": 26,
+			"heapDeltaBytes": 400648
+		},
+		"slice_pattern": {
+			"grammar": "rust",
+			"callCount": 3,
+			"meanMs": 0.0426,
+			"p99Ms": 0.046,
+			"outputBytes": 15,
+			"heapDeltaBytes": 177856
+		},
+		"source_file": {
+			"grammar": "rust",
+			"callCount": 248,
+			"meanMs": 0.0644,
+			"p99Ms": 0.1862,
+			"outputBytes": 22912,
+			"heapDeltaBytes": 21501632
+		},
+		"static_item": {
+			"grammar": "rust",
+			"callCount": 7,
+			"meanMs": 0.1029,
+			"p99Ms": 0.1863,
+			"outputBytes": 156,
+			"heapDeltaBytes": 1201992
+		},
+		"string_literal": {
+			"grammar": "rust",
+			"callCount": 89,
+			"meanMs": 0.0416,
+			"p99Ms": 0.1059,
+			"outputBytes": 926,
+			"heapDeltaBytes": 5164200
+		},
+		"struct_expression": {
+			"grammar": "rust",
+			"callCount": 10,
+			"meanMs": 0.0426,
+			"p99Ms": 0.0677,
+			"outputBytes": 327,
+			"heapDeltaBytes": 528328
+		},
+		"struct_item": {
+			"grammar": "rust",
+			"callCount": 29,
+			"meanMs": 0.076,
+			"p99Ms": 0.1785,
+			"outputBytes": 833,
+			"heapDeltaBytes": 3694448
+		},
+		"struct_pattern": {
+			"grammar": "rust",
+			"callCount": 6,
+			"meanMs": 0.0702,
+			"p99Ms": 0.1094,
+			"outputBytes": 120,
+			"heapDeltaBytes": 413000
+		},
+		"token_binding_pattern": {
+			"grammar": "rust",
+			"callCount": 6,
+			"meanMs": 0.0495,
+			"p99Ms": 0.0893,
+			"outputBytes": 42,
+			"heapDeltaBytes": 322096
+		},
+		"token_repetition": {
+			"grammar": "rust",
+			"callCount": 4,
+			"meanMs": 0.0465,
+			"p99Ms": 0.0635,
+			"outputBytes": 47,
+			"heapDeltaBytes": 239152
+		},
+		"token_repetition_pattern": {
+			"grammar": "rust",
+			"callCount": 4,
+			"meanMs": 0.0537,
+			"p99Ms": 0.07,
+			"outputBytes": 82,
+			"heapDeltaBytes": 242680
+		},
+		"token_tree": {
+			"grammar": "rust",
+			"callCount": 40,
+			"meanMs": 0.0393,
+			"p99Ms": 0.1156,
+			"outputBytes": 786,
+			"heapDeltaBytes": 2150600
+		},
+		"token_tree_pattern": {
+			"grammar": "rust",
+			"callCount": 9,
+			"meanMs": 0.0414,
+			"p99Ms": 0.086,
+			"outputBytes": 116,
+			"heapDeltaBytes": 518352
+		},
+		"trait_bounds": {
+			"grammar": "rust",
+			"callCount": 26,
+			"meanMs": 0.1406,
+			"p99Ms": 2.5985,
+			"outputBytes": 350,
+			"heapDeltaBytes": -43231568
+		},
+		"trait_item": {
+			"grammar": "rust",
+			"callCount": 24,
+			"meanMs": 0.0988,
+			"p99Ms": 0.2396,
+			"outputBytes": 1134,
+			"heapDeltaBytes": 4283072
+		},
+		"try_block": {
+			"grammar": "rust",
+			"callCount": 3,
+			"meanMs": 0.0473,
+			"p99Ms": 0.059,
+			"outputBytes": 18,
+			"heapDeltaBytes": 139896
+		},
+		"try_expression": {
+			"grammar": "rust",
+			"callCount": 17,
+			"meanMs": 0.0445,
+			"p99Ms": 0.0808,
+			"outputBytes": 254,
+			"heapDeltaBytes": 527752
+		},
+		"tuple_expression": {
+			"grammar": "rust",
+			"callCount": 10,
+			"meanMs": 0.0742,
+			"p99Ms": 0.1193,
+			"outputBytes": 90,
+			"heapDeltaBytes": 1067856
+		},
+		"tuple_struct_pattern": {
+			"grammar": "rust",
+			"callCount": 44,
+			"meanMs": 0.0864,
+			"p99Ms": 1.5374,
+			"outputBytes": 357,
+			"heapDeltaBytes": -52337480
+		},
+		"tuple_type": {
+			"grammar": "typescript",
+			"callCount": 14,
+			"meanMs": 0.0419,
+			"p99Ms": 0.0528,
+			"outputBytes": 181,
+			"heapDeltaBytes": 823264
+		},
+		"type_arguments": {
+			"grammar": "typescript",
+			"callCount": 75,
+			"meanMs": 0.0434,
+			"p99Ms": 0.1711,
+			"outputBytes": 730,
+			"heapDeltaBytes": 4411808
+		},
+		"type_binding": {
+			"grammar": "rust",
+			"callCount": 8,
+			"meanMs": 0.0736,
+			"p99Ms": 0.1848,
+			"outputBytes": 70,
+			"heapDeltaBytes": 637384
+		},
+		"type_cast_expression": {
+			"grammar": "rust",
+			"callCount": 12,
+			"meanMs": 0.0492,
+			"p99Ms": 0.0769,
+			"outputBytes": 162,
+			"heapDeltaBytes": 643752
+		},
+		"type_item": {
+			"grammar": "rust",
+			"callCount": 61,
+			"meanMs": 0.0772,
+			"p99Ms": 0.1418,
+			"outputBytes": 1587,
+			"heapDeltaBytes": 9892424
+		},
+		"type_parameters": {
+			"grammar": "typescript",
+			"callCount": 46,
+			"meanMs": 0.0429,
+			"p99Ms": 0.1325,
+			"outputBytes": 405,
+			"heapDeltaBytes": 2655056
+		},
+		"unary_expression": {
+			"grammar": "typescript",
+			"callCount": 9,
+			"meanMs": 0.0427,
+			"p99Ms": 0.0513,
+			"outputBytes": 91,
+			"heapDeltaBytes": 480344
+		},
+		"union_item": {
+			"grammar": "rust",
+			"callCount": 3,
+			"meanMs": 0.0983,
+			"p99Ms": 0.105,
+			"outputBytes": 615,
+			"heapDeltaBytes": 413328
+		},
+		"unsafe_block": {
+			"grammar": "rust",
+			"callCount": 3,
+			"meanMs": 0.0518,
+			"p99Ms": 0.0617,
+			"outputBytes": 48,
+			"heapDeltaBytes": 139176
+		},
+		"use_as_clause": {
+			"grammar": "rust",
+			"callCount": 4,
+			"meanMs": 0.065,
+			"p99Ms": 0.0997,
+			"outputBytes": 136,
+			"heapDeltaBytes": 218144
+		},
+		"use_declaration": {
+			"grammar": "rust",
+			"callCount": 17,
+			"meanMs": 0.0554,
+			"p99Ms": 0.0919,
+			"outputBytes": 455,
+			"heapDeltaBytes": 1329608
+		},
+		"use_list": {
+			"grammar": "rust",
+			"callCount": 7,
+			"meanMs": 0.0436,
+			"p99Ms": 0.0571,
+			"outputBytes": 154,
+			"heapDeltaBytes": 415144
+		},
+		"use_wildcard": {
+			"grammar": "rust",
+			"callCount": 5,
+			"meanMs": 0.0607,
+			"p99Ms": 0.0871,
+			"outputBytes": 75,
+			"heapDeltaBytes": 349176
+		},
+		"variadic_parameter": {
+			"grammar": "rust",
+			"callCount": 3,
+			"meanMs": 0.1164,
+			"p99Ms": 0.1777,
+			"outputBytes": 16,
+			"heapDeltaBytes": 289688
+		},
+		"visibility_modifier": {
+			"grammar": "rust",
+			"callCount": 60,
+			"meanMs": 0.0513,
+			"p99Ms": 0.1113,
+			"outputBytes": 297,
+			"heapDeltaBytes": 4265352
+		},
+		"where_clause": {
+			"grammar": "rust",
+			"callCount": 10,
+			"meanMs": 0.0503,
+			"p99Ms": 0.0859,
+			"outputBytes": 192,
+			"heapDeltaBytes": 550440
+		},
+		"where_predicate": {
+			"grammar": "rust",
+			"callCount": 8,
+			"meanMs": 0.0471,
+			"p99Ms": 0.0706,
+			"outputBytes": 140,
+			"heapDeltaBytes": 424936
+		},
+		"while_expression": {
+			"grammar": "rust",
+			"callCount": 12,
+			"meanMs": 0.0586,
+			"p99Ms": 0.1088,
+			"outputBytes": 510,
+			"heapDeltaBytes": 999144
+		},
+		"yield_expression": {
+			"grammar": "typescript",
+			"callCount": 3,
+			"meanMs": 0.079,
+			"p99Ms": 0.1104,
+			"outputBytes": 129,
+			"heapDeltaBytes": 232144
+		},
+		"_arrow_function__call_signature": {
+			"grammar": "typescript",
+			"callCount": 3,
+			"meanMs": 0.0944,
+			"p99Ms": 0.1256,
+			"outputBytes": 112,
+			"heapDeltaBytes": 299440
+		},
+		"_arrow_function_parameter": {
+			"grammar": "typescript",
+			"callCount": 2,
+			"meanMs": 0.0644,
+			"p99Ms": 0.071,
+			"outputBytes": 10,
+			"heapDeltaBytes": 90768
+		},
+		"_call_expression_call": {
+			"grammar": "typescript",
+			"callCount": 21,
+			"meanMs": 0.0537,
+			"p99Ms": 0.1396,
+			"outputBytes": 319,
+			"heapDeltaBytes": 590744
+		},
+		"_call_expression_member": {
+			"grammar": "typescript",
+			"callCount": 2,
+			"meanMs": 0.0641,
+			"p99Ms": 0.0849,
+			"outputBytes": 18,
+			"heapDeltaBytes": 163024
+		},
+		"_class_body_member": {
+			"grammar": "typescript",
+			"callCount": 25,
+			"meanMs": 0.0493,
+			"p99Ms": 0.1363,
+			"outputBytes": 809,
+			"heapDeltaBytes": 1440800
+		},
+		"_class_body_method": {
+			"grammar": "typescript",
+			"callCount": 19,
+			"meanMs": 0.0605,
+			"p99Ms": 0.1312,
+			"outputBytes": 665,
+			"heapDeltaBytes": 1716168
+		},
+		"_class_body_method_sig": {
+			"grammar": "typescript",
+			"callCount": 3,
+			"meanMs": 0.0407,
+			"p99Ms": 0.0497,
+			"outputBytes": 39,
+			"heapDeltaBytes": 174272
+		},
+		"_class_heritage_extends_clause": {
+			"grammar": "typescript",
+			"callCount": 13,
+			"meanMs": 0.0425,
+			"p99Ms": 0.0621,
+			"outputBytes": 259,
+			"heapDeltaBytes": 689088
+		},
+		"_export_statement_equals_export": {
+			"grammar": "typescript",
+			"callCount": 3,
+			"meanMs": 0.0753,
+			"p99Ms": 0.1151,
+			"outputBytes": 35,
+			"heapDeltaBytes": 170168
+		},
+		"_export_statement_type_export": {
+			"grammar": "typescript",
+			"callCount": 4,
+			"meanMs": 0.0583,
+			"p99Ms": 0.0807,
+			"outputBytes": 131,
+			"heapDeltaBytes": 331784
+		},
+		"_for_header_lhs": {
+			"grammar": "typescript",
+			"callCount": 2,
+			"meanMs": 0.0626,
+			"p99Ms": 0.072,
+			"outputBytes": 2,
+			"heapDeltaBytes": 92256
+		},
+		"_index_signature_colon": {
+			"grammar": "typescript",
+			"callCount": 18,
+			"meanMs": 0.0412,
+			"p99Ms": 0.0654,
+			"outputBytes": 115,
+			"heapDeltaBytes": 967944
+		},
+		"_index_signature_mapped_type_clause": {
+			"grammar": "typescript",
+			"callCount": 7,
+			"meanMs": 0.0423,
+			"p99Ms": 0.0538,
+			"outputBytes": 182,
+			"heapDeltaBytes": 370656
+		},
+		"_parenthesized_expression_typed": {
+			"grammar": "typescript",
+			"callCount": 7,
+			"meanMs": 0.0533,
+			"p99Ms": 0.0922,
+			"outputBytes": 22,
+			"heapDeltaBytes": 554928
+		},
+		"_public_field_definition_access_first": {
+			"grammar": "typescript",
+			"callCount": 4,
+			"meanMs": 0.0714,
+			"p99Ms": 0.0931,
+			"outputBytes": 0,
+			"heapDeltaBytes": 324264
+		},
+		"_public_field_definition_readonly_first": {
+			"grammar": "typescript",
+			"callCount": 5,
+			"meanMs": 0.0012,
+			"p99Ms": 0.0015,
+			"outputBytes": 40,
+			"heapDeltaBytes": 1160
+		},
+		"_public_field_definition_static_mods": {
+			"grammar": "typescript",
+			"callCount": 6,
+			"meanMs": 0.0026,
+			"p99Ms": 0.0053,
+			"outputBytes": 36,
+			"heapDeltaBytes": 1392
+		},
+		"_string_double": {
+			"grammar": "typescript",
+			"callCount": 33,
+			"meanMs": 0.0447,
+			"p99Ms": 0.1306,
+			"outputBytes": 224,
+			"heapDeltaBytes": 1912224
+		},
+		"_string_single": {
+			"grammar": "typescript",
+			"callCount": 27,
+			"meanMs": 0.0521,
+			"p99Ms": 0.132,
+			"outputBytes": 147,
+			"heapDeltaBytes": 1569128
+		},
+		"_update_expression_postfix": {
+			"grammar": "typescript",
+			"callCount": 2,
+			"meanMs": 0.059,
+			"p99Ms": 0.0844,
+			"outputBytes": 12,
+			"heapDeltaBytes": 110464
+		},
+		"abstract_class_declaration": {
+			"grammar": "typescript",
+			"callCount": 11,
+			"meanMs": 0.0827,
+			"p99Ms": 0.1093,
+			"outputBytes": 570,
+			"heapDeltaBytes": 1631432
+		},
+		"abstract_method_signature": {
+			"grammar": "typescript",
+			"callCount": 6,
+			"meanMs": 0.1126,
+			"p99Ms": 0.1727,
+			"outputBytes": 182,
+			"heapDeltaBytes": 1341912
+		},
+		"ambient_declaration": {
+			"grammar": "typescript",
+			"callCount": 38,
+			"meanMs": 0.0499,
+			"p99Ms": 0.2054,
+			"outputBytes": 2772,
+			"heapDeltaBytes": 2767056
+		},
+		"array": {
+			"grammar": "typescript",
+			"callCount": 5,
+			"meanMs": 0.0568,
+			"p99Ms": 0.0954,
+			"outputBytes": 20,
+			"heapDeltaBytes": 298128
+		},
+		"arrow_function": {
+			"grammar": "typescript",
+			"callCount": 7,
+			"meanMs": 0.1037,
+			"p99Ms": 0.2012,
+			"outputBytes": 150,
+			"heapDeltaBytes": 745784
+		},
+		"as_expression": {
+			"grammar": "typescript",
+			"callCount": 10,
+			"meanMs": 0.0484,
+			"p99Ms": 0.0675,
+			"outputBytes": 206,
+			"heapDeltaBytes": 694344
+		},
+		"asserts": {
+			"grammar": "typescript",
+			"callCount": 11,
+			"meanMs": 0.0281,
+			"p99Ms": 0.0693,
+			"outputBytes": 121,
+			"heapDeltaBytes": 383720
+		},
+		"asserts_annotation": {
+			"grammar": "typescript",
+			"callCount": 4,
+			"meanMs": 0.061,
+			"p99Ms": 0.1067,
+			"outputBytes": 56,
+			"heapDeltaBytes": 219088
+		},
+		"augmented_assignment_expression": {
+			"grammar": "typescript",
+			"callCount": 1,
+			"meanMs": 0.0445,
+			"p99Ms": 0.0445,
+			"outputBytes": 11,
+			"heapDeltaBytes": 63472
+		},
+		"break_statement": {
+			"grammar": "typescript",
+			"callCount": 5,
+			"meanMs": 0.0619,
+			"p99Ms": 0.0876,
+			"outputBytes": 35,
+			"heapDeltaBytes": 376440
+		},
+		"call_signature": {
+			"grammar": "typescript",
+			"callCount": 4,
+			"meanMs": 0.0544,
+			"p99Ms": 0.0659,
+			"outputBytes": 68,
+			"heapDeltaBytes": 387864
+		},
+		"catch_clause": {
+			"grammar": "typescript",
+			"callCount": 4,
+			"meanMs": 0.118,
+			"p99Ms": 0.2703,
+			"outputBytes": 70,
+			"heapDeltaBytes": 444000
+		},
+		"class": {
+			"grammar": "typescript",
+			"callCount": 4,
+			"meanMs": 0.09,
+			"p99Ms": 0.1567,
+			"outputBytes": 29,
+			"heapDeltaBytes": 511344
+		},
+		"class_body": {
+			"grammar": "typescript",
+			"callCount": 60,
+			"meanMs": 0.0401,
+			"p99Ms": 0.0593,
+			"outputBytes": 2528,
+			"heapDeltaBytes": 3508848
+		},
+		"class_declaration": {
+			"grammar": "typescript",
+			"callCount": 73,
+			"meanMs": 0.0805,
+			"p99Ms": 0.1625,
+			"outputBytes": 4700,
+			"heapDeltaBytes": 12815984
+		},
+		"class_heritage": {
+			"grammar": "typescript",
+			"callCount": 16,
+			"meanMs": 0.0704,
+			"p99Ms": 0.2185,
+			"outputBytes": 359,
+			"heapDeltaBytes": 1044560
+		},
+		"class_static_block": {
+			"grammar": "typescript",
+			"callCount": 3,
+			"meanMs": 0.0628,
+			"p99Ms": 0.0839,
+			"outputBytes": 95,
+			"heapDeltaBytes": 196392
+		},
+		"conditional_type": {
+			"grammar": "typescript",
+			"callCount": 21,
+			"meanMs": 0.0466,
+			"p99Ms": 0.0835,
+			"outputBytes": 840,
+			"heapDeltaBytes": 1545712
+		},
+		"constraint": {
+			"grammar": "typescript",
+			"callCount": 12,
+			"meanMs": 0.0446,
+			"p99Ms": 0.0876,
+			"outputBytes": 235,
+			"heapDeltaBytes": 538408
+		},
+		"constructor_type": {
+			"grammar": "typescript",
+			"callCount": 10,
+			"meanMs": 0.0747,
+			"p99Ms": 0.1773,
+			"outputBytes": 257,
+			"heapDeltaBytes": 1167784
+		},
+		"continue_statement": {
+			"grammar": "typescript",
+			"callCount": 3,
+			"meanMs": 0.0663,
+			"p99Ms": 0.0758,
+			"outputBytes": 30,
+			"heapDeltaBytes": 231280
+		},
+		"debugger_statement": {
+			"grammar": "typescript",
+			"callCount": 3,
+			"meanMs": 0.0509,
+			"p99Ms": 0.0621,
+			"outputBytes": 30,
+			"heapDeltaBytes": 139296
+		},
+		"do_statement": {
+			"grammar": "typescript",
+			"callCount": 3,
+			"meanMs": 0.0684,
+			"p99Ms": 0.0789,
+			"outputBytes": 63,
+			"heapDeltaBytes": 249104
+		},
+		"enum_assignment": {
+			"grammar": "typescript",
+			"callCount": 9,
+			"meanMs": 0.0395,
+			"p99Ms": 0.055,
+			"outputBytes": 155,
+			"heapDeltaBytes": 480280
+		},
+		"enum_body": {
+			"grammar": "typescript",
+			"callCount": 5,
+			"meanMs": 0.096,
+			"p99Ms": 0.1502,
+			"outputBytes": 42,
+			"heapDeltaBytes": 394712
+		},
+		"enum_declaration": {
+			"grammar": "typescript",
+			"callCount": 7,
+			"meanMs": 0.0656,
+			"p99Ms": 0.1125,
+			"outputBytes": 524,
+			"heapDeltaBytes": 592576
+		},
+		"export_clause": {
+			"grammar": "typescript",
+			"callCount": 4,
+			"meanMs": 0.0413,
+			"p99Ms": 0.049,
+			"outputBytes": 50,
+			"heapDeltaBytes": 237152
+		},
+		"export_specifier": {
+			"grammar": "typescript",
+			"callCount": 6,
+			"meanMs": 0.0727,
+			"p99Ms": 0.1738,
+			"outputBytes": 32,
+			"heapDeltaBytes": 581200
+		},
+		"export_statement": {
+			"grammar": "typescript",
+			"callCount": 66,
+			"meanMs": 0.0391,
+			"p99Ms": 0.0972,
+			"outputBytes": 2756,
+			"heapDeltaBytes": 3680848
+		},
+		"extends_clause": {
+			"grammar": "typescript",
+			"callCount": 16,
+			"meanMs": 0.0744,
+			"p99Ms": 0.1995,
+			"outputBytes": 289,
+			"heapDeltaBytes": 1505400
+		},
+		"extends_type_clause": {
+			"grammar": "typescript",
+			"callCount": 3,
+			"meanMs": 0.097,
+			"p99Ms": 0.1458,
+			"outputBytes": 40,
+			"heapDeltaBytes": 173696
+		},
+		"flow_maybe_type": {
+			"grammar": "typescript",
+			"callCount": 8,
+			"meanMs": 0.0467,
+			"p99Ms": 0.1193,
+			"outputBytes": 45,
+			"heapDeltaBytes": 360456
+		},
+		"for_in_statement": {
+			"grammar": "typescript",
+			"callCount": 3,
+			"meanMs": 0.0987,
+			"p99Ms": 0.1137,
+			"outputBytes": 51,
+			"heapDeltaBytes": 353104
+		},
+		"formal_parameters": {
+			"grammar": "typescript",
+			"callCount": 115,
+			"meanMs": 0.0411,
+			"p99Ms": 0.1137,
+			"outputBytes": 1007,
+			"heapDeltaBytes": 6914488
+		},
+		"function_declaration": {
+			"grammar": "typescript",
+			"callCount": 32,
+			"meanMs": 0.0777,
+			"p99Ms": 0.2097,
+			"outputBytes": 1495,
+			"heapDeltaBytes": 5330648
+		},
+		"function_expression": {
+			"grammar": "typescript",
+			"callCount": 3,
+			"meanMs": 0.1049,
+			"p99Ms": 0.1173,
+			"outputBytes": 81,
+			"heapDeltaBytes": 510112
+		},
+		"function_signature": {
+			"grammar": "typescript",
+			"callCount": 29,
+			"meanMs": 0.0764,
+			"p99Ms": 0.1296,
+			"outputBytes": 1116,
+			"heapDeltaBytes": 5125440
+		},
+		"generator_function_declaration": {
+			"grammar": "typescript",
+			"callCount": 3,
+			"meanMs": 0.1441,
+			"p99Ms": 0.2385,
+			"outputBytes": 324,
+			"heapDeltaBytes": 509808
+		},
+		"implements_clause": {
+			"grammar": "typescript",
+			"callCount": 6,
+			"meanMs": 0.082,
+			"p99Ms": 0.16,
+			"outputBytes": 72,
+			"heapDeltaBytes": 331264
+		},
+		"import_alias": {
+			"grammar": "typescript",
+			"callCount": 9,
+			"meanMs": 0.0563,
+			"p99Ms": 0.092,
+			"outputBytes": 120,
+			"heapDeltaBytes": 715560
+		},
+		"import_attribute": {
+			"grammar": "typescript",
+			"callCount": 1,
+			"meanMs": 0.0857,
+			"p99Ms": 0.0857,
+			"outputBytes": 15,
+			"heapDeltaBytes": 56608
+		},
+		"import_clause": {
+			"grammar": "typescript",
+			"callCount": 14,
+			"meanMs": 0.0533,
+			"p99Ms": 0.1153,
+			"outputBytes": 229,
+			"heapDeltaBytes": 822520
+		},
+		"import_specifier": {
+			"grammar": "typescript",
+			"callCount": 18,
+			"meanMs": 0.0585,
+			"p99Ms": 0.177,
+			"outputBytes": 147,
+			"heapDeltaBytes": 1454064
+		},
+		"index_signature": {
+			"grammar": "typescript",
+			"callCount": 26,
+			"meanMs": 0.0699,
+			"p99Ms": 0.1081,
+			"outputBytes": 493,
+			"heapDeltaBytes": 2633552
+		},
+		"index_type_query": {
+			"grammar": "typescript",
+			"callCount": 28,
+			"meanMs": 0.0387,
+			"p99Ms": 0.0679,
+			"outputBytes": 326,
+			"heapDeltaBytes": 1253928
+		},
+		"infer_type": {
+			"grammar": "typescript",
+			"callCount": 10,
+			"meanMs": 0.0541,
+			"p99Ms": 0.0967,
+			"outputBytes": 100,
+			"heapDeltaBytes": 713896
+		},
+		"instantiation_expression": {
+			"grammar": "typescript",
+			"callCount": 7,
+			"meanMs": 0.0523,
+			"p99Ms": 0.0894,
+			"outputBytes": 91,
+			"heapDeltaBytes": 382208
+		},
+		"interface_declaration": {
+			"grammar": "typescript",
+			"callCount": 34,
+			"meanMs": 0.0595,
+			"p99Ms": 0.0994,
+			"outputBytes": 1587,
+			"heapDeltaBytes": 3685880
+		},
+		"internal_module": {
+			"grammar": "typescript",
+			"callCount": 13,
+			"meanMs": 0.0485,
+			"p99Ms": 0.08,
+			"outputBytes": 1562,
+			"heapDeltaBytes": 820944
+		},
+		"intersection_type": {
+			"grammar": "typescript",
+			"callCount": 27,
+			"meanMs": 0.0436,
+			"p99Ms": 0.0679,
+			"outputBytes": 557,
+			"heapDeltaBytes": 1554536
+		},
+		"lexical_declaration": {
+			"grammar": "typescript",
+			"callCount": 68,
+			"meanMs": 0.0465,
+			"p99Ms": 0.2329,
+			"outputBytes": 2163,
+			"heapDeltaBytes": 4931048
+		},
+		"literal_type": {
+			"grammar": "typescript",
+			"callCount": 46,
+			"meanMs": 0.0338,
+			"p99Ms": 0.0481,
+			"outputBytes": 187,
+			"heapDeltaBytes": 2430536
+		},
+		"lookup_type": {
+			"grammar": "typescript",
+			"callCount": 25,
+			"meanMs": 0.0418,
+			"p99Ms": 0.0794,
+			"outputBytes": 324,
+			"heapDeltaBytes": 1447760
+		},
+		"mapped_type_clause": {
+			"grammar": "typescript",
+			"callCount": 9,
+			"meanMs": 0.0721,
+			"p99Ms": 0.1765,
+			"outputBytes": 206,
+			"heapDeltaBytes": 721040
+		},
+		"member_expression": {
+			"grammar": "typescript",
+			"callCount": 51,
+			"meanMs": 0.0476,
+			"p99Ms": 0.0781,
+			"outputBytes": 651,
+			"heapDeltaBytes": 3782352
+		},
+		"method_definition": {
+			"grammar": "typescript",
+			"callCount": 19,
+			"meanMs": 0.2698,
+			"p99Ms": 2.679,
+			"outputBytes": 629,
+			"heapDeltaBytes": -39354912
+		},
+		"method_signature": {
+			"grammar": "typescript",
+			"callCount": 14,
+			"meanMs": 0.1242,
+			"p99Ms": 0.174,
+			"outputBytes": 286,
+			"heapDeltaBytes": 4114896
+		},
+		"named_imports": {
+			"grammar": "typescript",
+			"callCount": 12,
+			"meanMs": 0.0486,
+			"p99Ms": 0.0919,
+			"outputBytes": 212,
+			"heapDeltaBytes": 715440
+		},
+		"nested_identifier": {
+			"grammar": "typescript",
+			"callCount": 6,
+			"meanMs": 0.0652,
+			"p99Ms": 0.1297,
+			"outputBytes": 26,
+			"heapDeltaBytes": 325952
+		},
+		"nested_type_identifier": {
+			"grammar": "typescript",
+			"callCount": 12,
+			"meanMs": 0.0448,
+			"p99Ms": 0.0765,
+			"outputBytes": 84,
+			"heapDeltaBytes": 633416
+		},
+		"new_expression": {
+			"grammar": "typescript",
+			"callCount": 3,
+			"meanMs": 0.0887,
+			"p99Ms": 0.0986,
+			"outputBytes": 69,
+			"heapDeltaBytes": 300400
+		},
+		"non_null_expression": {
+			"grammar": "typescript",
+			"callCount": 4,
+			"meanMs": 0.0587,
+			"p99Ms": 0.0868,
+			"outputBytes": 22,
+			"heapDeltaBytes": 198008
+		},
+		"object": {
+			"grammar": "typescript",
+			"callCount": 14,
+			"meanMs": 0.0457,
+			"p99Ms": 0.096,
+			"outputBytes": 334,
+			"heapDeltaBytes": 827600
+		},
+		"object_pattern": {
+			"grammar": "typescript",
+			"callCount": 3,
+			"meanMs": 0.0465,
+			"p99Ms": 0.063,
+			"outputBytes": 15,
+			"heapDeltaBytes": 165952
+		},
+		"object_type": {
+			"grammar": "typescript",
+			"callCount": 79,
+			"meanMs": 0.0547,
+			"p99Ms": 0.1631,
+			"outputBytes": 1997,
+			"heapDeltaBytes": 7280520
+		},
+		"omitting_type_annotation": {
+			"grammar": "typescript",
+			"callCount": 2,
+			"meanMs": 0.1271,
+			"p99Ms": 0.153,
+			"outputBytes": 12,
+			"heapDeltaBytes": 103520
+		},
+		"opting_type_annotation": {
+			"grammar": "typescript",
+			"callCount": 2,
+			"meanMs": 0.0703,
+			"p99Ms": 0.0729,
+			"outputBytes": 10,
+			"heapDeltaBytes": 93976
+		},
+		"optional_parameter": {
+			"grammar": "typescript",
+			"callCount": 7,
+			"meanMs": 0.1101,
+			"p99Ms": 0.2151,
+			"outputBytes": 101,
+			"heapDeltaBytes": 1259416
+		},
+		"optional_type": {
+			"grammar": "typescript",
+			"callCount": 2,
+			"meanMs": 0.0829,
+			"p99Ms": 0.0922,
+			"outputBytes": 14,
+			"heapDeltaBytes": 100680
+		},
+		"parenthesized_type": {
+			"grammar": "typescript",
+			"callCount": 25,
+			"meanMs": 0.0372,
+			"p99Ms": 0.0603,
+			"outputBytes": 382,
+			"heapDeltaBytes": 1225952
+		},
+		"program": {
+			"grammar": "typescript",
+			"callCount": 216,
+			"meanMs": 0.0598,
+			"p99Ms": 0.177,
+			"outputBytes": 22570,
+			"heapDeltaBytes": 22071032
+		},
+		"property_signature": {
+			"grammar": "typescript",
+			"callCount": 42,
+			"meanMs": 0.0908,
+			"p99Ms": 0.1417,
+			"outputBytes": 644,
+			"heapDeltaBytes": 8916112
+		},
+		"public_field_definition": {
+			"grammar": "typescript",
+			"callCount": 23,
+			"meanMs": 0.0881,
+			"p99Ms": 0.1348,
+			"outputBytes": 814,
+			"heapDeltaBytes": 3947240
+		},
+		"readonly_type": {
+			"grammar": "typescript",
+			"callCount": 10,
+			"meanMs": 0.0393,
+			"p99Ms": 0.0636,
+			"outputBytes": 157,
+			"heapDeltaBytes": 450248
+		},
+		"required_parameter": {
+			"grammar": "typescript",
+			"callCount": 76,
+			"meanMs": 0.0782,
+			"p99Ms": 0.1549,
+			"outputBytes": 785,
+			"heapDeltaBytes": 13297992
+		},
+		"rest_pattern": {
+			"grammar": "typescript",
+			"callCount": 7,
+			"meanMs": 0.0477,
+			"p99Ms": 0.0809,
+			"outputBytes": 40,
+			"heapDeltaBytes": 381856
+		},
+		"rest_type": {
+			"grammar": "typescript",
+			"callCount": 2,
+			"meanMs": 0.0584,
+			"p99Ms": 0.0685,
+			"outputBytes": 8,
+			"heapDeltaBytes": 93616
+		},
+		"satisfies_expression": {
+			"grammar": "typescript",
+			"callCount": 8,
+			"meanMs": 0.0414,
+			"p99Ms": 0.0578,
+			"outputBytes": 199,
+			"heapDeltaBytes": 437528
+		},
+		"statement_block": {
+			"grammar": "typescript",
+			"callCount": 109,
+			"meanMs": 0.0801,
+			"p99Ms": 0.1037,
+			"outputBytes": 2934,
+			"heapDeltaBytes": -39819432
+		},
+		"subscript_expression": {
+			"grammar": "typescript",
+			"callCount": 6,
+			"meanMs": 0.0613,
+			"p99Ms": 0.0833,
+			"outputBytes": 60,
+			"heapDeltaBytes": 507544
+		},
+		"switch_body": {
+			"grammar": "typescript",
+			"callCount": 2,
+			"meanMs": 0.041,
+			"p99Ms": 0.0425,
+			"outputBytes": 108,
+			"heapDeltaBytes": 118120
+		},
+		"switch_case": {
+			"grammar": "typescript",
+			"callCount": 2,
+			"meanMs": 0.0776,
+			"p99Ms": 0.0798,
+			"outputBytes": 26,
+			"heapDeltaBytes": 166896
+		},
+		"switch_default": {
+			"grammar": "typescript",
+			"callCount": 2,
+			"meanMs": 0.0708,
+			"p99Ms": 0.0747,
+			"outputBytes": 28,
+			"heapDeltaBytes": 148912
+		},
+		"switch_statement": {
+			"grammar": "typescript",
+			"callCount": 3,
+			"meanMs": 0.0591,
+			"p99Ms": 0.0774,
+			"outputBytes": 237,
+			"heapDeltaBytes": 169064
+		},
+		"template_literal_type": {
+			"grammar": "typescript",
+			"callCount": 20,
+			"meanMs": 0.0428,
+			"p99Ms": 0.0675,
+			"outputBytes": 298,
+			"heapDeltaBytes": 1170376
+		},
+		"template_type": {
+			"grammar": "typescript",
+			"callCount": 18,
+			"meanMs": 0.0434,
+			"p99Ms": 0.1218,
+			"outputBytes": 213,
+			"heapDeltaBytes": 755192
+		},
+		"ternary_expression": {
+			"grammar": "typescript",
+			"callCount": 3,
+			"meanMs": 0.0613,
+			"p99Ms": 0.077,
+			"outputBytes": 87,
+			"heapDeltaBytes": 197568
+		},
+		"throw_statement": {
+			"grammar": "typescript",
+			"callCount": 3,
+			"meanMs": 0.0724,
+			"p99Ms": 0.0979,
+			"outputBytes": 45,
+			"heapDeltaBytes": 246088
+		},
+		"type_alias_declaration": {
+			"grammar": "typescript",
+			"callCount": 124,
+			"meanMs": 0.0503,
+			"p99Ms": 0.0875,
+			"outputBytes": 5210,
+			"heapDeltaBytes": 10975152
+		},
+		"type_annotation": {
+			"grammar": "typescript",
+			"callCount": 228,
+			"meanMs": 0.0335,
+			"p99Ms": 0.071,
+			"outputBytes": 2093,
+			"heapDeltaBytes": 10011656
+		},
+		"type_predicate": {
+			"grammar": "typescript",
+			"callCount": 9,
+			"meanMs": 0.0496,
+			"p99Ms": 0.09,
+			"outputBytes": 95,
+			"heapDeltaBytes": 485808
+		},
+		"type_predicate_annotation": {
+			"grammar": "typescript",
+			"callCount": 6,
+			"meanMs": 0.0477,
+			"p99Ms": 0.0914,
+			"outputBytes": 57,
+			"heapDeltaBytes": 111304
+		},
+		"type_query": {
+			"grammar": "typescript",
+			"callCount": 27,
+			"meanMs": 0.0417,
+			"p99Ms": 0.1305,
+			"outputBytes": 363,
+			"heapDeltaBytes": 1466664
+		},
+		"update_expression": {
+			"grammar": "typescript",
+			"callCount": 6,
+			"meanMs": 0.0602,
+			"p99Ms": 0.1013,
+			"outputBytes": 54,
+			"heapDeltaBytes": 397240
+		},
+		"variable_declaration": {
+			"grammar": "typescript",
+			"callCount": 33,
+			"meanMs": 0.0476,
+			"p99Ms": 0.1041,
+			"outputBytes": 607,
+			"heapDeltaBytes": 1824528
+		},
+		"variable_declarator": {
+			"grammar": "typescript",
+			"callCount": 72,
+			"meanMs": 0.0525,
+			"p99Ms": 0.1151,
+			"outputBytes": 1519,
+			"heapDeltaBytes": 6864360
+		}
+	}
 }

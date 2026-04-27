@@ -2,9 +2,9 @@
 description: Security review of staged changes only (git diff --cached)
 ---
 
-
 <!-- Extension: security-review -->
 <!-- Config: .specify/extensions/security-review/ -->
+
 # Security Review — Staged Changes
 
 ## User Input

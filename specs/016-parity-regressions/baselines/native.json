@@ -1,1090 +1,853 @@
 {
-    "backend": "native",
-    "commit": "5eb15d0",
-    "grammars": {
-        "python": {
-            "parityFixtures": {
-                "failingByKind": {
-                    "as_pattern": [
-                        "render #54",
-                        "render #171",
-                        "render #172"
-                    ],
-                    "attribute": [
-                        "render #3",
-                        "render #25",
-                        "render #31",
-                        "render #67",
-                        "render #73",
-                        "render #84",
-                        "render #94",
-                        "render #109",
-                        "render #113",
-                        "render #117",
-                        "render #121",
-                        "render #125",
-                        "render #144",
-                        "render #147",
-                        "render #151",
-                        "render #154",
-                        "render #158",
-                        "render #161",
-                        "render #176",
-                        "render #186"
-                    ],
-                    "await": [
-                        "render #4"
-                    ],
-                    "binary_operator": [
-                        "render #0",
-                        "render #17",
-                        "render #19",
-                        "render #20",
-                        "render #22",
-                        "render #26",
-                        "render #44",
-                        "render #74",
-                        "render #76",
-                        "render #88",
-                        "render #166",
-                        "render #168"
-                    ],
-                    "boolean_operator": [
-                        "render #27",
-                        "render #163",
-                        "render #195"
-                    ],
-                    "call": [
-                        "render #5",
-                        "render #7",
-                        "render #8",
-                        "render #10",
-                        "render #13",
-                        "render #23",
-                        "render #36",
-                        "render #41",
-                        "render #43",
-                        "render #53",
-                        "render #56",
-                        "render #59",
-                        "render #66",
-                        "render #71",
-                        "render #86",
-                        "render #92",
-                        "render #96",
-                        "render #106",
-                        "render #108",
-                        "render #112",
-                        "render #116",
-                        "render #120",
-                        "render #124",
-                        "render #133",
-                        "render #135",
-                        "render #137",
-                        "render #141",
-                        "render #143",
-                        "render #146",
-                        "render #150",
-                        "render #153",
-                        "render #157",
-                        "render #160",
-                        "render #162",
-                        "render #173",
-                        "render #182",
-                        "render #184",
-                        "render #187",
-                        "render #189",
-                        "render #194",
-                        "render #196"
-                    ],
-                    "concatenated_string": [
-                        "render #68",
-                        "render #78",
-                        "render #139"
-                    ],
-                    "conditional_expression": [
-                        "render #52"
-                    ],
-                    "dictionary": [
-                        "render #12",
-                        "render #16",
-                        "render #93",
-                        "render #100",
-                        "render #193"
-                    ],
-                    "dictionary_comprehension": [
-                        "render #97"
-                    ],
-                    "generator_expression": [
-                        "render #40",
-                        "render #104"
-                    ],
-                    "lambda": [
-                        "render #42",
-                        "render #91"
-                    ],
-                    "list": [
-                        "render #33",
-                        "render #57",
-                        "render #58",
-                        "render #81",
-                        "render #90",
-                        "render #131",
-                        "render #132",
-                        "render #136",
-                        "render #170"
-                    ],
-                    "list_comprehension": [
-                        "render #55",
-                        "render #87"
-                    ],
-                    "list_pattern": [
-                        "render #110",
-                        "render #114",
-                        "render #118",
-                        "render #122",
-                        "render #126"
-                    ],
-                    "list_splat": [
-                        "render #14",
-                        "render #49",
-                        "render #82",
-                        "render #99"
-                    ],
-                    "list_splat_pattern": [
-                        "render #9",
-                        "render #29",
-                        "render #46",
-                        "render #130",
-                        "render #177",
-                        "render #180"
-                    ],
-                    "named_expression": [
-                        "render #34",
-                        "render #142"
-                    ],
-                    "not_operator": [
-                        "render #28",
-                        "render #164",
-                        "render #169"
-                    ],
-                    "parenthesized_expression": [
-                        "render #35",
-                        "render #39",
-                        "render #183"
-                    ],
-                    "set": [
-                        "render #98"
-                    ],
-                    "set_comprehension": [
-                        "render #101"
-                    ],
-                    "string": [
-                        "render #11",
-                        "render #38",
-                        "render #45",
-                        "render #64",
-                        "render #65",
-                        "render #69",
-                        "render #70",
-                        "render #72",
-                        "render #75",
-                        "render #77",
-                        "render #79",
-                        "render #80",
-                        "render #111",
-                        "render #115",
-                        "render #119",
-                        "render #123",
-                        "render #127",
-                        "render #129",
-                        "render #134",
-                        "render #138",
-                        "render #145",
-                        "render #149",
-                        "render #156",
-                        "render #159",
-                        "render #165",
-                        "render #174",
-                        "render #178",
-                        "render #190",
-                        "render #191",
-                        "render #192",
-                        "render #197"
-                    ],
-                    "subscript": [
-                        "render #1",
-                        "render #2",
-                        "render #24",
-                        "render #30",
-                        "render #85",
-                        "render #95",
-                        "render #102",
-                        "render #105",
-                        "render #167",
-                        "render #185",
-                        "render #188"
-                    ],
-                    "tuple": [
-                        "render #15",
-                        "render #47",
-                        "render #48",
-                        "render #50",
-                        "render #51",
-                        "render #83",
-                        "render #89",
-                        "render #103",
-                        "render #107",
-                        "render #140",
-                        "render #179",
-                        "render #199"
-                    ],
-                    "tuple_pattern": [
-                        "render #148",
-                        "render #152",
-                        "render #155"
-                    ],
-                    "type": [
-                        "render #6",
-                        "render #32",
-                        "render #37",
-                        "render #60",
-                        "render #128",
-                        "render #175",
-                        "render #181",
-                        "render #198",
-                        "render #200"
-                    ],
-                    "unary_operator": [
-                        "render #18",
-                        "render #21",
-                        "render #61",
-                        "render #62",
-                        "render #63"
-                    ]
-                },
-                "formatDeferredByKind": {},
-                "pass": 0,
-                "total": 201
-            },
-            "validators": {
-                "coverage": {
-                    "failingKinds": [
-                        "comparison_operator",
-                        "dict_pattern"
-                    ],
-                    "formatDeferredKinds": [],
-                    "pass": 103,
-                    "total": 105
-                },
-                "factoryRoundtrip": {
-                    "astMatchPass": 203,
-                    "failingKinds": [
-                        "as_pattern",
-                        "boolean_operator",
-                        "comparison_operator",
-                        "list_splat",
-                        "set",
-                        "tuple",
-                        "tuple_pattern",
-                        "type"
-                    ],
-                    "formatDeferredKinds": [],
-                    "pass": 210,
-                    "total": 898
-                },
-                "from": {
-                    "failingKinds": [
-                        "expression_statement",
-                        "list_splat"
-                    ],
-                    "formatDeferredKinds": [],
-                    "pass": 110,
-                    "total": 114
-                },
-                "roundtrip": {
-                    "astMatchPass": 104,
-                    "failingKinds": [
-                        "as_pattern",
-                        "comparison_operator",
-                        "list_splat",
-                        "tuple",
-                        "tuple_pattern"
-                    ],
-                    "formatDeferredKinds": [],
-                    "pass": 107,
-                    "total": 115
-                }
-            }
-        },
-        "rust": {
-            "parityFixtures": {
-                "failingByKind": {
-                    "abstract_type": [
-                        "render #39",
-                        "render #48",
-                        "render #53",
-                        "render #122",
-                        "render #193"
-                    ],
-                    "array_expression": [
-                        "render #36",
-                        "render #166",
-                        "render #271",
-                        "render #337",
-                        "render #377"
-                    ],
-                    "array_type": [
-                        "render #35",
-                        "render #91",
-                        "render #104",
-                        "render #236",
-                        "render #241",
-                        "render #455"
-                    ],
-                    "assignment_expression": [
-                        "render #263",
-                        "render #320"
-                    ],
-                    "associated_type": [
-                        "render #186",
-                        "render #201",
-                        "render #207"
-                    ],
-                    "async_block": [
-                        "render #9",
-                        "render #16"
-                    ],
-                    "attribute_item": [
-                        "render #43",
-                        "render #88",
-                        "render #93",
-                        "render #97",
-                        "render #129",
-                        "render #146",
-                        "render #153",
-                        "render #156",
-                        "render #163",
-                        "render #273",
-                        "render #310"
-                    ],
-                    "await_expression": [
-                        "render #4",
-                        "render #5",
-                        "render #74"
-                    ],
-                    "binary_expression": [
-                        "render #31",
-                        "render #256",
-                        "render #258",
-                        "render #267",
-                        "render #290",
-                        "render #301",
-                        "render #314",
-                        "render #329",
-                        "render #360",
-                        "render #370"
-                    ],
-                    "block": [
-                        "render #1",
-                        "render #10",
-                        "render #17",
-                        "render #19",
-                        "render #21",
-                        "render #29",
-                        "render #46",
-                        "render #51",
-                        "render #55",
-                        "render #57",
-                        "render #60",
-                        "render #77",
-                        "render #84",
-                        "render #101",
-                        "render #105",
-                        "render #128",
-                        "render #131",
-                        "render #150",
-                        "render #161",
-                        "render #182",
-                        "render #196",
-                        "render #212",
-                        "render #221",
-                        "render #225",
-                        "render #231",
-                        "render #238",
-                        "render #243",
-                        "render #245",
-                        "render #261",
-                        "render #288",
-                        "render #294",
-                        "render #298",
-                        "render #305",
-                        "render #307",
-                        "render #319",
-                        "render #322",
-                        "render #325",
-                        "render #353",
-                        "render #358",
-                        "render #366",
-                        "render #369",
-                        "render #415",
-                        "render #430",
-                        "render #459"
-                    ],
-                    "bounded_type": [
-                        "render #54",
-                        "render #121",
-                        "render #173",
-                        "render #195",
-                        "render #217",
-                        "render #470"
-                    ],
-                    "break_expression": [
-                        "render #80",
-                        "render #323"
-                    ],
-                    "call_expression": [
-                        "render #7",
-                        "render #63",
-                        "render #75",
-                        "render #143",
-                        "render #152",
-                        "render #162",
-                        "render #183",
-                        "render #253",
-                        "render #269",
-                        "render #270",
-                        "render #281",
-                        "render #286",
-                        "render #326",
-                        "render #332",
-                        "render #333",
-                        "render #338",
-                        "render #340",
-                        "render #343",
-                        "render #345",
-                        "render #348",
-                        "render #354",
-                        "render #367",
-                        "render #374",
-                        "render #416",
-                        "render #432",
-                        "render #460"
-                    ],
-                    "captured_pattern": [
-                        "render #410",
-                        "render #426"
-                    ],
-                    "closure_expression": [
-                        "render #13",
-                        "render #15",
-                        "render #300",
-                        "render #350",
-                        "render #356",
-                        "render #357",
-                        "render #423"
-                    ],
-                    "compound_assignment_expr": [
-                        "render #264",
-                        "render #362"
-                    ],
-                    "const_block": [
-                        "render #368",
-                        "render #437"
-                    ],
-                    "const_item": [
-                        "render #113",
-                        "render #232",
-                        "render #364",
-                        "render #431"
-                    ],
-                    "continue_expression": [
-                        "render #81",
-                        "render #330"
-                    ],
-                    "delim_token_tree": [
-                        "render #387",
-                        "render #389",
-                        "render #390"
-                    ],
-                    "dynamic_type": [
-                        "render #174",
-                        "render #218",
-                        "render #471"
-                    ],
-                    "enum_item": [
-                        "render #94",
-                        "render #98",
-                        "render #157"
-                    ],
-                    "extern_crate_declaration": [
-                        "render #26"
-                    ],
-                    "field_expression": [
-                        "render #8",
-                        "render #64",
-                        "render #76",
-                        "render #144",
-                        "render #184",
-                        "render #246",
-                        "render #251",
-                        "render #254",
-                        "render #331",
-                        "render #334",
-                        "render #349",
-                        "render #355",
-                        "render #375",
-                        "render #400",
-                        "render #419",
-                        "render #433"
-                    ],
-                    "for_expression": [
-                        "render #262",
-                        "render #324",
-                        "render #421"
-                    ],
-                    "function_item": [
-                        "render #0",
-                        "render #28",
-                        "render #45",
-                        "render #47",
-                        "render #52",
-                        "render #56",
-                        "render #58",
-                        "render #100",
-                        "render #102",
-                        "render #127",
-                        "render #130",
-                        "render #149",
-                        "render #160",
-                        "render #181",
-                        "render #191",
-                        "render #211",
-                        "render #219",
-                        "render #223",
-                        "render #230",
-                        "render #235",
-                        "render #242",
-                        "render #244",
-                        "render #287",
-                        "render #427",
-                        "render #429",
-                        "render #457"
-                    ],
-                    "function_signature_item": [
-                        "render #111",
-                        "render #187"
-                    ],
-                    "function_type": [
-                        "render #40",
-                        "render #124",
-                        "render #458",
-                        "render #465",
-                        "render #473"
-                    ],
-                    "gen_block": [
-                        "render #20"
-                    ],
-                    "generic_function": [
-                        "render #346"
-                    ],
-                    "generic_pattern": [
-                        "render #439"
-                    ],
-                    "generic_type": [
-                        "render #41",
-                        "render #49",
-                        "render #96",
-                        "render #112",
-                        "render #120",
-                        "render #126",
-                        "render #179",
-                        "render #198",
-                        "render #208",
-                        "render #214",
-                        "render #237",
-                        "render #448",
-                        "render #452",
-                        "render #463",
-                        "render #469",
-                        "render #475"
-                    ],
-                    "generic_type_with_turbofish": [
-                        "render #453"
-                    ],
-                    "if_expression": [
-                        "render #83",
-                        "render #289",
-                        "render #292",
-                        "render #295",
-                        "render #315",
-                        "render #328",
-                        "render #371",
-                        "render #412"
-                    ],
-                    "impl_item": [
-                        "render #168",
-                        "render #169",
-                        "render #172",
-                        "render #178",
-                        "render #180",
-                        "render #197",
-                        "render #203",
-                        "render #209"
-                    ],
-                    "index_expression": [
-                        "render #335"
-                    ],
-                    "inner_attribute_item": [
-                        "render #135",
-                        "render #138"
-                    ],
-                    "let_declaration": [
-                        "render #2",
-                        "render #11",
-                        "render #12",
-                        "render #14",
-                        "render #22",
-                        "render #68",
-                        "render #70",
-                        "render #82",
-                        "render #85",
-                        "render #165",
-                        "render #266",
-                        "render #275",
-                        "render #278",
-                        "render #284",
-                        "render #291",
-                        "render #312",
-                        "render #376",
-                        "render #418"
-                    ],
-                    "loop_expression": [
-                        "render #321"
-                    ],
-                    "macro_definition": [
-                        "render #391"
-                    ],
-                    "macro_invocation": [
-                        "render #33",
-                        "render #147",
-                        "render #311",
-                        "render #342",
-                        "render #384",
-                        "render #386",
-                        "render #388",
-                        "render #428",
-                        "render #435"
-                    ],
-                    "match_expression": [
-                        "render #140",
-                        "render #306",
-                        "render #393",
-                        "render #397",
-                        "render #403",
-                        "render #408",
-                        "render #434",
-                        "render #438"
-                    ],
-                    "mod_item": [
-                        "render #24",
-                        "render #134",
-                        "render #137",
-                        "render #226"
-                    ],
-                    "mut_pattern": [
-                        "render #352",
-                        "render #401",
-                        "render #425"
-                    ],
-                    "negative_literal": [
-                        "render #309"
-                    ],
-                    "or_pattern": [
-                        "render #313",
-                        "render #409",
-                        "render #413"
-                    ],
-                    "parenthesized_expression": [
-                        "render #247",
-                        "render #257",
-                        "render #260",
-                        "render #336",
-                        "render #378"
-                    ],
-                    "pointer_type": [
-                        "render #61",
-                        "render #116",
-                        "render #224",
-                        "render #446",
-                        "render #467",
-                        "render #476"
-                    ],
-                    "range_expression": [
-                        "render #259",
-                        "render #327",
-                        "render #379"
-                    ],
-                    "raw_string_literal": [
-                        "render #381",
-                        "render #382",
-                        "render #383"
-                    ],
-                    "ref_pattern": [
-                        "render #399",
-                        "render #422"
-                    ],
-                    "reference_expression": [
-                        "render #145",
-                        "render #250",
-                        "render #255",
-                        "render #373",
-                        "render #420"
-                    ],
-                    "reference_pattern": [
-                        "render #106",
-                        "render #402"
-                    ],
-                    "reference_type": [
-                        "render #32",
-                        "render #107",
-                        "render #192",
-                        "render #215",
-                        "render #444",
-                        "render #456",
-                        "render #461",
-                        "render #472"
-                    ],
-                    "removed_trait_bound": [
-                        "render #190"
-                    ],
-                    "return_expression": [
-                        "render #30",
-                        "render #78",
-                        "render #363"
-                    ],
-                    "scoped_identifier": [
-                        "render #44",
-                        "render #66",
-                        "render #136",
-                        "render #142",
-                        "render #151",
-                        "render #155",
-                        "render #177",
-                        "render #222",
-                        "render #282",
-                        "render #339",
-                        "render #341",
-                        "render #344",
-                        "render #347",
-                        "render #385",
-                        "render #396",
-                        "render #451"
-                    ],
-                    "scoped_type_identifier": [
-                        "render #42",
-                        "render #72",
-                        "render #117",
-                        "render #176",
-                        "render #188",
-                        "render #202",
-                        "render #229",
-                        "render #234",
-                        "render #407",
-                        "render #450",
-                        "render #477"
-                    ],
-                    "scoped_type_identifier_in_expression_position": [
-                        "render #279",
-                        "render #283"
-                    ],
-                    "slice_pattern": [
-                        "render #103"
-                    ],
-                    "static_item": [
-                        "render #115",
-                        "render #118"
-                    ],
-                    "string_literal": [
-                        "render #34",
-                        "render #59",
-                        "render #69",
-                        "render #133",
-                        "render #139",
-                        "render #148",
-                        "render #159",
-                        "render #164",
-                        "render #272",
-                        "render #280",
-                        "render #297",
-                        "render #304",
-                        "render #308",
-                        "render #380",
-                        "render #392",
-                        "render #395",
-                        "render #436",
-                        "render #466"
-                    ],
-                    "struct_expression": [
-                        "render #277",
-                        "render #285"
-                    ],
-                    "struct_item": [
-                        "render #86",
-                        "render #92",
-                        "render #132",
-                        "render #228",
-                        "render #233",
-                        "render #239"
-                    ],
-                    "struct_pattern": [
-                        "render #71",
-                        "render #406"
-                    ],
-                    "trait_item": [
-                        "render #110",
-                        "render #114",
-                        "render #170",
-                        "render #185",
-                        "render #189",
-                        "render #199",
-                        "render #205",
-                        "render #213"
-                    ],
-                    "try_block": [
-                        "render #18"
-                    ],
-                    "try_expression": [
-                        "render #3",
-                        "render #6",
-                        "render #73",
-                        "render #252"
-                    ],
-                    "tuple_expression": [
-                        "render #38",
-                        "render #167",
-                        "render #274"
-                    ],
-                    "tuple_pattern": [
-                        "render #108",
-                        "render #276",
-                        "render #296",
-                        "render #303",
-                        "render #351",
-                        "render #404",
-                        "render #424"
-                    ],
-                    "tuple_struct_pattern": [
-                        "render #79",
-                        "render #141",
-                        "render #293",
-                        "render #299",
-                        "render #316",
-                        "render #394",
-                        "render #398",
-                        "render #405",
-                        "render #411",
-                        "render #414"
-                    ],
-                    "tuple_type": [
-                        "render #37",
-                        "render #50",
-                        "render #109",
-                        "render #123",
-                        "render #175",
-                        "render #194",
-                        "render #442"
-                    ],
-                    "type_cast_expression": [
-                        "render #248",
-                        "render #265",
-                        "render #474"
-                    ],
-                    "type_item": [
-                        "render #119",
-                        "render #125",
-                        "render #204",
-                        "render #210",
-                        "render #216",
-                        "render #440",
-                        "render #441",
-                        "render #443",
-                        "render #445",
-                        "render #447",
-                        "render #449",
-                        "render #454",
-                        "render #462",
-                        "render #464",
-                        "render #468"
-                    ],
-                    "unary_expression": [
-                        "render #249",
-                        "render #268",
-                        "render #318",
-                        "render #372"
-                    ],
-                    "union_item": [
-                        "render #89"
-                    ],
-                    "unsafe_block": [
-                        "render #365"
-                    ],
-                    "use_declaration": [
-                        "render #65",
-                        "render #154"
-                    ],
-                    "visibility_modifier": [
-                        "render #25",
-                        "render #27",
-                        "render #62",
-                        "render #67",
-                        "render #87",
-                        "render #90",
-                        "render #95",
-                        "render #99",
-                        "render #158",
-                        "render #171",
-                        "render #200",
-                        "render #206",
-                        "render #220",
-                        "render #227",
-                        "render #240"
-                    ],
-                    "while_expression": [
-                        "render #302",
-                        "render #317",
-                        "render #359",
-                        "render #417"
-                    ],
-                    "yield_expression": [
-                        "render #23",
-                        "render #361"
-                    ]
-                },
-                "formatDeferredByKind": {},
-                "pass": 0,
-                "total": 478
-            },
-            "validators": {
-                "coverage": {
-                    "failingKinds": [
-                        "generic_type",
-                        "match_arm",
-                        "ordered_field_declaration_list"
-                    ],
-                    "formatDeferredKinds": [],
-                    "pass": 177,
-                    "total": 180
-                },
-                "factoryRoundtrip": {
-                    "astMatchPass": 477,
-                    "failingKinds": [
-                        "array_expression",
-                        "closure_expression",
-                        "delim_token_tree",
-                        "generic_type_with_turbofish",
-                        "impl_item",
-                        "macro_definition",
-                        "match_arm",
-                        "mod_item",
-                        "or_pattern",
-                        "pointer_type",
-                        "range_pattern",
-                        "struct_item",
-                        "token_tree",
-                        "tuple_expression"
-                    ],
-                    "formatDeferredKinds": [],
-                    "pass": 493,
-                    "total": 1205
-                },
-                "from": {
-                    "failingKinds": [
-                        "attribute"
-                    ],
-                    "formatDeferredKinds": [],
-                    "pass": 130,
-                    "total": 148
-                },
-                "roundtrip": {
-                    "astMatchPass": 124,
-                    "failingKinds": [],
-                    "formatDeferredKinds": [],
-                    "pass": 124,
-                    "total": 136
-                }
-            }
-        },
-        "typescript": {
-            "parityFixtures": {
-                "failingByKind": {},
-                "formatDeferredByKind": {},
-                "pass": 415,
-                "total": 415
-            },
-            "validators": {
-                "coverage": {
-                    "failingKinds": [
-                        "call_expression",
-                        "instantiation_expression",
-                        "optional_parameter",
-                        "required_parameter"
-                    ],
-                    "formatDeferredKinds": [],
-                    "pass": 175,
-                    "total": 179
-                },
-                "factoryRoundtrip": {
-                    "astMatchPass": 442,
-                    "failingKinds": [
-                        "ambient_declaration",
-                        "array",
-                        "arrow_function",
-                        "assignment_expression",
-                        "call_expression",
-                        "export_statement",
-                        "function_declaration",
-                        "import_statement",
-                        "instantiation_expression",
-                        "member_expression",
-                        "module",
-                        "object_type",
-                        "parenthesized_expression",
-                        "string"
-                    ],
-                    "formatDeferredKinds": [],
-                    "pass": 451,
-                    "total": 1054
-                },
-                "from": {
-                    "failingKinds": [],
-                    "formatDeferredKinds": [],
-                    "pass": 127,
-                    "total": 137
-                },
-                "roundtrip": {
-                    "astMatchPass": 91,
-                    "failingKinds": [
-                        "ambient_declaration",
-                        "array",
-                        "assignment_expression",
-                        "call_expression",
-                        "import_statement",
-                        "instantiation_expression",
-                        "member_expression",
-                        "object_type",
-                        "parenthesized_expression"
-                    ],
-                    "formatDeferredKinds": [],
-                    "pass": 99,
-                    "total": 112
-                }
-            }
-        }
-    },
-    "totals": {
-        "fail": 2756,
-        "pass": 2721,
-        "total": 5477
-    }
+	"backend": "native",
+	"commit": "5eb15d0",
+	"grammars": {
+		"python": {
+			"parityFixtures": {
+				"failingByKind": {
+					"as_pattern": ["render #54", "render #171", "render #172"],
+					"attribute": [
+						"render #3",
+						"render #25",
+						"render #31",
+						"render #67",
+						"render #73",
+						"render #84",
+						"render #94",
+						"render #109",
+						"render #113",
+						"render #117",
+						"render #121",
+						"render #125",
+						"render #144",
+						"render #147",
+						"render #151",
+						"render #154",
+						"render #158",
+						"render #161",
+						"render #176",
+						"render #186"
+					],
+					"await": ["render #4"],
+					"binary_operator": [
+						"render #0",
+						"render #17",
+						"render #19",
+						"render #20",
+						"render #22",
+						"render #26",
+						"render #44",
+						"render #74",
+						"render #76",
+						"render #88",
+						"render #166",
+						"render #168"
+					],
+					"boolean_operator": ["render #27", "render #163", "render #195"],
+					"call": [
+						"render #5",
+						"render #7",
+						"render #8",
+						"render #10",
+						"render #13",
+						"render #23",
+						"render #36",
+						"render #41",
+						"render #43",
+						"render #53",
+						"render #56",
+						"render #59",
+						"render #66",
+						"render #71",
+						"render #86",
+						"render #92",
+						"render #96",
+						"render #106",
+						"render #108",
+						"render #112",
+						"render #116",
+						"render #120",
+						"render #124",
+						"render #133",
+						"render #135",
+						"render #137",
+						"render #141",
+						"render #143",
+						"render #146",
+						"render #150",
+						"render #153",
+						"render #157",
+						"render #160",
+						"render #162",
+						"render #173",
+						"render #182",
+						"render #184",
+						"render #187",
+						"render #189",
+						"render #194",
+						"render #196"
+					],
+					"concatenated_string": ["render #68", "render #78", "render #139"],
+					"conditional_expression": ["render #52"],
+					"dictionary": ["render #12", "render #16", "render #93", "render #100", "render #193"],
+					"dictionary_comprehension": ["render #97"],
+					"generator_expression": ["render #40", "render #104"],
+					"lambda": ["render #42", "render #91"],
+					"list": [
+						"render #33",
+						"render #57",
+						"render #58",
+						"render #81",
+						"render #90",
+						"render #131",
+						"render #132",
+						"render #136",
+						"render #170"
+					],
+					"list_comprehension": ["render #55", "render #87"],
+					"list_pattern": [
+						"render #110",
+						"render #114",
+						"render #118",
+						"render #122",
+						"render #126"
+					],
+					"list_splat": ["render #14", "render #49", "render #82", "render #99"],
+					"list_splat_pattern": [
+						"render #9",
+						"render #29",
+						"render #46",
+						"render #130",
+						"render #177",
+						"render #180"
+					],
+					"named_expression": ["render #34", "render #142"],
+					"not_operator": ["render #28", "render #164", "render #169"],
+					"parenthesized_expression": ["render #35", "render #39", "render #183"],
+					"set": ["render #98"],
+					"set_comprehension": ["render #101"],
+					"string": [
+						"render #11",
+						"render #38",
+						"render #45",
+						"render #64",
+						"render #65",
+						"render #69",
+						"render #70",
+						"render #72",
+						"render #75",
+						"render #77",
+						"render #79",
+						"render #80",
+						"render #111",
+						"render #115",
+						"render #119",
+						"render #123",
+						"render #127",
+						"render #129",
+						"render #134",
+						"render #138",
+						"render #145",
+						"render #149",
+						"render #156",
+						"render #159",
+						"render #165",
+						"render #174",
+						"render #178",
+						"render #190",
+						"render #191",
+						"render #192",
+						"render #197"
+					],
+					"subscript": [
+						"render #1",
+						"render #2",
+						"render #24",
+						"render #30",
+						"render #85",
+						"render #95",
+						"render #102",
+						"render #105",
+						"render #167",
+						"render #185",
+						"render #188"
+					],
+					"tuple": [
+						"render #15",
+						"render #47",
+						"render #48",
+						"render #50",
+						"render #51",
+						"render #83",
+						"render #89",
+						"render #103",
+						"render #107",
+						"render #140",
+						"render #179",
+						"render #199"
+					],
+					"tuple_pattern": ["render #148", "render #152", "render #155"],
+					"type": [
+						"render #6",
+						"render #32",
+						"render #37",
+						"render #60",
+						"render #128",
+						"render #175",
+						"render #181",
+						"render #198",
+						"render #200"
+					],
+					"unary_operator": ["render #18", "render #21", "render #61", "render #62", "render #63"]
+				},
+				"formatDeferredByKind": {},
+				"pass": 0,
+				"total": 201
+			},
+			"validators": {
+				"coverage": {
+					"failingKinds": ["comparison_operator", "dict_pattern"],
+					"formatDeferredKinds": [],
+					"pass": 103,
+					"total": 105
+				},
+				"factoryRoundtrip": {
+					"astMatchPass": 203,
+					"failingKinds": [
+						"as_pattern",
+						"boolean_operator",
+						"comparison_operator",
+						"list_splat",
+						"set",
+						"tuple",
+						"tuple_pattern",
+						"type"
+					],
+					"formatDeferredKinds": [],
+					"pass": 210,
+					"total": 898
+				},
+				"from": {
+					"failingKinds": ["expression_statement", "list_splat"],
+					"formatDeferredKinds": [],
+					"pass": 110,
+					"total": 114
+				},
+				"roundtrip": {
+					"astMatchPass": 104,
+					"failingKinds": [
+						"as_pattern",
+						"comparison_operator",
+						"list_splat",
+						"tuple",
+						"tuple_pattern"
+					],
+					"formatDeferredKinds": [],
+					"pass": 107,
+					"total": 115
+				}
+			}
+		},
+		"rust": {
+			"parityFixtures": {
+				"failingByKind": {
+					"abstract_type": ["render #39", "render #48", "render #53", "render #122", "render #193"],
+					"array_expression": [
+						"render #36",
+						"render #166",
+						"render #271",
+						"render #337",
+						"render #377"
+					],
+					"array_type": [
+						"render #35",
+						"render #91",
+						"render #104",
+						"render #236",
+						"render #241",
+						"render #455"
+					],
+					"assignment_expression": ["render #263", "render #320"],
+					"associated_type": ["render #186", "render #201", "render #207"],
+					"async_block": ["render #9", "render #16"],
+					"attribute_item": [
+						"render #43",
+						"render #88",
+						"render #93",
+						"render #97",
+						"render #129",
+						"render #146",
+						"render #153",
+						"render #156",
+						"render #163",
+						"render #273",
+						"render #310"
+					],
+					"await_expression": ["render #4", "render #5", "render #74"],
+					"binary_expression": [
+						"render #31",
+						"render #256",
+						"render #258",
+						"render #267",
+						"render #290",
+						"render #301",
+						"render #314",
+						"render #329",
+						"render #360",
+						"render #370"
+					],
+					"block": [
+						"render #1",
+						"render #10",
+						"render #17",
+						"render #19",
+						"render #21",
+						"render #29",
+						"render #46",
+						"render #51",
+						"render #55",
+						"render #57",
+						"render #60",
+						"render #77",
+						"render #84",
+						"render #101",
+						"render #105",
+						"render #128",
+						"render #131",
+						"render #150",
+						"render #161",
+						"render #182",
+						"render #196",
+						"render #212",
+						"render #221",
+						"render #225",
+						"render #231",
+						"render #238",
+						"render #243",
+						"render #245",
+						"render #261",
+						"render #288",
+						"render #294",
+						"render #298",
+						"render #305",
+						"render #307",
+						"render #319",
+						"render #322",
+						"render #325",
+						"render #353",
+						"render #358",
+						"render #366",
+						"render #369",
+						"render #415",
+						"render #430",
+						"render #459"
+					],
+					"bounded_type": [
+						"render #54",
+						"render #121",
+						"render #173",
+						"render #195",
+						"render #217",
+						"render #470"
+					],
+					"break_expression": ["render #80", "render #323"],
+					"call_expression": [
+						"render #7",
+						"render #63",
+						"render #75",
+						"render #143",
+						"render #152",
+						"render #162",
+						"render #183",
+						"render #253",
+						"render #269",
+						"render #270",
+						"render #281",
+						"render #286",
+						"render #326",
+						"render #332",
+						"render #333",
+						"render #338",
+						"render #340",
+						"render #343",
+						"render #345",
+						"render #348",
+						"render #354",
+						"render #367",
+						"render #374",
+						"render #416",
+						"render #432",
+						"render #460"
+					],
+					"captured_pattern": ["render #410", "render #426"],
+					"closure_expression": [
+						"render #13",
+						"render #15",
+						"render #300",
+						"render #350",
+						"render #356",
+						"render #357",
+						"render #423"
+					],
+					"compound_assignment_expr": ["render #264", "render #362"],
+					"const_block": ["render #368", "render #437"],
+					"const_item": ["render #113", "render #232", "render #364", "render #431"],
+					"continue_expression": ["render #81", "render #330"],
+					"delim_token_tree": ["render #387", "render #389", "render #390"],
+					"dynamic_type": ["render #174", "render #218", "render #471"],
+					"enum_item": ["render #94", "render #98", "render #157"],
+					"extern_crate_declaration": ["render #26"],
+					"field_expression": [
+						"render #8",
+						"render #64",
+						"render #76",
+						"render #144",
+						"render #184",
+						"render #246",
+						"render #251",
+						"render #254",
+						"render #331",
+						"render #334",
+						"render #349",
+						"render #355",
+						"render #375",
+						"render #400",
+						"render #419",
+						"render #433"
+					],
+					"for_expression": ["render #262", "render #324", "render #421"],
+					"function_item": [
+						"render #0",
+						"render #28",
+						"render #45",
+						"render #47",
+						"render #52",
+						"render #56",
+						"render #58",
+						"render #100",
+						"render #102",
+						"render #127",
+						"render #130",
+						"render #149",
+						"render #160",
+						"render #181",
+						"render #191",
+						"render #211",
+						"render #219",
+						"render #223",
+						"render #230",
+						"render #235",
+						"render #242",
+						"render #244",
+						"render #287",
+						"render #427",
+						"render #429",
+						"render #457"
+					],
+					"function_signature_item": ["render #111", "render #187"],
+					"function_type": [
+						"render #40",
+						"render #124",
+						"render #458",
+						"render #465",
+						"render #473"
+					],
+					"gen_block": ["render #20"],
+					"generic_function": ["render #346"],
+					"generic_pattern": ["render #439"],
+					"generic_type": [
+						"render #41",
+						"render #49",
+						"render #96",
+						"render #112",
+						"render #120",
+						"render #126",
+						"render #179",
+						"render #198",
+						"render #208",
+						"render #214",
+						"render #237",
+						"render #448",
+						"render #452",
+						"render #463",
+						"render #469",
+						"render #475"
+					],
+					"generic_type_with_turbofish": ["render #453"],
+					"if_expression": [
+						"render #83",
+						"render #289",
+						"render #292",
+						"render #295",
+						"render #315",
+						"render #328",
+						"render #371",
+						"render #412"
+					],
+					"impl_item": [
+						"render #168",
+						"render #169",
+						"render #172",
+						"render #178",
+						"render #180",
+						"render #197",
+						"render #203",
+						"render #209"
+					],
+					"index_expression": ["render #335"],
+					"inner_attribute_item": ["render #135", "render #138"],
+					"let_declaration": [
+						"render #2",
+						"render #11",
+						"render #12",
+						"render #14",
+						"render #22",
+						"render #68",
+						"render #70",
+						"render #82",
+						"render #85",
+						"render #165",
+						"render #266",
+						"render #275",
+						"render #278",
+						"render #284",
+						"render #291",
+						"render #312",
+						"render #376",
+						"render #418"
+					],
+					"loop_expression": ["render #321"],
+					"macro_definition": ["render #391"],
+					"macro_invocation": [
+						"render #33",
+						"render #147",
+						"render #311",
+						"render #342",
+						"render #384",
+						"render #386",
+						"render #388",
+						"render #428",
+						"render #435"
+					],
+					"match_expression": [
+						"render #140",
+						"render #306",
+						"render #393",
+						"render #397",
+						"render #403",
+						"render #408",
+						"render #434",
+						"render #438"
+					],
+					"mod_item": ["render #24", "render #134", "render #137", "render #226"],
+					"mut_pattern": ["render #352", "render #401", "render #425"],
+					"negative_literal": ["render #309"],
+					"or_pattern": ["render #313", "render #409", "render #413"],
+					"parenthesized_expression": [
+						"render #247",
+						"render #257",
+						"render #260",
+						"render #336",
+						"render #378"
+					],
+					"pointer_type": [
+						"render #61",
+						"render #116",
+						"render #224",
+						"render #446",
+						"render #467",
+						"render #476"
+					],
+					"range_expression": ["render #259", "render #327", "render #379"],
+					"raw_string_literal": ["render #381", "render #382", "render #383"],
+					"ref_pattern": ["render #399", "render #422"],
+					"reference_expression": [
+						"render #145",
+						"render #250",
+						"render #255",
+						"render #373",
+						"render #420"
+					],
+					"reference_pattern": ["render #106", "render #402"],
+					"reference_type": [
+						"render #32",
+						"render #107",
+						"render #192",
+						"render #215",
+						"render #444",
+						"render #456",
+						"render #461",
+						"render #472"
+					],
+					"removed_trait_bound": ["render #190"],
+					"return_expression": ["render #30", "render #78", "render #363"],
+					"scoped_identifier": [
+						"render #44",
+						"render #66",
+						"render #136",
+						"render #142",
+						"render #151",
+						"render #155",
+						"render #177",
+						"render #222",
+						"render #282",
+						"render #339",
+						"render #341",
+						"render #344",
+						"render #347",
+						"render #385",
+						"render #396",
+						"render #451"
+					],
+					"scoped_type_identifier": [
+						"render #42",
+						"render #72",
+						"render #117",
+						"render #176",
+						"render #188",
+						"render #202",
+						"render #229",
+						"render #234",
+						"render #407",
+						"render #450",
+						"render #477"
+					],
+					"scoped_type_identifier_in_expression_position": ["render #279", "render #283"],
+					"slice_pattern": ["render #103"],
+					"static_item": ["render #115", "render #118"],
+					"string_literal": [
+						"render #34",
+						"render #59",
+						"render #69",
+						"render #133",
+						"render #139",
+						"render #148",
+						"render #159",
+						"render #164",
+						"render #272",
+						"render #280",
+						"render #297",
+						"render #304",
+						"render #308",
+						"render #380",
+						"render #392",
+						"render #395",
+						"render #436",
+						"render #466"
+					],
+					"struct_expression": ["render #277", "render #285"],
+					"struct_item": [
+						"render #86",
+						"render #92",
+						"render #132",
+						"render #228",
+						"render #233",
+						"render #239"
+					],
+					"struct_pattern": ["render #71", "render #406"],
+					"trait_item": [
+						"render #110",
+						"render #114",
+						"render #170",
+						"render #185",
+						"render #189",
+						"render #199",
+						"render #205",
+						"render #213"
+					],
+					"try_block": ["render #18"],
+					"try_expression": ["render #3", "render #6", "render #73", "render #252"],
+					"tuple_expression": ["render #38", "render #167", "render #274"],
+					"tuple_pattern": [
+						"render #108",
+						"render #276",
+						"render #296",
+						"render #303",
+						"render #351",
+						"render #404",
+						"render #424"
+					],
+					"tuple_struct_pattern": [
+						"render #79",
+						"render #141",
+						"render #293",
+						"render #299",
+						"render #316",
+						"render #394",
+						"render #398",
+						"render #405",
+						"render #411",
+						"render #414"
+					],
+					"tuple_type": [
+						"render #37",
+						"render #50",
+						"render #109",
+						"render #123",
+						"render #175",
+						"render #194",
+						"render #442"
+					],
+					"type_cast_expression": ["render #248", "render #265", "render #474"],
+					"type_item": [
+						"render #119",
+						"render #125",
+						"render #204",
+						"render #210",
+						"render #216",
+						"render #440",
+						"render #441",
+						"render #443",
+						"render #445",
+						"render #447",
+						"render #449",
+						"render #454",
+						"render #462",
+						"render #464",
+						"render #468"
+					],
+					"unary_expression": ["render #249", "render #268", "render #318", "render #372"],
+					"union_item": ["render #89"],
+					"unsafe_block": ["render #365"],
+					"use_declaration": ["render #65", "render #154"],
+					"visibility_modifier": [
+						"render #25",
+						"render #27",
+						"render #62",
+						"render #67",
+						"render #87",
+						"render #90",
+						"render #95",
+						"render #99",
+						"render #158",
+						"render #171",
+						"render #200",
+						"render #206",
+						"render #220",
+						"render #227",
+						"render #240"
+					],
+					"while_expression": ["render #302", "render #317", "render #359", "render #417"],
+					"yield_expression": ["render #23", "render #361"]
+				},
+				"formatDeferredByKind": {},
+				"pass": 0,
+				"total": 478
+			},
+			"validators": {
+				"coverage": {
+					"failingKinds": ["generic_type", "match_arm", "ordered_field_declaration_list"],
+					"formatDeferredKinds": [],
+					"pass": 177,
+					"total": 180
+				},
+				"factoryRoundtrip": {
+					"astMatchPass": 477,
+					"failingKinds": [
+						"array_expression",
+						"closure_expression",
+						"delim_token_tree",
+						"generic_type_with_turbofish",
+						"impl_item",
+						"macro_definition",
+						"match_arm",
+						"mod_item",
+						"or_pattern",
+						"pointer_type",
+						"range_pattern",
+						"struct_item",
+						"token_tree",
+						"tuple_expression"
+					],
+					"formatDeferredKinds": [],
+					"pass": 493,
+					"total": 1205
+				},
+				"from": {
+					"failingKinds": ["attribute"],
+					"formatDeferredKinds": [],
+					"pass": 130,
+					"total": 148
+				},
+				"roundtrip": {
+					"astMatchPass": 124,
+					"failingKinds": [],
+					"formatDeferredKinds": [],
+					"pass": 124,
+					"total": 136
+				}
+			}
+		},
+		"typescript": {
+			"parityFixtures": {
+				"failingByKind": {},
+				"formatDeferredByKind": {},
+				"pass": 415,
+				"total": 415
+			},
+			"validators": {
+				"coverage": {
+					"failingKinds": [
+						"call_expression",
+						"instantiation_expression",
+						"optional_parameter",
+						"required_parameter"
+					],
+					"formatDeferredKinds": [],
+					"pass": 175,
+					"total": 179
+				},
+				"factoryRoundtrip": {
+					"astMatchPass": 442,
+					"failingKinds": [
+						"ambient_declaration",
+						"array",
+						"arrow_function",
+						"assignment_expression",
+						"call_expression",
+						"export_statement",
+						"function_declaration",
+						"import_statement",
+						"instantiation_expression",
+						"member_expression",
+						"module",
+						"object_type",
+						"parenthesized_expression",
+						"string"
+					],
+					"formatDeferredKinds": [],
+					"pass": 451,
+					"total": 1054
+				},
+				"from": {
+					"failingKinds": [],
+					"formatDeferredKinds": [],
+					"pass": 127,
+					"total": 137
+				},
+				"roundtrip": {
+					"astMatchPass": 91,
+					"failingKinds": [
+						"ambient_declaration",
+						"array",
+						"assignment_expression",
+						"call_expression",
+						"import_statement",
+						"instantiation_expression",
+						"member_expression",
+						"object_type",
+						"parenthesized_expression"
+					],
+					"formatDeferredKinds": [],
+					"pass": 99,
+					"total": 112
+				}
+			}
+		}
+	},
+	"totals": {
+		"fail": 2756,
+		"pass": 2721,
+		"total": 5477
+	}
 }

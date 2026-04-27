@@ -1,15 +1,15 @@
 {
-  "collectedOn": {
-    "cpuModel": "Apple M4 Pro",
-    "nodeVersion": "v24.15.0",
-    "platform": "darwin"
-  },
-  "ffi": {
-    "meanPayloadBytes": 531,
-    "meanRoundtripMs": 0.0045,
-    "p99RoundtripMs": 0.0373,
-    "totalCalls": 893
-  },
-  "schemaVersion": 1,
-  "warnOnlyUntil": "2026-05-26"
+	"collectedOn": {
+		"cpuModel": "Apple M4 Pro",
+		"nodeVersion": "v24.15.0",
+		"platform": "darwin"
+	},
+	"ffi": {
+		"meanPayloadBytes": 531,
+		"meanRoundtripMs": 0.0045,
+		"p99RoundtripMs": 0.0373,
+		"totalCalls": 893
+	},
+	"schemaVersion": 1,
+	"warnOnlyUntil": "2026-05-26"
 }

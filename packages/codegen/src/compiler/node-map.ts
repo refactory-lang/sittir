@@ -44,11 +44,7 @@ import type {
 } from "./rule.ts";
 import { isSeq, isField } from "./rule.ts";
 import type { KindProjection } from "./types.ts";
-import {
-	renderRuleTemplate,
-	findRepeatSeparator,
-	findRepeatFlag,
-} from "./template-walker.ts";
+import { renderRuleTemplate, findRepeatSeparator, findRepeatFlag } from "./template-walker.ts";
 import { tokenToName } from "./optimize.ts";
 import { assertNever } from "../polymorph-variant.ts";
 

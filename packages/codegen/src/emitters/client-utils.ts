@@ -20,37 +20,19 @@ export function emitClientUtils(_config: EmitClientUtilsConfig): string {
 
 	// isNodeData
 	lines.push("/**");
-	lines.push(
-		" * Type guard: returns true if `v` is a NodeData.",
-	);
+	lines.push(" * Type guard: returns true if `v` is a NodeData.");
 	lines.push(" *");
-	lines.push(
-		" * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished",
-	);
-	lines.push(
-		" * from loose config bags by the presence of any of:",
-	);
-	lines.push(
-		" *   - `$fields` (branch nodes with named children),",
-	);
-	lines.push(
-		" *   - `$text` (leaf nodes, or branch nodes with `SITTIR_DEBUG_TEXT=1`),",
-	);
-	lines.push(
-		" *   - `$children` (container nodes whose children arrive without field names),",
-	);
-	lines.push(
-		" *   - `$source` (provenance tag stamped by `readNode` and every factory).",
-	);
-	lines.push(
-		" *",
-	);
+	lines.push(" * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished");
+	lines.push(" * from loose config bags by the presence of any of:");
+	lines.push(" *   - `$fields` (branch nodes with named children),");
+	lines.push(" *   - `$text` (leaf nodes, or branch nodes with `SITTIR_DEBUG_TEXT=1`),");
+	lines.push(" *   - `$children` (container nodes whose children arrive without field names),");
+	lines.push(" *   - `$source` (provenance tag stamped by `readNode` and every factory).");
+	lines.push(" *");
 	lines.push(
 		" * The `$source` discriminant covers container-style branch nodes (e.g. `match_pattern`)",
 	);
-	lines.push(
-		" * that carry neither `$fields` nor `$text` when `SITTIR_DEBUG_TEXT` is unset.",
-	);
+	lines.push(" * that carry neither `$fields` nor `$text` when `SITTIR_DEBUG_TEXT` is unset.");
 	lines.push(" */");
 	lines.push("export function isNodeData<K extends keyof NamespaceMap>(");
 	lines.push("  v: NamespaceMap[K]['Node'] | NamespaceMap[K]['Loose'] | NamespaceMap[K]['Tree']");
@@ -60,15 +42,9 @@ export function emitClientUtils(_config: EmitClientUtilsConfig): string {
 	lines.push("  if (v === null || typeof v !== 'object') return false;");
 	lines.push("  const o = v as Record<string, unknown>;");
 	lines.push("  if (typeof o['$type'] !== 'string') return false;");
-	lines.push(
-		"  return (o['$fields'] !== null && typeof o['$fields'] === 'object')",
-	);
-	lines.push(
-		"    || typeof o['$text'] === 'string'",
-	);
-	lines.push(
-		"    || Array.isArray(o['$children'])",
-	);
+	lines.push("  return (o['$fields'] !== null && typeof o['$fields'] === 'object')");
+	lines.push("    || typeof o['$text'] === 'string'");
+	lines.push("    || Array.isArray(o['$children'])");
 	lines.push(
 		"    || o['$source'] === 'ts' || o['$source'] === 'sg' || o['$source'] === 'factory';",
 	);

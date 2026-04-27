@@ -41,7 +41,10 @@ function makeBaseline(ffi: BaselineFfi): Parameters<typeof evaluateVerdict>[0] {
 	};
 }
 
-function makeFresh(ffi: BaselineFfi | undefined, overrides: Partial<{ schemaVersion: number; platform: string }> = {}): Parameters<typeof evaluateVerdict>[1] {
+function makeFresh(
+	ffi: BaselineFfi | undefined,
+	overrides: Partial<{ schemaVersion: number; platform: string }> = {},
+): Parameters<typeof evaluateVerdict>[1] {
 	return {
 		schemaVersion: overrides.schemaVersion ?? 1,
 		backend: "native",
