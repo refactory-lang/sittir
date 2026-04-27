@@ -48,7 +48,6 @@ import {
 	renderRuleTemplate,
 	findRepeatSeparator,
 	findRepeatFlag,
-	findFieldsWithRepeatFlag,
 } from "./template-walker.ts";
 import { tokenToName } from "./optimize.ts";
 import { assertNever } from "../polymorph-variant.ts";
@@ -592,6 +591,8 @@ function mergeFieldsByName(fields: AssembledField[]): AssembledField[] {
 		byName.set(f.name, {
 			...existing,
 			values: mergedValues,
+			hasTrailing: existing.hasTrailing || f.hasTrailing,
+			hasLeading: existing.hasLeading || f.hasLeading,
 			aliasSources:
 				mergedAliases && Object.keys(mergedAliases).length > 0 ? mergedAliases : undefined,
 			projection: { ...existing.projection, kinds: mergedKinds },
@@ -641,11 +642,22 @@ function deriveFieldsRaw(rule: Rule, outerMultiplicity: Multiplicity): Assembled
 				);
 			const projectionKinds = [...new Set(kindNames)];
 
+			// Derive trailing/leading flags — only meaningful for array/nonEmptyArray
+			// slots (i.e. the field backs a repeat that carries the flag). Gate on
+			// multiplicity first so optional(repeat(...)) shapes don't pollute the flag.
+			const isMultiSlot = values.some(
+				(v) => v.multiplicity === "array" || v.multiplicity === "nonEmptyArray",
+			);
+			const hasTrailing = isMultiSlot && findRepeatFlag(rule.content, "trailing");
+			const hasLeading = isMultiSlot && findRepeatFlag(rule.content, "leading");
+
 			const outerField: AssembledField = {
 				name: rule.name,
 				propertyName,
 				paramName: safeParamName(propertyName),
 				values,
+				hasTrailing,
+				hasLeading,
 				aliasSources: Object.keys(aliasSources).length > 0 ? aliasSources : undefined,
 				source: rule.source ?? "grammar",
 				projection: { typeName: "", kinds: projectionKinds },
@@ -1547,6 +1559,23 @@ export interface AssembledChild {
 export interface AssembledField extends AssembledChild {
 	readonly paramName: string;
 	/**
+	 * True when the repeat that backs this field carries a `trailing`
+	 * separator flag AND the field's multiplicity is array or
+	 * nonEmptyArray (i.e. `values` contains at least one entry with
+	 * `multiplicity === 'array' | 'nonEmptyArray'`).
+	 *
+	 * Derived once in `deriveFieldsRaw` from the SAME simplifiedRule
+	 * that the template walker walks, replacing the old ad-hoc
+	 * `findFieldsWithRepeatFlag` calls at each renderTemplate site.
+	 */
+	readonly hasTrailing: boolean;
+	/**
+	 * True when the repeat that backs this field carries a `leading`
+	 * separator flag AND the field's multiplicity is array or
+	 * nonEmptyArray. See {@link hasTrailing}.
+	 */
+	readonly hasLeading: boolean;
+	/**
 	 * Alias provenance per content type. When a content element was
 	 * declared at the call site via `alias($.source, $.target)` —
 	 * tree-sitter erases `source` at parse time, so the runtime $type
@@ -2203,8 +2232,8 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
 		if (sep) meta.joinBy = sep;
 		if (findRepeatFlag(this.simplifiedRule, "trailing")) meta.joinByTrailing = true;
 		if (findRepeatFlag(this.simplifiedRule, "leading")) meta.joinByLeading = true;
-		const trailingFields = findFieldsWithRepeatFlag(this.simplifiedRule, "trailing");
-		const leadingFields = findFieldsWithRepeatFlag(this.simplifiedRule, "leading");
+		const trailingFields = new Set(this.fields.filter((f) => f.hasTrailing).map((f) => f.name));
+		const leadingFields = new Set(this.fields.filter((f) => f.hasLeading).map((f) => f.name));
 		if (trailingFields.size > 0) meta.trailingFields = trailingFields;
 		if (leadingFields.size > 0) meta.leadingFields = leadingFields;
 		if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField;
@@ -2477,10 +2506,9 @@ export class AssembledContainer extends AssembledNodeBase<
 		if (sep) meta.joinBy = sep;
 		if (findRepeatFlag(this.simplifiedRule, "trailing")) meta.joinByTrailing = true;
 		if (findRepeatFlag(this.simplifiedRule, "leading")) meta.joinByLeading = true;
-		const trailingFields = findFieldsWithRepeatFlag(this.simplifiedRule, "trailing");
-		const leadingFields = findFieldsWithRepeatFlag(this.simplifiedRule, "leading");
-		if (trailingFields.size > 0) meta.trailingFields = trailingFields;
-		if (leadingFields.size > 0) meta.leadingFields = leadingFields;
+		// Containers have no fields — trailingFields/leadingFields are always
+		// empty; omit the findFieldsWithRepeatFlag calls (DRY: derived once on
+		// AssembledField.hasTrailing/hasLeading; containers have no AssembledField).
 		if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField;
 		return { template: translateToJinja(withClauses, meta) };
 	}
@@ -2657,10 +2685,10 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 		const mergedTrailingFields = new Set<string>();
 		const mergedLeadingFields = new Set<string>();
 		for (const form of this.#forms) {
-			for (const f of findFieldsWithRepeatFlag(form.simplifiedRule, "trailing"))
-				mergedTrailingFields.add(f);
-			for (const f of findFieldsWithRepeatFlag(form.simplifiedRule, "leading"))
-				mergedLeadingFields.add(f);
+			for (const f of form.fields.filter((field) => field.hasTrailing))
+				mergedTrailingFields.add(f.name);
+			for (const f of form.fields.filter((field) => field.hasLeading))
+				mergedLeadingFields.add(f.name);
 		}
 		if (mergedTrailingFields.size > 0) meta.trailingFields = mergedTrailingFields;
 		if (mergedLeadingFields.size > 0) meta.leadingFields = mergedLeadingFields;
@@ -2991,8 +3019,8 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		if (sep) meta.joinBy = sep;
 		if (findRepeatFlag(this.simplifiedRule, "trailing")) meta.joinByTrailing = true;
 		if (findRepeatFlag(this.simplifiedRule, "leading")) meta.joinByLeading = true;
-		const trailingFields = findFieldsWithRepeatFlag(this.simplifiedRule, "trailing");
-		const leadingFields = findFieldsWithRepeatFlag(this.simplifiedRule, "leading");
+		const trailingFields = new Set(this.fields.filter((f) => f.hasTrailing).map((f) => f.name));
+		const leadingFields = new Set(this.fields.filter((f) => f.hasLeading).map((f) => f.name));
 		if (trailingFields.size > 0) meta.trailingFields = trailingFields;
 		if (leadingFields.size > 0) meta.leadingFields = leadingFields;
 		if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField;

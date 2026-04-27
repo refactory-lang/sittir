@@ -29,6 +29,8 @@ function makeField(
 		paramName: "field",
 		source: "grammar",
 		projection: { typeName: "", kinds: [] },
+		hasTrailing: false,
+		hasLeading: false,
 		...overrides,
 	} as AssembledField;
 }

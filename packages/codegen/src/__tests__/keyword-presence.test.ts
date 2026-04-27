@@ -32,6 +32,8 @@ function makeField(values: readonly NodeOrTerminal[]): AssembledField {
 		source: "grammar",
 		projection: { typeName: "", kinds: [] },
 		values,
+		hasTrailing: false,
+		hasLeading: false,
 	} as AssembledField;
 }
 

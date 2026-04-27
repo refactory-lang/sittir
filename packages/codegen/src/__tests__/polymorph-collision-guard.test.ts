@@ -92,6 +92,8 @@ describe("resolveHoistedForm — collision guard", () => {
 			values: [],
 			source: "grammar",
 			projection: { typeName: "", kinds: [] },
+			hasTrailing: false,
+			hasLeading: false,
 		};
 		// form.fields is a getter backed by #fields cache; we override for
 		// the test via Object.defineProperty to avoid reaching into the
@@ -129,6 +131,8 @@ describe("resolveHoistedForm — collision guard", () => {
 			values: [],
 			source: "grammar",
 			projection: { typeName: "", kinds: [] },
+			hasTrailing: false,
+			hasLeading: false,
 		};
 		Object.defineProperty(form, "fields", { value: [nonCollidingField], configurable: true });
 
