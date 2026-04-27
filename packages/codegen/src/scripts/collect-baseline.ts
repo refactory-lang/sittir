@@ -243,11 +243,12 @@ async function collectParityFixtures(grammar: Grammar, backend: Backend): Promis
 	const failingByKind = new Map<string, string[]>();
 
 	fixtures.forEach((fx, idx) => {
-		let actual: string | null = null;
+		let actual: string;
 		try {
 			actual = renderer.render(fx.input);
-		} catch {
-			actual = null;
+		} catch (error) {
+			const message = error instanceof Error ? error.message : String(error);
+			throw new Error(`[${grammar}][${backend}][render #${idx}] ${fx.input.$type}: ${message}`);
 		}
 		if (actual === fx.expectedOutput) {
 			pass++;
@@ -286,60 +287,83 @@ async function collectParityFixtures(grammar: Grammar, backend: Backend): Promis
 // Validator collection
 // ---------------------------------------------------------------------------
 
-async function collectValidatorsForGrammar(grammar: Grammar): Promise<GrammarEntry["validators"]> {
-	const tp = templatesPathFor(grammar);
+/**
+ * Run `fn` with `SITTIR_BACKEND` set to the requested backend, then
+ * restore the previous value (or delete it if it was absent). This
+ * ensures validator collection exercises the correct engine path even
+ * when the caller's ambient environment doesn't already carry the right
+ * value.
+ */
+async function withBackendEnv<T>(backend: Backend, fn: () => Promise<T>): Promise<T> {
+	const prev = process.env.SITTIR_BACKEND;
+	process.env.SITTIR_BACKEND = backend === "native" ? "native" : "typescript";
+	try {
+		return await fn();
+	} finally {
+		if (prev === undefined) delete process.env.SITTIR_BACKEND;
+		else process.env.SITTIR_BACKEND = prev;
+	}
+}
 
-	// Validators dispatch through `buildReadHandle` internally, so they
-	// already honour SITTIR_BACKEND. We just call them. Run in parallel
-	// — each pulls its own copy of corpus + tree, no shared mutable
-	// state.
-	const [from, cov, rt, fac] = await Promise.all([
-		validateFrom(grammar),
-		Promise.resolve(validateTemplateCoverage(grammar, tp)),
-		validateRoundTrip(grammar, tp),
-		validateFactoryRoundTrip(grammar, tp),
-	]);
+async function collectValidatorsForGrammar(
+	grammar: Grammar,
+	backend: Backend,
+): Promise<GrammarEntry["validators"]> {
+	return withBackendEnv(backend, async () => {
+		const tp = templatesPathFor(grammar);
 
-	// Format-deferred kinds default to []. Triage runs during cluster
-	// commits — see contracts/baseline-json.md verdict rules. When a
-	// template-shape fix surfaces an underlying format-only failure,
-	// the cluster commit MOVES the kind from `failingKinds` into
-	// `formatDeferredKinds` (preserving the regression-checker's
-	// `failingKinds + formatDeferredKinds` non-growth invariant within
-	// 016). At baseline, no triage has happened — every entry is [].
-	const empty: string[] = [];
-	return {
-		from: {
-			pass: from.pass,
-			total: from.total,
-			failingKinds: uniqSorted(from.errors.map((e) => e.kind)),
-			formatDeferredKinds: empty,
-		},
-		coverage: {
-			pass: cov.pass,
-			total: cov.total,
-			failingKinds: uniqSorted(cov.issues.map((i) => i.kind)),
-			formatDeferredKinds: empty,
-		},
-		roundtrip: {
-			pass: rt.pass,
-			total: rt.total,
-			astMatchPass: rt.astMatchPass,
-			failingKinds: uniqSorted(
-				[...rt.errors, ...rt.astMismatches]
-					.map((e) => kindFromRoundtripName(e.name))
-					.filter((k): k is string => k !== null),
-			),
-			formatDeferredKinds: empty,
-		},
-		factoryRoundtrip: {
-			pass: fac.pass,
-			total: fac.total,
-			astMatchPass: fac.astMatchPass,
-			failingKinds: uniqSorted([...fac.errors, ...fac.astMismatches].map((e) => e.kind)),
-			formatDeferredKinds: empty,
-		},
-	};
+		// Validators dispatch through `buildReadHandle` internally, so they
+		// already honour SITTIR_BACKEND. We just call them. Run in parallel
+		// — each pulls its own copy of corpus + tree, no shared mutable
+		// state.
+		const [from, cov, rt, fac] = await Promise.all([
+			validateFrom(grammar),
+			Promise.resolve(validateTemplateCoverage(grammar, tp)),
+			validateRoundTrip(grammar, tp),
+			validateFactoryRoundTrip(grammar, tp),
+		]);
+
+		// Format-deferred kinds default to []. Triage runs during cluster
+		// commits — see contracts/baseline-json.md verdict rules. When a
+		// template-shape fix surfaces an underlying format-only failure,
+		// the cluster commit MOVES the kind from `failingKinds` into
+		// `formatDeferredKinds` (preserving the regression-checker's
+		// `failingKinds + formatDeferredKinds` non-growth invariant within
+		// 016). At baseline, no triage has happened — every entry is [].
+		const empty: string[] = [];
+		return {
+			from: {
+				pass: from.pass,
+				total: from.total,
+				failingKinds: uniqSorted(from.errors.map((e) => e.kind)),
+				formatDeferredKinds: empty,
+			},
+			coverage: {
+				pass: cov.pass,
+				total: cov.total,
+				failingKinds: uniqSorted(cov.issues.map((i) => i.kind)),
+				formatDeferredKinds: empty,
+			},
+			roundtrip: {
+				pass: rt.pass,
+				total: rt.total,
+				astMatchPass: rt.astMatchPass,
+				failingKinds: uniqSorted(
+					[...rt.errors, ...rt.astMismatches]
+						.map((e) => kindFromRoundtripName(e.name))
+						.filter((k): k is string => k !== null),
+				),
+				formatDeferredKinds: empty,
+			},
+			factoryRoundtrip: {
+				pass: fac.pass,
+				total: fac.total,
+				astMatchPass: fac.astMatchPass,
+				failingKinds: uniqSorted([...fac.errors, ...fac.astMismatches].map((e) => e.kind)),
+				formatDeferredKinds: empty,
+			},
+		};
+	});
 }
 
 // ---------------------------------------------------------------------------
@@ -390,7 +414,7 @@ function computeTotals(grammars: BackendBaseline["grammars"]): BackendBaseline["
 
 async function collectGrammarEntry(grammar: Grammar, backend: Backend): Promise<GrammarEntry> {
 	const [validators, parityFixtures] = await Promise.all([
-		collectValidatorsForGrammar(grammar),
+		collectValidatorsForGrammar(grammar, backend),
 		collectParityFixtures(grammar, backend),
 	]);
 	return { validators, parityFixtures };

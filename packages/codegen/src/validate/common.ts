@@ -276,10 +276,12 @@ function loadNativeEngineForGrammar(grammar: string): NativeEngineLike | null {
 export function buildReadHandle(grammar: string, tree: TS.Tree, source: string): TreeHandle {
 	if (process.env.SITTIR_BACKEND === "native") {
 		const engine = loadNativeEngineForGrammar(grammar);
-		if (engine) return nativeTreeHandle(engine, source);
-		// SITTIR_BACKEND=native explicitly requested but native unavailable —
-		// fall through to wasm so the validator surfaces the actual gap
-		// (e.g. corpus failure modes) rather than a load error.
+		if (!engine) {
+			throw new Error(
+				`SITTIR_BACKEND=native but no native engine is available for grammar '${grammar}'`,
+			);
+		}
+		return nativeTreeHandle(engine, source);
 	}
 	return treeHandle(tree, source);
 }
