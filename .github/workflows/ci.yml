@@ -316,9 +316,9 @@ jobs:
         # render behavior — the pipeline fails LOUDLY if a codegen
         # change silently shifts the capture without a matching commit.
         run: |
-          npx tsx packages/codegen/src/cli.ts --grammar rust --all --rust-render --output packages/rust/src
-          npx tsx packages/codegen/src/cli.ts --grammar typescript --all --rust-render --output packages/typescript/src
-          npx tsx packages/codegen/src/cli.ts --grammar python --all --rust-render --output packages/python/src
+          npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src
+          npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
+          npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
       - name: Fixture check — no drift from committed
         # ENFORCING (no per-step continue-on-error). 016 Cluster A
         # established that fixture drift → silent data-rot → 6

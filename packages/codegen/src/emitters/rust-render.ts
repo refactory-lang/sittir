@@ -55,7 +55,7 @@ export interface RustRenderEmit {
 
 function hashRsHeader(lang: Grammar): string {
 	return `// @generated from packages/${lang}/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --rust-render
+// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
 //
 // This file carries the SHA-256 digest of the template bundle at codegen
 // time. The napi binding (sittir-${lang}-napi) exports it as
@@ -68,7 +68,7 @@ function hashRsHeader(lang: Grammar): string {
 
 function hashTsHeader(lang: Grammar): string {
 	return `// @generated from packages/${lang}/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --rust-render
+// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
 //
 // Companion to packages/${lang}/rust-render/src/hash.rs; the two must
 // agree byte-for-byte at runtime for the native backend to be picked
@@ -79,7 +79,7 @@ function hashTsHeader(lang: Grammar): string {
 
 function templatesRsHeader(lang: Grammar): string {
 	return `// @generated from packages/${lang}/node-model.json5 and packages/${lang}/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --rust-render
+// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
 //
 // Per-kind askama template structs + render_dispatch + GrammarMeta impl
 // for the ${lang} grammar. Every struct in this file is backed by a
@@ -100,7 +100,7 @@ function cargoTomlContents(lang: Grammar): string {
 	// Keep synced with the T005 stub shape. askama/serde/sittir-core are
 	// workspace-declared so the per-crate manifests inherit versions.
 	return `# @generated from packages/${lang}/node-model.json5 — do not hand-edit.
-# Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --rust-render
+# Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
 [package]
 name = "sittir-${lang}-render"
 version = "0.0.0"
@@ -563,7 +563,7 @@ function renderGrammarMeta(lang: Grammar, meta: MetaData): string {
 
 function libRsContents(lang: Grammar): string {
 	return `// @generated from packages/${lang}/node-model.json5 — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --rust-render
+// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
 
 pub mod hash;
 pub mod templates;

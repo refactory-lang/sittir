@@ -53,7 +53,6 @@ interface CliArgs {
 	transpile?: boolean;
 	tsGenerate?: boolean;
 	skipTsChain?: boolean;
-	rustRender?: boolean;
 	buildNative?: boolean;
 	help?: boolean;
 }
@@ -97,9 +96,6 @@ function parseArgs(argv: string[]): CliArgs {
 			case "--skip-ts-chain":
 				args.skipTsChain = true;
 				break;
-			case "--rust-render":
-				args.rustRender = true;
-				break;
 			case "--no-build-native":
 				args.buildNative = false;
 				break;
@@ -126,7 +122,8 @@ Usage: sittir --grammar <name> [--all | --nodes <kinds>] --output <dir>
 Options:
   --grammar, -g    Grammar name (rust, typescript, python)
   --nodes, -n      Comma-separated node kinds to generate
-  --all, -a        Generate for all branch node kinds
+  --all, -a        Generate TS output plus native rust-render artifacts
+                   for supported grammars (rust, typescript, python)
   --output, -o     Output directory for generated files
   --tests-dir      Output directory for test files (default: ../tests)
   --transpile      Transpile overrides.ts to .sittir/grammar.js
@@ -135,15 +132,6 @@ Options:
                    grammar.json + node-types.json
   --skip-ts-chain  Skip the auto transpile + tree-sitter generate chain
                    that --all normally runs before sittir codegen
-  --rust-render    Also emit the rust-render crate's codegen artifacts
-                   (spec 012 T016+): packages/<grammar>/rust-render/src/hash.rs
-                   and packages/<grammar>/src/hash.ts. The JS backend shim
-                   uses the TS-side hash to detect drift vs. the native
-                   binary (FR-020). After regenerating templates, automatically
-                   rebuilds the corresponding napi crate so the native render
-                   path picks up template changes (otherwise native baseline
-                   collection silently falls back to TS render with stale
-                   templates). Suppress with --no-build-native.
   --no-build-native  Skip the post-regen napi crate rebuild (use when you
                    only need the TS-side artifacts; faster regen).
   --help, -h       Show this help
@@ -264,24 +252,23 @@ writeFile(join(outDir, "index.ts"), result.index);
 writeJinjaTemplates(result.jinjaTemplates, join(dirname(outDir), "templates"));
 
 // --- rust-render emission (spec 012 T017) ---
-// When `--rust-render` is set, also emit hash.rs / hash.ts so the
-// native backend and the TS backend can detect template-bundle drift
+// When `--all` is set for a supported grammar, also emit hash.rs / hash.ts
+// so the native backend and the TS backend can detect template-bundle drift
 // at runtime (FR-020). The hash is computed over the same `.jinja`
 // bodies that were just written above — this keeps the TS-side and
 // Rust-side derivations in lockstep.
-if (cliArgs.rustRender) {
-	const grammar = config.grammar;
-	if (grammar !== "rust" && grammar !== "typescript" && grammar !== "python") {
-		console.error(
-			`--rust-render: unsupported grammar '${grammar}'. Supported: rust, typescript, python.`,
-		);
-		process.exit(1);
-	}
+const RUST_RENDER_GRAMMARS = ["rust", "typescript", "python"] as const;
+const shouldEmitRustRender =
+	cliArgs.all &&
+	(RUST_RENDER_GRAMMARS as readonly string[]).includes(config.grammar);
+
+if (shouldEmitRustRender) {
+	const grammar = config.grammar as (typeof RUST_RENDER_GRAMMARS)[number];
 	const templateFiles: TemplateFile[] = [];
 	for (const [kind, body] of result.jinjaTemplates.bodies) {
 		templateFiles.push({ filename: `${kind}.jinja`, content: body });
 	}
-	const emit = emitRenderCrate(grammar as RustRenderGrammar, templateFiles, result.nodeMap);
+	const emit = emitRenderCrate(grammar, templateFiles, result.nodeMap);
 	writeFile(emit.hashRs.path, emit.hashRs.contents);
 	writeFile(emit.hashTs.path, emit.hashTs.contents);
 	writeFile(emit.templatesRs.path, emit.templatesRs.contents);

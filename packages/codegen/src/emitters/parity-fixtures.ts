@@ -18,7 +18,7 @@
  * `typescript/export_statement`, `typescript/call_expression`. Extraction
  * fails the build if any are absent from the matching grammar's fixtures.
  *
- * Runs from `cli.ts --rust-render` after the render crate is emitted;
+ * Runs from `cli.ts --all` after TS + native render artifacts are emitted;
  * produces `packages/{lang}/rust-render/test-fixtures.json` per grammar.
  */
 
