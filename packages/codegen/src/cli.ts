@@ -132,8 +132,10 @@ Options:
                    grammar.json + node-types.json
   --skip-ts-chain  Skip the auto transpile + tree-sitter generate chain
                    that --all normally runs before sittir codegen
-  --no-build-native  Skip the post-regen napi crate rebuild (use when you
-                   only need the TS-side artifacts; faster regen).
+  --no-build-native  Skip the post-regen napi crate rebuild (suppresses the
+                   cargo rebuild that --all triggers after emitting native
+                   artifacts; useful when you only want updated TS/Rust
+                   source files without a full native recompile).
   --help, -h       Show this help
 
 With --all (without --skip-ts-chain), the CLI chains:

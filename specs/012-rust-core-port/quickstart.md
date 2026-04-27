@@ -80,13 +80,13 @@ The first `cargo build` on a fresh checkout downloads `tree-sitter`, `ast-grep-c
 
 ## Regenerating the Rust render crates
 
-Per-grammar generation is triggered through the existing codegen CLI, now with an added `--rust-render` flag:
+Per-grammar generation is triggered through `--all`, which now emits both TS
+and native rust-render artifacts in a single pass:
 
 ```bash
 npx tsx packages/codegen/src/cli.ts \
   --grammar rust \
   --all \
-  --rust-render \
   --output packages/rust/src
 
 # Same for typescript, python
@@ -189,7 +189,7 @@ New grammars inherit the Rust path automatically:
 | Task                                | Command                                                                                              |
 | ----------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | Full rebuild (Rust + TS)            | `pnpm -r run type-check && cd rust && cargo build --workspace`                                       |
-| Regenerate all grammars (TS + Rust) | `pnpm -r exec npx tsx packages/codegen/src/cli.ts --grammar $G --all --rust-render` (loop over G)    |
+| Regenerate all grammars (TS + Rust) | `npx tsx packages/codegen/src/cli.ts --grammar $G --all --output packages/$G/src` (loop over G)       |
 | Run all tests                       | `pnpm test && cd rust && cargo test --workspace`                                                     |
 | Run only parity tests               | `cd rust && cargo test -p sittir-parity-tests`                                                       |
 | Benchmark (micro)                   | `cd rust && cargo bench -p sittir-core`                                                              |
@@ -203,7 +203,7 @@ New grammars inherit the Rust path automatically:
 
 **Symptom**: `cargo build` fails with "file not found" in `templates.rs` on a fresh checkout.
 **Cause**: the Rust render crate is codegen-emitted. A fresh checkout has the stub crate but no generated contents.
-**Fix**: run the codegen step first (`npx tsx packages/codegen/src/cli.ts --grammar rust --all --rust-render`).
+**Fix**: run the codegen step first (`npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src`).
 
 **Symptom**: `getActiveBackend()` returns `typescript` on a supported platform.
 **Cause #1**: `@sittir/{lang}-native` not installed (check `node_modules/`).
