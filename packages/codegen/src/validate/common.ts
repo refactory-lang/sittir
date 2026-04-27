@@ -161,6 +161,9 @@ export function treeHandle(tree: TS.Tree, source?: string): TreeHandle {
 	}
 	collect(tree.rootNode);
 
+	// TS handles use nodeById/rootNode directly in readNode(). No `read`
+	// method is set here — native handles set `read` so readNode() dispatches
+	// through the napi engine without a JS-side tree walk.
 	const handle: TreeHandle = {
 		rootNode: adaptNode(tree.rootNode),
 		nodeById: (id: number) => {
@@ -169,9 +172,6 @@ export function treeHandle(tree: TS.Tree, source?: string): TreeHandle {
 			return adaptNode(node);
 		},
 		source,
-		read(nodeId?: number) {
-			return readNodeFn(handle, nodeId);
-		},
 	};
 	return handle;
 }

@@ -91,6 +91,12 @@ function promoteAnonymousKeyword(
  * @param nodeId - If provided, read this node; otherwise read the root
  */
 export function readNode(tree: TreeHandle, nodeId?: number): AnyNodeData {
+	// Native-handle dispatch: when `tree.read` is present the handle owns a
+	// Rust/napi engine that produces `AnyNodeData` directly (no JS-side tree
+	// walk needed). TS handles do NOT set `tree.read` so this branch is
+	// native-only — no circular recursion risk.
+	if (tree.read) return tree.read(nodeId);
+
 	const node = nodeId != null ? tree.nodeById(nodeId) : tree.rootNode;
 
 	// `Object.create(null)` avoids prototype pollution on field names
