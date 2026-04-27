@@ -85,7 +85,8 @@ impl SittirEngine {
             .source
             .as_ref()
             .ok_or_else(|| Error::from_reason("no source cached — call parseAndRead first"))?;
-        let id = node_id as u64;
+        let id = sittir_core::boundary::coerce_node_id(node_id)
+            .map_err(|msg| Error::from_reason(msg))?;
         let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
             sittir_core::read_node::read_node(tree, source, Some(id))
         }));
