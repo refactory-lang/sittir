@@ -112,8 +112,8 @@ cd rust && cargo build --workspace
 The shared parity fixtures are emitted by codegen from the existing round-trip validator's corpus:
 
 ```bash
-# Generate fixtures (part of the codegen run above; or run standalone)
-npx tsx packages/codegen/src/cli.ts --grammar rust --fixtures-only
+# Fixtures are emitted as part of the normal --all regen run:
+npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src
 
 # Rust-side parity run (byte-identical render + semantic round-trip)
 cd rust && cargo test -p sittir-parity-tests
