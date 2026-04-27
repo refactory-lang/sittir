@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 395,
+  "nodeCount": 396,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -1058,7 +1058,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "_field_identifier",
               "unresolved": true
             }
           ]
@@ -1142,7 +1142,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "_shorthand_field_identifier",
               "unresolved": true
             }
           ],
@@ -1150,11 +1150,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "identifier"
+              "_shorthand_field_identifier"
             ]
           },
           "aliasSources": {
-            "shorthand_field_identifier": "identifier"
+            "shorthand_field_identifier": "_shorthand_field_identifier"
           }
         }
       ],
@@ -1315,18 +1315,18 @@
       "text": ";"
     },
     {
-      "kind": "_inner_doc_comment_marker",
+      "kind": "_inner_block_doc_comment_marker",
       "modelType": "leaf",
-      "typeName": "InnerDocCommentMarker",
-      "factoryName": "innerDocCommentMarker",
-      "irKey": "innerDocCommentMarker",
+      "typeName": "InnerBlockDocCommentMarker",
+      "factoryName": "innerBlockDocCommentMarker",
+      "irKey": "innerBlockDocCommentMarker",
       "hidden": false
     },
     {
-      "kind": "_inner_line_doc_comment_marker",
+      "kind": "_inner_doc_comment_marker",
       "modelType": "token",
-      "typeName": "InnerLineDocCommentMarker",
-      "irKey": "innerLineDocCommentMarker",
+      "typeName": "InnerDocCommentMarker",
+      "irKey": "innerDocCommentMarker",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"!\" as const",
@@ -1983,18 +1983,18 @@
       "children": []
     },
     {
-      "kind": "_outer_doc_comment_marker",
+      "kind": "_outer_block_doc_comment_marker",
       "modelType": "leaf",
-      "typeName": "OuterDocCommentMarker",
-      "factoryName": "outerDocCommentMarker",
-      "irKey": "outerDocCommentMarker",
+      "typeName": "OuterBlockDocCommentMarker",
+      "factoryName": "outerBlockDocCommentMarker",
+      "irKey": "outerBlockDocCommentMarker",
       "hidden": false
     },
     {
-      "kind": "_outer_line_doc_comment_marker",
+      "kind": "_outer_doc_comment_marker",
       "modelType": "token",
-      "typeName": "OuterLineDocCommentMarker",
-      "irKey": "outerLineDocCommentMarker",
+      "typeName": "OuterDocCommentMarker",
+      "irKey": "outerDocCommentMarker",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"/\" as const",
@@ -2508,6 +2508,31 @@
       ]
     },
     {
+      "kind": "_shorthand_field_identifier",
+      "modelType": "container",
+      "typeName": "ShorthandFieldIdentifier",
+      "factoryName": "shorthandFieldIdentifier",
+      "irKey": "shorthandFieldIdentifier",
+      "hidden": false,
+      "children": [
+        {
+          "name": "identifier",
+          "propertyName": "identifier",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
       "kind": "_statement",
       "modelType": "supertype",
       "typeName": "Statement",
@@ -2880,13 +2905,13 @@
       "hidden": true,
       "subtypes": [
         "_primitive_type",
+        "_type_identifier",
         "abstract_type",
         "array_type",
         "bounded_type",
         "dynamic_type",
         "function_type",
         "generic_type",
-        "identifier",
         "macro_invocation",
         "metavariable",
         "never_type",
@@ -2916,7 +2941,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "_type_identifier",
               "unresolved": true
             }
           ]
@@ -7114,7 +7139,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "_shorthand_field_identifier",
               "unresolved": true
             }
           ],
@@ -7122,11 +7147,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "identifier"
+              "_shorthand_field_identifier"
             ]
           },
           "aliasSources": {
-            "shorthand_field_identifier": "identifier"
+            "shorthand_field_identifier": "_shorthand_field_identifier"
           }
         }
       ],

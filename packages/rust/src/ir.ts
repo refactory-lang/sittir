@@ -125,7 +125,6 @@ export const type = {
   unit: F.unitType,
   array: _attach(F.arrayType, { from: FR.arrayTypeFrom }),
   function_: _attach(F.functionType, { from: FR.functionTypeFrom }),
-  identifier: F.identifier,
   macro: _attach(F.macroInvocation, { from: FR.macroInvocationFrom }),
   dynamic: _attach(F.dynamicType, { from: FR.dynamicTypeFrom }),
   bounded: _attach(F.boundedType, { from: FR.boundedTypeFrom }),

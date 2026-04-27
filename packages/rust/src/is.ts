@@ -193,6 +193,7 @@ export interface IsGuards {
     ReservedIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_reserved_identifier' };
     TypeIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_type_identifier' };
     FieldIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_field_identifier' };
+    ShorthandFieldIdentifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_shorthand_field_identifier' };
     StringContent<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_string_content' };
     ClosureExpressionExpr<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_closure_expression_expr' };
     FieldPatternShorthand<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_field_pattern_shorthand' };
@@ -409,6 +410,7 @@ export interface AssertGuards {
     ReservedIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: '_reserved_identifier' };
     TypeIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: '_type_identifier' };
     FieldIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: '_field_identifier' };
+    ShorthandFieldIdentifier(v: { readonly $type: string }): asserts v is { readonly $type: '_shorthand_field_identifier' };
     StringContent(v: { readonly $type: string }): asserts v is { readonly $type: '_string_content' };
     ClosureExpressionExpr(v: { readonly $type: string }): asserts v is { readonly $type: '_closure_expression_expr' };
     FieldPatternShorthand(v: { readonly $type: string }): asserts v is { readonly $type: '_field_pattern_shorthand' };
@@ -469,7 +471,7 @@ const _supertype_declarationStatement = new Set<string>(["const_item", "macro_in
 const _supertype_tokenPattern = new Set<string>(["token_tree_pattern", "token_repetition_pattern", "token_binding_pattern", "metavariable", "string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "mutable_specifier", "self", "super", "crate"]);
 const _supertype_tokens = new Set<string>(["token_tree", "token_repetition", "metavariable", "string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "mutable_specifier", "self", "super", "crate"]);
 const _supertype_useClause = new Set<string>(["self", "identifier", "metavariable", "super", "crate", "scoped_identifier", "use_as_clause", "use_list", "scoped_use_list", "use_wildcard"]);
-const _supertype_type = new Set<string>(["abstract_type", "reference_type", "metavariable", "pointer_type", "generic_type", "scoped_type_identifier", "tuple_type", "unit_type", "array_type", "function_type", "identifier", "macro_invocation", "never_type", "dynamic_type", "bounded_type", "removed_trait_bound", "_primitive_type"]);
+const _supertype_type = new Set<string>(["abstract_type", "reference_type", "metavariable", "pointer_type", "generic_type", "scoped_type_identifier", "tuple_type", "unit_type", "array_type", "function_type", "_type_identifier", "macro_invocation", "never_type", "dynamic_type", "bounded_type", "removed_trait_bound", "_primitive_type"]);
 const _supertype_expressionExceptRange = new Set<string>(["unary_expression", "reference_expression", "try_expression", "binary_expression", "assignment_expression", "compound_assignment_expr", "type_cast_expression", "call_expression", "return_expression", "yield_expression", "string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "self", "scoped_identifier", "generic_function", "await_expression", "field_expression", "array_expression", "tuple_expression", "macro_invocation", "unit_expression", "break_expression", "continue_expression", "index_expression", "metavariable", "closure_expression", "parenthesized_expression", "struct_expression", "unsafe_block", "async_block", "gen_block", "try_block", "block", "if_expression", "match_expression", "while_expression", "loop_expression", "for_expression", "const_block"]);
 const _supertype_expression = new Set<string>(["unary_expression", "reference_expression", "try_expression", "binary_expression", "assignment_expression", "compound_assignment_expr", "type_cast_expression", "call_expression", "return_expression", "yield_expression", "string_literal", "raw_string_literal", "char_literal", "boolean_literal", "integer_literal", "float_literal", "identifier", "self", "scoped_identifier", "generic_function", "await_expression", "field_expression", "array_expression", "tuple_expression", "macro_invocation", "unit_expression", "break_expression", "continue_expression", "index_expression", "metavariable", "closure_expression", "parenthesized_expression", "struct_expression", "unsafe_block", "async_block", "gen_block", "try_block", "block", "if_expression", "match_expression", "while_expression", "loop_expression", "for_expression", "const_block", "range_expression"]);
 const _supertype_expressionEndingWithBlock = new Set<string>(["unsafe_block", "async_block", "gen_block", "try_block", "block", "if_expression", "match_expression", "while_expression", "loop_expression", "for_expression", "const_block"]);
@@ -650,6 +652,7 @@ export const is = {
     ReservedIdentifier: _g("_reserved_identifier"),
     TypeIdentifier: _g("_type_identifier"),
     FieldIdentifier: _g("_field_identifier"),
+    ShorthandFieldIdentifier: _g("_shorthand_field_identifier"),
     StringContent: _g("_string_content"),
     ClosureExpressionExpr: _g("_closure_expression_expr"),
     FieldPatternShorthand: _g("_field_pattern_shorthand"),
@@ -887,6 +890,7 @@ export const assert = {
     ReservedIdentifier: _makeAssert('ReservedIdentifier', is.ReservedIdentifier as _AnyGuard),
     TypeIdentifier: _makeAssert('TypeIdentifier', is.TypeIdentifier as _AnyGuard),
     FieldIdentifier: _makeAssert('FieldIdentifier', is.FieldIdentifier as _AnyGuard),
+    ShorthandFieldIdentifier: _makeAssert('ShorthandFieldIdentifier', is.ShorthandFieldIdentifier as _AnyGuard),
     StringContent: _makeAssert('StringContent', is.StringContent as _AnyGuard),
     ClosureExpressionExpr: _makeAssert('ClosureExpressionExpr', is.ClosureExpressionExpr as _AnyGuard),
     FieldPatternShorthand: _makeAssert('FieldPatternShorthand', is.FieldPatternShorthand as _AnyGuard),

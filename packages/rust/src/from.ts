@@ -382,8 +382,8 @@ const _K3: readonly string[] = ["_reserved_identifier"];
 const _K4: readonly string[] = ["field_declaration_list","ordered_field_declaration_list"];
 const _K5: readonly string[] = ["char_literal","boolean_literal","integer_literal","float_literal","identifier","self","unit_expression","metavariable"];
 const _K6: readonly string[] = ["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","break_expression","continue_expression","index_expression","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"];
-const _K7: readonly string[] = ["metavariable","unit_type","identifier","_primitive_type"];
-const _K8: readonly string[] = ["abstract_type","reference_type","pointer_type","generic_type","scoped_type_identifier","tuple_type","array_type","function_type","macro_invocation","dynamic_type","bounded_type","removed_trait_bound"];
+const _K7: readonly string[] = ["metavariable","unit_type","_primitive_type"];
+const _K8: readonly string[] = ["abstract_type","reference_type","pointer_type","generic_type","scoped_type_identifier","tuple_type","array_type","function_type","_type_identifier","macro_invocation","dynamic_type","bounded_type","removed_trait_bound"];
 const _K9: readonly string[] = ["_kw_ref_marker","mutable_specifier"];
 const _K10: readonly string[] = ["identifier","metavariable"];
 const _K11: readonly string[] = ["_primitive_type"];
@@ -401,7 +401,7 @@ const _K22: readonly string[] = ["_function_type_trait_form","_function_type_fn_
 const _K23: readonly string[] = ["scoped_identifier","field_expression"];
 const _K24: readonly string[] = ["_type_identifier","_reserved_identifier","scoped_type_identifier"];
 const _K25: readonly string[] = ["_type_identifier","scoped_identifier"];
-const _K26: readonly string[] = ["lifetime","abstract_type","reference_type","pointer_type","generic_type","scoped_type_identifier","tuple_type","array_type","function_type","macro_invocation","dynamic_type","bounded_type","removed_trait_bound","use_bounds"];
+const _K26: readonly string[] = ["lifetime","abstract_type","reference_type","pointer_type","generic_type","scoped_type_identifier","tuple_type","array_type","function_type","_type_identifier","macro_invocation","dynamic_type","bounded_type","removed_trait_bound","use_bounds"];
 const _K27: readonly string[] = ["_type_identifier","scoped_type_identifier","removed_trait_bound","generic_type","function_type","tuple_type","bounded_type"];
 const _K28: readonly string[] = ["higher_ranked_trait_bound","_type_identifier","scoped_type_identifier","generic_type","function_type","tuple_type"];
 const _K29: readonly string[] = ["scoped_identifier","_reserved_identifier"];
@@ -1884,7 +1884,7 @@ export function structPatternFrom(input: T.StructPattern.Loose): ReturnType<type
 export function fieldPatternShorthandFrom(input: T.FieldPatternShorthand.Loose): ReturnType<typeof F.fieldPatternShorthand> | T.FieldPatternShorthand {
   if (isNodeData(input)) return input;
   return F.fieldPatternShorthand({
-    name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
+    name: _resolveOneBranch<T.ShorthandFieldIdentifier>(input.name, "_shorthand_field_identifier"),
   });
 }
 
@@ -1897,7 +1897,7 @@ export function fieldPatternUFormShorthandFrom(input: Omit<ConfigOf<T.FieldPatte
   return F.fieldPatternUFormShorthand({
     refMarker: _resolveBooleanKeyword(input.refMarker),
     mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
-    name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
+    name: _resolveOneBranch<T.ShorthandFieldIdentifier>(input.name, "_shorthand_field_identifier"),
   });
 }
 

@@ -25,6 +25,7 @@ export const NODE_KINDS = [
   '_range_expression_bare',
   '_reference_expression_raw_mut',
   '_reserved_identifier',
+  '_shorthand_field_identifier',
   '_string_content',
   '_token_tree_brace',
   '_token_tree_bracket',
@@ -204,7 +205,7 @@ export const LEAF_KINDS = [
   '_',
   '_doc_comment',
   '_error_sentinel',
-  '_inner_doc_comment_marker',
+  '_inner_block_doc_comment_marker',
   '_kw_async_marker',
   '_kw_move_marker',
   '_kw_ref_marker',
@@ -212,7 +213,7 @@ export const LEAF_KINDS = [
   '_kw_unsafe_marker',
   '_line_comment_content',
   '_line_comment_regular_dslash',
-  '_outer_doc_comment_marker',
+  '_outer_block_doc_comment_marker',
   '_pointer_type_const',
   '_primitive_type',
   '_reference_expression_raw_const',
@@ -282,7 +283,7 @@ export const KEYWORDS = [
   '_',
   '_foreign_mod_item_semi',
   '_impl_item_semi',
-  '_inner_line_doc_comment_marker',
+  '_inner_doc_comment_marker',
   '_kw_async_marker',
   '_kw_move_marker',
   '_kw_negative',
@@ -291,7 +292,7 @@ export const KEYWORDS = [
   '_kw_static_marker',
   '_kw_unsafe_marker',
   '_mod_item_external',
-  '_outer_line_doc_comment_marker',
+  '_outer_doc_comment_marker',
   '_pointer_type_const',
   '_range_pattern_left_bare',
   '_struct_item_unit',
@@ -448,6 +449,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_reference_expression_raw_mut': [
   ],
   '_reserved_identifier': [
+  ],
+  '_shorthand_field_identifier': [
   ],
   '_string_content': [
   ],

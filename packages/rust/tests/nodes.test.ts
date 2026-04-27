@@ -1706,19 +1706,19 @@ describe('struct_pattern', () => {
 
 describe('field_pattern_shorthand', () => {
   it('factory produces correct type', () => {
-    const node = ir.fieldPatternShorthand({ name: { $type: 'identifier', $text: 'test' } as any });
+    const node = ir.fieldPatternShorthand({ name: { $type: '_shorthand_field_identifier', $text: 'test' } as any });
     expect(node.$type).toBe('field_pattern_shorthand');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.fieldPatternShorthand({ name: { $type: 'identifier', $text: 'test' } as any });
+    const node = ir.fieldPatternShorthand({ name: { $type: '_shorthand_field_identifier', $text: 'test' } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
 describe('field_pattern', () => {
   it('shorthand form produces correct type', () => {
-    const node = ir.fieldPattern.shorthand({ name: { $type: 'identifier', $text: 'test' } as any });
+    const node = ir.fieldPattern.shorthand({ name: { $type: '_shorthand_field_identifier', $text: 'test' } as any });
     expect(node.$type).toBe('field_pattern');
     expect(node.$source).toBe('factory');
   });

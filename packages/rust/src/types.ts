@@ -237,6 +237,7 @@ export const enum SyntaxKind {
   ReservedIdentifier = '_reserved_identifier',
   TypeIdentifier = '_type_identifier',
   FieldIdentifier = '_field_identifier',
+  ShorthandFieldIdentifier = '_shorthand_field_identifier',
   _StringContent = '_string_content',
   ArrayExpressionSemi = '_array_expression_semi',
   ArrayExpressionList = '_array_expression_list',
@@ -297,8 +298,6 @@ export const enum SyntaxKind {
   Metavariable = 'metavariable',
   PrimitiveType = '_primitive_type',
   DocComment = '_doc_comment',
-  OuterDocCommentMarker = '_outer_doc_comment_marker',
-  InnerDocCommentMarker = '_inner_doc_comment_marker',
   KwRefMarker = '_kw_ref_marker',
   KwUnsafeMarker = '_kw_unsafe_marker',
   KwStaticMarker = '_kw_static_marker',
@@ -312,6 +311,8 @@ export const enum SyntaxKind {
   StringContent = 'string_content',
   RawStringLiteralContent = 'raw_string_literal_content',
   FloatLiteral = 'float_literal',
+  OuterBlockDocCommentMarker = '_outer_block_doc_comment_marker',
+  InnerBlockDocCommentMarker = '_inner_block_doc_comment_marker',
   ErrorSentinel = '_error_sentinel',
   As = 'as',
   Async = 'async',
@@ -463,7 +464,7 @@ export const enum TypeKind {
   UnitType = 'unit_type',
   ArrayType = 'array_type',
   FunctionType = 'function_type',
-  Identifier = 'identifier',
+  TypeIdentifier = '_type_identifier',
   MacroInvocation = 'macro_invocation',
   NeverType = 'never_type',
   DynamicType = 'dynamic_type',
@@ -2023,7 +2024,7 @@ export interface StructPattern {
 export interface FieldPatternShorthand {
   readonly $type: 'field_pattern_shorthand';
   readonly $fields: {
-    readonly name: Identifier;
+    readonly name: ShorthandFieldIdentifier;
   };
 }
 
@@ -2173,11 +2174,16 @@ export interface ReservedIdentifier {
 
 export interface TypeIdentifier {
   readonly $type: '_type_identifier';
-  readonly $children: readonly [Identifier];
+  readonly $children: readonly [TypeIdentifier];
 }
 
 export interface FieldIdentifier {
   readonly $type: '_field_identifier';
+  readonly $children: readonly [FieldIdentifier];
+}
+
+export interface ShorthandFieldIdentifier {
+  readonly $type: '_shorthand_field_identifier';
   readonly $children: readonly [Identifier];
 }
 
@@ -2222,7 +2228,7 @@ export interface _ClosureExpressionExpr {
 export interface _FieldPatternShorthand {
   readonly $type: '_field_pattern_shorthand';
   readonly $fields: {
-    readonly name: Identifier;
+    readonly name: ShorthandFieldIdentifier;
   };
 }
 
@@ -2484,14 +2490,14 @@ export type Crate = Terminal<"crate", "crate">;
 export type Metavariable = Terminal<"metavariable", string>;
 export type PrimitiveType = Terminal<"_primitive_type", "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char">;
 export type DocComment = Terminal<"_doc_comment", string>;
-export type OuterDocCommentMarker = Terminal<"_outer_doc_comment_marker", string>;
-export type InnerDocCommentMarker = Terminal<"_inner_doc_comment_marker", string>;
 export type ReferenceExpressionRawConst = Terminal<"_reference_expression_raw_const", string>;
 export type LineCommentRegularDslash = Terminal<"_line_comment_regular_dslash", string>;
 export type LineCommentContent = Terminal<"_line_comment_content", string>;
 export type StringContent = Terminal<"string_content", string>;
 export type RawStringLiteralContent = Terminal<"raw_string_literal_content", string>;
 export type FloatLiteral = Terminal<"float_literal", string>;
+export type OuterBlockDocCommentMarker = Terminal<"_outer_block_doc_comment_marker", string>;
+export type InnerBlockDocCommentMarker = Terminal<"_inner_block_doc_comment_marker", string>;
 export type ErrorSentinel = Terminal<"_error_sentinel", string>;
 
 // Tree types
@@ -2711,6 +2717,7 @@ export interface BlockCommentTree extends TreeNode<'block_comment'> {}
 export interface ReservedIdentifierTree extends AnyTreeNode { readonly type: "_reserved_identifier"; }
 export interface TypeIdentifierTree extends AnyTreeNode { readonly type: "_type_identifier"; }
 export interface FieldIdentifierTree extends AnyTreeNode { readonly type: "_field_identifier"; }
+export interface ShorthandFieldIdentifierTree extends AnyTreeNode { readonly type: "_shorthand_field_identifier"; }
 export interface _StringContentTree extends AnyTreeNode { readonly type: "_string_content"; }
 export interface ArrayExpressionSemiTree extends AnyTreeNode { readonly type: "_array_expression_semi"; }
 export interface ArrayExpressionListTree extends AnyTreeNode { readonly type: "_array_expression_list"; }
@@ -2771,14 +2778,14 @@ export interface CrateTree extends AnyTreeNode { readonly type: "crate"; }
 export interface MetavariableTree extends TreeNode<'metavariable'> {}
 export interface PrimitiveTypeTree extends AnyTreeNode { readonly type: "_primitive_type"; }
 export interface DocCommentTree extends AnyTreeNode { readonly type: "_doc_comment"; }
-export interface OuterDocCommentMarkerTree extends AnyTreeNode { readonly type: "_outer_doc_comment_marker"; }
-export interface InnerDocCommentMarkerTree extends AnyTreeNode { readonly type: "_inner_doc_comment_marker"; }
 export interface ReferenceExpressionRawConstTree extends AnyTreeNode { readonly type: "_reference_expression_raw_const"; }
 export interface LineCommentRegularDslashTree extends AnyTreeNode { readonly type: "_line_comment_regular_dslash"; }
 export interface LineCommentContentTree extends AnyTreeNode { readonly type: "_line_comment_content"; }
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface RawStringLiteralContentTree extends AnyTreeNode { readonly type: "raw_string_literal_content"; }
 export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
+export interface OuterBlockDocCommentMarkerTree extends AnyTreeNode { readonly type: "_outer_block_doc_comment_marker"; }
+export interface InnerBlockDocCommentMarkerTree extends AnyTreeNode { readonly type: "_inner_block_doc_comment_marker"; }
 export interface ErrorSentinelTree extends AnyTreeNode { readonly type: "_error_sentinel"; }
 export interface AsTree extends AnyTreeNode { readonly type: "as"; }
 export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
@@ -2936,7 +2943,7 @@ export type _Type =
   | UnitType
   | ArrayType
   | FunctionType
-  | Identifier
+  | TypeIdentifier
   | MacroInvocation
   | DynamicType
   | BoundedType
@@ -2944,7 +2951,7 @@ export type _Type =
   | PrimitiveType
 ;
 
-export type _TypeTree = AbstractTypeTree | ReferenceTypeTree | MetavariableTree | PointerTypeTree | GenericTypeTree | ScopedTypeIdentifierTree | TupleTypeTree | UnitTypeTree | ArrayTypeTree | FunctionTypeTree | IdentifierTree | MacroInvocationTree | DynamicTypeTree | BoundedTypeTree | RemovedTraitBoundTree | PrimitiveTypeTree;
+export type _TypeTree = AbstractTypeTree | ReferenceTypeTree | MetavariableTree | PointerTypeTree | GenericTypeTree | ScopedTypeIdentifierTree | TupleTypeTree | UnitTypeTree | ArrayTypeTree | FunctionTypeTree | TypeIdentifierTree | MacroInvocationTree | DynamicTypeTree | BoundedTypeTree | RemovedTraitBoundTree | PrimitiveTypeTree;
 
 export type ExpressionExceptRange =
   | UnaryExpression
@@ -3384,6 +3391,7 @@ export type RustNode =
   | ReservedIdentifier
   | TypeIdentifier
   | FieldIdentifier
+  | ShorthandFieldIdentifier
   | _StringContent
   | ArrayExpressionSemi
   | ArrayExpressionList
@@ -3599,6 +3607,7 @@ export interface KindMap {
   '_reserved_identifier': ReservedIdentifier;
   '_type_identifier': TypeIdentifier;
   '_field_identifier': FieldIdentifier;
+  '_shorthand_field_identifier': ShorthandFieldIdentifier;
   '_string_content': _StringContent;
   '_array_expression_semi': ArrayExpressionSemi;
   '_array_expression_list': ArrayExpressionList;
@@ -3659,14 +3668,14 @@ export interface KindMap {
   'metavariable': Metavariable;
   '_primitive_type': PrimitiveType;
   '_doc_comment': DocComment;
-  '_outer_doc_comment_marker': OuterDocCommentMarker;
-  '_inner_doc_comment_marker': InnerDocCommentMarker;
   '_reference_expression_raw_const': ReferenceExpressionRawConst;
   '_line_comment_regular_dslash': LineCommentRegularDslash;
   '_line_comment_content': LineCommentContent;
   'string_content': StringContent;
   'raw_string_literal_content': RawStringLiteralContent;
   'float_literal': FloatLiteral;
+  '_outer_block_doc_comment_marker': OuterBlockDocCommentMarker;
+  '_inner_block_doc_comment_marker': InnerBlockDocCommentMarker;
   '_error_sentinel': ErrorSentinel;
 }
 
@@ -3861,6 +3870,7 @@ export interface BlockCommentNs extends NodeNs<BlockComment, LeafScalarMap, Leaf
 export interface ReservedIdentifierNs extends NodeNs<ReservedIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface TypeIdentifierNs extends NodeNs<TypeIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FieldIdentifierNs extends NodeNs<FieldIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ShorthandFieldIdentifierNs extends NodeNs<ShorthandFieldIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _StringContentNs extends NodeNs<_StringContent, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ArrayExpressionSemiNs extends NodeNs<ArrayExpressionSemi, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ArrayExpressionListNs extends NodeNs<ArrayExpressionList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -4075,6 +4085,7 @@ export interface NamespaceMap {
   '_reserved_identifier': ReservedIdentifierNs;
   '_type_identifier': TypeIdentifierNs;
   '_field_identifier': FieldIdentifierNs;
+  '_shorthand_field_identifier': ShorthandFieldIdentifierNs;
   '_string_content': _StringContentNs;
   '_array_expression_semi': ArrayExpressionSemiNs;
   '_array_expression_list': ArrayExpressionListNs;
@@ -5303,6 +5314,13 @@ export namespace FieldIdentifier {
   export type Loose = LooseFor<'_field_identifier'>;
   export type Tree = TreeFor<'_field_identifier'>;
   export type Kind = '_field_identifier';
+}
+export namespace ShorthandFieldIdentifier {
+  export type Config = ConfigFor<'_shorthand_field_identifier'>;
+  export type Fluent = FluentFor<'_shorthand_field_identifier'>;
+  export type Loose = LooseFor<'_shorthand_field_identifier'>;
+  export type Tree = TreeFor<'_shorthand_field_identifier'>;
+  export type Kind = '_shorthand_field_identifier';
 }
 export namespace _StringContent {
   export type Config = ConfigFor<'_string_content'>;

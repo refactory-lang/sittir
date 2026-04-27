@@ -129,6 +129,7 @@ import type {
   ScopedTypeIdentifierInExpressionPosition,
   ScopedUseList,
   SelfParameter,
+  ShorthandFieldIdentifier,
   ShorthandFieldInitializer,
   SlicePattern,
   SourceFile,
@@ -1522,7 +1523,7 @@ export function wrapStructPattern(data: _NodeData, tree: TreeHandle): WrappedNod
 export function wrapFieldPatternShorthand(data: _NodeData, tree: TreeHandle): WrappedNode<FieldPatternShorthand> {
   return {
     ...data,
-    get name() { return drillAs(data.$fields?.['name'], tree, "shorthand_field_identifier", "identifier"); },
+    get name() { return drillAs(data.$fields?.['name'], tree, "shorthand_field_identifier", "_shorthand_field_identifier"); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<FieldPatternShorthand>;
 }
@@ -1651,6 +1652,13 @@ export function wrapFieldIdentifier(data: _NodeData, tree: TreeHandle): WrappedN
   } as unknown as WrappedNode<FieldIdentifier>;
 }
 
+export function wrapShorthandFieldIdentifier(data: _NodeData, tree: TreeHandle): WrappedNode<ShorthandFieldIdentifier> {
+  return {
+    ...data,
+    get child() { return drillIn(data.$children?.[0], tree); },
+  } as unknown as WrappedNode<ShorthandFieldIdentifier>;
+}
+
 export function wrap_StringContent(data: _NodeData, tree: TreeHandle): WrappedNode<_StringContent> {
   return {
     ...data,
@@ -1669,7 +1677,7 @@ export function wrap_ClosureExpressionExpr(data: _NodeData, tree: TreeHandle): W
 export function wrap_FieldPatternShorthand(data: _NodeData, tree: TreeHandle): WrappedNode<_FieldPatternShorthand> {
   return {
     ...data,
-    get name() { return drillAs(data.$fields?.['name'], tree, "shorthand_field_identifier", "identifier"); },
+    get name() { return drillAs(data.$fields?.['name'], tree, "shorthand_field_identifier", "_shorthand_field_identifier"); },
     get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<_FieldPatternShorthand>;
 }
@@ -2032,10 +2040,9 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'crate': (d) => d,
   'metavariable': (d) => d,
   '_primitive_type': (d) => d,
+  '_shorthand_field_identifier': (d, t) => wrapShorthandFieldIdentifier(d, t),
   '_string_content': (d, t) => wrap_StringContent(d, t),
   '_doc_comment': (d) => d,
-  '_outer_doc_comment_marker': (d) => d,
-  '_inner_doc_comment_marker': (d) => d,
   '_kw_ref_marker': (d) => d,
   '_kw_unsafe_marker': (d) => d,
   '_kw_static_marker': (d) => d,
@@ -2075,6 +2082,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'string_content': (d) => d,
   'raw_string_literal_content': (d) => d,
   'float_literal': (d) => d,
+  '_outer_block_doc_comment_marker': (d) => d,
+  '_inner_block_doc_comment_marker': (d) => d,
   '_error_sentinel': (d) => d,
 };
 
@@ -2119,6 +2128,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'reference_expression_raw_const': '_reference_expression_raw_const',
   'reference_expression_raw_mut': '_reference_expression_raw_mut',
   'reserved_identifier': '_reserved_identifier',
+  'shorthand_field_identifier': '_shorthand_field_identifier',
   'statement': '_statement',
   'struct_item_brace': '_struct_item_brace',
   'struct_item_tuple': '_struct_item_tuple',

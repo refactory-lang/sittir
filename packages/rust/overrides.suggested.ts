@@ -138,7 +138,7 @@ export const suggestedRules = {
   _tokens: $ => choice($.token_tree, $.token_repetition, $.metavariable, $.string_literal, $.raw_string_literal, $.char_literal, $.boolean_literal, $.integer_literal, $.float_literal, $.identifier, $.mutable_specifier, $.self, $.super, $.crate),
 
   // [applied] promoted supertype
-  _type: $ => choice($.abstract_type, $.reference_type, $.metavariable, $.pointer_type, $.generic_type, $.scoped_type_identifier, $.tuple_type, $.unit_type, $.array_type, $.function_type, $.identifier, $.macro_invocation, $.never_type, $.dynamic_type, $.bounded_type, $.removed_trait_bound, $._primitive_type),
+  _type: $ => choice($.abstract_type, $.reference_type, $.metavariable, $.pointer_type, $.generic_type, $.scoped_type_identifier, $.tuple_type, $.unit_type, $.array_type, $.function_type, $._type_identifier, $.macro_invocation, $.never_type, $.dynamic_type, $.bounded_type, $.removed_trait_bound, $._primitive_type),
 
   // [applied] promoted supertype
   _use_clause: $ => choice($.self, $.identifier, $.metavariable, $.super, $.crate, $.scoped_identifier, $.use_as_clause, $.use_list, $.scoped_use_list, $.use_wildcard),

@@ -3908,7 +3908,7 @@ export function fieldPatternShorthand(config: ConfigOf<T.FieldPatternShorthand>)
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    name(value?: T.Identifier) { return _fs(config, fieldPatternShorthand, 'name', value, config?.name); },
+    name(value?: T.ShorthandFieldIdentifier) { return _fs(config, fieldPatternShorthand, 'name', value, config?.name); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -3949,7 +3949,7 @@ export function fieldPatternUFormShorthand(config: Omit<ConfigOf<T.FieldPatternU
       if (value === undefined) return fields.mutable_specifier;
       return fieldPatternUFormShorthand({ refMarker: config.refMarker, name: inner.$fields.name, mutableSpecifier: value });
     },
-    name(value?: T.Identifier) {
+    name(value?: T.ShorthandFieldIdentifier) {
       if (value === undefined) return inner.$fields.name;
       return fieldPatternUFormShorthand({ refMarker: config.refMarker, mutableSpecifier: config.mutableSpecifier, name: value });
     },
@@ -4471,7 +4471,7 @@ export function reservedIdentifier(child: T.Identifier) {
   };
 }
 
-export function typeIdentifier(child: T.Identifier) {
+export function typeIdentifier(child: T.TypeIdentifier) {
   const children = [child];
   return {
     $type: '_type_identifier' as const,
@@ -4487,7 +4487,7 @@ export function typeIdentifier(child: T.Identifier) {
   };
 }
 
-export function fieldIdentifier(child: T.Identifier) {
+export function fieldIdentifier(child: T.FieldIdentifier) {
   const children = [child];
   return {
     $type: '_field_identifier' as const,
@@ -4564,6 +4564,22 @@ export function primitiveType(text: 'u8' | 'i8' | 'u16' | 'i16' | 'u32' | 'i32' 
   };
 }
 
+export function shorthandFieldIdentifier(child: T.Identifier) {
+  const children = [child];
+  return {
+    $type: '_shorthand_field_identifier' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ShorthandFieldIdentifierTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function _stringContent(child: T.RawStringLiteralContent) {
   const children = [child];
   return {
@@ -4590,32 +4606,6 @@ export function docComment(text: string) {
     render: () => text,
     toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
     replace: (t: T.DocCommentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
-export function outerDocCommentMarker(text: string) {
-  if (text.length === 0) throw new Error(`_outer_doc_comment_marker: text must be non-empty`);
-  return {
-    $type: '_outer_doc_comment_marker' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.OuterDocCommentMarkerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
-export function innerDocCommentMarker(text: string) {
-  if (text.length === 0) throw new Error(`_inner_doc_comment_marker: text must be non-empty`);
-  return {
-    $type: '_inner_doc_comment_marker' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.InnerDocCommentMarkerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
@@ -4718,7 +4708,7 @@ export function _fieldPatternShorthand(config: ConfigOf<T._FieldPatternShorthand
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    name(value?: T.Identifier) { return _fs(config, _fieldPatternShorthand, 'name', value, config?.name); },
+    name(value?: T.ShorthandFieldIdentifier) { return _fs(config, _fieldPatternShorthand, 'name', value, config?.name); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
@@ -5498,6 +5488,32 @@ export function floatLiteral(text: string) {
   };
 }
 
+export function outerBlockDocCommentMarker(text: string) {
+  if (text.length === 0) throw new Error(`_outer_block_doc_comment_marker: text must be non-empty`);
+  return {
+    $type: '_outer_block_doc_comment_marker' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.OuterBlockDocCommentMarkerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function innerBlockDocCommentMarker(text: string) {
+  if (text.length === 0) throw new Error(`_inner_block_doc_comment_marker: text must be non-empty`);
+  return {
+    $type: '_inner_block_doc_comment_marker' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.InnerBlockDocCommentMarkerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
 export function errorSentinel(text: string) {
   if (text.length === 0) throw new Error(`_error_sentinel: text must be non-empty`);
   return {
@@ -5695,10 +5711,9 @@ export type FluentKindMap = {
   "crate": T.Crate;
   "metavariable": T.Metavariable;
   "_primitive_type": T.PrimitiveType;
+  "_shorthand_field_identifier": FluentNode<"_shorthand_field_identifier", T.ShorthandFieldIdentifier.Config>;
   "_string_content": FluentNode<"_string_content", T._StringContent.Config>;
   "_doc_comment": T.DocComment;
-  "_outer_doc_comment_marker": T.OuterDocCommentMarker;
-  "_inner_doc_comment_marker": T.InnerDocCommentMarker;
   "_array_expression_semi": T.ArrayExpressionSemi;
   "_array_expression_list": T.ArrayExpressionList;
   "_closure_expression_block": T.ClosureExpressionBlock;
@@ -5748,6 +5763,8 @@ export type FluentKindMap = {
   "string_content": T.StringContent;
   "raw_string_literal_content": T.RawStringLiteralContent;
   "float_literal": T.FloatLiteral;
+  "_outer_block_doc_comment_marker": T.OuterBlockDocCommentMarker;
+  "_inner_block_doc_comment_marker": T.InnerBlockDocCommentMarker;
   "_error_sentinel": T.ErrorSentinel;
 };
 
@@ -5935,10 +5952,9 @@ export const _factoryMap = {
   "crate": crate,
   "metavariable": metavariable,
   "_primitive_type": primitiveType,
+  "_shorthand_field_identifier": shorthandFieldIdentifier,
   "_string_content": _stringContent,
   "_doc_comment": docComment,
-  "_outer_doc_comment_marker": outerDocCommentMarker,
-  "_inner_doc_comment_marker": innerDocCommentMarker,
   "_array_expression_semi": _arrayExpressionSemi,
   "_array_expression_list": _arrayExpressionList,
   "_closure_expression_block": _closureExpressionBlock,
@@ -5988,6 +6004,8 @@ export const _factoryMap = {
   "string_content": stringContent,
   "raw_string_literal_content": rawStringLiteralContent,
   "float_literal": floatLiteral,
+  "_outer_block_doc_comment_marker": outerBlockDocCommentMarker,
+  "_inner_block_doc_comment_marker": innerBlockDocCommentMarker,
   "_error_sentinel": errorSentinel,
 } as const;
 export type _FactoryMap = typeof _factoryMap;

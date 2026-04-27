@@ -186,6 +186,7 @@
     "crate": "text",
     "metavariable": "text",
     "_primitive_type": "text",
+    "_shorthand_field_identifier": "children",
     "_string_content": "children",
     "_doc_comment": "text",
     "_kw_ref_marker": "text",
@@ -305,7 +306,7 @@
       "generic_type": "generic_type_with_turbofish"
     },
     "field_pattern_shorthand.name": {
-      "shorthand_field_identifier": "identifier"
+      "shorthand_field_identifier": "_shorthand_field_identifier"
     },
     "raw_string_literal.string_content": {
       "string_content": "_string_content"
@@ -314,7 +315,7 @@
       "doc_comment": "_doc_comment"
     },
     "_field_pattern_shorthand.name": {
-      "shorthand_field_identifier": "identifier"
+      "shorthand_field_identifier": "_shorthand_field_identifier"
     },
     "_line_comment_doc.doc": {
       "doc_comment": "_doc_comment"
