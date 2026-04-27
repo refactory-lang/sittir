@@ -1,5 +1,5 @@
 // @generated from packages/typescript/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar typescript --rust-render
+// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
 //
 // Companion to packages/typescript/rust-render/src/hash.rs; the two must
 // agree byte-for-byte at runtime for the native backend to be picked

@@ -1,5 +1,5 @@
 // @generated from packages/typescript/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar typescript --rust-render
+// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
 //
 // This file carries the SHA-256 digest of the template bundle at codegen
 // time. The napi binding (sittir-typescript-napi) exports it as

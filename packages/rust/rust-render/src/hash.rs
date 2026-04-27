@@ -1,5 +1,5 @@
 // @generated from packages/rust/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar rust --rust-render
+// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src
 //
 // This file carries the SHA-256 digest of the template bundle at codegen
 // time. The napi binding (sittir-rust-napi) exports it as

@@ -1,5 +1,5 @@
 // @generated from packages/python/node-model.json5 — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar python --all --rust-render
+// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
 
 pub mod hash;
 pub mod templates;

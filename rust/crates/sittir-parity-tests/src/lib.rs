@@ -61,7 +61,7 @@ pub fn load_fixtures(grammar: &str) -> Vec<ParityFixture> {
         grammar,
     );
     let json = std::fs::read_to_string(&path).unwrap_or_else(|e| {
-        panic!("failed to read {path}: {e}. Run `npx tsx packages/codegen/src/cli.ts --grammar {grammar} --all --rust-render` to regenerate.")
+        panic!("failed to read {path}: {e}. Run `npx tsx packages/codegen/src/cli.ts --grammar {grammar} --all --output packages/{grammar}/src` to regenerate.")
     });
     serde_json::from_str(&json).unwrap_or_else(|e| {
         panic!("failed to parse fixtures for {grammar}: {e}")

@@ -1,5 +1,5 @@
 // @generated from packages/python/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar python --rust-render
+// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
 //
 // This file carries the SHA-256 digest of the template bundle at codegen
 // time. The napi binding (sittir-python-napi) exports it as

@@ -10,7 +10,7 @@
  * byte-for-byte.
  *
  * A divergence here indicates:
- *   - fixture JSON is stale (regen via `cli.ts --rust-render`), OR
+ *   - fixture JSON is stale (regen via `cli.ts --grammar python --all --output packages/python/src`), OR
  *   - render path has non-deterministic behavior (real bug).
  *
  * The TS `readNode` path used at fixture capture is shallow — the
