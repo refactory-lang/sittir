@@ -47,6 +47,22 @@ describe('Engine API shape', () => {
 		expect(typeof engineWithoutReader.render).toBe('function');
 	});
 
+	it('JS engine without parse function has no reader', () => {
+		// When parse is omitted, createJsEngine should not attach reader
+		const engine = createJsEngine({
+			templatesPath: join(__dirname, '..', '..', 'rust', 'templates')
+			// parse omitted
+		});
+
+		// Reader should be absent
+		expect(engine.reader).toBeUndefined();
+
+		// But renderer methods are still present
+		expect(typeof engine.render).toBe('function');
+		expect(typeof engine.applyEdits).toBe('function');
+		expect(typeof engine.dispose).toBe('function');
+	});
+
 	it('ignoreFormat option is part of render signature', () => {
 		const engine = createJsEngine({
 			templatesPath: join(__dirname, '..', '..', 'rust', 'templates'),

@@ -2,7 +2,7 @@
 //
 // Engine abstraction — shared interface for JS and native render paths.
 //
-// The engine combines parser + renderer into a single surface. Client-side
+// The engine combines reader + renderer into a single surface. Client-side
 // `engine.render(...)` is contextless (no format unless engine-level config
 // supplies one). Engine-level format is immutable after engine creation.
 // Engine config wins over inferred tree format; detached NodeData must not
@@ -23,8 +23,9 @@ import { readNode } from './readNode.ts';
 
 /**
  * Reader surface — parse + read methods grouped together.
- * Available when the engine supports parsing (JS fallback always provides this;
- * native engines may provide it if built with parser support).
+ * Available when the engine supports parsing (JS fallback provides this
+ * when a real parse function is available; native engines provide it when
+ * built with reader support).
  */
 export interface SittirEngineReader {
 	/**
@@ -123,10 +124,11 @@ export interface JsEngineOptions {
 	format?: FormatRecord;
 
 	/**
-	 * Parser function — provided by the grammar package.
+	 * Parser function — provided by the grammar package when a real reader is available.
 	 * Returns a TreeHandle (compatible with tree-sitter Tree or ast-grep SgRoot).
+	 * When omitted, the engine will have no reader surface (renderer-only).
 	 */
-	parse: (source: string) => TreeHandle;
+	parse?: (source: string) => TreeHandle;
 }
 
 /**
@@ -159,7 +161,7 @@ export function createJsEngine(options: JsEngineOptions): SittirEngineLike {
 		return effective ? applyFormat(canonical, effective) : canonical;
 	}
 
-	return {
+	const engine: SittirEngineLike = {
 		render(node: AnyNodeData, options?: { ignoreFormat?: boolean }): string {
 			// Engine-level render: no tree association, so treeFormat is undefined.
 			return renderNode(node, undefined, options?.ignoreFormat);
@@ -171,9 +173,12 @@ export function createJsEngine(options: JsEngineOptions): SittirEngineLike {
 
 		dispose(): void {
 			// JS engine has no native resources to release.
-		},
+		}
+	};
 
-		reader: {
+	// Only attach reader when a real parse function is provided.
+	if (parse) {
+		engine.reader = {
 			parseAndRead(source: string): ParseAndReadResult {
 				const tree = parse(source);
 				const root = readNode(tree);
@@ -194,6 +199,8 @@ export function createJsEngine(options: JsEngineOptions): SittirEngineLike {
 			readNode(nodeId: NodeId): AnyNodeData {
 				throw new Error('readNode(id) requires a tree handle from parseAndRead()');
 			}
-		}
-	};
+		};
+	}
+
+	return engine;
 }

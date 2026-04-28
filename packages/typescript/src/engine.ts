@@ -100,8 +100,8 @@ const engine = new status.native.SittirEngine(nativeOptions);
  * Create a grammar-specific engine instance.
  *
  * Attempts to use the native backend if available; falls back to the JS
- * engine (Nunjucks renderer) otherwise. The JS engine returns a synchronous
- * renderer-only interface (no reader) to avoid async initialization races.
+ * engine (Nunjucks renderer) otherwise. The JS fallback is renderer-only
+ * (no reader) because this package doesn't provide a synchronous JS reader.
  *
  * @param options - Engine configuration (format, etc.)
  * @returns An engine implementing SittirEngineLike.
@@ -110,16 +110,11 @@ export function createEngine(options?: EngineOptions): SittirEngineLike {
 	const native = getNativeBackendEngine(options);
 	if (native) return native;
 
-	// JS fallback - synchronous renderer only (no parser/reader)
+	// JS fallback - renderer only (no reader)
 	const jsOptions: JsEngineOptions = {
 		templatesPath: join(__dirname, '..', 'templates'),
-		format: options?.format,
-		parse: (_source: string) => {
-			throw new Error(
-				'JS fallback engine does not support parsing. ' +
-				'Use native engine or construct reader separately.'
-			);
-		}
+		format: options?.format
+		// parse omitted: no synchronous JS reader available
 	};
 
 	return createJsEngine(jsOptions);
