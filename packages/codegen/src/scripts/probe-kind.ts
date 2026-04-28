@@ -55,17 +55,17 @@
  * follow-up note in this file's docstring at the bottom of the diff.
  */
 
-import { parseArgs } from "node:util";
+import { parseArgs } from 'node:util';
 import {
 	loadLanguageForGrammar,
 	loadWebTreeSitter,
 	treeHandle,
 	adaptNode,
-	nativeTreeHandle,
-} from "../validate/common.ts";
-import { loadReadTreeNode } from "../validate/common.ts";
-import type * as TS from "web-tree-sitter";
-import type { AnyTreeNode, NodeId } from "@sittir/types";
+	nativeTreeHandle
+} from '../validate/common.ts';
+import { loadReadTreeNode } from '../validate/common.ts';
+import type * as TS from 'web-tree-sitter';
+import type { AnyTreeNode, NodeId } from '@sittir/types';
 
 // ---------------------------------------------------------------------------
 // CLI
@@ -74,22 +74,22 @@ import type { AnyTreeNode, NodeId } from "@sittir/types";
 async function main(): Promise<void> {
 	const { values } = parseArgs({
 		options: {
-			grammar: { type: "string", short: "g" },
-			source: { type: "string", short: "s" },
-			stdin: { type: "boolean", default: false },
-			kind: { type: "string", short: "k" },
-			range: { type: "string" },
-			"no-render": { type: "boolean", default: false },
-			"no-wrap": {
-				type: "boolean",
-				default: false,
+			grammar: { type: 'string', short: 'g' },
+			source: { type: 'string', short: 's' },
+			stdin: { type: 'boolean', default: false },
+			kind: { type: 'string', short: 'k' },
+			range: { type: 'string' },
+			'no-render': { type: 'boolean', default: false },
+			'no-wrap': {
+				type: 'boolean',
+				default: false
 				// Skip the grammar's readTreeNode (wrap layer with
 				// drillAs) and use core `readNode` directly. Matches
 				// what validators currently call — useful for
 				// reproducing rtPass failures.
 			},
-			reparse: { type: "boolean", default: false },
-			pretty: { type: "boolean", default: false },
+			reparse: { type: 'boolean', default: false },
+			pretty: { type: 'boolean', default: false },
 			// --baseline <path-to-package-dir>: also run the same
 			// probe against the baseline-package's `src/wrap.ts`,
 			// `templates/`, and `.sittir/parser.wasm`. Output gains
@@ -100,10 +100,10 @@ async function main(): Promise<void> {
 			// into a sibling dir (e.g. `packages/rust-baseline/`),
 			// then `--baseline packages/rust-baseline`. Same parser
 			// is used by default unless --baseline-parser is set.
-			baseline: { type: "string" },
-			"baseline-parser": {
-				type: "boolean",
-				default: false,
+			baseline: { type: 'string' },
+			'baseline-parser': {
+				type: 'boolean',
+				default: false
 				// Use baseline's `.sittir/parser.wasm` for the
 				// baseline pass instead of the current package's.
 				// Only enable if you regenerated the baseline's
@@ -124,35 +124,41 @@ async function main(): Promise<void> {
 			//                 `tree_sitter_<lang>::LANGUAGE`.
 			//   - both:       runs both, emits a `compareEngines`
 			//                 block with rendered-equal verdict.
-			engine: { type: "string" },
-		},
+			engine: { type: 'string' }
+		}
 	});
 	if (!values.grammar) {
-		console.error("probe-kind: --grammar <rust|typescript|python> required");
+		console.error('probe-kind: --grammar <rust|typescript|python> required');
 		process.exit(2);
 	}
 	const grammar = values.grammar as string;
-	const source = values.stdin ? await readStdin() : (values.source as string | undefined);
+	const source = values.stdin
+		? await readStdin()
+		: (values.source as string | undefined);
 	if (source === undefined) {
-		console.error("probe-kind: --source <text> or --stdin required");
+		console.error('probe-kind: --source <text> or --stdin required');
 		process.exit(2);
 	}
 
-	const parsedRange = values.range ? parseRange(values.range as string) : undefined;
-	const engineRaw = (values.engine as string | undefined) ?? "typescript";
-	if (!["typescript", "native", "both"].includes(engineRaw)) {
+	const parsedRange = values.range
+		? parseRange(values.range as string)
+		: undefined;
+	const engineRaw = (values.engine as string | undefined) ?? 'typescript';
+	if (!['typescript', 'native', 'both'].includes(engineRaw)) {
 		console.error(
-			`probe-kind: --engine must be 'typescript' | 'native' | 'both' (got '${engineRaw}')`,
+			`probe-kind: --engine must be 'typescript' | 'native' | 'both' (got '${engineRaw}')`
 		);
 		process.exit(2);
 	}
 	const opts = {
-		noRender: values["no-render"] === true,
-		noWrap: values["no-wrap"] === true,
+		noRender: values['no-render'] === true,
+		noWrap: values['no-wrap'] === true,
 		kind: values.kind as string | undefined,
 		range: parsedRange,
 		reparse: values.reparse === true,
-		engine: (engineRaw === "both" ? "typescript" : engineRaw) as "typescript" | "native",
+		engine: (engineRaw === 'both' ? 'typescript' : engineRaw) as
+			| 'typescript'
+			| 'native'
 	};
 	const report = await probe(grammar, source, opts);
 	let baselineReport: ProbeReport | undefined;
@@ -162,15 +168,18 @@ async function main(): Promise<void> {
 		baselineReport = await probe(grammar, source, {
 			...opts,
 			baselineDir,
-			useBaselineParser: values["baseline-parser"] === true,
+			useBaselineParser: values['baseline-parser'] === true
 		});
 		compare = computeCompare(report, baselineReport);
 	}
 	let engineNativeReport: ProbeReport | undefined;
 	let compareEngines: ProbeEngineCompare | undefined;
-	if (engineRaw === "both" || engineRaw === "native") {
-		engineNativeReport = await probe(grammar, source, { ...opts, engine: "native" });
-		if (engineRaw === "both") {
+	if (engineRaw === 'both' || engineRaw === 'native') {
+		engineNativeReport = await probe(grammar, source, {
+			...opts,
+			engine: 'native'
+		});
+		if (engineRaw === 'both') {
 			compareEngines = computeEngineCompare(report, engineNativeReport);
 		}
 	}
@@ -178,13 +187,13 @@ async function main(): Promise<void> {
 	const out: Record<string, unknown> = baselineReport
 		? { ...report, baseline: baselineReport, compare }
 		: { ...report };
-	if (engineRaw === "native") {
+	if (engineRaw === 'native') {
 		Object.assign(out, engineNativeReport);
-	} else if (engineRaw === "both") {
+	} else if (engineRaw === 'both') {
 		out.engineNative = engineNativeReport;
 		out.compareEngines = compareEngines;
 	}
-	process.stdout.write(JSON.stringify(out, null, indent) + "\n");
+	process.stdout.write(JSON.stringify(out, null, indent) + '\n');
 }
 
 // ---------------------------------------------------------------------------
@@ -198,7 +207,7 @@ export interface ProbeReport {
 	 *  default; `'native'` indicates the `@sittir/<lang>-native`
 	 *  napi engine. Stamped so a `--engine both` consumer can tell
 	 *  which side of the compare each block came from. */
-	engine?: "typescript" | "native";
+	engine?: 'typescript' | 'native';
 	/** Source sub-range probed (absent when probing the full source). */
 	probeRange?: { start: number; end: number; kind?: string; text: string };
 	cst: CstNode;
@@ -207,7 +216,11 @@ export interface ProbeReport {
 	/** Reparse pass when `--reparse` set: rendered output re-parsed and dumped. */
 	reparsedCst?: CstNode;
 	/** Structural diff summary between original and reparsed CST. */
-	astDiff?: { childCountMatch: boolean; originalShape: string; reparsedShape: string };
+	astDiff?: {
+		childCountMatch: boolean;
+		originalShape: string;
+		reparsedShape: string;
+	};
 	diff: { sourceLen: number; renderedLen?: number; sameText?: boolean };
 }
 
@@ -253,17 +266,19 @@ export async function probe(
 		 *  Tree-sitter wasm is still used for the CST dump
 		 *  (cosmetic — informational `cst` block) regardless of
 		 *  engine, so the JSON output is comparable across both. */
-		engine?: "typescript" | "native";
-	} = {},
+		engine?: 'typescript' | 'native';
+	} = {}
 ): Promise<ProbeReport> {
 	const { Parser, lang } =
 		opts.baselineDir && opts.useBaselineParser
-			? await loadLanguageFromPath(resolveBaselinePath(opts.baselineDir, ".sittir/parser.wasm"))
+			? await loadLanguageFromPath(
+					resolveBaselinePath(opts.baselineDir, '.sittir/parser.wasm')
+				)
 			: await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
 	const tree = parser.parse(source);
-	if (!tree) throw new Error("probe-kind: parse returned null");
+	if (!tree) throw new Error('probe-kind: parse returned null');
 
 	// Resolve probe target: root node, or a specific sub-tree.
 	// `tree.rootNode` is a getter that returns a fresh wrapper each
@@ -271,15 +286,22 @@ export async function probe(
 	// is unreliable — track "is this root?" with a flag.
 	let targetNode: any = tree.rootNode;
 	let isRoot = true;
-	let probeRange: ProbeReport["probeRange"] | undefined;
+	let probeRange: ProbeReport['probeRange'] | undefined;
 	if (opts.range) {
-		targetNode = findNodeCoveringRange(tree.rootNode, opts.range.start, opts.range.end);
+		targetNode = findNodeCoveringRange(
+			tree.rootNode,
+			opts.range.start,
+			opts.range.end
+		);
 		if (!targetNode)
-			throw new Error(`probe-kind: no node covers range ${opts.range.start}–${opts.range.end}`);
+			throw new Error(
+				`probe-kind: no node covers range ${opts.range.start}–${opts.range.end}`
+			);
 		isRoot = false;
 	} else if (opts.kind) {
 		targetNode = findFirstByKind(tree.rootNode, opts.kind);
-		if (!targetNode) throw new Error(`probe-kind: no node of kind '${opts.kind}' found`);
+		if (!targetNode)
+			throw new Error(`probe-kind: no node of kind '${opts.kind}' found`);
 		isRoot = false;
 	}
 	if (!isRoot) {
@@ -287,7 +309,7 @@ export async function probe(
 			start: targetNode.startIndex,
 			end: targetNode.endIndex,
 			kind: targetNode.type,
-			text: targetNode.text,
+			text: targetNode.text
 		};
 	}
 
@@ -304,7 +326,7 @@ export async function probe(
 	// (informational) `cst` dump is comparable across paths.
 	let nodeData: unknown;
 	let nativeEngine: NativeProbeEngine | undefined;
-	if (opts.engine === "native" && !opts.noWrap) {
+	if (opts.engine === 'native' && !opts.noWrap) {
 		nativeEngine = await loadNativeEngine(grammar);
 		const readTreeNodeFn = await loadReadTreeNode(grammar);
 		const handle = nativeTreeHandle(nativeEngine, source);
@@ -321,17 +343,23 @@ export async function probe(
 				? findInNodeData(root, opts.kind)
 				: findInNodeDataByRange(root, opts.range!.start, opts.range!.end);
 			if (!target) {
-				throw new Error(`probe-kind: --engine native: no node match in NodeData tree`);
+				throw new Error(
+					`probe-kind: --engine native: no node match in NodeData tree`
+				);
 			}
 			const targetId = (target as { $nodeId?: NodeId }).$nodeId;
 			nodeData =
-				targetId !== undefined && readTreeNodeFn ? readTreeNodeFn(handle, targetId) : target;
+				targetId !== undefined && readTreeNodeFn
+					? readTreeNodeFn(handle, targetId)
+					: target;
 		}
 	} else {
 		const readTreeNodeFn = opts.noWrap
 			? null
 			: opts.baselineDir
-				? await loadReadTreeNodeFromPath(resolveBaselinePath(opts.baselineDir, "src/wrap.ts"))
+				? await loadReadTreeNodeFromPath(
+						resolveBaselinePath(opts.baselineDir, 'src/wrap.ts')
+					)
 				: await loadReadTreeNode(grammar);
 		const handle = treeHandle(tree, source);
 		const nodeId = isRoot ? undefined : (targetNode.id as NodeId);
@@ -344,17 +372,17 @@ export async function probe(
 	let sameText: boolean | undefined;
 	let renderedLen: number | undefined;
 	let reparsedCst: CstNode | undefined;
-	let astDiff: ProbeReport["astDiff"] | undefined;
+	let astDiff: ProbeReport['astDiff'] | undefined;
 	if (!opts.noRender) {
 		rendered =
-			opts.engine === "native"
+			opts.engine === 'native'
 				? nativeEngine
 					? nativeEngine.render(JSON.stringify(stripBigInts(nodeData)))
 					: await renderNodeDataNative(grammar, nodeData)
 				: opts.baselineDir
 					? await renderNodeDataFromPath(
-							resolveBaselinePath(opts.baselineDir, "templates"),
-							nodeData,
+							resolveBaselinePath(opts.baselineDir, 'templates'),
+							nodeData
 						)
 					: await renderNodeData(grammar, nodeData);
 		renderedLen = rendered.length;
@@ -368,14 +396,15 @@ export async function probe(
 				// sub-tree.
 				const root2 = isRoot
 					? tree2.rootNode
-					: (findFirstByKind(tree2.rootNode, targetNode.type) ?? tree2.rootNode);
+					: (findFirstByKind(tree2.rootNode, targetNode.type) ??
+						tree2.rootNode);
 				reparsedCst = dumpCst(root2, null);
 				const origShape = shapeString(cst);
 				const reparsedShape = shapeString(reparsedCst);
 				astDiff = {
 					childCountMatch: origShape === reparsedShape,
 					originalShape: origShape,
-					reparsedShape: reparsedShape,
+					reparsedShape: reparsedShape
 				};
 			}
 		}
@@ -384,7 +413,7 @@ export async function probe(
 	return {
 		grammar,
 		source,
-		engine: opts.engine ?? "typescript",
+		engine: opts.engine ?? 'typescript',
 		probeRange,
 		cst,
 		nodeData: stripBigInts(nodeData),
@@ -394,8 +423,8 @@ export async function probe(
 		diff: {
 			sourceLen: probeRange ? probeRange.text.length : source.length,
 			renderedLen,
-			sameText,
-		},
+			sameText
+		}
 	};
 }
 
@@ -407,7 +436,7 @@ function dumpCst(node: any, fieldName: string | null): CstNode {
 	const out: CstNode = {
 		type: node.type,
 		named: node.isNamed,
-		children: [],
+		children: []
 	};
 	if (fieldName) out.field = fieldName;
 	if (node.childCount === 0) {
@@ -417,7 +446,10 @@ function dumpCst(node: any, fieldName: string | null): CstNode {
 	for (let i = 0; i < node.childCount; i++) {
 		const child = node.child(i);
 		if (!child) continue;
-		const fn = typeof node.fieldNameForChild === "function" ? node.fieldNameForChild(i) : null;
+		const fn =
+			typeof node.fieldNameForChild === 'function'
+				? node.fieldNameForChild(i)
+				: null;
 		out.children.push(dumpCst(child, fn));
 	}
 	return out;
@@ -425,9 +457,9 @@ function dumpCst(node: any, fieldName: string | null): CstNode {
 
 async function fallbackReadNode(
 	handle: ReturnType<typeof treeHandle>,
-	nodeId?: NodeId,
+	nodeId?: NodeId
 ): Promise<unknown> {
-	const { readNode } = await import("@sittir/core");
+	const { readNode } = await import('@sittir/core');
 	return readNode(handle, nodeId);
 }
 
@@ -447,7 +479,11 @@ function findFirstByKind(node: any, kind: string): any | null {
  * Find the smallest node whose byte range exactly covers `[start, end)`.
  * Falls back to any node covering the range when no exact match exists.
  */
-function findNodeCoveringRange(node: any, start: number, end: number): any | null {
+function findNodeCoveringRange(
+	node: any,
+	start: number,
+	end: number
+): any | null {
 	if (node.startIndex > start || node.endIndex < end) return null;
 	// Try to narrow into a child.
 	for (let i = 0; i < node.childCount; i++) {
@@ -462,28 +498,39 @@ function findNodeCoveringRange(node: any, start: number, end: number): any | nul
 
 /** Normalize a CST node to a compact shape signature for diffing. */
 function shapeString(node: CstNode): string {
-	const kids = node.children.length === 0 ? "" : `(${node.children.map(shapeString).join(",")})`;
+	const kids =
+		node.children.length === 0
+			? ''
+			: `(${node.children.map(shapeString).join(',')})`;
 	return `${node.type}${kids}`;
 }
 
 function parseRange(spec: string): { start: number; end: number } {
 	const m = /^(\d+),(\d+)$/.exec(spec.trim());
-	if (!m) throw new Error(`probe-kind: --range expects 'start,end' (got '${spec}')`);
+	if (!m)
+		throw new Error(`probe-kind: --range expects 'start,end' (got '${spec}')`);
 	return { start: Number(m[1]), end: Number(m[2]) };
 }
 
-async function renderNodeData(grammar: string, nodeData: unknown): Promise<string> {
-	const { createRenderer } = await import("@sittir/core");
+async function renderNodeData(
+	grammar: string,
+	nodeData: unknown
+): Promise<string> {
+	const { createRenderer } = await import('@sittir/core');
 	const thisFile = import.meta.url;
-	const templatesPath = new URL(`../../../${grammar}/templates`, thisFile).pathname;
+	const templatesPath = new URL(`../../../${grammar}/templates`, thisFile)
+		.pathname;
 	const bound = createRenderer(templatesPath);
 	return bound.render(nodeData as Parameters<typeof bound.render>[0]);
 }
 
 /** @internal — render via templates from an explicit absolute path
  *  (used by --baseline mode to swap render-side artifacts). */
-async function renderNodeDataFromPath(templatesPath: string, nodeData: unknown): Promise<string> {
-	const { createRenderer } = await import("@sittir/core");
+async function renderNodeDataFromPath(
+	templatesPath: string,
+	nodeData: unknown
+): Promise<string> {
+	const { createRenderer } = await import('@sittir/core');
 	const bound = createRenderer(templatesPath);
 	return bound.render(nodeData as Parameters<typeof bound.render>[0]);
 }
@@ -498,7 +545,7 @@ interface NativeProbeEngine {
 	render(nodeJson: string): string;
 }
 async function loadNativeEngine(grammar: string): Promise<NativeProbeEngine> {
-	const { createRequire } = await import("node:module");
+	const { createRequire } = await import('node:module');
 	const req = createRequire(import.meta.url);
 	// Try the published package name first; fall back to the
 	// workspace-local napi build at `rust/crates/sittir-<grammar>-napi/`
@@ -507,7 +554,10 @@ async function loadNativeEngine(grammar: string): Promise<NativeProbeEngine> {
 	// package). The crate's package.json `main` points at the local
 	// platform-specific `.node` artifact.
 	const pkg = `@sittir/${grammar}-native`;
-	const repoRoot = new URL("../../../..", import.meta.url).pathname.replace(/\/$/, "");
+	const repoRoot = new URL('../../../..', import.meta.url).pathname.replace(
+		/\/$/,
+		''
+	);
 	const localCratePath = `${repoRoot}/rust/crates/sittir-${grammar}-napi`;
 	let mod: { SittirEngine: new () => NativeProbeEngine };
 	try {
@@ -518,7 +568,7 @@ async function loadNativeEngine(grammar: string): Promise<NativeProbeEngine> {
 		} catch (err) {
 			const message = err instanceof Error ? err.message : String(err);
 			throw new Error(
-				`probe-kind: --engine native could not load '${pkg}' or '${localCratePath}' — build the native binary with \`cd rust/crates/sittir-${grammar}-napi && pnpm exec napi build --release\`. Underlying error: ${message}`,
+				`probe-kind: --engine native could not load '${pkg}' or '${localCratePath}' — build the native binary with \`cd rust/crates/sittir-${grammar}-napi && pnpm exec napi build --release\`. Underlying error: ${message}`
 			);
 		}
 	}
@@ -530,7 +580,10 @@ async function loadNativeEngine(grammar: string): Promise<NativeProbeEngine> {
  *  parse / tree dependency. The native crate uses the `tree_sitter`
  *  Rust crate + `tree_sitter_<lang>::LANGUAGE`; zero web-tree-sitter
  *  on this path. */
-async function renderNodeDataNative(grammar: string, nodeData: unknown): Promise<string> {
+async function renderNodeDataNative(
+	grammar: string,
+	nodeData: unknown
+): Promise<string> {
 	const engine = await loadNativeEngine(grammar);
 	const json = JSON.stringify(stripBigInts(nodeData));
 	return engine.render(json);
@@ -540,14 +593,17 @@ async function renderNodeDataNative(grammar: string, nodeData: unknown): Promise
  *  path. Mirrors `loadReadTreeNode` in `validate/common.ts` but
  *  without the kind-name registry — caller passes the absolute path. */
 async function loadReadTreeNodeFromPath(
-	wrapTsPath: string,
+	wrapTsPath: string
 ): Promise<((handle: unknown, nodeId?: number) => unknown) | null> {
 	try {
 		const mod = await import(wrapTsPath);
-		return (mod as { readTreeNode?: (h: unknown, id?: number) => unknown }).readTreeNode ?? null;
+		return (
+			(mod as { readTreeNode?: (h: unknown, id?: number) => unknown })
+				.readTreeNode ?? null
+		);
 	} catch (e) {
 		process.stderr.write(
-			`probe-kind: failed to load baseline wrap module at ${wrapTsPath}: ${(e as Error).message}\n`,
+			`probe-kind: failed to load baseline wrap module at ${wrapTsPath}: ${(e as Error).message}\n`
 		);
 		return null;
 	}
@@ -556,7 +612,7 @@ async function loadReadTreeNodeFromPath(
 /** @internal — load a tree-sitter Language from an explicit wasm path
  *  (used by --baseline-parser mode). */
 async function loadLanguageFromPath(
-	wasmPath: string,
+	wasmPath: string
 ): Promise<{ Parser: typeof TS.Parser; lang: TS.Language }> {
 	const { Parser, Language } = await loadWebTreeSitter();
 	const lang = await Language.load(wasmPath);
@@ -567,8 +623,11 @@ async function loadLanguageFromPath(
  *  Accepts a baseline dir as either an absolute path or a repo-relative
  *  path (e.g. `packages/rust-baseline`). */
 function resolveBaselinePath(baselineDir: string, sub: string): string {
-	if (baselineDir.startsWith("/")) return `${baselineDir}/${sub}`;
-	const repoRoot = new URL("../../../..", import.meta.url).pathname.replace(/\/$/, "");
+	if (baselineDir.startsWith('/')) return `${baselineDir}/${sub}`;
+	const repoRoot = new URL('../../../..', import.meta.url).pathname.replace(
+		/\/$/,
+		''
+	);
 	return `${repoRoot}/${baselineDir}/${sub}`;
 }
 
@@ -587,22 +646,33 @@ export interface ProbeCompare {
 	summary: string;
 }
 
-function computeCompare(current: ProbeReport, baseline: ProbeReport): ProbeCompare {
+function computeCompare(
+	current: ProbeReport,
+	baseline: ProbeReport
+): ProbeCompare {
 	const renderedEqual = current.rendered === baseline.rendered;
-	const renderedLenDelta = (current.diff.renderedLen ?? 0) - (baseline.diff.renderedLen ?? 0);
+	const renderedLenDelta =
+		(current.diff.renderedLen ?? 0) - (baseline.diff.renderedLen ?? 0);
 	const inputAstShapeEqual = shapeOf(current.cst) === shapeOf(baseline.cst);
 	let astShapeEqual: boolean | undefined;
 	if (current.astDiff && baseline.astDiff) {
-		astShapeEqual = current.astDiff.reparsedShape === baseline.astDiff.reparsedShape;
+		astShapeEqual =
+			current.astDiff.reparsedShape === baseline.astDiff.reparsedShape;
 	}
 	const summary = renderedEqual
-		? "rendered output identical"
-		: `rendered output differs (${renderedLenDelta >= 0 ? "+" : ""}${renderedLenDelta} chars)`;
-	return { renderedEqual, renderedLenDelta, astShapeEqual, inputAstShapeEqual, summary };
+		? 'rendered output identical'
+		: `rendered output differs (${renderedLenDelta >= 0 ? '+' : ''}${renderedLenDelta} chars)`;
+	return {
+		renderedEqual,
+		renderedLenDelta,
+		astShapeEqual,
+		inputAstShapeEqual,
+		summary
+	};
 }
 
 function shapeOf(node: CstNode): string {
-	return `${node.named ? node.type : `"${node.type}"`}(${node.children.map(shapeOf).join(",")})`;
+	return `${node.named ? node.type : `"${node.type}"`}(${node.children.map(shapeOf).join(',')})`;
 }
 
 /** @internal — depth-first walk a NodeData tree, returning the first
@@ -610,8 +680,12 @@ function shapeOf(node: CstNode): string {
  *  path to find a kind-specific subtree once `parse_and_read` has
  *  returned the whole-tree NodeData. */
 function findInNodeData(node: unknown, kind: string): unknown | null {
-	if (!node || typeof node !== "object") return null;
-	const n = node as { $type?: string; $fields?: Record<string, unknown>; $children?: unknown[] };
+	if (!node || typeof node !== 'object') return null;
+	const n = node as {
+		$type?: string;
+		$fields?: Record<string, unknown>;
+		$children?: unknown[];
+	};
 	if (n.$type === kind) return node;
 	if (n.$fields) {
 		for (const v of Object.values(n.$fields)) {
@@ -640,8 +714,12 @@ function findInNodeData(node: unknown, kind: string): unknown | null {
  *  whenever a child's span contains the target, fall back to the
  *  smallest containing node when no child does. Used by the native
  *  engine `--range` path where the wasm `targetNode.id` doesn't apply. */
-function findInNodeDataByRange(node: unknown, start: number, end: number): unknown | null {
-	if (!node || typeof node !== "object") return null;
+function findInNodeDataByRange(
+	node: unknown,
+	start: number,
+	end: number
+): unknown | null {
+	if (!node || typeof node !== 'object') return null;
 	const n = node as {
 		$span?: { start: number; end: number };
 		$fields?: Record<string, unknown>;
@@ -649,7 +727,8 @@ function findInNodeDataByRange(node: unknown, start: number, end: number): unkno
 	};
 	if (!n.$span) return null;
 	if (n.$span.start > start || n.$span.end < end) return null;
-	const recurseInto = (child: unknown): unknown | null => findInNodeDataByRange(child, start, end);
+	const recurseInto = (child: unknown): unknown | null =>
+		findInNodeDataByRange(child, start, end);
 	if (n.$fields) {
 		for (const v of Object.values(n.$fields)) {
 			if (Array.isArray(v)) {
@@ -686,29 +765,37 @@ export interface ProbeEngineCompare {
 	summary: string;
 }
 
-function computeEngineCompare(ts: ProbeReport, native: ProbeReport): ProbeEngineCompare {
+function computeEngineCompare(
+	ts: ProbeReport,
+	native: ProbeReport
+): ProbeEngineCompare {
 	const renderedEqual = ts.rendered === native.rendered;
-	const renderedLenDelta = (ts.diff.renderedLen ?? 0) - (native.diff.renderedLen ?? 0);
+	const renderedLenDelta =
+		(ts.diff.renderedLen ?? 0) - (native.diff.renderedLen ?? 0);
 	let astShapeEqual: boolean | undefined;
 	if (ts.astDiff && native.astDiff) {
 		astShapeEqual = ts.astDiff.reparsedShape === native.astDiff.reparsedShape;
 	}
 	const summary = renderedEqual
-		? "TS and native engines agree on render output"
-		: `engines disagree (TS - native = ${renderedLenDelta >= 0 ? "+" : ""}${renderedLenDelta} chars)`;
+		? 'TS and native engines agree on render output'
+		: `engines disagree (TS - native = ${renderedLenDelta >= 0 ? '+' : ''}${renderedLenDelta} chars)`;
 	return { renderedEqual, renderedLenDelta, astShapeEqual, summary };
 }
 
 function stripBigInts(v: unknown): unknown {
 	// NodeData carries `$nodeId` as number (or bigint on some platforms);
 	// JSON.stringify chokes on bigint. Cast to Number for dump purposes.
-	return JSON.parse(JSON.stringify(v, (_k, val) => (typeof val === "bigint" ? Number(val) : val)));
+	return JSON.parse(
+		JSON.stringify(v, (_k, val) =>
+			typeof val === 'bigint' ? Number(val) : val
+		)
+	);
 }
 
 async function readStdin(): Promise<string> {
 	const chunks: Buffer[] = [];
 	for await (const chunk of process.stdin) chunks.push(chunk as Buffer);
-	return Buffer.concat(chunks).toString("utf-8");
+	return Buffer.concat(chunks).toString('utf-8');
 }
 
 // silence unused warnings on adaptNode / AnyTreeNode (used indirectly in treeHandle path)
@@ -722,7 +809,7 @@ type _AnyTreeNode = AnyTreeNode;
 const isMain = import.meta.url === `file://${process.argv[1]}`;
 if (isMain) {
 	main().catch((err) => {
-		console.error("probe-kind:", err instanceof Error ? err.message : err);
+		console.error('probe-kind:', err instanceof Error ? err.message : err);
 		process.exit(1);
 	});
 }

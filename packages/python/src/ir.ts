@@ -11,19 +11,19 @@
 // to feed it directly into `.from()`, use the typed wrapper (`readTreeNode`)
 // so `.from()` sees a wrapped node and takes the identity quick-return path.
 
-import * as F from "./factories.js";
-import * as FR from "./from.js";
+import * as F from './factories.js';
+import * as FR from './from.js';
 
-function _attach<T extends (...args: never[]) => unknown, P extends Record<string, unknown>>(
-	fn: T,
-	props: P,
-): T & P {
+function _attach<
+	T extends (...args: never[]) => unknown,
+	P extends Record<string, unknown>
+>(fn: T, props: P): T & P {
 	for (const key of Object.keys(props)) {
 		Object.defineProperty(fn, key, {
 			value: props[key],
 			writable: true,
 			configurable: true,
-			enumerable: true,
+			enumerable: true
 		});
 	}
 	return fn as T & P;
@@ -39,17 +39,25 @@ export const statement = {
 	with_: _attach(F.withStatement, { from: FR.withStatementFrom }),
 	function_: _attach(F.functionDefinition, { from: FR.functionDefinitionFrom }),
 	class_: _attach(F.classDefinition, { from: FR.classDefinitionFrom }),
-	decorated: _attach(F.decoratedDefinition, { from: FR.decoratedDefinitionFrom }),
-	match: _attach(F.matchStatement, { from: FR.matchStatementFrom }),
+	decorated: _attach(F.decoratedDefinition, {
+		from: FR.decoratedDefinitionFrom
+	}),
+	match: _attach(F.matchStatement, { from: FR.matchStatementFrom })
 } as const;
 
 export const simpleStatement = {
-	futureImport: _attach(F.futureImportStatement, { from: FR.futureImportStatementFrom }),
+	futureImport: _attach(F.futureImportStatement, {
+		from: FR.futureImportStatementFrom
+	}),
 	import_: _attach(F.importStatement, { from: FR.importStatementFrom }),
-	importFrom: _attach(F.importFromStatement, { from: FR.importFromStatementFrom }),
+	importFrom: _attach(F.importFromStatement, {
+		from: FR.importFromStatementFrom
+	}),
 	print: _attach(F.printStatement, { from: FR.printStatementFrom }),
 	assert: _attach(F.assertStatement, { from: FR.assertStatementFrom }),
-	expression: _attach(F.expressionStatement, { from: FR.expressionStatementFrom }),
+	expression: _attach(F.expressionStatement, {
+		from: FR.expressionStatementFrom
+	}),
 	return_: _attach(F.returnStatement, { from: FR.returnStatementFrom }),
 	delete_: _attach(F.deleteStatement, { from: FR.deleteStatementFrom }),
 	raise: _attach(F.raiseStatement, { from: FR.raiseStatementFrom }),
@@ -59,15 +67,15 @@ export const simpleStatement = {
 	global: _attach(F.globalStatement, { from: FR.globalStatementFrom }),
 	nonlocal: _attach(F.nonlocalStatement, { from: FR.nonlocalStatementFrom }),
 	exec: _attach(F.execStatement, { from: FR.execStatementFrom }),
-	typeAlias: _attach(F.typeAliasStatement, { from: FR.typeAliasStatementFrom }),
+	typeAlias: _attach(F.typeAliasStatement, { from: FR.typeAliasStatementFrom })
 } as const;
 
 export const namedExpressionLhs = {
-	identifier: F.identifier,
+	identifier: F.identifier
 } as const;
 
 export const expressions = {
-	expression: _attach(F.expressionList, { from: FR.expressionListFrom }),
+	expression: _attach(F.expressionList, { from: FR.expressionListFrom })
 } as const;
 
 export const compoundStatement = {
@@ -78,8 +86,10 @@ export const compoundStatement = {
 	with_: _attach(F.withStatement, { from: FR.withStatementFrom }),
 	function_: _attach(F.functionDefinition, { from: FR.functionDefinitionFrom }),
 	class_: _attach(F.classDefinition, { from: FR.classDefinitionFrom }),
-	decorated: _attach(F.decoratedDefinition, { from: FR.decoratedDefinitionFrom }),
-	match: _attach(F.matchStatement, { from: FR.matchStatementFrom }),
+	decorated: _attach(F.decoratedDefinition, {
+		from: FR.decoratedDefinitionFrom
+	}),
+	match: _attach(F.matchStatement, { from: FR.matchStatementFrom })
 } as const;
 
 export const simplePattern = {
@@ -88,22 +98,28 @@ export const simplePattern = {
 	union: _attach(F.unionPattern, { from: FR.unionPatternFrom }),
 	dict: _attach(F.dictPattern, { from: FR.dictPatternFrom }),
 	string: _attach(F.string, { from: FR.stringFrom }),
-	concatenated: _attach(F.concatenatedString, { from: FR.concatenatedStringFrom }),
+	concatenated: _attach(F.concatenatedString, {
+		from: FR.concatenatedStringFrom
+	}),
 	true_: F.true_,
 	false_: F.false_,
 	none: F.none,
 	complex: _attach(F.complexPattern, { from: FR.complexPatternFrom }),
-	dotted: _attach(F.dottedName, { from: FR.dottedNameFrom }),
+	dotted: _attach(F.dottedName, { from: FR.dottedNameFrom })
 } as const;
 
 export const parameter = {
 	identifier: F.identifier,
 	typed: _attach(F.typedParameter, { from: FR.typedParameterFrom }),
 	default_: _attach(F.defaultParameter, { from: FR.defaultParameterFrom }),
-	typedDefault: _attach(F.typedDefaultParameter, { from: FR.typedDefaultParameterFrom }),
+	typedDefault: _attach(F.typedDefaultParameter, {
+		from: FR.typedDefaultParameterFrom
+	}),
 	listSplat: _attach(F.listSplatPattern, { from: FR.listSplatPatternFrom }),
 	tuple: _attach(F.tuplePattern, { from: FR.tuplePatternFrom }),
-	dictionarySplat: _attach(F.dictionarySplatPattern, { from: FR.dictionarySplatPatternFrom }),
+	dictionarySplat: _attach(F.dictionarySplatPattern, {
+		from: FR.dictionarySplatPatternFrom
+	})
 } as const;
 
 export const pattern = {
@@ -112,21 +128,27 @@ export const pattern = {
 	attribute: _attach(F.attribute, { from: FR.attributeFrom }),
 	listSplat: _attach(F.listSplatPattern, { from: FR.listSplatPatternFrom }),
 	tuple: _attach(F.tuplePattern, { from: FR.tuplePatternFrom }),
-	list: _attach(F.listPattern, { from: FR.listPatternFrom }),
+	list: _attach(F.listPattern, { from: FR.listPatternFrom })
 } as const;
 
 export const expressionWithinForInClause = {
-	lambdaWithinForIn: _attach(F.lambdaWithinForInClause, { from: FR.lambdaWithinForInClauseFrom }),
+	lambdaWithinForIn: _attach(F.lambdaWithinForInClause, {
+		from: FR.lambdaWithinForInClauseFrom
+	})
 } as const;
 
 export const expression = {
-	comparison: _attach(F.comparisonOperator, { from: FR.comparisonOperatorFrom }),
+	comparison: _attach(F.comparisonOperator, {
+		from: FR.comparisonOperatorFrom
+	}),
 	not: _attach(F.notOperator, { from: FR.notOperatorFrom }),
 	boolean: _attach(F.booleanOperator, { from: FR.booleanOperatorFrom }),
 	lambda: _attach(F.lambda, { from: FR.lambdaFrom }),
-	conditional: _attach(F.conditionalExpression, { from: FR.conditionalExpressionFrom }),
+	conditional: _attach(F.conditionalExpression, {
+		from: FR.conditionalExpressionFrom
+	}),
 	named: _attach(F.namedExpression, { from: FR.namedExpressionFrom }),
-	as: _attach(F.asPattern, { from: FR.asPatternFrom }),
+	as: _attach(F.asPattern, { from: FR.asPatternFrom })
 } as const;
 
 export const primaryExpression = {
@@ -134,7 +156,9 @@ export const primaryExpression = {
 	binary: _attach(F.binaryOperator, { from: FR.binaryOperatorFrom }),
 	identifier: F.identifier,
 	string: _attach(F.string, { from: FR.stringFrom }),
-	concatenated: _attach(F.concatenatedString, { from: FR.concatenatedStringFrom }),
+	concatenated: _attach(F.concatenatedString, {
+		from: FR.concatenatedStringFrom
+	}),
 	integer: F.integer,
 	float: F.float,
 	true_: F.true_,
@@ -148,13 +172,17 @@ export const primaryExpression = {
 	dictionary: _attach(F.dictionary, { from: FR.dictionaryFrom }),
 	set: _attach(F.set, { from: FR.setFrom }),
 	tuple: _attach(F.tuple, { from: FR.tupleFrom }),
-	parenthesized: _attach(F.parenthesizedExpression, { from: FR.parenthesizedExpressionFrom }),
-	generator: _attach(F.generatorExpression, { from: FR.generatorExpressionFrom }),
-	listSplat: _attach(F.listSplatPattern, { from: FR.listSplatPatternFrom }),
+	parenthesized: _attach(F.parenthesizedExpression, {
+		from: FR.parenthesizedExpressionFrom
+	}),
+	generator: _attach(F.generatorExpression, {
+		from: FR.generatorExpressionFrom
+	}),
+	listSplat: _attach(F.listSplatPattern, { from: FR.listSplatPatternFrom })
 } as const;
 
 export const leftHandSide = {
-	pattern: _attach(F.patternList, { from: FR.patternListFrom }),
+	pattern: _attach(F.patternList, { from: FR.patternListFrom })
 } as const;
 
 export const rightHandSide = {
@@ -163,25 +191,29 @@ export const rightHandSide = {
 		from: FR.assignmentFrom,
 		eq: _attach(F.assignmentUFormEq, { from: FR.assignmentUFormEqFrom }),
 		type: _attach(F.assignmentUFormType, { from: FR.assignmentUFormTypeFrom }),
-		typed: _attach(F.assignmentUFormTyped, { from: FR.assignmentUFormTypedFrom }),
+		typed: _attach(F.assignmentUFormTyped, {
+			from: FR.assignmentUFormTypedFrom
+		})
 	}),
-	augmented: _attach(F.augmentedAssignment, { from: FR.augmentedAssignmentFrom }),
+	augmented: _attach(F.augmentedAssignment, {
+		from: FR.augmentedAssignmentFrom
+	}),
 	pattern: _attach(F.patternList, { from: FR.patternListFrom }),
-	yield_: _attach(F.yield_, { from: FR.yield_From }),
+	yield_: _attach(F.yield_, { from: FR.yield_From })
 } as const;
 
 export const fExpression = {
 	expression: _attach(F.expressionList, { from: FR.expressionListFrom }),
 	pattern: _attach(F.patternList, { from: FR.patternListFrom }),
-	yield_: _attach(F.yield_, { from: FR.yield_From }),
+	yield_: _attach(F.yield_, { from: FR.yield_From })
 } as const;
 
 export const keywordIdentifier = {
-	identifier: F.identifier,
+	identifier: F.identifier
 } as const;
 
 export const dictPatternKv = {
-	splat: _attach(F.splatPattern, { from: FR.splatPatternFrom }),
+	splat: _attach(F.splatPattern, { from: FR.splatPatternFrom })
 } as const;
 
 export const ir = {
@@ -189,16 +221,22 @@ export const ir = {
 	module: _attach(F.module, { from: FR.moduleFrom }),
 	importStatement: _attach(F.importStatement, { from: FR.importStatementFrom }),
 	relativeImport: _attach(F.relativeImport, { from: FR.relativeImportFrom }),
-	futureImport: _attach(F.futureImportStatement, { from: FR.futureImportStatementFrom }),
-	importFrom: _attach(F.importFromStatement, { from: FR.importFromStatementFrom }),
+	futureImport: _attach(F.futureImportStatement, {
+		from: FR.futureImportStatementFrom
+	}),
+	importFrom: _attach(F.importFromStatement, {
+		from: FR.importFromStatementFrom
+	}),
 	aliasedImport: _attach(F.aliasedImport, { from: FR.aliasedImportFrom }),
 	print: _attach(F.printStatement, { from: FR.printStatementFrom }),
 	chevron: _attach(F.chevron, { from: FR.chevronFrom }),
 	assert: _attach(F.assertStatement, { from: FR.assertStatementFrom }),
 	expressionStatementTuple: _attach(F.expressionStatementTuple, {
-		from: FR.expressionStatementTupleFrom,
+		from: FR.expressionStatementTupleFrom
 	}),
-	expressionStatement: _attach(F.expressionStatement, { from: FR.expressionStatementFrom }),
+	expressionStatement: _attach(F.expressionStatement, {
+		from: FR.expressionStatementFrom
+	}),
 	named: _attach(F.namedExpression, { from: FR.namedExpressionFrom }),
 	returnStatement: _attach(F.returnStatement, { from: FR.returnStatementFrom }),
 	deleteStatement: _attach(F.deleteStatement, { from: FR.deleteStatementFrom }),
@@ -219,12 +257,18 @@ export const ir = {
 	withClause: _attach(F.withClause, {
 		from: FR.withClauseFrom,
 		bare: _attach(F.withClauseUFormBare, { from: FR.withClauseUFormBareFrom }),
-		paren: _attach(F.withClauseUFormParen, { from: FR.withClauseUFormParenFrom }),
+		paren: _attach(F.withClauseUFormParen, {
+			from: FR.withClauseUFormParenFrom
+		})
 	}),
 	withItem: _attach(F.withItem, { from: FR.withItemFrom }),
-	functionDefinition: _attach(F.functionDefinition, { from: FR.functionDefinitionFrom }),
+	functionDefinition: _attach(F.functionDefinition, {
+		from: FR.functionDefinitionFrom
+	}),
 	parameters: _attach(F.parameters, { from: FR.parametersFrom }),
-	lambdaParameters: _attach(F.lambdaParameters, { from: FR.lambdaParametersFrom }),
+	lambdaParameters: _attach(F.lambdaParameters, {
+		from: FR.lambdaParametersFrom
+	}),
 	listSplat: _attach(F.listSplat, { from: FR.listSplatFrom }),
 	dictionarySplat: _attach(F.dictionarySplat, { from: FR.dictionarySplatFrom }),
 	global: _attach(F.globalStatement, { from: FR.globalStatementFrom }),
@@ -234,10 +278,12 @@ export const ir = {
 	classDefinition: _attach(F.classDefinition, { from: FR.classDefinitionFrom }),
 	typeParameter: _attach(F.typeParameter, { from: FR.typeParameterFrom }),
 	parenthesizedListSplat: _attach(F.parenthesizedListSplat, {
-		from: FR.parenthesizedListSplatFrom,
+		from: FR.parenthesizedListSplatFrom
 	}),
 	argumentList: _attach(F.argumentList, { from: FR.argumentListFrom }),
-	decorated: _attach(F.decoratedDefinition, { from: FR.decoratedDefinitionFrom }),
+	decorated: _attach(F.decoratedDefinition, {
+		from: FR.decoratedDefinitionFrom
+	}),
 	decorator: _attach(F.decorator, { from: FR.decoratorFrom }),
 	block: _attach(F.block, { from: FR.blockFrom }),
 	expressionList: _attach(F.expressionList, { from: FR.expressionListFrom }),
@@ -251,29 +297,41 @@ export const ir = {
 	complexPattern: _attach(F.complexPattern, { from: FR.complexPatternFrom }),
 	tuplePattern: _attach(F.tuplePattern, { from: FR.tuplePatternFrom }),
 	listPattern: _attach(F.listPattern, { from: FR.listPatternFrom }),
-	defaultParameter: _attach(F.defaultParameter, { from: FR.defaultParameterFrom }),
-	typedDefaultParameter: _attach(F.typedDefaultParameter, { from: FR.typedDefaultParameterFrom }),
-	listSplatPattern: _attach(F.listSplatPattern, { from: FR.listSplatPatternFrom }),
+	defaultParameter: _attach(F.defaultParameter, {
+		from: FR.defaultParameterFrom
+	}),
+	typedDefaultParameter: _attach(F.typedDefaultParameter, {
+		from: FR.typedDefaultParameterFrom
+	}),
+	listSplatPattern: _attach(F.listSplatPattern, {
+		from: FR.listSplatPatternFrom
+	}),
 	dictionarySplatPattern: _attach(F.dictionarySplatPattern, {
-		from: FR.dictionarySplatPatternFrom,
+		from: FR.dictionarySplatPatternFrom
 	}),
 	asPattern: _attach(F.asPattern, { from: FR.asPatternFrom }),
 	notOperator: _attach(F.notOperator, { from: FR.notOperatorFrom }),
 	booleanOperator: _attach(F.booleanOperator, { from: FR.booleanOperatorFrom }),
 	binaryOperator: _attach(F.binaryOperator, { from: FR.binaryOperatorFrom }),
 	unaryOperator: _attach(F.unaryOperator, { from: FR.unaryOperatorFrom }),
-	comparisonOperator: _attach(F.comparisonOperator, { from: FR.comparisonOperatorFrom }),
+	comparisonOperator: _attach(F.comparisonOperator, {
+		from: FR.comparisonOperatorFrom
+	}),
 	lambda: _attach(F.lambda, { from: FR.lambdaFrom }),
 	lambdaWithinForInClause: _attach(F.lambdaWithinForInClause, {
-		from: FR.lambdaWithinForInClauseFrom,
+		from: FR.lambdaWithinForInClauseFrom
 	}),
 	assignment: _attach(F.assignment, {
 		from: FR.assignmentFrom,
 		eq: _attach(F.assignmentUFormEq, { from: FR.assignmentUFormEqFrom }),
 		type: _attach(F.assignmentUFormType, { from: FR.assignmentUFormTypeFrom }),
-		typed: _attach(F.assignmentUFormTyped, { from: FR.assignmentUFormTypedFrom }),
+		typed: _attach(F.assignmentUFormTyped, {
+			from: FR.assignmentUFormTypedFrom
+		})
 	}),
-	augmentedAssignment: _attach(F.augmentedAssignment, { from: FR.augmentedAssignmentFrom }),
+	augmentedAssignment: _attach(F.augmentedAssignment, {
+		from: FR.augmentedAssignmentFrom
+	}),
 	patternList: _attach(F.patternList, { from: FR.patternListFrom }),
 	yield_: _attach(F.yield_, { from: FR.yield_From }),
 	attribute: _attach(F.attribute, { from: FR.attributeFrom }),
@@ -293,17 +351,29 @@ export const ir = {
 	tuple: _attach(F.tuple, { from: FR.tupleFrom }),
 	dictionary: _attach(F.dictionary, { from: FR.dictionaryFrom }),
 	pair: _attach(F.pair, { from: FR.pairFrom }),
-	listComprehension: _attach(F.listComprehension, { from: FR.listComprehensionFrom }),
-	dictionaryComprehension: _attach(F.dictionaryComprehension, {
-		from: FR.dictionaryComprehensionFrom,
+	listComprehension: _attach(F.listComprehension, {
+		from: FR.listComprehensionFrom
 	}),
-	setComprehension: _attach(F.setComprehension, { from: FR.setComprehensionFrom }),
-	generator: _attach(F.generatorExpression, { from: FR.generatorExpressionFrom }),
-	parenthesized: _attach(F.parenthesizedExpression, { from: FR.parenthesizedExpressionFrom }),
+	dictionaryComprehension: _attach(F.dictionaryComprehension, {
+		from: FR.dictionaryComprehensionFrom
+	}),
+	setComprehension: _attach(F.setComprehension, {
+		from: FR.setComprehensionFrom
+	}),
+	generator: _attach(F.generatorExpression, {
+		from: FR.generatorExpressionFrom
+	}),
+	parenthesized: _attach(F.parenthesizedExpression, {
+		from: FR.parenthesizedExpressionFrom
+	}),
 	forInClause: _attach(F.forInClause, { from: FR.forInClauseFrom }),
 	ifClause: _attach(F.ifClause, { from: FR.ifClauseFrom }),
-	conditional: _attach(F.conditionalExpression, { from: FR.conditionalExpressionFrom }),
-	concatenatedString: _attach(F.concatenatedString, { from: FR.concatenatedStringFrom }),
+	conditional: _attach(F.conditionalExpression, {
+		from: FR.conditionalExpressionFrom
+	}),
+	concatenatedString: _attach(F.concatenatedString, {
+		from: FR.concatenatedStringFrom
+	}),
 	string: _attach(F.string, { from: FR.stringFrom }),
 	stringContent: _attach(F.stringContent, { from: FR.stringContentFrom }),
 	interpolation: _attach(F.interpolation, { from: FR.interpolationFrom }),
@@ -348,5 +418,5 @@ export const ir = {
 	rightHandSide,
 	fExpression,
 	keywordIdentifier,
-	dictPatternKv,
+	dictPatternKv
 } as const;

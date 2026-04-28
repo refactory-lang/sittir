@@ -17,19 +17,19 @@
  * standard `Rule` union.
  */
 
-import type { Rule } from "../../compiler/rule.ts";
+import type { Rule } from '../../compiler/rule.ts';
 
 type Globals = Record<string, unknown>;
 
 const DSL_KEYS = [
-	"seq",
-	"choice",
-	"optional",
-	"repeat",
-	"repeat1",
-	"field",
-	"alias",
-	"prec",
+	'seq',
+	'choice',
+	'optional',
+	'repeat',
+	'repeat1',
+	'field',
+	'alias',
+	'prec'
 ] as const;
 
 let savedGlobals: Globals | null = null;
@@ -45,36 +45,46 @@ export function installFakeDsl(overrides?: Partial<Globals>): void {
 	for (const k of DSL_KEYS) saved[k] = g[k];
 	savedGlobals = saved;
 
-	g.seq = (...members: Rule[]): Rule => ({ type: "seq", members }) as Rule;
-	g.choice = (...members: Rule[]): Rule => ({ type: "choice", members }) as Rule;
-	g.optional = (content: Rule): Rule => ({ type: "optional", content }) as Rule;
-	g.repeat = (content: Rule): Rule => ({ type: "repeat", content }) as Rule;
-	g.repeat1 = (content: Rule): Rule => ({ type: "repeat1", content }) as Rule;
-	g.field = (name: string, content: Rule): Rule => ({ type: "field", name, content }) as Rule;
+	g.seq = (...members: Rule[]): Rule => ({ type: 'seq', members }) as Rule;
+	g.choice = (...members: Rule[]): Rule =>
+		({ type: 'choice', members }) as Rule;
+	g.optional = (content: Rule): Rule => ({ type: 'optional', content }) as Rule;
+	g.repeat = (content: Rule): Rule => ({ type: 'repeat', content }) as Rule;
+	g.repeat1 = (content: Rule): Rule => ({ type: 'repeat1', content }) as Rule;
+	g.field = (name: string, content: Rule): Rule =>
+		({ type: 'field', name, content }) as Rule;
 	g.alias = (rule: unknown, value: unknown): Rule => {
-		if (typeof value === "string") {
-			return { type: "alias", content: rule, named: false, value } as Rule;
+		if (typeof value === 'string') {
+			return { type: 'alias', content: rule, named: false, value } as Rule;
 		}
 		const sym = value as { type?: string; name?: string };
-		if (sym && (sym.type === "symbol" || sym.type === "SYMBOL")) {
-			return { type: "alias", content: rule, named: true, value: sym.name } as Rule;
+		if (sym && (sym.type === 'symbol' || sym.type === 'SYMBOL')) {
+			return {
+				type: 'alias',
+				content: rule,
+				named: true,
+				value: sym.name
+			} as Rule;
 		}
-		throw new Error("fake alias: invalid value");
+		throw new Error('fake alias: invalid value');
 	};
 	// prec/prec.left/prec.right/prec.dynamic all preserve the value
 	// on the returned rule so tests can assert precedence round-trip.
 	const makePrec =
-		(variant: "prec" | "prec_left" | "prec_right" | "prec_dynamic") =>
+		(variant: 'prec' | 'prec_left' | 'prec_right' | 'prec_dynamic') =>
 		(value: number, content: Rule): Rule =>
 			({ type: variant, value, content }) as unknown as Rule;
-	const precFn = makePrec("prec") as ((value: number, content: Rule) => Rule) & {
+	const precFn = makePrec('prec') as ((
+		value: number,
+		content: Rule
+	) => Rule) & {
 		left: (value: number, content: Rule) => Rule;
 		right: (value: number, content: Rule) => Rule;
 		dynamic: (value: number, content: Rule) => Rule;
 	};
-	precFn.left = makePrec("prec_left");
-	precFn.right = makePrec("prec_right");
-	precFn.dynamic = makePrec("prec_dynamic");
+	precFn.left = makePrec('prec_left');
+	precFn.right = makePrec('prec_right');
+	precFn.dynamic = makePrec('prec_dynamic');
 	g.prec = precFn;
 
 	if (overrides) {

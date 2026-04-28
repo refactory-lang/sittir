@@ -39,7 +39,7 @@ Runs **once per module load** (effectively once per Node process under normal ES
 
 ```ts
 // packages/{lang}/src/backend.ts
-export type BackendName = "native" | "js";
+export type BackendName = 'native' | 'js';
 
 export interface BackendStatus {
 	name: BackendName;
@@ -55,8 +55,8 @@ export function getActiveBackend(): BackendStatus;
 Exported from `packages/{lang}/src/index.ts`:
 
 ```ts
-export { getActiveBackend } from "./backend.ts";
-export type { BackendName, BackendStatus } from "./backend.ts";
+export { getActiveBackend } from './backend.ts';
+export type { BackendName, BackendStatus } from './backend.ts';
 ```
 
 ---
@@ -106,11 +106,11 @@ Not required by the spec but documented here as a planned debug aid. When set to
 
 ```ts
 // Consumer inspecting the selection
-import { getActiveBackend } from "@sittir/rust";
+import { getActiveBackend } from '@sittir/rust';
 
 const status = getActiveBackend();
-if (status.name === "typescript") {
-	console.warn("[perf] running on TS backend:", status.reason ?? "default");
+if (status.name === 'typescript') {
+	console.warn('[perf] running on TS backend:', status.reason ?? 'default');
 }
 ```
 

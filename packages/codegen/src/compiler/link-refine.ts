@@ -16,7 +16,7 @@
  * See ADR-0010 phase 2 for the full design.
  */
 
-import type { Rule, ChoiceRule, FieldRule, EnumRule } from "./rule.ts";
+import type { Rule, ChoiceRule, FieldRule, EnumRule } from './rule.ts';
 import {
 	isChoice,
 	isEnum,
@@ -25,11 +25,11 @@ import {
 	isSeq,
 	isOptional,
 	isRepeat,
-	isRepeat1,
-} from "./rule.ts";
-import type { RefineForm } from "./types.ts";
-import { parsePath } from "../dsl/transform/transform-path.ts";
-import type { PathSegment } from "../dsl/transform/transform-path.ts";
+	isRepeat1
+} from './rule.ts';
+import type { RefineForm } from './types.ts';
+import { parsePath } from '../dsl/transform/transform-path.ts';
+import type { PathSegment } from '../dsl/transform/transform-path.ts';
 
 /**
  * The result of resolving a refine() path against a rule tree. Carries
@@ -60,7 +60,11 @@ export interface RefinePathResolution {
  * @param rule - Post-link rule tree for `kind`.
  * @param forms - Ordered list of refine forms declared for `kind`.
  */
-export function validateRefineForms(kind: string, rule: Rule, forms: readonly RefineForm[]): void {
+export function validateRefineForms(
+	kind: string,
+	rule: Rule,
+	forms: readonly RefineForm[]
+): void {
 	for (const form of forms) {
 		for (const [pathStr, selection] of Object.entries(form.selections)) {
 			const resolution = resolveRefinePath(kind, form.name, pathStr, rule);
@@ -84,11 +88,13 @@ export function resolveRefinePath(
 	kind: string,
 	formName: string,
 	pathStr: string,
-	rule: Rule,
+	rule: Rule
 ): RefinePathResolution {
 	const segments = parsePath(pathStr);
 	if (segments.length === 0) {
-		throw new Error(`refine(${kind}) form '${formName}': path '${pathStr}' is empty`);
+		throw new Error(
+			`refine(${kind}) form '${formName}': path '${pathStr}' is empty`
+		);
 	}
 	let cur: Rule = rule;
 	let fieldName: string | undefined;
@@ -96,12 +102,12 @@ export function resolveRefinePath(
 		const seg = segments[i]!;
 		const res = stepPath(cur, seg, kind, formName, pathStr);
 		cur = res.next;
-		if (seg.kind === "fieldName") fieldName = seg.name;
+		if (seg.kind === 'fieldName') fieldName = seg.name;
 	}
 	const final = unwrapToChoice(cur);
 	if (!final) {
 		throw new Error(
-			`refine(${kind}) form '${formName}': path '${pathStr}' does not resolve to a choice (got '${cur.type}')`,
+			`refine(${kind}) form '${formName}': path '${pathStr}' does not resolve to a choice (got '${cur.type}')`
 		);
 	}
 	return { fieldName, choice: final };
@@ -120,34 +126,34 @@ function stepPath(
 	seg: PathSegment,
 	kind: string,
 	formName: string,
-	pathStr: string,
+	pathStr: string
 ): { next: Rule } {
 	switch (seg.kind) {
-		case "fieldName": {
+		case 'fieldName': {
 			const target = findFieldByName(rule, seg.name);
 			if (!target) {
 				throw new Error(
-					`refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.name}:' does not match any field in rule (type '${rule.type}')`,
+					`refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.name}:' does not match any field in rule (type '${rule.type}')`
 				);
 			}
 			return { next: target.content };
 		}
-		case "index": {
+		case 'index': {
 			const members = membersOf(rule);
 			if (!members) {
 				throw new Error(
-					`refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.value}' cannot descend into '${rule.type}'`,
+					`refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.value}' cannot descend into '${rule.type}'`
 				);
 			}
 			const idx = seg.value < 0 ? members.length + seg.value : seg.value;
 			if (idx < 0 || idx >= members.length) {
 				throw new Error(
-					`refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.value}' out of bounds for ${rule.type} (length ${members.length})`,
+					`refine(${kind}) form '${formName}': path '${pathStr}' segment '${seg.value}' out of bounds for ${rule.type} (length ${members.length})`
 				);
 			}
 			return { next: members[idx]! };
 		}
-		case "wildcard": {
+		case 'wildcard': {
 			const members = membersOf(rule);
 			if (members && members.length > 0) {
 				return { next: members[0]! };
@@ -155,12 +161,12 @@ function stepPath(
 			const content = singleContentOf(rule);
 			if (content) return { next: content };
 			throw new Error(
-				`refine(${kind}) form '${formName}': path '${pathStr}' wildcard cannot descend into '${rule.type}'`,
+				`refine(${kind}) form '${formName}': path '${pathStr}' wildcard cannot descend into '${rule.type}'`
 			);
 		}
-		case "kind-match":
+		case 'kind-match':
 			throw new Error(
-				`refine(${kind}) form '${formName}': path '${pathStr}' uses kind-match '(${seg.name})' — refine paths only support positional indices and 'name:' field traversal`,
+				`refine(${kind}) form '${formName}': path '${pathStr}' uses kind-match '(${seg.name})' — refine paths only support positional indices and 'name:' field traversal`
 			);
 	}
 }
@@ -226,21 +232,23 @@ function validateSelection(
 	formName: string,
 	pathStr: string,
 	choice: ChoiceRule | EnumRule,
-	selection: number | string,
+	selection: number | string
 ): void {
 	const arms: readonly Rule[] = choice.members;
-	if (typeof selection === "number") {
+	if (typeof selection === 'number') {
 		if (selection < 0 || selection >= arms.length) {
 			throw new Error(
-				`refine(${kind}) form '${formName}': path '${pathStr}' selection index ${selection} out of range (choice has ${arms.length} branches)`,
+				`refine(${kind}) form '${formName}': path '${pathStr}' selection index ${selection} out of range (choice has ${arms.length} branches)`
 			);
 		}
 		return;
 	}
-	const stringValues = arms.map(unwrapToStringValue).filter((v): v is string => v !== undefined);
+	const stringValues = arms
+		.map(unwrapToStringValue)
+		.filter((v): v is string => v !== undefined);
 	if (!stringValues.includes(selection)) {
 		throw new Error(
-			`refine(${kind}) form '${formName}': path '${pathStr}' selection '${selection}' does not match any string branch of the choice (available: ${stringValues.map((v) => `'${v}'`).join(", ") || "<none>"})`,
+			`refine(${kind}) form '${formName}': path '${pathStr}' selection '${selection}' does not match any string branch of the choice (available: ${stringValues.map((v) => `'${v}'`).join(', ') || '<none>'})`
 		);
 	}
 }
@@ -254,7 +262,7 @@ function validateSelection(
  */
 function unwrapToStringValue(rule: Rule): string | undefined {
 	if (isString(rule)) return rule.value;
-	if (rule.type === "variant") {
+	if (rule.type === 'variant') {
 		const inner = (rule as { content: Rule }).content;
 		if (isString(inner)) return inner.value;
 	}
@@ -279,13 +287,13 @@ function unwrapToStringValue(rule: Rule): string | undefined {
  */
 export function narrowedFieldLiteralsForForm(
 	rule: Rule,
-	form: RefineForm,
+	form: RefineForm
 ): Array<{ fieldName: string; literal: string }> {
 	const out: Array<{ fieldName: string; literal: string }> = [];
 	for (const [pathStr, selection] of Object.entries(form.selections)) {
 		let resolution: RefinePathResolution;
 		try {
-			resolution = resolveRefinePath("<emit>", form.name, pathStr, rule);
+			resolution = resolveRefinePath('<emit>', form.name, pathStr, rule);
 		} catch {
 			continue;
 		}
@@ -304,9 +312,9 @@ export function narrowedFieldLiteralsForForm(
  */
 export function resolveSelectionLiteral(
 	choice: ChoiceRule | EnumRule,
-	selection: number | string,
+	selection: number | string
 ): string | undefined {
-	if (typeof selection === "string") return selection;
+	if (typeof selection === 'string') return selection;
 	const arm = choice.members[selection];
 	if (!arm) return undefined;
 	return unwrapToStringValue(arm);
@@ -318,20 +326,20 @@ export function resolveSelectionLiteral(
 // ---------------------------------------------------------------------------
 
 function membersOf(rule: Rule): Rule[] | undefined {
-	if (rule.type === "seq" || rule.type === "choice") return rule.members;
+	if (rule.type === 'seq' || rule.type === 'choice') return rule.members;
 	return undefined;
 }
 
 function singleContentOf(rule: Rule): Rule | undefined {
 	switch (rule.type) {
-		case "optional":
-		case "repeat":
-		case "repeat1":
-		case "field":
-		case "variant":
-		case "clause":
-		case "group":
-		case "terminal":
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'field':
+		case 'variant':
+		case 'clause':
+		case 'group':
+		case 'terminal':
 			return rule.content;
 		default:
 			return undefined;

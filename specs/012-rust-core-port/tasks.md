@@ -1,5 +1,5 @@
 ---
-description: "Task list for feature 012 — Rust Port of @sittir/core"
+description: 'Task list for feature 012 — Rust Port of @sittir/core'
 ---
 
 # Tasks: Rust Port of `@sittir/core`

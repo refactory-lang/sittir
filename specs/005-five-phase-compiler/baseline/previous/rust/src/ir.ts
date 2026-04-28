@@ -179,8 +179,8 @@ import {
 	outerDocCommentMarker,
 	innerDocCommentMarker,
 	typeIdentifier,
-	fieldIdentifier,
-} from "./factories.js";
+	fieldIdentifier
+} from './factories.js';
 import {
 	sourceFileFrom,
 	expressionStatementFrom,
@@ -339,19 +339,19 @@ import {
 	hiddenPathFrom,
 	hiddenTypeIdentifierFrom,
 	hiddenFieldIdentifierFrom,
-	letChainFrom,
-} from "./from.js";
+	letChainFrom
+} from './from.js';
 
-function _attach<T extends (...args: any[]) => any, P extends Record<string, unknown>>(
-	fn: T,
-	props: P,
-): T & P {
+function _attach<
+	T extends (...args: any[]) => any,
+	P extends Record<string, unknown>
+>(fn: T, props: P): T & P {
 	for (const key of Object.keys(props)) {
 		Object.defineProperty(fn, key, {
 			value: (props as any)[key],
 			writable: true,
 			configurable: true,
-			enumerable: true,
+			enumerable: true
 		});
 	}
 	return fn as T & P;
@@ -364,11 +364,17 @@ export const ir = {
 	macro: _attach(macroDefinition, { from: macroDefinitionFrom }),
 	macroRule: _attach(macroRule, { from: macroRuleFrom }),
 	tokenTreePattern: _attach(tokenTreePattern, { from: tokenTreePatternFrom }),
-	tokenBindingPattern: _attach(tokenBindingPattern, { from: tokenBindingPatternFrom }),
-	tokenRepetitionPattern: _attach(tokenRepetitionPattern, { from: tokenRepetitionPatternFrom }),
+	tokenBindingPattern: _attach(tokenBindingPattern, {
+		from: tokenBindingPatternFrom
+	}),
+	tokenRepetitionPattern: _attach(tokenRepetitionPattern, {
+		from: tokenRepetitionPatternFrom
+	}),
 	tokenTree: _attach(tokenTree, { from: tokenTreeFrom }),
 	tokenRepetition: _attach(tokenRepetition, { from: tokenRepetitionFrom }),
-	nonSpecialToken: _attach(hiddenNonSpecialToken, { from: hiddenNonSpecialTokenFrom }),
+	nonSpecialToken: _attach(hiddenNonSpecialToken, {
+		from: hiddenNonSpecialTokenFrom
+	}),
 	attributeItem: _attach(attributeItem, { from: attributeItemFrom }),
 	innerAttribute: _attach(innerAttributeItem, { from: innerAttributeItemFrom }),
 	attribute: _attach(attribute, { from: attributeFrom }),
@@ -380,30 +386,44 @@ export const ir = {
 	enumItem: _attach(enumItem, { from: enumItemFrom }),
 	enumVariantList: _attach(enumVariantList, { from: enumVariantListFrom }),
 	enumVariant: _attach(enumVariant, { from: enumVariantFrom }),
-	fieldDeclarationList: _attach(fieldDeclarationList, { from: fieldDeclarationListFrom }),
+	fieldDeclarationList: _attach(fieldDeclarationList, {
+		from: fieldDeclarationListFrom
+	}),
 	field: _attach(fieldDeclaration, { from: fieldDeclarationFrom }),
 	orderedFieldDeclarationList: _attach(orderedFieldDeclarationList, {
-		from: orderedFieldDeclarationListFrom,
+		from: orderedFieldDeclarationListFrom
 	}),
-	externCrate: _attach(externCrateDeclaration, { from: externCrateDeclarationFrom }),
+	externCrate: _attach(externCrateDeclaration, {
+		from: externCrateDeclarationFrom
+	}),
 	constItem: _attach(constItem, { from: constItemFrom }),
 	staticItem: _attach(staticItem, { from: staticItemFrom }),
 	type: _attach(typeItem, { from: typeItemFrom }),
 	functionItem: _attach(functionItem, { from: functionItemFrom }),
-	functionSignature: _attach(functionSignatureItem, { from: functionSignatureItemFrom }),
-	functionModifiers: _attach(functionModifiers, { from: functionModifiersFrom }),
+	functionSignature: _attach(functionSignatureItem, {
+		from: functionSignatureItemFrom
+	}),
+	functionModifiers: _attach(functionModifiers, {
+		from: functionModifiersFrom
+	}),
 	whereClause: _attach(whereClause, { from: whereClauseFrom }),
 	wherePredicate: _attach(wherePredicate, { from: wherePredicateFrom }),
 	impl: _attach(implItem, { from: implItemFrom }),
 	trait: _attach(traitItem, { from: traitItemFrom }),
 	associatedType: _attach(associatedType, { from: associatedTypeFrom }),
 	traitBounds: _attach(traitBounds, { from: traitBoundsFrom }),
-	higherRankedTraitBound: _attach(higherRankedTraitBound, { from: higherRankedTraitBoundFrom }),
-	removedTraitBound: _attach(removedTraitBound, { from: removedTraitBoundFrom }),
+	higherRankedTraitBound: _attach(higherRankedTraitBound, {
+		from: higherRankedTraitBoundFrom
+	}),
+	removedTraitBound: _attach(removedTraitBound, {
+		from: removedTraitBoundFrom
+	}),
 	typeParameters: _attach(typeParameters, { from: typeParametersFrom }),
 	constParameter: _attach(constParameter, { from: constParameterFrom }),
 	typeParameter: _attach(typeParameter, { from: typeParameterFrom }),
-	lifetimeParameter: _attach(lifetimeParameter, { from: lifetimeParameterFrom }),
+	lifetimeParameter: _attach(lifetimeParameter, {
+		from: lifetimeParameterFrom
+	}),
 	letDeclaration: _attach(letDeclaration, { from: letDeclarationFrom }),
 	use: _attach(useDeclaration, { from: useDeclarationFrom }),
 	scopedUseList: _attach(scopedUseList, { from: scopedUseListFrom }),
@@ -412,10 +432,14 @@ export const ir = {
 	useWildcard: _attach(useWildcard, { from: useWildcardFrom }),
 	parameters: _attach(parameters, { from: parametersFrom }),
 	selfParameter: _attach(selfParameter, { from: selfParameterFrom }),
-	variadicParameter: _attach(variadicParameter, { from: variadicParameterFrom }),
+	variadicParameter: _attach(variadicParameter, {
+		from: variadicParameterFrom
+	}),
 	parameter: _attach(parameter, { from: parameterFrom }),
 	externModifier: _attach(externModifier, { from: externModifierFrom }),
-	visibilityModifier: _attach(visibilityModifier, { from: visibilityModifierFrom }),
+	visibilityModifier: _attach(visibilityModifier, {
+		from: visibilityModifierFrom
+	}),
 	hiddenType: _attach(hiddenType, { from: hiddenTypeFrom }),
 	bracketedType: _attach(bracketedType, { from: bracketedTypeFrom }),
 	qualifiedType: _attach(qualifiedType, { from: qualifiedTypeFrom }),
@@ -427,7 +451,7 @@ export const ir = {
 	genericFunction: _attach(genericFunction, { from: genericFunctionFrom }),
 	genericType: _attach(genericType, { from: genericTypeFrom }),
 	genericTypeWithTurbofish: _attach(genericTypeWithTurbofish, {
-		from: genericTypeWithTurbofishFrom,
+		from: genericTypeWithTurbofishFrom
 	}),
 	boundedType: _attach(boundedType, { from: boundedTypeFrom }),
 	useBounds: _attach(useBounds, { from: useBoundsFrom }),
@@ -438,38 +462,53 @@ export const ir = {
 	abstractType: _attach(abstractType, { from: abstractTypeFrom }),
 	dynamicType: _attach(dynamicType, { from: dynamicTypeFrom }),
 	expressionExceptRange: _attach(hiddenExpressionExceptRange, {
-		from: hiddenExpressionExceptRangeFrom,
+		from: hiddenExpressionExceptRangeFrom
 	}),
 	macroInvocation: _attach(macroInvocation, { from: macroInvocationFrom }),
 	delimTokenTree: _attach(delimTokenTree, { from: delimTokenTreeFrom }),
-	nonDelimToken: _attach(hiddenNonDelimToken, { from: hiddenNonDelimTokenFrom }),
-	scopedIdentifier: _attach(scopedIdentifier, { from: scopedIdentifierFrom }),
-	scopedTypeIdentifierInExpressionPosition: _attach(scopedTypeIdentifierInExpressionPosition, {
-		from: scopedTypeIdentifierInExpressionPositionFrom,
+	nonDelimToken: _attach(hiddenNonDelimToken, {
+		from: hiddenNonDelimTokenFrom
 	}),
-	scopedTypeIdentifier: _attach(scopedTypeIdentifier, { from: scopedTypeIdentifierFrom }),
+	scopedIdentifier: _attach(scopedIdentifier, { from: scopedIdentifierFrom }),
+	scopedTypeIdentifierInExpressionPosition: _attach(
+		scopedTypeIdentifierInExpressionPosition,
+		{
+			from: scopedTypeIdentifierInExpressionPositionFrom
+		}
+	),
+	scopedTypeIdentifier: _attach(scopedTypeIdentifier, {
+		from: scopedTypeIdentifierFrom
+	}),
 	range: _attach(rangeExpression, { from: rangeExpressionFrom }),
 	unary: _attach(unaryExpression, { from: unaryExpressionFrom }),
 	tryExpression: _attach(tryExpression, { from: tryExpressionFrom }),
 	reference: _attach(referenceExpression, { from: referenceExpressionFrom }),
 	binary: _attach(binaryExpression, { from: binaryExpressionFrom }),
 	assignment: _attach(assignmentExpression, { from: assignmentExpressionFrom }),
-	compoundAssignmentExpr: _attach(compoundAssignmentExpr, { from: compoundAssignmentExprFrom }),
+	compoundAssignmentExpr: _attach(compoundAssignmentExpr, {
+		from: compoundAssignmentExprFrom
+	}),
 	typeCast: _attach(typeCastExpression, { from: typeCastExpressionFrom }),
 	returnExpression: _attach(returnExpression, { from: returnExpressionFrom }),
 	yieldExpression: _attach(yieldExpression, { from: yieldExpressionFrom }),
 	call: _attach(callExpression, { from: callExpressionFrom }),
 	arguments: _attach(arguments_, { from: arguments_From }),
 	array: _attach(arrayExpression, { from: arrayExpressionFrom }),
-	parenthesized: _attach(parenthesizedExpression, { from: parenthesizedExpressionFrom }),
+	parenthesized: _attach(parenthesizedExpression, {
+		from: parenthesizedExpressionFrom
+	}),
 	tuple: _attach(tupleExpression, { from: tupleExpressionFrom }),
 	structExpression: _attach(structExpression, { from: structExpressionFrom }),
-	fieldInitializerList: _attach(fieldInitializerList, { from: fieldInitializerListFrom }),
+	fieldInitializerList: _attach(fieldInitializerList, {
+		from: fieldInitializerListFrom
+	}),
 	shorthandFieldInitializer: _attach(shorthandFieldInitializer, {
-		from: shorthandFieldInitializerFrom,
+		from: shorthandFieldInitializerFrom
 	}),
 	fieldInitializer: _attach(fieldInitializer, { from: fieldInitializerFrom }),
-	baseFieldInitializer: _attach(baseFieldInitializer, { from: baseFieldInitializerFrom }),
+	baseFieldInitializer: _attach(baseFieldInitializer, {
+		from: baseFieldInitializerFrom
+	}),
 	ifExpression: _attach(ifExpression, { from: ifExpressionFrom }),
 	letCondition: _attach(letCondition, { from: letConditionFrom }),
 	hiddenLetChain: _attach(hiddenLetChain, { from: hiddenLetChainFrom }),
@@ -486,12 +525,16 @@ export const ir = {
 	closure: _attach(closureExpression, {
 		from: closureExpressionFrom,
 		body: _attach(closureExpressionBody, { from: closureExpressionBodyFrom }),
-		body2: _attach(closureExpressionBody2, { from: closureExpressionBody2From }),
+		body2: _attach(closureExpressionBody2, { from: closureExpressionBody2From })
 	}),
-	closureParameters: _attach(closureParameters, { from: closureParametersFrom }),
+	closureParameters: _attach(closureParameters, {
+		from: closureParametersFrom
+	}),
 	label: _attach(label, { from: labelFrom }),
 	breakExpression: _attach(breakExpression, { from: breakExpressionFrom }),
-	continueExpression: _attach(continueExpression, { from: continueExpressionFrom }),
+	continueExpression: _attach(continueExpression, {
+		from: continueExpressionFrom
+	}),
 	index: _attach(indexExpression, { from: indexExpressionFrom }),
 	awaitExpression: _attach(awaitExpression, { from: awaitExpressionFrom }),
 	fieldExpression: _attach(fieldExpression, { from: fieldExpressionFrom }),
@@ -504,18 +547,20 @@ export const ir = {
 	genericPattern: _attach(genericPattern, { from: genericPatternFrom }),
 	tuplePattern: _attach(tuplePattern, { from: tuplePatternFrom }),
 	slicePattern: _attach(slicePattern, { from: slicePatternFrom }),
-	tupleStructPattern: _attach(tupleStructPattern, { from: tupleStructPatternFrom }),
+	tupleStructPattern: _attach(tupleStructPattern, {
+		from: tupleStructPatternFrom
+	}),
 	structPattern: _attach(structPattern, { from: structPatternFrom }),
 	fieldPattern: _attach(fieldPattern, {
 		from: fieldPatternFrom,
 		name: _attach(fieldPatternName, { from: fieldPatternNameFrom }),
-		colon: _attach(fieldPatternColon, { from: fieldPatternColonFrom }),
+		colon: _attach(fieldPatternColon, { from: fieldPatternColonFrom })
 	}),
 	mutPattern: _attach(mutPattern, { from: mutPatternFrom }),
 	rangePattern: _attach(rangePattern, {
 		from: rangePatternFrom,
 		left: _attach(rangePatternLeft, { from: rangePatternLeftFrom }),
-		right: _attach(rangePatternRight, { from: rangePatternRightFrom }),
+		right: _attach(rangePatternRight, { from: rangePatternRightFrom })
 	}),
 	refPattern: _attach(refPattern, { from: refPatternFrom }),
 	capturedPattern: _attach(capturedPattern, { from: capturedPatternFrom }),
@@ -527,15 +572,19 @@ export const ir = {
 	comment: _attach(comment, { from: commentFrom }),
 	lineComment: _attach(lineComment, { from: lineCommentFrom }),
 	lineDocCommentMarker: _attach(hiddenLineDocCommentMarker, {
-		from: hiddenLineDocCommentMarkerFrom,
+		from: hiddenLineDocCommentMarkerFrom
 	}),
 	blockComment: _attach(blockComment, { from: blockCommentFrom }),
 	blockDocCommentMarker: _attach(hiddenBlockDocCommentMarker, {
-		from: hiddenBlockDocCommentMarkerFrom,
+		from: hiddenBlockDocCommentMarkerFrom
 	}),
 	path: _attach(hiddenPath, { from: hiddenPathFrom }),
-	hiddenTypeIdentifier: _attach(hiddenTypeIdentifier, { from: hiddenTypeIdentifierFrom }),
-	hiddenFieldIdentifier: _attach(hiddenFieldIdentifier, { from: hiddenFieldIdentifierFrom }),
+	hiddenTypeIdentifier: _attach(hiddenTypeIdentifier, {
+		from: hiddenTypeIdentifierFrom
+	}),
+	hiddenFieldIdentifier: _attach(hiddenFieldIdentifier, {
+		from: hiddenFieldIdentifierFrom
+	}),
 	letChain: _attach(letChain, { from: letChainFrom }),
 
 	// Keyword factories
@@ -561,5 +610,5 @@ export const ir = {
 	outerDocCommentMarker: outerDocCommentMarker,
 	innerDocCommentMarker: innerDocCommentMarker,
 	typeIdentifier: typeIdentifier,
-	fieldIdentifier: fieldIdentifier,
+	fieldIdentifier: fieldIdentifier
 } as const;

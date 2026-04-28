@@ -55,28 +55,31 @@
 - [ ] **Step 1: Add a failing checked-in hash sync test**
 
 ```ts
-import { describe, expect, it } from "vitest";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
-const GRAMMARS = ["python", "rust", "typescript"] as const;
+const GRAMMARS = ['python', 'rust', 'typescript'] as const;
 
 function readTsHash(grammar: (typeof GRAMMARS)[number]): string {
-	const text = readFileSync(resolve(`packages/${grammar}/src/hash.ts`), "utf8");
+	const text = readFileSync(resolve(`packages/${grammar}/src/hash.ts`), 'utf8');
 	const match = /TEMPLATE_BUNDLE_HASH = '([0-9a-f]{64})'/.exec(text);
 	if (!match?.[1]) throw new Error(`missing TS hash for ${grammar}`);
 	return match[1];
 }
 
 function readNativeHash(grammar: (typeof GRAMMARS)[number]): string {
-	const text = readFileSync(resolve(`packages/${grammar}/rust-render/src/hash.rs`), "utf8");
+	const text = readFileSync(
+		resolve(`packages/${grammar}/rust-render/src/hash.rs`),
+		'utf8'
+	);
 	const match = /TEMPLATE_BUNDLE_HASH: &str = "([0-9a-f]{64})"/.exec(text);
 	if (!match?.[1]) throw new Error(`missing native hash for ${grammar}`);
 	return match[1];
 }
 
-describe("checked-in native bundle sync", () => {
-	it.each(GRAMMARS)("%s TS/native hashes match", (grammar) => {
+describe('checked-in native bundle sync', () => {
+	it.each(GRAMMARS)('%s TS/native hashes match', (grammar) => {
 		expect(readTsHash(grammar)).toBe(readNativeHash(grammar));
 	});
 });
@@ -95,8 +98,8 @@ Expected: **FAIL** with at least one grammar reporting mismatched TS/native bund
 - [ ] **Step 3: Update the emitter test to the one-flag contract**
 
 ```ts
-it("references the one-flag regen command in generated headers", () => {
-	const emit = emitHashFiles("typescript", sample);
+it('references the one-flag regen command in generated headers', () => {
+	const emit = emitHashFiles('typescript', sample);
 	expect(emit.hashRs.contents).toMatch(/--grammar typescript --all/);
 	expect(emit.hashRs.contents).not.toMatch(/--rust-render/);
 	expect(emit.hashTs.contents).toMatch(/--grammar typescript --all/);
@@ -106,8 +109,8 @@ it("references the one-flag regen command in generated headers", () => {
 - [ ] **Step 4: Add a native collect-baseline assertion that makes the mismatch easier to diagnose**
 
 ```ts
-it("native parity render path does not silently mask bundle drift", async () => {
-	await expect(collectBaseline("native")).resolves.toBeDefined();
+it('native parity render path does not silently mask bundle drift', async () => {
+	await expect(collectBaseline('native')).resolves.toBeDefined();
 });
 ```
 
@@ -184,7 +187,9 @@ Remove all mentions of `--rust-render`.
 ```ts
 const shouldEmitRustRender =
 	cliArgs.all &&
-	(config.grammar === "rust" || config.grammar === "typescript" || config.grammar === "python");
+	(config.grammar === 'rust' ||
+		config.grammar === 'typescript' ||
+		config.grammar === 'python');
 
 if (shouldEmitRustRender) {
 	// existing emitRenderCrate + template copy + parity fixture extraction

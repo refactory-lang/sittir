@@ -24,11 +24,14 @@
  * deterministically.
  */
 
-import { readFileSync, existsSync } from "node:fs";
-import { resolve } from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { readFileSync, existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const repoRoot = fileURLToPath(new URL("../../../..", import.meta.url)).replace(/\/$/, "");
+const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(
+	/\/$/,
+	''
+);
 
 // ---------------------------------------------------------------------------
 // Schema types — mirror packages/core/src/metrics.ts
@@ -37,7 +40,7 @@ const repoRoot = fileURLToPath(new URL("../../../..", import.meta.url)).replace(
 /** Subset of MetricsFile we read. Keep in sync with packages/core/src/metrics.ts. */
 interface MetricsFile {
 	readonly schemaVersion: number;
-	readonly backend: "ts" | "native";
+	readonly backend: 'ts' | 'native';
 	readonly collectedOn: {
 		readonly platform: string;
 		readonly nodeVersion: string;
@@ -72,14 +75,18 @@ interface PerfBaseline {
 // ---------------------------------------------------------------------------
 
 export type Verdict =
-	| { kind: "ok" }
-	| { kind: "platform-mismatch"; baselinePlatform: string; freshPlatform: string }
-	| { kind: "schema-mismatch"; baselineVersion: number; freshVersion: number }
-	| { kind: "backend-mismatch"; freshBackend: string }
-	| { kind: "missing-ffi" }
+	| { kind: 'ok' }
 	| {
-			kind: "regression";
-			field: "meanRoundtripMs" | "totalCalls";
+			kind: 'platform-mismatch';
+			baselinePlatform: string;
+			freshPlatform: string;
+	  }
+	| { kind: 'schema-mismatch'; baselineVersion: number; freshVersion: number }
+	| { kind: 'backend-mismatch'; freshBackend: string }
+	| { kind: 'missing-ffi' }
+	| {
+			kind: 'regression';
+			field: 'meanRoundtripMs' | 'totalCalls';
 			baseline: number;
 			fresh: number;
 			deltaPct: number;
@@ -96,52 +103,52 @@ const REGRESSION_THRESHOLD_PCT = 10;
 export function evaluateVerdict(
 	baseline: PerfBaseline,
 	fresh: MetricsFile,
-	warnOnly: boolean,
+	warnOnly: boolean
 ): Verdict {
 	if (baseline.schemaVersion !== fresh.schemaVersion) {
 		return {
-			kind: "schema-mismatch",
+			kind: 'schema-mismatch',
 			baselineVersion: baseline.schemaVersion,
-			freshVersion: fresh.schemaVersion,
+			freshVersion: fresh.schemaVersion
 		};
 	}
-	if (fresh.backend !== "native") {
-		return { kind: "backend-mismatch", freshBackend: fresh.backend };
+	if (fresh.backend !== 'native') {
+		return { kind: 'backend-mismatch', freshBackend: fresh.backend };
 	}
 	if (baseline.collectedOn.platform !== fresh.collectedOn.platform) {
 		return {
-			kind: "platform-mismatch",
+			kind: 'platform-mismatch',
 			baselinePlatform: baseline.collectedOn.platform,
-			freshPlatform: fresh.collectedOn.platform,
+			freshPlatform: fresh.collectedOn.platform
 		};
 	}
 	const ffi = fresh.ffi;
 	if (!ffi) {
-		return { kind: "missing-ffi" };
+		return { kind: 'missing-ffi' };
 	}
 	const meanDelta = pctDelta(baseline.ffi.meanRoundtripMs, ffi.meanRoundtripMs);
 	if (meanDelta > REGRESSION_THRESHOLD_PCT) {
 		return {
-			kind: "regression",
-			field: "meanRoundtripMs",
+			kind: 'regression',
+			field: 'meanRoundtripMs',
 			baseline: baseline.ffi.meanRoundtripMs,
 			fresh: ffi.meanRoundtripMs,
 			deltaPct: meanDelta,
-			warnOnly,
+			warnOnly
 		};
 	}
 	const callsDelta = pctDelta(baseline.ffi.totalCalls, ffi.totalCalls);
 	if (callsDelta > REGRESSION_THRESHOLD_PCT) {
 		return {
-			kind: "regression",
-			field: "totalCalls",
+			kind: 'regression',
+			field: 'totalCalls',
 			baseline: baseline.ffi.totalCalls,
 			fresh: ffi.totalCalls,
 			deltaPct: callsDelta,
-			warnOnly,
+			warnOnly
 		};
 	}
-	return { kind: "ok" };
+	return { kind: 'ok' };
 }
 
 /** Percentage change from `before` to `after`; positive = increase. */
@@ -158,7 +165,7 @@ function readJson<T>(path: string): T {
 	if (!existsSync(path)) {
 		throw new Error(`file not found: ${path}`);
 	}
-	const raw = readFileSync(path, "utf-8");
+	const raw = readFileSync(path, 'utf-8');
 	return JSON.parse(raw) as T;
 }
 
@@ -185,45 +192,46 @@ export interface CheckResult {
 export function checkPerfBaseline(
 	baselinePath: string,
 	metricsPath: string,
-	warnOnly: boolean,
+	warnOnly: boolean
 ): CheckResult {
 	const baseline = readJson<PerfBaseline>(baselinePath);
 	const fresh = readJson<MetricsFile>(metricsPath);
 	const verdict = evaluateVerdict(baseline, fresh, warnOnly);
 
 	switch (verdict.kind) {
-		case "ok":
+		case 'ok':
 			return { exitCode: 0, verdict };
-		case "backend-mismatch":
+		case 'backend-mismatch':
 			return {
 				exitCode: 1,
 				verdict,
-				stderrLine: `[ERROR] backend mismatch — native perf gate requires backend=native, got backend=${verdict.freshBackend}`,
+				stderrLine: `[ERROR] backend mismatch — native perf gate requires backend=native, got backend=${verdict.freshBackend}`
 			};
-		case "missing-ffi":
+		case 'missing-ffi':
 			return {
 				exitCode: 1,
 				verdict,
-				stderrLine: "[ERROR] native metrics missing ffi block — cannot evaluate perf gate",
+				stderrLine:
+					'[ERROR] native metrics missing ffi block — cannot evaluate perf gate'
 			};
-		case "schema-mismatch":
+		case 'schema-mismatch':
 			return {
 				exitCode: 2,
 				verdict,
-				stderrLine: `[ERROR] schemaVersion mismatch — baseline=${verdict.baselineVersion} fresh=${verdict.freshVersion}`,
+				stderrLine: `[ERROR] schemaVersion mismatch — baseline=${verdict.baselineVersion} fresh=${verdict.freshVersion}`
 			};
-		case "platform-mismatch":
+		case 'platform-mismatch':
 			return {
 				exitCode: 0,
 				verdict,
-				stderrLine: `[INFO] platform mismatch — perf gate skipped (baseline=${verdict.baselinePlatform} fresh=${verdict.freshPlatform})`,
+				stderrLine: `[INFO] platform mismatch — perf gate skipped (baseline=${verdict.baselinePlatform} fresh=${verdict.freshPlatform})`
 			};
-		case "regression": {
-			const line = `${verdict.warnOnly ? "[WARN]" : "[ERROR]"} ffi regression: ${verdict.field} baseline=${verdict.baseline} fresh=${verdict.fresh} delta=+${verdict.deltaPct.toFixed(2)}%`;
+		case 'regression': {
+			const line = `${verdict.warnOnly ? '[WARN]' : '[ERROR]'} ffi regression: ${verdict.field} baseline=${verdict.baseline} fresh=${verdict.fresh} delta=+${verdict.deltaPct.toFixed(2)}%`;
 			return {
 				exitCode: verdict.warnOnly ? 0 : 1,
 				verdict,
-				stderrLine: line,
+				stderrLine: line
 			};
 		}
 	}
@@ -239,17 +247,20 @@ interface CliArgs {
 }
 
 function parseArgs(argv: readonly string[]): CliArgs {
-	let baseline = resolve(repoRoot, "specs/054-post-016-perf-tracking/baselines/perf-native.json");
-	let metrics = resolve(process.cwd(), "metrics-native.json");
+	let baseline = resolve(
+		repoRoot,
+		'specs/054-post-016-perf-tracking/baselines/perf-native.json'
+	);
+	let metrics = resolve(process.cwd(), 'metrics-native.json');
 	for (let i = 0; i < argv.length; i++) {
 		const a = argv[i];
-		if (a === "--baseline" && i + 1 < argv.length) {
+		if (a === '--baseline' && i + 1 < argv.length) {
 			baseline = resolve(process.cwd(), argv[++i]!);
-		} else if (a === "--metrics" && i + 1 < argv.length) {
+		} else if (a === '--metrics' && i + 1 < argv.length) {
 			metrics = resolve(process.cwd(), argv[++i]!);
-		} else if (a === "--help" || a === "-h") {
+		} else if (a === '--help' || a === '-h') {
 			process.stdout.write(
-				"Usage: check-perf-baseline.ts [--baseline <path>] [--metrics <path>]\n",
+				'Usage: check-perf-baseline.ts [--baseline <path>] [--metrics <path>]\n'
 			);
 			process.exit(0);
 		}
@@ -268,7 +279,7 @@ const isCli = (() => {
 
 if (isCli) {
 	const args = parseArgs(process.argv.slice(2));
-	const warnOnly = process.env["SITTIR_METRICS_FFI_WARN_ONLY"] === "1";
+	const warnOnly = process.env['SITTIR_METRICS_FFI_WARN_ONLY'] === '1';
 	const result = checkPerfBaseline(args.baseline, args.metrics, warnOnly);
 	if (result.stderrLine) process.stderr.write(`${result.stderrLine}\n`);
 	process.exit(result.exitCode);

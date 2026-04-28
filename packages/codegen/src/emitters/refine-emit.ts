@@ -9,9 +9,9 @@
  * walker-per-emitter duplication.
  */
 
-import type { NodeMap, RefineForm } from "../compiler/types.ts";
-import type { AssembledNode } from "../compiler/node-map.ts";
-import { narrowedFieldLiteralsForForm } from "../compiler/link-refine.ts";
+import type { NodeMap, RefineForm } from '../compiler/types.ts';
+import type { AssembledNode } from '../compiler/node-map.ts';
+import { narrowedFieldLiteralsForForm } from '../compiler/link-refine.ts';
 
 /**
  * Per-kind refine descriptor collected once, consumed by every emitter
@@ -30,7 +30,10 @@ export interface RefineFormInfo {
 	readonly form: RefineForm;
 	/** Per-form field narrowings: each entry says "in this form, field
 	 *  `fieldName` should be narrowed to the literal `literal`". */
-	readonly narrowedFields: ReadonlyArray<{ fieldName: string; literal: string }>;
+	readonly narrowedFields: ReadonlyArray<{
+		fieldName: string;
+		literal: string;
+	}>;
 }
 
 /**
@@ -47,7 +50,9 @@ export interface RefineFormInfo {
  * intended behavior for selections that target anonymous structural
  * literals.
  */
-export function collectRefineKindInfos(nodeMap: NodeMap): RefineKindInfo[] | undefined {
+export function collectRefineKindInfos(
+	nodeMap: NodeMap
+): RefineKindInfo[] | undefined {
 	const forms = nodeMap.refineForms;
 	if (!forms || forms.size === 0) return undefined;
 	const out: RefineKindInfo[] = [];
@@ -74,7 +79,7 @@ export function pascalCase(s: string): string {
 		.split(/[_\s-]+/)
 		.filter((p) => p.length > 0)
 		.map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-		.join("");
+		.join('');
 }
 
 /**
@@ -90,7 +95,7 @@ export function camelCase(s: string): string {
 		parts
 			.slice(1)
 			.map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-			.join("")
+			.join('')
 	);
 }
 
@@ -98,7 +103,10 @@ export function camelCase(s: string): string {
  * Per-form TS type name: `<ParentTypeName><FormPascal>`.
  * Example: `InterfaceBody` + `curly` → `InterfaceBodyCurly`.
  */
-export function refineFormTypeName(parentTypeName: string, formName: string): string {
+export function refineFormTypeName(
+	parentTypeName: string,
+	formName: string
+): string {
 	return `${parentTypeName}${pascalCase(formName)}`;
 }
 
@@ -106,6 +114,9 @@ export function refineFormTypeName(parentTypeName: string, formName: string): st
  * Per-form factory function name: `<kind-camel><FormPascal>`, matching
  * the base factory-naming convention already used for polymorph forms.
  */
-export function refineFormFactoryName(baseFactoryName: string, formName: string): string {
+export function refineFormFactoryName(
+	baseFactoryName: string,
+	formName: string
+): string {
 	return `${baseFactoryName}${pascalCase(formName)}`;
 }

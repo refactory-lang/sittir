@@ -13,10 +13,10 @@
  * this script should not need to run again.
  */
 
-import { readFileSync, writeFileSync } from "node:fs";
-import { resolve, relative } from "node:path";
-import { evaluate } from "../src/compiler/evaluate.ts";
-import type { Rule } from "../src/compiler/rule.ts";
+import { readFileSync, writeFileSync } from 'node:fs';
+import { resolve, relative } from 'node:path';
+import { evaluate } from '../src/compiler/evaluate.ts';
+import type { Rule } from '../src/compiler/rule.ts';
 
 interface OverrideField {
 	types: { type: string; named: boolean }[];
@@ -33,16 +33,24 @@ const grammarName = process.argv[2];
 const grammarJsPath = process.argv[3];
 
 if (!grammarName || !grammarJsPath) {
-	console.error("Usage: npx tsx convert-overrides.ts <grammar-name> <grammar-js-path>");
+	console.error(
+		'Usage: npx tsx convert-overrides.ts <grammar-name> <grammar-js-path>'
+	);
 	process.exit(1);
 }
 
-const repoRoot = resolve(import.meta.dirname!, "../../../../");
-const overridesJsonPath = resolve(repoRoot, `packages/${grammarName}/overrides.json`);
-const overridesTsPath = resolve(repoRoot, `packages/${grammarName}/overrides.ts`);
+const repoRoot = resolve(import.meta.dirname!, '../../../../');
+const overridesJsonPath = resolve(
+	repoRoot,
+	`packages/${grammarName}/overrides.json`
+);
+const overridesTsPath = resolve(
+	repoRoot,
+	`packages/${grammarName}/overrides.ts`
+);
 
 const overrides: Record<string, OverrideEntry> = JSON.parse(
-	readFileSync(overridesJsonPath, "utf-8"),
+	readFileSync(overridesJsonPath, 'utf-8')
 );
 
 // Load the base grammar so we can translate structural positions (the v1
@@ -58,11 +66,11 @@ const raw = await evaluate(grammarJsPath);
  */
 function structuralToRaw(kind: string, structuralPos: number): number | null {
 	const rule = raw.rules[kind];
-	if (!rule || rule.type !== "seq") return null;
+	if (!rule || rule.type !== 'seq') return null;
 	let seen = 0;
 	for (let i = 0; i < rule.members.length; i++) {
 		const m = rule.members[i]!;
-		if (m.type === "string" || m.type === "field") continue;
+		if (m.type === 'string' || m.type === 'field') continue;
 		if (seen === structuralPos) return i;
 		seen++;
 	}
@@ -70,7 +78,10 @@ function structuralToRaw(kind: string, structuralPos: number): number | null {
 }
 
 // Compute relative path from packages/<grammar>/ to the grammar.js
-const grammarRelPath = relative(resolve(repoRoot, `packages/${grammarName}`), grammarJsPath);
+const grammarRelPath = relative(
+	resolve(repoRoot, `packages/${grammarName}`),
+	grammarJsPath
+);
 
 const lines: string[] = [
 	`/**`,
@@ -87,7 +98,7 @@ const lines: string[] = [
 	``,
 	`export default grammar(base, {`,
 	`    name: '${grammarName}',`,
-	`    rules: {`,
+	`    rules: {`
 ];
 
 let skippedOutOfBounds = 0;
@@ -108,9 +119,9 @@ for (const [kind, entry] of Object.entries(overrides)) {
 			skippedOutOfBounds++;
 			continue;
 		}
-		const comment = info.types.map((t) => t.type).join(" | ");
+		const comment = info.types.map((t) => t.type).join(' | ');
 		patches.push(
-			`            ${rawIndex}: field('${fieldName}'), // ${comment} [struct=${info.position}]`,
+			`            ${rawIndex}: field('${fieldName}'), // ${comment} [struct=${info.position}]`
 		);
 	}
 
@@ -127,7 +138,7 @@ lines.push(`    },`);
 lines.push(`})`);
 lines.push(``);
 
-writeFileSync(overridesTsPath, lines.join("\n"));
+writeFileSync(overridesTsPath, lines.join('\n'));
 console.log(
-	`Wrote ${overridesTsPath} (${Object.keys(overrides).length} kinds, ${Object.values(overrides).reduce((n, e) => n + Object.keys(e.fields ?? {}).length, 0)} fields)`,
+	`Wrote ${overridesTsPath} (${Object.keys(overrides).length} kinds, ${Object.values(overrides).reduce((n, e) => n + Object.keys(e.fields ?? {}).length, 0)} fields)`
 );

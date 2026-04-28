@@ -18,15 +18,21 @@ The surviving generated output (still in working tree as of `6fbd48ea`) shows th
 
 ```ts
 export type PolymorphVariantDescriptor =
-	| { readonly source: "override"; readonly childKind: Readonly<Record<string, string>> }
-	| { readonly source: "promoted"; readonly fields: Readonly<Record<string, readonly string[]>> };
+	| {
+			readonly source: 'override';
+			readonly childKind: Readonly<Record<string, string>>;
+	  }
+	| {
+			readonly source: 'promoted';
+			readonly fields: Readonly<Record<string, readonly string[]>>;
+	  };
 ```
 
 **Subagent (reverse-engineered from `packages/rust/factory-map.json5`):**
 
 ```ts
 export type PolymorphVariantDescriptor = {
-	readonly source: "override" | "promoted";
+	readonly source: 'override' | 'promoted';
 	readonly variants: readonly string[];
 };
 ```
@@ -40,7 +46,7 @@ In `buildFactoryMap`, replace the branches that built `childKind` / `fields` map
 ```ts
 polymorphVariants[kind] = {
 	source: node.source, // 'override' | 'promoted'
-	variants: node.forms.map((f) => f.name),
+	variants: node.forms.map((f) => f.name)
 };
 ```
 
@@ -53,28 +59,29 @@ For every polymorph parent kind, the generated `wrap<Parent>(data, tree)` fn emi
 ```ts
 export function wrapExpressionStatement(
 	data: _NodeData,
-	tree: TreeHandle,
+	tree: TreeHandle
 ): WrappedNode<ExpressionStatement> {
 	const _variant =
 		data.$variant ??
 		(() => {
 			// Override path: match first named child's $type against ${parent}_${variant}.
 			for (const c of data.$children ?? []) {
-				if (c == null || typeof c !== "object" || (c as any).$named === false) continue;
+				if (c == null || typeof c !== 'object' || (c as any).$named === false)
+					continue;
 				switch ((c as any).$type) {
-					case "expression_statement_with_semi":
-						return "with_semi";
-					case "expression_statement_block_ending":
-						return "block_ending";
+					case 'expression_statement_with_semi':
+						return 'with_semi';
+					case 'expression_statement_block_ending':
+						return 'block_ending';
 				}
 			}
 			// Promoted path: check $fields presence per form.
 			const hasChildren = (data.$children ?? []).some(
-				(c: any) => c != null && typeof c === "object" && c.$named !== false,
+				(c: any) => c != null && typeof c === 'object' && c.$named !== false
 			);
 			const f = data.$fields ?? {};
-			if (hasChildren) return "with_semi";
-			if (hasChildren) return "block_ending";
+			if (hasChildren) return 'with_semi';
+			if (hasChildren) return 'block_ending';
 			return undefined;
 		})();
 	return {
@@ -82,7 +89,7 @@ export function wrapExpressionStatement(
 		$variant: _variant,
 		get child() {
 			return drillIn(data.$children?.[0], tree);
-		},
+		}
 	} as unknown as WrappedNode<ExpressionStatement>;
 }
 ```

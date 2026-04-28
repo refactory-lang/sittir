@@ -15,15 +15,19 @@ pnpm add @sittir/rust
 Every field holds a `Builder` instance — no strings. Use `LeafBuilder` via the `ir` namespace to introduce text:
 
 ```ts
-import { ir } from "@sittir/rust";
+import { ir } from '@sittir/rust';
 
 const node = ir
-	.fn(ir.identifier("main"))
+	.fn(ir.identifier('main'))
 	.parameters(ir.parameters())
-	.body(ir.block(ir.expressionStatement(ir.macro_invocation(ir.identifier("println")))));
+	.body(
+		ir.block(
+			ir.expressionStatement(ir.macro_invocation(ir.identifier('println')))
+		)
+	);
 
 node.renderImpl(); // "fn main ( ) { println ! }"
-node.render("fast"); // same, with brace/paren validation
+node.render('fast'); // same, with brace/paren validation
 ```
 
 ### Declarative API (`.from()`)
@@ -32,9 +36,9 @@ For deeply nested constructs, use `.from()` with a typed options object:
 
 ```ts
 const node = ir.fn.from({
-	name: ir.identifier("main"),
+	name: ir.identifier('main'),
 	parameters: ir.parameters(),
-	body: ir.block(),
+	body: ir.block()
 });
 ```
 
@@ -42,7 +46,7 @@ Leaf-typed fields accept strings — auto-resolved to `LeafBuilder`:
 
 ```ts
 // name is typed as Builder<TypeIdentifier> | string
-const s = ir.struct_.from({ name: "Config" });
+const s = ir.struct_.from({ name: 'Config' });
 // equivalent to: ir.struct_(ir.typeIdentifier('Config'))
 ```
 
@@ -61,7 +65,7 @@ ir.block([stmt1, stmt2, stmt3]); // ← old style, no longer needed
 ### CST Round-Trip
 
 ```ts
-import { fromCST, edit } from "@sittir/rust";
+import { fromCST, edit } from '@sittir/rust';
 
 // Hydrate a tree-sitter CST node into a builder tree
 const builder = fromCST(treeSitterNode);
@@ -79,8 +83,8 @@ const patch = edit(treeSitterNode, (b) => {
 The `ir` namespace includes builders for all terminal node kinds:
 
 ```ts
-ir.identifier("main"); // LeafBuilder<'identifier'>
-ir.typeIdentifier("Config"); // LeafBuilder<'type_identifier'>
+ir.identifier('main'); // LeafBuilder<'identifier'>
+ir.typeIdentifier('Config'); // LeafBuilder<'type_identifier'>
 ir.integerLiteral(42); // LeafBuilder<'integer_literal'> (accepts number)
 ir.stringLiteral('"hello"'); // LeafBuilder<'string_literal'>
 ```
@@ -133,10 +137,10 @@ import type {
 	StructItem,
 	FunctionItem,
 	Identifier, // leaf type
-	Expression, // supertype union
-} from "@sittir/rust";
+	Expression // supertype union
+} from '@sittir/rust';
 
-import type { FunctionBuilder } from "@sittir/rust";
+import type { FunctionBuilder } from '@sittir/rust';
 ```
 
 ## License

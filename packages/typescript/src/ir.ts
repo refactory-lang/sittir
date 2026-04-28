@@ -11,19 +11,19 @@
 // to feed it directly into `.from()`, use the typed wrapper (`readTreeNode`)
 // so `.from()` sees a wrapped node and takes the identity quick-return path.
 
-import * as F from "./factories.js";
-import * as FR from "./from.js";
+import * as F from './factories.js';
+import * as FR from './from.js';
 
-function _attach<T extends (...args: never[]) => unknown, P extends Record<string, unknown>>(
-	fn: T,
-	props: P,
-): T & P {
+function _attach<
+	T extends (...args: never[]) => unknown,
+	P extends Record<string, unknown>
+>(fn: T, props: P): T & P {
 	for (const key of Object.keys(props)) {
 		Object.defineProperty(fn, key, {
 			value: props[key],
 			writable: true,
 			configurable: true,
-			enumerable: true,
+			enumerable: true
 		});
 	}
 	return fn as T & P;
@@ -36,39 +36,49 @@ export const moduleExportName = {
 	string: _attach(F.string, {
 		from: FR.stringFrom,
 		double: _attach(F.stringUFormDouble, { from: FR.stringUFormDoubleFrom }),
-		single: _attach(F.stringUFormSingle, { from: FR.stringUFormSingleFrom }),
-	}),
+		single: _attach(F.stringUFormSingle, { from: FR.stringUFormSingleFrom })
+	})
 } as const;
 
 export const declaration = {
 	function_: _attach(F.functionSignature, { from: FR.functionSignatureFrom }),
-	abstractClass: _attach(F.abstractClassDeclaration, { from: FR.abstractClassDeclarationFrom }),
+	abstractClass: _attach(F.abstractClassDeclaration, {
+		from: FR.abstractClassDeclarationFrom
+	}),
 	module: _attach(F.module, { from: FR.moduleFrom }),
 	internal: _attach(F.internalModule, { from: FR.internalModuleFrom }),
-	typeAlias: _attach(F.typeAliasDeclaration, { from: FR.typeAliasDeclarationFrom }),
+	typeAlias: _attach(F.typeAliasDeclaration, {
+		from: FR.typeAliasDeclarationFrom
+	}),
 	enum_: _attach(F.enumDeclaration, { from: FR.enumDeclarationFrom }),
-	interface_: _attach(F.interfaceDeclaration, { from: FR.interfaceDeclarationFrom }),
+	interface_: _attach(F.interfaceDeclaration, {
+		from: FR.interfaceDeclarationFrom
+	}),
 	import_: _attach(F.importAlias, { from: FR.importAliasFrom }),
-	ambient: _attach(F.ambientDeclaration, { from: FR.ambientDeclarationFrom }),
+	ambient: _attach(F.ambientDeclaration, { from: FR.ambientDeclarationFrom })
 } as const;
 
 export const statement = {
 	export_: _attach(F.exportStatement, {
 		from: FR.exportStatementFrom,
-		default: _attach(F.exportStatementUFormDefault, { from: FR.exportStatementUFormDefaultFrom }),
+		default: _attach(F.exportStatementUFormDefault, {
+			from: FR.exportStatementUFormDefaultFrom
+		}),
 		type_export: _attach(F.exportStatementUFormTypeExport, {
-			from: FR.exportStatementUFormTypeExportFrom,
+			from: FR.exportStatementUFormTypeExportFrom
 		}),
 		equals_export: _attach(F.exportStatementUFormEqualsExport, {
-			from: FR.exportStatementUFormEqualsExportFrom,
+			from: FR.exportStatementUFormEqualsExportFrom
 		}),
 		namespace_export: _attach(F.exportStatementUFormNamespaceExport, {
-			from: FR.exportStatementUFormNamespaceExportFrom,
-		}),
+			from: FR.exportStatementUFormNamespaceExportFrom
+		})
 	}),
 	import_: _attach(F.importStatement, { from: FR.importStatementFrom }),
 	debugger_: _attach(F.debuggerStatement, { from: FR.debuggerStatementFrom }),
-	expression: _attach(F.expressionStatement, { from: FR.expressionStatementFrom }),
+	expression: _attach(F.expressionStatement, {
+		from: FR.expressionStatementFrom
+	}),
 	statementBlock: _attach(F.statementBlock, { from: FR.statementBlockFrom }),
 	if_: _attach(F.ifStatement, { from: FR.ifStatementFrom }),
 	switch_: _attach(F.switchStatement, { from: FR.switchStatementFrom }),
@@ -82,22 +92,28 @@ export const statement = {
 	continue_: _attach(F.continueStatement, { from: FR.continueStatementFrom }),
 	return_: _attach(F.returnStatement, { from: FR.returnStatementFrom }),
 	throw_: _attach(F.throwStatement, { from: FR.throwStatementFrom }),
-	labeled: _attach(F.labeledStatement, { from: FR.labeledStatementFrom }),
+	labeled: _attach(F.labeledStatement, { from: FR.labeledStatementFrom })
 } as const;
 
 export const expressions = {
-	sequence: _attach(F.sequenceExpression, { from: FR.sequenceExpressionFrom }),
+	sequence: _attach(F.sequenceExpression, { from: FR.sequenceExpressionFrom })
 } as const;
 
 export const expression = {
 	as: _attach(F.asExpression, { from: FR.asExpressionFrom }),
-	satisfies: _attach(F.satisfiesExpression, { from: FR.satisfiesExpressionFrom }),
-	instantiation: _attach(F.instantiationExpression, { from: FR.instantiationExpressionFrom }),
+	satisfies: _attach(F.satisfiesExpression, {
+		from: FR.satisfiesExpressionFrom
+	}),
+	instantiation: _attach(F.instantiationExpression, {
+		from: FR.instantiationExpressionFrom
+	}),
 	internal: _attach(F.internalModule, { from: FR.internalModuleFrom }),
 	type: _attach(F.typeAssertion, { from: FR.typeAssertionFrom }),
-	assignment: _attach(F.assignmentExpression, { from: FR.assignmentExpressionFrom }),
+	assignment: _attach(F.assignmentExpression, {
+		from: FR.assignmentExpressionFrom
+	}),
 	augmentedAssignment: _attach(F.augmentedAssignmentExpression, {
-		from: FR.augmentedAssignmentExpressionFrom,
+		from: FR.augmentedAssignmentExpressionFrom
 	}),
 	await: _attach(F.awaitExpression, { from: FR.awaitExpressionFrom }),
 	unary: _attach(F.unaryExpression, { from: FR.unaryExpressionFrom }),
@@ -105,78 +121,90 @@ export const expression = {
 	ternary: _attach(F.ternaryExpression, { from: FR.ternaryExpressionFrom }),
 	update: _attach(F.updateExpression, {
 		from: FR.updateExpressionFrom,
-		postfix: _attach(F.updateExpressionUFormPostfix, { from: FR.updateExpressionUFormPostfixFrom }),
-		prefix: _attach(F.updateExpressionUFormPrefix, { from: FR.updateExpressionUFormPrefixFrom }),
+		postfix: _attach(F.updateExpressionUFormPostfix, {
+			from: FR.updateExpressionUFormPostfixFrom
+		}),
+		prefix: _attach(F.updateExpressionUFormPrefix, {
+			from: FR.updateExpressionUFormPrefixFrom
+		})
 	}),
 	new_: _attach(F.newExpression, { from: FR.newExpressionFrom }),
-	yield_: _attach(F.yieldExpression, { from: FR.yieldExpressionFrom }),
+	yield_: _attach(F.yieldExpression, { from: FR.yieldExpressionFrom })
 } as const;
 
 export const primaryExpression = {
-	nonNull: _attach(F.nonNullExpression, { from: FR.nonNullExpressionFrom }),
+	nonNull: _attach(F.nonNullExpression, { from: FR.nonNullExpressionFrom })
 } as const;
 
 export const jsxElement = {
 	jsx: _attach(F.jsxElement, { from: FR.jsxElementFrom }),
-	jsxSelfClosing: _attach(F.jsxSelfClosingElement, { from: FR.jsxSelfClosingElementFrom }),
+	jsxSelfClosing: _attach(F.jsxSelfClosingElement, {
+		from: FR.jsxSelfClosingElementFrom
+	})
 } as const;
 
 export const jsxChild = {
 	jsx: F.jsxText,
 	htmlCharacter: F.htmlCharacterReference,
-	jsxSelfClosing: _attach(F.jsxSelfClosingElement, { from: FR.jsxSelfClosingElementFrom }),
+	jsxSelfClosing: _attach(F.jsxSelfClosingElement, {
+		from: FR.jsxSelfClosingElementFrom
+	})
 } as const;
 
 export const jsxIdentifier = {
 	jsx: F.jsxIdentifier,
-	identifier: F.identifier,
+	identifier: F.identifier
 } as const;
 
 export const jsxElementName = {
 	jsx: F.jsxIdentifier,
 	identifier: F.identifier,
 	nested: _attach(F.nestedIdentifier, { from: FR.nestedIdentifierFrom }),
-	jsxNamespace: _attach(F.jsxNamespaceName, { from: FR.jsxNamespaceNameFrom }),
+	jsxNamespace: _attach(F.jsxNamespaceName, { from: FR.jsxNamespaceNameFrom })
 } as const;
 
 export const jsxAttribute = {
-	jsx: _attach(F.jsxAttribute, { from: FR.jsxAttributeFrom }),
+	jsx: _attach(F.jsxAttribute, { from: FR.jsxAttributeFrom })
 } as const;
 
 export const jsxAttributeName = {
 	identifier: F.identifier,
-	jsxNamespace: _attach(F.jsxNamespaceName, { from: FR.jsxNamespaceNameFrom }),
+	jsxNamespace: _attach(F.jsxNamespaceName, { from: FR.jsxNamespaceNameFrom })
 } as const;
 
 export const jsxAttributeValue = {
 	jsx: _attach(F.jsxExpression, { from: FR.jsxExpressionFrom }),
-	jsxSelfClosing: _attach(F.jsxSelfClosingElement, { from: FR.jsxSelfClosingElementFrom }),
+	jsxSelfClosing: _attach(F.jsxSelfClosingElement, {
+		from: FR.jsxSelfClosingElementFrom
+	})
 } as const;
 
 export const formalParameter = {
 	required: _attach(F.requiredParameter, { from: FR.requiredParameterFrom }),
-	optional: _attach(F.optionalParameter, { from: FR.optionalParameterFrom }),
+	optional: _attach(F.optionalParameter, { from: FR.optionalParameterFrom })
 } as const;
 
 export const destructuringPattern = {
 	object: _attach(F.objectPattern, { from: FR.objectPatternFrom }),
-	array: _attach(F.arrayPattern, { from: FR.arrayPatternFrom }),
+	array: _attach(F.arrayPattern, { from: FR.arrayPatternFrom })
 } as const;
 
 export const identifier = {
 	undefined: F.undefined_,
-	identifier: F.identifier,
+	identifier: F.identifier
 } as const;
 
 export const pattern = {
 	member: _attach(F.memberExpression, { from: FR.memberExpressionFrom }),
-	subscript: _attach(F.subscriptExpression, { from: FR.subscriptExpressionFrom }),
+	subscript: _attach(F.subscriptExpression, {
+		from: FR.subscriptExpressionFrom
+	}),
 	undefined: F.undefined_,
 	identifier: F.identifier,
 	object: _attach(F.objectPattern, { from: FR.objectPatternFrom }),
 	array: _attach(F.arrayPattern, { from: FR.arrayPatternFrom }),
 	nonNull: _attach(F.nonNullExpression, { from: FR.nonNullExpressionFrom }),
-	rest: _attach(F.restPattern, { from: FR.restPatternFrom }),
+	rest: _attach(F.restPattern, { from: FR.restPatternFrom })
 } as const;
 
 export const propertyName = {
@@ -185,42 +213,50 @@ export const propertyName = {
 	string: _attach(F.string, {
 		from: FR.stringFrom,
 		double: _attach(F.stringUFormDouble, { from: FR.stringUFormDoubleFrom }),
-		single: _attach(F.stringUFormSingle, { from: FR.stringUFormSingleFrom }),
+		single: _attach(F.stringUFormSingle, { from: FR.stringUFormSingleFrom })
 	}),
 	number: F.number,
-	computedProperty: _attach(F.computedPropertyName, { from: FR.computedPropertyNameFrom }),
+	computedProperty: _attach(F.computedPropertyName, {
+		from: FR.computedPropertyNameFrom
+	})
 } as const;
 
 export const shorthandPropertyIdentifier = {
-	identifier: F.identifier,
+	identifier: F.identifier
 } as const;
 
 export const shorthandPropertyIdentifierPattern = {
-	identifier: F.identifier,
+	identifier: F.identifier
 } as const;
 
 export const importIdentifier = {
-	identifier: F.identifier,
+	identifier: F.identifier
 } as const;
 
 export const type = {
 	function_: _attach(F.functionType, { from: FR.functionTypeFrom }),
 	readonly: _attach(F.readonlyType, { from: FR.readonlyTypeFrom }),
 	constructor: _attach(F.constructorType, { from: FR.constructorTypeFrom }),
-	infer: _attach(F.inferType, { from: FR.inferTypeFrom }),
+	infer: _attach(F.inferType, { from: FR.inferTypeFrom })
 } as const;
 
 export const tupleTypeMember = {
 	tuple: _attach(F.tupleParameter, { from: FR.tupleParameterFrom }),
-	optionalTuple: _attach(F.optionalTupleParameter, { from: FR.optionalTupleParameterFrom }),
+	optionalTuple: _attach(F.optionalTupleParameter, {
+		from: FR.optionalTupleParameterFrom
+	}),
 	optional: _attach(F.optionalType, { from: FR.optionalTypeFrom }),
-	rest: _attach(F.restType, { from: FR.restTypeFrom }),
+	rest: _attach(F.restType, { from: FR.restTypeFrom })
 } as const;
 
 export const primaryType = {
-	parenthesized: _attach(F.parenthesizedType, { from: FR.parenthesizedTypeFrom }),
+	parenthesized: _attach(F.parenthesizedType, {
+		from: FR.parenthesizedTypeFrom
+	}),
 	predefined: F.predefinedType,
-	nestedType: _attach(F.nestedTypeIdentifier, { from: FR.nestedTypeIdentifierFrom }),
+	nestedType: _attach(F.nestedTypeIdentifier, {
+		from: FR.nestedTypeIdentifierFrom
+	}),
 	generic: _attach(F.genericType, { from: FR.genericTypeFrom }),
 	object: _attach(F.objectType, { from: FR.objectTypeFrom }),
 	array: _attach(F.arrayType, { from: FR.arrayTypeFrom }),
@@ -232,74 +268,90 @@ export const primaryType = {
 	literal: _attach(F.literalType, { from: FR.literalTypeFrom }),
 	lookup: _attach(F.lookupType, { from: FR.lookupTypeFrom }),
 	conditional: _attach(F.conditionalType, { from: FR.conditionalTypeFrom }),
-	templateLiteral: _attach(F.templateLiteralType, { from: FR.templateLiteralTypeFrom }),
+	templateLiteral: _attach(F.templateLiteralType, {
+		from: FR.templateLiteralTypeFrom
+	}),
 	intersection: _attach(F.intersectionType, { from: FR.intersectionTypeFrom }),
-	union: _attach(F.unionType, { from: FR.unionTypeFrom }),
+	union: _attach(F.unionType, { from: FR.unionTypeFrom })
 } as const;
 
 export const ir = {
 	// Node factories
 	program: _attach(F.program, { from: FR.programFrom }),
 	exportStatementTypeExport: _attach(F.exportStatementTypeExport, {
-		from: FR.exportStatementTypeExportFrom,
+		from: FR.exportStatementTypeExportFrom
 	}),
 	exportStatementEqualsExport: _attach(F.exportStatementEqualsExport, {
-		from: FR.exportStatementEqualsExportFrom,
+		from: FR.exportStatementEqualsExportFrom
 	}),
 	exportStatementNamespaceExport: _attach(F.exportStatementNamespaceExport, {
-		from: FR.exportStatementNamespaceExportFrom,
+		from: FR.exportStatementNamespaceExportFrom
 	}),
 	exportStatement: _attach(F.exportStatement, {
 		from: FR.exportStatementFrom,
-		default: _attach(F.exportStatementUFormDefault, { from: FR.exportStatementUFormDefaultFrom }),
+		default: _attach(F.exportStatementUFormDefault, {
+			from: FR.exportStatementUFormDefaultFrom
+		}),
 		type_export: _attach(F.exportStatementUFormTypeExport, {
-			from: FR.exportStatementUFormTypeExportFrom,
+			from: FR.exportStatementUFormTypeExportFrom
 		}),
 		equals_export: _attach(F.exportStatementUFormEqualsExport, {
-			from: FR.exportStatementUFormEqualsExportFrom,
+			from: FR.exportStatementUFormEqualsExportFrom
 		}),
 		namespace_export: _attach(F.exportStatementUFormNamespaceExport, {
-			from: FR.exportStatementUFormNamespaceExportFrom,
-		}),
+			from: FR.exportStatementUFormNamespaceExportFrom
+		})
 	}),
 	namespaceExport: _attach(F.namespaceExport, { from: FR.namespaceExportFrom }),
 	exportClause: _attach(F.exportClause, { from: FR.exportClauseFrom }),
 	exportSpecifier: _attach(F.exportSpecifier, { from: FR.exportSpecifierFrom }),
 	importStatement: _attach(F.importStatement, { from: FR.importStatementFrom }),
 	importClauseNamespaceImport: _attach(F.importClauseNamespaceImport, {
-		from: FR.importClauseNamespaceImportFrom,
+		from: FR.importClauseNamespaceImportFrom
 	}),
 	importClauseNamedImports: _attach(F.importClauseNamedImports, {
-		from: FR.importClauseNamedImportsFrom,
+		from: FR.importClauseNamedImportsFrom
 	}),
 	importClauseDefaultImport: _attach(F.importClauseDefaultImport, {
-		from: FR.importClauseDefaultImportFrom,
+		from: FR.importClauseDefaultImportFrom
 	}),
 	importClause: _attach(F.importClause, {
 		from: FR.importClauseFrom,
 		namespace_import: _attach(F.importClauseUFormNamespaceImport, {
-			from: FR.importClauseUFormNamespaceImportFrom,
+			from: FR.importClauseUFormNamespaceImportFrom
 		}),
 		named_imports: _attach(F.importClauseUFormNamedImports, {
-			from: FR.importClauseUFormNamedImportsFrom,
+			from: FR.importClauseUFormNamedImportsFrom
 		}),
 		default_import: _attach(F.importClauseUFormDefaultImport, {
-			from: FR.importClauseUFormDefaultImportFrom,
-		}),
+			from: FR.importClauseUFormDefaultImportFrom
+		})
 	}),
 	namespaceImport: _attach(F.namespaceImport, { from: FR.namespaceImportFrom }),
 	namedImports: _attach(F.namedImports, { from: FR.namedImportsFrom }),
-	importSpecifierName: _attach(F.importSpecifierName, { from: FR.importSpecifierNameFrom }),
+	importSpecifierName: _attach(F.importSpecifierName, {
+		from: FR.importSpecifierNameFrom
+	}),
 	importSpecifier: _attach(F.importSpecifier, {
 		from: FR.importSpecifierFrom,
-		name: _attach(F.importSpecifierUFormName, { from: FR.importSpecifierUFormNameFrom }),
-		as: _attach(F.importSpecifierUFormAs, { from: FR.importSpecifierUFormAsFrom }),
+		name: _attach(F.importSpecifierUFormName, {
+			from: FR.importSpecifierUFormNameFrom
+		}),
+		as: _attach(F.importSpecifierUFormAs, {
+			from: FR.importSpecifierUFormAsFrom
+		})
 	}),
 	importAttribute: _attach(F.importAttribute, { from: FR.importAttributeFrom }),
-	expressionStatement: _attach(F.expressionStatement, { from: FR.expressionStatementFrom }),
-	variable: _attach(F.variableDeclaration, { from: FR.variableDeclarationFrom }),
+	expressionStatement: _attach(F.expressionStatement, {
+		from: FR.expressionStatementFrom
+	}),
+	variable: _attach(F.variableDeclaration, {
+		from: FR.variableDeclarationFrom
+	}),
 	lexical: _attach(F.lexicalDeclaration, { from: FR.lexicalDeclarationFrom }),
-	variableDeclarator: _attach(F.variableDeclarator, { from: FR.variableDeclaratorFrom }),
+	variableDeclarator: _attach(F.variableDeclarator, {
+		from: FR.variableDeclaratorFrom
+	}),
 	statementBlock: _attach(F.statementBlock, { from: FR.statementBlockFrom }),
 	elseClause: _attach(F.elseClause, { from: FR.elseClauseFrom }),
 	ifStatement: _attach(F.ifStatement, { from: FR.ifStatementFrom }),
@@ -311,8 +363,12 @@ export const ir = {
 	tryStatement: _attach(F.tryStatement, { from: FR.tryStatementFrom }),
 	withStatement: _attach(F.withStatement, { from: FR.withStatementFrom }),
 	breakStatement: _attach(F.breakStatement, { from: FR.breakStatementFrom }),
-	continueStatement: _attach(F.continueStatement, { from: FR.continueStatementFrom }),
-	debuggerStatement: _attach(F.debuggerStatement, { from: FR.debuggerStatementFrom }),
+	continueStatement: _attach(F.continueStatement, {
+		from: FR.continueStatementFrom
+	}),
+	debuggerStatement: _attach(F.debuggerStatement, {
+		from: FR.debuggerStatementFrom
+	}),
 	returnStatement: _attach(F.returnStatement, { from: FR.returnStatementFrom }),
 	throwStatement: _attach(F.throwStatement, { from: FR.throwStatementFrom }),
 	labeled: _attach(F.labeledStatement, { from: FR.labeledStatementFrom }),
@@ -322,85 +378,115 @@ export const ir = {
 	catchClause: _attach(F.catchClause, { from: FR.catchClauseFrom }),
 	finallyClause: _attach(F.finallyClause, { from: FR.finallyClauseFrom }),
 	parenthesizedExpressionSequence: _attach(F.parenthesizedExpressionSequence, {
-		from: FR.parenthesizedExpressionSequenceFrom,
+		from: FR.parenthesizedExpressionSequenceFrom
 	}),
 	parenthesized: _attach(F.parenthesizedExpression, {
 		from: FR.parenthesizedExpressionFrom,
 		typed: _attach(F.parenthesizedExpressionUFormTyped, {
-			from: FR.parenthesizedExpressionUFormTypedFrom,
+			from: FR.parenthesizedExpressionUFormTypedFrom
 		}),
 		sequence: _attach(F.parenthesizedExpressionUFormSequence, {
-			from: FR.parenthesizedExpressionUFormSequenceFrom,
-		}),
+			from: FR.parenthesizedExpressionUFormSequenceFrom
+		})
 	}),
 	yieldExpression: _attach(F.yieldExpression, { from: FR.yieldExpressionFrom }),
 	object: _attach(F.object, { from: FR.objectFrom }),
 	objectPattern: _attach(F.objectPattern, { from: FR.objectPatternFrom }),
-	assignmentPattern: _attach(F.assignmentPattern, { from: FR.assignmentPatternFrom }),
+	assignmentPattern: _attach(F.assignmentPattern, {
+		from: FR.assignmentPatternFrom
+	}),
 	objectAssignmentPattern: _attach(F.objectAssignmentPattern, {
-		from: FR.objectAssignmentPatternFrom,
+		from: FR.objectAssignmentPatternFrom
 	}),
 	array: _attach(F.array, { from: FR.arrayFrom }),
 	arrayPattern: _attach(F.arrayPattern, { from: FR.arrayPatternFrom }),
 	jsxElement2: _attach(F.jsxElement, { from: FR.jsxElementFrom }),
 	jsx: _attach(F.jsxExpression, { from: FR.jsxExpressionFrom }),
-	jsxOpeningElement: _attach(F.jsxOpeningElement, { from: FR.jsxOpeningElementFrom }),
-	nestedIdentifier: _attach(F.nestedIdentifier, { from: FR.nestedIdentifierFrom }),
-	jsxNamespaceName: _attach(F.jsxNamespaceName, { from: FR.jsxNamespaceNameFrom }),
-	jsxClosingElement: _attach(F.jsxClosingElement, { from: FR.jsxClosingElementFrom }),
-	jsxSelfClosingElement: _attach(F.jsxSelfClosingElement, { from: FR.jsxSelfClosingElementFrom }),
+	jsxOpeningElement: _attach(F.jsxOpeningElement, {
+		from: FR.jsxOpeningElementFrom
+	}),
+	nestedIdentifier: _attach(F.nestedIdentifier, {
+		from: FR.nestedIdentifierFrom
+	}),
+	jsxNamespaceName: _attach(F.jsxNamespaceName, {
+		from: FR.jsxNamespaceNameFrom
+	}),
+	jsxClosingElement: _attach(F.jsxClosingElement, {
+		from: FR.jsxClosingElementFrom
+	}),
+	jsxSelfClosingElement: _attach(F.jsxSelfClosingElement, {
+		from: FR.jsxSelfClosingElementFrom
+	}),
 	jsxAttribute2: _attach(F.jsxAttribute, { from: FR.jsxAttributeFrom }),
 	class_: _attach(F.class_, { from: FR.class_From }),
-	classDeclaration: _attach(F.classDeclaration, { from: FR.classDeclarationFrom }),
+	classDeclaration: _attach(F.classDeclaration, {
+		from: FR.classDeclarationFrom
+	}),
 	classHeritageExtendsClause: _attach(F.classHeritageExtendsClause, {
-		from: FR.classHeritageExtendsClauseFrom,
+		from: FR.classHeritageExtendsClauseFrom
 	}),
 	classHeritageImplementsClause: _attach(F.classHeritageImplementsClause, {
-		from: FR.classHeritageImplementsClauseFrom,
+		from: FR.classHeritageImplementsClauseFrom
 	}),
 	classHeritage: _attach(F.classHeritage, {
 		from: FR.classHeritageFrom,
 		extends_clause: _attach(F.classHeritageUFormExtendsClause, {
-			from: FR.classHeritageUFormExtendsClauseFrom,
+			from: FR.classHeritageUFormExtendsClauseFrom
 		}),
 		implements_clause: _attach(F.classHeritageUFormImplementsClause, {
-			from: FR.classHeritageUFormImplementsClauseFrom,
-		}),
+			from: FR.classHeritageUFormImplementsClauseFrom
+		})
 	}),
-	functionExpression: _attach(F.functionExpression, { from: FR.functionExpressionFrom }),
-	functionDeclaration: _attach(F.functionDeclaration, { from: FR.functionDeclarationFrom }),
-	generatorFunction: _attach(F.generatorFunction, { from: FR.generatorFunctionFrom }),
+	functionExpression: _attach(F.functionExpression, {
+		from: FR.functionExpressionFrom
+	}),
+	functionDeclaration: _attach(F.functionDeclaration, {
+		from: FR.functionDeclarationFrom
+	}),
+	generatorFunction: _attach(F.generatorFunction, {
+		from: FR.generatorFunctionFrom
+	}),
 	generatorFunctionDeclaration: _attach(F.generatorFunctionDeclaration, {
-		from: FR.generatorFunctionDeclarationFrom,
+		from: FR.generatorFunctionDeclarationFrom
 	}),
 	arrowFunctionParameter: _attach(F.arrowFunctionParameter, {
-		from: FR.arrowFunctionParameterFrom,
+		from: FR.arrowFunctionParameterFrom
 	}),
 	arrowFunctionCallSignature: _attach(F.arrowFunctionUCallSignature, {
-		from: FR.arrowFunctionUCallSignatureFrom,
+		from: FR.arrowFunctionUCallSignatureFrom
 	}),
 	arrowFunction: _attach(F.arrowFunction, {
 		from: FR.arrowFunctionFrom,
-		parameter: _attach(F.arrowFunctionUFormParameter, { from: FR.arrowFunctionUFormParameterFrom }),
-		_call_signature: _attach(F.arrowFunctionUFormUCallSignature, {
-			from: FR.arrowFunctionUFormUCallSignatureFrom,
+		parameter: _attach(F.arrowFunctionUFormParameter, {
+			from: FR.arrowFunctionUFormParameterFrom
 		}),
+		_call_signature: _attach(F.arrowFunctionUFormUCallSignature, {
+			from: FR.arrowFunctionUFormUCallSignatureFrom
+		})
 	}),
 	call: _attach(F.callExpression, {
 		from: FR.callExpressionFrom,
-		call: _attach(F.callExpressionUFormCall, { from: FR.callExpressionUFormCallFrom }),
-		template_call: _attach(F.callExpressionUFormTemplateCall, {
-			from: FR.callExpressionUFormTemplateCallFrom,
+		call: _attach(F.callExpressionUFormCall, {
+			from: FR.callExpressionUFormCallFrom
 		}),
-		member: _attach(F.callExpressionUFormMember, { from: FR.callExpressionUFormMemberFrom }),
+		template_call: _attach(F.callExpressionUFormTemplateCall, {
+			from: FR.callExpressionUFormTemplateCallFrom
+		}),
+		member: _attach(F.callExpressionUFormMember, {
+			from: FR.callExpressionUFormMemberFrom
+		})
 	}),
 	newExpression: _attach(F.newExpression, { from: FR.newExpressionFrom }),
 	awaitExpression: _attach(F.awaitExpression, { from: FR.awaitExpressionFrom }),
 	member: _attach(F.memberExpression, { from: FR.memberExpressionFrom }),
-	subscript: _attach(F.subscriptExpression, { from: FR.subscriptExpressionFrom }),
-	assignment: _attach(F.assignmentExpression, { from: FR.assignmentExpressionFrom }),
+	subscript: _attach(F.subscriptExpression, {
+		from: FR.subscriptExpressionFrom
+	}),
+	assignment: _attach(F.assignmentExpression, {
+		from: FR.assignmentExpressionFrom
+	}),
 	augmentedAssignment: _attach(F.augmentedAssignmentExpression, {
-		from: FR.augmentedAssignmentExpressionFrom,
+		from: FR.augmentedAssignmentExpressionFrom
 	}),
 	spreadElement: _attach(F.spreadElement, { from: FR.spreadElementFrom }),
 	ternary: _attach(F.ternaryExpression, { from: FR.ternaryExpressionFrom }),
@@ -408,8 +494,12 @@ export const ir = {
 	unary: _attach(F.unaryExpression, { from: FR.unaryExpressionFrom }),
 	update: _attach(F.updateExpression, {
 		from: FR.updateExpressionFrom,
-		postfix: _attach(F.updateExpressionUFormPostfix, { from: FR.updateExpressionUFormPostfixFrom }),
-		prefix: _attach(F.updateExpressionUFormPrefix, { from: FR.updateExpressionUFormPrefixFrom }),
+		postfix: _attach(F.updateExpressionUFormPostfix, {
+			from: FR.updateExpressionUFormPostfixFrom
+		}),
+		prefix: _attach(F.updateExpressionUFormPrefix, {
+			from: FR.updateExpressionUFormPrefixFrom
+		})
 	}),
 	sequence: _attach(F.sequenceExpression, { from: FR.sequenceExpressionFrom }),
 	stringDouble: _attach(F.stringDouble, { from: FR.stringDoubleFrom }),
@@ -417,114 +507,172 @@ export const ir = {
 	string: _attach(F.string, {
 		from: FR.stringFrom,
 		double: _attach(F.stringUFormDouble, { from: FR.stringUFormDoubleFrom }),
-		single: _attach(F.stringUFormSingle, { from: FR.stringUFormSingleFrom }),
+		single: _attach(F.stringUFormSingle, { from: FR.stringUFormSingleFrom })
 	}),
 	templateString: _attach(F.templateString, { from: FR.templateStringFrom }),
-	templateSubstitution: _attach(F.templateSubstitution, { from: FR.templateSubstitutionFrom }),
+	templateSubstitution: _attach(F.templateSubstitution, {
+		from: FR.templateSubstitutionFrom
+	}),
 	regex: _attach(F.regex, { from: FR.regexFrom }),
 	arguments: _attach(F.arguments_, { from: FR.arguments_From }),
 	decorator: _attach(F.decorator, { from: FR.decoratorFrom }),
-	decoratorMember: _attach(F.decoratorMemberExpression, { from: FR.decoratorMemberExpressionFrom }),
-	decoratorCall: _attach(F.decoratorCallExpression, { from: FR.decoratorCallExpressionFrom }),
+	decoratorMember: _attach(F.decoratorMemberExpression, {
+		from: FR.decoratorMemberExpressionFrom
+	}),
+	decoratorCall: _attach(F.decoratorCallExpression, {
+		from: FR.decoratorCallExpressionFrom
+	}),
 	classBody: _attach(F.classBody, { from: FR.classBodyFrom }),
 	field: _attach(F.fieldDefinition, { from: FR.fieldDefinitionFrom }),
-	formalParameters: _attach(F.formalParameters, { from: FR.formalParametersFrom }),
-	classStaticBlock: _attach(F.classStaticBlock, { from: FR.classStaticBlockFrom }),
+	formalParameters: _attach(F.formalParameters, {
+		from: FR.formalParametersFrom
+	}),
+	classStaticBlock: _attach(F.classStaticBlock, {
+		from: FR.classStaticBlockFrom
+	}),
 	restPattern: _attach(F.restPattern, { from: FR.restPatternFrom }),
 	method: _attach(F.methodDefinition, { from: FR.methodDefinitionFrom }),
 	pair: _attach(F.pair, { from: FR.pairFrom }),
 	pairPattern: _attach(F.pairPattern, { from: FR.pairPatternFrom }),
-	computedPropertyName: _attach(F.computedPropertyName, { from: FR.computedPropertyNameFrom }),
-	publicField: _attach(F.publicFieldDefinition, { from: FR.publicFieldDefinitionFrom }),
+	computedPropertyName: _attach(F.computedPropertyName, {
+		from: FR.computedPropertyNameFrom
+	}),
+	publicField: _attach(F.publicFieldDefinition, {
+		from: FR.publicFieldDefinitionFrom
+	}),
 	nonNull: _attach(F.nonNullExpression, { from: FR.nonNullExpressionFrom }),
 	methodSignature: _attach(F.methodSignature, { from: FR.methodSignatureFrom }),
 	abstractMethodSignature: _attach(F.abstractMethodSignature, {
-		from: FR.abstractMethodSignatureFrom,
+		from: FR.abstractMethodSignatureFrom
 	}),
-	functionSignature: _attach(F.functionSignature, { from: FR.functionSignatureFrom }),
+	functionSignature: _attach(F.functionSignature, {
+		from: FR.functionSignatureFrom
+	}),
 	decoratorParenthesized: _attach(F.decoratorParenthesizedExpression, {
-		from: FR.decoratorParenthesizedExpressionFrom,
+		from: FR.decoratorParenthesizedExpressionFrom
 	}),
 	typeAssertion: _attach(F.typeAssertion, { from: FR.typeAssertionFrom }),
 	as: _attach(F.asExpression, { from: FR.asExpressionFrom }),
-	satisfies: _attach(F.satisfiesExpression, { from: FR.satisfiesExpressionFrom }),
-	instantiation: _attach(F.instantiationExpression, { from: FR.instantiationExpressionFrom }),
-	importRequireClause: _attach(F.importRequireClause, { from: FR.importRequireClauseFrom }),
+	satisfies: _attach(F.satisfiesExpression, {
+		from: FR.satisfiesExpressionFrom
+	}),
+	instantiation: _attach(F.instantiationExpression, {
+		from: FR.instantiationExpressionFrom
+	}),
+	importRequireClause: _attach(F.importRequireClause, {
+		from: FR.importRequireClauseFrom
+	}),
 	extendsClause: _attach(F.extendsClause, { from: FR.extendsClauseFrom }),
-	implementsClause: _attach(F.implementsClause, { from: FR.implementsClauseFrom }),
+	implementsClause: _attach(F.implementsClause, {
+		from: FR.implementsClauseFrom
+	}),
 	ambient: _attach(F.ambientDeclaration, { from: FR.ambientDeclarationFrom }),
-	abstractClass: _attach(F.abstractClassDeclaration, { from: FR.abstractClassDeclarationFrom }),
+	abstractClass: _attach(F.abstractClassDeclaration, {
+		from: FR.abstractClassDeclarationFrom
+	}),
 	module: _attach(F.module, { from: FR.moduleFrom }),
 	internalModule: _attach(F.internalModule, { from: FR.internalModuleFrom }),
 	importAlias: _attach(F.importAlias, { from: FR.importAliasFrom }),
-	nestedTypeIdentifier: _attach(F.nestedTypeIdentifier, { from: FR.nestedTypeIdentifierFrom }),
-	interface: _attach(F.interfaceDeclaration, { from: FR.interfaceDeclarationFrom }),
-	extendsTypeClause: _attach(F.extendsTypeClause, { from: FR.extendsTypeClauseFrom }),
+	nestedTypeIdentifier: _attach(F.nestedTypeIdentifier, {
+		from: FR.nestedTypeIdentifierFrom
+	}),
+	interface: _attach(F.interfaceDeclaration, {
+		from: FR.interfaceDeclarationFrom
+	}),
+	extendsTypeClause: _attach(F.extendsTypeClause, {
+		from: FR.extendsTypeClauseFrom
+	}),
 	enumDeclaration: _attach(F.enumDeclaration, { from: FR.enumDeclarationFrom }),
 	enumBody: _attach(F.enumBody, { from: FR.enumBodyFrom }),
 	enumAssignment: _attach(F.enumAssignment, { from: FR.enumAssignmentFrom }),
-	typeAlias: _attach(F.typeAliasDeclaration, { from: FR.typeAliasDeclarationFrom }),
-	requiredParameter: _attach(F.requiredParameter, { from: FR.requiredParameterFrom }),
-	optionalParameter: _attach(F.optionalParameter, { from: FR.optionalParameterFrom }),
-	omittingTypeAnnotation: _attach(F.omittingTypeAnnotation, {
-		from: FR.omittingTypeAnnotationFrom,
+	typeAlias: _attach(F.typeAliasDeclaration, {
+		from: FR.typeAliasDeclarationFrom
 	}),
-	addingTypeAnnotation: _attach(F.addingTypeAnnotation, { from: FR.addingTypeAnnotationFrom }),
-	optingTypeAnnotation: _attach(F.optingTypeAnnotation, { from: FR.optingTypeAnnotationFrom }),
+	requiredParameter: _attach(F.requiredParameter, {
+		from: FR.requiredParameterFrom
+	}),
+	optionalParameter: _attach(F.optionalParameter, {
+		from: FR.optionalParameterFrom
+	}),
+	omittingTypeAnnotation: _attach(F.omittingTypeAnnotation, {
+		from: FR.omittingTypeAnnotationFrom
+	}),
+	addingTypeAnnotation: _attach(F.addingTypeAnnotation, {
+		from: FR.addingTypeAnnotationFrom
+	}),
+	optingTypeAnnotation: _attach(F.optingTypeAnnotation, {
+		from: FR.optingTypeAnnotationFrom
+	}),
 	typeAnnotation: _attach(F.typeAnnotation, { from: FR.typeAnnotationFrom }),
 	asserts: _attach(F.asserts, { from: FR.assertsFrom }),
-	assertsAnnotation: _attach(F.assertsAnnotation, { from: FR.assertsAnnotationFrom }),
+	assertsAnnotation: _attach(F.assertsAnnotation, {
+		from: FR.assertsAnnotationFrom
+	}),
 	tupleParameter: _attach(F.tupleParameter, { from: FR.tupleParameterFrom }),
 	optionalTupleParameter: _attach(F.optionalTupleParameter, {
-		from: FR.optionalTupleParameterFrom,
+		from: FR.optionalTupleParameterFrom
 	}),
 	optionalType: _attach(F.optionalType, { from: FR.optionalTypeFrom }),
 	restType: _attach(F.restType, { from: FR.restTypeFrom }),
 	constructorType: _attach(F.constructorType, { from: FR.constructorTypeFrom }),
 	templateType: _attach(F.templateType, { from: FR.templateTypeFrom }),
-	templateLiteralType: _attach(F.templateLiteralType, { from: FR.templateLiteralTypeFrom }),
+	templateLiteralType: _attach(F.templateLiteralType, {
+		from: FR.templateLiteralTypeFrom
+	}),
 	inferType: _attach(F.inferType, { from: FR.inferTypeFrom }),
 	conditionalType: _attach(F.conditionalType, { from: FR.conditionalTypeFrom }),
 	genericType: _attach(F.genericType, { from: FR.genericTypeFrom }),
 	typePredicate: _attach(F.typePredicate, { from: FR.typePredicateFrom }),
 	typePredicateAnnotation: _attach(F.typePredicateAnnotation, {
-		from: FR.typePredicateAnnotationFrom,
+		from: FR.typePredicateAnnotationFrom
 	}),
 	typeQuery: _attach(F.typeQuery, { from: FR.typeQueryFrom }),
 	indexTypeQuery: _attach(F.indexTypeQuery, { from: FR.indexTypeQueryFrom }),
 	lookupType: _attach(F.lookupType, { from: FR.lookupTypeFrom }),
-	mappedTypeClause: _attach(F.mappedTypeClause, { from: FR.mappedTypeClauseFrom }),
+	mappedTypeClause: _attach(F.mappedTypeClause, {
+		from: FR.mappedTypeClauseFrom
+	}),
 	literalType: _attach(F.literalType, { from: FR.literalTypeFrom }),
 	flowMaybeType: _attach(F.flowMaybeType, { from: FR.flowMaybeTypeFrom }),
-	parenthesizedType: _attach(F.parenthesizedType, { from: FR.parenthesizedTypeFrom }),
+	parenthesizedType: _attach(F.parenthesizedType, {
+		from: FR.parenthesizedTypeFrom
+	}),
 	typeArguments: _attach(F.typeArguments, { from: FR.typeArgumentsFrom }),
 	objectType: _attach(F.objectType, {
 		from: FR.objectTypeFrom,
 		curly: F.objectTypeCurly,
-		flow: F.objectTypeFlow,
+		flow: F.objectTypeFlow
 	}),
 	callSignature: _attach(F.callSignature, { from: FR.callSignatureFrom }),
-	propertySignature: _attach(F.propertySignature, { from: FR.propertySignatureFrom }),
+	propertySignature: _attach(F.propertySignature, {
+		from: FR.propertySignatureFrom
+	}),
 	typeParameters: _attach(F.typeParameters, { from: FR.typeParametersFrom }),
 	typeParameter: _attach(F.typeParameter, { from: FR.typeParameterFrom }),
 	defaultType: _attach(F.defaultType, { from: FR.defaultTypeFrom }),
 	constraint: _attach(F.constraint, { from: FR.constraintFrom }),
-	constructSignature: _attach(F.constructSignature, { from: FR.constructSignatureFrom }),
+	constructSignature: _attach(F.constructSignature, {
+		from: FR.constructSignatureFrom
+	}),
 	indexSignatureMappedTypeClause: _attach(F.indexSignatureMappedTypeClause, {
-		from: FR.indexSignatureMappedTypeClauseFrom,
+		from: FR.indexSignatureMappedTypeClauseFrom
 	}),
 	indexSignature: _attach(F.indexSignature, {
 		from: FR.indexSignatureFrom,
-		colon: _attach(F.indexSignatureUFormColon, { from: FR.indexSignatureUFormColonFrom }),
-		mapped_type_clause: _attach(F.indexSignatureUFormMappedTypeClause, {
-			from: FR.indexSignatureUFormMappedTypeClauseFrom,
+		colon: _attach(F.indexSignatureUFormColon, {
+			from: FR.indexSignatureUFormColonFrom
 		}),
+		mapped_type_clause: _attach(F.indexSignatureUFormMappedTypeClause, {
+			from: FR.indexSignatureUFormMappedTypeClauseFrom
+		})
 	}),
 	arrayType: _attach(F.arrayType, { from: FR.arrayTypeFrom }),
 	tupleType: _attach(F.tupleType, { from: FR.tupleTypeFrom }),
 	readonlyType: _attach(F.readonlyType, { from: FR.readonlyTypeFrom }),
 	unionType: _attach(F.unionType, { from: FR.unionTypeFrom }),
-	intersectionType: _attach(F.intersectionType, { from: FR.intersectionTypeFrom }),
+	intersectionType: _attach(F.intersectionType, {
+		from: FR.intersectionTypeFrom
+	}),
 	functionType: _attach(F.functionType, { from: FR.functionTypeFrom }),
 
 	// Keyword factories
@@ -582,5 +730,5 @@ export const ir = {
 	importIdentifier,
 	type,
 	tupleTypeMember,
-	primaryType,
+	primaryType
 } as const;

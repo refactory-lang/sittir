@@ -63,7 +63,7 @@ Expected: all tests pass. Record counts.
 Delete these two lines at the bottom of `packages/codegen/src/dsl/index.ts`:
 
 ```ts
-import { installGrammarWrapper } from "./synthetic-rules.ts";
+import { installGrammarWrapper } from './synthetic-rules.ts';
 installGrammarWrapper();
 ```
 
@@ -113,11 +113,14 @@ Remove the dual-writes to module-level accumulators. When wire context isn't act
 In `packages/codegen/src/dsl/synthetic-rules.ts`, replace the existing `registerSyntheticRule` function (lines 45–78) with:
 
 ```ts
-export function registerSyntheticRule(name: string, content: RuntimeRule): void {
+export function registerSyntheticRule(
+	name: string,
+	content: RuntimeRule
+): void {
 	if (!wireRegisterSyntheticRule(name, content)) {
 		throw new Error(
 			`registerSyntheticRule('${name}'): called outside a wire() context. ` +
-				`Wrap your grammar() opts in wire({...}) so synthetic rules route through it.`,
+				`Wrap your grammar() opts in wire({...}) so synthetic rules route through it.`
 		);
 	}
 }
@@ -128,11 +131,14 @@ export function registerSyntheticRule(name: string, content: RuntimeRule): void 
 Replace the existing function (lines 121–140) with:
 
 ```ts
-export function registerPolymorphVariant(parentKind: string, childSuffix: string): void {
+export function registerPolymorphVariant(
+	parentKind: string,
+	childSuffix: string
+): void {
 	if (!wireRegisterPolymorphVariant(parentKind, childSuffix)) {
 		throw new Error(
 			`registerPolymorphVariant('${parentKind}'/'${childSuffix}'): called outside a wire() context. ` +
-				`variant()/alias() must be resolved inside a rule callback that runs under wire().`,
+				`variant()/alias() must be resolved inside a rule callback that runs under wire().`
 		);
 	}
 }
@@ -146,7 +152,9 @@ Replace the existing function (lines 177–188) with:
 export function registerConflict(names: readonly string[]): void {
 	if (names.length === 0) return;
 	if (!wireRegisterConflict(names)) {
-		throw new Error(`registerConflict(${JSON.stringify(names)}): called outside a wire() context.`);
+		throw new Error(
+			`registerConflict(${JSON.stringify(names)}): called outside a wire() context.`
+		);
 	}
 }
 ```
@@ -202,13 +210,13 @@ Append to `packages/codegen/src/dsl/wire.ts` near the other context accessors (a
  */
 export function withWireContext<T>(
 	ruleKind: string | null,
-	fn: (ctx: WireContext) => T,
+	fn: (ctx: WireContext) => T
 ): { result: T; ctx: WireContext } {
 	const ctx: WireContext = {
 		deposits: new Map(),
 		polymorphVariants: [],
 		conflictGroups: [],
-		currentRuleKind: ruleKind,
+		currentRuleKind: ruleKind
 	};
 	const prev = currentContext;
 	currentContext = ctx;
@@ -266,8 +274,8 @@ In `packages/codegen/src/compiler/evaluate.ts`:
   import {
   	withSyntheticRuleScope,
   	setCurrentRuleKind,
-  	drainPolymorphVariants,
-  } from "../dsl/synthetic-rules.ts";
+  	drainPolymorphVariants
+  } from '../dsl/synthetic-rules.ts';
   ```
 
   with (empty — we stop importing from synthetic-rules entirely):
@@ -282,7 +290,8 @@ In `packages/codegen/src/compiler/evaluate.ts`:
   // (variant/alias placeholder resolution). Pull them out once
   // evaluation is done and merge into the rules map.
   evaluateRuleFunctions(opts, baseRules, refs, rules);
-  const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+  const wireCtx = (opts as unknown as { __wireContext__?: WireContext })
+  	.__wireContext__;
   if (wireCtx) injectSyntheticRules(wireCtx.deposits, rules);
   ```
 
@@ -297,7 +306,7 @@ In `packages/codegen/src/compiler/evaluate.ts`:
   	opts: GrammarOptions,
   	baseRules: Record<string, Rule>,
   	refs: SymbolRef[],
-  	rules: Record<string, Rule>,
+  	rules: Record<string, Rule>
   ): void {
   	for (const [name, ruleFn] of Object.entries(opts.rules)) {
   		const $ = createProxy(name, refs);
@@ -312,7 +321,8 @@ In `packages/codegen/src/compiler/evaluate.ts`:
 
   ```ts
   function drainPolymorphMetadata(opts: GrammarOptions): PolymorphVariant[] {
-  	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+  	const wireCtx = (opts as unknown as { __wireContext__?: WireContext })
+  		.__wireContext__;
   	return wireCtx ? [...wireCtx.polymorphVariants] : [];
   }
   ```
@@ -320,8 +330,8 @@ In `packages/codegen/src/compiler/evaluate.ts`:
   Add the `PolymorphVariant` import at the top of `evaluate.ts`:
 
   ```ts
-  import type { WireContext } from "../dsl/wire.ts";
-  import type { PolymorphVariant } from "./types.ts";
+  import type { WireContext } from '../dsl/wire.ts';
+  import type { PolymorphVariant } from './types.ts';
   ```
 
   (Check that `types.ts` exports `PolymorphVariant` — it does per the grep earlier.)
@@ -331,15 +341,15 @@ In `packages/codegen/src/compiler/evaluate.ts`:
 Replace `packages/codegen/src/dsl/__tests__/polymorph-metadata.test.ts` with:
 
 ```ts
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { transform } from "../transform.ts";
-import { variant } from "../variant.ts";
-import { withWireContext } from "../wire.ts";
-import type { Rule } from "../../compiler/rule.ts";
-import { installFakeDsl, restoreFakeDsl } from "./_test-helpers.ts";
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { transform } from '../transform.ts';
+import { variant } from '../variant.ts';
+import { withWireContext } from '../wire.ts';
+import type { Rule } from '../../compiler/rule.ts';
+import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 
-const sym = (name: string): Rule => ({ type: "symbol", name }) as Rule;
-const str = (value: string): Rule => ({ type: "string", value }) as Rule;
+const sym = (name: string): Rule => ({ type: 'symbol', name }) as Rule;
+const str = (value: string): Rule => ({ type: 'string', value }) as Rule;
 
 beforeAll(() => {
 	installFakeDsl();
@@ -348,70 +358,74 @@ afterAll(() => {
 	restoreFakeDsl();
 });
 
-describe("polymorph metadata registration", () => {
-	it("registers variant when alias placeholder is resolved in transform", () => {
+describe('polymorph metadata registration', () => {
+	it('registers variant when alias placeholder is resolved in transform', () => {
 		const original = {
-			type: "seq",
+			type: 'seq',
 			members: [
-				sym("left"),
+				sym('left'),
 				{
-					type: "choice",
+					type: 'choice',
 					members: [
-						{ type: "seq", members: [str("="), sym("right")] },
-						{ type: "seq", members: [str(":"), sym("type")] },
-					],
-				},
-			],
+						{ type: 'seq', members: [str('='), sym('right')] },
+						{ type: 'seq', members: [str(':'), sym('type')] }
+					]
+				}
+			]
 		} as Rule;
 
-		const { ctx } = withWireContext("assignment", () => {
+		const { ctx } = withWireContext('assignment', () => {
 			transform(original, {
-				"1/0": variant("eq"),
-				"1/1": variant("type"),
+				'1/0': variant('eq'),
+				'1/1': variant('type')
 			});
 		});
 
-		expect(ctx.polymorphVariants.filter((v) => v.parent === "assignment")).toEqual([
-			{ parent: "assignment", child: "eq" },
-			{ parent: "assignment", child: "type" },
+		expect(
+			ctx.polymorphVariants.filter((v) => v.parent === 'assignment')
+		).toEqual([
+			{ parent: 'assignment', child: 'eq' },
+			{ parent: 'assignment', child: 'type' }
 		]);
 		expect(ctx.deposits.size).toBe(2);
 	});
 
-	it("throws when variant() is used without a current rule kind", () => {
+	it('throws when variant() is used without a current rule kind', () => {
 		const original = {
-			type: "seq",
-			members: [sym("a"), { type: "choice", members: [sym("b"), sym("c")] }],
+			type: 'seq',
+			members: [sym('a'), { type: 'choice', members: [sym('b'), sym('c')] }]
 		} as Rule;
 
 		expect(() => {
 			withWireContext(null, () => {
 				transform(original, {
-					"1/0": variant("b"),
+					'1/0': variant('b')
 				});
 			});
 		}).toThrow(/no current rule kind/);
 	});
 
-	it("accumulates variants from multiple rules", () => {
+	it('accumulates variants from multiple rules', () => {
 		const makeChoice = () =>
 			({
-				type: "seq",
-				members: [{ type: "choice", members: [sym("a"), sym("b")] }],
+				type: 'seq',
+				members: [{ type: 'choice', members: [sym('a'), sym('b')] }]
 			}) as Rule;
 
-		const { ctx: ctx1 } = withWireContext("rule_one", () => {
-			transform(makeChoice(), { "0/0": variant("a"), "0/1": variant("b") });
+		const { ctx: ctx1 } = withWireContext('rule_one', () => {
+			transform(makeChoice(), { '0/0': variant('a'), '0/1': variant('b') });
 		});
-		const { ctx: ctx2 } = withWireContext("rule_two", () => {
-			transform(makeChoice(), { "0/0": variant("x") });
+		const { ctx: ctx2 } = withWireContext('rule_two', () => {
+			transform(makeChoice(), { '0/0': variant('x') });
 		});
 
 		expect(ctx1.polymorphVariants).toEqual([
-			{ parent: "rule_one", child: "a" },
-			{ parent: "rule_one", child: "b" },
+			{ parent: 'rule_one', child: 'a' },
+			{ parent: 'rule_one', child: 'b' }
 		]);
-		expect(ctx2.polymorphVariants).toEqual([{ parent: "rule_two", child: "x" }]);
+		expect(ctx2.polymorphVariants).toEqual([
+			{ parent: 'rule_two', child: 'x' }
+		]);
 	});
 });
 ```
@@ -427,84 +441,105 @@ Replace `packages/codegen/src/dsl/__tests__/transform-hoist.test.ts` with:
  * transform-hoist.test.ts — unit coverage for tryHoistSiblingVariants.
  */
 
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { transform } from "../transform.ts";
-import { variant } from "../variant.ts";
-import { withWireContext } from "../wire.ts";
-import { installFakeDsl, restoreFakeDsl } from "./_test-helpers.ts";
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { transform } from '../transform.ts';
+import { variant } from '../variant.ts';
+import { withWireContext } from '../wire.ts';
+import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 
-describe("tryHoistSiblingVariants (via transform)", () => {
+describe('tryHoistSiblingVariants (via transform)', () => {
 	beforeAll(() => installFakeDsl());
 	afterAll(() => restoreFakeDsl());
 
-	it("hoists sibling variants through a parent prec wrapper and registers them as self-conflicts", () => {
-		const { result: patched, ctx } = withWireContext("demo", () => {
+	it('hoists sibling variants through a parent prec wrapper and registers them as self-conflicts', () => {
+		const { result: patched, ctx } = withWireContext('demo', () => {
 			const g = globalThis as any;
 			const original = g.prec.left(
 				2,
 				g.seq(
-					{ type: "string", value: "[" } as any,
-					g.choice({ type: "blank" } as any, g.repeat({ type: "symbol", name: "X" } as any)),
-					{ type: "string", value: "]" } as any,
-				),
+					{ type: 'string', value: '[' } as any,
+					g.choice(
+						{ type: 'blank' } as any,
+						g.repeat({ type: 'symbol', name: 'X' } as any)
+					),
+					{ type: 'string', value: ']' } as any
+				)
 			);
 			return transform(original, {
-				"1/0": variant("empty"),
-				"1/1": variant("list"),
+				'1/0': variant('empty'),
+				'1/1': variant('list')
 			}) as any;
 		});
 
-		expect(patched.type).toBe("choice");
+		expect(patched.type).toBe('choice');
 		expect(patched.members).toHaveLength(2);
-		expect(patched.members[0].type).toBe("symbol");
-		expect(patched.members[0].name).toBe("demo_empty");
-		expect(patched.members[1].name).toBe("demo_list");
+		expect(patched.members[0].type).toBe('symbol');
+		expect(patched.members[0].name).toBe('demo_empty');
+		expect(patched.members[1].name).toBe('demo_list');
 
-		expect(ctx.deposits.has("demo_empty")).toBe(true);
-		expect(ctx.deposits.has("demo_list")).toBe(true);
-		const emptyBody: any = ctx.deposits.get("demo_empty");
-		expect(emptyBody.type).toBe("prec_left");
+		expect(ctx.deposits.has('demo_empty')).toBe(true);
+		expect(ctx.deposits.has('demo_list')).toBe(true);
+		const emptyBody: any = ctx.deposits.get('demo_empty');
+		expect(emptyBody.type).toBe('prec_left');
 		expect(emptyBody.value).toBe(2);
 
-		expect(ctx.conflictGroups).toContainEqual(["demo_empty", "demo_list"]);
-		expect(ctx.conflictGroups).toContainEqual(["demo_empty"]);
-		expect(ctx.conflictGroups).toContainEqual(["demo_list"]);
+		expect(ctx.conflictGroups).toContainEqual(['demo_empty', 'demo_list']);
+		expect(ctx.conflictGroups).toContainEqual(['demo_empty']);
+		expect(ctx.conflictGroups).toContainEqual(['demo_list']);
 
-		expect(ctx.polymorphVariants).toContainEqual({ parent: "demo", child: "empty" });
-		expect(ctx.polymorphVariants).toContainEqual({ parent: "demo", child: "list" });
+		expect(ctx.polymorphVariants).toContainEqual({
+			parent: 'demo',
+			child: 'empty'
+		});
+		expect(ctx.polymorphVariants).toContainEqual({
+			parent: 'demo',
+			child: 'list'
+		});
 	});
 
-	it("skips hoist when no variant alternative matches empty (non-empty alts go per-patch)", () => {
-		const { ctx } = withWireContext("nonempty", () => {
+	it('skips hoist when no variant alternative matches empty (non-empty alts go per-patch)', () => {
+		const { ctx } = withWireContext('nonempty', () => {
 			const g = globalThis as any;
 			const original = g.seq(
-				{ type: "string", value: "(" } as any,
-				g.choice({ type: "symbol", name: "X" } as any, { type: "symbol", name: "Y" } as any),
-				{ type: "string", value: ")" } as any,
+				{ type: 'string', value: '(' } as any,
+				g.choice(
+					{ type: 'symbol', name: 'X' } as any,
+					{ type: 'symbol', name: 'Y' } as any
+				),
+				{ type: 'string', value: ')' } as any
 			);
 			transform(original, {
-				"1/0": variant("x"),
-				"1/1": variant("y"),
+				'1/0': variant('x'),
+				'1/1': variant('y')
 			});
 		});
 		expect(ctx.conflictGroups).toEqual([]);
 	});
 
-	it("bails on mixed choice positions (variants at different choicePos)", () => {
-		const { ctx } = withWireContext("mixed", () => {
+	it('bails on mixed choice positions (variants at different choicePos)', () => {
+		const { ctx } = withWireContext('mixed', () => {
 			const g = globalThis as any;
 			const original = g.seq(
-				g.choice({ type: "symbol", name: "A" } as any, { type: "symbol", name: "B" } as any),
-				{ type: "string", value: "|" } as any,
-				g.choice({ type: "symbol", name: "C" } as any, { type: "symbol", name: "D" } as any),
+				g.choice(
+					{ type: 'symbol', name: 'A' } as any,
+					{ type: 'symbol', name: 'B' } as any
+				),
+				{ type: 'string', value: '|' } as any,
+				g.choice(
+					{ type: 'symbol', name: 'C' } as any,
+					{ type: 'symbol', name: 'D' } as any
+				)
 			);
 			transform(original, {
-				"0/0": variant("left_a"),
-				"2/0": variant("right_c"),
+				'0/0': variant('left_a'),
+				'2/0': variant('right_c')
 			});
 		});
 		expect(ctx.conflictGroups).toEqual([]);
-		expect(ctx.polymorphVariants.map((v) => v.child).sort()).toEqual(["left_a", "right_c"]);
+		expect(ctx.polymorphVariants.map((v) => v.child).sort()).toEqual([
+			'left_a',
+			'right_c'
+		]);
 	});
 });
 ```
@@ -598,8 +633,8 @@ Move `maybeKeywordSymbol` into `field.ts` (its semantic home — field-name → 
 Prepend to `packages/codegen/src/dsl/field.ts` (after the existing imports, before `type Input`):
 
 ```ts
-import { registerSyntheticRule } from "./synthetic-rules.ts";
-import { isStringType, type RuntimeRule } from "./runtime-shapes.ts";
+import { registerSyntheticRule } from './synthetic-rules.ts';
+import { isStringType, type RuntimeRule } from './runtime-shapes.ts';
 
 /**
  * Shared `FIELD(name, bare-STRING)` → `FIELD(name, SYMBOL(_kw_<name>))`
@@ -621,12 +656,12 @@ import { isStringType, type RuntimeRule } from "./runtime-shapes.ts";
 export function maybeKeywordSymbol(
 	fieldName: string,
 	content: unknown,
-	wrapSyntheticBody?: (body: RuntimeRule) => RuntimeRule,
+	wrapSyntheticBody?: (body: RuntimeRule) => RuntimeRule
 ): unknown {
 	const c = content as { type?: string; value?: string };
-	if (!c || typeof c.type !== "string") return content;
+	if (!c || typeof c.type !== 'string') return content;
 	if (!isStringType(c.type)) return content;
-	const isUpperCase = c.type === "STRING";
+	const isUpperCase = c.type === 'STRING';
 	const hiddenName = `_kw_${fieldName}`;
 	const nativePrec = (
 		globalThis as {
@@ -634,13 +669,15 @@ export function maybeKeywordSymbol(
 		}
 	).prec;
 	let precBody: RuntimeRule = (
-		typeof nativePrec?.left === "function" ? nativePrec.left(1, content) : content
+		typeof nativePrec?.left === 'function'
+			? nativePrec.left(1, content)
+			: content
 	) as RuntimeRule;
 	if (wrapSyntheticBody) precBody = wrapSyntheticBody(precBody);
 	registerSyntheticRule(hiddenName, precBody);
 	return {
-		type: isUpperCase ? "SYMBOL" : "symbol",
-		name: hiddenName,
+		type: isUpperCase ? 'SYMBOL' : 'symbol',
+		name: hiddenName
 	};
 }
 ```
@@ -664,8 +701,8 @@ import {
 	registerSyntheticRule,
 	registerConflict,
 	wrapInPrecStack,
-	matchesEmpty,
-} from "./synthetic-rules.ts";
+	matchesEmpty
+} from './synthetic-rules.ts';
 ```
 
 to:
@@ -678,9 +715,9 @@ import {
 	registerSyntheticRule,
 	registerConflict,
 	wrapInPrecStack,
-	matchesEmpty,
-} from "./synthetic-rules.ts";
-import { maybeKeywordSymbol } from "./field.ts";
+	matchesEmpty
+} from './synthetic-rules.ts';
+import { maybeKeywordSymbol } from './field.ts';
 ```
 
 - [ ] **Step 4: Type-check + test**
@@ -713,7 +750,7 @@ next to field() instead of living in the synthetic-rules graveyard."
 Append to `packages/codegen/src/dsl/transform-path.ts`:
 
 ```ts
-import type { RuntimeRule as RuntimeRule2 } from "./runtime-shapes.ts";
+import type { RuntimeRule as RuntimeRule2 } from './runtime-shapes.ts';
 
 /**
  * Wrap `content` in the accumulated prec stack collected during path
@@ -724,7 +761,10 @@ import type { RuntimeRule as RuntimeRule2 } from "./runtime-shapes.ts";
 export function wrapInPrecStack(
 	content: RuntimeRule2,
 	precStack: readonly RuntimeRule2[] | undefined,
-	reconstructPrec: (wrapper: RuntimeRule2, newContent: RuntimeRule2) => RuntimeRule2,
+	reconstructPrec: (
+		wrapper: RuntimeRule2,
+		newContent: RuntimeRule2
+	) => RuntimeRule2
 ): RuntimeRule2 {
 	if (!precStack?.length) return content;
 	let result = content;
@@ -754,7 +794,7 @@ export function registerAliasedVariant(
 	hiddenName: string,
 	aliasValue: string,
 	originalMember: RuntimeRule,
-	bodyWrapper: (body: RuntimeRule) => RuntimeRule,
+	bodyWrapper: (body: RuntimeRule) => RuntimeRule
 ): RuntimeRule {
 	const isUpperCase = originalMember.type === originalMember.type.toUpperCase();
 	const wasEmpty = matchesEmpty(originalMember);
@@ -762,22 +802,23 @@ export function registerAliasedVariant(
 	if (wasEmpty && !factored) {
 		throw new Error(
 			`variant()/alias(): can't extract '${hiddenName}' — its content matches the empty string and no non-empty core could be factored out. ` +
-				`Tree-sitter rejects syntactic rules that match empty. Restructure the parent rule (e.g. lift the empty case outside the choice) before splitting.`,
+				`Tree-sitter rejects syntactic rules that match empty. Restructure the parent rule (e.g. lift the empty case outside the choice) before splitting.`
 		);
 	}
 	const body = factored ? factored.nonEmpty : originalMember;
 	registerSyntheticRule(hiddenName, bodyWrapper(body as RuntimeRule));
 	const aliasNode = {
-		type: isUpperCase ? "ALIAS" : "alias",
-		content: { type: isUpperCase ? "SYMBOL" : "symbol", name: hiddenName },
+		type: isUpperCase ? 'ALIAS' : 'alias',
+		content: { type: isUpperCase ? 'SYMBOL' : 'symbol', name: hiddenName },
 		named: true,
-		value: aliasValue,
+		value: aliasValue
 	} as unknown as RuntimeRule;
 	if (factored) {
-		const optional = (globalThis as { optional?: (c: unknown) => unknown }).optional;
-		if (typeof optional !== "function") {
+		const optional = (globalThis as { optional?: (c: unknown) => unknown })
+			.optional;
+		if (typeof optional !== 'function') {
 			throw new Error(
-				"transform: no global optional() found — variant()/alias() on empty-matching content needs runtime optional()",
+				'transform: no global optional() found — variant()/alias() on empty-matching content needs runtime optional()'
 			);
 		}
 		return optional(aliasNode) as RuntimeRule;
@@ -812,7 +853,7 @@ function extractNonEmpty(rule: RuntimeRule): { nonEmpty: unknown } | null {
 		const r = rule as unknown as Record<string, unknown>;
 		const nonEmpty: Record<string, unknown> = {
 			...r,
-			type: t === "REPEAT" ? "REPEAT1" : "repeat1",
+			type: t === 'REPEAT' ? 'REPEAT1' : 'repeat1'
 		};
 		return { nonEmpty };
 	}
@@ -828,7 +869,9 @@ function extractNonEmpty(rule: RuntimeRule): { nonEmpty: unknown } | null {
 		return { nonEmpty: { type: t, members: nonEmpty } };
 	}
 	if (isSeqType(t)) {
-		const members = [...(rule as unknown as { members: RuntimeRule[] }).members];
+		const members = [
+			...(rule as unknown as { members: RuntimeRule[] }).members
+		];
 		for (let i = 0; i < members.length; i++) {
 			const factored = extractNonEmpty(members[i]!);
 			if (factored) {
@@ -853,17 +896,21 @@ import {
 	reconstructWrapper,
 	reconstructPrec,
 	reconstructContainer,
-	wrapInPrecStack,
-} from "./transform-path.ts";
-import { isFieldPlaceholder, type FieldPlaceholder, maybeKeywordSymbol } from "./field.ts";
-import { isAliasPlaceholder, type AliasPlaceholder } from "./alias.ts";
-import { isVariantPlaceholder, type VariantPlaceholder } from "./variant.ts";
+	wrapInPrecStack
+} from './transform-path.ts';
+import {
+	isFieldPlaceholder,
+	type FieldPlaceholder,
+	maybeKeywordSymbol
+} from './field.ts';
+import { isAliasPlaceholder, type AliasPlaceholder } from './alias.ts';
+import { isVariantPlaceholder, type VariantPlaceholder } from './variant.ts';
 import {
 	getCurrentRuleKind,
 	registerPolymorphVariant,
 	registerSyntheticRule,
-	registerConflict,
-} from "./synthetic-rules.ts";
+	registerConflict
+} from './synthetic-rules.ts';
 import {
 	isFieldLike,
 	isPrecWrapper,
@@ -873,8 +920,8 @@ import {
 	isBlankType,
 	isOptionalType,
 	isPlainRepeatType,
-	type RuntimeRule,
-} from "./runtime-shapes.ts";
+	type RuntimeRule
+} from './runtime-shapes.ts';
 ```
 
 - [ ] **Step 4: Delete the moved definitions from `synthetic-rules.ts`**
@@ -925,15 +972,19 @@ Final state: `synthetic-rules.ts` should now only hold three wire-only registrat
 In `packages/codegen/src/dsl/transform.ts`, replace the `synthetic-rules.ts` import line with direct wire-module calls. Adjust the top-of-file imports:
 
 ```ts
-import { isFieldPlaceholder, type FieldPlaceholder, maybeKeywordSymbol } from "./field.ts";
-import { isAliasPlaceholder, type AliasPlaceholder } from "./alias.ts";
-import { isVariantPlaceholder, type VariantPlaceholder } from "./variant.ts";
+import {
+	isFieldPlaceholder,
+	type FieldPlaceholder,
+	maybeKeywordSymbol
+} from './field.ts';
+import { isAliasPlaceholder, type AliasPlaceholder } from './alias.ts';
+import { isVariantPlaceholder, type VariantPlaceholder } from './variant.ts';
 import {
 	wireRegisterSyntheticRule,
 	wireRegisterPolymorphVariant,
 	wireRegisterConflict,
-	wireGetCurrentRuleKind,
-} from "./wire.ts";
+	wireGetCurrentRuleKind
+} from './wire.ts';
 ```
 
 Then replace call sites inside `transform.ts`:
@@ -944,7 +995,7 @@ Then replace call sites inside `transform.ts`:
   ```ts
   if (!wireRegisterPolymorphVariant(parentKind, name)) {
   	throw new Error(
-  		`variant('${name}'): no active wire() context — variant() must run inside a rule callback under wire()`,
+  		`variant('${name}'): no active wire() context — variant() must run inside a rule callback under wire()`
   	);
   }
   ```
@@ -953,7 +1004,9 @@ Then replace call sites inside `transform.ts`:
 
   ```ts
   if (!wireRegisterSyntheticRule(hidden, body)) {
-  	throw new Error(`registerSyntheticRule('${hidden}'): no active wire() context`);
+  	throw new Error(
+  		`registerSyntheticRule('${hidden}'): no active wire() context`
+  	);
   }
   ```
 
@@ -974,7 +1027,7 @@ In `packages/codegen/src/dsl/field.ts`, replace `import { registerSyntheticRule 
 ```ts
 if (!wireRegisterSyntheticRule(hiddenName, precBody)) {
 	throw new Error(
-		`field('${fieldName}', <STRING>): no active wire() context — call must occur inside a rule callback wrapped by wire()`,
+		`field('${fieldName}', <STRING>): no active wire() context — call must occur inside a rule callback wrapped by wire()`
 	);
 }
 ```
@@ -1230,13 +1283,13 @@ Rewrite `packages/codegen/src/dsl/index.ts`:
  * internal layout is a detail — consumers always import from here.
  */
 
-export { transform, insert, replace } from "./transform/transform.ts";
-export { role } from "./primitives/role.ts";
-export { enrich } from "./enrich.ts";
-export { alias } from "./primitives/alias.ts";
-export { variant } from "./primitives/variant.ts";
-export { field } from "./primitives/field.ts";
-export { wire } from "./wire/wire.ts";
+export { transform, insert, replace } from './transform/transform.ts';
+export { role } from './primitives/role.ts';
+export { enrich } from './enrich.ts';
+export { alias } from './primitives/alias.ts';
+export { variant } from './primitives/variant.ts';
+export { field } from './primitives/field.ts';
+export { wire } from './wire/wire.ts';
 ```
 
 - [ ] **Step 5: Update `enrich.ts` + any other top-level `dsl/` file imports**
@@ -1248,7 +1301,7 @@ In `packages/codegen/src/dsl/enrich.ts`, adjust any imports it has of sibling DS
 In `packages/codegen/src/compiler/evaluate.ts`, adjust the wire import:
 
 ```ts
-import type { WireContext } from "../dsl/wire/wire.ts";
+import type { WireContext } from '../dsl/wire/wire.ts';
 ```
 
 (And `../dsl/role.ts` → `../dsl/primitives/role.ts` if used.)

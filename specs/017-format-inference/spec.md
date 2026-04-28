@@ -7,9 +7,9 @@
 
 ## Overview
 
-The grammar's per-rule template defines the *shape* of rendered source — the tokens that appear, their ordering, the separators the grammar mandates. Source text adds *format*: any choice the grammar treats as semantically equivalent. Today's render path preserves some spelling incidentally through `$text` on leaf/token nodes, but it does not model or guarantee the residual branch-level choices that live at separator, wrapper, indentation, and trivia boundaries. Any source with non-canonical layout or optional-token choices therefore cannot reliably survive a parse-render roundtrip.
+The grammar's per-rule template defines the _shape_ of rendered source — the tokens that appear, their ordering, the separators the grammar mandates. Source text adds _format_: any choice the grammar treats as semantically equivalent. Today's render path preserves some spelling incidentally through `$text` on leaf/token nodes, but it does not model or guarantee the residual branch-level choices that live at separator, wrapper, indentation, and trivia boundaries. Any source with non-canonical layout or optional-token choices therefore cannot reliably survive a parse-render roundtrip.
 
-**Operational definition**: format is *any source-text variation that produces the same AST after parse*. Concrete categories include:
+**Operational definition**: format is _any source-text variation that produces the same AST after parse_. Concrete categories include:
 
 - **Whitespace** — tab vs space indent, space around operators, blank-line distribution, trailing whitespace.
 - **Quote style** — Python `'foo'` vs `"foo"`; JS `'foo'` vs `"foo"` vs template literals; Rust raw strings `r"…"` vs regular strings.
@@ -27,7 +27,7 @@ This feature closes that gap by attaching a structured `$format` record to `Node
 
 Spec 016 (parity-and-regressions) is concurrently fixing template-shape failures — the cluster of 16 known TS-mode failures whose root cause is the template, not the source format. 016 amended its SC-001 to scope only to template-shape failures; format-attributable failures (whitespace divergence, optional-separator choice differences) are deferred to 017's input corpus. 017's success is measured in part by clearing that deferred set.
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Parse-then-render reproduces source byte-for-byte (Priority: P1)
 
@@ -88,9 +88,9 @@ A maintainer running validators with `SITTIR_BACKEND=native` (the Rust Askama pa
 - **Factory-built node inserted into a parsed tree**: factory output has no `$format` (it has no source provenance). Render emits template-canonical bytes for that subtree; the surrounding parsed tree retains its `$format`-driven output. The composite render shows the boundary as a style discontinuity (acceptable — out of scope for 017 to harmonise via formatter behaviour).
 - **Same fixture parsed under different upstream tree-sitter versions**: if the parse tree shape changes (e.g. a node kind splits, or a field is renamed in the grammar), `$format` extraction produces different records, but each is internally consistent with the tree it was derived from. No silent drift between extraction and application.
 - **Source span is empty (zero-byte)**: extractor records empty format; render emits nothing. No special-casing required.
-- **Render under format-canonical mode**: a caller may want to render *without* `$format` (e.g. to normalise a tree). The render path supports this via an opt-in mode; default is "apply `$format` if present."
+- **Render under format-canonical mode**: a caller may want to render _without_ `$format` (e.g. to normalise a tree). The render path supports this via an opt-in mode; default is "apply `$format` if present."
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -114,7 +114,7 @@ A maintainer running validators with `SITTIR_BACKEND=native` (the Rust Askama pa
 - **Format Applier**: the single code path per backend (one in `@sittir/core` for the TS render; one in each napi crate's render path for native) that consumes `$format` during render. Grammar-agnostic.
 - **Format Corpus Manifest**: the committed file at `specs/017-format-inference/format-corpus.json`. Enumerates the acceptance fixtures 017 must pass, grouped by grammar and tagged with the format dimension under test (layout, separators, optional tokens, literal spelling, trivia placement, etc.). If 016 produced format-deferred fixtures they appear here with `seedSource = "016-deferred"`; any additional 017-discovered fixtures are added with `seedSource = "017-measured"`.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

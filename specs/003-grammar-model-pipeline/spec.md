@@ -184,7 +184,7 @@ Named node with fields and optionally children. Has members and rule.
 
 ```typescript
 interface BranchModel extends NodeModelBase {
-	modelType: "branch";
+	modelType: 'branch';
 	kind: string;
 	fields: FieldModel[];
 	children?: ChildModel[];
@@ -199,7 +199,7 @@ Named node with children but no fields. Has members and rule.
 
 ```typescript
 interface ContainerModel extends NodeModelBase {
-	modelType: "container";
+	modelType: 'container';
 	kind: string;
 	children: ChildModel[];
 	members: NodeMember[];
@@ -213,7 +213,7 @@ Named node with variable text. No fields, no children, no fixed values.
 
 ```typescript
 interface LeafModel extends NodeModelBase {
-	modelType: "leaf";
+	modelType: 'leaf';
 	kind: string;
 	pattern: string | null;
 	rule: EnrichedRule | null;
@@ -226,7 +226,7 @@ Named node with a fixed set of text values. Like a leaf but with enumerated opti
 
 ```typescript
 interface EnumModel extends NodeModelBase {
-	modelType: "enum";
+	modelType: 'enum';
 	kind: string;
 	values: string[];
 	rule: EnrichedRule | null;
@@ -239,7 +239,7 @@ Named node with constant text. Zero-arg factory.
 
 ```typescript
 interface KeywordModel extends NodeModelBase {
-	modelType: "keyword";
+	modelType: 'keyword';
 	kind: string;
 	text: string;
 	rule: EnrichedRule | null;
@@ -252,7 +252,7 @@ Anonymous token. Has a fixed text value (the token itself).
 
 ```typescript
 interface TokenModel extends NodeModelBase {
-	modelType: "token";
+	modelType: 'token';
 	kind: string;
 	rule: EnrichedRule | null;
 }
@@ -264,7 +264,7 @@ Abstract grouping node. Not emitted directly, used for type unions.
 
 ```typescript
 interface SupertypeModel extends NodeModelBase {
-	modelType: "supertype";
+	modelType: 'supertype';
 	kind: string;
 	subtypes: string[];
 	rule: EnrichedRule | null;
@@ -277,30 +277,30 @@ Exported from the model module. Each narrows the discriminated union and makes t
 
 ```typescript
 export function isBranch(n: NodeModel): n is BranchModel {
-	return n.modelType === "branch";
+	return n.modelType === 'branch';
 }
 export function isContainer(n: NodeModel): n is ContainerModel {
-	return n.modelType === "container";
+	return n.modelType === 'container';
 }
 export function isLeaf(n: NodeModel): n is LeafModel {
-	return n.modelType === "leaf";
+	return n.modelType === 'leaf';
 }
 export function isEnum(n: NodeModel): n is EnumModel {
-	return n.modelType === "enum";
+	return n.modelType === 'enum';
 }
 export function isKeyword(n: NodeModel): n is KeywordModel {
-	return n.modelType === "keyword";
+	return n.modelType === 'keyword';
 }
 export function isToken(n: NodeModel): n is TokenModel {
-	return n.modelType === "token";
+	return n.modelType === 'token';
 }
 export function isSupertype(n: NodeModel): n is SupertypeModel {
-	return n.modelType === "supertype";
+	return n.modelType === 'supertype';
 }
 
 /** Branch or Container — nodes with members and rules */
 export function isStructural(n: NodeModel): n is BranchModel | ContainerModel {
-	return n.modelType === "branch" || n.modelType === "container";
+	return n.modelType === 'branch' || n.modelType === 'container';
 }
 ```
 
@@ -360,10 +360,10 @@ interface ListChildModel {
 
 ```typescript
 type NodeMember =
-	| { member: "field"; field: FieldModel }
-	| { member: "token"; value: string; optional: boolean }
-	| { member: "child"; child: ChildModel }
-	| { member: "choice"; branches: NodeMember[][] };
+	| { member: 'field'; field: FieldModel }
+	| { member: 'token'; value: string; optional: boolean }
+	| { member: 'child'; child: ChildModel }
+	| { member: 'choice'; branches: NodeMember[][] };
 ```
 
 ### Kind Projections (derived, computed on-demand)
@@ -401,16 +401,16 @@ After step 12 (hydrate), all models are promoted to hydrated variants via a type
 // Core transformation: replace kinds + freeze
 // kinds: string[] → kinds: HydratedNodeModel[] (references are hydrated too)
 type Hydrate<T> = T extends { kinds: string[] }
-	? Readonly<Omit<T, "kinds"> & { kinds: HydratedNodeModel[] }>
+	? Readonly<Omit<T, 'kinds'> & { kinds: HydratedNodeModel[] }>
 	: T extends { fields: FieldModel[] }
 		? Readonly<
-				Omit<T, "fields" | "children"> & {
+				Omit<T, 'fields' | 'children'> & {
 					fields: Hydrate<FieldModel>[];
 					children?: Hydrate<ChildModel>[];
 				}
 			>
 		: T extends { children: ChildModel[] }
-			? Readonly<Omit<T, "children"> & { children: Hydrate<ChildModel>[] }>
+			? Readonly<Omit<T, 'children'> & { children: Hydrate<ChildModel>[] }>
 			: Readonly<T>;
 
 // Every model subtype has a hydrated variant

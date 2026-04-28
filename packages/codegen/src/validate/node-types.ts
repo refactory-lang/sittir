@@ -13,9 +13,9 @@
  * CLI behind a `--validate-node-types` flag.
  */
 
-import type { LinkedGrammar } from "../compiler/types.ts";
-import { loadRawEntries } from "./node-types-loader.ts";
-import type { RawNodeEntry } from "./node-types-loader.ts";
+import type { LinkedGrammar } from '../compiler/types.ts';
+import { loadRawEntries } from './node-types-loader.ts';
+import type { RawNodeEntry } from './node-types-loader.ts';
 
 export interface NodeTypesValidationResult {
 	readonly grammar: string;
@@ -26,18 +26,18 @@ export interface NodeTypesValidationResult {
 
 export type NodeTypesDiscrepancy =
 	| {
-			readonly kind: "missing_rule";
+			readonly kind: 'missing_rule';
 			readonly node: string;
 			readonly detail: string;
 	  }
 	| {
-			readonly kind: "visibility_mismatch";
+			readonly kind: 'visibility_mismatch';
 			readonly node: string;
-			readonly expected: "named" | "anonymous";
-			readonly actual: "named" | "anonymous";
+			readonly expected: 'named' | 'anonymous';
+			readonly actual: 'named' | 'anonymous';
 	  }
 	| {
-			readonly kind: "supertype_mismatch";
+			readonly kind: 'supertype_mismatch';
 			readonly node: string;
 			readonly detail: string;
 	  };
@@ -52,7 +52,7 @@ export type NodeTypesDiscrepancy =
  */
 export function validateAgainstNodeTypes(
 	grammar: string,
-	linked: LinkedGrammar,
+	linked: LinkedGrammar
 ): NodeTypesValidationResult {
 	let rawEntries: RawNodeEntry[];
 	try {
@@ -81,9 +81,9 @@ export function validateAgainstNodeTypes(
 			// rule means Link dropped it (likely via a grammar-level
 			// inline) OR the rule was renamed.
 			discrepancies.push({
-				kind: "missing_rule",
+				kind: 'missing_rule',
 				node: entry.type,
-				detail: "declared in node-types.json but not present in linked rules",
+				detail: 'declared in node-types.json but not present in linked rules'
 			});
 			continue;
 		}
@@ -93,47 +93,49 @@ export function validateAgainstNodeTypes(
 		// should be classified as `supertype` or an equivalent
 		// choice of the same subtype set.
 		if (entry.subtypes) {
-			const expected = new Set(entry.subtypes.filter((s) => s.named).map((s) => s.type));
-			if (rule.type === "supertype") {
+			const expected = new Set(
+				entry.subtypes.filter((s) => s.named).map((s) => s.type)
+			);
+			if (rule.type === 'supertype') {
 				const actual = new Set(rule.subtypes);
 				if (!setsEqual(expected, actual)) {
 					discrepancies.push({
-						kind: "supertype_mismatch",
+						kind: 'supertype_mismatch',
 						node: entry.type,
 						detail:
-							`expected subtypes {${[...expected].sort().join(", ")}}, ` +
-							`got {${[...actual].sort().join(", ")}}`,
+							`expected subtypes {${[...expected].sort().join(', ')}}, ` +
+							`got {${[...actual].sort().join(', ')}}`
 					});
 				} else {
 					matched++;
 				}
-			} else if (rule.type === "choice") {
+			} else if (rule.type === 'choice') {
 				// Hidden choice that Link kept as raw — accept if
 				// members cover the expected set.
 				const actual = new Set<string>();
 				for (const m of rule.members) {
-					const inner = m.type === "variant" ? m.content : m;
-					if (inner.type === "symbol") actual.add(inner.name);
+					const inner = m.type === 'variant' ? m.content : m;
+					if (inner.type === 'symbol') actual.add(inner.name);
 				}
 				if (!setsEqual(expected, actual)) {
 					discrepancies.push({
-						kind: "supertype_mismatch",
+						kind: 'supertype_mismatch',
 						node: entry.type,
 						detail:
 							`supertype in node-types.json, but linked choice ` +
-							`members {${[...actual].sort().join(", ")}} differ from ` +
-							`expected {${[...expected].sort().join(", ")}}`,
+							`members {${[...actual].sort().join(', ')}} differ from ` +
+							`expected {${[...expected].sort().join(', ')}}`
 					});
 				} else {
 					matched++;
 				}
 			} else {
 				discrepancies.push({
-					kind: "supertype_mismatch",
+					kind: 'supertype_mismatch',
 					node: entry.type,
 					detail:
 						`node-types.json marks '${entry.type}' as a supertype, ` +
-						`but Link classified it as '${rule.type}'`,
+						`but Link classified it as '${rule.type}'`
 				});
 			}
 		} else {
@@ -145,27 +147,29 @@ export function validateAgainstNodeTypes(
 		grammar,
 		total: rawEntries.filter((e) => e.named).length,
 		matched,
-		discrepancies,
+		discrepancies
 	};
 }
 
 /** Human-readable summary — one line per discrepancy, max 200 chars. */
-export function formatNodeTypesValidationReport(result: NodeTypesValidationResult): string {
+export function formatNodeTypesValidationReport(
+	result: NodeTypesValidationResult
+): string {
 	const lines: string[] = [];
-	const icon = result.discrepancies.length === 0 ? "  v" : "  x";
+	const icon = result.discrepancies.length === 0 ? '  v' : '  x';
 	lines.push(
-		`${icon} ${result.matched}/${result.total} node-types.json agreement (${result.discrepancies.length} discrepancies)`,
+		`${icon} ${result.matched}/${result.total} node-types.json agreement (${result.discrepancies.length} discrepancies)`
 	);
 	for (const d of result.discrepancies) {
-		if (d.kind === "missing_rule") {
+		if (d.kind === 'missing_rule') {
 			lines.push(`    x ${d.node}: ${d.detail}`);
-		} else if (d.kind === "visibility_mismatch") {
+		} else if (d.kind === 'visibility_mismatch') {
 			lines.push(`    x ${d.node}: visibility ${d.expected} → ${d.actual}`);
 		} else {
 			lines.push(`    x ${d.node}: ${d.detail}`);
 		}
 	}
-	return lines.join("\n");
+	return lines.join('\n');
 }
 
 function setsEqual<T>(a: Set<T>, b: Set<T>): boolean {

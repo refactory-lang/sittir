@@ -26,11 +26,11 @@
  * round-trip, from(), render) will be working on a corrupted view.
  */
 
-import { readFileSync, readdirSync } from "node:fs";
-import { join } from "node:path";
-import { readNode } from "@sittir/core";
-import type { AnyNodeData, NodeId } from "@sittir/types";
-import { loadRawEntries } from "./node-types-loader.ts";
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { readNode } from '@sittir/core';
+import type { AnyNodeData, NodeId } from '@sittir/types';
+import { loadRawEntries } from './node-types-loader.ts';
 import {
 	loadLanguageForGrammar,
 	treeHandle,
@@ -40,8 +40,8 @@ import {
 	collectKinds,
 	emitValidatorMetrics,
 	type TSNode,
-	type TSTree,
-} from "./common.ts";
+	type TSTree
+} from './common.ts';
 
 // Tree-sitter adapter + tree walkers imported from validate/common.ts.
 // See that file for the canonical TSNode/TSTree shapes (backed by web-tree-sitter's
@@ -58,38 +58,40 @@ interface CorpusEntry {
 
 function parseCorpus(content: string): CorpusEntry[] {
 	const entries: CorpusEntry[] = [];
-	const lines = content.split("\n");
+	const lines = content.split('\n');
 	let i = 0;
 	while (i < lines.length) {
-		if (!lines[i]!.startsWith("====")) {
+		if (!lines[i]!.startsWith('====')) {
 			i++;
 			continue;
 		}
 		i++;
-		const name = lines[i]?.trim() ?? "";
+		const name = lines[i]?.trim() ?? '';
 		i++;
-		while (i < lines.length && lines[i]!.startsWith("====")) i++;
+		while (i < lines.length && lines[i]!.startsWith('====')) i++;
 		const sourceLines: string[] = [];
 		while (i < lines.length && !lines[i]!.match(/^-{3,}$/)) {
 			sourceLines.push(lines[i]!);
 			i++;
 		}
-		while (i < lines.length && !lines[i]!.startsWith("====")) i++;
-		const source = sourceLines.join("\n").trim();
+		while (i < lines.length && !lines[i]!.startsWith('====')) i++;
+		const source = sourceLines.join('\n').trim();
 		if (source) entries.push({ name, source });
 	}
 	return entries;
 }
 
-const FIXTURES_DIR = new URL("../../fixtures", import.meta.url).pathname;
+const FIXTURES_DIR = new URL('../../fixtures', import.meta.url).pathname;
 
 function loadCorpusEntries(grammar: string): CorpusEntry[] {
 	const entries: CorpusEntry[] = [];
 	const files = readdirSync(FIXTURES_DIR).filter(
-		(f) => f.startsWith(`${grammar}-`) && f.endsWith(".txt"),
+		(f) => f.startsWith(`${grammar}-`) && f.endsWith('.txt')
 	);
 	for (const file of files) {
-		entries.push(...parseCorpus(readFileSync(join(FIXTURES_DIR, file), "utf-8")));
+		entries.push(
+			...parseCorpus(readFileSync(join(FIXTURES_DIR, file), 'utf-8'))
+		);
 	}
 	return entries;
 }
@@ -103,7 +105,11 @@ function loadCorpusEntries(grammar: string): CorpusEntry[] {
  * truth for "what fields should readNode surface for this kind".
  */
 function buildKindFieldMap(
-	rawEntries: { type: string; named: boolean; fields?: Record<string, unknown> }[],
+	rawEntries: {
+		type: string;
+		named: boolean;
+		fields?: Record<string, unknown>;
+	}[]
 ): Map<string, Set<string>> {
 	const result = new Map<string, Set<string>>();
 	for (const entry of rawEntries) {
@@ -185,14 +191,14 @@ function countUnfieldedNamedChildren(node: TSNode): number {
 function countPromotedOverrideChildren(
 	data: AnyNodeData,
 	liveFieldNames: Set<string>,
-	overrideFields: Set<string>,
+	overrideFields: Set<string>
 ): number {
 	let count = 0;
 	for (const [fname, value] of Object.entries(data.$fields ?? {})) {
 		if (liveFieldNames.has(fname)) continue; // tree-sitter field, not override
 		if (!overrideFields.has(fname)) continue; // neither override nor live
 		if (Array.isArray(value)) count += value.length;
-		else if (value && typeof value === "object") count += 1;
+		else if (value && typeof value === 'object') count += 1;
 	}
 	return count;
 }
@@ -202,7 +208,7 @@ function checkNodeData(
 	node: TSNode,
 	data: AnyNodeData,
 	expectedFields: Set<string>,
-	overrideFields: Set<string>,
+	overrideFields: Set<string>
 ): string | null {
 	// 1. $type must match
 	if (data.$type !== kind) {
@@ -218,10 +224,16 @@ function checkNodeData(
 		}
 	}
 
-	const dataChildrenCount = (data.$children ?? []).filter((c: any) => c?.$named !== false).length;
+	const dataChildrenCount = (data.$children ?? []).filter(
+		(c: any) => c?.$named !== false
+	).length;
 
 	const expectedNamedUnfielded = countUnfieldedNamedChildren(node);
-	const promotedChildCount = countPromotedOverrideChildren(data, liveFieldNames, overrideFields);
+	const promotedChildCount = countPromotedOverrideChildren(
+		data,
+		liveFieldNames,
+		overrideFields
+	);
 
 	if (dataChildrenCount + promotedChildCount < expectedNamedUnfielded) {
 		return (
@@ -248,7 +260,9 @@ export interface ReadNodeRoundTripResult {
 	issues: NodeIssue[];
 }
 
-export async function validateReadNodeRoundTrip(grammar: string): Promise<ReadNodeRoundTripResult> {
+export async function validateReadNodeRoundTrip(
+	grammar: string
+): Promise<ReadNodeRoundTripResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
@@ -296,7 +310,7 @@ export async function validateReadNodeRoundTrip(grammar: string): Promise<ReadNo
 				issues.push({
 					kind,
 					instance: entry.name,
-					message: `readNode threw: ${(e as Error).message.slice(0, 80)}`,
+					message: `readNode threw: ${(e as Error).message.slice(0, 80)}`
 				});
 				continue;
 			}
@@ -315,12 +329,14 @@ export async function validateReadNodeRoundTrip(grammar: string): Promise<ReadNo
 	return { grammar, total, pass, fail: total - pass - skip, skip, issues };
 }
 
-export function formatReadNodeRoundTripReport(result: ReadNodeRoundTripResult): string {
+export function formatReadNodeRoundTripReport(
+	result: ReadNodeRoundTripResult
+): string {
 	const lines: string[] = [];
-	const icon = result.issues.length === 0 ? "v" : "x";
+	const icon = result.issues.length === 0 ? 'v' : 'x';
 	lines.push(
 		`  ${icon} ${result.pass}/${result.total} readNode round-trip` +
-			` (${result.skip} skipped, ${result.issues.length} issues)`,
+			` (${result.skip} skipped, ${result.issues.length} issues)`
 	);
 	if (result.issues.length > 0) {
 		for (const issue of result.issues.slice(0, 30)) {
@@ -330,5 +346,5 @@ export function formatReadNodeRoundTripReport(result: ReadNodeRoundTripResult): 
 			lines.push(`    … and ${result.issues.length - 30} more`);
 		}
 	}
-	return lines.join("\n");
+	return lines.join('\n');
 }

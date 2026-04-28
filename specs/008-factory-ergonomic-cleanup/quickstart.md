@@ -9,7 +9,7 @@ Consumer-facing examples showing the new surface. Use these as acceptance-test s
 **After US1 lands.** Any of these three expressions resolve to the same concrete type:
 
 ```ts
-import type { FunctionItem, ConfigFor, NamespaceMap } from "@sittir/rust";
+import type { FunctionItem, ConfigFor, NamespaceMap } from '@sittir/rust';
 
 // 1. Namespace sugar (preferred for specific code)
 function a(c: FunctionItem.Config): FunctionItem.Fluent {
@@ -22,13 +22,13 @@ function b<K extends keyof NamespaceMap>(c: ConfigFor<K>) {
 }
 
 // 3. Direct map access (preferred for programmatic type utilities)
-type X = NamespaceMap["function_item"]["Config"];
+type X = NamespaceMap['function_item']['Config'];
 
 // Type-level proof: all three are the same type.
 type _Check =
-	FunctionItem.Config extends ConfigFor<"function_item">
-		? ConfigFor<"function_item"> extends NamespaceMap["function_item"]["Config"]
-			? NamespaceMap["function_item"]["Config"] extends FunctionItem.Config
+	FunctionItem.Config extends ConfigFor<'function_item'>
+		? ConfigFor<'function_item'> extends NamespaceMap['function_item']['Config']
+			? NamespaceMap['function_item']['Config'] extends FunctionItem.Config
 				? true
 				: never
 			: never
@@ -45,8 +45,8 @@ Acceptance: `_Check` resolves to `true`, confirming SC-010.
 **After US2 lands.** Narrow an `AnyNodeData` or `AnyTreeNode` through two orthogonal axes:
 
 ```ts
-import { is, isTree, isNode, assert } from "@sittir/rust";
-import type { AnyNodeData, AnyTreeNode } from "@sittir/types";
+import { is, isTree, isNode, assert } from '@sittir/rust';
+import type { AnyNodeData, AnyTreeNode } from '@sittir/types';
 
 declare const v: AnyNodeData | AnyTreeNode;
 
@@ -58,7 +58,7 @@ if (is.functionItem(v)) {
 
 // Kind + shape — resolves to concrete type via NamespaceMap
 if (is.functionItem(v) && isTree(v)) {
-	v.field("name"); // ✓ FunctionItem.Tree — typed field access (tree-sitter API keeps .type / .text())
+	v.field('name'); // ✓ FunctionItem.Tree — typed field access (tree-sitter API keeps .type / .text())
 	v.range(); // ✓ tree-node method
 }
 
@@ -68,9 +68,9 @@ if (is.functionItem(v) && isNode(v)) {
 }
 
 // Generic inverse form
-const k = "function_item" as const;
+const k = 'function_item' as const;
 if (is.kind(v, k) && isTree(v)) {
-	v.field("name"); // ✓ resolves FunctionItemTree via NamespaceMap[K]['Tree']
+	v.field('name'); // ✓ resolves FunctionItemTree via NamespaceMap[K]['Tree']
 }
 
 // Supertype narrowing
@@ -101,11 +101,11 @@ Acceptance: each composition narrows as described, verified by a type-level `exp
 **After US3 lands.** The resolver recognises already-resolved input and returns it unchanged:
 
 ```ts
-import { ir } from "@sittir/rust";
+import { ir } from '@sittir/rust';
 
 const factoryOutput = ir.functionItem({
-	name: "fibonacci",
-	body: ir.block({ statements: [] }),
+	name: 'fibonacci',
+	body: ir.block({ statements: [] })
 });
 
 // Same JS object — resolver is identity on NodeData
@@ -114,12 +114,12 @@ console.assert(returnValue === factoryOutput); // ✓
 
 // Loose bag — resolver translates, returns new fluent node
 const fromBag = ir.functionItem.from({
-	name: "fibonacci",
-	body: { statements: [] }, // nested bag — resolver descends
+	name: 'fibonacci',
+	body: { statements: [] } // nested bag — resolver descends
 });
 console.assert(fromBag !== factoryOutput); // ✓ different instance
 console.assert(fromBag.$fields.name !== undefined); // ✓ resolved (post-US7)
-console.assert(fromBag.$source === "factory"); // ✓ provenance tag
+console.assert(fromBag.$source === 'factory'); // ✓ provenance tag
 ```
 
 Acceptance: `===` holds for the NodeData input case (SC-005c); bag input produces a freshly-constructed fluent node.
@@ -131,7 +131,7 @@ Acceptance: `===` holds for the NodeData input case (SC-005c); bag input produce
 **After US5 lands.** Both access forms point at the same factory+resolver bundle:
 
 ```ts
-import { ir, expression, pattern } from "@sittir/rust";
+import { ir, expression, pattern } from '@sittir/rust';
 
 // ir.expression.* is attached to ir; `expression` is also exported
 // standalone for tree-shakeable access.
@@ -156,8 +156,12 @@ Acceptance: identical `_attach` bundle from both paths (SC-012) — verified by
 
 ```ts
 // consumer.ts
-import { ir } from "@sittir/rust";
-console.log(ir.functionItem({ name: "hello", body: ir.block({ statements: [] }) }).render());
+import { ir } from '@sittir/rust';
+console.log(
+	ir
+		.functionItem({ name: 'hello', body: ir.block({ statements: [] }) })
+		.render()
+);
 ```
 
 ```bash
@@ -264,17 +268,17 @@ named `type`. Pre-008 this collided with the NodeData kind discriminant
 Post-US7 the discriminant is `$type`, so the two are unambiguous:
 
 ```ts
-import { ir } from "@sittir/python";
+import { ir } from '@sittir/python';
 
 const stmt = ir.typeAliasStatement({
-	type: "type", // the `type` keyword field (bag still uses bare `type` key)
-	left: ir.typeIdentifier("Foo"),
-	right: ir.typeIdentifier("u64"),
+	type: 'type', // the `type` keyword field (bag still uses bare `type` key)
+	left: ir.typeIdentifier('Foo'),
+	right: ir.typeIdentifier('u64')
 });
 
-console.assert(stmt.$type === "type_alias_statement"); // ✓ kind discriminant
-console.assert(stmt.$fields.type === "type"); // ✓ keyword field
-console.assert(stmt.$source === "factory"); // ✓ provenance
+console.assert(stmt.$type === 'type_alias_statement'); // ✓ kind discriminant
+console.assert(stmt.$fields.type === 'type'); // ✓ keyword field
+console.assert(stmt.$source === 'factory'); // ✓ provenance
 ```
 
 Acceptance: no cast workaround needed in generated `from.ts` — the

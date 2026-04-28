@@ -60,24 +60,27 @@ import type {
 	Rule,
 	SeqRule,
 	StringRule,
-	SymbolRule,
-} from "../compiler/rule.ts";
+	SymbolRule
+} from '../compiler/rule.ts';
 
 export type RuntimeRule = { readonly type: string };
 
-export type SymbolLike = { type: "symbol" | "SYMBOL"; name: string };
+export type SymbolLike = { type: 'symbol' | 'SYMBOL'; name: string };
 
 export type FieldLike = {
-	type: "field" | "FIELD";
+	type: 'field' | 'FIELD';
 	name: string;
 	content: unknown;
 	source?: string;
 };
 
 export function isSymbolLike(v: unknown): v is SymbolLike {
-	if (!v || typeof v !== "object") return false;
+	if (!v || typeof v !== 'object') return false;
 	const t = (v as { type?: unknown }).type;
-	if ((t === "symbol" || t === "SYMBOL") && typeof (v as { name?: unknown }).name === "string")
+	if (
+		(t === 'symbol' || t === 'SYMBOL') &&
+		typeof (v as { name?: unknown }).name === 'string'
+	)
 		return true;
 	return extractSymbolName(v) !== undefined;
 }
@@ -88,21 +91,24 @@ export function isSymbolLike(v: unknown): v is SymbolLike {
  * nested objects; this unwraps to the name string if possible.
  */
 export function extractSymbolName(v: unknown): string | undefined {
-	if (!v || typeof v !== "object") return undefined;
+	if (!v || typeof v !== 'object') return undefined;
 	const r = v as Record<string, unknown>;
 	const t = r.type;
-	if (isSymbolType(t)) return typeof r.name === "string" ? r.name : undefined;
+	if (isSymbolType(t)) return typeof r.name === 'string' ? r.name : undefined;
 	// Tree-sitter CLI: $.name → { symbol: { type: 'SYMBOL', name: '...' } }
-	if (r.symbol && typeof r.symbol === "object") {
+	if (r.symbol && typeof r.symbol === 'object') {
 		return extractSymbolName(r.symbol);
 	}
 	return undefined;
 }
 
 export function isFieldLike(v: unknown): v is FieldLike {
-	if (!v || typeof v !== "object") return false;
+	if (!v || typeof v !== 'object') return false;
 	const t = (v as { type?: unknown }).type;
-	return (t === "field" || t === "FIELD") && typeof (v as { name?: unknown }).name === "string";
+	return (
+		(t === 'field' || t === 'FIELD') &&
+		typeof (v as { name?: unknown }).name === 'string'
+	);
 }
 
 /**
@@ -110,7 +116,7 @@ export function isFieldLike(v: unknown): v is FieldLike {
  * `members: Rule[]` payload.
  */
 export function isContainerType(t: string): boolean {
-	return t === "seq" || t === "SEQ" || t === "choice" || t === "CHOICE";
+	return t === 'seq' || t === 'SEQ' || t === 'choice' || t === 'CHOICE';
 }
 
 /**
@@ -120,16 +126,16 @@ export function isContainerType(t: string): boolean {
  */
 export function isWrapperType(t: string): boolean {
 	return (
-		t === "optional" ||
-		t === "repeat" ||
-		t === "REPEAT" ||
-		t === "repeat1" ||
-		t === "REPEAT1" ||
-		t === "field" ||
-		t === "FIELD" ||
-		t === "TOKEN" ||
-		t === "IMMEDIATE_TOKEN" ||
-		t === "BLANK"
+		t === 'optional' ||
+		t === 'repeat' ||
+		t === 'REPEAT' ||
+		t === 'repeat1' ||
+		t === 'REPEAT1' ||
+		t === 'field' ||
+		t === 'FIELD' ||
+		t === 'TOKEN' ||
+		t === 'IMMEDIATE_TOKEN' ||
+		t === 'BLANK'
 	);
 }
 
@@ -142,14 +148,14 @@ export function isWrapperType(t: string): boolean {
 export function isPrecWrapper(rule: { type: string }): boolean {
 	const t = rule.type;
 	return (
-		t === "prec" ||
-		t === "PREC" ||
-		t === "prec_left" ||
-		t === "PREC_LEFT" ||
-		t === "prec_right" ||
-		t === "PREC_RIGHT" ||
-		t === "prec_dynamic" ||
-		t === "PREC_DYNAMIC"
+		t === 'prec' ||
+		t === 'PREC' ||
+		t === 'prec_left' ||
+		t === 'PREC_LEFT' ||
+		t === 'prec_right' ||
+		t === 'PREC_RIGHT' ||
+		t === 'prec_dynamic' ||
+		t === 'PREC_DYNAMIC'
 	);
 }
 
@@ -162,7 +168,7 @@ export function isPrecWrapper(rule: { type: string }): boolean {
 
 /** True if `t` equals `lower` or its uppercase form (`'seq'` or `'SEQ'`). */
 export function typeEq(t: unknown, lower: string): boolean {
-	return typeof t === "string" && (t === lower || t === lower.toUpperCase());
+	return typeof t === 'string' && (t === lower || t === lower.toUpperCase());
 }
 
 export type IsRuntimeRule<T> = T extends { type: infer U }
@@ -172,32 +178,44 @@ export type IsRuntimeRule<T> = T extends { type: infer U }
 	: false;
 
 export const isSeqType = <T>(
-	t: T,
-): t is T & (IsRuntimeRule<T> extends true ? SeqRule : { type: "SEQ"; content: Rule }) =>
-	typeEq(t, "seq");
+	t: T
+): t is T &
+	(IsRuntimeRule<T> extends true ? SeqRule : { type: 'SEQ'; content: Rule }) =>
+	typeEq(t, 'seq');
 export const isChoiceType = <T>(
-	t: T,
-): t is T & (IsRuntimeRule<T> extends true ? ChoiceRule : { type: "CHOICE"; content: Rule }) =>
-	typeEq(t, "choice");
+	t: T
+): t is T &
+	(IsRuntimeRule<T> extends true
+		? ChoiceRule
+		: { type: 'CHOICE'; content: Rule }) => typeEq(t, 'choice');
 export const isOptionalType = <T>(
-	t: T,
-): t is T & (IsRuntimeRule<T> extends true ? OptionalRule : { type: "OPTIONAL"; content: Rule }) =>
-	typeEq(t, "optional");
+	t: T
+): t is T &
+	(IsRuntimeRule<T> extends true
+		? OptionalRule
+		: { type: 'OPTIONAL'; content: Rule }) => typeEq(t, 'optional');
 export const isFieldType = <T>(
-	t: T,
-): t is T & (IsRuntimeRule<T> extends true ? FieldRule : { type: "FIELD"; content: Rule }) =>
-	typeEq(t, "field");
+	t: T
+): t is T &
+	(IsRuntimeRule<T> extends true
+		? FieldRule
+		: { type: 'FIELD'; content: Rule }) => typeEq(t, 'field');
 export const isSymbolType = <T>(
-	t: T,
-): t is T & (IsRuntimeRule<T> extends true ? SymbolRule : { type: "SYMBOL"; content: Rule }) =>
-	typeEq(t, "symbol");
+	t: T
+): t is T &
+	(IsRuntimeRule<T> extends true
+		? SymbolRule
+		: { type: 'SYMBOL'; content: Rule }) => typeEq(t, 'symbol');
 export const isStringType = <T>(
-	t: T,
-): t is T & (IsRuntimeRule<T> extends true ? StringRule : { type: "STRING"; content: Rule }) =>
-	typeEq(t, "string");
+	t: T
+): t is T &
+	(IsRuntimeRule<T> extends true
+		? StringRule
+		: { type: 'STRING'; content: Rule }) => typeEq(t, 'string');
 /** Plain repeat (zero-or-more). Excludes repeat1. Callers that need
  *  either should use {@link isRepeatType}. */
-export const isPlainRepeatType = (t: unknown): boolean => typeEq(t, "repeat");
+export const isPlainRepeatType = (t: unknown): boolean => typeEq(t, 'repeat');
 /** Either repeat variant — true for both `repeat` and `repeat1`. */
-export const isRepeatType = (t: unknown): boolean => typeEq(t, "repeat") || typeEq(t, "repeat1");
-export const isBlankType = (t: unknown): boolean => typeEq(t, "blank");
+export const isRepeatType = (t: unknown): boolean =>
+	typeEq(t, 'repeat') || typeEq(t, 'repeat1');
+export const isBlankType = (t: unknown): boolean => typeEq(t, 'blank');

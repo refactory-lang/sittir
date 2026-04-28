@@ -59,7 +59,7 @@
  * picks them up via line-315 `Object.assign({}, baseGrammar.rules)`.
  */
 
-import type { Rule } from "../compiler/rule.ts";
+import type { Rule } from '../compiler/rule.ts';
 import {
 	isSeqType,
 	isStringType,
@@ -68,8 +68,8 @@ import {
 	isOptionalType,
 	isChoiceType,
 	isRepeatType,
-	isPrecWrapper,
-} from "./runtime-shapes.ts";
+	isPrecWrapper
+} from './runtime-shapes.ts';
 
 // Shape of the tree-sitter grammar result that our grammarFn produces.
 // The outer wrapper is `{ grammar: {...} }` because tree-sitter's
@@ -83,12 +83,14 @@ export interface GrammarResult {
 }
 
 export function enrich(base: GrammarResult): GrammarResult {
-	if (!base || typeof base !== "object") {
-		throw new Error("enrich(): expected a grammar object, got " + typeof base);
+	if (!base || typeof base !== 'object') {
+		throw new Error('enrich(): expected a grammar object, got ' + typeof base);
 	}
-	const hasWrapper = "grammar" in base;
+	const hasWrapper = 'grammar' in base;
 	const rulesBag = (
-		hasWrapper ? base.grammar?.rules : (base as unknown as { rules?: unknown }).rules
+		hasWrapper
+			? base.grammar?.rules
+			: (base as unknown as { rules?: unknown }).rules
 	) as Record<string, Rule> | undefined;
 	if (!rulesBag) return base;
 	// Extract declared supertype names so pass 3 can treat `_prefix`-
@@ -105,7 +107,9 @@ export function enrich(base: GrammarResult): GrammarResult {
 	const enrichedRules: Record<string, Rule> = {};
 	for (const name of Object.keys(rulesBag)) {
 		const rule = rulesBag[name];
-		enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules, supertypeNames) : rule!;
+		enrichedRules[name] = rule
+			? applyEnrichPasses(name, rule, kwRules, supertypeNames)
+			: rule!;
 	}
 	// Inject `_kw_<name>` hidden rules — user rules NEVER shadow them
 	// (they start with `_kw_`, a reserved prefix).
@@ -113,14 +117,17 @@ export function enrich(base: GrammarResult): GrammarResult {
 	if (hasWrapper) {
 		return { ...base, grammar: { ...base.grammar, rules: mergedRules } };
 	}
-	return { ...(base as unknown as object), rules: mergedRules } as unknown as GrammarResult;
+	return {
+		...(base as unknown as object),
+		rules: mergedRules
+	} as unknown as GrammarResult;
 }
 
 function applyEnrichPasses(
 	ruleName: string,
 	rule: Rule,
 	kwRules: Record<string, Rule>,
-	supertypeNames: ReadonlySet<string>,
+	supertypeNames: ReadonlySet<string>
 ): Rule {
 	// Fixed-point loop. The current pass set has well-defined
 	// non-overlapping outputs (symbol-to-field wraps SYMBOLs as FIELD;
@@ -146,7 +153,7 @@ function applyEnrichPasses(
 	}
 	if (!process.env.SITTIR_QUIET) {
 		process.stderr.write(
-			`enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations\n`,
+			`enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations\n`
 		);
 	}
 	return r;
@@ -160,12 +167,15 @@ function applyEnrichPasses(
  * `supertypeNames.has('_expression')` and still strip the prefix when
  * composing the field name.
  */
-function extractSupertypeNames(base: unknown, hasWrapper: boolean): ReadonlySet<string> {
+function extractSupertypeNames(
+	base: unknown,
+	hasWrapper: boolean
+): ReadonlySet<string> {
 	const root = hasWrapper
 		? (base as { grammar?: Record<string, unknown> }).grammar
 		: (base as Record<string, unknown>);
 	const fn = root?.supertypes;
-	if (typeof fn !== "function") return new Set();
+	if (typeof fn !== 'function') return new Set();
 	// Proxy that returns a SYMBOL-shaped object for any property access —
 	// matches tree-sitter's grammar-authoring protocol where `$.foo`
 	// produces a SYMBOL reference named 'foo'. Enough to let the
@@ -176,10 +186,10 @@ function extractSupertypeNames(base: unknown, hasWrapper: boolean): ReadonlySet<
 		{},
 		{
 			get(_t, prop) {
-				if (typeof prop === "string") return { type: "SYMBOL", name: prop };
+				if (typeof prop === 'string') return { type: 'SYMBOL', name: prop };
 				return undefined;
-			},
-		},
+			}
+		}
 	);
 	let result: unknown;
 	try {
@@ -191,7 +201,7 @@ function extractSupertypeNames(base: unknown, hasWrapper: boolean): ReadonlySet<
 	const names = new Set<string>();
 	for (const r of result) {
 		const n = (r as { name?: unknown })?.name;
-		if (typeof n === "string") names.add(n);
+		if (typeof n === 'string') names.add(n);
 	}
 	return names;
 }
@@ -200,12 +210,16 @@ function extractSupertypeNames(base: unknown, hasWrapper: boolean): ReadonlySet<
 // Direct-mutation builders
 // ---------------------------------------------------------------------------
 
-function detectCase(referenceRule: unknown): "upper" | "lower" {
-	const t = (referenceRule as { type?: string })?.type ?? "";
-	return t.length > 0 && t === t.toUpperCase() ? "upper" : "lower";
+function detectCase(referenceRule: unknown): 'upper' | 'lower' {
+	const t = (referenceRule as { type?: string })?.type ?? '';
+	return t.length > 0 && t === t.toUpperCase() ? 'upper' : 'lower';
 }
 
-function makeField(referenceRule: unknown, name: string, content: unknown): Rule {
+function makeField(
+	referenceRule: unknown,
+	name: string,
+	content: unknown
+): Rule {
 	// Propagate `fieldName` onto inner symbol `_ref` metadata, mirroring
 	// the runtime `field()` helper in evaluate.ts. Without this, an
 	// enrich-promoted FIELD wraps the same SYMBOL as an override-promoted
@@ -217,10 +231,10 @@ function makeField(referenceRule: unknown, name: string, content: unknown): Rule
 	// boundaries.
 	propagateFieldName(content, name);
 	return {
-		type: detectCase(referenceRule) === "upper" ? "FIELD" : "field",
+		type: detectCase(referenceRule) === 'upper' ? 'FIELD' : 'field',
 		name,
 		content,
-		source: "enriched",
+		source: 'enriched'
 	} as unknown as Rule;
 }
 
@@ -231,7 +245,7 @@ function makeField(referenceRule: unknown, name: string, content: unknown): Rule
  *  (those own their own field name). No-op when `_ref` is absent
  *  (e.g. enrich running before evaluate has annotated refs). */
 function propagateFieldName(rule: unknown, fieldName: string): void {
-	if (!rule || typeof rule !== "object") return;
+	if (!rule || typeof rule !== 'object') return;
 	const r = rule as {
 		type?: string;
 		_ref?: { fieldName?: string };
@@ -242,25 +256,26 @@ function propagateFieldName(rule: unknown, fieldName: string): void {
 		r._ref.fieldName = fieldName;
 	}
 	const t = r.type;
-	if (t === "seq" || t === "SEQ" || t === "choice" || t === "CHOICE") {
-		if (Array.isArray(r.members)) for (const m of r.members) propagateFieldName(m, fieldName);
+	if (t === 'seq' || t === 'SEQ' || t === 'choice' || t === 'CHOICE') {
+		if (Array.isArray(r.members))
+			for (const m of r.members) propagateFieldName(m, fieldName);
 		return;
 	}
 	if (
-		t === "optional" ||
-		t === "OPTIONAL" ||
-		t === "repeat" ||
-		t === "REPEAT" ||
-		t === "repeat1" ||
-		t === "REPEAT1" ||
-		t === "prec" ||
-		t === "PREC" ||
-		t === "prec_left" ||
-		t === "PREC_LEFT" ||
-		t === "prec_right" ||
-		t === "PREC_RIGHT" ||
-		t === "prec_dynamic" ||
-		t === "PREC_DYNAMIC"
+		t === 'optional' ||
+		t === 'OPTIONAL' ||
+		t === 'repeat' ||
+		t === 'REPEAT' ||
+		t === 'repeat1' ||
+		t === 'REPEAT1' ||
+		t === 'prec' ||
+		t === 'PREC' ||
+		t === 'prec_left' ||
+		t === 'PREC_LEFT' ||
+		t === 'prec_right' ||
+		t === 'PREC_RIGHT' ||
+		t === 'prec_dynamic' ||
+		t === 'PREC_DYNAMIC'
 	) {
 		if (r.content !== undefined) propagateFieldName(r.content, fieldName);
 		return;
@@ -270,8 +285,8 @@ function propagateFieldName(rule: unknown, fieldName: string): void {
 
 function makeSymbol(referenceRule: unknown, name: string): Rule {
 	return {
-		type: detectCase(referenceRule) === "upper" ? "SYMBOL" : "symbol",
-		name,
+		type: detectCase(referenceRule) === 'upper' ? 'SYMBOL' : 'symbol',
+		name
 	} as unknown as Rule;
 }
 
@@ -287,7 +302,7 @@ function registerKwRule(
 	hostRule: Rule,
 	stringLiteral: Rule,
 	keyword: string,
-	kwRules: Record<string, Rule>,
+	kwRules: Record<string, Rule>
 ): Rule {
 	const hiddenName = `_kw_${keyword}`;
 	if (!(hiddenName in kwRules)) {
@@ -307,9 +322,9 @@ function normalizeMember(m: unknown): {
 	members?: unknown[];
 	name?: string;
 } {
-	if (typeof m === "string") return { type: "STRING", value: m };
-	if (m instanceof RegExp) return { type: "PATTERN", value: m.source };
-	return (m as { type: string }) ?? { type: "UNKNOWN" };
+	if (typeof m === 'string') return { type: 'STRING', value: m };
+	if (m instanceof RegExp) return { type: 'PATTERN', value: m.source };
+	return (m as { type: string }) ?? { type: 'UNKNOWN' };
 }
 
 /** Collect field names that already exist on the top-level seq. */
@@ -319,14 +334,14 @@ function collectFieldNamesRuntime(rule: Rule): Set<string> {
 	const members = (rule as unknown as { members: unknown[] }).members;
 	for (const raw of members) {
 		const m = normalizeMember(raw);
-		if (isFieldType(m.type) && typeof m.name === "string") {
+		if (isFieldType(m.type) && typeof m.name === 'string') {
 			names.add(m.name);
 			continue;
 		}
 		const peeled = peelOptional(m as unknown as Rule);
 		if (peeled.isOptional) {
 			const innerN = normalizeMember(peeled.inner);
-			if (isFieldType(innerN.type) && typeof innerN.name === "string") {
+			if (isFieldType(innerN.type) && typeof innerN.name === 'string') {
 				names.add(innerN.name);
 			}
 		}
@@ -341,12 +356,18 @@ function collectFieldNamesRuntime(rule: Rule): Set<string> {
  */
 function peelOptional(rule: Rule): { inner: Rule; isOptional: boolean } {
 	if (isOptionalType(rule.type)) {
-		return { inner: (rule as unknown as { content: Rule }).content, isOptional: true };
+		return {
+			inner: (rule as unknown as { content: Rule }).content,
+			isOptional: true
+		};
 	}
 	if (isChoiceType(rule.type)) {
-		const members = (rule as unknown as { members: Array<{ type: string }> }).members;
+		const members = (rule as unknown as { members: Array<{ type: string }> })
+			.members;
 		if (members.length === 2) {
-			const blankIdx = members.findIndex((m) => m.type === "BLANK" || m.type === "blank");
+			const blankIdx = members.findIndex(
+				(m) => m.type === 'BLANK' || m.type === 'blank'
+			);
 			if (blankIdx !== -1) {
 				const inner = members[1 - blankIdx] as unknown as Rule;
 				return { inner, isOptional: true };
@@ -421,23 +442,26 @@ interface SymbolTarget {
  *  optional(seq) with non-anon members, or non-symbol leaves). */
 function detectSymbolTarget(member: Rule): SymbolTarget | null {
 	// Shape 1: bare SYMBOL.
-	if (isSymbolType(member.type) && typeof (member as { name?: unknown }).name === "string") {
+	if (
+		isSymbolType(member.type) &&
+		typeof (member as { name?: unknown }).name === 'string'
+	) {
 		const name = (member as { name: string }).name;
 		return {
 			name,
 			symbolRule: member,
-			wrap: (fieldNode) => fieldNode,
+			wrap: (fieldNode) => fieldNode
 		};
 	}
 	const peeled = peelOptional(member);
 	if (!peeled.isOptional) return null;
 	const innerN = normalizeMember(peeled.inner);
 	// Shape 2: optional(SYMBOL).
-	if (isSymbolType(innerN.type) && typeof innerN.name === "string") {
+	if (isSymbolType(innerN.type) && typeof innerN.name === 'string') {
 		return {
 			name: innerN.name,
 			symbolRule: peeled.inner,
-			wrap: (fieldNode) => rebuildOptional(member, fieldNode),
+			wrap: (fieldNode) => rebuildOptional(member, fieldNode)
 		};
 	}
 	// Shape 3: optional(seq(SYMBOL, <anon…>)) — exactly one SYMBOL,
@@ -447,26 +471,32 @@ function detectSymbolTarget(member: Rule): SymbolTarget | null {
 	let symIdx = -1;
 	for (let i = 0; i < seqMembers.length; i++) {
 		const sn = normalizeMember(seqMembers[i]!);
-		if (isSymbolType(sn.type) && typeof sn.name === "string") {
+		if (isSymbolType(sn.type) && typeof sn.name === 'string') {
 			if (symIdx !== -1) return null; // >1 SYMBOL — too complex
 			symIdx = i;
-		} else if (!isStringType(sn.type) && sn.type !== "PATTERN" && sn.type !== "pattern") {
+		} else if (
+			!isStringType(sn.type) &&
+			sn.type !== 'PATTERN' &&
+			sn.type !== 'pattern'
+		) {
 			return null; // non-anonymous, non-symbol — too complex
 		}
 	}
 	if (symIdx === -1) return null;
 	const symMember = seqMembers[symIdx]!;
 	const sn = normalizeMember(symMember);
-	if (!isSymbolType(sn.type) || typeof sn.name !== "string") return null;
+	if (!isSymbolType(sn.type) || typeof sn.name !== 'string') return null;
 	const seqRule = peeled.inner;
 	return {
 		name: sn.name,
 		symbolRule: symMember,
 		wrap: (fieldNode) => {
-			const newSeqMembers = seqMembers.map((mm, i) => (i === symIdx ? fieldNode : mm));
+			const newSeqMembers = seqMembers.map((mm, i) =>
+				i === symIdx ? fieldNode : mm
+			);
 			const newSeq = { ...seqRule, members: newSeqMembers } as Rule;
 			return rebuildOptional(member, newSeq);
-		},
+		}
 	};
 }
 
@@ -489,17 +519,17 @@ function detectSymbolTarget(member: Rule): SymbolTarget | null {
 function countSymbolsInRepeat(
 	node: Rule | undefined | null,
 	kindCounts: Map<string, number>,
-	inRepeat: boolean = false,
+	inRepeat: boolean = false
 ): void {
 	if (!node) return;
 	const t = (node as { type?: string }).type;
 	if (!t) return;
 	if (isFieldType(t)) return;
-	if (t === "ALIAS" || t === "alias") return;
+	if (t === 'ALIAS' || t === 'alias') return;
 	if (isSymbolType(t)) {
 		if (!inRepeat) return;
 		const name = (node as unknown as { name?: string }).name;
-		if (typeof name === "string") {
+		if (typeof name === 'string') {
 			kindCounts.set(name, (kindCounts.get(name) ?? 0) + 1);
 		}
 		return;
@@ -527,7 +557,7 @@ function countSymbolsInRepeat(
 function applySymbolToField(
 	ruleName: string,
 	rule: Rule,
-	supertypeNames: ReadonlySet<string>,
+	supertypeNames: ReadonlySet<string>
 ): Rule {
 	// Skip hidden helpers — tree-sitter inlines their bodies into each
 	// call site, so field wrappers added here would propagate silently
@@ -535,7 +565,7 @@ function applySymbolToField(
 	// only to pass 3; pass 1 relied on pass 1's per-symbol underscore
 	// check, which doesn't catch the parent-rule-is-hidden case. Move
 	// the guard up.
-	if (ruleName.startsWith("_")) return rule;
+	if (ruleName.startsWith('_')) return rule;
 	// Peel prec wrappers so prec-wrapped rules (rust `lifetime: prec(1,
 	// seq('\'', $.identifier))`, `break_expression: prec.left(seq(...))`)
 	// are reachable. The prec stack rides back on top after rebuild.
@@ -551,7 +581,8 @@ function applySymbolToField(
 	// collision between (e.g.) a bare $.foo and an optional($.foo) on
 	// the same parent prevents both from getting field-wrapped.
 	const kindCounts = new Map<string, number>();
-	const targetByIdx: Array<SymbolTarget | null> = members.map(detectSymbolTarget);
+	const targetByIdx: Array<SymbolTarget | null> =
+		members.map(detectSymbolTarget);
 	for (const t of targetByIdx) {
 		if (t) kindCounts.set(t.name, (kindCounts.get(t.name) ?? 0) + 1);
 	}
@@ -576,13 +607,17 @@ function applySymbolToField(
 		const t = targetByIdx[i];
 		if (!t) return m;
 		let fieldName = t.name;
-		if (t.name.startsWith("_")) {
+		if (t.name.startsWith('_')) {
 			if (!supertypeNames.has(t.name)) return m;
 			fieldName = t.name.slice(1);
 		}
 		if ((kindCounts.get(t.name) ?? 0) > 1) return m;
 		if (existing.has(fieldName)) {
-			reportSkip("symbol-to-field", ruleName, `field '${fieldName}' already exists`);
+			reportSkip(
+				'symbol-to-field',
+				ruleName,
+				`field '${fieldName}' already exists`
+			);
 			return m;
 		}
 		existing.add(fieldName);
@@ -602,7 +637,11 @@ function applySymbolToField(
 // Pass 2: optional keyword-prefix
 // ---------------------------------------------------------------------------
 
-function applyOptionalKeyword(ruleName: string, rule: Rule, kwRules: Record<string, Rule>): Rule {
+function applyOptionalKeyword(
+	ruleName: string,
+	rule: Rule,
+	kwRules: Record<string, Rule>
+): Rule {
 	// Peel prec wrappers transparently when computing the seq-level
 	// claimed-name set, so prec-wrapped seqs (rust `closure_expression:
 	// prec(closure, seq(...))`, python `for_in_clause: prec.left(seq(...))`,
@@ -614,7 +653,9 @@ function applyOptionalKeyword(ruleName: string, rule: Rule, kwRules: Record<stri
 	// through prec wrappers (added below) would then walk the inner seq
 	// with an EMPTY claimed-set, mis-handling collisions.
 	const inner = peelPrec(rule);
-	const claimed = isSeqType(inner.type) ? collectFieldNamesRuntime(inner) : new Set<string>();
+	const claimed = isSeqType(inner.type)
+		? collectFieldNamesRuntime(inner)
+		: new Set<string>();
 	return walkOptionalKeyword(ruleName, rule, claimed, kwRules) ?? rule;
 }
 
@@ -633,7 +674,7 @@ function walkOptionalKeyword(
 	ruleName: string,
 	rule: Rule,
 	claimedAtSeqLevel: Set<string>,
-	kwRules: Record<string, Rule>,
+	kwRules: Record<string, Rule>
 ): Rule | null {
 	if (isSeqType(rule.type)) {
 		const members = (rule as unknown as { members: Rule[] }).members;
@@ -664,10 +705,15 @@ function walkOptionalKeyword(
 			rule,
 			peeled.inner,
 			claimedAtSeqLevel,
-			kwRules,
+			kwRules
 		);
 		if (replacement !== null) return replacement;
-		const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules);
+		const innerRewritten = walkOptionalKeyword(
+			ruleName,
+			peeled.inner,
+			claimedAtSeqLevel,
+			kwRules
+		);
 		if (innerRewritten !== null) {
 			return rebuildOptional(rule, innerRewritten);
 		}
@@ -675,7 +721,12 @@ function walkOptionalKeyword(
 	}
 	if (isRepeatType(rule.type) || isFieldType(rule.type)) {
 		const content = (rule as unknown as { content: Rule }).content;
-		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules);
+		const out = walkOptionalKeyword(
+			ruleName,
+			content,
+			claimedAtSeqLevel,
+			kwRules
+		);
 		if (out === null) return null;
 		return { ...rule, content: out } as Rule;
 	}
@@ -693,7 +744,12 @@ function walkOptionalKeyword(
 	// to types.ts / factories.ts emitters).
 	if (isPrecWrapper(rule as { type: string })) {
 		const content = (rule as unknown as { content: Rule }).content;
-		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules);
+		const out = walkOptionalKeyword(
+			ruleName,
+			content,
+			claimedAtSeqLevel,
+			kwRules
+		);
 		if (out === null) return null;
 		return { ...rule, content: out } as Rule;
 	}
@@ -705,12 +761,12 @@ function tryPromoteInnerKeyword(
 	optionalRule: Rule,
 	inner: Rule,
 	claimed: Set<string>,
-	kwRules: Record<string, Rule>,
+	kwRules: Record<string, Rule>
 ): Rule | null {
 	const innerNorm = normalizeMember(inner);
 	if (!isStringType(innerNorm.type)) return null;
 	const kw = innerNorm.value;
-	if (typeof kw !== "string" || !isIdentifierShaped(kw)) return null;
+	if (typeof kw !== 'string' || !isIdentifierShaped(kw)) return null;
 	// Auto-name promoted optional keywords as `<token>_marker` rather
 	// than the bare token name. The semantic suffix conveys
 	// "presence-indicator slot for this literal" and avoids JS-reserved-
@@ -722,7 +778,11 @@ function tryPromoteInnerKeyword(
 	// `accessor_kind`/`optionality_marker` for choice-of-strings).
 	const fieldName = `${kw}_marker`;
 	if (claimed.has(fieldName)) {
-		reportSkip("optional-keyword-prefix", ruleName, `field '${fieldName}' already exists`);
+		reportSkip(
+			'optional-keyword-prefix',
+			ruleName,
+			`field '${fieldName}' already exists`
+		);
 		return null;
 	}
 	claimed.add(fieldName);
@@ -738,7 +798,7 @@ function rebuildOptional(optionalRule: Rule, newInner: Rule): Rule {
 	const members = (optionalRule as unknown as { members: Rule[] }).members;
 	const newMembers = members.map((m) => {
 		const t = (m as { type?: string }).type;
-		return t === "BLANK" || t === "blank" ? m : newInner;
+		return t === 'BLANK' || t === 'blank' ? m : newInner;
 	});
 	return { ...optionalRule, members: newMembers } as Rule;
 }

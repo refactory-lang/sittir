@@ -7,4 +7,4 @@
 // falls through to the TS engine silently.
 
 export const TEMPLATE_BUNDLE_HASH =
-	"abd09b4455aa1dcb7a8ec9b4b725cc12882551c72c81221acc49ecc63c070d45";
+	'b49edf825d9e0dbfc391790988fb1f91ebfe6a4564bde184aa947bd7f1792586';

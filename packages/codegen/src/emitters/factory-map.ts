@@ -15,9 +15,12 @@
  * round-trip through JSON.
  */
 
-import type { NodeMap } from "../compiler/types.ts";
-import type { AssembledNode, AssembledGroup } from "../compiler/node-map.ts";
-import type { PolymorphVariantDescriptor, PolymorphVariantMap } from "../polymorph-variant.ts";
+import type { NodeMap } from '../compiler/types.ts';
+import type { AssembledNode, AssembledGroup } from '../compiler/node-map.ts';
+import type {
+	PolymorphVariantDescriptor,
+	PolymorphVariantMap
+} from '../polymorph-variant.ts';
 
 export interface EmitFactoryMapConfig {
 	grammar: string;
@@ -25,8 +28,12 @@ export interface EmitFactoryMapConfig {
 }
 
 export interface FactoryMapData {
-	readonly factoryShapes: Readonly<Record<string, "config" | "children" | "text">>;
-	readonly fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
+	readonly factoryShapes: Readonly<
+		Record<string, 'config' | 'children' | 'text'>
+	>;
+	readonly fieldAliasMap: Readonly<
+		Record<string, Readonly<Record<string, string>>>
+	>;
 	readonly factoryFields: Readonly<Record<string, readonly string[]>>;
 	/**
 	 * Polymorph variant discriminators. For each polymorph parent kind a
@@ -49,9 +56,9 @@ export interface FactoryMapData {
 export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 	const aliasSet = collectAliasSourceKinds(nodeMap);
 
-	const factoryShapes: Record<string, "config" | "children" | "text"> = {};
+	const factoryShapes: Record<string, 'config' | 'children' | 'text'> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith("_") && !aliasSet.has(kind)) continue;
+		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
 		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 		const shape = shapeOf(node, nodeMap);
 		if (shape) factoryShapes[kind] = shape;
@@ -59,9 +66,14 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 
 	const fieldAliasMap: Record<string, Record<string, string>> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (node.modelType !== "branch" && node.modelType !== "polymorph" && node.modelType !== "group")
+		if (
+			node.modelType !== 'branch' &&
+			node.modelType !== 'polymorph' &&
+			node.modelType !== 'group'
+		)
 			continue;
-		const fields = node.modelType === "polymorph" ? node.allFormFields : node.fields;
+		const fields =
+			node.modelType === 'polymorph' ? node.allFormFields : node.fields;
 		for (const f of fields) {
 			if (!f.aliasSources) continue;
 			const pairs = Object.entries(f.aliasSources).filter(([t, s]) => t !== s);
@@ -72,16 +84,16 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 
 	const factoryFields: Record<string, readonly string[]> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith("_") && !aliasSet.has(kind)) continue;
-		if (node.modelType === "branch" || node.modelType === "group") {
+		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
+		if (node.modelType === 'branch' || node.modelType === 'group') {
 			if (node.fields.length === 0) continue;
 			if (node.children && node.children.length > 0) continue;
 			factoryFields[kind] = node.fields.map((f) => f.name);
-		} else if (node.modelType === "polymorph") {
+		} else if (node.modelType === 'polymorph') {
 			const unique = [...new Set(node.allFormFields.map((f) => f.name))];
 			if (unique.length === 0) continue;
 			const hasChildrenInAnyForm = node.forms.some(
-				(f: AssembledGroup) => f.children && f.children.length > 0,
+				(f: AssembledGroup) => f.children && f.children.length > 0
 			);
 			if (hasChildrenInAnyForm) continue;
 			factoryFields[kind] = unique;
@@ -98,10 +110,10 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 		// `.from()`-dispatch and the validator's deep-read path both
 		// know which kinds participate in variant() adoption.
 		if (
-			(node.modelType === "branch" || node.modelType === "container") &&
+			(node.modelType === 'branch' || node.modelType === 'container') &&
 			node.variantChildKinds.length > 0
 		) {
-			if (kind.startsWith("_") && !aliasSet.has(kind)) continue;
+			if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
 			const childKind: Record<string, string> = {};
 			for (const visibleName of node.variantChildKinds) {
 				const suffix = visibleName.startsWith(`${kind}_`)
@@ -109,23 +121,23 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 					: visibleName;
 				childKind[visibleName] = suffix;
 			}
-			polymorphVariants[kind] = { source: "override", childKind };
+			polymorphVariants[kind] = { source: 'override', childKind };
 			continue;
 		}
-		if (node.modelType !== "polymorph") continue;
-		if (kind.startsWith("_") && !aliasSet.has(kind)) continue;
-		if (node.source === "override") {
+		if (node.modelType !== 'polymorph') continue;
+		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
+		if (node.source === 'override') {
 			const childKind: Record<string, string> = {};
 			for (const form of node.forms) {
 				childKind[`${kind}_${form.name}`] = form.name;
 			}
-			polymorphVariants[kind] = { source: "override", childKind };
+			polymorphVariants[kind] = { source: 'override', childKind };
 		} else {
 			const fields: Record<string, readonly string[]> = {};
 			const seenSignatures = new Map<string, string>();
 			for (const form of node.forms) {
 				const fieldNames = form.fields.map((f) => f.propertyName);
-				const signature = [...fieldNames].sort().join(",");
+				const signature = [...fieldNames].sort().join(',');
 				const prior = seenSignatures.get(signature);
 				if (prior !== undefined) {
 					// Two forms with identical field-key sets can't be
@@ -138,14 +150,14 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 					// order — first-match-wins, stable-by-spec. Callers
 					// who need the second form pass `$variant` explicitly.
 					console.warn(
-						`[factory-map] polymorph '${kind}': forms '${prior}' and '${form.name}' share field signature [${signature || "(empty)"}]. ` +
-							`.from() without $variant will dispatch to '${prior}' by declaration order.`,
+						`[factory-map] polymorph '${kind}': forms '${prior}' and '${form.name}' share field signature [${signature || '(empty)'}]. ` +
+							`.from() without $variant will dispatch to '${prior}' by declaration order.`
 					);
 				}
 				seenSignatures.set(signature, form.name);
 				fields[form.name] = fieldNames;
 			}
-			polymorphVariants[kind] = { source: "promoted", fields };
+			polymorphVariants[kind] = { source: 'promoted', fields };
 		}
 	}
 
@@ -155,28 +167,31 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 export function emitFactoryMap(config: EmitFactoryMapConfig): string {
 	const data = buildFactoryMap(config.nodeMap);
 	const header = [
-		"// Auto-generated by @sittir/codegen — do not edit.",
-		"//",
-		"// Validator-only factory metadata.",
-		"// See emitters/factory-map.ts for semantics of each map.",
-		"",
-	].join("\n");
-	return header + JSON.stringify(data, null, 2) + "\n";
+		'// Auto-generated by @sittir/codegen — do not edit.',
+		'//',
+		'// Validator-only factory metadata.',
+		'// See emitters/factory-map.ts for semantics of each map.',
+		''
+	].join('\n');
+	return header + JSON.stringify(data, null, 2) + '\n';
 }
 
-function shapeOf(node: AssembledNode, nodeMap: NodeMap): "config" | "children" | "text" | null {
-	if (node.isTextTemplate(nodeMap.externals)) return "text";
+function shapeOf(
+	node: AssembledNode,
+	nodeMap: NodeMap
+): 'config' | 'children' | 'text' | null {
+	if (node.isTextTemplate(nodeMap.externals)) return 'text';
 	switch (node.modelType) {
-		case "leaf":
-		case "enum":
-		case "keyword":
-			return "text";
-		case "container":
-			return "children";
-		case "branch":
-		case "polymorph":
-		case "group":
-			return "config";
+		case 'leaf':
+		case 'enum':
+		case 'keyword':
+			return 'text';
+		case 'container':
+			return 'children';
+		case 'branch':
+		case 'polymorph':
+		case 'group':
+			return 'config';
 		default:
 			return null;
 	}
@@ -188,9 +203,9 @@ function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	// `alias($.source, $.target)` in some other rule's field slot.
 	for (const [, n] of nodeMap.nodes) {
 		const fs =
-			n.modelType === "polymorph"
+			n.modelType === 'polymorph'
 				? n.allFormFields
-				: n.modelType === "branch" || n.modelType === "group"
+				: n.modelType === 'branch' || n.modelType === 'group'
 					? n.fields
 					: [];
 		for (const f of fs) {
@@ -207,9 +222,9 @@ function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	// reason — re-derived here from the same predicate to keep both
 	// emitters consistent.
 	for (const [kind, n] of nodeMap.nodes) {
-		if (!kind.startsWith("_")) continue;
+		if (!kind.startsWith('_')) continue;
 		if (!n.userFacing) continue;
-		if (n.modelType === "token" || n.modelType === "multi") continue;
+		if (n.modelType === 'token' || n.modelType === 'multi') continue;
 		out.add(kind);
 	}
 	return out;

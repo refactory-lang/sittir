@@ -1,5 +1,5 @@
 ---
-description: "Task list for Jinja template migration"
+description: 'Task list for Jinja template migration'
 ---
 
 # Tasks: Jinja Template Migration (Askama-Style)

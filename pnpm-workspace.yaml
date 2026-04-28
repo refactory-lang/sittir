@@ -1,5 +1,5 @@
 packages:
-  - "packages/*"
-  - "rust/crates/sittir-rust-napi"
-  - "rust/crates/sittir-typescript-napi"
-  - "rust/crates/sittir-python-napi"
+  - 'packages/*'
+  - 'rust/crates/sittir-rust-napi'
+  - 'rust/crates/sittir-typescript-napi'
+  - 'rust/crates/sittir-python-napi'

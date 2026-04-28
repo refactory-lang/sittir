@@ -61,14 +61,14 @@ Create `packages/codegen/src/emitters/jinja-translator.ts` with the mapping rule
 export function translateToJinja(
 	node: AssembledNode,
 	rules: Record<string, Rule>,
-	wordMatcher: RegExp,
+	wordMatcher: RegExp
 ): string {
-	if (node.modelType === "branch" || node.modelType === "container") {
+	if (node.modelType === 'branch' || node.modelType === 'container') {
 		return translateSingleTemplate(node, rules, wordMatcher);
 	}
 	// ... other modelType cases added incrementally
 	throw new Error(
-		`translateToJinja: unsupported modelType '${node.modelType}' for rule '${node.kind}'`,
+		`translateToJinja: unsupported modelType '${node.modelType}' for rule '${node.kind}'`
 	);
 }
 ```

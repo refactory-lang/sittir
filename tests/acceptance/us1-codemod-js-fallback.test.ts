@@ -15,19 +15,19 @@
  * actually routes through the JS engine when the env var is set.
  */
 
-import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
-import { readFileSync, readdirSync } from "node:fs";
-import { dirname, join, basename } from "node:path";
-import { fileURLToPath } from "node:url";
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import { readFileSync, readdirSync } from 'node:fs';
+import { dirname, join, basename } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const CORPUS_DIR = join(__dirname, "fixtures", "codemod-sample");
-const BASELINE_DIR = join(CORPUS_DIR, "baseline");
+const CORPUS_DIR = join(__dirname, 'fixtures', 'codemod-sample');
+const BASELINE_DIR = join(CORPUS_DIR, 'baseline');
 
-describe("US1 acceptance — SITTIR_BACKEND=js fallback (T051)", () => {
+describe('US1 acceptance — SITTIR_BACKEND=js fallback (T051)', () => {
 	const originalEnv = process.env.SITTIR_BACKEND;
 	beforeAll(() => {
-		process.env.SITTIR_BACKEND = "js";
+		process.env.SITTIR_BACKEND = 'js';
 	});
 	afterAll(() => {
 		if (originalEnv === undefined) {
@@ -44,25 +44,27 @@ describe("US1 acceptance — SITTIR_BACKEND=js fallback (T051)", () => {
 		// an earlier test file (e.g. T050) keeps its native verdict
 		// and the SITTIR_BACKEND=js override never runs.
 		vi.resetModules();
-		const { getActiveBackend } = await import("@sittir/rust");
+		const { getActiveBackend } = await import('@sittir/rust');
 		const backend = getActiveBackend();
-		expect(backend.name).toBe("js");
-		expect(backend.reason ?? "").toMatch(/user-forced|sittir_backend/i);
+		expect(backend.name).toBe('js');
+		expect(backend.reason ?? '').toMatch(/user-forced|sittir_backend/i);
 	});
 
-	it("produces files byte-identical to the JS-captured baseline", async () => {
+	it('produces files byte-identical to the JS-captured baseline', async () => {
 		// Re-import the codemod helper fresh so its `applyEdits`
 		// boundary import resolves through a backend.ts that observes
 		// SITTIR_BACKEND=js on first call.
 		vi.resetModules();
-		const { runCodemodOnDir } = await import("./codemod-inline.ts");
+		const { runCodemodOnDir } = await import('./codemod-inline.ts');
 		const results = await runCodemodOnDir(CORPUS_DIR);
-		const baselineFiles = new Set(readdirSync(BASELINE_DIR).filter((n) => n.endsWith(".rs")));
+		const baselineFiles = new Set(
+			readdirSync(BASELINE_DIR).filter((n) => n.endsWith('.rs'))
+		);
 		expect(results.length).toBeGreaterThanOrEqual(20);
 		for (const r of results) {
 			const name = basename(r.path);
 			expect(baselineFiles.has(name)).toBe(true);
-			const expected = readFileSync(join(BASELINE_DIR, name), "utf-8");
+			const expected = readFileSync(join(BASELINE_DIR, name), 'utf-8');
 			// Byte-identical — JS on both sides of the comparison
 			// (baseline was captured under SITTIR_BACKEND=js,
 			// this run forces the same). Any divergence here would

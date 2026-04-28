@@ -80,34 +80,39 @@
 - [ ] **Step 1: Add boundary tests that prove native runtime failures are not silently retried on JS/TS**
 
 ```ts
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock("../src/backend.ts", () => ({
+vi.mock('../src/backend.ts', () => ({
 	getActiveBackend: () => ({
-		name: "native",
+		name: 'native',
 		hashMatch: true,
 		native: {
 			SittirEngine: class {
 				render(): string {
-					throw new Error("native render boom");
+					throw new Error('native render boom');
 				}
 				applyEdits(): string {
-					throw new Error("native apply boom");
+					throw new Error('native apply boom');
 				}
-			},
-		},
-	}),
+			}
+		}
+	})
 }));
 
-describe("native boundary", () => {
+describe('native boundary', () => {
 	beforeEach(() => {
 		vi.resetModules();
 	});
 
-	it("throws when native render fails", async () => {
-		const { render } = await import("../src/boundary.ts");
+	it('throws when native render fails', async () => {
+		const { render } = await import('../src/boundary.ts');
 		expect(() =>
-			render({ $type: "identifier", $source: "factory", $named: true, $text: "x" }),
+			render({
+				$type: 'identifier',
+				$source: 'factory',
+				$named: true,
+				$text: 'x'
+			})
 		).toThrow(/native render boom/);
 	});
 });
@@ -118,27 +123,29 @@ Use the same test shape in all three grammar packages, adjusting only the relati
 - [ ] **Step 2: Extend `collect-baseline` tests to lock native-validator dispatch and parity-failure surfacing**
 
 ```ts
-import * as common from "../validate/common.ts";
-import * as baseline from "../scripts/collect-baseline.ts";
+import * as common from '../validate/common.ts';
+import * as baseline from '../scripts/collect-baseline.ts';
 
-it("native baseline runs validators with SITTIR_BACKEND=native", async () => {
+it('native baseline runs validators with SITTIR_BACKEND=native', async () => {
 	const seen = new Set<string | undefined>();
 	const original = common.buildReadHandle;
-	const spy = vi.spyOn(common, "buildReadHandle").mockImplementation((...args) => {
-		seen.add(process.env.SITTIR_BACKEND);
-		return original(...args);
-	});
-	await baseline.collectBaseline("native");
-	expect(seen).toEqual(new Set(["native"]));
+	const spy = vi
+		.spyOn(common, 'buildReadHandle')
+		.mockImplementation((...args) => {
+			seen.add(process.env.SITTIR_BACKEND);
+			return original(...args);
+		});
+	await baseline.collectBaseline('native');
+	expect(seen).toEqual(new Set(['native']));
 	spy.mockRestore();
 });
 
-it("parity render exceptions surface with fixture context", async () => {
-	vi.spyOn(baseline, "loadBoundaryRender").mockResolvedValue(() => {
-		throw new Error("boom");
+it('parity render exceptions surface with fixture context', async () => {
+	vi.spyOn(baseline, 'loadBoundaryRender').mockResolvedValue(() => {
+		throw new Error('boom');
 	});
-	await expect(baseline.collectBaseline("native")).rejects.toThrow(
-		/\[python\]\[native\]\[render #0\].*boom/,
+	await expect(baseline.collectBaseline('native')).rejects.toThrow(
+		/\[python\]\[native\]\[render #0\].*boom/
 	);
 });
 ```
@@ -146,18 +153,22 @@ it("parity render exceptions surface with fixture context", async () => {
 - [ ] **Step 3: Extend `check-perf-baseline` tests so native perf checks reject TS-shaped input**
 
 ```ts
-it("rejects a metrics file with backend ts for the native perf gate", () => {
+it('rejects a metrics file with backend ts for the native perf gate', () => {
 	const v = evaluateVerdict(
 		makeBaseline(baselineFfi),
-		{ ...makeFresh(baselineFfi), backend: "ts" },
-		false,
+		{ ...makeFresh(baselineFfi), backend: 'ts' },
+		false
 	);
-	expect(v.kind).toBe("backend-mismatch");
+	expect(v.kind).toBe('backend-mismatch');
 });
 
-it("rejects a native metrics file with no ffi block", () => {
-	const v = evaluateVerdict(makeBaseline(baselineFfi), makeFresh(undefined), false);
-	expect(v.kind).toBe("missing-ffi");
+it('rejects a native metrics file with no ffi block', () => {
+	const v = evaluateVerdict(
+		makeBaseline(baselineFfi),
+		makeFresh(undefined),
+		false
+	);
+	expect(v.kind).toBe('missing-ffi');
 });
 ```
 
@@ -210,11 +221,14 @@ git commit -m "test: lock review remediation behavior"
 - [ ] **Step 1: Add strict native wire types to `@sittir/types`**
 
 ```ts
-export type NativeFieldValue = NativeNodeData | readonly NativeNodeData[] | string;
+export type NativeFieldValue =
+	| NativeNodeData
+	| readonly NativeNodeData[]
+	| string;
 
 export interface NativeNodeData {
 	$type: string;
-	$source: "ts" | "sg" | "factory";
+	$source: 'ts' | 'sg' | 'factory';
 	$named: boolean;
 	$fields?: { readonly [key: string]: NativeFieldValue };
 	$children?: readonly NativeNodeData[];
@@ -229,15 +243,19 @@ Export these from `packages/types/src/index.ts` beside `AnyNodeData`.
 - [ ] **Step 2: Add shared runtime validation in `@sittir/core`**
 
 ```ts
-import type { AnyNodeData, NativeNodeData, NodeFieldValue } from "@sittir/types";
+import type {
+	AnyNodeData,
+	NativeNodeData,
+	NodeFieldValue
+} from '@sittir/types';
 
 export function assertNativeNodeData(
 	node: AnyNodeData,
-	path = "$",
+	path = '$'
 ): asserts node is NativeNodeData {
-	if (typeof node.$source !== "string")
+	if (typeof node.$source !== 'string')
 		throw new Error(`${path}.$source is required for native render`);
-	if (typeof node.$named !== "boolean")
+	if (typeof node.$named !== 'boolean')
 		throw new Error(`${path}.$named is required for native render`);
 	for (const [field, value] of Object.entries(node.$fields ?? {})) {
 		assertNativeFieldValue(value as NodeFieldValue, `${path}.$fields.${field}`);
@@ -254,8 +272,16 @@ Add a small private `assertNativeFieldValue()` in the same file so the three gra
 
 ```ts
 export type BackendStatus =
-	| { readonly name: "native"; readonly hashMatch: true; readonly native: NativeModule }
-	| { readonly name: "typescript"; readonly reason: string; readonly hashMatch?: false };
+	| {
+			readonly name: 'native';
+			readonly hashMatch: true;
+			readonly native: NativeModule;
+	  }
+	| {
+			readonly name: 'typescript';
+			readonly reason: string;
+			readonly hashMatch?: false;
+	  };
 ```
 
 Keep the existing selection behavior, but make each return site build one of the two legal union members explicitly.
@@ -268,8 +294,8 @@ import {
 	createRenderer,
 	recordFfi,
 	metricsEnabled,
-	readNode as coreReadNode,
-} from "@sittir/core";
+	readNode as coreReadNode
+} from '@sittir/core';
 
 export function render(node: AnyNodeData): string {
 	const engine = getNativeEngine();
@@ -279,7 +305,13 @@ export function render(node: AnyNodeData): string {
 		if (metricsEnabled) {
 			const t0 = performance.now();
 			const result = engine.render(json);
-			recordFfi(GRAMMAR, node.$type, json.length, performance.now() - t0, result.length);
+			recordFfi(
+				GRAMMAR,
+				node.$type,
+				json.length,
+				performance.now() - t0,
+				result.length
+			);
 			return result;
 		}
 		return engine.render(json);
@@ -334,9 +366,12 @@ git commit -m "fix: make native boundary strict"
 - [ ] **Step 1: Add a helper that runs validator collection under the requested backend**
 
 ```ts
-async function withBackendEnv<T>(backend: Backend, fn: () => Promise<T>): Promise<T> {
+async function withBackendEnv<T>(
+	backend: Backend,
+	fn: () => Promise<T>
+): Promise<T> {
 	const prev = process.env.SITTIR_BACKEND;
-	process.env.SITTIR_BACKEND = backend === "native" ? "native" : "typescript";
+	process.env.SITTIR_BACKEND = backend === 'native' ? 'native' : 'typescript';
 	try {
 		return await fn();
 	} finally {
@@ -351,12 +386,16 @@ Wrap the `Promise.all([...validators])` call in `collectValidatorsForGrammar()` 
 - [ ] **Step 2: Make `buildReadHandle()` fail loudly when native was requested but cannot load**
 
 ```ts
-export function buildReadHandle(grammar: string, tree: TS.Tree, source: string): TreeHandle {
-	if (process.env.SITTIR_BACKEND === "native") {
+export function buildReadHandle(
+	grammar: string,
+	tree: TS.Tree,
+	source: string
+): TreeHandle {
+	if (process.env.SITTIR_BACKEND === 'native') {
 		const engine = loadNativeEngineForGrammar(grammar);
 		if (!engine) {
 			throw new Error(
-				`SITTIR_BACKEND=native but no native engine is available for grammar '${grammar}'`,
+				`SITTIR_BACKEND=native but no native engine is available for grammar '${grammar}'`
 			);
 		}
 		return nativeTreeHandle(engine, source);
@@ -385,7 +424,9 @@ fixtures.forEach((fx, idx) => {
 If you need richer diagnostics, wrap `renderer.render` with `catch (error)` and rethrow:
 
 ```ts
-throw new Error(`[${grammar}][${backend}][render #${idx}] ${fx.input.$type}: ${message}`);
+throw new Error(
+	`[${grammar}][${backend}][render #${idx}] ${fx.input.$type}: ${message}`
+);
 ```
 
 Do not convert the error into `null`.
@@ -393,12 +434,16 @@ Do not convert the error into `null`.
 - [ ] **Step 4: Update the tests to assert strict native behavior**
 
 ```ts
-it("native-mode validator collection fails if native read handles are unavailable", async () => {
-	await expect(collectBaseline("native")).rejects.toThrow(/SITTIR_BACKEND=native/);
+it('native-mode validator collection fails if native read handles are unavailable', async () => {
+	await expect(collectBaseline('native')).rejects.toThrow(
+		/SITTIR_BACKEND=native/
+	);
 });
 
-it("native parity render exceptions surface with fixture context", async () => {
-	await expect(collectBaseline("native")).rejects.toThrow(/\[rust\]\[native\]\[render #/);
+it('native parity render exceptions surface with fixture context', async () => {
+	await expect(collectBaseline('native')).rejects.toThrow(
+		/\[rust\]\[native\]\[render #/
+	);
 });
 ```
 
@@ -540,17 +585,25 @@ git commit -m "fix(napi): validate read_node ids"
 - [ ] **Step 1: Replace the local metrics schema with the canonical type and stricter verdicts**
 
 ```ts
-import type { MetricsFile } from "@sittir/core";
+import type { MetricsFile } from '@sittir/core';
 
 export type Verdict =
-	| { kind: "ok" }
-	| { kind: "backend-mismatch"; expected: "native"; fresh: MetricsFile["backend"] }
-	| { kind: "missing-ffi" }
-	| { kind: "platform-mismatch"; baselinePlatform: string; freshPlatform: string }
-	| { kind: "schema-mismatch"; baselineVersion: number; freshVersion: number }
+	| { kind: 'ok' }
 	| {
-			kind: "regression";
-			field: "meanRoundtripMs" | "totalCalls";
+			kind: 'backend-mismatch';
+			expected: 'native';
+			fresh: MetricsFile['backend'];
+	  }
+	| { kind: 'missing-ffi' }
+	| {
+			kind: 'platform-mismatch';
+			baselinePlatform: string;
+			freshPlatform: string;
+	  }
+	| { kind: 'schema-mismatch'; baselineVersion: number; freshVersion: number }
+	| {
+			kind: 'regression';
+			field: 'meanRoundtripMs' | 'totalCalls';
 			baseline: number;
 			fresh: number;
 			deltaPct: number;
@@ -561,9 +614,9 @@ export type Verdict =
 Then gate native-only checks explicitly:
 
 ```ts
-if (fresh.backend !== "native")
-	return { kind: "backend-mismatch", expected: "native", fresh: fresh.backend };
-if (!fresh.ffi) return { kind: "missing-ffi" };
+if (fresh.backend !== 'native')
+	return { kind: 'backend-mismatch', expected: 'native', fresh: fresh.backend };
+if (!fresh.ffi) return { kind: 'missing-ffi' };
 ```
 
 - [ ] **Step 2: Remove `--rust-render` from the CLI contract**
@@ -590,7 +643,9 @@ Delete the `case "--rust-render":` parser branch and move the rust-render emissi
 ```ts
 const shouldEmitRustRender =
 	cliArgs.all &&
-	(config.grammar === "rust" || config.grammar === "typescript" || config.grammar === "python");
+	(config.grammar === 'rust' ||
+		config.grammar === 'typescript' ||
+		config.grammar === 'python');
 ```
 
 - [ ] **Step 3: Update generated command strings and CI to the one supported workflow**

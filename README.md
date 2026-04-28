@@ -37,19 +37,19 @@ Given any tree-sitter grammar, sittir generates:
 ### Factory API
 
 ```ts
-import { ir } from "@sittir/rust";
+import { ir } from '@sittir/rust';
 
 const node = ir.functionItem({
-	name: ir.identifier("main"), // leaf factory takes text directly
+	name: ir.identifier('main'), // leaf factory takes text directly
 	parameters: ir.parameters(), // variadic child container
-	body: ir.block({ children: [] }),
+	body: ir.block({ children: [] })
 });
 
 console.log(node.$type); // "function_item"
 console.log(node.name().$text); // "main" (no arg = getter)
 console.log(node.render()); // "fn main () {  }"
 
-const renamed = node.name(ir.identifier("run")); // with arg = immutable setter
+const renamed = node.name(ir.identifier('run')); // with arg = immutable setter
 console.log(renamed.name().$text); // "run"
 ```
 
@@ -58,23 +58,23 @@ console.log(renamed.name().$text); // "run"
 `.from()` accepts looser inputs and resolves them into the same `NodeData` shape. Strings become the expected leaf nodes when the grammar gives sittir enough type information.
 
 ```ts
-import { ir } from "@sittir/typescript";
+import { ir } from '@sittir/typescript';
 
 const fn = ir.functionDeclaration.from({
-	name: "greet", // string → identifier leaf node
+	name: 'greet', // string → identifier leaf node
 	parameters: ir.formalParameters.from(),
 	body: ir.statementBlock.from({
 		statements: [
 			ir.statement.return_.from({
 				children: [
 					ir.call.call.from({
-						function: "formatGreeting",
-						arguments: ir.arguments.from("name"),
-					}),
-				],
-			}),
-		],
-	}),
+						function: 'formatGreeting',
+						arguments: ir.arguments.from('name')
+					})
+				]
+			})
+		]
+	})
 });
 
 console.log(fn.render().trim());
@@ -84,16 +84,16 @@ console.log(fn.render().trim());
 Grouped namespaces expose the same factories in a grammar-aware shape:
 
 ```ts
-import { expression, ir } from "@sittir/rust";
+import { expression, ir } from '@sittir/rust';
 
 const call = ir.expression.call.from({
-	function: "println",
-	arguments: ir.arguments.from("value"),
+	function: 'println',
+	arguments: ir.arguments.from('value')
 });
 
 const alsoCall = expression.call.from({
-	function: "dbg",
-	arguments: ir.arguments.from("value"),
+	function: 'dbg',
+	arguments: ir.arguments.from('value')
 });
 ```
 
@@ -102,19 +102,21 @@ const alsoCall = expression.call.from({
 Find nodes with ast-grep, read into typed NodeData, modify with fluent setters, emit a text edit:
 
 ```ts
-import { parse, Lang } from "@ast-grep/napi";
-import { ir, readTreeNode } from "@sittir/rust";
+import { parse, Lang } from '@ast-grep/napi';
+import { ir, readTreeNode } from '@sittir/rust';
 
 // 1. Find all function items using ast-grep
 const root = parse(Lang.Rust, source).root();
-const matches = root.findAll({ rule: { kind: "function_item" } });
+const matches = root.findAll({ rule: { kind: 'function_item' } });
 
 for (const match of matches) {
 	// 2. Read the parse tree node into typed NodeData
 	const fn = readTreeNode(match) as ReturnType<typeof ir.functionItem>;
 
 	// 3. Modify — fluent setter returns a new node (immutable)
-	const updated = fn.visibilityModifier(ir.visibilityModifier({ children: [] })).body(fn.body());
+	const updated = fn
+		.visibilityModifier(ir.visibilityModifier({ children: [] }))
+		.body(fn.body());
 
 	// 4. replace() renders through the active package backend and pairs
 	// the result with the target's byte range.
@@ -180,22 +182,22 @@ Grammar maintainers author `packages/<lang>/overrides.ts` to patch field labels 
 
 ```ts
 // packages/python/overrides.ts
-import base from "tree-sitter-python/grammar.js";
-import { transform, role, enrich, field } from "../codegen/src/dsl/index.ts";
+import base from 'tree-sitter-python/grammar.js';
+import { transform, role, enrich, field } from '../codegen/src/dsl/index.ts';
 
 export default grammar(enrich(base), {
-	name: "python",
+	name: 'python',
 	rules: {
-		_indent: ($) => role($._indent, "indent"),
-		_dedent: ($) => role($._dedent, "dedent"),
+		_indent: ($) => role($._indent, 'indent'),
+		_dedent: ($) => role($._dedent, 'dedent'),
 
 		conditional_expression: ($, original) =>
 			transform(original, {
-				0: field("body"),
-				2: field("condition"),
-				4: field("alternative"),
-			}),
-	},
+				0: field('body'),
+				2: field('condition'),
+				4: field('alternative')
+			})
+	}
 });
 ```
 
@@ -230,7 +232,7 @@ per process — call it any time after the first `import` of the
 package.
 
 ```ts
-import { getActiveBackend } from "@sittir/rust";
+import { getActiveBackend } from '@sittir/rust';
 
 console.log(getActiveBackend());
 // { name: 'native', reason: 'loaded', hashMatch: true }
@@ -240,11 +242,11 @@ console.log(getActiveBackend());
 
 ### Environment variables
 
-| Variable                    | Effect                                                                                          |
-| --------------------------- | ----------------------------------------------------------------------------------------------- |
-| `SITTIR_BACKEND=native`     | Force the native backend; throw if it can't load. Useful for CI parity diffing.                 |
-| `SITTIR_BACKEND=js`         | Skip the native load entirely; always use the JS engine. Useful for capturing reference output. |
-| `SITTIR_BACKEND_DEBUG=1`    | Emit a single `stderr` line per package indicating which backend resolved and why.              |
+| Variable                 | Effect                                                                                          |
+| ------------------------ | ----------------------------------------------------------------------------------------------- |
+| `SITTIR_BACKEND=native`  | Force the native backend; throw if it can't load. Useful for CI parity diffing.                 |
+| `SITTIR_BACKEND=js`      | Skip the native load entirely; always use the JS engine. Useful for capturing reference output. |
+| `SITTIR_BACKEND_DEBUG=1` | Emit a single `stderr` line per package indicating which backend resolved and why.              |
 
 ### Silent-fallback semantics
 

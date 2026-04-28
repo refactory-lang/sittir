@@ -18,10 +18,10 @@
  * one file instead of four.
  */
 
-import { readFileSync, readdirSync, statSync } from "node:fs";
-import { join } from "node:path";
-import { parse as parseYaml } from "yaml";
-import type { RulesConfig, TemplateRule } from "@sittir/types";
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { join } from 'node:path';
+import { parse as parseYaml } from 'yaml';
+import type { RulesConfig, TemplateRule } from '@sittir/types';
 
 /**
  * Returns true when `err` is a Node.js-shaped filesystem error carrying
@@ -29,10 +29,13 @@ import type { RulesConfig, TemplateRule } from "@sittir/types";
  * `catch` to the filesystem-not-present case without swallowing
  * permission errors (EACCES) or resource limits (EMFILE).
  */
-export function isNodeError(err: unknown, code?: string): err is NodeJS.ErrnoException {
-	if (!err || typeof err !== "object") return false;
+export function isNodeError(
+	err: unknown,
+	code?: string
+): err is NodeJS.ErrnoException {
+	if (!err || typeof err !== 'object') return false;
 	const candidate = err as { code?: unknown };
-	if (typeof candidate.code !== "string") return false;
+	if (typeof candidate.code !== 'string') return false;
 	return code === undefined || candidate.code === code;
 }
 
@@ -49,7 +52,9 @@ export function deriveRuleKinds(templatesPath: string): Set<string> {
 	const dirEntries = tryReadDirEntries(templatesPath);
 	if (dirEntries !== null) {
 		return new Set(
-			dirEntries.filter((f) => f.endsWith(".jinja")).map((f) => f.slice(0, -".jinja".length)),
+			dirEntries
+				.filter((f) => f.endsWith('.jinja'))
+				.map((f) => f.slice(0, -'.jinja'.length))
 		);
 	}
 	const content = tryReadFile(templatesPath);
@@ -73,16 +78,16 @@ export function deriveRuleKinds(templatesPath: string): Set<string> {
  */
 export function loadRulesFromPath(
 	templatesPath: string,
-	bodyReader?: (kind: string, body: string) => TemplateRule,
+	bodyReader?: (kind: string, body: string) => TemplateRule
 ): Record<string, TemplateRule> {
 	const dirEntries = tryReadDirEntries(templatesPath);
 	if (dirEntries !== null) {
 		const rules: Record<string, TemplateRule> = {};
 		for (const name of dirEntries) {
-			if (!name.endsWith(".jinja")) continue;
-			const kind = name.slice(0, -".jinja".length);
-			const body = readFileSync(join(templatesPath, name), "utf-8");
-			const stripped = body.replace(/^\{#[^#]*#\}\s*/, "");
+			if (!name.endsWith('.jinja')) continue;
+			const kind = name.slice(0, -'.jinja'.length);
+			const body = readFileSync(join(templatesPath, name), 'utf-8');
+			const stripped = body.replace(/^\{#[^#]*#\}\s*/, '');
 			rules[kind] = bodyReader ? bodyReader(kind, stripped) : stripped;
 		}
 		return rules;
@@ -103,7 +108,7 @@ function tryReadDirEntries(path: string): string[] | null {
 	try {
 		stat = statSync(path);
 	} catch (err) {
-		if (isNodeError(err, "ENOENT") || isNodeError(err, "ENOTDIR")) return null;
+		if (isNodeError(err, 'ENOENT') || isNodeError(err, 'ENOTDIR')) return null;
 		throw err;
 	}
 	if (!stat.isDirectory()) return null;
@@ -116,9 +121,9 @@ function tryReadDirEntries(path: string): string[] | null {
  */
 function tryReadFile(path: string): string | null {
 	try {
-		return readFileSync(path, "utf-8");
+		return readFileSync(path, 'utf-8');
 	} catch (err) {
-		if (isNodeError(err, "ENOENT") || isNodeError(err, "EISDIR")) return null;
+		if (isNodeError(err, 'ENOENT') || isNodeError(err, 'EISDIR')) return null;
 		throw err;
 	}
 }

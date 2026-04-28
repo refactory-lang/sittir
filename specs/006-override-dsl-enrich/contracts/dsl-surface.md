@@ -64,12 +64,12 @@ Records a role binding as a side-effect on the current grammar's role accumulato
 
 ```js
 grammar(enrich(base), {
-	name: "python",
+	name: 'python',
 	rules: {
-		_indent: ($) => role($._indent, "indent"),
-		_dedent: ($) => role($._dedent, "dedent"),
-		_newline: ($) => role($._newline, "newline"),
-	},
+		_indent: ($) => role($._indent, 'indent'),
+		_dedent: ($) => role($._dedent, 'dedent'),
+		_newline: ($) => role($._newline, 'newline')
+	}
 });
 ```
 
@@ -94,14 +94,14 @@ Applies structural patches to a rule without rewriting it. Takes an object map o
 ```js
 // Flat positional (numeric keys)
 transform(original, {
-	0: field("expression"),
-	2: field("body"),
+	0: field('expression'),
+	2: field('body')
 });
 
 // Path-addressed (string keys with /)
 transform(original, {
-	"0/1": field("name"),
-	"0/*/0": field("item"),
+	'0/1': field('name'),
+	'0/*/0': field('item')
 });
 ```
 

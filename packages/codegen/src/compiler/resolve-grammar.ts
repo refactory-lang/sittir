@@ -5,8 +5,8 @@
  * grammar.js file paths in node_modules.
  */
 
-import { createRequire } from "node:module";
-import { dirname, join } from "node:path";
+import { createRequire } from 'node:module';
+import { dirname, join } from 'node:path';
 
 const require = createRequire(import.meta.url);
 
@@ -15,8 +15,8 @@ const require = createRequire(import.meta.url);
  * Most grammars use `tree-sitter-{grammar}/grammar.js`.
  */
 const GRAMMAR_JS_PATHS: Record<string, string> = {
-	typescript: "tree-sitter-typescript/typescript/grammar.js",
-	tsx: "tree-sitter-typescript/tsx/grammar.js",
+	typescript: 'tree-sitter-typescript/typescript/grammar.js',
+	tsx: 'tree-sitter-typescript/tsx/grammar.js'
 };
 
 /**
@@ -40,5 +40,5 @@ export function resolveOverridesPath(grammar: string): string {
 	const srcDir = dirname(compilerDir); // src/
 	const codegenDir = dirname(srcDir); // codegen/
 	const packagesDir = dirname(codegenDir); // packages/
-	return join(packagesDir, grammar, "overrides.ts");
+	return join(packagesDir, grammar, 'overrides.ts');
 }

@@ -50,50 +50,50 @@
  *   5. Assemble's field→slot mapping.
  */
 
-import { parseArgs } from "node:util";
-import { resolve } from "node:path";
-import { existsSync } from "node:fs";
-import { createRequire } from "node:module";
+import { parseArgs } from 'node:util';
+import { resolve } from 'node:path';
+import { existsSync } from 'node:fs';
+import { createRequire } from 'node:module';
 
 const requireFromHere = createRequire(import.meta.url);
-import { evaluate } from "../compiler/evaluate.ts";
-import { link } from "../compiler/link.ts";
-import { optimize } from "../compiler/optimize.ts";
-import { assemble } from "../compiler/assemble.ts";
-import { emitTypes } from "../emitters/types.ts";
-import { emitJinjaTemplates } from "../emitters/templates.ts";
+import { evaluate } from '../compiler/evaluate.ts';
+import { link } from '../compiler/link.ts';
+import { optimize } from '../compiler/optimize.ts';
+import { assemble } from '../compiler/assemble.ts';
+import { emitTypes } from '../emitters/types.ts';
+import { emitJinjaTemplates } from '../emitters/templates.ts';
 
 async function main(): Promise<void> {
 	const { values } = parseArgs({
 		options: {
-			grammar: { type: "string", short: "g" },
-			kind: { type: "string", short: "k" },
-			"no-overrides": { type: "boolean", default: false },
-			compact: { type: "boolean", default: false },
-			"skip-emit": { type: "boolean", default: false },
-		},
+			grammar: { type: 'string', short: 'g' },
+			kind: { type: 'string', short: 'k' },
+			'no-overrides': { type: 'boolean', default: false },
+			compact: { type: 'boolean', default: false },
+			'skip-emit': { type: 'boolean', default: false }
+		}
 	});
 	const grammar = values.grammar as string | undefined;
 	const kind = values.kind as string | undefined;
 	if (!grammar || !kind) {
 		process.stderr.write(
-			"Usage: probe-stages.ts --grammar <name> --kind <kind> [--no-overrides] [--compact] [--skip-emit]\n",
+			'Usage: probe-stages.ts --grammar <name> --kind <kind> [--no-overrides] [--compact] [--skip-emit]\n'
 		);
 		process.exit(1);
 	}
 
-	const repoRoot = resolve(new URL("../../../..", import.meta.url).pathname);
+	const repoRoot = resolve(new URL('../../../..', import.meta.url).pathname);
 
 	// Pick entry point: grammar.js when --no-overrides, else overrides.ts.
 	const overridesPath = resolve(repoRoot, `packages/${grammar}/overrides.ts`);
 	const grammarJsPath = resolveGrammarJsPath(grammar);
-	const useOverrides = !values["no-overrides"] && existsSync(overridesPath);
+	const useOverrides = !values['no-overrides'] && existsSync(overridesPath);
 	const entryPath = useOverrides ? overridesPath : grammarJsPath;
 
 	const stages: Record<string, unknown> = {
 		grammar,
 		kind,
-		entryPath: relFromRoot(entryPath, repoRoot),
+		entryPath: relFromRoot(entryPath, repoRoot)
 	};
 
 	// Phase 1: evaluate.
@@ -115,12 +115,12 @@ async function main(): Promise<void> {
 	stages.assemble = node ? summarizeAssembled(node) : null;
 
 	// Phase 5: emit (optional — heavy).
-	if (!values["skip-emit"]) {
+	if (!values['skip-emit']) {
 		try {
 			const types = emitTypes({ grammar, nodeMap });
 			const ifacePat = new RegExp(
 				`export interface ${kindToPascal(kind)}[^\\{]*\\{[\\s\\S]*?\\n\\}`,
-				"m",
+				'm'
 			);
 			const m = (types as unknown as string).match(ifacePat);
 			stages.emitInterface = m ? m[0] : null;
@@ -137,13 +137,13 @@ async function main(): Promise<void> {
 	}
 
 	const indent = values.compact ? undefined : 2;
-	process.stdout.write(JSON.stringify(stages, null, indent) + "\n");
+	process.stdout.write(JSON.stringify(stages, null, indent) + '\n');
 }
 
 function resolveGrammarJsPath(grammar: string): string {
 	const candidates = [
 		`tree-sitter-${grammar}/grammar.js`,
-		`tree-sitter-${grammar}/common/define-grammar.js`,
+		`tree-sitter-${grammar}/common/define-grammar.js`
 	];
 	for (const c of candidates) {
 		try {
@@ -152,7 +152,9 @@ function resolveGrammarJsPath(grammar: string): string {
 			/* try next */
 		}
 	}
-	throw new Error(`probe-stages: could not resolve base grammar.js for '${grammar}'`);
+	throw new Error(
+		`probe-stages: could not resolve base grammar.js for '${grammar}'`
+	);
 }
 
 function relFromRoot(p: string, root: string): string {
@@ -161,10 +163,10 @@ function relFromRoot(p: string, root: string): string {
 
 function kindToPascal(kind: string): string {
 	return kind
-		.replace(/^_+/, "")
-		.split("_")
+		.replace(/^_+/, '')
+		.split('_')
 		.map((s) => (s.length ? s[0]!.toUpperCase() + s.slice(1) : s))
-		.join("");
+		.join('');
 }
 
 /**
@@ -186,10 +188,10 @@ function summarizeAssembled(node: unknown): unknown {
 	};
 	const fields = summarizeMapLike(n.fields, (v) => ({
 		source: (v as { source?: string }).source,
-		values: summarizeValues((v as { values?: unknown }).values),
+		values: summarizeValues((v as { values?: unknown }).values)
 	}));
 	const children = summarizeMapLike(n.children, (v) => ({
-		values: summarizeValues((v as { values?: unknown }).values),
+		values: summarizeValues((v as { values?: unknown }).values)
 	}));
 	const forms = summarizeMapLike(n.forms, () => ({}));
 	return {
@@ -200,13 +202,13 @@ function summarizeAssembled(node: unknown): unknown {
 		parameterlessReason: n.parameterlessReason,
 		fields,
 		children,
-		forms,
+		forms
 	};
 }
 
 function summarizeMapLike(
 	v: unknown,
-	proj: (value: unknown) => Record<string, unknown>,
+	proj: (value: unknown) => Record<string, unknown>
 ): Array<Record<string, unknown>> {
 	if (!v) return [];
 	if (v instanceof Map) {
@@ -218,10 +220,10 @@ function summarizeMapLike(
 			return { name: it.name, ...proj(item) };
 		});
 	}
-	if (typeof v === "object") {
+	if (typeof v === 'object') {
 		return Object.entries(v as Record<string, unknown>).map(([k, val]) => ({
 			name: k,
-			...proj(val),
+			...proj(val)
 		}));
 	}
 	return [];
@@ -230,9 +232,9 @@ function summarizeMapLike(
 function summarizeValues(v: unknown): unknown {
 	if (!Array.isArray(v)) return v;
 	return v.map((x) => {
-		if (typeof x === "string") return { string: x };
+		if (typeof x === 'string') return { string: x };
 		const o = x as { kind?: string; name?: string };
-		if (o && typeof o === "object" && "name" in o) {
+		if (o && typeof o === 'object' && 'name' in o) {
 			return { node: o.name, kind: o.kind };
 		}
 		return x;

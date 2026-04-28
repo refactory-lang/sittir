@@ -8,9 +8,9 @@
 // entirely (unit-test convenience on the legacy regex-substitutor
 // path, retained for in-memory test fixtures).
 
-import type { RulesConfig } from "./types.ts";
-import { createRendererFromConfig } from "./render.ts";
-import type { BoundRenderer } from "./render.ts";
+import type { RulesConfig } from './types.ts';
+import { createRendererFromConfig } from './render.ts';
+import type { BoundRenderer } from './render.ts';
 
 /**
  * Create a renderer bound to a specific templates source.
@@ -23,8 +23,10 @@ import type { BoundRenderer } from "./render.ts";
  */
 export function createRenderer(templatesDir: string): BoundRenderer;
 export function createRenderer(config: RulesConfig): BoundRenderer;
-export function createRenderer(pathOrConfig: string | RulesConfig): BoundRenderer {
-	if (typeof pathOrConfig !== "string") {
+export function createRenderer(
+	pathOrConfig: string | RulesConfig
+): BoundRenderer {
+	if (typeof pathOrConfig !== 'string') {
 		return createRendererFromConfig(pathOrConfig);
 	}
 	// String argument is a `.jinja` templates directory. Separators,
@@ -34,11 +36,11 @@ export function createRenderer(pathOrConfig: string | RulesConfig): BoundRendere
 	// render path needs no runtime config; an empty RulesConfig
 	// suffices.
 	const emptyConfig: RulesConfig = {
-		language: "",
+		language: '',
 		extensions: [],
 		expandoChar: null,
-		metadata: { grammarSha: "" },
-		rules: {},
+		metadata: { grammarSha: '' },
+		rules: {}
 	};
 	return createRendererFromConfig(emptyConfig, { templatesDir: pathOrConfig });
 }

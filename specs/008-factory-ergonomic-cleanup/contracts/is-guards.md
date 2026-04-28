@@ -12,15 +12,17 @@ export const is: IsGuards;
 
 type IsGuards = {
 	// Per-kind (camelCase keys)
-	[K in keyof NamespaceMap as CamelCase<K & string>]: <T extends { readonly type: string }>(
-		v: T,
-	) => v is T & { readonly type: NamespaceMap[K]["Kind"] & string };
+	[K in keyof NamespaceMap as CamelCase<K & string>]: <
+		T extends { readonly type: string }
+	>(
+		v: T
+	) => v is T & { readonly type: NamespaceMap[K]['Kind'] & string };
 } & {
 	// Generic inverse
 	kind<K extends keyof NamespaceMap>(
 		v: { readonly type: string },
-		kind: K,
-	): v is { readonly type: NamespaceMap[K]["Kind"] & string };
+		kind: K
+	): v is { readonly type: NamespaceMap[K]['Kind'] & string };
 
 	// Per-supertype (one entry per supertype declared in the grammar)
 	expression: (v: { readonly type: string }) => v is Expression;
@@ -33,15 +35,17 @@ type IsGuards = {
 
 ```ts
 // Kind already narrowed: resolves through NamespaceMap to the concrete Tree/Node type
-export function isTree<T extends { readonly type: K }, K extends keyof NamespaceMap & string>(
-	v: T,
-): v is T & NamespaceMap[K]["Tree"];
+export function isTree<
+	T extends { readonly type: K },
+	K extends keyof NamespaceMap & string
+>(v: T): v is T & NamespaceMap[K]['Tree'];
 // Kind unknown: falls back to generic AnyTreeNode
 export function isTree(v: { readonly type: string }): v is AnyTreeNode;
 
-export function isNode<T extends { readonly type: K }, K extends keyof NamespaceMap & string>(
-	v: T,
-): v is T & NamespaceMap[K]["Node"];
+export function isNode<
+	T extends { readonly type: K },
+	K extends keyof NamespaceMap & string
+>(v: T): v is T & NamespaceMap[K]['Node'];
 export function isNode(v: { readonly type: string }): v is AnyNodeData;
 ```
 

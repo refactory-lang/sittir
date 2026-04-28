@@ -29,27 +29,27 @@
  * and calls the same function.
  */
 
-import { readFileSync } from "node:fs";
-import { pathToFileURL } from "node:url";
+import { readFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 
 import type {
 	BackendBaseline,
 	GrammarEntry,
 	ParityFixtures,
 	RoundtripResult,
-	ValidatorResult,
-} from "./collect-baseline.ts";
+	ValidatorResult
+} from './collect-baseline.ts';
 
 // ---------------------------------------------------------------------------
 // Verdict shape
 // ---------------------------------------------------------------------------
 
 export type RegressionVerdictReason =
-	| "pass-count-drop"
-	| "total-drop"
-	| "total-fail-rise"
-	| "schema-violation"
-	| "format-deferred-rise";
+	| 'pass-count-drop'
+	| 'total-drop'
+	| 'total-fail-rise'
+	| 'schema-violation'
+	| 'format-deferred-rise';
 
 export type RegressionVerdict =
 	| { ok: true; summary: string }
@@ -57,7 +57,12 @@ export type RegressionVerdict =
 			ok: false;
 			reason: RegressionVerdictReason;
 			summary: string;
-			details: { path: string; before?: unknown; after?: unknown; note?: string };
+			details: {
+				path: string;
+				before?: unknown;
+				after?: unknown;
+				note?: string;
+			};
 	  };
 
 // ---------------------------------------------------------------------------
@@ -66,12 +71,20 @@ export type RegressionVerdict =
 // truth for "which validators / which grammars exist".
 // ---------------------------------------------------------------------------
 
-const GRAMMARS = ["python", "rust", "typescript"] as const;
+const GRAMMARS = ['python', 'rust', 'typescript'] as const;
 
-const VALIDATORS = ["from", "coverage", "roundtrip", "factoryRoundtrip"] as const;
+const VALIDATORS = [
+	'from',
+	'coverage',
+	'roundtrip',
+	'factoryRoundtrip'
+] as const;
 type ValidatorName = (typeof VALIDATORS)[number];
 
-const ROUNDTRIP_VALIDATORS: readonly ValidatorName[] = ["roundtrip", "factoryRoundtrip"];
+const ROUNDTRIP_VALIDATORS: readonly ValidatorName[] = [
+	'roundtrip',
+	'factoryRoundtrip'
+];
 
 // ---------------------------------------------------------------------------
 // Schema validation — runs on BOTH base and head. Catches manual edits
@@ -87,24 +100,27 @@ function isSorted(arr: readonly string[]): boolean {
 }
 
 function isPlainStringArray(value: unknown): value is string[] {
-	return Array.isArray(value) && value.every((v) => typeof v === "string");
+	return Array.isArray(value) && value.every((v) => typeof v === 'string');
 }
 
-function validateSortedStringArray(value: unknown, path: string): RegressionVerdict | null {
+function validateSortedStringArray(
+	value: unknown,
+	path: string
+): RegressionVerdict | null {
 	if (!isPlainStringArray(value)) {
 		return {
 			ok: false,
-			reason: "schema-violation",
+			reason: 'schema-violation',
 			summary: `schema violation: ${path} is not a string[]`,
-			details: { path, after: value, note: "expected string[]" },
+			details: { path, after: value, note: 'expected string[]' }
 		};
 	}
 	if (!isSorted(value)) {
 		return {
 			ok: false,
-			reason: "schema-violation",
+			reason: 'schema-violation',
 			summary: `schema violation: ${path} is not sorted ascending`,
-			details: { path, after: value, note: "array must be sorted ascending" },
+			details: { path, after: value, note: 'array must be sorted ascending' }
 		};
 	}
 	return null;
@@ -113,162 +129,174 @@ function validateSortedStringArray(value: unknown, path: string): RegressionVerd
 function validateValidatorResultShape(
 	v: unknown,
 	path: string,
-	isRoundtrip: boolean,
+	isRoundtrip: boolean
 ): RegressionVerdict | null {
-	if (v === null || typeof v !== "object") {
+	if (v === null || typeof v !== 'object') {
 		return {
 			ok: false,
-			reason: "schema-violation",
+			reason: 'schema-violation',
 			summary: `schema violation: ${path} is not an object`,
-			details: { path, after: v, note: "expected validator-result object" },
+			details: { path, after: v, note: 'expected validator-result object' }
 		};
 	}
 	const obj = v as Record<string, unknown>;
-	for (const key of ["pass", "total"] as const) {
-		if (typeof obj[key] !== "number") {
+	for (const key of ['pass', 'total'] as const) {
+		if (typeof obj[key] !== 'number') {
 			return {
 				ok: false,
-				reason: "schema-violation",
+				reason: 'schema-violation',
 				summary: `schema violation: ${path}.${key} is missing or not a number`,
-				details: { path: `${path}.${key}`, after: obj[key] },
+				details: { path: `${path}.${key}`, after: obj[key] }
 			};
 		}
 	}
-	if (isRoundtrip && typeof obj["astMatchPass"] !== "number") {
+	if (isRoundtrip && typeof obj['astMatchPass'] !== 'number') {
 		return {
 			ok: false,
-			reason: "schema-violation",
+			reason: 'schema-violation',
 			summary: `schema violation: ${path}.astMatchPass is missing or not a number`,
-			details: { path: `${path}.astMatchPass`, after: obj["astMatchPass"] },
+			details: { path: `${path}.astMatchPass`, after: obj['astMatchPass'] }
 		};
 	}
-	if (!("failingKinds" in obj)) {
+	if (!('failingKinds' in obj)) {
 		return {
 			ok: false,
-			reason: "schema-violation",
+			reason: 'schema-violation',
 			summary: `schema violation: ${path}.failingKinds is missing`,
-			details: { path: `${path}.failingKinds`, note: "required by contract" },
+			details: { path: `${path}.failingKinds`, note: 'required by contract' }
 		};
 	}
-	const fkv = validateSortedStringArray(obj["failingKinds"], `${path}.failingKinds`);
+	const fkv = validateSortedStringArray(
+		obj['failingKinds'],
+		`${path}.failingKinds`
+	);
 	if (fkv) return fkv;
-	if (!("formatDeferredKinds" in obj)) {
+	if (!('formatDeferredKinds' in obj)) {
 		return {
 			ok: false,
-			reason: "schema-violation",
+			reason: 'schema-violation',
 			summary: `schema violation: ${path}.formatDeferredKinds is missing`,
 			details: {
 				path: `${path}.formatDeferredKinds`,
-				note: "required by contract (added in 6c1a3e24)",
-			},
+				note: 'required by contract (added in 6c1a3e24)'
+			}
 		};
 	}
-	const fdv = validateSortedStringArray(obj["formatDeferredKinds"], `${path}.formatDeferredKinds`);
+	const fdv = validateSortedStringArray(
+		obj['formatDeferredKinds'],
+		`${path}.formatDeferredKinds`
+	);
 	if (fdv) return fdv;
 	return null;
 }
 
-function validateParityFixturesShape(v: unknown, path: string): RegressionVerdict | null {
-	if (v === null || typeof v !== "object") {
+function validateParityFixturesShape(
+	v: unknown,
+	path: string
+): RegressionVerdict | null {
+	if (v === null || typeof v !== 'object') {
 		return {
 			ok: false,
-			reason: "schema-violation",
+			reason: 'schema-violation',
 			summary: `schema violation: ${path} is not an object`,
-			details: { path, after: v },
+			details: { path, after: v }
 		};
 	}
 	const obj = v as Record<string, unknown>;
-	for (const key of ["pass", "total"] as const) {
-		if (typeof obj[key] !== "number") {
+	for (const key of ['pass', 'total'] as const) {
+		if (typeof obj[key] !== 'number') {
 			return {
 				ok: false,
-				reason: "schema-violation",
+				reason: 'schema-violation',
 				summary: `schema violation: ${path}.${key} is missing or not a number`,
-				details: { path: `${path}.${key}`, after: obj[key] },
+				details: { path: `${path}.${key}`, after: obj[key] }
 			};
 		}
 	}
-	for (const key of ["failingByKind", "formatDeferredByKind"] as const) {
+	for (const key of ['failingByKind', 'formatDeferredByKind'] as const) {
 		if (!(key in obj)) {
 			return {
 				ok: false,
-				reason: "schema-violation",
+				reason: 'schema-violation',
 				summary: `schema violation: ${path}.${key} is missing`,
-				details: { path: `${path}.${key}`, note: "required by contract" },
+				details: { path: `${path}.${key}`, note: 'required by contract' }
 			};
 		}
 		const value = obj[key];
-		if (value === null || typeof value !== "object" || Array.isArray(value)) {
+		if (value === null || typeof value !== 'object' || Array.isArray(value)) {
 			return {
 				ok: false,
-				reason: "schema-violation",
+				reason: 'schema-violation',
 				summary: `schema violation: ${path}.${key} is not a plain object`,
-				details: { path: `${path}.${key}`, after: value },
+				details: { path: `${path}.${key}`, after: value }
 			};
 		}
 		const keys = Object.keys(value as object);
 		if (!isSorted(keys)) {
 			return {
 				ok: false,
-				reason: "schema-violation",
+				reason: 'schema-violation',
 				summary: `schema violation: ${path}.${key} keys are not sorted ascending`,
 				details: {
 					path: `${path}.${key}`,
 					after: keys,
-					note: "object keys must be sorted ascending",
-				},
+					note: 'object keys must be sorted ascending'
+				}
 			};
 		}
 	}
 	return null;
 }
 
-function validateBaselineShape(b: unknown, label: string): RegressionVerdict | null {
-	if (b === null || typeof b !== "object") {
+function validateBaselineShape(
+	b: unknown,
+	label: string
+): RegressionVerdict | null {
+	if (b === null || typeof b !== 'object') {
 		return {
 			ok: false,
-			reason: "schema-violation",
+			reason: 'schema-violation',
 			summary: `${label}: not an object`,
-			details: { path: label, after: b },
+			details: { path: label, after: b }
 		};
 	}
 	const obj = b as Record<string, unknown>;
-	if (obj["backend"] !== "typescript" && obj["backend"] !== "native") {
+	if (obj['backend'] !== 'typescript' && obj['backend'] !== 'native') {
 		return {
 			ok: false,
-			reason: "schema-violation",
+			reason: 'schema-violation',
 			summary: `${label}.backend is not 'typescript' | 'native'`,
-			details: { path: `${label}.backend`, after: obj["backend"] },
+			details: { path: `${label}.backend`, after: obj['backend'] }
 		};
 	}
-	if (typeof obj["commit"] !== "string") {
+	if (typeof obj['commit'] !== 'string') {
 		return {
 			ok: false,
-			reason: "schema-violation",
+			reason: 'schema-violation',
 			summary: `${label}.commit is missing or not a string`,
-			details: { path: `${label}.commit`, after: obj["commit"] },
+			details: { path: `${label}.commit`, after: obj['commit'] }
 		};
 	}
-	const grammars = obj["grammars"];
-	if (grammars === null || typeof grammars !== "object") {
+	const grammars = obj['grammars'];
+	if (grammars === null || typeof grammars !== 'object') {
 		return {
 			ok: false,
-			reason: "schema-violation",
+			reason: 'schema-violation',
 			summary: `${label}.grammars is not an object`,
-			details: { path: `${label}.grammars`, after: grammars },
+			details: { path: `${label}.grammars`, after: grammars }
 		};
 	}
 	const grammarKeys = Object.keys(grammars as object);
 	if (!isSorted(grammarKeys)) {
 		return {
 			ok: false,
-			reason: "schema-violation",
+			reason: 'schema-violation',
 			summary: `schema violation: ${label}.grammars keys are not sorted ascending`,
 			details: {
 				path: `${label}.grammars`,
 				after: grammarKeys,
-				note: "object keys must be sorted ascending",
-			},
+				note: 'object keys must be sorted ascending'
+			}
 		};
 	}
 	for (const g of GRAMMARS) {
@@ -277,39 +305,39 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 		if (ge === undefined) {
 			return {
 				ok: false,
-				reason: "schema-violation",
+				reason: 'schema-violation',
 				summary: `${gPath} is missing`,
-				details: { path: gPath, note: "required grammar entry" },
+				details: { path: gPath, note: 'required grammar entry' }
 			};
 		}
-		if (ge === null || typeof ge !== "object") {
+		if (ge === null || typeof ge !== 'object') {
 			return {
 				ok: false,
-				reason: "schema-violation",
+				reason: 'schema-violation',
 				summary: `${gPath} is not an object`,
-				details: { path: gPath, after: ge },
+				details: { path: gPath, after: ge }
 			};
 		}
-		const validators = (ge as Record<string, unknown>)["validators"];
-		if (validators === null || typeof validators !== "object") {
+		const validators = (ge as Record<string, unknown>)['validators'];
+		if (validators === null || typeof validators !== 'object') {
 			return {
 				ok: false,
-				reason: "schema-violation",
+				reason: 'schema-violation',
 				summary: `${gPath}.validators is not an object`,
-				details: { path: `${gPath}.validators`, after: validators },
+				details: { path: `${gPath}.validators`, after: validators }
 			};
 		}
 		const validatorKeys = Object.keys(validators as object);
 		if (!isSorted(validatorKeys)) {
 			return {
 				ok: false,
-				reason: "schema-violation",
+				reason: 'schema-violation',
 				summary: `schema violation: ${gPath}.validators keys are not sorted ascending`,
 				details: {
 					path: `${gPath}.validators`,
 					after: validatorKeys,
-					note: "object keys must be sorted ascending",
-				},
+					note: 'object keys must be sorted ascending'
+				}
 			};
 		}
 		for (const vName of VALIDATORS) {
@@ -319,29 +347,29 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 			const sv = validateValidatorResultShape(vv, vPath, isRoundtrip);
 			if (sv) return sv;
 		}
-		const pf = (ge as Record<string, unknown>)["parityFixtures"];
+		const pf = (ge as Record<string, unknown>)['parityFixtures'];
 		const pfv = validateParityFixturesShape(pf, `${gPath}.parityFixtures`);
 		if (pfv) return pfv;
 	}
-	const totals = obj["totals"];
-	if (totals === null || typeof totals !== "object") {
+	const totals = obj['totals'];
+	if (totals === null || typeof totals !== 'object') {
 		return {
 			ok: false,
-			reason: "schema-violation",
+			reason: 'schema-violation',
 			summary: `${label}.totals is not an object`,
-			details: { path: `${label}.totals`, after: totals },
+			details: { path: `${label}.totals`, after: totals }
 		};
 	}
-	for (const key of ["pass", "fail", "total"] as const) {
-		if (typeof (totals as Record<string, unknown>)[key] !== "number") {
+	for (const key of ['pass', 'fail', 'total'] as const) {
+		if (typeof (totals as Record<string, unknown>)[key] !== 'number') {
 			return {
 				ok: false,
-				reason: "schema-violation",
+				reason: 'schema-violation',
 				summary: `${label}.totals.${key} is missing or not a number`,
 				details: {
 					path: `${label}.totals.${key}`,
-					after: (totals as Record<string, unknown>)[key],
-				},
+					after: (totals as Record<string, unknown>)[key]
+				}
 			};
 		}
 	}
@@ -363,30 +391,41 @@ function collectPassCounts(b: BackendBaseline): PassCountSample[] {
 		const ge = b.grammars[g];
 		for (const vName of VALIDATORS) {
 			const v = ge.validators[vName] as ValidatorResult;
-			out.push({ path: `grammars.${g}.validators.${vName}.pass`, value: v.pass });
+			out.push({
+				path: `grammars.${g}.validators.${vName}.pass`,
+				value: v.pass
+			});
 			if (ROUNDTRIP_VALIDATORS.includes(vName)) {
 				out.push({
 					path: `grammars.${g}.validators.${vName}.astMatchPass`,
-					value: (v as RoundtripResult).astMatchPass,
+					value: (v as RoundtripResult).astMatchPass
 				});
 			}
 		}
-		out.push({ path: `grammars.${g}.parityFixtures.pass`, value: ge.parityFixtures.pass });
+		out.push({
+			path: `grammars.${g}.parityFixtures.pass`,
+			value: ge.parityFixtures.pass
+		});
 	}
-	out.push({ path: "totals.pass", value: b.totals.pass });
+	out.push({ path: 'totals.pass', value: b.totals.pass });
 	return out;
 }
 
-function checkPassCounts(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
-	const baseSamples = new Map(collectPassCounts(base).map((s) => [s.path, s.value]));
+function checkPassCounts(
+	base: BackendBaseline,
+	head: BackendBaseline
+): RegressionVerdict | null {
+	const baseSamples = new Map(
+		collectPassCounts(base).map((s) => [s.path, s.value])
+	);
 	for (const s of collectPassCounts(head)) {
 		const before = baseSamples.get(s.path) ?? 0;
 		if (s.value < before) {
 			return {
 				ok: false,
-				reason: "pass-count-drop",
+				reason: 'pass-count-drop',
 				summary: `pass-count drop at ${s.path}: ${before} → ${s.value}`,
-				details: { path: s.path, before, after: s.value },
+				details: { path: s.path, before, after: s.value }
 			};
 		}
 	}
@@ -397,13 +436,20 @@ function checkPassCounts(base: BackendBaseline, head: BackendBaseline): Regressi
 // Total-drop / total-fail-rise (rules #2 / #3)
 // ---------------------------------------------------------------------------
 
-function checkTotalDrop(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
+function checkTotalDrop(
+	base: BackendBaseline,
+	head: BackendBaseline
+): RegressionVerdict | null {
 	if (head.totals.total < base.totals.total) {
 		return {
 			ok: false,
-			reason: "total-drop",
+			reason: 'total-drop',
 			summary: `totals.total decreased: ${base.totals.total} → ${head.totals.total} (likely fixture deletion)`,
-			details: { path: "totals.total", before: base.totals.total, after: head.totals.total },
+			details: {
+				path: 'totals.total',
+				before: base.totals.total,
+				after: head.totals.total
+			}
 		};
 	}
 	return null;
@@ -411,7 +457,7 @@ function checkTotalDrop(base: BackendBaseline, head: BackendBaseline): Regressio
 
 function checkTotalFailRise(
 	base: BackendBaseline,
-	head: BackendBaseline,
+	head: BackendBaseline
 ): RegressionVerdict | null {
 	if (head.totals.fail <= base.totals.fail) return null;
 	// Total fail rose. Allowed only when the rise is FULLY accounted
@@ -427,9 +473,13 @@ function checkTotalFailRise(
 	if (totalRise >= failRise && passDelta >= 0) return null;
 	return {
 		ok: false,
-		reason: "total-fail-rise",
+		reason: 'total-fail-rise',
 		summary: `totals.fail increased: ${base.totals.fail} → ${head.totals.fail} (totals.total: ${base.totals.total} → ${head.totals.total}, pass: ${base.totals.pass} → ${head.totals.pass})`,
-		details: { path: "totals.fail", before: base.totals.fail, after: head.totals.fail },
+		details: {
+			path: 'totals.fail',
+			before: base.totals.fail,
+			after: head.totals.fail
+		}
 	};
 }
 
@@ -444,7 +494,8 @@ function validatorSum(v: ValidatorResult): number {
 
 function parityFixturesSum(p: ParityFixtures): number {
 	let sum = 0;
-	for (const k of Object.keys(p.failingByKind)) sum += p.failingByKind[k]?.length ?? 0;
+	for (const k of Object.keys(p.failingByKind))
+		sum += p.failingByKind[k]?.length ?? 0;
 	for (const k of Object.keys(p.formatDeferredByKind))
 		sum += p.formatDeferredByKind[k]?.length ?? 0;
 	return sum;
@@ -452,7 +503,7 @@ function parityFixturesSum(p: ParityFixtures): number {
 
 function checkFormatDeferredRise(
 	base: BackendBaseline,
-	head: BackendBaseline,
+	head: BackendBaseline
 ): RegressionVerdict | null {
 	for (const g of GRAMMARS) {
 		const baseGE: GrammarEntry = base.grammars[g];
@@ -478,14 +529,14 @@ function checkFormatDeferredRise(
 				if (totalRise >= failRise && passDelta >= 0) continue;
 				return {
 					ok: false,
-					reason: "format-deferred-rise",
+					reason: 'format-deferred-rise',
 					summary: `format-deferred sum grew at grammars.${g}.validators.${vName}: ${before} → ${after} (total: ${baseTotal} → ${headTotal}, pass: ${baseV.pass} → ${headV.pass})`,
 					details: {
 						path: `grammars.${g}.validators.${vName}`,
 						before,
 						after,
-						note: "failingKinds.length + formatDeferredKinds.length must not grow within feature 016 (move semantics permitted)",
-					},
+						note: 'failingKinds.length + formatDeferredKinds.length must not grow within feature 016 (move semantics permitted)'
+					}
 				};
 			}
 		}
@@ -494,14 +545,14 @@ function checkFormatDeferredRise(
 		if (afterPf > beforePf) {
 			return {
 				ok: false,
-				reason: "format-deferred-rise",
+				reason: 'format-deferred-rise',
 				summary: `format-deferred fixture-id sum grew at grammars.${g}.parityFixtures: ${beforePf} → ${afterPf}`,
 				details: {
 					path: `grammars.${g}.parityFixtures`,
 					before: beforePf,
 					after: afterPf,
-					note: "sum of failingByKind + formatDeferredByKind ids must not grow",
-				},
+					note: 'sum of failingByKind + formatDeferredByKind ids must not grow'
+				}
 			};
 		}
 	}
@@ -534,18 +585,21 @@ function checkFormatDeferredRise(
  * check, `base.backend === head.backend` is guaranteed, so the summary
  * may quote `head.backend` without ambiguity.
  */
-export function checkRegression(base: BackendBaseline, head: BackendBaseline): RegressionVerdict {
-	const headSchema = validateBaselineShape(head, "head");
+export function checkRegression(
+	base: BackendBaseline,
+	head: BackendBaseline
+): RegressionVerdict {
+	const headSchema = validateBaselineShape(head, 'head');
 	if (headSchema) return headSchema;
-	const baseSchema = validateBaselineShape(base, "base");
+	const baseSchema = validateBaselineShape(base, 'base');
 	if (baseSchema) return baseSchema;
 
 	if (base.backend !== head.backend) {
 		return {
 			ok: false,
-			reason: "schema-violation",
+			reason: 'schema-violation',
 			summary: `backend mismatch: base=${base.backend}, head=${head.backend}`,
-			details: { path: "backend", before: base.backend, after: head.backend },
+			details: { path: 'backend', before: base.backend, after: head.backend }
 		};
 	}
 
@@ -563,7 +617,7 @@ export function checkRegression(base: BackendBaseline, head: BackendBaseline): R
 
 	return {
 		ok: true,
-		summary: `no regression: backend=${head.backend} totals.pass ${base.totals.pass}→${head.totals.pass}, totals.fail ${base.totals.fail}→${head.totals.fail}`,
+		summary: `no regression: backend=${head.backend} totals.pass ${base.totals.pass}→${head.totals.pass}, totals.fail ${base.totals.fail}→${head.totals.fail}`
 	};
 }
 
@@ -581,20 +635,22 @@ function parseArgs(argv: readonly string[]): CliArgs {
 	let head: string | undefined;
 	for (let i = 0; i < argv.length; i++) {
 		const arg = argv[i];
-		if (arg === "--base") {
+		if (arg === '--base') {
 			base = argv[++i];
-		} else if (arg === "--head") {
+		} else if (arg === '--head') {
 			head = argv[++i];
 		}
 	}
 	if (base === undefined || head === undefined) {
-		throw new Error("usage: check-baseline-regression --base <path> --head <path>");
+		throw new Error(
+			'usage: check-baseline-regression --base <path> --head <path>'
+		);
 	}
 	return { base, head };
 }
 
 function readJsonFile(path: string): unknown {
-	return JSON.parse(readFileSync(path, "utf-8"));
+	return JSON.parse(readFileSync(path, 'utf-8'));
 }
 
 const isCli = (() => {
@@ -617,7 +673,7 @@ if (isCli) {
 		process.exit(0);
 	} else {
 		process.stderr.write(
-			`${JSON.stringify({ reason: verdict.reason, summary: verdict.summary, details: verdict.details }, null, 2)}\n`,
+			`${JSON.stringify({ reason: verdict.reason, summary: verdict.summary, details: verdict.details }, null, 2)}\n`
 		);
 		process.exit(1);
 	}

@@ -12,7 +12,7 @@ This contract defines the canonical shape of the per-backend baseline JSON files
 ```ts
 interface BackendBaseline {
 	/** Which backend produced the counts. */
-	backend: "typescript" | "native";
+	backend: 'typescript' | 'native';
 
 	/**
 	 * Short SHA of HEAD at collection time. Informational — not part of
@@ -23,7 +23,7 @@ interface BackendBaseline {
 
 	/** Per-grammar counts. Keys MUST be sorted: python, rust, typescript. */
 	grammars: {
-		readonly [grammar in "python" | "rust" | "typescript"]: GrammarEntry;
+		readonly [grammar in 'python' | 'rust' | 'typescript']: GrammarEntry;
 	};
 
 	/** Roll-up across all grammars and validators. Spot-check sums. */

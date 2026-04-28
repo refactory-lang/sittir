@@ -793,473 +793,624 @@ import type {
 	YieldExpressionConfig,
 	YieldExpressionFromInput,
 	YieldExpressionTree,
-	YieldTree,
-} from "./types.js";
-import type { ConfigOf } from "@sittir/types";
+	YieldTree
+} from './types.js';
+import type { ConfigOf } from '@sittir/types';
 
 type _TypeExtends<A, B> = A extends B ? true : false;
 type _TypeAssert<T extends true> = T;
 
 // --- Concrete interface `type` literal ---
-export type _Type_SourceFile = _TypeAssert<_TypeExtends<SourceFile["type"], "source_file">>;
+export type _Type_SourceFile = _TypeAssert<
+	_TypeExtends<SourceFile['type'], 'source_file'>
+>;
 export type _Type_ExpressionStatement = _TypeAssert<
-	_TypeExtends<ExpressionStatement["type"], "expression_statement">
+	_TypeExtends<ExpressionStatement['type'], 'expression_statement'>
 >;
 export type _Type_MacroDefinition = _TypeAssert<
-	_TypeExtends<MacroDefinition["type"], "macro_definition">
+	_TypeExtends<MacroDefinition['type'], 'macro_definition'>
 >;
-export type _Type_MacroRule = _TypeAssert<_TypeExtends<MacroRule["type"], "macro_rule">>;
+export type _Type_MacroRule = _TypeAssert<
+	_TypeExtends<MacroRule['type'], 'macro_rule'>
+>;
 export type _Type_TokenTreePattern = _TypeAssert<
-	_TypeExtends<TokenTreePattern["type"], "token_tree_pattern">
+	_TypeExtends<TokenTreePattern['type'], 'token_tree_pattern'>
 >;
 export type _Type_TokenBindingPattern = _TypeAssert<
-	_TypeExtends<TokenBindingPattern["type"], "token_binding_pattern">
+	_TypeExtends<TokenBindingPattern['type'], 'token_binding_pattern'>
 >;
 export type _Type_TokenRepetitionPattern = _TypeAssert<
-	_TypeExtends<TokenRepetitionPattern["type"], "token_repetition_pattern">
+	_TypeExtends<TokenRepetitionPattern['type'], 'token_repetition_pattern'>
 >;
-export type _Type_TokenTree = _TypeAssert<_TypeExtends<TokenTree["type"], "token_tree">>;
+export type _Type_TokenTree = _TypeAssert<
+	_TypeExtends<TokenTree['type'], 'token_tree'>
+>;
 export type _Type_TokenRepetition = _TypeAssert<
-	_TypeExtends<TokenRepetition["type"], "token_repetition">
+	_TypeExtends<TokenRepetition['type'], 'token_repetition'>
 >;
 export type _Type_HiddenNonSpecialToken = _TypeAssert<
-	_TypeExtends<HiddenNonSpecialToken["type"], "_non_special_token">
+	_TypeExtends<HiddenNonSpecialToken['type'], '_non_special_token'>
 >;
 export type _Type_AttributeItem = _TypeAssert<
-	_TypeExtends<AttributeItem["type"], "attribute_item">
+	_TypeExtends<AttributeItem['type'], 'attribute_item'>
 >;
 export type _Type_InnerAttributeItem = _TypeAssert<
-	_TypeExtends<InnerAttributeItem["type"], "inner_attribute_item">
+	_TypeExtends<InnerAttributeItem['type'], 'inner_attribute_item'>
 >;
-export type _Type_Attribute = _TypeAssert<_TypeExtends<Attribute["type"], "attribute">>;
-export type _Type_ModItem = _TypeAssert<_TypeExtends<ModItem["type"], "mod_item">>;
+export type _Type_Attribute = _TypeAssert<
+	_TypeExtends<Attribute['type'], 'attribute'>
+>;
+export type _Type_ModItem = _TypeAssert<
+	_TypeExtends<ModItem['type'], 'mod_item'>
+>;
 export type _Type_ForeignModItem = _TypeAssert<
-	_TypeExtends<ForeignModItem["type"], "foreign_mod_item">
+	_TypeExtends<ForeignModItem['type'], 'foreign_mod_item'>
 >;
 export type _Type_DeclarationList = _TypeAssert<
-	_TypeExtends<DeclarationList["type"], "declaration_list">
+	_TypeExtends<DeclarationList['type'], 'declaration_list'>
 >;
-export type _Type_StructItem = _TypeAssert<_TypeExtends<StructItem["type"], "struct_item">>;
-export type _Type_UnionItem = _TypeAssert<_TypeExtends<UnionItem["type"], "union_item">>;
-export type _Type_EnumItem = _TypeAssert<_TypeExtends<EnumItem["type"], "enum_item">>;
+export type _Type_StructItem = _TypeAssert<
+	_TypeExtends<StructItem['type'], 'struct_item'>
+>;
+export type _Type_UnionItem = _TypeAssert<
+	_TypeExtends<UnionItem['type'], 'union_item'>
+>;
+export type _Type_EnumItem = _TypeAssert<
+	_TypeExtends<EnumItem['type'], 'enum_item'>
+>;
 export type _Type_EnumVariantList = _TypeAssert<
-	_TypeExtends<EnumVariantList["type"], "enum_variant_list">
+	_TypeExtends<EnumVariantList['type'], 'enum_variant_list'>
 >;
-export type _Type_EnumVariant = _TypeAssert<_TypeExtends<EnumVariant["type"], "enum_variant">>;
+export type _Type_EnumVariant = _TypeAssert<
+	_TypeExtends<EnumVariant['type'], 'enum_variant'>
+>;
 export type _Type_FieldDeclarationList = _TypeAssert<
-	_TypeExtends<FieldDeclarationList["type"], "field_declaration_list">
+	_TypeExtends<FieldDeclarationList['type'], 'field_declaration_list'>
 >;
 export type _Type_FieldDeclaration = _TypeAssert<
-	_TypeExtends<FieldDeclaration["type"], "field_declaration">
+	_TypeExtends<FieldDeclaration['type'], 'field_declaration'>
 >;
 export type _Type_OrderedFieldDeclarationList = _TypeAssert<
-	_TypeExtends<OrderedFieldDeclarationList["type"], "ordered_field_declaration_list">
+	_TypeExtends<
+		OrderedFieldDeclarationList['type'],
+		'ordered_field_declaration_list'
+	>
 >;
 export type _Type_ExternCrateDeclaration = _TypeAssert<
-	_TypeExtends<ExternCrateDeclaration["type"], "extern_crate_declaration">
+	_TypeExtends<ExternCrateDeclaration['type'], 'extern_crate_declaration'>
 >;
-export type _Type_ConstItem = _TypeAssert<_TypeExtends<ConstItem["type"], "const_item">>;
-export type _Type_StaticItem = _TypeAssert<_TypeExtends<StaticItem["type"], "static_item">>;
-export type _Type_TypeItem = _TypeAssert<_TypeExtends<TypeItem["type"], "type_item">>;
-export type _Type_FunctionItem = _TypeAssert<_TypeExtends<FunctionItem["type"], "function_item">>;
+export type _Type_ConstItem = _TypeAssert<
+	_TypeExtends<ConstItem['type'], 'const_item'>
+>;
+export type _Type_StaticItem = _TypeAssert<
+	_TypeExtends<StaticItem['type'], 'static_item'>
+>;
+export type _Type_TypeItem = _TypeAssert<
+	_TypeExtends<TypeItem['type'], 'type_item'>
+>;
+export type _Type_FunctionItem = _TypeAssert<
+	_TypeExtends<FunctionItem['type'], 'function_item'>
+>;
 export type _Type_FunctionSignatureItem = _TypeAssert<
-	_TypeExtends<FunctionSignatureItem["type"], "function_signature_item">
+	_TypeExtends<FunctionSignatureItem['type'], 'function_signature_item'>
 >;
 export type _Type_FunctionModifiers = _TypeAssert<
-	_TypeExtends<FunctionModifiers["type"], "function_modifiers">
+	_TypeExtends<FunctionModifiers['type'], 'function_modifiers'>
 >;
-export type _Type_WhereClause = _TypeAssert<_TypeExtends<WhereClause["type"], "where_clause">>;
+export type _Type_WhereClause = _TypeAssert<
+	_TypeExtends<WhereClause['type'], 'where_clause'>
+>;
 export type _Type_WherePredicate = _TypeAssert<
-	_TypeExtends<WherePredicate["type"], "where_predicate">
+	_TypeExtends<WherePredicate['type'], 'where_predicate'>
 >;
-export type _Type_ImplItem = _TypeAssert<_TypeExtends<ImplItem["type"], "impl_item">>;
-export type _Type_TraitItem = _TypeAssert<_TypeExtends<TraitItem["type"], "trait_item">>;
+export type _Type_ImplItem = _TypeAssert<
+	_TypeExtends<ImplItem['type'], 'impl_item'>
+>;
+export type _Type_TraitItem = _TypeAssert<
+	_TypeExtends<TraitItem['type'], 'trait_item'>
+>;
 export type _Type_AssociatedType = _TypeAssert<
-	_TypeExtends<AssociatedType["type"], "associated_type">
+	_TypeExtends<AssociatedType['type'], 'associated_type'>
 >;
-export type _Type_TraitBounds = _TypeAssert<_TypeExtends<TraitBounds["type"], "trait_bounds">>;
+export type _Type_TraitBounds = _TypeAssert<
+	_TypeExtends<TraitBounds['type'], 'trait_bounds'>
+>;
 export type _Type_HigherRankedTraitBound = _TypeAssert<
-	_TypeExtends<HigherRankedTraitBound["type"], "higher_ranked_trait_bound">
+	_TypeExtends<HigherRankedTraitBound['type'], 'higher_ranked_trait_bound'>
 >;
 export type _Type_RemovedTraitBound = _TypeAssert<
-	_TypeExtends<RemovedTraitBound["type"], "removed_trait_bound">
+	_TypeExtends<RemovedTraitBound['type'], 'removed_trait_bound'>
 >;
 export type _Type_TypeParameters = _TypeAssert<
-	_TypeExtends<TypeParameters["type"], "type_parameters">
+	_TypeExtends<TypeParameters['type'], 'type_parameters'>
 >;
 export type _Type_ConstParameter = _TypeAssert<
-	_TypeExtends<ConstParameter["type"], "const_parameter">
+	_TypeExtends<ConstParameter['type'], 'const_parameter'>
 >;
 export type _Type_TypeParameter = _TypeAssert<
-	_TypeExtends<TypeParameter["type"], "type_parameter">
+	_TypeExtends<TypeParameter['type'], 'type_parameter'>
 >;
 export type _Type_LifetimeParameter = _TypeAssert<
-	_TypeExtends<LifetimeParameter["type"], "lifetime_parameter">
+	_TypeExtends<LifetimeParameter['type'], 'lifetime_parameter'>
 >;
 export type _Type_LetDeclaration = _TypeAssert<
-	_TypeExtends<LetDeclaration["type"], "let_declaration">
+	_TypeExtends<LetDeclaration['type'], 'let_declaration'>
 >;
 export type _Type_UseDeclaration = _TypeAssert<
-	_TypeExtends<UseDeclaration["type"], "use_declaration">
+	_TypeExtends<UseDeclaration['type'], 'use_declaration'>
 >;
 export type _Type_ScopedUseList = _TypeAssert<
-	_TypeExtends<ScopedUseList["type"], "scoped_use_list">
+	_TypeExtends<ScopedUseList['type'], 'scoped_use_list'>
 >;
-export type _Type_UseList = _TypeAssert<_TypeExtends<UseList["type"], "use_list">>;
-export type _Type_UseAsClause = _TypeAssert<_TypeExtends<UseAsClause["type"], "use_as_clause">>;
-export type _Type_UseWildcard = _TypeAssert<_TypeExtends<UseWildcard["type"], "use_wildcard">>;
-export type _Type_Parameters = _TypeAssert<_TypeExtends<Parameters["type"], "parameters">>;
+export type _Type_UseList = _TypeAssert<
+	_TypeExtends<UseList['type'], 'use_list'>
+>;
+export type _Type_UseAsClause = _TypeAssert<
+	_TypeExtends<UseAsClause['type'], 'use_as_clause'>
+>;
+export type _Type_UseWildcard = _TypeAssert<
+	_TypeExtends<UseWildcard['type'], 'use_wildcard'>
+>;
+export type _Type_Parameters = _TypeAssert<
+	_TypeExtends<Parameters['type'], 'parameters'>
+>;
 export type _Type_SelfParameter = _TypeAssert<
-	_TypeExtends<SelfParameter["type"], "self_parameter">
+	_TypeExtends<SelfParameter['type'], 'self_parameter'>
 >;
 export type _Type_VariadicParameter = _TypeAssert<
-	_TypeExtends<VariadicParameter["type"], "variadic_parameter">
+	_TypeExtends<VariadicParameter['type'], 'variadic_parameter'>
 >;
-export type _Type_Parameter = _TypeAssert<_TypeExtends<Parameter["type"], "parameter">>;
+export type _Type_Parameter = _TypeAssert<
+	_TypeExtends<Parameter['type'], 'parameter'>
+>;
 export type _Type_ExternModifier = _TypeAssert<
-	_TypeExtends<ExternModifier["type"], "extern_modifier">
+	_TypeExtends<ExternModifier['type'], 'extern_modifier'>
 >;
 export type _Type_VisibilityModifier = _TypeAssert<
-	_TypeExtends<VisibilityModifier["type"], "visibility_modifier">
+	_TypeExtends<VisibilityModifier['type'], 'visibility_modifier'>
 >;
-export type _Type_HiddenType = _TypeAssert<_TypeExtends<HiddenType["type"], "_type">>;
+export type _Type_HiddenType = _TypeAssert<
+	_TypeExtends<HiddenType['type'], '_type'>
+>;
 export type _Type_BracketedType = _TypeAssert<
-	_TypeExtends<BracketedType["type"], "bracketed_type">
+	_TypeExtends<BracketedType['type'], 'bracketed_type'>
 >;
 export type _Type_QualifiedType = _TypeAssert<
-	_TypeExtends<QualifiedType["type"], "qualified_type">
+	_TypeExtends<QualifiedType['type'], 'qualified_type'>
 >;
-export type _Type_Lifetime = _TypeAssert<_TypeExtends<Lifetime["type"], "lifetime">>;
-export type _Type_ArrayType = _TypeAssert<_TypeExtends<ArrayType["type"], "array_type">>;
-export type _Type_ForLifetimes = _TypeAssert<_TypeExtends<ForLifetimes["type"], "for_lifetimes">>;
-export type _Type_FunctionType = _TypeAssert<_TypeExtends<FunctionType["type"], "function_type">>;
-export type _Type_TupleType = _TypeAssert<_TypeExtends<TupleType["type"], "tuple_type">>;
+export type _Type_Lifetime = _TypeAssert<
+	_TypeExtends<Lifetime['type'], 'lifetime'>
+>;
+export type _Type_ArrayType = _TypeAssert<
+	_TypeExtends<ArrayType['type'], 'array_type'>
+>;
+export type _Type_ForLifetimes = _TypeAssert<
+	_TypeExtends<ForLifetimes['type'], 'for_lifetimes'>
+>;
+export type _Type_FunctionType = _TypeAssert<
+	_TypeExtends<FunctionType['type'], 'function_type'>
+>;
+export type _Type_TupleType = _TypeAssert<
+	_TypeExtends<TupleType['type'], 'tuple_type'>
+>;
 export type _Type_GenericFunction = _TypeAssert<
-	_TypeExtends<GenericFunction["type"], "generic_function">
+	_TypeExtends<GenericFunction['type'], 'generic_function'>
 >;
-export type _Type_GenericType = _TypeAssert<_TypeExtends<GenericType["type"], "generic_type">>;
+export type _Type_GenericType = _TypeAssert<
+	_TypeExtends<GenericType['type'], 'generic_type'>
+>;
 export type _Type_GenericTypeWithTurbofish = _TypeAssert<
-	_TypeExtends<GenericTypeWithTurbofish["type"], "generic_type_with_turbofish">
+	_TypeExtends<GenericTypeWithTurbofish['type'], 'generic_type_with_turbofish'>
 >;
-export type _Type_BoundedType = _TypeAssert<_TypeExtends<BoundedType["type"], "bounded_type">>;
-export type _Type_UseBounds = _TypeAssert<_TypeExtends<UseBounds["type"], "use_bounds">>;
+export type _Type_BoundedType = _TypeAssert<
+	_TypeExtends<BoundedType['type'], 'bounded_type'>
+>;
+export type _Type_UseBounds = _TypeAssert<
+	_TypeExtends<UseBounds['type'], 'use_bounds'>
+>;
 export type _Type_TypeArguments = _TypeAssert<
-	_TypeExtends<TypeArguments["type"], "type_arguments">
+	_TypeExtends<TypeArguments['type'], 'type_arguments'>
 >;
-export type _Type_TypeBinding = _TypeAssert<_TypeExtends<TypeBinding["type"], "type_binding">>;
+export type _Type_TypeBinding = _TypeAssert<
+	_TypeExtends<TypeBinding['type'], 'type_binding'>
+>;
 export type _Type_ReferenceType = _TypeAssert<
-	_TypeExtends<ReferenceType["type"], "reference_type">
+	_TypeExtends<ReferenceType['type'], 'reference_type'>
 >;
-export type _Type_PointerType = _TypeAssert<_TypeExtends<PointerType["type"], "pointer_type">>;
-export type _Type_AbstractType = _TypeAssert<_TypeExtends<AbstractType["type"], "abstract_type">>;
-export type _Type_DynamicType = _TypeAssert<_TypeExtends<DynamicType["type"], "dynamic_type">>;
+export type _Type_PointerType = _TypeAssert<
+	_TypeExtends<PointerType['type'], 'pointer_type'>
+>;
+export type _Type_AbstractType = _TypeAssert<
+	_TypeExtends<AbstractType['type'], 'abstract_type'>
+>;
+export type _Type_DynamicType = _TypeAssert<
+	_TypeExtends<DynamicType['type'], 'dynamic_type'>
+>;
 export type _Type_HiddenExpressionExceptRange = _TypeAssert<
-	_TypeExtends<HiddenExpressionExceptRange["type"], "_expression_except_range">
+	_TypeExtends<HiddenExpressionExceptRange['type'], '_expression_except_range'>
 >;
 export type _Type_MacroInvocation = _TypeAssert<
-	_TypeExtends<MacroInvocation["type"], "macro_invocation">
+	_TypeExtends<MacroInvocation['type'], 'macro_invocation'>
 >;
 export type _Type_DelimTokenTree = _TypeAssert<
-	_TypeExtends<DelimTokenTree["type"], "delim_token_tree">
+	_TypeExtends<DelimTokenTree['type'], 'delim_token_tree'>
 >;
 export type _Type_HiddenNonDelimToken = _TypeAssert<
-	_TypeExtends<HiddenNonDelimToken["type"], "_non_delim_token">
+	_TypeExtends<HiddenNonDelimToken['type'], '_non_delim_token'>
 >;
 export type _Type_ScopedIdentifier = _TypeAssert<
-	_TypeExtends<ScopedIdentifier["type"], "scoped_identifier">
+	_TypeExtends<ScopedIdentifier['type'], 'scoped_identifier'>
 >;
 export type _Type_ScopedTypeIdentifierInExpressionPosition = _TypeAssert<
 	_TypeExtends<
-		ScopedTypeIdentifierInExpressionPosition["type"],
-		"scoped_type_identifier_in_expression_position"
+		ScopedTypeIdentifierInExpressionPosition['type'],
+		'scoped_type_identifier_in_expression_position'
 	>
 >;
 export type _Type_ScopedTypeIdentifier = _TypeAssert<
-	_TypeExtends<ScopedTypeIdentifier["type"], "scoped_type_identifier">
+	_TypeExtends<ScopedTypeIdentifier['type'], 'scoped_type_identifier'>
 >;
 export type _Type_RangeExpression = _TypeAssert<
-	_TypeExtends<RangeExpression["type"], "range_expression">
+	_TypeExtends<RangeExpression['type'], 'range_expression'>
 >;
 export type _Type_UnaryExpression = _TypeAssert<
-	_TypeExtends<UnaryExpression["type"], "unary_expression">
+	_TypeExtends<UnaryExpression['type'], 'unary_expression'>
 >;
 export type _Type_TryExpression = _TypeAssert<
-	_TypeExtends<TryExpression["type"], "try_expression">
+	_TypeExtends<TryExpression['type'], 'try_expression'>
 >;
 export type _Type_ReferenceExpression = _TypeAssert<
-	_TypeExtends<ReferenceExpression["type"], "reference_expression">
+	_TypeExtends<ReferenceExpression['type'], 'reference_expression'>
 >;
 export type _Type_BinaryExpression = _TypeAssert<
-	_TypeExtends<BinaryExpression["type"], "binary_expression">
+	_TypeExtends<BinaryExpression['type'], 'binary_expression'>
 >;
 export type _Type_AssignmentExpression = _TypeAssert<
-	_TypeExtends<AssignmentExpression["type"], "assignment_expression">
+	_TypeExtends<AssignmentExpression['type'], 'assignment_expression'>
 >;
 export type _Type_CompoundAssignmentExpr = _TypeAssert<
-	_TypeExtends<CompoundAssignmentExpr["type"], "compound_assignment_expr">
+	_TypeExtends<CompoundAssignmentExpr['type'], 'compound_assignment_expr'>
 >;
 export type _Type_TypeCastExpression = _TypeAssert<
-	_TypeExtends<TypeCastExpression["type"], "type_cast_expression">
+	_TypeExtends<TypeCastExpression['type'], 'type_cast_expression'>
 >;
 export type _Type_ReturnExpression = _TypeAssert<
-	_TypeExtends<ReturnExpression["type"], "return_expression">
+	_TypeExtends<ReturnExpression['type'], 'return_expression'>
 >;
 export type _Type_YieldExpression = _TypeAssert<
-	_TypeExtends<YieldExpression["type"], "yield_expression">
+	_TypeExtends<YieldExpression['type'], 'yield_expression'>
 >;
 export type _Type_CallExpression = _TypeAssert<
-	_TypeExtends<CallExpression["type"], "call_expression">
+	_TypeExtends<CallExpression['type'], 'call_expression'>
 >;
-export type _Type_Arguments = _TypeAssert<_TypeExtends<Arguments["type"], "arguments">>;
+export type _Type_Arguments = _TypeAssert<
+	_TypeExtends<Arguments['type'], 'arguments'>
+>;
 export type _Type_ArrayExpression = _TypeAssert<
-	_TypeExtends<ArrayExpression["type"], "array_expression">
+	_TypeExtends<ArrayExpression['type'], 'array_expression'>
 >;
 export type _Type_ParenthesizedExpression = _TypeAssert<
-	_TypeExtends<ParenthesizedExpression["type"], "parenthesized_expression">
+	_TypeExtends<ParenthesizedExpression['type'], 'parenthesized_expression'>
 >;
 export type _Type_TupleExpression = _TypeAssert<
-	_TypeExtends<TupleExpression["type"], "tuple_expression">
+	_TypeExtends<TupleExpression['type'], 'tuple_expression'>
 >;
 export type _Type_StructExpression = _TypeAssert<
-	_TypeExtends<StructExpression["type"], "struct_expression">
+	_TypeExtends<StructExpression['type'], 'struct_expression'>
 >;
 export type _Type_FieldInitializerList = _TypeAssert<
-	_TypeExtends<FieldInitializerList["type"], "field_initializer_list">
+	_TypeExtends<FieldInitializerList['type'], 'field_initializer_list'>
 >;
 export type _Type_ShorthandFieldInitializer = _TypeAssert<
-	_TypeExtends<ShorthandFieldInitializer["type"], "shorthand_field_initializer">
+	_TypeExtends<ShorthandFieldInitializer['type'], 'shorthand_field_initializer'>
 >;
 export type _Type_FieldInitializer = _TypeAssert<
-	_TypeExtends<FieldInitializer["type"], "field_initializer">
+	_TypeExtends<FieldInitializer['type'], 'field_initializer'>
 >;
 export type _Type_BaseFieldInitializer = _TypeAssert<
-	_TypeExtends<BaseFieldInitializer["type"], "base_field_initializer">
+	_TypeExtends<BaseFieldInitializer['type'], 'base_field_initializer'>
 >;
-export type _Type_IfExpression = _TypeAssert<_TypeExtends<IfExpression["type"], "if_expression">>;
-export type _Type_LetCondition = _TypeAssert<_TypeExtends<LetCondition["type"], "let_condition">>;
-export type _Type_HiddenLetChain = _TypeAssert<_TypeExtends<HiddenLetChain["type"], "_let_chain">>;
-export type _Type_ElseClause = _TypeAssert<_TypeExtends<ElseClause["type"], "else_clause">>;
+export type _Type_IfExpression = _TypeAssert<
+	_TypeExtends<IfExpression['type'], 'if_expression'>
+>;
+export type _Type_LetCondition = _TypeAssert<
+	_TypeExtends<LetCondition['type'], 'let_condition'>
+>;
+export type _Type_HiddenLetChain = _TypeAssert<
+	_TypeExtends<HiddenLetChain['type'], '_let_chain'>
+>;
+export type _Type_ElseClause = _TypeAssert<
+	_TypeExtends<ElseClause['type'], 'else_clause'>
+>;
 export type _Type_MatchExpression = _TypeAssert<
-	_TypeExtends<MatchExpression["type"], "match_expression">
+	_TypeExtends<MatchExpression['type'], 'match_expression'>
 >;
-export type _Type_MatchBlock = _TypeAssert<_TypeExtends<MatchBlock["type"], "match_block">>;
-export type _Type_MatchArm = _TypeAssert<_TypeExtends<MatchArm["type"], "match_arm">>;
-export type _Type_LastMatchArm = _TypeAssert<_TypeExtends<LastMatchArm["type"], "last_match_arm">>;
-export type _Type_MatchPattern = _TypeAssert<_TypeExtends<MatchPattern["type"], "match_pattern">>;
+export type _Type_MatchBlock = _TypeAssert<
+	_TypeExtends<MatchBlock['type'], 'match_block'>
+>;
+export type _Type_MatchArm = _TypeAssert<
+	_TypeExtends<MatchArm['type'], 'match_arm'>
+>;
+export type _Type_LastMatchArm = _TypeAssert<
+	_TypeExtends<LastMatchArm['type'], 'last_match_arm'>
+>;
+export type _Type_MatchPattern = _TypeAssert<
+	_TypeExtends<MatchPattern['type'], 'match_pattern'>
+>;
 export type _Type_WhileExpression = _TypeAssert<
-	_TypeExtends<WhileExpression["type"], "while_expression">
+	_TypeExtends<WhileExpression['type'], 'while_expression'>
 >;
 export type _Type_LoopExpression = _TypeAssert<
-	_TypeExtends<LoopExpression["type"], "loop_expression">
+	_TypeExtends<LoopExpression['type'], 'loop_expression'>
 >;
 export type _Type_ForExpression = _TypeAssert<
-	_TypeExtends<ForExpression["type"], "for_expression">
+	_TypeExtends<ForExpression['type'], 'for_expression'>
 >;
-export type _Type_ConstBlock = _TypeAssert<_TypeExtends<ConstBlock["type"], "const_block">>;
+export type _Type_ConstBlock = _TypeAssert<
+	_TypeExtends<ConstBlock['type'], 'const_block'>
+>;
 export type _Type_ClosureExpression = _TypeAssert<
-	_TypeExtends<ClosureExpression["type"], "closure_expression">
+	_TypeExtends<ClosureExpression['type'], 'closure_expression'>
 >;
 export type _Type_ClosureParameters = _TypeAssert<
-	_TypeExtends<ClosureParameters["type"], "closure_parameters">
+	_TypeExtends<ClosureParameters['type'], 'closure_parameters'>
 >;
-export type _Type_Label = _TypeAssert<_TypeExtends<Label["type"], "label">>;
+export type _Type_Label = _TypeAssert<_TypeExtends<Label['type'], 'label'>>;
 export type _Type_BreakExpression = _TypeAssert<
-	_TypeExtends<BreakExpression["type"], "break_expression">
+	_TypeExtends<BreakExpression['type'], 'break_expression'>
 >;
 export type _Type_ContinueExpression = _TypeAssert<
-	_TypeExtends<ContinueExpression["type"], "continue_expression">
+	_TypeExtends<ContinueExpression['type'], 'continue_expression'>
 >;
 export type _Type_IndexExpression = _TypeAssert<
-	_TypeExtends<IndexExpression["type"], "index_expression">
+	_TypeExtends<IndexExpression['type'], 'index_expression'>
 >;
 export type _Type_AwaitExpression = _TypeAssert<
-	_TypeExtends<AwaitExpression["type"], "await_expression">
+	_TypeExtends<AwaitExpression['type'], 'await_expression'>
 >;
 export type _Type_FieldExpression = _TypeAssert<
-	_TypeExtends<FieldExpression["type"], "field_expression">
+	_TypeExtends<FieldExpression['type'], 'field_expression'>
 >;
-export type _Type_UnsafeBlock = _TypeAssert<_TypeExtends<UnsafeBlock["type"], "unsafe_block">>;
-export type _Type_AsyncBlock = _TypeAssert<_TypeExtends<AsyncBlock["type"], "async_block">>;
-export type _Type_GenBlock = _TypeAssert<_TypeExtends<GenBlock["type"], "gen_block">>;
-export type _Type_TryBlock = _TypeAssert<_TypeExtends<TryBlock["type"], "try_block">>;
-export type _Type_Block = _TypeAssert<_TypeExtends<Block["type"], "block">>;
-export type _Type_HiddenPattern = _TypeAssert<_TypeExtends<HiddenPattern["type"], "_pattern">>;
+export type _Type_UnsafeBlock = _TypeAssert<
+	_TypeExtends<UnsafeBlock['type'], 'unsafe_block'>
+>;
+export type _Type_AsyncBlock = _TypeAssert<
+	_TypeExtends<AsyncBlock['type'], 'async_block'>
+>;
+export type _Type_GenBlock = _TypeAssert<
+	_TypeExtends<GenBlock['type'], 'gen_block'>
+>;
+export type _Type_TryBlock = _TypeAssert<
+	_TypeExtends<TryBlock['type'], 'try_block'>
+>;
+export type _Type_Block = _TypeAssert<_TypeExtends<Block['type'], 'block'>>;
+export type _Type_HiddenPattern = _TypeAssert<
+	_TypeExtends<HiddenPattern['type'], '_pattern'>
+>;
 export type _Type_GenericPattern = _TypeAssert<
-	_TypeExtends<GenericPattern["type"], "generic_pattern">
+	_TypeExtends<GenericPattern['type'], 'generic_pattern'>
 >;
-export type _Type_TuplePattern = _TypeAssert<_TypeExtends<TuplePattern["type"], "tuple_pattern">>;
-export type _Type_SlicePattern = _TypeAssert<_TypeExtends<SlicePattern["type"], "slice_pattern">>;
+export type _Type_TuplePattern = _TypeAssert<
+	_TypeExtends<TuplePattern['type'], 'tuple_pattern'>
+>;
+export type _Type_SlicePattern = _TypeAssert<
+	_TypeExtends<SlicePattern['type'], 'slice_pattern'>
+>;
 export type _Type_TupleStructPattern = _TypeAssert<
-	_TypeExtends<TupleStructPattern["type"], "tuple_struct_pattern">
+	_TypeExtends<TupleStructPattern['type'], 'tuple_struct_pattern'>
 >;
 export type _Type_StructPattern = _TypeAssert<
-	_TypeExtends<StructPattern["type"], "struct_pattern">
+	_TypeExtends<StructPattern['type'], 'struct_pattern'>
 >;
-export type _Type_FieldPattern = _TypeAssert<_TypeExtends<FieldPattern["type"], "field_pattern">>;
-export type _Type_MutPattern = _TypeAssert<_TypeExtends<MutPattern["type"], "mut_pattern">>;
-export type _Type_RangePattern = _TypeAssert<_TypeExtends<RangePattern["type"], "range_pattern">>;
-export type _Type_RefPattern = _TypeAssert<_TypeExtends<RefPattern["type"], "ref_pattern">>;
+export type _Type_FieldPattern = _TypeAssert<
+	_TypeExtends<FieldPattern['type'], 'field_pattern'>
+>;
+export type _Type_MutPattern = _TypeAssert<
+	_TypeExtends<MutPattern['type'], 'mut_pattern'>
+>;
+export type _Type_RangePattern = _TypeAssert<
+	_TypeExtends<RangePattern['type'], 'range_pattern'>
+>;
+export type _Type_RefPattern = _TypeAssert<
+	_TypeExtends<RefPattern['type'], 'ref_pattern'>
+>;
 export type _Type_CapturedPattern = _TypeAssert<
-	_TypeExtends<CapturedPattern["type"], "captured_pattern">
+	_TypeExtends<CapturedPattern['type'], 'captured_pattern'>
 >;
 export type _Type_ReferencePattern = _TypeAssert<
-	_TypeExtends<ReferencePattern["type"], "reference_pattern">
+	_TypeExtends<ReferencePattern['type'], 'reference_pattern'>
 >;
-export type _Type_OrPattern = _TypeAssert<_TypeExtends<OrPattern["type"], "or_pattern">>;
+export type _Type_OrPattern = _TypeAssert<
+	_TypeExtends<OrPattern['type'], 'or_pattern'>
+>;
 export type _Type_NegativeLiteral = _TypeAssert<
-	_TypeExtends<NegativeLiteral["type"], "negative_literal">
+	_TypeExtends<NegativeLiteral['type'], 'negative_literal'>
 >;
 export type _Type_StringLiteral = _TypeAssert<
-	_TypeExtends<StringLiteral["type"], "string_literal">
+	_TypeExtends<StringLiteral['type'], 'string_literal'>
 >;
 export type _Type_RawStringLiteral = _TypeAssert<
-	_TypeExtends<RawStringLiteral["type"], "raw_string_literal">
+	_TypeExtends<RawStringLiteral['type'], 'raw_string_literal'>
 >;
-export type _Type_Comment = _TypeAssert<_TypeExtends<Comment["type"], "comment">>;
-export type _Type_LineComment = _TypeAssert<_TypeExtends<LineComment["type"], "line_comment">>;
+export type _Type_Comment = _TypeAssert<
+	_TypeExtends<Comment['type'], 'comment'>
+>;
+export type _Type_LineComment = _TypeAssert<
+	_TypeExtends<LineComment['type'], 'line_comment'>
+>;
 export type _Type_HiddenLineDocCommentMarker = _TypeAssert<
-	_TypeExtends<HiddenLineDocCommentMarker["type"], "_line_doc_comment_marker">
+	_TypeExtends<HiddenLineDocCommentMarker['type'], '_line_doc_comment_marker'>
 >;
-export type _Type_BlockComment = _TypeAssert<_TypeExtends<BlockComment["type"], "block_comment">>;
+export type _Type_BlockComment = _TypeAssert<
+	_TypeExtends<BlockComment['type'], 'block_comment'>
+>;
 export type _Type_HiddenBlockDocCommentMarker = _TypeAssert<
-	_TypeExtends<HiddenBlockDocCommentMarker["type"], "_block_doc_comment_marker">
+	_TypeExtends<HiddenBlockDocCommentMarker['type'], '_block_doc_comment_marker'>
 >;
-export type _Type_HiddenPath = _TypeAssert<_TypeExtends<HiddenPath["type"], "_path">>;
+export type _Type_HiddenPath = _TypeAssert<
+	_TypeExtends<HiddenPath['type'], '_path'>
+>;
 export type _Type_HiddenTypeIdentifier = _TypeAssert<
-	_TypeExtends<HiddenTypeIdentifier["type"], "_type_identifier">
+	_TypeExtends<HiddenTypeIdentifier['type'], '_type_identifier'>
 >;
 export type _Type_HiddenFieldIdentifier = _TypeAssert<
-	_TypeExtends<HiddenFieldIdentifier["type"], "_field_identifier">
+	_TypeExtends<HiddenFieldIdentifier['type'], '_field_identifier'>
 >;
-export type _Type_LetChain = _TypeAssert<_TypeExtends<LetChain["type"], "let_chain">>;
+export type _Type_LetChain = _TypeAssert<
+	_TypeExtends<LetChain['type'], 'let_chain'>
+>;
 export type _Type_FragmentSpecifier = _TypeAssert<
-	_TypeExtends<FragmentSpecifier["type"], "fragment_specifier">
+	_TypeExtends<FragmentSpecifier['type'], 'fragment_specifier'>
 >;
-export type _Type_UnitType = _TypeAssert<_TypeExtends<UnitType["type"], "unit_type">>;
+export type _Type_UnitType = _TypeAssert<
+	_TypeExtends<UnitType['type'], 'unit_type'>
+>;
 export type _Type_MutableSpecifier = _TypeAssert<
-	_TypeExtends<MutableSpecifier["type"], "mutable_specifier">
+	_TypeExtends<MutableSpecifier['type'], 'mutable_specifier'>
 >;
 export type _Type_UnitExpression = _TypeAssert<
-	_TypeExtends<UnitExpression["type"], "unit_expression">
+	_TypeExtends<UnitExpression['type'], 'unit_expression'>
 >;
 export type _Type_IntegerLiteral = _TypeAssert<
-	_TypeExtends<IntegerLiteral["type"], "integer_literal">
+	_TypeExtends<IntegerLiteral['type'], 'integer_literal'>
 >;
-export type _Type_CharLiteral = _TypeAssert<_TypeExtends<CharLiteral["type"], "char_literal">>;
+export type _Type_CharLiteral = _TypeAssert<
+	_TypeExtends<CharLiteral['type'], 'char_literal'>
+>;
 export type _Type_EscapeSequence = _TypeAssert<
-	_TypeExtends<EscapeSequence["type"], "escape_sequence">
+	_TypeExtends<EscapeSequence['type'], 'escape_sequence'>
 >;
 export type _Type_BooleanLiteral = _TypeAssert<
-	_TypeExtends<BooleanLiteral["type"], "boolean_literal">
+	_TypeExtends<BooleanLiteral['type'], 'boolean_literal'>
 >;
-export type _Type_Identifier = _TypeAssert<_TypeExtends<Identifier["type"], "identifier">>;
-export type _Type_Shebang = _TypeAssert<_TypeExtends<Shebang["type"], "shebang">>;
+export type _Type_Identifier = _TypeAssert<
+	_TypeExtends<Identifier['type'], 'identifier'>
+>;
+export type _Type_Shebang = _TypeAssert<
+	_TypeExtends<Shebang['type'], 'shebang'>
+>;
 export type _Type_HiddenReservedIdentifier = _TypeAssert<
-	_TypeExtends<HiddenReservedIdentifier["type"], "_reserved_identifier">
+	_TypeExtends<HiddenReservedIdentifier['type'], '_reserved_identifier'>
 >;
-export type _Type_Self = _TypeAssert<_TypeExtends<Self["type"], "self">>;
-export type _Type_Super = _TypeAssert<_TypeExtends<Super["type"], "super">>;
-export type _Type_Crate = _TypeAssert<_TypeExtends<Crate["type"], "crate">>;
-export type _Type_Metavariable = _TypeAssert<_TypeExtends<Metavariable["type"], "metavariable">>;
+export type _Type_Self = _TypeAssert<_TypeExtends<Self['type'], 'self'>>;
+export type _Type_Super = _TypeAssert<_TypeExtends<Super['type'], 'super'>>;
+export type _Type_Crate = _TypeAssert<_TypeExtends<Crate['type'], 'crate'>>;
+export type _Type_Metavariable = _TypeAssert<
+	_TypeExtends<Metavariable['type'], 'metavariable'>
+>;
 export type _Type_PrimitiveType = _TypeAssert<
-	_TypeExtends<PrimitiveType["type"], "primitive_type">
+	_TypeExtends<PrimitiveType['type'], 'primitive_type'>
 >;
 export type _Type_ShorthandFieldIdentifier = _TypeAssert<
-	_TypeExtends<ShorthandFieldIdentifier["type"], "shorthand_field_identifier">
+	_TypeExtends<ShorthandFieldIdentifier['type'], 'shorthand_field_identifier'>
 >;
 export type _Type_OuterDocCommentMarker = _TypeAssert<
-	_TypeExtends<OuterDocCommentMarker["type"], "outer_doc_comment_marker">
+	_TypeExtends<OuterDocCommentMarker['type'], 'outer_doc_comment_marker'>
 >;
 export type _Type_InnerDocCommentMarker = _TypeAssert<
-	_TypeExtends<InnerDocCommentMarker["type"], "inner_doc_comment_marker">
+	_TypeExtends<InnerDocCommentMarker['type'], 'inner_doc_comment_marker'>
 >;
 export type _Type_TypeIdentifier = _TypeAssert<
-	_TypeExtends<TypeIdentifier["type"], "type_identifier">
+	_TypeExtends<TypeIdentifier['type'], 'type_identifier'>
 >;
 export type _Type_FieldIdentifier = _TypeAssert<
-	_TypeExtends<FieldIdentifier["type"], "field_identifier">
+	_TypeExtends<FieldIdentifier['type'], 'field_identifier'>
 >;
-export type _Type_Expr = _TypeAssert<_TypeExtends<Expr["type"], "expr">>;
-export type _Type_Expr2021 = _TypeAssert<_TypeExtends<Expr2021["type"], "expr_2021">>;
-export type _Type_Ident = _TypeAssert<_TypeExtends<Ident["type"], "ident">>;
-export type _Type_Item = _TypeAssert<_TypeExtends<Item["type"], "item">>;
-export type _Type_Literal = _TypeAssert<_TypeExtends<Literal["type"], "literal">>;
-export type _Type_Meta = _TypeAssert<_TypeExtends<Meta["type"], "meta">>;
-export type _Type_Pat = _TypeAssert<_TypeExtends<Pat["type"], "pat">>;
-export type _Type_PatParam = _TypeAssert<_TypeExtends<PatParam["type"], "pat_param">>;
-export type _Type_Path = _TypeAssert<_TypeExtends<Path["type"], "path">>;
-export type _Type_Stmt = _TypeAssert<_TypeExtends<Stmt["type"], "stmt">>;
-export type _Type_Tt = _TypeAssert<_TypeExtends<Tt["type"], "tt">>;
-export type _Type_Ty = _TypeAssert<_TypeExtends<Ty["type"], "ty">>;
-export type _Type_Vis = _TypeAssert<_TypeExtends<Vis["type"], "vis">>;
-export type _Type_U8 = _TypeAssert<_TypeExtends<U8["type"], "u8">>;
-export type _Type_I8 = _TypeAssert<_TypeExtends<I8["type"], "i8">>;
-export type _Type_U16 = _TypeAssert<_TypeExtends<U16["type"], "u16">>;
-export type _Type_I16 = _TypeAssert<_TypeExtends<I16["type"], "i16">>;
-export type _Type_U32 = _TypeAssert<_TypeExtends<U32["type"], "u32">>;
-export type _Type_I32 = _TypeAssert<_TypeExtends<I32["type"], "i32">>;
-export type _Type_U64 = _TypeAssert<_TypeExtends<U64["type"], "u64">>;
-export type _Type_I64 = _TypeAssert<_TypeExtends<I64["type"], "i64">>;
-export type _Type_U128 = _TypeAssert<_TypeExtends<U128["type"], "u128">>;
-export type _Type_I128 = _TypeAssert<_TypeExtends<I128["type"], "i128">>;
-export type _Type_Isize = _TypeAssert<_TypeExtends<Isize["type"], "isize">>;
-export type _Type_Usize = _TypeAssert<_TypeExtends<Usize["type"], "usize">>;
-export type _Type_F32 = _TypeAssert<_TypeExtends<F32["type"], "f32">>;
-export type _Type_F64 = _TypeAssert<_TypeExtends<F64["type"], "f64">>;
-export type _Type_Bool = _TypeAssert<_TypeExtends<Bool["type"], "bool">>;
-export type _Type_Str = _TypeAssert<_TypeExtends<Str["type"], "str">>;
-export type _Type_Char = _TypeAssert<_TypeExtends<Char["type"], "char">>;
-export type _Type_Hidden = _TypeAssert<_TypeExtends<Hidden["type"], "_">>;
-export type _Type_As = _TypeAssert<_TypeExtends<As["type"], "as">>;
-export type _Type_Async = _TypeAssert<_TypeExtends<Async["type"], "async">>;
-export type _Type_Await = _TypeAssert<_TypeExtends<Await["type"], "await">>;
-export type _Type_Break = _TypeAssert<_TypeExtends<Break["type"], "break">>;
-export type _Type_Const = _TypeAssert<_TypeExtends<Const["type"], "const">>;
-export type _Type_Continue = _TypeAssert<_TypeExtends<Continue["type"], "continue">>;
-export type _Type_Default = _TypeAssert<_TypeExtends<Default["type"], "default">>;
-export type _Type_Enum = _TypeAssert<_TypeExtends<Enum["type"], "enum">>;
-export type _Type_Fn = _TypeAssert<_TypeExtends<Fn["type"], "fn">>;
-export type _Type_For = _TypeAssert<_TypeExtends<For["type"], "for">>;
-export type _Type_Gen = _TypeAssert<_TypeExtends<Gen["type"], "gen">>;
-export type _Type_If = _TypeAssert<_TypeExtends<If["type"], "if">>;
-export type _Type_Impl = _TypeAssert<_TypeExtends<Impl["type"], "impl">>;
-export type _Type_Let = _TypeAssert<_TypeExtends<Let["type"], "let">>;
-export type _Type_Loop = _TypeAssert<_TypeExtends<Loop["type"], "loop">>;
-export type _Type_Match = _TypeAssert<_TypeExtends<Match["type"], "match">>;
-export type _Type_Mod = _TypeAssert<_TypeExtends<Mod["type"], "mod">>;
-export type _Type_Pub = _TypeAssert<_TypeExtends<Pub["type"], "pub">>;
-export type _Type_Return = _TypeAssert<_TypeExtends<Return["type"], "return">>;
-export type _Type_Static = _TypeAssert<_TypeExtends<Static["type"], "static">>;
-export type _Type_Struct = _TypeAssert<_TypeExtends<Struct["type"], "struct">>;
-export type _Type_Trait = _TypeAssert<_TypeExtends<Trait["type"], "trait">>;
-export type _Type_Type = _TypeAssert<_TypeExtends<Type["type"], "type">>;
-export type _Type_Union = _TypeAssert<_TypeExtends<Union["type"], "union">>;
-export type _Type_Unsafe = _TypeAssert<_TypeExtends<Unsafe["type"], "unsafe">>;
-export type _Type_Use = _TypeAssert<_TypeExtends<Use["type"], "use">>;
-export type _Type_Where = _TypeAssert<_TypeExtends<Where["type"], "where">>;
-export type _Type_While = _TypeAssert<_TypeExtends<While["type"], "while">>;
-export type _Type_Extern = _TypeAssert<_TypeExtends<Extern["type"], "extern">>;
-export type _Type_Ref = _TypeAssert<_TypeExtends<Ref["type"], "ref">>;
-export type _Type_Else = _TypeAssert<_TypeExtends<Else["type"], "else">>;
-export type _Type_In = _TypeAssert<_TypeExtends<In["type"], "in">>;
-export type _Type_Dyn = _TypeAssert<_TypeExtends<Dyn["type"], "dyn">>;
-export type _Type_Mut = _TypeAssert<_TypeExtends<Mut["type"], "mut">>;
-export type _Type_Raw = _TypeAssert<_TypeExtends<Raw["type"], "raw">>;
-export type _Type_Yield = _TypeAssert<_TypeExtends<Yield["type"], "yield">>;
-export type _Type_Move = _TypeAssert<_TypeExtends<Move["type"], "move">>;
-export type _Type_Try = _TypeAssert<_TypeExtends<Try["type"], "try">>;
-export type _Type_True = _TypeAssert<_TypeExtends<True["type"], "true">>;
-export type _Type_False = _TypeAssert<_TypeExtends<False["type"], "false">>;
+export type _Type_Expr = _TypeAssert<_TypeExtends<Expr['type'], 'expr'>>;
+export type _Type_Expr2021 = _TypeAssert<
+	_TypeExtends<Expr2021['type'], 'expr_2021'>
+>;
+export type _Type_Ident = _TypeAssert<_TypeExtends<Ident['type'], 'ident'>>;
+export type _Type_Item = _TypeAssert<_TypeExtends<Item['type'], 'item'>>;
+export type _Type_Literal = _TypeAssert<
+	_TypeExtends<Literal['type'], 'literal'>
+>;
+export type _Type_Meta = _TypeAssert<_TypeExtends<Meta['type'], 'meta'>>;
+export type _Type_Pat = _TypeAssert<_TypeExtends<Pat['type'], 'pat'>>;
+export type _Type_PatParam = _TypeAssert<
+	_TypeExtends<PatParam['type'], 'pat_param'>
+>;
+export type _Type_Path = _TypeAssert<_TypeExtends<Path['type'], 'path'>>;
+export type _Type_Stmt = _TypeAssert<_TypeExtends<Stmt['type'], 'stmt'>>;
+export type _Type_Tt = _TypeAssert<_TypeExtends<Tt['type'], 'tt'>>;
+export type _Type_Ty = _TypeAssert<_TypeExtends<Ty['type'], 'ty'>>;
+export type _Type_Vis = _TypeAssert<_TypeExtends<Vis['type'], 'vis'>>;
+export type _Type_U8 = _TypeAssert<_TypeExtends<U8['type'], 'u8'>>;
+export type _Type_I8 = _TypeAssert<_TypeExtends<I8['type'], 'i8'>>;
+export type _Type_U16 = _TypeAssert<_TypeExtends<U16['type'], 'u16'>>;
+export type _Type_I16 = _TypeAssert<_TypeExtends<I16['type'], 'i16'>>;
+export type _Type_U32 = _TypeAssert<_TypeExtends<U32['type'], 'u32'>>;
+export type _Type_I32 = _TypeAssert<_TypeExtends<I32['type'], 'i32'>>;
+export type _Type_U64 = _TypeAssert<_TypeExtends<U64['type'], 'u64'>>;
+export type _Type_I64 = _TypeAssert<_TypeExtends<I64['type'], 'i64'>>;
+export type _Type_U128 = _TypeAssert<_TypeExtends<U128['type'], 'u128'>>;
+export type _Type_I128 = _TypeAssert<_TypeExtends<I128['type'], 'i128'>>;
+export type _Type_Isize = _TypeAssert<_TypeExtends<Isize['type'], 'isize'>>;
+export type _Type_Usize = _TypeAssert<_TypeExtends<Usize['type'], 'usize'>>;
+export type _Type_F32 = _TypeAssert<_TypeExtends<F32['type'], 'f32'>>;
+export type _Type_F64 = _TypeAssert<_TypeExtends<F64['type'], 'f64'>>;
+export type _Type_Bool = _TypeAssert<_TypeExtends<Bool['type'], 'bool'>>;
+export type _Type_Str = _TypeAssert<_TypeExtends<Str['type'], 'str'>>;
+export type _Type_Char = _TypeAssert<_TypeExtends<Char['type'], 'char'>>;
+export type _Type_Hidden = _TypeAssert<_TypeExtends<Hidden['type'], '_'>>;
+export type _Type_As = _TypeAssert<_TypeExtends<As['type'], 'as'>>;
+export type _Type_Async = _TypeAssert<_TypeExtends<Async['type'], 'async'>>;
+export type _Type_Await = _TypeAssert<_TypeExtends<Await['type'], 'await'>>;
+export type _Type_Break = _TypeAssert<_TypeExtends<Break['type'], 'break'>>;
+export type _Type_Const = _TypeAssert<_TypeExtends<Const['type'], 'const'>>;
+export type _Type_Continue = _TypeAssert<
+	_TypeExtends<Continue['type'], 'continue'>
+>;
+export type _Type_Default = _TypeAssert<
+	_TypeExtends<Default['type'], 'default'>
+>;
+export type _Type_Enum = _TypeAssert<_TypeExtends<Enum['type'], 'enum'>>;
+export type _Type_Fn = _TypeAssert<_TypeExtends<Fn['type'], 'fn'>>;
+export type _Type_For = _TypeAssert<_TypeExtends<For['type'], 'for'>>;
+export type _Type_Gen = _TypeAssert<_TypeExtends<Gen['type'], 'gen'>>;
+export type _Type_If = _TypeAssert<_TypeExtends<If['type'], 'if'>>;
+export type _Type_Impl = _TypeAssert<_TypeExtends<Impl['type'], 'impl'>>;
+export type _Type_Let = _TypeAssert<_TypeExtends<Let['type'], 'let'>>;
+export type _Type_Loop = _TypeAssert<_TypeExtends<Loop['type'], 'loop'>>;
+export type _Type_Match = _TypeAssert<_TypeExtends<Match['type'], 'match'>>;
+export type _Type_Mod = _TypeAssert<_TypeExtends<Mod['type'], 'mod'>>;
+export type _Type_Pub = _TypeAssert<_TypeExtends<Pub['type'], 'pub'>>;
+export type _Type_Return = _TypeAssert<_TypeExtends<Return['type'], 'return'>>;
+export type _Type_Static = _TypeAssert<_TypeExtends<Static['type'], 'static'>>;
+export type _Type_Struct = _TypeAssert<_TypeExtends<Struct['type'], 'struct'>>;
+export type _Type_Trait = _TypeAssert<_TypeExtends<Trait['type'], 'trait'>>;
+export type _Type_Type = _TypeAssert<_TypeExtends<Type['type'], 'type'>>;
+export type _Type_Union = _TypeAssert<_TypeExtends<Union['type'], 'union'>>;
+export type _Type_Unsafe = _TypeAssert<_TypeExtends<Unsafe['type'], 'unsafe'>>;
+export type _Type_Use = _TypeAssert<_TypeExtends<Use['type'], 'use'>>;
+export type _Type_Where = _TypeAssert<_TypeExtends<Where['type'], 'where'>>;
+export type _Type_While = _TypeAssert<_TypeExtends<While['type'], 'while'>>;
+export type _Type_Extern = _TypeAssert<_TypeExtends<Extern['type'], 'extern'>>;
+export type _Type_Ref = _TypeAssert<_TypeExtends<Ref['type'], 'ref'>>;
+export type _Type_Else = _TypeAssert<_TypeExtends<Else['type'], 'else'>>;
+export type _Type_In = _TypeAssert<_TypeExtends<In['type'], 'in'>>;
+export type _Type_Dyn = _TypeAssert<_TypeExtends<Dyn['type'], 'dyn'>>;
+export type _Type_Mut = _TypeAssert<_TypeExtends<Mut['type'], 'mut'>>;
+export type _Type_Raw = _TypeAssert<_TypeExtends<Raw['type'], 'raw'>>;
+export type _Type_Yield = _TypeAssert<_TypeExtends<Yield['type'], 'yield'>>;
+export type _Type_Move = _TypeAssert<_TypeExtends<Move['type'], 'move'>>;
+export type _Type_Try = _TypeAssert<_TypeExtends<Try['type'], 'try'>>;
+export type _Type_True = _TypeAssert<_TypeExtends<True['type'], 'true'>>;
+export type _Type_False = _TypeAssert<_TypeExtends<False['type'], 'false'>>;
 
 // --- ConfigOf<T> assignable to *Config ---
-export type _Config_SourceFile = _TypeAssert<_TypeExtends<ConfigOf<SourceFile>, SourceFileConfig>>;
+export type _Config_SourceFile = _TypeAssert<
+	_TypeExtends<ConfigOf<SourceFile>, SourceFileConfig>
+>;
 export type _Config_ExpressionStatement = _TypeAssert<
 	_TypeExtends<ConfigOf<ExpressionStatement>, ExpressionStatementConfig>
 >;
 export type _Config_MacroDefinition = _TypeAssert<
 	_TypeExtends<ConfigOf<MacroDefinition>, MacroDefinitionConfig>
 >;
-export type _Config_MacroRule = _TypeAssert<_TypeExtends<ConfigOf<MacroRule>, MacroRuleConfig>>;
+export type _Config_MacroRule = _TypeAssert<
+	_TypeExtends<ConfigOf<MacroRule>, MacroRuleConfig>
+>;
 export type _Config_TokenTreePattern = _TypeAssert<
 	_TypeExtends<ConfigOf<TokenTreePattern>, TokenTreePatternConfig>
 >;
@@ -1269,7 +1420,9 @@ export type _Config_TokenBindingPattern = _TypeAssert<
 export type _Config_TokenRepetitionPattern = _TypeAssert<
 	_TypeExtends<ConfigOf<TokenRepetitionPattern>, TokenRepetitionPatternConfig>
 >;
-export type _Config_TokenTree = _TypeAssert<_TypeExtends<ConfigOf<TokenTree>, TokenTreeConfig>>;
+export type _Config_TokenTree = _TypeAssert<
+	_TypeExtends<ConfigOf<TokenTree>, TokenTreeConfig>
+>;
 export type _Config_TokenRepetition = _TypeAssert<
 	_TypeExtends<ConfigOf<TokenRepetition>, TokenRepetitionConfig>
 >;
@@ -1282,17 +1435,27 @@ export type _Config_AttributeItem = _TypeAssert<
 export type _Config_InnerAttributeItem = _TypeAssert<
 	_TypeExtends<ConfigOf<InnerAttributeItem>, InnerAttributeItemConfig>
 >;
-export type _Config_Attribute = _TypeAssert<_TypeExtends<ConfigOf<Attribute>, AttributeConfig>>;
-export type _Config_ModItem = _TypeAssert<_TypeExtends<ConfigOf<ModItem>, ModItemConfig>>;
+export type _Config_Attribute = _TypeAssert<
+	_TypeExtends<ConfigOf<Attribute>, AttributeConfig>
+>;
+export type _Config_ModItem = _TypeAssert<
+	_TypeExtends<ConfigOf<ModItem>, ModItemConfig>
+>;
 export type _Config_ForeignModItem = _TypeAssert<
 	_TypeExtends<ConfigOf<ForeignModItem>, ForeignModItemConfig>
 >;
 export type _Config_DeclarationList = _TypeAssert<
 	_TypeExtends<ConfigOf<DeclarationList>, DeclarationListConfig>
 >;
-export type _Config_StructItem = _TypeAssert<_TypeExtends<ConfigOf<StructItem>, StructItemConfig>>;
-export type _Config_UnionItem = _TypeAssert<_TypeExtends<ConfigOf<UnionItem>, UnionItemConfig>>;
-export type _Config_EnumItem = _TypeAssert<_TypeExtends<ConfigOf<EnumItem>, EnumItemConfig>>;
+export type _Config_StructItem = _TypeAssert<
+	_TypeExtends<ConfigOf<StructItem>, StructItemConfig>
+>;
+export type _Config_UnionItem = _TypeAssert<
+	_TypeExtends<ConfigOf<UnionItem>, UnionItemConfig>
+>;
+export type _Config_EnumItem = _TypeAssert<
+	_TypeExtends<ConfigOf<EnumItem>, EnumItemConfig>
+>;
 export type _Config_EnumVariantList = _TypeAssert<
 	_TypeExtends<ConfigOf<EnumVariantList>, EnumVariantListConfig>
 >;
@@ -1306,14 +1469,23 @@ export type _Config_FieldDeclaration = _TypeAssert<
 	_TypeExtends<ConfigOf<FieldDeclaration>, FieldDeclarationConfig>
 >;
 export type _Config_OrderedFieldDeclarationList = _TypeAssert<
-	_TypeExtends<ConfigOf<OrderedFieldDeclarationList>, OrderedFieldDeclarationListConfig>
+	_TypeExtends<
+		ConfigOf<OrderedFieldDeclarationList>,
+		OrderedFieldDeclarationListConfig
+	>
 >;
 export type _Config_ExternCrateDeclaration = _TypeAssert<
 	_TypeExtends<ConfigOf<ExternCrateDeclaration>, ExternCrateDeclarationConfig>
 >;
-export type _Config_ConstItem = _TypeAssert<_TypeExtends<ConfigOf<ConstItem>, ConstItemConfig>>;
-export type _Config_StaticItem = _TypeAssert<_TypeExtends<ConfigOf<StaticItem>, StaticItemConfig>>;
-export type _Config_TypeItem = _TypeAssert<_TypeExtends<ConfigOf<TypeItem>, TypeItemConfig>>;
+export type _Config_ConstItem = _TypeAssert<
+	_TypeExtends<ConfigOf<ConstItem>, ConstItemConfig>
+>;
+export type _Config_StaticItem = _TypeAssert<
+	_TypeExtends<ConfigOf<StaticItem>, StaticItemConfig>
+>;
+export type _Config_TypeItem = _TypeAssert<
+	_TypeExtends<ConfigOf<TypeItem>, TypeItemConfig>
+>;
 export type _Config_FunctionItem = _TypeAssert<
 	_TypeExtends<ConfigOf<FunctionItem>, FunctionItemConfig>
 >;
@@ -1329,8 +1501,12 @@ export type _Config_WhereClause = _TypeAssert<
 export type _Config_WherePredicate = _TypeAssert<
 	_TypeExtends<ConfigOf<WherePredicate>, WherePredicateConfig>
 >;
-export type _Config_ImplItem = _TypeAssert<_TypeExtends<ConfigOf<ImplItem>, ImplItemConfig>>;
-export type _Config_TraitItem = _TypeAssert<_TypeExtends<ConfigOf<TraitItem>, TraitItemConfig>>;
+export type _Config_ImplItem = _TypeAssert<
+	_TypeExtends<ConfigOf<ImplItem>, ImplItemConfig>
+>;
+export type _Config_TraitItem = _TypeAssert<
+	_TypeExtends<ConfigOf<TraitItem>, TraitItemConfig>
+>;
 export type _Config_AssociatedType = _TypeAssert<
 	_TypeExtends<ConfigOf<AssociatedType>, AssociatedTypeConfig>
 >;
@@ -1364,43 +1540,57 @@ export type _Config_UseDeclaration = _TypeAssert<
 export type _Config_ScopedUseList = _TypeAssert<
 	_TypeExtends<ConfigOf<ScopedUseList>, ScopedUseListConfig>
 >;
-export type _Config_UseList = _TypeAssert<_TypeExtends<ConfigOf<UseList>, UseListConfig>>;
+export type _Config_UseList = _TypeAssert<
+	_TypeExtends<ConfigOf<UseList>, UseListConfig>
+>;
 export type _Config_UseAsClause = _TypeAssert<
 	_TypeExtends<ConfigOf<UseAsClause>, UseAsClauseConfig>
 >;
 export type _Config_UseWildcard = _TypeAssert<
 	_TypeExtends<ConfigOf<UseWildcard>, UseWildcardConfig>
 >;
-export type _Config_Parameters = _TypeAssert<_TypeExtends<ConfigOf<Parameters>, ParametersConfig>>;
+export type _Config_Parameters = _TypeAssert<
+	_TypeExtends<ConfigOf<Parameters>, ParametersConfig>
+>;
 export type _Config_SelfParameter = _TypeAssert<
 	_TypeExtends<ConfigOf<SelfParameter>, SelfParameterConfig>
 >;
 export type _Config_VariadicParameter = _TypeAssert<
 	_TypeExtends<ConfigOf<VariadicParameter>, VariadicParameterConfig>
 >;
-export type _Config_Parameter = _TypeAssert<_TypeExtends<ConfigOf<Parameter>, ParameterConfig>>;
+export type _Config_Parameter = _TypeAssert<
+	_TypeExtends<ConfigOf<Parameter>, ParameterConfig>
+>;
 export type _Config_ExternModifier = _TypeAssert<
 	_TypeExtends<ConfigOf<ExternModifier>, ExternModifierConfig>
 >;
 export type _Config_VisibilityModifier = _TypeAssert<
 	_TypeExtends<ConfigOf<VisibilityModifier>, VisibilityModifierConfig>
 >;
-export type _Config_HiddenType = _TypeAssert<_TypeExtends<ConfigOf<HiddenType>, HiddenTypeConfig>>;
+export type _Config_HiddenType = _TypeAssert<
+	_TypeExtends<ConfigOf<HiddenType>, HiddenTypeConfig>
+>;
 export type _Config_BracketedType = _TypeAssert<
 	_TypeExtends<ConfigOf<BracketedType>, BracketedTypeConfig>
 >;
 export type _Config_QualifiedType = _TypeAssert<
 	_TypeExtends<ConfigOf<QualifiedType>, QualifiedTypeConfig>
 >;
-export type _Config_Lifetime = _TypeAssert<_TypeExtends<ConfigOf<Lifetime>, LifetimeConfig>>;
-export type _Config_ArrayType = _TypeAssert<_TypeExtends<ConfigOf<ArrayType>, ArrayTypeConfig>>;
+export type _Config_Lifetime = _TypeAssert<
+	_TypeExtends<ConfigOf<Lifetime>, LifetimeConfig>
+>;
+export type _Config_ArrayType = _TypeAssert<
+	_TypeExtends<ConfigOf<ArrayType>, ArrayTypeConfig>
+>;
 export type _Config_ForLifetimes = _TypeAssert<
 	_TypeExtends<ConfigOf<ForLifetimes>, ForLifetimesConfig>
 >;
 export type _Config_FunctionType = _TypeAssert<
 	_TypeExtends<ConfigOf<FunctionType>, FunctionTypeConfig>
 >;
-export type _Config_TupleType = _TypeAssert<_TypeExtends<ConfigOf<TupleType>, TupleTypeConfig>>;
+export type _Config_TupleType = _TypeAssert<
+	_TypeExtends<ConfigOf<TupleType>, TupleTypeConfig>
+>;
 export type _Config_GenericFunction = _TypeAssert<
 	_TypeExtends<ConfigOf<GenericFunction>, GenericFunctionConfig>
 >;
@@ -1408,12 +1598,17 @@ export type _Config_GenericType = _TypeAssert<
 	_TypeExtends<ConfigOf<GenericType>, GenericTypeConfig>
 >;
 export type _Config_GenericTypeWithTurbofish = _TypeAssert<
-	_TypeExtends<ConfigOf<GenericTypeWithTurbofish>, GenericTypeWithTurbofishConfig>
+	_TypeExtends<
+		ConfigOf<GenericTypeWithTurbofish>,
+		GenericTypeWithTurbofishConfig
+	>
 >;
 export type _Config_BoundedType = _TypeAssert<
 	_TypeExtends<ConfigOf<BoundedType>, BoundedTypeConfig>
 >;
-export type _Config_UseBounds = _TypeAssert<_TypeExtends<ConfigOf<UseBounds>, UseBoundsConfig>>;
+export type _Config_UseBounds = _TypeAssert<
+	_TypeExtends<ConfigOf<UseBounds>, UseBoundsConfig>
+>;
 export type _Config_TypeArguments = _TypeAssert<
 	_TypeExtends<ConfigOf<TypeArguments>, TypeArgumentsConfig>
 >;
@@ -1433,7 +1628,10 @@ export type _Config_DynamicType = _TypeAssert<
 	_TypeExtends<ConfigOf<DynamicType>, DynamicTypeConfig>
 >;
 export type _Config_HiddenExpressionExceptRange = _TypeAssert<
-	_TypeExtends<ConfigOf<HiddenExpressionExceptRange>, HiddenExpressionExceptRangeConfig>
+	_TypeExtends<
+		ConfigOf<HiddenExpressionExceptRange>,
+		HiddenExpressionExceptRangeConfig
+	>
 >;
 export type _Config_MacroInvocation = _TypeAssert<
 	_TypeExtends<ConfigOf<MacroInvocation>, MacroInvocationConfig>
@@ -1489,7 +1687,9 @@ export type _Config_YieldExpression = _TypeAssert<
 export type _Config_CallExpression = _TypeAssert<
 	_TypeExtends<ConfigOf<CallExpression>, CallExpressionConfig>
 >;
-export type _Config_Arguments = _TypeAssert<_TypeExtends<ConfigOf<Arguments>, ArgumentsConfig>>;
+export type _Config_Arguments = _TypeAssert<
+	_TypeExtends<ConfigOf<Arguments>, ArgumentsConfig>
+>;
 export type _Config_ArrayExpression = _TypeAssert<
 	_TypeExtends<ConfigOf<ArrayExpression>, ArrayExpressionConfig>
 >;
@@ -1506,7 +1706,10 @@ export type _Config_FieldInitializerList = _TypeAssert<
 	_TypeExtends<ConfigOf<FieldInitializerList>, FieldInitializerListConfig>
 >;
 export type _Config_ShorthandFieldInitializer = _TypeAssert<
-	_TypeExtends<ConfigOf<ShorthandFieldInitializer>, ShorthandFieldInitializerConfig>
+	_TypeExtends<
+		ConfigOf<ShorthandFieldInitializer>,
+		ShorthandFieldInitializerConfig
+	>
 >;
 export type _Config_FieldInitializer = _TypeAssert<
 	_TypeExtends<ConfigOf<FieldInitializer>, FieldInitializerConfig>
@@ -1523,12 +1726,18 @@ export type _Config_LetCondition = _TypeAssert<
 export type _Config_HiddenLetChain = _TypeAssert<
 	_TypeExtends<ConfigOf<HiddenLetChain>, HiddenLetChainConfig>
 >;
-export type _Config_ElseClause = _TypeAssert<_TypeExtends<ConfigOf<ElseClause>, ElseClauseConfig>>;
+export type _Config_ElseClause = _TypeAssert<
+	_TypeExtends<ConfigOf<ElseClause>, ElseClauseConfig>
+>;
 export type _Config_MatchExpression = _TypeAssert<
 	_TypeExtends<ConfigOf<MatchExpression>, MatchExpressionConfig>
 >;
-export type _Config_MatchBlock = _TypeAssert<_TypeExtends<ConfigOf<MatchBlock>, MatchBlockConfig>>;
-export type _Config_MatchArm = _TypeAssert<_TypeExtends<ConfigOf<MatchArm>, MatchArmConfig>>;
+export type _Config_MatchBlock = _TypeAssert<
+	_TypeExtends<ConfigOf<MatchBlock>, MatchBlockConfig>
+>;
+export type _Config_MatchArm = _TypeAssert<
+	_TypeExtends<ConfigOf<MatchArm>, MatchArmConfig>
+>;
 export type _Config_LastMatchArm = _TypeAssert<
 	_TypeExtends<ConfigOf<LastMatchArm>, LastMatchArmConfig>
 >;
@@ -1544,11 +1753,15 @@ export type _Config_LoopExpression = _TypeAssert<
 export type _Config_ForExpression = _TypeAssert<
 	_TypeExtends<ConfigOf<ForExpression>, ForExpressionConfig>
 >;
-export type _Config_ConstBlock = _TypeAssert<_TypeExtends<ConfigOf<ConstBlock>, ConstBlockConfig>>;
+export type _Config_ConstBlock = _TypeAssert<
+	_TypeExtends<ConfigOf<ConstBlock>, ConstBlockConfig>
+>;
 export type _Config_ClosureParameters = _TypeAssert<
 	_TypeExtends<ConfigOf<ClosureParameters>, ClosureParametersConfig>
 >;
-export type _Config_Label = _TypeAssert<_TypeExtends<ConfigOf<Label>, LabelConfig>>;
+export type _Config_Label = _TypeAssert<
+	_TypeExtends<ConfigOf<Label>, LabelConfig>
+>;
 export type _Config_BreakExpression = _TypeAssert<
 	_TypeExtends<ConfigOf<BreakExpression>, BreakExpressionConfig>
 >;
@@ -1567,10 +1780,18 @@ export type _Config_FieldExpression = _TypeAssert<
 export type _Config_UnsafeBlock = _TypeAssert<
 	_TypeExtends<ConfigOf<UnsafeBlock>, UnsafeBlockConfig>
 >;
-export type _Config_AsyncBlock = _TypeAssert<_TypeExtends<ConfigOf<AsyncBlock>, AsyncBlockConfig>>;
-export type _Config_GenBlock = _TypeAssert<_TypeExtends<ConfigOf<GenBlock>, GenBlockConfig>>;
-export type _Config_TryBlock = _TypeAssert<_TypeExtends<ConfigOf<TryBlock>, TryBlockConfig>>;
-export type _Config_Block = _TypeAssert<_TypeExtends<ConfigOf<Block>, BlockConfig>>;
+export type _Config_AsyncBlock = _TypeAssert<
+	_TypeExtends<ConfigOf<AsyncBlock>, AsyncBlockConfig>
+>;
+export type _Config_GenBlock = _TypeAssert<
+	_TypeExtends<ConfigOf<GenBlock>, GenBlockConfig>
+>;
+export type _Config_TryBlock = _TypeAssert<
+	_TypeExtends<ConfigOf<TryBlock>, TryBlockConfig>
+>;
+export type _Config_Block = _TypeAssert<
+	_TypeExtends<ConfigOf<Block>, BlockConfig>
+>;
 export type _Config_HiddenPattern = _TypeAssert<
 	_TypeExtends<ConfigOf<HiddenPattern>, HiddenPatternConfig>
 >;
@@ -1589,15 +1810,21 @@ export type _Config_TupleStructPattern = _TypeAssert<
 export type _Config_StructPattern = _TypeAssert<
 	_TypeExtends<ConfigOf<StructPattern>, StructPatternConfig>
 >;
-export type _Config_MutPattern = _TypeAssert<_TypeExtends<ConfigOf<MutPattern>, MutPatternConfig>>;
-export type _Config_RefPattern = _TypeAssert<_TypeExtends<ConfigOf<RefPattern>, RefPatternConfig>>;
+export type _Config_MutPattern = _TypeAssert<
+	_TypeExtends<ConfigOf<MutPattern>, MutPatternConfig>
+>;
+export type _Config_RefPattern = _TypeAssert<
+	_TypeExtends<ConfigOf<RefPattern>, RefPatternConfig>
+>;
 export type _Config_CapturedPattern = _TypeAssert<
 	_TypeExtends<ConfigOf<CapturedPattern>, CapturedPatternConfig>
 >;
 export type _Config_ReferencePattern = _TypeAssert<
 	_TypeExtends<ConfigOf<ReferencePattern>, ReferencePatternConfig>
 >;
-export type _Config_OrPattern = _TypeAssert<_TypeExtends<ConfigOf<OrPattern>, OrPatternConfig>>;
+export type _Config_OrPattern = _TypeAssert<
+	_TypeExtends<ConfigOf<OrPattern>, OrPatternConfig>
+>;
 export type _Config_NegativeLiteral = _TypeAssert<
 	_TypeExtends<ConfigOf<NegativeLiteral>, NegativeLiteralConfig>
 >;
@@ -1607,505 +1834,662 @@ export type _Config_StringLiteral = _TypeAssert<
 export type _Config_RawStringLiteral = _TypeAssert<
 	_TypeExtends<ConfigOf<RawStringLiteral>, RawStringLiteralConfig>
 >;
-export type _Config_Comment = _TypeAssert<_TypeExtends<ConfigOf<Comment>, CommentConfig>>;
+export type _Config_Comment = _TypeAssert<
+	_TypeExtends<ConfigOf<Comment>, CommentConfig>
+>;
 export type _Config_LineComment = _TypeAssert<
 	_TypeExtends<ConfigOf<LineComment>, LineCommentConfig>
 >;
 export type _Config_HiddenLineDocCommentMarker = _TypeAssert<
-	_TypeExtends<ConfigOf<HiddenLineDocCommentMarker>, HiddenLineDocCommentMarkerConfig>
+	_TypeExtends<
+		ConfigOf<HiddenLineDocCommentMarker>,
+		HiddenLineDocCommentMarkerConfig
+	>
 >;
 export type _Config_BlockComment = _TypeAssert<
 	_TypeExtends<ConfigOf<BlockComment>, BlockCommentConfig>
 >;
 export type _Config_HiddenBlockDocCommentMarker = _TypeAssert<
-	_TypeExtends<ConfigOf<HiddenBlockDocCommentMarker>, HiddenBlockDocCommentMarkerConfig>
+	_TypeExtends<
+		ConfigOf<HiddenBlockDocCommentMarker>,
+		HiddenBlockDocCommentMarkerConfig
+	>
 >;
-export type _Config_HiddenPath = _TypeAssert<_TypeExtends<ConfigOf<HiddenPath>, HiddenPathConfig>>;
+export type _Config_HiddenPath = _TypeAssert<
+	_TypeExtends<ConfigOf<HiddenPath>, HiddenPathConfig>
+>;
 export type _Config_HiddenTypeIdentifier = _TypeAssert<
 	_TypeExtends<ConfigOf<HiddenTypeIdentifier>, HiddenTypeIdentifierConfig>
 >;
 export type _Config_HiddenFieldIdentifier = _TypeAssert<
 	_TypeExtends<ConfigOf<HiddenFieldIdentifier>, HiddenFieldIdentifierConfig>
 >;
-export type _Config_LetChain = _TypeAssert<_TypeExtends<ConfigOf<LetChain>, LetChainConfig>>;
+export type _Config_LetChain = _TypeAssert<
+	_TypeExtends<ConfigOf<LetChain>, LetChainConfig>
+>;
 
 // --- TreeNode types have correct `type` ---
-export type _Tree_SourceFile = _TypeAssert<_TypeExtends<SourceFileTree["type"], "source_file">>;
+export type _Tree_SourceFile = _TypeAssert<
+	_TypeExtends<SourceFileTree['type'], 'source_file'>
+>;
 export type _Tree_ExpressionStatement = _TypeAssert<
-	_TypeExtends<ExpressionStatementTree["type"], "expression_statement">
+	_TypeExtends<ExpressionStatementTree['type'], 'expression_statement'>
 >;
 export type _Tree_MacroDefinition = _TypeAssert<
-	_TypeExtends<MacroDefinitionTree["type"], "macro_definition">
+	_TypeExtends<MacroDefinitionTree['type'], 'macro_definition'>
 >;
-export type _Tree_MacroRule = _TypeAssert<_TypeExtends<MacroRuleTree["type"], "macro_rule">>;
+export type _Tree_MacroRule = _TypeAssert<
+	_TypeExtends<MacroRuleTree['type'], 'macro_rule'>
+>;
 export type _Tree_TokenTreePattern = _TypeAssert<
-	_TypeExtends<TokenTreePatternTree["type"], "token_tree_pattern">
+	_TypeExtends<TokenTreePatternTree['type'], 'token_tree_pattern'>
 >;
 export type _Tree_TokenBindingPattern = _TypeAssert<
-	_TypeExtends<TokenBindingPatternTree["type"], "token_binding_pattern">
+	_TypeExtends<TokenBindingPatternTree['type'], 'token_binding_pattern'>
 >;
 export type _Tree_TokenRepetitionPattern = _TypeAssert<
-	_TypeExtends<TokenRepetitionPatternTree["type"], "token_repetition_pattern">
+	_TypeExtends<TokenRepetitionPatternTree['type'], 'token_repetition_pattern'>
 >;
-export type _Tree_TokenTree = _TypeAssert<_TypeExtends<TokenTreeTree["type"], "token_tree">>;
+export type _Tree_TokenTree = _TypeAssert<
+	_TypeExtends<TokenTreeTree['type'], 'token_tree'>
+>;
 export type _Tree_TokenRepetition = _TypeAssert<
-	_TypeExtends<TokenRepetitionTree["type"], "token_repetition">
+	_TypeExtends<TokenRepetitionTree['type'], 'token_repetition'>
 >;
 export type _Tree_HiddenNonSpecialToken = _TypeAssert<
-	_TypeExtends<HiddenNonSpecialTokenTree["type"], "_non_special_token">
+	_TypeExtends<HiddenNonSpecialTokenTree['type'], '_non_special_token'>
 >;
 export type _Tree_AttributeItem = _TypeAssert<
-	_TypeExtends<AttributeItemTree["type"], "attribute_item">
+	_TypeExtends<AttributeItemTree['type'], 'attribute_item'>
 >;
 export type _Tree_InnerAttributeItem = _TypeAssert<
-	_TypeExtends<InnerAttributeItemTree["type"], "inner_attribute_item">
+	_TypeExtends<InnerAttributeItemTree['type'], 'inner_attribute_item'>
 >;
-export type _Tree_Attribute = _TypeAssert<_TypeExtends<AttributeTree["type"], "attribute">>;
-export type _Tree_ModItem = _TypeAssert<_TypeExtends<ModItemTree["type"], "mod_item">>;
+export type _Tree_Attribute = _TypeAssert<
+	_TypeExtends<AttributeTree['type'], 'attribute'>
+>;
+export type _Tree_ModItem = _TypeAssert<
+	_TypeExtends<ModItemTree['type'], 'mod_item'>
+>;
 export type _Tree_ForeignModItem = _TypeAssert<
-	_TypeExtends<ForeignModItemTree["type"], "foreign_mod_item">
+	_TypeExtends<ForeignModItemTree['type'], 'foreign_mod_item'>
 >;
 export type _Tree_DeclarationList = _TypeAssert<
-	_TypeExtends<DeclarationListTree["type"], "declaration_list">
+	_TypeExtends<DeclarationListTree['type'], 'declaration_list'>
 >;
-export type _Tree_StructItem = _TypeAssert<_TypeExtends<StructItemTree["type"], "struct_item">>;
-export type _Tree_UnionItem = _TypeAssert<_TypeExtends<UnionItemTree["type"], "union_item">>;
-export type _Tree_EnumItem = _TypeAssert<_TypeExtends<EnumItemTree["type"], "enum_item">>;
+export type _Tree_StructItem = _TypeAssert<
+	_TypeExtends<StructItemTree['type'], 'struct_item'>
+>;
+export type _Tree_UnionItem = _TypeAssert<
+	_TypeExtends<UnionItemTree['type'], 'union_item'>
+>;
+export type _Tree_EnumItem = _TypeAssert<
+	_TypeExtends<EnumItemTree['type'], 'enum_item'>
+>;
 export type _Tree_EnumVariantList = _TypeAssert<
-	_TypeExtends<EnumVariantListTree["type"], "enum_variant_list">
+	_TypeExtends<EnumVariantListTree['type'], 'enum_variant_list'>
 >;
-export type _Tree_EnumVariant = _TypeAssert<_TypeExtends<EnumVariantTree["type"], "enum_variant">>;
+export type _Tree_EnumVariant = _TypeAssert<
+	_TypeExtends<EnumVariantTree['type'], 'enum_variant'>
+>;
 export type _Tree_FieldDeclarationList = _TypeAssert<
-	_TypeExtends<FieldDeclarationListTree["type"], "field_declaration_list">
+	_TypeExtends<FieldDeclarationListTree['type'], 'field_declaration_list'>
 >;
 export type _Tree_FieldDeclaration = _TypeAssert<
-	_TypeExtends<FieldDeclarationTree["type"], "field_declaration">
+	_TypeExtends<FieldDeclarationTree['type'], 'field_declaration'>
 >;
 export type _Tree_OrderedFieldDeclarationList = _TypeAssert<
-	_TypeExtends<OrderedFieldDeclarationListTree["type"], "ordered_field_declaration_list">
+	_TypeExtends<
+		OrderedFieldDeclarationListTree['type'],
+		'ordered_field_declaration_list'
+	>
 >;
 export type _Tree_ExternCrateDeclaration = _TypeAssert<
-	_TypeExtends<ExternCrateDeclarationTree["type"], "extern_crate_declaration">
+	_TypeExtends<ExternCrateDeclarationTree['type'], 'extern_crate_declaration'>
 >;
-export type _Tree_ConstItem = _TypeAssert<_TypeExtends<ConstItemTree["type"], "const_item">>;
-export type _Tree_StaticItem = _TypeAssert<_TypeExtends<StaticItemTree["type"], "static_item">>;
-export type _Tree_TypeItem = _TypeAssert<_TypeExtends<TypeItemTree["type"], "type_item">>;
+export type _Tree_ConstItem = _TypeAssert<
+	_TypeExtends<ConstItemTree['type'], 'const_item'>
+>;
+export type _Tree_StaticItem = _TypeAssert<
+	_TypeExtends<StaticItemTree['type'], 'static_item'>
+>;
+export type _Tree_TypeItem = _TypeAssert<
+	_TypeExtends<TypeItemTree['type'], 'type_item'>
+>;
 export type _Tree_FunctionItem = _TypeAssert<
-	_TypeExtends<FunctionItemTree["type"], "function_item">
+	_TypeExtends<FunctionItemTree['type'], 'function_item'>
 >;
 export type _Tree_FunctionSignatureItem = _TypeAssert<
-	_TypeExtends<FunctionSignatureItemTree["type"], "function_signature_item">
+	_TypeExtends<FunctionSignatureItemTree['type'], 'function_signature_item'>
 >;
 export type _Tree_FunctionModifiers = _TypeAssert<
-	_TypeExtends<FunctionModifiersTree["type"], "function_modifiers">
+	_TypeExtends<FunctionModifiersTree['type'], 'function_modifiers'>
 >;
-export type _Tree_WhereClause = _TypeAssert<_TypeExtends<WhereClauseTree["type"], "where_clause">>;
+export type _Tree_WhereClause = _TypeAssert<
+	_TypeExtends<WhereClauseTree['type'], 'where_clause'>
+>;
 export type _Tree_WherePredicate = _TypeAssert<
-	_TypeExtends<WherePredicateTree["type"], "where_predicate">
+	_TypeExtends<WherePredicateTree['type'], 'where_predicate'>
 >;
-export type _Tree_ImplItem = _TypeAssert<_TypeExtends<ImplItemTree["type"], "impl_item">>;
-export type _Tree_TraitItem = _TypeAssert<_TypeExtends<TraitItemTree["type"], "trait_item">>;
+export type _Tree_ImplItem = _TypeAssert<
+	_TypeExtends<ImplItemTree['type'], 'impl_item'>
+>;
+export type _Tree_TraitItem = _TypeAssert<
+	_TypeExtends<TraitItemTree['type'], 'trait_item'>
+>;
 export type _Tree_AssociatedType = _TypeAssert<
-	_TypeExtends<AssociatedTypeTree["type"], "associated_type">
+	_TypeExtends<AssociatedTypeTree['type'], 'associated_type'>
 >;
-export type _Tree_TraitBounds = _TypeAssert<_TypeExtends<TraitBoundsTree["type"], "trait_bounds">>;
+export type _Tree_TraitBounds = _TypeAssert<
+	_TypeExtends<TraitBoundsTree['type'], 'trait_bounds'>
+>;
 export type _Tree_HigherRankedTraitBound = _TypeAssert<
-	_TypeExtends<HigherRankedTraitBoundTree["type"], "higher_ranked_trait_bound">
+	_TypeExtends<HigherRankedTraitBoundTree['type'], 'higher_ranked_trait_bound'>
 >;
 export type _Tree_RemovedTraitBound = _TypeAssert<
-	_TypeExtends<RemovedTraitBoundTree["type"], "removed_trait_bound">
+	_TypeExtends<RemovedTraitBoundTree['type'], 'removed_trait_bound'>
 >;
 export type _Tree_TypeParameters = _TypeAssert<
-	_TypeExtends<TypeParametersTree["type"], "type_parameters">
+	_TypeExtends<TypeParametersTree['type'], 'type_parameters'>
 >;
 export type _Tree_ConstParameter = _TypeAssert<
-	_TypeExtends<ConstParameterTree["type"], "const_parameter">
+	_TypeExtends<ConstParameterTree['type'], 'const_parameter'>
 >;
 export type _Tree_TypeParameter = _TypeAssert<
-	_TypeExtends<TypeParameterTree["type"], "type_parameter">
+	_TypeExtends<TypeParameterTree['type'], 'type_parameter'>
 >;
 export type _Tree_LifetimeParameter = _TypeAssert<
-	_TypeExtends<LifetimeParameterTree["type"], "lifetime_parameter">
+	_TypeExtends<LifetimeParameterTree['type'], 'lifetime_parameter'>
 >;
 export type _Tree_LetDeclaration = _TypeAssert<
-	_TypeExtends<LetDeclarationTree["type"], "let_declaration">
+	_TypeExtends<LetDeclarationTree['type'], 'let_declaration'>
 >;
 export type _Tree_UseDeclaration = _TypeAssert<
-	_TypeExtends<UseDeclarationTree["type"], "use_declaration">
+	_TypeExtends<UseDeclarationTree['type'], 'use_declaration'>
 >;
 export type _Tree_ScopedUseList = _TypeAssert<
-	_TypeExtends<ScopedUseListTree["type"], "scoped_use_list">
+	_TypeExtends<ScopedUseListTree['type'], 'scoped_use_list'>
 >;
-export type _Tree_UseList = _TypeAssert<_TypeExtends<UseListTree["type"], "use_list">>;
-export type _Tree_UseAsClause = _TypeAssert<_TypeExtends<UseAsClauseTree["type"], "use_as_clause">>;
-export type _Tree_UseWildcard = _TypeAssert<_TypeExtends<UseWildcardTree["type"], "use_wildcard">>;
-export type _Tree_Parameters = _TypeAssert<_TypeExtends<ParametersTree["type"], "parameters">>;
+export type _Tree_UseList = _TypeAssert<
+	_TypeExtends<UseListTree['type'], 'use_list'>
+>;
+export type _Tree_UseAsClause = _TypeAssert<
+	_TypeExtends<UseAsClauseTree['type'], 'use_as_clause'>
+>;
+export type _Tree_UseWildcard = _TypeAssert<
+	_TypeExtends<UseWildcardTree['type'], 'use_wildcard'>
+>;
+export type _Tree_Parameters = _TypeAssert<
+	_TypeExtends<ParametersTree['type'], 'parameters'>
+>;
 export type _Tree_SelfParameter = _TypeAssert<
-	_TypeExtends<SelfParameterTree["type"], "self_parameter">
+	_TypeExtends<SelfParameterTree['type'], 'self_parameter'>
 >;
 export type _Tree_VariadicParameter = _TypeAssert<
-	_TypeExtends<VariadicParameterTree["type"], "variadic_parameter">
+	_TypeExtends<VariadicParameterTree['type'], 'variadic_parameter'>
 >;
-export type _Tree_Parameter = _TypeAssert<_TypeExtends<ParameterTree["type"], "parameter">>;
+export type _Tree_Parameter = _TypeAssert<
+	_TypeExtends<ParameterTree['type'], 'parameter'>
+>;
 export type _Tree_ExternModifier = _TypeAssert<
-	_TypeExtends<ExternModifierTree["type"], "extern_modifier">
+	_TypeExtends<ExternModifierTree['type'], 'extern_modifier'>
 >;
 export type _Tree_VisibilityModifier = _TypeAssert<
-	_TypeExtends<VisibilityModifierTree["type"], "visibility_modifier">
+	_TypeExtends<VisibilityModifierTree['type'], 'visibility_modifier'>
 >;
-export type _Tree_HiddenType = _TypeAssert<_TypeExtends<HiddenTypeTree["type"], "_type">>;
+export type _Tree_HiddenType = _TypeAssert<
+	_TypeExtends<HiddenTypeTree['type'], '_type'>
+>;
 export type _Tree_BracketedType = _TypeAssert<
-	_TypeExtends<BracketedTypeTree["type"], "bracketed_type">
+	_TypeExtends<BracketedTypeTree['type'], 'bracketed_type'>
 >;
 export type _Tree_QualifiedType = _TypeAssert<
-	_TypeExtends<QualifiedTypeTree["type"], "qualified_type">
+	_TypeExtends<QualifiedTypeTree['type'], 'qualified_type'>
 >;
-export type _Tree_Lifetime = _TypeAssert<_TypeExtends<LifetimeTree["type"], "lifetime">>;
-export type _Tree_ArrayType = _TypeAssert<_TypeExtends<ArrayTypeTree["type"], "array_type">>;
+export type _Tree_Lifetime = _TypeAssert<
+	_TypeExtends<LifetimeTree['type'], 'lifetime'>
+>;
+export type _Tree_ArrayType = _TypeAssert<
+	_TypeExtends<ArrayTypeTree['type'], 'array_type'>
+>;
 export type _Tree_ForLifetimes = _TypeAssert<
-	_TypeExtends<ForLifetimesTree["type"], "for_lifetimes">
+	_TypeExtends<ForLifetimesTree['type'], 'for_lifetimes'>
 >;
 export type _Tree_FunctionType = _TypeAssert<
-	_TypeExtends<FunctionTypeTree["type"], "function_type">
+	_TypeExtends<FunctionTypeTree['type'], 'function_type'>
 >;
-export type _Tree_TupleType = _TypeAssert<_TypeExtends<TupleTypeTree["type"], "tuple_type">>;
+export type _Tree_TupleType = _TypeAssert<
+	_TypeExtends<TupleTypeTree['type'], 'tuple_type'>
+>;
 export type _Tree_GenericFunction = _TypeAssert<
-	_TypeExtends<GenericFunctionTree["type"], "generic_function">
+	_TypeExtends<GenericFunctionTree['type'], 'generic_function'>
 >;
-export type _Tree_GenericType = _TypeAssert<_TypeExtends<GenericTypeTree["type"], "generic_type">>;
+export type _Tree_GenericType = _TypeAssert<
+	_TypeExtends<GenericTypeTree['type'], 'generic_type'>
+>;
 export type _Tree_GenericTypeWithTurbofish = _TypeAssert<
-	_TypeExtends<GenericTypeWithTurbofishTree["type"], "generic_type_with_turbofish">
+	_TypeExtends<
+		GenericTypeWithTurbofishTree['type'],
+		'generic_type_with_turbofish'
+	>
 >;
-export type _Tree_BoundedType = _TypeAssert<_TypeExtends<BoundedTypeTree["type"], "bounded_type">>;
-export type _Tree_UseBounds = _TypeAssert<_TypeExtends<UseBoundsTree["type"], "use_bounds">>;
+export type _Tree_BoundedType = _TypeAssert<
+	_TypeExtends<BoundedTypeTree['type'], 'bounded_type'>
+>;
+export type _Tree_UseBounds = _TypeAssert<
+	_TypeExtends<UseBoundsTree['type'], 'use_bounds'>
+>;
 export type _Tree_TypeArguments = _TypeAssert<
-	_TypeExtends<TypeArgumentsTree["type"], "type_arguments">
+	_TypeExtends<TypeArgumentsTree['type'], 'type_arguments'>
 >;
-export type _Tree_TypeBinding = _TypeAssert<_TypeExtends<TypeBindingTree["type"], "type_binding">>;
+export type _Tree_TypeBinding = _TypeAssert<
+	_TypeExtends<TypeBindingTree['type'], 'type_binding'>
+>;
 export type _Tree_ReferenceType = _TypeAssert<
-	_TypeExtends<ReferenceTypeTree["type"], "reference_type">
+	_TypeExtends<ReferenceTypeTree['type'], 'reference_type'>
 >;
-export type _Tree_PointerType = _TypeAssert<_TypeExtends<PointerTypeTree["type"], "pointer_type">>;
+export type _Tree_PointerType = _TypeAssert<
+	_TypeExtends<PointerTypeTree['type'], 'pointer_type'>
+>;
 export type _Tree_AbstractType = _TypeAssert<
-	_TypeExtends<AbstractTypeTree["type"], "abstract_type">
+	_TypeExtends<AbstractTypeTree['type'], 'abstract_type'>
 >;
-export type _Tree_DynamicType = _TypeAssert<_TypeExtends<DynamicTypeTree["type"], "dynamic_type">>;
+export type _Tree_DynamicType = _TypeAssert<
+	_TypeExtends<DynamicTypeTree['type'], 'dynamic_type'>
+>;
 export type _Tree_HiddenExpressionExceptRange = _TypeAssert<
-	_TypeExtends<HiddenExpressionExceptRangeTree["type"], "_expression_except_range">
+	_TypeExtends<
+		HiddenExpressionExceptRangeTree['type'],
+		'_expression_except_range'
+	>
 >;
 export type _Tree_MacroInvocation = _TypeAssert<
-	_TypeExtends<MacroInvocationTree["type"], "macro_invocation">
+	_TypeExtends<MacroInvocationTree['type'], 'macro_invocation'>
 >;
 export type _Tree_DelimTokenTree = _TypeAssert<
-	_TypeExtends<DelimTokenTreeTree["type"], "delim_token_tree">
+	_TypeExtends<DelimTokenTreeTree['type'], 'delim_token_tree'>
 >;
 export type _Tree_HiddenNonDelimToken = _TypeAssert<
-	_TypeExtends<HiddenNonDelimTokenTree["type"], "_non_delim_token">
+	_TypeExtends<HiddenNonDelimTokenTree['type'], '_non_delim_token'>
 >;
 export type _Tree_ScopedIdentifier = _TypeAssert<
-	_TypeExtends<ScopedIdentifierTree["type"], "scoped_identifier">
+	_TypeExtends<ScopedIdentifierTree['type'], 'scoped_identifier'>
 >;
 export type _Tree_ScopedTypeIdentifierInExpressionPosition = _TypeAssert<
 	_TypeExtends<
-		ScopedTypeIdentifierInExpressionPositionTree["type"],
-		"scoped_type_identifier_in_expression_position"
+		ScopedTypeIdentifierInExpressionPositionTree['type'],
+		'scoped_type_identifier_in_expression_position'
 	>
 >;
 export type _Tree_ScopedTypeIdentifier = _TypeAssert<
-	_TypeExtends<ScopedTypeIdentifierTree["type"], "scoped_type_identifier">
+	_TypeExtends<ScopedTypeIdentifierTree['type'], 'scoped_type_identifier'>
 >;
 export type _Tree_RangeExpression = _TypeAssert<
-	_TypeExtends<RangeExpressionTree["type"], "range_expression">
+	_TypeExtends<RangeExpressionTree['type'], 'range_expression'>
 >;
 export type _Tree_UnaryExpression = _TypeAssert<
-	_TypeExtends<UnaryExpressionTree["type"], "unary_expression">
+	_TypeExtends<UnaryExpressionTree['type'], 'unary_expression'>
 >;
 export type _Tree_TryExpression = _TypeAssert<
-	_TypeExtends<TryExpressionTree["type"], "try_expression">
+	_TypeExtends<TryExpressionTree['type'], 'try_expression'>
 >;
 export type _Tree_ReferenceExpression = _TypeAssert<
-	_TypeExtends<ReferenceExpressionTree["type"], "reference_expression">
+	_TypeExtends<ReferenceExpressionTree['type'], 'reference_expression'>
 >;
 export type _Tree_BinaryExpression = _TypeAssert<
-	_TypeExtends<BinaryExpressionTree["type"], "binary_expression">
+	_TypeExtends<BinaryExpressionTree['type'], 'binary_expression'>
 >;
 export type _Tree_AssignmentExpression = _TypeAssert<
-	_TypeExtends<AssignmentExpressionTree["type"], "assignment_expression">
+	_TypeExtends<AssignmentExpressionTree['type'], 'assignment_expression'>
 >;
 export type _Tree_CompoundAssignmentExpr = _TypeAssert<
-	_TypeExtends<CompoundAssignmentExprTree["type"], "compound_assignment_expr">
+	_TypeExtends<CompoundAssignmentExprTree['type'], 'compound_assignment_expr'>
 >;
 export type _Tree_TypeCastExpression = _TypeAssert<
-	_TypeExtends<TypeCastExpressionTree["type"], "type_cast_expression">
+	_TypeExtends<TypeCastExpressionTree['type'], 'type_cast_expression'>
 >;
 export type _Tree_ReturnExpression = _TypeAssert<
-	_TypeExtends<ReturnExpressionTree["type"], "return_expression">
+	_TypeExtends<ReturnExpressionTree['type'], 'return_expression'>
 >;
 export type _Tree_YieldExpression = _TypeAssert<
-	_TypeExtends<YieldExpressionTree["type"], "yield_expression">
+	_TypeExtends<YieldExpressionTree['type'], 'yield_expression'>
 >;
 export type _Tree_CallExpression = _TypeAssert<
-	_TypeExtends<CallExpressionTree["type"], "call_expression">
+	_TypeExtends<CallExpressionTree['type'], 'call_expression'>
 >;
-export type _Tree_Arguments = _TypeAssert<_TypeExtends<ArgumentsTree["type"], "arguments">>;
+export type _Tree_Arguments = _TypeAssert<
+	_TypeExtends<ArgumentsTree['type'], 'arguments'>
+>;
 export type _Tree_ArrayExpression = _TypeAssert<
-	_TypeExtends<ArrayExpressionTree["type"], "array_expression">
+	_TypeExtends<ArrayExpressionTree['type'], 'array_expression'>
 >;
 export type _Tree_ParenthesizedExpression = _TypeAssert<
-	_TypeExtends<ParenthesizedExpressionTree["type"], "parenthesized_expression">
+	_TypeExtends<ParenthesizedExpressionTree['type'], 'parenthesized_expression'>
 >;
 export type _Tree_TupleExpression = _TypeAssert<
-	_TypeExtends<TupleExpressionTree["type"], "tuple_expression">
+	_TypeExtends<TupleExpressionTree['type'], 'tuple_expression'>
 >;
 export type _Tree_StructExpression = _TypeAssert<
-	_TypeExtends<StructExpressionTree["type"], "struct_expression">
+	_TypeExtends<StructExpressionTree['type'], 'struct_expression'>
 >;
 export type _Tree_FieldInitializerList = _TypeAssert<
-	_TypeExtends<FieldInitializerListTree["type"], "field_initializer_list">
+	_TypeExtends<FieldInitializerListTree['type'], 'field_initializer_list'>
 >;
 export type _Tree_ShorthandFieldInitializer = _TypeAssert<
-	_TypeExtends<ShorthandFieldInitializerTree["type"], "shorthand_field_initializer">
+	_TypeExtends<
+		ShorthandFieldInitializerTree['type'],
+		'shorthand_field_initializer'
+	>
 >;
 export type _Tree_FieldInitializer = _TypeAssert<
-	_TypeExtends<FieldInitializerTree["type"], "field_initializer">
+	_TypeExtends<FieldInitializerTree['type'], 'field_initializer'>
 >;
 export type _Tree_BaseFieldInitializer = _TypeAssert<
-	_TypeExtends<BaseFieldInitializerTree["type"], "base_field_initializer">
+	_TypeExtends<BaseFieldInitializerTree['type'], 'base_field_initializer'>
 >;
 export type _Tree_IfExpression = _TypeAssert<
-	_TypeExtends<IfExpressionTree["type"], "if_expression">
+	_TypeExtends<IfExpressionTree['type'], 'if_expression'>
 >;
 export type _Tree_LetCondition = _TypeAssert<
-	_TypeExtends<LetConditionTree["type"], "let_condition">
+	_TypeExtends<LetConditionTree['type'], 'let_condition'>
 >;
 export type _Tree_HiddenLetChain = _TypeAssert<
-	_TypeExtends<HiddenLetChainTree["type"], "_let_chain">
+	_TypeExtends<HiddenLetChainTree['type'], '_let_chain'>
 >;
-export type _Tree_ElseClause = _TypeAssert<_TypeExtends<ElseClauseTree["type"], "else_clause">>;
+export type _Tree_ElseClause = _TypeAssert<
+	_TypeExtends<ElseClauseTree['type'], 'else_clause'>
+>;
 export type _Tree_MatchExpression = _TypeAssert<
-	_TypeExtends<MatchExpressionTree["type"], "match_expression">
+	_TypeExtends<MatchExpressionTree['type'], 'match_expression'>
 >;
-export type _Tree_MatchBlock = _TypeAssert<_TypeExtends<MatchBlockTree["type"], "match_block">>;
-export type _Tree_MatchArm = _TypeAssert<_TypeExtends<MatchArmTree["type"], "match_arm">>;
+export type _Tree_MatchBlock = _TypeAssert<
+	_TypeExtends<MatchBlockTree['type'], 'match_block'>
+>;
+export type _Tree_MatchArm = _TypeAssert<
+	_TypeExtends<MatchArmTree['type'], 'match_arm'>
+>;
 export type _Tree_LastMatchArm = _TypeAssert<
-	_TypeExtends<LastMatchArmTree["type"], "last_match_arm">
+	_TypeExtends<LastMatchArmTree['type'], 'last_match_arm'>
 >;
 export type _Tree_MatchPattern = _TypeAssert<
-	_TypeExtends<MatchPatternTree["type"], "match_pattern">
+	_TypeExtends<MatchPatternTree['type'], 'match_pattern'>
 >;
 export type _Tree_WhileExpression = _TypeAssert<
-	_TypeExtends<WhileExpressionTree["type"], "while_expression">
+	_TypeExtends<WhileExpressionTree['type'], 'while_expression'>
 >;
 export type _Tree_LoopExpression = _TypeAssert<
-	_TypeExtends<LoopExpressionTree["type"], "loop_expression">
+	_TypeExtends<LoopExpressionTree['type'], 'loop_expression'>
 >;
 export type _Tree_ForExpression = _TypeAssert<
-	_TypeExtends<ForExpressionTree["type"], "for_expression">
+	_TypeExtends<ForExpressionTree['type'], 'for_expression'>
 >;
-export type _Tree_ConstBlock = _TypeAssert<_TypeExtends<ConstBlockTree["type"], "const_block">>;
+export type _Tree_ConstBlock = _TypeAssert<
+	_TypeExtends<ConstBlockTree['type'], 'const_block'>
+>;
 export type _Tree_ClosureExpression = _TypeAssert<
-	_TypeExtends<ClosureExpressionTree["type"], "closure_expression">
+	_TypeExtends<ClosureExpressionTree['type'], 'closure_expression'>
 >;
 export type _Tree_ClosureParameters = _TypeAssert<
-	_TypeExtends<ClosureParametersTree["type"], "closure_parameters">
+	_TypeExtends<ClosureParametersTree['type'], 'closure_parameters'>
 >;
-export type _Tree_Label = _TypeAssert<_TypeExtends<LabelTree["type"], "label">>;
+export type _Tree_Label = _TypeAssert<_TypeExtends<LabelTree['type'], 'label'>>;
 export type _Tree_BreakExpression = _TypeAssert<
-	_TypeExtends<BreakExpressionTree["type"], "break_expression">
+	_TypeExtends<BreakExpressionTree['type'], 'break_expression'>
 >;
 export type _Tree_ContinueExpression = _TypeAssert<
-	_TypeExtends<ContinueExpressionTree["type"], "continue_expression">
+	_TypeExtends<ContinueExpressionTree['type'], 'continue_expression'>
 >;
 export type _Tree_IndexExpression = _TypeAssert<
-	_TypeExtends<IndexExpressionTree["type"], "index_expression">
+	_TypeExtends<IndexExpressionTree['type'], 'index_expression'>
 >;
 export type _Tree_AwaitExpression = _TypeAssert<
-	_TypeExtends<AwaitExpressionTree["type"], "await_expression">
+	_TypeExtends<AwaitExpressionTree['type'], 'await_expression'>
 >;
 export type _Tree_FieldExpression = _TypeAssert<
-	_TypeExtends<FieldExpressionTree["type"], "field_expression">
+	_TypeExtends<FieldExpressionTree['type'], 'field_expression'>
 >;
-export type _Tree_UnsafeBlock = _TypeAssert<_TypeExtends<UnsafeBlockTree["type"], "unsafe_block">>;
-export type _Tree_AsyncBlock = _TypeAssert<_TypeExtends<AsyncBlockTree["type"], "async_block">>;
-export type _Tree_GenBlock = _TypeAssert<_TypeExtends<GenBlockTree["type"], "gen_block">>;
-export type _Tree_TryBlock = _TypeAssert<_TypeExtends<TryBlockTree["type"], "try_block">>;
-export type _Tree_Block = _TypeAssert<_TypeExtends<BlockTree["type"], "block">>;
-export type _Tree_HiddenPattern = _TypeAssert<_TypeExtends<HiddenPatternTree["type"], "_pattern">>;
+export type _Tree_UnsafeBlock = _TypeAssert<
+	_TypeExtends<UnsafeBlockTree['type'], 'unsafe_block'>
+>;
+export type _Tree_AsyncBlock = _TypeAssert<
+	_TypeExtends<AsyncBlockTree['type'], 'async_block'>
+>;
+export type _Tree_GenBlock = _TypeAssert<
+	_TypeExtends<GenBlockTree['type'], 'gen_block'>
+>;
+export type _Tree_TryBlock = _TypeAssert<
+	_TypeExtends<TryBlockTree['type'], 'try_block'>
+>;
+export type _Tree_Block = _TypeAssert<_TypeExtends<BlockTree['type'], 'block'>>;
+export type _Tree_HiddenPattern = _TypeAssert<
+	_TypeExtends<HiddenPatternTree['type'], '_pattern'>
+>;
 export type _Tree_GenericPattern = _TypeAssert<
-	_TypeExtends<GenericPatternTree["type"], "generic_pattern">
+	_TypeExtends<GenericPatternTree['type'], 'generic_pattern'>
 >;
 export type _Tree_TuplePattern = _TypeAssert<
-	_TypeExtends<TuplePatternTree["type"], "tuple_pattern">
+	_TypeExtends<TuplePatternTree['type'], 'tuple_pattern'>
 >;
 export type _Tree_SlicePattern = _TypeAssert<
-	_TypeExtends<SlicePatternTree["type"], "slice_pattern">
+	_TypeExtends<SlicePatternTree['type'], 'slice_pattern'>
 >;
 export type _Tree_TupleStructPattern = _TypeAssert<
-	_TypeExtends<TupleStructPatternTree["type"], "tuple_struct_pattern">
+	_TypeExtends<TupleStructPatternTree['type'], 'tuple_struct_pattern'>
 >;
 export type _Tree_StructPattern = _TypeAssert<
-	_TypeExtends<StructPatternTree["type"], "struct_pattern">
+	_TypeExtends<StructPatternTree['type'], 'struct_pattern'>
 >;
 export type _Tree_FieldPattern = _TypeAssert<
-	_TypeExtends<FieldPatternTree["type"], "field_pattern">
+	_TypeExtends<FieldPatternTree['type'], 'field_pattern'>
 >;
-export type _Tree_MutPattern = _TypeAssert<_TypeExtends<MutPatternTree["type"], "mut_pattern">>;
+export type _Tree_MutPattern = _TypeAssert<
+	_TypeExtends<MutPatternTree['type'], 'mut_pattern'>
+>;
 export type _Tree_RangePattern = _TypeAssert<
-	_TypeExtends<RangePatternTree["type"], "range_pattern">
+	_TypeExtends<RangePatternTree['type'], 'range_pattern'>
 >;
-export type _Tree_RefPattern = _TypeAssert<_TypeExtends<RefPatternTree["type"], "ref_pattern">>;
+export type _Tree_RefPattern = _TypeAssert<
+	_TypeExtends<RefPatternTree['type'], 'ref_pattern'>
+>;
 export type _Tree_CapturedPattern = _TypeAssert<
-	_TypeExtends<CapturedPatternTree["type"], "captured_pattern">
+	_TypeExtends<CapturedPatternTree['type'], 'captured_pattern'>
 >;
 export type _Tree_ReferencePattern = _TypeAssert<
-	_TypeExtends<ReferencePatternTree["type"], "reference_pattern">
+	_TypeExtends<ReferencePatternTree['type'], 'reference_pattern'>
 >;
-export type _Tree_OrPattern = _TypeAssert<_TypeExtends<OrPatternTree["type"], "or_pattern">>;
+export type _Tree_OrPattern = _TypeAssert<
+	_TypeExtends<OrPatternTree['type'], 'or_pattern'>
+>;
 export type _Tree_NegativeLiteral = _TypeAssert<
-	_TypeExtends<NegativeLiteralTree["type"], "negative_literal">
+	_TypeExtends<NegativeLiteralTree['type'], 'negative_literal'>
 >;
 export type _Tree_StringLiteral = _TypeAssert<
-	_TypeExtends<StringLiteralTree["type"], "string_literal">
+	_TypeExtends<StringLiteralTree['type'], 'string_literal'>
 >;
 export type _Tree_RawStringLiteral = _TypeAssert<
-	_TypeExtends<RawStringLiteralTree["type"], "raw_string_literal">
+	_TypeExtends<RawStringLiteralTree['type'], 'raw_string_literal'>
 >;
-export type _Tree_Comment = _TypeAssert<_TypeExtends<CommentTree["type"], "comment">>;
-export type _Tree_LineComment = _TypeAssert<_TypeExtends<LineCommentTree["type"], "line_comment">>;
+export type _Tree_Comment = _TypeAssert<
+	_TypeExtends<CommentTree['type'], 'comment'>
+>;
+export type _Tree_LineComment = _TypeAssert<
+	_TypeExtends<LineCommentTree['type'], 'line_comment'>
+>;
 export type _Tree_HiddenLineDocCommentMarker = _TypeAssert<
-	_TypeExtends<HiddenLineDocCommentMarkerTree["type"], "_line_doc_comment_marker">
+	_TypeExtends<
+		HiddenLineDocCommentMarkerTree['type'],
+		'_line_doc_comment_marker'
+	>
 >;
 export type _Tree_BlockComment = _TypeAssert<
-	_TypeExtends<BlockCommentTree["type"], "block_comment">
+	_TypeExtends<BlockCommentTree['type'], 'block_comment'>
 >;
 export type _Tree_HiddenBlockDocCommentMarker = _TypeAssert<
-	_TypeExtends<HiddenBlockDocCommentMarkerTree["type"], "_block_doc_comment_marker">
+	_TypeExtends<
+		HiddenBlockDocCommentMarkerTree['type'],
+		'_block_doc_comment_marker'
+	>
 >;
-export type _Tree_HiddenPath = _TypeAssert<_TypeExtends<HiddenPathTree["type"], "_path">>;
+export type _Tree_HiddenPath = _TypeAssert<
+	_TypeExtends<HiddenPathTree['type'], '_path'>
+>;
 export type _Tree_HiddenTypeIdentifier = _TypeAssert<
-	_TypeExtends<HiddenTypeIdentifierTree["type"], "_type_identifier">
+	_TypeExtends<HiddenTypeIdentifierTree['type'], '_type_identifier'>
 >;
 export type _Tree_HiddenFieldIdentifier = _TypeAssert<
-	_TypeExtends<HiddenFieldIdentifierTree["type"], "_field_identifier">
+	_TypeExtends<HiddenFieldIdentifierTree['type'], '_field_identifier'>
 >;
-export type _Tree_LetChain = _TypeAssert<_TypeExtends<LetChainTree["type"], "let_chain">>;
+export type _Tree_LetChain = _TypeAssert<
+	_TypeExtends<LetChainTree['type'], 'let_chain'>
+>;
 export type _Tree_FragmentSpecifier = _TypeAssert<
-	_TypeExtends<FragmentSpecifierTree["type"], "fragment_specifier">
+	_TypeExtends<FragmentSpecifierTree['type'], 'fragment_specifier'>
 >;
-export type _Tree_UnitType = _TypeAssert<_TypeExtends<UnitTypeTree["type"], "unit_type">>;
+export type _Tree_UnitType = _TypeAssert<
+	_TypeExtends<UnitTypeTree['type'], 'unit_type'>
+>;
 export type _Tree_MutableSpecifier = _TypeAssert<
-	_TypeExtends<MutableSpecifierTree["type"], "mutable_specifier">
+	_TypeExtends<MutableSpecifierTree['type'], 'mutable_specifier'>
 >;
 export type _Tree_UnitExpression = _TypeAssert<
-	_TypeExtends<UnitExpressionTree["type"], "unit_expression">
+	_TypeExtends<UnitExpressionTree['type'], 'unit_expression'>
 >;
 export type _Tree_IntegerLiteral = _TypeAssert<
-	_TypeExtends<IntegerLiteralTree["type"], "integer_literal">
+	_TypeExtends<IntegerLiteralTree['type'], 'integer_literal'>
 >;
-export type _Tree_CharLiteral = _TypeAssert<_TypeExtends<CharLiteralTree["type"], "char_literal">>;
+export type _Tree_CharLiteral = _TypeAssert<
+	_TypeExtends<CharLiteralTree['type'], 'char_literal'>
+>;
 export type _Tree_EscapeSequence = _TypeAssert<
-	_TypeExtends<EscapeSequenceTree["type"], "escape_sequence">
+	_TypeExtends<EscapeSequenceTree['type'], 'escape_sequence'>
 >;
 export type _Tree_BooleanLiteral = _TypeAssert<
-	_TypeExtends<BooleanLiteralTree["type"], "boolean_literal">
+	_TypeExtends<BooleanLiteralTree['type'], 'boolean_literal'>
 >;
-export type _Tree_Identifier = _TypeAssert<_TypeExtends<IdentifierTree["type"], "identifier">>;
-export type _Tree_Shebang = _TypeAssert<_TypeExtends<ShebangTree["type"], "shebang">>;
+export type _Tree_Identifier = _TypeAssert<
+	_TypeExtends<IdentifierTree['type'], 'identifier'>
+>;
+export type _Tree_Shebang = _TypeAssert<
+	_TypeExtends<ShebangTree['type'], 'shebang'>
+>;
 export type _Tree_HiddenReservedIdentifier = _TypeAssert<
-	_TypeExtends<HiddenReservedIdentifierTree["type"], "_reserved_identifier">
+	_TypeExtends<HiddenReservedIdentifierTree['type'], '_reserved_identifier'>
 >;
-export type _Tree_Self = _TypeAssert<_TypeExtends<SelfTree["type"], "self">>;
-export type _Tree_Super = _TypeAssert<_TypeExtends<SuperTree["type"], "super">>;
-export type _Tree_Crate = _TypeAssert<_TypeExtends<CrateTree["type"], "crate">>;
+export type _Tree_Self = _TypeAssert<_TypeExtends<SelfTree['type'], 'self'>>;
+export type _Tree_Super = _TypeAssert<_TypeExtends<SuperTree['type'], 'super'>>;
+export type _Tree_Crate = _TypeAssert<_TypeExtends<CrateTree['type'], 'crate'>>;
 export type _Tree_Metavariable = _TypeAssert<
-	_TypeExtends<MetavariableTree["type"], "metavariable">
+	_TypeExtends<MetavariableTree['type'], 'metavariable'>
 >;
 export type _Tree_PrimitiveType = _TypeAssert<
-	_TypeExtends<PrimitiveTypeTree["type"], "primitive_type">
+	_TypeExtends<PrimitiveTypeTree['type'], 'primitive_type'>
 >;
 export type _Tree_ShorthandFieldIdentifier = _TypeAssert<
-	_TypeExtends<ShorthandFieldIdentifierTree["type"], "shorthand_field_identifier">
+	_TypeExtends<
+		ShorthandFieldIdentifierTree['type'],
+		'shorthand_field_identifier'
+	>
 >;
 export type _Tree_OuterDocCommentMarker = _TypeAssert<
-	_TypeExtends<OuterDocCommentMarkerTree["type"], "outer_doc_comment_marker">
+	_TypeExtends<OuterDocCommentMarkerTree['type'], 'outer_doc_comment_marker'>
 >;
 export type _Tree_InnerDocCommentMarker = _TypeAssert<
-	_TypeExtends<InnerDocCommentMarkerTree["type"], "inner_doc_comment_marker">
+	_TypeExtends<InnerDocCommentMarkerTree['type'], 'inner_doc_comment_marker'>
 >;
 export type _Tree_TypeIdentifier = _TypeAssert<
-	_TypeExtends<TypeIdentifierTree["type"], "type_identifier">
+	_TypeExtends<TypeIdentifierTree['type'], 'type_identifier'>
 >;
 export type _Tree_FieldIdentifier = _TypeAssert<
-	_TypeExtends<FieldIdentifierTree["type"], "field_identifier">
+	_TypeExtends<FieldIdentifierTree['type'], 'field_identifier'>
 >;
-export type _Tree_Expr = _TypeAssert<_TypeExtends<ExprTree["type"], "expr">>;
-export type _Tree_Expr2021 = _TypeAssert<_TypeExtends<Expr2021Tree["type"], "expr_2021">>;
-export type _Tree_Ident = _TypeAssert<_TypeExtends<IdentTree["type"], "ident">>;
-export type _Tree_Item = _TypeAssert<_TypeExtends<ItemTree["type"], "item">>;
-export type _Tree_Literal = _TypeAssert<_TypeExtends<LiteralTree["type"], "literal">>;
-export type _Tree_Meta = _TypeAssert<_TypeExtends<MetaTree["type"], "meta">>;
-export type _Tree_Pat = _TypeAssert<_TypeExtends<PatTree["type"], "pat">>;
-export type _Tree_PatParam = _TypeAssert<_TypeExtends<PatParamTree["type"], "pat_param">>;
-export type _Tree_Path = _TypeAssert<_TypeExtends<PathTree["type"], "path">>;
-export type _Tree_Stmt = _TypeAssert<_TypeExtends<StmtTree["type"], "stmt">>;
-export type _Tree_Tt = _TypeAssert<_TypeExtends<TtTree["type"], "tt">>;
-export type _Tree_Ty = _TypeAssert<_TypeExtends<TyTree["type"], "ty">>;
-export type _Tree_Vis = _TypeAssert<_TypeExtends<VisTree["type"], "vis">>;
-export type _Tree_U8 = _TypeAssert<_TypeExtends<U8Tree["type"], "u8">>;
-export type _Tree_I8 = _TypeAssert<_TypeExtends<I8Tree["type"], "i8">>;
-export type _Tree_U16 = _TypeAssert<_TypeExtends<U16Tree["type"], "u16">>;
-export type _Tree_I16 = _TypeAssert<_TypeExtends<I16Tree["type"], "i16">>;
-export type _Tree_U32 = _TypeAssert<_TypeExtends<U32Tree["type"], "u32">>;
-export type _Tree_I32 = _TypeAssert<_TypeExtends<I32Tree["type"], "i32">>;
-export type _Tree_U64 = _TypeAssert<_TypeExtends<U64Tree["type"], "u64">>;
-export type _Tree_I64 = _TypeAssert<_TypeExtends<I64Tree["type"], "i64">>;
-export type _Tree_U128 = _TypeAssert<_TypeExtends<U128Tree["type"], "u128">>;
-export type _Tree_I128 = _TypeAssert<_TypeExtends<I128Tree["type"], "i128">>;
-export type _Tree_Isize = _TypeAssert<_TypeExtends<IsizeTree["type"], "isize">>;
-export type _Tree_Usize = _TypeAssert<_TypeExtends<UsizeTree["type"], "usize">>;
-export type _Tree_F32 = _TypeAssert<_TypeExtends<F32Tree["type"], "f32">>;
-export type _Tree_F64 = _TypeAssert<_TypeExtends<F64Tree["type"], "f64">>;
-export type _Tree_Bool = _TypeAssert<_TypeExtends<BoolTree["type"], "bool">>;
-export type _Tree_Str = _TypeAssert<_TypeExtends<StrTree["type"], "str">>;
-export type _Tree_Char = _TypeAssert<_TypeExtends<CharTree["type"], "char">>;
-export type _Tree_Hidden = _TypeAssert<_TypeExtends<HiddenTree["type"], "_">>;
-export type _Tree_As = _TypeAssert<_TypeExtends<AsTree["type"], "as">>;
-export type _Tree_Async = _TypeAssert<_TypeExtends<AsyncTree["type"], "async">>;
-export type _Tree_Await = _TypeAssert<_TypeExtends<AwaitTree["type"], "await">>;
-export type _Tree_Break = _TypeAssert<_TypeExtends<BreakTree["type"], "break">>;
-export type _Tree_Const = _TypeAssert<_TypeExtends<ConstTree["type"], "const">>;
-export type _Tree_Continue = _TypeAssert<_TypeExtends<ContinueTree["type"], "continue">>;
-export type _Tree_Default = _TypeAssert<_TypeExtends<DefaultTree["type"], "default">>;
-export type _Tree_Enum = _TypeAssert<_TypeExtends<EnumTree["type"], "enum">>;
-export type _Tree_Fn = _TypeAssert<_TypeExtends<FnTree["type"], "fn">>;
-export type _Tree_For = _TypeAssert<_TypeExtends<ForTree["type"], "for">>;
-export type _Tree_Gen = _TypeAssert<_TypeExtends<GenTree["type"], "gen">>;
-export type _Tree_If = _TypeAssert<_TypeExtends<IfTree["type"], "if">>;
-export type _Tree_Impl = _TypeAssert<_TypeExtends<ImplTree["type"], "impl">>;
-export type _Tree_Let = _TypeAssert<_TypeExtends<LetTree["type"], "let">>;
-export type _Tree_Loop = _TypeAssert<_TypeExtends<LoopTree["type"], "loop">>;
-export type _Tree_Match = _TypeAssert<_TypeExtends<MatchTree["type"], "match">>;
-export type _Tree_Mod = _TypeAssert<_TypeExtends<ModTree["type"], "mod">>;
-export type _Tree_Pub = _TypeAssert<_TypeExtends<PubTree["type"], "pub">>;
-export type _Tree_Return = _TypeAssert<_TypeExtends<ReturnTree["type"], "return">>;
-export type _Tree_Static = _TypeAssert<_TypeExtends<StaticTree["type"], "static">>;
-export type _Tree_Struct = _TypeAssert<_TypeExtends<StructTree["type"], "struct">>;
-export type _Tree_Trait = _TypeAssert<_TypeExtends<TraitTree["type"], "trait">>;
-export type _Tree_Type = _TypeAssert<_TypeExtends<TypeTree["type"], "type">>;
-export type _Tree_Union = _TypeAssert<_TypeExtends<UnionTree["type"], "union">>;
-export type _Tree_Unsafe = _TypeAssert<_TypeExtends<UnsafeTree["type"], "unsafe">>;
-export type _Tree_Use = _TypeAssert<_TypeExtends<UseTree["type"], "use">>;
-export type _Tree_Where = _TypeAssert<_TypeExtends<WhereTree["type"], "where">>;
-export type _Tree_While = _TypeAssert<_TypeExtends<WhileTree["type"], "while">>;
-export type _Tree_Extern = _TypeAssert<_TypeExtends<ExternTree["type"], "extern">>;
-export type _Tree_Ref = _TypeAssert<_TypeExtends<RefTree["type"], "ref">>;
-export type _Tree_Else = _TypeAssert<_TypeExtends<ElseTree["type"], "else">>;
-export type _Tree_In = _TypeAssert<_TypeExtends<InTree["type"], "in">>;
-export type _Tree_Dyn = _TypeAssert<_TypeExtends<DynTree["type"], "dyn">>;
-export type _Tree_Mut = _TypeAssert<_TypeExtends<MutTree["type"], "mut">>;
-export type _Tree_Raw = _TypeAssert<_TypeExtends<RawTree["type"], "raw">>;
-export type _Tree_Yield = _TypeAssert<_TypeExtends<YieldTree["type"], "yield">>;
-export type _Tree_Move = _TypeAssert<_TypeExtends<MoveTree["type"], "move">>;
-export type _Tree_Try = _TypeAssert<_TypeExtends<TryTree["type"], "try">>;
-export type _Tree_True = _TypeAssert<_TypeExtends<TrueTree["type"], "true">>;
-export type _Tree_False = _TypeAssert<_TypeExtends<FalseTree["type"], "false">>;
+export type _Tree_Expr = _TypeAssert<_TypeExtends<ExprTree['type'], 'expr'>>;
+export type _Tree_Expr2021 = _TypeAssert<
+	_TypeExtends<Expr2021Tree['type'], 'expr_2021'>
+>;
+export type _Tree_Ident = _TypeAssert<_TypeExtends<IdentTree['type'], 'ident'>>;
+export type _Tree_Item = _TypeAssert<_TypeExtends<ItemTree['type'], 'item'>>;
+export type _Tree_Literal = _TypeAssert<
+	_TypeExtends<LiteralTree['type'], 'literal'>
+>;
+export type _Tree_Meta = _TypeAssert<_TypeExtends<MetaTree['type'], 'meta'>>;
+export type _Tree_Pat = _TypeAssert<_TypeExtends<PatTree['type'], 'pat'>>;
+export type _Tree_PatParam = _TypeAssert<
+	_TypeExtends<PatParamTree['type'], 'pat_param'>
+>;
+export type _Tree_Path = _TypeAssert<_TypeExtends<PathTree['type'], 'path'>>;
+export type _Tree_Stmt = _TypeAssert<_TypeExtends<StmtTree['type'], 'stmt'>>;
+export type _Tree_Tt = _TypeAssert<_TypeExtends<TtTree['type'], 'tt'>>;
+export type _Tree_Ty = _TypeAssert<_TypeExtends<TyTree['type'], 'ty'>>;
+export type _Tree_Vis = _TypeAssert<_TypeExtends<VisTree['type'], 'vis'>>;
+export type _Tree_U8 = _TypeAssert<_TypeExtends<U8Tree['type'], 'u8'>>;
+export type _Tree_I8 = _TypeAssert<_TypeExtends<I8Tree['type'], 'i8'>>;
+export type _Tree_U16 = _TypeAssert<_TypeExtends<U16Tree['type'], 'u16'>>;
+export type _Tree_I16 = _TypeAssert<_TypeExtends<I16Tree['type'], 'i16'>>;
+export type _Tree_U32 = _TypeAssert<_TypeExtends<U32Tree['type'], 'u32'>>;
+export type _Tree_I32 = _TypeAssert<_TypeExtends<I32Tree['type'], 'i32'>>;
+export type _Tree_U64 = _TypeAssert<_TypeExtends<U64Tree['type'], 'u64'>>;
+export type _Tree_I64 = _TypeAssert<_TypeExtends<I64Tree['type'], 'i64'>>;
+export type _Tree_U128 = _TypeAssert<_TypeExtends<U128Tree['type'], 'u128'>>;
+export type _Tree_I128 = _TypeAssert<_TypeExtends<I128Tree['type'], 'i128'>>;
+export type _Tree_Isize = _TypeAssert<_TypeExtends<IsizeTree['type'], 'isize'>>;
+export type _Tree_Usize = _TypeAssert<_TypeExtends<UsizeTree['type'], 'usize'>>;
+export type _Tree_F32 = _TypeAssert<_TypeExtends<F32Tree['type'], 'f32'>>;
+export type _Tree_F64 = _TypeAssert<_TypeExtends<F64Tree['type'], 'f64'>>;
+export type _Tree_Bool = _TypeAssert<_TypeExtends<BoolTree['type'], 'bool'>>;
+export type _Tree_Str = _TypeAssert<_TypeExtends<StrTree['type'], 'str'>>;
+export type _Tree_Char = _TypeAssert<_TypeExtends<CharTree['type'], 'char'>>;
+export type _Tree_Hidden = _TypeAssert<_TypeExtends<HiddenTree['type'], '_'>>;
+export type _Tree_As = _TypeAssert<_TypeExtends<AsTree['type'], 'as'>>;
+export type _Tree_Async = _TypeAssert<_TypeExtends<AsyncTree['type'], 'async'>>;
+export type _Tree_Await = _TypeAssert<_TypeExtends<AwaitTree['type'], 'await'>>;
+export type _Tree_Break = _TypeAssert<_TypeExtends<BreakTree['type'], 'break'>>;
+export type _Tree_Const = _TypeAssert<_TypeExtends<ConstTree['type'], 'const'>>;
+export type _Tree_Continue = _TypeAssert<
+	_TypeExtends<ContinueTree['type'], 'continue'>
+>;
+export type _Tree_Default = _TypeAssert<
+	_TypeExtends<DefaultTree['type'], 'default'>
+>;
+export type _Tree_Enum = _TypeAssert<_TypeExtends<EnumTree['type'], 'enum'>>;
+export type _Tree_Fn = _TypeAssert<_TypeExtends<FnTree['type'], 'fn'>>;
+export type _Tree_For = _TypeAssert<_TypeExtends<ForTree['type'], 'for'>>;
+export type _Tree_Gen = _TypeAssert<_TypeExtends<GenTree['type'], 'gen'>>;
+export type _Tree_If = _TypeAssert<_TypeExtends<IfTree['type'], 'if'>>;
+export type _Tree_Impl = _TypeAssert<_TypeExtends<ImplTree['type'], 'impl'>>;
+export type _Tree_Let = _TypeAssert<_TypeExtends<LetTree['type'], 'let'>>;
+export type _Tree_Loop = _TypeAssert<_TypeExtends<LoopTree['type'], 'loop'>>;
+export type _Tree_Match = _TypeAssert<_TypeExtends<MatchTree['type'], 'match'>>;
+export type _Tree_Mod = _TypeAssert<_TypeExtends<ModTree['type'], 'mod'>>;
+export type _Tree_Pub = _TypeAssert<_TypeExtends<PubTree['type'], 'pub'>>;
+export type _Tree_Return = _TypeAssert<
+	_TypeExtends<ReturnTree['type'], 'return'>
+>;
+export type _Tree_Static = _TypeAssert<
+	_TypeExtends<StaticTree['type'], 'static'>
+>;
+export type _Tree_Struct = _TypeAssert<
+	_TypeExtends<StructTree['type'], 'struct'>
+>;
+export type _Tree_Trait = _TypeAssert<_TypeExtends<TraitTree['type'], 'trait'>>;
+export type _Tree_Type = _TypeAssert<_TypeExtends<TypeTree['type'], 'type'>>;
+export type _Tree_Union = _TypeAssert<_TypeExtends<UnionTree['type'], 'union'>>;
+export type _Tree_Unsafe = _TypeAssert<
+	_TypeExtends<UnsafeTree['type'], 'unsafe'>
+>;
+export type _Tree_Use = _TypeAssert<_TypeExtends<UseTree['type'], 'use'>>;
+export type _Tree_Where = _TypeAssert<_TypeExtends<WhereTree['type'], 'where'>>;
+export type _Tree_While = _TypeAssert<_TypeExtends<WhileTree['type'], 'while'>>;
+export type _Tree_Extern = _TypeAssert<
+	_TypeExtends<ExternTree['type'], 'extern'>
+>;
+export type _Tree_Ref = _TypeAssert<_TypeExtends<RefTree['type'], 'ref'>>;
+export type _Tree_Else = _TypeAssert<_TypeExtends<ElseTree['type'], 'else'>>;
+export type _Tree_In = _TypeAssert<_TypeExtends<InTree['type'], 'in'>>;
+export type _Tree_Dyn = _TypeAssert<_TypeExtends<DynTree['type'], 'dyn'>>;
+export type _Tree_Mut = _TypeAssert<_TypeExtends<MutTree['type'], 'mut'>>;
+export type _Tree_Raw = _TypeAssert<_TypeExtends<RawTree['type'], 'raw'>>;
+export type _Tree_Yield = _TypeAssert<_TypeExtends<YieldTree['type'], 'yield'>>;
+export type _Tree_Move = _TypeAssert<_TypeExtends<MoveTree['type'], 'move'>>;
+export type _Tree_Try = _TypeAssert<_TypeExtends<TryTree['type'], 'try'>>;
+export type _Tree_True = _TypeAssert<_TypeExtends<TrueTree['type'], 'true'>>;
+export type _Tree_False = _TypeAssert<_TypeExtends<FalseTree['type'], 'false'>>;

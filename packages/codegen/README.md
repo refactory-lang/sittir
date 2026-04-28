@@ -25,9 +25,9 @@ Reads `tree-sitter-{lang}/src/node-types.json` and `grammar.json` directly from 
 ### Programmatic
 
 ```ts
-import { generate } from "@sittir/codegen";
+import { generate } from '@sittir/codegen';
 
-const files = generate({ grammar: "rust" });
+const files = generate({ grammar: 'rust' });
 // files.builders   — Map<string, string> (one file per node kind)
 // files.types      — grammar-derived TypeScript types
 // files.builder    — ir namespace (fluent + leaf + fromCST + edit)
@@ -104,9 +104,9 @@ The codegen resolves field types from the grammar's `namedTypes`:
 ## Generate a New Language IR
 
 ```ts
-import { generate } from "@sittir/codegen";
+import { generate } from '@sittir/codegen';
 
-const files = generate({ grammar: "go" });
+const files = generate({ grammar: 'go' });
 ```
 
 Or use the CLI:
@@ -126,7 +126,15 @@ injected as globals at evaluate time — _don't_ import those. The
 sittir-specific extensions below ARE imported explicitly:
 
 ```ts
-import { transform, role, enrich, field, alias, insert, replace } from "@sittir/codegen/dsl";
+import {
+	transform,
+	role,
+	enrich,
+	field,
+	alias,
+	insert,
+	replace
+} from '@sittir/codegen/dsl';
 ```
 
 | Function        | Signature                                            | Purpose                                                                                                                                                                                                                                                                                                                                                                        |

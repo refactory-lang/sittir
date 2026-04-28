@@ -85,11 +85,11 @@ In `packages/codegen/src/compiler/link.ts`, after the pass that assembles each k
  */
 function markSingleLiteralKinds(linked: LinkedGrammar): void {
 	for (const [name, node] of linked.nodes) {
-		if (node.modelType !== "terminal") continue;
+		if (node.modelType !== 'terminal') continue;
 		const literal = extractSingleLiteralValue(node.rule);
 		if (literal !== null) {
 			(node as Writable<AssembledTerminal>).isSingleLiteralKind = true(
-				node as Writable<AssembledTerminal>,
+				node as Writable<AssembledTerminal>
 			).literalValue = literal;
 		}
 	}
@@ -121,12 +121,12 @@ In `packages/codegen/src/emitters/factories.ts` (or a new `shared.ts` helper if 
  */
 export function resolveEffectiveLiteral(
 	field: AssembledField,
-	kindMap: Map<string, AssembledNode>,
+	kindMap: Map<string, AssembledNode>
 ): string | undefined {
 	if (field.literalValues?.length === 1) return field.literalValues[0];
 	if (field.contentTypes.length === 1) {
 		const ref = kindMap.get(field.contentTypes[0]!);
-		if (ref && "isSingleLiteralKind" in ref && ref.isSingleLiteralKind) {
+		if (ref && 'isSingleLiteralKind' in ref && ref.isSingleLiteralKind) {
 			return (ref as { literalValue: string }).literalValue;
 		}
 	}
@@ -135,7 +135,7 @@ export function resolveEffectiveLiteral(
 
 export function isAutoStampField(
 	field: AssembledField,
-	kindMap: Map<string, AssembledNode>,
+	kindMap: Map<string, AssembledNode>
 ): boolean {
 	return resolveEffectiveLiteral(field, kindMap) !== undefined;
 }
@@ -371,7 +371,10 @@ Initialize in `wire(config)` and in `withWireContext()`.
 Add a wire-routing helper:
 
 ```ts
-export function wireRegisterRefineForms(kind: string, forms: RefineForm[]): boolean {
+export function wireRegisterRefineForms(
+	kind: string,
+	forms: RefineForm[]
+): boolean {
 	if (!currentContext) return false;
 	currentContext.refineForms.set(kind, forms);
 	return true;
@@ -390,8 +393,12 @@ Write `packages/codegen/src/dsl/primitives/refine.ts`:
  * tree is unchanged. See ADR-0010 for the full design.
  */
 
-import type { RuntimeRule } from "../runtime-shapes.ts";
-import { wireGetCurrentRuleKind, wireRegisterRefineForms, type RefineForm } from "../wire/wire.ts";
+import type { RuntimeRule } from '../runtime-shapes.ts';
+import {
+	wireGetCurrentRuleKind,
+	wireRegisterRefineForms,
+	type RefineForm
+} from '../wire/wire.ts';
 
 export type FormMap = Record<string, Record<string, number | string>>;
 
@@ -414,18 +421,22 @@ export function refine(original: RuntimeRule, forms: FormMap): RuntimeRule {
 	const kind = wireGetCurrentRuleKind();
 	if (!kind) {
 		throw new Error(
-			`refine(): no active wire context — refine() must run inside a rule callback under wire()`,
+			`refine(): no active wire context — refine() must run inside a rule callback under wire()`
 		);
 	}
 	const formList: RefineForm[] = [];
 	for (const [name, selections] of Object.entries(forms)) {
 		if (formList.some((f) => f.name === name)) {
-			throw new Error(`refine(): duplicate form name '${name}' on rule '${kind}'`);
+			throw new Error(
+				`refine(): duplicate form name '${name}' on rule '${kind}'`
+			);
 		}
 		formList.push({ name, selections: { ...selections } });
 	}
 	if (!wireRegisterRefineForms(kind, formList)) {
-		throw new Error(`refine(): wire context rejected registration — unexpected`);
+		throw new Error(
+			`refine(): wire context rejected registration — unexpected`
+		);
 	}
 	return original;
 }
@@ -438,7 +449,7 @@ Note: path + selection **validation** (path resolves to a choice, selection in r
 Add:
 
 ```ts
-export { refine } from "./primitives/refine.ts";
+export { refine } from './primitives/refine.ts';
 ```
 
 - [ ] **Step 4: Unit tests**
@@ -446,45 +457,45 @@ export { refine } from "./primitives/refine.ts";
 Write `packages/codegen/src/dsl/__tests__/refine.test.ts`:
 
 ```ts
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { refine } from "../primitives/refine.ts";
-import { withWireContext } from "../wire/wire.ts";
-import { installFakeDsl, restoreFakeDsl } from "./_test-helpers.ts";
-import type { Rule } from "../../compiler/rule.ts";
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { refine } from '../primitives/refine.ts';
+import { withWireContext } from '../wire/wire.ts';
+import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
+import type { Rule } from '../../compiler/rule.ts';
 
 beforeAll(() => installFakeDsl());
 afterAll(() => restoreFakeDsl());
 
-describe("refine()", () => {
-	const rule = { type: "seq", members: [] } as Rule;
+describe('refine()', () => {
+	const rule = { type: 'seq', members: [] } as Rule;
 
-	it("registers form metadata on the active wire context", () => {
-		const { ctx, result } = withWireContext("interface_body", () => {
+	it('registers form metadata on the active wire context', () => {
+		const { ctx, result } = withWireContext('interface_body', () => {
 			return refine(rule, {
-				curly: { "opening:": "{", "closing:": "}" },
-				flow: { "opening:": "{|", "closing:": "|}" },
+				curly: { 'opening:': '{', 'closing:': '}' },
+				flow: { 'opening:': '{|', 'closing:': '|}' }
 			});
 		});
 		expect(result).toBe(rule); // unchanged structurally
-		const forms = ctx.refineForms.get("interface_body");
+		const forms = ctx.refineForms.get('interface_body');
 		expect(forms).toBeDefined();
 		expect(forms).toHaveLength(2);
-		expect(forms![0].name).toBe("curly");
-		expect(forms![0].selections["opening:"]).toBe("{");
-		expect(forms![1].name).toBe("flow");
+		expect(forms![0].name).toBe('curly');
+		expect(forms![0].selections['opening:']).toBe('{');
+		expect(forms![1].name).toBe('flow');
 	});
 
-	it("throws without an active wire context", () => {
+	it('throws without an active wire context', () => {
 		expect(() => {
-			refine(rule, { curly: { "opening:": "{" } });
+			refine(rule, { curly: { 'opening:': '{' } });
 		}).toThrow(/no active wire context/);
 	});
 
-	it("throws on duplicate form names", () => {
+	it('throws on duplicate form names', () => {
 		expect(() => {
-			withWireContext("x", () => {
+			withWireContext('x', () => {
 				refine(rule, {
-					curly: { "opening:": "{" },
+					curly: { 'opening:': '{' }
 					// duplicate — same form name, different selection
 				});
 			});
@@ -536,9 +547,14 @@ This task is the biggest in the plan. Break into steps carefully.
 In `evaluate.ts::drainPolymorphMetadata`, add a sibling `drainRefineMetadata`:
 
 ```ts
-function drainRefineMetadata(opts: GrammarOptions): Map<string, RefineForm[]> | undefined {
-	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
-	return wireCtx && wireCtx.refineForms.size > 0 ? new Map(wireCtx.refineForms) : undefined;
+function drainRefineMetadata(
+	opts: GrammarOptions
+): Map<string, RefineForm[]> | undefined {
+	const wireCtx = (opts as unknown as { __wireContext__?: WireContext })
+		.__wireContext__;
+	return wireCtx && wireCtx.refineForms.size > 0
+		? new Map(wireCtx.refineForms)
+		: undefined;
 }
 ```
 
@@ -603,7 +619,10 @@ Key trick: per-form Config generation narrows the auto-stamp-eligible fields. Th
 Write a small helper:
 
 ```ts
-function narrowFieldsForForm(fields: AssembledField[], form: RefineForm): AssembledField[] {
+function narrowFieldsForForm(
+	fields: AssembledField[],
+	form: RefineForm
+): AssembledField[] {
 	// For each form selection, find the field whose path matches,
 	// replace its literalValues with the singleton selected value.
 	// Fields unaffected by the form stay as-is.
@@ -701,31 +720,35 @@ Inspect generated `factories.ts`: `interfaceBody.curly(...)`, `interfaceBody.flo
 Create or append to `packages/typescript/tests/refine.test.ts`:
 
 ```ts
-import { describe, it, expect, expectTypeOf } from "vitest";
-import { ir } from "../src/index.ts";
+import { describe, it, expect, expectTypeOf } from 'vitest';
+import { ir } from '../src/index.ts';
 
-describe("interface_body refined forms", () => {
-	it("curly factory stamps { and }", () => {
+describe('interface_body refined forms', () => {
+	it('curly factory stamps { and }', () => {
 		const node = ir.interfaceBody.curly({ members: [] });
-		expect(node.$fields.opening).toBe("{");
-		expect(node.$fields.closing).toBe("}");
+		expect(node.$fields.opening).toBe('{');
+		expect(node.$fields.closing).toBe('}');
 	});
 
-	it("flow factory stamps {| and |}", () => {
+	it('flow factory stamps {| and |}', () => {
 		const node = ir.interfaceBody.flow({ members: [] });
-		expect(node.$fields.opening).toBe("{|");
-		expect(node.$fields.closing).toBe("|}");
+		expect(node.$fields.opening).toBe('{|');
+		expect(node.$fields.closing).toBe('|}');
 	});
 
-	it("bare ir.interfaceBody defaults to curly (first-declared)", () => {
+	it('bare ir.interfaceBody defaults to curly (first-declared)', () => {
 		const node = ir.interfaceBody({ members: [] });
-		expect(node.$fields.opening).toBe("{");
-		expect(node.$fields.closing).toBe("}");
+		expect(node.$fields.opening).toBe('{');
+		expect(node.$fields.closing).toBe('}');
 	});
 
-	it("Config types omit the auto-stamped fields", () => {
-		expectTypeOf<Parameters<typeof ir.interfaceBody.curly>[0]>().not.toHaveProperty("opening");
-		expectTypeOf<Parameters<typeof ir.interfaceBody.curly>[0]>().not.toHaveProperty("closing");
+	it('Config types omit the auto-stamped fields', () => {
+		expectTypeOf<
+			Parameters<typeof ir.interfaceBody.curly>[0]
+		>().not.toHaveProperty('opening');
+		expectTypeOf<
+			Parameters<typeof ir.interfaceBody.curly>[0]
+		>().not.toHaveProperty('closing');
 	});
 });
 ```

@@ -136,14 +136,14 @@ Derivation reduces to:
 
 ```ts
 function deriveFields(rule: Rule): AssembledField[] {
-	const members = rule.type === "seq" ? rule.members : [rule];
+	const members = rule.type === 'seq' ? rule.members : [rule];
 	return members.filter(isField).map((f) => buildAssembledField(f));
 }
 
 function deriveChildren(rule: Rule): AssembledChild[] {
-	const members = rule.type === "seq" ? rule.members : [rule];
+	const members = rule.type === 'seq' ? rule.members : [rule];
 	return members
-		.filter((m) => m.type === "symbol" || m.type === "supertype")
+		.filter((m) => m.type === 'symbol' || m.type === 'supertype')
 		.map((m) => buildAssembledChild(m));
 }
 ```
@@ -216,7 +216,7 @@ class AssembledBranch {
 }
 
 function projectFields(simplified: Rule): AssembledField[] {
-	const members = simplified.type === "seq" ? simplified.members : [simplified];
+	const members = simplified.type === 'seq' ? simplified.members : [simplified];
 	return members.filter(isField).map(buildAssembledField);
 }
 ```

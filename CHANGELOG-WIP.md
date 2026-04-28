@@ -87,7 +87,7 @@ export function functionItem(
 
 ```ts
 node.name = (v) => {
-	(node.fields as any)["name"] = v;
+	(node.fields as any)['name'] = v;
 	return node;
 };
 ```

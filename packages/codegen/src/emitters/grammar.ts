@@ -3,12 +3,12 @@
  * derived from tree-sitter's node-types.json.
  */
 
-import { loadRawEntries } from "../validate/node-types-loader.ts";
-import { snakeToCamel } from "../compiler/node-map.ts";
+import { loadRawEntries } from '../validate/node-types-loader.ts';
+import { snakeToCamel } from '../compiler/node-map.ts';
 
 function toGrammarTypeName(grammar: string): string {
 	const camel = snakeToCamel(grammar);
-	return camel.charAt(0).toUpperCase() + camel.slice(1) + "Types";
+	return camel.charAt(0).toUpperCase() + camel.slice(1) + 'Types';
 }
 
 export interface EmitGrammarConfig {
@@ -33,9 +33,15 @@ export function emitGrammar(config: EmitGrammarConfig): string {
 
 	const lines: string[] = [];
 
-	lines.push("// Auto-generated grammar type from tree-sitter-" + grammar + "/src/node-types.json");
-	lines.push("// Structurally compatible with @codemod.com/jssg-types " + grammarTypeName);
-	lines.push("");
+	lines.push(
+		'// Auto-generated grammar type from tree-sitter-' +
+			grammar +
+			'/src/node-types.json'
+	);
+	lines.push(
+		'// Structurally compatible with @codemod.com/jssg-types ' + grammarTypeName
+	);
+	lines.push('');
 	lines.push(`export type ${grammarAlias} = {`);
 
 	// Deduplicate: some types appear twice (named + unnamed).
@@ -49,8 +55,8 @@ export function emitGrammar(config: EmitGrammarConfig): string {
 		lines.push(`  readonly ${JSON.stringify(key)}: ${json};`);
 	}
 
-	lines.push("};");
-	lines.push("");
+	lines.push('};');
+	lines.push('');
 
-	return lines.join("\n");
+	return lines.join('\n');
 }

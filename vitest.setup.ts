@@ -14,18 +14,20 @@
  * at the start of the test run.
  */
 
-import { compileParser } from "./packages/codegen/src/transpile/compile-parser.ts";
-import { existsSync } from "node:fs";
-import { join } from "node:path";
+import { compileParser } from './packages/codegen/src/transpile/compile-parser.ts';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 
-const GRAMMARS = ["rust", "typescript", "python"] as const;
+const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 
 export async function setup() {
 	for (const grammar of GRAMMARS) {
-		const grammarDir = join(import.meta.dirname, "packages", grammar);
-		const grammarJs = join(grammarDir, ".sittir", "grammar.js");
+		const grammarDir = join(import.meta.dirname, 'packages', grammar);
+		const grammarJs = join(grammarDir, '.sittir', 'grammar.js');
 		if (!existsSync(grammarJs)) {
-			console.warn(`[vitest-setup] no .sittir/grammar.js for ${grammar} — skip`);
+			console.warn(
+				`[vitest-setup] no .sittir/grammar.js for ${grammar} — skip`
+			);
 			continue;
 		}
 		try {
@@ -35,7 +37,7 @@ export async function setup() {
 		} catch (e) {
 			console.error(
 				`[vitest-setup] compileParser(${grammar}) failed:`,
-				(e as Error).message?.slice(0, 200),
+				(e as Error).message?.slice(0, 200)
 			);
 			throw e;
 		}

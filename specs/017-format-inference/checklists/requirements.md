@@ -41,4 +41,4 @@
   1. Exact `$format` record field names inside the four required substructures (`boundary`, `slots`, `literals`, `trivia`) — committed to in FR-001; finer schema design is plan-phase work, not a spec-level open question.
   2. Whether per-grammar `.jinja` templates need format hooks vs format applied "around" the template — deferred to the plan; the spec treats it as an implementation choice that doesn't change the user-visible contract.
   3. Comment-attachment semantics — explicitly out of scope (Out of Scope + Edge Cases). Stored as positional offsets only.
-   None of these block planning; all are plan-phase commitments, not user-visible-contract decisions.
+     None of these block planning; all are plan-phase commitments, not user-visible-contract decisions.

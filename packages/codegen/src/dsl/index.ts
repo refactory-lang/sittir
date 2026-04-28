@@ -31,19 +31,19 @@
  * grammar.js files call `grammar(...)` without importing it.
  */
 
-export { transform, insert, replace } from "./transform/transform.ts";
-export { role } from "./primitives/role.ts";
-export { enrich } from "./enrich.ts";
-export { alias } from "./primitives/alias.ts";
-export { variant } from "./primitives/variant.ts";
-export { field } from "./primitives/field.ts";
-export { refine } from "./primitives/refine.ts";
-export { wire } from "./wire/wire.ts";
+export { transform, insert, replace } from './transform/transform.ts';
+export { role } from './primitives/role.ts';
+export { enrich } from './enrich.ts';
+export { alias } from './primitives/alias.ts';
+export { variant } from './primitives/variant.ts';
+export { field } from './primitives/field.ts';
+export { refine } from './primitives/refine.ts';
+export { wire } from './wire/wire.ts';
 export type {
 	GrammarBase,
 	WireConfig,
 	WiredOpts,
 	PolymorphsConfig,
 	TransformsConfig,
-	PatchMap,
-} from "./wire/wire.ts";
+	PatchMap
+} from './wire/wire.ts';

@@ -1,78 +1,87 @@
-import { describe, it, expect } from "vitest";
-import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-import { deriveRuleKinds, loadRulesFromPath, isNodeError } from "../validate/templates-path.ts";
+import { describe, it, expect } from 'vitest';
+import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import {
+	deriveRuleKinds,
+	loadRulesFromPath,
+	isNodeError
+} from '../validate/templates-path.ts';
 
 // Unit coverage for the shared helpers that collapse the jinja-dir vs
 // legacy-yaml loader fork once, so every validator doesn't re-implement
 // its own catch { } logic.
 
-function makeTmp(prefix = "sittir-templates-path-"): string {
+function makeTmp(prefix = 'sittir-templates-path-'): string {
 	return mkdtempSync(join(tmpdir(), prefix));
 }
 
-describe("deriveRuleKinds", () => {
-	it("returns empty set for a missing path", () => {
-		const result = deriveRuleKinds(join(tmpdir(), "sittir-does-not-exist-xyz-" + Date.now()));
+describe('deriveRuleKinds', () => {
+	it('returns empty set for a missing path', () => {
+		const result = deriveRuleKinds(
+			join(tmpdir(), 'sittir-does-not-exist-xyz-' + Date.now())
+		);
 		expect(result.size).toBe(0);
 	});
 
-	it("returns kinds from a .jinja directory", () => {
+	it('returns kinds from a .jinja directory', () => {
 		const tmp = makeTmp();
 		try {
-			writeFileSync(join(tmp, "function_item.jinja"), "{{ name }}");
-			writeFileSync(join(tmp, "identifier.jinja"), "{{ text }}");
+			writeFileSync(join(tmp, 'function_item.jinja'), '{{ name }}');
+			writeFileSync(join(tmp, 'identifier.jinja'), '{{ text }}');
 			const result = deriveRuleKinds(tmp);
-			expect(result.has("function_item")).toBe(true);
-			expect(result.has("identifier")).toBe(true);
+			expect(result.has('function_item')).toBe(true);
+			expect(result.has('identifier')).toBe(true);
 			expect(result.size).toBe(2);
 		} finally {
 			rmSync(tmp, { recursive: true, force: true });
 		}
 	});
 
-	it("ignores non-jinja files in a directory", () => {
+	it('ignores non-jinja files in a directory', () => {
 		const tmp = makeTmp();
 		try {
-			writeFileSync(join(tmp, "a.jinja"), "{{ text }}");
-			writeFileSync(join(tmp, "README.md"), "# hi");
-			writeFileSync(join(tmp, "stray.txt"), "noise");
-			writeFileSync(join(tmp, "b.jinja.bak"), "ignored");
+			writeFileSync(join(tmp, 'a.jinja'), '{{ text }}');
+			writeFileSync(join(tmp, 'README.md'), '# hi');
+			writeFileSync(join(tmp, 'stray.txt'), 'noise');
+			writeFileSync(join(tmp, 'b.jinja.bak'), 'ignored');
 			const result = deriveRuleKinds(tmp);
-			expect(Array.from(result).sort()).toEqual(["a"]);
+			expect(Array.from(result).sort()).toEqual(['a']);
 		} finally {
 			rmSync(tmp, { recursive: true, force: true });
 		}
 	});
 
-	it("falls back to YAML when path is a file", () => {
+	it('falls back to YAML when path is a file', () => {
 		const tmp = makeTmp();
 		try {
-			const yamlPath = join(tmp, "templates.yaml");
+			const yamlPath = join(tmp, 'templates.yaml');
 			writeFileSync(
 				yamlPath,
 				[
-					"language: test",
-					"rules:",
-					"  function_item:",
+					'language: test',
+					'rules:',
+					'  function_item:',
 					'    template: "{{ name }}"',
-					"  identifier:",
-					'    template: "{{ text }}"',
-				].join("\n"),
+					'  identifier:',
+					'    template: "{{ text }}"'
+				].join('\n')
 			);
 			const result = deriveRuleKinds(yamlPath);
-			expect(Array.from(result).sort()).toEqual(["function_item", "identifier"]);
+			expect(Array.from(result).sort()).toEqual([
+				'function_item',
+				'identifier'
+			]);
 		} finally {
 			rmSync(tmp, { recursive: true, force: true });
 		}
 	});
 
-	it("YAML without `rules:` → empty set", () => {
+	it('YAML without `rules:` → empty set', () => {
 		const tmp = makeTmp();
 		try {
-			const yamlPath = join(tmp, "bare.yaml");
-			writeFileSync(yamlPath, "language: test\nextensions: []\n");
+			const yamlPath = join(tmp, 'bare.yaml');
+			writeFileSync(yamlPath, 'language: test\nextensions: []\n');
 			const result = deriveRuleKinds(yamlPath);
 			expect(result.size).toBe(0);
 		} finally {
@@ -81,90 +90,97 @@ describe("deriveRuleKinds", () => {
 	});
 });
 
-describe("loadRulesFromPath", () => {
-	it("returns an empty map for a missing path", () => {
-		const result = loadRulesFromPath(join(tmpdir(), "sittir-absent-" + Date.now()));
+describe('loadRulesFromPath', () => {
+	it('returns an empty map for a missing path', () => {
+		const result = loadRulesFromPath(
+			join(tmpdir(), 'sittir-absent-' + Date.now())
+		);
 		expect(Object.keys(result).length).toBe(0);
 	});
 
-	it("loads per-rule .jinja bodies from a directory", () => {
+	it('loads per-rule .jinja bodies from a directory', () => {
 		const tmp = makeTmp();
 		try {
-			writeFileSync(join(tmp, "function_item.jinja"), "fn {{ name }}()");
-			writeFileSync(join(tmp, "identifier.jinja"), "{{ text }}");
+			writeFileSync(join(tmp, 'function_item.jinja'), 'fn {{ name }}()');
+			writeFileSync(join(tmp, 'identifier.jinja'), '{{ text }}');
 			const result = loadRulesFromPath(tmp);
-			expect(result.function_item).toBe("fn {{ name }}()");
-			expect(result.identifier).toBe("{{ text }}");
+			expect(result.function_item).toBe('fn {{ name }}()');
+			expect(result.identifier).toBe('{{ text }}');
 		} finally {
 			rmSync(tmp, { recursive: true, force: true });
 		}
 	});
 
-	it("strips a leading {# … #} header comment from bodies", () => {
+	it('strips a leading {# … #} header comment from bodies', () => {
 		const tmp = makeTmp();
 		try {
 			writeFileSync(
-				join(tmp, "foo.jinja"),
-				"{# @generated by sittir - do not edit #}\nfn {{ name }}()",
+				join(tmp, 'foo.jinja'),
+				'{# @generated by sittir - do not edit #}\nfn {{ name }}()'
 			);
 			const result = loadRulesFromPath(tmp);
 			// header stripped; body + newline preserved
-			expect(result.foo).toBe("fn {{ name }}()");
+			expect(result.foo).toBe('fn {{ name }}()');
 		} finally {
 			rmSync(tmp, { recursive: true, force: true });
 		}
 	});
 
-	it("ignores non-.jinja entries", () => {
+	it('ignores non-.jinja entries', () => {
 		const tmp = makeTmp();
 		try {
-			writeFileSync(join(tmp, "good.jinja"), "{{ text }}");
-			writeFileSync(join(tmp, "stray.yaml"), "ignored: true");
-			writeFileSync(join(tmp, "README.md"), "noise");
+			writeFileSync(join(tmp, 'good.jinja'), '{{ text }}');
+			writeFileSync(join(tmp, 'stray.yaml'), 'ignored: true');
+			writeFileSync(join(tmp, 'README.md'), 'noise');
 			const result = loadRulesFromPath(tmp);
-			expect(Object.keys(result).sort()).toEqual(["good"]);
+			expect(Object.keys(result).sort()).toEqual(['good']);
 		} finally {
 			rmSync(tmp, { recursive: true, force: true });
 		}
 	});
 
-	it("invokes bodyReader per-body when provided", () => {
+	it('invokes bodyReader per-body when provided', () => {
 		const tmp = makeTmp();
 		try {
-			writeFileSync(join(tmp, "x.jinja"), "{{ text }}");
+			writeFileSync(join(tmp, 'x.jinja'), '{{ text }}');
 			const result = loadRulesFromPath(
 				tmp,
 				(kind, body) =>
 					({
-						template: `[${kind}]${body}`,
-					}) as unknown as string,
+						template: `[${kind}]${body}`
+					}) as unknown as string
 			);
-			expect(result.x).toEqual({ template: "[x]{{ text }}" });
+			expect(result.x).toEqual({ template: '[x]{{ text }}' });
 		} finally {
 			rmSync(tmp, { recursive: true, force: true });
 		}
 	});
 
-	it("falls back to YAML when path is a file", () => {
+	it('falls back to YAML when path is a file', () => {
 		const tmp = makeTmp();
 		try {
-			const yamlPath = join(tmp, "templates.yaml");
+			const yamlPath = join(tmp, 'templates.yaml');
 			writeFileSync(
 				yamlPath,
-				["language: test", "rules:", "  foo:", '    template: "{{ name }}"'].join("\n"),
+				[
+					'language: test',
+					'rules:',
+					'  foo:',
+					'    template: "{{ name }}"'
+				].join('\n')
 			);
 			const result = loadRulesFromPath(yamlPath);
-			expect(result.foo).toEqual({ template: "{{ name }}" });
+			expect(result.foo).toEqual({ template: '{{ name }}' });
 		} finally {
 			rmSync(tmp, { recursive: true, force: true });
 		}
 	});
 
-	it("YAML without `rules:` → empty map", () => {
+	it('YAML without `rules:` → empty map', () => {
 		const tmp = makeTmp();
 		try {
-			const yamlPath = join(tmp, "bare.yaml");
-			writeFileSync(yamlPath, "language: test\n");
+			const yamlPath = join(tmp, 'bare.yaml');
+			writeFileSync(yamlPath, 'language: test\n');
 			const result = loadRulesFromPath(yamlPath);
 			expect(Object.keys(result).length).toBe(0);
 		} finally {
@@ -173,25 +189,25 @@ describe("loadRulesFromPath", () => {
 	});
 });
 
-describe("isNodeError", () => {
-	it("returns false for non-object values", () => {
+describe('isNodeError', () => {
+	it('returns false for non-object values', () => {
 		expect(isNodeError(undefined)).toBe(false);
 		expect(isNodeError(null)).toBe(false);
-		expect(isNodeError("oops")).toBe(false);
+		expect(isNodeError('oops')).toBe(false);
 		expect(isNodeError(42)).toBe(false);
 	});
 
-	it("returns false for an object without a string `code`", () => {
+	it('returns false for an object without a string `code`', () => {
 		expect(isNodeError({})).toBe(false);
 		expect(isNodeError({ code: 7 })).toBe(false);
 	});
 
-	it("returns true for an object with a string `code` when no code filter given", () => {
-		expect(isNodeError({ code: "ENOENT" })).toBe(true);
+	it('returns true for an object with a string `code` when no code filter given', () => {
+		expect(isNodeError({ code: 'ENOENT' })).toBe(true);
 	});
 
-	it("filters by matching code when provided", () => {
-		expect(isNodeError({ code: "ENOENT" }, "ENOENT")).toBe(true);
-		expect(isNodeError({ code: "EACCES" }, "ENOENT")).toBe(false);
+	it('filters by matching code when provided', () => {
+		expect(isNodeError({ code: 'ENOENT' }, 'ENOENT')).toBe(true);
+		expect(isNodeError({ code: 'EACCES' }, 'ENOENT')).toBe(false);
 	});
 });

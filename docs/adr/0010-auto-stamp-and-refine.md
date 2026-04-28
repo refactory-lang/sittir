@@ -12,8 +12,8 @@ literal:
 
 ```ts
 ir.breakStatement({
-	break: "break", // typed as "break" — the ONLY valid value
-	label: "outer",
+	break: 'break', // typed as "break" — the ONLY valid value
+	label: 'outer'
 });
 ```
 
@@ -124,9 +124,9 @@ Consequences at the factory surface:
 
 ```ts
 // Before:
-ir.breakStatement({ break: "break", label: "outer" });
+ir.breakStatement({ break: 'break', label: 'outer' });
 // After:
-ir.breakStatement({ label: "outer" }); // "break" stamped automatically
+ir.breakStatement({ label: 'outer' }); // "break" stamped automatically
 ```
 
 **Applies today** to any field whose grammar-derived type union collapses

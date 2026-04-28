@@ -13,13 +13,20 @@
 // Previously imported `tsx/grammar.js` — harmless for the current
 // non-JSX corpus but a latent mismatch: anything JSX-shaped would
 // reparse-fail. Pick one grammar and stick with it end-to-end.
-import base from "../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js";
-import { transform, enrich, field, wire, refine, variant } from "../codegen/src/dsl/index.ts";
+import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js';
+import {
+	transform,
+	enrich,
+	field,
+	wire,
+	refine,
+	variant
+} from '../codegen/src/dsl/index.ts';
 
 export default grammar(
 	enrich(base),
 	wire({
-		name: "typescript",
+		name: 'typescript',
 		// Conflict markers for variant() adoption on kinds where splitting
 		// exposes LR(1) ambiguities the unsplit grammar resolved via shared
 		// state. Each entry names two or more rules tree-sitter should
@@ -53,14 +60,29 @@ export default grammar(
 			[$.object, $.object_pattern],
 			[$.primary_expression, $.method_definition],
 			[$.primary_expression, $.arrow_function, $._property_name],
-			[$.call_expression, $.binary_expression, $.unary_expression, $.instantiation_expression],
+			[
+				$.call_expression,
+				$.binary_expression,
+				$.unary_expression,
+				$.instantiation_expression
+			],
 			[$.assignment_expression, $.pattern],
 			[$.primary_expression, $.pattern],
 			[$.primary_expression, $._parameter_name],
-			[$.call_expression, $.await_expression, $.binary_expression, $.instantiation_expression],
+			[
+				$.call_expression,
+				$.await_expression,
+				$.binary_expression,
+				$.instantiation_expression
+			],
 			[$.array, $.array_pattern],
 			[$.primary_type, $.type_parameter],
-			[$.call_expression, $.binary_expression, $.update_expression, $.instantiation_expression],
+			[
+				$.call_expression,
+				$.binary_expression,
+				$.update_expression,
+				$.instantiation_expression
+			],
 			[$.primary_expression, $.rest_pattern],
 			[$._for_header, $.primary_expression],
 			[$.class],
@@ -99,22 +121,29 @@ export default grammar(
 				$.binary_expression,
 				$.unary_expression,
 				$.instantiation_expression,
-				$._call_expression_call,
+				$._call_expression_call
 			],
 			[
 				$.await_expression,
 				$.binary_expression,
 				$.instantiation_expression,
-				$._call_expression_call,
+				$._call_expression_call
 			],
 			[
 				$.binary_expression,
 				$.update_expression,
 				$.instantiation_expression,
-				$._call_expression_call,
+				$._call_expression_call
 			],
-			[$.binary_expression, $.instantiation_expression, $._call_expression_call],
-			[$._type_query_call_expression_in_type_annotation, $._call_expression_call],
+			[
+				$.binary_expression,
+				$.instantiation_expression,
+				$._call_expression_call
+			],
+			[
+				$._type_query_call_expression_in_type_annotation,
+				$._call_expression_call
+			],
 			[$._type_query_call_expression, $._call_expression_call],
 			[$.primary_expression, $._export_statement_default],
 			// update_expression variant extraction: the hoisted
@@ -163,7 +192,7 @@ export default grammar(
 			[$.primary_expression, $._for_header_var_kind],
 			[$.primary_expression, $._for_header_let_const_kind],
 			[$.variable_declarator, $._for_header_var_kind],
-			[$.variable_declarator, $._for_header_let_const_kind],
+			[$.variable_declarator, $._for_header_let_const_kind]
 		],
 		// Inline `public_field_definition`'s polymorph-synthesized variant
 		// bodies at the alias site. Why inline instead of `conflicts:` —
@@ -222,14 +251,18 @@ export default grammar(
 			// re-authored below in `rules:` as `() => 'async'` (prec 0) so
 			// the existing `[primary_expression, arrow_function]` conflict
 			// can engage GLR to disambiguate.
-			$._kw_async_marker,
+			$._kw_async_marker
 		],
 		polymorphs: {
-			arrow_function: { "1/0": "parameter", "1/1": "_call_signature" },
-			class_heritage: { "0": "extends_clause", "1": "implements_clause" },
-			import_clause: { "0": "namespace_import", "1": "named_imports", "2": "default_import" },
-			import_specifier: { "1/0": "name", "1/1": "as" },
-			index_signature: { "2/0": "colon", "2/1": "mapped_type_clause" },
+			arrow_function: { '1/0': 'parameter', '1/1': '_call_signature' },
+			class_heritage: { '0': 'extends_clause', '1': 'implements_clause' },
+			import_clause: {
+				'0': 'namespace_import',
+				'1': 'named_imports',
+				'2': 'default_import'
+			},
+			import_specifier: { '1/0': 'name', '1/1': 'as' },
+			index_signature: { '2/0': 'colon', '2/1': 'mapped_type_clause' },
 
 			// _export_statement_default — synthesized by
 			// `export_statement: { 0: variant('default') }` transform. Body
@@ -238,16 +271,16 @@ export default grammar(
 			//   arm 1: `seq(repeat(field('decorator',…)), 'export',
 			//             choice(field('declaration',…), seq('default', …)))`
 			// Top-level split.
-			_export_statement_default: { 0: "from_arm", 1: "decl_arm" },
+			_export_statement_default: { 0: 'from_arm', 1: 'decl_arm' },
 
 			// _export_statement_default_from_arm body:
 			//   `seq('export', choice(4 from-clause shapes), _semicolon)`
 			// Inner choice at path 1 has 3 seqs + 1 bare symbol — split the
 			// 3 seqs so the remaining choice is all symbol-like.
 			_export_statement_default_from_arm: {
-				"1/0": "star_from", // seq('*', _from_clause)
-				"1/1": "ns_from", // seq(namespace_export, _from_clause)
-				"1/2": "clause_from", // seq(export_clause, _from_clause)
+				'1/0': 'star_from', // seq('*', _from_clause)
+				'1/1': 'ns_from', // seq(namespace_export, _from_clause)
+				'1/2': 'clause_from' // seq(export_clause, _from_clause)
 			},
 
 			// _export_statement_default_decl_arm body:
@@ -262,10 +295,10 @@ export default grammar(
 			// heterogeneous path — multi-level adoption hits the leaves
 			// directly rather than cascading through intermediate kinds.
 			_export_statement_default_decl_arm: {
-				"2/1": "default_kw", // seq('default', …)
+				'2/1': 'default_kw' // seq('default', …)
 			},
 			_export_statement_default_decl_arm_default_kw: {
-				"1/1": "value", // seq(field('value', expression), _semicolon)
+				'1/1': 'value' // seq(field('value', expression), _semicolon)
 			},
 
 			// class_body body: `seq('{', repeat(choice(5 arms)), '}')`.
@@ -273,9 +306,9 @@ export default grammar(
 			// (class_static_block), 1 bare literal (';'). Split the 3 seqs
 			// so the choice becomes symbol-like across all arms.
 			class_body: {
-				"1/0/0": "method", // seq(repeat(field(decorator,…)), method_definition, optional(_semicolon))
-				"1/0/1": "method_sig", // seq(method_signature, choice(…))
-				"1/0/3": "member", // seq(choice(4 member kinds), choice(_semicolon, ','))
+				'1/0/0': 'method', // seq(repeat(field(decorator,…)), method_definition, optional(_semicolon))
+				'1/0/1': 'method_sig', // seq(method_signature, choice(…))
+				'1/0/3': 'member' // seq(choice(4 member kinds), choice(_semicolon, ','))
 			},
 
 			// _for_header body (base-grammar hidden):
@@ -287,9 +320,9 @@ export default grammar(
 			//              optional(_automatic_semicolon))
 			// Split each arm so the outer choice becomes all symbol-like.
 			_for_header: {
-				"1/0": "lhs",
-				"1/1": "var_kind",
-				"1/2": "let_const_kind",
+				'1/0': 'lhs',
+				'1/1': 'var_kind',
+				'1/2': 'let_const_kind'
 			},
 
 			// public_field_definition body position 1:
@@ -312,14 +345,14 @@ export default grammar(
 			// canonical. Variant adoption stays a pure sittir-side concern;
 			// tree-sitter parses the same tree as before.
 			public_field_definition: {
-				"1/0/0": "declare_first",
-				"1/0/1": "access_first",
+				'1/0/0': 'declare_first',
+				'1/0/1': 'access_first',
 				// Position 2: a four-arm modifier choice (heterogeneous).
-				"2/0": "static_mods",
-				"2/1": "abstract_first",
-				"2/2": "readonly_first",
-				"2/3": "accessor_opt",
-			},
+				'2/0': 'static_mods',
+				'2/1': 'abstract_first',
+				'2/2': 'readonly_first',
+				'2/3': 'accessor_opt'
+			}
 		},
 		transforms: {
 			// abstract_class_declaration: wrap pos 5 (class_heritage choice).
@@ -340,13 +373,13 @@ export default grammar(
 			// the accessor keyword. NOTE: no readonly_marker — `'abstract'` is
 			// a required literal at pos 1, not optional.
 			abstract_method_signature: {
-				"3/0": field("accessor_kind"),
-				"5/0": field("optional_marker"),
+				'3/0': field('accessor_kind'),
+				'5/0': field('optional_marker')
 			},
 
 			// ambient_declaration: 3 field(s)
 			ambient_declaration: {
-				1: field("declaration"), // declaration | statement_block | property_identifier [struct=0]
+				1: field('declaration') // declaration | statement_block | property_identifier [struct=0]
 			},
 
 			// array_type: 1 field(s)
@@ -354,12 +387,12 @@ export default grammar(
 
 			// as_expression: 2 field(s)
 			as_expression: {
-				2: field("type_annotation"), // type [struct=1]
+				2: field('type_annotation') // type [struct=1]
 			},
 
 			// asserts_annotation: 1 field(s)
 			asserts_annotation: {
-				0: field("asserts"), // asserts [struct=0]
+				0: field('asserts') // asserts [struct=0]
 			},
 
 			// await_expression: 1 field(s)
@@ -372,7 +405,7 @@ export default grammar(
 			// (automatic_semicolon choice). pos 0 is decorator repeat — leave it
 			// alone so the base 'decorator' field survives.
 			class_declaration: {
-				6: field("automatic_semicolon"),
+				6: field('automatic_semicolon')
 			},
 
 			// computed_property_name: 1 field(s)
@@ -383,7 +416,7 @@ export default grammar(
 
 			// enum_body: 2 field(s)
 			enum_body: {
-				1: field("opening"), // enum_assignment [struct=0]
+				1: field('opening') // enum_assignment [struct=0]
 			},
 
 			// flow_maybe_type: 1 field(s)
@@ -391,14 +424,14 @@ export default grammar(
 
 			// import_alias: 3 field(s)
 			import_alias: {
-				1: field("name"), // identifier [struct=0]
-				3: field("value"), // identifier | nested_identifier [struct=1]
-				4: field("semicolon"), //  [struct=2]
+				1: field('name'), // identifier [struct=0]
+				3: field('value'), // identifier | nested_identifier [struct=1]
+				4: field('semicolon') //  [struct=2]
 			},
 
 			// import_attribute: 1 field(s)
 			import_attribute: {
-				0: field("object"), // object [struct=0]
+				0: field('object') // object [struct=0]
 			},
 
 			// import_require_clause: 1 field(s)
@@ -406,9 +439,9 @@ export default grammar(
 
 			// import_statement: 4 field(s)
 			import_statement: {
-				1: field("import_clause"), // import_clause | import_require_clause [struct=0]
-				2: field("from_clause"), //  [struct=1]
-				4: field("semicolon"), //  [struct=3]
+				1: field('import_clause'), // import_clause | import_require_clause [struct=0]
+				2: field('from_clause'), //  [struct=1]
+				4: field('semicolon') //  [struct=3]
 			},
 
 			// index_type_query: 1 field(s)
@@ -416,8 +449,8 @@ export default grammar(
 
 			// infer_type: 2 field(s)
 			infer_type: {
-				1: field("type_identifier"), // _type_identifier | type_identifier [struct=0]
-				2: field("constraint"), // type | type_identifier [struct=1]
+				1: field('type_identifier'), // _type_identifier | type_identifier [struct=0]
+				2: field('constraint') // type | type_identifier [struct=1]
 			},
 
 			// instantiation_expression: 1 field(s)
@@ -428,19 +461,19 @@ export default grammar(
 
 			// intersection_type: 2 field(s)
 			intersection_type: {
-				0: field("left"), // type [struct=0]
-				2: field("right"), // type [struct=1]
+				0: field('left'), // type [struct=0]
+				2: field('right') // type [struct=1]
 			},
 
 			// lexical_declaration: 2 field(s)
 			lexical_declaration: {
-				1: field("declarators"), // variable_declarator [struct=0]
-				2: field("semicolon"), //  [struct=1]
+				1: field('declarators'), // variable_declarator [struct=0]
+				2: field('semicolon') //  [struct=1]
 			},
 
 			// lookup_type: 2 field(s)
 			lookup_type: {
-				2: field("index_type"), // type [struct=1]
+				2: field('index_type') // type [struct=1]
 			},
 
 			// method_definition: prec.left(seq(
@@ -472,11 +505,11 @@ export default grammar(
 			// into every reference site at LR-table generation while preserving
 			// the FIELD wrapper for the parse tree.
 			method_definition: {
-				1: field("static_marker"), // 'static' [pos=1] — T048: fixed from override_modifier
-				"3/0": field("readonly_marker"),
-				"4/0": field("async_marker"),
-				"5/0": field("accessor_kind"),
-				"7/0": field("optional_marker"),
+				1: field('static_marker'), // 'static' [pos=1] — T048: fixed from override_modifier
+				'3/0': field('readonly_marker'),
+				'4/0': field('async_marker'),
+				'5/0': field('accessor_kind'),
+				'7/0': field('optional_marker')
 			},
 
 			// method_signature: seq(
@@ -496,9 +529,9 @@ export default grammar(
 			// (choice-of-strings, enrich skips), optional_marker
 			// (`?` not identifier-shaped).
 			method_signature: {
-				1: field("static_marker"), // 'static' [pos=1] — T048: fixed from override_modifier
-				"5/0": field("accessor_kind"),
-				"7/0": field("optional_marker"),
+				1: field('static_marker'), // 'static' [pos=1] — T048: fixed from override_modifier
+				'5/0': field('accessor_kind'),
+				'7/0': field('optional_marker')
 			},
 
 			// namespace_import: 1 field(s)
@@ -511,8 +544,8 @@ export default grammar(
 
 			// program: 2 field(s)
 			program: {
-				0: field("hash_bang_line"), // hash_bang_line [struct=0]
-				1: field("statements"), // statement [struct=1]
+				0: field('hash_bang_line'), // hash_bang_line [struct=0]
+				1: field('statements') // statement [struct=1]
 			},
 
 			// property_signature: seq(
@@ -528,13 +561,13 @@ export default grammar(
 			// Standalone `optional('readonly')` is auto-promoted by enrich.
 			// Kept entries: optional_marker (`?` non-identifier).
 			property_signature: {
-				1: field("static_marker"), // 'static' [pos=1] — T048: fixed from override_modifier
-				"5/0": field("optional_marker"),
+				1: field('static_marker'), // 'static' [pos=1] — T048: fixed from override_modifier
+				'5/0': field('optional_marker')
 			},
 
 			// satisfies_expression: 2 field(s)
 			satisfies_expression: {
-				2: field("type_annotation"), // type [struct=1]
+				2: field('type_annotation') // type [struct=1]
 			},
 
 			// spread_element: 1 field(s)
@@ -542,8 +575,8 @@ export default grammar(
 
 			// statement_block: 2 field(s)
 			statement_block: {
-				1: field("statements"), // statement [struct=0]
-				3: field("automatic_semicolon"), //  [struct=1]
+				1: field('statements'), // statement [struct=0]
+				3: field('automatic_semicolon') //  [struct=1]
 			},
 
 			// type_assertion: 2 field(s)
@@ -551,24 +584,24 @@ export default grammar(
 
 			// type_predicate_annotation: 1 field(s)
 			type_predicate_annotation: {
-				0: field("type_predicate"), // type_predicate [struct=0]
+				0: field('type_predicate') // type_predicate [struct=0]
 			},
 
 			// union_type: 2 field(s)
 			union_type: {
-				0: field("left"), // type [struct=0]
-				2: field("right"), // type [struct=1]
+				0: field('left'), // type [struct=0]
+				2: field('right') // type [struct=1]
 			},
 
 			// variable_declaration: 2 field(s)
 			variable_declaration: {
-				1: field("declarators"), // variable_declarator [struct=0]
-				2: field("semicolon"), //  [struct=1]
+				1: field('declarators'), // variable_declarator [struct=0]
+				2: field('semicolon') //  [struct=1]
 			},
 
 			// yield_expression: 1 field(s)
 			yield_expression: {
-				1: field("expression"), // expression [struct=0]
+				1: field('expression') // expression [struct=0]
 			},
 
 			// expression_statement: label the trailing `_semicolon` so the
@@ -577,25 +610,25 @@ export default grammar(
 			// `{{ children | join(" ") }}` filters to NAMED-only children
 			// and the `;` drops. Grammar: `seq(_expressions, _semicolon)`.
 			expression_statement: {
-				1: field("semicolon"),
+				1: field('semicolon')
 			},
 
 			// type_alias_declaration: same semicolon-drop pattern. Grammar:
 			// `seq('type', field('name'), optional(type_parameters), '=',
 			// field('value'), _semicolon)` — label pos 5.
 			type_alias_declaration: {
-				5: field("semicolon"),
+				5: field('semicolon')
 			},
 
 			// return_statement: seq('return', optional(_expressions),
 			// _semicolon). Label pos 2.
 			return_statement: {
-				2: field("semicolon"),
+				2: field('semicolon')
 			},
 
 			// throw_statement: seq('throw', _expressions, _semicolon).
 			throw_statement: {
-				2: field("semicolon"),
+				2: field('semicolon')
 			},
 
 			// function_signature: seq(
@@ -610,8 +643,8 @@ export default grammar(
 			// factoryRoundtrip AST match fails when only enrich auto-promotes
 			// (the synthesized `_kw_async_marker` content shape diverges).
 			function_signature: {
-				"0/0": field("async_marker"),
-				4: field("semicolon"),
+				'0/0': field('async_marker'),
+				4: field('semicolon')
 			},
 
 			// JS-inherited function family — all start with `optional('async')` at pos 0.
@@ -639,7 +672,7 @@ export default grammar(
 			//   optional('async'), 'function', field('name', optional($.identifier)),
 			//   $._call_signature, field('body', $.statement_block)))
 			function_expression: {
-				"0/0": field("async_marker"),
+				'0/0': field('async_marker')
 			},
 
 			// function_declaration: prec.right('declaration', seq(
@@ -647,7 +680,7 @@ export default grammar(
 			//   $._call_signature, field('body', $.statement_block),
 			//   optional($._automatic_semicolon)))
 			function_declaration: {
-				"0/0": field("async_marker"),
+				'0/0': field('async_marker')
 			},
 
 			// generator_function: prec('literal', seq(
@@ -655,7 +688,7 @@ export default grammar(
 			//   field('name', optional($.identifier)),
 			//   $._call_signature, field('body', $.statement_block)))
 			generator_function: {
-				"0/0": field("async_marker"),
+				'0/0': field('async_marker')
 			},
 
 			// generator_function_declaration: prec.right('declaration', seq(
@@ -663,7 +696,7 @@ export default grammar(
 			//   $._call_signature, field('body', $.statement_block),
 			//   optional($._automatic_semicolon)))
 			generator_function_declaration: {
-				"0/0": field("async_marker"),
+				'0/0': field('async_marker')
 			},
 
 			// arrow_function: seq(optional('async'), choice(field('parameter',…),
@@ -673,24 +706,24 @@ export default grammar(
 			// break_statement: seq('break', field('label', optional(...)),
 			// _semicolon). Label the trailing `;` at pos 2.
 			break_statement: {
-				2: field("semicolon"),
+				2: field('semicolon')
 			},
 
 			// continue_statement: seq('continue', field('label', ...), _semicolon).
 			continue_statement: {
-				2: field("semicolon"),
+				2: field('semicolon')
 			},
 
 			// debugger_statement: seq('debugger', _semicolon).
 			debugger_statement: {
-				1: field("semicolon"),
+				1: field('semicolon')
 			},
 
 			// do_statement: seq('do', field('body'), 'while', field('condition'),
 			// optional(_semicolon)). Optional wrapper at pos 4; labeling as
 			// a semicolon field lets the template emit it when present.
 			do_statement: {
-				4: field("semicolon"),
+				4: field('semicolon')
 			},
 
 			// -------------------------------------------------------------------
@@ -706,7 +739,7 @@ export default grammar(
 			//   'new', type_parameters?, parameters, '=>', type))
 			// prec.left wrapper hides the seq from enrich; hand-promoted here.
 			constructor_type: {
-				"0/0": field("abstract_marker"),
+				'0/0': field('abstract_marker')
 			},
 
 			// construct_signature / type_parameter / for_in_statement /
@@ -722,7 +755,7 @@ export default grammar(
 			// when only enrich auto-promotes (synthesized `_kw_const_marker`
 			// content shape diverges).
 			enum_declaration: {
-				"0/0": field("const_marker"),
+				'0/0': field('const_marker')
 			},
 
 			// assignment_expression: prec.right('assign', seq(
@@ -730,7 +763,7 @@ export default grammar(
 			//   field('left', ...), '=', field('right', ...)))
 			// prec.right wrapper hides the seq from enrich; hand-promoted here.
 			assignment_expression: {
-				"0/0": field("using_marker"),
+				'0/0': field('using_marker')
 			},
 
 			// export_specifier: seq(
@@ -743,7 +776,7 @@ export default grammar(
 			// (CHOICE without BLANK is not handled). Risk: tree-sitter may
 			// strip the FIELD around the bare-STRING choice arms.
 			export_specifier: {
-				"0/0": field("export_kind"),
+				'0/0': field('export_kind')
 			},
 
 			// import_specifier: seq(
@@ -751,7 +784,7 @@ export default grammar(
 			//   choice(...))
 			// Same caveat as export_specifier above re: choice-of-strings.
 			import_specifier: {
-				"0/0": field("import_kind"),
+				'0/0': field('import_kind')
 			},
 
 			// public_field_definition: seq(
@@ -767,7 +800,7 @@ export default grammar(
 			// (`?` = optional field, `!` = definite-assignment) — keep as one
 			// discriminator field; the literal value distinguishes.
 			public_field_definition: {
-				"4/0": field("optionality_marker"),
+				'4/0': field('optionality_marker')
 			},
 
 			// _type_query_subscript_expression: DEFERRED. Tree-sitter aliases
@@ -790,8 +823,8 @@ export default grammar(
 			// push-down; the parent template collapses to $$$CHILDREN.
 			// Path 1/N targets choice alt N inside the seq's member 1.
 			parenthesized_expression: {
-				"1/0": variant("typed"),
-				"1/1": variant("sequence"),
+				'1/0': variant('typed'),
+				'1/1': variant('sequence')
 			},
 
 			// export_statement: variant() adoption on all four branches.
@@ -817,10 +850,10 @@ export default grammar(
 			// logic correctly; the audit flag surfaces real adoption
 			// opportunity but not a blocking bug.
 			export_statement: {
-				0: variant("default"),
-				1: variant("type_export"),
-				2: variant("equals_export"),
-				3: variant("namespace_export"),
+				0: variant('default'),
+				1: variant('type_export'),
+				2: variant('equals_export'),
+				3: variant('namespace_export')
 			},
 
 			// call_expression: variant() adoption on three per-prec
@@ -829,9 +862,9 @@ export default grammar(
 			// re-wraps each extracted hidden rule in the same prec so the
 			// base grammar's conflict resolution carries through.
 			call_expression: {
-				0: variant("call"),
-				1: variant("template_call"),
-				2: variant("member"),
+				0: variant('call'),
+				1: variant('template_call'),
+				2: variant('member')
 			},
 
 			// string: variant() adoption on the quote-style choice. Base
@@ -842,15 +875,15 @@ export default grammar(
 			// children (`string_double` / `string_single`) gives each its
 			// own template that preserves the quote style.
 			string: {
-				0: variant("double"),
-				1: variant("single"),
+				0: variant('double'),
+				1: variant('single')
 			},
 
 			// update_expression: postfix vs prefix `++` / `--`.
 			update_expression: {
-				0: variant("postfix"),
-				1: variant("prefix"),
-			},
+				0: variant('postfix'),
+				1: variant('prefix')
+			}
 		},
 		rules: {
 			// parenthesized_expression: held. Base is plain `seq('(',
@@ -911,7 +944,7 @@ export default grammar(
 			// hidden rule with no precedence wrap puts both at prec 0 so the
 			// existing `[primary_expression, arrow_function]` conflict
 			// declaration can engage GLR to disambiguate.
-			_kw_async_marker: () => "async",
+			_kw_async_marker: () => 'async',
 
 			// object_type / interface_body — correlated choice selection
 			// across non-adjacent positions: the opening and closing
@@ -929,21 +962,21 @@ export default grammar(
 			object_type: ($, original) =>
 				refine(
 					transform(original, {
-						0: field("opening"),
-						1: field("members"),
-						2: field("closing"),
+						0: field('opening'),
+						1: field('members'),
+						2: field('closing')
 					}),
 					{
-						curly: { "opening:": "{", "closing:": "}" },
-						flow: { "opening:": "{|", "closing:": "|}" },
-					},
-				),
+						curly: { 'opening:': '{', 'closing:': '}' },
+						flow: { 'opening:': '{|', 'closing:': '|}' }
+					}
+				)
 			// interface_body is a tree-sitter alias target of object_type —
 			// it has no base rule of its own, so there's nothing to refine
 			// via an override callback. It inherits the parse shape from
 			// object_type. If per-form factory support for `interface_body`
 			// is needed, a follow-up can add a codegen pass that mirrors
 			// `object_type`'s refineForms onto the alias-target kind.
-		},
-	}),
+		}
+	})
 );

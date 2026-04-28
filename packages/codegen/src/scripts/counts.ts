@@ -7,14 +7,17 @@
  * If no grammar args given, runs all three.
  */
 
-import { resolve } from "node:path";
-import { validateFactoryRoundTrip } from "../validate/factory-roundtrip.ts";
-import { validateFrom } from "../validate/from.ts";
-import { validateRoundTrip } from "../validate/roundtrip.ts";
-import { validateTemplateCoverage } from "../validate/template-coverage.ts";
+import { resolve } from 'node:path';
+import { validateFactoryRoundTrip } from '../validate/factory-roundtrip.ts';
+import { validateFrom } from '../validate/from.ts';
+import { validateRoundTrip } from '../validate/roundtrip.ts';
+import { validateTemplateCoverage } from '../validate/template-coverage.ts';
 
 function templatesPath(grammar: string): string {
-	return resolve(new URL("../../../..", import.meta.url).pathname, `packages/${grammar}/templates`);
+	return resolve(
+		new URL('../../../..', import.meta.url).pathname,
+		`packages/${grammar}/templates`
+	);
 }
 
 async function runGrammar(grammar: string): Promise<string> {
@@ -23,19 +26,19 @@ async function runGrammar(grammar: string): Promise<string> {
 		validateFrom(grammar),
 		validateRoundTrip(grammar, tp),
 		Promise.resolve(validateTemplateCoverage(grammar, tp)),
-		validateFactoryRoundTrip(grammar, tp),
+		validateFactoryRoundTrip(grammar, tp)
 	]);
 	return [
 		`${grammar}:`,
 		`  fromPass=${from.pass}    fromTotal=${from.total}`,
 		`  covPass=${cov.pass}    covTotal=${cov.total}`,
 		`  rtPass=${rt.pass}    rtTotal=${rt.total}    rtAstMatchPass=${rt.astMatchPass}`,
-		`  factoryPass=${fac.pass}    factoryTotal=${fac.total}    factoryAstMatchPass=${fac.astMatchPass}`,
-	].join("\n");
+		`  factoryPass=${fac.pass}    factoryTotal=${fac.total}    factoryAstMatchPass=${fac.astMatchPass}`
+	].join('\n');
 }
 
 const args = process.argv.slice(2);
-const grammars = args.length ? args : ["rust", "typescript", "python"];
+const grammars = args.length ? args : ['rust', 'typescript', 'python'];
 
 for (const g of grammars) {
 	try {

@@ -481,6 +481,17 @@ pub struct ReservedIdentifierTemplate {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_shorthand_field_identifier.jinja", escape = "none")]
+pub struct ShorthandFieldIdentifierTemplate {
+    pub children: Vec<String>,
+    pub children_list: Vec<String>,
+    pub variant: String,
+    pub text: String,
+    pub trailing_sep: bool,
+    pub leading_sep: bool,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_string_content.jinja", escape = "none")]
 pub struct _StringContentTemplate {
     pub children: Vec<String>,
@@ -3376,6 +3387,17 @@ pub fn render_dispatch(
             };
             t.render_with_values(&_values)
         }
+        "_shorthand_field_identifier" => {
+            let t = ShorthandFieldIdentifierTemplate {
+                children: ctx.children_list.clone(),
+                children_list: ctx.children_list.clone(),
+                variant: ctx.variant.clone(),
+                text: ctx.text.clone(),
+                trailing_sep: ctx.trailing_sep,
+                leading_sep: ctx.leading_sep,
+            };
+            t.render_with_values(&_values)
+        }
         "_string_content" => {
             let t = _StringContentTemplate {
                 children: ctx.children_list.clone(),
@@ -5936,7 +5958,7 @@ impl ::sittir_core::prepare::GrammarMeta for RustGrammarMeta {
     }
     fn is_list_container(&self, kind: &str) -> bool {
         matches!(kind,
-            "_delim_token_tree_brace" | "_delim_token_tree_bracket" | "_delim_token_tree_paren" | "_expression_statement_block_ending" | "_expression_statement_with_semi" | "_field_identifier" | "_function_type_fn_form" | "_let_chain" | "_macro_definition_brace" | "_macro_definition_bracket" | "_macro_definition_paren" | "_pointer_type_mut" | "_reference_expression_raw_mut" | "_reserved_identifier" | "_string_content" | "_token_tree_brace" | "_token_tree_bracket" | "_token_tree_paren" | "_token_tree_pattern_brace" | "_token_tree_pattern_bracket" | "_token_tree_pattern_paren" | "_type_identifier" | "_visibility_modifier_crate" | "arguments" | "await_expression" | "base_field_initializer" | "bracketed_type" | "closure_parameters" | "comment" | "declaration_list" | "delim_token_tree_brace" | "delim_token_tree_bracket" | "delim_token_tree_paren" | "else_clause" | "enum_variant_list" | "expression_statement_block_ending" | "expression_statement_with_semi" | "field_declaration_list" | "field_initializer_list" | "for_lifetimes" | "macro_definition_brace" | "macro_definition_bracket" | "macro_definition_paren" | "match_block" | "parameters" | "parenthesized_expression" | "pointer_type_mut" | "ref_pattern" | "removed_trait_bound" | "return_expression" | "slice_pattern" | "string_literal" | "token_repetition" | "token_repetition_pattern" | "token_tree_brace" | "token_tree_bracket" | "token_tree_paren" | "token_tree_pattern_brace" | "token_tree_pattern_bracket" | "token_tree_pattern_paren" | "trait_bounds" | "tuple_pattern" | "tuple_type" | "type_arguments" | "type_parameters" | "use_bounds" | "use_list" | "visibility_modifier_crate" | "where_clause" | "yield_expression"
+            "_delim_token_tree_brace" | "_delim_token_tree_bracket" | "_delim_token_tree_paren" | "_expression_statement_block_ending" | "_expression_statement_with_semi" | "_field_identifier" | "_function_type_fn_form" | "_let_chain" | "_macro_definition_brace" | "_macro_definition_bracket" | "_macro_definition_paren" | "_pointer_type_mut" | "_reference_expression_raw_mut" | "_reserved_identifier" | "_shorthand_field_identifier" | "_string_content" | "_token_tree_brace" | "_token_tree_bracket" | "_token_tree_paren" | "_token_tree_pattern_brace" | "_token_tree_pattern_bracket" | "_token_tree_pattern_paren" | "_type_identifier" | "_visibility_modifier_crate" | "arguments" | "await_expression" | "base_field_initializer" | "bracketed_type" | "closure_parameters" | "comment" | "declaration_list" | "delim_token_tree_brace" | "delim_token_tree_bracket" | "delim_token_tree_paren" | "else_clause" | "enum_variant_list" | "expression_statement_block_ending" | "expression_statement_with_semi" | "field_declaration_list" | "field_initializer_list" | "for_lifetimes" | "macro_definition_brace" | "macro_definition_bracket" | "macro_definition_paren" | "match_block" | "parameters" | "parenthesized_expression" | "pointer_type_mut" | "ref_pattern" | "removed_trait_bound" | "return_expression" | "slice_pattern" | "string_literal" | "token_repetition" | "token_repetition_pattern" | "token_tree_brace" | "token_tree_bracket" | "token_tree_paren" | "token_tree_pattern_brace" | "token_tree_pattern_bracket" | "token_tree_pattern_paren" | "trait_bounds" | "tuple_pattern" | "tuple_type" | "type_arguments" | "type_parameters" | "use_bounds" | "use_list" | "visibility_modifier_crate" | "where_clause" | "yield_expression"
         )
     }
 }

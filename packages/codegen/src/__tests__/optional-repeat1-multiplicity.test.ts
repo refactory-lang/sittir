@@ -1,6 +1,10 @@
-import { describe, it, expect } from "vitest";
-import { deriveChildren, isNonEmpty, isMultiple } from "../compiler/node-map.ts";
-import type { Rule } from "../compiler/rule.ts";
+import { describe, it, expect } from 'vitest';
+import {
+	deriveChildren,
+	isNonEmpty,
+	isMultiple
+} from '../compiler/node-map.ts';
+import type { Rule } from '../compiler/rule.ts';
 
 /**
  * Regression: `seq(LIT, optional(repeat1(symbol, sep)), LIT)` (the canonical
@@ -19,53 +23,53 @@ import type { Rule } from "../compiler/rule.ts";
  * Fix: when `optional` directly wraps `repeat1`, recurse with 'array'
  * instead — mirroring `fieldContentMultiplicity`'s field-level rule.
  */
-describe("node-map — optional(repeat1(...)) multiplicity", () => {
-	it("treats optional(repeat1(symbol, sep)) as array, not nonEmptyArray", () => {
+describe('node-map — optional(repeat1(...)) multiplicity', () => {
+	it('treats optional(repeat1(symbol, sep)) as array, not nonEmptyArray', () => {
 		// Body shape after evaluate's commaSep1 lift:
 		//   seq('(', optional(repeat1(parameter, sep=',')), ')')
 		const rule: Rule = {
-			type: "seq",
+			type: 'seq',
 			members: [
-				{ type: "string", value: "(" },
+				{ type: 'string', value: '(' },
 				{
-					type: "optional",
+					type: 'optional',
 					content: {
-						type: "repeat1",
-						content: { type: "symbol", name: "parameter" },
-						separator: ",",
-					},
+						type: 'repeat1',
+						content: { type: 'symbol', name: 'parameter' },
+						separator: ','
+					}
 				},
-				{ type: "string", value: ")" },
-			],
+				{ type: 'string', value: ')' }
+			]
 		};
 		const children = deriveChildren(rule);
 		expect(children).toHaveLength(1);
 		const slot = children[0]!;
-		expect(slot.name).toBe("parameter");
+		expect(slot.name).toBe('parameter');
 		expect(isMultiple(slot)).toBe(true);
 		expect(isNonEmpty(slot)).toBe(false); // CRITICAL: outer optional makes empty valid
 	});
 
-	it("still treats bare repeat1(symbol) as nonEmptyArray", () => {
+	it('still treats bare repeat1(symbol) as nonEmptyArray', () => {
 		// Sanity: removing the outer optional → nonEmpty signal must survive.
 		const rule: Rule = {
-			type: "repeat1",
-			content: { type: "symbol", name: "parameter" },
+			type: 'repeat1',
+			content: { type: 'symbol', name: 'parameter' }
 		};
 		const children = deriveChildren(rule);
 		expect(children).toHaveLength(1);
 		expect(isNonEmpty(children[0]!)).toBe(true);
 	});
 
-	it("treats optional(repeat(symbol)) as array (unchanged behaviour)", () => {
+	it('treats optional(repeat(symbol)) as array (unchanged behaviour)', () => {
 		// Pre-existing repeat (not repeat1) inside optional: already 'array',
 		// not affected by the fix. Asserted to lock the contract.
 		const rule: Rule = {
-			type: "optional",
+			type: 'optional',
 			content: {
-				type: "repeat",
-				content: { type: "symbol", name: "parameter" },
-			},
+				type: 'repeat',
+				content: { type: 'symbol', name: 'parameter' }
+			}
 		};
 		const children = deriveChildren(rule);
 		expect(children).toHaveLength(1);

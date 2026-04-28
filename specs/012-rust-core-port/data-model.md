@@ -299,7 +299,7 @@ impl SittirEngine {
 ```ts
 // packages/{lang}/src/backend.ts (new)
 
-export type BackendName = "native" | "typescript";
+export type BackendName = 'native' | 'typescript';
 
 export interface BackendStatus {
 	name: BackendName;
@@ -332,15 +332,15 @@ Per FR-012, fixtures are auto-extracted from the existing round-trip validator o
 ```ts
 // Written by codegen as packages/{lang}/rust-render/test-fixtures.json
 interface RenderFixture {
-	kind: "render";
-	grammar: "rust" | "typescript" | "python";
+	kind: 'render';
+	grammar: 'rust' | 'typescript' | 'python';
 	input: NodeData; // primitive NodeData input
 	expectedOutput: string; // TS engine's render output (the reference)
 }
 
 interface RoundTripFixture {
-	kind: "roundtrip";
-	grammar: "rust" | "typescript" | "python";
+	kind: 'roundtrip';
+	grammar: 'rust' | 'typescript' | 'python';
 	sourceIn: string; // original source
 	pattern: string; // ast-grep pattern matched
 	edits: EditSpec[]; // edits applied

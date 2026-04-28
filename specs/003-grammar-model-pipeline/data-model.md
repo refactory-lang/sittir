@@ -142,26 +142,26 @@ Common: `required`, `kinds: string[]`, `childSignature?` (added by optimization)
 
 ```typescript
 type NodeMember =
-	| { member: "field"; field: FieldModel }
-	| { member: "token"; value: string; optional: boolean }
-	| { member: "child"; child: ChildModel }
-	| { member: "choice"; branches: NodeMember[][] };
+	| { member: 'field'; field: FieldModel }
+	| { member: 'token'; value: string; optional: boolean }
+	| { member: 'child'; child: ChildModel }
+	| { member: 'choice'; branches: NodeMember[][] };
 ```
 
 ## Hydrated Types (post-hydration, frozen)
 
 ```typescript
 type Hydrate<T> = T extends { kinds: string[] }
-	? Readonly<Omit<T, "kinds"> & { kinds: HydratedNodeModel[] }>
+	? Readonly<Omit<T, 'kinds'> & { kinds: HydratedNodeModel[] }>
 	: T extends { fields: FieldModel[] }
 		? Readonly<
-				Omit<T, "fields" | "children"> & {
+				Omit<T, 'fields' | 'children'> & {
 					fields: Hydrate<FieldModel>[];
 					children?: Hydrate<ChildModel>[];
 				}
 			>
 		: T extends { children: ChildModel[] }
-			? Readonly<Omit<T, "children"> & { children: Hydrate<ChildModel>[] }>
+			? Readonly<Omit<T, 'children'> & { children: Hydrate<ChildModel>[] }>
 			: Readonly<T>;
 
 type HydratedNodeModel =

@@ -1,39 +1,50 @@
-import type { AnyNodeData, NativeFieldValue, NativeNodeData } from "@sittir/types";
+import type {
+	AnyNodeData,
+	NativeFieldValue,
+	NativeNodeData
+} from '@sittir/types';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === "object" && value !== null && !Array.isArray(value);
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 function describe(value: unknown): string {
-	if (value === null) return "null";
-	if (Array.isArray(value)) return "array";
+	if (value === null) return 'null';
+	if (Array.isArray(value)) return 'array';
 	return typeof value;
 }
 
 function assertString(value: unknown, path: string): asserts value is string {
-	if (typeof value !== "string") {
+	if (typeof value !== 'string') {
 		throw new TypeError(`${path} must be a string, got ${describe(value)}`);
 	}
 }
 
 function assertBoolean(value: unknown, path: string): asserts value is boolean {
-	if (typeof value !== "boolean") {
+	if (typeof value !== 'boolean') {
 		throw new TypeError(`${path} must be a boolean, got ${describe(value)}`);
 	}
 }
 
-function assertFiniteNumber(value: unknown, path: string): asserts value is number {
-	if (typeof value !== "number" || !Number.isFinite(value)) {
-		throw new TypeError(`${path} must be a finite number, got ${describe(value)}`);
+function assertFiniteNumber(
+	value: unknown,
+	path: string
+): asserts value is number {
+	if (typeof value !== 'number' || !Number.isFinite(value)) {
+		throw new TypeError(
+			`${path} must be a finite number, got ${describe(value)}`
+		);
 	}
 }
 
 function assertNativeSource(
 	value: unknown,
-	path: string,
-): asserts value is NativeNodeData["$source"] {
-	if (value !== "ts" && value !== "sg" && value !== "factory") {
-		throw new TypeError(`${path} must be one of "ts", "sg", or "factory", got ${describe(value)}`);
+	path: string
+): asserts value is NativeNodeData['$source'] {
+	if (value !== 'ts' && value !== 'sg' && value !== 'factory') {
+		throw new TypeError(
+			`${path} must be one of "ts", "sg", or "factory", got ${describe(value)}`
+		);
 	}
 }
 
@@ -45,8 +56,11 @@ function assertNativeSpan(value: unknown, path: string): void {
 	assertFiniteNumber(value.end, `${path}.end`);
 }
 
-function assertNativeFieldValue(value: unknown, path: string): asserts value is NativeFieldValue {
-	if (typeof value === "string") return;
+function assertNativeFieldValue(
+	value: unknown,
+	path: string
+): asserts value is NativeFieldValue {
+	if (typeof value === 'string') return;
 	if (Array.isArray(value)) {
 		for (const [index, item] of value.entries()) {
 			assertNativeNodeDataInternal(item, `${path}[${index}]`);
@@ -79,7 +93,7 @@ function assertNativeChildren(value: unknown, path: string): void {
 
 function assertNativeNodeDataInternal(
 	value: unknown,
-	path: string,
+	path: string
 ): asserts value is NativeNodeData {
 	if (!isRecord(value)) {
 		throw new TypeError(`${path} must be an object, got ${describe(value)}`);
@@ -87,11 +101,14 @@ function assertNativeNodeDataInternal(
 	assertString(value.$type, `${path}.$type`);
 	assertNativeSource(value.$source, `${path}.$source`);
 	assertBoolean(value.$named, `${path}.$named`);
-	if (value.$fields !== undefined) assertNativeFields(value.$fields, `${path}.$fields`);
-	if (value.$children !== undefined) assertNativeChildren(value.$children, `${path}.$children`);
+	if (value.$fields !== undefined)
+		assertNativeFields(value.$fields, `${path}.$fields`);
+	if (value.$children !== undefined)
+		assertNativeChildren(value.$children, `${path}.$children`);
 	if (value.$text !== undefined) assertString(value.$text, `${path}.$text`);
 	if (value.$span !== undefined) assertNativeSpan(value.$span, `${path}.$span`);
-	if (value.$nodeId !== undefined) assertFiniteNumber(value.$nodeId, `${path}.$nodeId`);
+	if (value.$nodeId !== undefined)
+		assertFiniteNumber(value.$nodeId, `${path}.$nodeId`);
 }
 
 export function isNativeNodeData(node: AnyNodeData): node is NativeNodeData {
@@ -103,6 +120,8 @@ export function isNativeNodeData(node: AnyNodeData): node is NativeNodeData {
 	}
 }
 
-export function assertNativeNodeData(node: AnyNodeData): asserts node is NativeNodeData {
-	assertNativeNodeDataInternal(node, "node");
+export function assertNativeNodeData(
+	node: AnyNodeData
+): asserts node is NativeNodeData {
+	assertNativeNodeDataInternal(node, 'node');
 }

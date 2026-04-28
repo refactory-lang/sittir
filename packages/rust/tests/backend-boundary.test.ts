@@ -1,15 +1,15 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const identifier = {
-	$type: "identifier",
-	$source: "factory",
+	$type: 'identifier',
+	$source: 'factory',
 	$named: true,
-	$text: "x",
+	$text: 'x'
 } as const;
 
-describe("boundary", () => {
+describe('boundary', () => {
 	afterEach(() => {
-		vi.doUnmock("../src/backend.js");
+		vi.doUnmock('../src/backend.js');
 		vi.restoreAllMocks();
 		vi.resetModules();
 	});
@@ -19,17 +19,17 @@ describe("boundary", () => {
 			render(nodeJson: string): string;
 			applyEdits(
 				source: string,
-				edits: { startPos: number; endPos: number; insertedText: string }[],
+				edits: { startPos: number; endPos: number; insertedText: string }[]
 			): string;
-		},
+		}
 	): void {
 		vi.resetModules();
-		vi.doMock("../src/backend.js", () => ({
+		vi.doMock('../src/backend.js', () => ({
 			getActiveBackend: () => ({
-				name: "native",
+				name: 'native',
 				hashMatch: true,
-				native: { SittirEngine },
-			}),
+				native: { SittirEngine }
+			})
 		}));
 	}
 
@@ -37,32 +37,32 @@ describe("boundary", () => {
 		mockNativeBackend(
 			class {
 				render(_nodeJson: string): never {
-					throw new Error("native render boom");
+					throw new Error('native render boom');
 				}
 
 				applyEdits(
 					_source: string,
-					_edits: { startPos: number; endPos: number; insertedText: string }[],
+					_edits: { startPos: number; endPos: number; insertedText: string }[]
 				): never {
-					throw new Error("native apply boom");
+					throw new Error('native apply boom');
 				}
-			},
+			}
 		);
 	}
 
-	it("surfaces native render failures instead of silently retrying on TS", async () => {
+	it('surfaces native render failures instead of silently retrying on TS', async () => {
 		mockNativeFailureBackend();
-		const { render } = await import("../src/boundary.ts");
+		const { render } = await import('../src/boundary.ts');
 		expect(() => render(identifier)).toThrow(/native render boom/);
 	});
 
-	it("surfaces native applyEdits failures instead of silently retrying on TS", async () => {
+	it('surfaces native applyEdits failures instead of silently retrying on TS', async () => {
 		mockNativeFailureBackend();
-		const { applyEdits } = await import("../src/boundary.ts");
-		expect(() => applyEdits("abc", [])).toThrow(/native apply boom/);
+		const { applyEdits } = await import('../src/boundary.ts');
+		expect(() => applyEdits('abc', [])).toThrow(/native apply boom/);
 	});
 
-	it("rejects payloads that do not satisfy the native wire contract", async () => {
+	it('rejects payloads that do not satisfy the native wire contract', async () => {
 		const renderSpy = vi.fn((nodeJson: string) => `ok:${nodeJson.length}`);
 		mockNativeBackend(
 			class {
@@ -72,18 +72,18 @@ describe("boundary", () => {
 
 				applyEdits(
 					_source: string,
-					_edits: { startPos: number; endPos: number; insertedText: string }[],
+					_edits: { startPos: number; endPos: number; insertedText: string }[]
 				): string {
-					return "";
+					return '';
 				}
-			},
+			}
 		);
-		const { render } = await import("../src/boundary.ts");
+		const { render } = await import('../src/boundary.ts');
 		const invalidNode = {
-			$type: "arguments",
-			$source: "factory",
+			$type: 'arguments',
+			$source: 'factory',
 			$named: true,
-			$children: [identifier, "oops"],
+			$children: [identifier, 'oops']
 		} as const;
 		expect(() => render(invalidNode)).toThrow(/node\.\$children\[1\]/);
 		expect(renderSpy).not.toHaveBeenCalled();

@@ -12,33 +12,42 @@
  * test — tsc --noEmit failure IS the failure. The runtime body is empty.
  */
 
-import { describe, it } from "vitest";
+import { describe, it } from 'vitest';
 import type {
 	FunctionItem,
 	ConfigFor,
 	FluentFor,
 	LooseFor,
 	TreeFor,
-	NamespaceMap,
-} from "../src/index.ts";
+	NamespaceMap
+} from '../src/index.ts';
 
 type Equals<A, B> =
-	(<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
+	(<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2
+		? true
+		: false;
 
 function expectTrue<_T extends true>(): void {}
 
-describe("rust NamespaceMap access-path convergence", () => {
-	it("three paths resolve to same Config type", () => {
-		expectTrue<Equals<FunctionItem.Config, ConfigFor<"function_item">>>();
-		expectTrue<Equals<ConfigFor<"function_item">, NamespaceMap["function_item"]["Config"]>>();
-		expectTrue<Equals<FunctionItem.Config, NamespaceMap["function_item"]["Config"]>>();
+describe('rust NamespaceMap access-path convergence', () => {
+	it('three paths resolve to same Config type', () => {
+		expectTrue<Equals<FunctionItem.Config, ConfigFor<'function_item'>>>();
+		expectTrue<
+			Equals<
+				ConfigFor<'function_item'>,
+				NamespaceMap['function_item']['Config']
+			>
+		>();
+		expectTrue<
+			Equals<FunctionItem.Config, NamespaceMap['function_item']['Config']>
+		>();
 	});
 
-	it("Fluent / Loose / Tree / Kind each converge", () => {
-		expectTrue<Equals<FunctionItem.Fluent, FluentFor<"function_item">>>();
-		expectTrue<Equals<FunctionItem.Loose, LooseFor<"function_item">>>();
-		expectTrue<Equals<FunctionItem.Tree, TreeFor<"function_item">>>();
-		expectTrue<Equals<FunctionItem.Kind, "function_item">>();
+	it('Fluent / Loose / Tree / Kind each converge', () => {
+		expectTrue<Equals<FunctionItem.Fluent, FluentFor<'function_item'>>>();
+		expectTrue<Equals<FunctionItem.Loose, LooseFor<'function_item'>>>();
+		expectTrue<Equals<FunctionItem.Tree, TreeFor<'function_item'>>>();
+		expectTrue<Equals<FunctionItem.Kind, 'function_item'>>();
 	});
 
 	// The pre-008 `FunctionItemConfig` / `LooseFunctionItem` flat aliases

@@ -27,7 +27,11 @@ export interface TemplateContext {
 	 * Field names come from the tree-sitter grammar verbatim. No camelCase
 	 * translation — templates see the raw names.
 	 */
-	readonly [fieldName: string]: string | undefined | readonly string[] | boolean;
+	readonly [fieldName: string]:
+		| string
+		| undefined
+		| readonly string[]
+		| boolean;
 
 	/** Pre-joined unconsumed named children (with joinBy / flankSep applied). */
 	readonly children: string;
@@ -147,7 +151,7 @@ Lives in `packages/codegen/src/emitters/jinja-translator.ts`. Not part of the ru
 export function translateToJinja(
 	node: AssembledNode,
 	rules: Record<string, Rule>,
-	wordMatcher: RegExp,
+	wordMatcher: RegExp
 ): string;
 ```
 

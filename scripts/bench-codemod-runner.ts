@@ -13,12 +13,12 @@
  * `getActiveBackend()` resolves to.
  */
 
-import { runCodemodOnDir } from "../tests/acceptance/codemod-inline.ts";
+import { runCodemodOnDir } from '../tests/acceptance/codemod-inline.ts';
 
 async function main(): Promise<void> {
 	const corpus = process.argv[2];
 	if (!corpus) {
-		console.error("bench-codemod-runner: missing corpus directory argument");
+		console.error('bench-codemod-runner: missing corpus directory argument');
 		process.exit(2);
 	}
 	const start = Date.now();

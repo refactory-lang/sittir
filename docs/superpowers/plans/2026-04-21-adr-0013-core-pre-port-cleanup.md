@@ -29,20 +29,25 @@ one entry point.
 
 ```ts
 // packages/core/src/loader.ts
-import * as fs from "node:fs";
-import { parse as parseYaml } from "yaml";
-import type { RulesConfig } from "./types.ts";
-import { createRendererFromConfig, type BoundRenderer } from "./render.ts";
+import * as fs from 'node:fs';
+import { parse as parseYaml } from 'yaml';
+import type { RulesConfig } from './types.ts';
+import { createRendererFromConfig, type BoundRenderer } from './render.ts';
 
 export function loadTemplates(yamlPath: string): RulesConfig {
-	const content = fs.readFileSync(yamlPath, "utf-8");
+	const content = fs.readFileSync(yamlPath, 'utf-8');
 	return parseYaml(content) as RulesConfig;
 }
 
 export function createRenderer(yamlPath: string): BoundRenderer;
 export function createRenderer(config: RulesConfig): BoundRenderer;
-export function createRenderer(pathOrConfig: string | RulesConfig): BoundRenderer {
-	const config = typeof pathOrConfig === "string" ? loadTemplates(pathOrConfig) : pathOrConfig;
+export function createRenderer(
+	pathOrConfig: string | RulesConfig
+): BoundRenderer {
+	const config =
+		typeof pathOrConfig === 'string'
+			? loadTemplates(pathOrConfig)
+			: pathOrConfig;
 	return createRendererFromConfig(config);
 }
 ```
@@ -74,7 +79,7 @@ export function createRendererFromConfig(config: RulesConfig): BoundRenderer {
 
 ```ts
 // packages/core/src/index.ts
-export { createRenderer, loadTemplates } from "./loader.ts";
+export { createRenderer, loadTemplates } from './loader.ts';
 // + keep existing type exports from render.ts unchanged
 ```
 
@@ -142,7 +147,7 @@ if (allEqual) {
 return { variants };
 
 function normalizeTrailingNewline(s: string): string {
-	return s.endsWith("\n") ? s.slice(0, -1) : s;
+	return s.endsWith('\n') ? s.slice(0, -1) : s;
 }
 ```
 
@@ -194,34 +199,41 @@ fallback. Add a minimal assertion test:
 
 ```ts
 // packages/core/tests/variant-dispatch.test.ts
-import { describe, it, expect } from "vitest";
-import type { RulesConfig } from "../src/types.ts";
-import { createRenderer } from "../src/loader.ts";
+import { describe, it, expect } from 'vitest';
+import type { RulesConfig } from '../src/types.ts';
+import { createRenderer } from '../src/loader.ts';
 // Pull in the three-grammar templates to check $variant-keyed rules.
 
-describe("variant dispatch uses primary $variant key", () => {
+describe('variant dispatch uses primary $variant key', () => {
 	// Minimal inline test: a rule with variants, a factory-produced
 	// node stamping $variant, render must match the variant-keyed
 	// template exactly, not fall through to pickTemplate.
-	it("matches template by $variant key", () => {
+	it('matches template by $variant key', () => {
 		const config: RulesConfig = {
 			rules: {
 				widget: {
 					variants: {
-						alpha: "A:$NAME",
-						beta: "B:$NAME",
-					},
-				},
-			},
+						alpha: 'A:$NAME',
+						beta: 'B:$NAME'
+					}
+				}
+			}
 		};
 		const { render } = createRenderer(config);
 		const node = {
-			$type: "widget",
-			$source: "factory" as const,
-			$variant: "beta",
-			$fields: { name: { $type: "id", $source: "factory" as const, $text: "x", $named: true } },
+			$type: 'widget',
+			$source: 'factory' as const,
+			$variant: 'beta',
+			$fields: {
+				name: {
+					$type: 'id',
+					$source: 'factory' as const,
+					$text: 'x',
+					$named: true
+				}
+			}
 		};
-		expect(render(node as any)).toBe("B:x");
+		expect(render(node as any)).toBe('B:x');
 	});
 });
 ```
@@ -281,23 +293,30 @@ ordering it relies on (as a comment, for reviewability):
 Create `packages/core/tests/prepare.test.ts`:
 
 ```ts
-import { describe, it, expect } from "vitest";
-import { prepare } from "../src/render.ts";
+import { describe, it, expect } from 'vitest';
+import { prepare } from '../src/render.ts';
 
-describe("prepare()", () => {
-	it("materializes a PreparedRender bag", () => {
+describe('prepare()', () => {
+	it('materializes a PreparedRender bag', () => {
 		const config = {
 			rules: {
-				greet: "$NAME!",
-			},
+				greet: '$NAME!'
+			}
 		};
 		const node = {
-			$type: "greet",
-			$source: "factory" as const,
-			$fields: { name: { $type: "id", $source: "factory" as const, $text: "world", $named: true } },
+			$type: 'greet',
+			$source: 'factory' as const,
+			$fields: {
+				name: {
+					$type: 'id',
+					$source: 'factory' as const,
+					$text: 'world',
+					$named: true
+				}
+			}
 		};
 		const prepared = prepare(node as any, config);
-		expect(prepared.fields.name).toBe("world");
+		expect(prepared.fields.name).toBe('world');
 		expect(prepared.children).toEqual([]);
 	});
 });
@@ -344,7 +363,7 @@ export interface PreparedRender {
 export function prepare(
 	node: AnyNodeData,
 	rule: TemplateRule,
-	ctx: InternalRenderContext,
+	ctx: InternalRenderContext
 ): PreparedRender {
 	// ... walk rule's template (and variants/clauses), collect consumed
 	// indices, resolve each slot to its string form, return the bag.
@@ -368,20 +387,20 @@ Expected: PASS.
 In `prepare.test.ts`, add:
 
 ```ts
-it("clause consumes a child that $$$CHILDREN would emit", () => {
+it('clause consumes a child that $$$CHILDREN would emit', () => {
 	// Template: $CLAUSE_FOO $$$CHILDREN
 	// Node has a child matching clause-kind + additional named children.
 	// Expect: clause child is in fields[...] output; $$$CHILDREN emits
 	// only the remainder.
 });
 
-it("flankSep detects adjacent anon separator after consumption", () => {
+it('flankSep detects adjacent anon separator after consumption', () => {
 	// Template: $$$CHILDREN with joinByTrailing: true
 	// Node children: [a, b, c, ',']
 	// Expect: trailingSep=true in the bag.
 });
 
-it("field-to-child promotion only when no $$$CHILDREN + single named child", () => {
+it('field-to-child promotion only when no $$$CHILDREN + single named child', () => {
 	// Template: $FOO
 	// Node children: [singleChild], no $fields.foo
 	// Expect: prepared.fields.foo === render(singleChild)

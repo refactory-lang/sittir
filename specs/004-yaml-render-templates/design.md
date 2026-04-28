@@ -13,7 +13,7 @@ export const rules: RulesRegistry = {
 		'(function_item (_)* "fn" name: (_) type_parameters: (_)? parameters: (_) return_type: (_)? (_)* body: (_))',
 	let_declaration:
 		'(let_declaration "let" (_)* pattern: (_) type: (_)? value: (_)? alternative: (_)? ";")',
-	binary_expression: "(binary_expression left: (_) operator: (_) right: (_))",
+	binary_expression: '(binary_expression left: (_) operator: (_) right: (_))'
 	// ...
 };
 ```
@@ -36,7 +36,7 @@ Parsed by `packages/core/src/sexpr.ts` (119 lines):
 `packages/core/src/render.ts` (133 lines). Joins all non-empty parts with a single space:
 
 ```ts
-return parts.filter((p) => p !== "").join(" ");
+return parts.filter((p) => p !== '').join(' ');
 ```
 
 ### Separator map
@@ -97,7 +97,7 @@ function_item:
     fn $NAME($$$PARAMETERS) $RETURN_TYPE_CLAUSE{
         $$$BODY
     }
-  return_type_clause: "-> $RETURN_TYPE "
+  return_type_clause: '-> $RETURN_TYPE '
 ```
 
 The render engine sees `$RETURN_TYPE_CLAUSE` in the template and checks whether `return_type_clause` is a key in the current rule object. If it is:
@@ -134,7 +134,7 @@ CHOICE([
 Produces:
 
 ```yaml
-return_type_clause: "-> $RETURN_TYPE "
+return_type_clause: '-> $RETURN_TYPE '
 ```
 
 Common patterns:
@@ -164,14 +164,14 @@ function_item:
     fn $NAME($$$PARAMETERS) $RETURN_TYPE_CLAUSE{
         $$$BODY
     }
-  return_type_clause: "-> $RETURN_TYPE "
+  return_type_clause: '-> $RETURN_TYPE '
 
 # Python — colon and indentation are literal
 function_definition:
   template: |
     def $NAME($$$PARAMETERS)$RETURN_TYPE_CLAUSE:
         $$$BODY
-  return_type_clause: " -> $RETURN_TYPE"
+  return_type_clause: ' -> $RETURN_TYPE'
 ```
 
 ### `joinBy`
@@ -185,7 +185,7 @@ transform:
     rewrite:
       rewriters: [some-rewrite]
       source: $$$ARGS
-      joinBy: ", "
+      joinBy: ', '
 ```
 
 In sittir, `joinBy` lives inside the rule object:
@@ -194,8 +194,8 @@ In sittir, `joinBy` lives inside the rule object:
 rules:
   # String joinBy — applies to all $$$ variables in this rule
   parameters:
-    template: "($$$CHILDREN)"
-    joinBy: ", "
+    template: '($$$CHILDREN)'
+    joinBy: ', '
 
   # Object joinBy — per-variable when a rule has multiple $$$ fields
   function_item:
@@ -203,9 +203,9 @@ rules:
       fn $NAME($$$PARAMETERS) $RETURN_TYPE_CLAUSE{
           $$$BODY
       }
-    return_type_clause: "-> $RETURN_TYPE "
+    return_type_clause: '-> $RETURN_TYPE '
     joinBy:
-      PARAMETERS: ", "
+      PARAMETERS: ', '
       BODY: "\n"
 ```
 
@@ -223,9 +223,9 @@ language: rust
 extensions: [rs]
 expandoChar: null
 metadata:
-  treeSitterVersion: "0.24.6"
-  generatedAt: "2026-03-30T01:00:00Z"
-  grammarSha: "abc123"
+  treeSitterVersion: '0.24.6'
+  generatedAt: '2026-03-30T01:00:00Z'
+  grammarSha: 'abc123'
 rules:
   # ...
 ```
@@ -268,7 +268,7 @@ fix:
 
 ```yaml
 # sittir rule — string form (same as ast-grep fix string)
-binary_expression: "$LEFT $OPERATOR $RIGHT"
+binary_expression: '$LEFT $OPERATOR $RIGHT'
 
 # sittir rule — object form (same template key as ast-grep FixConfig)
 function_item:
@@ -276,9 +276,9 @@ function_item:
     fn $NAME($$$PARAMETERS) $RETURN_TYPE_CLAUSE{
         $$$BODY
     }
-  return_type_clause: "-> $RETURN_TYPE "
+  return_type_clause: '-> $RETURN_TYPE '
   joinBy:
-    PARAMETERS: ", "
+    PARAMETERS: ', '
     BODY: "\n"
 ```
 
@@ -306,29 +306,29 @@ The children-by-kind fallback handles named children (from node-types.json) that
 
 ```yaml
 # Override fields — promoted to fields by wrap emitter
-unary_expression: "$OPERATOR$ARGUMENT"
+unary_expression: '$OPERATOR$ARGUMENT'
 # wrap promoted operator (anon token) and argument (named child) into fields
 
-index_expression: "$VALUE[$INDEX]"
+index_expression: '$VALUE[$INDEX]'
 # wrap promoted value and index into fields; "[" and "]" stay as template literals
 
-range_expression: "$START$OPERATOR$END"
+range_expression: '$START$OPERATOR$END'
 
 # Tree-sitter fields — no different from overrides
 function_item:
   template: $VISIBILITY_MODIFIER $FUNCTION_MODIFIERS fn $NAME$TYPE_PARAMETERS($$$PARAMETERS) $RETURN_TYPE_CLAUSE $WHERE_CLAUSE $BODY
-  return_type_clause: "-> $RETURN_TYPE"
+  return_type_clause: '-> $RETURN_TYPE'
 
-binary_expression: "$LEFT $OPERATOR $RIGHT"
+binary_expression: '$LEFT $OPERATOR $RIGHT'
 
 # Truly unnamed groups — $$$CHILDREN
 arguments:
-  template: "$$$CHILDREN"
+  template: '$$$CHILDREN'
   joinBy:
-    CHILDREN: ", "
+    CHILDREN: ', '
 
 declaration_list:
-  template: "$$$CHILDREN"
+  template: '$$$CHILDREN'
   joinBy:
     CHILDREN: "\n"
 
@@ -338,7 +338,7 @@ block:
     $LABEL_CLAUSE{
         $$$CHILDREN
     }
-  label_clause: "$LABEL: "
+  label_clause: '$LABEL: '
   joinBy:
     CHILDREN: "\n"
 ```
@@ -402,8 +402,8 @@ The grammar has `CHOICE("-", "*", "!")` — an anonymous token. The wrap functio
 
 ```ts
 // Generated wrap code for unary_expression (heuristic 3 with per-token matching):
-config["operator"] = (() => {
-	const _vals = new Set(["-", "*", "!", "&"]);
+config['operator'] = (() => {
+	const _vals = new Set(['-', '*', '!', '&']);
 	for (let i = 0; i < _allChildren.length; i++) {
 		if (_consumed.has(i)) continue;
 		const c = _allChildren[i]!;
@@ -958,7 +958,7 @@ The walker also gains formatting awareness: `IMMEDIATE_TOKEN` signals no-space-b
 Clause generation: when `ruleToSExpr()` encounters `CHOICE([SEQ(STRING("->"), FIELD(return_type)), BLANK])`, instead of marking the field `required: false` and dropping the paired token (current behavior — open issue #1), it emits a clause:
 
 ```yaml
-return_type_clause: "-> $RETURN_TYPE "
+return_type_clause: '-> $RETURN_TYPE '
 ```
 
 And references `$RETURN_TYPE_CLAUSE` in the parent template. The YAML nesting expresses the required/non-required distinction.

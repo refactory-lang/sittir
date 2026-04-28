@@ -53,27 +53,33 @@ Same tree shape as `GrammarRule`, with cross-referenced metadata attached at rel
 
 ```typescript
 type EnrichedRule =
-	| { type: "SEQ"; members: EnrichedRule[] }
-	| { type: "CHOICE"; members: EnrichedRule[] }
-	| { type: "STRING"; value: string }
+	| { type: 'SEQ'; members: EnrichedRule[] }
+	| { type: 'CHOICE'; members: EnrichedRule[] }
+	| { type: 'STRING'; value: string }
 	| {
-			type: "FIELD";
+			type: 'FIELD';
 			name: string;
 			content: EnrichedRule;
 			required: boolean; // from node-types.json
 			multiple: boolean;
 	  } // from node-types.json
-	| { type: "SYMBOL"; name: string; leaf: boolean; keyword: boolean; supertype: boolean }
-	| { type: "BLANK" }
-	| { type: "REPEAT"; content: EnrichedRule }
-	| { type: "REPEAT1"; content: EnrichedRule }
-	| { type: "PREC"; value: number; content: EnrichedRule }
-	| { type: "PREC_LEFT"; value: number; content: EnrichedRule }
-	| { type: "PREC_RIGHT"; value: number; content: EnrichedRule }
-	| { type: "ALIAS"; content: EnrichedRule; named: boolean; value: string }
-	| { type: "TOKEN"; content: EnrichedRule }
-	| { type: "IMMEDIATE_TOKEN"; content: EnrichedRule }
-	| { type: "PATTERN"; value: string };
+	| {
+			type: 'SYMBOL';
+			name: string;
+			leaf: boolean;
+			keyword: boolean;
+			supertype: boolean;
+	  }
+	| { type: 'BLANK' }
+	| { type: 'REPEAT'; content: EnrichedRule }
+	| { type: 'REPEAT1'; content: EnrichedRule }
+	| { type: 'PREC'; value: number; content: EnrichedRule }
+	| { type: 'PREC_LEFT'; value: number; content: EnrichedRule }
+	| { type: 'PREC_RIGHT'; value: number; content: EnrichedRule }
+	| { type: 'ALIAS'; content: EnrichedRule; named: boolean; value: string }
+	| { type: 'TOKEN'; content: EnrichedRule }
+	| { type: 'IMMEDIATE_TOKEN'; content: EnrichedRule }
+	| { type: 'PATTERN'; value: string };
 ```
 
 Enrichment is purely additive:
@@ -92,10 +98,10 @@ The node model is an **ordered sequence of elements** — matching the physical 
 ```typescript
 /** An element in the node's ordered structure */
 type NodeElement =
-	| { element: "field"; field: FieldModel }
-	| { element: "token"; value: string; optional: boolean }
-	| { element: "child"; child: ChildModel }
-	| { element: "choice"; branches: NodeElement[][] };
+	| { element: 'field'; field: FieldModel }
+	| { element: 'token'; value: string; optional: boolean }
+	| { element: 'child'; child: ChildModel }
+	| { element: 'choice'; branches: NodeElement[][] };
 
 interface FieldModel {
 	name: string;
@@ -186,7 +192,10 @@ interface FactorySignature {
 interface FromSignature {
 	id: string;
 	// Per-field: field name → resolution dispatch shape
-	fields: Record<string, { leafTypes: string[]; branchTypes: string[]; anonTokens: string[] }>;
+	fields: Record<
+		string,
+		{ leafTypes: string[]; branchTypes: string[]; anonTokens: string[] }
+	>;
 }
 
 /** How does assign hydrate this kind from a TreeNode? */

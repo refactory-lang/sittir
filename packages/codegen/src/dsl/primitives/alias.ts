@@ -22,31 +22,35 @@
  *     import { alias } from '@sittir/codegen/dsl'
  */
 
-import type { Rule } from "../../compiler/rule.ts";
+import type { Rule } from '../../compiler/rule.ts';
 
 export interface AliasPlaceholder {
-	readonly __sittirPlaceholder: "alias";
+	readonly __sittirPlaceholder: 'alias';
 	readonly name: string;
 }
 
 export function isAliasPlaceholder(v: unknown): v is AliasPlaceholder {
 	return (
 		!!v &&
-		typeof v === "object" &&
-		(v as { __sittirPlaceholder?: unknown }).__sittirPlaceholder === "alias"
+		typeof v === 'object' &&
+		(v as { __sittirPlaceholder?: unknown }).__sittirPlaceholder === 'alias'
 	);
 }
 
 export function alias(rule: Rule | string, value?: string | Rule): unknown {
 	// One-arg string form: alias('variant_name') → placeholder for transform.
-	if (typeof rule === "string" && value === undefined) {
-		return { __sittirPlaceholder: "alias" as const, name: rule } satisfies AliasPlaceholder;
+	if (typeof rule === 'string' && value === undefined) {
+		return {
+			__sittirPlaceholder: 'alias' as const,
+			name: rule
+		} satisfies AliasPlaceholder;
 	}
 
-	const native = (globalThis as { alias?: (r: unknown, v: unknown) => unknown }).alias;
-	if (typeof native !== "function") {
+	const native = (globalThis as { alias?: (r: unknown, v: unknown) => unknown })
+		.alias;
+	if (typeof native !== 'function') {
 		throw new Error(
-			"alias(): no global alias() found — must be called inside a runtime that injects alias() (sittir evaluate.ts or tree-sitter CLI)",
+			'alias(): no global alias() found — must be called inside a runtime that injects alias() (sittir evaluate.ts or tree-sitter CLI)'
 		);
 	}
 

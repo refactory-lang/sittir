@@ -101,8 +101,8 @@ The bitflag detector reads the post-Link `AssembledField.values`, which already 
  */
 export function keywordPresenceKind(
 	field: AssembledChild,
-	nodeMap: NodeMap,
-): "boolean" | "bitflag" | null {
+	nodeMap: NodeMap
+): 'boolean' | 'bitflag' | null {
 	/* ... */
 }
 ```
@@ -111,10 +111,16 @@ Companion accessors:
 
 ```ts
 /** The single literal for a boolean-keyword field. Undefined otherwise. */
-export function keywordPresenceValue(field: AssembledChild, nodeMap: NodeMap): string | undefined;
+export function keywordPresenceValue(
+	field: AssembledChild,
+	nodeMap: NodeMap
+): string | undefined;
 
 /** The ordered-unique literal set for a bitflag field. Empty otherwise. */
-export function keywordPresenceValues(field: AssembledChild, nodeMap: NodeMap): readonly string[];
+export function keywordPresenceValues(
+	field: AssembledChild,
+	nodeMap: NodeMap
+): readonly string[];
 ```
 
 **Resolving each slot entry to "a single literal"** reuses the existing machinery:
@@ -167,7 +173,7 @@ export const enum FunctionMod {
 	Unsafe = 1 << 1,
 	Const = 1 << 2,
 	Extern = 1 << 3,
-	Default = 1 << 4,
+	Default = 1 << 4
 }
 ```
 
@@ -212,8 +218,8 @@ Snapshot a const table emission for a fabricated bitflag field.
 ```ts
 function fieldTypeExpr(field, nodeMap, lookupUnion): string {
 	const kw = keywordPresenceKind(field, nodeMap);
-	if (kw === "boolean") return "boolean";
-	if (kw === "bitflag") return constNameFor(field, nodeMap); // e.g. 'FunctionMod' — const enum
+	if (kw === 'boolean') return 'boolean';
+	if (kw === 'bitflag') return constNameFor(field, nodeMap); // e.g. 'FunctionMod' — const enum
 	// ... existing fieldTypeComponents path for everything else
 }
 ```
@@ -249,30 +255,32 @@ Extend the existing field-emission dispatch (after `isAutoStampField` check, bef
 
 ```ts
 const kw = keywordPresenceKind(f, nodeMap);
-if (kw === "boolean") {
+if (kw === 'boolean') {
 	// fields.mutable_specifier = config.mut ? { $type: 'mutable_specifier', $text: 'mut', ... } : undefined
 	const fieldName = f.name;
 	const value = keywordPresenceValue(f, nodeMap)!;
 	const propertyName = f.propertyName; // camelCase
 	lines.push(
-		`    ${fieldName}: config.${propertyName} === true ? { $type: '${fieldName}', $text: ${JSON.stringify(value)}, $named: true, $source: 'factory' as const } : undefined,`,
+		`    ${fieldName}: config.${propertyName} === true ? { $type: '${fieldName}', $text: ${JSON.stringify(value)}, $named: true, $source: 'factory' as const } : undefined,`
 	);
 	continue;
 }
-if (kw === "bitflag") {
+if (kw === 'bitflag') {
 	const constName = constNameFor(f, nodeMap);
 	const values = keywordPresenceValues(f, nodeMap);
 	const fieldName = f.name;
 	const propertyName = f.propertyName;
 	// emit: fields.function_modifiers = config.modifiers !== undefined ? (function_modifiers with spread kids) : undefined
-	lines.push(`    ${fieldName}: config.${propertyName} !== undefined ? ${fieldName}(`);
+	lines.push(
+		`    ${fieldName}: config.${propertyName} !== undefined ? ${fieldName}(`
+	);
 	values.forEach((v, i) => {
 		const member = pascalCase(v);
 		lines.push(
-			`      ...(config.${propertyName} & ${constName}.${member} ? [{ $type: '_kw_${v}', $text: ${JSON.stringify(v)}, $named: false, $source: 'factory' as const }] : []),`,
+			`      ...(config.${propertyName} & ${constName}.${member} ? [{ $type: '_kw_${v}', $text: ${JSON.stringify(v)}, $named: false, $source: 'factory' as const }] : []),`
 		);
 	});
-	lines.push("    ) : undefined,");
+	lines.push('    ) : undefined,');
 	continue;
 }
 ```
@@ -300,10 +308,14 @@ Inner NodeData shape for each keyword: use the existing `_kw_<value>` hidden kin
 - [ ] **Step 5.1: Emit `_resolveBooleanKeyword`** as a helper at module top:
 
 ```ts
-function _resolveBooleanKeyword(v: unknown, keyword: string, factory: () => unknown): unknown {
+function _resolveBooleanKeyword(
+	v: unknown,
+	keyword: string,
+	factory: () => unknown
+): unknown {
 	if (v === true) return factory();
 	if (v === false || v === undefined || v === null) return undefined;
-	if (typeof v === "string" && v === keyword) return factory();
+	if (typeof v === 'string' && v === keyword) return factory();
 	if (isNodeData(v)) return v;
 	return undefined;
 }
@@ -318,15 +330,18 @@ function _resolveBooleanKeyword(v: unknown, keyword: string, factory: () => unkn
       signature.
 
 ```ts
-function _resolveBitflag(v: unknown, constMap: Record<string, number>): number | undefined {
+function _resolveBitflag(
+	v: unknown,
+	constMap: Record<string, number>
+): number | undefined {
 	if (v === undefined || v === null) return undefined;
-	if (typeof v === "number") return v;
-	if (typeof v === "string") return constMap[v] ?? 0;
+	if (typeof v === 'number') return v;
+	if (typeof v === 'string') return constMap[v] ?? 0;
 	if (Array.isArray(v)) {
 		let f = 0;
 		for (const item of v) {
-			if (typeof item === "string") f |= constMap[item] ?? 0;
-			else if (typeof item === "number") f |= item;
+			if (typeof item === 'string') f |= constMap[item] ?? 0;
+			else if (typeof item === 'number') f |= item;
 		}
 		return f;
 	}
@@ -335,7 +350,7 @@ function _resolveBitflag(v: unknown, constMap: Record<string, number>): number |
 	if (isNodeData(v) && Array.isArray((v as any).$children)) {
 		let f = 0;
 		for (const child of (v as any).$children) {
-			if (child?.$text && typeof child.$text === "string") {
+			if (child?.$text && typeof child.$text === 'string') {
 				f |= constMap[child.$text] ?? 0;
 			}
 		}

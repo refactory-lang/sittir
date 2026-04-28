@@ -1,11 +1,11 @@
-import { describe, it, expect } from "vitest";
-import { generate } from "../compiler/generate.ts";
+import { describe, it, expect } from 'vitest';
+import { generate } from '../compiler/generate.ts';
 
-describe("generate — new pipeline end-to-end", () => {
-	it("generates all output files for Python", async () => {
+describe('generate — new pipeline end-to-end', () => {
+	it('generates all output files for Python', async () => {
 		const result = await generate({
-			grammar: "python",
-			outputDir: "/tmp/sittir-test-python",
+			grammar: 'python',
+			outputDir: '/tmp/sittir-test-python'
 		});
 
 		// All files should be non-empty strings
@@ -19,10 +19,10 @@ describe("generate — new pipeline end-to-end", () => {
 		expect(result.nodeMap.nodes.size).toBeGreaterThan(50);
 	}, 30000);
 
-	it("generates all output files for Rust", async () => {
+	it('generates all output files for Rust', async () => {
 		const result = await generate({
-			grammar: "rust",
-			outputDir: "/tmp/sittir-test-rust",
+			grammar: 'rust',
+			outputDir: '/tmp/sittir-test-rust'
 		});
 
 		expect(result.grammar.length).toBeGreaterThan(0);
@@ -31,10 +31,10 @@ describe("generate — new pipeline end-to-end", () => {
 		expect(result.nodeMap.nodes.size).toBeGreaterThan(100);
 	}, 30000);
 
-	it("generates all output files for TypeScript", async () => {
+	it('generates all output files for TypeScript', async () => {
 		const result = await generate({
-			grammar: "typescript",
-			outputDir: "/tmp/sittir-test-typescript",
+			grammar: 'typescript',
+			outputDir: '/tmp/sittir-test-typescript'
 		});
 
 		expect(result.grammar.length).toBeGreaterThan(0);

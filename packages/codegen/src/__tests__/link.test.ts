@@ -1,17 +1,20 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from 'vitest';
 import {
 	link,
 	enrichPositions,
 	computeParentSets,
-	applyOverridePolymorphs,
-} from "../compiler/link.ts";
-import type { DerivationLog } from "../compiler/types.ts";
-import type { Rule, SymbolRef } from "../compiler/rule.ts";
-import type { RawGrammar, LinkedGrammar } from "../compiler/types.ts";
+	applyOverridePolymorphs
+} from '../compiler/link.ts';
+import type { DerivationLog } from '../compiler/types.ts';
+import type { Rule, SymbolRef } from '../compiler/rule.ts';
+import type { RawGrammar, LinkedGrammar } from '../compiler/types.ts';
 
-function makeRaw(rules: Record<string, Rule>, overrides?: Partial<RawGrammar>): RawGrammar {
+function makeRaw(
+	rules: Record<string, Rule>,
+	overrides?: Partial<RawGrammar>
+): RawGrammar {
 	return {
-		name: "test",
+		name: 'test',
 		rules,
 		extras: [],
 		externals: [],
@@ -20,56 +23,61 @@ function makeRaw(rules: Record<string, Rule>, overrides?: Partial<RawGrammar>): 
 		conflicts: [],
 		word: null,
 		references: [],
-		...overrides,
+		...overrides
 	};
 }
 
-describe("Link — reference resolution", () => {
-	it("resolves symbol references to their content", () => {
+describe('Link — reference resolution', () => {
+	it('resolves symbol references to their content', () => {
 		const raw = makeRaw({
 			source_file: {
-				type: "repeat",
-				content: { type: "symbol", name: "statement" },
+				type: 'repeat',
+				content: { type: 'symbol', name: 'statement' }
 			},
 			statement: {
-				type: "seq",
+				type: 'seq',
 				members: [
-					{ type: "string", value: "x" },
-					{ type: "string", value: ";" },
-				],
-			},
+					{ type: 'string', value: 'x' },
+					{ type: 'string', value: ';' }
+				]
+			}
 		});
 		const linked = link(raw);
 		// source_file's repeat content should reference 'statement' as a symbol
 		// Link keeps visible symbol references (they become named children)
 		// Hidden symbols get inlined
-		expect(linked.rules["source_file"]).toBeDefined();
-		expect(linked.rules["statement"]).toBeDefined();
+		expect(linked.rules['source_file']).toBeDefined();
+		expect(linked.rules['statement']).toBeDefined();
 	});
 
-	it("produces a LinkedGrammar with no alias or token nodes", () => {
+	it('produces a LinkedGrammar with no alias or token nodes', () => {
 		const raw = makeRaw({
 			root: {
-				type: "seq",
+				type: 'seq',
 				members: [
-					{ type: "token", content: { type: "string", value: "//" }, immediate: false },
-					{ type: "repeat1", content: { type: "string", value: "x" } },
-				],
-			},
+					{
+						type: 'token',
+						content: { type: 'string', value: '//' },
+						immediate: false
+					},
+					{ type: 'repeat1', content: { type: 'string', value: 'x' } }
+				]
+			}
 		});
 		const linked = link(raw);
 
 		function assertNoRefTypes(rule: Rule): void {
-			if ("type" in rule) {
-				expect(rule.type).not.toBe("alias");
-				expect(rule.type).not.toBe("token");
+			if ('type' in rule) {
+				expect(rule.type).not.toBe('alias');
+				expect(rule.type).not.toBe('token');
 				// NOTE: `repeat1` is intentionally preserved through
 				// Link so the downstream field / child derivation can
 				// stamp `nonEmpty: true` on the resulting slot and the
 				// types emitter can render a non-empty tuple type.
 			}
-			if ("content" in rule && rule.content) assertNoRefTypes(rule.content as Rule);
-			if ("members" in rule && Array.isArray((rule as any).members)) {
+			if ('content' in rule && rule.content)
+				assertNoRefTypes(rule.content as Rule);
+			if ('members' in rule && Array.isArray((rule as any).members)) {
 				for (const m of (rule as any).members) assertNoRefTypes(m);
 			}
 		}
@@ -79,226 +87,237 @@ describe("Link — reference resolution", () => {
 		}
 	});
 
-	it("preserves repeat1 through Link for non-empty signal", () => {
+	it('preserves repeat1 through Link for non-empty signal', () => {
 		const raw = makeRaw({
-			items: { type: "repeat1", content: { type: "string", value: "x" } },
+			items: { type: 'repeat1', content: { type: 'string', value: 'x' } }
 		});
 		const linked = link(raw);
 		// `items` is a pure-terminal subtree (only string literals) so Link
 		// wraps it as TerminalRule; unwrap to verify the repeat1 survived.
-		const rule = linked.rules["items"];
-		const inner = rule!.type === "terminal" ? (rule as any).content : rule;
-		expect(inner.type).toBe("repeat1");
+		const rule = linked.rules['items'];
+		const inner = rule!.type === 'terminal' ? (rule as any).content : rule;
+		expect(inner.type).toBe('repeat1');
 	});
 
-	it("flattens token to its content", () => {
+	it('flattens token to its content', () => {
 		const raw = makeRaw({
-			comment: { type: "token", content: { type: "string", value: "//" }, immediate: false },
+			comment: {
+				type: 'token',
+				content: { type: 'string', value: '//' },
+				immediate: false
+			}
 		});
 		const linked = link(raw);
-		expect(linked.rules["comment"]).toEqual({ type: "string", value: "//" });
+		expect(linked.rules['comment']).toEqual({ type: 'string', value: '//' });
 	});
 });
 
-describe("Link — hidden rule classification", () => {
-	it("classifies hidden choice-of-symbols in supertypes as supertype", () => {
+describe('Link — hidden rule classification', () => {
+	it('classifies hidden choice-of-symbols in supertypes as supertype', () => {
 		const raw = makeRaw(
 			{
 				_expression: {
-					type: "choice",
+					type: 'choice',
 					members: [
-						{ type: "symbol", name: "binary_expression" },
-						{ type: "symbol", name: "identifier" },
-					],
+						{ type: 'symbol', name: 'binary_expression' },
+						{ type: 'symbol', name: 'identifier' }
+					]
 				},
-				binary_expression: { type: "string", value: "binexpr" },
-				identifier: { type: "pattern", value: "[a-z]+" },
+				binary_expression: { type: 'string', value: 'binexpr' },
+				identifier: { type: 'pattern', value: '[a-z]+' }
 			},
-			{ supertypes: ["_expression"] },
+			{ supertypes: ['_expression'] }
 		);
 		const linked = link(raw);
-		expect(linked.rules["_expression"]).toEqual({
-			type: "supertype",
-			name: "_expression",
-			subtypes: ["binary_expression", "identifier"],
-			source: "grammar",
+		expect(linked.rules['_expression']).toEqual({
+			type: 'supertype',
+			name: '_expression',
+			subtypes: ['binary_expression', 'identifier'],
+			source: 'grammar'
 		});
 	});
 
-	it("classifies hidden choice-of-strings as enum", () => {
+	it('classifies hidden choice-of-strings as enum', () => {
 		const raw = makeRaw({
 			_visibility: {
-				type: "choice",
+				type: 'choice',
 				members: [
-					{ type: "string", value: "pub" },
-					{ type: "string", value: "crate" },
-				],
-			},
+					{ type: 'string', value: 'pub' },
+					{ type: 'string', value: 'crate' }
+				]
+			}
 		});
 		const linked = link(raw);
 		// Hidden choice of strings → already an enum from Evaluate
 		// But if it arrives as a choice, Link should detect it
-		expect(linked.rules["_visibility"]!.type).toBe("enum");
+		expect(linked.rules['_visibility']!.type).toBe('enum');
 	});
 });
 
-describe("Link — clause detection", () => {
-	it("detects optional(seq(STRING, FIELD, ...)) as a clause", () => {
+describe('Link — clause detection', () => {
+	it('detects optional(seq(STRING, FIELD, ...)) as a clause', () => {
 		const raw = makeRaw({
 			function_def: {
-				type: "seq",
+				type: 'seq',
 				members: [
-					{ type: "string", value: "fn" },
+					{ type: 'string', value: 'fn' },
 					{
-						type: "optional",
+						type: 'optional',
 						content: {
-							type: "seq",
+							type: 'seq',
 							members: [
-								{ type: "string", value: "->" },
-								{ type: "field", name: "return_type", content: { type: "symbol", name: "type" } },
-							],
-						},
-					},
-				],
+								{ type: 'string', value: '->' },
+								{
+									type: 'field',
+									name: 'return_type',
+									content: { type: 'symbol', name: 'type' }
+								}
+							]
+						}
+					}
+				]
 			},
-			type: { type: "pattern", value: "[A-Z]\\w*" },
+			type: { type: 'pattern', value: '[A-Z]\\w*' }
 		});
 		const linked = link(raw);
-		const fnDef = linked.rules["function_def"] as any;
+		const fnDef = linked.rules['function_def'] as any;
 		// The optional should be detected as a clause
 		const optionalMember = fnDef.members[1];
-		expect(optionalMember.type).toBe("clause");
+		expect(optionalMember.type).toBe('clause');
 	});
 });
 
-describe("Link — field provenance", () => {
-	it("preserves field source from override", () => {
+describe('Link — field provenance', () => {
+	it('preserves field source from override', () => {
 		const raw = makeRaw({
 			item: {
-				type: "seq",
+				type: 'seq',
 				members: [
 					{
-						type: "field",
-						name: "body",
-						content: { type: "symbol", name: "block" },
-						source: "override",
-					},
-				],
+						type: 'field',
+						name: 'body',
+						content: { type: 'symbol', name: 'block' },
+						source: 'override'
+					}
+				]
 			},
-			block: { type: "string", value: "{}" },
+			block: { type: 'string', value: '{}' }
 		});
 		const linked = link(raw);
-		const item = linked.rules["item"] as any;
-		expect(item.members[0].source).toBe("override");
+		const item = linked.rules['item'] as any;
+		expect(item.members[0].source).toBe('override');
 	});
 });
 
-describe("Link — output contract", () => {
-	it("returns supertypes as a Set", () => {
+describe('Link — output contract', () => {
+	it('returns supertypes as a Set', () => {
 		const raw = makeRaw(
 			{
 				_expression: {
-					type: "choice",
-					members: [{ type: "symbol", name: "id" }],
+					type: 'choice',
+					members: [{ type: 'symbol', name: 'id' }]
 				},
-				id: { type: "pattern", value: "[a-z]+" },
+				id: { type: 'pattern', value: '[a-z]+' }
 			},
-			{ supertypes: ["_expression"] },
+			{ supertypes: ['_expression'] }
 		);
 		const linked = link(raw);
 		expect(linked.supertypes).toBeInstanceOf(Set);
-		expect(linked.supertypes.has("_expression")).toBe(true);
+		expect(linked.supertypes.has('_expression')).toBe(true);
 	});
 
-	it("returns word from raw grammar", () => {
-		const raw = makeRaw({ id: { type: "pattern", value: "[a-z]+" } }, { word: "id" });
+	it('returns word from raw grammar', () => {
+		const raw = makeRaw(
+			{ id: { type: 'pattern', value: '[a-z]+' } },
+			{ word: 'id' }
+		);
 		const linked = link(raw);
-		expect(linked.word).toBe("id");
+		expect(linked.word).toBe('id');
 	});
 });
 
-describe("Link — reference graph enrichment", () => {
-	it("enrichPositions assigns position to refs by walking seq members", () => {
+describe('Link — reference graph enrichment', () => {
+	it('enrichPositions assigns position to refs by walking seq members', () => {
 		const rules: Record<string, Rule> = {
 			item: {
-				type: "seq",
+				type: 'seq',
 				members: [
-					{ type: "string", value: "fn" },
-					{ type: "symbol", name: "name" },
-					{ type: "symbol", name: "body" },
-				],
-			},
+					{ type: 'string', value: 'fn' },
+					{ type: 'symbol', name: 'name' },
+					{ type: 'symbol', name: 'body' }
+				]
+			}
 		};
 		const refs: SymbolRef[] = [
-			{ refType: "symbol", from: "item", to: "name" },
-			{ refType: "symbol", from: "item", to: "body" },
+			{ refType: 'symbol', from: 'item', to: 'name' },
+			{ refType: 'symbol', from: 'item', to: 'body' }
 		];
 		enrichPositions(rules, refs);
 		expect(refs[0]!.position).toBe(1);
 		expect(refs[1]!.position).toBe(2);
 	});
 
-	it("computeParentSets groups refs by target symbol", () => {
+	it('computeParentSets groups refs by target symbol', () => {
 		const refs: SymbolRef[] = [
-			{ refType: "symbol", from: "a", to: "block" },
-			{ refType: "symbol", from: "b", to: "block" },
-			{ refType: "symbol", from: "a", to: "expr" },
+			{ refType: 'symbol', from: 'a', to: 'block' },
+			{ refType: 'symbol', from: 'b', to: 'block' },
+			{ refType: 'symbol', from: 'a', to: 'expr' }
 		];
 		const parents = computeParentSets(refs);
-		expect(parents.get("block")).toHaveLength(2);
-		expect(parents.get("expr")).toHaveLength(1);
+		expect(parents.get('block')).toHaveLength(2);
+		expect(parents.get('expr')).toHaveLength(1);
 	});
 });
 
-describe("Link — T019a cycle detection", () => {
-	it("detects self-referential hidden rule without crashing", () => {
+describe('Link — T019a cycle detection', () => {
+	it('detects self-referential hidden rule without crashing', () => {
 		const raw = makeRaw({
 			_recursive: {
-				type: "choice",
+				type: 'choice',
 				members: [
-					{ type: "symbol", name: "_recursive" },
-					{ type: "string", value: "base" },
-				],
-			},
+					{ type: 'symbol', name: '_recursive' },
+					{ type: 'string', value: 'base' }
+				]
+			}
 		});
 		// Should not throw — cycles are flagged, not fatal
 		const linked = link(raw);
-		expect(linked.rules["_recursive"]).toBeDefined();
+		expect(linked.rules['_recursive']).toBeDefined();
 	});
 });
 
-describe("Link — T016a hidden choice classification", () => {
-	it("classifies hidden choice of symbols as supertype", () => {
+describe('Link — T016a hidden choice classification', () => {
+	it('classifies hidden choice of symbols as supertype', () => {
 		const refs: SymbolRef[] = [
-			{ refType: "symbol", from: "a", to: "_helper" },
-			{ refType: "symbol", from: "b", to: "_helper" },
-			{ refType: "symbol", from: "c", to: "_helper" },
+			{ refType: 'symbol', from: 'a', to: '_helper' },
+			{ refType: 'symbol', from: 'b', to: '_helper' },
+			{ refType: 'symbol', from: 'c', to: '_helper' }
 		];
 		const raw = makeRaw(
 			{
 				_helper: {
-					type: "choice",
+					type: 'choice',
 					members: [
-						{ type: "symbol", name: "x" },
-						{ type: "symbol", name: "y" },
-					],
+						{ type: 'symbol', name: 'x' },
+						{ type: 'symbol', name: 'y' }
+					]
 				},
-				a: { type: "symbol", name: "_helper" },
-				b: { type: "symbol", name: "_helper" },
-				c: { type: "symbol", name: "_helper" },
-				x: { type: "pattern", value: "x" },
-				y: { type: "pattern", value: "y" },
+				a: { type: 'symbol', name: '_helper' },
+				b: { type: 'symbol', name: '_helper' },
+				c: { type: 'symbol', name: '_helper' },
+				x: { type: 'pattern', value: 'x' },
+				y: { type: 'pattern', value: 'y' }
 			},
-			{ references: refs },
+			{ references: refs }
 		);
 		const linked = link(raw);
 		// All hidden choices → supertype (Link classifies, Assemble passes through)
-		expect(linked.rules["_helper"]!.type).toBe("supertype");
+		expect(linked.rules['_helper']!.type).toBe('supertype');
 	});
 });
 
-describe("Link — variant tagging + polymorph promotion", () => {
-	it("leaves visible choice members un-wrapped — named variants are the grammar-author path", () => {
+describe('Link — variant tagging + polymorph promotion', () => {
+	it('leaves visible choice members un-wrapped — named variants are the grammar-author path', () => {
 		// Pre-spec-013 Link ran `tagAllRulesVariants` to auto-wrap every
 		// visible choice branch in `variant('form_N' | leading-literal)`.
 		// That was a heuristic for polymorph-promotion candidacy; with the
@@ -310,66 +329,77 @@ describe("Link — variant tagging + polymorph promotion", () => {
 		// via `applyOverridePolymorphs` on user-declared variants only.
 		const raw = makeRaw({
 			statement: {
-				type: "choice",
+				type: 'choice',
 				members: [
 					{
-						type: "seq",
+						type: 'seq',
 						members: [
-							{ type: "string", value: "if" },
-							{ type: "symbol", name: "expr" },
-						],
+							{ type: 'string', value: 'if' },
+							{ type: 'symbol', name: 'expr' }
+						]
 					},
 					{
-						type: "seq",
+						type: 'seq',
 						members: [
-							{ type: "string", value: "while" },
-							{ type: "symbol", name: "expr" },
-						],
-					},
-				],
+							{ type: 'string', value: 'while' },
+							{ type: 'symbol', name: 'expr' }
+						]
+					}
+				]
 			},
-			expr: { type: "pattern", value: ".*" },
+			expr: { type: 'pattern', value: '.*' }
 		});
 		const linked = link(raw);
-		const stmt = linked.rules["statement"] as any;
-		expect(stmt.type).toBe("choice");
-		expect(stmt.members.every((m: any) => m.type === "seq")).toBe(true);
+		const stmt = linked.rules['statement'] as any;
+		expect(stmt.type).toBe('choice');
+		expect(stmt.members.every((m: any) => m.type === 'seq')).toBe(true);
 	});
 
-	it("promotePolymorph detects heterogeneous-field choices (suggestion-only, no mutation)", () => {
+	it('promotePolymorph detects heterogeneous-field choices (suggestion-only, no mutation)', () => {
 		const raw = makeRaw({
 			assignment: {
-				type: "choice",
+				type: 'choice',
 				members: [
 					{
-						type: "seq",
+						type: 'seq',
 						members: [
-							{ type: "string", value: "=" },
-							{ type: "field", name: "left", content: { type: "symbol", name: "expr" } },
-						],
+							{ type: 'string', value: '=' },
+							{
+								type: 'field',
+								name: 'left',
+								content: { type: 'symbol', name: 'expr' }
+							}
+						]
 					},
 					{
-						type: "seq",
+						type: 'seq',
 						members: [
-							{ type: "string", value: ":" },
-							{ type: "field", name: "right", content: { type: "symbol", name: "expr" } },
-						],
-					},
-				],
+							{ type: 'string', value: ':' },
+							{
+								type: 'field',
+								name: 'right',
+								content: { type: 'symbol', name: 'expr' }
+							}
+						]
+					}
+				]
 			},
-			expr: { type: "pattern", value: ".*" },
+			expr: { type: 'pattern', value: '.*' }
 		});
 		const linked = link(raw);
-		const assignment = linked.rules["assignment"] as any;
-		expect(assignment.type).not.toBe("polymorph");
+		const assignment = linked.rules['assignment'] as any;
+		expect(assignment.type).not.toBe('polymorph');
 		expect(
 			linked.derivations.promotedRules.some(
-				(p: any) => p.kind === "assignment" && p.classification === "polymorph" && !p.applied,
-			),
+				(p: any) =>
+					p.kind === 'assignment' &&
+					p.classification === 'polymorph' &&
+					!p.applied
+			)
 		).toBe(true);
 	});
 
-	it("applyOverridePolymorphs pushes ambient scaffold into variant-child hidden rules when they live deep in the parent rule", () => {
+	it('applyOverridePolymorphs pushes ambient scaffold into variant-child hidden rules when they live deep in the parent rule', () => {
 		// visibility_modifier-shaped case: variant aliases buried in
 		// `optional(seq('(', inner_choice, ')'))`. `findVariantChoice`
 		// only sees the outermost (tagVariants-wrapped) choice whose
@@ -386,90 +416,106 @@ describe("Link — variant tagging + polymorph promotion", () => {
 		// would otherwise restructure this fixture.
 		const rules: Record<string, Rule> = {
 			visibility_modifier: {
-				type: "choice",
+				type: 'choice',
 				members: [
-					{ type: "variant", name: "crate", content: { type: "symbol", name: "crate" } },
 					{
-						type: "variant",
-						name: "form1",
+						type: 'variant',
+						name: 'crate',
+						content: { type: 'symbol', name: 'crate' }
+					},
+					{
+						type: 'variant',
+						name: 'form1',
 						content: {
-							type: "seq",
+							type: 'seq',
 							members: [
-								{ type: "field", name: "pub", content: { type: "symbol", name: "_kw_pub" } },
 								{
-									type: "optional",
+									type: 'field',
+									name: 'pub',
+									content: { type: 'symbol', name: '_kw_pub' }
+								},
+								{
+									type: 'optional',
 									content: {
-										type: "seq",
+										type: 'seq',
 										members: [
-											{ type: "string", value: "(" },
+											{ type: 'string', value: '(' },
 											{
-												type: "choice",
+												type: 'choice',
 												members: [
 													{
-														type: "alias",
+														type: 'alias',
 														named: true,
-														value: "visibility_modifier_pub_self",
-														content: { type: "symbol", name: "_visibility_modifier_pub_self" },
+														value: 'visibility_modifier_pub_self',
+														content: {
+															type: 'symbol',
+															name: '_visibility_modifier_pub_self'
+														}
 													},
 													{
-														type: "alias",
+														type: 'alias',
 														named: true,
-														value: "visibility_modifier_pub_super",
-														content: { type: "symbol", name: "_visibility_modifier_pub_super" },
-													},
-												],
+														value: 'visibility_modifier_pub_super',
+														content: {
+															type: 'symbol',
+															name: '_visibility_modifier_pub_super'
+														}
+													}
+												]
 											},
-											{ type: "string", value: ")" },
-										],
-									},
-								},
-							],
-						},
-					},
-				],
+											{ type: 'string', value: ')' }
+										]
+									}
+								}
+							]
+						}
+					}
+				]
 			},
-			_visibility_modifier_pub_self: { type: "symbol", name: "self" },
-			_visibility_modifier_pub_super: { type: "symbol", name: "super" },
+			_visibility_modifier_pub_self: { type: 'symbol', name: 'self' },
+			_visibility_modifier_pub_super: { type: 'symbol', name: 'super' }
 		};
 		const derivations: DerivationLog = {
 			inferredFields: [],
 			promotedRules: [],
-			repeatedShapes: [],
+			repeatedShapes: []
 		};
 		applyOverridePolymorphs(
 			rules,
 			[
-				{ parent: "visibility_modifier", child: "pub_self" },
-				{ parent: "visibility_modifier", child: "pub_super" },
+				{ parent: 'visibility_modifier', child: 'pub_self' },
+				{ parent: 'visibility_modifier', child: 'pub_super' }
 			],
-			derivations,
+			derivations
 		);
 		// Parent rule stays as a choice (not replaced by flat polymorph).
-		expect(rules["visibility_modifier"]!.type).toBe("choice");
+		expect(rules['visibility_modifier']!.type).toBe('choice');
 		// Each variant-child hidden rule now has its body wrapped in the
 		// ambient `(` / `)` literals that used to flank the inner choice.
-		const selfBody = rules["_visibility_modifier_pub_self"]!;
-		expect(selfBody.type).toBe("seq");
-		if (selfBody.type !== "seq") throw new Error("unreachable");
-		expect(selfBody.members.map((m) => (m.type === "string" ? m.value : m.type))).toEqual([
-			"(",
-			"symbol",
-			")",
-		]);
-		const superBody = rules["_visibility_modifier_pub_super"]!;
-		expect(superBody.type).toBe("seq");
+		const selfBody = rules['_visibility_modifier_pub_self']!;
+		expect(selfBody.type).toBe('seq');
+		if (selfBody.type !== 'seq') throw new Error('unreachable');
+		expect(
+			selfBody.members.map((m) => (m.type === 'string' ? m.value : m.type))
+		).toEqual(['(', 'symbol', ')']);
+		const superBody = rules['_visibility_modifier_pub_super']!;
+		expect(superBody.type).toBe('seq');
 		// Variant-child derivations emitted for downstream use.
 		const derivedKinds = derivations.promotedRules
 			.filter(
 				(p) =>
-					p.kind === "visibility_modifier_pub_self" || p.kind === "visibility_modifier_pub_super",
+					p.kind === 'visibility_modifier_pub_self' ||
+					p.kind === 'visibility_modifier_pub_super'
 			)
 			.map((p) => p.kind)
 			.sort();
-		expect(derivedKinds).toEqual(["visibility_modifier_pub_self", "visibility_modifier_pub_super"]);
+		expect(derivedKinds).toEqual([
+			'visibility_modifier_pub_self',
+			'visibility_modifier_pub_super'
+		]);
 	});
 
-	it("applyOverridePolymorphs replaces rule when registered variant children DO match found choice", () => {
+	it('applyOverridePolymorphs replaces rule when registered variant children DO match found choice', () => {
 		// Positive case mirroring python's `assignment` shape — the choice
 		// IS at the top level after `tagVariants` strips its variant wraps,
 		// and each member is `symbol(${parent}_${child})`. Expect the rule
@@ -477,49 +523,65 @@ describe("Link — variant tagging + polymorph promotion", () => {
 		const raw = makeRaw(
 			{
 				assignment: {
-					type: "choice",
+					type: 'choice',
 					members: [
-						{ type: "symbol", name: "assignment_eq" },
-						{ type: "symbol", name: "assignment_type" },
-					],
+						{ type: 'symbol', name: 'assignment_eq' },
+						{ type: 'symbol', name: 'assignment_type' }
+					]
 				},
 				assignment_eq: {
-					type: "seq",
+					type: 'seq',
 					members: [
-						{ type: "field", name: "left", content: { type: "symbol", name: "expr" } },
-						{ type: "string", value: "=" },
-						{ type: "field", name: "right", content: { type: "symbol", name: "expr" } },
-					],
+						{
+							type: 'field',
+							name: 'left',
+							content: { type: 'symbol', name: 'expr' }
+						},
+						{ type: 'string', value: '=' },
+						{
+							type: 'field',
+							name: 'right',
+							content: { type: 'symbol', name: 'expr' }
+						}
+					]
 				},
 				assignment_type: {
-					type: "seq",
+					type: 'seq',
 					members: [
-						{ type: "field", name: "left", content: { type: "symbol", name: "expr" } },
-						{ type: "string", value: ":" },
-						{ type: "field", name: "typ", content: { type: "symbol", name: "expr" } },
-					],
+						{
+							type: 'field',
+							name: 'left',
+							content: { type: 'symbol', name: 'expr' }
+						},
+						{ type: 'string', value: ':' },
+						{
+							type: 'field',
+							name: 'typ',
+							content: { type: 'symbol', name: 'expr' }
+						}
+					]
 				},
-				expr: { type: "pattern", value: ".*" },
+				expr: { type: 'pattern', value: '.*' }
 			},
 			{
 				polymorphVariants: [
-					{ parent: "assignment", child: "eq" },
-					{ parent: "assignment", child: "type" },
-				],
-			},
+					{ parent: 'assignment', child: 'eq' },
+					{ parent: 'assignment', child: 'type' }
+				]
+			}
 		);
 		const linked = link(raw);
-		expect(linked.rules["assignment"]!.type).toBe("polymorph");
-		const poly = linked.rules["assignment"] as {
-			type: "polymorph";
+		expect(linked.rules['assignment']!.type).toBe('polymorph');
+		const poly = linked.rules['assignment'] as {
+			type: 'polymorph';
 			forms: { name: string }[];
 			source: string;
 		};
-		expect(poly.source).toBe("override");
-		expect(poly.forms.map((f) => f.name).sort()).toEqual(["eq", "type"]);
+		expect(poly.source).toBe('override');
+		expect(poly.forms.map((f) => f.name).sort()).toEqual(['eq', 'type']);
 	});
 
-	it("homogeneous-field choices stay as raw choice (not polymorph)", () => {
+	it('homogeneous-field choices stay as raw choice (not polymorph)', () => {
 		// Two branches, both with a single `value` field — same field set
 		// → not a polymorph. Post-spec-013 Link doesn't auto-wrap them
 		// in `variant(...)`; the downstream simplify `mergeChoiceBranches`
@@ -527,30 +589,38 @@ describe("Link — variant tagging + polymorph promotion", () => {
 		// flat seq with per-position unioned contents.
 		const raw = makeRaw({
 			literal: {
-				type: "choice",
+				type: 'choice',
 				members: [
 					{
-						type: "seq",
+						type: 'seq',
 						members: [
-							{ type: "string", value: "int" },
-							{ type: "field", name: "value", content: { type: "symbol", name: "num" } },
-						],
+							{ type: 'string', value: 'int' },
+							{
+								type: 'field',
+								name: 'value',
+								content: { type: 'symbol', name: 'num' }
+							}
+						]
 					},
 					{
-						type: "seq",
+						type: 'seq',
 						members: [
-							{ type: "string", value: "float" },
-							{ type: "field", name: "value", content: { type: "symbol", name: "num" } },
-						],
-					},
-				],
+							{ type: 'string', value: 'float' },
+							{
+								type: 'field',
+								name: 'value',
+								content: { type: 'symbol', name: 'num' }
+							}
+						]
+					}
+				]
 			},
-			num: { type: "pattern", value: "[0-9]+" },
+			num: { type: 'pattern', value: '[0-9]+' }
 		});
 		const linked = link(raw);
-		const literal = linked.rules["literal"] as any;
-		expect(literal.type).toBe("choice");
+		const literal = linked.rules['literal'] as any;
+		expect(literal.type).toBe('choice');
 		// No variant wrappers — branches travel as bare seqs through Link.
-		expect(literal.members.every((m: any) => m.type === "seq")).toBe(true);
+		expect(literal.members.every((m: any) => m.type === 'seq')).toBe(true);
 	});
 });

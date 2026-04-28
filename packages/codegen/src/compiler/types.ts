@@ -19,8 +19,8 @@
  * too; splitting it into `./node-map.ts` is a later step.
  */
 
-import type { Rule, SymbolRef } from "./rule.ts";
-import type { AssembledNode } from "./node-map.ts";
+import type { Rule, SymbolRef } from './rule.ts';
+import type { AssembledNode } from './node-map.ts';
 
 /**
  * One entry in the {@link LinkedGrammar.polymorphVariants} /
@@ -43,7 +43,7 @@ export interface PolymorphVariant {
 // External-scanner role binding
 // ---------------------------------------------------------------------------
 
-export type ExternalRole = { role: "indent" | "dedent" | "newline" };
+export type ExternalRole = { role: 'indent' | 'dedent' | 'newline' };
 
 // ---------------------------------------------------------------------------
 // Phase 1 — Evaluate output
@@ -120,7 +120,7 @@ export interface SuggestedOverride {
 	/** Human-readable derivation tag — `field-name-inference: 6/6 ...`. */
 	readonly derivation: string;
 	/** Confidence based on agreement ratio. */
-	readonly confidence: "high" | "medium" | "low";
+	readonly confidence: 'high' | 'medium' | 'low';
 }
 
 /**
@@ -158,7 +158,7 @@ export interface InferredFieldEntry {
 	/** Symbol being wrapped (the `to` in `field('name', $.to)`). */
 	readonly targetSymbol: string;
 	/** Confidence tier based on cross-parent agreement ratio. */
-	readonly confidence: "high" | "medium" | "low";
+	readonly confidence: 'high' | 'medium' | 'low';
 	/** Numeric agreement — e.g. 10/10 → 1.0, 6/7 → ~0.857. */
 	readonly agreement: number;
 	/** Total named refs that the inference was measured against. */
@@ -175,14 +175,14 @@ export interface RepeatedShapeEntry {
 	/** Parent rules whose fields carry this exact kind set. */
 	readonly parents: readonly string[];
 	/** Suggested shape: 'supertype' for choice-of-named, 'group' for heterogeneous. */
-	readonly shape: "supertype" | "group";
+	readonly shape: 'supertype' | 'group';
 }
 
 export interface PromotedRuleEntry {
 	/** Kind whose rule was classified via promotion. */
 	readonly kind: string;
 	/** What it was promoted to. */
-	readonly classification: "enum" | "supertype" | "terminal" | "polymorph";
+	readonly classification: 'enum' | 'supertype' | 'terminal' | 'polymorph';
 	/** True if Link kept the promotion; false if held back by `include`. */
 	readonly applied: boolean;
 	/**
@@ -236,8 +236,8 @@ export interface LinkedGrammar {
  * `grammar` and `override` are always-on — user-authored content cannot
  * be filtered out.
  */
-export type DerivedRuleSource = "promoted";
-export type DerivedFieldSource = "enriched" | "inlined" | "inferred";
+export type DerivedRuleSource = 'promoted';
+export type DerivedFieldSource = 'enriched' | 'inlined' | 'inferred';
 
 export interface IncludeFilter {
 	/** Derived rule classifications to KEEP. Defaults to all. */
@@ -348,10 +348,12 @@ export interface NodeMap {
 	readonly refineForms?: Map<string, RefineForm[]>;
 }
 
-export function computePolymorphFormKinds(nodes: Map<string, AssembledNode>): Set<string> {
+export function computePolymorphFormKinds(
+	nodes: Map<string, AssembledNode>
+): Set<string> {
 	const result = new Set<string>();
 	for (const [, node] of nodes) {
-		if (node.modelType !== "polymorph") continue;
+		if (node.modelType !== 'polymorph') continue;
 		// All polymorph form kinds need to be skipped from direct kind
 		// iteration — both promoted (synthesized `${parent}_${variant}`)
 		// and override (disambiguated `${parent}__form_${variant}`).

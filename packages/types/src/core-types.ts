@@ -54,7 +54,7 @@ export type NodeId = number & { readonly [nodeIdBrand]: true };
 export interface AnyNodeData {
 	$type: string;
 	/** Which producer emitted this node. */
-	$source?: "ts" | "sg" | "factory";
+	$source?: 'ts' | 'sg' | 'factory';
 	/** Variant subtype name — set by factory, absent on readNode output. */
 	$variant?: string;
 	$fields?: { readonly [key: string]: NodeFieldValue };
@@ -87,11 +87,14 @@ export interface AnyNodeData {
 	$named?: boolean;
 }
 
-export type NativeFieldValue = NativeNodeData | readonly NativeNodeData[] | string;
+export type NativeFieldValue =
+	| NativeNodeData
+	| readonly NativeNodeData[]
+	| string;
 
 export interface NativeNodeData {
 	readonly $type: string;
-	readonly $source: "ts" | "sg" | "factory";
+	readonly $source: 'ts' | 'sg' | 'factory';
 	readonly $named: boolean;
 	readonly $fields?: { readonly [key: string]: NativeFieldValue };
 	readonly $children?: readonly NativeNodeData[];
@@ -253,4 +256,6 @@ export interface Renderable {
 }
 
 /** Extract type string(s) from a navigation node type. */
-export type KindOf<T> = T extends { readonly type: infer K extends string } ? K : never;
+export type KindOf<T> = T extends { readonly type: infer K extends string }
+	? K
+	: never;

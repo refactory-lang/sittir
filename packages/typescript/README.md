@@ -13,13 +13,13 @@ pnpm add @sittir/typescript
 ### Fluent API
 
 ```ts
-import { ir } from "@sittir/typescript";
+import { ir } from '@sittir/typescript';
 
 const node = ir
-	.functionDeclaration(ir.identifier("greet"))
+	.functionDeclaration(ir.identifier('greet'))
 	.parameters(ir.formalParameters())
-	.returnType(ir.typeAnnotation(ir.predefinedType("string")))
-	.body(ir.statementBlock(ir.return_().children(ir.identifier("hello"))));
+	.returnType(ir.typeAnnotation(ir.predefinedType('string')))
+	.body(ir.statementBlock(ir.return_().children(ir.identifier('hello'))));
 
 node.renderImpl(); // "function greet ( ) : string { return hello }"
 ```
@@ -29,25 +29,25 @@ node.renderImpl(); // "function greet ( ) : string { return hello }"
 ```ts
 // Strings auto-resolve to LeafBuilder for leaf-typed fields
 const fn = ir.function_.from({
-	name: "greet", // string → LeafBuilder('identifier', 'greet')
+	name: 'greet', // string → LeafBuilder('identifier', 'greet')
 	parameters: ir.formalParameters(),
-	body: ir.statementBlock(),
+	body: ir.statementBlock()
 });
 ```
 
 ### Leaf Builders
 
 ```ts
-ir.identifier("x"); // LeafBuilder<'identifier'>
-ir.typeIdentifier("Props"); // LeafBuilder<'type_identifier'>
-ir.predefinedType("string"); // LeafBuilder<'predefined_type'>
-ir.propertyIdentifier("name");
+ir.identifier('x'); // LeafBuilder<'identifier'>
+ir.typeIdentifier('Props'); // LeafBuilder<'type_identifier'>
+ir.predefinedType('string'); // LeafBuilder<'predefined_type'>
+ir.propertyIdentifier('name');
 ```
 
 ### CST Round-Trip
 
 ```ts
-import { fromCST, edit } from "@sittir/typescript";
+import { fromCST, edit } from '@sittir/typescript';
 
 const builder = fromCST(treeSitterNode);
 const patch = edit(treeSitterNode, (b) => b.body(ir.statementBlock()));
@@ -61,10 +61,10 @@ import type {
 	FunctionDeclaration,
 	Identifier, // leaf type
 	Expression, // supertype union
-	Statement, // supertype union
-} from "@sittir/typescript";
+	Statement // supertype union
+} from '@sittir/typescript';
 
-import type { FunctionBuilder } from "@sittir/typescript";
+import type { FunctionBuilder } from '@sittir/typescript';
 ```
 
 ## TSX
@@ -72,11 +72,11 @@ import type { FunctionBuilder } from "@sittir/typescript";
 TSX is available as a subpath export, mirroring how `tree-sitter-typescript` structures its grammar (one package, two entry points):
 
 ```ts
-import { ir } from "@sittir/typescript/tsx";
+import { ir } from '@sittir/typescript/tsx';
 
 const el = ir
-	.jsxElement(ir.jsxOpeningElement(ir.identifier("div")))
-	.closingElement(ir.jsxClosingElement(ir.identifier("div")));
+	.jsxElement(ir.jsxOpeningElement(ir.identifier('div')))
+	.closingElement(ir.jsxClosingElement(ir.identifier('div')));
 
 el.renderImpl(); // "< div > < / div >"
 ```

@@ -33,13 +33,13 @@
  * migrate independently.
  */
 
-import type { PolymorphVariant } from "../../compiler/types.ts";
-import type { RuntimeRule } from "../runtime-shapes.ts";
-import { variant as variantPlaceholder } from "../primitives/variant.ts";
-import { transform as transformFn } from "../transform/transform.ts";
-import { isFieldPlaceholder } from "../primitives/field.ts";
-import { isAliasPlaceholder } from "../primitives/alias.ts";
-import { isVariantPlaceholder } from "../primitives/variant.ts";
+import type { PolymorphVariant } from '../../compiler/types.ts';
+import type { RuntimeRule } from '../runtime-shapes.ts';
+import { variant as variantPlaceholder } from '../primitives/variant.ts';
+import { transform as transformFn } from '../transform/transform.ts';
+import { isFieldPlaceholder } from '../primitives/field.ts';
+import { isAliasPlaceholder } from '../primitives/alias.ts';
+import { isVariantPlaceholder } from '../primitives/variant.ts';
 
 // ---------------------------------------------------------------------------
 // WireContext + module-level current pointer
@@ -99,7 +99,10 @@ export function getCurrentWireContext(): WireContext | null {
  * `true` when the context absorbed the call, `false` when there is no
  * active context (caller falls back to the legacy accumulator).
  */
-export function wireRegisterSyntheticRule(name: string, content: RuntimeRule): boolean {
+export function wireRegisterSyntheticRule(
+	name: string,
+	content: RuntimeRule
+): boolean {
 	if (!currentContext) return false;
 	currentContext.deposits.set(name, content);
 	return true;
@@ -120,10 +123,13 @@ export function wireRegisterSyntheticRule(name: string, content: RuntimeRule): b
  * suffix twice for one parent without the second entry overwriting
  * the first at JS object-literal level.
  */
-export function wireRegisterPolymorphVariant(parent: string, child: string): boolean {
+export function wireRegisterPolymorphVariant(
+	parent: string,
+	child: string
+): boolean {
 	if (!currentContext) return false;
 	const exists = currentContext.polymorphVariants.some(
-		(v) => v.parent === parent && v.child === child,
+		(v) => v.parent === parent && v.child === child
 	);
 	if (!exists) {
 		currentContext.polymorphVariants.push({ parent, child });
@@ -138,8 +144,10 @@ export function wireRegisterPolymorphVariant(parent: string, child: string): boo
 export function wireRegisterConflict(names: readonly string[]): boolean {
 	if (!currentContext) return false;
 	if (names.length === 0) return true;
-	const key = names.join("\u0000");
-	const exists = currentContext.conflictGroups.some((g) => g.join("\u0000") === key);
+	const key = names.join('\u0000');
+	const exists = currentContext.conflictGroups.some(
+		(g) => g.join('\u0000') === key
+	);
 	if (!exists) {
 		currentContext.conflictGroups.push([...names]);
 	}
@@ -160,7 +168,10 @@ export function wireRegisterConflict(names: readonly string[]): boolean {
  * Returns `true` when the context absorbed the call, `false` when
  * there is no active context.
  */
-export function wireRegisterRefineForms(kind: string, forms: RefineForm[]): boolean {
+export function wireRegisterRefineForms(
+	kind: string,
+	forms: RefineForm[]
+): boolean {
 	if (!currentContext) return false;
 	currentContext.refineForms.set(kind, forms);
 	return true;
@@ -183,14 +194,14 @@ export function wireGetCurrentRuleKind(): string | null {
  */
 export function withWireContext<T>(
 	ruleKind: string | null,
-	fn: (ctx: WireContext) => T,
+	fn: (ctx: WireContext) => T
 ): { result: T; ctx: WireContext } {
 	const ctx: WireContext = {
 		deposits: new Map(),
 		polymorphVariants: [],
 		conflictGroups: [],
 		refineForms: new Map(),
-		currentRuleKind: ruleKind,
+		currentRuleKind: ruleKind
 	};
 	const prev = currentContext;
 	currentContext = ctx;
@@ -227,12 +238,16 @@ export function withWireContext<T>(
  * keys, preserving the pre-generics behaviour of every call site that
  * doesn't supply a base type.
  */
-export type GrammarBase = Record<string, unknown> | { readonly rules: Record<string, unknown> };
+export type GrammarBase =
+	| Record<string, unknown>
+	| { readonly rules: Record<string, unknown> };
 
 /** @internal — extract the rule-kind string union from a base grammar.
  *  Handles both shapes: `{ rules: { … } }` (tree-sitter native) and
  *  flat top-level keys (sittir-emitted `<Lang>Grammar`). */
-type BaseKind<Base extends GrammarBase> = Base extends { readonly rules: infer R }
+type BaseKind<Base extends GrammarBase> = Base extends {
+	readonly rules: infer R;
+}
 	? keyof R & string
 	: keyof Base & string;
 
@@ -295,7 +310,8 @@ export type PatchMap = Record<string, unknown>;
  */
 export interface WireConfig<Base extends GrammarBase = GrammarBase> {
 	readonly name?: string;
-	readonly rules: Partial<Record<BaseKind<Base>, RuleFn>> & Record<string, RuleFn>;
+	readonly rules: Partial<Record<BaseKind<Base>, RuleFn>> &
+		Record<string, RuleFn>;
 	readonly polymorphs?: PolymorphsConfig<Base>;
 	readonly transforms?: TransformsConfig<Base>;
 	readonly conflicts?: ConflictsFn;
@@ -332,7 +348,11 @@ export interface WiredOpts {
 }
 
 type RuleFn = (this: unknown, $: unknown, previous?: unknown) => unknown;
-type ConflictsFn = (this: unknown, $: unknown, previous?: unknown[][]) => unknown[][];
+type ConflictsFn = (
+	this: unknown,
+	$: unknown,
+	previous?: unknown[][]
+) => unknown[][];
 type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 
 /**
@@ -345,13 +365,15 @@ type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
  *   `Object.keys()` snapshot; content resolves via deferred-content fns
  *   as tree-sitter iterates.
  */
-export function wire<Base extends GrammarBase = GrammarBase>(config: WireConfig<Base>): WiredOpts {
+export function wire<Base extends GrammarBase = GrammarBase>(
+	config: WireConfig<Base>
+): WiredOpts {
 	const context: WireContext = {
 		deposits: new Map(),
 		polymorphVariants: [],
 		conflictGroups: [],
 		refineForms: new Map(),
-		currentRuleKind: null,
+		currentRuleKind: null
 	};
 
 	const polymorphs = config.polymorphs ?? {};
@@ -385,12 +407,12 @@ export function wire<Base extends GrammarBase = GrammarBase>(config: WireConfig<
 	const wired: WiredOpts = {
 		...config,
 		rules: outRules,
-		...(conflicts === undefined ? {} : { conflicts }),
+		...(conflicts === undefined ? {} : { conflicts })
 	};
-	Object.defineProperty(wired, "__wireContext__", {
+	Object.defineProperty(wired, '__wireContext__', {
 		value: context,
 		enumerable: false,
-		configurable: true,
+		configurable: true
 	});
 	return wired;
 }
@@ -415,7 +437,7 @@ export function wire<Base extends GrammarBase = GrammarBase>(config: WireConfig<
 function composeOrSynthesizePolymorphParents(
 	rules: Record<string, RuleFn>,
 	polymorphs: PolymorphsConfig,
-	context: WireContext,
+	context: WireContext
 ): void {
 	for (const [parent, armMap] of Object.entries(polymorphs)) {
 		if (!armMap) continue;
@@ -442,14 +464,18 @@ function buildPolymorphParentFn(
 	parent: string,
 	armMap: Record<string, string>,
 	userFn: RuleFn | undefined,
-	context: WireContext,
+	context: WireContext
 ): RuleFn {
 	const patches: Record<string, unknown> = {};
 	for (const [path, suffix] of Object.entries(armMap)) {
 		patches[path] = variantPlaceholder(suffix);
 	}
-	const isHidden = parent.startsWith("_");
-	return function wiredPolymorphParent(this: unknown, $: unknown, original: unknown): unknown {
+	const isHidden = parent.startsWith('_');
+	return function wiredPolymorphParent(
+		this: unknown,
+		$: unknown,
+		original: unknown
+	): unknown {
 		let base: unknown;
 		if (userFn) {
 			base = userFn.call(this, $, original);
@@ -458,7 +484,10 @@ function buildPolymorphParentFn(
 		} else {
 			base = original;
 		}
-		return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, patches);
+		return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(
+			base,
+			patches
+		);
 	};
 }
 
@@ -479,7 +508,7 @@ function buildPolymorphParentFn(
 function injectHiddenRulePlaceholders(
 	rules: Record<string, RuleFn>,
 	polymorphs: PolymorphsConfig,
-	context: WireContext,
+	context: WireContext
 ): void {
 	for (const [parent, armMap] of Object.entries(polymorphs)) {
 		if (!armMap) continue;
@@ -504,13 +533,21 @@ function injectHiddenRulePlaceholders(
  * Used by wire's injectHiddenRulePlaceholders AND transform.ts's
  * variant-resolution paths so both agree on the rule name.
  */
-export function polymorphVisibleName(parentKind: string, suffix: string): string {
-	const visibleParent = parentKind.startsWith("_") ? parentKind.slice(1) : parentKind;
+export function polymorphVisibleName(
+	parentKind: string,
+	suffix: string
+): string {
+	const visibleParent = parentKind.startsWith('_')
+		? parentKind.slice(1)
+		: parentKind;
 	return `${visibleParent}_${suffix}`;
 }
 
 /** Hidden rule name for a polymorph variant — underscore-prefixed visible form. */
-export function polymorphHiddenName(parentKind: string, suffix: string): string {
+export function polymorphHiddenName(
+	parentKind: string,
+	suffix: string
+): string {
 	return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
 
@@ -522,7 +559,7 @@ export function polymorphHiddenName(parentKind: string, suffix: string): string 
  */
 function composeOrSynthesizeTransformParents(
 	rules: Record<string, RuleFn>,
-	transforms: TransformsConfig,
+	transforms: TransformsConfig
 ): void {
 	for (const [kind, entry] of Object.entries(transforms)) {
 		if (!entry) continue;
@@ -541,11 +578,18 @@ function composeOrSynthesizeTransformParents(
  */
 function buildTransformParentFn(
 	patchSets: readonly PatchMap[],
-	userFn: RuleFn | undefined,
+	userFn: RuleFn | undefined
 ): RuleFn {
-	return function wiredTransformParent(this: unknown, $: unknown, original: unknown): unknown {
+	return function wiredTransformParent(
+		this: unknown,
+		$: unknown,
+		original: unknown
+	): unknown {
 		const base = userFn ? userFn.call(this, $, original) : original;
-		return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets);
+		return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(
+			base,
+			...patchSets
+		);
 	};
 }
 
@@ -570,7 +614,7 @@ function buildTransformParentFn(
 function injectTransformHiddenRulePlaceholders(
 	rules: Record<string, RuleFn>,
 	transforms: TransformsConfig,
-	context: WireContext,
+	context: WireContext
 ): void {
 	for (const [kind, entry] of Object.entries(transforms)) {
 		if (!entry) continue;
@@ -596,21 +640,24 @@ function registerHiddenRuleForPlaceholder(
 	value: unknown,
 	parentKind: string,
 	rules: Record<string, RuleFn>,
-	context: WireContext,
+	context: WireContext
 ): void {
 	if (isFieldPlaceholder(value)) {
 		const hiddenName = `_kw_${value.name}`;
-		if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+		if (!(hiddenName in rules))
+			rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
 		return;
 	}
 	if (isVariantPlaceholder(value)) {
 		const hiddenName = `_${parentKind}_${value.name}`;
-		if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+		if (!(hiddenName in rules))
+			rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
 		return;
 	}
 	if (isAliasPlaceholder(value)) {
 		const hiddenName = `_${value.name}`;
-		if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+		if (!(hiddenName in rules))
+			rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
 		return;
 	}
 }
@@ -641,13 +688,20 @@ function registerHiddenRuleForPlaceholder(
  *      Normally consumed by `evaluate`'s `prunePlaceholderOrphans` so
  *      BLANK orphans don't pollute the grammar.
  */
-function makeDeferredContentFn(context: WireContext, hiddenName: string): RuleFn {
-	return function deferredHiddenRule(this: unknown, _$: unknown, previous?: unknown): unknown {
+function makeDeferredContentFn(
+	context: WireContext,
+	hiddenName: string
+): RuleFn {
+	return function deferredHiddenRule(
+		this: unknown,
+		_$: unknown,
+		previous?: unknown
+	): unknown {
 		const body = context.deposits.get(hiddenName);
 		if (body) return body;
 		if (previous !== undefined) return previous;
 		const blankFn = (globalThis as { blank?: () => unknown }).blank;
-		return blankFn ? blankFn() : { type: "BLANK" };
+		return blankFn ? blankFn() : { type: 'BLANK' };
 	};
 }
 
@@ -657,7 +711,10 @@ function makeDeferredContentFn(context: WireContext, hiddenName: string): RuleFn
  * restores both values so nested / re-entrant grammar calls don't leak
  * state into each other.
  */
-function wrapAllRuleFns(rules: Record<string, RuleFn>, context: WireContext): void {
+function wrapAllRuleFns(
+	rules: Record<string, RuleFn>,
+	context: WireContext
+): void {
 	for (const [name, fn] of Object.entries(rules)) {
 		rules[name] = wrapOneRuleFn(name, fn, context);
 	}
@@ -668,7 +725,11 @@ function wrapAllRuleFns(rules: Record<string, RuleFn>, context: WireContext): vo
  * currentRuleKind, installs this context, runs the fn, restores.
  */
 function wrapOneRuleFn(name: string, fn: RuleFn, context: WireContext): RuleFn {
-	return function wiredRuleFn(this: unknown, $: unknown, previous?: unknown): unknown {
+	return function wiredRuleFn(
+		this: unknown,
+		$: unknown,
+		previous?: unknown
+	): unknown {
 		const prevContext = currentContext;
 		const prevKind = context.currentRuleKind;
 		currentContext = context;
@@ -694,7 +755,7 @@ function wrapOneRuleFn(name: string, fn: RuleFn, context: WireContext): RuleFn {
  */
 function wrapConflictsCallback(
 	userConflicts: ConflictsFn | undefined,
-	context: WireContext,
+	context: WireContext
 ): ConflictsFn | undefined {
 	return buildWiredConflictsFn(userConflicts, context);
 }
@@ -717,13 +778,19 @@ function wrapConflictsCallback(
  */
 function buildWiredConflictsFn(
 	userConflicts: ConflictsFn | undefined,
-	context: WireContext,
+	context: WireContext
 ): ConflictsFn {
-	return function wiredConflicts(this: unknown, $: unknown, previous?: unknown[][]): unknown[][] {
-		const base = userConflicts ? userConflicts.call(this, $, previous) : (previous ?? []);
+	return function wiredConflicts(
+		this: unknown,
+		$: unknown,
+		previous?: unknown[][]
+	): unknown[][] {
+		const base = userConflicts
+			? userConflicts.call(this, $, previous)
+			: (previous ?? []);
 		if (context.conflictGroups.length === 0) return base as unknown[][];
 		const symbolized = context.conflictGroups.map((group) =>
-			group.map((name) => symbolizeRef($, name)),
+			group.map((name) => symbolizeRef($, name))
 		);
 		return [...(base as unknown[][]), ...symbolized];
 	};
@@ -751,5 +818,5 @@ function buildWiredConflictsFn(
  * without changing the surface.
  */
 function symbolizeRef(_$: unknown, name: string): unknown {
-	return { type: "SYMBOL", name };
+	return { type: 'SYMBOL', name };
 }

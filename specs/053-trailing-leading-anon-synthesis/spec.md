@@ -192,18 +192,21 @@ A new DSL helper declares the synthesized field explicitly:
 
 ```ts
 // packages/rust/overrides.ts
-overrideKind("tuple_expression", (rule) =>
+overrideKind('tuple_expression', (rule) =>
 	rule.patch(
 		seq(
-			"(",
-			field("attributes", repeat($.attribute)),
+			'(',
+			field('attributes', repeat($.attribute)),
 			field(
-				"elements",
-				repeat($.expression, { sep: ",", trailing: trailing("elements_trailing") }),
+				'elements',
+				repeat($.expression, {
+					sep: ',',
+					trailing: trailing('elements_trailing')
+				})
 			),
-			")",
-		),
-	),
+			')'
+		)
+	)
 );
 ```
 
@@ -258,7 +261,7 @@ interface SynthesizedAnonField {
 	$type: string; // the anon token kind, e.g. ',' or ';'
 	$named: false; // always false — it's an anonymous token
 	$text: string; // actual text, e.g. ',' or ';'
-	$source: "ts"; // set by readTreeNode
+	$source: 'ts'; // set by readTreeNode
 	$span?: ByteRange; // present when readTreeNode captures it
 }
 ```
@@ -273,8 +276,8 @@ Factory input accepts the synthesized field as an optional key:
 
 ```ts
 ir.tupleExpression({
-	elements: [ir.integerLiteral({ value: "0" })],
-	elements_trailing: ",", // string shorthand, resolved to leaf NodeData by from()
+	elements: [ir.integerLiteral({ value: '0' })],
+	elements_trailing: ',' // string shorthand, resolved to leaf NodeData by from()
 });
 ```
 
@@ -291,7 +294,7 @@ node.elements_trailing; // → NodeData | undefined (drills into $fields)
 ### Wrap setter (post Task #43)
 
 ```ts
-node.elements_trailing(","); // → new wrapped node with trailing comma
+node.elements_trailing(','); // → new wrapped node with trailing comma
 node.elements_trailing(undefined); // → new wrapped node without trailing comma
 ```
 

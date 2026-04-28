@@ -8,13 +8,19 @@
  */
 
 // @ts-nocheck — grammar.js is untyped
-import base from "../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js";
-import { transform, role, enrich, field, wire } from "../codegen/src/dsl/index.ts";
+import base from '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js';
+import {
+	transform,
+	role,
+	enrich,
+	field,
+	wire
+} from '../codegen/src/dsl/index.ts';
 
 export default grammar(
 	enrich(base),
 	wire({
-		name: "python",
+		name: 'python',
 		// Structural-whitespace role bindings — declared inline in the
 		// externals callback. `role(symbolRef, name)` returns the symbol
 		// unchanged (so externals still receives a valid token reference)
@@ -27,9 +33,9 @@ export default grammar(
 			// the externals list — tree-sitter's grammar() doesn't dedupe,
 			// so spreading prev plus role() returns would emit each token
 			// twice and the generated parser.c would fail to compile.
-			role($._indent, "indent");
-			role($._dedent, "dedent");
-			role($._newline, "newline");
+			role($._indent, 'indent');
+			role($._dedent, 'dedent');
+			role($._newline, 'newline');
 			return prev;
 		},
 		conflicts: ($, previous) => [
@@ -42,10 +48,10 @@ export default grammar(
 			// rule, tree-sitter needs an explicit GLR fork group to decide
 			// between the bare expression and the tuple form on the `,`
 			// suffix that only the tuple accepts.
-			[$.expression_statement, $._expression_statement_tuple],
+			[$.expression_statement, $._expression_statement_tuple]
 		],
 		polymorphs: {
-			assignment: { "1/0": "eq", "1/1": "type", "1/2": "typed" },
+			assignment: { '1/0': 'eq', '1/1': 'type', '1/2': 'typed' },
 
 			// expression_statement: bare expression / comma-separated tuple
 			// form / assignment / augmented_assignment / yield. Arms 0, 2,
@@ -59,15 +65,15 @@ export default grammar(
 			// table sees `expression • …` and needs to decide on the `,`
 			// continuation only the tuple form accepts.
 			expression_statement: {
-				1: "tuple",
+				1: 'tuple'
 			},
 
 			// with_clause: bare (`a, b, c`) vs parenthesized (`(a, b, c)`).
 			// Same with_item content on both arms; paren form wraps with
 			// '(' ... ')'. Split per variant so each owns its template.
 			with_clause: {
-				0: "bare",
-				1: "paren",
+				0: 'bare',
+				1: 'paren'
 			},
 
 			// _match_block: base rule is
@@ -79,7 +85,7 @@ export default grammar(
 			// Heterogeneous: one seq + one bare symbol. Splitting the seq arm
 			// into `_match_block_block` leaves the remaining choice as all
 			// symbol-like (alias + symbol) — canonical.
-			_match_block: { 0: "block" },
+			_match_block: { 0: 'block' },
 
 			// dict_pattern: base rule is
 			//   seq('{', optional(seq(
@@ -94,7 +100,7 @@ export default grammar(
 			// Splitting the key-value arm into `dict_pattern_kv` leaves the
 			// remaining choice all symbol-like. Requires infra (B)'s alias
 			// descent in applyPath.
-			dict_pattern: { "1/0/0/0": "kv" },
+			dict_pattern: { '1/0/0/0': 'kv' },
 
 			// _simple_pattern: base rule is
 			//   prec(1, choice(
@@ -126,7 +132,7 @@ export default grammar(
 			// Note: `_simple_pattern` is a hidden rule, so no conflicts entry
 			// is needed — tree-sitter inlines it into parent rules directly.
 			// The visible variant kind is `simple_pattern_negative`.
-			_simple_pattern: { "11": "negative" },
+			_simple_pattern: { '11': 'negative' }
 		},
 		transforms: {
 			// as_pattern: 1 field(s)
@@ -140,37 +146,37 @@ export default grammar(
 
 			// class_pattern: 2 field(s)
 			class_pattern: {
-				2: field("arguments"), // case_pattern [struct=1]
+				2: field('arguments') // case_pattern [struct=1]
 			},
 
 			// comparison_operator: 2 field(s)
 			comparison_operator: {
-				0: field("left"), // primary_expression [struct=0]
-				1: field("comparators"), // primary_expression [struct=1]
+				0: field('left'), // primary_expression [struct=0]
+				1: field('comparators') // primary_expression [struct=1]
 			},
 
 			// complex_pattern: 2 field(s)
 			complex_pattern: {
-				0: field("real"), // integer | float [struct=0]
-				1: field("imaginary"), // integer | float [struct=1]
+				0: field('real'), // integer | float [struct=0]
+				1: field('imaginary') // integer | float [struct=1]
 			},
 
 			// conditional_expression: 3 field(s)
 			conditional_expression: {
-				0: field("body"), // expression [struct=0]
-				2: field("condition"), // expression [struct=1]
-				4: field("alternative"), // expression [struct=2]
+				0: field('body'), // expression [struct=0]
+				2: field('condition'), // expression [struct=1]
+				4: field('alternative') // expression [struct=2]
 			},
 
 			// constrained_type: 2 field(s)
 			constrained_type: {
-				0: field("base_type"), // type [struct=0]
-				2: field("constraint"), // type [struct=1]
+				0: field('base_type'), // type [struct=0]
+				2: field('constraint') // type [struct=1]
 			},
 
 			// decorator: 2 field(s)
 			decorator: {
-				2: field("newline"), //  [struct=1]
+				2: field('newline') //  [struct=1]
 			},
 
 			// dictionary_splat: 1 field(s)
@@ -182,7 +188,7 @@ export default grammar(
 			// didn't match. Wrap the optional as field('in_clause') so the
 			// whole clause (`in` + exprs) renders only when present.
 			exec_statement: {
-				2: field("in_clause"),
+				2: field('in_clause')
 			},
 
 			// for_statement / function_definition / with_statement: each
@@ -195,17 +201,17 @@ export default grammar(
 			// walker, so the position is still hand-promoted (016 task #30
 			// naming convention).
 			for_in_clause: {
-				"0/0": field("async_marker"),
+				'0/0': field('async_marker')
 			},
 
 			// finally_clause: 1 field(s)
 			finally_clause: {
-				2: field("block"), // block [struct=0]
+				2: field('block') // block [struct=0]
 			},
 
 			// generic_type: 2 field(s)
 			generic_type: {
-				0: field("identifier"), // identifier [struct=0]
+				0: field('identifier') // identifier [struct=0]
 			},
 
 			// if_clause: 1 field(s)
@@ -213,12 +219,12 @@ export default grammar(
 
 			// import_from_statement: 1 field(s)
 			import_from_statement: {
-				3: field("wildcard_import"), // wildcard_import [struct=0]
+				3: field('wildcard_import') // wildcard_import [struct=0]
 			},
 
 			// keyword_pattern: 2 field(s)
 			keyword_pattern: {
-				2: field("simple_pattern"), // _simple_pattern | class_pattern | complex_pattern | concatenated_string | dict_pattern | dotted_name | false | float | integer | list_pattern | none | splat_pattern | string | true | tuple_pattern | union_pattern [struct=1]
+				2: field('simple_pattern') // _simple_pattern | class_pattern | complex_pattern | concatenated_string | dict_pattern | dotted_name | false | float | integer | list_pattern | none | splat_pattern | string | true | tuple_pattern | union_pattern [struct=1]
 			},
 
 			// list_splat: 1 field(s)
@@ -226,7 +232,7 @@ export default grammar(
 
 			// member_type: 2 field(s)
 			member_type: {
-				0: field("base_type"), // type [struct=0]
+				0: field('base_type') // type [struct=0]
 			},
 
 			// relative_import: 2 field(s)
@@ -234,24 +240,24 @@ export default grammar(
 
 			// slice: 3 field(s)
 			slice: {
-				0: field("start"), // expression [struct=0]
-				2: field("stop"), // expression [struct=1]
-				3: field("step"), // expression [struct=2]
+				0: field('start'), // expression [struct=0]
+				2: field('stop'), // expression [struct=1]
+				3: field('step') // expression [struct=2]
 			},
 
 			// splat_pattern: 1 field(s)
 			splat_pattern: {
-				0: field("identifier"), // identifier [struct=0]
+				0: field('identifier') // identifier [struct=0]
 			},
 
 			// splat_type: 1 field(s)
 			splat_type: {
-				0: field("identifier"), // identifier [struct=0]
+				0: field('identifier') // identifier [struct=0]
 			},
 
 			// string: 3 field(s)
 			string: {
-				1: field("content"), // interpolation | string_content [struct=1]
+				1: field('content') // interpolation | string_content [struct=1]
 			},
 
 			// type_alias_statement: wrap base position 0 (bare 'type' literal)
@@ -262,20 +268,20 @@ export default grammar(
 			// regression test (python type_alias_statement collision)
 			// assumes the wrapped form.
 			type_alias_statement: {
-				0: field("type"),
+				0: field('type')
 			},
 
 			// try_statement: 3 field(s)
 			try_statement: {
-				3: field("except_clauses"), // except_clause [struct=0]
+				3: field('except_clauses') // except_clause [struct=0]
 			},
 
 			// union_type: 2 field(s)
 			union_type: {
-				0: field("left"), // type [struct=0]
-				2: field("right"), // type [struct=1]
-			},
+				0: field('left'), // type [struct=0]
+				2: field('right') // type [struct=1]
+			}
 		},
-		rules: {},
-	}),
+		rules: {}
+	})
 );

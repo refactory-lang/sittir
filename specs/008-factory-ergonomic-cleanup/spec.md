@@ -60,17 +60,17 @@ After this change, `.from()` reclaims its actual semantic: **resolve a loose bag
 
 ```ts
 export function functionItemFrom(
-	input: T.FunctionItem | T.FunctionItem.Loose,
+	input: T.FunctionItem | T.FunctionItem.Loose
 ): T.FunctionItem.Fluent {
 	if (isNodeData(input)) return input as T.FunctionItem.Fluent;
 
 	return functionItem({
 		visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(
 			input.visibilityModifier,
-			"visibility_modifier",
+			'visibility_modifier'
 		),
 		name: _resolveOne<T.Identifier | T.Metavariable>(input.name, _K11, _K0),
-		body: _resolveOneBranch<T.Block>(input.body, "block"),
+		body: _resolveOneBranch<T.Block>(input.body, 'block')
 		// ...
 	});
 }
@@ -170,7 +170,7 @@ After this change, `AnyNodeData`'s shape becomes:
 ```ts
 interface AnyNodeData {
 	readonly $type: string;
-	readonly $source?: "ts" | "sg" | "factory";
+	readonly $source?: 'ts' | 'sg' | 'factory';
 	readonly $fields?: Record<string, NodeFieldValue>;
 	readonly $children?: readonly NodeChildValue[];
 	readonly $text?: string;

@@ -8,7 +8,11 @@
 
 ```typescript
 // Render node data to source string using S-expression render rules
-export function render(node: AnyNodeData, registry: RulesRegistry, joinBy?: JoinByMap): string;
+export function render(
+	node: AnyNodeData,
+	registry: RulesRegistry,
+	joinBy?: JoinByMap
+): string;
 
 // Parse S-expression template into cached parsed form
 export function parseTemplate(template: string): ParsedTemplate;
@@ -22,7 +26,7 @@ export function toEdit(
 	rules: RulesRegistry,
 	startOrRange: number | ByteRange,
 	endPos?: number,
-	joinBy?: JoinByMap,
+	joinBy?: JoinByMap
 ): Edit;
 
 // Type-safe field replacement using KindOf<T> inference
@@ -31,7 +35,7 @@ export function replaceField<T extends AnyNodeData>(
 	selector: (node: T) => unknown,
 	replacement: AnyNodeData,
 	rules: RulesRegistry,
-	joinBy?: JoinByMap,
+	joinBy?: JoinByMap
 ): Edit;
 
 // Bind a range to a node for later .replace()
@@ -42,7 +46,7 @@ export function replace(
 	node: AnyNodeData,
 	target: ReplaceTarget,
 	rules: RulesRegistry,
-	joinBy?: JoinByMap,
+	joinBy?: JoinByMap
 ): Edit;
 
 // Build CST node tree with byte offsets
@@ -50,7 +54,7 @@ export function toCst(
 	node: AnyNodeData,
 	registry: RulesRegistry,
 	offset?: number,
-	joinBy?: JoinByMap,
+	joinBy?: JoinByMap
 ): CSTNode;
 ```
 
@@ -66,7 +70,7 @@ Note: `@sittir/core` has NO `.from()` resolution — generated packages inline a
 type NodeData<G, K extends NodeKind<G>> = ExpandNode<G, K, []>;
 
 // NodeFields<G, K> — factory config type (NodeData<G,K>['fields'])
-type NodeFields<G, K extends NodeKind<G>> = NodeData<G, K>["fields"];
+type NodeFields<G, K extends NodeKind<G>> = NodeData<G, K>['fields'];
 
 // TreeNode<G, K> — parsed tree node with typed field() navigation
 // Structurally compatible with ast-grep SgNode
@@ -158,18 +162,27 @@ interface GeneratedFiles {
 
 ```typescript
 // Generated types.ts re-exports with grammar bound:
-import type { NodeData as BaseNodeData } from "@sittir/types";
+import type { NodeData as BaseNodeData } from '@sittir/types';
 type RustGrammar = {
 	/* grammar type literal */
 };
-export type NodeData<K extends NodeKind<RustGrammar>> = BaseNodeData<RustGrammar, K>;
-export type NodeFields<K extends NodeKind<RustGrammar>> = BaseNodeFields<RustGrammar, K>;
-export type TreeNode<K extends NodeKind<RustGrammar>> = BaseTreeNode<RustGrammar, K>;
+export type NodeData<K extends NodeKind<RustGrammar>> = BaseNodeData<
+	RustGrammar,
+	K
+>;
+export type NodeFields<K extends NodeKind<RustGrammar>> = BaseNodeFields<
+	RustGrammar,
+	K
+>;
+export type TreeNode<K extends NodeKind<RustGrammar>> = BaseTreeNode<
+	RustGrammar,
+	K
+>;
 
 // Named interfaces for IDE performance:
-export interface FunctionItem extends NodeData<"function_item"> {}
-export interface FunctionItemFields extends NodeFields<"function_item"> {}
-export interface FunctionItemTree extends TreeNode<"function_item"> {}
+export interface FunctionItem extends NodeData<'function_item'> {}
+export interface FunctionItemFields extends NodeFields<'function_item'> {}
+export interface FunctionItemTree extends TreeNode<'function_item'> {}
 ```
 
 ### Three API Tiers
@@ -183,22 +196,25 @@ export interface FunctionItemTree extends TreeNode<"function_item"> {}
 ### Unified Factory API (three modes)
 
 ```typescript
-import { ir } from "@sittir/rust";
+import { ir } from '@sittir/rust';
 
 // === Mode 1: Declarative (config object) ===
 const fn1 = ir.function({
-	name: ir.identifier("main"),
+	name: ir.identifier('main'),
 	parameters: ir.parameters([]),
-	body: ir.block(),
+	body: ir.block()
 });
 
 // === Mode 2: Fluent (method chaining) ===
-const fn2 = ir.function(ir.identifier("main")).parameters(ir.parameters([])).body(ir.block());
+const fn2 = ir
+	.function(ir.identifier('main'))
+	.parameters(ir.parameters([]))
+	.body(ir.block());
 
 // === Mode 3: Mixed (required positional + config) ===
-const fn3 = ir.function(ir.identifier("main"), {
+const fn3 = ir.function(ir.identifier('main'), {
 	parameters: ir.parameters([]),
-	body: ir.block(),
+	body: ir.block()
 });
 
 // All three produce identical NodeData with render/toEdit/replace methods:
@@ -207,19 +223,19 @@ const edit = fn1.toEdit(42, 67);
 
 // .from() — ergonomic entry point (strings, objects, TreeNodes):
 const fn4 = ir.function.from({
-	name: "main",
+	name: 'main'
 	// Required array fields default to [] when omitted:
 	// parameters, body etc. are coerced to empty arrays
 });
 
 // .from() with explicit children:
 const fn5 = ir.function.from({
-	name: "main",
-	parameters: { children: [{ kind: "parameter", name: "x", type: "i32" }] },
+	name: 'main',
+	parameters: { children: [{ kind: 'parameter', name: 'x', type: 'i32' }] }
 });
 
 // .assign() — hydrate from parsed tree node:
-import { edit } from "@sittir/rust";
+import { edit } from '@sittir/rust';
 // edit() returns Simplify<NodeData<K> & { toEdit, replace, render }>
 // K flows from TreeNode<K> input → typed return
 const hydrated = edit(treeNode); // universal entry via assignByKind
@@ -232,12 +248,12 @@ ir.mut(); // → { type: 'mutable_specifier', text: 'mut' }
 ### Constants
 
 ```typescript
-import { nodeKinds, leafKinds, keywords, operators } from "@sittir/rust/consts";
+import { nodeKinds, leafKinds, keywords, operators } from '@sittir/rust/consts';
 ```
 
 ### Render Templates
 
 ```typescript
-import { rules } from "@sittir/rust/rules";
+import { rules } from '@sittir/rust/rules';
 // rules['function_item'] → S-expression template string
 ```

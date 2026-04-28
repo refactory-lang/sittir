@@ -17,7 +17,7 @@ Templates look like the code they produce:
 
 ```yaml
 # Simple rule (string form)
-binary_expression: "$LEFT $OPERATOR $RIGHT"
+binary_expression: '$LEFT $OPERATOR $RIGHT'
 
 # Complex rule (object form with clauses and joinBy)
 function_item:
@@ -25,9 +25,9 @@ function_item:
     fn $NAME($$$PARAMETERS) $RETURN_TYPE_CLAUSE{
         $$$BODY
     }
-  return_type_clause: "-> $RETURN_TYPE "
+  return_type_clause: '-> $RETURN_TYPE '
   joinBy:
-    PARAMETERS: ", "
+    PARAMETERS: ', '
     BODY: "\n"
 ```
 
@@ -46,7 +46,9 @@ Some tree-sitter grammars lack explicit FIELDs for certain nodes (e.g., Rust `in
 ```json
 {
 	"index_expression": { "fields": { "value": {}, "index": {} } },
-	"unary_expression": { "fields": { "operator": { "anonymous": true }, "argument": {} } }
+	"unary_expression": {
+		"fields": { "operator": { "anonymous": true }, "argument": {} }
+	}
 }
 ```
 

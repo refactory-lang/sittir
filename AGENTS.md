@@ -41,17 +41,17 @@ Generated packages (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) cont
 Three ways to reach the same per-kind type family — all resolve identically:
 
 ```ts
-import type { FunctionItem, ConfigFor, NamespaceMap } from "@sittir/rust";
+import type { FunctionItem, ConfigFor, NamespaceMap } from '@sittir/rust';
 
 FunctionItem.Config; // namespace sugar (preferred)
-ConfigFor<"function_item">; // generic (kind-parametric code)
-NamespaceMap["function_item"]["Config"]; // direct map (meta-utilities)
+ConfigFor<'function_item'>; // generic (kind-parametric code)
+NamespaceMap['function_item']['Config']; // direct map (meta-utilities)
 ```
 
 Guards — narrow through kind × shape (spec 008 US2):
 
 ```ts
-import { is, isTree, isNode, assert } from "@sittir/rust";
+import { is, isTree, isNode, assert } from '@sittir/rust';
 
 if (is.functionItem(v) && isNode(v)) {
 	// kind + data-shape
@@ -59,7 +59,7 @@ if (is.functionItem(v) && isNode(v)) {
 }
 if (is.expression(v) && isTree(v)) {
 	// supertype + tree-shape
-	v.field("name"); // tree-sitter typed field
+	v.field('name'); // tree-sitter typed field
 }
 assert.functionItem(v); // throws TypeError on mismatch
 ```
@@ -67,7 +67,7 @@ assert.functionItem(v); // throws TypeError on mismatch
 IR namespace — flat + grouped (spec 008 US5), both tree-shakeable:
 
 ```ts
-import { ir, expression } from "@sittir/rust";
+import { ir, expression } from '@sittir/rust';
 
 ir.binary(config); // flat camelCase (supertype-stripped short name)
 ir.expression.binary(config); // grouped (attached to ir)

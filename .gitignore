@@ -38,3 +38,4 @@ rust/crates/sittir-*-napi/*.node
 rust/crates/sittir-*-napi/index.js
 rust/crates/sittir-*-napi/index.d.ts
 .claude/worktrees/
+tmp-scripts/

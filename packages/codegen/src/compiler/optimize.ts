@@ -12,11 +12,11 @@
  * re-collapse.
  */
 
-import type { Rule, SeqRule, PolymorphRule } from "./rule.ts";
-import { isChoice } from "./rule.ts";
-import type { LinkedGrammar, OptimizedGrammar } from "./types.ts";
-import { simplifyRules } from "./simplify.ts";
-import { compileWordMatcher } from "./common.ts";
+import type { Rule, SeqRule, PolymorphRule } from './rule.ts';
+import { isChoice } from './rule.ts';
+import type { LinkedGrammar, OptimizedGrammar } from './types.ts';
+import { simplifyRules } from './simplify.ts';
+import { compileWordMatcher } from './common.ts';
 
 // ---------------------------------------------------------------------------
 // optimize() — currently a passthrough
@@ -43,7 +43,9 @@ import { compileWordMatcher } from "./common.ts";
  * promotion are surfaced via suggested.ts; the user authors variant() in
  * overrides.ts to make them explicit.
  */
-function applyNormalizationPasses(rawRules: Record<string, Rule>): Record<string, Rule> {
+function applyNormalizationPasses(
+	rawRules: Record<string, Rule>
+): Record<string, Rule> {
 	let rules: Record<string, Rule> = {};
 	for (const [name, rule] of Object.entries(rawRules)) {
 		rules[name] = collapseWrappers(rule); // T062
@@ -80,7 +82,7 @@ function applyNormalizationPasses(rawRules: Record<string, Rule>): Record<string
  */
 function computeSimplifiedRules(
 	rules: Record<string, Rule>,
-	word: string | null,
+	word: string | null
 ): ReturnType<typeof simplifyRules> {
 	const wordMatcher = compileWordMatcher(word, rules);
 	return simplifyRules(rules, wordMatcher);
@@ -99,7 +101,7 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
 		derivations: linked.derivations,
 		aliasedHiddenKinds: linked.aliasedHiddenKinds,
 		polymorphVariants: linked.polymorphVariants,
-		refineForms: linked.refineForms,
+		refineForms: linked.refineForms
 	};
 }
 
@@ -121,7 +123,7 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
  */
 export function fanOutSeqChoices(rule: Rule): Rule {
 	switch (rule.type) {
-		case "seq": {
+		case 'seq': {
 			const members = rule.members.map(fanOutSeqChoices);
 			const choiceIdx = members.findIndex(isChoice);
 			if (choiceIdx < 0) return { ...rule, members };
@@ -134,30 +136,30 @@ export function fanOutSeqChoices(rule: Rule): Rule {
 			const before = members.slice(0, choiceIdx);
 			const after = members.slice(choiceIdx + 1);
 			const branches: Rule[] = choice.members.map((branch) => {
-				const inner = branch.type === "variant" ? branch.content : branch;
+				const inner = branch.type === 'variant' ? branch.content : branch;
 				const seqMembers = [...before, inner, ...after];
 				if (seqMembers.length === 1) return seqMembers[0]!;
 				// Preserve variant labels by re-wrapping.
-				const flat: Rule = { type: "seq", members: seqMembers };
-				return branch.type === "variant"
-					? { type: "variant", name: branch.name, content: flat }
+				const flat: Rule = { type: 'seq', members: seqMembers };
+				return branch.type === 'variant'
+					? { type: 'variant', name: branch.name, content: flat }
 					: flat;
 			});
-			return { type: "choice", members: branches };
+			return { type: 'choice', members: branches };
 		}
-		case "choice": {
+		case 'choice': {
 			const members = rule.members.map(fanOutSeqChoices);
 			return { ...rule, members };
 		}
-		case "optional":
-		case "repeat":
-		case "token":
-		case "field":
-		case "variant":
-		case "clause":
-		case "group":
+		case 'optional':
+		case 'repeat':
+		case 'token':
+		case 'field':
+		case 'variant':
+		case 'clause':
+		case 'group':
 			return { ...rule, content: fanOutSeqChoices(rule.content) };
-		case "polymorph":
+		case 'polymorph':
 			return mapPolymorphForms(rule, fanOutSeqChoices);
 		default:
 			return rule;
@@ -190,11 +192,11 @@ export function fanOutSeqChoices(rule: Rule): Rule {
  */
 function isAtomForFactoring(rule: Rule): boolean {
 	switch (rule.type) {
-		case "symbol":
-		case "string":
-		case "pattern":
-		case "field":
-		case "token":
+		case 'symbol':
+		case 'string':
+		case 'pattern':
+		case 'field':
+		case 'token':
 			return true;
 		default:
 			return false;
@@ -219,10 +221,13 @@ function extractFactoredChoiceBody(
 	members: Rule[],
 	seqs: Rule[][],
 	prefixLen: number,
-	suffixLen: number,
+	suffixLen: number
 ): { prefix: Rule[]; suffix: Rule[]; nonEmpty: Rule[]; hasEmpty: boolean } {
 	const prefix = seqs[0]!.slice(0, prefixLen);
-	const suffix = prefixLen < seqs[0]!.length ? seqs[0]!.slice(seqs[0]!.length - suffixLen) : [];
+	const suffix =
+		prefixLen < seqs[0]!.length
+			? seqs[0]!.slice(seqs[0]!.length - suffixLen)
+			: [];
 	let hasEmpty = false;
 	const nonEmpty: Rule[] = [];
 	for (let i = 0; i < members.length; i++) {
@@ -233,9 +238,12 @@ function extractFactoredChoiceBody(
 			hasEmpty = true;
 			continue;
 		}
-		const bodyRule: Rule = body.length === 1 ? body[0]! : { type: "seq", members: body };
+		const bodyRule: Rule =
+			body.length === 1 ? body[0]! : { type: 'seq', members: body };
 		nonEmpty.push(
-			m.type === "variant" ? { type: "variant", name: m.name, content: bodyRule } : bodyRule,
+			m.type === 'variant'
+				? { type: 'variant', name: m.name, content: bodyRule }
+				: bodyRule
 		);
 	}
 	return { prefix, suffix, nonEmpty, hasEmpty };
@@ -253,9 +261,11 @@ function extractFactoredChoiceBody(
  */
 export function factorChoiceBranches(rule: Rule): Rule {
 	switch (rule.type) {
-		case "choice": {
+		case 'choice': {
 			const members = rule.members.map(factorChoiceBranches);
-			const unwrapped = members.map((m) => (m.type === "variant" ? m.content : m));
+			const unwrapped = members.map((m) =>
+				m.type === 'variant' ? m.content : m
+			);
 			// Normalize bare atoms (symbols, strings, fields, etc.) as
 			// single-member seqs so the factoring logic can treat them
 			// uniformly. Canonical target case:
@@ -271,9 +281,12 @@ export function factorChoiceBranches(rule: Rule): Rule {
 			// control. After prec-stripping, the shape is exactly the
 			// asymmetric-length choice this pass can now factor.
 			const canFactor =
-				unwrapped.length >= 2 && unwrapped.every((b) => b.type === "seq" || isAtomForFactoring(b));
+				unwrapped.length >= 2 &&
+				unwrapped.every((b) => b.type === 'seq' || isAtomForFactoring(b));
 			if (!canFactor) return { ...rule, members };
-			const seqs = unwrapped.map((b) => (b.type === "seq" ? (b as SeqRule).members : [b]));
+			const seqs = unwrapped.map((b) =>
+				b.type === 'seq' ? (b as SeqRule).members : [b]
+			);
 			const prefixLen = findCommonPrefix(seqs);
 			const suffixLen = findCommonSuffix(seqs, prefixLen);
 			if (prefixLen === 0 && suffixLen === 0) return { ...rule, members };
@@ -281,31 +294,35 @@ export function factorChoiceBranches(rule: Rule): Rule {
 				members,
 				seqs,
 				prefixLen,
-				suffixLen,
+				suffixLen
 			);
 			if (nonEmpty.length === 0) {
 				// Every branch was empty → prefix/suffix already cover it.
 				return outerFromParts(prefix, suffix);
 			}
 			const core: Rule =
-				nonEmpty.length === 1 ? nonEmpty[0]! : { type: "choice", members: nonEmpty };
-			const inner: Rule = hasEmpty ? { type: "optional", content: core } : core;
+				nonEmpty.length === 1
+					? nonEmpty[0]!
+					: { type: 'choice', members: nonEmpty };
+			const inner: Rule = hasEmpty ? { type: 'optional', content: core } : core;
 			const outerMembers: Rule[] = [...prefix, inner, ...suffix];
-			return outerMembers.length === 1 ? outerMembers[0]! : { type: "seq", members: outerMembers };
+			return outerMembers.length === 1
+				? outerMembers[0]!
+				: { type: 'seq', members: outerMembers };
 		}
-		case "seq": {
+		case 'seq': {
 			const members = rule.members.map(factorChoiceBranches);
 			return { ...rule, members };
 		}
-		case "optional":
-		case "repeat":
-		case "token":
-		case "field":
-		case "variant":
-		case "clause":
-		case "group":
+		case 'optional':
+		case 'repeat':
+		case 'token':
+		case 'field':
+		case 'variant':
+		case 'clause':
+		case 'group':
 			return { ...rule, content: factorChoiceBranches(rule.content) };
-		case "polymorph":
+		case 'polymorph':
 			return mapPolymorphForms(rule, factorChoiceBranches);
 		default:
 			return rule;
@@ -327,7 +344,7 @@ export function factorChoiceBranches(rule: Rule): Rule {
  */
 export function dedupeSeqMembers(rule: Rule): Rule {
 	switch (rule.type) {
-		case "seq": {
+		case 'seq': {
 			const members = rule.members.map(dedupeSeqMembers);
 			const deduped: Rule[] = [];
 			for (const m of members) {
@@ -337,17 +354,17 @@ export function dedupeSeqMembers(rule: Rule): Rule {
 			}
 			return { ...rule, members: deduped };
 		}
-		case "choice":
+		case 'choice':
 			return { ...rule, members: rule.members.map(dedupeSeqMembers) };
-		case "optional":
-		case "repeat":
-		case "token":
-		case "field":
-		case "variant":
-		case "clause":
-		case "group":
+		case 'optional':
+		case 'repeat':
+		case 'token':
+		case 'field':
+		case 'variant':
+		case 'clause':
+		case 'group':
 			return { ...rule, content: dedupeSeqMembers(rule.content) };
-		case "polymorph":
+		case 'polymorph':
 			return mapPolymorphForms(rule, dedupeSeqMembers);
 		default:
 			return rule;
@@ -376,7 +393,9 @@ export function dedupeSeqMembers(rule: Rule): Rule {
  * produce the same downstream shape whether the helper exists as
  * its own entry or as an expansion in its parent.
  */
-export function inlineSingleUseHidden(rules: Record<string, Rule>): Record<string, Rule> {
+export function inlineSingleUseHidden(
+	rules: Record<string, Rule>
+): Record<string, Rule> {
 	// Work on a shallow copy — we mutate entries and delete keys.
 	const work: Record<string, Rule> = { ...rules };
 	iterateInliningToFixedPoint(work);
@@ -399,7 +418,7 @@ function iterateInliningToFixedPoint(work: Record<string, Rule>): void {
 		let changed = false;
 		for (const [name, rule] of Object.entries(work)) {
 			// Only hidden helpers are candidates.
-			if (!name.startsWith("_")) continue;
+			if (!name.startsWith('_')) continue;
 			if (isStructurallyMeaningfulHiddenRule(rule)) continue;
 			const uses = refCounts.get(name) ?? 0;
 			if (uses !== 1) continue;
@@ -424,11 +443,11 @@ function iterateInliningToFixedPoint(work: Record<string, Rule>): void {
  */
 function isStructurallyMeaningfulHiddenRule(rule: Rule): boolean {
 	return (
-		rule.type === "supertype" ||
-		rule.type === "polymorph" ||
-		rule.type === "enum" ||
-		rule.type === "terminal" ||
-		rule.type === "group"
+		rule.type === 'supertype' ||
+		rule.type === 'polymorph' ||
+		rule.type === 'enum' ||
+		rule.type === 'terminal' ||
+		rule.type === 'group'
 	);
 }
 
@@ -445,7 +464,7 @@ function isStructurallyMeaningfulHiddenRule(rule: Rule): boolean {
 function spliceHiddenRuleIntoSingleParent(
 	work: Record<string, Rule>,
 	name: string,
-	rule: Rule,
+	rule: Rule
 ): boolean {
 	for (const [parentName, parentRule] of Object.entries(work)) {
 		if (parentName === name) continue;
@@ -477,28 +496,28 @@ function countReferences(rules: Record<string, Rule>): Map<string, number> {
 
 function walkSymbols(rule: Rule, visit: (name: string) => void): void {
 	switch (rule.type) {
-		case "symbol":
+		case 'symbol':
 			visit(rule.name);
 			return;
-		case "seq":
-		case "choice":
+		case 'seq':
+		case 'choice':
 			for (const m of rule.members) walkSymbols(m, visit);
 			return;
-		case "optional":
-		case "repeat":
-		case "repeat1":
-		case "token":
-		case "field":
-		case "variant":
-		case "clause":
-		case "group":
-		case "terminal":
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'token':
+		case 'field':
+		case 'variant':
+		case 'clause':
+		case 'group':
+		case 'terminal':
 			walkSymbols(rule.content, visit);
 			return;
-		case "polymorph":
+		case 'polymorph':
 			for (const form of rule.forms) walkSymbols(form.content, visit);
 			return;
-		case "supertype":
+		case 'supertype':
 			for (const sub of rule.subtypes) visit(sub);
 			return;
 	}
@@ -509,9 +528,13 @@ function walkSymbols(rule: Rule, visit: (name: string) => void): void {
  * content of `targetRule`. Returns the same reference when nothing
  * changed so callers can do identity comparison.
  */
-function replaceSymbolRef(rule: Rule, targetName: string, targetRule: Rule): Rule {
+function replaceSymbolRef(
+	rule: Rule,
+	targetName: string,
+	targetRule: Rule
+): Rule {
 	switch (rule.type) {
-		case "symbol":
+		case 'symbol':
 			if (rule.name === targetName) {
 				// Unwrap the replacement down to its content if the
 				// target carries structural wrappers that would
@@ -521,7 +544,7 @@ function replaceSymbolRef(rule: Rule, targetName: string, targetRule: Rule): Rul
 				return targetRule;
 			}
 			return rule;
-		case "seq": {
+		case 'seq': {
 			let changed = false;
 			const members = rule.members.map((m) => {
 				const r = replaceSymbolRef(m, targetName, targetRule);
@@ -530,7 +553,7 @@ function replaceSymbolRef(rule: Rule, targetName: string, targetRule: Rule): Rul
 			});
 			return changed ? { ...rule, members } : rule;
 		}
-		case "choice": {
+		case 'choice': {
 			let changed = false;
 			const members = rule.members.map((m) => {
 				const r = replaceSymbolRef(m, targetName, targetRule);
@@ -539,17 +562,17 @@ function replaceSymbolRef(rule: Rule, targetName: string, targetRule: Rule): Rul
 			});
 			return changed ? { ...rule, members } : rule;
 		}
-		case "optional":
-		case "repeat":
-		case "token":
-		case "field":
-		case "variant":
-		case "clause":
-		case "group": {
+		case 'optional':
+		case 'repeat':
+		case 'token':
+		case 'field':
+		case 'variant':
+		case 'clause':
+		case 'group': {
 			const inner = replaceSymbolRef(rule.content, targetName, targetRule);
 			return inner === rule.content ? rule : { ...rule, content: inner };
 		}
-		case "polymorph": {
+		case 'polymorph': {
 			let changed = false;
 			const forms = rule.forms.map((f) => {
 				const rewritten = replaceSymbolRef(f.content, targetName, targetRule);
@@ -572,40 +595,41 @@ function replaceSymbolRef(rule: Rule, targetName: string, targetRule: Rule): Rul
  */
 export function collapseWrappers(rule: Rule): Rule {
 	switch (rule.type) {
-		case "optional": {
+		case 'optional': {
 			const inner = collapseWrappers(rule.content);
 			// optional(optional(x)) → optional(x)
-			if (inner.type === "optional") return inner;
+			if (inner.type === 'optional') return inner;
 			// optional(repeat(x)) → repeat(x) — repeat already matches zero
-			if (inner.type === "repeat") return inner;
+			if (inner.type === 'repeat') return inner;
 			return { ...rule, content: inner };
 		}
-		case "repeat": {
+		case 'repeat': {
 			const inner = collapseWrappers(rule.content);
 			// repeat(repeat(x)) → repeat(x)
-			if (inner.type === "repeat" && !rule.separator && !inner.separator) return inner;
+			if (inner.type === 'repeat' && !rule.separator && !inner.separator)
+				return inner;
 			// repeat(optional(x)) → repeat(x) — the outer repeat already
 			// handles zero occurrences.
-			if (inner.type === "optional") return { ...rule, content: inner.content };
+			if (inner.type === 'optional') return { ...rule, content: inner.content };
 			return { ...rule, content: inner };
 		}
-		case "seq": {
+		case 'seq': {
 			const members = rule.members.map(collapseWrappers);
 			if (members.length === 1) return members[0]!;
 			return { ...rule, members };
 		}
-		case "choice": {
+		case 'choice': {
 			const members = rule.members.map(collapseWrappers);
 			if (members.length === 1) return members[0]!;
 			return { ...rule, members };
 		}
-		case "field":
-		case "variant":
-		case "clause":
-		case "group":
-		case "token":
+		case 'field':
+		case 'variant':
+		case 'clause':
+		case 'group':
+		case 'token':
 			return { ...rule, content: collapseWrappers(rule.content) };
-		case "polymorph":
+		case 'polymorph':
 			return mapPolymorphForms(rule, collapseWrappers);
 		default:
 			return rule;
@@ -618,18 +642,21 @@ function outerFromParts(prefix: Rule[], suffix: Rule[]): Rule {
 		// Unreachable: factorChoiceBranches early-returns on
 		// prefixLen===0 && suffixLen===0, so an all-empty factoring
 		// never calls this.
-		throw new Error("outerFromParts: no prefix or suffix to wrap");
+		throw new Error('outerFromParts: no prefix or suffix to wrap');
 	}
 	if (members.length === 1) return members[0]!;
-	return { type: "seq", members };
+	return { type: 'seq', members };
 }
 
 // Keep in sync when adding new Optimize passes — polymorph forms must
 // receive the same rewrite as top-level rules.
-function mapPolymorphForms(rule: PolymorphRule, rewrite: (r: Rule) => Rule): Rule {
+function mapPolymorphForms(
+	rule: PolymorphRule,
+	rewrite: (r: Rule) => Rule
+): Rule {
 	return {
 		...rule,
-		forms: rule.forms.map((f) => ({ ...f, content: rewrite(f.content) })),
+		forms: rule.forms.map((f) => ({ ...f, content: rewrite(f.content) }))
 	};
 }
 
@@ -641,47 +668,60 @@ export function rulesEqual(a: Rule, b: Rule): boolean {
 	if (a.type !== b.type) return false;
 
 	switch (a.type) {
-		case "string":
+		case 'string':
 			return a.value === (b as typeof a).value;
-		case "pattern":
+		case 'pattern':
 			return a.value === (b as typeof a).value;
-		case "symbol":
+		case 'symbol':
 			// Include aliasedFrom: two symbols with the same `.name` but
 			// different alias provenance point at the same kind but carry
 			// different drillAs metadata. Treating them as equal lets
 			// factoring collapse to one branch and silently drop the
 			// aliasSources entry from the other (see
 			// node-model.json5 diff for `_index_signature_colon.name`).
-			return a.name === (b as typeof a).name && a.aliasedFrom === (b as typeof a).aliasedFrom;
-		case "seq":
+			return (
+				a.name === (b as typeof a).name &&
+				a.aliasedFrom === (b as typeof a).aliasedFrom
+			);
+		case 'seq':
 			return (
 				a.members.length === (b as typeof a).members.length &&
 				a.members.every((m, i) => rulesEqual(m, (b as typeof a).members[i]!))
 			);
-		case "choice":
+		case 'choice':
 			return (
 				a.members.length === (b as typeof a).members.length &&
 				a.members.every((m, i) => rulesEqual(m, (b as typeof a).members[i]!))
 			);
-		case "optional":
+		case 'optional':
 			return rulesEqual(a.content, (b as typeof a).content);
-		case "repeat":
+		case 'repeat':
 			return (
-				rulesEqual(a.content, (b as typeof a).content) && a.separator === (b as typeof a).separator
+				rulesEqual(a.content, (b as typeof a).content) &&
+				a.separator === (b as typeof a).separator
 			);
-		case "field":
-			return a.name === (b as typeof a).name && rulesEqual(a.content, (b as typeof a).content);
-		case "variant":
-			return a.name === (b as typeof a).name && rulesEqual(a.content, (b as typeof a).content);
-		case "enum": {
+		case 'field':
+			return (
+				a.name === (b as typeof a).name &&
+				rulesEqual(a.content, (b as typeof a).content)
+			);
+		case 'variant':
+			return (
+				a.name === (b as typeof a).name &&
+				rulesEqual(a.content, (b as typeof a).content)
+			);
+		case 'enum': {
 			const bm = (b as typeof a).members;
-			return a.members.length === bm.length && a.members.every((m, i) => m.value === bm[i]!.value);
+			return (
+				a.members.length === bm.length &&
+				a.members.every((m, i) => m.value === bm[i]!.value)
+			);
 		}
-		case "supertype":
+		case 'supertype':
 			return a.name === (b as typeof a).name;
-		case "indent":
-		case "dedent":
-		case "newline":
+		case 'indent':
+		case 'dedent':
+		case 'newline':
 			return true;
 		default:
 			return JSON.stringify(a) === JSON.stringify(b);
@@ -694,7 +734,7 @@ export function rulesEqual(a: Rule, b: Rule): boolean {
 
 export function factorSeqChoice(branches: Rule[]): Rule[] {
 	// Check if all branches are seqs
-	const seqs = branches.map((b) => (b.type === "seq" ? b.members : [b]));
+	const seqs = branches.map((b) => (b.type === 'seq' ? b.members : [b]));
 
 	const prefixLen = findCommonPrefix(seqs);
 	if (prefixLen === 0) return branches;
@@ -703,9 +743,11 @@ export function factorSeqChoice(branches: Rule[]): Rule[] {
 
 	// Extract factored branches (the parts that differ)
 	return branches.map((b): Rule => {
-		if (b.type === "seq") {
+		if (b.type === 'seq') {
 			const members = b.members.slice(prefixLen, b.members.length - suffixLen);
-			return members.length === 1 ? members[0]! : { type: "seq" as const, members };
+			return members.length === 1
+				? members[0]!
+				: { type: 'seq' as const, members };
 		}
 		return b;
 	});
@@ -744,14 +786,19 @@ function findCommonSuffix(seqs: Rule[][], prefixLen: number): number {
 // wrapVariants / deduplicateVariants / nameVariant / tokenToName all
 // moved to compiler/link.ts — they're classification, not simplification.
 // Re-export from there if test files or callers still need them.
-export { wrapVariants, deduplicateVariants, nameVariant, tokenToName } from "./link.ts";
+export {
+	wrapVariants,
+	deduplicateVariants,
+	nameVariant,
+	tokenToName
+} from './link.ts';
 
 // ---------------------------------------------------------------------------
 // fanOutChoices — expand nested choices (for use by callers)
 // ---------------------------------------------------------------------------
 
 export function fanOutChoices(rule: Rule): Rule[] {
-	if (rule.type === "choice") {
+	if (rule.type === 'choice') {
 		return rule.members.flatMap((m) => fanOutChoices(m));
 	}
 	return [rule];

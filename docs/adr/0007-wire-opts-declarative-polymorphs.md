@@ -58,13 +58,13 @@ export default grammar(
 	enrich(base),
 	wire({
 		polymorphs: {
-			assignment: { "1/0": "eq", "1/1": "type", "1/2": "typed" },
-			closure_expression: { "4/0": "block", "4/1": "expr" },
+			assignment: { '1/0': 'eq', '1/1': 'type', '1/2': 'typed' },
+			closure_expression: { '4/0': 'block', '4/1': 'expr' }
 		},
 		rules: {
 			/* regular rules */
-		},
-	}),
+		}
+	})
 );
 ```
 

@@ -81,13 +81,13 @@
 ```typescript
 // Generated per node kind — a flat array of render steps
 export const functionItemRule: RenderRule[] = [
-	{ token: "fn" },
-	{ field: "name", required: true },
-	{ token: "(" },
-	{ field: "parameters", required: false, multiple: true, sep: ", " },
-	{ token: ")" },
-	{ field: "returnType", required: false, prefix: " -> " },
-	{ field: "body", required: false },
+	{ token: 'fn' },
+	{ field: 'name', required: true },
+	{ token: '(' },
+	{ field: 'parameters', required: false, multiple: true, sep: ', ' },
+	{ token: ')' },
+	{ field: 'returnType', required: false, prefix: ' -> ' },
+	{ field: 'body', required: false }
 ];
 ```
 

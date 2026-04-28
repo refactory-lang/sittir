@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeAll } from "vitest";
-import { resolve } from "node:path";
-import { generate } from "../../src/compiler/generate.ts";
-import { validateRoundTrip } from "../../src/validate/roundtrip.ts";
-import { validateFactoryRoundTrip } from "../../src/validate/factory-roundtrip.ts";
+import { describe, it, expect, beforeAll } from 'vitest';
+import { resolve } from 'node:path';
+import { generate } from '../../src/compiler/generate.ts';
+import { validateRoundTrip } from '../../src/validate/roundtrip.ts';
+import { validateFactoryRoundTrip } from '../../src/validate/factory-roundtrip.ts';
 
 /**
  * Resolve the on-disk `.jinja` templates directory for `grammar`.
@@ -10,10 +10,13 @@ import { validateFactoryRoundTrip } from "../../src/validate/factory-roundtrip.t
  * and dispatch accordingly.
  */
 function templatesPath(grammar: string): string {
-	return resolve(new URL("../../../..", import.meta.url).pathname, `packages/${grammar}/templates`);
+	return resolve(
+		new URL('../../../..', import.meta.url).pathname,
+		`packages/${grammar}/templates`
+	);
 }
 
-const GRAMMARS = ["rust", "typescript", "python"] as const;
+const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 
 // Round-trip failure ceilings — asserted ceilings can only go DOWN
 // over time. The authoritative guard is
@@ -31,7 +34,10 @@ const GRAMMARS = ["rust", "typescript", "python"] as const;
 // fix + null-wrap→skip expose the true failure counts, which are the
 // new ceilings. No real regression — numbers were inflated by silent
 // skip.
-const RT_CEILINGS: Record<string, { roundTrip: number; factoryRoundTrip: number }> = {
+const RT_CEILINGS: Record<
+	string,
+	{ roundTrip: number; factoryRoundTrip: number }
+> = {
 	// MEASUREMENT RESET (2026-04-25): rust roundTrip 55 → 65,
 	// factoryRoundTrip 45 → 70. TS-side post-processing was hiding
 	// walker whitespace artifacts; raw output exposes more real fail
@@ -47,17 +53,17 @@ const RT_CEILINGS: Record<string, { roundTrip: number; factoryRoundTrip: number 
 	// mapped ancestor and actually reparse — exposing more real
 	// factory-rt bugs.
 	typescript: { roundTrip: 60, factoryRoundTrip: 90 },
-	python: { roundTrip: 55, factoryRoundTrip: 65 },
+	python: { roundTrip: 55, factoryRoundTrip: 65 }
 };
 
 for (const grammar of GRAMMARS) {
 	describe(`${grammar} e2e validation`, () => {
 		let result: Awaited<ReturnType<typeof generate>>;
 		beforeAll(async () => {
-			result = await generate({ grammar, outputDir: "src" });
+			result = await generate({ grammar, outputDir: 'src' });
 		});
 
-		it("generates without errors", () => {
+		it('generates without errors', () => {
 			expect(result.jinjaTemplates.bodies.size).toBeGreaterThan(0);
 			expect(result.factories).toBeDefined();
 			expect(result.types).toBeDefined();
@@ -65,25 +71,28 @@ for (const grammar of GRAMMARS) {
 			expect(result.suggested).toBeDefined();
 		});
 
-		describe("round-trip validation", () => {
+		describe('round-trip validation', () => {
 			const ceiling = RT_CEILINGS[grammar]!;
 
-			it("parse → readNode → render → reparse preserves structure", async () => {
+			it('parse → readNode → render → reparse preserves structure', async () => {
 				const rt = await validateRoundTrip(grammar, templatesPath(grammar));
 				expect(rt.pass).toBeGreaterThan(0);
 				// Ceiling: fail count must not regress above known baseline
 				expect(
 					rt.fail,
-					`round-trip regressions (ceiling ${ceiling.roundTrip})`,
+					`round-trip regressions (ceiling ${ceiling.roundTrip})`
 				).toBeLessThanOrEqual(ceiling.roundTrip);
 			}, 30_000);
 
-			it("factory round-trip — factory → render → parse matches", async () => {
-				const frt = await validateFactoryRoundTrip(grammar, templatesPath(grammar));
+			it('factory round-trip — factory → render → parse matches', async () => {
+				const frt = await validateFactoryRoundTrip(
+					grammar,
+					templatesPath(grammar)
+				);
 				expect(frt.pass).toBeGreaterThan(0);
 				expect(
 					frt.fail,
-					`factory round-trip regressions (ceiling ${ceiling.factoryRoundTrip})`,
+					`factory round-trip regressions (ceiling ${ceiling.factoryRoundTrip})`
 				).toBeLessThanOrEqual(ceiling.factoryRoundTrip);
 			}, 30_000);
 		});

@@ -12,8 +12,8 @@
  * when they need file-backed Nunjucks.
  */
 
-import nunjucks from "nunjucks";
-import type { FlankedChildArray } from "../render.ts";
+import nunjucks from 'nunjucks';
+import type { FlankedChildArray } from '../render.ts';
 
 /**
  * Build a Nunjucks `Environment` configured for sittir templates:
@@ -30,10 +30,12 @@ import type { FlankedChildArray } from "../render.ts";
  *   comment at the option itself captures how FR-018 / SC-005 is still
  *   met for the typed-expression and template-file-missing channels.
  */
-export function createNunjucksEnvironment(templatesDir: string): nunjucks.Environment {
+export function createNunjucksEnvironment(
+	templatesDir: string
+): nunjucks.Environment {
 	const loader = new nunjucks.FileSystemLoader(templatesDir, {
 		noCache: false,
-		watch: false,
+		watch: false
 	});
 	const env = new nunjucks.Environment(loader, {
 		autoescape: false,
@@ -56,7 +58,7 @@ export function createNunjucksEnvironment(templatesDir: string): nunjucks.Enviro
 		//      deferred) catches undefined refs at cargo build.
 		throwOnUndefined: false,
 		trimBlocks: false,
-		lstripBlocks: false,
+		lstripBlocks: false
 	});
 	registerSittirFilters(env);
 	return env;
@@ -101,18 +103,22 @@ function registerSittirFilters(env: nunjucks.Environment): void {
 	 * is a context-builder bug: throw with filter name and value preview
 	 * instead of silently rendering `"[object Object]"`.
 	 */
-	const normalizeJoinValue = (value: unknown, filterName: string): readonly string[] | string => {
-		if (value === undefined || value === null) return "";
+	const normalizeJoinValue = (
+		value: unknown,
+		filterName: string
+	): readonly string[] | string => {
+		if (value === undefined || value === null) return '';
 		if (Array.isArray(value)) return value as readonly string[];
-		if (typeof value === "string") return value;
-		if (typeof value === "number" || typeof value === "boolean") return String(value);
+		if (typeof value === 'string') return value;
+		if (typeof value === 'number' || typeof value === 'boolean')
+			return String(value);
 		throw new TypeError(
 			`${filterName}: unsupported value type ${typeof value} ` +
 				`(value = ${JSON.stringify(value)?.slice(0, 120)}). Expected array / string / nullish; ` +
-				`a foreign shape here indicates a context-builder bug.`,
+				`a foreign shape here indicates a context-builder bug.`
 		);
 	};
-	const sepOf = (sep: unknown): string => (typeof sep === "string" ? sep : "");
+	const sepOf = (sep: unknown): string => (typeof sep === 'string' ? sep : '');
 	// Line-comment-aware join. When a child ends with a `//` or `#`
 	// line-terminated comment, force the following separator to be `\n`
 	// instead of the configured one — otherwise joining with ` ` (block's
@@ -122,31 +128,34 @@ function registerSittirFilters(env: nunjucks.Environment): void {
 	// path handles it too. Cluster J (016): block round-trip on fixtures
 	// containing `// comment` followed by a statement.
 	const endsLineComment = (s: string): boolean => {
-		const trimmed = s.replace(/[ \t]+$/, "");
-		if (trimmed.endsWith("\n")) return false;
+		const trimmed = s.replace(/[ \t]+$/, '');
+		if (trimmed.endsWith('\n')) return false;
 		return /(?:^|\n)\s*(?:\/\/|#)[^\n]*$/.test(trimmed);
 	};
-	const joinWithLineCommentFix = (parts: readonly string[], sep: string): string => {
-		if (parts.length === 0) return "";
+	const joinWithLineCommentFix = (
+		parts: readonly string[],
+		sep: string
+	): string => {
+		if (parts.length === 0) return '';
 		if (parts.length === 1) return parts[0]!;
 		const out: string[] = [];
 		for (let i = 0; i < parts.length; i++) {
 			out.push(parts[i]!);
 			if (i < parts.length - 1) {
-				out.push(endsLineComment(parts[i]!) ? "\n" : sep);
+				out.push(endsLineComment(parts[i]!) ? '\n' : sep);
 			}
 		}
-		return out.join("");
+		return out.join('');
 	};
-	env.addFilter("join", (value: unknown, sep: unknown) => {
-		const v = normalizeJoinValue(value, "join");
+	env.addFilter('join', (value: unknown, sep: unknown) => {
+		const v = normalizeJoinValue(value, 'join');
 		return Array.isArray(v) ? joinWithLineCommentFix(v, sepOf(sep)) : v;
 	});
 	const flankJoin = (
 		value: unknown,
 		sep: unknown,
 		filterName: string,
-		sides: { leading: boolean; trailing: boolean },
+		sides: { leading: boolean; trailing: boolean }
 	): string => {
 		const v = normalizeJoinValue(value, filterName);
 		// `Array.isArray` widens `readonly string[]` to `any[]`, so the
@@ -154,21 +163,24 @@ function registerSittirFilters(env: nunjucks.Environment): void {
 		// string[]` instead of `string`. An explicit string narrowing
 		// matches the runtime shape — normalizeJoinValue only returns
 		// array-or-string — without a cast.
-		if (typeof v === "string") return v;
+		if (typeof v === 'string') return v;
 		const s = sepOf(sep);
 		const flanked = v as FlankedChildArray;
-		const prefix = sides.leading && flanked._leading_anon === s ? s : "";
-		const suffix = sides.trailing && flanked._trailing_anon === s ? s : "";
+		const prefix = sides.leading && flanked._leading_anon === s ? s : '';
+		const suffix = sides.trailing && flanked._trailing_anon === s ? s : '';
 		return prefix + joinWithLineCommentFix(v, s) + suffix;
 	};
-	env.addFilter("joinWithTrailing", (value: unknown, sep: unknown) =>
-		flankJoin(value, sep, "joinWithTrailing", { leading: false, trailing: true }),
+	env.addFilter('joinWithTrailing', (value: unknown, sep: unknown) =>
+		flankJoin(value, sep, 'joinWithTrailing', {
+			leading: false,
+			trailing: true
+		})
 	);
-	env.addFilter("joinWithLeading", (value: unknown, sep: unknown) =>
-		flankJoin(value, sep, "joinWithLeading", { leading: true, trailing: false }),
+	env.addFilter('joinWithLeading', (value: unknown, sep: unknown) =>
+		flankJoin(value, sep, 'joinWithLeading', { leading: true, trailing: false })
 	);
-	env.addFilter("joinWithFlanks", (value: unknown, sep: unknown) =>
-		flankJoin(value, sep, "joinWithFlanks", { leading: true, trailing: true }),
+	env.addFilter('joinWithFlanks', (value: unknown, sep: unknown) =>
+		flankJoin(value, sep, 'joinWithFlanks', { leading: true, trailing: true })
 	);
 
 	// Presence-check filters — templates use `{% if foo | isBlank %}`
@@ -184,12 +196,12 @@ function registerSittirFilters(env: nunjucks.Environment): void {
 	//   uniform bool regardless of renderer.
 	const isBlank = (value: unknown): boolean => {
 		if (value === undefined || value === null) return true;
-		if (typeof value === "string") return value.trim().length === 0;
+		if (typeof value === 'string') return value.trim().length === 0;
 		if (Array.isArray(value)) return value.length === 0;
 		return false;
 	};
-	env.addFilter("isBlank", isBlank);
-	env.addFilter("isPresent", (value: unknown) => !isBlank(value));
+	env.addFilter('isBlank', isBlank);
+	env.addFilter('isPresent', (value: unknown) => !isBlank(value));
 
 	// `value` filter — render an optional field as its inner value
 	// when present, or empty string when absent. Pairs with `isPresent`
@@ -205,9 +217,9 @@ function registerSittirFilters(env: nunjucks.Environment): void {
 	//     inner String for Some(_). Optional fields stay typed as
 	//     `Option<String>` so they preserve the absent-vs-present-empty
 	//     distinction at the struct level.
-	env.addFilter("value", (value: unknown): string => {
-		if (value === undefined || value === null) return "";
-		if (typeof value === "string") return value;
+	env.addFilter('value', (value: unknown): string => {
+		if (value === undefined || value === null) return '';
+		if (typeof value === 'string') return value;
 		// NodeData / object — coerce via String() (most templates have
 		// rendered-string children, so this path rarely fires).
 		return String(value);

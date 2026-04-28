@@ -2,7 +2,7 @@
 // Per-grammar type guards: is / assert / isTree / isNode.
 // Composition: kind × shape = concrete type via NamespaceMap.
 
-import type { AnyNodeData, AnyTreeNodeOf as AnyTreeNode } from "@sittir/types";
+import type { AnyNodeData, AnyTreeNodeOf as AnyTreeNode } from '@sittir/types';
 import type {
 	NamespaceMap,
 	Declaration,
@@ -28,585 +28,633 @@ import type {
 	TupleTypeMember,
 	Type,
 	_Identifier,
-	_JsxIdentifier,
-} from "./types.js";
+	_JsxIdentifier
+} from './types.js';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
-	program<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "program" };
+	program<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: 'program' };
 	exportStatementTypeExport<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "export_statement_type_export" };
+		v: T
+	): v is T & { readonly $type: 'export_statement_type_export' };
 	exportStatementEqualsExport<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "export_statement_equals_export" };
+		v: T
+	): v is T & { readonly $type: 'export_statement_equals_export' };
 	exportStatementNamespaceExport<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "export_statement_namespace_export" };
+		v: T
+	): v is T & { readonly $type: 'export_statement_namespace_export' };
 	exportStatement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "export_statement" };
+		v: T
+	): v is T & { readonly $type: 'export_statement' };
 	namespaceExport<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "namespace_export" };
+		v: T
+	): v is T & { readonly $type: 'namespace_export' };
 	exportClause<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "export_clause" };
+		v: T
+	): v is T & { readonly $type: 'export_clause' };
 	exportSpecifier<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "export_specifier" };
+		v: T
+	): v is T & { readonly $type: 'export_specifier' };
 	importStatement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "import_statement" };
+		v: T
+	): v is T & { readonly $type: 'import_statement' };
 	importClauseNamespaceImport<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "import_clause_namespace_import" };
+		v: T
+	): v is T & { readonly $type: 'import_clause_namespace_import' };
 	importClauseNamedImports<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "import_clause_named_imports" };
+		v: T
+	): v is T & { readonly $type: 'import_clause_named_imports' };
 	importClauseDefaultImport<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "import_clause_default_import" };
+		v: T
+	): v is T & { readonly $type: 'import_clause_default_import' };
 	importClause<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "import_clause" };
+		v: T
+	): v is T & { readonly $type: 'import_clause' };
 	namespaceImport<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "namespace_import" };
+		v: T
+	): v is T & { readonly $type: 'namespace_import' };
 	namedImports<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "named_imports" };
+		v: T
+	): v is T & { readonly $type: 'named_imports' };
 	importSpecifierName<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "import_specifier_name" };
+		v: T
+	): v is T & { readonly $type: 'import_specifier_name' };
 	importSpecifier<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "import_specifier" };
+		v: T
+	): v is T & { readonly $type: 'import_specifier' };
 	importAttribute<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "import_attribute" };
+		v: T
+	): v is T & { readonly $type: 'import_attribute' };
 	expressionStatement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "expression_statement" };
+		v: T
+	): v is T & { readonly $type: 'expression_statement' };
 	variableDeclaration<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "variable_declaration" };
+		v: T
+	): v is T & { readonly $type: 'variable_declaration' };
 	lexicalDeclaration<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "lexical_declaration" };
+		v: T
+	): v is T & { readonly $type: 'lexical_declaration' };
 	variableDeclarator<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "variable_declarator" };
+		v: T
+	): v is T & { readonly $type: 'variable_declarator' };
 	statementBlock<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "statement_block" };
+		v: T
+	): v is T & { readonly $type: 'statement_block' };
 	elseClause<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "else_clause" };
+		v: T
+	): v is T & { readonly $type: 'else_clause' };
 	ifStatement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "if_statement" };
+		v: T
+	): v is T & { readonly $type: 'if_statement' };
 	switchStatement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "switch_statement" };
+		v: T
+	): v is T & { readonly $type: 'switch_statement' };
 	forStatement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "for_statement" };
+		v: T
+	): v is T & { readonly $type: 'for_statement' };
 	forInStatement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "for_in_statement" };
+		v: T
+	): v is T & { readonly $type: 'for_in_statement' };
 	whileStatement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "while_statement" };
+		v: T
+	): v is T & { readonly $type: 'while_statement' };
 	doStatement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "do_statement" };
+		v: T
+	): v is T & { readonly $type: 'do_statement' };
 	tryStatement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "try_statement" };
+		v: T
+	): v is T & { readonly $type: 'try_statement' };
 	withStatement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "with_statement" };
+		v: T
+	): v is T & { readonly $type: 'with_statement' };
 	breakStatement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "break_statement" };
+		v: T
+	): v is T & { readonly $type: 'break_statement' };
 	continueStatement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "continue_statement" };
+		v: T
+	): v is T & { readonly $type: 'continue_statement' };
 	debuggerStatement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "debugger_statement" };
+		v: T
+	): v is T & { readonly $type: 'debugger_statement' };
 	returnStatement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "return_statement" };
+		v: T
+	): v is T & { readonly $type: 'return_statement' };
 	throwStatement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "throw_statement" };
+		v: T
+	): v is T & { readonly $type: 'throw_statement' };
 	labeledStatement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "labeled_statement" };
+		v: T
+	): v is T & { readonly $type: 'labeled_statement' };
 	switchBody<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "switch_body" };
+		v: T
+	): v is T & { readonly $type: 'switch_body' };
 	switchCase<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "switch_case" };
+		v: T
+	): v is T & { readonly $type: 'switch_case' };
 	switchDefault<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "switch_default" };
+		v: T
+	): v is T & { readonly $type: 'switch_default' };
 	catchClause<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "catch_clause" };
+		v: T
+	): v is T & { readonly $type: 'catch_clause' };
 	finallyClause<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "finally_clause" };
+		v: T
+	): v is T & { readonly $type: 'finally_clause' };
 	parenthesizedExpressionSequence<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "parenthesized_expression_sequence" };
+		v: T
+	): v is T & { readonly $type: 'parenthesized_expression_sequence' };
 	parenthesizedExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "parenthesized_expression" };
+		v: T
+	): v is T & { readonly $type: 'parenthesized_expression' };
 	yieldExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "yield_expression" };
-	object<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "object" };
+		v: T
+	): v is T & { readonly $type: 'yield_expression' };
+	object<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: 'object' };
 	objectPattern<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "object_pattern" };
+		v: T
+	): v is T & { readonly $type: 'object_pattern' };
 	assignmentPattern<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "assignment_pattern" };
+		v: T
+	): v is T & { readonly $type: 'assignment_pattern' };
 	objectAssignmentPattern<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "object_assignment_pattern" };
-	array<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "array" };
+		v: T
+	): v is T & { readonly $type: 'object_assignment_pattern' };
+	array<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: 'array' };
 	arrayPattern<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "array_pattern" };
+		v: T
+	): v is T & { readonly $type: 'array_pattern' };
 	jsxElement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "jsx_element" };
+		v: T
+	): v is T & { readonly $type: 'jsx_element' };
 	jsxExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "jsx_expression" };
+		v: T
+	): v is T & { readonly $type: 'jsx_expression' };
 	jsxOpeningElement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "jsx_opening_element" };
+		v: T
+	): v is T & { readonly $type: 'jsx_opening_element' };
 	nestedIdentifier<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "nested_identifier" };
+		v: T
+	): v is T & { readonly $type: 'nested_identifier' };
 	jsxNamespaceName<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "jsx_namespace_name" };
+		v: T
+	): v is T & { readonly $type: 'jsx_namespace_name' };
 	jsxClosingElement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "jsx_closing_element" };
+		v: T
+	): v is T & { readonly $type: 'jsx_closing_element' };
 	jsxSelfClosingElement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "jsx_self_closing_element" };
+		v: T
+	): v is T & { readonly $type: 'jsx_self_closing_element' };
 	jsxAttribute<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "jsx_attribute" };
-	JsxString<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "_jsx_string" };
-	class_<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "class" };
+		v: T
+	): v is T & { readonly $type: 'jsx_attribute' };
+	JsxString<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: '_jsx_string' };
+	class_<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: 'class' };
 	classDeclaration<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "class_declaration" };
+		v: T
+	): v is T & { readonly $type: 'class_declaration' };
 	classHeritageExtendsClause<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "class_heritage_extends_clause" };
+		v: T
+	): v is T & { readonly $type: 'class_heritage_extends_clause' };
 	classHeritageImplementsClause<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "class_heritage_implements_clause" };
+		v: T
+	): v is T & { readonly $type: 'class_heritage_implements_clause' };
 	classHeritage<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "class_heritage" };
+		v: T
+	): v is T & { readonly $type: 'class_heritage' };
 	functionExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "function_expression" };
+		v: T
+	): v is T & { readonly $type: 'function_expression' };
 	functionDeclaration<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "function_declaration" };
+		v: T
+	): v is T & { readonly $type: 'function_declaration' };
 	generatorFunction<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "generator_function" };
+		v: T
+	): v is T & { readonly $type: 'generator_function' };
 	generatorFunctionDeclaration<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "generator_function_declaration" };
+		v: T
+	): v is T & { readonly $type: 'generator_function_declaration' };
 	arrowFunctionParameter<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "arrow_function_parameter" };
+		v: T
+	): v is T & { readonly $type: 'arrow_function_parameter' };
 	arrowFunction_CallSignature<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "arrow_function__call_signature" };
+		v: T
+	): v is T & { readonly $type: 'arrow_function__call_signature' };
 	arrowFunction<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "arrow_function" };
+		v: T
+	): v is T & { readonly $type: 'arrow_function' };
 	callExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "call_expression" };
+		v: T
+	): v is T & { readonly $type: 'call_expression' };
 	newExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "new_expression" };
+		v: T
+	): v is T & { readonly $type: 'new_expression' };
 	awaitExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "await_expression" };
+		v: T
+	): v is T & { readonly $type: 'await_expression' };
 	memberExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "member_expression" };
+		v: T
+	): v is T & { readonly $type: 'member_expression' };
 	subscriptExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "subscript_expression" };
+		v: T
+	): v is T & { readonly $type: 'subscript_expression' };
 	LhsExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_lhs_expression" };
+		v: T
+	): v is T & { readonly $type: '_lhs_expression' };
 	assignmentExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "assignment_expression" };
+		v: T
+	): v is T & { readonly $type: 'assignment_expression' };
 	augmentedAssignmentExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "augmented_assignment_expression" };
+		v: T
+	): v is T & { readonly $type: 'augmented_assignment_expression' };
 	spreadElement<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "spread_element" };
+		v: T
+	): v is T & { readonly $type: 'spread_element' };
 	ternaryExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "ternary_expression" };
+		v: T
+	): v is T & { readonly $type: 'ternary_expression' };
 	binaryExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "binary_expression" };
+		v: T
+	): v is T & { readonly $type: 'binary_expression' };
 	unaryExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "unary_expression" };
+		v: T
+	): v is T & { readonly $type: 'unary_expression' };
 	updateExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "update_expression" };
+		v: T
+	): v is T & { readonly $type: 'update_expression' };
 	sequenceExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "sequence_expression" };
+		v: T
+	): v is T & { readonly $type: 'sequence_expression' };
 	stringDouble<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "string_double" };
+		v: T
+	): v is T & { readonly $type: 'string_double' };
 	stringSingle<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "string_single" };
-	string<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "string" };
+		v: T
+	): v is T & { readonly $type: 'string_single' };
+	string<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: 'string' };
 	templateString<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "template_string" };
+		v: T
+	): v is T & { readonly $type: 'template_string' };
 	templateSubstitution<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "template_substitution" };
-	regex<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "regex" };
-	arguments<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "arguments" };
-	decorator<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "decorator" };
+		v: T
+	): v is T & { readonly $type: 'template_substitution' };
+	regex<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: 'regex' };
+	arguments<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: 'arguments' };
+	decorator<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: 'decorator' };
 	decoratorMemberExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "decorator_member_expression" };
+		v: T
+	): v is T & { readonly $type: 'decorator_member_expression' };
 	decoratorCallExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "decorator_call_expression" };
-	classBody<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "class_body" };
+		v: T
+	): v is T & { readonly $type: 'decorator_call_expression' };
+	classBody<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: 'class_body' };
 	fieldDefinition<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "field_definition" };
+		v: T
+	): v is T & { readonly $type: 'field_definition' };
 	formalParameters<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "formal_parameters" };
+		v: T
+	): v is T & { readonly $type: 'formal_parameters' };
 	classStaticBlock<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "class_static_block" };
+		v: T
+	): v is T & { readonly $type: 'class_static_block' };
 	restPattern<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "rest_pattern" };
+		v: T
+	): v is T & { readonly $type: 'rest_pattern' };
 	methodDefinition<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "method_definition" };
-	pair<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "pair" };
+		v: T
+	): v is T & { readonly $type: 'method_definition' };
+	pair<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: 'pair' };
 	pairPattern<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "pair_pattern" };
+		v: T
+	): v is T & { readonly $type: 'pair_pattern' };
 	computedPropertyName<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "computed_property_name" };
+		v: T
+	): v is T & { readonly $type: 'computed_property_name' };
 	StatementIdentifier<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_statement_identifier" };
+		v: T
+	): v is T & { readonly $type: '_statement_identifier' };
 	PropertyIdentifier<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_property_identifier" };
+		v: T
+	): v is T & { readonly $type: '_property_identifier' };
 	StringFragment<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_string_fragment" };
+		v: T
+	): v is T & { readonly $type: '_string_fragment' };
 	publicFieldDefinition<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "public_field_definition" };
+		v: T
+	): v is T & { readonly $type: 'public_field_definition' };
 	nonNullExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "non_null_expression" };
+		v: T
+	): v is T & { readonly $type: 'non_null_expression' };
 	methodSignature<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "method_signature" };
+		v: T
+	): v is T & { readonly $type: 'method_signature' };
 	abstractMethodSignature<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "abstract_method_signature" };
+		v: T
+	): v is T & { readonly $type: 'abstract_method_signature' };
 	functionSignature<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "function_signature" };
+		v: T
+	): v is T & { readonly $type: 'function_signature' };
 	decoratorParenthesizedExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "decorator_parenthesized_expression" };
+		v: T
+	): v is T & { readonly $type: 'decorator_parenthesized_expression' };
 	typeAssertion<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "type_assertion" };
+		v: T
+	): v is T & { readonly $type: 'type_assertion' };
 	asExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "as_expression" };
+		v: T
+	): v is T & { readonly $type: 'as_expression' };
 	satisfiesExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "satisfies_expression" };
+		v: T
+	): v is T & { readonly $type: 'satisfies_expression' };
 	instantiationExpression<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "instantiation_expression" };
+		v: T
+	): v is T & { readonly $type: 'instantiation_expression' };
 	importRequireClause<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "import_require_clause" };
+		v: T
+	): v is T & { readonly $type: 'import_require_clause' };
 	extendsClause<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "extends_clause" };
+		v: T
+	): v is T & { readonly $type: 'extends_clause' };
 	implementsClause<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "implements_clause" };
+		v: T
+	): v is T & { readonly $type: 'implements_clause' };
 	ambientDeclaration<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "ambient_declaration" };
+		v: T
+	): v is T & { readonly $type: 'ambient_declaration' };
 	abstractClassDeclaration<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "abstract_class_declaration" };
-	module<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "module" };
+		v: T
+	): v is T & { readonly $type: 'abstract_class_declaration' };
+	module<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: 'module' };
 	internalModule<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "internal_module" };
+		v: T
+	): v is T & { readonly $type: 'internal_module' };
 	importAlias<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "import_alias" };
+		v: T
+	): v is T & { readonly $type: 'import_alias' };
 	nestedTypeIdentifier<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "nested_type_identifier" };
+		v: T
+	): v is T & { readonly $type: 'nested_type_identifier' };
 	interfaceDeclaration<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "interface_declaration" };
+		v: T
+	): v is T & { readonly $type: 'interface_declaration' };
 	extendsTypeClause<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "extends_type_clause" };
+		v: T
+	): v is T & { readonly $type: 'extends_type_clause' };
 	enumDeclaration<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "enum_declaration" };
-	enumBody<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "enum_body" };
+		v: T
+	): v is T & { readonly $type: 'enum_declaration' };
+	enumBody<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: 'enum_body' };
 	enumAssignment<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "enum_assignment" };
+		v: T
+	): v is T & { readonly $type: 'enum_assignment' };
 	typeAliasDeclaration<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "type_alias_declaration" };
+		v: T
+	): v is T & { readonly $type: 'type_alias_declaration' };
 	requiredParameter<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "required_parameter" };
+		v: T
+	): v is T & { readonly $type: 'required_parameter' };
 	optionalParameter<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "optional_parameter" };
+		v: T
+	): v is T & { readonly $type: 'optional_parameter' };
 	omittingTypeAnnotation<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "omitting_type_annotation" };
+		v: T
+	): v is T & { readonly $type: 'omitting_type_annotation' };
 	addingTypeAnnotation<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "adding_type_annotation" };
+		v: T
+	): v is T & { readonly $type: 'adding_type_annotation' };
 	optingTypeAnnotation<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "opting_type_annotation" };
+		v: T
+	): v is T & { readonly $type: 'opting_type_annotation' };
 	typeAnnotation<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "type_annotation" };
-	asserts<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "asserts" };
+		v: T
+	): v is T & { readonly $type: 'type_annotation' };
+	asserts<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: 'asserts' };
 	assertsAnnotation<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "asserts_annotation" };
+		v: T
+	): v is T & { readonly $type: 'asserts_annotation' };
 	tupleParameter<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "tuple_parameter" };
+		v: T
+	): v is T & { readonly $type: 'tuple_parameter' };
 	optionalTupleParameter<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "optional_tuple_parameter" };
+		v: T
+	): v is T & { readonly $type: 'optional_tuple_parameter' };
 	optionalType<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "optional_type" };
-	restType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "rest_type" };
+		v: T
+	): v is T & { readonly $type: 'optional_type' };
+	restType<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: 'rest_type' };
 	constructorType<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "constructor_type" };
+		v: T
+	): v is T & { readonly $type: 'constructor_type' };
 	templateType<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "template_type" };
+		v: T
+	): v is T & { readonly $type: 'template_type' };
 	templateLiteralType<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "template_literal_type" };
-	inferType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "infer_type" };
+		v: T
+	): v is T & { readonly $type: 'template_literal_type' };
+	inferType<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: 'infer_type' };
 	conditionalType<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "conditional_type" };
+		v: T
+	): v is T & { readonly $type: 'conditional_type' };
 	genericType<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "generic_type" };
+		v: T
+	): v is T & { readonly $type: 'generic_type' };
 	typePredicate<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "type_predicate" };
+		v: T
+	): v is T & { readonly $type: 'type_predicate' };
 	typePredicateAnnotation<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "type_predicate_annotation" };
-	typeQuery<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "type_query" };
+		v: T
+	): v is T & { readonly $type: 'type_predicate_annotation' };
+	typeQuery<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: 'type_query' };
 	indexTypeQuery<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "index_type_query" };
+		v: T
+	): v is T & { readonly $type: 'index_type_query' };
 	lookupType<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "lookup_type" };
+		v: T
+	): v is T & { readonly $type: 'lookup_type' };
 	mappedTypeClause<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "mapped_type_clause" };
+		v: T
+	): v is T & { readonly $type: 'mapped_type_clause' };
 	literalType<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "literal_type" };
+		v: T
+	): v is T & { readonly $type: 'literal_type' };
 	flowMaybeType<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "flow_maybe_type" };
+		v: T
+	): v is T & { readonly $type: 'flow_maybe_type' };
 	parenthesizedType<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "parenthesized_type" };
+		v: T
+	): v is T & { readonly $type: 'parenthesized_type' };
 	typeArguments<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "type_arguments" };
+		v: T
+	): v is T & { readonly $type: 'type_arguments' };
 	objectType<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "object_type" };
+		v: T
+	): v is T & { readonly $type: 'object_type' };
 	callSignature<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "call_signature" };
+		v: T
+	): v is T & { readonly $type: 'call_signature' };
 	propertySignature<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "property_signature" };
+		v: T
+	): v is T & { readonly $type: 'property_signature' };
 	typeParameters<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "type_parameters" };
+		v: T
+	): v is T & { readonly $type: 'type_parameters' };
 	typeParameter<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "type_parameter" };
+		v: T
+	): v is T & { readonly $type: 'type_parameter' };
 	defaultType<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "default_type" };
-	constraint<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "constraint" };
+		v: T
+	): v is T & { readonly $type: 'default_type' };
+	constraint<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: 'constraint' };
 	constructSignature<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "construct_signature" };
+		v: T
+	): v is T & { readonly $type: 'construct_signature' };
 	indexSignatureMappedTypeClause<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "index_signature_mapped_type_clause" };
+		v: T
+	): v is T & { readonly $type: 'index_signature_mapped_type_clause' };
 	indexSignature<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "index_signature" };
-	arrayType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "array_type" };
-	tupleType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "tuple_type" };
+		v: T
+	): v is T & { readonly $type: 'index_signature' };
+	arrayType<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: 'array_type' };
+	tupleType<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: 'tuple_type' };
 	readonlyType<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "readonly_type" };
-	unionType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "union_type" };
+		v: T
+	): v is T & { readonly $type: 'readonly_type' };
+	unionType<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: 'union_type' };
 	intersectionType<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "intersection_type" };
+		v: T
+	): v is T & { readonly $type: 'intersection_type' };
 	functionType<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "function_type" };
+		v: T
+	): v is T & { readonly $type: 'function_type' };
 	TypeIdentifier<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_type_identifier" };
+		v: T
+	): v is T & { readonly $type: '_type_identifier' };
 	InterfaceBody<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_interface_body" };
-	ThisType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: "_this_type" };
+		v: T
+	): v is T & { readonly $type: '_interface_body' };
+	ThisType<T extends { readonly $type: string }>(
+		v: T
+	): v is T & { readonly $type: '_this_type' };
 	ExportStatementDefaultFromArm<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_export_statement_default_from_arm" };
+		v: T
+	): v is T & { readonly $type: '_export_statement_default_from_arm' };
 	ArrowFunctionParameter<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_arrow_function_parameter" };
+		v: T
+	): v is T & { readonly $type: '_arrow_function_parameter' };
 	ArrowFunction_CallSignature<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_arrow_function__call_signature" };
+		v: T
+	): v is T & { readonly $type: '_arrow_function__call_signature' };
 	ClassHeritageExtendsClause<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_class_heritage_extends_clause" };
+		v: T
+	): v is T & { readonly $type: '_class_heritage_extends_clause' };
 	ClassHeritageImplementsClause<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_class_heritage_implements_clause" };
+		v: T
+	): v is T & { readonly $type: '_class_heritage_implements_clause' };
 	ImportClauseNamespaceImport<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_import_clause_namespace_import" };
+		v: T
+	): v is T & { readonly $type: '_import_clause_namespace_import' };
 	ImportClauseNamedImports<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_import_clause_named_imports" };
+		v: T
+	): v is T & { readonly $type: '_import_clause_named_imports' };
 	ImportClauseDefaultImport<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_import_clause_default_import" };
+		v: T
+	): v is T & { readonly $type: '_import_clause_default_import' };
 	ImportSpecifierName<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_import_specifier_name" };
+		v: T
+	): v is T & { readonly $type: '_import_specifier_name' };
 	IndexSignatureMappedTypeClause<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_index_signature_mapped_type_clause" };
+		v: T
+	): v is T & { readonly $type: '_index_signature_mapped_type_clause' };
 	ExportStatementDefaultFromArmStarFrom<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_export_statement_default_from_arm_star_from" };
+		v: T
+	): v is T & {
+		readonly $type: '_export_statement_default_from_arm_star_from';
+	};
 	ExportStatementDefaultFromArmNsFrom<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_export_statement_default_from_arm_ns_from" };
+		v: T
+	): v is T & { readonly $type: '_export_statement_default_from_arm_ns_from' };
 	ExportStatementDefaultFromArmClauseFrom<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_export_statement_default_from_arm_clause_from" };
+		v: T
+	): v is T & {
+		readonly $type: '_export_statement_default_from_arm_clause_from';
+	};
 	ClassBodyMethodSig<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_class_body_method_sig" };
+		v: T
+	): v is T & { readonly $type: '_class_body_method_sig' };
 	ClassBodyMember<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_class_body_member" };
+		v: T
+	): v is T & { readonly $type: '_class_body_member' };
 	ForHeaderLhs<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_for_header_lhs" };
+		v: T
+	): v is T & { readonly $type: '_for_header_lhs' };
 	PublicFieldDefinitionDeclareFirst<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_public_field_definition_declare_first" };
+		v: T
+	): v is T & { readonly $type: '_public_field_definition_declare_first' };
 	PublicFieldDefinitionAccessorOpt<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_public_field_definition_accessor_opt" };
+		v: T
+	): v is T & { readonly $type: '_public_field_definition_accessor_opt' };
 	ParenthesizedExpressionSequence<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_parenthesized_expression_sequence" };
+		v: T
+	): v is T & { readonly $type: '_parenthesized_expression_sequence' };
 	ExportStatementTypeExport<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_export_statement_type_export" };
+		v: T
+	): v is T & { readonly $type: '_export_statement_type_export' };
 	ExportStatementEqualsExport<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_export_statement_equals_export" };
+		v: T
+	): v is T & { readonly $type: '_export_statement_equals_export' };
 	ExportStatementNamespaceExport<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_export_statement_namespace_export" };
+		v: T
+	): v is T & { readonly $type: '_export_statement_namespace_export' };
 	StringDouble<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_string_double" };
+		v: T
+	): v is T & { readonly $type: '_string_double' };
 	StringSingle<T extends { readonly $type: string }>(
-		v: T,
-	): v is T & { readonly $type: "_string_single" };
+		v: T
+	): v is T & { readonly $type: '_string_single' };
 	kind<K extends keyof NamespaceMap>(
 		v: { readonly $type: string },
-		kind: K,
+		kind: K
 	): v is { readonly $type: K & string };
 	moduleExportName(v: { readonly $type: string }): v is ModuleExportName;
 	declaration(v: { readonly $type: string }): v is Declaration;
@@ -620,12 +668,16 @@ export interface IsGuards {
 	jsxAttributeName(v: { readonly $type: string }): v is JsxAttributeName;
 	jsxAttributeValue(v: { readonly $type: string }): v is JsxAttributeValue;
 	formalParameter(v: { readonly $type: string }): v is FormalParameter;
-	destructuringPattern(v: { readonly $type: string }): v is DestructuringPattern;
+	destructuringPattern(v: {
+		readonly $type: string;
+	}): v is DestructuringPattern;
 	identifier(v: { readonly $type: string }): v is _Identifier;
 	pattern(v: { readonly $type: string }): v is Pattern;
 	propertyName(v: { readonly $type: string }): v is PropertyName;
 	semicolon(v: { readonly $type: string }): v is Semicolon;
-	shorthandPropertyIdentifier(v: { readonly $type: string }): v is ShorthandPropertyIdentifier;
+	shorthandPropertyIdentifier(v: {
+		readonly $type: string;
+	}): v is ShorthandPropertyIdentifier;
 	shorthandPropertyIdentifierPattern(v: {
 		readonly $type: string;
 	}): v is ShorthandPropertyIdentifierPattern;
@@ -633,475 +685,659 @@ export interface IsGuards {
 	type(v: { readonly $type: string }): v is Type;
 	tupleTypeMember(v: { readonly $type: string }): v is TupleTypeMember;
 	primaryType(v: { readonly $type: string }): v is PrimaryType;
-	exportStatementDefault(v: { readonly $type: string }): v is ExportStatementDefault;
+	exportStatementDefault(v: {
+		readonly $type: string;
+	}): v is ExportStatementDefault;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
-	program(v: { readonly $type: string }): asserts v is { readonly $type: "program" };
+	program(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'program' };
 	exportStatementTypeExport(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "export_statement_type_export" };
+	}): asserts v is { readonly $type: 'export_statement_type_export' };
 	exportStatementEqualsExport(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "export_statement_equals_export" };
+	}): asserts v is { readonly $type: 'export_statement_equals_export' };
 	exportStatementNamespaceExport(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "export_statement_namespace_export" };
+	}): asserts v is { readonly $type: 'export_statement_namespace_export' };
 	exportStatement(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "export_statement" };
+	}): asserts v is { readonly $type: 'export_statement' };
 	namespaceExport(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "namespace_export" };
-	exportClause(v: { readonly $type: string }): asserts v is { readonly $type: "export_clause" };
+	}): asserts v is { readonly $type: 'namespace_export' };
+	exportClause(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'export_clause' };
 	exportSpecifier(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "export_specifier" };
+	}): asserts v is { readonly $type: 'export_specifier' };
 	importStatement(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "import_statement" };
+	}): asserts v is { readonly $type: 'import_statement' };
 	importClauseNamespaceImport(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "import_clause_namespace_import" };
+	}): asserts v is { readonly $type: 'import_clause_namespace_import' };
 	importClauseNamedImports(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "import_clause_named_imports" };
+	}): asserts v is { readonly $type: 'import_clause_named_imports' };
 	importClauseDefaultImport(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "import_clause_default_import" };
-	importClause(v: { readonly $type: string }): asserts v is { readonly $type: "import_clause" };
+	}): asserts v is { readonly $type: 'import_clause_default_import' };
+	importClause(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'import_clause' };
 	namespaceImport(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "namespace_import" };
-	namedImports(v: { readonly $type: string }): asserts v is { readonly $type: "named_imports" };
+	}): asserts v is { readonly $type: 'namespace_import' };
+	namedImports(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'named_imports' };
 	importSpecifierName(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "import_specifier_name" };
+	}): asserts v is { readonly $type: 'import_specifier_name' };
 	importSpecifier(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "import_specifier" };
+	}): asserts v is { readonly $type: 'import_specifier' };
 	importAttribute(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "import_attribute" };
+	}): asserts v is { readonly $type: 'import_attribute' };
 	expressionStatement(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "expression_statement" };
+	}): asserts v is { readonly $type: 'expression_statement' };
 	variableDeclaration(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "variable_declaration" };
+	}): asserts v is { readonly $type: 'variable_declaration' };
 	lexicalDeclaration(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "lexical_declaration" };
+	}): asserts v is { readonly $type: 'lexical_declaration' };
 	variableDeclarator(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "variable_declarator" };
-	statementBlock(v: { readonly $type: string }): asserts v is { readonly $type: "statement_block" };
-	elseClause(v: { readonly $type: string }): asserts v is { readonly $type: "else_clause" };
-	ifStatement(v: { readonly $type: string }): asserts v is { readonly $type: "if_statement" };
+	}): asserts v is { readonly $type: 'variable_declarator' };
+	statementBlock(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'statement_block' };
+	elseClause(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'else_clause' };
+	ifStatement(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'if_statement' };
 	switchStatement(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "switch_statement" };
-	forStatement(v: { readonly $type: string }): asserts v is { readonly $type: "for_statement" };
+	}): asserts v is { readonly $type: 'switch_statement' };
+	forStatement(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'for_statement' };
 	forInStatement(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "for_in_statement" };
-	whileStatement(v: { readonly $type: string }): asserts v is { readonly $type: "while_statement" };
-	doStatement(v: { readonly $type: string }): asserts v is { readonly $type: "do_statement" };
-	tryStatement(v: { readonly $type: string }): asserts v is { readonly $type: "try_statement" };
-	withStatement(v: { readonly $type: string }): asserts v is { readonly $type: "with_statement" };
-	breakStatement(v: { readonly $type: string }): asserts v is { readonly $type: "break_statement" };
+	}): asserts v is { readonly $type: 'for_in_statement' };
+	whileStatement(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'while_statement' };
+	doStatement(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'do_statement' };
+	tryStatement(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'try_statement' };
+	withStatement(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'with_statement' };
+	breakStatement(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'break_statement' };
 	continueStatement(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "continue_statement" };
+	}): asserts v is { readonly $type: 'continue_statement' };
 	debuggerStatement(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "debugger_statement" };
+	}): asserts v is { readonly $type: 'debugger_statement' };
 	returnStatement(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "return_statement" };
-	throwStatement(v: { readonly $type: string }): asserts v is { readonly $type: "throw_statement" };
+	}): asserts v is { readonly $type: 'return_statement' };
+	throwStatement(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'throw_statement' };
 	labeledStatement(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "labeled_statement" };
-	switchBody(v: { readonly $type: string }): asserts v is { readonly $type: "switch_body" };
-	switchCase(v: { readonly $type: string }): asserts v is { readonly $type: "switch_case" };
-	switchDefault(v: { readonly $type: string }): asserts v is { readonly $type: "switch_default" };
-	catchClause(v: { readonly $type: string }): asserts v is { readonly $type: "catch_clause" };
-	finallyClause(v: { readonly $type: string }): asserts v is { readonly $type: "finally_clause" };
+	}): asserts v is { readonly $type: 'labeled_statement' };
+	switchBody(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'switch_body' };
+	switchCase(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'switch_case' };
+	switchDefault(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'switch_default' };
+	catchClause(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'catch_clause' };
+	finallyClause(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'finally_clause' };
 	parenthesizedExpressionSequence(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "parenthesized_expression_sequence" };
+	}): asserts v is { readonly $type: 'parenthesized_expression_sequence' };
 	parenthesizedExpression(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "parenthesized_expression" };
+	}): asserts v is { readonly $type: 'parenthesized_expression' };
 	yieldExpression(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "yield_expression" };
-	object(v: { readonly $type: string }): asserts v is { readonly $type: "object" };
-	objectPattern(v: { readonly $type: string }): asserts v is { readonly $type: "object_pattern" };
+	}): asserts v is { readonly $type: 'yield_expression' };
+	object(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'object' };
+	objectPattern(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'object_pattern' };
 	assignmentPattern(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "assignment_pattern" };
+	}): asserts v is { readonly $type: 'assignment_pattern' };
 	objectAssignmentPattern(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "object_assignment_pattern" };
-	array(v: { readonly $type: string }): asserts v is { readonly $type: "array" };
-	arrayPattern(v: { readonly $type: string }): asserts v is { readonly $type: "array_pattern" };
-	jsxElement(v: { readonly $type: string }): asserts v is { readonly $type: "jsx_element" };
-	jsxExpression(v: { readonly $type: string }): asserts v is { readonly $type: "jsx_expression" };
+	}): asserts v is { readonly $type: 'object_assignment_pattern' };
+	array(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'array' };
+	arrayPattern(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'array_pattern' };
+	jsxElement(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'jsx_element' };
+	jsxExpression(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'jsx_expression' };
 	jsxOpeningElement(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "jsx_opening_element" };
+	}): asserts v is { readonly $type: 'jsx_opening_element' };
 	nestedIdentifier(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "nested_identifier" };
+	}): asserts v is { readonly $type: 'nested_identifier' };
 	jsxNamespaceName(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "jsx_namespace_name" };
+	}): asserts v is { readonly $type: 'jsx_namespace_name' };
 	jsxClosingElement(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "jsx_closing_element" };
+	}): asserts v is { readonly $type: 'jsx_closing_element' };
 	jsxSelfClosingElement(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "jsx_self_closing_element" };
-	jsxAttribute(v: { readonly $type: string }): asserts v is { readonly $type: "jsx_attribute" };
-	JsxString(v: { readonly $type: string }): asserts v is { readonly $type: "_jsx_string" };
-	class_(v: { readonly $type: string }): asserts v is { readonly $type: "class" };
+	}): asserts v is { readonly $type: 'jsx_self_closing_element' };
+	jsxAttribute(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'jsx_attribute' };
+	JsxString(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: '_jsx_string' };
+	class_(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'class' };
 	classDeclaration(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "class_declaration" };
+	}): asserts v is { readonly $type: 'class_declaration' };
 	classHeritageExtendsClause(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "class_heritage_extends_clause" };
+	}): asserts v is { readonly $type: 'class_heritage_extends_clause' };
 	classHeritageImplementsClause(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "class_heritage_implements_clause" };
-	classHeritage(v: { readonly $type: string }): asserts v is { readonly $type: "class_heritage" };
+	}): asserts v is { readonly $type: 'class_heritage_implements_clause' };
+	classHeritage(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'class_heritage' };
 	functionExpression(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "function_expression" };
+	}): asserts v is { readonly $type: 'function_expression' };
 	functionDeclaration(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "function_declaration" };
+	}): asserts v is { readonly $type: 'function_declaration' };
 	generatorFunction(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "generator_function" };
+	}): asserts v is { readonly $type: 'generator_function' };
 	generatorFunctionDeclaration(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "generator_function_declaration" };
+	}): asserts v is { readonly $type: 'generator_function_declaration' };
 	arrowFunctionParameter(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "arrow_function_parameter" };
+	}): asserts v is { readonly $type: 'arrow_function_parameter' };
 	arrowFunction_CallSignature(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "arrow_function__call_signature" };
-	arrowFunction(v: { readonly $type: string }): asserts v is { readonly $type: "arrow_function" };
-	callExpression(v: { readonly $type: string }): asserts v is { readonly $type: "call_expression" };
-	newExpression(v: { readonly $type: string }): asserts v is { readonly $type: "new_expression" };
+	}): asserts v is { readonly $type: 'arrow_function__call_signature' };
+	arrowFunction(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'arrow_function' };
+	callExpression(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'call_expression' };
+	newExpression(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'new_expression' };
 	awaitExpression(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "await_expression" };
+	}): asserts v is { readonly $type: 'await_expression' };
 	memberExpression(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "member_expression" };
+	}): asserts v is { readonly $type: 'member_expression' };
 	subscriptExpression(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "subscript_expression" };
-	LhsExpression(v: { readonly $type: string }): asserts v is { readonly $type: "_lhs_expression" };
+	}): asserts v is { readonly $type: 'subscript_expression' };
+	LhsExpression(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: '_lhs_expression' };
 	assignmentExpression(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "assignment_expression" };
+	}): asserts v is { readonly $type: 'assignment_expression' };
 	augmentedAssignmentExpression(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "augmented_assignment_expression" };
-	spreadElement(v: { readonly $type: string }): asserts v is { readonly $type: "spread_element" };
+	}): asserts v is { readonly $type: 'augmented_assignment_expression' };
+	spreadElement(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'spread_element' };
 	ternaryExpression(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "ternary_expression" };
+	}): asserts v is { readonly $type: 'ternary_expression' };
 	binaryExpression(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "binary_expression" };
+	}): asserts v is { readonly $type: 'binary_expression' };
 	unaryExpression(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "unary_expression" };
+	}): asserts v is { readonly $type: 'unary_expression' };
 	updateExpression(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "update_expression" };
+	}): asserts v is { readonly $type: 'update_expression' };
 	sequenceExpression(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "sequence_expression" };
-	stringDouble(v: { readonly $type: string }): asserts v is { readonly $type: "string_double" };
-	stringSingle(v: { readonly $type: string }): asserts v is { readonly $type: "string_single" };
-	string(v: { readonly $type: string }): asserts v is { readonly $type: "string" };
-	templateString(v: { readonly $type: string }): asserts v is { readonly $type: "template_string" };
+	}): asserts v is { readonly $type: 'sequence_expression' };
+	stringDouble(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'string_double' };
+	stringSingle(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'string_single' };
+	string(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'string' };
+	templateString(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'template_string' };
 	templateSubstitution(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "template_substitution" };
-	regex(v: { readonly $type: string }): asserts v is { readonly $type: "regex" };
-	arguments(v: { readonly $type: string }): asserts v is { readonly $type: "arguments" };
-	decorator(v: { readonly $type: string }): asserts v is { readonly $type: "decorator" };
+	}): asserts v is { readonly $type: 'template_substitution' };
+	regex(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'regex' };
+	arguments(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'arguments' };
+	decorator(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'decorator' };
 	decoratorMemberExpression(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "decorator_member_expression" };
+	}): asserts v is { readonly $type: 'decorator_member_expression' };
 	decoratorCallExpression(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "decorator_call_expression" };
-	classBody(v: { readonly $type: string }): asserts v is { readonly $type: "class_body" };
+	}): asserts v is { readonly $type: 'decorator_call_expression' };
+	classBody(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'class_body' };
 	fieldDefinition(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "field_definition" };
+	}): asserts v is { readonly $type: 'field_definition' };
 	formalParameters(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "formal_parameters" };
+	}): asserts v is { readonly $type: 'formal_parameters' };
 	classStaticBlock(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "class_static_block" };
-	restPattern(v: { readonly $type: string }): asserts v is { readonly $type: "rest_pattern" };
+	}): asserts v is { readonly $type: 'class_static_block' };
+	restPattern(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'rest_pattern' };
 	methodDefinition(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "method_definition" };
-	pair(v: { readonly $type: string }): asserts v is { readonly $type: "pair" };
-	pairPattern(v: { readonly $type: string }): asserts v is { readonly $type: "pair_pattern" };
+	}): asserts v is { readonly $type: 'method_definition' };
+	pair(v: { readonly $type: string }): asserts v is { readonly $type: 'pair' };
+	pairPattern(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'pair_pattern' };
 	computedPropertyName(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "computed_property_name" };
+	}): asserts v is { readonly $type: 'computed_property_name' };
 	StatementIdentifier(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_statement_identifier" };
+	}): asserts v is { readonly $type: '_statement_identifier' };
 	PropertyIdentifier(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_property_identifier" };
+	}): asserts v is { readonly $type: '_property_identifier' };
 	StringFragment(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_string_fragment" };
+	}): asserts v is { readonly $type: '_string_fragment' };
 	publicFieldDefinition(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "public_field_definition" };
+	}): asserts v is { readonly $type: 'public_field_definition' };
 	nonNullExpression(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "non_null_expression" };
+	}): asserts v is { readonly $type: 'non_null_expression' };
 	methodSignature(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "method_signature" };
+	}): asserts v is { readonly $type: 'method_signature' };
 	abstractMethodSignature(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "abstract_method_signature" };
+	}): asserts v is { readonly $type: 'abstract_method_signature' };
 	functionSignature(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "function_signature" };
+	}): asserts v is { readonly $type: 'function_signature' };
 	decoratorParenthesizedExpression(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "decorator_parenthesized_expression" };
-	typeAssertion(v: { readonly $type: string }): asserts v is { readonly $type: "type_assertion" };
-	asExpression(v: { readonly $type: string }): asserts v is { readonly $type: "as_expression" };
+	}): asserts v is { readonly $type: 'decorator_parenthesized_expression' };
+	typeAssertion(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'type_assertion' };
+	asExpression(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'as_expression' };
 	satisfiesExpression(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "satisfies_expression" };
+	}): asserts v is { readonly $type: 'satisfies_expression' };
 	instantiationExpression(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "instantiation_expression" };
+	}): asserts v is { readonly $type: 'instantiation_expression' };
 	importRequireClause(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "import_require_clause" };
-	extendsClause(v: { readonly $type: string }): asserts v is { readonly $type: "extends_clause" };
+	}): asserts v is { readonly $type: 'import_require_clause' };
+	extendsClause(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'extends_clause' };
 	implementsClause(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "implements_clause" };
+	}): asserts v is { readonly $type: 'implements_clause' };
 	ambientDeclaration(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "ambient_declaration" };
+	}): asserts v is { readonly $type: 'ambient_declaration' };
 	abstractClassDeclaration(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "abstract_class_declaration" };
-	module(v: { readonly $type: string }): asserts v is { readonly $type: "module" };
-	internalModule(v: { readonly $type: string }): asserts v is { readonly $type: "internal_module" };
-	importAlias(v: { readonly $type: string }): asserts v is { readonly $type: "import_alias" };
+	}): asserts v is { readonly $type: 'abstract_class_declaration' };
+	module(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'module' };
+	internalModule(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'internal_module' };
+	importAlias(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'import_alias' };
 	nestedTypeIdentifier(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "nested_type_identifier" };
+	}): asserts v is { readonly $type: 'nested_type_identifier' };
 	interfaceDeclaration(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "interface_declaration" };
+	}): asserts v is { readonly $type: 'interface_declaration' };
 	extendsTypeClause(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "extends_type_clause" };
+	}): asserts v is { readonly $type: 'extends_type_clause' };
 	enumDeclaration(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "enum_declaration" };
-	enumBody(v: { readonly $type: string }): asserts v is { readonly $type: "enum_body" };
-	enumAssignment(v: { readonly $type: string }): asserts v is { readonly $type: "enum_assignment" };
+	}): asserts v is { readonly $type: 'enum_declaration' };
+	enumBody(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'enum_body' };
+	enumAssignment(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'enum_assignment' };
 	typeAliasDeclaration(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "type_alias_declaration" };
+	}): asserts v is { readonly $type: 'type_alias_declaration' };
 	requiredParameter(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "required_parameter" };
+	}): asserts v is { readonly $type: 'required_parameter' };
 	optionalParameter(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "optional_parameter" };
+	}): asserts v is { readonly $type: 'optional_parameter' };
 	omittingTypeAnnotation(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "omitting_type_annotation" };
+	}): asserts v is { readonly $type: 'omitting_type_annotation' };
 	addingTypeAnnotation(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "adding_type_annotation" };
+	}): asserts v is { readonly $type: 'adding_type_annotation' };
 	optingTypeAnnotation(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "opting_type_annotation" };
-	typeAnnotation(v: { readonly $type: string }): asserts v is { readonly $type: "type_annotation" };
-	asserts(v: { readonly $type: string }): asserts v is { readonly $type: "asserts" };
+	}): asserts v is { readonly $type: 'opting_type_annotation' };
+	typeAnnotation(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'type_annotation' };
+	asserts(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'asserts' };
 	assertsAnnotation(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "asserts_annotation" };
-	tupleParameter(v: { readonly $type: string }): asserts v is { readonly $type: "tuple_parameter" };
+	}): asserts v is { readonly $type: 'asserts_annotation' };
+	tupleParameter(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'tuple_parameter' };
 	optionalTupleParameter(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "optional_tuple_parameter" };
-	optionalType(v: { readonly $type: string }): asserts v is { readonly $type: "optional_type" };
-	restType(v: { readonly $type: string }): asserts v is { readonly $type: "rest_type" };
+	}): asserts v is { readonly $type: 'optional_tuple_parameter' };
+	optionalType(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'optional_type' };
+	restType(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'rest_type' };
 	constructorType(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "constructor_type" };
-	templateType(v: { readonly $type: string }): asserts v is { readonly $type: "template_type" };
+	}): asserts v is { readonly $type: 'constructor_type' };
+	templateType(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'template_type' };
 	templateLiteralType(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "template_literal_type" };
-	inferType(v: { readonly $type: string }): asserts v is { readonly $type: "infer_type" };
+	}): asserts v is { readonly $type: 'template_literal_type' };
+	inferType(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'infer_type' };
 	conditionalType(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "conditional_type" };
-	genericType(v: { readonly $type: string }): asserts v is { readonly $type: "generic_type" };
-	typePredicate(v: { readonly $type: string }): asserts v is { readonly $type: "type_predicate" };
+	}): asserts v is { readonly $type: 'conditional_type' };
+	genericType(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'generic_type' };
+	typePredicate(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'type_predicate' };
 	typePredicateAnnotation(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "type_predicate_annotation" };
-	typeQuery(v: { readonly $type: string }): asserts v is { readonly $type: "type_query" };
+	}): asserts v is { readonly $type: 'type_predicate_annotation' };
+	typeQuery(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'type_query' };
 	indexTypeQuery(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "index_type_query" };
-	lookupType(v: { readonly $type: string }): asserts v is { readonly $type: "lookup_type" };
+	}): asserts v is { readonly $type: 'index_type_query' };
+	lookupType(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'lookup_type' };
 	mappedTypeClause(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "mapped_type_clause" };
-	literalType(v: { readonly $type: string }): asserts v is { readonly $type: "literal_type" };
-	flowMaybeType(v: { readonly $type: string }): asserts v is { readonly $type: "flow_maybe_type" };
+	}): asserts v is { readonly $type: 'mapped_type_clause' };
+	literalType(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'literal_type' };
+	flowMaybeType(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'flow_maybe_type' };
 	parenthesizedType(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "parenthesized_type" };
-	typeArguments(v: { readonly $type: string }): asserts v is { readonly $type: "type_arguments" };
-	objectType(v: { readonly $type: string }): asserts v is { readonly $type: "object_type" };
-	callSignature(v: { readonly $type: string }): asserts v is { readonly $type: "call_signature" };
+	}): asserts v is { readonly $type: 'parenthesized_type' };
+	typeArguments(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'type_arguments' };
+	objectType(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'object_type' };
+	callSignature(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'call_signature' };
 	propertySignature(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "property_signature" };
-	typeParameters(v: { readonly $type: string }): asserts v is { readonly $type: "type_parameters" };
-	typeParameter(v: { readonly $type: string }): asserts v is { readonly $type: "type_parameter" };
-	defaultType(v: { readonly $type: string }): asserts v is { readonly $type: "default_type" };
-	constraint(v: { readonly $type: string }): asserts v is { readonly $type: "constraint" };
+	}): asserts v is { readonly $type: 'property_signature' };
+	typeParameters(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'type_parameters' };
+	typeParameter(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'type_parameter' };
+	defaultType(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'default_type' };
+	constraint(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'constraint' };
 	constructSignature(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "construct_signature" };
+	}): asserts v is { readonly $type: 'construct_signature' };
 	indexSignatureMappedTypeClause(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "index_signature_mapped_type_clause" };
-	indexSignature(v: { readonly $type: string }): asserts v is { readonly $type: "index_signature" };
-	arrayType(v: { readonly $type: string }): asserts v is { readonly $type: "array_type" };
-	tupleType(v: { readonly $type: string }): asserts v is { readonly $type: "tuple_type" };
-	readonlyType(v: { readonly $type: string }): asserts v is { readonly $type: "readonly_type" };
-	unionType(v: { readonly $type: string }): asserts v is { readonly $type: "union_type" };
+	}): asserts v is { readonly $type: 'index_signature_mapped_type_clause' };
+	indexSignature(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'index_signature' };
+	arrayType(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'array_type' };
+	tupleType(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'tuple_type' };
+	readonlyType(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'readonly_type' };
+	unionType(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'union_type' };
 	intersectionType(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "intersection_type" };
-	functionType(v: { readonly $type: string }): asserts v is { readonly $type: "function_type" };
+	}): asserts v is { readonly $type: 'intersection_type' };
+	functionType(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: 'function_type' };
 	TypeIdentifier(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_type_identifier" };
-	InterfaceBody(v: { readonly $type: string }): asserts v is { readonly $type: "_interface_body" };
-	ThisType(v: { readonly $type: string }): asserts v is { readonly $type: "_this_type" };
+	}): asserts v is { readonly $type: '_type_identifier' };
+	InterfaceBody(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: '_interface_body' };
+	ThisType(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: '_this_type' };
 	ExportStatementDefaultFromArm(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_export_statement_default_from_arm" };
+	}): asserts v is { readonly $type: '_export_statement_default_from_arm' };
 	ArrowFunctionParameter(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_arrow_function_parameter" };
+	}): asserts v is { readonly $type: '_arrow_function_parameter' };
 	ArrowFunction_CallSignature(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_arrow_function__call_signature" };
+	}): asserts v is { readonly $type: '_arrow_function__call_signature' };
 	ClassHeritageExtendsClause(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_class_heritage_extends_clause" };
+	}): asserts v is { readonly $type: '_class_heritage_extends_clause' };
 	ClassHeritageImplementsClause(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_class_heritage_implements_clause" };
+	}): asserts v is { readonly $type: '_class_heritage_implements_clause' };
 	ImportClauseNamespaceImport(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_import_clause_namespace_import" };
+	}): asserts v is { readonly $type: '_import_clause_namespace_import' };
 	ImportClauseNamedImports(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_import_clause_named_imports" };
+	}): asserts v is { readonly $type: '_import_clause_named_imports' };
 	ImportClauseDefaultImport(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_import_clause_default_import" };
+	}): asserts v is { readonly $type: '_import_clause_default_import' };
 	ImportSpecifierName(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_import_specifier_name" };
+	}): asserts v is { readonly $type: '_import_specifier_name' };
 	IndexSignatureMappedTypeClause(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_index_signature_mapped_type_clause" };
+	}): asserts v is { readonly $type: '_index_signature_mapped_type_clause' };
 	ExportStatementDefaultFromArmStarFrom(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_export_statement_default_from_arm_star_from" };
+	}): asserts v is {
+		readonly $type: '_export_statement_default_from_arm_star_from';
+	};
 	ExportStatementDefaultFromArmNsFrom(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_export_statement_default_from_arm_ns_from" };
+	}): asserts v is {
+		readonly $type: '_export_statement_default_from_arm_ns_from';
+	};
 	ExportStatementDefaultFromArmClauseFrom(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_export_statement_default_from_arm_clause_from" };
+	}): asserts v is {
+		readonly $type: '_export_statement_default_from_arm_clause_from';
+	};
 	ClassBodyMethodSig(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_class_body_method_sig" };
+	}): asserts v is { readonly $type: '_class_body_method_sig' };
 	ClassBodyMember(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_class_body_member" };
-	ForHeaderLhs(v: { readonly $type: string }): asserts v is { readonly $type: "_for_header_lhs" };
+	}): asserts v is { readonly $type: '_class_body_member' };
+	ForHeaderLhs(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: '_for_header_lhs' };
 	PublicFieldDefinitionDeclareFirst(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_public_field_definition_declare_first" };
+	}): asserts v is { readonly $type: '_public_field_definition_declare_first' };
 	PublicFieldDefinitionAccessorOpt(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_public_field_definition_accessor_opt" };
+	}): asserts v is { readonly $type: '_public_field_definition_accessor_opt' };
 	ParenthesizedExpressionSequence(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_parenthesized_expression_sequence" };
+	}): asserts v is { readonly $type: '_parenthesized_expression_sequence' };
 	ExportStatementTypeExport(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_export_statement_type_export" };
+	}): asserts v is { readonly $type: '_export_statement_type_export' };
 	ExportStatementEqualsExport(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_export_statement_equals_export" };
+	}): asserts v is { readonly $type: '_export_statement_equals_export' };
 	ExportStatementNamespaceExport(v: {
 		readonly $type: string;
-	}): asserts v is { readonly $type: "_export_statement_namespace_export" };
-	StringDouble(v: { readonly $type: string }): asserts v is { readonly $type: "_string_double" };
-	StringSingle(v: { readonly $type: string }): asserts v is { readonly $type: "_string_single" };
+	}): asserts v is { readonly $type: '_export_statement_namespace_export' };
+	StringDouble(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: '_string_double' };
+	StringSingle(v: {
+		readonly $type: string;
+	}): asserts v is { readonly $type: '_string_single' };
 	kind<K extends keyof NamespaceMap>(
 		v: { readonly $type: string },
-		kind: K,
+		kind: K
 	): asserts v is { readonly $type: K & string };
-	moduleExportName(v: { readonly $type: string }): asserts v is ModuleExportName;
+	moduleExportName(v: {
+		readonly $type: string;
+	}): asserts v is ModuleExportName;
 	declaration(v: { readonly $type: string }): asserts v is Declaration;
 	statement(v: { readonly $type: string }): asserts v is Statement;
 	expressions(v: { readonly $type: string }): asserts v is Expressions;
 	expression(v: { readonly $type: string }): asserts v is Expression;
-	primaryExpression(v: { readonly $type: string }): asserts v is PrimaryExpression;
+	primaryExpression(v: {
+		readonly $type: string;
+	}): asserts v is PrimaryExpression;
 	jsxChild(v: { readonly $type: string }): asserts v is JsxChild;
 	jsxIdentifier(v: { readonly $type: string }): asserts v is _JsxIdentifier;
 	jsxElementName(v: { readonly $type: string }): asserts v is JsxElementName;
-	jsxAttributeName(v: { readonly $type: string }): asserts v is JsxAttributeName;
-	jsxAttributeValue(v: { readonly $type: string }): asserts v is JsxAttributeValue;
+	jsxAttributeName(v: {
+		readonly $type: string;
+	}): asserts v is JsxAttributeName;
+	jsxAttributeValue(v: {
+		readonly $type: string;
+	}): asserts v is JsxAttributeValue;
 	formalParameter(v: { readonly $type: string }): asserts v is FormalParameter;
-	destructuringPattern(v: { readonly $type: string }): asserts v is DestructuringPattern;
+	destructuringPattern(v: {
+		readonly $type: string;
+	}): asserts v is DestructuringPattern;
 	identifier(v: { readonly $type: string }): asserts v is _Identifier;
 	pattern(v: { readonly $type: string }): asserts v is Pattern;
 	propertyName(v: { readonly $type: string }): asserts v is PropertyName;
@@ -1112,11 +1348,15 @@ export interface AssertGuards {
 	shorthandPropertyIdentifierPattern(v: {
 		readonly $type: string;
 	}): asserts v is ShorthandPropertyIdentifierPattern;
-	importIdentifier(v: { readonly $type: string }): asserts v is ImportIdentifier;
+	importIdentifier(v: {
+		readonly $type: string;
+	}): asserts v is ImportIdentifier;
 	type(v: { readonly $type: string }): asserts v is Type;
 	tupleTypeMember(v: { readonly $type: string }): asserts v is TupleTypeMember;
 	primaryType(v: { readonly $type: string }): asserts v is PrimaryType;
-	exportStatementDefault(v: { readonly $type: string }): asserts v is ExportStatementDefault;
+	exportStatementDefault(v: {
+		readonly $type: string;
+	}): asserts v is ExportStatementDefault;
 }
 
 // Runtime: kind guards = string equality; supertype guards = Set.has.
@@ -1124,362 +1364,387 @@ export interface AssertGuards {
 function _g(k: string): (v: { readonly $type: string }) => boolean {
 	return (v) => v.$type === k;
 }
-function _sg(ks: ReadonlySet<string>): (v: { readonly $type: string }) => boolean {
+function _sg(
+	ks: ReadonlySet<string>
+): (v: { readonly $type: string }) => boolean {
 	return (v) => ks.has(v.$type);
 }
 
-const _supertype_moduleExportName = new Set<string>(["identifier", "string"]);
+const _supertype_moduleExportName = new Set<string>(['identifier', 'string']);
 const _supertype_declaration = new Set<string>([
-	"function_signature",
-	"abstract_class_declaration",
-	"module",
-	"internal_module",
-	"type_alias_declaration",
-	"enum_declaration",
-	"interface_declaration",
-	"import_alias",
-	"ambient_declaration",
+	'function_signature',
+	'abstract_class_declaration',
+	'module',
+	'internal_module',
+	'type_alias_declaration',
+	'enum_declaration',
+	'interface_declaration',
+	'import_alias',
+	'ambient_declaration'
 ]);
 const _supertype_statement = new Set<string>([
-	"export_statement",
-	"import_statement",
-	"debugger_statement",
-	"expression_statement",
-	"declaration",
-	"statement_block",
-	"if_statement",
-	"switch_statement",
-	"for_statement",
-	"for_in_statement",
-	"while_statement",
-	"do_statement",
-	"try_statement",
-	"with_statement",
-	"break_statement",
-	"continue_statement",
-	"return_statement",
-	"throw_statement",
-	"empty_statement",
-	"labeled_statement",
+	'export_statement',
+	'import_statement',
+	'debugger_statement',
+	'expression_statement',
+	'declaration',
+	'statement_block',
+	'if_statement',
+	'switch_statement',
+	'for_statement',
+	'for_in_statement',
+	'while_statement',
+	'do_statement',
+	'try_statement',
+	'with_statement',
+	'break_statement',
+	'continue_statement',
+	'return_statement',
+	'throw_statement',
+	'empty_statement',
+	'labeled_statement'
 ]);
-const _supertype_expressions = new Set<string>(["expression", "sequence_expression"]);
+const _supertype_expressions = new Set<string>([
+	'expression',
+	'sequence_expression'
+]);
 const _supertype_expression = new Set<string>([
-	"as_expression",
-	"satisfies_expression",
-	"instantiation_expression",
-	"internal_module",
-	"type_assertion",
-	"primary_expression",
-	"assignment_expression",
-	"augmented_assignment_expression",
-	"await_expression",
-	"unary_expression",
-	"binary_expression",
-	"ternary_expression",
-	"update_expression",
-	"new_expression",
-	"yield_expression",
+	'as_expression',
+	'satisfies_expression',
+	'instantiation_expression',
+	'internal_module',
+	'type_assertion',
+	'primary_expression',
+	'assignment_expression',
+	'augmented_assignment_expression',
+	'await_expression',
+	'unary_expression',
+	'binary_expression',
+	'ternary_expression',
+	'update_expression',
+	'new_expression',
+	'yield_expression'
 ]);
-const _supertype_primaryExpression = new Set<string>(["non_null_expression"]);
+const _supertype_primaryExpression = new Set<string>(['non_null_expression']);
 const _supertype_jsxChild = new Set<string>([
-	"jsx_text",
-	"html_character_reference",
-	"jsx_element",
-	"jsx_self_closing_element",
-	"jsx_expression",
+	'jsx_text',
+	'html_character_reference',
+	'jsx_element',
+	'jsx_self_closing_element',
+	'jsx_expression'
 ]);
-const _supertype_jsxIdentifier = new Set<string>(["jsx_identifier", "identifier"]);
+const _supertype_jsxIdentifier = new Set<string>([
+	'jsx_identifier',
+	'identifier'
+]);
 const _supertype_jsxElementName = new Set<string>([
-	"jsx_identifier",
-	"identifier",
-	"nested_identifier",
-	"jsx_namespace_name",
+	'jsx_identifier',
+	'identifier',
+	'nested_identifier',
+	'jsx_namespace_name'
 ]);
-const _supertype_jsxAttributeName = new Set<string>(["identifier", "jsx_namespace_name"]);
+const _supertype_jsxAttributeName = new Set<string>([
+	'identifier',
+	'jsx_namespace_name'
+]);
 const _supertype_jsxAttributeValue = new Set<string>([
-	"_jsx_string",
-	"jsx_expression",
-	"jsx_element",
-	"jsx_self_closing_element",
+	'_jsx_string',
+	'jsx_expression',
+	'jsx_element',
+	'jsx_self_closing_element'
 ]);
-const _supertype_formalParameter = new Set<string>(["required_parameter", "optional_parameter"]);
-const _supertype_destructuringPattern = new Set<string>(["object_pattern", "array_pattern"]);
-const _supertype_identifier = new Set<string>(["undefined", "identifier"]);
+const _supertype_formalParameter = new Set<string>([
+	'required_parameter',
+	'optional_parameter'
+]);
+const _supertype_destructuringPattern = new Set<string>([
+	'object_pattern',
+	'array_pattern'
+]);
+const _supertype_identifier = new Set<string>(['undefined', 'identifier']);
 const _supertype_pattern = new Set<string>([
-	"member_expression",
-	"subscript_expression",
-	"undefined",
-	"identifier",
-	"object_pattern",
-	"array_pattern",
-	"non_null_expression",
-	"rest_pattern",
+	'member_expression',
+	'subscript_expression',
+	'undefined',
+	'identifier',
+	'object_pattern',
+	'array_pattern',
+	'non_null_expression',
+	'rest_pattern'
 ]);
 const _supertype_propertyName = new Set<string>([
-	"identifier",
-	"private_property_identifier",
-	"string",
-	"number",
-	"computed_property_name",
+	'identifier',
+	'private_property_identifier',
+	'string',
+	'number',
+	'computed_property_name'
 ]);
-const _supertype_semicolon = new Set<string>(["_automatic_semicolon"]);
+const _supertype_semicolon = new Set<string>(['_automatic_semicolon']);
 const _supertype_shorthandPropertyIdentifier = new Set<string>([
-	"identifier",
-	"_reserved_identifier",
+	'identifier',
+	'_reserved_identifier'
 ]);
 const _supertype_shorthandPropertyIdentifierPattern = new Set<string>([
-	"identifier",
-	"_reserved_identifier",
+	'identifier',
+	'_reserved_identifier'
 ]);
-const _supertype_importIdentifier = new Set<string>(["identifier"]);
+const _supertype_importIdentifier = new Set<string>(['identifier']);
 const _supertype_type = new Set<string>([
-	"primary_type",
-	"function_type",
-	"readonly_type",
-	"constructor_type",
-	"infer_type",
-	"_type_query_member_expression_in_type_annotation",
-	"_type_query_call_expression_in_type_annotation",
+	'primary_type',
+	'function_type',
+	'readonly_type',
+	'constructor_type',
+	'infer_type',
+	'_type_query_member_expression_in_type_annotation',
+	'_type_query_call_expression_in_type_annotation'
 ]);
 const _supertype_tupleTypeMember = new Set<string>([
-	"tuple_parameter",
-	"optional_tuple_parameter",
-	"optional_type",
-	"rest_type",
-	"type",
+	'tuple_parameter',
+	'optional_tuple_parameter',
+	'optional_type',
+	'rest_type',
+	'type'
 ]);
 const _supertype_primaryType = new Set<string>([
-	"parenthesized_type",
-	"predefined_type",
-	"_type_identifier",
-	"nested_type_identifier",
-	"generic_type",
-	"object_type",
-	"array_type",
-	"tuple_type",
-	"flow_maybe_type",
-	"type_query",
-	"index_type_query",
-	"this",
-	"existential_type",
-	"literal_type",
-	"lookup_type",
-	"conditional_type",
-	"template_literal_type",
-	"intersection_type",
-	"union_type",
+	'parenthesized_type',
+	'predefined_type',
+	'_type_identifier',
+	'nested_type_identifier',
+	'generic_type',
+	'object_type',
+	'array_type',
+	'tuple_type',
+	'flow_maybe_type',
+	'type_query',
+	'index_type_query',
+	'this',
+	'existential_type',
+	'literal_type',
+	'lookup_type',
+	'conditional_type',
+	'template_literal_type',
+	'intersection_type',
+	'union_type'
 ]);
 const _supertype_exportStatementDefault = new Set<string>([
-	"_export_statement_default_from_arm",
-	"_export_statement_default_decl_arm",
+	'_export_statement_default_from_arm',
+	'_export_statement_default_decl_arm'
 ]);
 
 export const is = {
-	program: _g("program"),
-	exportStatementTypeExport: _g("export_statement_type_export"),
-	exportStatementEqualsExport: _g("export_statement_equals_export"),
-	exportStatementNamespaceExport: _g("export_statement_namespace_export"),
-	exportStatement: _g("export_statement"),
-	namespaceExport: _g("namespace_export"),
-	exportClause: _g("export_clause"),
-	exportSpecifier: _g("export_specifier"),
-	importStatement: _g("import_statement"),
-	importClauseNamespaceImport: _g("import_clause_namespace_import"),
-	importClauseNamedImports: _g("import_clause_named_imports"),
-	importClauseDefaultImport: _g("import_clause_default_import"),
-	importClause: _g("import_clause"),
-	namespaceImport: _g("namespace_import"),
-	namedImports: _g("named_imports"),
-	importSpecifierName: _g("import_specifier_name"),
-	importSpecifier: _g("import_specifier"),
-	importAttribute: _g("import_attribute"),
-	expressionStatement: _g("expression_statement"),
-	variableDeclaration: _g("variable_declaration"),
-	lexicalDeclaration: _g("lexical_declaration"),
-	variableDeclarator: _g("variable_declarator"),
-	statementBlock: _g("statement_block"),
-	elseClause: _g("else_clause"),
-	ifStatement: _g("if_statement"),
-	switchStatement: _g("switch_statement"),
-	forStatement: _g("for_statement"),
-	forInStatement: _g("for_in_statement"),
-	whileStatement: _g("while_statement"),
-	doStatement: _g("do_statement"),
-	tryStatement: _g("try_statement"),
-	withStatement: _g("with_statement"),
-	breakStatement: _g("break_statement"),
-	continueStatement: _g("continue_statement"),
-	debuggerStatement: _g("debugger_statement"),
-	returnStatement: _g("return_statement"),
-	throwStatement: _g("throw_statement"),
-	labeledStatement: _g("labeled_statement"),
-	switchBody: _g("switch_body"),
-	switchCase: _g("switch_case"),
-	switchDefault: _g("switch_default"),
-	catchClause: _g("catch_clause"),
-	finallyClause: _g("finally_clause"),
-	parenthesizedExpressionSequence: _g("parenthesized_expression_sequence"),
-	parenthesizedExpression: _g("parenthesized_expression"),
-	yieldExpression: _g("yield_expression"),
-	object: _g("object"),
-	objectPattern: _g("object_pattern"),
-	assignmentPattern: _g("assignment_pattern"),
-	objectAssignmentPattern: _g("object_assignment_pattern"),
-	array: _g("array"),
-	arrayPattern: _g("array_pattern"),
-	jsxElement: _g("jsx_element"),
-	jsxExpression: _g("jsx_expression"),
-	jsxOpeningElement: _g("jsx_opening_element"),
-	nestedIdentifier: _g("nested_identifier"),
-	jsxNamespaceName: _g("jsx_namespace_name"),
-	jsxClosingElement: _g("jsx_closing_element"),
-	jsxSelfClosingElement: _g("jsx_self_closing_element"),
-	jsxAttribute: _g("jsx_attribute"),
-	JsxString: _g("_jsx_string"),
-	class_: _g("class"),
-	classDeclaration: _g("class_declaration"),
-	classHeritageExtendsClause: _g("class_heritage_extends_clause"),
-	classHeritageImplementsClause: _g("class_heritage_implements_clause"),
-	classHeritage: _g("class_heritage"),
-	functionExpression: _g("function_expression"),
-	functionDeclaration: _g("function_declaration"),
-	generatorFunction: _g("generator_function"),
-	generatorFunctionDeclaration: _g("generator_function_declaration"),
-	arrowFunctionParameter: _g("arrow_function_parameter"),
-	arrowFunction_CallSignature: _g("arrow_function__call_signature"),
-	arrowFunction: _g("arrow_function"),
-	callExpression: _g("call_expression"),
-	newExpression: _g("new_expression"),
-	awaitExpression: _g("await_expression"),
-	memberExpression: _g("member_expression"),
-	subscriptExpression: _g("subscript_expression"),
-	LhsExpression: _g("_lhs_expression"),
-	assignmentExpression: _g("assignment_expression"),
-	augmentedAssignmentExpression: _g("augmented_assignment_expression"),
-	spreadElement: _g("spread_element"),
-	ternaryExpression: _g("ternary_expression"),
-	binaryExpression: _g("binary_expression"),
-	unaryExpression: _g("unary_expression"),
-	updateExpression: _g("update_expression"),
-	sequenceExpression: _g("sequence_expression"),
-	stringDouble: _g("string_double"),
-	stringSingle: _g("string_single"),
-	string: _g("string"),
-	templateString: _g("template_string"),
-	templateSubstitution: _g("template_substitution"),
-	regex: _g("regex"),
-	arguments: _g("arguments"),
-	decorator: _g("decorator"),
-	decoratorMemberExpression: _g("decorator_member_expression"),
-	decoratorCallExpression: _g("decorator_call_expression"),
-	classBody: _g("class_body"),
-	fieldDefinition: _g("field_definition"),
-	formalParameters: _g("formal_parameters"),
-	classStaticBlock: _g("class_static_block"),
-	restPattern: _g("rest_pattern"),
-	methodDefinition: _g("method_definition"),
-	pair: _g("pair"),
-	pairPattern: _g("pair_pattern"),
-	computedPropertyName: _g("computed_property_name"),
-	StatementIdentifier: _g("_statement_identifier"),
-	PropertyIdentifier: _g("_property_identifier"),
-	StringFragment: _g("_string_fragment"),
-	publicFieldDefinition: _g("public_field_definition"),
-	nonNullExpression: _g("non_null_expression"),
-	methodSignature: _g("method_signature"),
-	abstractMethodSignature: _g("abstract_method_signature"),
-	functionSignature: _g("function_signature"),
-	decoratorParenthesizedExpression: _g("decorator_parenthesized_expression"),
-	typeAssertion: _g("type_assertion"),
-	asExpression: _g("as_expression"),
-	satisfiesExpression: _g("satisfies_expression"),
-	instantiationExpression: _g("instantiation_expression"),
-	importRequireClause: _g("import_require_clause"),
-	extendsClause: _g("extends_clause"),
-	implementsClause: _g("implements_clause"),
-	ambientDeclaration: _g("ambient_declaration"),
-	abstractClassDeclaration: _g("abstract_class_declaration"),
-	module: _g("module"),
-	internalModule: _g("internal_module"),
-	importAlias: _g("import_alias"),
-	nestedTypeIdentifier: _g("nested_type_identifier"),
-	interfaceDeclaration: _g("interface_declaration"),
-	extendsTypeClause: _g("extends_type_clause"),
-	enumDeclaration: _g("enum_declaration"),
-	enumBody: _g("enum_body"),
-	enumAssignment: _g("enum_assignment"),
-	typeAliasDeclaration: _g("type_alias_declaration"),
-	requiredParameter: _g("required_parameter"),
-	optionalParameter: _g("optional_parameter"),
-	omittingTypeAnnotation: _g("omitting_type_annotation"),
-	addingTypeAnnotation: _g("adding_type_annotation"),
-	optingTypeAnnotation: _g("opting_type_annotation"),
-	typeAnnotation: _g("type_annotation"),
-	asserts: _g("asserts"),
-	assertsAnnotation: _g("asserts_annotation"),
-	tupleParameter: _g("tuple_parameter"),
-	optionalTupleParameter: _g("optional_tuple_parameter"),
-	optionalType: _g("optional_type"),
-	restType: _g("rest_type"),
-	constructorType: _g("constructor_type"),
-	templateType: _g("template_type"),
-	templateLiteralType: _g("template_literal_type"),
-	inferType: _g("infer_type"),
-	conditionalType: _g("conditional_type"),
-	genericType: _g("generic_type"),
-	typePredicate: _g("type_predicate"),
-	typePredicateAnnotation: _g("type_predicate_annotation"),
-	typeQuery: _g("type_query"),
-	indexTypeQuery: _g("index_type_query"),
-	lookupType: _g("lookup_type"),
-	mappedTypeClause: _g("mapped_type_clause"),
-	literalType: _g("literal_type"),
-	flowMaybeType: _g("flow_maybe_type"),
-	parenthesizedType: _g("parenthesized_type"),
-	typeArguments: _g("type_arguments"),
-	objectType: _g("object_type"),
-	callSignature: _g("call_signature"),
-	propertySignature: _g("property_signature"),
-	typeParameters: _g("type_parameters"),
-	typeParameter: _g("type_parameter"),
-	defaultType: _g("default_type"),
-	constraint: _g("constraint"),
-	constructSignature: _g("construct_signature"),
-	indexSignatureMappedTypeClause: _g("index_signature_mapped_type_clause"),
-	indexSignature: _g("index_signature"),
-	arrayType: _g("array_type"),
-	tupleType: _g("tuple_type"),
-	readonlyType: _g("readonly_type"),
-	unionType: _g("union_type"),
-	intersectionType: _g("intersection_type"),
-	functionType: _g("function_type"),
-	TypeIdentifier: _g("_type_identifier"),
-	InterfaceBody: _g("_interface_body"),
-	ThisType: _g("_this_type"),
-	ExportStatementDefaultFromArm: _g("_export_statement_default_from_arm"),
-	ArrowFunctionParameter: _g("_arrow_function_parameter"),
-	ArrowFunction_CallSignature: _g("_arrow_function__call_signature"),
-	ClassHeritageExtendsClause: _g("_class_heritage_extends_clause"),
-	ClassHeritageImplementsClause: _g("_class_heritage_implements_clause"),
-	ImportClauseNamespaceImport: _g("_import_clause_namespace_import"),
-	ImportClauseNamedImports: _g("_import_clause_named_imports"),
-	ImportClauseDefaultImport: _g("_import_clause_default_import"),
-	ImportSpecifierName: _g("_import_specifier_name"),
-	IndexSignatureMappedTypeClause: _g("_index_signature_mapped_type_clause"),
-	ExportStatementDefaultFromArmStarFrom: _g("_export_statement_default_from_arm_star_from"),
-	ExportStatementDefaultFromArmNsFrom: _g("_export_statement_default_from_arm_ns_from"),
-	ExportStatementDefaultFromArmClauseFrom: _g("_export_statement_default_from_arm_clause_from"),
-	ClassBodyMethodSig: _g("_class_body_method_sig"),
-	ClassBodyMember: _g("_class_body_member"),
-	ForHeaderLhs: _g("_for_header_lhs"),
-	PublicFieldDefinitionDeclareFirst: _g("_public_field_definition_declare_first"),
-	PublicFieldDefinitionAccessorOpt: _g("_public_field_definition_accessor_opt"),
-	ParenthesizedExpressionSequence: _g("_parenthesized_expression_sequence"),
-	ExportStatementTypeExport: _g("_export_statement_type_export"),
-	ExportStatementEqualsExport: _g("_export_statement_equals_export"),
-	ExportStatementNamespaceExport: _g("_export_statement_namespace_export"),
-	StringDouble: _g("_string_double"),
-	StringSingle: _g("_string_single"),
+	program: _g('program'),
+	exportStatementTypeExport: _g('export_statement_type_export'),
+	exportStatementEqualsExport: _g('export_statement_equals_export'),
+	exportStatementNamespaceExport: _g('export_statement_namespace_export'),
+	exportStatement: _g('export_statement'),
+	namespaceExport: _g('namespace_export'),
+	exportClause: _g('export_clause'),
+	exportSpecifier: _g('export_specifier'),
+	importStatement: _g('import_statement'),
+	importClauseNamespaceImport: _g('import_clause_namespace_import'),
+	importClauseNamedImports: _g('import_clause_named_imports'),
+	importClauseDefaultImport: _g('import_clause_default_import'),
+	importClause: _g('import_clause'),
+	namespaceImport: _g('namespace_import'),
+	namedImports: _g('named_imports'),
+	importSpecifierName: _g('import_specifier_name'),
+	importSpecifier: _g('import_specifier'),
+	importAttribute: _g('import_attribute'),
+	expressionStatement: _g('expression_statement'),
+	variableDeclaration: _g('variable_declaration'),
+	lexicalDeclaration: _g('lexical_declaration'),
+	variableDeclarator: _g('variable_declarator'),
+	statementBlock: _g('statement_block'),
+	elseClause: _g('else_clause'),
+	ifStatement: _g('if_statement'),
+	switchStatement: _g('switch_statement'),
+	forStatement: _g('for_statement'),
+	forInStatement: _g('for_in_statement'),
+	whileStatement: _g('while_statement'),
+	doStatement: _g('do_statement'),
+	tryStatement: _g('try_statement'),
+	withStatement: _g('with_statement'),
+	breakStatement: _g('break_statement'),
+	continueStatement: _g('continue_statement'),
+	debuggerStatement: _g('debugger_statement'),
+	returnStatement: _g('return_statement'),
+	throwStatement: _g('throw_statement'),
+	labeledStatement: _g('labeled_statement'),
+	switchBody: _g('switch_body'),
+	switchCase: _g('switch_case'),
+	switchDefault: _g('switch_default'),
+	catchClause: _g('catch_clause'),
+	finallyClause: _g('finally_clause'),
+	parenthesizedExpressionSequence: _g('parenthesized_expression_sequence'),
+	parenthesizedExpression: _g('parenthesized_expression'),
+	yieldExpression: _g('yield_expression'),
+	object: _g('object'),
+	objectPattern: _g('object_pattern'),
+	assignmentPattern: _g('assignment_pattern'),
+	objectAssignmentPattern: _g('object_assignment_pattern'),
+	array: _g('array'),
+	arrayPattern: _g('array_pattern'),
+	jsxElement: _g('jsx_element'),
+	jsxExpression: _g('jsx_expression'),
+	jsxOpeningElement: _g('jsx_opening_element'),
+	nestedIdentifier: _g('nested_identifier'),
+	jsxNamespaceName: _g('jsx_namespace_name'),
+	jsxClosingElement: _g('jsx_closing_element'),
+	jsxSelfClosingElement: _g('jsx_self_closing_element'),
+	jsxAttribute: _g('jsx_attribute'),
+	JsxString: _g('_jsx_string'),
+	class_: _g('class'),
+	classDeclaration: _g('class_declaration'),
+	classHeritageExtendsClause: _g('class_heritage_extends_clause'),
+	classHeritageImplementsClause: _g('class_heritage_implements_clause'),
+	classHeritage: _g('class_heritage'),
+	functionExpression: _g('function_expression'),
+	functionDeclaration: _g('function_declaration'),
+	generatorFunction: _g('generator_function'),
+	generatorFunctionDeclaration: _g('generator_function_declaration'),
+	arrowFunctionParameter: _g('arrow_function_parameter'),
+	arrowFunction_CallSignature: _g('arrow_function__call_signature'),
+	arrowFunction: _g('arrow_function'),
+	callExpression: _g('call_expression'),
+	newExpression: _g('new_expression'),
+	awaitExpression: _g('await_expression'),
+	memberExpression: _g('member_expression'),
+	subscriptExpression: _g('subscript_expression'),
+	LhsExpression: _g('_lhs_expression'),
+	assignmentExpression: _g('assignment_expression'),
+	augmentedAssignmentExpression: _g('augmented_assignment_expression'),
+	spreadElement: _g('spread_element'),
+	ternaryExpression: _g('ternary_expression'),
+	binaryExpression: _g('binary_expression'),
+	unaryExpression: _g('unary_expression'),
+	updateExpression: _g('update_expression'),
+	sequenceExpression: _g('sequence_expression'),
+	stringDouble: _g('string_double'),
+	stringSingle: _g('string_single'),
+	string: _g('string'),
+	templateString: _g('template_string'),
+	templateSubstitution: _g('template_substitution'),
+	regex: _g('regex'),
+	arguments: _g('arguments'),
+	decorator: _g('decorator'),
+	decoratorMemberExpression: _g('decorator_member_expression'),
+	decoratorCallExpression: _g('decorator_call_expression'),
+	classBody: _g('class_body'),
+	fieldDefinition: _g('field_definition'),
+	formalParameters: _g('formal_parameters'),
+	classStaticBlock: _g('class_static_block'),
+	restPattern: _g('rest_pattern'),
+	methodDefinition: _g('method_definition'),
+	pair: _g('pair'),
+	pairPattern: _g('pair_pattern'),
+	computedPropertyName: _g('computed_property_name'),
+	StatementIdentifier: _g('_statement_identifier'),
+	PropertyIdentifier: _g('_property_identifier'),
+	StringFragment: _g('_string_fragment'),
+	publicFieldDefinition: _g('public_field_definition'),
+	nonNullExpression: _g('non_null_expression'),
+	methodSignature: _g('method_signature'),
+	abstractMethodSignature: _g('abstract_method_signature'),
+	functionSignature: _g('function_signature'),
+	decoratorParenthesizedExpression: _g('decorator_parenthesized_expression'),
+	typeAssertion: _g('type_assertion'),
+	asExpression: _g('as_expression'),
+	satisfiesExpression: _g('satisfies_expression'),
+	instantiationExpression: _g('instantiation_expression'),
+	importRequireClause: _g('import_require_clause'),
+	extendsClause: _g('extends_clause'),
+	implementsClause: _g('implements_clause'),
+	ambientDeclaration: _g('ambient_declaration'),
+	abstractClassDeclaration: _g('abstract_class_declaration'),
+	module: _g('module'),
+	internalModule: _g('internal_module'),
+	importAlias: _g('import_alias'),
+	nestedTypeIdentifier: _g('nested_type_identifier'),
+	interfaceDeclaration: _g('interface_declaration'),
+	extendsTypeClause: _g('extends_type_clause'),
+	enumDeclaration: _g('enum_declaration'),
+	enumBody: _g('enum_body'),
+	enumAssignment: _g('enum_assignment'),
+	typeAliasDeclaration: _g('type_alias_declaration'),
+	requiredParameter: _g('required_parameter'),
+	optionalParameter: _g('optional_parameter'),
+	omittingTypeAnnotation: _g('omitting_type_annotation'),
+	addingTypeAnnotation: _g('adding_type_annotation'),
+	optingTypeAnnotation: _g('opting_type_annotation'),
+	typeAnnotation: _g('type_annotation'),
+	asserts: _g('asserts'),
+	assertsAnnotation: _g('asserts_annotation'),
+	tupleParameter: _g('tuple_parameter'),
+	optionalTupleParameter: _g('optional_tuple_parameter'),
+	optionalType: _g('optional_type'),
+	restType: _g('rest_type'),
+	constructorType: _g('constructor_type'),
+	templateType: _g('template_type'),
+	templateLiteralType: _g('template_literal_type'),
+	inferType: _g('infer_type'),
+	conditionalType: _g('conditional_type'),
+	genericType: _g('generic_type'),
+	typePredicate: _g('type_predicate'),
+	typePredicateAnnotation: _g('type_predicate_annotation'),
+	typeQuery: _g('type_query'),
+	indexTypeQuery: _g('index_type_query'),
+	lookupType: _g('lookup_type'),
+	mappedTypeClause: _g('mapped_type_clause'),
+	literalType: _g('literal_type'),
+	flowMaybeType: _g('flow_maybe_type'),
+	parenthesizedType: _g('parenthesized_type'),
+	typeArguments: _g('type_arguments'),
+	objectType: _g('object_type'),
+	callSignature: _g('call_signature'),
+	propertySignature: _g('property_signature'),
+	typeParameters: _g('type_parameters'),
+	typeParameter: _g('type_parameter'),
+	defaultType: _g('default_type'),
+	constraint: _g('constraint'),
+	constructSignature: _g('construct_signature'),
+	indexSignatureMappedTypeClause: _g('index_signature_mapped_type_clause'),
+	indexSignature: _g('index_signature'),
+	arrayType: _g('array_type'),
+	tupleType: _g('tuple_type'),
+	readonlyType: _g('readonly_type'),
+	unionType: _g('union_type'),
+	intersectionType: _g('intersection_type'),
+	functionType: _g('function_type'),
+	TypeIdentifier: _g('_type_identifier'),
+	InterfaceBody: _g('_interface_body'),
+	ThisType: _g('_this_type'),
+	ExportStatementDefaultFromArm: _g('_export_statement_default_from_arm'),
+	ArrowFunctionParameter: _g('_arrow_function_parameter'),
+	ArrowFunction_CallSignature: _g('_arrow_function__call_signature'),
+	ClassHeritageExtendsClause: _g('_class_heritage_extends_clause'),
+	ClassHeritageImplementsClause: _g('_class_heritage_implements_clause'),
+	ImportClauseNamespaceImport: _g('_import_clause_namespace_import'),
+	ImportClauseNamedImports: _g('_import_clause_named_imports'),
+	ImportClauseDefaultImport: _g('_import_clause_default_import'),
+	ImportSpecifierName: _g('_import_specifier_name'),
+	IndexSignatureMappedTypeClause: _g('_index_signature_mapped_type_clause'),
+	ExportStatementDefaultFromArmStarFrom: _g(
+		'_export_statement_default_from_arm_star_from'
+	),
+	ExportStatementDefaultFromArmNsFrom: _g(
+		'_export_statement_default_from_arm_ns_from'
+	),
+	ExportStatementDefaultFromArmClauseFrom: _g(
+		'_export_statement_default_from_arm_clause_from'
+	),
+	ClassBodyMethodSig: _g('_class_body_method_sig'),
+	ClassBodyMember: _g('_class_body_member'),
+	ForHeaderLhs: _g('_for_header_lhs'),
+	PublicFieldDefinitionDeclareFirst: _g(
+		'_public_field_definition_declare_first'
+	),
+	PublicFieldDefinitionAccessorOpt: _g('_public_field_definition_accessor_opt'),
+	ParenthesizedExpressionSequence: _g('_parenthesized_expression_sequence'),
+	ExportStatementTypeExport: _g('_export_statement_type_export'),
+	ExportStatementEqualsExport: _g('_export_statement_equals_export'),
+	ExportStatementNamespaceExport: _g('_export_statement_namespace_export'),
+	StringDouble: _g('_string_double'),
+	StringSingle: _g('_string_single'),
 	kind: (v: { readonly $type: string }, k: string): boolean => v.$type === k,
 	moduleExportName: _sg(_supertype_moduleExportName),
 	declaration: _sg(_supertype_declaration),
@@ -1499,12 +1764,14 @@ export const is = {
 	propertyName: _sg(_supertype_propertyName),
 	semicolon: _sg(_supertype_semicolon),
 	shorthandPropertyIdentifier: _sg(_supertype_shorthandPropertyIdentifier),
-	shorthandPropertyIdentifierPattern: _sg(_supertype_shorthandPropertyIdentifierPattern),
+	shorthandPropertyIdentifierPattern: _sg(
+		_supertype_shorthandPropertyIdentifierPattern
+	),
 	importIdentifier: _sg(_supertype_importIdentifier),
 	type: _sg(_supertype_type),
 	tupleTypeMember: _sg(_supertype_tupleTypeMember),
 	primaryType: _sg(_supertype_primaryType),
-	exportStatementDefault: _sg(_supertype_exportStatementDefault),
+	exportStatementDefault: _sg(_supertype_exportStatementDefault)
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -1513,8 +1780,10 @@ function _makeAssert(name: string, guard: _AnyGuard) {
 	return (...args: unknown[]): void => {
 		if (!guard(...args)) {
 			const v = args[0] as { $type?: unknown } | null;
-			const actual = v?.$type ?? "(none)";
-			throw new TypeError(`assert.${name}: expected type '${name}', got '${String(actual)}'`);
+			const actual = v?.$type ?? '(none)';
+			throw new TypeError(
+				`assert.${name}: expected type '${name}', got '${String(actual)}'`
+			);
 		}
 	};
 }
@@ -1522,410 +1791,656 @@ function _makeAssertKind(guard: _AnyGuard) {
 	return (...args: unknown[]): void => {
 		if (!guard(...args)) {
 			const v = args[0] as { $type?: unknown } | null;
-			const expected = String(args[1] ?? "(unknown)");
-			const actual = v?.$type ?? "(none)";
-			throw new TypeError(`assert.kind: expected type '${expected}', got '${String(actual)}'`);
+			const expected = String(args[1] ?? '(unknown)');
+			const actual = v?.$type ?? '(none)';
+			throw new TypeError(
+				`assert.kind: expected type '${expected}', got '${String(actual)}'`
+			);
 		}
 	};
 }
 
 export const assert = {
-	program: _makeAssert("program", is.program as _AnyGuard),
+	program: _makeAssert('program', is.program as _AnyGuard),
 	exportStatementTypeExport: _makeAssert(
-		"exportStatementTypeExport",
-		is.exportStatementTypeExport as _AnyGuard,
+		'exportStatementTypeExport',
+		is.exportStatementTypeExport as _AnyGuard
 	),
 	exportStatementEqualsExport: _makeAssert(
-		"exportStatementEqualsExport",
-		is.exportStatementEqualsExport as _AnyGuard,
+		'exportStatementEqualsExport',
+		is.exportStatementEqualsExport as _AnyGuard
 	),
 	exportStatementNamespaceExport: _makeAssert(
-		"exportStatementNamespaceExport",
-		is.exportStatementNamespaceExport as _AnyGuard,
+		'exportStatementNamespaceExport',
+		is.exportStatementNamespaceExport as _AnyGuard
 	),
-	exportStatement: _makeAssert("exportStatement", is.exportStatement as _AnyGuard),
-	namespaceExport: _makeAssert("namespaceExport", is.namespaceExport as _AnyGuard),
-	exportClause: _makeAssert("exportClause", is.exportClause as _AnyGuard),
-	exportSpecifier: _makeAssert("exportSpecifier", is.exportSpecifier as _AnyGuard),
-	importStatement: _makeAssert("importStatement", is.importStatement as _AnyGuard),
+	exportStatement: _makeAssert(
+		'exportStatement',
+		is.exportStatement as _AnyGuard
+	),
+	namespaceExport: _makeAssert(
+		'namespaceExport',
+		is.namespaceExport as _AnyGuard
+	),
+	exportClause: _makeAssert('exportClause', is.exportClause as _AnyGuard),
+	exportSpecifier: _makeAssert(
+		'exportSpecifier',
+		is.exportSpecifier as _AnyGuard
+	),
+	importStatement: _makeAssert(
+		'importStatement',
+		is.importStatement as _AnyGuard
+	),
 	importClauseNamespaceImport: _makeAssert(
-		"importClauseNamespaceImport",
-		is.importClauseNamespaceImport as _AnyGuard,
+		'importClauseNamespaceImport',
+		is.importClauseNamespaceImport as _AnyGuard
 	),
 	importClauseNamedImports: _makeAssert(
-		"importClauseNamedImports",
-		is.importClauseNamedImports as _AnyGuard,
+		'importClauseNamedImports',
+		is.importClauseNamedImports as _AnyGuard
 	),
 	importClauseDefaultImport: _makeAssert(
-		"importClauseDefaultImport",
-		is.importClauseDefaultImport as _AnyGuard,
+		'importClauseDefaultImport',
+		is.importClauseDefaultImport as _AnyGuard
 	),
-	importClause: _makeAssert("importClause", is.importClause as _AnyGuard),
-	namespaceImport: _makeAssert("namespaceImport", is.namespaceImport as _AnyGuard),
-	namedImports: _makeAssert("namedImports", is.namedImports as _AnyGuard),
-	importSpecifierName: _makeAssert("importSpecifierName", is.importSpecifierName as _AnyGuard),
-	importSpecifier: _makeAssert("importSpecifier", is.importSpecifier as _AnyGuard),
-	importAttribute: _makeAssert("importAttribute", is.importAttribute as _AnyGuard),
-	expressionStatement: _makeAssert("expressionStatement", is.expressionStatement as _AnyGuard),
-	variableDeclaration: _makeAssert("variableDeclaration", is.variableDeclaration as _AnyGuard),
-	lexicalDeclaration: _makeAssert("lexicalDeclaration", is.lexicalDeclaration as _AnyGuard),
-	variableDeclarator: _makeAssert("variableDeclarator", is.variableDeclarator as _AnyGuard),
-	statementBlock: _makeAssert("statementBlock", is.statementBlock as _AnyGuard),
-	elseClause: _makeAssert("elseClause", is.elseClause as _AnyGuard),
-	ifStatement: _makeAssert("ifStatement", is.ifStatement as _AnyGuard),
-	switchStatement: _makeAssert("switchStatement", is.switchStatement as _AnyGuard),
-	forStatement: _makeAssert("forStatement", is.forStatement as _AnyGuard),
-	forInStatement: _makeAssert("forInStatement", is.forInStatement as _AnyGuard),
-	whileStatement: _makeAssert("whileStatement", is.whileStatement as _AnyGuard),
-	doStatement: _makeAssert("doStatement", is.doStatement as _AnyGuard),
-	tryStatement: _makeAssert("tryStatement", is.tryStatement as _AnyGuard),
-	withStatement: _makeAssert("withStatement", is.withStatement as _AnyGuard),
-	breakStatement: _makeAssert("breakStatement", is.breakStatement as _AnyGuard),
-	continueStatement: _makeAssert("continueStatement", is.continueStatement as _AnyGuard),
-	debuggerStatement: _makeAssert("debuggerStatement", is.debuggerStatement as _AnyGuard),
-	returnStatement: _makeAssert("returnStatement", is.returnStatement as _AnyGuard),
-	throwStatement: _makeAssert("throwStatement", is.throwStatement as _AnyGuard),
-	labeledStatement: _makeAssert("labeledStatement", is.labeledStatement as _AnyGuard),
-	switchBody: _makeAssert("switchBody", is.switchBody as _AnyGuard),
-	switchCase: _makeAssert("switchCase", is.switchCase as _AnyGuard),
-	switchDefault: _makeAssert("switchDefault", is.switchDefault as _AnyGuard),
-	catchClause: _makeAssert("catchClause", is.catchClause as _AnyGuard),
-	finallyClause: _makeAssert("finallyClause", is.finallyClause as _AnyGuard),
+	importClause: _makeAssert('importClause', is.importClause as _AnyGuard),
+	namespaceImport: _makeAssert(
+		'namespaceImport',
+		is.namespaceImport as _AnyGuard
+	),
+	namedImports: _makeAssert('namedImports', is.namedImports as _AnyGuard),
+	importSpecifierName: _makeAssert(
+		'importSpecifierName',
+		is.importSpecifierName as _AnyGuard
+	),
+	importSpecifier: _makeAssert(
+		'importSpecifier',
+		is.importSpecifier as _AnyGuard
+	),
+	importAttribute: _makeAssert(
+		'importAttribute',
+		is.importAttribute as _AnyGuard
+	),
+	expressionStatement: _makeAssert(
+		'expressionStatement',
+		is.expressionStatement as _AnyGuard
+	),
+	variableDeclaration: _makeAssert(
+		'variableDeclaration',
+		is.variableDeclaration as _AnyGuard
+	),
+	lexicalDeclaration: _makeAssert(
+		'lexicalDeclaration',
+		is.lexicalDeclaration as _AnyGuard
+	),
+	variableDeclarator: _makeAssert(
+		'variableDeclarator',
+		is.variableDeclarator as _AnyGuard
+	),
+	statementBlock: _makeAssert('statementBlock', is.statementBlock as _AnyGuard),
+	elseClause: _makeAssert('elseClause', is.elseClause as _AnyGuard),
+	ifStatement: _makeAssert('ifStatement', is.ifStatement as _AnyGuard),
+	switchStatement: _makeAssert(
+		'switchStatement',
+		is.switchStatement as _AnyGuard
+	),
+	forStatement: _makeAssert('forStatement', is.forStatement as _AnyGuard),
+	forInStatement: _makeAssert('forInStatement', is.forInStatement as _AnyGuard),
+	whileStatement: _makeAssert('whileStatement', is.whileStatement as _AnyGuard),
+	doStatement: _makeAssert('doStatement', is.doStatement as _AnyGuard),
+	tryStatement: _makeAssert('tryStatement', is.tryStatement as _AnyGuard),
+	withStatement: _makeAssert('withStatement', is.withStatement as _AnyGuard),
+	breakStatement: _makeAssert('breakStatement', is.breakStatement as _AnyGuard),
+	continueStatement: _makeAssert(
+		'continueStatement',
+		is.continueStatement as _AnyGuard
+	),
+	debuggerStatement: _makeAssert(
+		'debuggerStatement',
+		is.debuggerStatement as _AnyGuard
+	),
+	returnStatement: _makeAssert(
+		'returnStatement',
+		is.returnStatement as _AnyGuard
+	),
+	throwStatement: _makeAssert('throwStatement', is.throwStatement as _AnyGuard),
+	labeledStatement: _makeAssert(
+		'labeledStatement',
+		is.labeledStatement as _AnyGuard
+	),
+	switchBody: _makeAssert('switchBody', is.switchBody as _AnyGuard),
+	switchCase: _makeAssert('switchCase', is.switchCase as _AnyGuard),
+	switchDefault: _makeAssert('switchDefault', is.switchDefault as _AnyGuard),
+	catchClause: _makeAssert('catchClause', is.catchClause as _AnyGuard),
+	finallyClause: _makeAssert('finallyClause', is.finallyClause as _AnyGuard),
 	parenthesizedExpressionSequence: _makeAssert(
-		"parenthesizedExpressionSequence",
-		is.parenthesizedExpressionSequence as _AnyGuard,
+		'parenthesizedExpressionSequence',
+		is.parenthesizedExpressionSequence as _AnyGuard
 	),
 	parenthesizedExpression: _makeAssert(
-		"parenthesizedExpression",
-		is.parenthesizedExpression as _AnyGuard,
+		'parenthesizedExpression',
+		is.parenthesizedExpression as _AnyGuard
 	),
-	yieldExpression: _makeAssert("yieldExpression", is.yieldExpression as _AnyGuard),
-	object: _makeAssert("object", is.object as _AnyGuard),
-	objectPattern: _makeAssert("objectPattern", is.objectPattern as _AnyGuard),
-	assignmentPattern: _makeAssert("assignmentPattern", is.assignmentPattern as _AnyGuard),
+	yieldExpression: _makeAssert(
+		'yieldExpression',
+		is.yieldExpression as _AnyGuard
+	),
+	object: _makeAssert('object', is.object as _AnyGuard),
+	objectPattern: _makeAssert('objectPattern', is.objectPattern as _AnyGuard),
+	assignmentPattern: _makeAssert(
+		'assignmentPattern',
+		is.assignmentPattern as _AnyGuard
+	),
 	objectAssignmentPattern: _makeAssert(
-		"objectAssignmentPattern",
-		is.objectAssignmentPattern as _AnyGuard,
+		'objectAssignmentPattern',
+		is.objectAssignmentPattern as _AnyGuard
 	),
-	array: _makeAssert("array", is.array as _AnyGuard),
-	arrayPattern: _makeAssert("arrayPattern", is.arrayPattern as _AnyGuard),
-	jsxElement: _makeAssert("jsxElement", is.jsxElement as _AnyGuard),
-	jsxExpression: _makeAssert("jsxExpression", is.jsxExpression as _AnyGuard),
-	jsxOpeningElement: _makeAssert("jsxOpeningElement", is.jsxOpeningElement as _AnyGuard),
-	nestedIdentifier: _makeAssert("nestedIdentifier", is.nestedIdentifier as _AnyGuard),
-	jsxNamespaceName: _makeAssert("jsxNamespaceName", is.jsxNamespaceName as _AnyGuard),
-	jsxClosingElement: _makeAssert("jsxClosingElement", is.jsxClosingElement as _AnyGuard),
+	array: _makeAssert('array', is.array as _AnyGuard),
+	arrayPattern: _makeAssert('arrayPattern', is.arrayPattern as _AnyGuard),
+	jsxElement: _makeAssert('jsxElement', is.jsxElement as _AnyGuard),
+	jsxExpression: _makeAssert('jsxExpression', is.jsxExpression as _AnyGuard),
+	jsxOpeningElement: _makeAssert(
+		'jsxOpeningElement',
+		is.jsxOpeningElement as _AnyGuard
+	),
+	nestedIdentifier: _makeAssert(
+		'nestedIdentifier',
+		is.nestedIdentifier as _AnyGuard
+	),
+	jsxNamespaceName: _makeAssert(
+		'jsxNamespaceName',
+		is.jsxNamespaceName as _AnyGuard
+	),
+	jsxClosingElement: _makeAssert(
+		'jsxClosingElement',
+		is.jsxClosingElement as _AnyGuard
+	),
 	jsxSelfClosingElement: _makeAssert(
-		"jsxSelfClosingElement",
-		is.jsxSelfClosingElement as _AnyGuard,
+		'jsxSelfClosingElement',
+		is.jsxSelfClosingElement as _AnyGuard
 	),
-	jsxAttribute: _makeAssert("jsxAttribute", is.jsxAttribute as _AnyGuard),
-	JsxString: _makeAssert("JsxString", is.JsxString as _AnyGuard),
-	class_: _makeAssert("class_", is.class_ as _AnyGuard),
-	classDeclaration: _makeAssert("classDeclaration", is.classDeclaration as _AnyGuard),
+	jsxAttribute: _makeAssert('jsxAttribute', is.jsxAttribute as _AnyGuard),
+	JsxString: _makeAssert('JsxString', is.JsxString as _AnyGuard),
+	class_: _makeAssert('class_', is.class_ as _AnyGuard),
+	classDeclaration: _makeAssert(
+		'classDeclaration',
+		is.classDeclaration as _AnyGuard
+	),
 	classHeritageExtendsClause: _makeAssert(
-		"classHeritageExtendsClause",
-		is.classHeritageExtendsClause as _AnyGuard,
+		'classHeritageExtendsClause',
+		is.classHeritageExtendsClause as _AnyGuard
 	),
 	classHeritageImplementsClause: _makeAssert(
-		"classHeritageImplementsClause",
-		is.classHeritageImplementsClause as _AnyGuard,
+		'classHeritageImplementsClause',
+		is.classHeritageImplementsClause as _AnyGuard
 	),
-	classHeritage: _makeAssert("classHeritage", is.classHeritage as _AnyGuard),
-	functionExpression: _makeAssert("functionExpression", is.functionExpression as _AnyGuard),
-	functionDeclaration: _makeAssert("functionDeclaration", is.functionDeclaration as _AnyGuard),
-	generatorFunction: _makeAssert("generatorFunction", is.generatorFunction as _AnyGuard),
+	classHeritage: _makeAssert('classHeritage', is.classHeritage as _AnyGuard),
+	functionExpression: _makeAssert(
+		'functionExpression',
+		is.functionExpression as _AnyGuard
+	),
+	functionDeclaration: _makeAssert(
+		'functionDeclaration',
+		is.functionDeclaration as _AnyGuard
+	),
+	generatorFunction: _makeAssert(
+		'generatorFunction',
+		is.generatorFunction as _AnyGuard
+	),
 	generatorFunctionDeclaration: _makeAssert(
-		"generatorFunctionDeclaration",
-		is.generatorFunctionDeclaration as _AnyGuard,
+		'generatorFunctionDeclaration',
+		is.generatorFunctionDeclaration as _AnyGuard
 	),
 	arrowFunctionParameter: _makeAssert(
-		"arrowFunctionParameter",
-		is.arrowFunctionParameter as _AnyGuard,
+		'arrowFunctionParameter',
+		is.arrowFunctionParameter as _AnyGuard
 	),
 	arrowFunction_CallSignature: _makeAssert(
-		"arrowFunction_CallSignature",
-		is.arrowFunction_CallSignature as _AnyGuard,
+		'arrowFunction_CallSignature',
+		is.arrowFunction_CallSignature as _AnyGuard
 	),
-	arrowFunction: _makeAssert("arrowFunction", is.arrowFunction as _AnyGuard),
-	callExpression: _makeAssert("callExpression", is.callExpression as _AnyGuard),
-	newExpression: _makeAssert("newExpression", is.newExpression as _AnyGuard),
-	awaitExpression: _makeAssert("awaitExpression", is.awaitExpression as _AnyGuard),
-	memberExpression: _makeAssert("memberExpression", is.memberExpression as _AnyGuard),
-	subscriptExpression: _makeAssert("subscriptExpression", is.subscriptExpression as _AnyGuard),
-	LhsExpression: _makeAssert("LhsExpression", is.LhsExpression as _AnyGuard),
-	assignmentExpression: _makeAssert("assignmentExpression", is.assignmentExpression as _AnyGuard),
+	arrowFunction: _makeAssert('arrowFunction', is.arrowFunction as _AnyGuard),
+	callExpression: _makeAssert('callExpression', is.callExpression as _AnyGuard),
+	newExpression: _makeAssert('newExpression', is.newExpression as _AnyGuard),
+	awaitExpression: _makeAssert(
+		'awaitExpression',
+		is.awaitExpression as _AnyGuard
+	),
+	memberExpression: _makeAssert(
+		'memberExpression',
+		is.memberExpression as _AnyGuard
+	),
+	subscriptExpression: _makeAssert(
+		'subscriptExpression',
+		is.subscriptExpression as _AnyGuard
+	),
+	LhsExpression: _makeAssert('LhsExpression', is.LhsExpression as _AnyGuard),
+	assignmentExpression: _makeAssert(
+		'assignmentExpression',
+		is.assignmentExpression as _AnyGuard
+	),
 	augmentedAssignmentExpression: _makeAssert(
-		"augmentedAssignmentExpression",
-		is.augmentedAssignmentExpression as _AnyGuard,
+		'augmentedAssignmentExpression',
+		is.augmentedAssignmentExpression as _AnyGuard
 	),
-	spreadElement: _makeAssert("spreadElement", is.spreadElement as _AnyGuard),
-	ternaryExpression: _makeAssert("ternaryExpression", is.ternaryExpression as _AnyGuard),
-	binaryExpression: _makeAssert("binaryExpression", is.binaryExpression as _AnyGuard),
-	unaryExpression: _makeAssert("unaryExpression", is.unaryExpression as _AnyGuard),
-	updateExpression: _makeAssert("updateExpression", is.updateExpression as _AnyGuard),
-	sequenceExpression: _makeAssert("sequenceExpression", is.sequenceExpression as _AnyGuard),
-	stringDouble: _makeAssert("stringDouble", is.stringDouble as _AnyGuard),
-	stringSingle: _makeAssert("stringSingle", is.stringSingle as _AnyGuard),
-	string: _makeAssert("string", is.string as _AnyGuard),
-	templateString: _makeAssert("templateString", is.templateString as _AnyGuard),
-	templateSubstitution: _makeAssert("templateSubstitution", is.templateSubstitution as _AnyGuard),
-	regex: _makeAssert("regex", is.regex as _AnyGuard),
-	arguments: _makeAssert("arguments", is.arguments as _AnyGuard),
-	decorator: _makeAssert("decorator", is.decorator as _AnyGuard),
+	spreadElement: _makeAssert('spreadElement', is.spreadElement as _AnyGuard),
+	ternaryExpression: _makeAssert(
+		'ternaryExpression',
+		is.ternaryExpression as _AnyGuard
+	),
+	binaryExpression: _makeAssert(
+		'binaryExpression',
+		is.binaryExpression as _AnyGuard
+	),
+	unaryExpression: _makeAssert(
+		'unaryExpression',
+		is.unaryExpression as _AnyGuard
+	),
+	updateExpression: _makeAssert(
+		'updateExpression',
+		is.updateExpression as _AnyGuard
+	),
+	sequenceExpression: _makeAssert(
+		'sequenceExpression',
+		is.sequenceExpression as _AnyGuard
+	),
+	stringDouble: _makeAssert('stringDouble', is.stringDouble as _AnyGuard),
+	stringSingle: _makeAssert('stringSingle', is.stringSingle as _AnyGuard),
+	string: _makeAssert('string', is.string as _AnyGuard),
+	templateString: _makeAssert('templateString', is.templateString as _AnyGuard),
+	templateSubstitution: _makeAssert(
+		'templateSubstitution',
+		is.templateSubstitution as _AnyGuard
+	),
+	regex: _makeAssert('regex', is.regex as _AnyGuard),
+	arguments: _makeAssert('arguments', is.arguments as _AnyGuard),
+	decorator: _makeAssert('decorator', is.decorator as _AnyGuard),
 	decoratorMemberExpression: _makeAssert(
-		"decoratorMemberExpression",
-		is.decoratorMemberExpression as _AnyGuard,
+		'decoratorMemberExpression',
+		is.decoratorMemberExpression as _AnyGuard
 	),
 	decoratorCallExpression: _makeAssert(
-		"decoratorCallExpression",
-		is.decoratorCallExpression as _AnyGuard,
+		'decoratorCallExpression',
+		is.decoratorCallExpression as _AnyGuard
 	),
-	classBody: _makeAssert("classBody", is.classBody as _AnyGuard),
-	fieldDefinition: _makeAssert("fieldDefinition", is.fieldDefinition as _AnyGuard),
-	formalParameters: _makeAssert("formalParameters", is.formalParameters as _AnyGuard),
-	classStaticBlock: _makeAssert("classStaticBlock", is.classStaticBlock as _AnyGuard),
-	restPattern: _makeAssert("restPattern", is.restPattern as _AnyGuard),
-	methodDefinition: _makeAssert("methodDefinition", is.methodDefinition as _AnyGuard),
-	pair: _makeAssert("pair", is.pair as _AnyGuard),
-	pairPattern: _makeAssert("pairPattern", is.pairPattern as _AnyGuard),
-	computedPropertyName: _makeAssert("computedPropertyName", is.computedPropertyName as _AnyGuard),
-	StatementIdentifier: _makeAssert("StatementIdentifier", is.StatementIdentifier as _AnyGuard),
-	PropertyIdentifier: _makeAssert("PropertyIdentifier", is.PropertyIdentifier as _AnyGuard),
-	StringFragment: _makeAssert("StringFragment", is.StringFragment as _AnyGuard),
+	classBody: _makeAssert('classBody', is.classBody as _AnyGuard),
+	fieldDefinition: _makeAssert(
+		'fieldDefinition',
+		is.fieldDefinition as _AnyGuard
+	),
+	formalParameters: _makeAssert(
+		'formalParameters',
+		is.formalParameters as _AnyGuard
+	),
+	classStaticBlock: _makeAssert(
+		'classStaticBlock',
+		is.classStaticBlock as _AnyGuard
+	),
+	restPattern: _makeAssert('restPattern', is.restPattern as _AnyGuard),
+	methodDefinition: _makeAssert(
+		'methodDefinition',
+		is.methodDefinition as _AnyGuard
+	),
+	pair: _makeAssert('pair', is.pair as _AnyGuard),
+	pairPattern: _makeAssert('pairPattern', is.pairPattern as _AnyGuard),
+	computedPropertyName: _makeAssert(
+		'computedPropertyName',
+		is.computedPropertyName as _AnyGuard
+	),
+	StatementIdentifier: _makeAssert(
+		'StatementIdentifier',
+		is.StatementIdentifier as _AnyGuard
+	),
+	PropertyIdentifier: _makeAssert(
+		'PropertyIdentifier',
+		is.PropertyIdentifier as _AnyGuard
+	),
+	StringFragment: _makeAssert('StringFragment', is.StringFragment as _AnyGuard),
 	publicFieldDefinition: _makeAssert(
-		"publicFieldDefinition",
-		is.publicFieldDefinition as _AnyGuard,
+		'publicFieldDefinition',
+		is.publicFieldDefinition as _AnyGuard
 	),
-	nonNullExpression: _makeAssert("nonNullExpression", is.nonNullExpression as _AnyGuard),
-	methodSignature: _makeAssert("methodSignature", is.methodSignature as _AnyGuard),
+	nonNullExpression: _makeAssert(
+		'nonNullExpression',
+		is.nonNullExpression as _AnyGuard
+	),
+	methodSignature: _makeAssert(
+		'methodSignature',
+		is.methodSignature as _AnyGuard
+	),
 	abstractMethodSignature: _makeAssert(
-		"abstractMethodSignature",
-		is.abstractMethodSignature as _AnyGuard,
+		'abstractMethodSignature',
+		is.abstractMethodSignature as _AnyGuard
 	),
-	functionSignature: _makeAssert("functionSignature", is.functionSignature as _AnyGuard),
+	functionSignature: _makeAssert(
+		'functionSignature',
+		is.functionSignature as _AnyGuard
+	),
 	decoratorParenthesizedExpression: _makeAssert(
-		"decoratorParenthesizedExpression",
-		is.decoratorParenthesizedExpression as _AnyGuard,
+		'decoratorParenthesizedExpression',
+		is.decoratorParenthesizedExpression as _AnyGuard
 	),
-	typeAssertion: _makeAssert("typeAssertion", is.typeAssertion as _AnyGuard),
-	asExpression: _makeAssert("asExpression", is.asExpression as _AnyGuard),
-	satisfiesExpression: _makeAssert("satisfiesExpression", is.satisfiesExpression as _AnyGuard),
+	typeAssertion: _makeAssert('typeAssertion', is.typeAssertion as _AnyGuard),
+	asExpression: _makeAssert('asExpression', is.asExpression as _AnyGuard),
+	satisfiesExpression: _makeAssert(
+		'satisfiesExpression',
+		is.satisfiesExpression as _AnyGuard
+	),
 	instantiationExpression: _makeAssert(
-		"instantiationExpression",
-		is.instantiationExpression as _AnyGuard,
+		'instantiationExpression',
+		is.instantiationExpression as _AnyGuard
 	),
-	importRequireClause: _makeAssert("importRequireClause", is.importRequireClause as _AnyGuard),
-	extendsClause: _makeAssert("extendsClause", is.extendsClause as _AnyGuard),
-	implementsClause: _makeAssert("implementsClause", is.implementsClause as _AnyGuard),
-	ambientDeclaration: _makeAssert("ambientDeclaration", is.ambientDeclaration as _AnyGuard),
+	importRequireClause: _makeAssert(
+		'importRequireClause',
+		is.importRequireClause as _AnyGuard
+	),
+	extendsClause: _makeAssert('extendsClause', is.extendsClause as _AnyGuard),
+	implementsClause: _makeAssert(
+		'implementsClause',
+		is.implementsClause as _AnyGuard
+	),
+	ambientDeclaration: _makeAssert(
+		'ambientDeclaration',
+		is.ambientDeclaration as _AnyGuard
+	),
 	abstractClassDeclaration: _makeAssert(
-		"abstractClassDeclaration",
-		is.abstractClassDeclaration as _AnyGuard,
+		'abstractClassDeclaration',
+		is.abstractClassDeclaration as _AnyGuard
 	),
-	module: _makeAssert("module", is.module as _AnyGuard),
-	internalModule: _makeAssert("internalModule", is.internalModule as _AnyGuard),
-	importAlias: _makeAssert("importAlias", is.importAlias as _AnyGuard),
-	nestedTypeIdentifier: _makeAssert("nestedTypeIdentifier", is.nestedTypeIdentifier as _AnyGuard),
-	interfaceDeclaration: _makeAssert("interfaceDeclaration", is.interfaceDeclaration as _AnyGuard),
-	extendsTypeClause: _makeAssert("extendsTypeClause", is.extendsTypeClause as _AnyGuard),
-	enumDeclaration: _makeAssert("enumDeclaration", is.enumDeclaration as _AnyGuard),
-	enumBody: _makeAssert("enumBody", is.enumBody as _AnyGuard),
-	enumAssignment: _makeAssert("enumAssignment", is.enumAssignment as _AnyGuard),
-	typeAliasDeclaration: _makeAssert("typeAliasDeclaration", is.typeAliasDeclaration as _AnyGuard),
-	requiredParameter: _makeAssert("requiredParameter", is.requiredParameter as _AnyGuard),
-	optionalParameter: _makeAssert("optionalParameter", is.optionalParameter as _AnyGuard),
+	module: _makeAssert('module', is.module as _AnyGuard),
+	internalModule: _makeAssert('internalModule', is.internalModule as _AnyGuard),
+	importAlias: _makeAssert('importAlias', is.importAlias as _AnyGuard),
+	nestedTypeIdentifier: _makeAssert(
+		'nestedTypeIdentifier',
+		is.nestedTypeIdentifier as _AnyGuard
+	),
+	interfaceDeclaration: _makeAssert(
+		'interfaceDeclaration',
+		is.interfaceDeclaration as _AnyGuard
+	),
+	extendsTypeClause: _makeAssert(
+		'extendsTypeClause',
+		is.extendsTypeClause as _AnyGuard
+	),
+	enumDeclaration: _makeAssert(
+		'enumDeclaration',
+		is.enumDeclaration as _AnyGuard
+	),
+	enumBody: _makeAssert('enumBody', is.enumBody as _AnyGuard),
+	enumAssignment: _makeAssert('enumAssignment', is.enumAssignment as _AnyGuard),
+	typeAliasDeclaration: _makeAssert(
+		'typeAliasDeclaration',
+		is.typeAliasDeclaration as _AnyGuard
+	),
+	requiredParameter: _makeAssert(
+		'requiredParameter',
+		is.requiredParameter as _AnyGuard
+	),
+	optionalParameter: _makeAssert(
+		'optionalParameter',
+		is.optionalParameter as _AnyGuard
+	),
 	omittingTypeAnnotation: _makeAssert(
-		"omittingTypeAnnotation",
-		is.omittingTypeAnnotation as _AnyGuard,
+		'omittingTypeAnnotation',
+		is.omittingTypeAnnotation as _AnyGuard
 	),
-	addingTypeAnnotation: _makeAssert("addingTypeAnnotation", is.addingTypeAnnotation as _AnyGuard),
-	optingTypeAnnotation: _makeAssert("optingTypeAnnotation", is.optingTypeAnnotation as _AnyGuard),
-	typeAnnotation: _makeAssert("typeAnnotation", is.typeAnnotation as _AnyGuard),
-	asserts: _makeAssert("asserts", is.asserts as _AnyGuard),
-	assertsAnnotation: _makeAssert("assertsAnnotation", is.assertsAnnotation as _AnyGuard),
-	tupleParameter: _makeAssert("tupleParameter", is.tupleParameter as _AnyGuard),
+	addingTypeAnnotation: _makeAssert(
+		'addingTypeAnnotation',
+		is.addingTypeAnnotation as _AnyGuard
+	),
+	optingTypeAnnotation: _makeAssert(
+		'optingTypeAnnotation',
+		is.optingTypeAnnotation as _AnyGuard
+	),
+	typeAnnotation: _makeAssert('typeAnnotation', is.typeAnnotation as _AnyGuard),
+	asserts: _makeAssert('asserts', is.asserts as _AnyGuard),
+	assertsAnnotation: _makeAssert(
+		'assertsAnnotation',
+		is.assertsAnnotation as _AnyGuard
+	),
+	tupleParameter: _makeAssert('tupleParameter', is.tupleParameter as _AnyGuard),
 	optionalTupleParameter: _makeAssert(
-		"optionalTupleParameter",
-		is.optionalTupleParameter as _AnyGuard,
+		'optionalTupleParameter',
+		is.optionalTupleParameter as _AnyGuard
 	),
-	optionalType: _makeAssert("optionalType", is.optionalType as _AnyGuard),
-	restType: _makeAssert("restType", is.restType as _AnyGuard),
-	constructorType: _makeAssert("constructorType", is.constructorType as _AnyGuard),
-	templateType: _makeAssert("templateType", is.templateType as _AnyGuard),
-	templateLiteralType: _makeAssert("templateLiteralType", is.templateLiteralType as _AnyGuard),
-	inferType: _makeAssert("inferType", is.inferType as _AnyGuard),
-	conditionalType: _makeAssert("conditionalType", is.conditionalType as _AnyGuard),
-	genericType: _makeAssert("genericType", is.genericType as _AnyGuard),
-	typePredicate: _makeAssert("typePredicate", is.typePredicate as _AnyGuard),
+	optionalType: _makeAssert('optionalType', is.optionalType as _AnyGuard),
+	restType: _makeAssert('restType', is.restType as _AnyGuard),
+	constructorType: _makeAssert(
+		'constructorType',
+		is.constructorType as _AnyGuard
+	),
+	templateType: _makeAssert('templateType', is.templateType as _AnyGuard),
+	templateLiteralType: _makeAssert(
+		'templateLiteralType',
+		is.templateLiteralType as _AnyGuard
+	),
+	inferType: _makeAssert('inferType', is.inferType as _AnyGuard),
+	conditionalType: _makeAssert(
+		'conditionalType',
+		is.conditionalType as _AnyGuard
+	),
+	genericType: _makeAssert('genericType', is.genericType as _AnyGuard),
+	typePredicate: _makeAssert('typePredicate', is.typePredicate as _AnyGuard),
 	typePredicateAnnotation: _makeAssert(
-		"typePredicateAnnotation",
-		is.typePredicateAnnotation as _AnyGuard,
+		'typePredicateAnnotation',
+		is.typePredicateAnnotation as _AnyGuard
 	),
-	typeQuery: _makeAssert("typeQuery", is.typeQuery as _AnyGuard),
-	indexTypeQuery: _makeAssert("indexTypeQuery", is.indexTypeQuery as _AnyGuard),
-	lookupType: _makeAssert("lookupType", is.lookupType as _AnyGuard),
-	mappedTypeClause: _makeAssert("mappedTypeClause", is.mappedTypeClause as _AnyGuard),
-	literalType: _makeAssert("literalType", is.literalType as _AnyGuard),
-	flowMaybeType: _makeAssert("flowMaybeType", is.flowMaybeType as _AnyGuard),
-	parenthesizedType: _makeAssert("parenthesizedType", is.parenthesizedType as _AnyGuard),
-	typeArguments: _makeAssert("typeArguments", is.typeArguments as _AnyGuard),
-	objectType: _makeAssert("objectType", is.objectType as _AnyGuard),
-	callSignature: _makeAssert("callSignature", is.callSignature as _AnyGuard),
-	propertySignature: _makeAssert("propertySignature", is.propertySignature as _AnyGuard),
-	typeParameters: _makeAssert("typeParameters", is.typeParameters as _AnyGuard),
-	typeParameter: _makeAssert("typeParameter", is.typeParameter as _AnyGuard),
-	defaultType: _makeAssert("defaultType", is.defaultType as _AnyGuard),
-	constraint: _makeAssert("constraint", is.constraint as _AnyGuard),
-	constructSignature: _makeAssert("constructSignature", is.constructSignature as _AnyGuard),
+	typeQuery: _makeAssert('typeQuery', is.typeQuery as _AnyGuard),
+	indexTypeQuery: _makeAssert('indexTypeQuery', is.indexTypeQuery as _AnyGuard),
+	lookupType: _makeAssert('lookupType', is.lookupType as _AnyGuard),
+	mappedTypeClause: _makeAssert(
+		'mappedTypeClause',
+		is.mappedTypeClause as _AnyGuard
+	),
+	literalType: _makeAssert('literalType', is.literalType as _AnyGuard),
+	flowMaybeType: _makeAssert('flowMaybeType', is.flowMaybeType as _AnyGuard),
+	parenthesizedType: _makeAssert(
+		'parenthesizedType',
+		is.parenthesizedType as _AnyGuard
+	),
+	typeArguments: _makeAssert('typeArguments', is.typeArguments as _AnyGuard),
+	objectType: _makeAssert('objectType', is.objectType as _AnyGuard),
+	callSignature: _makeAssert('callSignature', is.callSignature as _AnyGuard),
+	propertySignature: _makeAssert(
+		'propertySignature',
+		is.propertySignature as _AnyGuard
+	),
+	typeParameters: _makeAssert('typeParameters', is.typeParameters as _AnyGuard),
+	typeParameter: _makeAssert('typeParameter', is.typeParameter as _AnyGuard),
+	defaultType: _makeAssert('defaultType', is.defaultType as _AnyGuard),
+	constraint: _makeAssert('constraint', is.constraint as _AnyGuard),
+	constructSignature: _makeAssert(
+		'constructSignature',
+		is.constructSignature as _AnyGuard
+	),
 	indexSignatureMappedTypeClause: _makeAssert(
-		"indexSignatureMappedTypeClause",
-		is.indexSignatureMappedTypeClause as _AnyGuard,
+		'indexSignatureMappedTypeClause',
+		is.indexSignatureMappedTypeClause as _AnyGuard
 	),
-	indexSignature: _makeAssert("indexSignature", is.indexSignature as _AnyGuard),
-	arrayType: _makeAssert("arrayType", is.arrayType as _AnyGuard),
-	tupleType: _makeAssert("tupleType", is.tupleType as _AnyGuard),
-	readonlyType: _makeAssert("readonlyType", is.readonlyType as _AnyGuard),
-	unionType: _makeAssert("unionType", is.unionType as _AnyGuard),
-	intersectionType: _makeAssert("intersectionType", is.intersectionType as _AnyGuard),
-	functionType: _makeAssert("functionType", is.functionType as _AnyGuard),
-	TypeIdentifier: _makeAssert("TypeIdentifier", is.TypeIdentifier as _AnyGuard),
-	InterfaceBody: _makeAssert("InterfaceBody", is.InterfaceBody as _AnyGuard),
-	ThisType: _makeAssert("ThisType", is.ThisType as _AnyGuard),
+	indexSignature: _makeAssert('indexSignature', is.indexSignature as _AnyGuard),
+	arrayType: _makeAssert('arrayType', is.arrayType as _AnyGuard),
+	tupleType: _makeAssert('tupleType', is.tupleType as _AnyGuard),
+	readonlyType: _makeAssert('readonlyType', is.readonlyType as _AnyGuard),
+	unionType: _makeAssert('unionType', is.unionType as _AnyGuard),
+	intersectionType: _makeAssert(
+		'intersectionType',
+		is.intersectionType as _AnyGuard
+	),
+	functionType: _makeAssert('functionType', is.functionType as _AnyGuard),
+	TypeIdentifier: _makeAssert('TypeIdentifier', is.TypeIdentifier as _AnyGuard),
+	InterfaceBody: _makeAssert('InterfaceBody', is.InterfaceBody as _AnyGuard),
+	ThisType: _makeAssert('ThisType', is.ThisType as _AnyGuard),
 	ExportStatementDefaultFromArm: _makeAssert(
-		"ExportStatementDefaultFromArm",
-		is.ExportStatementDefaultFromArm as _AnyGuard,
+		'ExportStatementDefaultFromArm',
+		is.ExportStatementDefaultFromArm as _AnyGuard
 	),
 	ArrowFunctionParameter: _makeAssert(
-		"ArrowFunctionParameter",
-		is.ArrowFunctionParameter as _AnyGuard,
+		'ArrowFunctionParameter',
+		is.ArrowFunctionParameter as _AnyGuard
 	),
 	ArrowFunction_CallSignature: _makeAssert(
-		"ArrowFunction_CallSignature",
-		is.ArrowFunction_CallSignature as _AnyGuard,
+		'ArrowFunction_CallSignature',
+		is.ArrowFunction_CallSignature as _AnyGuard
 	),
 	ClassHeritageExtendsClause: _makeAssert(
-		"ClassHeritageExtendsClause",
-		is.ClassHeritageExtendsClause as _AnyGuard,
+		'ClassHeritageExtendsClause',
+		is.ClassHeritageExtendsClause as _AnyGuard
 	),
 	ClassHeritageImplementsClause: _makeAssert(
-		"ClassHeritageImplementsClause",
-		is.ClassHeritageImplementsClause as _AnyGuard,
+		'ClassHeritageImplementsClause',
+		is.ClassHeritageImplementsClause as _AnyGuard
 	),
 	ImportClauseNamespaceImport: _makeAssert(
-		"ImportClauseNamespaceImport",
-		is.ImportClauseNamespaceImport as _AnyGuard,
+		'ImportClauseNamespaceImport',
+		is.ImportClauseNamespaceImport as _AnyGuard
 	),
 	ImportClauseNamedImports: _makeAssert(
-		"ImportClauseNamedImports",
-		is.ImportClauseNamedImports as _AnyGuard,
+		'ImportClauseNamedImports',
+		is.ImportClauseNamedImports as _AnyGuard
 	),
 	ImportClauseDefaultImport: _makeAssert(
-		"ImportClauseDefaultImport",
-		is.ImportClauseDefaultImport as _AnyGuard,
+		'ImportClauseDefaultImport',
+		is.ImportClauseDefaultImport as _AnyGuard
 	),
-	ImportSpecifierName: _makeAssert("ImportSpecifierName", is.ImportSpecifierName as _AnyGuard),
+	ImportSpecifierName: _makeAssert(
+		'ImportSpecifierName',
+		is.ImportSpecifierName as _AnyGuard
+	),
 	IndexSignatureMappedTypeClause: _makeAssert(
-		"IndexSignatureMappedTypeClause",
-		is.IndexSignatureMappedTypeClause as _AnyGuard,
+		'IndexSignatureMappedTypeClause',
+		is.IndexSignatureMappedTypeClause as _AnyGuard
 	),
 	ExportStatementDefaultFromArmStarFrom: _makeAssert(
-		"ExportStatementDefaultFromArmStarFrom",
-		is.ExportStatementDefaultFromArmStarFrom as _AnyGuard,
+		'ExportStatementDefaultFromArmStarFrom',
+		is.ExportStatementDefaultFromArmStarFrom as _AnyGuard
 	),
 	ExportStatementDefaultFromArmNsFrom: _makeAssert(
-		"ExportStatementDefaultFromArmNsFrom",
-		is.ExportStatementDefaultFromArmNsFrom as _AnyGuard,
+		'ExportStatementDefaultFromArmNsFrom',
+		is.ExportStatementDefaultFromArmNsFrom as _AnyGuard
 	),
 	ExportStatementDefaultFromArmClauseFrom: _makeAssert(
-		"ExportStatementDefaultFromArmClauseFrom",
-		is.ExportStatementDefaultFromArmClauseFrom as _AnyGuard,
+		'ExportStatementDefaultFromArmClauseFrom',
+		is.ExportStatementDefaultFromArmClauseFrom as _AnyGuard
 	),
-	ClassBodyMethodSig: _makeAssert("ClassBodyMethodSig", is.ClassBodyMethodSig as _AnyGuard),
-	ClassBodyMember: _makeAssert("ClassBodyMember", is.ClassBodyMember as _AnyGuard),
-	ForHeaderLhs: _makeAssert("ForHeaderLhs", is.ForHeaderLhs as _AnyGuard),
+	ClassBodyMethodSig: _makeAssert(
+		'ClassBodyMethodSig',
+		is.ClassBodyMethodSig as _AnyGuard
+	),
+	ClassBodyMember: _makeAssert(
+		'ClassBodyMember',
+		is.ClassBodyMember as _AnyGuard
+	),
+	ForHeaderLhs: _makeAssert('ForHeaderLhs', is.ForHeaderLhs as _AnyGuard),
 	PublicFieldDefinitionDeclareFirst: _makeAssert(
-		"PublicFieldDefinitionDeclareFirst",
-		is.PublicFieldDefinitionDeclareFirst as _AnyGuard,
+		'PublicFieldDefinitionDeclareFirst',
+		is.PublicFieldDefinitionDeclareFirst as _AnyGuard
 	),
 	PublicFieldDefinitionAccessorOpt: _makeAssert(
-		"PublicFieldDefinitionAccessorOpt",
-		is.PublicFieldDefinitionAccessorOpt as _AnyGuard,
+		'PublicFieldDefinitionAccessorOpt',
+		is.PublicFieldDefinitionAccessorOpt as _AnyGuard
 	),
 	ParenthesizedExpressionSequence: _makeAssert(
-		"ParenthesizedExpressionSequence",
-		is.ParenthesizedExpressionSequence as _AnyGuard,
+		'ParenthesizedExpressionSequence',
+		is.ParenthesizedExpressionSequence as _AnyGuard
 	),
 	ExportStatementTypeExport: _makeAssert(
-		"ExportStatementTypeExport",
-		is.ExportStatementTypeExport as _AnyGuard,
+		'ExportStatementTypeExport',
+		is.ExportStatementTypeExport as _AnyGuard
 	),
 	ExportStatementEqualsExport: _makeAssert(
-		"ExportStatementEqualsExport",
-		is.ExportStatementEqualsExport as _AnyGuard,
+		'ExportStatementEqualsExport',
+		is.ExportStatementEqualsExport as _AnyGuard
 	),
 	ExportStatementNamespaceExport: _makeAssert(
-		"ExportStatementNamespaceExport",
-		is.ExportStatementNamespaceExport as _AnyGuard,
+		'ExportStatementNamespaceExport',
+		is.ExportStatementNamespaceExport as _AnyGuard
 	),
-	StringDouble: _makeAssert("StringDouble", is.StringDouble as _AnyGuard),
-	StringSingle: _makeAssert("StringSingle", is.StringSingle as _AnyGuard),
+	StringDouble: _makeAssert('StringDouble', is.StringDouble as _AnyGuard),
+	StringSingle: _makeAssert('StringSingle', is.StringSingle as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
-	moduleExportName: _makeAssert("moduleExportName", is.moduleExportName as _AnyGuard),
-	declaration: _makeAssert("declaration", is.declaration as _AnyGuard),
-	statement: _makeAssert("statement", is.statement as _AnyGuard),
-	expressions: _makeAssert("expressions", is.expressions as _AnyGuard),
-	expression: _makeAssert("expression", is.expression as _AnyGuard),
-	primaryExpression: _makeAssert("primaryExpression", is.primaryExpression as _AnyGuard),
-	jsxChild: _makeAssert("jsxChild", is.jsxChild as _AnyGuard),
-	jsxIdentifier: _makeAssert("jsxIdentifier", is.jsxIdentifier as _AnyGuard),
-	jsxElementName: _makeAssert("jsxElementName", is.jsxElementName as _AnyGuard),
-	jsxAttributeName: _makeAssert("jsxAttributeName", is.jsxAttributeName as _AnyGuard),
-	jsxAttributeValue: _makeAssert("jsxAttributeValue", is.jsxAttributeValue as _AnyGuard),
-	formalParameter: _makeAssert("formalParameter", is.formalParameter as _AnyGuard),
-	destructuringPattern: _makeAssert("destructuringPattern", is.destructuringPattern as _AnyGuard),
-	identifier: _makeAssert("identifier", is.identifier as _AnyGuard),
-	pattern: _makeAssert("pattern", is.pattern as _AnyGuard),
-	propertyName: _makeAssert("propertyName", is.propertyName as _AnyGuard),
-	semicolon: _makeAssert("semicolon", is.semicolon as _AnyGuard),
+	moduleExportName: _makeAssert(
+		'moduleExportName',
+		is.moduleExportName as _AnyGuard
+	),
+	declaration: _makeAssert('declaration', is.declaration as _AnyGuard),
+	statement: _makeAssert('statement', is.statement as _AnyGuard),
+	expressions: _makeAssert('expressions', is.expressions as _AnyGuard),
+	expression: _makeAssert('expression', is.expression as _AnyGuard),
+	primaryExpression: _makeAssert(
+		'primaryExpression',
+		is.primaryExpression as _AnyGuard
+	),
+	jsxChild: _makeAssert('jsxChild', is.jsxChild as _AnyGuard),
+	jsxIdentifier: _makeAssert('jsxIdentifier', is.jsxIdentifier as _AnyGuard),
+	jsxElementName: _makeAssert('jsxElementName', is.jsxElementName as _AnyGuard),
+	jsxAttributeName: _makeAssert(
+		'jsxAttributeName',
+		is.jsxAttributeName as _AnyGuard
+	),
+	jsxAttributeValue: _makeAssert(
+		'jsxAttributeValue',
+		is.jsxAttributeValue as _AnyGuard
+	),
+	formalParameter: _makeAssert(
+		'formalParameter',
+		is.formalParameter as _AnyGuard
+	),
+	destructuringPattern: _makeAssert(
+		'destructuringPattern',
+		is.destructuringPattern as _AnyGuard
+	),
+	identifier: _makeAssert('identifier', is.identifier as _AnyGuard),
+	pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
+	propertyName: _makeAssert('propertyName', is.propertyName as _AnyGuard),
+	semicolon: _makeAssert('semicolon', is.semicolon as _AnyGuard),
 	shorthandPropertyIdentifier: _makeAssert(
-		"shorthandPropertyIdentifier",
-		is.shorthandPropertyIdentifier as _AnyGuard,
+		'shorthandPropertyIdentifier',
+		is.shorthandPropertyIdentifier as _AnyGuard
 	),
 	shorthandPropertyIdentifierPattern: _makeAssert(
-		"shorthandPropertyIdentifierPattern",
-		is.shorthandPropertyIdentifierPattern as _AnyGuard,
+		'shorthandPropertyIdentifierPattern',
+		is.shorthandPropertyIdentifierPattern as _AnyGuard
 	),
-	importIdentifier: _makeAssert("importIdentifier", is.importIdentifier as _AnyGuard),
-	type: _makeAssert("type", is.type as _AnyGuard),
-	tupleTypeMember: _makeAssert("tupleTypeMember", is.tupleTypeMember as _AnyGuard),
-	primaryType: _makeAssert("primaryType", is.primaryType as _AnyGuard),
+	importIdentifier: _makeAssert(
+		'importIdentifier',
+		is.importIdentifier as _AnyGuard
+	),
+	type: _makeAssert('type', is.type as _AnyGuard),
+	tupleTypeMember: _makeAssert(
+		'tupleTypeMember',
+		is.tupleTypeMember as _AnyGuard
+	),
+	primaryType: _makeAssert('primaryType', is.primaryType as _AnyGuard),
 	exportStatementDefault: _makeAssert(
-		"exportStatementDefault",
-		is.exportStatementDefault as _AnyGuard,
-	),
+		'exportStatementDefault',
+		is.exportStatementDefault as _AnyGuard
+	)
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.
 // Overload 1: typed input whose type is a NamespaceMap key → narrow to Tree/Node projection.
 // Overload 2: generic unknown → fall back to AnyTreeNode / AnyNodeData.
 
-export function isTree<T extends { readonly $type: K }, K extends keyof NamespaceMap & string>(
-	v: T,
-): v is T & NamespaceMap[K]["Tree"];
+export function isTree<
+	T extends { readonly $type: K },
+	K extends keyof NamespaceMap & string
+>(v: T): v is T & NamespaceMap[K]['Tree'];
 export function isTree(v: unknown): v is AnyTreeNode;
 export function isTree(v: unknown): boolean {
-	return typeof (v as { range?: unknown })?.range === "function";
+	return typeof (v as { range?: unknown })?.range === 'function';
 }
 
-export function isNode<T extends { readonly $type: K }, K extends keyof NamespaceMap & string>(
-	v: T,
-): v is T & NamespaceMap[K]["Node"];
+export function isNode<
+	T extends { readonly $type: K },
+	K extends keyof NamespaceMap & string
+>(v: T): v is T & NamespaceMap[K]['Node'];
 export function isNode(v: { readonly $type: string }): v is AnyNodeData;
 export function isNode(v: { readonly $type: string }): boolean {
 	const o = v as { $fields?: unknown; $text?: unknown };
 	return (
-		(o.$fields !== undefined && o.$fields !== null && typeof o.$fields === "object") ||
-		typeof o.$text === "string"
+		(o.$fields !== undefined &&
+			o.$fields !== null &&
+			typeof o.$fields === 'object') ||
+		typeof o.$text === 'string'
 	);
 }

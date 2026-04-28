@@ -18,18 +18,22 @@ import type {
 	TerminalRule,
 	StringRule,
 	EnumRule,
-	SupertypeRule,
-} from "./rule.ts";
+	SupertypeRule
+} from './rule.ts';
 import type {
 	OptimizedGrammar,
 	NodeMap,
 	KindProjection,
 	SignaturePool,
 	ProjectionContext,
-	PolymorphVariant,
-} from "./types.ts";
-import { computePolymorphFormKinds } from "./types.ts";
-import type { AssembledNode, AssembledField, AssembledChild } from "./node-map.ts";
+	PolymorphVariant
+} from './types.ts';
+import { computePolymorphFormKinds } from './types.ts';
+import type {
+	AssembledNode,
+	AssembledField,
+	AssembledChild
+} from './node-map.ts';
 import {
 	AssembledBranch,
 	AssembledContainer,
@@ -48,15 +52,15 @@ import {
 	isMultiple,
 	isNodeRef,
 	isTerminalValue,
-	isUnresolvedRef,
-} from "./node-map.ts";
+	isUnresolvedRef
+} from './node-map.ts';
 import {
 	simplifyRule,
 	inlineGroupRefs,
 	extractRepeatShape,
-	hoistInnerFieldsForTemplate,
-} from "./simplify.ts";
-import { compileWordMatcher } from "./common.ts";
+	hoistInnerFieldsForTemplate
+} from './simplify.ts';
+import { compileWordMatcher } from './common.ts';
 
 // ---------------------------------------------------------------------------
 // assemble() — main entry point
@@ -67,7 +71,9 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 	// Parents that went through Link's variant() push-down keep their
 	// original rule shape but should NOT T065-promote to polymorph —
 	// each variant child renders via its own kind-template.
-	const variantParents = new Set(optimized.polymorphVariants?.map((v) => v.parent) ?? []);
+	const variantParents = new Set(
+		optimized.polymorphVariants?.map((v) => v.parent) ?? []
+	);
 	const variantChildrenByParent = new Map<string, string[]>();
 	for (const v of optimized.polymorphVariants ?? []) {
 		const existing = variantChildrenByParent.get(v.parent) ?? [];
@@ -89,7 +95,9 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 		// here — templates need anonymous delimiters (`,`, `(`, `;`,
 		// …) to surface as template text. See
 		// `project_simplify_template_walker_divergence.md`.
-		const inlinedRule = hoistInnerFieldsForTemplate(inlineGroupRefs(rule, optimized.rules));
+		const inlinedRule = hoistInnerFieldsForTemplate(
+			inlineGroupRefs(rule, optimized.rules)
+		);
 		const modelType = classifyNode(kind, inlinedRule, { variantParents });
 		// `simplifiedRules[kind]` is already inlined + fixpoint-reduced
 		// by `simplifyRules` in optimize — pass through as-is.
@@ -97,86 +105,111 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 		const variantChildKinds = variantChildrenByParent.get(kind);
 
 		switch (modelType) {
-			case "branch": {
+			case 'branch': {
 				nodes.set(
 					kind,
 					new AssembledBranch(
 						kind,
 						inlinedRule as SeqRule | ChoiceRule,
 						simplifiedRule,
-						variantChildKinds ? { variantChildKinds } : undefined,
-					),
+						variantChildKinds ? { variantChildKinds } : undefined
+					)
 				);
 				break;
 			}
-			case "container": {
+			case 'container': {
 				nodes.set(
 					kind,
 					new AssembledContainer(
 						kind,
 						inlinedRule as SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
 						simplifiedRule,
-						variantChildKinds ? { variantChildKinds } : undefined,
-					),
+						variantChildKinds ? { variantChildKinds } : undefined
+					)
 				);
 				break;
 			}
-			case "polymorph": {
+			case 'polymorph': {
 				const polyForms = derivePolymorphForms(kind, rule);
 				const polySource =
-					rule.type === "polymorph"
-						? rule.source === "override"
-							? "override"
-							: "promoted"
-						: "promoted";
+					rule.type === 'polymorph'
+						? rule.source === 'override'
+							? 'override'
+							: 'promoted'
+						: 'promoted';
 				const forms = buildAssembledFormGroups(kind, polyForms, polySource);
 				for (const form of forms) nodes.set(form.kind, form);
-				for (const child of buildVisibleVariantChildGroups(polySource, polyForms, optimized)) {
+				for (const child of buildVisibleVariantChildGroups(
+					polySource,
+					polyForms,
+					optimized
+				)) {
 					nodes.set(child.kind, child);
 				}
-				const variantChildKinds = collectOverrideVariantChildKinds(polySource, polyForms);
+				const variantChildKinds = collectOverrideVariantChildKinds(
+					polySource,
+					polyForms
+				);
 				nodes.set(
 					kind,
-					new AssembledPolymorph(kind, rule as PolymorphRule | ChoiceRule, forms, {
-						source: polySource,
-						variantChildKinds,
-					}),
+					new AssembledPolymorph(
+						kind,
+						rule as PolymorphRule | ChoiceRule,
+						forms,
+						{
+							source: polySource,
+							variantChildKinds
+						}
+					)
 				);
 				break;
 			}
-			case "leaf": {
-				nodes.set(kind, new AssembledLeaf(kind, rule as PatternRule | TerminalRule));
+			case 'leaf': {
+				nodes.set(
+					kind,
+					new AssembledLeaf(kind, rule as PatternRule | TerminalRule)
+				);
 				break;
 			}
-			case "keyword": {
+			case 'keyword': {
 				nodes.set(kind, new AssembledKeyword(kind, rule as StringRule));
 				break;
 			}
-			case "token": {
+			case 'token': {
 				// Hidden — no factoryName; token kinds have StringRule bodies
 				nodes.set(kind, new AssembledToken(kind, rule as StringRule));
 				break;
 			}
-			case "enum": {
+			case 'enum': {
 				nodes.set(kind, new AssembledEnum(kind, rule as EnumRule));
 				break;
 			}
-			case "supertype": {
+			case 'supertype': {
 				const subtypes = resolveSupertypeSubtypes(rule, optimized);
-				nodes.set(kind, new AssembledSupertype(kind, rule as SupertypeRule | ChoiceRule, subtypes));
+				nodes.set(
+					kind,
+					new AssembledSupertype(
+						kind,
+						rule as SupertypeRule | ChoiceRule,
+						subtypes
+					)
+				);
 				break;
 			}
-			case "group": {
-				const { groupRule, groupSimplified } = unwrapGroupRuleAndSimplified(rule, simplifiedRule);
+			case 'group': {
+				const { groupRule, groupSimplified } = unwrapGroupRuleAndSimplified(
+					rule,
+					simplifiedRule
+				);
 				nodes.set(kind, new AssembledGroup(kind, groupRule, groupSimplified));
 				break;
 			}
-			case "multi": {
+			case 'multi': {
 				const shape = extractRepeatShape(inlinedRule);
 				if (!shape) {
 					throw new Error(
 						`assemble: '${kind}' classified as 'multi' but extractRepeatShape ` +
-							`returned null — classifier and extractor must agree on shape.`,
+							`returned null — classifier and extractor must agree on shape.`
 					);
 				}
 				nodes.set(kind, new AssembledMulti(kind, shape.repeat));
@@ -203,7 +236,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 		word: optimized.word,
 		externals: optimized.externals ? new Set(optimized.externals) : undefined,
 		polymorphFormKinds: computePolymorphFormKinds(nodes),
-		refineForms: optimized.refineForms,
+		refineForms: optimized.refineForms
 	};
 }
 
@@ -229,17 +262,20 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
  *   been attached by `tagVariants`, so the form kinds stay collision-free and
  *   obviously generated.
  */
-function derivePolymorphForms(kind: string, rule: Rule): PolymorphRule["forms"] {
-	if (rule.type === "polymorph") return rule.forms;
-	if (rule.type === "choice") {
+function derivePolymorphForms(
+	kind: string,
+	rule: Rule
+): PolymorphRule['forms'] {
+	if (rule.type === 'polymorph') return rule.forms;
+	if (rule.type === 'choice') {
 		return rule.members.map((m, i) => ({
 			name: `form${i}`,
-			content: m.type === "variant" ? m.content : m,
+			content: m.type === 'variant' ? m.content : m
 		}));
 	}
 	throw new Error(
 		`assemble: kind '${kind}' classified as polymorph but rule.type=${rule.type}. ` +
-			`promotePolymorph in Optimize should have wrapped it.`,
+			`promotePolymorph in Optimize should have wrapped it.`
 	);
 }
 
@@ -262,8 +298,8 @@ function derivePolymorphForms(kind: string, rule: Rule): PolymorphRule["forms"] 
  */
 function buildAssembledFormGroups(
 	parentKind: string,
-	polyForms: PolymorphRule["forms"],
-	polySource: "override" | "promoted",
+	polyForms: PolymorphRule['forms'],
+	polySource: 'override' | 'promoted'
 ): AssembledGroup[] {
 	const nameCounts = new Map<string, number>();
 	return polyForms.map((form) => {
@@ -271,16 +307,21 @@ function buildAssembledFormGroups(
 		nameCounts.set(form.name, seen + 1);
 		const disambiguated = seen === 0 ? form.name : `${form.name}${seen + 1}`;
 		const formKind =
-			polySource === "override"
+			polySource === 'override'
 				? `${parentKind}__form_${disambiguated}`
 				: `${parentKind}_${disambiguated}`;
 		const formNames = nameNode(formKind);
-		return new AssembledGroup(formKind, form.content, simplifyRule(form.content), {
-			factoryName: formNames.factoryName,
-			irKey: formNames.irKey,
-			name: disambiguated,
-			parentKind,
-		});
+		return new AssembledGroup(
+			formKind,
+			form.content,
+			simplifyRule(form.content),
+			{
+				factoryName: formNames.factoryName,
+				irKey: formNames.irKey,
+				name: disambiguated,
+				parentKind
+			}
+		);
 	});
 }
 
@@ -300,11 +341,13 @@ function buildAssembledFormGroups(
  *   union on the parent polymorph references.
  */
 function collectOverrideVariantChildKinds(
-	polySource: "override" | "promoted",
-	polyForms: PolymorphRule["forms"],
+	polySource: 'override' | 'promoted',
+	polyForms: PolymorphRule['forms']
 ): string[] {
-	if (polySource !== "override") return [];
-	return polyForms.map((f) => extractVariantChildSymbol(f.content)).filter((s): s is string => !!s);
+	if (polySource !== 'override') return [];
+	return polyForms
+		.map((f) => extractVariantChildSymbol(f.content))
+		.filter((s): s is string => !!s);
 }
 
 /**
@@ -322,11 +365,11 @@ function collectOverrideVariantChildKinds(
  * structural source rule is present in `optimized.rules`.
  */
 function buildVisibleVariantChildGroups(
-	polySource: "override" | "promoted",
-	polyForms: PolymorphRule["forms"],
-	optimized: OptimizedGrammar,
+	polySource: 'override' | 'promoted',
+	polyForms: PolymorphRule['forms'],
+	optimized: OptimizedGrammar
 ): AssembledNode[] {
-	if (polySource !== "override") return [];
+	if (polySource !== 'override') return [];
 	const groups: AssembledNode[] = [];
 	for (const form of polyForms) {
 		const visibleKind = extractVariantChildSymbol(form.content);
@@ -334,22 +377,29 @@ function buildVisibleVariantChildGroups(
 		const hiddenKind = `_${visibleKind}`;
 		const sourceRule = optimized.rules[hiddenKind];
 		if (!sourceRule) continue;
-		const inlinedRule = hoistInnerFieldsForTemplate(inlineGroupRefs(sourceRule, optimized.rules));
-		const simplifiedRule = optimized.simplifiedRules[hiddenKind] ?? simplifyRule(sourceRule);
+		const inlinedRule = hoistInnerFieldsForTemplate(
+			inlineGroupRefs(sourceRule, optimized.rules)
+		);
+		const simplifiedRule =
+			optimized.simplifiedRules[hiddenKind] ?? simplifyRule(sourceRule);
 		const modelType = classifyNode(visibleKind, inlinedRule);
 		switch (modelType) {
-			case "branch":
+			case 'branch':
 				groups.push(
-					new AssembledBranch(visibleKind, inlinedRule as SeqRule | ChoiceRule, simplifiedRule),
+					new AssembledBranch(
+						visibleKind,
+						inlinedRule as SeqRule | ChoiceRule,
+						simplifiedRule
+					)
 				);
 				break;
-			case "container":
+			case 'container':
 				groups.push(
 					new AssembledContainer(
 						visibleKind,
 						inlinedRule as SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
-						simplifiedRule,
-					),
+						simplifiedRule
+					)
 				);
 				break;
 			default:
@@ -379,14 +429,17 @@ function buildVisibleVariantChildGroups(
  *   Hidden names (`_foo`) are then resolved to the concrete kinds that
  *   tree-sitter actually surfaces at runtime via {@link resolveHiddenSubtypes}.
  */
-function resolveSupertypeSubtypes(rule: Rule, optimized: OptimizedGrammar): string[] {
+function resolveSupertypeSubtypes(
+	rule: Rule,
+	optimized: OptimizedGrammar
+): string[] {
 	let subtypes: string[];
-	if (rule.type === "supertype") {
+	if (rule.type === 'supertype') {
 		subtypes = rule.subtypes;
-	} else if (rule.type === "choice") {
+	} else if (rule.type === 'choice') {
 		subtypes = rule.members
-			.map((m) => (m.type === "variant" ? m.content : m))
-			.filter((m): m is SymbolRule => m.type === "symbol")
+			.map((m) => (m.type === 'variant' ? m.content : m))
+			.filter((m): m is SymbolRule => m.type === 'symbol')
 			.map((m) => m.name);
 	} else {
 		subtypes = [];
@@ -394,7 +447,7 @@ function resolveSupertypeSubtypes(rule: Rule, optimized: OptimizedGrammar): stri
 	return resolveHiddenSubtypes(
 		subtypes,
 		optimized.rules,
-		optimized.aliasedHiddenKinds ?? new Map(),
+		optimized.aliasedHiddenKinds ?? new Map()
 	);
 }
 
@@ -414,10 +467,11 @@ function resolveSupertypeSubtypes(rule: Rule, optimized: OptimizedGrammar): stri
  */
 function unwrapGroupRuleAndSimplified(
 	rule: Rule,
-	simplifiedRule: Rule,
+	simplifiedRule: Rule
 ): { groupRule: Rule; groupSimplified: Rule } {
-	const groupRule = rule.type === "group" ? rule.content : rule;
-	const groupSimplified = rule.type === "group" ? simplifyRule(groupRule) : simplifiedRule;
+	const groupRule = rule.type === 'group' ? rule.content : rule;
+	const groupSimplified =
+		rule.type === 'group' ? simplifyRule(groupRule) : simplifiedRule;
 	return { groupRule, groupSimplified };
 }
 
@@ -464,7 +518,10 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
  * Required repeated slots are NOT eligible — their cardinality is
  * user-determined.
  */
-function isAutoStampSlot(slot: AssembledChild, nodes: Map<string, AssembledNode>): boolean {
+function isAutoStampSlot(
+	slot: AssembledChild,
+	nodes: Map<string, AssembledNode>
+): boolean {
 	if (!isRequired(slot)) return true; // optional slots never block parameterless
 	if (isMultiple(slot)) return false; // required repeated slot needs user input
 
@@ -492,14 +549,16 @@ function isAutoStampSlot(slot: AssembledChild, nodes: Map<string, AssembledNode>
  * compounds).
  */
 function getSlotsForParameterless(
-	node: AssembledNode,
-): { fields: readonly AssembledField[]; children: readonly AssembledChild[] } | undefined {
+	node: AssembledNode
+):
+	| { fields: readonly AssembledField[]; children: readonly AssembledChild[] }
+	| undefined {
 	switch (node.modelType) {
-		case "branch":
+		case 'branch':
 			return { fields: node.fields, children: node.children ?? [] };
-		case "group":
+		case 'group':
 			return { fields: node.fields, children: node.children ?? [] };
-		case "container":
+		case 'container':
 			// Containers have children but no fields
 			return { fields: [], children: node.children };
 		default:
@@ -516,7 +575,7 @@ function getSlotsForParameterless(
  */
 function stampExpressionForSlot(
 	slot: AssembledChild,
-	nodes: Map<string, AssembledNode>,
+	nodes: Map<string, AssembledNode>
 ): string | undefined {
 	if (!isRequired(slot)) return undefined; // optional — no stamp needed
 	if (slot.values.length !== 1) return undefined;
@@ -576,7 +635,7 @@ function markParameterlessKinds(nodes: Map<string, AssembledNode>): void {
 		if (iters++ >= MAX_ITERS) {
 			throw new Error(
 				`markParameterlessKinds: fixpoint did not converge after ${MAX_ITERS} iterations. ` +
-					`Possible circular dependency in auto-stamp slot resolution.`,
+					`Possible circular dependency in auto-stamp slot resolution.`
 			);
 		}
 		changed = false;
@@ -635,7 +694,7 @@ function markParameterlessKinds(nodes: Map<string, AssembledNode>): void {
 function resolveHiddenSubtypes(
 	names: readonly string[],
 	rules: Record<string, Rule>,
-	_aliasedHiddenKinds: ReadonlyMap<string, string>,
+	_aliasedHiddenKinds: ReadonlyMap<string, string>
 ): string[] {
 	// Post-synthesis-removal: the rules map is keyed by SOURCE kinds
 	// only (hidden `_X`). Subtype names surface as source kinds; we
@@ -648,7 +707,7 @@ function resolveHiddenSubtypes(
 	const visit = (name: string): void => {
 		if (seen.has(name)) return;
 		seen.add(name);
-		if (!name.startsWith("_")) {
+		if (!name.startsWith('_')) {
 			out.push(name);
 			return;
 		}
@@ -664,7 +723,7 @@ function resolveHiddenSubtypes(
 		}
 		for (const r of resolved) {
 			// Recurse in case a hidden rule resolves to another hidden rule.
-			if (r.startsWith("_")) {
+			if (r.startsWith('_')) {
 				visit(r);
 				continue;
 			}
@@ -681,46 +740,52 @@ function resolveHiddenSubtypes(
 function resolveHiddenRuleContent(
 	rule: Rule,
 	rules: Record<string, Rule>,
-	seen: Set<string>,
+	seen: Set<string>
 ): string[] {
 	switch (rule.type) {
-		case "alias":
+		case 'alias':
 			// Resolve to the SOURCE kind (what's in the rules map).
 			// Evaluate's `synthesizeInlineAliasSources` pass ensures
 			// every named alias has a bare-symbol source that's a
 			// real rule. Fall back to the value when that invariant
 			// doesn't hold (pre-evaluate / test fixtures).
-			if (rule.named && rule.content.type === "symbol") {
+			if (rule.named && rule.content.type === 'symbol') {
 				return [rule.content.name];
 			}
 			return [rule.value];
-		case "symbol": {
+		case 'symbol': {
 			// Post-synthesis-removal: resolve visible-via-alias symbols
 			// (`aliasedFrom` set) to their SOURCE kind name, which is
 			// what's in the rules map and nodeMap.
 			const refName = rule.aliasedFrom ?? rule.name;
-			if (!refName.startsWith("_")) return [refName];
+			if (!refName.startsWith('_')) return [refName];
 			if (seen.has(refName)) return [];
 			seen.add(refName);
 			const target = rules[refName];
 			return target ? resolveHiddenRuleContent(target, rules, seen) : [refName];
 		}
-		case "supertype":
+		case 'supertype':
 			return rule.subtypes.flatMap((s) => {
 				if (seen.has(s)) return [];
 				seen.add(s);
-				if (!s.startsWith("_")) return [s];
+				if (!s.startsWith('_')) return [s];
 				const target = rules[s];
 				return target ? resolveHiddenRuleContent(target, rules, seen) : [s];
 			});
-		case "choice":
-			return rule.members.flatMap((m) => resolveHiddenRuleContent(m, rules, seen));
-		case "variant":
-		case "clause":
-		case "group":
-		case "token":
-		case "terminal":
-			return resolveHiddenRuleContent((rule as { content: Rule }).content, rules, seen);
+		case 'choice':
+			return rule.members.flatMap((m) =>
+				resolveHiddenRuleContent(m, rules, seen)
+			);
+		case 'variant':
+		case 'clause':
+		case 'group':
+		case 'token':
+		case 'terminal':
+			return resolveHiddenRuleContent(
+				(rule as { content: Rule }).content,
+				rules,
+				seen
+			);
 		default:
 			return [];
 	}
@@ -762,35 +827,37 @@ function markUserFacing(nodes: Map<string, AssembledNode>): void {
 	const aliasSourceKinds = new Set<string>();
 	for (const [, n] of nodes) {
 		const fieldSlots =
-			n.modelType === "polymorph"
+			n.modelType === 'polymorph'
 				? n.allFormFields
-				: n.modelType === "branch" || n.modelType === "group"
+				: n.modelType === 'branch' || n.modelType === 'group'
 					? n.fields
 					: [];
 		const childSlots =
-			n.modelType === "branch" || n.modelType === "container" || n.modelType === "group"
+			n.modelType === 'branch' ||
+			n.modelType === 'container' ||
+			n.modelType === 'group'
 				? (n.children ?? [])
 				: [];
 		for (const slot of [...fieldSlots, ...childSlots]) {
 			for (const v of slot.values) {
 				if (!isNodeRef(v)) continue;
 				const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
-				if (name.startsWith("_")) aliasSourceKinds.add(name);
+				if (name.startsWith('_')) aliasSourceKinds.add(name);
 			}
 		}
 	}
 	for (const [kind, n] of nodes) {
-		if (n.modelType === "token" || n.modelType === "multi") {
+		if (n.modelType === 'token' || n.modelType === 'multi') {
 			n.userFacing = false;
 			continue;
 		}
-		if (!kind.startsWith("_")) {
+		if (!kind.startsWith('_')) {
 			n.userFacing = true;
 			continue;
 		}
 		// Hidden — user-facing only when referenced as alias source,
 		// or when it's a polymorph (dispatched into via $variant).
-		n.userFacing = aliasSourceKinds.has(kind) || n.modelType === "polymorph";
+		n.userFacing = aliasSourceKinds.has(kind) || n.modelType === 'polymorph';
 	}
 }
 
@@ -811,7 +878,7 @@ function markUserFacing(nodes: Map<string, AssembledNode>): void {
  */
 function markVariantChildrenUserFacing(
 	nodes: Map<string, AssembledNode>,
-	variants: readonly PolymorphVariant[],
+	variants: readonly PolymorphVariant[]
 ): void {
 	for (const v of variants) {
 		const hiddenChildKind = `${v.parent}_${v.child}`;
@@ -832,8 +899,8 @@ function resolveCollidingNames(nodes: Map<string, AssembledNode>): void {
 	}
 	for (const [typeName, group] of byType) {
 		if (group.length < 2) continue;
-		const visible = group.filter((n) => !n.kind.startsWith("_"));
-		const hidden = group.filter((n) => n.kind.startsWith("_"));
+		const visible = group.filter((n) => !n.kind.startsWith('_'));
+		const hidden = group.filter((n) => n.kind.startsWith('_'));
 		if (visible.length >= 1 && hidden.length >= 1) {
 			renameCollidingHiddenKinds(visible, hidden, typeName);
 		} else if (visible.length >= 2) {
@@ -864,15 +931,15 @@ function resolveCollidingNames(nodes: Map<string, AssembledNode>): void {
 function renameCollidingHiddenKinds(
 	visible: AssembledNode[],
 	hidden: AssembledNode[],
-	typeName: string,
+	typeName: string
 ): void {
-	const hasNonTokenVisible = visible.some((n) => n.modelType !== "token");
+	const hasNonTokenVisible = visible.some((n) => n.modelType !== 'token');
 	if (!hasNonTokenVisible) return;
 	for (const h of hidden) {
 		const newType = `_${typeName}`;
 		console.warn(
 			`[assemble] typeName collision: kind '${h.kind}' renamed ` +
-				`'${typeName}' → '${newType}' (visible sibling(s): ${visible.map((v) => `'${v.kind}'`).join(", ")})`,
+				`'${typeName}' → '${newType}' (visible sibling(s): ${visible.map((v) => `'${v.kind}'`).join(', ')})`
 		);
 		h.typeName = newType;
 		if (h.factoryName !== undefined) {
@@ -894,7 +961,10 @@ function renameCollidingHiddenKinds(
  *   by kind string) keeps the original name; subsequent ones receive a numeric suffix.
  *   A warning is emitted so the situation is visible in the run log.
  */
-function renameCollidingVisibleKinds(visible: AssembledNode[], typeName: string): void {
+function renameCollidingVisibleKinds(
+	visible: AssembledNode[],
+	typeName: string
+): void {
 	const sorted = [...visible].sort((a, b) => a.kind.localeCompare(b.kind));
 	for (let i = 1; i < sorted.length; i++) {
 		const n = sorted[i]!;
@@ -904,7 +974,7 @@ function renameCollidingVisibleKinds(visible: AssembledNode[], typeName: string)
 				`'${typeName}' → '${newType}' (siblings: ${sorted
 					.slice(0, i)
 					.map((s) => `'${s.kind}'`)
-					.join(", ")})`,
+					.join(', ')})`
 		);
 		n.typeName = newType;
 		if (n.factoryName !== undefined) {
@@ -923,12 +993,15 @@ function renameCollidingVisibleKinds(visible: AssembledNode[], typeName: string)
  *   Two hidden kinds both normalized to the same name receive numeric suffixes on every
  *   node after the first. A warning is emitted for each rename.
  */
-function renameCollidingHiddenOnlyKinds(hidden: AssembledNode[], typeName: string): void {
+function renameCollidingHiddenOnlyKinds(
+	hidden: AssembledNode[],
+	typeName: string
+): void {
 	for (let i = 1; i < hidden.length; i++) {
 		const h = hidden[i]!;
 		const newType = `${typeName}${i + 1}`;
 		console.warn(
-			`[assemble] typeName collision among hidden kinds: '${h.kind}' renamed '${typeName}' → '${newType}'`,
+			`[assemble] typeName collision among hidden kinds: '${h.kind}' renamed '${typeName}' → '${newType}'`
 		);
 		h.typeName = newType;
 		if (h.factoryName !== undefined) {
@@ -948,9 +1021,12 @@ function renameCollidingHiddenOnlyKinds(hidden: AssembledNode[], typeName: strin
  *   supertype like python `expression` still blocks `expression_statement` from
  *   collapsing its irKey onto `expression`.
  */
-function preclaimSupertypeIrKeys(nodes: Map<string, AssembledNode>, claimed: Set<string>): void {
+function preclaimSupertypeIrKeys(
+	nodes: Map<string, AssembledNode>,
+	claimed: Set<string>
+): void {
 	for (const node of nodes.values()) {
-		if (node.modelType !== "supertype") continue;
+		if (node.modelType !== 'supertype') continue;
 		claimed.add(shortenIrKey(node.kind));
 	}
 }
@@ -981,14 +1057,14 @@ function partitionNodesIntoIrKeyPhases(nodes: Map<string, AssembledNode>): {
 	const phase2: AssembledNode[] = [];
 	for (const node of nodes.values()) {
 		if (!node.factoryName) continue;
-		if (node.modelType === "group") continue;
+		if (node.modelType === 'group') continue;
 		const short = shortenIrKey(node.kind);
 		if (short === node.factoryName) phase1.push(node);
 		else phase2.push(node);
 	}
 	const hiddenSort = (a: AssembledNode, b: AssembledNode) => {
-		const aHidden = a.kind.startsWith("_") ? 1 : 0;
-		const bHidden = b.kind.startsWith("_") ? 1 : 0;
+		const aHidden = a.kind.startsWith('_') ? 1 : 0;
+		const bHidden = b.kind.startsWith('_') ? 1 : 0;
 		return aHidden - bHidden;
 	};
 	phase1.sort(hiddenSort);
@@ -1008,7 +1084,10 @@ function partitionNodesIntoIrKeyPhases(nodes: Map<string, AssembledNode>): {
  *   where even the full name collides (two kinds normalise to the same factoryName),
  *   a numeric suffix is appended to guarantee uniqueness.
  */
-function assignIrKeyWithFallback(node: AssembledNode, claimed: Set<string>): void {
+function assignIrKeyWithFallback(
+	node: AssembledNode,
+	claimed: Set<string>
+): void {
 	const short = shortenIrKey(node.kind);
 	if (!claimed.has(short)) {
 		claimed.add(short);
@@ -1027,16 +1106,16 @@ function assignIrKeyWithFallback(node: AssembledNode, claimed: Set<string>): voi
 
 function shortenIrKey(kind: string): string {
 	const stripped = kind
-		.replace(/_item$/, "")
-		.replace(/_expression$/, "")
-		.replace(/_statement$/, "")
-		.replace(/_declaration$/, "")
-		.replace(/_definition$/, "");
-	const parts = stripped.split("_").filter(Boolean);
+		.replace(/_item$/, '')
+		.replace(/_expression$/, '')
+		.replace(/_statement$/, '')
+		.replace(/_declaration$/, '')
+		.replace(/_definition$/, '');
+	const parts = stripped.split('_').filter(Boolean);
 	if (parts.length === 0) return nameNode(kind).factoryName;
 	const camel = parts
 		.map((w, i) => (i === 0 ? w : w.charAt(0).toUpperCase() + w.slice(1)))
-		.join("");
+		.join('');
 	// Reserved-word names fall back to the factory name, which already
 	// carries the `_` suffix from nameNode.
 	if (IR_KEY_RESERVED.has(camel)) return nameNode(kind).factoryName;
@@ -1044,47 +1123,47 @@ function shortenIrKey(kind: string): string {
 }
 
 const IR_KEY_RESERVED = new Set([
-	"break",
-	"case",
-	"catch",
-	"class",
-	"const",
-	"continue",
-	"debugger",
-	"default",
-	"delete",
-	"do",
-	"else",
-	"enum",
-	"export",
-	"extends",
-	"false",
-	"finally",
-	"for",
-	"function",
-	"if",
-	"import",
-	"in",
-	"instanceof",
-	"let",
-	"new",
-	"null",
-	"return",
-	"static",
-	"super",
-	"switch",
-	"this",
-	"throw",
-	"true",
-	"try",
-	"typeof",
-	"var",
-	"void",
-	"while",
-	"with",
-	"yield",
-	"async",
-	"await",
+	'break',
+	'case',
+	'catch',
+	'class',
+	'const',
+	'continue',
+	'debugger',
+	'default',
+	'delete',
+	'do',
+	'else',
+	'enum',
+	'export',
+	'extends',
+	'false',
+	'finally',
+	'for',
+	'function',
+	'if',
+	'import',
+	'in',
+	'instanceof',
+	'let',
+	'new',
+	'null',
+	'return',
+	'static',
+	'super',
+	'switch',
+	'this',
+	'throw',
+	'true',
+	'try',
+	'typeof',
+	'var',
+	'void',
+	'while',
+	'with',
+	'yield',
+	'async',
+	'await'
 ]);
 
 // ---------------------------------------------------------------------------
@@ -1106,14 +1185,17 @@ const IR_KEY_RESERVED = new Set([
  *   grammar declares no `word` (or we can't extract its pattern), falls back to
  *   the conservative `/^\w+$/` heuristic.
  */
-function detectKeywordShape(value: string, wordMatcher: RegExp | undefined): boolean {
+function detectKeywordShape(
+	value: string,
+	wordMatcher: RegExp | undefined
+): boolean {
 	return wordMatcher ? wordMatcher.test(value) : /^\w+$/.test(value);
 }
 
 function collectAnonymousNodes(
 	rules: Record<string, Rule>,
 	nodes: Map<string, AssembledNode>,
-	wordMatcher: RegExp | undefined,
+	wordMatcher: RegExp | undefined
 ): void {
 	const seen = new Set<string>();
 
@@ -1123,16 +1205,19 @@ function collectAnonymousNodes(
 
 	for (const value of seen) {
 		if (nodes.has(value)) continue; // Already classified as a named rule
-		if (value === "" || /^\s+$/.test(value)) continue; // Skip whitespace/empty
+		if (value === '' || /^\s+$/.test(value)) continue; // Skip whitespace/empty
 
 		const isWordShape = detectKeywordShape(value, wordMatcher);
 		// Synthetic StringRule for anonymous tokens — the kind IS the literal value.
-		const syntheticStringRule: StringRule = { type: "string", value };
+		const syntheticStringRule: StringRule = { type: 'string', value };
 
 		if (isWordShape) {
 			// Keyword token (e.g., "if", "class", "pub")
 			// Anonymous keywords from grammar — no factory (hidden: no user construction path)
-			nodes.set(value, new AssembledKeyword(value, syntheticStringRule, { hidden: true }));
+			nodes.set(
+				value,
+				new AssembledKeyword(value, syntheticStringRule, { hidden: true })
+			);
 		} else {
 			// Operator/punctuation token (e.g., "+", "->", "{")
 			nodes.set(value, new AssembledToken(value, syntheticStringRule));
@@ -1154,34 +1239,34 @@ function collectAnonymousNodes(
  */
 function walkForStrings(rule: Rule, out: Set<string>): void {
 	switch (rule.type) {
-		case "string":
+		case 'string':
 			out.add(rule.value);
 			break;
-		case "enum":
+		case 'enum':
 			// Enum values are text content — do NOT descend (see JSDoc).
 			break;
-		case "seq":
+		case 'seq':
 			for (const m of rule.members) walkForStrings(m, out);
 			break;
-		case "choice":
+		case 'choice':
 			for (const m of rule.members) walkForStrings(m, out);
 			break;
-		case "optional":
+		case 'optional':
 			walkForStrings(rule.content, out);
 			break;
-		case "repeat":
+		case 'repeat':
 			walkForStrings(rule.content, out);
 			break;
-		case "field":
+		case 'field':
 			walkForStrings(rule.content, out);
 			break;
-		case "variant":
+		case 'variant':
 			walkForStrings(rule.content, out);
 			break;
-		case "clause":
+		case 'clause':
 			walkForStrings(rule.content, out);
 			break;
-		case "group":
+		case 'group':
 			walkForStrings(rule.content, out);
 			break;
 	}
@@ -1191,7 +1276,7 @@ function walkForStrings(rule: Rule, out: Set<string>): void {
 // classifyNode — structural simplification + visibility
 // ---------------------------------------------------------------------------
 
-type ModelType = AssembledNode["modelType"];
+type ModelType = AssembledNode['modelType'];
 
 // `inlineGroupRefs` / `resolveGroupOrMultiInlineTarget` moved to
 // `simplify.ts` so the group-inlining happens inside the simplify
@@ -1217,23 +1302,23 @@ type ModelType = AssembledNode["modelType"];
 export function classifyNode(
 	kind: string,
 	rule: Rule,
-	opts?: { variantParents?: ReadonlySet<string> },
+	opts?: { variantParents?: ReadonlySet<string> }
 ): ModelType {
 	switch (rule.type) {
-		case "enum":
-			return "enum";
-		case "supertype":
-			return "supertype";
-		case "group":
-			return "group";
-		case "terminal":
-			return "leaf";
-		case "polymorph":
-			return "polymorph";
-		case "pattern":
-			return "leaf";
-		case "string":
-			return /^\w+$/.test(rule.value) ? "keyword" : "token";
+		case 'enum':
+			return 'enum';
+		case 'supertype':
+			return 'supertype';
+		case 'group':
+			return 'group';
+		case 'terminal':
+			return 'leaf';
+		case 'polymorph':
+			return 'polymorph';
+		case 'pattern':
+			return 'leaf';
+		case 'string':
+			return /^\w+$/.test(rule.value) ? 'keyword' : 'token';
 	}
 
 	// T065 auto-polymorph promotion removed (spec 013 cleanup).
@@ -1244,7 +1329,7 @@ export function classifyNode(
 	// heterogeneous-field-per-arm shapes without inventing anonymous
 	// polymorph identities.
 	void opts;
-	if (isHiddenRepeatHelper(kind, rule)) return "multi";
+	if (isHiddenRepeatHelper(kind, rule)) return 'multi';
 	const branchOrContainer = classifyBranchOrContainer(rule);
 	if (branchOrContainer !== null) return branchOrContainer;
 	return classifyT065TerminalFallback(kind, rule);
@@ -1263,7 +1348,7 @@ export function classifyNode(
  *   referrers (rest-params factory, multi-valued child slot). See AssembledMulti doc.
  */
 function isHiddenRepeatHelper(kind: string, rule: Rule): boolean {
-	return kind.startsWith("_") && extractRepeatShape(rule) !== null;
+	return kind.startsWith('_') && extractRepeatShape(rule) !== null;
 }
 
 /**
@@ -1279,8 +1364,8 @@ function isHiddenRepeatHelper(kind: string, rule: Rule): boolean {
  *   later, once.
  */
 function classifyBranchOrContainer(rule: Rule): ModelType | null {
-	if (hasAnyField(rule)) return "branch";
-	if (hasAnyChild(rule)) return "container";
+	if (hasAnyField(rule)) return 'branch';
+	if (hasAnyChild(rule)) return 'container';
 	return null;
 }
 
@@ -1298,11 +1383,12 @@ function classifyBranchOrContainer(rule: Rule): ModelType | null {
  *   unclassifiable after this is a real pipeline error.
  */
 function classifyT065TerminalFallback(kind: string, rule: Rule): ModelType {
-	if (isAllTextShape(rule)) return "leaf";
-	if (rule.type === "choice" && rule.members.every((m) => m.type === "string")) return "enum";
+	if (isAllTextShape(rule)) return 'leaf';
+	if (rule.type === 'choice' && rule.members.every((m) => m.type === 'string'))
+		return 'enum';
 	throw new Error(
 		`classifyNode: '${kind}' has no fields, no children, and no rule-type ` +
-			`classification. Link should have wrapped it as TerminalRule. rule.type=${rule.type}`,
+			`classification. Link should have wrapped it as TerminalRule. rule.type=${rule.type}`
 	);
 }
 
@@ -1314,21 +1400,21 @@ function classifyT065TerminalFallback(kind: string, rule: Rule): ModelType {
  */
 function isAllTextShape(rule: Rule): boolean {
 	switch (rule.type) {
-		case "string":
-		case "pattern":
+		case 'string':
+		case 'pattern':
 			return true;
-		case "symbol":
-		case "field":
+		case 'symbol':
+		case 'field':
 			return false;
-		case "seq":
-		case "choice":
+		case 'seq':
+		case 'choice':
 			return rule.members.length > 0 && rule.members.every(isAllTextShape);
-		case "optional":
-		case "repeat":
-		case "token":
-		case "variant":
-		case "clause":
-		case "group":
+		case 'optional':
+		case 'repeat':
+		case 'token':
+		case 'variant':
+		case 'clause':
+		case 'group':
 			return isAllTextShape(rule.content);
 		default:
 			return false;
@@ -1357,60 +1443,63 @@ export { simplifyRule };
 // nameNode has moved to node-map.ts (imported above); re-exported here for
 // backwards compatibility with assemble.test.ts and any other callers that
 // import it from this module.
-export { nameNode } from "./node-map.ts";
+export { nameNode } from './node-map.ts';
 
 // Reserved words that cannot be used as parameter/method names in TypeScript.
 const TS_RESERVED_WORDS = new Set([
-	"arguments",
-	"await",
-	"break",
-	"case",
-	"catch",
-	"class",
-	"const",
-	"continue",
-	"debugger",
-	"default",
-	"delete",
-	"do",
-	"else",
-	"enum",
-	"export",
-	"extends",
-	"false",
-	"finally",
-	"for",
-	"function",
-	"if",
-	"import",
-	"in",
-	"instanceof",
-	"new",
-	"null",
-	"return",
-	"super",
-	"switch",
-	"this",
-	"throw",
-	"true",
-	"try",
-	"typeof",
-	"var",
-	"void",
-	"while",
-	"with",
-	"yield",
-	"let",
-	"static",
-	"implements",
-	"interface",
-	"package",
-	"private",
-	"protected",
-	"public",
+	'arguments',
+	'await',
+	'break',
+	'case',
+	'catch',
+	'class',
+	'const',
+	'continue',
+	'debugger',
+	'default',
+	'delete',
+	'do',
+	'else',
+	'enum',
+	'export',
+	'extends',
+	'false',
+	'finally',
+	'for',
+	'function',
+	'if',
+	'import',
+	'in',
+	'instanceof',
+	'new',
+	'null',
+	'return',
+	'super',
+	'switch',
+	'this',
+	'throw',
+	'true',
+	'try',
+	'typeof',
+	'var',
+	'void',
+	'while',
+	'with',
+	'yield',
+	'let',
+	'static',
+	'implements',
+	'interface',
+	'package',
+	'private',
+	'protected',
+	'public'
 ]);
 
-export function nameField(fieldName: string): { propertyName: string; paramName: string } {
+export function nameField(fieldName: string): {
+	propertyName: string;
+	paramName: string;
+} {
 	let propertyName = fieldName.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
 	// Avoid TS reserved keywords for param names by suffixing with '_'
 	let paramName = propertyName;
@@ -1431,14 +1520,16 @@ export function nameField(fieldName: string): { propertyName: string; paramName:
 // ---------------------------------------------------------------------------
 
 function extractVariantChildSymbol(rule: Rule): string | null {
-	if (rule.type === "symbol") return rule.name;
-	if (rule.type === "seq") {
+	if (rule.type === 'symbol') return rule.name;
+	if (rule.type === 'seq') {
 		for (const m of rule.members) {
-			if (m.type === "symbol") return m.name;
-			if (m.type === "variant" && m.content.type === "symbol") return m.content.name;
+			if (m.type === 'symbol') return m.name;
+			if (m.type === 'variant' && m.content.type === 'symbol')
+				return m.content.name;
 		}
 	}
-	if (rule.type === "variant" && rule.content.type === "symbol") return rule.content.name;
+	if (rule.type === 'variant' && rule.content.type === 'symbol')
+		return rule.content.name;
 	return null;
 }
 
@@ -1450,6 +1541,8 @@ function computeSignatures(nodes: Map<string, AssembledNode>): SignaturePool {
 	return { signatures: new Map() };
 }
 
-function buildProjections(nodes: Map<string, AssembledNode>): ProjectionContext {
+function buildProjections(
+	nodes: Map<string, AssembledNode>
+): ProjectionContext {
 	return { projections: new Map() };
 }

@@ -101,39 +101,44 @@ One type throughout the pipeline. Defined once, never extended.
 ```ts
 type Rule =
 	// Structural grouping — Optimize restructures these
-	| { type: "seq"; members: Rule[] }
-	| { type: "optional"; content: Rule }
-	| { type: "choice"; members: Rule[] }
-	| { type: "repeat"; content: Rule; separator?: string; trailing?: boolean }
-	| { type: "repeat1"; content: Rule; separator?: string }
+	| { type: 'seq'; members: Rule[] }
+	| { type: 'optional'; content: Rule }
+	| { type: 'choice'; members: Rule[] }
+	| { type: 'repeat'; content: Rule; separator?: string; trailing?: boolean }
+	| { type: 'repeat1'; content: Rule; separator?: string }
 
 	// Named patterns — clean wrappers, no derived metadata
 	| {
-			type: "field";
+			type: 'field';
 			name: string;
 			content: Rule;
-			source?: "grammar" | "override" | "inlined" | "inferred";
-			nameFrom?: "grammar" | "kind" | "override" | "usage";
+			source?: 'grammar' | 'override' | 'inlined' | 'inferred';
+			nameFrom?: 'grammar' | 'kind' | 'override' | 'usage';
 	  }
-	| { type: "variant"; name: string; content: Rule }
-	| { type: "clause"; name: string; content: Rule }
-	| { type: "enum"; values: string[]; source?: "grammar" | "promoted" }
-	| { type: "supertype"; name: string; subtypes: string[]; source?: "grammar" | "promoted" }
-	| { type: "group"; name: string; content: Rule }
+	| { type: 'variant'; name: string; content: Rule }
+	| { type: 'clause'; name: string; content: Rule }
+	| { type: 'enum'; values: string[]; source?: 'grammar' | 'promoted' }
+	| {
+			type: 'supertype';
+			name: string;
+			subtypes: string[];
+			source?: 'grammar' | 'promoted';
+	  }
+	| { type: 'group'; name: string; content: Rule }
 
 	// Terminals
-	| { type: "string"; value: string }
-	| { type: "pattern"; value: string }
+	| { type: 'string'; value: string }
+	| { type: 'pattern'; value: string }
 
 	// Structural whitespace
-	| { type: "indent" }
-	| { type: "dedent" }
-	| { type: "newline" }
+	| { type: 'indent' }
+	| { type: 'dedent' }
+	| { type: 'newline' }
 
 	// References — Link resolves these; absent after Link
-	| { type: "symbol"; name: string; hidden?: boolean; supertype?: boolean }
-	| { type: "alias"; content: Rule; named: boolean; value: string }
-	| { type: "token"; content: Rule; immediate: boolean };
+	| { type: 'symbol'; name: string; hidden?: boolean; supertype?: boolean }
+	| { type: 'alias'; content: Rule; named: boolean; value: string }
+	| { type: 'token'; content: Rule; immediate: boolean };
 
 interface SymbolRef {
 	from: string;
@@ -251,14 +256,14 @@ interface LinkedGrammar {
 	suggestedOverrides?: SuggestedOverride[]; // from diagnostic derivations
 }
 
-type ExternalRole = { role: "indent" | "dedent" | "newline" };
+type ExternalRole = { role: 'indent' | 'dedent' | 'newline' };
 
 interface SuggestedOverride {
 	kind: string; // target rule
 	path: (string | number)[]; // position within rule (name or index)
 	rule: Rule; // suggested Rule insertion
 	derivation: string; // which derivation produced this
-	confidence: "high" | "medium" | "low";
+	confidence: 'high' | 'medium' | 'low';
 }
 ```
 
@@ -312,56 +317,56 @@ interface AssembledNodeBase {
 
 // seq with fields (visible)
 interface AssembledBranch extends AssembledNodeBase {
-	modelType: "branch";
+	modelType: 'branch';
 	fields: AssembledField[];
 	children?: AssembledChild[];
 }
 
 // repeat (visible)
 interface AssembledContainer extends AssembledNodeBase {
-	modelType: "container";
+	modelType: 'container';
 	children: AssembledChild[];
 	separator?: string;
 }
 
 // choice of structures (visible) — one kind, multiple structural forms
 interface AssembledPolymorph extends AssembledNodeBase {
-	modelType: "polymorph";
+	modelType: 'polymorph';
 	forms: AssembledForm[];
 }
 
 // pattern (visible)
 interface AssembledLeaf extends AssembledNodeBase {
-	modelType: "leaf";
+	modelType: 'leaf';
 	pattern?: string;
 }
 
 // single string, alphanumeric (visible)
 interface AssembledKeyword extends AssembledNodeBase {
-	modelType: "keyword";
+	modelType: 'keyword';
 	text: string;
 }
 
 // non-alphanumeric terminal (visible)
 interface AssembledToken extends AssembledNodeBase {
-	modelType: "token";
+	modelType: 'token';
 }
 
 // choice of strings (hidden or visible) — no factory
 interface AssembledEnum extends AssembledNodeBase {
-	modelType: "enum";
+	modelType: 'enum';
 	values: string[];
 }
 
 // hidden choice of symbols — no factory, no AST node
 interface AssembledSupertype extends AssembledNodeBase {
-	modelType: "supertype";
+	modelType: 'supertype';
 	subtypes: string[];
 }
 
 // hidden seq with fields — fields promoted to parent, no factory, no AST node
 interface AssembledGroup extends AssembledNodeBase {
-	modelType: "group";
+	modelType: 'group';
 	fields: AssembledField[];
 }
 
@@ -374,7 +379,7 @@ interface AssembledField {
 	required: boolean; // derived: is this field inside an optional?
 	multiple: boolean; // derived: is this field inside a repeat?
 	contentTypes: string[]; // derived: walk field content, collect kind names
-	source: "grammar" | "override" | "inlined" | "inferred";
+	source: 'grammar' | 'override' | 'inlined' | 'inferred';
 	projection: KindProjection;
 }
 
@@ -439,21 +444,21 @@ Overrides are grammar extensions that use tree-sitter's native `($, original)` p
 
 ```ts
 // overrides.ts
-const base = require("tree-sitter-rust/grammar");
+const base = require('tree-sitter-rust/grammar');
 
 module.exports = grammar(base, {
-	name: "rust",
+	name: 'rust',
 	rules: {
 		// ($, original) — original is the base grammar's function_item rule
 		function_item: ($, original) =>
 			transform(original, {
-				2: field("body"), // insert: wrap position 2 in a field
-				parameters: field("params"), // insert: address by existing field name
+				2: field('body'), // insert: wrap position 2 in a field
+				parameters: field('params') // insert: address by existing field name
 			}),
 
-		_newline: ($) => role("newline"), // external role mapping
-		_indent: ($) => role("indent"),
-	},
+		_newline: ($) => role('newline'), // external role mapping
+		_indent: ($) => role('indent')
+	}
 });
 ```
 
@@ -468,7 +473,7 @@ module.exports = grammar(base, {
 The `$` proxy knows which rule is currently being evaluated. When `field('body', $.block)` executes, `field()` sees the symbol returned by the proxy — so it knows parent → field name → referenced symbol. When `optional($.block)` executes, it knows the reference is optional.
 
 ```ts
-let currentRule = "";
+let currentRule = '';
 const references: SymbolRef[] = [];
 
 const $ = new Proxy(
@@ -477,9 +482,9 @@ const $ = new Proxy(
 		get: (_, name: string) => {
 			const ref: SymbolRef = { from: currentRule, to: name };
 			references.push(ref);
-			return { type: "symbol", name, hidden: name.startsWith("_"), ref };
-		},
-	},
+			return { type: 'symbol', name, hidden: name.startsWith('_'), ref };
+		}
+	}
 );
 
 for (const [name, ruleFn] of Object.entries(def.rules)) {
@@ -494,20 +499,20 @@ DSL functions enrich the ref in-place:
 function field(name: string, content: Input): Rule {
 	const resolved = normalize(content);
 	if (resolved.ref) resolved.ref.fieldName = name;
-	return { type: "field", name, content: resolved };
+	return { type: 'field', name, content: resolved };
 }
 
 function optional(content: Input): Rule {
 	const resolved = normalize(content);
 	if (resolved.ref) resolved.ref.optional = true;
-	return { type: "optional", content: resolved };
+	return { type: 'optional', content: resolved };
 }
 
 function repeat(content: Input): Rule {
 	const resolved = normalize(content);
 	if (resolved.ref) resolved.ref.repeated = true;
 	// separator detection...
-	return { type: "repeat", content: resolved, separator };
+	return { type: 'repeat', content: resolved, separator };
 }
 ```
 

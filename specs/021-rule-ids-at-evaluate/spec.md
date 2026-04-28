@@ -171,16 +171,18 @@ The catalog is the new architectural center. A representative contract:
 ```ts
 export type RuleId = string;
 
-export type RulePathSegment = { edge: "content" } | { edge: "members"; index: number };
+export type RulePathSegment =
+	| { edge: 'content' }
+	| { edge: 'members'; index: number };
 
 export interface RuleCatalogEntry {
 	readonly id: RuleId;
 	readonly ownerKind: string;
-	readonly ruleType: Rule["type"];
+	readonly ruleType: Rule['type'];
 	readonly parentId?: RuleId;
 	readonly path: readonly RulePathSegment[];
 	readonly childIds: readonly RuleId[];
-	readonly provenance: "grammar" | "override" | "evaluate-synthesized";
+	readonly provenance: 'grammar' | 'override' | 'evaluate-synthesized';
 }
 
 export interface RuleCatalog {
@@ -208,7 +210,7 @@ Representative direction:
 
 ```ts
 export interface SymbolRef {
-	readonly refType: "symbol" | "alias" | "token";
+	readonly refType: 'symbol' | 'alias' | 'token';
 	readonly fromKind: string;
 	readonly fromRuleId: RuleId;
 	readonly toKind: string;
@@ -242,15 +244,15 @@ export interface RuleFactTable {
 }
 
 export type RuleRole =
-	| "field-carrier"
-	| "child-carrier"
-	| "slot-member"
-	| "separator"
-	| "leading-separator"
-	| "trailing-separator"
-	| "clause-wrapper"
-	| "discriminant"
-	| "structural-wrapper";
+	| 'field-carrier'
+	| 'child-carrier'
+	| 'slot-member'
+	| 'separator'
+	| 'leading-separator'
+	| 'trailing-separator'
+	| 'clause-wrapper'
+	| 'discriminant'
+	| 'structural-wrapper';
 ```
 
 The exact role taxonomy can evolve during planning, but the architectural rule is fixed:

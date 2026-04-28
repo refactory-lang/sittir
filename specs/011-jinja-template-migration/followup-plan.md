@@ -239,8 +239,12 @@ separator tokens into multi-valued field join output (`a,,b,,c`).
 - [ ] Change `PreparedRender` from optional-fields shape to:
   ```ts
   type PreparedRender =
-  	| { kind: "text"; text: string }
-  	| { kind: "template"; template: string; substitutions: readonly Substitution[] };
+  	| { kind: 'text'; text: string }
+  	| {
+  			kind: 'template';
+  			template: string;
+  			substitutions: readonly Substitution[];
+  	  };
   ```
 - [ ] `applyTemplate` switches on `kind` with exhaustive `assertNever`.
 - [ ] Remove the silent `return ''` fallback.

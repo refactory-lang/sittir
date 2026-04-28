@@ -29,9 +29,9 @@
  *     import { role } from '@sittir/codegen/dsl'
  */
 
-import type { Rule } from "../../compiler/rule.ts";
-import type { ExternalRole } from "../../compiler/types.ts";
-import { isSymbolLike } from "../runtime-shapes.ts";
+import type { Rule } from '../../compiler/rule.ts';
+import type { ExternalRole } from '../../compiler/types.ts';
+import { isSymbolLike } from '../runtime-shapes.ts';
 
 // Module-local accumulator. Null when no `grammar(...)` call is on
 // the stack — calling `role()` in that state is an error because we
@@ -52,20 +52,23 @@ let currentRoles: Map<string, ExternalRole> | null = null;
  * inside a `withRoleScope` block. This keeps the same call site valid
  * for both consumers without runtime feature detection.
  */
-const VALID_ROLE_NAMES = new Set(["indent", "dedent", "newline"] as const);
+const VALID_ROLE_NAMES = new Set(['indent', 'dedent', 'newline'] as const);
 
-export function role(symbol: Rule, roleName: "indent" | "dedent" | "newline"): Rule {
+export function role(
+	symbol: Rule,
+	roleName: 'indent' | 'dedent' | 'newline'
+): Rule {
 	if (!isSymbolLike(symbol)) {
 		throw new Error(
-			`role(): first argument must be a symbol reference (e.g. $._indent), got ${JSON.stringify(symbol)}`,
+			`role(): first argument must be a symbol reference (e.g. $._indent), got ${JSON.stringify(symbol)}`
 		);
 	}
 	// Runtime validation — the TS type parameter doesn't flow through
 	// override files' @ts-nocheck imports, so a typo like 'indet' would
 	// otherwise silently store a wrong binding.
-	if (!VALID_ROLE_NAMES.has(roleName as "indent" | "dedent" | "newline")) {
+	if (!VALID_ROLE_NAMES.has(roleName as 'indent' | 'dedent' | 'newline')) {
 		throw new Error(
-			`role(): second argument must be one of 'indent' | 'dedent' | 'newline', got ${JSON.stringify(roleName)}`,
+			`role(): second argument must be one of 'indent' | 'dedent' | 'newline', got ${JSON.stringify(roleName)}`
 		);
 	}
 	if (currentRoles !== null) {
@@ -81,7 +84,10 @@ export function role(symbol: Rule, roleName: "indent" | "dedent" | "newline"): R
  *
  * Called by `grammarFn` in evaluate.ts — not by override authors.
  */
-export function withRoleScope<T>(fn: () => T): { roles: Map<string, ExternalRole>; result: T } {
+export function withRoleScope<T>(fn: () => T): {
+	roles: Map<string, ExternalRole>;
+	result: T;
+} {
 	const previous = currentRoles;
 	const fresh = new Map<string, ExternalRole>();
 	currentRoles = fresh;

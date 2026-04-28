@@ -87,7 +87,9 @@ Per-grammar supplemental field definitions for nodes where the tree-sitter gramm
 ```json
 {
 	"index_expression": { "fields": { "value": {}, "index": {} } },
-	"unary_expression": { "fields": { "operator": { "anonymous": true }, "argument": {} } }
+	"unary_expression": {
+		"fields": { "operator": { "anonymous": true }, "argument": {} }
+	}
 }
 ```
 

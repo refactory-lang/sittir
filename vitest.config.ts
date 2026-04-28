@@ -1,4 +1,4 @@
-import { defineConfig } from "vitest/config";
+import { defineConfig } from 'vitest/config';
 
 /**
  * Root vitest config. The workspace is still defined in
@@ -12,7 +12,7 @@ import { defineConfig } from "vitest/config";
  */
 export default defineConfig({
 	test: {
-		exclude: ["**/node_modules/**", "**/dist/**", "**/.worktrees/**"],
+		exclude: ['**/node_modules/**', '**/dist/**', '**/.worktrees/**'],
 		// Compile every grammar's override parser before any test runs.
 		// `.sittir/parser.wasm` is gitignored; on a fresh checkout / in CI
 		// the file doesn't exist and validators silently fall back to the
@@ -20,6 +20,6 @@ export default defineConfig({
 		// ceilings below floor. compileParser() is mtime-aware — local
 		// runs with a cached wasm are a no-op (~1ms). Cold compile pays
 		// ~10s total across the three grammars, paid once per session.
-		globalSetup: ["./vitest.setup.ts"],
-	},
+		globalSetup: ['./vitest.setup.ts']
+	}
 });

@@ -14,8 +14,8 @@
  * access; these tests cover the verdict logic exhaustively.
  */
 
-import { describe, it, expect } from "vitest";
-import { evaluateVerdict } from "../scripts/check-perf-baseline.ts";
+import { describe, it, expect } from 'vitest';
+import { evaluateVerdict } from '../scripts/check-perf-baseline.ts';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -31,29 +31,33 @@ interface BaselineFfi {
 function makeBaseline(ffi: BaselineFfi): Parameters<typeof evaluateVerdict>[0] {
 	return {
 		schemaVersion: 1,
-		warnOnlyUntil: "2026-05-26",
+		warnOnlyUntil: '2026-05-26',
 		collectedOn: {
-			platform: "darwin",
-			nodeVersion: "v24.15.0",
-			cpuModel: "Apple M4 Pro",
+			platform: 'darwin',
+			nodeVersion: 'v24.15.0',
+			cpuModel: 'Apple M4 Pro'
 		},
-		ffi,
+		ffi
 	};
 }
 
 function makeFresh(
 	ffi: BaselineFfi | undefined,
-	overrides: Partial<{ schemaVersion: number; backend: "ts" | "native"; platform: string }> = {},
+	overrides: Partial<{
+		schemaVersion: number;
+		backend: 'ts' | 'native';
+		platform: string;
+	}> = {}
 ): Parameters<typeof evaluateVerdict>[1] {
 	return {
 		schemaVersion: overrides.schemaVersion ?? 1,
-		backend: overrides.backend ?? "native",
+		backend: overrides.backend ?? 'native',
 		collectedOn: {
-			platform: overrides.platform ?? "darwin",
-			nodeVersion: "v24.15.0",
-			cpuModel: "Apple M4 Pro",
+			platform: overrides.platform ?? 'darwin',
+			nodeVersion: 'v24.15.0',
+			cpuModel: 'Apple M4 Pro'
 		},
-		...(ffi ? { ffi } : {}),
+		...(ffi ? { ffi } : {})
 	};
 }
 
@@ -61,101 +65,138 @@ const baselineFfi: BaselineFfi = {
 	totalCalls: 893,
 	meanRoundtripMs: 0.0045,
 	p99RoundtripMs: 0.0373,
-	meanPayloadBytes: 531,
+	meanPayloadBytes: 531
 };
 
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
 
-describe("evaluateVerdict", () => {
-	it("returns ok when fresh matches baseline exactly", () => {
-		const v = evaluateVerdict(makeBaseline(baselineFfi), makeFresh(baselineFfi), false);
-		expect(v.kind).toBe("ok");
+describe('evaluateVerdict', () => {
+	it('returns ok when fresh matches baseline exactly', () => {
+		const v = evaluateVerdict(
+			makeBaseline(baselineFfi),
+			makeFresh(baselineFfi),
+			false
+		);
+		expect(v.kind).toBe('ok');
 	});
 
-	it("returns ok when meanRoundtripMs increases by ≤ 10%", () => {
-		const fresh: BaselineFfi = { ...baselineFfi, meanRoundtripMs: 0.0045 * 1.09 };
-		const v = evaluateVerdict(makeBaseline(baselineFfi), makeFresh(fresh), false);
-		expect(v.kind).toBe("ok");
+	it('returns ok when meanRoundtripMs increases by ≤ 10%', () => {
+		const fresh: BaselineFfi = {
+			...baselineFfi,
+			meanRoundtripMs: 0.0045 * 1.09
+		};
+		const v = evaluateVerdict(
+			makeBaseline(baselineFfi),
+			makeFresh(fresh),
+			false
+		);
+		expect(v.kind).toBe('ok');
 	});
 
 	it("returns ok when totalCalls decreases (improvements aren't regressions)", () => {
 		const fresh: BaselineFfi = { ...baselineFfi, totalCalls: 700 };
-		const v = evaluateVerdict(makeBaseline(baselineFfi), makeFresh(fresh), false);
-		expect(v.kind).toBe("ok");
+		const v = evaluateVerdict(
+			makeBaseline(baselineFfi),
+			makeFresh(fresh),
+			false
+		);
+		expect(v.kind).toBe('ok');
 	});
 
-	it("flags meanRoundtripMs regression > 10%", () => {
-		const fresh: BaselineFfi = { ...baselineFfi, meanRoundtripMs: 0.0045 * 1.2 };
-		const v = evaluateVerdict(makeBaseline(baselineFfi), makeFresh(fresh), false);
-		expect(v.kind).toBe("regression");
-		if (v.kind === "regression") {
-			expect(v.field).toBe("meanRoundtripMs");
+	it('flags meanRoundtripMs regression > 10%', () => {
+		const fresh: BaselineFfi = {
+			...baselineFfi,
+			meanRoundtripMs: 0.0045 * 1.2
+		};
+		const v = evaluateVerdict(
+			makeBaseline(baselineFfi),
+			makeFresh(fresh),
+			false
+		);
+		expect(v.kind).toBe('regression');
+		if (v.kind === 'regression') {
+			expect(v.field).toBe('meanRoundtripMs');
 			expect(v.deltaPct).toBeGreaterThan(10);
 			expect(v.warnOnly).toBe(false);
 		}
 	});
 
-	it("flags totalCalls regression > 10%", () => {
+	it('flags totalCalls regression > 10%', () => {
 		const fresh: BaselineFfi = { ...baselineFfi, totalCalls: 1100 };
-		const v = evaluateVerdict(makeBaseline(baselineFfi), makeFresh(fresh), false);
-		expect(v.kind).toBe("regression");
-		if (v.kind === "regression") {
-			expect(v.field).toBe("totalCalls");
+		const v = evaluateVerdict(
+			makeBaseline(baselineFfi),
+			makeFresh(fresh),
+			false
+		);
+		expect(v.kind).toBe('regression');
+		if (v.kind === 'regression') {
+			expect(v.field).toBe('totalCalls');
 			expect(v.deltaPct).toBeGreaterThan(10);
 		}
 	});
 
-	it("propagates warnOnly into regression verdict", () => {
-		const fresh: BaselineFfi = { ...baselineFfi, meanRoundtripMs: 0.0045 * 1.2 };
-		const v = evaluateVerdict(makeBaseline(baselineFfi), makeFresh(fresh), true);
-		expect(v.kind).toBe("regression");
-		if (v.kind === "regression") expect(v.warnOnly).toBe(true);
-	});
-
-	it("returns platform-mismatch when collectedOn.platform differs", () => {
+	it('propagates warnOnly into regression verdict', () => {
+		const fresh: BaselineFfi = {
+			...baselineFfi,
+			meanRoundtripMs: 0.0045 * 1.2
+		};
 		const v = evaluateVerdict(
 			makeBaseline(baselineFfi),
-			makeFresh(baselineFfi, { platform: "linux" }),
-			false,
+			makeFresh(fresh),
+			true
 		);
-		expect(v.kind).toBe("platform-mismatch");
-		if (v.kind === "platform-mismatch") {
-			expect(v.baselinePlatform).toBe("darwin");
-			expect(v.freshPlatform).toBe("linux");
+		expect(v.kind).toBe('regression');
+		if (v.kind === 'regression') expect(v.warnOnly).toBe(true);
+	});
+
+	it('returns platform-mismatch when collectedOn.platform differs', () => {
+		const v = evaluateVerdict(
+			makeBaseline(baselineFfi),
+			makeFresh(baselineFfi, { platform: 'linux' }),
+			false
+		);
+		expect(v.kind).toBe('platform-mismatch');
+		if (v.kind === 'platform-mismatch') {
+			expect(v.baselinePlatform).toBe('darwin');
+			expect(v.freshPlatform).toBe('linux');
 		}
 	});
 
-	it("returns schema-mismatch when schemaVersion differs", () => {
+	it('returns schema-mismatch when schemaVersion differs', () => {
 		const v = evaluateVerdict(
 			makeBaseline(baselineFfi),
 			makeFresh(baselineFfi, { schemaVersion: 2 }),
-			false,
+			false
 		);
-		expect(v.kind).toBe("schema-mismatch");
+		expect(v.kind).toBe('schema-mismatch');
 	});
 
-	it("rejects a metrics file with backend ts for the native perf gate", () => {
+	it('rejects a metrics file with backend ts for the native perf gate', () => {
 		const v = evaluateVerdict(
 			makeBaseline(baselineFfi),
-			{ ...makeFresh(baselineFfi), backend: "ts" },
-			false,
+			{ ...makeFresh(baselineFfi), backend: 'ts' },
+			false
 		);
-		expect(v.kind).toBe("backend-mismatch");
+		expect(v.kind).toBe('backend-mismatch');
 	});
 
-	it("rejects a native metrics file with no ffi block", () => {
-		const v = evaluateVerdict(makeBaseline(baselineFfi), makeFresh(undefined), false);
-		expect(v.kind).toBe("missing-ffi");
-	});
-
-	it("prefers schema-mismatch over platform-mismatch when both differ", () => {
+	it('rejects a native metrics file with no ffi block', () => {
 		const v = evaluateVerdict(
 			makeBaseline(baselineFfi),
-			makeFresh(baselineFfi, { schemaVersion: 2, platform: "linux" }),
-			false,
+			makeFresh(undefined),
+			false
 		);
-		expect(v.kind).toBe("schema-mismatch");
+		expect(v.kind).toBe('missing-ffi');
+	});
+
+	it('prefers schema-mismatch over platform-mismatch when both differ', () => {
+		const v = evaluateVerdict(
+			makeBaseline(baselineFfi),
+			makeFresh(baselineFfi, { schemaVersion: 2, platform: 'linux' }),
+			false
+		);
+		expect(v.kind).toBe('schema-mismatch');
 	});
 });

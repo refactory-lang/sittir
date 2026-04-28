@@ -21,16 +21,16 @@ import {
 	createRenderer,
 	readNode as coreReadNode,
 	recordFfi,
-	metricsEnabled,
-} from "@sittir/core";
-import type { TreeHandle } from "@sittir/core";
-import type { AnyNodeData, ByteRange, Edit, NodeId } from "@sittir/types";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-import { getActiveBackend, type NativeEngine } from "./backend.js";
+	metricsEnabled
+} from '@sittir/core';
+import type { TreeHandle } from '@sittir/core';
+import type { AnyNodeData, ByteRange, Edit, NodeId } from '@sittir/types';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { getActiveBackend, type NativeEngine } from './backend.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const GRAMMAR = "typescript";
+const GRAMMAR = 'typescript';
 
 /**
  * Package-level Nunjucks renderer. Lazily built on first render call
@@ -40,14 +40,17 @@ const GRAMMAR = "typescript";
 let tsRenderer: ReturnType<typeof createRenderer> | null = null;
 function getTsRenderer(): ReturnType<typeof createRenderer> {
 	if (tsRenderer === null) {
-		tsRenderer = createRenderer(join(__dirname, "..", "templates"));
+		tsRenderer = createRenderer(join(__dirname, '..', 'templates'));
 	}
 	return tsRenderer;
 }
 
 function formatNativeError(operation: string, error: unknown): Error {
 	const message = error instanceof Error ? error.message : String(error);
-	return new Error(`@sittir/${GRAMMAR} native ${operation} failed: ${message}`, { cause: error });
+	return new Error(
+		`@sittir/${GRAMMAR} native ${operation} failed: ${message}`,
+		{ cause: error }
+	);
 }
 
 /**
@@ -59,12 +62,12 @@ function formatNativeError(operation: string, error: unknown): Error {
 let nativeEngine: NativeEngine | null = null;
 function getNativeEngine(): NativeEngine | null {
 	const status = getActiveBackend();
-	if (status.name !== "native") return null;
+	if (status.name !== 'native') return null;
 	if (nativeEngine === null) {
 		try {
 			nativeEngine = new status.native.SittirEngine();
 		} catch (error) {
-			throw formatNativeError("engine initialization", error);
+			throw formatNativeError('engine initialization', error);
 		}
 	}
 	return nativeEngine;
@@ -84,7 +87,13 @@ export function render(node: AnyNodeData): string {
 		if (metricsEnabled) {
 			const t0 = performance.now();
 			const result = engine.render(json);
-			recordFfi(GRAMMAR, node.$type, json.length, performance.now() - t0, result.length);
+			recordFfi(
+				GRAMMAR,
+				node.$type,
+				json.length,
+				performance.now() - t0,
+				result.length
+			);
 			return result;
 		}
 		return engine.render(json);
@@ -100,23 +109,33 @@ export function render(node: AnyNodeData): string {
  * reports — keeping the factory-method `node.toEdit(...)` consistent
  * with `node.render()`.
  */
-export function toEdit(node: AnyNodeData, startOrRange: number | ByteRange, end?: number): Edit {
+export function toEdit(
+	node: AnyNodeData,
+	startOrRange: number | ByteRange,
+	end?: number
+): Edit {
 	const insertedText = render(node);
-	if (typeof startOrRange === "number") {
-		if (typeof end !== "number") {
-			throw new Error("endPos is required when startPos is a number");
+	if (typeof startOrRange === 'number') {
+		if (typeof end !== 'number') {
+			throw new Error('endPos is required when startPos is a number');
 		}
 		if (startOrRange < 0 || end < 0) {
 			throw new Error(
-				`Edit positions must be non-negative (got start=${startOrRange}, end=${end})`,
+				`Edit positions must be non-negative (got start=${startOrRange}, end=${end})`
 			);
 		}
 		if (startOrRange > end) {
-			throw new Error(`Edit startPos (${startOrRange}) must not exceed endPos (${end})`);
+			throw new Error(
+				`Edit startPos (${startOrRange}) must not exceed endPos (${end})`
+			);
 		}
 		return { startPos: startOrRange, endPos: end, insertedText };
 	}
-	return { startPos: startOrRange.start.index, endPos: startOrRange.end.index, insertedText };
+	return {
+		startPos: startOrRange.start.index,
+		endPos: startOrRange.end.index,
+		insertedText
+	};
 }
 
 /**
@@ -133,10 +152,10 @@ export function applyEdits(source: string, edits: readonly Edit[]): string {
 		try {
 			return engine.applyEdits(
 				source,
-				edits.map((e) => ({ ...e })),
+				edits.map((e) => ({ ...e }))
 			);
 		} catch (error) {
-			throw formatNativeError("applyEdits", error);
+			throw formatNativeError('applyEdits', error);
 		}
 	}
 	return applyEditsTs(source, edits);
@@ -148,10 +167,14 @@ function applyEditsTs(source: string, edits: readonly Edit[]): string {
 	let out = source;
 	for (const e of sorted) {
 		if (e.startPos > e.endPos) {
-			throw new Error(`invalid edit range: startPos=${e.startPos} > endPos=${e.endPos}`);
+			throw new Error(
+				`invalid edit range: startPos=${e.startPos} > endPos=${e.endPos}`
+			);
 		}
 		if (e.endPos > out.length) {
-			throw new Error(`edit endPos=${e.endPos} exceeds source length=${out.length}`);
+			throw new Error(
+				`edit endPos=${e.endPos} exceeds source length=${out.length}`
+			);
 		}
 		out = out.slice(0, e.startPos) + e.insertedText + out.slice(e.endPos);
 	}
@@ -196,10 +219,10 @@ export function findMatches(_source: string, _pattern: string): never {
 	const engine = getNativeEngine();
 	if (engine !== null) {
 		throw new Error(
-			"findMatches not yet routable through native backend — ast-grep-core integration pending (T033 deferral)",
+			'findMatches not yet routable through native backend — ast-grep-core integration pending (T033 deferral)'
 		);
 	}
 	throw new Error(
-		"findMatches not yet implemented in the TS backend of @sittir/typescript — use ast-grep directly and feed TreeHandle to readNode()",
+		'findMatches not yet implemented in the TS backend of @sittir/typescript — use ast-grep directly and feed TreeHandle to readNode()'
 	);
 }

@@ -1,24 +1,27 @@
-import { validateRoundTrip } from "../validate/roundtrip.ts";
-import { resolve } from "node:path";
+import { validateRoundTrip } from '../validate/roundtrip.ts';
+import { resolve } from 'node:path';
 
-for (const g of ["rust", "python", "typescript"]) {
-	const tp = resolve(new URL("../../../..", import.meta.url).pathname, `packages/${g}/templates`);
+for (const g of ['rust', 'python', 'typescript']) {
+	const tp = resolve(
+		new URL('../../../..', import.meta.url).pathname,
+		`packages/${g}/templates`
+	);
 	const r = await validateRoundTrip(g, tp);
 	console.log(
 		g,
-		"pass=",
+		'pass=',
 		r.pass,
-		"fail=",
+		'fail=',
 		r.fail,
-		"skip=",
+		'skip=',
 		r.skip,
-		"total=",
+		'total=',
 		r.total,
-		"astMatch=",
+		'astMatch=',
 		r.astMatchPass,
-		"errors=",
+		'errors=',
 		r.errors.length,
-		"astMismatches=",
-		r.astMismatches.length,
+		'astMismatches=',
+		r.astMismatches.length
 	);
 }

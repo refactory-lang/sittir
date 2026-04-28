@@ -4,35 +4,38 @@
  * Pipeline: evaluate → link → optimize → assemble → emitters.
  */
 
-import { existsSync } from "node:fs";
-import { evaluate } from "./evaluate.ts";
-import { link } from "./link.ts";
-import { optimize } from "./optimize.ts";
-import { assemble } from "./assemble.ts";
-import { resolveGrammarJsPath, resolveOverridesPath } from "./resolve-grammar.ts";
-import { tracePhaseRules, traceAssembleNodes } from "./trace.ts";
+import { existsSync } from 'node:fs';
+import { evaluate } from './evaluate.ts';
+import { link } from './link.ts';
+import { optimize } from './optimize.ts';
+import { assemble } from './assemble.ts';
+import {
+	resolveGrammarJsPath,
+	resolveOverridesPath
+} from './resolve-grammar.ts';
+import { tracePhaseRules, traceAssembleNodes } from './trace.ts';
 
-import { emitGrammar } from "../emitters/grammar.ts";
-import { emitTypes } from "../emitters/types.ts";
-import { emitJinjaTemplates } from "../emitters/templates.ts";
-import { emitFactories } from "../emitters/factories.ts";
-import { emitFactoryMap } from "../emitters/factory-map.ts";
-import { emitWrap } from "../emitters/wrap.ts";
-import { emitFrom } from "../emitters/from.ts";
-import { emitClientUtils } from "../emitters/client-utils.ts";
-import { emitIr } from "../emitters/ir.ts";
-import { emitTests } from "../emitters/test.ts";
-import { emitTypeTests } from "../emitters/type-test.ts";
-import { emitConfig } from "../emitters/config.ts";
-import { emitConsts } from "../emitters/consts.ts";
-import { emitIndex } from "../emitters/index-file.ts";
-import { emitSuggested } from "../emitters/suggested.ts";
-import { emitIs } from "../emitters/is.ts";
-import { emitNodeModel } from "../emitters/node-model.ts";
+import { emitGrammar } from '../emitters/grammar.ts';
+import { emitTypes } from '../emitters/types.ts';
+import { emitJinjaTemplates } from '../emitters/templates.ts';
+import { emitFactories } from '../emitters/factories.ts';
+import { emitFactoryMap } from '../emitters/factory-map.ts';
+import { emitWrap } from '../emitters/wrap.ts';
+import { emitFrom } from '../emitters/from.ts';
+import { emitClientUtils } from '../emitters/client-utils.ts';
+import { emitIr } from '../emitters/ir.ts';
+import { emitTests } from '../emitters/test.ts';
+import { emitTypeTests } from '../emitters/type-test.ts';
+import { emitConfig } from '../emitters/config.ts';
+import { emitConsts } from '../emitters/consts.ts';
+import { emitIndex } from '../emitters/index-file.ts';
+import { emitSuggested } from '../emitters/suggested.ts';
+import { emitIs } from '../emitters/is.ts';
+import { emitNodeModel } from '../emitters/node-model.ts';
 
-import type { NodeMap, IncludeFilter } from "./types.ts";
-import type { EmittedTemplates } from "../emitters/templates.ts";
-import type { RoundTripDiagnostic } from "../emitters/suggested.ts";
+import type { NodeMap, IncludeFilter } from './types.ts';
+import type { EmittedTemplates } from '../emitters/templates.ts';
+import type { RoundTripDiagnostic } from '../emitters/suggested.ts';
 
 export interface GeneratedFiles {
 	grammar: string;
@@ -127,21 +130,24 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 	// Phase 1: Evaluate
 	const raw = await evaluate(entryPath);
-	tracePhaseRules("evaluate", raw.rules);
+	tracePhaseRules('evaluate', raw.rules);
 
 	// Phase 2: Link — pass the include filter so derivation passes
 	// know whether to mutate the rule tree or only log to the sidecar.
 	const linked = link(raw, cfg.include);
-	tracePhaseRules("link", linked.rules);
+	tracePhaseRules('link', linked.rules);
 
 	// Phase 3: Optimize
 	const optimized = optimize(linked);
-	tracePhaseRules("optimize", optimized.rules);
-	tracePhaseRules("simplify", optimized.simplifiedRules);
+	tracePhaseRules('optimize', optimized.rules);
+	tracePhaseRules('simplify', optimized.simplifiedRules);
 
 	// Phase 4: Assemble
 	const nodeMap = assemble(optimized);
-	traceAssembleNodes("assemble", nodeMap.nodes as unknown as Map<string, never>);
+	traceAssembleNodes(
+		'assemble',
+		nodeMap.nodes as unknown as Map<string, never>
+	);
 
 	// Phase 5: Emit — every emitter consumes NodeMap directly. The
 	// ir-namespace keys are populated on each AssembledNode during
@@ -151,7 +157,11 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		grammar: emitGrammar({ grammar: cfg.grammar }),
 		types: emitTypes({ grammar: cfg.grammar, nodeMap }),
 		jinjaTemplates: emitJinjaTemplates({ grammar: cfg.grammar, nodeMap }),
-		factories: emitFactories({ grammar: cfg.grammar, nodeMap, strict: cfg.strict }),
+		factories: emitFactories({
+			grammar: cfg.grammar,
+			nodeMap,
+			strict: cfg.strict
+		}),
 		factoryMap: emitFactoryMap({ grammar: cfg.grammar, nodeMap }),
 		wrap: emitWrap({ grammar: cfg.grammar, nodeMap }),
 		utils: emitClientUtils({ nodeMap }),
@@ -166,9 +176,9 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		suggested: emitSuggested({
 			grammar: cfg.grammar,
 			nodeMap,
-			roundTripFailures: cfg.roundTripFailures,
+			roundTripFailures: cfg.roundTripFailures
 		}),
 		is: emitIs({ grammar: cfg.grammar, nodeMap }),
-		nodeMap,
+		nodeMap
 	};
 }

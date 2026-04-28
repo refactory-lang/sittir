@@ -20,44 +20,44 @@
  * shapes reach Link.
  */
 
-import { describe, it, expect } from "vitest";
-import { evaluate } from "../compiler/evaluate.ts";
-import { resolveOverridesPath } from "../compiler/resolve-grammar.ts";
-import type { Rule } from "../compiler/rule.ts";
-import type { RawGrammar } from "../compiler/types.ts";
+import { describe, it, expect } from 'vitest';
+import { evaluate } from '../compiler/evaluate.ts';
+import { resolveOverridesPath } from '../compiler/resolve-grammar.ts';
+import type { Rule } from '../compiler/rule.ts';
+import type { RawGrammar } from '../compiler/types.ts';
 
 const KNOWN_RULE_TYPES = new Set([
 	// Structural grouping
-	"seq",
-	"optional",
-	"choice",
-	"repeat",
-	"repeat1",
+	'seq',
+	'optional',
+	'choice',
+	'repeat',
+	'repeat1',
 	// Named patterns
-	"field",
-	"variant",
-	"clause",
-	"enum",
-	"supertype",
-	"group",
-	"terminal",
-	"polymorph",
+	'field',
+	'variant',
+	'clause',
+	'enum',
+	'supertype',
+	'group',
+	'terminal',
+	'polymorph',
 	// Terminals
-	"string",
-	"pattern",
+	'string',
+	'pattern',
 	// Structural whitespace
-	"indent",
-	"dedent",
-	"newline",
+	'indent',
+	'dedent',
+	'newline',
 	// References (Link resolves these)
-	"symbol",
-	"alias",
-	"token",
+	'symbol',
+	'alias',
+	'token'
 ]);
 
-const GRAMMARS = ["python", "rust", "typescript"] as const;
+const GRAMMARS = ['python', 'rust', 'typescript'] as const;
 
-describe("post-evaluate invariant", () => {
+describe('post-evaluate invariant', () => {
 	for (const grammar of GRAMMARS) {
 		it(`${grammar}: rule tree contains only known rule types`, async () => {
 			const overridesPath = resolveOverridesPath(grammar);
@@ -66,18 +66,22 @@ describe("post-evaluate invariant", () => {
 			const violations: string[] = [];
 			for (const [ruleName, rule] of Object.entries(raw.rules)) {
 				walkRule(rule, ruleName, [], (node, ruleName, path) => {
-					if (!node || typeof node !== "object") return;
+					if (!node || typeof node !== 'object') return;
 					const t = (node as { type?: unknown }).type;
-					if (typeof t !== "string") {
-						violations.push(`${ruleName}@${path.join("/")}: missing type field`);
+					if (typeof t !== 'string') {
+						violations.push(
+							`${ruleName}@${path.join('/')}: missing type field`
+						);
 						return;
 					}
 					if (!KNOWN_RULE_TYPES.has(t)) {
-						violations.push(`${ruleName}@${path.join("/")}: unknown rule type '${t}'`);
+						violations.push(
+							`${ruleName}@${path.join('/')}: unknown rule type '${t}'`
+						);
 					}
 				});
 			}
-			expect(violations, violations.join("\n")).toEqual([]);
+			expect(violations, violations.join('\n')).toEqual([]);
 		});
 
 		it(`${grammar}: rule tree contains no sittir placeholders`, async () => {
@@ -87,18 +91,22 @@ describe("post-evaluate invariant", () => {
 			const violations: string[] = [];
 			for (const [ruleName, rule] of Object.entries(raw.rules)) {
 				walkRule(rule, ruleName, [], (node, ruleName, path) => {
-					if (!node || typeof node !== "object") return;
-					if ("__sittirPlaceholder" in node) {
-						violations.push(`${ruleName}@${path.join("/")}: leaked __sittirPlaceholder`);
+					if (!node || typeof node !== 'object') return;
+					if ('__sittirPlaceholder' in node) {
+						violations.push(
+							`${ruleName}@${path.join('/')}: leaked __sittirPlaceholder`
+						);
 					}
 					// _needsContent is a legacy sittir-only marker on
 					// FieldRule placeholders — also must not survive.
 					if ((node as { _needsContent?: unknown })._needsContent) {
-						violations.push(`${ruleName}@${path.join("/")}: leaked _needsContent placeholder`);
+						violations.push(
+							`${ruleName}@${path.join('/')}: leaked _needsContent placeholder`
+						);
 					}
 				});
 			}
-			expect(violations, violations.join("\n")).toEqual([]);
+			expect(violations, violations.join('\n')).toEqual([]);
 		});
 
 		it(`${grammar}: top-level RawGrammar shape is the documented sidecar set`, async () => {
@@ -108,26 +116,29 @@ describe("post-evaluate invariant", () => {
 			// Allowed top-level fields. Anything else is a leaked
 			// sittir-only payload that the pipeline doesn't expect.
 			const ALLOWED = new Set([
-				"name",
-				"rules",
-				"extras",
-				"externals",
-				"supertypes",
-				"inline",
-				"conflicts",
-				"word",
-				"references",
+				'name',
+				'rules',
+				'extras',
+				'externals',
+				'supertypes',
+				'inline',
+				'conflicts',
+				'word',
+				'references',
 				// Documented sidecar — populated by role() accumulator.
-				"externalRoles",
+				'externalRoles',
 				// Nested-alias polymorph metadata — populated by alias() in transform.
-				"polymorphVariants",
+				'polymorphVariants',
 				// refine() form metadata — populated per ADR-0010 phase 2.
-				"refineForms",
+				'refineForms'
 			]);
-			const extra = Object.keys(raw as unknown as Record<string, unknown>).filter(
-				(k) => !ALLOWED.has(k),
-			);
-			expect(extra, `unexpected RawGrammar fields: ${extra.join(", ")}`).toEqual([]);
+			const extra = Object.keys(
+				raw as unknown as Record<string, unknown>
+			).filter((k) => !ALLOWED.has(k));
+			expect(
+				extra,
+				`unexpected RawGrammar fields: ${extra.join(', ')}`
+			).toEqual([]);
 		});
 	}
 });
@@ -141,17 +152,17 @@ function walkRule(
 	node: unknown,
 	ruleName: string,
 	path: (string | number)[],
-	visit: (node: unknown, ruleName: string, path: (string | number)[]) => void,
+	visit: (node: unknown, ruleName: string, path: (string | number)[]) => void
 ): void {
 	visit(node, ruleName, path);
-	if (!node || typeof node !== "object") return;
+	if (!node || typeof node !== 'object') return;
 	const r = node as Record<string, unknown>;
 	if (Array.isArray(r.members)) {
 		for (let i = 0; i < r.members.length; i++) {
 			walkRule(r.members[i], ruleName, [...path, i], visit);
 		}
 	}
-	if (r.content && typeof r.content === "object") {
-		walkRule(r.content, ruleName, [...path, "content"], visit);
+	if (r.content && typeof r.content === 'object') {
+		walkRule(r.content, ruleName, [...path, 'content'], visit);
 	}
 }

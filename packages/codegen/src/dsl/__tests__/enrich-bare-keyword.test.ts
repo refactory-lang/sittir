@@ -1,10 +1,10 @@
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { enrich } from "../enrich.ts";
-import type { Rule, SeqRule } from "../../compiler/rule.ts";
-import { installFakeDsl, restoreFakeDsl } from "./_test-helpers.ts";
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { enrich } from '../enrich.ts';
+import type { Rule, SeqRule } from '../../compiler/rule.ts';
+import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 
 function mkGrammar(rules: Record<string, Rule>) {
-	return { grammar: { name: "test", rules } };
+	return { grammar: { name: 'test', rules } };
 }
 
 function runEnrich(input: ReturnType<typeof mkGrammar>) {
@@ -25,7 +25,7 @@ function topSeq(g: ReturnType<typeof mkGrammar>, ruleName: string): SeqRule {
 // literals at runtime without grammar-side wrapping.
 //
 // Tests here verify that enrich does NOT touch leading literals.
-describe("enrich — leading string literals (bare-keyword pass removed)", () => {
+describe('enrich — leading string literals (bare-keyword pass removed)', () => {
 	beforeAll(() => {
 		installFakeDsl();
 	});
@@ -33,51 +33,57 @@ describe("enrich — leading string literals (bare-keyword pass removed)", () =>
 		restoreFakeDsl();
 	});
 
-	it("leaves leading identifier-shaped literals as plain strings", () => {
+	it('leaves leading identifier-shaped literals as plain strings', () => {
 		const g = runEnrich(
 			mkGrammar({
 				async_fn: {
-					type: "seq",
+					type: 'seq',
 					members: [
-						{ type: "string", value: "async" },
-						{ type: "symbol", name: "body" },
-					],
-				},
-			}),
+						{ type: 'string', value: 'async' },
+						{ type: 'symbol', name: 'body' }
+					]
+				}
+			})
 		);
-		const seq = topSeq(g, "async_fn");
-		expect(seq.members[0]).toMatchObject({ type: "string", value: "async" });
+		const seq = topSeq(g, 'async_fn');
+		expect(seq.members[0]).toMatchObject({ type: 'string', value: 'async' });
 	});
 
-	it("leaves non-leading string literals as plain strings", () => {
+	it('leaves non-leading string literals as plain strings', () => {
 		const g = runEnrich(
 			mkGrammar({
 				for_loop: {
-					type: "seq",
+					type: 'seq',
 					members: [
-						{ type: "symbol", name: "label" },
-						{ type: "string", value: "for" },
-						{ type: "symbol", name: "pattern" },
-					],
-				},
-			}),
+						{ type: 'symbol', name: 'label' },
+						{ type: 'string', value: 'for' },
+						{ type: 'symbol', name: 'pattern' }
+					]
+				}
+			})
 		);
-		expect(topSeq(g, "for_loop").members[1]).toMatchObject({ type: "string", value: "for" });
+		expect(topSeq(g, 'for_loop').members[1]).toMatchObject({
+			type: 'string',
+			value: 'for'
+		});
 	});
 
-	it("leaves punctuation literals alone", () => {
+	it('leaves punctuation literals alone', () => {
 		const g = runEnrich(
 			mkGrammar({
 				paren: {
-					type: "seq",
+					type: 'seq',
 					members: [
-						{ type: "string", value: "(" },
-						{ type: "symbol", name: "expr" },
-						{ type: "string", value: ")" },
-					],
-				},
-			}),
+						{ type: 'string', value: '(' },
+						{ type: 'symbol', name: 'expr' },
+						{ type: 'string', value: ')' }
+					]
+				}
+			})
 		);
-		expect(topSeq(g, "paren").members[0]).toMatchObject({ type: "string", value: "(" });
+		expect(topSeq(g, 'paren').members[0]).toMatchObject({
+			type: 'string',
+			value: '('
+		});
 	});
 });

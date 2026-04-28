@@ -133,8 +133,8 @@ import {
 	ellipsis_,
 	false_,
 	none_,
-	true_,
-} from "./factories.js";
+	true_
+} from './factories.js';
 import {
 	aliasedImportFrom,
 	argumentListFrom,
@@ -247,52 +247,74 @@ import {
 	withClauseFrom,
 	withItemFrom,
 	withStatementFrom,
-	yield_From,
-} from "./from.js";
+	yield_From
+} from './from.js';
 
 export const ir = {
 	// Branch node factories
 	aliasedImport: Object.assign(aliased_import_, { from: aliasedImportFrom }),
 	argumentList: Object.assign(argument_list_, { from: argumentListFrom }),
 	asPattern: Object.assign(as_pattern_, { from: asPatternFrom }),
-	assertStatement: Object.assign(assert_statement_, { from: assertStatementFrom }),
+	assertStatement: Object.assign(assert_statement_, {
+		from: assertStatementFrom
+	}),
 	assignment: Object.assign(assignment_, {
 		from: assignmentFrom,
 		v0: Object.assign(assignment__v0_, { from: assignmentV0From }),
 		v1: Object.assign(assignment__v1_, { from: assignmentV1From }),
-		v2: Object.assign(assignment__v2_, { from: assignmentV2From }),
+		v2: Object.assign(assignment__v2_, { from: assignmentV2From })
 	}),
 	attribute: Object.assign(attribute_, { from: attributeFrom }),
-	augmentedAssignment: Object.assign(augmented_assignment_, { from: augmentedAssignmentFrom }),
+	augmentedAssignment: Object.assign(augmented_assignment_, {
+		from: augmentedAssignmentFrom
+	}),
 	await: Object.assign(await_, { from: await_From }),
 	binaryOperator: Object.assign(binary_operator_, { from: binaryOperatorFrom }),
 	block: Object.assign(block_, { from: blockFrom }),
-	booleanOperator: Object.assign(boolean_operator_, { from: booleanOperatorFrom }),
+	booleanOperator: Object.assign(boolean_operator_, {
+		from: booleanOperatorFrom
+	}),
 	call: Object.assign(call_, { from: callFrom }),
 	caseClause: Object.assign(case_clause_, { from: caseClauseFrom }),
 	casePattern: Object.assign(case_pattern_, { from: casePatternFrom }),
 	chevron: Object.assign(chevron_, { from: chevronFrom }),
-	classDefinition: Object.assign(class_definition_, { from: classDefinitionFrom }),
-	classPattern: Object.assign(class_pattern_, { from: classPatternFrom }),
-	comparisonOperator: Object.assign(comparison_operator_, { from: comparisonOperatorFrom }),
-	complexPattern: Object.assign(complex_pattern_, { from: complexPatternFrom }),
-	concatenatedString: Object.assign(concatenated_string_, { from: concatenatedStringFrom }),
-	conditionalExpression: Object.assign(conditional_expression_, {
-		from: conditionalExpressionFrom,
+	classDefinition: Object.assign(class_definition_, {
+		from: classDefinitionFrom
 	}),
-	constrainedType: Object.assign(constrained_type_, { from: constrainedTypeFrom }),
-	decoratedDefinition: Object.assign(decorated_definition_, { from: decoratedDefinitionFrom }),
+	classPattern: Object.assign(class_pattern_, { from: classPatternFrom }),
+	comparisonOperator: Object.assign(comparison_operator_, {
+		from: comparisonOperatorFrom
+	}),
+	complexPattern: Object.assign(complex_pattern_, { from: complexPatternFrom }),
+	concatenatedString: Object.assign(concatenated_string_, {
+		from: concatenatedStringFrom
+	}),
+	conditionalExpression: Object.assign(conditional_expression_, {
+		from: conditionalExpressionFrom
+	}),
+	constrainedType: Object.assign(constrained_type_, {
+		from: constrainedTypeFrom
+	}),
+	decoratedDefinition: Object.assign(decorated_definition_, {
+		from: decoratedDefinitionFrom
+	}),
 	decorator: Object.assign(decorator_, { from: decoratorFrom }),
-	defaultParameter: Object.assign(default_parameter_, { from: defaultParameterFrom }),
-	deleteStatement: Object.assign(delete_statement_, { from: deleteStatementFrom }),
+	defaultParameter: Object.assign(default_parameter_, {
+		from: defaultParameterFrom
+	}),
+	deleteStatement: Object.assign(delete_statement_, {
+		from: deleteStatementFrom
+	}),
 	dictPattern: Object.assign(dict_pattern_, { from: dictPatternFrom }),
 	dictionary: Object.assign(dictionary_, { from: dictionaryFrom }),
 	dictionaryComprehension: Object.assign(dictionary_comprehension_, {
-		from: dictionaryComprehensionFrom,
+		from: dictionaryComprehensionFrom
 	}),
-	dictionarySplat: Object.assign(dictionary_splat_, { from: dictionarySplatFrom }),
+	dictionarySplat: Object.assign(dictionary_splat_, {
+		from: dictionarySplatFrom
+	}),
 	dictionarySplatPattern: Object.assign(dictionary_splat_pattern_, {
-		from: dictionarySplatPatternFrom,
+		from: dictionarySplatPatternFrom
 	}),
 	dottedName: Object.assign(dotted_name_, { from: dottedNameFrom }),
 	elifClause: Object.assign(elif_clause_, { from: elifClauseFrom }),
@@ -300,72 +322,112 @@ export const ir = {
 	exceptClause: Object.assign(except_clause_, { from: exceptClauseFrom }),
 	execStatement: Object.assign(exec_statement_, { from: execStatementFrom }),
 	expressionList: Object.assign(expression_list_, { from: expressionListFrom }),
-	expressionStatement: Object.assign(expression_statement_, { from: expressionStatementFrom }),
+	expressionStatement: Object.assign(expression_statement_, {
+		from: expressionStatementFrom
+	}),
 	finallyClause: Object.assign(finally_clause_, { from: finallyClauseFrom }),
 	forInClause: Object.assign(for_in_clause_, { from: forInClauseFrom }),
 	forStatement: Object.assign(for_statement_, { from: forStatementFrom }),
-	formatExpression: Object.assign(format_expression_, { from: formatExpressionFrom }),
-	formatSpecifier: Object.assign(format_specifier_, { from: formatSpecifierFrom }),
-	functionDefinition: Object.assign(function_definition_, { from: functionDefinitionFrom }),
-	futureImportStatement: Object.assign(future_import_statement_, {
-		from: futureImportStatementFrom,
+	formatExpression: Object.assign(format_expression_, {
+		from: formatExpressionFrom
 	}),
-	generatorExpression: Object.assign(generator_expression_, { from: generatorExpressionFrom }),
+	formatSpecifier: Object.assign(format_specifier_, {
+		from: formatSpecifierFrom
+	}),
+	functionDefinition: Object.assign(function_definition_, {
+		from: functionDefinitionFrom
+	}),
+	futureImportStatement: Object.assign(future_import_statement_, {
+		from: futureImportStatementFrom
+	}),
+	generatorExpression: Object.assign(generator_expression_, {
+		from: generatorExpressionFrom
+	}),
 	genericType: Object.assign(generic_type_, { from: genericTypeFrom }),
-	globalStatement: Object.assign(global_statement_, { from: globalStatementFrom }),
+	globalStatement: Object.assign(global_statement_, {
+		from: globalStatementFrom
+	}),
 	ifClause: Object.assign(if_clause_, { from: ifClauseFrom }),
 	ifStatement: Object.assign(if_statement_, { from: ifStatementFrom }),
 	importFromStatement: Object.assign(import_from_statement_, {
 		from: importFromStatementFrom,
-		v0: Object.assign(import_from_statement__v0_, { from: importFromStatementV0From }),
-		name: Object.assign(import_from_statement__name_, { from: importFromStatementNameFrom }),
+		v0: Object.assign(import_from_statement__v0_, {
+			from: importFromStatementV0From
+		}),
+		name: Object.assign(import_from_statement__name_, {
+			from: importFromStatementNameFrom
+		})
 	}),
-	importStatement: Object.assign(import_statement_, { from: importStatementFrom }),
+	importStatement: Object.assign(import_statement_, {
+		from: importStatementFrom
+	}),
 	interpolation: Object.assign(interpolation_, { from: interpolationFrom }),
-	keywordArgument: Object.assign(keyword_argument_, { from: keywordArgumentFrom }),
+	keywordArgument: Object.assign(keyword_argument_, {
+		from: keywordArgumentFrom
+	}),
 	keywordPattern: Object.assign(keyword_pattern_, { from: keywordPatternFrom }),
 	lambda: Object.assign(lambda_, { from: lambdaFrom }),
-	lambdaParameters: Object.assign(lambda_parameters_, { from: lambdaParametersFrom }),
+	lambdaParameters: Object.assign(lambda_parameters_, {
+		from: lambdaParametersFrom
+	}),
 	list: Object.assign(list_, { from: listFrom }),
-	listComprehension: Object.assign(list_comprehension_, { from: listComprehensionFrom }),
+	listComprehension: Object.assign(list_comprehension_, {
+		from: listComprehensionFrom
+	}),
 	listPattern: Object.assign(list_pattern_, { from: listPatternFrom }),
 	listSplat: Object.assign(list_splat_, { from: listSplatFrom }),
-	listSplatPattern: Object.assign(list_splat_pattern_, { from: listSplatPatternFrom }),
+	listSplatPattern: Object.assign(list_splat_pattern_, {
+		from: listSplatPatternFrom
+	}),
 	matchStatement: Object.assign(match_statement_, { from: matchStatementFrom }),
 	memberType: Object.assign(member_type_, { from: memberTypeFrom }),
 	module: Object.assign(module_, { from: moduleFrom }),
-	namedExpression: Object.assign(named_expression_, { from: namedExpressionFrom }),
-	nonlocalStatement: Object.assign(nonlocal_statement_, { from: nonlocalStatementFrom }),
+	namedExpression: Object.assign(named_expression_, {
+		from: namedExpressionFrom
+	}),
+	nonlocalStatement: Object.assign(nonlocal_statement_, {
+		from: nonlocalStatementFrom
+	}),
 	notOperator: Object.assign(not_operator_, { from: notOperatorFrom }),
 	pair: Object.assign(pair_, { from: pairFrom }),
 	parameters: Object.assign(parameters_, { from: parametersFrom }),
 	parenthesizedExpression: Object.assign(parenthesized_expression_, {
-		from: parenthesizedExpressionFrom,
+		from: parenthesizedExpressionFrom
 	}),
 	parenthesizedListSplat: Object.assign(parenthesized_list_splat_, {
-		from: parenthesizedListSplatFrom,
+		from: parenthesizedListSplatFrom
 	}),
 	patternList: Object.assign(pattern_list_, { from: patternListFrom }),
 	printStatement: Object.assign(print_statement_, {
 		from: printStatementFrom,
-		chevron: Object.assign(print_statement__chevron_, { from: printStatementChevronFrom }),
-		v1: Object.assign(print_statement__v1_, { from: printStatementV1From }),
+		chevron: Object.assign(print_statement__chevron_, {
+			from: printStatementChevronFrom
+		}),
+		v1: Object.assign(print_statement__v1_, { from: printStatementV1From })
 	}),
 	raiseStatement: Object.assign(raise_statement_, { from: raiseStatementFrom }),
 	relativeImport: Object.assign(relative_import_, { from: relativeImportFrom }),
-	returnStatement: Object.assign(return_statement_, { from: returnStatementFrom }),
+	returnStatement: Object.assign(return_statement_, {
+		from: returnStatementFrom
+	}),
 	set: Object.assign(set_, { from: setFrom }),
-	setComprehension: Object.assign(set_comprehension_, { from: setComprehensionFrom }),
+	setComprehension: Object.assign(set_comprehension_, {
+		from: setComprehensionFrom
+	}),
 	slice: Object.assign(slice_, { from: sliceFrom }),
 	splatPattern: Object.assign(splat_pattern_, {
 		from: splatPatternFrom,
-		identifier: Object.assign(splat_pattern__identifier_, { from: splatPatternIdentifierFrom }),
-		_: Object.assign(splat_pattern____, { from: splatPattern_From }),
+		identifier: Object.assign(splat_pattern__identifier_, {
+			from: splatPatternIdentifierFrom
+		}),
+		_: Object.assign(splat_pattern____, { from: splatPattern_From })
 	}),
 	splatType: Object.assign(splat_type_, {
 		from: splatTypeFrom,
 		star: Object.assign(splat_type__star_, { from: splatTypeStarFrom }),
-		tok_2a2a: Object.assign(splat_type__tok_2a2a_, { from: splatTypeTok_2a2aFrom }),
+		tok_2a2a: Object.assign(splat_type__tok_2a2a_, {
+			from: splatTypeTok_2a2aFrom
+		})
 	}),
 	string: Object.assign(string_, { from: stringFrom }),
 	stringContent: Object.assign(string_content_, { from: stringContentFrom }),
@@ -374,10 +436,12 @@ export const ir = {
 	tuple: Object.assign(tuple_, { from: tupleFrom }),
 	tuplePattern: Object.assign(tuple_pattern_, { from: tuplePatternFrom }),
 	type: Object.assign(type_, { from: type_From }),
-	typeAliasStatement: Object.assign(type_alias_statement_, { from: typeAliasStatementFrom }),
+	typeAliasStatement: Object.assign(type_alias_statement_, {
+		from: typeAliasStatementFrom
+	}),
 	typeParameter: Object.assign(type_parameter_, { from: typeParameterFrom }),
 	typedDefaultParameter: Object.assign(typed_default_parameter_, {
-		from: typedDefaultParameterFrom,
+		from: typedDefaultParameterFrom
 	}),
 	typedParameter: Object.assign(typed_parameter_, { from: typedParameterFrom }),
 	unaryOperator: Object.assign(unary_operator_, { from: unaryOperatorFrom }),
@@ -415,30 +479,30 @@ export const ir = {
 	typeConversion: type_conversion_,
 
 	// Semantic operator aliases
-	modAssign: () => ({ type: "operator", fields: {}, text: "%=" }),
-	bitAndAssign: () => ({ type: "operator", fields: {}, text: "&=" }),
-	mulAssign: () => ({ type: "operator", fields: {}, text: "*=" }),
-	addAssign: () => ({ type: "operator", fields: {}, text: "+=" }),
-	subAssign: () => ({ type: "operator", fields: {}, text: "-=" }),
-	divAssign: () => ({ type: "operator", fields: {}, text: "/=" }),
-	shlAssign: () => ({ type: "operator", fields: {}, text: "<<=" }),
-	shrAssign: () => ({ type: "operator", fields: {}, text: ">>=" }),
-	bitXorAssign: () => ({ type: "operator", fields: {}, text: "^=" }),
-	bitOrAssign: () => ({ type: "operator", fields: {}, text: "|=" }),
-	mod: () => ({ type: "operator", fields: {}, text: "%" }),
-	bitAnd: () => ({ type: "operator", fields: {}, text: "&" }),
-	mul: () => ({ type: "operator", fields: {}, text: "*" }),
-	add: () => ({ type: "operator", fields: {}, text: "+" }),
-	sub: () => ({ type: "operator", fields: {}, text: "-" }),
-	div: () => ({ type: "operator", fields: {}, text: "/" }),
-	shl: () => ({ type: "operator", fields: {}, text: "<<" }),
-	shr: () => ({ type: "operator", fields: {}, text: ">>" }),
-	bitXor: () => ({ type: "operator", fields: {}, text: "^" }),
-	bitOr: () => ({ type: "operator", fields: {}, text: "|" }),
-	neq: () => ({ type: "operators", fields: {}, text: "!=" }),
-	lt: () => ({ type: "operators", fields: {}, text: "<" }),
-	lte: () => ({ type: "operators", fields: {}, text: "<=" }),
-	eq: () => ({ type: "operators", fields: {}, text: "==" }),
-	gt: () => ({ type: "operators", fields: {}, text: ">" }),
-	gte: () => ({ type: "operators", fields: {}, text: ">=" }),
+	modAssign: () => ({ type: 'operator', fields: {}, text: '%=' }),
+	bitAndAssign: () => ({ type: 'operator', fields: {}, text: '&=' }),
+	mulAssign: () => ({ type: 'operator', fields: {}, text: '*=' }),
+	addAssign: () => ({ type: 'operator', fields: {}, text: '+=' }),
+	subAssign: () => ({ type: 'operator', fields: {}, text: '-=' }),
+	divAssign: () => ({ type: 'operator', fields: {}, text: '/=' }),
+	shlAssign: () => ({ type: 'operator', fields: {}, text: '<<=' }),
+	shrAssign: () => ({ type: 'operator', fields: {}, text: '>>=' }),
+	bitXorAssign: () => ({ type: 'operator', fields: {}, text: '^=' }),
+	bitOrAssign: () => ({ type: 'operator', fields: {}, text: '|=' }),
+	mod: () => ({ type: 'operator', fields: {}, text: '%' }),
+	bitAnd: () => ({ type: 'operator', fields: {}, text: '&' }),
+	mul: () => ({ type: 'operator', fields: {}, text: '*' }),
+	add: () => ({ type: 'operator', fields: {}, text: '+' }),
+	sub: () => ({ type: 'operator', fields: {}, text: '-' }),
+	div: () => ({ type: 'operator', fields: {}, text: '/' }),
+	shl: () => ({ type: 'operator', fields: {}, text: '<<' }),
+	shr: () => ({ type: 'operator', fields: {}, text: '>>' }),
+	bitXor: () => ({ type: 'operator', fields: {}, text: '^' }),
+	bitOr: () => ({ type: 'operator', fields: {}, text: '|' }),
+	neq: () => ({ type: 'operators', fields: {}, text: '!=' }),
+	lt: () => ({ type: 'operators', fields: {}, text: '<' }),
+	lte: () => ({ type: 'operators', fields: {}, text: '<=' }),
+	eq: () => ({ type: 'operators', fields: {}, text: '==' }),
+	gt: () => ({ type: 'operators', fields: {}, text: '>' }),
+	gte: () => ({ type: 'operators', fields: {}, text: '>=' })
 } as const;

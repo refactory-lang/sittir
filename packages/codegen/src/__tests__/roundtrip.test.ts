@@ -14,16 +14,16 @@
  * validator to load from the checked-in location.
  */
 
-import { describe, it, expect } from "vitest";
-import { writeFileSync, mkdirSync, existsSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { generate } from "../compiler/generate.ts";
+import { describe, it, expect } from 'vitest';
+import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { generate } from '../compiler/generate.ts';
 
-describe("round-trip validation", () => {
-	it("generates all output files for python without crashing", async () => {
+describe('round-trip validation', () => {
+	it('generates all output files for python without crashing', async () => {
 		const result = await generate({
-			grammar: "python",
-			outputDir: "/tmp/sittir-rt-python/src",
+			grammar: 'python',
+			outputDir: '/tmp/sittir-rt-python/src'
 		});
 		expect(result.types.length).toBeGreaterThan(0);
 		expect(result.factories.length).toBeGreaterThan(0);
@@ -31,28 +31,28 @@ describe("round-trip validation", () => {
 		expect(result.from.length).toBeGreaterThan(0);
 	}, 30000);
 
-	it("generates all output files for rust without crashing", async () => {
+	it('generates all output files for rust without crashing', async () => {
 		const result = await generate({
-			grammar: "rust",
-			outputDir: "/tmp/sittir-rt-rust/src",
+			grammar: 'rust',
+			outputDir: '/tmp/sittir-rt-rust/src'
 		});
 		expect(result.types.length).toBeGreaterThan(0);
 		expect(result.factories.length).toBeGreaterThan(0);
 	}, 30000);
 
-	it("generates all output files for typescript without crashing", async () => {
+	it('generates all output files for typescript without crashing', async () => {
 		const result = await generate({
-			grammar: "typescript",
-			outputDir: "/tmp/sittir-rt-typescript/src",
+			grammar: 'typescript',
+			outputDir: '/tmp/sittir-rt-typescript/src'
 		});
 		expect(result.types.length).toBeGreaterThan(0);
 		expect(result.factories.length).toBeGreaterThan(0);
 	}, 30000);
 
-	it("produces valid-looking .jinja templates for python", async () => {
+	it('produces valid-looking .jinja templates for python', async () => {
 		const result = await generate({
-			grammar: "python",
-			outputDir: "/tmp/sittir-rt-python/src",
+			grammar: 'python',
+			outputDir: '/tmp/sittir-rt-python/src'
 		});
 		// The emitted Map should have meaningful per-rule templates.
 		expect(result.jinjaTemplates.bodies.size).toBeGreaterThan(20);
@@ -62,25 +62,25 @@ describe("round-trip validation", () => {
 		}
 	}, 30000);
 
-	it("factory round-trip is valid: NodeMap → factories reference correct types", async () => {
+	it('factory round-trip is valid: NodeMap → factories reference correct types', async () => {
 		const result = await generate({
-			grammar: "python",
-			outputDir: "/tmp/sittir-rt-python/src",
+			grammar: 'python',
+			outputDir: '/tmp/sittir-rt-python/src'
 		});
 		// Basic sanity — factories should export functions and reference types
-		expect(result.factories).toContain("export function");
-		expect(result.factories).toContain("_factoryMap");
+		expect(result.factories).toContain('export function');
+		expect(result.factories).toContain('_factoryMap');
 		// Types should have interfaces
-		expect(result.types).toContain("export interface");
-		expect(result.types).toContain("SyntaxKind");
+		expect(result.types).toContain('export interface');
+		expect(result.types).toContain('SyntaxKind');
 	}, 30000);
 });
 
-describe("NodeMap structure", () => {
-	it("polymorph forms are synthesized into the NodeMap as groups", async () => {
+describe('NodeMap structure', () => {
+	it('polymorph forms are synthesized into the NodeMap as groups', async () => {
 		const result = await generate({
-			grammar: "python",
-			outputDir: "/tmp/sittir-rt-python/src",
+			grammar: 'python',
+			outputDir: '/tmp/sittir-rt-python/src'
 		});
 		// Check the NodeMap contains group entries for polymorph forms.
 		// Python's only native polymorph (`assignment`) is now a nested-
@@ -91,11 +91,11 @@ describe("NodeMap structure", () => {
 		let polymorphCount = 0;
 		const assignmentVariantKinds = new Set<string>();
 		for (const [kind, node] of result.nodeMap.nodes) {
-			if (node.modelType === "group") {
+			if (node.modelType === 'group') {
 				groupCount++;
-				if (kind.startsWith("assignment_")) assignmentVariantKinds.add(kind);
+				if (kind.startsWith('assignment_')) assignmentVariantKinds.add(kind);
 			}
-			if (node.modelType === "polymorph") polymorphCount++;
+			if (node.modelType === 'polymorph') polymorphCount++;
 		}
 		expect(groupCount).toBeGreaterThan(0);
 		expect(assignmentVariantKinds.size).toBeGreaterThanOrEqual(2);
@@ -104,14 +104,14 @@ describe("NodeMap structure", () => {
 		expect(polymorphCount).toBeGreaterThanOrEqual(0);
 	}, 30000);
 
-	it("every branch node has a rule attached", async () => {
+	it('every branch node has a rule attached', async () => {
 		const result = await generate({
-			grammar: "python",
-			outputDir: "/tmp/sittir-rt-python/src",
+			grammar: 'python',
+			outputDir: '/tmp/sittir-rt-python/src'
 		});
 		let branchCount = 0;
 		for (const [_kind, node] of result.nodeMap.nodes) {
-			if (node.modelType === "branch") {
+			if (node.modelType === 'branch') {
 				branchCount++;
 				// AssembledBranch.rule should be present
 				expect((node as any).rule).toBeDefined();

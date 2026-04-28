@@ -21,11 +21,11 @@ import type {
 	DerivationLog,
 	InferredFieldEntry,
 	PromotedRuleEntry,
-	RepeatedShapeEntry,
-} from "../compiler/types.ts";
-import type { Rule } from "../compiler/rule.ts";
-import { findAllPolymorphCandidates } from "../compiler/link.ts";
-import type { PolymorphCandidateLocation } from "../compiler/link.ts";
+	RepeatedShapeEntry
+} from '../compiler/types.ts';
+import type { Rule } from '../compiler/rule.ts';
+import { findAllPolymorphCandidates } from '../compiler/link.ts';
+import type { PolymorphCandidateLocation } from '../compiler/link.ts';
 
 /**
  * Derive a short, readable base label for a single choice arm.
@@ -48,15 +48,15 @@ import type { PolymorphCandidateLocation } from "../compiler/link.ts";
  *   Both paths now share this base-name function.
  */
 function deriveArmNameFromRule(node: Rule, index: number): string {
-	if (node.type === "variant") return node.name;
-	if (node.type === "symbol" || node.type === "supertype") return node.name;
-	if (node.type === "seq" && node.members.length > 0) {
+	if (node.type === 'variant') return node.name;
+	if (node.type === 'symbol' || node.type === 'supertype') return node.name;
+	if (node.type === 'seq' && node.members.length > 0) {
 		// Lead with the first named member (symbol/supertype) or a
 		// leading identifier-shaped string literal ('(' → 'paren', etc.
 		// the caller can rename).
 		for (const m of node.members) {
-			if (m.type === "symbol" || m.type === "supertype") return m.name;
-			if (m.type === "string") {
+			if (m.type === 'symbol' || m.type === 'supertype') return m.name;
+			if (m.type === 'string') {
 				const s = m.value;
 				if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(s)) return s;
 			}
@@ -77,7 +77,7 @@ function deriveArmNameFromRule(node: Rule, index: number): string {
  */
 function deduplicateArmNames(
 	members: readonly Rule[],
-	nameFn: (m: Rule, i: number) => string = deriveArmNameFromRule,
+	nameFn: (m: Rule, i: number) => string = deriveArmNameFromRule
 ): string[] {
 	const counts = new Map<string, number>();
 	return members.map((m, i) => {
@@ -114,39 +114,44 @@ function armNamesFor(cand: PolymorphCandidateLocation): string[] {
  * candidate despite Link's suggestion (rare but possible when multiple
  * passes run; defensive).
  */
-function locateTopLevelChoice(rule: Rule): { choicePath: string; arms: string[] } | null {
-	function walk(node: Rule, path: string): { choicePath: string; arms: string[] } | null {
-		if (node.type === "choice") {
+function locateTopLevelChoice(
+	rule: Rule
+): { choicePath: string; arms: string[] } | null {
+	function walk(
+		node: Rule,
+		path: string
+	): { choicePath: string; arms: string[] } | null {
+		if (node.type === 'choice') {
 			const arms = deduplicateArmNames(node.members, deriveArmNameFromRule);
 			return { choicePath: path, arms };
 		}
-		if (node.type === "seq") {
+		if (node.type === 'seq') {
 			for (let i = 0; i < node.members.length; i++) {
 				const m = node.members[i]!;
-				const sub = walk(m, path === "" ? `${i}` : `${path}/${i}`);
+				const sub = walk(m, path === '' ? `${i}` : `${path}/${i}`);
 				if (sub) return sub;
 			}
 			return null;
 		}
-		if (node.type === "field") {
+		if (node.type === 'field') {
 			// Field wrappers around choices — the common pattern the
 			// promotePolymorph pass used to miss (e.g. python's
 			// `field('wildcard_import', choice(...))`). Descend; the
 			// emitted `variant()` overrides will replace the choice arms
 			// and the author can optionally drop the outer field wrapper.
-			return walk(node.content, path === "" ? "0" : `${path}/0`);
+			return walk(node.content, path === '' ? '0' : `${path}/0`);
 		}
 		if (
-			node.type === "optional" ||
-			node.type === "variant" ||
-			node.type === "group" ||
-			node.type === "clause"
+			node.type === 'optional' ||
+			node.type === 'variant' ||
+			node.type === 'group' ||
+			node.type === 'clause'
 		) {
-			return walk(node.content, path === "" ? "0" : `${path}/0`);
+			return walk(node.content, path === '' ? '0' : `${path}/0`);
 		}
 		return null;
 	}
-	return walk(rule, "");
+	return walk(rule, '');
 }
 
 /**
@@ -156,14 +161,18 @@ function locateTopLevelChoice(rule: Rule): { choicePath: string; arms: string[] 
  * (applied inference). Returns null when the rule is not a SEQ at the
  * top level or the target can't be located as a direct member.
  */
-function findSymbolPosition(rule: Rule, targetSymbol: string, fieldName: string): number | null {
-	if (rule.type !== "seq") return null;
+function findSymbolPosition(
+	rule: Rule,
+	targetSymbol: string,
+	fieldName: string
+): number | null {
+	if (rule.type !== 'seq') return null;
 	const unwrap = (r: Rule): Rule => {
 		switch (r.type) {
-			case "optional":
-			case "variant":
-			case "group":
-			case "clause":
+			case 'optional':
+			case 'variant':
+			case 'group':
+			case 'clause':
 				return unwrap(r.content);
 			default:
 				return r;
@@ -171,11 +180,11 @@ function findSymbolPosition(rule: Rule, targetSymbol: string, fieldName: string)
 	};
 	for (let i = 0; i < rule.members.length; i++) {
 		const m = unwrap(rule.members[i]!);
-		if (m.type === "symbol" && m.name === targetSymbol) return i;
+		if (m.type === 'symbol' && m.name === targetSymbol) return i;
 		if (
-			m.type === "field" &&
+			m.type === 'field' &&
 			m.name === fieldName &&
-			unwrap(m.content).type === "symbol" &&
+			unwrap(m.content).type === 'symbol' &&
 			(unwrap(m.content) as { name: string }).name === targetSymbol
 		) {
 			return i;
@@ -205,9 +214,9 @@ export interface RoundTripDiagnostic {
 	 *  - 'factory' — `parse → readNode → factory() → render → reparse`
 	 *    (factory API surface gaps: missing fields, wrong defaults)
 	 */
-	readonly source: "render" | "factory";
+	readonly source: 'render' | 'factory';
 	/** What broke — 'parse-error' (rendered text unparseable) or 'ast-mismatch' (structural drift). */
-	readonly category: "parse-error" | "ast-mismatch";
+	readonly category: 'parse-error' | 'ast-mismatch';
 	/** Input source text. */
 	readonly input?: string;
 	/** Rendered text (what the renderer emitted). Absent when parse-error occurs before render. */
@@ -228,19 +237,19 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 	const log: DerivationLog = nodeMap.derivations;
 	const lines: string[] = [];
 
-	lines.push("// Auto-generated by @sittir/codegen — DO NOT EDIT");
-	lines.push("//");
+	lines.push('// Auto-generated by @sittir/codegen — DO NOT EDIT');
+	lines.push('//');
 	lines.push(`// Derivation log for grammar '${grammar}' — copy-pasteable`);
-	lines.push("// grammar extension snippets plus the raw data arrays they");
-	lines.push("// came from. Every `suggestedRules` entry is a real");
-	lines.push("// `transform(...)` or `choice(...)` expression; paste the");
-	lines.push("// ones you want into your own overrides.ts.");
-	lines.push("");
-	lines.push("// @ts-nocheck — the DSL globals (grammar, transform, field,");
+	lines.push('// grammar extension snippets plus the raw data arrays they');
+	lines.push('// came from. Every `suggestedRules` entry is a real');
+	lines.push('// `transform(...)` or `choice(...)` expression; paste the');
+	lines.push('// ones you want into your own overrides.ts.');
+	lines.push('');
+	lines.push('// @ts-nocheck — the DSL globals (grammar, transform, field,');
 	lines.push("// choice, $) are injected by @sittir/codegen's evaluator at");
-	lines.push("// runtime. This file is documentation / copy-paste source,");
+	lines.push('// runtime. This file is documentation / copy-paste source,');
 	lines.push("// not a standalone module; it isn't imported at build time.");
-	lines.push("");
+	lines.push('');
 
 	// ---------------------------------------------------------------
 	// Summary
@@ -250,45 +259,65 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 	const promotedApplied = log.promotedRules.filter((e) => e.applied).length;
 	const promotedHeld = log.promotedRules.length - promotedApplied;
 
-	lines.push("// ---------------------------------------------------------------");
-	lines.push("// Summary");
-	lines.push("// ---------------------------------------------------------------");
 	lines.push(
-		`// Field inferences:  ${log.inferredFields.length}  (${inferredApplied} applied, ${inferredHeld} held)`,
+		'// ---------------------------------------------------------------'
+	);
+	lines.push('// Summary');
+	lines.push(
+		'// ---------------------------------------------------------------'
 	);
 	lines.push(
-		`// Rule promotions:   ${log.promotedRules.length}  (${promotedApplied} applied, ${promotedHeld} held)`,
+		`// Field inferences:  ${log.inferredFields.length}  (${inferredApplied} applied, ${inferredHeld} held)`
 	);
 	lines.push(
-		`// Repeated shapes:   ${log.repeatedShapes.length}  (advisory — suggested supertypes/groups)`,
+		`// Rule promotions:   ${log.promotedRules.length}  (${promotedApplied} applied, ${promotedHeld} held)`
+	);
+	lines.push(
+		`// Repeated shapes:   ${log.repeatedShapes.length}  (advisory — suggested supertypes/groups)`
 	);
 	if (roundTripFailures.length > 0) {
-		const parseErrors = roundTripFailures.filter((f) => f.category === "parse-error").length;
-		const astMismatches = roundTripFailures.filter((f) => f.category === "ast-mismatch").length;
-		const renderFails = roundTripFailures.filter((f) => f.source === "render").length;
-		const factoryFails = roundTripFailures.filter((f) => f.source === "factory").length;
+		const parseErrors = roundTripFailures.filter(
+			(f) => f.category === 'parse-error'
+		).length;
+		const astMismatches = roundTripFailures.filter(
+			(f) => f.category === 'ast-mismatch'
+		).length;
+		const renderFails = roundTripFailures.filter(
+			(f) => f.source === 'render'
+		).length;
+		const factoryFails = roundTripFailures.filter(
+			(f) => f.source === 'factory'
+		).length;
 		lines.push(
-			`// Round-trip fails: ${roundTripFailures.length}  (${parseErrors} parse errors, ${astMismatches} AST mismatches; ${renderFails} render, ${factoryFails} factory)`,
+			`// Round-trip fails: ${roundTripFailures.length}  (${parseErrors} parse errors, ${astMismatches} AST mismatches; ${renderFails} render, ${factoryFails} factory)`
 		);
 	}
-	lines.push("");
+	lines.push('');
 
 	// ---------------------------------------------------------------
 	// Round-trip failures (corpus diagnostics)
 	// ---------------------------------------------------------------
 	if (roundTripFailures.length > 0) {
-		lines.push("// ---------------------------------------------------------------");
+		lines.push(
+			'// ---------------------------------------------------------------'
+		);
 		lines.push("// Round-trip failures — corpus cases that didn't survive");
-		lines.push("// parse → readNode → render → reparse. Each entry shows the");
-		lines.push("// input and rendered text so you can spot what the renderer");
-		lines.push("// dropped. Common causes:");
-		lines.push("//   - Repeated slot missing a `joinBy` separator (renders only");
-		lines.push("//     the first occurrence of a multi-valued field)");
-		lines.push("//   - Missing `transform()` patch wrapping an anonymous token");
-		lines.push("//     that should be a named field");
-		lines.push("//   - Template gap — rule content has no renderable slot for");
-		lines.push("//     some structural position");
-		lines.push("// ---------------------------------------------------------------");
+		lines.push('// parse → readNode → render → reparse. Each entry shows the');
+		lines.push('// input and rendered text so you can spot what the renderer');
+		lines.push('// dropped. Common causes:');
+		lines.push(
+			'//   - Repeated slot missing a `joinBy` separator (renders only'
+		);
+		lines.push('//     the first occurrence of a multi-valued field)');
+		lines.push(
+			'//   - Missing `transform()` patch wrapping an anonymous token'
+		);
+		lines.push('//     that should be a named field');
+		lines.push('//   - Template gap — rule content has no renderable slot for');
+		lines.push('//     some structural position');
+		lines.push(
+			'// ---------------------------------------------------------------'
+		);
 		// Group by rule kind so related failures cluster.
 		const byKind = new Map<string, RoundTripDiagnostic[]>();
 		for (const f of roundTripFailures) {
@@ -296,15 +325,15 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 			arr.push(f);
 			byKind.set(f.kind, arr);
 		}
-		lines.push("export const roundTripFailures: Array<{");
-		lines.push("  readonly entry: string;");
-		lines.push("  readonly kind: string;");
+		lines.push('export const roundTripFailures: Array<{');
+		lines.push('  readonly entry: string;');
+		lines.push('  readonly kind: string;');
 		lines.push('  readonly source: "render" | "factory";');
 		lines.push('  readonly category: "parse-error" | "ast-mismatch";');
-		lines.push("  readonly input?: string;");
-		lines.push("  readonly rendered?: string;");
-		lines.push("  readonly message: string;");
-		lines.push("}> = [");
+		lines.push('  readonly input?: string;');
+		lines.push('  readonly rendered?: string;');
+		lines.push('  readonly message: string;');
+		lines.push('}> = [');
 		for (const [kind, failures] of byKind) {
 			lines.push(`  // --- ${kind} (${failures.length}) ---`);
 			for (const f of failures) {
@@ -313,14 +342,16 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 				lines.push(`    kind: ${JSON.stringify(kind)},`);
 				lines.push(`    source: ${JSON.stringify(f.source)},`);
 				lines.push(`    category: ${JSON.stringify(f.category)},`);
-				if (f.input !== undefined) lines.push(`    input:    ${JSON.stringify(f.input)},`);
-				if (f.rendered !== undefined) lines.push(`    rendered: ${JSON.stringify(f.rendered)},`);
+				if (f.input !== undefined)
+					lines.push(`    input:    ${JSON.stringify(f.input)},`);
+				if (f.rendered !== undefined)
+					lines.push(`    rendered: ${JSON.stringify(f.rendered)},`);
 				lines.push(`    message: ${JSON.stringify(f.message)},`);
 				lines.push(`  },`);
 			}
 		}
-		lines.push("];");
-		lines.push("");
+		lines.push('];');
+		lines.push('');
 	}
 
 	// ---------------------------------------------------------------
@@ -333,27 +364,33 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 	// separate from `suggestedRules` matches the two-block shape the
 	// grammars now author by hand (see rust/overrides.ts for the
 	// template).
-	lines.push("// ---------------------------------------------------------------");
-	lines.push("// suggestedTransforms — drop entries into your overrides.ts");
-	lines.push("// `transforms:` block. Each value is a patch map (or an");
-	lines.push("// array of patch maps when both field and polymorph");
-	lines.push("// candidates target the same kind).");
-	lines.push("// ---------------------------------------------------------------");
-	lines.push("export const suggestedTransforms = {");
+	lines.push(
+		'// ---------------------------------------------------------------'
+	);
+	lines.push('// suggestedTransforms — drop entries into your overrides.ts');
+	lines.push('// `transforms:` block. Each value is a patch map (or an');
+	lines.push('// array of patch maps when both field and polymorph');
+	lines.push('// candidates target the same kind).');
+	lines.push(
+		'// ---------------------------------------------------------------'
+	);
+	lines.push('export const suggestedTransforms = {');
 
 	const {
 		emittedKinds: transformKinds,
 		emit: emitTransform,
-		quoteKey,
+		quoteKey
 	} = createDeduplicatingEmitter();
 
 	const inferredByKind = groupInferencesByKind(log.inferredFields);
 	const polymorphHolds = log.promotedRules.filter(
-		(e) => e.classification === "polymorph" && !e.applied,
+		(e) => e.classification === 'polymorph' && !e.applied
 	);
-	const polymorphByKind = new Map(polymorphHolds.map((e) => [e.kind, e] as const));
+	const polymorphByKind = new Map(
+		polymorphHolds.map((e) => [e.kind, e] as const)
+	);
 	const allTransformKinds = [
-		...new Set([...inferredByKind.keys(), ...polymorphByKind.keys()]),
+		...new Set([...inferredByKind.keys(), ...polymorphByKind.keys()])
 	].sort();
 
 	for (const kind of allTransformKinds) {
@@ -373,7 +410,9 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 		if (inferred) {
 			const resolved = inferred.map((e) => ({
 				e,
-				pos: parentRule ? findSymbolPosition(parentRule, e.targetSymbol, e.fieldName) : null,
+				pos: parentRule
+					? findSymbolPosition(parentRule, e.targetSymbol, e.fieldName)
+					: null
 			}));
 			const seen = new Set<string>();
 			for (const { e, pos } of resolved) {
@@ -390,7 +429,7 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 					targetSymbol: e.targetSymbol,
 					applied: e.applied,
 					pct: e.agreement * 100,
-					samples: e.sampleSize,
+					samples: e.sampleSize
 				});
 			}
 		}
@@ -400,34 +439,38 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 		const hasFieldPatch = fieldPatches.length > 0;
 
 		emitTransform(kind, () => {
-			if (inferred) lines.push(`  // ${kind}: ${inferred.length} inferred field(s)`);
+			if (inferred)
+				lines.push(`  // ${kind}: ${inferred.length} inferred field(s)`);
 			for (const e of nonPositional) {
-				const tag = e.applied ? "applied" : "held";
+				const tag = e.applied ? 'applied' : 'held';
 				const pct = (e.agreement * 100).toFixed(0);
 				lines.push(
 					`  // [${tag}] ${quoteKey(kind)} field '${e.fieldName}' on $.${e.targetSymbol}` +
 						` — ${pct}% agreement, ${e.sampleSize} parents. Parent rule is not a top-level` +
 						` SEQ so transform() can't target a position; inference is applied inside Link's` +
-						` applyInferredFields pass (tree rewrite) rather than via overrides.ts.`,
+						` applyInferredFields pass (tree rewrite) rather than via overrides.ts.`
 				);
 			}
 			if (!hasFieldPatch && !hasVariantPatch) {
-				lines.push("");
+				lines.push('');
 				return;
 			}
 
 			if (polymorph && hasVariantPatch) {
-				const total = polymorphCandidates.reduce((s, c) => s + c.choiceArmCount, 0);
+				const total = polymorphCandidates.reduce(
+					(s, c) => s + c.choiceArmCount,
+					0
+				);
 				lines.push(
-					`  // [held] polymorph — ${polymorphCandidates.length} choice position(s), ${total} arm(s) total`,
+					`  // [held] polymorph — ${polymorphCandidates.length} choice position(s), ${total} arm(s) total`
 				);
 				if (polymorphCandidates.some((c) => c.fieldWrapperName)) {
 					const wrapped = polymorphCandidates
 						.filter((c) => c.fieldWrapperName)
 						.map((c) => c.fieldWrapperName)
-						.join(", ");
+						.join(', ');
 					lines.push(
-						`  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: ${wrapped}`,
+						`  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: ${wrapped}`
 					);
 				}
 			}
@@ -437,22 +480,28 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 			// requires all variant patches in one set to target the same choice position).
 			const patchSets: string[][] = [];
 			if (hasFieldPatch) {
-				const block = ["{"];
+				const block = ['{'];
 				for (const p of fieldPatches) {
-					const tag = p.applied ? "applied" : "held";
-					block.push(`  // [${tag}] ${p.pct.toFixed(0)}% agreement, ${p.samples} parents`);
-					block.push(`  ${p.pos}: field(${JSON.stringify(p.fieldName)}),  // $.${p.targetSymbol}`);
+					const tag = p.applied ? 'applied' : 'held';
+					block.push(
+						`  // [${tag}] ${p.pct.toFixed(0)}% agreement, ${p.samples} parents`
+					);
+					block.push(
+						`  ${p.pos}: field(${JSON.stringify(p.fieldName)}),  // $.${p.targetSymbol}`
+					);
 				}
-				block.push("}");
+				block.push('}');
 				patchSets.push(block);
 			}
 			for (const cand of polymorphCandidates) {
-				const block = ["{"];
+				const block = ['{'];
 				cand.armNames.forEach((armName, i) => {
-					const key = cand.path === "" ? `${i}` : `${cand.path}/${i}`;
-					block.push(`  ${JSON.stringify(key)}: variant(${JSON.stringify(armName)}),`);
+					const key = cand.path === '' ? `${i}` : `${cand.path}/${i}`;
+					block.push(
+						`  ${JSON.stringify(key)}: variant(${JSON.stringify(armName)}),`
+					);
 				});
-				block.push("}");
+				block.push('}');
 				patchSets.push(block);
 			}
 			const useArray = patchSets.length > 1;
@@ -460,7 +509,8 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 				const [block] = patchSets;
 				if (block) {
 					lines.push(`  ${quoteKey(kind)}: ${block[0]}`);
-					for (let i = 1; i < block.length - 1; i++) lines.push(`    ${block[i]}`);
+					for (let i = 1; i < block.length - 1; i++)
+						lines.push(`    ${block[i]}`);
 					lines.push(`  ${block[block.length - 1]},`);
 				}
 			} else {
@@ -468,12 +518,13 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 				patchSets.forEach((block, si) => {
 					const isLast = si === patchSets.length - 1;
 					lines.push(`    ${block[0]}`);
-					for (let i = 1; i < block.length - 1; i++) lines.push(`      ${block[i]}`);
-					lines.push(`    ${block[block.length - 1]}${isLast ? "" : ","}`);
+					for (let i = 1; i < block.length - 1; i++)
+						lines.push(`      ${block[i]}`);
+					lines.push(`    ${block[block.length - 1]}${isLast ? '' : ','}`);
 				});
-				lines.push("  ],");
+				lines.push('  ],');
 			}
-			lines.push("");
+			lines.push('');
 		});
 	}
 	// Polymorph holds with no candidates — comment-only entries.
@@ -482,15 +533,15 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 		if ((entry.polymorphCandidates ?? []).length === 0) {
 			emitTransform(entry.kind, () => {
 				lines.push(
-					`  // [held] polymorph — no candidates captured at Link time for '${entry.kind}'`,
+					`  // [held] polymorph — no candidates captured at Link time for '${entry.kind}'`
 				);
-				lines.push("");
+				lines.push('');
 			});
 		}
 	}
 
-	lines.push("};");
-	lines.push("");
+	lines.push('};');
+	lines.push('');
 
 	// ---------------------------------------------------------------
 	// Copy-paste ready rules block — supertype & repeated-shape definitions
@@ -498,13 +549,17 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 	// These are NEW rule definitions (not transforms of existing ones)
 	// so they stay in `suggestedRules` with the `$ => ...` callback
 	// shape used by overrides.ts's `rules:` block.
-	lines.push("// ---------------------------------------------------------------");
-	lines.push("// suggestedRules — drop entries into your overrides.ts");
-	lines.push("// `rules:` block. Each value defines a NEW rule (supertype");
-	lines.push("// union or repeated-shape group) authored as a `$ => ...`");
-	lines.push("// callback.");
-	lines.push("// ---------------------------------------------------------------");
-	lines.push("export const suggestedRules = {");
+	lines.push(
+		'// ---------------------------------------------------------------'
+	);
+	lines.push('// suggestedRules — drop entries into your overrides.ts');
+	lines.push('// `rules:` block. Each value defines a NEW rule (supertype');
+	lines.push('// union or repeated-shape group) authored as a `$ => ...`');
+	lines.push('// callback.');
+	lines.push(
+		'// ---------------------------------------------------------------'
+	);
+	lines.push('export const suggestedRules = {');
 
 	const { emit } = createDeduplicatingEmitter();
 
@@ -512,24 +567,28 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 	// rules and get a reminder to list them in the grammar's
 	// `supertypes:` array.
 	const promotedSupertypes = log.promotedRules
-		.filter((e) => e.classification === "supertype")
+		.filter((e) => e.classification === 'supertype')
 		.sort((a, b) => a.kind.localeCompare(b.kind));
 	if (promotedSupertypes.length > 0) {
-		lines.push("  // --- Promoted supertypes (add matching names to grammar.supertypes) ---");
+		lines.push(
+			'  // --- Promoted supertypes (add matching names to grammar.supertypes) ---'
+		);
 	}
 	for (const entry of promotedSupertypes) {
 		const node = nodeMap.nodes.get(entry.kind);
-		const subs = node && node.modelType === "supertype" ? node.subtypes : [];
+		const subs = node && node.modelType === 'supertype' ? node.subtypes : [];
 		emit(entry.kind, () => {
-			const tag = entry.applied ? "applied" : "held";
+			const tag = entry.applied ? 'applied' : 'held';
 			lines.push(`  // [${tag}] promoted supertype`);
 			if (subs.length > 0) {
-				const choices = subs.map((s) => `$.${s}`).join(", ");
+				const choices = subs.map((s) => `$.${s}`).join(', ');
 				lines.push(`  ${quoteKey(entry.kind)}: $ => choice(${choices}),`);
 			} else {
-				lines.push(`  ${quoteKey(entry.kind)}: $ => choice(/* no subtypes recorded */),`);
+				lines.push(
+					`  ${quoteKey(entry.kind)}: $ => choice(/* no subtypes recorded */),`
+				);
 			}
-			lines.push("");
+			lines.push('');
 		});
 	}
 
@@ -537,57 +596,68 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 	// verbatim so the author can adopt it by pasting one line plus
 	// the supertypes-array entry.
 	if (log.repeatedShapes.length > 0) {
-		lines.push("  // --- Repeated-shape candidates (reused across ≥2 parents) ---");
+		lines.push(
+			'  // --- Repeated-shape candidates (reused across ≥2 parents) ---'
+		);
 	}
 	const sortedShapes = [...log.repeatedShapes].sort((a, b) => {
-		if (b.parents.length !== a.parents.length) return b.parents.length - a.parents.length;
+		if (b.parents.length !== a.parents.length)
+			return b.parents.length - a.parents.length;
 		return a.kinds.length - b.kinds.length;
 	});
 	for (const shape of sortedShapes) {
 		emit(shape.suggestedName, () => {
-			lines.push(`  // parents: ${shape.parents.join(", ")}`);
-			const choices = shape.kinds.map((k) => `$.${k}`).join(", ");
-			lines.push(`  ${quoteKey(shape.suggestedName)}: $ => choice(${choices}),`);
-			lines.push("");
+			lines.push(`  // parents: ${shape.parents.join(', ')}`);
+			const choices = shape.kinds.map((k) => `$.${k}`).join(', ');
+			lines.push(
+				`  ${quoteKey(shape.suggestedName)}: $ => choice(${choices}),`
+			);
+			lines.push('');
 		});
 	}
 
-	lines.push("};");
-	lines.push("");
+	lines.push('};');
+	lines.push('');
 
 	// ---------------------------------------------------------------
 	// Raw data exports — typed arrays for programmatic consumption
 	// ---------------------------------------------------------------
-	lines.push("// ---------------------------------------------------------------");
-	lines.push("// Raw derivation data — typed arrays for tooling");
-	lines.push("// ---------------------------------------------------------------");
-	lines.push("export interface PromotedRule {");
-	lines.push("  readonly kind: string;");
-	lines.push("  readonly classification: 'enum' | 'supertype' | 'terminal' | 'polymorph';");
-	lines.push("  readonly applied: boolean;");
-	lines.push("}");
-	lines.push("export const promotedRules: readonly PromotedRule[] = [");
+	lines.push(
+		'// ---------------------------------------------------------------'
+	);
+	lines.push('// Raw derivation data — typed arrays for tooling');
+	lines.push(
+		'// ---------------------------------------------------------------'
+	);
+	lines.push('export interface PromotedRule {');
+	lines.push('  readonly kind: string;');
+	lines.push(
+		"  readonly classification: 'enum' | 'supertype' | 'terminal' | 'polymorph';"
+	);
+	lines.push('  readonly applied: boolean;');
+	lines.push('}');
+	lines.push('export const promotedRules: readonly PromotedRule[] = [');
 	for (const entry of sortedPromotions(log.promotedRules)) {
 		lines.push(
-			`  { kind: ${JSON.stringify(entry.kind)}, classification: ${JSON.stringify(entry.classification)}, applied: ${entry.applied} },`,
+			`  { kind: ${JSON.stringify(entry.kind)}, classification: ${JSON.stringify(entry.classification)}, applied: ${entry.applied} },`
 		);
 	}
-	lines.push("];");
-	lines.push("");
+	lines.push('];');
+	lines.push('');
 
-	lines.push("export interface InferredField {");
-	lines.push("  readonly kind: string;");
-	lines.push("  readonly fieldName: string;");
-	lines.push("  readonly targetSymbol: string;");
+	lines.push('export interface InferredField {');
+	lines.push('  readonly kind: string;');
+	lines.push('  readonly fieldName: string;');
+	lines.push('  readonly targetSymbol: string;');
 	lines.push("  readonly confidence: 'high' | 'medium' | 'low';");
-	lines.push("  readonly agreement: number;");
-	lines.push("  readonly sampleSize: number;");
-	lines.push("  readonly applied: boolean;");
-	lines.push("}");
-	lines.push("export const inferredFields: readonly InferredField[] = [");
+	lines.push('  readonly agreement: number;');
+	lines.push('  readonly sampleSize: number;');
+	lines.push('  readonly applied: boolean;');
+	lines.push('}');
+	lines.push('export const inferredFields: readonly InferredField[] = [');
 	for (const entry of sortedInferences(log.inferredFields)) {
 		lines.push(
-			"  { " +
+			'  { ' +
 				`kind: ${JSON.stringify(entry.kind)}, ` +
 				`fieldName: ${JSON.stringify(entry.fieldName)}, ` +
 				`targetSymbol: ${JSON.stringify(entry.targetSymbol)}, ` +
@@ -595,45 +665,47 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 				`agreement: ${entry.agreement.toFixed(3)}, ` +
 				`sampleSize: ${entry.sampleSize}, ` +
 				`applied: ${entry.applied}` +
-				" },",
+				' },'
 		);
 	}
-	lines.push("];");
-	lines.push("");
+	lines.push('];');
+	lines.push('');
 
-	lines.push("export interface RepeatedShape {");
-	lines.push("  readonly suggestedName: string;");
-	lines.push("  readonly kinds: readonly string[];");
-	lines.push("  readonly parents: readonly string[];");
+	lines.push('export interface RepeatedShape {');
+	lines.push('  readonly suggestedName: string;');
+	lines.push('  readonly kinds: readonly string[];');
+	lines.push('  readonly parents: readonly string[];');
 	lines.push("  readonly shape: 'supertype' | 'group';");
-	lines.push("}");
-	lines.push("export const repeatedShapes: readonly RepeatedShape[] = [");
+	lines.push('}');
+	lines.push('export const repeatedShapes: readonly RepeatedShape[] = [');
 	for (const entry of sortedShapes) {
 		lines.push(
-			"  { " +
+			'  { ' +
 				`suggestedName: ${JSON.stringify(entry.suggestedName)}, ` +
 				`kinds: ${JSON.stringify(entry.kinds)}, ` +
 				`parents: ${JSON.stringify(entry.parents)}, ` +
 				`shape: ${JSON.stringify(entry.shape)}` +
-				" },",
+				' },'
 		);
 	}
-	lines.push("];");
-	lines.push("");
+	lines.push('];');
+	lines.push('');
 
-	return lines.join("\n");
+	return lines.join('\n');
 }
 
 // ---------------------------------------------------------------------------
 // Sort helpers — stable, skim-friendly ordering per section
 // ---------------------------------------------------------------------------
 
-function sortedPromotions(entries: readonly PromotedRuleEntry[]): PromotedRuleEntry[] {
-	const order: Record<PromotedRuleEntry["classification"], number> = {
+function sortedPromotions(
+	entries: readonly PromotedRuleEntry[]
+): PromotedRuleEntry[] {
+	const order: Record<PromotedRuleEntry['classification'], number> = {
 		supertype: 0,
 		enum: 1,
 		terminal: 2,
-		polymorph: 3,
+		polymorph: 3
 	};
 	return [...entries].sort((a, b) => {
 		if (order[a.classification] !== order[b.classification]) {
@@ -643,7 +715,9 @@ function sortedPromotions(entries: readonly PromotedRuleEntry[]): PromotedRuleEn
 	});
 }
 
-function sortedInferences(entries: readonly InferredFieldEntry[]): InferredFieldEntry[] {
+function sortedInferences(
+	entries: readonly InferredFieldEntry[]
+): InferredFieldEntry[] {
 	return [...entries].sort((a, b) => {
 		const aScore = a.agreement * a.sampleSize;
 		const bScore = b.agreement * b.sampleSize;
@@ -673,7 +747,8 @@ function createDeduplicatingEmitter(): {
 		emittedKinds.add(kind);
 		fn();
 	};
-	const quoteKey = (k: string): string => (/^[a-zA-Z_$][\w$]*$/.test(k) ? k : JSON.stringify(k));
+	const quoteKey = (k: string): string =>
+		/^[a-zA-Z_$][\w$]*$/.test(k) ? k : JSON.stringify(k);
 	return { emittedKinds, emit, quoteKey };
 }
 
@@ -684,7 +759,7 @@ function createDeduplicatingEmitter(): {
  * @returns Map from kind string to the entries that inferred fields on it.
  */
 function groupInferencesByKind(
-	entries: readonly InferredFieldEntry[],
+	entries: readonly InferredFieldEntry[]
 ): Map<string, InferredFieldEntry[]> {
 	const byKind = new Map<string, InferredFieldEntry[]>();
 	for (const e of entries) {

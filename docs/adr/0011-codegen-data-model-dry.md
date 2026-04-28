@@ -183,22 +183,22 @@ THE core data-model change. Replaces five fields on `AssembledChild`
 one:
 
 ```ts
-type Multiplicity = "optional" | "single" | "array" | "nonEmptyArray";
+type Multiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray';
 
 interface NodeRef<T extends AssembledNode = AssembledNode> {
-	readonly kind: "node-ref";
+	readonly kind: 'node-ref';
 	readonly node: T | UnresolvedRef;
 	readonly multiplicity: Multiplicity;
 }
 
 interface TerminalValue {
-	readonly kind: "terminal";
+	readonly kind: 'terminal';
 	readonly value: string;
 	readonly multiplicity: Multiplicity;
 }
 
 interface UnresolvedRef {
-	readonly kind: "unresolved-ref";
+	readonly kind: 'unresolved-ref';
 	readonly name: string;
 }
 

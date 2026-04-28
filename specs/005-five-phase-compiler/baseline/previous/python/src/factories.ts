@@ -281,164 +281,189 @@ import type {
 	WithStatement,
 	WithStatementTree,
 	Yield,
-	YieldTree,
-} from "./types.js";
-import type { Edit, AnyNodeData, ConfigOf } from "@sittir/types";
-import { createRenderer } from "@sittir/core";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+	YieldTree
+} from './types.js';
+import type { Edit, AnyNodeData, ConfigOf } from '@sittir/types';
+import { createRenderer } from '@sittir/core';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const { render, toEdit } = createRenderer(join(__dirname, "..", "templates.yaml"));
+const { render, toEdit } = createRenderer(
+	join(__dirname, '..', 'templates.yaml')
+);
 
 const RESERVED_KEYWORDS = new Set([
-	"False",
-	"None",
-	"True",
-	"_",
-	"__future__",
-	"and",
-	"as",
-	"assert",
-	"async",
-	"break",
-	"break_statement",
-	"case",
-	"class",
-	"continue",
-	"continue_statement",
-	"def",
-	"del",
-	"elif",
-	"else",
-	"except",
-	"exec",
-	"false",
-	"finally",
-	"for",
-	"from",
-	"global",
-	"if",
-	"import",
-	"in",
-	"is",
-	"match",
-	"none",
-	"nonlocal",
-	"not",
-	"or",
-	"pass",
-	"pass_statement",
-	"print",
-	"raise",
-	"return",
-	"true",
-	"try",
-	"while",
-	"with",
+	'False',
+	'None',
+	'True',
+	'_',
+	'__future__',
+	'and',
+	'as',
+	'assert',
+	'async',
+	'break',
+	'break_statement',
+	'case',
+	'class',
+	'continue',
+	'continue_statement',
+	'def',
+	'del',
+	'elif',
+	'else',
+	'except',
+	'exec',
+	'false',
+	'finally',
+	'for',
+	'from',
+	'global',
+	'if',
+	'import',
+	'in',
+	'is',
+	'match',
+	'none',
+	'nonlocal',
+	'not',
+	'or',
+	'pass',
+	'pass_statement',
+	'print',
+	'raise',
+	'return',
+	'true',
+	'try',
+	'while',
+	'with'
 ]);
 
 export function module(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "module" as const,
+		type: 'module' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ModuleTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function hiddenSimpleStatements(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "_simple_statements" as const,
+		type: '_simple_statements' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: HiddenSimpleStatementsTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function importStatement(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "import_statement" as const,
+		type: 'import_statement' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ImportStatementTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function importPrefix(text: string) {
 	return {
-		type: "import_prefix" as const,
+		type: 'import_prefix' as const,
 		named: true as const,
 		text: text,
 		render: () => text,
-		toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) =>
-			typeof s === "number"
+		toEdit: (
+			s: number | { start: { index: number }; end: { index: number } },
+			e?: number
+		) =>
+			typeof s === 'number'
 				? { startPos: s, endPos: e!, insertedText: text }
 				: { startPos: s.start.index, endPos: s.end.index, insertedText: text },
 		replace: (t: ImportPrefixTree) => {
 			const r = t.range();
-			return { startPos: r.start.index, endPos: r.end.index, insertedText: text };
-		},
+			return {
+				startPos: r.start.index,
+				endPos: r.end.index,
+				insertedText: text
+			};
+		}
 	};
 }
 
 export function relativeImport(config: ConfigOf<RelativeImport>) {
 	const fields = {
 		import_prefix: config?.importPrefix,
-		dotted_name: config?.dottedName,
+		dotted_name: config?.dottedName
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "relative_import" as const,
+		type: 'relative_import' as const,
 		named: true as const,
 		fields,
 		children,
 		importPrefix(importPrefix_?: any) {
 			return importPrefix_ !== undefined
-				? relativeImport({ ...(config as any), importPrefix: importPrefix_ } as any)
+				? relativeImport({
+						...(config as any),
+						importPrefix: importPrefix_
+					} as any)
 				: fields.import_prefix;
 		},
 		dottedName(dottedName_?: any) {
@@ -456,94 +481,112 @@ export function relativeImport(config: ConfigOf<RelativeImport>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: RelativeImportTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function futureImportStatement(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "future_import_statement" as const,
+		type: 'future_import_statement' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: FutureImportStatementTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function importFromStatement(config: ConfigOf<ImportFromStatement>) {
 	const fields = {
 		module_name: config?.moduleName,
-		wildcard_import: config?.wildcardImport,
+		wildcard_import: config?.wildcardImport
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "import_from_statement" as const,
+		type: 'import_from_statement' as const,
 		named: true as const,
 		fields,
 		children,
 		moduleName(moduleName_?: any) {
 			return moduleName_ !== undefined
-				? importFromStatement({ ...(config as any), moduleName: moduleName_ } as any)
+				? importFromStatement({
+						...(config as any),
+						moduleName: moduleName_
+					} as any)
 				: fields.module_name;
 		},
 		wildcardImport(wildcardImport_?: any) {
 			return wildcardImport_ !== undefined
-				? importFromStatement({ ...(config as any), wildcardImport: wildcardImport_ } as any)
+				? importFromStatement({
+						...(config as any),
+						wildcardImport: wildcardImport_
+					} as any)
 				: fields.wildcard_import;
 		},
 		getChildren() {
 			return children;
 		},
 		setChildren(...items: any[]) {
-			return importFromStatement({ ...(config as any), children: items } as any);
+			return importFromStatement({
+				...(config as any),
+				children: items
+			} as any);
 		},
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ImportFromStatementTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function hiddenImportList(config: ConfigOf<HiddenImportList>) {
 	const fields = {
-		name: config?.name,
+		name: config?.name
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "_import_list" as const,
+		type: '_import_list' as const,
 		named: true as const,
 		fields,
 		children,
@@ -562,27 +605,30 @@ export function hiddenImportList(config: ConfigOf<HiddenImportList>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: HiddenImportListTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function aliasedImport(config: ConfigOf<AliasedImport>) {
 	const fields = {
 		name: config?.name,
-		alias: config?.alias,
+		alias: config?.alias
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "aliased_import" as const,
+		type: 'aliased_import' as const,
 		named: true as const,
 		fields,
 		children,
@@ -606,26 +652,29 @@ export function aliasedImport(config: ConfigOf<AliasedImport>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: AliasedImportTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function printStatement(config: ConfigOf<PrintStatement>) {
 	const fields = {
-		argument: config?.argument,
+		argument: config?.argument
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "print_statement" as const,
+		type: 'print_statement' as const,
 		named: true as const,
 		fields,
 		children,
@@ -644,26 +693,29 @@ export function printStatement(config: ConfigOf<PrintStatement>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: PrintStatementTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function chevron(config: ConfigOf<Chevron>) {
 	const fields = {
-		expression: config?.expression,
+		expression: config?.expression
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "chevron" as const,
+		type: 'chevron' as const,
 		named: true as const,
 		fields,
 		children,
@@ -682,73 +734,86 @@ export function chevron(config: ConfigOf<Chevron>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ChevronTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function assertStatement(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "assert_statement" as const,
+		type: 'assert_statement' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: AssertStatementTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function expressionStatement(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "expression_statement" as const,
+		type: 'expression_statement' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ExpressionStatementTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function namedExpression(config: ConfigOf<NamedExpression>) {
 	const fields = {
 		name: config?.name,
-		value: config?.value,
+		value: config?.value
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "named_expression" as const,
+		type: 'named_expression' as const,
 		named: true as const,
 		fields,
 		children,
@@ -772,74 +837,83 @@ export function namedExpression(config: ConfigOf<NamedExpression>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: NamedExpressionTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function returnStatement(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "return_statement" as const,
+		type: 'return_statement' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ReturnStatementTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function deleteStatement(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "delete_statement" as const,
+		type: 'delete_statement' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: DeleteStatementTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function raiseStatement(config?: ConfigOf<RaiseStatement>) {
 	const fields = {
-		cause: config?.cause,
+		cause: config?.cause
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "raise_statement" as const,
+		type: 'raise_statement' as const,
 		named: true as const,
 		fields,
 		children,
@@ -858,67 +932,103 @@ export function raiseStatement(config?: ConfigOf<RaiseStatement>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: RaiseStatementTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function passStatement() {
 	return {
-		type: "pass_statement" as const,
+		type: 'pass_statement' as const,
 		named: true as const,
-		text: "pass",
-		render: () => "pass",
-		toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) =>
-			typeof s === "number"
-				? { startPos: s, endPos: e!, insertedText: "pass" }
-				: { startPos: s.start.index, endPos: s.end.index, insertedText: "pass" },
+		text: 'pass',
+		render: () => 'pass',
+		toEdit: (
+			s: number | { start: { index: number }; end: { index: number } },
+			e?: number
+		) =>
+			typeof s === 'number'
+				? { startPos: s, endPos: e!, insertedText: 'pass' }
+				: {
+						startPos: s.start.index,
+						endPos: s.end.index,
+						insertedText: 'pass'
+					},
 		replace: (t: PassStatementTree) => {
 			const r = t.range();
-			return { startPos: r.start.index, endPos: r.end.index, insertedText: "pass" };
-		},
+			return {
+				startPos: r.start.index,
+				endPos: r.end.index,
+				insertedText: 'pass'
+			};
+		}
 	};
 }
 
 export function breakStatement() {
 	return {
-		type: "break_statement" as const,
+		type: 'break_statement' as const,
 		named: true as const,
-		text: "break",
-		render: () => "break",
-		toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) =>
-			typeof s === "number"
-				? { startPos: s, endPos: e!, insertedText: "break" }
-				: { startPos: s.start.index, endPos: s.end.index, insertedText: "break" },
+		text: 'break',
+		render: () => 'break',
+		toEdit: (
+			s: number | { start: { index: number }; end: { index: number } },
+			e?: number
+		) =>
+			typeof s === 'number'
+				? { startPos: s, endPos: e!, insertedText: 'break' }
+				: {
+						startPos: s.start.index,
+						endPos: s.end.index,
+						insertedText: 'break'
+					},
 		replace: (t: BreakStatementTree) => {
 			const r = t.range();
-			return { startPos: r.start.index, endPos: r.end.index, insertedText: "break" };
-		},
+			return {
+				startPos: r.start.index,
+				endPos: r.end.index,
+				insertedText: 'break'
+			};
+		}
 	};
 }
 
 export function continueStatement() {
 	return {
-		type: "continue_statement" as const,
+		type: 'continue_statement' as const,
 		named: true as const,
-		text: "continue",
-		render: () => "continue",
-		toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) =>
-			typeof s === "number"
-				? { startPos: s, endPos: e!, insertedText: "continue" }
-				: { startPos: s.start.index, endPos: s.end.index, insertedText: "continue" },
+		text: 'continue',
+		render: () => 'continue',
+		toEdit: (
+			s: number | { start: { index: number }; end: { index: number } },
+			e?: number
+		) =>
+			typeof s === 'number'
+				? { startPos: s, endPos: e!, insertedText: 'continue' }
+				: {
+						startPos: s.start.index,
+						endPos: s.end.index,
+						insertedText: 'continue'
+					},
 		replace: (t: ContinueStatementTree) => {
 			const r = t.range();
-			return { startPos: r.start.index, endPos: r.end.index, insertedText: "continue" };
-		},
+			return {
+				startPos: r.start.index,
+				endPos: r.end.index,
+				insertedText: 'continue'
+			};
+		}
 	};
 }
 
@@ -926,11 +1036,11 @@ export function ifStatement(config: ConfigOf<IfStatement>) {
 	const fields = {
 		condition: config?.condition,
 		consequence: config?.consequence,
-		alternative: config?.alternative,
+		alternative: config?.alternative
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "if_statement" as const,
+		type: 'if_statement' as const,
 		named: true as const,
 		fields,
 		children,
@@ -959,27 +1069,30 @@ export function ifStatement(config: ConfigOf<IfStatement>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: IfStatementTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function elifClause(config: ConfigOf<ElifClause>) {
 	const fields = {
 		condition: config?.condition,
-		consequence: config?.consequence,
+		consequence: config?.consequence
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "elif_clause" as const,
+		type: 'elif_clause' as const,
 		named: true as const,
 		fields,
 		children,
@@ -1003,26 +1116,29 @@ export function elifClause(config: ConfigOf<ElifClause>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ElifClauseTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function elseClause(config: ConfigOf<ElseClause>) {
 	const fields = {
-		body: config?.body,
+		body: config?.body
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "else_clause" as const,
+		type: 'else_clause' as const,
 		named: true as const,
 		fields,
 		children,
@@ -1041,27 +1157,30 @@ export function elseClause(config: ConfigOf<ElseClause>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ElseClauseTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function matchStatement(config: ConfigOf<MatchStatement>) {
 	const fields = {
 		subject: config?.subject,
-		body: config?.body,
+		body: config?.body
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "match_statement" as const,
+		type: 'match_statement' as const,
 		named: true as const,
 		fields,
 		children,
@@ -1085,32 +1204,38 @@ export function matchStatement(config: ConfigOf<MatchStatement>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: MatchStatementTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function hiddenMatchBlock(config: ConfigOf<HiddenMatchBlock>) {
 	const fields = {
-		alternative: config?.alternative,
+		alternative: config?.alternative
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "_match_block" as const,
+		type: '_match_block' as const,
 		named: true as const,
 		fields,
 		children,
 		alternative(...alternative_: any[]) {
 			return alternative_.length
-				? hiddenMatchBlock({ ...(config as any), alternative: alternative_ } as any)
+				? hiddenMatchBlock({
+						...(config as any),
+						alternative: alternative_
+					} as any)
 				: fields.alternative;
 		},
 		getChildren() {
@@ -1123,27 +1248,30 @@ export function hiddenMatchBlock(config: ConfigOf<HiddenMatchBlock>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: HiddenMatchBlockTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function caseClause(config: ConfigOf<CaseClause>) {
 	const fields = {
 		guard: config?.guard,
-		consequence: config?.consequence,
+		consequence: config?.consequence
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "case_clause" as const,
+		type: 'case_clause' as const,
 		named: true as const,
 		fields,
 		children,
@@ -1167,16 +1295,19 @@ export function caseClause(config: ConfigOf<CaseClause>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: CaseClauseTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
@@ -1185,11 +1316,11 @@ export function forStatement(config: ConfigOf<ForStatement>) {
 		left: config?.left,
 		right: config?.right,
 		body: config?.body,
-		alternative: config?.alternative,
+		alternative: config?.alternative
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "for_statement" as const,
+		type: 'for_statement' as const,
 		named: true as const,
 		fields,
 		children,
@@ -1223,16 +1354,19 @@ export function forStatement(config: ConfigOf<ForStatement>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ForStatementTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
@@ -1240,11 +1374,11 @@ export function whileStatement(config: ConfigOf<WhileStatement>) {
 	const fields = {
 		condition: config?.condition,
 		body: config?.body,
-		alternative: config?.alternative,
+		alternative: config?.alternative
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "while_statement" as const,
+		type: 'while_statement' as const,
 		named: true as const,
 		fields,
 		children,
@@ -1260,7 +1394,10 @@ export function whileStatement(config: ConfigOf<WhileStatement>) {
 		},
 		alternative(alternative_?: any) {
 			return alternative_ !== undefined
-				? whileStatement({ ...(config as any), alternative: alternative_ } as any)
+				? whileStatement({
+						...(config as any),
+						alternative: alternative_
+					} as any)
 				: fields.alternative;
 		},
 		getChildren() {
@@ -1273,16 +1410,19 @@ export function whileStatement(config: ConfigOf<WhileStatement>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: WhileStatementTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
@@ -1291,11 +1431,11 @@ export function tryStatement(config: ConfigOf<TryStatement>) {
 		body: config?.body,
 		except_clauses: config?.exceptClauses,
 		else_clause: config?.elseClause,
-		finally_clause: config?.finallyClause,
+		finally_clause: config?.finallyClause
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "try_statement" as const,
+		type: 'try_statement' as const,
 		named: true as const,
 		fields,
 		children,
@@ -1306,7 +1446,10 @@ export function tryStatement(config: ConfigOf<TryStatement>) {
 		},
 		exceptClauses(exceptClauses_?: any) {
 			return exceptClauses_ !== undefined
-				? tryStatement({ ...(config as any), exceptClauses: exceptClauses_ } as any)
+				? tryStatement({
+						...(config as any),
+						exceptClauses: exceptClauses_
+					} as any)
 				: fields.except_clauses;
 		},
 		elseClause(elseClause_?: any) {
@@ -1316,7 +1459,10 @@ export function tryStatement(config: ConfigOf<TryStatement>) {
 		},
 		finallyClause(finallyClause_?: any) {
 			return finallyClause_ !== undefined
-				? tryStatement({ ...(config as any), finallyClause: finallyClause_ } as any)
+				? tryStatement({
+						...(config as any),
+						finallyClause: finallyClause_
+					} as any)
 				: fields.finally_clause;
 		},
 		getChildren() {
@@ -1329,27 +1475,30 @@ export function tryStatement(config: ConfigOf<TryStatement>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: TryStatementTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function exceptClause(config?: ConfigOf<ExceptClause>) {
 	const fields = {
 		value: config?.value,
-		alias: config?.alias,
+		alias: config?.alias
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "except_clause" as const,
+		type: 'except_clause' as const,
 		named: true as const,
 		fields,
 		children,
@@ -1373,26 +1522,29 @@ export function exceptClause(config?: ConfigOf<ExceptClause>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ExceptClauseTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function finallyClause(config: ConfigOf<FinallyClause>) {
 	const fields = {
-		block: config?.block,
+		block: config?.block
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "finally_clause" as const,
+		type: 'finally_clause' as const,
 		named: true as const,
 		fields,
 		children,
@@ -1411,27 +1563,30 @@ export function finallyClause(config: ConfigOf<FinallyClause>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: FinallyClauseTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function withStatement(config: ConfigOf<WithStatement>) {
 	const fields = {
 		with_clause: config?.withClause,
-		body: config?.body,
+		body: config?.body
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "with_statement" as const,
+		type: 'with_statement' as const,
 		named: true as const,
 		fields,
 		children,
@@ -1455,49 +1610,57 @@ export function withStatement(config: ConfigOf<WithStatement>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: WithStatementTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function withClause(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "with_clause" as const,
+		type: 'with_clause' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: WithClauseTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function withItem(config: ConfigOf<WithItem>) {
 	const fields = {
-		value: config?.value,
+		value: config?.value
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "with_item" as const,
+		type: 'with_item' as const,
 		named: true as const,
 		fields,
 		children,
@@ -1516,16 +1679,19 @@ export function withItem(config: ConfigOf<WithItem>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: WithItemTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
@@ -1535,11 +1701,11 @@ export function functionDefinition(config: ConfigOf<FunctionDefinition>) {
 		type_parameters: config?.typeParameters,
 		parameters: config?.parameters,
 		return_type: config?.returnType,
-		body: config?.body,
+		body: config?.body
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "function_definition" as const,
+		type: 'function_definition' as const,
 		named: true as const,
 		fields,
 		children,
@@ -1550,17 +1716,26 @@ export function functionDefinition(config: ConfigOf<FunctionDefinition>) {
 		},
 		typeParameters(typeParameters_?: any) {
 			return typeParameters_ !== undefined
-				? functionDefinition({ ...(config as any), typeParameters: typeParameters_ } as any)
+				? functionDefinition({
+						...(config as any),
+						typeParameters: typeParameters_
+					} as any)
 				: fields.type_parameters;
 		},
 		parameters(parameters_?: any) {
 			return parameters_ !== undefined
-				? functionDefinition({ ...(config as any), parameters: parameters_ } as any)
+				? functionDefinition({
+						...(config as any),
+						parameters: parameters_
+					} as any)
 				: fields.parameters;
 		},
 		returnType(returnType_?: any) {
 			return returnType_ !== undefined
-				? functionDefinition({ ...(config as any), returnType: returnType_ } as any)
+				? functionDefinition({
+						...(config as any),
+						returnType: returnType_
+					} as any)
 				: fields.return_type;
 		},
 		body(body_?: any) {
@@ -1578,74 +1753,83 @@ export function functionDefinition(config: ConfigOf<FunctionDefinition>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: FunctionDefinitionTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function parameters(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "parameters" as const,
+		type: 'parameters' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ParametersTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function lambdaParameters(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "lambda_parameters" as const,
+		type: 'lambda_parameters' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: LambdaParametersTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function listSplat(config: ConfigOf<ListSplat>) {
 	const fields = {
-		expression: config?.expression,
+		expression: config?.expression
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "list_splat" as const,
+		type: 'list_splat' as const,
 		named: true as const,
 		fields,
 		children,
@@ -1664,32 +1848,38 @@ export function listSplat(config: ConfigOf<ListSplat>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ListSplatTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function dictionarySplat(config: ConfigOf<DictionarySplat>) {
 	const fields = {
-		expression: config?.expression,
+		expression: config?.expression
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "dictionary_splat" as const,
+		type: 'dictionary_splat' as const,
 		named: true as const,
 		fields,
 		children,
 		expression(expression_?: any) {
 			return expression_ !== undefined
-				? dictionarySplat({ ...(config as any), expression: expression_ } as any)
+				? dictionarySplat({
+						...(config as any),
+						expression: expression_
+					} as any)
 				: fields.expression;
 		},
 		getChildren() {
@@ -1702,72 +1892,85 @@ export function dictionarySplat(config: ConfigOf<DictionarySplat>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: DictionarySplatTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function globalStatement(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "global_statement" as const,
+		type: 'global_statement' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: GlobalStatementTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function nonlocalStatement(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "nonlocal_statement" as const,
+		type: 'nonlocal_statement' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: NonlocalStatementTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function execStatement(config: ConfigOf<ExecStatement>) {
 	const fields = {
-		code: config?.code,
+		code: config?.code
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "exec_statement" as const,
+		type: 'exec_statement' as const,
 		named: true as const,
 		fields,
 		children,
@@ -1786,27 +1989,30 @@ export function execStatement(config: ConfigOf<ExecStatement>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ExecStatementTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function typeAliasStatement(config: ConfigOf<TypeAliasStatement>) {
 	const fields = {
 		left: config?.left,
-		right: config?.right,
+		right: config?.right
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "type_alias_statement" as const,
+		type: 'type_alias_statement' as const,
 		named: true as const,
 		fields,
 		children,
@@ -1830,16 +2036,19 @@ export function typeAliasStatement(config: ConfigOf<TypeAliasStatement>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: TypeAliasStatementTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
@@ -1848,11 +2057,11 @@ export function classDefinition(config: ConfigOf<ClassDefinition>) {
 		name: config?.name,
 		type_parameters: config?.typeParameters,
 		superclasses: config?.superclasses,
-		body: config?.body,
+		body: config?.body
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "class_definition" as const,
+		type: 'class_definition' as const,
 		named: true as const,
 		fields,
 		children,
@@ -1863,12 +2072,18 @@ export function classDefinition(config: ConfigOf<ClassDefinition>) {
 		},
 		typeParameters(typeParameters_?: any) {
 			return typeParameters_ !== undefined
-				? classDefinition({ ...(config as any), typeParameters: typeParameters_ } as any)
+				? classDefinition({
+						...(config as any),
+						typeParameters: typeParameters_
+					} as any)
 				: fields.type_parameters;
 		},
 		superclasses(superclasses_?: any) {
 			return superclasses_ !== undefined
-				? classDefinition({ ...(config as any), superclasses: superclasses_ } as any)
+				? classDefinition({
+						...(config as any),
+						superclasses: superclasses_
+					} as any)
 				: fields.superclasses;
 		},
 		body(body_?: any) {
@@ -1886,135 +2101,160 @@ export function classDefinition(config: ConfigOf<ClassDefinition>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ClassDefinitionTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function typeParameter(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "type_parameter" as const,
+		type: 'type_parameter' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: TypeParameterTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function parenthesizedListSplat(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "parenthesized_list_splat" as const,
+		type: 'parenthesized_list_splat' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ParenthesizedListSplatTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function argumentList(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "argument_list" as const,
+		type: 'argument_list' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ArgumentListTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function decoratedDefinition(config: ConfigOf<DecoratedDefinition>) {
 	const fields = {
-		definition: config?.definition,
+		definition: config?.definition
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "decorated_definition" as const,
+		type: 'decorated_definition' as const,
 		named: true as const,
 		fields,
 		children,
 		definition(definition_?: any) {
 			return definition_ !== undefined
-				? decoratedDefinition({ ...(config as any), definition: definition_ } as any)
+				? decoratedDefinition({
+						...(config as any),
+						definition: definition_
+					} as any)
 				: fields.definition;
 		},
 		getChildren() {
 			return children;
 		},
 		setChildren(...items: any[]) {
-			return decoratedDefinition({ ...(config as any), children: items } as any);
+			return decoratedDefinition({
+				...(config as any),
+				children: items
+			} as any);
 		},
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: DecoratedDefinitionTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function decorator(config: ConfigOf<Decorator>) {
 	const fields = {
 		expression: config?.expression,
-		newline: config?.newline,
+		newline: config?.newline
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "decorator" as const,
+		type: 'decorator' as const,
 		named: true as const,
 		fields,
 		children,
@@ -2038,284 +2278,334 @@ export function decorator(config: ConfigOf<Decorator>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: DecoratorTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function hiddenSuite(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "_suite" as const,
+		type: '_suite' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: HiddenSuiteTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function block(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "block" as const,
+		type: 'block' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: BlockTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function expressionList(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "expression_list" as const,
+		type: 'expression_list' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ExpressionListTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function dottedName(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "dotted_name" as const,
+		type: 'dotted_name' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: DottedNameTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function casePattern(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "case_pattern" as const,
+		type: 'case_pattern' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: CasePatternTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function hiddenSimplePattern(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "_simple_pattern" as const,
+		type: '_simple_pattern' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: HiddenSimplePatternTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function hiddenAsPattern(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "_as_pattern" as const,
+		type: '_as_pattern' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: HiddenAsPatternTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function unionPattern(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "union_pattern" as const,
+		type: 'union_pattern' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: UnionPatternTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function hiddenListPattern(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "_list_pattern" as const,
+		type: '_list_pattern' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: HiddenListPatternTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function hiddenTuplePattern(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "_tuple_pattern" as const,
+		type: '_tuple_pattern' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: HiddenTuplePatternTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function dictPattern(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "dict_pattern" as const,
+		type: 'dict_pattern' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: DictPatternTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function keywordPattern(config: ConfigOf<KeywordPattern>) {
 	const fields = {
 		identifier: config?.identifier,
-		simple_pattern: config?.simplePattern,
+		simple_pattern: config?.simplePattern
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "keyword_pattern" as const,
+		type: 'keyword_pattern' as const,
 		named: true as const,
 		fields,
 		children,
@@ -2326,7 +2616,10 @@ export function keywordPattern(config: ConfigOf<KeywordPattern>) {
 		},
 		simplePattern(simplePattern_?: any) {
 			return simplePattern_ !== undefined
-				? keywordPattern({ ...(config as any), simplePattern: simplePattern_ } as any)
+				? keywordPattern({
+						...(config as any),
+						simplePattern: simplePattern_
+					} as any)
 				: fields.simple_pattern;
 		},
 		getChildren() {
@@ -2339,26 +2632,29 @@ export function keywordPattern(config: ConfigOf<KeywordPattern>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: KeywordPatternTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function splatPattern(config: ConfigOf<SplatPattern>) {
 	const fields = {
-		identifier: config?.identifier,
+		identifier: config?.identifier
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "splat_pattern" as const,
+		type: 'splat_pattern' as const,
 		named: true as const,
 		fields,
 		children,
@@ -2377,27 +2673,30 @@ export function splatPattern(config: ConfigOf<SplatPattern>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: SplatPatternTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function classPattern(config: ConfigOf<ClassPattern>) {
 	const fields = {
 		dotted_name: config?.dottedName,
-		arguments: config?.arguments,
+		arguments: config?.arguments
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "class_pattern" as const,
+		type: 'class_pattern' as const,
 		named: true as const,
 		fields,
 		children,
@@ -2421,27 +2720,30 @@ export function classPattern(config: ConfigOf<ClassPattern>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ClassPatternTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function complexPattern(config: ConfigOf<ComplexPattern>) {
 	const fields = {
 		real: config?.real,
-		imaginary: config?.imaginary,
+		imaginary: config?.imaginary
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "complex_pattern" as const,
+		type: 'complex_pattern' as const,
 		named: true as const,
 		fields,
 		children,
@@ -2465,169 +2767,194 @@ export function complexPattern(config: ConfigOf<ComplexPattern>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ComplexPatternTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function hiddenParameters(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "_parameters" as const,
+		type: '_parameters' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: HiddenParametersTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function hiddenPatterns(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "_patterns" as const,
+		type: '_patterns' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: HiddenPatternsTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function parameter(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "parameter" as const,
+		type: 'parameter' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ParameterTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function pattern(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "pattern" as const,
+		type: 'pattern' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: PatternTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function tuplePattern(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "tuple_pattern" as const,
+		type: 'tuple_pattern' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: TuplePatternTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function listPattern(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "list_pattern" as const,
+		type: 'list_pattern' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ListPatternTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function defaultParameter(config: ConfigOf<DefaultParameter>) {
 	const fields = {
 		name: config?.name,
-		value: config?.value,
+		value: config?.value
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "default_parameter" as const,
+		type: 'default_parameter' as const,
 		named: true as const,
 		fields,
 		children,
@@ -2651,16 +2978,19 @@ export function defaultParameter(config: ConfigOf<DefaultParameter>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: DefaultParameterTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
@@ -2668,11 +2998,11 @@ export function typedDefaultParameter(config: ConfigOf<TypedDefaultParameter>) {
 	const fields = {
 		name: config?.name,
 		type: config?.type,
-		value: config?.value,
+		value: config?.value
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "typed_default_parameter" as const,
+		type: 'typed_default_parameter' as const,
 		named: true as const,
 		fields,
 		children,
@@ -2695,81 +3025,93 @@ export function typedDefaultParameter(config: ConfigOf<TypedDefaultParameter>) {
 			return children;
 		},
 		setChildren(...items: any[]) {
-			return typedDefaultParameter({ ...(config as any), children: items } as any);
+			return typedDefaultParameter({
+				...(config as any),
+				children: items
+			} as any);
 		},
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: TypedDefaultParameterTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function listSplatPattern(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "list_splat_pattern" as const,
+		type: 'list_splat_pattern' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ListSplatPatternTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function dictionarySplatPattern(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "dictionary_splat_pattern" as const,
+		type: 'dictionary_splat_pattern' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: DictionarySplatPatternTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function asPattern(config: ConfigOf<AsPattern>) {
 	const fields = {
 		expression: config?.expression,
-		alias: config?.alias,
+		alias: config?.alias
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "as_pattern" as const,
+		type: 'as_pattern' as const,
 		named: true as const,
 		fields,
 		children,
@@ -2793,74 +3135,83 @@ export function asPattern(config: ConfigOf<AsPattern>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: AsPatternTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function expression(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "expression" as const,
+		type: 'expression' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ExpressionTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function primaryExpression(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "primary_expression" as const,
+		type: 'primary_expression' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: PrimaryExpressionTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function notOperator(config: ConfigOf<NotOperator>) {
 	const fields = {
-		argument: config?.argument,
+		argument: config?.argument
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "not_operator" as const,
+		type: 'not_operator' as const,
 		named: true as const,
 		fields,
 		children,
@@ -2879,16 +3230,19 @@ export function notOperator(config: ConfigOf<NotOperator>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: NotOperatorTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
@@ -2896,11 +3250,11 @@ export function booleanOperator(config: ConfigOf<BooleanOperator>) {
 	const fields = {
 		left: config?.left,
 		operator: config?.operator,
-		right: config?.right,
+		right: config?.right
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "boolean_operator" as const,
+		type: 'boolean_operator' as const,
 		named: true as const,
 		fields,
 		children,
@@ -2929,16 +3283,19 @@ export function booleanOperator(config: ConfigOf<BooleanOperator>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: BooleanOperatorTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
@@ -2946,11 +3303,11 @@ export function binaryOperator(config: ConfigOf<BinaryOperator>) {
 	const fields = {
 		left: config?.left,
 		operator: config?.operator,
-		right: config?.right,
+		right: config?.right
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "binary_operator" as const,
+		type: 'binary_operator' as const,
 		named: true as const,
 		fields,
 		children,
@@ -2979,27 +3336,30 @@ export function binaryOperator(config: ConfigOf<BinaryOperator>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: BinaryOperatorTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function unaryOperator(config: ConfigOf<UnaryOperator>) {
 	const fields = {
 		operator: config?.operator,
-		argument: config?.argument,
+		argument: config?.argument
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "unary_operator" as const,
+		type: 'unary_operator' as const,
 		named: true as const,
 		fields,
 		children,
@@ -3023,61 +3383,78 @@ export function unaryOperator(config: ConfigOf<UnaryOperator>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: UnaryOperatorTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function hiddenNotIn(text: string) {
 	return {
-		type: "_not_in" as const,
+		type: '_not_in' as const,
 		named: true as const,
 		text: text,
 		render: () => text,
-		toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) =>
-			typeof s === "number"
+		toEdit: (
+			s: number | { start: { index: number }; end: { index: number } },
+			e?: number
+		) =>
+			typeof s === 'number'
 				? { startPos: s, endPos: e!, insertedText: text }
 				: { startPos: s.start.index, endPos: s.end.index, insertedText: text },
 		replace: (t: HiddenNotInTree) => {
 			const r = t.range();
-			return { startPos: r.start.index, endPos: r.end.index, insertedText: text };
-		},
+			return {
+				startPos: r.start.index,
+				endPos: r.end.index,
+				insertedText: text
+			};
+		}
 	};
 }
 
 export function hiddenIsNot(text: string) {
 	return {
-		type: "_is_not" as const,
+		type: '_is_not' as const,
 		named: true as const,
 		text: text,
 		render: () => text,
-		toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) =>
-			typeof s === "number"
+		toEdit: (
+			s: number | { start: { index: number }; end: { index: number } },
+			e?: number
+		) =>
+			typeof s === 'number'
 				? { startPos: s, endPos: e!, insertedText: text }
 				: { startPos: s.start.index, endPos: s.end.index, insertedText: text },
 		replace: (t: HiddenIsNotTree) => {
 			const r = t.range();
-			return { startPos: r.start.index, endPos: r.end.index, insertedText: text };
-		},
+			return {
+				startPos: r.start.index,
+				endPos: r.end.index,
+				insertedText: text
+			};
+		}
 	};
 }
 
 export function comparisonOperator(config: ConfigOf<ComparisonOperator>) {
 	const fields = {
 		left: config?.left,
-		comparators: config?.comparators,
+		comparators: config?.comparators
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "comparison_operator" as const,
+		type: 'comparison_operator' as const,
 		named: true as const,
 		fields,
 		children,
@@ -3088,7 +3465,10 @@ export function comparisonOperator(config: ConfigOf<ComparisonOperator>) {
 		},
 		comparators(comparators_?: any) {
 			return comparators_ !== undefined
-				? comparisonOperator({ ...(config as any), comparators: comparators_ } as any)
+				? comparisonOperator({
+						...(config as any),
+						comparators: comparators_
+					} as any)
 				: fields.comparators;
 		},
 		getChildren() {
@@ -3101,27 +3481,30 @@ export function comparisonOperator(config: ConfigOf<ComparisonOperator>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ComparisonOperatorTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function lambda(config: ConfigOf<Lambda>) {
 	const fields = {
 		parameters: config?.parameters,
-		body: config?.body,
+		body: config?.body
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "lambda" as const,
+		type: 'lambda' as const,
 		named: true as const,
 		fields,
 		children,
@@ -3131,7 +3514,9 @@ export function lambda(config: ConfigOf<Lambda>) {
 				: fields.parameters;
 		},
 		body(body_?: any) {
-			return body_ !== undefined ? lambda({ ...(config as any), body: body_ } as any) : fields.body;
+			return body_ !== undefined
+				? lambda({ ...(config as any), body: body_ } as any)
+				: fields.body;
 		},
 		getChildren() {
 			return children;
@@ -3143,33 +3528,41 @@ export function lambda(config: ConfigOf<Lambda>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: LambdaTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
-export function lambdaWithinForInClause(config: ConfigOf<LambdaWithinForInClause>) {
+export function lambdaWithinForInClause(
+	config: ConfigOf<LambdaWithinForInClause>
+) {
 	const fields = {
 		parameters: config?.parameters,
-		body: config?.body,
+		body: config?.body
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "lambda_within_for_in_clause" as const,
+		type: 'lambda_within_for_in_clause' as const,
 		named: true as const,
 		fields,
 		children,
 		parameters(parameters_?: any) {
 			return parameters_ !== undefined
-				? lambdaWithinForInClause({ ...(config as any), parameters: parameters_ } as any)
+				? lambdaWithinForInClause({
+						...(config as any),
+						parameters: parameters_
+					} as any)
 				: fields.parameters;
 		},
 		body(body_?: any) {
@@ -3181,37 +3574,43 @@ export function lambdaWithinForInClause(config: ConfigOf<LambdaWithinForInClause
 			return children;
 		},
 		setChildren(...items: any[]) {
-			return lambdaWithinForInClause({ ...(config as any), children: items } as any);
+			return lambdaWithinForInClause({
+				...(config as any),
+				children: items
+			} as any);
 		},
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: LambdaWithinForInClauseTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function assignment(config?: ConfigOf<Assignment>) {
-	if (config && "right" in config) return assignmentColon2(config as any);
-	if (config && "right" in config) return assignmentEq(config as any);
+	if (config && 'right' in config) return assignmentColon2(config as any);
+	if (config && 'right' in config) return assignmentEq(config as any);
 	return assignmentColon(config as any);
 }
 export function assignmentEq(config: ConfigOf<AssignmentEq>) {
 	const fields = {
-		right: config?.right,
+		right: config?.right
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "assignment" as const,
+		type: 'assignment' as const,
 		named: true as const,
 		fields,
 		children,
@@ -3230,25 +3629,28 @@ export function assignmentEq(config: ConfigOf<AssignmentEq>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: AssignmentEqTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 export function assignmentColon(config: ConfigOf<AssignmentColon>) {
 	const fields = {
-		type: config?.type,
+		type: config?.type
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "assignment" as const,
+		type: 'assignment' as const,
 		named: true as const,
 		fields,
 		children,
@@ -3267,26 +3669,29 @@ export function assignmentColon(config: ConfigOf<AssignmentColon>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: AssignmentColonTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 export function assignmentColon2(config: ConfigOf<AssignmentColon2>) {
 	const fields = {
 		type: config?.type,
-		right: config?.right,
+		right: config?.right
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "assignment" as const,
+		type: 'assignment' as const,
 		named: true as const,
 		fields,
 		children,
@@ -3310,16 +3715,19 @@ export function assignmentColon2(config: ConfigOf<AssignmentColon2>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: AssignmentColon2Tree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
@@ -3327,11 +3735,11 @@ export function augmentedAssignment(config: ConfigOf<AugmentedAssignment>) {
 	const fields = {
 		left: config?.left,
 		operator: config?.operator,
-		right: config?.right,
+		right: config?.right
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "augmented_assignment" as const,
+		type: 'augmented_assignment' as const,
 		named: true as const,
 		fields,
 		children,
@@ -3342,7 +3750,10 @@ export function augmentedAssignment(config: ConfigOf<AugmentedAssignment>) {
 		},
 		operator(operator_?: any) {
 			return operator_ !== undefined
-				? augmentedAssignment({ ...(config as any), operator: operator_ } as any)
+				? augmentedAssignment({
+						...(config as any),
+						operator: operator_
+					} as any)
 				: fields.operator;
 		},
 		right(right_?: any) {
@@ -3354,80 +3765,94 @@ export function augmentedAssignment(config: ConfigOf<AugmentedAssignment>) {
 			return children;
 		},
 		setChildren(...items: any[]) {
-			return augmentedAssignment({ ...(config as any), children: items } as any);
+			return augmentedAssignment({
+				...(config as any),
+				children: items
+			} as any);
 		},
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: AugmentedAssignmentTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function patternList(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "pattern_list" as const,
+		type: 'pattern_list' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: PatternListTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function yield_(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "yield" as const,
+		type: 'yield' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: YieldTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function attribute(config: ConfigOf<Attribute>) {
 	const fields = {
 		object: config?.object,
-		attribute: config?.attribute,
+		attribute: config?.attribute
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "attribute" as const,
+		type: 'attribute' as const,
 		named: true as const,
 		fields,
 		children,
@@ -3451,27 +3876,30 @@ export function attribute(config: ConfigOf<Attribute>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: AttributeTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function subscript(config: ConfigOf<Subscript>) {
 	const fields = {
 		value: config?.value,
-		subscript: config?.subscript,
+		subscript: config?.subscript
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "subscript" as const,
+		type: 'subscript' as const,
 		named: true as const,
 		fields,
 		children,
@@ -3495,16 +3923,19 @@ export function subscript(config: ConfigOf<Subscript>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: SubscriptTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
@@ -3512,11 +3943,11 @@ export function slice(config: ConfigOf<Slice>) {
 	const fields = {
 		start: config?.start,
 		stop: config?.stop,
-		step: config?.step,
+		step: config?.step
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "slice" as const,
+		type: 'slice' as const,
 		named: true as const,
 		fields,
 		children,
@@ -3526,10 +3957,14 @@ export function slice(config: ConfigOf<Slice>) {
 				: fields.start;
 		},
 		stop(stop_?: any) {
-			return stop_ !== undefined ? slice({ ...(config as any), stop: stop_ } as any) : fields.stop;
+			return stop_ !== undefined
+				? slice({ ...(config as any), stop: stop_ } as any)
+				: fields.stop;
 		},
 		step(step_?: any) {
-			return step_ !== undefined ? slice({ ...(config as any), step: step_ } as any) : fields.step;
+			return step_ !== undefined
+				? slice({ ...(config as any), step: step_ } as any)
+				: fields.step;
 		},
 		getChildren() {
 			return children;
@@ -3541,27 +3976,30 @@ export function slice(config: ConfigOf<Slice>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: SliceTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function call(config: ConfigOf<Call>) {
 	const fields = {
 		function: config?.function,
-		arguments: config?.arguments,
+		arguments: config?.arguments
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "call" as const,
+		type: 'call' as const,
 		named: true as const,
 		fields,
 		children,
@@ -3585,26 +4023,29 @@ export function call(config: ConfigOf<Call>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: CallTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function typedParameter(config: ConfigOf<TypedParameter>) {
 	const fields = {
-		type: config?.type,
+		type: config?.type
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "typed_parameter" as const,
+		type: 'typed_parameter' as const,
 		named: true as const,
 		fields,
 		children,
@@ -3623,50 +4064,56 @@ export function typedParameter(config: ConfigOf<TypedParameter>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: TypedParameterTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function type(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "type" as const,
+		type: 'type' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: TypeTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function splatType(config: ConfigOf<SplatType>) {
 	const fields = {
-		identifier: config?.identifier,
+		identifier: config?.identifier
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "splat_type" as const,
+		type: 'splat_type' as const,
 		named: true as const,
 		fields,
 		children,
@@ -3685,27 +4132,30 @@ export function splatType(config: ConfigOf<SplatType>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: SplatTypeTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function genericType(config: ConfigOf<GenericType>) {
 	const fields = {
 		identifier: config?.identifier,
-		type_parameter: config?.typeParameter,
+		type_parameter: config?.typeParameter
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "generic_type" as const,
+		type: 'generic_type' as const,
 		named: true as const,
 		fields,
 		children,
@@ -3716,7 +4166,10 @@ export function genericType(config: ConfigOf<GenericType>) {
 		},
 		typeParameter(typeParameter_?: any) {
 			return typeParameter_ !== undefined
-				? genericType({ ...(config as any), typeParameter: typeParameter_ } as any)
+				? genericType({
+						...(config as any),
+						typeParameter: typeParameter_
+					} as any)
 				: fields.type_parameter;
 		},
 		getChildren() {
@@ -3729,27 +4182,30 @@ export function genericType(config: ConfigOf<GenericType>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: GenericTypeTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function unionType(config: ConfigOf<UnionType>) {
 	const fields = {
 		left: config?.left,
-		right: config?.right,
+		right: config?.right
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "union_type" as const,
+		type: 'union_type' as const,
 		named: true as const,
 		fields,
 		children,
@@ -3773,27 +4229,30 @@ export function unionType(config: ConfigOf<UnionType>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: UnionTypeTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function constrainedType(config: ConfigOf<ConstrainedType>) {
 	const fields = {
 		base_type: config?.baseType,
-		constraint: config?.constraint,
+		constraint: config?.constraint
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "constrained_type" as const,
+		type: 'constrained_type' as const,
 		named: true as const,
 		fields,
 		children,
@@ -3804,7 +4263,10 @@ export function constrainedType(config: ConfigOf<ConstrainedType>) {
 		},
 		constraint(constraint_?: any) {
 			return constraint_ !== undefined
-				? constrainedType({ ...(config as any), constraint: constraint_ } as any)
+				? constrainedType({
+						...(config as any),
+						constraint: constraint_
+					} as any)
 				: fields.constraint;
 		},
 		getChildren() {
@@ -3817,27 +4279,30 @@ export function constrainedType(config: ConfigOf<ConstrainedType>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ConstrainedTypeTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function memberType(config: ConfigOf<MemberType>) {
 	const fields = {
 		base_type: config?.baseType,
-		identifier: config?.identifier,
+		identifier: config?.identifier
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "member_type" as const,
+		type: 'member_type' as const,
 		named: true as const,
 		fields,
 		children,
@@ -3861,27 +4326,30 @@ export function memberType(config: ConfigOf<MemberType>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: MemberTypeTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function keywordArgument(config: ConfigOf<KeywordArgument>) {
 	const fields = {
 		name: config?.name,
-		value: config?.value,
+		value: config?.value
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "keyword_argument" as const,
+		type: 'keyword_argument' as const,
 		named: true as const,
 		fields,
 		children,
@@ -3905,127 +4373,146 @@ export function keywordArgument(config: ConfigOf<KeywordArgument>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: KeywordArgumentTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function list(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "list" as const,
+		type: 'list' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ListTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function set(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "set" as const,
+		type: 'set' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: SetTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function tuple(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "tuple" as const,
+		type: 'tuple' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: TupleTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function dictionary(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "dictionary" as const,
+		type: 'dictionary' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: DictionaryTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function pair(config: ConfigOf<Pair>) {
 	const fields = {
 		key: config?.key,
-		value: config?.value,
+		value: config?.value
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "pair" as const,
+		type: 'pair' as const,
 		named: true as const,
 		fields,
 		children,
 		key(key_?: any) {
-			return key_ !== undefined ? pair({ ...(config as any), key: key_ } as any) : fields.key;
+			return key_ !== undefined
+				? pair({ ...(config as any), key: key_ } as any)
+				: fields.key;
 		},
 		value(value_?: any) {
 			return value_ !== undefined
@@ -4042,26 +4529,29 @@ export function pair(config: ConfigOf<Pair>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: PairTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function listComprehension(config: ConfigOf<ListComprehension>) {
 	const fields = {
-		body: config?.body,
+		body: config?.body
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "list_comprehension" as const,
+		type: 'list_comprehension' as const,
 		named: true as const,
 		fields,
 		children,
@@ -4080,26 +4570,31 @@ export function listComprehension(config: ConfigOf<ListComprehension>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ListComprehensionTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
-export function dictionaryComprehension(config: ConfigOf<DictionaryComprehension>) {
+export function dictionaryComprehension(
+	config: ConfigOf<DictionaryComprehension>
+) {
 	const fields = {
-		body: config?.body,
+		body: config?.body
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "dictionary_comprehension" as const,
+		type: 'dictionary_comprehension' as const,
 		named: true as const,
 		fields,
 		children,
@@ -4112,32 +4607,38 @@ export function dictionaryComprehension(config: ConfigOf<DictionaryComprehension
 			return children;
 		},
 		setChildren(...items: any[]) {
-			return dictionaryComprehension({ ...(config as any), children: items } as any);
+			return dictionaryComprehension({
+				...(config as any),
+				children: items
+			} as any);
 		},
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: DictionaryComprehensionTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function setComprehension(config: ConfigOf<SetComprehension>) {
 	const fields = {
-		body: config?.body,
+		body: config?.body
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "set_comprehension" as const,
+		type: 'set_comprehension' as const,
 		named: true as const,
 		fields,
 		children,
@@ -4156,26 +4657,29 @@ export function setComprehension(config: ConfigOf<SetComprehension>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: SetComprehensionTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function generatorExpression(config: ConfigOf<GeneratorExpression>) {
 	const fields = {
-		body: config?.body,
+		body: config?.body
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "generator_expression" as const,
+		type: 'generator_expression' as const,
 		named: true as const,
 		fields,
 		children,
@@ -4188,103 +4692,122 @@ export function generatorExpression(config: ConfigOf<GeneratorExpression>) {
 			return children;
 		},
 		setChildren(...items: any[]) {
-			return generatorExpression({ ...(config as any), children: items } as any);
+			return generatorExpression({
+				...(config as any),
+				children: items
+			} as any);
 		},
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: GeneratorExpressionTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function hiddenComprehensionClauses(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "_comprehension_clauses" as const,
+		type: '_comprehension_clauses' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: HiddenComprehensionClausesTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function parenthesizedExpression(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "parenthesized_expression" as const,
+		type: 'parenthesized_expression' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ParenthesizedExpressionTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function hiddenCollectionElements(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "_collection_elements" as const,
+		type: '_collection_elements' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: HiddenCollectionElementsTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function forInClause(config: ConfigOf<ForInClause>) {
 	const fields = {
 		left: config?.left,
-		right: config?.right,
+		right: config?.right
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "for_in_clause" as const,
+		type: 'for_in_clause' as const,
 		named: true as const,
 		fields,
 		children,
@@ -4308,26 +4831,29 @@ export function forInClause(config: ConfigOf<ForInClause>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ForInClauseTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function ifClause(config: ConfigOf<IfClause>) {
 	const fields = {
-		expression: config?.expression,
+		expression: config?.expression
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "if_clause" as const,
+		type: 'if_clause' as const,
 		named: true as const,
 		fields,
 		children,
@@ -4346,16 +4872,19 @@ export function ifClause(config: ConfigOf<IfClause>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: IfClauseTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
@@ -4363,11 +4892,11 @@ export function conditionalExpression(config: ConfigOf<ConditionalExpression>) {
 	const fields = {
 		body: config?.body,
 		condition: config?.condition,
-		alternative: config?.alternative,
+		alternative: config?.alternative
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "conditional_expression" as const,
+		type: 'conditional_expression' as const,
 		named: true as const,
 		fields,
 		children,
@@ -4378,57 +4907,74 @@ export function conditionalExpression(config: ConfigOf<ConditionalExpression>) {
 		},
 		condition(condition_?: any) {
 			return condition_ !== undefined
-				? conditionalExpression({ ...(config as any), condition: condition_ } as any)
+				? conditionalExpression({
+						...(config as any),
+						condition: condition_
+					} as any)
 				: fields.condition;
 		},
 		alternative(alternative_?: any) {
 			return alternative_ !== undefined
-				? conditionalExpression({ ...(config as any), alternative: alternative_ } as any)
+				? conditionalExpression({
+						...(config as any),
+						alternative: alternative_
+					} as any)
 				: fields.alternative;
 		},
 		getChildren() {
 			return children;
 		},
 		setChildren(...items: any[]) {
-			return conditionalExpression({ ...(config as any), children: items } as any);
+			return conditionalExpression({
+				...(config as any),
+				children: items
+			} as any);
 		},
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ConditionalExpressionTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function concatenatedString(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "concatenated_string" as const,
+		type: 'concatenated_string' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: ConcatenatedStringTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
@@ -4436,11 +4982,11 @@ export function string(config: ConfigOf<String>) {
 	const fields = {
 		string_start: config?.stringStart,
 		content: config?.content,
-		string_end: config?.stringEnd,
+		string_end: config?.stringEnd
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "string" as const,
+		type: 'string' as const,
 		named: true as const,
 		fields,
 		children,
@@ -4469,39 +5015,47 @@ export function string(config: ConfigOf<String>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: StringTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function stringContent(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "string_content" as const,
+		type: 'string_content' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: StringContentTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
@@ -4509,11 +5063,11 @@ export function interpolation(config: ConfigOf<Interpolation>) {
 	const fields = {
 		expression: config?.expression,
 		type_conversion: config?.typeConversion,
-		format_specifier: config?.formatSpecifier,
+		format_specifier: config?.formatSpecifier
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "interpolation" as const,
+		type: 'interpolation' as const,
 		named: true as const,
 		fields,
 		children,
@@ -4524,12 +5078,18 @@ export function interpolation(config: ConfigOf<Interpolation>) {
 		},
 		typeConversion(typeConversion_?: any) {
 			return typeConversion_ !== undefined
-				? interpolation({ ...(config as any), typeConversion: typeConversion_ } as any)
+				? interpolation({
+						...(config as any),
+						typeConversion: typeConversion_
+					} as any)
 				: fields.type_conversion;
 		},
 		formatSpecifier(formatSpecifier_?: any) {
 			return formatSpecifier_ !== undefined
-				? interpolation({ ...(config as any), formatSpecifier: formatSpecifier_ } as any)
+				? interpolation({
+						...(config as any),
+						formatSpecifier: formatSpecifier_
+					} as any)
 				: fields.format_specifier;
 		},
 		getChildren() {
@@ -4542,208 +5102,294 @@ export function interpolation(config: ConfigOf<Interpolation>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: InterpolationTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function escapeSequence(text: string) {
 	return {
-		type: "escape_sequence" as const,
+		type: 'escape_sequence' as const,
 		named: true as const,
 		text: text,
 		render: () => text,
-		toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) =>
-			typeof s === "number"
+		toEdit: (
+			s: number | { start: { index: number }; end: { index: number } },
+			e?: number
+		) =>
+			typeof s === 'number'
 				? { startPos: s, endPos: e!, insertedText: text }
 				: { startPos: s.start.index, endPos: s.end.index, insertedText: text },
 		replace: (t: EscapeSequenceTree) => {
 			const r = t.range();
-			return { startPos: r.start.index, endPos: r.end.index, insertedText: text };
-		},
+			return {
+				startPos: r.start.index,
+				endPos: r.end.index,
+				insertedText: text
+			};
+		}
 	};
 }
 
 export function formatSpecifier(..._children: any[]) {
-	const children = _children.filter((c: any) => c && typeof c === "object" && "type" in c);
+	const children = _children.filter(
+		(c: any) => c && typeof c === 'object' && 'type' in c
+	);
 	return {
-		type: "format_specifier" as const,
+		type: 'format_specifier' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: FormatSpecifierTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function typeConversion(text: string) {
 	return {
-		type: "type_conversion" as const,
+		type: 'type_conversion' as const,
 		named: true as const,
 		text: text,
 		render: () => text,
-		toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) =>
-			typeof s === "number"
+		toEdit: (
+			s: number | { start: { index: number }; end: { index: number } },
+			e?: number
+		) =>
+			typeof s === 'number'
 				? { startPos: s, endPos: e!, insertedText: text }
 				: { startPos: s.start.index, endPos: s.end.index, insertedText: text },
 		replace: (t: TypeConversionTree) => {
 			const r = t.range();
-			return { startPos: r.start.index, endPos: r.end.index, insertedText: text };
-		},
+			return {
+				startPos: r.start.index,
+				endPos: r.end.index,
+				insertedText: text
+			};
+		}
 	};
 }
 
 export function integer(text: string) {
 	return {
-		type: "integer" as const,
+		type: 'integer' as const,
 		named: true as const,
 		text: text,
 		render: () => text,
-		toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) =>
-			typeof s === "number"
+		toEdit: (
+			s: number | { start: { index: number }; end: { index: number } },
+			e?: number
+		) =>
+			typeof s === 'number'
 				? { startPos: s, endPos: e!, insertedText: text }
 				: { startPos: s.start.index, endPos: s.end.index, insertedText: text },
 		replace: (t: IntegerTree) => {
 			const r = t.range();
-			return { startPos: r.start.index, endPos: r.end.index, insertedText: text };
-		},
+			return {
+				startPos: r.start.index,
+				endPos: r.end.index,
+				insertedText: text
+			};
+		}
 	};
 }
 
 export function float(text: string) {
 	return {
-		type: "float" as const,
+		type: 'float' as const,
 		named: true as const,
 		text: text,
 		render: () => text,
-		toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) =>
-			typeof s === "number"
+		toEdit: (
+			s: number | { start: { index: number }; end: { index: number } },
+			e?: number
+		) =>
+			typeof s === 'number'
 				? { startPos: s, endPos: e!, insertedText: text }
 				: { startPos: s.start.index, endPos: s.end.index, insertedText: text },
 		replace: (t: FloatTree) => {
 			const r = t.range();
-			return { startPos: r.start.index, endPos: r.end.index, insertedText: text };
-		},
+			return {
+				startPos: r.start.index,
+				endPos: r.end.index,
+				insertedText: text
+			};
+		}
 	};
 }
 
 export function identifier(text: string) {
 	return {
-		type: "identifier" as const,
+		type: 'identifier' as const,
 		named: true as const,
 		text: text,
 		render: () => text,
-		toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) =>
-			typeof s === "number"
+		toEdit: (
+			s: number | { start: { index: number }; end: { index: number } },
+			e?: number
+		) =>
+			typeof s === 'number'
 				? { startPos: s, endPos: e!, insertedText: text }
 				: { startPos: s.start.index, endPos: s.end.index, insertedText: text },
 		replace: (t: IdentifierTree) => {
 			const r = t.range();
-			return { startPos: r.start.index, endPos: r.end.index, insertedText: text };
-		},
+			return {
+				startPos: r.start.index,
+				endPos: r.end.index,
+				insertedText: text
+			};
+		}
 	};
 }
 
 export function keywordIdentifier(text: string) {
 	return {
-		type: "keyword_identifier" as const,
+		type: 'keyword_identifier' as const,
 		named: true as const,
 		text: text,
 		render: () => text,
-		toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) =>
-			typeof s === "number"
+		toEdit: (
+			s: number | { start: { index: number }; end: { index: number } },
+			e?: number
+		) =>
+			typeof s === 'number'
 				? { startPos: s, endPos: e!, insertedText: text }
 				: { startPos: s.start.index, endPos: s.end.index, insertedText: text },
 		replace: (t: KeywordIdentifierTree) => {
 			const r = t.range();
-			return { startPos: r.start.index, endPos: r.end.index, insertedText: text };
-		},
+			return {
+				startPos: r.start.index,
+				endPos: r.end.index,
+				insertedText: text
+			};
+		}
 	};
 }
 
 export function true_() {
 	return {
-		type: "true" as const,
+		type: 'true' as const,
 		named: true as const,
-		text: "True",
-		render: () => "True",
-		toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) =>
-			typeof s === "number"
-				? { startPos: s, endPos: e!, insertedText: "True" }
-				: { startPos: s.start.index, endPos: s.end.index, insertedText: "True" },
+		text: 'True',
+		render: () => 'True',
+		toEdit: (
+			s: number | { start: { index: number }; end: { index: number } },
+			e?: number
+		) =>
+			typeof s === 'number'
+				? { startPos: s, endPos: e!, insertedText: 'True' }
+				: {
+						startPos: s.start.index,
+						endPos: s.end.index,
+						insertedText: 'True'
+					},
 		replace: (t: TrueTree) => {
 			const r = t.range();
-			return { startPos: r.start.index, endPos: r.end.index, insertedText: "True" };
-		},
+			return {
+				startPos: r.start.index,
+				endPos: r.end.index,
+				insertedText: 'True'
+			};
+		}
 	};
 }
 
 export function false_() {
 	return {
-		type: "false" as const,
+		type: 'false' as const,
 		named: true as const,
-		text: "False",
-		render: () => "False",
-		toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) =>
-			typeof s === "number"
-				? { startPos: s, endPos: e!, insertedText: "False" }
-				: { startPos: s.start.index, endPos: s.end.index, insertedText: "False" },
+		text: 'False',
+		render: () => 'False',
+		toEdit: (
+			s: number | { start: { index: number }; end: { index: number } },
+			e?: number
+		) =>
+			typeof s === 'number'
+				? { startPos: s, endPos: e!, insertedText: 'False' }
+				: {
+						startPos: s.start.index,
+						endPos: s.end.index,
+						insertedText: 'False'
+					},
 		replace: (t: FalseTree) => {
 			const r = t.range();
-			return { startPos: r.start.index, endPos: r.end.index, insertedText: "False" };
-		},
+			return {
+				startPos: r.start.index,
+				endPos: r.end.index,
+				insertedText: 'False'
+			};
+		}
 	};
 }
 
 export function none() {
 	return {
-		type: "none" as const,
+		type: 'none' as const,
 		named: true as const,
-		text: "None",
-		render: () => "None",
-		toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) =>
-			typeof s === "number"
-				? { startPos: s, endPos: e!, insertedText: "None" }
-				: { startPos: s.start.index, endPos: s.end.index, insertedText: "None" },
+		text: 'None',
+		render: () => 'None',
+		toEdit: (
+			s: number | { start: { index: number }; end: { index: number } },
+			e?: number
+		) =>
+			typeof s === 'number'
+				? { startPos: s, endPos: e!, insertedText: 'None' }
+				: {
+						startPos: s.start.index,
+						endPos: s.end.index,
+						insertedText: 'None'
+					},
 		replace: (t: NoneTree) => {
 			const r = t.range();
-			return { startPos: r.start.index, endPos: r.end.index, insertedText: "None" };
-		},
+			return {
+				startPos: r.start.index,
+				endPos: r.end.index,
+				insertedText: 'None'
+			};
+		}
 	};
 }
 
 export function await_(config: ConfigOf<Await>) {
 	const fields = {
-		primary_expression: config?.primaryExpression,
+		primary_expression: config?.primaryExpression
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "await" as const,
+		type: 'await' as const,
 		named: true as const,
 		fields,
 		children,
 		primaryExpression(primaryExpression_?: any) {
 			return primaryExpression_ !== undefined
-				? await_({ ...(config as any), primaryExpression: primaryExpression_ } as any)
+				? await_({
+						...(config as any),
+						primaryExpression: primaryExpression_
+					} as any)
 				: fields.primary_expression;
 		},
 		getChildren() {
@@ -4756,74 +5402,94 @@ export function await_(config: ConfigOf<Await>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: AwaitTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
 export function comment(text: string) {
 	return {
-		type: "comment" as const,
+		type: 'comment' as const,
 		named: true as const,
 		text: text,
 		render: () => text,
-		toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) =>
-			typeof s === "number"
+		toEdit: (
+			s: number | { start: { index: number }; end: { index: number } },
+			e?: number
+		) =>
+			typeof s === 'number'
 				? { startPos: s, endPos: e!, insertedText: text }
 				: { startPos: s.start.index, endPos: s.end.index, insertedText: text },
 		replace: (t: CommentTree) => {
 			const r = t.range();
-			return { startPos: r.start.index, endPos: r.end.index, insertedText: text };
-		},
+			return {
+				startPos: r.start.index,
+				endPos: r.end.index,
+				insertedText: text
+			};
+		}
 	};
 }
 
 export function lineContinuation(text: string) {
 	return {
-		type: "line_continuation" as const,
+		type: 'line_continuation' as const,
 		named: true as const,
 		text: text,
 		render: () => text,
-		toEdit: (s: number | { start: { index: number }; end: { index: number } }, e?: number) =>
-			typeof s === "number"
+		toEdit: (
+			s: number | { start: { index: number }; end: { index: number } },
+			e?: number
+		) =>
+			typeof s === 'number'
 				? { startPos: s, endPos: e!, insertedText: text }
 				: { startPos: s.start.index, endPos: s.end.index, insertedText: text },
 		replace: (t: LineContinuationTree) => {
 			const r = t.range();
-			return { startPos: r.start.index, endPos: r.end.index, insertedText: text };
-		},
+			return {
+				startPos: r.start.index,
+				endPos: r.end.index,
+				insertedText: text
+			};
+		}
 	};
 }
 
 export function asPatternTarget(child?: any) {
-	const hasChild = child && typeof child === "object" && "type" in child;
+	const hasChild = child && typeof child === 'object' && 'type' in child;
 	const children = hasChild ? [child] : [];
 	return {
-		type: "as_pattern_target" as const,
+		type: 'as_pattern_target' as const,
 		named: true as const,
 		children,
 		render() {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: AsPatternTargetTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
@@ -4831,27 +5497,36 @@ export function formatExpression(config: ConfigOf<FormatExpression>) {
 	const fields = {
 		expression: config?.expression,
 		type_conversion: config?.typeConversion,
-		format_specifier: config?.formatSpecifier,
+		format_specifier: config?.formatSpecifier
 	};
 	const children = (config as any)?.children ?? [];
 	return {
-		type: "format_expression" as const,
+		type: 'format_expression' as const,
 		named: true as const,
 		fields,
 		children,
 		expression(expression_?: any) {
 			return expression_ !== undefined
-				? formatExpression({ ...(config as any), expression: expression_ } as any)
+				? formatExpression({
+						...(config as any),
+						expression: expression_
+					} as any)
 				: fields.expression;
 		},
 		typeConversion(typeConversion_?: any) {
 			return typeConversion_ !== undefined
-				? formatExpression({ ...(config as any), typeConversion: typeConversion_ } as any)
+				? formatExpression({
+						...(config as any),
+						typeConversion: typeConversion_
+					} as any)
 				: fields.type_conversion;
 		},
 		formatSpecifier(formatSpecifier_?: any) {
 			return formatSpecifier_ !== undefined
-				? formatExpression({ ...(config as any), formatSpecifier: formatSpecifier_ } as any)
+				? formatExpression({
+						...(config as any),
+						formatSpecifier: formatSpecifier_
+					} as any)
 				: fields.format_specifier;
 		},
 		getChildren() {
@@ -4864,16 +5539,19 @@ export function formatExpression(config: ConfigOf<FormatExpression>) {
 			return render(this);
 		},
 		toEdit(
-			startOrRange: number | { start: { index: number }; end: { index: number } },
-			endPos?: number,
+			startOrRange:
+				| number
+				| { start: { index: number }; end: { index: number } },
+			endPos?: number
 		) {
-			if (typeof startOrRange === "number") return toEdit(this, startOrRange, endPos!);
+			if (typeof startOrRange === 'number')
+				return toEdit(this, startOrRange, endPos!);
 			return toEdit(this, startOrRange);
 		},
 		replace(target: FormatExpressionTree) {
 			const r = target.range();
 			return toEdit(this, r);
-		},
+		}
 	};
 }
 
@@ -5016,5 +5694,5 @@ export const _factoryMap: Record<string, (config?: any) => unknown> = {
 	comment: comment,
 	line_continuation: lineContinuation,
 	as_pattern_target: asPatternTarget,
-	format_expression: formatExpression,
+	format_expression: formatExpression
 };

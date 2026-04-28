@@ -15,11 +15,11 @@
  * `findMatches` integration (T033 stub).
  */
 
-import { readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
-import { loadLanguageForGrammar } from "../../packages/codegen/src/validate/common.ts";
-import { applyEdits } from "@sittir/rust";
-import type { Edit } from "@sittir/types";
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { loadLanguageForGrammar } from '../../packages/codegen/src/validate/common.ts';
+import { applyEdits } from '@sittir/rust';
+import type { Edit } from '@sittir/types';
 
 /** A function_item match marked for inlining. */
 interface InlineMatch {
@@ -47,14 +47,14 @@ export interface CodemodResult {
  * source and the number of insertions performed.
  */
 export async function runCodemodOnSource(
-	source: string,
+	source: string
 ): Promise<{ output: string; insertions: number }> {
-	const { Parser, lang } = await loadLanguageForGrammar("rust");
+	const { Parser, lang } = await loadLanguageForGrammar('rust');
 	const parser = new Parser();
 	parser.setLanguage(lang);
 	const tree = parser.parse(source);
 	if (tree === null) {
-		throw new Error("rust parser returned null tree");
+		throw new Error('rust parser returned null tree');
 	}
 	const matches = findInlineCandidates(tree.rootNode, source);
 	parser.delete();
@@ -63,7 +63,7 @@ export async function runCodemodOnSource(
 	const edits: Edit[] = matches.map((m) => ({
 		startPos: m.startByte,
 		endPos: m.startByte,
-		insertedText: `#[inline]\n${m.indent}`,
+		insertedText: `#[inline]\n${m.indent}`
 	}));
 	return { output: applyEdits(source, edits), insertions: edits.length };
 }
@@ -85,7 +85,7 @@ function findInlineCandidates(rootNode: any, source: string): InlineMatch[] {
 
 function visit(cursor: any, source: string, out: InlineMatch[]): void {
 	const node = cursor.currentNode;
-	if (node.type === "function_item") {
+	if (node.type === 'function_item') {
 		const candidate = considerFunction(node, source);
 		if (candidate !== null) out.push(candidate);
 		// Don't recurse into function bodies — nested fn defs are
@@ -108,10 +108,10 @@ function visit(cursor: any, source: string, out: InlineMatch[]): void {
  * starts with `#[inline]` or `#[inline(`).
  */
 function considerFunction(node: any, source: string): InlineMatch | null {
-	const body = node.childForFieldName("body");
-	if (body === null || body.type !== "block") return null;
+	const body = node.childForFieldName('body');
+	if (body === null || body.type !== 'block') return null;
 	const bodyText = source.slice(body.startIndex, body.endIndex);
-	const lineCount = bodyText.split("\n").length;
+	const lineCount = bodyText.split('\n').length;
 	if (lineCount > 5) return null;
 
 	// Walk preceding attribute_item siblings looking for #[inline].
@@ -129,7 +129,7 @@ function considerFunction(node: any, source: string): InlineMatch | null {
 	let firstAttrIdx = myIdx;
 	for (let i = myIdx - 1; i >= 0; i--) {
 		const sib = siblings[i];
-		if (sib.type === "attribute_item" || sib.type === "inner_attribute_item") {
+		if (sib.type === 'attribute_item' || sib.type === 'inner_attribute_item') {
 			const text = source.slice(sib.startIndex, sib.endIndex);
 			if (/^#!?\[\s*inline\b/.test(text)) return null;
 			firstAttrIdx = i;
@@ -144,7 +144,7 @@ function considerFunction(node: any, source: string): InlineMatch | null {
 	// anchorNode up to its first column. Lets the inserted attribute
 	// align with the function (top-level functions get '', nested
 	// ones inside an impl block get the impl's indentation).
-	const lineStart = source.lastIndexOf("\n", startByte - 1) + 1;
+	const lineStart = source.lastIndexOf('\n', startByte - 1) + 1;
 	const indent = source.slice(lineStart, startByte);
 	return { startByte, indent };
 }
@@ -153,15 +153,17 @@ function considerFunction(node: any, source: string): InlineMatch | null {
  * Apply the codemod to every `.rs` file in `corpusDir` (non-recursive,
  * sorted by filename). Returns one entry per file.
  */
-export async function runCodemodOnDir(corpusDir: string): Promise<CodemodResult[]> {
+export async function runCodemodOnDir(
+	corpusDir: string
+): Promise<CodemodResult[]> {
 	const entries = readdirSync(corpusDir, { withFileTypes: true })
-		.filter((e) => e.isFile() && e.name.endsWith(".rs"))
+		.filter((e) => e.isFile() && e.name.endsWith('.rs'))
 		.map((e) => e.name)
 		.sort();
 	const results: CodemodResult[] = [];
 	for (const name of entries) {
 		const path = join(corpusDir, name);
-		const source = readFileSync(path, "utf-8");
+		const source = readFileSync(path, 'utf-8');
 		const { output, insertions } = await runCodemodOnSource(source);
 		results.push({ path, output, insertions });
 	}

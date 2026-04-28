@@ -208,8 +208,8 @@ import {
 	crate_,
 	mutable_specifier_,
 	self_,
-	super_,
-} from "./factories.js";
+	super_
+} from './factories.js';
 import {
 	abstractTypeFrom,
 	arguments_From,
@@ -380,8 +380,8 @@ import {
 	whereClauseFrom,
 	wherePredicateFrom,
 	whileExpressionFrom,
-	yieldExpressionFrom,
-} from "./from.js";
+	yieldExpressionFrom
+} from './from.js';
 
 export const ir = {
 	// Branch node factories
@@ -389,205 +389,313 @@ export const ir = {
 	arguments: Object.assign(arguments_, { from: arguments_From }),
 	arrayExpression: Object.assign(array_expression_, {
 		from: arrayExpressionFrom,
-		semi: Object.assign(array_expression__semi_, { from: arrayExpressionSemiFrom }),
-		comma: Object.assign(array_expression__comma_, { from: arrayExpressionCommaFrom }),
+		semi: Object.assign(array_expression__semi_, {
+			from: arrayExpressionSemiFrom
+		}),
+		comma: Object.assign(array_expression__comma_, {
+			from: arrayExpressionCommaFrom
+		})
 	}),
 	arrayType: Object.assign(array_type_, { from: arrayTypeFrom }),
-	assignmentExpression: Object.assign(assignment_expression_, { from: assignmentExpressionFrom }),
+	assignmentExpression: Object.assign(assignment_expression_, {
+		from: assignmentExpressionFrom
+	}),
 	associatedType: Object.assign(associated_type_, { from: associatedTypeFrom }),
 	asyncBlock: Object.assign(async_block_, { from: asyncBlockFrom }),
 	attribute: Object.assign(attribute_, { from: attributeFrom }),
 	attributeItem: Object.assign(attribute_item_, { from: attributeItemFrom }),
-	awaitExpression: Object.assign(await_expression_, { from: awaitExpressionFrom }),
-	baseFieldInitializer: Object.assign(base_field_initializer_, { from: baseFieldInitializerFrom }),
-	binaryExpression: Object.assign(binary_expression_, { from: binaryExpressionFrom }),
+	awaitExpression: Object.assign(await_expression_, {
+		from: awaitExpressionFrom
+	}),
+	baseFieldInitializer: Object.assign(base_field_initializer_, {
+		from: baseFieldInitializerFrom
+	}),
+	binaryExpression: Object.assign(binary_expression_, {
+		from: binaryExpressionFrom
+	}),
 	block: Object.assign(block_, { from: blockFrom }),
 	blockComment: Object.assign(block_comment_, { from: blockCommentFrom }),
 	boundedType: Object.assign(bounded_type_, { from: boundedTypeFrom }),
 	bracketedType: Object.assign(bracketed_type_, { from: bracketedTypeFrom }),
-	breakExpression: Object.assign(break_expression_, { from: breakExpressionFrom }),
+	breakExpression: Object.assign(break_expression_, {
+		from: breakExpressionFrom
+	}),
 	callExpression: Object.assign(call_expression_, { from: callExpressionFrom }),
-	capturedPattern: Object.assign(captured_pattern_, { from: capturedPatternFrom }),
-	closureExpression: Object.assign(closure_expression_, { from: closureExpressionFrom }),
-	closureParameters: Object.assign(closure_parameters_, { from: closureParametersFrom }),
+	capturedPattern: Object.assign(captured_pattern_, {
+		from: capturedPatternFrom
+	}),
+	closureExpression: Object.assign(closure_expression_, {
+		from: closureExpressionFrom
+	}),
+	closureParameters: Object.assign(closure_parameters_, {
+		from: closureParametersFrom
+	}),
 	compoundAssignmentExpr: Object.assign(compound_assignment_expr_, {
-		from: compoundAssignmentExprFrom,
+		from: compoundAssignmentExprFrom
 	}),
 	constBlock: Object.assign(const_block_, { from: constBlockFrom }),
 	const: Object.assign(const_item_, { from: constItemFrom }),
 	constParameter: Object.assign(const_parameter_, { from: constParameterFrom }),
-	continueExpression: Object.assign(continue_expression_, { from: continueExpressionFrom }),
-	declarationList: Object.assign(declaration_list_, { from: declarationListFrom }),
+	continueExpression: Object.assign(continue_expression_, {
+		from: continueExpressionFrom
+	}),
+	declarationList: Object.assign(declaration_list_, {
+		from: declarationListFrom
+	}),
 	dynamicType: Object.assign(dynamic_type_, { from: dynamicTypeFrom }),
 	elseClause: Object.assign(else_clause_, { from: elseClauseFrom }),
 	enum: Object.assign(enum_item_, { from: enumItemFrom }),
 	enumVariant: Object.assign(enum_variant_, { from: enumVariantFrom }),
-	enumVariantList: Object.assign(enum_variant_list_, { from: enumVariantListFrom }),
-	expressionStatement: Object.assign(expression_statement_, { from: expressionStatementFrom }),
+	enumVariantList: Object.assign(enum_variant_list_, {
+		from: enumVariantListFrom
+	}),
+	expressionStatement: Object.assign(expression_statement_, {
+		from: expressionStatementFrom
+	}),
 	externCrateDeclaration: Object.assign(extern_crate_declaration_, {
-		from: externCrateDeclarationFrom,
+		from: externCrateDeclarationFrom
 	}),
 	externModifier: Object.assign(extern_modifier_, { from: externModifierFrom }),
-	fieldDeclaration: Object.assign(field_declaration_, { from: fieldDeclarationFrom }),
-	fieldDeclarationList: Object.assign(field_declaration_list_, { from: fieldDeclarationListFrom }),
-	fieldExpression: Object.assign(field_expression_, { from: fieldExpressionFrom }),
-	fieldInitializer: Object.assign(field_initializer_, { from: fieldInitializerFrom }),
-	fieldInitializerList: Object.assign(field_initializer_list_, { from: fieldInitializerListFrom }),
+	fieldDeclaration: Object.assign(field_declaration_, {
+		from: fieldDeclarationFrom
+	}),
+	fieldDeclarationList: Object.assign(field_declaration_list_, {
+		from: fieldDeclarationListFrom
+	}),
+	fieldExpression: Object.assign(field_expression_, {
+		from: fieldExpressionFrom
+	}),
+	fieldInitializer: Object.assign(field_initializer_, {
+		from: fieldInitializerFrom
+	}),
+	fieldInitializerList: Object.assign(field_initializer_list_, {
+		from: fieldInitializerListFrom
+	}),
 	fieldPattern: Object.assign(field_pattern_, {
 		from: fieldPatternFrom,
 		v0: Object.assign(field_pattern__v0_, { from: fieldPatternV0From }),
-		colon: Object.assign(field_pattern__colon_, { from: fieldPatternColonFrom }),
+		colon: Object.assign(field_pattern__colon_, { from: fieldPatternColonFrom })
 	}),
 	forExpression: Object.assign(for_expression_, { from: forExpressionFrom }),
 	forLifetimes: Object.assign(for_lifetimes_, { from: forLifetimesFrom }),
 	foreignMod: Object.assign(foreign_mod_item_, {
 		from: foreignModItemFrom,
-		semi: Object.assign(foreign_mod_item__semi_, { from: foreignModItemSemiFrom }),
-		body: Object.assign(foreign_mod_item__body_, { from: foreignModItemBodyFrom }),
+		semi: Object.assign(foreign_mod_item__semi_, {
+			from: foreignModItemSemiFrom
+		}),
+		body: Object.assign(foreign_mod_item__body_, {
+			from: foreignModItemBodyFrom
+		})
 	}),
 	function: Object.assign(function_item_, { from: functionItemFrom }),
-	functionModifiers: Object.assign(function_modifiers_, { from: functionModifiersFrom }),
-	functionSignature: Object.assign(function_signature_item_, { from: functionSignatureItemFrom }),
+	functionModifiers: Object.assign(function_modifiers_, {
+		from: functionModifiersFrom
+	}),
+	functionSignature: Object.assign(function_signature_item_, {
+		from: functionSignatureItemFrom
+	}),
 	functionType: Object.assign(function_type_, {
 		from: functionTypeFrom,
-		trait: Object.assign(function_type__trait_, { from: functionTypeTraitFrom }),
-		fn: Object.assign(function_type__fn_, { from: functionTypeFnFrom }),
+		trait: Object.assign(function_type__trait_, {
+			from: functionTypeTraitFrom
+		}),
+		fn: Object.assign(function_type__fn_, { from: functionTypeFnFrom })
 	}),
 	genBlock: Object.assign(gen_block_, { from: genBlockFrom }),
-	genericFunction: Object.assign(generic_function_, { from: genericFunctionFrom }),
+	genericFunction: Object.assign(generic_function_, {
+		from: genericFunctionFrom
+	}),
 	genericPattern: Object.assign(generic_pattern_, { from: genericPatternFrom }),
 	genericType: Object.assign(generic_type_, { from: genericTypeFrom }),
 	genericTypeWithTurbofish: Object.assign(generic_type_with_turbofish_, {
-		from: genericTypeWithTurbofishFrom,
+		from: genericTypeWithTurbofishFrom
 	}),
 	higherRankedTraitBound: Object.assign(higher_ranked_trait_bound_, {
-		from: higherRankedTraitBoundFrom,
+		from: higherRankedTraitBoundFrom
 	}),
 	ifExpression: Object.assign(if_expression_, { from: ifExpressionFrom }),
 	impl: Object.assign(impl_item_, {
 		from: implItemFrom,
 		body: Object.assign(impl_item__body_, { from: implItemBodyFrom }),
-		semi: Object.assign(impl_item__semi_, { from: implItemSemiFrom }),
+		semi: Object.assign(impl_item__semi_, { from: implItemSemiFrom })
 	}),
-	indexExpression: Object.assign(index_expression_, { from: indexExpressionFrom }),
-	innerAttribute: Object.assign(inner_attribute_item_, { from: innerAttributeItemFrom }),
+	indexExpression: Object.assign(index_expression_, {
+		from: indexExpressionFrom
+	}),
+	innerAttribute: Object.assign(inner_attribute_item_, {
+		from: innerAttributeItemFrom
+	}),
 	label: Object.assign(label_, { from: labelFrom }),
 	letChain: Object.assign(let_chain_, { from: letChainFrom }),
 	letCondition: Object.assign(let_condition_, { from: letConditionFrom }),
 	letDeclaration: Object.assign(let_declaration_, { from: letDeclarationFrom }),
 	lifetime: Object.assign(lifetime_, { from: lifetimeFrom }),
-	lifetimeParameter: Object.assign(lifetime_parameter_, { from: lifetimeParameterFrom }),
+	lifetimeParameter: Object.assign(lifetime_parameter_, {
+		from: lifetimeParameterFrom
+	}),
 	lineComment: Object.assign(line_comment_, {
 		from: lineCommentFrom,
 		v0: Object.assign(line_comment__v0_, { from: lineCommentV0From }),
-		outer: Object.assign(line_comment__outer_, { from: lineCommentOuterFrom }),
+		outer: Object.assign(line_comment__outer_, { from: lineCommentOuterFrom })
 	}),
 	loopExpression: Object.assign(loop_expression_, { from: loopExpressionFrom }),
 	macroDefinition: Object.assign(macro_definition_, {
 		from: macroDefinitionFrom,
-		paren: Object.assign(macro_definition__paren_, { from: macroDefinitionParenFrom }),
-		bracket: Object.assign(macro_definition__bracket_, { from: macroDefinitionBracketFrom }),
-		brace: Object.assign(macro_definition__brace_, { from: macroDefinitionBraceFrom }),
+		paren: Object.assign(macro_definition__paren_, {
+			from: macroDefinitionParenFrom
+		}),
+		bracket: Object.assign(macro_definition__bracket_, {
+			from: macroDefinitionBracketFrom
+		}),
+		brace: Object.assign(macro_definition__brace_, {
+			from: macroDefinitionBraceFrom
+		})
 	}),
-	macroInvocation: Object.assign(macro_invocation_, { from: macroInvocationFrom }),
+	macroInvocation: Object.assign(macro_invocation_, {
+		from: macroInvocationFrom
+	}),
 	macroRule: Object.assign(macro_rule_, { from: macroRuleFrom }),
 	matchArm: Object.assign(match_arm_, { from: matchArmFrom }),
 	matchBlock: Object.assign(match_block_, { from: matchBlockFrom }),
-	matchExpression: Object.assign(match_expression_, { from: matchExpressionFrom }),
+	matchExpression: Object.assign(match_expression_, {
+		from: matchExpressionFrom
+	}),
 	matchPattern: Object.assign(match_pattern_, { from: matchPatternFrom }),
 	mod: Object.assign(mod_item_, {
 		from: modItemFrom,
 		semi: Object.assign(mod_item__semi_, { from: modItemSemiFrom }),
-		body: Object.assign(mod_item__body_, { from: modItemBodyFrom }),
+		body: Object.assign(mod_item__body_, { from: modItemBodyFrom })
 	}),
 	mutPattern: Object.assign(mut_pattern_, { from: mutPatternFrom }),
-	negativeLiteral: Object.assign(negative_literal_, { from: negativeLiteralFrom }),
+	negativeLiteral: Object.assign(negative_literal_, {
+		from: negativeLiteralFrom
+	}),
 	orPattern: Object.assign(or_pattern_, {
 		from: orPatternFrom,
 		right: Object.assign(or_pattern__right_, { from: orPatternRightFrom }),
-		v1: Object.assign(or_pattern__v1_, { from: orPatternV1From }),
+		v1: Object.assign(or_pattern__v1_, { from: orPatternV1From })
 	}),
 	orderedFieldDeclarationList: Object.assign(ordered_field_declaration_list_, {
-		from: orderedFieldDeclarationListFrom,
+		from: orderedFieldDeclarationListFrom
 	}),
 	parameter: Object.assign(parameter_, { from: parameterFrom }),
 	parameters: Object.assign(parameters_, { from: parametersFrom }),
 	parenthesizedExpression: Object.assign(parenthesized_expression_, {
-		from: parenthesizedExpressionFrom,
+		from: parenthesizedExpressionFrom
 	}),
 	pointerType: Object.assign(pointer_type_, {
 		from: pointerTypeFrom,
 		const: Object.assign(pointer_type__const_, { from: pointerTypeConstFrom }),
 		mutable_specifier: Object.assign(pointer_type__mutable_specifier_, {
-			from: pointerTypeMutableSpecifierFrom,
-		}),
+			from: pointerTypeMutableSpecifierFrom
+		})
 	}),
 	qualifiedType: Object.assign(qualified_type_, { from: qualifiedTypeFrom }),
 	rangeExpression: Object.assign(range_expression_, {
 		from: rangeExpressionFrom,
-		end: Object.assign(range_expression__end_, { from: rangeExpressionEndFrom }),
+		end: Object.assign(range_expression__end_, {
+			from: rangeExpressionEndFrom
+		}),
 		v1: Object.assign(range_expression__v1_, { from: rangeExpressionV1From }),
-		v2: Object.assign(range_expression__v2_, { from: rangeExpressionV2From }),
+		v2: Object.assign(range_expression__v2_, { from: rangeExpressionV2From })
 	}),
 	rangePattern: Object.assign(range_pattern_, {
 		from: rangePatternFrom,
-		ellipsis: Object.assign(range_pattern__ellipsis_, { from: rangePatternEllipsisFrom }),
-		dotdot: Object.assign(range_pattern__dotdot_, { from: rangePatternDotdotFrom }),
-		tok_2e2e3d: Object.assign(range_pattern__tok_2e2e3d_, { from: rangePatternTok_2e2e3dFrom }),
+		ellipsis: Object.assign(range_pattern__ellipsis_, {
+			from: rangePatternEllipsisFrom
+		}),
+		dotdot: Object.assign(range_pattern__dotdot_, {
+			from: rangePatternDotdotFrom
+		}),
+		tok_2e2e3d: Object.assign(range_pattern__tok_2e2e3d_, {
+			from: rangePatternTok_2e2e3dFrom
+		})
 	}),
-	rawStringLiteral: Object.assign(raw_string_literal_, { from: rawStringLiteralFrom }),
+	rawStringLiteral: Object.assign(raw_string_literal_, {
+		from: rawStringLiteralFrom
+	}),
 	refPattern: Object.assign(ref_pattern_, { from: refPatternFrom }),
 	referenceExpression: Object.assign(reference_expression_, {
 		from: referenceExpressionFrom,
-		const: Object.assign(reference_expression__const_, { from: referenceExpressionConstFrom }),
-		mutable_specifier: Object.assign(reference_expression__mutable_specifier_, {
-			from: referenceExpressionMutableSpecifierFrom,
+		const: Object.assign(reference_expression__const_, {
+			from: referenceExpressionConstFrom
 		}),
+		mutable_specifier: Object.assign(reference_expression__mutable_specifier_, {
+			from: referenceExpressionMutableSpecifierFrom
+		})
 	}),
-	referencePattern: Object.assign(reference_pattern_, { from: referencePatternFrom }),
+	referencePattern: Object.assign(reference_pattern_, {
+		from: referencePatternFrom
+	}),
 	referenceType: Object.assign(reference_type_, { from: referenceTypeFrom }),
-	removedTraitBound: Object.assign(removed_trait_bound_, { from: removedTraitBoundFrom }),
-	returnExpression: Object.assign(return_expression_, { from: returnExpressionFrom }),
-	scopedIdentifier: Object.assign(scoped_identifier_, { from: scopedIdentifierFrom }),
-	scopedTypeIdentifier: Object.assign(scoped_type_identifier_, { from: scopedTypeIdentifierFrom }),
+	removedTraitBound: Object.assign(removed_trait_bound_, {
+		from: removedTraitBoundFrom
+	}),
+	returnExpression: Object.assign(return_expression_, {
+		from: returnExpressionFrom
+	}),
+	scopedIdentifier: Object.assign(scoped_identifier_, {
+		from: scopedIdentifierFrom
+	}),
+	scopedTypeIdentifier: Object.assign(scoped_type_identifier_, {
+		from: scopedTypeIdentifierFrom
+	}),
 	scopedUseList: Object.assign(scoped_use_list_, { from: scopedUseListFrom }),
 	selfParameter: Object.assign(self_parameter_, { from: selfParameterFrom }),
 	shorthandFieldInitializer: Object.assign(shorthand_field_initializer_, {
-		from: shorthandFieldInitializerFrom,
+		from: shorthandFieldInitializerFrom
 	}),
 	slicePattern: Object.assign(slice_pattern_, { from: slicePatternFrom }),
 	sourceFile: Object.assign(source_file_, { from: sourceFileFrom }),
 	static: Object.assign(static_item_, { from: staticItemFrom }),
 	stringLiteral: Object.assign(string_literal_, { from: stringLiteralFrom }),
-	structExpression: Object.assign(struct_expression_, { from: structExpressionFrom }),
+	structExpression: Object.assign(struct_expression_, {
+		from: structExpressionFrom
+	}),
 	struct: Object.assign(struct_item_, {
 		from: structItemFrom,
-		where_clause: Object.assign(struct_item__where_clause_, { from: structItemWhereClauseFrom }),
-		semi: Object.assign(struct_item__semi_, { from: structItemSemiFrom }),
+		where_clause: Object.assign(struct_item__where_clause_, {
+			from: structItemWhereClauseFrom
+		}),
+		semi: Object.assign(struct_item__semi_, { from: structItemSemiFrom })
 	}),
 	structPattern: Object.assign(struct_pattern_, { from: structPatternFrom }),
-	tokenBindingPattern: Object.assign(token_binding_pattern_, { from: tokenBindingPatternFrom }),
-	tokenRepetition: Object.assign(token_repetition_, { from: tokenRepetitionFrom }),
+	tokenBindingPattern: Object.assign(token_binding_pattern_, {
+		from: tokenBindingPatternFrom
+	}),
+	tokenRepetition: Object.assign(token_repetition_, {
+		from: tokenRepetitionFrom
+	}),
 	tokenRepetitionPattern: Object.assign(token_repetition_pattern_, {
-		from: tokenRepetitionPatternFrom,
+		from: tokenRepetitionPatternFrom
 	}),
 	tokenTree: Object.assign(token_tree_, { from: tokenTreeFrom }),
-	tokenTreePattern: Object.assign(token_tree_pattern_, { from: tokenTreePatternFrom }),
+	tokenTreePattern: Object.assign(token_tree_pattern_, {
+		from: tokenTreePatternFrom
+	}),
 	traitBounds: Object.assign(trait_bounds_, { from: traitBoundsFrom }),
 	trait: Object.assign(trait_item_, { from: traitItemFrom }),
 	tryBlock: Object.assign(try_block_, { from: tryBlockFrom }),
 	tryExpression: Object.assign(try_expression_, { from: tryExpressionFrom }),
-	tupleExpression: Object.assign(tuple_expression_, { from: tupleExpressionFrom }),
+	tupleExpression: Object.assign(tuple_expression_, {
+		from: tupleExpressionFrom
+	}),
 	tuplePattern: Object.assign(tuple_pattern_, { from: tuplePatternFrom }),
-	tupleStructPattern: Object.assign(tuple_struct_pattern_, { from: tupleStructPatternFrom }),
+	tupleStructPattern: Object.assign(tuple_struct_pattern_, {
+		from: tupleStructPatternFrom
+	}),
 	tupleType: Object.assign(tuple_type_, { from: tupleTypeFrom }),
 	typeArguments: Object.assign(type_arguments_, { from: typeArgumentsFrom }),
 	typeBinding: Object.assign(type_binding_, { from: typeBindingFrom }),
-	typeCastExpression: Object.assign(type_cast_expression_, { from: typeCastExpressionFrom }),
+	typeCastExpression: Object.assign(type_cast_expression_, {
+		from: typeCastExpressionFrom
+	}),
 	type: Object.assign(type_item_, { from: typeItemFrom }),
 	typeParameter: Object.assign(type_parameter_, { from: typeParameterFrom }),
 	typeParameters: Object.assign(type_parameters_, { from: typeParametersFrom }),
-	unaryExpression: Object.assign(unary_expression_, { from: unaryExpressionFrom }),
+	unaryExpression: Object.assign(unary_expression_, {
+		from: unaryExpressionFrom
+	}),
 	union: Object.assign(union_item_, { from: unionItemFrom }),
 	unsafeBlock: Object.assign(unsafe_block_, { from: unsafeBlockFrom }),
 	useAsClause: Object.assign(use_as_clause_, { from: useAsClauseFrom }),
@@ -595,16 +703,26 @@ export const ir = {
 	useDeclaration: Object.assign(use_declaration_, { from: useDeclarationFrom }),
 	useList: Object.assign(use_list_, { from: useListFrom }),
 	useWildcard: Object.assign(use_wildcard_, { from: useWildcardFrom }),
-	variadicParameter: Object.assign(variadic_parameter_, { from: variadicParameterFrom }),
+	variadicParameter: Object.assign(variadic_parameter_, {
+		from: variadicParameterFrom
+	}),
 	visibilityModifier: Object.assign(visibility_modifier_, {
 		from: visibilityModifierFrom,
-		v0: Object.assign(visibility_modifier__v0_, { from: visibilityModifierV0From }),
-		paren: Object.assign(visibility_modifier__paren_, { from: visibilityModifierParenFrom }),
+		v0: Object.assign(visibility_modifier__v0_, {
+			from: visibilityModifierV0From
+		}),
+		paren: Object.assign(visibility_modifier__paren_, {
+			from: visibilityModifierParenFrom
+		})
 	}),
 	whereClause: Object.assign(where_clause_, { from: whereClauseFrom }),
 	wherePredicate: Object.assign(where_predicate_, { from: wherePredicateFrom }),
-	whileExpression: Object.assign(while_expression_, { from: whileExpressionFrom }),
-	yieldExpression: Object.assign(yield_expression_, { from: yieldExpressionFrom }),
+	whileExpression: Object.assign(while_expression_, {
+		from: whileExpressionFrom
+	}),
+	yieldExpression: Object.assign(yield_expression_, {
+		from: yieldExpressionFrom
+	}),
 
 	// Keyword factories
 	emptyStatement: empty_statement_,
@@ -637,31 +755,31 @@ export const ir = {
 	typeIdentifier: type_identifier_,
 
 	// Semantic operator aliases
-	neq: () => ({ type: "operator", fields: {}, text: "!=" }),
-	bitAnd: () => ({ type: "operator", fields: {}, text: "&" }),
-	and: () => ({ type: "operator", fields: {}, text: "&&" }),
-	mul: () => ({ type: "operator", fields: {}, text: "*" }),
-	add: () => ({ type: "operator", fields: {}, text: "+" }),
-	sub: () => ({ type: "operator", fields: {}, text: "-" }),
-	div: () => ({ type: "operator", fields: {}, text: "/" }),
-	lt: () => ({ type: "operator", fields: {}, text: "<" }),
-	shl: () => ({ type: "operator", fields: {}, text: "<<" }),
-	lte: () => ({ type: "operator", fields: {}, text: "<=" }),
-	eq: () => ({ type: "operator", fields: {}, text: "==" }),
-	gt: () => ({ type: "operator", fields: {}, text: ">" }),
-	gte: () => ({ type: "operator", fields: {}, text: ">=" }),
-	shr: () => ({ type: "operator", fields: {}, text: ">>" }),
-	bitXor: () => ({ type: "operator", fields: {}, text: "^" }),
-	bitOr: () => ({ type: "operator", fields: {}, text: "|" }),
-	or: () => ({ type: "operator", fields: {}, text: "||" }),
-	modAssign: () => ({ type: "operator", fields: {}, text: "%=" }),
-	bitAndAssign: () => ({ type: "operator", fields: {}, text: "&=" }),
-	mulAssign: () => ({ type: "operator", fields: {}, text: "*=" }),
-	addAssign: () => ({ type: "operator", fields: {}, text: "+=" }),
-	subAssign: () => ({ type: "operator", fields: {}, text: "-=" }),
-	divAssign: () => ({ type: "operator", fields: {}, text: "/=" }),
-	shlAssign: () => ({ type: "operator", fields: {}, text: "<<=" }),
-	shrAssign: () => ({ type: "operator", fields: {}, text: ">>=" }),
-	bitXorAssign: () => ({ type: "operator", fields: {}, text: "^=" }),
-	bitOrAssign: () => ({ type: "operator", fields: {}, text: "|=" }),
+	neq: () => ({ type: 'operator', fields: {}, text: '!=' }),
+	bitAnd: () => ({ type: 'operator', fields: {}, text: '&' }),
+	and: () => ({ type: 'operator', fields: {}, text: '&&' }),
+	mul: () => ({ type: 'operator', fields: {}, text: '*' }),
+	add: () => ({ type: 'operator', fields: {}, text: '+' }),
+	sub: () => ({ type: 'operator', fields: {}, text: '-' }),
+	div: () => ({ type: 'operator', fields: {}, text: '/' }),
+	lt: () => ({ type: 'operator', fields: {}, text: '<' }),
+	shl: () => ({ type: 'operator', fields: {}, text: '<<' }),
+	lte: () => ({ type: 'operator', fields: {}, text: '<=' }),
+	eq: () => ({ type: 'operator', fields: {}, text: '==' }),
+	gt: () => ({ type: 'operator', fields: {}, text: '>' }),
+	gte: () => ({ type: 'operator', fields: {}, text: '>=' }),
+	shr: () => ({ type: 'operator', fields: {}, text: '>>' }),
+	bitXor: () => ({ type: 'operator', fields: {}, text: '^' }),
+	bitOr: () => ({ type: 'operator', fields: {}, text: '|' }),
+	or: () => ({ type: 'operator', fields: {}, text: '||' }),
+	modAssign: () => ({ type: 'operator', fields: {}, text: '%=' }),
+	bitAndAssign: () => ({ type: 'operator', fields: {}, text: '&=' }),
+	mulAssign: () => ({ type: 'operator', fields: {}, text: '*=' }),
+	addAssign: () => ({ type: 'operator', fields: {}, text: '+=' }),
+	subAssign: () => ({ type: 'operator', fields: {}, text: '-=' }),
+	divAssign: () => ({ type: 'operator', fields: {}, text: '/=' }),
+	shlAssign: () => ({ type: 'operator', fields: {}, text: '<<=' }),
+	shrAssign: () => ({ type: 'operator', fields: {}, text: '>>=' }),
+	bitXorAssign: () => ({ type: 'operator', fields: {}, text: '^=' }),
+	bitOrAssign: () => ({ type: 'operator', fields: {}, text: '|=' })
 } as const;

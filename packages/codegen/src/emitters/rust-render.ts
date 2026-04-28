@@ -15,19 +15,19 @@
  * (T017) owns filesystem I/O and the template-directory copy.
  */
 
-import type { NodeMap } from "../compiler/types.ts";
-import type { AssembledNode } from "../compiler/node-map.ts";
+import type { NodeMap } from '../compiler/types.ts';
+import type { AssembledNode } from '../compiler/node-map.ts';
 import {
 	AssembledBranch,
 	AssembledContainer,
 	AssembledPolymorph,
-	AssembledGroup,
-} from "../compiler/node-map.ts";
-import type { TemplateFile } from "./template-hash.ts";
-import { computeTemplateBundleHash } from "./template-hash.ts";
+	AssembledGroup
+} from '../compiler/node-map.ts';
+import type { TemplateFile } from './template-hash.ts';
+import { computeTemplateBundleHash } from './template-hash.ts';
 
 /** Grammars the emitter supports. Matches the three per-grammar packages. */
-export type Grammar = "rust" | "typescript" | "python";
+export type Grammar = 'rust' | 'typescript' | 'python';
 
 /**
  * Output of a single emit pass. Each field names a file path
@@ -140,31 +140,31 @@ serde = { workspace = true }
 // promoted keyword field). Dropping it here would shadow the field
 // lookup at struct-derive time.
 const RESERVED_IDENTS = new Set([
-	"true",
-	"false",
-	"none",
-	"null",
-	"empty",
-	"and",
-	"or",
-	"not",
-	"is",
-	"if",
-	"elif",
-	"else",
-	"endif",
-	"for",
-	"endfor",
-	"loop",
+	'true',
+	'false',
+	'none',
+	'null',
+	'empty',
+	'and',
+	'or',
+	'not',
+	'is',
+	'if',
+	'elif',
+	'else',
+	'endif',
+	'for',
+	'endfor',
+	'loop'
 ]);
 
 const SHARED_POSITIONAL = new Set([
-	"children",
-	"children_list",
-	"variant",
-	"text",
-	"trailing_sep",
-	"leading_sep",
+	'children',
+	'children_list',
+	'variant',
+	'text',
+	'trailing_sep',
+	'leading_sep'
 ]);
 
 /**
@@ -173,7 +173,7 @@ const SHARED_POSITIONAL = new Set([
  * or a `join*` filter). The distinction drives the generated struct's
  * field type: `String` for scalar, `Vec<String>` for list.
  */
-type IdentShape = "scalar" | "list";
+type IdentShape = 'scalar' | 'list';
 
 /**
  * Extract the set of variable identifiers referenced by a Jinja
@@ -198,8 +198,8 @@ function scanTemplateIdentifiers(body: string): Map<string, IdentShape> {
 	const record = (id: string, shape: IdentShape): void => {
 		if (RESERVED_IDENTS.has(id)) return;
 		const prior = out.get(id);
-		if (prior === "list" || shape === "list") out.set(id, "list");
-		else if (prior === undefined) out.set(id, "scalar");
+		if (prior === 'list' || shape === 'list') out.set(id, 'list');
+		else if (prior === undefined) out.set(id, 'scalar');
 	};
 
 	// {{ expr | filter(...) }} — first identifier is the source.
@@ -209,25 +209,26 @@ function scanTemplateIdentifiers(body: string): Map<string, IdentShape> {
 	let m: RegExpExecArray | null;
 	while ((m = exprRe.exec(body)) !== null) {
 		const id = m[1]!;
-		const rest = m[2] ?? "";
+		const rest = m[2] ?? '';
 		const firstFilter = /\|\s*([a-zA-Z_][a-zA-Z0-9_]*)/.exec(rest);
-		const filterName = firstFilter?.[1] ?? "";
+		const filterName = firstFilter?.[1] ?? '';
 		const isJoin =
-			filterName === "join" ||
-			filterName === "joinWithTrailing" ||
-			filterName === "joinWithLeading" ||
-			filterName === "joinWithFlanks";
-		record(id, isJoin ? "list" : "scalar");
+			filterName === 'join' ||
+			filterName === 'joinWithTrailing' ||
+			filterName === 'joinWithLeading' ||
+			filterName === 'joinWithFlanks';
+		record(id, isJoin ? 'list' : 'scalar');
 	}
 	// {% if expr %} / {% elif expr %} — first identifier in the condition.
 	const ifRe = /\{%-?\s*(?:if|elif)\s+([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
 	while ((m = ifRe.exec(body)) !== null) {
-		record(m[1]!, "scalar");
+		record(m[1]!, 'scalar');
 	}
 	// {% for x in y %} — y is the iterable.
-	const forRe = /\{%-?\s*for\s+[a-zA-Z_][a-zA-Z0-9_]*\s+in\s+([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
+	const forRe =
+		/\{%-?\s*for\s+[a-zA-Z_][a-zA-Z0-9_]*\s+in\s+([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
 	while ((m = forRe.exec(body)) !== null) {
-		record(m[1]!, "list");
+		record(m[1]!, 'list');
 	}
 	return out;
 }
@@ -237,58 +238,58 @@ function scanTemplateIdentifiers(body: string): Map<string, IdentShape> {
 // ----------------------------------------------------------------------
 
 const RUST_KEYWORDS = new Set([
-	"as",
-	"break",
-	"const",
-	"continue",
-	"crate",
-	"else",
-	"enum",
-	"extern",
-	"false",
-	"fn",
-	"for",
-	"if",
-	"impl",
-	"in",
-	"let",
-	"loop",
-	"match",
-	"mod",
-	"move",
-	"mut",
-	"pub",
-	"ref",
-	"return",
-	"self",
-	"Self",
-	"static",
-	"struct",
-	"super",
-	"trait",
-	"true",
-	"type",
-	"unsafe",
-	"use",
-	"where",
-	"while",
-	"async",
-	"await",
-	"dyn",
-	"abstract",
-	"become",
-	"box",
-	"do",
-	"final",
-	"macro",
-	"override",
-	"priv",
-	"typeof",
-	"unsized",
-	"virtual",
-	"yield",
-	"try",
-	"union",
+	'as',
+	'break',
+	'const',
+	'continue',
+	'crate',
+	'else',
+	'enum',
+	'extern',
+	'false',
+	'fn',
+	'for',
+	'if',
+	'impl',
+	'in',
+	'let',
+	'loop',
+	'match',
+	'mod',
+	'move',
+	'mut',
+	'pub',
+	'ref',
+	'return',
+	'self',
+	'Self',
+	'static',
+	'struct',
+	'super',
+	'trait',
+	'true',
+	'type',
+	'unsafe',
+	'use',
+	'where',
+	'while',
+	'async',
+	'await',
+	'dyn',
+	'abstract',
+	'become',
+	'box',
+	'do',
+	'final',
+	'macro',
+	'override',
+	'priv',
+	'typeof',
+	'unsized',
+	'virtual',
+	'yield',
+	'try',
+	'union'
 ]);
 
 /** Keywords that CANNOT be raw identifiers in Rust — they must be
@@ -299,7 +300,7 @@ const RUST_KEYWORDS = new Set([
  *  reference these names will fail compilation — they require a
  *  template-author-side fix (rename the grammar field or a codegen
  *  pre-pass that renames at emit time). */
-const RUST_NON_RAWABLE_KEYWORDS = new Set(["crate", "self", "super", "Self"]);
+const RUST_NON_RAWABLE_KEYWORDS = new Set(['crate', 'self', 'super', 'Self']);
 
 /** Rust keyword → raw-identifier form. Askama lets us declare the
  *  struct field under `r#kw` and still use `{{ kw }}` in the template
@@ -326,11 +327,11 @@ function structNameFor(kind: string, node: AssembledNode | undefined): string {
 
 function pascal(s: string): string {
 	return s
-		.replace(/^_+/, "") // strip leading underscores (hidden-kind marker)
-		.split("_")
+		.replace(/^_+/, '') // strip leading underscores (hidden-kind marker)
+		.split('_')
 		.filter(Boolean)
 		.map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-		.join("");
+		.join('');
 }
 
 // ----------------------------------------------------------------------
@@ -348,7 +349,11 @@ interface EmittedStruct {
 	fields: EmittedField[]; // non-shared variable names referenced by the template
 }
 
-function emitStruct(kind: string, body: string, node: AssembledNode | undefined): EmittedStruct {
+function emitStruct(
+	kind: string,
+	body: string,
+	node: AssembledNode | undefined
+): EmittedStruct {
 	const name = structNameFor(kind, node);
 	const idents = scanTemplateIdentifiers(body);
 	const fields: EmittedField[] = [];
@@ -361,14 +366,16 @@ function emitStruct(kind: string, body: string, node: AssembledNode | undefined)
 }
 
 function rustFieldType(shape: IdentShape): string {
-	return shape === "list" ? "Vec<String>" : "String";
+	return shape === 'list' ? 'Vec<String>' : 'String';
 }
 
 function renderStructDefs(structs: EmittedStruct[]): string {
 	const lines: string[] = [];
 	for (const s of structs) {
 		lines.push(`#[derive(::askama::Template)]`);
-		lines.push(`#[template(path = ${JSON.stringify(`${s.kind}.jinja`)}, escape = "none")]`);
+		lines.push(
+			`#[template(path = ${JSON.stringify(`${s.kind}.jinja`)}, escape = "none")]`
+		);
 		lines.push(`pub struct ${s.name} {`);
 		// Shared positional fields (always emitted — keeps the struct
 		// uniform even when a template doesn't reference them).
@@ -392,22 +399,34 @@ function renderStructDefs(structs: EmittedStruct[]): string {
 			lines.push(`    pub ${rustFieldIdent(f.name)}_list: Vec<String>,`);
 		}
 		lines.push(`}`);
-		lines.push("");
+		lines.push('');
 	}
-	return lines.join("\n");
+	return lines.join('\n');
 }
 
 function renderDispatchFn(structs: EmittedStruct[]): string {
 	const lines: string[] = [];
 	lines.push(`use ::askama::Template as _AskamaTemplate;`);
-	lines.push("");
-	lines.push(`/// Render the given NodeData kind using its generated askama template struct.`);
-	lines.push(`/// Matches on the source kind name (\`_X\` for hidden user-facing aliases,`);
-	lines.push(`/// \`X\` for visible) — mirrors what NodeData.\$type carries at runtime.`);
+	lines.push('');
+	lines.push(
+		`/// Render the given NodeData kind using its generated askama template struct.`
+	);
+	lines.push(
+		`/// Matches on the source kind name (\`_X\` for hidden user-facing aliases,`
+	);
+	lines.push(
+		`/// \`X\` for visible) — mirrors what NodeData.\$type carries at runtime.`
+	);
 	lines.push(`///`);
-	lines.push(`/// The render uses \`render_with_values(ctx.as_values())\` so the`);
-	lines.push(`/// flank-aware filters (\`joinWithTrailing\` / \`joinWithLeading\` /`);
-	lines.push(`/// \`joinWithFlanks\`) can read \`trailing_anon\` / \`leading_anon\` from`);
+	lines.push(
+		`/// The render uses \`render_with_values(ctx.as_values())\` so the`
+	);
+	lines.push(
+		`/// flank-aware filters (\`joinWithTrailing\` / \`joinWithLeading\` /`
+	);
+	lines.push(
+		`/// \`joinWithFlanks\`) can read \`trailing_anon\` / \`leading_anon\` from`
+	);
 	lines.push(`/// the context — matching the TS engine's \`_trailing_anon\` /`);
 	lines.push(`/// \`_leading_anon\` side-channel on the children array.`);
 	lines.push(`pub fn render_dispatch(`);
@@ -430,10 +449,10 @@ function renderDispatchFn(structs: EmittedStruct[]): string {
 			// element) forms from TemplateContext. Both default to
 			// empty so optional fields don't panic on absence.
 			lines.push(
-				`                ${rustFieldIdent(f.name)}: ctx.fields.get(${JSON.stringify(f.name)}).cloned().unwrap_or_default(),`,
+				`                ${rustFieldIdent(f.name)}: ctx.fields.get(${JSON.stringify(f.name)}).cloned().unwrap_or_default(),`
 			);
 			lines.push(
-				`                ${rustFieldIdent(f.name)}_list: ctx.fields_list.get(${JSON.stringify(f.name)}).cloned().unwrap_or_default(),`,
+				`                ${rustFieldIdent(f.name)}_list: ctx.fields_list.get(${JSON.stringify(f.name)}).cloned().unwrap_or_default(),`
 			);
 		}
 		lines.push(`            };`);
@@ -441,11 +460,13 @@ function renderDispatchFn(structs: EmittedStruct[]): string {
 		lines.push(`        }`);
 	}
 	lines.push(`        other => Err(::askama::Error::Custom(`);
-	lines.push(`            format!("render_dispatch: no template for kind '{}'", other).into(),`);
+	lines.push(
+		`            format!("render_dispatch: no template for kind '{}'", other).into(),`
+	);
 	lines.push(`        )),`);
 	lines.push(`    }`);
 	lines.push(`}`);
-	return lines.join("\n");
+	return lines.join('\n');
 }
 
 // ----------------------------------------------------------------------
@@ -495,7 +516,7 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 				// yet with a variantChildKind.
 				if (!map.has(childKind)) {
 					const unpaired = node.forms.find(
-						(f) => !Array.from(map.values()).includes(f.name) || true,
+						(f) => !Array.from(map.values()).includes(f.name) || true
 					);
 					if (unpaired) map.set(childKind, unpaired.name);
 				}
@@ -508,23 +529,33 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 
 function renderGrammarMeta(lang: Grammar, meta: MetaData): string {
 	const lines: string[] = [];
-	lines.push(`/// Per-grammar metadata — separator / variant-label / list-container tables.`);
+	lines.push(
+		`/// Per-grammar metadata — separator / variant-label / list-container tables.`
+	);
 	lines.push(`/// Implements the \`sittir_core::prepare::GrammarMeta\` trait.`);
 	lines.push(`pub struct ${pascal(lang)}GrammarMeta;`);
-	lines.push("");
-	lines.push(`impl ::sittir_core::prepare::GrammarMeta for ${pascal(lang)}GrammarMeta {`);
+	lines.push('');
+	lines.push(
+		`impl ::sittir_core::prepare::GrammarMeta for ${pascal(lang)}GrammarMeta {`
+	);
 	// separator_for
 	lines.push(`    fn separator_for(&self, kind: &str) -> Option<&str> {`);
 	lines.push(`        match kind {`);
-	const sortedSeps = Array.from(meta.separators.entries()).sort(([a], [b]) => a.localeCompare(b));
+	const sortedSeps = Array.from(meta.separators.entries()).sort(([a], [b]) =>
+		a.localeCompare(b)
+	);
 	for (const [k, s] of sortedSeps) {
-		lines.push(`            ${JSON.stringify(k)} => Some(${JSON.stringify(s)}),`);
+		lines.push(
+			`            ${JSON.stringify(k)} => Some(${JSON.stringify(s)}),`
+		);
 	}
 	lines.push(`            _ => None,`);
 	lines.push(`        }`);
 	lines.push(`    }`);
 	// variant_for
-	lines.push(`    fn variant_for(&self, parent_kind: &str, child_kind: &str) -> Option<&str> {`);
+	lines.push(
+		`    fn variant_for(&self, parent_kind: &str, child_kind: &str) -> Option<&str> {`
+	);
 	lines.push(`        match (parent_kind, child_kind) {`);
 	const sortedVariants: [string, string, string][] = [];
 	for (const [parent, m] of meta.variants) {
@@ -532,10 +563,12 @@ function renderGrammarMeta(lang: Grammar, meta: MetaData): string {
 			sortedVariants.push([parent, child, label]);
 		}
 	}
-	sortedVariants.sort((a, b) => a[0].localeCompare(b[0]) || a[1].localeCompare(b[1]));
+	sortedVariants.sort(
+		(a, b) => a[0].localeCompare(b[0]) || a[1].localeCompare(b[1])
+	);
 	for (const [p, c, l] of sortedVariants) {
 		lines.push(
-			`            (${JSON.stringify(p)}, ${JSON.stringify(c)}) => Some(${JSON.stringify(l)}),`,
+			`            (${JSON.stringify(p)}, ${JSON.stringify(c)}) => Some(${JSON.stringify(l)}),`
 		);
 	}
 	lines.push(`            _ => None,`);
@@ -548,13 +581,13 @@ function renderGrammarMeta(lang: Grammar, meta: MetaData): string {
 	if (sortedList.length === 0) {
 		lines.push(`            _ if false => true`);
 	} else {
-		const arms = sortedList.map((k) => JSON.stringify(k)).join(" | ");
+		const arms = sortedList.map((k) => JSON.stringify(k)).join(' | ');
 		lines.push(`            ${arms}`);
 	}
 	lines.push(`        )`);
 	lines.push(`    }`);
 	lines.push(`}`);
-	return lines.join("\n");
+	return lines.join('\n');
 }
 
 // ----------------------------------------------------------------------
@@ -585,18 +618,18 @@ pub use templates::{render_dispatch, ${pascal(lang)}GrammarMeta};
  */
 export function emitHashFiles(
 	lang: Grammar,
-	files: readonly TemplateFile[],
-): { hashRs: RustRenderEmit["hashRs"]; hashTs: RustRenderEmit["hashTs"] } {
+	files: readonly TemplateFile[]
+): { hashRs: RustRenderEmit['hashRs']; hashTs: RustRenderEmit['hashTs'] } {
 	const hash = computeTemplateBundleHash(files);
 	return {
 		hashRs: {
 			path: `packages/${lang}/rust-render/src/hash.rs`,
-			contents: `${hashRsHeader(lang)}\npub const TEMPLATE_BUNDLE_HASH: &str = "${hash}";\n`,
+			contents: `${hashRsHeader(lang)}\npub const TEMPLATE_BUNDLE_HASH: &str = "${hash}";\n`
 		},
 		hashTs: {
 			path: `packages/${lang}/src/hash.ts`,
-			contents: `${hashTsHeader(lang)}\nexport const TEMPLATE_BUNDLE_HASH = '${hash}'\n`,
-		},
+			contents: `${hashTsHeader(lang)}\nexport const TEMPLATE_BUNDLE_HASH = '${hash}'\n`
+		}
 	};
 }
 
@@ -615,15 +648,17 @@ export function emitHashFiles(
 export function emitRenderCrate(
 	lang: Grammar,
 	files: readonly TemplateFile[],
-	nodeMap: NodeMap,
+	nodeMap: NodeMap
 ): RustRenderEmit {
 	const { hashRs, hashTs } = emitHashFiles(lang, files);
 	const structs: EmittedStruct[] = [];
 	// Same order the hash function sorts under — deterministic output.
-	const sortedFiles = [...files].sort((a, b) => a.filename.localeCompare(b.filename));
+	const sortedFiles = [...files].sort((a, b) =>
+		a.filename.localeCompare(b.filename)
+	);
 	for (const f of sortedFiles) {
-		if (!f.filename.endsWith(".jinja")) continue;
-		const kind = f.filename.slice(0, -".jinja".length);
+		if (!f.filename.endsWith('.jinja')) continue;
+		const kind = f.filename.slice(0, -'.jinja'.length);
 		const node = nodeMap.nodes.get(kind);
 		// Only user-facing nodes get templates emitted (see templates.ts
 		// emitJinjaTemplates); if the jinja file exists, the node exists
@@ -634,9 +669,9 @@ export function emitRenderCrate(
 	const meta = collectMetaData(nodeMap);
 	const templatesRs = [
 		templatesRsHeader(lang),
-		"",
-		"#![allow(dead_code, unused_imports, non_snake_case)]",
-		"",
+		'',
+		'#![allow(dead_code, unused_imports, non_snake_case)]',
+		'',
 		// Askama resolves custom filters by looking for a sibling
 		// `filters` module at the derive-macro's call site. Re-export the
 		// canonical `sittir_core::filters::*` here — `joinWithTrailing`,
@@ -644,27 +679,27 @@ export function emitRenderCrate(
 		// from per-call askama `Values` (see `TemplateContext::as_values`).
 		// `render_dispatch` below threads the values through every
 		// template render via `render_with_values`.
-		"pub mod filters {",
-		"    //! Askama resolves custom-filter names by searching for a",
-		"    //! sibling `filters` module at the derive-macro site. This",
-		"    //! module just re-exports the canonical implementations",
-		"    //! from `sittir_core::filters`.",
-		"    pub use ::sittir_core::filters::{",
-		"        upper, lower, joinby,",
-		"        isBlank, isPresent,",
-		"        joinWithTrailing, joinWithLeading, joinWithFlanks,",
-		"    };",
-		"}",
-		"",
+		'pub mod filters {',
+		'    //! Askama resolves custom-filter names by searching for a',
+		'    //! sibling `filters` module at the derive-macro site. This',
+		'    //! module just re-exports the canonical implementations',
+		'    //! from `sittir_core::filters`.',
+		'    pub use ::sittir_core::filters::{',
+		'        upper, lower, joinby,',
+		'        isBlank, isPresent,',
+		'        joinWithTrailing, joinWithLeading, joinWithFlanks,',
+		'    };',
+		'}',
+		'',
 		renderStructDefs(structs),
 		renderDispatchFn(structs),
-		"",
-		renderGrammarMeta(lang, meta),
-	].join("\n");
+		'',
+		renderGrammarMeta(lang, meta)
+	].join('\n');
 	const listShapedFieldsByKind = new Map<string, Set<string>>();
 	for (const s of structs) {
 		const listFields = new Set<string>();
-		for (const f of s.fields) if (f.shape === "list") listFields.add(f.name);
+		for (const f of s.fields) if (f.shape === 'list') listFields.add(f.name);
 		if (listFields.size > 0) listShapedFieldsByKind.set(s.kind, listFields);
 	}
 	return {
@@ -672,16 +707,16 @@ export function emitRenderCrate(
 		hashTs,
 		templatesRs: {
 			path: `packages/${lang}/rust-render/src/templates.rs`,
-			contents: templatesRs + "\n",
+			contents: templatesRs + '\n'
 		},
 		libRs: {
 			path: `packages/${lang}/rust-render/src/lib.rs`,
-			contents: libRsContents(lang),
+			contents: libRsContents(lang)
 		},
 		cargoToml: {
 			path: `packages/${lang}/rust-render/Cargo.toml`,
-			contents: cargoTomlContents(lang),
+			contents: cargoTomlContents(lang)
 		},
-		listShapedFieldsByKind,
+		listShapedFieldsByKind
 	};
 }

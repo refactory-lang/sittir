@@ -16,28 +16,32 @@
  *   sittir --grammar rust --all --output src/
  */
 
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { toIrKey, toFactoryName } from "./naming.ts";
-import { emitGrammar } from "./emitters/grammar.ts";
-import { emitTypes } from "./emitters/types.ts";
-import { emitTemplatesYaml } from "./emitters/rules.ts";
-import { emitFactories } from "./emitters/factories.ts";
-import { emitWrap } from "./emitters/wrap.ts";
-import { emitFrom } from "./emitters/from.ts";
-import { emitClientUtils } from "./emitters/client-utils.ts";
-import { emitConsts } from "./emitters/consts.ts";
-import { emitIrNamespace } from "./emitters/ir-namespace.ts";
-import { emitTests } from "./emitters/test-new.ts";
-import { emitTypeTests } from "./emitters/type-test.ts";
-import { emitConfig } from "./emitters/config.ts";
-import { emitIndex } from "./emitters/index-file.ts";
-import { buildGrammarModel } from "./grammar-model.ts";
-import type { HydratedNodeModel } from "./node-model.ts";
-import { isTupleChildren, eachChildSlot } from "./node-model.ts";
-import { structuralNodes } from "./emitters/utils.ts";
-import type { OverridesConfig, OverrideFieldDef, OverrideTypeRef } from "./overrides.ts";
-import { RESERVED_FIELD_NAMES } from "./overrides.ts";
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { toIrKey, toFactoryName } from './naming.ts';
+import { emitGrammar } from './emitters/grammar.ts';
+import { emitTypes } from './emitters/types.ts';
+import { emitTemplatesYaml } from './emitters/rules.ts';
+import { emitFactories } from './emitters/factories.ts';
+import { emitWrap } from './emitters/wrap.ts';
+import { emitFrom } from './emitters/from.ts';
+import { emitClientUtils } from './emitters/client-utils.ts';
+import { emitConsts } from './emitters/consts.ts';
+import { emitIrNamespace } from './emitters/ir-namespace.ts';
+import { emitTests } from './emitters/test-new.ts';
+import { emitTypeTests } from './emitters/type-test.ts';
+import { emitConfig } from './emitters/config.ts';
+import { emitIndex } from './emitters/index-file.ts';
+import { buildGrammarModel } from './grammar-model.ts';
+import type { HydratedNodeModel } from './node-model.ts';
+import { isTupleChildren, eachChildSlot } from './node-model.ts';
+import { structuralNodes } from './emitters/utils.ts';
+import type {
+	OverridesConfig,
+	OverrideFieldDef,
+	OverrideTypeRef
+} from './overrides.ts';
+import { RESERVED_FIELD_NAMES } from './overrides.ts';
 
 export {
 	listBranchKinds,
@@ -48,8 +52,8 @@ export {
 	registerGrammarPath,
 	collectRequiredTokens,
 	listSupertypes,
-	listLeafValues,
-} from "./grammar-reader.ts";
+	listLeafValues
+} from './grammar-reader.ts';
 
 export interface CodegenConfig {
 	/** Grammar language (e.g., 'rust', 'typescript', 'python') */
@@ -102,7 +106,9 @@ export interface GeneratedFiles {
  *
  * Pure REPEAT nodes (single slot, multiple) are skipped — they use $$$CHILDREN.
  */
-function generateTupleChildOverrides(nodes: HydratedNodeModel[]): OverridesConfig {
+function generateTupleChildOverrides(
+	nodes: HydratedNodeModel[]
+): OverridesConfig {
 	const overrides: OverridesConfig = {};
 
 	for (const node of structuralNodes(nodes)) {
@@ -128,23 +134,27 @@ function generateTupleChildOverrides(nodes: HydratedNodeModel[]): OverridesConfi
 				// Only token models are truly anonymous — keywords are named nodes
 				const types: OverrideTypeRef[] = slot.kinds.map((k) => {
 					const mt = (k as any).modelType;
-					return { type: k.kind, named: mt !== "token" };
+					return { type: k.kind, named: mt !== 'token' };
 				});
 
 				// Use the slot name from grammar's nameChildSlots when available
 				const slotName = slot.name;
 				let fieldName: string;
 
-				if (slotName && !slotName.startsWith("NEEDS_NAME") && !RESERVED_FIELD_NAMES.has(slotName)) {
+				if (
+					slotName &&
+					!slotName.startsWith('NEEDS_NAME') &&
+					!RESERVED_FIELD_NAMES.has(slotName)
+				) {
 					fieldName = slotName;
-				} else if (RESERVED_FIELD_NAMES.has(slotName ?? "")) {
+				} else if (RESERVED_FIELD_NAMES.has(slotName ?? '')) {
 					// Skip reserved field names — can't be used as override field names
 					continue;
 				} else {
 					fieldName = slotName ?? `NEEDS_NAME_${i}`;
-					const kindList = slot.kinds.map((k) => k.kind).join(", ");
+					const kindList = slot.kinds.map((k) => k.kind).join(', ');
 					console.warn(
-						`[overrides] ${node.kind}: ${fieldName} — position ${i} (${kindList}) needs a field name`,
+						`[overrides] ${node.kind}: ${fieldName} — position ${i} (${kindList}) needs a field name`
 					);
 				}
 
@@ -152,7 +162,7 @@ function generateTupleChildOverrides(nodes: HydratedNodeModel[]): OverridesConfi
 					types,
 					multiple: slot.multiple,
 					required: slot.required ?? false,
-					position: i,
+					position: i
 				};
 			}
 		} else {
@@ -171,7 +181,7 @@ function generateTupleChildOverrides(nodes: HydratedNodeModel[]): OverridesConfi
 				/* keep as $$$CHILDREN */
 			}
 			// Skip if kinds include any supertype/hidden (starts with _) — too abstract to name
-			else if (slot.kinds.some((k) => k.kind.startsWith("_"))) {
+			else if (slot.kinds.some((k) => k.kind.startsWith('_'))) {
 				/* keep as $CHILDREN */
 			}
 			// Single concrete kind → promote to named override field
@@ -184,14 +194,14 @@ function generateTupleChildOverrides(nodes: HydratedNodeModel[]): OverridesConfi
 				} else {
 					const types: OverrideTypeRef[] = slot.kinds.map((k) => {
 						const mt = (k as any).modelType;
-						return { type: k.kind, named: mt !== "token" };
+						return { type: k.kind, named: mt !== 'token' };
 					});
 
 					fields[fieldName] = {
 						types,
 						multiple: slot.multiple,
 						required: slot.required ?? false,
-						position: 0,
+						position: 0
 					};
 				}
 			}
@@ -209,7 +219,7 @@ function generateTupleChildOverrides(nodes: HydratedNodeModel[]): OverridesConfi
 function overridesPath(grammar: string): string {
 	const codegenDir = dirname(dirname(new URL(import.meta.url).pathname));
 	const packagesDir = dirname(codegenDir);
-	return join(packagesDir, grammar, "overrides.json");
+	return join(packagesDir, grammar, 'overrides.json');
 }
 
 /**
@@ -218,9 +228,14 @@ function overridesPath(grammar: string): string {
  * kinds/fields not already present.
  * Returns true if the file was updated.
  */
-function mergeAutoOverridesToDisk(grammar: string, autoOverrides: OverridesConfig): boolean {
+function mergeAutoOverridesToDisk(
+	grammar: string,
+	autoOverrides: OverridesConfig
+): boolean {
 	const path = overridesPath(grammar);
-	const disk: OverridesConfig = existsSync(path) ? JSON.parse(readFileSync(path, "utf-8")) : {};
+	const disk: OverridesConfig = existsSync(path)
+		? JSON.parse(readFileSync(path, 'utf-8'))
+		: {};
 
 	let changed = false;
 	for (const [kind, entry] of Object.entries(autoOverrides)) {
@@ -269,7 +284,7 @@ function mergeAutoOverridesToDisk(grammar: string, autoOverrides: OverridesConfi
 		for (const key of Object.keys(disk).sort()) {
 			sorted[key] = disk[key]!;
 		}
-		writeFileSync(path, JSON.stringify(sorted, null, 2) + "\n");
+		writeFileSync(path, JSON.stringify(sorted, null, 2) + '\n');
 	}
 	return changed;
 }
@@ -305,7 +320,11 @@ export function generate(cfg: CodegenConfig): GeneratedFiles {
 	return {
 		grammar: emitGrammar({ grammar: cfg.grammar }),
 		types: emitTypes({ grammar: cfg.grammar, nodes }),
-		templatesYaml: emitTemplatesYaml({ grammar: cfg.grammar, nodes, grammarSha: "" }),
+		templatesYaml: emitTemplatesYaml({
+			grammar: cfg.grammar,
+			nodes,
+			grammarSha: ''
+		}),
 		factories: emitFactories({ grammar: cfg.grammar, nodes }),
 		wrap: emitWrap({ grammar: cfg.grammar, nodes }),
 		utils: emitClientUtils({ nodes }),
@@ -316,6 +335,6 @@ export function generate(cfg: CodegenConfig): GeneratedFiles {
 		tests: emitTests({ grammar: cfg.grammar, nodes }),
 		typeTests: emitTypeTests({ nodes }),
 		config: emitConfig({ grammar: cfg.grammar }),
-		nodeModel,
+		nodeModel
 	};
 }

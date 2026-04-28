@@ -9,16 +9,16 @@
  * warns via console.warn.
  */
 
-import { describe, it, expect, vi } from "vitest";
-import type { Rule, SeqRule } from "../compiler/rule.ts";
-import type { NodeMap } from "../compiler/types.ts";
+import { describe, it, expect, vi } from 'vitest';
+import type { Rule, SeqRule } from '../compiler/rule.ts';
+import type { NodeMap } from '../compiler/types.ts';
 import {
 	AssembledGroup,
 	AssembledBranch,
 	type AssembledField,
-	type AssembledNode,
-} from "../compiler/node-map.ts";
-import { resolveHoistedForm } from "../emitters/shared.ts";
+	type AssembledNode
+} from '../compiler/node-map.ts';
+import { resolveHoistedForm } from '../emitters/shared.ts';
 
 // ---------------------------------------------------------------------------
 // Synthetic rule + NodeMap builders.
@@ -31,45 +31,50 @@ import { resolveHoistedForm } from "../emitters/shared.ts";
 // ---------------------------------------------------------------------------
 
 function mkSymbol(name: string): Rule {
-	return { type: "symbol", name } as Rule;
+	return { type: 'symbol', name } as Rule;
 }
 
 function mkField(name: string, content: Rule): Rule {
-	return { type: "field", name, content, source: "grammar" } as Rule;
+	return { type: 'field', name, content, source: 'grammar' } as Rule;
 }
 
 function mkSeq(members: Rule[]): SeqRule {
-	return { type: "seq", members };
+	return { type: 'seq', members };
 }
 
 /** Inner rule: two fields `left` + `right`. */
 function makeInnerRule(): SeqRule {
-	return mkSeq([mkField("left", mkSymbol("expr")), mkField("right", mkSymbol("expr"))]);
+	return mkSeq([
+		mkField('left', mkSymbol('expr')),
+		mkField('right', mkSymbol('expr'))
+	]);
 }
 
 /** Form rule: one child slot pointing at `inner_binary`. */
 function makeFormRule(): SeqRule {
-	return mkSeq([mkSymbol("inner_binary")]);
+	return mkSeq([mkSymbol('inner_binary')]);
 }
 
 function makeInner(): AssembledBranch {
 	const rule = makeInnerRule();
-	return new AssembledBranch("inner_binary", rule, rule, { factoryName: "innerBinary" });
+	return new AssembledBranch('inner_binary', rule, rule, {
+		factoryName: 'innerBinary'
+	});
 }
 
 function makeForm(): AssembledGroup {
 	const rule = makeFormRule();
-	return new AssembledGroup("outer__form_binary", rule, rule, {
-		factoryName: "outerFormBinary",
-		name: "binary",
-		parentKind: "outer",
+	return new AssembledGroup('outer__form_binary', rule, rule, {
+		factoryName: 'outerFormBinary',
+		name: 'binary',
+		parentKind: 'outer'
 	});
 }
 
 function makeNodeMap(entries: Record<string, AssembledNode>): NodeMap {
 	return {
-		name: "synth",
-		nodes: new Map(Object.entries(entries)),
+		name: 'synth',
+		nodes: new Map(Object.entries(entries))
 	} as unknown as NodeMap;
 }
 
@@ -77,33 +82,36 @@ function makeNodeMap(entries: Record<string, AssembledNode>): NodeMap {
 // Tests
 // ---------------------------------------------------------------------------
 
-describe("resolveHoistedForm — collision guard", () => {
-	it("returns undefined when form-level and inner fields share a propertyName", () => {
+describe('resolveHoistedForm — collision guard', () => {
+	it('returns undefined when form-level and inner fields share a propertyName', () => {
 		const inner = makeInner();
 		// Sanity check — inner must expose `left` + `right` fields.
-		expect(inner.fields.map((f) => f.propertyName)).toEqual(["left", "right"]);
+		expect(inner.fields.map((f) => f.propertyName)).toEqual(['left', 'right']);
 
 		const form = makeForm();
 		// Install a form-level field that collides with the inner `left`.
 		const collidingField: AssembledField = {
-			name: "left",
-			propertyName: "left",
-			paramName: "left",
+			name: 'left',
+			propertyName: 'left',
+			paramName: 'left',
 			values: [],
-			source: "grammar",
-			projection: { typeName: "", kinds: [] },
+			source: 'grammar',
+			projection: { typeName: '', kinds: [] },
 			hasTrailing: false,
-			hasLeading: false,
+			hasLeading: false
 		};
 		// form.fields is a getter backed by #fields cache; we override for
 		// the test via Object.defineProperty to avoid reaching into the
 		// caching internals. Using a read-only descriptor preserves the
 		// AssembledGroup instanceof identity.
-		Object.defineProperty(form, "fields", { value: [collidingField], configurable: true });
+		Object.defineProperty(form, 'fields', {
+			value: [collidingField],
+			configurable: true
+		});
 
 		const nodeMap = makeNodeMap({ inner_binary: inner });
 
-		const warn = vi.spyOn(console, "warn").mockImplementation(() => {
+		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {
 			/* swallow */
 		});
 		try {
@@ -111,7 +119,7 @@ describe("resolveHoistedForm — collision guard", () => {
 			expect(result).toBeUndefined();
 			// Warning text should mention the form kind + the colliding field name.
 			expect(warn).toHaveBeenCalled();
-			const msg = warn.mock.calls.map((c) => String(c[0])).join("\n");
+			const msg = warn.mock.calls.map((c) => String(c[0])).join('\n');
 			expect(msg).toMatch(/outer__form_binary/);
 			expect(msg).toMatch(/'left'/);
 		} finally {
@@ -119,41 +127,47 @@ describe("resolveHoistedForm — collision guard", () => {
 		}
 	});
 
-	it("returns a HoistedForm descriptor when there is NO collision", () => {
+	it('returns a HoistedForm descriptor when there is NO collision', () => {
 		const inner = makeInner();
 		const form = makeForm();
 
 		// Form-level field name that does NOT collide with inner fields.
 		const nonCollidingField: AssembledField = {
-			name: "operator",
-			propertyName: "operator",
-			paramName: "operator",
+			name: 'operator',
+			propertyName: 'operator',
+			paramName: 'operator',
 			values: [],
-			source: "grammar",
-			projection: { typeName: "", kinds: [] },
+			source: 'grammar',
+			projection: { typeName: '', kinds: [] },
 			hasTrailing: false,
-			hasLeading: false,
+			hasLeading: false
 		};
-		Object.defineProperty(form, "fields", { value: [nonCollidingField], configurable: true });
+		Object.defineProperty(form, 'fields', {
+			value: [nonCollidingField],
+			configurable: true
+		});
 
 		const nodeMap = makeNodeMap({ inner_binary: inner });
 
-		const warn = vi.spyOn(console, "warn").mockImplementation(() => {
+		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {
 			/* swallow */
 		});
 		try {
 			const result = resolveHoistedForm(form, nodeMap);
 			expect(result).toBeDefined();
-			expect(result!.innerKind).toBe("inner_binary");
-			expect(result!.innerFactoryName).toBe("innerBinary");
-			expect(result!.innerFields.map((f) => f.propertyName)).toEqual(["left", "right"]);
+			expect(result!.innerKind).toBe('inner_binary');
+			expect(result!.innerFactoryName).toBe('innerBinary');
+			expect(result!.innerFields.map((f) => f.propertyName)).toEqual([
+				'left',
+				'right'
+			]);
 			expect(warn).not.toHaveBeenCalled();
 		} finally {
 			warn.mockRestore();
 		}
 	});
 
-	it("returns a HoistedForm descriptor when the form has no fields at all", () => {
+	it('returns a HoistedForm descriptor when the form has no fields at all', () => {
 		const inner = makeInner();
 		const form = makeForm();
 		// form.fields is empty by default (form rule has no field() nodes) —
@@ -163,6 +177,9 @@ describe("resolveHoistedForm — collision guard", () => {
 		const nodeMap = makeNodeMap({ inner_binary: inner });
 		const result = resolveHoistedForm(form, nodeMap);
 		expect(result).toBeDefined();
-		expect(result!.innerFields.map((f) => f.propertyName)).toEqual(["left", "right"]);
+		expect(result!.innerFields.map((f) => f.propertyName)).toEqual([
+			'left',
+			'right'
+		]);
 	});
 });

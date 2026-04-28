@@ -12,7 +12,7 @@
 ```ts
 interface AnyNodeData {
 	$type: string; // required
-	$source?: "ts" | "sg" | "factory"; // optional
+	$source?: 'ts' | 'sg' | 'factory'; // optional
 	$variant?: string; // factory-only
 	$fields?: { readonly [key: string]: NodeFieldValue }; // branch-only
 	$children?: readonly NodeChildValue[]; // branch-only
@@ -51,7 +51,7 @@ export type ProducedNodeData =
 
 interface FactoryBranchData {
 	$type: string;
-	$source: "factory"; // required
+	$source: 'factory'; // required
 	$named: true; // required
 	$variant?: string;
 	$fields: { readonly [key: string]: NodeFieldValue }; // required on branch
@@ -60,14 +60,14 @@ interface FactoryBranchData {
 
 interface FactoryLeafData {
 	$type: string;
-	$source: "factory";
+	$source: 'factory';
 	$named: true;
 	$text: string; // required on leaf
 }
 
 interface TreeSitterBranchData {
 	$type: string;
-	$source: "ts";
+	$source: 'ts';
 	$span: { start: number; end: number }; // required on ts
 	$nodeId: number; // required on ts
 	$named: boolean;
@@ -78,7 +78,7 @@ interface TreeSitterBranchData {
 
 interface TreeSitterLeafData {
 	$type: string;
-	$source: "ts";
+	$source: 'ts';
 	$span: { start: number; end: number };
 	$nodeId: number;
 	$named: boolean;

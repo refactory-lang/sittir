@@ -130,13 +130,13 @@ A failure on the byte-identical partition means the Rust and TS render engines d
 
 ```ts
 // example-codemod.ts
-import { getActiveBackend, findMatches, wrap, readNode } from "@sittir/rust";
+import { getActiveBackend, findMatches, wrap, readNode } from '@sittir/rust';
 
-console.log("backend:", getActiveBackend());
+console.log('backend:', getActiveBackend());
 // → { name: 'native', hashMatch: true } when things are configured right
 
-const source = await fs.readFile("some-file.rs", "utf8");
-const matches = findMatches(source, "fn $NAME($$$PARAMS) { $$$BODY }");
+const source = await fs.readFile('some-file.rs', 'utf8');
+const matches = findMatches(source, 'fn $NAME($$$PARAMS) { $$$BODY }');
 for (const match of matches) {
 	const node = wrap(match); // existing TS API
 	console.log(node.$fields.name.$text);

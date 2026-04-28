@@ -33,7 +33,7 @@ The two alternatives are kept on the record as ordered fallbacks. They activate 
 - **Option B (first fallback) — native-side accessor adapter, still one template source.** If Askama cannot consume the canonical template text directly from the generated struct surface, introduce a thin generated native adapter layer (custom accessors, wrapper fields, or filter-level helpers) that preserves the single canonical template body. This fallback may change generated Rust code and helpers, but it is **not** allowed to re-introduce a second hand-edited or separately-authored template directory, and it still uses the relocated crate layout.
 - **Option A (second fallback) — deterministic native preprocessor with one declared rule table.** If both direct convergence and a native adapter fail, keep a single canonical template directory but run a deterministic codegen/build-time rewrite into the native load path. The rewrite rules must live in one declared source (for example in `packages/codegen/src/emitters/rust-render.ts`) and be auditable, testable, and minimal. This is the safety net, not the preferred design.
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - One template directory per grammar (Priority: P1)
 
@@ -85,7 +85,7 @@ A maintainer running the regular codegen invocation (`npx tsx packages/codegen/s
 
 ### User Story 4 - Contributors can explain both the template location and the native crate location in one sentence (Priority: P2)
 
-A new contributor browsing the repository needs to be able to answer both questions — "where do templates live?" and "where do native render crates live?" — with one short explanation: *"Templates live in `packages/{lang}/templates/`; TS reads them directly, native reads that same directory directly or via a symlink, and the generated native render crate for each grammar lives in `rust/crates/sittir-render-{lang}` rather than under the grammar package."*
+A new contributor browsing the repository needs to be able to answer both questions — "where do templates live?" and "where do native render crates live?" — with one short explanation: _"Templates live in `packages/{lang}/templates/`; TS reads them directly, native reads that same directory directly or via a symlink, and the generated native render crate for each grammar lives in `rust/crates/sittir-render-{lang}` rather than under the grammar package."_
 
 **Why this priority**: The structural fix is easy to accidentally undo if the repo still reads like there are two template systems or two competing native-crate layouts. This story captures the documentation and command updates that prevent future regressions.
 
@@ -126,7 +126,7 @@ A new contributor browsing the repository needs to be able to answer both questi
    - **If both fail** on a meaningful cross-section of rules: drop to Option A and record the exact rewrite rules in one declared place.
 6. Record the result in `specs/020-template-engine-converge/research.md` during planning/implementation before the full rollout begins.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -151,7 +151,7 @@ A new contributor browsing the repository needs to be able to answer both questi
   - Principle VI (Deterministic Output) — one canonical template source produces one deterministic bundle.
   - Principle VII (Grammar-Agnostic Pipeline) — the convergence and relocation mechanisms work across `rust`, `typescript`, and `python` without per-grammar forks in the overall pipeline; any unavoidable exceptions live in one declared table.
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **Canonical Template Directory**: The single per-grammar directory `packages/{lang}/templates/` containing one `.jinja` file per kind. Post-convergence, this is the only authored/generated template bundle both backends read.
 - **Centralized Native Render Crate**: The generated crate at `rust/crates/sittir-render-{lang}/` for each grammar. Post-convergence, this is the only valid filesystem location for the per-grammar native render crate.
@@ -161,7 +161,7 @@ A new contributor browsing the repository needs to be able to answer both questi
 - **Exception List**: The single declared table of any native-only identifier accommodations that remain legal after convergence (for example non-rawable Rust keywords). This list is auditable and testable.
 - **Verification Gate**: The initial spike that proves whether the current architecture can eliminate the native list-rewrite path while keeping canonical templates untouched and the native crate relocated.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

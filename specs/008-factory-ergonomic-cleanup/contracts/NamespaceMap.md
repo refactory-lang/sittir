@@ -18,13 +18,13 @@ export interface NamespaceMap {
 }
 
 // Derived accessors
-export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]["Config"];
-export type FluentFor<K extends keyof NamespaceMap> = NamespaceMap[K]["Fluent"];
-export type LooseFor<K extends keyof NamespaceMap> = NamespaceMap[K]["Loose"];
-export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]["Tree"];
+export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
+export type FluentFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Fluent'];
+export type LooseFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Loose'];
+export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Tree'];
 
 // Derived — not emitted as separate maps anymore
-export type KindMap = { [K in keyof NamespaceMap]: NamespaceMap[K]["Node"] };
+export type KindMap = { [K in keyof NamespaceMap]: NamespaceMap[K]['Node'] };
 ```
 
 ## Preconditions

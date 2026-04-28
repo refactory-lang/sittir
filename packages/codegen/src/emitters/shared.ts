@@ -3,13 +3,13 @@
  * patterns that copy-paste across 3+ emitters, not to become a grab-bag.
  */
 
-import type { NodeMap } from "../compiler/types.ts";
+import type { NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledField,
 	AssembledChild,
 	NodeOrTerminal,
-	AssembledNode,
-} from "../compiler/node-map.ts";
+	AssembledNode
+} from '../compiler/node-map.ts';
 import {
 	AssembledKeyword,
 	AssembledToken,
@@ -22,8 +22,8 @@ import {
 	isUnresolvedRef,
 	isRequired,
 	isMultiple,
-	isNonEmpty,
-} from "../compiler/node-map.ts";
+	isNonEmpty
+} from '../compiler/node-map.ts';
 
 // Re-export derived helpers so emitters can import from one place.
 export { isRequired, isMultiple, isNonEmpty };
@@ -58,20 +58,22 @@ export function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	const out = new Set<string>();
 	for (const [, n] of nodeMap.nodes) {
 		const fieldSlots =
-			n.modelType === "polymorph"
+			n.modelType === 'polymorph'
 				? n.allFormFields
-				: n.modelType === "branch" || n.modelType === "group"
+				: n.modelType === 'branch' || n.modelType === 'group'
 					? n.fields
 					: [];
 		const childSlots =
-			n.modelType === "branch" || n.modelType === "container" || n.modelType === "group"
+			n.modelType === 'branch' ||
+			n.modelType === 'container' ||
+			n.modelType === 'group'
 				? (n.children ?? [])
 				: [];
 		for (const slot of [...fieldSlots, ...childSlots]) {
 			for (const v of slot.values) {
 				if (!isNodeRef(v)) continue;
 				const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
-				if (name.startsWith("_")) out.add(name);
+				if (name.startsWith('_')) out.add(name);
 			}
 		}
 	}
@@ -82,21 +84,26 @@ export function referencedKinds(nodeMap: NodeMap): Set<string> {
 	const referenced = new Set<string>();
 	for (const [, node] of nodeMap.nodes) {
 		switch (node.modelType) {
-			case "branch":
-			case "group":
-				for (const f of node.fields) for (const t of slotKindNames(f)) referenced.add(t);
-				for (const c of node.children ?? []) for (const t of slotKindNames(c)) referenced.add(t);
+			case 'branch':
+			case 'group':
+				for (const f of node.fields)
+					for (const t of slotKindNames(f)) referenced.add(t);
+				for (const c of node.children ?? [])
+					for (const t of slotKindNames(c)) referenced.add(t);
 				break;
-			case "container":
-				for (const c of node.children) for (const t of slotKindNames(c)) referenced.add(t);
+			case 'container':
+				for (const c of node.children)
+					for (const t of slotKindNames(c)) referenced.add(t);
 				break;
-			case "polymorph":
+			case 'polymorph':
 				for (const form of node.forms) {
-					for (const f of form.fields) for (const t of slotKindNames(f)) referenced.add(t);
-					for (const c of form.children) for (const t of slotKindNames(c)) referenced.add(t);
+					for (const f of form.fields)
+						for (const t of slotKindNames(f)) referenced.add(t);
+					for (const c of form.children)
+						for (const t of slotKindNames(c)) referenced.add(t);
 				}
 				break;
-			case "supertype":
+			case 'supertype':
 				for (const t of node.subtypes) referenced.add(t);
 				break;
 		}
@@ -109,7 +116,9 @@ export function referencedKinds(nodeMap: NodeMap): Set<string> {
  * Returns the name string for each NodeRef entry (resolved or unresolved).
  * Terminal values are excluded — they're not kinds.
  */
-export function slotKindNames(slot: { values: readonly NodeOrTerminal[] }): string[] {
+export function slotKindNames(slot: {
+	values: readonly NodeOrTerminal[];
+}): string[] {
 	const out: string[] = [];
 	for (const v of slot.values) {
 		if (!isNodeRef(v)) continue;
@@ -122,7 +131,9 @@ export function slotKindNames(slot: { values: readonly NodeOrTerminal[] }): stri
 /**
  * Extract the terminal literal values from a slot's `values` array.
  */
-export function slotLiteralValues(slot: { values: readonly NodeOrTerminal[] }): string[] {
+export function slotLiteralValues(slot: {
+	values: readonly NodeOrTerminal[];
+}): string[] {
 	return slot.values.filter(isTerminalValue).map((v) => v.value);
 }
 
@@ -172,7 +183,7 @@ function identOrQuoted(name: string): string {
  */
 export function resolveEffectiveLiteral(
 	field: AssembledField,
-	nodeMap: NodeMap,
+	nodeMap: NodeMap
 ): string | undefined {
 	// Only required fields are auto-stamped — optional fields control
 	// whether a keyword is present at all, which must remain user choice.
@@ -196,7 +207,7 @@ export function resolveEffectiveLiteral(
 	// prevent single-value auto-stamp, which is the correct behavior).
 	if (isNodeRef(v)) {
 		const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
-		if (kindName.startsWith("_")) {
+		if (kindName.startsWith('_')) {
 			const ref = nodeMap.nodes.get(kindName);
 			if (ref instanceof AssembledKeyword) return ref.text;
 		}
@@ -209,7 +220,10 @@ export function resolveEffectiveLiteral(
  * Returns `true` when `resolveEffectiveLiteral` would return a value —
  * i.e., the field is auto-stamp-eligible per ADR-0010 phase 1.
  */
-export function isAutoStampField(field: AssembledField, nodeMap: NodeMap): boolean {
+export function isAutoStampField(
+	field: AssembledField,
+	nodeMap: NodeMap
+): boolean {
 	return resolveEffectiveLiteral(field, nodeMap) !== undefined;
 }
 
@@ -240,9 +254,9 @@ export function isAutoStampField(field: AssembledField, nodeMap: NodeMap): boole
  */
 export function resolveHiddenKeywordLiteral(
 	kindName: string,
-	nodeMap: NodeMap,
+	nodeMap: NodeMap
 ): string | undefined {
-	if (!kindName.startsWith("_")) return undefined;
+	if (!kindName.startsWith('_')) return undefined;
 	const node = nodeMap.nodes.get(kindName);
 	if (node instanceof AssembledKeyword) return node.text;
 	// Tokens with StringRule bodies are anonymous-string literals that
@@ -279,7 +293,10 @@ export function resolveHiddenKeywordLiteral(
  * applies equally to fields and children. The `isParameterless` property
  * on `AssembledNodeBase` must already be populated before calling this.
  */
-export function isAutoStampSlot(slot: AssembledChild, nodeMap: NodeMap): boolean {
+export function isAutoStampSlot(
+	slot: AssembledChild,
+	nodeMap: NodeMap
+): boolean {
 	if (!isRequired(slot)) return true; // optional → does not block
 	if (isMultiple(slot)) return false; // required repeated → user must supply
 
@@ -303,7 +320,7 @@ export function isAutoStampSlot(slot: AssembledChild, nodeMap: NodeMap): boolean
 		// factory stamping; see `stampExpressionFor` for the
 		// corresponding branch).
 		if (
-			kindName.startsWith("_") &&
+			kindName.startsWith('_') &&
 			(ref instanceof AssembledKeyword || ref instanceof AssembledToken)
 		)
 			return true;
@@ -335,7 +352,7 @@ export function isAutoStampSlot(slot: AssembledChild, nodeMap: NodeMap): boolean
 export function stampExpressionFor(
 	slot: AssembledChild,
 	nodeMap: NodeMap,
-	context: "field" | "child" = "field",
+	context: 'field' | 'child' = 'field'
 ): string | undefined {
 	if (!isRequired(slot)) return undefined; // optional — no stamp
 	if (isMultiple(slot)) return undefined; // repeated — no stamp
@@ -350,7 +367,7 @@ export function stampExpressionFor(
 	// (`readonly [Terminal<"text">]` = `{ $type, $text, ... }`, not a
 	// bare string).
 	if (isTerminalValue(v)) {
-		if (context === "child") {
+		if (context === 'child') {
 			const text = JSON.stringify(v.value);
 			return `{ $type: ${text} as const, $text: ${text} as const, $source: 'factory' as const, $named: false as const }`;
 		}
@@ -367,7 +384,9 @@ export function stampExpressionFor(
 		const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
 		const ref = nodeMap.nodes.get(kindName);
 		if (ref?.isParameterless) {
-			return context === "child" ? ref.stampChildExpression : ref.stampExpression;
+			return context === 'child'
+				? ref.stampChildExpression
+				: ref.stampExpression;
 		}
 	}
 
@@ -407,9 +426,9 @@ export function stampExpressionFor(
  * resolver twice.
  */
 export type TypeComponent =
-	| { kind: "nodeKind"; value: string; rawKind: string }
-	| { kind: "literal"; value: string }
-	| { kind: "missing"; value: string; rawKind: string };
+	| { kind: 'nodeKind'; value: string; rawKind: string }
+	| { kind: 'literal'; value: string }
+	| { kind: 'missing'; value: string; rawKind: string };
 
 /**
  * Compute the shared {@link TypeComponent} list for a field slot.
@@ -431,7 +450,10 @@ export type TypeComponent =
  * @returns Ordered components (in the order the kinds / literals appear
  *   in `field.values`). Callers deduplicate at emission time.
  */
-export function fieldTypeComponents(field: AssembledField, nodeMap: NodeMap): TypeComponent[] {
+export function fieldTypeComponents(
+	field: AssembledField,
+	nodeMap: NodeMap
+): TypeComponent[] {
 	const out: TypeComponent[] = [];
 	const resolveAliased = (t: string): string => {
 		const source = field.aliasSources?.[t];
@@ -440,7 +462,7 @@ export function fieldTypeComponents(field: AssembledField, nodeMap: NodeMap): Ty
 	};
 	for (const v of field.values) {
 		if (isTerminalValue(v)) {
-			out.push({ kind: "literal", value: v.value });
+			out.push({ kind: 'literal', value: v.value });
 			continue;
 		}
 		if (!isNodeRef(v)) continue;
@@ -448,16 +470,18 @@ export function fieldTypeComponents(field: AssembledField, nodeMap: NodeMap): Ty
 		const t = resolveAliased(rawName);
 		const lit = resolveHiddenKeywordLiteral(t, nodeMap);
 		if (lit !== undefined) {
-			out.push({ kind: "literal", value: lit });
+			out.push({ kind: 'literal', value: lit });
 			continue;
 		}
 		const node = nodeMap.nodes.get(t);
 		if (!node) {
-			const fallback = t.replace(/(?:^|_)([a-z])/g, (_, c: string) => c.toUpperCase());
-			out.push({ kind: "missing", value: fallback, rawKind: t });
+			const fallback = t.replace(/(?:^|_)([a-z])/g, (_, c: string) =>
+				c.toUpperCase()
+			);
+			out.push({ kind: 'missing', value: fallback, rawKind: t });
 			continue;
 		}
-		out.push({ kind: "nodeKind", value: node.typeName, rawKind: t });
+		out.push({ kind: 'nodeKind', value: node.typeName, rawKind: t });
 	}
 	return out;
 }
@@ -530,7 +554,7 @@ export interface HoistedForm {
  */
 export function resolveHoistedForm(
 	form: AssembledGroup,
-	nodeMap: NodeMap,
+	nodeMap: NodeMap
 ): HoistedForm | undefined {
 	// Exactly one child slot.
 	const children = form.children;
@@ -563,7 +587,9 @@ export function resolveHoistedForm(
 	// `config.children`-based inner construction call instead of a
 	// Config-forwarding one.
 	const innerFields =
-		inner instanceof AssembledBranch || inner instanceof AssembledGroup ? (inner.fields ?? []) : [];
+		inner instanceof AssembledBranch || inner instanceof AssembledGroup
+			? (inner.fields ?? [])
+			: [];
 
 	// Collision check: a property name on the form AND the inner child
 	// would produce an ambiguous hoisted Config surface. Bail out —
@@ -573,7 +599,7 @@ export function resolveHoistedForm(
 		for (const f of innerFields) {
 			if (formNames.has(f.propertyName)) {
 				console.warn(
-					`[resolveHoistedForm] name collision on form '${form.kind}': inner field '${f.propertyName}' shadows form-level field; falling back to non-hoisted Config shape.`,
+					`[resolveHoistedForm] name collision on form '${form.kind}': inner field '${f.propertyName}' shadows form-level field; falling back to non-hoisted Config shape.`
 				);
 				return undefined;
 			}
@@ -585,7 +611,7 @@ export function resolveHoistedForm(
 		innerNode: inner,
 		innerTypeName: inner.typeName,
 		innerFactoryName: inner.rawFactoryName,
-		innerFields,
+		innerFields
 	};
 }
 
@@ -606,10 +632,15 @@ export function resolveHoistedForm(
  *
  * Any other shape (non-literal node ref, unresolved ref) returns undefined.
  */
-function resolveEntryLiteral(entry: NodeOrTerminal, nodeMap: NodeMap): string | undefined {
+function resolveEntryLiteral(
+	entry: NodeOrTerminal,
+	nodeMap: NodeMap
+): string | undefined {
 	if (isTerminalValue(entry)) return entry.value;
 	if (!isNodeRef(entry)) return undefined;
-	const kindName = isUnresolvedRef(entry.node) ? entry.node.name : entry.node.kind;
+	const kindName = isUnresolvedRef(entry.node)
+		? entry.node.name
+		: entry.node.kind;
 	// Hidden `_kw_*` / hidden single-string token — uses the existing helper.
 	const lit = resolveHiddenKeywordLiteral(kindName, nodeMap);
 	if (lit !== undefined) return lit;
@@ -622,7 +653,7 @@ function resolveEntryLiteral(entry: NodeOrTerminal, nodeMap: NodeMap): string | 
 	// Hidden non-underscore keyword resolution (defensive — keeps the
 	// helper symmetric with resolveHiddenKeywordLiteral, which only
 	// returns for `_`-prefixed kinds).
-	if (!kindName.startsWith("_")) {
+	if (!kindName.startsWith('_')) {
 		if (ref instanceof AssembledKeyword) return ref.text;
 		if (ref instanceof AssembledToken) return ref.text;
 	}
@@ -657,15 +688,18 @@ function resolveEntryLiteral(entry: NodeOrTerminal, nodeMap: NodeMap): string | 
  */
 export function keywordPresenceKind(
 	field: AssembledChild,
-	nodeMap: NodeMap,
-): "boolean" | "bitflag" | null {
+	nodeMap: NodeMap
+): 'boolean' | 'bitflag' | null {
 	if (field.values.length === 0) return null;
 
 	// Single optional entry → boolean when the entry resolves to a literal.
 	if (field.values.length === 1) {
 		const v = field.values[0]!;
-		if (v.multiplicity === "optional" && resolveEntryLiteral(v, nodeMap) !== undefined) {
-			return "boolean";
+		if (
+			v.multiplicity === 'optional' &&
+			resolveEntryLiteral(v, nodeMap) !== undefined
+		) {
+			return 'boolean';
 		}
 	}
 
@@ -673,14 +707,15 @@ export function keywordPresenceKind(
 	// for the repeat-of-literals cases.
 	const literals: string[] = [];
 	for (const v of field.values) {
-		if (v.multiplicity !== "array" && v.multiplicity !== "nonEmptyArray") return null;
+		if (v.multiplicity !== 'array' && v.multiplicity !== 'nonEmptyArray')
+			return null;
 		const lit = resolveEntryLiteral(v, nodeMap);
 		if (lit === undefined) return null;
 		literals.push(lit);
 	}
 	const distinct = new Set(literals);
-	if (distinct.size === 1) return "boolean"; // degenerate repeat(single-literal)
-	if (distinct.size >= 2) return "bitflag";
+	if (distinct.size === 1) return 'boolean'; // degenerate repeat(single-literal)
+	if (distinct.size >= 2) return 'bitflag';
 	return null;
 }
 
@@ -688,8 +723,11 @@ export function keywordPresenceKind(
  * The single literal for a boolean-keyword field. Returns `undefined` if
  * the field is not a boolean-keyword field.
  */
-export function keywordPresenceValue(field: AssembledChild, nodeMap: NodeMap): string | undefined {
-	if (keywordPresenceKind(field, nodeMap) !== "boolean") return undefined;
+export function keywordPresenceValue(
+	field: AssembledChild,
+	nodeMap: NodeMap
+): string | undefined {
+	if (keywordPresenceKind(field, nodeMap) !== 'boolean') return undefined;
 	// For single-entry optional: the entry's literal. For degenerate
 	// repeat(single-literal): the one distinct literal.
 	for (const v of field.values) {
@@ -705,8 +743,11 @@ export function keywordPresenceValue(field: AssembledChild, nodeMap: NodeMap): s
  * the literals appear in the grammar's `values` array — that order is
  * the canonical render / enum-declaration order.
  */
-export function keywordPresenceValues(field: AssembledChild, nodeMap: NodeMap): readonly string[] {
-	if (keywordPresenceKind(field, nodeMap) !== "bitflag") return [];
+export function keywordPresenceValues(
+	field: AssembledChild,
+	nodeMap: NodeMap
+): readonly string[] {
+	if (keywordPresenceKind(field, nodeMap) !== 'bitflag') return [];
 	const seen = new Set<string>();
 	const out: string[] = [];
 	for (const v of field.values) {
@@ -724,7 +765,9 @@ export function keywordPresenceValues(field: AssembledChild, nodeMap: NodeMap): 
  * `nonEmptyArray`. Used by the consts emitter to decide whether a bitflag
  * enum needs a `None = 0` member (repeat allows zero → yes, repeat1 no).
  */
-export function keywordPresenceIsNonEmptyRepeat(field: AssembledChild): boolean {
+export function keywordPresenceIsNonEmptyRepeat(
+	field: AssembledChild
+): boolean {
 	if (field.values.length === 0) return false;
-	return field.values.every((v) => v.multiplicity === "nonEmptyArray");
+	return field.values.every((v) => v.multiplicity === 'nonEmptyArray');
 }

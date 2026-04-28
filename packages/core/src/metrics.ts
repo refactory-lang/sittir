@@ -10,15 +10,15 @@
  * call after their final render pass when the env var is set.
  */
 
-import { writeFileSync } from "node:fs";
-import { join as pathJoin } from "node:path";
-import os from "node:os";
+import { writeFileSync } from 'node:fs';
+import { join as pathJoin } from 'node:path';
+import os from 'node:os';
 
 // ---------------------------------------------------------------------------
 // Boot-time flag — evaluated ONCE, never re-read.
 // ---------------------------------------------------------------------------
 
-const METRICS_ENABLED: boolean = process.env["SITTIR_METRICS"] === "1";
+const METRICS_ENABLED: boolean = process.env['SITTIR_METRICS'] === '1';
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -48,7 +48,7 @@ export interface FfiMetrics {
 
 export interface MetricsFile {
 	readonly schemaVersion: 1;
-	readonly backend: "ts" | "native";
+	readonly backend: 'ts' | 'native';
 	readonly collectedAt: string;
 	readonly collectedOn: {
 		readonly platform: string;
@@ -87,7 +87,12 @@ interface FfiBucket {
 }
 
 const _perKind = new Map<string, KindBucket>();
-const _ffi: FfiBucket = { totalCalls: 0, totalMs: 0, samples: [], totalPayloadBytes: 0 };
+const _ffi: FfiBucket = {
+	totalCalls: 0,
+	totalMs: 0,
+	samples: [],
+	totalPayloadBytes: 0
+};
 
 function _key(grammar: string, kind: string): string {
 	return `${grammar}:${kind}`;
@@ -125,7 +130,9 @@ export function withMetrics<T>(grammar: string, kind: string, fn: () => T): T {
 	const afterMs = performance.now() - before;
 	const heapDelta = process.memoryUsage().heapUsed - heapBefore;
 	const outputBytes =
-		typeof result === "string" ? (result as string).length : JSON.stringify(result).length;
+		typeof result === 'string'
+			? (result as string).length
+			: JSON.stringify(result).length;
 
 	const k = _key(grammar, kind);
 	const existing = _perKind.get(k);
@@ -143,7 +150,7 @@ export function withMetrics<T>(grammar: string, kind: string, fn: () => T): T {
 			samples: [afterMs],
 			outputBytes,
 			heapDeltaBytes: heapDelta,
-			napiCopyBytes: 0,
+			napiCopyBytes: 0
 		});
 	}
 
@@ -165,7 +172,7 @@ export function recordFfi(
 	kind: string,
 	payloadBytes: number,
 	roundtripMs: number,
-	outputBytes: number,
+	outputBytes: number
 ): void {
 	if (!METRICS_ENABLED) return;
 
@@ -187,7 +194,7 @@ export function recordFfi(
 			samples: [],
 			outputBytes: 0,
 			heapDeltaBytes: 0,
-			napiCopyBytes: payloadBytes + outputBytes,
+			napiCopyBytes: payloadBytes + outputBytes
 		});
 	}
 }
@@ -199,7 +206,7 @@ export function recordFfi(
  * @param backend - Which backend produced the metrics.
  * @param outDir - Directory to write the file into (defaults to `process.cwd()`).
  */
-export function dumpMetrics(backend: "ts" | "native", outDir?: string): void {
+export function dumpMetrics(backend: 'ts' | 'native', outDir?: string): void {
 	if (!METRICS_ENABLED) return;
 
 	const dir = outDir ?? process.cwd();
@@ -213,7 +220,7 @@ export function dumpMetrics(backend: "ts" | "native", outDir?: string): void {
 	const sortedKeys = [..._perKind.keys()].sort();
 	for (const k of sortedKeys) {
 		const b = _perKind.get(k)!;
-		const kindName = k.split(":")[1] ?? k;
+		const kindName = k.split(':')[1] ?? k;
 		const meanMs = b.callCount > 0 ? b.totalMs / b.callCount : 0;
 		const p99Ms = _p99(b.samples);
 		const entry: PerKindMetrics = {
@@ -223,7 +230,9 @@ export function dumpMetrics(backend: "ts" | "native", outDir?: string): void {
 			p99Ms: Number(p99Ms.toFixed(4)),
 			outputBytes: b.outputBytes,
 			heapDeltaBytes: b.heapDeltaBytes,
-			...(backend === "native" && b.napiCopyBytes > 0 ? { napiCopyBytes: b.napiCopyBytes } : {}),
+			...(backend === 'native' && b.napiCopyBytes > 0
+				? { napiCopyBytes: b.napiCopyBytes }
+				: {})
 		};
 		perKindOut[kindName] = entry;
 		totalHeapDelta += b.heapDeltaBytes;
@@ -231,12 +240,12 @@ export function dumpMetrics(backend: "ts" | "native", outDir?: string): void {
 	}
 
 	const ffiOut: FfiMetrics | undefined =
-		backend === "native" && _ffi.totalCalls > 0
+		backend === 'native' && _ffi.totalCalls > 0
 			? {
 					totalCalls: _ffi.totalCalls,
 					meanRoundtripMs: Number((_ffi.totalMs / _ffi.totalCalls).toFixed(4)),
 					p99RoundtripMs: Number(_p99(_ffi.samples).toFixed(4)),
-					meanPayloadBytes: Math.round(_ffi.totalPayloadBytes / _ffi.totalCalls),
+					meanPayloadBytes: Math.round(_ffi.totalPayloadBytes / _ffi.totalCalls)
 				}
 			: undefined;
 
@@ -248,23 +257,27 @@ export function dumpMetrics(backend: "ts" | "native", outDir?: string): void {
 		collectedOn: {
 			platform: process.platform,
 			nodeVersion: process.version,
-			cpuModel: os.cpus()[0]?.model ?? "unknown",
+			cpuModel: os.cpus()[0]?.model ?? 'unknown'
 		},
 		memory: {
 			tsHeapDeltaBytes: totalHeapDelta,
-			...(backend === "native"
+			...(backend === 'native'
 				? {
 						rustResidentDeltaBytes: rssNow,
 						napiCopyBytes: totalNapiCopy,
-						napiCopyBytesEstimate: true,
+						napiCopyBytesEstimate: true
 					}
-				: { napiCopyBytesEstimate: false }),
+				: { napiCopyBytesEstimate: false })
 		},
 		...(ffiOut ? { ffi: ffiOut } : {}),
-		perKind: perKindOut,
+		perKind: perKindOut
 	};
 
-	writeFileSync(pathJoin(dir, filename), JSON.stringify(file, null, 2) + "\n", "utf-8");
+	writeFileSync(
+		pathJoin(dir, filename),
+		JSON.stringify(file, null, 2) + '\n',
+		'utf-8'
+	);
 }
 
 /**

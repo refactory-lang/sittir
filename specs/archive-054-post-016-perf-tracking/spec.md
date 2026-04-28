@@ -114,7 +114,7 @@ The napi-rs bridge marshals a `RenderInput` object (serialised from TS-side Node
 ```ts
 interface MetricsFile {
 	schemaVersion: 1;
-	backend: "ts" | "native";
+	backend: 'ts' | 'native';
 	collectedAt: string; // ISO 8601, UTC
 	collectedOn: {
 		platform: string; // process.platform

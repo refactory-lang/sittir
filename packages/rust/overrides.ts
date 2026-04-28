@@ -15,10 +15,17 @@
 // protection on `polymorphs` / `transforms` / `rules` keys. Only the
 // final `grammar(enrich(base), wire(config))` line and the injected
 // DSL globals inside rule callbacks need suppression.
-import base from "../../node_modules/.pnpm/tree-sitter-rust@0.24.0/node_modules/tree-sitter-rust/grammar.js";
-import { transform, enrich, field, alias, variant, wire } from "../codegen/src/dsl/index.ts";
-import type { WireConfig } from "../codegen/src/dsl/index.ts";
-import type { RustGrammar } from "./src/grammar.ts";
+import base from '../../node_modules/.pnpm/tree-sitter-rust@0.24.0/node_modules/tree-sitter-rust/grammar.js';
+import {
+	transform,
+	enrich,
+	field,
+	alias,
+	variant,
+	wire
+} from '../codegen/src/dsl/index.ts';
+import type { WireConfig } from '../codegen/src/dsl/index.ts';
+import type { RustGrammar } from './src/grammar.ts';
 
 // Injected globals from tree-sitter's grammar() + DSL — declare so the
 // typed `config` below can reference `$.<rule>` / `seq(...)` / etc.
@@ -34,10 +41,13 @@ declare const prec: {
 declare const repeat: (r: unknown) => unknown;
 declare const repeat1: (r: unknown) => unknown;
 declare const optional: (r: unknown) => unknown;
-declare const token: { (r: unknown): unknown; immediate: (r: unknown) => unknown };
+declare const token: {
+	(r: unknown): unknown;
+	immediate: (r: unknown) => unknown;
+};
 
 const config: WireConfig<RustGrammar> = {
-	name: "rust",
+	name: 'rust',
 	// `previous` is the base grammar's conflicts list — concat so we
 	// don't drop the base entries (`$._type`, `$._pattern`, etc.).
 	conflicts: ($, previous) => [
@@ -48,10 +58,14 @@ const config: WireConfig<RustGrammar> = {
 		[$._expression_except_range, $._match_arm_block_ending],
 		// visibility_modifier variant extraction: `pub(crate)` vs
 		// `crate::foo` share the `crate` prefix.
-		[$.scoped_identifier, $.scoped_type_identifier, $._visibility_modifier_crate],
+		[
+			$.scoped_identifier,
+			$.scoped_type_identifier,
+			$._visibility_modifier_crate
+		],
 		// visibility_modifier variant extraction: `pub` vs `pub(x)`
 		// share the `pub` prefix; parser needs lookahead.
-		[$._visibility_modifier_pub],
+		[$._visibility_modifier_pub]
 	],
 	// Inline the synthesized hidden `_kw_async_marker` rule's body at
 	// every reference site. Without inlining, `closure_expression`'s
@@ -67,15 +81,20 @@ const config: WireConfig<RustGrammar> = {
 	// Wave-1 follow-up (016 task #27).
 	inline: ($, previous) => [...(previous ?? []), $._kw_async_marker],
 	polymorphs: {
-		array_expression: { "2/0": "semi", "2/1": "list" },
-		closure_expression: { "4/0": "block", "4/1": "expr" },
-		field_pattern: { "2/0": "shorthand", "2/1": "named" },
-		function_type: { "1/0/0": "trait_form", "1/0/1": "fn_form" },
-		impl_item: { "6/0": "body", "6/1": "semi" },
-		macro_definition: { "2/0": "paren", "2/1": "bracket", "2/2": "brace" },
-		mod_item: { "3/0": "external", "3/1": "inline" },
-		or_pattern: { "0": "binary", "1": "prefix" },
-		range_expression: { "0": "binary", "1": "postfix", "2": "prefix", "3": "bare" },
+		array_expression: { '2/0': 'semi', '2/1': 'list' },
+		closure_expression: { '4/0': 'block', '4/1': 'expr' },
+		field_pattern: { '2/0': 'shorthand', '2/1': 'named' },
+		function_type: { '1/0/0': 'trait_form', '1/0/1': 'fn_form' },
+		impl_item: { '6/0': 'body', '6/1': 'semi' },
+		macro_definition: { '2/0': 'paren', '2/1': 'bracket', '2/2': 'brace' },
+		mod_item: { '3/0': 'external', '3/1': 'inline' },
+		or_pattern: { '0': 'binary', '1': 'prefix' },
+		range_expression: {
+			'0': 'binary',
+			'1': 'postfix',
+			'2': 'prefix',
+			'3': 'bare'
+		},
 		// range_pattern: the base rule is
 		//   choice(
 		//     seq(field('left', X), choice(             ← 0
@@ -87,8 +106,12 @@ const config: WireConfig<RustGrammar> = {
 		// Flatten the adoption so the inner-choice arms get their own
 		// variant names — the asymmetry (`..=`/`...` require a right,
 		// bare `..` doesn't) means these are genuine structural variants.
-		range_pattern: { "0/1/0": "left_with_right", "0/1/1": "left_bare", "1": "prefix" },
-		struct_item: { "4/0": "brace", "4/1": "tuple", "4/2": "unit" },
+		range_pattern: {
+			'0/1/0': 'left_with_right',
+			'0/1/1': 'left_bare',
+			'1': 'prefix'
+		},
+		struct_item: { '4/0': 'brace', '4/1': 'tuple', '4/2': 'unit' },
 		// visibility_modifier — three variants at two nesting depths,
 		// all addressed from the top-level rule:
 		//   - `1/1/0/1/3` in_path
@@ -107,10 +130,10 @@ const config: WireConfig<RustGrammar> = {
 		// Same convention the range_pattern entry above uses — put the
 		// deepest paths first.
 		visibility_modifier: {
-			"1/1/0/1/3": "in_path",
-			"0": "crate",
-			"1": "pub",
-		},
+			'1/1/0/1/3': 'in_path',
+			'0': 'crate',
+			'1': 'pub'
+		}
 	},
 	transforms: {
 		// abstract_type: 1 field(s)
@@ -126,18 +149,21 @@ const config: WireConfig<RustGrammar> = {
 		// introduces (the `async move {}` parity fixture round-trips
 		// only with this entry).
 		async_block: {
-			"1/0": field("move_marker"),
+			'1/0': field('move_marker')
 		},
 
 		// array_expression polymorph splits '2/0' (semi) / '2/1' (list).
 		// These base-shape patches add field labels BEFORE polymorph
 		// aliasing — composition-order inversion in wire() lets this
 		// flow declaratively instead of inline in rules:.
-		array_expression: [{ 1: field("attributes") }, { "2/(_expression)": field("elements") }],
+		array_expression: [
+			{ 1: field('attributes') },
+			{ '2/(_expression)': field('elements') }
+		],
 		// bounded_type: 2 field(s)
 		bounded_type: {
-			0: field("left"), // lifetime | _type | use_bounds [struct=0]
-			2: field("right"), // lifetime | _type | use_bounds [struct=1]
+			0: field('left'), // lifetime | _type | use_bounds [struct=0]
+			2: field('right') // lifetime | _type | use_bounds [struct=1]
 		},
 
 		// closure_expression: prec(closure, seq(
@@ -169,9 +195,9 @@ const config: WireConfig<RustGrammar> = {
 		// follow-up, task #27) is required to keep `let a = async move
 		// || async move {}` from regressing to ERROR.
 		closure_expression: {
-			"0/0": field("static_marker"),
-			"1/0": field("async_marker"),
-			"2/0": field("move_marker"),
+			'0/0': field('static_marker'),
+			'1/0': field('async_marker'),
+			'2/0': field('move_marker')
 		},
 
 		// extern_modifier: 1 field(s)
@@ -202,7 +228,7 @@ const config: WireConfig<RustGrammar> = {
 			// projects to a flags enum instead of an array. Deferred —
 			// needs bitflag detection in the walker for the repeat1+field
 			// combination, not just seq-positioned boolean-keyword slots.
-			_: field("modifier"),
+			_: field('modifier')
 		},
 
 		// visibility_modifier — replaces the hand-authored rule below
@@ -235,8 +261,8 @@ const config: WireConfig<RustGrammar> = {
 		//     ),
 		//   )
 		visibility_modifier: {
-			"1/0": field("pub"),
-			"1/1/0/1/3/0": field("in"),
+			'1/0': field('pub'),
+			'1/1/0/1/3/0': field('in')
 		},
 
 		// function_type: top-level seq is
@@ -256,11 +282,11 @@ const config: WireConfig<RustGrammar> = {
 		// preserves it. Kept hand-promoted for the same render-spacing
 		// reason as async_block (see note above).
 		gen_block: {
-			"1/0": field("move_marker"),
+			'1/0': field('move_marker')
 		},
 
 		generic_type_with_turbofish: {
-			1: field("turbofish"),
+			1: field('turbofish')
 		},
 
 		// generic_type: base rule unchanged. ADR-0006 dispatches via
@@ -289,19 +315,19 @@ const config: WireConfig<RustGrammar> = {
 		//     literal inside the inner-seq's leading optional. The
 		//     `negative` name is context-specific (not `bang_marker`).
 		impl_item: {
-			"0/0": field("unsafe_marker"),
-			"3/0/0/0": field("negative"),
+			'0/0': field('unsafe_marker'),
+			'3/0/0/0': field('negative')
 		},
 
 		// index_expression: 2 field(s)
 		index_expression: {
-			0: field("object"), // _expression [struct=0]
-			2: field("index"), // _expression [struct=1]
+			0: field('object'), // _expression [struct=0]
+			2: field('index') // _expression [struct=1]
 		},
 
 		// macro_invocation: 1 field(s)
 		macro_invocation: {
-			2: field("token_tree"), // token_tree [struct=0]
+			2: field('token_tree') // token_tree [struct=0]
 		},
 
 		// mod_item: two forms — `mod name;` (external) vs `mod name { ... }`
@@ -311,7 +337,7 @@ const config: WireConfig<RustGrammar> = {
 
 		// negative_literal: 2 field(s)
 		negative_literal: {
-			1: field("value"), // integer_literal | float_literal [struct=0]
+			1: field('value') // integer_literal | float_literal [struct=0]
 		},
 
 		// ordered_field_declaration_list: 1 field(s)
@@ -323,15 +349,15 @@ const config: WireConfig<RustGrammar> = {
 		// the outer level, so the position 2 override was structurally
 		// incorrect. Only wrapping position 1 (the per-element group).
 		ordered_field_declaration_list: {
-			1: field("attributes"), // per-element group [struct=0]
+			1: field('attributes') // per-element group [struct=0]
 		},
 
 		// or_pattern polymorph splits '0' (binary) / '1' (prefix).
 		// Field labels land on base-shape choice arms pre-alias.
 		or_pattern: {
-			"0/0": field("left"),
-			"0/2": field("right"),
-			"1/1": field("right"),
+			'0/0': field('left'),
+			'0/2': field('right'),
+			'1/1': field('right')
 		},
 
 		// pointer_type: position 1 is `choice('const', $.mutable_specifier)`.
@@ -340,37 +366,37 @@ const config: WireConfig<RustGrammar> = {
 		// the named slot at readNode time, so the template can emit the
 		// actual qualifier text instead of hardcoding "const".
 		pointer_type: {
-			1: field("mutable_specifier"),
+			1: field('mutable_specifier')
 		},
 
 		// raw_string_literal: 3 field(s)
 		raw_string_literal: {
-			0: field("raw_string_literal_start"), //  [struct=0]
-			1: field("string_content"), // string_content [struct=1]
-			2: field("raw_string_literal_end"), //  [struct=2]
+			0: field('raw_string_literal_start'), //  [struct=0]
+			1: field('string_content'), // string_content [struct=1]
+			2: field('raw_string_literal_end') //  [struct=2]
 		},
 
 		// range_expression polymorph splits '0'..'3'. Field labels
 		// land on base-shape choice arms pre-alias.
 		range_expression: {
-			"0/0": field("start"),
-			"0/1": field("operator"),
-			"0/2": field("end"),
-			"1/0": field("start"),
-			"1/1": field("operator"),
-			"2/0": field("operator"),
-			"2/1": field("end"),
-			"3": field("operator"),
+			'0/0': field('start'),
+			'0/1': field('operator'),
+			'0/2': field('end'),
+			'1/0': field('start'),
+			'1/1': field('operator'),
+			'2/0': field('operator'),
+			'2/1': field('end'),
+			'3': field('operator')
 		},
 
 		// reference_expression: 1 field(s)
 		reference_expression: {
-			1: field("mutable_specifier"), // mutable_specifier [struct=0]
+			1: field('mutable_specifier') // mutable_specifier [struct=0]
 		},
 
 		// reference_pattern: 2 field(s)
 		reference_pattern: {
-			2: field("pattern"), // _pattern [struct=1]
+			2: field('pattern') // _pattern [struct=1]
 		},
 
 		// reference_type: 2 field(s)
@@ -382,23 +408,23 @@ const config: WireConfig<RustGrammar> = {
 		// at pos 1 is the explicit lifetime name ('a etc.) — distinct
 		// name to avoid colliding with pos 0's label.
 		self_parameter: {
-			0: field("reference"), // optional('&')
+			0: field('reference') // optional('&')
 		},
 
 		// shorthand_field_initializer: 2 field(s)
 		shorthand_field_initializer: {
-			0: field("attributes"), // attribute_item [struct=0]
+			0: field('attributes') // attribute_item [struct=0]
 			// pos 1 $.identifier auto-labelled by enrich pass 1
 		},
 
 		// source_file: 2 field(s)
 		source_file: {
-			1: field("statements"), // _statement [struct=1]
+			1: field('statements') // _statement [struct=1]
 		},
 
 		// static_item: 2 field(s)
 		static_item: {
-			2: field("mutable_specifier"), // mutable_specifier [struct=1]
+			2: field('mutable_specifier') // mutable_specifier [struct=1]
 		},
 
 		// struct_item: three body shapes — brace (`{ ... }`), tuple
@@ -419,27 +445,27 @@ const config: WireConfig<RustGrammar> = {
 		// hand-promoted for the same render-spacing reason as async_block
 		// (see note above).
 		trait_item: {
-			"1/0": field("unsafe_marker"),
+			'1/0': field('unsafe_marker')
 		},
 
 		// try_block: 1 field(s)
 		// try_expression: 2 field(s)
 		try_expression: {
-			0: field("value"), // _expression [struct=0]
+			0: field('value') // _expression [struct=0]
 		},
 
 		// tuple_expression: flat list of expressions comma-separated.
 		// Kind-match labels every `_expression` as `elements` without
 		// capturing the `,` separators (same pattern as array_expression).
 		tuple_expression: {
-			1: field("attributes"),
-			"(_expression)": field("elements"),
+			1: field('attributes'),
+			'(_expression)': field('elements')
 		},
 
 		// type_item: 3 field(s)
 		type_item: {
-			4: field("where_clause"), // where_clause [struct=1]
-			7: field("trailing_where_clause"), // where_clause [struct=2]
+			4: field('where_clause'), // where_clause [struct=1]
+			7: field('trailing_where_clause') // where_clause [struct=2]
 		},
 
 		// unary_expression — label both the operator token (pos 0) and
@@ -448,13 +474,13 @@ const config: WireConfig<RustGrammar> = {
 		// fields so the template emits `$OPERATOR$OPERAND` instead of
 		// `$OPERATOR $$$CHILDREN` (which reads empty after field promotion).
 		unary_expression: {
-			0: field("operator"), // choice('-', '*', '!')
-			1: field("operand"), // $._expression
+			0: field('operator'), // choice('-', '*', '!')
+			1: field('operand') // $._expression
 		},
 
 		// use_wildcard: 1 field(s)
 		use_wildcard: {
-			0: field("path"), // crate | identifier | metavariable | scoped_identifier | self | super [struct=0]
+			0: field('path') // crate | identifier | metavariable | scoped_identifier | self | super [struct=0]
 		},
 
 		// variadic_parameter: 1 field(s)
@@ -466,31 +492,31 @@ const config: WireConfig<RustGrammar> = {
 		// form have structurally distinct templates. Each becomes its
 		// own variant child kind.
 		expression_statement: {
-			0: variant("with_semi"),
-			1: variant("block_ending"),
+			0: variant('with_semi'),
+			1: variant('block_ending')
 		},
 
 		// foreign_mod_item: choice at pos 2 between ';' (bare extern
 		// decl) and field('body', declaration_list) (block extern).
 		// Variant-adopt so each arm owns its own template.
 		foreign_mod_item: {
-			"2/0": variant("semi"),
-			"2/1": variant("body"),
+			'2/0': variant('semi'),
+			'2/1': variant('body')
 		},
 
 		// pointer_type: choice('const', mutable_specifier) at pos 1.
 		// Literal 'const' vs symbol → split arms.
 		pointer_type: {
-			"1/0": variant("const"),
-			"1/1": variant("mut"),
+			'1/0': variant('const'),
+			'1/1': variant('mut')
 		},
 
 		// reference_expression: inner choice at path 1/0/1 selects
 		// `const` vs `mutable_specifier` inside the `&raw (…) …`
 		// form. Same const-vs-mut shape as pointer_type.
 		reference_expression: {
-			"1/0/1/0": variant("raw_const"),
-			"1/0/1/1": variant("raw_mut"),
+			'1/0/1/0': variant('raw_const'),
+			'1/0/1/1': variant('raw_mut')
 		},
 
 		// match_arm: choice(seq(field('value',expr), ','),
@@ -498,17 +524,17 @@ const config: WireConfig<RustGrammar> = {
 		// The ','-terminated form vs block-ending form have distinct
 		// literals. Split arms.
 		match_arm: {
-			"3/0": variant("with_comma"),
-			"3/1": variant("block_ending"),
+			'3/0': variant('with_comma'),
+			'3/1': variant('block_ending')
 		},
 
 		// line_comment: choice at pos 1 between regular double-slash,
 		// doc-comment, and regular content. Each arm has its own
 		// distinct literal prefix.
 		line_comment: {
-			"1/0": variant("regular_dslash"),
-			"1/1": variant("doc"),
-			"1/2": variant("content"),
+			'1/0': variant('regular_dslash'),
+			'1/1': variant('doc'),
+			'1/2': variant('content')
 		},
 
 		// token_tree_pattern / token_tree / delim_token_tree: each is
@@ -516,20 +542,20 @@ const config: WireConfig<RustGrammar> = {
 		// Three delimiter-variants — distinct opening/closing literals per
 		// arm, same inner content. Split so each arm owns its template.
 		token_tree_pattern: {
-			0: variant("paren"),
-			1: variant("bracket"),
-			2: variant("brace"),
+			0: variant('paren'),
+			1: variant('bracket'),
+			2: variant('brace')
 		},
 		token_tree: {
-			0: variant("paren"),
-			1: variant("bracket"),
-			2: variant("brace"),
+			0: variant('paren'),
+			1: variant('bracket'),
+			2: variant('brace')
 		},
 		delim_token_tree: {
-			0: variant("paren"),
-			1: variant("bracket"),
-			2: variant("brace"),
-		},
+			0: variant('paren'),
+			1: variant('bracket'),
+			2: variant('brace')
+		}
 
 		// _let_chain: left-recursive `_let_chain && let_condition` vs
 		// base `let_condition`. Hidden rule — tree-sitter flattens the
@@ -577,14 +603,14 @@ const config: WireConfig<RustGrammar> = {
 		// literal time, before `$` exists. See ADR-0009 §Task-7.
 		_pattern: ($, original) =>
 			transform(original, {
-				"-1": alias($._wildcard_pattern, $.wildcard_pattern),
+				'-1': alias($._wildcard_pattern, $.wildcard_pattern)
 			}),
 
 		// The hidden rule `_wildcard_pattern` is just the `_` literal;
 		// the named alias on `_pattern` above promotes it to a proper
 		// `wildcard_pattern` kind at parse time.
-		_wildcard_pattern: ($) => "_",
-	},
+		_wildcard_pattern: ($) => '_'
+	}
 };
 
 // The typed `config` above is validated against WireConfig<RustGrammar>.

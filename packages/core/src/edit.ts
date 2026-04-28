@@ -6,8 +6,8 @@ import type {
 	ReplaceTarget,
 	AnyTreeNode,
 	Renderable,
-	KindOf,
-} from "./types.ts";
+	KindOf
+} from './types.ts';
 
 export type { ReplaceTarget, AnyTreeNode, Renderable, KindOf };
 
@@ -15,12 +15,15 @@ export type { ReplaceTarget, AnyTreeNode, Renderable, KindOf };
 // replace — loosely typed, any AnyNodeData
 // ---------------------------------------------------------------------------
 
-export function replace(target: ReplaceTarget, replacement: AnyNodeData & Renderable): Edit {
+export function replace(
+	target: ReplaceTarget,
+	replacement: AnyNodeData & Renderable
+): Edit {
 	const range = target.range();
 	return {
 		startPos: range.start.index,
 		endPos: range.end.index,
-		insertedText: replacement.render(),
+		insertedText: replacement.render()
 	};
 }
 
@@ -35,15 +38,17 @@ export function replace(target: ReplaceTarget, replacement: AnyNodeData & Render
  * The generated `edit(target)` creates the right factory for the target's kind,
  * then calls `bindRange()` to attach the range.
  */
-export function bindRange<T extends { readonly type: string; render(): string }>(
+export function bindRange<
+	T extends { readonly type: string; render(): string }
+>(
 	target: ReplaceTarget,
-	factoryOutput: T,
+	factoryOutput: T
 ): T & { toEdit(): Edit; replace(): Edit } {
 	const range = target.range();
 	const boundEdit = () => ({
 		startPos: range.start.index,
 		endPos: range.end.index,
-		insertedText: factoryOutput.render(),
+		insertedText: factoryOutput.render()
 	});
 	// Override toEdit and replace to use the bound range when called with no args.
 	// `factoryOutput` is typed as the caller's generic T; we're monkey-patching
@@ -58,21 +63,24 @@ export function bindRange<T extends { readonly type: string; render(): string }>
 // replaceField — type-safe field replacement via selector lambda
 // ---------------------------------------------------------------------------
 
-export function replaceField<TNode extends { readonly type: string }, TField extends ReplaceTarget>(
+export function replaceField<
+	TNode extends { readonly type: string },
+	TField extends ReplaceTarget
+>(
 	target: TNode,
 	selector: (node: TNode) => TField | undefined,
-	replacement: AnyNodeData & Renderable,
+	replacement: AnyNodeData & Renderable
 ): Edit {
 	const fieldNode = selector(target);
 	if (!fieldNode) {
 		throw new Error(
-			`Cannot replace undefined field on '${target.type}' — field is not present on the target node`,
+			`Cannot replace undefined field on '${target.type}' — field is not present on the target node`
 		);
 	}
 	const range = fieldNode.range();
 	return {
 		startPos: range.start.index,
 		endPos: range.end.index,
-		insertedText: replacement.render(),
+		insertedText: replacement.render()
 	};
 }

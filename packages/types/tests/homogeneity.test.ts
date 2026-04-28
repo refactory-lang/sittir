@@ -6,11 +6,13 @@
  * would fail to compile if the predicate misbehaves.
  */
 
-import { describe, it } from "vitest";
-import type { ConfigOf, FromInputOf } from "../src/index.ts";
+import { describe, it } from 'vitest';
+import type { ConfigOf, FromInputOf } from '../src/index.ts';
 
 type Equals<A, B> =
-	(<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
+	(<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2
+		? true
+		: false;
 
 function expectTrue<_T extends true>(): void {}
 function expectFalse<_T extends false>(): void {}
@@ -18,64 +20,82 @@ function expectFalse<_T extends false>(): void {}
 // --- Homogeneous arms: identical $fields shape -----------------------------
 
 interface HomoLeft {
-	readonly $type: "homo_left";
+	readonly $type: 'homo_left';
 	readonly $fields: { readonly x: number; readonly y: number };
 }
 interface HomoRight {
-	readonly $type: "homo_right";
+	readonly $type: 'homo_right';
 	readonly $fields: { readonly x: number; readonly y: number };
 }
 
 // --- Heterogeneous arm: extra field vs HomoLeft ----------------------------
 
 interface HeteroExtra {
-	readonly $type: "hetero_extra";
-	readonly $fields: { readonly x: number; readonly y: number; readonly z: number };
+	readonly $type: 'hetero_extra';
+	readonly $fields: {
+		readonly x: number;
+		readonly y: number;
+		readonly z: number;
+	};
 }
 
 // Parents that exercise the multi-branch union path.
 interface ParentHomo {
-	readonly $type: "parent_homo";
+	readonly $type: 'parent_homo';
 	readonly $fields: { readonly child: HomoLeft | HomoRight };
 }
 interface ParentHetero {
-	readonly $type: "parent_hetero";
+	readonly $type: 'parent_hetero';
 	readonly $fields: { readonly child: HomoLeft | HeteroExtra };
 }
 
 interface SyntheticNamespaceMap {
-	homo_left: { Loose: FromInputOf<HomoLeft, {}, {}, [], SyntheticNamespaceMap> };
-	homo_right: { Loose: FromInputOf<HomoRight, {}, {}, [], SyntheticNamespaceMap> };
-	hetero_extra: { Loose: FromInputOf<HeteroExtra, {}, {}, [], SyntheticNamespaceMap> };
-	parent_homo: { Loose: FromInputOf<ParentHomo, {}, {}, [], SyntheticNamespaceMap> };
-	parent_hetero: { Loose: FromInputOf<ParentHetero, {}, {}, [], SyntheticNamespaceMap> };
+	homo_left: {
+		Loose: FromInputOf<HomoLeft, {}, {}, [], SyntheticNamespaceMap>;
+	};
+	homo_right: {
+		Loose: FromInputOf<HomoRight, {}, {}, [], SyntheticNamespaceMap>;
+	};
+	hetero_extra: {
+		Loose: FromInputOf<HeteroExtra, {}, {}, [], SyntheticNamespaceMap>;
+	};
+	parent_homo: {
+		Loose: FromInputOf<ParentHomo, {}, {}, [], SyntheticNamespaceMap>;
+	};
+	parent_hetero: {
+		Loose: FromInputOf<ParentHetero, {}, {}, [], SyntheticNamespaceMap>;
+	};
 }
 
-type HomoLoose = SyntheticNamespaceMap["parent_homo"]["Loose"];
-type HeteroLoose = SyntheticNamespaceMap["parent_hetero"]["Loose"];
+type HomoLoose = SyntheticNamespaceMap['parent_homo']['Loose'];
+type HeteroLoose = SyntheticNamespaceMap['parent_hetero']['Loose'];
 
-type HomoChild = NonNullable<HomoLoose["child"]>;
-type HeteroChild = NonNullable<HeteroLoose["child"]>;
+type HomoChild = NonNullable<HomoLoose['child']>;
+type HeteroChild = NonNullable<HeteroLoose['child']>;
 
 type BareXY = { readonly x: number; readonly y: number };
 type BareXYZ = { readonly x: number; readonly y: number; readonly z: number };
 
-describe("Spec 009 Layer 1 — homogeneity-aware Loose", () => {
-	it("homogeneous union accepts a bare bag (no `kind` tag required)", () => {
+describe('Spec 009 Layer 1 — homogeneity-aware Loose', () => {
+	it('homogeneous union accepts a bare bag (no `kind` tag required)', () => {
 		// Positive: bare {x,y} must be assignable to the child slot.
 		type BareAssignable = BareXY extends HomoChild ? true : false;
 		expectTrue<BareAssignable>();
 	});
 
-	it("homogeneous union: kind-tagged form still accepted", () => {
+	it('homogeneous union: kind-tagged form still accepted', () => {
 		// The tagged form is NOT required, but it's still a valid member
 		// of the Loose union for consumers who prefer explicit tagging.
-		type Tagged = { readonly kind: "homo_left"; readonly x: number; readonly y: number };
+		type Tagged = {
+			readonly kind: 'homo_left';
+			readonly x: number;
+			readonly y: number;
+		};
 		type TaggedAssignable = Tagged extends HomoChild ? true : false;
 		expectTrue<TaggedAssignable>();
 	});
 
-	it("heterogeneous union rejects a bare bag at the shape that needs a tag", () => {
+	it('heterogeneous union rejects a bare bag at the shape that needs a tag', () => {
 		// Negative case — the load-bearing test. On a heterogeneous union,
 		// a bare `{x, y, z}` bag (shape of HeteroExtra) must NOT be directly
 		// assignable to the child slot, because the slot requires the
@@ -91,7 +111,7 @@ describe("Spec 009 Layer 1 — homogeneity-aware Loose", () => {
 		// construct HomoLeft bare. The point is that the heterogeneous
 		// member REQUIRES the tag.
 		type TaggedHetero = {
-			readonly kind: "hetero_extra";
+			readonly kind: 'hetero_extra';
 			readonly x: number;
 			readonly y: number;
 			readonly z: number;
@@ -108,7 +128,7 @@ describe("Spec 009 Layer 1 — homogeneity-aware Loose", () => {
 		expectTrue<HasTagged>();
 	});
 
-	it("IsHomogeneous predicate: true for identical arms, false for divergent", () => {
+	it('IsHomogeneous predicate: true for identical arms, false for divergent', () => {
 		// Direct test of the predicate via its observable effect on the
 		// child-slot Loose shape. For a homogeneous parent, the child
 		// slot type MUST be assignable to a bare bag (the tag-stripping
@@ -121,7 +141,7 @@ describe("Spec 009 Layer 1 — homogeneity-aware Loose", () => {
 		// assignable (existence of tagged form proves IsHomogeneous
 		// returned false for this union).
 		type HeteroTaggedOk = {
-			readonly kind: "homo_left";
+			readonly kind: 'homo_left';
 			readonly x: number;
 			readonly y: number;
 		} extends HeteroChild
@@ -142,31 +162,31 @@ describe("Spec 009 Layer 1 — homogeneity-aware Loose", () => {
 // introduced alongside the consolidated polymorph dispatcher path.
 // ---------------------------------------------------------------------------
 
-describe("ConfigOf — $variant tag carried on polymorph forms without $children", () => {
+describe('ConfigOf — $variant tag carried on polymorph forms without $children', () => {
 	// Synthetic polymorph form — has $variant but no $children tuple.
 	interface _FormNoChildren {
-		readonly $type: "foo";
-		readonly $variant: "bar";
+		readonly $type: 'foo';
+		readonly $variant: 'bar';
 		readonly $fields: { readonly x: string };
 	}
 	type _Config = ConfigOf<_FormNoChildren>;
 
-	it("requires $variant on Config when the form declares one", () => {
+	it('requires $variant on Config when the form declares one', () => {
 		// Positive: supplying `$variant` compiles.
-		const _ok: _Config = { x: "x", $variant: "bar" };
+		const _ok: _Config = { x: 'x', $variant: 'bar' };
 		void _ok;
 
 		// Negative: missing `$variant` must fail. @ts-expect-error proves
 		// the type enforcement fires at compile time.
 		// @ts-expect-error — $variant is required on Config for forms that declare it.
-		const _bad: _Config = { x: "x" };
+		const _bad: _Config = { x: 'x' };
 		void _bad;
 	});
 
-	it("types $variant as the exact literal the form declares", () => {
+	it('types $variant as the exact literal the form declares', () => {
 		// Wrong literal must fail.
 		// @ts-expect-error — $variant must be the exact declared literal ('bar').
-		const _wrong: _Config = { x: "x", $variant: "other" };
+		const _wrong: _Config = { x: 'x', $variant: 'other' };
 		void _wrong;
 	});
 });

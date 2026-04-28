@@ -27,22 +27,22 @@ import {
 	reconstructWrapper,
 	reconstructPrec,
 	reconstructContainer,
-	wrapInPrecStack,
-} from "./transform-path.ts";
-import { isFieldPlaceholder, maybeKeywordSymbol } from "../primitives/field.ts";
-import type { FieldPlaceholder } from "../primitives/field.ts";
-import { isAliasPlaceholder } from "../primitives/alias.ts";
-import type { AliasPlaceholder } from "../primitives/alias.ts";
-import { isVariantPlaceholder } from "../primitives/variant.ts";
-import type { VariantPlaceholder } from "../primitives/variant.ts";
+	wrapInPrecStack
+} from './transform-path.ts';
+import { isFieldPlaceholder, maybeKeywordSymbol } from '../primitives/field.ts';
+import type { FieldPlaceholder } from '../primitives/field.ts';
+import { isAliasPlaceholder } from '../primitives/alias.ts';
+import type { AliasPlaceholder } from '../primitives/alias.ts';
+import { isVariantPlaceholder } from '../primitives/variant.ts';
+import type { VariantPlaceholder } from '../primitives/variant.ts';
 import {
 	wireRegisterSyntheticRule,
 	wireRegisterPolymorphVariant,
 	wireRegisterConflict,
 	wireGetCurrentRuleKind,
 	polymorphVisibleName,
-	polymorphHiddenName,
-} from "../wire/wire.ts";
+	polymorphHiddenName
+} from '../wire/wire.ts';
 import {
 	isFieldLike,
 	isPrecWrapper,
@@ -51,9 +51,9 @@ import {
 	isChoiceType,
 	isBlankType,
 	isOptionalType,
-	isPlainRepeatType,
-} from "../runtime-shapes.ts";
-import type { RuntimeRule } from "../runtime-shapes.ts";
+	isPlainRepeatType
+} from '../runtime-shapes.ts';
+import type { RuntimeRule } from '../runtime-shapes.ts';
 
 /**
  * Apply patches to a rule. Patches are an object with path-string keys
@@ -106,12 +106,15 @@ export function transform<_Base = unknown>(
 	for (const patches of patchSets) {
 		const hasPathKeys = requiresPathMode(patches);
 		const hasPlaceholderAlias = Object.values(patches).some(
-			(v) => isAliasPlaceholder(v) || isVariantPlaceholder(v),
+			(v) => isAliasPlaceholder(v) || isVariantPlaceholder(v)
 		);
 		if (hasPathKeys || hasPlaceholderAlias) {
 			rule = applyPathPatches(rule, patches);
 		} else {
-			rule = applyFlatPatches(rule, patches as Record<number | string, RuntimeRule>);
+			rule = applyFlatPatches(
+				rule,
+				patches as Record<number | string, RuntimeRule>
+			);
 		}
 	}
 	return rule;
@@ -142,13 +145,15 @@ function applyPathPatches(
 	patches: Record<
 		number | string,
 		RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder
-	>,
+	>
 ): RuntimeRule {
 	const { variantEntries, otherEntries } = partitionPatchesByVariant(patches);
 	let rule = original;
 	for (const [key, value] of otherEntries) {
 		const segments = parsePath(String(key));
-		rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
+		rule = applyPath(rule, segments, (member, precStack) =>
+			resolvePatch(value, member, precStack)
+		);
 	}
 	if (variantEntries.length > 0) {
 		rule = applyVariantPatches(rule, variantEntries);
@@ -174,16 +179,22 @@ function partitionPatchesByVariant(
 	patches: Record<
 		number | string,
 		RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder
-	>,
+	>
 ): {
 	variantEntries: Array<[string, VariantPlaceholder]>;
 	otherEntries: Array<
-		[string, RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder]
+		[
+			string,
+			RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder
+		]
 	>;
 } {
 	const variantEntries: Array<[string, VariantPlaceholder]> = [];
 	const otherEntries: Array<
-		[string, RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder]
+		[
+			string,
+			RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder
+		]
 	> = [];
 	for (const entry of Object.entries(patches)) {
 		const v = entry[1];
@@ -210,7 +221,7 @@ function partitionPatchesByVariant(
  */
 function applyVariantPatches(
 	rule: RuntimeRule,
-	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>,
+	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>
 ): RuntimeRule {
 	// Sort deepest-first so variants at greater path depth run before
 	// shallower ones. Without this, a shallower variant that aliases
@@ -220,7 +231,9 @@ function applyVariantPatches(
 	// JS object iteration places pure-numeric keys first in numeric
 	// order regardless of insertion order, so relying on author-
 	// specified ordering isn't portable.
-	const ordered = [...variantEntries].sort(([a], [b]) => parsePath(b).length - parsePath(a).length);
+	const ordered = [...variantEntries].sort(
+		([a], [b]) => parsePath(b).length - parsePath(a).length
+	);
 	const hoisted = tryHoistSiblingVariants(rule, ordered);
 	if (hoisted) {
 		let result = hoisted.rule;
@@ -228,7 +241,7 @@ function applyVariantPatches(
 			if (hoisted.consumed.has(key)) continue;
 			const segments = parsePath(key);
 			result = applyPath(result, segments, (member, precStack) =>
-				resolvePatch(value, member, precStack),
+				resolvePatch(value, member, precStack)
 			);
 		}
 		return result;
@@ -237,7 +250,7 @@ function applyVariantPatches(
 	for (const [key, value] of ordered) {
 		const segments = parsePath(key);
 		result = applyPath(result, segments, (member, precStack) =>
-			resolvePatch(value, member, precStack),
+			resolvePatch(value, member, precStack)
 		);
 	}
 	return result;
@@ -259,32 +272,38 @@ function applyVariantPatches(
  */
 function tryHoistSiblingVariants(
 	rule: RuntimeRule,
-	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>,
+	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>
 ): { rule: RuntimeRule; consumed: Set<string> } | null {
 	const { bail, precStack, core } = peelPrecWrappersFromRule(rule);
 	const t = core.type;
-	if (!t) return bail("core rule has no type after prec peeling");
+	if (!t) return bail('core rule has no type after prec peeling');
 	if (!isSeqType(t)) return bail(`core rule type '${t}' is not seq/SEQ`);
 	const parsed = parseVariantPathsForHoist(variantEntries, bail);
 	if (parsed === null) return null;
 	const choicePos = parsed[0]!.choicePos;
 	if (parsed.some((p) => p.choicePos !== choicePos))
 		return bail(
-			`variant patches target mixed choice positions (${parsed.map((p) => p.choicePos).join(",")}) — hoist needs all siblings at one choice`,
+			`variant patches target mixed choice positions (${parsed.map((p) => p.choicePos).join(',')}) — hoist needs all siblings at one choice`
 		);
 	const seqMembers = [...membersOf(core)];
 	const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
 	const choice = seqMembers[resolvedPos];
 	if (!choice || !isChoiceType(choice.type))
-		return bail(`position ${resolvedPos} is '${choice?.type}', not choice/CHOICE`);
+		return bail(
+			`position ${resolvedPos} is '${choice?.type}', not choice/CHOICE`
+		);
 	const choiceMembers = membersOf(choice);
 	const anyEmpty = parsed.some((p) =>
-		matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx]!),
+		matchesEmpty(
+			choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx]!
+		)
 	);
 	if (!anyEmpty) return null; // non-empty variants fall through to per-patch extraction — not an error, just not a hoist candidate
 	const parentKind = wireGetCurrentRuleKind();
 	if (!parentKind)
-		return bail("no current rule kind (variant()/transform() called outside rule callback?)");
+		return bail(
+			'no current rule kind (variant()/transform() called outside rule callback?)'
+		);
 	return buildHoistedVariants(
 		core,
 		seqMembers,
@@ -293,7 +312,7 @@ function tryHoistSiblingVariants(
 		choice,
 		parsed,
 		parentKind,
-		precStack,
+		precStack
 	);
 }
 
@@ -321,8 +340,9 @@ function peelPrecWrappersFromRule(rule: RuntimeRule): {
 	precStack: RuntimeRule[];
 	core: RuntimeRule;
 } {
-	const dbg = typeof process !== "undefined" ? process?.env?.SITTIR_DEBUG : undefined;
-	const kindFor = wireGetCurrentRuleKind() ?? "(unknown)";
+	const dbg =
+		typeof process !== 'undefined' ? process?.env?.SITTIR_DEBUG : undefined;
+	const kindFor = wireGetCurrentRuleKind() ?? '(unknown)';
 	const bail = (reason: string): null => {
 		if (dbg) console.error(`[sittir] hoist skipped on '${kindFor}': ${reason}`);
 		return null;
@@ -351,17 +371,28 @@ function peelPrecWrappersFromRule(rule: RuntimeRule): {
  */
 function parseVariantPathsForHoist(
 	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>,
-	bail: (reason: string) => null,
-): Array<{ key: string; v: VariantPlaceholder; choicePos: number; altIdx: number }> | null {
-	const parsed: Array<{ key: string; v: VariantPlaceholder; choicePos: number; altIdx: number }> =
-		[];
+	bail: (reason: string) => null
+): Array<{
+	key: string;
+	v: VariantPlaceholder;
+	choicePos: number;
+	altIdx: number;
+}> | null {
+	const parsed: Array<{
+		key: string;
+		v: VariantPlaceholder;
+		choicePos: number;
+		altIdx: number;
+	}> = [];
 	for (const [key, v] of variantEntries) {
 		const segs = parsePath(key);
 		if (segs.length !== 2)
-			return bail(`variant patch '${key}' has ${segs.length} segments (expected 2: N/M)`);
-		if (segs[0]!.kind !== "index" || segs[1]!.kind !== "index")
 			return bail(
-				`variant patch '${key}' uses non-index segments (kind-match / wildcard not supported for hoist)`,
+				`variant patch '${key}' has ${segs.length} segments (expected 2: N/M)`
+			);
+		if (segs[0]!.kind !== 'index' || segs[1]!.kind !== 'index')
+			return bail(
+				`variant patch '${key}' uses non-index segments (kind-match / wildcard not supported for hoist)`
 			);
 		parsed.push({ key, v, choicePos: segs[0]!.value, altIdx: segs[1]!.value });
 	}
@@ -401,16 +432,24 @@ function buildHoistedVariants(
 	choiceMembers: RuntimeRule[],
 	resolvedPos: number,
 	choice: RuntimeRule,
-	parsed: ReadonlyArray<{ key: string; v: VariantPlaceholder; choicePos: number; altIdx: number }>,
+	parsed: ReadonlyArray<{
+		key: string;
+		v: VariantPlaceholder;
+		choicePos: number;
+		altIdx: number;
+	}>,
 	parentKind: string,
-	precStack: ReadonlyArray<RuntimeRule>,
+	precStack: ReadonlyArray<RuntimeRule>
 ): { rule: RuntimeRule; consumed: Set<string> } {
 	const refs: RuntimeRule[] = [];
 	const isUpperCase = core.type === core.type.toUpperCase();
 	for (const p of parsed) {
-		const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
+		const resolvedAlt =
+			p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
 		const altContent = choiceMembers[resolvedAlt]!;
-		const hoistedMembers = seqMembers.map((m, i) => (i === resolvedPos ? altContent : m));
+		const hoistedMembers = seqMembers.map((m, i) =>
+			i === resolvedPos ? altContent : m
+		);
 		const hoistedSeq = reconstructContainer(core, hoistedMembers);
 		const hoistedBody = wrapVariantBodyInParentPrec(hoistedSeq, precStack);
 		// Hidden rule name (underscore-prefixed) — MUST match wire's
@@ -430,28 +469,32 @@ function buildHoistedVariants(
 		const hiddenName = polymorphHiddenName(parentKind, p.v.name);
 		if (!wireRegisterPolymorphVariant(parentKind, p.v.name)) {
 			throw new Error(
-				`variant('${p.v.name}'): no active wire() context — variant() must run inside a rule callback under wire()`,
+				`variant('${p.v.name}'): no active wire() context — variant() must run inside a rule callback under wire()`
 			);
 		}
 		if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {
-			throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
+			throw new Error(
+				`registerSyntheticRule('${hiddenName}'): no active wire() context`
+			);
 		}
 		// Emit `alias($._hidden, $.visible)` so tree-sitter matches the
 		// hidden rule but surfaces the visible kind name in parse trees.
 		// Mirrors `registerAliasedVariant`'s output shape used by the
 		// non-hoisted variant placeholder path.
 		refs.push({
-			type: isUpperCase ? "ALIAS" : "alias",
-			content: { type: isUpperCase ? "SYMBOL" : "symbol", name: hiddenName },
+			type: isUpperCase ? 'ALIAS' : 'alias',
+			content: { type: isUpperCase ? 'SYMBOL' : 'symbol', name: hiddenName },
 			named: true,
-			value: visibleName,
+			value: visibleName
 		} as unknown as RuntimeRule);
 	}
 	// Conflicts MUST reference declared rules (tree-sitter rejects
 	// symbol references to alias targets in the conflicts array with
 	// "Undefined symbol"). Use the hidden rule names — those ARE
 	// declared via wire's placeholder injection.
-	registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, p.v.name)));
+	registerHoistedVariantConflicts(
+		parsed.map((p) => polymorphHiddenName(parentKind, p.v.name))
+	);
 	const newChoice = reconstructContainer(choice, refs);
 	return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
@@ -491,7 +534,7 @@ const contentOf = (r: RuntimeRule): RuntimeRule =>
 
 function applyFlatPatches(
 	original: RuntimeRule,
-	patches: Record<number | string, RuntimeRule>,
+	patches: Record<number | string, RuntimeRule>
 ): RuntimeRule {
 	const t = original.type;
 	if (isSeqType(t)) {
@@ -501,7 +544,9 @@ function applyFlatPatches(
 	// Choice: apply transform to each member recursively. Reconstruct
 	// via native dsl so the choice keeps its runtime-correct shape.
 	if (isChoiceType(t)) {
-		const newMembers = membersOf(original).map((m) => applyFlatPatches(m, patches));
+		const newMembers = membersOf(original).map((m) =>
+			applyFlatPatches(m, patches)
+		);
 		return reconstructContainer(original, newMembers);
 	}
 
@@ -537,7 +582,7 @@ function applyFlatPatches(
  */
 function applyFlatPatchesThroughPrec(
 	original: RuntimeRule,
-	patches: Record<number | string, RuntimeRule>,
+	patches: Record<number | string, RuntimeRule>
 ): RuntimeRule {
 	const newContent = applyFlatPatches(contentOf(original), patches);
 	return reconstructPrec(original, newContent);
@@ -567,19 +612,19 @@ function applyFlatPatchesThroughPrec(
  */
 function applyFlatPatchesToSeq(
 	original: RuntimeRule,
-	patches: Record<number | string, RuntimeRule>,
+	patches: Record<number | string, RuntimeRule>
 ): RuntimeRule {
 	const members = [...membersOf(original)];
 	for (const [key, patch] of Object.entries(patches)) {
 		if (!/^\d+$/.test(key)) {
 			throw new Error(
-				`transform: invalid flat-positional key '${key}' — keys must be non-negative integers. Use path syntax ('0/1', '*') for nested addressing.`,
+				`transform: invalid flat-positional key '${key}' — keys must be non-negative integers. Use path syntax ('0/1', '*') for nested addressing.`
 			);
 		}
 		const index = Number(key);
 		if (index >= members.length) {
 			throw new Error(
-				`transform: index ${index} out of bounds in ${original.type} of length ${members.length}`,
+				`transform: index ${index} out of bounds in ${original.type} of length ${members.length}`
 			);
 		}
 		members[index] = resolvePatch(patch, members[index]!);
@@ -587,8 +632,10 @@ function applyFlatPatchesToSeq(
 	return reconstructContainer(original, members);
 }
 
-const wrapInPrec = (content: RuntimeRule, precStack?: readonly RuntimeRule[]): RuntimeRule =>
-	wrapInPrecStack(content, precStack, reconstructPrec);
+const wrapInPrec = (
+	content: RuntimeRule,
+	precStack?: readonly RuntimeRule[]
+): RuntimeRule => wrapInPrecStack(content, precStack, reconstructPrec);
 
 /**
  * Wrap a hoisted variant's body in the parent rule's accumulated prec
@@ -609,7 +656,7 @@ const wrapInPrec = (content: RuntimeRule, precStack?: readonly RuntimeRule[]): R
  */
 function wrapVariantBodyInParentPrec(
 	hoistedSeq: RuntimeRule,
-	precStack: ReadonlyArray<RuntimeRule>,
+	precStack: ReadonlyArray<RuntimeRule>
 ): RuntimeRule {
 	return wrapInPrec(hoistedSeq, precStack);
 }
@@ -617,7 +664,7 @@ function wrapVariantBodyInParentPrec(
 function resolvePatch(
 	patch: RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder,
 	originalMember: RuntimeRule,
-	precStack?: readonly RuntimeRule[],
+	precStack?: readonly RuntimeRule[]
 ): RuntimeRule {
 	if (isFieldPlaceholder(patch)) {
 		return resolveFieldPlaceholder(patch, originalMember, precStack);
@@ -626,7 +673,7 @@ function resolvePatch(
 	// Tag `source: 'override'` so derive-overrides-json and template
 	// walker recognize it as user-authored.
 	if (isFieldLike(patch)) {
-		return { ...patch, source: "override" as const } as unknown as RuntimeRule;
+		return { ...patch, source: 'override' as const } as unknown as RuntimeRule;
 	}
 	// Variant placeholder — variant('suffix'): auto-prefix with current
 	// rule kind → alias('parentKind_suffix'). Registers polymorph metadata.
@@ -634,18 +681,21 @@ function resolvePatch(
 		const parentKind = wireGetCurrentRuleKind();
 		if (!parentKind) {
 			throw new Error(
-				`variant('${patch.name}'): no current rule kind — variant() must be used inside a rule callback`,
+				`variant('${patch.name}'): no current rule kind — variant() must be used inside a rule callback`
 			);
 		}
 		if (!wireRegisterPolymorphVariant(parentKind, patch.name)) {
 			throw new Error(
-				`variant('${patch.name}'): no active wire() context — variant() must run inside a rule callback under wire()`,
+				`variant('${patch.name}'): no active wire() context — variant() must run inside a rule callback under wire()`
 			);
 		}
 		const visibleName = polymorphVisibleName(parentKind, patch.name);
 		const hiddenName = polymorphHiddenName(parentKind, patch.name);
-		return registerAliasedVariant(hiddenName, visibleName, originalMember, (body) =>
-			wrapInPrec(body, precStack),
+		return registerAliasedVariant(
+			hiddenName,
+			visibleName,
+			originalMember,
+			(body) => wrapInPrec(body, precStack)
 		);
 	}
 	if (isAliasPlaceholder(patch)) {
@@ -688,10 +738,13 @@ function resolvePatch(
 function resolveFieldPlaceholder(
 	patch: FieldPlaceholder,
 	originalMember: RuntimeRule,
-	precStack?: readonly RuntimeRule[],
+	precStack?: readonly RuntimeRule[]
 ): RuntimeRule {
 	let content: unknown = originalMember;
-	if (isFieldLike(content) && (content.source === "enriched" || content.source === "inferred")) {
+	if (
+		isFieldLike(content) &&
+		(content.source === 'enriched' || content.source === 'inferred')
+	) {
 		// Override landing on an already-enriched/inferred position is
 		// redundant — the one-line entry could be deleted and the
 		// enrich/link auto-inference pass would produce the same FIELD
@@ -701,34 +754,35 @@ function resolveFieldPlaceholder(
 		// mark fields we synthesized — neither should leak into the override
 		// result as a nested wrapper.
 		if (!process.env.SITTIR_QUIET) {
-			const parentKind = wireGetCurrentRuleKind() ?? "(unknown)";
+			const parentKind = wireGetCurrentRuleKind() ?? '(unknown)';
 			const overrideName = patch.name;
-			const enrichName = (content as { name?: string }).name ?? "(unknown)";
+			const enrichName = (content as { name?: string }).name ?? '(unknown)';
 			const tag =
 				overrideName === enrichName
 					? `duplicate name ('${overrideName}')`
 					: `override renames '${enrichName}' → '${overrideName}'`;
 			process.stderr.write(
 				`transform: override field('${overrideName}') on '${parentKind}' wraps an enrich-labeled FIELD — ${tag}. ` +
-					`Drop the override entry if the names match; enrich will cover it automatically.\n`,
+					`Drop the override entry if the names match; enrich will cover it automatically.\n`
 			);
 		}
 		content = content.content;
 	}
 	const maybeSymbolized = maybeKeywordSymbol(patch.name, content, (body) =>
-		wrapInPrec(body, precStack),
+		wrapInPrec(body, precStack)
 	);
 	if (maybeSymbolized !== content) {
 		content = maybeSymbolized;
 	}
-	const native = (globalThis as { field?: (n: string, c: unknown) => unknown }).field;
-	if (typeof native !== "function") {
+	const native = (globalThis as { field?: (n: string, c: unknown) => unknown })
+		.field;
+	if (typeof native !== 'function') {
 		throw new Error(
-			"transform: no global field() found — patches that use the one-arg field() form require a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)",
+			'transform: no global field() found — patches that use the one-arg field() form require a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)'
 		);
 	}
 	const result = native(patch.name, content) as object;
-	return { ...result, source: "override" as const } as unknown as RuntimeRule;
+	return { ...result, source: 'override' as const } as unknown as RuntimeRule;
 }
 
 /**
@@ -749,11 +803,14 @@ function resolveFieldPlaceholder(
 function resolveAliasPlaceholder(
 	patch: AliasPlaceholder,
 	originalMember: RuntimeRule,
-	precStack?: readonly RuntimeRule[],
+	precStack?: readonly RuntimeRule[]
 ): RuntimeRule {
-	const hiddenName = "_" + patch.name;
-	return registerAliasedVariant(hiddenName, patch.name, originalMember, (body) =>
-		wrapInPrec(body, precStack),
+	const hiddenName = '_' + patch.name;
+	return registerAliasedVariant(
+		hiddenName,
+		patch.name,
+		originalMember,
+		(body) => wrapInPrec(body, precStack)
 	);
 }
 
@@ -768,7 +825,7 @@ function resolveAliasPlaceholder(
 export function insert(
 	original: RuntimeRule,
 	position: number,
-	wrapper: (content: RuntimeRule) => RuntimeRule,
+	wrapper: (content: RuntimeRule) => RuntimeRule
 ): RuntimeRule {
 	const t = original.type;
 	if (!isSeqType(t)) {
@@ -778,13 +835,13 @@ export function insert(
 	const members = [...membersOf(original)];
 	if (position < 0 || position >= members.length) {
 		throw new Error(
-			`insert(): position ${position} out of bounds (rule has ${members.length} members)`,
+			`insert(): position ${position} out of bounds (rule has ${members.length} members)`
 		);
 	}
 
 	const wrapped = wrapper(members[position]!);
 	members[position] = isFieldLike(wrapped)
-		? ({ ...wrapped, source: "override" as const } as unknown as RuntimeRule)
+		? ({ ...wrapped, source: 'override' as const } as unknown as RuntimeRule)
 		: wrapped;
 
 	return reconstructContainer(original, members);
@@ -797,7 +854,7 @@ export function insert(
 export function replace(
 	original: RuntimeRule,
 	position: number,
-	replacement: RuntimeRule | null,
+	replacement: RuntimeRule | null
 ): RuntimeRule {
 	const t = original.type;
 	if (!isSeqType(t)) {
@@ -807,7 +864,7 @@ export function replace(
 	const members = [...membersOf(original)];
 	if (position < 0 || position >= members.length) {
 		throw new Error(
-			`replace(): position ${position} out of bounds (rule has ${members.length} members)`,
+			`replace(): position ${position} out of bounds (rule has ${members.length} members)`
 		);
 	}
 
@@ -848,7 +905,7 @@ export function registerAliasedVariant(
 	hiddenName: string,
 	aliasValue: string,
 	originalMember: RuntimeRule,
-	bodyWrapper: (body: RuntimeRule) => RuntimeRule,
+	bodyWrapper: (body: RuntimeRule) => RuntimeRule
 ): RuntimeRule {
 	const isUpperCase = originalMember.type === originalMember.type.toUpperCase();
 	const wasEmpty = matchesEmpty(originalMember);
@@ -856,24 +913,29 @@ export function registerAliasedVariant(
 	if (wasEmpty && !factored) {
 		throw new Error(
 			`variant()/alias(): can't extract '${hiddenName}' — its content matches the empty string and no non-empty core could be factored out. ` +
-				`Tree-sitter rejects syntactic rules that match empty. Restructure the parent rule (e.g. lift the empty case outside the choice) before splitting.`,
+				`Tree-sitter rejects syntactic rules that match empty. Restructure the parent rule (e.g. lift the empty case outside the choice) before splitting.`
 		);
 	}
 	const body = factored ? factored.nonEmpty : originalMember;
-	if (!wireRegisterSyntheticRule(hiddenName, bodyWrapper(body as RuntimeRule))) {
-		throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
+	if (
+		!wireRegisterSyntheticRule(hiddenName, bodyWrapper(body as RuntimeRule))
+	) {
+		throw new Error(
+			`registerSyntheticRule('${hiddenName}'): no active wire() context`
+		);
 	}
 	const aliasNode = {
-		type: isUpperCase ? "ALIAS" : "alias",
-		content: { type: isUpperCase ? "SYMBOL" : "symbol", name: hiddenName },
+		type: isUpperCase ? 'ALIAS' : 'alias',
+		content: { type: isUpperCase ? 'SYMBOL' : 'symbol', name: hiddenName },
 		named: true,
-		value: aliasValue,
+		value: aliasValue
 	} as unknown as RuntimeRule;
 	if (factored) {
-		const optional = (globalThis as { optional?: (c: unknown) => unknown }).optional;
-		if (typeof optional !== "function") {
+		const optional = (globalThis as { optional?: (c: unknown) => unknown })
+			.optional;
+		if (typeof optional !== 'function') {
 			throw new Error(
-				"transform: no global optional() found — variant()/alias() on empty-matching content needs runtime optional()",
+				'transform: no global optional() found — variant()/alias() on empty-matching content needs runtime optional()'
 			);
 		}
 		return optional(aliasNode) as RuntimeRule;
@@ -928,7 +990,7 @@ function extractNonEmpty(rule: RuntimeRule): { nonEmpty: unknown } | null {
 		const r = rule as unknown as Record<string, unknown>;
 		const nonEmpty: Record<string, unknown> = {
 			...r,
-			type: t === "REPEAT" ? "REPEAT1" : "repeat1",
+			type: t === 'REPEAT' ? 'REPEAT1' : 'repeat1'
 		};
 		return { nonEmpty };
 	}
@@ -944,7 +1006,9 @@ function extractNonEmpty(rule: RuntimeRule): { nonEmpty: unknown } | null {
 		return { nonEmpty: { type: t, members: nonEmpty } };
 	}
 	if (isSeqType(t)) {
-		const members = [...(rule as unknown as { members: RuntimeRule[] }).members];
+		const members = [
+			...(rule as unknown as { members: RuntimeRule[] }).members
+		];
 		for (let i = 0; i < members.length; i++) {
 			const factored = extractNonEmpty(members[i]!);
 			if (factored) {

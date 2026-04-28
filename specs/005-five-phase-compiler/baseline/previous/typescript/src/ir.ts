@@ -242,8 +242,8 @@ import {
 	stringFragment,
 	interfaceBody,
 	thisType,
-	typeIdentifier,
-} from "./factories.js";
+	typeIdentifier
+} from './factories.js';
 import {
 	programFrom,
 	exportStatementFrom,
@@ -455,19 +455,19 @@ import {
 	hiddenTypeIdentifierFrom,
 	shorthandPropertyIdentifierFrom,
 	shorthandPropertyIdentifierPatternFrom,
-	interfaceBodyFrom,
-} from "./from.js";
+	interfaceBodyFrom
+} from './from.js';
 
-function _attach<T extends (...args: any[]) => any, P extends Record<string, unknown>>(
-	fn: T,
-	props: P,
-): T & P {
+function _attach<
+	T extends (...args: any[]) => any,
+	P extends Record<string, unknown>
+>(fn: T, props: P): T & P {
 	for (const key of Object.keys(props)) {
 		Object.defineProperty(fn, key, {
 			value: (props as any)[key],
 			writable: true,
 			configurable: true,
-			enumerable: true,
+			enumerable: true
 		});
 	}
 	return fn as T & P;
@@ -480,8 +480,12 @@ export const ir = {
 		from: exportStatementFrom,
 		form_0: _attach(exportStatementForm0, { from: exportStatementForm0From }),
 		export: _attach(exportStatementExport, { from: exportStatementExportFrom }),
-		export2: _attach(exportStatementExport2, { from: exportStatementExport2From }),
-		export3: _attach(exportStatementExport3, { from: exportStatementExport3From }),
+		export2: _attach(exportStatementExport2, {
+			from: exportStatementExport2From
+		}),
+		export3: _attach(exportStatementExport3, {
+			from: exportStatementExport3From
+		})
 	}),
 	namespaceExport: _attach(namespaceExport, { from: namespaceExportFrom }),
 	exportClause: _attach(exportClause, { from: exportClauseFrom }),
@@ -494,42 +498,78 @@ export const ir = {
 	importSpecifier: _attach(importSpecifier, {
 		from: importSpecifierFrom,
 		name: _attach(importSpecifierName, { from: importSpecifierNameFrom }),
-		as: _attach(importSpecifierAs, { from: importSpecifierAsFrom }),
+		as: _attach(importSpecifierAs, { from: importSpecifierAsFrom })
 	}),
 	importAttribute: _attach(importAttribute, { from: importAttributeFrom }),
 	statement: _attach(statement, {
 		from: statementFrom,
-		export_statement: _attach(statementExportStatement, { from: statementExportStatementFrom }),
-		import_statement: _attach(statementImportStatement, { from: statementImportStatementFrom }),
+		export_statement: _attach(statementExportStatement, {
+			from: statementExportStatementFrom
+		}),
+		import_statement: _attach(statementImportStatement, {
+			from: statementImportStatementFrom
+		}),
 		debugger_statement: _attach(statementDebuggerStatement, {
-			from: statementDebuggerStatementFrom,
+			from: statementDebuggerStatementFrom
 		}),
 		expression_statement: _attach(statementExpressionStatement, {
-			from: statementExpressionStatementFrom,
+			from: statementExpressionStatementFrom
 		}),
-		declaration: _attach(statementDeclaration, { from: statementDeclarationFrom }),
+		declaration: _attach(statementDeclaration, {
+			from: statementDeclarationFrom
+		}),
 		body: _attach(statementBody, { from: statementBodyFrom }),
-		if_statement: _attach(statementIfStatement, { from: statementIfStatementFrom }),
-		switch_statement: _attach(statementSwitchStatement, { from: statementSwitchStatementFrom }),
-		for_statement: _attach(statementForStatement, { from: statementForStatementFrom }),
-		for_in_statement: _attach(statementForInStatement, { from: statementForInStatementFrom }),
-		while_statement: _attach(statementWhileStatement, { from: statementWhileStatementFrom }),
-		do_statement: _attach(statementDoStatement, { from: statementDoStatementFrom }),
-		try_statement: _attach(statementTryStatement, { from: statementTryStatementFrom }),
-		with_statement: _attach(statementWithStatement, { from: statementWithStatementFrom }),
-		break_statement: _attach(statementBreakStatement, { from: statementBreakStatementFrom }),
-		continue_statement: _attach(statementContinueStatement, {
-			from: statementContinueStatementFrom,
+		if_statement: _attach(statementIfStatement, {
+			from: statementIfStatementFrom
 		}),
-		return_statement: _attach(statementReturnStatement, { from: statementReturnStatementFrom }),
-		throw_statement: _attach(statementThrowStatement, { from: statementThrowStatementFrom }),
-		empty_statement: _attach(statementEmptyStatement, { from: statementEmptyStatementFrom }),
-		labeled_statement: _attach(statementLabeledStatement, { from: statementLabeledStatementFrom }),
+		switch_statement: _attach(statementSwitchStatement, {
+			from: statementSwitchStatementFrom
+		}),
+		for_statement: _attach(statementForStatement, {
+			from: statementForStatementFrom
+		}),
+		for_in_statement: _attach(statementForInStatement, {
+			from: statementForInStatementFrom
+		}),
+		while_statement: _attach(statementWhileStatement, {
+			from: statementWhileStatementFrom
+		}),
+		do_statement: _attach(statementDoStatement, {
+			from: statementDoStatementFrom
+		}),
+		try_statement: _attach(statementTryStatement, {
+			from: statementTryStatementFrom
+		}),
+		with_statement: _attach(statementWithStatement, {
+			from: statementWithStatementFrom
+		}),
+		break_statement: _attach(statementBreakStatement, {
+			from: statementBreakStatementFrom
+		}),
+		continue_statement: _attach(statementContinueStatement, {
+			from: statementContinueStatementFrom
+		}),
+		return_statement: _attach(statementReturnStatement, {
+			from: statementReturnStatementFrom
+		}),
+		throw_statement: _attach(statementThrowStatement, {
+			from: statementThrowStatementFrom
+		}),
+		empty_statement: _attach(statementEmptyStatement, {
+			from: statementEmptyStatementFrom
+		}),
+		labeled_statement: _attach(statementLabeledStatement, {
+			from: statementLabeledStatementFrom
+		})
 	}),
-	expressionStatement: _attach(expressionStatement, { from: expressionStatementFrom }),
+	expressionStatement: _attach(expressionStatement, {
+		from: expressionStatementFrom
+	}),
 	variable: _attach(variableDeclaration, { from: variableDeclarationFrom }),
 	lexical: _attach(lexicalDeclaration, { from: lexicalDeclarationFrom }),
-	variableDeclarator: _attach(variableDeclarator, { from: variableDeclaratorFrom }),
+	variableDeclarator: _attach(variableDeclarator, {
+		from: variableDeclaratorFrom
+	}),
 	statementBlock: _attach(statementBlock, { from: statementBlockFrom }),
 	elseClause: _attach(elseClause, { from: elseClauseFrom }),
 	ifStatement: _attach(ifStatement, { from: ifStatementFrom }),
@@ -541,8 +581,12 @@ export const ir = {
 	tryStatement: _attach(tryStatement, { from: tryStatementFrom }),
 	withStatement: _attach(withStatement, { from: withStatementFrom }),
 	breakStatement: _attach(breakStatement, { from: breakStatementFrom }),
-	continueStatement: _attach(continueStatement, { from: continueStatementFrom }),
-	debuggerStatement: _attach(debuggerStatement, { from: debuggerStatementFrom }),
+	continueStatement: _attach(continueStatement, {
+		from: continueStatementFrom
+	}),
+	debuggerStatement: _attach(debuggerStatement, {
+		from: debuggerStatementFrom
+	}),
 	returnStatement: _attach(returnStatement, { from: returnStatementFrom }),
 	throwStatement: _attach(throwStatement, { from: throwStatementFrom }),
 	labeled: _attach(labeledStatement, { from: labeledStatementFrom }),
@@ -554,51 +598,75 @@ export const ir = {
 	parenthesized: _attach(parenthesizedExpression, {
 		from: parenthesizedExpressionFrom,
 		expression: _attach(parenthesizedExpressionExpression, {
-			from: parenthesizedExpressionExpressionFrom,
+			from: parenthesizedExpressionExpressionFrom
 		}),
 		sequence_expression: _attach(parenthesizedExpressionSequenceExpression, {
-			from: parenthesizedExpressionSequenceExpressionFrom,
-		}),
+			from: parenthesizedExpressionSequenceExpressionFrom
+		})
 	}),
 	expression: _attach(expression, { from: expressionFrom }),
 	primary: _attach(primaryExpression, { from: primaryExpressionFrom }),
 	yieldExpression: _attach(yieldExpression, { from: yieldExpressionFrom }),
 	object: _attach(object, { from: objectFrom }),
 	objectPattern: _attach(objectPattern, { from: objectPatternFrom }),
-	assignmentPattern: _attach(assignmentPattern, { from: assignmentPatternFrom }),
-	objectAssignmentPattern: _attach(objectAssignmentPattern, { from: objectAssignmentPatternFrom }),
+	assignmentPattern: _attach(assignmentPattern, {
+		from: assignmentPatternFrom
+	}),
+	objectAssignmentPattern: _attach(objectAssignmentPattern, {
+		from: objectAssignmentPatternFrom
+	}),
 	array: _attach(array, { from: arrayFrom }),
 	arrayPattern: _attach(arrayPattern, { from: arrayPatternFrom }),
 	jsxElement: _attach(jsxElement, { from: jsxElementFrom }),
 	jsx: _attach(jsxExpression, { from: jsxExpressionFrom }),
-	jsxOpeningElement: _attach(jsxOpeningElement, { from: jsxOpeningElementFrom }),
+	jsxOpeningElement: _attach(jsxOpeningElement, {
+		from: jsxOpeningElementFrom
+	}),
 	nestedIdentifier: _attach(nestedIdentifier, { from: nestedIdentifierFrom }),
 	jsxNamespaceName: _attach(jsxNamespaceName, { from: jsxNamespaceNameFrom }),
-	jsxClosingElement: _attach(jsxClosingElement, { from: jsxClosingElementFrom }),
-	jsxSelfClosingElement: _attach(jsxSelfClosingElement, { from: jsxSelfClosingElementFrom }),
+	jsxClosingElement: _attach(jsxClosingElement, {
+		from: jsxClosingElementFrom
+	}),
+	jsxSelfClosingElement: _attach(jsxSelfClosingElement, {
+		from: jsxSelfClosingElementFrom
+	}),
 	jsxAttribute: _attach(jsxAttribute, { from: jsxAttributeFrom }),
 	jsxString: _attach(hiddenJsxString, { from: hiddenJsxStringFrom }),
 	class_: _attach(class_, { from: class_From }),
 	classDeclaration: _attach(classDeclaration, { from: classDeclarationFrom }),
 	classHeritage: _attach(classHeritage, { from: classHeritageFrom }),
-	functionExpression: _attach(functionExpression, { from: functionExpressionFrom }),
-	functionDeclaration: _attach(functionDeclaration, { from: functionDeclarationFrom }),
-	generatorFunction: _attach(generatorFunction, { from: generatorFunctionFrom }),
+	functionExpression: _attach(functionExpression, {
+		from: functionExpressionFrom
+	}),
+	functionDeclaration: _attach(functionDeclaration, {
+		from: functionDeclarationFrom
+	}),
+	generatorFunction: _attach(generatorFunction, {
+		from: generatorFunctionFrom
+	}),
 	generatorFunctionDeclaration: _attach(generatorFunctionDeclaration, {
-		from: generatorFunctionDeclarationFrom,
+		from: generatorFunctionDeclarationFrom
 	}),
 	arrowFunction: _attach(arrowFunction, {
 		from: arrowFunctionFrom,
-		parameter: _attach(arrowFunctionParameter, { from: arrowFunctionParameterFrom }),
-		_call_signature: _attach(arrowFunctionUCallSignature, {
-			from: arrowFunctionUCallSignatureFrom,
+		parameter: _attach(arrowFunctionParameter, {
+			from: arrowFunctionParameterFrom
 		}),
+		_call_signature: _attach(arrowFunctionUCallSignature, {
+			from: arrowFunctionUCallSignatureFrom
+		})
 	}),
 	call: _attach(callExpression, {
 		from: callExpressionFrom,
-		function: _attach(callExpressionFunction, { from: callExpressionFunctionFrom }),
-		function2: _attach(callExpressionFunction2, { from: callExpressionFunction2From }),
-		tok_q_dot: _attach(callExpressionTokQDot, { from: callExpressionTokQDotFrom }),
+		function: _attach(callExpressionFunction, {
+			from: callExpressionFunctionFrom
+		}),
+		function2: _attach(callExpressionFunction2, {
+			from: callExpressionFunction2From
+		}),
+		tok_q_dot: _attach(callExpressionTokQDot, {
+			from: callExpressionTokQDotFrom
+		})
 	}),
 	newExpression: _attach(newExpression, { from: newExpressionFrom }),
 	awaitExpression: _attach(awaitExpression, { from: awaitExpressionFrom }),
@@ -607,10 +675,10 @@ export const ir = {
 	lhs: _attach(hiddenLhsExpression, { from: hiddenLhsExpressionFrom }),
 	assignment: _attach(assignmentExpression, { from: assignmentExpressionFrom }),
 	augmentedAssignmentLhs: _attach(hiddenAugmentedAssignmentLhs, {
-		from: hiddenAugmentedAssignmentLhsFrom,
+		from: hiddenAugmentedAssignmentLhsFrom
 	}),
 	augmentedAssignment: _attach(augmentedAssignmentExpression, {
-		from: augmentedAssignmentExpressionFrom,
+		from: augmentedAssignmentExpressionFrom
 	}),
 	spreadElement: _attach(spreadElement, { from: spreadElementFrom }),
 	ternary: _attach(ternaryExpression, { from: ternaryExpressionFrom }),
@@ -620,12 +688,18 @@ export const ir = {
 	sequence: _attach(sequenceExpression, { from: sequenceExpressionFrom }),
 	string: _attach(string, { from: stringFrom }),
 	templateString: _attach(templateString, { from: templateStringFrom }),
-	templateSubstitution: _attach(templateSubstitution, { from: templateSubstitutionFrom }),
+	templateSubstitution: _attach(templateSubstitution, {
+		from: templateSubstitutionFrom
+	}),
 	regex: _attach(regex, { from: regexFrom }),
 	arguments: _attach(arguments_, { from: arguments_From }),
 	decorator: _attach(decorator, { from: decoratorFrom }),
-	decoratorMember: _attach(decoratorMemberExpression, { from: decoratorMemberExpressionFrom }),
-	decoratorCall: _attach(decoratorCallExpression, { from: decoratorCallExpressionFrom }),
+	decoratorMember: _attach(decoratorMemberExpression, {
+		from: decoratorMemberExpressionFrom
+	}),
+	decoratorCall: _attach(decoratorCallExpression, {
+		from: decoratorCallExpressionFrom
+	}),
 	classBody: _attach(classBody, { from: classBodyFrom }),
 	field: _attach(fieldDefinition, { from: fieldDefinitionFrom }),
 	formalParameters: _attach(formalParameters, { from: formalParametersFrom }),
@@ -636,83 +710,127 @@ export const ir = {
 	pair: _attach(pair, { from: pairFrom }),
 	pairPattern: _attach(pairPattern, { from: pairPatternFrom }),
 	propertyName: _attach(hiddenPropertyName, { from: hiddenPropertyNameFrom }),
-	computedPropertyName: _attach(computedPropertyName, { from: computedPropertyNameFrom }),
-	semicolon: _attach(hiddenSemicolon, { from: hiddenSemicolonFrom }),
-	publicField: _attach(publicFieldDefinition, { from: publicFieldDefinitionFrom }),
-	jsxStartOpeningElement: _attach(hiddenJsxStartOpeningElement, {
-		from: hiddenJsxStartOpeningElementFrom,
+	computedPropertyName: _attach(computedPropertyName, {
+		from: computedPropertyNameFrom
 	}),
-	importIdentifier: _attach(hiddenImportIdentifier, { from: hiddenImportIdentifierFrom }),
+	semicolon: _attach(hiddenSemicolon, { from: hiddenSemicolonFrom }),
+	publicField: _attach(publicFieldDefinition, {
+		from: publicFieldDefinitionFrom
+	}),
+	jsxStartOpeningElement: _attach(hiddenJsxStartOpeningElement, {
+		from: hiddenJsxStartOpeningElementFrom
+	}),
+	importIdentifier: _attach(hiddenImportIdentifier, {
+		from: hiddenImportIdentifierFrom
+	}),
 	nonNull: _attach(nonNullExpression, { from: nonNullExpressionFrom }),
 	methodSignature: _attach(methodSignature, { from: methodSignatureFrom }),
-	abstractMethodSignature: _attach(abstractMethodSignature, { from: abstractMethodSignatureFrom }),
-	functionSignature: _attach(functionSignature, { from: functionSignatureFrom }),
+	abstractMethodSignature: _attach(abstractMethodSignature, {
+		from: abstractMethodSignatureFrom
+	}),
+	functionSignature: _attach(functionSignature, {
+		from: functionSignatureFrom
+	}),
 	decoratorParenthesized: _attach(decoratorParenthesizedExpression, {
-		from: decoratorParenthesizedExpressionFrom,
+		from: decoratorParenthesizedExpressionFrom
 	}),
 	typeAssertion: _attach(typeAssertion, { from: typeAssertionFrom }),
 	as: _attach(asExpression, { from: asExpressionFrom }),
 	satisfies: _attach(satisfiesExpression, { from: satisfiesExpressionFrom }),
-	instantiation: _attach(instantiationExpression, { from: instantiationExpressionFrom }),
-	importRequireClause: _attach(importRequireClause, { from: importRequireClauseFrom }),
+	instantiation: _attach(instantiationExpression, {
+		from: instantiationExpressionFrom
+	}),
+	importRequireClause: _attach(importRequireClause, {
+		from: importRequireClauseFrom
+	}),
 	extendsClause: _attach(extendsClause, { from: extendsClauseFrom }),
 	implementsClause: _attach(implementsClause, { from: implementsClauseFrom }),
 	ambient: _attach(ambientDeclaration, { from: ambientDeclarationFrom }),
-	abstractClass: _attach(abstractClassDeclaration, { from: abstractClassDeclarationFrom }),
+	abstractClass: _attach(abstractClassDeclaration, {
+		from: abstractClassDeclarationFrom
+	}),
 	module: _attach(module, { from: moduleFrom }),
 	internalModule: _attach(internalModule, { from: internalModuleFrom }),
 	importAlias: _attach(importAlias, { from: importAliasFrom }),
-	nestedTypeIdentifier: _attach(nestedTypeIdentifier, { from: nestedTypeIdentifierFrom }),
+	nestedTypeIdentifier: _attach(nestedTypeIdentifier, {
+		from: nestedTypeIdentifierFrom
+	}),
 	interface: _attach(interfaceDeclaration, { from: interfaceDeclarationFrom }),
-	extendsTypeClause: _attach(extendsTypeClause, { from: extendsTypeClauseFrom }),
+	extendsTypeClause: _attach(extendsTypeClause, {
+		from: extendsTypeClauseFrom
+	}),
 	enumDeclaration: _attach(enumDeclaration, { from: enumDeclarationFrom }),
 	enumBody: _attach(enumBody, { from: enumBodyFrom }),
 	enumAssignment: _attach(enumAssignment, { from: enumAssignmentFrom }),
 	typeAlias: _attach(typeAliasDeclaration, { from: typeAliasDeclarationFrom }),
-	requiredParameter: _attach(requiredParameter, { from: requiredParameterFrom }),
-	optionalParameter: _attach(optionalParameter, { from: optionalParameterFrom }),
-	omittingTypeAnnotation: _attach(omittingTypeAnnotation, { from: omittingTypeAnnotationFrom }),
-	addingTypeAnnotation: _attach(addingTypeAnnotation, { from: addingTypeAnnotationFrom }),
-	optingTypeAnnotation: _attach(optingTypeAnnotation, { from: optingTypeAnnotationFrom }),
+	requiredParameter: _attach(requiredParameter, {
+		from: requiredParameterFrom
+	}),
+	optionalParameter: _attach(optionalParameter, {
+		from: optionalParameterFrom
+	}),
+	omittingTypeAnnotation: _attach(omittingTypeAnnotation, {
+		from: omittingTypeAnnotationFrom
+	}),
+	addingTypeAnnotation: _attach(addingTypeAnnotation, {
+		from: addingTypeAnnotationFrom
+	}),
+	optingTypeAnnotation: _attach(optingTypeAnnotation, {
+		from: optingTypeAnnotationFrom
+	}),
 	typeAnnotation: _attach(typeAnnotation, { from: typeAnnotationFrom }),
 	asserts: _attach(asserts, { from: assertsFrom }),
-	assertsAnnotation: _attach(assertsAnnotation, { from: assertsAnnotationFrom }),
+	assertsAnnotation: _attach(assertsAnnotation, {
+		from: assertsAnnotationFrom
+	}),
 	type: _attach(type, { from: typeFrom }),
 	tupleParameter: _attach(tupleParameter, { from: tupleParameterFrom }),
-	optionalTupleParameter: _attach(optionalTupleParameter, { from: optionalTupleParameterFrom }),
+	optionalTupleParameter: _attach(optionalTupleParameter, {
+		from: optionalTupleParameterFrom
+	}),
 	optionalType: _attach(optionalType, { from: optionalTypeFrom }),
 	restType: _attach(restType, { from: restTypeFrom }),
 	constructorType: _attach(constructorType, { from: constructorTypeFrom }),
 	primaryType: _attach(primaryType, { from: primaryTypeFrom }),
 	templateType: _attach(templateType, { from: templateTypeFrom }),
-	templateLiteralType: _attach(templateLiteralType, { from: templateLiteralTypeFrom }),
+	templateLiteralType: _attach(templateLiteralType, {
+		from: templateLiteralTypeFrom
+	}),
 	inferType: _attach(inferType, { from: inferTypeFrom }),
 	conditionalType: _attach(conditionalType, { from: conditionalTypeFrom }),
 	genericType: _attach(genericType, { from: genericTypeFrom }),
 	typePredicate: _attach(typePredicate, { from: typePredicateFrom }),
-	typePredicateAnnotation: _attach(typePredicateAnnotation, { from: typePredicateAnnotationFrom }),
+	typePredicateAnnotation: _attach(typePredicateAnnotation, {
+		from: typePredicateAnnotationFrom
+	}),
 	typeQuery: _attach(typeQuery, { from: typeQueryFrom }),
 	indexTypeQuery: _attach(indexTypeQuery, { from: indexTypeQueryFrom }),
 	lookupType: _attach(lookupType, { from: lookupTypeFrom }),
 	mappedTypeClause: _attach(mappedTypeClause, { from: mappedTypeClauseFrom }),
 	literalType: _attach(literalType, { from: literalTypeFrom }),
 	flowMaybeType: _attach(flowMaybeType, { from: flowMaybeTypeFrom }),
-	parenthesizedType: _attach(parenthesizedType, { from: parenthesizedTypeFrom }),
+	parenthesizedType: _attach(parenthesizedType, {
+		from: parenthesizedTypeFrom
+	}),
 	typeArguments: _attach(typeArguments, { from: typeArgumentsFrom }),
 	objectType: _attach(objectType, { from: objectTypeFrom }),
 	callSignature: _attach(callSignature, { from: callSignatureFrom }),
-	propertySignature: _attach(propertySignature, { from: propertySignatureFrom }),
+	propertySignature: _attach(propertySignature, {
+		from: propertySignatureFrom
+	}),
 	typeParameters: _attach(typeParameters, { from: typeParametersFrom }),
 	typeParameter: _attach(typeParameter, { from: typeParameterFrom }),
 	defaultType: _attach(defaultType, { from: defaultTypeFrom }),
 	constraint: _attach(constraint, { from: constraintFrom }),
-	constructSignature: _attach(constructSignature, { from: constructSignatureFrom }),
+	constructSignature: _attach(constructSignature, {
+		from: constructSignatureFrom
+	}),
 	indexSignature: _attach(indexSignature, {
 		from: indexSignatureFrom,
 		colon: _attach(indexSignatureColon, { from: indexSignatureColonFrom }),
 		mapped_type_clause: _attach(indexSignatureMappedTypeClause, {
-			from: indexSignatureMappedTypeClauseFrom,
-		}),
+			from: indexSignatureMappedTypeClauseFrom
+		})
 	}),
 	arrayType: _attach(arrayType, { from: arrayTypeFrom }),
 	tupleType: _attach(tupleType, { from: tupleTypeFrom }),
@@ -720,13 +838,18 @@ export const ir = {
 	unionType: _attach(unionType, { from: unionTypeFrom }),
 	intersectionType: _attach(intersectionType, { from: intersectionTypeFrom }),
 	functionType: _attach(functionType, { from: functionTypeFrom }),
-	hiddenTypeIdentifier: _attach(hiddenTypeIdentifier, { from: hiddenTypeIdentifierFrom }),
+	hiddenTypeIdentifier: _attach(hiddenTypeIdentifier, {
+		from: hiddenTypeIdentifierFrom
+	}),
 	shorthandPropertyIdentifier: _attach(shorthandPropertyIdentifier, {
-		from: shorthandPropertyIdentifierFrom,
+		from: shorthandPropertyIdentifierFrom
 	}),
-	shorthandPropertyIdentifierPattern: _attach(shorthandPropertyIdentifierPattern, {
-		from: shorthandPropertyIdentifierPatternFrom,
-	}),
+	shorthandPropertyIdentifierPattern: _attach(
+		shorthandPropertyIdentifierPattern,
+		{
+			from: shorthandPropertyIdentifierPatternFrom
+		}
+	),
 	interfaceBody: _attach(interfaceBody, { from: interfaceBodyFrom }),
 
 	// Keyword factories
@@ -762,5 +885,5 @@ export const ir = {
 	statementIdentifier: statementIdentifier,
 	propertyIdentifier: propertyIdentifier,
 	stringFragment: stringFragment,
-	typeIdentifier: typeIdentifier,
+	typeIdentifier: typeIdentifier
 } as const;

@@ -66,22 +66,22 @@ Overrides are now TypeScript grammar extensions:
 
 ```ts
 // packages/rust/overrides.ts
-import { grammar, transform, field, role } from "@sittir/codegen";
-import base from "./grammar.js";
+import { grammar, transform, field, role } from '@sittir/codegen';
+import base from './grammar.js';
 
 export default grammar(base, {
 	rules: {
 		// Wrap position 2 of function_item in a field named 'body'
 		function_item: ($) =>
 			transform($.function_item, {
-				2: field("body"),
+				2: field('body')
 			}),
 
 		// Map external tokens to structural roles
-		_newline: ($) => role("newline"),
-		_indent: ($) => role("indent"),
-		_dedent: ($) => role("dedent"),
-	},
+		_newline: ($) => role('newline'),
+		_indent: ($) => role('indent'),
+		_dedent: ($) => role('dedent')
+	}
 });
 ```
 
@@ -98,10 +98,10 @@ To adopt a suggestion, copy the relevant entry from `overrides.suggested.ts` int
 ## Development: Using Phases Directly
 
 ```ts
-import { evaluate, link, optimize, assemble } from "@sittir/codegen";
+import { evaluate, link, optimize, assemble } from '@sittir/codegen';
 
 // Each phase is independently callable
-const raw = evaluate("path/to/grammar.js", "path/to/overrides.ts");
+const raw = evaluate('path/to/grammar.js', 'path/to/overrides.ts');
 const linked = link(raw);
 const optimized = optimize(linked);
 const nodeMap = assemble(optimized);

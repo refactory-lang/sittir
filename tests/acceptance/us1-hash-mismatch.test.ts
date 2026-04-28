@@ -27,9 +27,9 @@
  * branch.
  */
 
-import { describe, it, expect, vi } from "vitest";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { describe, it, expect, vi } from 'vitest';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 // Resolve the absolute path to `dist/hash.js` inside the @sittir/rust
 // package. Vite's module graph keys mocks on resolved file paths when
@@ -37,20 +37,28 @@ import { fileURLToPath } from "node:url";
 // imports `./hash.js` from inside the same dist directory, so the
 // mock target must be the absolute path on disk.
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const HASH_MODULE = join(__dirname, "..", "..", "packages", "rust", "dist", "hash.js");
+const HASH_MODULE = join(
+	__dirname,
+	'..',
+	'..',
+	'packages',
+	'rust',
+	'dist',
+	'hash.js'
+);
 
-describe("US1 acceptance — hash-mismatch silent fallback (T052)", () => {
+describe('US1 acceptance — hash-mismatch silent fallback (T052)', () => {
 	it('falls through to js with reason containing "hash mismatch"', async () => {
 		vi.resetModules();
 		vi.doMock(HASH_MODULE, () => ({
-			TEMPLATE_BUNDLE_HASH: "deadbeef-tampered-hash-not-the-real-one",
+			TEMPLATE_BUNDLE_HASH: 'deadbeef-tampered-hash-not-the-real-one'
 		}));
-		const { getActiveBackend } = await import("@sittir/rust");
+		const { getActiveBackend } = await import('@sittir/rust');
 		const backend = getActiveBackend();
-		expect(backend.name).toBe("js");
+		expect(backend.name).toBe('js');
 		if (backend.hashMatch !== undefined) {
 			expect(backend.hashMatch).toBe(false);
-			expect(backend.reason ?? "").toMatch(/hash.mismatch/i);
+			expect(backend.reason ?? '').toMatch(/hash.mismatch/i);
 		} else {
 			// Soft pass — native binary didn't load, so the hash
 			// compare branch was never reached. Still asserts a

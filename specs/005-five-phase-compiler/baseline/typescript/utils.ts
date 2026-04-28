@@ -6,9 +6,9 @@ import type {
 	AnyTreeNodeOf,
 	RuntimeNodeOf,
 	FluentNodeOf,
-	TreeNodeOf,
-} from "@sittir/types";
-import type { KindMap, ConfigMap, FromInputMap } from "./types.js";
+	TreeNodeOf
+} from '@sittir/types';
+import type { KindMap, ConfigMap, FromInputMap } from './types.js';
 
 // ---------------------------------------------------------------------------
 // Type guards
@@ -20,14 +20,17 @@ import type { KindMap, ConfigMap, FromInputMap } from "./types.js";
  * to RuntimeNodeOf<KindMap[K]>.
  */
 export function isNodeData<K extends keyof KindMap & keyof FromInputMap>(
-	v: RuntimeNodeOf<KindMap[K]> | FromInputMap[K] | TreeNodeOf<KindMap[K]>,
+	v: RuntimeNodeOf<KindMap[K]> | FromInputMap[K] | TreeNodeOf<KindMap[K]>
 ): v is RuntimeNodeOf<KindMap[K]>;
 export function isNodeData(v: unknown): v is AnyNodeData;
 export function isNodeData(v: unknown): v is AnyNodeData {
-	if (v === null || typeof v !== "object") return false;
+	if (v === null || typeof v !== 'object') return false;
 	const o = v as Record<string, unknown>;
-	if (typeof o["type"] !== "string") return false;
-	return (o["fields"] !== null && typeof o["fields"] === "object") || typeof o["text"] === "string";
+	if (typeof o['type'] !== 'string') return false;
+	return (
+		(o['fields'] !== null && typeof o['fields'] === 'object') ||
+		typeof o['text'] === 'string'
+	);
 }
 
 /**
@@ -35,16 +38,16 @@ export function isNodeData(v: unknown): v is AnyNodeData {
  * Generic overload narrows from a union to TreeNodeOf<KindMap[K]>.
  */
 export function isTreeNode<K extends keyof KindMap & keyof FromInputMap>(
-	v: TreeNodeOf<KindMap[K]> | RuntimeNodeOf<KindMap[K]>,
+	v: TreeNodeOf<KindMap[K]> | RuntimeNodeOf<KindMap[K]>
 ): v is TreeNodeOf<KindMap[K]>;
 export function isTreeNode(v: unknown): v is AnyTreeNodeOf;
 export function isTreeNode(v: unknown): v is AnyTreeNodeOf {
-	if (v === null || typeof v !== "object") return false;
+	if (v === null || typeof v !== 'object') return false;
 	const o = v as Record<string, unknown>;
 	return (
-		typeof o["type"] === "string" &&
-		typeof o["field"] === "function" &&
-		typeof o["text"] === "function"
+		typeof o['type'] === 'string' &&
+		typeof o['field'] === 'function' &&
+		typeof o['text'] === 'function'
 	);
 }
 
@@ -53,8 +56,10 @@ export function isTreeNode(v: unknown): v is AnyTreeNodeOf {
 // ---------------------------------------------------------------------------
 
 /** Returns true if `v` has a `kind` string property for branch discrimination. */
-export function hasKind(v: object): v is { kind: string } & Record<string, unknown> {
-	return "kind" in v && typeof (v as Record<string, unknown>).kind === "string";
+export function hasKind(
+	v: object
+): v is { kind: string } & Record<string, unknown> {
+	return 'kind' in v && typeof (v as Record<string, unknown>).kind === 'string';
 }
 
 // ---------------------------------------------------------------------------
@@ -69,7 +74,10 @@ export function hasKind(v: object): v is { kind: string } & Record<string, unkno
  * Type guard: returns true if `v` is a NodeData of the given kind.
  * Narrows `v` to `KindMap[K]`.
  */
-export function isNodeOfKind<K extends keyof KindMap>(v: unknown, kind: K): v is KindMap[K] {
+export function isNodeOfKind<K extends keyof KindMap>(
+	v: unknown,
+	kind: K
+): v is KindMap[K] {
 	return isNodeData(v) && v.type === kind;
 }
 
@@ -79,7 +87,7 @@ export function isNodeOfKind<K extends keyof KindMap>(v: unknown, kind: K): v is
  */
 export function hasKindOf<K extends keyof FromInputMap>(
 	v: object,
-	kind: K,
+	kind: K
 ): v is { kind: K } & FromInputMap[K] {
-	return "kind" in v && (v as Record<string, unknown>).kind === kind;
+	return 'kind' in v && (v as Record<string, unknown>).kind === kind;
 }

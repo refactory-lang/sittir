@@ -10,8 +10,8 @@
  * authoritative output of Assemble.
  */
 
-import type { NodeMap } from "../compiler/types.ts";
-import type { AssembledNode } from "../compiler/node-map.ts";
+import type { NodeMap } from '../compiler/types.ts';
+import type { AssembledNode } from '../compiler/node-map.ts';
 
 /**
  * Classification of how a kind reaches a rendered output string.
@@ -26,7 +26,7 @@ import type { AssembledNode } from "../compiler/node-map.ts";
  *   `none`     — the kind is a hidden token or an unreachable
  *     rule that render() can't produce.
  */
-export type RenderKindPath = "template" | "text" | "dispatch" | "none";
+export type RenderKindPath = 'template' | 'text' | 'dispatch' | 'none';
 
 export interface RuleLookup {
 	/** All kinds known to the NodeMap, keyed by string. */
@@ -53,17 +53,17 @@ export function buildRuleLookup(nodeMap: NodeMap): RuleLookup {
 		kinds.add(kind);
 		const p = classify(node);
 		path.set(kind, p);
-		if (p !== "none") renderable.add(kind);
-		if (p === "template") templated.add(kind);
+		if (p !== 'none') renderable.add(kind);
+		if (p === 'template') templated.add(kind);
 		// Post-synthesis-removal: hidden `_X` kinds whose `userFacing`
 		// flag is set are the sittir-internal identity for CST kind
 		// `X` (via alias). node-types.json lists `X`; the renderable
 		// / templated sets must include it so validation passes.
-		if (node.userFacing && kind.startsWith("_")) {
+		if (node.userFacing && kind.startsWith('_')) {
 			const visible = kind.slice(1);
 			kinds.add(visible);
-			if (p !== "none") renderable.add(visible);
-			if (p === "template") templated.add(visible);
+			if (p !== 'none') renderable.add(visible);
+			if (p === 'template') templated.add(visible);
 			path.set(visible, p);
 		}
 	}
@@ -73,20 +73,20 @@ export function buildRuleLookup(nodeMap: NodeMap): RuleLookup {
 
 function classify(node: AssembledNode): RenderKindPath {
 	switch (node.modelType) {
-		case "branch":
-		case "container":
-		case "group":
-		case "polymorph":
-			return "template";
-		case "leaf":
-		case "keyword":
-		case "enum":
-			return "text";
-		case "supertype":
-			return "dispatch";
-		case "token":
-			return "none";
+		case 'branch':
+		case 'container':
+		case 'group':
+		case 'polymorph':
+			return 'template';
+		case 'leaf':
+		case 'keyword':
+		case 'enum':
+			return 'text';
+		case 'supertype':
+			return 'dispatch';
+		case 'token':
+			return 'none';
 		default:
-			return "none";
+			return 'none';
 	}
 }

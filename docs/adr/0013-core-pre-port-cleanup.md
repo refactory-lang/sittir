@@ -242,8 +242,11 @@ interface ChildInfo {
 
 function placeChildren(
 	children: readonly ChildInfo[],
-	parentKind: string,
-): { fields: Record<string, AnyNodeData | AnyNodeData[]>; children: AnyNodeData[] };
+	parentKind: string
+): {
+	fields: Record<string, AnyNodeData | AnyNodeData[]>;
+	children: AnyNodeData[];
+};
 ```
 
 `readNode` becomes: (a) walk tree-sitter, collecting `ChildInfo[]`, (b)

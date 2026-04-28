@@ -23,11 +23,15 @@
  *     import { field } from '@sittir/codegen/dsl'
  */
 
-import type { Rule } from "../../compiler/rule.ts";
-import type { FieldLike } from "../runtime-shapes.ts";
-import { wireRegisterSyntheticRule } from "../wire/wire.ts";
-import { isStringType, isOptionalType, isChoiceType } from "../runtime-shapes.ts";
-import type { RuntimeRule } from "../runtime-shapes.ts";
+import type { Rule } from '../../compiler/rule.ts';
+import type { FieldLike } from '../runtime-shapes.ts';
+import { wireRegisterSyntheticRule } from '../wire/wire.ts';
+import {
+	isStringType,
+	isOptionalType,
+	isChoiceType
+} from '../runtime-shapes.ts';
+import type { RuntimeRule } from '../runtime-shapes.ts';
 
 /**
  * Shared `FIELD(name, <shape-containing-STRING>)` →
@@ -67,10 +71,10 @@ import type { RuntimeRule } from "../runtime-shapes.ts";
 export function maybeKeywordSymbol(
 	fieldName: string,
 	content: unknown,
-	wrapSyntheticBody?: (body: RuntimeRule) => RuntimeRule,
+	wrapSyntheticBody?: (body: RuntimeRule) => RuntimeRule
 ): unknown {
 	const c = content as { type?: string; value?: string };
-	if (!c || typeof c.type !== "string") return content;
+	if (!c || typeof c.type !== 'string') return content;
 
 	// Bare STRING — synthesize the hidden rule and return a SYMBOL ref.
 	if (isStringType(c.type)) {
@@ -82,7 +86,7 @@ export function maybeKeywordSymbol(
 	// Tree-sitter's FIELD(OPTIONAL(SYMBOL)) survives; FIELD(OPTIONAL(STRING))
 	// may not.
 	if (isOptionalType(c.type)) {
-		return descendOptional(fieldName, content, wrapSyntheticBody, "optional");
+		return descendOptional(fieldName, content, wrapSyntheticBody, 'optional');
 	}
 
 	// CHOICE(STRING, BLANK) is tree-sitter's normalized form for
@@ -90,9 +94,16 @@ export function maybeKeywordSymbol(
 	if (isChoiceType(c.type)) {
 		const members = (content as { members?: Array<{ type?: string }> }).members;
 		if (Array.isArray(members) && members.length === 2) {
-			const blankIdx = members.findIndex((m) => m?.type === "BLANK" || m?.type === "blank");
+			const blankIdx = members.findIndex(
+				(m) => m?.type === 'BLANK' || m?.type === 'blank'
+			);
 			if (blankIdx !== -1) {
-				return descendOptional(fieldName, content, wrapSyntheticBody, "choice-blank");
+				return descendOptional(
+					fieldName,
+					content,
+					wrapSyntheticBody,
+					'choice-blank'
+				);
 			}
 		}
 		return content;
@@ -110,28 +121,30 @@ export function maybeKeywordSymbol(
 function synthesizeKwSymbol(
 	fieldName: string,
 	content: unknown,
-	wrapSyntheticBody: ((body: RuntimeRule) => RuntimeRule) | undefined,
+	wrapSyntheticBody: ((body: RuntimeRule) => RuntimeRule) | undefined
 ): unknown {
 	const c = content as { type: string };
-	const isUpperCase = c.type === "STRING";
+	const isUpperCase = c.type === 'STRING';
 	const hiddenName = `_kw_${fieldName}`;
 	const nativePrec = (
 		globalThis as {
-			prec?: ((v: number, c: unknown) => unknown) & { left?: (v: number, c: unknown) => unknown };
+			prec?: ((v: number, c: unknown) => unknown) & {
+				left?: (v: number, c: unknown) => unknown;
+			};
 		}
 	).prec;
 	let precBody: RuntimeRule = (
-		typeof nativePrec === "function" ? nativePrec(-1, content) : content
+		typeof nativePrec === 'function' ? nativePrec(-1, content) : content
 	) as RuntimeRule;
 	if (wrapSyntheticBody) precBody = wrapSyntheticBody(precBody);
 	if (!wireRegisterSyntheticRule(hiddenName, precBody)) {
 		throw new Error(
-			`field('${fieldName}', <STRING>): no active wire() context — call must occur inside a rule callback wrapped by wire()`,
+			`field('${fieldName}', <STRING>): no active wire() context — call must occur inside a rule callback wrapped by wire()`
 		);
 	}
 	return {
-		type: isUpperCase ? "SYMBOL" : "symbol",
-		name: hiddenName,
+		type: isUpperCase ? 'SYMBOL' : 'symbol',
+		name: hiddenName
 	};
 }
 
@@ -154,14 +167,16 @@ function descendOptional(
 	fieldName: string,
 	content: unknown,
 	wrapSyntheticBody: ((body: RuntimeRule) => RuntimeRule) | undefined,
-	wrapperKind: "optional" | "choice-blank",
+	wrapperKind: 'optional' | 'choice-blank'
 ): unknown {
 	let inner: unknown;
-	if (wrapperKind === "optional") {
+	if (wrapperKind === 'optional') {
 		inner = (content as { content?: unknown }).content;
 	} else {
 		const members = (content as { members: Array<{ type?: string }> }).members;
-		const nonBlank = members.find((m) => m.type !== "BLANK" && m.type !== "blank");
+		const nonBlank = members.find(
+			(m) => m.type !== 'BLANK' && m.type !== 'blank'
+		);
 		inner = nonBlank;
 	}
 
@@ -169,15 +184,17 @@ function descendOptional(
 	if (rewritten === inner) return content;
 
 	// Rebuild the wrapper around the rewritten inner.
-	if (wrapperKind === "optional") {
-		const nativeOptional = (globalThis as { optional?: (c: unknown) => unknown }).optional;
-		if (typeof nativeOptional !== "function") return content;
+	if (wrapperKind === 'optional') {
+		const nativeOptional = (
+			globalThis as { optional?: (c: unknown) => unknown }
+		).optional;
+		if (typeof nativeOptional !== 'function') return content;
 		return nativeOptional(rewritten);
 	}
 	// choice-blank: reconstruct the CHOICE preserving the BLANK position.
 	const c = content as { type: string; members: Array<{ type?: string }> };
 	const newMembers = c.members.map((m) =>
-		m.type === "BLANK" || m.type === "blank" ? m : (rewritten as typeof m),
+		m.type === 'BLANK' || m.type === 'blank' ? m : (rewritten as typeof m)
 	);
 	return { ...c, members: newMembers };
 }
@@ -186,15 +203,15 @@ type Input = string | RegExp | Rule;
 
 /** Marker emitted by `field('name')` — a placeholder for transform patches. */
 export interface FieldPlaceholder {
-	readonly __sittirPlaceholder: "field";
+	readonly __sittirPlaceholder: 'field';
 	readonly name: string;
 }
 
 export function isFieldPlaceholder(v: unknown): v is FieldPlaceholder {
 	return (
 		!!v &&
-		typeof v === "object" &&
-		(v as { __sittirPlaceholder?: unknown }).__sittirPlaceholder === "field"
+		typeof v === 'object' &&
+		(v as { __sittirPlaceholder?: unknown }).__sittirPlaceholder === 'field'
 	);
 }
 
@@ -214,14 +231,21 @@ export function isFieldPlaceholder(v: unknown): v is FieldPlaceholder {
  * whatever shape the runtime-injected `field()` produces (sittir
  * lowercase `type: 'field'` or tree-sitter uppercase `type: 'FIELD'`).
  */
-export function field(name: string, content?: Input): FieldPlaceholder | FieldLike {
+export function field(
+	name: string,
+	content?: Input
+): FieldPlaceholder | FieldLike {
 	if (content === undefined) {
-		return { __sittirPlaceholder: "field" as const, name } satisfies FieldPlaceholder;
+		return {
+			__sittirPlaceholder: 'field' as const,
+			name
+		} satisfies FieldPlaceholder;
 	}
-	const native = (globalThis as { field?: (n: string, c: Input) => unknown }).field;
-	if (typeof native !== "function") {
+	const native = (globalThis as { field?: (n: string, c: Input) => unknown })
+		.field;
+	if (typeof native !== 'function') {
 		throw new Error(
-			"field(): no global field() found — must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)",
+			'field(): no global field() found — must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)'
 		);
 	}
 	return buildTwoArgFieldResult(native, name, content);
@@ -248,14 +272,17 @@ export function field(name: string, content?: Input): FieldPlaceholder | FieldLi
 function buildTwoArgFieldResult(
 	native: (n: string, c: Input) => unknown,
 	name: string,
-	content: Input,
+	content: Input
 ): FieldLike {
 	const initial = native(name, content) as FieldLike & { content?: unknown };
 	const inner = initial.content;
 	const symbolized = maybeKeywordSymbol(name, inner);
 	if (symbolized !== inner) {
 		const reconstructed = native(name, symbolized as Input) as FieldLike;
-		return { ...reconstructed, source: "override" as const } as unknown as FieldLike;
+		return {
+			...reconstructed,
+			source: 'override' as const
+		} as unknown as FieldLike;
 	}
-	return { ...initial, source: "override" as const } as unknown as FieldLike;
+	return { ...initial, source: 'override' as const } as unknown as FieldLike;
 }

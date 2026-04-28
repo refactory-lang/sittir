@@ -26,12 +26,12 @@
  * its source.
  */
 
-import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
-import { fileURLToPath } from "node:url";
-import { loadRawEntries } from "./node-types-loader.ts";
-import type { RawNodeEntry, RawFieldEntry } from "./node-types-loader.ts";
-import { loadRulesFromPath as loadRulesFromTemplatesPath } from "./templates-path.ts";
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { loadRawEntries } from './node-types-loader.ts';
+import type { RawNodeEntry, RawFieldEntry } from './node-types-loader.ts';
+import { loadRulesFromPath as loadRulesFromTemplatesPath } from './templates-path.ts';
 
 /**
  * Load the rules map from either a legacy YAML file or a directory of
@@ -64,7 +64,7 @@ function jinjaBodyToLegacyRule(body: string): TemplateRule {
 		(_m, stem: string, clauseBody: string) => {
 			clauses[`${stem}_clause`] = jinjaInterpolationsToLegacy(clauseBody);
 			return `$${stem.toUpperCase()}_CLAUSE`;
-		},
+		}
 	);
 	const template = jinjaInterpolationsToLegacy(withClauseRefs);
 	if (Object.keys(clauses).length === 0) return template;
@@ -88,16 +88,20 @@ function jinjaInterpolationsToLegacy(body: string): string {
 			// Multi-valued slot: one of the join-variant filters ⇒ `$$$`.
 			// Single-valued slot: bare `{{ name }}` OR the `| value`
 			// unwrap (which just coerces Option<String> → String) ⇒ `$`.
-			const prefix = joinFilter ? "$$$" : "$";
+			const prefix = joinFilter ? '$$$' : '$';
 			return `${prefix}${name.toUpperCase()}`;
-		},
+		}
 	);
 }
 
-function loadRulesFromPath(templatesPath: string): Record<string, TemplateRule> {
-	return loadRulesFromTemplatesPath(templatesPath, (_kind, body) => jinjaBodyToLegacyRule(body));
+function loadRulesFromPath(
+	templatesPath: string
+): Record<string, TemplateRule> {
+	return loadRulesFromTemplatesPath(templatesPath, (_kind, body) =>
+		jinjaBodyToLegacyRule(body)
+	);
 }
-import type { TemplateRule, TemplateRuleObject } from "@sittir/types";
+import type { TemplateRule, TemplateRuleObject } from '@sittir/types';
 
 // ---------------------------------------------------------------------------
 // Result shape
@@ -116,7 +120,7 @@ export interface TemplateCoverageResult {
 export interface CoverageIssue {
 	kind: string;
 	/** 'missing-field' (field declared, not referenced) or 'literal-leak' (doubled separator). */
-	type: "missing-field" | "literal-leak";
+	type: 'missing-field' | 'literal-leak';
 	/** Human-readable description. */
 	message: string;
 }
@@ -127,7 +131,7 @@ export interface CoverageIssue {
 
 export function validateTemplateCoverage(
 	grammar: string,
-	templatesPath: string,
+	templatesPath: string
 ): TemplateCoverageResult {
 	const entries = loadRawEntries(grammar);
 	const rules = loadRulesFromPath(templatesPath);
@@ -174,7 +178,11 @@ export function validateTemplateCoverage(
 		if (rule === undefined) continue; // validate-renderable catches this.
 
 		total++;
-		const kindIssues = checkRule(entry, rule, hoistedOuterByKind.get(entry.type) ?? new Set());
+		const kindIssues = checkRule(
+			entry,
+			rule,
+			hoistedOuterByKind.get(entry.type) ?? new Set()
+		);
 		if (kindIssues.length === 0) {
 			pass++;
 		} else {
@@ -206,7 +214,7 @@ export function validateTemplateCoverage(
  */
 function computeUnionPlaceholders(
 	variants: NamedTemplate[],
-	clauseTemplates: Record<string, string>,
+	clauseTemplates: Record<string, string>
 ): Set<string> {
 	const unionPlaceholders = new Set<string>();
 	for (const { template } of variants) {
@@ -234,17 +242,17 @@ function computeUnionPlaceholders(
  */
 function checkVariantsForLiteralLeaks(
 	entry: RawNodeEntry,
-	variants: NamedTemplate[],
+	variants: NamedTemplate[]
 ): CoverageIssue[] {
 	const issues: CoverageIssue[] = [];
 	for (const { label, template } of variants) {
 		const leak = /([/&|;+\-*=<>!?~^%])\1{3,}/.exec(template);
 		if (leak) {
-			const label_ = label ? ` (variant '${label}')` : "";
+			const label_ = label ? ` (variant '${label}')` : '';
 			issues.push({
 				kind: entry.type,
-				type: "literal-leak",
-				message: `template contains suspicious literal run ${JSON.stringify(leak[0])}${label_} — likely walker concat bug: ${JSON.stringify(template)}`,
+				type: 'literal-leak',
+				message: `template contains suspicious literal run ${JSON.stringify(leak[0])}${label_} — likely walker concat bug: ${JSON.stringify(template)}`
 			});
 		}
 	}
@@ -254,7 +262,7 @@ function checkVariantsForLiteralLeaks(
 function checkRule(
 	entry: RawNodeEntry,
 	rule: TemplateRule,
-	hoistedOuterFields: Set<string>,
+	hoistedOuterFields: Set<string>
 ): CoverageIssue[] {
 	const fields = entry.fields ?? {};
 	const fieldNames = Object.keys(fields);
@@ -270,7 +278,7 @@ function checkRule(
 	// them. Skip field-coverage enforcement for these.
 	if (variants.length === 1) {
 		const body = variants[0]!.template.trim();
-		if (body === "{{ text }}" || body === "$TEXT") return issues;
+		if (body === '{{ text }}' || body === '$TEXT') return issues;
 	}
 
 	const ruleObj = isObjectRule(rule) ? rule : undefined;
@@ -280,7 +288,10 @@ function checkRule(
 	const unionPlaceholders = computeUnionPlaceholders(variants, clauseTemplates);
 
 	for (const fname of fieldNames) {
-		if (isFieldReferenced(fname, unionPlaceholders, clauseKeys, clauseTemplates)) continue;
+		if (
+			isFieldReferenced(fname, unionPlaceholders, clauseKeys, clauseTemplates)
+		)
+			continue;
 		// Hoisted-outer flatten artifact: `fname` is declared on the
 		// kind in `node-types.json` but our simplify hoist drops the
 		// `field('fname', ...)` wrapper from the rule passed to the
@@ -295,11 +306,13 @@ function checkRule(
 		const bodies =
 			variants.length === 1
 				? JSON.stringify(variants[0]!.template)
-				: variants.map((v) => `${v.label}=${JSON.stringify(v.template)}`).join(" | ");
+				: variants
+						.map((v) => `${v.label}=${JSON.stringify(v.template)}`)
+						.join(' | ');
 		issues.push({
 			kind: entry.type,
-			type: "missing-field",
-			message: `field '${fname}' declared but not referenced in any template: ${bodies}`,
+			type: 'missing-field',
+			message: `field '${fname}' declared but not referenced in any template: ${bodies}`
 		});
 	}
 
@@ -313,7 +326,7 @@ function checkRule(
 // ---------------------------------------------------------------------------
 
 function isObjectRule(rule: TemplateRule): rule is TemplateRuleObject {
-	return rule !== null && typeof rule === "object" && !Array.isArray(rule);
+	return rule !== null && typeof rule === 'object' && !Array.isArray(rule);
 }
 
 interface NamedTemplate {
@@ -329,13 +342,14 @@ interface NamedTemplate {
  * follow them from placeholder references).
  */
 function collectTemplates(rule: TemplateRule): NamedTemplate[] {
-	if (typeof rule === "string") return [{ label: "", template: rule }];
+	if (typeof rule === 'string') return [{ label: '', template: rule }];
 	const out: NamedTemplate[] = [];
 	const obj = rule as TemplateRuleObject;
-	if (typeof obj.template === "string") out.push({ label: "", template: obj.template });
-	if (obj.variants && typeof obj.variants === "object") {
+	if (typeof obj.template === 'string')
+		out.push({ label: '', template: obj.template });
+	if (obj.variants && typeof obj.variants === 'object') {
 		for (const [name, tmpl] of Object.entries(obj.variants)) {
-			if (typeof tmpl === "string") out.push({ label: name, template: tmpl });
+			if (typeof tmpl === 'string') out.push({ label: name, template: tmpl });
 		}
 	}
 	return out;
@@ -345,32 +359,34 @@ function collectClauseKeys(obj: TemplateRuleObject): Set<string> {
 	const keys = new Set<string>();
 	for (const k of Object.keys(obj)) {
 		if (
-			k === "template" ||
-			k === "variants" ||
-			k === "joinBy" ||
-			k === "joinByField" ||
-			k === "detect"
+			k === 'template' ||
+			k === 'variants' ||
+			k === 'joinBy' ||
+			k === 'joinByField' ||
+			k === 'detect'
 		)
 			continue;
 		const v = (obj as Record<string, unknown>)[k];
-		if (typeof v === "string") keys.add(k);
+		if (typeof v === 'string') keys.add(k);
 	}
 	return keys;
 }
 
-function collectClauseTemplates(obj: TemplateRuleObject): Record<string, string> {
+function collectClauseTemplates(
+	obj: TemplateRuleObject
+): Record<string, string> {
 	const out: Record<string, string> = {};
 	for (const k of Object.keys(obj)) {
 		if (
-			k === "template" ||
-			k === "variants" ||
-			k === "joinBy" ||
-			k === "joinByField" ||
-			k === "detect"
+			k === 'template' ||
+			k === 'variants' ||
+			k === 'joinBy' ||
+			k === 'joinByField' ||
+			k === 'detect'
 		)
 			continue;
 		const v = (obj as Record<string, unknown>)[k];
-		if (typeof v === "string") out[k] = v;
+		if (typeof v === 'string') out[k] = v;
 	}
 	return out;
 }
@@ -411,7 +427,7 @@ function extractPlaceholders(template: string): Set<string> {
 function isReferencedViaClausePlaceholder(
 	fieldName: string,
 	placeholders: Set<string>,
-	clauseKeys: Set<string>,
+	clauseKeys: Set<string>
 ): boolean {
 	const clauseKey = `${fieldName}_clause`;
 	return placeholders.has(clauseKey) && clauseKeys.has(clauseKey);
@@ -432,7 +448,7 @@ function isReferencedViaClausePlaceholder(
  */
 function isReferencedInClauseBody(
 	fieldName: string,
-	clauseTemplates: Record<string, string>,
+	clauseTemplates: Record<string, string>
 ): boolean {
 	for (const body of Object.values(clauseTemplates)) {
 		if (extractPlaceholders(body).has(fieldName)) return true;
@@ -444,13 +460,14 @@ function isFieldReferenced(
 	fieldName: string,
 	placeholders: Set<string>,
 	clauseKeys: Set<string>,
-	clauseTemplates: Record<string, string>,
+	clauseTemplates: Record<string, string>
 ): boolean {
 	// 1. Direct reference: `$FIELD` or `$$$FIELD`.
 	if (placeholders.has(fieldName)) return true;
 
 	// 2. Clause placeholder reference.
-	if (isReferencedViaClausePlaceholder(fieldName, placeholders, clauseKeys)) return true;
+	if (isReferencedViaClausePlaceholder(fieldName, placeholders, clauseKeys))
+		return true;
 
 	// 3. Clause body reference.
 	if (isReferencedInClauseBody(fieldName, clauseTemplates)) return true;
@@ -462,21 +479,25 @@ function isFieldReferenced(
 // Formatting
 // ---------------------------------------------------------------------------
 
-export function formatTemplateCoverageReport(result: TemplateCoverageResult): string {
+export function formatTemplateCoverageReport(
+	result: TemplateCoverageResult
+): string {
 	const lines: string[] = [];
-	const icon = result.fail === 0 ? "v" : "x";
+	const icon = result.fail === 0 ? 'v' : 'x';
 	lines.push(
 		`  ${icon} ${result.pass}/${result.total} kinds have full template coverage` +
-			` (${result.fail} failing, ${result.issues.length} issues)`,
+			` (${result.fail} failing, ${result.issues.length} issues)`
 	);
 	const shown = result.issues.slice(0, 20);
 	for (const i of shown) {
-		lines.push(`    ${i.type === "literal-leak" ? "!" : "x"} ${i.kind}: ${i.message}`);
+		lines.push(
+			`    ${i.type === 'literal-leak' ? '!' : 'x'} ${i.kind}: ${i.message}`
+		);
 	}
 	if (result.issues.length > shown.length) {
 		lines.push(`    ... and ${result.issues.length - shown.length} more`);
 	}
-	return lines.join("\n");
+	return lines.join('\n');
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -512,11 +533,13 @@ type _FieldUse = RawFieldEntry; // keep import alive for docs
  *   3. Field's content has NO named-symbol / supertype sibling of the
  *      inner field (those would lose their outer-field label).
  */
-function computeHoistedOuterFields(grammar: GrammarJson): Map<string, Set<string>> {
+function computeHoistedOuterFields(
+	grammar: GrammarJson
+): Map<string, Set<string>> {
 	const rules = grammar.rules;
 	const out = new Map<string, Set<string>>();
 	for (const kind of Object.keys(rules)) {
-		if (kind.startsWith("_")) continue;
+		if (kind.startsWith('_')) continue;
 		const fields = new Set<string>();
 		collectHoistedOuterFields(rules[kind], rules, fields, new Set());
 		out.set(kind, fields);
@@ -536,9 +559,9 @@ function collectHoistedOuterFields(
 	node: unknown,
 	rules: Record<string, unknown>,
 	out: Set<string>,
-	visited: Set<string>,
+	visited: Set<string>
 ): void {
-	if (!node || typeof node !== "object") return;
+	if (!node || typeof node !== 'object') return;
 	if (isField(node)) {
 		if (fieldHoistsViaSimplify(node.content, rules)) out.add(node.name);
 		// Recurse into the FIELD's content too — a field deeper inside
@@ -555,7 +578,7 @@ function collectHoistedOuterFields(
 		return;
 	}
 	if (isSymbol(node)) {
-		if (!node.name.startsWith("_")) return;
+		if (!node.name.startsWith('_')) return;
 		if (visited.has(node.name)) return;
 		const target = rules[node.name];
 		if (target === undefined) return;
@@ -565,9 +588,11 @@ function collectHoistedOuterFields(
 		return;
 	}
 	const n = node as { content?: unknown; members?: unknown[] };
-	if (n.content !== undefined) collectHoistedOuterFields(n.content, rules, out, visited);
+	if (n.content !== undefined)
+		collectHoistedOuterFields(n.content, rules, out, visited);
 	if (Array.isArray(n.members))
-		for (const m of n.members) collectHoistedOuterFields(m, rules, out, visited);
+		for (const m of n.members)
+			collectHoistedOuterFields(m, rules, out, visited);
 }
 
 /**
@@ -576,10 +601,14 @@ function collectHoistedOuterFields(
  * discriminants) instead of the internal `Rule` union. Returns true
  * when the outer field would be dropped by the simplify hoist.
  */
-function fieldHoistsViaSimplify(content: unknown, rules: Record<string, unknown>): boolean {
-	if (!content || typeof content !== "object") return false;
+function fieldHoistsViaSimplify(
+	content: unknown,
+	rules: Record<string, unknown>
+): boolean {
+	if (!content || typeof content !== 'object') return false;
 	if (isField(content)) return false; // direct field-of-field, different hoist path
-	if (!hasInnerFieldAtExposableDepthGrammar(content, rules, new Set())) return false;
+	if (!hasInnerFieldAtExposableDepthGrammar(content, rules, new Set()))
+		return false;
 	if (hasNamedSiblingOfInnerFieldGrammar(content)) return false;
 	return true;
 }
@@ -594,12 +623,12 @@ function fieldHoistsViaSimplify(content: unknown, rules: Record<string, unknown>
 function hasInnerFieldAtExposableDepthGrammar(
 	node: unknown,
 	rules: Record<string, unknown>,
-	visited: Set<string>,
+	visited: Set<string>
 ): boolean {
-	if (!node || typeof node !== "object") return false;
+	if (!node || typeof node !== 'object') return false;
 	if (isField(node)) return true;
 	if (isSymbol(node)) {
-		if (!node.name.startsWith("_")) return false;
+		if (!node.name.startsWith('_')) return false;
 		if (visited.has(node.name)) return false;
 		const target = rules[node.name];
 		if (target === undefined) return false;
@@ -614,8 +643,12 @@ function hasInnerFieldAtExposableDepthGrammar(
 	const n = node as { type?: string; content?: unknown; members?: unknown[] };
 	// Stop at terminal-bearing or schema-isolating wrappers — STRING /
 	// PATTERN / BLANK / ALIAS{named:true} (handled above).
-	if (n.type === "STRING" || n.type === "PATTERN" || n.type === "BLANK") return false;
-	if (n.content !== undefined && hasInnerFieldAtExposableDepthGrammar(n.content, rules, visited))
+	if (n.type === 'STRING' || n.type === 'PATTERN' || n.type === 'BLANK')
+		return false;
+	if (
+		n.content !== undefined &&
+		hasInnerFieldAtExposableDepthGrammar(n.content, rules, visited)
+	)
 		return true;
 	if (Array.isArray(n.members)) {
 		for (const m of n.members) {
@@ -633,9 +666,9 @@ function hasInnerFieldAtExposableDepthGrammar(
  * runtime label if dropped.
  */
 function hasNamedSiblingOfInnerFieldGrammar(node: unknown): boolean {
-	if (!node || typeof node !== "object") return false;
+	if (!node || typeof node !== 'object') return false;
 	const n = node as { type?: string; members?: unknown[]; content?: unknown };
-	if (n.type === "SEQ" && Array.isArray(n.members)) {
+	if (n.type === 'SEQ' && Array.isArray(n.members)) {
 		const hasField = n.members.some((m) => isField(m));
 		if (hasField) {
 			for (const m of n.members) {
@@ -645,7 +678,7 @@ function hasNamedSiblingOfInnerFieldGrammar(node: unknown): boolean {
 		}
 		return n.members.some(hasNamedSiblingOfInnerFieldGrammar);
 	}
-	if (n.type === "CHOICE" && Array.isArray(n.members)) {
+	if (n.type === 'CHOICE' && Array.isArray(n.members)) {
 		return n.members.some(hasNamedSiblingOfInnerFieldGrammar);
 	}
 	if (n.content !== undefined) {
@@ -663,20 +696,20 @@ function hasNamedSiblingOfInnerFieldGrammar(node: unknown): boolean {
  * (OPTIONAL{SYMBOL}, REPEAT{SYMBOL}, …) are still detected.
  */
 function isNamedReferenceGrammar(node: unknown): boolean {
-	if (!node || typeof node !== "object") return false;
-	if (isSymbol(node)) return !node.name.startsWith("_");
+	if (!node || typeof node !== 'object') return false;
+	if (isSymbol(node)) return !node.name.startsWith('_');
 	if (isAlias(node)) return node.named === true;
 	const n = node as { type?: string; content?: unknown };
 	if (
-		n.type === "OPTIONAL" ||
-		n.type === "REPEAT" ||
-		n.type === "REPEAT1" ||
-		n.type === "TOKEN" ||
-		n.type === "IMMEDIATE_TOKEN" ||
-		n.type === "PREC" ||
-		n.type === "PREC_LEFT" ||
-		n.type === "PREC_RIGHT" ||
-		n.type === "PREC_DYNAMIC"
+		n.type === 'OPTIONAL' ||
+		n.type === 'REPEAT' ||
+		n.type === 'REPEAT1' ||
+		n.type === 'TOKEN' ||
+		n.type === 'IMMEDIATE_TOKEN' ||
+		n.type === 'PREC' ||
+		n.type === 'PREC_LEFT' ||
+		n.type === 'PREC_RIGHT' ||
+		n.type === 'PREC_DYNAMIC'
 	) {
 		return n.content !== undefined && isNamedReferenceGrammar(n.content);
 	}
@@ -688,36 +721,42 @@ function isNamedReferenceGrammar(node: unknown): boolean {
 // after the cluster D workaround retired on the simplify-hoist landing).
 // ---------------------------------------------------------------------------
 
-const packagesDir = fileURLToPath(new URL("../../../", import.meta.url));
+const packagesDir = fileURLToPath(new URL('../../../', import.meta.url));
 
 interface GrammarJson {
 	rules: Record<string, unknown>;
 }
 
 interface FieldNode {
-	type: "FIELD";
+	type: 'FIELD';
 	name: string;
 	content: unknown;
 }
 interface SymbolNode {
-	type: "SYMBOL";
+	type: 'SYMBOL';
 	name: string;
 }
 interface AliasNode {
-	type: "ALIAS";
+	type: 'ALIAS';
 	value: string;
 	named?: boolean;
 	content: unknown;
 }
 
 function isField(n: unknown): n is FieldNode {
-	return !!n && typeof n === "object" && (n as { type?: unknown }).type === "FIELD";
+	return (
+		!!n && typeof n === 'object' && (n as { type?: unknown }).type === 'FIELD'
+	);
 }
 function isSymbol(n: unknown): n is SymbolNode {
-	return !!n && typeof n === "object" && (n as { type?: unknown }).type === "SYMBOL";
+	return (
+		!!n && typeof n === 'object' && (n as { type?: unknown }).type === 'SYMBOL'
+	);
 }
 function isAlias(n: unknown): n is AliasNode {
-	return !!n && typeof n === "object" && (n as { type?: unknown }).type === "ALIAS";
+	return (
+		!!n && typeof n === 'object' && (n as { type?: unknown }).type === 'ALIAS'
+	);
 }
 
 /**
@@ -727,7 +766,7 @@ function isAlias(n: unknown): n is AliasNode {
  * as "no transitive-coverage data; fall back to strict checking".
  */
 function loadGrammarJson(grammar: string): GrammarJson | null {
-	const path = join(packagesDir, grammar, ".sittir", "src", "grammar.json");
+	const path = join(packagesDir, grammar, '.sittir', 'src', 'grammar.json');
 	if (!existsSync(path)) return null;
-	return JSON.parse(readFileSync(path, "utf8")) as GrammarJson;
+	return JSON.parse(readFileSync(path, 'utf8')) as GrammarJson;
 }

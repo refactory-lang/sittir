@@ -19,14 +19,14 @@
  * on branch nodes for debugging purposes.
  */
 
-import type { AnyNodeData, AnyTreeNode, NodeId } from "./types.ts";
+import type { AnyNodeData, AnyTreeNode, NodeId } from './types.ts';
 
 /**
  * Whether to emit `$text` on branch nodes (those with `$fields` or
  * `$children`). Read once at module load from the environment.
  * Enable with `SITTIR_DEBUG_TEXT=1`.
  */
-const DEBUG_TEXT = process.env.SITTIR_DEBUG_TEXT === "1";
+const DEBUG_TEXT = process.env.SITTIR_DEBUG_TEXT === '1';
 
 /**
  * A handle to the parsed tree, providing node lookup by id.
@@ -73,10 +73,10 @@ function toNodeId(id: number): NodeId {
 function promoteAnonymousKeyword(
 	child: AnyTreeNode,
 	entry: AnyNodeData,
-	fields: Record<string, AnyNodeData | AnyNodeData[]>,
+	fields: Record<string, AnyNodeData | AnyNodeData[]>
 ): boolean {
 	if (child.isNamed()) return false;
-	const text = entry.$text ?? "";
+	const text = entry.$text ?? '';
 	if (text.length === 0) return false;
 	if (fields[text] !== undefined) return false;
 	fields[text] = entry;
@@ -112,7 +112,8 @@ export function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
 	// entry, corrupting the accumulated array with a null-serializing
 	// function object. Others that can bite the same way: `toString`,
 	// `hasOwnProperty`, `valueOf`, `__proto__`.
-	const fields: Record<string, AnyNodeData | AnyNodeData[]> = Object.create(null);
+	const fields: Record<string, AnyNodeData | AnyNodeData[]> =
+		Object.create(null);
 	const children: AnyNodeData[] = [];
 
 	const allChildren = node.children();
@@ -121,11 +122,11 @@ export function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
 
 		const entry: AnyNodeData = {
 			$type: child.type,
-			$source: "ts",
+			$source: 'ts',
 			$text: child.text(),
 			$span: { start: child.range().start.index, end: child.range().end.index },
 			$nodeId: toNodeId(child.id()),
-			$named: child.isNamed(),
+			$named: child.isNamed()
 		};
 
 		const fname = node.fieldNameForChild?.(i);
@@ -146,7 +147,11 @@ export function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
 			const existing = fields[fname];
 			if (existing === undefined) {
 				fields[fname] = entry;
-			} else if (!Array.isArray(existing) && existing.$named === false && entry.$named === true) {
+			} else if (
+				!Array.isArray(existing) &&
+				existing.$named === false &&
+				entry.$named === true
+			) {
 				fields[fname] = entry;
 			} else if (Array.isArray(existing)) {
 				existing.push(entry);
@@ -164,7 +169,7 @@ export function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
 
 	return {
 		$type: node.type,
-		$source: "ts",
+		$source: 'ts',
 		// Branch nodes: emit $text only when DEBUG_TEXT is enabled.
 		// Leaf nodes (no $fields / $children) always carry $text so the
 		// render fast-path and all leaf-consuming callers work correctly.
@@ -173,6 +178,6 @@ export function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
 		$children: children.length > 0 ? children : undefined,
 		$span: { start: node.range().start.index, end: node.range().end.index },
 		$nodeId: toNodeId(node.id()),
-		$named: node.isNamed(),
+		$named: node.isNamed()
 	};
 }

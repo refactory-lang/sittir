@@ -27,48 +27,48 @@
 export const suggestedTransforms = {
 	// [held] polymorph — 1 choice position(s), 3 arm(s) total
 	_suite: {
-		"0": variant("form0"),
-		"1": variant("form1"),
-		"2": variant("form2"),
+		'0': variant('form0'),
+		'1': variant('form1'),
+		'2': variant('form2')
 	},
 
 	// [held] polymorph — 1 choice position(s), 2 arm(s) total
 	expression_list: {
-		"1/0": variant("form0"),
-		"1/1": variant("form1"),
+		'1/0': variant('form0'),
+		'1/1': variant('form1')
 	},
 
 	// [held] polymorph — 1 choice position(s), 2 arm(s) total
 	future_import_statement: {
-		"3/0": variant("form0"),
-		"3/1": variant("form1"),
+		'3/0': variant('form0'),
+		'3/1': variant('form1')
 	},
 
 	// [held] polymorph — 1 choice position(s), 3 arm(s) total
 	// note: choice(s) sit inside field() wrapper(s) — variant() will supersede: wildcard_import
 	import_from_statement: {
-		"3/0": variant("form0"),
-		"3/1": variant("form1"),
-		"3/2": variant("form2"),
+		'3/0': variant('form0'),
+		'3/1': variant('form1'),
+		'3/2': variant('form2')
 	},
 
 	// [held] polymorph — 1 choice position(s), 2 arm(s) total
 	pattern_list: {
-		"1/0": variant("form0"),
-		"1/1": variant("form1"),
+		'1/0': variant('form0'),
+		'1/1': variant('form1')
 	},
 
 	// [held] polymorph — 1 choice position(s), 2 arm(s) total
 	splat_pattern: {
-		"1/0": variant("form0"),
-		"1/1": variant("form1"),
+		'1/0': variant('form0'),
+		'1/1': variant('form1')
 	},
 
 	// [held] polymorph — 1 choice position(s), 2 arm(s) total
 	yield: {
-		"1/0": variant("form0"),
-		"1/1": variant("form1"),
-	},
+		'1/0': variant('form0'),
+		'1/1': variant('form1')
+	}
 };
 
 // ---------------------------------------------------------------
@@ -90,20 +90,22 @@ export const suggestedRules = {
 			$.function_definition,
 			$.class_definition,
 			$.decorated_definition,
-			$.match_statement,
+			$.match_statement
 		),
 
 	// [applied] promoted supertype
 	_dict_pattern_kv: ($) => choice($._key_value_pattern, $.splat_pattern),
 
 	// [applied] promoted supertype
-	_expression_within_for_in_clause: ($) => choice($.expression, $.lambda_within_for_in_clause),
+	_expression_within_for_in_clause: ($) =>
+		choice($.expression, $.lambda_within_for_in_clause),
 
 	// [applied] promoted supertype
 	_expressions: ($) => choice($.expression, $.expression_list),
 
 	// [applied] promoted supertype
-	_f_expression: ($) => choice($.expression, $.expression_list, $.pattern_list, $.yield),
+	_f_expression: ($) =>
+		choice($.expression, $.expression_list, $.pattern_list, $.yield),
 
 	// [applied] promoted supertype
 	_left_hand_side: ($) => choice($.pattern, $.pattern_list),
@@ -119,7 +121,7 @@ export const suggestedRules = {
 			$.assignment,
 			$.augmented_assignment,
 			$.pattern_list,
-			$.yield,
+			$.yield
 		),
 
 	// [applied] promoted supertype
@@ -138,7 +140,7 @@ export const suggestedRules = {
 			$.none,
 			$._simple_pattern_negative,
 			$.complex_pattern,
-			$.dotted_name,
+			$.dotted_name
 		),
 
 	// [applied] promoted supertype
@@ -159,7 +161,7 @@ export const suggestedRules = {
 			$.global_statement,
 			$.nonlocal_statement,
 			$.exec_statement,
-			$.type_alias_statement,
+			$.type_alias_statement
 		),
 
 	// [applied] promoted supertype
@@ -174,7 +176,7 @@ export const suggestedRules = {
 			$.function_definition,
 			$.class_definition,
 			$.decorated_definition,
-			$.match_statement,
+			$.match_statement
 		),
 
 	// [applied] promoted supertype
@@ -187,7 +189,7 @@ export const suggestedRules = {
 			$.primary_expression,
 			$.conditional_expression,
 			$.named_expression,
-			$.as_pattern,
+			$.as_pattern
 		),
 
 	// [applied] promoted supertype
@@ -204,7 +206,7 @@ export const suggestedRules = {
 			$.tuple_pattern,
 			$.keyword_separator,
 			$.positional_separator,
-			$.dictionary_splat_pattern,
+			$.dictionary_splat_pattern
 		),
 
 	// [applied] promoted supertype
@@ -216,7 +218,7 @@ export const suggestedRules = {
 			$.attribute,
 			$.list_splat_pattern,
 			$.tuple_pattern,
-			$.list_pattern,
+			$.list_pattern
 		),
 
 	// [applied] promoted supertype
@@ -247,8 +249,8 @@ export const suggestedRules = {
 			$.parenthesized_expression,
 			$.generator_expression,
 			$.ellipsis,
-			$.list_splat_pattern,
-		),
+			$.list_splat_pattern
+		)
 };
 
 // ---------------------------------------------------------------
@@ -256,58 +258,74 @@ export const suggestedRules = {
 // ---------------------------------------------------------------
 export interface PromotedRule {
 	readonly kind: string;
-	readonly classification: "enum" | "supertype" | "terminal" | "polymorph";
+	readonly classification: 'enum' | 'supertype' | 'terminal' | 'polymorph';
 	readonly applied: boolean;
 }
 export const promotedRules: readonly PromotedRule[] = [
-	{ kind: "_compound_statement", classification: "supertype", applied: true },
-	{ kind: "_dict_pattern_kv", classification: "supertype", applied: true },
-	{ kind: "_expression_within_for_in_clause", classification: "supertype", applied: true },
-	{ kind: "_expressions", classification: "supertype", applied: true },
-	{ kind: "_f_expression", classification: "supertype", applied: true },
-	{ kind: "_left_hand_side", classification: "supertype", applied: true },
-	{ kind: "_named_expression_lhs", classification: "supertype", applied: true },
-	{ kind: "_right_hand_side", classification: "supertype", applied: true },
-	{ kind: "_simple_pattern", classification: "supertype", applied: true },
-	{ kind: "_simple_statement", classification: "supertype", applied: true },
-	{ kind: "_statement", classification: "supertype", applied: true },
-	{ kind: "expression", classification: "supertype", applied: true },
-	{ kind: "keyword_identifier", classification: "supertype", applied: true },
-	{ kind: "parameter", classification: "supertype", applied: true },
-	{ kind: "pattern", classification: "supertype", applied: true },
-	{ kind: "primary_expression", classification: "supertype", applied: true },
-	{ kind: "_is_not", classification: "terminal", applied: true },
-	{ kind: "_not_in", classification: "terminal", applied: true },
-	{ kind: "comment", classification: "terminal", applied: true },
-	{ kind: "escape_sequence", classification: "terminal", applied: true },
-	{ kind: "float", classification: "terminal", applied: true },
-	{ kind: "import_prefix", classification: "terminal", applied: true },
-	{ kind: "integer", classification: "terminal", applied: true },
-	{ kind: "line_continuation", classification: "terminal", applied: true },
-	{ kind: "_match_block_block", classification: "polymorph", applied: true },
-	{ kind: "_suite", classification: "polymorph", applied: false },
-	{ kind: "assignment", classification: "polymorph", applied: true },
-	{ kind: "assignment_eq", classification: "polymorph", applied: true },
-	{ kind: "assignment_type", classification: "polymorph", applied: true },
-	{ kind: "assignment_typed", classification: "polymorph", applied: true },
-	{ kind: "expression_list", classification: "polymorph", applied: false },
-	{ kind: "expression_statement", classification: "polymorph", applied: true },
-	{ kind: "expression_statement_tuple", classification: "polymorph", applied: true },
-	{ kind: "future_import_statement", classification: "polymorph", applied: false },
-	{ kind: "import_from_statement", classification: "polymorph", applied: false },
-	{ kind: "pattern_list", classification: "polymorph", applied: false },
-	{ kind: "splat_pattern", classification: "polymorph", applied: false },
-	{ kind: "with_clause", classification: "polymorph", applied: true },
-	{ kind: "with_clause_bare", classification: "polymorph", applied: true },
-	{ kind: "with_clause_paren", classification: "polymorph", applied: true },
-	{ kind: "yield", classification: "polymorph", applied: false },
+	{ kind: '_compound_statement', classification: 'supertype', applied: true },
+	{ kind: '_dict_pattern_kv', classification: 'supertype', applied: true },
+	{
+		kind: '_expression_within_for_in_clause',
+		classification: 'supertype',
+		applied: true
+	},
+	{ kind: '_expressions', classification: 'supertype', applied: true },
+	{ kind: '_f_expression', classification: 'supertype', applied: true },
+	{ kind: '_left_hand_side', classification: 'supertype', applied: true },
+	{ kind: '_named_expression_lhs', classification: 'supertype', applied: true },
+	{ kind: '_right_hand_side', classification: 'supertype', applied: true },
+	{ kind: '_simple_pattern', classification: 'supertype', applied: true },
+	{ kind: '_simple_statement', classification: 'supertype', applied: true },
+	{ kind: '_statement', classification: 'supertype', applied: true },
+	{ kind: 'expression', classification: 'supertype', applied: true },
+	{ kind: 'keyword_identifier', classification: 'supertype', applied: true },
+	{ kind: 'parameter', classification: 'supertype', applied: true },
+	{ kind: 'pattern', classification: 'supertype', applied: true },
+	{ kind: 'primary_expression', classification: 'supertype', applied: true },
+	{ kind: '_is_not', classification: 'terminal', applied: true },
+	{ kind: '_not_in', classification: 'terminal', applied: true },
+	{ kind: 'comment', classification: 'terminal', applied: true },
+	{ kind: 'escape_sequence', classification: 'terminal', applied: true },
+	{ kind: 'float', classification: 'terminal', applied: true },
+	{ kind: 'import_prefix', classification: 'terminal', applied: true },
+	{ kind: 'integer', classification: 'terminal', applied: true },
+	{ kind: 'line_continuation', classification: 'terminal', applied: true },
+	{ kind: '_match_block_block', classification: 'polymorph', applied: true },
+	{ kind: '_suite', classification: 'polymorph', applied: false },
+	{ kind: 'assignment', classification: 'polymorph', applied: true },
+	{ kind: 'assignment_eq', classification: 'polymorph', applied: true },
+	{ kind: 'assignment_type', classification: 'polymorph', applied: true },
+	{ kind: 'assignment_typed', classification: 'polymorph', applied: true },
+	{ kind: 'expression_list', classification: 'polymorph', applied: false },
+	{ kind: 'expression_statement', classification: 'polymorph', applied: true },
+	{
+		kind: 'expression_statement_tuple',
+		classification: 'polymorph',
+		applied: true
+	},
+	{
+		kind: 'future_import_statement',
+		classification: 'polymorph',
+		applied: false
+	},
+	{
+		kind: 'import_from_statement',
+		classification: 'polymorph',
+		applied: false
+	},
+	{ kind: 'pattern_list', classification: 'polymorph', applied: false },
+	{ kind: 'splat_pattern', classification: 'polymorph', applied: false },
+	{ kind: 'with_clause', classification: 'polymorph', applied: true },
+	{ kind: 'with_clause_bare', classification: 'polymorph', applied: true },
+	{ kind: 'with_clause_paren', classification: 'polymorph', applied: true },
+	{ kind: 'yield', classification: 'polymorph', applied: false }
 ];
 
 export interface InferredField {
 	readonly kind: string;
 	readonly fieldName: string;
 	readonly targetSymbol: string;
-	readonly confidence: "high" | "medium" | "low";
+	readonly confidence: 'high' | 'medium' | 'low';
 	readonly agreement: number;
 	readonly sampleSize: number;
 	readonly applied: boolean;
@@ -318,6 +336,6 @@ export interface RepeatedShape {
 	readonly suggestedName: string;
 	readonly kinds: readonly string[];
 	readonly parents: readonly string[];
-	readonly shape: "supertype" | "group";
+	readonly shape: 'supertype' | 'group';
 }
 export const repeatedShapes: readonly RepeatedShape[] = [];

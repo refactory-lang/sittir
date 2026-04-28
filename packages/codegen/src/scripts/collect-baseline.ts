@@ -27,24 +27,24 @@
  * if so.
  */
 
-import { execSync } from "node:child_process";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { execSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import { validateFactoryRoundTrip } from "../validate/factory-roundtrip.ts";
-import { validateFrom } from "../validate/from.ts";
-import { validateRoundTrip } from "../validate/roundtrip.ts";
-import { validateTemplateCoverage } from "../validate/template-coverage.ts";
+import { validateFactoryRoundTrip } from '../validate/factory-roundtrip.ts';
+import { validateFrom } from '../validate/from.ts';
+import { validateRoundTrip } from '../validate/roundtrip.ts';
+import { validateTemplateCoverage } from '../validate/template-coverage.ts';
 
 // ---------------------------------------------------------------------------
 // Schema types — see contracts/baseline-json.md
 // ---------------------------------------------------------------------------
 
-export type Backend = "typescript" | "native";
-export type Grammar = "python" | "rust" | "typescript";
+export type Backend = 'typescript' | 'native';
+export type Grammar = 'python' | 'rust' | 'typescript';
 
-const GRAMMARS: readonly Grammar[] = ["python", "rust", "typescript"];
+const GRAMMARS: readonly Grammar[] = ['python', 'rust', 'typescript'];
 
 export interface ValidatorResult {
 	pass: number;
@@ -99,14 +99,20 @@ export interface BackendBaseline {
 // Repo-relative path helpers
 // ---------------------------------------------------------------------------
 
-const repoRoot = fileURLToPath(new URL("../../../..", import.meta.url)).replace(/\/$/, "");
+const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(
+	/\/$/,
+	''
+);
 
 function templatesPathFor(grammar: Grammar): string {
 	return resolve(repoRoot, `packages/${grammar}/templates`);
 }
 
 function fixturesPathFor(grammar: Grammar): string {
-	return resolve(repoRoot, `packages/${grammar}/rust-render/test-fixtures.json`);
+	return resolve(
+		repoRoot,
+		`packages/${grammar}/rust-render/test-fixtures.json`
+	);
 }
 
 // ---------------------------------------------------------------------------
@@ -133,7 +139,7 @@ function uniqSorted(values: Iterable<string>): string[] {
 // ---------------------------------------------------------------------------
 
 interface RenderFixture {
-	readonly kind: "render";
+	readonly kind: 'render';
 	readonly grammar: string;
 	readonly input: { readonly $type: string; readonly [k: string]: unknown };
 	readonly expectedOutput: string;
@@ -145,10 +151,11 @@ interface ParityFixtureLike {
 }
 
 function loadRenderFixtures(grammar: Grammar): RenderFixture[] {
-	const raw = readFileSync(fixturesPathFor(grammar), "utf-8");
+	const raw = readFileSync(fixturesPathFor(grammar), 'utf-8');
 	const all = JSON.parse(raw) as ParityFixtureLike[];
 	return all.filter(
-		(f): f is RenderFixture => f.kind === "render" && typeof f.input?.$type === "string",
+		(f): f is RenderFixture =>
+			f.kind === 'render' && typeof f.input?.$type === 'string'
 	);
 }
 
@@ -158,7 +165,8 @@ interface ParityRenderer {
 
 /** Resolved per-grammar boundary path used for native parity render. */
 function boundaryPathFor(grammar: Grammar): string {
-	return pathToFileURL(resolve(repoRoot, `packages/${grammar}/src/boundary.ts`)).href;
+	return pathToFileURL(resolve(repoRoot, `packages/${grammar}/src/boundary.ts`))
+		.href;
 }
 
 /**
@@ -184,7 +192,7 @@ export type BoundaryImporter = (path: string) => Promise<unknown>;
  */
 export async function loadBoundaryRender(
 	grammar: Grammar,
-	importFn: BoundaryImporter = (p) => import(p),
+	importFn: BoundaryImporter = (p) => import(p)
 ): Promise<(node: unknown) => string> {
 	const boundaryPath = boundaryPathFor(grammar);
 	let mod: unknown;
@@ -193,13 +201,13 @@ export async function loadBoundaryRender(
 	} catch (e) {
 		const msg = e instanceof Error ? e.message : String(e);
 		throw new Error(
-			`failed to import native boundary for grammar '${grammar}' from ${boundaryPath}: ${msg}`,
+			`failed to import native boundary for grammar '${grammar}' from ${boundaryPath}: ${msg}`
 		);
 	}
 	const render = (mod as { render?: unknown }).render;
-	if (typeof render !== "function") {
+	if (typeof render !== 'function') {
 		throw new Error(
-			`native boundary for grammar '${grammar}' at ${boundaryPath} does not export a 'render' function`,
+			`native boundary for grammar '${grammar}' at ${boundaryPath} does not export a 'render' function`
 		);
 	}
 	return render as (node: unknown) => string;
@@ -221,16 +229,18 @@ export async function loadBoundaryRender(
 async function buildParityRenderer(
 	grammar: Grammar,
 	backend: Backend,
-	importFn?: BoundaryImporter,
+	importFn?: BoundaryImporter
 ): Promise<ParityRenderer> {
-	if (backend === "native") {
+	if (backend === 'native') {
 		const render = await loadBoundaryRender(grammar, importFn);
 		return { render };
 	}
 	// Lazy import of @sittir/core's createRenderer — keeps the module
 	// import-cheap when the test target only exercises the type shape.
-	const core = (await import("@sittir/core")) as {
-		createRenderer: (templatesPath: string) => { render: (node: unknown) => string };
+	const core = (await import('@sittir/core')) as {
+		createRenderer: (templatesPath: string) => {
+			render: (node: unknown) => string;
+		};
 	};
 	const r = core.createRenderer(templatesPathFor(grammar));
 	return { render: r.render.bind(r) };
@@ -239,7 +249,7 @@ async function buildParityRenderer(
 export async function collectParityFixtures(
 	grammar: Grammar,
 	backend: Backend,
-	importFn?: BoundaryImporter,
+	importFn?: BoundaryImporter
 ): Promise<ParityFixtures> {
 	const fixtures = loadRenderFixtures(grammar);
 	const renderer = await buildParityRenderer(grammar, backend, importFn);
@@ -256,7 +266,9 @@ export async function collectParityFixtures(
 			actual = renderer.render(fx.input);
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
-			throw new Error(`[${grammar}][${backend}][render #${idx}] ${fx.input.$type}: ${message}`);
+			throw new Error(
+				`[${grammar}][${backend}][render #${idx}] ${fx.input.$type}: ${message}`
+			);
 		}
 		if (actual === fx.expectedOutput) {
 			pass++;
@@ -287,7 +299,7 @@ export async function collectParityFixtures(
 		// a fixture is reclassified, it's MOVED from `failingByKind` to
 		// `formatDeferredByKind`. At baseline (commit 6e06f93f / no
 		// triage performed), this is always empty.
-		formatDeferredByKind: {},
+		formatDeferredByKind: {}
 	};
 }
 
@@ -297,19 +309,20 @@ export async function collectParityFixtures(
 
 async function collectValidatorsForGrammar(
 	grammar: Grammar,
-	backend: Backend,
-): Promise<GrammarEntry["validators"]> {
+	backend: Backend
+): Promise<GrammarEntry['validators']> {
 	const tp = templatesPathFor(grammar);
 
 	// Pass backend explicitly so each validator uses the correct engine
 	// without touching process.env — avoids cross-contamination when
 	// collectBaseline() is called concurrently.
-	const backendArg: "native" | "typescript" = backend === "native" ? "native" : "typescript";
+	const backendArg: 'native' | 'typescript' =
+		backend === 'native' ? 'native' : 'typescript';
 	const [from, cov, rt, fac] = await Promise.all([
 		validateFrom(grammar, backendArg),
 		Promise.resolve(validateTemplateCoverage(grammar, tp)),
 		validateRoundTrip(grammar, tp, { backend: backendArg }),
-		validateFactoryRoundTrip(grammar, tp, backendArg),
+		validateFactoryRoundTrip(grammar, tp, backendArg)
 	]);
 
 	// Format-deferred kinds default to []. Triage runs during cluster
@@ -325,13 +338,13 @@ async function collectValidatorsForGrammar(
 			pass: from.pass,
 			total: from.total,
 			failingKinds: uniqSorted(from.errors.map((e) => e.kind)),
-			formatDeferredKinds: empty,
+			formatDeferredKinds: empty
 		},
 		coverage: {
 			pass: cov.pass,
 			total: cov.total,
 			failingKinds: uniqSorted(cov.issues.map((i) => i.kind)),
-			formatDeferredKinds: empty,
+			formatDeferredKinds: empty
 		},
 		roundtrip: {
 			pass: rt.pass,
@@ -340,17 +353,19 @@ async function collectValidatorsForGrammar(
 			failingKinds: uniqSorted(
 				[...rt.errors, ...rt.astMismatches]
 					.map((e) => kindFromRoundtripName(e.name))
-					.filter((k): k is string => k !== null),
+					.filter((k): k is string => k !== null)
 			),
-			formatDeferredKinds: empty,
+			formatDeferredKinds: empty
 		},
 		factoryRoundtrip: {
 			pass: fac.pass,
 			total: fac.total,
 			astMatchPass: fac.astMatchPass,
-			failingKinds: uniqSorted([...fac.errors, ...fac.astMismatches].map((e) => e.kind)),
-			formatDeferredKinds: empty,
-		},
+			failingKinds: uniqSorted(
+				[...fac.errors, ...fac.astMismatches].map((e) => e.kind)
+			),
+			formatDeferredKinds: empty
+		}
 	};
 }
 
@@ -360,24 +375,26 @@ async function collectValidatorsForGrammar(
 
 function shortSha(): string {
 	try {
-		const out = execSync("git rev-parse --short=7 HEAD", {
+		const out = execSync('git rev-parse --short=7 HEAD', {
 			cwd: repoRoot,
-			encoding: "utf-8",
-			stdio: ["ignore", "pipe", "ignore"],
+			encoding: 'utf-8',
+			stdio: ['ignore', 'pipe', 'ignore']
 		}).trim();
 		if (/^[a-f0-9]{7}$/.test(out)) return out;
 	} catch {
 		// git missing or not a repo — fall through to placeholder
 	}
-	return "0000000";
+	return '0000000';
 }
 
 function resolveBackend(input: string | undefined): Backend {
-	if (input === "native") return "native";
-	return "typescript";
+	if (input === 'native') return 'native';
+	return 'typescript';
 }
 
-function computeTotals(grammars: BackendBaseline["grammars"]): BackendBaseline["totals"] {
+function computeTotals(
+	grammars: BackendBaseline['grammars']
+): BackendBaseline['totals'] {
 	let pass = 0;
 	let total = 0;
 	for (const g of GRAMMARS) {
@@ -388,7 +405,7 @@ function computeTotals(grammars: BackendBaseline["grammars"]): BackendBaseline["
 			entry.validators.from,
 			entry.validators.coverage,
 			entry.validators.roundtrip,
-			entry.validators.factoryRoundtrip,
+			entry.validators.factoryRoundtrip
 		];
 		for (const v of validators) {
 			pass += v.pass;
@@ -400,15 +417,20 @@ function computeTotals(grammars: BackendBaseline["grammars"]): BackendBaseline["
 	return { pass, fail: total - pass, total };
 }
 
-async function collectGrammarEntry(grammar: Grammar, backend: Backend): Promise<GrammarEntry> {
+async function collectGrammarEntry(
+	grammar: Grammar,
+	backend: Backend
+): Promise<GrammarEntry> {
 	const [validators, parityFixtures] = await Promise.all([
 		collectValidatorsForGrammar(grammar, backend),
-		collectParityFixtures(grammar, backend),
+		collectParityFixtures(grammar, backend)
 	]);
 	return { validators, parityFixtures };
 }
 
-export async function collectBaseline(backendInput?: string): Promise<BackendBaseline> {
+export async function collectBaseline(
+	backendInput?: string
+): Promise<BackendBaseline> {
 	const backend = resolveBackend(backendInput);
 	const commit = shortSha();
 
@@ -426,13 +448,13 @@ export async function collectBaseline(backendInput?: string): Promise<BackendBas
 	// tuple union to the exact `Record<Grammar, GrammarEntry>` shape, but
 	// it's now over a proven-complete object — every Grammar key is
 	// present by construction (loop iterates the full GRAMMARS list).
-	const grammars = Object.fromEntries(tuples) as BackendBaseline["grammars"];
+	const grammars = Object.fromEntries(tuples) as BackendBaseline['grammars'];
 
 	return {
 		backend,
 		commit,
 		grammars,
-		totals: computeTotals(grammars),
+		totals: computeTotals(grammars)
 	};
 }
 
@@ -452,7 +474,7 @@ export async function collectBaseline(backendInput?: string): Promise<BackendBas
  */
 function sortKeysDeep(value: unknown): unknown {
 	if (Array.isArray(value)) return value.map(sortKeysDeep);
-	if (value !== null && typeof value === "object") {
+	if (value !== null && typeof value === 'object') {
 		const proto = Object.getPrototypeOf(value);
 		if (proto === Object.prototype || proto === null) {
 			const out: Record<string, unknown> = {};
@@ -485,14 +507,15 @@ const isCli = (() => {
 })();
 
 if (isCli) {
-	const metricsBackend: "ts" | "native" = process.env.SITTIR_BACKEND === "native" ? "native" : "ts";
+	const metricsBackend: 'ts' | 'native' =
+		process.env.SITTIR_BACKEND === 'native' ? 'native' : 'ts';
 	const baseline = await collectBaseline(process.env.SITTIR_BACKEND);
 	process.stdout.write(serialiseBaseline(baseline));
 
 	// Emit metrics file when SITTIR_METRICS=1 is set. The import is
 	// deferred so the hot path stays free of the `os` module load.
-	if (process.env["SITTIR_METRICS"] === "1") {
-		const { dumpMetrics } = await import("@sittir/core");
+	if (process.env['SITTIR_METRICS'] === '1') {
+		const { dumpMetrics } = await import('@sittir/core');
 		dumpMetrics(metricsBackend);
 	}
 }

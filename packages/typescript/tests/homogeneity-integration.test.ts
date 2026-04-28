@@ -15,25 +15,32 @@
  * a different homogeneous polymorph.
  */
 
-import { describe, it } from "vitest";
-import type { FormalParameter } from "../src/index.ts";
-import type { NamespaceMap } from "../src/index.ts";
-import type { FromInputOf } from "@sittir/types";
+import { describe, it } from 'vitest';
+import type { FormalParameter } from '../src/index.ts';
+import type { NamespaceMap } from '../src/index.ts';
+import type { FromInputOf } from '@sittir/types';
 
 function expectTrue<_T extends true>(): void {}
 
-describe("spec 009 Layer 1 — real typescript grammar integration", () => {
-	it("FormalParameter Loose shape does not require a kind tag", () => {
+describe('spec 009 Layer 1 — real typescript grammar integration', () => {
+	it('FormalParameter Loose shape does not require a kind tag', () => {
 		// The Loose projection for FormalParameter after spec 009 Layer 1
 		// folds the two arms together (since their $fields are identical).
 		// A bare bag with just the shared fields should be assignable.
-		type FormalParamLoose = FromInputOf<FormalParameter, {}, {}, [], NamespaceMap>;
+		type FormalParamLoose = FromInputOf<
+			FormalParameter,
+			{},
+			{},
+			[],
+			NamespaceMap
+		>;
 
 		// The shared shape is `{ type?: TypeAnnotation }` + children.
 		// An empty loose bag is valid (everything optional) — it matches
 		// both arms structurally.
 		type EmptyBag = {};
-		type EmptyBagIsLoose = EmptyBag extends Partial<FormalParamLoose> ? true : false;
+		type EmptyBagIsLoose =
+			EmptyBag extends Partial<FormalParamLoose> ? true : false;
 		expectTrue<EmptyBagIsLoose>();
 
 		// Under homogeneity, the `{kind: K}` tagged arm is DROPPED from the

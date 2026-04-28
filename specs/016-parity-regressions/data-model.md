@@ -27,25 +27,30 @@ This feature operates on existing in-memory entities (validator results, NodeDat
 			"validators": {
 				"from": { "pass": 130, "total": 148, "failingKinds": ["…"] },
 				"coverage": { "pass": 132, "total": 136, "failingKinds": ["…"] },
-				"roundtrip": { "pass": 121, "total": 136, "astMatchPass": 120, "failingKinds": ["…"] },
+				"roundtrip": {
+					"pass": 121,
+					"total": 136,
+					"astMatchPass": 120,
+					"failingKinds": ["…"]
+				},
 				"factoryRoundtrip": {
 					"pass": 127,
 					"total": 135,
 					"astMatchPass": 123,
-					"failingKinds": ["…"],
-				},
+					"failingKinds": ["…"]
+				}
 			},
 			"parityFixtures": {
 				"pass": 468,
 				"total": 473,
 				"failingByKind": {
 					"mut_pattern": ["render #344", "render #393", "render #417"],
-					"captured_pattern": ["render #402", "render #418"],
-				},
-			},
+					"captured_pattern": ["render #402", "render #418"]
+				}
+			}
 		},
 		"typescript": { "…": "same shape" },
-		"python": { "…": "same shape" },
+		"python": { "…": "same shape" }
 	},
 	"totals": {
 		// Roll-up across all per-grammar validators + parity fixtures.
@@ -61,8 +66,8 @@ This feature operates on existing in-memory entities (validator results, NodeDat
 		// because per-validator pass counts are also tracked.
 		"pass": 3134,
 		"fail": 1825,
-		"total": 4959,
-	},
+		"total": 4959
+	}
 }
 ```
 
