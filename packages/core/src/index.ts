@@ -17,3 +17,4 @@ export {
 } from './metrics.ts';
 export type { MetricsFile, PerKindMetrics, FfiMetrics } from './metrics.ts';
 export { assertNativeNodeData, isNativeNodeData } from './native-boundary.ts';
+export { applyFormat } from './format.ts';
