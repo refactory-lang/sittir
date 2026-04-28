@@ -21,7 +21,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const FIXTURES_DIR = resolve(__dirname, '../../tests/format-roundtrip/fixtures');
 const CORPUS_PATH = resolve(__dirname, '../../specs/017-format-inference/format-corpus.json');
 
-function tryLoadNativeEngine(): { parseAndRead(src: string): string } | null {
+function tryLoadNativeEngine(): { parseAndRead(src: string): string; render(nodeJson: string): string } | null {
 	try {
 		const req = createRequire(import.meta.url);
 		const repoRoot = resolve(__dirname, '../..');
@@ -87,4 +87,35 @@ describe('US2 — edit isolation (python)', () => {
 		expect(diff!.start).toBeGreaterThanOrEqual(edit.startPos);
 		expect(diff!.end).toBeLessThan(edit.startPos + edit.insertedText.length);
 	});
+});
+
+describe('US3 — native/TS render parity (python)', () => {
+	const corpus = JSON.parse(readFileSync(CORPUS_PATH, 'utf-8')) as {
+		fixtures: Array<{ grammar: string; fixture: string; formatCategory: string; expectedBackendCoverage: string }>;
+	};
+	const bothFixtures = corpus.fixtures.filter(
+		(f) => f.grammar === 'python' && f.expectedBackendCoverage === 'both',
+	);
+
+	if (bothFixtures.length === 0) {
+		it.todo('no "both" fixtures yet — add entries to format-corpus.json to enable parity testing');
+	} else {
+		for (const entry of bothFixtures) {
+			it(`${entry.fixture}: native render matches TS render byte-for-byte`, () => {
+				const engine = tryLoadNativeEngine();
+				if (!engine) return; // skip — native not built
+
+				const source = readFileSync(resolve(FIXTURES_DIR, entry.fixture), 'utf-8');
+				const parsed = JSON.parse(engine.parseAndRead(source)) as {
+					nodeData: unknown;
+					format?: unknown;
+				};
+
+				const nodeDataWithFormat = { ...(parsed.nodeData as object), '$format': parsed.format };
+				const nativeRendered = engine.render(JSON.stringify(nodeDataWithFormat));
+
+				expect(nativeRendered).toBe(source);
+			});
+		}
+	}
 });
