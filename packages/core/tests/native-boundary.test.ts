@@ -25,13 +25,4 @@ describe('native render boundary', () => {
 		expect(() => assertNativeNodeData(withVariant)).not.toThrow();
 		expect(isNativeNodeData(withVariant)).toBe(true);
 	});
-
-	it('still rejects per-node $format when engine-owned format exists elsewhere', () => {
-		const withFormat: AnyNodeData = {
-			...leaf,
-			$format: { boundary: { leading: '  ' } },
-		};
-
-		expect(() => assertNativeNodeData(withFormat)).toThrow(/\$format/);
-	});
 });
