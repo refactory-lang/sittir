@@ -42,6 +42,7 @@ export type BackendStatus = NativeBackendStatus | JsBackendStatus;
  */
 export interface NativeEngine {
 	readonly templateBundleHash: string;
+	parseAndRead(source: string): string;
 	findAndRead(source: string, pattern: string): string;
 	readNode(nodeId: NodeId): string;
 	render(nodeJson: string): string;
@@ -49,10 +50,11 @@ export interface NativeEngine {
 		source: string,
 		edits: { startPos: number; endPos: number; insertedText: string }[]
 	): string;
+	dispose(): void;
 }
 
 export interface NativeModule {
-	SittirEngine: new () => NativeEngine;
+	SittirEngine: new (options?: { format?: string }) => NativeEngine;
 }
 
 /**
@@ -134,12 +136,12 @@ function tryLoadNative(): NativeModule | { reason: string } {
  *
  * `SITTIR_BACKEND` forced-selection (documented as non-normative in
  * the contract):
- *   - `typescript` — skip the native load entirely; status.reason
+ *   - `js` — skip the native load entirely; status.reason
  *     records the override.
  *   - `native` — disable the silent fall-back; any native-load or
  *     hash-mismatch failure throws loudly so CI parity-diffing
  *     runs fail visibly instead of silently re-running on TS.
- *   - unset / any other value — default try-native-else-TS flow.
+ *   - unset / any other value — default try-native-else-JS flow.
  */
 function computeBackend(): BackendStatus {
 	const forced = process.env.SITTIR_BACKEND;

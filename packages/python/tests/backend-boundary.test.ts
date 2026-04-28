@@ -103,7 +103,7 @@ describe('boundary', () => {
 			}
 		);
 
-		// @ts-expect-error - engine.ts created in Task 2
+		// Engine created - remove ts-expect-error
 		const { createEngine } = await import('../src/engine.ts');
 		const engine = createEngine({ format: { boundary: { leading: '\t' } } });
 		expect(engine.render(identifier)).toBe('\tx');
