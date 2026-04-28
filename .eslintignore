@@ -1,0 +1,13 @@
+# Volatile generated artifacts (codegen-owned, exclude from lint scope)
+# These are regenerated frequently and should not be part of default
+# lint coverage. Stability is achieved at the emitter level.
+**/tests/nodes.test.ts
+**/.sittir/**
+specs/*/baselines/**
+specs/*/perf-baselines/**
+specs/*/perf/**
+
+# Standard ignores
+node_modules/
+dist/
+target/
