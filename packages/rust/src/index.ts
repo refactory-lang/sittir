@@ -30,8 +30,12 @@ export type { Edit, CSTNode, RenderContext } from '@sittir/types';
 // Spec 012 boundary shim — backend-dispatching render/toEdit/applyEdits.
 // Spec 020 T003 — engine factory and default-engine delegation.
 export { createEngine } from './engine.js';
+export type { EngineOptions } from './engine.js';
 export { render, toEdit, applyEdits } from './boundary.js';
 
 // Backend selection (spec 012) — native vs. typescript fallback shim.
 export { getActiveBackend } from './backend.js';
 export type { BackendName, BackendStatus } from './backend.js';
+
+// Engine-facing types from @sittir/core
+export type { SittirEngineLike, SittirEngineReader } from '@sittir/core';

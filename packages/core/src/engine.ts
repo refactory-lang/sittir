@@ -24,7 +24,7 @@ import { readNode } from './readNode.ts';
 /**
  * Reader surface — parse + read methods grouped together.
  * Available when the engine supports parsing (JS fallback provides this
- * when a real parse function is available; native engines provide it when
+ * when a parse function is configured; native engines provide it when
  * built with reader support).
  */
 export interface SittirEngineReader {
@@ -66,7 +66,9 @@ export interface SittirEngineLike {
 
 	/**
 	 * Reader surface — parse + read operations.
-	 * Present when the engine supports parsing (JS fallback always has this).
+	 * Present when the engine supports parsing. JS fallback has this only
+	 * when a parse function is configured; native engines provide it when
+	 * built with reader support.
 	 */
 	reader?: SittirEngineReader;
 }
