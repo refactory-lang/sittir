@@ -22,10 +22,11 @@ import type { TreeHandle } from './readNode.ts';
 import { readNode } from './readNode.ts';
 
 /**
- * Engine-like interface — parser + renderer + edit application.
- * Both JS and native engines implement this shape.
+ * Reader surface — parse + read methods grouped together.
+ * Available when the engine supports parsing (JS fallback always provides this;
+ * native engines may provide it if built with parser support).
  */
-export interface SittirEngineLike {
+export interface SittirEngineReader {
 	/**
 	 * Parse source and read the root node into NodeData.
 	 * Returns the root NodeData plus a TreeHandle for drill-in.
@@ -37,7 +38,14 @@ export interface SittirEngineLike {
 	 * The nodeId must belong to the tree owned by this engine.
 	 */
 	readNode(nodeId: NodeId): AnyNodeData;
+}
 
+/**
+ * Engine interface — renderer-first with optional reader.
+ * Top-level surface is always renderer (render, applyEdits, dispose).
+ * Reader methods are grouped in an optional `reader` sub-object.
+ */
+export interface SittirEngineLike {
 	/**
 	 * Render a NodeData node to a string.
 	 * Applies engine-level format unless `ignoreFormat: true`.
@@ -54,6 +62,12 @@ export interface SittirEngineLike {
 	 * Release engine resources (if any).
 	 */
 	dispose(): void;
+
+	/**
+	 * Reader surface — parse + read operations.
+	 * Present when the engine supports parsing (JS fallback always has this).
+	 */
+	reader?: SittirEngineReader;
 }
 
 /**
@@ -146,27 +160,6 @@ export function createJsEngine(options: JsEngineOptions): SittirEngineLike {
 	}
 
 	return {
-		parseAndRead(source: string): ParseAndReadResult {
-			const tree = parse(source);
-			const root = readNode(tree);
-
-			// Attach a render method to the tree handle so drill-in nodes can render.
-			const treeWithRender: TreeHandle = {
-				...tree,
-				read: (nodeId?: NodeId) => readNode(tree, nodeId),
-				render: (nodeId?: NodeId, opts?: { ignoreFormat?: boolean }) => {
-					const node = nodeId !== undefined ? readNode(tree, nodeId) : root;
-					return renderNode(node, tree.format, opts?.ignoreFormat);
-				}
-			};
-
-			return { root, tree: treeWithRender };
-		},
-
-		readNode(nodeId: NodeId): AnyNodeData {
-			throw new Error('readNode(id) requires a tree handle from parseAndRead()');
-		},
-
 		render(node: AnyNodeData, options?: { ignoreFormat?: boolean }): string {
 			// Engine-level render: no tree association, so treeFormat is undefined.
 			return renderNode(node, undefined, options?.ignoreFormat);
@@ -178,6 +171,29 @@ export function createJsEngine(options: JsEngineOptions): SittirEngineLike {
 
 		dispose(): void {
 			// JS engine has no native resources to release.
+		},
+
+		reader: {
+			parseAndRead(source: string): ParseAndReadResult {
+				const tree = parse(source);
+				const root = readNode(tree);
+
+				// Attach a render method to the tree handle so drill-in nodes can render.
+				const treeWithRender: TreeHandle = {
+					...tree,
+					read: (nodeId?: NodeId) => readNode(tree, nodeId),
+					render: (nodeId?: NodeId, opts?: { ignoreFormat?: boolean }) => {
+						const node = nodeId !== undefined ? readNode(tree, nodeId) : root;
+						return renderNode(node, tree.format, opts?.ignoreFormat);
+					}
+				};
+
+				return { root, tree: treeWithRender };
+			},
+
+			readNode(nodeId: NodeId): AnyNodeData {
+				throw new Error('readNode(id) requires a tree handle from parseAndRead()');
+			}
 		}
 	};
 }

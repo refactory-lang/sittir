@@ -43,8 +43,9 @@ export interface TreeHandle {
 	 * Per-handle read dispatch. When present, the wrap layer reads
 	 * through this method instead of running `readNode(handle, id)`
 	 * directly. Native-engine handles set this to a closure that
-	 * calls `engine.parseAndRead(source)` (root) / `engine.readNode(id)`
-	 * (drill-in) so reads stay inside the engine that owns the tree.
+	 * calls `engine.reader.parseAndRead(source)` (root) / 
+	 * `engine.reader.readNode(id)` (drill-in) so reads stay inside 
+	 * the engine that owns the tree.
 	 *
 	 * Why per-handle: tree-sitter `Node::id()` is documented as
 	 * "unique within a given syntax tree" and is a raw-pointer cast,

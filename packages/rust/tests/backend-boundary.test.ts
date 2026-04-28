@@ -100,13 +100,27 @@ describe('boundary', () => {
 				applyEdits(source: string): string {
 					return source;
 				}
+				parseAndRead(_source: string): string {
+					return JSON.stringify({ nodeData: identifier });
+				}
+				readNode(_nodeId: number): string {
+					return JSON.stringify(identifier);
+				}
+				dispose(): void {}
 			}
 		);
 
-		// Engine created - remove ts-expect-error
+		// Engine created with reader support
 		const { createEngine } = await import('../src/engine.ts');
 		const engine = createEngine({ format: { boundary: { leading: '\t' } } });
 		expect(engine.render(identifier)).toBe('\tx');
 		expect(renderSpy).toHaveBeenCalledTimes(1);
+		
+		// Reader should be available on native engine
+		expect(engine.reader).toBeDefined();
+		if (engine.reader) {
+			const { root } = engine.reader.parseAndRead('x');
+			expect(root).toEqual(identifier);
+		}
 	});
 });

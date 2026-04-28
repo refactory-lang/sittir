@@ -24,6 +24,7 @@ export {
 } from './engine.ts';
 export type {
 	SittirEngineLike,
+	SittirEngineReader,
 	ParseAndReadResult,
 	JsEngineOptions
 } from './engine.ts';
