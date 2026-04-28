@@ -65,3 +65,22 @@ describe('render format resolution', () => {
 		expect(render(leaf)).toBe('~ hello');
 	});
 });
+
+describe('engine format resolution', () => {
+	it('engine format wins over inferred tree format', () => {
+		// @ts-expect-error - engine.ts created in Task 2
+		const { resolveEngineFormat } = require('../src/engine.ts');
+		const inferred: FormatRecord = { boundary: { leading: '  ' } };
+		const engineFormat: FormatRecord = { boundary: { leading: '\t' } };
+
+		expect(resolveEngineFormat(engineFormat, inferred, false)).toEqual(engineFormat);
+	});
+
+	it('detached NodeData does not borrow inferred tree format', () => {
+		// @ts-expect-error - engine.ts created in Task 2
+		const { resolveEngineFormat } = require('../src/engine.ts');
+		const inferred: FormatRecord = { boundary: { leading: '  ' } };
+
+		expect(resolveEngineFormat(undefined, inferred, true)).toBeUndefined();
+	});
+});

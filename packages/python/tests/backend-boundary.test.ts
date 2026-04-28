@@ -15,7 +15,7 @@ describe('boundary', () => {
 	});
 
 	function mockNativeBackend(
-		SittirEngine: new () => {
+		SittirEngine: new (options?: { format?: string }) => {
 			render(nodeJson: string): string;
 			applyEdits(
 				source: string,
@@ -87,5 +87,26 @@ describe('boundary', () => {
 		} as const;
 		expect(() => render(invalidNode)).toThrow(/node\.\$children\[1\]/);
 		expect(renderSpy).not.toHaveBeenCalled();
+	});
+
+	it('uses engine-owned format when native render is called without per-call format args', async () => {
+		const renderSpy = vi.fn((_nodeJson: string) => '\tx');
+		mockNativeBackend(
+			class {
+				constructor(_options?: { format?: string }) {}
+				render(nodeJson: string): string {
+					return renderSpy(nodeJson);
+				}
+				applyEdits(source: string): string {
+					return source;
+				}
+			}
+		);
+
+		// @ts-expect-error - engine.ts created in Task 2
+		const { createEngine } = await import('../src/engine.ts');
+		const engine = createEngine({ format: { boundary: { leading: '\t' } } });
+		expect(engine.render(identifier)).toBe('\tx');
+		expect(renderSpy).toHaveBeenCalledTimes(1);
 	});
 });
