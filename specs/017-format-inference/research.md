@@ -28,26 +28,21 @@ All NEEDS CLARIFICATION items are resolved. No open unknowns.
 
 ---
 
-## Decision 3: Extraction point in `readNode`
+## Decision 3: Extraction point — Rust-only, NOT in JS `readNode`
 
-**Decision**: Call `extractFormat` once per node, after the `fields`/`children` accumulation loop, before the return statement. Pass `sourceText` as an optional parameter on `readNode`.
+**Decision (revised 2026-04-27)**: `extractFormat` lives exclusively in the native Rust tier (`rust/sittir-core/src/format.rs`). The JS `readNode` in `@sittir/core` is **unchanged** — it never receives a `sourceText` parameter and never emits `$format`.
 
-**Rationale**: `readNode` already has the tree node, its span, and the accumulated `$fields`/`$children` — everything the extractor needs. Adding extraction after the loop and before the return keeps the single-code-path invariant (FR-007). Making `sourceText` optional preserves backward compatibility — callers without source (e.g. tree-only hydration) pass `undefined` and extraction is skipped.
+**Rationale**: Format inference is a byte-level analysis pass over source text. This naturally belongs in Rust: it's performance-sensitive, it operates on raw bytes, and keeping it native avoids a complex sourceText-threading API on the JS side that would change the contract for every existing JS `readNode` caller. The JS tier remains a fast structural reader; the native tier is the format-aware parser.
 
-**Alternatives considered**:
-- **Post-processing pass over the returned tree**: requires a second tree walk and a separate entry point — two derivations of the same information. Rejected per DRY.
-- **Lazy extraction on first `render()` call**: requires `readNode` to stash the full source text on every node, which is memory-wasteful and couples `render` to the extraction algorithm. Rejected.
+**Corollary**: The only way to get a `NodeData` with `$format` populated is to use the native reader. JS callers that want format-preserving roundtrip must go through the native path. JS callers that don't need format are unaffected — zero API change.
 
 ---
 
-## Decision 4: Application point in `render`
+## Decision 4: Application point — `RenderContext.format`, not per-node lookup
 
-**Decision**: Check `node.$format` at the top of `render()`, after `prepare()`. If present and `ctx.ignoreFormat !== true`, call `applyFormat(node, format, canonicalResult)` and return early.
+**Decision**: Both the JS render (`@sittir/core`) and the native Rust render consume a single `FormatRecord` via `ctx.format?: FormatRecord`. The render path checks `ctx.format ?? node.$format` — tree-level record first, per-node inline override second, then template-canonical. This satisfies FR-003 and FR-005.
 
-**Rationale**: Inserting the check after `prepare()` means the template-canonical string is already computed — `applyFormat` receives it and applies the format deltas. No duplication of the template-resolution logic. The `ignoreFormat` flag on `RenderContext` satisfies FR-010.
-
-**Alternatives considered**:
-- **Separate `renderFormatted()` function**: requires callers to pick the right function; removes the opt-out semantic. Rejected — FR-003 says render MUST apply `$format` when present and fall back otherwise. A single `render()` with opt-out is the correct surface.
+**Rationale**: A single record per render context is simpler than a per-node map lookup on every node. Format style is a file-level property (indent width, trailing-comma policy, quote style) — not something that varies node-by-node within a well-formatted file.
 
 ---
 
@@ -69,11 +64,19 @@ No subfield can be inferred from another. No two subfields encode the same fact.
 
 ---
 
-## Decision 6: `readNode` signature change
+## Decision 4a: One `FormatRecord` per tree, not per node
 
-**Decision**: `readNode(tree, nodeId?, sourceText?)` — add an optional third parameter. Callers that don't need format pass nothing; format extraction is `if (sourceText != null)` gated.
+**Decision**: Format inference produces a single `FormatRecord` for the entire parsed file. The Rust reader sets `treeHandle.format?: FormatRecord`. There is no `Map<NodeId, FormatRecord>` or `$format` on individual nodes from inference.
 
-**Rationale**: Backward-compatible; zero changes to existing call sites.
+**Rationale**: Format style is a file-level property — indent policy, separator conventions, quote style. Inferring a consensus record across the file is simpler to implement, simpler to store, and simpler to apply. A per-node map would imply node-local style variations within a single file; well-formatted real-world files don't have that.
+
+**Corollary**: `$format` on `AnyNodeData` is reserved for user-supplied per-node inline overrides only. Inferred format never sets `node.$format`.
+
+
+
+**Decision**: `readNode(tree, nodeId?)` — no new parameters. The JS reader never extracts format.
+
+**Rationale**: Extraction is Rust-only (Decision 3). Adding an optional `sourceText` to the JS signature would imply JS extraction is possible or planned. Keeping the JS signature clean avoids future confusion and maintains the invariant: `$format` on a `NodeData` means "this came from the native reader".
 
 ---
 

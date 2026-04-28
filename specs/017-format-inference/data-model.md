@@ -54,42 +54,38 @@ export interface FormatRecord {
 }
 ```
 
-### Addition to `AnyNodeData`
+### Addition to `AnyNodeData` (user-supplied inline override only)
 
 ```ts
 export interface AnyNodeData {
   // ... existing fields ...
-  /** Residual source-format metadata. Present only when source span cannot be
-   *  reproduced from template-canonical render + existing $text/$fields/$children.
-   *  Populated by readNode when sourceText is provided; absent on factory output. */
+  /** Per-node format override. Set by callers to override the tree-level format
+   *  (ctx.format) for this specific node. Never set by inference — inferred format
+   *  lives on TreeHandle.format. Absent on all factory and readNode output. */
   $format?: FormatRecord;
 }
 ```
 
 ---
 
-## Format Extractor — `extractFormat`
+## Format Extractor — `extract_format` (Rust-only)
 
-**Location**: `packages/core/src/format.ts` (new file)
+**Location**: `rust/sittir-core/src/format.rs`
 
-**Signature**:
-```ts
-export function extractFormat(
-  sourceSpan: string,
-  canonicalRender: string,
-  node: AnyNodeData,
-): FormatRecord | undefined
+**Signature** (Rust):
+```rust
+pub fn extract_format(source: &str, tree: &Tree) -> Option<FormatRecord>
 ```
 
 **Algorithm**:
-1. If `sourceSpan === canonicalRender`, return `undefined` immediately (hot path — no allocation).
-2. Compute `boundary`: leading/trailing bytes in `sourceSpan` that do not appear at the same position in `canonicalRender`.
-3. Compute `slots`: walk `node.$fields` and `node.$children`; for each position, detect separator deviations and optional-token presence/absence.
-4. Compute `literals`: for leaf children where `$text` differs from what `canonicalRender` places at that position.
-5. Compute `trivia`: scan `sourceSpan` for comment-syntax bytes; record offset + text.
-6. If all four subfields are `undefined`, return `undefined` (no record allocated).
+1. Walk the tree once, collecting style samples: indent widths, separator spellings, optional-token presence/absence, quote characters, trivia patterns.
+2. Compute consensus values for each `FormatRecord` subfield from the collected samples.
+3. If all subfields are `None` / empty (source is already template-canonical), return `None` (no allocation).
+4. Return the consensus `FormatRecord`.
 
-**Determinism**: same `sourceSpan` + same `canonicalRender` + same `node` → same result.
+The result is stored on `TreeHandle.format`. It is **not** stored per-node.
+
+**Determinism**: same `source` + same grammar version → same result.
 
 ---
 
@@ -114,34 +110,44 @@ export function applyFormat(
 
 ---
 
-## `RenderContext` extension — `ignoreFormat`
+### `TreeHandle` extension — `format`
 
-**Location**: `@sittir/types/src/core-types.ts` (or the existing `RenderContext` declaration)
+**Location**: `packages/core/src/readNode.ts`
+
+The inferred format record is stored on the tree handle itself — one record per parsed file.
 
 ```ts
-export interface RenderContext {
+export interface TreeHandle {
   // ... existing fields ...
-  /** When true, ignore $format on all nodes and render template-canonical.
-   *  Default: false (apply $format when present). Satisfies FR-010. */
-  ignoreFormat?: boolean;
+  /**
+   * Format record inferred from the source file by the native Rust reader.
+   * Absent on trees produced by the JS reader (readNode never sets this).
+   * Callers can also set this manually to apply a house-style config.
+   */
+  format?: FormatRecord;
 }
 ```
 
 ---
 
-## `readNode` signature extension
+## `RenderContext` extension
 
-**Location**: `packages/core/src/readNode.ts`
+**Location**: `packages/core/src/render.ts` (or `@sittir/types`)
 
 ```ts
-export function readNode(
-  tree: TreeHandle,
-  nodeId?: number,
-  sourceText?: string,   // NEW — pass full source for format extraction
-): AnyNodeData
+export interface RenderContext {
+  // ... existing fields ...
+  /** Tree-level format record. Applied to every node rendered under this context.
+   *  Per-node `node.$format` overrides this when both are present.
+   *  When absent (and node.$format absent), template-canonical output is used. */
+  format?: FormatRecord;
+  /** When true, ignore all format records and render template-canonical.
+   *  Default: false (apply format when present). Satisfies FR-010. */
+  ignoreFormat?: boolean;
+}
 ```
 
-When `sourceText` is `undefined`, `$format` is never populated (backward-compatible).
+Callers populate `ctx.format` from `treeHandle.format` when they want format-preserving rendering.
 
 ---
 
