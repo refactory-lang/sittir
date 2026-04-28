@@ -45,12 +45,19 @@ export interface FormatTrivia {
   text: string;
 }
 
-/** Residual format metadata on a NodeData node produced from source text. */
+/** Residual format metadata for a tree or a specific node kind. */
 export interface FormatRecord {
   boundary?: FormatBoundary;
   slots?: Record<string, FormatSlot>;
   literals?: Record<string, FormatLiteral>;
   trivia?: FormatTrivia[];
+  /**
+   * Per-kind format overrides. Key is the raw node kind (e.g. "function_item").
+   * Render lookup: node.$format ?? kinds[node.$type] ?? parent FormatRecord.
+   * Entries here share the same FormatRecord shape; nesting beyond one level
+   * is valid but the render path resolves only one level deep.
+   */
+  kinds?: Record<string, FormatRecord>;
 }
 ```
 
@@ -137,7 +144,11 @@ export interface TreeHandle {
 ```ts
 export interface RenderContext {
   // ... existing fields ...
-  /** Tree-level format record. Applied to every node rendered under this context.
+  /** Tree-level format record. The render path resolves format for each node as:
+   *    node.$format                      // per-node inline override (highest priority)
+   *    ?? ctx.format?.kinds?.[node.$type] // per-kind entry on the tree-level record
+   *    ?? ctx.format                      // tree-level default
+   *    ?? undefined                       // template-canonical fallback
    *  Per-node `node.$format` overrides this when both are present.
    *  When absent (and node.$format absent), template-canonical output is used. */
   format?: FormatRecord;

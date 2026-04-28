@@ -9,7 +9,7 @@ Add a structured `$format` record to `AnyNodeData` in `@sittir/types` that captu
 
 **Architecture (revised 2026-04-27)**:
 
-- **Extraction is Rust-only.** Format is inferred exclusively by the native Rust reader as a single `FormatRecord` for the entire parse result — one style record per file. After extraction the Rust reader sets `treeHandle.format?: FormatRecord`. No per-node map; no per-node `$format` from inference.
+- **Extraction is Rust-only.** Format is inferred exclusively by the native Rust reader as a single `FormatRecord` for the entire parse result — one style record per file, stored on `treeHandle.format`. Per-kind style variations are expressed as `FormatRecord.kinds` child entries (e.g. `kinds["function_item"]` overrides the tree-level defaults for that kind). No per-node map; no `$format` from inference.
 - **Rendering is backend-agnostic.** Both the JS (`@sittir/core` Nunjucks) and native (Rust Askama) render engines read `ctx.format` to apply a tree-level style. `RenderContext` accepts `format?: FormatRecord`. Nodes rendered under the same context share the same format record. If absent, template-canonical output is used.
 - **`$format` on `AnyNodeData` is for user-supplied inline format only.** Inferred format never sets `node.$format`. The render path checks `ctx.format` (tree-level, from inference or user config) first, then `node.$format` (per-node inline override), then falls back to canonical.
 - **User-configured format is backend-agnostic.** A caller may supply a hand-crafted `FormatRecord` as `ctx.format` (e.g. a house-style config) to either render backend.

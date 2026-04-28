@@ -64,11 +64,13 @@ No subfield can be inferred from another. No two subfields encode the same fact.
 
 ---
 
-## Decision 4a: One `FormatRecord` per tree, not per node
+## Decision 4a: One `FormatRecord` per tree; per-kind granularity via `kinds` child entries
 
-**Decision**: Format inference produces a single `FormatRecord` for the entire parsed file. The Rust reader sets `treeHandle.format?: FormatRecord`. There is no `Map<NodeId, FormatRecord>` or `$format` on individual nodes from inference.
+**Decision**: Format inference produces a single `FormatRecord` for the entire parsed file stored on `treeHandle.format`. Per-kind style variations are expressed as entries in `FormatRecord.kinds?: Record<string, FormatRecord>` — a child map keyed by raw node kind. There is no per-node map and no `$format` from inference.
 
-**Rationale**: Format style is a file-level property — indent policy, separator conventions, quote style. Inferring a consensus record across the file is simpler to implement, simpler to store, and simpler to apply. A per-node map would imply node-local style variations within a single file; well-formatted real-world files don't have that.
+**Rationale**: Format style is a file-level property — indent policy, separator conventions, quote style. A single top-level record covers the common case. `kinds` child entries handle the legitimate case where different node kinds have different style conventions in the same file (e.g. function bodies vs. argument lists vs. type parameters). The render path resolves one level: `kinds[node.$type] ?? top-level record`. This is granular enough without introducing per-node complexity.
+
+**Lookup order** (render path): `node.$format ?? ctx.format?.kinds?.[node.$type] ?? ctx.format`
 
 **Corollary**: `$format` on `AnyNodeData` is reserved for user-supplied per-node inline overrides only. Inferred format never sets `node.$format`.
 
