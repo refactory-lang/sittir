@@ -130,3 +130,104 @@ pub struct Edit {
     pub end_pos: u32,
     pub inserted_text: String,
 }
+
+/// Leading / trailing delimiters for a format region. Mirrors
+/// `FormatBoundary` in `@sittir/types` (FR-008).
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct FormatBoundary {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub leading: Option<String>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub trailing: Option<String>,
+}
+
+/// Per-slot separator / trailing-comma / absence hints. Mirrors
+/// `FormatSlot` in `@sittir/types` (FR-008). `rename_all = "camelCase"`
+/// maps `trailing_present` → `trailingPresent` on the wire.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct FormatSlot {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub sep: Option<String>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub trailing_present: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub absent: Option<bool>,
+}
+
+/// A fixed literal token value override. Mirrors `FormatLiteral` in
+/// `@sittir/types` (FR-008).
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct FormatLiteral {
+    pub raw: String,
+}
+
+/// A trivia (whitespace / comment) insertion at a byte offset. Mirrors
+/// `FormatTrivia` in `@sittir/types` (FR-008).
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct FormatTrivia {
+    pub offset: u32,
+    pub text: String,
+}
+
+/// Complete format record for a node kind. `kinds` enables per-kind
+/// overrides nested inside a parent record. Mirrors `FormatRecord` in
+/// `@sittir/types` (FR-008).
+///
+/// The recursive `kinds` field is fine in Rust because `HashMap` is
+/// heap-allocated, so the struct size is statically bounded.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct FormatRecord {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub boundary: Option<FormatBoundary>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub slots: Option<HashMap<String, FormatSlot>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub literals: Option<HashMap<String, FormatLiteral>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub trivia: Option<Vec<FormatTrivia>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub kinds: Option<HashMap<String, FormatRecord>>,
+}
+
+#[cfg(test)]
+mod format_tests {
+    use super::*;
+
+    #[test]
+    fn format_record_json_roundtrip() {
+        let record = FormatRecord {
+            boundary: Some(FormatBoundary {
+                leading: Some("    ".to_string()),
+                trailing: Some("\n".to_string()),
+            }),
+            slots: None,
+            literals: None,
+            trivia: None,
+            kinds: None,
+        };
+        let json = serde_json::to_string(&record).unwrap();
+        let back: FormatRecord = serde_json::from_str(&json).unwrap();
+        assert_eq!(record, back);
+    }
+
+    #[test]
+    fn format_record_skip_none_fields() {
+        let record = FormatRecord {
+            boundary: None,
+            slots: None,
+            literals: None,
+            trivia: None,
+            kinds: None,
+        };
+        let json = serde_json::to_string(&record).unwrap();
+        assert_eq!(json, "{}");
+    }
+}
