@@ -53,6 +53,14 @@ export interface TreeHandle {
 	 */
 	read?(nodeId?: NodeId): AnyNodeData;
 	/**
+	 * Per-handle render dispatch. When present, the wrap layer renders
+	 * through this method instead of calling a separate renderer. Engine
+	 * handles set this to a closure that calls `engine.render(node, options)`
+	 * so renders stay inside the engine that owns the tree (preserving
+	 * engine-level format config).
+	 */
+	render?(nodeId?: NodeId, options?: { ignoreFormat?: boolean }): string;
+	/**
 	 * Format record inferred from the source file by the native Rust reader.
 	 * Absent on trees produced by the JS reader (readNode never sets this).
 	 * Callers can also set this manually to apply a house-style config.

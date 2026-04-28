@@ -18,3 +18,12 @@ export {
 export type { MetricsFile, PerKindMetrics, FfiMetrics } from './metrics.ts';
 export { assertNativeNodeData, isNativeNodeData } from './native-boundary.ts';
 export { applyFormat, rebaseTrivia } from './format.ts';
+export {
+	createJsEngine,
+	resolveEngineFormat
+} from './engine.ts';
+export type {
+	SittirEngineLike,
+	ParseAndReadResult,
+	JsEngineOptions
+} from './engine.ts';
