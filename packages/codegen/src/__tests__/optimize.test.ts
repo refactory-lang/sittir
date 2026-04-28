@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
 	optimize,
-	fanOutChoices,
 	factorSeqChoice,
 	rulesEqual,
 	wrapVariants,
@@ -17,7 +16,6 @@ import {
 import type { Rule } from '../compiler/rule.ts';
 import type {
 	LinkedGrammar,
-	OptimizedGrammar,
 	ExternalRole
 } from '../compiler/types.ts';
 

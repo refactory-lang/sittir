@@ -33,7 +33,6 @@ import type { AnyNodeData, NodeId } from '@sittir/types';
 import { loadRawEntries } from './node-types-loader.ts';
 import {
 	loadLanguageForGrammar,
-	treeHandle,
 	buildReadHandle,
 	findFirst,
 	findNativeNodeId,

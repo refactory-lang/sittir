@@ -18,10 +18,8 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode } from '../compiler/node-map.ts';
 import {
-	AssembledBranch,
 	AssembledContainer,
-	AssembledPolymorph,
-	AssembledGroup
+	AssembledPolymorph
 } from '../compiler/node-map.ts';
 import type { TemplateFile } from './template-hash.ts';
 import { computeTemplateBundleHash } from './template-hash.ts';
@@ -365,7 +363,7 @@ function emitStruct(
 	return { name, kind, fields };
 }
 
-function rustFieldType(shape: IdentShape): string {
+function _rustFieldType(shape: IdentShape): string {
 	return shape === 'list' ? 'Vec<String>' : 'String';
 }
 
@@ -415,7 +413,7 @@ function renderDispatchFn(structs: EmittedStruct[]): string {
 		`/// Matches on the source kind name (\`_X\` for hidden user-facing aliases,`
 	);
 	lines.push(
-		`/// \`X\` for visible) — mirrors what NodeData.\$type carries at runtime.`
+		`/// \`X\` for visible) — mirrors what NodeData.$type carries at runtime.`
 	);
 	lines.push(`///`);
 	lines.push(

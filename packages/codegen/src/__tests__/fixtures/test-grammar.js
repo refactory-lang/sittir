@@ -24,8 +24,8 @@ module.exports = grammar({
 				)
 			),
 
-		identifier: ($) => /[a-z_]\w*/,
+		identifier: (_$) => /[a-z_]\w*/,
 
-		number: ($) => /\d+/
+		number: (_$) => /\d+/
 	}
 });

@@ -9,14 +9,11 @@
  * No tree-sitter re-parsing needed — pure structural comparison.
  */
 
-import { createRequire } from 'node:module';
-import { parse as parseYaml } from 'yaml';
 import { readNode } from '@sittir/core';
-import type { AnyNodeData, NodeId, RulesConfig } from '@sittir/types';
+import type { AnyNodeData, NodeId } from '@sittir/types';
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
-	treeHandle,
 	buildReadHandle,
 	findFirst,
 	findNativeNodeId,
@@ -24,8 +21,6 @@ import {
 	emitValidatorMetrics,
 	type TSTree
 } from './common.ts';
-
-const require = createRequire(import.meta.url);
 
 const FROM_MODULE_PATHS: Record<string, string> = {
 	rust: '../../../rust/src/from.ts',

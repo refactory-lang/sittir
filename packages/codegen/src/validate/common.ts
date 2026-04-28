@@ -14,7 +14,6 @@
  */
 
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import type { Mode } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
@@ -24,7 +23,7 @@ import {
 	metricsEnabled
 } from '@sittir/core';
 import type * as TS from 'web-tree-sitter';
-import type { SgNode, Pos, Range } from '@ast-grep/wasm';
+import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
 import type { AnyNodeData, AnyTreeNode, NodeId, NativeParseResult } from '@sittir/types';
 import type { TreeHandle } from '@sittir/core';

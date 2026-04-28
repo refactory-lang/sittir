@@ -2,7 +2,6 @@
 import type {
 	AnyNodeData,
 	Edit,
-	ByteRange,
 	ReplaceTarget,
 	AnyTreeNode,
 	Renderable,

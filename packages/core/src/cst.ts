@@ -1,5 +1,5 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
-import type { AnyNodeData, CSTNode, Position, RulesConfig } from './types.ts';
+import type { AnyNodeData, CSTNode, Position } from './types.ts';
 import type { BoundRenderer } from './render.ts';
 
 function offsetToPosition(

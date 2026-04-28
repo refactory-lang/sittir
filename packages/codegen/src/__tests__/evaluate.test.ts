@@ -18,7 +18,6 @@ import {
 } from '../compiler/evaluate.ts';
 import { transform, insert, replace } from '../dsl/transform/transform.ts';
 import type { SymbolRef } from '../compiler/rule.ts';
-import type { RawGrammar } from '../compiler/types.ts';
 
 // Install sittir's lowercase DSL primitives as globals so transform()'s
 // native-dsl delegation paths can reach them when this test imports
@@ -222,8 +221,8 @@ describe('Evaluate — DSL functions', () => {
 		it('records a SymbolRef for each property access', () => {
 			const refs: SymbolRef[] = [];
 			const $ = createProxy('function_item', refs);
-			$.block;
-			$.parameters;
+			void $.block;
+			void $.parameters;
 			expect(refs).toHaveLength(2);
 			expect(refs[0]).toEqual({
 				refType: 'symbol',

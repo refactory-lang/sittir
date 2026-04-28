@@ -372,7 +372,7 @@ interface BranchLikeNode {
 	readonly children?: readonly AssembledChild[];
 }
 
-function emitVariantFrom(
+function _emitVariantFrom(
 	node: AssembledNode,
 	polymorphVariants: PolymorphVariant[],
 	nodeMap: NodeMap,

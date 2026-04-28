@@ -26,7 +26,7 @@ import type {
 	SymbolRule,
 	StringRule
 } from './rule.ts';
-import { isField, isSeq, isChoice, isString, isVariant } from './rule.ts';
+import { isField, isSeq, isChoice, isString } from './rule.ts';
 import type {
 	RawGrammar,
 	LinkedGrammar,
@@ -34,7 +34,6 @@ import type {
 	IncludeFilter,
 	DerivationLog,
 	InferredFieldEntry,
-	PromotedRuleEntry,
 	RepeatedShapeEntry
 } from './types.ts';
 import { hasAnyField, hasAnyChild } from './node-map.ts';
@@ -55,7 +54,7 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
 	// Resolve include defaults: undefined means "include everything".
 	// Explicit empty arrays mean "include nothing of this category".
 	const includeRules = new Set(include?.rules ?? (['promoted'] as const));
-	const includeFields = new Set(
+	const _includeFields = new Set(
 		include?.fields ?? (['enriched', 'inferred', 'inlined'] as const)
 	);
 	const applyPromotedRules = includeRules.has('promoted');
@@ -363,8 +362,7 @@ function runFieldNameInferencePass(
 			name,
 			inferredFieldNames,
 			false,
-			derivations.inferredFields,
-			false
+			derivations.inferredFields
 		);
 	}
 }
@@ -515,7 +513,7 @@ function extractAliasedFromName(
  * reference at parse time and is opaque to the parent's structural
  * shape.
  */
-function wouldInlineAtAssemble(
+function _wouldInlineAtAssemble(
 	kindName: string,
 	rules: Record<string, Rule>
 ): boolean {
@@ -1895,7 +1893,7 @@ function classifyHiddenRule(
 	name: string,
 	rule: Rule,
 	supertypes: Set<string>,
-	references: SymbolRef[]
+	_references: SymbolRef[]
 ): Rule {
 	// Already classified (e.g., enum from Evaluate)
 	if (
@@ -2423,7 +2421,6 @@ function applyInferredFields(
 	inferred: Map<string, InferredName>,
 	apply: boolean,
 	log: InferredFieldEntry[],
-	_apply: boolean,
 	_insideField = false
 ): { rule: Rule; applied: boolean } {
 	switch (rule.type) {
@@ -2473,7 +2470,6 @@ function applyInferredFields(
 					inferred,
 					apply,
 					log,
-					_apply,
 					_insideField
 				);
 				members.push(r.rule);
@@ -2492,7 +2488,6 @@ function applyInferredFields(
 					inferred,
 					apply,
 					log,
-					_apply,
 					_insideField
 				);
 				members.push(r.rule);
@@ -2513,7 +2508,6 @@ function applyInferredFields(
 				inferred,
 				apply,
 				log,
-				_apply,
 				_insideField
 			);
 			return {
