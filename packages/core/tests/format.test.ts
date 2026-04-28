@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { FormatRecord } from '../src/types.ts';
-import { applyFormat } from '../src/format.ts';
+import { applyFormat, rebaseTrivia } from '../src/format.ts';
 
 describe('applyFormat', () => {
 	it('returns canonical unchanged when FormatRecord is empty', () => {
@@ -82,5 +82,82 @@ describe('FormatRecord JSON roundtrip', () => {
 		expect(deserialized).toEqual(record);
 		expect(deserialized.trivia).toBeUndefined();
 		expect(deserialized.slots).toBeUndefined();
+	});
+});
+
+describe('rebaseTrivia', () => {
+	it('returns a new object (shallow clone)', () => {
+		const format: FormatRecord = { trivia: [{ offset: 5, text: '// hi' }] };
+		const result = rebaseTrivia(format, 0, 3);
+		expect(result).not.toBe(format);
+	});
+
+	it('leaves offsets below editStart unchanged', () => {
+		const format: FormatRecord = {
+			trivia: [{ offset: 3, text: '/* a */' }, { offset: 7, text: '/* b */' }],
+		};
+		const result = rebaseTrivia(format, 10, 5);
+		expect(result.trivia).toEqual([
+			{ offset: 3, text: '/* a */' },
+			{ offset: 7, text: '/* b */' },
+		]);
+	});
+
+	it('shifts offsets at or above editStart by delta', () => {
+		const format: FormatRecord = {
+			trivia: [{ offset: 3, text: 'A' }, { offset: 10, text: 'B' }, { offset: 20, text: 'C' }],
+		};
+		const result = rebaseTrivia(format, 10, 4);
+		expect(result.trivia).toEqual([
+			{ offset: 3, text: 'A' },
+			{ offset: 14, text: 'B' },
+			{ offset: 24, text: 'C' },
+		]);
+	});
+
+	it('works with a negative delta (deletion)', () => {
+		const format: FormatRecord = {
+			trivia: [{ offset: 2, text: 'X' }, { offset: 15, text: 'Y' }],
+		};
+		const result = rebaseTrivia(format, 5, -3);
+		expect(result.trivia).toEqual([
+			{ offset: 2, text: 'X' },
+			{ offset: 12, text: 'Y' },
+		]);
+	});
+
+	it('rebases sub-records in kinds recursively', () => {
+		const format: FormatRecord = {
+			trivia: [{ offset: 1, text: 'root' }],
+			kinds: {
+				fn_item: {
+					trivia: [{ offset: 5, text: 'inner' }, { offset: 20, text: 'after' }],
+				},
+			},
+		};
+		const result = rebaseTrivia(format, 10, 2);
+		expect(result.trivia).toEqual([{ offset: 1, text: 'root' }]);
+		expect(result.kinds?.['fn_item']?.trivia).toEqual([
+			{ offset: 5, text: 'inner' },
+			{ offset: 22, text: 'after' },
+		]);
+	});
+
+	it('preserves other FormatRecord fields unchanged', () => {
+		const format: FormatRecord = {
+			boundary: { leading: '  ' },
+			slots: { name: { sep: ', ' } },
+			trivia: [{ offset: 5, text: '// x' }],
+		};
+		const result = rebaseTrivia(format, 3, 1);
+		expect(result.boundary).toEqual({ leading: '  ' });
+		expect(result.slots).toEqual({ name: { sep: ', ' } });
+	});
+
+	it('handles absent trivia gracefully (no trivia key)', () => {
+		const format: FormatRecord = { boundary: { leading: '\t' } };
+		const result = rebaseTrivia(format, 0, 10);
+		expect(result.trivia).toBeUndefined();
+		expect(result.boundary).toEqual({ leading: '\t' });
 	});
 });
