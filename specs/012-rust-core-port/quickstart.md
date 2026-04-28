@@ -189,7 +189,7 @@ New grammars inherit the Rust path automatically:
 | Task                                | Command                                                                                              |
 | ----------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | Full rebuild (Rust + TS)            | `pnpm -r run type-check && cd rust && cargo build --workspace`                                       |
-| Regenerate all grammars (TS + Rust) | `npx tsx packages/codegen/src/cli.ts --grammar $G --all --output packages/$G/src` (loop over G)       |
+| Regenerate all grammars (TS + Rust) | `npx tsx packages/codegen/src/cli.ts --grammar $G --all --output packages/$G/src` (loop over G)      |
 | Run all tests                       | `pnpm test && cd rust && cargo test --workspace`                                                     |
 | Run only parity tests               | `cd rust && cargo test -p sittir-parity-tests`                                                       |
 | Benchmark (micro)                   | `cd rust && cargo bench -p sittir-core`                                                              |

@@ -33,11 +33,11 @@ description: "Task list for feature 012 — Rust Port of @sittir/core"
 **Purpose**: Create the Rust workspace, wire it into CI, and confirm the round-trip-ceilings-at-zero prereq (FR-014) before any engine work begins.
 
 - [x] T001 Verify FR-014 prereq: confirm the corpus-validation pinning test (`pnpm -F @sittir/codegen test -- corpus-validation`) passes with FLOORS meeting the completion signal defined in [r1-ceilings-plan.md](./r1-ceilings-plan.md) §"Completion signal" — `factoryPass/fromPass ≥ legacy baseline` for each grammar, `factoryAstMatchPass ≥ factoryPass − 2`, `rtPass ≥ rtTotal − 10`, and no test-skip/expect-fail workarounds. If not met, execute the cluster-close loop in r1-ceilings-plan.md before proceeding to T002. Per FR-014, implementation MUST NOT begin until this gate passes.
-- [x] T002 Create Rust workspace root at `/rust/Cargo.toml` with `[workspace]` `members = ["crates/sittir-core", "crates/sittir-rust-napi", "crates/sittir-typescript-napi", "crates/sittir-python-napi", "../packages/rust/rust-render", "../packages/typescript/rust-render", "../packages/python/rust-render"]` and `resolver = "2"`.
+- [x] T002 Create Rust workspace root at `/rust/Cargo.toml` with `[workspace]` `members = ["crates/sittir-core", "crates/sittir-rust-napi", "crates/sittir-js-napi", "crates/sittir-python-napi", "../packages/rust/rust-render", "../packages/js/rust-render", "../packages/python/rust-render"]` and `resolver = "2"`.
 - [x] T003 Create hand-written `sittir-core` crate skeleton at `rust/crates/sittir-core/Cargo.toml` with deps `serde = { version = "1", features = ["derive"] }`, `serde_json = "1"`, `tree-sitter = "0.24"`, `ast-grep-core = "0.x"`, `sha2 = "0.10"`, `askama = "0.14"`. Include a `rust/crates/sittir-core/src/lib.rs` with empty module declarations (`types`, `read_node`, `prepare`, `splice`, `boundary`, `filters`).
-- [x] T004 [P] Create three napi-binding crate skeletons at `rust/crates/sittir-rust-napi/`, `rust/crates/sittir-typescript-napi/`, `rust/crates/sittir-python-napi/`. Each has a `Cargo.toml` depending on `sittir-core` + `napi` + `napi-derive` + the matching `tree-sitter-{lang}` crate, plus a `src/lib.rs` stub and a `build.rs` using `napi-build`.
-- [x] T005 [P] Create three generated render-crate stubs at `packages/rust/rust-render/Cargo.toml`, `packages/typescript/rust-render/Cargo.toml`, `packages/python/rust-render/Cargo.toml`. Each declares `[package]` metadata + `sittir-core` + `askama` deps + a `src/lib.rs` with placeholder `pub fn render_dispatch(_kind: &str, _ctx: &sittir_core::prepare::TemplateContext) -> Result<String, askama::Error> { unimplemented!() }` — codegen will overwrite `src/` later.
-- [x] T006 [P] Add `@napi-rs/cli` as a devDependency to the workspace root `package.json` and create `packages/rust/package.json` optional peer dep entry for `@sittir/rust-native`. Repeat skeleton for `packages/typescript/package.json` and `packages/python/package.json`.
+- [x] T004 [P] Create three napi-binding crate skeletons at `rust/crates/sittir-rust-napi/`, `rust/crates/sittir-js-napi/`, `rust/crates/sittir-python-napi/`. Each has a `Cargo.toml` depending on `sittir-core` + `napi` + `napi-derive` + the matching `tree-sitter-{lang}` crate, plus a `src/lib.rs` stub and a `build.rs` using `napi-build`.
+- [x] T005 [P] Create three generated render-crate stubs at `packages/rust/rust-render/Cargo.toml`, `packages/js/rust-render/Cargo.toml`, `packages/python/rust-render/Cargo.toml`. Each declares `[package]` metadata + `sittir-core` + `askama` deps + a `src/lib.rs` with placeholder `pub fn render_dispatch(_kind: &str, _ctx: &sittir_core::prepare::TemplateContext) -> Result<String, askama::Error> { unimplemented!() }` — codegen will overwrite `src/` later.
+- [x] T006 [P] Add `@napi-rs/cli` as a devDependency to the workspace root `package.json` and create `packages/rust/package.json` optional peer dep entry for `@sittir/rust-native`. Repeat skeleton for `packages/js/package.json` and `packages/python/package.json`.
 - [x] T007 [P] Add a Rust jobs stub to `.github/workflows/ci.yml`: a single `cargo check --workspace` job on `ubuntu-22.04` that runs after the existing TS jobs. Platform-matrix expansion comes in Phase 4.
 - [x] T008 Verify the skeleton compiles: `cd rust && cargo check --workspace` exits 0. Creates a baseline that subsequent phases diff against.
 
@@ -58,10 +58,10 @@ description: "Task list for feature 012 — Rust Port of @sittir/core"
 - [x] T015 [P] Unit-test the hash function in `packages/codegen/src/emitters/template-hash.test.ts` — asserts stability across file order perturbations, LF vs CRLF normalization, and that edits change the hash.
 - [x] T016 Emit `hash.rs` + `hash.ts` from the render-crate emitter in `packages/codegen/src/emitters/rust-render.ts` (scaffold the file; T022 fills in the rest). For now, implement just the hash emission: `pub const TEMPLATE_BUNDLE_HASH: &str = "..."` into `packages/{lang}/rust-render/src/hash.rs` and `export const TEMPLATE_BUNDLE_HASH = "..."` into `packages/{lang}/src/hash.ts`. Depends on T014.
 - [x] T017 [P] Add `--rust-render` CLI flag handling in `packages/codegen/src/cli.ts`. When set, invoke the rust-render emitter (T016 scaffold + subsequent Phase 3 fills) alongside the existing TS emitter.
-- [x] T018 [P] Create the JS-side backend-selection module skeleton at `packages/rust/src/backend.ts` — exports `BackendName`, `BackendStatus`, `getActiveBackend()` with a placeholder body returning `{ name: "typescript", reason: "not yet implemented" }`. Module-local cache pattern from contracts/backend-selection.md. Freeze the returned object.
-- [x] T019 [P] Propagate the backend-selection skeleton to `packages/typescript/src/backend.ts` and `packages/python/src/backend.ts` (exact copy-paste; differs only in package identity strings in log lines).
-- [x] T020 [P] Re-export `getActiveBackend` and types from `packages/rust/src/index.ts`, `packages/typescript/src/index.ts`, `packages/python/src/index.ts`. Additive — does not break existing exports.
-- [x] T021 Verify Phase 2 skeleton: `cd rust && cargo test -p sittir-core` passes all filter + boundary tests; `pnpm -r run type-check` passes with the new backend modules; `SITTIR_BACKEND_DEBUG=1 node -e "require('@sittir/rust').getActiveBackend()"` logs once to stderr with `backend = typescript, reason = not yet implemented`.
+- [x] T018 [P] Create the JS-side backend-selection module skeleton at `packages/rust/src/backend.ts` — exports `BackendName`, `BackendStatus`, `getActiveBackend()` with a placeholder body returning `{ name: "js", reason: "not yet implemented" }`. Module-local cache pattern from contracts/backend-selection.md. Freeze the returned object.
+- [x] T019 [P] Propagate the backend-selection skeleton to `packages/js/src/backend.ts` and `packages/python/src/backend.ts` (exact copy-paste; differs only in package identity strings in log lines).
+- [x] T020 [P] Re-export `getActiveBackend` and types from `packages/rust/src/index.ts`, `packages/js/src/index.ts`, `packages/python/src/index.ts`. Additive — does not break existing exports.
+- [x] T021 Verify Phase 2 skeleton: `cd rust && cargo test -p sittir-core` passes all filter + boundary tests; `pnpm -r run type-check` passes with the new backend modules; `SITTIR_BACKEND_DEBUG=1 node -e "require('@sittir/rust').getActiveBackend()"` logs once to stderr with `backend = js, reason = not yet implemented`.
 
 **Checkpoint**: Foundation ready. Rust core crate compiles standalone (FR-004 established); hash mechanism wired end-to-end; JS backend module plumbed though always falling through. Phase 3 can now begin.
 
@@ -71,7 +71,7 @@ description: "Task list for feature 012 — Rust Port of @sittir/core"
 
 **Goal**: a Node.js codemod script using the existing sittir TS API transparently uses the Rust engine when native is available, produces output byte-identical (render) or semantically equivalent (round-trip) to the TS baseline, and finishes in less wall-clock time.
 
-**Independent Test**: Run an existing sittir codemod suite against a fixed corpus twice — once with native enabled, once `SITTIR_BACKEND=typescript` forced — verify (a) parity bars per FR-002a/b and (b) strictly-lower wall-clock on the native run.
+**Independent Test**: Run an existing sittir codemod suite against a fixed corpus twice — once with native enabled, once `SITTIR_BACKEND=js` forced — verify (a) parity bars per FR-002a/b and (b) strictly-lower wall-clock on the native run.
 
 ### Rust core implementation (US1)
 
@@ -88,40 +88,40 @@ description: "Task list for feature 012 — Rust Port of @sittir/core"
 - [x] T029 [US1] Emit custom-filter references alongside the templates emission: generated templates.rs imports `sittir_core::filters::{upper, lower, joinby}` and annotates each per-kind struct with `#[template(…)]` attribute referencing the filter module per askama conventions.
 - [x] T030 [US1] Add `.jinja` file copying to the render-crate emitter: `packages/{lang}/templates/*.jinja` is copied into `packages/{lang}/rust-render/templates/` at each codegen run so askama's build-time `#[template(path = ...)]` can resolve them. Template authorship remains in `packages/{lang}/templates/` (single source of truth per FR-003).
 - [x] T031 [US1] Emit the render-crate `Cargo.toml` with full deps (askama, sittir-core, serde) from the emitter. Overwrite the T005 stub.
-- [x] T032 [US1] Regenerate all three grammars: `pnpm -r exec npx tsx packages/codegen/src/cli.ts --grammar $G --all --rust-render` for G ∈ {rust, typescript, python}. Run `cd rust && cargo build --workspace` and expect clean compile — any askama error here is a codegen bug (template references a variable not on the struct).
+- [x] T032 [US1] Regenerate all three grammars: `pnpm -r exec npx tsx packages/codegen/src/cli.ts --grammar $G --all --rust-render` for G ∈ {rust, js, python}. Run `cd rust && cargo build --workspace` and expect clean compile — any askama error here is a codegen bug (template references a variable not on the struct).
 
 ### napi binding per grammar (US1)
 
 - [x] T033 [P] [US1] Implement `SittirEngine` in `rust/crates/sittir-rust-napi/src/lib.rs` per data-model.md §4 and contracts/napi-api.md: `#[napi]` struct holding `tree_sitter::Parser`, `Option<String>` source, `Option<tree_sitter::Tree>`. Methods: `new()`, `template_bundle_hash` getter, `find_and_read(source, pattern)`, `read_node(node_id)`, `render(node_json)`, `apply_edits(source, edits)`. Delegates all heavy lifting to `sittir_core` + `sittir_rust_render`.
-- [x] T034 [P] [US1] Implement `SittirEngine` in `rust/crates/sittir-typescript-napi/src/lib.rs` (exact clone of T033, differs only in imports: `tree_sitter_typescript::LANGUAGE_TYPESCRIPT` + `sittir_typescript_render::render_dispatch`).
+- [x] T034 [P] [US1] Implement `SittirEngine` in `rust/crates/sittir-js-napi/src/lib.rs` (exact clone of T033, differs only in imports: `tree_sitter_js::LANGUAGE_TYPESCRIPT` + `sittir_js_render::render_dispatch`).
 - [x] T035 [P] [US1] Implement `SittirEngine` in `rust/crates/sittir-python-napi/src/lib.rs` (exact clone, Python grammar).
 - [x] T036 [P] [US1] Add napi `.node` build + package.json scaffolding for `@sittir/rust-native` at `rust/crates/sittir-rust-napi/package.json` + `build.rs` — `napi-build::setup()`. Creates the npm package shell.
-- [x] T037 [P] [US1] Repeat the `@sittir/typescript-native` package shell at `rust/crates/sittir-typescript-napi/package.json`.
+- [x] T037 [P] [US1] Repeat the `@sittir/js-native` package shell at `rust/crates/sittir-js-napi/package.json`.
 - [x] T038 [P] [US1] Repeat the `@sittir/python-native` package shell at `rust/crates/sittir-python-napi/package.json`.
 
 ### JS-side runtime selection wiring (US1)
 
 - [x] T039 [US1] Implement the real runtime-selection algorithm in `packages/rust/src/backend.ts` per contracts/backend-selection.md: try `require('@sittir/rust-native')`; on success, compare `engine.templateBundleHash` vs. imported `TEMPLATE_BUNDLE_HASH` from `./hash.ts`; set status; `SITTIR_BACKEND_DEBUG` env-var nudge emits one stderr line; cache the singleton. Overwrites T018 stub.
-- [x] T040 [US1] Propagate the real selection algorithm to `packages/typescript/src/backend.ts` and `packages/python/src/backend.ts` — same logic, different package IDs in log messages and require paths.
+- [x] T040 [US1] Propagate the real selection algorithm to `packages/js/src/backend.ts` and `packages/python/src/backend.ts` — same logic, different package IDs in log messages and require paths.
 - [x] T041 [US1] Route `findMatches`, `readNode`, `render`, and splice paths through the backend shim in `packages/rust/src/index.ts` — each export checks `getActiveBackend().name` and dispatches to the native engine (via the boundary shim) or the TS engine. Consumer-facing signatures unchanged (FR-006).
-- [x] T042 [US1] Propagate the index.ts routing changes to `packages/typescript/src/index.ts` and `packages/python/src/index.ts`.
-- [x] T043 [P] [US1] Add `SITTIR_BACKEND` forced-selection env-var handling (documented as non-normative in contracts/backend-selection.md) in `packages/rust/src/backend.ts`: `typescript` skips the native load, `native` disables the fallback and throws loudly. Useful for CI parity diffing in Phase 4.
+- [x] T042 [US1] Propagate the index.ts routing changes to `packages/js/src/index.ts` and `packages/python/src/index.ts`.
+- [x] T043 [P] [US1] Add `SITTIR_BACKEND` forced-selection env-var handling (documented as non-normative in contracts/backend-selection.md) in `packages/rust/src/backend.ts`: `js` skips the native load, `native` disables the fallback and throws loudly. Useful for CI parity diffing in Phase 4.
 - [x] T044 [US1] Propagate `SITTIR_BACKEND` override to the other two grammar packages.
 
 ### Parity fixture extraction + harness (US1, FR-012)
 
-- [x] T045 [US1] Implement the parity-fixture extractor in `packages/codegen/src/emitters/parity-fixtures.ts`. Hooks into the existing round-trip validator corpus — **first step is to inspect the current validator implementation** (`packages/codegen/src/` round-trip validator) to determine whether it persists an emittable corpus or runs entirely in-memory. If in-memory, instrument the validator to expose its input/output pairs as a stream or returned collection (see T045a). Once accessible: for each validator input/output pair, emit a `RenderFixture` record (NodeData + expected rendered string) and a `RoundTripFixture` record (source + pattern + edits + expected source + expected re-parse tree serialized as `Tree.rootNode.toString()` s-expression per data-model.md §6) to `packages/{lang}/rust-render/test-fixtures.json`. **Assert that the emitted corpus contains at least one fixture each for the three FR-011 exception kinds** per their matching grammar — `rust/visibility_modifier` in the rust corpus, `typescript/export_statement` and `typescript/call_expression` in the typescript corpus — and fail the build if absent.
+- [x] T045 [US1] Implement the parity-fixture extractor in `packages/codegen/src/emitters/parity-fixtures.ts`. Hooks into the existing round-trip validator corpus — **first step is to inspect the current validator implementation** (`packages/codegen/src/` round-trip validator) to determine whether it persists an emittable corpus or runs entirely in-memory. If in-memory, instrument the validator to expose its input/output pairs as a stream or returned collection (see T045a). Once accessible: for each validator input/output pair, emit a `RenderFixture` record (NodeData + expected rendered string) and a `RoundTripFixture` record (source + pattern + edits + expected source + expected re-parse tree serialized as `Tree.rootNode.toString()` s-expression per data-model.md §6) to `packages/{lang}/rust-render/test-fixtures.json`. **Assert that the emitted corpus contains at least one fixture each for the three FR-011 exception kinds** per their matching grammar — `rust/visibility_modifier` in the rust corpus, `js/export_statement` and `js/call_expression` in the js corpus — and fail the build if absent.
 - [x] T045a [US1] IF T045 inspection finds the round-trip validator is in-memory-only (likely), add a validator-instrumentation commit that exposes its input/output pairs via a public API in the validator module. This is the "validator promotion" sub-task flagged by analysis finding U4. Executed only if needed; skip otherwise.
 - [x] T046 [US1] Wire fixture extraction into the `--rust-render` codegen flow from T017. Each codegen run regenerates fixtures; fixture regen is NOT optional.
 - [x] T047 [P] [US1] Implement the Rust-side parity harness in `rust/tests/parity/main.rs`. Loads each grammar's `test-fixtures.json`, runs the Rust engine over `RenderFixture.input` (SC-001a byte-identical) and `RoundTripFixture` full pipeline (SC-001b semantic), diffs outputs, fails the test on any divergence with the fixture ID + expected/actual diff.
-- [x] T048 [P] [US1] Implement the TS-side parity sanity check at `packages/rust/tests/parity.test.ts`, `packages/typescript/tests/parity.test.ts`, `packages/python/tests/parity.test.ts`. Loads the same fixture JSON, runs the TS engine, confirms it reproduces the `expectedOutput` / `expectedSourceOut` — catches fixture-generator bugs without involving Rust.
+- [x] T048 [P] [US1] Implement the TS-side parity sanity check at `packages/rust/tests/parity.test.ts`, `packages/js/tests/parity.test.ts`, `packages/python/tests/parity.test.ts`. Loads the same fixture JSON, runs the TS engine, confirms it reproduces the `expectedOutput` / `expectedSourceOut` — catches fixture-generator bugs without involving Rust.
 - [x] T049 [US1] Add a CI job `cargo test -p sittir-parity-tests` that runs T047. Configured to fail the build on any fixture divergence. SC-001a and SC-001b are gated here.
 
 ### End-to-end acceptance (US1)
 
-- [x] T050 [US1] Write an acceptance integration test at `tests/acceptance/us1-codemod.test.ts` that models an existing sittir codemod: loads a 50-file sample corpus, pattern-matches, constructs edits via factories, writes modified files. Asserts `getActiveBackend().name === "native"` (assuming platform is in the matrix) and that output files match a baseline captured with `SITTIR_BACKEND=typescript`. Corresponds to US1 Acceptance Scenario 1.
-- [x] T051 [US1] Add a second acceptance test variant forcing `SITTIR_BACKEND=typescript` — asserts the codemod produces **identical** output files (byte-identical at the file level — stronger than the render-only parity bar because TS is the reference on both sides of this comparison). Corresponds to US1 Acceptance Scenario 2 (silent fallback path).
-- [x] T052 [US1] Verify the template-hash-mismatch fallback path: write a test that intentionally modifies the baked Rust hash (or the TS-side exported hash), reloads the module, asserts `getActiveBackend().name === "typescript"` with `reason` containing "hash mismatch" and `hashMatch === false`.
+- [x] T050 [US1] Write an acceptance integration test at `tests/acceptance/us1-codemod.test.ts` that models an existing sittir codemod: loads a 50-file sample corpus, pattern-matches, constructs edits via factories, writes modified files. Asserts `getActiveBackend().name === "native"` (assuming platform is in the matrix) and that output files match a baseline captured with `SITTIR_BACKEND=js`. Corresponds to US1 Acceptance Scenario 1.
+- [x] T051 [US1] Add a second acceptance test variant forcing `SITTIR_BACKEND=js` — asserts the codemod produces **identical** output files (byte-identical at the file level — stronger than the render-only parity bar because TS is the reference on both sides of this comparison). Corresponds to US1 Acceptance Scenario 2 (silent fallback path).
+- [x] T052 [US1] Verify the template-hash-mismatch fallback path: write a test that intentionally modifies the baked Rust hash (or the TS-side exported hash), reloads the module, asserts `getActiveBackend().name === "js"` with `reason` containing "hash mismatch" and `hashMatch === false`.
 
 **Checkpoint**: US1 is functional. Native backend loads on at least one platform (whichever the developer's machine is). Parity suite passes with zero divergence. An existing codemod runs end-to-end on native and produces byte-identical-at-the-file-level output to a TS-baseline run.
 
@@ -142,7 +142,7 @@ description: "Task list for feature 012 — Rust Port of @sittir/core"
 ### Benchmarks (per SC-003 + research R9)
 
 - [x] T058 [P] Micro-benchmark at `rust/crates/sittir-core/benches/render.rs` using `criterion` — measures per-kind render time on synthetic NodeData across the largest-surface-area kinds per grammar. Baseline for intra-Rust regression detection.
-- [x] T059 [P] Macro-benchmark script at `scripts/bench-codemod.sh` that runs a fixed codemod against a fixed corpus twice (once `SITTIR_BACKEND=native`, once `=typescript`) and reports wall-clock delta. Exit 0 only if native is strictly lower (SC-003 automation).
+- [x] T059 [P] Macro-benchmark script at `scripts/bench-codemod.sh` that runs a fixed codemod against a fixed corpus twice (once `SITTIR_BACKEND=native`, once `=js`) and reports wall-clock delta. Exit 0 only if native is strictly lower (SC-003 automation).
 
 ### Spec success-criteria verification gates
 
@@ -198,7 +198,7 @@ T013 [P]  Filter-parity tests
 T015 [P]  Hash function unit tests
 T017 [P]  --rust-render CLI flag
 T018 [P]  backend.ts skeleton (rust)
-T019 [P]  backend.ts skeleton (typescript, python)
+T019 [P]  backend.ts skeleton (js, python)
 T020 [P]  Re-export from index.ts
 ```
 
@@ -206,10 +206,10 @@ T020 [P]  Re-export from index.ts
 
 ```
 T033 [P] [US1]  sittir-rust-napi
-T034 [P] [US1]  sittir-typescript-napi
+T034 [P] [US1]  sittir-js-napi
 T035 [P] [US1]  sittir-python-napi
 T036 [P] [US1]  @sittir/rust-native package.json
-T037 [P] [US1]  @sittir/typescript-native package.json
+T037 [P] [US1]  @sittir/js-native package.json
 T038 [P] [US1]  @sittir/python-native package.json
 ```
 
@@ -235,8 +235,8 @@ T065–T067 [P]  Documentation
 **Test sequence**: T050 + T051 + T052 together cover the US1 acceptance scenarios from spec.md.
 
 - T050 proves the happy path: native backend, byte-identical file output vs. TS baseline, strictly-lower wall-clock.
-- T051 proves the silent-fallback path: forced `SITTIR_BACKEND=typescript`, consumer code unchanged, file output unchanged.
-- T052 proves the hash-mismatch-fallback path: tampered hash forces TS fallback with a visible `reason` field.
+- T051 proves the silent-fallback path: forced `SITTIR_BACKEND=js`, consumer code unchanged, file output unchanged.
+- T052 proves the hash-mismatch-fallback path: tampered hash forces JS fallback with a visible `reason` field.
 
 All three tests pass → US1 is delivered.
 

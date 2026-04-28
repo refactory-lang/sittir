@@ -17,7 +17,7 @@ import type { NodeId } from "@sittir/types";
 import { TEMPLATE_BUNDLE_HASH } from "./hash.js";
 
 /** Which backend is currently serving render/read/splice. */
-export type BackendName = "native" | "typescript";
+export type BackendName = "native" | "js";
 
 export type NativeBackendStatus = {
 	readonly name: "native";
@@ -25,14 +25,14 @@ export type NativeBackendStatus = {
 	readonly native: NativeModule;
 };
 
-export type TypeScriptBackendStatus = {
-	readonly name: "typescript";
+export type JsBackendStatus = {
+	readonly name: "js";
 	readonly reason: string;
 	readonly hashMatch?: false;
 };
 
 /** Result of a backend selection. Frozen — consumers cannot mutate. */
-export type BackendStatus = NativeBackendStatus | TypeScriptBackendStatus;
+export type BackendStatus = NativeBackendStatus | JsBackendStatus;
 
 /**
  * Structural shape of `@sittir/python-native`. Matches
@@ -71,11 +71,11 @@ const PACKAGE_ID = "sittir/python";
 /** npm package id of the paired native binary. */
 const NATIVE_PACKAGE = "@sittir/python-native";
 
-function createTypeScriptStatus(reason: string, hashMatch?: false): TypeScriptBackendStatus {
+function createJsStatus(reason: string, hashMatch?: false): JsBackendStatus {
 	if (hashMatch === false) {
-		return Object.freeze({ name: "typescript", reason, hashMatch: false });
+		return Object.freeze({ name: "js", reason, hashMatch: false });
 	}
-	return Object.freeze({ name: "typescript", reason });
+	return Object.freeze({ name: "js", reason });
 }
 
 function createNativeStatus(native: NativeModule): NativeBackendStatus {
@@ -92,7 +92,7 @@ function emitDebug(status: BackendStatus): void {
 	if (debugEmitted) return;
 	if (!process.env.SITTIR_BACKEND_DEBUG) return;
 	debugEmitted = true;
-	const suffix = status.name === "typescript" ? `, reason = ${status.reason}` : "";
+	const suffix = status.name === "js" ? `, reason = ${status.reason}` : "";
 	try {
 		process.stderr.write(`${PACKAGE_ID}: backend = ${status.name}${suffix}\n`);
 	} catch {
@@ -136,12 +136,12 @@ function tryLoadNative(): NativeModule | { reason: string } {
  *   - `native` — disable the silent fall-back; any native-load or
  *     hash-mismatch failure throws loudly so CI parity-diffing
  *     runs fail visibly instead of silently re-running on TS.
- *   - unset / any other value — default try-native-else-TS flow.
+ *   - unset / any other value — default try-native-else-JS flow.
  */
 function computeBackend(): BackendStatus {
 	const forced = process.env.SITTIR_BACKEND;
-	if (forced === "typescript") {
-		return createTypeScriptStatus("forced by SITTIR_BACKEND=typescript");
+	if (forced === "js") {
+		return createJsStatus("forced by SITTIR_BACKEND=js");
 	}
 
 	const loaded = tryLoadNative();
@@ -149,7 +149,7 @@ function computeBackend(): BackendStatus {
 		if (forced === "native") {
 			throw new Error(`SITTIR_BACKEND=native but native engine unavailable — ${loaded.reason}`);
 		}
-		return createTypeScriptStatus(loaded.reason);
+		return createJsStatus(loaded.reason);
 	}
 
 	let hashMatch: boolean;
@@ -163,7 +163,7 @@ function computeBackend(): BackendStatus {
 		if (forced === "native") {
 			throw new Error(`SITTIR_BACKEND=native but native-engine error at init: ${message}`);
 		}
-		return createTypeScriptStatus(`native-engine error at init: ${message}`);
+		return createJsStatus(`native-engine error at init: ${message}`);
 	}
 
 	if (!hashMatch) {
@@ -172,7 +172,7 @@ function computeBackend(): BackendStatus {
 				`SITTIR_BACKEND=native but template-bundle hash mismatch (native=${nativeHash}, ts=${TEMPLATE_BUNDLE_HASH})`,
 			);
 		}
-		return createTypeScriptStatus("template-bundle hash mismatch", false);
+		return createJsStatus("template-bundle hash mismatch", false);
 	}
 
 	return createNativeStatus(loaded);

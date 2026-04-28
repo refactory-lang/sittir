@@ -261,8 +261,7 @@ writeJinjaTemplates(result.jinjaTemplates, join(dirname(outDir), "templates"));
 // Rust-side derivations in lockstep.
 const RUST_RENDER_GRAMMARS = ["rust", "typescript", "python"] as const;
 const shouldEmitRustRender =
-	cliArgs.all &&
-	(RUST_RENDER_GRAMMARS as readonly string[]).includes(config.grammar);
+	cliArgs.all && (RUST_RENDER_GRAMMARS as readonly string[]).includes(config.grammar);
 
 if (shouldEmitRustRender) {
 	const grammar = config.grammar as (typeof RUST_RENDER_GRAMMARS)[number];

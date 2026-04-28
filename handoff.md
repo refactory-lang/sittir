@@ -290,18 +290,18 @@ npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages
 npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
 
 # Run tests per backend
-SITTIR_BACKEND=typescript pnpm test
+SITTIR_BACKEND=js pnpm test
 SITTIR_BACKEND=native pnpm test
 
 # Collect baselines
-SITTIR_BACKEND=typescript npx tsx packages/codegen/src/scripts/collect-baseline.ts
+SITTIR_BACKEND=js npx tsx packages/codegen/src/scripts/collect-baseline.ts
 SITTIR_BACKEND=native npx tsx packages/codegen/src/scripts/collect-baseline.ts
 
 # Probe a single kind
 npx tsx packages/codegen/src/scripts/probe-kind.ts <grammar> <kind>
 
 # Collect perf metrics
-SITTIR_METRICS=1 SITTIR_BACKEND=typescript pnpm test     # writes metrics-ts.json
+SITTIR_METRICS=1 SITTIR_BACKEND=js pnpm test     # writes metrics-ts.json
 SITTIR_METRICS=1 SITTIR_BACKEND=native pnpm test         # writes metrics-native.json
 
 # Check perf baseline

@@ -284,7 +284,10 @@ export async function validateReadNodeRoundTrip(grammar: string): Promise<ReadNo
 			// Skip alias-target kinds the native engine emits under a different
 			// rule name rather than falling back to a mismatched WASM ID.
 			const nativeId = findNativeNodeId(handle, kind);
-			if (nativeId === null && handle.read) { skip++; continue; }
+			if (nativeId === null && handle.read) {
+				skip++;
+				continue;
+			}
 			const nodeId = nativeId ?? (node.id as NodeId);
 			let data: AnyNodeData;
 			try {

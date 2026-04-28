@@ -243,7 +243,7 @@ console.log(getActiveBackend());
 | Variable                    | Effect                                                                                          |
 | --------------------------- | ----------------------------------------------------------------------------------------------- |
 | `SITTIR_BACKEND=native`     | Force the native backend; throw if it can't load. Useful for CI parity diffing.                 |
-| `SITTIR_BACKEND=typescript` | Skip the native load entirely; always use the TS engine. Useful for capturing reference output. |
+| `SITTIR_BACKEND=js`         | Skip the native load entirely; always use the JS engine. Useful for capturing reference output. |
 | `SITTIR_BACKEND_DEBUG=1`    | Emit a single `stderr` line per package indicating which backend resolved and why.              |
 
 ### Silent-fallback semantics

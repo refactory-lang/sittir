@@ -29,7 +29,7 @@ Port the hot-path read/render/splice engine of `@sittir/core` from TypeScript to
 
 **Target Platform**:
 
-- Per FR-017, the native addon ships prebuilts for: macOS arm64, macOS x64, Linux x64 (glibc), Linux x64 (musl), Linux arm64 (glibc), Linux arm64 (musl), Windows x64. All other platforms use the TS fallback transparently (FR-009).
+- Per FR-017, the native addon ships prebuilts for: macOS arm64, macOS x64, Linux x64 (glibc), Linux x64 (musl), Linux arm64 (glibc), Linux arm64 (musl), Windows x64. All other platforms use the JS fallback transparently (FR-009).
 - TypeScript fallback continues to run on any Node.js-capable platform.
 
 **Project Type**: Compiler-adjacent library (tree transformation engine). Multi-crate Rust workspace added alongside the existing pnpm TypeScript monorepo.
@@ -122,7 +122,7 @@ packages/
 │   ├── src/                 # generated TypeScript (existing)
 │   ├── templates/           # generated .jinja files (existing from branch 011)
 │   └── rust-render/         # NEW — generated Rust render crate (see below)
-├── typescript/              # @sittir/typescript — analogous
+├── js/              # @sittir/js — analogous
 │   └── rust-render/         # NEW
 ├── python/                  # @sittir/python — analogous
 │   └── rust-render/         # NEW
@@ -151,7 +151,7 @@ rust/
 │   │   │   ├── lib.rs
 │   │   │   └── templates.rs     # #[derive(Template)] per kind + render_dispatch()
 │   │   └── templates/           # symlink or copy of packages/rust/templates/
-│   ├── sittir-typescript-render/
+│   ├── sittir-js-render/
 │   │   └── [same structure]
 │   ├── sittir-python-render/
 │   │   └── [same structure]

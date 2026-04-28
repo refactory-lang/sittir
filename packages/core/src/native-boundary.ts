@@ -28,7 +28,10 @@ function assertFiniteNumber(value: unknown, path: string): asserts value is numb
 	}
 }
 
-function assertNativeSource(value: unknown, path: string): asserts value is NativeNodeData["$source"] {
+function assertNativeSource(
+	value: unknown,
+	path: string,
+): asserts value is NativeNodeData["$source"] {
 	if (value !== "ts" && value !== "sg" && value !== "factory") {
 		throw new TypeError(`${path} must be one of "ts", "sg", or "factory", got ${describe(value)}`);
 	}
@@ -74,7 +77,10 @@ function assertNativeChildren(value: unknown, path: string): void {
 	}
 }
 
-function assertNativeNodeDataInternal(value: unknown, path: string): asserts value is NativeNodeData {
+function assertNativeNodeDataInternal(
+	value: unknown,
+	path: string,
+): asserts value is NativeNodeData {
 	if (!isRecord(value)) {
 		throw new TypeError(`${path} must be an object, got ${describe(value)}`);
 	}

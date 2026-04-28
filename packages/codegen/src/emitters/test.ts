@@ -114,7 +114,9 @@ function emitBranchTest(
 		);
 		if (hasNonAutoStampRequired) {
 			const firstKind = slotKindNames(node.children[0]!)[0];
-			const dummy = firstKind ? `{ $type: '${firstKind}', $text: 'test', $source: 'factory', $named: true } as any` : `'test' as any`;
+			const dummy = firstKind
+				? `{ $type: '${firstKind}', $text: 'test', $source: 'factory', $named: true } as any`
+				: `'test' as any`;
 			typeConfigParts.push(`children: [${dummy}] as any`);
 		}
 	}
@@ -125,7 +127,9 @@ function emitBranchTest(
 		!renderConfigParts.some((p) => p.startsWith("children"))
 	) {
 		const firstKind = slotKindNames(node.children[0]!)[0];
-		const dummy = firstKind ? `{ $type: '${firstKind}', $text: 'test', $source: 'factory', $named: true } as any` : `'test' as any`;
+		const dummy = firstKind
+			? `{ $type: '${firstKind}', $text: 'test', $source: 'factory', $named: true } as any`
+			: `'test' as any`;
 		renderConfigParts.push(`children: [${dummy}] as any`);
 	}
 

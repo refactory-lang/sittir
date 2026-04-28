@@ -171,9 +171,7 @@ The catalog is the new architectural center. A representative contract:
 ```ts
 export type RuleId = string;
 
-export type RulePathSegment =
-	| { edge: "content" }
-	| { edge: "members"; index: number };
+export type RulePathSegment = { edge: "content" } | { edge: "members"; index: number };
 
 export interface RuleCatalogEntry {
 	readonly id: RuleId;

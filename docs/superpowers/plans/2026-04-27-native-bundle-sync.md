@@ -331,13 +331,15 @@ If `metrics-native.json` is emitted and the run is part of the fix verification,
 
 - [ ] **Step 3: Update contributor-facing regeneration commands**
 
-```md
+````md
 ```bash
 npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src
 npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
 npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
 ```
-```
+````
+
+````
 
 Apply that command set in both `README.md` and `CLAUDE.md`, removing any mention of a separate `--rust-render` flag.
 
@@ -349,7 +351,7 @@ Run:
 pnpm -r run type-check
 pnpm test
 pnpm format:check
-```
+````
 
 Expected: all commands pass. If `pnpm test` still shows native parity failures, they should now be real render mismatches rather than bundle-hash guard failures.
 

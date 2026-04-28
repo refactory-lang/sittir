@@ -4,7 +4,7 @@
  *
  * Asserts:
  *   - intentionally-modified hash causes `getActiveBackend()` to
- *     return `{ name: 'typescript', reason: ~/hash mismatch/i,
+ *     return `{ name: 'js', reason: ~/hash mismatch/i,
  *     hashMatch: false }`.
  *   - no exception propagates to the consumer; the fallback is
  *     silent by default (visible only via `getActiveBackend()` or
@@ -40,14 +40,14 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const HASH_MODULE = join(__dirname, "..", "..", "packages", "rust", "dist", "hash.js");
 
 describe("US1 acceptance — hash-mismatch silent fallback (T052)", () => {
-	it('falls through to typescript with reason containing "hash mismatch"', async () => {
+	it('falls through to js with reason containing "hash mismatch"', async () => {
 		vi.resetModules();
 		vi.doMock(HASH_MODULE, () => ({
 			TEMPLATE_BUNDLE_HASH: "deadbeef-tampered-hash-not-the-real-one",
 		}));
 		const { getActiveBackend } = await import("@sittir/rust");
 		const backend = getActiveBackend();
-		expect(backend.name).toBe("typescript");
+		expect(backend.name).toBe("js");
 		if (backend.hashMatch !== undefined) {
 			expect(backend.hashMatch).toBe(false);
 			expect(backend.reason ?? "").toMatch(/hash.mismatch/i);

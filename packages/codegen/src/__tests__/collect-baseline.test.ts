@@ -189,12 +189,10 @@ describe("collect-baseline", () => {
 	it("native baseline threads backend='native' through buildReadHandle", async () => {
 		const seen = new Set<string | undefined>();
 		const original = common.buildReadHandle;
-		const spy = vi
-			.spyOn(common, "buildReadHandle")
-			.mockImplementation((g, t, s, backend) => {
-				seen.add(backend);
-				return original(g, t, s, backend);
-			});
+		const spy = vi.spyOn(common, "buildReadHandle").mockImplementation((g, t, s, backend) => {
+			seen.add(backend);
+			return original(g, t, s, backend);
+		});
 		// Dispatch assertion only: whether collectBaseline("native") ultimately
 		// succeeds or fails (e.g. due to pre-existing Task 4 node-id issues),
 		// buildReadHandle must have been called with backend="native" as an
@@ -228,9 +226,7 @@ describe("collect-baseline", () => {
 		// After Task 3: buildReadHandle throws explicitly; that error must
 		// propagate rather than being rewritten into quiet parity numbers.
 		vi.spyOn(common, "buildReadHandle").mockImplementation((g) => {
-			throw new Error(
-				`SITTIR_BACKEND=native but no native engine is available for grammar '${g}'`,
-			);
+			throw new Error(`SITTIR_BACKEND=native but no native engine is available for grammar '${g}'`);
 		});
 		await expect(baseline.collectBaseline("native")).rejects.toThrow(
 			/no native engine is available for grammar/,

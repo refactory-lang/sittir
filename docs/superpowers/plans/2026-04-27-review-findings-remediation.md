@@ -137,7 +137,9 @@ it("parity render exceptions surface with fixture context", async () => {
 	vi.spyOn(baseline, "loadBoundaryRender").mockResolvedValue(() => {
 		throw new Error("boom");
 	});
-	await expect(baseline.collectBaseline("native")).rejects.toThrow(/\[python\]\[native\]\[render #0\].*boom/);
+	await expect(baseline.collectBaseline("native")).rejects.toThrow(
+		/\[python\]\[native\]\[render #0\].*boom/,
+	);
 });
 ```
 
@@ -229,9 +231,14 @@ Export these from `packages/types/src/index.ts` beside `AnyNodeData`.
 ```ts
 import type { AnyNodeData, NativeNodeData, NodeFieldValue } from "@sittir/types";
 
-export function assertNativeNodeData(node: AnyNodeData, path = "$"): asserts node is NativeNodeData {
-	if (typeof node.$source !== "string") throw new Error(`${path}.$source is required for native render`);
-	if (typeof node.$named !== "boolean") throw new Error(`${path}.$named is required for native render`);
+export function assertNativeNodeData(
+	node: AnyNodeData,
+	path = "$",
+): asserts node is NativeNodeData {
+	if (typeof node.$source !== "string")
+		throw new Error(`${path}.$source is required for native render`);
+	if (typeof node.$named !== "boolean")
+		throw new Error(`${path}.$named is required for native render`);
 	for (const [field, value] of Object.entries(node.$fields ?? {})) {
 		assertNativeFieldValue(value as NodeFieldValue, `${path}.$fields.${field}`);
 	}
@@ -256,7 +263,13 @@ Keep the existing selection behavior, but make each return site build one of the
 - [ ] **Step 4: Make the three boundary shims validate payloads and throw on native runtime failures**
 
 ```ts
-import { assertNativeNodeData, createRenderer, recordFfi, metricsEnabled, readNode as coreReadNode } from "@sittir/core";
+import {
+	assertNativeNodeData,
+	createRenderer,
+	recordFfi,
+	metricsEnabled,
+	readNode as coreReadNode,
+} from "@sittir/core";
 
 export function render(node: AnyNodeData): string {
 	const engine = getNativeEngine();
@@ -342,7 +355,9 @@ export function buildReadHandle(grammar: string, tree: TS.Tree, source: string):
 	if (process.env.SITTIR_BACKEND === "native") {
 		const engine = loadNativeEngineForGrammar(grammar);
 		if (!engine) {
-			throw new Error(`SITTIR_BACKEND=native but no native engine is available for grammar '${grammar}'`);
+			throw new Error(
+				`SITTIR_BACKEND=native but no native engine is available for grammar '${grammar}'`,
+			);
 		}
 		return nativeTreeHandle(engine, source);
 	}
@@ -546,7 +561,8 @@ export type Verdict =
 Then gate native-only checks explicitly:
 
 ```ts
-if (fresh.backend !== "native") return { kind: "backend-mismatch", expected: "native", fresh: fresh.backend };
+if (fresh.backend !== "native")
+	return { kind: "backend-mismatch", expected: "native", fresh: fresh.backend };
 if (!fresh.ffi) return { kind: "missing-ffi" };
 ```
 
