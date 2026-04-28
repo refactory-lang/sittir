@@ -56,9 +56,9 @@ fn detect_indent(source: &str) -> Option<String> {
         }
     }
 
-    if tab_count > 0 && tab_count >= four_space_count {
+    if tab_count > four_space_count && tab_count > two_space_count {
         Some("\t".to_string())
-    } else if four_space_count > two_space_count && four_space_count > 0 {
+    } else if four_space_count > two_space_count && four_space_count > tab_count {
         Some("    ".to_string())
     } else {
         // 2-space or no indentation — already canonical.
@@ -69,9 +69,10 @@ fn detect_indent(source: &str) -> Option<String> {
 /// Apply a [`FormatRecord`] to a canonical render string.
 ///
 /// Mirrors `applyFormat` in `packages/core/src/format.ts` (Phase 1):
-/// 1. Prepend `boundary.leading` and append `boundary.trailing`.
-/// 2. Insert `trivia` items at their byte offsets (right-to-left so
-///    earlier offsets are not invalidated by later insertions).
+/// 1. Insert `trivia` items at their byte offsets (right-to-left so
+///    earlier offsets are not invalidated). Offsets are canonical-relative,
+///    so trivia must be applied before boundary.
+/// 2. Prepend `boundary.leading` and append `boundary.trailing`.
 /// 3. `slots` and `literals` are reserved for future phases; ignored here.
 ///
 /// # Arguments
@@ -198,13 +199,8 @@ mod tests {
 
     #[test]
     fn apply_format_trivia_inserted_at_offsets() {
-        // Insert " world" at offset 5 and "!" at offset 5 → both at 5.
-        // Descending sort: offset 5 first (same), so "!" inserted at 5 then
-        // " world" also at 5 → " world!hello" — no, let's use distinct offsets.
-        // "hello" len=5. Insert " X" at offset 2, "Y" at offset 4.
-        // Right-to-left: offset 4 first → "hellYo", then offset 2 → "heY Xllo"?
-        // Use clean example: canonical = "ab", insert "1" at 1, "2" at 2.
-        // Descending: insert "2" at 2 → "ab2", then "1" at 1 → "a1b2".
+        // canonical = "ab"; trivia: insert "1" at offset 1, "2" at offset 2.
+        // Applied right-to-left: "2" at offset 2 → "ab2", then "1" at offset 1 → "a1b2".
         let fmt = make_record(
             None,
             None,

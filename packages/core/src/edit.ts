@@ -129,6 +129,10 @@ export function applyEdits(
 
 /** Splice a single edit into the source string. */
 function applyOneEdit(source: string, edit: Edit): string {
+	if (edit.startPos < 0 || edit.startPos > source.length)
+		throw new Error(`applyEdits: startPos ${edit.startPos} out of bounds (source length ${source.length})`);
+	if (edit.endPos < edit.startPos || edit.endPos > source.length)
+		throw new Error(`applyEdits: endPos ${edit.endPos} out of bounds (startPos ${edit.startPos}, source length ${source.length})`);
 	return source.slice(0, edit.startPos) + edit.insertedText + source.slice(edit.endPos);
 }
 

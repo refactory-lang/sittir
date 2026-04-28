@@ -10,9 +10,10 @@ import type { FormatRecord, FormatTrivia } from './types.ts';
  *
  * @remarks
  * Steps:
- * 1. Apply `boundary.leading` (prepend) and `boundary.trailing` (append).
- * 2. Insert `trivia` items at their recorded byte offsets (applied
- *    right-to-left to preserve earlier offsets).
+ * 1. Insert `trivia` items at their recorded byte offsets (applied
+ *    right-to-left to preserve earlier offsets). Offsets are
+ *    canonical-relative, so trivia must be applied before boundary.
+ * 2. Prepend `boundary.leading` and append `boundary.trailing`.
  * 3. `slots` and `literals` adjustments are reserved for future phases;
  *    if present they are noted but do not alter the output in Phase 1.
  */
@@ -22,8 +23,8 @@ export function applyFormat(
 ): string {
 	let result = canonicalRender;
 
-	result = applyBoundary(result, format);
 	result = applyTrivia(result, format);
+	result = applyBoundary(result, format);
 
 	return result;
 }
@@ -49,7 +50,7 @@ function applyTrivia(s: string, format: FormatRecord): string {
 	const sorted = [...trivia].sort((a, b) => b.offset - a.offset);
 	let result = s;
 	for (const item of sorted) {
-		const offset = Math.min(item.offset, result.length);
+		const offset = Math.max(0, Math.min(item.offset, result.length));
 		result = result.slice(0, offset) + item.text + result.slice(offset);
 	}
 	return result;
@@ -88,9 +89,13 @@ function rebaseTriviaItems(
 	delta: number,
 ): FormatTrivia[] | undefined {
 	if (!trivia) return undefined;
-	return trivia.map((item) =>
-		item.offset >= editStart ? { ...item, offset: item.offset + delta } : item,
-	);
+	return trivia.map((item) => {
+		if (item.offset < editStart) return item;
+		const newOffset = item.offset + delta;
+		// Clamp to zero: a large negative delta must not produce a negative
+		// offset (negative indices into slice() silently corrupt output).
+		return { ...item, offset: Math.max(0, newOffset) };
+	});
 }
 
 /** Recursively rebase all sub-records in `kinds`. */

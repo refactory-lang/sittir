@@ -628,9 +628,7 @@ function applyTemplate(prepared: PreparedRender): string {
 
 function render(node: AnyNodeData, ctx: InternalRenderContext): string {
 	const canonical = applyTemplate(prepare(node, ctx));
-	const formatRecord = resolveFormat(node, ctx);
-	if (formatRecord !== undefined) return applyFormat(canonical, formatRecord);
-	return canonical;
+	return withFormat(canonical, node, ctx);
 }
 
 /**
@@ -644,6 +642,12 @@ function resolveFormat(
 ): FormatRecord | undefined {
 	if (ctx.ignoreFormat) return undefined;
 	return node.$format ?? ctx.format?.kinds?.[node.$type] ?? ctx.format;
+}
+
+/** Apply the resolved FormatRecord for this node to `canonical`, or return `canonical` unchanged. */
+function withFormat(canonical: string, node: AnyNodeData, ctx: InternalRenderContext): string {
+	const fmt = resolveFormat(node, ctx);
+	return fmt !== undefined ? applyFormat(canonical, fmt) : canonical;
 }
 
 /**
@@ -1089,10 +1093,7 @@ function renderNunjucks(
 ): string {
 	// Text-only leaves: short-circuit to $text.
 	if (node.$text !== undefined && !node.$fields && !node.$children) {
-		const canonical = node.$text;
-		const formatRecord = resolveFormat(node, ctx);
-		if (formatRecord !== undefined) return applyFormat(canonical, formatRecord);
-		return canonical;
+		return withFormat(node.$text, node, ctx);
 	}
 
 	const env =
@@ -1125,9 +1126,7 @@ function renderNunjucks(
 			// distinguishes "file absent" (→ fallback) from "file present but
 			// malformed" (→ propagate Nunjucks's compile error).
 			const fallback = tokenShapedFallback(node);
-			const formatRecord = resolveFormat(node, ctx);
-			if (formatRecord !== undefined) return applyFormat(fallback, formatRecord);
-			return fallback;
+			return withFormat(fallback, node, ctx);
 		}
 	}
 
@@ -1148,9 +1147,7 @@ function renderNunjucks(
 	}
 	// Honest raw output — see `applyTemplate` for the rationale. Symmetric
 	// with the native engine and with the legacy substitutor path.
-	const formatRecord = resolveFormat(node, ctx);
-	if (formatRecord !== undefined) return applyFormat(rendered, formatRecord);
-	return rendered;
+	return withFormat(rendered, node, ctx);
 }
 
 /**

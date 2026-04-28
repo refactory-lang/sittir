@@ -212,16 +212,20 @@ export function nativeTreeHandle(
 	engine: NativeEngineLike,
 	source: string
 ): TreeHandle {
-	let rootData: AnyNodeDataLike | null = null;
-	let capturedFormat: FormatRecord | undefined;
-	function ensureRoot(): AnyNodeDataLike {
-		if (rootData === null) {
-			const result = JSON.parse(engine.parseAndRead(source)) as ParseResult;
-			rootData = result.nodeData;
-			capturedFormat = result.format;
-		}
-		return rootData;
+	// Parse eagerly: populates engine tree cache and captures format in one call.
+	// Behavioral note: prior to 017, nativeTreeHandle parsed lazily on first
+	// readNode() call. Parsing is now unconditional at construction time so
+	// the format record is always available before callers access tree.format.
+	const parseResult = JSON.parse(engine.parseAndRead(source)) as ParseResult;
+	if (parseResult.nodeData === undefined) {
+		const keys = Object.keys(parseResult as object).join(', ');
+		throw new Error(
+			'nativeTreeHandle: engine.parseAndRead() returned JSON without a "nodeData" key. ' +
+			'The engine binary is out of date — rebuild sittir-{lang}-napi against this version. ' +
+			`Received keys: ${keys}`
+		);
 	}
+	const rootData: AnyNodeDataLike = parseResult.nodeData;
 	const handle: TreeHandle = {
 		// The native engine doesn't expose JS-side raw tree-sitter Node
 		// wrappers; reads always go through `read` below. The required
@@ -239,23 +243,14 @@ export function nativeTreeHandle(
 		source,
 		read(nodeId?: NodeId) {
 			if (nodeId === undefined) {
-				return ensureRoot() as unknown as ReturnType<
-					NonNullable<TreeHandle['read']>
-				>;
+				return rootData as unknown as ReturnType<NonNullable<TreeHandle['read']>>;
 			}
-			// Ensure the engine has parsed (populates its tree cache);
-			// readNode(id) returns "no tree cached" otherwise.
-			ensureRoot();
 			return JSON.parse(engine.readNode(nodeId)) as ReturnType<
 				NonNullable<TreeHandle['read']>
 			>;
-		}
+		},
+		...(parseResult.format !== undefined && { format: parseResult.format }),
 	};
-	// Eagerly parse to populate format for callers
-	ensureRoot();
-	if (capturedFormat !== undefined) {
-		handle.format = capturedFormat;
-	}
 	return handle;
 }
 

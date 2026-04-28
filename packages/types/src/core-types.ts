@@ -280,8 +280,6 @@ export interface RenderContext {
 	parser?: unknown;
 	/** Indentation unit. Default: two spaces. */
 	indent?: string;
-	/** External post-formatting hook — called after render if present. */
-	postFormatter?: (source: string) => string | Promise<string>;
 	/** Tree-level format record. The render path resolves format for each node as:
 	 *    node.$format                      // per-node inline override (highest priority)
 	 *    ?? ctx.format?.kinds?.[node.$type] // per-kind entry on the tree-level record

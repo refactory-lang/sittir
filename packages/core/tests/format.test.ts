@@ -51,15 +51,15 @@ describe('applyFormat', () => {
 		).toBe('ab!');
 	});
 
-	it('applies boundary before trivia (trivia offsets are into boundary-adjusted string)', () => {
-		// boundary adds "  " prefix → "  fn foo()" (10 chars)
-		// trivia offset 2 (after leading spaces) inserts "/**/": "  /**/fn foo()"
+	it('applies trivia before boundary (trivia offsets are into canonical string)', () => {
+		// trivia offset 2 inserts "/**/" into canonical "fn foo()": "fn/**/ foo()"
+		// boundary then adds "  " prefix: "  fn/**/ foo()"
 		expect(
 			applyFormat('fn foo()', {
 				boundary: { leading: '  ' },
 				trivia: [{ offset: 2, text: '/**/' }],
 			}),
-		).toBe('  /**/fn foo()');
+		).toBe('  fn/**/ foo()');
 	});
 });
 

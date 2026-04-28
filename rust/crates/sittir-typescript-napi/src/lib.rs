@@ -110,6 +110,12 @@ impl SittirEngine {
         }
     }
 
+    /// Render a NodeData (passed as JSON string) to source. Stateless.
+    ///
+    /// Format asymmetry (Phase 1): if the node carries `$format` it is applied
+    /// post-canonicalization. Factory-constructed nodes without `$format` render
+    /// canonically. JS fills the gap via renderer-option `ctx.format`; aligning
+    /// Rust with a `format_json` param is Phase 2 work (FR-023).
     #[napi]
     pub fn render(&self, node_json: String) -> Result<String> {
         let node: NodeData = serde_json::from_str(&node_json)
