@@ -107,6 +107,11 @@ export function replaceField<
  * `editStart = edit.startPos` and
  * `delta = edit.insertedText.length - (edit.endPos - edit.startPos)`.
  * FR-004: this is the single call-site for format rebasing after batched edits.
+ *
+ * **Overlapping edits produce undefined behavior.** Callers must ensure edits
+ * are non-overlapping. No validation is performed at runtime; passing edits
+ * whose ranges intersect may produce incorrect output or throw from the bounds
+ * check in `applyOneEdit`.
  */
 export function applyEdits(
 	source: string,

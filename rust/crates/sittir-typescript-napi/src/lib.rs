@@ -66,7 +66,10 @@ impl SittirEngine {
         let tree = self
             .parser
             .parse(&source, None)
-            .ok_or_else(|| Error::from_reason("parse failed"))?;
+            .ok_or_else(|| {
+                let snippet: String = source.chars().take(80).collect();
+                Error::from_reason(format!("parse failed (source: {snippet:?})"))
+            })?;
         self.source = Some(source.clone());
         self.tree = Some(tree.clone());
         let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
@@ -119,7 +122,10 @@ impl SittirEngine {
     #[napi]
     pub fn render(&self, node_json: String) -> Result<String> {
         let node: NodeData = serde_json::from_str(&node_json)
-            .map_err(|e| Error::from_reason(format!("parse NodeData JSON failed: {e}")))?;
+            .map_err(|e| {
+                let snippet: String = node_json.chars().take(80).collect();
+                Error::from_reason(format!("parse NodeData JSON failed: {e} (json: {snippet:?})"))
+            })?;
         let format = node.format.clone();
         let meta = TypescriptGrammarMeta;
         let dispatch: RenderDispatch = render_dispatch;

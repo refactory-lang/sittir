@@ -228,15 +228,15 @@ export interface FormatBoundary {
 /**
  * Per-position separator/optional-token override.
  * Key: field name (raw snake_case) or child-array index as string.
+ *
+ * Discriminated union: `absent: true` marks the slot as omitted in source
+ * (e.g. a trailing semicolon that was absent). When absent, `sep` and
+ * `trailingPresent` are meaningless and excluded by the type. JSON-wire
+ * compatible with the Rust `FormatSlot` struct (all fields skip-serialize-if-none).
  */
-export interface FormatSlot {
-	/** Separator override (e.g. ",\n  " vs ", "). */
-	sep?: string;
-	/** Trailing comma/separator present (true) or absent (false/undefined). */
-	trailingPresent?: boolean;
-	/** Optional token omitted in source (e.g. semicolon absent). */
-	absent?: boolean;
-}
+export type FormatSlot =
+	| { readonly absent: true }
+	| { readonly absent?: false; sep?: string; trailingPresent?: boolean };
 
 /**
  * Literal-spelling override for a leaf node.
@@ -249,11 +249,26 @@ export interface FormatLiteral {
 
 /** A single trivia item (comment or blank line) with position in the span. */
 export interface FormatTrivia {
-	/** Byte offset within the enclosing node's span (relative to span start). */
+	/**
+	 * Byte offset within the enclosing node's span (relative to span start).
+	 *
+	 * @remarks
+	 * Must be non-negative. Mirrors Rust's `u32` offset field — the TS
+	 * `number` type does not enforce this at the type level. `rebaseTrivia`
+	 * clamps shifted offsets to `Math.max(0, n)` to guard against negative
+	 * values produced by large deletions.
+	 */
 	offset: number;
 	/** Verbatim text of the comment or blank-line sequence. */
 	text: string;
 }
+
+/**
+ * Per-kind format record: a {@link FormatRecord} without recursive `kinds`.
+ * Used for entries inside `FormatRecord.kinds` — nesting `kinds` inside
+ * `kinds` is not supported by the render path (resolves only one level deep).
+ */
+export type KindFormatRecord = Omit<FormatRecord, 'kinds'>;
 
 /** Residual format metadata for a tree or a specific node kind. */
 export interface FormatRecord {
@@ -264,10 +279,10 @@ export interface FormatRecord {
 	/**
 	 * Per-kind format overrides. Key is the raw node kind (e.g. "function_item").
 	 * Render lookup: node.$format ?? kinds[node.$type] ?? parent FormatRecord.
-	 * Entries here share the same FormatRecord shape; nesting beyond one level
-	 * is valid but the render path resolves only one level deep.
+	 * Entries here use {@link KindFormatRecord} — nesting is not supported
+	 * and the render path resolves only one level deep.
 	 */
-	kinds?: Record<string, FormatRecord>;
+	kinds?: Record<string, KindFormatRecord>;
 }
 
 // ---------------------------------------------------------------------------
@@ -328,3 +343,20 @@ export interface Renderable {
 export type KindOf<T> = T extends { readonly type: infer K extends string }
 	? K
 	: never;
+
+// ---------------------------------------------------------------------------
+// Native (NAPI) parse result
+// ---------------------------------------------------------------------------
+
+/**
+ * Return value of the native (NAPI) `parseAndRead` call.
+ * Carries both the hydrated node data and the inferred format (if any)
+ * so callers can attach format to the {@link TreeHandle} without a
+ * second round-trip.
+ */
+export interface NativeParseResult {
+	/** Hydrated root node data produced by the native parser. */
+	nodeData: AnyNodeData;
+	/** Format inferred from source layout, if inference succeeded. */
+	format?: FormatRecord;
+}

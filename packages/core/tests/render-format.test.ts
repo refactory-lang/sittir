@@ -24,6 +24,14 @@ describe('render format resolution', () => {
 		expect(render(leaf)).toBe('hello');
 	});
 
+	it('ignoreFormat suppresses node.$format (not just ctx.format)', () => {
+		const nodeFormat: FormatRecord = { boundary: { leading: '\t' } };
+		const nodeWithFormat: AnyNodeData = { ...leaf, $format: nodeFormat };
+		const { render } = createRendererFromConfig(config, { ignoreFormat: true });
+		// Even though the node carries $format, ignoreFormat: true wins.
+		expect(render(nodeWithFormat)).toBe('hello');
+	});
+
 	it('node.$format takes priority over ctx.format', () => {
 		const ctxFormat: FormatRecord = { boundary: { leading: '  ' } };
 		const nodeFormat: FormatRecord = { boundary: { leading: '\t' } };

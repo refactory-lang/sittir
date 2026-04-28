@@ -18,6 +18,8 @@ export type {
 	FormatLiteral,
 	FormatTrivia,
 	FormatRecord,
+	KindFormatRecord,
+	NativeParseResult,
 	RenderContext,
 	ReplaceTarget,
 	Renderable,

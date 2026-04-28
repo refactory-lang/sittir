@@ -160,4 +160,22 @@ describe('rebaseTrivia', () => {
 		expect(result.trivia).toBeUndefined();
 		expect(result.boundary).toEqual({ leading: '\t' });
 	});
+
+	it('clamps trivia offset to 0 when large negative delta would produce negative offset', () => {
+		// offset 3, delta -10 → 3 + (-10) = -7. Must clamp to 0, not -7.
+		const format: FormatRecord = {
+			trivia: [{ offset: 3, text: '// clamped' }],
+		};
+		const result = rebaseTrivia(format, 0, -10);
+		expect(result.trivia?.[0]?.offset).toBe(0);
+	});
+
+	it('does not clamp when offset stays non-negative', () => {
+		// offset 10, delta -3 → 7. No clamping needed.
+		const format: FormatRecord = {
+			trivia: [{ offset: 10, text: '// ok' }],
+		};
+		const result = rebaseTrivia(format, 0, -3);
+		expect(result.trivia?.[0]?.offset).toBe(7);
+	});
 });

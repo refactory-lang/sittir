@@ -26,7 +26,7 @@ import {
 import type * as TS from 'web-tree-sitter';
 import type { SgNode, Pos, Range } from '@ast-grep/wasm';
 
-import type { AnyNodeData, AnyTreeNode, NodeId, FormatRecord } from '@sittir/types';
+import type { AnyNodeData, AnyTreeNode, NodeId, NativeParseResult } from '@sittir/types';
 import type { TreeHandle } from '@sittir/core';
 import {
 	assertNever,
@@ -199,11 +199,6 @@ export function treeHandle(tree: TS.Tree, source?: string): TreeHandle {
  * the tree-sitter `Node::id()` returned in `$nodeId` is dereferenced
  * by the same engine that produced it — no cross-engine id leakage.
  */
-interface ParseResult {
-	nodeData: AnyNodeDataLike;
-	format?: FormatRecord;
-}
-
 export interface NativeEngineLike {
 	parseAndRead(source: string): string;
 	readNode(nodeId: NodeId): string;
@@ -216,7 +211,7 @@ export function nativeTreeHandle(
 	// Behavioral note: prior to 017, nativeTreeHandle parsed lazily on first
 	// readNode() call. Parsing is now unconditional at construction time so
 	// the format record is always available before callers access tree.format.
-	const parseResult = JSON.parse(engine.parseAndRead(source)) as ParseResult;
+	const parseResult = JSON.parse(engine.parseAndRead(source)) as NativeParseResult;
 	if (parseResult.nodeData === undefined) {
 		const keys = Object.keys(parseResult as object).join(', ');
 		throw new Error(
@@ -225,7 +220,7 @@ export function nativeTreeHandle(
 			`Received keys: ${keys}`
 		);
 	}
-	const rootData: AnyNodeDataLike = parseResult.nodeData;
+	const rootData: AnyNodeData = parseResult.nodeData;
 	const handle: TreeHandle = {
 		// The native engine doesn't expose JS-side raw tree-sitter Node
 		// wrappers; reads always go through `read` below. The required
@@ -252,10 +247,6 @@ export function nativeTreeHandle(
 		...(parseResult.format !== undefined && { format: parseResult.format }),
 	};
 	return handle;
-}
-
-interface AnyNodeDataLike {
-	readonly $type: string;
 }
 
 /**
