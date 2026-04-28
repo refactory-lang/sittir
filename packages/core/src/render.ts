@@ -17,10 +17,12 @@ import type {
 	ByteRange,
 	RulesConfig,
 	TemplateRule,
-	TemplateRuleObject
+	TemplateRuleObject,
+	FormatRecord
 } from './types.ts';
 import { createNunjucksEnvironment } from './templates/nunjucks-env.ts';
 import { withMetrics } from './metrics.ts';
+import { applyFormat } from './format.ts';
 
 export type { RulesConfig };
 
@@ -40,9 +42,11 @@ interface InternalRenderContext {
 	config: RulesConfig;
 	varPattern: RegExp;
 	prefix: string;
+	format?: FormatRecord;
+	ignoreFormat?: boolean;
 }
 
-function buildRenderContext(config: RulesConfig): InternalRenderContext {
+function buildRenderContext(config: RulesConfig, options?: RendererOptions): InternalRenderContext {
 	const prefix = config.expandoChar ?? '$';
 	const varPattern =
 		prefix === '$'
@@ -51,7 +55,7 @@ function buildRenderContext(config: RulesConfig): InternalRenderContext {
 					`(${escapeRegex(prefix)}{3}|${escapeRegex(prefix)}{2}|${escapeRegex(prefix)}_|${escapeRegex(prefix)})([A-Z][A-Z0-9_]*)`,
 					'g'
 				);
-	return { config, varPattern, prefix };
+	return { config, varPattern, prefix, format: options?.format, ignoreFormat: options?.ignoreFormat };
 }
 
 // ---------------------------------------------------------------------------
@@ -623,7 +627,23 @@ function applyTemplate(prepared: PreparedRender): string {
 }
 
 function render(node: AnyNodeData, ctx: InternalRenderContext): string {
-	return applyTemplate(prepare(node, ctx));
+	const canonical = applyTemplate(prepare(node, ctx));
+	const formatRecord = resolveFormat(node, ctx);
+	if (formatRecord !== undefined) return applyFormat(canonical, formatRecord);
+	return canonical;
+}
+
+/**
+ * Resolve the FormatRecord for this node render.
+ * Priority: per-node inline override > per-kind entry > tree-level default.
+ * Returns undefined when ignoreFormat is true, or no format is present.
+ */
+function resolveFormat(
+	node: AnyNodeData,
+	ctx: InternalRenderContext
+): FormatRecord | undefined {
+	if (ctx.ignoreFormat) return undefined;
+	return node.$format ?? ctx.format?.kinds?.[node.$type] ?? ctx.format;
 }
 
 /**
@@ -1069,7 +1089,10 @@ function renderNunjucks(
 ): string {
 	// Text-only leaves: short-circuit to $text.
 	if (node.$text !== undefined && !node.$fields && !node.$children) {
-		return node.$text;
+		const canonical = node.$text;
+		const formatRecord = resolveFormat(node, ctx);
+		if (formatRecord !== undefined) return applyFormat(canonical, formatRecord);
+		return canonical;
 	}
 
 	const env =
@@ -1101,7 +1124,10 @@ function renderNunjucks(
 			// the token-shaped-kind path (FR-017 / T027a). Filesystem check
 			// distinguishes "file absent" (→ fallback) from "file present but
 			// malformed" (→ propagate Nunjucks's compile error).
-			return tokenShapedFallback(node);
+			const fallback = tokenShapedFallback(node);
+			const formatRecord = resolveFormat(node, ctx);
+			if (formatRecord !== undefined) return applyFormat(fallback, formatRecord);
+			return fallback;
 		}
 	}
 
@@ -1122,6 +1148,8 @@ function renderNunjucks(
 	}
 	// Honest raw output — see `applyTemplate` for the rationale. Symmetric
 	// with the native engine and with the legacy substitutor path.
+	const formatRecord = resolveFormat(node, ctx);
+	if (formatRecord !== undefined) return applyFormat(rendered, formatRecord);
 	return rendered;
 }
 
@@ -1340,6 +1368,10 @@ export interface RendererOptions {
 	 *  nunjucks import out of render.ts so the module stays Node-free
 	 *  for consumers that never touch the file-loader. */
 	nunjucksEnv?: NunjucksEnvLike;
+	/** Tree-level format record — applied when no per-node or per-kind format overrides. */
+	format?: FormatRecord;
+	/** When true, skip all format resolution and render template-canonical output. */
+	ignoreFormat?: boolean;
 }
 
 /**
@@ -1368,7 +1400,7 @@ export function createRendererFromConfig(
 	config: RulesConfig,
 	options?: RendererOptions
 ): BoundRenderer {
-	const ctx = buildRenderContext(config);
+	const ctx = buildRenderContext(config, options);
 	const nunjucksEnv = options?.nunjucksEnv;
 	const templatesDir = options?.templatesDir;
 	const grammar = grammarFromTemplatesDir(templatesDir);
