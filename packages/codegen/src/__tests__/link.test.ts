@@ -7,7 +7,7 @@ import {
 } from '../compiler/link.ts';
 import type { DerivationLog } from '../compiler/types.ts';
 import type { Rule, SymbolRef } from '../compiler/rule.ts';
-import type { RawGrammar, LinkedGrammar } from '../compiler/types.ts';
+import type { RawGrammar } from '../compiler/types.ts';
 
 function makeRaw(
 	rules: Record<string, Rule>,

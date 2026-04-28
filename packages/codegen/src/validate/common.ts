@@ -14,7 +14,6 @@
  */
 
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import type { Mode } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
@@ -24,9 +23,9 @@ import {
 	metricsEnabled
 } from '@sittir/core';
 import type * as TS from 'web-tree-sitter';
-import type { SgNode, Pos, Range } from '@ast-grep/wasm';
+import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
-import type { AnyNodeData, AnyTreeNode, NodeId } from '@sittir/types';
+import type { AnyNodeData, AnyTreeNode, NodeId, NativeParseResult } from '@sittir/types';
 import type { TreeHandle } from '@sittir/core';
 import {
 	assertNever,
@@ -207,13 +206,20 @@ export function nativeTreeHandle(
 	engine: NativeEngineLike,
 	source: string
 ): TreeHandle {
-	let rootData: AnyNodeDataLike | null = null;
-	function ensureRoot(): AnyNodeDataLike {
-		if (rootData === null) {
-			rootData = JSON.parse(engine.parseAndRead(source)) as AnyNodeDataLike;
-		}
-		return rootData;
+	// Parse eagerly: populates engine tree cache and captures format in one call.
+	// Behavioral note: prior to 017, nativeTreeHandle parsed lazily on first
+	// readNode() call. Parsing is now unconditional at construction time so
+	// the format record is always available before callers access tree.format.
+	const parseResult = JSON.parse(engine.parseAndRead(source)) as NativeParseResult;
+	if (parseResult.nodeData === undefined) {
+		const keys = Object.keys(parseResult as object).join(', ');
+		throw new Error(
+			'nativeTreeHandle: engine.parseAndRead() returned JSON without a "nodeData" key. ' +
+			'The engine binary is out of date — rebuild sittir-{lang}-napi against this version. ' +
+			`Received keys: ${keys}`
+		);
 	}
+	const rootData: AnyNodeData = parseResult.nodeData;
 	const handle: TreeHandle = {
 		// The native engine doesn't expose JS-side raw tree-sitter Node
 		// wrappers; reads always go through `read` below. The required
@@ -231,23 +237,15 @@ export function nativeTreeHandle(
 		source,
 		read(nodeId?: NodeId) {
 			if (nodeId === undefined) {
-				return ensureRoot() as unknown as ReturnType<
-					NonNullable<TreeHandle['read']>
-				>;
+				return rootData as unknown as ReturnType<NonNullable<TreeHandle['read']>>;
 			}
-			// Ensure the engine has parsed (populates its tree cache);
-			// readNode(id) returns "no tree cached" otherwise.
-			ensureRoot();
 			return JSON.parse(engine.readNode(nodeId)) as ReturnType<
 				NonNullable<TreeHandle['read']>
 			>;
-		}
+		},
+		...(parseResult.format !== undefined && { format: parseResult.format }),
 	};
 	return handle;
-}
-
-interface AnyNodeDataLike {
-	readonly $type: string;
 }
 
 /**

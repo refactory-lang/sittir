@@ -339,13 +339,15 @@ function walkRuleForTemplate(
 	rule: Rule,
 	seen: Set<string>,
 	inRepeat: boolean,
-	clauses: Record<string, string>,
+	_clauses: Record<string, string>,
 	rules?: Record<string, Rule>,
 	repeatedFields?: ReadonlySet<string>,
 	joinByField?: Record<string, string>,
 	wordMatcher?: RegExp,
-	optionalFields?: ReadonlySet<string>
+	_optionalFields?: ReadonlySet<string>
 ): string[] {
+	const clauses = _clauses;
+	const optionalFields = _optionalFields;
 	switch (rule.type) {
 		case 'seq': {
 			// Sibling-repeated-field detection. When `inferFields` has

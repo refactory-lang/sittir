@@ -8,7 +8,6 @@
  * Requires web-tree-sitter + language WASM files.
  */
 
-import { createRequire } from 'node:module';
 import { readNode, createRenderer } from '@sittir/core';
 import type { TreeHandle } from '@sittir/core';
 import type { AnyNodeData, NodeId } from '@sittir/types';
@@ -17,7 +16,6 @@ import { loadRawEntries } from './node-types-loader.ts';
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
-	treeHandle,
 	buildReadHandle,
 	findFirst,
 	findNativeNodeId,
@@ -56,7 +54,7 @@ import {
  * @param deepReadKinds - Set of `$type` values that should be deep-read
  *   when encountered as named children.
  */
-function deepReadNode(
+function _deepReadNode(
 	tree: TreeHandle,
 	nodeId: NodeId | undefined,
 	deepReadKinds: ReadonlySet<string>
@@ -75,7 +73,7 @@ function deepReadNode(
 		deepReadKinds.has(entry.$type);
 	if (data.$children) {
 		const drilled = data.$children.map((c) =>
-			shouldDrill(c) ? deepReadNode(tree, c.$nodeId, deepReadKinds) : c
+			shouldDrill(c) ? _deepReadNode(tree, c.$nodeId, deepReadKinds) : c
 		);
 		(data as { $children?: typeof drilled }).$children = drilled;
 	}
@@ -94,12 +92,12 @@ function deepReadNode(
 			if (Array.isArray(value)) {
 				newFields[key] = value.map((entry) =>
 					shouldDrill(entry)
-						? deepReadNode(tree, entry.$nodeId, deepReadKinds)
+						? _deepReadNode(tree, entry.$nodeId, deepReadKinds)
 						: entry
 				);
 			} else {
 				newFields[key] = shouldDrill(value)
-					? deepReadNode(tree, value.$nodeId, deepReadKinds)
+					? _deepReadNode(tree, value.$nodeId, deepReadKinds)
 					: value;
 			}
 		}
@@ -286,8 +284,6 @@ function astStructuralDiff(
 	return null;
 }
 
-const require = createRequire(import.meta.url);
-
 // ---------------------------------------------------------------------------
 // Validation
 // ---------------------------------------------------------------------------
@@ -383,7 +379,7 @@ function discoverAliasSourceKinds(
  * @param tree - The parsed tree-sitter tree to search in.
  * @returns The matching TSNode, or null if none found.
  */
-function resolveNodeForKind(
+function _resolveNodeForKind(
 	kind: string,
 	nodeIdToEffectiveType: Map<number, string>,
 	tree: TSTree

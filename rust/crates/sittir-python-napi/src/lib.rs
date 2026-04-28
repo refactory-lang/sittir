@@ -12,8 +12,16 @@ use napi::bindgen_prelude::*;
 use napi_derive::napi;
 use sittir_core::prepare::{build_template_context, RenderDispatch};
 use sittir_core::splice::apply_edits as splice_apply_edits;
-use sittir_core::types::{Edit, NodeData};
+use sittir_core::types::{Edit, FormatRecord, NodeData};
 use sittir_python_render::{render_dispatch, PythonGrammarMeta, TEMPLATE_BUNDLE_HASH};
+
+#[derive(serde::Serialize)]
+struct ParseResult<'a> {
+    #[serde(rename = "nodeData")]
+    node_data: &'a NodeData,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    format: Option<FormatRecord>,
+}
 
 #[napi]
 pub struct SittirEngine {
@@ -56,7 +64,10 @@ impl SittirEngine {
         let tree = self
             .parser
             .parse(&source, None)
-            .ok_or_else(|| Error::from_reason("parse failed"))?;
+            .ok_or_else(|| {
+                let snippet: String = source.chars().take(80).collect();
+                Error::from_reason(format!("parse failed (source: {snippet:?})"))
+            })?;
         self.source = Some(source.clone());
         self.tree = Some(tree.clone());
         let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
@@ -67,8 +78,14 @@ impl SittirEngine {
             )
         }));
         match result {
-            Ok(data) => serde_json::to_string(&data)
-                .map_err(|e| Error::from_reason(format!("serialize NodeData failed: {e}"))),
+            Ok(data) => {
+                let format = sittir_core::format::extract_format(
+                    self.source.as_ref().unwrap(),
+                    self.tree.as_ref().unwrap(),
+                );
+                serde_json::to_string(&ParseResult { node_data: &data, format })
+                    .map_err(|e| Error::from_reason(format!("serialize ParseResult failed: {e}")))
+            }
             Err(panic_payload) => Err(Error::from_reason(panic_msg(panic_payload, "parse_and_read panicked"))),
         }
     }
@@ -94,16 +111,30 @@ impl SittirEngine {
         }
     }
 
+    /// Render a NodeData (passed as JSON string) to source. Stateless.
+    ///
+    /// Format asymmetry (Phase 1): if the node carries `$format` it is applied
+    /// post-canonicalization. Factory-constructed nodes without `$format` render
+    /// canonically. JS fills the gap via renderer-option `ctx.format`; aligning
+    /// Rust with a `format_json` param is Phase 2 work (FR-023).
     #[napi]
     pub fn render(&self, node_json: String) -> Result<String> {
         let node: NodeData = serde_json::from_str(&node_json)
-            .map_err(|e| Error::from_reason(format!("parse NodeData JSON failed: {e}")))?;
+            .map_err(|e| {
+                let snippet: String = node_json.chars().take(80).collect();
+                Error::from_reason(format!("parse NodeData JSON failed: {e} (json: {snippet:?})"))
+            })?;
+        let format = node.format.clone();
         let meta = PythonGrammarMeta;
         let dispatch: RenderDispatch = render_dispatch;
         let ctx = build_template_context(&node, &meta, dispatch)
             .map_err(|e| Error::from_reason(format!("build template context failed: {e}")))?;
-        dispatch(&node.type_, &ctx)
-            .map_err(|e| Error::from_reason(format!("render_dispatch failed: {e}")))
+        let canonical = dispatch(&node.type_, &ctx)
+            .map_err(|e| Error::from_reason(format!("render_dispatch failed: {e}")))?;
+        Ok(match format {
+            Some(fmt) => sittir_core::format::apply_format(&canonical, &fmt),
+            None => canonical,
+        })
     }
 
     #[napi]

@@ -226,7 +226,7 @@ function classifyRenderability(
 	return null;
 }
 
-function reasonFor(entry: RawNodeEntry, ruleKinds: Set<string>): string {
+function reasonFor(entry: RawNodeEntry, _ruleKinds: Set<string>): string {
 	const hasFields = entry.fields && Object.keys(entry.fields).length > 0;
 	const hasChildren = entry.children !== undefined;
 	const parts: string[] = [];

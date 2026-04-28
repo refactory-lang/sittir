@@ -36,7 +36,6 @@ import type {
 	StringRule,
 	PatternRule,
 	TokenRule,
-	GroupRule,
 	EnumRule,
 	SupertypeRule,
 	PolymorphRule,
@@ -2233,7 +2232,7 @@ export function filterForFlanks(key: string, meta: JinjaTranslateMeta): string {
  * `computeGuardedRanges` would treat all interior placeholders as
  * already-guarded and the wrapper would no-op.
  */
-function wrapFormOptionalPlaceholders(
+function _wrapFormOptionalPlaceholders(
 	template: string,
 	fields: readonly AssembledField[]
 ): string {

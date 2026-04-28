@@ -8,9 +8,8 @@ import {
 } from '../compiler/assemble.ts';
 import { simplifyRules } from '../compiler/simplify.ts';
 import type { Rule } from '../compiler/rule.ts';
-import type { OptimizedGrammar, NodeMap } from '../compiler/types.ts';
+import type { OptimizedGrammar } from '../compiler/types.ts';
 import { deriveFields, isRequired, isMultiple } from '../compiler/node-map.ts';
-import type { AssembledNode } from '../compiler/node-map.ts';
 
 function makeOptimized(
 	rules: Record<string, Rule>,

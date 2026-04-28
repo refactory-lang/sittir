@@ -16,7 +16,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve, relative } from 'node:path';
 import { evaluate } from '../src/compiler/evaluate.ts';
-import type { Rule } from '../src/compiler/rule.ts';
+import type { Rule as _Rule } from '../src/compiler/rule.ts';
 
 interface OverrideField {
 	types: { type: string; named: boolean }[];

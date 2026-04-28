@@ -20,11 +20,9 @@ import type {
 	NodeMap,
 	DerivationLog,
 	InferredFieldEntry,
-	PromotedRuleEntry,
-	RepeatedShapeEntry
+	PromotedRuleEntry
 } from '../compiler/types.ts';
 import type { Rule } from '../compiler/rule.ts';
-import { findAllPolymorphCandidates } from '../compiler/link.ts';
 import type { PolymorphCandidateLocation } from '../compiler/link.ts';
 
 /**
@@ -98,7 +96,7 @@ function deduplicateArmNames(
  * (inline ladder in `armNamesFor` vs `deriveArmNameFromRule`) was two
  * derivations of the same facts that had to stay in sync.
  */
-function armNamesFor(cand: PolymorphCandidateLocation): string[] {
+function _armNamesFor(cand: PolymorphCandidateLocation): string[] {
 	return deduplicateArmNames(cand.choice.members);
 }
 
@@ -114,7 +112,7 @@ function armNamesFor(cand: PolymorphCandidateLocation): string[] {
  * candidate despite Link's suggestion (rare but possible when multiple
  * passes run; defensive).
  */
-function locateTopLevelChoice(
+function _locateTopLevelChoice(
 	rule: Rule
 ): { choicePath: string; arms: string[] } | null {
 	function walk(

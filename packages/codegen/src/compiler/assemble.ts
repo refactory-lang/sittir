@@ -7,7 +7,6 @@
 
 import type {
 	Rule,
-	FieldRule,
 	PolymorphRule,
 	SymbolRule,
 	SeqRule,
@@ -23,7 +22,6 @@ import type {
 import type {
 	OptimizedGrammar,
 	NodeMap,
-	KindProjection,
 	SignaturePool,
 	ProjectionContext,
 	PolymorphVariant
@@ -573,7 +571,7 @@ function getSlotsForParameterless(
  * stamp — we simply omit them from the factory call for parameterless
  * compounds).
  */
-function stampExpressionForSlot(
+function _stampExpressionForSlot(
 	slot: AssembledChild,
 	nodes: Map<string, AssembledNode>
 ): string | undefined {
@@ -1537,12 +1535,12 @@ function extractVariantChildSymbol(rule: Rule): string | null {
 // Signatures & Projections (stubs — full implementation in refinement)
 // ---------------------------------------------------------------------------
 
-function computeSignatures(nodes: Map<string, AssembledNode>): SignaturePool {
+function computeSignatures(_nodes: Map<string, AssembledNode>): SignaturePool {
 	return { signatures: new Map() };
 }
 
 function buildProjections(
-	nodes: Map<string, AssembledNode>
+	_nodes: Map<string, AssembledNode>
 ): ProjectionContext {
 	return { projections: new Map() };
 }

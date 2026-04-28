@@ -12,11 +12,9 @@ import {
 	type AssembledNode,
 	type AssembledField,
 	type AssembledChild,
-	AssembledGroup,
-	type AssembledPolymorph
+	AssembledGroup
 } from '../compiler/node-map.ts';
 import {
-	AssembledKeyword,
 	isNodeRef,
 	isTerminalValue,
 	isUnresolvedRef
@@ -39,12 +37,10 @@ import {
 	keywordPresenceValues,
 	resolveHiddenKeywordLiteral
 } from './shared.ts';
-import { resolveBitflagConstName } from './consts.ts';
 import {
 	collectRefineKindInfos,
 	refineFormTypeName,
 	refineFormFactoryName,
-	camelCase as refineCamelCase,
 	type RefineKindInfo,
 	type RefineFormInfo
 } from './refine-emit.ts';
@@ -520,7 +516,7 @@ function emitPerNodeFactories(
  */
 function buildFactoryMapEntries(
 	nodeMap: NodeMap,
-	aliasSourceKinds: Set<string>
+	_aliasSourceKinds: Set<string>
 ): MapEntry[] {
 	const mapEntries: MapEntry[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
@@ -1941,7 +1937,7 @@ function emitPolymorphDispatch(
 	lines.push(`  }`);
 	const formNames = forms.map((f) => `'${f.name}'`).join(' | ');
 	lines.push(
-		`  throw new Error(\`${node.rawFactoryName!}: unknown \$variant '\${(config as { $variant?: string }).$variant}' — expected one of ${formNames}.\`);`
+		`  throw new Error(\`${node.rawFactoryName!}: unknown $variant '\${(config as { $variant?: string }).$variant}' — expected one of ${formNames}.\`);`
 	);
 	return lines;
 }

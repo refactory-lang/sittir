@@ -6,7 +6,7 @@ export interface EmitConfigConfig {
 	grammar: string;
 }
 
-export function emitConfig(config: EmitConfigConfig): string {
+export function emitConfig(_config: EmitConfigConfig): string {
 	const lines: string[] = [];
 
 	lines.push(`import { defineConfig } from 'vitest/config';`);

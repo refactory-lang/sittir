@@ -16,7 +16,7 @@
  * ```
  */
 
-import type { CamelCase, SimplifyDeep } from 'type-fest';
+import type { CamelCase } from 'type-fest';
 
 // ---------------------------------------------------------------------------
 // Runtime types — re-exported from core-types (zero runtime in this package)
@@ -37,6 +37,13 @@ export type {
 	ByteRange,
 	Position,
 	CSTNode,
+	FormatBoundary,
+	FormatSlot,
+	FormatLiteral,
+	FormatTrivia,
+	FormatRecord,
+	KindFormatRecord,
+	NativeParseResult,
 	RenderContext,
 	ReplaceTarget,
 	Renderable
@@ -484,7 +491,7 @@ export type FluentNode<K extends string, C = unknown> = {
  * ```
  */
 export type RuntimeNodeOf<T> = T extends {
-	readonly $type: infer K extends string;
+	readonly $type: infer _K extends string;
 }
 	? Simplify<
 			{

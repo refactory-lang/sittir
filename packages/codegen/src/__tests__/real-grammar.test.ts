@@ -4,7 +4,6 @@ import { link } from '../compiler/link.ts';
 import { optimize } from '../compiler/optimize.ts';
 import { assemble } from '../compiler/assemble.ts';
 import { resolveGrammarJsPath } from '../compiler/resolve-grammar.ts';
-import { resolve } from 'node:path';
 
 // Raw base grammars (no override() / variant() applied) still contain
 // non-canonical shapes that would trip the derive-audit default. Switch

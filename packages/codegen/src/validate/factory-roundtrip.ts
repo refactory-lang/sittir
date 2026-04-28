@@ -10,7 +10,6 @@
  * 5. Re-parse and verify the kind exists
  */
 
-import { createRequire } from 'node:module';
 import { readNode, createRenderer } from '@sittir/core';
 import type { AnyNodeData, NodeFieldValue, NodeId } from '@sittir/types';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
@@ -19,7 +18,6 @@ import { loadRawEntries } from './node-types-loader.ts';
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
-	treeHandle,
 	buildReadHandle,
 	findFirst,
 	findNativeNodeId,
@@ -104,8 +102,6 @@ function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
 	}
 	return null;
 }
-
-const require = createRequire(import.meta.url);
 
 // ---------------------------------------------------------------------------
 // Strip runtime metadata to simulate factory output

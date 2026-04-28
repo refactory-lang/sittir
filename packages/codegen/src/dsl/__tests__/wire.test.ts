@@ -46,7 +46,7 @@ describe('wire()', () => {
 	});
 
 	it('returns opts unchanged when no polymorphs are declared', () => {
-		const ruleFn: RuleFn = ($, _prev) => ({ type: 'symbol', name: 'x' });
+		const ruleFn: RuleFn = (_$, _prev) => ({ type: 'symbol', name: 'x' });
 		const wired = wire({ name: 'test', rules: { foo: ruleFn } });
 		expect(wired.name).toBe('test');
 		expect(Object.keys(wired.rules)).toEqual(['foo']);
@@ -174,7 +174,7 @@ describe('wire()', () => {
 						getCurrentWireContext()?.currentRuleKind ?? null;
 					return original;
 				},
-				ident: ($, _prev) => {
+				ident: (_$, _prev) => {
 					observedKindDuringIdent =
 						getCurrentWireContext()?.currentRuleKind ?? null;
 					return { type: 'pattern', value: '[a-z]+' };
@@ -192,7 +192,7 @@ describe('wire()', () => {
 		const wired = wire({
 			name: 'test',
 			rules: {
-				foo: ($, _prev) => ({ type: 'symbol', name: 'x' })
+				foo: (_$, _prev) => ({ type: 'symbol', name: 'x' })
 			}
 		});
 		expect(getCurrentWireContext()).toBeNull();

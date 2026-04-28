@@ -3,7 +3,7 @@ module.exports = grammar({
 	name: 'hidden_only',
 
 	rules: {
-		_expr: ($) => choice('a', 'b'),
-		_stmt: ($) => seq('x', 'y')
+		_expr: (_$) => choice('a', 'b'),
+		_stmt: (_$) => seq('x', 'y')
 	}
 });

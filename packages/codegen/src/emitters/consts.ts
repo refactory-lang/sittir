@@ -7,8 +7,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledNode,
-	AssembledBranch,
-	AssembledContainer,
 	AssembledField
 } from '../compiler/node-map.ts';
 import {

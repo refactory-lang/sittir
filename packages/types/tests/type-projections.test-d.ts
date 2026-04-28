@@ -97,7 +97,6 @@ type _4d = Expect<
 >;
 
 // field('name') should return a TreeNode for identifier | metavariable (or null)
-type FnNameField = ReturnType<FnTree['field']>;
 
 // ---------------------------------------------------------------------------
 // 5. NodeKind — valid kinds
@@ -169,7 +168,6 @@ type _9d = Expect<Extends<'right', keyof BinFields>>;
 // ---------------------------------------------------------------------------
 
 type BlockNode = NodeData<RustGrammar, 'block'>;
-type BlockFields = NodeConfig<RustGrammar, 'block'>;
 
 type _10a = Expect<Equal<BlockNode['type'], 'block'>>;
 

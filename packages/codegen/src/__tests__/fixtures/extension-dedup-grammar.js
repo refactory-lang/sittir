@@ -14,7 +14,7 @@ module.exports = grammar({
 		$._indent // intentional duplicate
 	],
 
-	extras: ($) => [
+	extras: (_$) => [
 		/\s/,
 		/\s/ // intentional duplicate
 	],
@@ -22,8 +22,8 @@ module.exports = grammar({
 	rules: {
 		source_file: ($) => $._statement,
 		_statement: ($) => $.identifier,
-		identifier: ($) => /[a-z]+/,
-		_indent: ($) => 'INDENT',
-		_dedent: ($) => 'DEDENT'
+		identifier: (_$) => /[a-z]+/,
+		_indent: (_$) => 'INDENT',
+		_dedent: (_$) => 'DEDENT'
 	}
 });

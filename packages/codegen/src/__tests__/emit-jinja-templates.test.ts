@@ -4,8 +4,7 @@ import {
 	readdirSync,
 	readFileSync,
 	writeFileSync,
-	rmSync,
-	mkdirSync
+	rmSync
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';

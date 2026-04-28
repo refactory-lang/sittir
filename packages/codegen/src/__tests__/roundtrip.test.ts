@@ -15,8 +15,6 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
 import { generate } from '../compiler/generate.ts';
 
 describe('round-trip validation', () => {

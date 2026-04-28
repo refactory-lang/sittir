@@ -85,6 +85,10 @@ export interface AnyNodeData {
 	 * Optional at the type level because generated kind interfaces
 	 * omit it by convention (factory output always sets it at runtime). */
 	$named?: boolean;
+	/** Per-node format override. Set by callers to override the tree-level format
+	 *  (ctx.format) for this specific node. Never set by inference — inferred format
+	 *  lives on TreeHandle.format. Absent on all factory and readNode output. */
+	$format?: FormatRecord;
 }
 
 export type NativeFieldValue =
@@ -210,6 +214,78 @@ export interface CSTNode {
 }
 
 // ---------------------------------------------------------------------------
+// Format record — residual source-text metadata
+// ---------------------------------------------------------------------------
+
+/** Leading/trailing bytes around the canonical body of a node's span. */
+export interface FormatBoundary {
+	/** Bytes before the canonical body — indent, preceding blank lines. */
+	leading?: string;
+	/** Bytes after the canonical body — trailing newline, blank lines. */
+	trailing?: string;
+}
+
+/**
+ * Per-position separator/optional-token override.
+ * Key: field name (raw snake_case) or child-array index as string.
+ *
+ * Discriminated union: `absent: true` marks the slot as omitted in source
+ * (e.g. a trailing semicolon that was absent). When absent, `sep` and
+ * `trailingPresent` are meaningless and excluded by the type. JSON-wire
+ * compatible with the Rust `FormatSlot` struct (all fields skip-serialize-if-none).
+ */
+export type FormatSlot =
+	| { readonly absent: true }
+	| { readonly absent?: false; sep?: string; trailingPresent?: boolean };
+
+/**
+ * Literal-spelling override for a leaf node.
+ * Key: field name or "$text" for the node's own text.
+ */
+export interface FormatLiteral {
+	/** Exact source spelling — overrides `$text` at render time. */
+	raw: string;
+}
+
+/** A single trivia item (comment or blank line) with position in the span. */
+export interface FormatTrivia {
+	/**
+	 * Byte offset within the enclosing node's span (relative to span start).
+	 *
+	 * @remarks
+	 * Must be non-negative. Mirrors Rust's `u32` offset field — the TS
+	 * `number` type does not enforce this at the type level. `rebaseTrivia`
+	 * clamps shifted offsets to `Math.max(0, n)` to guard against negative
+	 * values produced by large deletions.
+	 */
+	offset: number;
+	/** Verbatim text of the comment or blank-line sequence. */
+	text: string;
+}
+
+/**
+ * Per-kind format record: a {@link FormatRecord} without recursive `kinds`.
+ * Used for entries inside `FormatRecord.kinds` — nesting `kinds` inside
+ * `kinds` is not supported by the render path (resolves only one level deep).
+ */
+export type KindFormatRecord = Omit<FormatRecord, 'kinds'>;
+
+/** Residual format metadata for a tree or a specific node kind. */
+export interface FormatRecord {
+	boundary?: FormatBoundary;
+	slots?: Record<string, FormatSlot>;
+	literals?: Record<string, FormatLiteral>;
+	trivia?: FormatTrivia[];
+	/**
+	 * Per-kind format overrides. Key is the raw node kind (e.g. "function_item").
+	 * Render lookup: node.$format ?? kinds[node.$type] ?? parent FormatRecord.
+	 * Entries here use {@link KindFormatRecord} — nesting is not supported
+	 * and the render path resolves only one level deep.
+	 */
+	kinds?: Record<string, KindFormatRecord>;
+}
+
+// ---------------------------------------------------------------------------
 // Render context
 // ---------------------------------------------------------------------------
 
@@ -219,8 +295,16 @@ export interface RenderContext {
 	parser?: unknown;
 	/** Indentation unit. Default: two spaces. */
 	indent?: string;
-	/** External formatting hook — called after render if present. */
-	format?: (source: string) => string | Promise<string>;
+	/** Tree-level format record. The render path resolves format for each node as:
+	 *    node.$format                      // per-node inline override (highest priority)
+	 *    ?? ctx.format?.kinds?.[node.$type] // per-kind entry on the tree-level record
+	 *    ?? ctx.format                      // tree-level default
+	 *    ?? undefined                       // template-canonical fallback
+	 *  When absent (and node.$format absent), template-canonical output is used. */
+	format?: FormatRecord;
+	/** When true, ignore all format records and render template-canonical.
+	 *  Default: false (apply format when present). */
+	ignoreFormat?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -259,3 +343,20 @@ export interface Renderable {
 export type KindOf<T> = T extends { readonly type: infer K extends string }
 	? K
 	: never;
+
+// ---------------------------------------------------------------------------
+// Native (NAPI) parse result
+// ---------------------------------------------------------------------------
+
+/**
+ * Return value of the native (NAPI) `parseAndRead` call.
+ * Carries both the hydrated node data and the inferred format (if any)
+ * so callers can attach format to the {@link TreeHandle} without a
+ * second round-trip.
+ */
+export interface NativeParseResult {
+	/** Hydrated root node data produced by the native parser. */
+	nodeData: AnyNodeData;
+	/** Format inferred from source layout, if inference succeeded. */
+	format?: FormatRecord;
+}

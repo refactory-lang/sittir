@@ -74,7 +74,6 @@ type HomoChild = NonNullable<HomoLoose['child']>;
 type HeteroChild = NonNullable<HeteroLoose['child']>;
 
 type BareXY = { readonly x: number; readonly y: number };
-type BareXYZ = { readonly x: number; readonly y: number; readonly z: number };
 
 describe('Spec 009 Layer 1 — homogeneity-aware Loose', () => {
 	it('homogeneous union accepts a bare bag (no `kind` tag required)', () => {

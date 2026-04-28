@@ -24,7 +24,6 @@ import {
 	AssembledBranch,
 	AssembledContainer,
 	AssembledPolymorph,
-	AssembledSupertype,
 	snakeToCamel,
 	isNodeRef,
 	isTerminalValue,
@@ -39,12 +38,10 @@ import {
 	slotKindNames,
 	slotLiteralValues,
 	resolveHiddenKeywordLiteral,
-	isAutoStampSlot,
 	referencedKinds,
 	fieldTypeComponents,
 	isValidIdent,
 	keywordPresenceKind,
-	keywordPresenceValues
 } from './shared.ts';
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
@@ -1029,7 +1026,7 @@ function emitFieldArrayDeclaration(
  * `[]` — they don't get aliased because they don't produce a
  * multi-type union.
  */
-function fieldTypeParts(field: AssembledField, nodeMap?: NodeMap): string[] {
+function _fieldTypeParts(field: AssembledField, nodeMap?: NodeMap): string[] {
 	const litVals = slotLiteralValues(field);
 	if (litVals.length > 0) return [];
 	const kinds = slotKindNames(field);

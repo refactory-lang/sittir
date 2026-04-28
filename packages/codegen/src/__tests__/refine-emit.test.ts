@@ -16,7 +16,6 @@ import type { Rule } from '../compiler/rule.ts';
 import type { RawGrammar, RefineForm } from '../compiler/types.ts';
 import { link } from '../compiler/link.ts';
 import {
-	validateRefineForms,
 	resolveRefinePath,
 	narrowedFieldLiteralsForForm
 } from '../compiler/link-refine.ts';

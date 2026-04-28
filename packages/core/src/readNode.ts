@@ -19,7 +19,7 @@
  * on branch nodes for debugging purposes.
  */
 
-import type { AnyNodeData, AnyTreeNode, NodeId } from './types.ts';
+import type { AnyNodeData, AnyTreeNode, FormatRecord, NodeId } from './types.ts';
 
 /**
  * Whether to emit `$text` on branch nodes (those with `$fields` or
@@ -52,6 +52,12 @@ export interface TreeHandle {
 	 * tree. The dispatch must live on the handle that owns the tree.
 	 */
 	read?(nodeId?: NodeId): AnyNodeData;
+	/**
+	 * Format record inferred from the source file by the native Rust reader.
+	 * Absent on trees produced by the JS reader (readNode never sets this).
+	 * Callers can also set this manually to apply a house-style config.
+	 */
+	format?: FormatRecord;
 }
 
 function toNodeId(id: number): NodeId {
@@ -132,7 +138,7 @@ export function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
 		const fname = node.fieldNameForChild?.(i);
 		if (fname) {
 			// Multi-valued fields (e.g. python's `argument` in
-			// `print a, b, c` where each expression has the same
+			// `print a, b, c` where each expression has each expression has the same
 			// field name) must accumulate into an array instead of
 			// overwriting. But collisions with an anonymous-keyword
 			// placeholder (from promoteAnonymousKeyword earlier in

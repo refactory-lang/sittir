@@ -6,7 +6,9 @@ export default defineConfig({
 	categories: {
 		correctness: 'error'
 	},
-	rules: {},
+	rules: {
+		'only-used-in-recursion': 'off'
+	},
 	env: {
 		builtin: true
 	},
@@ -16,6 +18,10 @@ export default defineConfig({
 		'specs/**',
 		'node_modules/',
 		'dist/',
-		'target/'
+		'target/',
+		'.agents/**',
+		'.claude/**',
+		'**/overrides.ts',
+		'tests/format-roundtrip/fixtures/**'
 	]
 });

@@ -33,16 +33,13 @@ import type { RoundTripDiagnostic } from './emitters/suggested.ts';
 import { compileParser } from './transpile/compile-parser.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { writeJinjaTemplates } from './emitters/templates.ts';
-import {
-	emitRenderCrate,
-	type Grammar as RustRenderGrammar
-} from './emitters/rust-render.ts';
+import { emitRenderCrate } from './emitters/rust-render.ts';
 import {
 	extractParityFixtures,
 	serializeFixtures,
 	fixturesOutputPath
 } from './emitters/parity-fixtures.ts';
-import { readdirSync, readFileSync, existsSync, rmSync } from 'node:fs';
+import { readdirSync, readFileSync, rmSync } from 'node:fs';
 import type { TemplateFile } from './emitters/template-hash.ts';
 
 interface CodegenConfig {

@@ -128,6 +128,7 @@ fn read_ts_node(
         text,
         span: Some(span),
         node_id: Some(assigned_id),
+        format: None,
     }
 }
 
