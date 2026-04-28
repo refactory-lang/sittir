@@ -14,6 +14,8 @@ import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
+import { applyEdits } from '@sittir/core';
+import type { Edit } from '@sittir/types';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const FIXTURES_DIR = resolve(__dirname, '../../tests/format-roundtrip/fixtures');
@@ -59,4 +61,30 @@ describe('format-roundtrip python fixtures', () => {
 			}
 		});
 	}
+});
+
+function diffPositions(a: string, b: string): { start: number; end: number } | null {
+	let start = 0;
+	while (start < Math.min(a.length, b.length) && a[start] === b[start]) start++;
+	if (start === Math.min(a.length, b.length) && a.length === b.length) return null;
+	let endA = a.length - 1, endB = b.length - 1;
+	while (endA > start && endB > start && a[endA] === b[endB]) { endA--; endB--; }
+	return { start, end: Math.max(endA, endB) };
+}
+
+describe('US2 — edit isolation (python)', () => {
+	it('python-4space.py: rename find_user → lookup_user is isolated to the edited byte range', () => {
+		const source = readFileSync(resolve(FIXTURES_DIR, 'python-4space.py'), 'utf-8');
+		const original = 'find_user';
+		const replacement = 'lookup_user';
+		const startPos = source.indexOf(original);
+		expect(startPos).toBeGreaterThan(-1);
+		const endPos = startPos + original.length;
+		const edit: Edit = { startPos, endPos, insertedText: replacement };
+		const result = applyEdits(source, [edit]);
+		const diff = diffPositions(source, result.source);
+		expect(diff).not.toBeNull();
+		expect(diff!.start).toBeGreaterThanOrEqual(edit.startPos);
+		expect(diff!.end).toBeLessThan(edit.startPos + edit.insertedText.length);
+	});
 });
