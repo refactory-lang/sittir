@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import type { FormatRecord } from '../src/types.ts';
 import { applyFormat } from '../src/format.ts';
 
 describe('applyFormat', () => {
@@ -59,5 +60,27 @@ describe('applyFormat', () => {
 				trivia: [{ offset: 2, text: '/**/' }],
 			}),
 		).toBe('  /**/fn foo()');
+	});
+});
+
+describe('FormatRecord JSON roundtrip', () => {
+	it('FormatRecord survives JSON roundtrip', () => {
+		const record: FormatRecord = {
+			boundary: { leading: '\t', trailing: '\n' },
+			trivia: [{ offset: 5, text: ' // comment' }],
+			slots: { name: { sep: ', ' } },
+			literals: { open: { raw: '{' } },
+		};
+		const serialized = JSON.stringify(record);
+		const deserialized = JSON.parse(serialized) as FormatRecord;
+		expect(deserialized).toEqual(record);
+	});
+
+	it('FormatRecord round-trips with optional fields absent', () => {
+		const record: FormatRecord = { boundary: { leading: '    ' } };
+		const deserialized = JSON.parse(JSON.stringify(record)) as FormatRecord;
+		expect(deserialized).toEqual(record);
+		expect(deserialized.trivia).toBeUndefined();
+		expect(deserialized.slots).toBeUndefined();
 	});
 });
