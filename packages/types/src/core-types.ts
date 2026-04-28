@@ -85,6 +85,10 @@ export interface AnyNodeData {
 	 * Optional at the type level because generated kind interfaces
 	 * omit it by convention (factory output always sets it at runtime). */
 	$named?: boolean;
+	/** Per-node format override. Set by callers to override the tree-level format
+	 *  (ctx.format) for this specific node. Never set by inference — inferred format
+	 *  lives on TreeHandle.format. Absent on all factory and readNode output. */
+	$format?: FormatRecord;
 }
 
 export type NativeFieldValue =
@@ -210,6 +214,63 @@ export interface CSTNode {
 }
 
 // ---------------------------------------------------------------------------
+// Format record — residual source-text metadata
+// ---------------------------------------------------------------------------
+
+/** Leading/trailing bytes around the canonical body of a node's span. */
+export interface FormatBoundary {
+	/** Bytes before the canonical body — indent, preceding blank lines. */
+	leading?: string;
+	/** Bytes after the canonical body — trailing newline, blank lines. */
+	trailing?: string;
+}
+
+/**
+ * Per-position separator/optional-token override.
+ * Key: field name (raw snake_case) or child-array index as string.
+ */
+export interface FormatSlot {
+	/** Separator override (e.g. ",\n  " vs ", "). */
+	sep?: string;
+	/** Trailing comma/separator present (true) or absent (false/undefined). */
+	trailingPresent?: boolean;
+	/** Optional token omitted in source (e.g. semicolon absent). */
+	absent?: boolean;
+}
+
+/**
+ * Literal-spelling override for a leaf node.
+ * Key: field name or "$text" for the node's own text.
+ */
+export interface FormatLiteral {
+	/** Exact source spelling — overrides `$text` at render time. */
+	raw: string;
+}
+
+/** A single trivia item (comment or blank line) with position in the span. */
+export interface FormatTrivia {
+	/** Byte offset within the enclosing node's span (relative to span start). */
+	offset: number;
+	/** Verbatim text of the comment or blank-line sequence. */
+	text: string;
+}
+
+/** Residual format metadata for a tree or a specific node kind. */
+export interface FormatRecord {
+	boundary?: FormatBoundary;
+	slots?: Record<string, FormatSlot>;
+	literals?: Record<string, FormatLiteral>;
+	trivia?: FormatTrivia[];
+	/**
+	 * Per-kind format overrides. Key is the raw node kind (e.g. "function_item").
+	 * Render lookup: node.$format ?? kinds[node.$type] ?? parent FormatRecord.
+	 * Entries here share the same FormatRecord shape; nesting beyond one level
+	 * is valid but the render path resolves only one level deep.
+	 */
+	kinds?: Record<string, FormatRecord>;
+}
+
+// ---------------------------------------------------------------------------
 // Render context
 // ---------------------------------------------------------------------------
 
@@ -219,8 +280,18 @@ export interface RenderContext {
 	parser?: unknown;
 	/** Indentation unit. Default: two spaces. */
 	indent?: string;
-	/** External formatting hook — called after render if present. */
-	format?: (source: string) => string | Promise<string>;
+	/** External post-formatting hook — called after render if present. */
+	postFormatter?: (source: string) => string | Promise<string>;
+	/** Tree-level format record. The render path resolves format for each node as:
+	 *    node.$format                      // per-node inline override (highest priority)
+	 *    ?? ctx.format?.kinds?.[node.$type] // per-kind entry on the tree-level record
+	 *    ?? ctx.format                      // tree-level default
+	 *    ?? undefined                       // template-canonical fallback
+	 *  When absent (and node.$format absent), template-canonical output is used. */
+	format?: FormatRecord;
+	/** When true, ignore all format records and render template-canonical.
+	 *  Default: false (apply format when present). */
+	ignoreFormat?: boolean;
 }
 
 // ---------------------------------------------------------------------------

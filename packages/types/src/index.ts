@@ -37,6 +37,11 @@ export type {
 	ByteRange,
 	Position,
 	CSTNode,
+	FormatBoundary,
+	FormatSlot,
+	FormatLiteral,
+	FormatTrivia,
+	FormatRecord,
 	RenderContext,
 	ReplaceTarget,
 	Renderable
