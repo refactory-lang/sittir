@@ -82,6 +82,13 @@ pub struct NodeData {
         skip_serializing_if = "Option::is_none"
     )]
     pub node_id: Option<u64>,
+
+    #[serde(
+        rename = "$format",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub format: Option<FormatRecord>,
 }
 
 /// Where a `NodeData` originated. `Ts` = `readNode` over a tree-sitter

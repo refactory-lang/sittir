@@ -114,12 +114,17 @@ impl SittirEngine {
     pub fn render(&self, node_json: String) -> Result<String> {
         let node: NodeData = serde_json::from_str(&node_json)
             .map_err(|e| Error::from_reason(format!("parse NodeData JSON failed: {e}")))?;
+        let format = node.format.clone();
         let meta = TypescriptGrammarMeta;
         let dispatch: RenderDispatch = render_dispatch;
         let ctx = build_template_context(&node, &meta, dispatch)
             .map_err(|e| Error::from_reason(format!("build template context failed: {e}")))?;
-        dispatch(&node.type_, &ctx)
-            .map_err(|e| Error::from_reason(format!("render_dispatch failed: {e}")))
+        let canonical = dispatch(&node.type_, &ctx)
+            .map_err(|e| Error::from_reason(format!("render_dispatch failed: {e}")))?;
+        Ok(match format {
+            Some(fmt) => sittir_core::format::apply_format(&canonical, &fmt),
+            None => canonical,
+        })
     }
 
     #[napi]
