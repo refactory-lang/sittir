@@ -2,17 +2,28 @@
  * Grammar-specific engine factory for @sittir/typescript.
  *
  * Combines native backend selection (getNativeBackendEngine) with JS fallback
- * (createJsEngine from @sittir/core). Provides a unified engine surface that
- * abstracts over the native/JS dispatch.
+ * (createJsEngine from @sittir/core/engine). Provides a unified engine surface
+ * that abstracts over the native/JS dispatch.
  */
 
-import { createJsEngine, type SittirEngineLike, type JsEngineOptions, assertNativeNodeData } from '@sittir/core';
-import type { FormatRecord } from '@sittir/types';
+import {
+	createJsEngine,
+	type SittirEngineLike,
+	type JsEngineOptions,
+	assertNativeNodeData
+} from '@sittir/core/engine';
+import type { TreeHandle } from '@sittir/core';
+import type { AnyNodeData, AnyTreeNode, FormatRecord } from '@sittir/types';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getActiveBackend } from './backend.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+interface NativeParseResult {
+	readonly nodeData: AnyNodeData;
+	readonly format?: FormatRecord;
+}
 
 export interface EngineOptions {
 	readonly format?: FormatRecord;
@@ -22,33 +33,45 @@ export interface EngineOptions {
  * Try to construct a native engine if the backend is active and supports
  * the new engine API (constructor with options + dispose method).
  */
-function getNativeBackendEngine(options?: EngineOptions): SittirEngineLike | null {
+function getNativeBackendEngine(
+	options?: EngineOptions
+): SittirEngineLike | null {
 	const status = getActiveBackend();
 	if (status.name !== 'native') return null;
 
 	try {
-		const nativeOptions = options?.format 
-? { format: JSON.stringify(options.format) } 
-: undefined; 
-const engine = new status.native.SittirEngine(nativeOptions);
+		const nativeOptions = options?.format
+			? { format: JSON.stringify(options.format) }
+			: undefined;
+		const engine = new status.native.SittirEngine(nativeOptions);
+
+		function renderNativeNode(
+			node: Parameters<SittirEngineLike['render']>[0],
+			opts?: Parameters<SittirEngineLike['render']>[1]
+		): string {
+			assertNativeNodeData(node);
+			// Native engine does not yet support ignoreFormat option (Task 4).
+			// Until engine-owned format state is implemented, throw explicitly.
+			if (opts?.ignoreFormat === true) {
+				throw new Error(
+					'ignoreFormat option not yet supported by native engine. ' +
+						'Use JS engine or wait for Task 4 (engine-owned format state).'
+				);
+			}
+			return engine.render(JSON.stringify(node));
+		}
+
 		// Wrap the native engine to match SittirEngineLike interface
 		return {
 			render(node, opts) {
-				assertNativeNodeData(node);
-				// Native engine does not yet support ignoreFormat option (Task 4).
-				// Until engine-owned format state is implemented, throw explicitly.
-				if (opts?.ignoreFormat === true) {
-					throw new Error(
-						'ignoreFormat option not yet supported by native engine. ' +
-						'Use JS engine or wait for Task 4 (engine-owned format state).'
-					);
-				}
-				const json = JSON.stringify(node);
-				return engine.render(json);
+				return renderNativeNode(node, opts);
 			},
 
 			applyEdits(source, edits) {
-				return engine.applyEdits(source, edits.map(e => ({ ...e })));
+				return engine.applyEdits(
+					source,
+					edits.map((e) => ({ ...e }))
+				);
 			},
 
 			dispose() {
@@ -58,12 +81,16 @@ const engine = new status.native.SittirEngine(nativeOptions);
 			reader: {
 				parseAndRead(source: string) {
 					const json = engine.parseAndRead(source);
-					const parsed = JSON.parse(json);
+					const parsed = JSON.parse(json) as NativeParseResult;
 					// Native parseAndRead returns { nodeData, format? }
 					return {
 						root: parsed.nodeData,
 						tree: {
-							rootNode: null as any, // Native handle doesn't expose raw nodes
+							get rootNode(): AnyTreeNode {
+								throw new Error(
+									'rootNode unavailable on native engine handle; use tree.read()'
+								);
+							},
 							nodeById: () => {
 								throw new Error('nodeById unavailable on native engine handle');
 							},
@@ -71,22 +98,23 @@ const engine = new status.native.SittirEngine(nativeOptions);
 							read: (nodeId) => {
 								if (nodeId === undefined) return parsed.nodeData;
 								const nodeJson = engine.readNode(nodeId);
-								return JSON.parse(nodeJson);
+								return JSON.parse(nodeJson) as AnyNodeData;
 							},
 							render: (nodeId, opts) => {
-								const node = nodeId === undefined 
-									? parsed.nodeData 
-									: JSON.parse(engine.readNode(nodeId));
-								return engine.render(JSON.stringify(node));
+								const node =
+									nodeId === undefined
+										? parsed.nodeData
+										: (JSON.parse(engine.readNode(nodeId)) as AnyNodeData);
+								return renderNativeNode(node, opts);
 							},
 							format: parsed.format
-						}
+						} satisfies TreeHandle
 					};
 				},
 
 				readNode(nodeId) {
 					const json = engine.readNode(nodeId);
-					return JSON.parse(json);
+					return JSON.parse(json) as AnyNodeData;
 				}
 			}
 		};

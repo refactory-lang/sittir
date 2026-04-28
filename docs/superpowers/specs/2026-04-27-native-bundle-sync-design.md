@@ -55,12 +55,12 @@ The gate is not the bug. It is the mechanism that exposed drift.
 The generation flow must ensure that a normal regen updates both sides together:
 
 - TS-side generated templates and hash artifact (`src/hash.ts`)
-- native rust-render crate templates and hash artifact (`rust-render/src/hash.rs`)
+- native render-module crate templates and hash artifact (`render-module/src/hash.rs`)
 
 The likely implementation surface is:
 
 - `packages/codegen/src/cli.ts`
-- `packages/codegen/src/emitters/rust-render.ts`
+- `packages/codegen/src/emitters/render-module.ts`
 
 The fix should make it difficult for `--all` output to move forward while native bundle artifacts remain stale.
 
@@ -88,7 +88,7 @@ If parity still differs after sync restoration, that is a real renderer/template
 
 ## Data Flow
 
-1. Codegen emits TS template artifacts and native rust-render artifacts.
+1. Codegen emits TS template artifacts and native render-module artifacts.
 2. Hash artifacts are derived from the same emitted template bundle.
 3. Backend selection compares native runtime hash to generated TS hash.
 4. Native parity collection calls boundary `render()`.

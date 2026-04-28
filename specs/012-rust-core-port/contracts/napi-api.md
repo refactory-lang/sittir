@@ -1,8 +1,8 @@
 # Contract — napi API surface
 
-**Artifact**: `@sittir/{lang}-native` (platform-subpackaged `.node` addon)
+**Artifact**: `@sittir/{lang}` (grammar-local `.node` addon)
 **Consumer**: `@sittir/{lang}` top-level JS shim (runtime backend selection)
-**Maintained by**: `rust/crates/sittir-{lang}-napi/src/lib.rs` (one per grammar)
+**Maintained by**: `rust/crates/sittir-{lang}/src/lib.rs`
 
 ---
 
@@ -11,7 +11,7 @@
 ```ts
 // Type signature as seen from the TypeScript consumer side
 export class SittirEngine {
-	constructor();
+	constructor(grammar: 'rust' | 'typescript' | 'python', options?: { format?: string });
 
 	/** Template bundle hash baked at build time. Property access. */
 	readonly templateBundleHash: string;
@@ -27,6 +27,9 @@ export class SittirEngine {
 
 	/** Apply a batch of edits to a source string; returns modified source. */
 	applyEdits(source: string, edits: EditSpec[]): string;
+
+	/** Clear cached tree/source/inferred-format state held by this engine instance. */
+	dispose(): void;
 }
 
 export interface EditSpec {
@@ -40,10 +43,12 @@ export interface EditSpec {
 
 ## Method contracts
 
-### `new SittirEngine()`
+### `new SittirEngine(grammar, options?)`
 
-- **Pre**: none.
-- **Post**: engine is ready to accept `findAndRead` calls.
+- **Pre**: `grammar` is one of `'rust'`, `'typescript'`, or `'python'`.
+- **Post**: engine is ready to accept `findAndRead` calls. When `options.format`
+  is present, it is parsed once at construction and remains fixed for the
+  lifetime of that engine instance.
 - **Errors**: never throws. If the native binary can be constructed at all, construction succeeds.
 - **Thread**: caller's thread; instance is `!Send`/`!Sync`. Each JS worker thread needs its own.
 
@@ -76,11 +81,16 @@ export interface EditSpec {
 
 - **Pre**: `nodeJson` is a valid JSON-stringified NodeData. The `$type` field must match a registered kind in this grammar's template set.
 - **Post**: the rendered source string.
+- **Format resolution**:
+  1. engine-level `options.format` when present
+  2. cached tree-level inferred format from the most recent `parseAndRead`, but only for non-`$source: "factory"` nodes
+  3. canonical output when neither format source applies
 - **Errors**:
   - Invalid JSON → throws.
   - Unknown `$type` → throws `Error("no template registered for kind 'X'")`.
   - Template render error (askama) → throws with template filename + line. (Most template defects fail `cargo build` per FR-008; runtime errors here are limited to value-level issues the compile-time type check cannot catch, e.g. a template iterating a list that turned out empty under a strict-mode filter.)
-- **Purity**: stateless. Does not read or mutate engine state.
+- **State use**: render reads immutable engine config plus any cached tree-level
+  inferred format held by the engine. It does not mutate that state.
 
 ### `applyEdits(source: string, edits: EditSpec[]): string`
 
@@ -89,8 +99,16 @@ export interface EditSpec {
 - **Errors**:
   - `endPos < startPos` → throws `Error("invalid edit range")`.
   - `endPos > source.byteLength` → throws.
-  - Overlapping edits → NOT detected; last-wins behavior. Documented consumer responsibility (matches existing TS `edit.ts` behavior).
+- Overlapping edits → NOT detected; last-wins behavior. Documented consumer responsibility (matches existing TS `edit.ts` behavior).
 - **Purity**: stateless.
+
+### `dispose(): void`
+
+- **Pre**: none.
+- **Post**: cached `source`, cached parse tree, and cached inferred tree-level format are cleared.
+- **State retained**: immutable engine-level `options.format`, when present, remains attached to the engine instance.
+- **Errors**: never throws.
+- **Use case**: release per-source cached state without constructing a new engine.
 
 ---
 
@@ -107,5 +125,5 @@ All errors are napi-rs `Error` instances with a `.message` populated from the Ru
 
 ## Version contract
 
-- The `@sittir/{lang}-native` npm package version MUST match the `@sittir/{lang}` package version within a MAJOR.MINOR window. Patch-level divergence is tolerated via the hash check (FR-020).
-- Breaking changes to this napi surface (method signature changes) require a MAJOR bump of both packages.
+- The `@sittir/{lang}` npm package version MUST match the `@sittir/{lang}` package version within a MAJOR.MINOR window. Patch-level divergence is tolerated via the hash check (FR-020).
+- Breaking changes to this napi surface (method signature changes) require a MAJOR bump of `@sittir/{lang}` and each consuming grammar package.

@@ -27,15 +27,16 @@ export { createRenderer } from '@sittir/core';
 export type { NodeData, TreeNode } from './types.js';
 export type { Edit, CSTNode, RenderContext } from '@sittir/types';
 
-// Spec 012 boundary shim — backend-dispatching render/toEdit/applyEdits.
-// Spec 020 T003 — engine factory and default-engine delegation.
+// Spec 012 boundary shim — backend-dispatching render/toEdit/
+// applyEdits. Routes through `getActiveBackend()` so consumers
+// (codemods, scripts) get native automatically when the napi
+// `.node` is loadable, TS otherwise. The raw `createRenderer`
+// re-export above stays for callers that want the TS engine
+// explicitly without going through the selector.
+export { render, toEdit, applyEdits } from './boundary.js';
 export { createEngine } from './engine.js';
 export type { EngineOptions } from './engine.js';
-export { render, toEdit, applyEdits } from './boundary.js';
 
 // Backend selection (spec 012) — native vs. typescript fallback shim.
 export { getActiveBackend } from './backend.js';
 export type { BackendName, BackendStatus } from './backend.js';
-
-// Engine-facing types from @sittir/core
-export type { SittirEngineLike, SittirEngineReader } from '@sittir/core';

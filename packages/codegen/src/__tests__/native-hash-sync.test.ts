@@ -28,7 +28,10 @@ function readTsHash(grammar: Grammar): CheckedInHash {
 }
 
 function readNativeHash(grammar: Grammar): CheckedInHash {
-	const path = resolve(repoRoot, `rust/crates/sittir-render-${grammar}/src/hash.rs`);
+	const path = resolve(
+		repoRoot,
+		`rust/crates/sittir-${grammar}/src/render/hash.rs`
+	);
 	const text = readFileSync(path, 'utf8');
 	const match = /TEMPLATE_BUNDLE_HASH: &str = "([0-9a-f]{64})"/.exec(text);
 	if (!match?.[1]) {

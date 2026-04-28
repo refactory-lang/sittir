@@ -32,6 +32,6 @@
 ## Notes
 
 - Items marked incomplete require spec updates before `/speckit.clarify` or `/speckit.plan`.
-- This remains an internal-tooling feature. The "user" is a maintainer working on the render/codegen pipeline, so the spec intentionally names contract surfaces such as `NodeData`, `TemplateContext`, Askama, canonical `.jinja` templates, centralized native render crates, and parity baselines.
+- This remains an internal-tooling feature. The "user" is a maintainer working on the render/codegen pipeline, so the spec intentionally names contract surfaces such as `NodeData`, `TemplateContext`, Askama, canonical `.jinja` templates, grammar-owned native/render modules, and parity baselines.
 - The revised 2026-04-28 draft preserves the earlier 020 convergence content as baseline scope, then layers the new Level 1 and Level 3 optimization stages on top.
 - No clarification markers remain because the attached design already fixes the main scope decisions: Level 1 first, Level 3 second, Askama retained, `.jinja` unchanged, and the N-API boundary unchanged.

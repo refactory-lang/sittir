@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { assertNativeNodeData, isNativeNodeData } from '../src/native-boundary.ts';
+import {
+	assertNativeNodeData,
+	isNativeNodeData
+} from '../src/native-boundary.ts';
 import type { AnyNodeData, FormatRecord } from '../src/types.ts';
 
 const leaf: AnyNodeData = {

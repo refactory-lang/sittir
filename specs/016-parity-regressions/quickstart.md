@@ -103,7 +103,7 @@ Every changed line should either:
 
 If any `pass` count decreased, your fix waterfalled negatively — STOP, investigate, expand the fix or split the commit so the regression is recovered before landing.
 
-**Waterfall reproducibility check** (lesson from 016 Cluster A): when your commit reports a positive waterfall on the native backend (e.g. "+N native python kinds incidentally fixed"), verify the count is reproducible from the COMMIT'S CONTENT, not from residual local state. Specifically, native-mode counts depend on the napi `.node` artifacts loaded at `collect-baseline` time. If you rebuilt one of the napi crates locally as part of the cluster work — e.g. `cargo build` ran inside `rust/crates/sittir-{lang}-napi/` — the `.node` artifact in your working tree may be ahead of master and the `+N waterfall` you see may not be reproducible by a CI run that downloads the same artifact from `napi-build`.
+**Waterfall reproducibility check** (lesson from 016 Cluster A): when your commit reports a positive waterfall on the native backend (e.g. "+N native python kinds incidentally fixed"), verify the count is reproducible from the COMMIT'S CONTENT, not from residual local state. Specifically, native-mode counts depend on the napi `.node` artifacts loaded at `collect-baseline` time. If you rebuilt one of the napi crates locally as part of the cluster work — e.g. `cargo build` ran inside `rust/crates/sittir-{lang}/` — the `.node` artifact in your working tree may be ahead of master and the `+N waterfall` you see may not be reproducible by a CI run that downloads the same artifact from `napi-build`.
 
 To check reproducibility before pushing:
 
@@ -111,7 +111,7 @@ To check reproducibility before pushing:
 # Save your current state.
 git stash
 # Force a fresh napi rebuild from the committed source.
-cargo build --release -p sittir-rust-napi -p sittir-typescript-napi -p sittir-python-napi
+cargo build --release -p sittir-{lang}
 # Re-collect.
 SITTIR_BACKEND=native npx tsx packages/codegen/src/scripts/collect-baseline.ts > /tmp/native-clean.json 2>/dev/null
 # Compare with the JSON in your stashed state.

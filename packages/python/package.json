@@ -48,8 +48,5 @@
 		"tree-sitter-python": "^0.25.0",
 		"type-fest": "^5.6.0"
 	},
-	"optionalDependencies": {
-		"@sittir/python-native": "workspace:*"
-	},
-	"//peer": "spec 012 T038: @sittir/python-native is a workspace optionalDependency."
+	"//native": "Native artifacts are grammar-local implementation details for @sittir/python, built from rust/crates/sittir-python."
 }

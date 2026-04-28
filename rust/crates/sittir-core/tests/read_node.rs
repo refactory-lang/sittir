@@ -18,7 +18,14 @@ use sittir_core::types::{NodeData, Source};
 
 /// The eight top-level keys permitted on the wire, per data-model.md §1.
 const ALLOWED_TOP_LEVEL_KEYS: &[&str] = &[
-    "$type", "$source", "$named", "$fields", "$children", "$text", "$span", "$nodeId",
+    "$type",
+    "$source",
+    "$named",
+    "$fields",
+    "$children",
+    "$text",
+    "$span",
+    "$nodeId",
 ];
 
 /// Recursively assert that every object-shaped JSON node in `value`

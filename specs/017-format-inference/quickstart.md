@@ -22,7 +22,7 @@ const source = `fn greet(\tname: &str) { println!("{}", name); }`;
 
 // Native engine parses, reads, and infers format in one call.
 // Returns NodeData (root) and populates treeHandle.format.
-const engine = new SittirEngine();         // from @sittir/rust-native
+const engine = new SittirEngine('rust');   // from @sittir/{lang}
 const nodeData = engine.parseAndRead(source); // treeHandle.format is set
 
 // Pass the inferred format record to the renderer via RenderContext.

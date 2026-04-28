@@ -101,6 +101,11 @@ function assertNativeNodeDataInternal(
 	assertString(value.$type, `${path}.$type`);
 	assertNativeSource(value.$source, `${path}.$source`);
 	assertBoolean(value.$named, `${path}.$named`);
+	if (value.$format !== undefined) {
+		throw new TypeError(
+			`${path}.$format is not supported by the native render boundary; pass format separately`
+		);
+	}
 	if (value.$fields !== undefined)
 		assertNativeFields(value.$fields, `${path}.$fields`);
 	if (value.$children !== undefined)

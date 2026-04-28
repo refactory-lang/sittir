@@ -46,7 +46,10 @@ interface InternalRenderContext {
 	ignoreFormat?: boolean;
 }
 
-function buildRenderContext(config: RulesConfig, options?: RendererOptions): InternalRenderContext {
+function buildRenderContext(
+	config: RulesConfig,
+	options?: RendererOptions
+): InternalRenderContext {
 	const prefix = config.expandoChar ?? '$';
 	const varPattern =
 		prefix === '$'
@@ -55,7 +58,13 @@ function buildRenderContext(config: RulesConfig, options?: RendererOptions): Int
 					`(${escapeRegex(prefix)}{3}|${escapeRegex(prefix)}{2}|${escapeRegex(prefix)}_|${escapeRegex(prefix)})([A-Z][A-Z0-9_]*)`,
 					'g'
 				);
-	return { config, varPattern, prefix, format: options?.format, ignoreFormat: options?.ignoreFormat };
+	return {
+		config,
+		varPattern,
+		prefix,
+		format: options?.format,
+		ignoreFormat: options?.ignoreFormat
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -150,6 +159,47 @@ export type PreparedRender =
 			readonly substitutions: readonly Substitution[];
 	  };
 
+function isAnonEntry(value: unknown): value is AnyNodeData {
+	return (
+		value != null &&
+		typeof value === 'object' &&
+		(value as AnyNodeData).$named === false
+	);
+}
+
+function collectAnonText(node: AnyNodeData): string | null {
+	const fieldsAllAnon =
+		!node.$fields ||
+		Object.values(node.$fields).every((value) =>
+			Array.isArray(value) ? value.every(isAnonEntry) : isAnonEntry(value)
+		);
+	const childrenAllAnon =
+		!node.$children ||
+		(node.$children as readonly AnyNodeData[]).every(
+			(child) => child.$named === false
+		);
+	if (!fieldsAllAnon || !childrenAllAnon) return null;
+	if (node.$text !== undefined) return node.$text;
+
+	const parts: string[] = [];
+	if (node.$fields) {
+		for (const value of Object.values(node.$fields)) {
+			const items = Array.isArray(value) ? value : [value];
+			for (const item of items) {
+				const anon = item as AnyNodeData | null | undefined;
+				if (anon?.$text !== undefined) parts.push(anon.$text);
+			}
+		}
+	}
+	if (node.$children) {
+		for (const child of node.$children) {
+			const anon = child as AnyNodeData | null | undefined;
+			if (anon?.$text !== undefined) parts.push(anon.$text);
+		}
+	}
+	return parts.length > 0 ? parts.join('') : null;
+}
+
 /**
  * Bag passed to Nunjucks for a single render. Named field slots arrive
  * as strings (single) or `string[]` (multi — the walker's
@@ -235,47 +285,8 @@ export function prepare(
 		//
 		// Narrow fallback so a real missing-rule bug (node with actual
 		// named fields or named children) still throws.
-		const isAnonEntry = (v: unknown): boolean => {
-			if (v == null || typeof v !== 'object') return false;
-			const n = v as AnyNodeData;
-			return n.$named === false;
-		};
-		const fieldsAllAnon =
-			!node.$fields ||
-			Object.values(node.$fields).every((v) =>
-				Array.isArray(v) ? v.every(isAnonEntry) : isAnonEntry(v)
-			);
-		const childrenAllAnon =
-			!node.$children ||
-			(node.$children as readonly AnyNodeData[]).every(
-				(c) => c.$named === false
-			);
-		if (fieldsAllAnon && childrenAllAnon) {
-			// Parsed-tree path: $text is the full span (present when DEBUG_TEXT=1
-			// or the node is a true leaf). Branch $text is omitted by default —
-			// synthesize from anonymous entries when $text is absent.
-			if (node.$text !== undefined) return { kind: 'text', text: node.$text };
-			const parts: string[] = [];
-			if (node.$fields) {
-				for (const v of Object.values(node.$fields)) {
-					const items = Array.isArray(v) ? v : [v];
-					for (const item of items) {
-						const n = item as AnyNodeData | null | undefined;
-						if (n?.$text !== undefined) parts.push(n.$text);
-					}
-				}
-			}
-			if (node.$children) {
-				for (const c of node.$children) {
-					const n = c as AnyNodeData | null | undefined;
-					if (n?.$text !== undefined) parts.push(n.$text);
-				}
-			}
-			// Only succeed when there was something to synthesize from.
-			// An empty node ($fields: {}, no children, no $text) is a real
-			// branch-without-template error, not a degenerate token.
-			if (parts.length > 0) return { kind: 'text', text: parts.join('') };
-		}
+		const fallbackText = collectAnonText(node);
+		if (fallbackText !== null) return { kind: 'text', text: fallbackText };
 		throw new Error(`No render rule for '${node.$type}'`);
 	}
 
@@ -645,7 +656,11 @@ function resolveFormat(
 }
 
 /** Apply the resolved FormatRecord for this node to `canonical`, or return `canonical` unchanged. */
-function withFormat(canonical: string, node: AnyNodeData, ctx: InternalRenderContext): string {
+function withFormat(
+	canonical: string,
+	node: AnyNodeData,
+	ctx: InternalRenderContext
+): string {
 	const fmt = resolveFormat(node, ctx);
 	return fmt !== undefined ? applyFormat(canonical, fmt) : canonical;
 }
@@ -1160,46 +1175,8 @@ function renderNunjucks(
  * know how to render.
  */
 function tokenShapedFallback(node: AnyNodeData): string {
-	const isAnonEntry = (v: unknown): boolean => {
-		if (v == null || typeof v !== 'object') return false;
-		return (v as AnyNodeData).$named === false;
-	};
-	const fieldsAllAnon =
-		!node.$fields ||
-		Object.values(node.$fields).every((v) =>
-			Array.isArray(v) ? v.every(isAnonEntry) : isAnonEntry(v)
-		);
-	const childrenAllAnon =
-		!node.$children ||
-		(node.$children as readonly AnyNodeData[]).every((c) => c.$named === false);
-	if (fieldsAllAnon && childrenAllAnon) {
-		// Parsed-tree path: $text is the full span (present when DEBUG_TEXT=1
-		// or the node is a true leaf). Factory / no-debug path: synthesize by
-		// collecting each anonymous entry's $text in field-declaration order,
-		// then appending anonymous children. Covers token-shaped named kinds
-		// whose $text was omitted because readNode treats them as branches.
-		if (node.$text !== undefined) return node.$text;
-		const parts: string[] = [];
-		if (node.$fields) {
-			for (const v of Object.values(node.$fields)) {
-				const items = Array.isArray(v) ? v : [v];
-				for (const item of items) {
-					const n = item as AnyNodeData | null | undefined;
-					if (n?.$text !== undefined) parts.push(n.$text);
-				}
-			}
-		}
-		if (node.$children) {
-			for (const c of node.$children) {
-				const n = c as AnyNodeData | null | undefined;
-				if (n?.$text !== undefined) parts.push(n.$text);
-			}
-		}
-		// Only succeed when there was something to synthesize from.
-		// An empty node ($fields: {}, no children, no $text) is a real
-		// branch-without-template error, not a degenerate token.
-		if (parts.length > 0) return parts.join('');
-	}
+	const fallbackText = collectAnonText(node);
+	if (fallbackText !== null) return fallbackText;
 	throw new Error(
 		`No render template for '${node.$type}' (no <kind>.jinja file and node has named fields/children)`
 	);

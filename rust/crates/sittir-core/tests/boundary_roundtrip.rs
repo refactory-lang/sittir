@@ -23,7 +23,6 @@ fn sample_leaf() -> NodeData {
         text: Some("foo".to_string()),
         span: Some(Span { start: 42, end: 45 }),
         node_id: Some(7),
-        format: None,
     }
 }
 
@@ -44,7 +43,6 @@ fn sample_branch() -> NodeData {
         text: None,
         span: None,
         node_id: None,
-        format: None,
     }
 }
 
@@ -72,7 +70,10 @@ fn absent_optionals_stay_absent_on_the_wire() {
     let obj = v.as_object().expect("object");
     assert!(!obj.contains_key("$text"), "absent $text must be elided");
     assert!(!obj.contains_key("$span"), "absent $span must be elided");
-    assert!(!obj.contains_key("$nodeId"), "absent $nodeId must be elided");
+    assert!(
+        !obj.contains_key("$nodeId"),
+        "absent $nodeId must be elided"
+    );
     // Required trio still present.
     assert!(obj.contains_key("$type"));
     assert!(obj.contains_key("$source"));
@@ -96,8 +97,14 @@ fn no_unexpected_top_level_keys() {
     // Enumerate the 8 allowed top-level keys per data-model.md §1.
     // Any other top-level `$`-key is a contract violation.
     const ALLOWED: &[&str] = &[
-        "$type", "$source", "$named",
-        "$fields", "$children", "$text", "$span", "$nodeId", "$format",
+        "$type",
+        "$source",
+        "$named",
+        "$fields",
+        "$children",
+        "$text",
+        "$span",
+        "$nodeId",
     ];
     let json = serde_json::to_string(&sample_branch()).unwrap();
     let v = wire(&json);
@@ -138,8 +145,7 @@ fn field_value_deserializes_from_each_variant() {
     let single: FieldValue = serde_json::from_str(&obj_json).unwrap();
     assert!(matches!(single, FieldValue::Single(_)));
 
-    let arr_json =
-        serde_json::to_string(&vec![sample_leaf(), sample_leaf()]).unwrap();
+    let arr_json = serde_json::to_string(&vec![sample_leaf(), sample_leaf()]).unwrap();
     let multi: FieldValue = serde_json::from_str(&arr_json).unwrap();
     assert!(matches!(multi, FieldValue::Multiple(ref v) if v.len() == 2));
 

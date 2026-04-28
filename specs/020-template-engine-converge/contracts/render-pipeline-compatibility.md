@@ -9,7 +9,7 @@ Define the observable compatibility boundaries that 020 must preserve while fini
 | Surface | Contract |
 | --- | --- |
 | Canonical templates | `packages/{lang}/templates/` remains the only authored `.jinja` source for each grammar. |
-| Native crate location | The only valid generated native crate locations are `rust/crates/sittir-render-rust`, `rust/crates/sittir-render-typescript`, and `rust/crates/sittir-render-python`. |
+| Native crate location | Generated Askama render modules live under `rust/crates/sittir-{lang}/src/render`; grammar-owned N-API entrypoints, tree-sitter bindings, template hashes, and backend adapters live under `rust/crates/sittir-{lang}` and own the native package boundary. |
 | Regenerate workflow | `npx tsx packages/codegen/src/cli.ts --grammar X --all --output packages/X/src` remains the standard artifact refresh path. |
 | Public native render boundary | The native render entry remains `render(node_json) -> String`; no public N-API signature change is introduced by this feature. |
 | Template engine choice | Askama remains the native template engine and canonical `.jinja` files remain the authored template format. |
@@ -40,8 +40,8 @@ Define the observable compatibility boundaries that 020 must preserve while fini
 
 | Stage | Required Evidence |
 | --- | --- |
-| Baseline convergence complete | Canonical template directory, centralized native crate paths, and standard regenerate workflow are all in place. |
-| Level 1 complete | Regenerated native render crates show borrowed Askama views; parity remains byte-identical on both backends. |
+| Baseline convergence complete | Canonical template directory, grammar-owned native crate paths, and standard regenerate workflow are all in place. |
+| Level 1 complete | Regenerated native render modules show borrowed Askama views; parity remains byte-identical on both backends. |
 | Level 3 dispatch switch | Generated direct-render functions are active and parity remains byte-identical for representative proof cases. |
 | Level 3 cleanup | Full supported-grammar parity re-proof plus removal of obsolete preparation/filter path from the runtime flow. |
 

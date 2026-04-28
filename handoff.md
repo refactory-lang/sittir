@@ -50,12 +50,12 @@ What works in native mode today: rendering (perf-tracking collected 893 FFI call
 **Fix scope** (deferred from 012 rust-core-port):
 
 - Likely implementation in `packages/core/src/loader.ts` or `cst.ts` (the native-handle adapter).
-- May need a Rust-side index (HashMap<NodeId, NodeRef>) in `rust/crates/sittir-rust-napi/src/lib.rs` so the napi binding can answer the lookup in O(1).
+- May need a Rust-side index (HashMap<NodeId, NodeRef>) in `rust/crates/sittir-{lang}/src/lib.rs` so the N-API binding can answer the lookup in O(1).
 - The TS handle has the same method working (`packages/codegen/src/validate/common.ts` — search for the TS-side handle implementation as the reference).
 
 **Sequence implication**: ship `nodeById()` BEFORE C1/C2 land — otherwise the un-renderable kind regressions can't be verified in native mode, and the handoff's "zero regression" guarantee on those clusters is unenforceable.
 
-**Risk**: medium. Touches FFI surface. Must coordinate with napi rebuild (`pnpm -C rust/crates/sittir-rust-napi run build`).
+**Risk**: medium. Touches FFI surface. Must coordinate with napi rebuild (`pnpm -C rust/crates/sittir-{lang} run build`).
 
 ---
 
@@ -104,7 +104,7 @@ The branch should be ready for PR after the un-renderable C1+C2 land and the lin
 
 #### **#31 — Spec 020: drop `_list` suffix divergence**
 
-- Concrete + scoped. TS templates use `{{ override_modifier }}`; rust-render mirrors use `{{ override_modifier_list }}` via `cli.ts:rewriteListUsage`. Two names for one fact (DRY anti-pattern).
+- Concrete + scoped. TS templates use `{{ override_modifier }}`; render-module mirrors use `{{ override_modifier_list }}` via `cli.ts:rewriteListUsage`. Two names for one fact (DRY anti-pattern).
 - Per memory note `project_template_list_suffix_divergence`: option 1 is to drop the suffix entirely.
 - Small spec. Worktree may already be staged at `.worktrees/020-*` per `project_pending_specs_post_016`.
 

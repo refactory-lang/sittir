@@ -11,10 +11,7 @@ import {
 } from '../compiler/node-map.ts';
 import type { SeqRule } from '../compiler/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import {
-	emitHashFiles,
-	emitRenderCrate
-} from '../emitters/rust-render.ts';
+import { emitHashFiles, emitRenderModule } from '../emitters/render-module.ts';
 import { fixturesOutputPath } from '../emitters/parity-fixtures.ts';
 
 const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(
@@ -33,7 +30,10 @@ function makeMinimalNodeMap(): NodeMap {
 			}
 		]
 	};
-	const nodes = new Map<string, AssembledBranch | AssembledLeaf | AssembledKeyword>([
+	const nodes = new Map<
+		string,
+		AssembledBranch | AssembledLeaf | AssembledKeyword
+	>([
 		['function_item', new AssembledBranch('function_item', nameRule, nameRule)],
 		[
 			'identifier',
@@ -52,47 +52,46 @@ function makeMinimalNodeMap(): NodeMap {
 }
 
 describe('render pipeline optimization — retained baseline convergence', () => {
-	it('emits native render artifacts under rust/crates/sittir-render-{lang}', () => {
+	it('emits native render artifacts under rust/crates/sittir-{lang}/src/render', () => {
 		const files = [
-			{ filename: 'function_item.jinja', content: '{# @generated #}\n{{ name }}' }
+			{
+				filename: 'function_item.jinja',
+				content: '{# @generated #}\n{{ name }}'
+			}
 		] as const;
 
 		const hashes = emitHashFiles('rust', files);
 		expect(hashes.hashRs.path).toBe(
-			'rust/crates/sittir-render-rust/src/hash.rs'
+			'rust/crates/sittir-rust/src/render/hash.rs'
 		);
 		expect(hashes.hashTs.path).toBe('packages/rust/src/hash.ts');
 
-		const emitted = emitRenderCrate('rust', files, makeMinimalNodeMap());
+		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap());
 		expect(emitted.templatesRs.path).toBe(
-			'rust/crates/sittir-render-rust/src/templates.rs'
+			'rust/crates/sittir-rust/src/render/templates.rs'
 		);
-		expect(emitted.libRs.path).toBe('rust/crates/sittir-render-rust/src/lib.rs');
-		expect(emitted.cargoToml.path).toBe(
-			'rust/crates/sittir-render-rust/Cargo.toml'
+		expect(emitted.libRs.path).toBe(
+			'rust/crates/sittir-rust/src/render/mod.rs'
 		);
 	});
 
-	it('writes extracted parity fixtures beside the centralized native render crate', () => {
+	it('writes extracted parity fixtures beside the grammar native crate', () => {
 		expect(fixturesOutputPath('rust')).toBe(
-			'rust/crates/sittir-render-rust/test-fixtures.json'
+			'rust/crates/sittir-rust/test-fixtures.json'
 		);
 		expect(fixturesOutputPath('typescript')).toBe(
-			'rust/crates/sittir-render-typescript/test-fixtures.json'
+			'rust/crates/sittir-typescript/test-fixtures.json'
 		);
 		expect(fixturesOutputPath('python')).toBe(
-			'rust/crates/sittir-render-python/test-fixtures.json'
+			'rust/crates/sittir-python/test-fixtures.json'
 		);
 	});
 
-	it('tracks centralized render crates in the Cargo workspace instead of package-local rust-render crates', () => {
+	it('tracks grammar-owned native crates in the Cargo workspace instead of separate render modules', () => {
 		const cargoToml = readFileSync(resolve(repoRoot, 'Cargo.toml'), 'utf8');
-		expect(cargoToml).toContain('"rust/crates/sittir-render-rust"');
-		expect(cargoToml).toContain('"rust/crates/sittir-render-typescript"');
-		expect(cargoToml).toContain('"rust/crates/sittir-render-python"');
-		expect(cargoToml).not.toContain('"packages/rust/rust-render"');
-		expect(cargoToml).not.toContain('"packages/typescript/rust-render"');
-		expect(cargoToml).not.toContain('"packages/python/rust-render"');
+		expect(cargoToml).toContain('"rust/crates/sittir-rust"');
+		expect(cargoToml).toContain('"rust/crates/sittir-typescript"');
+		expect(cargoToml).toContain('"rust/crates/sittir-python"');
 	});
 });
 
@@ -106,21 +105,21 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 			}
 		] as const;
 
-		const emitted = emitRenderCrate('rust', files, makeMinimalNodeMap());
+		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap());
 		expect(emitted.templatesRs.contents).toContain(
-			'pub struct FunctionItemTemplate<\'a> {'
+			"pub struct FunctionItemTemplate<'a> {"
 		);
 		expect(emitted.templatesRs.contents).toContain(
-			'    pub children: &\'a [String],'
+			"    pub children: &'a [String],"
 		);
 		expect(emitted.templatesRs.contents).toContain(
-			'    pub children_list: &\'a [String],'
+			"    pub children_list: &'a [String],"
 		);
-		expect(emitted.templatesRs.contents).toContain('    pub variant: &\'a str,');
-		expect(emitted.templatesRs.contents).toContain('    pub text: &\'a str,');
-		expect(emitted.templatesRs.contents).toContain('    pub name: &\'a str,');
+		expect(emitted.templatesRs.contents).toContain("    pub variant: &'a str,");
+		expect(emitted.templatesRs.contents).toContain("    pub text: &'a str,");
+		expect(emitted.templatesRs.contents).toContain("    pub name: &'a str,");
 		expect(emitted.templatesRs.contents).toContain(
-			'    pub name_list: &\'a [String],'
+			"    pub name_list: &'a [String],"
 		);
 		expect(emitted.templatesRs.contents).toContain(
 			'        children: children.items.as_slice(),'
@@ -129,10 +128,18 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 			'        children_list: children.items.as_slice(),'
 		);
 		expect(emitted.templatesRs.contents).toContain('        variant,');
-		expect(emitted.templatesRs.contents).toContain('        text: text.as_str(),');
-		expect(emitted.templatesRs.contents).toContain('        name: field_0.scalar.as_str(),');
-		expect(emitted.templatesRs.contents).toContain('        name_list: field_0.items.as_slice(),');
-		expect(emitted.templatesRs.contents).not.toContain('.cloned().unwrap_or_default()');
+		expect(emitted.templatesRs.contents).toContain(
+			'        text: text.as_str(),'
+		);
+		expect(emitted.templatesRs.contents).toContain(
+			'        name: field_0.scalar.as_str(),'
+		);
+		expect(emitted.templatesRs.contents).toContain(
+			'        name_list: field_0.items.as_slice(),'
+		);
+		expect(emitted.templatesRs.contents).not.toContain(
+			'.cloned().unwrap_or_default()'
+		);
 	});
 });
 
@@ -146,11 +153,12 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 			}
 		] as const;
 
-		const emitted = emitRenderCrate('rust', files, makeMinimalNodeMap());
+		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap());
 
 		expect(emitted.templatesRs.contents).toContain('fn resolve_leaf');
 		expect(emitted.templatesRs.contents).toContain('fn resolve_optional');
 		expect(emitted.templatesRs.contents).toContain('fn resolve_required');
+		expect(emitted.templatesRs.contents).toContain('fn missing_required_field');
 		expect(emitted.templatesRs.contents).toContain('fn resolve_children');
 		expect(emitted.templatesRs.contents).toContain(
 			'pub fn render_dispatch(node: &::sittir_core::types::NodeData)'
@@ -159,11 +167,35 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted.templatesRs.contents).toContain(
 			'"function_item" => render_function_item(node)'
 		);
-		expect(emitted.templatesRs.contents).toContain('resolve_field(node, "name")');
+		expect(emitted.templatesRs.contents).toContain(
+			'resolve_field(node, "name", false)'
+		);
+		expect(emitted.templatesRs.contents).toContain(
+			`format!("render_dispatch: missing required field '{}' on '{}'", name, node.type_)`
+		);
 		expect(emitted.templatesRs.contents).not.toContain('TemplateContext');
-		expect(emitted.templatesRs.contents).not.toContain('pub struct RustGrammarMeta');
-		expect(emitted.libRs.contents).toContain('pub use templates::render_dispatch;');
+		expect(emitted.templatesRs.contents).not.toContain(
+			'pub struct RustGrammarMeta'
+		);
+		expect(emitted.libRs.contents).toContain(
+			'pub use templates::render_dispatch;'
+		);
 		expect(emitted.libRs.contents).not.toContain('RustGrammarMeta');
+	});
+
+	it('marks unguarded required template fields as hard-required', () => {
+		const files = [
+			{
+				filename: 'function_item.jinja',
+				content: '{# @generated #}\n{{ name }} {{ text }}'
+			}
+		] as const;
+
+		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap());
+
+		expect(emitted.templatesRs.contents).toContain(
+			'resolve_field(node, "name", true)'
+		);
 	});
 
 	it('removes the shared prepare bridge while keeping the native render boundary unchanged', () => {
@@ -172,12 +204,12 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 			'utf8'
 		);
 		const rustNapi = readFileSync(
-			resolve(repoRoot, 'rust/crates/sittir-rust-napi/src/lib.rs'),
+			resolve(repoRoot, 'rust/crates/sittir-rust/src/lib.rs'),
 			'utf8'
 		);
 
 		expect(coreLib).not.toContain('pub mod prepare;');
-		expect(rustNapi).toContain('let canonical = render_dispatch(&node)');
+		expect(rustNapi).toContain('render_dispatch(node)');
 		expect(rustNapi).not.toContain('build_template_context');
 	});
 });

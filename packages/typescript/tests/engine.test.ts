@@ -38,18 +38,32 @@ describe('engine', () => {
 						}
 						applyEdits(
 							source: string,
-							_edits: { startPos: number; endPos: number; insertedText: string }[]
+							_edits: {
+								startPos: number;
+								endPos: number;
+								insertedText: string;
+							}[]
 						): string {
 							return source;
 						}
 						parseAndRead(_source: string): string {
 							return JSON.stringify({
-								nodeData: { $type: 'identifier', $source: 'ts', $named: true, $text: 'x' },
+								nodeData: {
+									$type: 'identifier',
+									$source: 'ts',
+									$named: true,
+									$text: 'x'
+								},
 								format: undefined
 							});
 						}
 						readNode(_nodeId: number): string {
-							return JSON.stringify({ $type: 'identifier', $source: 'ts', $named: true, $text: 'x' });
+							return JSON.stringify({
+								$type: 'identifier',
+								$source: 'ts',
+								$named: true,
+								$text: 'x'
+							});
 						}
 						dispose(): void {}
 					}
@@ -82,7 +96,11 @@ describe('engine', () => {
 						}
 						applyEdits(
 							source: string,
-							_edits: { startPos: number; endPos: number; insertedText: string }[]
+							_edits: {
+								startPos: number;
+								endPos: number;
+								insertedText: string;
+							}[]
 						): string {
 							return source;
 						}
@@ -95,7 +113,12 @@ describe('engine', () => {
 		const { createEngine } = await import('../src/engine.js');
 		const engine = createEngine();
 
-		const node = { $type: 'identifier', $source: 'factory' as const, $named: true, $text: 'x' };
+		const node = {
+			$type: 'identifier',
+			$source: 'factory' as const,
+			$named: true,
+			$text: 'x'
+		};
 
 		// ignoreFormat: false or undefined should work
 		expect(() => engine.render(node)).not.toThrow();
@@ -103,6 +126,69 @@ describe('engine', () => {
 
 		// ignoreFormat: true should throw with explicit message
 		expect(() => engine.render(node, { ignoreFormat: true })).toThrow(
+			/ignoreFormat option not yet supported by native engine/
+		);
+	});
+
+	it('native tree handle render rejects ignoreFormat option', async () => {
+		vi.doMock('../src/backend.js', () => ({
+			getActiveBackend: () => ({
+				name: 'native',
+				hashMatch: true,
+				native: {
+					SittirEngine: class {
+						render(_nodeJson: string): string {
+							return 'const x = 1;';
+						}
+						applyEdits(
+							source: string,
+							_edits: {
+								startPos: number;
+								endPos: number;
+								insertedText: string;
+							}[]
+						): string {
+							return source;
+						}
+						parseAndRead(_source: string): string {
+							return JSON.stringify({
+								nodeData: {
+									$type: 'identifier',
+									$source: 'ts',
+									$named: true,
+									$text: 'x'
+								},
+								format: undefined
+							});
+						}
+						readNode(_nodeId: number): string {
+							return JSON.stringify({
+								$type: 'identifier',
+								$source: 'ts',
+								$named: true,
+								$text: 'x'
+							});
+						}
+						dispose(): void {}
+					}
+				}
+			})
+		}));
+
+		const { createEngine } = await import('../src/engine.js');
+		const engine = createEngine();
+		const parsed = engine.reader?.parseAndRead('const x = 1;');
+		expect(parsed).toBeDefined();
+		if (!parsed) {
+			throw new Error('expected native engine reader to be available');
+		}
+		const render = parsed.tree.render;
+		expect(render).toBeDefined();
+		if (!render) {
+			throw new Error('expected native tree handle render to be available');
+		}
+
+		expect(() => render(undefined, { ignoreFormat: true })).toThrow(
 			/ignoreFormat option not yet supported by native engine/
 		);
 	});

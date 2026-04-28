@@ -1,12 +1,13 @@
 /**
  * T020 — Format roundtrip test for Rust grammar fixtures.
  *
- * Spec 017 US1: parse via native reader, set treeHandle.format,
- * render with JS engine, assert result equals fixture source byte-for-byte.
+ * Spec 017 US1: parse via native reader, then render through engine surfaces
+ * on both paths so parity comes from engine-owned format state rather than
+ * helper-level post-processing.
  *
- * Phase 1 status: native reader populates format via extract_format (Rust).
- * The JS applyFormat applies boundary.leading/trailing only; per-line
- * indentation restoration is Phase 2 (slots/separators).
+ * Phase 1 status: native reader populates inferred format via extract_format
+ * (Rust). The JS render engine still replays only boundary.leading/trailing;
+ * per-line indentation restoration remains Phase 2 (slots/separators).
  */
 
 import { describe, it, expect } from 'vitest';
@@ -16,7 +17,9 @@ import {
 	loadFixtureSource,
 	loadFormatCorpusEntries,
 	parseNativeFixture,
+	parseTsFixture,
 	pickRenderFixture,
+	createTsRenderEngine,
 	renderNativeNodeData,
 	renderTsNodeData,
 	toBoundaryNodeData,
@@ -28,7 +31,7 @@ describe('format-roundtrip rust fixtures', () => {
 
 	for (const entry of rustFixtures) {
 		it.todo(
-			`${entry.fixture}: byte-equal roundtrip (Phase 2 — needs slot/indent restoration)`,
+			`${entry.fixture}: byte-equal roundtrip (Phase 2 — needs slot/indent restoration)`
 		);
 
 		it(`${entry.fixture}: extract_format populates treeHandle.format`, () => {
@@ -52,20 +55,29 @@ describe('US1 — borrowed Askama parity (rust)', () => {
 		if (!engine) return; // skip — native not built
 
 		const fixture = pickRenderFixture('rust', ['function_item', 'block']);
+		const tsEngine = createTsRenderEngine('rust');
 		const nativeRendered = renderNativeNodeData(engine, fixture.input);
-		const tsRendered = renderTsNodeData('rust', fixture.input);
+		const tsRendered = renderTsNodeData(tsEngine, fixture.input);
 
 		expect(nativeRendered).toBe(tsRendered);
 		expect(nativeRendered).toBe(fixture.expectedOutput);
 	});
 });
 
-function diffPositions(a: string, b: string): { start: number; end: number } | null {
+function diffPositions(
+	a: string,
+	b: string
+): { start: number; end: number } | null {
 	let start = 0;
 	while (start < Math.min(a.length, b.length) && a[start] === b[start]) start++;
-	if (start === Math.min(a.length, b.length) && a.length === b.length) return null;
-	let endA = a.length - 1, endB = b.length - 1;
-	while (endA > start && endB > start && a[endA] === b[endB]) { endA--; endB--; }
+	if (start === Math.min(a.length, b.length) && a.length === b.length)
+		return null;
+	let endA = a.length - 1,
+		endB = b.length - 1;
+	while (endA > start && endB > start && a[endA] === b[endB]) {
+		endA--;
+		endB--;
+	}
 	return { start, end: Math.max(endA, endB) };
 }
 
@@ -87,19 +99,17 @@ describe('US2 — edit isolation (rust)', () => {
 });
 
 describe('US2 — direct render parity (rust)', () => {
-	it('rust-tab-indent.rs: native direct render matches TS render for parsed node data', () => {
+	it('rust-tab-indent.rs: native direct render matches TS render for parsed node data', async () => {
 		const engine = tryLoadNativeEngine('rust');
 		if (!engine) return; // skip — native not built
 
 		const source = loadFixtureSource('rust-tab-indent.rs');
 		const parsed = parseNativeFixture(engine, source);
-		const nodeDataWithFormat = {
-			...(parsed.nodeData as object),
-			$format: parsed.format
-		};
-		const boundaryNodeData = toBoundaryNodeData(nodeDataWithFormat);
+		const nodeData = await parseTsFixture('rust', source);
+		const boundaryNodeData = toBoundaryNodeData(nodeData);
+		const tsEngine = createTsRenderEngine('rust', parsed.format);
 		const nativeRendered = renderNativeNodeData(engine, boundaryNodeData);
-		const tsRendered = renderTsNodeData('rust', boundaryNodeData);
+		const tsRendered = renderTsNodeData(tsEngine, boundaryNodeData);
 
 		expect(nativeRendered).toBe(tsRendered);
 	});
@@ -111,22 +121,25 @@ describe('US3 — native/TS render parity (rust)', () => {
 	);
 
 	if (bothFixtures.length === 0) {
-		it.todo('no "both" fixtures yet — add entries to format-corpus.json to enable parity testing');
+		it.todo(
+			'no "both" fixtures yet — add entries to format-corpus.json to enable parity testing'
+		);
 	} else {
 		for (const entry of bothFixtures) {
-			it(`${entry.fixture}: native render matches TS render byte-for-byte`, () => {
+			it(`${entry.fixture}: native render matches TS render byte-for-byte`, async () => {
 				const engine = tryLoadNativeEngine('rust');
 				if (!engine) return; // skip — native not built
 
 				const source = loadFixtureSource(entry.fixture);
 				const parsed = parseNativeFixture(engine, source);
-				const nodeDataWithFormat = {
-					...(parsed.nodeData as object),
-					$format: parsed.format
-				};
-				const nativeRendered = renderNativeNodeData(engine, nodeDataWithFormat);
+				const nodeData = await parseTsFixture('rust', source);
+				const boundaryNodeData = toBoundaryNodeData(nodeData);
+				const tsEngine = createTsRenderEngine('rust', parsed.format);
+				const nativeRendered = renderNativeNodeData(engine, boundaryNodeData);
+				const tsRendered = renderTsNodeData(tsEngine, boundaryNodeData);
 
-				expect(nativeRendered).toBe(source);
+				expect(nativeRendered).toBe(tsRendered);
+				expect(tsRendered).not.toHaveLength(0);
 			});
 		}
 	}

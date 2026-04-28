@@ -44,11 +44,7 @@ use std::collections::HashMap;
 /// Panics if `node_id` is `Some(id)` but no node with that id exists
 /// in the current tree. The napi wrapper translates this into the
 /// `"node id N not found in current tree"` error surface.
-pub fn read_node(
-    tree: &tree_sitter::Tree,
-    source: &str,
-    node_id: Option<u64>,
-) -> NodeData {
+pub fn read_node(tree: &tree_sitter::Tree, source: &str, node_id: Option<u64>) -> NodeData {
     let root = tree.root_node();
     match node_id {
         None => read_ts_node(root, source),
@@ -61,11 +57,7 @@ pub fn read_node(
 
 /// Depth-first search for the tree-sitter node whose canonical
 /// `Node::id()` matches `target`.
-fn find_by_id<'a>(
-    node: tree_sitter::Node<'a>,
-    target: u64,
-) -> Option<tree_sitter::Node<'a>> {
-
+fn find_by_id<'a>(node: tree_sitter::Node<'a>, target: u64) -> Option<tree_sitter::Node<'a>> {
     if node.id() as u64 == target {
         return Some(node);
     }
@@ -79,10 +71,7 @@ fn find_by_id<'a>(
 }
 
 /// Recursive core — converts a tree-sitter `Node` into `NodeData`.
-fn read_ts_node(
-    node: tree_sitter::Node<'_>,
-    source: &str,
-) -> NodeData {
+fn read_ts_node(node: tree_sitter::Node<'_>, source: &str) -> NodeData {
     let assigned_id = node.id() as u64;
 
     let kind = node.kind().to_string();
@@ -105,9 +94,7 @@ fn read_ts_node(
             .as_ref()
             .is_none_or(|cs| cs.iter().all(|c| !c.named));
     let text = if is_leaf {
-        source
-            .get(byte_range.clone())
-            .map(|s| s.to_string())
+        source.get(byte_range.clone()).map(|s| s.to_string())
     } else {
         None
     };
@@ -128,7 +115,6 @@ fn read_ts_node(
         text,
         span: Some(span),
         node_id: Some(assigned_id),
-        format: None,
     }
 }
 

@@ -33,8 +33,8 @@ import type { RoundTripDiagnostic } from './emitters/suggested.ts';
 import { compileParser } from './transpile/compile-parser.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { writeJinjaTemplates } from './emitters/templates.ts';
-import { emitRenderCrate } from './emitters/rust-render.ts';
-import { renderCrateTemplatesDir } from './emitters/render-crate-paths.ts';
+import { emitRenderModule } from './emitters/render-module.ts';
+import { renderModuleTemplatesDir } from './emitters/render-module-paths.ts';
 import {
 	extractParityFixtures,
 	serializeFixtures,
@@ -129,7 +129,7 @@ Usage: sittir --grammar <name> [--all | --nodes <kinds>] --output <dir>
 Options:
   --grammar, -g    Grammar name (rust, typescript, python)
   --nodes, -n      Comma-separated node kinds to generate
-  --all, -a        Generate TS output plus native rust-render artifacts
+  --all, -a        Generate TS output plus native render-module artifacts
                    for supported grammars (rust, typescript, python)
   --output, -o     Output directory for generated files
   --tests-dir      Output directory for test files (default: ../tests)
@@ -139,7 +139,7 @@ Options:
                    grammar.json + node-types.json
   --skip-ts-chain  Skip the auto transpile + tree-sitter generate chain
                    that --all normally runs before sittir codegen
-  --no-build-native  Skip the post-regen napi crate rebuild (suppresses the
+  --no-build-native  Skip the post-regen N-API binding rebuild (suppresses the
                    cargo rebuild that --all triggers after emitting native
                    artifacts; useful when you only want updated TS/Rust
                    source files without a full native recompile).
@@ -265,7 +265,7 @@ writeFile(join(outDir, 'index.ts'), result.index);
 // whose rule kind is no longer in the grammar.
 writeJinjaTemplates(result.jinjaTemplates, join(dirname(outDir), 'templates'));
 
-// --- rust-render emission (spec 012 T017) ---
+// --- grammar-owned Rust render-module emission (spec 012 T017) ---
 // When `--all` is set for a supported grammar, also emit hash.rs / hash.ts
 // so the native backend and the TS backend can detect template-bundle drift
 // at runtime (FR-020). The hash is computed over the same `.jinja`
@@ -282,13 +282,12 @@ if (shouldEmitRustRender) {
 	for (const [kind, body] of result.jinjaTemplates.bodies) {
 		templateFiles.push({ filename: `${kind}.jinja`, content: body });
 	}
-	const emit = emitRenderCrate(grammar, templateFiles, result.nodeMap);
+	const emit = emitRenderModule(grammar, templateFiles, result.nodeMap);
 	writeFile(emit.hashRs.path, emit.hashRs.contents);
 	writeFile(emit.hashTs.path, emit.hashTs.contents);
 	writeFile(emit.templatesRs.path, emit.templatesRs.contents);
 	writeFile(emit.libRs.path, emit.libRs.contents);
-	writeFile(emit.cargoToml.path, emit.cargoToml.contents);
-	// Copy the per-kind `.jinja` files into the render-crate's templates/
+	// Copy the per-kind `.jinja` files into the grammar crate's templates/
 	// directory so askama's build-time `#[template(path = ...)]` can
 	// resolve them (T030). Stale files (no longer in jinjaTemplates) are
 	// removed so regenerations don't accumulate dead templates.
@@ -296,10 +295,10 @@ if (shouldEmitRustRender) {
 	// Template-body transform: rust keywords that can't be raw-
 	// identifier'd (`crate`, `self`, `super`, `Self`) have their struct
 	// field names suffixed with `_` at emit time (see
-	// `rust-render.ts:RUST_NON_RAWABLE_KEYWORDS`). Askama resolves
+	// `render-module.ts:RUST_NON_RAWABLE_KEYWORDS`). Askama resolves
 	// template variables by the field's raw name, so the template
 	// copy must rename `{{ crate }}` → `{{ crate_ }}` to match.
-	// Applies only to the rust-render copy — the source .jinja under
+	// Applies only to the Rust render-module copy — the source .jinja under
 	// packages/{lang}/templates/ stays unchanged (TS Nunjucks side
 	// doesn't have the keyword collision).
 	const RUST_UNRAWABLE_KW = ['crate', 'self', 'super', 'Self'] as const;
@@ -318,7 +317,7 @@ if (shouldEmitRustRender) {
 	};
 	// Each user field is emitted as BOTH scalar (`foo`, the pre-joined
 	// form) and list (`foo_list`, per-element). Rewrite list-consuming
-	// references in the rust-render template copy so they target the
+	// references in the Rust render-module template copy so they target the
 	// list slot. Flank-aware joins (`joinWithTrailing` / `Leading` /
 	// `Flanks`) are rewritten to `joinby(...)` with the generated
 	// boolean fields that direct render populates per slot.
@@ -330,21 +329,24 @@ if (shouldEmitRustRender) {
 		let out = body;
 		const flankRe =
 			/\{\{(-?\s*)([a-zA-Z_][a-zA-Z0-9_]*)(\s*\|\s*joinWith(Trailing|Leading|Flanks)\s*\(([^)]*)\))(\s*-?)\}\}/g;
-		out = out.replace(flankRe, (match, lead, ident, _filter, mode, args, trail) => {
-			if (ident !== 'children' && !listFields.has(ident)) return match;
-			const target = ident === 'children' ? 'children' : `${ident}_list`;
-			const leadingExpr =
-				ident === 'children' ? 'leading_sep' : `${ident}_leading_sep`;
-			const trailingExpr =
-				ident === 'children' ? 'trailing_sep' : `${ident}_trailing_sep`;
-			const boolArgs =
-				mode === 'Leading'
-					? `${leadingExpr}, false`
-					: mode === 'Trailing'
-						? `false, ${trailingExpr}`
-						: `${leadingExpr}, ${trailingExpr}`;
-			return `{{${lead}${target} | joinby(${args}, ${boolArgs})${trail}}}`;
-		});
+		out = out.replace(
+			flankRe,
+			(match, lead, ident, _filter, mode, args, trail) => {
+				if (ident !== 'children' && !listFields.has(ident)) return match;
+				const target = ident === 'children' ? 'children' : `${ident}_list`;
+				const leadingExpr =
+					ident === 'children' ? 'leading_sep' : `${ident}_leading_sep`;
+				const trailingExpr =
+					ident === 'children' ? 'trailing_sep' : `${ident}_trailing_sep`;
+				const boolArgs =
+					mode === 'Leading'
+						? `${leadingExpr}, false`
+						: mode === 'Trailing'
+							? `false, ${trailingExpr}`
+							: `${leadingExpr}, ${trailingExpr}`;
+				return `{{${lead}${target} | joinby(${args}, ${boolArgs})${trail}}}`;
+			}
+		);
 		// `{{ foo | join(...) }}` → `{{ foo_list | join(...) }}`
 		const filterRe = new RegExp(
 			`(\\{\\{-?\\s*)(${alt})(\\s*\\|\\s*join\\b)`,
@@ -364,7 +366,9 @@ if (shouldEmitRustRender) {
 		return body + '\n';
 	};
 	const srcTemplatesDir = join(dirname(outDir), 'templates');
-	const dstTemplatesDir = renderCrateTemplatesDir(grammar as 'rust' | 'typescript' | 'python');
+	const dstTemplatesDir = renderModuleTemplatesDir(
+		grammar as 'rust' | 'typescript' | 'python'
+	);
 	mkdirSync(dstTemplatesDir, { recursive: true });
 	const emittedNames = new Set<string>();
 	for (const [kind] of result.jinjaTemplates.bodies) {
@@ -384,19 +388,18 @@ if (shouldEmitRustRender) {
 		if (!emittedNames.has(existing))
 			rmSync(join(dstTemplatesDir, existing), { force: true });
 	}
-	console.log(`  → rust-render crate regenerated for ${grammar}:`);
+	console.log(`  → Rust render module regenerated for ${grammar}:`);
 	console.log(`    ${emit.hashRs.path}`);
 	console.log(`    ${emit.hashTs.path}`);
 	console.log(`    ${emit.templatesRs.path}`);
 	console.log(`    ${emit.libRs.path}`);
-	console.log(`    ${emit.cargoToml.path}`);
 	console.log(`    ${dstTemplatesDir}/ (${emittedNames.size} .jinja files)`);
 
 	// --- parity-fixture extraction (spec 012 T045 / T046) ---
 	// Run the round-trip validator in fixture-capture mode. Every
 	// successfully round-tripped kind emits a paired (render,
 	// roundtrip) fixture; the result is written to
-	// rust/crates/sittir-render-{grammar}/test-fixtures.json where the
+	// rust/crates/sittir-{grammar}/test-fixtures.json where the
 	// Rust parity harness (T047) reads it via serde_json.
 	//
 	// FR-011 required-kinds gate lives in `extractParityFixtures` —
@@ -411,22 +414,22 @@ if (shouldEmitRustRender) {
 		`    ${fxPath} (${extracted.renderCount} render + ${extracted.roundTripCount} roundtrip, ${extracted.coveredKinds.size} kinds)`
 	);
 
-	// Rebuild the corresponding napi crate so the native render path
+	// Rebuild the corresponding N-API binding so the native render path
 	// picks up the new templates. Askama compiles templates at the
 	// crate's build time via proc macro; without a rebuild, native
 	// baseline collection silently falls back to TS render with the
 	// previous templates baked in. Opt out with --no-build-native.
 	if (cliArgs.buildNative !== false) {
-		const napiCrate = `rust/crates/sittir-${grammar}-napi`;
-		console.log(`  → rebuilding napi crate (sittir-${grammar}-napi)…`);
+		const nativeCrate = `rust/crates/sittir-${grammar}`;
+		console.log(`  → rebuilding grammar-owned N-API binding for ${grammar}…`);
 		try {
-			execSync(`pnpm -C ${napiCrate} run build`, {
+			execSync(`pnpm -C ${nativeCrate} run build`, {
 				stdio: 'inherit',
 				cwd: process.cwd()
 			});
 		} catch (e) {
 			console.error(
-				`    napi rebuild failed for ${grammar}. Native baseline collection will use stale templates. ` +
+				`    N-API rebuild failed for ${grammar}. Native baseline collection will use stale templates. ` +
 					`Re-run with --no-build-native to suppress this attempt, or fix the cargo build error.`
 			);
 			throw e;

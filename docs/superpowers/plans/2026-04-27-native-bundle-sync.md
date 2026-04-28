@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Remove the separate `--rust-render` regeneration path, make `--all` regenerate both TS and native render artifacts in one pass, and add a guard so checked-in TS/native bundle hashes cannot drift again.
+**Goal:** Remove the separate `--all` regeneration path, make `--all` regenerate both TS and native render artifacts in one pass, and add a guard so checked-in TS/native bundle hashes cannot drift again.
 
-**Architecture:** Keep the strict native hash gate in `packages/*/src/backend.ts` unchanged. Fix the problem at the generation boundary: `packages/codegen/src/cli.ts` should treat `--all` as the single source of truth for both TS-side output and native `rust-render` output, while a dedicated regression test verifies the checked-in TS/native hashes match for all three grammars.
+**Architecture:** Keep the strict native hash gate in `packages/*/src/backend.ts` unchanged. Fix the problem at the generation boundary: `packages/codegen/src/cli.ts` should treat `--all` as the single source of truth for both TS-side output and native `render-module` output, while a dedicated regression test verifies the checked-in TS/native hashes match for all three grammars.
 
 **Tech Stack:** TypeScript ESM, Vitest, pnpm workspaces, napi-rs native crates, `npx tsx packages/codegen/src/cli.ts`, `pnpm test`, `pnpm -r run type-check`
 
@@ -14,32 +14,32 @@
 
 **Modify**
 
-- `packages/codegen/src/cli.ts` — remove the user-facing `--rust-render` branch and make `--all` perform the full TS + native artifact regeneration path for supported grammars.
-- `packages/codegen/src/emitters/rust-render.ts` — update generated header comments and command hints so they reference the one-flag workflow.
-- `packages/codegen/src/emitters/parity-fixtures.ts` — update comments that still describe fixture extraction as `--rust-render`-specific.
-- `packages/codegen/src/emitters/rust-render.test.ts` — update emitter expectations to the one-flag contract.
+- `packages/codegen/src/cli.ts` — remove the user-facing `--all` branch and make `--all` perform the full TS + native artifact regeneration path for supported grammars.
+- `packages/codegen/src/emitters/render-module.ts` — update generated header comments and command hints so they reference the one-flag workflow.
+- `packages/codegen/src/emitters/parity-fixtures.ts` — update comments that still describe fixture extraction as `--all`-specific.
+- `packages/codegen/src/emitters/render-module.test.ts` — update emitter expectations to the one-flag contract.
 - `packages/codegen/src/__tests__/collect-baseline.test.ts` — extend baseline tests so native parity regressions fail loudly when bundle sync is broken.
 - `README.md` — update public regeneration commands to the one-flag workflow.
 - `CLAUDE.md` — update repo commands and contributor guidance so native sync is part of the normal regen path.
 
 **Create**
 
-- `packages/codegen/src/__tests__/native-hash-sync.test.ts` — repository-level regression test that compares checked-in `src/hash.ts` and `rust-render/src/hash.rs` for `python`, `rust`, and `typescript`.
+- `packages/codegen/src/__tests__/native-hash-sync.test.ts` — repository-level regression test that compares checked-in `src/hash.ts` and `render-module/src/hash.rs` for `python`, `rust`, and `typescript`.
 
 **Regenerate / Refresh**
 
 - `packages/{python,rust,typescript}/src/hash.ts`
-- `packages/{python,rust,typescript}/rust-render/src/hash.rs`
-- `packages/{python,rust,typescript}/rust-render/src/templates.rs`
-- `packages/{python,rust,typescript}/rust-render/src/lib.rs`
-- `packages/{python,rust,typescript}/rust-render/templates/*.jinja`
-- `packages/{python,rust,typescript}/rust-render/test-fixtures.json`
+- `rust/crates/sittir-{python,rust,typescript}/src/render/hash.rs`
+- `rust/crates/sittir-{python,rust,typescript}/src/render/templates.rs`
+- `rust/crates/sittir-{python,rust,typescript}/src/render/mod.rs`
+- `rust/crates/sittir-{python,rust,typescript}/templates/*.jinja`
+- `rust/crates/sittir-{python,rust,typescript}/test-fixtures.json`
 - `specs/016-parity-regressions/baselines/native.json`
 - `specs/054-post-016-perf-tracking/baselines/perf-native.json` (only if metrics are intentionally refreshed as part of verification)
 
 **Native build surface**
 
-- `rust/crates/sittir-rust-napi/package.json` — existing build command reference only; no code change expected unless the one-flag path needs an explicit build invocation update.
+- `rust/crates/sittir-{lang}/package.json` — existing build command reference only; no code change expected unless the one-flag path needs an explicit build invocation update.
 
 ---
 
@@ -48,7 +48,7 @@
 **Files:**
 
 - Create: `packages/codegen/src/__tests__/native-hash-sync.test.ts`
-- Modify: `packages/codegen/src/emitters/rust-render.test.ts`
+- Modify: `packages/codegen/src/emitters/render-module.test.ts`
 - Modify: `packages/codegen/src/__tests__/collect-baseline.test.ts`
 - Test: `packages/codegen/src/__tests__/native-hash-sync.test.ts`
 
@@ -70,7 +70,7 @@ function readTsHash(grammar: (typeof GRAMMARS)[number]): string {
 
 function readNativeHash(grammar: (typeof GRAMMARS)[number]): string {
 	const text = readFileSync(
-		resolve(`packages/${grammar}/rust-render/src/hash.rs`),
+		resolve(`rust/crates/sittir-${grammar}/src/render/hash.rs`),
 		'utf8'
 	);
 	const match = /TEMPLATE_BUNDLE_HASH: &str = "([0-9a-f]{64})"/.exec(text);
@@ -101,7 +101,7 @@ Expected: **FAIL** with at least one grammar reporting mismatched TS/native bund
 it('references the one-flag regen command in generated headers', () => {
 	const emit = emitHashFiles('typescript', sample);
 	expect(emit.hashRs.contents).toMatch(/--grammar typescript --all/);
-	expect(emit.hashRs.contents).not.toMatch(/--rust-render/);
+	expect(emit.hashRs.contents).not.toMatch(/--all/);
 	expect(emit.hashTs.contents).toMatch(/--grammar typescript --all/);
 });
 ```
@@ -121,7 +121,7 @@ Add a focused inline assertion or error expectation near the existing native-mod
 Run:
 
 ```bash
-pnpm test packages/codegen/src/emitters/rust-render.test.ts packages/codegen/src/__tests__/collect-baseline.test.ts packages/codegen/src/__tests__/native-hash-sync.test.ts
+pnpm test packages/codegen/src/emitters/render-module.test.ts packages/codegen/src/__tests__/collect-baseline.test.ts packages/codegen/src/__tests__/native-hash-sync.test.ts
 ```
 
 Expected: **FAIL** on the new sync assertion until the CLI/generation changes land; existing unrelated tests stay green.
@@ -129,7 +129,7 @@ Expected: **FAIL** on the new sync assertion until the CLI/generation changes la
 - [ ] **Step 6: Commit the red tests**
 
 ```bash
-git add packages/codegen/src/emitters/rust-render.test.ts \
+git add packages/codegen/src/emitters/render-module.test.ts \
         packages/codegen/src/__tests__/collect-baseline.test.ts \
         packages/codegen/src/__tests__/native-hash-sync.test.ts
 git commit -m "test: lock one-flag native bundle sync contract"
@@ -142,9 +142,9 @@ git commit -m "test: lock one-flag native bundle sync contract"
 **Files:**
 
 - Modify: `packages/codegen/src/cli.ts`
-- Modify: `packages/codegen/src/emitters/rust-render.ts`
+- Modify: `packages/codegen/src/emitters/render-module.ts`
 - Modify: `packages/codegen/src/emitters/parity-fixtures.ts`
-- Test: `packages/codegen/src/emitters/rust-render.test.ts`
+- Test: `packages/codegen/src/emitters/render-module.test.ts`
 
 - [ ] **Step 1: Remove `rustRender` from the CLI argument shape and parser**
 
@@ -165,7 +165,7 @@ interface CliArgs {
 }
 ```
 
-Delete the `case "--rust-render":` parser branch entirely.
+Delete the `case "--all":` parser branch entirely.
 
 - [ ] **Step 2: Rewrite the help text so `--all` is the only regeneration path**
 
@@ -174,15 +174,15 @@ console.log(`
 Usage: sittir --grammar <name> [--all | --nodes <kinds>] --output <dir>
 
 Options:
-  --all, -a        Generate TS output plus native rust-render artifacts
+  --all, -a        Generate TS output plus native render-module artifacts
                    for supported grammars (rust, typescript, python)
   --no-build-native  Skip the post-regen napi crate rebuild
 `);
 ```
 
-Remove all mentions of `--rust-render`.
+Remove all mentions of `--all`.
 
-- [ ] **Step 3: Move the rust-render emission branch under the `--all` flow**
+- [ ] **Step 3: Move the render-module emission branch under the `--all` flow**
 
 ```ts
 const shouldEmitRustRender =
@@ -204,14 +204,14 @@ The implementation should keep the current native artifact emission logic intact
 // Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
 ```
 
-Apply that command string consistently in `rust-render.ts` for `hash.rs`, `hash.ts`, `templates.rs`, `lib.rs`, and `Cargo.toml` headers.
+Apply that command string consistently in `render-module.ts` for `hash.rs`, `hash.ts`, `templates.rs`, `lib.rs`, and `Cargo.toml` headers.
 
 - [ ] **Step 5: Update parity-fixture comments so they describe the new contract**
 
 ```ts
 /**
  * Runs from `cli.ts --all` after TS + native render artifacts are emitted;
- * produces `packages/{lang}/rust-render/test-fixtures.json` per grammar.
+ * produces `rust/crates/sittir-{lang}/src/render/test-fixtures.json` per grammar.
  */
 ```
 
@@ -220,7 +220,7 @@ Apply that command string consistently in `rust-render.ts` for `hash.rs`, `hash.
 Run:
 
 ```bash
-pnpm test packages/codegen/src/emitters/rust-render.test.ts packages/codegen/src/__tests__/native-hash-sync.test.ts
+pnpm test packages/codegen/src/emitters/render-module.test.ts packages/codegen/src/__tests__/native-hash-sync.test.ts
 ```
 
 Expected: the emitter test passes; the repo-level sync test may still fail until checked-in artifacts are regenerated in Task 3.
@@ -229,9 +229,9 @@ Expected: the emitter test passes; the repo-level sync test may still fail until
 
 ```bash
 git add packages/codegen/src/cli.ts \
-        packages/codegen/src/emitters/rust-render.ts \
+        packages/codegen/src/emitters/render-module.ts \
         packages/codegen/src/emitters/parity-fixtures.ts \
-        packages/codegen/src/emitters/rust-render.test.ts
+        packages/codegen/src/emitters/render-module.test.ts
 git commit -m "feat(codegen): fold native artifact emission into --all"
 ```
 
@@ -242,11 +242,11 @@ git commit -m "feat(codegen): fold native artifact emission into --all"
 **Files:**
 
 - Modify: `packages/{python,rust,typescript}/src/hash.ts`
-- Modify: `packages/{python,rust,typescript}/rust-render/src/hash.rs`
-- Modify: `packages/{python,rust,typescript}/rust-render/src/templates.rs`
-- Modify: `packages/{python,rust,typescript}/rust-render/src/lib.rs`
-- Modify: `packages/{python,rust,typescript}/rust-render/templates/*.jinja`
-- Modify: `packages/{python,rust,typescript}/rust-render/test-fixtures.json`
+- Modify: `rust/crates/sittir-{python,rust,typescript}/src/render/hash.rs`
+- Modify: `rust/crates/sittir-{python,rust,typescript}/src/render/templates.rs`
+- Modify: `rust/crates/sittir-{python,rust,typescript}/src/render/mod.rs`
+- Modify: `rust/crates/sittir-{python,rust,typescript}/templates/*.jinja`
+- Modify: `rust/crates/sittir-{python,rust,typescript}/test-fixtures.json`
 - Test: `packages/codegen/src/__tests__/native-hash-sync.test.ts`
 
 - [ ] **Step 1: Regenerate all three grammars with the single flag**
@@ -259,17 +259,17 @@ npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages
 npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
 ```
 
-Expected: each run reports generated TS files, regenerated rust-render crate files, and refreshed `rust-render/test-fixtures.json`.
+Expected: each run reports generated TS files, regenerated render-module module files, and refreshed `render-module/test-fixtures.json`.
 
 - [ ] **Step 2: Rebuild the native napi crate**
 
 Run:
 
 ```bash
-pnpm -C rust/crates/sittir-rust-napi run build
+pnpm -C rust/crates/sittir-{lang} run build
 ```
 
-Expected: **PASS** and the native addon rebuild completes without template/hash errors.
+Expected: **PASS** and the native backend rebuild completes without template/hash errors.
 
 - [ ] **Step 3: Run the sync regression test**
 
@@ -296,9 +296,9 @@ Expected: native boundary no longer fails immediately on bundle mismatch; any re
 - [ ] **Step 5: Commit the regenerated artifacts**
 
 ```bash
-git add packages/python/src/hash.ts packages/python/rust-render \
-        packages/rust/src/hash.ts packages/rust/rust-render \
-        packages/typescript/src/hash.ts packages/typescript/rust-render
+git add packages/python/src/hash.ts rust/crates/sittir-python/src/render \
+        packages/rust/src/hash.ts rust/crates/sittir-rust/src/render \
+        packages/typescript/src/hash.ts rust/crates/sittir-typescript/src/render
 git commit -m "chore: resync checked-in native render artifacts"
 ```
 
@@ -346,7 +346,7 @@ npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/pyt
 
 ````
 
-Apply that command set in both `README.md` and `CLAUDE.md`, removing any mention of a separate `--rust-render` flag.
+Apply that command set in both `README.md` and `CLAUDE.md`, removing any mention of a separate `--all` flag.
 
 - [ ] **Step 4: Run the full validation sweep**
 

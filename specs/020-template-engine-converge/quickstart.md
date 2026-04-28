@@ -4,7 +4,7 @@
 
 Feature 020 has two jobs:
 
-1. finish any remaining baseline convergence owned by 020 (single canonical template source, centralized native render crates, one regenerate workflow), and
+1. finish any remaining baseline convergence owned by 020 (single canonical template source, grammar-owned native/render modules, one regenerate workflow), and
 2. optimize native rendering in two full-grammar stages:
    - **Level 1**: borrow from `TemplateContext` instead of cloning;
    - **Level 3**: render directly from `NodeData` and retire the preparation layer after parity proof.
@@ -23,7 +23,8 @@ pnpm test
 Verify the retained baseline obligations are satisfied or plan to finish them inside 020 before Level 1:
 
 - canonical `.jinja` templates live only under `packages/{lang}/templates/`
-- native render crates live under `rust/crates/sittir-render-{lang}/`
+- generated native render modules live under `rust/crates/sittir-{lang}/src/render/`
+- grammar-owned N-API entrypoints, tree-sitter bindings, template hashes, and backend adapters live under `rust/crates/sittir-{lang}/`
 - the standard `--all` workflow refreshes both TS and native artifacts
 
 ## 2. Regenerate all supported grammars from one workflow
@@ -40,9 +41,10 @@ Use these same commands after each major generator/runtime change so the three g
 
 Target areas:
 
-- `packages/codegen/src/emitters/rust-render.ts`
+- `packages/codegen/src/emitters/render-module.ts`
 - any shared emitter helpers that populate generated Askama structs
-- centralized native render crates under `rust/crates/sittir-render-{lang}/`
+- generated native render modules under `rust/crates/sittir-{lang}/src/render/`
+- grammar-owned N-API entrypoints under `rust/crates/sittir-{lang}/`
 
 Acceptance target:
 
@@ -76,7 +78,7 @@ Before marking Level 3 complete, verify:
 - the direct render path is active for all supported grammars
 - the legacy `prepare.rs` bridge is gone and `sittir-core` no longer exports it
 - parity remains byte-identical for representative formatted and unformatted fixtures
-- docs/examples still point to canonical templates and centralized native render crates
+- docs/examples still point to canonical templates and grammar-owned native/render modules
 
 Run the standard validation suite again:
 

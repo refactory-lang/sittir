@@ -41,7 +41,7 @@ import {
 	referencedKinds,
 	fieldTypeComponents,
 	isValidIdent,
-	keywordPresenceKind,
+	keywordPresenceKind
 } from './shared.ts';
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';

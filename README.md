@@ -226,8 +226,11 @@ public API works on every platform regardless of native availability.
 
 Authored templates remain canonical under `packages/{lang}/templates/`.
 The checked-in native Askama crates are generated companions under
-`rust/crates/sittir-render-{lang}/`, refreshed by the same
-`--all` codegen workflow as the TypeScript package outputs.
+`rust/crates/sittir-{lang}/src/render/`, refreshed by the same
+`--all` codegen workflow as the TypeScript package outputs. The
+grammar-owned N-API entrypoints live under
+`rust/crates/sittir-{lang}/` and delegate shared engine state to
+`sittir-core`.
 
 ### Selecting a backend at runtime
 

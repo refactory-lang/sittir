@@ -6,7 +6,7 @@ const leaf: AnyNodeData = {
 	$type: 'identifier',
 	$source: 'factory',
 	$named: true,
-	$text: 'hello',
+	$text: 'hello'
 };
 
 const config = { rules: {} };
@@ -20,7 +20,10 @@ describe('render format resolution', () => {
 
 	it('ignoreFormat suppresses format application', () => {
 		const format: FormatRecord = { boundary: { leading: '  ' } };
-		const { render } = createRendererFromConfig(config, { format, ignoreFormat: true });
+		const { render } = createRendererFromConfig(config, {
+			format,
+			ignoreFormat: true
+		});
 		expect(render(leaf)).toBe('hello');
 	});
 
@@ -42,7 +45,7 @@ describe('render format resolution', () => {
 
 	it('ctx.format.kinds[nodeType] applied for matching kind', () => {
 		const format: FormatRecord = {
-			kinds: { identifier: { boundary: { leading: '> ' } } },
+			kinds: { identifier: { boundary: { leading: '> ' } } }
 		};
 		const { render } = createRendererFromConfig(config, { format });
 		expect(render(leaf)).toBe('> hello');
@@ -50,7 +53,7 @@ describe('render format resolution', () => {
 
 	it('ctx.format.kinds[nodeType] not applied for non-matching kind', () => {
 		const format: FormatRecord = {
-			kinds: { other_kind: { boundary: { leading: '> ' } } },
+			kinds: { other_kind: { boundary: { leading: '> ' } } }
 		};
 		const { render } = createRendererFromConfig(config, { format });
 		expect(render(leaf)).toBe('hello');
@@ -59,7 +62,7 @@ describe('render format resolution', () => {
 	it('ctx.format used as fallback when kinds does not match', () => {
 		const format: FormatRecord = {
 			boundary: { leading: '~ ' },
-			kinds: { other_kind: { boundary: { leading: '> ' } } },
+			kinds: { other_kind: { boundary: { leading: '> ' } } }
 		};
 		const { render } = createRendererFromConfig(config, { format });
 		expect(render(leaf)).toBe('~ hello');
@@ -73,7 +76,9 @@ describe('engine format resolution', () => {
 		const inferred: FormatRecord = { boundary: { leading: '  ' } };
 		const engineFormat: FormatRecord = { boundary: { leading: '\t' } };
 
-		expect(resolveEngineFormat(engineFormat, inferred, false)).toEqual(engineFormat);
+		expect(resolveEngineFormat(engineFormat, inferred, false)).toEqual(
+			engineFormat
+		);
 	});
 
 	it('detached NodeData does not borrow inferred tree format', () => {

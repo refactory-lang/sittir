@@ -7,17 +7,27 @@
 
 Finish any remaining baseline convergence owned by 020, then optimize the native render pipeline in two staged rollouts across `rust`, `typescript`, and `python`. Level 1 is a generator-driven change that rewrites generated Askama structs and dispatchers to borrow from `TemplateContext` instead of cloning. Level 3 is an architectural refactor that emits direct `NodeData` render functions, inlines render metadata, removes the legacy preparation bridge after byte-identical parity is proven, and leaves `sittir-core::filters` as the shared Askama-filter surface.
 
+**Architecture addendum**: the agreed post-020 target is no longer a
+permanent shared native backend, `*-napi` crate name, or
+`sittir-{lang}` crate layer. The steady-state target is generic
+engine logic in `sittir-core`, with each `sittir-{lang}` package/crate
+owning its grammar-specific render module, tree-sitter language binding,
+template hash, backend selection, and thin N-API layer. On the JS side,
+the current `@sittir/core` package shape is also transitional: the
+generic engine surface should be separated from low-level runtime
+primitives instead of leaving `core` as both substrate and engine shim.
+
 ## Technical Context
 
 **Language/Version**: TypeScript 6.0.2 (workspace ESM) and Rust 1.82+  
-**Primary Dependencies**: `@sittir/codegen`, `@sittir/core`, `@sittir/types`, Askama 0.14, napi-rs 3, `web-tree-sitter`, centralized native render crates under `rust/crates/sittir-render-{lang}`  
+**Primary Dependencies**: `@sittir/codegen`, `@sittir/core`, `@sittir/types`, Askama 0.14, napi-rs 3, `web-tree-sitter`, `sittir-core`, grammar-specific `sittir-{lang}` crates, and grammar-specific tree-sitter language crates  
 **Storage**: File system only (generated templates, generated native crates, spec artifacts, parity baselines); no runtime persistence  
 **Testing**: `pnpm test`, `pnpm -r run type-check`, feature 016 parity baselines, native crate build/test coverage where touched  
 **Target Platform**: Node.js codegen environment plus Rust native-render workspace in local development and CI  
-**Project Type**: Library + code generator + generated native render crates  
+**Project Type**: Library + code generator + generated native render/runtime integration  
 **Performance Goals**: remove step-2→3 scalar/list clones in Level 1; remove per-render field/field-list map allocations in Level 3; preserve byte-identical output on both backends  
 **Constraints**: canonical `.jinja` templates stay shared; Askama and N-API surfaces stay unchanged; generated files are never hand-edited; both levels complete across all three grammars together; parity ceilings must be zero before optimization begins  
-**Scale/Scope**: 3 grammars, 2 optimization levels, centralized native render crates, shared runtime cleanup in `sittir-core`, docs/regeneration/parity validation updates
+**Scale/Scope**: 3 grammars, 2 optimization levels, shared runtime cleanup in `sittir-core`, a recorded follow-on target to collapse grammar-specific native/render ownership into `sittir-{lang}`, and a JS package-boundary cleanup that separates the generic engine surface from low-level `@sittir/core` primitives
 
 ## Constitution Check
 
@@ -63,7 +73,7 @@ packages/codegen/src/
 ├── cli.ts
 ├── emitters/
 │   ├── templates.ts
-│   ├── rust-render.ts
+│   ├── render-module.ts
 │   └── template-hash.ts
 └── __tests__/
 
@@ -78,15 +88,18 @@ rust/crates/sittir-core/src/
 ├── splice.rs
 └── types.rs
 
-rust/crates/sittir-render-rust/src/
-rust/crates/sittir-render-typescript/src/
-rust/crates/sittir-render-python/src/
+rust/crates/sittir-rust/src/render/        # generated render module
+rust/crates/sittir-typescript/src/render/  # generated render module
+rust/crates/sittir-python/src/render/      # generated render module
+rust/crates/sittir-rust/templates/
+rust/crates/sittir-typescript/templates/
+rust/crates/sittir-python/templates/
 
 specs/016-parity-regressions/baselines/
 tests/format-roundtrip/
 ```
 
-**Structure Decision**: Keep the feature generator-centric. Codegen emitter changes live under `packages/codegen/src/`; shared runtime cleanup stays constrained to `rust/crates/sittir-core/src/`; generated per-grammar native render crates remain under `rust/crates/sittir-render-{lang}` and are regenerated, never hand-edited.
+**Structure Decision**: Keep the feature generator-centric. Codegen emitter changes live under `packages/codegen/src/`; shared runtime cleanup stays constrained to `rust/crates/sittir-core/src/`; generated render artifacts now live inside the grammar-owned `rust/crates/sittir-{lang}` crate. Likewise, the current `packages/core/src/engine.ts` ownership is treated as transitional package layout rather than proof that low-level `@sittir/core` primitives and the generic engine surface should remain permanently fused.
 
 ## Phase 0: Research
 
@@ -108,7 +121,7 @@ Key decisions (see [`research.md`](./research.md) for full rationale):
 [`data-model.md`](./data-model.md) defines the runtime/codegen entities that evolve across baseline, Level 1, and Level 3:
 
 - canonical template bundle
-- centralized native render crate
+- grammar-owned native/render layer (target state)
 - legacy `TemplateContext`
 - borrowed Askama view
 - direct render function
@@ -119,7 +132,7 @@ Key decisions (see [`research.md`](./research.md) for full rationale):
 [`contracts/render-pipeline-compatibility.md`](./contracts/render-pipeline-compatibility.md) captures the stable compatibility surface for:
 
 - canonical template ownership
-- centralized native crate location
+- grammar-owned native/render module location
 - standard regenerate workflow
 - unchanged N-API/render entrypoints
 - Level 1 borrowed-view invariants

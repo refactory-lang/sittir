@@ -36,7 +36,7 @@ import { validateFactoryRoundTrip } from '../validate/factory-roundtrip.ts';
 import { validateFrom } from '../validate/from.ts';
 import { validateRoundTrip } from '../validate/roundtrip.ts';
 import { validateTemplateCoverage } from '../validate/template-coverage.ts';
-import { renderCrateFixturesPath } from '../emitters/render-crate-paths.ts';
+import { renderModuleFixturesPath } from '../emitters/render-module-paths.ts';
 
 // ---------------------------------------------------------------------------
 // Schema types — see contracts/baseline-json.md
@@ -110,7 +110,7 @@ function templatesPathFor(grammar: Grammar): string {
 }
 
 function fixturesPathFor(grammar: Grammar): string {
-	return resolve(repoRoot, renderCrateFixturesPath(grammar));
+	return resolve(repoRoot, renderModuleFixturesPath(grammar));
 }
 
 // ---------------------------------------------------------------------------

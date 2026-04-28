@@ -16,7 +16,7 @@ tree-sitter = { workspace = true }
 # runtime crate. Both are pure Rust — no Node.js is required at
 # compile time, so FR-004 ("sittir-core builds without Node.js/npm")
 # still holds. The actual .node artifact is linked by the
-# sittir-*-napi binding crates; this dep only buys us the boundary
+# sittir-* grammar binding crates; this dep only buys us the boundary
 # attribute on `Edit`.
 napi = { version = "3", default-features = false, features = ["napi4"] }
 napi-derive = "3"

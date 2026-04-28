@@ -148,7 +148,11 @@ export function createJsEngine(options: JsEngineOptions): SittirEngineLike {
 	const { templatesPath, format: engineFormat, parse } = options;
 	const renderer = createRenderer(templatesPath);
 
-	function renderNode(node: AnyNodeData, treeFormat?: FormatRecord, ignoreFormat = false): string {
+	function renderNode(
+		node: AnyNodeData,
+		treeFormat?: FormatRecord,
+		ignoreFormat = false
+	): string {
 		// Render the canonical template output first.
 		const canonical = renderer.render(node);
 
@@ -199,7 +203,9 @@ export function createJsEngine(options: JsEngineOptions): SittirEngineLike {
 			},
 
 			readNode(nodeId: NodeId): AnyNodeData {
-				throw new Error('readNode(id) requires a tree handle from parseAndRead()');
+				throw new Error(
+					'readNode(id) requires a tree handle from parseAndRead()'
+				);
 			}
 		};
 	}

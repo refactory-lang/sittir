@@ -88,14 +88,14 @@ packages/typescript/templates.yaml # [REMOVED]  deleted in Phase A
 packages/python/templates.yaml     # [REMOVED]  deleted in Phase A
 
 # Phase B (separate, landable after Phase A)
-crates/sittir-render/
+rust/crates/sittir-{lang}/src/render/
 ├── Cargo.toml            # [NEW]  askama-based renderer crate
 ├── build.rs              # [NEW]  validates generated .jinja files at compile time
 ├── src/lib.rs            # [NEW]  per-rule render structs (derive(Template))
 └── tests/parity.rs       # [NEW]  cross-render parity with TS snapshot
 ```
 
-**Structure Decision**: Phase A lands entirely inside the existing `@sittir/*` TypeScript workspace — no new packages or crates. Templates move from `packages/<grammar>/templates.yaml` to `packages/<grammar>/templates/*.jinja`. The codegen template emitter (`packages/codegen/src/emitters/templates.ts`) replaces its YAML-dictionary output with a multi-file `.jinja` emission. Phase B adds a new Rust crate `crates/sittir-render/` (first Rust code in the repo) consuming the same `.jinja` files via askama's `#[derive(Template)]`. Directory layout chosen so the Phase B crate reads `.jinja` files via relative paths from the generated grammar packages; askama resolves them at build time.
+**Structure Decision**: Phase A lands entirely inside the existing `@sittir/*` TypeScript workspace — no new packages or crates. Templates move from `packages/<grammar>/templates.yaml` to `packages/<grammar>/templates/*.jinja`. The codegen template emitter (`packages/codegen/src/emitters/templates.ts`) replaces its YAML-dictionary output with a multi-file `.jinja` emission. Phase B adds a new Rust crate `rust/crates/sittir-{lang}/src/render/` (first Rust code in the repo) consuming the same `.jinja` files via askama's `#[derive(Template)]`. Directory layout chosen so the Phase B crate reads `.jinja` files via relative paths from the generated grammar packages; askama resolves them at build time.
 
 ## Complexity Tracking
 

@@ -21,7 +21,7 @@
 
 - **~450 `#[derive(Template)]` structs** across three grammars (one per kind). All codegen-emitted, not hand-written. Builds the "per-kind struct with typed fields" view of the grammar that makes FR-008 work. This is a Principle II (Fewer Abstractions) tension — **see Complexity Tracking in plan.md**. The tradeoff is justified: it is the mechanism by which the spec-mandated build-time validation is achieved. Removing the structs would require replacing askama, which violates FR-008.
 - **Per-grammar build time**: the derive macro invocations add measurable compile time per grammar crate (projected ~5–15s incremental on a release build). Acceptable for the CI and local-dev loops.
-- **Template file layout**: askama reads `.jinja` files from disk at build time, so `packages/{lang}/rust-render/templates/` must be a copy or symlink of `packages/{lang}/templates/`. Handled by codegen writing both locations (single source: the codegen pipeline; two emission targets).
+- **Template file layout**: askama reads `.jinja` files from disk at build time, so `rust/crates/sittir-{lang}/src/render/templates/` must be a copy or symlink of `packages/{lang}/templates/`. Handled by codegen writing both locations (single source: the codegen pipeline; two emission targets).
 
 **Alternatives considered**:
 
@@ -29,20 +29,20 @@
 - **`tera`**: rejected — runtime parsing, same failure against FR-008 as minijinja. Also larger feature surface we don't need.
 - **Hand-written template compiler in sittir**: rejected by FR-013.
 
-**Sittir-wide impact**: `askama = "0.14"` (or latest stable) is a new Rust dependency declared in each generated render crate (`sittir-{lang}-render`). `sittir-core` registers the filter aliases via askama's `#[template]` filter module mechanism. Per-grammar render crates depend on `askama` directly.
+**Sittir-wide impact**: `askama = "0.14"` (or latest stable) is a new Rust dependency declared in each generated render module (`sittir-{lang}`). `sittir-core` registers the filter aliases via askama's `#[template]` filter module mechanism. Per-grammar render modules depend on `askama` directly.
 
 ---
 
 ## R2. Cargo workspace layout — top-level `rust/` vs. per-package
 
-**Decision**: **Single top-level `rust/` workspace** at repo root, with render crates pointed at by path into `packages/{lang}/rust-render/`.
+**Decision**: **Single top-level `rust/` workspace** at repo root, with render modules pointed at by path into `rust/crates/sittir-{lang}/src/render/`.
 
 **Rationale**:
 
 - Cargo workspaces require a single `Cargo.toml` at the workspace root. Placing the workspace at repo root lets `cargo build --workspace` cover every crate in one command — essential for CI and for `cargo test` running parity fixtures across all grammars.
-- The per-grammar render crates (`packages/{lang}/rust-render/`) are **generated output** and belong physically next to the `.jinja` templates they render. Listing them as workspace members by path keeps the workspace manifest authoritative while the code lives where codegen wants it.
+- The per-grammar render modules (`rust/crates/sittir-{lang}/src/render/`) are **generated output** and belong physically next to the `.jinja` templates they render. Listing them as workspace members by path keeps the workspace manifest authoritative while the code lives where codegen wants it.
 - `sittir-core` lives in `rust/crates/sittir-core/` because it's hand-written and not tied to a single grammar.
-- `sittir-{lang}-napi` lives in `rust/crates/` too because it's a thin binding glue per grammar (not generated per rule) and its release artifact (`.node`) belongs in a platform-agnostic location.
+- `sittir-{lang}` lives in `rust/crates/` too because it's a thin binding glue per grammar (not generated per rule) and its release artifact (`.node`) belongs in a platform-agnostic location.
 
 **Alternatives considered**:
 
@@ -93,10 +93,10 @@
 
 **Decision**: Computed by TS codegen during the per-grammar emit step. Bytes hashed = concatenation of `{filename}\0{file_contents_with_LF_normalized}\0` for each `.jinja` file in **sorted filename order**. Emitted to two places in the same codegen pass:
 
-- As a `pub const TEMPLATE_BUNDLE_HASH: &str = "..."` in `packages/{lang}/rust-render/src/hash.rs` (included by `lib.rs`).
+- As a `pub const TEMPLATE_BUNDLE_HASH: &str = "..."` in `rust/crates/sittir-{lang}/src/render/hash.rs` (included by `lib.rs`).
 - As `export const TEMPLATE_BUNDLE_HASH = "..."` in `packages/{lang}/src/hash.ts` (re-exported from `index.ts`).
 
-The napi binding exposes `#[napi] pub fn template_bundle_hash() -> String { sittir_{lang}_render::TEMPLATE_BUNDLE_HASH.to_string() }`. The JS runtime-selection shim imports both, compares, and picks the native backend only on match.
+The N-API binding exposes `#[napi] pub fn template_bundle_hash() -> String { sittir_{lang}_render::TEMPLATE_BUNDLE_HASH.to_string() }`. The JS runtime-selection shim imports both, compares, and picks the native backend only on match.
 
 **Rationale**:
 
@@ -135,13 +135,13 @@ The napi binding exposes `#[napi] pub fn template_bundle_hash() -> String { sitt
 
 ## R7. Tree-sitter Rust integration — grammar access
 
-**Decision**: Use the published per-grammar crates (`tree-sitter-rust`, `tree-sitter-typescript`, `tree-sitter-python`) as direct Rust dependencies of the per-grammar napi binding crate. The existing TS-side use of `web-tree-sitter` + WASM-compiled grammars is unchanged.
+**Decision**: Use the published per-grammar crates (`tree-sitter-rust`, `tree-sitter-typescript`, `tree-sitter-python`) as direct Rust dependencies of the per-grammar N-API binding crate. The existing TS-side use of `web-tree-sitter` + WASM-compiled grammars is unchanged.
 
 **Rationale**:
 
 - The Rust grammar crates ship a static `Language` constant each (`tree_sitter_rust::LANGUAGE`). One-line initialization: `parser.set_language(&tree_sitter_rust::LANGUAGE.into())`.
-- Versions are coupled: the grammar crate version MUST match the `.jinja` template bundle's grammar version. Mismatch here would manifest as readNode producing `$fields` keys the Rust render crate doesn't expect. The template-bundle hash check (FR-020, R5) covers this indirectly — a template regen implies a grammar version change, which produces a new hash.
-- Transitive coupling: `sittir-{lang}-napi` depends on `tree-sitter-{lang}` + `sittir-{lang}-render` + `sittir-core`. The `tree-sitter-{lang}` grammar version must be pinned per-release alongside the template bundle.
+- Versions are coupled: the grammar crate version MUST match the `.jinja` template bundle's grammar version. Mismatch here would manifest as readNode producing `$fields` keys the Rust render module doesn't expect. The template-bundle hash check (FR-020, R5) covers this indirectly — a template regen implies a grammar version change, which produces a new hash.
+- Transitive coupling: `sittir-{lang}` depends on `tree-sitter-{lang}` + `sittir-{lang}` + `sittir-core`. The `tree-sitter-{lang}` grammar version must be pinned per-release alongside the template bundle.
 
 **Alternatives considered**:
 
@@ -152,12 +152,12 @@ The napi binding exposes `#[napi] pub fn template_bundle_hash() -> String { sitt
 
 ## R8. Platform matrix CI — release-pipeline shape
 
-**Decision**: Use **`@napi-rs/cli`'s built-in release pipeline** via a GitHub Actions matrix. 7 platform jobs (per FR-017) produce 7 `.node` artifacts, published to npm as platform-tagged subpackages (`@sittir/rust-native-darwin-arm64`, etc.) — the standard napi-rs shape.
+**Decision**: Use **`@napi-rs/cli`'s built-in release pipeline** via a GitHub Actions matrix. 7 platform jobs (per FR-017) produce 7 `.node` artifacts, published to npm as platform-tagged subpackages (`@sittir/{lang}-darwin-arm64`, etc.) — the standard napi-rs shape.
 
 **Rationale**:
 
 - Reuses a well-trodden napi-rs release path (same approach as `@node-rs/argon2`, `swc`, `oxc`, `parcel`'s Rust tooling). CI configuration is near-boilerplate.
-- Platform subpackages are optional peer deps of the umbrella `@sittir/rust-native`; npm installs only the one matching the consumer's platform. Unavailable platforms → no install → loadable-from-JS detection fails → TS fallback per FR-009.
+- Platform subpackages are optional peer deps of the umbrella `@sittir/{lang}`; npm installs only the one matching the consumer's platform. Unavailable platforms → no install → loadable-from-JS detection fails → TS fallback per FR-009.
 - Musl Linux builds use the `napi-rs/setup-node-and-napi` action with the `musl` target; glibc builds use the default.
 
 **CI matrix jobs** (per grammar × 7 platforms = 21 jobs at MVP):
@@ -199,7 +199,7 @@ The macro-benchmark is the one that SC-003 is gated on. The micro-benchmark exis
 | Item                                | Decision                                                                                                            |
 | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | Template engine                     | `askama` (compile-time; one `#[derive(Template)]` per kind emitted by codegen) — chosen to satisfy FR-008 literally |
-| Cargo workspace                     | Top-level `rust/` with per-grammar render crates at `packages/{lang}/rust-render/` as workspace members by path     |
+| Cargo workspace                     | Top-level `rust/` with per-grammar render modules at `rust/crates/sittir-{lang}/src/render/` as workspace members by path     |
 | napi-rs boundary                    | Hybrid: JSON string for NodeData; direct N-API for Edit                                                             |
 | Edit-path batching (spec Open Q #2) | Hybrid per-render + batched `apply_edits` — no combined endpoint in MVP                                             |
 | Template-bundle hash                | SHA-256 over `{filename}\0{content}\0` with LF-normalized content, sorted filename order                            |

@@ -79,7 +79,10 @@ fn empty_source_append() {
 #[test]
 fn invalid_range_rejected() {
     let err = apply_edits("abc", vec![edit(2, 1, "x")]).expect_err("must reject");
-    assert!(matches!(err, SpliceError::InvalidRange { start: 2, end: 1 }));
+    assert!(matches!(
+        err,
+        SpliceError::InvalidRange { start: 2, end: 1 }
+    ));
 }
 
 #[test]
@@ -87,7 +90,10 @@ fn out_of_bounds_end_rejected() {
     let err = apply_edits("abc", vec![edit(0, 99, "x")]).expect_err("must reject");
     assert!(matches!(
         err,
-        SpliceError::OutOfBounds { end: 99, source_len: 3 }
+        SpliceError::OutOfBounds {
+            end: 99,
+            source_len: 3
+        }
     ));
 }
 

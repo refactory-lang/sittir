@@ -12,6 +12,7 @@
 //!   semantics (T012 / feature 020 cleanup).
 
 pub mod boundary;
+pub mod engine;
 pub mod filters;
 pub mod format;
 pub mod read_node;

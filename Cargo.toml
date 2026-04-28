@@ -2,13 +2,10 @@
 resolver = "2"
 members = [
   "rust/crates/sittir-core",
-  "rust/crates/sittir-rust-napi",
-  "rust/crates/sittir-typescript-napi",
-  "rust/crates/sittir-python-napi",
   "rust/crates/sittir-parity-tests",
-  "rust/crates/sittir-render-rust",
-  "rust/crates/sittir-render-typescript",
-  "rust/crates/sittir-render-python"
+  "rust/crates/sittir-rust",
+  "rust/crates/sittir-typescript",
+  "rust/crates/sittir-python"
 ]
 
 # NOTE on workspace-root location (deviation from spec 012 task T002):
@@ -17,7 +14,7 @@ members = [
 # member live hierarchically below the workspace root (rejected with
 # "workspace member is not hierarchically below the workspace root"),
 # which is why the workspace manifest lives at the repo root while the
-# centralized generated render crates live under `rust/crates/`.
+# grammar-owned native crates live under `rust/crates/sittir-{lang}`.
 
 [workspace.package]
 version = "0.0.0"

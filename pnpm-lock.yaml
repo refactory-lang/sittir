@@ -152,10 +152,6 @@ importers:
       type-fest:
         specifier: ^5.6.0
         version: 5.6.0
-    optionalDependencies:
-      '@sittir/python-native':
-        specifier: workspace:*
-        version: link:../../rust/crates/sittir-python-napi
 
   packages/rust:
     dependencies:
@@ -175,10 +171,6 @@ importers:
       type-fest:
         specifier: ^5.6.0
         version: 5.6.0
-    optionalDependencies:
-      '@sittir/rust-native':
-        specifier: workspace:*
-        version: link:../../rust/crates/sittir-rust-napi
 
   packages/types:
     dependencies:
@@ -204,24 +196,20 @@ importers:
       type-fest:
         specifier: ^5.6.0
         version: 5.6.0
-    optionalDependencies:
-      '@sittir/typescript-native':
-        specifier: workspace:*
-        version: link:../../rust/crates/sittir-typescript-napi
 
-  rust/crates/sittir-python-napi:
+  rust/crates/sittir-python:
     devDependencies:
       '@napi-rs/cli':
         specifier: ^3.0.0
         version: 3.6.2(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.6.0)(node-addon-api@8.7.0)
 
-  rust/crates/sittir-rust-napi:
+  rust/crates/sittir-rust:
     devDependencies:
       '@napi-rs/cli':
         specifier: ^3.0.0
         version: 3.6.2(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.6.0)(node-addon-api@8.7.0)
 
-  rust/crates/sittir-typescript-napi:
+  rust/crates/sittir-typescript:
     devDependencies:
       '@napi-rs/cli':
         specifier: ^3.0.0

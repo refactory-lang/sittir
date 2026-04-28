@@ -27,11 +27,7 @@ fn upper_ascii_matches_ts() {
         ("camelCase", "CAMELCASE"),
     ];
     for (input, expected) in cases {
-        assert_eq!(
-            upper(input).unwrap(),
-            expected,
-            "upper({input:?}) mismatch"
-        );
+        assert_eq!(upper(input).unwrap(), expected, "upper({input:?}) mismatch");
     }
 }
 
@@ -45,11 +41,7 @@ fn lower_ascii_matches_ts() {
         ("CamelCase", "camelcase"),
     ];
     for (input, expected) in cases {
-        assert_eq!(
-            lower(input).unwrap(),
-            expected,
-            "lower({input:?}) mismatch"
-        );
+        assert_eq!(lower(input).unwrap(), expected, "lower({input:?}) mismatch");
     }
 }
 

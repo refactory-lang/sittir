@@ -30,15 +30,15 @@ sittir/
 │   ├── rust/
 │   │   ├── src/                     # generated TS (existing)
 │   │   ├── templates/               # generated .jinja (existing)
-│   │   └── rust-render/             # NEW — generated Rust render crate
+│   │   └── render-module/             # NEW — generated Rust render module
 │   │       ├── Cargo.toml
 │   │       ├── src/lib.rs
 │   │       ├── src/templates.rs
 │   │       └── src/hash.rs          # FR-020 const
 │   ├── typescript/
-│   │   └── rust-render/
+│   │   └── render-module/
 │   └── python/
-│       └── rust-render/
+│       └── render-module/
 └── rust/                            # NEW — Rust workspace root
     ├── Cargo.toml                   # workspace manifest
     ├── crates/
@@ -51,9 +51,7 @@ sittir/
     │   │       ├── splice.rs
     │   │       ├── boundary.rs
     │   │       └── filters.rs
-    │   ├── sittir-rust-napi/        # napi binding (rust grammar)
-    │   ├── sittir-typescript-napi/
-    │   └── sittir-python-napi/
+    │   └── sittir-{lang}/             # shared N-API binding
     └── tests/
         ├── fixtures/                # auto-extracted parity fixtures (JSON)
         └── parity/                  # cross-engine diff harness
@@ -78,10 +76,10 @@ The first `cargo build` on a fresh checkout downloads `tree-sitter`, `ast-grep-c
 
 ---
 
-## Regenerating the Rust render crates
+## Regenerating the Rust render modules
 
 Per-grammar generation is triggered through `--all`, which now emits both TS
-and native rust-render artifacts in a single pass:
+and native render-module artifacts in a single pass:
 
 ```bash
 npx tsx packages/codegen/src/cli.ts \
@@ -95,8 +93,8 @@ npx tsx packages/codegen/src/cli.ts \
 This emits (per grammar):
 
 - The existing TS output (unchanged).
-- `packages/{lang}/rust-render/src/templates.rs` — `match kind { ... }` dispatch + embedded templates.
-- `packages/{lang}/rust-render/src/hash.rs` — `pub const TEMPLATE_BUNDLE_HASH`.
+- `rust/crates/sittir-{lang}/src/render/templates.rs` — `match kind { ... }` dispatch + embedded templates.
+- `rust/crates/sittir-{lang}/src/render/hash.rs` — `pub const TEMPLATE_BUNDLE_HASH`.
 - `packages/{lang}/src/hash.ts` — `export const TEMPLATE_BUNDLE_HASH` (matches Rust const byte-for-byte).
 
 After regeneration, rebuild the Rust workspace:
@@ -177,10 +175,9 @@ To simulate the FR-020 failure mode:
 New grammars inherit the Rust path automatically:
 
 1. Add the TS-side `@sittir/{newlang}` package as usual (existing workflow).
-2. In `rust/Cargo.toml`, add `packages/{newlang}/rust-render` and `rust/crates/sittir-{newlang}-napi` to the `members` list.
-3. Create `rust/crates/sittir-{newlang}-napi/` from the existing napi-binding template (copy-paste from `sittir-rust-napi/` and update imports).
-4. Add the new grammar to the CI platform matrix (GitHub Actions: 7 new jobs).
-5. Run codegen; run parity suite; both should pass on day one if the grammar is well-formed.
+2. In `rust/Cargo.toml`, add `rust/crates/sittir-{newlang}/src/render` to the `members` list.
+3. Extend `rust/crates/sittir-{lang}/src/lib.rs` to recognize the new grammar and bind its tree-sitter language + render dispatcher.
+4. Run codegen; run parity suite; both should pass on day one if the grammar is well-formed.
 
 ---
 
@@ -202,7 +199,7 @@ New grammars inherit the Rust path automatically:
 ## Troubleshooting
 
 **Symptom**: `cargo build` fails with "file not found" in `templates.rs` on a fresh checkout.
-**Cause**: the Rust render crate is codegen-emitted. A fresh checkout has the stub crate but no generated contents.
+**Cause**: the Rust render module is codegen-emitted. A fresh checkout has the stub crate but no generated contents.
 **Fix**: run the codegen step first (`npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src`).
 
 **Symptom**: `getActiveBackend()` returns `typescript` on a supported platform.

@@ -1,7 +1,7 @@
 /**
  * Backend-selection shim — spec 012 T040 (real selection algorithm;
  * overwrites the T019 stub). Picks between the native backend
- * (`@sittir/python-native`) and the TypeScript fallback. See
+ * (the grammar-local `sittir-python` build) and the TypeScript fallback. See
  * specs/012-rust-core-port/contracts/backend-selection.md for the
  * runtime-selection contract.
  *
@@ -13,11 +13,14 @@
  */
 
 import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
 import type { NodeId } from '@sittir/types';
 import { TEMPLATE_BUNDLE_HASH } from './hash.js';
 
 /** Which backend is currently serving render/read/splice. */
 export type BackendName = 'native' | 'js';
+/** User-facing backend choices. `auto` is the default policy. */
+export type BackendChoice = 'auto' | 'native' | 'wasm' | 'js';
 
 export type NativeBackendStatus = {
 	readonly name: 'native';
@@ -35,7 +38,7 @@ export type JsBackendStatus = {
 export type BackendStatus = NativeBackendStatus | JsBackendStatus;
 
 /**
- * Structural shape of `@sittir/python-native`. Matches
+ * Structural shape of the grammar-local `sittir-python` native module. Matches
  * contracts/napi-api.md — we only require `SittirEngine` with the
  * documented surface. Declared locally (not imported) so the package
  * type-checks even when the native package is not installed.
@@ -70,8 +73,11 @@ let debugEmitted = false;
 /** Package identifier baked into the `SITTIR_BACKEND_DEBUG` log line. */
 const PACKAGE_ID = 'sittir/python';
 
-/** npm package id of the paired native binary. */
-const NATIVE_PACKAGE = '@sittir/python-native';
+/** Workspace-local native module path for the grammar-owned binary. */
+const NATIVE_MODULE_PATH = fileURLToPath(new URL(
+	'../../../rust/crates/sittir-python/index.js',
+	import.meta.url
+));
 
 function createJsStatus(reason: string, hashMatch?: false): JsBackendStatus {
 	if (hashMatch === false) {
@@ -103,15 +109,15 @@ function emitDebug(status: BackendStatus): void {
 }
 
 /**
- * Attempt to `require` the paired native package. Uses
+ * Attempt to `require` the grammar-local native build. Uses
  * `createRequire(import.meta.url)` so ESM consumers can still resolve
- * CJS native addons. Returns either the loaded module or a status
+ * CJS native backends. Returns either the loaded module or a status
  * object carrying the fallback reason.
  */
 function tryLoadNative(): NativeModule | { reason: string } {
 	try {
 		const req = createRequire(import.meta.url);
-		const mod = req(NATIVE_PACKAGE) as NativeModule;
+		const mod = req(NATIVE_MODULE_PATH) as NativeModule;
 		return mod;
 	} catch (err) {
 		const message = err instanceof Error ? err.message : String(err);
@@ -138,6 +144,9 @@ function tryLoadNative(): NativeModule | { reason: string } {
  * the contract):
  *   - `js` — skip the native load entirely; status.reason
  *     records the override.
+ *   - `wasm` — reserved grammar-local backend choice. Until the
+ *     package ships a WASM engine, status.reason records the request
+ *     and the language package serves the JS backend.
  *   - `native` — disable the silent fall-back; any native-load or
  *     hash-mismatch failure throws loudly so CI parity-diffing
  *     runs fail visibly instead of silently re-running on TS.
@@ -147,6 +156,11 @@ function computeBackend(): BackendStatus {
 	const forced = process.env.SITTIR_BACKEND;
 	if (forced === 'js') {
 		return createJsStatus('forced by SITTIR_BACKEND=js');
+	}
+	if (forced === 'wasm') {
+		return createJsStatus(
+			'forced by SITTIR_BACKEND=wasm, but @sittir/python does not package a WASM backend yet'
+		);
 	}
 
 	const loaded = tryLoadNative();

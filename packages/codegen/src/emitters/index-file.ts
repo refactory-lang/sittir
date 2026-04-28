@@ -48,6 +48,8 @@ export function emitIndex(_config: EmitIndexConfig): string {
 		'// re-export above stays for callers that want the TS engine',
 		'// explicitly without going through the selector.',
 		"export { render, toEdit, applyEdits } from './boundary.js';",
+		"export { createEngine } from './engine.js';",
+		"export type { EngineOptions } from './engine.js';",
 		'',
 		'// Backend selection (spec 012) — native vs. typescript fallback shim.',
 		"export { getActiveBackend } from './backend.js';",

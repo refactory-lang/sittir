@@ -79,7 +79,7 @@ describe('emitJinjaTemplates — T021 pure function', () => {
 		const result = emitJinjaTemplates({ grammar: 'test', nodeMap: nm });
 		expect(Array.from(result.bodies.keys())).toEqual(['function_item']);
 		expect(Array.from(result.bodies.keys())).not.toContain(
-			'rust/crates/sittir-render-test/function_item'
+			'rust/crates/sittir-test/function_item'
 		);
 	});
 });

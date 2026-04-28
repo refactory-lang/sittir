@@ -120,7 +120,7 @@ jobs:
   # Spec 016 T009 (follow-up) — regression-checker (native mode).
   # Sibling to `regression-checker`, gated on `napi-build` so the linux
   # x86_64-gnu `.node` artifacts produced by that matrix are available
-  # to dispatch `SITTIR_BACKEND=native` through the per-grammar boundary.
+  # to dispatch `SITTIR_BACKEND=native` through the shared native boundary.
   #
   # The check-baseline-regression script is backend-agnostic (the same
   # five verdict rules apply to both `ts.json` and `native.json` per
@@ -161,18 +161,18 @@ jobs:
         with:
           name: bindings-x86_64-unknown-linux-gnu
           path: /tmp/016-bindings
-      - name: Stage `.node` artifacts next to napi crates
-        # The artifact preserves the per-crate subdirs from the upload
-        # step (`rust/crates/sittir-{rust,typescript,python}-napi/*.node`).
-        # Copy them back into the workspace so the per-grammar napi
-        # loaders pick them up at runtime.
+      - name: Stage `.node` artifacts next to napi crate
+        # The artifact preserves the grammar-owned napi crate subdirs from
+        # the upload step (`rust/crates/sittir-*/*.node`). Copy them
+        # back into the workspace so each grammar loader picks up its native
+        # binary at runtime.
         run: |
           if [ -d /tmp/016-bindings/rust/crates ]; then
             cp -R /tmp/016-bindings/rust/crates/. rust/crates/
           else
             # Fallback if the artifact was uploaded flat
-            for crate in sittir-rust-napi sittir-typescript-napi sittir-python-napi; do
-              find /tmp/016-bindings -name "*.node" -exec cp {} "rust/crates/${crate}/" \;
+            for crate in rust typescript python; do
+              find /tmp/016-bindings -path "*sittir-${crate}/*.node" -exec cp {} "rust/crates/sittir-${crate}/" \;
             done
           fi
           find rust/crates -name "*.node" -print
@@ -237,8 +237,8 @@ jobs:
           if [ -d /tmp/054-bindings/rust/crates ]; then
             cp -R /tmp/054-bindings/rust/crates/. rust/crates/
           else
-            for crate in sittir-rust-napi sittir-typescript-napi sittir-python-napi; do
-              find /tmp/054-bindings -name "*.node" -exec cp {} "rust/crates/${crate}/" \;
+            for crate in rust typescript python; do
+              find /tmp/054-bindings -path "*sittir-${crate}/*.node" -exec cp {} "rust/crates/sittir-${crate}/" \;
             done
           fi
       - name: Collect fresh metrics (native backend)
@@ -325,7 +325,7 @@ jobs:
         # parity tests failing for the wrong reason. Failing CI
         # forces the next maintainer to commit the regen output
         # alongside whatever codegen change caused the drift.
-        run: git diff --exit-code packages/*/rust-render/test-fixtures.json
+	        run: git diff --exit-code rust/crates/sittir-*/render/test-fixtures.json
       - name: cargo test parity (--ignored for diagnostic)
         # Advisory until #[ignore]'d tests pass un-ignored — see job
         # docstring above.
@@ -399,15 +399,11 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           key: ${{ matrix.target }}
-      - name: napi build — @sittir/rust-native
-        run: pnpm exec napi build --platform --release --target ${{ matrix.target }}
-        working-directory: rust/crates/sittir-rust-napi
-      - name: napi build — @sittir/typescript-native
-        run: pnpm exec napi build --platform --release --target ${{ matrix.target }}
-        working-directory: rust/crates/sittir-typescript-napi
-      - name: napi build — @sittir/python-native
-        run: pnpm exec napi build --platform --release --target ${{ matrix.target }}
-        working-directory: rust/crates/sittir-python-napi
+      - name: napi build — grammar-owned native packages
+        run: |
+          for crate in rust typescript python; do
+            pnpm -C "rust/crates/sittir-${crate}" exec napi build --platform --release --target "${{ matrix.target }}"
+          done
       - name: cargo test --workspace (skip cross-compiled targets)
         if: matrix.cross == false
         run: cargo test --workspace --target ${{ matrix.target }}
@@ -423,9 +419,7 @@ jobs:
         with:
           name: bindings-${{ matrix.target }}
           path: |
-            rust/crates/sittir-rust-napi/*.node
-            rust/crates/sittir-typescript-napi/*.node
-            rust/crates/sittir-python-napi/*.node
+            rust/crates/sittir-*/*.node
           if-no-files-found: ignore
 
   # Spec 012 T060 — surface parity counts in PR job summary so review

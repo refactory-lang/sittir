@@ -1,7 +1,7 @@
 /**
  * T048 — TS-side parity sanity check (python grammar).
  *
- * Loads the same centralized native `test-fixtures.json` the Rust parity
+ * Loads the same grammar-owned native `test-fixtures.json` the Rust parity
  * harness (T047) reads, runs the TS engine over each fixture, and
  * confirms it reproduces the captured `expectedOutput` (render) /
  * `expectedSourceOut` (round-trip). Catches fixture-generator bugs
@@ -50,7 +50,7 @@ const FIXTURES_PATH = resolve(
 	'../../..',
 	'rust',
 	'crates',
-	`sittir-render-${GRAMMAR}`,
+	`sittir-${GRAMMAR}`,
 	'test-fixtures.json'
 );
 const TEMPLATES_PATH = resolve(__dirname, '..', 'templates');

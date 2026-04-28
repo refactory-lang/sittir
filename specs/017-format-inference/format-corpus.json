@@ -6,21 +6,21 @@
       "fixture": "rust-tab-indent.rs",
       "formatCategory": "tab-indent",
       "seedSource": "017-measured",
-      "expectedBackendCoverage": "typescript-only"
+      "expectedBackendCoverage": "both"
     },
     {
       "grammar": "typescript",
       "fixture": "typescript-4space.ts",
       "formatCategory": "4space-indent",
       "seedSource": "017-measured",
-      "expectedBackendCoverage": "typescript-only"
+      "expectedBackendCoverage": "both"
     },
     {
       "grammar": "python",
       "fixture": "python-4space.py",
       "formatCategory": "4space-indent",
       "seedSource": "017-measured",
-      "expectedBackendCoverage": "typescript-only"
+      "expectedBackendCoverage": "both"
     }
   ]
 }

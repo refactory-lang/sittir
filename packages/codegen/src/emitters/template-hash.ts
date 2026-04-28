@@ -6,7 +6,7 @@
  * Spec 012 T014. Unit-tested in `template-hash.test.ts` (T015).
  *
  * The hash is baked into two artifacts during codegen:
- *   - `packages/{lang}/rust-render/src/hash.rs` — `pub const
+ *   - `rust/crates/sittir-{lang}/src/render/hash.rs` — `pub const
  *     TEMPLATE_BUNDLE_HASH: &str = "…";` (T016)
  *   - `packages/{lang}/src/hash.ts` — `export const
  *     TEMPLATE_BUNDLE_HASH = "…";` (T016)

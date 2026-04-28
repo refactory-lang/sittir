@@ -12,7 +12,7 @@
 
 import type { AnyNodeData, ByteRange, Edit } from '@sittir/types';
 import { createEngine } from './engine.js';
-import type { SittirEngineLike } from '@sittir/core';
+import type { SittirEngineLike } from '@sittir/core/engine';
 
 let defaultEngine: SittirEngineLike | null = null;
 
@@ -69,4 +69,3 @@ export function toEdit(
 export function applyEdits(source: string, edits: readonly Edit[]): string {
 	return getDefaultEngine().applyEdits(source, edits);
 }
-

@@ -15,7 +15,10 @@ describe('boundary', () => {
 	});
 
 	function mockNativeBackend(
-		SittirEngine: new (options?: { format?: string }) => {
+		SittirEngine: new (
+			grammar: string,
+			options?: { format?: string }
+		) => {
 			render(nodeJson: string): string;
 			applyEdits(
 				source: string,
@@ -93,7 +96,7 @@ describe('boundary', () => {
 		const renderSpy = vi.fn((_nodeJson: string) => '\tx');
 		mockNativeBackend(
 			class {
-				constructor(_options?: { format?: string }) {}
+				constructor(_grammar: string, _options?: { format?: string }) {}
 				render(nodeJson: string): string {
 					return renderSpy(nodeJson);
 				}

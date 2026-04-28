@@ -32,7 +32,7 @@
 
 ## Clarification decisions absorbed (from `/speckit-superb-clarify`)
 
-- **Q1 — Release shape:** Approach A (phased, P1 first). MVP is native addon + TS fallback. WASM and crates.io are named future releases. Captured in: `Input` paragraph, US2 + US3 status markers, FR-001, FR-004, FR-018, Deferred/Future Work section, SC-DEF-01/02.
+- **Q1 — Release shape:** Approach A (phased, P1 first). MVP is native backend + TS fallback. WASM and crates.io are named future releases. Captured in: `Input` paragraph, US2 + US3 status markers, FR-001, FR-004, FR-018, Deferred/Future Work section, SC-DEF-01/02.
 - **Q2 — Correctness bar:** Approach C (byte-identical render; semantic round-trip). Captured in: FR-002a, FR-002b, edge-cases entries for render vs. splice drift, SC-001a, SC-001b.
 - **Q3 — Platform matrix:** Approach B (standard napi-rs, 7 prebuilts). Captured in: FR-017, SC-006.
 - **Q4 — readNode port scope:** Approach C (primitive in Rust; enrichment in TS). Captured in: `Input` paragraph, FR-005, FR-005a, FR-007, FR-011, Key Entities split into primitive vs. consumer-facing NodeData, SC-007.

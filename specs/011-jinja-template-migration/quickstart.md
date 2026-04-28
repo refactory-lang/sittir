@@ -103,7 +103,7 @@ If `pnpm test` wall-clock regresses by more than a few percent, wire up `nunjuck
 
 ### Step 1: New crate skeleton
 
-Create `crates/sittir-render/` with `Cargo.toml` depending on `askama` (latest 0.x). Set up `build.rs` if needed for grammar-specific asset copying.
+Create `rust/crates/sittir-{lang}/src/render/` with `Cargo.toml` depending on `askama` (latest 0.x). Set up `build.rs` if needed for grammar-specific asset copying.
 
 ### Step 2: Codegen emits Rust source
 
@@ -130,11 +130,11 @@ pub struct FunctionItemContext<'a> {
 
 ### Step 3: Cross-render parity test
 
-`crates/sittir-render/tests/parity.rs`: reads the same corpus the TS tests use, renders each node through the Rust implementation, compares against a TS-produced reference snapshot. Byte-identical required.
+`rust/crates/sittir-{lang}/src/render/tests/parity.rs`: reads the same corpus the TS tests use, renders each node through the Rust implementation, compares against a TS-produced reference snapshot. Byte-identical required.
 
 ### Step 4: Filter aliases
 
-`crates/sittir-render/src/filters.rs`: register Nunjucks-compatible aliases for divergent askama filters (`upper` → askama's `uppercase`, etc.).
+`rust/crates/sittir-{lang}/src/render/filters.rs`: register Nunjucks-compatible aliases for divergent askama filters (`upper` → askama's `uppercase`, etc.).
 
 ---
 
@@ -150,8 +150,8 @@ Phase A:
 
 Phase B:
 
-- [ ] `cargo build` succeeds across the sittir-render crate
-- [ ] `cargo test -p sittir-render` passes (parity corpus green)
+- [ ] `cargo build` succeeds across the sittir-{lang} crate
+- [ ] `cargo test -p sittir-parity-tests` passes (parity corpus green)
 - [ ] Intentional template-variable typo → `cargo build` fails with clear file + variable error
 - [ ] Per-node wall-clock render time at least 2× faster than TS baseline (bench included)
 
@@ -185,6 +185,6 @@ Phase A delivers:
 
 Phase B delivers:
 
-- `crates/sittir-render/` crate
+- `rust/crates/sittir-{lang}/src/render/` crate
 - `packages/codegen/src/emitters/rust-source.ts` (new) — emits per-rule askama structs
 - Cross-render parity test green across 3 grammars

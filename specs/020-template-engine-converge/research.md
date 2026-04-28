@@ -6,7 +6,7 @@ All planning-time ambiguities are resolved. No open `NEEDS CLARIFICATION` items 
 
 ## Decision 1: 020 owns both baseline convergence and optimization rollout
 
-**Decision**: Feature 020 fully owns any remaining work needed to finish the earlier convergence baseline (single canonical template directory, centralized native render crates, one regenerate workflow, no native-only template mirror) as well as the Level 1 and Level 3 optimization stages.
+**Decision**: Feature 020 fully owns any remaining work needed to finish the earlier convergence baseline (single canonical template directory, grammar-owned native/render modules, one regenerate workflow, no native-only template mirror) as well as the Level 1 and Level 3 optimization stages.
 
 **Rationale**: Treating baseline convergence as a separate prerequisite would split one architectural story across multiple partially overlapping features. The clarified spec explicitly makes 020 responsible for both finishing the retained baseline and delivering the optimization rollout, which keeps task decomposition and acceptance criteria aligned.
 
@@ -56,7 +56,7 @@ All planning-time ambiguities are resolved. No open `NEEDS CLARIFICATION` items 
 
 **Decision**: Level 1 and Level 3 both merge as whole-feature rollouts across `rust`, `typescript`, and `python`. Temporary mixed-mode validation is allowed during implementation, but a merged end state where one grammar remains on an older level is not acceptable.
 
-**Rationale**: The regenerate workflow, parity baselines, and centralized native render crate layout are shared across the supported grammars. Completing a level for only one or two grammars would complicate docs, tests, and generator invariants while leaving the repo in a semi-migrated state.
+**Rationale**: The regenerate workflow, parity baselines, and grammar-owned native/render module layout are shared across the supported grammars. Completing a level for only one or two grammars would complicate docs, tests, and generator invariants while leaving the repo in a semi-migrated state.
 
 **Alternatives considered**:
 - **Grammar-by-grammar merged rollout for both levels**: rejected because it would leave long-lived mixed architecture in the main branch.

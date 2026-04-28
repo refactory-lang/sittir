@@ -14,10 +14,7 @@ import {
 	dedupeSeqMembers
 } from '../compiler/optimize.ts';
 import type { Rule } from '../compiler/rule.ts';
-import type {
-	LinkedGrammar,
-	ExternalRole
-} from '../compiler/types.ts';
+import type { LinkedGrammar, ExternalRole } from '../compiler/types.ts';
 
 function makeLinked(
 	rules: Record<string, Rule>,

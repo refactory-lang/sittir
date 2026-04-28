@@ -2,24 +2,45 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createRenderer } from '@sittir/core';
+import { createJsEngine, type SittirEngineLike } from '@sittir/core/engine';
+import { readTreeNode as readPythonTreeNode } from '@sittir/python';
+import { readTreeNode as readRustTreeNode } from '@sittir/rust';
+import { readTreeNode as readTypeScriptTreeNode } from '@sittir/typescript';
+import type { FormatRecord } from '@sittir/types';
+
+import {
+	loadLanguageForGrammar,
+	loadWebTreeSitter,
+	treeHandle
+} from '../../packages/codegen/src/validate/common.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, '../..');
 const FIXTURES_DIR = resolve(repoRoot, 'tests/format-roundtrip/fixtures');
-const CORPUS_PATH = resolve(repoRoot, 'specs/017-format-inference/format-corpus.json');
+const CORPUS_PATH = resolve(
+	repoRoot,
+	'specs/017-format-inference/format-corpus.json'
+);
 
 type Grammar = 'python' | 'rust' | 'typescript';
 
-const NATIVE_ENGINE_PATH = {
-	python: 'rust/crates/sittir-python-napi',
-	rust: 'rust/crates/sittir-rust-napi',
-	typescript: 'rust/crates/sittir-typescript-napi'
+const READ_TREE_NODE = {
+	python: readPythonTreeNode,
+	rust: readRustTreeNode,
+	typescript: readTypeScriptTreeNode
+} as const;
+
+const NATIVE_ENGINE_PATH_BY_GRAMMAR = {
+	python: 'rust/crates/sittir-python',
+	rust: 'rust/crates/sittir-rust',
+	typescript: 'rust/crates/sittir-typescript'
 } as const;
 
 export type NativeEngine = {
 	parseAndRead(src: string): string;
+	readNode(nodeId: number): string;
 	render(nodeJson: string): string;
+	dispose(): void;
 };
 
 export type FormatCorpusEntry = {
@@ -48,32 +69,59 @@ export function loadFixtureSource(fixture: string): string {
 	return readFileSync(resolve(FIXTURES_DIR, fixture), 'utf-8');
 }
 
-export function tryLoadNativeEngine(grammar: Grammar): NativeEngine | null {
+export function tryLoadNativeEngine(
+	grammar: Grammar,
+	format?: FormatRecord
+): NativeEngine | null {
 	try {
 		const req = createRequire(import.meta.url);
-		const mod = req(resolve(repoRoot, NATIVE_ENGINE_PATH[grammar])) as {
-			SittirEngine: new () => NativeEngine;
+		const mod = req(
+			resolve(repoRoot, NATIVE_ENGINE_PATH_BY_GRAMMAR[grammar])
+		) as {
+			SittirEngine: new (options?: { format?: string }) => NativeEngine;
 		};
 
-		return new mod.SittirEngine();
+		return new mod.SittirEngine(
+			format ? { format: JSON.stringify(format) } : undefined
+		);
 	} catch {
 		return null;
 	}
 }
 
+export async function parseTsFixture(
+	grammar: Grammar,
+	source: string
+): Promise<object> {
+	const { Parser, lang } = await loadLanguageForGrammar(grammar);
+	const parser = new Parser();
+	parser.setLanguage(lang);
+	const tree = parser.parse(source);
+	if (!tree) {
+		throw new Error(`failed to parse ${grammar} fixture source`);
+	}
+	return READ_TREE_NODE[grammar](treeHandle(tree, source));
+}
+
 export function parseNativeFixture(
 	engine: NativeEngine,
 	source: string
-): { nodeData: object; format?: unknown } {
+): { nodeData: object; format?: FormatRecord } {
 	return JSON.parse(engine.parseAndRead(source)) as {
 		nodeData: object;
-		format?: unknown;
+		format?: FormatRecord;
 	};
 }
 
-type BoundaryNodeValue = null | boolean | number | string | BoundaryNodeValue[] | {
-	[key: string]: BoundaryNodeValue;
-};
+type BoundaryNodeValue =
+	| null
+	| boolean
+	| number
+	| string
+	| BoundaryNodeValue[]
+	| {
+			[key: string]: BoundaryNodeValue;
+	  };
 
 function cloneJsonValue<T extends BoundaryNodeValue>(value: T): T {
 	return JSON.parse(JSON.stringify(value)) as T;
@@ -106,7 +154,10 @@ export function toBoundaryNodeData(nodeData: unknown): object {
 	if (node.$fields && typeof node.$fields === 'object') {
 		const fields = node.$fields as Record<string, unknown>;
 		boundary.$fields = Object.fromEntries(
-			Object.entries(fields).map(([name, value]) => [name, toBoundaryFieldValue(value)])
+			Object.entries(fields).map(([name, value]) => [
+				name,
+				toBoundaryFieldValue(value)
+			])
 		);
 	}
 
@@ -128,26 +179,29 @@ export function toBoundaryNodeData(nodeData: unknown): object {
 		boundary.$nodeId = node.$nodeId;
 	}
 
-	if (node.$format && typeof node.$format === 'object') {
-		boundary.$format = cloneJsonValue(node.$format as BoundaryNodeValue);
-	}
-
 	return boundary;
 }
 
-export function renderNativeNodeData(engine: NativeEngine, nodeData: object): string {
-	const nodeDataWithFormat = {
-		...nodeData
-	};
-
-	return engine.render(JSON.stringify(nodeDataWithFormat));
+export function renderNativeNodeData(
+	engine: NativeEngine,
+	nodeData: object
+): string {
+	return engine.render(JSON.stringify(nodeData));
 }
 
-export function renderTsNodeData(grammar: Grammar, nodeData: object): string {
+export function createTsRenderEngine(
+	grammar: Grammar,
+	format?: FormatRecord
+): SittirEngineLike {
 	const templatesPath = resolve(repoRoot, 'packages', grammar, 'templates');
-	const { render } = createRenderer(templatesPath);
+	return createJsEngine({ templatesPath, format });
+}
 
-	return render(nodeData as never);
+export function renderTsNodeData(
+	engine: SittirEngineLike,
+	nodeData: object
+): string {
+	return engine.render(nodeData as never);
 }
 
 export function loadRenderFixtures(grammar: Grammar): RenderFixture[] {
@@ -155,14 +209,16 @@ export function loadRenderFixtures(grammar: Grammar): RenderFixture[] {
 		repoRoot,
 		'rust',
 		'crates',
-		`sittir-render-${grammar}`,
+		`sittir-${grammar}`,
 		'test-fixtures.json'
 	);
 	const fixtures = JSON.parse(readFileSync(fixturesPath, 'utf-8')) as Array<
 		RenderFixture | { kind: 'roundtrip' }
 	>;
 
-	return fixtures.filter((fixture): fixture is RenderFixture => fixture.kind === 'render');
+	return fixtures.filter(
+		(fixture): fixture is RenderFixture => fixture.kind === 'render'
+	);
 }
 
 export function pickRenderFixture(

@@ -1,9 +1,9 @@
 //! Parity fixture harness (spec 012 T047 / FR-012).
 //!
 //! For each grammar:
-//!   - load its `rust/crates/sittir-render-{lang}/test-fixtures.json`
-//!   - for every `RenderFixture`: build a `TemplateContext` from the
-//!     captured NodeData, call the Rust engine's `render_dispatch`,
+//!   - load its `rust/crates/sittir-{lang}/test-fixtures.json`
+//!   - for every `RenderFixture`: call the grammar's direct native
+//!     `render_dispatch` on the captured `NodeData`,
 //!     assert the output matches `expectedOutput` BYTE-FOR-BYTE
 //!     (SC-001a).
 //!   - for every `RoundTripFixture`: render the captured source via
@@ -16,7 +16,7 @@
 //!
 //! The napi bindings are NOT exercised here — their correctness is
 //! covered by per-crate tests. This harness isolates
-//! render-crate + sittir-core engine parity.
+//! grammar crate render module + sittir-core engine parity.
 
 use sittir_core::types::NodeData;
 use sittir_parity_tests::{load_fixtures, ParityFixture};
@@ -40,7 +40,7 @@ struct Engine {
 fn rust_engine() -> Engine {
     Engine {
         name: "rust",
-        render: sittir_rust_render::render_dispatch,
+        render: sittir_rust::render::render_dispatch,
         language: tree_sitter_rust::LANGUAGE.into(),
         enabled: true,
     }
@@ -49,7 +49,7 @@ fn rust_engine() -> Engine {
 fn typescript_engine() -> Engine {
     Engine {
         name: "typescript",
-        render: sittir_typescript_render::render_dispatch,
+        render: sittir_typescript::render::render_dispatch,
         language: tree_sitter_typescript::LANGUAGE_TYPESCRIPT.into(),
         enabled: true,
     }
@@ -58,7 +58,7 @@ fn typescript_engine() -> Engine {
 fn python_engine() -> Engine {
     Engine {
         name: "python",
-        render: sittir_python_render::render_dispatch,
+        render: sittir_python::render::render_dispatch,
         language: tree_sitter_python::LANGUAGE.into(),
         enabled: true,
     }

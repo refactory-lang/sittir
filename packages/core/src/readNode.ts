@@ -19,7 +19,12 @@
  * on branch nodes for debugging purposes.
  */
 
-import type { AnyNodeData, AnyTreeNode, FormatRecord, NodeId } from './types.ts';
+import type {
+	AnyNodeData,
+	AnyTreeNode,
+	FormatRecord,
+	NodeId
+} from './types.ts';
 
 /**
  * Whether to emit `$text` on branch nodes (those with `$fields` or
@@ -43,8 +48,8 @@ export interface TreeHandle {
 	 * Per-handle read dispatch. When present, the wrap layer reads
 	 * through this method instead of running `readNode(handle, id)`
 	 * directly. Native-engine handles set this to a closure that
-	 * calls `engine.reader.parseAndRead(source)` (root) / 
-	 * `engine.reader.readNode(id)` (drill-in) so reads stay inside 
+	 * calls `engine.reader.parseAndRead(source)` (root) /
+	 * `engine.reader.readNode(id)` (drill-in) so reads stay inside
 	 * the engine that owns the tree.
 	 *
 	 * Why per-handle: tree-sitter `Node::id()` is documented as
