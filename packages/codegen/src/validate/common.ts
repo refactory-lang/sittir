@@ -26,7 +26,7 @@ import {
 import type * as TS from 'web-tree-sitter';
 import type { SgNode, Pos, Range } from '@ast-grep/wasm';
 
-import type { AnyNodeData, AnyTreeNode, NodeId } from '@sittir/types';
+import type { AnyNodeData, AnyTreeNode, NodeId, FormatRecord } from '@sittir/types';
 import type { TreeHandle } from '@sittir/core';
 import {
 	assertNever,
@@ -199,6 +199,11 @@ export function treeHandle(tree: TS.Tree, source?: string): TreeHandle {
  * the tree-sitter `Node::id()` returned in `$nodeId` is dereferenced
  * by the same engine that produced it — no cross-engine id leakage.
  */
+interface ParseResult {
+	nodeData: AnyNodeDataLike;
+	format?: FormatRecord;
+}
+
 export interface NativeEngineLike {
 	parseAndRead(source: string): string;
 	readNode(nodeId: NodeId): string;
@@ -208,9 +213,12 @@ export function nativeTreeHandle(
 	source: string
 ): TreeHandle {
 	let rootData: AnyNodeDataLike | null = null;
+	let capturedFormat: FormatRecord | undefined;
 	function ensureRoot(): AnyNodeDataLike {
 		if (rootData === null) {
-			rootData = JSON.parse(engine.parseAndRead(source)) as AnyNodeDataLike;
+			const result = JSON.parse(engine.parseAndRead(source)) as ParseResult;
+			rootData = result.nodeData;
+			capturedFormat = result.format;
 		}
 		return rootData;
 	}
@@ -243,6 +251,11 @@ export function nativeTreeHandle(
 			>;
 		}
 	};
+	// Eagerly parse to populate format for callers
+	ensureRoot();
+	if (capturedFormat !== undefined) {
+		handle.format = capturedFormat;
+	}
 	return handle;
 }
 
