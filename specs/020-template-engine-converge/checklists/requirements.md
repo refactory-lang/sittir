@@ -1,8 +1,7 @@
-# Specification Quality Checklist: Template Engine Converge
+# Specification Quality Checklist: Render Pipeline Optimization
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
-**Created**: 2026-04-25
-**Updated**: 2026-04-27
+**Created**: 2026-04-28
 **Feature**: [spec.md](../spec.md)
 
 ## Content Quality
@@ -33,7 +32,6 @@
 ## Notes
 
 - Items marked incomplete require spec updates before `/speckit.clarify` or `/speckit.plan`.
-- This is an internal-tooling feature; the "user" is a maintainer working on the codegen/render pipeline. The spec therefore names repo artifacts such as `.jinja` templates, `TemplateContext`, Askama/Nunjucks, `render_dispatch`, Rust workspace crate paths, and `--all` because those are the contract surfaces the maintainer must reason about.
-- The 2026-04-27 revision realigns the spec to the current main-repo architecture from specs 011/012/016: canonical `.jinja` files already exist, native render crates already exist, and the remaining problem is the duplicated native template bundle plus its copy-time rewrite path.
-- The same revision folds in the **user-approved relocation requirement**: generated native render crates move from `packages/<grammar>/rust-render` to `rust/crates/sittir-render-<grammar>`, with crate renames and docs/command/example updates handled inside spec 020 rather than via a separate feature.
-- The single load-bearing uncertainty (whether the current Askama-facing generated surface can consume canonical unsuffixed list usages without `rewriteListUsage`, while also surviving the crate relocation cleanly) is captured as the explicit **Verification Gate**. The gate has named fallbacks (Option B, then Option A), so the spec remains plan-ready without leaving hidden ambiguity.
+- This remains an internal-tooling feature. The "user" is a maintainer working on the render/codegen pipeline, so the spec intentionally names contract surfaces such as `NodeData`, `TemplateContext`, Askama, canonical `.jinja` templates, centralized native render crates, and parity baselines.
+- The revised 2026-04-28 draft preserves the earlier 020 convergence content as baseline scope, then layers the new Level 1 and Level 3 optimization stages on top.
+- No clarification markers remain because the attached design already fixes the main scope decisions: Level 1 first, Level 3 second, Askama retained, `.jinja` unchanged, and the N-API boundary unchanged.

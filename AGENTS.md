@@ -389,6 +389,8 @@ Aggregate totals can hide kinds falling out of the validation universe.
 <!-- MANUAL ADDITIONS END -->
 
 ## Active Technologies
+- TypeScript 6.0.2 (workspace ESM) and Rust 1.82+ + `@sittir/codegen`, `@sittir/core`, `@sittir/types`, Askama 0.14, napi-rs 3, `web-tree-sitter`, centralized native render crates under `rust/crates/sittir-render-{lang}` (020-render-pipeline-optimization)
+- File system only (generated templates, generated native crates, spec artifacts, parity baselines); no runtime persistence (020-render-pipeline-optimization)
 
 - TypeScript (ESM, `.ts` extensions in imports), TypeScript 6.0.2 + `@sittir/core`, `@sittir/types`, `@sittir/codegen`; tree-sitter grammars (grammar.json + node-types.json) (004-yaml-render-templates)
 - File system (per-rule `.jinja` templates at `packages/{lang}/templates/<kind>.jinja`, read at render time by Nunjucks) (011-jinja-template-migration, supersedes 004's YAML templates)
