@@ -22,6 +22,7 @@ The key rules are:
 3. parsed tree handles retain inferred tree-level format associated with the renderer that created them
 4. render resolves format from renderer state, not from node payload
 5. precedence is fixed and shared across backends: **engine config wins over inferred tree format**
+6. engine-level format configuration is established when the renderer is created and does not mutate afterward
 
 This is a renderer/handle design change, not a per-node data-model change.
 
@@ -80,7 +81,7 @@ Existing convenience helpers may remain, but they should delegate to this shared
 
 Each renderer instance owns:
 
-- optional engine-level default format configuration
+- optional engine-level default format configuration fixed at renderer creation
 - any backend-specific runtime resources needed for parsing and rendering
 - the association table for parsed tree handles and their inferred format
 
