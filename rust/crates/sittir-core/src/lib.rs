@@ -17,6 +17,7 @@
 
 pub mod boundary;
 pub mod filters;
+pub mod format;
 pub mod prepare;
 pub mod read_node;
 pub mod splice;
