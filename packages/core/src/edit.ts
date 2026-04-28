@@ -6,8 +6,10 @@ import type {
 	ReplaceTarget,
 	AnyTreeNode,
 	Renderable,
-	KindOf
+	KindOf,
+	FormatRecord
 } from './types.ts';
+import { rebaseTrivia } from './format.ts';
 
 export type { ReplaceTarget, AnyTreeNode, Renderable, KindOf };
 
@@ -83,4 +85,56 @@ export function replaceField<
 		endPos: range.end.index,
 		insertedText: replacement.render()
 	};
+}
+
+// ---------------------------------------------------------------------------
+// applyEdits — apply a batch of edits + rebase the accompanying FormatRecord
+// ---------------------------------------------------------------------------
+
+/**
+ * Apply a batch of edits to `source`, returning the mutated source string
+ * and a rebased format record (if one was supplied).
+ *
+ * @param source - The original source string.
+ * @param edits - Array of edits to apply (may be empty, may be unsorted).
+ * @param format - Optional FormatRecord to rebase alongside the text edits.
+ * @returns `{ source: string; format: FormatRecord | undefined }`
+ *
+ * @remarks
+ * Edits are applied in descending `startPos` order so earlier byte
+ * positions are not invalidated by later insertions/deletions.
+ * For each edit, `rebaseTrivia` is called with
+ * `editStart = edit.startPos` and
+ * `delta = edit.insertedText.length - (edit.endPos - edit.startPos)`.
+ * FR-004: this is the single call-site for format rebasing after batched edits.
+ */
+export function applyEdits(
+	source: string,
+	edits: readonly Edit[],
+	format?: FormatRecord
+): { source: string; format: FormatRecord | undefined } {
+	if (edits.length === 0) return { source, format };
+
+	const sorted = [...edits].sort((a, b) => b.startPos - a.startPos);
+	let result = source;
+	let fmt = format;
+
+	for (const edit of sorted) {
+		result = applyOneEdit(result, edit);
+		fmt = rebaseOneEdit(fmt, edit);
+	}
+
+	return { source: result, format: fmt };
+}
+
+/** Splice a single edit into the source string. */
+function applyOneEdit(source: string, edit: Edit): string {
+	return source.slice(0, edit.startPos) + edit.insertedText + source.slice(edit.endPos);
+}
+
+/** Rebase the format record for a single edit, returning undefined if absent. */
+function rebaseOneEdit(format: FormatRecord | undefined, edit: Edit): FormatRecord | undefined {
+	if (!format) return undefined;
+	const delta = edit.insertedText.length - (edit.endPos - edit.startPos);
+	return rebaseTrivia(format, edit.startPos, delta);
 }
