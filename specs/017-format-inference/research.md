@@ -76,6 +76,8 @@ No subfield can be inferred from another. No two subfields encode the same fact.
 
 
 
+## Decision 6: JS readNode signature — unchanged
+
 **Decision**: `readNode(tree, nodeId?)` — no new parameters. The JS reader never extracts format.
 
 **Rationale**: Extraction is Rust-only (Decision 3). Adding an optional `sourceText` to the JS signature would imply JS extraction is possible or planned. Keeping the JS signature clean avoids future confusion and maintains the invariant: `$format` on a `NodeData` means "this came from the native reader".

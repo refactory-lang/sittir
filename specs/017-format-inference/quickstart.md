@@ -3,39 +3,48 @@
 ## Overview
 
 Feature 017 adds byte-equal parse-render roundtrip to sittir. After 017 lands,
-`render(readNode(parse(source), source), rules)` equals `source` byte-for-byte.
+`render(readNode(parse(source)), rules, { format: treeHandle.format })` equals
+`source` byte-for-byte on the native read path.
 
-## Using format extraction
+**Key architecture point**: Format extraction is Rust-only. The native reader
+(`SittirEngine.parse_and_read`) populates `treeHandle.format` with a single
+`FormatRecord` for the whole file. The JS `readNode` signature is unchanged and
+never emits `$format`. Both the JS and native render engines can _apply_ a
+`FormatRecord` received via `RenderContext.format`.
+
+## Using format extraction (native read path)
 
 ```ts
-import { readNode } from '@sittir/core';
 import { createRendererFromConfig } from '@sittir/core';
 import { rules } from '@sittir/rust';
 
-const source = `fn greet(	name: &str) { println!("{}", name); }`;
-const tree = parser.parse(source);
+const source = `fn greet(\tname: &str) { println!("{}", name); }`;
 
-// Pass source text as third argument — enables $format population
-const nodeData = readNode(tree.handle, undefined, source);
+// Native engine parses, reads, and infers format in one call.
+// Returns NodeData (root) and populates treeHandle.format.
+const engine = new SittirEngine();         // from @sittir/rust-native
+const nodeData = engine.parseAndRead(source); // treeHandle.format is set
 
-// render applies $format automatically — output equals source
-const output = createRendererFromConfig(rules)(nodeData);
+// Pass the inferred format record to the renderer via RenderContext.
+const renderer = createRendererFromConfig(rules);
+const output = renderer(nodeData, { format: treeHandle.format });
 assert(output === source); // ✓ byte-equal
 ```
 
 ## Opt-out (canonical render)
 
 ```ts
-const renderer = createRendererFromConfig(rules, { ignoreFormat: true });
-const canonical = renderer(nodeData); // uses template defaults, ignores $format
+const renderer = createRendererFromConfig(rules);
+// ignoreFormat: true skips $format even when ctx.format is set
+const canonical = renderer(nodeData, { ignoreFormat: true });
 ```
 
-## Inspecting `$format`
+## Inspecting `treeHandle.format`
 
 ```ts
 import type { FormatRecord } from '@sittir/types';
 
-const fmt: FormatRecord | undefined = nodeData.$format;
+const fmt: FormatRecord | undefined = treeHandle.format;
 
 if (fmt?.boundary?.leading) {
   console.log('leading whitespace:', JSON.stringify(fmt.boundary.leading));
@@ -44,6 +53,10 @@ if (fmt?.slots) {
   for (const [key, slot] of Object.entries(fmt.slots)) {
     console.log(`slot ${key}:`, slot);
   }
+}
+// Per-kind override: e.g. function_item uses different indent style
+if (fmt?.kinds?.['function_item']) {
+  console.log('function_item format:', fmt.kinds['function_item']);
 }
 ```
 
