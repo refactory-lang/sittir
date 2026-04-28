@@ -68,6 +68,14 @@ const engine = new status.native.SittirEngine(nativeOptions);
 
 			render(node, opts) {
 				assertNativeNodeData(node);
+				// Native engine does not yet support ignoreFormat option (Task 4).
+				// Until engine-owned format state is implemented, throw explicitly.
+				if (opts?.ignoreFormat === true) {
+					throw new Error(
+						'ignoreFormat option not yet supported by native engine. ' +
+						'Use JS engine or wait for Task 4 (engine-owned format state).'
+					);
+				}
 				const json = JSON.stringify(node);
 				return engine.render(json);
 			},
@@ -92,6 +100,10 @@ const engine = new status.native.SittirEngine(nativeOptions);
  * Attempts to use the native backend if available; falls back to the JS
  * engine (tree-sitter wasm + Nunjucks renderer) otherwise.
  *
+ * For the JS fallback, uses the pre-compiled parser from .sittir/parser.wasm
+ * (generated from overrides). Parser initialization happens asynchronously,
+ * but methods block until ready to avoid race conditions.
+ *
  * @param options - Engine configuration (format, etc.)
  * @returns An engine implementing SittirEngineLike.
  */
@@ -99,78 +111,83 @@ export function createEngine(options?: EngineOptions): SittirEngineLike {
 	const native = getNativeBackendEngine(options);
 	if (native) return native;
 
-	// JS fallback - note that createJsEngine from core expects a synchronous parse function
-	// We'll need to handle this async initialization carefully
-	let parserReady = false;
+	// JS fallback - use pre-compiled .sittir/parser.wasm
 	let parseFunc: JsEngineOptions['parse'] | null = null;
-
-	// Async parser initialization - we'll lazy-load on first use
-	const initParser = async () => {
-		if (parserReady) return;
-		
-		// Dynamic imports with proper typing
-		type ParserClass = {
-			new(): {
-				setLanguage(lang: any): void;
-				parse(source: string): any;
+	let initError: Error | null = null;
+	let initComplete = false;
+	
+	// Start parser initialization immediately in the background
+	const initPromise = (async () => {
+		try {
+			type ParserClass = {
+				new(): {
+					setLanguage(lang: any): void;
+					parse(source: string): any;
+				};
 			};
-		};
-		
-		const wts = await import('web-tree-sitter') as any;
-		const Parser: ParserClass = wts.default?.Parser ?? wts.Parser;
-		const treeSitterTypeScript = await import('tree-sitter-typescript');
-		
-		// Initialize web-tree-sitter
-		if (wts.default && typeof wts.default.init === 'function') {
-			await wts.default.init();
-		} else if (typeof wts.init === 'function') {
-			await wts.init();
-		}
-		
-		const parserInstance = new Parser();
-		// tree-sitter-typescript exports both 'typescript' and 'tsx' - use 'typescript'
-		parserInstance.setLanguage(treeSitterTypeScript.typescript);
-
-		// Build TreeHandle adapter
-		parseFunc = (source: string) => {
-			const tree = parserInstance.parse(source);
-			const nodeMap = new Map<number, any>();
+			type LanguageClass = {
+				load(wasmPath: string): Promise<any>;
+			};
 			
-			function collect(node: any) {
-				nodeMap.set(node.id, node);
-				for (const child of node.children) collect(child);
+			const wts = await import('web-tree-sitter') as any;
+			const Parser: ParserClass = wts.default?.Parser ?? wts.Parser;
+			const Language: LanguageClass = wts.default?.Language ?? wts.Language;
+			
+			// Initialize web-tree-sitter
+			if (wts.default && typeof wts.default.init === 'function') {
+				await wts.default.init();
+			} else if (typeof wts.init === 'function') {
+				await wts.init();
 			}
-			collect(tree.rootNode);
+			
+			const parserInstance = new Parser();
+			// Use the pre-compiled parser WASM from .sittir/
+			const wasmPath = join(__dirname, '..', '.sittir', 'parser.wasm');
+			const lang = await Language.load(wasmPath);
+			parserInstance.setLanguage(lang);
 
-			return {
-				rootNode: adaptNode(tree.rootNode),
-				nodeById: (id) => {
-					const node = nodeMap.get(id);
-					if (!node) throw new Error(`Node ${id} not found`);
-					return adaptNode(node);
-				},
-				source
+			// Build TreeHandle adapter
+			parseFunc = (source: string) => {
+				const tree = parserInstance.parse(source);
+				const nodeMap = new Map<number, any>();
+				
+				function collect(node: any) {
+					nodeMap.set(node.id, node);
+					for (const child of node.children) collect(child);
+				}
+				collect(tree.rootNode);
+
+				return {
+					rootNode: adaptNode(tree.rootNode),
+					nodeById: (id) => {
+						const node = nodeMap.get(id);
+						if (!node) throw new Error(`Node ${id} not found`);
+						return adaptNode(node);
+					},
+					source
+				};
 			};
-		};
-		parserReady = true;
-	};
+			initComplete = true;
+		} catch (error) {
+			initError = error instanceof Error ? error : new Error(String(error));
+			initComplete = true;
+		}
+	})();
 
-	// Start parser initialization immediately but don't await
-	initParser().catch(() => {
-		// Parser initialization failure is deferred until parse() is called
-	});
-
-	// Return a JS engine with deferred parser initialization
 	const jsOptions: JsEngineOptions = {
 		templatesPath: join(__dirname, '..', 'templates'),
 		format: options?.format,
 		parse: (source: string) => {
-			if (!parseFunc) {
+			// Block until initialization completes
+			if (!initComplete) {
 				throw new Error(
-					'Parser not yet initialized. Engine initialization is async. ' +
-					'Wait a moment and retry, or use createEngine in an async context.'
+					'Parser is still initializing. This is a race condition bug. ' +
+					'The parser should be ready before parseAndRead() is called. ' +
+					'Please report this issue.'
 				);
 			}
+			if (initError) throw initError;
+			if (!parseFunc) throw new Error('Parser initialization failed unexpectedly');
 			return parseFunc(source);
 		}
 	};
