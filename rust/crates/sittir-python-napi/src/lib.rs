@@ -12,8 +12,16 @@ use napi::bindgen_prelude::*;
 use napi_derive::napi;
 use sittir_core::prepare::{build_template_context, RenderDispatch};
 use sittir_core::splice::apply_edits as splice_apply_edits;
-use sittir_core::types::{Edit, NodeData};
+use sittir_core::types::{Edit, FormatRecord, NodeData};
 use sittir_python_render::{render_dispatch, PythonGrammarMeta, TEMPLATE_BUNDLE_HASH};
+
+#[derive(serde::Serialize)]
+struct ParseResult<'a> {
+    #[serde(rename = "nodeData")]
+    node_data: &'a NodeData,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    format: Option<FormatRecord>,
+}
 
 #[napi]
 pub struct SittirEngine {
@@ -67,8 +75,14 @@ impl SittirEngine {
             )
         }));
         match result {
-            Ok(data) => serde_json::to_string(&data)
-                .map_err(|e| Error::from_reason(format!("serialize NodeData failed: {e}"))),
+            Ok(data) => {
+                let format = sittir_core::format::extract_format(
+                    self.source.as_ref().unwrap(),
+                    self.tree.as_ref().unwrap(),
+                );
+                serde_json::to_string(&ParseResult { node_data: &data, format })
+                    .map_err(|e| Error::from_reason(format!("serialize ParseResult failed: {e}")))
+            }
             Err(panic_payload) => Err(Error::from_reason(panic_msg(panic_payload, "parse_and_read panicked"))),
         }
     }
