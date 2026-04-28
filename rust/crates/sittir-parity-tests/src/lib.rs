@@ -56,7 +56,7 @@ pub enum ParityFixture {
 /// it regardless of the caller's cwd.
 pub fn load_fixtures(grammar: &str) -> Vec<ParityFixture> {
     let path = format!(
-        "{}/../../../packages/{}/rust-render/test-fixtures.json",
+        "{}/../sittir-render-{}/test-fixtures.json",
         env!("CARGO_MANIFEST_DIR"),
         grammar,
     );

@@ -224,20 +224,24 @@ bundle hash matches the JS-side bundle, the public APIs (`render`,
 Otherwise they fall back silently to the TypeScript engine — every
 public API works on every platform regardless of native availability.
 
+Authored templates remain canonical under `packages/{lang}/templates/`.
+The checked-in native Askama crates are generated companions under
+`rust/crates/sittir-render-{lang}/`, refreshed by the same
+`--all` codegen workflow as the TypeScript package outputs.
+
 ### Selecting a backend at runtime
 
-`getActiveBackend(): { name, reason, hashMatch }` reports which
-engine the package resolved on first import. The result is cached
-per process — call it any time after the first `import` of the
-package.
+`getActiveBackend()` reports which engine the package resolved on
+first import. The result is cached per process — call it any time
+after the first `import` of the package.
 
 ```ts
 import { getActiveBackend } from '@sittir/rust';
 
 console.log(getActiveBackend());
-// { name: 'native', reason: 'loaded', hashMatch: true }
+// { name: 'native', hashMatch: true, native: ... }
 // or
-// { name: 'typescript', reason: 'native package not installed', hashMatch: false }
+// { name: 'js', reason: 'native package not installed', hashMatch: false }
 ```
 
 ### Environment variables

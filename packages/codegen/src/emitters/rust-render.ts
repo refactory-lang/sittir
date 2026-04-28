@@ -1,13 +1,15 @@
 /**
  * Rust render-crate emitter. Owns codegen output for
- * `packages/{lang}/rust-render/src/*.rs` and the companion
+ * `rust/crates/sittir-render-{lang}/src/*.rs` and the companion
  * `packages/{lang}/src/hash.ts` that the TS backend shim imports.
  *
  * Spec 012:
  *  - T016 (initial scaffold): hash.rs + hash.ts emission.
- *  - T027/T028/T029: per-kind `#[derive(Template)]` structs + filter
- *    imports + `render_dispatch` in `packages/{lang}/rust-render/src/templates.rs`.
- *  - T030: `.jinja` file copying into `packages/{lang}/rust-render/templates/`.
+ *  - T027/T028/T029: per-kind `#[derive(Template)]` structs + direct
+ *    `NodeData` render helpers + `render_dispatch` in
+ *    `rust/crates/sittir-render-{lang}/src/templates.rs`.
+ *  - T030: canonical `.jinja` copying into
+ *    `rust/crates/sittir-render-{lang}/templates/`.
  *  - T031: full `Cargo.toml` with real deps.
  *
  * The emitter is pure — given a grammar's template bundle + node map,
@@ -23,6 +25,10 @@ import {
 } from '../compiler/node-map.ts';
 import type { TemplateFile } from './template-hash.ts';
 import { computeTemplateBundleHash } from './template-hash.ts';
+import {
+	renderCrateRoot,
+	renderCrateSrcDir
+} from './render-crate-paths.ts';
 
 /** Grammars the emitter supports. Matches the three per-grammar packages. */
 export type Grammar = 'rust' | 'typescript' | 'python';
@@ -34,15 +40,15 @@ export type Grammar = 'rust' | 'typescript' | 'python';
  * the emitter over the same inputs produces byte-identical output.
  */
 export interface RustRenderEmit {
-	/** `packages/{lang}/rust-render/src/hash.rs` */
+	/** `rust/crates/sittir-render-{lang}/src/hash.rs` */
 	hashRs: { path: string; contents: string };
 	/** `packages/{lang}/src/hash.ts` */
 	hashTs: { path: string; contents: string };
-	/** `packages/{lang}/rust-render/src/templates.rs` (T027/T028/T029) */
+	/** `rust/crates/sittir-render-{lang}/src/templates.rs` (T027/T028/T029) */
 	templatesRs: { path: string; contents: string };
-	/** `packages/{lang}/rust-render/src/lib.rs` (T028 — exposes render_dispatch) */
+	/** `rust/crates/sittir-render-{lang}/src/lib.rs` (T028 — exposes render_dispatch) */
 	libRs: { path: string; contents: string };
-	/** `packages/{lang}/rust-render/Cargo.toml` (T031) */
+	/** `rust/crates/sittir-render-{lang}/Cargo.toml` (T031) */
 	cargoToml: { path: string; contents: string };
 	/** Per-kind set of field names emitted as `Vec<String>` (list shape).
 	 *  Used by the cli.ts template-copy step to rewrite scalar-filter
@@ -68,7 +74,7 @@ function hashTsHeader(lang: Grammar): string {
 	return `// @generated from packages/${lang}/templates/*.jinja — do not hand-edit.
 // Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
 //
-// Companion to packages/${lang}/rust-render/src/hash.rs; the two must
+// Companion to ${renderCrateSrcDir(lang)}/hash.rs; the two must
 // agree byte-for-byte at runtime for the native backend to be picked
 // (FR-020). Mismatch is caught by packages/${lang}/src/backend.ts and
 // falls through to the TS engine silently.
@@ -79,7 +85,7 @@ function templatesRsHeader(lang: Grammar): string {
 	return `// @generated from packages/${lang}/node-model.json5 and packages/${lang}/templates/*.jinja — do not hand-edit.
 // Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
 //
-// Per-kind askama template structs + render_dispatch + GrammarMeta impl
+// Per-kind askama template structs + direct render helpers + render_dispatch
 // for the ${lang} grammar. Every struct in this file is backed by a
 // sibling \`.jinja\` template under \`templates/\`, copied from
 // \`packages/${lang}/templates/\` at codegen time (spec 012 T030).
@@ -109,7 +115,7 @@ repository = "https://github.com/refactory-lang/sittir"
 description = "Generated render dispatch for the ${lang} grammar — codegen output from packages/${lang}/node-model.json5 and packages/${lang}/templates/*.jinja."
 
 [dependencies]
-sittir-core = { path = "../../../rust/crates/sittir-core" }
+sittir-core = { path = "../sittir-core" }
 askama = { workspace = true }
 serde = { workspace = true }
 `;
@@ -363,10 +369,6 @@ function emitStruct(
 	return { name, kind, fields };
 }
 
-function _rustFieldType(shape: IdentShape): string {
-	return shape === 'list' ? 'Vec<String>' : 'String';
-}
-
 function renderStructDefs(structs: EmittedStruct[]): string {
 	const lines: string[] = [];
 	for (const s of structs) {
@@ -374,13 +376,13 @@ function renderStructDefs(structs: EmittedStruct[]): string {
 		lines.push(
 			`#[template(path = ${JSON.stringify(`${s.kind}.jinja`)}, escape = "none")]`
 		);
-		lines.push(`pub struct ${s.name} {`);
+		lines.push(`pub struct ${s.name}<'a> {`);
 		// Shared positional fields (always emitted — keeps the struct
 		// uniform even when a template doesn't reference them).
-		lines.push(`    pub children: Vec<String>,`);
-		lines.push(`    pub children_list: Vec<String>,`);
-		lines.push(`    pub variant: String,`);
-		lines.push(`    pub text: String,`);
+		lines.push(`    pub children: &'a [String],`);
+		lines.push(`    pub children_list: &'a [String],`);
+		lines.push(`    pub variant: &'a str,`);
+		lines.push(`    pub text: &'a str,`);
 		lines.push(`    pub trailing_sep: bool,`);
 		lines.push(`    pub leading_sep: bool,`);
 		// Each user-declared field always emits BOTH a scalar and a
@@ -393,9 +395,407 @@ function renderStructDefs(structs: EmittedStruct[]): string {
 		// "not present" via `| isPresent`, so no separate filter is
 		// needed — we never permit null arrays, only empty ones.
 		for (const f of s.fields) {
-			lines.push(`    pub ${rustFieldIdent(f.name)}: String,`);
-			lines.push(`    pub ${rustFieldIdent(f.name)}_list: Vec<String>,`);
+			lines.push(`    pub ${rustFieldIdent(f.name)}: &'a str,`);
+			lines.push(`    pub ${rustFieldIdent(f.name)}_list: &'a [String],`);
+			lines.push(`    pub ${rustFieldIdent(f.name)}_leading_sep: bool,`);
+			lines.push(`    pub ${rustFieldIdent(f.name)}_trailing_sep: bool,`);
 		}
+		lines.push(`}`);
+		lines.push('');
+	}
+	return lines.join('\n');
+}
+
+function renderFnName(kind: string): string {
+	const base = kind.replace(/^_+/, 'hidden_').replace(/[^a-zA-Z0-9]+/g, '_');
+	return `render_${base}`;
+}
+
+function renderDirectSupport(meta: MetaData): string {
+	const lines: string[] = [];
+	lines.push(`use ::askama::Template as _AskamaTemplate;`);
+	lines.push(`use ::sittir_core::types::{FieldValue, NodeData};`);
+	lines.push('');
+	lines.push(`#[derive(Debug, Default)]`);
+	lines.push(`struct ResolvedField {`);
+	lines.push(`    scalar: String,`);
+	lines.push(`    items: Vec<String>,`);
+	lines.push(`    leading_sep: bool,`);
+	lines.push(`    trailing_sep: bool,`);
+	lines.push(`}`);
+	lines.push('');
+	lines.push(`impl ResolvedField {`);
+	lines.push(`    fn from_scalar(value: String) -> Self {`);
+	lines.push(`        let mut items = Vec::new();`);
+	lines.push(`        if !value.is_empty() {`);
+	lines.push(`            items.push(value.clone());`);
+	lines.push(`        }`);
+	lines.push(`        Self {`);
+	lines.push(`            scalar: value,`);
+	lines.push(`            items,`);
+	lines.push(`            leading_sep: false,`);
+	lines.push(`            trailing_sep: false,`);
+	lines.push(`        }`);
+	lines.push(`    }`);
+	lines.push(`}`);
+	lines.push('');
+	lines.push(`fn separator_for(kind: &str) -> &'static str {`);
+	lines.push(`    match kind {`);
+	for (const [k, s] of Array.from(meta.separators.entries()).sort(([a], [b]) =>
+		a.localeCompare(b)
+	)) {
+		lines.push(`        ${JSON.stringify(k)} => ${JSON.stringify(s)},`);
+	}
+	lines.push(`        _ => "",`);
+	lines.push(`    }`);
+	lines.push(`}`);
+	lines.push('');
+	lines.push(`fn variant_for(parent_kind: &str, child_kind: &str) -> Option<&'static str> {`);
+	lines.push(`    match (parent_kind, child_kind) {`);
+	const sortedVariants: [string, string, string][] = [];
+	for (const [parent, map] of meta.variants) {
+		for (const [child, label] of map) sortedVariants.push([parent, child, label]);
+	}
+	sortedVariants.sort(
+		(a, b) => a[0].localeCompare(b[0]) || a[1].localeCompare(b[1])
+	);
+	for (const [parent, child, label] of sortedVariants) {
+		lines.push(
+			`        (${JSON.stringify(parent)}, ${JSON.stringify(child)}) => Some(${JSON.stringify(label)}),`
+		);
+	}
+	lines.push(`        _ => None,`);
+	lines.push(`    }`);
+	lines.push(`}`);
+	lines.push('');
+	lines.push(`fn first_named_child_kind(node: &NodeData) -> Option<&str> {`);
+	lines.push(`    node.children.as_ref()?.iter().find(|child| child.named).map(|child| child.type_.as_str())`);
+	lines.push(`}`);
+	lines.push('');
+	lines.push(`fn resolve_variant(node: &NodeData) -> &'static str {`);
+	lines.push(`    first_named_child_kind(node)`);
+	lines.push(`        .and_then(|child_kind| variant_for(node.type_.as_str(), child_kind))`);
+	lines.push(`        .unwrap_or("")`);
+	lines.push(`}`);
+	lines.push('');
+	lines.push(`fn render_node_value(node: &NodeData) -> Result<String, ::askama::Error> {`);
+	lines.push(`    render_dispatch(node)`);
+	lines.push(`}`);
+	lines.push('');
+	lines.push(`fn resolve_text(node: &NodeData) -> Result<String, ::askama::Error> {`);
+	lines.push(`    if let Some(text) = &node.text {`);
+	lines.push(`        return Ok(text.clone());`);
+	lines.push(`    }`);
+	lines.push(`    let mut parts = Vec::new();`);
+	lines.push(`    if let Some(fields) = &node.fields {`);
+	lines.push(`        for value in fields.values() {`);
+	lines.push(`            match value {`);
+	lines.push(`                FieldValue::Single(child) => parts.push(render_node_value(child)?),`);
+	lines.push(`                FieldValue::Multiple(items) => {`);
+	lines.push(`                    for child in items {`);
+	lines.push(`                        parts.push(render_node_value(child)?);`);
+	lines.push(`                    }`);
+	lines.push(`                }`);
+	lines.push(`                FieldValue::Text(text) => parts.push(text.clone()),`);
+	lines.push(`            }`);
+	lines.push(`        }`);
+	lines.push(`    }`);
+	lines.push(`    if let Some(children) = &node.children {`);
+	lines.push(`        for child in children {`);
+	lines.push(`            parts.push(render_node_value(child)?);`);
+	lines.push(`        }`);
+	lines.push(`    }`);
+	lines.push(`    Ok(parts.join(""))`);
+	lines.push(`}`);
+	lines.push('');
+	lines.push(`fn resolve_leaf<'a>(node: &'a NodeData, name: &str) -> Option<&'a str> {`);
+	lines.push(`    match node.fields.as_ref().and_then(|fields| fields.get(name)) {`);
+	lines.push(`        Some(FieldValue::Single(child)) => child.text.as_deref(),`);
+	lines.push(`        Some(FieldValue::Text(text)) => Some(text.as_str()),`);
+	lines.push(`        _ => None,`);
+	lines.push(`    }`);
+	lines.push(`}`);
+	lines.push('');
+	lines.push(`fn resolve_optional(node: &NodeData, name: &str) -> Result<Option<String>, ::askama::Error> {`);
+	lines.push(`    match node.fields.as_ref().and_then(|fields| fields.get(name)) {`);
+	lines.push(`        None => Ok(None),`);
+	lines.push(`        Some(FieldValue::Text(text)) => Ok((!text.is_empty()).then(|| text.clone())),`);
+	lines.push(`        Some(FieldValue::Single(child)) => {`);
+	lines.push(`            let rendered = render_node_value(child)?;`);
+	lines.push(`            Ok((!rendered.is_empty()).then_some(rendered))`);
+	lines.push(`        }`);
+	lines.push(`        Some(FieldValue::Multiple(_)) => {`);
+	lines.push(`            let resolved = resolve_field(node, name)?;`);
+	lines.push(`            Ok((!resolved.scalar.is_empty()).then_some(resolved.scalar))`);
+	lines.push(`        }`);
+	lines.push(`    }`);
+	lines.push(`}`);
+	lines.push('');
+	lines.push(`fn resolve_required(node: &NodeData, name: &str) -> Result<String, ::askama::Error> {`);
+	lines.push(`    Ok(resolve_optional(node, name)?.unwrap_or_default())`);
+	lines.push(`}`);
+	lines.push('');
+	lines.push(`fn is_join_flank_token(text: &str) -> bool {`);
+	lines.push(`    matches!(text, "," | ";")`);
+	lines.push(`}`);
+	lines.push('');
+	lines.push(`fn detect_field_trailing_sep(node: &NodeData, field_name: &str) -> bool {`);
+	lines.push(`    let fields = match &node.fields {`);
+	lines.push(`        Some(fields) => fields,`);
+	lines.push(`        None => return false,`);
+	lines.push(`    };`);
+	lines.push(`    let value = match fields.get(field_name) {`);
+	lines.push(`        Some(value) => value,`);
+	lines.push(`        None => return false,`);
+	lines.push(`    };`);
+	lines.push(`    let boundary = match value {`);
+	lines.push(`        FieldValue::Multiple(items) => items`);
+	lines.push(`            .iter()`);
+	lines.push(`            .filter(|item| item.named)`);
+	lines.push(`            .filter_map(|item| item.span.map(|span| span.end))`);
+	lines.push(`            .max(),`);
+	lines.push(`        _ => None,`);
+	lines.push(`    };`);
+	lines.push(`    let boundary = match boundary {`);
+	lines.push(`        Some(boundary) => boundary,`);
+	lines.push(`        None => return false,`);
+	lines.push(`    };`);
+	lines.push(`    for (name, raw) in fields {`);
+	lines.push(`        if name == field_name {`);
+	lines.push(`            continue;`);
+	lines.push(`        }`);
+	lines.push(`        let values: Vec<&NodeData> = match raw {`);
+	lines.push(`            FieldValue::Single(item) => vec![item.as_ref()],`);
+	lines.push(`            FieldValue::Multiple(items) => items.iter().collect(),`);
+	lines.push(`            FieldValue::Text(_) => Vec::new(),`);
+	lines.push(`        };`);
+		lines.push(`        for candidate in values {`);
+		lines.push(`            if candidate.named {`);
+		lines.push(`                continue;`);
+		lines.push(`            }`);
+		lines.push(`            if let Some(span) = candidate.span {`);
+		lines.push(`                if span.start >= boundary && candidate.text.as_deref().map_or(false, is_join_flank_token) {`);
+		lines.push(`                    return true;`);
+		lines.push(`                }`);
+		lines.push(`            }`);
+	lines.push(`        }`);
+	lines.push(`    }`);
+	lines.push(`    if let Some(children) = &node.children {`);
+		lines.push(`        for child in children {`);
+		lines.push(`            if child.named {`);
+		lines.push(`                continue;`);
+		lines.push(`            }`);
+		lines.push(`            if let Some(span) = child.span {`);
+		lines.push(`                if span.start >= boundary && child.text.as_deref().map_or(false, is_join_flank_token) {`);
+		lines.push(`                    return true;`);
+		lines.push(`                }`);
+		lines.push(`            }`);
+	lines.push(`        }`);
+	lines.push(`    }`);
+	lines.push(`    false`);
+	lines.push(`}`);
+	lines.push('');
+	lines.push(`fn resolve_field(node: &NodeData, name: &str) -> Result<ResolvedField, ::askama::Error> {`);
+	lines.push(`    match node.fields.as_ref().and_then(|fields| fields.get(name)) {`);
+	lines.push(`        None => Ok(ResolvedField::default()),`);
+	lines.push(`        Some(FieldValue::Text(text)) => Ok(ResolvedField::from_scalar(text.clone())),`);
+	lines.push(`        Some(FieldValue::Single(child)) => {`);
+	lines.push(`            let rendered = render_node_value(child)?;`);
+	lines.push(`            Ok(ResolvedField::from_scalar(rendered))`);
+	lines.push(`        }`);
+	lines.push(`        Some(FieldValue::Multiple(items)) => {`);
+	lines.push(`            let mut rendered = Vec::new();`);
+	lines.push(`            for item in items {`);
+	lines.push(`                if !item.named {`);
+	lines.push(`                    continue;`);
+	lines.push(`                }`);
+	lines.push(`                rendered.push(render_node_value(item)?);`);
+	lines.push(`            }`);
+	lines.push(`            let scalar = if rendered.is_empty() {`);
+	lines.push(`                String::new()`);
+	lines.push(`            } else {`);
+	lines.push(`                ::sittir_core::filters::joinby(rendered.as_slice(), separator_for(node.type_.as_str()), false, false)?`);
+	lines.push(`            };`);
+	lines.push(`            Ok(ResolvedField {`);
+	lines.push(`                scalar,`);
+	lines.push(`                items: rendered,`);
+	lines.push(`                leading_sep: false,`);
+	lines.push(`                trailing_sep: detect_field_trailing_sep(node, name),`);
+	lines.push(`            })`);
+	lines.push(`        }`);
+	lines.push(`    }`);
+	lines.push(`}`);
+	lines.push('');
+	lines.push(`fn resolve_children(node: &NodeData, consumed_fields: &[&str]) -> Result<ResolvedField, ::askama::Error> {`);
+	lines.push(`    let mut child_nodes: Vec<(u32, usize, &NodeData)> = Vec::new();`);
+	lines.push(`    let mut child_ordinal = 0usize;`);
+	lines.push(`    let mut first_named_idx: Option<usize> = None;`);
+	lines.push(`    let mut last_named_idx: Option<usize> = None;`);
+	lines.push(`    if let Some(items) = &node.children {`);
+	lines.push(`        for (index, child) in items.iter().enumerate() {`);
+	lines.push(`            if !child.named {`);
+	lines.push(`                continue;`);
+	lines.push(`            }`);
+	lines.push(`            if first_named_idx.is_none() {`);
+	lines.push(`                first_named_idx = Some(index);`);
+	lines.push(`            }`);
+	lines.push(`            last_named_idx = Some(index);`);
+	lines.push(`            child_nodes.push((child.span.map_or(u32::MAX, |span| span.start), child_ordinal, child));`);
+	lines.push(`            child_ordinal += 1;`);
+	lines.push(`        }`);
+	lines.push(`    }`);
+	lines.push(`    if let Some(fields) = &node.fields {`);
+	lines.push(`        for (name, value) in fields {`);
+	lines.push(`            if consumed_fields.iter().any(|consumed| consumed == &name.as_str()) {`);
+	lines.push(`                continue;`);
+	lines.push(`            }`);
+	lines.push(`            match value {`);
+	lines.push(`                FieldValue::Single(child) => {`);
+	lines.push(`                    if child.named {`);
+	lines.push(`                        child_nodes.push((child.span.map_or(u32::MAX, |span| span.start), child_ordinal, child.as_ref()));`);
+	lines.push(`                        child_ordinal += 1;`);
+	lines.push(`                    }`);
+	lines.push(`                }`);
+	lines.push(`                FieldValue::Multiple(items) => {`);
+	lines.push(`                    for child in items {`);
+	lines.push(`                        if child.named {`);
+	lines.push(`                            child_nodes.push((child.span.map_or(u32::MAX, |span| span.start), child_ordinal, child));`);
+	lines.push(`                            child_ordinal += 1;`);
+	lines.push(`                        }`);
+	lines.push(`                    }`);
+	lines.push(`                }`);
+	lines.push(`                FieldValue::Text(_) => {}`);
+	lines.push(`            }`);
+	lines.push(`        }`);
+	lines.push(`    }`);
+	lines.push(`    child_nodes.sort_by(|left, right| left.0.cmp(&right.0).then(left.1.cmp(&right.1)));`);
+	lines.push(`    let mut children = Vec::new();`);
+	lines.push(`    for (_, _, child) in child_nodes {`);
+	lines.push(`        children.push(render_node_value(child)?);`);
+	lines.push(`    }`);
+	lines.push(`    let mut leading_sep = false;`);
+	lines.push(`    let mut trailing_sep = false;`);
+	lines.push(`    if let Some(items) = &node.children {`);
+		lines.push(`        if let Some(first) = first_named_idx {`);
+		lines.push(`            if first > 0 {`);
+		lines.push(`                if let Some(before) = items.get(first - 1) {`);
+		lines.push(
+			`                    leading_sep = !before.named && before.text.as_deref().map_or(false, is_join_flank_token);`
+		);
+		lines.push(`                }`);
+		lines.push(`            }`);
+		lines.push(`        }`);
+		lines.push(`        if let Some(last) = last_named_idx {`);
+		lines.push(`            if let Some(after) = items.get(last + 1) {`);
+		lines.push(
+			`                trailing_sep = !after.named && after.text.as_deref().map_or(false, is_join_flank_token);`
+		);
+		lines.push(`            }`);
+		lines.push(`        }`);
+	lines.push(`    }`);
+	lines.push(`    let scalar = if children.is_empty() {`);
+	lines.push(`        String::new()`);
+	lines.push(`    } else {`);
+	lines.push(`        ::sittir_core::filters::joinby(children.as_slice(), separator_for(node.type_.as_str()), leading_sep, trailing_sep)?`);
+	lines.push(`    };`);
+	lines.push(`    Ok(ResolvedField {`);
+	lines.push(`        scalar,`);
+	lines.push(`        items: children,`);
+	lines.push(`        leading_sep,`);
+	lines.push(`        trailing_sep,`);
+	lines.push(`    })`);
+	lines.push(`}`);
+	lines.push('');
+	lines.push(`fn token_shaped_fallback(node: &NodeData) -> Result<String, ::askama::Error> {`);
+	lines.push(`    let fields_all_anon = node.fields.as_ref().map_or(true, |fields| {`);
+	lines.push(`        fields.values().all(|value| match value {`);
+	lines.push(`            FieldValue::Single(item) => !item.named,`);
+	lines.push(`            FieldValue::Multiple(items) => items.iter().all(|item| !item.named),`);
+	lines.push(`            FieldValue::Text(_) => true,`);
+	lines.push(`        })`);
+	lines.push(`    });`);
+	lines.push(`    let children_all_anon = node.children.as_ref().map_or(true, |children| children.iter().all(|child| !child.named));`);
+	lines.push(`    if fields_all_anon && children_all_anon {`);
+	lines.push(`        if let Some(text) = &node.text {`);
+	lines.push(`            return Ok(text.clone());`);
+	lines.push(`        }`);
+	lines.push(`        let mut parts = Vec::new();`);
+	lines.push(`        if let Some(fields) = &node.fields {`);
+	lines.push(`            for value in fields.values() {`);
+	lines.push(`                match value {`);
+	lines.push(`                    FieldValue::Single(item) => {`);
+	lines.push(`                        if let Some(text) = &item.text {`);
+	lines.push(`                            parts.push(text.clone());`);
+	lines.push(`                        }`);
+	lines.push(`                    }`);
+	lines.push(`                    FieldValue::Multiple(items) => {`);
+	lines.push(`                        for item in items {`);
+	lines.push(`                            if let Some(text) = &item.text {`);
+	lines.push(`                                parts.push(text.clone());`);
+	lines.push(`                            }`);
+	lines.push(`                        }`);
+	lines.push(`                    }`);
+	lines.push(`                    FieldValue::Text(text) => parts.push(text.clone()),`);
+	lines.push(`                }`);
+	lines.push(`            }`);
+	lines.push(`        }`);
+	lines.push(`        if let Some(children) = &node.children {`);
+	lines.push(`            for child in children {`);
+	lines.push(`                if let Some(text) = &child.text {`);
+	lines.push(`                    parts.push(text.clone());`);
+	lines.push(`                }`);
+	lines.push(`            }`);
+	lines.push(`        }`);
+	lines.push(`        if !parts.is_empty() {`);
+	lines.push(`            return Ok(parts.join(""));`);
+	lines.push(`        }`);
+	lines.push(`    }`);
+	lines.push(`    Err(::askama::Error::Custom(`);
+	lines.push(`        format!("render_dispatch: no template for kind '{}'", node.type_).into(),`);
+	lines.push(`    ))`);
+	lines.push(`}`);
+	return lines.join('\n');
+}
+
+function renderPerKindFns(structs: EmittedStruct[]): string {
+	const lines: string[] = [];
+	for (const s of structs) {
+		lines.push(`fn ${renderFnName(s.kind)}(node: &NodeData) -> Result<String, ::askama::Error> {`);
+		const consumedFieldArgs =
+			s.fields.length === 0
+				? '&[]'
+				: `&[${s.fields.map((field) => JSON.stringify(field.name)).join(', ')}]`;
+		lines.push(`    let children = resolve_children(node, ${consumedFieldArgs})?;`);
+		for (const [index, f] of s.fields.entries()) {
+			lines.push(
+				`    let field_${index} = resolve_field(node, ${JSON.stringify(f.name)})?;`
+			);
+		}
+		lines.push(`    let variant = resolve_variant(node);`);
+		lines.push(`    let text = resolve_text(node)?;`);
+		lines.push(`    let template = ${s.name} {`);
+		lines.push(`        children: children.items.as_slice(),`);
+		lines.push(`        children_list: children.items.as_slice(),`);
+		lines.push(`        variant,`);
+		lines.push(`        text: text.as_str(),`);
+		lines.push(`        trailing_sep: children.trailing_sep,`);
+		lines.push(`        leading_sep: children.leading_sep,`);
+		for (const [index, f] of s.fields.entries()) {
+			lines.push(
+				`        ${rustFieldIdent(f.name)}: field_${index}.scalar.as_str(),`
+			);
+			lines.push(
+				`        ${rustFieldIdent(f.name)}_list: field_${index}.items.as_slice(),`
+			);
+			lines.push(
+				`        ${rustFieldIdent(f.name)}_leading_sep: field_${index}.leading_sep,`
+			);
+			lines.push(
+				`        ${rustFieldIdent(f.name)}_trailing_sep: field_${index}.trailing_sep,`
+			);
+		}
+		lines.push(`    };`);
+		lines.push(`    template.render()`);
 		lines.push(`}`);
 		lines.push('');
 	}
@@ -404,71 +804,32 @@ function renderStructDefs(structs: EmittedStruct[]): string {
 
 function renderDispatchFn(structs: EmittedStruct[]): string {
 	const lines: string[] = [];
-	lines.push(`use ::askama::Template as _AskamaTemplate;`);
-	lines.push('');
+	const templateKinds = new Set(structs.map((s) => s.kind));
 	lines.push(
-		`/// Render the given NodeData kind using its generated askama template struct.`
+		`pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, ::askama::Error> {`
 	);
-	lines.push(
-		`/// Matches on the source kind name (\`_X\` for hidden user-facing aliases,`
-	);
-	lines.push(
-		`/// \`X\` for visible) — mirrors what NodeData.$type carries at runtime.`
-	);
-	lines.push(`///`);
-	lines.push(
-		`/// The render uses \`render_with_values(ctx.as_values())\` so the`
-	);
-	lines.push(
-		`/// flank-aware filters (\`joinWithTrailing\` / \`joinWithLeading\` /`
-	);
-	lines.push(
-		`/// \`joinWithFlanks\`) can read \`trailing_anon\` / \`leading_anon\` from`
-	);
-	lines.push(`/// the context — matching the TS engine's \`_trailing_anon\` /`);
-	lines.push(`/// \`_leading_anon\` side-channel on the children array.`);
-	lines.push(`pub fn render_dispatch(`);
-	lines.push(`    kind: &str,`);
-	lines.push(`    ctx: &::sittir_core::prepare::TemplateContext,`);
-	lines.push(`) -> Result<String, ::askama::Error> {`);
-	lines.push(`    let _values = ctx.as_values();`);
-	lines.push(`    match kind {`);
+	lines.push(`    if node.fields.is_none() && node.children.is_none() {`);
+	lines.push(`        if let Some(text) = &node.text {`);
+	lines.push(`            return Ok(text.clone());`);
+	lines.push(`        }`);
+	lines.push(`    }`);
+	lines.push(`    match node.type_.as_str() {`);
 	for (const s of structs) {
-		lines.push(`        ${JSON.stringify(s.kind)} => {`);
-		lines.push(`            let t = ${s.name} {`);
-		lines.push(`                children: ctx.children_list.clone(),`);
-		lines.push(`                children_list: ctx.children_list.clone(),`);
-		lines.push(`                variant: ctx.variant.clone(),`);
-		lines.push(`                text: ctx.text.clone(),`);
-		lines.push(`                trailing_sep: ctx.trailing_sep,`);
-		lines.push(`                leading_sep: ctx.leading_sep,`);
-		for (const f of s.fields) {
-			// Dual-view: populate both scalar (joined) and list (per-
-			// element) forms from TemplateContext. Both default to
-			// empty so optional fields don't panic on absence.
-			lines.push(
-				`                ${rustFieldIdent(f.name)}: ctx.fields.get(${JSON.stringify(f.name)}).cloned().unwrap_or_default(),`
-			);
-			lines.push(
-				`                ${rustFieldIdent(f.name)}_list: ctx.fields_list.get(${JSON.stringify(f.name)}).cloned().unwrap_or_default(),`
-			);
+		const patterns = [JSON.stringify(s.kind)];
+		if (s.kind.startsWith('_')) {
+			const visible = JSON.stringify(s.kind.replace(/^_+/, ''));
+			if (!templateKinds.has(s.kind.replace(/^_+/, ''))) patterns.push(visible);
 		}
-		lines.push(`            };`);
-		lines.push(`            t.render_with_values(&_values)`);
-		lines.push(`        }`);
+		lines.push(`        ${patterns.join(' | ')} => ${renderFnName(s.kind)}(node),`);
 	}
-	lines.push(`        other => Err(::askama::Error::Custom(`);
-	lines.push(
-		`            format!("render_dispatch: no template for kind '{}'", other).into(),`
-	);
-	lines.push(`        )),`);
+	lines.push(`        _ => token_shaped_fallback(node),`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	return lines.join('\n');
 }
 
 // ----------------------------------------------------------------------
-// GrammarMeta emission
+// Direct-render metadata collection
 // ----------------------------------------------------------------------
 
 interface MetaData {
@@ -525,71 +886,8 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 	return { separators, listContainers, variants };
 }
 
-function renderGrammarMeta(lang: Grammar, meta: MetaData): string {
-	const lines: string[] = [];
-	lines.push(
-		`/// Per-grammar metadata — separator / variant-label / list-container tables.`
-	);
-	lines.push(`/// Implements the \`sittir_core::prepare::GrammarMeta\` trait.`);
-	lines.push(`pub struct ${pascal(lang)}GrammarMeta;`);
-	lines.push('');
-	lines.push(
-		`impl ::sittir_core::prepare::GrammarMeta for ${pascal(lang)}GrammarMeta {`
-	);
-	// separator_for
-	lines.push(`    fn separator_for(&self, kind: &str) -> Option<&str> {`);
-	lines.push(`        match kind {`);
-	const sortedSeps = Array.from(meta.separators.entries()).sort(([a], [b]) =>
-		a.localeCompare(b)
-	);
-	for (const [k, s] of sortedSeps) {
-		lines.push(
-			`            ${JSON.stringify(k)} => Some(${JSON.stringify(s)}),`
-		);
-	}
-	lines.push(`            _ => None,`);
-	lines.push(`        }`);
-	lines.push(`    }`);
-	// variant_for
-	lines.push(
-		`    fn variant_for(&self, parent_kind: &str, child_kind: &str) -> Option<&str> {`
-	);
-	lines.push(`        match (parent_kind, child_kind) {`);
-	const sortedVariants: [string, string, string][] = [];
-	for (const [parent, m] of meta.variants) {
-		for (const [child, label] of m) {
-			sortedVariants.push([parent, child, label]);
-		}
-	}
-	sortedVariants.sort(
-		(a, b) => a[0].localeCompare(b[0]) || a[1].localeCompare(b[1])
-	);
-	for (const [p, c, l] of sortedVariants) {
-		lines.push(
-			`            (${JSON.stringify(p)}, ${JSON.stringify(c)}) => Some(${JSON.stringify(l)}),`
-		);
-	}
-	lines.push(`            _ => None,`);
-	lines.push(`        }`);
-	lines.push(`    }`);
-	// is_list_container
-	lines.push(`    fn is_list_container(&self, kind: &str) -> bool {`);
-	lines.push(`        matches!(kind,`);
-	const sortedList = Array.from(meta.listContainers).sort();
-	if (sortedList.length === 0) {
-		lines.push(`            _ if false => true`);
-	} else {
-		const arms = sortedList.map((k) => JSON.stringify(k)).join(' | ');
-		lines.push(`            ${arms}`);
-	}
-	lines.push(`        )`);
-	lines.push(`    }`);
-	lines.push(`}`);
-	return lines.join('\n');
-}
-
 // ----------------------------------------------------------------------
-// lib.rs — expose render_dispatch + GrammarMeta
+// lib.rs — expose render_dispatch
 // ----------------------------------------------------------------------
 
 function libRsContents(lang: Grammar): string {
@@ -600,7 +898,7 @@ pub mod hash;
 pub mod templates;
 
 pub use hash::TEMPLATE_BUNDLE_HASH;
-pub use templates::{render_dispatch, ${pascal(lang)}GrammarMeta};
+pub use templates::render_dispatch;
 `;
 }
 
@@ -621,7 +919,7 @@ export function emitHashFiles(
 	const hash = computeTemplateBundleHash(files);
 	return {
 		hashRs: {
-			path: `packages/${lang}/rust-render/src/hash.rs`,
+			path: `${renderCrateSrcDir(lang)}/hash.rs`,
 			contents: `${hashRsHeader(lang)}\npub const TEMPLATE_BUNDLE_HASH: &str = "${hash}";\n`
 		},
 		hashTs: {
@@ -633,13 +931,14 @@ export function emitHashFiles(
 
 /**
  * Emit the full render crate for a grammar — hash files, per-kind
- * template structs, render_dispatch, GrammarMeta, lib.rs, Cargo.toml.
+ * template structs, direct-render helpers, render_dispatch, lib.rs,
+ * Cargo.toml.
  *
  * @param lang — grammar identifier.
  * @param files — the grammar's `.jinja` bundle (filename → body).
  *   Used for the hash input AND for per-kind struct-field derivation.
- * @param nodeMap — the assembled node map, source of GrammarMeta tables
- *   and typeName lookups.
+ * @param nodeMap — the assembled node map, source of direct-render
+ *   metadata tables and typeName lookups.
  * @returns paired file contents. The CLI writes them + handles the
  *   `.jinja` directory copy separately (T030).
  */
@@ -672,27 +971,45 @@ export function emitRenderCrate(
 		'',
 		// Askama resolves custom filters by looking for a sibling
 		// `filters` module at the derive-macro's call site. Re-export the
-		// canonical `sittir_core::filters::*` here — `joinWithTrailing`,
-		// `joinWithLeading`, `joinWithFlanks` consult flank-anon text
-		// from per-call askama `Values` (see `TemplateContext::as_values`).
-		// `render_dispatch` below threads the values through every
-		// template render via `render_with_values`.
+		// canonical `sittir_core::filters::*` here; flank-aware joins read
+		// their optional anon-token side channel from Askama's per-render
+		// `Values` bag while `joinby` consumes the generated boolean flank
+		// fields directly.
 		'pub mod filters {',
 		'    //! Askama resolves custom-filter names by searching for a',
 		'    //! sibling `filters` module at the derive-macro site. This',
 		'    //! module just re-exports the canonical implementations',
 		'    //! from `sittir_core::filters`.',
+		'    pub fn joinby<S: AsRef<str>>(',
+		'        xs: &[S],',
+		'        _values: &dyn ::askama::Values,',
+		'        sep: &str,',
+		'        leading: impl std::borrow::Borrow<bool>,',
+		'        trailing: impl std::borrow::Borrow<bool>,',
+		'    ) -> Result<String, ::askama::Error> {',
+		'        ::sittir_core::filters::joinby(xs, sep, *leading.borrow(), *trailing.borrow())',
+		'    }',
+		'',
+		'    pub fn join<S: AsRef<str>>(',
+		'        xs: &[S],',
+		'        sep: &str,',
+		'    ) -> Result<String, ::askama::Error> {',
+		'        ::sittir_core::filters::joinby(xs, sep, false, false)',
+		'    }',
+		'',
 		'    pub use ::sittir_core::filters::{',
-		'        upper, lower, joinby,',
+		'        upper, lower,',
 		'        isBlank, isPresent,',
 		'        joinWithTrailing, joinWithLeading, joinWithFlanks,',
 		'    };',
 		'}',
 		'',
 		renderStructDefs(structs),
-		renderDispatchFn(structs),
+		renderDirectSupport(meta),
 		'',
-		renderGrammarMeta(lang, meta)
+		renderPerKindFns(structs),
+		'',
+		renderDispatchFn(structs),
 	].join('\n');
 	const listShapedFieldsByKind = new Map<string, Set<string>>();
 	for (const s of structs) {
@@ -704,15 +1021,15 @@ export function emitRenderCrate(
 		hashRs,
 		hashTs,
 		templatesRs: {
-			path: `packages/${lang}/rust-render/src/templates.rs`,
+			path: `${renderCrateSrcDir(lang)}/templates.rs`,
 			contents: templatesRs + '\n'
 		},
 		libRs: {
-			path: `packages/${lang}/rust-render/src/lib.rs`,
+			path: `${renderCrateSrcDir(lang)}/lib.rs`,
 			contents: libRsContents(lang)
 		},
 		cargoToml: {
-			path: `packages/${lang}/rust-render/Cargo.toml`,
+			path: `${renderCrateRoot(lang)}/Cargo.toml`,
 			contents: cargoTomlContents(lang)
 		},
 		listShapedFieldsByKind

@@ -10,10 +10,9 @@
 
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
-use sittir_core::prepare::{build_template_context, RenderDispatch};
 use sittir_core::splice::apply_edits as splice_apply_edits;
 use sittir_core::types::{Edit, FormatRecord, NodeData};
-use sittir_python_render::{render_dispatch, PythonGrammarMeta, TEMPLATE_BUNDLE_HASH};
+use sittir_python_render::{render_dispatch, TEMPLATE_BUNDLE_HASH};
 
 #[derive(serde::Serialize)]
 struct ParseResult<'a> {
@@ -125,11 +124,7 @@ impl SittirEngine {
                 Error::from_reason(format!("parse NodeData JSON failed: {e} (json: {snippet:?})"))
             })?;
         let format = node.format.clone();
-        let meta = PythonGrammarMeta;
-        let dispatch: RenderDispatch = render_dispatch;
-        let ctx = build_template_context(&node, &meta, dispatch)
-            .map_err(|e| Error::from_reason(format!("build template context failed: {e}")))?;
-        let canonical = dispatch(&node.type_, &ctx)
+        let canonical = render_dispatch(&node)
             .map_err(|e| Error::from_reason(format!("render_dispatch failed: {e}")))?;
         Ok(match format {
             Some(fmt) => sittir_core::format::apply_format(&canonical, &fmt),
@@ -152,4 +147,3 @@ fn panic_msg(payload: Box<dyn std::any::Any + Send>, fallback: &str) -> String {
         fallback.to_string()
     }
 }
-

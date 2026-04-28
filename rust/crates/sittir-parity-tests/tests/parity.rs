@@ -1,7 +1,7 @@
 //! Parity fixture harness (spec 012 T047 / FR-012).
 //!
 //! For each grammar:
-//!   - load its `packages/{lang}/rust-render/test-fixtures.json`
+//!   - load its `rust/crates/sittir-render-{lang}/test-fixtures.json`
 //!   - for every `RenderFixture`: build a `TemplateContext` from the
 //!     captured NodeData, call the Rust engine's `render_dispatch`,
 //!     assert the output matches `expectedOutput` BYTE-FOR-BYTE
@@ -18,18 +18,17 @@
 //! covered by per-crate tests. This harness isolates
 //! render-crate + sittir-core engine parity.
 
-use sittir_core::prepare::{render as render_top, GrammarMeta, TemplateContext};
 use sittir_core::types::NodeData;
 use sittir_parity_tests::{load_fixtures, ParityFixture};
 use tree_sitter::Parser;
 
-type Renderer = fn(&str, &TemplateContext) -> Result<String, askama::Error>;
+type Renderer = fn(&NodeData) -> Result<String, askama::Error>;
 
 /// One grammar's engine binding — everything the harness needs to
 /// drive the render + reparse pipeline end-to-end.
 struct Engine {
     name: &'static str,
-    render_dispatch: Renderer,
+    render: Renderer,
     language: tree_sitter::Language,
     /// Whether to run this engine's fixtures. Stubbed when the grammar's
     /// fixtures aren't yet extractable (e.g. an upstream cluster still
@@ -41,7 +40,7 @@ struct Engine {
 fn rust_engine() -> Engine {
     Engine {
         name: "rust",
-        render_dispatch: sittir_rust_render::render_dispatch,
+        render: sittir_rust_render::render_dispatch,
         language: tree_sitter_rust::LANGUAGE.into(),
         enabled: true,
     }
@@ -50,7 +49,7 @@ fn rust_engine() -> Engine {
 fn typescript_engine() -> Engine {
     Engine {
         name: "typescript",
-        render_dispatch: sittir_typescript_render::render_dispatch,
+        render: sittir_typescript_render::render_dispatch,
         language: tree_sitter_typescript::LANGUAGE_TYPESCRIPT.into(),
         enabled: true,
     }
@@ -59,39 +58,15 @@ fn typescript_engine() -> Engine {
 fn python_engine() -> Engine {
     Engine {
         name: "python",
-        render_dispatch: sittir_python_render::render_dispatch,
+        render: sittir_python_render::render_dispatch,
         language: tree_sitter_python::LANGUAGE.into(),
         enabled: true,
     }
 }
 
-/// Render a NodeData through the engine. Mirrors what the TS engine's
-/// `render(node)` does: short-circuit text-only leaves to `$text`,
-/// otherwise build a TemplateContext + dispatch to the per-kind
-/// struct. `render_any` (in `sittir_core::prepare`) handles the
-/// short-circuit so anonymous tokens don't tail-call into
-/// `render_dispatch` for a kind that has no template.
+/// Render a NodeData through the engine's direct native dispatch.
 fn render_node(engine: &Engine, node: &NodeData) -> Result<String, askama::Error> {
-    let meta = match engine.name {
-        "rust" => &sittir_rust_render::RustGrammarMeta as &dyn GrammarMeta,
-        "typescript" => &sittir_typescript_render::TypescriptGrammarMeta as &dyn GrammarMeta,
-        "python" => &sittir_python_render::PythonGrammarMeta as &dyn GrammarMeta,
-        _ => panic!("render_node: unknown grammar {}", engine.name),
-    };
-    render_top(node, &DynMeta(meta), engine.render_dispatch)
-}
-
-struct DynMeta<'a>(&'a dyn GrammarMeta);
-impl<'a> GrammarMeta for DynMeta<'a> {
-    fn separator_for(&self, kind: &str) -> Option<&str> {
-        self.0.separator_for(kind)
-    }
-    fn variant_for(&self, parent: &str, child: &str) -> Option<&str> {
-        self.0.variant_for(parent, child)
-    }
-    fn is_list_container(&self, kind: &str) -> bool {
-        self.0.is_list_container(kind)
-    }
+    (engine.render)(node)
 }
 
 /// Run the render-parity assertion for a single fixture.

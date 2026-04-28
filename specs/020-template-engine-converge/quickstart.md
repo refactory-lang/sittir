@@ -65,7 +65,7 @@ Recommended implementation sequence:
 2. emit per-kind direct-render functions beside the current path
 3. switch dispatch to the direct path
 4. prove parity on both backends
-5. remove `TemplateContext` preparation/filter bridge from the runtime path
+5. remove `TemplateContext` preparation/runtime-metadata bridge from the runtime path
 
 Do **not** treat one grammar as "done early" in the merged branch. Temporary mixed-mode development is fine while proving parity locally, but the committed feature state must move all three grammars together.
 
@@ -74,7 +74,7 @@ Do **not** treat one grammar as "done early" in the merged branch. Temporary mix
 Before marking Level 3 complete, verify:
 
 - the direct render path is active for all supported grammars
-- the legacy preparation-only runtime path is no longer on the render hot path
+- the legacy `prepare.rs` bridge is gone and `sittir-core` no longer exports it
 - parity remains byte-identical for representative formatted and unformatted fixtures
 - docs/examples still point to canonical templates and centralized native render crates
 

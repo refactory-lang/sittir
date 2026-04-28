@@ -5,7 +5,7 @@
 
 ## Summary
 
-Finish any remaining baseline convergence owned by 020, then optimize the native render pipeline in two staged rollouts across `rust`, `typescript`, and `python`. Level 1 is a generator-driven change that rewrites generated Askama structs and dispatchers to borrow from `TemplateContext` instead of cloning. Level 3 is an architectural refactor that emits direct `NodeData` render functions, inlines render metadata, and removes the legacy preparation/filter bridge only after byte-identical parity is proven.
+Finish any remaining baseline convergence owned by 020, then optimize the native render pipeline in two staged rollouts across `rust`, `typescript`, and `python`. Level 1 is a generator-driven change that rewrites generated Askama structs and dispatchers to borrow from `TemplateContext` instead of cloning. Level 3 is an architectural refactor that emits direct `NodeData` render functions, inlines render metadata, removes the legacy preparation bridge after byte-identical parity is proven, and leaves `sittir-core::filters` as the shared Askama-filter surface.
 
 ## Technical Context
 
@@ -73,7 +73,6 @@ packages/python/templates/
 
 rust/crates/sittir-core/src/
 ├── lib.rs
-├── prepare.rs
 ├── filters.rs
 ├── read_node.rs
 ├── splice.rs

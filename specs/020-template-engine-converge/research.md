@@ -30,7 +30,7 @@ All planning-time ambiguities are resolved. No open `NEEDS CLARIFICATION` items 
 
 ## Decision 3: Level 3 emits direct-render functions and retires the preparation layer only after proof
 
-**Decision**: Level 3 introduces generated per-kind render functions plus a small shared helper surface for leaf, optional, required, repeated, variant, and child resolution. These functions consume `NodeData` directly and feed Askama without building `TemplateContext`. `prepare.rs`, `filters.rs`, and runtime metadata bridges are only removed after the direct path passes parity.
+**Decision**: Level 3 introduces generated per-kind render functions plus a small shared helper surface for leaf, optional, required, repeated, variant, and child resolution. These functions consume `NodeData` directly and feed Askama without building `TemplateContext`. `prepare.rs` and the runtime metadata bridge are removed after the direct path passes parity, while `filters.rs` remains as the shared Askama-filter surface with a smaller flank-values helper.
 
 **Rationale**: The constitution favors fewer abstractions and a smaller `sittir-core` surface. Emitting direct render functions from known model data removes the extra map-building layer while preserving the observable render contract. Staging cleanup after parity proof keeps rollback cheap.
 

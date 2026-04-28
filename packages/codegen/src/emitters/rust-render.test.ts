@@ -16,7 +16,7 @@ const sample: TemplateFile[] = [
 describe('emitHashFiles', () => {
 	it('writes to the expected per-grammar paths', () => {
 		const emit = emitHashFiles('rust', sample);
-		expect(emit.hashRs.path).toBe('packages/rust/rust-render/src/hash.rs');
+		expect(emit.hashRs.path).toBe('rust/crates/sittir-render-rust/src/hash.rs');
 		expect(emit.hashTs.path).toBe('packages/rust/src/hash.ts');
 	});
 

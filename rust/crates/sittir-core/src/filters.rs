@@ -11,10 +11,10 @@
 //! `joinWithTrailing`, `joinWithLeading`, `joinWithFlanks`) because
 //! the flank decision is driven by tree-sitter-attached metadata
 //! (`_leading_anon` / `_trailing_anon`) that only the TS reader can
-//! see. On the Rust side the per-grammar render crate has already
-//! surfaced those as typed bools on `TemplateContext` (`leading_sep`
-//! / `trailing_sep`), so a single `joinby` filter with boolean
-//! arguments covers every variant. Templates will call:
+//! see. On the Rust side the generated render crate already surfaces
+//! typed boolean flank fields on each Askama struct, so a single
+//! `joinby` filter with boolean arguments covers every variant.
+//! Templates will call:
 //!
 //! ```jinja
 //! {{ children_list | joinby(", ", leading_sep, trailing_sep) }}
@@ -41,16 +41,10 @@ pub fn lower(s: &str) -> Result<String, askama::Error> {
 ///
 /// # Arguments
 ///
-/// * `xs` — pre-rendered children (one string per position). Typically
-///   comes from `TemplateContext.children_list`.
-/// * `sep` — the separator. Grammar-registered per spec-011 joinby
-///   metadata; surfaced on the template as a literal or through the
-///   `GrammarMeta::separator_for` lookup.
-/// * `leading` — whether to emit `sep` at the start. Set from
-///   `TemplateContext.leading_sep` — true when the parser observed a
-///   leading anonymous separator on this list position.
-/// * `trailing` — whether to emit `sep` at the end. Set from
-///   `TemplateContext.trailing_sep`.
+/// * `xs` — pre-rendered children (one string per position).
+/// * `sep` — the separator emitted by the template call site.
+/// * `leading` — whether to emit `sep` at the start.
+/// * `trailing` — whether to emit `sep` at the end.
 ///
 /// # Behavior
 ///
@@ -120,6 +114,29 @@ fn join_with_line_comment_fix<S: AsRef<str>>(xs: &[S], sep: &str) -> String {
     out
 }
 
+/// Minimal askama values bridge for flank-aware filters.
+///
+/// The direct-render path no longer builds a shared `TemplateContext`,
+/// but `joinWithTrailing` / `joinWithLeading` / `joinWithFlanks` still
+/// need a `Values` bag to read the optional anonymous flank tokens.
+/// Generated render crates pass Askama's internal values object during
+/// normal rendering; tests can construct this helper directly.
+#[derive(Debug, Default, Clone, PartialEq, Eq)]
+pub struct FlankValues {
+    pub leading_anon: Option<String>,
+    pub trailing_anon: Option<String>,
+}
+
+impl askama::Values for FlankValues {
+    fn get_value<'a>(&'a self, key: &str) -> Option<&'a dyn std::any::Any> {
+        match key {
+            "trailing_anon" => Some(&self.trailing_anon),
+            "leading_anon" => Some(&self.leading_anon),
+            _ => None,
+        }
+    }
+}
+
 /// Presence test — true when a field is absent / empty / whitespace-only.
 ///
 /// Mirrors the TS `isBlank` nunjucks filter registered in
@@ -159,13 +176,37 @@ impl PresenceCheck for str {
     }
 }
 
+impl PresenceCheck for &str {
+    fn is_present_check(&self) -> bool {
+        !self.trim().is_empty()
+    }
+}
+
 impl PresenceCheck for String {
     fn is_present_check(&self) -> bool {
         !self.trim().is_empty()
     }
 }
 
+impl PresenceCheck for &String {
+    fn is_present_check(&self) -> bool {
+        !self.trim().is_empty()
+    }
+}
+
 impl<S> PresenceCheck for Vec<S> {
+    fn is_present_check(&self) -> bool {
+        !self.is_empty()
+    }
+}
+
+impl<S> PresenceCheck for [S] {
+    fn is_present_check(&self) -> bool {
+        !self.is_empty()
+    }
+}
+
+impl<S> PresenceCheck for &[S] {
     fn is_present_check(&self) -> bool {
         !self.is_empty()
     }
@@ -201,10 +242,10 @@ pub fn isPresent<T: PresenceCheck + ?Sized>(
 /// flanking a `;`-joined list contributes nothing — the separator
 /// argument is the source of truth for what to emit.
 ///
-/// `key` is `"trailing_anon"` or `"leading_anon"`. Codegen passes the
-/// `Option<String>` from `TemplateContext` into `render_with_values`
-/// under those keys; this helper does the downcast + match in one
-/// place so the per-filter wrappers stay one-liners.
+/// `key` is `"trailing_anon"` or `"leading_anon"`. Generated render
+/// crates surface those names through Askama's `Values` bag; this
+/// helper does the downcast + match in one place so the per-filter
+/// wrappers stay one-liners.
 fn flank_match(values: &dyn askama::Values, key: &str, sep: &str) -> bool {
     match values.get_value(key) {
         Some(any) => {
@@ -225,14 +266,12 @@ fn flank_match(values: &dyn askama::Values, key: &str, sep: &str) -> bool {
 
 /// Askama filter — `{{ children | joinWithTrailing(",") }}`. Emits a
 /// trailing `sep` iff the children list captured a trailing anonymous
-/// token whose text matches `sep`. Source: `TemplateContext.trailing_anon`,
-/// passed through `render_with_values` under key `"trailing_anon"` by
-/// the generated `render_dispatch`.
+/// token whose text matches `sep`. Source: the generated render
+/// crate's Askama values bag under key `"trailing_anon"`.
 ///
-/// On a context with no flank metadata (`render()` instead of
-/// `render_with_values()`, or values bag missing the key) the filter
-/// degrades to plain `join` — matches TS engine behavior when the
-/// children array has no `_trailing_anon` property.
+/// On a context with no flank metadata the filter degrades to plain
+/// `join` — matches TS engine behavior when the children array has no
+/// `_trailing_anon` property.
 #[allow(non_snake_case)]
 pub fn joinWithTrailing<S: AsRef<str>>(
     xs: &[S],

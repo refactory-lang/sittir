@@ -3,7 +3,7 @@
 **Feature Branch**: `020-render-pipeline-optimization`  
 **Created**: 2026-04-25  
 **Last Updated**: 2026-04-28  
-**Status**: Draft  
+**Status**: Implemented  
 **Input**: User description: "Update/begin spec 020 using `specs/020-template-engine-converge/spec.md`, incorporate the existing 020 content, and fold in the attached design for **Render Pipeline Optimization — Level 1 + Level 3**. Level 1 removes the native step-2→3 clone boundary by borrowing from `TemplateContext`; Level 3 removes `TemplateContext` entirely by rendering directly from `NodeData`. Both levels land only after parity ceilings are zero on both TS and native backends, and they preserve the existing Askama + `.jinja` + N-API surfaces."
 
 ## Current Architecture Alignment
@@ -163,7 +163,7 @@ The revised 020 gate has two checkpoints:
 - **FR-009**: Level 3 MUST inline or compile-time-embed metadata previously queried through runtime render metadata surfaces, including leaf-kind knowledge, separators, variant routing, and equivalent render-time facts needed to populate Askama structs.
 - **FR-010**: Level 3 MUST preserve the current semantics for leaf short-circuiting, child rendering, separator/flank detection, variant routing, and format-aware rendering behavior while bypassing `TemplateContext`.
 - **FR-011**: Level 3 MUST land in staged, independently verifiable steps: helper introduction alongside the current pipeline, per-kind render emission alongside the current dispatch, dispatch switch, parity verification, and only then cleanup of obsolete preparation/filter infrastructure.
-- **FR-012**: If direct `NodeData` rendering cannot preserve byte-identical parity for representative kinds and grammars, the feature MUST stop after Level 1. Removing `TemplateContext`, `prepare.rs`, `GrammarMeta`, `filters.rs`, or equivalent preparation-only infrastructure is forbidden until parity proves stable.
+- **FR-012**: If direct `NodeData` rendering cannot preserve byte-identical parity for representative kinds and grammars, the feature MUST stop after Level 1. Removing `TemplateContext`, `prepare.rs`, `GrammarMeta`, or equivalent preparation-only infrastructure is forbidden until parity proves stable.
 - **FR-013**: The generated-vs-handwritten boundary from the earlier 020 draft remains in force. Implementation changes MUST land in hand-written sources such as codegen emitters and shared runtime helpers, not by hand-editing generated `templates.rs`, grammar package outputs, or generated native crate artifacts.
 - **FR-014**: Contributor-facing documentation, commands, and examples MUST continue to describe one canonical template directory per grammar, one centralized native render crate per grammar, one regenerate workflow, and the distinction between Level 1 and Level 3 consistently.
 - **FR-015**: Askama remains the template engine for this feature, canonical `.jinja` files remain the authored template surface, and the current `render(node_json) -> String` N-API boundary remains unchanged.

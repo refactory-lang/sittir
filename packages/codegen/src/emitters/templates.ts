@@ -17,6 +17,11 @@
  * method returns Jinja-shaped output directly — clause / variant
  * inlining, `$VAR` → `{{ var }}` translation, and separator-filter
  * selection are all collapsed into that one chokepoint.
+ *
+ * These emitted files are the canonical authored templates under
+ * `packages/{lang}/templates/`. The native Askama copies under
+ * `rust/crates/sittir-render-{lang}/templates/` are derived later by
+ * `cli.ts` from this source of truth; never edit those copies by hand.
  */
 
 import * as fs from 'node:fs';

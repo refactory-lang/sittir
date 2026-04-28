@@ -73,6 +73,15 @@ describe('emitJinjaTemplates — T021 pure function', () => {
 		const body = result.bodies.get('function_item')!;
 		expect(body).toContain('{{ name }}');
 	});
+
+	it('emits canonical kind filenames, not native-crate-relative paths', () => {
+		const nm = makeMinimalNodeMap();
+		const result = emitJinjaTemplates({ grammar: 'test', nodeMap: nm });
+		expect(Array.from(result.bodies.keys())).toEqual(['function_item']);
+		expect(Array.from(result.bodies.keys())).not.toContain(
+			'rust/crates/sittir-render-test/function_item'
+		);
+	});
 });
 
 describe('writeJinjaTemplates — T022 stale-file cleanup', () => {

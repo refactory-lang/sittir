@@ -26,17 +26,16 @@
 //! - `read_node(nodeId)` — delegates to `sittir_core::read_node::read_node`.
 //!   Requires a prior `find_and_read` to have populated the internal
 //!   tree; we keep that stub-guarded too.
-//! - `render(nodeJson)` — `serde_json` → `NodeData` → `build_template_context`
-//!   → `render_dispatch`. Stateless.
+//! - `render(nodeJson)` — `serde_json` → `NodeData` →
+//!   `sittir_rust_render::render_dispatch`. Stateless.
 //! - `apply_edits(source, edits)` — delegates to `sittir_core::splice`.
 //!   Stateless.
 
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
-use sittir_core::prepare::{build_template_context, RenderDispatch};
 use sittir_core::splice::apply_edits as splice_apply_edits;
 use sittir_core::types::{Edit, FormatRecord, NodeData};
-use sittir_rust_render::{render_dispatch, RustGrammarMeta, TEMPLATE_BUNDLE_HASH};
+use sittir_rust_render::{render_dispatch, TEMPLATE_BUNDLE_HASH};
 
 /// Result wrapper for parse_and_read: NodeData + optional FormatRecord.
 #[derive(serde::Serialize)]
@@ -196,11 +195,7 @@ impl SittirEngine {
                 Error::from_reason(format!("parse NodeData JSON failed: {e} (json: {snippet:?})"))
             })?;
         let format = node.format.clone();
-        let meta = RustGrammarMeta;
-        let dispatch: RenderDispatch = render_dispatch;
-        let ctx = build_template_context(&node, &meta, dispatch)
-            .map_err(|e| Error::from_reason(format!("build template context failed: {e}")))?;
-        let canonical = dispatch(&node.type_, &ctx)
+        let canonical = render_dispatch(&node)
             .map_err(|e| Error::from_reason(format!("render_dispatch failed: {e}")))?;
         Ok(match format {
             Some(fmt) => sittir_core::format::apply_format(&canonical, &fmt),
@@ -230,4 +225,3 @@ fn panic_msg(payload: Box<dyn std::any::Any + Send>, fallback: &str) -> String {
         fallback.to_string()
     }
 }
-

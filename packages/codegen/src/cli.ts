@@ -34,6 +34,7 @@ import { compileParser } from './transpile/compile-parser.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { writeJinjaTemplates } from './emitters/templates.ts';
 import { emitRenderCrate } from './emitters/rust-render.ts';
+import { renderCrateTemplatesDir } from './emitters/render-crate-paths.ts';
 import {
 	extractParityFixtures,
 	serializeFixtures,
@@ -315,36 +316,41 @@ if (shouldEmitRustRender) {
 		}
 		return out;
 	};
-	// Each user field is emitted as BOTH scalar (`foo: String`, the
-	// pre-joined form) and list (`foo_list: Vec<String>`, per-element).
-	// Rewrite list-consuming references in the rust-render template
-	// copy so they target `foo_list` — list-consumers are:
-	//   - `{{ foo | join(...) }}` / `| joinWithTrailing(...)` / etc.
-	//   - `{% for x in foo %}`
-	// All other references (`{{ foo }}`, `{% if foo | isPresent %}`)
-	// stay on the scalar — empty lists render as empty joined strings
-	// which read as "not present" via `isPresent`, so no separate list
-	// filter is needed.
-	const LIST_FILTERS = [
-		'join',
-		'joinWithTrailing',
-		'joinWithLeading',
-		'joinWithFlanks'
-	];
+	// Each user field is emitted as BOTH scalar (`foo`, the pre-joined
+	// form) and list (`foo_list`, per-element). Rewrite list-consuming
+	// references in the rust-render template copy so they target the
+	// list slot. Flank-aware joins (`joinWithTrailing` / `Leading` /
+	// `Flanks`) are rewritten to `joinby(...)` with the generated
+	// boolean fields that direct render populates per slot.
 	const rewriteListUsage = (body: string, listFields: Set<string>): string => {
-		if (listFields.size === 0) return body;
-		const alt = Array.from(listFields)
-			.map((f) => f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-			.join('|');
+		const escaped = Array.from(listFields).map((f) =>
+			f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+		);
+		const alt = escaped.length > 0 ? escaped.join('|') : '(?!)';
+		let out = body;
+		const flankRe =
+			/\{\{(-?\s*)([a-zA-Z_][a-zA-Z0-9_]*)(\s*\|\s*joinWith(Trailing|Leading|Flanks)\s*\(([^)]*)\))(\s*-?)\}\}/g;
+		out = out.replace(flankRe, (match, lead, ident, _filter, mode, args, trail) => {
+			if (ident !== 'children' && !listFields.has(ident)) return match;
+			const target = ident === 'children' ? 'children' : `${ident}_list`;
+			const leadingExpr =
+				ident === 'children' ? 'leading_sep' : `${ident}_leading_sep`;
+			const trailingExpr =
+				ident === 'children' ? 'trailing_sep' : `${ident}_trailing_sep`;
+			const boolArgs =
+				mode === 'Leading'
+					? `${leadingExpr}, false`
+					: mode === 'Trailing'
+						? `false, ${trailingExpr}`
+						: `${leadingExpr}, ${trailingExpr}`;
+			return `{{${lead}${target} | joinby(${args}, ${boolArgs})${trail}}}`;
+		});
 		// `{{ foo | join(...) }}` → `{{ foo_list | join(...) }}`
 		const filterRe = new RegExp(
-			`(\\{\\{-?\\s*)(?:${alt})(\\s*\\|\\s*(?:${LIST_FILTERS.join('|')})\\b)`,
+			`(\\{\\{-?\\s*)(${alt})(\\s*\\|\\s*join\\b)`,
 			'g'
 		);
-		let out = body.replace(filterRe, (_m, p1, p2) => {
-			const fname = _m.slice(p1.length).match(new RegExp(`^(${alt})`))![1]!;
-			return `${p1}${fname}_list${p2}`;
-		});
+		out = out.replace(filterRe, `$1$2_list$3`);
 		// `{% for x in foo %}` → `{% for x in foo_list %}`
 		const forRe = new RegExp(
 			`(\\{%-?\\s*for\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s+in\\s+)(${alt})\\b`,
@@ -353,8 +359,12 @@ if (shouldEmitRustRender) {
 		out = out.replace(forRe, `$1$2_list`);
 		return out;
 	};
+	const preserveMultilineTrailingNewline = (body: string): string => {
+		if (!body.includes('\n') || !body.endsWith('\n')) return body;
+		return body + '\n';
+	};
 	const srcTemplatesDir = join(dirname(outDir), 'templates');
-	const dstTemplatesDir = `packages/${grammar}/rust-render/templates`;
+	const dstTemplatesDir = renderCrateTemplatesDir(grammar as 'rust' | 'typescript' | 'python');
 	mkdirSync(dstTemplatesDir, { recursive: true });
 	const emittedNames = new Set<string>();
 	for (const [kind] of result.jinjaTemplates.bodies) {
@@ -365,6 +375,7 @@ if (shouldEmitRustRender) {
 			emit.listShapedFieldsByKind.get(kind) ?? new Set<string>();
 		let transformed = renameForRustRender(readFileSync(srcPath, 'utf8'));
 		transformed = rewriteListUsage(transformed, listFields);
+		transformed = preserveMultilineTrailingNewline(transformed);
 		writeFile(dstPath, transformed);
 		emittedNames.add(fname);
 	}
@@ -385,7 +396,7 @@ if (shouldEmitRustRender) {
 	// Run the round-trip validator in fixture-capture mode. Every
 	// successfully round-tripped kind emits a paired (render,
 	// roundtrip) fixture; the result is written to
-	// packages/{grammar}/rust-render/test-fixtures.json where the
+	// rust/crates/sittir-render-{grammar}/test-fixtures.json where the
 	// Rust parity harness (T047) reads it via serde_json.
 	//
 	// FR-011 required-kinds gate lives in `extractParityFixtures` —

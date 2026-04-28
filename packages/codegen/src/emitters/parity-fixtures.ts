@@ -28,6 +28,7 @@ import {
 	type RenderFixture,
 	type RoundTripFixture
 } from '../validate/roundtrip.ts';
+import { renderCrateFixturesPath } from './render-crate-paths.ts';
 
 /** FR-011 exception kinds — at least one fixture of each must appear
  *  in the extracted corpus for its matching grammar. See spec 012
@@ -120,7 +121,9 @@ export function serializeFixtures(fixtures: readonly ParityFixture[]): string {
  *  single `packages/{lang}/` regen replaces both the Rust source and
  *  its test inputs. */
 export function fixturesOutputPath(grammar: string): string {
-	return `packages/${grammar}/rust-render/test-fixtures.json`;
+	return renderCrateFixturesPath(
+		grammar as 'rust' | 'typescript' | 'python'
+	);
 }
 
 // Re-export the fixture types so cli.ts / tests can reference them

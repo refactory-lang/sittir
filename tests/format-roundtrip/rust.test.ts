@@ -10,35 +10,21 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { createRequire } from 'node:module';
 import { applyEdits } from '@sittir/core';
 import type { Edit } from '@sittir/types';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const FIXTURES_DIR = resolve(__dirname, '../../tests/format-roundtrip/fixtures');
-const CORPUS_PATH = resolve(__dirname, '../../specs/017-format-inference/format-corpus.json');
-
-function tryLoadNativeEngine(): { parseAndRead(src: string): string; render(nodeJson: string): string } | null {
-	try {
-		const req = createRequire(import.meta.url);
-		const repoRoot = resolve(__dirname, '../..');
-		const mod = req(`${repoRoot}/rust/crates/sittir-rust-napi`) as {
-			SittirEngine: new () => { parseAndRead(src: string): string };
-		};
-		return new mod.SittirEngine();
-	} catch {
-		return null;
-	}
-}
+import {
+	loadFixtureSource,
+	loadFormatCorpusEntries,
+	parseNativeFixture,
+	pickRenderFixture,
+	renderNativeNodeData,
+	renderTsNodeData,
+	toBoundaryNodeData,
+	tryLoadNativeEngine
+} from './helpers.ts';
 
 describe('format-roundtrip rust fixtures', () => {
-	const corpus = JSON.parse(readFileSync(CORPUS_PATH, 'utf-8')) as {
-		fixtures: Array<{ grammar: string; fixture: string; formatCategory: string }>;
-	};
-	const rustFixtures = corpus.fixtures.filter((f) => f.grammar === 'rust');
+	const rustFixtures = loadFormatCorpusEntries('rust');
 
 	for (const entry of rustFixtures) {
 		it.todo(
@@ -46,21 +32,32 @@ describe('format-roundtrip rust fixtures', () => {
 		);
 
 		it(`${entry.fixture}: extract_format populates treeHandle.format`, () => {
-			const engine = tryLoadNativeEngine();
+			const engine = tryLoadNativeEngine('rust');
 			if (!engine) return; // skip — native not built
 
-			const source = readFileSync(resolve(FIXTURES_DIR, entry.fixture), 'utf-8');
-			const result = JSON.parse(engine.parseAndRead(source)) as {
-				nodeData: unknown;
-				format?: unknown;
-			};
+			const source = loadFixtureSource(entry.fixture);
+			const parsed = parseNativeFixture(engine, source);
 
 			if (entry.formatCategory !== 'canonical') {
-				expect(result.format).toBeDefined();
-				expect(result.format).toHaveProperty('boundary');
+				expect(parsed.format).toBeDefined();
+				expect(parsed.format).toHaveProperty('boundary');
 			}
 		});
 	}
+});
+
+describe('US1 — borrowed Askama parity (rust)', () => {
+	it('generated function_item render fixture matches the TS renderer', () => {
+		const engine = tryLoadNativeEngine('rust');
+		if (!engine) return; // skip — native not built
+
+		const fixture = pickRenderFixture('rust', ['function_item', 'block']);
+		const nativeRendered = renderNativeNodeData(engine, fixture.input);
+		const tsRendered = renderTsNodeData('rust', fixture.input);
+
+		expect(nativeRendered).toBe(tsRendered);
+		expect(nativeRendered).toBe(fixture.expectedOutput);
+	});
 });
 
 function diffPositions(a: string, b: string): { start: number; end: number } | null {
@@ -74,7 +71,7 @@ function diffPositions(a: string, b: string): { start: number; end: number } | n
 
 describe('US2 — edit isolation (rust)', () => {
 	it('rust-tab-indent.rs: rename greet → welcome is isolated to the edited byte range', () => {
-		const source = readFileSync(resolve(FIXTURES_DIR, 'rust-tab-indent.rs'), 'utf-8');
+		const source = loadFixtureSource('rust-tab-indent.rs');
 		const original = 'greet';
 		const replacement = 'welcome';
 		const startPos = source.indexOf(original);
@@ -89,12 +86,28 @@ describe('US2 — edit isolation (rust)', () => {
 	});
 });
 
+describe('US2 — direct render parity (rust)', () => {
+	it('rust-tab-indent.rs: native direct render matches TS render for parsed node data', () => {
+		const engine = tryLoadNativeEngine('rust');
+		if (!engine) return; // skip — native not built
+
+		const source = loadFixtureSource('rust-tab-indent.rs');
+		const parsed = parseNativeFixture(engine, source);
+		const nodeDataWithFormat = {
+			...(parsed.nodeData as object),
+			$format: parsed.format
+		};
+		const boundaryNodeData = toBoundaryNodeData(nodeDataWithFormat);
+		const nativeRendered = renderNativeNodeData(engine, boundaryNodeData);
+		const tsRendered = renderTsNodeData('rust', boundaryNodeData);
+
+		expect(nativeRendered).toBe(tsRendered);
+	});
+});
+
 describe('US3 — native/TS render parity (rust)', () => {
-	const corpus = JSON.parse(readFileSync(CORPUS_PATH, 'utf-8')) as {
-		fixtures: Array<{ grammar: string; fixture: string; formatCategory: string; expectedBackendCoverage: string }>;
-	};
-	const bothFixtures = corpus.fixtures.filter(
-		(f) => f.grammar === 'rust' && f.expectedBackendCoverage === 'both',
+	const bothFixtures = loadFormatCorpusEntries('rust').filter(
+		(entry) => entry.expectedBackendCoverage === 'both'
 	);
 
 	if (bothFixtures.length === 0) {
@@ -102,17 +115,16 @@ describe('US3 — native/TS render parity (rust)', () => {
 	} else {
 		for (const entry of bothFixtures) {
 			it(`${entry.fixture}: native render matches TS render byte-for-byte`, () => {
-				const engine = tryLoadNativeEngine();
+				const engine = tryLoadNativeEngine('rust');
 				if (!engine) return; // skip — native not built
 
-				const source = readFileSync(resolve(FIXTURES_DIR, entry.fixture), 'utf-8');
-				const parsed = JSON.parse(engine.parseAndRead(source)) as {
-					nodeData: unknown;
-					format?: unknown;
+				const source = loadFixtureSource(entry.fixture);
+				const parsed = parseNativeFixture(engine, source);
+				const nodeDataWithFormat = {
+					...(parsed.nodeData as object),
+					$format: parsed.format
 				};
-
-				const nodeDataWithFormat = { ...(parsed.nodeData as object), '$format': parsed.format };
-				const nativeRendered = engine.render(JSON.stringify(nodeDataWithFormat));
+				const nativeRendered = renderNativeNodeData(engine, nodeDataWithFormat);
 
 				expect(nativeRendered).toBe(source);
 			});

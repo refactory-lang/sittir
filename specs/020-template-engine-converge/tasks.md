@@ -17,8 +17,8 @@
 
 **Purpose**: Create the shared verification scaffolding used by all stories.
 
-- [ ] T001 Create `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts` to hold baseline-convergence, Level 1, Level 3, fallback, public-surface, and cleanup guard assertions for feature 020
-- [ ] T002 Extend `tests/format-roundtrip/rust.test.ts`, `tests/format-roundtrip/typescript.test.ts`, and `tests/format-roundtrip/python.test.ts` with shared 020 helper coverage for borrowed-view parity and direct-render parity probes
+- [x] T001 Create `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts` to hold baseline-convergence, Level 1, Level 3, fallback, public-surface, and cleanup guard assertions for feature 020
+- [x] T002 Extend `tests/format-roundtrip/rust.test.ts`, `tests/format-roundtrip/typescript.test.ts`, and `tests/format-roundtrip/python.test.ts` with shared 020 helper coverage for borrowed-view parity and direct-render parity probes
 
 ---
 
@@ -28,10 +28,10 @@
 
 **⚠️ CRITICAL**: No user story work should begin until the standard regenerate workflow, canonical template ownership, centralized native crate layout, and zero-ceiling parity gate are aligned.
 
-- [ ] T003 Finish the single `--all` native artifact refresh path in `packages/codegen/src/cli.ts` and `packages/codegen/src/emitters/rust-render.ts` so TS and native artifacts regenerate from one workflow
-- [ ] T004 [P] Remove remaining grammar-local native crate and duplicate template path assumptions in `packages/codegen/src/emitters/templates.ts`, `packages/codegen/src/emitters/template-hash.ts`, and `packages/codegen/src/emitters/rust-render.ts`
-- [ ] T005 [P] Write failing baseline convergence assertions in `packages/codegen/src/__tests__/emit-jinja-templates.test.ts` and `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts` for canonical template directories and centralized `rust/crates/sittir-render-{lang}` outputs
-- [ ] T006 Make the retained baseline convergence assertions pass and verify the aligned regenerate/template/crate layout with `packages/codegen/src/__tests__/collect-baseline.test.ts` and `packages/codegen/src/__tests__/emit-jinja-templates.test.ts`
+- [x] T003 Finish the single `--all` native artifact refresh path in `packages/codegen/src/cli.ts` and `packages/codegen/src/emitters/rust-render.ts` so TS and native artifacts regenerate from one workflow
+- [x] T004 [P] Remove remaining grammar-local native crate and duplicate template path assumptions in `packages/codegen/src/emitters/templates.ts`, `packages/codegen/src/emitters/template-hash.ts`, and `packages/codegen/src/emitters/rust-render.ts`
+- [x] T005 [P] Write failing baseline convergence assertions in `packages/codegen/src/__tests__/emit-jinja-templates.test.ts` and `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts` for canonical template directories and centralized `rust/crates/sittir-render-{lang}` outputs
+- [x] T006 Make the retained baseline convergence assertions pass and verify the aligned regenerate/template/crate layout with `packages/codegen/src/__tests__/collect-baseline.test.ts` and `packages/codegen/src/__tests__/emit-jinja-templates.test.ts`
 - [ ] T007 Record the prerequisite zero-ceiling parity result with `packages/codegen/src/__tests__/collect-baseline.test.ts` and `tests/format-roundtrip/{rust,typescript,python}.test.ts`; block Level 1 work until both backends are clean for all supported grammars
 
 **Checkpoint**: Baseline convergence is complete, the shared verification harness is ready, and parity debt is confirmed to be zero before optimization begins.
@@ -46,15 +46,15 @@
 
 ### Validation for User Story 1
 
-- [ ] T008 [P] [US1] Write failing Level 1 borrowed-view expectations in `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts` for scalar, list, children, `variant`, and `text` field emission
-- [ ] T009 [P] [US1] Write failing Level 1 parity assertions in `tests/format-roundtrip/rust.test.ts`, `tests/format-roundtrip/typescript.test.ts`, and `tests/format-roundtrip/python.test.ts`
+- [x] T008 [P] [US1] Write failing Level 1 borrowed-view expectations in `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts` for scalar, list, children, `variant`, and `text` field emission
+- [x] T009 [P] [US1] Write failing Level 1 parity assertions in `tests/format-roundtrip/rust.test.ts`, `tests/format-roundtrip/typescript.test.ts`, and `tests/format-roundtrip/python.test.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T010 [US1] Make the borrowed-view emission tests pass by updating Askama struct generation in `packages/codegen/src/emitters/rust-render.ts` so generated template structs borrow from `TemplateContext`
-- [ ] T011 [US1] Make the dispatcher assertions pass by updating borrowed dispatcher construction in `packages/codegen/src/emitters/rust-render.ts` to replace per-field clone extraction with borrowed accessors and slices
-- [ ] T012 [US1] Regenerate native render crates for all grammars via `packages/codegen/src/cli.ts` so `rust/crates/sittir-render-rust/src/templates.rs`, `rust/crates/sittir-render-typescript/src/templates.rs`, and `rust/crates/sittir-render-python/src/templates.rs` reflect borrowed Askama views
-- [ ] T013 [US1] Make the Level 1 codegen and parity suites pass across all three grammars with `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts` and `tests/format-roundtrip/{rust,typescript,python}.test.ts`
+- [x] T010 [US1] Make the borrowed-view emission tests pass by updating Askama struct generation in `packages/codegen/src/emitters/rust-render.ts` so generated template structs borrow from `TemplateContext`
+- [x] T011 [US1] Make the dispatcher assertions pass by updating borrowed dispatcher construction in `packages/codegen/src/emitters/rust-render.ts` to replace per-field clone extraction with borrowed accessors and slices
+- [x] T012 [US1] Regenerate native render crates for all grammars via `packages/codegen/src/cli.ts` so `rust/crates/sittir-render-rust/src/templates.rs`, `rust/crates/sittir-render-typescript/src/templates.rs`, and `rust/crates/sittir-render-python/src/templates.rs` reflect borrowed Askama views
+- [x] T013 [US1] Make the Level 1 codegen and parity suites pass across all three grammars with `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts` and `tests/format-roundtrip/{rust,typescript,python}.test.ts`
 
 **Checkpoint**: Level 1 is fully functional and testable across `rust`, `typescript`, and `python`.
 
@@ -68,17 +68,17 @@
 
 ### Validation for User Story 2
 
-- [ ] T014 [P] [US2] Write failing direct-render emission assertions in `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts` for leaf, optional, repeated, children, variant, mixed-borrow, and safe fallback strategies
-- [ ] T015 [P] [US2] Write failing Level 3 parity probes in `tests/format-roundtrip/rust.test.ts`, `tests/format-roundtrip/typescript.test.ts`, and `tests/format-roundtrip/python.test.ts` for leaf fields, structured fields, scalar/list dual-use behavior, unknown-kind fallback, child/flank behavior, variant routing, and format-aware rendering
+- [x] T014 [P] [US2] Write failing direct-render emission assertions in `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts` for leaf, optional, repeated, children, variant, mixed-borrow, and safe fallback strategies
+- [x] T015 [P] [US2] Write failing Level 3 parity probes in `tests/format-roundtrip/rust.test.ts`, `tests/format-roundtrip/typescript.test.ts`, and `tests/format-roundtrip/python.test.ts` for leaf fields, structured fields, scalar/list dual-use behavior, unknown-kind fallback, child/flank behavior, variant routing, and format-aware rendering
 
 ### Implementation for User Story 2
 
-- [ ] T016 [US2] Make the helper assertions pass by emitting shared Level 3 resolve helpers in `packages/codegen/src/emitters/rust-render.ts` for leaf, optional, required, repeated, child, and variant resolution
-- [ ] T017 [US2] Make the mixed-borrow and fallback assertions pass by emitting per-kind `render_<kind>` functions with stack-owned structured renders, borrowed leaf text, and safe non-template fallback branches in `packages/codegen/src/emitters/rust-render.ts`
-- [ ] T018 [US2] Inline separator, leaf-kind, and variant routing metadata in `packages/codegen/src/emitters/rust-render.ts` so direct render dispatch no longer depends on runtime `GrammarMeta` lookups
-- [ ] T019 [US2] Switch generated native dispatch to the direct-render functions in `packages/codegen/src/emitters/rust-render.ts` and `packages/codegen/src/cli.ts` for all supported grammars
-- [ ] T020 [US2] Regenerate `rust/crates/sittir-render-rust/src/{lib.rs,templates.rs}`, `rust/crates/sittir-render-typescript/src/{lib.rs,templates.rs}`, and `rust/crates/sittir-render-python/src/{lib.rs,templates.rs}` via `packages/codegen/src/cli.ts` to materialize the direct-render path
-- [ ] T021 [US2] Make the pre-cleanup Level 3 codegen and parity suites pass with `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts` and `tests/format-roundtrip/{rust,typescript,python}.test.ts`
+- [x] T016 [US2] Make the helper assertions pass by emitting shared Level 3 resolve helpers in `packages/codegen/src/emitters/rust-render.ts` for leaf, optional, required, repeated, child, and variant resolution
+- [x] T017 [US2] Make the mixed-borrow and fallback assertions pass by emitting per-kind `render_<kind>` functions with stack-owned structured renders, borrowed leaf text, and safe non-template fallback branches in `packages/codegen/src/emitters/rust-render.ts`
+- [x] T018 [US2] Inline separator, leaf-kind, and variant routing metadata in `packages/codegen/src/emitters/rust-render.ts` so direct render dispatch no longer depends on runtime `GrammarMeta` lookups
+- [x] T019 [US2] Switch generated native dispatch to the direct-render functions in `packages/codegen/src/emitters/rust-render.ts` and `packages/codegen/src/cli.ts` for all supported grammars
+- [x] T020 [US2] Regenerate `rust/crates/sittir-render-rust/src/{lib.rs,templates.rs}`, `rust/crates/sittir-render-typescript/src/{lib.rs,templates.rs}`, and `rust/crates/sittir-render-python/src/{lib.rs,templates.rs}` via `packages/codegen/src/cli.ts` to materialize the direct-render path
+- [x] T021 [US2] Make the pre-cleanup Level 3 codegen and parity suites pass with `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts` and `tests/format-roundtrip/{rust,typescript,python}.test.ts`
 
 **Checkpoint**: The direct-render path is active and parity-clean before any cleanup removes the legacy preparation layer.
 
@@ -92,16 +92,16 @@
 
 ### Validation for User Story 3
 
-- [ ] T022 [P] [US3] Write failing staged-rollout guard assertions in `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts` and `packages/codegen/src/__tests__/collect-baseline.test.ts` so cleanup requires all-grammar parity evidence and recorded verification artifacts
-- [ ] T023 [P] [US3] Write failing compatibility assertions in `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts` for unchanged Askama/`.jinja` ownership, centralized native crate outputs, and the existing native `render(node_json) -> String` boundary
+- [x] T022 [P] [US3] Write failing staged-rollout guard assertions in `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts` and `packages/codegen/src/__tests__/collect-baseline.test.ts` so cleanup requires all-grammar parity evidence and recorded verification artifacts
+- [x] T023 [P] [US3] Write failing compatibility assertions in `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts` for unchanged Askama/`.jinja` ownership, centralized native crate outputs, and the existing native `render(node_json) -> String` boundary
 
 ### Implementation for User Story 3
 
-- [ ] T024 [US3] Keep the legacy preparation path available during proof by updating `rust/crates/sittir-core/src/lib.rs` and `rust/crates/sittir-core/src/prepare.rs` to coexist with the direct-render path
-- [ ] T025 [US3] Record and verify Level 1 and Level 3 gate results in `specs/020-template-engine-converge/research.md` and `specs/020-template-engine-converge/quickstart.md` before final cleanup signoff
-- [ ] T026 [US3] Remove obsolete preparation/bridge code from `rust/crates/sittir-core/src/prepare.rs`, `rust/crates/sittir-core/src/filters.rs`, and `rust/crates/sittir-core/src/lib.rs` only after all three grammars pass the direct path
-- [ ] T027 [US3] Reconcile post-cleanup shared runtime types and helper exports in `rust/crates/sittir-core/src/types.rs` and `rust/crates/sittir-core/src/read_node.rs` with the direct-render design
-- [ ] T028 [US3] Make the rollback/parity closure and compatibility checks pass using `packages/codegen/src/__tests__/collect-baseline.test.ts`, `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts`, `tests/format-roundtrip/{rust,typescript,python}.test.ts`, and spot checks of `rust/crates/sittir-{rust,typescript,python}-napi/src/lib.rs`
+- [x] T024 [US3] Keep the legacy preparation path available during proof by updating `rust/crates/sittir-core/src/lib.rs` and `rust/crates/sittir-core/src/prepare.rs` to coexist with the direct-render path
+- [x] T025 [US3] Record and verify Level 1 and Level 3 gate results in `specs/020-template-engine-converge/research.md` and `specs/020-template-engine-converge/quickstart.md` before final cleanup signoff
+- [x] T026 [US3] Remove obsolete preparation/bridge code from `rust/crates/sittir-core/src/prepare.rs`, `rust/crates/sittir-core/src/filters.rs`, and `rust/crates/sittir-core/src/lib.rs` only after all three grammars pass the direct path
+- [x] T027 [US3] Reconcile post-cleanup shared runtime types and helper exports in `rust/crates/sittir-core/src/types.rs` and `rust/crates/sittir-core/src/read_node.rs` with the direct-render design
+- [x] T028 [US3] Make the rollback/parity closure and compatibility checks pass using `packages/codegen/src/__tests__/collect-baseline.test.ts`, `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts`, `tests/format-roundtrip/{rust,typescript,python}.test.ts`, and spot checks of `rust/crates/sittir-{rust,typescript,python}-napi/src/lib.rs`
 
 **Checkpoint**: Cleanup is complete, parity is re-proven, rollback-only scaffolding is gone, and the public native render boundary is unchanged.
 
@@ -115,10 +115,10 @@
 
 ### Implementation for User Story 4
 
-- [ ] T029 [P] [US4] Update contributor docs in `README.md` and `CLAUDE.md` for canonical template ownership, centralized native crate paths, direct-render fallback behavior, and the Level 1 vs Level 3 distinction
-- [ ] T030 [P] [US4] Update generator-facing docs/comments in `packages/codegen/src/emitters/templates.ts` and `packages/codegen/src/emitters/rust-render.ts` to explain shared template ownership, fallback expectations, and the direct-render stages
-- [ ] T031 [US4] Update feature guidance in `specs/020-template-engine-converge/spec.md`, `specs/020-template-engine-converge/plan.md`, and `specs/020-template-engine-converge/quickstart.md` with final implementation notes
-- [ ] T032 [US4] Validate the documentation and compatibility story by checking paths, commands, fallback notes, and the unchanged render boundary in `README.md`, `CLAUDE.md`, `specs/020-template-engine-converge/quickstart.md`, and `rust/crates/sittir-{rust,typescript,python}-napi/src/lib.rs`
+- [x] T029 [P] [US4] Update contributor docs in `README.md` and `CLAUDE.md` for canonical template ownership, centralized native crate paths, direct-render fallback behavior, and the Level 1 vs Level 3 distinction
+- [x] T030 [P] [US4] Update generator-facing docs/comments in `packages/codegen/src/emitters/templates.ts` and `packages/codegen/src/emitters/rust-render.ts` to explain shared template ownership, fallback expectations, and the direct-render stages
+- [x] T031 [US4] Update feature guidance in `specs/020-template-engine-converge/spec.md`, `specs/020-template-engine-converge/plan.md`, and `specs/020-template-engine-converge/quickstart.md` with final implementation notes
+- [x] T032 [US4] Validate the documentation and compatibility story by checking paths, commands, fallback notes, and the unchanged render boundary in `README.md`, `CLAUDE.md`, `specs/020-template-engine-converge/quickstart.md`, and `rust/crates/sittir-{rust,typescript,python}-napi/src/lib.rs`
 
 **Checkpoint**: Documentation and generator guidance reflect the shipped architecture consistently.
 
@@ -126,10 +126,10 @@
 
 ## Final Phase: Polish & Cross-Cutting Concerns
 
-- [ ] T033 [P] Run `pnpm -r run type-check` and fix residual type issues in touched files under `packages/codegen/src/**` and `rust/crates/sittir-core/src/**`
-- [ ] T034 [P] Run `pnpm test` and fix regressions in `packages/codegen/src/__tests__/**` and `tests/format-roundtrip/**`
-- [ ] T035 Verify the standard regenerate workflow via `packages/codegen/src/cli.ts` and spot-check generated outputs in `rust/crates/sittir-render-{rust,typescript,python}/src/` before merge
-- [ ] T036 Create a checkpoint commit for the completed 020 implementation after validation passes and before requesting final review
+- [x] T033 [P] Run `pnpm -r run type-check` and fix residual type issues in touched files under `packages/codegen/src/**` and `rust/crates/sittir-core/src/**`
+- [x] T034 [P] Run `pnpm test` and fix regressions in `packages/codegen/src/__tests__/**` and `tests/format-roundtrip/**`
+- [x] T035 Verify the standard regenerate workflow via `packages/codegen/src/cli.ts` and spot-check generated outputs in `rust/crates/sittir-render-{rust,typescript,python}/src/` before merge
+- [x] T036 Create a checkpoint commit for the completed 020 implementation after validation passes and before requesting final review
 
 ---
 

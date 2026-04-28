@@ -6,9 +6,9 @@ members = [
   "rust/crates/sittir-typescript-napi",
   "rust/crates/sittir-python-napi",
   "rust/crates/sittir-parity-tests",
-  "packages/rust/rust-render",
-  "packages/typescript/rust-render",
-  "packages/python/rust-render"
+  "rust/crates/sittir-render-rust",
+  "rust/crates/sittir-render-typescript",
+  "rust/crates/sittir-render-python"
 ]
 
 # NOTE on workspace-root location (deviation from spec 012 task T002):
@@ -16,11 +16,8 @@ members = [
 # resolved via `..` paths. cargo 1.83+ enforces that every workspace
 # member live hierarchically below the workspace root (rejected with
 # "workspace member is not hierarchically below the workspace root"),
-# which invalidates the spec's layout because render crates must live
-# under `packages/{lang}/rust-render/` (Principle III — generated
-# alongside their template source). Minimal fix: promote the workspace
-# manifest one level to the repo root. All spec-driven file locations
-# for individual crates remain unchanged.
+# which is why the workspace manifest lives at the repo root while the
+# centralized generated render crates live under `rust/crates/`.
 
 [workspace.package]
 version = "0.0.0"

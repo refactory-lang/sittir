@@ -24,6 +24,11 @@ Generated packages (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) cont
 - `consts.ts` — discoverable arrays/maps of kinds, keywords, operators
 - `index.ts` — barrel re-exports
 
+Authored templates stay canonical under `packages/{lang}/templates/`.
+The native Askama companions are generated under
+`rust/crates/sittir-render-{lang}/`; `--all` regeneration refreshes both
+the TypeScript package outputs and those checked-in native crates.
+
 ## Key Design Decisions
 
 - **NodeData** — plain objects, not ES classes. Branches: `{ $type, $source, $named, $fields }`. Leaves: `{ $type, $source, $named, $text }`. Fields stored under **raw** (snake_case) names inside `$fields`. `$`-prefix on metadata (spec 008 US7) eliminates collisions with user-facing field names like `type` (python's `type_alias_statement`).
