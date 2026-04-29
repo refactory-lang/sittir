@@ -40,12 +40,13 @@ function _bf<T>(v: unknown, kinds: readonly string[], texts: readonly string[], 
   return out;
 }
 
-const _leafRe_typeConversion = /^(?:![a-z])/u;
 const _leafRe_identifier = /^(?:[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
+const _leafRe_typeConversion = /^(?:![a-z])/u;
 
-export function module(...children: T.Statement[]) {
+export function _asPattern(child: (T.CasePattern | T.Identifier)) {
+  const children = [child];
   return {
-    $type: 'module' as const,
+    $type: '_as_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -54,14 +55,14 @@ export function module(...children: T.Statement[]) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.ModuleTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T._AsPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function simpleStatements(...children: T.SimpleStatement[]) {
-  _assertNonEmpty(children, '_simple_statements.children');
+export function asPatternTarget(child: T.Expression) {
+  const children = [child];
   return {
-    $type: '_simple_statements' as const,
+    $type: '_as_pattern_target' as const,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -70,98 +71,97 @@ export function simpleStatements(...children: T.SimpleStatement[]) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.SimpleStatementsTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.AsPatternTargetTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function importStatement(config: ConfigOf<T.ImportStatement>) {
+export function _assignmentEq(config: ConfigOf<T.AssignmentEq>) {
   const fields = {
-    name: config.name,
+    right: config.right,
   };
   return {
-    $type: 'import_statement' as const,
+    $type: '_assignment_eq' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    name(...values: NonEmptyArray<T.DottedName | T.AliasedImport>) { return _fsm(config, importStatement, 'name', values, config?.name); },
+    right(value?: T.RightHandSide) { return _fs(config, _assignmentEq, 'right', value, config?.right); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.ImportStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.AssignmentEqTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function importPrefix(text: string) {
-  if (text.length === 0) throw new Error(`import_prefix: text must be non-empty`);
-  return {
-    $type: 'import_prefix' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.ImportPrefixTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
-export function relativeImport(config: ConfigOf<T.RelativeImport>) {
+export function _assignmentType(config: ConfigOf<T.AssignmentType>) {
   const fields = {
-    import_prefix: config.importPrefix,
-    dotted_name: config.dottedName,
+    type: config.type,
   };
   return {
-    $type: 'relative_import' as const,
+    $type: '_assignment_type' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    importPrefix(value?: T.ImportPrefix) { return _fs(config, relativeImport, 'importPrefix', value, config?.importPrefix); },
-    dottedName(value?: T.DottedName | undefined) { return _fs(config, relativeImport, 'dottedName', value, config?.dottedName); },
+    typeField(value?: T.Type) { return _fs(config, _assignmentType, 'type', value, config?.type); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.RelativeImportTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.AssignmentTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function futureImportStatement(config: ConfigOf<T.FutureImportStatement>) {
+export function _assignmentTyped(config: ConfigOf<T.AssignmentTyped>) {
   const fields = {
-    name: config.name,
+    type: config.type,
+    right: config.right,
   };
   return {
-    $type: 'future_import_statement' as const,
+    $type: '_assignment_typed' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    name(...values: NonEmptyArray<T.DottedName | T.AliasedImport>) { return _fsm(config, futureImportStatement, 'name', values, config?.name); },
+    typeField(value?: T.Type) { return _fs(config, _assignmentTyped, 'type', value, config?.type); },
+    right(value?: T.RightHandSide) { return _fs(config, _assignmentTyped, 'right', value, config?.right); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.FutureImportStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.AssignmentTypedTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function importFromStatement(config: ConfigOf<T.ImportFromStatement>) {
-  const fields = {
-    module_name: config.moduleName,
-  };
+export function comprehensionClauses(...children: (T.ForInClause | T.IfClause)[]) {
   return {
-    $type: 'import_from_statement' as const,
+    $type: '_comprehension_clauses' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
-    moduleName(value?: T.RelativeImport | T.DottedName) { return _fs(config, importFromStatement, 'moduleName', value, config?.moduleName); },
+    $children: children,
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.ImportFromStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.ComprehensionClausesTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function formatExpression(child: T.Interpolation) {
+  const children = [child];
+  return {
+    $type: '_format_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.FormatExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -184,1045 +184,16 @@ export function _importList(config: ConfigOf<T.ImportList>) {
   };
 }
 
-export function aliasedImport(config: ConfigOf<T.AliasedImport>) {
-  const fields = {
-    name: config.name,
-    alias: config.alias,
-  };
+export function isNot(text: string) {
+  if (text.length === 0) throw new Error(`_is_not: text must be non-empty`);
   return {
-    $type: 'aliased_import' as const,
+    $type: '_is_not' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
-    name(value?: T.DottedName) { return _fs(config, aliasedImport, 'name', value, config?.name); },
-    alias(value?: T.Identifier) { return _fs(config, aliasedImport, 'alias', value, config?.alias); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.AliasedImportTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function printStatement(config: ConfigOf<T.PrintStatement>) {
-  const fields = {
-    argument: config.argument,
-  };
-  const children = config.children ?? [];
-  return {
-    $type: 'print_statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    $children: children,
-    argument(...values: T.Expression[]) { return _fsm(config, printStatement, 'argument', values, config?.argument); },
-    child(value?: T.Chevron) {
-      if (value === undefined) return children[0];
-      return printStatement({ ...config, children: [value] });
-    },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.PrintStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function chevron(config: ConfigOf<T.Chevron>) {
-  const fields = {
-    expression: config.expression,
-  };
-  return {
-    $type: 'chevron' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    expression(value?: T.Expression) { return _fs(config, chevron, 'expression', value, config?.expression); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ChevronTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function assertStatement(...children: T.Expression[]) {
-  _assertNonEmpty(children, 'assert_statement.children');
-  return {
-    $type: 'assert_statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.AssertStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function expressionStatementTuple(...children: T.Expression[]) {
-  _assertNonEmpty(children, 'expression_statement_tuple.children');
-  return {
-    $type: 'expression_statement_tuple' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ExpressionStatementTupleTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function expressionStatement(config: Omit<ConfigOf<T.ExpressionStatementUFormTuple>, '$variant'>) {
-  return expressionStatementUFormTuple(config as Parameters<typeof expressionStatementUFormTuple>[0]);
-}
-export function expressionStatementUFormTuple(_config?: Omit<ConfigOf<T.ExpressionStatementUFormTuple>, '$variant'>) {
-  return {
-    $type: 'expression_statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $variant: 'tuple' as const,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ExpressionStatementUFormTupleTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function namedExpression(config: ConfigOf<T.NamedExpression>) {
-  const fields = {
-    name: config.name,
-    value: config.value,
-  };
-  return {
-    $type: 'named_expression' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    name(value?: T.NamedExpressionLhs) { return _fs(config, namedExpression, 'name', value, config?.name); },
-    value(value?: T.Expression) { return _fs(config, namedExpression, 'value', value, config?.value); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.NamedExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function returnStatement(child?: T.Expressions) {
-  const children = child != null ? [child] : [];
-  return {
-    $type: 'return_statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ReturnStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function deleteStatement(child: T.Expressions) {
-  const children = [child];
-  return {
-    $type: 'delete_statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.DeleteStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function raiseStatement(config?: ConfigOf<T.RaiseStatement>) {
-  const fields = {
-    cause: config?.cause,
-  };
-  const children = config?.children ?? [];
-  return {
-    $type: 'raise_statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    $children: children,
-    cause(value?: T.Expression | undefined) { return _fs(config, raiseStatement, 'cause', value, config?.cause); },
-    child(value?: T.Expressions) {
-      if (value === undefined) return children[0];
-      return raiseStatement({ ...config, children: [value] });
-    },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.RaiseStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function passStatement() {
-  return {
-    $type: 'pass_statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: 'pass' as const,
-    render: () => 'pass' as const,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'pass' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'pass' as const },
-    replace: (t: T.PassStatementTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'pass' as const }; },
-  };
-}
-
-export function breakStatement() {
-  return {
-    $type: 'break_statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: 'break' as const,
-    render: () => 'break' as const,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'break' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'break' as const },
-    replace: (t: T.BreakStatementTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'break' as const }; },
-  };
-}
-
-export function continueStatement() {
-  return {
-    $type: 'continue_statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: 'continue' as const,
-    render: () => 'continue' as const,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'continue' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'continue' as const },
-    replace: (t: T.ContinueStatementTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'continue' as const }; },
-  };
-}
-
-export function ifStatement(config: ConfigOf<T.IfStatement>) {
-  const fields = {
-    condition: config.condition,
-    consequence: config.consequence,
-    alternative: config.alternative,
-  };
-  return {
-    $type: 'if_statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    condition(value?: T.Expression) { return _fs(config, ifStatement, 'condition', value, config?.condition); },
-    consequence(value?: T.Suite) { return _fs(config, ifStatement, 'consequence', value, config?.consequence); },
-    alternative(...values: (T.ElifClause | T.ElseClause)[]) { return _fsm(config, ifStatement, 'alternative', values, config?.alternative); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.IfStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function elifClause(config: ConfigOf<T.ElifClause>) {
-  const fields = {
-    condition: config.condition,
-    consequence: config.consequence,
-  };
-  return {
-    $type: 'elif_clause' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    condition(value?: T.Expression) { return _fs(config, elifClause, 'condition', value, config?.condition); },
-    consequence(value?: T.Suite) { return _fs(config, elifClause, 'consequence', value, config?.consequence); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ElifClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function elseClause(config: ConfigOf<T.ElseClause>) {
-  const fields = {
-    body: config.body,
-  };
-  return {
-    $type: 'else_clause' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    body(value?: T.Suite) { return _fs(config, elseClause, 'body', value, config?.body); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ElseClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function matchStatement(config: ConfigOf<T.MatchStatement>) {
-  const fields = {
-    subject: config.subject,
-    body: config.body,
-  };
-  return {
-    $type: 'match_statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    subject(...values: NonEmptyArray<T.Expression>) { return _fsm(config, matchStatement, 'subject', values, config?.subject); },
-    body(value?: T.MatchBlock) { return _fs(config, matchStatement, 'body', value, config?.body); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.MatchStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function matchBlock(child: T.MatchBlockBlock) {
-  const children = [child];
-  return {
-    $type: '_match_block' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.MatchBlockTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function caseClause(config: ConfigOf<T.CaseClause>) {
-  const fields = {
-    guard: config.guard,
-    consequence: config.consequence,
-  };
-  const children = config.children ?? [];
-  return {
-    $type: 'case_clause' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    $children: children,
-    guard(value?: T.IfClause | undefined) { return _fs(config, caseClause, 'guard', value, config?.guard); },
-    consequence(value?: T.Suite) { return _fs(config, caseClause, 'consequence', value, config?.consequence); },
-    children(...items: T.CasePattern[]) {
-      if (items.length === 0) return children;
-      _assertNonEmpty(items, 'case_clause.children');
-      return caseClause({ ...config, children: items });
-    },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.CaseClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function forStatement(config: ConfigOf<T.ForStatement>) {
-  const fields = {
-    async_marker: config.asyncMarker ? "async" as const : undefined,
-    left: config.left,
-    right: config.right,
-    body: config.body,
-    alternative: config.alternative,
-  };
-  return {
-    $type: 'for_statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    asyncMarker(value?: "async" | undefined) { return _fs(config, forStatement, 'asyncMarker', value, config?.asyncMarker); },
-    left(value?: T.LeftHandSide) { return _fs(config, forStatement, 'left', value, config?.left); },
-    right(value?: T.Expressions) { return _fs(config, forStatement, 'right', value, config?.right); },
-    body(value?: T.Suite) { return _fs(config, forStatement, 'body', value, config?.body); },
-    alternative(value?: T.ElseClause | undefined) { return _fs(config, forStatement, 'alternative', value, config?.alternative); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ForStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function whileStatement(config: ConfigOf<T.WhileStatement>) {
-  const fields = {
-    condition: config.condition,
-    body: config.body,
-    alternative: config.alternative,
-  };
-  return {
-    $type: 'while_statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    condition(value?: T.Expression) { return _fs(config, whileStatement, 'condition', value, config?.condition); },
-    body(value?: T.Suite) { return _fs(config, whileStatement, 'body', value, config?.body); },
-    alternative(value?: T.ElseClause | undefined) { return _fs(config, whileStatement, 'alternative', value, config?.alternative); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.WhileStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function tryStatement(config: ConfigOf<T.TryStatement>) {
-  const fields = {
-    body: config.body,
-    except_clauses: config.exceptClauses,
-    else_clause: config.elseClause,
-    finally_clause: config.finallyClause,
-  };
-  return {
-    $type: 'try_statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    body(value?: T.Suite) { return _fs(config, tryStatement, 'body', value, config?.body); },
-    exceptClauses(...values: T.ExceptClause[]) { return _fsm(config, tryStatement, 'exceptClauses', values, config?.exceptClauses); },
-    elseClause(value?: T.ElseClause | undefined) { return _fs(config, tryStatement, 'elseClause', value, config?.elseClause); },
-    finallyClause(value?: T.FinallyClause | undefined) { return _fs(config, tryStatement, 'finallyClause', value, config?.finallyClause); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.TryStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function exceptClause(config: ConfigOf<T.ExceptClause>) {
-  const fields = {
-    value: config.value,
-    alias: config.alias,
-  };
-  const children = config.children ?? [];
-  return {
-    $type: 'except_clause' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    $children: children,
-    value(...values: NonEmptyArray<T.Expression>) { return _fsm(config, exceptClause, 'value', values, config?.value); },
-    alias(value?: T.Expression | undefined) { return _fs(config, exceptClause, 'alias', value, config?.alias); },
-    child(value?: T.Suite) {
-      if (value === undefined) return children[0];
-      return exceptClause({ ...config, children: [value] });
-    },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ExceptClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function finallyClause(config: ConfigOf<T.FinallyClause>) {
-  const fields = {
-    block: config.block,
-  };
-  return {
-    $type: 'finally_clause' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    block(value?: T.Suite) { return _fs(config, finallyClause, 'block', value, config?.block); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.FinallyClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function withStatement(config: ConfigOf<T.WithStatement>) {
-  const fields = {
-    async_marker: config.asyncMarker ? "async" as const : undefined,
-    with_clause: config.withClause,
-    body: config.body,
-  };
-  return {
-    $type: 'with_statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    asyncMarker(value?: "async" | undefined) { return _fs(config, withStatement, 'asyncMarker', value, config?.asyncMarker); },
-    withClause(value?: T.WithClause) { return _fs(config, withStatement, 'withClause', value, config?.withClause); },
-    body(value?: T.Suite) { return _fs(config, withStatement, 'body', value, config?.body); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.WithStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function withClauseBare(...children: T.WithItem[]) {
-  _assertNonEmpty(children, 'with_clause_bare.children');
-  return {
-    $type: 'with_clause_bare' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.WithClauseBareTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function withClauseParen(...children: T.WithItem[]) {
-  _assertNonEmpty(children, 'with_clause_paren.children');
-  return {
-    $type: 'with_clause_paren' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.WithClauseParenTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function withClause(config: ConfigOf<T.WithClauseUFormBare>): ReturnType<typeof withClauseUFormBare>;
-export function withClause(config: ConfigOf<T.WithClauseUFormParen>): ReturnType<typeof withClauseUFormParen>;
-export function withClause(config: ConfigOf<T.WithClauseUFormBare> | ConfigOf<T.WithClauseUFormParen>) {
-  switch (config.$variant) {
-    case 'bare': return withClauseUFormBare(config as Parameters<typeof withClauseUFormBare>[0]);
-    case 'paren': return withClauseUFormParen(config as Parameters<typeof withClauseUFormParen>[0]);
-  }
-  throw new Error(`withClause: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'bare' | 'paren'.`);
-}
-export function withClauseUFormBare(_config?: Omit<ConfigOf<T.WithClauseUFormBare>, '$variant'>) {
-  return {
-    $type: 'with_clause' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $variant: 'bare' as const,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.WithClauseUFormBareTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-export function withClauseUFormParen(config?: Omit<ConfigOf<T.WithClauseUFormParen>, '$variant'>) {
-  const inner = _withClauseParen(...(config?.children ?? []));
-  const children = [inner] as const;
-  return {
-    $type: 'with_clause' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $variant: 'paren' as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.WithClauseUFormParenTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function withItem(config: ConfigOf<T.WithItem>) {
-  const fields = {
-    value: config.value,
-  };
-  return {
-    $type: 'with_item' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    value(value?: T.Expression) { return _fs(config, withItem, 'value', value, config?.value); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.WithItemTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function functionDefinition(config: ConfigOf<T.FunctionDefinition>) {
-  const fields = {
-    async_marker: config.asyncMarker ? "async" as const : undefined,
-    name: config.name,
-    type_parameters: config.typeParameters,
-    parameters: config.parameters,
-    return_type: config.returnType,
-    body: config.body,
-  };
-  return {
-    $type: 'function_definition' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    asyncMarker(value?: "async" | undefined) { return _fs(config, functionDefinition, 'asyncMarker', value, config?.asyncMarker); },
-    name(value?: T.Identifier) { return _fs(config, functionDefinition, 'name', value, config?.name); },
-    typeParameters(value?: T.TypeParameter | undefined) { return _fs(config, functionDefinition, 'typeParameters', value, config?.typeParameters); },
-    parameters(value?: T.Parameters) { return _fs(config, functionDefinition, 'parameters', value, config?.parameters); },
-    returnType(value?: T.Type | undefined) { return _fs(config, functionDefinition, 'returnType', value, config?.returnType); },
-    body(value?: T.Suite) { return _fs(config, functionDefinition, 'body', value, config?.body); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.FunctionDefinitionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function parameters(...children: T.Parameter[]) {
-  return {
-    $type: 'parameters' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ParametersTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function lambdaParameters(...children: T.Parameter[]) {
-  _assertNonEmpty(children, 'lambda_parameters.children');
-  return {
-    $type: 'lambda_parameters' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.LambdaParametersTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function listSplat(config: ConfigOf<T.ListSplat>) {
-  const fields = {
-    expression: config.expression,
-  };
-  return {
-    $type: 'list_splat' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    expression(value?: T.Expression) { return _fs(config, listSplat, 'expression', value, config?.expression); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ListSplatTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function dictionarySplat(config: ConfigOf<T.DictionarySplat>) {
-  const fields = {
-    expression: config.expression,
-  };
-  return {
-    $type: 'dictionary_splat' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    expression(value?: T.Expression) { return _fs(config, dictionarySplat, 'expression', value, config?.expression); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.DictionarySplatTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function globalStatement(...children: T.Identifier[]) {
-  _assertNonEmpty(children, 'global_statement.children');
-  return {
-    $type: 'global_statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.GlobalStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function nonlocalStatement(...children: T.Identifier[]) {
-  _assertNonEmpty(children, 'nonlocal_statement.children');
-  return {
-    $type: 'nonlocal_statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.NonlocalStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function execStatement(config: ConfigOf<T.ExecStatement>) {
-  const fields = {
-    code: config.code,
-    in_clause: config.inClause,
-  };
-  return {
-    $type: 'exec_statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    code(value?: T.String | T.Identifier) { return _fs(config, execStatement, 'code', value, config?.code); },
-    inClause(...values: NonEmptyArray<"in" | T.Expression>) { return _fsm(config, execStatement, 'inClause', values, config?.inClause); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ExecStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function typeAliasStatement(config: ConfigOf<T.TypeAliasStatement>) {
-  const fields = {
-    type: "type" as const,
-    left: config.left,
-    right: config.right,
-  };
-  return {
-    $type: 'type_alias_statement' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    get typeField() { return fields.type; },
-    left(value?: T.Type) { return _fs(config, typeAliasStatement, 'left', value, config?.left); },
-    right(value?: T.Type) { return _fs(config, typeAliasStatement, 'right', value, config?.right); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.TypeAliasStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function classDefinition(config: ConfigOf<T.ClassDefinition>) {
-  const fields = {
-    name: config.name,
-    type_parameters: config.typeParameters,
-    superclasses: config.superclasses,
-    body: config.body,
-  };
-  return {
-    $type: 'class_definition' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    name(value?: T.Identifier) { return _fs(config, classDefinition, 'name', value, config?.name); },
-    typeParameters(value?: T.TypeParameter | undefined) { return _fs(config, classDefinition, 'typeParameters', value, config?.typeParameters); },
-    superclasses(value?: T.ArgumentList | undefined) { return _fs(config, classDefinition, 'superclasses', value, config?.superclasses); },
-    body(value?: T.Suite) { return _fs(config, classDefinition, 'body', value, config?.body); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ClassDefinitionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function typeParameter(...children: T.Type[]) {
-  _assertNonEmpty(children, 'type_parameter.children');
-  return {
-    $type: 'type_parameter' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.TypeParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function parenthesizedListSplat(child: (T.ParenthesizedListSplat | T.ListSplat)) {
-  const children = [child];
-  return {
-    $type: 'parenthesized_list_splat' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ParenthesizedListSplatTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function argumentList(...children: (T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument)[]) {
-  return {
-    $type: 'argument_list' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ArgumentListTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function decoratedDefinition(config: ConfigOf<T.DecoratedDefinition>) {
-  const fields = {
-    definition: config.definition,
-  };
-  const children = config.children ?? [];
-  return {
-    $type: 'decorated_definition' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    $children: children,
-    definition(value?: T.ClassDefinition | T.FunctionDefinition) { return _fs(config, decoratedDefinition, 'definition', value, config?.definition); },
-    children(...items: T.Decorator[]) {
-      if (items.length === 0) return children;
-      _assertNonEmpty(items, 'decorated_definition.children');
-      return decoratedDefinition({ ...config, children: items });
-    },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.DecoratedDefinitionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function decorator(config: ConfigOf<T.Decorator>) {
-  const fields = {
-    expression: config.expression,
-    newline: config.newline,
-  };
-  return {
-    $type: 'decorator' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    expression(value?: T.Expression) { return _fs(config, decorator, 'expression', value, config?.expression); },
-    newline(value?: string | undefined) { return _fs(config, decorator, 'newline', value, config?.newline); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.DecoratorTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function suite(child: (T.SimpleStatements | T.Block | T.Newline)) {
-  const children = [child];
-  return {
-    $type: '_suite' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.SuiteTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function block(...children: T.Statement[]) {
-  return {
-    $type: 'block' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.BlockTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function expressionList(...children: T.Expression[]) {
-  _assertNonEmpty(children, 'expression_list.children');
-  return {
-    $type: 'expression_list' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ExpressionListTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function dottedName(...children: T.Identifier[]) {
-  _assertNonEmpty(children, 'dotted_name.children');
-  return {
-    $type: 'dotted_name' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.DottedNameTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function casePattern(child: (T._AsPattern | T.KeywordPattern | T.SimplePattern)) {
-  const children = [child];
-  return {
-    $type: 'case_pattern' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.CasePatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function _asPattern(child: (T.CasePattern | T.Identifier)) {
-  const children = [child];
-  return {
-    $type: '_as_pattern' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T._AsPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function unionPattern(...children: T.SimplePattern[]) {
-  _assertNonEmpty(children, 'union_pattern.children');
-  return {
-    $type: 'union_pattern' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.UnionPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function _listPattern(...children: T.CasePattern[]) {
-  return {
-    $type: '_list_pattern' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T._ListPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function _tuplePattern(...children: T.CasePattern[]) {
-  return {
-    $type: '_tuple_pattern' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T._TuplePatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function dictPattern(...children: T.DictPatternKv[]) {
-  return {
-    $type: 'dict_pattern' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.DictPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.IsNotTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
@@ -1247,103 +218,9 @@ export function _keyValuePattern(config: ConfigOf<T.KeyValuePattern>) {
   };
 }
 
-export function keywordPattern(config: ConfigOf<T.KeywordPattern>) {
-  const fields = {
-    identifier: config.identifier,
-    simple_pattern: config.simplePattern,
-  };
+export function _listPattern(...children: T.CasePattern[]) {
   return {
-    $type: 'keyword_pattern' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    identifier(value?: T.Identifier) { return _fs(config, keywordPattern, 'identifier', value, config?.identifier); },
-    simplePattern(value?: T.SimplePattern) { return _fs(config, keywordPattern, 'simplePattern', value, config?.simplePattern); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.KeywordPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function splatPattern(config: ConfigOf<T.SplatPattern>) {
-  const fields = {
-    identifier: config.identifier,
-  };
-  const children = config.children ?? [];
-  return {
-    $type: 'splat_pattern' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    $children: children,
-    identifier(value?: "*" | "**") { return _fs(config, splatPattern, 'identifier', value, config?.identifier); },
-    child(value?: T.Identifier) {
-      if (value === undefined) return children[0];
-      return splatPattern({ ...config, children: [value] });
-    },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.SplatPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function classPattern(config: ConfigOf<T.ClassPattern>) {
-  const fields = {
-    dotted_name: config.dottedName,
-    arguments: config.arguments,
-  };
-  return {
-    $type: 'class_pattern' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    dottedName(value?: T.DottedName) { return _fs(config, classPattern, 'dottedName', value, config?.dottedName); },
-    arguments(...values: T.CasePattern[]) { return _fsm(config, classPattern, 'arguments', values, config?.arguments); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ClassPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function complexPattern(config: ConfigOf<T.ComplexPattern>) {
-  const fields = {
-    real: config.real ? "-" as const : undefined,
-    imaginary: config.imaginary,
-  };
-  const children = config.children ?? [];
-  return {
-    $type: 'complex_pattern' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    $children: children,
-    real(value?: "-" | undefined) { return _fs(config, complexPattern, 'real', value, config?.real); },
-    imaginary(value?: T.Integer | T.Float) { return _fs(config, complexPattern, 'imaginary', value, config?.imaginary); },
-    child(value?: (T.Integer | T.Float)) {
-      if (value === undefined) return children[0];
-      return complexPattern({ ...config, children: [value] });
-    },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ComplexPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function tuplePattern(...children: T.Pattern[]) {
-  return {
-    $type: 'tuple_pattern' as const,
+    $type: '_list_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -1352,73 +229,14 @@ export function tuplePattern(...children: T.Pattern[]) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.TuplePatternTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T._ListPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function listPattern(...children: T.Pattern[]) {
-  return {
-    $type: 'list_pattern' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ListPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function defaultParameter(config: ConfigOf<T.DefaultParameter>) {
-  const fields = {
-    name: config.name,
-    value: config.value,
-  };
-  return {
-    $type: 'default_parameter' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    name(value?: T.Identifier | T.TuplePattern) { return _fs(config, defaultParameter, 'name', value, config?.name); },
-    value(value?: T.Expression) { return _fs(config, defaultParameter, 'value', value, config?.value); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.DefaultParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function typedDefaultParameter(config: ConfigOf<T.TypedDefaultParameter>) {
-  const fields = {
-    name: config.name,
-    type: config.type,
-    value: config.value,
-  };
-  return {
-    $type: 'typed_default_parameter' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    name(value?: T.Identifier) { return _fs(config, typedDefaultParameter, 'name', value, config?.name); },
-    typeField(value?: T.Type) { return _fs(config, typedDefaultParameter, 'type', value, config?.type); },
-    value(value?: T.Expression) { return _fs(config, typedDefaultParameter, 'value', value, config?.value); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.TypedDefaultParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function listSplatPattern(child: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute)) {
+export function matchBlock(child: T.MatchBlockBlock) {
   const children = [child];
   return {
-    $type: 'list_splat_pattern' as const,
+    $type: '_match_block' as const,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -1427,14 +245,58 @@ export function listSplatPattern(child: (T.Identifier | T.KeywordIdentifier | T.
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.ListSplatPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.MatchBlockTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function dictionarySplatPattern(child: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute)) {
-  const children = [child];
+export function _matchBlockBlock(config: ConfigOf<T.MatchBlockBlock>) {
+  const fields = {
+    alternative: config.alternative,
+  };
   return {
-    $type: 'dictionary_splat_pattern' as const,
+    $type: '_match_block_block' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    alternative(...values: T.CaseClause[]) { return _fsm(config, _matchBlockBlock, 'alternative', values, config?.alternative); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.MatchBlockBlockTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function notIn(text: string) {
+  if (text.length === 0) throw new Error(`_not_in: text must be non-empty`);
+  return {
+    $type: '_not_in' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.NotInTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function simplePatternNegative(text: string) {
+  return {
+    $type: '_simple_pattern_negative' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.SimplePatternNegativeTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function simpleStatements(...children: T.SimpleStatement[]) {
+  _assertNonEmpty(children, '_simple_statements.children');
+  return {
+    $type: '_simple_statements' as const,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -1443,7 +305,90 @@ export function dictionarySplatPattern(child: (T.Identifier | T.KeywordIdentifie
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.DictionarySplatPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.SimpleStatementsTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function suite(child: (T.SimpleStatements | T.Block | T.Newline)) {
+  const children = [child];
+  return {
+    $type: '_suite' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.SuiteTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function _tuplePattern(...children: T.CasePattern[]) {
+  return {
+    $type: '_tuple_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T._TuplePatternTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function _withClauseParen(...children: T.WithItem[]) {
+  _assertNonEmpty(children, '_with_clause_paren.children');
+  return {
+    $type: '_with_clause_paren' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T._WithClauseParenTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function aliasedImport(config: ConfigOf<T.AliasedImport>) {
+  const fields = {
+    name: config.name,
+    alias: config.alias,
+  };
+  return {
+    $type: 'aliased_import' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    name(value?: T.DottedName) { return _fs(config, aliasedImport, 'name', value, config?.name); },
+    alias(value?: T.Identifier) { return _fs(config, aliasedImport, 'alias', value, config?.alias); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.AliasedImportTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function argumentList(...children: (T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument)[]) {
+  return {
+    $type: 'argument_list' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ArgumentListTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1468,178 +413,19 @@ export function asPattern(config: ConfigOf<T.AsPattern>) {
   };
 }
 
-export function notOperator(config: ConfigOf<T.NotOperator>) {
-  const fields = {
-    argument: config.argument,
-  };
+export function assertStatement(...children: T.Expression[]) {
+  _assertNonEmpty(children, 'assert_statement.children');
   return {
-    $type: 'not_operator' as const,
+    $type: 'assert_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
-    argument(value?: T.Expression) { return _fs(config, notOperator, 'argument', value, config?.argument); },
+    $children: children,
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.NotOperatorTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function booleanOperator(config: ConfigOf<T.BooleanOperator>) {
-  const fields = {
-    left: config.left,
-    operator: config.operator,
-    right: config.right,
-  };
-  return {
-    $type: 'boolean_operator' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    left(value?: T.Expression) { return _fs(config, booleanOperator, 'left', value, config?.left); },
-    operator(value?: "and" | "or") { return _fs(config, booleanOperator, 'operator', value, config?.operator); },
-    right(value?: T.Expression) { return _fs(config, booleanOperator, 'right', value, config?.right); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.BooleanOperatorTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function binaryOperator(config: ConfigOf<T.BinaryOperator>) {
-  const fields = {
-    left: config.left,
-    operator: config.operator,
-    right: config.right,
-  };
-  return {
-    $type: 'binary_operator' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    left(value?: T.PrimaryExpression) { return _fs(config, binaryOperator, 'left', value, config?.left); },
-    operator(value?: "+" | "-" | "*" | "@" | "/" | "%" | "//" | "**" | "|" | "&" | "^" | "<<" | ">>") { return _fs(config, binaryOperator, 'operator', value, config?.operator); },
-    right(value?: T.PrimaryExpression) { return _fs(config, binaryOperator, 'right', value, config?.right); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.BinaryOperatorTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function unaryOperator(config: ConfigOf<T.UnaryOperator>) {
-  const fields = {
-    operator: config.operator,
-    argument: config.argument,
-  };
-  return {
-    $type: 'unary_operator' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    operator(value?: "+" | "-" | "~") { return _fs(config, unaryOperator, 'operator', value, config?.operator); },
-    argument(value?: T.PrimaryExpression) { return _fs(config, unaryOperator, 'argument', value, config?.argument); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.UnaryOperatorTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function notIn(text: string) {
-  if (text.length === 0) throw new Error(`_not_in: text must be non-empty`);
-  return {
-    $type: '_not_in' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.NotInTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
-export function isNot(text: string) {
-  if (text.length === 0) throw new Error(`_is_not: text must be non-empty`);
-  return {
-    $type: '_is_not' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.IsNotTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
-export function comparisonOperator(config: ConfigOf<T.ComparisonOperator>) {
-  const fields = {
-    left: config.left,
-    operators: _bf<"<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not">(config.operators, ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"], ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"], false),
-  };
-  return {
-    $type: 'comparison_operator' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    left(value?: T.PrimaryExpression) { return _fs(config, comparisonOperator, 'left', value, config?.left); },
-    operators(...values: NonEmptyArray<"<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not">) { return _fsm(config, comparisonOperator, 'operators', values, config?.operators); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ComparisonOperatorTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function lambda(config: ConfigOf<T.Lambda>) {
-  const fields = {
-    parameters: config.parameters,
-    body: config.body,
-  };
-  return {
-    $type: 'lambda' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    parameters(value?: T.LambdaParameters | undefined) { return _fs(config, lambda, 'parameters', value, config?.parameters); },
-    body(value?: T.Expression) { return _fs(config, lambda, 'body', value, config?.body); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.LambdaTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function lambdaWithinForInClause(config: ConfigOf<T.LambdaWithinForInClause>) {
-  const fields = {
-    parameters: config.parameters,
-    body: config.body,
-  };
-  return {
-    $type: 'lambda_within_for_in_clause' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    parameters(value?: T.LambdaParameters | undefined) { return _fs(config, lambdaWithinForInClause, 'parameters', value, config?.parameters); },
-    body(value?: T.ExpressionWithinForInClause) { return _fs(config, lambdaWithinForInClause, 'body', value, config?.body); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.LambdaWithinForInClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.AssertStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -1746,6 +532,27 @@ export function assignmentUFormTyped(config: Omit<ConfigOf<T.AssignmentUFormType
   };
 }
 
+export function attribute(config: ConfigOf<T.Attribute>) {
+  const fields = {
+    object: config.object,
+    attribute: config.attribute,
+  };
+  return {
+    $type: 'attribute' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    object(value?: T.PrimaryExpression) { return _fs(config, attribute, 'object', value, config?.object); },
+    attribute(value?: T.Identifier) { return _fs(config, attribute, 'attribute', value, config?.attribute); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.AttributeTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
 export function augmentedAssignment(config: ConfigOf<T.AugmentedAssignment>) {
   const fields = {
     left: config.left,
@@ -1769,10 +576,51 @@ export function augmentedAssignment(config: ConfigOf<T.AugmentedAssignment>) {
   };
 }
 
-export function patternList(...children: T.Pattern[]) {
-  _assertNonEmpty(children, 'pattern_list.children');
+export function await_(config: ConfigOf<T.Await>) {
+  const fields = {
+    primary_expression: config.primaryExpression,
+  };
   return {
-    $type: 'pattern_list' as const,
+    $type: 'await' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    primaryExpression(value?: T.PrimaryExpression) { return _fs(config, await_, 'primaryExpression', value, config?.primaryExpression); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.AwaitTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function binaryOperator(config: ConfigOf<T.BinaryOperator>) {
+  const fields = {
+    left: config.left,
+    operator: config.operator,
+    right: config.right,
+  };
+  return {
+    $type: 'binary_operator' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    left(value?: T.PrimaryExpression) { return _fs(config, binaryOperator, 'left', value, config?.left); },
+    operator(value?: "+" | "-" | "*" | "@" | "/" | "%" | "//" | "**" | "|" | "&" | "^" | "<<" | ">>") { return _fs(config, binaryOperator, 'operator', value, config?.operator); },
+    right(value?: T.PrimaryExpression) { return _fs(config, binaryOperator, 'right', value, config?.right); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.BinaryOperatorTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function block(...children: T.Statement[]) {
+  return {
+    $type: 'block' as const,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -1781,88 +629,42 @@ export function patternList(...children: T.Pattern[]) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.PatternListTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.BlockTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function yield_(child: (T.Expression | T.Expressions)) {
-  const children = [child];
-  return {
-    $type: 'yield' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.YieldTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function attribute(config: ConfigOf<T.Attribute>) {
+export function booleanOperator(config: ConfigOf<T.BooleanOperator>) {
   const fields = {
-    object: config.object,
-    attribute: config.attribute,
+    left: config.left,
+    operator: config.operator,
+    right: config.right,
   };
   return {
-    $type: 'attribute' as const,
+    $type: 'boolean_operator' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    object(value?: T.PrimaryExpression) { return _fs(config, attribute, 'object', value, config?.object); },
-    attribute(value?: T.Identifier) { return _fs(config, attribute, 'attribute', value, config?.attribute); },
+    left(value?: T.Expression) { return _fs(config, booleanOperator, 'left', value, config?.left); },
+    operator(value?: "and" | "or") { return _fs(config, booleanOperator, 'operator', value, config?.operator); },
+    right(value?: T.Expression) { return _fs(config, booleanOperator, 'right', value, config?.right); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.AttributeTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.BooleanOperatorTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function subscript(config: ConfigOf<T.Subscript>) {
-  const fields = {
-    value: config.value,
-    subscript: config.subscript,
-  };
+export function breakStatement() {
   return {
-    $type: 'subscript' as const,
+    $type: 'break_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $fields: fields,
-    value(value?: T.PrimaryExpression) { return _fs(config, subscript, 'value', value, config?.value); },
-    subscript(...values: NonEmptyArray<T.Expression | T.Slice>) { return _fsm(config, subscript, 'subscript', values, config?.subscript); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.SubscriptTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function slice(config?: ConfigOf<T.Slice>) {
-  const fields = {
-    start: config?.start,
-    stop: config?.stop,
-    step: config?.step,
-  };
-  return {
-    $type: 'slice' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    start(value?: T.Expression | undefined) { return _fs(config, slice, 'start', value, config?.start); },
-    stop(value?: T.Expression | undefined) { return _fs(config, slice, 'stop', value, config?.stop); },
-    step(value?: T.Expression | undefined) { return _fs(config, slice, 'step', value, config?.step); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.SliceTree): Edit { const r = target.range(); return toEdit(this, r); },
+    $text: 'break' as const,
+    render: () => 'break' as const,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'break' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'break' as const },
+    replace: (t: T.BreakStatementTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'break' as const }; },
   };
 }
 
@@ -1887,35 +689,38 @@ export function call(config: ConfigOf<T.Call>) {
   };
 }
 
-export function typedParameter(config: ConfigOf<T.TypedParameter>) {
+export function caseClause(config: ConfigOf<T.CaseClause>) {
   const fields = {
-    type: config.type,
+    guard: config.guard,
+    consequence: config.consequence,
   };
   const children = config.children ?? [];
   return {
-    $type: 'typed_parameter' as const,
+    $type: 'case_clause' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
     $children: children,
-    typeField(value?: T.Type) { return _fs(config, typedParameter, 'type', value, config?.type); },
-    child(value?: (T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern)) {
-      if (value === undefined) return children[0];
-      return typedParameter({ ...config, children: [value] });
+    guard(value?: T.IfClause | undefined) { return _fs(config, caseClause, 'guard', value, config?.guard); },
+    consequence(value?: T.Suite) { return _fs(config, caseClause, 'consequence', value, config?.consequence); },
+    children(...items: T.CasePattern[]) {
+      if (items.length === 0) return children;
+      _assertNonEmpty(items, 'case_clause.children');
+      return caseClause({ ...config, children: items });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.TypedParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.CaseClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function type(child: (T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType)) {
+export function casePattern(child: (T._AsPattern | T.KeywordPattern | T.SimplePattern)) {
   const children = [child];
   return {
-    $type: 'type' as const,
+    $type: 'case_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -1924,68 +729,172 @@ export function type(child: (T.Expression | T.SplatType | T.GenericType | T.Unio
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.TypeTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.CasePatternTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function splatType(config: ConfigOf<T.SplatType>) {
+export function chevron(config: ConfigOf<T.Chevron>) {
   const fields = {
-    identifier: config.identifier,
+    expression: config.expression,
   };
   return {
-    $type: 'splat_type' as const,
+    $type: 'chevron' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    identifier(value?: "*" | "**" | T.Identifier) { return _fs(config, splatType, 'identifier', value, config?.identifier); },
+    expression(value?: T.Expression) { return _fs(config, chevron, 'expression', value, config?.expression); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.SplatTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.ChevronTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function genericType(config: ConfigOf<T.GenericType>) {
+export function classDefinition(config: ConfigOf<T.ClassDefinition>) {
   const fields = {
-    identifier: config.identifier,
-    type_parameter: config.typeParameter,
+    name: config.name,
+    type_parameters: config.typeParameters,
+    superclasses: config.superclasses,
+    body: config.body,
   };
   return {
-    $type: 'generic_type' as const,
+    $type: 'class_definition' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    identifier(value?: T.Identifier) { return _fs(config, genericType, 'identifier', value, config?.identifier); },
-    typeParameter(value?: T.TypeParameter) { return _fs(config, genericType, 'typeParameter', value, config?.typeParameter); },
+    name(value?: T.Identifier) { return _fs(config, classDefinition, 'name', value, config?.name); },
+    typeParameters(value?: T.TypeParameter | undefined) { return _fs(config, classDefinition, 'typeParameters', value, config?.typeParameters); },
+    superclasses(value?: T.ArgumentList | undefined) { return _fs(config, classDefinition, 'superclasses', value, config?.superclasses); },
+    body(value?: T.Suite) { return _fs(config, classDefinition, 'body', value, config?.body); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.GenericTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.ClassDefinitionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function unionType(config: ConfigOf<T.UnionType>) {
+export function classPattern(config: ConfigOf<T.ClassPattern>) {
+  const fields = {
+    dotted_name: config.dottedName,
+    arguments: config.arguments,
+  };
+  return {
+    $type: 'class_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    dottedName(value?: T.DottedName) { return _fs(config, classPattern, 'dottedName', value, config?.dottedName); },
+    arguments(...values: T.CasePattern[]) { return _fsm(config, classPattern, 'arguments', values, config?.arguments); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ClassPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function comment(text: string) {
+  if (text.length === 0) throw new Error(`comment: text must be non-empty`);
+  return {
+    $type: 'comment' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.CommentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function comparisonOperator(config: ConfigOf<T.ComparisonOperator>) {
   const fields = {
     left: config.left,
-    right: config.right,
+    operators: _bf<"<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not">(config.operators, ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"], ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"], false),
   };
   return {
-    $type: 'union_type' as const,
+    $type: 'comparison_operator' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    left(value?: T.Type) { return _fs(config, unionType, 'left', value, config?.left); },
-    right(value?: T.Type) { return _fs(config, unionType, 'right', value, config?.right); },
+    left(value?: T.PrimaryExpression) { return _fs(config, comparisonOperator, 'left', value, config?.left); },
+    operators(...values: NonEmptyArray<"<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not">) { return _fsm(config, comparisonOperator, 'operators', values, config?.operators); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.UnionTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.ComparisonOperatorTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function complexPattern(config: ConfigOf<T.ComplexPattern>) {
+  const fields = {
+    real: config.real ? "-" as const : undefined,
+    imaginary: config.imaginary,
+  };
+  const children = config.children ?? [];
+  return {
+    $type: 'complex_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
+    real(value?: "-" | undefined) { return _fs(config, complexPattern, 'real', value, config?.real); },
+    imaginary(value?: T.Integer | T.Float) { return _fs(config, complexPattern, 'imaginary', value, config?.imaginary); },
+    child(value?: (T.Integer | T.Float)) {
+      if (value === undefined) return children[0];
+      return complexPattern({ ...config, children: [value] });
+    },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ComplexPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function concatenatedString(...children: T.String[]) {
+  _assertNonEmpty(children, 'concatenated_string.children');
+  return {
+    $type: 'concatenated_string' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ConcatenatedStringTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function conditionalExpression(config: ConfigOf<T.ConditionalExpression>) {
+  const fields = {
+    body: config.body,
+    condition: config.condition,
+    alternative: config.alternative,
+  };
+  return {
+    $type: 'conditional_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    body(value?: T.Expression) { return _fs(config, conditionalExpression, 'body', value, config?.body); },
+    condition(value?: T.Expression) { return _fs(config, conditionalExpression, 'condition', value, config?.condition); },
+    alternative(value?: T.Expression) { return _fs(config, conditionalExpression, 'alternative', value, config?.alternative); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ConditionalExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2010,51 +919,90 @@ export function constrainedType(config: ConfigOf<T.ConstrainedType>) {
   };
 }
 
-export function memberType(config: ConfigOf<T.MemberType>) {
-  const fields = {
-    base_type: config.baseType,
-    identifier: config.identifier,
-  };
+export function continueStatement() {
   return {
-    $type: 'member_type' as const,
+    $type: 'continue_statement' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: 'continue' as const,
+    render: () => 'continue' as const,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'continue' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'continue' as const },
+    replace: (t: T.ContinueStatementTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'continue' as const }; },
+  };
+}
+
+export function decoratedDefinition(config: ConfigOf<T.DecoratedDefinition>) {
+  const fields = {
+    definition: config.definition,
+  };
+  const children = config.children ?? [];
+  return {
+    $type: 'decorated_definition' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    baseType(value?: T.Type) { return _fs(config, memberType, 'baseType', value, config?.baseType); },
-    identifier(value?: T.Identifier) { return _fs(config, memberType, 'identifier', value, config?.identifier); },
+    $children: children,
+    definition(value?: T.ClassDefinition | T.FunctionDefinition) { return _fs(config, decoratedDefinition, 'definition', value, config?.definition); },
+    children(...items: T.Decorator[]) {
+      if (items.length === 0) return children;
+      _assertNonEmpty(items, 'decorated_definition.children');
+      return decoratedDefinition({ ...config, children: items });
+    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.MemberTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.DecoratedDefinitionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function keywordArgument(config: ConfigOf<T.KeywordArgument>) {
+export function decorator(config: ConfigOf<T.Decorator>) {
+  const fields = {
+    expression: config.expression,
+    newline: config.newline,
+  };
+  return {
+    $type: 'decorator' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    expression(value?: T.Expression) { return _fs(config, decorator, 'expression', value, config?.expression); },
+    newline(value?: string | undefined) { return _fs(config, decorator, 'newline', value, config?.newline); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.DecoratorTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function defaultParameter(config: ConfigOf<T.DefaultParameter>) {
   const fields = {
     name: config.name,
     value: config.value,
   };
   return {
-    $type: 'keyword_argument' as const,
+    $type: 'default_parameter' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    name(value?: T.Identifier | T.KeywordIdentifier) { return _fs(config, keywordArgument, 'name', value, config?.name); },
-    value(value?: T.Expression) { return _fs(config, keywordArgument, 'value', value, config?.value); },
+    name(value?: T.Identifier | T.TuplePattern) { return _fs(config, defaultParameter, 'name', value, config?.name); },
+    value(value?: T.Expression) { return _fs(config, defaultParameter, 'value', value, config?.value); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.KeywordArgumentTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.DefaultParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function list(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
+export function deleteStatement(child: T.Expressions) {
+  const children = [child];
   return {
-    $type: 'list' as const,
+    $type: 'delete_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -2063,14 +1011,13 @@ export function list(...children: (T.Expression | T.Yield | T.ListSplat | T.Pare
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.ListTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.DeleteStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function set(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
-  _assertNonEmpty(children, 'set.children');
+export function dictPattern(...children: T.DictPatternKv[]) {
   return {
-    $type: 'set' as const,
+    $type: 'dict_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -2079,22 +1026,7 @@ export function set(...children: (T.Expression | T.Yield | T.ListSplat | T.Paren
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.SetTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function tuple(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
-  return {
-    $type: 'tuple' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.TupleTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.DictPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2110,52 +1042,6 @@ export function dictionary(...children: (T.Pair | T.DictionarySplat)[]) {
       return toEdit(this, startOrRange);
     },
     replace(this: AnyNodeData, target: T.DictionaryTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function pair(config: ConfigOf<T.Pair>) {
-  const fields = {
-    key: config.key,
-    value: config.value,
-  };
-  return {
-    $type: 'pair' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    key(value?: T.Expression) { return _fs(config, pair, 'key', value, config?.key); },
-    value(value?: T.Expression) { return _fs(config, pair, 'value', value, config?.value); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.PairTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function listComprehension(config: ConfigOf<T.ListComprehension>) {
-  const fields = {
-    body: config.body,
-  };
-  const children = config.children ?? [];
-  return {
-    $type: 'list_comprehension' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    $children: children,
-    body(value?: T.Expression) { return _fs(config, listComprehension, 'body', value, config?.body); },
-    child(value?: T.ComprehensionClauses) {
-      if (value === undefined) return children[0];
-      return listComprehension({ ...config, children: [value] });
-    },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ListComprehensionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2184,28 +1070,362 @@ export function dictionaryComprehension(config: ConfigOf<T.DictionaryComprehensi
   };
 }
 
-export function setComprehension(config: ConfigOf<T.SetComprehension>) {
+export function dictionarySplat(config: ConfigOf<T.DictionarySplat>) {
+  const fields = {
+    expression: config.expression,
+  };
+  return {
+    $type: 'dictionary_splat' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    expression(value?: T.Expression) { return _fs(config, dictionarySplat, 'expression', value, config?.expression); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.DictionarySplatTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function dictionarySplatPattern(child: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute)) {
+  const children = [child];
+  return {
+    $type: 'dictionary_splat_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.DictionarySplatPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function dottedName(...children: T.Identifier[]) {
+  _assertNonEmpty(children, 'dotted_name.children');
+  return {
+    $type: 'dotted_name' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.DottedNameTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function elifClause(config: ConfigOf<T.ElifClause>) {
+  const fields = {
+    condition: config.condition,
+    consequence: config.consequence,
+  };
+  return {
+    $type: 'elif_clause' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    condition(value?: T.Expression) { return _fs(config, elifClause, 'condition', value, config?.condition); },
+    consequence(value?: T.Suite) { return _fs(config, elifClause, 'consequence', value, config?.consequence); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ElifClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function elseClause(config: ConfigOf<T.ElseClause>) {
   const fields = {
     body: config.body,
   };
+  return {
+    $type: 'else_clause' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    body(value?: T.Suite) { return _fs(config, elseClause, 'body', value, config?.body); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ElseClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function escapeSequence(text: string) {
+  if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
+  return {
+    $type: 'escape_sequence' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.EscapeSequenceTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function exceptClause(config: ConfigOf<T.ExceptClause>) {
+  const fields = {
+    value: config.value,
+    alias: config.alias,
+  };
   const children = config.children ?? [];
   return {
-    $type: 'set_comprehension' as const,
+    $type: 'except_clause' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
     $children: children,
-    body(value?: T.Expression) { return _fs(config, setComprehension, 'body', value, config?.body); },
-    child(value?: T.ComprehensionClauses) {
+    value(...values: NonEmptyArray<T.Expression>) { return _fsm(config, exceptClause, 'value', values, config?.value); },
+    alias(value?: T.Expression | undefined) { return _fs(config, exceptClause, 'alias', value, config?.alias); },
+    child(value?: T.Suite) {
       if (value === undefined) return children[0];
-      return setComprehension({ ...config, children: [value] });
+      return exceptClause({ ...config, children: [value] });
     },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.SetComprehensionTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.ExceptClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function execStatement(config: ConfigOf<T.ExecStatement>) {
+  const fields = {
+    code: config.code,
+    in_clause: config.inClause,
+  };
+  return {
+    $type: 'exec_statement' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    code(value?: T.String | T.Identifier) { return _fs(config, execStatement, 'code', value, config?.code); },
+    inClause(...values: NonEmptyArray<"in" | T.Expression>) { return _fsm(config, execStatement, 'inClause', values, config?.inClause); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ExecStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function expressionList(...children: T.Expression[]) {
+  _assertNonEmpty(children, 'expression_list.children');
+  return {
+    $type: 'expression_list' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ExpressionListTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function expressionStatementTuple(...children: T.Expression[]) {
+  _assertNonEmpty(children, 'expression_statement_tuple.children');
+  return {
+    $type: 'expression_statement_tuple' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ExpressionStatementTupleTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function expressionStatement(config: Omit<ConfigOf<T.ExpressionStatementUFormTuple>, '$variant'>) {
+  return expressionStatementUFormTuple(config as Parameters<typeof expressionStatementUFormTuple>[0]);
+}
+export function expressionStatementUFormTuple(_config?: Omit<ConfigOf<T.ExpressionStatementUFormTuple>, '$variant'>) {
+  return {
+    $type: 'expression_statement' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'tuple' as const,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ExpressionStatementUFormTupleTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function false_() {
+  return {
+    $type: 'false' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: 'False' as const,
+    render: () => 'False' as const,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'False' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'False' as const },
+    replace: (t: T.FalseTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'False' as const }; },
+  };
+}
+
+export function finallyClause(config: ConfigOf<T.FinallyClause>) {
+  const fields = {
+    block: config.block,
+  };
+  return {
+    $type: 'finally_clause' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    block(value?: T.Suite) { return _fs(config, finallyClause, 'block', value, config?.block); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.FinallyClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function float(text: string) {
+  if (text.length === 0) throw new Error(`float: text must be non-empty`);
+  return {
+    $type: 'float' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.FloatTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function forInClause(config: ConfigOf<T.ForInClause>) {
+  const fields = {
+    async_marker: config.asyncMarker ? "async" as const : undefined,
+    left: config.left,
+    right: config.right,
+  };
+  return {
+    $type: 'for_in_clause' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    asyncMarker(value?: "async" | undefined) { return _fs(config, forInClause, 'asyncMarker', value, config?.asyncMarker); },
+    left(value?: T.LeftHandSide) { return _fs(config, forInClause, 'left', value, config?.left); },
+    right(...values: NonEmptyArray<T.ExpressionWithinForInClause>) { return _fsm(config, forInClause, 'right', values, config?.right); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ForInClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function forStatement(config: ConfigOf<T.ForStatement>) {
+  const fields = {
+    async_marker: config.asyncMarker ? "async" as const : undefined,
+    left: config.left,
+    right: config.right,
+    body: config.body,
+    alternative: config.alternative,
+  };
+  return {
+    $type: 'for_statement' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    asyncMarker(value?: "async" | undefined) { return _fs(config, forStatement, 'asyncMarker', value, config?.asyncMarker); },
+    left(value?: T.LeftHandSide) { return _fs(config, forStatement, 'left', value, config?.left); },
+    right(value?: T.Expressions) { return _fs(config, forStatement, 'right', value, config?.right); },
+    body(value?: T.Suite) { return _fs(config, forStatement, 'body', value, config?.body); },
+    alternative(value?: T.ElseClause | undefined) { return _fs(config, forStatement, 'alternative', value, config?.alternative); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ForStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function formatSpecifier(...children: T.FormatExpression[]) {
+  return {
+    $type: 'format_specifier' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.FormatSpecifierTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function functionDefinition(config: ConfigOf<T.FunctionDefinition>) {
+  const fields = {
+    async_marker: config.asyncMarker ? "async" as const : undefined,
+    name: config.name,
+    type_parameters: config.typeParameters,
+    parameters: config.parameters,
+    return_type: config.returnType,
+    body: config.body,
+  };
+  return {
+    $type: 'function_definition' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    asyncMarker(value?: "async" | undefined) { return _fs(config, functionDefinition, 'asyncMarker', value, config?.asyncMarker); },
+    name(value?: T.Identifier) { return _fs(config, functionDefinition, 'name', value, config?.name); },
+    typeParameters(value?: T.TypeParameter | undefined) { return _fs(config, functionDefinition, 'typeParameters', value, config?.typeParameters); },
+    parameters(value?: T.Parameters) { return _fs(config, functionDefinition, 'parameters', value, config?.parameters); },
+    returnType(value?: T.Type | undefined) { return _fs(config, functionDefinition, 'returnType', value, config?.returnType); },
+    body(value?: T.Suite) { return _fs(config, functionDefinition, 'body', value, config?.body); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.FunctionDefinitionTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function futureImportStatement(config: ConfigOf<T.FutureImportStatement>) {
+  const fields = {
+    name: config.name,
+  };
+  return {
+    $type: 'future_import_statement' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    name(...values: NonEmptyArray<T.DottedName | T.AliasedImport>) { return _fsm(config, futureImportStatement, 'name', values, config?.name); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.FutureImportStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2234,57 +1454,53 @@ export function generatorExpression(config: ConfigOf<T.GeneratorExpression>) {
   };
 }
 
-export function comprehensionClauses(...children: (T.ForInClause | T.IfClause)[]) {
-  return {
-    $type: '_comprehension_clauses' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ComprehensionClausesTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function parenthesizedExpression(child: (T.Expression | T.Yield)) {
-  const children = [child];
-  return {
-    $type: 'parenthesized_expression' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.ParenthesizedExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function forInClause(config: ConfigOf<T.ForInClause>) {
+export function genericType(config: ConfigOf<T.GenericType>) {
   const fields = {
-    async_marker: config.asyncMarker ? "async" as const : undefined,
-    left: config.left,
-    right: config.right,
+    identifier: config.identifier,
+    type_parameter: config.typeParameter,
   };
   return {
-    $type: 'for_in_clause' as const,
+    $type: 'generic_type' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    asyncMarker(value?: "async" | undefined) { return _fs(config, forInClause, 'asyncMarker', value, config?.asyncMarker); },
-    left(value?: T.LeftHandSide) { return _fs(config, forInClause, 'left', value, config?.left); },
-    right(...values: NonEmptyArray<T.ExpressionWithinForInClause>) { return _fsm(config, forInClause, 'right', values, config?.right); },
+    identifier(value?: T.Identifier) { return _fs(config, genericType, 'identifier', value, config?.identifier); },
+    typeParameter(value?: T.TypeParameter) { return _fs(config, genericType, 'typeParameter', value, config?.typeParameter); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.ForInClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.GenericTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function globalStatement(...children: T.Identifier[]) {
+  _assertNonEmpty(children, 'global_statement.children');
+  return {
+    $type: 'global_statement' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.GlobalStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function identifier(text: string) {
+  if (text.length === 0) throw new Error(`identifier: text must be non-empty`); if (!_leafRe_identifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
+  return {
+    $type: 'identifier' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.IdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
   };
 }
 
@@ -2307,33 +1523,183 @@ export function ifClause(config: ConfigOf<T.IfClause>) {
   };
 }
 
-export function conditionalExpression(config: ConfigOf<T.ConditionalExpression>) {
+export function ifStatement(config: ConfigOf<T.IfStatement>) {
   const fields = {
-    body: config.body,
     condition: config.condition,
+    consequence: config.consequence,
     alternative: config.alternative,
   };
   return {
-    $type: 'conditional_expression' as const,
+    $type: 'if_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    body(value?: T.Expression) { return _fs(config, conditionalExpression, 'body', value, config?.body); },
-    condition(value?: T.Expression) { return _fs(config, conditionalExpression, 'condition', value, config?.condition); },
-    alternative(value?: T.Expression) { return _fs(config, conditionalExpression, 'alternative', value, config?.alternative); },
+    condition(value?: T.Expression) { return _fs(config, ifStatement, 'condition', value, config?.condition); },
+    consequence(value?: T.Suite) { return _fs(config, ifStatement, 'consequence', value, config?.consequence); },
+    alternative(...values: (T.ElifClause | T.ElseClause)[]) { return _fsm(config, ifStatement, 'alternative', values, config?.alternative); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.ConditionalExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.IfStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function concatenatedString(...children: T.String[]) {
-  _assertNonEmpty(children, 'concatenated_string.children');
+export function importFromStatement(config: ConfigOf<T.ImportFromStatement>) {
+  const fields = {
+    module_name: config.moduleName,
+  };
   return {
-    $type: 'concatenated_string' as const,
+    $type: 'import_from_statement' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    moduleName(value?: T.RelativeImport | T.DottedName) { return _fs(config, importFromStatement, 'moduleName', value, config?.moduleName); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ImportFromStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function importPrefix(text: string) {
+  if (text.length === 0) throw new Error(`import_prefix: text must be non-empty`);
+  return {
+    $type: 'import_prefix' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.ImportPrefixTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function importStatement(config: ConfigOf<T.ImportStatement>) {
+  const fields = {
+    name: config.name,
+  };
+  return {
+    $type: 'import_statement' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    name(...values: NonEmptyArray<T.DottedName | T.AliasedImport>) { return _fsm(config, importStatement, 'name', values, config?.name); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ImportStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function integer(text: string) {
+  if (text.length === 0) throw new Error(`integer: text must be non-empty`);
+  return {
+    $type: 'integer' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.IntegerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function interpolation(config: ConfigOf<T.Interpolation>) {
+  const fields = {
+    expression: config.expression,
+    type_conversion: config.typeConversion,
+    format_specifier: config.formatSpecifier,
+  };
+  return {
+    $type: 'interpolation' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    expression(value?: T.FExpression) { return _fs(config, interpolation, 'expression', value, config?.expression); },
+    typeConversion(value?: T.TypeConversion | undefined) { return _fs(config, interpolation, 'typeConversion', value, config?.typeConversion); },
+    formatSpecifier(value?: T.FormatSpecifier | undefined) { return _fs(config, interpolation, 'formatSpecifier', value, config?.formatSpecifier); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.InterpolationTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function keywordArgument(config: ConfigOf<T.KeywordArgument>) {
+  const fields = {
+    name: config.name,
+    value: config.value,
+  };
+  return {
+    $type: 'keyword_argument' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    name(value?: T.Identifier | T.KeywordIdentifier) { return _fs(config, keywordArgument, 'name', value, config?.name); },
+    value(value?: T.Expression) { return _fs(config, keywordArgument, 'value', value, config?.value); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.KeywordArgumentTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function keywordPattern(config: ConfigOf<T.KeywordPattern>) {
+  const fields = {
+    identifier: config.identifier,
+    simple_pattern: config.simplePattern,
+  };
+  return {
+    $type: 'keyword_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    identifier(value?: T.Identifier) { return _fs(config, keywordPattern, 'identifier', value, config?.identifier); },
+    simplePattern(value?: T.SimplePattern) { return _fs(config, keywordPattern, 'simplePattern', value, config?.simplePattern); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.KeywordPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function lambda(config: ConfigOf<T.Lambda>) {
+  const fields = {
+    parameters: config.parameters,
+    body: config.body,
+  };
+  return {
+    $type: 'lambda' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    parameters(value?: T.LambdaParameters | undefined) { return _fs(config, lambda, 'parameters', value, config?.parameters); },
+    body(value?: T.Expression) { return _fs(config, lambda, 'body', value, config?.body); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.LambdaTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function lambdaParameters(...children: T.Parameter[]) {
+  _assertNonEmpty(children, 'lambda_parameters.children');
+  return {
+    $type: 'lambda_parameters' as const,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -2342,7 +1708,547 @@ export function concatenatedString(...children: T.String[]) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.ConcatenatedStringTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.LambdaParametersTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function lambdaWithinForInClause(config: ConfigOf<T.LambdaWithinForInClause>) {
+  const fields = {
+    parameters: config.parameters,
+    body: config.body,
+  };
+  return {
+    $type: 'lambda_within_for_in_clause' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    parameters(value?: T.LambdaParameters | undefined) { return _fs(config, lambdaWithinForInClause, 'parameters', value, config?.parameters); },
+    body(value?: T.ExpressionWithinForInClause) { return _fs(config, lambdaWithinForInClause, 'body', value, config?.body); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.LambdaWithinForInClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function lineContinuation(text: string) {
+  if (text.length === 0) throw new Error(`line_continuation: text must be non-empty`);
+  return {
+    $type: 'line_continuation' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: text,
+    render: () => text,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
+    replace: (t: T.LineContinuationTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+  };
+}
+
+export function list(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
+  return {
+    $type: 'list' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ListTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function listComprehension(config: ConfigOf<T.ListComprehension>) {
+  const fields = {
+    body: config.body,
+  };
+  const children = config.children ?? [];
+  return {
+    $type: 'list_comprehension' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
+    body(value?: T.Expression) { return _fs(config, listComprehension, 'body', value, config?.body); },
+    child(value?: T.ComprehensionClauses) {
+      if (value === undefined) return children[0];
+      return listComprehension({ ...config, children: [value] });
+    },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ListComprehensionTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function listPattern(...children: T.Pattern[]) {
+  return {
+    $type: 'list_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ListPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function listSplat(config: ConfigOf<T.ListSplat>) {
+  const fields = {
+    expression: config.expression,
+  };
+  return {
+    $type: 'list_splat' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    expression(value?: T.Expression) { return _fs(config, listSplat, 'expression', value, config?.expression); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ListSplatTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function listSplatPattern(child: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute)) {
+  const children = [child];
+  return {
+    $type: 'list_splat_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ListSplatPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function matchStatement(config: ConfigOf<T.MatchStatement>) {
+  const fields = {
+    subject: config.subject,
+    body: config.body,
+  };
+  return {
+    $type: 'match_statement' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    subject(...values: NonEmptyArray<T.Expression>) { return _fsm(config, matchStatement, 'subject', values, config?.subject); },
+    body(value?: T.MatchBlock) { return _fs(config, matchStatement, 'body', value, config?.body); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.MatchStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function memberType(config: ConfigOf<T.MemberType>) {
+  const fields = {
+    base_type: config.baseType,
+    identifier: config.identifier,
+  };
+  return {
+    $type: 'member_type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    baseType(value?: T.Type) { return _fs(config, memberType, 'baseType', value, config?.baseType); },
+    identifier(value?: T.Identifier) { return _fs(config, memberType, 'identifier', value, config?.identifier); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.MemberTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function module(...children: T.Statement[]) {
+  return {
+    $type: 'module' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ModuleTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function namedExpression(config: ConfigOf<T.NamedExpression>) {
+  const fields = {
+    name: config.name,
+    value: config.value,
+  };
+  return {
+    $type: 'named_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    name(value?: T.NamedExpressionLhs) { return _fs(config, namedExpression, 'name', value, config?.name); },
+    value(value?: T.Expression) { return _fs(config, namedExpression, 'value', value, config?.value); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.NamedExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function none() {
+  return {
+    $type: 'none' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: 'None' as const,
+    render: () => 'None' as const,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'None' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'None' as const },
+    replace: (t: T.NoneTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'None' as const }; },
+  };
+}
+
+export function nonlocalStatement(...children: T.Identifier[]) {
+  _assertNonEmpty(children, 'nonlocal_statement.children');
+  return {
+    $type: 'nonlocal_statement' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.NonlocalStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function notOperator(config: ConfigOf<T.NotOperator>) {
+  const fields = {
+    argument: config.argument,
+  };
+  return {
+    $type: 'not_operator' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    argument(value?: T.Expression) { return _fs(config, notOperator, 'argument', value, config?.argument); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.NotOperatorTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function pair(config: ConfigOf<T.Pair>) {
+  const fields = {
+    key: config.key,
+    value: config.value,
+  };
+  return {
+    $type: 'pair' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    key(value?: T.Expression) { return _fs(config, pair, 'key', value, config?.key); },
+    value(value?: T.Expression) { return _fs(config, pair, 'value', value, config?.value); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.PairTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function parameters(...children: T.Parameter[]) {
+  return {
+    $type: 'parameters' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ParametersTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function parenthesizedExpression(child: (T.Expression | T.Yield)) {
+  const children = [child];
+  return {
+    $type: 'parenthesized_expression' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ParenthesizedExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function parenthesizedListSplat(child: (T.ParenthesizedListSplat | T.ListSplat)) {
+  const children = [child];
+  return {
+    $type: 'parenthesized_list_splat' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ParenthesizedListSplatTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function passStatement() {
+  return {
+    $type: 'pass_statement' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $text: 'pass' as const,
+    render: () => 'pass' as const,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'pass' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'pass' as const },
+    replace: (t: T.PassStatementTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'pass' as const }; },
+  };
+}
+
+export function patternList(...children: T.Pattern[]) {
+  _assertNonEmpty(children, 'pattern_list.children');
+  return {
+    $type: 'pattern_list' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.PatternListTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function printStatement(config: ConfigOf<T.PrintStatement>) {
+  const fields = {
+    argument: config.argument,
+  };
+  const children = config.children ?? [];
+  return {
+    $type: 'print_statement' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
+    argument(...values: T.Expression[]) { return _fsm(config, printStatement, 'argument', values, config?.argument); },
+    child(value?: T.Chevron) {
+      if (value === undefined) return children[0];
+      return printStatement({ ...config, children: [value] });
+    },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.PrintStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function raiseStatement(config?: ConfigOf<T.RaiseStatement>) {
+  const fields = {
+    cause: config?.cause,
+  };
+  const children = config?.children ?? [];
+  return {
+    $type: 'raise_statement' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
+    cause(value?: T.Expression | undefined) { return _fs(config, raiseStatement, 'cause', value, config?.cause); },
+    child(value?: T.Expressions) {
+      if (value === undefined) return children[0];
+      return raiseStatement({ ...config, children: [value] });
+    },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.RaiseStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function relativeImport(config: ConfigOf<T.RelativeImport>) {
+  const fields = {
+    import_prefix: config.importPrefix,
+    dotted_name: config.dottedName,
+  };
+  return {
+    $type: 'relative_import' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    importPrefix(value?: T.ImportPrefix) { return _fs(config, relativeImport, 'importPrefix', value, config?.importPrefix); },
+    dottedName(value?: T.DottedName | undefined) { return _fs(config, relativeImport, 'dottedName', value, config?.dottedName); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.RelativeImportTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function returnStatement(child?: T.Expressions) {
+  const children = child != null ? [child] : [];
+  return {
+    $type: 'return_statement' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.ReturnStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function set(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
+  _assertNonEmpty(children, 'set.children');
+  return {
+    $type: 'set' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.SetTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function setComprehension(config: ConfigOf<T.SetComprehension>) {
+  const fields = {
+    body: config.body,
+  };
+  const children = config.children ?? [];
+  return {
+    $type: 'set_comprehension' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
+    body(value?: T.Expression) { return _fs(config, setComprehension, 'body', value, config?.body); },
+    child(value?: T.ComprehensionClauses) {
+      if (value === undefined) return children[0];
+      return setComprehension({ ...config, children: [value] });
+    },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.SetComprehensionTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function slice(config?: ConfigOf<T.Slice>) {
+  const fields = {
+    start: config?.start,
+    stop: config?.stop,
+    step: config?.step,
+  };
+  return {
+    $type: 'slice' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    start(value?: T.Expression | undefined) { return _fs(config, slice, 'start', value, config?.start); },
+    stop(value?: T.Expression | undefined) { return _fs(config, slice, 'stop', value, config?.stop); },
+    step(value?: T.Expression | undefined) { return _fs(config, slice, 'step', value, config?.step); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.SliceTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function splatPattern(config: ConfigOf<T.SplatPattern>) {
+  const fields = {
+    identifier: config.identifier,
+  };
+  const children = config.children ?? [];
+  return {
+    $type: 'splat_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    $children: children,
+    identifier(value?: "*" | "**") { return _fs(config, splatPattern, 'identifier', value, config?.identifier); },
+    child(value?: T.Identifier) {
+      if (value === undefined) return children[0];
+      return splatPattern({ ...config, children: [value] });
+    },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.SplatPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function splatType(config: ConfigOf<T.SplatType>) {
+  const fields = {
+    identifier: config.identifier,
+  };
+  return {
+    $type: 'splat_type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    identifier(value?: "*" | "**" | T.Identifier) { return _fs(config, splatType, 'identifier', value, config?.identifier); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.SplatTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2374,45 +2280,67 @@ export function stringContent(...children: (T.EscapeInterpolation | T.EscapeSequ
   };
 }
 
-export function interpolation(config: ConfigOf<T.Interpolation>) {
+export function subscript(config: ConfigOf<T.Subscript>) {
   const fields = {
-    expression: config.expression,
-    type_conversion: config.typeConversion,
-    format_specifier: config.formatSpecifier,
+    value: config.value,
+    subscript: config.subscript,
   };
   return {
-    $type: 'interpolation' as const,
+    $type: 'subscript' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    expression(value?: T.FExpression) { return _fs(config, interpolation, 'expression', value, config?.expression); },
-    typeConversion(value?: T.TypeConversion | undefined) { return _fs(config, interpolation, 'typeConversion', value, config?.typeConversion); },
-    formatSpecifier(value?: T.FormatSpecifier | undefined) { return _fs(config, interpolation, 'formatSpecifier', value, config?.formatSpecifier); },
+    value(value?: T.PrimaryExpression) { return _fs(config, subscript, 'value', value, config?.value); },
+    subscript(...values: NonEmptyArray<T.Expression | T.Slice>) { return _fsm(config, subscript, 'subscript', values, config?.subscript); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.InterpolationTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.SubscriptTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function escapeSequence(text: string) {
-  if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
+export function true_() {
   return {
-    $type: 'escape_sequence' as const,
+    $type: 'true' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.EscapeSequenceTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+    $text: 'True' as const,
+    render: () => 'True' as const,
+    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'True' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'True' as const },
+    replace: (t: T.TrueTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'True' as const }; },
   };
 }
 
-export function formatSpecifier(...children: T.FormatExpression[]) {
+export function tryStatement(config: ConfigOf<T.TryStatement>) {
+  const fields = {
+    body: config.body,
+    except_clauses: config.exceptClauses,
+    else_clause: config.elseClause,
+    finally_clause: config.finallyClause,
+  };
   return {
-    $type: 'format_specifier' as const,
+    $type: 'try_statement' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    body(value?: T.Suite) { return _fs(config, tryStatement, 'body', value, config?.body); },
+    exceptClauses(...values: T.ExceptClause[]) { return _fsm(config, tryStatement, 'exceptClauses', values, config?.exceptClauses); },
+    elseClause(value?: T.ElseClause | undefined) { return _fs(config, tryStatement, 'elseClause', value, config?.elseClause); },
+    finallyClause(value?: T.FinallyClause | undefined) { return _fs(config, tryStatement, 'finallyClause', value, config?.finallyClause); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TryStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function tuple(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
+  return {
+    $type: 'tuple' as const,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -2421,7 +2349,61 @@ export function formatSpecifier(...children: T.FormatExpression[]) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.FormatSpecifierTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.TupleTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function tuplePattern(...children: T.Pattern[]) {
+  return {
+    $type: 'tuple_pattern' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TuplePatternTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function type(child: (T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType)) {
+  const children = [child];
+  return {
+    $type: 'type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TypeTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function typeAliasStatement(config: ConfigOf<T.TypeAliasStatement>) {
+  const fields = {
+    type: "type" as const,
+    left: config.left,
+    right: config.right,
+  };
+  return {
+    $type: 'type_alias_statement' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    get typeField() { return fields.type; },
+    left(value?: T.Type) { return _fs(config, typeAliasStatement, 'left', value, config?.left); },
+    right(value?: T.Type) { return _fs(config, typeAliasStatement, 'right', value, config?.right); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.TypeAliasStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2438,130 +2420,10 @@ export function typeConversion(text: string) {
   };
 }
 
-export function integer(text: string) {
-  if (text.length === 0) throw new Error(`integer: text must be non-empty`);
+export function typeParameter(...children: T.Type[]) {
+  _assertNonEmpty(children, 'type_parameter.children');
   return {
-    $type: 'integer' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.IntegerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
-export function float(text: string) {
-  if (text.length === 0) throw new Error(`float: text must be non-empty`);
-  return {
-    $type: 'float' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.FloatTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
-export function identifier(text: string) {
-  if (text.length === 0) throw new Error(`identifier: text must be non-empty`); if (!_leafRe_identifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
-  return {
-    $type: 'identifier' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.IdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
-export function true_() {
-  return {
-    $type: 'true' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: 'True' as const,
-    render: () => 'True' as const,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'True' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'True' as const },
-    replace: (t: T.TrueTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'True' as const }; },
-  };
-}
-
-export function false_() {
-  return {
-    $type: 'false' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: 'False' as const,
-    render: () => 'False' as const,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'False' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'False' as const },
-    replace: (t: T.FalseTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'False' as const }; },
-  };
-}
-
-export function none() {
-  return {
-    $type: 'none' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: 'None' as const,
-    render: () => 'None' as const,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: 'None' as const } : { startPos: s.start.index, endPos: s.end.index, insertedText: 'None' as const },
-    replace: (t: T.NoneTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'None' as const }; },
-  };
-}
-
-export function await_(config: ConfigOf<T.Await>) {
-  const fields = {
-    primary_expression: config.primaryExpression,
-  };
-  return {
-    $type: 'await' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $fields: fields,
-    primaryExpression(value?: T.PrimaryExpression) { return _fs(config, await_, 'primaryExpression', value, config?.primaryExpression); },
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.AwaitTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function comment(text: string) {
-  if (text.length === 0) throw new Error(`comment: text must be non-empty`);
-  return {
-    $type: 'comment' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.CommentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
-export function lineContinuation(text: string) {
-  if (text.length === 0) throw new Error(`line_continuation: text must be non-empty`);
-  return {
-    $type: 'line_continuation' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.LineContinuationTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
-}
-
-export function asPatternTarget(child: T.Expression) {
-  const children = [child];
-  return {
-    $type: '_as_pattern_target' as const,
+    $type: 'type_parameter' as const,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -2570,89 +2432,83 @@ export function asPatternTarget(child: T.Expression) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.AsPatternTargetTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.TypeParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function formatExpression(child: T.Interpolation) {
-  const children = [child];
-  return {
-    $type: '_format_expression' as const,
-    $source: 'factory' as const,
-    $named: true as const,
-    $children: children,
-    render(this: AnyNodeData): string { return render(this); },
-    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-      return toEdit(this, startOrRange);
-    },
-    replace(this: AnyNodeData, target: T.FormatExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function _assignmentEq(config: ConfigOf<T.AssignmentEq>) {
+export function typedDefaultParameter(config: ConfigOf<T.TypedDefaultParameter>) {
   const fields = {
-    right: config.right,
+    name: config.name,
+    type: config.type,
+    value: config.value,
   };
   return {
-    $type: '_assignment_eq' as const,
+    $type: 'typed_default_parameter' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    right(value?: T.RightHandSide) { return _fs(config, _assignmentEq, 'right', value, config?.right); },
+    name(value?: T.Identifier) { return _fs(config, typedDefaultParameter, 'name', value, config?.name); },
+    typeField(value?: T.Type) { return _fs(config, typedDefaultParameter, 'type', value, config?.type); },
+    value(value?: T.Expression) { return _fs(config, typedDefaultParameter, 'value', value, config?.value); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.AssignmentEqTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.TypedDefaultParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function _assignmentType(config: ConfigOf<T.AssignmentType>) {
+export function typedParameter(config: ConfigOf<T.TypedParameter>) {
   const fields = {
     type: config.type,
   };
+  const children = config.children ?? [];
   return {
-    $type: '_assignment_type' as const,
+    $type: 'typed_parameter' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    typeField(value?: T.Type) { return _fs(config, _assignmentType, 'type', value, config?.type); },
+    $children: children,
+    typeField(value?: T.Type) { return _fs(config, typedParameter, 'type', value, config?.type); },
+    child(value?: (T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern)) {
+      if (value === undefined) return children[0];
+      return typedParameter({ ...config, children: [value] });
+    },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.AssignmentTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.TypedParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function _assignmentTyped(config: ConfigOf<T.AssignmentTyped>) {
+export function unaryOperator(config: ConfigOf<T.UnaryOperator>) {
   const fields = {
-    type: config.type,
-    right: config.right,
+    operator: config.operator,
+    argument: config.argument,
   };
   return {
-    $type: '_assignment_typed' as const,
+    $type: 'unary_operator' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    typeField(value?: T.Type) { return _fs(config, _assignmentTyped, 'type', value, config?.type); },
-    right(value?: T.RightHandSide) { return _fs(config, _assignmentTyped, 'right', value, config?.right); },
+    operator(value?: "+" | "-" | "~") { return _fs(config, unaryOperator, 'operator', value, config?.operator); },
+    argument(value?: T.PrimaryExpression) { return _fs(config, unaryOperator, 'argument', value, config?.argument); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.AssignmentTypedTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.UnaryOperatorTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function _withClauseParen(...children: T.WithItem[]) {
-  _assertNonEmpty(children, '_with_clause_paren.children');
+export function unionPattern(...children: T.SimplePattern[]) {
+  _assertNonEmpty(children, 'union_pattern.children');
   return {
-    $type: '_with_clause_paren' as const,
+    $type: 'union_pattern' as const,
     $source: 'factory' as const,
     $named: true as const,
     $children: children,
@@ -2661,38 +2517,182 @@ export function _withClauseParen(...children: T.WithItem[]) {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T._WithClauseParenTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.UnionPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function _matchBlockBlock(config: ConfigOf<T.MatchBlockBlock>) {
+export function unionType(config: ConfigOf<T.UnionType>) {
   const fields = {
+    left: config.left,
+    right: config.right,
+  };
+  return {
+    $type: 'union_type' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    left(value?: T.Type) { return _fs(config, unionType, 'left', value, config?.left); },
+    right(value?: T.Type) { return _fs(config, unionType, 'right', value, config?.right); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.UnionTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function whileStatement(config: ConfigOf<T.WhileStatement>) {
+  const fields = {
+    condition: config.condition,
+    body: config.body,
     alternative: config.alternative,
   };
   return {
-    $type: '_match_block_block' as const,
+    $type: 'while_statement' as const,
     $source: 'factory' as const,
     $named: true as const,
     $fields: fields,
-    alternative(...values: T.CaseClause[]) { return _fsm(config, _matchBlockBlock, 'alternative', values, config?.alternative); },
+    condition(value?: T.Expression) { return _fs(config, whileStatement, 'condition', value, config?.condition); },
+    body(value?: T.Suite) { return _fs(config, whileStatement, 'body', value, config?.body); },
+    alternative(value?: T.ElseClause | undefined) { return _fs(config, whileStatement, 'alternative', value, config?.alternative); },
     render(this: AnyNodeData): string { return render(this); },
     toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
       return toEdit(this, startOrRange);
     },
-    replace(this: AnyNodeData, target: T.MatchBlockBlockTree): Edit { const r = target.range(); return toEdit(this, r); },
+    replace(this: AnyNodeData, target: T.WhileStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
-export function simplePatternNegative(text: string) {
+export function withClauseBare(...children: T.WithItem[]) {
+  _assertNonEmpty(children, 'with_clause_bare.children');
   return {
-    $type: '_simple_pattern_negative' as const,
+    $type: 'with_clause_bare' as const,
     $source: 'factory' as const,
     $named: true as const,
-    $text: text,
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number) => typeof s === 'number' ? { startPos: s, endPos: e!, insertedText: text } : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-    replace: (t: T.SimplePatternNegativeTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.WithClauseBareTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function withClauseParen(...children: T.WithItem[]) {
+  _assertNonEmpty(children, 'with_clause_paren.children');
+  return {
+    $type: 'with_clause_paren' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.WithClauseParenTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function withClause(config: ConfigOf<T.WithClauseUFormBare>): ReturnType<typeof withClauseUFormBare>;
+export function withClause(config: ConfigOf<T.WithClauseUFormParen>): ReturnType<typeof withClauseUFormParen>;
+export function withClause(config: ConfigOf<T.WithClauseUFormBare> | ConfigOf<T.WithClauseUFormParen>) {
+  switch (config.$variant) {
+    case 'bare': return withClauseUFormBare(config as Parameters<typeof withClauseUFormBare>[0]);
+    case 'paren': return withClauseUFormParen(config as Parameters<typeof withClauseUFormParen>[0]);
+  }
+  throw new Error(`withClause: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'bare' | 'paren'.`);
+}
+export function withClauseUFormBare(_config?: Omit<ConfigOf<T.WithClauseUFormBare>, '$variant'>) {
+  return {
+    $type: 'with_clause' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'bare' as const,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.WithClauseUFormBareTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+export function withClauseUFormParen(config?: Omit<ConfigOf<T.WithClauseUFormParen>, '$variant'>) {
+  const inner = _withClauseParen(...(config?.children ?? []));
+  const children = [inner] as const;
+  return {
+    $type: 'with_clause' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $variant: 'paren' as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.WithClauseUFormParenTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function withItem(config: ConfigOf<T.WithItem>) {
+  const fields = {
+    value: config.value,
+  };
+  return {
+    $type: 'with_item' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    value(value?: T.Expression) { return _fs(config, withItem, 'value', value, config?.value); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.WithItemTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function withStatement(config: ConfigOf<T.WithStatement>) {
+  const fields = {
+    async_marker: config.asyncMarker ? "async" as const : undefined,
+    with_clause: config.withClause,
+    body: config.body,
+  };
+  return {
+    $type: 'with_statement' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $fields: fields,
+    asyncMarker(value?: "async" | undefined) { return _fs(config, withStatement, 'asyncMarker', value, config?.asyncMarker); },
+    withClause(value?: T.WithClause) { return _fs(config, withStatement, 'withClause', value, config?.withClause); },
+    body(value?: T.Suite) { return _fs(config, withStatement, 'body', value, config?.body); },
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.WithStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
+  };
+}
+
+export function yield_(child: (T.Expression | T.Expressions)) {
+  const children = [child];
+  return {
+    $type: 'yield' as const,
+    $source: 'factory' as const,
+    $named: true as const,
+    $children: children,
+    render(this: AnyNodeData): string { return render(this); },
+    toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+      if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
+      return toEdit(this, startOrRange);
+    },
+    replace(this: AnyNodeData, target: T.YieldTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
 }
 
@@ -2840,143 +2840,143 @@ export function except(text: string) {
 }
 
 export type FluentKindMap = {
-  "module": FluentNode<"module", T.Module.Config>;
-  "_simple_statements": FluentNode<"_simple_statements", T.SimpleStatements.Config>;
-  "import_statement": FluentNode<"import_statement", T.ImportStatement.Config>;
-  "import_prefix": T.ImportPrefix;
-  "relative_import": FluentNode<"relative_import", T.RelativeImport.Config>;
-  "future_import_statement": FluentNode<"future_import_statement", T.FutureImportStatement.Config>;
-  "import_from_statement": FluentNode<"import_from_statement", T.ImportFromStatement.Config>;
+  "_as_pattern": FluentNode<"_as_pattern", T._AsPattern.Config>;
+  "_as_pattern_target": FluentNode<"_as_pattern_target", T.AsPatternTarget.Config>;
+  "_assignment_eq": T.AssignmentEq;
+  "_assignment_type": T.AssignmentType;
+  "_assignment_typed": T.AssignmentTyped;
+  "_comprehension_clauses": FluentNode<"_comprehension_clauses", T.ComprehensionClauses.Config>;
+  "_format_expression": FluentNode<"_format_expression", T.FormatExpression.Config>;
   "_import_list": T.ImportList;
+  "_is_not": T.IsNot;
+  "_key_value_pattern": T.KeyValuePattern;
+  "_list_pattern": FluentNode<"_list_pattern", T._ListPattern.Config>;
+  "_match_block": FluentNode<"_match_block", T.MatchBlock.Config>;
+  "_match_block_block": T.MatchBlockBlock;
+  "_not_in": T.NotIn;
+  "_simple_pattern_negative": FluentNode<"_simple_pattern_negative", T.SimplePatternNegative.Config>;
+  "_simple_statements": FluentNode<"_simple_statements", T.SimpleStatements.Config>;
+  "_suite": FluentNode<"_suite", T.Suite.Config>;
+  "_tuple_pattern": FluentNode<"_tuple_pattern", T._TuplePattern.Config>;
+  "_with_clause_paren": FluentNode<"_with_clause_paren", T._WithClauseParen.Config>;
   "aliased_import": FluentNode<"aliased_import", T.AliasedImport.Config>;
-  "print_statement": FluentNode<"print_statement", T.PrintStatement.Config>;
-  "chevron": FluentNode<"chevron", T.Chevron.Config>;
+  "argument_list": FluentNode<"argument_list", T.ArgumentList.Config>;
+  "as_pattern": FluentNode<"as_pattern", T.AsPattern.Config>;
   "assert_statement": FluentNode<"assert_statement", T.AssertStatement.Config>;
-  "expression_statement_tuple": FluentNode<"expression_statement_tuple", T.ExpressionStatementTuple.Config>;
-  "expression_statement": FluentNode<"expression_statement", T.ExpressionStatement.Config>;
-  "named_expression": FluentNode<"named_expression", T.NamedExpression.Config>;
-  "return_statement": FluentNode<"return_statement", T.ReturnStatement.Config>;
-  "delete_statement": FluentNode<"delete_statement", T.DeleteStatement.Config>;
-  "raise_statement": FluentNode<"raise_statement", T.RaiseStatement.Config>;
-  "pass_statement": T.PassStatement;
+  "assignment": FluentNode<"assignment", T.Assignment.Config>;
+  "attribute": FluentNode<"attribute", T.Attribute.Config>;
+  "augmented_assignment": FluentNode<"augmented_assignment", T.AugmentedAssignment.Config>;
+  "await": FluentNode<"await", T.Await.Config>;
+  "binary_operator": FluentNode<"binary_operator", T.BinaryOperator.Config>;
+  "block": FluentNode<"block", T.Block.Config>;
+  "boolean_operator": FluentNode<"boolean_operator", T.BooleanOperator.Config>;
   "break_statement": T.BreakStatement;
+  "call": FluentNode<"call", T.Call.Config>;
+  "case_clause": FluentNode<"case_clause", T.CaseClause.Config>;
+  "case_pattern": FluentNode<"case_pattern", T.CasePattern.Config>;
+  "chevron": FluentNode<"chevron", T.Chevron.Config>;
+  "class_definition": FluentNode<"class_definition", T.ClassDefinition.Config>;
+  "class_pattern": FluentNode<"class_pattern", T.ClassPattern.Config>;
+  "comment": T.Comment;
+  "comparison_operator": FluentNode<"comparison_operator", T.ComparisonOperator.Config>;
+  "complex_pattern": FluentNode<"complex_pattern", T.ComplexPattern.Config>;
+  "concatenated_string": FluentNode<"concatenated_string", T.ConcatenatedString.Config>;
+  "conditional_expression": FluentNode<"conditional_expression", T.ConditionalExpression.Config>;
+  "constrained_type": FluentNode<"constrained_type", T.ConstrainedType.Config>;
   "continue_statement": T.ContinueStatement;
-  "if_statement": FluentNode<"if_statement", T.IfStatement.Config>;
+  "decorated_definition": FluentNode<"decorated_definition", T.DecoratedDefinition.Config>;
+  "decorator": FluentNode<"decorator", T.Decorator.Config>;
+  "default_parameter": FluentNode<"default_parameter", T.DefaultParameter.Config>;
+  "delete_statement": FluentNode<"delete_statement", T.DeleteStatement.Config>;
+  "dict_pattern": FluentNode<"dict_pattern", T.DictPattern.Config>;
+  "dictionary": FluentNode<"dictionary", T.Dictionary.Config>;
+  "dictionary_comprehension": FluentNode<"dictionary_comprehension", T.DictionaryComprehension.Config>;
+  "dictionary_splat": FluentNode<"dictionary_splat", T.DictionarySplat.Config>;
+  "dictionary_splat_pattern": FluentNode<"dictionary_splat_pattern", T.DictionarySplatPattern.Config>;
+  "dotted_name": FluentNode<"dotted_name", T.DottedName.Config>;
   "elif_clause": FluentNode<"elif_clause", T.ElifClause.Config>;
   "else_clause": FluentNode<"else_clause", T.ElseClause.Config>;
-  "match_statement": FluentNode<"match_statement", T.MatchStatement.Config>;
-  "_match_block": FluentNode<"_match_block", T.MatchBlock.Config>;
-  "case_clause": FluentNode<"case_clause", T.CaseClause.Config>;
-  "for_statement": FluentNode<"for_statement", T.ForStatement.Config>;
-  "while_statement": FluentNode<"while_statement", T.WhileStatement.Config>;
-  "try_statement": FluentNode<"try_statement", T.TryStatement.Config>;
+  "escape_sequence": T.EscapeSequence;
   "except_clause": FluentNode<"except_clause", T.ExceptClause.Config>;
+  "exec_statement": FluentNode<"exec_statement", T.ExecStatement.Config>;
+  "expression_list": FluentNode<"expression_list", T.ExpressionList.Config>;
+  "expression_statement_tuple": FluentNode<"expression_statement_tuple", T.ExpressionStatementTuple.Config>;
+  "expression_statement": FluentNode<"expression_statement", T.ExpressionStatement.Config>;
+  "false": T.False;
   "finally_clause": FluentNode<"finally_clause", T.FinallyClause.Config>;
-  "with_statement": FluentNode<"with_statement", T.WithStatement.Config>;
+  "float": T.Float;
+  "for_in_clause": FluentNode<"for_in_clause", T.ForInClause.Config>;
+  "for_statement": FluentNode<"for_statement", T.ForStatement.Config>;
+  "format_specifier": FluentNode<"format_specifier", T.FormatSpecifier.Config>;
+  "function_definition": FluentNode<"function_definition", T.FunctionDefinition.Config>;
+  "future_import_statement": FluentNode<"future_import_statement", T.FutureImportStatement.Config>;
+  "generator_expression": FluentNode<"generator_expression", T.GeneratorExpression.Config>;
+  "generic_type": FluentNode<"generic_type", T.GenericType.Config>;
+  "global_statement": FluentNode<"global_statement", T.GlobalStatement.Config>;
+  "identifier": T.Identifier;
+  "if_clause": FluentNode<"if_clause", T.IfClause.Config>;
+  "if_statement": FluentNode<"if_statement", T.IfStatement.Config>;
+  "import_from_statement": FluentNode<"import_from_statement", T.ImportFromStatement.Config>;
+  "import_prefix": T.ImportPrefix;
+  "import_statement": FluentNode<"import_statement", T.ImportStatement.Config>;
+  "integer": T.Integer;
+  "interpolation": FluentNode<"interpolation", T.Interpolation.Config>;
+  "keyword_argument": FluentNode<"keyword_argument", T.KeywordArgument.Config>;
+  "keyword_pattern": FluentNode<"keyword_pattern", T.KeywordPattern.Config>;
+  "lambda": FluentNode<"lambda", T.Lambda.Config>;
+  "lambda_parameters": FluentNode<"lambda_parameters", T.LambdaParameters.Config>;
+  "lambda_within_for_in_clause": FluentNode<"lambda_within_for_in_clause", T.LambdaWithinForInClause.Config>;
+  "line_continuation": T.LineContinuation;
+  "list": FluentNode<"list", T.List.Config>;
+  "list_comprehension": FluentNode<"list_comprehension", T.ListComprehension.Config>;
+  "list_pattern": FluentNode<"list_pattern", T.ListPattern.Config>;
+  "list_splat": FluentNode<"list_splat", T.ListSplat.Config>;
+  "list_splat_pattern": FluentNode<"list_splat_pattern", T.ListSplatPattern.Config>;
+  "match_statement": FluentNode<"match_statement", T.MatchStatement.Config>;
+  "member_type": FluentNode<"member_type", T.MemberType.Config>;
+  "module": FluentNode<"module", T.Module.Config>;
+  "named_expression": FluentNode<"named_expression", T.NamedExpression.Config>;
+  "none": T.None;
+  "nonlocal_statement": FluentNode<"nonlocal_statement", T.NonlocalStatement.Config>;
+  "not_operator": FluentNode<"not_operator", T.NotOperator.Config>;
+  "pair": FluentNode<"pair", T.Pair.Config>;
+  "parameters": FluentNode<"parameters", T.Parameters.Config>;
+  "parenthesized_expression": FluentNode<"parenthesized_expression", T.ParenthesizedExpression.Config>;
+  "parenthesized_list_splat": FluentNode<"parenthesized_list_splat", T.ParenthesizedListSplat.Config>;
+  "pass_statement": T.PassStatement;
+  "pattern_list": FluentNode<"pattern_list", T.PatternList.Config>;
+  "print_statement": FluentNode<"print_statement", T.PrintStatement.Config>;
+  "raise_statement": FluentNode<"raise_statement", T.RaiseStatement.Config>;
+  "relative_import": FluentNode<"relative_import", T.RelativeImport.Config>;
+  "return_statement": FluentNode<"return_statement", T.ReturnStatement.Config>;
+  "set": FluentNode<"set", T.Set.Config>;
+  "set_comprehension": FluentNode<"set_comprehension", T.SetComprehension.Config>;
+  "slice": FluentNode<"slice", T.Slice.Config>;
+  "splat_pattern": FluentNode<"splat_pattern", T.SplatPattern.Config>;
+  "splat_type": FluentNode<"splat_type", T.SplatType.Config>;
+  "string": FluentNode<"string", T.String.Config>;
+  "string_content": FluentNode<"string_content", T.StringContent.Config>;
+  "subscript": FluentNode<"subscript", T.Subscript.Config>;
+  "true": T.True;
+  "try_statement": FluentNode<"try_statement", T.TryStatement.Config>;
+  "tuple": FluentNode<"tuple", T.Tuple.Config>;
+  "tuple_pattern": FluentNode<"tuple_pattern", T.TuplePattern.Config>;
+  "type": FluentNode<"type", T.Type.Config>;
+  "type_alias_statement": FluentNode<"type_alias_statement", T.TypeAliasStatement.Config>;
+  "type_conversion": T.TypeConversion;
+  "type_parameter": FluentNode<"type_parameter", T.TypeParameter.Config>;
+  "typed_default_parameter": FluentNode<"typed_default_parameter", T.TypedDefaultParameter.Config>;
+  "typed_parameter": FluentNode<"typed_parameter", T.TypedParameter.Config>;
+  "unary_operator": FluentNode<"unary_operator", T.UnaryOperator.Config>;
+  "union_pattern": FluentNode<"union_pattern", T.UnionPattern.Config>;
+  "union_type": FluentNode<"union_type", T.UnionType.Config>;
+  "while_statement": FluentNode<"while_statement", T.WhileStatement.Config>;
   "with_clause_bare": FluentNode<"with_clause_bare", T.WithClauseBare.Config>;
   "with_clause_paren": FluentNode<"with_clause_paren", T.WithClauseParen.Config>;
   "with_clause": FluentNode<"with_clause", T.WithClause.Config>;
   "with_item": FluentNode<"with_item", T.WithItem.Config>;
-  "function_definition": FluentNode<"function_definition", T.FunctionDefinition.Config>;
-  "parameters": FluentNode<"parameters", T.Parameters.Config>;
-  "lambda_parameters": FluentNode<"lambda_parameters", T.LambdaParameters.Config>;
-  "list_splat": FluentNode<"list_splat", T.ListSplat.Config>;
-  "dictionary_splat": FluentNode<"dictionary_splat", T.DictionarySplat.Config>;
-  "global_statement": FluentNode<"global_statement", T.GlobalStatement.Config>;
-  "nonlocal_statement": FluentNode<"nonlocal_statement", T.NonlocalStatement.Config>;
-  "exec_statement": FluentNode<"exec_statement", T.ExecStatement.Config>;
-  "type_alias_statement": FluentNode<"type_alias_statement", T.TypeAliasStatement.Config>;
-  "class_definition": FluentNode<"class_definition", T.ClassDefinition.Config>;
-  "type_parameter": FluentNode<"type_parameter", T.TypeParameter.Config>;
-  "parenthesized_list_splat": FluentNode<"parenthesized_list_splat", T.ParenthesizedListSplat.Config>;
-  "argument_list": FluentNode<"argument_list", T.ArgumentList.Config>;
-  "decorated_definition": FluentNode<"decorated_definition", T.DecoratedDefinition.Config>;
-  "decorator": FluentNode<"decorator", T.Decorator.Config>;
-  "_suite": FluentNode<"_suite", T.Suite.Config>;
-  "block": FluentNode<"block", T.Block.Config>;
-  "expression_list": FluentNode<"expression_list", T.ExpressionList.Config>;
-  "dotted_name": FluentNode<"dotted_name", T.DottedName.Config>;
-  "case_pattern": FluentNode<"case_pattern", T.CasePattern.Config>;
-  "_as_pattern": FluentNode<"_as_pattern", T._AsPattern.Config>;
-  "union_pattern": FluentNode<"union_pattern", T.UnionPattern.Config>;
-  "_list_pattern": FluentNode<"_list_pattern", T._ListPattern.Config>;
-  "_tuple_pattern": FluentNode<"_tuple_pattern", T._TuplePattern.Config>;
-  "dict_pattern": FluentNode<"dict_pattern", T.DictPattern.Config>;
-  "_key_value_pattern": T.KeyValuePattern;
-  "keyword_pattern": FluentNode<"keyword_pattern", T.KeywordPattern.Config>;
-  "splat_pattern": FluentNode<"splat_pattern", T.SplatPattern.Config>;
-  "class_pattern": FluentNode<"class_pattern", T.ClassPattern.Config>;
-  "complex_pattern": FluentNode<"complex_pattern", T.ComplexPattern.Config>;
-  "tuple_pattern": FluentNode<"tuple_pattern", T.TuplePattern.Config>;
-  "list_pattern": FluentNode<"list_pattern", T.ListPattern.Config>;
-  "default_parameter": FluentNode<"default_parameter", T.DefaultParameter.Config>;
-  "typed_default_parameter": FluentNode<"typed_default_parameter", T.TypedDefaultParameter.Config>;
-  "list_splat_pattern": FluentNode<"list_splat_pattern", T.ListSplatPattern.Config>;
-  "dictionary_splat_pattern": FluentNode<"dictionary_splat_pattern", T.DictionarySplatPattern.Config>;
-  "as_pattern": FluentNode<"as_pattern", T.AsPattern.Config>;
-  "not_operator": FluentNode<"not_operator", T.NotOperator.Config>;
-  "boolean_operator": FluentNode<"boolean_operator", T.BooleanOperator.Config>;
-  "binary_operator": FluentNode<"binary_operator", T.BinaryOperator.Config>;
-  "unary_operator": FluentNode<"unary_operator", T.UnaryOperator.Config>;
-  "_not_in": T.NotIn;
-  "_is_not": T.IsNot;
-  "comparison_operator": FluentNode<"comparison_operator", T.ComparisonOperator.Config>;
-  "lambda": FluentNode<"lambda", T.Lambda.Config>;
-  "lambda_within_for_in_clause": FluentNode<"lambda_within_for_in_clause", T.LambdaWithinForInClause.Config>;
-  "assignment": FluentNode<"assignment", T.Assignment.Config>;
-  "augmented_assignment": FluentNode<"augmented_assignment", T.AugmentedAssignment.Config>;
-  "pattern_list": FluentNode<"pattern_list", T.PatternList.Config>;
+  "with_statement": FluentNode<"with_statement", T.WithStatement.Config>;
   "yield": FluentNode<"yield", T.Yield.Config>;
-  "attribute": FluentNode<"attribute", T.Attribute.Config>;
-  "subscript": FluentNode<"subscript", T.Subscript.Config>;
-  "slice": FluentNode<"slice", T.Slice.Config>;
-  "call": FluentNode<"call", T.Call.Config>;
-  "typed_parameter": FluentNode<"typed_parameter", T.TypedParameter.Config>;
-  "type": FluentNode<"type", T.Type.Config>;
-  "splat_type": FluentNode<"splat_type", T.SplatType.Config>;
-  "generic_type": FluentNode<"generic_type", T.GenericType.Config>;
-  "union_type": FluentNode<"union_type", T.UnionType.Config>;
-  "constrained_type": FluentNode<"constrained_type", T.ConstrainedType.Config>;
-  "member_type": FluentNode<"member_type", T.MemberType.Config>;
-  "keyword_argument": FluentNode<"keyword_argument", T.KeywordArgument.Config>;
-  "list": FluentNode<"list", T.List.Config>;
-  "set": FluentNode<"set", T.Set.Config>;
-  "tuple": FluentNode<"tuple", T.Tuple.Config>;
-  "dictionary": FluentNode<"dictionary", T.Dictionary.Config>;
-  "pair": FluentNode<"pair", T.Pair.Config>;
-  "list_comprehension": FluentNode<"list_comprehension", T.ListComprehension.Config>;
-  "dictionary_comprehension": FluentNode<"dictionary_comprehension", T.DictionaryComprehension.Config>;
-  "set_comprehension": FluentNode<"set_comprehension", T.SetComprehension.Config>;
-  "generator_expression": FluentNode<"generator_expression", T.GeneratorExpression.Config>;
-  "_comprehension_clauses": FluentNode<"_comprehension_clauses", T.ComprehensionClauses.Config>;
-  "parenthesized_expression": FluentNode<"parenthesized_expression", T.ParenthesizedExpression.Config>;
-  "for_in_clause": FluentNode<"for_in_clause", T.ForInClause.Config>;
-  "if_clause": FluentNode<"if_clause", T.IfClause.Config>;
-  "conditional_expression": FluentNode<"conditional_expression", T.ConditionalExpression.Config>;
-  "concatenated_string": FluentNode<"concatenated_string", T.ConcatenatedString.Config>;
-  "string": FluentNode<"string", T.String.Config>;
-  "string_content": FluentNode<"string_content", T.StringContent.Config>;
-  "interpolation": FluentNode<"interpolation", T.Interpolation.Config>;
-  "escape_sequence": T.EscapeSequence;
-  "format_specifier": FluentNode<"format_specifier", T.FormatSpecifier.Config>;
-  "type_conversion": T.TypeConversion;
-  "integer": T.Integer;
-  "float": T.Float;
-  "identifier": T.Identifier;
-  "true": T.True;
-  "false": T.False;
-  "none": T.None;
-  "await": FluentNode<"await", T.Await.Config>;
-  "comment": T.Comment;
-  "line_continuation": T.LineContinuation;
-  "_as_pattern_target": FluentNode<"_as_pattern_target", T.AsPatternTarget.Config>;
-  "_format_expression": FluentNode<"_format_expression", T.FormatExpression.Config>;
-  "_assignment_eq": T.AssignmentEq;
-  "_assignment_type": T.AssignmentType;
-  "_assignment_typed": T.AssignmentTyped;
-  "_with_clause_paren": FluentNode<"_with_clause_paren", T._WithClauseParen.Config>;
-  "_match_block_block": T.MatchBlockBlock;
-  "_simple_pattern_negative": FluentNode<"_simple_pattern_negative", T.SimplePatternNegative.Config>;
   "_newline": T.Newline;
   "_indent": T.Indent;
   "_dedent": T.Dedent;
@@ -2991,143 +2991,143 @@ export type FluentKindMap = {
 };
 
 export const _factoryMap = {
-  "module": module,
-  "_simple_statements": simpleStatements,
-  "import_statement": importStatement,
-  "import_prefix": importPrefix,
-  "relative_import": relativeImport,
-  "future_import_statement": futureImportStatement,
-  "import_from_statement": importFromStatement,
+  "_as_pattern": _asPattern,
+  "_as_pattern_target": asPatternTarget,
+  "_assignment_eq": _assignmentEq,
+  "_assignment_type": _assignmentType,
+  "_assignment_typed": _assignmentTyped,
+  "_comprehension_clauses": comprehensionClauses,
+  "_format_expression": formatExpression,
   "_import_list": _importList,
+  "_is_not": isNot,
+  "_key_value_pattern": _keyValuePattern,
+  "_list_pattern": _listPattern,
+  "_match_block": matchBlock,
+  "_match_block_block": _matchBlockBlock,
+  "_not_in": notIn,
+  "_simple_pattern_negative": simplePatternNegative,
+  "_simple_statements": simpleStatements,
+  "_suite": suite,
+  "_tuple_pattern": _tuplePattern,
+  "_with_clause_paren": _withClauseParen,
   "aliased_import": aliasedImport,
-  "print_statement": printStatement,
-  "chevron": chevron,
+  "argument_list": argumentList,
+  "as_pattern": asPattern,
   "assert_statement": assertStatement,
-  "expression_statement_tuple": expressionStatementTuple,
-  "expression_statement": expressionStatement,
-  "named_expression": namedExpression,
-  "return_statement": returnStatement,
-  "delete_statement": deleteStatement,
-  "raise_statement": raiseStatement,
-  "pass_statement": passStatement,
+  "assignment": assignment,
+  "attribute": attribute,
+  "augmented_assignment": augmentedAssignment,
+  "await": await_,
+  "binary_operator": binaryOperator,
+  "block": block,
+  "boolean_operator": booleanOperator,
   "break_statement": breakStatement,
+  "call": call,
+  "case_clause": caseClause,
+  "case_pattern": casePattern,
+  "chevron": chevron,
+  "class_definition": classDefinition,
+  "class_pattern": classPattern,
+  "comment": comment,
+  "comparison_operator": comparisonOperator,
+  "complex_pattern": complexPattern,
+  "concatenated_string": concatenatedString,
+  "conditional_expression": conditionalExpression,
+  "constrained_type": constrainedType,
   "continue_statement": continueStatement,
-  "if_statement": ifStatement,
+  "decorated_definition": decoratedDefinition,
+  "decorator": decorator,
+  "default_parameter": defaultParameter,
+  "delete_statement": deleteStatement,
+  "dict_pattern": dictPattern,
+  "dictionary": dictionary,
+  "dictionary_comprehension": dictionaryComprehension,
+  "dictionary_splat": dictionarySplat,
+  "dictionary_splat_pattern": dictionarySplatPattern,
+  "dotted_name": dottedName,
   "elif_clause": elifClause,
   "else_clause": elseClause,
-  "match_statement": matchStatement,
-  "_match_block": matchBlock,
-  "case_clause": caseClause,
-  "for_statement": forStatement,
-  "while_statement": whileStatement,
-  "try_statement": tryStatement,
+  "escape_sequence": escapeSequence,
   "except_clause": exceptClause,
+  "exec_statement": execStatement,
+  "expression_list": expressionList,
+  "expression_statement_tuple": expressionStatementTuple,
+  "expression_statement": expressionStatement,
+  "false": false_,
   "finally_clause": finallyClause,
-  "with_statement": withStatement,
+  "float": float,
+  "for_in_clause": forInClause,
+  "for_statement": forStatement,
+  "format_specifier": formatSpecifier,
+  "function_definition": functionDefinition,
+  "future_import_statement": futureImportStatement,
+  "generator_expression": generatorExpression,
+  "generic_type": genericType,
+  "global_statement": globalStatement,
+  "identifier": identifier,
+  "if_clause": ifClause,
+  "if_statement": ifStatement,
+  "import_from_statement": importFromStatement,
+  "import_prefix": importPrefix,
+  "import_statement": importStatement,
+  "integer": integer,
+  "interpolation": interpolation,
+  "keyword_argument": keywordArgument,
+  "keyword_pattern": keywordPattern,
+  "lambda": lambda,
+  "lambda_parameters": lambdaParameters,
+  "lambda_within_for_in_clause": lambdaWithinForInClause,
+  "line_continuation": lineContinuation,
+  "list": list,
+  "list_comprehension": listComprehension,
+  "list_pattern": listPattern,
+  "list_splat": listSplat,
+  "list_splat_pattern": listSplatPattern,
+  "match_statement": matchStatement,
+  "member_type": memberType,
+  "module": module,
+  "named_expression": namedExpression,
+  "none": none,
+  "nonlocal_statement": nonlocalStatement,
+  "not_operator": notOperator,
+  "pair": pair,
+  "parameters": parameters,
+  "parenthesized_expression": parenthesizedExpression,
+  "parenthesized_list_splat": parenthesizedListSplat,
+  "pass_statement": passStatement,
+  "pattern_list": patternList,
+  "print_statement": printStatement,
+  "raise_statement": raiseStatement,
+  "relative_import": relativeImport,
+  "return_statement": returnStatement,
+  "set": set,
+  "set_comprehension": setComprehension,
+  "slice": slice,
+  "splat_pattern": splatPattern,
+  "splat_type": splatType,
+  "string": string,
+  "string_content": stringContent,
+  "subscript": subscript,
+  "true": true_,
+  "try_statement": tryStatement,
+  "tuple": tuple,
+  "tuple_pattern": tuplePattern,
+  "type": type,
+  "type_alias_statement": typeAliasStatement,
+  "type_conversion": typeConversion,
+  "type_parameter": typeParameter,
+  "typed_default_parameter": typedDefaultParameter,
+  "typed_parameter": typedParameter,
+  "unary_operator": unaryOperator,
+  "union_pattern": unionPattern,
+  "union_type": unionType,
+  "while_statement": whileStatement,
   "with_clause_bare": withClauseBare,
   "with_clause_paren": withClauseParen,
   "with_clause": withClause,
   "with_item": withItem,
-  "function_definition": functionDefinition,
-  "parameters": parameters,
-  "lambda_parameters": lambdaParameters,
-  "list_splat": listSplat,
-  "dictionary_splat": dictionarySplat,
-  "global_statement": globalStatement,
-  "nonlocal_statement": nonlocalStatement,
-  "exec_statement": execStatement,
-  "type_alias_statement": typeAliasStatement,
-  "class_definition": classDefinition,
-  "type_parameter": typeParameter,
-  "parenthesized_list_splat": parenthesizedListSplat,
-  "argument_list": argumentList,
-  "decorated_definition": decoratedDefinition,
-  "decorator": decorator,
-  "_suite": suite,
-  "block": block,
-  "expression_list": expressionList,
-  "dotted_name": dottedName,
-  "case_pattern": casePattern,
-  "_as_pattern": _asPattern,
-  "union_pattern": unionPattern,
-  "_list_pattern": _listPattern,
-  "_tuple_pattern": _tuplePattern,
-  "dict_pattern": dictPattern,
-  "_key_value_pattern": _keyValuePattern,
-  "keyword_pattern": keywordPattern,
-  "splat_pattern": splatPattern,
-  "class_pattern": classPattern,
-  "complex_pattern": complexPattern,
-  "tuple_pattern": tuplePattern,
-  "list_pattern": listPattern,
-  "default_parameter": defaultParameter,
-  "typed_default_parameter": typedDefaultParameter,
-  "list_splat_pattern": listSplatPattern,
-  "dictionary_splat_pattern": dictionarySplatPattern,
-  "as_pattern": asPattern,
-  "not_operator": notOperator,
-  "boolean_operator": booleanOperator,
-  "binary_operator": binaryOperator,
-  "unary_operator": unaryOperator,
-  "_not_in": notIn,
-  "_is_not": isNot,
-  "comparison_operator": comparisonOperator,
-  "lambda": lambda,
-  "lambda_within_for_in_clause": lambdaWithinForInClause,
-  "assignment": assignment,
-  "augmented_assignment": augmentedAssignment,
-  "pattern_list": patternList,
+  "with_statement": withStatement,
   "yield": yield_,
-  "attribute": attribute,
-  "subscript": subscript,
-  "slice": slice,
-  "call": call,
-  "typed_parameter": typedParameter,
-  "type": type,
-  "splat_type": splatType,
-  "generic_type": genericType,
-  "union_type": unionType,
-  "constrained_type": constrainedType,
-  "member_type": memberType,
-  "keyword_argument": keywordArgument,
-  "list": list,
-  "set": set,
-  "tuple": tuple,
-  "dictionary": dictionary,
-  "pair": pair,
-  "list_comprehension": listComprehension,
-  "dictionary_comprehension": dictionaryComprehension,
-  "set_comprehension": setComprehension,
-  "generator_expression": generatorExpression,
-  "_comprehension_clauses": comprehensionClauses,
-  "parenthesized_expression": parenthesizedExpression,
-  "for_in_clause": forInClause,
-  "if_clause": ifClause,
-  "conditional_expression": conditionalExpression,
-  "concatenated_string": concatenatedString,
-  "string": string,
-  "string_content": stringContent,
-  "interpolation": interpolation,
-  "escape_sequence": escapeSequence,
-  "format_specifier": formatSpecifier,
-  "type_conversion": typeConversion,
-  "integer": integer,
-  "float": float,
-  "identifier": identifier,
-  "true": true_,
-  "false": false_,
-  "none": none,
-  "await": await_,
-  "comment": comment,
-  "line_continuation": lineContinuation,
-  "_as_pattern_target": asPatternTarget,
-  "_format_expression": formatExpression,
-  "_assignment_eq": _assignmentEq,
-  "_assignment_type": _assignmentType,
-  "_assignment_typed": _assignmentTyped,
-  "_with_clause_paren": _withClauseParen,
-  "_match_block_block": _matchBlockBlock,
-  "_simple_pattern_negative": simplePatternNegative,
   "_newline": newline,
   "_indent": indent,
   "_dedent": dedent,

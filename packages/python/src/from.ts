@@ -17,124 +17,124 @@ type _FromFieldInput =
   | readonly _FromFieldInput[];
 
 export const _fromMap = {
-  "module": moduleFrom,
-  "import_statement": importStatementFrom,
-  "import_prefix": importPrefixFrom,
-  "relative_import": relativeImportFrom,
-  "future_import_statement": futureImportStatementFrom,
-  "import_from_statement": importFromStatementFrom,
   "aliased_import": aliasedImportFrom,
-  "print_statement": printStatementFrom,
-  "chevron": chevronFrom,
+  "argument_list": argumentListFrom,
+  "as_pattern": asPatternFrom,
   "assert_statement": assertStatementFrom,
-  "expression_statement_tuple": expressionStatementTupleFrom,
-  "expression_statement": expressionStatementFrom,
-  "named_expression": namedExpressionFrom,
-  "return_statement": returnStatementFrom,
-  "delete_statement": deleteStatementFrom,
-  "raise_statement": raiseStatementFrom,
-  "pass_statement": passStatementFrom,
+  "assignment": assignmentFrom,
+  "attribute": attributeFrom,
+  "augmented_assignment": augmentedAssignmentFrom,
+  "await": await_From,
+  "binary_operator": binaryOperatorFrom,
+  "block": blockFrom,
+  "boolean_operator": booleanOperatorFrom,
   "break_statement": breakStatementFrom,
+  "call": callFrom,
+  "case_clause": caseClauseFrom,
+  "case_pattern": casePatternFrom,
+  "chevron": chevronFrom,
+  "class_definition": classDefinitionFrom,
+  "class_pattern": classPatternFrom,
+  "comment": commentFrom,
+  "comparison_operator": comparisonOperatorFrom,
+  "complex_pattern": complexPatternFrom,
+  "concatenated_string": concatenatedStringFrom,
+  "conditional_expression": conditionalExpressionFrom,
+  "constrained_type": constrainedTypeFrom,
   "continue_statement": continueStatementFrom,
-  "if_statement": ifStatementFrom,
+  "decorated_definition": decoratedDefinitionFrom,
+  "decorator": decoratorFrom,
+  "default_parameter": defaultParameterFrom,
+  "delete_statement": deleteStatementFrom,
+  "dict_pattern": dictPatternFrom,
+  "dictionary": dictionaryFrom,
+  "dictionary_comprehension": dictionaryComprehensionFrom,
+  "dictionary_splat": dictionarySplatFrom,
+  "dictionary_splat_pattern": dictionarySplatPatternFrom,
+  "dotted_name": dottedNameFrom,
   "elif_clause": elifClauseFrom,
   "else_clause": elseClauseFrom,
-  "match_statement": matchStatementFrom,
-  "case_clause": caseClauseFrom,
-  "for_statement": forStatementFrom,
-  "while_statement": whileStatementFrom,
-  "try_statement": tryStatementFrom,
+  "escape_sequence": escapeSequenceFrom,
   "except_clause": exceptClauseFrom,
+  "exec_statement": execStatementFrom,
+  "expression_list": expressionListFrom,
+  "expression_statement_tuple": expressionStatementTupleFrom,
+  "expression_statement": expressionStatementFrom,
+  "false": false_From,
   "finally_clause": finallyClauseFrom,
-  "with_statement": withStatementFrom,
+  "float": floatFrom,
+  "for_in_clause": forInClauseFrom,
+  "for_statement": forStatementFrom,
+  "format_specifier": formatSpecifierFrom,
+  "function_definition": functionDefinitionFrom,
+  "future_import_statement": futureImportStatementFrom,
+  "generator_expression": generatorExpressionFrom,
+  "generic_type": genericTypeFrom,
+  "global_statement": globalStatementFrom,
+  "identifier": identifierFrom,
+  "if_clause": ifClauseFrom,
+  "if_statement": ifStatementFrom,
+  "import_from_statement": importFromStatementFrom,
+  "import_prefix": importPrefixFrom,
+  "import_statement": importStatementFrom,
+  "integer": integerFrom,
+  "interpolation": interpolationFrom,
+  "keyword_argument": keywordArgumentFrom,
+  "keyword_pattern": keywordPatternFrom,
+  "lambda": lambdaFrom,
+  "lambda_parameters": lambdaParametersFrom,
+  "lambda_within_for_in_clause": lambdaWithinForInClauseFrom,
+  "line_continuation": lineContinuationFrom,
+  "list": listFrom,
+  "list_comprehension": listComprehensionFrom,
+  "list_pattern": listPatternFrom,
+  "list_splat": listSplatFrom,
+  "list_splat_pattern": listSplatPatternFrom,
+  "match_statement": matchStatementFrom,
+  "member_type": memberTypeFrom,
+  "module": moduleFrom,
+  "named_expression": namedExpressionFrom,
+  "none": noneFrom,
+  "nonlocal_statement": nonlocalStatementFrom,
+  "not_operator": notOperatorFrom,
+  "pair": pairFrom,
+  "parameters": parametersFrom,
+  "parenthesized_expression": parenthesizedExpressionFrom,
+  "parenthesized_list_splat": parenthesizedListSplatFrom,
+  "pass_statement": passStatementFrom,
+  "pattern_list": patternListFrom,
+  "print_statement": printStatementFrom,
+  "raise_statement": raiseStatementFrom,
+  "relative_import": relativeImportFrom,
+  "return_statement": returnStatementFrom,
+  "set": setFrom,
+  "set_comprehension": setComprehensionFrom,
+  "slice": sliceFrom,
+  "splat_pattern": splatPatternFrom,
+  "splat_type": splatTypeFrom,
+  "string": stringFrom,
+  "string_content": stringContentFrom,
+  "subscript": subscriptFrom,
+  "true": true_From,
+  "try_statement": tryStatementFrom,
+  "tuple": tupleFrom,
+  "tuple_pattern": tuplePatternFrom,
+  "type": typeFrom,
+  "type_alias_statement": typeAliasStatementFrom,
+  "type_conversion": typeConversionFrom,
+  "type_parameter": typeParameterFrom,
+  "typed_default_parameter": typedDefaultParameterFrom,
+  "typed_parameter": typedParameterFrom,
+  "unary_operator": unaryOperatorFrom,
+  "union_pattern": unionPatternFrom,
+  "union_type": unionTypeFrom,
+  "while_statement": whileStatementFrom,
   "with_clause_bare": withClauseBareFrom,
   "with_clause_paren": withClauseParenFrom,
   "with_clause": withClauseFrom,
   "with_item": withItemFrom,
-  "function_definition": functionDefinitionFrom,
-  "parameters": parametersFrom,
-  "lambda_parameters": lambdaParametersFrom,
-  "list_splat": listSplatFrom,
-  "dictionary_splat": dictionarySplatFrom,
-  "global_statement": globalStatementFrom,
-  "nonlocal_statement": nonlocalStatementFrom,
-  "exec_statement": execStatementFrom,
-  "type_alias_statement": typeAliasStatementFrom,
-  "class_definition": classDefinitionFrom,
-  "type_parameter": typeParameterFrom,
-  "parenthesized_list_splat": parenthesizedListSplatFrom,
-  "argument_list": argumentListFrom,
-  "decorated_definition": decoratedDefinitionFrom,
-  "decorator": decoratorFrom,
-  "block": blockFrom,
-  "expression_list": expressionListFrom,
-  "dotted_name": dottedNameFrom,
-  "case_pattern": casePatternFrom,
-  "union_pattern": unionPatternFrom,
-  "dict_pattern": dictPatternFrom,
-  "keyword_pattern": keywordPatternFrom,
-  "splat_pattern": splatPatternFrom,
-  "class_pattern": classPatternFrom,
-  "complex_pattern": complexPatternFrom,
-  "tuple_pattern": tuplePatternFrom,
-  "list_pattern": listPatternFrom,
-  "default_parameter": defaultParameterFrom,
-  "typed_default_parameter": typedDefaultParameterFrom,
-  "list_splat_pattern": listSplatPatternFrom,
-  "dictionary_splat_pattern": dictionarySplatPatternFrom,
-  "as_pattern": asPatternFrom,
-  "not_operator": notOperatorFrom,
-  "boolean_operator": booleanOperatorFrom,
-  "binary_operator": binaryOperatorFrom,
-  "unary_operator": unaryOperatorFrom,
-  "comparison_operator": comparisonOperatorFrom,
-  "lambda": lambdaFrom,
-  "lambda_within_for_in_clause": lambdaWithinForInClauseFrom,
-  "assignment": assignmentFrom,
-  "augmented_assignment": augmentedAssignmentFrom,
-  "pattern_list": patternListFrom,
+  "with_statement": withStatementFrom,
   "yield": yield_From,
-  "attribute": attributeFrom,
-  "subscript": subscriptFrom,
-  "slice": sliceFrom,
-  "call": callFrom,
-  "typed_parameter": typedParameterFrom,
-  "type": typeFrom,
-  "splat_type": splatTypeFrom,
-  "generic_type": genericTypeFrom,
-  "union_type": unionTypeFrom,
-  "constrained_type": constrainedTypeFrom,
-  "member_type": memberTypeFrom,
-  "keyword_argument": keywordArgumentFrom,
-  "list": listFrom,
-  "set": setFrom,
-  "tuple": tupleFrom,
-  "dictionary": dictionaryFrom,
-  "pair": pairFrom,
-  "list_comprehension": listComprehensionFrom,
-  "dictionary_comprehension": dictionaryComprehensionFrom,
-  "set_comprehension": setComprehensionFrom,
-  "generator_expression": generatorExpressionFrom,
-  "parenthesized_expression": parenthesizedExpressionFrom,
-  "for_in_clause": forInClauseFrom,
-  "if_clause": ifClauseFrom,
-  "conditional_expression": conditionalExpressionFrom,
-  "concatenated_string": concatenatedStringFrom,
-  "string": stringFrom,
-  "string_content": stringContentFrom,
-  "interpolation": interpolationFrom,
-  "escape_sequence": escapeSequenceFrom,
-  "format_specifier": formatSpecifierFrom,
-  "type_conversion": typeConversionFrom,
-  "integer": integerFrom,
-  "float": floatFrom,
-  "identifier": identifierFrom,
-  "true": true_From,
-  "false": false_From,
-  "none": noneFrom,
-  "await": await_From,
-  "comment": commentFrom,
-  "line_continuation": lineContinuationFrom,
   "string_start": stringStartFrom,
   "escape_interpolation": escapeInterpolationFrom,
   "string_end": stringEndFrom,
@@ -152,20 +152,20 @@ interface _LeafEntry {
   readonly factory: (text: string) => AnyNodeData;
 }
 const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
-  "import_prefix": { factory: F.importPrefix },
-  "pass_statement": { values: ["pass"], factory: () => F.passStatement() },
   "break_statement": { values: ["break"], factory: () => F.breakStatement() },
+  "comment": { factory: F.comment },
   "continue_statement": { values: ["continue"], factory: () => F.continueStatement() },
   "escape_sequence": { factory: F.escapeSequence },
-  "type_conversion": { factory: F.typeConversion },
-  "integer": { factory: F.integer },
+  "false": { values: ["False"], factory: () => F.false_() },
   "float": { factory: F.float },
   "identifier": { factory: F.identifier },
-  "true": { values: ["True"], factory: () => F.true_() },
-  "false": { values: ["False"], factory: () => F.false_() },
-  "none": { values: ["None"], factory: () => F.none() },
-  "comment": { factory: F.comment },
+  "import_prefix": { factory: F.importPrefix },
+  "integer": { factory: F.integer },
   "line_continuation": { factory: F.lineContinuation },
+  "none": { values: ["None"], factory: () => F.none() },
+  "pass_statement": { values: ["pass"], factory: () => F.passStatement() },
+  "true": { values: ["True"], factory: () => F.true_() },
+  "type_conversion": { factory: F.typeConversion },
   "string_start": { factory: F.stringStart },
   "escape_interpolation": { factory: F.escapeInterpolation },
   "string_end": { factory: F.stringEnd },
@@ -320,75 +320,28 @@ function _assertNonEmpty<T>(
 
 // Interned resolver kind lists (T042i dedup)
 const _super_expression: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","primary_expression","conditional_expression","named_expression","as_pattern"];
-const _super_keyword_identifier: readonly string[] = ["identifier"];
-const _super_expressions: readonly string[] = ["expression","expression_list"];
 const _super_left_hand_side: readonly string[] = ["pattern","pattern_list"];
-const _super_expression_within_for_in_clause: readonly string[] = ["expression","lambda_within_for_in_clause"];
 const _super_right_hand_side: readonly string[] = ["expression","expression_list","assignment","augmented_assignment","pattern_list","yield"];
+const _super_keyword_identifier: readonly string[] = ["identifier"];
+const _super_expression_within_for_in_clause: readonly string[] = ["expression","lambda_within_for_in_clause"];
+const _super_expressions: readonly string[] = ["expression","expression_list"];
 const _super_f_expression: readonly string[] = ["expression","expression_list","pattern_list","yield"];
 const _K0: readonly string[] = [];
-const _K1: readonly string[] = ["dotted_name","aliased_import"];
-const _K2: readonly string[] = ["relative_import","dotted_name"];
-const _K3: readonly string[] = ["keyword_identifier"];
-const _K4: readonly string[] = ["elif_clause","else_clause"];
-const _K5: readonly string[] = ["string"];
-const _K6: readonly string[] = ["class_definition","function_definition"];
-const _K7: readonly string[] = ["true","false","none"];
-const _K8: readonly string[] = ["class_pattern","splat_pattern","union_pattern","_list_pattern","_tuple_pattern","dict_pattern","string","concatenated_string","_simple_pattern_negative","complex_pattern","dotted_name"];
-const _K9: readonly string[] = ["integer","float"];
-const _K10: readonly string[] = ["tuple_pattern"];
-const _K11: readonly string[] = ["identifier","integer","float","true","false","none"];
-const _K12: readonly string[] = ["await","binary_operator","keyword_identifier","string","concatenated_string","unary_operator","attribute","subscript","call","list","list_comprehension","dictionary","dictionary_comprehension","set","set_comprehension","tuple","parenthesized_expression","generator_expression","list_splat_pattern"];
-const _K13: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","primary_expression","conditional_expression","named_expression","as_pattern","slice"];
-const _K14: readonly string[] = ["generator_expression","argument_list"];
+const _K1: readonly string[] = ["identifier","integer","float","true","false","none"];
+const _K2: readonly string[] = ["await","binary_operator","keyword_identifier","string","concatenated_string","unary_operator","attribute","subscript","call","list","list_comprehension","dictionary","dictionary_comprehension","set","set_comprehension","tuple","parenthesized_expression","generator_expression","list_splat_pattern"];
+const _K3: readonly string[] = ["generator_expression","argument_list"];
+const _K4: readonly string[] = ["integer","float"];
+const _K5: readonly string[] = ["class_definition","function_definition"];
+const _K6: readonly string[] = ["tuple_pattern"];
+const _K7: readonly string[] = ["string"];
+const _K8: readonly string[] = ["dotted_name","aliased_import"];
+const _K9: readonly string[] = ["elif_clause","else_clause"];
+const _K10: readonly string[] = ["relative_import","dotted_name"];
+const _K11: readonly string[] = ["true","false","none"];
+const _K12: readonly string[] = ["class_pattern","splat_pattern","union_pattern","_list_pattern","_tuple_pattern","dict_pattern","string","concatenated_string","_simple_pattern_negative","complex_pattern","dotted_name"];
+const _K13: readonly string[] = ["keyword_identifier"];
+const _K14: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","primary_expression","conditional_expression","named_expression","as_pattern","slice"];
 const _K15: readonly string[] = ["list_splat_pattern","dictionary_splat_pattern"];
-
-export function moduleFrom(...input: readonly (NonNullable<T.Module.Config['children']>[number] | T.Module)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'module') {
-    const data = input[0];
-    return F.module(...((data.$children ?? []) as readonly NonNullable<T.Module.Config['children']>[number][]));
-  }
-  return F.module(...(input as readonly NonNullable<T.Module.Config['children']>[number][]));
-}
-
-export function importStatementFrom(input: T.ImportStatement.Loose): ReturnType<typeof F.importStatement> | T.ImportStatement {
-  if (isNodeData(input)) return input;
-  const _ne_name = _resolveMany<T.DottedName | T.AliasedImport>(input.name, _K0, _K1);
-  _assertNonEmpty(_ne_name, 'import_statement.name');
-  return F.importStatement({
-    name: _ne_name,
-  });
-}
-
-export function importPrefixFrom(input: string | T.ImportPrefix) {
-  if (typeof input !== 'string') return input;
-  return F.importPrefix(input as Parameters<typeof F.importPrefix>[0]);
-}
-
-export function relativeImportFrom(input: T.RelativeImport.Loose): ReturnType<typeof F.relativeImport> | T.RelativeImport {
-  if (isNodeData(input)) return input;
-  return F.relativeImport({
-    importPrefix: _resolveOneLeaf<T.ImportPrefix>(input.importPrefix, "import_prefix"),
-    dottedName: _resolveOneBranch<T.DottedName>(input.dottedName, "dotted_name"),
-  });
-}
-
-export function futureImportStatementFrom(input: T.FutureImportStatement.Loose): ReturnType<typeof F.futureImportStatement> | T.FutureImportStatement {
-  if (isNodeData(input)) return input;
-  const _ne_name = _resolveMany<T.DottedName | T.AliasedImport>(input.name, _K0, _K1);
-  _assertNonEmpty(_ne_name, 'future_import_statement.name');
-  return F.futureImportStatement({
-    name: _ne_name,
-  });
-}
-
-export function importFromStatementFrom(input: T.ImportFromStatement.Loose): ReturnType<typeof F.importFromStatement> | T.ImportFromStatement {
-  if (isNodeData(input)) return input;
-  return F.importFromStatement({
-    moduleName: _resolveOne<T.RelativeImport | T.DottedName>(input.moduleName, _K0, _K2),
-    children: _resolveOne(input.children, _K0, _K0),
-  });
-}
 
 export function aliasedImportFrom(input: T.AliasedImport.Loose): ReturnType<typeof F.aliasedImport> | T.AliasedImport {
   if (isNodeData(input)) return input;
@@ -398,18 +351,19 @@ export function aliasedImportFrom(input: T.AliasedImport.Loose): ReturnType<type
   });
 }
 
-export function printStatementFrom(input: T.PrintStatement.Loose): ReturnType<typeof F.printStatement> | T.PrintStatement {
-  if (isNodeData(input)) return input;
-  return F.printStatement({
-    argument: _resolveMany<T.Expression>(input.argument, _K0, _super_expression),
-    children: _resolveOneBranch(input.children, "chevron"),
-  });
+export function argumentListFrom(...input: readonly (NonNullable<T.ArgumentList.Config['children']>[number] | T.ArgumentList)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'argument_list') {
+    const data = input[0];
+    return F.argumentList(...((data.$children ?? []) as readonly NonNullable<T.ArgumentList.Config['children']>[number][]));
+  }
+  return F.argumentList(...(input as readonly NonNullable<T.ArgumentList.Config['children']>[number][]));
 }
 
-export function chevronFrom(input: T.Chevron.Loose): ReturnType<typeof F.chevron> | T.Chevron {
+export function asPatternFrom(input: T.AsPattern.Loose): ReturnType<typeof F.asPattern> | T.AsPattern {
   if (isNodeData(input)) return input;
-  return F.chevron({
+  return F.asPattern({
     expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
+    alias: _resolveOneBranch<T.AsPatternTarget>(input.alias, "_as_pattern_target"),
   });
 }
 
@@ -419,6 +373,325 @@ export function assertStatementFrom(...input: readonly (NonNullable<T.AssertStat
     return F.assertStatement(...((data.$children ?? []) as readonly NonNullable<T.AssertStatement.Config['children']>[number][]));
   }
   return F.assertStatement(...(input as readonly NonNullable<T.AssertStatement.Config['children']>[number][]));
+}
+
+export function assignmentFrom(input?: T.Assignment.Loose): ReturnType<typeof F.assignment> | T.Assignment {
+  if (input !== undefined && isNodeData(input)) return input;
+  return F.assignment(input as Parameters<typeof F.assignment>[0]);
+}
+
+export function assignmentUFormEqFrom(input: Omit<ConfigOf<T.AssignmentUFormEq>, '$variant'>) {
+  return F.assignmentUFormEq({
+    left: _resolveOne<T.LeftHandSide>(input.left, _K0, _super_left_hand_side),
+    right: _resolveOne<T.RightHandSide>(input.right, _K0, _super_right_hand_side),
+  });
+}
+
+export function assignmentUFormTypeFrom(input: Omit<ConfigOf<T.AssignmentUFormType>, '$variant'>) {
+  return F.assignmentUFormType({
+    left: _resolveOne<T.LeftHandSide>(input.left, _K0, _super_left_hand_side),
+    type: _resolveOneBranch<T.Type>(input.type, "type"),
+  });
+}
+
+export function assignmentUFormTypedFrom(input: Omit<ConfigOf<T.AssignmentUFormTyped>, '$variant'>) {
+  return F.assignmentUFormTyped({
+    left: _resolveOne<T.LeftHandSide>(input.left, _K0, _super_left_hand_side),
+    type: _resolveOneBranch<T.Type>(input.type, "type"),
+    right: _resolveOne<T.RightHandSide>(input.right, _K0, _super_right_hand_side),
+  });
+}
+
+export function attributeFrom(input: T.Attribute.Loose): ReturnType<typeof F.attribute> | T.Attribute {
+  if (isNodeData(input)) return input;
+  return F.attribute({
+    object: _resolveOne<T.PrimaryExpression>(input.object, _K1, _K2),
+    attribute: _resolveOneLeaf<T.Identifier>(input.attribute, "identifier"),
+  });
+}
+
+export function augmentedAssignmentFrom(input: T.AugmentedAssignment.Loose): ReturnType<typeof F.augmentedAssignment> | T.AugmentedAssignment {
+  if (isNodeData(input)) return input;
+  return F.augmentedAssignment({
+    left: _resolveOne<T.LeftHandSide>(input.left, _K0, _super_left_hand_side),
+    operator: _resolveOne<"+=" | "-=" | "*=" | "/=" | "@=" | "//=" | "%=" | "**=" | ">>=" | "<<=" | "&=" | "^=" | "|=">(input.operator, _K0, _K0),
+    right: _resolveOne<T.RightHandSide>(input.right, _K0, _super_right_hand_side),
+  });
+}
+
+export function await_From(input: T.Await.Loose): ReturnType<typeof F.await_> | T.Await {
+  if (isNodeData(input)) return input;
+  return F.await_({
+    primaryExpression: _resolveOne<T.PrimaryExpression>(input.primaryExpression, _K1, _K2),
+  });
+}
+
+export function binaryOperatorFrom(input: T.BinaryOperator.Loose): ReturnType<typeof F.binaryOperator> | T.BinaryOperator {
+  if (isNodeData(input)) return input;
+  return F.binaryOperator({
+    left: _resolveOne<T.PrimaryExpression>(input.left, _K1, _K2),
+    operator: _resolveOne<"+" | "-" | "*" | "@" | "/" | "%" | "//" | "**" | "|" | "&" | "^" | "<<" | ">>">(input.operator, _K0, _K0),
+    right: _resolveOne<T.PrimaryExpression>(input.right, _K1, _K2),
+  });
+}
+
+export function blockFrom(...input: readonly (NonNullable<T.Block.Config['children']>[number] | T.Block)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'block') {
+    const data = input[0];
+    return F.block(...((data.$children ?? []) as readonly NonNullable<T.Block.Config['children']>[number][]));
+  }
+  return F.block(...(input as readonly NonNullable<T.Block.Config['children']>[number][]));
+}
+
+export function booleanOperatorFrom(input: T.BooleanOperator.Loose): ReturnType<typeof F.booleanOperator> | T.BooleanOperator {
+  if (isNodeData(input)) return input;
+  return F.booleanOperator({
+    left: _resolveOne<T.Expression>(input.left, _K0, _super_expression),
+    operator: _resolveOne<"and" | "or">(input.operator, _K0, _K0),
+    right: _resolveOne<T.Expression>(input.right, _K0, _super_expression),
+  });
+}
+
+export function breakStatementFrom(input?: T.BreakStatement) {
+  if (isNodeData(input)) return input;
+  return F.breakStatement();
+}
+
+export function callFrom(input: T.Call.Loose): ReturnType<typeof F.call> | T.Call {
+  if (isNodeData(input)) return input;
+  return F.call({
+    function: _resolveOne<T.PrimaryExpression>(input.function, _K1, _K2),
+    arguments: _resolveOne<T.GeneratorExpression | T.ArgumentList>(input.arguments, _K0, _K3),
+  });
+}
+
+export function caseClauseFrom(input: T.CaseClause.Loose): ReturnType<typeof F.caseClause> | T.CaseClause {
+  if (isNodeData(input)) return input;
+  const _ne_children: readonly (T.CasePattern)[] = _resolveManyBranch(input.children, "case_pattern");
+  _assertNonEmpty(_ne_children, 'case_clause.children');
+  return F.caseClause({
+    guard: _resolveOneBranch<T.IfClause>(input.guard, "if_clause"),
+    consequence: _resolveOneBranch<T.Suite>(input.consequence, "_suite"),
+    children: _ne_children,
+  });
+}
+
+export function casePatternFrom(input?: NonNullable<T.CasePattern.Config['children']>[number] | T.CasePattern) {
+  if (isNodeData(input) && input.$type === 'case_pattern') {
+    const data = input;
+    const child = data.$children ? data.$children[0] : undefined;
+    return F.casePattern(child as Parameters<typeof F.casePattern>[0]);
+  }
+  return F.casePattern(input as Parameters<typeof F.casePattern>[0]);
+}
+
+export function chevronFrom(input: T.Chevron.Loose): ReturnType<typeof F.chevron> | T.Chevron {
+  if (isNodeData(input)) return input;
+  return F.chevron({
+    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
+  });
+}
+
+export function classDefinitionFrom(input: T.ClassDefinition.Loose): ReturnType<typeof F.classDefinition> | T.ClassDefinition {
+  if (isNodeData(input)) return input;
+  return F.classDefinition({
+    name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
+    typeParameters: _resolveOneBranch<T.TypeParameter>(input.typeParameters, "type_parameter"),
+    superclasses: _resolveOneBranch<T.ArgumentList>(input.superclasses, "argument_list"),
+    body: _resolveOneBranch<T.Suite>(input.body, "_suite"),
+  });
+}
+
+export function classPatternFrom(input: T.ClassPattern.Loose): ReturnType<typeof F.classPattern> | T.ClassPattern {
+  if (isNodeData(input)) return input;
+  return F.classPattern({
+    dottedName: _resolveOneBranch<T.DottedName>(input.dottedName, "dotted_name"),
+    arguments: _resolveManyBranch<T.CasePattern>(input.arguments, "case_pattern"),
+  });
+}
+
+export function commentFrom(input: string | T.Comment) {
+  if (typeof input !== 'string') return input;
+  return F.comment(input as Parameters<typeof F.comment>[0]);
+}
+
+export function comparisonOperatorFrom(input: T.ComparisonOperator.Loose): ReturnType<typeof F.comparisonOperator> | T.ComparisonOperator {
+  if (isNodeData(input)) return input;
+  return F.comparisonOperator({
+    left: _resolveOne<T.PrimaryExpression>(input.left, _K1, _K2),
+    operators: _resolveBitflag(input.operators),
+  });
+}
+
+export function complexPatternFrom(input: T.ComplexPattern.Loose): ReturnType<typeof F.complexPattern> | T.ComplexPattern {
+  if (isNodeData(input)) return input;
+  return F.complexPattern({
+    real: _resolveBooleanKeyword(input.real),
+    imaginary: _resolveOne<T.Integer | T.Float>(input.imaginary, _K4, _K0),
+    children: _resolveOne(input.children, _K4, _K0),
+  });
+}
+
+export function concatenatedStringFrom(...input: readonly (NonNullable<T.ConcatenatedString.Config['children']>[number] | T.ConcatenatedString)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'concatenated_string') {
+    const data = input[0];
+    return F.concatenatedString(...((data.$children ?? []) as readonly NonNullable<T.ConcatenatedString.Config['children']>[number][]));
+  }
+  return F.concatenatedString(...(input as readonly NonNullable<T.ConcatenatedString.Config['children']>[number][]));
+}
+
+export function conditionalExpressionFrom(input: T.ConditionalExpression.Loose): ReturnType<typeof F.conditionalExpression> | T.ConditionalExpression {
+  if (isNodeData(input)) return input;
+  return F.conditionalExpression({
+    body: _resolveOne<T.Expression>(input.body, _K0, _super_expression),
+    condition: _resolveOne<T.Expression>(input.condition, _K0, _super_expression),
+    alternative: _resolveOne<T.Expression>(input.alternative, _K0, _super_expression),
+  });
+}
+
+export function constrainedTypeFrom(input: T.ConstrainedType.Loose): ReturnType<typeof F.constrainedType> | T.ConstrainedType {
+  if (isNodeData(input)) return input;
+  return F.constrainedType({
+    baseType: _resolveOneBranch<T.Type>(input.baseType, "type"),
+    constraint: _resolveOneBranch<T.Type>(input.constraint, "type"),
+  });
+}
+
+export function continueStatementFrom(input?: T.ContinueStatement) {
+  if (isNodeData(input)) return input;
+  return F.continueStatement();
+}
+
+export function decoratedDefinitionFrom(input: T.DecoratedDefinition.Loose): ReturnType<typeof F.decoratedDefinition> | T.DecoratedDefinition {
+  if (isNodeData(input)) return input;
+  const _ne_children: readonly (T.Decorator)[] = _resolveManyBranch(input.children, "decorator");
+  _assertNonEmpty(_ne_children, 'decorated_definition.children');
+  return F.decoratedDefinition({
+    definition: _resolveOne<T.ClassDefinition | T.FunctionDefinition>(input.definition, _K0, _K5),
+    children: _ne_children,
+  });
+}
+
+export function decoratorFrom(input: T.Decorator.Loose): ReturnType<typeof F.decorator> | T.Decorator {
+  if (isNodeData(input)) return input;
+  return F.decorator({
+    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
+    newline: _resolveOne<string>(input.newline, _K0, _K0),
+  });
+}
+
+export function defaultParameterFrom(input: T.DefaultParameter.Loose): ReturnType<typeof F.defaultParameter> | T.DefaultParameter {
+  if (isNodeData(input)) return input;
+  return F.defaultParameter({
+    name: _resolveOne<T.Identifier | T.TuplePattern>(input.name, _super_keyword_identifier, _K6),
+    value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
+  });
+}
+
+export function deleteStatementFrom(input?: NonNullable<T.DeleteStatement.Config['children']>[number] | T.DeleteStatement) {
+  if (isNodeData(input) && input.$type === 'delete_statement') {
+    const data = input;
+    const child = data.$children ? data.$children[0] : undefined;
+    return F.deleteStatement(child as Parameters<typeof F.deleteStatement>[0]);
+  }
+  return F.deleteStatement(input as Parameters<typeof F.deleteStatement>[0]);
+}
+
+export function dictPatternFrom(...input: readonly (NonNullable<T.DictPattern.Config['children']>[number] | T.DictPattern)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'dict_pattern') {
+    const data = input[0];
+    return F.dictPattern(...((data.$children ?? []) as readonly NonNullable<T.DictPattern.Config['children']>[number][]));
+  }
+  return F.dictPattern(...(input as readonly NonNullable<T.DictPattern.Config['children']>[number][]));
+}
+
+export function dictionaryFrom(...input: readonly (NonNullable<T.Dictionary.Config['children']>[number] | T.Dictionary)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'dictionary') {
+    const data = input[0];
+    return F.dictionary(...((data.$children ?? []) as readonly NonNullable<T.Dictionary.Config['children']>[number][]));
+  }
+  return F.dictionary(...(input as readonly NonNullable<T.Dictionary.Config['children']>[number][]));
+}
+
+export function dictionaryComprehensionFrom(input: T.DictionaryComprehension.Loose): ReturnType<typeof F.dictionaryComprehension> | T.DictionaryComprehension {
+  if (isNodeData(input)) return input;
+  return F.dictionaryComprehension({
+    body: _resolveOneBranch<T.Pair>(input.body, "pair"),
+    children: _resolveOneBranch(input.children, "_comprehension_clauses"),
+  });
+}
+
+export function dictionarySplatFrom(input: T.DictionarySplat.Loose): ReturnType<typeof F.dictionarySplat> | T.DictionarySplat {
+  if (isNodeData(input)) return input;
+  return F.dictionarySplat({
+    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
+  });
+}
+
+export function dictionarySplatPatternFrom(input?: NonNullable<T.DictionarySplatPattern.Config['children']>[number] | T.DictionarySplatPattern) {
+  if (isNodeData(input) && input.$type === 'dictionary_splat_pattern') {
+    const data = input;
+    const child = data.$children ? data.$children[0] : undefined;
+    return F.dictionarySplatPattern(child as Parameters<typeof F.dictionarySplatPattern>[0]);
+  }
+  return F.dictionarySplatPattern(input as Parameters<typeof F.dictionarySplatPattern>[0]);
+}
+
+export function dottedNameFrom(...input: readonly (NonNullable<T.DottedName.Config['children']>[number] | T.DottedName)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'dotted_name') {
+    const data = input[0];
+    return F.dottedName(...((data.$children ?? []) as readonly NonNullable<T.DottedName.Config['children']>[number][]));
+  }
+  return F.dottedName(...(input as readonly NonNullable<T.DottedName.Config['children']>[number][]));
+}
+
+export function elifClauseFrom(input: T.ElifClause.Loose): ReturnType<typeof F.elifClause> | T.ElifClause {
+  if (isNodeData(input)) return input;
+  return F.elifClause({
+    condition: _resolveOne<T.Expression>(input.condition, _K0, _super_expression),
+    consequence: _resolveOneBranch<T.Suite>(input.consequence, "_suite"),
+  });
+}
+
+export function elseClauseFrom(input: T.ElseClause.Loose): ReturnType<typeof F.elseClause> | T.ElseClause {
+  if (isNodeData(input)) return input;
+  return F.elseClause({
+    body: _resolveOneBranch<T.Suite>(input.body, "_suite"),
+  });
+}
+
+export function escapeSequenceFrom(input: string | T.EscapeSequence) {
+  if (typeof input !== 'string') return input;
+  return F.escapeSequence(input as Parameters<typeof F.escapeSequence>[0]);
+}
+
+export function exceptClauseFrom(input: T.ExceptClause.Loose): ReturnType<typeof F.exceptClause> | T.ExceptClause {
+  if (isNodeData(input)) return input;
+  const _ne_value = _resolveMany<T.Expression>(input.value, _K0, _super_expression);
+  _assertNonEmpty(_ne_value, 'except_clause.value');
+  return F.exceptClause({
+    value: _ne_value,
+    alias: _resolveOne<T.Expression>(input.alias, _K0, _super_expression),
+    children: _resolveOneBranch(input.children, "_suite"),
+  });
+}
+
+export function execStatementFrom(input: T.ExecStatement.Loose): ReturnType<typeof F.execStatement> | T.ExecStatement {
+  if (isNodeData(input)) return input;
+  const _ne_inClause = _resolveMany<"in" | T.Expression>(input.inClause, _K0, _super_expression);
+  _assertNonEmpty(_ne_inClause, 'exec_statement.inClause');
+  return F.execStatement({
+    code: _resolveOne<T.String | T.Identifier>(input.code, _super_keyword_identifier, _K7),
+    inClause: _ne_inClause,
+  });
+}
+
+export function expressionListFrom(...input: readonly (NonNullable<T.ExpressionList.Config['children']>[number] | T.ExpressionList)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'expression_list') {
+    const data = input[0];
+    return F.expressionList(...((data.$children ?? []) as readonly NonNullable<T.ExpressionList.Config['children']>[number][]));
+  }
+  return F.expressionList(...(input as readonly NonNullable<T.ExpressionList.Config['children']>[number][]));
 }
 
 export function expressionStatementTupleFrom(...input: readonly (NonNullable<T.ExpressionStatementTuple.Config['children']>[number] | T.ExpressionStatementTuple)[]) {
@@ -438,97 +711,31 @@ export function expressionStatementUFormTupleFrom(input: Omit<ConfigOf<T.Express
   return F.expressionStatementUFormTuple(input);
 }
 
-export function namedExpressionFrom(input: T.NamedExpression.Loose): ReturnType<typeof F.namedExpression> | T.NamedExpression {
+export function false_From(input?: T.False) {
   if (isNodeData(input)) return input;
-  return F.namedExpression({
-    name: _resolveOne<T.NamedExpressionLhs>(input.name, _super_keyword_identifier, _K3),
-    value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
+  return F.false_();
+}
+
+export function finallyClauseFrom(input: T.FinallyClause.Loose): ReturnType<typeof F.finallyClause> | T.FinallyClause {
+  if (isNodeData(input)) return input;
+  return F.finallyClause({
+    block: _resolveOneBranch<T.Suite>(input.block, "_suite"),
   });
 }
 
-export function returnStatementFrom(input?: NonNullable<T.ReturnStatement.Config['children']>[number] | T.ReturnStatement) {
-  if (isNodeData(input) && input.$type === 'return_statement') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.returnStatement(child as Parameters<typeof F.returnStatement>[0]);
-  }
-  return F.returnStatement(input as Parameters<typeof F.returnStatement>[0]);
+export function floatFrom(input: string | T.Float) {
+  if (typeof input !== 'string') return input;
+  return F.float(input as Parameters<typeof F.float>[0]);
 }
 
-export function deleteStatementFrom(input?: NonNullable<T.DeleteStatement.Config['children']>[number] | T.DeleteStatement) {
-  if (isNodeData(input) && input.$type === 'delete_statement') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.deleteStatement(child as Parameters<typeof F.deleteStatement>[0]);
-  }
-  return F.deleteStatement(input as Parameters<typeof F.deleteStatement>[0]);
-}
-
-export function raiseStatementFrom(input?: T.RaiseStatement.Loose): ReturnType<typeof F.raiseStatement> | T.RaiseStatement {
-  if (input !== undefined && isNodeData(input)) return input;
-  return F.raiseStatement({
-    cause: _resolveOne<T.Expression>(input?.cause, _K0, _super_expression),
-    children: _resolveOne(input?.children, _K0, _super_expressions),
-  });
-}
-
-export function passStatementFrom(input?: T.PassStatement) {
+export function forInClauseFrom(input: T.ForInClause.Loose): ReturnType<typeof F.forInClause> | T.ForInClause {
   if (isNodeData(input)) return input;
-  return F.passStatement();
-}
-
-export function breakStatementFrom(input?: T.BreakStatement) {
-  if (isNodeData(input)) return input;
-  return F.breakStatement();
-}
-
-export function continueStatementFrom(input?: T.ContinueStatement) {
-  if (isNodeData(input)) return input;
-  return F.continueStatement();
-}
-
-export function ifStatementFrom(input: T.IfStatement.Loose): ReturnType<typeof F.ifStatement> | T.IfStatement {
-  if (isNodeData(input)) return input;
-  return F.ifStatement({
-    condition: _resolveOne<T.Expression>(input.condition, _K0, _super_expression),
-    consequence: _resolveOneBranch<T.Suite>(input.consequence, "_suite"),
-    alternative: _resolveMany<T.ElifClause | T.ElseClause>(input.alternative, _K0, _K4),
-  });
-}
-
-export function elifClauseFrom(input: T.ElifClause.Loose): ReturnType<typeof F.elifClause> | T.ElifClause {
-  if (isNodeData(input)) return input;
-  return F.elifClause({
-    condition: _resolveOne<T.Expression>(input.condition, _K0, _super_expression),
-    consequence: _resolveOneBranch<T.Suite>(input.consequence, "_suite"),
-  });
-}
-
-export function elseClauseFrom(input: T.ElseClause.Loose): ReturnType<typeof F.elseClause> | T.ElseClause {
-  if (isNodeData(input)) return input;
-  return F.elseClause({
-    body: _resolveOneBranch<T.Suite>(input.body, "_suite"),
-  });
-}
-
-export function matchStatementFrom(input: T.MatchStatement.Loose): ReturnType<typeof F.matchStatement> | T.MatchStatement {
-  if (isNodeData(input)) return input;
-  const _ne_subject = _resolveMany<T.Expression>(input.subject, _K0, _super_expression);
-  _assertNonEmpty(_ne_subject, 'match_statement.subject');
-  return F.matchStatement({
-    subject: _ne_subject,
-    body: _resolveOneBranch<T.MatchBlock>(input.body, "_match_block"),
-  });
-}
-
-export function caseClauseFrom(input: T.CaseClause.Loose): ReturnType<typeof F.caseClause> | T.CaseClause {
-  if (isNodeData(input)) return input;
-  const _ne_children: readonly (T.CasePattern)[] = _resolveManyBranch(input.children, "case_pattern");
-  _assertNonEmpty(_ne_children, 'case_clause.children');
-  return F.caseClause({
-    guard: _resolveOneBranch<T.IfClause>(input.guard, "if_clause"),
-    consequence: _resolveOneBranch<T.Suite>(input.consequence, "_suite"),
-    children: _ne_children,
+  const _ne_right = _resolveMany<T.ExpressionWithinForInClause>(input.right, _K0, _super_expression_within_for_in_clause);
+  _assertNonEmpty(_ne_right, 'for_in_clause.right');
+  return F.forInClause({
+    asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
+    left: _resolveOne<T.LeftHandSide>(input.left, _K0, _super_left_hand_side),
+    right: _ne_right,
   });
 }
 
@@ -543,13 +750,401 @@ export function forStatementFrom(input: T.ForStatement.Loose): ReturnType<typeof
   });
 }
 
-export function whileStatementFrom(input: T.WhileStatement.Loose): ReturnType<typeof F.whileStatement> | T.WhileStatement {
+export function formatSpecifierFrom(...input: readonly (NonNullable<T.FormatSpecifier.Config['children']>[number] | T.FormatSpecifier)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'format_specifier') {
+    const data = input[0];
+    return F.formatSpecifier(...((data.$children ?? []) as readonly NonNullable<T.FormatSpecifier.Config['children']>[number][]));
+  }
+  return F.formatSpecifier(...(input as readonly NonNullable<T.FormatSpecifier.Config['children']>[number][]));
+}
+
+export function functionDefinitionFrom(input: T.FunctionDefinition.Loose): ReturnType<typeof F.functionDefinition> | T.FunctionDefinition {
   if (isNodeData(input)) return input;
-  return F.whileStatement({
-    condition: _resolveOne<T.Expression>(input.condition, _K0, _super_expression),
+  return F.functionDefinition({
+    asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
+    name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
+    typeParameters: _resolveOneBranch<T.TypeParameter>(input.typeParameters, "type_parameter"),
+    parameters: _resolveOneBranch<T.Parameters>(input.parameters, "parameters"),
+    returnType: _resolveOneBranch<T.Type>(input.returnType, "type"),
     body: _resolveOneBranch<T.Suite>(input.body, "_suite"),
-    alternative: _resolveOneBranch<T.ElseClause>(input.alternative, "else_clause"),
   });
+}
+
+export function futureImportStatementFrom(input: T.FutureImportStatement.Loose): ReturnType<typeof F.futureImportStatement> | T.FutureImportStatement {
+  if (isNodeData(input)) return input;
+  const _ne_name = _resolveMany<T.DottedName | T.AliasedImport>(input.name, _K0, _K8);
+  _assertNonEmpty(_ne_name, 'future_import_statement.name');
+  return F.futureImportStatement({
+    name: _ne_name,
+  });
+}
+
+export function generatorExpressionFrom(input: T.GeneratorExpression.Loose): ReturnType<typeof F.generatorExpression> | T.GeneratorExpression {
+  if (isNodeData(input)) return input;
+  return F.generatorExpression({
+    body: _resolveOne<T.Expression>(input.body, _K0, _super_expression),
+    children: _resolveOneBranch(input.children, "_comprehension_clauses"),
+  });
+}
+
+export function genericTypeFrom(input: T.GenericType.Loose): ReturnType<typeof F.genericType> | T.GenericType {
+  if (isNodeData(input)) return input;
+  return F.genericType({
+    identifier: _resolveOneLeaf<T.Identifier>(input.identifier, "identifier"),
+    typeParameter: _resolveOneBranch<T.TypeParameter>(input.typeParameter, "type_parameter"),
+  });
+}
+
+export function globalStatementFrom(...input: readonly (NonNullable<T.GlobalStatement.Config['children']>[number] | T.GlobalStatement)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'global_statement') {
+    const data = input[0];
+    return F.globalStatement(...((data.$children ?? []) as readonly NonNullable<T.GlobalStatement.Config['children']>[number][]));
+  }
+  return F.globalStatement(...(input as readonly NonNullable<T.GlobalStatement.Config['children']>[number][]));
+}
+
+export function identifierFrom(input: string | T.Identifier) {
+  if (typeof input !== 'string') return input;
+  return F.identifier(input as Parameters<typeof F.identifier>[0]);
+}
+
+export function ifClauseFrom(input: T.IfClause.Loose): ReturnType<typeof F.ifClause> | T.IfClause {
+  if (isNodeData(input)) return input;
+  return F.ifClause({
+    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
+  });
+}
+
+export function ifStatementFrom(input: T.IfStatement.Loose): ReturnType<typeof F.ifStatement> | T.IfStatement {
+  if (isNodeData(input)) return input;
+  return F.ifStatement({
+    condition: _resolveOne<T.Expression>(input.condition, _K0, _super_expression),
+    consequence: _resolveOneBranch<T.Suite>(input.consequence, "_suite"),
+    alternative: _resolveMany<T.ElifClause | T.ElseClause>(input.alternative, _K0, _K9),
+  });
+}
+
+export function importFromStatementFrom(input: T.ImportFromStatement.Loose): ReturnType<typeof F.importFromStatement> | T.ImportFromStatement {
+  if (isNodeData(input)) return input;
+  return F.importFromStatement({
+    moduleName: _resolveOne<T.RelativeImport | T.DottedName>(input.moduleName, _K0, _K10),
+    children: _resolveOne(input.children, _K0, _K0),
+  });
+}
+
+export function importPrefixFrom(input: string | T.ImportPrefix) {
+  if (typeof input !== 'string') return input;
+  return F.importPrefix(input as Parameters<typeof F.importPrefix>[0]);
+}
+
+export function importStatementFrom(input: T.ImportStatement.Loose): ReturnType<typeof F.importStatement> | T.ImportStatement {
+  if (isNodeData(input)) return input;
+  const _ne_name = _resolveMany<T.DottedName | T.AliasedImport>(input.name, _K0, _K8);
+  _assertNonEmpty(_ne_name, 'import_statement.name');
+  return F.importStatement({
+    name: _ne_name,
+  });
+}
+
+export function integerFrom(input: string | T.Integer) {
+  if (typeof input !== 'string') return input;
+  return F.integer(input as Parameters<typeof F.integer>[0]);
+}
+
+export function interpolationFrom(input: T.Interpolation.Loose): ReturnType<typeof F.interpolation> | T.Interpolation {
+  if (isNodeData(input)) return input;
+  return F.interpolation({
+    expression: _resolveOne<T.FExpression>(input.expression, _K0, _super_f_expression),
+    typeConversion: _resolveOneLeaf<T.TypeConversion>(input.typeConversion, "type_conversion"),
+    formatSpecifier: _resolveOneBranch<T.FormatSpecifier>(input.formatSpecifier, "format_specifier"),
+  });
+}
+
+export function keywordArgumentFrom(input: T.KeywordArgument.Loose): ReturnType<typeof F.keywordArgument> | T.KeywordArgument {
+  if (isNodeData(input)) return input;
+  return F.keywordArgument({
+    name: _resolveOneLeaf<T.Identifier | T.KeywordIdentifier>(input.name, "identifier"),
+    value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
+  });
+}
+
+export function keywordPatternFrom(input: T.KeywordPattern.Loose): ReturnType<typeof F.keywordPattern> | T.KeywordPattern {
+  if (isNodeData(input)) return input;
+  return F.keywordPattern({
+    identifier: _resolveOneLeaf<T.Identifier>(input.identifier, "identifier"),
+    simplePattern: _resolveOne<T.SimplePattern>(input.simplePattern, _K11, _K12),
+  });
+}
+
+export function lambdaFrom(input: T.Lambda.Loose): ReturnType<typeof F.lambda> | T.Lambda {
+  if (isNodeData(input)) return input;
+  return F.lambda({
+    parameters: _resolveOneBranch<T.LambdaParameters>(input.parameters, "lambda_parameters"),
+    body: _resolveOne<T.Expression>(input.body, _K0, _super_expression),
+  });
+}
+
+export function lambdaParametersFrom(...input: readonly (NonNullable<T.LambdaParameters.Config['children']>[number] | T.LambdaParameters)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'lambda_parameters') {
+    const data = input[0];
+    return F.lambdaParameters(...((data.$children ?? []) as readonly NonNullable<T.LambdaParameters.Config['children']>[number][]));
+  }
+  return F.lambdaParameters(...(input as readonly NonNullable<T.LambdaParameters.Config['children']>[number][]));
+}
+
+export function lambdaWithinForInClauseFrom(input: T.LambdaWithinForInClause.Loose): ReturnType<typeof F.lambdaWithinForInClause> | T.LambdaWithinForInClause {
+  if (isNodeData(input)) return input;
+  return F.lambdaWithinForInClause({
+    parameters: _resolveOneBranch<T.LambdaParameters>(input.parameters, "lambda_parameters"),
+    body: _resolveOne<T.ExpressionWithinForInClause>(input.body, _K0, _super_expression_within_for_in_clause),
+  });
+}
+
+export function lineContinuationFrom(input: string | T.LineContinuation) {
+  if (typeof input !== 'string') return input;
+  return F.lineContinuation(input as Parameters<typeof F.lineContinuation>[0]);
+}
+
+export function listFrom(...input: readonly (NonNullable<T.List.Config['children']>[number] | T.List)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'list') {
+    const data = input[0];
+    return F.list(...((data.$children ?? []) as readonly NonNullable<T.List.Config['children']>[number][]));
+  }
+  return F.list(...(input as readonly NonNullable<T.List.Config['children']>[number][]));
+}
+
+export function listComprehensionFrom(input: T.ListComprehension.Loose): ReturnType<typeof F.listComprehension> | T.ListComprehension {
+  if (isNodeData(input)) return input;
+  return F.listComprehension({
+    body: _resolveOne<T.Expression>(input.body, _K0, _super_expression),
+    children: _resolveOneBranch(input.children, "_comprehension_clauses"),
+  });
+}
+
+export function listPatternFrom(...input: readonly (NonNullable<T.ListPattern.Config['children']>[number] | T.ListPattern)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'list_pattern') {
+    const data = input[0];
+    return F.listPattern(...((data.$children ?? []) as readonly NonNullable<T.ListPattern.Config['children']>[number][]));
+  }
+  return F.listPattern(...(input as readonly NonNullable<T.ListPattern.Config['children']>[number][]));
+}
+
+export function listSplatFrom(input: T.ListSplat.Loose): ReturnType<typeof F.listSplat> | T.ListSplat {
+  if (isNodeData(input)) return input;
+  return F.listSplat({
+    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
+  });
+}
+
+export function listSplatPatternFrom(input?: NonNullable<T.ListSplatPattern.Config['children']>[number] | T.ListSplatPattern) {
+  if (isNodeData(input) && input.$type === 'list_splat_pattern') {
+    const data = input;
+    const child = data.$children ? data.$children[0] : undefined;
+    return F.listSplatPattern(child as Parameters<typeof F.listSplatPattern>[0]);
+  }
+  return F.listSplatPattern(input as Parameters<typeof F.listSplatPattern>[0]);
+}
+
+export function matchStatementFrom(input: T.MatchStatement.Loose): ReturnType<typeof F.matchStatement> | T.MatchStatement {
+  if (isNodeData(input)) return input;
+  const _ne_subject = _resolveMany<T.Expression>(input.subject, _K0, _super_expression);
+  _assertNonEmpty(_ne_subject, 'match_statement.subject');
+  return F.matchStatement({
+    subject: _ne_subject,
+    body: _resolveOneBranch<T.MatchBlock>(input.body, "_match_block"),
+  });
+}
+
+export function memberTypeFrom(input: T.MemberType.Loose): ReturnType<typeof F.memberType> | T.MemberType {
+  if (isNodeData(input)) return input;
+  return F.memberType({
+    baseType: _resolveOneBranch<T.Type>(input.baseType, "type"),
+    identifier: _resolveOneLeaf<T.Identifier>(input.identifier, "identifier"),
+  });
+}
+
+export function moduleFrom(...input: readonly (NonNullable<T.Module.Config['children']>[number] | T.Module)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'module') {
+    const data = input[0];
+    return F.module(...((data.$children ?? []) as readonly NonNullable<T.Module.Config['children']>[number][]));
+  }
+  return F.module(...(input as readonly NonNullable<T.Module.Config['children']>[number][]));
+}
+
+export function namedExpressionFrom(input: T.NamedExpression.Loose): ReturnType<typeof F.namedExpression> | T.NamedExpression {
+  if (isNodeData(input)) return input;
+  return F.namedExpression({
+    name: _resolveOne<T.NamedExpressionLhs>(input.name, _super_keyword_identifier, _K13),
+    value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
+  });
+}
+
+export function noneFrom(input?: T.None) {
+  if (isNodeData(input)) return input;
+  return F.none();
+}
+
+export function nonlocalStatementFrom(...input: readonly (NonNullable<T.NonlocalStatement.Config['children']>[number] | T.NonlocalStatement)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'nonlocal_statement') {
+    const data = input[0];
+    return F.nonlocalStatement(...((data.$children ?? []) as readonly NonNullable<T.NonlocalStatement.Config['children']>[number][]));
+  }
+  return F.nonlocalStatement(...(input as readonly NonNullable<T.NonlocalStatement.Config['children']>[number][]));
+}
+
+export function notOperatorFrom(input: T.NotOperator.Loose): ReturnType<typeof F.notOperator> | T.NotOperator {
+  if (isNodeData(input)) return input;
+  return F.notOperator({
+    argument: _resolveOne<T.Expression>(input.argument, _K0, _super_expression),
+  });
+}
+
+export function pairFrom(input: T.Pair.Loose): ReturnType<typeof F.pair> | T.Pair {
+  if (isNodeData(input)) return input;
+  return F.pair({
+    key: _resolveOne<T.Expression>(input.key, _K0, _super_expression),
+    value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
+  });
+}
+
+export function parametersFrom(...input: readonly (NonNullable<T.Parameters.Config['children']>[number] | T.Parameters)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'parameters') {
+    const data = input[0];
+    return F.parameters(...((data.$children ?? []) as readonly NonNullable<T.Parameters.Config['children']>[number][]));
+  }
+  return F.parameters(...(input as readonly NonNullable<T.Parameters.Config['children']>[number][]));
+}
+
+export function parenthesizedExpressionFrom(input?: NonNullable<T.ParenthesizedExpression.Config['children']>[number] | T.ParenthesizedExpression) {
+  if (isNodeData(input) && input.$type === 'parenthesized_expression') {
+    const data = input;
+    const child = data.$children ? data.$children[0] : undefined;
+    return F.parenthesizedExpression(child as Parameters<typeof F.parenthesizedExpression>[0]);
+  }
+  return F.parenthesizedExpression(input as Parameters<typeof F.parenthesizedExpression>[0]);
+}
+
+export function parenthesizedListSplatFrom(input?: NonNullable<T.ParenthesizedListSplat.Config['children']>[number] | T.ParenthesizedListSplat) {
+  if (isNodeData(input) && input.$type === 'parenthesized_list_splat') {
+    const data = input;
+    const child = data.$children ? data.$children[0] : undefined;
+    return F.parenthesizedListSplat(child as Parameters<typeof F.parenthesizedListSplat>[0]);
+  }
+  return F.parenthesizedListSplat(input as Parameters<typeof F.parenthesizedListSplat>[0]);
+}
+
+export function passStatementFrom(input?: T.PassStatement) {
+  if (isNodeData(input)) return input;
+  return F.passStatement();
+}
+
+export function patternListFrom(...input: readonly (NonNullable<T.PatternList.Config['children']>[number] | T.PatternList)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'pattern_list') {
+    const data = input[0];
+    return F.patternList(...((data.$children ?? []) as readonly NonNullable<T.PatternList.Config['children']>[number][]));
+  }
+  return F.patternList(...(input as readonly NonNullable<T.PatternList.Config['children']>[number][]));
+}
+
+export function printStatementFrom(input: T.PrintStatement.Loose): ReturnType<typeof F.printStatement> | T.PrintStatement {
+  if (isNodeData(input)) return input;
+  return F.printStatement({
+    argument: _resolveMany<T.Expression>(input.argument, _K0, _super_expression),
+    children: _resolveOneBranch(input.children, "chevron"),
+  });
+}
+
+export function raiseStatementFrom(input?: T.RaiseStatement.Loose): ReturnType<typeof F.raiseStatement> | T.RaiseStatement {
+  if (input !== undefined && isNodeData(input)) return input;
+  return F.raiseStatement({
+    cause: _resolveOne<T.Expression>(input?.cause, _K0, _super_expression),
+    children: _resolveOne(input?.children, _K0, _super_expressions),
+  });
+}
+
+export function relativeImportFrom(input: T.RelativeImport.Loose): ReturnType<typeof F.relativeImport> | T.RelativeImport {
+  if (isNodeData(input)) return input;
+  return F.relativeImport({
+    importPrefix: _resolveOneLeaf<T.ImportPrefix>(input.importPrefix, "import_prefix"),
+    dottedName: _resolveOneBranch<T.DottedName>(input.dottedName, "dotted_name"),
+  });
+}
+
+export function returnStatementFrom(input?: NonNullable<T.ReturnStatement.Config['children']>[number] | T.ReturnStatement) {
+  if (isNodeData(input) && input.$type === 'return_statement') {
+    const data = input;
+    const child = data.$children ? data.$children[0] : undefined;
+    return F.returnStatement(child as Parameters<typeof F.returnStatement>[0]);
+  }
+  return F.returnStatement(input as Parameters<typeof F.returnStatement>[0]);
+}
+
+export function setFrom(...input: readonly (NonNullable<T.Set.Config['children']>[number] | T.Set)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'set') {
+    const data = input[0];
+    return F.set(...((data.$children ?? []) as readonly NonNullable<T.Set.Config['children']>[number][]));
+  }
+  return F.set(...(input as readonly NonNullable<T.Set.Config['children']>[number][]));
+}
+
+export function setComprehensionFrom(input: T.SetComprehension.Loose): ReturnType<typeof F.setComprehension> | T.SetComprehension {
+  if (isNodeData(input)) return input;
+  return F.setComprehension({
+    body: _resolveOne<T.Expression>(input.body, _K0, _super_expression),
+    children: _resolveOneBranch(input.children, "_comprehension_clauses"),
+  });
+}
+
+export function sliceFrom(input?: T.Slice.Loose): ReturnType<typeof F.slice> | T.Slice {
+  if (input !== undefined && isNodeData(input)) return input;
+  return F.slice({
+    start: _resolveOne<T.Expression>(input?.start, _K0, _super_expression),
+    stop: _resolveOne<T.Expression>(input?.stop, _K0, _super_expression),
+    step: _resolveOne<T.Expression>(input?.step, _K0, _super_expression),
+  });
+}
+
+export function splatPatternFrom(input: T.SplatPattern.Loose): ReturnType<typeof F.splatPattern> | T.SplatPattern {
+  if (isNodeData(input)) return input;
+  return F.splatPattern({
+    identifier: _resolveOne<"*" | "**">(input.identifier, _K0, _K0),
+    children: _resolveOneLeaf(input.children, "identifier"),
+  });
+}
+
+export function splatTypeFrom(input: T.SplatType.Loose): ReturnType<typeof F.splatType> | T.SplatType {
+  if (isNodeData(input)) return input;
+  return F.splatType({
+    identifier: _resolveOneLeaf<"*" | "**" | T.Identifier>(input.identifier, "identifier"),
+  });
+}
+
+export function stringFrom(input: string | T.String) {
+  if (typeof input !== 'string') return input;
+  return F.string(input as Parameters<typeof F.string>[0]);
+}
+
+export function stringContentFrom(...input: readonly (NonNullable<T.StringContent.Config['children']>[number] | T.StringContent)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'string_content') {
+    const data = input[0];
+    return F.stringContent(...((data.$children ?? []) as readonly NonNullable<T.StringContent.Config['children']>[number][]));
+  }
+  return F.stringContent(...(input as readonly NonNullable<T.StringContent.Config['children']>[number][]));
+}
+
+export function subscriptFrom(input: T.Subscript.Loose): ReturnType<typeof F.subscript> | T.Subscript {
+  if (isNodeData(input)) return input;
+  const _ne_subscript = _resolveMany<T.Expression | T.Slice>(input.subscript, _K0, _K14);
+  _assertNonEmpty(_ne_subscript, 'subscript.subscript');
+  return F.subscript({
+    value: _resolveOne<T.PrimaryExpression>(input.value, _K1, _K2),
+    subscript: _ne_subscript,
+  });
+}
+
+export function true_From(input?: T.True) {
+  if (isNodeData(input)) return input;
+  return F.true_();
 }
 
 export function tryStatementFrom(input: T.TryStatement.Loose): ReturnType<typeof F.tryStatement> | T.TryStatement {
@@ -562,30 +1157,99 @@ export function tryStatementFrom(input: T.TryStatement.Loose): ReturnType<typeof
   });
 }
 
-export function exceptClauseFrom(input: T.ExceptClause.Loose): ReturnType<typeof F.exceptClause> | T.ExceptClause {
+export function tupleFrom(...input: readonly (NonNullable<T.Tuple.Config['children']>[number] | T.Tuple)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'tuple') {
+    const data = input[0];
+    return F.tuple(...((data.$children ?? []) as readonly NonNullable<T.Tuple.Config['children']>[number][]));
+  }
+  return F.tuple(...(input as readonly NonNullable<T.Tuple.Config['children']>[number][]));
+}
+
+export function tuplePatternFrom(...input: readonly (NonNullable<T.TuplePattern.Config['children']>[number] | T.TuplePattern)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'tuple_pattern') {
+    const data = input[0];
+    return F.tuplePattern(...((data.$children ?? []) as readonly NonNullable<T.TuplePattern.Config['children']>[number][]));
+  }
+  return F.tuplePattern(...(input as readonly NonNullable<T.TuplePattern.Config['children']>[number][]));
+}
+
+export function typeFrom(input?: NonNullable<T.Type.Config['children']>[number] | T.Type) {
+  if (isNodeData(input) && input.$type === 'type') {
+    const data = input;
+    const child = data.$children ? data.$children[0] : undefined;
+    return F.type(child as Parameters<typeof F.type>[0]);
+  }
+  return F.type(input as Parameters<typeof F.type>[0]);
+}
+
+export function typeAliasStatementFrom(input: T.TypeAliasStatement.Loose): ReturnType<typeof F.typeAliasStatement> | T.TypeAliasStatement {
   if (isNodeData(input)) return input;
-  const _ne_value = _resolveMany<T.Expression>(input.value, _K0, _super_expression);
-  _assertNonEmpty(_ne_value, 'except_clause.value');
-  return F.exceptClause({
-    value: _ne_value,
-    alias: _resolveOne<T.Expression>(input.alias, _K0, _super_expression),
-    children: _resolveOneBranch(input.children, "_suite"),
+  return F.typeAliasStatement({
+    left: _resolveOneBranch<T.Type>(input.left, "type"),
+    right: _resolveOneBranch<T.Type>(input.right, "type"),
   });
 }
 
-export function finallyClauseFrom(input: T.FinallyClause.Loose): ReturnType<typeof F.finallyClause> | T.FinallyClause {
+export function typeConversionFrom(input: string | T.TypeConversion) {
+  if (typeof input !== 'string') return input;
+  return F.typeConversion(input as Parameters<typeof F.typeConversion>[0]);
+}
+
+export function typeParameterFrom(...input: readonly (NonNullable<T.TypeParameter.Config['children']>[number] | T.TypeParameter)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'type_parameter') {
+    const data = input[0];
+    return F.typeParameter(...((data.$children ?? []) as readonly NonNullable<T.TypeParameter.Config['children']>[number][]));
+  }
+  return F.typeParameter(...(input as readonly NonNullable<T.TypeParameter.Config['children']>[number][]));
+}
+
+export function typedDefaultParameterFrom(input: T.TypedDefaultParameter.Loose): ReturnType<typeof F.typedDefaultParameter> | T.TypedDefaultParameter {
   if (isNodeData(input)) return input;
-  return F.finallyClause({
-    block: _resolveOneBranch<T.Suite>(input.block, "_suite"),
+  return F.typedDefaultParameter({
+    name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
+    type: _resolveOneBranch<T.Type>(input.type, "type"),
+    value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
   });
 }
 
-export function withStatementFrom(input: T.WithStatement.Loose): ReturnType<typeof F.withStatement> | T.WithStatement {
+export function typedParameterFrom(input: T.TypedParameter.Loose): ReturnType<typeof F.typedParameter> | T.TypedParameter {
   if (isNodeData(input)) return input;
-  return F.withStatement({
-    asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
-    withClause: _resolveOneBranch<T.WithClause>(input.withClause, "with_clause"),
+  return F.typedParameter({
+    type: _resolveOneBranch<T.Type>(input.type, "type"),
+    children: _resolveOne(input.children, _super_keyword_identifier, _K15),
+  });
+}
+
+export function unaryOperatorFrom(input: T.UnaryOperator.Loose): ReturnType<typeof F.unaryOperator> | T.UnaryOperator {
+  if (isNodeData(input)) return input;
+  return F.unaryOperator({
+    operator: _resolveOne<"+" | "-" | "~">(input.operator, _K0, _K0),
+    argument: _resolveOne<T.PrimaryExpression>(input.argument, _K1, _K2),
+  });
+}
+
+export function unionPatternFrom(...input: readonly (NonNullable<T.UnionPattern.Config['children']>[number] | T.UnionPattern)[]) {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'union_pattern') {
+    const data = input[0];
+    return F.unionPattern(...((data.$children ?? []) as readonly NonNullable<T.UnionPattern.Config['children']>[number][]));
+  }
+  return F.unionPattern(...(input as readonly NonNullable<T.UnionPattern.Config['children']>[number][]));
+}
+
+export function unionTypeFrom(input: T.UnionType.Loose): ReturnType<typeof F.unionType> | T.UnionType {
+  if (isNodeData(input)) return input;
+  return F.unionType({
+    left: _resolveOneBranch<T.Type>(input.left, "type"),
+    right: _resolveOneBranch<T.Type>(input.right, "type"),
+  });
+}
+
+export function whileStatementFrom(input: T.WhileStatement.Loose): ReturnType<typeof F.whileStatement> | T.WhileStatement {
+  if (isNodeData(input)) return input;
+  return F.whileStatement({
+    condition: _resolveOne<T.Expression>(input.condition, _K0, _super_expression),
     body: _resolveOneBranch<T.Suite>(input.body, "_suite"),
+    alternative: _resolveOneBranch<T.ElseClause>(input.alternative, "else_clause"),
   });
 }
 
@@ -625,375 +1289,13 @@ export function withItemFrom(input: T.WithItem.Loose): ReturnType<typeof F.withI
   });
 }
 
-export function functionDefinitionFrom(input: T.FunctionDefinition.Loose): ReturnType<typeof F.functionDefinition> | T.FunctionDefinition {
+export function withStatementFrom(input: T.WithStatement.Loose): ReturnType<typeof F.withStatement> | T.WithStatement {
   if (isNodeData(input)) return input;
-  return F.functionDefinition({
+  return F.withStatement({
     asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
-    name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
-    typeParameters: _resolveOneBranch<T.TypeParameter>(input.typeParameters, "type_parameter"),
-    parameters: _resolveOneBranch<T.Parameters>(input.parameters, "parameters"),
-    returnType: _resolveOneBranch<T.Type>(input.returnType, "type"),
+    withClause: _resolveOneBranch<T.WithClause>(input.withClause, "with_clause"),
     body: _resolveOneBranch<T.Suite>(input.body, "_suite"),
   });
-}
-
-export function parametersFrom(...input: readonly (NonNullable<T.Parameters.Config['children']>[number] | T.Parameters)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'parameters') {
-    const data = input[0];
-    return F.parameters(...((data.$children ?? []) as readonly NonNullable<T.Parameters.Config['children']>[number][]));
-  }
-  return F.parameters(...(input as readonly NonNullable<T.Parameters.Config['children']>[number][]));
-}
-
-export function lambdaParametersFrom(...input: readonly (NonNullable<T.LambdaParameters.Config['children']>[number] | T.LambdaParameters)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'lambda_parameters') {
-    const data = input[0];
-    return F.lambdaParameters(...((data.$children ?? []) as readonly NonNullable<T.LambdaParameters.Config['children']>[number][]));
-  }
-  return F.lambdaParameters(...(input as readonly NonNullable<T.LambdaParameters.Config['children']>[number][]));
-}
-
-export function listSplatFrom(input: T.ListSplat.Loose): ReturnType<typeof F.listSplat> | T.ListSplat {
-  if (isNodeData(input)) return input;
-  return F.listSplat({
-    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
-  });
-}
-
-export function dictionarySplatFrom(input: T.DictionarySplat.Loose): ReturnType<typeof F.dictionarySplat> | T.DictionarySplat {
-  if (isNodeData(input)) return input;
-  return F.dictionarySplat({
-    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
-  });
-}
-
-export function globalStatementFrom(...input: readonly (NonNullable<T.GlobalStatement.Config['children']>[number] | T.GlobalStatement)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'global_statement') {
-    const data = input[0];
-    return F.globalStatement(...((data.$children ?? []) as readonly NonNullable<T.GlobalStatement.Config['children']>[number][]));
-  }
-  return F.globalStatement(...(input as readonly NonNullable<T.GlobalStatement.Config['children']>[number][]));
-}
-
-export function nonlocalStatementFrom(...input: readonly (NonNullable<T.NonlocalStatement.Config['children']>[number] | T.NonlocalStatement)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'nonlocal_statement') {
-    const data = input[0];
-    return F.nonlocalStatement(...((data.$children ?? []) as readonly NonNullable<T.NonlocalStatement.Config['children']>[number][]));
-  }
-  return F.nonlocalStatement(...(input as readonly NonNullable<T.NonlocalStatement.Config['children']>[number][]));
-}
-
-export function execStatementFrom(input: T.ExecStatement.Loose): ReturnType<typeof F.execStatement> | T.ExecStatement {
-  if (isNodeData(input)) return input;
-  const _ne_inClause = _resolveMany<"in" | T.Expression>(input.inClause, _K0, _super_expression);
-  _assertNonEmpty(_ne_inClause, 'exec_statement.inClause');
-  return F.execStatement({
-    code: _resolveOne<T.String | T.Identifier>(input.code, _super_keyword_identifier, _K5),
-    inClause: _ne_inClause,
-  });
-}
-
-export function typeAliasStatementFrom(input: T.TypeAliasStatement.Loose): ReturnType<typeof F.typeAliasStatement> | T.TypeAliasStatement {
-  if (isNodeData(input)) return input;
-  return F.typeAliasStatement({
-    left: _resolveOneBranch<T.Type>(input.left, "type"),
-    right: _resolveOneBranch<T.Type>(input.right, "type"),
-  });
-}
-
-export function classDefinitionFrom(input: T.ClassDefinition.Loose): ReturnType<typeof F.classDefinition> | T.ClassDefinition {
-  if (isNodeData(input)) return input;
-  return F.classDefinition({
-    name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
-    typeParameters: _resolveOneBranch<T.TypeParameter>(input.typeParameters, "type_parameter"),
-    superclasses: _resolveOneBranch<T.ArgumentList>(input.superclasses, "argument_list"),
-    body: _resolveOneBranch<T.Suite>(input.body, "_suite"),
-  });
-}
-
-export function typeParameterFrom(...input: readonly (NonNullable<T.TypeParameter.Config['children']>[number] | T.TypeParameter)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'type_parameter') {
-    const data = input[0];
-    return F.typeParameter(...((data.$children ?? []) as readonly NonNullable<T.TypeParameter.Config['children']>[number][]));
-  }
-  return F.typeParameter(...(input as readonly NonNullable<T.TypeParameter.Config['children']>[number][]));
-}
-
-export function parenthesizedListSplatFrom(input?: NonNullable<T.ParenthesizedListSplat.Config['children']>[number] | T.ParenthesizedListSplat) {
-  if (isNodeData(input) && input.$type === 'parenthesized_list_splat') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.parenthesizedListSplat(child as Parameters<typeof F.parenthesizedListSplat>[0]);
-  }
-  return F.parenthesizedListSplat(input as Parameters<typeof F.parenthesizedListSplat>[0]);
-}
-
-export function argumentListFrom(...input: readonly (NonNullable<T.ArgumentList.Config['children']>[number] | T.ArgumentList)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'argument_list') {
-    const data = input[0];
-    return F.argumentList(...((data.$children ?? []) as readonly NonNullable<T.ArgumentList.Config['children']>[number][]));
-  }
-  return F.argumentList(...(input as readonly NonNullable<T.ArgumentList.Config['children']>[number][]));
-}
-
-export function decoratedDefinitionFrom(input: T.DecoratedDefinition.Loose): ReturnType<typeof F.decoratedDefinition> | T.DecoratedDefinition {
-  if (isNodeData(input)) return input;
-  const _ne_children: readonly (T.Decorator)[] = _resolveManyBranch(input.children, "decorator");
-  _assertNonEmpty(_ne_children, 'decorated_definition.children');
-  return F.decoratedDefinition({
-    definition: _resolveOne<T.ClassDefinition | T.FunctionDefinition>(input.definition, _K0, _K6),
-    children: _ne_children,
-  });
-}
-
-export function decoratorFrom(input: T.Decorator.Loose): ReturnType<typeof F.decorator> | T.Decorator {
-  if (isNodeData(input)) return input;
-  return F.decorator({
-    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
-    newline: _resolveOne<string>(input.newline, _K0, _K0),
-  });
-}
-
-export function blockFrom(...input: readonly (NonNullable<T.Block.Config['children']>[number] | T.Block)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'block') {
-    const data = input[0];
-    return F.block(...((data.$children ?? []) as readonly NonNullable<T.Block.Config['children']>[number][]));
-  }
-  return F.block(...(input as readonly NonNullable<T.Block.Config['children']>[number][]));
-}
-
-export function expressionListFrom(...input: readonly (NonNullable<T.ExpressionList.Config['children']>[number] | T.ExpressionList)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'expression_list') {
-    const data = input[0];
-    return F.expressionList(...((data.$children ?? []) as readonly NonNullable<T.ExpressionList.Config['children']>[number][]));
-  }
-  return F.expressionList(...(input as readonly NonNullable<T.ExpressionList.Config['children']>[number][]));
-}
-
-export function dottedNameFrom(...input: readonly (NonNullable<T.DottedName.Config['children']>[number] | T.DottedName)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'dotted_name') {
-    const data = input[0];
-    return F.dottedName(...((data.$children ?? []) as readonly NonNullable<T.DottedName.Config['children']>[number][]));
-  }
-  return F.dottedName(...(input as readonly NonNullable<T.DottedName.Config['children']>[number][]));
-}
-
-export function casePatternFrom(input?: NonNullable<T.CasePattern.Config['children']>[number] | T.CasePattern) {
-  if (isNodeData(input) && input.$type === 'case_pattern') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.casePattern(child as Parameters<typeof F.casePattern>[0]);
-  }
-  return F.casePattern(input as Parameters<typeof F.casePattern>[0]);
-}
-
-export function unionPatternFrom(...input: readonly (NonNullable<T.UnionPattern.Config['children']>[number] | T.UnionPattern)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'union_pattern') {
-    const data = input[0];
-    return F.unionPattern(...((data.$children ?? []) as readonly NonNullable<T.UnionPattern.Config['children']>[number][]));
-  }
-  return F.unionPattern(...(input as readonly NonNullable<T.UnionPattern.Config['children']>[number][]));
-}
-
-export function dictPatternFrom(...input: readonly (NonNullable<T.DictPattern.Config['children']>[number] | T.DictPattern)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'dict_pattern') {
-    const data = input[0];
-    return F.dictPattern(...((data.$children ?? []) as readonly NonNullable<T.DictPattern.Config['children']>[number][]));
-  }
-  return F.dictPattern(...(input as readonly NonNullable<T.DictPattern.Config['children']>[number][]));
-}
-
-export function keywordPatternFrom(input: T.KeywordPattern.Loose): ReturnType<typeof F.keywordPattern> | T.KeywordPattern {
-  if (isNodeData(input)) return input;
-  return F.keywordPattern({
-    identifier: _resolveOneLeaf<T.Identifier>(input.identifier, "identifier"),
-    simplePattern: _resolveOne<T.SimplePattern>(input.simplePattern, _K7, _K8),
-  });
-}
-
-export function splatPatternFrom(input: T.SplatPattern.Loose): ReturnType<typeof F.splatPattern> | T.SplatPattern {
-  if (isNodeData(input)) return input;
-  return F.splatPattern({
-    identifier: _resolveOne<"*" | "**">(input.identifier, _K0, _K0),
-    children: _resolveOneLeaf(input.children, "identifier"),
-  });
-}
-
-export function classPatternFrom(input: T.ClassPattern.Loose): ReturnType<typeof F.classPattern> | T.ClassPattern {
-  if (isNodeData(input)) return input;
-  return F.classPattern({
-    dottedName: _resolveOneBranch<T.DottedName>(input.dottedName, "dotted_name"),
-    arguments: _resolveManyBranch<T.CasePattern>(input.arguments, "case_pattern"),
-  });
-}
-
-export function complexPatternFrom(input: T.ComplexPattern.Loose): ReturnType<typeof F.complexPattern> | T.ComplexPattern {
-  if (isNodeData(input)) return input;
-  return F.complexPattern({
-    real: _resolveBooleanKeyword(input.real),
-    imaginary: _resolveOne<T.Integer | T.Float>(input.imaginary, _K9, _K0),
-    children: _resolveOne(input.children, _K9, _K0),
-  });
-}
-
-export function tuplePatternFrom(...input: readonly (NonNullable<T.TuplePattern.Config['children']>[number] | T.TuplePattern)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'tuple_pattern') {
-    const data = input[0];
-    return F.tuplePattern(...((data.$children ?? []) as readonly NonNullable<T.TuplePattern.Config['children']>[number][]));
-  }
-  return F.tuplePattern(...(input as readonly NonNullable<T.TuplePattern.Config['children']>[number][]));
-}
-
-export function listPatternFrom(...input: readonly (NonNullable<T.ListPattern.Config['children']>[number] | T.ListPattern)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'list_pattern') {
-    const data = input[0];
-    return F.listPattern(...((data.$children ?? []) as readonly NonNullable<T.ListPattern.Config['children']>[number][]));
-  }
-  return F.listPattern(...(input as readonly NonNullable<T.ListPattern.Config['children']>[number][]));
-}
-
-export function defaultParameterFrom(input: T.DefaultParameter.Loose): ReturnType<typeof F.defaultParameter> | T.DefaultParameter {
-  if (isNodeData(input)) return input;
-  return F.defaultParameter({
-    name: _resolveOne<T.Identifier | T.TuplePattern>(input.name, _super_keyword_identifier, _K10),
-    value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
-  });
-}
-
-export function typedDefaultParameterFrom(input: T.TypedDefaultParameter.Loose): ReturnType<typeof F.typedDefaultParameter> | T.TypedDefaultParameter {
-  if (isNodeData(input)) return input;
-  return F.typedDefaultParameter({
-    name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
-    type: _resolveOneBranch<T.Type>(input.type, "type"),
-    value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
-  });
-}
-
-export function listSplatPatternFrom(input?: NonNullable<T.ListSplatPattern.Config['children']>[number] | T.ListSplatPattern) {
-  if (isNodeData(input) && input.$type === 'list_splat_pattern') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.listSplatPattern(child as Parameters<typeof F.listSplatPattern>[0]);
-  }
-  return F.listSplatPattern(input as Parameters<typeof F.listSplatPattern>[0]);
-}
-
-export function dictionarySplatPatternFrom(input?: NonNullable<T.DictionarySplatPattern.Config['children']>[number] | T.DictionarySplatPattern) {
-  if (isNodeData(input) && input.$type === 'dictionary_splat_pattern') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.dictionarySplatPattern(child as Parameters<typeof F.dictionarySplatPattern>[0]);
-  }
-  return F.dictionarySplatPattern(input as Parameters<typeof F.dictionarySplatPattern>[0]);
-}
-
-export function asPatternFrom(input: T.AsPattern.Loose): ReturnType<typeof F.asPattern> | T.AsPattern {
-  if (isNodeData(input)) return input;
-  return F.asPattern({
-    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
-    alias: _resolveOneBranch<T.AsPatternTarget>(input.alias, "_as_pattern_target"),
-  });
-}
-
-export function notOperatorFrom(input: T.NotOperator.Loose): ReturnType<typeof F.notOperator> | T.NotOperator {
-  if (isNodeData(input)) return input;
-  return F.notOperator({
-    argument: _resolveOne<T.Expression>(input.argument, _K0, _super_expression),
-  });
-}
-
-export function booleanOperatorFrom(input: T.BooleanOperator.Loose): ReturnType<typeof F.booleanOperator> | T.BooleanOperator {
-  if (isNodeData(input)) return input;
-  return F.booleanOperator({
-    left: _resolveOne<T.Expression>(input.left, _K0, _super_expression),
-    operator: _resolveOne<"and" | "or">(input.operator, _K0, _K0),
-    right: _resolveOne<T.Expression>(input.right, _K0, _super_expression),
-  });
-}
-
-export function binaryOperatorFrom(input: T.BinaryOperator.Loose): ReturnType<typeof F.binaryOperator> | T.BinaryOperator {
-  if (isNodeData(input)) return input;
-  return F.binaryOperator({
-    left: _resolveOne<T.PrimaryExpression>(input.left, _K11, _K12),
-    operator: _resolveOne<"+" | "-" | "*" | "@" | "/" | "%" | "//" | "**" | "|" | "&" | "^" | "<<" | ">>">(input.operator, _K0, _K0),
-    right: _resolveOne<T.PrimaryExpression>(input.right, _K11, _K12),
-  });
-}
-
-export function unaryOperatorFrom(input: T.UnaryOperator.Loose): ReturnType<typeof F.unaryOperator> | T.UnaryOperator {
-  if (isNodeData(input)) return input;
-  return F.unaryOperator({
-    operator: _resolveOne<"+" | "-" | "~">(input.operator, _K0, _K0),
-    argument: _resolveOne<T.PrimaryExpression>(input.argument, _K11, _K12),
-  });
-}
-
-export function comparisonOperatorFrom(input: T.ComparisonOperator.Loose): ReturnType<typeof F.comparisonOperator> | T.ComparisonOperator {
-  if (isNodeData(input)) return input;
-  return F.comparisonOperator({
-    left: _resolveOne<T.PrimaryExpression>(input.left, _K11, _K12),
-    operators: _resolveBitflag(input.operators),
-  });
-}
-
-export function lambdaFrom(input: T.Lambda.Loose): ReturnType<typeof F.lambda> | T.Lambda {
-  if (isNodeData(input)) return input;
-  return F.lambda({
-    parameters: _resolveOneBranch<T.LambdaParameters>(input.parameters, "lambda_parameters"),
-    body: _resolveOne<T.Expression>(input.body, _K0, _super_expression),
-  });
-}
-
-export function lambdaWithinForInClauseFrom(input: T.LambdaWithinForInClause.Loose): ReturnType<typeof F.lambdaWithinForInClause> | T.LambdaWithinForInClause {
-  if (isNodeData(input)) return input;
-  return F.lambdaWithinForInClause({
-    parameters: _resolveOneBranch<T.LambdaParameters>(input.parameters, "lambda_parameters"),
-    body: _resolveOne<T.ExpressionWithinForInClause>(input.body, _K0, _super_expression_within_for_in_clause),
-  });
-}
-
-export function assignmentFrom(input?: T.Assignment.Loose): ReturnType<typeof F.assignment> | T.Assignment {
-  if (input !== undefined && isNodeData(input)) return input;
-  return F.assignment(input as Parameters<typeof F.assignment>[0]);
-}
-
-export function assignmentUFormEqFrom(input: Omit<ConfigOf<T.AssignmentUFormEq>, '$variant'>) {
-  return F.assignmentUFormEq({
-    left: _resolveOne<T.LeftHandSide>(input.left, _K0, _super_left_hand_side),
-    right: _resolveOne<T.RightHandSide>(input.right, _K0, _super_right_hand_side),
-  });
-}
-
-export function assignmentUFormTypeFrom(input: Omit<ConfigOf<T.AssignmentUFormType>, '$variant'>) {
-  return F.assignmentUFormType({
-    left: _resolveOne<T.LeftHandSide>(input.left, _K0, _super_left_hand_side),
-    type: _resolveOneBranch<T.Type>(input.type, "type"),
-  });
-}
-
-export function assignmentUFormTypedFrom(input: Omit<ConfigOf<T.AssignmentUFormTyped>, '$variant'>) {
-  return F.assignmentUFormTyped({
-    left: _resolveOne<T.LeftHandSide>(input.left, _K0, _super_left_hand_side),
-    type: _resolveOneBranch<T.Type>(input.type, "type"),
-    right: _resolveOne<T.RightHandSide>(input.right, _K0, _super_right_hand_side),
-  });
-}
-
-export function augmentedAssignmentFrom(input: T.AugmentedAssignment.Loose): ReturnType<typeof F.augmentedAssignment> | T.AugmentedAssignment {
-  if (isNodeData(input)) return input;
-  return F.augmentedAssignment({
-    left: _resolveOne<T.LeftHandSide>(input.left, _K0, _super_left_hand_side),
-    operator: _resolveOne<"+=" | "-=" | "*=" | "/=" | "@=" | "//=" | "%=" | "**=" | ">>=" | "<<=" | "&=" | "^=" | "|=">(input.operator, _K0, _K0),
-    right: _resolveOne<T.RightHandSide>(input.right, _K0, _super_right_hand_side),
-  });
-}
-
-export function patternListFrom(...input: readonly (NonNullable<T.PatternList.Config['children']>[number] | T.PatternList)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'pattern_list') {
-    const data = input[0];
-    return F.patternList(...((data.$children ?? []) as readonly NonNullable<T.PatternList.Config['children']>[number][]));
-  }
-  return F.patternList(...(input as readonly NonNullable<T.PatternList.Config['children']>[number][]));
 }
 
 export function yield_From(input?: NonNullable<T.Yield.Config['children']>[number] | T.Yield) {
@@ -1003,308 +1305,6 @@ export function yield_From(input?: NonNullable<T.Yield.Config['children']>[numbe
     return F.yield_(child as Parameters<typeof F.yield_>[0]);
   }
   return F.yield_(input as Parameters<typeof F.yield_>[0]);
-}
-
-export function attributeFrom(input: T.Attribute.Loose): ReturnType<typeof F.attribute> | T.Attribute {
-  if (isNodeData(input)) return input;
-  return F.attribute({
-    object: _resolveOne<T.PrimaryExpression>(input.object, _K11, _K12),
-    attribute: _resolveOneLeaf<T.Identifier>(input.attribute, "identifier"),
-  });
-}
-
-export function subscriptFrom(input: T.Subscript.Loose): ReturnType<typeof F.subscript> | T.Subscript {
-  if (isNodeData(input)) return input;
-  const _ne_subscript = _resolveMany<T.Expression | T.Slice>(input.subscript, _K0, _K13);
-  _assertNonEmpty(_ne_subscript, 'subscript.subscript');
-  return F.subscript({
-    value: _resolveOne<T.PrimaryExpression>(input.value, _K11, _K12),
-    subscript: _ne_subscript,
-  });
-}
-
-export function sliceFrom(input?: T.Slice.Loose): ReturnType<typeof F.slice> | T.Slice {
-  if (input !== undefined && isNodeData(input)) return input;
-  return F.slice({
-    start: _resolveOne<T.Expression>(input?.start, _K0, _super_expression),
-    stop: _resolveOne<T.Expression>(input?.stop, _K0, _super_expression),
-    step: _resolveOne<T.Expression>(input?.step, _K0, _super_expression),
-  });
-}
-
-export function callFrom(input: T.Call.Loose): ReturnType<typeof F.call> | T.Call {
-  if (isNodeData(input)) return input;
-  return F.call({
-    function: _resolveOne<T.PrimaryExpression>(input.function, _K11, _K12),
-    arguments: _resolveOne<T.GeneratorExpression | T.ArgumentList>(input.arguments, _K0, _K14),
-  });
-}
-
-export function typedParameterFrom(input: T.TypedParameter.Loose): ReturnType<typeof F.typedParameter> | T.TypedParameter {
-  if (isNodeData(input)) return input;
-  return F.typedParameter({
-    type: _resolveOneBranch<T.Type>(input.type, "type"),
-    children: _resolveOne(input.children, _super_keyword_identifier, _K15),
-  });
-}
-
-export function typeFrom(input?: NonNullable<T.Type.Config['children']>[number] | T.Type) {
-  if (isNodeData(input) && input.$type === 'type') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.type(child as Parameters<typeof F.type>[0]);
-  }
-  return F.type(input as Parameters<typeof F.type>[0]);
-}
-
-export function splatTypeFrom(input: T.SplatType.Loose): ReturnType<typeof F.splatType> | T.SplatType {
-  if (isNodeData(input)) return input;
-  return F.splatType({
-    identifier: _resolveOneLeaf<"*" | "**" | T.Identifier>(input.identifier, "identifier"),
-  });
-}
-
-export function genericTypeFrom(input: T.GenericType.Loose): ReturnType<typeof F.genericType> | T.GenericType {
-  if (isNodeData(input)) return input;
-  return F.genericType({
-    identifier: _resolveOneLeaf<T.Identifier>(input.identifier, "identifier"),
-    typeParameter: _resolveOneBranch<T.TypeParameter>(input.typeParameter, "type_parameter"),
-  });
-}
-
-export function unionTypeFrom(input: T.UnionType.Loose): ReturnType<typeof F.unionType> | T.UnionType {
-  if (isNodeData(input)) return input;
-  return F.unionType({
-    left: _resolveOneBranch<T.Type>(input.left, "type"),
-    right: _resolveOneBranch<T.Type>(input.right, "type"),
-  });
-}
-
-export function constrainedTypeFrom(input: T.ConstrainedType.Loose): ReturnType<typeof F.constrainedType> | T.ConstrainedType {
-  if (isNodeData(input)) return input;
-  return F.constrainedType({
-    baseType: _resolveOneBranch<T.Type>(input.baseType, "type"),
-    constraint: _resolveOneBranch<T.Type>(input.constraint, "type"),
-  });
-}
-
-export function memberTypeFrom(input: T.MemberType.Loose): ReturnType<typeof F.memberType> | T.MemberType {
-  if (isNodeData(input)) return input;
-  return F.memberType({
-    baseType: _resolveOneBranch<T.Type>(input.baseType, "type"),
-    identifier: _resolveOneLeaf<T.Identifier>(input.identifier, "identifier"),
-  });
-}
-
-export function keywordArgumentFrom(input: T.KeywordArgument.Loose): ReturnType<typeof F.keywordArgument> | T.KeywordArgument {
-  if (isNodeData(input)) return input;
-  return F.keywordArgument({
-    name: _resolveOneLeaf<T.Identifier | T.KeywordIdentifier>(input.name, "identifier"),
-    value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
-  });
-}
-
-export function listFrom(...input: readonly (NonNullable<T.List.Config['children']>[number] | T.List)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'list') {
-    const data = input[0];
-    return F.list(...((data.$children ?? []) as readonly NonNullable<T.List.Config['children']>[number][]));
-  }
-  return F.list(...(input as readonly NonNullable<T.List.Config['children']>[number][]));
-}
-
-export function setFrom(...input: readonly (NonNullable<T.Set.Config['children']>[number] | T.Set)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'set') {
-    const data = input[0];
-    return F.set(...((data.$children ?? []) as readonly NonNullable<T.Set.Config['children']>[number][]));
-  }
-  return F.set(...(input as readonly NonNullable<T.Set.Config['children']>[number][]));
-}
-
-export function tupleFrom(...input: readonly (NonNullable<T.Tuple.Config['children']>[number] | T.Tuple)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'tuple') {
-    const data = input[0];
-    return F.tuple(...((data.$children ?? []) as readonly NonNullable<T.Tuple.Config['children']>[number][]));
-  }
-  return F.tuple(...(input as readonly NonNullable<T.Tuple.Config['children']>[number][]));
-}
-
-export function dictionaryFrom(...input: readonly (NonNullable<T.Dictionary.Config['children']>[number] | T.Dictionary)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'dictionary') {
-    const data = input[0];
-    return F.dictionary(...((data.$children ?? []) as readonly NonNullable<T.Dictionary.Config['children']>[number][]));
-  }
-  return F.dictionary(...(input as readonly NonNullable<T.Dictionary.Config['children']>[number][]));
-}
-
-export function pairFrom(input: T.Pair.Loose): ReturnType<typeof F.pair> | T.Pair {
-  if (isNodeData(input)) return input;
-  return F.pair({
-    key: _resolveOne<T.Expression>(input.key, _K0, _super_expression),
-    value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
-  });
-}
-
-export function listComprehensionFrom(input: T.ListComprehension.Loose): ReturnType<typeof F.listComprehension> | T.ListComprehension {
-  if (isNodeData(input)) return input;
-  return F.listComprehension({
-    body: _resolveOne<T.Expression>(input.body, _K0, _super_expression),
-    children: _resolveOneBranch(input.children, "_comprehension_clauses"),
-  });
-}
-
-export function dictionaryComprehensionFrom(input: T.DictionaryComprehension.Loose): ReturnType<typeof F.dictionaryComprehension> | T.DictionaryComprehension {
-  if (isNodeData(input)) return input;
-  return F.dictionaryComprehension({
-    body: _resolveOneBranch<T.Pair>(input.body, "pair"),
-    children: _resolveOneBranch(input.children, "_comprehension_clauses"),
-  });
-}
-
-export function setComprehensionFrom(input: T.SetComprehension.Loose): ReturnType<typeof F.setComprehension> | T.SetComprehension {
-  if (isNodeData(input)) return input;
-  return F.setComprehension({
-    body: _resolveOne<T.Expression>(input.body, _K0, _super_expression),
-    children: _resolveOneBranch(input.children, "_comprehension_clauses"),
-  });
-}
-
-export function generatorExpressionFrom(input: T.GeneratorExpression.Loose): ReturnType<typeof F.generatorExpression> | T.GeneratorExpression {
-  if (isNodeData(input)) return input;
-  return F.generatorExpression({
-    body: _resolveOne<T.Expression>(input.body, _K0, _super_expression),
-    children: _resolveOneBranch(input.children, "_comprehension_clauses"),
-  });
-}
-
-export function parenthesizedExpressionFrom(input?: NonNullable<T.ParenthesizedExpression.Config['children']>[number] | T.ParenthesizedExpression) {
-  if (isNodeData(input) && input.$type === 'parenthesized_expression') {
-    const data = input;
-    const child = data.$children ? data.$children[0] : undefined;
-    return F.parenthesizedExpression(child as Parameters<typeof F.parenthesizedExpression>[0]);
-  }
-  return F.parenthesizedExpression(input as Parameters<typeof F.parenthesizedExpression>[0]);
-}
-
-export function forInClauseFrom(input: T.ForInClause.Loose): ReturnType<typeof F.forInClause> | T.ForInClause {
-  if (isNodeData(input)) return input;
-  const _ne_right = _resolveMany<T.ExpressionWithinForInClause>(input.right, _K0, _super_expression_within_for_in_clause);
-  _assertNonEmpty(_ne_right, 'for_in_clause.right');
-  return F.forInClause({
-    asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
-    left: _resolveOne<T.LeftHandSide>(input.left, _K0, _super_left_hand_side),
-    right: _ne_right,
-  });
-}
-
-export function ifClauseFrom(input: T.IfClause.Loose): ReturnType<typeof F.ifClause> | T.IfClause {
-  if (isNodeData(input)) return input;
-  return F.ifClause({
-    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
-  });
-}
-
-export function conditionalExpressionFrom(input: T.ConditionalExpression.Loose): ReturnType<typeof F.conditionalExpression> | T.ConditionalExpression {
-  if (isNodeData(input)) return input;
-  return F.conditionalExpression({
-    body: _resolveOne<T.Expression>(input.body, _K0, _super_expression),
-    condition: _resolveOne<T.Expression>(input.condition, _K0, _super_expression),
-    alternative: _resolveOne<T.Expression>(input.alternative, _K0, _super_expression),
-  });
-}
-
-export function concatenatedStringFrom(...input: readonly (NonNullable<T.ConcatenatedString.Config['children']>[number] | T.ConcatenatedString)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'concatenated_string') {
-    const data = input[0];
-    return F.concatenatedString(...((data.$children ?? []) as readonly NonNullable<T.ConcatenatedString.Config['children']>[number][]));
-  }
-  return F.concatenatedString(...(input as readonly NonNullable<T.ConcatenatedString.Config['children']>[number][]));
-}
-
-export function stringFrom(input: string | T.String) {
-  if (typeof input !== 'string') return input;
-  return F.string(input as Parameters<typeof F.string>[0]);
-}
-
-export function stringContentFrom(...input: readonly (NonNullable<T.StringContent.Config['children']>[number] | T.StringContent)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'string_content') {
-    const data = input[0];
-    return F.stringContent(...((data.$children ?? []) as readonly NonNullable<T.StringContent.Config['children']>[number][]));
-  }
-  return F.stringContent(...(input as readonly NonNullable<T.StringContent.Config['children']>[number][]));
-}
-
-export function interpolationFrom(input: T.Interpolation.Loose): ReturnType<typeof F.interpolation> | T.Interpolation {
-  if (isNodeData(input)) return input;
-  return F.interpolation({
-    expression: _resolveOne<T.FExpression>(input.expression, _K0, _super_f_expression),
-    typeConversion: _resolveOneLeaf<T.TypeConversion>(input.typeConversion, "type_conversion"),
-    formatSpecifier: _resolveOneBranch<T.FormatSpecifier>(input.formatSpecifier, "format_specifier"),
-  });
-}
-
-export function escapeSequenceFrom(input: string | T.EscapeSequence) {
-  if (typeof input !== 'string') return input;
-  return F.escapeSequence(input as Parameters<typeof F.escapeSequence>[0]);
-}
-
-export function formatSpecifierFrom(...input: readonly (NonNullable<T.FormatSpecifier.Config['children']>[number] | T.FormatSpecifier)[]) {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === 'format_specifier') {
-    const data = input[0];
-    return F.formatSpecifier(...((data.$children ?? []) as readonly NonNullable<T.FormatSpecifier.Config['children']>[number][]));
-  }
-  return F.formatSpecifier(...(input as readonly NonNullable<T.FormatSpecifier.Config['children']>[number][]));
-}
-
-export function typeConversionFrom(input: string | T.TypeConversion) {
-  if (typeof input !== 'string') return input;
-  return F.typeConversion(input as Parameters<typeof F.typeConversion>[0]);
-}
-
-export function integerFrom(input: string | T.Integer) {
-  if (typeof input !== 'string') return input;
-  return F.integer(input as Parameters<typeof F.integer>[0]);
-}
-
-export function floatFrom(input: string | T.Float) {
-  if (typeof input !== 'string') return input;
-  return F.float(input as Parameters<typeof F.float>[0]);
-}
-
-export function identifierFrom(input: string | T.Identifier) {
-  if (typeof input !== 'string') return input;
-  return F.identifier(input as Parameters<typeof F.identifier>[0]);
-}
-
-export function true_From(input?: T.True) {
-  if (isNodeData(input)) return input;
-  return F.true_();
-}
-
-export function false_From(input?: T.False) {
-  if (isNodeData(input)) return input;
-  return F.false_();
-}
-
-export function noneFrom(input?: T.None) {
-  if (isNodeData(input)) return input;
-  return F.none();
-}
-
-export function await_From(input: T.Await.Loose): ReturnType<typeof F.await_> | T.Await {
-  if (isNodeData(input)) return input;
-  return F.await_({
-    primaryExpression: _resolveOne<T.PrimaryExpression>(input.primaryExpression, _K11, _K12),
-  });
-}
-
-export function commentFrom(input: string | T.Comment) {
-  if (typeof input !== 'string') return input;
-  return F.comment(input as Parameters<typeof F.comment>[0]);
-}
-
-export function lineContinuationFrom(input: string | T.LineContinuation) {
-  if (typeof input !== 'string') return input;
-  return F.lineContinuation(input as Parameters<typeof F.lineContinuation>[0]);
 }
 
 export function stringStartFrom(input: string | T.StringStart) {

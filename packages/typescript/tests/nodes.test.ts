@@ -2,24 +2,585 @@
 import { describe, it, expect } from 'vitest';
 import { ir } from '../src/ir.js';
 
-describe('program', () => {
+describe('abstract_class_declaration', () => {
   it('factory produces correct type', () => {
-    const node = ir.program({ statements: [{ $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any] });
-    expect(node.$type).toBe('program');
+    const node = ir.abstractClass({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'class_body', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('abstract_class_declaration');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.program({ statements: [{ $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any] });
+    const node = ir.abstractClass({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'class_body', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('hash_bang_line', () => {
+describe('abstract_method_signature', () => {
   it('factory produces correct type', () => {
-    const node = ir.hashBangLine("#!/bin/sh");
-    expect(node.$type).toBe('hash_bang_line');
+    const node = ir.abstractMethodSignature({ name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('abstract_method_signature');
     expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("#!/bin/sh");
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.abstractMethodSignature({ name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('accessibility_modifier', () => {
+  it('factory accepts valid value', () => {
+    const node = ir.accessibilityModifier('public');
+    expect(node.$type).toBe('accessibility_modifier');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('adding_type_annotation', () => {
+  it('factory produces correct type', () => {
+    const node = ir.addingTypeAnnotation({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('adding_type_annotation');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.addingTypeAnnotation({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('ambient_declaration', () => {
+  it('factory produces correct type', () => {
+    const node = ir.ambient({ declaration: { $type: 'declaration', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('ambient_declaration');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.ambient({ declaration: { $type: 'declaration', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('arguments', () => {
+  it('factory produces correct type', () => {
+    const node = ir.arguments();
+    expect(node.$type).toBe('arguments');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('array', () => {
+  it('factory produces correct type', () => {
+    const node = ir.array();
+    expect(node.$type).toBe('array');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('array_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.arrayPattern();
+    expect(node.$type).toBe('array_pattern');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('array_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.arrayType({ primaryType: { $type: 'primary_type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('array_type');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.arrayType({ primaryType: { $type: 'primary_type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('arrow_function_parameter', () => {
+  it('factory produces correct type', () => {
+    const node = ir.arrowFunctionParameter({ parameter: { $type: '_reserved_identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('arrow_function_parameter');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.arrowFunctionParameter({ parameter: { $type: '_reserved_identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('arrow_function__call_signature', () => {
+  it('factory produces correct type', () => {
+    const node = ir.arrowFunctionCallSignature({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('arrow_function__call_signature');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.arrowFunctionCallSignature({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('arrow_function', () => {
+  it('parameter form produces correct type', () => {
+    const node = ir.arrowFunction.parameter({ body: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, parameter: { $type: '_reserved_identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('arrow_function');
+    expect(node.$source).toBe('factory');
+  });
+  it('_call_signature form produces correct type', () => {
+    const node = ir.arrowFunction._call_signature({ body: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('arrow_function');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('as_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.as({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, typeAnnotation: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('as_expression');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.as({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, typeAnnotation: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('asserts', () => {
+  it('factory produces correct type', () => {
+    const node = ir.asserts({ type: "type_predicate" } as never);
+    expect(node.$type).toBe('asserts');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('asserts_annotation', () => {
+  it('factory produces correct type', () => {
+    const node = ir.assertsAnnotation({ asserts: { $type: 'asserts', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('asserts_annotation');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.assertsAnnotation({ asserts: { $type: 'asserts', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('assignment_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.assignment({ left: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('assignment_expression');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.assignment({ left: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('assignment_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.assignmentPattern({ left: { $type: 'pattern', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('assignment_pattern');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.assignmentPattern({ left: { $type: 'pattern', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('augmented_assignment_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.augmentedAssignment({ left: { $type: 'member_expression', $text: 'test', $source: 'factory', $named: true } as any, operator: 'test' as any, right: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('augmented_assignment_expression');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.augmentedAssignment({ left: { $type: 'member_expression', $text: 'test', $source: 'factory', $named: true } as any, operator: 'test' as any, right: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('await_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.awaitExpression({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('await_expression');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.awaitExpression({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('binary_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.binary({ left: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, operator: 'test' as any, right: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('binary_expression');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.binary({ left: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, operator: 'test' as any, right: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('break_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.breakStatement({ semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('break_statement');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.breakStatement({ semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('call_expression', () => {
+  it('call form produces correct type', () => {
+    const node = ir.call.call({ function: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, arguments: { $type: 'arguments', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('call_expression');
+    expect(node.$source).toBe('factory');
+  });
+  it('template_call form produces correct type', () => {
+    const node = ir.call.template_call({ function: { $type: 'primary_expression', $text: 'test', $source: 'factory', $named: true } as any, arguments: { $type: 'template_string', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('call_expression');
+    expect(node.$source).toBe('factory');
+  });
+  it('member form produces correct type', () => {
+    const node = ir.call.member({ function: { $type: 'primary_expression', $text: 'test', $source: 'factory', $named: true } as any, arguments: { $type: 'arguments', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('call_expression');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('call_signature', () => {
+  it('factory produces correct type', () => {
+    const node = ir.callSignature({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('call_signature');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.callSignature({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('catch_clause', () => {
+  it('factory produces correct type', () => {
+    const node = ir.catchClause({ body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('catch_clause');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.catchClause({ body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('class', () => {
+  it('factory produces correct type', () => {
+    const node = ir.class_({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], body: { $type: 'class_body', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('class');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.class_({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], body: { $type: 'class_body', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('class_body', () => {
+  it('factory produces correct type', () => {
+    const node = ir.classBody();
+    expect(node.$type).toBe('class_body');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('class_declaration', () => {
+  it('factory produces correct type', () => {
+    const node = ir.classDeclaration({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'class_body', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('class_declaration');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.classDeclaration({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'class_body', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('class_heritage_extends_clause', () => {
+  it('factory produces correct type', () => {
+    const node = ir.classHeritageExtendsClause({ type: "extends_clause" } as never);
+    expect(node.$type).toBe('class_heritage_extends_clause');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('class_heritage_implements_clause', () => {
+  it('factory produces correct type', () => {
+    const node = ir.classHeritageImplementsClause({ type: "implements_clause" } as never);
+    expect(node.$type).toBe('class_heritage_implements_clause');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('class_heritage', () => {
+  it('extends_clause form produces correct type', () => {
+    const node = ir.classHeritage.extends_clause({});
+    expect(node.$type).toBe('class_heritage');
+    expect(node.$source).toBe('factory');
+  });
+  it('implements_clause form produces correct type', () => {
+    const node = ir.classHeritage.implements_clause({});
+    expect(node.$type).toBe('class_heritage');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('class_static_block', () => {
+  it('factory produces correct type', () => {
+    const node = ir.classStaticBlock({ body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('class_static_block');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.classStaticBlock({ body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_automatic_semicolon', $text: 'test', $source: 'factory', $named: true } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('comment', () => {
+  it('factory produces correct type', () => {
+    const node = ir.comment("test");
+    expect(node.$type).toBe('comment');
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
+  });
+});
+
+describe('computed_property_name', () => {
+  it('factory produces correct type', () => {
+    const node = ir.computedPropertyName({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('computed_property_name');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.computedPropertyName({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('conditional_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.conditionalType({ left: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any, consequence: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any, alternative: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('conditional_type');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.conditionalType({ left: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any, consequence: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any, alternative: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('constraint', () => {
+  it('factory produces correct type', () => {
+    const node = ir.constraint({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('constraint');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.constraint({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('construct_signature', () => {
+  it('factory produces correct type', () => {
+    const node = ir.constructSignature({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('construct_signature');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.constructSignature({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('constructor_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.constructorType({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('constructor_type');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.constructorType({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('continue_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.continueStatement({ semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('continue_statement');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.continueStatement({ semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('debugger_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.debuggerStatement({ semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('debugger_statement');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.debuggerStatement({ semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('decorator', () => {
+  it('factory produces correct type', () => {
+    const node = ir.decorator({ type: "identifier" } as never);
+    expect(node.$type).toBe('decorator');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('decorator_call_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.decoratorCall({ function: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, arguments: { $type: 'arguments', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('decorator_call_expression');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.decoratorCall({ function: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, arguments: { $type: 'arguments', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('decorator_member_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.decoratorMember({ object: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, property: { $type: '_property_identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('decorator_member_expression');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.decoratorMember({ object: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, property: { $type: '_property_identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('decorator_parenthesized_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.decoratorParenthesized({ type: "identifier" } as never);
+    expect(node.$type).toBe('decorator_parenthesized_expression');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('default_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.defaultType({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('default_type');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.defaultType({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('do_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.doStatement({ body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any, condition: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('do_statement');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.doStatement({ body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any, condition: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('else_clause', () => {
+  it('factory produces correct type', () => {
+    const node = ir.elseClause({ statement: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('else_clause');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.elseClause({ statement: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('enum_assignment', () => {
+  it('factory produces correct type', () => {
+    const node = ir.enumAssignment({ name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, value: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('enum_assignment');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.enumAssignment({ name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, value: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('enum_body', () => {
+  it('factory produces correct type', () => {
+    const node = ir.enumBody({ children: [{ $type: 'enum_assignment', $text: 'test', $source: 'factory', $named: true } as any] as any });
+    expect(node.$type).toBe('enum_body');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.enumBody({ children: [{ $type: 'enum_assignment', $text: 'test', $source: 'factory', $named: true } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('enum_declaration', () => {
+  it('factory produces correct type', () => {
+    const node = ir.enumDeclaration({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'enum_body', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('enum_declaration');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.enumDeclaration({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'enum_body', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('escape_sequence', () => {
+  it('factory produces correct type', () => {
+    const node = ir.escapeSequence("test");
+    expect(node.$type).toBe('escape_sequence');
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
+  });
+});
+
+describe('export_clause', () => {
+  it('factory produces correct type', () => {
+    const node = ir.exportClause();
+    expect(node.$type).toBe('export_clause');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('export_specifier', () => {
+  it('factory produces correct type', () => {
+    const node = ir.exportSpecifier({ name: { $type: '_module_export_name', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('export_specifier');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.exportSpecifier({ name: { $type: '_module_export_name', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -74,31 +635,238 @@ describe('export_statement', () => {
   });
 });
 
-describe('namespace_export', () => {
+describe('expression_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.namespaceExport({ type: "_module_export_name" } as never);
-    expect(node.$type).toBe('namespace_export');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('export_clause', () => {
-  it('factory produces correct type', () => {
-    const node = ir.exportClause();
-    expect(node.$type).toBe('export_clause');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('export_specifier', () => {
-  it('factory produces correct type', () => {
-    const node = ir.exportSpecifier({ name: { $type: '_module_export_name', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('export_specifier');
+    const node = ir.expressionStatement({ semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_expressions', $text: 'test', $source: 'factory', $named: true } as any] as any });
+    expect(node.$type).toBe('expression_statement');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.exportSpecifier({ name: { $type: '_module_export_name', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.expressionStatement({ semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_expressions', $text: 'test', $source: 'factory', $named: true } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('extends_clause', () => {
+  it('factory produces correct type', () => {
+    const node = ir.extendsClause({ value: [{ $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any] });
+    expect(node.$type).toBe('extends_clause');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.extendsClause({ value: [{ $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any] });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('extends_type_clause', () => {
+  it('factory produces correct type', () => {
+    const node = ir.extendsTypeClause({ type: [{ $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any] });
+    expect(node.$type).toBe('extends_type_clause');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.extendsTypeClause({ type: [{ $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any] });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe("false", () => {
+  it('factory produces keyword', () => {
+    const node = ir.false_();
+    expect(node.$type).toBe("false");
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("false");
+  });
+});
+
+describe('field_definition', () => {
+  it('factory produces correct type', () => {
+    const node = ir.field({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], property: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('field_definition');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.field({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], property: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('finally_clause', () => {
+  it('factory produces correct type', () => {
+    const node = ir.finallyClause({ body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('finally_clause');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.finallyClause({ body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('flow_maybe_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.flowMaybeType({ primaryType: { $type: 'primary_type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('flow_maybe_type');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.flowMaybeType({ primaryType: { $type: 'primary_type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('for_in_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.forIn({ operator: 'test' as any, right: { $type: '_expressions', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_for_header_lhs', $text: 'test', $source: 'factory', $named: true } as any] as any });
+    expect(node.$type).toBe('for_in_statement');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.forIn({ operator: 'test' as any, right: { $type: '_expressions', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_for_header_lhs', $text: 'test', $source: 'factory', $named: true } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('for_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.forStatement({ initializer: { $type: 'lexical_declaration', $text: 'test', $source: 'factory', $named: true } as any, condition: { $type: '_expressions', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('for_statement');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.forStatement({ initializer: { $type: 'lexical_declaration', $text: 'test', $source: 'factory', $named: true } as any, condition: { $type: '_expressions', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('formal_parameters', () => {
+  it('factory produces correct type', () => {
+    const node = ir.formalParameters();
+    expect(node.$type).toBe('formal_parameters');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('function_declaration', () => {
+  it('factory produces correct type', () => {
+    const node = ir.functionDeclaration({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('function_declaration');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.functionDeclaration({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_automatic_semicolon', $text: 'test', $source: 'factory', $named: true } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('function_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.functionExpression({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('function_expression');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.functionExpression({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('function_signature', () => {
+  it('factory produces correct type', () => {
+    const node = ir.functionSignature({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('function_signature');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.functionSignature({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('function_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.functionType({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, returnType: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('function_type');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.functionType({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, returnType: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('generator_function', () => {
+  it('factory produces correct type', () => {
+    const node = ir.generatorFunction({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('generator_function');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.generatorFunction({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('generator_function_declaration', () => {
+  it('factory produces correct type', () => {
+    const node = ir.generatorFunctionDeclaration({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('generator_function_declaration');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.generatorFunctionDeclaration({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_automatic_semicolon', $text: 'test', $source: 'factory', $named: true } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('generic_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.genericType({ name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, typeArguments: { $type: 'type_arguments', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('generic_type');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.genericType({ name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, typeArguments: { $type: 'type_arguments', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('hash_bang_line', () => {
+  it('factory produces correct type', () => {
+    const node = ir.hashBangLine("#!/bin/sh");
+    expect(node.$type).toBe('hash_bang_line');
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("#!/bin/sh");
+  });
+});
+
+describe('identifier', () => {
+  it('factory produces correct type', () => {
+    const node = ir.identifier2("test");
+    expect(node.$type).toBe('identifier');
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
+  });
+});
+
+describe('if_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.ifStatement({ condition: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any, consequence: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('if_statement');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.ifStatement({ condition: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any, consequence: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('implements_clause', () => {
+  it('factory produces correct type', () => {
+    const node = ir.implementsClause({ type: "type" } as never);
+    expect(node.$type).toBe('implements_clause');
+    expect(node.$source).toBe('factory');
   });
 });
 
@@ -111,14 +879,26 @@ describe("import", () => {
   });
 });
 
-describe('import_statement', () => {
+describe('import_alias', () => {
   it('factory produces correct type', () => {
-    const node = ir.importStatement({ fromClause: { $type: 'import_clause', $text: 'test', $source: 'factory', $named: true } as any, semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('import_statement');
+    const node = ir.importAlias({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, value: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('import_alias');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.importStatement({ fromClause: { $type: 'import_clause', $text: 'test', $source: 'factory', $named: true } as any, semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.importAlias({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, value: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('import_attribute', () => {
+  it('factory produces correct type', () => {
+    const node = ir.importAttribute({ object: { $type: 'object', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('import_attribute');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.importAttribute({ object: { $type: 'object', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -165,23 +945,15 @@ describe('import_clause', () => {
   });
 });
 
-describe('namespace_import', () => {
+describe('import_require_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.namespaceImport({ identifier: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('namespace_import');
+    const node = ir.importRequireClause({ identifier: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, source: { $type: 'string', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('import_require_clause');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.namespaceImport({ identifier: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.importRequireClause({ identifier: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, source: { $type: 'string', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('named_imports', () => {
-  it('factory produces correct type', () => {
-    const node = ir.namedImports();
-    expect(node.$type).toBe('named_imports');
-    expect(node.$source).toBe('factory');
   });
 });
 
@@ -210,38 +982,191 @@ describe('import_specifier', () => {
   });
 });
 
-describe('import_attribute', () => {
+describe('import_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.importAttribute({ object: { $type: 'object', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('import_attribute');
+    const node = ir.importStatement({ fromClause: { $type: 'import_clause', $text: 'test', $source: 'factory', $named: true } as any, semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('import_statement');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.importAttribute({ object: { $type: 'object', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.importStatement({ fromClause: { $type: 'import_clause', $text: 'test', $source: 'factory', $named: true } as any, semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('expression_statement', () => {
+describe('index_signature_mapped_type_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.expressionStatement({ semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_expressions', $text: 'test', $source: 'factory', $named: true } as any] as any });
-    expect(node.$type).toBe('expression_statement');
+    const node = ir.indexSignatureMappedTypeClause({ type: "mapped_type_clause" } as never);
+    expect(node.$type).toBe('index_signature_mapped_type_clause');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('index_signature', () => {
+  it('colon form produces correct type', () => {
+    const node = ir.indexSignature.colon({ type: { $type: 'type_annotation', $text: 'test', $source: 'factory', $named: true } as any, name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, indexType: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('index_signature');
+    expect(node.$source).toBe('factory');
+  });
+  it('mapped_type_clause form produces correct type', () => {
+    const node = ir.indexSignature.mapped_type_clause({ type: { $type: 'type_annotation', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('index_signature');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('index_type_query', () => {
+  it('factory produces correct type', () => {
+    const node = ir.indexTypeQuery({ primaryType: { $type: 'primary_type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('index_type_query');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.expressionStatement({ semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_expressions', $text: 'test', $source: 'factory', $named: true } as any] as any });
+    const node = ir.indexTypeQuery({ primaryType: { $type: 'primary_type', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('variable_declaration', () => {
+describe('infer_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.variable({ declarators: [{ $type: 'variable_declarator', $text: 'test', $source: 'factory', $named: true } as any], semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('variable_declaration');
+    const node = ir.inferType({ typeIdentifier: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('infer_type');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.variable({ declarators: [{ $type: 'variable_declarator', $text: 'test', $source: 'factory', $named: true } as any], semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.inferType({ typeIdentifier: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('instantiation_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.instantiation({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, typeArguments: { $type: 'type_arguments', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('instantiation_expression');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.instantiation({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, typeArguments: { $type: 'type_arguments', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('interface_declaration', () => {
+  it('factory produces correct type', () => {
+    const node = ir.interface({ name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: '_interface_body', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('interface_declaration');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.interface({ name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: '_interface_body', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('internal_module', () => {
+  it('factory produces correct type', () => {
+    const node = ir.internalModule({ name: { $type: 'string', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('internal_module');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.internalModule({ name: { $type: 'string', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('intersection_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.intersectionType({ right: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('intersection_type');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.intersectionType({ right: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('jsx_attribute', () => {
+  it('factory produces correct type', () => {
+    const node = ir.jsxAttribute2({ type: "_jsx_attribute_name" } as never);
+    expect(node.$type).toBe('jsx_attribute');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('jsx_closing_element', () => {
+  it('factory produces correct type', () => {
+    const node = ir.jsxClosingElement({});
+    expect(node.$type).toBe('jsx_closing_element');
+    expect(node.$source).toBe('factory');
+  });
+  it('render does not throw on minimal config', () => {
+    const node = ir.jsxClosingElement({});
+    expect(() => node.render()).not.toThrow();
+  });
+});
+
+describe('jsx_element', () => {
+  it('factory produces correct type', () => {
+    const node = ir.jsxElement2({ openTag: { $type: 'jsx_opening_element', $text: 'test', $source: 'factory', $named: true } as any, closeTag: { $type: 'jsx_closing_element', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_jsx_child', $text: 'test', $source: 'factory', $named: true } as any] as any });
+    expect(node.$type).toBe('jsx_element');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.jsxElement2({ openTag: { $type: 'jsx_opening_element', $text: 'test', $source: 'factory', $named: true } as any, closeTag: { $type: 'jsx_closing_element', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_jsx_child', $text: 'test', $source: 'factory', $named: true } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('jsx_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.jsx();
+    expect(node.$type).toBe('jsx_expression');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('jsx_namespace_name', () => {
+  it('factory produces correct type', () => {
+    const node = ir.jsxNamespaceName();
+    expect(node.$type).toBe('jsx_namespace_name');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('jsx_opening_element', () => {
+  it('factory produces correct type', () => {
+    const node = ir.jsxOpeningElement({ attribute: [{ $type: '_jsx_attribute', $text: 'test', $source: 'factory', $named: true } as any] });
+    expect(node.$type).toBe('jsx_opening_element');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.jsxOpeningElement({ attribute: [{ $type: '_jsx_attribute', $text: 'test', $source: 'factory', $named: true } as any] });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('jsx_self_closing_element', () => {
+  it('factory produces correct type', () => {
+    const node = ir.jsxSelfClosingElement({ attribute: [{ $type: '_jsx_attribute', $text: 'test', $source: 'factory', $named: true } as any] });
+    expect(node.$type).toBe('jsx_self_closing_element');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.jsxSelfClosingElement({ attribute: [{ $type: '_jsx_attribute', $text: 'test', $source: 'factory', $named: true } as any] });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('labeled_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.labeled({ label: { $type: '_statement_identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('labeled_statement');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.labeled({ label: { $type: '_statement_identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -258,170 +1183,479 @@ describe('lexical_declaration', () => {
   });
 });
 
-describe('variable_declarator', () => {
+describe('literal_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.variableDeclarator({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('variable_declarator');
+    const node = ir.literalType({ type: "_number" } as never);
+    expect(node.$type).toBe('literal_type');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('lookup_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.lookupType({ primaryType: { $type: 'primary_type', $text: 'test', $source: 'factory', $named: true } as any, indexType: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('lookup_type');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.variableDeclarator({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.lookupType({ primaryType: { $type: 'primary_type', $text: 'test', $source: 'factory', $named: true } as any, indexType: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('statement_block', () => {
+describe('mapped_type_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.statementBlock({ statements: [{ $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any] });
-    expect(node.$type).toBe('statement_block');
+    const node = ir.mappedTypeClause({ name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('mapped_type_clause');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.statementBlock({ statements: [{ $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any] });
+    const node = ir.mappedTypeClause({ name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('else_clause', () => {
+describe('member_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.elseClause({ statement: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('else_clause');
+    const node = ir.member({ object: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, property: { $type: 'private_property_identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('member_expression');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.elseClause({ statement: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.member({ object: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, property: { $type: 'private_property_identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('if_statement', () => {
+describe('meta_property', () => {
   it('factory produces correct type', () => {
-    const node = ir.ifStatement({ condition: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any, consequence: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('if_statement');
+    const node = ir.metaProperty("test");
+    expect(node.$type).toBe('meta_property');
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
+  });
+});
+
+describe('method_definition', () => {
+  it('factory produces correct type', () => {
+    const node = ir.method({ name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('method_definition');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.ifStatement({ condition: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any, consequence: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.method({ name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('switch_statement', () => {
+describe('method_signature', () => {
   it('factory produces correct type', () => {
-    const node = ir.switchStatement({ value: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'switch_body', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('switch_statement');
+    const node = ir.methodSignature({ name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('method_signature');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.switchStatement({ value: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'switch_body', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.methodSignature({ name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('for_statement', () => {
+describe('module', () => {
   it('factory produces correct type', () => {
-    const node = ir.forStatement({ initializer: { $type: 'lexical_declaration', $text: 'test', $source: 'factory', $named: true } as any, condition: { $type: '_expressions', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('for_statement');
+    const node = ir.module({ name: { $type: 'string', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('module');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.forStatement({ initializer: { $type: 'lexical_declaration', $text: 'test', $source: 'factory', $named: true } as any, condition: { $type: '_expressions', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.module({ name: { $type: 'string', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('for_in_statement', () => {
+describe('named_imports', () => {
   it('factory produces correct type', () => {
-    const node = ir.forIn({ operator: 'test' as any, right: { $type: '_expressions', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_for_header_lhs', $text: 'test', $source: 'factory', $named: true } as any] as any });
-    expect(node.$type).toBe('for_in_statement');
+    const node = ir.namedImports();
+    expect(node.$type).toBe('named_imports');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('namespace_export', () => {
+  it('factory produces correct type', () => {
+    const node = ir.namespaceExport({ type: "_module_export_name" } as never);
+    expect(node.$type).toBe('namespace_export');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('namespace_import', () => {
+  it('factory produces correct type', () => {
+    const node = ir.namespaceImport({ identifier: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('namespace_import');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.forIn({ operator: 'test' as any, right: { $type: '_expressions', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_for_header_lhs', $text: 'test', $source: 'factory', $named: true } as any] as any });
+    const node = ir.namespaceImport({ identifier: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('while_statement', () => {
+describe('nested_identifier', () => {
   it('factory produces correct type', () => {
-    const node = ir.whileStatement({ condition: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('while_statement');
+    const node = ir.nestedIdentifier({ object: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, property: { $type: '_property_identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('nested_identifier');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.whileStatement({ condition: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.nestedIdentifier({ object: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, property: { $type: '_property_identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('do_statement', () => {
+describe('nested_type_identifier', () => {
   it('factory produces correct type', () => {
-    const node = ir.doStatement({ body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any, condition: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('do_statement');
+    const node = ir.nestedTypeIdentifier({ module: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('nested_type_identifier');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.doStatement({ body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any, condition: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.nestedTypeIdentifier({ module: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('try_statement', () => {
+describe('new_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.tryStatement({ body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('try_statement');
+    const node = ir.newExpression({ constructor: { $type: 'primary_expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('new_expression');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.tryStatement({ body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.newExpression({ constructor: { $type: 'primary_expression', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('with_statement', () => {
+describe('non_null_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.withStatement({ object: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('with_statement');
+    const node = ir.nonNull({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('non_null_expression');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.withStatement({ object: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.nonNull({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('break_statement', () => {
+describe("null", () => {
+  it('factory produces keyword', () => {
+    const node = ir.null_();
+    expect(node.$type).toBe("null");
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("null");
+  });
+});
+
+describe('number', () => {
   it('factory produces correct type', () => {
-    const node = ir.breakStatement({ semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('break_statement');
+    const node = ir.number("test");
+    expect(node.$type).toBe('number');
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
+  });
+});
+
+describe('object', () => {
+  it('factory produces correct type', () => {
+    const node = ir.object();
+    expect(node.$type).toBe('object');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('object_assignment_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.objectAssignmentPattern({ left: { $type: '_shorthand_property_identifier_pattern', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('object_assignment_pattern');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.breakStatement({ semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.objectAssignmentPattern({ left: { $type: '_shorthand_property_identifier_pattern', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('continue_statement', () => {
+describe('object_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.continueStatement({ semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('continue_statement');
+    const node = ir.objectPattern();
+    expect(node.$type).toBe('object_pattern');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('object_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.objectType({ opening: 'test' as any, closing: 'test' as any });
+    expect(node.$type).toBe('object_type');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.continueStatement({ semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.objectType({ opening: 'test' as any, closing: 'test' as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('debugger_statement', () => {
+describe('omitting_type_annotation', () => {
   it('factory produces correct type', () => {
-    const node = ir.debuggerStatement({ semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('debugger_statement');
+    const node = ir.omittingTypeAnnotation({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('omitting_type_annotation');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.debuggerStatement({ semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.omittingTypeAnnotation({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('opting_type_annotation', () => {
+  it('factory produces correct type', () => {
+    const node = ir.optingTypeAnnotation({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('opting_type_annotation');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.optingTypeAnnotation({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('optional_parameter', () => {
+  it('factory produces correct type', () => {
+    const node = ir.optionalParameter({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], pattern: { $type: 'pattern', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('optional_parameter');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.optionalParameter({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], pattern: { $type: 'pattern', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: 'accessibility_modifier', $text: 'test', $source: 'factory', $named: true } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('optional_tuple_parameter', () => {
+  it('factory produces correct type', () => {
+    const node = ir.optionalTupleParameter({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, type: { $type: 'type_annotation', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('optional_tuple_parameter');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.optionalTupleParameter({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, type: { $type: 'type_annotation', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('optional_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.optionalType({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('optional_type');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.optionalType({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe("override_modifier", () => {
+  it('factory produces keyword', () => {
+    const node = ir.overrideModifier();
+    expect(node.$type).toBe("override_modifier");
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("override");
+  });
+});
+
+describe('pair', () => {
+  it('factory produces correct type', () => {
+    const node = ir.pair({ key: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, value: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('pair');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.pair({ key: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, value: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('pair_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.pairPattern({ key: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, value: { $type: 'pattern', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('pair_pattern');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.pairPattern({ key: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, value: { $type: 'pattern', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('parenthesized_expression_sequence', () => {
+  it('factory produces correct type', () => {
+    const node = ir.parenthesizedExpressionSequence({ type: "sequence_expression" } as never);
+    expect(node.$type).toBe('parenthesized_expression_sequence');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('parenthesized_expression', () => {
+  it('typed form produces correct type', () => {
+    const node = ir.parenthesized.typed({});
+    expect(node.$type).toBe('parenthesized_expression');
+    expect(node.$source).toBe('factory');
+  });
+  it('sequence form produces correct type', () => {
+    const node = ir.parenthesized.sequence({});
+    expect(node.$type).toBe('parenthesized_expression');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('parenthesized_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.parenthesizedType({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('parenthesized_type');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.parenthesizedType({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('predefined_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.predefinedType("test");
+    expect(node.$type).toBe('predefined_type');
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
+  });
+});
+
+describe('private_property_identifier', () => {
+  it('factory produces correct type', () => {
+    const node = ir.privatePropertyIdentifier("test");
+    expect(node.$type).toBe('private_property_identifier');
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
+  });
+});
+
+describe('program', () => {
+  it('factory produces correct type', () => {
+    const node = ir.program({ statements: [{ $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any] });
+    expect(node.$type).toBe('program');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.program({ statements: [{ $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any] });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('property_signature', () => {
+  it('factory produces correct type', () => {
+    const node = ir.propertySignature({ name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('property_signature');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.propertySignature({ name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('public_field_definition', () => {
+  it('factory produces correct type', () => {
+    const node = ir.publicField({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('public_field_definition');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.publicField({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_public_field_definition_declare_first', $text: 'test', $source: 'factory', $named: true } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('readonly_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.readonlyType({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('readonly_type');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.readonlyType({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('regex', () => {
+  it('factory produces correct type', () => {
+    const node = ir.regex({ pattern: { $type: 'regex_pattern', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('regex');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.regex({ pattern: { $type: 'regex_pattern', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('regex_flags', () => {
+  it('factory produces correct type', () => {
+    const node = ir.regexFlags("test");
+    expect(node.$type).toBe('regex_flags');
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
+  });
+});
+
+describe('regex_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.regexPattern("test");
+    expect(node.$type).toBe('regex_pattern');
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
+  });
+});
+
+describe('required_parameter', () => {
+  it('factory produces correct type', () => {
+    const node = ir.requiredParameter({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], pattern: { $type: 'pattern', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('required_parameter');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.requiredParameter({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], pattern: { $type: 'pattern', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: 'accessibility_modifier', $text: 'test', $source: 'factory', $named: true } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('rest_pattern', () => {
+  it('factory produces correct type', () => {
+    const node = ir.restPattern({ type: "_lhs_expression" } as never);
+    expect(node.$type).toBe('rest_pattern');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('rest_type', () => {
+  it('factory produces correct type', () => {
+    const node = ir.restType({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('rest_type');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.restType({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -438,27 +1672,97 @@ describe('return_statement', () => {
   });
 });
 
-describe('throw_statement', () => {
+describe('satisfies_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.throwStatement({ semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_expressions', $text: 'test', $source: 'factory', $named: true } as any] as any });
-    expect(node.$type).toBe('throw_statement');
+    const node = ir.satisfies({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, typeAnnotation: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('satisfies_expression');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.throwStatement({ semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_expressions', $text: 'test', $source: 'factory', $named: true } as any] as any });
+    const node = ir.satisfies({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, typeAnnotation: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('labeled_statement', () => {
+describe('sequence_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.labeled({ label: { $type: '_statement_identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('labeled_statement');
+    const node = ir.sequence({ type: "expression" } as never);
+    expect(node.$type).toBe('sequence_expression');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('spread_element', () => {
+  it('factory produces correct type', () => {
+    const node = ir.spreadElement({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('spread_element');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.labeled({ label: { $type: '_statement_identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.spreadElement({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('statement_block', () => {
+  it('factory produces correct type', () => {
+    const node = ir.statementBlock({ statements: [{ $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any] });
+    expect(node.$type).toBe('statement_block');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.statementBlock({ statements: [{ $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any] });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('string_double', () => {
+  it('factory produces correct type', () => {
+    const node = ir.stringDouble();
+    expect(node.$type).toBe('string_double');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('string_single', () => {
+  it('factory produces correct type', () => {
+    const node = ir.stringSingle();
+    expect(node.$type).toBe('string_single');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('string', () => {
+  it('double form produces correct type', () => {
+    const node = ir.string.double({});
+    expect(node.$type).toBe('string');
+    expect(node.$source).toBe('factory');
+  });
+  it('single form produces correct type', () => {
+    const node = ir.string.single({});
+    expect(node.$type).toBe('string');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('subscript_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.subscript({ object: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, index: { $type: '_expressions', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('subscript_expression');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.subscript({ object: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, index: { $type: '_expressions', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe("super", () => {
+  it('factory produces keyword', () => {
+    const node = ir.super();
+    expect(node.$type).toBe("super");
+    expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("super");
   });
 });
 
@@ -494,580 +1798,23 @@ describe('switch_default', () => {
   });
 });
 
-describe('catch_clause', () => {
+describe('switch_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.catchClause({ body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('catch_clause');
+    const node = ir.switchStatement({ value: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'switch_body', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('switch_statement');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.catchClause({ body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.switchStatement({ value: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'switch_body', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('finally_clause', () => {
+describe('template_literal_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.finallyClause({ body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('finally_clause');
+    const node = ir.templateLiteralType();
+    expect(node.$type).toBe('template_literal_type');
     expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.finallyClause({ body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('parenthesized_expression_sequence', () => {
-  it('factory produces correct type', () => {
-    const node = ir.parenthesizedExpressionSequence({ type: "sequence_expression" } as never);
-    expect(node.$type).toBe('parenthesized_expression_sequence');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('parenthesized_expression', () => {
-  it('typed form produces correct type', () => {
-    const node = ir.parenthesized.typed({});
-    expect(node.$type).toBe('parenthesized_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('sequence form produces correct type', () => {
-    const node = ir.parenthesized.sequence({});
-    expect(node.$type).toBe('parenthesized_expression');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('yield_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.yieldExpression({});
-    expect(node.$type).toBe('yield_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('render does not throw on minimal config', () => {
-    const node = ir.yieldExpression({});
-    expect(() => node.render()).not.toThrow();
-  });
-});
-
-describe('object', () => {
-  it('factory produces correct type', () => {
-    const node = ir.object();
-    expect(node.$type).toBe('object');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('object_pattern', () => {
-  it('factory produces correct type', () => {
-    const node = ir.objectPattern();
-    expect(node.$type).toBe('object_pattern');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('assignment_pattern', () => {
-  it('factory produces correct type', () => {
-    const node = ir.assignmentPattern({ left: { $type: 'pattern', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('assignment_pattern');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.assignmentPattern({ left: { $type: 'pattern', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('object_assignment_pattern', () => {
-  it('factory produces correct type', () => {
-    const node = ir.objectAssignmentPattern({ left: { $type: '_shorthand_property_identifier_pattern', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('object_assignment_pattern');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.objectAssignmentPattern({ left: { $type: '_shorthand_property_identifier_pattern', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('array', () => {
-  it('factory produces correct type', () => {
-    const node = ir.array();
-    expect(node.$type).toBe('array');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('array_pattern', () => {
-  it('factory produces correct type', () => {
-    const node = ir.arrayPattern();
-    expect(node.$type).toBe('array_pattern');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('jsx_element', () => {
-  it('factory produces correct type', () => {
-    const node = ir.jsxElement2({ openTag: { $type: 'jsx_opening_element', $text: 'test', $source: 'factory', $named: true } as any, closeTag: { $type: 'jsx_closing_element', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_jsx_child', $text: 'test', $source: 'factory', $named: true } as any] as any });
-    expect(node.$type).toBe('jsx_element');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.jsxElement2({ openTag: { $type: 'jsx_opening_element', $text: 'test', $source: 'factory', $named: true } as any, closeTag: { $type: 'jsx_closing_element', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_jsx_child', $text: 'test', $source: 'factory', $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('jsx_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.jsx();
-    expect(node.$type).toBe('jsx_expression');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('jsx_opening_element', () => {
-  it('factory produces correct type', () => {
-    const node = ir.jsxOpeningElement({ attribute: [{ $type: '_jsx_attribute', $text: 'test', $source: 'factory', $named: true } as any] });
-    expect(node.$type).toBe('jsx_opening_element');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.jsxOpeningElement({ attribute: [{ $type: '_jsx_attribute', $text: 'test', $source: 'factory', $named: true } as any] });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('nested_identifier', () => {
-  it('factory produces correct type', () => {
-    const node = ir.nestedIdentifier({ object: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, property: { $type: '_property_identifier', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('nested_identifier');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.nestedIdentifier({ object: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, property: { $type: '_property_identifier', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('jsx_namespace_name', () => {
-  it('factory produces correct type', () => {
-    const node = ir.jsxNamespaceName();
-    expect(node.$type).toBe('jsx_namespace_name');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('jsx_closing_element', () => {
-  it('factory produces correct type', () => {
-    const node = ir.jsxClosingElement({});
-    expect(node.$type).toBe('jsx_closing_element');
-    expect(node.$source).toBe('factory');
-  });
-  it('render does not throw on minimal config', () => {
-    const node = ir.jsxClosingElement({});
-    expect(() => node.render()).not.toThrow();
-  });
-});
-
-describe('jsx_self_closing_element', () => {
-  it('factory produces correct type', () => {
-    const node = ir.jsxSelfClosingElement({ attribute: [{ $type: '_jsx_attribute', $text: 'test', $source: 'factory', $named: true } as any] });
-    expect(node.$type).toBe('jsx_self_closing_element');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.jsxSelfClosingElement({ attribute: [{ $type: '_jsx_attribute', $text: 'test', $source: 'factory', $named: true } as any] });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('jsx_attribute', () => {
-  it('factory produces correct type', () => {
-    const node = ir.jsxAttribute2({ type: "_jsx_attribute_name" } as never);
-    expect(node.$type).toBe('jsx_attribute');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('unescaped_double_jsx_string_fragment', () => {
-  it('factory produces correct type', () => {
-    const node = ir.unescapedDoubleJsxStringFragment("test");
-    expect(node.$type).toBe('unescaped_double_jsx_string_fragment');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
-  });
-});
-
-describe('unescaped_single_jsx_string_fragment', () => {
-  it('factory produces correct type', () => {
-    const node = ir.unescapedSingleJsxStringFragment("test");
-    expect(node.$type).toBe('unescaped_single_jsx_string_fragment');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
-  });
-});
-
-describe('class', () => {
-  it('factory produces correct type', () => {
-    const node = ir.class_({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], body: { $type: 'class_body', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('class');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.class_({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], body: { $type: 'class_body', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('class_declaration', () => {
-  it('factory produces correct type', () => {
-    const node = ir.classDeclaration({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'class_body', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('class_declaration');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.classDeclaration({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'class_body', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('class_heritage_extends_clause', () => {
-  it('factory produces correct type', () => {
-    const node = ir.classHeritageExtendsClause({ type: "extends_clause" } as never);
-    expect(node.$type).toBe('class_heritage_extends_clause');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('class_heritage_implements_clause', () => {
-  it('factory produces correct type', () => {
-    const node = ir.classHeritageImplementsClause({ type: "implements_clause" } as never);
-    expect(node.$type).toBe('class_heritage_implements_clause');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('class_heritage', () => {
-  it('extends_clause form produces correct type', () => {
-    const node = ir.classHeritage.extends_clause({});
-    expect(node.$type).toBe('class_heritage');
-    expect(node.$source).toBe('factory');
-  });
-  it('implements_clause form produces correct type', () => {
-    const node = ir.classHeritage.implements_clause({});
-    expect(node.$type).toBe('class_heritage');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('function_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.functionExpression({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('function_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.functionExpression({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('function_declaration', () => {
-  it('factory produces correct type', () => {
-    const node = ir.functionDeclaration({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('function_declaration');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.functionDeclaration({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_automatic_semicolon', $text: 'test', $source: 'factory', $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('generator_function', () => {
-  it('factory produces correct type', () => {
-    const node = ir.generatorFunction({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('generator_function');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.generatorFunction({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('generator_function_declaration', () => {
-  it('factory produces correct type', () => {
-    const node = ir.generatorFunctionDeclaration({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('generator_function_declaration');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.generatorFunctionDeclaration({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_automatic_semicolon', $text: 'test', $source: 'factory', $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('arrow_function_parameter', () => {
-  it('factory produces correct type', () => {
-    const node = ir.arrowFunctionParameter({ parameter: { $type: '_reserved_identifier', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('arrow_function_parameter');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.arrowFunctionParameter({ parameter: { $type: '_reserved_identifier', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('arrow_function__call_signature', () => {
-  it('factory produces correct type', () => {
-    const node = ir.arrowFunctionCallSignature({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('arrow_function__call_signature');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.arrowFunctionCallSignature({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('arrow_function', () => {
-  it('parameter form produces correct type', () => {
-    const node = ir.arrowFunction.parameter({ body: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, parameter: { $type: '_reserved_identifier', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('arrow_function');
-    expect(node.$source).toBe('factory');
-  });
-  it('_call_signature form produces correct type', () => {
-    const node = ir.arrowFunction._call_signature({ body: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('arrow_function');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('call_expression', () => {
-  it('call form produces correct type', () => {
-    const node = ir.call.call({ function: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, arguments: { $type: 'arguments', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('call_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('template_call form produces correct type', () => {
-    const node = ir.call.template_call({ function: { $type: 'primary_expression', $text: 'test', $source: 'factory', $named: true } as any, arguments: { $type: 'template_string', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('call_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('member form produces correct type', () => {
-    const node = ir.call.member({ function: { $type: 'primary_expression', $text: 'test', $source: 'factory', $named: true } as any, arguments: { $type: 'arguments', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('call_expression');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('new_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.newExpression({ constructor: { $type: 'primary_expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('new_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.newExpression({ constructor: { $type: 'primary_expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('await_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.awaitExpression({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('await_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.awaitExpression({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('member_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.member({ object: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, property: { $type: 'private_property_identifier', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('member_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.member({ object: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, property: { $type: 'private_property_identifier', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('subscript_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.subscript({ object: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, index: { $type: '_expressions', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('subscript_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.subscript({ object: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, index: { $type: '_expressions', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('assignment_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.assignment({ left: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('assignment_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.assignment({ left: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('augmented_assignment_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.augmentedAssignment({ left: { $type: 'member_expression', $text: 'test', $source: 'factory', $named: true } as any, operator: 'test' as any, right: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('augmented_assignment_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.augmentedAssignment({ left: { $type: 'member_expression', $text: 'test', $source: 'factory', $named: true } as any, operator: 'test' as any, right: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('spread_element', () => {
-  it('factory produces correct type', () => {
-    const node = ir.spreadElement({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('spread_element');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.spreadElement({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('ternary_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.ternary({ condition: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, consequence: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, alternative: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('ternary_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.ternary({ condition: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, consequence: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, alternative: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('binary_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.binary({ left: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, operator: 'test' as any, right: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('binary_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.binary({ left: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, operator: 'test' as any, right: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('unary_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.unary({ operator: 'test' as any, argument: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('unary_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.unary({ operator: 'test' as any, argument: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('update_expression', () => {
-  it('postfix form produces correct type', () => {
-    const node = ir.update.postfix({ argument: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, operator: 'test' as any });
-    expect(node.$type).toBe('update_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('prefix form produces correct type', () => {
-    const node = ir.update.prefix({ operator: 'test' as any, argument: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('update_expression');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('sequence_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.sequence({ type: "expression" } as never);
-    expect(node.$type).toBe('sequence_expression');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('string_double', () => {
-  it('factory produces correct type', () => {
-    const node = ir.stringDouble();
-    expect(node.$type).toBe('string_double');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('string_single', () => {
-  it('factory produces correct type', () => {
-    const node = ir.stringSingle();
-    expect(node.$type).toBe('string_single');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('string', () => {
-  it('double form produces correct type', () => {
-    const node = ir.string.double({});
-    expect(node.$type).toBe('string');
-    expect(node.$source).toBe('factory');
-  });
-  it('single form produces correct type', () => {
-    const node = ir.string.single({});
-    expect(node.$type).toBe('string');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('unescaped_double_string_fragment', () => {
-  it('factory produces correct type', () => {
-    const node = ir.unescapedDoubleStringFragment("test");
-    expect(node.$type).toBe('unescaped_double_string_fragment');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
-  });
-});
-
-describe('unescaped_single_string_fragment', () => {
-  it('factory produces correct type', () => {
-    const node = ir.unescapedSingleStringFragment("test");
-    expect(node.$type).toBe('unescaped_single_string_fragment');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
-  });
-});
-
-describe('escape_sequence', () => {
-  it('factory produces correct type', () => {
-    const node = ir.escapeSequence("test");
-    expect(node.$type).toBe('escape_sequence');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
-  });
-});
-
-describe('comment', () => {
-  it('factory produces correct type', () => {
-    const node = ir.comment("test");
-    expect(node.$type).toBe('comment');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
   });
 });
 
@@ -1087,69 +1834,23 @@ describe('template_substitution', () => {
   });
 });
 
-describe('regex', () => {
+describe('template_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.regex({ pattern: { $type: 'regex_pattern', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('regex');
+    const node = ir.templateType({ type: "primary_type" } as never);
+    expect(node.$type).toBe('template_type');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('ternary_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.ternary({ condition: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, consequence: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, alternative: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('ternary_expression');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.regex({ pattern: { $type: 'regex_pattern', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.ternary({ condition: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, consequence: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, alternative: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('regex_pattern', () => {
-  it('factory produces correct type', () => {
-    const node = ir.regexPattern("test");
-    expect(node.$type).toBe('regex_pattern');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
-  });
-});
-
-describe('regex_flags', () => {
-  it('factory produces correct type', () => {
-    const node = ir.regexFlags("test");
-    expect(node.$type).toBe('regex_flags');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
-  });
-});
-
-describe('number', () => {
-  it('factory produces correct type', () => {
-    const node = ir.number("test");
-    expect(node.$type).toBe('number');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
-  });
-});
-
-describe('identifier', () => {
-  it('factory produces correct type', () => {
-    const node = ir.identifier2("test");
-    expect(node.$type).toBe('identifier');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
-  });
-});
-
-describe('private_property_identifier', () => {
-  it('factory produces correct type', () => {
-    const node = ir.privatePropertyIdentifier("test");
-    expect(node.$type).toBe('private_property_identifier');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
-  });
-});
-
-describe('meta_property', () => {
-  it('factory produces correct type', () => {
-    const node = ir.metaProperty("test");
-    expect(node.$type).toBe('meta_property');
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("test");
   });
 });
 
@@ -1162,12 +1863,15 @@ describe("this", () => {
   });
 });
 
-describe("super", () => {
-  it('factory produces keyword', () => {
-    const node = ir.super();
-    expect(node.$type).toBe("super");
+describe('throw_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.throwStatement({ semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_expressions', $text: 'test', $source: 'factory', $named: true } as any] as any });
+    expect(node.$type).toBe('throw_statement');
     expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("super");
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.throwStatement({ semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_expressions', $text: 'test', $source: 'factory', $named: true } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -1180,566 +1884,14 @@ describe("true", () => {
   });
 });
 
-describe("false", () => {
-  it('factory produces keyword', () => {
-    const node = ir.false_();
-    expect(node.$type).toBe("false");
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("false");
-  });
-});
-
-describe("null", () => {
-  it('factory produces keyword', () => {
-    const node = ir.null_();
-    expect(node.$type).toBe("null");
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("null");
-  });
-});
-
-describe("undefined", () => {
-  it('factory produces keyword', () => {
-    const node = ir.undefined();
-    expect(node.$type).toBe("undefined");
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("undefined");
-  });
-});
-
-describe('arguments', () => {
+describe('try_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.arguments();
-    expect(node.$type).toBe('arguments');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('decorator', () => {
-  it('factory produces correct type', () => {
-    const node = ir.decorator({ type: "identifier" } as never);
-    expect(node.$type).toBe('decorator');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('decorator_member_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.decoratorMember({ object: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, property: { $type: '_property_identifier', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('decorator_member_expression');
+    const node = ir.tryStatement({ body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('try_statement');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.decoratorMember({ object: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, property: { $type: '_property_identifier', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('decorator_call_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.decoratorCall({ function: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, arguments: { $type: 'arguments', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('decorator_call_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.decoratorCall({ function: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, arguments: { $type: 'arguments', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('class_body', () => {
-  it('factory produces correct type', () => {
-    const node = ir.classBody();
-    expect(node.$type).toBe('class_body');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('field_definition', () => {
-  it('factory produces correct type', () => {
-    const node = ir.field({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], property: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('field_definition');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.field({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], property: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('formal_parameters', () => {
-  it('factory produces correct type', () => {
-    const node = ir.formalParameters();
-    expect(node.$type).toBe('formal_parameters');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('class_static_block', () => {
-  it('factory produces correct type', () => {
-    const node = ir.classStaticBlock({ body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('class_static_block');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.classStaticBlock({ body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_automatic_semicolon', $text: 'test', $source: 'factory', $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('rest_pattern', () => {
-  it('factory produces correct type', () => {
-    const node = ir.restPattern({ type: "_lhs_expression" } as never);
-    expect(node.$type).toBe('rest_pattern');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('method_definition', () => {
-  it('factory produces correct type', () => {
-    const node = ir.method({ name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('method_definition');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.method({ name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('pair', () => {
-  it('factory produces correct type', () => {
-    const node = ir.pair({ key: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, value: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('pair');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.pair({ key: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, value: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('pair_pattern', () => {
-  it('factory produces correct type', () => {
-    const node = ir.pairPattern({ key: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, value: { $type: 'pattern', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('pair_pattern');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.pairPattern({ key: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, value: { $type: 'pattern', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('computed_property_name', () => {
-  it('factory produces correct type', () => {
-    const node = ir.computedPropertyName({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('computed_property_name');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.computedPropertyName({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('public_field_definition', () => {
-  it('factory produces correct type', () => {
-    const node = ir.publicField({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('public_field_definition');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.publicField({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: '_public_field_definition_declare_first', $text: 'test', $source: 'factory', $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('non_null_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.nonNull({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('non_null_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.nonNull({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('method_signature', () => {
-  it('factory produces correct type', () => {
-    const node = ir.methodSignature({ name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('method_signature');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.methodSignature({ name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('abstract_method_signature', () => {
-  it('factory produces correct type', () => {
-    const node = ir.abstractMethodSignature({ name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('abstract_method_signature');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.abstractMethodSignature({ name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('function_signature', () => {
-  it('factory produces correct type', () => {
-    const node = ir.functionSignature({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('function_signature');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.functionSignature({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('decorator_parenthesized_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.decoratorParenthesized({ type: "identifier" } as never);
-    expect(node.$type).toBe('decorator_parenthesized_expression');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('type_assertion', () => {
-  it('factory produces correct type', () => {
-    const node = ir.typeAssertion({ typeArguments: { $type: 'type_arguments', $text: 'test', $source: 'factory', $named: true } as any, expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('type_assertion');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.typeAssertion({ typeArguments: { $type: 'type_arguments', $text: 'test', $source: 'factory', $named: true } as any, expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('as_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.as({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, typeAnnotation: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('as_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.as({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, typeAnnotation: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('satisfies_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.satisfies({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, typeAnnotation: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('satisfies_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.satisfies({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, typeAnnotation: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('instantiation_expression', () => {
-  it('factory produces correct type', () => {
-    const node = ir.instantiation({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, typeArguments: { $type: 'type_arguments', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('instantiation_expression');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.instantiation({ expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, typeArguments: { $type: 'type_arguments', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('import_require_clause', () => {
-  it('factory produces correct type', () => {
-    const node = ir.importRequireClause({ identifier: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, source: { $type: 'string', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('import_require_clause');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.importRequireClause({ identifier: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, source: { $type: 'string', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('extends_clause', () => {
-  it('factory produces correct type', () => {
-    const node = ir.extendsClause({ value: [{ $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any] });
-    expect(node.$type).toBe('extends_clause');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.extendsClause({ value: [{ $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any] });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('implements_clause', () => {
-  it('factory produces correct type', () => {
-    const node = ir.implementsClause({ type: "type" } as never);
-    expect(node.$type).toBe('implements_clause');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('ambient_declaration', () => {
-  it('factory produces correct type', () => {
-    const node = ir.ambient({ declaration: { $type: 'declaration', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('ambient_declaration');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.ambient({ declaration: { $type: 'declaration', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('abstract_class_declaration', () => {
-  it('factory produces correct type', () => {
-    const node = ir.abstractClass({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'class_body', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('abstract_class_declaration');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.abstractClass({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'class_body', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('module', () => {
-  it('factory produces correct type', () => {
-    const node = ir.module({ name: { $type: 'string', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('module');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.module({ name: { $type: 'string', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('internal_module', () => {
-  it('factory produces correct type', () => {
-    const node = ir.internalModule({ name: { $type: 'string', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('internal_module');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.internalModule({ name: { $type: 'string', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('import_alias', () => {
-  it('factory produces correct type', () => {
-    const node = ir.importAlias({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, value: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('import_alias');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.importAlias({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, value: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('nested_type_identifier', () => {
-  it('factory produces correct type', () => {
-    const node = ir.nestedTypeIdentifier({ module: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('nested_type_identifier');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.nestedTypeIdentifier({ module: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('interface_declaration', () => {
-  it('factory produces correct type', () => {
-    const node = ir.interface({ name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: '_interface_body', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('interface_declaration');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.interface({ name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: '_interface_body', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('extends_type_clause', () => {
-  it('factory produces correct type', () => {
-    const node = ir.extendsTypeClause({ type: [{ $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any] });
-    expect(node.$type).toBe('extends_type_clause');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.extendsTypeClause({ type: [{ $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any] });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('enum_declaration', () => {
-  it('factory produces correct type', () => {
-    const node = ir.enumDeclaration({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'enum_body', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('enum_declaration');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.enumDeclaration({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'enum_body', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('enum_body', () => {
-  it('factory produces correct type', () => {
-    const node = ir.enumBody({ children: [{ $type: 'enum_assignment', $text: 'test', $source: 'factory', $named: true } as any] as any });
-    expect(node.$type).toBe('enum_body');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.enumBody({ children: [{ $type: 'enum_assignment', $text: 'test', $source: 'factory', $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('enum_assignment', () => {
-  it('factory produces correct type', () => {
-    const node = ir.enumAssignment({ name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, value: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('enum_assignment');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.enumAssignment({ name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any, value: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('type_alias_declaration', () => {
-  it('factory produces correct type', () => {
-    const node = ir.typeAlias({ name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, value: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any, semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('type_alias_declaration');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.typeAlias({ name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, value: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any, semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('accessibility_modifier', () => {
-  it('factory accepts valid value', () => {
-    const node = ir.accessibilityModifier('public');
-    expect(node.$type).toBe('accessibility_modifier');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe("override_modifier", () => {
-  it('factory produces keyword', () => {
-    const node = ir.overrideModifier();
-    expect(node.$type).toBe("override_modifier");
-    expect(node.$source).toBe('factory');
-    expect(node.$text).toBe("override");
-  });
-});
-
-describe('required_parameter', () => {
-  it('factory produces correct type', () => {
-    const node = ir.requiredParameter({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], pattern: { $type: 'pattern', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('required_parameter');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.requiredParameter({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], pattern: { $type: 'pattern', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: 'accessibility_modifier', $text: 'test', $source: 'factory', $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('optional_parameter', () => {
-  it('factory produces correct type', () => {
-    const node = ir.optionalParameter({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], pattern: { $type: 'pattern', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('optional_parameter');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.optionalParameter({ decorator: [{ $type: 'decorator', $text: 'test', $source: 'factory', $named: true } as any], pattern: { $type: 'pattern', $text: 'test', $source: 'factory', $named: true } as any, children: [{ $type: 'accessibility_modifier', $text: 'test', $source: 'factory', $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('omitting_type_annotation', () => {
-  it('factory produces correct type', () => {
-    const node = ir.omittingTypeAnnotation({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('omitting_type_annotation');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.omittingTypeAnnotation({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('adding_type_annotation', () => {
-  it('factory produces correct type', () => {
-    const node = ir.addingTypeAnnotation({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('adding_type_annotation');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.addingTypeAnnotation({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('opting_type_annotation', () => {
-  it('factory produces correct type', () => {
-    const node = ir.optingTypeAnnotation({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('opting_type_annotation');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.optingTypeAnnotation({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('type_annotation', () => {
-  it('factory produces correct type', () => {
-    const node = ir.typeAnnotation({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('type_annotation');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.typeAnnotation({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('asserts', () => {
-  it('factory produces correct type', () => {
-    const node = ir.asserts({ type: "type_predicate" } as never);
-    expect(node.$type).toBe('asserts');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('asserts_annotation', () => {
-  it('factory produces correct type', () => {
-    const node = ir.assertsAnnotation({ asserts: { $type: 'asserts', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('asserts_annotation');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.assertsAnnotation({ asserts: { $type: 'asserts', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.tryStatement({ body: { $type: 'statement_block', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1756,103 +1908,75 @@ describe('tuple_parameter', () => {
   });
 });
 
-describe('optional_tuple_parameter', () => {
+describe('tuple_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.optionalTupleParameter({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, type: { $type: 'type_annotation', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('optional_tuple_parameter');
+    const node = ir.tupleType();
+    expect(node.$type).toBe('tuple_type');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('type_alias_declaration', () => {
+  it('factory produces correct type', () => {
+    const node = ir.typeAlias({ name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, value: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any, semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('type_alias_declaration');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.optionalTupleParameter({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, type: { $type: 'type_annotation', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.typeAlias({ name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, value: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any, semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('optional_type', () => {
+describe('type_annotation', () => {
   it('factory produces correct type', () => {
-    const node = ir.optionalType({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('optional_type');
+    const node = ir.typeAnnotation({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('type_annotation');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.optionalType({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.typeAnnotation({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('rest_type', () => {
+describe('type_arguments', () => {
   it('factory produces correct type', () => {
-    const node = ir.restType({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('rest_type');
+    const node = ir.typeArguments({ type: "type" } as never);
+    expect(node.$type).toBe('type_arguments');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('type_assertion', () => {
+  it('factory produces correct type', () => {
+    const node = ir.typeAssertion({ typeArguments: { $type: 'type_arguments', $text: 'test', $source: 'factory', $named: true } as any, expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('type_assertion');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.restType({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.typeAssertion({ typeArguments: { $type: 'type_arguments', $text: 'test', $source: 'factory', $named: true } as any, expression: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('constructor_type', () => {
+describe('type_parameter', () => {
   it('factory produces correct type', () => {
-    const node = ir.constructorType({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('constructor_type');
+    const node = ir.typeParameter({ name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('type_parameter');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.constructorType({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.typeParameter({ name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('template_type', () => {
+describe('type_parameters', () => {
   it('factory produces correct type', () => {
-    const node = ir.templateType({ type: "primary_type" } as never);
-    expect(node.$type).toBe('template_type');
+    const node = ir.typeParameters({ type: "type_parameter" } as never);
+    expect(node.$type).toBe('type_parameters');
     expect(node.$source).toBe('factory');
-  });
-});
-
-describe('template_literal_type', () => {
-  it('factory produces correct type', () => {
-    const node = ir.templateLiteralType();
-    expect(node.$type).toBe('template_literal_type');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('infer_type', () => {
-  it('factory produces correct type', () => {
-    const node = ir.inferType({ typeIdentifier: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('infer_type');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.inferType({ typeIdentifier: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('conditional_type', () => {
-  it('factory produces correct type', () => {
-    const node = ir.conditionalType({ left: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any, consequence: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any, alternative: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('conditional_type');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.conditionalType({ left: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any, right: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any, consequence: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any, alternative: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('generic_type', () => {
-  it('factory produces correct type', () => {
-    const node = ir.genericType({ name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, typeArguments: { $type: 'type_arguments', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('generic_type');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.genericType({ name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, typeArguments: { $type: 'type_arguments', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -1888,233 +2012,60 @@ describe('type_query', () => {
   });
 });
 
-describe('index_type_query', () => {
+describe('unary_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.indexTypeQuery({ primaryType: { $type: 'primary_type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('index_type_query');
+    const node = ir.unary({ operator: 'test' as any, argument: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('unary_expression');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.indexTypeQuery({ primaryType: { $type: 'primary_type', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.unary({ operator: 'test' as any, argument: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('lookup_type', () => {
-  it('factory produces correct type', () => {
-    const node = ir.lookupType({ primaryType: { $type: 'primary_type', $text: 'test', $source: 'factory', $named: true } as any, indexType: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('lookup_type');
+describe("undefined", () => {
+  it('factory produces keyword', () => {
+    const node = ir.undefined();
+    expect(node.$type).toBe("undefined");
     expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.lookupType({ primaryType: { $type: 'primary_type', $text: 'test', $source: 'factory', $named: true } as any, indexType: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$text).toBe("undefined");
   });
 });
 
-describe('mapped_type_clause', () => {
+describe('unescaped_double_jsx_string_fragment', () => {
   it('factory produces correct type', () => {
-    const node = ir.mappedTypeClause({ name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('mapped_type_clause');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.mappedTypeClause({ name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any, type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('literal_type', () => {
-  it('factory produces correct type', () => {
-    const node = ir.literalType({ type: "_number" } as never);
-    expect(node.$type).toBe('literal_type');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('flow_maybe_type', () => {
-  it('factory produces correct type', () => {
-    const node = ir.flowMaybeType({ primaryType: { $type: 'primary_type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('flow_maybe_type');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.flowMaybeType({ primaryType: { $type: 'primary_type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('parenthesized_type', () => {
-  it('factory produces correct type', () => {
-    const node = ir.parenthesizedType({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('parenthesized_type');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.parenthesizedType({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('predefined_type', () => {
-  it('factory produces correct type', () => {
-    const node = ir.predefinedType("test");
-    expect(node.$type).toBe('predefined_type');
+    const node = ir.unescapedDoubleJsxStringFragment("test");
+    expect(node.$type).toBe('unescaped_double_jsx_string_fragment');
     expect(node.$source).toBe('factory');
     expect(node.$text).toBe("test");
   });
 });
 
-describe('type_arguments', () => {
+describe('unescaped_double_string_fragment', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeArguments({ type: "type" } as never);
-    expect(node.$type).toBe('type_arguments');
+    const node = ir.unescapedDoubleStringFragment("test");
+    expect(node.$type).toBe('unescaped_double_string_fragment');
     expect(node.$source).toBe('factory');
+    expect(node.$text).toBe("test");
   });
 });
 
-describe('object_type', () => {
+describe('unescaped_single_jsx_string_fragment', () => {
   it('factory produces correct type', () => {
-    const node = ir.objectType({ opening: 'test' as any, closing: 'test' as any });
-    expect(node.$type).toBe('object_type');
+    const node = ir.unescapedSingleJsxStringFragment("test");
+    expect(node.$type).toBe('unescaped_single_jsx_string_fragment');
     expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.objectType({ opening: 'test' as any, closing: 'test' as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$text).toBe("test");
   });
 });
 
-describe('call_signature', () => {
+describe('unescaped_single_string_fragment', () => {
   it('factory produces correct type', () => {
-    const node = ir.callSignature({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('call_signature');
+    const node = ir.unescapedSingleStringFragment("test");
+    expect(node.$type).toBe('unescaped_single_string_fragment');
     expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.callSignature({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('property_signature', () => {
-  it('factory produces correct type', () => {
-    const node = ir.propertySignature({ name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('property_signature');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.propertySignature({ name: { $type: '_property_name', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('type_parameters', () => {
-  it('factory produces correct type', () => {
-    const node = ir.typeParameters({ type: "type_parameter" } as never);
-    expect(node.$type).toBe('type_parameters');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('type_parameter', () => {
-  it('factory produces correct type', () => {
-    const node = ir.typeParameter({ name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('type_parameter');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.typeParameter({ name: { $type: '_type_identifier', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('default_type', () => {
-  it('factory produces correct type', () => {
-    const node = ir.defaultType({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('default_type');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.defaultType({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('constraint', () => {
-  it('factory produces correct type', () => {
-    const node = ir.constraint({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('constraint');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.constraint({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('construct_signature', () => {
-  it('factory produces correct type', () => {
-    const node = ir.constructSignature({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('construct_signature');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.constructSignature({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('index_signature_mapped_type_clause', () => {
-  it('factory produces correct type', () => {
-    const node = ir.indexSignatureMappedTypeClause({ type: "mapped_type_clause" } as never);
-    expect(node.$type).toBe('index_signature_mapped_type_clause');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('index_signature', () => {
-  it('colon form produces correct type', () => {
-    const node = ir.indexSignature.colon({ type: { $type: 'type_annotation', $text: 'test', $source: 'factory', $named: true } as any, name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any, indexType: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('index_signature');
-    expect(node.$source).toBe('factory');
-  });
-  it('mapped_type_clause form produces correct type', () => {
-    const node = ir.indexSignature.mapped_type_clause({ type: { $type: 'type_annotation', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('index_signature');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('array_type', () => {
-  it('factory produces correct type', () => {
-    const node = ir.arrayType({ primaryType: { $type: 'primary_type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('array_type');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.arrayType({ primaryType: { $type: 'primary_type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
-  });
-});
-
-describe('tuple_type', () => {
-  it('factory produces correct type', () => {
-    const node = ir.tupleType();
-    expect(node.$type).toBe('tuple_type');
-    expect(node.$source).toBe('factory');
-  });
-});
-
-describe('readonly_type', () => {
-  it('factory produces correct type', () => {
-    const node = ir.readonlyType({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('readonly_type');
-    expect(node.$source).toBe('factory');
-  });
-  it('render produces non-empty string', () => {
-    const node = ir.readonlyType({ type: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$text).toBe("test");
   });
 });
 
@@ -2130,27 +2081,76 @@ describe('union_type', () => {
   });
 });
 
-describe('intersection_type', () => {
+describe('update_expression', () => {
+  it('postfix form produces correct type', () => {
+    const node = ir.update.postfix({ argument: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any, operator: 'test' as any });
+    expect(node.$type).toBe('update_expression');
+    expect(node.$source).toBe('factory');
+  });
+  it('prefix form produces correct type', () => {
+    const node = ir.update.prefix({ operator: 'test' as any, argument: { $type: 'expression', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('update_expression');
+    expect(node.$source).toBe('factory');
+  });
+});
+
+describe('variable_declaration', () => {
   it('factory produces correct type', () => {
-    const node = ir.intersectionType({ right: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('intersection_type');
+    const node = ir.variable({ declarators: [{ $type: 'variable_declarator', $text: 'test', $source: 'factory', $named: true } as any], semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('variable_declaration');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.intersectionType({ right: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.variable({ declarators: [{ $type: 'variable_declarator', $text: 'test', $source: 'factory', $named: true } as any], semicolon: { $type: '_semicolon', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
-describe('function_type', () => {
+describe('variable_declarator', () => {
   it('factory produces correct type', () => {
-    const node = ir.functionType({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, returnType: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
-    expect(node.$type).toBe('function_type');
+    const node = ir.variableDeclarator({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('variable_declarator');
     expect(node.$source).toBe('factory');
   });
   it('render produces non-empty string', () => {
-    const node = ir.functionType({ parameters: { $type: 'formal_parameters', $text: 'test', $source: 'factory', $named: true } as any, returnType: { $type: 'type', $text: 'test', $source: 'factory', $named: true } as any });
+    const node = ir.variableDeclarator({ name: { $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any });
     expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('while_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.whileStatement({ condition: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('while_statement');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.whileStatement({ condition: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('with_statement', () => {
+  it('factory produces correct type', () => {
+    const node = ir.withStatement({ object: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.$type).toBe('with_statement');
+    expect(node.$source).toBe('factory');
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.withStatement({ object: { $type: 'parenthesized_expression', $text: 'test', $source: 'factory', $named: true } as any, body: { $type: 'statement', $text: 'test', $source: 'factory', $named: true } as any });
+    expect(node.render().length).toBeGreaterThan(0);
+  });
+});
+
+describe('yield_expression', () => {
+  it('factory produces correct type', () => {
+    const node = ir.yieldExpression({});
+    expect(node.$type).toBe('yield_expression');
+    expect(node.$source).toBe('factory');
+  });
+  it('render does not throw on minimal config', () => {
+    const node = ir.yieldExpression({});
+    expect(() => node.render()).not.toThrow();
   });
 });
 

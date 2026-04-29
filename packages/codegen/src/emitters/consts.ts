@@ -6,6 +6,7 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode, AssembledField } from '../compiler/node-map.ts';
+import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	isRequired,
 	isMultiple,
@@ -17,10 +18,11 @@ import {
 export interface EmitConstsConfig {
 	grammar: string;
 	nodeMap: NodeMap;
+	generatedIdTables?: GeneratedIdTables;
 }
 
 export function emitConsts(config: EmitConstsConfig): string {
-	const { nodeMap } = config;
+	const { nodeMap, generatedIdTables } = config;
 
 	const nodeKinds: string[] = []; // branch + container + polymorph
 	const leafKinds: string[] = []; // leaf + keyword + enum
@@ -113,6 +115,14 @@ export function emitConsts(config: EmitConstsConfig): string {
 	lines.push('export type Operator = (typeof OPERATORS)[number];');
 	lines.push('');
 
+	emitTreeSitterIdConsts(lines, {
+		kindIds: generatedIdTables?.kindIds,
+		fieldIds: generatedIdTables?.fieldIds,
+		kinds: [...new Set([...nodeKinds, ...leafKinds, ...keywords, ...operators])],
+		fields: collectFieldNames(nodeMap),
+		sourceArtifact: generatedIdTables?.sourceArtifact
+	});
+
 	// FIELD_MAP
 	lines.push('/** Per-node-kind field metadata. */');
 	lines.push('export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{');
@@ -158,6 +168,145 @@ export function emitConsts(config: EmitConstsConfig): string {
 	}
 
 	return lines.join('\n');
+}
+
+// ---------------------------------------------------------------------------
+// Tree-sitter generated ID emission
+// ---------------------------------------------------------------------------
+
+interface TreeSitterIdConstConfig {
+	readonly kindIds?: ReadonlyMap<string, number> | Record<string, number>;
+	readonly fieldIds?: ReadonlyMap<string, number> | Record<string, number>;
+	readonly kinds: readonly string[];
+	readonly fields: readonly string[];
+	readonly sourceArtifact?: string;
+}
+
+interface IdEnumEntry {
+	readonly key: string;
+	readonly id: number;
+	readonly memberName: string;
+}
+
+function emitTreeSitterIdConsts(
+	lines: string[],
+	config: TreeSitterIdConstConfig
+): void {
+	const kindEntries = collectIdEntries(config.kinds, config.kindIds);
+	const fieldEntries = collectIdEntries(config.fields, config.fieldIds);
+	if (kindEntries.length === 0 && fieldEntries.length === 0) return;
+
+	lines.push(
+		'/** Tree-sitter numeric IDs from the generated parser artifact. */'
+	);
+	if (config.sourceArtifact) {
+		lines.push(
+			`export const TREE_SITTER_ID_SOURCE = ${JSON.stringify(config.sourceArtifact)};`
+		);
+	}
+	lines.push('');
+
+	emitIdEnumBlock(lines, {
+		enumName: 'TreeSitterKindId',
+		forwardName: 'TREE_SITTER_KIND_ID_BY_KIND',
+		reverseName: 'TREE_SITTER_KIND_BY_KIND_ID',
+		recordType: 'Record<string, TreeSitterKindId>',
+		entries: kindEntries
+	});
+
+	emitIdEnumBlock(lines, {
+		enumName: 'TreeSitterFieldId',
+		forwardName: 'TREE_SITTER_FIELD_ID_BY_NAME',
+		reverseName: 'TREE_SITTER_FIELD_NAME_BY_ID',
+		recordType: 'Record<string, TreeSitterFieldId>',
+		entries: fieldEntries
+	});
+}
+
+function emitIdEnumBlock(
+	lines: string[],
+	config: {
+		readonly enumName: string;
+		readonly forwardName: string;
+		readonly reverseName: string;
+		readonly recordType: string;
+		readonly entries: readonly IdEnumEntry[];
+	}
+): void {
+	if (config.entries.length === 0) return;
+
+	lines.push(`export const enum ${config.enumName} {`);
+	for (const entry of config.entries) {
+		lines.push(`  ${entry.memberName} = ${entry.id},`);
+	}
+	lines.push('}');
+	lines.push('');
+
+	lines.push(`export const ${config.forwardName} = {`);
+	for (const entry of config.entries) {
+		lines.push(`  ${JSON.stringify(entry.key)}: ${config.enumName}.${entry.memberName},`);
+	}
+	lines.push(`} as const satisfies ${config.recordType};`);
+	lines.push('');
+
+	lines.push(`export const ${config.reverseName} = {`);
+	for (const entry of config.entries) {
+		lines.push(
+			`  [${config.enumName}.${entry.memberName}]: ${JSON.stringify(entry.key)},`
+		);
+	}
+	lines.push('} as const;');
+	lines.push('');
+}
+
+function collectIdEntries(
+	keys: readonly string[],
+	ids: ReadonlyMap<string, number> | Record<string, number> | undefined
+): IdEnumEntry[] {
+	const idMap = toIdMap(ids);
+	const usedNames = new Map<string, string>();
+	const result: IdEnumEntry[] = [];
+
+	for (const key of [...new Set(keys)].sort()) {
+		const id = idMap.get(key);
+		if (id === undefined) continue;
+		const baseName = treeSitterIdMemberName(key);
+		const existingKey = usedNames.get(baseName);
+		const memberName =
+			existingKey === undefined || existingKey === key
+				? baseName
+				: `${baseName}_${id}`;
+		usedNames.set(memberName, key);
+		if (existingKey === undefined) usedNames.set(baseName, key);
+		result.push({ key, id, memberName });
+	}
+
+	return result;
+}
+
+function toIdMap(
+	ids: ReadonlyMap<string, number> | Record<string, number> | undefined
+): Map<string, number> {
+	if (!ids) return new Map();
+	if (ids instanceof Map) return new Map(ids);
+	return new Map(Object.entries(ids));
+}
+
+function collectFieldNames(nodeMap: NodeMap): string[] {
+	const result = new Set<string>();
+	for (const [, node] of nodeMap.nodes) {
+		for (const field of fieldsOfNode(node)) result.add(field.name);
+	}
+	return [...result];
+}
+
+function treeSitterIdMemberName(key: string): string {
+	if (key.startsWith('_')) {
+		const name = pascalCaseFromSnake(key);
+		return name ? `Hidden${name}` : 'Hidden';
+	}
+	if (/^[A-Za-z_]\w*$/.test(key)) return pascalCaseFromSnake(key);
+	return bitflagMemberName(key);
 }
 
 // ---------------------------------------------------------------------------

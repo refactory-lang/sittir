@@ -18,6 +18,11 @@ import {
 } from '../compiler/evaluate.ts';
 import { transform, insert, replace } from '../dsl/transform/transform.ts';
 import type { SymbolRef } from '../compiler/rule.ts';
+import {
+	expectCompleteCatalog,
+	serializeCatalog,
+	walkRule
+} from './helpers/rule-catalog.ts';
 
 // Install sittir's lowercase DSL primitives as globals so transform()'s
 // native-dsl delegation paths can reach them when this test imports
@@ -547,25 +552,31 @@ describe('Evaluate — evaluate()', () => {
 		const operatorField = (binExpr as any).members.find(
 			(m: any) => m.type === 'field' && m.name === 'operator'
 		);
-		expect(operatorField.content).toEqual({
-			type: 'enum',
-			members: [
-				{ type: 'string', value: '+' },
-				{ type: 'string', value: '-' },
-				{ type: 'string', value: '*' },
-				{ type: 'string', value: '/' }
-			],
-			source: 'grammar'
-		});
+		expect(operatorField.content).toEqual(
+			expect.objectContaining({
+				type: 'enum',
+				members: [
+					expect.objectContaining({ type: 'string', value: '+' }),
+					expect.objectContaining({ type: 'string', value: '-' }),
+					expect.objectContaining({ type: 'string', value: '*' }),
+					expect.objectContaining({ type: 'string', value: '/' })
+				],
+				source: 'grammar'
+			})
+		);
 	});
 
 	it('preserves pattern rules for terminals', async () => {
 		const raw = await evaluate(fixture('test-grammar.js'));
-		expect(raw.rules['identifier']).toEqual({
-			type: 'pattern',
-			value: '[a-z_]\\w*'
-		});
-		expect(raw.rules['number']).toEqual({ type: 'pattern', value: '\\d+' });
+		expect(raw.rules['identifier']).toEqual(
+			expect.objectContaining({
+				type: 'pattern',
+				value: '[a-z_]\\w*'
+			})
+		);
+		expect(raw.rules['number']).toEqual(
+			expect.objectContaining({ type: 'pattern', value: '\\d+' })
+		);
 	});
 
 	it('captures field names in reference graph', async () => {
@@ -603,5 +614,131 @@ describe('Evaluate — evaluate()', () => {
 		} finally {
 			rmSync(dir, { recursive: true, force: true });
 		}
+	});
+
+	it('assigns inline IDs and catalog entries to every evaluated occurrence', async () => {
+		const raw = await evaluate(fixture('rule-identity-grammar.js'));
+
+		expectCompleteCatalog(raw.rules, raw.ruleCatalog);
+	});
+
+	it('uses positional IDs for identical subtrees in different branches', async () => {
+		const raw = await evaluate(fixture('rule-identity-grammar.js'));
+		const container = raw.rules['container']!;
+		const symbolIds: string[] = [];
+		walkRule(container, (rule) => {
+			if (rule.type === 'symbol' && rule.name === 'identifier') {
+				symbolIds.push(rule.id!);
+			}
+		});
+
+		expect(symbolIds.length).toBeGreaterThanOrEqual(2);
+		expect(new Set(symbolIds).size).toBe(symbolIds.length);
+	});
+
+	it('keeps catalog serialization deterministic for unchanged input', async () => {
+		const first = await evaluate(fixture('rule-identity-grammar.js'));
+		const second = await evaluate(fixture('rule-identity-grammar.js'));
+
+		expect(serializeCatalog(second.ruleCatalog)).toEqual(
+			serializeCatalog(first.ruleCatalog)
+		);
+	});
+
+	it('records grammar, override, and evaluate-synthesized provenance roots', async () => {
+		const base = await evaluate(fixture('rule-identity-grammar.js'));
+		const override = await evaluate(fixture('rule-identity-override.js'));
+		const baseContainer = base.ruleCatalog.byId.get(
+			base.ruleCatalog.rootsByKind.get('container')!
+		)!;
+		const overrideContainer = override.ruleCatalog.byId.get(
+			override.ruleCatalog.rootsByKind.get('container')!
+		)!;
+		const overrideOnly = override.ruleCatalog.byId.get(
+			override.ruleCatalog.rootsByKind.get('override_only')!
+		)!;
+		const synthesized = base.ruleCatalog.byId.get(
+			base.ruleCatalog.rootsByKind.get('_named_identifier')!
+		)!;
+
+		expect(baseContainer.provenance).toBe('grammar-authored');
+		expect(overrideContainer.provenance).toBe('override-authored-or-replaced');
+		expect(overrideOnly.provenance).toBe('override-authored-or-replaced');
+		expect(synthesized.provenance).toBe('evaluate-synthesized');
+	});
+
+	it('anchors symbol references to the originating rule ID', async () => {
+		const raw = await evaluate(fixture('rule-identity-grammar.js'));
+		const refs = raw.references.filter((ref) => ref.from === 'container');
+
+		expect(refs.length).toBeGreaterThan(0);
+		expect(refs.every((ref) => ref.fromRuleId)).toBe(true);
+		expect(new Set(refs.map((ref) => ref.fromRuleId))).toEqual(
+			new Set([raw.ruleCatalog.rootsByKind.get('container')])
+		);
+	});
+
+	it('classifies fields, aliases, leaves, references, tokens, and wrappers', async () => {
+		const raw = await evaluate(fixture('rule-identity-grammar.js'));
+		const classifications = raw.ruleCatalog.classificationById;
+		const byRuleType = new Map<string, string[]>();
+		for (const entry of raw.ruleCatalog.byId.values()) {
+			const list = byRuleType.get(entry.ruleType) ?? [];
+			list.push(entry.id);
+			byRuleType.set(entry.ruleType, list);
+		}
+
+		expect(classifications.get(byRuleType.get('symbol')![0]!)!.kind).toBe(
+			'nonterminal'
+		);
+		expect(classifications.get(byRuleType.get('pattern')![0]!)!.kind).toBe(
+			'terminal'
+		);
+		expect(classifications.get(byRuleType.get('token')![0]!)!.kind).toBe(
+			'terminal'
+		);
+		expect(classifications.get(byRuleType.get('field')![0]!)!.kind).toBe(
+			'nonterminal'
+		);
+	});
+
+	it('forces only the immediately wrapped field and named-alias content', async () => {
+		const raw = await evaluate(fixture('rule-identity-grammar.js'));
+		const forced = [...raw.ruleCatalog.classificationById.values()].filter(
+			(c) => c.forcedBy === 'field' || c.forcedBy === 'named-alias'
+		);
+
+		expect(
+			forced.some((c) => c.forcedBy === 'field' && c.edgeName === 'name')
+		).toBe(true);
+		expect(forced.some((c) => c.forcedBy === 'named-alias')).toBe(true);
+		for (const classification of forced) {
+			const entry = raw.ruleCatalog.byId.get(classification.ruleId)!;
+			for (const childId of entry.childIds) {
+				expect(
+					raw.ruleCatalog.classificationById.get(childId)!.forcedBy
+				).not.toBe(classification.forcedBy);
+			}
+		}
+	});
+
+	it('aggregates wrapper classification from descendants', async () => {
+		const raw = await evaluate(fixture('rule-identity-grammar.js'));
+		const entries = [...raw.ruleCatalog.byId.values()];
+		const choiceEntries = entries.filter(
+			(entry) => entry.ruleType === 'choice'
+		);
+		const repeatEntry = entries.find((entry) => entry.ruleType === 'repeat1')!;
+
+		expect(
+			choiceEntries.some(
+				(entry) =>
+					raw.ruleCatalog.classificationById.get(entry.id)!.kind ===
+					'nonterminal'
+			)
+		).toBe(true);
+		expect(raw.ruleCatalog.classificationById.get(repeatEntry.id)!.kind).toBe(
+			'nonterminal'
+		);
 	});
 });

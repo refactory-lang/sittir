@@ -24,6 +24,7 @@ import { assemble } from '../compiler/assemble.ts';
 import { emitTypes } from '../emitters/types.ts';
 import { emitFactories } from '../emitters/factories.ts';
 import { emitIr } from '../emitters/ir.ts';
+import { createEmptyRuleCatalog } from '../compiler/rule-catalog.ts';
 
 // ---------------------------------------------------------------------------
 // Synthetic grammar: `iface_body` with curly `{...}` and flow `{|...|}` forms
@@ -62,6 +63,7 @@ function makeRefineRaw(forms: RefineForm[]): RawGrammar {
 		rules: {
 			iface_body: ifaceBodyRule
 		},
+		ruleCatalog: createEmptyRuleCatalog(),
 		extras: [],
 		externals: [],
 		supertypes: [],

@@ -14297,7 +14297,7 @@
       "modelType": "branch",
       "typeName": "StructExpression",
       "factoryName": "structExpression",
-      "irKey": "structExpression",
+      "irKey": "struct",
       "hidden": false,
       "fields": [
         {
@@ -14371,7 +14371,7 @@
       "modelType": "polymorph",
       "typeName": "StructItem",
       "factoryName": "structItem",
-      "irKey": "struct",
+      "irKey": "structItem",
       "hidden": false,
       "source": "override",
       "polymorphSource": "override",

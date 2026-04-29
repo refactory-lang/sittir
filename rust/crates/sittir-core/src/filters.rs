@@ -334,7 +334,7 @@ impl askama::Values for FlankValues {
 /// the python and rust grammars). The TS/Nunjucks engine treats any
 /// non-empty array as present; this trait mirrors that semantic on the
 /// Rust/askama side.
-pub(crate) trait PresenceCheck {
+pub trait PresenceCheck {
     fn is_present_check(&self) -> bool;
 }
 
@@ -403,6 +403,7 @@ impl<T: PresenceCheck> PresenceCheck for Option<T> {
 }
 
 /// Presence test's inverse — blank means "not present".
+#[askama::filter_fn]
 #[allow(non_snake_case, private_bounds)]
 pub fn isBlank<T: PresenceCheck + ?Sized>(
     s: &T,
@@ -423,6 +424,7 @@ pub fn isBlank<T: PresenceCheck + ?Sized>(
 ///
 /// Matches the TS engine's semantics where an empty string and an
 /// empty array both render as "not present".
+#[askama::filter_fn]
 #[allow(non_snake_case, private_bounds)]
 pub fn isPresent<T: PresenceCheck + ?Sized>(
     s: &T,
@@ -471,6 +473,7 @@ fn flank_match(values: &dyn askama::Values, key: &str, sep: &str) -> bool {
 /// On a context with no flank metadata the filter degrades to plain
 /// `join` — matches TS engine behavior when the children array has no
 /// `_trailing_anon` property.
+#[askama::filter_fn]
 #[allow(non_snake_case)]
 pub fn joinWithTrailing<T: JoinSource + ?Sized>(
     xs: &T,
@@ -484,6 +487,7 @@ pub fn joinWithTrailing<T: JoinSource + ?Sized>(
 /// Askama filter — `{{ children | joinWithLeading(",") }}`. Symmetric to
 /// `joinWithTrailing`: emits a leading `sep` iff the children list
 /// captured a leading anonymous token whose text matches `sep`.
+#[askama::filter_fn]
 #[allow(non_snake_case)]
 pub fn joinWithLeading<T: JoinSource + ?Sized>(
     xs: &T,
@@ -497,6 +501,7 @@ pub fn joinWithLeading<T: JoinSource + ?Sized>(
 /// Askama filter — `{{ children | joinWithFlanks(",") }}`. Both
 /// directions; emits each flank independently iff its captured anon
 /// text matches `sep`.
+#[askama::filter_fn]
 #[allow(non_snake_case)]
 pub fn joinWithFlanks<T: JoinSource + ?Sized>(
     xs: &T,

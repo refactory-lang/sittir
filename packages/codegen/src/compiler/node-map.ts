@@ -1972,7 +1972,7 @@ function childrenMayBeEmpty(rule: Rule): boolean {
  *
  * Cross-renderer safe: `{%-` / `-%}` whitespace-control markers work
  * identically in Nunjucks (TS) and Askama (Rust) — see memory note
- * `project_jinja_intersection_safe_primitives`. `isPresent` is the
+ * `project_jinja_intersection_safe_primitives`. `is_present` is the
  * canonical cross-engine presence filter.
  *
  * @remarks

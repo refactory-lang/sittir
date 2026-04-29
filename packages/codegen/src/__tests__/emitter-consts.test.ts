@@ -294,4 +294,57 @@ describe('emitConsts', () => {
 		expect(output).toContain('Pub = 1 << 0,');
 		expect(output).toContain('PubCrate = 1 << 1,');
 	});
+
+	it('emits tree-sitter numeric kind and field ID enums from generated metadata', () => {
+		const nodeMap = makeNodeMap([
+			[
+				'source_file',
+				{
+					kind: 'source_file',
+					typeName: 'SourceFile',
+					factoryName: 'sourceFile',
+					modelType: 'branch',
+					fields: [
+						{
+							name: 'item',
+							propertyName: 'item',
+							paramName: 'item',
+							values: [],
+							source: 'grammar',
+							projection: { typeName: '', kinds: [] }
+						}
+					]
+				} as unknown as AssembledBranch
+			],
+			[
+				';',
+				{
+					kind: ';',
+					typeName: 'Semi',
+					modelType: 'token'
+				} as unknown as AssembledToken
+			]
+		]);
+
+		const output = emitConsts({
+			grammar: 'test',
+			nodeMap,
+			generatedIdTables: {
+				kindIds: { source_file: 1, ';': 2, missing: 99 },
+				fieldIds: { item: 7, missing: 99 },
+				sourceArtifact: 'parser.wasm'
+			}
+		});
+
+		expect(output).toContain('export const TREE_SITTER_ID_SOURCE = "parser.wasm";');
+		expect(output).toContain('export const enum TreeSitterKindId {');
+		expect(output).toContain('SourceFile = 1,');
+		expect(output).toContain('Semi = 2,');
+		expect(output).toContain('"source_file": TreeSitterKindId.SourceFile,');
+		expect(output).toContain('";": TreeSitterKindId.Semi,');
+		expect(output).not.toContain('missing');
+		expect(output).toContain('export const enum TreeSitterFieldId {');
+		expect(output).toContain('Item = 7,');
+		expect(output).toContain('"item": TreeSitterFieldId.Item,');
+	});
 });

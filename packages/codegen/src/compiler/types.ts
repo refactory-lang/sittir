@@ -19,7 +19,7 @@
  * too; splitting it into `./node-map.ts` is a later step.
  */
 
-import type { Rule, SymbolRef } from './rule.ts';
+import type { Rule, RuleId, SymbolRef } from './rule.ts';
 import type { AssembledNode } from './node-map.ts';
 
 /**
@@ -46,12 +46,62 @@ export interface PolymorphVariant {
 export type ExternalRole = { role: 'indent' | 'dedent' | 'newline' };
 
 // ---------------------------------------------------------------------------
+// Evaluate rule occurrence identity and classification
+// ---------------------------------------------------------------------------
+
+export type RuleProvenance =
+	| 'grammar-authored'
+	| 'override-authored-or-replaced'
+	| 'evaluate-synthesized';
+
+export type RulePathSegment =
+	| { readonly edge: 'content' }
+	| { readonly edge: 'members'; readonly index: number }
+	| { readonly edge: 'forms'; readonly index: number };
+
+export interface RuleCatalogEntry {
+	readonly id: RuleId;
+	readonly ownerKind: string;
+	readonly ruleType: Rule['type'];
+	readonly parentId?: RuleId;
+	readonly path: readonly RulePathSegment[];
+	readonly childIds: readonly RuleId[];
+	readonly provenance: RuleProvenance;
+}
+
+export interface RuleClassification {
+	readonly ruleId: RuleId;
+	readonly kind: 'terminal' | 'nonterminal';
+	readonly forcedBy?: 'intrinsic' | 'field' | 'named-alias';
+	readonly edgeName?: string;
+	readonly cstSurface?: 'named' | 'anonymous';
+}
+
+export interface RuleCatalog {
+	readonly byId: ReadonlyMap<RuleId, RuleCatalogEntry>;
+	readonly rootsByKind: ReadonlyMap<string, RuleId>;
+	readonly classificationById: ReadonlyMap<RuleId, RuleClassification>;
+}
+
+export interface GeneratedMetadata {
+	readonly kindId?: number;
+	readonly fieldId?: number;
+	readonly sourceArtifact: string;
+}
+
+export interface GeneratedMetadataCatalog {
+	readonly kindByName: ReadonlyMap<string, GeneratedMetadata>;
+	readonly fieldByName: ReadonlyMap<string, GeneratedMetadata>;
+}
+
+// ---------------------------------------------------------------------------
 // Phase 1 — Evaluate output
 // ---------------------------------------------------------------------------
 
 export interface RawGrammar {
 	readonly name: string;
 	readonly rules: Record<string, Rule>;
+	readonly ruleCatalog: RuleCatalog;
 	readonly extras: string[];
 	readonly externals: string[];
 	readonly supertypes: string[];

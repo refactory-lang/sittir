@@ -4,138 +4,138 @@
 // See emitters/factory-map.ts for semantics of each map.
 {
   "factoryShapes": {
-    "module": "children",
+    "_as_pattern": "children",
+    "_as_pattern_target": "children",
+    "_assignment_eq": "config",
+    "_assignment_type": "config",
+    "_assignment_typed": "config",
+    "_comprehension_clauses": "children",
+    "_format_expression": "children",
+    "_kw_async_marker": "text",
+    "_match_block": "children",
+    "_match_block_block": "config",
+    "_simple_pattern_negative": "text",
     "_simple_statements": "children",
-    "import_statement": "config",
-    "import_prefix": "text",
-    "relative_import": "config",
-    "future_import_statement": "config",
-    "import_from_statement": "config",
+    "_suite": "children",
+    "_with_clause_paren": "children",
     "aliased_import": "config",
-    "print_statement": "config",
-    "chevron": "config",
+    "argument_list": "children",
+    "as_pattern": "config",
     "assert_statement": "children",
-    "expression_statement_tuple": "children",
-    "expression_statement": "config",
-    "named_expression": "config",
-    "return_statement": "children",
-    "delete_statement": "children",
-    "raise_statement": "config",
-    "pass_statement": "text",
+    "assignment": "config",
+    "attribute": "config",
+    "augmented_assignment": "config",
+    "await": "config",
+    "binary_operator": "config",
+    "block": "children",
+    "boolean_operator": "config",
     "break_statement": "text",
+    "call": "config",
+    "case_clause": "config",
+    "case_pattern": "children",
+    "chevron": "config",
+    "class_definition": "config",
+    "class_pattern": "config",
+    "comment": "text",
+    "comparison_operator": "config",
+    "complex_pattern": "config",
+    "concatenated_string": "children",
+    "conditional_expression": "config",
+    "constrained_type": "config",
     "continue_statement": "text",
-    "if_statement": "config",
+    "decorated_definition": "config",
+    "decorator": "config",
+    "default_parameter": "config",
+    "delete_statement": "children",
+    "dict_pattern": "children",
+    "dictionary": "children",
+    "dictionary_comprehension": "config",
+    "dictionary_splat": "config",
+    "dictionary_splat_pattern": "children",
+    "dotted_name": "children",
     "elif_clause": "config",
     "else_clause": "config",
-    "match_statement": "config",
-    "_match_block": "children",
-    "case_clause": "config",
-    "for_statement": "config",
-    "while_statement": "config",
-    "try_statement": "config",
+    "escape_sequence": "text",
     "except_clause": "config",
+    "exec_statement": "config",
+    "expression_list": "children",
+    "expression_statement_tuple": "children",
+    "expression_statement": "config",
+    "false": "text",
     "finally_clause": "config",
-    "with_statement": "config",
+    "float": "text",
+    "for_in_clause": "config",
+    "for_statement": "config",
+    "format_specifier": "children",
+    "function_definition": "config",
+    "future_import_statement": "config",
+    "generator_expression": "config",
+    "generic_type": "config",
+    "global_statement": "children",
+    "identifier": "text",
+    "if_clause": "config",
+    "if_statement": "config",
+    "import_from_statement": "config",
+    "import_prefix": "text",
+    "import_statement": "config",
+    "integer": "text",
+    "interpolation": "config",
+    "keyword_argument": "config",
+    "keyword_pattern": "config",
+    "lambda": "config",
+    "lambda_parameters": "children",
+    "lambda_within_for_in_clause": "config",
+    "line_continuation": "text",
+    "list": "children",
+    "list_comprehension": "config",
+    "list_pattern": "children",
+    "list_splat": "config",
+    "list_splat_pattern": "children",
+    "match_statement": "config",
+    "member_type": "config",
+    "module": "children",
+    "named_expression": "config",
+    "none": "text",
+    "nonlocal_statement": "children",
+    "not_operator": "config",
+    "pair": "config",
+    "parameters": "children",
+    "parenthesized_expression": "children",
+    "parenthesized_list_splat": "children",
+    "pass_statement": "text",
+    "pattern_list": "children",
+    "print_statement": "config",
+    "raise_statement": "config",
+    "relative_import": "config",
+    "return_statement": "children",
+    "set": "children",
+    "set_comprehension": "config",
+    "slice": "config",
+    "splat_pattern": "config",
+    "splat_type": "config",
+    "string": "text",
+    "string_content": "children",
+    "subscript": "config",
+    "true": "text",
+    "try_statement": "config",
+    "tuple": "children",
+    "tuple_pattern": "children",
+    "type": "children",
+    "type_alias_statement": "config",
+    "type_conversion": "text",
+    "type_parameter": "children",
+    "typed_default_parameter": "config",
+    "typed_parameter": "config",
+    "unary_operator": "config",
+    "union_pattern": "children",
+    "union_type": "config",
+    "while_statement": "config",
     "with_clause_bare": "children",
     "with_clause_paren": "children",
     "with_clause": "config",
     "with_item": "config",
-    "function_definition": "config",
-    "parameters": "children",
-    "lambda_parameters": "children",
-    "list_splat": "config",
-    "dictionary_splat": "config",
-    "global_statement": "children",
-    "nonlocal_statement": "children",
-    "exec_statement": "config",
-    "type_alias_statement": "config",
-    "class_definition": "config",
-    "type_parameter": "children",
-    "parenthesized_list_splat": "children",
-    "argument_list": "children",
-    "decorated_definition": "config",
-    "decorator": "config",
-    "_suite": "children",
-    "block": "children",
-    "expression_list": "children",
-    "dotted_name": "children",
-    "case_pattern": "children",
-    "_as_pattern": "children",
-    "union_pattern": "children",
-    "dict_pattern": "children",
-    "keyword_pattern": "config",
-    "splat_pattern": "config",
-    "class_pattern": "config",
-    "complex_pattern": "config",
-    "tuple_pattern": "children",
-    "list_pattern": "children",
-    "default_parameter": "config",
-    "typed_default_parameter": "config",
-    "list_splat_pattern": "children",
-    "dictionary_splat_pattern": "children",
-    "as_pattern": "config",
-    "not_operator": "config",
-    "boolean_operator": "config",
-    "binary_operator": "config",
-    "unary_operator": "config",
-    "comparison_operator": "config",
-    "lambda": "config",
-    "lambda_within_for_in_clause": "config",
-    "assignment": "config",
-    "augmented_assignment": "config",
-    "pattern_list": "children",
+    "with_statement": "config",
     "yield": "children",
-    "attribute": "config",
-    "subscript": "config",
-    "slice": "config",
-    "call": "config",
-    "typed_parameter": "config",
-    "type": "children",
-    "splat_type": "config",
-    "generic_type": "config",
-    "union_type": "config",
-    "constrained_type": "config",
-    "member_type": "config",
-    "keyword_argument": "config",
-    "list": "children",
-    "set": "children",
-    "tuple": "children",
-    "dictionary": "children",
-    "pair": "config",
-    "list_comprehension": "config",
-    "dictionary_comprehension": "config",
-    "set_comprehension": "config",
-    "generator_expression": "config",
-    "_comprehension_clauses": "children",
-    "parenthesized_expression": "children",
-    "for_in_clause": "config",
-    "if_clause": "config",
-    "conditional_expression": "config",
-    "concatenated_string": "children",
-    "string": "text",
-    "string_content": "children",
-    "interpolation": "config",
-    "escape_sequence": "text",
-    "format_specifier": "children",
-    "type_conversion": "text",
-    "integer": "text",
-    "float": "text",
-    "identifier": "text",
-    "true": "text",
-    "false": "text",
-    "none": "text",
-    "await": "config",
-    "comment": "text",
-    "line_continuation": "text",
-    "_as_pattern_target": "children",
-    "_format_expression": "children",
-    "_kw_async_marker": "text",
-    "_assignment_eq": "config",
-    "_assignment_type": "config",
-    "_assignment_typed": "config",
-    "_with_clause_paren": "children",
-    "_match_block_block": "config",
-    "_simple_pattern_negative": "text",
     "_newline": "text",
     "string_start": "text",
     "_string_content": "text",
@@ -145,274 +145,50 @@
     ")": "text",
     "}": "text",
     "except": "text",
-    "import": "text",
-    "from": "text",
     "as": "text",
-    "print": "text",
+    "async": "text",
     "assert": "text",
-    "return": "text",
-    "del": "text",
-    "raise": "text",
-    "pass": "text",
-    "break": "text",
-    "continue": "text",
-    "if": "text",
-    "elif": "text",
-    "else": "text",
-    "match": "text",
-    "case": "text",
-    "for": "text",
-    "in": "text",
-    "while": "text",
-    "try": "text",
-    "finally": "text",
-    "with": "text",
-    "def": "text",
-    "global": "text",
-    "nonlocal": "text",
-    "exec": "text",
-    "class": "text",
-    "not": "text",
     "and": "text",
     "or": "text",
-    "True": "text",
+    "break": "text",
+    "case": "text",
+    "class": "text",
+    "if": "text",
+    "else": "text",
+    "continue": "text",
+    "del": "text",
+    "elif": "text",
+    "exec": "text",
+    "in": "text",
     "False": "text",
+    "finally": "text",
+    "for": "text",
+    "def": "text",
+    "from": "text",
+    "import": "text",
+    "global": "text",
+    "match": "text",
     "None": "text",
-    "async": "text"
+    "nonlocal": "text",
+    "not": "text",
+    "pass": "text",
+    "print": "text",
+    "raise": "text",
+    "return": "text",
+    "True": "text",
+    "try": "text",
+    "while": "text",
+    "with": "text"
   },
   "fieldAliasMap": {
-    "match_statement.body": {
-      "block": "_match_block"
-    },
     "as_pattern.alias": {
       "as_pattern_target": "_as_pattern_target"
+    },
+    "match_statement.body": {
+      "block": "_match_block"
     }
   },
   "factoryFields": {
-    "import_statement": [
-      "name"
-    ],
-    "relative_import": [
-      "import_prefix",
-      "dotted_name"
-    ],
-    "future_import_statement": [
-      "name"
-    ],
-    "aliased_import": [
-      "name",
-      "alias"
-    ],
-    "chevron": [
-      "expression"
-    ],
-    "named_expression": [
-      "name",
-      "value"
-    ],
-    "if_statement": [
-      "condition",
-      "consequence",
-      "alternative"
-    ],
-    "elif_clause": [
-      "condition",
-      "consequence"
-    ],
-    "else_clause": [
-      "body"
-    ],
-    "match_statement": [
-      "subject",
-      "body"
-    ],
-    "for_statement": [
-      "async_marker",
-      "left",
-      "right",
-      "body",
-      "alternative"
-    ],
-    "while_statement": [
-      "condition",
-      "body",
-      "alternative"
-    ],
-    "try_statement": [
-      "body",
-      "except_clauses",
-      "else_clause",
-      "finally_clause"
-    ],
-    "finally_clause": [
-      "block"
-    ],
-    "with_statement": [
-      "async_marker",
-      "with_clause",
-      "body"
-    ],
-    "with_item": [
-      "value"
-    ],
-    "function_definition": [
-      "async_marker",
-      "name",
-      "type_parameters",
-      "parameters",
-      "return_type",
-      "body"
-    ],
-    "list_splat": [
-      "expression"
-    ],
-    "dictionary_splat": [
-      "expression"
-    ],
-    "exec_statement": [
-      "code",
-      "in_clause"
-    ],
-    "type_alias_statement": [
-      "type",
-      "left",
-      "right"
-    ],
-    "class_definition": [
-      "name",
-      "type_parameters",
-      "superclasses",
-      "body"
-    ],
-    "decorator": [
-      "expression",
-      "newline"
-    ],
-    "keyword_pattern": [
-      "identifier",
-      "simple_pattern"
-    ],
-    "class_pattern": [
-      "dotted_name",
-      "arguments"
-    ],
-    "default_parameter": [
-      "name",
-      "value"
-    ],
-    "typed_default_parameter": [
-      "name",
-      "type",
-      "value"
-    ],
-    "as_pattern": [
-      "expression",
-      "alias"
-    ],
-    "not_operator": [
-      "argument"
-    ],
-    "boolean_operator": [
-      "left",
-      "operator",
-      "right"
-    ],
-    "binary_operator": [
-      "left",
-      "operator",
-      "right"
-    ],
-    "unary_operator": [
-      "operator",
-      "argument"
-    ],
-    "comparison_operator": [
-      "left",
-      "operators"
-    ],
-    "lambda": [
-      "parameters",
-      "body"
-    ],
-    "lambda_within_for_in_clause": [
-      "parameters",
-      "body"
-    ],
-    "augmented_assignment": [
-      "left",
-      "operator",
-      "right"
-    ],
-    "attribute": [
-      "object",
-      "attribute"
-    ],
-    "subscript": [
-      "value",
-      "subscript"
-    ],
-    "slice": [
-      "start",
-      "stop",
-      "step"
-    ],
-    "call": [
-      "function",
-      "arguments"
-    ],
-    "splat_type": [
-      "identifier"
-    ],
-    "generic_type": [
-      "identifier",
-      "type_parameter"
-    ],
-    "union_type": [
-      "left",
-      "right"
-    ],
-    "constrained_type": [
-      "base_type",
-      "constraint"
-    ],
-    "member_type": [
-      "base_type",
-      "identifier"
-    ],
-    "keyword_argument": [
-      "name",
-      "value"
-    ],
-    "pair": [
-      "key",
-      "value"
-    ],
-    "for_in_clause": [
-      "async_marker",
-      "left",
-      "right"
-    ],
-    "if_clause": [
-      "expression"
-    ],
-    "conditional_expression": [
-      "body",
-      "condition",
-      "alternative"
-    ],
-    "string": [
-      "string_start",
-      "content",
-      "string_end"
-    ],
-    "interpolation": [
-      "expression",
-      "type_conversion",
-      "format_specifier"
-    ],
-    "await": [
-      "primary_expression"
-    ],
     "_assignment_eq": [
       "right"
     ],
@@ -425,32 +201,237 @@
     ],
     "_match_block_block": [
       "alternative"
+    ],
+    "aliased_import": [
+      "name",
+      "alias"
+    ],
+    "as_pattern": [
+      "expression",
+      "alias"
+    ],
+    "attribute": [
+      "object",
+      "attribute"
+    ],
+    "augmented_assignment": [
+      "left",
+      "operator",
+      "right"
+    ],
+    "await": [
+      "primary_expression"
+    ],
+    "binary_operator": [
+      "left",
+      "operator",
+      "right"
+    ],
+    "boolean_operator": [
+      "left",
+      "operator",
+      "right"
+    ],
+    "call": [
+      "function",
+      "arguments"
+    ],
+    "chevron": [
+      "expression"
+    ],
+    "class_definition": [
+      "name",
+      "type_parameters",
+      "superclasses",
+      "body"
+    ],
+    "class_pattern": [
+      "dotted_name",
+      "arguments"
+    ],
+    "comparison_operator": [
+      "left",
+      "operators"
+    ],
+    "conditional_expression": [
+      "body",
+      "condition",
+      "alternative"
+    ],
+    "constrained_type": [
+      "base_type",
+      "constraint"
+    ],
+    "decorator": [
+      "expression",
+      "newline"
+    ],
+    "default_parameter": [
+      "name",
+      "value"
+    ],
+    "dictionary_splat": [
+      "expression"
+    ],
+    "elif_clause": [
+      "condition",
+      "consequence"
+    ],
+    "else_clause": [
+      "body"
+    ],
+    "exec_statement": [
+      "code",
+      "in_clause"
+    ],
+    "finally_clause": [
+      "block"
+    ],
+    "for_in_clause": [
+      "async_marker",
+      "left",
+      "right"
+    ],
+    "for_statement": [
+      "async_marker",
+      "left",
+      "right",
+      "body",
+      "alternative"
+    ],
+    "function_definition": [
+      "async_marker",
+      "name",
+      "type_parameters",
+      "parameters",
+      "return_type",
+      "body"
+    ],
+    "future_import_statement": [
+      "name"
+    ],
+    "generic_type": [
+      "identifier",
+      "type_parameter"
+    ],
+    "if_clause": [
+      "expression"
+    ],
+    "if_statement": [
+      "condition",
+      "consequence",
+      "alternative"
+    ],
+    "import_statement": [
+      "name"
+    ],
+    "interpolation": [
+      "expression",
+      "type_conversion",
+      "format_specifier"
+    ],
+    "keyword_argument": [
+      "name",
+      "value"
+    ],
+    "keyword_pattern": [
+      "identifier",
+      "simple_pattern"
+    ],
+    "lambda": [
+      "parameters",
+      "body"
+    ],
+    "lambda_within_for_in_clause": [
+      "parameters",
+      "body"
+    ],
+    "list_splat": [
+      "expression"
+    ],
+    "match_statement": [
+      "subject",
+      "body"
+    ],
+    "member_type": [
+      "base_type",
+      "identifier"
+    ],
+    "named_expression": [
+      "name",
+      "value"
+    ],
+    "not_operator": [
+      "argument"
+    ],
+    "pair": [
+      "key",
+      "value"
+    ],
+    "relative_import": [
+      "import_prefix",
+      "dotted_name"
+    ],
+    "slice": [
+      "start",
+      "stop",
+      "step"
+    ],
+    "splat_type": [
+      "identifier"
+    ],
+    "string": [
+      "string_start",
+      "content",
+      "string_end"
+    ],
+    "subscript": [
+      "value",
+      "subscript"
+    ],
+    "try_statement": [
+      "body",
+      "except_clauses",
+      "else_clause",
+      "finally_clause"
+    ],
+    "type_alias_statement": [
+      "type",
+      "left",
+      "right"
+    ],
+    "typed_default_parameter": [
+      "name",
+      "type",
+      "value"
+    ],
+    "unary_operator": [
+      "operator",
+      "argument"
+    ],
+    "union_type": [
+      "left",
+      "right"
+    ],
+    "while_statement": [
+      "condition",
+      "body",
+      "alternative"
+    ],
+    "with_item": [
+      "value"
+    ],
+    "with_statement": [
+      "async_marker",
+      "with_clause",
+      "body"
     ]
   },
   "polymorphVariants": {
-    "expression_statement": {
-      "source": "override",
-      "childKind": {
-        "expression_statement_tuple": "tuple"
-      }
-    },
     "_match_block": {
       "source": "override",
       "childKind": {
         "_match_block_block": "block"
-      }
-    },
-    "with_clause": {
-      "source": "override",
-      "childKind": {
-        "with_clause_bare": "bare",
-        "with_clause_paren": "paren"
-      }
-    },
-    "dict_pattern": {
-      "source": "override",
-      "childKind": {
-        "dict_pattern_kv": "kv"
       }
     },
     "assignment": {
@@ -459,6 +440,25 @@
         "assignment_eq": "eq",
         "assignment_type": "type",
         "assignment_typed": "typed"
+      }
+    },
+    "dict_pattern": {
+      "source": "override",
+      "childKind": {
+        "dict_pattern_kv": "kv"
+      }
+    },
+    "expression_statement": {
+      "source": "override",
+      "childKind": {
+        "expression_statement_tuple": "tuple"
+      }
+    },
+    "with_clause": {
+      "source": "override",
+      "childKind": {
+        "with_clause_bare": "bare",
+        "with_clause_paren": "paren"
       }
     }
   }

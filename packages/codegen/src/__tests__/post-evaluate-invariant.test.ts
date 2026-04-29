@@ -23,6 +23,10 @@
 import { describe, it, expect } from 'vitest';
 import { evaluate } from '../compiler/evaluate.ts';
 import { resolveOverridesPath } from '../compiler/resolve-grammar.ts';
+import {
+	expectCompleteCatalog,
+	serializeCatalog
+} from './helpers/rule-catalog.ts';
 
 const KNOWN_RULE_TYPES = new Set([
 	// Structural grouping
@@ -123,6 +127,7 @@ describe('post-evaluate invariant', () => {
 				'conflicts',
 				'word',
 				'references',
+				'ruleCatalog',
 				// Documented sidecar — populated by role() accumulator.
 				'externalRoles',
 				// Nested-alias polymorph metadata — populated by alias() in transform.
@@ -137,6 +142,23 @@ describe('post-evaluate invariant', () => {
 				extra,
 				`unexpected RawGrammar fields: ${extra.join(', ')}`
 			).toEqual([]);
+		});
+
+		it(`${grammar}: rule catalog covers every evaluated rule occurrence`, async () => {
+			const overridesPath = resolveOverridesPath(grammar);
+			const raw = await evaluate(overridesPath);
+
+			expectCompleteCatalog(raw.rules, raw.ruleCatalog);
+		});
+
+		it(`${grammar}: unchanged evaluation has deterministic catalog identity`, async () => {
+			const overridesPath = resolveOverridesPath(grammar);
+			const first = await evaluate(overridesPath);
+			const second = await evaluate(overridesPath);
+
+			expect(serializeCatalog(second.ruleCatalog)).toEqual(
+				serializeCatalog(first.ruleCatalog)
+			);
 		});
 	}
 });

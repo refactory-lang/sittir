@@ -60,7 +60,7 @@ function jinjaBodyToLegacyRule(body: string): TemplateRule {
 	// `{% if stem | isPresent %}` (cross-renderer emission, spec 013).
 	// Also tolerate `{%- -%}` whitespace-trim markers on both sides.
 	const withClauseRefs = body.replace(
-		/\{%-?\s*if\s+([a-z_][a-z0-9_]*)(?:\s*\|\s*isPresent)?\s*-?%\}([\s\S]*?)\{%-?\s*endif\s*-?%\}/g,
+		/\{%-?\s*if\s+([a-z_][a-z0-9_]*)(?:\s*\|\s*(?:isPresent|is_present))?\s*-?%\}([\s\S]*?)\{%-?\s*endif\s*-?%\}/g,
 		(_m, stem: string, clauseBody: string) => {
 			clauses[`${stem}_clause`] = jinjaInterpolationsToLegacy(clauseBody);
 			return `$${stem.toUpperCase()}_CLAUSE`;
@@ -76,14 +76,15 @@ function jinjaBodyToLegacyRule(body: string): TemplateRule {
  * interpolations with the legacy `$NAME` / `$$$NAME` placeholders the
  * coverage checker's regex-based field scanner understands. Any of the
  * sittir-registered join-variant filters (`join`, `joinWithTrailing`,
- * `joinWithLeading`, `joinWithFlanks`) signals a multi-valued slot
+ * `joinWithLeading`, `joinWithFlanks`, `join_with_trailing`,
+ * `join_with_leading`, `join_with_flanks`) signals a multi-valued slot
  * (maps to `$$$`); the bare form is single-valued (`$`). See
  * `packages/core/src/templates/nunjucks-env.ts:registerSittirFilters`
  * for the filter inventory the walker picks from.
  */
 function jinjaInterpolationsToLegacy(body: string): string {
 	return body.replace(
-		/\{\{\s*([a-z_][a-z0-9_]*)(?:\s*\|\s*(join|joinWithTrailing|joinWithLeading|joinWithFlanks)\([^)]*\)|\s*\|\s*value)?\s*\}\}/g,
+		/\{\{\s*([a-z_][a-z0-9_]*)(?:\s*\|\s*(join|joinWithTrailing|joinWithLeading|joinWithFlanks|join_with_trailing|join_with_leading|join_with_flanks)\([^)]*\)|\s*\|\s*value)?\s*\}\}/g,
 		(_m, name: string, joinFilter: string | undefined) => {
 			// Multi-valued slot: one of the join-variant filters ⇒ `$$$`.
 			// Single-valued slot: bare `{{ name }}` OR the `| value`

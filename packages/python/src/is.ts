@@ -25,274 +25,274 @@ import type {
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
-    module<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'module' };
+    AsPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_as_pattern' };
+    AsPatternTarget<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_as_pattern_target' };
+    ComprehensionClauses<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_comprehension_clauses' };
+    FormatExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_format_expression' };
+    ListPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_list_pattern' };
+    MatchBlock<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_match_block' };
+    SimplePatternNegative<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_simple_pattern_negative' };
     SimpleStatements<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_simple_statements' };
-    importStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_statement' };
-    relativeImport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'relative_import' };
-    futureImportStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'future_import_statement' };
-    importFromStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_from_statement' };
+    Suite<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_suite' };
+    TuplePattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_tuple_pattern' };
+    WithClauseParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_with_clause_paren' };
     aliasedImport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'aliased_import' };
-    printStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'print_statement' };
-    chevron<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'chevron' };
+    argumentList<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'argument_list' };
+    asPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'as_pattern' };
     assertStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'assert_statement' };
-    expressionStatementTuple<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'expression_statement_tuple' };
-    expressionStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'expression_statement' };
-    namedExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'named_expression' };
-    returnStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'return_statement' };
+    assignment<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'assignment' };
+    attribute<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'attribute' };
+    augmentedAssignment<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'augmented_assignment' };
+    await<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'await' };
+    binaryOperator<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'binary_operator' };
+    block<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'block' };
+    booleanOperator<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'boolean_operator' };
+    call<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'call' };
+    caseClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'case_clause' };
+    casePattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'case_pattern' };
+    chevron<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'chevron' };
+    classDefinition<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'class_definition' };
+    classPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'class_pattern' };
+    comparisonOperator<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'comparison_operator' };
+    complexPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'complex_pattern' };
+    concatenatedString<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'concatenated_string' };
+    conditionalExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'conditional_expression' };
+    constrainedType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'constrained_type' };
+    decoratedDefinition<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'decorated_definition' };
+    decorator<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'decorator' };
+    defaultParameter<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'default_parameter' };
     deleteStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'delete_statement' };
-    raiseStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'raise_statement' };
-    ifStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'if_statement' };
+    dictPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'dict_pattern' };
+    dictionary<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'dictionary' };
+    dictionaryComprehension<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'dictionary_comprehension' };
+    dictionarySplat<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'dictionary_splat' };
+    dictionarySplatPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'dictionary_splat_pattern' };
+    dottedName<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'dotted_name' };
     elifClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'elif_clause' };
     elseClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'else_clause' };
-    matchStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'match_statement' };
-    MatchBlock<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_match_block' };
-    caseClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'case_clause' };
-    forStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'for_statement' };
-    whileStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'while_statement' };
-    tryStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'try_statement' };
     exceptClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'except_clause' };
+    execStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'exec_statement' };
+    expressionList<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'expression_list' };
+    expressionStatementTuple<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'expression_statement_tuple' };
+    expressionStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'expression_statement' };
     finallyClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'finally_clause' };
-    withStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'with_statement' };
+    forInClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'for_in_clause' };
+    forStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'for_statement' };
+    formatSpecifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'format_specifier' };
+    functionDefinition<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'function_definition' };
+    futureImportStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'future_import_statement' };
+    generatorExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'generator_expression' };
+    genericType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'generic_type' };
+    globalStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'global_statement' };
+    ifClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'if_clause' };
+    ifStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'if_statement' };
+    importFromStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_from_statement' };
+    importStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'import_statement' };
+    interpolation<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'interpolation' };
+    keywordArgument<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'keyword_argument' };
+    keywordPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'keyword_pattern' };
+    lambda<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'lambda' };
+    lambdaParameters<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'lambda_parameters' };
+    lambdaWithinForInClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'lambda_within_for_in_clause' };
+    list<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'list' };
+    listComprehension<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'list_comprehension' };
+    listPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'list_pattern' };
+    listSplat<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'list_splat' };
+    listSplatPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'list_splat_pattern' };
+    matchStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'match_statement' };
+    memberType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'member_type' };
+    module<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'module' };
+    namedExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'named_expression' };
+    nonlocalStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'nonlocal_statement' };
+    notOperator<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'not_operator' };
+    pair<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'pair' };
+    parameters<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'parameters' };
+    parenthesizedExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'parenthesized_expression' };
+    parenthesizedListSplat<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'parenthesized_list_splat' };
+    patternList<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'pattern_list' };
+    printStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'print_statement' };
+    raiseStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'raise_statement' };
+    relativeImport<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'relative_import' };
+    returnStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'return_statement' };
+    set<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'set' };
+    setComprehension<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'set_comprehension' };
+    slice<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'slice' };
+    splatPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'splat_pattern' };
+    splatType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'splat_type' };
+    string<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'string' };
+    stringContent<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'string_content' };
+    subscript<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'subscript' };
+    tryStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'try_statement' };
+    tuple<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'tuple' };
+    tuplePattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'tuple_pattern' };
+    type<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'type' };
+    typeAliasStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'type_alias_statement' };
+    typeParameter<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'type_parameter' };
+    typedDefaultParameter<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'typed_default_parameter' };
+    typedParameter<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'typed_parameter' };
+    unaryOperator<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'unary_operator' };
+    unionPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'union_pattern' };
+    unionType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'union_type' };
+    whileStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'while_statement' };
     withClauseBare<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'with_clause_bare' };
     withClauseParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'with_clause_paren' };
     withClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'with_clause' };
     withItem<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'with_item' };
-    functionDefinition<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'function_definition' };
-    parameters<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'parameters' };
-    lambdaParameters<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'lambda_parameters' };
-    listSplat<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'list_splat' };
-    dictionarySplat<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'dictionary_splat' };
-    globalStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'global_statement' };
-    nonlocalStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'nonlocal_statement' };
-    execStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'exec_statement' };
-    typeAliasStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'type_alias_statement' };
-    classDefinition<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'class_definition' };
-    typeParameter<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'type_parameter' };
-    parenthesizedListSplat<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'parenthesized_list_splat' };
-    argumentList<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'argument_list' };
-    decoratedDefinition<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'decorated_definition' };
-    decorator<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'decorator' };
-    Suite<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_suite' };
-    block<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'block' };
-    expressionList<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'expression_list' };
-    dottedName<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'dotted_name' };
-    casePattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'case_pattern' };
-    AsPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_as_pattern' };
-    unionPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'union_pattern' };
-    ListPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_list_pattern' };
-    TuplePattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_tuple_pattern' };
-    dictPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'dict_pattern' };
-    keywordPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'keyword_pattern' };
-    splatPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'splat_pattern' };
-    classPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'class_pattern' };
-    complexPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'complex_pattern' };
-    tuplePattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'tuple_pattern' };
-    listPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'list_pattern' };
-    defaultParameter<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'default_parameter' };
-    typedDefaultParameter<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'typed_default_parameter' };
-    listSplatPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'list_splat_pattern' };
-    dictionarySplatPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'dictionary_splat_pattern' };
-    asPattern<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'as_pattern' };
-    notOperator<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'not_operator' };
-    booleanOperator<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'boolean_operator' };
-    binaryOperator<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'binary_operator' };
-    unaryOperator<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'unary_operator' };
-    comparisonOperator<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'comparison_operator' };
-    lambda<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'lambda' };
-    lambdaWithinForInClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'lambda_within_for_in_clause' };
-    assignment<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'assignment' };
-    augmentedAssignment<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'augmented_assignment' };
-    patternList<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'pattern_list' };
+    withStatement<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'with_statement' };
     yield_<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'yield' };
-    attribute<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'attribute' };
-    subscript<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'subscript' };
-    slice<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'slice' };
-    call<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'call' };
-    typedParameter<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'typed_parameter' };
-    type<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'type' };
-    splatType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'splat_type' };
-    genericType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'generic_type' };
-    unionType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'union_type' };
-    constrainedType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'constrained_type' };
-    memberType<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'member_type' };
-    keywordArgument<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'keyword_argument' };
-    list<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'list' };
-    set<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'set' };
-    tuple<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'tuple' };
-    dictionary<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'dictionary' };
-    pair<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'pair' };
-    listComprehension<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'list_comprehension' };
-    dictionaryComprehension<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'dictionary_comprehension' };
-    setComprehension<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'set_comprehension' };
-    generatorExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'generator_expression' };
-    ComprehensionClauses<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_comprehension_clauses' };
-    parenthesizedExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'parenthesized_expression' };
-    forInClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'for_in_clause' };
-    ifClause<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'if_clause' };
-    conditionalExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'conditional_expression' };
-    concatenatedString<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'concatenated_string' };
-    string<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'string' };
-    stringContent<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'string_content' };
-    interpolation<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'interpolation' };
-    formatSpecifier<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'format_specifier' };
-    await<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: 'await' };
-    AsPatternTarget<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_as_pattern_target' };
-    FormatExpression<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_format_expression' };
-    WithClauseParen<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_with_clause_paren' };
-    SimplePatternNegative<T extends { readonly $type: string }>(v: T): v is T & { readonly $type: '_simple_pattern_negative' };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): v is { readonly $type: K & string };
-    statement(v: { readonly $type: string }): v is Statement;
-    simpleStatement(v: { readonly $type: string }): v is SimpleStatement;
-    namedExpressionLhs(v: { readonly $type: string }): v is NamedExpressionLhs;
-    expressions(v: { readonly $type: string }): v is Expressions;
     compoundStatement(v: { readonly $type: string }): v is CompoundStatement;
+    dictPatternKv(v: { readonly $type: string }): v is DictPatternKv;
+    expressionWithinForInClause(v: { readonly $type: string }): v is ExpressionWithinForInClause;
+    expressions(v: { readonly $type: string }): v is Expressions;
+    fExpression(v: { readonly $type: string }): v is FExpression;
+    leftHandSide(v: { readonly $type: string }): v is LeftHandSide;
+    namedExpressionLhs(v: { readonly $type: string }): v is NamedExpressionLhs;
+    rightHandSide(v: { readonly $type: string }): v is RightHandSide;
     simplePattern(v: { readonly $type: string }): v is SimplePattern;
+    simpleStatement(v: { readonly $type: string }): v is SimpleStatement;
+    statement(v: { readonly $type: string }): v is Statement;
+    expression(v: { readonly $type: string }): v is Expression;
+    keywordIdentifier(v: { readonly $type: string }): v is KeywordIdentifier;
     parameter(v: { readonly $type: string }): v is Parameter;
     pattern(v: { readonly $type: string }): v is Pattern;
-    expressionWithinForInClause(v: { readonly $type: string }): v is ExpressionWithinForInClause;
-    expression(v: { readonly $type: string }): v is Expression;
     primaryExpression(v: { readonly $type: string }): v is PrimaryExpression;
-    leftHandSide(v: { readonly $type: string }): v is LeftHandSide;
-    rightHandSide(v: { readonly $type: string }): v is RightHandSide;
-    fExpression(v: { readonly $type: string }): v is FExpression;
-    keywordIdentifier(v: { readonly $type: string }): v is KeywordIdentifier;
-    dictPatternKv(v: { readonly $type: string }): v is DictPatternKv;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
-    module(v: { readonly $type: string }): asserts v is { readonly $type: 'module' };
+    AsPattern(v: { readonly $type: string }): asserts v is { readonly $type: '_as_pattern' };
+    AsPatternTarget(v: { readonly $type: string }): asserts v is { readonly $type: '_as_pattern_target' };
+    ComprehensionClauses(v: { readonly $type: string }): asserts v is { readonly $type: '_comprehension_clauses' };
+    FormatExpression(v: { readonly $type: string }): asserts v is { readonly $type: '_format_expression' };
+    ListPattern(v: { readonly $type: string }): asserts v is { readonly $type: '_list_pattern' };
+    MatchBlock(v: { readonly $type: string }): asserts v is { readonly $type: '_match_block' };
+    SimplePatternNegative(v: { readonly $type: string }): asserts v is { readonly $type: '_simple_pattern_negative' };
     SimpleStatements(v: { readonly $type: string }): asserts v is { readonly $type: '_simple_statements' };
-    importStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'import_statement' };
-    relativeImport(v: { readonly $type: string }): asserts v is { readonly $type: 'relative_import' };
-    futureImportStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'future_import_statement' };
-    importFromStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'import_from_statement' };
+    Suite(v: { readonly $type: string }): asserts v is { readonly $type: '_suite' };
+    TuplePattern(v: { readonly $type: string }): asserts v is { readonly $type: '_tuple_pattern' };
+    WithClauseParen(v: { readonly $type: string }): asserts v is { readonly $type: '_with_clause_paren' };
     aliasedImport(v: { readonly $type: string }): asserts v is { readonly $type: 'aliased_import' };
-    printStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'print_statement' };
-    chevron(v: { readonly $type: string }): asserts v is { readonly $type: 'chevron' };
+    argumentList(v: { readonly $type: string }): asserts v is { readonly $type: 'argument_list' };
+    asPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'as_pattern' };
     assertStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'assert_statement' };
-    expressionStatementTuple(v: { readonly $type: string }): asserts v is { readonly $type: 'expression_statement_tuple' };
-    expressionStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'expression_statement' };
-    namedExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'named_expression' };
-    returnStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'return_statement' };
+    assignment(v: { readonly $type: string }): asserts v is { readonly $type: 'assignment' };
+    attribute(v: { readonly $type: string }): asserts v is { readonly $type: 'attribute' };
+    augmentedAssignment(v: { readonly $type: string }): asserts v is { readonly $type: 'augmented_assignment' };
+    await(v: { readonly $type: string }): asserts v is { readonly $type: 'await' };
+    binaryOperator(v: { readonly $type: string }): asserts v is { readonly $type: 'binary_operator' };
+    block(v: { readonly $type: string }): asserts v is { readonly $type: 'block' };
+    booleanOperator(v: { readonly $type: string }): asserts v is { readonly $type: 'boolean_operator' };
+    call(v: { readonly $type: string }): asserts v is { readonly $type: 'call' };
+    caseClause(v: { readonly $type: string }): asserts v is { readonly $type: 'case_clause' };
+    casePattern(v: { readonly $type: string }): asserts v is { readonly $type: 'case_pattern' };
+    chevron(v: { readonly $type: string }): asserts v is { readonly $type: 'chevron' };
+    classDefinition(v: { readonly $type: string }): asserts v is { readonly $type: 'class_definition' };
+    classPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'class_pattern' };
+    comparisonOperator(v: { readonly $type: string }): asserts v is { readonly $type: 'comparison_operator' };
+    complexPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'complex_pattern' };
+    concatenatedString(v: { readonly $type: string }): asserts v is { readonly $type: 'concatenated_string' };
+    conditionalExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'conditional_expression' };
+    constrainedType(v: { readonly $type: string }): asserts v is { readonly $type: 'constrained_type' };
+    decoratedDefinition(v: { readonly $type: string }): asserts v is { readonly $type: 'decorated_definition' };
+    decorator(v: { readonly $type: string }): asserts v is { readonly $type: 'decorator' };
+    defaultParameter(v: { readonly $type: string }): asserts v is { readonly $type: 'default_parameter' };
     deleteStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'delete_statement' };
-    raiseStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'raise_statement' };
-    ifStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'if_statement' };
+    dictPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'dict_pattern' };
+    dictionary(v: { readonly $type: string }): asserts v is { readonly $type: 'dictionary' };
+    dictionaryComprehension(v: { readonly $type: string }): asserts v is { readonly $type: 'dictionary_comprehension' };
+    dictionarySplat(v: { readonly $type: string }): asserts v is { readonly $type: 'dictionary_splat' };
+    dictionarySplatPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'dictionary_splat_pattern' };
+    dottedName(v: { readonly $type: string }): asserts v is { readonly $type: 'dotted_name' };
     elifClause(v: { readonly $type: string }): asserts v is { readonly $type: 'elif_clause' };
     elseClause(v: { readonly $type: string }): asserts v is { readonly $type: 'else_clause' };
-    matchStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'match_statement' };
-    MatchBlock(v: { readonly $type: string }): asserts v is { readonly $type: '_match_block' };
-    caseClause(v: { readonly $type: string }): asserts v is { readonly $type: 'case_clause' };
-    forStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'for_statement' };
-    whileStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'while_statement' };
-    tryStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'try_statement' };
     exceptClause(v: { readonly $type: string }): asserts v is { readonly $type: 'except_clause' };
+    execStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'exec_statement' };
+    expressionList(v: { readonly $type: string }): asserts v is { readonly $type: 'expression_list' };
+    expressionStatementTuple(v: { readonly $type: string }): asserts v is { readonly $type: 'expression_statement_tuple' };
+    expressionStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'expression_statement' };
     finallyClause(v: { readonly $type: string }): asserts v is { readonly $type: 'finally_clause' };
-    withStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'with_statement' };
+    forInClause(v: { readonly $type: string }): asserts v is { readonly $type: 'for_in_clause' };
+    forStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'for_statement' };
+    formatSpecifier(v: { readonly $type: string }): asserts v is { readonly $type: 'format_specifier' };
+    functionDefinition(v: { readonly $type: string }): asserts v is { readonly $type: 'function_definition' };
+    futureImportStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'future_import_statement' };
+    generatorExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'generator_expression' };
+    genericType(v: { readonly $type: string }): asserts v is { readonly $type: 'generic_type' };
+    globalStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'global_statement' };
+    ifClause(v: { readonly $type: string }): asserts v is { readonly $type: 'if_clause' };
+    ifStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'if_statement' };
+    importFromStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'import_from_statement' };
+    importStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'import_statement' };
+    interpolation(v: { readonly $type: string }): asserts v is { readonly $type: 'interpolation' };
+    keywordArgument(v: { readonly $type: string }): asserts v is { readonly $type: 'keyword_argument' };
+    keywordPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'keyword_pattern' };
+    lambda(v: { readonly $type: string }): asserts v is { readonly $type: 'lambda' };
+    lambdaParameters(v: { readonly $type: string }): asserts v is { readonly $type: 'lambda_parameters' };
+    lambdaWithinForInClause(v: { readonly $type: string }): asserts v is { readonly $type: 'lambda_within_for_in_clause' };
+    list(v: { readonly $type: string }): asserts v is { readonly $type: 'list' };
+    listComprehension(v: { readonly $type: string }): asserts v is { readonly $type: 'list_comprehension' };
+    listPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'list_pattern' };
+    listSplat(v: { readonly $type: string }): asserts v is { readonly $type: 'list_splat' };
+    listSplatPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'list_splat_pattern' };
+    matchStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'match_statement' };
+    memberType(v: { readonly $type: string }): asserts v is { readonly $type: 'member_type' };
+    module(v: { readonly $type: string }): asserts v is { readonly $type: 'module' };
+    namedExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'named_expression' };
+    nonlocalStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'nonlocal_statement' };
+    notOperator(v: { readonly $type: string }): asserts v is { readonly $type: 'not_operator' };
+    pair(v: { readonly $type: string }): asserts v is { readonly $type: 'pair' };
+    parameters(v: { readonly $type: string }): asserts v is { readonly $type: 'parameters' };
+    parenthesizedExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'parenthesized_expression' };
+    parenthesizedListSplat(v: { readonly $type: string }): asserts v is { readonly $type: 'parenthesized_list_splat' };
+    patternList(v: { readonly $type: string }): asserts v is { readonly $type: 'pattern_list' };
+    printStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'print_statement' };
+    raiseStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'raise_statement' };
+    relativeImport(v: { readonly $type: string }): asserts v is { readonly $type: 'relative_import' };
+    returnStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'return_statement' };
+    set(v: { readonly $type: string }): asserts v is { readonly $type: 'set' };
+    setComprehension(v: { readonly $type: string }): asserts v is { readonly $type: 'set_comprehension' };
+    slice(v: { readonly $type: string }): asserts v is { readonly $type: 'slice' };
+    splatPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'splat_pattern' };
+    splatType(v: { readonly $type: string }): asserts v is { readonly $type: 'splat_type' };
+    string(v: { readonly $type: string }): asserts v is { readonly $type: 'string' };
+    stringContent(v: { readonly $type: string }): asserts v is { readonly $type: 'string_content' };
+    subscript(v: { readonly $type: string }): asserts v is { readonly $type: 'subscript' };
+    tryStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'try_statement' };
+    tuple(v: { readonly $type: string }): asserts v is { readonly $type: 'tuple' };
+    tuplePattern(v: { readonly $type: string }): asserts v is { readonly $type: 'tuple_pattern' };
+    type(v: { readonly $type: string }): asserts v is { readonly $type: 'type' };
+    typeAliasStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'type_alias_statement' };
+    typeParameter(v: { readonly $type: string }): asserts v is { readonly $type: 'type_parameter' };
+    typedDefaultParameter(v: { readonly $type: string }): asserts v is { readonly $type: 'typed_default_parameter' };
+    typedParameter(v: { readonly $type: string }): asserts v is { readonly $type: 'typed_parameter' };
+    unaryOperator(v: { readonly $type: string }): asserts v is { readonly $type: 'unary_operator' };
+    unionPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'union_pattern' };
+    unionType(v: { readonly $type: string }): asserts v is { readonly $type: 'union_type' };
+    whileStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'while_statement' };
     withClauseBare(v: { readonly $type: string }): asserts v is { readonly $type: 'with_clause_bare' };
     withClauseParen(v: { readonly $type: string }): asserts v is { readonly $type: 'with_clause_paren' };
     withClause(v: { readonly $type: string }): asserts v is { readonly $type: 'with_clause' };
     withItem(v: { readonly $type: string }): asserts v is { readonly $type: 'with_item' };
-    functionDefinition(v: { readonly $type: string }): asserts v is { readonly $type: 'function_definition' };
-    parameters(v: { readonly $type: string }): asserts v is { readonly $type: 'parameters' };
-    lambdaParameters(v: { readonly $type: string }): asserts v is { readonly $type: 'lambda_parameters' };
-    listSplat(v: { readonly $type: string }): asserts v is { readonly $type: 'list_splat' };
-    dictionarySplat(v: { readonly $type: string }): asserts v is { readonly $type: 'dictionary_splat' };
-    globalStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'global_statement' };
-    nonlocalStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'nonlocal_statement' };
-    execStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'exec_statement' };
-    typeAliasStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'type_alias_statement' };
-    classDefinition(v: { readonly $type: string }): asserts v is { readonly $type: 'class_definition' };
-    typeParameter(v: { readonly $type: string }): asserts v is { readonly $type: 'type_parameter' };
-    parenthesizedListSplat(v: { readonly $type: string }): asserts v is { readonly $type: 'parenthesized_list_splat' };
-    argumentList(v: { readonly $type: string }): asserts v is { readonly $type: 'argument_list' };
-    decoratedDefinition(v: { readonly $type: string }): asserts v is { readonly $type: 'decorated_definition' };
-    decorator(v: { readonly $type: string }): asserts v is { readonly $type: 'decorator' };
-    Suite(v: { readonly $type: string }): asserts v is { readonly $type: '_suite' };
-    block(v: { readonly $type: string }): asserts v is { readonly $type: 'block' };
-    expressionList(v: { readonly $type: string }): asserts v is { readonly $type: 'expression_list' };
-    dottedName(v: { readonly $type: string }): asserts v is { readonly $type: 'dotted_name' };
-    casePattern(v: { readonly $type: string }): asserts v is { readonly $type: 'case_pattern' };
-    AsPattern(v: { readonly $type: string }): asserts v is { readonly $type: '_as_pattern' };
-    unionPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'union_pattern' };
-    ListPattern(v: { readonly $type: string }): asserts v is { readonly $type: '_list_pattern' };
-    TuplePattern(v: { readonly $type: string }): asserts v is { readonly $type: '_tuple_pattern' };
-    dictPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'dict_pattern' };
-    keywordPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'keyword_pattern' };
-    splatPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'splat_pattern' };
-    classPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'class_pattern' };
-    complexPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'complex_pattern' };
-    tuplePattern(v: { readonly $type: string }): asserts v is { readonly $type: 'tuple_pattern' };
-    listPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'list_pattern' };
-    defaultParameter(v: { readonly $type: string }): asserts v is { readonly $type: 'default_parameter' };
-    typedDefaultParameter(v: { readonly $type: string }): asserts v is { readonly $type: 'typed_default_parameter' };
-    listSplatPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'list_splat_pattern' };
-    dictionarySplatPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'dictionary_splat_pattern' };
-    asPattern(v: { readonly $type: string }): asserts v is { readonly $type: 'as_pattern' };
-    notOperator(v: { readonly $type: string }): asserts v is { readonly $type: 'not_operator' };
-    booleanOperator(v: { readonly $type: string }): asserts v is { readonly $type: 'boolean_operator' };
-    binaryOperator(v: { readonly $type: string }): asserts v is { readonly $type: 'binary_operator' };
-    unaryOperator(v: { readonly $type: string }): asserts v is { readonly $type: 'unary_operator' };
-    comparisonOperator(v: { readonly $type: string }): asserts v is { readonly $type: 'comparison_operator' };
-    lambda(v: { readonly $type: string }): asserts v is { readonly $type: 'lambda' };
-    lambdaWithinForInClause(v: { readonly $type: string }): asserts v is { readonly $type: 'lambda_within_for_in_clause' };
-    assignment(v: { readonly $type: string }): asserts v is { readonly $type: 'assignment' };
-    augmentedAssignment(v: { readonly $type: string }): asserts v is { readonly $type: 'augmented_assignment' };
-    patternList(v: { readonly $type: string }): asserts v is { readonly $type: 'pattern_list' };
+    withStatement(v: { readonly $type: string }): asserts v is { readonly $type: 'with_statement' };
     yield_(v: { readonly $type: string }): asserts v is { readonly $type: 'yield' };
-    attribute(v: { readonly $type: string }): asserts v is { readonly $type: 'attribute' };
-    subscript(v: { readonly $type: string }): asserts v is { readonly $type: 'subscript' };
-    slice(v: { readonly $type: string }): asserts v is { readonly $type: 'slice' };
-    call(v: { readonly $type: string }): asserts v is { readonly $type: 'call' };
-    typedParameter(v: { readonly $type: string }): asserts v is { readonly $type: 'typed_parameter' };
-    type(v: { readonly $type: string }): asserts v is { readonly $type: 'type' };
-    splatType(v: { readonly $type: string }): asserts v is { readonly $type: 'splat_type' };
-    genericType(v: { readonly $type: string }): asserts v is { readonly $type: 'generic_type' };
-    unionType(v: { readonly $type: string }): asserts v is { readonly $type: 'union_type' };
-    constrainedType(v: { readonly $type: string }): asserts v is { readonly $type: 'constrained_type' };
-    memberType(v: { readonly $type: string }): asserts v is { readonly $type: 'member_type' };
-    keywordArgument(v: { readonly $type: string }): asserts v is { readonly $type: 'keyword_argument' };
-    list(v: { readonly $type: string }): asserts v is { readonly $type: 'list' };
-    set(v: { readonly $type: string }): asserts v is { readonly $type: 'set' };
-    tuple(v: { readonly $type: string }): asserts v is { readonly $type: 'tuple' };
-    dictionary(v: { readonly $type: string }): asserts v is { readonly $type: 'dictionary' };
-    pair(v: { readonly $type: string }): asserts v is { readonly $type: 'pair' };
-    listComprehension(v: { readonly $type: string }): asserts v is { readonly $type: 'list_comprehension' };
-    dictionaryComprehension(v: { readonly $type: string }): asserts v is { readonly $type: 'dictionary_comprehension' };
-    setComprehension(v: { readonly $type: string }): asserts v is { readonly $type: 'set_comprehension' };
-    generatorExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'generator_expression' };
-    ComprehensionClauses(v: { readonly $type: string }): asserts v is { readonly $type: '_comprehension_clauses' };
-    parenthesizedExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'parenthesized_expression' };
-    forInClause(v: { readonly $type: string }): asserts v is { readonly $type: 'for_in_clause' };
-    ifClause(v: { readonly $type: string }): asserts v is { readonly $type: 'if_clause' };
-    conditionalExpression(v: { readonly $type: string }): asserts v is { readonly $type: 'conditional_expression' };
-    concatenatedString(v: { readonly $type: string }): asserts v is { readonly $type: 'concatenated_string' };
-    string(v: { readonly $type: string }): asserts v is { readonly $type: 'string' };
-    stringContent(v: { readonly $type: string }): asserts v is { readonly $type: 'string_content' };
-    interpolation(v: { readonly $type: string }): asserts v is { readonly $type: 'interpolation' };
-    formatSpecifier(v: { readonly $type: string }): asserts v is { readonly $type: 'format_specifier' };
-    await(v: { readonly $type: string }): asserts v is { readonly $type: 'await' };
-    AsPatternTarget(v: { readonly $type: string }): asserts v is { readonly $type: '_as_pattern_target' };
-    FormatExpression(v: { readonly $type: string }): asserts v is { readonly $type: '_format_expression' };
-    WithClauseParen(v: { readonly $type: string }): asserts v is { readonly $type: '_with_clause_paren' };
-    SimplePatternNegative(v: { readonly $type: string }): asserts v is { readonly $type: '_simple_pattern_negative' };
     kind<K extends keyof NamespaceMap>(v: { readonly $type: string }, kind: K): asserts v is { readonly $type: K & string };
-    statement(v: { readonly $type: string }): asserts v is Statement;
-    simpleStatement(v: { readonly $type: string }): asserts v is SimpleStatement;
-    namedExpressionLhs(v: { readonly $type: string }): asserts v is NamedExpressionLhs;
-    expressions(v: { readonly $type: string }): asserts v is Expressions;
     compoundStatement(v: { readonly $type: string }): asserts v is CompoundStatement;
+    dictPatternKv(v: { readonly $type: string }): asserts v is DictPatternKv;
+    expressionWithinForInClause(v: { readonly $type: string }): asserts v is ExpressionWithinForInClause;
+    expressions(v: { readonly $type: string }): asserts v is Expressions;
+    fExpression(v: { readonly $type: string }): asserts v is FExpression;
+    leftHandSide(v: { readonly $type: string }): asserts v is LeftHandSide;
+    namedExpressionLhs(v: { readonly $type: string }): asserts v is NamedExpressionLhs;
+    rightHandSide(v: { readonly $type: string }): asserts v is RightHandSide;
     simplePattern(v: { readonly $type: string }): asserts v is SimplePattern;
+    simpleStatement(v: { readonly $type: string }): asserts v is SimpleStatement;
+    statement(v: { readonly $type: string }): asserts v is Statement;
+    expression(v: { readonly $type: string }): asserts v is Expression;
+    keywordIdentifier(v: { readonly $type: string }): asserts v is KeywordIdentifier;
     parameter(v: { readonly $type: string }): asserts v is Parameter;
     pattern(v: { readonly $type: string }): asserts v is Pattern;
-    expressionWithinForInClause(v: { readonly $type: string }): asserts v is ExpressionWithinForInClause;
-    expression(v: { readonly $type: string }): asserts v is Expression;
     primaryExpression(v: { readonly $type: string }): asserts v is PrimaryExpression;
-    leftHandSide(v: { readonly $type: string }): asserts v is LeftHandSide;
-    rightHandSide(v: { readonly $type: string }): asserts v is RightHandSide;
-    fExpression(v: { readonly $type: string }): asserts v is FExpression;
-    keywordIdentifier(v: { readonly $type: string }): asserts v is KeywordIdentifier;
-    dictPatternKv(v: { readonly $type: string }): asserts v is DictPatternKv;
 }
 
 // Runtime: kind guards = string equality; supertype guards = Set.has.
@@ -304,156 +304,156 @@ function _sg(ks: ReadonlySet<string>): (v: { readonly $type: string }) => boolea
     return (v) => ks.has(v.$type);
 }
 
-const _supertype_statement = new Set<string>(["_simple_statements", "if_statement", "for_statement", "while_statement", "try_statement", "with_statement", "function_definition", "class_definition", "decorated_definition", "match_statement"]);
-const _supertype_simpleStatement = new Set<string>(["future_import_statement", "import_statement", "import_from_statement", "print_statement", "assert_statement", "expression_statement", "return_statement", "delete_statement", "raise_statement", "pass_statement", "break_statement", "continue_statement", "global_statement", "nonlocal_statement", "exec_statement", "type_alias_statement"]);
-const _supertype_namedExpressionLhs = new Set<string>(["identifier", "keyword_identifier"]);
-const _supertype_expressions = new Set<string>(["expression", "expression_list"]);
 const _supertype_compoundStatement = new Set<string>(["if_statement", "for_statement", "while_statement", "try_statement", "with_statement", "function_definition", "class_definition", "decorated_definition", "match_statement"]);
+const _supertype_dictPatternKv = new Set<string>(["_key_value_pattern", "splat_pattern"]);
+const _supertype_expressionWithinForInClause = new Set<string>(["expression", "lambda_within_for_in_clause"]);
+const _supertype_expressions = new Set<string>(["expression", "expression_list"]);
+const _supertype_fExpression = new Set<string>(["expression", "expression_list", "pattern_list", "yield"]);
+const _supertype_leftHandSide = new Set<string>(["pattern", "pattern_list"]);
+const _supertype_namedExpressionLhs = new Set<string>(["identifier", "keyword_identifier"]);
+const _supertype_rightHandSide = new Set<string>(["expression", "expression_list", "assignment", "augmented_assignment", "pattern_list", "yield"]);
 const _supertype_simplePattern = new Set<string>(["class_pattern", "splat_pattern", "union_pattern", "_list_pattern", "_tuple_pattern", "dict_pattern", "string", "concatenated_string", "true", "false", "none", "_simple_pattern_negative", "complex_pattern", "dotted_name"]);
+const _supertype_simpleStatement = new Set<string>(["future_import_statement", "import_statement", "import_from_statement", "print_statement", "assert_statement", "expression_statement", "return_statement", "delete_statement", "raise_statement", "pass_statement", "break_statement", "continue_statement", "global_statement", "nonlocal_statement", "exec_statement", "type_alias_statement"]);
+const _supertype_statement = new Set<string>(["_simple_statements", "if_statement", "for_statement", "while_statement", "try_statement", "with_statement", "function_definition", "class_definition", "decorated_definition", "match_statement"]);
+const _supertype_expression = new Set<string>(["comparison_operator", "not_operator", "boolean_operator", "lambda", "primary_expression", "conditional_expression", "named_expression", "as_pattern"]);
+const _supertype_keywordIdentifier = new Set<string>(["identifier"]);
 const _supertype_parameter = new Set<string>(["identifier", "typed_parameter", "default_parameter", "typed_default_parameter", "list_splat_pattern", "tuple_pattern", "keyword_separator", "positional_separator", "dictionary_splat_pattern"]);
 const _supertype_pattern = new Set<string>(["identifier", "keyword_identifier", "subscript", "attribute", "list_splat_pattern", "tuple_pattern", "list_pattern"]);
-const _supertype_expressionWithinForInClause = new Set<string>(["expression", "lambda_within_for_in_clause"]);
-const _supertype_expression = new Set<string>(["comparison_operator", "not_operator", "boolean_operator", "lambda", "primary_expression", "conditional_expression", "named_expression", "as_pattern"]);
 const _supertype_primaryExpression = new Set<string>(["await", "binary_operator", "identifier", "keyword_identifier", "string", "concatenated_string", "integer", "float", "true", "false", "none", "unary_operator", "attribute", "subscript", "call", "list", "list_comprehension", "dictionary", "dictionary_comprehension", "set", "set_comprehension", "tuple", "parenthesized_expression", "generator_expression", "ellipsis", "list_splat_pattern"]);
-const _supertype_leftHandSide = new Set<string>(["pattern", "pattern_list"]);
-const _supertype_rightHandSide = new Set<string>(["expression", "expression_list", "assignment", "augmented_assignment", "pattern_list", "yield"]);
-const _supertype_fExpression = new Set<string>(["expression", "expression_list", "pattern_list", "yield"]);
-const _supertype_keywordIdentifier = new Set<string>(["identifier"]);
-const _supertype_dictPatternKv = new Set<string>(["_key_value_pattern", "splat_pattern"]);
 
 export const is = {
-    module: _g("module"),
+    AsPattern: _g("_as_pattern"),
+    AsPatternTarget: _g("_as_pattern_target"),
+    ComprehensionClauses: _g("_comprehension_clauses"),
+    FormatExpression: _g("_format_expression"),
+    ListPattern: _g("_list_pattern"),
+    MatchBlock: _g("_match_block"),
+    SimplePatternNegative: _g("_simple_pattern_negative"),
     SimpleStatements: _g("_simple_statements"),
-    importStatement: _g("import_statement"),
-    relativeImport: _g("relative_import"),
-    futureImportStatement: _g("future_import_statement"),
-    importFromStatement: _g("import_from_statement"),
+    Suite: _g("_suite"),
+    TuplePattern: _g("_tuple_pattern"),
+    WithClauseParen: _g("_with_clause_paren"),
     aliasedImport: _g("aliased_import"),
-    printStatement: _g("print_statement"),
-    chevron: _g("chevron"),
+    argumentList: _g("argument_list"),
+    asPattern: _g("as_pattern"),
     assertStatement: _g("assert_statement"),
-    expressionStatementTuple: _g("expression_statement_tuple"),
-    expressionStatement: _g("expression_statement"),
-    namedExpression: _g("named_expression"),
-    returnStatement: _g("return_statement"),
+    assignment: _g("assignment"),
+    attribute: _g("attribute"),
+    augmentedAssignment: _g("augmented_assignment"),
+    await: _g("await"),
+    binaryOperator: _g("binary_operator"),
+    block: _g("block"),
+    booleanOperator: _g("boolean_operator"),
+    call: _g("call"),
+    caseClause: _g("case_clause"),
+    casePattern: _g("case_pattern"),
+    chevron: _g("chevron"),
+    classDefinition: _g("class_definition"),
+    classPattern: _g("class_pattern"),
+    comparisonOperator: _g("comparison_operator"),
+    complexPattern: _g("complex_pattern"),
+    concatenatedString: _g("concatenated_string"),
+    conditionalExpression: _g("conditional_expression"),
+    constrainedType: _g("constrained_type"),
+    decoratedDefinition: _g("decorated_definition"),
+    decorator: _g("decorator"),
+    defaultParameter: _g("default_parameter"),
     deleteStatement: _g("delete_statement"),
-    raiseStatement: _g("raise_statement"),
-    ifStatement: _g("if_statement"),
+    dictPattern: _g("dict_pattern"),
+    dictionary: _g("dictionary"),
+    dictionaryComprehension: _g("dictionary_comprehension"),
+    dictionarySplat: _g("dictionary_splat"),
+    dictionarySplatPattern: _g("dictionary_splat_pattern"),
+    dottedName: _g("dotted_name"),
     elifClause: _g("elif_clause"),
     elseClause: _g("else_clause"),
-    matchStatement: _g("match_statement"),
-    MatchBlock: _g("_match_block"),
-    caseClause: _g("case_clause"),
-    forStatement: _g("for_statement"),
-    whileStatement: _g("while_statement"),
-    tryStatement: _g("try_statement"),
     exceptClause: _g("except_clause"),
+    execStatement: _g("exec_statement"),
+    expressionList: _g("expression_list"),
+    expressionStatementTuple: _g("expression_statement_tuple"),
+    expressionStatement: _g("expression_statement"),
     finallyClause: _g("finally_clause"),
-    withStatement: _g("with_statement"),
+    forInClause: _g("for_in_clause"),
+    forStatement: _g("for_statement"),
+    formatSpecifier: _g("format_specifier"),
+    functionDefinition: _g("function_definition"),
+    futureImportStatement: _g("future_import_statement"),
+    generatorExpression: _g("generator_expression"),
+    genericType: _g("generic_type"),
+    globalStatement: _g("global_statement"),
+    ifClause: _g("if_clause"),
+    ifStatement: _g("if_statement"),
+    importFromStatement: _g("import_from_statement"),
+    importStatement: _g("import_statement"),
+    interpolation: _g("interpolation"),
+    keywordArgument: _g("keyword_argument"),
+    keywordPattern: _g("keyword_pattern"),
+    lambda: _g("lambda"),
+    lambdaParameters: _g("lambda_parameters"),
+    lambdaWithinForInClause: _g("lambda_within_for_in_clause"),
+    list: _g("list"),
+    listComprehension: _g("list_comprehension"),
+    listPattern: _g("list_pattern"),
+    listSplat: _g("list_splat"),
+    listSplatPattern: _g("list_splat_pattern"),
+    matchStatement: _g("match_statement"),
+    memberType: _g("member_type"),
+    module: _g("module"),
+    namedExpression: _g("named_expression"),
+    nonlocalStatement: _g("nonlocal_statement"),
+    notOperator: _g("not_operator"),
+    pair: _g("pair"),
+    parameters: _g("parameters"),
+    parenthesizedExpression: _g("parenthesized_expression"),
+    parenthesizedListSplat: _g("parenthesized_list_splat"),
+    patternList: _g("pattern_list"),
+    printStatement: _g("print_statement"),
+    raiseStatement: _g("raise_statement"),
+    relativeImport: _g("relative_import"),
+    returnStatement: _g("return_statement"),
+    set: _g("set"),
+    setComprehension: _g("set_comprehension"),
+    slice: _g("slice"),
+    splatPattern: _g("splat_pattern"),
+    splatType: _g("splat_type"),
+    string: _g("string"),
+    stringContent: _g("string_content"),
+    subscript: _g("subscript"),
+    tryStatement: _g("try_statement"),
+    tuple: _g("tuple"),
+    tuplePattern: _g("tuple_pattern"),
+    type: _g("type"),
+    typeAliasStatement: _g("type_alias_statement"),
+    typeParameter: _g("type_parameter"),
+    typedDefaultParameter: _g("typed_default_parameter"),
+    typedParameter: _g("typed_parameter"),
+    unaryOperator: _g("unary_operator"),
+    unionPattern: _g("union_pattern"),
+    unionType: _g("union_type"),
+    whileStatement: _g("while_statement"),
     withClauseBare: _g("with_clause_bare"),
     withClauseParen: _g("with_clause_paren"),
     withClause: _g("with_clause"),
     withItem: _g("with_item"),
-    functionDefinition: _g("function_definition"),
-    parameters: _g("parameters"),
-    lambdaParameters: _g("lambda_parameters"),
-    listSplat: _g("list_splat"),
-    dictionarySplat: _g("dictionary_splat"),
-    globalStatement: _g("global_statement"),
-    nonlocalStatement: _g("nonlocal_statement"),
-    execStatement: _g("exec_statement"),
-    typeAliasStatement: _g("type_alias_statement"),
-    classDefinition: _g("class_definition"),
-    typeParameter: _g("type_parameter"),
-    parenthesizedListSplat: _g("parenthesized_list_splat"),
-    argumentList: _g("argument_list"),
-    decoratedDefinition: _g("decorated_definition"),
-    decorator: _g("decorator"),
-    Suite: _g("_suite"),
-    block: _g("block"),
-    expressionList: _g("expression_list"),
-    dottedName: _g("dotted_name"),
-    casePattern: _g("case_pattern"),
-    AsPattern: _g("_as_pattern"),
-    unionPattern: _g("union_pattern"),
-    ListPattern: _g("_list_pattern"),
-    TuplePattern: _g("_tuple_pattern"),
-    dictPattern: _g("dict_pattern"),
-    keywordPattern: _g("keyword_pattern"),
-    splatPattern: _g("splat_pattern"),
-    classPattern: _g("class_pattern"),
-    complexPattern: _g("complex_pattern"),
-    tuplePattern: _g("tuple_pattern"),
-    listPattern: _g("list_pattern"),
-    defaultParameter: _g("default_parameter"),
-    typedDefaultParameter: _g("typed_default_parameter"),
-    listSplatPattern: _g("list_splat_pattern"),
-    dictionarySplatPattern: _g("dictionary_splat_pattern"),
-    asPattern: _g("as_pattern"),
-    notOperator: _g("not_operator"),
-    booleanOperator: _g("boolean_operator"),
-    binaryOperator: _g("binary_operator"),
-    unaryOperator: _g("unary_operator"),
-    comparisonOperator: _g("comparison_operator"),
-    lambda: _g("lambda"),
-    lambdaWithinForInClause: _g("lambda_within_for_in_clause"),
-    assignment: _g("assignment"),
-    augmentedAssignment: _g("augmented_assignment"),
-    patternList: _g("pattern_list"),
+    withStatement: _g("with_statement"),
     yield_: _g("yield"),
-    attribute: _g("attribute"),
-    subscript: _g("subscript"),
-    slice: _g("slice"),
-    call: _g("call"),
-    typedParameter: _g("typed_parameter"),
-    type: _g("type"),
-    splatType: _g("splat_type"),
-    genericType: _g("generic_type"),
-    unionType: _g("union_type"),
-    constrainedType: _g("constrained_type"),
-    memberType: _g("member_type"),
-    keywordArgument: _g("keyword_argument"),
-    list: _g("list"),
-    set: _g("set"),
-    tuple: _g("tuple"),
-    dictionary: _g("dictionary"),
-    pair: _g("pair"),
-    listComprehension: _g("list_comprehension"),
-    dictionaryComprehension: _g("dictionary_comprehension"),
-    setComprehension: _g("set_comprehension"),
-    generatorExpression: _g("generator_expression"),
-    ComprehensionClauses: _g("_comprehension_clauses"),
-    parenthesizedExpression: _g("parenthesized_expression"),
-    forInClause: _g("for_in_clause"),
-    ifClause: _g("if_clause"),
-    conditionalExpression: _g("conditional_expression"),
-    concatenatedString: _g("concatenated_string"),
-    string: _g("string"),
-    stringContent: _g("string_content"),
-    interpolation: _g("interpolation"),
-    formatSpecifier: _g("format_specifier"),
-    await: _g("await"),
-    AsPatternTarget: _g("_as_pattern_target"),
-    FormatExpression: _g("_format_expression"),
-    WithClauseParen: _g("_with_clause_paren"),
-    SimplePatternNegative: _g("_simple_pattern_negative"),
     kind: (v: { readonly $type: string }, k: string): boolean => v.$type === k,
-    statement: _sg(_supertype_statement),
-    simpleStatement: _sg(_supertype_simpleStatement),
-    namedExpressionLhs: _sg(_supertype_namedExpressionLhs),
-    expressions: _sg(_supertype_expressions),
     compoundStatement: _sg(_supertype_compoundStatement),
+    dictPatternKv: _sg(_supertype_dictPatternKv),
+    expressionWithinForInClause: _sg(_supertype_expressionWithinForInClause),
+    expressions: _sg(_supertype_expressions),
+    fExpression: _sg(_supertype_fExpression),
+    leftHandSide: _sg(_supertype_leftHandSide),
+    namedExpressionLhs: _sg(_supertype_namedExpressionLhs),
+    rightHandSide: _sg(_supertype_rightHandSide),
     simplePattern: _sg(_supertype_simplePattern),
+    simpleStatement: _sg(_supertype_simpleStatement),
+    statement: _sg(_supertype_statement),
+    expression: _sg(_supertype_expression),
+    keywordIdentifier: _sg(_supertype_keywordIdentifier),
     parameter: _sg(_supertype_parameter),
     pattern: _sg(_supertype_pattern),
-    expressionWithinForInClause: _sg(_supertype_expressionWithinForInClause),
-    expression: _sg(_supertype_expression),
     primaryExpression: _sg(_supertype_primaryExpression),
-    leftHandSide: _sg(_supertype_leftHandSide),
-    rightHandSide: _sg(_supertype_rightHandSide),
-    fExpression: _sg(_supertype_fExpression),
-    keywordIdentifier: _sg(_supertype_keywordIdentifier),
-    dictPatternKv: _sg(_supertype_dictPatternKv),
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -479,138 +479,138 @@ function _makeAssertKind(guard: _AnyGuard) {
 }
 
 export const assert = {
-    module: _makeAssert('module', is.module as _AnyGuard),
+    AsPattern: _makeAssert('AsPattern', is.AsPattern as _AnyGuard),
+    AsPatternTarget: _makeAssert('AsPatternTarget', is.AsPatternTarget as _AnyGuard),
+    ComprehensionClauses: _makeAssert('ComprehensionClauses', is.ComprehensionClauses as _AnyGuard),
+    FormatExpression: _makeAssert('FormatExpression', is.FormatExpression as _AnyGuard),
+    ListPattern: _makeAssert('ListPattern', is.ListPattern as _AnyGuard),
+    MatchBlock: _makeAssert('MatchBlock', is.MatchBlock as _AnyGuard),
+    SimplePatternNegative: _makeAssert('SimplePatternNegative', is.SimplePatternNegative as _AnyGuard),
     SimpleStatements: _makeAssert('SimpleStatements', is.SimpleStatements as _AnyGuard),
-    importStatement: _makeAssert('importStatement', is.importStatement as _AnyGuard),
-    relativeImport: _makeAssert('relativeImport', is.relativeImport as _AnyGuard),
-    futureImportStatement: _makeAssert('futureImportStatement', is.futureImportStatement as _AnyGuard),
-    importFromStatement: _makeAssert('importFromStatement', is.importFromStatement as _AnyGuard),
+    Suite: _makeAssert('Suite', is.Suite as _AnyGuard),
+    TuplePattern: _makeAssert('TuplePattern', is.TuplePattern as _AnyGuard),
+    WithClauseParen: _makeAssert('WithClauseParen', is.WithClauseParen as _AnyGuard),
     aliasedImport: _makeAssert('aliasedImport', is.aliasedImport as _AnyGuard),
-    printStatement: _makeAssert('printStatement', is.printStatement as _AnyGuard),
-    chevron: _makeAssert('chevron', is.chevron as _AnyGuard),
+    argumentList: _makeAssert('argumentList', is.argumentList as _AnyGuard),
+    asPattern: _makeAssert('asPattern', is.asPattern as _AnyGuard),
     assertStatement: _makeAssert('assertStatement', is.assertStatement as _AnyGuard),
-    expressionStatementTuple: _makeAssert('expressionStatementTuple', is.expressionStatementTuple as _AnyGuard),
-    expressionStatement: _makeAssert('expressionStatement', is.expressionStatement as _AnyGuard),
-    namedExpression: _makeAssert('namedExpression', is.namedExpression as _AnyGuard),
-    returnStatement: _makeAssert('returnStatement', is.returnStatement as _AnyGuard),
+    assignment: _makeAssert('assignment', is.assignment as _AnyGuard),
+    attribute: _makeAssert('attribute', is.attribute as _AnyGuard),
+    augmentedAssignment: _makeAssert('augmentedAssignment', is.augmentedAssignment as _AnyGuard),
+    await: _makeAssert('await', is.await as _AnyGuard),
+    binaryOperator: _makeAssert('binaryOperator', is.binaryOperator as _AnyGuard),
+    block: _makeAssert('block', is.block as _AnyGuard),
+    booleanOperator: _makeAssert('booleanOperator', is.booleanOperator as _AnyGuard),
+    call: _makeAssert('call', is.call as _AnyGuard),
+    caseClause: _makeAssert('caseClause', is.caseClause as _AnyGuard),
+    casePattern: _makeAssert('casePattern', is.casePattern as _AnyGuard),
+    chevron: _makeAssert('chevron', is.chevron as _AnyGuard),
+    classDefinition: _makeAssert('classDefinition', is.classDefinition as _AnyGuard),
+    classPattern: _makeAssert('classPattern', is.classPattern as _AnyGuard),
+    comparisonOperator: _makeAssert('comparisonOperator', is.comparisonOperator as _AnyGuard),
+    complexPattern: _makeAssert('complexPattern', is.complexPattern as _AnyGuard),
+    concatenatedString: _makeAssert('concatenatedString', is.concatenatedString as _AnyGuard),
+    conditionalExpression: _makeAssert('conditionalExpression', is.conditionalExpression as _AnyGuard),
+    constrainedType: _makeAssert('constrainedType', is.constrainedType as _AnyGuard),
+    decoratedDefinition: _makeAssert('decoratedDefinition', is.decoratedDefinition as _AnyGuard),
+    decorator: _makeAssert('decorator', is.decorator as _AnyGuard),
+    defaultParameter: _makeAssert('defaultParameter', is.defaultParameter as _AnyGuard),
     deleteStatement: _makeAssert('deleteStatement', is.deleteStatement as _AnyGuard),
-    raiseStatement: _makeAssert('raiseStatement', is.raiseStatement as _AnyGuard),
-    ifStatement: _makeAssert('ifStatement', is.ifStatement as _AnyGuard),
+    dictPattern: _makeAssert('dictPattern', is.dictPattern as _AnyGuard),
+    dictionary: _makeAssert('dictionary', is.dictionary as _AnyGuard),
+    dictionaryComprehension: _makeAssert('dictionaryComprehension', is.dictionaryComprehension as _AnyGuard),
+    dictionarySplat: _makeAssert('dictionarySplat', is.dictionarySplat as _AnyGuard),
+    dictionarySplatPattern: _makeAssert('dictionarySplatPattern', is.dictionarySplatPattern as _AnyGuard),
+    dottedName: _makeAssert('dottedName', is.dottedName as _AnyGuard),
     elifClause: _makeAssert('elifClause', is.elifClause as _AnyGuard),
     elseClause: _makeAssert('elseClause', is.elseClause as _AnyGuard),
-    matchStatement: _makeAssert('matchStatement', is.matchStatement as _AnyGuard),
-    MatchBlock: _makeAssert('MatchBlock', is.MatchBlock as _AnyGuard),
-    caseClause: _makeAssert('caseClause', is.caseClause as _AnyGuard),
-    forStatement: _makeAssert('forStatement', is.forStatement as _AnyGuard),
-    whileStatement: _makeAssert('whileStatement', is.whileStatement as _AnyGuard),
-    tryStatement: _makeAssert('tryStatement', is.tryStatement as _AnyGuard),
     exceptClause: _makeAssert('exceptClause', is.exceptClause as _AnyGuard),
+    execStatement: _makeAssert('execStatement', is.execStatement as _AnyGuard),
+    expressionList: _makeAssert('expressionList', is.expressionList as _AnyGuard),
+    expressionStatementTuple: _makeAssert('expressionStatementTuple', is.expressionStatementTuple as _AnyGuard),
+    expressionStatement: _makeAssert('expressionStatement', is.expressionStatement as _AnyGuard),
     finallyClause: _makeAssert('finallyClause', is.finallyClause as _AnyGuard),
-    withStatement: _makeAssert('withStatement', is.withStatement as _AnyGuard),
+    forInClause: _makeAssert('forInClause', is.forInClause as _AnyGuard),
+    forStatement: _makeAssert('forStatement', is.forStatement as _AnyGuard),
+    formatSpecifier: _makeAssert('formatSpecifier', is.formatSpecifier as _AnyGuard),
+    functionDefinition: _makeAssert('functionDefinition', is.functionDefinition as _AnyGuard),
+    futureImportStatement: _makeAssert('futureImportStatement', is.futureImportStatement as _AnyGuard),
+    generatorExpression: _makeAssert('generatorExpression', is.generatorExpression as _AnyGuard),
+    genericType: _makeAssert('genericType', is.genericType as _AnyGuard),
+    globalStatement: _makeAssert('globalStatement', is.globalStatement as _AnyGuard),
+    ifClause: _makeAssert('ifClause', is.ifClause as _AnyGuard),
+    ifStatement: _makeAssert('ifStatement', is.ifStatement as _AnyGuard),
+    importFromStatement: _makeAssert('importFromStatement', is.importFromStatement as _AnyGuard),
+    importStatement: _makeAssert('importStatement', is.importStatement as _AnyGuard),
+    interpolation: _makeAssert('interpolation', is.interpolation as _AnyGuard),
+    keywordArgument: _makeAssert('keywordArgument', is.keywordArgument as _AnyGuard),
+    keywordPattern: _makeAssert('keywordPattern', is.keywordPattern as _AnyGuard),
+    lambda: _makeAssert('lambda', is.lambda as _AnyGuard),
+    lambdaParameters: _makeAssert('lambdaParameters', is.lambdaParameters as _AnyGuard),
+    lambdaWithinForInClause: _makeAssert('lambdaWithinForInClause', is.lambdaWithinForInClause as _AnyGuard),
+    list: _makeAssert('list', is.list as _AnyGuard),
+    listComprehension: _makeAssert('listComprehension', is.listComprehension as _AnyGuard),
+    listPattern: _makeAssert('listPattern', is.listPattern as _AnyGuard),
+    listSplat: _makeAssert('listSplat', is.listSplat as _AnyGuard),
+    listSplatPattern: _makeAssert('listSplatPattern', is.listSplatPattern as _AnyGuard),
+    matchStatement: _makeAssert('matchStatement', is.matchStatement as _AnyGuard),
+    memberType: _makeAssert('memberType', is.memberType as _AnyGuard),
+    module: _makeAssert('module', is.module as _AnyGuard),
+    namedExpression: _makeAssert('namedExpression', is.namedExpression as _AnyGuard),
+    nonlocalStatement: _makeAssert('nonlocalStatement', is.nonlocalStatement as _AnyGuard),
+    notOperator: _makeAssert('notOperator', is.notOperator as _AnyGuard),
+    pair: _makeAssert('pair', is.pair as _AnyGuard),
+    parameters: _makeAssert('parameters', is.parameters as _AnyGuard),
+    parenthesizedExpression: _makeAssert('parenthesizedExpression', is.parenthesizedExpression as _AnyGuard),
+    parenthesizedListSplat: _makeAssert('parenthesizedListSplat', is.parenthesizedListSplat as _AnyGuard),
+    patternList: _makeAssert('patternList', is.patternList as _AnyGuard),
+    printStatement: _makeAssert('printStatement', is.printStatement as _AnyGuard),
+    raiseStatement: _makeAssert('raiseStatement', is.raiseStatement as _AnyGuard),
+    relativeImport: _makeAssert('relativeImport', is.relativeImport as _AnyGuard),
+    returnStatement: _makeAssert('returnStatement', is.returnStatement as _AnyGuard),
+    set: _makeAssert('set', is.set as _AnyGuard),
+    setComprehension: _makeAssert('setComprehension', is.setComprehension as _AnyGuard),
+    slice: _makeAssert('slice', is.slice as _AnyGuard),
+    splatPattern: _makeAssert('splatPattern', is.splatPattern as _AnyGuard),
+    splatType: _makeAssert('splatType', is.splatType as _AnyGuard),
+    string: _makeAssert('string', is.string as _AnyGuard),
+    stringContent: _makeAssert('stringContent', is.stringContent as _AnyGuard),
+    subscript: _makeAssert('subscript', is.subscript as _AnyGuard),
+    tryStatement: _makeAssert('tryStatement', is.tryStatement as _AnyGuard),
+    tuple: _makeAssert('tuple', is.tuple as _AnyGuard),
+    tuplePattern: _makeAssert('tuplePattern', is.tuplePattern as _AnyGuard),
+    type: _makeAssert('type', is.type as _AnyGuard),
+    typeAliasStatement: _makeAssert('typeAliasStatement', is.typeAliasStatement as _AnyGuard),
+    typeParameter: _makeAssert('typeParameter', is.typeParameter as _AnyGuard),
+    typedDefaultParameter: _makeAssert('typedDefaultParameter', is.typedDefaultParameter as _AnyGuard),
+    typedParameter: _makeAssert('typedParameter', is.typedParameter as _AnyGuard),
+    unaryOperator: _makeAssert('unaryOperator', is.unaryOperator as _AnyGuard),
+    unionPattern: _makeAssert('unionPattern', is.unionPattern as _AnyGuard),
+    unionType: _makeAssert('unionType', is.unionType as _AnyGuard),
+    whileStatement: _makeAssert('whileStatement', is.whileStatement as _AnyGuard),
     withClauseBare: _makeAssert('withClauseBare', is.withClauseBare as _AnyGuard),
     withClauseParen: _makeAssert('withClauseParen', is.withClauseParen as _AnyGuard),
     withClause: _makeAssert('withClause', is.withClause as _AnyGuard),
     withItem: _makeAssert('withItem', is.withItem as _AnyGuard),
-    functionDefinition: _makeAssert('functionDefinition', is.functionDefinition as _AnyGuard),
-    parameters: _makeAssert('parameters', is.parameters as _AnyGuard),
-    lambdaParameters: _makeAssert('lambdaParameters', is.lambdaParameters as _AnyGuard),
-    listSplat: _makeAssert('listSplat', is.listSplat as _AnyGuard),
-    dictionarySplat: _makeAssert('dictionarySplat', is.dictionarySplat as _AnyGuard),
-    globalStatement: _makeAssert('globalStatement', is.globalStatement as _AnyGuard),
-    nonlocalStatement: _makeAssert('nonlocalStatement', is.nonlocalStatement as _AnyGuard),
-    execStatement: _makeAssert('execStatement', is.execStatement as _AnyGuard),
-    typeAliasStatement: _makeAssert('typeAliasStatement', is.typeAliasStatement as _AnyGuard),
-    classDefinition: _makeAssert('classDefinition', is.classDefinition as _AnyGuard),
-    typeParameter: _makeAssert('typeParameter', is.typeParameter as _AnyGuard),
-    parenthesizedListSplat: _makeAssert('parenthesizedListSplat', is.parenthesizedListSplat as _AnyGuard),
-    argumentList: _makeAssert('argumentList', is.argumentList as _AnyGuard),
-    decoratedDefinition: _makeAssert('decoratedDefinition', is.decoratedDefinition as _AnyGuard),
-    decorator: _makeAssert('decorator', is.decorator as _AnyGuard),
-    Suite: _makeAssert('Suite', is.Suite as _AnyGuard),
-    block: _makeAssert('block', is.block as _AnyGuard),
-    expressionList: _makeAssert('expressionList', is.expressionList as _AnyGuard),
-    dottedName: _makeAssert('dottedName', is.dottedName as _AnyGuard),
-    casePattern: _makeAssert('casePattern', is.casePattern as _AnyGuard),
-    AsPattern: _makeAssert('AsPattern', is.AsPattern as _AnyGuard),
-    unionPattern: _makeAssert('unionPattern', is.unionPattern as _AnyGuard),
-    ListPattern: _makeAssert('ListPattern', is.ListPattern as _AnyGuard),
-    TuplePattern: _makeAssert('TuplePattern', is.TuplePattern as _AnyGuard),
-    dictPattern: _makeAssert('dictPattern', is.dictPattern as _AnyGuard),
-    keywordPattern: _makeAssert('keywordPattern', is.keywordPattern as _AnyGuard),
-    splatPattern: _makeAssert('splatPattern', is.splatPattern as _AnyGuard),
-    classPattern: _makeAssert('classPattern', is.classPattern as _AnyGuard),
-    complexPattern: _makeAssert('complexPattern', is.complexPattern as _AnyGuard),
-    tuplePattern: _makeAssert('tuplePattern', is.tuplePattern as _AnyGuard),
-    listPattern: _makeAssert('listPattern', is.listPattern as _AnyGuard),
-    defaultParameter: _makeAssert('defaultParameter', is.defaultParameter as _AnyGuard),
-    typedDefaultParameter: _makeAssert('typedDefaultParameter', is.typedDefaultParameter as _AnyGuard),
-    listSplatPattern: _makeAssert('listSplatPattern', is.listSplatPattern as _AnyGuard),
-    dictionarySplatPattern: _makeAssert('dictionarySplatPattern', is.dictionarySplatPattern as _AnyGuard),
-    asPattern: _makeAssert('asPattern', is.asPattern as _AnyGuard),
-    notOperator: _makeAssert('notOperator', is.notOperator as _AnyGuard),
-    booleanOperator: _makeAssert('booleanOperator', is.booleanOperator as _AnyGuard),
-    binaryOperator: _makeAssert('binaryOperator', is.binaryOperator as _AnyGuard),
-    unaryOperator: _makeAssert('unaryOperator', is.unaryOperator as _AnyGuard),
-    comparisonOperator: _makeAssert('comparisonOperator', is.comparisonOperator as _AnyGuard),
-    lambda: _makeAssert('lambda', is.lambda as _AnyGuard),
-    lambdaWithinForInClause: _makeAssert('lambdaWithinForInClause', is.lambdaWithinForInClause as _AnyGuard),
-    assignment: _makeAssert('assignment', is.assignment as _AnyGuard),
-    augmentedAssignment: _makeAssert('augmentedAssignment', is.augmentedAssignment as _AnyGuard),
-    patternList: _makeAssert('patternList', is.patternList as _AnyGuard),
+    withStatement: _makeAssert('withStatement', is.withStatement as _AnyGuard),
     yield_: _makeAssert('yield_', is.yield_ as _AnyGuard),
-    attribute: _makeAssert('attribute', is.attribute as _AnyGuard),
-    subscript: _makeAssert('subscript', is.subscript as _AnyGuard),
-    slice: _makeAssert('slice', is.slice as _AnyGuard),
-    call: _makeAssert('call', is.call as _AnyGuard),
-    typedParameter: _makeAssert('typedParameter', is.typedParameter as _AnyGuard),
-    type: _makeAssert('type', is.type as _AnyGuard),
-    splatType: _makeAssert('splatType', is.splatType as _AnyGuard),
-    genericType: _makeAssert('genericType', is.genericType as _AnyGuard),
-    unionType: _makeAssert('unionType', is.unionType as _AnyGuard),
-    constrainedType: _makeAssert('constrainedType', is.constrainedType as _AnyGuard),
-    memberType: _makeAssert('memberType', is.memberType as _AnyGuard),
-    keywordArgument: _makeAssert('keywordArgument', is.keywordArgument as _AnyGuard),
-    list: _makeAssert('list', is.list as _AnyGuard),
-    set: _makeAssert('set', is.set as _AnyGuard),
-    tuple: _makeAssert('tuple', is.tuple as _AnyGuard),
-    dictionary: _makeAssert('dictionary', is.dictionary as _AnyGuard),
-    pair: _makeAssert('pair', is.pair as _AnyGuard),
-    listComprehension: _makeAssert('listComprehension', is.listComprehension as _AnyGuard),
-    dictionaryComprehension: _makeAssert('dictionaryComprehension', is.dictionaryComprehension as _AnyGuard),
-    setComprehension: _makeAssert('setComprehension', is.setComprehension as _AnyGuard),
-    generatorExpression: _makeAssert('generatorExpression', is.generatorExpression as _AnyGuard),
-    ComprehensionClauses: _makeAssert('ComprehensionClauses', is.ComprehensionClauses as _AnyGuard),
-    parenthesizedExpression: _makeAssert('parenthesizedExpression', is.parenthesizedExpression as _AnyGuard),
-    forInClause: _makeAssert('forInClause', is.forInClause as _AnyGuard),
-    ifClause: _makeAssert('ifClause', is.ifClause as _AnyGuard),
-    conditionalExpression: _makeAssert('conditionalExpression', is.conditionalExpression as _AnyGuard),
-    concatenatedString: _makeAssert('concatenatedString', is.concatenatedString as _AnyGuard),
-    string: _makeAssert('string', is.string as _AnyGuard),
-    stringContent: _makeAssert('stringContent', is.stringContent as _AnyGuard),
-    interpolation: _makeAssert('interpolation', is.interpolation as _AnyGuard),
-    formatSpecifier: _makeAssert('formatSpecifier', is.formatSpecifier as _AnyGuard),
-    await: _makeAssert('await', is.await as _AnyGuard),
-    AsPatternTarget: _makeAssert('AsPatternTarget', is.AsPatternTarget as _AnyGuard),
-    FormatExpression: _makeAssert('FormatExpression', is.FormatExpression as _AnyGuard),
-    WithClauseParen: _makeAssert('WithClauseParen', is.WithClauseParen as _AnyGuard),
-    SimplePatternNegative: _makeAssert('SimplePatternNegative', is.SimplePatternNegative as _AnyGuard),
     kind: _makeAssertKind(is.kind as _AnyGuard),
-    statement: _makeAssert('statement', is.statement as _AnyGuard),
-    simpleStatement: _makeAssert('simpleStatement', is.simpleStatement as _AnyGuard),
-    namedExpressionLhs: _makeAssert('namedExpressionLhs', is.namedExpressionLhs as _AnyGuard),
-    expressions: _makeAssert('expressions', is.expressions as _AnyGuard),
     compoundStatement: _makeAssert('compoundStatement', is.compoundStatement as _AnyGuard),
+    dictPatternKv: _makeAssert('dictPatternKv', is.dictPatternKv as _AnyGuard),
+    expressionWithinForInClause: _makeAssert('expressionWithinForInClause', is.expressionWithinForInClause as _AnyGuard),
+    expressions: _makeAssert('expressions', is.expressions as _AnyGuard),
+    fExpression: _makeAssert('fExpression', is.fExpression as _AnyGuard),
+    leftHandSide: _makeAssert('leftHandSide', is.leftHandSide as _AnyGuard),
+    namedExpressionLhs: _makeAssert('namedExpressionLhs', is.namedExpressionLhs as _AnyGuard),
+    rightHandSide: _makeAssert('rightHandSide', is.rightHandSide as _AnyGuard),
     simplePattern: _makeAssert('simplePattern', is.simplePattern as _AnyGuard),
+    simpleStatement: _makeAssert('simpleStatement', is.simpleStatement as _AnyGuard),
+    statement: _makeAssert('statement', is.statement as _AnyGuard),
+    expression: _makeAssert('expression', is.expression as _AnyGuard),
+    keywordIdentifier: _makeAssert('keywordIdentifier', is.keywordIdentifier as _AnyGuard),
     parameter: _makeAssert('parameter', is.parameter as _AnyGuard),
     pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
-    expressionWithinForInClause: _makeAssert('expressionWithinForInClause', is.expressionWithinForInClause as _AnyGuard),
-    expression: _makeAssert('expression', is.expression as _AnyGuard),
     primaryExpression: _makeAssert('primaryExpression', is.primaryExpression as _AnyGuard),
-    leftHandSide: _makeAssert('leftHandSide', is.leftHandSide as _AnyGuard),
-    rightHandSide: _makeAssert('rightHandSide', is.rightHandSide as _AnyGuard),
-    fExpression: _makeAssert('fExpression', is.fExpression as _AnyGuard),
-    keywordIdentifier: _makeAssert('keywordIdentifier', is.keywordIdentifier as _AnyGuard),
-    dictPatternKv: _makeAssert('dictPatternKv', is.dictPatternKv as _AnyGuard),
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.

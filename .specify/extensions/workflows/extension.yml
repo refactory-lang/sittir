@@ -118,62 +118,56 @@ hooks:
     condition: null
   before_specify:
     command: "speckit.workflows.issue-sync-before-specify"
-    optional: false
+    optional: true
     prompt: null
     description: "Update linked issue for workflow boundary before_specify"
     condition: null
   after_specify:
     command: "speckit.workflows.issue-sync-after-specify"
-    optional: false
+    optional: true
     prompt: null
     description: "Update linked issue for workflow boundary after_specify"
     condition: null
   before_plan:
     command: "speckit.workflows.issue-sync-before-plan"
-    optional: false
+    optional: true
     prompt: null
     description: "Update linked issue for workflow boundary before_plan"
     condition: null
   after_plan:
     command: "speckit.workflows.issue-sync-after-plan"
-    optional: false
+    optional: true
     prompt: null
     description: "Update linked issue for workflow boundary after_plan"
     condition: null
   before_tasks:
     command: "speckit.workflows.issue-sync-before-tasks"
-    optional: false
+    optional: true
     prompt: null
     description: "Update linked issue for workflow boundary before_tasks"
     condition: null
   after_tasks:
     command: "speckit.workflows.issue-sync-after-tasks"
-    optional: false
+    optional: true
     prompt: null
     description: "Update linked issue for workflow boundary after_tasks"
     condition: null
   before_implement:
     command: "speckit.workflows.issue-sync-before-implement"
-    optional: false
+    optional: true
     prompt: null
     description: "Update linked issue for workflow boundary before_implement"
     condition: null
   after_implement:
     command: "speckit.workflows.issue-sync-after-implement"
-    optional: false
+    optional: true
     prompt: null
     description: "Update linked issue for workflow boundary after_implement"
-    condition: null
-  before_commit:
-    command: "speckit.workflows.review"
-    optional: true
-    prompt: "Confirm review is approved before committing?"
-    description: "Ensure review is complete before git commit"
     condition: null
 
 defaults:
   enhance:
-    max_tasks: 7
+    max_tasks: 10
     min_tasks: 3
   bugfix:
     require_regression_test: true
