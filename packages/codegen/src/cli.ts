@@ -315,52 +315,6 @@ if (shouldEmitRustRender) {
 		}
 		return out;
 	};
-	// Each user field is emitted as BOTH scalar (`foo`, the pre-joined
-	// form) and list (`foo_list`, per-element). Rewrite list-consuming
-	// references in the Rust render-module template copy so they target the
-	// list slot. Flank-aware joins (`joinWithTrailing` / `Leading` /
-	// `Flanks`) are rewritten to `joinby(...)` with the generated
-	// boolean fields that direct render populates per slot.
-	const rewriteListUsage = (body: string, listFields: Set<string>): string => {
-		const escaped = Array.from(listFields).map((f) =>
-			f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-		);
-		const alt = escaped.length > 0 ? escaped.join('|') : '(?!)';
-		let out = body;
-		const flankRe =
-			/\{\{(-?\s*)([a-zA-Z_][a-zA-Z0-9_]*)(\s*\|\s*joinWith(Trailing|Leading|Flanks)\s*\(([^)]*)\))(\s*-?)\}\}/g;
-		out = out.replace(
-			flankRe,
-			(match, lead, ident, _filter, mode, args, trail) => {
-				if (ident !== 'children' && !listFields.has(ident)) return match;
-				const target = ident === 'children' ? 'children' : `${ident}_list`;
-				const leadingExpr =
-					ident === 'children' ? 'leading_sep' : `${ident}_leading_sep`;
-				const trailingExpr =
-					ident === 'children' ? 'trailing_sep' : `${ident}_trailing_sep`;
-				const boolArgs =
-					mode === 'Leading'
-						? `${leadingExpr}, false`
-						: mode === 'Trailing'
-							? `false, ${trailingExpr}`
-							: `${leadingExpr}, ${trailingExpr}`;
-				return `{{${lead}${target} | joinby(${args}, ${boolArgs})${trail}}}`;
-			}
-		);
-		// `{{ foo | join(...) }}` → `{{ foo_list | join(...) }}`
-		const filterRe = new RegExp(
-			`(\\{\\{-?\\s*)(${alt})(\\s*\\|\\s*join\\b)`,
-			'g'
-		);
-		out = out.replace(filterRe, `$1$2_list$3`);
-		// `{% for x in foo %}` → `{% for x in foo_list %}`
-		const forRe = new RegExp(
-			`(\\{%-?\\s*for\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s+in\\s+)(${alt})\\b`,
-			'g'
-		);
-		out = out.replace(forRe, `$1$2_list`);
-		return out;
-	};
 	const preserveMultilineTrailingNewline = (body: string): string => {
 		if (!body.includes('\n') || !body.endsWith('\n')) return body;
 		return body + '\n';
@@ -375,10 +329,7 @@ if (shouldEmitRustRender) {
 		const fname = `${kind}.jinja`;
 		const srcPath = join(srcTemplatesDir, fname);
 		const dstPath = join(dstTemplatesDir, fname);
-		const listFields =
-			emit.listShapedFieldsByKind.get(kind) ?? new Set<string>();
 		let transformed = renameForRustRender(readFileSync(srcPath, 'utf8'));
-		transformed = rewriteListUsage(transformed, listFields);
 		transformed = preserveMultilineTrailingNewline(transformed);
 		writeFile(dstPath, transformed);
 		emittedNames.add(fname);

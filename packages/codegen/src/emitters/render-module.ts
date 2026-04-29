@@ -17,12 +17,15 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledField, AssembledNode } from '../compiler/node-map.ts';
+import type {
+	AssembledNode,
+	RenderTemplateSurface
+} from '../compiler/node-map.ts';
 import {
 	AssembledContainer,
-	AssembledPolymorph,
-	isRequired
+	AssembledPolymorph
 } from '../compiler/node-map.ts';
+import { compileWordMatcher } from '../compiler/common.ts';
 import type { TemplateFile } from './template-hash.ts';
 import { computeTemplateBundleHash } from './template-hash.ts';
 import { renderModuleSrcDir } from './render-module-paths.ts';
@@ -45,11 +48,6 @@ export interface RustRenderModuleEmit {
 	templatesRs: { path: string; contents: string };
 	/** `rust/crates/sittir-{lang}/src/render/mod.rs` (T028 — exposes render_dispatch) */
 	libRs: { path: string; contents: string };
-	/** Per-kind set of field names emitted as `Vec<String>` (list shape).
-	 *  Used by the cli.ts template-copy step to rewrite scalar-filter
-	 *  calls (e.g. `| isPresent`) into their list-variant counterparts
-	 *  (`| isPresentList`) when the field is list-shaped. */
-	listShapedFieldsByKind: Map<string, Set<string>>;
 }
 
 function hashRsHeader(lang: Grammar): string {
@@ -95,121 +93,7 @@ function templatesRsHeader(lang: Grammar): string {
 // here, the codegen is out of sync: regenerate via the command above.`;
 }
 
-// ----------------------------------------------------------------------
-// Template-body identifier scan
-// ----------------------------------------------------------------------
-//
-// Askama structs MUST expose a field for every variable the template
-// references. Rather than trying to re-derive the variable set from the
-// rule tree (which the TS jinja emitter already did, and whose output
-// we're consuming), we scan each template body once for `{{ ident }}`,
-// `{% if ident %}`, `{%- elif ident … %}`, and `{% for x in ident %}`
-// references and union the set. The scan is a conservative over-
-// approximation — unused fields are harmless, missing fields break the
-// build. Reserved identifiers (`true`, `false`, loop var names) are
-// filtered out.
-
-// Jinja keywords / built-ins that are NOT template variables. `in` is
-// NOT included — it appears as a Jinja keyword in `{% for x in y %}`
-// (handled by the explicit forRe pattern) but also as a LEGITIMATE
-// VARIABLE in kinds whose grammar surfaces `in` as a literal child
-// (e.g. rust `pub(in path)` — `_visibility_modifier_pub_in_path.jinja`
-// renders `{{ in }} {{ children | join(" ") }}` where `in` is the
-// promoted keyword field). Dropping it here would shadow the field
-// lookup at struct-derive time.
-const RESERVED_IDENTS = new Set([
-	'true',
-	'false',
-	'none',
-	'null',
-	'empty',
-	'and',
-	'or',
-	'not',
-	'is',
-	'if',
-	'elif',
-	'else',
-	'endif',
-	'for',
-	'endfor',
-	'loop'
-]);
-
-const SHARED_POSITIONAL = new Set([
-	'children',
-	'children_list',
-	'variant',
-	'text',
-	'trailing_sep',
-	'leading_sep'
-]);
-
-/**
- * Template variable shape — scalar (rendered as a single joined string)
- * or list (rendered per-element by the template, either via `{% for %}`
- * or a `join*` filter). The distinction drives the generated struct's
- * field type: `String` for scalar, `Vec<String>` for list.
- */
-type IdentShape = 'scalar' | 'list';
-
-/**
- * Extract the set of variable identifiers referenced by a Jinja
- * template body, classified by shape (scalar vs list). Handles
- * `{{ ... }}`, `{% if ... %}`, `{%- elif ... %}`, `{% for x in y %}` —
- * pulls leading identifiers before any filter pipe or operator, plus
- * the right-hand-side of `for ... in ...`.
- *
- * An identifier is classified as 'list' when it appears as:
- *   - The `y` in `{% for x in y %}` (iterated)
- *   - The left operand of any `join*` filter (`join` / `joinWith*`) —
- *     these consume a slice of strings; the filter's signature
- *     rejects `&String` at askama compile time.
- * Otherwise 'scalar'.
- *
- * When the same identifier appears in BOTH shapes across the template,
- * 'list' wins (a Vec<String> can be `to_string`'d at a scalar site but
- * a String can't be iterated).
- */
-function scanTemplateIdentifiers(body: string): Map<string, IdentShape> {
-	const out = new Map<string, IdentShape>();
-	const record = (id: string, shape: IdentShape): void => {
-		if (RESERVED_IDENTS.has(id)) return;
-		const prior = out.get(id);
-		if (prior === 'list' || shape === 'list') out.set(id, 'list');
-		else if (prior === undefined) out.set(id, 'scalar');
-	};
-
-	// {{ expr | filter(...) }} — first identifier is the source.
-	// If the very first filter is join / joinWithTrailing / joinWithLeading /
-	// joinWithFlanks the source is list-shaped (the filter iterates).
-	const exprRe = /\{\{-?\s*([a-zA-Z_][a-zA-Z0-9_]*)([^}]*?)-?\}\}/g;
-	let m: RegExpExecArray | null;
-	while ((m = exprRe.exec(body)) !== null) {
-		const id = m[1]!;
-		const rest = m[2] ?? '';
-		const firstFilter = /\|\s*([a-zA-Z_][a-zA-Z0-9_]*)/.exec(rest);
-		const filterName = firstFilter?.[1] ?? '';
-		const isJoin =
-			filterName === 'join' ||
-			filterName === 'joinWithTrailing' ||
-			filterName === 'joinWithLeading' ||
-			filterName === 'joinWithFlanks';
-		record(id, isJoin ? 'list' : 'scalar');
-	}
-	// {% if expr %} / {% elif expr %} — first identifier in the condition.
-	const ifRe = /\{%-?\s*(?:if|elif)\s+([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
-	while ((m = ifRe.exec(body)) !== null) {
-		record(m[1]!, 'scalar');
-	}
-	// {% for x in y %} — y is the iterable.
-	const forRe =
-		/\{%-?\s*for\s+[a-zA-Z_][a-zA-Z0-9_]*\s+in\s+([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
-	while ((m = forRe.exec(body)) !== null) {
-		record(m[1]!, 'list');
-	}
-	return out;
-}
+type EmittedFieldView = 'scalar' | 'list' | 'field';
 
 // ----------------------------------------------------------------------
 // Rust identifier safety
@@ -318,53 +202,37 @@ function pascal(s: string): string {
 
 interface EmittedField {
 	name: string; // raw grammar field name
-	shape: IdentShape; // scalar → String, list → Vec<String>
+	view: EmittedFieldView;
 	required: boolean;
+	hasLeading: boolean;
+	hasTrailing: boolean;
 }
 
 interface EmittedStruct {
 	name: string;
 	kind: string;
-	fields: EmittedField[]; // non-shared variable names referenced by the template
+	fields: EmittedField[];
+	hasChildren: boolean;
+	hasVariant: boolean;
+	hasText: boolean;
 }
 
 function emitStruct(
 	kind: string,
-	body: string,
-	node: AssembledNode | undefined
+	node: AssembledNode | undefined,
+	surface: RenderTemplateSurface
 ): EmittedStruct {
 	const name = structNameFor(kind, node);
-	const idents = scanTemplateIdentifiers(body);
-	const fields: EmittedField[] = [];
-	for (const [id, shape] of idents) {
-		if (SHARED_POSITIONAL.has(id)) continue;
-		fields.push({
-			name: id,
-			shape,
-			required: isRequiredField(node, id) && !hasOptionalPresenceGuard(body, id)
-		});
-	}
+	const fields: EmittedField[] = [...surface.slots];
 	fields.sort((a, b) => a.name.localeCompare(b.name));
-	return { name, kind, fields };
-}
-
-function isRequiredField(
-	node: AssembledNode | undefined,
-	name: string
-): boolean {
-	const fieldOwner = node as { fields?: readonly AssembledField[] } | undefined;
-	const field = fieldOwner?.fields?.find(
-		(candidate) => candidate.name === name
-	);
-	return field !== undefined && isRequired(field);
-}
-
-function hasOptionalPresenceGuard(body: string, name: string): boolean {
-	const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-	const guardRe = new RegExp(
-		String.raw`\{%-?\s*(?:if|elif)\s+${escapedName}(?:_list)?\s*\|\s*(?:isPresent|isPresentList|isBlank|isBlankList)\b`
-	);
-	return guardRe.test(body);
+	return {
+		name,
+		kind,
+		fields,
+		hasChildren: surface.usesChildren,
+		hasVariant: surface.usesVariant,
+		hasText: surface.usesText
+	};
 }
 
 function renderStructDefs(structs: EmittedStruct[]): string {
@@ -375,28 +243,27 @@ function renderStructDefs(structs: EmittedStruct[]): string {
 			`#[template(path = ${JSON.stringify(`${s.kind}.jinja`)}, escape = "none")]`
 		);
 		lines.push(`pub struct ${s.name}<'a> {`);
-		// Shared positional fields (always emitted — keeps the struct
-		// uniform even when a template doesn't reference them).
-		lines.push(`    pub children: &'a [String],`);
-		lines.push(`    pub children_list: &'a [String],`);
-		lines.push(`    pub variant: &'a str,`);
-		lines.push(`    pub text: &'a str,`);
-		lines.push(`    pub trailing_sep: bool,`);
-		lines.push(`    pub leading_sep: bool,`);
-		// Each user-declared field always emits BOTH a scalar and a
-		// list view (mirrors the shared `children` + `children_list`
-		// pattern). Templates that interpolate / check presence use
-		// the scalar (pre-joined string); templates that iterate or
-		// pipe through a `join*` filter use the list. The per-field
-		// `_list` reference is synthesized at template-copy time (see
-		// `cli.ts`). Empty lists render as empty scalars and read as
-		// "not present" via `| isPresent`, so no separate filter is
-		// needed — we never permit null arrays, only empty ones.
+		if (s.hasChildren) {
+			lines.push(`    pub children: ::sittir_core::filters::ListView<'a>,`);
+		}
+		if (s.hasVariant) {
+			lines.push(`    pub variant: &'a str,`);
+		}
+		if (s.hasText) {
+			lines.push(`    pub text: &'a str,`);
+		}
 		for (const f of s.fields) {
-			lines.push(`    pub ${rustFieldIdent(f.name)}: &'a str,`);
-			lines.push(`    pub ${rustFieldIdent(f.name)}_list: &'a [String],`);
-			lines.push(`    pub ${rustFieldIdent(f.name)}_leading_sep: bool,`);
-			lines.push(`    pub ${rustFieldIdent(f.name)}_trailing_sep: bool,`);
+			if (f.view === 'scalar') {
+				lines.push(`    pub ${rustFieldIdent(f.name)}: &'a str,`);
+			} else if (f.view === 'list') {
+				lines.push(
+					`    pub ${rustFieldIdent(f.name)}: ::sittir_core::filters::ListView<'a>,`
+				);
+			} else {
+				lines.push(
+					`    pub ${rustFieldIdent(f.name)}: ::sittir_core::filters::FieldView<'a>,`
+				);
+			}
 		}
 		lines.push(`}`);
 		lines.push('');
@@ -414,25 +281,79 @@ function renderDirectSupport(meta: MetaData): string {
 	lines.push(`use ::askama::Template as _AskamaTemplate;`);
 	lines.push(`use ::sittir_core::types::{FieldValue, NodeData};`);
 	lines.push('');
+	lines.push(`#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]`);
+	lines.push(`enum ResolvedFieldKind {`);
+	lines.push(`    #[default]`);
+	lines.push(`    Missing,`);
+	lines.push(`    Scalar,`);
+	lines.push(`    List,`);
+	lines.push(`}`);
+	lines.push('');
 	lines.push(`#[derive(Debug, Default)]`);
 	lines.push(`struct ResolvedField {`);
+	lines.push(`    kind: ResolvedFieldKind,`);
 	lines.push(`    scalar: String,`);
 	lines.push(`    items: Vec<String>,`);
+	lines.push(`    separator: &'static str,`);
 	lines.push(`    leading_sep: bool,`);
 	lines.push(`    trailing_sep: bool,`);
 	lines.push(`}`);
 	lines.push('');
 	lines.push(`impl ResolvedField {`);
 	lines.push(`    fn from_scalar(value: String) -> Self {`);
-	lines.push(`        let mut items = Vec::new();`);
-	lines.push(`        if !value.is_empty() {`);
-	lines.push(`            items.push(value.clone());`);
-	lines.push(`        }`);
 	lines.push(`        Self {`);
+	lines.push(`            kind: ResolvedFieldKind::Scalar,`);
 	lines.push(`            scalar: value,`);
-	lines.push(`            items,`);
+	lines.push(`            items: Vec::new(),`);
+	lines.push(`            separator: "",`);
 	lines.push(`            leading_sep: false,`);
 	lines.push(`            trailing_sep: false,`);
+	lines.push(`        }`);
+	lines.push(`    }`);
+	lines.push('');
+	lines.push(
+		`    fn from_items(items: Vec<String>, separator: &'static str, leading_sep: bool, trailing_sep: bool) -> Self {`
+	);
+	lines.push(`        Self {`);
+	lines.push(`            kind: ResolvedFieldKind::List,`);
+	lines.push(
+		`            scalar: ::sittir_core::filters::joinby(&items, separator, leading_sep, trailing_sep).unwrap_or_default(),`
+	);
+	lines.push(`            items,`);
+	lines.push(`            separator,`);
+	lines.push(`            leading_sep,`);
+	lines.push(`            trailing_sep,`);
+	lines.push(`        }`);
+	lines.push(`    }`);
+	lines.push('');
+	lines.push(`    fn as_scalar(&self) -> &str {`);
+	lines.push(`        self.scalar.as_str()`);
+	lines.push(`    }`);
+	lines.push('');
+	lines.push(
+		`    fn as_list_view(&self) -> ::sittir_core::filters::ListView<'_> {`
+	);
+	lines.push(`        ::sittir_core::filters::ListView {`);
+	lines.push(`            items: self.items.as_slice(),`);
+	lines.push(`            separator: self.separator,`);
+	lines.push(`            leading: self.leading_sep,`);
+	lines.push(`            trailing: self.trailing_sep,`);
+	lines.push(`        }`);
+	lines.push(`    }`);
+	lines.push('');
+	lines.push(
+		`    fn as_field_view(&self) -> ::sittir_core::filters::FieldView<'_> {`
+	);
+	lines.push(`        match self.kind {`);
+	lines.push(
+		`            ResolvedFieldKind::Missing => ::sittir_core::filters::FieldView::Missing,`
+	);
+	lines.push(
+		`            ResolvedFieldKind::Scalar => ::sittir_core::filters::FieldView::Scalar(self.scalar.as_str()),`
+	);
+	lines.push(
+		`            ResolvedFieldKind::List => ::sittir_core::filters::FieldView::List(self.as_list_view()),`
+	);
 	lines.push(`        }`);
 	lines.push(`    }`);
 	lines.push(`}`);
@@ -669,30 +590,21 @@ function renderDirectSupport(meta: MetaData): string {
 	lines.push(`            let rendered = render_node_value(child)?;`);
 	lines.push(`            Ok(ResolvedField::from_scalar(rendered))`);
 	lines.push(`        }`);
-	lines.push(`        Some(FieldValue::Multiple(items)) => {`);
-	lines.push(`            let mut rendered = Vec::new();`);
-	lines.push(`            for item in items {`);
+		lines.push(`        Some(FieldValue::Multiple(items)) => {`);
+		lines.push(`            let mut rendered = Vec::new();`);
+		lines.push(`            for item in items {`);
 	lines.push(`                if !item.named {`);
 	lines.push(`                    continue;`);
 	lines.push(`                }`);
 	lines.push(`                rendered.push(render_node_value(item)?);`);
 	lines.push(`            }`);
-	lines.push(`            let scalar = if rendered.is_empty() {`);
-	lines.push(`                String::new()`);
-	lines.push(`            } else {`);
-	lines.push(
-		`                ::sittir_core::filters::joinby(rendered.as_slice(), separator_for(node.type_.as_str()), false, false)?`
-	);
-	lines.push(`            };`);
-	lines.push(`            Ok(ResolvedField {`);
-	lines.push(`                scalar,`);
-	lines.push(`                items: rendered,`);
-	lines.push(`                leading_sep: false,`);
-	lines.push(
-		`                trailing_sep: detect_field_trailing_sep(node, name),`
-	);
-	lines.push(`            })`);
-	lines.push(`        }`);
+		lines.push(`            Ok(ResolvedField::from_items(`);
+		lines.push(`                rendered,`);
+		lines.push(`                separator_for(node.type_.as_str()),`);
+		lines.push(`                false,`);
+		lines.push(`                detect_field_trailing_sep(node, name),`);
+		lines.push(`            ))`);
+		lines.push(`        }`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
@@ -777,19 +689,12 @@ function renderDirectSupport(meta: MetaData): string {
 	lines.push(`            }`);
 	lines.push(`        }`);
 	lines.push(`    }`);
-	lines.push(`    let scalar = if children.is_empty() {`);
-	lines.push(`        String::new()`);
-	lines.push(`    } else {`);
-	lines.push(
-		`        ::sittir_core::filters::joinby(children.as_slice(), separator_for(node.type_.as_str()), leading_sep, trailing_sep)?`
-	);
-	lines.push(`    };`);
-	lines.push(`    Ok(ResolvedField {`);
-	lines.push(`        scalar,`);
-	lines.push(`        items: children,`);
+	lines.push(`    Ok(ResolvedField::from_items(`);
+	lines.push(`        children,`);
+	lines.push(`        separator_for(node.type_.as_str()),`);
 	lines.push(`        leading_sep,`);
 	lines.push(`        trailing_sep,`);
-	lines.push(`    })`);
+	lines.push(`    ))`);
 	lines.push(`}`);
 	lines.push('');
 	lines.push(
@@ -873,28 +778,36 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 				`    let field_${index} = resolve_field(node, ${JSON.stringify(f.name)}, ${f.required})?;`
 			);
 		}
-		lines.push(`    let variant = resolve_variant(node);`);
-		lines.push(`    let text = resolve_text(node)?;`);
+		if (s.hasVariant) {
+			lines.push(`    let variant = resolve_variant(node);`);
+		}
+		if (s.hasText) {
+			lines.push(`    let text = resolve_text(node)?;`);
+		}
 		lines.push(`    let template = ${s.name} {`);
-		lines.push(`        children: children.items.as_slice(),`);
-		lines.push(`        children_list: children.items.as_slice(),`);
-		lines.push(`        variant,`);
-		lines.push(`        text: text.as_str(),`);
-		lines.push(`        trailing_sep: children.trailing_sep,`);
-		lines.push(`        leading_sep: children.leading_sep,`);
+		if (s.hasChildren) {
+			lines.push(`        children: children.as_list_view(),`);
+		}
+		if (s.hasVariant) {
+			lines.push(`        variant,`);
+		}
+		if (s.hasText) {
+			lines.push(`        text: text.as_str(),`);
+		}
 		for (const [index, f] of s.fields.entries()) {
-			lines.push(
-				`        ${rustFieldIdent(f.name)}: field_${index}.scalar.as_str(),`
-			);
-			lines.push(
-				`        ${rustFieldIdent(f.name)}_list: field_${index}.items.as_slice(),`
-			);
-			lines.push(
-				`        ${rustFieldIdent(f.name)}_leading_sep: field_${index}.leading_sep,`
-			);
-			lines.push(
-				`        ${rustFieldIdent(f.name)}_trailing_sep: field_${index}.trailing_sep,`
-			);
+			if (f.view === 'scalar') {
+				lines.push(
+					`        ${rustFieldIdent(f.name)}: field_${index}.as_scalar(),`
+				);
+			} else if (f.view === 'list') {
+				lines.push(
+					`        ${rustFieldIdent(f.name)}: field_${index}.as_list_view(),`
+				);
+			} else {
+				lines.push(
+					`        ${rustFieldIdent(f.name)}: field_${index}.as_field_view(),`
+				);
+			}
 		}
 		lines.push(`    };`);
 		lines.push(`    template.render()`);
@@ -1053,6 +966,7 @@ export function emitRenderModule(
 ): RustRenderModuleEmit {
 	const { hashRs, hashTs } = emitHashFiles(lang, files);
 	const structs: EmittedStruct[] = [];
+	const wordMatcher = compileWordMatcher(nodeMap.word, nodeMap.rules ?? {});
 	// Same order the hash function sorts under — deterministic output.
 	const sortedFiles = [...files].sort((a, b) =>
 		a.filename.localeCompare(b.filename)
@@ -1063,9 +977,24 @@ export function emitRenderModule(
 		const node = nodeMap.nodes.get(kind);
 		// Only user-facing nodes get templates emitted (see templates.ts
 		// emitJinjaTemplates); if the jinja file exists, the node exists
-		// and is userFacing. Fall through on missing — emit a struct with
-		// just shared fields.
-		structs.push(emitStruct(kind, f.content, node));
+		// and is userFacing.
+		const rendered = node?.renderTemplate(
+			nodeMap.rules ?? {},
+			wordMatcher ?? /\w/,
+			nodeMap.externals
+		);
+		structs.push(
+			emitStruct(
+				kind,
+				node,
+				rendered?.surface ?? {
+					slots: [],
+					usesChildren: false,
+					usesVariant: false,
+					usesText: false
+				}
+			)
+		);
 	}
 	const meta = collectMetaData(nodeMap);
 	const templatesRs = [
@@ -1084,8 +1013,8 @@ export function emitRenderModule(
 		'    //! sibling `filters` module at the derive-macro site. This',
 		'    //! module just re-exports the canonical implementations',
 		'    //! from `sittir_core::filters`.',
-		'    pub fn joinby<S: AsRef<str>>(',
-		'        xs: &[S],',
+		'    pub fn joinby<T: ::sittir_core::filters::JoinSource + ?Sized>(',
+		'        xs: &T,',
 		'        _values: &dyn ::askama::Values,',
 		'        sep: &str,',
 		'        leading: impl std::borrow::Borrow<bool>,',
@@ -1094,8 +1023,8 @@ export function emitRenderModule(
 		'        ::sittir_core::filters::joinby(xs, sep, *leading.borrow(), *trailing.borrow())',
 		'    }',
 		'',
-		'    pub fn join<S: AsRef<str>>(',
-		'        xs: &[S],',
+		'    pub fn join<T: ::sittir_core::filters::JoinSource + ?Sized>(',
+		'        xs: &T,',
 		'        sep: &str,',
 		'    ) -> Result<String, ::askama::Error> {',
 		'        ::sittir_core::filters::joinby(xs, sep, false, false)',
@@ -1115,12 +1044,6 @@ export function emitRenderModule(
 		'',
 		renderDispatchFn(structs)
 	].join('\n');
-	const listShapedFieldsByKind = new Map<string, Set<string>>();
-	for (const s of structs) {
-		const listFields = new Set<string>();
-		for (const f of s.fields) if (f.shape === 'list') listFields.add(f.name);
-		if (listFields.size > 0) listShapedFieldsByKind.set(s.kind, listFields);
-	}
 	return {
 		hashRs,
 		hashTs,
@@ -1131,7 +1054,6 @@ export function emitRenderModule(
 		libRs: {
 			path: `${renderModuleSrcDir(lang)}/mod.rs`,
 			contents: libRsContents(lang)
-		},
-		listShapedFieldsByKind
+		}
 	};
 }

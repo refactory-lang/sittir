@@ -186,6 +186,16 @@ interface WalkResult {
 	 * `attributes` joined by newline and `rest` joined by comma).
 	 */
 	joinByField: Record<string, string>;
+	/** True when the walk emitted the aggregate `$$$CHILDREN` placeholder. */
+	usesChildren: boolean;
+	/** Named slot usage derived directly from the rule walk output. */
+	slots: readonly WalkSlotUse[];
+}
+
+export interface WalkSlotUse {
+	readonly name: string;
+	readonly view: 'scalar' | 'list' | 'field';
+	readonly guarded: boolean;
 }
 
 export function renderRuleTemplate(
@@ -215,7 +225,45 @@ export function renderRuleTemplate(
 		wordMatcher,
 		optionalFields
 	);
-	return { template: parts.join(''), clauses, joinByField };
+	const template = parts.join('');
+	const slots = deriveWalkSlots(template);
+	return {
+		template,
+		clauses,
+		joinByField,
+		usesChildren: template.includes('$$$CHILDREN'),
+		slots
+	};
+}
+
+function deriveWalkSlots(template: string): readonly WalkSlotUse[] {
+	const guarded = new Set<string>();
+	for (const match of template.matchAll(
+		/\{%\s*if\s+([a-z0-9_]+)\s*\|\s*isPresent\s*%\}/g
+	)) {
+		const name = match[1];
+		if (name) guarded.add(name);
+	}
+	const byName = new Map<string, WalkSlotUse>();
+	for (const match of template.matchAll(/(\$\$\$|\$)([A-Z][A-Z0-9_]*)/g)) {
+		const sigil = match[1];
+		const raw = match[2];
+		if (!sigil || !raw) continue;
+		const name = raw.toLowerCase();
+		if (name === 'children' || name === 'text') continue;
+		const nextView = sigil === '$$$' ? 'list' : 'scalar';
+		const prev = byName.get(name);
+		const view =
+			prev == null || prev.view === nextView
+				? nextView
+				: ('field' as const);
+		byName.set(name, {
+			name,
+			view,
+			guarded: guarded.has(name)
+		});
+	}
+	return [...byName.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
 
 /**

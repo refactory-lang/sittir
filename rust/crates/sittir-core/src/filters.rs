@@ -22,6 +22,8 @@
 //!
 //! …and the per-kind codegen wires the bool arguments through.
 
+use std::fmt;
+
 /// Uppercase. Mirrors TS `String.prototype.toUpperCase()`.
 ///
 /// Returns `Result<_, askama::Error>` per askama filter convention so
@@ -36,31 +38,202 @@ pub fn lower(s: &str) -> Result<String, askama::Error> {
     Ok(s.to_lowercase())
 }
 
-/// Join a slice of pre-rendered child strings with a separator, with
-/// optional leading + trailing separator flanks.
-///
-/// # Arguments
-///
-/// * `xs` — pre-rendered children (one string per position).
-/// * `sep` — the separator emitted by the template call site.
-/// * `leading` — whether to emit `sep` at the start.
-/// * `trailing` — whether to emit `sep` at the end.
-///
-/// # Behavior
-///
-/// - Empty `xs` + `leading = trailing = false` → empty string.
-/// - Empty `xs` + any flank flag → the flank flags are suppressed
-///   (nothing to flank). Matches TS behavior: flanks only apply when
-///   there's content.
-/// - Populated `xs` → `prefix + xs.join(sep) + suffix` where prefix /
-///   suffix are each `sep` iff the corresponding flag is set.
-pub fn joinby<S: AsRef<str>>(
-    xs: &[S],
+#[inline]
+fn string_as_str(s: &String) -> &str {
+    s.as_str()
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ListView<'a> {
+    pub items: &'a [String],
+    pub separator: &'static str,
+    pub leading: bool,
+    pub trailing: bool,
+}
+
+impl ListView<'_> {
+    pub fn is_empty(&self) -> bool {
+        self.items.is_empty()
+    }
+}
+
+pub struct ListViewIter<'a> {
+    inner: std::iter::Map<std::slice::Iter<'a, String>, fn(&'a String) -> &'a str>,
+}
+
+impl<'a> Iterator for ListViewIter<'a> {
+    type Item = &'a str;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.inner.next()
+    }
+}
+
+impl<'a> IntoIterator for &'a ListView<'a> {
+    type Item = &'a str;
+    type IntoIter = ListViewIter<'a>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        ListViewIter {
+            inner: self.items.iter().map(string_as_str as fn(&'a String) -> &'a str),
+        }
+    }
+}
+
+impl fmt::Display for ListView<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let rendered =
+            joinby(self, self.separator, self.leading, self.trailing).map_err(|_| fmt::Error)?;
+        f.write_str(&rendered)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FieldView<'a> {
+    Missing,
+    Scalar(&'a str),
+    List(ListView<'a>),
+}
+
+pub enum FieldViewIter<'a> {
+    Missing(std::option::IntoIter<&'a str>),
+    Scalar(std::option::IntoIter<&'a str>),
+    List(ListViewIter<'a>),
+}
+
+impl<'a> Iterator for FieldViewIter<'a> {
+    type Item = &'a str;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        match self {
+            Self::Missing(inner) | Self::Scalar(inner) => inner.next(),
+            Self::List(inner) => inner.next(),
+        }
+    }
+}
+
+impl<'a> IntoIterator for &'a FieldView<'a> {
+    type Item = &'a str;
+    type IntoIter = FieldViewIter<'a>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        match self {
+            FieldView::Missing => FieldViewIter::Missing(None.into_iter()),
+            FieldView::Scalar(text) => FieldViewIter::Scalar(Some(*text).into_iter()),
+            FieldView::List(view) => FieldViewIter::List(view.into_iter()),
+        }
+    }
+}
+
+impl fmt::Display for FieldView<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Missing => Ok(()),
+            Self::Scalar(text) => f.write_str(text),
+            Self::List(view) => fmt::Display::fmt(view, f),
+        }
+    }
+}
+
+pub trait JoinSource {
+    fn len(&self) -> usize;
+    fn item(&self, index: usize) -> &str;
+
+    fn leading_sep_for(&self, _sep: &str) -> bool {
+        false
+    }
+
+    fn trailing_sep_for(&self, _sep: &str) -> bool {
+        false
+    }
+}
+
+impl<S: AsRef<str>> JoinSource for [S] {
+    fn len(&self) -> usize {
+        <[S]>::len(self)
+    }
+
+    fn item(&self, index: usize) -> &str {
+        self[index].as_ref()
+    }
+}
+
+impl<S: AsRef<str>> JoinSource for Vec<S> {
+    fn len(&self) -> usize {
+        self.as_slice().len()
+    }
+
+    fn item(&self, index: usize) -> &str {
+        self.as_slice()[index].as_ref()
+    }
+}
+
+impl<S: AsRef<str>, const N: usize> JoinSource for [S; N] {
+    fn len(&self) -> usize {
+        self.as_slice().len()
+    }
+
+    fn item(&self, index: usize) -> &str {
+        self.as_slice()[index].as_ref()
+    }
+}
+
+impl JoinSource for ListView<'_> {
+    fn len(&self) -> usize {
+        self.items.len()
+    }
+
+    fn item(&self, index: usize) -> &str {
+        self.items[index].as_str()
+    }
+
+    fn leading_sep_for(&self, sep: &str) -> bool {
+        self.separator == sep && self.leading
+    }
+
+    fn trailing_sep_for(&self, sep: &str) -> bool {
+        self.separator == sep && self.trailing
+    }
+}
+
+impl JoinSource for FieldView<'_> {
+    fn len(&self) -> usize {
+        match self {
+            Self::Missing => 0,
+            Self::Scalar(text) => usize::from(!text.is_empty()),
+            Self::List(view) => view.len(),
+        }
+    }
+
+    fn item(&self, index: usize) -> &str {
+        match self {
+            Self::Missing => panic!("FieldView::Missing has no join items"),
+            Self::Scalar(text) => {
+                debug_assert_eq!(index, 0);
+                text
+            }
+            Self::List(view) => view.item(index),
+        }
+    }
+
+    fn leading_sep_for(&self, sep: &str) -> bool {
+        matches!(self, Self::List(view) if view.leading_sep_for(sep))
+    }
+
+    fn trailing_sep_for(&self, sep: &str) -> bool {
+        matches!(self, Self::List(view) if view.trailing_sep_for(sep))
+    }
+}
+
+/// Join a pre-rendered sequence with a separator, with optional leading +
+/// trailing separator flanks.
+pub fn joinby<T: JoinSource + ?Sized>(
+    xs: &T,
     sep: &str,
     leading: bool,
     trailing: bool,
 ) -> Result<String, askama::Error> {
-    if xs.is_empty() {
+    if xs.len() == 0 {
         return Ok(String::new());
     }
     let prefix = if leading { sep } else { "" };
@@ -92,16 +265,16 @@ fn ends_line_comment(s: &str) -> bool {
 /// time. Cluster J (016): mirrors the TS Nunjucks `join` filter so the
 /// two engines stay byte-identical on fixtures containing `// comment`
 /// followed by a statement (e.g. rust block round-trip).
-fn join_with_line_comment_fix<S: AsRef<str>>(xs: &[S], sep: &str) -> String {
-    if xs.is_empty() {
+fn join_with_line_comment_fix<T: JoinSource + ?Sized>(xs: &T, sep: &str) -> String {
+    if xs.len() == 0 {
         return String::new();
     }
     if xs.len() == 1 {
-        return xs[0].as_ref().to_string();
+        return xs.item(0).to_string();
     }
     let mut out = String::new();
-    for (i, item) in xs.iter().enumerate() {
-        let s = item.as_ref();
+    for i in 0..xs.len() {
+        let s = xs.item(i);
         out.push_str(s);
         if i + 1 < xs.len() {
             if ends_line_comment(s) {
@@ -148,11 +321,6 @@ impl askama::Values for FlankValues {
 /// The TS engine accepts undefined/null/""/whitespace as blank. Askama
 /// template context fields are `String`-typed (absent fields are
 /// empty strings), so the test reduces to `trim().is_empty()`.
-#[allow(non_snake_case)]
-pub fn isBlank(s: &str, _values: &dyn askama::Values) -> Result<bool, askama::Error> {
-    Ok(s.trim().is_empty())
-}
-
 /// Private trait powering the generic `isPresent` filter.
 ///
 /// Two implementations exist:
@@ -194,6 +362,22 @@ impl PresenceCheck for &String {
     }
 }
 
+impl PresenceCheck for ListView<'_> {
+    fn is_present_check(&self) -> bool {
+        !self.items.is_empty()
+    }
+}
+
+impl PresenceCheck for FieldView<'_> {
+    fn is_present_check(&self) -> bool {
+        match self {
+            Self::Missing => false,
+            Self::Scalar(text) => !text.trim().is_empty(),
+            Self::List(view) => view.is_present_check(),
+        }
+    }
+}
+
 impl<S> PresenceCheck for Vec<S> {
     fn is_present_check(&self) -> bool {
         !self.is_empty()
@@ -210,6 +394,21 @@ impl<S> PresenceCheck for &[S] {
     fn is_present_check(&self) -> bool {
         !self.is_empty()
     }
+}
+
+impl<T: PresenceCheck> PresenceCheck for Option<T> {
+    fn is_present_check(&self) -> bool {
+        self.as_ref().is_some_and(PresenceCheck::is_present_check)
+    }
+}
+
+/// Presence test's inverse — blank means "not present".
+#[allow(non_snake_case, private_bounds)]
+pub fn isBlank<T: PresenceCheck + ?Sized>(
+    s: &T,
+    _values: &dyn askama::Values,
+) -> Result<bool, askama::Error> {
+    Ok(!s.is_present_check())
 }
 
 /// Inverse of `isBlank` — true when a field has non-whitespace content
@@ -273,12 +472,12 @@ fn flank_match(values: &dyn askama::Values, key: &str, sep: &str) -> bool {
 /// `join` — matches TS engine behavior when the children array has no
 /// `_trailing_anon` property.
 #[allow(non_snake_case)]
-pub fn joinWithTrailing<S: AsRef<str>>(
-    xs: &[S],
+pub fn joinWithTrailing<T: JoinSource + ?Sized>(
+    xs: &T,
     values: &dyn askama::Values,
     sep: &str,
 ) -> Result<String, askama::Error> {
-    let trailing = flank_match(values, "trailing_anon", sep);
+    let trailing = xs.trailing_sep_for(sep) || flank_match(values, "trailing_anon", sep);
     joinby(xs, sep, false, trailing)
 }
 
@@ -286,12 +485,12 @@ pub fn joinWithTrailing<S: AsRef<str>>(
 /// `joinWithTrailing`: emits a leading `sep` iff the children list
 /// captured a leading anonymous token whose text matches `sep`.
 #[allow(non_snake_case)]
-pub fn joinWithLeading<S: AsRef<str>>(
-    xs: &[S],
+pub fn joinWithLeading<T: JoinSource + ?Sized>(
+    xs: &T,
     values: &dyn askama::Values,
     sep: &str,
 ) -> Result<String, askama::Error> {
-    let leading = flank_match(values, "leading_anon", sep);
+    let leading = xs.leading_sep_for(sep) || flank_match(values, "leading_anon", sep);
     joinby(xs, sep, leading, false)
 }
 
@@ -299,12 +498,12 @@ pub fn joinWithLeading<S: AsRef<str>>(
 /// directions; emits each flank independently iff its captured anon
 /// text matches `sep`.
 #[allow(non_snake_case)]
-pub fn joinWithFlanks<S: AsRef<str>>(
-    xs: &[S],
+pub fn joinWithFlanks<T: JoinSource + ?Sized>(
+    xs: &T,
     values: &dyn askama::Values,
     sep: &str,
 ) -> Result<String, askama::Error> {
-    let leading = flank_match(values, "leading_anon", sep);
-    let trailing = flank_match(values, "trailing_anon", sep);
+    let leading = xs.leading_sep_for(sep) || flank_match(values, "leading_anon", sep);
+    let trailing = xs.trailing_sep_for(sep) || flank_match(values, "trailing_anon", sep);
     joinby(xs, sep, leading, trailing)
 }

@@ -96,12 +96,12 @@ describe('render pipeline optimization — retained baseline convergence', () =>
 });
 
 describe('render pipeline optimization — level 1 borrowed askama views', () => {
-	it('emits borrowed scalar, list, children, variant, and text access from TemplateContext', () => {
+	it('emits borrowed model-driven field views from the walker-owned slot contract', () => {
 		const files = [
 			{
 				filename: 'function_item.jinja',
 				content:
-					'{# @generated #}\n{% if name | isPresent %}{{ name }}{% endif %} {{ children | join(" ") }} {{ text }}'
+					'{# @generated #}\n{% if name | isPresent %}{{ name }}{% endif %} {{ children | join(" ") }}'
 			}
 		] as const;
 
@@ -109,34 +109,18 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 		expect(emitted.templatesRs.contents).toContain(
 			"pub struct FunctionItemTemplate<'a> {"
 		);
-		expect(emitted.templatesRs.contents).toContain(
-			"    pub children: &'a [String],"
-		);
-		expect(emitted.templatesRs.contents).toContain(
-			"    pub children_list: &'a [String],"
-		);
-		expect(emitted.templatesRs.contents).toContain("    pub variant: &'a str,");
-		expect(emitted.templatesRs.contents).toContain("    pub text: &'a str,");
 		expect(emitted.templatesRs.contents).toContain("    pub name: &'a str,");
 		expect(emitted.templatesRs.contents).toContain(
-			"    pub name_list: &'a [String],"
+			'        name: field_0.as_scalar(),'
 		);
-		expect(emitted.templatesRs.contents).toContain(
-			'        children: children.items.as_slice(),'
+		expect(emitted.templatesRs.contents).not.toContain("    pub text: &'a str,");
+		expect(emitted.templatesRs.contents).not.toContain("    pub variant: &'a str,");
+		expect(emitted.templatesRs.contents).not.toContain(
+			"    pub children: ::sittir_core::filters::ListView<'a>,"
 		);
-		expect(emitted.templatesRs.contents).toContain(
-			'        children_list: children.items.as_slice(),'
-		);
-		expect(emitted.templatesRs.contents).toContain('        variant,');
-		expect(emitted.templatesRs.contents).toContain(
-			'        text: text.as_str(),'
-		);
-		expect(emitted.templatesRs.contents).toContain(
-			'        name: field_0.scalar.as_str(),'
-		);
-		expect(emitted.templatesRs.contents).toContain(
-			'        name_list: field_0.items.as_slice(),'
-		);
+		expect(emitted.templatesRs.contents).not.toContain("    pub name_list: &'a [String],");
+		expect(emitted.templatesRs.contents).not.toContain("    pub name_leading_sep: bool,");
+		expect(emitted.templatesRs.contents).not.toContain("    pub name_trailing_sep: bool,");
 		expect(emitted.templatesRs.contents).not.toContain(
 			'.cloned().unwrap_or_default()'
 		);
@@ -149,7 +133,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 			{
 				filename: 'function_item.jinja',
 				content:
-					'{# @generated #}\n{% if name | isPresent %}{{ name }}{% endif %} {{ children | join(" ") }} {{ text }}'
+					'{# @generated #}\n{% if name | isPresent %}{{ name }}{% endif %}'
 			}
 		] as const;
 
@@ -168,7 +152,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 			'"function_item" => render_function_item(node)'
 		);
 		expect(emitted.templatesRs.contents).toContain(
-			'resolve_field(node, "name", false)'
+			'resolve_field(node, "name", true)'
 		);
 		expect(emitted.templatesRs.contents).toContain(
 			`format!("render_dispatch: missing required field '{}' on '{}'", name, node.type_)`
